@@ -27,7 +27,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.subscribers.SyncInfo;
 import org.eclipse.team.internal.ccvs.ui.AdaptableResourceList;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.internal.ui.DetailsDialog;
+import org.eclipse.team.internal.ui.dialogs.DetailsDialog;
 import org.eclipse.team.ui.sync.SyncInfoFilter;
 import org.eclipse.team.ui.sync.SyncResourceSet;
 import org.eclipse.ui.model.WorkbenchContentProvider;

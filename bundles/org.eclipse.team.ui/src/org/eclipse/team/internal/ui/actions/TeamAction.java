@@ -37,6 +37,7 @@ import org.eclipse.team.internal.core.TeamPlugin;
 import org.eclipse.team.internal.core.target.TargetManager;
 import org.eclipse.team.internal.core.target.TargetProvider;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbench;
@@ -265,7 +266,7 @@ public abstract class TeamAction extends ActionDelegate implements IObjectAction
 	 * @param shell  the shell to open the error dialog in
 	 */
 	protected void handle(Exception exception, String title, String message) {
-		TeamUIPlugin.handleError(getShell(), exception, title, message);
+		Utils.handleError(getShell(), exception, title, message);
 	}
 	
 	/**

@@ -24,6 +24,7 @@ import org.eclipse.team.internal.core.target.Site;
 import org.eclipse.team.internal.core.target.TargetManager;
 import org.eclipse.team.internal.core.target.TargetProvider;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.actions.TeamAction;
 
 public abstract class TargetAction extends TeamAction {
@@ -44,7 +45,7 @@ public abstract class TargetAction extends TeamAction {
 					try {
 						remote = ((SiteElement)next).getSite().getRemoteResource();
 					} catch (TeamException e) {
-						TeamUIPlugin.handle(e);
+						Utils.handle(e);
 						return new IRemoteTargetResource[0];
 					}
 				}

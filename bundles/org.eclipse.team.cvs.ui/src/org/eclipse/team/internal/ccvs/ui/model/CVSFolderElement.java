@@ -33,7 +33,7 @@ public class CVSFolderElement extends CVSResourceElement {
 	/**
 	 * Returns CVSResourceElement instances
 	 */
-	public Object[] internalGetChildren(Object o, IProgressMonitor monitor) throws TeamException {
+	public Object[] fetchChildren(Object o, IProgressMonitor monitor) throws TeamException {
 		ICVSResource[] children = folder.fetchChildren(monitor);
 		CVSResourceElement[] elements = new CVSResourceElement[children.length];
 		for (int i = 0; i < children.length; i++) {

@@ -33,9 +33,10 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.core.target.TargetManager;
 import org.eclipse.team.internal.core.target.TargetProvider;
-import org.eclipse.team.internal.ui.DetailsDialog;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.internal.ui.dialogs.DetailsDialog;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 /**
@@ -153,7 +154,7 @@ public class GetAction extends TargetAction {
 			}
 			return true;
 		} catch(CoreException e) {
-			TeamUIPlugin.handle(e);
+			Utils.handle(e);
 		}	
 		return false;
 	}

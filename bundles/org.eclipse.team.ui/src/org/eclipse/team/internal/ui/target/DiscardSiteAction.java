@@ -32,8 +32,8 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.core.target.Site;
 import org.eclipse.team.internal.core.target.TargetManager;
 import org.eclipse.team.internal.core.target.TargetProvider;
-import org.eclipse.team.internal.ui.DetailsDialog;
 import org.eclipse.team.internal.ui.Policy;
+import org.eclipse.team.internal.ui.dialogs.DetailsDialog;
 
 /**
  * Discards a remembered Site from Target Management. Before a Site can be

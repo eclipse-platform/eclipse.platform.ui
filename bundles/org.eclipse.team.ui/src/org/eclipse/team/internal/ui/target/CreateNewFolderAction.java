@@ -23,6 +23,7 @@ import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.internal.core.target.IRemoteTargetResource;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.internal.ui.Utils;
 
 /**
  * Action to create a new remote folder.
@@ -41,7 +42,7 @@ public class CreateNewFolderAction extends TargetAction {
 	 */
 	public void run(IAction action) {
 		try {
-			TeamUIPlugin.runWithProgressDialog(getShell(), true /* cancelable */, new IRunnableWithProgress() {
+			Utils.runWithProgressDialog(getShell(), true /* cancelable */, new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor)
 					throws InvocationTargetException, InterruptedException {
 						try {
@@ -64,7 +65,7 @@ public class CreateNewFolderAction extends TargetAction {
 	public static IRemoteTargetResource createDir(final Shell shell, final IRemoteTargetResource parent, final String defaultName) throws TeamException {
 		final IRemoteTargetResource[] newFolder = new IRemoteTargetResource[] {null};
 		try {				
-			TeamUIPlugin.runWithProgressDialog(shell, true, new IRunnableWithProgress() {
+			Utils.runWithProgressDialog(shell, true, new IRunnableWithProgress() {
 				public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					try {
 						monitor.beginTask(Policy.bind("CreateNewFolderAction.creatingFolder"), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
@@ -98,7 +99,7 @@ public class CreateNewFolderAction extends TargetAction {
 			if (e.getTargetException() instanceof TeamException) {
 				throw (TeamException)e.getTargetException();
 			}
-			TeamUIPlugin.handle(e);
+			Utils.handle(e);
 		} catch(InterruptedException e) {
 		}
 		return newFolder[0];

@@ -47,8 +47,8 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.internal.ui.IPromptCondition;
-import org.eclipse.team.internal.ui.PromptingDialog;
+import org.eclipse.team.internal.ui.dialogs.IPromptCondition;
+import org.eclipse.team.internal.ui.dialogs.PromptingDialog;
 
 /**
  * This class represents an action performed on a local CVS workspace

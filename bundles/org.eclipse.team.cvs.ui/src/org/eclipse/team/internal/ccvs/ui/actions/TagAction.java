@@ -34,8 +34,8 @@ import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.TagAsVersionDialog;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
-import org.eclipse.team.internal.ui.IPromptCondition;
-import org.eclipse.team.internal.ui.PromptingDialog;
+import org.eclipse.team.internal.ui.dialogs.IPromptCondition;
+import org.eclipse.team.internal.ui.dialogs.PromptingDialog;
 
 /**
  * TagAction tags the selected resources with a version tag specified by the user.

@@ -32,8 +32,8 @@ import org.eclipse.team.internal.ccvs.core.client.Checkout;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.internal.ui.IPromptCondition;
-import org.eclipse.team.internal.ui.PromptingDialog;
+import org.eclipse.team.internal.ui.dialogs.IPromptCondition;
+import org.eclipse.team.internal.ui.dialogs.PromptingDialog;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 /**

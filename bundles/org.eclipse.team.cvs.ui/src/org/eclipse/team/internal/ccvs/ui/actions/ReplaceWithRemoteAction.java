@@ -27,7 +27,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.core.InfiniteSubProgressMonitor;
-import org.eclipse.team.internal.ui.IPromptCondition;
+import org.eclipse.team.internal.ui.dialogs.IPromptCondition;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 public class ReplaceWithRemoteAction extends WorkspaceAction {

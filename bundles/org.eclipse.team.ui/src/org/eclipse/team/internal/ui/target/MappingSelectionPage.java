@@ -40,6 +40,7 @@ import org.eclipse.team.internal.core.target.UrlUtil;
 import org.eclipse.team.internal.ui.IHelpContextIds;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
@@ -115,7 +116,7 @@ public class MappingSelectionPage extends TargetWizardPage {
 					viewer.setExpandedState(currentSelection, true);
 					viewer.setSelection(new StructuredSelection(newFolderUIElement));
 				} catch (TeamException e) {
-					TeamUIPlugin.handle(e);
+					Utils.handle(e);
 					return;
 				}
 			}			

@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.internal.ui.Policy;
-import org.eclipse.team.internal.ui.TeamWizardPage;
+import org.eclipse.team.internal.ui.wizards.TeamWizardPage;
 
 public class ImportTargetSiteMainPage extends TeamWizardPage {
 	private Text fileText;

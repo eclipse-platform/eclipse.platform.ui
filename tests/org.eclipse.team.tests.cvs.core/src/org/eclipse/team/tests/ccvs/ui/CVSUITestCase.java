@@ -55,7 +55,7 @@ import org.eclipse.team.internal.ccvs.ui.sync.ForceCommitSyncAction;
 import org.eclipse.team.internal.ccvs.ui.sync.ForceUpdateSyncAction;
 import org.eclipse.team.internal.ccvs.ui.sync.UpdateSyncAction;
 import org.eclipse.team.internal.ccvs.ui.wizards.SharingWizard;
-import org.eclipse.team.internal.ui.IPromptCondition;
+import org.eclipse.team.internal.ui.dialogs.IPromptCondition;
 import org.eclipse.team.internal.ui.sync.ITeamNode;
 import org.eclipse.team.internal.ui.sync.SyncSet;
 import org.eclipse.team.internal.ui.sync.SyncView;

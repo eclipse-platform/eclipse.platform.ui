@@ -32,7 +32,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.internal.core.target.Site;
 import org.eclipse.team.internal.core.target.TargetManager;
 import org.eclipse.team.internal.ui.Policy;
-import org.eclipse.team.internal.ui.TeamWizardPage;
+import org.eclipse.team.internal.ui.wizards.TeamWizardPage;
 
 /**
  * This page allows the user to save the settings used by Target sites to a file.

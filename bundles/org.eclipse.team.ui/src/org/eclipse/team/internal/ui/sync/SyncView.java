@@ -422,15 +422,15 @@ public class SyncView extends ViewPart implements ISaveablePart, IPropertyChange
 		top.layout();
 		
 		// Set the sync mode depending on user preference
-		if (TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(ISharedImages.PREF_ALWAYS_IN_INCOMING_OUTGOING)) {
-			freeMode.run();
-		} else {
+		//if (TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(ISharedImages.PREF_ALWAYS_IN_INCOMING_OUTGOING)) {
+		//	freeMode.run();
+		//} else {
 			if (input.hasIncomingChanges()) {
 				incomingMode.run();
 			} else {
 				outgoingMode.run();
 			}
-		}
+		//}
 		// Reveal if fast view
 		try {
 			if (page == null) page = TeamUIPlugin.getActivePage();

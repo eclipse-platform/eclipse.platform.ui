@@ -62,7 +62,7 @@ public class RemoteVersionModule extends CVSModelElement implements IAdaptable {
 	 * object has no children. The children of the RemoteModule
 	 * are the versions for that module.
 	 */
-	public Object[] internalGetChildren(Object o, IProgressMonitor monitor) {
+	public Object[] fetchChildren(Object o, IProgressMonitor monitor) {
 		return (ICVSRemoteFolder[]) projects.toArray(new ICVSRemoteFolder[projects.size()]);
 	}
 	

@@ -33,6 +33,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.jobs.ILock;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
@@ -44,7 +46,6 @@ import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.syncinfo.BaserevInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.NotifyInfo;
-import org.eclipse.team.internal.ccvs.core.syncinfo.ReentrantLock;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.core.util.FileNameMatcher;
@@ -69,7 +70,7 @@ public class EclipseSynchronizer {
 	private static EclipseSynchronizer instance;
 	
 	// track resources that have changed in a given operation
-	private ReentrantLock lock = new ReentrantLock();
+	private ILock lock = Platform.getJobManager().newLock();
 	
 	private Set changedResources = new HashSet();
 	private Set changedFolders = new HashSet();
@@ -403,7 +404,7 @@ public class EclipseSynchronizer {
 	public void beginOperation(IProgressMonitor monitor) throws CVSException {
 		lock.acquire();
 
-		if (lock.getNestingCount() == 1) {
+		if (lock.getDepth() == 1) {
 			prepareCache(monitor);
 		}		
 	}
@@ -423,7 +424,7 @@ public class EclipseSynchronizer {
 	public void endOperation(IProgressMonitor monitor) throws CVSException {		
 		try {
 			IStatus status = SyncInfoCache.STATUS_OK;
-			if (lock.getNestingCount() == 1) {
+			if (lock.getDepth() == 1) {
 				status = commitCache(monitor);
 			}
 			if (!status.isOK()) {
@@ -1457,7 +1458,7 @@ public class EclipseSynchronizer {
 	 * @return boolean
 	 */
 	protected boolean isWorkspaceModifiable() {
-		return !lock.isReadOnly();
+		return true; //!lock.isReadOnly();
 	}
 	
 	/**
@@ -1467,7 +1468,6 @@ public class EclipseSynchronizer {
 	 * @param thread
 	 */
 	public void addReadOnlyThread(Thread thread) {
-		lock.addReadOnlyThread(thread);
+		//lock.addReadOnlyThread(thread);
 	}
-
 }

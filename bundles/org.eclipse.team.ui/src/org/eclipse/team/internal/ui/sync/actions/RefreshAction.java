@@ -1,21 +1,27 @@
-/*
- * Created on Jun 16, 2003
- *
- * To change the template for this generated file go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
- */
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.team.internal.ui.sync.actions;
-
-import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.subscribers.TeamSubscriber;
 import org.eclipse.team.internal.core.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.actions.TeamAction;
 import org.eclipse.team.internal.ui.sync.views.SubscriberInput;
 import org.eclipse.team.internal.ui.sync.views.SyncViewer;
@@ -38,33 +44,26 @@ class RefreshAction extends Action {
 	
 	public void run() {
 		final SyncViewer view = actions.getSyncView();
-		view.run(new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				try {
-					monitor.beginTask(null, 100);
-					ActionContext context = actions.getContext();
-					if(context != null) {
-						getResources(context.getSelection());
-						SubscriberInput input = (SubscriberInput)context.getInput();
-						IResource[] resources = getResources(context.getSelection());
-						if (refreshAll || resources.length == 0) {
-							// If no resources are selected, refresh all the subscriber roots
-							resources = input.roots();
-						}
-						input.getSubscriber().refresh(resources, IResource.DEPTH_INFINITE, Policy.subMonitorFor(monitor, 100));
-					}
-				} catch (TeamException e) {
-					throw new InvocationTargetException(e);
-				} finally {
-					monitor.done();
-				}
+		try {
+			ActionContext context = actions.getContext();
+			if(context != null) {
+				getResources(context.getSelection());
+				SubscriberInput input = (SubscriberInput)context.getInput();
+				IResource[] resources = getResources(context.getSelection());
+				if (refreshAll || resources.length == 0) {
+					// If no resources are selected, refresh all the subscriber roots
+					resources = input.roots();
+				}						
 			}
-			private IResource[] getResources(ISelection selection) {
-				if(selection == null) {
-					return new IResource[0];
-				}
-				return (IResource[])TeamAction.getSelectedAdaptables(selection, IResource.class);					
-			}
-		});
+		} catch(TeamException e) {
+			Utils.handle(e);
+		}
 	}
+	
+	private IResource[] getResources(ISelection selection) {
+		if(selection == null) {
+			return new IResource[0];
+		}
+		return (IResource[])TeamAction.getSelectedAdaptables(selection, IResource.class);					
+	}	
 }

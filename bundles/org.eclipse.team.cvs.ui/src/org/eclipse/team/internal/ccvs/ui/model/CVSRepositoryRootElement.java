@@ -54,7 +54,7 @@ public class CVSRepositoryRootElement extends CVSModelElement {
 	public Object getParent(Object o) {
 		return null;
 	}
-	public Object[] internalGetChildren(Object o, IProgressMonitor monitor) {
+	public Object[] fetchChildren(Object o, IProgressMonitor monitor) {
 		ICVSRepositoryLocation location = null;
 		if (o instanceof ICVSRepositoryLocation) {
 			location = (ICVSRepositoryLocation)o;

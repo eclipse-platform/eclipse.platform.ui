@@ -80,9 +80,8 @@ public class RemoteProjectsElement extends CVSTagElement {
 	/**
 	 * @see org.eclipse.team.internal.ccvs.ui.model.CVSModelElement#internalGetChildren(java.lang.Object, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public Object[] internalGetChildren(Object o, IProgressMonitor monitor) throws TeamException {
+	public Object[] fetchChildren(Object o, IProgressMonitor monitor) throws TeamException {
 		if (root == null) return new Object[0];
-		return super.internalGetChildren(o, monitor);
+		return super.fetchChildren(o, monitor);
 	}
-
 }

@@ -416,6 +416,7 @@ public class SyncFileWriter {
 	 */
 	private static String[] readLines(IFile file) throws CVSException {
 		try {
+			if(! file.exists()) return null;
 			BufferedReader reader = new BufferedReader(new InputStreamReader(file.getContents()));
 			List fileContentStore = new ArrayList();
 			try {

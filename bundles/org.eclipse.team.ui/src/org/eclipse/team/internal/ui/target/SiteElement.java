@@ -16,6 +16,7 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.core.target.IRemoteTargetResource;
 import org.eclipse.team.internal.core.target.Site;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.ISharedImages;
 
 /**
@@ -72,7 +73,7 @@ public class SiteElement extends RemoteResourceElement {
 		try {
 			setRemoteResource(site.getRemoteResource());
 		} catch (TeamException e) {
-			TeamUIPlugin.handle(e);
+			Utils.handle(e);
 			return new Object[0];
 		}
 		return super.getChildren(this);
@@ -84,7 +85,7 @@ public class SiteElement extends RemoteResourceElement {
 		try {
 			return site.getRemoteResource();
 		} catch (TeamException e) {
-			TeamUIPlugin.handle(e);
+			Utils.handle(e);
 			return null;
 		}
 	}

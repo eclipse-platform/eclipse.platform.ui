@@ -210,29 +210,35 @@ public class RepositoryManager {
 		return knownTags;
 	}
 	
-	public ICVSRemoteResource[] getFoldersForTag(ICVSRepositoryLocation location, CVSTag tag, IProgressMonitor monitor) throws CVSException {
-		if (tag.getType() == CVSTag.HEAD) {
-			ICVSRemoteResource[] resources = location.members(tag, false, monitor);
-			RepositoryRoot root = getRepositoryRootFor(location);
-			ICVSRemoteResource[] modules = root.getDefinedModules(tag, monitor);
-			ICVSRemoteResource[] result = new ICVSRemoteResource[resources.length + modules.length];
-			System.arraycopy(resources, 0, result, 0, resources.length);
-			System.arraycopy(modules, 0, result, resources.length, modules.length);
-			return result;
-		}
-		Set result = new HashSet();
-		// Get the tags for the location
-		RepositoryRoot root = getRepositoryRootFor(location);
-		String[] paths = root.getKnownRemotePaths();
-		for (int i = 0; i < paths.length; i++) {
-			String path = paths[i];
-			List tags = Arrays.asList(root.getKnownTags(path));
-			if (tags.contains(tag)) {
-				ICVSRemoteFolder remote = root.getRemoteFolder(path, tag, monitor);
-				result.add(remote);
+	public ICVSRemoteResource[] getFoldersForTag(ICVSRepositoryLocation location, CVSTag tag, IProgressMonitor monitor) throws CVSException {		
+		monitor = Policy.monitorFor(monitor);
+		try {
+			monitor.beginTask(Policy.bind("RepositoryManager.fetchingRemoteFolders", tag.getName()), 100);
+			if (tag.getType() == CVSTag.HEAD) {
+				ICVSRemoteResource[] resources = location.members(tag, false, Policy.subMonitorFor(monitor, 60));
+				RepositoryRoot root = getRepositoryRootFor(location);
+				ICVSRemoteResource[] modules = root.getDefinedModules(tag, Policy.subMonitorFor(monitor, 40));
+				ICVSRemoteResource[] result = new ICVSRemoteResource[resources.length + modules.length];
+				System.arraycopy(resources, 0, result, 0, resources.length);
+				System.arraycopy(modules, 0, result, resources.length, modules.length);
+				return result;
 			}
+			Set result = new HashSet();
+			// Get the tags for the location
+			RepositoryRoot root = getRepositoryRootFor(location);
+			String[] paths = root.getKnownRemotePaths();
+			for (int i = 0; i < paths.length; i++) {
+				String path = paths[i];
+				List tags = Arrays.asList(root.getKnownTags(path));
+				if (tags.contains(tag)) {
+					ICVSRemoteFolder remote = root.getRemoteFolder(path, tag, Policy.subMonitorFor(monitor, 100));
+					result.add(remote);
+				}
+			}
+			return (ICVSRemoteResource[])result.toArray(new ICVSRemoteResource[result.size()]);
+		} finally {
+			monitor.done();
 		}
-		return (ICVSRemoteResource[])result.toArray(new ICVSRemoteResource[result.size()]);
 	}
 		
 	/*

@@ -31,6 +31,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.ui.repo.*;
 import org.eclipse.team.internal.ccvs.ui.wizards.CVSWizardPage;
 import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.internal.ui.dialogs.*;
 import org.eclipse.team.internal.ccvs.ui.merge.ProjectElement;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchContentProvider;

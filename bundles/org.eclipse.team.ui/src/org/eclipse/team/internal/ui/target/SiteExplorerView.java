@@ -58,6 +58,7 @@ import org.eclipse.team.internal.core.target.TargetManager;
 import org.eclipse.team.internal.ui.IHelpContextIds;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -427,7 +428,7 @@ public class SiteExplorerView extends ViewPart implements ISiteListener {
 					expandInTreeCurrentSelection(new StructuredSelection(currentSelection), false);
 					folderTree.setSelection(new StructuredSelection(newFolderUIElement));
 				} catch (TeamException e) {
-					TeamUIPlugin.handle(e);
+					Utils.handle(e);
 					return;
 				}
 			}

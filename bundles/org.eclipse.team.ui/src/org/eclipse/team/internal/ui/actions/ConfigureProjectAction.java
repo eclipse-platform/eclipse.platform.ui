@@ -19,8 +19,8 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.team.core.RepositoryProvider;
-import org.eclipse.team.internal.ui.ConfigureProjectWizard;
 import org.eclipse.team.internal.ui.Policy;
+import org.eclipse.team.internal.ui.wizards.ConfigureProjectWizard;
 
 /**
  * Action for configuring a project. Configuring involves associating

@@ -47,6 +47,7 @@ import org.eclipse.team.internal.ccvs.ui.model.CVSAdapterFactory;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryRoot;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -221,7 +222,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	 */
 	public static void runWithProgress(Shell parent, boolean cancelable,
 		final IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
-		TeamUIPlugin.runWithProgress(parent, cancelable, runnable);
+		Utils.runWithProgress(parent, cancelable, runnable);
 	}
 	
 	/**
@@ -246,7 +247,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 			Runnable outerRunnable = new Runnable() {
 				public void run() {
 					try {
-						TeamUIPlugin.runWithProgress(parent, cancelable, runnable);
+						Utils.runWithProgress(parent, cancelable, runnable);
 					} catch (InvocationTargetException e) {
 						exception[1] = e;
 					} catch (InterruptedException e) {
@@ -280,7 +281,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 				}
 			}
 		} else {
-			TeamUIPlugin.runWithProgress(parent, cancelable, runnable);
+			Utils.runWithProgress(parent, cancelable, runnable);
 		}
 	}
 	

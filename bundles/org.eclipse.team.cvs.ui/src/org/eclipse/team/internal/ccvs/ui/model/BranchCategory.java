@@ -20,7 +20,6 @@ import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 /**
  * BranchCategory is the model element for the branches category
@@ -55,17 +54,13 @@ public class BranchCategory extends CVSModelElement implements IAdaptable {
 	 * element's children.  Returns an empty enumeration if this
 	 * object has no children.
 	 */
-	public Object[] internalGetChildren(Object o, IWorkingSet set, IProgressMonitor monitor) throws CVSException {
-		CVSTag[] tags = CVSUIPlugin.getPlugin().getRepositoryManager().getKnownTags(repository, set, CVSTag.BRANCH, monitor);
+	public Object[] fetchChildren(Object o, IProgressMonitor monitor) throws CVSException {
+		CVSTag[] tags = CVSUIPlugin.getPlugin().getRepositoryManager().getKnownTags(repository, getWorkingSet(), CVSTag.BRANCH, monitor);
 		CVSTagElement[] branchElements = new CVSTagElement[tags.length];
 		for (int i = 0; i < tags.length; i++) {
 			branchElements[i] = new CVSTagElement(tags[i], repository);
 		}
 		return branchElements;
-	}
-	
-	public Object[] internalGetChildren(Object o, IProgressMonitor monitor) throws CVSException {
-		return internalGetChildren(o, null, monitor);
 	}
 	
 	/**

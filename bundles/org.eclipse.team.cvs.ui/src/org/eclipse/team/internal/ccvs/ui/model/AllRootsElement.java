@@ -25,7 +25,7 @@ public class AllRootsElement extends CVSModelElement implements IAdaptable {
 	public ImageDescriptor getImageDescriptor(Object object) {
 		return null;
 	}
-	public Object[] internalGetChildren(Object o, IProgressMonitor monitor) {
+	public Object[] fetchChildren(Object o, IProgressMonitor monitor) {
 		return CVSUIPlugin.getPlugin().getRepositoryManager().getKnownRepositoryRoots();
 	}
 	public String getLabel(Object o) {

@@ -30,7 +30,7 @@ public class CVSFileElement extends CVSResourceElement {
 	/**
 	 * Initial implementation: return null;
 	 */
-	public Object[] internalGetChildren(Object o, IProgressMonitor monitor) {
+	public Object[] fetchChildren(Object o, IProgressMonitor monitor) {
 		return new Object[0];
 	}
 	/**

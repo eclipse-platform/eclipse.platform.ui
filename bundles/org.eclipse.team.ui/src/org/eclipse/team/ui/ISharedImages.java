@@ -73,9 +73,6 @@ public interface ISharedImages {
 	 public final String IMG_PROJECTSET_IMPORT_BANNER = "wizban/import_projectset_wizban.gif"; //$NON-NLS-1$
 	 public final String IMG_PROJECTSET_EXPORT_BANNER = "wizban/export_projectset_wizban.gif"; //$NON-NLS-1$
 	
-	 // preferences
-	 public final String PREF_ALWAYS_IN_INCOMING_OUTGOING = "pref_always_in_incoming_outgoing"; //$NON-NLS-1$
-
 	 //objects
 	 public final String IMG_SITE_ELEMENT = "clcl16/site_element.gif"; //$NON-NLS-1$
 	 public final String IMG_CHANGE_FILTER = "clcl16/change_filter.gif"; //$NON-NLS-1$

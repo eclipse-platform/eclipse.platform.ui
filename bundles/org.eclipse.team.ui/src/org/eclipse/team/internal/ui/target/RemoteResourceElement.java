@@ -24,6 +24,7 @@ import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.internal.core.target.IRemoteTargetResource;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.IWorkbenchAdapter;
@@ -101,14 +102,14 @@ public class RemoteResourceElement implements IWorkbenchAdapter, IAdaptable {
 			};
 			
 			if(runContext == null) {
-				TeamUIPlugin.runWithProgress(null, true /*cancelable*/, runnable);
+				Utils.runWithProgress(null, true /*cancelable*/, runnable);
 			} else {
 				runContext.run(true, true, runnable);
 			}
 		} catch (InterruptedException e) {
 			return new Object[0];
 		} catch (InvocationTargetException e) {
-			TeamUIPlugin.handle(e.getTargetException());
+			Utils.handle(e.getTargetException());
 			return new Object[0];
 		}
 		return result[0];

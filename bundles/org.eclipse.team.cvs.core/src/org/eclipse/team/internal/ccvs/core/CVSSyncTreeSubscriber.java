@@ -189,7 +189,19 @@ public abstract class CVSSyncTreeSubscriber extends TeamSubscriber {
 	 * @return
 	 */
 	protected SyncInfo getSyncInfo(IResource local, IRemoteResource base, IRemoteResource remote, IProgressMonitor monitor) throws TeamException {
-		return new CVSSyncInfo(local, base, remote, this, monitor);
+		try {
+			monitor = Policy.monitorFor(monitor);
+			monitor.beginTask(null, 100);
+			CVSSyncInfo info = new CVSSyncInfo(local, base, remote, this, Policy.subMonitorFor(monitor, 100));
+			
+			// if it's out of sync, then cache the contents
+			//if(info.getKind() != SyncInfo.IN_SYNC && remote != null) {
+			//	remote.getContents(Policy.subMonitorFor(monitor, 30));
+			//}
+			return info;
+		} finally {
+			monitor.done();
+		}
 	}
 
 	/* (non-Javadoc)

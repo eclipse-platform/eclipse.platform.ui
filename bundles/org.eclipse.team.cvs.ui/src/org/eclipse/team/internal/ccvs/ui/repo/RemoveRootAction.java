@@ -24,7 +24,7 @@ import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.actions.CVSAction;
-import org.eclipse.team.internal.ui.DetailsDialogWithProjects;
+import org.eclipse.team.internal.ui.dialogs.DetailsDialogWithProjects;
 import org.eclipse.ui.actions.SelectionListenerAction;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 

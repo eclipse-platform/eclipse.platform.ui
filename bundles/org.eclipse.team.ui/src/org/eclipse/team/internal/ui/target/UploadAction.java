@@ -25,9 +25,9 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.core.InfiniteSubProgressMonitor;
 import org.eclipse.team.internal.core.target.TargetManager;
 import org.eclipse.team.internal.core.target.TargetProvider;
-import org.eclipse.team.internal.ui.IPromptCondition;
 import org.eclipse.team.internal.ui.Policy;
-import org.eclipse.team.internal.ui.PromptingDialog;
+import org.eclipse.team.internal.ui.dialogs.IPromptCondition;
+import org.eclipse.team.internal.ui.dialogs.PromptingDialog;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 public class UploadAction extends TargetAction {

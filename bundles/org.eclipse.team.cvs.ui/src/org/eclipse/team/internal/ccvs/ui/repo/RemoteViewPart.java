@@ -114,7 +114,6 @@ public abstract class RemoteViewPart extends ViewPart implements ISelectionListe
 		drillPart = new DrillDownAdapter(viewer);
 		
 		contributeActions();
-
 		initializeListeners();
 
 		// F1 Help
@@ -368,6 +367,7 @@ public abstract class RemoteViewPart extends ViewPart implements ISelectionListe
 
 	protected void refreshViewer() {
 		if (viewer == null) return;
+		//((RemoteContentProvider)viewer.getContentProvider()).clearCache();
 		CVSUIPlugin.getPlugin().getRepositoryManager().purgeCache();
 		updateWorkingSetMenu();
 		viewer.refresh();
@@ -375,7 +375,7 @@ public abstract class RemoteViewPart extends ViewPart implements ISelectionListe
 	
 	public void collapseAll() {
 		if (viewer == null) return;
-		viewer.getControl().setRedraw(false);		
+		viewer.getControl().setRedraw(false);
 		viewer.collapseToLevel(viewer.getInput(), TreeViewer.ALL_LEVELS);
 		viewer.getControl().setRedraw(true);
 	}

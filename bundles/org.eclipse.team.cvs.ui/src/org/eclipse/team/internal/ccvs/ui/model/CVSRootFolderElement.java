@@ -26,7 +26,7 @@ public class CVSRootFolderElement extends CVSResourceElement {
 	/**
 	 * @see IWorkbenchAdapter#getChildren(Object)
 	 */
-	public Object[] internalGetChildren(Object o, IProgressMonitor monitor) {
+	public Object[] fetchChildren(Object o, IProgressMonitor monitor) {
 		CVSFolderElement[] folders = new CVSFolderElement[roots.length];
 		for (int i = 0; i < roots.length; i++) {
 			folders[i] = new CVSFolderElement(roots[i], false);

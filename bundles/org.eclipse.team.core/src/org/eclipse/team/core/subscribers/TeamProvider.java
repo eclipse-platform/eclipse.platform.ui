@@ -46,7 +46,6 @@ public class TeamProvider implements ISaveParticipant {
 	static private Map subscribers = new HashMap();
 	static private List listeners = new ArrayList(1);
 	static private Map factories = new HashMap();
-	private RefreshSubscribersJob refreshJob;
 	
 	public TeamProvider() {
 		startup();
@@ -107,7 +106,6 @@ public class TeamProvider implements ISaveParticipant {
 	public void startup() {
 		try {
 			ResourcesPlugin.getWorkspace().addSaveParticipant(TeamPlugin.getPlugin(), this);
-			//refreshJob = new RefreshSubscribersJob();
 		} catch (CoreException e) {
 			TeamPlugin.log(e);
 		}

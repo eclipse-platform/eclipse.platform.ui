@@ -47,7 +47,7 @@ public class ModulesCategory extends CVSModelElement implements IAdaptable {
 	/**
 	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(java.lang.Object)
 	 */
-	public Object[] internalGetChildren(Object o, IProgressMonitor monitor) throws TeamException {
+	public Object[] fetchChildren(Object o, IProgressMonitor monitor) throws TeamException {
 		return repository.members(CVSTag.DEFAULT, true /* module definitions */, monitor);
 	}
 

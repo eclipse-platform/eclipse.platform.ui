@@ -30,16 +30,16 @@
    <extension
       point = "org.eclipse.ui.preferencePages">
       	<page id="org.eclipse.team.ui.TeamPreferences"
-      		class="org.eclipse.team.internal.ui.TeamPreferencePage"
+      		class="org.eclipse.team.internal.ui.preferences.TeamPreferencePage"
       		name="%TeamPreferencePage.name">
       	</page>
        <page id="org.eclipse.team.ui.TextPreferences"
-       	  class="org.eclipse.team.internal.ui.TextPreferencePage"
+       	  class="org.eclipse.team.internal.ui.preferences.TextPreferencePage"
        	    name="%TextPreferencePage.name"
        	    category="org.eclipse.team.ui.TeamPreferences">
        </page>
        <page id="org.eclipse.team.ui.IgnorePreferences"
-       	  class="org.eclipse.team.internal.ui.IgnorePreferencePage"
+       	  class="org.eclipse.team.internal.ui.preferences.IgnorePreferencePage"
        	    name="%IgnorePreferencePage.name"
        	    category="org.eclipse.team.ui.TeamPreferences">
        </page>
@@ -198,7 +198,7 @@
       <wizard
          id="org.eclipse.team.ui.ProjectSetImportWizard"
          name="%ProjectSetImportWizard.name"
-         class="org.eclipse.team.internal.ui.ProjectSetImportWizard"
+         class="org.eclipse.team.internal.ui.wizard.ProjectSetImportWizard"
          icon="icons/full/obj/import_projectset.gif">
          <description>
             %ProjectSetImportWizard.description
@@ -222,7 +222,7 @@
       <wizard
          id="org.eclipse.team.ui.ProjectSetExportWizard"
          name="%ProjectSetExportWizard.name"
-         class="org.eclipse.team.internal.ui.ProjectSetExportWizard"
+         class="org.eclipse.team.internal.ui.wizards.ProjectSetExportWizard"
          icon="icons/full/obj/export_projectset.gif">
          <description>
             %ProjectSetExportWizard.description

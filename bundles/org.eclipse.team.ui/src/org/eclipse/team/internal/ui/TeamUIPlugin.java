@@ -11,7 +11,6 @@
 package org.eclipse.team.internal.ui;
 
 
-import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -24,21 +23,14 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.subscribers.RefreshSubscribersJob;
 import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -67,6 +59,15 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 	
 	private static Hashtable imageDescriptors = new Hashtable(20);
 	private static List disposeOnShutdownImages= new ArrayList();
+	
+	private RefreshSubscribersJob refreshJob;
+
+	/**
+	 * Returns the job that refreshes the active subscribers in the background.
+	 */
+	public RefreshSubscribersJob getRefreshJob() {
+		return refreshJob;
+	}
 
 	/**
 	 * Creates a new TeamUIPlugin.
@@ -77,6 +78,7 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 		super(descriptor);
 		instance = this;
 		initializeImages();
+		initializePreferences();
 	}
 	/**
 	 * Creates an extension.  If the extension plugin has not
@@ -139,7 +141,9 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 	 */
 	protected void initializePreferences() {
 		IPreferenceStore store = getPreferenceStore();
-		store.setDefault(ISharedImages.PREF_ALWAYS_IN_INCOMING_OUTGOING, false);
+		store.setDefault(IPreferenceIds.SYNCVIEW_BACKGROUND_SYNC, false);
+		store.setDefault(IPreferenceIds.SYNCVIEW_SCHEDULED_SYNC, false);
+		store.setDefault(IPreferenceIds.SYNCVIEW_DELAY, 5 /* minutes */);
 	}
 	
 	/**
@@ -169,165 +173,22 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 	}
 	
 	/**
-	 * Shows the given errors to the user.
-	 * 
-	 * @param Exception  the exception containing the error
-	 * @param title  the title of the error dialog
-	 * @param message  the message for the error dialog
-	 * @param shell  the shell to open the error dialog in
-	 */
-	public static void handleError(Shell shell, Exception exception, String title, String message) {
-		IStatus status = null;
-		boolean log = false;
-		boolean dialog = false;
-		Throwable t = exception;
-		if (exception instanceof TeamException) {
-			status = ((TeamException)exception).getStatus();
-			log = false;
-			dialog = true;
-		} else if (exception instanceof InvocationTargetException) {
-			t = ((InvocationTargetException)exception).getTargetException();
-			if (t instanceof TeamException) {
-				status = ((TeamException)t).getStatus();
-				log = false;
-				dialog = true;
-			} else if (t instanceof CoreException) {
-				status = ((CoreException)t).getStatus();
-				log = true;
-				dialog = true;
-			} else if (t instanceof InterruptedException) {
-				return;
-			} else {
-				status = new Status(IStatus.ERROR, TeamUIPlugin.ID, 1, Policy.bind("TeamAction.internal"), t); //$NON-NLS-1$
-				log = true;
-				dialog = true;
-			}
-		}
-		if (status == null) return;
-		if (!status.isOK()) {
-			IStatus toShow = status;
-			if (status.isMultiStatus()) {
-				IStatus[] children = status.getChildren();
-				if (children.length == 1) {
-					toShow = children[0];
-				}
-			}
-			if (title == null) {
-				title = status.getMessage();
-			}
-			if (message == null) {
-				message = status.getMessage();
-			}
-			if (dialog && shell != null) {
-				ErrorDialog.openError(shell, title, message, toShow);
-			}
-			if (log || shell == null) {
-				TeamUIPlugin.log(toShow.getSeverity(), message, t);
-			}
-		}
-	}
-	
-	public static void runWithProgress(Shell parent, boolean cancelable,
-		final IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
-		boolean createdShell = false;
-		try {
-			if (parent == null || parent.isDisposed()) {
-				Display display = Display.getCurrent();
-				if (display == null) {
-					// cannot provide progress (not in UI thread)
-					runnable.run(new NullProgressMonitor());
-					return;
-				}
-				// get the active shell or a suitable top-level shell
-				parent = display.getActiveShell();
-				if (parent == null) {
-					parent = new Shell(display);
-					createdShell = true;
-				}
-			}
-			// pop up progress dialog after a short delay
-			final Exception[] holder = new Exception[1];
-			BusyIndicator.showWhile(parent.getDisplay(), new Runnable() {
-				public void run() {
-					try {
-						runnable.run(new NullProgressMonitor());
-					} catch (InvocationTargetException e) {
-						holder[0] = e;
-					} catch (InterruptedException e) {
-						holder[0] = e;
-					}
-				}
-			});
-			if (holder[0] != null) {
-				if (holder[0] instanceof InvocationTargetException) {
-					throw (InvocationTargetException) holder[0];
-				} else {
-					throw (InterruptedException) holder[0];
-				}
-			}
-			//new TimeoutProgressMonitorDialog(parent, TIMEOUT).run(true /*fork*/, cancelable, runnable);
-		} finally {
-			if (createdShell) parent.dispose();
-		}
-	}
-	
-	/**
-	 * Creates a progress monitor and runs the specified runnable.
-	 * 
-	 * @param parent the parent Shell for the dialog
-	 * @param cancelable if true, the dialog will support cancelation
-	 * @param runnable the runnable
-	 * 
-	 * @exception InvocationTargetException when an exception is thrown from the runnable
-	 * @exception InterruptedException when the progress monitor is cancelled
-	 */
-	public static void runWithProgressDialog(Shell parent, boolean cancelable,
-		final IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
-			
-		new ProgressMonitorDialog(parent).run(cancelable, cancelable, runnable);
-	}
-	
-	/**
 	 * @see Plugin#startup()
 	 */
 	public void startup() throws CoreException {
 		Policy.localize("org.eclipse.team.internal.ui.messages"); //$NON-NLS-1$
 		initializePreferences();
+		
+		// startup auto-refresh job if necessary
+//		refreshJob = new RefreshSubscribersJob();
+//		if(getPreferenceStore().getBoolean(IPreferenceIds.SYNCVIEW_SCHEDULED_SYNC)) {
+//			refreshJob.setRefreshInterval(getPreferenceStore().getInt(IPreferenceIds.SYNCVIEW_DELAY));
+//			refreshJob.setRescheduled(true);
+//			// start once the platform has started and stabilized
+//			refreshJob.schedule(20000 /* 20 seconds */);
+//		}
 	}
 	
-	/*
-	 * This method is only for use by the Target Management feature (see bug
-	 * 16509).
-	 * 
-	 * @param t
-	 */
-	public static void handle(Throwable t) {
-		IStatus error = null;
-		if (t instanceof InvocationTargetException) {
-			t = ((InvocationTargetException)t).getTargetException();
-		}
-		if (t instanceof CoreException) {
-			error = ((CoreException)t).getStatus();
-		} else if (t instanceof TeamException) {
-			error = ((TeamException)t).getStatus();
-		} else {
-			error = new Status(IStatus.ERROR, TeamUIPlugin.ID, 1, Policy.bind("simpleInternal"), t); //$NON-NLS-1$
-		}
-	
-		Shell shell = new Shell(Display.getDefault());
-	
-		if (error.getSeverity() == IStatus.INFO) {
-			MessageDialog.openInformation(shell, Policy.bind("information"), error.getMessage()); //$NON-NLS-1$
-		} else {
-			ErrorDialog.openError(shell, Policy.bind("exception"), null, error); //$NON-NLS-1$
-		}
-		shell.dispose();
-		// Let's log non-team exceptions
-		if (!(t instanceof TeamException)) {
-			TeamUIPlugin.log(error.getSeverity(), error.getMessage(), t);
-		}
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.Plugin#shutdown()
 	 */

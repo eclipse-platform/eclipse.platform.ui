@@ -56,7 +56,7 @@ public class GroupedByVersionCategory extends CVSModelElement implements IAdapta
 	 * 
 	 * XXX This method looks wrong to me somehow
 	 */
-	public Object[] internalGetChildren(Object o, IProgressMonitor monitor) {
+	public Object[] fetchChildren(Object o, IProgressMonitor monitor) {
 		//String -> CTags[]
 		Map mappings = CVSUIPlugin.getPlugin().getRepositoryManager().getKnownProjectsAndVersions(repository);
 		Map remoteVersionModules = new HashMap();

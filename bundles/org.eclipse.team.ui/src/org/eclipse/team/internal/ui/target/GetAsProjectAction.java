@@ -31,8 +31,9 @@ import org.eclipse.team.internal.core.target.TargetManager;
 import org.eclipse.team.internal.core.target.TargetProvider;
 import org.eclipse.team.internal.core.target.UrlUtil;
 import org.eclipse.team.internal.ui.Policy;
-import org.eclipse.team.internal.ui.PromptingDialog;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.internal.ui.dialogs.*;
 
 /**
  * Action to transfer a remote folder and it's contents into the workspace. The
@@ -66,7 +67,7 @@ public class GetAsProjectAction extends TargetAction {
 		}
 		
 		try {
-			TeamUIPlugin.runWithProgressDialog(getShell(), true, new IRunnableWithProgress() {
+			Utils.runWithProgressDialog(getShell(), true, new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					try {
 						monitor.beginTask(getTaskName(remoteFolders), remoteFolders.length * 100);

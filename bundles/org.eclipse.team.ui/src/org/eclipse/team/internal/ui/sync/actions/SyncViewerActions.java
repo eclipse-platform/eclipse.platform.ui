@@ -216,7 +216,9 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 		
 		IMenuManager dropDownMenu = actionBars.getMenuManager();
 		workingSetGroup.fillActionBars(actionBars);
+		dropDownMenu.add(new SyncViewerShowPreferencesAction(this));
 		dropDownMenu.add(cancelSubscription);
+		
 	}
 
 	/* (non-Javadoc)
