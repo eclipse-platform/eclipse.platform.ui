@@ -49,6 +49,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPerspectiveDescriptor;
@@ -525,13 +526,12 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		
 		if (fEditorIndex >= 0) {
 			// first restoration of editor re-use
-			IEditorPart[] editors = page.getEditors();
-			if (fEditorIndex < editors.length) {
-				fEditor = editors[fEditorIndex];
+			IEditorReference[] refs = page.getEditorReferences();
+			if (fEditorIndex < refs.length) {
+				fEditor = refs[fEditorIndex].getEditor(false);
 			}
 			fEditorIndex = -1;
 		}
-		
 
 		//  if there is an editor in the debug page with the newInput
 		//     page bringToTop(editorAlreadyOpened)
@@ -548,7 +548,6 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
         		
 		IEditorPart editor = null;
 		if (fReuseEditor) {
-			IEditorPart[] editors = page.getEditors();
 			editor = page.getActiveEditor();
 			if (editor != null) {
 				if (!editor.getEditorInput().equals(input)) {
@@ -556,9 +555,11 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 				}
 			}
 			if (editor == null) {
-				for (int i = 0; i < editors.length; i++) {
-					if (editors[i].getEditorInput().equals(input)) {
-						editor = editors[i];
+				IEditorReference[] refs = page.getEditorReferences();
+				for (int i = 0; i < refs.length; i++) {
+					IEditorPart refEditor= refs[i].getEditor(false);
+					if (input.equals(refEditor.getEditorInput())) {
+						editor = refEditor;
 						page.bringToTop(editor);
 						break;
 					}
@@ -896,10 +897,10 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 			if (page == null) {
 				return;
 			}
-			IEditorPart[] parts = page.getEditors();
+			IEditorReference[] refs = page.getEditorReferences();
 			int index = -1;
-			for (int i = 0; i < parts.length; i++) {
-				if (parts[i].equals(fEditor)) {
+			for (int i = 0; i < refs.length; i++) {
+				if (fEditor.equals(refs[i].getEditor(false))) {
 					index = i;
 					break;
 				}
