@@ -1,2 +1,1 @@
-base=file:c:/eclipse/plugins/
-test=file:c:/eclipse/plugins/org.eclipse.core.tests.runtime/Plugin_Testing/plugins.activation.1/
+test=file:c:/20020319/eclipse/plugins/org.eclipse.core.tests.runtime/Plugin_Testing/plugins.activation.1/plugins/
