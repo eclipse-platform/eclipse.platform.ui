@@ -12,7 +12,6 @@ package org.eclipse.team.internal.ccvs.core;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -22,7 +21,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.team.core.ITeamStatus;
 import org.eclipse.team.core.RepositoryProvider;
@@ -42,7 +40,6 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.CVSBaseResourceVariantTree;
 import org.eclipse.team.internal.ccvs.core.syncinfo.CVSDescendantResourceVariantByteStore;
 import org.eclipse.team.internal.ccvs.core.syncinfo.CVSResourceVariantTree;
 import org.eclipse.team.internal.ccvs.core.util.ResourceStateChangeListeners;
-import org.eclipse.team.internal.ccvs.core.Policy;
 
 /**
  * CVSWorkspaceSubscriber
@@ -184,10 +181,6 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
 			try {
-				// We need to do a scheduling rule on the project to
-				// avoid overly desctructive operations from occuring 
-				// while we gather sync info
-				Platform.getJobManager().beginRule(resource, monitor);
 				resource.accept(new IResourceVisitor() {
 					public boolean visit(IResource innerResource) throws CoreException {
 						try {
@@ -213,8 +206,6 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 				set.addError(new TeamStatus(
 						IStatus.ERROR, CVSProviderPlugin.ID, ITeamStatus.SYNC_INFO_SET_ERROR,
 						e.getMessage(), e, ResourcesPlugin.getWorkspace().getRoot()));
-			} finally {
-				Platform.getJobManager().endRule(resource);
 			}
 		}
 		monitor.done();
