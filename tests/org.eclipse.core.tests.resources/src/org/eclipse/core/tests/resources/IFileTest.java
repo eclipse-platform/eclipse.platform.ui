@@ -243,6 +243,11 @@ protected void setUp() throws Exception {
  */
 public static Test suite() {
 	return new TestSuite(IFileTest.class);
+
+//	TestSuite suite = new TestSuite();
+//	suite.addTest(new IFileTest("testAppendContents2"));
+//	suite.addTest(new IFileTest("testSetContents3"));
+//	return suite;
 }
 protected void tearDown() throws Exception {
 	getWorkspace().getRoot().refreshLocal(IResource.DEPTH_INFINITE, null);
@@ -751,6 +756,99 @@ public void testSetContents2() throws Throwable {
 	} finally {
 		content.close();
 	}
+}
+public void testSetContents3() {
+}
+public void testAppendContents2() {
+	IFile file = projects[0].getFile("file1");
+	ensureDoesNotExistInWorkspace(file);
+
+	// If force=true, IFile is non-local, file exists in local file system:
+	// make IFile local, append contents (the thinking being that this file,
+	// though marked non-local, was in fact local awaiting discovery; so 
+	// force=true says we it is ok to make file local and proceed as per normal)
+	try {
+		// setup
+		file.create(null, false, getMonitor());
+		assertTrue("1.0", !file.isLocal(IResource.DEPTH_ZERO));
+		assertTrue("1.1", !file.getLocation().toFile().exists());
+		ensureExistsInFileSystem(file);
+		assertTrue("1.2", !file.isLocal(IResource.DEPTH_ZERO));
+	} catch (CoreException e) {
+		fail("1.3", e);
+	}
+	try {
+		file.appendContents(getRandomContents(), IResource.FORCE, getMonitor());
+	} catch (CoreException e) {
+		fail("1.4", e);
+	}
+	assertTrue("1.5", file.isLocal(IResource.DEPTH_ZERO));
+	assertTrue("1.6", file.getLocation().toFile().exists());
+	// cleanup
+	ensureDoesNotExistInWorkspace(file);
+	
+	// If force=true, IFile is non-local, file does not exist in local file system:
+	// fail - file not local (this file is not local for real - cannot append
+	// something to a file that you don't have)
+	try {
+		// setup
+		file.create(null, false, getMonitor());
+		assertTrue("2.0", !file.isLocal(IResource.DEPTH_ZERO));
+		assertTrue("2.1", !file.getLocation().toFile().exists());
+	} catch (CoreException e) {
+		fail("2.2", e);
+	}
+	try {
+		file.appendContents(getRandomContents(), IResource.FORCE, getMonitor());
+		fail("2.3");
+	} catch (CoreException e) {
+		// should fail
+	}
+	assertTrue("2.4", !file.isLocal(IResource.DEPTH_ZERO));
+	// cleanup
+	ensureDoesNotExistInWorkspace(file);
+	
+	// If force=false, IFile is non-local, file exists in local file system:
+	// fail - file not local
+	try {
+		// setup
+		file.create(null, false, getMonitor());
+		assertTrue("3.0", !file.isLocal(IResource.DEPTH_ZERO));
+		assertTrue("3.1", !file.getLocation().toFile().exists());
+		ensureExistsInFileSystem(file);
+		assertTrue("3.2", !file.isLocal(IResource.DEPTH_ZERO));
+	} catch (CoreException e) {
+		fail("3.3", e);
+	}
+	try {
+		file.appendContents(getRandomContents(), IResource.NONE, getMonitor());
+		fail("3.4");
+	} catch (CoreException e) {
+		// should fail
+	}
+	assertTrue("3.5", !file.isLocal(IResource.DEPTH_ZERO));
+	// cleanup
+	ensureDoesNotExistInWorkspace(file);
+	
+	// If force=false, IFile is non-local, file does not exist in local file system:
+	// fail - file not local
+	try {
+		// setup
+		file.create(null, false, getMonitor());
+		assertTrue("4.0", !file.isLocal(IResource.DEPTH_ZERO));
+		assertTrue("4.1", !file.getLocation().toFile().exists());
+	} catch (CoreException e) {
+		fail("4.2", e);
+	}
+	try {
+		file.appendContents(getRandomContents(), IResource.NONE, getMonitor());
+		fail("4.3");
+	} catch (CoreException e) {
+		// should fail
+	}
+	assertTrue("4.4", !file.isLocal(IResource.DEPTH_ZERO));
+	// cleanup
+	ensureDoesNotExistInWorkspace(file);
 }
 public void testSetGetFolderPersistentProperty() throws Throwable {
 	IResource target = getWorkspace().getRoot().getFile(new Path("/Project/File.txt"));

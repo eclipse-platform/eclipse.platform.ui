@@ -92,6 +92,11 @@ public void appendContents(InputStream source, boolean force, boolean keepHistor
  * resource will be marked as being local (even if it wasn't before).
  * </p>
  * <p>
+ * If this file is non-local then this method will always fail. The only exception
+ * is when <code>FORCE</code> is specified and the file exists in the local 
+ * file system. In this case the file is made local and the given contents are appended.
+ * </p>
+ * <p>
  * The <code>KEEP_HISTORY</code> update flag controls whether or not a copy of
  * current contents of this file should be captured in the workspace's local
  * history (properties are not recorded in the local history). The local history

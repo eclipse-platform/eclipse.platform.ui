@@ -516,7 +516,13 @@ public void write(IFile target, IPath location, InputStream content, boolean for
 			throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, target.getFullPath(), message, null);
 		}
 		long lastModified = CoreFileSystemLibrary.getLastModified(stat);
-		if (!force) {
+		if (force) {
+			if (append && !target.isLocal(IResource.DEPTH_ZERO) && !localFile.exists()) {
+				// force=true, local=false, existsInFileSystem=false
+				String message = Policy.bind("resources.mustBeLocal", target.getFullPath().toString()); //$NON-NLS-1$
+				throw new ResourceException(IResourceStatus.RESOURCE_NOT_LOCAL, target.getFullPath(), message, null);
+			}
+		} else {
 			if (target.isLocal(IResource.DEPTH_ZERO)) {
 				// test if timestamp is the same since last synchronization
 				ResourceInfo info = ((Resource) target).getResourceInfo(true, false);
@@ -524,11 +530,17 @@ public void write(IFile target, IPath location, InputStream content, boolean for
 					String message = Policy.bind("localstore.resourceIsOutOfSync", target.getFullPath().toString()); //$NON-NLS-1$
 					throw new ResourceException(IResourceStatus.OUT_OF_SYNC_LOCAL, target.getFullPath(), message, null);
 				}
-			} else
+			} else {
 				if (localFile.exists()) {
 					String message = Policy.bind("localstore.resourceExists", target.getFullPath().toString()); //$NON-NLS-1$
 					throw new ResourceException(IResourceStatus.EXISTS_LOCAL, target.getFullPath(), message, null);
+				} else {
+					if (append) {
+						String message = Policy.bind("resources.mustBeLocal", target.getFullPath().toString()); //$NON-NLS-1$
+						throw new ResourceException(IResourceStatus.RESOURCE_NOT_LOCAL, target.getFullPath(), message, null);
+					}
 				}
+			}
 		}
 		// add entry to History Store.
 		UniversalUniqueIdentifier uuid = null; // uuid to locate the file on history
