@@ -33,6 +33,7 @@ import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.action.ToolBarContributionItem;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
@@ -122,6 +123,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 
 	private PerspectiveBarManager perspectiveBar;
 	private Menu perspectiveBarMenu;
+	private Menu perspectiveBarGenericMenu;
 	
 	private TrimLayout defaultLayout; 
 	
@@ -1936,60 +1938,80 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	private void showPerspectiveBarPopup(Point pt) {
 
 		// Get the tool item under the mouse.
-		ToolBar toolBar = perspectiveBar.getControl();
+		final ToolBar toolBar = perspectiveBar.getControl();
 		ToolItem toolItem = toolBar.getItem(toolBar.toControl(pt));
-		if (toolItem == null)
-			return;
-
-		// Get the action for the tool item.
-		Object data = toolItem.getData();
-
-		if (!(data instanceof PerspectiveBarContributionItem))
-			return;
-		
-			// The perspective bar menu is created lazily here.
-			// Its data is set (each time) to the tool item, which refers to the SetPagePerspectiveAction
-			// which in turn refers to the page and perspective.
-			// It is important not to refer to the action, the page or the perspective directly
-			// since otherwise the menu hangs on to them after they are closed.
-			// By hanging onto the tool item instead, these references are cleared when the
-			// corresponding page or perspective is closed.
-			// See bug 11282 for more details on why it is done this way.
-			if (perspectiveBarMenu == null) {
+			
+		if (toolItem == null || !(toolItem.getData() instanceof PerspectiveBarContributionItem)) {
+			if (perspectiveBarGenericMenu == null) {
 				Menu menu = new Menu(toolBar);
-				MenuItem menuItem = new MenuItem(menu, SWT.NONE);
-				menuItem.setText(WorkbenchMessages.getString("WorkbenchWindow.close")); //$NON-NLS-1$
-				menuItem.addSelectionListener(new SelectionAdapter() {
+				final MenuItem dockMenuItem = new MenuItem(menu, SWT.CHECK);
+				dockMenuItem.setText(WorkbenchMessages.getString("Dock &Left"));
+				
+				dockMenuItem.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {
-						ToolItem perspectiveToolItem = (ToolItem) perspectiveBarMenu.getData();
-						if (perspectiveToolItem != null && !perspectiveToolItem.isDisposed()) {
-							PerspectiveBarContributionItem item =
-								(PerspectiveBarContributionItem) perspectiveToolItem.getData();
-							item.getPage().closePerspective(item.getPerspective(), true);
-						}
+						IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
+						apiStore.setValue(IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR, dockMenuItem.getSelection());
 					}
 				});
-				menuItem = new MenuItem(menu, SWT.NONE);
-				menuItem.setText(WorkbenchMessages.getString("WorkbenchWindow.closeAll")); //$NON-NLS-1$
-				menuItem.addSelectionListener(new SelectionAdapter() {
-					public void widgetSelected(SelectionEvent e) {
-						ToolItem perspectiveToolItem = (ToolItem) perspectiveBarMenu.getData();
-						if (perspectiveToolItem != null && !perspectiveToolItem.isDisposed()) {
-							PerspectiveBarContributionItem item =
-								(PerspectiveBarContributionItem) perspectiveToolItem.getData();
-							item.getPage().closeAllPerspectives();
-						}
-					}
-				});
-				perspectiveBarMenu = menu;
+				perspectiveBarGenericMenu = menu;
 			}
-			perspectiveBarMenu.setData(toolItem);
-
+			
+			// get the dock menu item and update the state to ensure it matches the preference
+			perspectiveBarGenericMenu.getItem(0).setSelection(dockPerspectiveBar);
+			
 			// Show popup menu.
-			if (perspectiveBarMenu != null) {
-				perspectiveBarMenu.setLocation(pt.x, pt.y);
-				perspectiveBarMenu.setVisible(true);
+			if (perspectiveBarGenericMenu != null) {
+				perspectiveBarGenericMenu.setLocation(pt.x, pt.y);
+				perspectiveBarGenericMenu.setVisible(true);
 			}
+			return;
+		}
+		
+		// The perspective bar menu is created lazily here.
+		// Its data is set (each time) to the tool item, which refers to the SetPagePerspectiveAction
+		// which in turn refers to the page and perspective.
+		// It is important not to refer to the action, the page or the perspective directly
+		// since otherwise the menu hangs on to them after they are closed.
+		// By hanging onto the tool item instead, these references are cleared when the
+		// corresponding page or perspective is closed.
+		// See bug 11282 for more details on why it is done this way.
+		if (perspectiveBarMenu == null) {
+			Menu menu = new Menu(toolBar);
+			MenuItem menuItem = new MenuItem(menu, SWT.NONE);
+			menuItem.setText(WorkbenchMessages.getString("WorkbenchWindow.close")); //$NON-NLS-1$
+			menuItem.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					ToolItem perspectiveToolItem = (ToolItem) perspectiveBarMenu.getData();
+					if (perspectiveToolItem != null && !perspectiveToolItem.isDisposed()) {
+						PerspectiveBarContributionItem item =
+							(PerspectiveBarContributionItem) perspectiveToolItem.getData();
+						item.getPage().closePerspective(item.getPerspective(), true);
+						toolBar.layout();
+					}
+				}
+			});
+			menuItem = new MenuItem(menu, SWT.NONE);
+			menuItem.setText(WorkbenchMessages.getString("WorkbenchWindow.closeAll")); //$NON-NLS-1$
+			menuItem.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					ToolItem perspectiveToolItem = (ToolItem) perspectiveBarMenu.getData();
+					if (perspectiveToolItem != null && !perspectiveToolItem.isDisposed()) {
+						PerspectiveBarContributionItem item =
+							(PerspectiveBarContributionItem) perspectiveToolItem.getData();
+						item.getPage().closeAllPerspectives();
+						toolBar.layout();
+					}
+				}
+			});
+			perspectiveBarMenu = menu;
+		}
+		perspectiveBarMenu.setData(toolItem);
+
+		// Show popup menu.
+		if (perspectiveBarMenu != null) {
+			perspectiveBarMenu.setLocation(pt.x, pt.y);
+			perspectiveBarMenu.setVisible(true);
+		}
 	}
 
 	/**
