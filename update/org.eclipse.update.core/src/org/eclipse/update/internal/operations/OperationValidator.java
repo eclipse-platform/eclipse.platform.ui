@@ -149,27 +149,6 @@ public class OperationValidator implements IOperationValidator {
 		return createCombinedReportStatus(beforeStatus, status);
 	}
 
-	/*
-	 * Called by UI before processing a delta
-	 */
-	public IStatus validateSessionDelta(
-		ISessionDelta delta,
-		IFeatureReference[] deltaRefs) {
-		// check initial state
-		ArrayList beforeStatus = new ArrayList();
-		validateInitialState(beforeStatus);
-
-		// check proposed change
-		ArrayList status = new ArrayList();
-		switch (delta.getType()) {
-			case ISessionDelta.ENABLE :
-				validateDeltaConfigure(delta, deltaRefs, status);
-				break;
-		}
-
-		// report status
-		return createCombinedReportStatus(beforeStatus, status);
-	}
 
 	/*
 	 * Called by the UI before doing a revert/ restore operation
@@ -243,8 +222,6 @@ public class OperationValidator implements IOperationValidator {
 		ArrayList status) {
 		try {
 			checkSiteReadOnly(feature,status);
-			if (validateUnconfigurePatch(feature, status))
-				return;
 			ArrayList features = computeFeatures();
 			features = computeFeaturesAfterOperation(features, null, feature);
 			checkConstraints(features, status);
@@ -253,26 +230,6 @@ public class OperationValidator implements IOperationValidator {
 		}
 	}
 
-	private static boolean validateUnconfigurePatch(
-		IFeature feature,
-		ArrayList status)
-		throws CoreException {
-//		if (feature.isPatch()) {
-//			IInstallConfiguration backup =
-//				UpdateUtils.getBackupConfigurationFor(feature);
-//			String msg;
-//			if (backup != null)
-//				msg =
-//					UpdateUtils.getFormattedMessage(
-//						KEY_PATCH_UNCONFIGURE_BACKUP,
-//						backup.getLabel());
-//			else
-//				msg = UpdateUtils.getString(KEY_PATCH_UNCONFIGURE);
-//			status.add(createStatus(feature, FeatureStatus.CODE_OTHER, msg));
-//			return true;
-//		}
-		return false;
-	}
 
 	/*
 	 * handle configure
@@ -353,21 +310,6 @@ public class OperationValidator implements IOperationValidator {
 		}
 	}
 
-	/*
-	 * Handle delta addition
-	 */
-	private static void validateDeltaConfigure(
-		ISessionDelta delta,
-		IFeatureReference[] deltaRefs,
-		ArrayList status) {
-		try {
-			ArrayList features = computeFeaturesAfterDelta(delta, deltaRefs);
-			checkConstraints(features, status);
-
-		} catch (CoreException e) {
-			status.add(e.getStatus());
-		}
-	}
 
 	/*
 	 * Handle one-click changes as a batch
@@ -395,7 +337,7 @@ public class OperationValidator implements IOperationValidator {
 						createStatus(
 							newFeature,
 							FeatureStatus.CODE_EXCLUSIVE,
-							UpdateUtils.getString(KEY_EXCLUSIVE)));
+							Policy.bind(KEY_EXCLUSIVE)));
 					continue;
 				}
 				checkForCycles(newFeature, null, features);
@@ -431,7 +373,7 @@ public class OperationValidator implements IOperationValidator {
 						createStatus(
 							newFeature,
 							FeatureStatus.CODE_OTHER,
-							UpdateUtils.getString(KEY_CONFLICT));
+							Policy.bind(KEY_CONFLICT));
 					status.add(0, conflict);
 					return;
 				}
@@ -459,7 +401,7 @@ public class OperationValidator implements IOperationValidator {
 				status.add(createStatus(
 								null,
 								FeatureStatus.CODE_OTHER,
-								UpdateUtils.getString("ActivityConstraints.platformModified")));
+								Policy.bind("ActivityConstraints.platformModified")));
 		} catch (IOException e) {
 			// ignore
 		}
@@ -472,8 +414,8 @@ public class OperationValidator implements IOperationValidator {
 		IConfiguredSite csite = feature.getSite().getCurrentConfiguredSite();
 		if (csite != null && !csite.isUpdatable())
 			status.add(createStatus(feature, FeatureStatus.CODE_OTHER,
-					UpdateUtils
-					.getFormattedMessage("ActivityConstraints.readOnly",
+					Policy
+					.bind("ActivityConstraints.readOnly",
 							csite.getSite().getURL().toExternalForm())));
 	}
 
@@ -538,7 +480,7 @@ public class OperationValidator implements IOperationValidator {
 		// check for <includes> cycle
 		if (visitedFeatures.contains(feature)) {
 			IStatus status =
-			createStatus(top, FeatureStatus.CODE_CYCLE, UpdateUtils.getString(KEY_CYCLE));
+			createStatus(top, FeatureStatus.CODE_CYCLE, Policy.bind(KEY_CYCLE));
 			throw new CoreException(status);
 		} else {
 			// keep track of visited features so we can detect cycles
@@ -579,7 +521,7 @@ public class OperationValidator implements IOperationValidator {
 				return;
 		}
 		status.add(
-			createStatus(feature, FeatureStatus.CODE_OTHER, UpdateUtils.getString(KEY_NO_LICENSE)));
+			createStatus(feature, FeatureStatus.CODE_OTHER, Policy.bind(KEY_NO_LICENSE)));
 	}
 
 	/*
@@ -664,80 +606,7 @@ public class OperationValidator implements IOperationValidator {
 		return list;
 	}
 
-	/*
-	 * Compute a list of features that will be configured after applying the
-	 * specified delta
-	 */
-	private static ArrayList computeFeaturesAfterDelta(
-		ISessionDelta delta,
-		IFeatureReference[] deltaRefs)
-		throws CoreException {
 
-		if (delta == null || deltaRefs == null)
-			deltaRefs = new IFeatureReference[0];
-		else if (deltaRefs == null)
-			deltaRefs = delta.getFeatureReferences();
-
-		ArrayList features = new ArrayList(); // cumulative results list
-		ILocalSite localSite = SiteManager.getLocalSite();
-		IInstallConfiguration config = localSite.getCurrentConfiguration();
-		IConfiguredSite[] csites = config.getConfiguredSites();
-
-		// compute changes for each site
-		for (int i = 0; i < csites.length; i++) {
-			IConfiguredSite csite = csites[i];
-			ArrayList siteFeatures = new ArrayList();
-
-			// collect currently configured features on site
-			IFeatureReference[] crefs = csite.getConfiguredFeatures();
-			for (int j = 0; crefs != null && j < crefs.length; j++) {
-				IFeatureReference cref = crefs[j];
-				IFeature cfeature = cref.getFeature(null);
-				siteFeatures.add(cfeature);
-			}
-
-			// add deltas for the site
-			for (int j = 0; j < deltaRefs.length; j++) {
-				ISite deltaSite = deltaRefs[j].getSite();
-				if (deltaSite.equals(csite.getSite())) {
-					IFeature dfeature = deltaRefs[j].getFeature(null);
-					if (!siteFeatures.contains(dfeature)) // don't add dups
-						siteFeatures.add(dfeature);
-				}
-			}
-
-			// reduce the list if needed
-			IFeature[] array =
-				(IFeature[]) siteFeatures.toArray(
-					new IFeature[siteFeatures.size()]);
-			ArrayList removeTree = new ArrayList();
-			for (int j = 0; j < array.length; j++) {
-				VersionedIdentifier id1 = array[j].getVersionedIdentifier();
-				for (int k = 0; k < array.length; k++) {
-					if (j == k)
-						continue;
-					VersionedIdentifier id2 = array[k].getVersionedIdentifier();
-					if (id1.getIdentifier().equals(id2.getIdentifier())) {
-						if (id2.getVersion().isGreaterThan(id1.getVersion())) {
-							removeTree.add(array[j]);
-							siteFeatures.remove(array[j]);
-							break;
-						}
-					}
-				}
-			}
-			// Compute patches that will need to be removed together with
-			// the removed features
-			ArrayList patchesTree = new ArrayList();
-			contributePatchesFor(removeTree, siteFeatures, patchesTree);
-			siteFeatures.removeAll(patchesTree);
-
-			// accumulate site results
-			features.addAll(siteFeatures);
-		}
-
-		return features;
-	}
 
 	/*
 	 * Compute a list of plugin entries for the specified features.
@@ -785,7 +654,7 @@ public class OperationValidator implements IOperationValidator {
 		
 		// check for <includes> cycle
 		if (candidates.contains(feature)) {
-			String msg = UpdateUtils.getFormattedMessage(
+			String msg = Policy.bind(
 					KEY_CYCLE, 
 					new String[] {feature.getLabel(), 
 							feature.getVersionedIdentifier().toString()});
@@ -849,7 +718,7 @@ public class OperationValidator implements IOperationValidator {
 			if (fos.size() > 0) {
 				if (!fos.contains(os)) {
 					IStatus s =
-						createStatus(feature, FeatureStatus.CODE_ENVIRONMENT, UpdateUtils.getString(KEY_OS));
+						createStatus(feature, FeatureStatus.CODE_ENVIRONMENT, Policy.bind(KEY_OS));
 					if (!status.contains(s))
 						status.add(s);
 					continue;
@@ -859,7 +728,7 @@ public class OperationValidator implements IOperationValidator {
 			if (fws.size() > 0) {
 				if (!fws.contains(ws)) {
 					IStatus s =
-						createStatus(feature, FeatureStatus.CODE_ENVIRONMENT, UpdateUtils.getString(KEY_WS));
+						createStatus(feature, FeatureStatus.CODE_ENVIRONMENT, Policy.bind(KEY_WS));
 					if (!status.contains(s))
 						status.add(s);
 					continue;
@@ -869,7 +738,7 @@ public class OperationValidator implements IOperationValidator {
 			if (farch.size() > 0) {
 				if (!farch.contains(arch)) {
 					IStatus s =
-						createStatus(feature, FeatureStatus.CODE_ENVIRONMENT, UpdateUtils.getString(KEY_ARCH));
+						createStatus(feature, FeatureStatus.CODE_ENVIRONMENT, Policy.bind(KEY_ARCH));
 					if (!status.contains(s))
 						status.add(s);
 					continue;
@@ -903,7 +772,7 @@ public class OperationValidator implements IOperationValidator {
 			}
 			if (!found) {
 				IStatus s =
-					createStatus(null, FeatureStatus.CODE_OTHER, UpdateUtils.getString(KEY_PLATFORM));
+					createStatus(null, FeatureStatus.CODE_OTHER, Policy.bind(KEY_PLATFORM));
 				if (!status.contains(s))
 					status.add(s);
 
@@ -934,7 +803,7 @@ public class OperationValidator implements IOperationValidator {
 				return;
 		}
 
-		IStatus s = createStatus(null, FeatureStatus.CODE_OTHER, UpdateUtils.getString(KEY_PRIMARY));
+		IStatus s = createStatus(null, FeatureStatus.CODE_OTHER, Policy.bind(KEY_PRIMARY));
 		if (!status.contains(s))
 			status.add(s);
 	}
@@ -1020,20 +889,20 @@ public class OperationValidator implements IOperationValidator {
 					// report status
 					String target =
 						featurePrereq
-							? UpdateUtils.getString(KEY_PREREQ_FEATURE)
-							: UpdateUtils.getString(KEY_PREREQ_PLUGIN);
+							? Policy.bind(KEY_PREREQ_FEATURE)
+							: Policy.bind(KEY_PREREQ_PLUGIN);
 					int errorCode = featurePrereq
 							? FeatureStatus.CODE_PREREQ_FEATURE
 							: FeatureStatus.CODE_PREREQ_PLUGIN;
 					String msg =
-						UpdateUtils.getFormattedMessage(
+						Policy.bind(
 							KEY_PREREQ,
 							new String[] { target, id });
 
 					if (!ignoreVersion) {
 						if (rule == IImport.RULE_PERFECT)
 							msg =
-								UpdateUtils.getFormattedMessage(
+								Policy.bind(
 									KEY_PREREQ_PERFECT,
 									new String[] {
 										target,
@@ -1041,7 +910,7 @@ public class OperationValidator implements IOperationValidator {
 										version.toString()});
 						else if (rule == IImport.RULE_EQUIVALENT)
 							msg =
-								UpdateUtils.getFormattedMessage(
+								Policy.bind(
 									KEY_PREREQ_EQUIVALENT,
 									new String[] {
 										target,
@@ -1049,7 +918,7 @@ public class OperationValidator implements IOperationValidator {
 										version.toString()});
 						else if (rule == IImport.RULE_COMPATIBLE)
 							msg =
-								UpdateUtils.getFormattedMessage(
+								Policy.bind(
 									KEY_PREREQ_COMPATIBLE,
 									new String[] {
 										target,
@@ -1057,7 +926,7 @@ public class OperationValidator implements IOperationValidator {
 										version.toString()});
 						else if (rule == IImport.RULE_GREATER_OR_EQUAL)
 							msg =
-								UpdateUtils.getFormattedMessage(
+								Policy.bind(
 									KEY_PREREQ_GREATER,
 									new String[] {
 										target,
@@ -1142,7 +1011,7 @@ public class OperationValidator implements IOperationValidator {
 		if (included) {
 			// feature is included as optional but
 			// no parent is currently configured.
-			String msg = UpdateUtils.getString(KEY_OPTIONAL_CHILD);
+			String msg = Policy.bind(KEY_OPTIONAL_CHILD);
 			status.add(createStatus(feature, FeatureStatus.CODE_OPTIONAL_CHILD, msg));
 		} else {
 			//feature is root - can be configured
@@ -1257,7 +1126,7 @@ public class OperationValidator implements IOperationValidator {
 		int code) {
 		IStatus[] carray =
 			(IStatus[]) children.toArray(new IStatus[children.size()]);
-		String message = UpdateUtils.getString(rootKey);
+		String message = Policy.bind(rootKey);
 		return new MultiStatus(
 			UpdateCore.getPlugin().getBundle().getSymbolicName(),
 			code,
@@ -1275,7 +1144,7 @@ public class OperationValidator implements IOperationValidator {
 			PluginVersionIdentifier version =
 				feature.getVersionedIdentifier().getVersion();
 			fullMessage =
-				UpdateUtils.getFormattedMessage(
+				Policy.bind(
 					KEY_CHILD_MESSAGE,
 					new String[] {
 						feature.getLabel(),

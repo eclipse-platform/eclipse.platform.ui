@@ -15,7 +15,7 @@ import java.util.ArrayList;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.internal.operations.*;
+import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.search.UpdatePolicy;
 
 /**
@@ -252,7 +252,7 @@ public class UpdateSearchRequest {
 					"org.eclipse.update.core",
 					ISite.SITE_ACCESS_EXCEPTION,
 					children,
-					UpdateUtils.getString("Search.networkProblems"),
+					Policy.bind("Search.networkProblems"),
 					null);
 			throw new CoreException(multiStatus);
 		}

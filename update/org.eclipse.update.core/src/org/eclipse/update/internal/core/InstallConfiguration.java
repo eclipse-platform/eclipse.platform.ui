@@ -22,7 +22,6 @@ import org.eclipse.update.core.VersionedIdentifier;
 import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.configurator.*;
 import org.eclipse.update.internal.model.*;
-import org.eclipse.update.internal.operations.*;
 import org.osgi.framework.*;
 
 /**
@@ -116,7 +115,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		}
 		
 		if (isDuplicateSite(file))
-			throw Utilities.newCoreException(UpdateUtils.getFormattedMessage("InstallConfiguration.location.exists", file.getPath()),null);
+			throw Utilities.newCoreException(Policy.bind("InstallConfiguration.location.exists", file.getPath()),null);
 		ISite site = InternalSiteManager.createSite(file);
 
 		//create a config site around the site
@@ -323,7 +322,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 	 * (cannot recreate these because must preserve other runtime state) [18520]
 	 * @return true if restart is needed
 	 */
-	public boolean save(boolean isTransient) throws CoreException {
+	public boolean save() throws CoreException {
 		
 		// Write info  into platform for the next runtime
 		IPlatformConfiguration runtimeConfiguration = ConfiguratorUtils.getCurrentPlatformConfiguration();

@@ -51,14 +51,6 @@ public interface IOperationValidator {
 	public IStatus validatePendingReplaceVersion(IFeature feature, IFeature anotherFeature);
 	
 	/**
-	 * Called before processing a delta.
-	 * @return the error status, or null if no errors
-	 */
-	public IStatus validateSessionDelta(
-		ISessionDelta delta,
-		IFeatureReference[] deltaRefs);
-
-	/**
 	 * Called before doing a revert/ restore operation
 	 * @return the error status, or null if no errors
 	 */

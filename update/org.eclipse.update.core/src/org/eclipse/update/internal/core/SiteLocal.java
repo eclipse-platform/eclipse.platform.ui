@@ -39,13 +39,13 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite{
 	 * Set the reconciliation as non optimistic
 	 */
 	public static ILocalSite getLocalSite() throws CoreException {
-		return internalGetLocalSite(false);
+		return internalGetLocalSite();
 	}
 
 	/*
 	 *Internal call is reconciliation needs to be optimistic
 	 */
-	public static ILocalSite internalGetLocalSite(boolean isOptimistic) throws CoreException {
+	public static ILocalSite internalGetLocalSite() throws CoreException {
 	
 		SiteLocal localSite = new SiteLocal();
 	
@@ -175,7 +175,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite{
 		// Save the current configuration as
 		// the other are already saved
 		// and set runtim info for next startup
-		return ((InstallConfiguration) getCurrentConfiguration()).save(isTransient());
+		return ((InstallConfiguration) getCurrentConfiguration()).save();
 	}
 	
 //	/**

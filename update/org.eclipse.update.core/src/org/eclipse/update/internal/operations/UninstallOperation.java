@@ -13,6 +13,7 @@ package org.eclipse.update.internal.operations;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.internal.core.*;
 import org.eclipse.update.operations.*;
 
 /**
@@ -38,7 +39,7 @@ public class UninstallOperation extends FeatureOperation implements IUninstallFe
 			} else {
 				// we should do something here
 				String message =
-					UpdateUtils.getFormattedMessage(
+					Policy.bind(
 						"OperationsManager.error.uninstall",
 						feature.getLabel());
 				IStatus status =

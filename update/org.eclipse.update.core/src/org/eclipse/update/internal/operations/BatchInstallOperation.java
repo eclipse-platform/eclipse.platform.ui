@@ -15,6 +15,7 @@ import java.lang.reflect.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
+import org.eclipse.update.internal.core.*;
 import org.eclipse.update.operations.*;
 
 public class BatchInstallOperation
@@ -68,7 +69,7 @@ public class BatchInstallOperation
 				listener.beforeExecute(this, null);
 			
 			monitor.beginTask(
-				UpdateUtils.getString(KEY_INSTALLING),
+				Policy.bind(KEY_INSTALLING),
 				operations.length);
 			for (int i = 0; i < operations.length; i++) {
 				SubProgressMonitor subMonitor =

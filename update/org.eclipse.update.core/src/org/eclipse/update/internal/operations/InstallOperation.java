@@ -15,6 +15,7 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.internal.core.*;
 import org.eclipse.update.operations.*;
 
 /**
@@ -84,7 +85,7 @@ public class InstallOperation
 					if (!UpdateUtils.isNestedChild(config, oldFeature)) {
 						// "eat" the error if nested child
 						String message =
-							UpdateUtils.getFormattedMessage(
+							Policy.bind(
 								KEY_OLD,
 								oldFeature.getLabel());
 						IStatus status =

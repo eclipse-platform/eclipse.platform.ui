@@ -47,13 +47,13 @@ public class InternalSiteManager {
 	 * @see SiteManager#getLocalSite()
 	 */
 	public static ILocalSite getLocalSite() throws CoreException {
-		return internalGetLocalSite(false);
+		return internalGetLocalSite();
 	}
 
 	/*
 	 * Internal call if optimistic reconciliation needed
 	 */
-	private static ILocalSite internalGetLocalSite(boolean isOptimistic) throws CoreException {
+	private static ILocalSite internalGetLocalSite() throws CoreException {
 
 		// if an exception occured while retrieving the Site
 		// rethrow it
@@ -62,7 +62,7 @@ public class InternalSiteManager {
 
 		if (localSite == null) {
 			try {
-				localSite = SiteLocal.internalGetLocalSite(isOptimistic);
+				localSite = SiteLocal.internalGetLocalSite();
 			} catch (CoreException e) {
 				exceptionOccured = e;
 				throw e;
@@ -333,24 +333,6 @@ public class InternalSiteManager {
 		return site;
 	}
 
-
-	/*
-	 * Reconcile the local site following a specific reconciliation strategy 
-	 * The parameter is true if we need to follow an optimistic reconciliation
-	 * returns true if there are delta to process
-	 * 
-	 * Called internally by UpdateManagerReconciler aplication
-	 */
-	public static boolean reconcile(boolean optimisticReconciliation) throws CoreException {
-		// reconcile
-		internalGetLocalSite(optimisticReconciliation);
-
-		// check if new features have been found
-		if (localSite instanceof SiteLocal) {
-			return SiteLocal.newFeaturesFound;
-		}
-		return false;
-	}
 
 	/**
 	 * Method downloaded.

@@ -22,7 +22,6 @@ import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.core.*;
-import org.eclipse.update.internal.model.*;
 import org.eclipse.update.internal.search.*;
 import org.eclipse.update.operations.*;
 import org.eclipse.update.search.*;
@@ -33,17 +32,9 @@ import org.eclipse.update.search.*;
  * All the methods are static and this class should be a singleton.
  */
 public class UpdateUtils {
-
-	private static final String RESOURCE_BUNDLE =
-		"org.eclipse.update.internal.operations.UpdateManagerResources";
-	private static ResourceBundle bundle;
 	
 	private static final String PREFIX = UpdateCore.getPlugin().getBundle().getSymbolicName();
 	public static final String P_UPDATE_POLICY_URL = PREFIX + ".updatePolicyURL";
-
-	static {
-		bundle = ResourceBundle.getBundle(RESOURCE_BUNDLE);
-	}
 
 	/**
 	 * Private constructor
@@ -51,27 +42,6 @@ public class UpdateUtils {
 	private UpdateUtils() {
 	}
 	
-	/**
-	 * Returns the string from the plugin's resource bundle,
-	 * or 'key' if not found.
-	 */
-	public static String getString(String key) {
-		try {
-			return bundle.getString(key);
-		} catch (MissingResourceException e) {
-			return key;
-		}
-	}
-
-	public static String getFormattedMessage(String key, String[] args) {
-		String text = getString(key);
-		return MessageFormat.format(text, args);
-	}
-
-	public static String getFormattedMessage(String key, String arg) {
-		String text = getString(key);
-		return MessageFormat.format(text, new String[] { arg });
-	}
 
 	public static String getPluginId() {
 		return UpdateCore.getPlugin().getBundle().getSymbolicName();

@@ -15,6 +15,7 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.internal.core.*;
 import org.eclipse.update.operations.*;
 
 
@@ -63,7 +64,7 @@ public class DuplicateConflictsValidator  {
 			String version =
 				feature.getVersionedIdentifier().getVersion().toString();
 			String location = configSite.getSite().getURL().getFile();
-			return UpdateUtils.getFormattedMessage(
+			return Policy.bind(
 				KEY_CONFLICT,
 				new String[] { version, location });
 		}
