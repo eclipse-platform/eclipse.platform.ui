@@ -24,6 +24,9 @@ public class MoveDeleteManager implements IMoveDeleteHook {
 	private IMoveDeleteHook getHookFor(IResource resource) {
 		IProject project = resource.getProject();
 		RepositoryProvider provider = RepositoryProviderType.getProvider(project);
+		if(provider==null) {
+			return DEFAULT_HOOK; 
+		}
 		IMoveDeleteHook hook = provider.getMoveDeleteHook();
 		if (hook == null) {
 			return DEFAULT_HOOK;
