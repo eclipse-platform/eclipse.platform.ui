@@ -609,7 +609,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
 	 */
 	public Image getImage() {
-		return DebugPluginImages.getImage(IInternalDebugUIConstants.IMG_OBJS_ENVIRONMENT);
+		return DebugPluginImages.getImage(IDebugUIConstants.IMG_OBJS_ENVIRONMENT);
 	}
 
 	/* (non-Javadoc)

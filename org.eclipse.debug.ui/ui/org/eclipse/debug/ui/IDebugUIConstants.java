@@ -533,6 +533,20 @@ public interface IDebugUIConstants {
 	 */
 	public static final String IMG_OBJS_REGISTER= "IMG_OBJS_REGISTER"; //$NON-NLS-1$
 
+	/**
+	 * Environment image identifier.
+	 * 
+	 * @since 3.0
+	 */
+	public static final String IMG_OBJS_ENVIRONMENT = "IMG_OBJS_ENVIRONMENT"; //$NON-NLS-1$
+	
+	/**
+	 * Environment variable image identifier.
+	 * 
+	 * @since 3.0
+	 */
+	public static final String IMG_OBJS_ENV_VAR = "IMG_OBJS_ENV_VAR"; //$NON-NLS-1$	
+	
 	// views
 	
 	/** 
