@@ -13,7 +13,6 @@ package org.eclipse.jface.text.contentassist;
 
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
@@ -35,12 +34,14 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.IRewriteTarget;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension;
+import org.eclipse.jface.text.TextUtilities;
 
 
 
@@ -668,21 +669,13 @@ class CompletionProposalPopup implements IContentAssistListener {
 			if (proposals[i] instanceof ICompletionProposalExtension2) {
 
 				ICompletionProposalExtension2 p= (ICompletionProposalExtension2) proposals[i];
-
-				if (fDocumentEvents.size() == 0) {
-					if (p.validate(document, offset, null))
+				
+				try {
+					DocumentEvent event= TextUtilities.mergeProcessedDocumentEvents(fDocumentEvents);
+					if (p.validate(document, offset, event))
 						filtered.add(p);
-
-				} else {
-					boolean validated= true;
-					Iterator iterator= fDocumentEvents.iterator();
-					while (validated && iterator.hasNext()) {
-						DocumentEvent event= (DocumentEvent) iterator.next();
-						validated= p.validate(document, offset, event);
-					}
-					if (validated)
-						filtered.add(p);				
-				}
+				} catch (BadLocationException e) {
+				}					
 			
 			} else if (proposals[i] instanceof ICompletionProposalExtension) {
 								
@@ -702,6 +695,5 @@ class CompletionProposalPopup implements IContentAssistListener {
 		filtered.toArray(p); 		
 		return p;
 	}
+	
 }
-
-
