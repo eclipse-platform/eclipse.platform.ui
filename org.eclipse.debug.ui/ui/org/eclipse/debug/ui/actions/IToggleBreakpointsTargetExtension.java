@@ -19,7 +19,7 @@ import org.eclipse.ui.IWorkbenchPart;
  * This interface provides the ability to selectively create any type of breakpoint
  * when invoked, rather than a specific type of breakpoint (for example, a line
  * breakpoint). This allows targets to choose the type of breakpoint to create
- * when the user double-clicks in the veritical ruler. 
+ * when the user double-clicks in the vertical ruler. 
  * <p>
  * Clients implementing <code>IToggleBreakpointsTarget</code> may optionally
  * implement this interface.

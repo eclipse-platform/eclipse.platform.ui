@@ -46,8 +46,9 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * </pre>
  * </p>
  * <p>
- * The action can also be contributed to a ruler context menu via the
- * <code>popupMenus</code> extension point.
+ * This action can also be contributed to a vertical ruler context menu via the
+ * <code>popupMenus</code> extension point, by referencing the ruler's context
+ * menu identifier in the <code>targetID</code> attribute.
  * <pre>
  * &lt;extension point="org.eclipse.ui.popupMenus"&gt;
  * 		&lt;viewerContribution
@@ -61,6 +62,10 @@ import org.eclipse.ui.texteditor.ITextEditor;
  *       &lt;/action&gt;
  *    &lt;/viewerContribution&gt;
  * </pre>
+ * </p>
+ * <p>
+ * Clients may refer to this class as an action delegate in plug-in XML. This class
+ * is not intended to be subclassed.
  * </p>
  * @since 3.1
  */
