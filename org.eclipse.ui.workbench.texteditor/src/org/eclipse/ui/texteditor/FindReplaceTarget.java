@@ -16,13 +16,14 @@ import org.eclipse.swt.graphics.Point;
 
 import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.IFindReplaceTargetExtension;
+import org.eclipse.jface.text.IFindReplaceTargetExtension3;
 import org.eclipse.jface.text.IRegion;
 
 /**
  * Internal find/replace target wrapping the editor's source viewer.
  * @since 2.1
  */
-class FindReplaceTarget implements IFindReplaceTarget, IFindReplaceTargetExtension, IFindReplaceTargetExtension2 {
+class FindReplaceTarget implements IFindReplaceTarget, IFindReplaceTargetExtension, IFindReplaceTargetExtension2, IFindReplaceTargetExtension3 {
 	
 	/** The editor */
 	private AbstractTextEditor fEditor;
@@ -79,6 +80,20 @@ class FindReplaceTarget implements IFindReplaceTarget, IFindReplaceTargetExtensi
 	}
 
 	/*
+	 * @see org.eclipse.jface.text.IFindReplaceTargetExtension3#findAndSelect(int, String, boolean, boolean, boolean, boolean)
+	 */
+	public int findAndSelect(int offset, String findString, boolean searchForward, boolean caseSensitive, boolean wholeWord, boolean regExSearch) {
+		if (getTarget() instanceof IFindReplaceTargetExtension3)
+			return ((IFindReplaceTargetExtension3)getTarget()).findAndSelect(offset, findString, searchForward, caseSensitive, wholeWord, regExSearch);
+
+		// fallback
+		if (!regExSearch && getTarget() != null)
+			return getTarget().findAndSelect(offset, findString, searchForward, caseSensitive, wholeWord);
+
+		return -1;
+	}
+
+	/*
 	 * @see org.eclipse.jface.text.IFindReplaceTarget#getSelection()
 	 */
 	public Point getSelection() {
@@ -113,6 +128,20 @@ class FindReplaceTarget implements IFindReplaceTarget, IFindReplaceTargetExtensi
 	 */
 	public void replaceSelection(String text) {
 		if (getTarget() != null)
+			getTarget().replaceSelection(text);
+	}
+
+	/**
+	 * @see org.eclipse.jface.text.IFindReplaceTargetExtension3#replaceSelection(String, boolean)
+	 */
+	public void replaceSelection(String text, boolean regExReplace) {
+		if (getTarget() instanceof IFindReplaceTargetExtension3) {
+			((IFindReplaceTargetExtension3)getTarget()).replaceSelection(text, regExReplace);
+			return;
+		}
+		
+		// fallback
+		if (!regExReplace && getTarget() != null)
 			getTarget().replaceSelection(text);
 	}
 

@@ -563,8 +563,9 @@ public interface IDocument {
 	 * @param caseSensitive indicates whether lower and upper case should be distinguished
 	 * @param wholeWord indicates whether the findString should be limited by white spaces as 
 	 * 		defined by Character.isWhiteSpace
-	 * @return the offset of the first occurence of findString based on the parameters
+	 * @return the offset of the first occurence of findString based on the parameters or -1 if no match is found
 	 * @exception BadLocationException if startOffset is an invalid document offset
+	 * @deprecated as of 3.0 search is provided by {@link FindReplaceDocumentAdapter}
 	 */
 	int search(int startOffset, String findString, boolean forwardSearch, boolean caseSensitive, boolean wholeWord) throws BadLocationException;
 }

@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.PatternSyntaxException;
 
 
 /**
@@ -98,6 +99,11 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 * @since 3.0
 	 */
 	private DocumentPartitioningChangedEvent fDocumentPartitioningChangedEvent;
+	/**
+	 * The find/replace document adapter.
+	 * @since 3.0
+	 */
+	private FindReplaceDocumentAdapter fFindReplaceDocumentAdapter;
 	
 	
 	/**
@@ -996,210 +1002,27 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 * @see org.eclipse.jface.text.IDocument#search(int, java.lang.String, boolean, boolean, boolean)
 	 */
 	public int search(int startPosition, String findString, boolean forwardSearch, boolean caseSensitive, boolean wholeWord) throws BadLocationException {
-		
-		if (findString == null || findString.length() == 0)
+		try {
+			return getFindReplaceDocumentAdapter().search(startPosition, findString, forwardSearch, caseSensitive, wholeWord, false).getOffset();	
+		} catch (IllegalStateException ex) {
 			return -1;
-		
-    		ITextStore store= getStore();
-		
-		if (startPosition < -1 || startPosition > store.getLength())
-			throw new BadLocationException();
-		
-		if (!caseSensitive)
-			findString= findString.toLowerCase();
-			
-		char[] fs= new char[findString.length()];
-		findString.getChars(0, fs.length, fs, 0);		
-		
-
-		if (forwardSearch) {
-			if (startPosition == -1)
-				startPosition= 0;
-			int end= getLength();
-			while (startPosition < end) {				
-				int pos= indexOf(store, fs, startPosition, caseSensitive);
-				if (!wholeWord || pos == -1 || isWholeWord(store, pos, pos + fs.length)) {
-					return pos;
-				}
-				startPosition= pos + 1;
-			}		
-		} else {
-			if (startPosition == -1)
-				startPosition= getLength();
-			while (startPosition >= 0) {				
-				int pos= lastIndexOf(store, fs, startPosition, caseSensitive);
-				if (!wholeWord || pos == -1 || isWholeWord(store, pos, pos + fs.length)) {
-					return pos;
-				}
-				startPosition= pos - 1;
-			}				
+		} catch (PatternSyntaxException ex) {
+			return -1;
 		}
-		return -1;
 	}
 	
 	/**
-	 * Returns the first index greater than <code>fromIndex</code> at which <code>str</code>
-	 * can be found in the <code>store</code>.
+	 * Returns the find/replace adapter for this document.
 	 * 
-	 * @param store the text store to search
-	 * @param str the string to search
-	 * @param fromIndex the start offset
-	 * @param caseSensitive <code>true</code> if capitalization should be honored, <code>false</code> otherwise
-	 * @return the offset greater than the start offset at which the search string has been found
+	 * @return this document's find/replace document adapter
+	 * @since 3.0
 	 */
-	static private int indexOf(ITextStore store, char[] str, int fromIndex, boolean caseSensitive) {
-		int count= store.getLength();
-	    	
-		if (fromIndex >= count)
-		    return -1;
+	private FindReplaceDocumentAdapter getFindReplaceDocumentAdapter() {
+		if (fFindReplaceDocumentAdapter == null)
+			fFindReplaceDocumentAdapter=  new FindReplaceDocumentAdapter(this);
 		
-	    	if (fromIndex < 0)
-	    	    fromIndex= 0;
-	    	
-	    	int strLen= str.length;
-		if (strLen == 0)	// empty string always matches
-			return fromIndex;
-	
-		char first= str[0];
-		int i= fromIndex;
-		int max= count - strLen;
-	
-	  restart:
-		while (true) {
-			
-			// Look for first character
-			if (caseSensitive) {
-				while (i <= max && store.get(i) != first)
-					i++;
-			} else {
-				while (i <= max && Character.toLowerCase(store.get(i)) != first)
-					i++;
-			}
-		    
-			if (i > max)
-				return -1;
-	
-			// Found first character
-			int j= i + 1;
-			int end= j + strLen - 1;
-			int k= 1;
-			if (caseSensitive) {
-				while (j < end) {
-					if (store.get(j++) != str[k++]) {
-						i++;
-						continue restart;
-					}
-				}
-			} else {
-				while (j < end) {
-					if (Character.toLowerCase(store.get(j++)) != str[k++]) {
-						i++;
-						continue restart;
-					}
-				}
-			}
-		    
-			return i;	// Found
-		}
+		return fFindReplaceDocumentAdapter;
 	}
-	
-	/**
-	 * Returns the first index smaller than <code>fromIndex</code> at which <code>str</code>
-	 * can be found in the <code>store</code>.
-	 * 
-	 * @param store the text store to search
-	 * @param str the string to search
-	 * @param fromIndex the start offset
-	 * @param caseSensitive <code>true</code> if capitalization should be honored, <code>false</code> otherwise
-	 * @return the offset smaller than the start offset at which the search string has been found
-	 */
-	static private int lastIndexOf(ITextStore store, char[] str, int fromIndex, boolean caseSensitive) {
-    	
-		if (fromIndex < 0)
-		    return -1;
-		
-   		int count= store.getLength();
-   		int strLen= str.length;
-		int rightIndex= count - strLen;
-		
-		if (fromIndex > rightIndex)
-		    fromIndex= rightIndex;
-		
-		if (strLen == 0)		// empty string always matches
-		    return fromIndex;
-	
-		int strLastIndex= strLen - 1;
-		char strLastChar= str[strLastIndex];
-		int min= strLen - 1;
-		int i= min + fromIndex;
-	
-	  restart:
-		while (true) {
-	
-		    // Look for the last character
-		    if (caseSensitive) {
-				while (i >= min && store.get(i) != strLastChar)
-					i--;
-		    } else {
-				while (i >= min && Character.toLowerCase(store.get(i)) != strLastChar)
-					i--;
-		    }
-		    		    
-		    if (i < min)
-				return -1;
-	
-		    // Found last character
-		    int j= i - 1;
-		    int start= j - (strLen - 1);
-		    int k= strLastIndex - 1;
-	
-		    if (caseSensitive) {
-			    while (j > start) {
-			        if (store.get(j--) != str[k--]) {
-				    	i--;
-				    	continue restart;
-					}
-			    }
-		    } else {
-			    while (j > start) {
-			        if (Character.toLowerCase(store.get(j--)) != str[k--]) {
-				    	i--;
-				    	continue restart;
-					}
-			    }
-		    }
-	
-		    return start + 1;    /* Found whole string. */
-		}
-	}
-	
-	/**
-	 * Tests if the substring is a whole word.
-	 * 
-	 * @param store the store in which to find the string
-	 * @param from the substring start offset
-	 * @param to the substring endoffset
-	 * @return <code>true</code> if the string is a whole word, otherwise <code>false</code>
-	 */	
-	private static boolean isWholeWord(ITextStore store, int from, int to) {
-		    	
-		if (from > 0) {
-			char ch= store.get(from-1);
-			if (Character.isLetterOrDigit(ch) || ch == '_') {
-				return false;
-			}
-		}
-		if (to < store.getLength()) {
-			char ch= store.get(to);
-			if (Character.isLetterOrDigit(ch) || ch == '_' ) {
-				return false;
-			}
-		}
-		return true;
-	}
-	
-	
-	// ---------- implementation of IDocumentExtension --------------
 	
 	/**
 	 * Inner class to bundle a registered post notifcation replace operation together with its
