@@ -3,22 +3,29 @@
  * All Rights Reserved.
  */
 package org.eclipse.help.internal.toc;
-import java.io.File;
-import java.util.*;
+import java.io.*;
+import org.eclipse.help.ITopic;
 import org.eclipse.help.internal.util.XMLGenerator;
-import org.eclipse.help.*;
 /**
  * This generates the XML file for the help navigation.
  */
 public class TocWriter extends XMLGenerator {
-	protected Toc topics;
+	protected Toc toc;
 	/**
-	 * @param viewSet com.ibm.itp.ua.view.ViewSet
-	 * @param outputDir java.io.File
+	 * @param toc Toc
+	 * @param writer java.io.Writer
 	 */
-	public TocWriter(Toc topics, File outputFile) {
+	public TocWriter(Toc toc, Writer writer) {
+		super(writer);
+		this.toc = toc;
+	}
+	/**
+	 * @param toc Toc
+	 * @param outputFile java.io.File
+	 */
+	public TocWriter(Toc toc, File outputFile) {
 		super(outputFile);
-		this.topics = topics;
+		this.toc = toc;
 	}
 	/**
 	 * Writes out navigation for the Toc to a file
@@ -26,12 +33,12 @@ public class TocWriter extends XMLGenerator {
 	public void generate() {
 		println(
 			"<toc label=\""
-				+ xmlEscape(topics.getLabel())
+				+ xmlEscape(toc.getLabel())
 				+ "\" tocID=\""
-				+ reduceURL(topics.getTocID())
+				+ reduceURL(toc.getTocID())
 				+ "\">");
-		ITopic[] subtopics = topics.getSubtopics();
-		for (int i=0; i<subtopics.length; i++) {
+		ITopic[] subtopics = toc.getSubtopics();
+		for (int i = 0; i < subtopics.length; i++) {
 			generate(subtopics[i]);
 		}
 		println("</toc>");
@@ -53,7 +60,7 @@ public class TocWriter extends XMLGenerator {
 		ITopic[] subtopics = topic.getSubtopics();
 		if (subtopics.length > 0) {
 			println(">");
-			for (int i=0 ;i<subtopics.length; i++) {
+			for (int i = 0; i < subtopics.length; i++) {
 				generate(subtopics[i]);
 			}
 			printPad();
