@@ -11,7 +11,10 @@
 package org.eclipse.team.internal.ccvs.core;
 
 
+import java.util.Date;
+
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.team.internal.ccvs.core.util.CVSDateFormatter;
 
 /**
  * A tag in CVS gives a label  to a collection of revisions. The labels can represent a version, a branch, 
@@ -34,11 +37,15 @@ public class CVSTag {
 		this("HEAD", HEAD); //$NON-NLS-1$
 	}
 
-	public CVSTag(String name, int type) {
+	public CVSTag(String name, int type) {		
 		this.name = name;
 		this.type = type;
 	}
-	
+	//Write a date in local date tag format
+	public CVSTag(Date date) {
+		this (CVSDateFormatter.dateTagOfLocalFormat(date), DATE);
+	}
+
 	public boolean equals(Object other) {
 		if(other == this) return true;
 		if (!(other instanceof CVSTag)) return false;
@@ -62,7 +69,7 @@ public class CVSTag {
 		return name.hashCode();
 	}
 	
-	public int compareTo(CVSTag other) {
+	public int compareTo(CVSTag other) {		
 		return getName().compareTo(other.getName());
 	}
 	
@@ -87,4 +94,14 @@ public class CVSTag {
 		}
 		return new CVSStatus(CVSStatus.OK, Policy.bind("ok")); //$NON-NLS-1$
 	}
+	
+	/**
+	 * Return the date this tag represents or <code>null</code>
+	 * if the tag is not of type DATE.
+	 * @return the date of the tag or <code>null</code>
+	 */
+	public Date asDate(){
+		return CVSDateFormatter.parseTagName(name);
+	}
+
 }
