@@ -104,22 +104,6 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 	}
 	
 	/*
-	 * @see ICVSFile#isDirty()
-	 */
-	public boolean isDirty() throws CVSException {
-		if (!exists() || !isManaged()) {
-			return true;
-		} else {
-			ResourceSyncInfo info = getSyncInfo();
-			if (info.isAdded()) return false;
-			if (info.isDeleted()) return true;
-			// consider a merged file as always modified.
-			if(info.isMerged()) return true;
-			return !getTimeStamp().equals(info.getTimeStamp());
-		}
-	}
-
-	/*
 	 * @see ICVSFile#isModified()
 	 */
 	public boolean isModified() throws CVSException {

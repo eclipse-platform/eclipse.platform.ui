@@ -21,8 +21,8 @@ import org.eclipse.team.internal.ccvs.ui.ResourceEditionNode;
 import org.eclipse.team.ui.actions.TeamAction;
 
 /**
- * This action is used for comparing two arbitrary resource
- * editions.
+ * This action is used for comparing two arbitrary remote resources. This is
+ * enabled in the repository explorer.
  */
 public class CompareRemoteResourcesAction extends TeamAction {
 	/* (non-Javadoc)

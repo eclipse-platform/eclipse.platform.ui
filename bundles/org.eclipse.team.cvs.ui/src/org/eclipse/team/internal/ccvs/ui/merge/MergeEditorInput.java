@@ -135,5 +135,4 @@ public class MergeEditorInput extends CVSSyncCompareInput {
 		}
 		return super.collectResourceChanges(parent, tree, pm);
 	}
-
 }

@@ -5,31 +5,27 @@ package org.eclipse.team.internal.ccvs.ui.sync;
  * All Rights Reserved.
  */
  
-import java.lang.reflect.InvocationTargetException;
-
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseMoveListener;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
-import org.eclipse.team.internal.ccvs.core.ILogEntry;
+import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.resources.CVSRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.ui.AvoidableMessageDialog;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.ui.sync.CatchupReleaseViewer;
 import org.eclipse.team.ui.sync.ChangedTeamContainer;
-import org.eclipse.team.ui.sync.ITeamNode;
 import org.eclipse.team.ui.sync.SyncCompareInput;
 import org.eclipse.team.ui.sync.TeamFile;
 
@@ -147,19 +143,15 @@ public class CVSSyncCompareInput extends SyncCompareInput {
 	 */
 	protected void compareInputChanged(ICompareInput source) {
 		super.compareInputChanged(source);
-		contentsChanged(source);
-	}
-	protected void contentsChanged(ICompareInput source) {
-		// Mark the source as merged.
-		if (source instanceof TeamFile) {
-			IRemoteSyncElement element = ((TeamFile)source).getMergeResource().getSyncElement();
-			try {
-				CVSUIPlugin.getPlugin().getRepositoryManager().merged(new IRemoteSyncElement[] {element});
-			} catch (TeamException e) {
-				ErrorDialog.openError(getShell(), null, null, e.getStatus());
-			}
+		updateView();
+		
+		// prompt user with warning
+		Shell shell = getShell();
+		if(shell != null) {
+			promptForConfirmMerge(getShell());
 		}
 	}
+	
 	/*
 	 * @see SyncCompareInput#getSyncGranularity()
 	 */
@@ -187,5 +179,33 @@ public class CVSSyncCompareInput extends SyncCompareInput {
 	 */
 	public IResource[] getResources() {
 		return resources;
+	}
+	
+	/*
+	 * Inform user that when changes are merged in the sync view that confirm
+	 * merge should be called to finish the merge.
+	 */
+	private void promptForConfirmMerge(final Shell shell) {
+		final IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
+		if(!store.getBoolean(ICVSUIConstants.PREF_PROMPT_ON_SAVING_IN_SYNC)) {
+			return;
+		};
+
+		shell.getDisplay().syncExec(new Runnable() {
+			public void run() {							
+				AvoidableMessageDialog dialog = new AvoidableMessageDialog(
+						shell,
+						Policy.bind("CVSSyncCompareInput.confirmMergeTitle"),  //$NON-NLS-1$
+						null,	// accept the default window icon
+						Policy.bind("CVSSyncCompareInput.confirmMergeMessage"),  //$NON-NLS-1$
+						MessageDialog.INFORMATION, 
+						new String[] {IDialogConstants.OK_LABEL}, 
+						0);
+				dialog.open();		
+				if(dialog.isDontShowAgain()) {
+					store.setValue(ICVSUIConstants.PREF_PROMPT_ON_SAVING_IN_SYNC, false);
+				}																				
+			}
+		});
 	}
 }

@@ -164,8 +164,6 @@ public abstract class RemoteSyncElement extends LocalSyncElement implements IRem
 		IRemoteResource base = getBase();
 		
 		boolean localExists = getLocal().exists();
-		boolean isDirty = isDirty();
-		boolean isOutOfDate = isOutOfDate();
 	
 		if (isThreeWay()) {
 			if (base == null) {
@@ -180,8 +178,14 @@ public abstract class RemoteSyncElement extends LocalSyncElement implements IRem
 						description = INCOMING | ADDITION;
 					} else {
 						description = CONFLICTING | ADDITION;
-						if (compare(granularity, false, local, remote, progress))
-							description |= PSEUDO_CONFLICT;
+						try {
+							progress.beginTask(null, 60);
+							if (compare(granularity, true, local, remote, Policy.subMonitorFor(progress, 30))) {
+								description |= PSEUDO_CONFLICT;
+							}
+						} finally {
+							progress.done();
+						}
 					}
 				}
 			} else {
@@ -189,21 +193,21 @@ public abstract class RemoteSyncElement extends LocalSyncElement implements IRem
 					if (remote == null) {
 						description = CONFLICTING | DELETION | PSEUDO_CONFLICT;
 					} else {
-						if (compare(granularity, !isOutOfDate, base, remote, progress))
+						if (compare(granularity, false, base, remote, progress))
 							description = OUTGOING | DELETION;
 						else
 							description = CONFLICTING | CHANGE;
 					}
 				} else {
 					if (remote == null) {
-						if (compare(granularity, !isDirty, local, base, progress))
+						if (compare(granularity, false, local, base, progress))
 							description = INCOMING | DELETION;
 						else
 							description = CONFLICTING | CHANGE;
 					} else {
 						progress.beginTask(null, 90);
-						boolean ay = compare(granularity, !isDirty, local, base, Policy.subMonitorFor(progress, 30));
-						boolean am = compare(granularity, !isOutOfDate, base, remote, Policy.subMonitorFor(progress, 30));
+						boolean ay = compare(granularity, false, local, base, Policy.subMonitorFor(progress, 30));
+						boolean am = compare(granularity, false, base, remote, Policy.subMonitorFor(progress, 30));
 						if (ay && am) {
 							;
 						} else if (ay && !am) {
@@ -213,51 +217,27 @@ public abstract class RemoteSyncElement extends LocalSyncElement implements IRem
 						} else {
 							description = CONFLICTING | CHANGE;
 						}
-						if (description != IN_SYNC && compare(granularity, false, local, remote, Policy.subMonitorFor(progress, 30)))
+						if (description != IN_SYNC && compare(granularity, true, local, remote, Policy.subMonitorFor(progress, 30))) {
 							description |= PSEUDO_CONFLICT;
+						}
 						progress.done();
 					}
 				}
 			}
-		} else { // three-way compare without access to base contents
+		} else { // two compare without access to base contents
 			if (remote == null) {
 				if (!localExists) {
-					// this should never happen
 					Assert.isTrue(false);
+					// shouldn't happen
 				} else {
-					// no remote but a local
-					if (!isDirty && isOutOfDate) {
-						description = INCOMING | DELETION;
-					} else if (isDirty && isOutOfDate) {
-						description = CONFLICTING | CHANGE;
-					} else if (!isDirty && !isOutOfDate) {
-						description = OUTGOING | ADDITION;
-					}
+					description= DELETION;
 				}
 			} else {
 				if (!localExists) {
-					// a remote but no local
-					if (!isDirty && !isOutOfDate) {
-						description = INCOMING | ADDITION;
-					} else if (isDirty && !isOutOfDate) {
-						description = OUTGOING | DELETION;
-					} else if (isDirty && isOutOfDate) {
-						description = CONFLICTING | CHANGE;
-					}
+					description= ADDITION;
 				} else {
-					// have a local and a remote			
-					if (!isDirty && !isOutOfDate && base != null) {
-						// ignore, there is no change;
-					} else if (!isDirty && isOutOfDate) {
-						description = INCOMING | CHANGE;
-					} else if (isDirty && !isOutOfDate) {
-						description = OUTGOING | CHANGE;
-					} else {
-						description = CONFLICTING | CHANGE;
-					}
-					// if contents are the same, then mark as pseudo change
-					if (description != IN_SYNC && compare(granularity, false, local, remote, progress))
-						description |= PSEUDO_CONFLICT;
+					if (! compare(granularity, false, local, remote, Policy.subMonitorFor(progress, 30)))
+						description= CHANGE;
 				}
 			}
 		}
@@ -270,8 +250,9 @@ public abstract class RemoteSyncElement extends LocalSyncElement implements IRem
 	 * If timestampDiff is true then the timestamps don't differ and there's no point checking the
 	 * contents.
 	 */
-	private boolean compare(int granularity, boolean timestampDiff, IResource e1, IRemoteResource e2, IProgressMonitor monitor) {
-		if (!timestampDiff && (granularity == GRANULARITY_CONTENTS)) {
+	private boolean compare(int granularity, boolean force, IResource e1, IRemoteResource e2, IProgressMonitor monitor) {
+		boolean timestampEquals = force || timestampEquals(e1, e2);
+		if (!timestampEquals && (granularity == GRANULARITY_CONTENTS)) {
 			try {
 				monitor.beginTask(null, 100);
 				return contentsEqual(getContents(e1, Policy.subMonitorFor(monitor, 50)), getContents(e2, Policy.subMonitorFor(monitor, 50)));
@@ -279,12 +260,13 @@ public abstract class RemoteSyncElement extends LocalSyncElement implements IRem
 				monitor.done();
 			}
 		} else {
-			return timestampDiff;
+			return timestampEquals;
 		}
 	}
 	
-	private boolean compare(int granularity, boolean timestampDiff, IRemoteResource e1, IRemoteResource e2, IProgressMonitor monitor) {
-		if (!timestampDiff && (granularity == GRANULARITY_CONTENTS)) {
+	private boolean compare(int granularity, boolean force, IRemoteResource e1, IRemoteResource e2, IProgressMonitor monitor) {
+		boolean timestampEquals = force || timestampEquals(e1, e2);
+		if (!timestampEquals && (granularity == GRANULARITY_CONTENTS)) {
 			try {
 				monitor.beginTask(null, 100);
 				return contentsEqual(getContents(e1, Policy.subMonitorFor(monitor, 50)), getContents(e2, Policy.subMonitorFor(monitor, 50)));
@@ -292,9 +274,12 @@ public abstract class RemoteSyncElement extends LocalSyncElement implements IRem
 				monitor.done();
 			}
 		} else {
-			return timestampDiff;
+			return timestampEquals;
 		}
 	}
+	
+	protected abstract boolean timestampEquals(IResource e1, IRemoteResource e2);
+	protected abstract boolean timestampEquals(IRemoteResource e1, IRemoteResource e2);
 	
 	private InputStream getContents(IResource resource, IProgressMonitor monitor) {
 		try {

@@ -27,6 +27,7 @@ import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.PromptingDialog;
 import org.eclipse.team.internal.ccvs.ui.TagSelectionDialog;
@@ -36,7 +37,7 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 /**
  * Action for replace with tag.
  */
-public class ReplaceWithTagAction extends TeamAction {
+public class ReplaceWithTagAction extends CVSAction {
 	/*
 	 * Method declared on IActionDelegate.
 	 */
@@ -109,30 +110,13 @@ public class ReplaceWithTagAction extends TeamAction {
 		}, Policy.bind("ReplaceWithTagAction.replace"), this.PROGRESS_DIALOG); //$NON-NLS-1$
 	}
 	
-	protected boolean isEnabled() {
-		IResource[] resources = getSelectedResources();
-		// allow operation for homegeneous multiple selections
-		if(resources.length>0) {
-			int type = -1;
-			for (int i = 0; i < resources.length; i++) {
-				IResource resource = resources[i];
-				if(type!=-1) {
-					if(type!=resource.getType()) return false;
-				}
-				if(RepositoryProvider.getProvider(resource.getProject(), CVSProviderPlugin.getTypeId()) == null) {
-					return false;
-				}
-				type = resource.getType();
-				ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
-				if(cvsResource.isFolder()) {
-					if( ! ((ICVSFolder)cvsResource).isCVSFolder()) return false;
-				} else {
-					if( ! cvsResource.isManaged()) return false;
-				}
-			}
-			return true;
+	protected boolean isEnabled() {		
+		try {
+			return isSelectionNonOverlapping();
+		} catch(TeamException e) {
+			CVSUIPlugin.log(e.getStatus());
+			return false;
 		}
-		return false;
 	}
 	
 	protected boolean equalTags(CVSTag tag1, CVSTag tag2) {

@@ -6,9 +6,15 @@ package org.eclipse.team.internal.ccvs.ui.sync;
  */
  
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.compare.CompareConfiguration;
+import org.eclipse.compare.structuremergeviewer.DiffContainer;
+import org.eclipse.compare.structuremergeviewer.DiffElement;
+import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -23,6 +29,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
@@ -66,6 +73,7 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 	private IgnoreAction ignoreAction;
 	private HistoryAction showInHistory;
 	private OverrideUpdateMergeAction forceUpdateMergeAction;
+	private Action confirmMerge;
 	
 	private static class DiffOverlayIcon extends OverlayIcon {
 		private static final int HEIGHT = 16;
@@ -218,6 +226,8 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 				manager.add(updateAction);
 				forceUpdateAction.update(SyncView.SYNC_INCOMING);
 				manager.add(forceUpdateAction);
+				manager.add(new Separator());
+				manager.add(confirmMerge);
 				break;
 			case SyncView.SYNC_OUTGOING:
 				commitAction.update(SyncView.SYNC_OUTGOING);
@@ -226,6 +236,8 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 				manager.add(forceCommitAction);
 				ignoreAction.update();
 				manager.add(ignoreAction);
+				manager.add(new Separator());
+				manager.add(confirmMerge);
 				break;
 			case SyncView.SYNC_BOTH:
 				commitAction.update(SyncView.SYNC_BOTH);
@@ -237,6 +249,8 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 				manager.add(forceCommitAction);
 				forceUpdateAction.update(SyncView.SYNC_BOTH);
 				manager.add(forceUpdateAction);				
+				manager.add(new Separator());
+				manager.add(confirmMerge);
 				break;
 			case SyncView.SYNC_MERGE:
 				updateMergeAction.update(SyncView.SYNC_INCOMING);
@@ -265,7 +279,73 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 		
 		// Show in history view
 		showInHistory = new HistoryAction(Policy.bind("CVSCatchupReleaseViewer.showInHistory")); //$NON-NLS-1$
-		addSelectionChangedListener(showInHistory);	
+		addSelectionChangedListener(showInHistory);
+		
+		// confirm merge
+		confirmMerge = new Action(Policy.bind("CVSCatchupReleaseViewer.confirmMerge"), null) { //$NON-NLS-1$
+			public void run() {
+				ISelection s = getSelection();
+				if (!(s instanceof IStructuredSelection) || s.isEmpty()) {
+					return;
+				}
+				List needsMerge = new ArrayList();
+				for (Iterator it = ((IStructuredSelection)s).iterator(); it.hasNext();) {
+					final Object element = it.next();
+					if(element instanceof DiffElement) {
+						mergeRecursive((IDiffElement)element, needsMerge);
+					}
+				}
+				TeamFile[] files = (TeamFile[]) needsMerge.toArray(new TeamFile[needsMerge.size()]);
+				if(files.length != 0) {
+					try {
+						for (int i = 0; i < files.length; i++) {		
+							TeamFile teamFile = (TeamFile)files[i];
+							CVSUIPlugin.getPlugin().getRepositoryManager().merged(new IRemoteSyncElement[] {teamFile.getMergeResource().getSyncElement()});
+							teamFile.merged();
+						}
+					} catch(TeamException e) {
+						ErrorDialog.openError(getControl().getShell(), null, null, e.getStatus());
+					}
+				}
+				refresh();				
+			}
+			 
+			public boolean isEnabled() {
+				ISelection s = getSelection();
+				if (!(s instanceof IStructuredSelection) || s.isEmpty()) {
+					return false;
+				}
+				for (Iterator it = ((IStructuredSelection)s).iterator(); it.hasNext();) {
+					Object element = (Object) it.next();
+					if(element instanceof TeamFile) {
+						TeamFile file = (TeamFile)element;						
+						if(file.hasBeenSaved()) {
+							int direction = file.getChangeDirection();
+							int type = file.getChangeType();
+							if(direction == IRemoteSyncElement.INCOMING ||
+							   direction == IRemoteSyncElement.CONFLICTING) {
+								continue;
+							}
+						}
+					}
+					return false;
+				}
+				return true;
+			}
+		};
+	}
+	
+	protected void mergeRecursive(IDiffElement element, List needsMerge) {
+		if(element instanceof DiffContainer) {
+			DiffContainer container = (DiffContainer)element;
+			IDiffElement[] children = container.getChildren();
+			for (int i = 0; i < children.length; i++) {
+				mergeRecursive(children[i], needsMerge);
+			}
+		} else if(element instanceof TeamFile) {
+			TeamFile file = (TeamFile)element;
+			needsMerge.add(file);			
+		}
 	}
 	
 	/**

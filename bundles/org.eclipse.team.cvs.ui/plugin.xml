@@ -210,6 +210,13 @@
                id="org.eclipse.team.ccvs.ui.sync">
          </action>
          <action
+               label="%CompareWithTagAction.label"
+               tooltip="%CompareWithTagAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.CompareWithTagAction"
+               menubarPath="compareWithMenu/compareWithGroup"
+               id="org.eclipse.team.ccvs.ui.compareWithTag">
+         </action>      
+         <action
                label="%ReplaceWithTagAction.label"
                tooltip="%ReplaceWithTagAction.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.ReplaceWithTagAction"
@@ -254,29 +261,6 @@
                class="org.eclipse.team.internal.ccvs.ui.actions.AddAction"
                menubarPath="team.main/group3"
                id="org.eclipse.team.ccvs.ui.add">
-         </action>
-      </objectContribution>
-      <objectContribution
-            objectClass="org.eclipse.core.resources.IContainer"
-            adaptable="true"
-            id="org.eclipse.team.ccvs.ui.IContainerContributions">
-         <filter
-               name="projectNature"
-               value="org.eclipse.team.cvs.core.cvsnature">
-         </filter>
-         <action
-               label="%CompareWithTagAction.label"
-               tooltip="%CompareWithTagAction.tooltip"
-               class="org.eclipse.team.internal.ccvs.ui.actions.CompareWithTagAction"
-               menubarPath="compareWithMenu/compareWithGroup"
-               id="org.eclipse.team.ccvs.ui.compareWithTag">
-         </action>
-         <action
-               label="%CompareWithBaseAction.label"
-               tooltip="%CompareWithBaseAction.tooltip"
-               class="org.eclipse.team.internal.ccvs.ui.actions.CompareWithBaseAction"
-               menubarPath="compareWithMenu/compareWithGroup"
-               id="org.eclipse.team.ccvs.ui.compareWithBase">
          </action>
       </objectContribution>
       <objectContribution

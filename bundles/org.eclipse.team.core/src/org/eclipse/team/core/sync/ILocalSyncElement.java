@@ -151,17 +151,6 @@ public interface ILocalSyncElement {
 	public IRemoteResource getBase();
 	
 	/**
-	 * Answers if the local resource currently has a different timestamp to the base timestamp
-	 * for this resource.
-	 * 
-	 * @param resource the resource to test.
-	 * @return <code>true</code> if the resource has a different modification
-	 * timestamp, and <code>false</code> otherwise. If a base does not exist, this method
-	 * must return <code>false</code>.
-	 */
-	public boolean isDirty();
-	
-	/**
 	 * Answers if the remote resource state is checked-out. If the resource has never been checked in this
 	 * method will return <code>true</code>.
 	 * <p>

@@ -46,8 +46,8 @@ import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 
 /**
- * A compare input for performing naive comparisons between
- * resources and resource editions.
+ * A compare input for comparing remote resources. Use <code>CVSLocalCompareInput</code> 
+ * when comparing resources in the workspace to remote resources.
  */
 public class CVSCompareEditorInput extends CompareEditorInput {
 	private ITypedElement left;
@@ -59,53 +59,17 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 	private static final int NODE_NOT_EQUAL = 1;
 	private static final int NODE_UNKNOWN = 2;
 	
-	class ResourceDiffNode extends DiffNode {
-		public ResourceDiffNode(IDiffContainer parent, int kind, ITypedElement ancestor, ITypedElement left, ITypedElement right) {
-			super(parent, kind, ancestor, left, right);
-		}
-		/*
-		 * @see ICompareInput#copy(boolean)
-		 */
-		public void copy(boolean leftToRight) {
-			if (leftToRight) return;
-			ITypedElement right = getRight();
-			ITypedElement left = getLeft();
-			if (left == null) {
-				// Addition
-				ResourceDiffNode parent = (ResourceDiffNode)getParent();
-				IContainer parentResource = (IContainer)((CVSResourceNode)parent.getLeft()).getResource();
-				IFile resource = parentResource.getFile(new Path(right.getName()));
-				try {
-					resource.create(new ByteArrayInputStream(new byte[0]), false, null);
-				} catch (CoreException e) {
-					CVSUIPlugin.log(e.getStatus());
-				}
-				left = new CVSResourceNode(resource);
-				setLeft(left);
-			} else {
-				// Deletion
-				try {
-					((IFile)((CVSResourceNode)left).getResource()).delete(false, true, null);
-				} catch (CoreException e) {
-					CVSUIPlugin.log(e.getStatus());
-				}
-				setLeft(null);
-			}
-			super.copy(leftToRight);
-		}
-	};
-	
 	/**
 	 * Creates a new CVSCompareEditorInput.
 	 */
-	public CVSCompareEditorInput(ITypedElement left, ITypedElement right) {
+	public CVSCompareEditorInput(ResourceEditionNode left, ResourceEditionNode right) {
 		this(left, right, null);
 	}
 	
 	/**
 	 * Creates a new CVSCompareEditorInput.
 	 */
-	public CVSCompareEditorInput(ITypedElement left, ITypedElement right, ITypedElement ancestor) {
+	public CVSCompareEditorInput(ResourceEditionNode left, ResourceEditionNode right, ResourceEditionNode ancestor) {
 		super(new CompareConfiguration());
 		this.left = left;
 		this.right = right;
@@ -113,19 +77,9 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 	}
 	
 	/**
-	 * Overridden to create the CVSDiffTreeViewer to have the proper popup actions
-	 */
-	//public Viewer createDiffViewer(Composite parent) {
-	//	return new CVSDiffTreeViewer(parent, this);
-	//}
-
-	/**
 	 * Returns the label for the given input element.
 	 */
 	private String getLabel(ITypedElement element) {
-		if (element instanceof ResourceNode) {
-			return Policy.bind("CVSCompareEditorInput.workspace", element.getName()); //$NON-NLS-1$
-		}
 		if (element instanceof ResourceEditionNode) {
 			ICVSRemoteResource edition = ((ResourceEditionNode)element).getRemoteResource();
 			ICVSResource resource = (ICVSResource)edition;
@@ -161,9 +115,6 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 	 * Returns the label for the given input element.
 	 */
 	private String getVersionLabel(ITypedElement element) {
-		if (element instanceof ResourceNode) {
-			return Policy.bind("CVSCompareEditorInput.workspaceLabel"); //$NON-NLS-1$
-		}
 		if (element instanceof ResourceEditionNode) {
 			ICVSRemoteResource edition = ((ResourceEditionNode)element).getRemoteResource();
 			ICVSResource resource = (ICVSResource)edition;
@@ -260,25 +211,6 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 		ITypedElement right = this.right;
 		ITypedElement ancestor = this.ancestor;
 		
-		if (selection.size() == 1) {
-			Object s = selection.getFirstElement();
-			if (s instanceof ResourceDiffNode) {
-				ResourceDiffNode node = (ResourceDiffNode)s;
-				left = node.getLeft();
-				right = node.getRight();
-				ancestor = node.getAncestor();
-				if (left == null) {
-					cc.setLeftLabel(Policy.bind("CVSCompareEditorInput.noWorkspaceFile")); //$NON-NLS-1$
-					cc.setLeftImage(right.getImage());
-				}
-				if (right == null) {
-					cc.setRightLabel(Policy.bind("CVSCompareEditorInput.noRepositoryFile")); //$NON-NLS-1$
-					cc.setRightImage(left.getImage());
-				}
-				if (ancestor == null) ancestor = this.ancestor;
-			}
-		}
-		
 		if (left != null) {
 			cc.setLeftLabel(getLabel(left));
 			cc.setLeftImage(left.getImage());
@@ -342,11 +274,7 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 				return null;
 			}
 			protected Object visit(Object data, int result, Object ancestor, Object left, Object right) {
-				if (CVSCompareEditorInput.this.left instanceof CVSResourceNode) {
-					return new ResourceDiffNode((IDiffContainer) data, result, (ITypedElement)ancestor, (ITypedElement)left, (ITypedElement)right);
-				} else {
-					return new DiffNode((IDiffContainer) data, result, (ITypedElement)ancestor, (ITypedElement)left, (ITypedElement)right);
-				}
+				return new DiffNode((IDiffContainer) data, result, (ITypedElement)ancestor, (ITypedElement)left, (ITypedElement)right);
 			}
 		};
 		
@@ -385,22 +313,10 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 	 * NODE_UNKNOWN if comparison was not possible.
 	 */
 	protected int teamEqual(Object left, Object right) {
-		
 		// calculate the type for the left contribution
 		ICVSRemoteResource leftEdition = null;
 		if (left instanceof ResourceEditionNode) {
 			leftEdition = ((ResourceEditionNode)left).getRemoteResource();
-		} else if (left instanceof ResourceNode) {
-			IResource resource = ((ResourceNode)left).getResource();
-			try {
-				ICVSResource element = CVSWorkspaceRoot.getCVSResourceFor(resource);
-				if (resource.getType() == IResource.FILE) {
-					if (((ICVSFile) element).isDirty()) return NODE_NOT_EQUAL;
-				}
-				leftEdition = CVSWorkspaceRoot.getRemoteResourceFor(resource);
-			} catch(CVSException e) {
-				return NODE_UNKNOWN;
-			}
 		}
 		
 		// calculate the type for the right contribution
@@ -451,6 +367,7 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 	private boolean considerContentIfRevisionOrPathDiffers() {
 		return CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.PREF_CONSIDER_CONTENTS);
 	}
+	
 	public Viewer createDiffViewer(Composite parent) {
 		Viewer viewer = super.createDiffViewer(parent);
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {

@@ -29,6 +29,7 @@ public class ProjectElement implements IAdaptable, IWorkbenchAdapter {
 		if(includeHeadTag) {
 			return new Object[] { branches, 
 								   new TagElement(CVSTag.DEFAULT),
+								   new TagElement(CVSTag.BASE),
 								   versions
 								  			 };
 		} else {

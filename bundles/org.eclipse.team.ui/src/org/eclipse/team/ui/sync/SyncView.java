@@ -60,6 +60,7 @@ public class SyncView extends ViewPart {
 	public static final int SYNC_OUTGOING = 2;
 	public static final int SYNC_BOTH = 3;
 	public static final int SYNC_MERGE = 4;
+	public static final int SYNC_COMPARE = 5;
 	
 	// Titles cached for efficiency
 	private final String CATCHUP_TITLE = Policy.bind("SyncView.incomingModeTitle"); //$NON-NLS-1$

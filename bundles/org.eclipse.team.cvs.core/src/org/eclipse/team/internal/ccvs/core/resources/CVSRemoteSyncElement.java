@@ -5,6 +5,7 @@ package org.eclipse.team.internal.ccvs.core.resources;
  * All Rights Reserved.
  */
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
@@ -14,6 +15,7 @@ import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.core.sync.RemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
@@ -52,22 +54,6 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 	}
 
 	/*
-	 * @see IRemoteSyncElement#isOutOfDate()
-	 */
-	public boolean isOutOfDate() {
-		IRemoteResource base = getBase();
-		if(base!=null && remote!=null) {
-			ICVSRemoteResource remoteCvs = (ICVSRemoteResource)remote;
-			ICVSRemoteResource baseCvs = (ICVSRemoteResource)base;
-			return ! remoteCvs.equals(baseCvs);
-		} else if(base!=null && remote==null) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	/*
 	 * @see LocalSyncElement#getData()
 	 */
 	protected Object getData() {
@@ -86,13 +72,6 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 	 */
 	public IRemoteResource getBase() {
 		return localSync.getBase();
-	}
-
-	/*
-	 * @see ILocalSyncElement#isDirty()
-	 */
-	public boolean isDirty() {
-		return localSync.isDirty();
 	}
 
 	/*
@@ -281,7 +260,7 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 		// special handling for folders, the generic sync algorithm doesn't work well
 		// with CVS because folders are not in namespaces (e.g. they exist in all versions
 		// and branches).
-		if(isContainer()) {
+		if(isContainer() && isThreeWay()) {
 			int folderKind = IRemoteSyncElement.IN_SYNC;
 			IResource local = getLocal();
 			ICVSRemoteFolder remote = (ICVSRemoteFolder)getRemote();
@@ -293,7 +272,7 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 					// conflicting deletion ignore
 				}
 			} else {
-				if(remote == null) { 
+				if(remote == null) {
 					if(cvsFolder.isCVSFolder()) {
 						folderKind = IRemoteSyncElement.INCOMING | IRemoteSyncElement.DELETION;
 					} else {
@@ -354,5 +333,46 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 			}
 		}
 		return kind;
+	}
+	
+	/**
+	 * @see RemoteSyncElement#timestampEquals(IRemoteResource, IRemoteResource)
+	 */
+	protected boolean timestampEquals(IRemoteResource e1, IRemoteResource e2) {
+		if(e1.isContainer()) {
+			if(e2.isContainer()) {
+				return true;
+			}
+			return false;
+		}
+		return e1.equals(e2);
+	}
+
+	/**
+	 * @see RemoteSyncElement#timestampEquals(IResource, IRemoteResource)
+	 */
+	protected boolean timestampEquals(IResource e1, IRemoteResource e2) {
+		if(e1.getType() != IResource.FILE) {
+			if(e2.isContainer()) {
+				return true;
+			}
+			return false;
+		}
+		ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor((IFile)e1);
+		try {
+			ResourceSyncInfo info1 = cvsFile.getSyncInfo();
+			ResourceSyncInfo info2 = ((ICVSRemoteResource)e2).getSyncInfo();
+			
+			if(info1 != null) {
+				if(info1.isDeleted() || info1.isMerged() || cvsFile.isModified()) {
+					return false;
+				}
+				return info1.getRevision().equals(info2.getRevision());
+			}
+			return false;
+		} catch(CVSException e) {
+			CVSProviderPlugin.log(e.getStatus());
+			return false;
+		}
 	}
 }

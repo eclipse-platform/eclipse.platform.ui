@@ -27,14 +27,7 @@ public interface IRemoteSyncElement extends ILocalSyncElement {
 	 * is none.
 	 */
 	public IRemoteResource getRemote();
-
-	/**
-	 * Answers <code>true</code> if the base of the given resource is different to the 
-	 * released state of the given resource. If a base does not exist then this method must
-	 * return <code>false</code>.
-	 */
-	public boolean isOutOfDate();
-	
+		
 	/**
 	 * Answers <code>true</code> if the base tree is not to be considered during sync
 	 * comparisons and <code>false</code> if it should. If the base tree is ignored the

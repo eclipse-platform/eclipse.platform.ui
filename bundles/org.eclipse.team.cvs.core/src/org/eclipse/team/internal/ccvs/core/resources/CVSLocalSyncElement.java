@@ -49,39 +49,6 @@ public class CVSLocalSyncElement extends LocalSyncElement {
 	}
 
 	/*
-	 * @see ILocalSyncElement#isDirty()
-	 */
-	public boolean isDirty() {
-		ICVSResource cvsResource = getCVSResourceFor(getLocal());
-		if(cvsResource == null) {
-			return false;
-		} else {
-			// a folder is dirty if it is managed but is not a CVS folder. This can
-			// easily happen if someone deletes a folder from the file system but
-			// doesn't unmanage it.
-			if(cvsResource.isFolder()) {
-				return false;
-			} else {
-				try {
-					ResourceSyncInfo info = cvsResource.getSyncInfo();
-					if(info==null) {
-						return false;
-					}
-					if(base!=null) {
-						boolean sameRevisions = ((RemoteFile)base).getRevision().equals(info.getRevision());
-						if(!sameRevisions) {
-							return true;
-						}
-					}
-					return ((ICVSFile)cvsResource).isDirty();
-				} catch(CVSException e) {
-					return true;
-				}
-			}
-		}
-	}
-
-	/*
 	 * @see ILocalSyncElement#isCheckedOut()
 	 */
 	public boolean isCheckedOut() {

@@ -14,6 +14,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.wizards.BranchWizard;
 
 /**
@@ -39,8 +40,13 @@ public class BranchAction extends CVSAction {
 	/*
 	 * @see TeamAction#isEnabled()
 	 */
-	protected boolean isEnabled() throws TeamException {
-		return isSelectionNonOverlapping();
+	protected boolean isEnabled() {
+		try {
+			return isSelectionNonOverlapping();
+		} catch(TeamException e) {
+			CVSUIPlugin.log(e.getStatus());
+			return false;
+		}
 	}
 }
 
