@@ -8,6 +8,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -56,7 +57,7 @@ public class FileSelectionDialog extends MessageDialog {
  *    <code>null</code> to display a default message
  */
 public FileSelectionDialog(Shell parentShell, IAdaptable rootElement, String message) {
-	super(parentShell, "Add Build File", null, message, MessageDialog.NONE, new String[] {"Ok", "Cancel"}, 0);
+	super(parentShell, "Choose Location", null, message, MessageDialog.NONE, new String[] {"Ok", "Cancel"}, 0);
 	root = rootElement;
 	setShellStyle(getShellStyle() | SWT.RESIZE);
 }
@@ -183,7 +184,7 @@ private void initializeDialog() {
 	});
 	selectionGroup.addDoubleClickListener(new IDoubleClickListener() {
 		public void doubleClick(DoubleClickEvent event) {
-			buttonPressed(0);
+			buttonPressed(IDialogConstants.OK_ID);
 		}
 	});
 
@@ -204,7 +205,7 @@ public IFile getResult() {
 }
 
 protected void buttonPressed(int buttonId) {
-	if (buttonId == 0) {
+	if (buttonId == IDialogConstants.OK_ID) {
 		Object resource= selectionGroup.getListTableSelection().getFirstElement();
 		if (resource instanceof IFile) {
 			result = (IFile) resource;

@@ -18,6 +18,8 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -326,7 +328,8 @@ public class AddCustomDialog extends StatusDialog {
 		//Just create with a dummy root.
 		FileSystemElement dummyRoot= new FileSystemElement("Dummy", null, true); //$NON-NLS-1$
 		this.selectionGroup = new TreeAndListGroup(parent, dummyRoot, 
-			getFolderProvider(), new WorkbenchLabelProvider(), getFileProvider(), new WorkbenchLabelProvider(), SWT.NONE, 400, 150);
+				getFolderProvider(), new WorkbenchLabelProvider(), getFileProvider(),
+				new WorkbenchLabelProvider(), SWT.NONE, 400, 150);
 
 		ISelectionChangedListener listener = new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
@@ -338,7 +341,11 @@ public class AddCustomDialog extends StatusDialog {
 		this.selectionGroup.setTreeSorter(sorter);
 		this.selectionGroup.setListSorter(sorter);
 		this.selectionGroup.addSelectionChangedListener(listener);
-
+		selectionGroup.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				buttonPressed(IDialogConstants.OK_ID);
+			}
+		});
 	}
 	
 	/**
