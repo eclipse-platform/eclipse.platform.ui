@@ -149,7 +149,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	/** Width of birds eye view */
 	private static final int BIRDS_EYE_VIEW_INSET= 1;
 	/** Use splines between diff ranges */
-	private static final boolean USE_SPLINES= true;
+	private static final boolean USE_SPLINES= false;
 
 	/** line width of change borders */
 	private static final int LW= 1;
