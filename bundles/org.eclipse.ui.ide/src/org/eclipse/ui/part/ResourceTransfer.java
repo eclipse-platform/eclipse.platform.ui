@@ -14,7 +14,6 @@ import java.io.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.dnd.ByteArrayTransfer;
 import org.eclipse.swt.dnd.TransferData;
 
@@ -172,8 +171,7 @@ private IResource readResource(DataInputStream dataIn) throws IOException {
 		case IResource.PROJECT :
 			return workspace.getRoot().getProject(path);
 	}
-	Assert.isTrue(false, "Unknown resource type in ResourceTransfer.readResource");//$NON-NLS-1$
-	return null;
+	throw new IllegalArgumentException("Unknown resource type in ResourceTransfer.readResource"); //$NON-NLS-1$
 }
 /**
  * Writes the given resource to the given stream.

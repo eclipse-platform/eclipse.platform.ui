@@ -12,9 +12,8 @@ package org.eclipse.ui.actions;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.misc.Assert;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -74,7 +73,9 @@ public abstract class WorkspaceAction extends ResourceSelectionListenerAction {
  */
 protected WorkspaceAction(Shell shell, String text) {
 	super(text);
-	Assert.isNotNull(shell);
+	if (shell == null) {
+		throw new IllegalArgumentException();
+	}
 	this.shell = shell;
 }
 /**
@@ -87,7 +88,7 @@ protected WorkspaceAction(Shell shell, String text) {
  */
 void displayError(String message) {
 	if (message == null) {
-		message = WorkbenchMessages.getString("WorkbenchAction.internalError"); //$NON-NLS-1$
+		message = IDEWorkbenchMessages.getString("WorkbenchAction.internalError"); //$NON-NLS-1$
 	}
 	MessageDialog.openError(shell, getProblemsTitle(), message);
 }
@@ -155,7 +156,7 @@ abstract String getOperationMessage();
  * @return the problems message
  */
 String getProblemsMessage() {
-	return WorkbenchMessages.getString("WorkbenchAction.problemsMessage"); //$NON-NLS-1$
+	return IDEWorkbenchMessages.getString("WorkbenchAction.problemsMessage"); //$NON-NLS-1$
 }
 /**
  * Returns the title for this action's problems dialog.
@@ -168,7 +169,7 @@ String getProblemsMessage() {
  * @return the problems dialog title
  */
 String getProblemsTitle() {
-	return WorkbenchMessages.getString("WorkspaceAction.problemsTitle"); //$NON-NLS-1$
+	return IDEWorkbenchMessages.getString("WorkspaceAction.problemsTitle"); //$NON-NLS-1$
 }
 /**
  * Returns the shell for this action. This shell is used for the modal progress
@@ -257,7 +258,7 @@ List pruneResources(List resourceCollection) {
  */
 private void recordError(CoreException error) {
 	if (errorStatus == null)
-		errorStatus = new MultiStatus(WorkbenchPlugin.PI_WORKBENCH, IStatus.ERROR, getProblemsMessage(), error);
+		errorStatus = new MultiStatus(IDEWorkbenchPlugin.IDE_WORKBENCH, IStatus.ERROR, getProblemsMessage(), error);
 
 	errorStatus.merge(error.getStatus());
 }
@@ -284,8 +285,8 @@ public void run() {
 		return;
 	} catch (InvocationTargetException e) {
 		// we catch CoreException in execute(), but unexpected runtime exceptions or errors may still occur
-		String msg = WorkbenchMessages.format("WorkspaceAction.logTitle", new Object[] {getClass().getName(), e.getTargetException()}); //$NON-NLS-1$
-		WorkbenchPlugin.log(msg,StatusUtil.newStatus(IStatus.ERROR, msg, e.getTargetException())); 
+		String msg = IDEWorkbenchMessages.format("WorkspaceAction.logTitle", new Object[] {getClass().getName(), e.getTargetException()}); //$NON-NLS-1$
+		IDEWorkbenchPlugin.log(msg,StatusUtil.newStatus(IStatus.ERROR, msg, e.getTargetException())); 
 		displayError(e.getTargetException().getMessage());
 	}
 

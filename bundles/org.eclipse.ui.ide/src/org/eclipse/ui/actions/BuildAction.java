@@ -13,7 +13,10 @@ package org.eclipse.ui.actions;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.IPreferenceConstants;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.*;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -64,14 +67,14 @@ public BuildAction(Shell shell, int type) {
 	super(shell, "");//$NON-NLS-1$
 
 	if (type == IncrementalProjectBuilder.INCREMENTAL_BUILD) {
-		setText(WorkbenchMessages.getString("BuildAction.text")); //$NON-NLS-1$
-		setToolTipText(WorkbenchMessages.getString("BuildAction.toolTip")); //$NON-NLS-1$
+		setText(IDEWorkbenchMessages.getString("BuildAction.text")); //$NON-NLS-1$
+		setToolTipText(IDEWorkbenchMessages.getString("BuildAction.toolTip")); //$NON-NLS-1$
 		setId(ID_BUILD);
 		WorkbenchHelp.setHelp(this, IHelpContextIds.INCREMENTAL_BUILD_ACTION);
 	}
 	else {
-		setText(WorkbenchMessages.getString("RebuildAction.text")); //$NON-NLS-1$
-		setToolTipText(WorkbenchMessages.getString("RebuildAction.tooltip")); //$NON-NLS-1$
+		setText(IDEWorkbenchMessages.getString("RebuildAction.text")); //$NON-NLS-1$
+		setToolTipText(IDEWorkbenchMessages.getString("RebuildAction.tooltip")); //$NON-NLS-1$
 		setId(ID_REBUILD_ALL);
 		WorkbenchHelp.setHelp(this, IHelpContextIds.FULL_BUILD_ACTION);
 	}
@@ -90,19 +93,19 @@ protected List getActionResources() {
  * Method declared on WorkspaceAction.
  */
 String getOperationMessage() {
-	return WorkbenchMessages.getString("BuildAction.operationMessage"); //$NON-NLS-1$
+	return IDEWorkbenchMessages.getString("BuildAction.operationMessage"); //$NON-NLS-1$
 }
 /* (non-Javadoc)
  * Method declared on WorkspaceAction.
  */
 String getProblemsMessage() {
-	return WorkbenchMessages.getString("BuildAction.problemMessage"); //$NON-NLS-1$
+	return IDEWorkbenchMessages.getString("BuildAction.problemMessage"); //$NON-NLS-1$
 }
 /* (non-Javadoc)
  * Method declared on WorkspaceAction.
  */
 String getProblemsTitle() {
-	return WorkbenchMessages.getString("BuildAction.problemTitle"); //$NON-NLS-1$
+	return IDEWorkbenchMessages.getString("BuildAction.problemTitle"); //$NON-NLS-1$
 }
 
 /**
@@ -162,7 +165,7 @@ void invokeOperation(IResource resource, IProgressMonitor monitor) throws CoreEx
  * @return <code>true</code> if Save All Before Build is enabled
  */
 public static boolean isSaveAllSet() {
-	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+	IPreferenceStore store = IDEWorkbenchPlugin.getDefault().getPreferenceStore();
 	return store.getBoolean(IPreferenceConstants.SAVE_ALL_BEFORE_BUILD);
 }
 /* (non-Javadoc)

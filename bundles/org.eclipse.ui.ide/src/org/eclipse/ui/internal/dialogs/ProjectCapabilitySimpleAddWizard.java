@@ -20,7 +20,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 
 public class ProjectCapabilitySimpleAddWizard extends Wizard {
 	private ProjectCapabilitySimpleSelectionPage mainPage;
@@ -36,7 +36,7 @@ public class ProjectCapabilitySimpleAddWizard extends Wizard {
 		setForcePreviousAndNextButtons(true);
 		setNeedsProgressMonitor(true);
 		initializeDefaultPageImageDescriptor();
-		setWindowTitle(WorkbenchMessages.getString("ProjectCapabilitySimpleSelectionPage.windowTitle")); //$NON-NLS-1$
+		setWindowTitle(IDEWorkbenchMessages.getString("ProjectCapabilitySimpleSelectionPage.windowTitle")); //$NON-NLS-1$
 	}
 		
 	/* (non-Javadoc)
@@ -49,8 +49,8 @@ public class ProjectCapabilitySimpleAddWizard extends Wizard {
 				workbench,
 				selection,
 				project);
-		mainPage.setTitle(WorkbenchMessages.getString("ProjectCapabilitySimpleSelectionPage.title")); //$NON-NLS-1$
-		mainPage.setDescription(WorkbenchMessages.getString("ProjectCapabilitySimpleSelectionPage.description")); //$NON-NLS-1$
+		mainPage.setTitle(IDEWorkbenchMessages.getString("ProjectCapabilitySimpleSelectionPage.title")); //$NON-NLS-1$
+		mainPage.setDescription(IDEWorkbenchMessages.getString("ProjectCapabilitySimpleSelectionPage.description")); //$NON-NLS-1$
 		addPage(mainPage);
 	}
 

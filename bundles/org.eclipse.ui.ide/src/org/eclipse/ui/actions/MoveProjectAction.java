@@ -16,9 +16,9 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ProjectLocationMoveDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.swt.widgets.Shell;
@@ -29,10 +29,10 @@ import java.text.MessageFormat;
  * as they have different semantics from other resources.
  */
 public class MoveProjectAction extends CopyProjectAction {
-	private static String MOVE_TOOL_TIP = WorkbenchMessages.getString("MoveProjectAction.toolTip"); //$NON-NLS-1$
-	private static String MOVE_TITLE = WorkbenchMessages.getString("MoveProjectAction.text"); //$NON-NLS-1$
-	private static String PROBLEMS_TITLE = WorkbenchMessages.getString("MoveProjectAction.dialogTitle"); //$NON-NLS-1$
-	private static String MOVE_PROGRESS_TITLE = WorkbenchMessages.getString("MoveProjectAction.progressMessage"); //$NON-NLS-1$
+	private static String MOVE_TOOL_TIP = IDEWorkbenchMessages.getString("MoveProjectAction.toolTip"); //$NON-NLS-1$
+	private static String MOVE_TITLE = IDEWorkbenchMessages.getString("MoveProjectAction.text"); //$NON-NLS-1$
+	private static String PROBLEMS_TITLE = IDEWorkbenchMessages.getString("MoveProjectAction.dialogTitle"); //$NON-NLS-1$
+	private static String MOVE_PROGRESS_TITLE = IDEWorkbenchMessages.getString("MoveProjectAction.progressMessage"); //$NON-NLS-1$
 
 	
 	/**
@@ -102,9 +102,9 @@ boolean performMove(
 		return false;
 	} catch (InvocationTargetException e) {
 		// CoreExceptions are collected above, but unexpected runtime exceptions and errors may still occur.
-		WorkbenchPlugin.log(
+		IDEWorkbenchPlugin.log(
 			MessageFormat.format("Exception in {0}.performMove(): {1}", new Object[] {getClass().getName(),e.getTargetException()}));//$NON-NLS-1$
-		displayError(WorkbenchMessages.format("MoveProjectAction.internalError", new Object[] {e.getTargetException().getMessage()})); //$NON-NLS-1$
+		displayError(IDEWorkbenchMessages.format("MoveProjectAction.internalError", new Object[] {e.getTargetException().getMessage()})); //$NON-NLS-1$
 		return false;
 	}
 
@@ -119,7 +119,7 @@ boolean performMove(
 protected Object[] queryDestinationParameters(IProject project) {
 	ProjectLocationMoveDialog dialog =
 		new ProjectLocationMoveDialog(shell, project);
-	dialog.setTitle(WorkbenchMessages.getString("MoveProjectAction.moveTitle")); //$NON-NLS-1$
+	dialog.setTitle(IDEWorkbenchMessages.getString("MoveProjectAction.moveTitle")); //$NON-NLS-1$
 	dialog.open();
 	return dialog.getResult();
 }

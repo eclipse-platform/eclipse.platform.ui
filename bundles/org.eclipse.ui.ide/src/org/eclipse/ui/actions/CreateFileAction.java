@@ -13,10 +13,9 @@ package org.eclipse.ui.actions;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchImages;
-import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.misc.Assert;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.wizards.newresource.BasicNewFileResourceWizard;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -51,10 +50,12 @@ public class CreateFileAction extends ResourceSelectionListenerAction {
  * @deprecated see deprecated tag on class
  */
 public CreateFileAction(Shell shell) {
-	super(WorkbenchMessages.getString("CreateFileAction.text")); //$NON-NLS-1$
-	Assert.isNotNull(shell);
+	super(IDEWorkbenchMessages.getString("CreateFileAction.text")); //$NON-NLS-1$
+	if (shell == null) {
+		throw new IllegalArgumentException();
+	}
 	this.shell = shell;
-	setToolTipText(WorkbenchMessages.getString("CreateFileAction.toolTip")); //$NON-NLS-1$
+	setToolTipText(IDEWorkbenchMessages.getString("CreateFileAction.toolTip")); //$NON-NLS-1$
 	setImageDescriptor(WorkbenchImages.getImageDescriptor(ISharedImages.IMG_OBJ_FILE));
 	setId(ID);
 	WorkbenchHelp.setHelp(this, IHelpContextIds.CREATE_FILE_ACTION);
@@ -70,7 +71,7 @@ public void run() {
 	wizard.setNeedsProgressMonitor(true);
 	WizardDialog dialog = new WizardDialog(shell, wizard);
 	dialog.create();
-	dialog.getShell().setText(WorkbenchMessages.getString("CreateFileAction.title")); //$NON-NLS-1$
+	dialog.getShell().setText(IDEWorkbenchMessages.getString("CreateFileAction.title")); //$NON-NLS-1$
 	WorkbenchHelp.setHelp(dialog.getShell(), IHelpContextIds.NEW_FILE_WIZARD);
 	dialog.open();
 }

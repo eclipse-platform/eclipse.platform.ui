@@ -21,8 +21,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
-import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
@@ -46,7 +46,7 @@ public class WizardNewProjectReferencePage extends WizardPage {
 	// widgets
 	private CheckboxTableViewer referenceProjectsViewer;
 
-	private static final String REFERENCED_PROJECTS_TITLE = WorkbenchMessages.getString("WizardNewProjectReferences.title"); //$NON-NLS-1$
+	private static final String REFERENCED_PROJECTS_TITLE = IDEWorkbenchMessages.getString("WizardNewProjectReferences.title"); //$NON-NLS-1$
 	private static final int PROJECT_LIST_MULTIPLIER = 15;
 /**
  * Creates a new project reference wizard page.

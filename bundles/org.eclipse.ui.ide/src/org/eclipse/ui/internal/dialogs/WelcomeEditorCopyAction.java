@@ -12,7 +12,7 @@
 package org.eclipse.ui.internal.dialogs;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 
 /**
  * Global copy action for the welcome editor.
@@ -22,7 +22,7 @@ public class WelcomeEditorCopyAction extends Action {
 	
 	public WelcomeEditorCopyAction(WelcomeEditor editor) {
 		editorPart = editor;
-		setText(WorkbenchMessages.getString("WelcomeEditor.copy.text")); //$NON-NLS-1$
+		setText(IDEWorkbenchMessages.getString("WelcomeEditor.copy.text")); //$NON-NLS-1$
 	}
 	
 	public void run() {

@@ -22,7 +22,9 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.*;
-import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
+
 import java.io.File;
 import java.util.ArrayList;
 
@@ -40,11 +42,11 @@ public class ProjectLocationMoveDialog extends SelectionDialog {
 	private Label statusMessageLabel;
 	private Button browseButton;
 
-	private static String LOCATION_LABEL = WorkbenchMessages.getString("ProjectLocationSelectionDialog.locationLabel"); //$NON-NLS-1$
-	private static String BROWSE_LABEL = WorkbenchMessages.getString("ProjectLocationSelectionDialog.browseLabel"); //$NON-NLS-1$
-	private static String DIRECTORY_DIALOG_LABEL = WorkbenchMessages.getString("ProjectLocationSelectionDialog.directoryLabel"); //$NON-NLS-1$
-	private static String INVALID_LOCATION_MESSAGE = WorkbenchMessages.getString("ProjectLocationSelectionDialog.locationError"); //$NON-NLS-1$
-	private static String PROJECT_LOCATION_SELECTION_TITLE = WorkbenchMessages.getString("ProjectLocationSelectionDialog.selectionTitle"); //$NON-NLS-1$
+	private static String LOCATION_LABEL = IDEWorkbenchMessages.getString("ProjectLocationSelectionDialog.locationLabel"); //$NON-NLS-1$
+	private static String BROWSE_LABEL = IDEWorkbenchMessages.getString("ProjectLocationSelectionDialog.browseLabel"); //$NON-NLS-1$
+	private static String DIRECTORY_DIALOG_LABEL = IDEWorkbenchMessages.getString("ProjectLocationSelectionDialog.directoryLabel"); //$NON-NLS-1$
+	private static String INVALID_LOCATION_MESSAGE = IDEWorkbenchMessages.getString("ProjectLocationSelectionDialog.locationError"); //$NON-NLS-1$
+	private static String PROJECT_LOCATION_SELECTION_TITLE = IDEWorkbenchMessages.getString("ProjectLocationSelectionDialog.selectionTitle"); //$NON-NLS-1$
 
 	// constants
 	private static final int SIZING_TEXT_FIELD_WIDTH = 250;
@@ -108,7 +110,7 @@ private String checkValidLocation() {
 	else {
 		String locationFieldContents = locationPathField.getText();
 		if (locationFieldContents.equals("")) {//$NON-NLS-1$
-			return(WorkbenchMessages.getString("WizardNewProjectCreationPage.projectLocationEmpty")); //$NON-NLS-1$
+			return(IDEWorkbenchMessages.getString("WizardNewProjectCreationPage.projectLocationEmpty")); //$NON-NLS-1$
 		}
 		else{
 			IPath path = new Path("");//$NON-NLS-1$
@@ -200,7 +202,7 @@ private final void createProjectLocationGroup(Composite parent) {
 	final Button useDefaultsButton =
 		new Button(projectGroup, SWT.CHECK | SWT.RIGHT);
 	useDefaultsButton.setFont(font);
-	useDefaultsButton.setText(WorkbenchMessages.getString("ProjectLocationSelectionDialog.useDefaultLabel")); //$NON-NLS-1$
+	useDefaultsButton.setText(IDEWorkbenchMessages.getString("ProjectLocationSelectionDialog.useDefaultLabel")); //$NON-NLS-1$
 	useDefaultsButton.setSelection(this.useDefaults);
 	GridData buttonData = new GridData();
 	buttonData.horizontalSpan = 3;

@@ -39,7 +39,7 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
-import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.DialogUtil;
 import org.eclipse.ui.internal.model.WorkbenchAdapter;
 import org.eclipse.ui.model.IWorkbenchAdapter;
@@ -83,7 +83,7 @@ class NewWizardNewPage
 		this.wizardCategories = wizardCategories;
 	}
 	public void activate() {
-		page.setDescription(WorkbenchMessages.getString("NewWizardNewPage.description")); //$NON-NLS-1$
+		page.setDescription(IDEWorkbenchMessages.getString("NewWizardNewPage.description")); //$NON-NLS-1$
 
 		selectionChanged(
 			new SelectionChangedEvent(

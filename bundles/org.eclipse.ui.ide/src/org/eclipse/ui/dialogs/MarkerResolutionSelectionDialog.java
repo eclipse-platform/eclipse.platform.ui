@@ -18,9 +18,9 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.dialogs.SimpleListContentProvider;
-import org.eclipse.ui.internal.misc.Assert;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
 
 /**
  * Dialog to allow the user to select from a list of marker
@@ -62,10 +62,12 @@ public class MarkerResolutionSelectionDialog extends SelectionDialog {
 	 */
 	public MarkerResolutionSelectionDialog(Shell shell, IMarkerResolution[] markerResolutions) {
 		super(shell);
-		Assert.isTrue(markerResolutions != null && markerResolutions.length > 0);
+		if (markerResolutions == null || markerResolutions.length == 0) {
+			throw new IllegalArgumentException();
+		}
 		resolutions = markerResolutions;
-		setTitle(WorkbenchMessages.getString("MarkerResolutionSelectionDialog.title"));	//$NON-NLS-1$
-		setMessage(WorkbenchMessages.getString("MarkerResolutionSelectionDialog.messageLabel")); //$NON-NLS-1$
+		setTitle(IDEWorkbenchMessages.getString("MarkerResolutionSelectionDialog.title"));	//$NON-NLS-1$
+		setMessage(IDEWorkbenchMessages.getString("MarkerResolutionSelectionDialog.messageLabel")); //$NON-NLS-1$
 		setInitialSelections(new Object[]{markerResolutions[0]});
 	}
 

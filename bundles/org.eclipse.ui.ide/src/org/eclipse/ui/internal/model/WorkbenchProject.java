@@ -17,7 +17,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.WorkbenchImages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.misc.OverlayIcon;
 
 /**
@@ -47,7 +47,7 @@ protected ImageDescriptor getBaseImage(IResource resource) {
 				if (overlayImage != null) {
 					return overlayImage;
 				}
-				ImageDescriptor natureImage = WorkbenchPlugin.getDefault().getProjectImageRegistry().getNatureImage(natureIds[i]);
+				ImageDescriptor natureImage = IDEWorkbenchPlugin.getDefault().getProjectImageRegistry().getNatureImage(natureIds[i]);
 				if (natureImage != null) {
 					// @issue move IDE specific images
 					ImageDescriptor baseImage = WorkbenchImages.getImageDescriptor(baseKey);

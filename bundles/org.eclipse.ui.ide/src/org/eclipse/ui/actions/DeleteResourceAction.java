@@ -25,8 +25,9 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.*;
-import org.eclipse.ui.internal.misc.Assert;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
 
 /**
  * Standard action for deleting the currently selected resources.
@@ -57,18 +58,18 @@ public class DeleteResourceAction extends ResourceSelectionListenerAction {
 		
 		static String getTitle(List projects) {
 			if (projects.size() == 1)
-				return WorkbenchMessages.getString("DeleteResourceAction.titleProject1");  //$NON-NLS-1$
+				return IDEWorkbenchMessages.getString("DeleteResourceAction.titleProject1");  //$NON-NLS-1$
 			else
-				return WorkbenchMessages.getString("DeleteResourceAction.titleProjectN");  //$NON-NLS-1$
+				return IDEWorkbenchMessages.getString("DeleteResourceAction.titleProjectN");  //$NON-NLS-1$
 		}
 		
 		static String getMessage(List projects) {
 			if (projects.size() == 1) {
 				IProject project = (IProject) projects.get(0);
-				return WorkbenchMessages.format("DeleteResourceAction.confirmProject1", new Object[] { project.getName() });  //$NON-NLS-1$
+				return IDEWorkbenchMessages.format("DeleteResourceAction.confirmProject1", new Object[] { project.getName() });  //$NON-NLS-1$
 			}
 			else {
-				return WorkbenchMessages.format("DeleteResourceAction.confirmProjectN", new Object[] { new Integer(projects.size()) });  //$NON-NLS-1$
+				return IDEWorkbenchMessages.format("DeleteResourceAction.confirmProjectN", new Object[] { new Integer(projects.size()) });  //$NON-NLS-1$
 			}
 		}
 
@@ -89,18 +90,18 @@ public class DeleteResourceAction extends ResourceSelectionListenerAction {
 			if (projects.size() == 1) {
 				IProject project = (IProject) projects.get(0);
 				if(project == null || project.getLocation() == null)
-					text1 = WorkbenchMessages.getString("DeleteResourceAction.deleteContentsN");  //$NON-NLS-1$
+					text1 = IDEWorkbenchMessages.getString("DeleteResourceAction.deleteContentsN");  //$NON-NLS-1$
 				else
-					text1 = WorkbenchMessages.format("DeleteResourceAction.deleteContents1", new Object[] { project.getLocation().toOSString() });  //$NON-NLS-1$
+					text1 = IDEWorkbenchMessages.format("DeleteResourceAction.deleteContents1", new Object[] { project.getLocation().toOSString() });  //$NON-NLS-1$
 			} else {
-				text1 = WorkbenchMessages.getString("DeleteResourceAction.deleteContentsN");  //$NON-NLS-1$
+				text1 = IDEWorkbenchMessages.getString("DeleteResourceAction.deleteContentsN");  //$NON-NLS-1$
 			}
 			radio1.setText(text1);
 			radio1.setFont(parent.getFont());
 
 			radio2 = new Button(composite, SWT.RADIO);
 			radio2.addSelectionListener(selectionListener);
-			String text2 = WorkbenchMessages.getString("DeleteResourceAction.doNotDeleteContents");  //$NON-NLS-1$
+			String text2 = IDEWorkbenchMessages.getString("DeleteResourceAction.doNotDeleteContents");  //$NON-NLS-1$
 			radio2.setText(text2);
 			radio2.setFont(parent.getFont());
 			
@@ -150,11 +151,13 @@ public class DeleteResourceAction extends ResourceSelectionListenerAction {
  * @param shell the shell for any dialogs
  */
 public DeleteResourceAction(Shell shell) {
-	super(WorkbenchMessages.getString("DeleteResourceAction.text")); //$NON-NLS-1$
-	setToolTipText(WorkbenchMessages.getString("DeleteResourceAction.toolTip")); //$NON-NLS-1$
+	super(IDEWorkbenchMessages.getString("DeleteResourceAction.text")); //$NON-NLS-1$
+	setToolTipText(IDEWorkbenchMessages.getString("DeleteResourceAction.toolTip")); //$NON-NLS-1$
 	WorkbenchHelp.setHelp(this, IHelpContextIds.DELETE_RESOURCE_ACTION);
 	setId(ID);
-	Assert.isNotNull(shell);
+	if (shell == null) {
+		throw new IllegalArgumentException();
+	}
 	this.shell = shell;
 }
 /**
@@ -249,19 +252,19 @@ boolean confirmDeleteNonProjects() {
 	String title;
 	String msg;
 	if (resources.size() == 1) {
-		title = WorkbenchMessages.getString("DeleteResourceAction.title1");  //$NON-NLS-1$
+		title = IDEWorkbenchMessages.getString("DeleteResourceAction.title1");  //$NON-NLS-1$
  		IResource resource = (IResource) resources.get(0);
  		if (resource.isLinked())
- 			msg = WorkbenchMessages.format("DeleteResourceAction.confirmLinkedResource1", new Object[] { resource.getName() });  //$NON-NLS-1$
+ 			msg = IDEWorkbenchMessages.format("DeleteResourceAction.confirmLinkedResource1", new Object[] { resource.getName() });  //$NON-NLS-1$
  		else
-			msg = WorkbenchMessages.format("DeleteResourceAction.confirm1", new Object[] { resource.getName() });  //$NON-NLS-1$
+			msg = IDEWorkbenchMessages.format("DeleteResourceAction.confirm1", new Object[] { resource.getName() });  //$NON-NLS-1$
 	}
 	else {
-		title = WorkbenchMessages.getString("DeleteResourceAction.titleN");  //$NON-NLS-1$
+		title = IDEWorkbenchMessages.getString("DeleteResourceAction.titleN");  //$NON-NLS-1$
 		if (containsLinkedResource())
-			msg = WorkbenchMessages.format("DeleteResourceAction.confirmLinkedResourceN", new Object[] { new Integer(resources.size()) });  //$NON-NLS-1$
+			msg = IDEWorkbenchMessages.format("DeleteResourceAction.confirmLinkedResourceN", new Object[] { new Integer(resources.size()) });  //$NON-NLS-1$
 		else
-			msg = WorkbenchMessages.format("DeleteResourceAction.confirmN", new Object[] { new Integer(resources.size()) });  //$NON-NLS-1$
+			msg = IDEWorkbenchMessages.format("DeleteResourceAction.confirmN", new Object[] { new Integer(resources.size()) });  //$NON-NLS-1$
 	}
 	return MessageDialog.openQuestion(shell, title, msg);
 }
@@ -403,24 +406,24 @@ public void run() {
 			if (outOfSyncError) {
 				ErrorDialog.openError(
 					shell, 
-					WorkbenchMessages.getString("DeleteResourceAction.errorTitle"), 	//$NON-NLS-1$
-					WorkbenchMessages.getString("DeleteResourceAction.outOfSyncError"),	//$NON-NLS-1$
+					IDEWorkbenchMessages.getString("DeleteResourceAction.errorTitle"), 	//$NON-NLS-1$
+					IDEWorkbenchMessages.getString("DeleteResourceAction.outOfSyncError"),	//$NON-NLS-1$
 					status);
 			} 
 			else {
 				ErrorDialog.openError(
 					shell, 
-					WorkbenchMessages.getString("DeleteResourceAction.errorTitle"), // no special message //$NON-NLS-1$
+					IDEWorkbenchMessages.getString("DeleteResourceAction.errorTitle"), // no special message //$NON-NLS-1$
 					null, status);
 			}
 		} 
 		else {
 			// CoreExceptions are collected above, but unexpected runtime exceptions and errors may still occur.
-			WorkbenchPlugin.log(MessageFormat.format("Exception in {0}.run: {1}", new Object[] {getClass().getName(), t}));//$NON-NLS-1$
+			IDEWorkbenchPlugin.log(MessageFormat.format("Exception in {0}.run: {1}", new Object[] {getClass().getName(), t}));//$NON-NLS-1$
 			MessageDialog.openError(
 				shell,
-				WorkbenchMessages.getString("DeleteResourceAction.messageTitle"), //$NON-NLS-1$
-				WorkbenchMessages.format("DeleteResourceAction.internalError", new Object[] {t.getMessage()})); //$NON-NLS-1$
+				IDEWorkbenchMessages.getString("DeleteResourceAction.messageTitle"), //$NON-NLS-1$
+				IDEWorkbenchMessages.format("DeleteResourceAction.internalError", new Object[] {t.getMessage()})); //$NON-NLS-1$
 		}
 	} catch (InterruptedException e) {
 		// just return
@@ -442,8 +445,8 @@ IResource[] getResourcesToDelete() {
 	ReadOnlyStateChecker checker =
 		new ReadOnlyStateChecker(
 			this.shell,
-			WorkbenchMessages.getString("DeleteResourceAction.title1"), //$NON-NLS-1$
-			WorkbenchMessages.getString("DeleteResourceAction.readOnlyQuestion")); //$NON-NLS-1$
+			IDEWorkbenchMessages.getString("DeleteResourceAction.title1"), //$NON-NLS-1$
+			IDEWorkbenchMessages.getString("DeleteResourceAction.readOnlyQuestion")); //$NON-NLS-1$
 	
 	return checker.checkReadOnlyResources(selectedResources);
 }
@@ -468,9 +471,9 @@ private int queryDeleteOutOfSync(IResource resource) {
 	final MessageDialog dialog =
 		new MessageDialog(
 			shell,
-			WorkbenchMessages.getString("DeleteResourceAction.messageTitle"),	//$NON-NLS-1$		
+			IDEWorkbenchMessages.getString("DeleteResourceAction.messageTitle"),	//$NON-NLS-1$		
 			null,
-			WorkbenchMessages.format("DeleteResourceAction.outOfSyncQuestion", new Object[] {resource.getName()}),	//$NON-NLS-1$
+			IDEWorkbenchMessages.format("DeleteResourceAction.outOfSyncQuestion", new Object[] {resource.getName()}),	//$NON-NLS-1$
 			MessageDialog.QUESTION,
 			new String[] {
 				IDialogConstants.YES_LABEL,

@@ -13,8 +13,7 @@ package org.eclipse.ui.internal.dialogs;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.*;
 import org.eclipse.ui.AboutInfo;
-import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.misc.Assert;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 /**
  * A simple editor input for the welcome editor
  */	
@@ -27,7 +26,9 @@ public class WelcomeEditorInput implements IEditorInput {
  */
 public WelcomeEditorInput(AboutInfo info) {
 	super();
-	Assert.isNotNull(info);
+	if (info == null) {
+		throw new IllegalArgumentException();
+	}
 	aboutInfo = info;	
 }
 		public boolean exists() {
@@ -40,7 +41,7 @@ public WelcomeEditorInput(AboutInfo info) {
 			return null;
 		}
 		public String getName() {
-			return WorkbenchMessages.getString("WelcomeEditor.title"); //$NON-NLS-1$	
+			return IDEWorkbenchMessages.getString("WelcomeEditor.title"); //$NON-NLS-1$	
 		}
 		public IPersistableElement getPersistable() {
 			return new IPersistableElement() {
@@ -64,6 +65,6 @@ public WelcomeEditorInput(AboutInfo info) {
 			return false;
 		}
 		public String getToolTipText() {
-			return WorkbenchMessages.format("WelcomeEditor.toolTip", new Object[]{aboutInfo.getFeatureLabel()}); //$NON-NLS-1$	
+			return IDEWorkbenchMessages.format("WelcomeEditor.toolTip", new Object[]{aboutInfo.getFeatureLabel()}); //$NON-NLS-1$	
 		}
 }

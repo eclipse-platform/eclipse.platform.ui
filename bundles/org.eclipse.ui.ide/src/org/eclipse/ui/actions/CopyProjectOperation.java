@@ -20,7 +20,7 @@ import org.eclipse.jface.dialogs.*;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ProjectLocationSelectionDialog;
-import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 
 /**
  * Implementation class to perform the actual copying of project resources from the clipboard 
@@ -60,7 +60,7 @@ public class CopyProjectOperation {
 		//Get the project name and location in a two element list
 		ProjectLocationSelectionDialog dialog =
 			new ProjectLocationSelectionDialog(parentShell, project);
-		dialog.setTitle(WorkbenchMessages.getString("CopyProjectOperation.copyProject")); //$NON-NLS-1$
+		dialog.setTitle(IDEWorkbenchMessages.getString("CopyProjectOperation.copyProject")); //$NON-NLS-1$
 		if (dialog.open() != Dialog.OK) 
 			return;
 			
@@ -80,7 +80,7 @@ public class CopyProjectOperation {
 		if (errorStatus != null) {
 			ErrorDialog.openError(
 				parentShell, 
-				WorkbenchMessages.getString("CopyProjectOperation.copyFailedTitle"), //$NON-NLS-1$
+				IDEWorkbenchMessages.getString("CopyProjectOperation.copyFailedTitle"), //$NON-NLS-1$
 				null, 
 				errorStatus);
 			errorStatus = null; 
@@ -103,7 +103,7 @@ public class CopyProjectOperation {
 		WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor monitor) {
 	
-				monitor.beginTask(WorkbenchMessages.getString("CopyProjectOperation.progressTitle"), 100); //$NON-NLS-1$
+				monitor.beginTask(IDEWorkbenchMessages.getString("CopyProjectOperation.progressTitle"), 100); //$NON-NLS-1$
 				try {
 					if (monitor.isCanceled())
 						throw new OperationCanceledException();
@@ -135,8 +135,8 @@ public class CopyProjectOperation {
 				public void run() {
 					MessageDialog.openError(
 						parentShell,
-						WorkbenchMessages.getString("CopyProjectOperation.copyFailedTitle"), //$NON-NLS-1$
-						WorkbenchMessages.format(
+						IDEWorkbenchMessages.getString("CopyProjectOperation.copyFailedTitle"), //$NON-NLS-1$
+						IDEWorkbenchMessages.format(
 							"CopyProjectOperation.internalError", //$NON-NLS-1$
 							new Object[] {message})); 
 				}
@@ -187,7 +187,7 @@ public class CopyProjectOperation {
 			errorStatus = new MultiStatus(
 				PlatformUI.PLUGIN_ID, 
 				IStatus.ERROR, 
-				WorkbenchMessages.getString("CopyProjectOperation.copyFailedMessage"), //$NON-NLS-1$
+				IDEWorkbenchMessages.getString("CopyProjectOperation.copyFailedMessage"), //$NON-NLS-1$
 				error);
 	
 		errorStatus.merge(error.getStatus());

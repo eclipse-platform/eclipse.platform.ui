@@ -12,7 +12,7 @@ package org.eclipse.ui.internal.model;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.ui.internal.WorkbenchImages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.jface.resource.ImageDescriptor;
 /**
@@ -26,7 +26,7 @@ public class WorkbenchFile extends WorkbenchResource {
  */
 protected ImageDescriptor getBaseImage(IResource resource) {
 	// @issue move IDE specific images
-	ImageDescriptor image = WorkbenchPlugin.getDefault().getEditorRegistry().getImageDescriptor((IFile) resource);
+	ImageDescriptor image = IDEWorkbenchPlugin.getDefault().getEditorRegistry().getImageDescriptor((IFile) resource);
 	if (image == null)
 		image = WorkbenchImages.getImageDescriptor(ISharedImages.IMG_OBJ_FILE);
 	return image;

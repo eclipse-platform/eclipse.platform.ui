@@ -13,7 +13,7 @@ package org.eclipse.ui.actions;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.jface.dialogs.*;
 
@@ -33,7 +33,7 @@ public class ReadOnlyStateChecker {
 	private boolean yesToAllSelected = false;
 	private boolean cancelSelected = false;
 
-	private String READ_ONLY_EXCEPTION_MESSAGE = WorkbenchMessages.getString("ReadOnlyCheck.problems"); //$NON-NLS-1$
+	private String READ_ONLY_EXCEPTION_MESSAGE = IDEWorkbenchMessages.getString("ReadOnlyCheck.problems"); //$NON-NLS-1$
 	
 /**
  * Create a new checker that parents the dialog off of parent using the supplied

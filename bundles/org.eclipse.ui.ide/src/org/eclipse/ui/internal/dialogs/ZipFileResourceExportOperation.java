@@ -13,7 +13,7 @@ package org.eclipse.ui.internal.dialogs;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.jface.operation.*;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -142,9 +142,9 @@ protected void exportResource(IResource resource) throws InterruptedException {
 		try {
 			exporter.write((IFile)resource,destinationName);
 		} catch (IOException e) {
-			addError(WorkbenchMessages.format("ZipExport.errorOnResource", new Object[] {resource.getFullPath()}) ,e); //$NON-NLS-1$
+			addError(IDEWorkbenchMessages.format("ZipExport.errorOnResource", new Object[] {resource.getFullPath()}) ,e); //$NON-NLS-1$
 		} catch (CoreException e) {
-			addError(WorkbenchMessages.format("ZipExport.errorOnResource", new Object[] {resource.getFullPath()}) ,e); //$NON-NLS-1$
+			addError(IDEWorkbenchMessages.format("ZipExport.errorOnResource", new Object[] {resource.getFullPath()}) ,e); //$NON-NLS-1$
 		}
 		
 		monitor.worked(1);
@@ -156,7 +156,7 @@ protected void exportResource(IResource resource) throws InterruptedException {
 			children = ((IContainer)resource).members();
 		} catch (CoreException e) {
 			// this should never happen because an #isAccessible check is done before #members is invoked
-			addError(WorkbenchMessages.format("ZipExport.errorOnResource", new Object[] {resource.getFullPath()}) ,e); //$NON-NLS-1$
+			addError(IDEWorkbenchMessages.format("ZipExport.errorOnResource", new Object[] {resource.getFullPath()}) ,e); //$NON-NLS-1$
 		}
 
 		for (int i = 0; i<children.length; i++) 
@@ -201,7 +201,7 @@ public IStatus getStatus() {
 		PlatformUI.PLUGIN_ID, 
 		IStatus.OK, 
 		errors,
-		WorkbenchMessages.getString("ZipExport.problemEncountered"),  //$NON-NLS-1$
+		IDEWorkbenchMessages.getString("ZipExport.problemEncountered"),  //$NON-NLS-1$
 		null);
 }
 /**
@@ -252,7 +252,7 @@ public void run(IProgressMonitor monitor) throws InvocationTargetException, Inte
 	try {
 		initialize();
 	} catch (IOException e) {
-		throw new InvocationTargetException(e, WorkbenchMessages.getString("ZipExport.unableToOpen") + e.getMessage()); //$NON-NLS-1$
+		throw new InvocationTargetException(e, IDEWorkbenchMessages.getString("ZipExport.unableToOpen") + e.getMessage()); //$NON-NLS-1$
 	}
 
 	try {
@@ -267,7 +267,7 @@ public void run(IProgressMonitor monitor) throws InvocationTargetException, Inte
 		catch (CoreException e) {
 			// Should not happen
 		}
-		monitor.beginTask(WorkbenchMessages.getString("ZipExport.progress"), totalWork); //$NON-NLS-1$
+		monitor.beginTask(IDEWorkbenchMessages.getString("ZipExport.progress"), totalWork); //$NON-NLS-1$
 		if (resourcesToExport == null) {
 			exportResource(resource);
 		}
@@ -279,7 +279,7 @@ public void run(IProgressMonitor monitor) throws InvocationTargetException, Inte
 		try {
 			exporter.finished();
 		} catch (IOException e) {
-			throw new InvocationTargetException(e, WorkbenchMessages.getString("ZipExport.unableToClose") + e.getMessage()); //$NON-NLS-1$
+			throw new InvocationTargetException(e, IDEWorkbenchMessages.getString("ZipExport.unableToClose") + e.getMessage()); //$NON-NLS-1$
 		}
 	} finally {
 		monitor.done();

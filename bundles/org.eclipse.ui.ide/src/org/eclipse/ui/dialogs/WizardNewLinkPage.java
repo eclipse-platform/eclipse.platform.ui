@@ -26,8 +26,10 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.dialogs.PathVariableSelectionDialog;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
 
 /**
  * Standard resource link page for a wizard that creates a file or 
@@ -78,9 +80,9 @@ public void createControl(Composite parent) {
 
 	final Button createLinkButton = new Button(topLevel, SWT.CHECK);
 	if (type == IResource.FILE)
-		createLinkButton.setText(WorkbenchMessages.getString("WizardNewLinkPage.linkFileButton")); //$NON-NLS-1$
+		createLinkButton.setText(IDEWorkbenchMessages.getString("WizardNewLinkPage.linkFileButton")); //$NON-NLS-1$
 	else
-		createLinkButton.setText(WorkbenchMessages.getString("WizardNewLinkPage.linkFolderButton")); //$NON-NLS-1$
+		createLinkButton.setText(IDEWorkbenchMessages.getString("WizardNewLinkPage.linkFolderButton")); //$NON-NLS-1$
 	createLinkButton.setSelection(createLink);
 	GridData data = new GridData();
 	data.horizontalSpan = 3;
@@ -138,7 +140,7 @@ private void createLinkLocationGroup(Composite locationGroup, boolean enabled) {
 	browseButton = new Button(locationGroup, SWT.PUSH);
 	setButtonLayoutData(browseButton);
 	browseButton.setFont(font);
-	browseButton.setText(WorkbenchMessages.getString("WizardNewLinkPage.browseButton")); //$NON-NLS-1$
+	browseButton.setText(IDEWorkbenchMessages.getString("WizardNewLinkPage.browseButton")); //$NON-NLS-1$
 	browseButton.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent event) {
 			handleLinkTargetBrowseButtonPressed();
@@ -155,7 +157,7 @@ private void createLinkLocationGroup(Composite locationGroup, boolean enabled) {
 	variablesButton = new Button(locationGroup, SWT.PUSH);
 	setButtonLayoutData(variablesButton);
 	variablesButton.setFont(font);
-	variablesButton.setText(WorkbenchMessages.getString("WizardNewLinkPage.variablesButton")); //$NON-NLS-1$
+	variablesButton.setText(IDEWorkbenchMessages.getString("WizardNewLinkPage.variablesButton")); //$NON-NLS-1$
 	variablesButton.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent event) {
 			handleVariablesButtonPressed();
@@ -211,7 +213,7 @@ private void handleLinkTargetBrowseButtonPressed() {
 				dialog.setFilterPath(linkTargetName);
 			}
 		}
-		dialog.setMessage(WorkbenchMessages.getString("WizardNewLinkPage.targetSelectionLabel")); //$NON-NLS-1$
+		dialog.setMessage(IDEWorkbenchMessages.getString("WizardNewLinkPage.targetSelectionLabel")); //$NON-NLS-1$
 		selection = dialog.open();
 	}					
 	if (selection != null) {
@@ -271,12 +273,12 @@ private boolean validateFileType(File linkTargetFile) {
 	boolean valid = true;
 	
 	if (type == IResource.FILE && linkTargetFile.isFile() == false) {
-		setErrorMessage(WorkbenchMessages.getString("WizardNewLinkPage.linkTargetNotFile")); //$NON-NLS-1$
+		setErrorMessage(IDEWorkbenchMessages.getString("WizardNewLinkPage.linkTargetNotFile")); //$NON-NLS-1$
 		valid = false;
 	}
 	else
 	if (type == IResource.FOLDER && linkTargetFile.isDirectory() == false) {
-		setErrorMessage(WorkbenchMessages.getString("WizardNewLinkPage.linkTargetNotFolder")); //$NON-NLS-1$
+		setErrorMessage(IDEWorkbenchMessages.getString("WizardNewLinkPage.linkTargetNotFolder")); //$NON-NLS-1$
 		valid = false;
 	}
 	return valid;
@@ -292,13 +294,13 @@ private boolean validateLinkTargetName(String linkTargetName) {
 	boolean valid = true;
 
 	if ("".equals(linkTargetName)) {//$NON-NLS-1$
-		setErrorMessage(WorkbenchMessages.getString("WizardNewLinkPage.linkTargetEmpty")); //$NON-NLS-1$
+		setErrorMessage(IDEWorkbenchMessages.getString("WizardNewLinkPage.linkTargetEmpty")); //$NON-NLS-1$
 		valid = false;
 	}
 	else {
 		IPath path = new Path("");//$NON-NLS-1$
 		if (path.isValidPath(linkTargetName) == false) {
-			setErrorMessage(WorkbenchMessages.getString("WizardNewLinkPage.linkTargetInvalid")); //$NON-NLS-1$
+			setErrorMessage(IDEWorkbenchMessages.getString("WizardNewLinkPage.linkTargetInvalid")); //$NON-NLS-1$
 			valid = false;
 		}
 	}
@@ -313,7 +315,7 @@ private boolean validateLinkTargetName(String linkTargetName) {
  */
 private boolean validatePage() {
 	boolean valid = true;
-	IWorkspace workspace = WorkbenchPlugin.getPluginWorkspace();
+	IWorkspace workspace = IDEWorkbenchPlugin.getPluginWorkspace();
 	
 	if (createLink) {
 		String linkTargetName = linkTargetField.getText();
@@ -322,7 +324,7 @@ private boolean validatePage() {
 		if (valid) {
 			File linkTargetFile = new Path(linkTargetName).toFile();
 			if (linkTargetFile.exists() == false) {
-				setErrorMessage(WorkbenchMessages.getString("WizardNewLinkPage.linkTargetNonExistent")); //$NON-NLS-1$
+				setErrorMessage(IDEWorkbenchMessages.getString("WizardNewLinkPage.linkTargetNonExistent")); //$NON-NLS-1$
 				valid = false;
 			}
 			else {
@@ -331,7 +333,7 @@ private boolean validatePage() {
 					new Path(linkTargetName));
 
 				if (locationStatus.isOK() == false) {
-					setErrorMessage(WorkbenchMessages.getString("WizardNewLinkPage.linkTargetLocationInvalid")); //$NON-NLS-1$
+					setErrorMessage(IDEWorkbenchMessages.getString("WizardNewLinkPage.linkTargetLocationInvalid")); //$NON-NLS-1$
 					valid = false;
 				}
 				else {

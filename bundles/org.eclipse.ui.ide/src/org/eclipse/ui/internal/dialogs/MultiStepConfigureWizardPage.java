@@ -24,8 +24,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
-import org.eclipse.ui.internal.misc.Assert;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
 import org.eclipse.ui.internal.misc.WizardStepGroup;
 
 /**
@@ -427,8 +426,9 @@ public class MultiStepConfigureWizardPage extends WizardPage {
 			if (rememberPrevious && currentPage != null)
 				page.setPreviousPage(currentPage);
 				
-			if (wizard != page.getWizard())
-				Assert.isTrue(false);
+			if (wizard != page.getWizard()) {
+				throw new IllegalStateException();
+			}
 			
 			// ensure that page control has been created
 			// (this allows lazy page control creation)
@@ -436,7 +436,9 @@ public class MultiStepConfigureWizardPage extends WizardPage {
 				page.createControl(pageSite);
 				// the page is responsible for ensuring the created control is accessable
 				// via getControl.
-				Assert.isNotNull(page.getControl());
+				if (page.getControl() == null) {
+					throw new IllegalArgumentException();
+				}
 				// ensure the dialog is large enough for this page
 				updateSizeForPage(page);
 				wizardDialog.updateLayout();

@@ -14,7 +14,8 @@
 package org.eclipse.ui.dialogs;
 
 import org.eclipse.ui.help.*;
-import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
 import org.eclipse.ui.internal.misc.CheckboxTreeAndListGroup;
 import org.eclipse.ui.model.*;
 import org.eclipse.jface.viewers.*;
@@ -68,12 +69,12 @@ public class FileSelectionDialog extends SelectionDialog {
  */
 public FileSelectionDialog(Shell parentShell, FileSystemElement fileSystemElement, String message) {
 	super(parentShell);
-	setTitle(WorkbenchMessages.getString("FileSelectionDialog.title")); //$NON-NLS-1$
+	setTitle(IDEWorkbenchMessages.getString("FileSelectionDialog.title")); //$NON-NLS-1$
 	root = fileSystemElement;
 	if (message != null)
 		setMessage(message);
 	else
-		setMessage(WorkbenchMessages.getString("FileSelectionDialog.message")); //$NON-NLS-1$
+		setMessage(IDEWorkbenchMessages.getString("FileSelectionDialog.message")); //$NON-NLS-1$
 }
 /**
  * Add the selection and deselection buttons to the dialog.

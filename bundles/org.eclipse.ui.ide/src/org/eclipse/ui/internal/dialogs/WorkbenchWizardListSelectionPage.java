@@ -19,7 +19,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.DialogUtil;
 import org.eclipse.ui.internal.model.AdaptableList;
 import org.eclipse.ui.model.*;
@@ -47,7 +47,7 @@ public abstract class WorkbenchWizardListSelectionPage extends WorkbenchWizardSe
  */
 protected WorkbenchWizardListSelectionPage(IWorkbench aWorkbench, IStructuredSelection currentSelection, AdaptableList wizardElements, String message) {
 	super("singleWizardSelectionPage", aWorkbench, currentSelection, wizardElements);//$NON-NLS-1$
-	setDescription(WorkbenchMessages.getString("WizardList.description")); //$NON-NLS-1$
+	setDescription(IDEWorkbenchMessages.getString("WizardList.description")); //$NON-NLS-1$
 	this.message = message;
 }
 /** (non-Javadoc)

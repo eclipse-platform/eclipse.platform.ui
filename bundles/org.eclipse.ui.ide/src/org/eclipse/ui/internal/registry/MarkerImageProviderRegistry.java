@@ -14,7 +14,9 @@ package org.eclipse.ui.internal.registry;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.resources.*;
-import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.IMarkerImageProvider;
+import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.*;
 import java.util.*;
 import java.net.*;
@@ -102,7 +104,7 @@ public ImageDescriptor getImageDescriptor(IMarker marker) {
 						//image descriptor can be created without activating the plugin next
 						//time the workbench is started.
 						if(desc.provider == null)
-							desc.provider = (IMarkerImageProvider)WorkbenchPlugin.createExtension(
+							desc.provider = (IMarkerImageProvider)IDEWorkbenchPlugin.createExtension(
 								desc.element, ATT_PROVIDER_CLASS);
 						String path = desc.provider.getImagePath(marker);
 						if(path != desc.imagePath) {
@@ -124,7 +126,7 @@ public ImageDescriptor getImageDescriptor(IMarker marker) {
 				}
 			}
 		} catch (CoreException e) {
-			WorkbenchPlugin.getDefault().getLog().log(
+			IDEWorkbenchPlugin.getDefault().getLog().log(
 				new Status(
 					IStatus.ERROR,PlatformUI.PLUGIN_ID,0,
 					"Exception creating image descriptor for: " +  desc.markerType,//$NON-NLS-1$

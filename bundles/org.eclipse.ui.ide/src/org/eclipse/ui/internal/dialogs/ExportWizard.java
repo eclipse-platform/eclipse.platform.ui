@@ -18,7 +18,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
+import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
 import org.eclipse.ui.internal.model.AdaptableList;
 import org.eclipse.ui.internal.registry.WizardsRegistryReader;
 
@@ -57,7 +61,7 @@ public void addPages() {
 			this.workbench, 
 			this.selection, 
 			getAvailableExportWizards(), 
-			WorkbenchMessages.getString("ExportWizard.selectDestination")));  //$NON-NLS-1$
+			IDEWorkbenchMessages.getString("ExportWizard.selectDestination")));  //$NON-NLS-1$
 }
 /**
  * Returns the export wizards that are available for invocation.
@@ -72,7 +76,7 @@ public void init(IWorkbench aWorkbench,IStructuredSelection currentSelection) {
 	this.workbench = aWorkbench;
 	this.selection = currentSelection;
 	
-	setWindowTitle(WorkbenchMessages.getString("ExportWizard.title")); //$NON-NLS-1$
+	setWindowTitle(IDEWorkbenchMessages.getString("ExportWizard.title")); //$NON-NLS-1$
 	setDefaultPageImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_WIZBAN_EXPORT_WIZ));
 	setNeedsProgressMonitor(true);
 }

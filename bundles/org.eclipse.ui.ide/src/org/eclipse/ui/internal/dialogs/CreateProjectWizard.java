@@ -29,7 +29,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
-import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 
 /**
  * Internal workbench wizard to create a project
@@ -90,13 +90,13 @@ public class CreateProjectWizard extends Wizard {
 				if (((CoreException)t).getStatus().getCode() == IResourceStatus.CASE_VARIANT_EXISTS) {
 					MessageDialog.openError(
 						getShell(), 
-						WorkbenchMessages.getString("CreateProjectWizard.errorTitle"),  //$NON-NLS-1$
-						WorkbenchMessages.getString("CreateProjectWizard.caseVariantExistsError")  //$NON-NLS-1$,
+						IDEWorkbenchMessages.getString("CreateProjectWizard.errorTitle"),  //$NON-NLS-1$
+						IDEWorkbenchMessages.getString("CreateProjectWizard.caseVariantExistsError")  //$NON-NLS-1$,
 						);	
 				} else {
 					ErrorDialog.openError(
 						getShell(), 
-						WorkbenchMessages.getString("CreateProjectWizard.errorTitle"),  //$NON-NLS-1$
+						IDEWorkbenchMessages.getString("CreateProjectWizard.errorTitle"),  //$NON-NLS-1$
 						null, // no special message
 				 		((CoreException) t).getStatus());
 				}
@@ -111,8 +111,8 @@ public class CreateProjectWizard extends Wizard {
 						t));
 				MessageDialog.openError(
 					getShell(),
-					WorkbenchMessages.getString("CreateProjectWizard.errorTitle"),  //$NON-NLS-1$
-					WorkbenchMessages.format("CreateProjectWizard.internalError", new Object[] {t.getMessage()})); //$NON-NLS-1$
+					IDEWorkbenchMessages.getString("CreateProjectWizard.errorTitle"),  //$NON-NLS-1$
+					IDEWorkbenchMessages.format("CreateProjectWizard.internalError", new Object[] {t.getMessage()})); //$NON-NLS-1$
 			}
 			return null;
 		}

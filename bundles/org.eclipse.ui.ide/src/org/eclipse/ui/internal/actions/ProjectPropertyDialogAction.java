@@ -26,8 +26,8 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.PartEventAction;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
-import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.dialogs.PropertyDialog;
 import org.eclipse.ui.internal.dialogs.PropertyPageContributorManager;
 import org.eclipse.ui.internal.dialogs.PropertyPageManager;
@@ -41,8 +41,8 @@ public class ProjectPropertyDialogAction extends PartEventAction implements INul
 public ProjectPropertyDialogAction(IWorkbenchWindow window) {
 	super(new String());
 	this.window = window;
-	setText(WorkbenchMessages.getString("Workbench.projectProperties")); //$NON-NLS-1$
-	setToolTipText(WorkbenchMessages.getString("Workbench.projectPropertiesToolTip")); //$NON-NLS-1$
+	setText(IDEWorkbenchMessages.getString("Workbench.projectProperties")); //$NON-NLS-1$
+	setToolTipText(IDEWorkbenchMessages.getString("Workbench.projectPropertiesToolTip")); //$NON-NLS-1$
 	WorkbenchHelp.setHelp(this, IHelpContextIds.PROJECT_PROPERTY_DIALOG_ACTION);
 	window.getSelectionService().addSelectionListener(this);
 }
@@ -78,11 +78,11 @@ public void run() {
 	if (!pages.hasNext()) {
 		MessageDialog.openInformation(
 			window.getShell(),
-			WorkbenchMessages.getString("PropertyDialog.messageTitle"), //$NON-NLS-1$
-			WorkbenchMessages.format("PropertyDialog.noPropertyMessage", new Object[] {name})); //$NON-NLS-1$
+			IDEWorkbenchMessages.getString("PropertyDialog.messageTitle"), //$NON-NLS-1$
+			IDEWorkbenchMessages.format("PropertyDialog.noPropertyMessage", new Object[] {name})); //$NON-NLS-1$
 		return;
 	} else
-		title = WorkbenchMessages.format("PropertyDialog.propertyMessage", new Object[] {name}); //$NON-NLS-1$
+		title = IDEWorkbenchMessages.format("PropertyDialog.propertyMessage", new Object[] {name}); //$NON-NLS-1$
 
 	// @issue should use PropertyDialogAction instead
 	PropertyDialog propertyDialog = new PropertyDialog(window.getShell(), pageManager, new StructuredSelection(project)); 

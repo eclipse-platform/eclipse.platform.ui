@@ -20,8 +20,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
-import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.misc.WizardStepGroup;
 
 /**
@@ -90,7 +90,7 @@ public class MultiStepReviewWizardPage extends WizardPage {
 		
 		// Add a label to identify the details text field
 		Label label = new Label(composite, SWT.LEFT);
-		label.setText(WorkbenchMessages.getString("MultiStepReviewWizardPage.detailsLabel")); //$NON-NLS-1$
+		label.setText(IDEWorkbenchMessages.getString("MultiStepReviewWizardPage.detailsLabel")); //$NON-NLS-1$
 		GridData data = new GridData();
 		data.verticalAlignment = SWT.TOP;
 		label.setLayoutData(data);
@@ -109,7 +109,7 @@ public class MultiStepReviewWizardPage extends WizardPage {
 	 */
 	private void createInstructionsGroup(Composite parent) {
 		instructionLabel = new Label(parent, SWT.LEFT);
-		instructionLabel.setText(WorkbenchMessages.getString("MultiStepReviewWizardPage.instructionLabel")); //$NON-NLS-1$
+		instructionLabel.setText(IDEWorkbenchMessages.getString("MultiStepReviewWizardPage.instructionLabel")); //$NON-NLS-1$
 		GridData data = new GridData();
 		data.verticalAlignment = SWT.TOP;
 		data.horizontalSpan = 2;
@@ -163,9 +163,9 @@ public class MultiStepReviewWizardPage extends WizardPage {
 		super.setVisible(visible);
 		if (visible) {
 			if (stepWizard.canFinishOnReviewPage())
-				instructionLabel.setText(WorkbenchMessages.getString("MultiStepReviewWizardPage.instructionFinishLabel")); //$NON-NLS-1$
+				instructionLabel.setText(IDEWorkbenchMessages.getString("MultiStepReviewWizardPage.instructionFinishLabel")); //$NON-NLS-1$
 			else
-				instructionLabel.setText(WorkbenchMessages.getString("MultiStepReviewWizardPage.instructionNextLabel")); //$NON-NLS-1$
+				instructionLabel.setText(IDEWorkbenchMessages.getString("MultiStepReviewWizardPage.instructionNextLabel")); //$NON-NLS-1$
 			((Composite)getControl()).layout(true);
 		}
 	}

@@ -20,8 +20,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
-import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 
 /**
  * A selection dialog which shows the path variables defined in the 
@@ -58,7 +58,7 @@ public class PathVariableSelectionDialog extends SelectionDialog {
  */
 public PathVariableSelectionDialog(Shell parentShell, int variableType) {
 	super(parentShell);
-	setTitle(WorkbenchMessages.getString("PathVariableSelectionDialog.title")); //$NON-NLS-1$
+	setTitle(IDEWorkbenchMessages.getString("PathVariableSelectionDialog.title")); //$NON-NLS-1$
 	this.variableType = variableType;
 	pathVariablesGroup = new PathVariablesGroup(
 		false, 
@@ -80,8 +80,8 @@ protected void buttonPressed(int buttonId) {
 	if (buttonId == EXTEND_ID) {
 		FileFolderSelectionDialog dialog = new FileFolderSelectionDialog(getShell(), false, variableType);
 		PathVariablesGroup.PathVariableElement selection = pathVariablesGroup.getSelection()[0];
-		dialog.setTitle(WorkbenchMessages.getString("PathVariableSelectionDialog.ExtensionDialog.title")); //$NON-NLS-1$
-		dialog.setMessage(WorkbenchMessages.format("PathVariableSelectionDialog.ExtensionDialog.description", new Object[] {selection.name})); //$NON-NLS-1$
+		dialog.setTitle(IDEWorkbenchMessages.getString("PathVariableSelectionDialog.ExtensionDialog.title")); //$NON-NLS-1$
+		dialog.setMessage(IDEWorkbenchMessages.format("PathVariableSelectionDialog.ExtensionDialog.description", new Object[] {selection.name})); //$NON-NLS-1$
 		dialog.setInput(selection.path.toFile());
 		if (dialog.open() == FileFolderSelectionDialog.OK && pathVariablesGroup.performOk()) {
 			setExtensionResult(selection, (File) dialog.getResult()[0]);
@@ -105,7 +105,7 @@ protected void configureShell(Shell shell) {
  */
 protected void createButtonsForButtonBar(Composite parent) {
 	createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
-	createButton(parent, EXTEND_ID, WorkbenchMessages.getString("PathVariableSelectionDialog.extendButton"), false);//$NON-NLS-1$	
+	createButton(parent, EXTEND_ID, IDEWorkbenchMessages.getString("PathVariableSelectionDialog.extendButton"), false);//$NON-NLS-1$	
 	createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 	updateExtendButtonState();
 }

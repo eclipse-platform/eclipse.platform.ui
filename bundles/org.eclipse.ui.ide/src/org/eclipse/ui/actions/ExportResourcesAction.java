@@ -23,9 +23,9 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
-import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.ExportWizard;
 
 /**
@@ -44,7 +44,7 @@ public class ExportResourcesAction extends ResourceSelectionListenerAction {
 	 * Create a new instance of this class
 	 */
 	public ExportResourcesAction(IWorkbenchWindow window) {
-		this(window, WorkbenchMessages.getString("ExportResourcesAction.text")); //$NON-NLS-1$
+		this(window, IDEWorkbenchMessages.getString("ExportResourcesAction.text")); //$NON-NLS-1$
 	}
 
 	/**
@@ -52,7 +52,7 @@ public class ExportResourcesAction extends ResourceSelectionListenerAction {
 	 */
 	public ExportResourcesAction(IWorkbenchWindow window, String label) {
 		super(label); //$NON-NLS-1$
-		setToolTipText(WorkbenchMessages.getString("ExportResourcesAction.toolTip")); //$NON-NLS-1$
+		setToolTipText(IDEWorkbenchMessages.getString("ExportResourcesAction.toolTip")); //$NON-NLS-1$
 		setId(IWorkbenchActionConstants.EXPORT);
 		WorkbenchHelp.setHelp(this, IHelpContextIds.EXPORT_ACTION);
 		this.window = window;
@@ -97,7 +97,7 @@ public class ExportResourcesAction extends ResourceSelectionListenerAction {
 			selectionToPass = new StructuredSelection(selectedResources);
 
 		wizard.init(window.getWorkbench(), selectionToPass);
-		IDialogSettings workbenchSettings = WorkbenchPlugin.getDefault().getDialogSettings();
+		IDialogSettings workbenchSettings = IDEWorkbenchPlugin.getDefault().getDialogSettings();
 		IDialogSettings wizardSettings = workbenchSettings.getSection("ExportResourcesAction"); //$NON-NLS-1$
 		if (wizardSettings == null)
 			wizardSettings = workbenchSettings.addNewSection("ExportResourcesAction"); //$NON-NLS-1$

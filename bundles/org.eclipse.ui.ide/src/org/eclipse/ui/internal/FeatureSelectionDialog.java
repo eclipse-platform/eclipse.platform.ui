@@ -33,7 +33,7 @@ import org.eclipse.ui.AboutInfo;
 import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.dialogs.SimpleListContentProvider;
-import org.eclipse.ui.internal.misc.Assert;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 
 /**
  * Dialog to allow the user to select a feature from a list.
@@ -83,11 +83,13 @@ public class FeatureSelectionDialog extends SelectionDialog {
 		String helpContextId) {
 			
 		super(shell);
-		Assert.isTrue(features != null && features.length > 0);
+		if (features == null || features.length == 0) {
+			throw new IllegalArgumentException();
+		}
 		this.features = features;
 		this.helpContextId = helpContextId;
-		setTitle(WorkbenchMessages.getString(shellTitle));
-		setMessage(WorkbenchMessages.getString(shellMessage));
+		setTitle(IDEWorkbenchMessages.getString(shellTitle));
+		setMessage(IDEWorkbenchMessages.getString(shellMessage));
 			
 		// Sort ascending
 		Arrays.sort(features, new Comparator() {

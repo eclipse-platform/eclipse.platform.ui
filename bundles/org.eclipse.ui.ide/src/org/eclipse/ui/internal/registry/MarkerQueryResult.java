@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
-
-import org.eclipse.ui.internal.misc.Assert;
-
 /**
  * Instances of this class represent the result of a specific marker
  * query. Specifically they contain an ordered collection of marker 
@@ -38,8 +35,9 @@ public class MarkerQueryResult {
 	 * @param values the target marker's attribute values
 	 */
 	public MarkerQueryResult(String[] markerAttributeValues) {
-		Assert.isNotNull(markerAttributeValues);
-		
+		if (markerAttributeValues == null) {
+			throw new IllegalArgumentException();
+		}
 		values = markerAttributeValues;
 		computeHashCode();
 	}

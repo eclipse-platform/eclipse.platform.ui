@@ -21,7 +21,7 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 
 /**
  * Workbench-level composite for resource and container specification by the user.
@@ -47,7 +47,7 @@ public class ResourceAndContainerGroup implements Listener {
 	private boolean allowExistingResources = false;
 
 	// resource type (file, folder, project)
-	private String resourceType = WorkbenchMessages.getString("ResourceGroup.resource"); //$NON-NLS-1$
+	private String resourceType = IDEWorkbenchMessages.getString("ResourceGroup.resource"); //$NON-NLS-1$
 
 	// show closed projects in the tree, by default
 	private boolean showClosedProjects = true;
@@ -261,14 +261,14 @@ protected boolean validateContainer() {
 	IPath path = containerGroup.getContainerFullPath();
 	if (path == null) {
 		problemType = PROBLEM_CONTAINER_EMPTY;
-		problemMessage = WorkbenchMessages.getString("ResourceGroup.folderEmpty"); //$NON-NLS-1$
+		problemMessage = IDEWorkbenchMessages.getString("ResourceGroup.folderEmpty"); //$NON-NLS-1$
 		return false;
 	}
 	IWorkspace workspace = ResourcesPlugin.getWorkspace();
 	String projectName = path.segment(0);
 	if (projectName == null || !workspace.getRoot().getProject(projectName).exists()) {
 		problemType = PROBLEM_PROJECT_DOES_NOT_EXIST;
-		problemMessage = WorkbenchMessages.getString("ResourceGroup.noProject"); //$NON-NLS-1$
+		problemMessage = IDEWorkbenchMessages.getString("ResourceGroup.noProject"); //$NON-NLS-1$
 		return false;
 	}
 	return true;
@@ -314,7 +314,7 @@ protected boolean validateFullResourcePath(IPath resourcePath) {
 
 	if (!allowExistingResources && (workspace.getRoot().getFolder(resourcePath).exists() || workspace.getRoot().getFile(resourcePath).exists())) {
 		problemType = PROBLEM_RESOURCE_EXIST;
-		problemMessage = WorkbenchMessages.getString("ResourceGroup.nameExists"); //$NON-NLS-1$
+		problemMessage = IDEWorkbenchMessages.getString("ResourceGroup.nameExists"); //$NON-NLS-1$
 		return false;
 	} 
 	return true;
@@ -331,13 +331,13 @@ protected boolean validateResourceName() {
 
     if (resourceName.equals("")) {//$NON-NLS-1$
         problemType = PROBLEM_RESOURCE_EMPTY;
-        problemMessage = WorkbenchMessages.format("ResourceGroup.emptyName", new Object[] {resourceType}); //$NON-NLS-1$
+        problemMessage = IDEWorkbenchMessages.format("ResourceGroup.emptyName", new Object[] {resourceType}); //$NON-NLS-1$
         return false;
     }
     
     if(!(new Path("")).isValidSegment(resourceName)){ //$NON-NLS-1$
 		problemType = PROBLEM_NAME_INVALID;
-		problemMessage = WorkbenchMessages.format("ResourceGroup.invalidFilename", new String[] {resourceName}); //$NON-NLS-1$
+		problemMessage = IDEWorkbenchMessages.format("ResourceGroup.invalidFilename", new String[] {resourceName}); //$NON-NLS-1$
 		return false;
 	}
 	

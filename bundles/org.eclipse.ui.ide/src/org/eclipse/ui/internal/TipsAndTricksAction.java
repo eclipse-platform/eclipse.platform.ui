@@ -25,6 +25,9 @@ import org.eclipse.ui.AboutInfo;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.PartEventAction;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
 
 /**
  * Launch the tips and tricks action.
@@ -36,8 +39,8 @@ public class TipsAndTricksAction extends PartEventAction {
 	 *	Create an instance of this class
 	 */
 	public TipsAndTricksAction(IWorkbenchWindow window) {
-		super(WorkbenchMessages.getString("TipsAndTricks.text")); //$NON-NLS-1$
-		setToolTipText(WorkbenchMessages.getString("TipsAndTricks.toolTip")); //$NON-NLS-1$
+		super(IDEWorkbenchMessages.getString("TipsAndTricks.text")); //$NON-NLS-1$
+		setToolTipText(IDEWorkbenchMessages.getString("TipsAndTricks.toolTip")); //$NON-NLS-1$
 		WorkbenchHelp.setHelp(this, IHelpContextIds.TIPS_AND_TRICKS_ACTION);
 		setActionDefinitionId("org.eclipse.ui.help.tipsAndTricksAction"); //$NON-NLS-1$
 		this.window = window;
@@ -62,8 +65,8 @@ public class TipsAndTricksAction extends PartEventAction {
 		if (tipsAndTricksFeatures.size() == 0) {
 			MessageDialog.openInformation(
 				shell, 
-				WorkbenchMessages.getString("TipsAndTricksMessageDialog.title"), //$NON-NLS-1$
-				WorkbenchMessages.getString("TipsAndTricksMessageDialog.message")); //$NON-NLS-1$
+				IDEWorkbenchMessages.getString("TipsAndTricksMessageDialog.title"), //$NON-NLS-1$
+				IDEWorkbenchMessages.getString("TipsAndTricksMessageDialog.message")); //$NON-NLS-1$
 			return;
 		}
 
@@ -99,19 +102,19 @@ public class TipsAndTricksAction extends PartEventAction {
 					}
 				});
 			} else {
-				IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 1, WorkbenchMessages.getString("TipsAndTricksAction.hrefNotDefined"), null); //$NON-NLS-1$
+				IStatus status = new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH, 1, IDEWorkbenchMessages.getString("TipsAndTricksAction.hrefNotDefined"), null); //$NON-NLS-1$
 				ErrorDialog.openError(
 					shell, 
-					WorkbenchMessages.getString("TipsAndTricksErrorDialog.title"), //$NON-NLS-1$
-					WorkbenchMessages.getString("TipsAndTricksErrorDialog.noHref"), //$NON-NLS-1$
+					IDEWorkbenchMessages.getString("TipsAndTricksErrorDialog.title"), //$NON-NLS-1$
+					IDEWorkbenchMessages.getString("TipsAndTricksErrorDialog.noHref"), //$NON-NLS-1$
 					status);
 			}
 		} else {
-			IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 1, WorkbenchMessages.getString("TipsAndTricksAction.hrefNotDefined"), null); //$NON-NLS-1$
+			IStatus status = new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH, 1, IDEWorkbenchMessages.getString("TipsAndTricksAction.hrefNotDefined"), null); //$NON-NLS-1$
 			ErrorDialog.openError(
 				shell, 
-				WorkbenchMessages.getString("TipsAndTricksErrorDialog.title"), //$NON-NLS-1$
-				WorkbenchMessages.getString("TipsAndTricksErrorDialog.noFeatures"), //$NON-NLS-1$
+				IDEWorkbenchMessages.getString("TipsAndTricksErrorDialog.title"), //$NON-NLS-1$
+				IDEWorkbenchMessages.getString("TipsAndTricksErrorDialog.noFeatures"), //$NON-NLS-1$
 				status);
 		}
 	}

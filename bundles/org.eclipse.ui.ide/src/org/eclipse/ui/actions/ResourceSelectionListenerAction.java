@@ -13,7 +13,6 @@ package org.eclipse.ui.actions;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.*;
 import java.util.*;
 

@@ -12,8 +12,8 @@ package org.eclipse.ui.dialogs;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 
 /**
  * For creating non-existing folder resources along a given workspace path.
@@ -135,9 +135,9 @@ private IProject createProjectHandle(IWorkspaceRoot root, String projectName) {
  * @exception OperationCanceledException if the operation is canceled
  */
 public IContainer generateContainer(IProgressMonitor monitor) throws CoreException {
-	WorkbenchPlugin.getPluginWorkspace().run(new IWorkspaceRunnable() {
+	IDEWorkbenchPlugin.getPluginWorkspace().run(new IWorkspaceRunnable() {
 		public void run(IProgressMonitor monitor) throws CoreException {
-			monitor.beginTask(WorkbenchMessages.getString("ContainerGenerator.progressMessage"), 1000 * containerFullPath.segmentCount()); //$NON-NLS-1$
+			monitor.beginTask(IDEWorkbenchMessages.getString("ContainerGenerator.progressMessage"), 1000 * containerFullPath.segmentCount()); //$NON-NLS-1$
 			if (container != null)
 				return;
 
@@ -177,6 +177,6 @@ public IContainer generateContainer(IProgressMonitor monitor) throws CoreExcepti
  * @return the workspace root resource handle
  */
 private IWorkspaceRoot getWorkspaceRoot() {
-	return WorkbenchPlugin.getPluginWorkspace().getRoot();
+	return IDEWorkbenchPlugin.getPluginWorkspace().getRoot();
 }
 }

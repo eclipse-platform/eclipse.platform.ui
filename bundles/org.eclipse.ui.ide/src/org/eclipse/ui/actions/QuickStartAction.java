@@ -22,7 +22,6 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.util.Assert;
 
 import org.eclipse.ui.AboutInfo;
 import org.eclipse.ui.IEditorPart;
@@ -32,11 +31,11 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.FeatureSelectionDialog;
-import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
 import org.eclipse.ui.internal.Workbench;
-import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPage;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.WelcomeEditorInput;
 
 /**
@@ -51,9 +50,11 @@ public class QuickStartAction extends Action {
 	 * Creates an instance of this action, for use in the given window.
 	 */
 	public QuickStartAction(IWorkbenchWindow window) {
-		super(WorkbenchMessages.getString("QuickStart.text")); //$NON-NLS-1$
-		Assert.isNotNull(window);
-		setToolTipText(WorkbenchMessages.getString("QuickStart.toolTip")); //$NON-NLS-1$
+		super(IDEWorkbenchMessages.getString("QuickStart.text")); //$NON-NLS-1$
+		if (window == null) {
+			throw new IllegalArgumentException();
+		}
+		setToolTipText(IDEWorkbenchMessages.getString("QuickStart.toolTip")); //$NON-NLS-1$
 		WorkbenchHelp.setHelp(this, IHelpContextIds.QUICK_START_ACTION);
 		setActionDefinitionId("org.eclipse.ui.help.quickStartAction"); //$NON-NLS-1$
 		this.window = window;
@@ -89,8 +90,8 @@ public class QuickStartAction extends Action {
 		if (welcomeFeatures.size() == 0) {
 			MessageDialog.openInformation(
 				shell, 
-				WorkbenchMessages.getString("QuickStartMessageDialog.title"), //$NON-NLS-1$
-				WorkbenchMessages.getString("QuickStartMessageDialog.message")); //$NON-NLS-1$
+				IDEWorkbenchMessages.getString("QuickStartMessageDialog.title"), //$NON-NLS-1$
+				IDEWorkbenchMessages.getString("QuickStartMessageDialog.message")); //$NON-NLS-1$
 			return null;
 		}
 
@@ -160,7 +161,7 @@ public class QuickStartAction extends Action {
 			page = window.getActivePage();
 
 			if (page == null || page.getPerspective() == null) {
-				perspectiveId = WorkbenchPlugin.getDefault().getPerspectiveRegistry().getDefaultPerspective();
+				perspectiveId = IDEWorkbenchPlugin.getDefault().getPerspectiveRegistry().getDefaultPerspective();
 			}
 		}
 
@@ -187,11 +188,11 @@ public class QuickStartAction extends Action {
 		try {
 			page.openEditor(input, EDITOR_ID);
 		} catch (PartInitException e) {
-			IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 1, WorkbenchMessages.getString("QuickStartAction.openEditorException"), e); //$NON-NLS-1$
+			IStatus status = new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH, 1, IDEWorkbenchMessages.getString("QuickStartAction.openEditorException"), e); //$NON-NLS-1$
 			ErrorDialog.openError(
 				window.getShell(),
-				WorkbenchMessages.getString("Workbench.openEditorErrorDialogTitle"),  //$NON-NLS-1$
-				WorkbenchMessages.getString("Workbench.openEditorErrorDialogMessage"), //$NON-NLS-1$
+				IDEWorkbenchMessages.getString("Workbench.openEditorErrorDialogTitle"),  //$NON-NLS-1$
+				IDEWorkbenchMessages.getString("Workbench.openEditorErrorDialogMessage"), //$NON-NLS-1$
 				status);
 			return false;
 		}

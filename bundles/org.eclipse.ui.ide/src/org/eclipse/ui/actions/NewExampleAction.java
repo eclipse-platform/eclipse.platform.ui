@@ -22,11 +22,10 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
-import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.NewWizard;
-import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.registry.NewWizardsRegistryReader;
 
 /**
@@ -68,8 +67,10 @@ public class NewExampleAction extends Action {
 	 * 		selection and shell for opening the wizard.
 	 */
 	public NewExampleAction(IWorkbenchWindow window) {
-		super(WorkbenchMessages.getString("NewExampleAction.text")); //$NON-NLS-1$
-		Assert.isNotNull(window);
+		super(IDEWorkbenchMessages.getString("NewExampleAction.text")); //$NON-NLS-1$
+		if (window == null) {
+			throw new IllegalArgumentException();
+		}
 		this.window = window;
 		ISharedImages images = PlatformUI.getWorkbench().getSharedImages();
 		setImageDescriptor(
@@ -78,7 +79,7 @@ public class NewExampleAction extends Action {
 			images.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD_HOVER));
 		setDisabledImageDescriptor(
 			images.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD_DISABLED));
-		setToolTipText(WorkbenchMessages.getString("NewExampleAction.toolTip")); //$NON-NLS-1$
+		setToolTipText(IDEWorkbenchMessages.getString("NewExampleAction.toolTip")); //$NON-NLS-1$
 		WorkbenchHelp.setHelp(this, IHelpContextIds.NEW_ACTION);
 	}
 
@@ -98,7 +99,7 @@ public class NewExampleAction extends Action {
 			selectionToPass = (IStructuredSelection) selection;
 		wizard.init(workbench, selectionToPass);
 		IDialogSettings workbenchSettings =
-			WorkbenchPlugin.getDefault().getDialogSettings();
+			IDEWorkbenchPlugin.getDefault().getDialogSettings();
 		IDialogSettings wizardSettings = workbenchSettings.getSection("NewWizardAction"); //$NON-NLS-1$
 		if (wizardSettings == null)
 			wizardSettings = workbenchSettings.addNewSection("NewWizardAction"); //$NON-NLS-1$
@@ -109,7 +110,7 @@ public class NewExampleAction extends Action {
 		Shell parent = window.getShell();
 		WizardDialog dialog = new WizardDialog(parent, wizard);
 		dialog.create();
-		wizard.setWindowTitle(WorkbenchMessages.getString("NewExample.title")); //$NON-NLS-1$
+		wizard.setWindowTitle(IDEWorkbenchMessages.getString("NewExample.title")); //$NON-NLS-1$
 		dialog.getShell().setSize(
 			Math.max(SIZING_WIZARD_WIDTH, dialog.getShell().getSize().x),
 			SIZING_WIZARD_HEIGHT);

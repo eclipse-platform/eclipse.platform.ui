@@ -22,7 +22,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.part.DrillDownComposite;
 
@@ -47,8 +47,8 @@ public class ContainerSelectionGroup extends Composite {
 	private TreeViewer treeViewer;
 
 	// the message to display at the top of this dialog
-	private static final String DEFAULT_MSG_NEW_ALLOWED = WorkbenchMessages.getString("ContainerGroup.message"); //$NON-NLS-1$
-	private static final String DEFAULT_MSG_SELECT_ONLY = WorkbenchMessages.getString("ContainerGroup.selectFolder"); //$NON-NLS-1$
+	private static final String DEFAULT_MSG_NEW_ALLOWED = IDEWorkbenchMessages.getString("ContainerGroup.message"); //$NON-NLS-1$
+	private static final String DEFAULT_MSG_SELECT_ONLY = IDEWorkbenchMessages.getString("ContainerGroup.selectFolder"); //$NON-NLS-1$
 
 	// sizing constants
 	private static final int SIZING_SELECTION_PANE_WIDTH = 320;

@@ -11,7 +11,8 @@
 
 package org.eclipse.ui.internal.dialogs;
 
-import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.core.runtime.*;
 import org.xml.sax.*;
 import org.apache.xerces.parsers.*;
@@ -260,11 +261,11 @@ public void parse(InputStream is) {
 	try {
 		parser.parse(new InputSource(is));
 	} catch (SAXException e) {
-		IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 1, WorkbenchMessages.getString("WelcomeParser.parseException"), e);  //$NON-NLS-1$	
-		WorkbenchPlugin.log(WorkbenchMessages.getString("WelcomeParser.parseError"), status);  //$NON-NLS-1$	
+		IStatus status = new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH, 1, IDEWorkbenchMessages.getString("WelcomeParser.parseException"), e);  //$NON-NLS-1$	
+		IDEWorkbenchPlugin.log(IDEWorkbenchMessages.getString("WelcomeParser.parseError"), status);  //$NON-NLS-1$	
 	} catch (IOException e) {
-		IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 1, WorkbenchMessages.getString("WelcomeParser.parseException"), e); //$NON-NLS-1$	
-		WorkbenchPlugin.log(WorkbenchMessages.getString("WelcomeParser.parseError"), status);  //$NON-NLS-1$	
+		IStatus status = new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH, 1, IDEWorkbenchMessages.getString("WelcomeParser.parseException"), e); //$NON-NLS-1$	
+		IDEWorkbenchPlugin.log(IDEWorkbenchMessages.getString("WelcomeParser.parseError"), status);  //$NON-NLS-1$	
 	}
 }
 /**

@@ -27,7 +27,7 @@ import org.eclipse.ui.ICapabilityUninstallWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
-import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 
 /**
  * Internal workbench wizard to remove a capability
@@ -111,7 +111,7 @@ public class RemoveCapabilityWizard extends Wizard implements ICapabilityUninsta
 			if (t instanceof CoreException) {
 				ErrorDialog.openError(
 					getShell(), 
-					WorkbenchMessages.getString("RemoveCapabilityWizard.errorMessage"),  //$NON-NLS-1$
+					IDEWorkbenchMessages.getString("RemoveCapabilityWizard.errorMessage"),  //$NON-NLS-1$
 					null, // no special message
 			 		((CoreException) t).getStatus());
 			} else {
@@ -125,8 +125,8 @@ public class RemoveCapabilityWizard extends Wizard implements ICapabilityUninsta
 						t));
 				MessageDialog.openError(
 					getShell(),
-					WorkbenchMessages.getString("RemoveCapabilityWizard.errorMessage"),  //$NON-NLS-1$
-					WorkbenchMessages.format("RemoveCapabilityWizard.internalError", new Object[] {t.getMessage()})); //$NON-NLS-1$
+					IDEWorkbenchMessages.getString("RemoveCapabilityWizard.errorMessage"),  //$NON-NLS-1$
+					IDEWorkbenchMessages.format("RemoveCapabilityWizard.internalError", new Object[] {t.getMessage()})); //$NON-NLS-1$
 			}
 			return false;
 		}

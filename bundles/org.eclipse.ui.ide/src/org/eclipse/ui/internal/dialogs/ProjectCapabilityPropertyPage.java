@@ -25,9 +25,9 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
-import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
 import org.eclipse.ui.internal.misc.ProjectCapabilitySelectionGroup;
 import org.eclipse.ui.internal.registry.Capability;
 import org.eclipse.ui.internal.registry.CapabilityRegistry;
@@ -64,13 +64,13 @@ public class ProjectCapabilityPropertyPage extends PropertyPage {
 	protected Control createContents(Composite parent) {
 		WorkbenchHelp.setHelp(getControl(), IHelpContextIds.PROJECT_CAPABILITY_PROPERTY_PAGE);
 		noDefaultAndApplyButton();
-		CapabilityRegistry reg = WorkbenchPlugin.getDefault().getCapabilityRegistry();
+		CapabilityRegistry reg = IDEWorkbenchPlugin.getDefault().getCapabilityRegistry();
 		
 		String instructions;
 		if (reg.hasCapabilities())
-			instructions = WorkbenchMessages.getString("ProjectCapabilityPropertyPage.chooseCapabilities"); //$NON-NLS-1$
+			instructions = IDEWorkbenchMessages.getString("ProjectCapabilityPropertyPage.chooseCapabilities"); //$NON-NLS-1$
 		else
-			instructions = WorkbenchMessages.getString("ProjectCapabilityPropertyPage.noCapabilities"); //$NON-NLS-1$
+			instructions = IDEWorkbenchMessages.getString("ProjectCapabilityPropertyPage.noCapabilities"); //$NON-NLS-1$
 		Label label = new Label(parent, SWT.LEFT);
 		label.setFont(parent.getFont());
 		label.setText(instructions);
@@ -103,14 +103,14 @@ public class ProjectCapabilityPropertyPage extends PropertyPage {
 			return true;
 
 		// Validate the requested changes are ok
-		CapabilityRegistry reg = WorkbenchPlugin.getDefault().getCapabilityRegistry();
+		CapabilityRegistry reg = IDEWorkbenchPlugin.getDefault().getCapabilityRegistry();
 		Capability[] caps = capabilityGroup.getSelectedCapabilities();
 		IStatus status = reg.validateCapabilities(caps);
 		if (!status.isOK()) {
 			ErrorDialog.openError(
 				getShell(),
-				WorkbenchMessages.getString("ProjectCapabilityPropertyPage.errorTitle"), //$NON-NLS-1$
-				WorkbenchMessages.getString("ProjectCapabilityPropertyPage.invalidSelection"), //$NON-NLS-1$
+				IDEWorkbenchMessages.getString("ProjectCapabilityPropertyPage.errorTitle"), //$NON-NLS-1$
+				IDEWorkbenchMessages.getString("ProjectCapabilityPropertyPage.invalidSelection"), //$NON-NLS-1$
 				status);
 			return true;
 		}
@@ -123,8 +123,8 @@ public class ProjectCapabilityPropertyPage extends PropertyPage {
 		} catch (CoreException e) {
 			ErrorDialog.openError(
 				getShell(),
-				WorkbenchMessages.getString("ProjectCapabilityPropertyPage.errorTitle"), //$NON-NLS-1$
-				WorkbenchMessages.getString("ProjectCapabilityPropertyPage.internalError"), //$NON-NLS-1$
+				IDEWorkbenchMessages.getString("ProjectCapabilityPropertyPage.errorTitle"), //$NON-NLS-1$
+				IDEWorkbenchMessages.getString("ProjectCapabilityPropertyPage.internalError"), //$NON-NLS-1$
 				e.getStatus());
 			return true;
 		}

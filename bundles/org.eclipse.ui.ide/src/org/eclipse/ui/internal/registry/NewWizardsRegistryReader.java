@@ -15,9 +15,11 @@ import java.util.*;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.dialogs.WizardCollectionElement;
 import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.misc.Sorter;
 import org.eclipse.ui.internal.model.AdaptableList;
 
@@ -38,7 +40,7 @@ public class NewWizardsRegistryReader extends WizardsRegistryReader {
 	public final static String		FULL_EXAMPLES_WIZARD_CATEGORY = "org.eclipse.ui.Examples";//$NON-NLS-1$
 	private final static String		TAG_CATEGORY = "category";	//$NON-NLS-1$
 	private final static String		UNCATEGORIZED_WIZARD_CATEGORY = "org.eclipse.ui.Other";//$NON-NLS-1$
-	private final static String		UNCATEGORIZED_WIZARD_CATEGORY_LABEL = WorkbenchMessages.getString("NewWizardsRegistryReader.otherCategory");//$NON-NLS-1$
+	private final static String		UNCATEGORIZED_WIZARD_CATEGORY_LABEL = IDEWorkbenchMessages.getString("NewWizardsRegistryReader.otherCategory");//$NON-NLS-1$
 	private final static String		CATEGORY_SEPARATOR = "/";//$NON-NLS-1$
 	private final static String		ATT_CATEGORY = "category";//$NON-NLS-1$
 	private final static String ATT_PROJECT = "project";//$NON-NLS-1$
@@ -136,7 +138,7 @@ private void deferCategory(IConfigurationElement config) {
 	try {
 		category = new Category(config);
 	} catch (CoreException e) {
-		WorkbenchPlugin.log("Cannot create category: ", e.getStatus());//$NON-NLS-1$
+		IDEWorkbenchPlugin.log("Cannot create category: ", e.getStatus());//$NON-NLS-1$
 		return;
 	}
 

@@ -16,7 +16,9 @@ import java.util.StringTokenizer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
+import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.registry.NewWizardsRegistryReader;
 
 /**
@@ -104,9 +106,9 @@ public class NewWizard extends Wizard {
 		this.selection = currentSelection;
 
 		if (projectsOnly)
-			setWindowTitle(WorkbenchMessages.getString("NewProject.title")); //$NON-NLS-1$
+			setWindowTitle(IDEWorkbenchMessages.getString("NewProject.title")); //$NON-NLS-1$
 		else
-			setWindowTitle(WorkbenchMessages.getString("NewWizard.title")); //$NON-NLS-1$
+			setWindowTitle(IDEWorkbenchMessages.getString("NewWizard.title")); //$NON-NLS-1$
 		setDefaultPageImageDescriptor(
 			WorkbenchImages.getImageDescriptor(
 				IWorkbenchGraphicConstants.IMG_WIZBAN_NEW_WIZ));

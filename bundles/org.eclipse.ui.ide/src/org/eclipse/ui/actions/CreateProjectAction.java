@@ -21,12 +21,11 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
-import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.MultiStepWizardDialog;
 import org.eclipse.ui.internal.dialogs.NewProjectWizard;
-import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.registry.Capability;
 import org.eclipse.ui.internal.registry.CapabilityRegistry;
 import org.eclipse.ui.internal.ide.Category;
@@ -80,14 +79,16 @@ public class CreateProjectAction extends Action {
 	 * 		selection and shell for opening the wizard.
 	 */
 	public CreateProjectAction(IWorkbenchWindow window) {
-		super(WorkbenchMessages.getString("CreateProjectAction.text")); //$NON-NLS-1$
-		Assert.isNotNull(window);
+		super(IDEWorkbenchMessages.getString("CreateProjectAction.text")); //$NON-NLS-1$
+		if (window == null) {
+			throw new IllegalArgumentException();
+		}
 		this.window = window;
 		ISharedImages images = PlatformUI.getWorkbench().getSharedImages();
 		setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD));
 		setHoverImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD_HOVER));
 		setDisabledImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD_DISABLED));
-		setToolTipText(WorkbenchMessages.getString("CreateProjectAction.toolTip"));	 //$NON-NLS-1$
+		setToolTipText(IDEWorkbenchMessages.getString("CreateProjectAction.toolTip"));	 //$NON-NLS-1$
 		WorkbenchHelp.setHelp(this, IHelpContextIds.NEW_ACTION);
 	}
 
@@ -112,7 +113,7 @@ public class CreateProjectAction extends Action {
 		if (ids == null || ids.length == 0)
 			initialSelectedCategories = null;
 		else {
-			CapabilityRegistry reg = WorkbenchPlugin.getDefault().getCapabilityRegistry();
+			CapabilityRegistry reg = IDEWorkbenchPlugin.getDefault().getCapabilityRegistry();
 			ArrayList results = new ArrayList(ids.length);
 			for (int i = 0; i < ids.length; i++) {
 				Category cat = reg.findCategory(ids[i]);
@@ -138,7 +139,7 @@ public class CreateProjectAction extends Action {
 		if (ids == null || ids.length == 0)
 			initialProjectCapabilities = null;
 		else {
-			CapabilityRegistry reg = WorkbenchPlugin.getDefault().getCapabilityRegistry();
+			CapabilityRegistry reg = IDEWorkbenchPlugin.getDefault().getCapabilityRegistry();
 			ArrayList results = new ArrayList(ids.length);
 			for (int i = 0; i < ids.length; i++) {
 				Capability cap = reg.findCapability(ids[i]);

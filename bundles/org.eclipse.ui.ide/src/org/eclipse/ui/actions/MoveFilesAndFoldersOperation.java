@@ -13,7 +13,7 @@ package org.eclipse.ui.actions;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 
 /**
  * Moves files and folders.
@@ -101,7 +101,7 @@ public class MoveFilesAndFoldersOperation extends CopyFilesAndFoldersOperation {
 	 * @return the deep query message
 	 */
 	protected String getDeepCheckQuestion(IResource source) {
-		return WorkbenchMessages.format(
+		return IDEWorkbenchMessages.format(
 			"CopyFilesAndFoldersOperation.deepMoveQuestion", //$NON-NLS-1$
 			new Object[] {source.getFullPath().makeRelative()});
 	}
@@ -111,7 +111,7 @@ public class MoveFilesAndFoldersOperation extends CopyFilesAndFoldersOperation {
 	 * @return the task title
 	 */
 	protected String getOperationTitle() {
-		return WorkbenchMessages.getString("MoveFilesAndFoldersOperation.operationTitle"); //$NON-NLS-1$
+		return IDEWorkbenchMessages.getString("MoveFilesAndFoldersOperation.operationTitle"); //$NON-NLS-1$
 	}
 	/**
 	 * Returns the message for this operation's problems dialog.
@@ -119,7 +119,7 @@ public class MoveFilesAndFoldersOperation extends CopyFilesAndFoldersOperation {
 	 * @return the problems message
 	 */
 	protected String getProblemsMessage() {
-		return WorkbenchMessages.getString("MoveFilesAndFoldersOperation.problemMessage"); //$NON-NLS-1$
+		return IDEWorkbenchMessages.getString("MoveFilesAndFoldersOperation.problemMessage"); //$NON-NLS-1$
 	}
 	/**
 	 * Returns the title for this operation's problems dialog.
@@ -127,7 +127,7 @@ public class MoveFilesAndFoldersOperation extends CopyFilesAndFoldersOperation {
 	 * @return the problems dialog title
 	 */
 	protected String getProblemsTitle() {
-		return WorkbenchMessages.getString("MoveFilesAndFoldersOperation.moveFailedTitle"); //$NON-NLS-1$
+		return IDEWorkbenchMessages.getString("MoveFilesAndFoldersOperation.moveFailedTitle"); //$NON-NLS-1$
 	}
 	/**
 	 * Returns whether the source file in a destination collision
@@ -175,7 +175,7 @@ public class MoveFilesAndFoldersOperation extends CopyFilesAndFoldersOperation {
 
 			// is the source being copied onto itself?
 			if (sourceResource.getParent().equals(destination)) {
-				return WorkbenchMessages.format(
+				return IDEWorkbenchMessages.format(
 					"MoveFilesAndFoldersOperation.sameSourceAndDest", //$NON-NLS-1$
 					new Object[] {sourceResource.getName()});
 			}
@@ -184,7 +184,7 @@ public class MoveFilesAndFoldersOperation extends CopyFilesAndFoldersOperation {
 				IPath sourceLocation = sourceResource.getLocation();
 				IPath destinationResource = destinationLocation.append(sourceResource.getName());
 				if (sourceLocation != null && sourceLocation.isPrefixOf(destinationResource)) {
-					return WorkbenchMessages.format(
+					return IDEWorkbenchMessages.format(
 						"MoveFilesAndFoldersOperation.sameSourceAndDest", //$NON-NLS-1$
 						new Object[] {sourceResource.getName()});
 				}

@@ -21,7 +21,10 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
+import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
 import org.eclipse.ui.internal.misc.ResourceAndContainerGroup;
 
 /**
@@ -62,7 +65,7 @@ public SaveAsDialog(Shell parentShell) {
  */
 protected void configureShell(Shell shell) {
 	super.configureShell(shell);
-	shell.setText(WorkbenchMessages.getString("SaveAsDialog.text")); //$NON-NLS-1$
+	shell.setText(IDEWorkbenchMessages.getString("SaveAsDialog.text")); //$NON-NLS-1$
 	WorkbenchHelp.setHelp(shell, IHelpContextIds.SAVE_AS_DIALOG);
 }
 /* (non-Javadoc)
@@ -75,10 +78,10 @@ protected Control createContents(Composite parent) {
 	initializeControls();
 	validatePage();
 	resourceGroup.setFocus();
-	setTitle(WorkbenchMessages.getString("SaveAsDialog.title")); //$NON-NLS-1$
+	setTitle(IDEWorkbenchMessages.getString("SaveAsDialog.title")); //$NON-NLS-1$
 	dlgTitleImage = WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_DLGBAN_SAVEAS_DLG).createImage();
 	setTitleImage(dlgTitleImage);
-	setMessage(WorkbenchMessages.getString("SaveAsDialog.message")); //$NON-NLS-1$
+	setMessage(IDEWorkbenchMessages.getString("SaveAsDialog.message")); //$NON-NLS-1$
 	
 	return contents;
 }
@@ -122,7 +125,7 @@ protected Control createDialogArea(Composite parent) {
 		}
 	};
 
-	resourceGroup = new ResourceAndContainerGroup(composite, listener, WorkbenchMessages.getString("SaveAsDialog.fileLabel"), WorkbenchMessages.getString("SaveAsDialog.file")); //$NON-NLS-2$ //$NON-NLS-1$
+	resourceGroup = new ResourceAndContainerGroup(composite, listener, IDEWorkbenchMessages.getString("SaveAsDialog.fileLabel"), IDEWorkbenchMessages.getString("SaveAsDialog.file")); //$NON-NLS-2$ //$NON-NLS-1$
 	resourceGroup.setAllowExistingResources(true);
 
 	return parentComposite;
@@ -181,11 +184,11 @@ protected void okPressed() {
 			IDialogConstants.NO_LABEL,
 			IDialogConstants.CANCEL_LABEL
 		};
-		String question = WorkbenchMessages.format("SaveAsDialog.overwriteQuestion", //$NON-NLS-1$
+		String question = IDEWorkbenchMessages.format("SaveAsDialog.overwriteQuestion", //$NON-NLS-1$
 			new Object[] { path.toOSString() } );
 		MessageDialog d= new MessageDialog(
 			getShell(),
-			WorkbenchMessages.getString("Question"), //$NON-NLS-1$
+			IDEWorkbenchMessages.getString("Question"), //$NON-NLS-1$
 			null,
 			question,
 			MessageDialog.QUESTION,

@@ -66,7 +66,7 @@ import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchAdviser;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchActionBuilder;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.MessageDialogWithToggle;
 import org.eclipse.ui.internal.dialogs.WelcomeEditorInput;
 import org.eclipse.ui.internal.model.WorkbenchAdapterBuilder;
@@ -168,7 +168,7 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 		if (avoidDeadlock) {
 			try {
 				Display display = Display.getCurrent();
-				UIWorkspaceLock uiLock = new UIWorkspaceLock(WorkbenchPlugin.getPluginWorkspace(), display);
+				UIWorkspaceLock uiLock = new UIWorkspaceLock(IDEWorkbenchPlugin.getPluginWorkspace(), display);
 				ResourcesPlugin.getWorkspace().setWorkspaceLock(uiLock);
 				display.setSynchronizer(new UISynchronizer(display, uiLock));
 			} catch (CoreException e) {
@@ -220,7 +220,7 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 	 * @see org.eclipse.ui.application.WorkbenchAdviser#postShutdown
 	 */
 	public void postShutdown() {
-		if (WorkbenchPlugin.getPluginWorkspace() != null) {
+		if (IDEWorkbenchPlugin.getPluginWorkspace() != null) {
 			disconnectFromWorkspace();
 		}
 	}
@@ -257,7 +257,7 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 			return true;
 
 		// @issue the Exit Prompt On Close preference is IDE specific
-		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store = IDEWorkbenchPlugin.getDefault().getPreferenceStore();
 		boolean promptOnExit =	store.getBoolean(IPreferenceConstants.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW);
 
 		if (promptOnExit) {
@@ -722,13 +722,13 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 		}
 
 		// @issue the preference WELCOME_DIALOG should be moved to the IDE preference store
-		if (WorkbenchPlugin.getDefault().getPreferenceStore().getBoolean(IPreferenceConstants.WELCOME_DIALOG)) {
+		if (IDEWorkbenchPlugin.getDefault().getPreferenceStore().getBoolean(IPreferenceConstants.WELCOME_DIALOG)) {
 			// Show the quick start wizard the first time the workbench opens.
 			URL url = primaryInfo.getWelcomePageURL();
 			if (url == null) {
 				return;
 			}
-			WorkbenchPlugin.getDefault().getPreferenceStore().setValue(IPreferenceConstants.WELCOME_DIALOG, false);
+			IDEWorkbenchPlugin.getDefault().getPreferenceStore().setValue(IPreferenceConstants.WELCOME_DIALOG, false);
 			openWelcomeEditor(window, new WelcomeEditorInput(primaryInfo), null);
 		} else {
 			// Show the welcome page for any newly installed features

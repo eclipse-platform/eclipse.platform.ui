@@ -13,8 +13,7 @@ package org.eclipse.ui.internal.registry;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.misc.Assert;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
  * Instances of this class hold a marker type id and/or 
@@ -51,7 +50,9 @@ public class MarkerQuery {
 	 * @param attributes the targetted marker attributes
 	 */
 	public MarkerQuery(String markerType, String[] markerAttributes) {
-		Assert.isNotNull(markerAttributes);
+		if (markerAttributes == null) {
+			throw new IllegalArgumentException();
+		}
 		
 		type = markerType;
 		attributes = markerAttributes;
@@ -75,7 +76,7 @@ public class MarkerQuery {
 			if (type != null && !type.equals(marker.getType()))
 				return null;
 		} catch (CoreException e) {
-			WorkbenchPlugin.log("Error accessing marker type", e.getStatus()); //$NON-NLS-1$
+			IDEWorkbenchPlugin.log("Error accessing marker type", e.getStatus()); //$NON-NLS-1$
 			return null;
 		}
 			
@@ -88,7 +89,7 @@ public class MarkerQuery {
 					return null;
 				values[i] = value.toString();
 			} catch (CoreException e) {
-				WorkbenchPlugin.log("Error accessing marker attribute", e.getStatus()); //$NON-NLS-1$
+				IDEWorkbenchPlugin.log("Error accessing marker attribute", e.getStatus()); //$NON-NLS-1$
 				return null;
 			}
 		}

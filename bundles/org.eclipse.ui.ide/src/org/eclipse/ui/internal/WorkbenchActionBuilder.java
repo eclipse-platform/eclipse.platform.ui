@@ -51,7 +51,9 @@ import org.eclipse.ui.actions.RetargetAction;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.actions.ProjectPropertyDialogAction;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
 
 /**
  * Adds actions to a workbench window.
@@ -200,7 +202,7 @@ public final class WorkbenchActionBuilder {
 		// Listen for preference property changes to
 		// update the menubar and toolbar
 		IPreferenceStore store =
-			WorkbenchPlugin.getDefault().getPreferenceStore();
+			IDEWorkbenchPlugin.getDefault().getPreferenceStore();
 		store.addPropertyChangeListener(propertyChangeListener);
 
 		// Listen to workbench page lifecycle methods to enable
@@ -289,7 +291,7 @@ public final class WorkbenchActionBuilder {
 			addManualIncrementalBuildToolAction(configurer);
 		}
 
-		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store = IDEWorkbenchPlugin.getDefault().getPreferenceStore();
 		if (store.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN)) {
 			addPinEditorAction(configurer);
 		}
@@ -337,11 +339,11 @@ public final class WorkbenchActionBuilder {
 	 * Creates and returns the File menu.
 	 */
 	private MenuManager createFileMenu() {
-		MenuManager menu = new MenuManager(WorkbenchMessages.getString("Workbench.file"), IWorkbenchActionConstants.M_FILE); //$NON-NLS-1$
+		MenuManager menu = new MenuManager(IDEWorkbenchMessages.getString("Workbench.file"), IWorkbenchActionConstants.M_FILE); //$NON-NLS-1$
 		menu.add(new GroupMarker(IWorkbenchActionConstants.FILE_START));
 		{
 			this.newWizardMenu = new NewWizardMenu(getWindow());
-			MenuManager newMenu = new MenuManager(WorkbenchMessages.getString("Workbench.new")); //$NON-NLS-1$
+			MenuManager newMenu = new MenuManager(IDEWorkbenchMessages.getString("Workbench.new")); //$NON-NLS-1$
 			newMenu.add(this.newWizardMenu);
 			menu.add(newMenu);
 		}
@@ -395,7 +397,7 @@ public final class WorkbenchActionBuilder {
 	 * Creates and returns the Edit menu.
 	 */
 	private MenuManager createEditMenu() {
-		MenuManager menu = new MenuManager(WorkbenchMessages.getString("Workbench.edit"), IWorkbenchActionConstants.M_EDIT); //$NON-NLS-1$
+		MenuManager menu = new MenuManager(IDEWorkbenchMessages.getString("Workbench.edit"), IWorkbenchActionConstants.M_EDIT); //$NON-NLS-1$
 		menu.add(new GroupMarker(IWorkbenchActionConstants.EDIT_START));
 
 		menu.add(undoAction);
@@ -430,11 +432,11 @@ public final class WorkbenchActionBuilder {
 	 * Creates and returns the Navigate menu.
 	 */
 	private MenuManager createNavigateMenu() {
-		MenuManager menu = new MenuManager(WorkbenchMessages.getString("Workbench.navigate"), IWorkbenchActionConstants.M_NAVIGATE); //$NON-NLS-1$
+		MenuManager menu = new MenuManager(IDEWorkbenchMessages.getString("Workbench.navigate"), IWorkbenchActionConstants.M_NAVIGATE); //$NON-NLS-1$
 		menu.add(new GroupMarker(IWorkbenchActionConstants.NAV_START));
 		menu.add(goIntoAction);
 
-		MenuManager goToSubMenu = new MenuManager(WorkbenchMessages.getString("Workbench.goTo"), IWorkbenchActionConstants.GO_TO); //$NON-NLS-1$
+		MenuManager goToSubMenu = new MenuManager(IDEWorkbenchMessages.getString("Workbench.goTo"), IWorkbenchActionConstants.GO_TO); //$NON-NLS-1$
 		menu.add(goToSubMenu);
 		goToSubMenu.add(backAction);
 		goToSubMenu.add(forwardAction);
@@ -447,7 +449,7 @@ public final class WorkbenchActionBuilder {
 		}
 		menu.add(new Separator(IWorkbenchActionConstants.SHOW_EXT));
 		{
-			MenuManager showInSubMenu = new MenuManager(WorkbenchMessages.getString("Workbench.showIn")); //$NON-NLS-1$
+			MenuManager showInSubMenu = new MenuManager(IDEWorkbenchMessages.getString("Workbench.showIn")); //$NON-NLS-1$
 			showInSubMenu.add(new ShowInMenu(getWindow()));
 			menu.add(showInSubMenu);
 		}
@@ -472,7 +474,7 @@ public final class WorkbenchActionBuilder {
 	 */
 	private MenuManager createProjectMenu() {
 		boolean autoBuild = ResourcesPlugin.getWorkspace().isAutoBuilding();
-		MenuManager menu = new MenuManager(WorkbenchMessages.getString("Workbench.project"), IWorkbenchActionConstants.M_PROJECT); //$NON-NLS-1$
+		MenuManager menu = new MenuManager(IDEWorkbenchMessages.getString("Workbench.project"), IWorkbenchActionConstants.M_PROJECT); //$NON-NLS-1$
 		menu.add(new Separator(IWorkbenchActionConstants.PROJ_START));
 
 		menu.add(openProjectAction);
@@ -502,10 +504,10 @@ public final class WorkbenchActionBuilder {
 	 * Creates and returns the Window menu.
 	 */
 	private MenuManager createWindowMenu() {
-		MenuManager menu = new MenuManager(WorkbenchMessages.getString("Workbench.window"), IWorkbenchActionConstants.M_WINDOW); //$NON-NLS-1$
+		MenuManager menu = new MenuManager(IDEWorkbenchMessages.getString("Workbench.window"), IWorkbenchActionConstants.M_WINDOW); //$NON-NLS-1$
 
 		OpenInNewWindowAction action = new OpenInNewWindowAction(getWindow());
-		action.setText(WorkbenchMessages.getString("Workbench.openNewWindow")); //$NON-NLS-1$
+		action.setText(IDEWorkbenchMessages.getString("Workbench.openNewWindow")); //$NON-NLS-1$
 		menu.add(action);
 		menu.add(new Separator());
 		addPerspectiveActions(menu);
@@ -525,7 +527,7 @@ public final class WorkbenchActionBuilder {
 	 */
 	private void addPerspectiveActions(MenuManager menu) {
 		{
-			String openText = WorkbenchMessages.getString("Workbench.openPerspective"); //$NON-NLS-1$
+			String openText = IDEWorkbenchMessages.getString("Workbench.openPerspective"); //$NON-NLS-1$
 			MenuManager changePerspMenuMgr = new MenuManager(openText); //$NON-NLS-1$
 			ChangeToPerspectiveMenu changePerspMenuItem =
 				new ChangeToPerspectiveMenu(getWindow());
@@ -533,7 +535,7 @@ public final class WorkbenchActionBuilder {
 			menu.add(changePerspMenuMgr);
 		}
 		{
-			MenuManager showViewMenuMgr = new MenuManager(WorkbenchMessages.getString("Workbench.showView")); //$NON-NLS-1$
+			MenuManager showViewMenuMgr = new MenuManager(IDEWorkbenchMessages.getString("Workbench.showView")); //$NON-NLS-1$
 			ShowViewMenu showViewMenu = new ShowViewMenu(getWindow());
 			showViewMenuMgr.add(showViewMenu);
 			menu.add(showViewMenuMgr);
@@ -552,7 +554,7 @@ public final class WorkbenchActionBuilder {
 	 * Adds the keyboard navigation submenu to the specified menu.
 	 */
 	private void addKeyboardShortcuts(MenuManager menu) {
-		MenuManager subMenu = new MenuManager(WorkbenchMessages.getString("Workbench.shortcuts")); //$NON-NLS-1$
+		MenuManager subMenu = new MenuManager(IDEWorkbenchMessages.getString("Workbench.shortcuts")); //$NON-NLS-1$
 		menu.add(subMenu);
 		subMenu.add(showPartPaneMenuAction);
 		subMenu.add(showViewMenuAction);
@@ -574,7 +576,7 @@ public final class WorkbenchActionBuilder {
 	 * Creates and returns the Help menu.
 	 */
 	private MenuManager createHelpMenu() {
-		MenuManager menu = new MenuManager(WorkbenchMessages.getString("Workbench.help"), IWorkbenchActionConstants.M_HELP); //$NON-NLS-1$
+		MenuManager menu = new MenuManager(IDEWorkbenchMessages.getString("Workbench.help"), IWorkbenchActionConstants.M_HELP); //$NON-NLS-1$
 		// See if a welcome page is specified
 		if (quickStartAction != null)
 			menu.add(quickStartAction);
@@ -598,7 +600,7 @@ public final class WorkbenchActionBuilder {
 		// Listen for preference property changes to
 		// update the menubar and toolbar
 		IPreferenceStore store =
-			WorkbenchPlugin.getDefault().getPreferenceStore();
+			IDEWorkbenchPlugin.getDefault().getPreferenceStore();
 		store.removePropertyChangeListener(propertyChangeListener);
 	}
 
@@ -667,7 +669,7 @@ public final class WorkbenchActionBuilder {
 			WorkbenchImages.getImageDescriptor(
 				IWorkbenchGraphicConstants.IMG_CTOOL_IMPORT_WIZ_DISABLED));
 
-		exportResourcesAction = new ExportResourcesAction(getWindow(), WorkbenchMessages.getString("ExportResourcesAction.fileMenuText")); //$NON-NLS-1$
+		exportResourcesAction = new ExportResourcesAction(getWindow(), IDEWorkbenchMessages.getString("ExportResourcesAction.fileMenuText")); //$NON-NLS-1$
 		exportResourcesAction.setImageDescriptor(
 			WorkbenchImages.getImageDescriptor(
 				IWorkbenchGraphicConstants.IMG_CTOOL_EXPORT_WIZ));
@@ -842,8 +844,8 @@ public final class WorkbenchActionBuilder {
 		addTaskAction = createGlobalAction(IWorkbenchActionConstants.ADD_TASK, "edit", false); //$NON-NLS-1$
 
 		// can't use createGlobalAction convenience since deleteAction is not registered with the key binding service
-		deleteAction = new RetargetAction(IWorkbenchActionConstants.DELETE, WorkbenchMessages.getString("Workbench.delete")); //$NON-NLS-1$
-		deleteAction.setToolTipText(WorkbenchMessages.getString("Workbench.deleteToolTip")); //$NON-NLS-1$
+		deleteAction = new RetargetAction(IWorkbenchActionConstants.DELETE, IDEWorkbenchMessages.getString("Workbench.delete")); //$NON-NLS-1$
+		deleteAction.setToolTipText(IDEWorkbenchMessages.getString("Workbench.deleteToolTip")); //$NON-NLS-1$
 		deleteAction.setImageDescriptor(
 			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE));
 		deleteAction.setHoverImageDescriptor(
@@ -1030,8 +1032,8 @@ public final class WorkbenchActionBuilder {
 		String actionDefSuffix,
 		boolean labelRetarget) {
 			
-		String text = WorkbenchMessages.getString("Workbench." + messageId); //$NON-NLS-1$
-		String toolTipText = WorkbenchMessages.getString("Workbench." + messageId + "ToolTip"); //$NON-NLS-1$ //$NON-NLS-2$
+		String text = IDEWorkbenchMessages.getString("Workbench." + messageId); //$NON-NLS-1$
+		String toolTipText = IDEWorkbenchMessages.getString("Workbench." + messageId + "ToolTip"); //$NON-NLS-1$ //$NON-NLS-2$
 		RetargetAction action;
 		if (labelRetarget) {
 			action = new LabelRetargetAction(id, text);
@@ -1050,7 +1052,7 @@ public final class WorkbenchActionBuilder {
 	 */
 	private void handlePropertyChange(PropertyChangeEvent event) {
 		IPreferenceStore store =
-			WorkbenchPlugin.getDefault().getPreferenceStore();
+			IDEWorkbenchPlugin.getDefault().getPreferenceStore();
 		if (event.getProperty().equals(IPreferenceConstants.REUSE_EDITORS_BOOLEAN)) {
 			if (store.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN))
 				addPinEditorAction(windowConfigurer);

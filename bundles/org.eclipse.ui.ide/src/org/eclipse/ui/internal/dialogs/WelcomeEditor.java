@@ -34,7 +34,11 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
+import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
 import org.eclipse.ui.part.EditorPart;
 
 /**
@@ -78,7 +82,7 @@ public class WelcomeEditor extends EditorPart {
  */
 public WelcomeEditor() {
 	super();
-	setTitle(WorkbenchMessages.getString("WelcomeEditor.title")); //$NON-NLS-1$
+	setTitle(IDEWorkbenchMessages.getString("WelcomeEditor.title")); //$NON-NLS-1$
 	copyAction = new WelcomeEditorCopyAction(this);
 	copyAction.setEnabled(false);	
 }
@@ -838,8 +842,8 @@ public void readFile() {
 		read(is);
 	}
 	catch (IOException e) {
-		IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 1, WorkbenchMessages.getString("WelcomeEditor.accessException"), e); //$NON-NLS-1$
-		WorkbenchPlugin.log(WorkbenchMessages.getString("WelcomeEditor.readFileError"), status); //$NON-NLS-1$
+		IStatus status = new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH, 1, IDEWorkbenchMessages.getString("WelcomeEditor.accessException"), e); //$NON-NLS-1$
+		IDEWorkbenchPlugin.log(IDEWorkbenchMessages.getString("WelcomeEditor.readFileError"), status); //$NON-NLS-1$
 	}
 	finally {
 		try { 

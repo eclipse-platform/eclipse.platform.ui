@@ -26,9 +26,9 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
-import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.OpenResourceDialog;
 
 /**
@@ -96,9 +96,9 @@ public void run(IAction action) {
 			page.openEditor(file);
 		}
 	} catch (CoreException x) {
-		String title = WorkbenchMessages.getString("OpenWorkspaceFileAction.errorTitle"); //$NON-NLS-1$
-		String message = WorkbenchMessages.getString("OpenWorkspaceFileAction.errorMessage"); //$NON-NLS-1$
-		WorkbenchPlugin.log(title, x.getStatus());
+		String title = IDEWorkbenchMessages.getString("OpenWorkspaceFileAction.errorTitle"); //$NON-NLS-1$
+		String message = IDEWorkbenchMessages.getString("OpenWorkspaceFileAction.errorMessage"); //$NON-NLS-1$
+		IDEWorkbenchPlugin.log(title, x.getStatus());
 		ErrorDialog.openError(workbenchWindow.getShell(), title, message, x.getStatus());
 	}
 }

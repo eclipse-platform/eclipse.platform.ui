@@ -11,7 +11,7 @@
 package org.eclipse.ui.internal.dialogs;
 
 import org.eclipse.jface.wizard.IWizard;
-import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 
 /**
  * Represents the create project step in a multi-step
@@ -36,14 +36,14 @@ public class CreateProjectStep extends WizardStep {
 	 * Method declared on WizardStep.
 	 */
 	public String getLabel() {
-		return WorkbenchMessages.getString("CreateProjectStep.label"); //$NON-NLS-1$
+		return IDEWorkbenchMessages.getString("CreateProjectStep.label"); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
 	 * Method declared on WizardStep.
 	 */
 	public String getDetails() {
-		return WorkbenchMessages.format("CreateProjectStep.details", new Object[] {stepWizard.getProjectName()}); //$NON-NLS-1$
+		return IDEWorkbenchMessages.format("CreateProjectStep.details", new Object[] {stepWizard.getProjectName()}); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

@@ -24,6 +24,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
 import org.eclipse.ui.actions.NewWizardAction;
 import org.eclipse.ui.actions.NewWizardMenu;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 
 /**
  * Invoke the resource creation wizard selection Wizard.
@@ -37,7 +38,7 @@ public class NewWizardDropDownAction extends Action implements IMenuCreator, IWo
 	 *	Create a new instance of this class
 	 */
 	public NewWizardDropDownAction(IWorkbenchWindow window, NewWizardAction newWizardAction) {
-		super(WorkbenchMessages.getString("NewWizardDropDown.text")); //$NON-NLS-1$
+		super(IDEWorkbenchMessages.getString("NewWizardDropDown.text")); //$NON-NLS-1$
 		this.window = window;
 		this.newWizardAction = newWizardAction;
 		setToolTipText(newWizardAction.getToolTipText());

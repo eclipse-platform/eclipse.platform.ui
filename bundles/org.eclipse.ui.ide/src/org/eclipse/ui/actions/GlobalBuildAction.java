@@ -20,8 +20,9 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.*;
-import org.eclipse.ui.internal.misc.Assert;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
 
 /**
  * Standard action for full and incremental builds of all projects
@@ -68,8 +69,12 @@ public class GlobalBuildAction extends Action {
  * @deprecated use GlobalBuildAction(IWorkbenchWindow, type) instead
  */
 public GlobalBuildAction(IWorkbench workbench, Shell shell, int type) {
-	Assert.isNotNull(workbench);
-	Assert.isNotNull(shell);
+	if (workbench == null) {
+		throw new IllegalArgumentException();
+	}
+	if (shell == null) {
+		throw new IllegalArgumentException();
+	}
 	this.workbench = workbench;
 	this.shell = shell;
 	setBuildType(type);
@@ -86,7 +91,9 @@ public GlobalBuildAction(IWorkbench workbench, Shell shell, int type) {
  *  <code>IncrementalProjectBuilder.FULL_BUILD</code>
  */
 public GlobalBuildAction(IWorkbenchWindow window, int type) {
-	Assert.isNotNull(window);
+	if (window == null) {
+		throw new IllegalArgumentException();
+	}
 	this.workbench = window.getWorkbench();
 	this.window = window;
 	setBuildType(type);
@@ -104,20 +111,19 @@ private void setBuildType(int type) {
 	switch (type) {
 		case IncrementalProjectBuilder.INCREMENTAL_BUILD:
 		case IncrementalProjectBuilder.AUTO_BUILD:
-			setText(WorkbenchMessages.getString("GlobalBuildAction.text")); //$NON-NLS-1$
-			setToolTipText(WorkbenchMessages.getString("GlobalBuildAction.toolTip")); //$NON-NLS-1$
+			setText(IDEWorkbenchMessages.getString("GlobalBuildAction.text")); //$NON-NLS-1$
+			setToolTipText(IDEWorkbenchMessages.getString("GlobalBuildAction.toolTip")); //$NON-NLS-1$
 			setId(IWorkbenchActionConstants.BUILD);
 			WorkbenchHelp.setHelp(this, IHelpContextIds.GLOBAL_INCREMENTAL_BUILD_ACTION);
 			break;
 		case IncrementalProjectBuilder.FULL_BUILD:
-			setText(WorkbenchMessages.getString("GlobalBuildAction.rebuildText")); //$NON-NLS-1$
-			setToolTipText(WorkbenchMessages.getString("GlobalBuildAction.rebuildToolTip")); //$NON-NLS-1$
+			setText(IDEWorkbenchMessages.getString("GlobalBuildAction.rebuildText")); //$NON-NLS-1$
+			setToolTipText(IDEWorkbenchMessages.getString("GlobalBuildAction.rebuildToolTip")); //$NON-NLS-1$
 			setId(IWorkbenchActionConstants.REBUILD_ALL);
 			WorkbenchHelp.setHelp(this, IHelpContextIds.GLOBAL_FULL_BUILD_ACTION);
 			break;
 		default:
-			Assert.isTrue(false, "Invalid build type"); //$NON-NLS-1$
-			break;
+			throw new IllegalArgumentException("Invalid build type"); //$NON-NLS-1$
 	}
 	this.buildType = type;
 }
@@ -139,9 +145,9 @@ private Shell getShell() {
  */
 private String getOperationMessage() {
 	if (buildType == IncrementalProjectBuilder.INCREMENTAL_BUILD)
-		return WorkbenchMessages.getString("GlobalBuildAction.buildOperationTitle"); //$NON-NLS-1$
+		return IDEWorkbenchMessages.getString("GlobalBuildAction.buildOperationTitle"); //$NON-NLS-1$
 	else
-		return WorkbenchMessages.getString("GlobalBuildAction.rebuildAllOperationTitle"); //$NON-NLS-1$
+		return IDEWorkbenchMessages.getString("GlobalBuildAction.rebuildAllOperationTitle"); //$NON-NLS-1$
 }
 /**
  * Builds all projects within the workspace. Does
@@ -159,7 +165,7 @@ public void doBuild() {
 	final MultiStatus status = new MultiStatus(
 		PlatformUI.PLUGIN_ID,
 		0,
-		WorkbenchMessages.getString("GlobalBuildAction.buildProblems"), //$NON-NLS-1$
+		IDEWorkbenchMessages.getString("GlobalBuildAction.buildProblems"), //$NON-NLS-1$
 		null);
 
 	IRunnableWithProgress op = new IRunnableWithProgress() {
@@ -190,11 +196,11 @@ public void doBuild() {
 	}
 	catch (InvocationTargetException e) {
 		// Unexpected runtime exceptions
-		WorkbenchPlugin.log("Exception in " + getClass().getName() + ".run: " + e.getTargetException());//$NON-NLS-2$//$NON-NLS-1$
+		IDEWorkbenchPlugin.log("Exception in " + getClass().getName() + ".run: " + e.getTargetException());//$NON-NLS-2$//$NON-NLS-1$
 		MessageDialog.openError(
 			shell, 
-			WorkbenchMessages.getString("GlobalBuildAction.buildProblems"), //$NON-NLS-1$
-			WorkbenchMessages.format(
+			IDEWorkbenchMessages.getString("GlobalBuildAction.buildProblems"), //$NON-NLS-1$
+			IDEWorkbenchMessages.format(
 				"GlobalBuildAction.internalError", //$NON-NLS-1$
 				new Object[] {e.getTargetException().getMessage()}));
 		return;
@@ -204,7 +210,7 @@ public void doBuild() {
 	if (!status.isOK()) {
 		ErrorDialog.openError(
 			shell,
-			WorkbenchMessages.getString("GlobalBuildAction.problemTitle"), //$NON-NLS-1$
+			IDEWorkbenchMessages.getString("GlobalBuildAction.problemTitle"), //$NON-NLS-1$
 			null, // no special message
 			status);
 	}
@@ -267,11 +273,11 @@ public void run() {
 		}
 	}
 	catch (CoreException e) {
-		WorkbenchPlugin.log("Exception in " + getClass().getName() + ".run: " + e);//$NON-NLS-2$//$NON-NLS-1$
+		IDEWorkbenchPlugin.log("Exception in " + getClass().getName() + ".run: " + e);//$NON-NLS-2$//$NON-NLS-1$
 		ErrorDialog.openError(
 			getShell(),
-			WorkbenchMessages.getString("GlobalBuildAction.buildProblems"), //$NON-NLS-1$
-			WorkbenchMessages.format("GlobalBuildAction.internalError", new Object[] {e.getMessage()}), //$NON-NLS-1$
+			IDEWorkbenchMessages.getString("GlobalBuildAction.buildProblems"), //$NON-NLS-1$
+			IDEWorkbenchMessages.format("GlobalBuildAction.internalError", new Object[] {e.getMessage()}), //$NON-NLS-1$
 			e.getStatus());
 		return false;
 	}

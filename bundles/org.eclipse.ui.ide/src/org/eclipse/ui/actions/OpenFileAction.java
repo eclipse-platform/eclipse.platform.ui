@@ -17,8 +17,10 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.ide.DialogUtil;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
 
 /**
  * Standard action for opening an editor on the currently selected file 
@@ -60,9 +62,9 @@ public OpenFileAction(IWorkbenchPage page) {
  */
 public OpenFileAction(IWorkbenchPage page, IEditorDescriptor descriptor) {
 	super(page);
-	setText(descriptor == null ? WorkbenchMessages.getString("OpenFileAction.text") : descriptor.getLabel()); //$NON-NLS-1$
+	setText(descriptor == null ? IDEWorkbenchMessages.getString("OpenFileAction.text") : descriptor.getLabel()); //$NON-NLS-1$
 	WorkbenchHelp.setHelp(this, IHelpContextIds.OPEN_FILE_ACTION);
-	setToolTipText(WorkbenchMessages.getString("OpenFileAction.toolTip")); //$NON-NLS-1$
+	setToolTipText(IDEWorkbenchMessages.getString("OpenFileAction.toolTip")); //$NON-NLS-1$
 	setId(ID);
 	this.editorDescriptor = descriptor;
 }
@@ -86,8 +88,8 @@ boolean ensureFileLocal(final IFile file) {
  */
 void openFile(IFile file) {
 	if (getWorkbenchPage() == null) {
-		IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 1, WorkbenchMessages.getString("OpenFileAction.openFileError"), null); //$NON-NLS-1$
-		WorkbenchPlugin.log(WorkbenchMessages.getString("OpenFileAction.openFileErrorTitle"), status); //$NON-NLS-1$
+		IStatus status = new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH, 1, IDEWorkbenchMessages.getString("OpenFileAction.openFileError"), null); //$NON-NLS-1$
+		IDEWorkbenchPlugin.log(IDEWorkbenchMessages.getString("OpenFileAction.openFileErrorTitle"), status); //$NON-NLS-1$
 		return;
 	}
 	try {
@@ -101,7 +103,7 @@ void openFile(IFile file) {
 	} catch (PartInitException e) {
 		DialogUtil.openError(
 			getWorkbenchPage().getWorkbenchWindow().getShell(),
-			WorkbenchMessages.getString("OpenFileAction.openFileShellTitle"), //$NON-NLS-1$
+			IDEWorkbenchMessages.getString("OpenFileAction.openFileShellTitle"), //$NON-NLS-1$
 			e.getMessage(),
 			e);
 	}

@@ -21,8 +21,8 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.DialogUtil;
 import org.eclipse.ui.internal.dialogs.IElementFilter;
 import org.eclipse.ui.internal.dialogs.ResourceTreeAndListGroup;
@@ -67,8 +67,8 @@ public abstract class WizardResourceImportPage extends WizardDataTransferPage {
 	protected ResourceTreeAndListGroup selectionGroup;
 
 	//messages
-	private static final String EMPTY_FOLDER_MESSAGE = WorkbenchMessages.getString("WizardImportPage.specifyFolder"); //$NON-NLS-1$
-	private static final String INACCESSABLE_FOLDER_MESSAGE = WorkbenchMessages.getString("WizardImportPage.folderMustExist"); //$NON-NLS-1$
+	private static final String EMPTY_FOLDER_MESSAGE = IDEWorkbenchMessages.getString("WizardImportPage.specifyFolder"); //$NON-NLS-1$
+	private static final String INACCESSABLE_FOLDER_MESSAGE = IDEWorkbenchMessages.getString("WizardImportPage.folderMustExist"); //$NON-NLS-1$
 
 /**
  * Creates an import wizard page. If the initial resource selection 
@@ -153,7 +153,7 @@ protected final void createDestinationGroup(Composite parent) {
 
 	// container label
 	Label resourcesLabel = new Label(containerGroup,SWT.NONE);
-	resourcesLabel.setText(WorkbenchMessages.getString("WizardImportPage.folder")); //$NON-NLS-1$
+	resourcesLabel.setText(IDEWorkbenchMessages.getString("WizardImportPage.folder")); //$NON-NLS-1$
 	resourcesLabel.setFont(parent.getFont());
 
 	// container name entry field
@@ -166,7 +166,7 @@ protected final void createDestinationGroup(Composite parent) {
 
 	// container browse button
 	containerBrowseButton = new Button(containerGroup,SWT.PUSH);
-	containerBrowseButton.setText(WorkbenchMessages.getString("WizardImportPage.browse2")); //$NON-NLS-1$
+	containerBrowseButton.setText(IDEWorkbenchMessages.getString("WizardImportPage.browse2")); //$NON-NLS-1$
 	containerBrowseButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 	containerBrowseButton.addListener(SWT.Selection,this);
 	containerBrowseButton.setFont(parent.getFont());
@@ -217,7 +217,7 @@ protected abstract void createSourceGroup(Composite parent);
  * @see WizardDataTransferPage.getErrorDialogTitle()
  */
 protected String getErrorDialogTitle(){
-	return WorkbenchMessages.getString("WizardImportPage.errorDialogTitle"); //$NON-NLS-1$
+	return IDEWorkbenchMessages.getString("WizardImportPage.errorDialogTitle"); //$NON-NLS-1$
 }
 
 /**
@@ -232,7 +232,7 @@ protected String getErrorDialogTitle(){
  *   the container name entry field, or <code>null</code>
  */
 protected IPath getContainerFullPath() {
-	IWorkspace workspace = WorkbenchPlugin.getPluginWorkspace();
+	IWorkspace workspace = IDEWorkbenchPlugin.getPluginWorkspace();
 
 	//make the path absolute to allow for optional leading slash
 	IPath testPath = getResourcePath();
@@ -296,7 +296,7 @@ protected void getSelectedResources(IElementFilter filter, IProgressMonitor moni
  *   or <code>null</code>
  */
 protected IContainer getSpecifiedContainer() {
-	IWorkspace workspace = WorkbenchPlugin.getPluginWorkspace();
+	IWorkspace workspace = IDEWorkbenchPlugin.getPluginWorkspace();
 	IPath path = getContainerFullPath();
 	if (workspace.getRoot().exists(path))
 		return (IContainer) workspace.getRoot().findMember(path);
@@ -320,8 +320,8 @@ protected void handleContainerBrowseButtonPressed() {
 	IPath containerPath =
 		queryForContainer(
 			getSpecifiedContainer(), 
-			WorkbenchMessages.getString("WizardImportPage.selectFolderLabel"), //$NON-NLS-1$
-			WorkbenchMessages.getString("WizardImportPage.selectFolderTitle")); //$NON-NLS-1$
+			IDEWorkbenchMessages.getString("WizardImportPage.selectFolderLabel"), //$NON-NLS-1$
+			IDEWorkbenchMessages.getString("WizardImportPage.selectFolderTitle")); //$NON-NLS-1$
 
 	// if a container was selected then put its name in the container name field
 	if (containerPath != null) { // null means user cancelled
@@ -439,14 +439,14 @@ protected final boolean validateDestinationGroup() {
 	IContainer container = getSpecifiedContainer();
 	if (container == null) {
 		//if it is does not exist be sure the project does
-		IWorkspace workspace = WorkbenchPlugin.getPluginWorkspace();
+		IWorkspace workspace = IDEWorkbenchPlugin.getPluginWorkspace();
 		IPath projectPath =
 			containerPath.removeLastSegments(containerPath.segmentCount() - 1);
 
 		if (workspace.getRoot().exists(projectPath))
 			return true;
 		else {
-			setErrorMessage(WorkbenchMessages.getString("WizardImportPage.projectNotExist")); //$NON-NLS-1$
+			setErrorMessage(IDEWorkbenchMessages.getString("WizardImportPage.projectNotExist")); //$NON-NLS-1$
 			return false;
 		}
 	} else {
@@ -456,10 +456,10 @@ protected final boolean validateDestinationGroup() {
 		}
 		if (container.getLocation() == null) {
 			if (container.isLinked()) {
-				setErrorMessage(WorkbenchMessages.getString("WizardImportPage.undefinedPathVariable")); //$NON-NLS-1$	
+				setErrorMessage(IDEWorkbenchMessages.getString("WizardImportPage.undefinedPathVariable")); //$NON-NLS-1$	
 			}
 			else {
-				setErrorMessage(WorkbenchMessages.getString("WizardImportPage.containerNotExist")); //$NON-NLS-1$
+				setErrorMessage(IDEWorkbenchMessages.getString("WizardImportPage.containerNotExist")); //$NON-NLS-1$
 			}
 			return false;
 		}
@@ -480,7 +480,7 @@ protected final boolean validateDestinationGroup() {
  */
 protected final String getSourceConflictMessage(){
 	return(
-		WorkbenchMessages.getString(
+		IDEWorkbenchMessages.getString(
 			"WizardImportPage.importOnReceiver")); //$NON-NLS-1$
 }
 
@@ -504,7 +504,7 @@ protected boolean sourceConflictsWithDestination(IPath sourcePath){
 protected boolean determinePageCompletion() {
 	//Check for valid projects before making the user do anything 
 	if(noOpenProjects()){
-		setErrorMessage(WorkbenchMessages.getString("WizardImportPage.noOpenProjects")); //$NON-NLS-1$
+		setErrorMessage(IDEWorkbenchMessages.getString("WizardImportPage.noOpenProjects")); //$NON-NLS-1$
 		return false;
 	}
 	return super.determinePageCompletion();
@@ -516,7 +516,7 @@ protected boolean determinePageCompletion() {
  * @return boolean
  */
 private boolean noOpenProjects(){
-	IProject[] projects = WorkbenchPlugin.getPluginWorkspace().getRoot().getProjects();
+	IProject[] projects = IDEWorkbenchPlugin.getPluginWorkspace().getRoot().getProjects();
 	for(int i = 0; i < projects.length; i ++){
 		if(projects[i].isOpen())
 			return false;

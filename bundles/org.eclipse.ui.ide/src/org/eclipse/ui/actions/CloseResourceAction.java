@@ -26,7 +26,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
 import org.eclipse.ui.internal.model.AdaptableList;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchPartLabelProvider;
@@ -48,9 +49,9 @@ public class CloseResourceAction extends WorkspaceAction implements IResourceCha
 	 * @param shell the shell for any dialogs
 	 */
 	public CloseResourceAction(Shell shell) {
-		super(shell, WorkbenchMessages.getString("CloseResourceAction.text")); //$NON-NLS-1$
+		super(shell, IDEWorkbenchMessages.getString("CloseResourceAction.text")); //$NON-NLS-1$
 		setId(ID);
-		setToolTipText(WorkbenchMessages.getString("CloseResourceAction.toolTip")); //$NON-NLS-1$
+		setToolTipText(IDEWorkbenchMessages.getString("CloseResourceAction.toolTip")); //$NON-NLS-1$
 		WorkbenchHelp.setHelp(this, IHelpContextIds.CLOSE_RESOURCE_ACTION);
 	}
 	/**
@@ -113,10 +114,10 @@ public class CloseResourceAction extends WorkspaceAction implements IResourceCha
 		AdaptableList input = new AdaptableList();
 		input.add(saveEditors.iterator());
 		ListSelectionDialog dlg =
-			new ListSelectionDialog(getShell(), input, new WorkbenchContentProvider(), new WorkbenchPartLabelProvider(), WorkbenchMessages.getString("EditorManager.saveResourcesMessage")); //$NON-NLS-1$
+			new ListSelectionDialog(getShell(), input, new WorkbenchContentProvider(), new WorkbenchPartLabelProvider(), IDEWorkbenchMessages.getString("EditorManager.saveResourcesMessage")); //$NON-NLS-1$
 
 		dlg.setInitialSelections(saveEditors.toArray(new Object[saveEditors.size()]));
-		dlg.setTitle(WorkbenchMessages.getString("EditorManager.saveResourcesTitle")); //$NON-NLS-1$
+		dlg.setTitle(IDEWorkbenchMessages.getString("EditorManager.saveResourcesTitle")); //$NON-NLS-1$
 		int result = dlg.open();
 
 		if (result == IDialogConstants.CANCEL_ID)
@@ -133,13 +134,13 @@ public class CloseResourceAction extends WorkspaceAction implements IResourceCha
 	 * Method declared on WorkspaceAction.
 	 */
 	String getProblemsMessage() {
-		return WorkbenchMessages.getString("CloseResourceAction.problemMessage"); //$NON-NLS-1$
+		return IDEWorkbenchMessages.getString("CloseResourceAction.problemMessage"); //$NON-NLS-1$
 	}
 	/* (non-Javadoc)
 	 * Method declared on WorkspaceAction.
 	 */
 	String getProblemsTitle() {
-		return WorkbenchMessages.getString("CloseResourceAction.title"); //$NON-NLS-1$
+		return IDEWorkbenchMessages.getString("CloseResourceAction.title"); //$NON-NLS-1$
 	}
 	/* (non-Javadoc)
 	 * Method declared on WorkspaceAction.

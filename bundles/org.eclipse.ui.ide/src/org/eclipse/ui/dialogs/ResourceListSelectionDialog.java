@@ -23,7 +23,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.StringMatcher;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
@@ -342,18 +342,18 @@ protected Control createDialogArea(Composite parent) {
 	
 	Composite dialogArea = (Composite)super.createDialogArea(parent);
 	Label l = new Label(dialogArea,SWT.NONE);
-	l.setText(WorkbenchMessages.getString("ResourceSelectionDialog.label")); //$NON-NLS-1$
+	l.setText(IDEWorkbenchMessages.getString("ResourceSelectionDialog.label")); //$NON-NLS-1$
 	GridData data = new GridData(GridData.FILL_HORIZONTAL);
 	l.setLayoutData(data);
 	
 	l = new Label(dialogArea,SWT.NONE);
-	l.setText(WorkbenchMessages.getString("ResourceSelectionDialog.pattern")); //$NON-NLS-1$
+	l.setText(IDEWorkbenchMessages.getString("ResourceSelectionDialog.pattern")); //$NON-NLS-1$
 	data = new GridData(GridData.FILL_HORIZONTAL);
 	l.setLayoutData(data);
 	pattern = new Text(dialogArea,SWT.SINGLE|SWT.BORDER);
 	pattern.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	l = new Label(dialogArea,SWT.NONE);
-	l.setText(WorkbenchMessages.getString("ResourceSelectionDialog.matching")); //$NON-NLS-1$
+	l.setText(IDEWorkbenchMessages.getString("ResourceSelectionDialog.matching")); //$NON-NLS-1$
 	data = new GridData(GridData.FILL_HORIZONTAL);
 	l.setLayoutData(data);
 	resourceNames = new Table(dialogArea,SWT.SINGLE|SWT.BORDER|SWT.V_SCROLL);
@@ -362,7 +362,7 @@ protected Control createDialogArea(Composite parent) {
 	resourceNames.setLayoutData(data);
 	
 	l = new Label(dialogArea,SWT.NONE);
-	l.setText(WorkbenchMessages.getString("ResourceSelectionDialog.folders")); //$NON-NLS-1$
+	l.setText(IDEWorkbenchMessages.getString("ResourceSelectionDialog.folders")); //$NON-NLS-1$
 	data = new GridData(GridData.FILL_HORIZONTAL);
 	l.setLayoutData(data);
 	

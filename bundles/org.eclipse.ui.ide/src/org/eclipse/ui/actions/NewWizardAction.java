@@ -26,9 +26,9 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
-import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.NewWizard;
 
 /**
@@ -64,13 +64,13 @@ public class NewWizardAction extends Action {
 	 *	Create a new instance of this class
 	 */
 	public NewWizardAction(IWorkbenchWindow window) {
-		super(WorkbenchMessages.getString("NewWizardAction.text")); //$NON-NLS-1$
+		super(IDEWorkbenchMessages.getString("NewWizardAction.text")); //$NON-NLS-1$
 		this.window = window;
 		ISharedImages images = PlatformUI.getWorkbench().getSharedImages();
 		setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD));
 		setHoverImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD_HOVER));
 		setDisabledImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD_DISABLED));
-		setToolTipText(WorkbenchMessages.getString("NewWizardAction.toolTip")); //$NON-NLS-1$
+		setToolTipText(IDEWorkbenchMessages.getString("NewWizardAction.toolTip")); //$NON-NLS-1$
 		WorkbenchHelp.setHelp(this, IHelpContextIds.NEW_ACTION);
 		setActionDefinitionId("org.eclipse.ui.newWizard"); //$NON-NLS-1$
 	}
@@ -121,7 +121,7 @@ public class NewWizardAction extends Action {
 		}
 
 		wizard.init(window.getWorkbench(), selectionToPass);
-		IDialogSettings workbenchSettings = WorkbenchPlugin.getDefault().getDialogSettings();
+		IDialogSettings workbenchSettings = IDEWorkbenchPlugin.getDefault().getDialogSettings();
 		IDialogSettings wizardSettings = workbenchSettings.getSection("NewWizardAction"); //$NON-NLS-1$
 		if (wizardSettings == null)
 			wizardSettings = workbenchSettings.addNewSection("NewWizardAction"); //$NON-NLS-1$

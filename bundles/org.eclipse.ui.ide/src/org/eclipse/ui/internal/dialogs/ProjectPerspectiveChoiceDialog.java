@@ -29,8 +29,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
-import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.model.PerspectiveLabelProvider;
 
 public class ProjectPerspectiveChoiceDialog extends Dialog {
@@ -86,7 +86,7 @@ public class ProjectPerspectiveChoiceDialog extends Dialog {
 	 */
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
-		shell.setText(WorkbenchMessages.getString("ProjectPerspectiveChoiceDialog.title")); //$NON-NLS-1$
+		shell.setText(IDEWorkbenchMessages.getString("ProjectPerspectiveChoiceDialog.title")); //$NON-NLS-1$
 		WorkbenchHelp.setHelp(shell, IHelpContextIds.SHOW_PROJECT_PERSPECTIVE_DIALOG);
 	}
 	
@@ -129,7 +129,7 @@ public class ProjectPerspectiveChoiceDialog extends Dialog {
 		// Label for choosing perspective
 		Label label = new Label(parent, SWT.NONE);
 		label.setFont(font);
-		label.setText(WorkbenchMessages.getString("ProjectPerspectiveChoiceDialog.choosePerspective")); //$NON-NLS-1$
+		label.setText(IDEWorkbenchMessages.getString("ProjectPerspectiveChoiceDialog.choosePerspective")); //$NON-NLS-1$
 		
 		// Add perspective list.
 		list = new TableViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
@@ -155,11 +155,11 @@ public class ProjectPerspectiveChoiceDialog extends Dialog {
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 		optionGroup.setLayoutData(data);
 		optionGroup.setFont(font);
-		optionGroup.setText(WorkbenchMessages.getString("ProjectPerspectiveChoiceDialog.options")); //$NON-NLS-1$
+		optionGroup.setText(IDEWorkbenchMessages.getString("ProjectPerspectiveChoiceDialog.options")); //$NON-NLS-1$
 
 		// Same window option
 		Button button = new Button(optionGroup, SWT.RADIO | SWT.LEFT);
-		button.setText(WorkbenchMessages.getString("ProjectPerspectiveChoiceDialog.sameWindow")); //$NON-NLS-1$
+		button.setText(IDEWorkbenchMessages.getString("ProjectPerspectiveChoiceDialog.sameWindow")); //$NON-NLS-1$
 		data = new GridData();
 		button.setLayoutData(data);
 		button.setFont(font);
@@ -172,7 +172,7 @@ public class ProjectPerspectiveChoiceDialog extends Dialog {
 		
 		// New window option
 		button = new Button(optionGroup, SWT.RADIO | SWT.LEFT);
-		button.setText(WorkbenchMessages.getString("ProjectPerspectiveChoiceDialog.newWindow")); //$NON-NLS-1$
+		button.setText(IDEWorkbenchMessages.getString("ProjectPerspectiveChoiceDialog.newWindow")); //$NON-NLS-1$
 		data = new GridData();
 		button.setLayoutData(data);
 		button.setFont(font);
@@ -221,8 +221,8 @@ public class ProjectPerspectiveChoiceDialog extends Dialog {
 		if (errors[0] != null) {
 			ErrorDialog.openError(
 				window.getShell(),
-				WorkbenchMessages.getString("ProjectPerspectiveChoiceDialog.errorTitle"), //$NON-NLS-1$
-				WorkbenchMessages.getString("ProjectPerspectiveChoiceDialog.errorMessage"), //$NON-NLS-1$
+				IDEWorkbenchMessages.getString("ProjectPerspectiveChoiceDialog.errorTitle"), //$NON-NLS-1$
+				IDEWorkbenchMessages.getString("ProjectPerspectiveChoiceDialog.errorMessage"), //$NON-NLS-1$
 				errors[0].getStatus());
 			errors[0] = null;
 			return window;

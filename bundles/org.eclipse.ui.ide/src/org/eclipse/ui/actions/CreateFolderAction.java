@@ -14,10 +14,9 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.wizards.newresource.BasicNewFolderResourceWizard;
-import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchImages;
-import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.misc.Assert;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Shell;
@@ -51,11 +50,13 @@ public class CreateFolderAction extends ResourceSelectionListenerAction {
  * @deprecated see deprecated tag on class
  */
 public CreateFolderAction(Shell shell) {
-	super(WorkbenchMessages.getString("CreateFolderAction.text")); //$NON-NLS-1$
-	Assert.isNotNull(shell);
+	super(IDEWorkbenchMessages.getString("CreateFolderAction.text")); //$NON-NLS-1$
+	if (shell == null) {
+		throw new IllegalArgumentException();
+	}
 	this.shell = shell;
 	setImageDescriptor(WorkbenchImages.getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER));
-	setToolTipText(WorkbenchMessages.getString("CreateFolderAction.toolTip")); //$NON-NLS-1$
+	setToolTipText(IDEWorkbenchMessages.getString("CreateFolderAction.toolTip")); //$NON-NLS-1$
 	setId(ID);
 	WorkbenchHelp.setHelp(this, IHelpContextIds.CREATE_FOLDER_ACTION);
 }
@@ -70,7 +71,7 @@ public void run() {
 	wizard.setNeedsProgressMonitor(true);
 	WizardDialog dialog = new WizardDialog(shell, wizard);
 	dialog.create();
-	dialog.getShell().setText(WorkbenchMessages.getString("CreateFolderAction.title")); //$NON-NLS-1$
+	dialog.getShell().setText(IDEWorkbenchMessages.getString("CreateFolderAction.title")); //$NON-NLS-1$
 	WorkbenchHelp.setHelp(dialog.getShell(), IHelpContextIds.NEW_FOLDER_WIZARD);
 	dialog.open();
 

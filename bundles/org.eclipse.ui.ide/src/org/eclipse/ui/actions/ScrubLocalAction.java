@@ -13,9 +13,9 @@ package org.eclipse.ui.actions;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 
@@ -38,8 +38,8 @@ public class ScrubLocalAction extends WorkspaceAction {
  * @param shell the shell for any dialogs
  */
 public ScrubLocalAction(Shell shell) {
-	super(shell, WorkbenchMessages.getString("ScrubLocalAction.text")); //$NON-NLS-1$
-	setToolTipText(WorkbenchMessages.getString("ScrubLocalAction.toolTip")); //$NON-NLS-1$
+	super(shell, IDEWorkbenchMessages.getString("ScrubLocalAction.text")); //$NON-NLS-1$
+	setToolTipText(IDEWorkbenchMessages.getString("ScrubLocalAction.toolTip")); //$NON-NLS-1$
 	setId(ID);
 	WorkbenchHelp.setHelp(this, IHelpContextIds.SCRUB_LOCAL_ACTION);
 }
@@ -47,19 +47,19 @@ public ScrubLocalAction(Shell shell) {
  * Method declared on WorkspaceAction.
  */
 String getOperationMessage() {
-	return WorkbenchMessages.getString("ScrubLocalAction.progress"); //$NON-NLS-1$
+	return IDEWorkbenchMessages.getString("ScrubLocalAction.progress"); //$NON-NLS-1$
 }
 /* (non-Javadoc)
  * Method declared on WorkspaceAction.
  */
 String getProblemsMessage() {
-	return WorkbenchMessages.getString("ScrubLocalAction.problemsMessage"); //$NON-NLS-1$
+	return IDEWorkbenchMessages.getString("ScrubLocalAction.problemsMessage"); //$NON-NLS-1$
 }
 /* (non-Javadoc)
  * Method declared on WorkspaceAction.
  */
 String getProblemsTitle() {
-	return WorkbenchMessages.getString("ScrubLocalAction.problemsTitle"); //$NON-NLS-1$
+	return IDEWorkbenchMessages.getString("ScrubLocalAction.problemsTitle"); //$NON-NLS-1$
 }
 /* (non-Javadoc)
  * Method declared on WorkspaceAction.

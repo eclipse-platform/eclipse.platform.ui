@@ -26,8 +26,8 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
-import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 
 /**
  * Preference page for linked resources. 
@@ -73,7 +73,7 @@ public class LinkedResourcesPreferencePage extends PreferencePage implements IWo
 		pageComponent.setFont(font);
 
 		final Button enableLinkedResourcesButton = new Button(pageComponent, SWT.CHECK);		
-		enableLinkedResourcesButton.setText(WorkbenchMessages.getString("LinkedResourcesPreference.enableLinkedResources")); //$NON-NLS-1$
+		enableLinkedResourcesButton.setText(IDEWorkbenchMessages.getString("LinkedResourcesPreference.enableLinkedResources")); //$NON-NLS-1$
 		enableLinkedResourcesButton.setFont(font);
 		enableLinkedResourcesButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -85,8 +85,8 @@ public class LinkedResourcesPreferencePage extends PreferencePage implements IWo
 				if (enabled) {
 					MessageDialog.openWarning(
 						getShell(), 
-						WorkbenchMessages.getString("LinkedResourcesPreference.linkedResourcesWarningTitle"),		//$NON-NLS-1$ 
-						WorkbenchMessages.getString("LinkedResourcesPreference.linkedResourcesWarningMessage"));	//$NON-NLS-1$
+						IDEWorkbenchMessages.getString("LinkedResourcesPreference.linkedResourcesWarningTitle"),		//$NON-NLS-1$ 
+						IDEWorkbenchMessages.getString("LinkedResourcesPreference.linkedResourcesWarningMessage"));	//$NON-NLS-1$
 				}
 			}
 		});
@@ -95,7 +95,7 @@ public class LinkedResourcesPreferencePage extends PreferencePage implements IWo
 		WorkbenchPreferencePage.createSpace(pageComponent);
 		
 		topLabel = new Label(pageComponent, SWT.NONE);
-		topLabel.setText(WorkbenchMessages.getString("LinkedResourcesPreference.explanation")); //$NON-NLS-1$
+		topLabel.setText(IDEWorkbenchMessages.getString("LinkedResourcesPreference.explanation")); //$NON-NLS-1$
 		data = new GridData();
 		data.verticalAlignment = GridData.FILL;
 		data.horizontalAlignment = GridData.FILL;

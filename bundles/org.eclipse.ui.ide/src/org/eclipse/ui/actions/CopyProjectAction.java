@@ -15,11 +15,10 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ProjectLocationSelectionDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import java.lang.reflect.InvocationTargetException;
@@ -32,10 +31,10 @@ import java.util.List;
  * manipulated. This should be disabled for multi select or no selection.
  */
 public class CopyProjectAction extends ResourceSelectionListenerAction {
-	private static String COPY_TOOL_TIP = WorkbenchMessages.getString("CopyProjectAction.toolTip"); //$NON-NLS-1$
-	private static String COPY_TITLE = WorkbenchMessages.getString("CopyProjectAction.title"); //$NON-NLS-1$
-	private static String COPY_PROGRESS_TITLE = WorkbenchMessages.getString("CopyProjectAction.progressTitle"); //$NON-NLS-1$
-	private static String PROBLEMS_TITLE = WorkbenchMessages.getString("CopyProjectAction.copyFailedTitle"); //$NON-NLS-1$
+	private static String COPY_TOOL_TIP = IDEWorkbenchMessages.getString("CopyProjectAction.toolTip"); //$NON-NLS-1$
+	private static String COPY_TITLE = IDEWorkbenchMessages.getString("CopyProjectAction.title"); //$NON-NLS-1$
+	private static String COPY_PROGRESS_TITLE = IDEWorkbenchMessages.getString("CopyProjectAction.progressTitle"); //$NON-NLS-1$
+	private static String PROBLEMS_TITLE = IDEWorkbenchMessages.getString("CopyProjectAction.copyFailedTitle"); //$NON-NLS-1$
 
 	/**
 	 * The id of this action.
@@ -74,7 +73,9 @@ CopyProjectAction(Shell shell, String name) {
 	super(name);
 	setToolTipText(COPY_TOOL_TIP);
 	setId(CopyProjectAction.ID);
-	Assert.isNotNull(shell);
+	if (shell == null) {
+		throw new IllegalArgumentException();
+	}
 	this.shell = shell;
 }
 /**
@@ -170,7 +171,7 @@ boolean performCopy(
 	} catch (InterruptedException e) {
 		return false;
 	} catch (InvocationTargetException e) {
-		displayError(WorkbenchMessages.format("CopyProjectAction.internalError", new Object[] {e.getTargetException().getMessage()})); //$NON-NLS-1$
+		displayError(IDEWorkbenchMessages.format("CopyProjectAction.internalError", new Object[] {e.getTargetException().getMessage()})); //$NON-NLS-1$
 		return false;
 	}
 
@@ -185,7 +186,7 @@ boolean performCopy(
 protected Object [] queryDestinationParameters(IProject project) {
 	ProjectLocationSelectionDialog dialog =
 		new ProjectLocationSelectionDialog(shell, project);
-	dialog.setTitle(WorkbenchMessages.getString("CopyProjectAction.copyTitle")); //$NON-NLS-1$
+	dialog.setTitle(IDEWorkbenchMessages.getString("CopyProjectAction.copyTitle")); //$NON-NLS-1$
 	dialog.open();
 	return dialog.getResult();
 }

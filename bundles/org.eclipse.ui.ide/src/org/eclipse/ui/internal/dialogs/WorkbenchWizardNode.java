@@ -20,7 +20,7 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
-import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 
 /**
  * A wizard node represents a "potential" wizard. Wizard nodes
@@ -108,11 +108,11 @@ public IWizard getWizard() {
 	});
 
 	if (statuses[0] != null) {
-		parentWizardPage.setErrorMessage(WorkbenchMessages.getString("WorkbenchWizard.errorMessage")); //$NON-NLS-1$
+		parentWizardPage.setErrorMessage(IDEWorkbenchMessages.getString("WorkbenchWizard.errorMessage")); //$NON-NLS-1$
 		ErrorDialog.openError(
 			parentWizardPage.getShell(),
-			WorkbenchMessages.getString("WorkbenchWizard.errorTitle"), //$NON-NLS-1$
-			WorkbenchMessages.getString("WorkbenchWizard.errorMessage"), //$NON-NLS-1$
+			IDEWorkbenchMessages.getString("WorkbenchWizard.errorTitle"), //$NON-NLS-1$
+			IDEWorkbenchMessages.getString("WorkbenchWizard.errorMessage"), //$NON-NLS-1$
 			statuses[0]);
 		return null;
 	}

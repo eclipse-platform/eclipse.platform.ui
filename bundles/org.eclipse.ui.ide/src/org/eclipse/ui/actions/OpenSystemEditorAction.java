@@ -16,11 +16,10 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
-import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.DialogUtil;
-import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import java.util.Iterator;
 
@@ -49,11 +48,13 @@ public class OpenSystemEditorAction extends ResourceSelectionListenerAction  {
  * @param page the workbench page in which to open the editor
  */
 public OpenSystemEditorAction(IWorkbenchPage page) {
-	super(WorkbenchMessages.getString("OpenSystemEditorAction.text")); //$NON-NLS-1$
-	setToolTipText(WorkbenchMessages.getString("OpenSystemEditorAction.toolTip")); //$NON-NLS-1$
+	super(IDEWorkbenchMessages.getString("OpenSystemEditorAction.text")); //$NON-NLS-1$
+	setToolTipText(IDEWorkbenchMessages.getString("OpenSystemEditorAction.toolTip")); //$NON-NLS-1$
 	setId(ID);
 	WorkbenchHelp.setHelp(this, IHelpContextIds.OPEN_SYSTEM_EDITOR_ACTION);
-	Assert.isNotNull(page);
+	if (page == null) {
+		throw new IllegalArgumentException();
+	}
 	this.workbenchPage = page;
 }
 /**
@@ -71,8 +72,8 @@ IWorkbenchPage getWorkbenchPage() {
  */
 void openFile(IFile file) {
 	if (getWorkbenchPage() == null) {
-		IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 1, WorkbenchMessages.getString("OpenSystemEditorAction.pageError"), null); //$NON-NLS-1$
-		WorkbenchPlugin.log(WorkbenchMessages.getString("OpenSystemEditorAction.logTitle"), status); //$NON-NLS-1$
+		IStatus status = new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH, 1, IDEWorkbenchMessages.getString("OpenSystemEditorAction.pageError"), null); //$NON-NLS-1$
+		IDEWorkbenchPlugin.log(IDEWorkbenchMessages.getString("OpenSystemEditorAction.logTitle"), status); //$NON-NLS-1$
 		return;
 	}
 	try {
@@ -80,7 +81,7 @@ void openFile(IFile file) {
 	} catch (PartInitException e) {
 		DialogUtil.openError(
 			getWorkbenchPage().getWorkbenchWindow().getShell(),
-			WorkbenchMessages.getString("OpenSystemEditorAction.dialogTitle"), //$NON-NLS-1$
+			IDEWorkbenchMessages.getString("OpenSystemEditorAction.dialogTitle"), //$NON-NLS-1$
 			e.getMessage(),
 			e);
 	}

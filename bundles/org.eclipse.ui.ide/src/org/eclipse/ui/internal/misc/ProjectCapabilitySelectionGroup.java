@@ -26,27 +26,14 @@ import java.util.Map;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
-import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.ICheckStateListener;
-import org.eclipse.jface.viewers.IContentProvider;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.ListViewer;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.registry.Capability;
 import org.eclipse.ui.internal.registry.CapabilityRegistry;
 import org.eclipse.ui.internal.ide.Category;
@@ -61,7 +48,8 @@ public class ProjectCapabilitySelectionGroup {
 	private static final String EMPTY_DESCRIPTION = "\n\n\n"; //$NON-NLS-1$
 	
 	private CapabilityRegistry registry;
-	private Category[] initialCategories;
+	// @issue need own ICategory
+	private ICategory[] initialCategories;
 	private Capability[] initialCapabilities;
 	private Capability[] disabledCapabilities;
 	private boolean modified = false;
@@ -87,8 +75,8 @@ public class ProjectCapabilitySelectionGroup {
 		private Collator collator = Collator.getInstance();
 
 		public int compare(Object ob1, Object ob2) {
-			Category c1 = (Category) ob1;
-			Category c2 = (Category) ob2;
+			ICategory c1 = (ICategory) ob1;
+			ICategory c2 = (ICategory) ob2;
 			return collator.compare(c1.getLabel(), c2.getLabel());
 		}
 	};
@@ -111,7 +99,7 @@ public class ProjectCapabilitySelectionGroup {
 	 * @param capabilities the intial collection of valid capabilities to select
 	 * @param registry all available capabilities registered by plug-ins
 	 */
-	public ProjectCapabilitySelectionGroup(Category[] categories, Capability[] capabilities, CapabilityRegistry registry) {
+	public ProjectCapabilitySelectionGroup(ICategory[] categories, Capability[] capabilities, CapabilityRegistry registry) {
 		this(categories, capabilities, null, registry);
 	}
 
@@ -123,7 +111,7 @@ public class ProjectCapabilitySelectionGroup {
 	 * @param disabledCapabilities the collection of capabilities to show as disabled
 	 * @param registry all available capabilities registered by plug-ins
 	 */
-	public ProjectCapabilitySelectionGroup(Category[] categories, Capability[] capabilities, Capability[] disabledCapabilities, CapabilityRegistry registry) {
+	public ProjectCapabilitySelectionGroup(ICategory[] categories, Capability[] capabilities, Capability[] disabledCapabilities, CapabilityRegistry registry) {
 		super();
 		this.initialCategories = categories;
 		this.initialCapabilities = capabilities;
@@ -153,7 +141,7 @@ public class ProjectCapabilitySelectionGroup {
 		
 		// Add a label to identify the list viewer of categories
 		Label categoryLabel = new Label(catComposite, SWT.LEFT);
-		categoryLabel.setText(WorkbenchMessages.getString("ProjectCapabilitySelectionGroup.categories")); //$NON-NLS-1$
+		categoryLabel.setText(IDEWorkbenchMessages.getString("ProjectCapabilitySelectionGroup.categories")); //$NON-NLS-1$
 		GridData data = new GridData();
 		data.verticalAlignment = SWT.TOP;
 		categoryLabel.setLayoutData(data);
@@ -174,7 +162,7 @@ public class ProjectCapabilitySelectionGroup {
 		
 		// Add a label to identify the checkbox tree viewer of capabilities
 		Label capabilityLabel = new Label(capComposite, SWT.LEFT);
-		capabilityLabel.setText(WorkbenchMessages.getString("ProjectCapabilitySelectionGroup.capabilities")); //$NON-NLS-1$
+		capabilityLabel.setText(IDEWorkbenchMessages.getString("ProjectCapabilitySelectionGroup.capabilities")); //$NON-NLS-1$
 		data = new GridData();
 		data.verticalAlignment = SWT.TOP;
 		capabilityLabel.setLayoutData(data);
@@ -190,7 +178,7 @@ public class ProjectCapabilitySelectionGroup {
 
 		// Add a label to identify the text field of capability's description
 		Label descLabel = new Label(composite, SWT.LEFT);
-		descLabel.setText(WorkbenchMessages.getString("ProjectCapabilitySelectionGroup.description")); //$NON-NLS-1$
+		descLabel.setText(IDEWorkbenchMessages.getString("ProjectCapabilitySelectionGroup.description")); //$NON-NLS-1$
 		data = new GridData();
 		data.verticalAlignment = SWT.TOP;
 		data.horizontalSpan = 2;
@@ -210,7 +198,7 @@ public class ProjectCapabilitySelectionGroup {
 		
 		// Add a text field to explain grayed out items
 		Label grayLabel = new Label(composite, SWT.LEFT);
-		grayLabel.setText(WorkbenchMessages.getString("ProjectCapabilitySelectionGroup.grayItems")); //$NON-NLS-1$
+		grayLabel.setText(IDEWorkbenchMessages.getString("ProjectCapabilitySelectionGroup.grayItems")); //$NON-NLS-1$
 		data = new GridData();
 		data.verticalAlignment = SWT.TOP;
 		data.horizontalSpan = 2;
@@ -248,7 +236,7 @@ public class ProjectCapabilitySelectionGroup {
 					visibleCapabilities.clear();
 					Iterator enum = sel.iterator();
 					while (enum.hasNext()) {
-						Category cat = (Category)enum.next();
+						ICategory cat = (ICategory)enum.next();
 						visibleCapabilities.addAll(cat.getElements());
 					}
 					Collections.sort(visibleCapabilities, capabilityComparator);
@@ -327,6 +315,7 @@ public class ProjectCapabilitySelectionGroup {
 	private ArrayList getAvailableCategories() {
 		ArrayList results = registry.getUsedCategories();
 		Collections.sort(results, categoryComparator);
+		// @issue new own default misc category
 		if (registry.getMiscCategory() != null)
 			results.add(registry.getMiscCategory());
 		return results;
@@ -474,8 +463,8 @@ public class ProjectCapabilitySelectionGroup {
 		if (isDisabledCapability(capability)) {
 			MessageDialog.openWarning(
 				checkboxViewer.getControl().getShell(),
-				WorkbenchMessages.getString("ProjectCapabilitySelectionGroup.errorTitle"), //$NON-NLS-1$
-				WorkbenchMessages.format("ProjectCapabilitySelectionGroup.disabledCapability", new Object[] {capability.getName()})); //$NON-NLS-1$
+				IDEWorkbenchMessages.getString("ProjectCapabilitySelectionGroup.errorTitle"), //$NON-NLS-1$
+				IDEWorkbenchMessages.format("ProjectCapabilitySelectionGroup.disabledCapability", new Object[] {capability.getName()})); //$NON-NLS-1$
 			checkboxViewer.setChecked(capability, false);
 			return;
 		}
@@ -484,8 +473,8 @@ public class ProjectCapabilitySelectionGroup {
 		if (!capability.isValid()) {
 			MessageDialog.openWarning(
 				checkboxViewer.getControl().getShell(),
-				WorkbenchMessages.getString("ProjectCapabilitySelectionGroup.errorTitle"), //$NON-NLS-1$
-				WorkbenchMessages.format("ProjectCapabilitySelectionGroup.invalidCapability", new Object[] {capability.getName()})); //$NON-NLS-1$
+				IDEWorkbenchMessages.getString("ProjectCapabilitySelectionGroup.errorTitle"), //$NON-NLS-1$
+				IDEWorkbenchMessages.format("ProjectCapabilitySelectionGroup.invalidCapability", new Object[] {capability.getName()})); //$NON-NLS-1$
 			checkboxViewer.setChecked(capability, false);
 			return;
 		}
@@ -497,8 +486,8 @@ public class ProjectCapabilitySelectionGroup {
 			if (member != null && member != capability) {
 				MessageDialog.openWarning(
 					checkboxViewer.getControl().getShell(),
-					WorkbenchMessages.getString("ProjectCapabilitySelectionGroup.errorTitle"), //$NON-NLS-1$
-					WorkbenchMessages.format("ProjectCapabilitySelectionGroup.membershipConflict", new Object[] {capability.getName(), member.getName()})); //$NON-NLS-1$
+					IDEWorkbenchMessages.getString("ProjectCapabilitySelectionGroup.errorTitle"), //$NON-NLS-1$
+					IDEWorkbenchMessages.format("ProjectCapabilitySelectionGroup.membershipConflict", new Object[] {capability.getName(), member.getName()})); //$NON-NLS-1$
 				checkboxViewer.setChecked(capability, false);
 				return;
 			}
@@ -524,8 +513,8 @@ public class ProjectCapabilitySelectionGroup {
 					if (prereqCapabilities[i] == null || isDisabledCapability(prereqCapabilities[i]) || !prereqCapabilities[i].isValid()) {
 						MessageDialog.openWarning(
 							checkboxViewer.getControl().getShell(),
-							WorkbenchMessages.getString("ProjectCapabilitySelectionGroup.errorTitle"), //$NON-NLS-1$
-							WorkbenchMessages.format("ProjectCapabilitySelectionGroup.missingPrereqs", new Object[] {capability.getName(), prereqIds[i]})); //$NON-NLS-1$
+							IDEWorkbenchMessages.getString("ProjectCapabilitySelectionGroup.errorTitle"), //$NON-NLS-1$
+							IDEWorkbenchMessages.format("ProjectCapabilitySelectionGroup.missingPrereqs", new Object[] {capability.getName(), prereqIds[i]})); //$NON-NLS-1$
 						checkboxViewer.setChecked(capability, false);
 						return;
 					}
@@ -537,8 +526,8 @@ public class ProjectCapabilitySelectionGroup {
 						if (member != null && member != prereqCapabilities[i]) {
 							MessageDialog.openWarning(
 								checkboxViewer.getControl().getShell(),
-								WorkbenchMessages.getString("ProjectCapabilitySelectionGroup.errorTitle"), //$NON-NLS-1$
-								WorkbenchMessages.format("ProjectCapabilitySelectionGroup.membershipPrereqConflict", new Object[] {capability.getName(), prereqCapabilities[i].getName(), member.getName()})); //$NON-NLS-1$
+								IDEWorkbenchMessages.getString("ProjectCapabilitySelectionGroup.errorTitle"), //$NON-NLS-1$
+								IDEWorkbenchMessages.format("ProjectCapabilitySelectionGroup.membershipPrereqConflict", new Object[] {capability.getName(), prereqCapabilities[i].getName(), member.getName()})); //$NON-NLS-1$
 							checkboxViewer.setChecked(capability, false);
 							return;
 						}
@@ -655,8 +644,8 @@ public class ProjectCapabilitySelectionGroup {
 				Capability cap = (Capability) descCopy.get(0);
 				MessageDialog.openWarning(
 					checkboxViewer.getControl().getShell(),
-					WorkbenchMessages.getString("ProjectCapabilitySelectionGroup.errorTitle"), //$NON-NLS-1$
-					WorkbenchMessages.format("ProjectCapabilitySelectionGroup.requiredPrereq", new Object[] {capability.getName(), cap.getName()})); //$NON-NLS-1$
+					IDEWorkbenchMessages.getString("ProjectCapabilitySelectionGroup.errorTitle"), //$NON-NLS-1$
+					IDEWorkbenchMessages.format("ProjectCapabilitySelectionGroup.requiredPrereq", new Object[] {capability.getName(), cap.getName()})); //$NON-NLS-1$
 			} else {
 				StringBuffer msg = new StringBuffer();
 				Iterator enum = descCopy.iterator();
@@ -667,8 +656,8 @@ public class ProjectCapabilitySelectionGroup {
 				}
 				MessageDialog.openWarning(
 					checkboxViewer.getControl().getShell(),
-					WorkbenchMessages.getString("ProjectCapabilitySelectionGroup.errorTitle"), //$NON-NLS-1$
-					WorkbenchMessages.format("ProjectCapabilitySelectionGroup.requiredPrereqs", new Object[] {capability.getName(), msg.toString()})); //$NON-NLS-1$
+					IDEWorkbenchMessages.getString("ProjectCapabilitySelectionGroup.errorTitle"), //$NON-NLS-1$
+					IDEWorkbenchMessages.format("ProjectCapabilitySelectionGroup.requiredPrereqs", new Object[] {capability.getName(), msg.toString()})); //$NON-NLS-1$
 			}
 		}
 	}
@@ -764,7 +753,7 @@ public class ProjectCapabilitySelectionGroup {
 			Capability cap = (Capability) element;
 			String text = cap.getName();
 			if (isDisabledCapability(cap))
-				text = WorkbenchMessages.format("ProjectCapabilitySelectionGroup.disabledLabel", new Object[] {text}); //$NON-NLS-1$
+				text = IDEWorkbenchMessages.format("ProjectCapabilitySelectionGroup.disabledLabel", new Object[] {text}); //$NON-NLS-1$
 			return text;
 		}
 	}

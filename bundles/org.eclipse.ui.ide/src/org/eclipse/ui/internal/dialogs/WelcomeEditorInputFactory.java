@@ -12,8 +12,8 @@ package org.eclipse.ui.internal.dialogs;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.internal.Workbench;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+
 /**
  * A simple factory for the welcome editor
  */
@@ -47,7 +47,7 @@ public IAdaptable createElement(IMemento memento) {
 
 	AboutInfo info = null;
 	AboutInfo [] infos = 
-		((Workbench)(WorkbenchPlugin.getDefault().getWorkbench())).getConfigurationInfo().getFeaturesInfo();
+		((Workbench)(IDEWorkbenchPlugin.getDefault().getWorkbench())).getConfigurationInfo().getFeaturesInfo();
 	for (int i = 0; i < infos.length; i++) {
 		if (featureId.equals(infos[i].getFeatureId())) {
 			info = infos[i];

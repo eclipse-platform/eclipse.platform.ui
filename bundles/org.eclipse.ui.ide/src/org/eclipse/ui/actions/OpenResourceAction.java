@@ -23,8 +23,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
-import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 
 /**
  * Standard action for opening the currently selected project(s).
@@ -48,9 +48,9 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 	 * @param shell the shell for any dialogs
 	 */
 	public OpenResourceAction(Shell shell) {
-		super(shell, WorkbenchMessages.getString("OpenResourceAction.text")); //$NON-NLS-1$
+		super(shell, IDEWorkbenchMessages.getString("OpenResourceAction.text")); //$NON-NLS-1$
 		WorkbenchHelp.setHelp(this, IHelpContextIds.OPEN_RESOURCE_ACTION);
-		setToolTipText(WorkbenchMessages.getString("OpenResourceAction.toolTip")); //$NON-NLS-1$
+		setToolTipText(IDEWorkbenchMessages.getString("OpenResourceAction.toolTip")); //$NON-NLS-1$
 		setId(ID);
 	}
 	/* (non-Javadoc)
@@ -63,13 +63,13 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 	 * Method declared on WorkspaceAction.
 	 */
 	String getProblemsMessage() {
-		return WorkbenchMessages.getString("OpenResourceAction.problemMessage"); //$NON-NLS-1$
+		return IDEWorkbenchMessages.getString("OpenResourceAction.problemMessage"); //$NON-NLS-1$
 	}
 	/* (non-Javadoc)
 	 * Method declared on WorkspaceAction.
 	 */
 	String getProblemsTitle() {
-		return WorkbenchMessages.getString("OpenResourceAction.dialogTitle"); //$NON-NLS-1$
+		return IDEWorkbenchMessages.getString("OpenResourceAction.dialogTitle"); //$NON-NLS-1$
 	}
 	/* (non-Javadoc)
 	 * Method declared on WorkspaceAction.

@@ -23,7 +23,7 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.dialogs.ISelectionStatusValidator;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
  * Selection dialog to select files and/or folders on the file system.
@@ -143,7 +143,7 @@ public class FileFolderSelectionDialog extends ElementTreeSelectionDialog {
 		}	
 		public IStatus validate(Object[] selection) {
 			int nSelected= selection.length;
-			String pluginId = WorkbenchPlugin.getDefault().getDescriptor().getUniqueIdentifier();
+			String pluginId = IDEWorkbenchPlugin.getDefault().getDescriptor().getUniqueIdentifier();
 			
 			if (nSelected == 0 || (nSelected > 1 && multiSelect == false)) {
 				return new Status(IStatus.ERROR, pluginId, IStatus.ERROR, "", null);  //$NON-NLS-1$

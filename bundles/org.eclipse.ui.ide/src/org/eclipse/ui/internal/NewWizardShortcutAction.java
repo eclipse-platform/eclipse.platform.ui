@@ -28,6 +28,8 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
 
 /**
  *	Instances can launch arbitrary resource creation wizards
@@ -66,8 +68,8 @@ public class NewWizardShortcutAction extends Action {
 		} catch (CoreException e) {
 			ErrorDialog.openError(
 				window.getShell(),
-				WorkbenchMessages.getString("NewWizardShortcutAction.errorTitle"), //$NON-NLS-1$
-				WorkbenchMessages.getString("NewWizardShortcutAction.errorMessage"), //$NON-NLS-1$
+				IDEWorkbenchMessages.getString("NewWizardShortcutAction.errorTitle"), //$NON-NLS-1$
+				IDEWorkbenchMessages.getString("NewWizardShortcutAction.errorMessage"), //$NON-NLS-1$
 				e.getStatus());
 			return;
 		}

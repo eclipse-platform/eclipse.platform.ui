@@ -26,7 +26,9 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
 
 
 /**
@@ -59,13 +61,13 @@ public class RenameResourceAction extends WorkspaceAction {
 	 */
 	private IPath newPath;
 
-	private static final String CHECK_RENAME_TITLE = WorkbenchMessages.getString("RenameResourceAction.checkTitle"); //$NON-NLS-1$
+	private static final String CHECK_RENAME_TITLE = IDEWorkbenchMessages.getString("RenameResourceAction.checkTitle"); //$NON-NLS-1$
 
 	private static final String CHECK_RENAME_MESSAGE =
-		WorkbenchMessages.getString("RenameResourceAction.readOnlyCheck"); //$NON-NLS-1$
-	private static String RESOURCE_EXISTS_TITLE = WorkbenchMessages.getString("RenameResourceAction.resourceExists"); //$NON-NLS-1$
-	private static String RESOURCE_EXISTS_MESSAGE = WorkbenchMessages.getString("RenameResourceAction.overwriteQuestion"); //$NON-NLS-1$
-	private static String RENAMING_MESSAGE = WorkbenchMessages.getString("RenameResourceAction.progressMessage"); //$NON-NLS-1$
+		IDEWorkbenchMessages.getString("RenameResourceAction.readOnlyCheck"); //$NON-NLS-1$
+	private static String RESOURCE_EXISTS_TITLE = IDEWorkbenchMessages.getString("RenameResourceAction.resourceExists"); //$NON-NLS-1$
+	private static String RESOURCE_EXISTS_MESSAGE = IDEWorkbenchMessages.getString("RenameResourceAction.overwriteQuestion"); //$NON-NLS-1$
+	private static String RENAMING_MESSAGE = IDEWorkbenchMessages.getString("RenameResourceAction.progressMessage"); //$NON-NLS-1$
 
 /**
  * Creates a new action. Using this constructor directly will rename using a
@@ -74,8 +76,8 @@ public class RenameResourceAction extends WorkspaceAction {
  * @param shell the shell for any dialogs
  */
 public RenameResourceAction(Shell shell) {
-	super(shell, WorkbenchMessages.getString("RenameResourceAction.text")); //$NON-NLS-1$
-	setToolTipText(WorkbenchMessages.getString("RenameResourceAction.toolTip")); //$NON-NLS-1$
+	super(shell, IDEWorkbenchMessages.getString("RenameResourceAction.text")); //$NON-NLS-1$
+	setToolTipText(IDEWorkbenchMessages.getString("RenameResourceAction.toolTip")); //$NON-NLS-1$
 	setId(ID);
 	WorkbenchHelp.setHelp(this, IHelpContextIds.RENAME_RESOURCE_ACTION);
 }
@@ -239,19 +241,19 @@ private void disposeTextWidget() {
  * Method declared on WorkspaceAction.
  */
 String getOperationMessage() {
-	return WorkbenchMessages.getString("RenameResourceAction.progress"); //$NON-NLS-1$
+	return IDEWorkbenchMessages.getString("RenameResourceAction.progress"); //$NON-NLS-1$
 }
 /* (non-Javadoc)
  * Method declared on WorkspaceAction.
  */
 String getProblemsMessage() {
-	return WorkbenchMessages.getString("RenameResourceAction.problemMessage"); //$NON-NLS-1$
+	return IDEWorkbenchMessages.getString("RenameResourceAction.problemMessage"); //$NON-NLS-1$
 }
 /* (non-Javadoc)
  * Method declared on WorkspaceAction.
  */
 String getProblemsTitle() {
-	return WorkbenchMessages.getString("RenameResourceAction.problemTitle"); //$NON-NLS-1$
+	return IDEWorkbenchMessages.getString("RenameResourceAction.problemTitle"); //$NON-NLS-1$
 }
 /**
  * Get the Tree being edited.
@@ -304,19 +306,19 @@ void invokeOperation(IResource resource, IProgressMonitor monitor)
  * @param context IVisualPart
  */
 protected String queryNewResourceName(final IResource resource) {
-	final IWorkspace workspace = WorkbenchPlugin.getPluginWorkspace();
+	final IWorkspace workspace = IDEWorkbenchPlugin.getPluginWorkspace();
 	final IPath prefix = resource.getFullPath().removeLastSegments(1);
 	IInputValidator validator = new IInputValidator() {
 		public String isValid(String string) {
 			if (resource.getName().equals(string)) {
-				return WorkbenchMessages.getString("RenameResourceAction.nameMustBeDifferent"); //$NON-NLS-1$
+				return IDEWorkbenchMessages.getString("RenameResourceAction.nameMustBeDifferent"); //$NON-NLS-1$
 			}
 			IStatus status = workspace.validateName(string, resource.getType());
 			if (!status.isOK()) {
 				return status.getMessage();
 			}
 			if (workspace.getRoot().exists(prefix.append(string))) {
-				return WorkbenchMessages.getString("RenameResourceAction.nameExists"); //$NON-NLS-1$
+				return IDEWorkbenchMessages.getString("RenameResourceAction.nameExists"); //$NON-NLS-1$
 			}
 			return null;
 		}
@@ -324,8 +326,8 @@ protected String queryNewResourceName(final IResource resource) {
 		
 	InputDialog dialog = new InputDialog(
 		getShell(),
-		WorkbenchMessages.getString("RenameResourceAction.inputDialogTitle"),  //$NON-NLS-1$
-		WorkbenchMessages.getString("RenameResourceAction.inputDialogMessage"), //$NON-NLS-1$
+		IDEWorkbenchMessages.getString("RenameResourceAction.inputDialogTitle"),  //$NON-NLS-1$
+		IDEWorkbenchMessages.getString("RenameResourceAction.inputDialogMessage"), //$NON-NLS-1$
 		resource.getName(), 
 		validator); 
 	dialog.setBlockOnOpen(true);
@@ -415,7 +417,7 @@ private void saveChangesAndDispose(IResource resource) {
 			//Dispose the text widget regardless
 			disposeTextWidget();
 			if (!newName.equals(inlinedResource.getName())) {
-				IWorkspace workspace = WorkbenchPlugin.getPluginWorkspace();
+				IWorkspace workspace = IDEWorkbenchPlugin.getPluginWorkspace();
 				IStatus status = workspace.validateName(newName, inlinedResource.getType());
 				if (!status.isOK()) {
 					displayError(status.getMessage());

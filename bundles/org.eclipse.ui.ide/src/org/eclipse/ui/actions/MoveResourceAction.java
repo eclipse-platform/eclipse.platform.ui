@@ -19,8 +19,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
-import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 
 /**
  * Standard action for moving the currently selected resources elsewhere
@@ -48,8 +48,8 @@ public class MoveResourceAction extends CopyResourceAction {
 	 * @param shell the shell for any dialogs
 	 */
 	public MoveResourceAction(Shell shell) {
-		super(shell, WorkbenchMessages.getString("MoveResourceAction.text")); //$NON-NLS-1$
-		setToolTipText(WorkbenchMessages.getString("MoveResourceAction.toolTip")); //$NON-NLS-1$
+		super(shell, IDEWorkbenchMessages.getString("MoveResourceAction.text")); //$NON-NLS-1$
+		setToolTipText(IDEWorkbenchMessages.getString("MoveResourceAction.toolTip")); //$NON-NLS-1$
 		setId(MoveResourceAction.ID);
 		WorkbenchHelp.setHelp(this, IHelpContextIds.MOVE_RESOURCE_ACTION);
 	}
@@ -73,8 +73,8 @@ public class MoveResourceAction extends CopyResourceAction {
 	protected IResource[] getResources(List resourceList) {
 		ReadOnlyStateChecker checker = new ReadOnlyStateChecker(
 			getShell(), 
-			WorkbenchMessages.getString("MoveResourceAction.title"),			//$NON-NLS-1$
-			WorkbenchMessages.getString("MoveResourceAction.checkMoveMessage"));//$NON-NLS-1$	
+			IDEWorkbenchMessages.getString("MoveResourceAction.title"),			//$NON-NLS-1$
+			IDEWorkbenchMessages.getString("MoveResourceAction.checkMoveMessage"));//$NON-NLS-1$	
 		return checker.checkReadOnlyResources(super.getResources(resourceList));
 	}
 	/* (non-Javadoc)

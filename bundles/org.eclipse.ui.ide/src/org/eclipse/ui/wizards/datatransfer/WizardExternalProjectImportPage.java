@@ -28,8 +28,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
  * Standard main page for a wizard that creates a project resource from
@@ -331,7 +331,7 @@ public class WizardExternalProjectImportPage extends WizardPage {
 		return true;
 	}
 	private IWorkspace getWorkspace() {
-		IWorkspace workspace = WorkbenchPlugin.getPluginWorkspace();
+		IWorkspace workspace = IDEWorkbenchPlugin.getPluginWorkspace();
 		return workspace;
 	}
 

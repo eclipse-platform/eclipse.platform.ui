@@ -34,7 +34,9 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.ICapabilityUninstallWizard;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
 import org.eclipse.ui.internal.registry.Capability;
 import org.eclipse.ui.internal.registry.CapabilityRegistry;
 import org.eclipse.ui.model.WorkbenchContentProvider;
@@ -68,7 +70,7 @@ public class ProjectCapabilityEditingPropertyPage extends ProjectCapabilityPrope
 		Font font = parent.getFont();
 		WorkbenchHelp.setHelp(getControl(), IHelpContextIds.PROJECT_CAPABILITY_PROPERTY_PAGE);
 		noDefaultAndApplyButton();
-		reg = WorkbenchPlugin.getDefault().getCapabilityRegistry();
+		reg = IDEWorkbenchPlugin.getDefault().getCapabilityRegistry();
 		
 		Composite topComposite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -79,9 +81,9 @@ public class ProjectCapabilityEditingPropertyPage extends ProjectCapabilityPrope
 		
 		String instructions;
 		if (reg.hasCapabilities())
-			instructions = WorkbenchMessages.getString("ProjectCapabilityPropertyPage.chooseCapabilities"); //$NON-NLS-1$
+			instructions = IDEWorkbenchMessages.getString("ProjectCapabilityPropertyPage.chooseCapabilities"); //$NON-NLS-1$
 		else
-			instructions = WorkbenchMessages.getString("ProjectCapabilityPropertyPage.noCapabilities"); //$NON-NLS-1$
+			instructions = IDEWorkbenchMessages.getString("ProjectCapabilityPropertyPage.noCapabilities"); //$NON-NLS-1$
 		Label label = new Label(topComposite, SWT.LEFT);
 		label.setFont(font);
 		label.setText(instructions);
@@ -106,7 +108,7 @@ public class ProjectCapabilityEditingPropertyPage extends ProjectCapabilityPrope
 
 		label = new Label(capComposite, SWT.LEFT);
 		label.setFont(font);
-		label.setText(WorkbenchMessages.getString("ProjectCapabilitySelectionGroup.capabilities")); //$NON-NLS-1$
+		label.setText(IDEWorkbenchMessages.getString("ProjectCapabilitySelectionGroup.capabilities")); //$NON-NLS-1$
 		
 		table = new TableViewer(capComposite, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		table.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -127,7 +129,7 @@ public class ProjectCapabilityEditingPropertyPage extends ProjectCapabilityPrope
 		label.setText(""); //$NON-NLS-1$
 		
 		addButton = new Button(buttonComposite, SWT.PUSH);
-		addButton.setText(WorkbenchMessages.getString("ProjectCapabilityEditingPropertyPage.add")); //$NON-NLS-1$
+		addButton.setText(IDEWorkbenchMessages.getString("ProjectCapabilityEditingPropertyPage.add")); //$NON-NLS-1$
 		addButton.setEnabled(true);
 		addButton.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
@@ -145,7 +147,7 @@ public class ProjectCapabilityEditingPropertyPage extends ProjectCapabilityPrope
 		addButton.setFont(font);
 		
 		removeButton = new Button(buttonComposite, SWT.PUSH);
-		removeButton.setText(WorkbenchMessages.getString("ProjectCapabilityEditingPropertyPage.remove")); //$NON-NLS-1$
+		removeButton.setText(IDEWorkbenchMessages.getString("ProjectCapabilityEditingPropertyPage.remove")); //$NON-NLS-1$
 		removeButton.setEnabled(false);
 		removeButton.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
@@ -220,8 +222,8 @@ public class ProjectCapabilityEditingPropertyPage extends ProjectCapabilityPrope
 			if (prereqs.contains(cap.getId())) {
 				MessageDialog.openWarning(
 					getShell(),
-					WorkbenchMessages.getString("ProjectCapabilityPropertyPage.errorTitle"), //$NON-NLS-1$
-					WorkbenchMessages.format("ProjectCapabilityPropertyPage.capabilityRequired", new Object[] {caps[i].getName()})); //$NON-NLS-1$
+					IDEWorkbenchMessages.getString("ProjectCapabilityPropertyPage.errorTitle"), //$NON-NLS-1$
+					IDEWorkbenchMessages.format("ProjectCapabilityPropertyPage.capabilityRequired", new Object[] {caps[i].getName()})); //$NON-NLS-1$
 				return;
 			}
 		}
@@ -230,8 +232,8 @@ public class ProjectCapabilityEditingPropertyPage extends ProjectCapabilityPrope
 		if (!status.isOK()) {
 			ErrorDialog.openError(
 				getShell(),
-				WorkbenchMessages.getString("ProjectCapabilityPropertyPage.errorTitle"), //$NON-NLS-1$
-				WorkbenchMessages.getString("ProjectCapabilityPropertyPage.invalidSelection"), //$NON-NLS-1$
+				IDEWorkbenchMessages.getString("ProjectCapabilityPropertyPage.errorTitle"), //$NON-NLS-1$
+				IDEWorkbenchMessages.getString("ProjectCapabilityPropertyPage.invalidSelection"), //$NON-NLS-1$
 				status);
 			return;
 		}
@@ -308,7 +310,7 @@ public class ProjectCapabilityEditingPropertyPage extends ProjectCapabilityPrope
 			Capability cap = (Capability) element;
 			String text = cap.getName();
 			if (isDisabledCapability(cap))
-				text = WorkbenchMessages.format("ProjectCapabilitySelectionGroup.disabledLabel", new Object[] {text}); //$NON-NLS-1$
+				text = IDEWorkbenchMessages.format("ProjectCapabilitySelectionGroup.disabledLabel", new Object[] {text}); //$NON-NLS-1$
 			return text;
 		}
 	}

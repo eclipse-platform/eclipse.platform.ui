@@ -21,7 +21,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 
 import java.util.List;
 import java.util.Arrays;
@@ -245,19 +245,19 @@ public abstract class WizardDataTransferPage
 		//and there are at least 2 segments.
 		if (path.getFileExtension() == null || path.segmentCount() < 2)
 			messageString =
-				WorkbenchMessages.format(
+				IDEWorkbenchMessages.format(
 					"WizardDataTransfer.existsQuestion", //$NON-NLS-1$
 					new String[] { pathString });
 
 		else
 			messageString =
-				WorkbenchMessages.format(
+				IDEWorkbenchMessages.format(
 					"WizardDataTransfer.overwriteNameAndPathQuestion", //$NON-NLS-1$
 					new String[] {
 						path.lastSegment(),
 						path.removeLastSegments(1).toOSString()});
 
-			final MessageDialog dialog = new MessageDialog(getContainer().getShell(), WorkbenchMessages.getString("Question"), //$NON-NLS-1$
+			final MessageDialog dialog = new MessageDialog(getContainer().getShell(), IDEWorkbenchMessages.getString("Question"), //$NON-NLS-1$
 	null,
 		messageString,
 		MessageDialog.QUESTION,
@@ -288,7 +288,7 @@ public abstract class WizardDataTransferPage
 	 * @return <code>true</code> for Yes, and <code>false</code> for No
 	 */
 	protected boolean queryYesNoQuestion(String message) {
-			MessageDialog dialog = new MessageDialog(getContainer().getShell(), WorkbenchMessages.getString("Question"), //$NON-NLS-1$
+			MessageDialog dialog = new MessageDialog(getContainer().getShell(), IDEWorkbenchMessages.getString("Question"), //$NON-NLS-1$
 	(Image) null,
 		message,
 		MessageDialog.NONE,
@@ -393,7 +393,7 @@ public abstract class WizardDataTransferPage
 		optionsGroup.setLayoutData(
 			new GridData(
 				GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
-		optionsGroup.setText(WorkbenchMessages.getString("WizardExportPage.options")); //$NON-NLS-1$
+		optionsGroup.setText(IDEWorkbenchMessages.getString("WizardExportPage.options")); //$NON-NLS-1$
 		optionsGroup.setFont(parent.getFont());
 
 		createOptionsGroupButtons(optionsGroup);
@@ -419,7 +419,7 @@ public abstract class WizardDataTransferPage
 		//Some system exceptions have no message
 		if (message == null)
 			message =
-				WorkbenchMessages.format(
+				IDEWorkbenchMessages.format(
 					"WizardDataTransfer.exceptionMessage", //$NON-NLS-1$
 					new String[] { exception.toString()});
 		displayErrorDialog(message);
@@ -430,7 +430,7 @@ public abstract class WizardDataTransferPage
 	 * override.
 	 */
 	protected String getErrorDialogTitle() {
-		return WorkbenchMessages.getString(
+		return IDEWorkbenchMessages.getString(
 			"WizardExportPage.internalErrorTitle"); //$NON-NLS-1$
 	}
 

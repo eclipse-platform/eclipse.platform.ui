@@ -29,7 +29,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchImages;
-import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 
 /**
  * A widget group that displays path variables. 
@@ -172,7 +172,7 @@ public class PathVariablesGroup {
 
 		// layout the table & its buttons
 		variableLabel = new Label(pageComponent, SWT.LEFT);
-		variableLabel.setText(WorkbenchMessages.getString("PathVariablesBlock.variablesLabel")); //$NON-NLS-1$
+		variableLabel.setText(IDEWorkbenchMessages.getString("PathVariablesBlock.variablesLabel")); //$NON-NLS-1$
 		data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
 		data.horizontalSpan = 2;
@@ -306,7 +306,7 @@ public class PathVariablesGroup {
 		groupComponent.setFont(font);
 
 		addButton = new Button(groupComponent, SWT.PUSH);
-		addButton.setText(WorkbenchMessages.getString("PathVariablesBlock.addVariableButton")); //$NON-NLS-1$
+		addButton.setText(IDEWorkbenchMessages.getString("PathVariablesBlock.addVariableButton")); //$NON-NLS-1$
 		addButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				addNewVariable();
@@ -316,7 +316,7 @@ public class PathVariablesGroup {
 		setButtonLayoutData(addButton);
 
 		editButton = new Button(groupComponent, SWT.PUSH);
-		editButton.setText(WorkbenchMessages.getString("PathVariablesBlock.editVariableButton")); //$NON-NLS-1$
+		editButton.setText(IDEWorkbenchMessages.getString("PathVariablesBlock.editVariableButton")); //$NON-NLS-1$
 		editButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				editSelectedVariable();
@@ -326,7 +326,7 @@ public class PathVariablesGroup {
 		setButtonLayoutData(editButton);
 
 		removeButton = new Button(groupComponent, SWT.PUSH);
-		removeButton.setText(WorkbenchMessages.getString("PathVariablesBlock.removeVariableButton")); //$NON-NLS-1$
+		removeButton.setText(IDEWorkbenchMessages.getString("PathVariablesBlock.removeVariableButton")); //$NON-NLS-1$
 		removeButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				removeSelectedVariables();

@@ -19,10 +19,9 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
-import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.misc.Assert;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 
@@ -73,12 +72,14 @@ public class AddBookmarkAction extends SelectionListenerAction {
 	 * @param promptForName whether to ask the user for the bookmark name
 	 */
 	public AddBookmarkAction(Shell shell, boolean promptForName) {
-		super(WorkbenchMessages.getString("AddBookmarkLabel")); //$NON-NLS-1$
+		super(IDEWorkbenchMessages.getString("AddBookmarkLabel")); //$NON-NLS-1$
 		setId(ID);
-		Assert.isNotNull(shell);
+		if (shell == null) {
+			throw new IllegalArgumentException();
+		}
 		this.shell = shell;
 		this.promptForName = promptForName;
-		setToolTipText(WorkbenchMessages.getString("AddBookmarkToolTip")); //$NON-NLS-1$
+		setToolTipText(IDEWorkbenchMessages.getString("AddBookmarkToolTip")); //$NON-NLS-1$
 		WorkbenchHelp.setHelp(this, IHelpContextIds.ADD_BOOKMARK_ACTION);
 	}
 
@@ -124,7 +125,7 @@ public class AddBookmarkAction extends SelectionListenerAction {
 				},
 				null);
 		} catch (CoreException e) {
-			WorkbenchPlugin.log(null, e.getStatus()); // We don't care
+			IDEWorkbenchPlugin.log(null, e.getStatus()); // We don't care
 		}
 	}
 	
@@ -151,8 +152,8 @@ public class AddBookmarkAction extends SelectionListenerAction {
 	 * @return the bookmark name or <code>null</code> if cancelled.
 	 */
 	String askForLabel(String proposal) {
-		String title = WorkbenchMessages.getString("AddBookmarkDialog.title"); //$NON-NLS-1$
-		String message = WorkbenchMessages.getString("AddBookmarkDialog.message"); //$NON-NLS-1$
+		String title = IDEWorkbenchMessages.getString("AddBookmarkDialog.title"); //$NON-NLS-1$
+		String message = IDEWorkbenchMessages.getString("AddBookmarkDialog.message"); //$NON-NLS-1$
 
 		IInputValidator inputValidator = new IInputValidator() {
 			public String isValid(String newText) {

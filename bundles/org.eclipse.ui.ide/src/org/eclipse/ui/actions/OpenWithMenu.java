@@ -24,8 +24,8 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.IWorkbenchConstants;
-import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.dialogs.DialogUtil;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.DialogUtil;
 import org.eclipse.ui.internal.misc.Sorter;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.eclipse.ui.internal.registry.EditorRegistry;
@@ -240,7 +240,7 @@ private void openEditor(IEditorDescriptor editor) {
 	} catch (PartInitException e) {
 		DialogUtil.openError(
 			page.getWorkbenchWindow().getShell(),
-			WorkbenchMessages.getString("OpenWithMenu.dialogTitle"), //$NON-NLS-1$
+			IDEWorkbenchMessages.getString("OpenWithMenu.dialogTitle"), //$NON-NLS-1$
 			e.getMessage(),
 			e);
 	}
@@ -256,7 +256,7 @@ private void openEditor(IEditorDescriptor editor) {
 private void createDefaultMenuItem(Menu menu, final IFile file) {
 	final MenuItem menuItem = new MenuItem(menu, SWT.RADIO);
 	menuItem.setSelection(registry.getDefaultEditor(file) == null);
-	menuItem.setText(WorkbenchMessages.getString("DefaultEditorDescription.name")); //$NON-NLS-1$
+	menuItem.setText(IDEWorkbenchMessages.getString("DefaultEditorDescription.name")); //$NON-NLS-1$
 	
 	Listener listener = new Listener() {
 		public void handleEvent(Event event) {
@@ -269,7 +269,7 @@ private void createDefaultMenuItem(Menu menu, final IFile file) {
 						} catch (PartInitException e) {
 							DialogUtil.openError(
 								page.getWorkbenchWindow().getShell(),
-								WorkbenchMessages.getString("OpenWithMenu.dialogTitle"), //$NON-NLS-1$
+								IDEWorkbenchMessages.getString("OpenWithMenu.dialogTitle"), //$NON-NLS-1$
 								e.getMessage(),
 								e);
 						}

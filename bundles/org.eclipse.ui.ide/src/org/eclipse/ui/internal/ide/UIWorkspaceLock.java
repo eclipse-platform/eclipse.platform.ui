@@ -15,7 +15,7 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.WorkspaceLock;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.internal.Semaphore;
-import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 
 public class UIWorkspaceLock extends WorkspaceLock {
 	protected Display display;
@@ -32,12 +32,12 @@ public boolean acquire() throws InterruptedException {
 		Thread currentOperation = getCurrentOperationThread();
 		if (currentOperation != null) {
 			if (display.getSyncThread() == currentOperation && isTreeLocked())
-				throw new RuntimeException(WorkbenchMessages.getString("UIWorkspaceLock.errorModDuringNotification")); //$NON-NLS-1$
+				throw new RuntimeException(IDEWorkbenchMessages.getString("UIWorkspaceLock.errorModDuringNotification")); //$NON-NLS-1$
 			// If a syncExec was executed from the current operation, it
 			// has already acquired the lock. So, just return true.
 			if (pendingWork != null && pendingWorkStarted && pendingWork.getOperationThread() == currentOperation) {
 				if (isTreeLocked())
-					throw new RuntimeException(WorkbenchMessages.getString("UIWorkspaceLock.errorModDuringNotification")); //$NON-NLS-1$
+					throw new RuntimeException(IDEWorkbenchMessages.getString("UIWorkspaceLock.errorModDuringNotification")); //$NON-NLS-1$
 				else
 					return true; // we are a nested operation
 			}

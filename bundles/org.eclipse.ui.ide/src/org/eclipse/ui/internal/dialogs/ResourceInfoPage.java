@@ -27,8 +27,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
-import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 
 /**
  * This is a dummy page that is added to the property dialog
@@ -41,25 +41,25 @@ public class ResourceInfoPage extends PropertyPage {
 	private Button derivedBox;
 	private boolean previousReadOnlyValue;
 	private boolean previousDerivedValue;
-	private static String READ_ONLY = WorkbenchMessages.getString("ResourceInfo.readOnly"); //$NON-NLS-1$
-	private static String DERIVED = WorkbenchMessages.getString("ResourceInfo.derived"); //$NON-NLS-1$
-	private static String TYPE_TITLE = WorkbenchMessages.getString("ResourceInfo.type"); //$NON-NLS-1$
-	private static String LOCATION_TITLE = WorkbenchMessages.getString("ResourceInfo.location"); //$NON-NLS-1$
-	private static String RESOLVED_LOCATION_TITLE = WorkbenchMessages.getString("ResourceInfo.resolvedLocation"); //$NON-NLS-1$
-	private static String SIZE_TITLE = WorkbenchMessages.getString("ResourceInfo.size"); //$NON-NLS-1$
-	private static String BYTES_LABEL = WorkbenchMessages.getString("ResourceInfo.bytes"); //$NON-NLS-1$
-	private static String FILE_LABEL = WorkbenchMessages.getString("ResourceInfo.file"); //$NON-NLS-1$
-	private static String FOLDER_LABEL = WorkbenchMessages.getString("ResourceInfo.folder"); //$NON-NLS-1$
-	private static String PROJECT_LABEL = WorkbenchMessages.getString("ResourceInfo.project"); //$NON-NLS-1$
-	private static String LINKED_FILE_LABEL = WorkbenchMessages.getString("ResourceInfo.linkedFile"); //$NON-NLS-1$
-	private static String LINKED_FOLDER_LABEL = WorkbenchMessages.getString("ResourceInfo.linkedFolder"); //$NON-NLS-1$
-	private static String UNKNOWN_LABEL = WorkbenchMessages.getString("ResourceInfo.unknown"); //$NON-NLS-1$
-	private static String NOT_LOCAL_TEXT = WorkbenchMessages.getString("ResourceInfo.notLocal"); //$NON-NLS-1$
-	private static String MISSING_PATH_VARIABLE_TEXT = WorkbenchMessages.getString("ResourceInfo.undefinedPathVariable"); //$NON-NLS-1$
-	private static String NOT_EXIST_TEXT = WorkbenchMessages.getString("ResourceInfo.notExist"); //$NON-NLS-1$
-	private static String PATH_TITLE = WorkbenchMessages.getString("ResourceInfo.path"); //$NON-NLS-1$
-	private static String TIMESTAMP_TITLE = WorkbenchMessages.getString("ResourceInfo.lastModified"); //$NON-NLS-1$
-	private static String FILE_NOT_EXIST_TEXT = WorkbenchMessages.getString("ResourceInfo.fileNotExist"); //$NON-NLS-1$
+	private static String READ_ONLY = IDEWorkbenchMessages.getString("ResourceInfo.readOnly"); //$NON-NLS-1$
+	private static String DERIVED = IDEWorkbenchMessages.getString("ResourceInfo.derived"); //$NON-NLS-1$
+	private static String TYPE_TITLE = IDEWorkbenchMessages.getString("ResourceInfo.type"); //$NON-NLS-1$
+	private static String LOCATION_TITLE = IDEWorkbenchMessages.getString("ResourceInfo.location"); //$NON-NLS-1$
+	private static String RESOLVED_LOCATION_TITLE = IDEWorkbenchMessages.getString("ResourceInfo.resolvedLocation"); //$NON-NLS-1$
+	private static String SIZE_TITLE = IDEWorkbenchMessages.getString("ResourceInfo.size"); //$NON-NLS-1$
+	private static String BYTES_LABEL = IDEWorkbenchMessages.getString("ResourceInfo.bytes"); //$NON-NLS-1$
+	private static String FILE_LABEL = IDEWorkbenchMessages.getString("ResourceInfo.file"); //$NON-NLS-1$
+	private static String FOLDER_LABEL = IDEWorkbenchMessages.getString("ResourceInfo.folder"); //$NON-NLS-1$
+	private static String PROJECT_LABEL = IDEWorkbenchMessages.getString("ResourceInfo.project"); //$NON-NLS-1$
+	private static String LINKED_FILE_LABEL = IDEWorkbenchMessages.getString("ResourceInfo.linkedFile"); //$NON-NLS-1$
+	private static String LINKED_FOLDER_LABEL = IDEWorkbenchMessages.getString("ResourceInfo.linkedFolder"); //$NON-NLS-1$
+	private static String UNKNOWN_LABEL = IDEWorkbenchMessages.getString("ResourceInfo.unknown"); //$NON-NLS-1$
+	private static String NOT_LOCAL_TEXT = IDEWorkbenchMessages.getString("ResourceInfo.notLocal"); //$NON-NLS-1$
+	private static String MISSING_PATH_VARIABLE_TEXT = IDEWorkbenchMessages.getString("ResourceInfo.undefinedPathVariable"); //$NON-NLS-1$
+	private static String NOT_EXIST_TEXT = IDEWorkbenchMessages.getString("ResourceInfo.notExist"); //$NON-NLS-1$
+	private static String PATH_TITLE = IDEWorkbenchMessages.getString("ResourceInfo.path"); //$NON-NLS-1$
+	private static String TIMESTAMP_TITLE = IDEWorkbenchMessages.getString("ResourceInfo.lastModified"); //$NON-NLS-1$
+	private static String FILE_NOT_EXIST_TEXT = IDEWorkbenchMessages.getString("ResourceInfo.fileNotExist"); //$NON-NLS-1$
 
 	//Max value width in characters before wrapping
 	private static final int MAX_VALUE_WIDTH = 80;
@@ -468,7 +468,7 @@ public boolean performOk() {
 		catch (CoreException exception){
 			ErrorDialog.openError(
 				getShell(), 
-				WorkbenchMessages.getString("InternalError"), //$NON-NLS-1$
+				IDEWorkbenchMessages.getString("InternalError"), //$NON-NLS-1$
 				exception.getLocalizedMessage(),
 				exception.getStatus()); 
 			return false;

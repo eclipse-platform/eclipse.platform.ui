@@ -17,7 +17,8 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.*;
-import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.model.WorkbenchAdapter;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
@@ -145,7 +146,7 @@ public class Capability extends WorkbenchAdapter implements IAdaptable {
 		if (isValid())
 			return natureDescriptor.getLabel();
 		else
-			return WorkbenchMessages.format("Capability.nameMissing", new Object[] {id}); //$NON-NLS-1$
+			return IDEWorkbenchMessages.format("Capability.nameMissing", new Object[] {id}); //$NON-NLS-1$
 	}
 	
 	public ImageDescriptor getIconDescriptor() {
@@ -203,7 +204,7 @@ public class Capability extends WorkbenchAdapter implements IAdaptable {
 		try {
 			return (ICapabilityInstallWizard)element.createExecutableExtension(ATT_INSTALL_WIZARD);
 		} catch (CoreException e) {
-			WorkbenchPlugin.log("Could not create capability install wizard.", e.getStatus()); //$NON-NLS-1$
+			IDEWorkbenchPlugin.log("Could not create capability install wizard.", e.getStatus()); //$NON-NLS-1$
 			return null;
 		}
 	}
@@ -234,7 +235,7 @@ public class Capability extends WorkbenchAdapter implements IAdaptable {
 		try {
 			return (ICapabilityUninstallWizard)element.createExecutableExtension(ATT_UNINSTALL_WIZARD);
 		} catch (CoreException e) {
-			WorkbenchPlugin.log("Could not create capability uninstall wizard.", e.getStatus()); //$NON-NLS-1$
+			IDEWorkbenchPlugin.log("Could not create capability uninstall wizard.", e.getStatus()); //$NON-NLS-1$
 			return null;
 		}
 	}

@@ -12,7 +12,7 @@ package org.eclipse.ui.internal.dialogs;
 
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.dialogs.MultiStepConfigureWizardPage.WizardStepContainer;
 
 /**
@@ -127,7 +127,7 @@ public abstract class MultiStepWizard extends Wizard {
 	 * </p>
 	 */
 	protected String getFinishStepLabel(WizardStep[] steps) {
-		return WorkbenchMessages.getString("MultiStepWizard.finishLabel"); //$NON-NLS-1$
+		return IDEWorkbenchMessages.getString("MultiStepWizard.finishLabel"); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

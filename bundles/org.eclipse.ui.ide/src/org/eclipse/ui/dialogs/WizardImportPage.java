@@ -19,8 +19,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
  * The abstract superclass for a typical import wizard's main page.
@@ -104,12 +104,12 @@ public void createControl(Composite parent) {
 
 	createSpacer(composite);
 
-	createBoldLabel(composite, WorkbenchMessages.getString("WizardImportPage.destinationLabel"));	 //$NON-NLS-1$
+	createBoldLabel(composite, IDEWorkbenchMessages.getString("WizardImportPage.destinationLabel"));	 //$NON-NLS-1$
 	createDestinationGroup(composite);
 
 	createSpacer(composite);
 
-	createBoldLabel(composite, WorkbenchMessages.getString("WizardImportPage.options")); //$NON-NLS-1$
+	createBoldLabel(composite, IDEWorkbenchMessages.getString("WizardImportPage.options")); //$NON-NLS-1$
 	createOptionsGroup(composite);
 
 	restoreWidgetValues();
@@ -134,7 +134,7 @@ protected final void createDestinationGroup(Composite parent) {
 
 	// container label
 	Label resourcesLabel = new Label(containerGroup,SWT.NONE);
-	resourcesLabel.setText(WorkbenchMessages.getString("WizardImportPage.folder")); //$NON-NLS-1$
+	resourcesLabel.setText(IDEWorkbenchMessages.getString("WizardImportPage.folder")); //$NON-NLS-1$
 
 	// container name entry field
 	containerNameField = new Text(containerGroup,SWT.SINGLE|SWT.BORDER);
@@ -145,7 +145,7 @@ protected final void createDestinationGroup(Composite parent) {
 
 	// container browse button
 	containerBrowseButton = new Button(containerGroup,SWT.PUSH);
-	containerBrowseButton.setText(WorkbenchMessages.getString("WizardImportPage.browseLabel")); //$NON-NLS-1$
+	containerBrowseButton.setText(IDEWorkbenchMessages.getString("WizardImportPage.browseLabel")); //$NON-NLS-1$
 	containerBrowseButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 	containerBrowseButton.addListener(SWT.Selection,this);
 
@@ -166,7 +166,7 @@ protected abstract void createSourceGroup(Composite parent);
  * @param message the error message
  */
 protected void displayErrorDialog(String message) {
-	MessageDialog.openError(getContainer().getShell(),WorkbenchMessages.getString("WizardImportPage.errorDialogTitle"),message); //$NON-NLS-1$
+	MessageDialog.openError(getContainer().getShell(),IDEWorkbenchMessages.getString("WizardImportPage.errorDialogTitle"),message); //$NON-NLS-1$
 }
 /**
  * Returns the path of the container resource specified in the container
@@ -180,7 +180,7 @@ protected void displayErrorDialog(String message) {
  *   the container name entry field, or <code>null</code>
  */
 protected IPath getContainerFullPath() {
-	IWorkspace workspace = WorkbenchPlugin.getPluginWorkspace();
+	IWorkspace workspace = IDEWorkbenchPlugin.getPluginWorkspace();
 
 	//make the path absolute to allow for optional leading slash
 	IPath testPath = getResourcePath();
@@ -210,7 +210,7 @@ protected IPath getResourcePath() {
  *   or <code>null</code>
  */
 protected IContainer getSpecifiedContainer() {
-	IWorkspace workspace = WorkbenchPlugin.getPluginWorkspace();
+	IWorkspace workspace = IDEWorkbenchPlugin.getPluginWorkspace();
 	IPath path = getContainerFullPath();
 	if (workspace.getRoot().exists(path))
 		return (IContainer) workspace.getRoot().findMember(path);
@@ -223,7 +223,7 @@ protected IContainer getSpecifiedContainer() {
  */
 protected void handleContainerBrowseButtonPressed() {
 	// see if the user wishes to modify this container selection
-	IPath containerPath = queryForContainer(getSpecifiedContainer(), WorkbenchMessages.getString("WizardImportPage.selectFolderLabel")); //$NON-NLS-1$
+	IPath containerPath = queryForContainer(getSpecifiedContainer(), IDEWorkbenchMessages.getString("WizardImportPage.selectFolderLabel")); //$NON-NLS-1$
 
 	// if a container was selected then put its name in the container name field
 	if (containerPath != null)			// null means user cancelled
@@ -275,7 +275,7 @@ protected final boolean validateDestinationGroup() {
 	IContainer container = getSpecifiedContainer();
 	if (container != null) {
 		if (!container.isAccessible()) {
-			setErrorMessage(WorkbenchMessages.getString("WizardImportPage.folderMustExist")); //$NON-NLS-1$
+			setErrorMessage(IDEWorkbenchMessages.getString("WizardImportPage.folderMustExist")); //$NON-NLS-1$
 			return false;
 		}
 	}

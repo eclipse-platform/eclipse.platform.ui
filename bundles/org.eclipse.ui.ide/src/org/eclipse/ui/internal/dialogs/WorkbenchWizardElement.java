@@ -18,7 +18,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.internal.SelectionEnabler;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.model.WorkbenchAdapter;
 import org.eclipse.ui.internal.registry.WizardsRegistryReader;
 import org.eclipse.ui.model.IWorkbenchAdapter;
@@ -81,7 +81,7 @@ public IStructuredSelection adaptedSelection(IStructuredSelection selection) {
  * the extension point.
  */
 public Object createExecutableExtension ()  throws CoreException {
-	return WorkbenchPlugin.createExtension(configurationElement,
+	return IDEWorkbenchPlugin.createExtension(configurationElement,
 		WizardsRegistryReader.ATT_CLASS);
 }
 /**

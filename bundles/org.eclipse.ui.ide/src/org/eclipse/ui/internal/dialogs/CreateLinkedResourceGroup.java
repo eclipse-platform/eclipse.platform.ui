@@ -23,7 +23,8 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
  * Widget group for specifying a linked file or folder target.
@@ -78,9 +79,9 @@ public Composite createContents(Composite parent) {
 
 	final Button createLinkButton = new Button(groupComposite, SWT.CHECK);
 	if (type == IResource.FILE)
-		createLinkButton.setText(WorkbenchMessages.getString("CreateLinkedResourceGroup.linkFileButton")); //$NON-NLS-1$
+		createLinkButton.setText(IDEWorkbenchMessagesIDEWorkbenchMessages.getString("CreateLinkedResourceGroup.linkFileButton")); //$NON-NLS-1$
 	else
-		createLinkButton.setText(WorkbenchMessages.getString("CreateLinkedResourceGroup.linkFolderButton")); //$NON-NLS-1$
+		createLinkButton.setText(IDEWorkbenchMessages.getString("CreateLinkedResourceGroup.linkFolderButton")); //$NON-NLS-1$
 	createLinkButton.setSelection(createLink);
 	createLinkButton.setFont(font);
 	SelectionListener selectionListener = new SelectionAdapter() {
@@ -143,7 +144,7 @@ private void createLinkLocationGroup(Composite locationGroup, boolean enabled) {
 	browseButton = new Button(linkTargetGroup, SWT.PUSH);
 	setButtonLayoutData(browseButton);
 	browseButton.setFont(font);
-	browseButton.setText(WorkbenchMessages.getString("CreateLinkedResourceGroup.browseButton")); //$NON-NLS-1$
+	browseButton.setText(IDEWorkbenchMessages.getString("CreateLinkedResourceGroup.browseButton")); //$NON-NLS-1$
 	browseButton.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent event) {
 			handleLinkTargetBrowseButtonPressed();
@@ -155,7 +156,7 @@ private void createLinkLocationGroup(Composite locationGroup, boolean enabled) {
 	variablesButton = new Button(linkTargetGroup, SWT.PUSH);
 	setButtonLayoutData(variablesButton);
 	variablesButton.setFont(font);
-	variablesButton.setText(WorkbenchMessages.getString("CreateLinkedResourceGroup.variablesButton")); //$NON-NLS-1$
+	variablesButton.setText(IDEWorkbenchMessages.getString("CreateLinkedResourceGroup.variablesButton")); //$NON-NLS-1$
 	variablesButton.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent event) {
 			handleVariablesButtonPressed();
@@ -175,7 +176,7 @@ private void createLinkLocationGroup(Composite locationGroup, boolean enabled) {
 	resolvedPathGroup.setFont(font);
 
 	resolvedPathLabelText = new Label(resolvedPathGroup, SWT.SINGLE);
-	resolvedPathLabelText.setText(WorkbenchMessages.getString("CreateLinkedResourceGroup.resolvedPathLabel")); //$NON-NLS-1$
+	resolvedPathLabelText.setText(IDEWorkbenchMessages.getString("CreateLinkedResourceGroup.resolvedPathLabel")); //$NON-NLS-1$
 	resolvedPathLabelText.setVisible(false);
 
 	resolvedPathLabelData = new Label(resolvedPathGroup, SWT.SINGLE);
@@ -194,7 +195,7 @@ private void createLinkLocationGroup(Composite locationGroup, boolean enabled) {
 private IStatus createStatus(int severity, String message) {
 	return new Status(
 		severity,
-		WorkbenchPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
+		IDEWorkbenchPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
 		severity,
 		message,	
 		null);
@@ -249,7 +250,7 @@ private void handleLinkTargetBrowseButtonPressed() {
 			if (path != null)
 				dialog.setFilterPath(path);
 		}
-		dialog.setMessage(WorkbenchMessages.getString("CreateLinkedResourceGroup.targetSelectionLabel")); //$NON-NLS-1$
+		dialog.setMessage(IDEWorkbenchMessages.getString("CreateLinkedResourceGroup.targetSelectionLabel")); //$NON-NLS-1$
 		selection = dialog.open();
 	}					
 	if (selection != null)
@@ -349,11 +350,11 @@ private IStatus validateFileType(File linkTargetFile) {
 	if (type == IResource.FILE && linkTargetFile.isFile() == false) {
 		return createStatus(
 			IStatus.ERROR,
-			WorkbenchMessages.getString("CreateLinkedResourceGroup.linkTargetNotFile"));	//$NON-NLS-1$
+			IDEWorkbenchMessages.getString("CreateLinkedResourceGroup.linkTargetNotFile"));	//$NON-NLS-1$
 	} else if (type == IResource.FOLDER && linkTargetFile.isDirectory() == false) {
 		return createStatus(
 			IStatus.ERROR,
-			WorkbenchMessages.getString("CreateLinkedResourceGroup.linkTargetNotFolder"));	//$NON-NLS-1$
+			IDEWorkbenchMessages.getString("CreateLinkedResourceGroup.linkTargetNotFolder"));	//$NON-NLS-1$
 	}
 	return createStatus(IStatus.OK, ""); //$NON-NLS-1$
 }
@@ -367,7 +368,7 @@ public IStatus validateLinkLocation(IResource linkHandle) {
 	if (linkTargetField == null || linkTargetField.isDisposed())
 		return createStatus(IStatus.OK, "");	//$NON-NLS-1$
 	
-	IWorkspace workspace = WorkbenchPlugin.getPluginWorkspace();
+	IWorkspace workspace = IDEWorkbenchPlugin.getPluginWorkspace();
 	IPath path = new Path(linkTarget);
 	
 	if (createLink == false)
@@ -389,7 +390,7 @@ public IStatus validateLinkLocation(IResource linkHandle) {
 		// locationStatus takes precedence over missing location warning.
 		return createStatus(
 			IStatus.WARNING,
-			WorkbenchMessages.getString("CreateLinkedResourceGroup.linkTargetNonExistent"));	//$NON-NLS-1$	
+			IDEWorkbenchMessages.getString("CreateLinkedResourceGroup.linkTargetNonExistent"));	//$NON-NLS-1$	
 	}
 	return locationStatus;
 }

@@ -27,7 +27,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.dialogs.WizardStep;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 
@@ -80,7 +80,7 @@ public class WizardStepGroup {
 		
 		// Add a label to identify the step list field
 		Label label = new Label(composite, SWT.LEFT);
-		label.setText(WorkbenchMessages.getString("WizardStepGroup.stepsLabel")); //$NON-NLS-1$
+		label.setText(IDEWorkbenchMessages.getString("WizardStepGroup.stepsLabel")); //$NON-NLS-1$
 		GridData data = new GridData();
 		data.verticalAlignment = SWT.TOP;
 		label.setLayoutData(data);

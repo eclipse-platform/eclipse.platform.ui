@@ -21,8 +21,9 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 import org.eclipse.ui.dialogs.ISelectionValidator;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.*;
-import org.eclipse.ui.internal.misc.Assert;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
 
 /**
  * Standard action for copying the currently selected resources elsewhere
@@ -68,7 +69,7 @@ public class CopyResourceAction extends ResourceSelectionListenerAction implemen
 	 * @param shell the shell for any dialogs
 	 */
 	public CopyResourceAction(Shell shell) {
-		this(shell, WorkbenchMessages.getString("CopyResourceAction.title")); //$NON-NLS-1$
+		this(shell, IDEWorkbenchMessages.getString("CopyResourceAction.title")); //$NON-NLS-1$
 		WorkbenchHelp.setHelp(this, IHelpContextIds.COPY_RESOURCE_ACTION);
 	}
 	/**
@@ -80,9 +81,11 @@ public class CopyResourceAction extends ResourceSelectionListenerAction implemen
 	 */
 	CopyResourceAction(Shell shell, String name) {
 		super(name);
-		setToolTipText(WorkbenchMessages.getString("CopyResourceAction.toolTip")); //$NON-NLS-1$
+		setToolTipText(IDEWorkbenchMessages.getString("CopyResourceAction.toolTip")); //$NON-NLS-1$
 		setId(CopyResourceAction.ID);
-		Assert.isNotNull(shell);
+		if (shell == null) {
+			throw new IllegalArgumentException();
+		}
 		this.shell = shell;
 	}
 	/**
@@ -126,7 +129,7 @@ public class CopyResourceAction extends ResourceSelectionListenerAction implemen
 	 * is a good place to copy the selected resources.
 	 */
 	public String isValid(Object destination) {
-		IWorkspaceRoot root = WorkbenchPlugin.getPluginWorkspace().getRoot();
+		IWorkspaceRoot root = IDEWorkbenchPlugin.getPluginWorkspace().getRoot();
 		IContainer container = (IContainer) root.findMember((IPath) destination);
 		
 		if (container != null) {
@@ -148,7 +151,7 @@ public class CopyResourceAction extends ResourceSelectionListenerAction implemen
 	IPath queryDestinationResource() {
 		// start traversal at root resource, should probably start at a
 		// better location in the tree
-		ContainerSelectionDialog dialog = new ContainerSelectionDialog(shell, getInitialContainer(), true, WorkbenchMessages.getString("CopyResourceAction.selectDestination")); //$NON-NLS-1$
+		ContainerSelectionDialog dialog = new ContainerSelectionDialog(shell, getInitialContainer(), true, IDEWorkbenchMessages.getString("CopyResourceAction.selectDestination")); //$NON-NLS-1$
 		dialog.setValidator(this);
 		dialog.showClosedProjects(false);
 		dialog.open();
@@ -167,7 +170,7 @@ public class CopyResourceAction extends ResourceSelectionListenerAction implemen
 		if (destination == null)
 			return;
 
-		IWorkspaceRoot root = WorkbenchPlugin.getPluginWorkspace().getRoot();
+		IWorkspaceRoot root = IDEWorkbenchPlugin.getPluginWorkspace().getRoot();
 		IContainer container = (IContainer) root.findMember(destination);
 		if (container == null) {
 			return;

@@ -31,8 +31,10 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.dialogs.CreateLinkedResourceGroup;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
 import org.eclipse.ui.internal.misc.ResourceAndContainerGroup;
 /**
  * Standard main page for a wizard that creates a file resource.
@@ -115,7 +117,7 @@ protected void createAdvancedControls(Composite parent) {
 
 		advancedButton = new Button(linkedResourceParent, SWT.PUSH);
 		advancedButton.setFont(linkedResourceParent.getFont());
-		advancedButton.setText(WorkbenchMessages.getString("showAdvanced")); //$NON-NLS-1$
+		advancedButton.setText(IDEWorkbenchMessages.getString("showAdvanced")); //$NON-NLS-1$
 		GridData data = setButtonLayoutData(advancedButton);
 		data.horizontalAlignment = GridData.BEGINNING;
 		advancedButton.setLayoutData(data);
@@ -148,7 +150,7 @@ public void createControl(Composite parent) {
 	WorkbenchHelp.setHelp(topLevel, IHelpContextIds.NEW_FILE_WIZARD_PAGE);
 
 	// resource and container group
-	resourceGroup = new ResourceAndContainerGroup(topLevel, this, getNewFileLabel(), WorkbenchMessages.getString("WizardNewFileCreationPage.file"), false, SIZING_CONTAINER_GROUP_HEIGHT); //$NON-NLS-1$
+	resourceGroup = new ResourceAndContainerGroup(topLevel, this, getNewFileLabel(), IDEWorkbenchMessages.getString("WizardNewFileCreationPage.file"), false, SIZING_CONTAINER_GROUP_HEIGHT); //$NON-NLS-1$
 	resourceGroup.setAllowExistingResources(false);
 	initialPopulateContainerNameField();
 	createAdvancedControls(topLevel);
@@ -202,7 +204,7 @@ protected void createFile(IFile fileHandle, InputStream contents, IProgressMonit
  * @see #createFile
  */
 protected IFile createFileHandle(IPath filePath) {
-	return WorkbenchPlugin.getPluginWorkspace().getRoot().getFile(filePath);
+	return IDEWorkbenchPlugin.getPluginWorkspace().getRoot().getFile(filePath);
 }
 /**
  * Creates the link target path if a link target has been specified. 
@@ -255,7 +257,7 @@ public IFile createNewFile() {
 			InterruptedException
 		{
 			try {
-				monitor.beginTask(WorkbenchMessages.getString("WizardNewFileCreationPage.progress"), 2000); //$NON-NLS-1$
+				monitor.beginTask(IDEWorkbenchMessages.getString("WizardNewFileCreationPage.progress"), 2000); //$NON-NLS-1$
 				ContainerGenerator generator = new ContainerGenerator(containerPath);
 				generator.generateContainer(new SubProgressMonitor(monitor, 1000));
 				createFile(newFileHandle,initialContents, new SubProgressMonitor(monitor, 1000));
@@ -273,14 +275,14 @@ public IFile createNewFile() {
 		if (e.getTargetException() instanceof CoreException) {
 			ErrorDialog.openError(
 				getContainer().getShell(), // Was Utilities.getFocusShell()
-				WorkbenchMessages.getString("WizardNewFileCreationPage.errorTitle"),  //$NON-NLS-1$
+				IDEWorkbenchMessages.getString("WizardNewFileCreationPage.errorTitle"),  //$NON-NLS-1$
 				null,	// no special message
 				((CoreException) e.getTargetException()).getStatus());
 		}
 		else {
 			// CoreExceptions are handled above, but unexpected runtime exceptions and errors may still occur.
-			WorkbenchPlugin.log(MessageFormat.format("Exception in {0}.getNewFile(): {1}", new Object[] {getClass().getName(), e.getTargetException()}));//$NON-NLS-1$
-			MessageDialog.openError(getContainer().getShell(), WorkbenchMessages.getString("WizardNewFileCreationPage.internalErrorTitle"), WorkbenchMessages.format("WizardNewFileCreationPage.internalErrorMessage", new Object[] {e.getTargetException().getMessage()})); //$NON-NLS-2$ //$NON-NLS-1$
+			IDEWorkbenchPlugin.log(MessageFormat.format("Exception in {0}.getNewFile(): {1}", new Object[] {getClass().getName(), e.getTargetException()}));//$NON-NLS-1$
+			MessageDialog.openError(getContainer().getShell(), IDEWorkbenchMessages.getString("WizardNewFileCreationPage.internalErrorTitle"), IDEWorkbenchMessages.format("WizardNewFileCreationPage.internalErrorMessage", new Object[] {e.getTargetException().getMessage()})); //$NON-NLS-2$ //$NON-NLS-1$
 		}
 		return null;
 	}
@@ -333,7 +335,7 @@ protected InputStream getInitialContents() {
  *     component group
  */
 protected String getNewFileLabel() {
-	return WorkbenchMessages.getString("WizardNewFileCreationPage.fileLabel"); //$NON-NLS-1$
+	return IDEWorkbenchMessages.getString("WizardNewFileCreationPage.fileLabel"); //$NON-NLS-1$
 }
 /**
  * Shows/hides the advanced option widgets. 
@@ -348,7 +350,7 @@ protected void handleAdvancedButtonSelect() {
 		linkedResourceComposite = null;
 		composite.layout();
 		shell.setSize(shellSize.x, shellSize.y - linkedResourceGroupHeight);
-		advancedButton.setText(WorkbenchMessages.getString("showAdvanced")); //$NON-NLS-1$
+		advancedButton.setText(IDEWorkbenchMessages.getString("showAdvanced")); //$NON-NLS-1$
 	} else {
 		linkedResourceComposite = linkedResourceGroup.createContents(linkedResourceParent);
 		if (linkedResourceGroupHeight == -1) {
@@ -357,7 +359,7 @@ protected void handleAdvancedButtonSelect() {
 		}
 		shell.setSize(shellSize.x, shellSize.y + linkedResourceGroupHeight);
 		composite.layout();
-		advancedButton.setText(WorkbenchMessages.getString("hideAdvanced")); //$NON-NLS-1$
+		advancedButton.setText(IDEWorkbenchMessages.getString("hideAdvanced")); //$NON-NLS-1$
 	}
 }
 /**

@@ -22,8 +22,8 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.registry.Capability;
 import org.eclipse.ui.internal.registry.CapabilityRegistry;
 
@@ -51,7 +51,7 @@ public class UpdateProjectCapabilityWizard extends MultiStepCapabilityWizard {
 		this.addCapabilities = addCapabilities;
 		this.removeCapabilities = removeCapabilities;
 		initializeDefaultPageImageDescriptor();
-		setWindowTitle(WorkbenchMessages.getString("UpdateProjectCapabilityWizard.windowTitle")); //$NON-NLS-1$
+		setWindowTitle(IDEWorkbenchMessages.getString("UpdateProjectCapabilityWizard.windowTitle")); //$NON-NLS-1$
 	}
 
 	/**
@@ -98,7 +98,7 @@ public class UpdateProjectCapabilityWizard extends MultiStepCapabilityWizard {
 		// Collect the minimum add capability steps
 		if (addCapabilities.length > 0) {
 			IWorkbench workbench = PlatformUI.getWorkbench();
-			CapabilityRegistry reg = WorkbenchPlugin.getDefault().getCapabilityRegistry();
+			CapabilityRegistry reg = IDEWorkbenchPlugin.getDefault().getCapabilityRegistry();
 			Capability[] results = reg.pruneCapabilities(addCapabilities);
 			for (int i = 0; i < results.length; i++, stepNumber++)
 				steps.add(new InstallCapabilityStep(stepNumber, results[i], workbench, this));
@@ -130,14 +130,14 @@ public class UpdateProjectCapabilityWizard extends MultiStepCapabilityWizard {
 	 * Method declared on MultiStepWizard.
 	 */
 	protected String getConfigurePageTitle() {
-		return WorkbenchMessages.getString("UpdateProjectCapabilityWizard.title"); //$NON-NLS-1$
+		return IDEWorkbenchMessages.getString("UpdateProjectCapabilityWizard.title"); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
 	 * Method declared on MultiStepWizard.
 	 */
 	protected String getConfigurePageDescription() {
-		return WorkbenchMessages.getString("WizardProjectConfigurePage.description"); //$NON-NLS-1$
+		return IDEWorkbenchMessages.getString("WizardProjectConfigurePage.description"); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -188,14 +188,14 @@ public class UpdateProjectCapabilityWizard extends MultiStepCapabilityWizard {
 	 * Method declared on MultiStepWizard.
 	 */
 	protected String getReviewPageTitle() {
-		return WorkbenchMessages.getString("UpdateProjectCapabilityWizard.title"); //$NON-NLS-1$
+		return IDEWorkbenchMessages.getString("UpdateProjectCapabilityWizard.title"); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
 	 * Method declared on MultiStepWizard.
 	 */
 	protected String getReviewPageDescription() {
-		return WorkbenchMessages.getString("WizardProjectReviewPage.description"); //$NON-NLS-1$
+		return IDEWorkbenchMessages.getString("WizardProjectReviewPage.description"); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -213,8 +213,8 @@ public class UpdateProjectCapabilityWizard extends MultiStepCapabilityWizard {
 	/* package */ boolean handleMissingStepWizard(WizardStep step) {
 		MessageDialog.openError(
 			getShell(),
-			WorkbenchMessages.getString("UpdateProjectCapabilityWizard.errorTitle"), //$NON-NLS-1$
-			WorkbenchMessages.format("UpdateProjectCapabilityWizard.noWizard", new Object[] {step.getLabel()})); //$NON-NLS-1$
+			IDEWorkbenchMessages.getString("UpdateProjectCapabilityWizard.errorTitle"), //$NON-NLS-1$
+			IDEWorkbenchMessages.format("UpdateProjectCapabilityWizard.noWizard", new Object[] {step.getLabel()})); //$NON-NLS-1$
 		return false;
 	}
 

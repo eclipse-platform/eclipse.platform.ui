@@ -12,7 +12,7 @@ package org.eclipse.ui.internal.model;
 
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 
 /**
  * An IWorkbenchAdapter implementation for IWorkspaceRoot objects.
@@ -39,6 +39,6 @@ public ImageDescriptor getImageDescriptor(Object object) {
  */
 public String getLabel(Object o) {
 	//root resource has no name
-	return WorkbenchMessages.getString("Workspace"); //$NON-NLS-1$
+	return IDEWorkbenchMessages.getString("Workspace"); //$NON-NLS-1$
 }
 }

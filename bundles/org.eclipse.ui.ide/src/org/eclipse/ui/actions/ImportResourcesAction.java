@@ -23,9 +23,9 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
-import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.ImportWizard;
 
 /**
@@ -44,8 +44,8 @@ public class ImportResourcesAction extends ResourceSelectionListenerAction {
 	 * Create a new instance of this class
 	 */
 	public ImportResourcesAction(IWorkbenchWindow window) {
-		super(WorkbenchMessages.getString("ImportResourcesAction.text")); //$NON-NLS-1$
-		setToolTipText(WorkbenchMessages.getString("ImportResourcesAction.toolTip")); //$NON-NLS-1$
+		super(IDEWorkbenchMessages.getString("ImportResourcesAction.text")); //$NON-NLS-1$
+		setToolTipText(IDEWorkbenchMessages.getString("ImportResourcesAction.toolTip")); //$NON-NLS-1$
 		setId(IWorkbenchActionConstants.IMPORT);
 		WorkbenchHelp.setHelp(this, IHelpContextIds.IMPORT_ACTION);
 		this.window = window;
@@ -81,7 +81,7 @@ public class ImportResourcesAction extends ResourceSelectionListenerAction {
 			selectionToPass = new StructuredSelection(selectedResources);
 
 		wizard.init(window.getWorkbench(), selectionToPass);
-		IDialogSettings workbenchSettings = WorkbenchPlugin.getDefault().getDialogSettings();
+		IDialogSettings workbenchSettings = IDEWorkbenchPlugin.getDefault().getDialogSettings();
 		IDialogSettings wizardSettings = workbenchSettings.getSection("ImportResourcesAction"); //$NON-NLS-1$
 		if (wizardSettings == null)
 			wizardSettings = workbenchSettings.addNewSection("ImportResourcesAction"); //$NON-NLS-1$

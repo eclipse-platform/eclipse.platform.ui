@@ -14,7 +14,7 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import java.lang.reflect.InvocationTargetException;
 
@@ -82,7 +82,7 @@ public synchronized final void run(IProgressMonitor monitor) throws InvocationTa
 				// CoreException and OperationCanceledException are propagated
 			}
 		};
-		WorkbenchPlugin.getPluginWorkspace().run(workspaceRunnable, monitor);
+		IDEWorkbenchPlugin.getPluginWorkspace().run(workspaceRunnable, monitor);
 	} catch (CoreException e) {
 		throw new InvocationTargetException(e);
 	} catch (OperationCanceledException e) {

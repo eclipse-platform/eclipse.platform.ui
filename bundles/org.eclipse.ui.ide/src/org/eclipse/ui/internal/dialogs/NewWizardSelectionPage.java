@@ -16,8 +16,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
-import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 /**
  *	New wizard selection tab that allows the user to either select a
  *	registered 'New' wizard to be launched, or to select a solution or
@@ -35,7 +35,7 @@ class NewWizardSelectionPage extends WorkbenchWizardSelectionPage {
 public NewWizardSelectionPage(IWorkbench aWorkbench , IStructuredSelection currentSelection, WizardCollectionElement elements) {
 	// override what superclass does with elements
 	super("newWizardSelectionPage", aWorkbench, currentSelection, null);//$NON-NLS-1$
-	setDescription(WorkbenchMessages.getString("NewWizardSelectionPage.description")); //$NON-NLS-1$
+	setDescription(IDEWorkbenchMessages.getString("NewWizardSelectionPage.description")); //$NON-NLS-1$
 	wizardCategories = elements;	
 }
 /**

@@ -14,9 +14,10 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
 import org.eclipse.ui.internal.misc.CheckboxTreeAndListGroup;
 import org.eclipse.ui.help.*;
-import org.eclipse.ui.internal.*;
 import org.eclipse.ui.model.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.events.ControlEvent;
@@ -62,12 +63,12 @@ public class ResourceSelectionDialog extends SelectionDialog {
  */
 public ResourceSelectionDialog(Shell parentShell, IAdaptable rootElement, String message) {
 	super(parentShell);
-	setTitle(WorkbenchMessages.getString("ResourceSelectionDialog.title")); //$NON-NLS-1$
+	setTitle(IDEWorkbenchMessages.getString("ResourceSelectionDialog.title")); //$NON-NLS-1$
 	root = rootElement;
 	if (message != null)
 		setMessage(message);
 	else
-		setMessage(WorkbenchMessages.getString("ResourceSelectionDialog.message")); //$NON-NLS-1$
+		setMessage(IDEWorkbenchMessages.getString("ResourceSelectionDialog.message")); //$NON-NLS-1$
 	setShellStyle(getShellStyle() | SWT.RESIZE);
 }
 /**

@@ -26,8 +26,8 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
-import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 
 /**
  * Standard action for refreshing the workspace from the local file system for
@@ -48,8 +48,8 @@ public class RefreshAction extends WorkspaceAction {
  * @param shell the shell for any dialogs
  */
 public RefreshAction(Shell shell) {
-	super(shell, WorkbenchMessages.getString("RefreshAction.text")); //$NON-NLS-1$
-	setToolTipText(WorkbenchMessages.getString("RefreshAction.toolTip")); //$NON-NLS-1$
+	super(shell, IDEWorkbenchMessages.getString("RefreshAction.text")); //$NON-NLS-1$
+	setToolTipText(IDEWorkbenchMessages.getString("RefreshAction.toolTip")); //$NON-NLS-1$
 	setId(ID);
 	WorkbenchHelp.setHelp(this, IHelpContextIds.REFRESH_ACTION);
 }
@@ -62,11 +62,11 @@ void checkLocationDeleted(IProject project) throws CoreException {
 		return;
 	File location = project.getLocation().toFile();
 	if (!location.exists()) {
-		String message = WorkbenchMessages.format("RefreshAction.locationDeletedMessage", new Object[] {project.getName(),location.getAbsolutePath()});//$NON-NLS-1$
+		String message = IDEWorkbenchMessages.format("RefreshAction.locationDeletedMessage", new Object[] {project.getName(),location.getAbsolutePath()});//$NON-NLS-1$
 		
 		final MessageDialog dialog = new MessageDialog(
 			getShell(),
-			WorkbenchMessages.getString("RefreshAction.dialogTitle"), // dialog title //$NON-NLS-1$
+			IDEWorkbenchMessages.getString("RefreshAction.dialogTitle"), // dialog title //$NON-NLS-1$
 			null, // use default window icon
 			message,
 			MessageDialog.QUESTION,
@@ -90,19 +90,19 @@ void checkLocationDeleted(IProject project) throws CoreException {
  * Method declared on WorkspaceAction.
  */
 String getOperationMessage() {
-	return WorkbenchMessages.getString("RefreshAction.progressMessage"); //$NON-NLS-1$
+	return IDEWorkbenchMessages.getString("RefreshAction.progressMessage"); //$NON-NLS-1$
 }
 /* (non-Javadoc)
  * Method declared on WorkspaceAction.
  */
 String getProblemsMessage() {
-	return WorkbenchMessages.getString("RefreshAction.problemMessage"); //$NON-NLS-1$
+	return IDEWorkbenchMessages.getString("RefreshAction.problemMessage"); //$NON-NLS-1$
 }
 /* (non-Javadoc)
  * Method declared on WorkspaceAction.
  */
 String getProblemsTitle() {
-	return WorkbenchMessages.getString("RefreshAction.problemTitle"); //$NON-NLS-1$
+	return IDEWorkbenchMessages.getString("RefreshAction.problemTitle"); //$NON-NLS-1$
 }
 /**
  * Returns a list containing the workspace root if the selection would otherwise be empty.

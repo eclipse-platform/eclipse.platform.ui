@@ -27,8 +27,8 @@ import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.registry.Capability;
 import org.eclipse.ui.internal.registry.CapabilityRegistry;
 import org.eclipse.ui.internal.ide.Category;
@@ -60,7 +60,7 @@ public class NewProjectWizard extends MultiStepCapabilityWizard implements INewW
 	public NewProjectWizard() {
 		super();
 		
-		WorkbenchPlugin plugin = WorkbenchPlugin.getDefault();
+		IDEWorkbenchPlugin plugin = IDEWorkbenchPlugin.getDefault();
 		IDialogSettings workbenchSettings = plugin.getDialogSettings();
 		IDialogSettings section = workbenchSettings.getSection("NewProjectWizard");//$NON-NLS-1$
 		if (section == null)
@@ -73,14 +73,14 @@ public class NewProjectWizard extends MultiStepCapabilityWizard implements INewW
 	 */
 	protected void addCustomPages() {
 		creationPage = new WizardNewProjectNameAndLocationPage("newProjectCreationPage");//$NON-NLS-1$
-		creationPage.setTitle(WorkbenchMessages.getString("NewProjectWizard.title")); //$NON-NLS-1$
-		creationPage.setDescription(WorkbenchMessages.getString("WizardNewProjectCreationPage.description")); //$NON-NLS-1$
+		creationPage.setTitle(IDEWorkbenchMessages.getString("NewProjectWizard.title")); //$NON-NLS-1$
+		creationPage.setDescription(IDEWorkbenchMessages.getString("WizardNewProjectCreationPage.description")); //$NON-NLS-1$
 		creationPage.setInitialProjectName(initialProjectName);
 		this.addPage(creationPage);
 		
 		capabilityPage = new WizardNewProjectCapabilityPage("newProjectCapabilityPage");//$NON-NLS-1$
-		capabilityPage.setTitle(WorkbenchMessages.getString("NewProjectWizard.title")); //$NON-NLS-1$
-		capabilityPage.setDescription(WorkbenchMessages.getString("WizardNewProjectCapabilityPage.description")); //$NON-NLS-1$
+		capabilityPage.setTitle(IDEWorkbenchMessages.getString("NewProjectWizard.title")); //$NON-NLS-1$
+		capabilityPage.setDescription(IDEWorkbenchMessages.getString("WizardNewProjectCapabilityPage.description")); //$NON-NLS-1$
 		capabilityPage.setInitialProjectCapabilities(initialProjectCapabilities);
 		capabilityPage.setInitialSelectedCategories(initialSelectedCategories);
 		this.addPage(capabilityPage);
@@ -95,7 +95,7 @@ public class NewProjectWizard extends MultiStepCapabilityWizard implements INewW
 	 */
 	private boolean buildSteps() {
 		Capability[] caps = capabilityPage.getSelectedCapabilities();
-		CapabilityRegistry reg = WorkbenchPlugin.getDefault().getCapabilityRegistry();
+		CapabilityRegistry reg = IDEWorkbenchPlugin.getDefault().getCapabilityRegistry();
 		IStatus status = reg.validateCapabilities(caps);
 		if (status.isOK()) {
 			Capability[] results = reg.pruneCapabilities(caps);
@@ -108,8 +108,8 @@ public class NewProjectWizard extends MultiStepCapabilityWizard implements INewW
 		} else {
 			ErrorDialog.openError(
 				getShell(), 
-				WorkbenchMessages.getString("NewProjectWizard.errorTitle"),  //$NON-NLS-1$
-				WorkbenchMessages.getString("NewProjectWizard.invalidCapabilities"),  //$NON-NLS-1$
+				IDEWorkbenchMessages.getString("NewProjectWizard.errorTitle"),  //$NON-NLS-1$
+				IDEWorkbenchMessages.getString("NewProjectWizard.invalidCapabilities"),  //$NON-NLS-1$
 		 		status);
 			return false;
 		}
@@ -127,28 +127,28 @@ public class NewProjectWizard extends MultiStepCapabilityWizard implements INewW
 	 * Method declared on MultiStepWizard.
 	 */
 	protected String getConfigurePageTitle() {
-		return WorkbenchMessages.getString("NewProjectWizard.title"); //$NON-NLS-1$
+		return IDEWorkbenchMessages.getString("NewProjectWizard.title"); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
 	 * Method declared on MultiStepWizard.
 	 */
 	protected String getConfigurePageDescription() {
-		return WorkbenchMessages.getString("WizardProjectConfigurePage.description"); //$NON-NLS-1$
+		return IDEWorkbenchMessages.getString("WizardProjectConfigurePage.description"); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
 	 * Method declared on MultiStepWizard.
 	 */
 	protected  String getReviewPageTitle() {
-		return WorkbenchMessages.getString("NewProjectWizard.title"); //$NON-NLS-1$
+		return IDEWorkbenchMessages.getString("NewProjectWizard.title"); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
 	 * Method declared on MultiStepWizard.
 	 */
 	protected String getReviewPageDescription() {
-		return WorkbenchMessages.getString("WizardProjectReviewPage.description"); //$NON-NLS-1$
+		return IDEWorkbenchMessages.getString("WizardProjectReviewPage.description"); //$NON-NLS-1$
 	}
 		
 	/* (non-Javadoc)
@@ -221,8 +221,8 @@ public class NewProjectWizard extends MultiStepCapabilityWizard implements INewW
 	/* package */ boolean handleMissingStepWizard(WizardStep step) {
 		MessageDialog.openError(
 			getShell(),
-			WorkbenchMessages.getString("NewProjectWizard.errorTitle"), //$NON-NLS-1$
-			WorkbenchMessages.format("NewProjectWizard.noWizard", new Object[] {step.getLabel()})); //$NON-NLS-1$
+			IDEWorkbenchMessages.getString("NewProjectWizard.errorTitle"), //$NON-NLS-1$
+			IDEWorkbenchMessages.format("NewProjectWizard.noWizard", new Object[] {step.getLabel()})); //$NON-NLS-1$
 		return false;
 	}
 
@@ -233,7 +233,7 @@ public class NewProjectWizard extends MultiStepCapabilityWizard implements INewW
 		this.workbench = workbench;
 		this.selection = currentSelection;
 		initializeDefaultPageImageDescriptor();
-		setWindowTitle(WorkbenchMessages.getString("NewProjectWizard.windowTitle")); //$NON-NLS-1$
+		setWindowTitle(IDEWorkbenchMessages.getString("NewProjectWizard.windowTitle")); //$NON-NLS-1$
 	}
 
 	/**

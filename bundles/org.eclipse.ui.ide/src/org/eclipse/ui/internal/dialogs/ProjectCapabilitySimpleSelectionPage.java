@@ -36,8 +36,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.ICapabilityInstallWizard;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.registry.Capability;
 import org.eclipse.ui.internal.registry.CapabilityRegistry;
 import org.eclipse.ui.internal.ide.Category;
@@ -61,7 +61,7 @@ public class ProjectCapabilitySimpleSelectionPage extends WizardPage {
 		this.workbench = workbench;
 		this.selection = selection;
 		this.project = project;
-		this.reg = WorkbenchPlugin.getDefault().getCapabilityRegistry();
+		this.reg = IDEWorkbenchPlugin.getDefault().getCapabilityRegistry();
 	}
 	
 	/* (non-Javadoc)
@@ -81,7 +81,7 @@ public class ProjectCapabilitySimpleSelectionPage extends WizardPage {
 		topContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		Label label = new Label(topContainer, SWT.LEFT);
-		label.setText(WorkbenchMessages.getString("ProjectCapabilitySelectionGroup.capabilities")); //$NON-NLS-1$
+		label.setText(IDEWorkbenchMessages.getString("ProjectCapabilitySelectionGroup.capabilities")); //$NON-NLS-1$
 		GridData data = new GridData();
 		data.verticalAlignment = SWT.TOP;
 		label.setLayoutData(data);
@@ -182,7 +182,7 @@ public class ProjectCapabilitySimpleSelectionPage extends WizardPage {
 		Capability[] caps = reg.getProjectCapabilities(project);
 		List existingCaps = Arrays.asList(caps);
 		if (existingCaps.contains(chosenCapability)) {
-			setErrorMessage(WorkbenchMessages.getString("ProjectCapabilitySimpleSelectionPage.capabilityExist")); //$NON-NLS-1$
+			setErrorMessage(IDEWorkbenchMessages.getString("ProjectCapabilitySimpleSelectionPage.capabilityExist")); //$NON-NLS-1$
 			return false;
 		}
 
@@ -190,11 +190,11 @@ public class ProjectCapabilitySimpleSelectionPage extends WizardPage {
 		Capability[] prereqs = reg.findCapabilities(ids);
 		for (int i = 0; i < prereqs.length; i++) {
 			if (prereqs[i] == null) {
-				setErrorMessage(WorkbenchMessages.format("ProjectCapabilitySimpleSelectionPage.capabilityMissing", new Object[] {ids[i]})); //$NON-NLS-1$
+				setErrorMessage(IDEWorkbenchMessages.format("ProjectCapabilitySimpleSelectionPage.capabilityMissing", new Object[] {ids[i]})); //$NON-NLS-1$
 				return false;
 			}
 			if (!existingCaps.contains(prereqs[i])) {
-				setErrorMessage(WorkbenchMessages.format("ProjectCapabilitySimpleSelectionPage.capabilityRequired", new Object[] {prereqs[i].getName()})); //$NON-NLS-1$
+				setErrorMessage(IDEWorkbenchMessages.format("ProjectCapabilitySimpleSelectionPage.capabilityRequired", new Object[] {prereqs[i].getName()})); //$NON-NLS-1$
 				return false;
 			}
 		}
@@ -205,7 +205,7 @@ public class ProjectCapabilitySimpleSelectionPage extends WizardPage {
 			String[] setIds = reg.getMembershipSetIds(caps[i]);
 			for (int j = 0; j < setIds.length; j++) {
 				if (idsList.contains(setIds[j])) {
-					setErrorMessage(WorkbenchMessages.format("ProjectCapabilitySimpleSelectionPage.capabilitySet", new Object[] {caps[i].getName()})); //$NON-NLS-1$
+					setErrorMessage(IDEWorkbenchMessages.format("ProjectCapabilitySimpleSelectionPage.capabilitySet", new Object[] {caps[i].getName()})); //$NON-NLS-1$
 					return false;
 				}
 			}

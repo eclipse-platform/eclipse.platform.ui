@@ -15,9 +15,9 @@ import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
-import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
 import org.eclipse.ui.internal.misc.ProjectCapabilitySelectionGroup;
 import org.eclipse.ui.internal.registry.Capability;
 import org.eclipse.ui.internal.registry.CapabilityRegistry;
@@ -65,7 +65,7 @@ public class WizardNewProjectCapabilityPage extends WizardPage {
 	 */
 	public void createControl(Composite parent) {
 		WorkbenchHelp.setHelp(parent, IHelpContextIds.NEW_PROJECT_CAPABILITY_WIZARD_PAGE);
-		CapabilityRegistry reg = WorkbenchPlugin.getDefault().getCapabilityRegistry();
+		CapabilityRegistry reg = IDEWorkbenchPlugin.getDefault().getCapabilityRegistry();
 		capabilityGroup = new ProjectCapabilitySelectionGroup(initialSelectedCategories, initialProjectCapabilities, reg);
 		setControl(capabilityGroup.createContents(parent));
 		
@@ -76,7 +76,7 @@ public class WizardNewProjectCapabilityPage extends WizardPage {
 		});
 		
 		if (!reg.hasCapabilities())
-			setMessage(WorkbenchMessages.getString("WizardNewProjectCapabilityPage.noCapabilities"), WARNING); //$NON-NLS-1$
+			setMessage(IDEWorkbenchMessages.getString("WizardNewProjectCapabilityPage.noCapabilities"), WARNING); //$NON-NLS-1$
 	}
 
 	/**

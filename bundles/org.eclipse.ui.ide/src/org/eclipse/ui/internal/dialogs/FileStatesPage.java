@@ -23,8 +23,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
-import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 /**
  * The FileStatesPage is the page used to set the file states sizes for the workbench.
  */
@@ -32,14 +32,14 @@ public class FileStatesPage
 	extends PreferencePage
 	implements IWorkbenchPreferencePage, Listener {
 
-	private static final String LONGEVITY_TITLE = WorkbenchMessages.getString("FileHistory.longevity"); //$NON-NLS-1$
-	private static final String MAX_FILE_STATES_TITLE = WorkbenchMessages.getString("FileHistory.entries"); //$NON-NLS-1$
-	private static final String MAX_FILE_STATE_SIZE_TITLE = WorkbenchMessages.getString("FileHistory.diskSpace"); //$NON-NLS-1$
-	private static final String POSITIVE_MESSAGE = WorkbenchMessages.getString("FileHistory.mustBePositive"); //$NON-NLS-1$
-	private static final String INVALID_VALUE_MESSAGE = WorkbenchMessages.getString("FileHistory.invalid"); //$NON-NLS-1$
-	private static final String SAVE_ERROR_MESSAGE = WorkbenchMessages.getString("FileHistory.exceptionSaving"); //$NON-NLS-1$
-	private static final String NOTE_MESSAGE = WorkbenchMessages.getString("FileHistory.restartNote"); //$NON-NLS-1$
-	private static final String NOTE_LABEL = WorkbenchMessages.getString("Preference.note"); //$NON-NLS-1$
+	private static final String LONGEVITY_TITLE = IDEWorkbenchMessages.getString("FileHistory.longevity"); //$NON-NLS-1$
+	private static final String MAX_FILE_STATES_TITLE = IDEWorkbenchMessages.getString("FileHistory.entries"); //$NON-NLS-1$
+	private static final String MAX_FILE_STATE_SIZE_TITLE = IDEWorkbenchMessages.getString("FileHistory.diskSpace"); //$NON-NLS-1$
+	private static final String POSITIVE_MESSAGE = IDEWorkbenchMessages.getString("FileHistory.mustBePositive"); //$NON-NLS-1$
+	private static final String INVALID_VALUE_MESSAGE = IDEWorkbenchMessages.getString("FileHistory.invalid"); //$NON-NLS-1$
+	private static final String SAVE_ERROR_MESSAGE = IDEWorkbenchMessages.getString("FileHistory.exceptionSaving"); //$NON-NLS-1$
+	private static final String NOTE_MESSAGE = IDEWorkbenchMessages.getString("FileHistory.restartNote"); //$NON-NLS-1$
+	private static final String NOTE_LABEL = IDEWorkbenchMessages.getString("Preference.note"); //$NON-NLS-1$
 
 	private static final int FAILED_VALUE = -1;
 
@@ -328,7 +328,7 @@ public class FileStatesPage
 
 		if (maxFileStates > FILE_STATES_MAXIMUM) {
 			setErrorMessage(
-				WorkbenchMessages.format(
+				IDEWorkbenchMessages.format(
 					"FileHistory.aboveMaxEntries", //$NON-NLS-1$
 					new String[] { String.valueOf(FILE_STATES_MAXIMUM)}));
 			return FAILED_VALUE;
@@ -351,7 +351,7 @@ public class FileStatesPage
 
 		if (maxFileStateSize > STATE_SIZE_MAXIMUM) {
 			setErrorMessage(
-				WorkbenchMessages.format(
+				IDEWorkbenchMessages.format(
 					"FileHistory.aboveMaxFileSize", //$NON-NLS-1$
 					new String[] { String.valueOf(STATE_SIZE_MAXIMUM)}));
 			return FAILED_VALUE;

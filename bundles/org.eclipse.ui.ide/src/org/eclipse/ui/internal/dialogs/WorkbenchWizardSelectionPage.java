@@ -15,7 +15,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.wizard.IWizardNode;
 import org.eclipse.jface.wizard.WizardSelectionPage;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.model.AdaptableList;
 
 /**
@@ -36,7 +36,7 @@ public WorkbenchWizardSelectionPage(String name, IWorkbench aWorkbench, IStructu
 	this.wizardElements = elements;
 	this.currentResourceSelection = currentSelection;
 	this.workbench = aWorkbench;
-	setTitle(WorkbenchMessages.getString("Select")); //$NON-NLS-1$
+	setTitle(IDEWorkbenchMessages.getString("Select")); //$NON-NLS-1$
 }
 /**
  *	Answer the wizard object corresponding to the passed id, or null

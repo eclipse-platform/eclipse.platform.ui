@@ -28,7 +28,7 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 import org.eclipse.ui.dialogs.WizardNewProjectReferencePage;
 import org.eclipse.ui.internal.IPreferenceConstants;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.MessageDialogWithToggle;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
@@ -362,7 +362,7 @@ public static void updatePerspective(IConfigurationElement configElement) {
 	IPerspectiveRegistry reg = PlatformUI.getWorkbench().getPerspectiveRegistry();
 	IPerspectiveDescriptor finalPersp = reg.findPerspectiveWithId(finalPerspId);
 	if (finalPersp == null) {
-		WorkbenchPlugin.log(
+		IDEWorkbenchPlugin.log(
 			"Unable to find persective " //$NON-NLS-1$
 				+ finalPerspId
 				+ " in BasicNewProjectResourceWizard.updatePerspective"); //$NON-NLS-1$
@@ -418,7 +418,7 @@ public static void updatePerspective(IConfigurationElement configElement) {
  * @return <code>true</code> if it's OK to switch, <code>false</code> otherwise
  */
 private static boolean confirmPerspectiveSwitch(IWorkbenchWindow window, IPerspectiveDescriptor finalPersp) {
-	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+	IPreferenceStore store = IDEWorkbenchPlugin.getDefault().getPreferenceStore();
 	// @issue Constants need to move to IDE project
 	String pspm = store.getString(IPreferenceConstants.PROJECT_SWITCH_PERSP_MODE);
 	if (!IPreferenceConstants.PSPM_PROMPT.equals(pspm)) {

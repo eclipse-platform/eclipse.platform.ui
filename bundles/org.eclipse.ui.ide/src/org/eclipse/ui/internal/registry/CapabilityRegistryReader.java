@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.IWorkbenchConstants;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
  * This class is used to read project capabilities and capability
@@ -82,7 +82,7 @@ public class CapabilityRegistryReader extends RegistryReader{
 			capabilityRegistry.addCategory(category);
 		} catch (WorkbenchException e) {
 			// log an error since its not safe to show a dialog here
-			WorkbenchPlugin.log("Unable to create capability category. ", e.getStatus()); //$NON-NLS-1$
+			IDEWorkbenchPlugin.log("Unable to create capability category. ", e.getStatus()); //$NON-NLS-1$
 		}
 		return true;		
 	}

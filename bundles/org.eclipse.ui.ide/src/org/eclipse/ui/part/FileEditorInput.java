@@ -18,7 +18,6 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.misc.Assert;
 
 /**
  * Adapter for making a file resource a suitable input for an editor.
@@ -34,7 +33,9 @@ public class FileEditorInput implements IFileEditorInput, IPersistableElement {
  * @param file the file resource
  */
 public FileEditorInput(IFile file) {
-	Assert.isNotNull(file);
+	if (file == null) {
+		throw new IllegalArgumentException();
+	}
 	this.file = file;
 }
 /**

@@ -28,8 +28,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.ide.DialogUtil;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
@@ -172,11 +174,11 @@ public class ProjectReferencePage extends PropertyPage {
 		} else {
 			String msg = target.getMessage();
 			if (msg == null)
-				msg = WorkbenchMessages.getString("Internal_error"); //$NON-NLS-1$
+				msg = IDEWorkbenchMessages.getString("Internal_error"); //$NON-NLS-1$
 			error =
 				new Status(
 					IStatus.ERROR,
-					WorkbenchPlugin.PI_WORKBENCH,
+					IDEWorkbenchPlugin.IDE_WORKBENCH,
 					1,
 					msg,
 					target);
@@ -189,7 +191,7 @@ public class ProjectReferencePage extends PropertyPage {
 	private void initialize() {
 		project = (IProject) getElement().getAdapter(IResource.class);
 		noDefaultAndApplyButton();
-		setDescription(WorkbenchMessages.format("ProjectReferencesPage.label", new Object[] { project.getName()})); //$NON-NLS-1$
+		setDescription(IDEWorkbenchMessages.format("ProjectReferencesPage.label", new Object[] { project.getName()})); //$NON-NLS-1$
 	}
 	/**
 	 * @see PreferencePage#performOk

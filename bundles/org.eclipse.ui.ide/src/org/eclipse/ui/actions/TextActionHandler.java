@@ -17,7 +17,8 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
 
 /**
  * Handles the redirection of the global Cut, Copy, Paste, and
@@ -103,7 +104,7 @@ public class TextActionHandler {
 
 	private class DeleteActionHandler extends Action {
 		protected DeleteActionHandler() {
-			super(WorkbenchMessages.getString("Delete")); //$NON-NLS-1$
+			super(IDEWorkbenchMessages.getString("Delete")); //$NON-NLS-1$
 			setId("TextDeleteActionHandler");//$NON-NLS-1$
 			setEnabled(false);
 			WorkbenchHelp.setHelp(this, IHelpContextIds.TEXT_DELETE_ACTION);
@@ -133,7 +134,7 @@ public class TextActionHandler {
 	
 	private class CutActionHandler extends Action {
 		protected CutActionHandler() {
-			super(WorkbenchMessages.getString("Cut")); //$NON-NLS-1$
+			super(IDEWorkbenchMessages.getString("Cut")); //$NON-NLS-1$
 			setId("TextCutActionHandler");//$NON-NLS-1$
 			setEnabled(false);
 			WorkbenchHelp.setHelp(this, IHelpContextIds.TEXT_CUT_ACTION);
@@ -163,7 +164,7 @@ public class TextActionHandler {
 	
 	private class CopyActionHandler extends Action {
 		protected CopyActionHandler() {
-			super(WorkbenchMessages.getString("Copy")); //$NON-NLS-1$
+			super(IDEWorkbenchMessages.getString("Copy")); //$NON-NLS-1$
 			setId("TextCopyActionHandler");//$NON-NLS-1$
 			setEnabled(false);
 			WorkbenchHelp.setHelp(this, IHelpContextIds.TEXT_COPY_ACTION);
@@ -193,7 +194,7 @@ public class TextActionHandler {
 	
 	private class PasteActionHandler extends Action {
 		protected PasteActionHandler() {
-			super(WorkbenchMessages.getString("Paste")); //$NON-NLS-1$
+			super(IDEWorkbenchMessages.getString("Paste")); //$NON-NLS-1$
 			setId("TextPasteActionHandler");//$NON-NLS-1$
 			setEnabled(false);
 			WorkbenchHelp.setHelp(this, IHelpContextIds.TEXT_PASTE_ACTION);
@@ -223,7 +224,7 @@ public class TextActionHandler {
 	
 	private class SelectAllActionHandler extends Action {
 		protected SelectAllActionHandler() {
-			super(WorkbenchMessages.getString("TextAction.selectAll")); //$NON-NLS-1$
+			super(IDEWorkbenchMessages.getString("TextAction.selectAll")); //$NON-NLS-1$
 			setId("TextSelectAllActionHandler");//$NON-NLS-1$
 			setEnabled(false);
 			WorkbenchHelp.setHelp(this, IHelpContextIds.TEXT_SELECT_ALL_ACTION);

@@ -29,8 +29,10 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.dialogs.CreateLinkedResourceGroup;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
 
 /**
  * The NewFolderDialog is used to create a new folder.
@@ -77,7 +79,7 @@ public class NewFolderDialog extends SelectionStatusDialog {
 public NewFolderDialog(Shell parentShell, IContainer container) {
 	super(parentShell);
 	this.container = container;
-	setTitle(WorkbenchMessages.getString("NewFolderDialog.title")); //$NON-NLS-1$
+	setTitle(IDEWorkbenchMessages.getString("NewFolderDialog.title")); //$NON-NLS-1$
 	setShellStyle(getShellStyle() | SWT.RESIZE);
 	setStatusLineAboveButtons(true);
 }
@@ -130,7 +132,7 @@ protected void createAdvancedControls(Composite parent) {
 
 		advancedButton = new Button(linkedResourceParent, SWT.PUSH);
 		advancedButton.setFont(linkedResourceParent.getFont());
-		advancedButton.setText(WorkbenchMessages.getString("showAdvanced")); //$NON-NLS-1$
+		advancedButton.setText(IDEWorkbenchMessages.getString("showAdvanced")); //$NON-NLS-1$
 		setButtonLayoutData(advancedButton);
 		GridData data = (GridData) advancedButton.getLayoutData();
 		data.horizontalAlignment = GridData.BEGINNING;
@@ -179,7 +181,7 @@ private void createFolderNameGroup(Composite parent) {
 	// new project label
 	Label folderLabel = new Label(folderGroup,SWT.NONE);
 	folderLabel.setFont(font);
-	folderLabel.setText(WorkbenchMessages.getString("NewFolderDialog.nameLabel"));	//$NON-NLS-1$
+	folderLabel.setText(IDEWorkbenchMessages.getString("NewFolderDialog.nameLabel"));	//$NON-NLS-1$
 
 	// new project name entry field
 	folderNameField = new Text(folderGroup, SWT.BORDER);
@@ -222,7 +224,7 @@ private IFolder createNewFolder(String folderName, final String linkTargetName) 
 	WorkspaceModifyOperation operation = new WorkspaceModifyOperation() {
 		public void execute(IProgressMonitor monitor) throws CoreException {
 			try {
-				monitor.beginTask(WorkbenchMessages.getString("NewFolderDialog.progress"), 2000); //$NON-NLS-1$
+				monitor.beginTask(IDEWorkbenchMessages.getString("NewFolderDialog.progress"), 2000); //$NON-NLS-1$
 				if (monitor.isCanceled())
 					throw new OperationCanceledException();
 				if (linkTargetName == null)
@@ -245,19 +247,19 @@ private IFolder createNewFolder(String folderName, final String linkTargetName) 
 		if (exception.getTargetException() instanceof CoreException) {
 			ErrorDialog.openError(
 				getShell(),
-				WorkbenchMessages.getString("NewFolderDialog.errorTitle"),  //$NON-NLS-1$
+				IDEWorkbenchMessages.getString("NewFolderDialog.errorTitle"),  //$NON-NLS-1$
 				null,	// no special message
 				((CoreException) exception.getTargetException()).getStatus());
 		}
 		else {
 			// CoreExceptions are handled above, but unexpected runtime exceptions and errors may still occur.
-			WorkbenchPlugin.log(MessageFormat.format(
+			IDEWorkbenchPlugin.log(MessageFormat.format(
 				"Exception in {0}.createNewFolder(): {1}", 					//$NON-NLS-1$
 				new Object[] {getClass().getName(), exception.getTargetException()}));
 			MessageDialog.openError(
 				getShell(), 
-				WorkbenchMessages.getString("NewFolderDialog.errorTitle"), 	//$NON-NLS-1$
-				WorkbenchMessages.format("NewFolderDialog.internalError", 	//$NON-NLS-1$
+				IDEWorkbenchMessages.getString("NewFolderDialog.errorTitle"), 	//$NON-NLS-1$
+				IDEWorkbenchMessages.format("NewFolderDialog.internalError", 	//$NON-NLS-1$
 				new Object[] {exception.getTargetException().getMessage()}));
 		}
 		return null;
@@ -277,7 +279,7 @@ protected void handleAdvancedButtonSelect() {
 		linkedResourceComposite = null;
 		composite.layout();
 		shell.setSize(shellSize.x, basicShellHeight);
-		advancedButton.setText(WorkbenchMessages.getString("showAdvanced")); //$NON-NLS-1$
+		advancedButton.setText(IDEWorkbenchMessages.getString("showAdvanced")); //$NON-NLS-1$
 	} else {
 		if (basicShellHeight == -1) {
 			basicShellHeight = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).y;
@@ -286,7 +288,7 @@ protected void handleAdvancedButtonSelect() {
 		shellSize = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 		shell.setSize(shellSize);
 		composite.layout();
-		advancedButton.setText(WorkbenchMessages.getString("hideAdvanced")); //$NON-NLS-1$
+		advancedButton.setText(IDEWorkbenchMessages.getString("hideAdvanced")); //$NON-NLS-1$
 	}				
 }
 /**
@@ -303,7 +305,7 @@ private boolean isValidContainer() {
 		return false;
 		
 	try {
-		IWorkspace workspace = WorkbenchPlugin.getPluginWorkspace();
+		IWorkspace workspace = IDEWorkbenchPlugin.getPluginWorkspace();
 		IProject project = (IProject) container;
 		String[] natureIds = project.getDescription().getNatureIds();
 		
@@ -346,7 +348,7 @@ private void updateStatus(int severity, String message) {
 	updateStatus(
 		new Status(
 			severity,
-			WorkbenchPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
+			IDEWorkbenchPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
 			severity,
 			message,
 			null));
@@ -387,7 +389,7 @@ private boolean validateFolderName() {
 	IStatus nameStatus = workspace.validateName(name, IResource.FOLDER);
 
 	if ("".equals(name)) { //$NON-NLS-1$
-		updateStatus(IStatus.ERROR, WorkbenchMessages.getString("NewFolderDialog.folderNameEmpty"));	//$NON-NLS-1$
+		updateStatus(IStatus.ERROR, IDEWorkbenchMessages.getString("NewFolderDialog.folderNameEmpty"));	//$NON-NLS-1$
 		return false;
 	}
 	if (nameStatus.isOK() == false) {
@@ -396,7 +398,7 @@ private boolean validateFolderName() {
 	}
 	IPath path = new Path(name);
 	if (container.getFolder(path).exists() || container.getFile(path).exists()) {
-		updateStatus(IStatus.ERROR, WorkbenchMessages.format("NewFolderDialog.alreadyExists", new Object[] { name }));	//$NON-NLS-1$
+		updateStatus(IStatus.ERROR, IDEWorkbenchMessages.format("NewFolderDialog.alreadyExists", new Object[] { name }));	//$NON-NLS-1$
 		return false;
 	}
 	updateStatus(IStatus.OK, "");	//$NON-NLS-1$

@@ -26,9 +26,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.internal.Workbench;
-import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.DialogUtil;
 import org.eclipse.ui.internal.dialogs.ResourceTreeAndListGroup;
 import org.eclipse.ui.model.WorkbenchContentProvider;
@@ -69,9 +68,9 @@ public abstract class WizardExportResourcesPage
 	// widgets
 	private ResourceTreeAndListGroup resourceGroup;
 
-	private final static String SELECT_TYPES_TITLE = WorkbenchMessages.getString("WizardTransferPage.selectTypes"); //$NON-NLS-1$
-	private final static String SELECT_ALL_TITLE = WorkbenchMessages.getString("WizardTransferPage.selectAll"); //$NON-NLS-1$
-	private final static String DESELECT_ALL_TITLE = WorkbenchMessages.getString("WizardTransferPage.deselectAll"); //$NON-NLS-1$
+	private final static String SELECT_TYPES_TITLE = IDEWorkbenchMessages.getString("WizardTransferPage.selectTypes"); //$NON-NLS-1$
+	private final static String SELECT_ALL_TITLE = IDEWorkbenchMessages.getString("WizardTransferPage.selectAll"); //$NON-NLS-1$
+	private final static String DESELECT_ALL_TITLE = IDEWorkbenchMessages.getString("WizardTransferPage.deselectAll"); //$NON-NLS-1$
 
 	/**
 	 * Creates an export wizard page. If the current resource selection 
@@ -289,7 +288,7 @@ public abstract class WizardExportResourcesPage
 	 * @see WizardDataTransferPage.getErrorDialogTitle()
 	 */
 	protected String getErrorDialogTitle() {
-		return WorkbenchMessages.getString("WizardExportPage.errorDialogTitle"); //$NON-NLS-1$
+		return IDEWorkbenchMessages.getString("WizardExportPage.errorDialogTitle"); //$NON-NLS-1$
 	}
 	/**
 	 * Obsolete method. This was implemented to handle the case where ensureLocal()
@@ -593,6 +592,6 @@ public abstract class WizardExportResourcesPage
 	 */
 	protected boolean saveDirtyEditors() {
 		return
-			WorkbenchPlugin.getDefault().getWorkbench().saveAllEditors(true);
+			IDEWorkbenchPlugin.getDefault().getWorkbench().saveAllEditors(true);
 	}
 }

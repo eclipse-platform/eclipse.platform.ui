@@ -23,8 +23,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
-import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.misc.ContainerSelectionGroup;
 
 /**
@@ -79,13 +79,13 @@ public class ContainerSelectionDialog extends SelectionDialog {
 		boolean allowNewContainerName,
 		String message) {
 		super(parentShell);
-		setTitle(WorkbenchMessages.getString("ContainerSelectionDialog.title")); //$NON-NLS-1$
+		setTitle(IDEWorkbenchMessages.getString("ContainerSelectionDialog.title")); //$NON-NLS-1$
 		this.initialSelection = initialRoot;
 		this.allowNewContainerName = allowNewContainerName;
 		if (message != null)
 			setMessage(message);
 		else
-			setMessage(WorkbenchMessages.getString("ContainerSelectionDialog.message")); //$NON-NLS-1$
+			setMessage(IDEWorkbenchMessages.getString("ContainerSelectionDialog.message")); //$NON-NLS-1$
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
 	/* (non-Javadoc)
