@@ -32,86 +32,139 @@ public final class BootLoader {
 	 * The unique identifier constant (value "<code>org.eclipse.core.boot</code>")
 	 * of the Core Boot (pseudo-) plug-in.
 	 */
-	public static final String PI_BOOT = "org.eclipse.core.boot";
+	public static final String PI_BOOT = "org.eclipse.core.boot";//$NON-NLS-1$
 
 	/**
 	 * Constant string (value "win32") indicating the platform is running on a
 	 * Window 32-bit operating system (e.g., Windows 98, NT, 2000).
 	 */
-	public static final String OS_WIN32 = "win32";
+	public static final String OS_WIN32 = "win32";//$NON-NLS-1$
 
 	/**
 	 * Constant string (value "linux") indicating the platform is running on a
 	 * Linux-based operating system.
 	 */
-	public static final String OS_LINUX = "linux";
+	public static final String OS_LINUX = "linux";//$NON-NLS-1$
 
 	/**
 	 * Constant string (value "aix") indicating the platform is running on an
-	 * AIX-based machine.
+	 * AIX-based operating system.
 	 */
-	public static final String OS_AIX = "aix";
+	public static final String OS_AIX = "aix";//$NON-NLS-1$
 
 	/**
 	 * Constant string (value "solaris") indicating the platform is running on a
-	 * Solaris-based machine.
+	 * Solaris-based operating system.
 	 */
-	public static final String OS_SOLARIS = "solaris";
+	public static final String OS_SOLARIS = "solaris";//$NON-NLS-1$
 
 	/**
 	 * Constant string (value "hpux") indicating the platform is running on an
-	 * HP/UX-based machine.
+	 * HP/UX-based operating system.
 	 */
-	public static final String OS_HPUX = "hpux";
+	public static final String OS_HPUX = "hpux";//$NON-NLS-1$
 
 	/**
 	 * Constant string (value "qnx") indicating the platform is running on a
-	 * QNX-based machine.
+	 * QNX-based operating system.
 	 */
-	public static final String OS_QNX = "qnx";
+	public static final String OS_QNX = "qnx";//$NON-NLS-1$
+
+	/**
+	 * Constant string (value "macosx") indicating the platform is running on a
+	 * Mac OS X operating system.
+	 * 
+	 * @since 2.0
+	 */
+	public static final String OS_MACOSX = "macosx";//$NON-NLS-1$
 
 	/**
 	 * Constant string (value "unknown") indicating the platform is running on a
 	 * machine running an unknown operating system.
 	 */
-	public static final String OS_UNKNOWN = "unknown";
+	public static final String OS_UNKNOWN = "unknown";//$NON-NLS-1$
 
 	/**
 	 * Constant string (value "x86") indicating the platform is running on an
 	 * x86-based architecture.
 	 */
-	public static final String ARCH_X86 = "x86";
+	public static final String ARCH_X86 = "x86";//$NON-NLS-1$
+
+	/**
+	 * Constant string (value "ppc") indicating the platform is running on an
+	 * PowerPC-based architecture.
+	 * 
+	 * @since 2.0
+	 */
+	public static final String ARCH_PPC = "ppc";//$NON-NLS-1$
+
+	/**
+	 * Constant string (value "sparc") indicating the platform is running on an
+	 * Sparc-based architecture.
+	 * 
+	 * @since 2.0
+	 */
+	public static final String ARCH_SPARC = "sparc";//$NON-NLS-1$
 
 	/**
 	 * Constant string (value "win32") indicating the platform is running on a
 	 * machine using the Windows windowing system.
 	 */
-	public static final String WS_WIN32 = "win32";
+	public static final String WS_WIN32 = "win32";//$NON-NLS-1$
 
 	/**
 	 * Constant string (value "motif") indicating the platform is running on a
 	 * machine using the Motif windowing system.
 	 */
-	public static final String WS_MOTIF = "motif";
+	public static final String WS_MOTIF = "motif";//$NON-NLS-1$
 
 	/**
 	 * Constant string (value "gtk") indicating the platform is running on a
 	 * machine using the GTK windowing system.
 	 */
-	public static final String WS_GTK = "gtk";
+	public static final String WS_GTK = "gtk";//$NON-NLS-1$
 
 	/**
 	 * Constant string (value "photon") indicating the platform is running on a
 	 * machine using the Photon windowing system.
 	 */
-	public static final String WS_PHOTON = "photon";
+	public static final String WS_PHOTON = "photon";//$NON-NLS-1$
+
+	/**
+	 * Constant string (value "carbon") indicating the platform is running on a
+	 * machine using the Carbon windowing system (Mac OS X).
+	 * 
+	 * @since 2.0
+	 */
+	public static final String WS_CARBON = "carbon";//$NON-NLS-1$
 
 	/**
 	 * Constant string (value "unknown") indicating the platform is running on a
 	 * machine running an unknown windowing system.
 	 */
-	public static final String WS_UNKNOWN = "unknown";
+	public static final String WS_UNKNOWN = "unknown";//$NON-NLS-1$
 
+	private static final String[] ARCH_LIST = {
+		ARCH_PPC,
+		ARCH_SPARC,
+		ARCH_X86
+	};
+	private static final String[] OS_LIST = {
+		OS_AIX,
+		OS_HPUX,
+		OS_LINUX,
+		OS_MACOSX,
+		OS_QNX,
+		OS_SOLARIS,
+		OS_WIN32
+	};
+	private static final String[] WS_LIST = {
+		WS_CARBON,
+		WS_GTK,
+		WS_MOTIF,
+		WS_PHOTON,
+		WS_WIN32
+	};
 /**
  * Private constructor to block instance creation.
  */
@@ -257,6 +310,54 @@ public static IPlatformRunnable getRunnable(String pluginId, String className, O
  */
 public static String getWS() {
 	return InternalBootLoader.getWS();
+}
+/**
+ * Returns a list of known system architectures.
+ * <p>
+ * Note that this list is not authoritative; there may be legal values
+ * not included in this list. Indeed, the value returned by 
+ * <code>getOSArch</code> may not be in this list. Also, this list may 
+ * change over time as Eclipse comes to run on more operating environments.
+ * </p>
+ * 
+ * @return the list of system architectures known to the system
+ * @see #getOSArch
+ * @since 2.0
+ */
+public static String[] knownOSArchValues() {
+	return ARCH_LIST;
+}
+/**
+ * Returns a list of known operating system names.
+ * <p>
+ * Note that this list is not authoritative; there may be legal values
+ * not included in this list. Indeed, the value returned by 
+ * <code>getOS</code> may not be in this list. Also, this list may 
+ * change over time as Eclipse comes to run on more operating environments.
+ * </p>
+ * 
+ * @return the list of operating systems known to the system
+ * @see #getOS
+ * @since 2.0
+ */
+public static String[] knownOSValues() {
+	return OS_LIST;
+}
+/**
+ * Returns a list of known windowing system names.
+ * <p>
+ * Note that this list is not authoritative; there may be legal values
+ * not included in this list. Indeed, the value returned by 
+ * <code>getWS</code> may not be in this list. Also, this list may 
+ * change over time as Eclipse comes to run on more operating environments.
+ * </p>
+ * 
+ * @return the list of window systems known to the system
+ * @see #getWS
+ * @since 2.0
+ */
+public static String[] knownWSValues() {
+	return WS_LIST;
 }
 /**
  * Returns <code>true</code> if the platform is currently running in 

@@ -56,7 +56,6 @@ public final class InternalBootLoader {
 	private static String ws = null;
 	private static String os = null;
 	private static String arch = null;
-	private static final String[] OS_LIST = { BootLoader.OS_WIN32, BootLoader.OS_LINUX, BootLoader.OS_AIX, BootLoader.OS_SOLARIS, BootLoader.OS_HPUX, BootLoader.OS_QNX };
 	
 	private static final String PLATFORM_ENTRYPOINT = "org.eclipse.core.internal.runtime.InternalPlatform";
 	private static final String BOOTNAME = "org.eclipse.core.boot";
@@ -784,29 +783,39 @@ private static void setupSystemContext() {
 		nl = Locale.getDefault().toString();
 
 	if (os == null) {
-		String name = System.getProperty("os.name");
-		for (int i = 0; i < OS_LIST.length; i++)
-			if (name.regionMatches(true, 0, OS_LIST[i], 0, 3))
-				os = OS_LIST[i];
+		String name = System.getProperty("os.name");//$NON-NLS-1$
+		String[] os_list = BootLoader.knownOSValues();
+		for (int i = 0; os == null && i < os_list.length; i++)
+			if (name.regionMatches(true, 0, os_list[i], 0, 3))
+				os = os_list[i];
 		// EXCEPTION: All mappings of SunOS convert to Solaris
 		if (os == null)
 			os = name.equalsIgnoreCase(INTERNAL_OS_SUNOS) ? BootLoader.OS_SOLARIS : BootLoader.OS_UNKNOWN;
 	}
 
-	if (ws == null)
+	if (ws == null) {
 		// setup default values for known OSes if nothing was specified
 		if (os.equals(BootLoader.OS_WIN32))
 			ws = BootLoader.WS_WIN32;
+		else if (os.equals(BootLoader.OS_LINUX))
+			ws = BootLoader.WS_MOTIF;
+		else if (os.equals(BootLoader.OS_MACOSX))
+			ws = BootLoader.WS_CARBON;
 		else
-			if (os.equals(BootLoader.OS_LINUX))
-				ws = BootLoader.WS_MOTIF;
-			else
-				ws = BootLoader.WS_UNKNOWN;
+			ws = BootLoader.WS_UNKNOWN;
+	}
 
 	if (arch == null) {
-		String name = System.getProperty("os.arch");
+		String name = System.getProperty("os.arch");//$NON-NLS-1$
 		// Map i386 architecture to x86
-		arch = name.equalsIgnoreCase(INTERNAL_ARCH_I386) ? BootLoader.ARCH_X86 : name;
+		if (name.equalsIgnoreCase(INTERNAL_ARCH_I386))
+			arch = BootLoader.ARCH_X86;
+		String[] arch_list = BootLoader.knownOSArchValues();
+		for (int i = 0; arch == null && i < arch_list.length; i++)
+			if (name.equalsIgnoreCase(arch_list[i]))
+				arch = arch_list[i];
+		if (arch == null)
+			arch = name;
 	}
 }
 /**
