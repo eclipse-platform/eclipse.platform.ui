@@ -17,9 +17,7 @@ public class RemoveAllExpressionsAction extends AbstractRemoveAllActionDelegate 
 	protected void doAction() {
 		IExpressionManager manager = DebugPlugin.getDefault().getExpressionManager();
 		IExpression[] expressions= manager.getExpressions();
-		for (int i= 0; i < expressions.length; i++) {
-			manager.removeExpression(expressions[i]);
-		}
+		manager.removeExpressions(expressions);
 	}
 	
 	protected void update() {
