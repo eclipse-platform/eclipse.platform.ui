@@ -130,9 +130,10 @@ public final class AdapterManager implements IAdapterManager, IRegistryChangeLis
 			try {
 				if (factory instanceof AdapterFactoryProxy)
 					factory = ((AdapterFactoryProxy) factory).loadFactory(false);
-				if (factory != null)
+				if (factory != null) {
 					clazz = factory.getClass().getClassLoader().loadClass(typeName);
-				cacheClassLookup(factory, clazz);
+					cacheClassLookup(factory, clazz);
+                }
 			} catch (ClassNotFoundException e) {
 				// class not yet loaded
 			}
