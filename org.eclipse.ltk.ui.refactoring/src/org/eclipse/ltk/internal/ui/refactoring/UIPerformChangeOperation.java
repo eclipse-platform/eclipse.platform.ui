@@ -15,6 +15,10 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+
+import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
@@ -47,7 +51,9 @@ public class UIPerformChangeOperation extends PerformChangeOperation {
 	
 	protected void executeChange(final IProgressMonitor pm) throws CoreException {
 		if (fDisplay != null && !fDisplay.isDisposed()) {
-			final CoreException[] exception= new CoreException[1]; 
+			final CoreException[] exception= new CoreException[1];
+			final ISchedulingRule rule= ResourcesPlugin.getWorkspace().getRoot();
+			final Thread callerThread= Thread.currentThread();
 			Runnable r= new Runnable() {
 				public void run() {
 					IRewriteTarget[] targets= null;
@@ -70,11 +76,16 @@ public class UIPerformChangeOperation extends PerformChangeOperation {
 					} catch (CoreException e) {
 						exception[0]= e;
 					} finally {
-						if (targets != null)
-							endCompoundChange(targets);
+						try {
+							if (targets != null)
+								endCompoundChange(targets);
+						} finally {
+							Platform.getJobManager().transferRule(rule, callerThread);
+						}
 					}
 				}
 			};
+			Platform.getJobManager().transferRule(rule, fDisplay.getThread());
 			fDisplay.syncExec(r);
 			if (exception[0] != null)
 				throw new CoreException(exception[0].getStatus());

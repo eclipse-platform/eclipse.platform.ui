@@ -110,7 +110,7 @@ public class RefactoringWizardOpenOperation {
 			public void run() {
 				try {
 					// we are getting the block dialog for free if we pass in null
-					manager.suspend(ResourcesPlugin.getWorkspace().getRoot(), null);
+					manager.beginRule(ResourcesPlugin.getWorkspace().getRoot(), null);
 					
 					refactoring.setValidationContext(parent);
 					fInitialConditions= checkInitialConditions(refactoring, parent, dialogTitle);
@@ -130,7 +130,7 @@ public class RefactoringWizardOpenOperation {
 				} catch (OperationCanceledException e) {
 					canceled[0]= new InterruptedException(e.getMessage());
 				} finally {
-					manager.resume(ResourcesPlugin.getWorkspace().getRoot());
+					manager.endRule(ResourcesPlugin.getWorkspace().getRoot());
 					refactoring.setValidationContext(null);
 				}		
 			}
