@@ -10,16 +10,16 @@
  *******************************************************************************/
 package org.eclipse.jface.action;
 
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.CoolBar;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.ToolBar;
+
+import org.eclipse.jface.util.Assert;
 
 /**
  * A <code>SubMenuManager</code> is used to define a set of contribution
@@ -31,6 +31,7 @@ import org.eclipse.swt.widgets.ToolBar;
  * </p>
  */
 public class SubMenuManager extends SubContributionManager implements IMenuManager {
+
 	/**
 	 * Maps each submenu in the manager to a wrapper.  The wrapper is used to
 	 * monitor additions and removals.  If the visibility of the manager is modified
@@ -48,42 +49,74 @@ public class SubMenuManager extends SubContributionManager implements IMenuManag
 	public SubMenuManager(IMenuManager mgr) {
 		super(mgr);
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.IMenuManager#addMenuListener(org.eclipse.jface.action.IMenuListener)
+	 */
+	public void addMenuListener(IMenuListener listener) {
+		getParentMenuManager().addMenuListener(listener);
+	}
+
 	/**
 	 * The default implementation of this <code>IContributionItem</code>
 	 * method does nothing. Subclasses may override.
 	 */
 	public void dispose() {
 	}
+
 	/* (non-Javadoc)
-	 * Method declared on IMenuManager.
-	 */
-	public void addMenuListener(IMenuListener listener) {
-		getParentMenuManager().addMenuListener(listener);
-	}
-	/* (non-Javadoc)
-	 * Method declared on IMenuManager.
+	 * @see org.eclipse.jface.action.IContributionItem#fill(org.eclipse.swt.widgets.Composite)
 	 */
 	public void fill(Composite parent) {
 		if (isVisible())
 			getParentMenuManager().fill(parent);
 	}
+
 	/* (non-Javadoc)
-	 * Method declared on IMenuManager.
+	 * @see org.eclipse.jface.action.IContributionItem#fill(org.eclipse.swt.widgets.CoolBar, int)
+	 */
+	public void fill(CoolBar parent, int index) {
+
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.IContributionItem#fill(org.eclipse.swt.widgets.Menu, int)
 	 */
 	public void fill(Menu parent, int index) {
 		if (isVisible())
 			getParentMenuManager().fill(parent, index);
 	}
+
 	/* (non-Javadoc)
-	 * Method declared on IMenuManager.
+	 * @see org.eclipse.jface.action.IContributionItem#fill(org.eclipse.swt.widgets.ToolBar, int)
 	 */
 	public void fill(ToolBar parent, int index) {
 		if (isVisible())
 			getParentMenuManager().fill(parent, index);
 	}
+
 	/* (non-Javadoc)
-	 * Method declared on IMenuManager.
+	 * Method declared on IContributionManager.
+	 *
+	 * Returns the item passed to us, not the wrapper.
+	 * In the case of menu's not added by this manager,
+	 * ensure that we return a wrapper for the menu.
 	 */
+	public IContributionItem find(String id) {
+		IContributionItem item = getParentMenuManager().find(id);
+		if (item instanceof SubContributionItem)
+			// Return the item passed to us, not the wrapper.
+			item = unwrap(item);
+
+		if (item instanceof IMenuManager) {
+			// if it is a menu manager wrap it before returning
+			IMenuManager menu = (IMenuManager) item;
+			item = getWrapper(menu);
+		}
+
+		return item;
+	}
+
 	/**
 	 * <p>
 	 * The menu returned is wrapped within a <code>SubMenuManager</code> to
@@ -98,6 +131,7 @@ public class SubMenuManager extends SubContributionManager implements IMenuManag
 		}
 		return null;
 	}
+
 	/* (non-Javadoc)
 	 * Method declared on IMenuManager.
 	 *
@@ -121,47 +155,30 @@ public class SubMenuManager extends SubContributionManager implements IMenuManag
 		}
 		return item;
 	}
+
 	/* (non-Javadoc)
-	 * Method declared on IContributionManager.
-	 *
-	 * Returns the item passed to us, not the wrapper.
-	 * In the case of menu's not added by this manager,
-	 * ensure that we return a wrapper for the menu.
+	 * @see org.eclipse.jface.action.IContributionItem#getId()
 	 */
-	public IContributionItem find(String id) {
-		IContributionItem item = getParentMenuManager().find(id);
-		if (item instanceof SubContributionItem)
-			// Return the item passed to us, not the wrapper.
-			item = unwrap(item);
-
-		if (item instanceof IMenuManager) {
-			// if it is a menu manager wrap it before returning
-			IMenuManager menu = (IMenuManager) item;
-			item = getWrapper(menu);
-		}
-
-		return item;
+	public String getId() {
+		return getParentMenuManager().getId();
 	}
+
 	/**
 	 * Returns the parent menu manager that this sub-manager contributes to.
 	 */
 	protected final IMenuManager getParentMenuManager() {
 		// Cast is ok because that's the only
 		// thing we accept in the construtor.
-		return (IMenuManager)getParent();
+		return (IMenuManager) getParent();
 	}
+
 	/* (non-Javadoc)
-	 * Method declared on IMenuManager.
-	 */
-	public String getId() {
-		return getParentMenuManager().getId();
-	}
-	/* (non-Javadoc)
-	 * Method declared on IMenuManager.
+	 * @see org.eclipse.jface.action.IMenuManager#getRemoveAllWhenShown()
 	 */
 	public boolean getRemoveAllWhenShown() {
 		return false;
 	}
+
 	/**
 	 * Returns the menu wrapper for a menu manager.
 	 * <p>
@@ -183,30 +200,35 @@ public class SubMenuManager extends SubContributionManager implements IMenuManag
 		}
 		return wrapper;
 	}
+
 	/* (non-Javadoc)
-	 * Method declared on IMenuManager.
+	 * @see org.eclipse.jface.action.IContributionItem#isDynamic()
 	 */
 	public boolean isDynamic() {
 		return getParentMenuManager().isDynamic();
 	}
+
 	/* (non-Javadoc)
-	 * Method declared on IMenuManager.
+	 * @see org.eclipse.jface.action.IContributionItem#isEnabled()
 	 */
 	public boolean isEnabled() {
 		return isVisible() && getParentMenuManager().isEnabled();
 	}
+
 	/* (non-Javadoc)
-	 * Method declared on IMenuManager.
+	 * @see org.eclipse.jface.action.IContributionItem#isGroupMarker()
 	 */
 	public boolean isGroupMarker() {
 		return getParentMenuManager().isGroupMarker();
 	}
+
 	/* (non-Javadoc)
-	 * Method declared on IMenuManager.
+	 * @see org.eclipse.jface.action.IContributionItem#isSeparator()
 	 */
 	public boolean isSeparator() {
 		return getParentMenuManager().isSeparator();
 	}
+
 	/**
 	 * Remove all contribution items.
 	 */
@@ -222,27 +244,37 @@ public class SubMenuManager extends SubContributionManager implements IMenuManag
 			mapMenuToWrapper = null;
 		}
 	}
+
 	/* (non-Javadoc)
-	 * Method declared on IMenuManager.
+	 * @see org.eclipse.jface.action.IMenuManager#removeMenuListener(org.eclipse.jface.action.IMenuListener)
 	 */
 	public void removeMenuListener(IMenuListener listener) {
 		getParentMenuManager().removeMenuListener(listener);
 	}
+
 	/* (non-Javadoc)
-	 * Method declared on IContributionItem.
+	 * @see org.eclipse.jface.action.IContributionItem#saveWidgetState()
+	 */
+	public void saveWidgetState() {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.IContributionItem#setParent(org.eclipse.jface.action.IContributionManager)
 	 */
 	public void setParent(IContributionManager parent) {
 		// do nothing, our "parent manager's" parent 
 		// is set when it is added to a manager
 	}
+
 	/* (non-Javadoc)
-	 * Method declared on IMenuManager.
+	 * @see org.eclipse.jface.action.IMenuManager#setRemoveAllWhenShown(boolean)
 	 */
 	public void setRemoveAllWhenShown(boolean removeAll) {
 		Assert.isTrue(false, "Should not be called on submenu manager"); //$NON-NLS-1$
 	}
+
 	/* (non-Javadoc)
-	 * Method declared on SubContributionManager.
+	 * @see org.eclipse.jface.action.SubContributionManager#setVisible(boolean)
 	 */
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
@@ -254,8 +286,9 @@ public class SubMenuManager extends SubContributionManager implements IMenuManag
 			}
 		}
 	}
+
 	/* (non-Javadoc)
-	 * Method declared on IMenuManager.
+	 * @see org.eclipse.jface.action.IContributionItem#update()
 	 */
 	public void update() {
 		// This method is not governed by visibility.  The client may
@@ -263,8 +296,9 @@ public class SubMenuManager extends SubContributionManager implements IMenuManag
 		// point we need to update the parent.
 		getParentMenuManager().update();
 	}
+
 	/* (non-Javadoc)
-	 * Method declared on IMenuManager.
+	 * @see org.eclipse.jface.action.IContributionManager#update(boolean)
 	 */
 	public void update(boolean force) {
 		// This method is not governed by visibility.  The client may
@@ -272,8 +306,16 @@ public class SubMenuManager extends SubContributionManager implements IMenuManag
 		// point we need to update the parent.
 		getParentMenuManager().update(force);
 	}
+
 	/* (non-Javadoc)
-	 * Method declared on IMenuManager.
+	 * @see org.eclipse.jface.action.IContributionItem#update(java.lang.String)
+	 */
+	public void update(String id) {
+		getParentMenuManager().update(id);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.IMenuManager#updateAll(boolean)
 	 */
 	public void updateAll(boolean force) {
 		// This method is not governed by visibility.  The client may
@@ -281,12 +323,7 @@ public class SubMenuManager extends SubContributionManager implements IMenuManag
 		// point we need to update the parent.
 		getParentMenuManager().updateAll(force);
 	}
-	/* (non-Javadoc)
-	 * Method declared on IContributionItem.
-	 */
-	public void update(String id) {
-		getParentMenuManager().update(id);
-	}
+
 	/**
 	 * Wraps a menu manager in a sub menu manager, and returns the new wrapper.
 	 */
@@ -294,18 +331,5 @@ public class SubMenuManager extends SubContributionManager implements IMenuManag
 		SubMenuManager mgr = new SubMenuManager(menu);
 		mgr.setVisible(isVisible());
 		return mgr;
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.IContributionItem#fill(org.eclipse.swt.widgets.CoolBar, int)
-	 */
-	public void fill(CoolBar parent, int index) {
-		
-	}
-
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.IContributionItem#saveWidgetState()
-	 */
-	public void saveWidgetState() {	
 	}
 }
