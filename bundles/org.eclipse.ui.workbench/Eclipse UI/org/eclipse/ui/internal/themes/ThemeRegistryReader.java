@@ -39,6 +39,7 @@ public class ThemeRegistryReader extends RegistryReader {
     public static String ATT_CLASS = "class"; //$NON-NLS-1$
 	public static final String ATT_DEFAULTS_TO = "defaultsTo"; //$NON-NLS-1$
 	public static final String ATT_ID = "id"; //$NON-NLS-1$
+	public static final String ATT_PARENT_ID = "parentId"; //$NON-NLS-1$
 	public static final String ATT_IS_EDITABLE = "isEditable"; //$NON-NLS-1$
 	public static final String ATT_LABEL = "label"; //$NON-NLS-1$
 	public static final String ATT_VALUE = "value"; //$NON-NLS-1$
@@ -128,6 +129,7 @@ public class ThemeRegistryReader extends RegistryReader {
 		String name = element.getAttribute(ATT_LABEL);
 		
 		String id = element.getAttribute(ATT_ID);
+		String parentId = element.getAttribute(ATT_PARENT_ID);
 	
 		String description = null;
 
@@ -140,6 +142,7 @@ public class ThemeRegistryReader extends RegistryReader {
 		return new ThemeElementCategory(
 				name,
 				id,
+				parentId,
 				description,
 				element.getDeclaringExtension().getNamespace(),
 				element);

@@ -21,7 +21,7 @@ import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.ISharedImages;
@@ -84,6 +84,7 @@ public class WorkbenchPreview implements IThemePreview {
         viewForm = new ViewForm(folder, SWT.NONE);
         viewForm.marginHeight = 0;
         viewForm.marginWidth = 0;
+        viewForm.verticalSpacing = 0;
         viewForm.setBorderVisible(false);
         toolBar = new ToolBar(viewForm, SWT.FLAT | SWT.WRAP);
         ToolItem toolItem = new ToolItem(toolBar, SWT.PUSH);
@@ -100,9 +101,10 @@ public class WorkbenchPreview implements IThemePreview {
         
         CTabItem item = new CTabItem(folder, SWT.CLOSE);  
         item.setText("Lorem"); //$NON-NLS-1$
-        Text text = new Text(viewForm, SWT.NONE);
+        Label text = new Label(viewForm, SWT.NONE);
         viewForm.setContent(text);
-        text.setText("Lorem ipsum dolor sit amet"); //$NON-NLS-1$                
+        text.setText("Lorem ipsum dolor sit amet"); //$NON-NLS-1$
+        text.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_WHITE));
         item = new CTabItem(folder, SWT.CLOSE);
         item.setText("Ipsum"); //$NON-NLS-1$
         item.setControl(viewForm);        

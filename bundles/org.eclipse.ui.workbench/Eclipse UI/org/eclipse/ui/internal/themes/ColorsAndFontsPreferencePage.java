@@ -30,14 +30,16 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
@@ -55,7 +57,6 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -65,8 +66,10 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IThemePreview;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.dialogs.FilteredTree;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.themes.ITheme;
 import org.eclipse.ui.themes.IThemeManager;
@@ -78,6 +81,106 @@ import org.eclipse.ui.themes.IThemeManager;
  */
 public final class ColorsAndFontsPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
     
+    private class ThemeContentProvider implements ITreeContentProvider {    	
+    	
+        private IThemeRegistry registry;
+
+        /* (non-Javadoc)
+         * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
+         */
+        public Object[] getChildren(Object parentElement) {
+            if (parentElement instanceof ThemeElementCategory) {
+                String categoryId = ((ThemeElementCategory)parentElement).getId();
+        		Object [] defintions = (Object []) categoryMap.get(categoryId);
+        		if (defintions == null) {	
+        		    defintions = getCategoryChildren(categoryId);
+        			categoryMap.put(categoryId, defintions);
+        		}
+        		return defintions;                
+            }
+            return new Object [0];
+        }
+
+        private Object[] getCategoryChildren(String categoryId) {
+		    ArrayList list = new ArrayList();
+		    
+		    if (categoryId != null) {
+			    ThemeElementCategory [] categories = registry.getCategories();
+			    for (int i = 0; i < categories.length; i++) {
+	                if (categoryId.equals(categories[i].getParentId()))
+	                    list.add(categories[i]);
+	            }
+		    }
+			
+			ColorDefinition[] colorDefinitions = themeRegistry.getColorsFor(currentTheme.getId());
+			for (int i = 0; i < colorDefinitions.length; i++) {
+			    if (!colorDefinitions[i].isEditable())
+			        continue;
+			    String catId = colorDefinitions[i].getCategoryId();
+			    if ((catId == null && categoryId == null) || (catId != null && categoryId != null && categoryId.equals(catId))) {
+			        list.add(colorDefinitions[i]);
+			    }
+			}
+			
+			FontDefinition[] fontDefinitions = themeRegistry.getFontsFor(currentTheme.getId());
+			for (int i = 0; i < fontDefinitions.length; i++) {
+			    if (!fontDefinitions[i].isEditable())
+			        continue;                
+			    String catId = fontDefinitions[i].getCategoryId();
+			    if ((catId == null && categoryId == null) || (catId != null && categoryId != null && categoryId.equals(catId))) {
+			        list.add(fontDefinitions[i]);
+			    }
+			}			
+			return list.toArray(new Object[list.size()]);			
+        }
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
+         */
+        public Object getParent(Object element) {
+            return null;
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
+         */
+        public boolean hasChildren(Object element) {
+            if (element instanceof ThemeElementCategory)
+                return true;
+            return false;
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
+         */
+        public Object[] getElements(Object inputElement) {
+            ArrayList list = new ArrayList();
+            Object [] uncatChildren = getCategoryChildren(null);
+            list.addAll(Arrays.asList(uncatChildren));
+            ThemeElementCategory [] categories = ((IThemeRegistry)inputElement).getCategories();
+            for (int i = 0; i < categories.length; i++) {
+                if (categories[i].getParentId() == null)
+                    list.add(categories[i]);
+            }
+            return list.toArray(new Object [list.size()]);
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.jface.viewers.IContentProvider#dispose()
+         */
+        public void dispose() {
+            categoryMap.clear();
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+         */
+        public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+            categoryMap.clear();
+            registry = (IThemeRegistry) newInput;
+        }
+
+    }
     private class PresentationLabelProvider extends LabelProvider implements IFontProvider {
         
         private HashMap fonts = new HashMap();
@@ -92,7 +195,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
                 fireLabelProviderChanged(new LabelProviderChangedEvent(PresentationLabelProvider.this));                
             }            
         };
-
+        
         private Image emptyImage;        
         
         /**
@@ -139,11 +242,9 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
          * @see org.eclipse.jface.viewers.IFontProvider#getFont(java.lang.Object)
          */
         public Font getFont(Object element) {
+            Display display = tree.getDisplay();
             if (element instanceof FontDefinition) {
-                int parentHeight = presentationList.getControl().getFont().getFontData()[0].getHeight();
-                                
-	    		Display display = presentationList.getControl().getDisplay();
-	    		
+                int parentHeight = tree.getViewer().getControl().getFont().getFontData()[0].getHeight();
     	        Font baseFont = fontRegistry.get(((FontDefinition)element).getId());
     	        Font font = (Font) fonts.get(baseFont);
     	        if (font == null) {
@@ -158,8 +259,9 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
     	        updateColumn(getText(element), font);
     	        return font;
     	    }
-    	    updateColumn(getText(element), presentationList.getControl().getFont());
-            return null;
+
+            updateColumn(getText(element), tree.getViewer().getControl().getFont());
+            return display.getSystemFont();
         }
     	
     	/**
@@ -170,7 +272,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 		 * workaround to bug 56593.
          */
         private void updateColumn(String text, Font font) {
-        	Display display = presentationList.getControl().getDisplay();
+        	Display display = tree.getDisplay();
 
 		    GC gc = new GC(display);
 		    gc.setFont(font);
@@ -178,8 +280,8 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 			int width = gc.stringExtent(text).x;
 			if (width > largestFontWidth) {
 				largestFontWidth = width;
-				if (!presentationList.getControl().isDisposed())				
-				    presentationList.getControl().setFont(font);
+				if (!tree.isDisposed())				
+				    tree.getViewer().getControl().setFont(font);
 			}
 			gc.dispose();    	        
         }
@@ -192,17 +294,17 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
     	        Color c = colorRegistry.get(((ColorDefinition)element).getId());
     	        Image image = (Image) images.get(c);
     	        if (image == null) {
-    	        	Display display = presentationList.getControl().getDisplay();
+    	        	Display display = tree.getDisplay();
     	            ensureImageSize(display);
 		    		//int size = presentationList.getControl().getFont().getFontData()[0].getHeight();
 	    	        image = new Image(display, imageSize, imageSize);
 	    	        
 		    		GC gc = new GC(image);
-		    		gc.setBackground(presentationList.getControl().getBackground());
-		    		gc.setForeground(presentationList.getControl().getBackground());
+		    		gc.setBackground(tree.getViewer().getControl().getBackground());
+		    		gc.setForeground(tree.getViewer().getControl().getBackground());
 		    		gc.drawRectangle(0, 0, imageSize - 1, imageSize - 1);
 		    		
-		    		gc.setForeground(presentationList.getControl().getForeground());
+		    		gc.setForeground(tree.getViewer().getControl().getForeground());
 		    		gc.setBackground(c);
 		    		
 		    		int offset = (imageSize - usableImageSize) / 2;
@@ -215,19 +317,11 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 	    		return image;
     	        
     	    }
+    	    else if (element instanceof FontDefinition){
+    	        return workbench.getSharedImages().getImage(IWorkbenchGraphicConstants.IMG_OBJ_FONT);
+    	    }
     	    else {
-    	    	if (emptyImage == null) {
-    	    		Display display = presentationList.getControl().getDisplay();
-    	    		ensureImageSize(display);
-	    	        emptyImage = new Image(display, imageSize, imageSize);
-	    	        
-		    		GC gc = new GC(emptyImage);
-		    		gc.setBackground(presentationList.getControl().getBackground());		    		
-		    		gc.setForeground(presentationList.getControl().getBackground());
-		    		gc.fillRectangle(0, 0, imageSize - 1 , imageSize - 1);
-		    		gc.dispose();
-    	    	}
-    	    	return emptyImage;
+    	        return workbench.getSharedImages().getImage(IWorkbenchGraphicConstants.IMG_OBJ_THEME_CATEGORY);
     	    }
     	}
 
@@ -237,7 +331,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
          */
         private void ensureImageSize(Display display) {
             if (imageSize == -1) {    	        
-	    		imageSize = presentationList.getTable().getItemHeight();    
+	    		imageSize = tree.getViewer().getTree().getItemHeight();    
 	    		usableImageSize = Math.max(1, imageSize - 4);
             }
         }
@@ -250,7 +344,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
     			return ((IThemeElementDefinition) element).getLabel();
     		return ""; //$NON-NLS-1$
     	}
-    }
+    }    
     
 	/**
 	 * The translation bundle in which to look up internationalized text.
@@ -258,14 +352,13 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 	private final static ResourceBundle RESOURCE_BUNDLE =
 		ResourceBundle.getBundle(ColorsAndFontsPreferencePage.class.getName());
 
-    private Font appliedDialogFont;
-	
-	private Combo categoryCombo;
-	
+
 	/**
 	 * Map to precalculate category color lists.
 	 */
 	private Map categoryMap = new HashMap(7);
+	
+    private Font appliedDialogFont;
 	
 	/**
 	 * The composite containing all color-specific controls. 
@@ -329,7 +422,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 	/**
 	 * The list of fonts and colors.
 	 */
-	private TableViewer presentationList;
+	//private TreeViewer presentationList;
 	
 	/**
 	 * The composite that is parent to all previews.
@@ -350,11 +443,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 	 * The layout for the previewComposite.
 	 */
     private StackLayout stackLayout;
-    
-    /**
-	 * The last category viewed.
- 	 */ 
-    private static String lastCategory;
+   
 
     private final IThemeRegistry themeRegistry;
 
@@ -372,6 +461,9 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
     private IPropertyChangeListener themeChangeListener;
 
     private IWorkbench workbench;
+    
+    private FilteredTree tree;
+    
 	/**
 	 * Create a new instance of the receiver. 
 	 */
@@ -394,44 +486,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 		return button;
 	}  
 
-    /**
-     * @param mainColumn
-     */
-    private ThemeElementCategory createCategoryControl(Composite mainColumn) {
-    	Label label = new Label(mainColumn, SWT.LEFT);
-    	label.setText(RESOURCE_BUNDLE.getString("category")); //$NON-NLS-1$
-    	myApplyDialogFont(label);
-		GridData data = new GridData(GridData.BEGINNING);		
-		label.setLayoutData(data);    	
-        categoryCombo = new Combo(mainColumn, SWT.READ_ONLY);
-        myApplyDialogFont(categoryCombo);
-        
-        ThemeElementCategory [] categories = themeRegistry.getCategories();
-        for (int i = 0; i < categories.length; i++) {
-            categoryCombo.add(categories[i].getLabel());
-        }
-        categoryCombo.add(RESOURCE_BUNDLE.getString("uncategorized")); //$NON-NLS-1$
-        
-        data = new GridData(GridData.FILL_HORIZONTAL);		
-		categoryCombo.setLayoutData(data);
-         
-        if (categories.length == 0) {
-        	categoryCombo.select(0);
-        	return null;
-        }
-        	
-        int idx = 0;
-        if (lastCategory != null) {
-        	idx = Arrays.binarySearch(categories, lastCategory, IThemeRegistry.ID_COMPARATOR);
-        	if (idx < 0) {
-        		categoryCombo.select(categories.length);
-        		return null; // unknown category.   default to uncategorized
-        	}    	
-        }
-        
-        categoryCombo.select(idx);
-        return categories[idx];
-    }
 
 	/**
 	 * Create the color selection control. 
@@ -493,8 +547,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 		layout.marginHeight = 0;
 		mainColumn.setFont(parent.getFont());
 		mainColumn.setLayout(layout);
-		
-		ThemeElementCategory category = createCategoryControl(mainColumn);
 
 		GridData data = new GridData(GridData.BEGINNING);	
 		Label label = new Label(mainColumn, SWT.LEFT);	
@@ -511,7 +563,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		controlRow.setLayoutData(data);		
 		
-		createList(controlRow);
+		createTree(controlRow);
 		Composite controlColumn = new Composite(controlRow, SWT.NONE);
 		data = new GridData(GridData.FILL_VERTICAL);
 		controlColumn.setLayoutData(data);
@@ -536,9 +588,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 
 		createDescriptionControl(mainColumn);
 
-		createPreviewControl(mainColumn);
-		
-		updateCategorySelection(category == null ? null : category.getId());
+		createPreviewControl(mainColumn);		
 		
 		hookListeners();
 		
@@ -594,17 +644,47 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 	 * 
 	 * @param parent the parent <code>Composite</code>.
 	 */
-	private void createList(Composite parent) {
-		presentationList =
-			new TableViewer(parent, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
-		presentationList.setContentProvider(new ArrayContentProvider());
+	private void createTree(Composite parent) {
 		labelProvider = new PresentationLabelProvider();
-        presentationList.setLabelProvider(labelProvider);
-		presentationList.setSorter(new ViewerSorter());
+	    tree = new FilteredTree(
+	            parent, 
+	            SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+	    
+	    tree.getViewer().setLabelProvider(labelProvider);
+	    tree.getViewer().setContentProvider(new ThemeContentProvider());
+	    tree.getViewer().setSorter(new ViewerSorter() {
+			        /* (non-Javadoc)
+			         * @see org.eclipse.jface.viewers.ViewerSorter#category(java.lang.Object)
+			         */
+			        public int category(Object element) {
+			            if (element instanceof ThemeElementCategory)
+			                return 0;
+			            return 1;
+			        }});
+		tree.getViewer().setInput(WorkbenchPlugin.getDefault().getThemeRegistry());
+		tree.getViewer().addDoubleClickListener(new IDoubleClickListener() {
+		    /*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.viewers.IDoubleClickListener#doubleClick(org.eclipse.jface.viewers.DoubleClickEvent)
+			 */
+			public void doubleClick(DoubleClickEvent event) {
+				IStructuredSelection s = (IStructuredSelection) event.getSelection();
+				Object element = s.getFirstElement();
+				if (tree.getViewer().isExpandable(element)) {
+				    tree.getViewer().setExpandedState(element, !tree.getViewer().getExpandedState(element));
+				} 
+			}
+		});
 		
-		GridData data = new GridData(GridData.FILL_HORIZONTAL);
-		presentationList.getControl().setLayoutData(data);
-        myApplyDialogFont(presentationList.getControl());
+		
+		GridData data = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_FILL);
+		data.heightHint = Math.max(175, convertHeightInCharsToPixels(10));		
+		tree.setLayoutData(data);
+		myApplyDialogFont(tree.getViewer().getControl());
+//		presentationList.getControl().setLayoutData(data);
+//        myApplyDialogFont(presentationList.getControl());
+//        presentationList.setInput(WorkbenchPlugin.getDefault().getThemeRegistry());
 	}
 
     /**
@@ -816,7 +896,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
      * @return
      */
     protected ColorDefinition getSelectedColorDefinition() {
-        Object o = ((IStructuredSelection)presentationList.getSelection()).getFirstElement();
+        Object o = ((IStructuredSelection)tree.getViewer().getSelection()).getFirstElement();
         if (o instanceof ColorDefinition)
             return (ColorDefinition) o;
         return null;        
@@ -826,7 +906,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
      * @return
      */
     protected FontDefinition getSelectedFontDefinition() {
-        Object o = ((IStructuredSelection)presentationList.getSelection()).getFirstElement();
+        Object o = ((IStructuredSelection)tree.getViewer().getSelection()).getFirstElement();
         if (o instanceof FontDefinition)
             return (FontDefinition) o;
         return null;        
@@ -835,14 +915,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 	/**
 	 * Hook all control listeners.
 	 */
-	private void hookListeners() {
-        categoryCombo.addSelectionListener(new SelectionAdapter() {
-
-            public void widgetSelected(SelectionEvent e) {
-                refreshCategory();
-            }
-        });        
-	    
+	private void hookListeners() {	    
 		colorSelector.addListener(new IPropertyChangeListener() {
 
 			/* (non-Javadoc)
@@ -861,7 +934,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 			}
 		});
 
-		presentationList.addSelectionChangedListener(new ISelectionChangedListener() {
+		tree.getViewer().addSelectionChangedListener(new ISelectionChangedListener() {
 
 			/* (non-Javadoc)
 			 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
@@ -870,16 +943,24 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 				if (event.getSelection().isEmpty()) {
 					swapNoControls();
 					updateColorControls(null);
+					updateCategorySelection(null);
 				} else {
 					Object element = ((IStructuredSelection) event.getSelection())
 							.getFirstElement();
-					if (element instanceof ColorDefinition) {
+					if (element instanceof ThemeElementCategory) {
+						String description = ((ThemeElementCategory)element).getDescription();
+						descriptionText.setText(description == null ? "" : description); //$NON-NLS-1$
+					    updateCategorySelection((ThemeElementCategory) element);
+					}
+					else if (element instanceof ColorDefinition) {
 						swapColorControls();
 						updateColorControls((ColorDefinition) element);
+						updateCategorySelection(WorkbenchPlugin.getDefault().getThemeRegistry().findCategory(((ColorDefinition) element).getCategoryId()));
 					}
 					else if (element instanceof FontDefinition) {
 						swapFontControls();
 						updateFontControls((FontDefinition) element);
+						updateCategorySelection(WorkbenchPlugin.getDefault().getThemeRegistry().findCategory(((FontDefinition) element).getCategoryId()));
 					}					
 				}
 			}
@@ -1195,16 +1276,16 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 	}
 	
     /**
-     * Refreshes teh category.
+     * Refreshes the category.
      */
     private void refreshCategory() {
-        if (categoryCombo.isDisposed())
-            return;
-        int index = categoryCombo.getSelectionIndex();
-        if (index == categoryCombo.getItemCount() - 1)
-            updateCategorySelection(null);
-        else 
-            updateCategorySelection(themeRegistry.getCategories()[index].getId()); 
+//        if (categoryCombo.isDisposed())
+//            return;
+//        int index = categoryCombo.getSelectionIndex();
+//        if (index == categoryCombo.getItemCount() - 1)
+//            updateCategorySelection(null);
+//        else 
+//            updateCategorySelection(themeRegistry.getCategories()[index].getId()); 
         
         updateColorControls(null);
         updateFontControls(null);
@@ -1364,64 +1445,18 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 	 * Set the color list.
 	 * @param category the category to use.
 	 */
-	private void updateCategorySelection(String categoryId) {
-		Object [] defintions;
-		String key = categoryId;
-		ThemeElementCategory category = null;
+	private void updateCategorySelection(ThemeElementCategory category) {
+
+	    largestFontWidth = 0;
 		
-		if (categoryId == null) {
-		    key = "uncategorized"; //$NON-NLS-1$
-		}
-		else {		
-			int idx = Arrays.binarySearch(themeRegistry.getCategories(), categoryId, IThemeRegistry.ID_COMPARATOR);
-			if (idx == -1)
-				categoryId = null;	
-			else 
-				category = themeRegistry.getCategories()[idx];	
-		}		
-		
-		lastCategory = key;
-		
-		defintions = (Object []) categoryMap.get(key);
-		if (defintions == null) {	
-		    ArrayList list = new ArrayList();
-		    			
-			ColorDefinition[] colorDefinitions = themeRegistry.getColorsFor(currentTheme.getId());
-            for (int i = 0; i < colorDefinitions.length; i++) {
-                if (!colorDefinitions[i].isEditable())
-                    continue;
-			    String catId = colorDefinitions[i].getCategoryId();
-			    if ((catId == null && categoryId == null) || (catId != null && categoryId != null && categoryId.equals(catId))) {
-			        list.add(colorDefinitions[i]);
-			    }
-			}
-			
-			FontDefinition[] fontDefinitions = themeRegistry.getFontsFor(currentTheme.getId());
-            for (int i = 0; i < fontDefinitions.length; i++) {
-                if (!fontDefinitions[i].isEditable())
-                    continue;                
-			    String catId = fontDefinitions[i].getCategoryId();
-			    if ((catId == null && categoryId == null) || (catId != null && categoryId != null && categoryId.equals(catId))) {
-			        list.add(fontDefinitions[i]);
-			    }
-			}			
-			defintions = new Object[list.size()];
-			list.toArray(defintions);
-			categoryMap.put(key, defintions);
-		}
-	
-		largestFontWidth = 0;
-		presentationList.setInput(defintions);		
-		
-		Composite previewControl = (Composite) previewMap.get(key);
+		Composite previewControl = (Composite) previewMap.get(category);
 		if (previewControl == null) {
 		    if (category != null) {
 		        try {
-                    IThemePreview preview = category.createPreview();
+		            IThemePreview preview = getThemePreview(category);
                     if (preview != null) {
 	                    previewControl = new Composite(previewComposite, SWT.NONE);
 	                    previewControl.setLayout(new FillLayout());
-	                    myApplyDialogFont(previewControl);
 	                    ITheme theme = getCascadingTheme();
 	                    preview.createControl(previewControl, theme);
 	                    previewSet.add(preview);
@@ -1439,12 +1474,30 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 		if (previewControl == null) {
 		    previewControl = getDefaultPreviewControl();
 		}
-		previewMap.put(key, previewControl);
+		previewMap.put(category, previewControl);
 		stackLayout.topControl = previewControl;
 		previewComposite.layout();
 	}
 
 	/**
+     * @param category the category
+     * @return the preview for the category, or its ancestors preview if it does not have one.
+     */
+    private IThemePreview getThemePreview(ThemeElementCategory category) throws CoreException {
+        IThemePreview preview = category.createPreview();
+        if (preview != null)
+            return preview;
+        
+        if (category.getParentId() != null) {
+            int idx = Arrays.binarySearch(themeRegistry.getCategories(), category.getParentId(), IThemeRegistry.ID_COMPARATOR);
+            if (idx >= 0) 
+                return getThemePreview(themeRegistry.getCategories()[idx]);
+        }
+
+        return null;
+    }
+
+    /**
      * @return
      */
     private ITheme getCascadingTheme() {

@@ -55,6 +55,13 @@ public class ThemeRegistry implements IThemeRegistry {
 	void add(ColorDefinition desc) {
 		colors.add(desc);
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.themes.IThemeRegistry#findCategory(java.lang.String)
+     */
+    public ThemeElementCategory findCategory(String id) {
+        return (ThemeElementCategory) findDescriptor(getCategories(), id);
+    }	
 	
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.themes.IThemeRegistry#findColor(java.lang.String)

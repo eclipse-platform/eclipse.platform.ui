@@ -93,6 +93,13 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="parentId" type="string">
+            <annotation>
+               <documentation>
+                  the id of the parent category, if any.
+               </documentation>
+            </annotation>
+         </attribute>
          <attribute name="class" type="string">
             <annotation>
                <documentation>
@@ -537,11 +544,11 @@ All rights reserved.   This program and the accompanying materials are made avai
         categoryId=&quot;com.xyz.ThemeCategory&quot;
         label=&quot;XYZ Foreground Color&quot;
         value=&quot;COLOR_BLACK&quot;&gt;
-        	&lt;!-- white should be used on GTK --&gt;
-        	&lt;colorValue
-        		value=&quot;COLOR_WHITE&quot;
-        		os=&quot;linux&quot;
-        		ws=&quot;gtk&quot;/&gt;
+         &lt;!-- white should be used on GTK --&gt;
+         &lt;colorValue
+          value=&quot;COLOR_WHITE&quot;
+          os=&quot;linux&quot;
+          ws=&quot;gtk&quot;/&gt;
         &lt;description&gt;
         This color is used for the forground color of the XYZ plugin editor.
         &lt;/description&gt;
@@ -562,9 +569,9 @@ All rights reserved.   This program and the accompanying materials are made avai
         &lt;/colorFactory&gt;
         &lt;!-- black should be used on GTK --&gt;
         &lt;colorValue
-        	value=&quot;COLOR_BLACK&quot;
-        	os=&quot;linux&quot;
-        	ws=&quot;gtk&quot;/&gt;
+         value=&quot;COLOR_BLACK&quot;
+         os=&quot;linux&quot;
+         ws=&quot;gtk&quot;/&gt;
         &lt;description&gt;
         This color is used for the background color of the XYZ plugin editor.
         &lt;/description&gt;

@@ -193,6 +193,8 @@ declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_PIN_EDITOR_DISABLED, PATH_DTOO
 
 	declareImage(IWorkbenchGraphicConstants.IMG_DLGBAN_SAVEAS_DLG, PATH_WIZBAN+"saveas_dlg.gif", false); //$NON-NLS-1$
 
+	declareImage(IWorkbenchGraphicConstants.IMG_OBJ_FONT, PATH_OBJECT+"font.gif", true); //$NON-NLS-1$
+	declareImage(IWorkbenchGraphicConstants.IMG_OBJ_THEME_CATEGORY, PATH_OBJECT+"theme_category.gif", true); //$NON-NLS-1$
 	declareImage(IWorkbenchGraphicConstants.IMG_OBJ_ACTIVITY, PATH_OBJECT+"activity.gif", true); //$NON-NLS-1$
 	declareImage(IWorkbenchGraphicConstants.IMG_OBJ_ACTIVITY_CATEGORY, PATH_OBJECT+"activity_category.gif", true); //$NON-NLS-1$
 

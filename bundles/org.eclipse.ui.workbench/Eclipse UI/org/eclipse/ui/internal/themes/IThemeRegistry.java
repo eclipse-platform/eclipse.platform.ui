@@ -104,6 +104,16 @@ public interface IThemeRegistry {
 			return ""; //$NON-NLS-1$
 		}
 	};
+
+
+	/**
+	 * Returns the category matching the provided id.
+	 * 
+	 * @param id the id to search for
+	 * @return the element matching the provided id, or <code>null</code> if 
+	 * not found
+	 */	
+    public ThemeElementCategory findCategory(String id);	
 	
 	/**
 	 * Returns the color matching the provided id.

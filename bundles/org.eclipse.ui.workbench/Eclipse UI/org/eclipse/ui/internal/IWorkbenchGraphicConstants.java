@@ -120,4 +120,18 @@ public interface IWorkbenchGraphicConstants {
      * @since 3.0
      */
     public static final String IMG_OBJ_ACTIVITY = "IMG_OBJ_ACTIVITY"; //$NON-NLS-1$
+
+    /**
+     * Identifies a font.
+     * 
+     * @since 3.0
+     */
+    public static final String IMG_OBJ_FONT = "IMG_OBJ_FONT"; //$NON-NLS-1$
+
+    /**
+     * Identifies a theme category.
+     * 
+     * @since 3.0
+     */
+    public static final String IMG_OBJ_THEME_CATEGORY = "IMG_OBJ_THEME_CATEGORY"; //$NON-NLS-1$    
 }
