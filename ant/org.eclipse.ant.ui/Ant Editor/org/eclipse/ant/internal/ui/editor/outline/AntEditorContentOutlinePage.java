@@ -81,7 +81,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 	private XMLCore fCore;
 	private ListenerList fPostSelectionChangedListeners= new ListenerList();
 	private boolean fIsModelEmpty= true;
-	private boolean fFilterSubtargets;
+	private boolean fFilterInternalTargets;
 
 	/**
 	 * The content provider for the objects shown in the outline view.
@@ -108,7 +108,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 			XmlElement tempParentElement = (XmlElement)parentNode;
 			List tempChilds = new ArrayList();
 			tempChilds.addAll(tempParentElement.getChildNodes());
-			if (isFilterSubtargets()) {
+			if (isFilterInternalTargets()) {
 				// Filter out private targets
 				ListIterator iter= tempChilds.listIterator();
 				while (iter.hasNext()) {
@@ -196,7 +196,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 					flags = flags | AntImageDescriptor.DEFAULT_TARGET;
 					base = AntUIImages.getImageDescriptor(IAntUIConstants.IMG_ANT_DEFAULT_TARGET);
 				} else if (tempElement.getAttributeNamed(IAntEditorConstants.ATTR_DESCRIPTION) == null) {
-					base = AntUIImages.getImageDescriptor(IAntUIConstants.IMG_ANT_TARGET_PRIVATE);
+					base = AntUIImages.getImageDescriptor(IAntUIConstants.IMG_ANT_TARGET_INTERNAL);
 				} else {
 					base = AntUIImages.getImageDescriptor(IAntUIConstants.IMG_ANT_TARGET);
 				}
@@ -264,23 +264,23 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 	}
 	
 	/**
-	 * Sets whether subtargets should be filtered out of the outline. Must
+	 * Sets whether internal targets should be filtered out of the outline. Must
 	 * be called in the UI thread.
 	 * @param filter
 	 */
-	protected void setFilterSubtargets(boolean filter) {
-		fFilterSubtargets= filter;
-		AntUIPlugin.getDefault().getPreferenceStore().setValue(IAntUIPreferenceConstants.ANTEDITOR_FILTER_SUBTARGETS, filter);
+	protected void setFilterInternalTargets(boolean filter) {
+		fFilterInternalTargets= filter;
+		AntUIPlugin.getDefault().getPreferenceStore().setValue(IAntUIPreferenceConstants.ANTEDITOR_FILTER_INTERNAL_TARGETS, filter);
 		getTreeViewer().refresh();
 	}
 	
 	/**
-	 * Returns whether subtargets are currently being filtered out of
+	 * Returns whether internal targets are currently being filtered out of
 	 * the outline.
 	 * @return
 	 */
-	protected boolean isFilterSubtargets() {
-		return fFilterSubtargets;
+	protected boolean isFilterInternalTargets() {
+		return fFilterInternalTargets;
 	}
 	
 	private boolean isDefaultTargetNode(XmlElement node) {
@@ -313,7 +313,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 	public AntEditorContentOutlinePage(XMLCore core) {
 		super();
 		fCore= core;
-		fFilterSubtargets= AntUIPlugin.getDefault().getPreferenceStore().getBoolean(IAntUIPreferenceConstants.ANTEDITOR_FILTER_SUBTARGETS);
+		fFilterInternalTargets= AntUIPlugin.getDefault().getPreferenceStore().getBoolean(IAntUIPreferenceConstants.ANTEDITOR_FILTER_INTERNAL_TARGETS);
 	}
 
 	/* (non-Javadoc)
@@ -369,7 +369,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		site.registerContextMenu(IAntUIConstants.PLUGIN_ID + ".antEditorOutline", manager, viewer); //$NON-NLS-1$
 		
 		IToolBarManager tbm= site.getActionBars().getToolBarManager();
-		tbm.add(new FilterSubtargetsAction(this));
+		tbm.add(new FilterInternalTargetsAction(this));
 		
 		openWithMenu= new AntOpenWithMenu(this.getSite().getPage());
 		

@@ -37,7 +37,7 @@ public interface IAntUIPreferenceConstants {
 	
 	/**
 	 * Boolean preference identifier constant which specifies whether the Ant editor should
-	 * show subtargets in the Outline.
+	 * show internal targets in the Outline.
 	 */
-	public static final String ANTEDITOR_FILTER_SUBTARGETS= "anteditor.filterSubtargets"; //$NON-NLS-1$
+	public static final String ANTEDITOR_FILTER_INTERNAL_TARGETS= "anteditor.filterInternalTargets"; //$NON-NLS-1$
 }

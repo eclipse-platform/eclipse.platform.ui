@@ -15,25 +15,25 @@ import org.eclipse.ant.internal.ui.model.IAntUIConstants;
 import org.eclipse.jface.action.Action;
 
 /** 
- * An action which toggles filtering of subtargets from the Ant outline.
+ * An action which toggles filtering of internal targets from the Ant outline.
  */
-public class FilterSubtargetsAction extends Action {
+public class FilterInternalTargetsAction extends Action {
 	
 	private AntEditorContentOutlinePage fPage;
 	
-	public FilterSubtargetsAction(AntEditorContentOutlinePage page) {
-		super(AntOutlineMessages.getString("FilterSubtargetsAction.0")); //$NON-NLS-1$
+	public FilterInternalTargetsAction(AntEditorContentOutlinePage page) {
+		super(AntOutlineMessages.getString("FilterInternalTargetsAction.0")); //$NON-NLS-1$
 		fPage = page;
-		setImageDescriptor(AntUIImages.getImageDescriptor(IAntUIConstants.IMG_FILTER_SUBTARGETS));
-		setToolTipText(AntOutlineMessages.getString("FilterSubtargetsAction.1")); //$NON-NLS-1$
-		setChecked(fPage.isFilterSubtargets());
+		setImageDescriptor(AntUIImages.getImageDescriptor(IAntUIConstants.IMG_ANT_TARGET_INTERNAL));
+		setToolTipText(AntOutlineMessages.getString("FilterInternalTargetsAction.0")); //$NON-NLS-1$
+		setChecked(fPage.isFilterInternalTargets());
 	}
 	
 	/**
-	 * Toggles the filtering of subtarget from the Ant outline
+	 * Toggles the filtering of internal targets from the Ant outline
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	public void run() {
-		fPage.setFilterSubtargets(isChecked());
+		fPage.setFilterInternalTargets(isChecked());
 	}
 }

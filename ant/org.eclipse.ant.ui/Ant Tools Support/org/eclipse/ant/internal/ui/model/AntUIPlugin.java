@@ -143,7 +143,7 @@ public class AntUIPlugin extends AbstractUIPlugin {
 		}
 		prefs.setDefault(IAntUIPreferenceConstants.ANT_XERCES_JARS_WARNING, true);
 		prefs.setDefault(IAntUIPreferenceConstants.ANT_ERROR_DIALOG, true);
-		prefs.setDefault(IAntUIPreferenceConstants.ANTEDITOR_FILTER_SUBTARGETS, false);
+		prefs.setDefault(IAntUIPreferenceConstants.ANTEDITOR_FILTER_INTERNAL_TARGETS, false);
 
 		// Ant Editor color preferences
 		PreferenceConverter.setDefault(prefs, IAntEditorColorConstants.P_DEFAULT, IAntEditorColorConstants.DEFAULT);

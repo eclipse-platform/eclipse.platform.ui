@@ -57,7 +57,7 @@ public interface IAntUIConstants {
 	//	Label images
 	 public static final String IMG_ANT_PROJECT= PLUGIN_ID + ".antProject"; //$NON-NLS-1$
 	 public static final String IMG_ANT_TARGET= PLUGIN_ID + ".antTarget"; //$NON-NLS-1$
-	 public static final String IMG_ANT_TARGET_PRIVATE = PLUGIN_ID + ".antPrivateTarget"; //$NON-NLS-1$
+	 public static final String IMG_ANT_TARGET_INTERNAL = PLUGIN_ID + ".antPrivateTarget"; //$NON-NLS-1$
 	 public static final String IMG_ANT_DEFAULT_TARGET= PLUGIN_ID + ".antDefaultTarget"; //$NON-NLS-1$
 	 public static final String IMG_ANT_TARGET_ERROR = PLUGIN_ID + ".antTargetError"; //$NON-NLS-1$
 	 
@@ -73,7 +73,7 @@ public interface IAntUIConstants {
 	public static final String IMG_RUN= PLUGIN_ID + ".run"; //$NON-NLS-1$
 	public static final String IMG_SEARCH= PLUGIN_ID + ".search"; //$NON-NLS-1$
 	public static final String IMG_TOGGLE= PLUGIN_ID + ".toggle"; //$NON-NLS-1$
-	public static final String IMG_FILTER_SUBTARGETS= PLUGIN_ID + ".filterSubtargets"; //$NON-NLS-1$
+	public static final String IMG_FILTER_INTERNAL_TARGETS= PLUGIN_ID + ".filterInternalTargets"; //$NON-NLS-1$
 	 
 	//	Overlays
 	 public static final String IMG_OVR_ERROR = PLUGIN_ID + ".ovrError";  //$NON-NLS-1$
