@@ -507,7 +507,7 @@
          name="%antDocumentFactory.name"
          point="org.eclipse.core.filebuffers.documentCreation">
       <factory
-            extensions="xml"
+            extensions="xml, ent, macrodef"
             class="org.eclipse.ant.internal.ui.editor.text.AntDocumentFactory">
       </factory>
    </extension>
@@ -517,7 +517,7 @@
          name="%antDocumentSetupParticipant"
          point="org.eclipse.core.filebuffers.documentSetup">
       <participant
-            extensions="xml"
+            extensions="xml, ent, macrodef"
             class="org.eclipse.ant.internal.ui.editor.text.AntDocumentSetupParticipant">
       </participant>
    </extension>
