@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -86,6 +88,8 @@ public class ProjectHelper extends ProjectHelper2 {
 		
 		private UnknownElement task= null;
 		private Task currentTask= null;
+        
+        private Map fNormalizedFileNames= new HashMap();
 		
 		/* (non-Javadoc)
 		 * @see org.apache.tools.ant.helper.ProjectHelper2.AntHandler#onStartChild(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes, org.apache.tools.ant.helper.AntXMLContext)
@@ -146,11 +150,24 @@ public class ProjectHelper extends ProjectHelper2 {
             task.setTaskType(org.apache.tools.ant.ProjectHelper.genComponentName(task.getNamespace(), tag));
             task.setTaskName(qname);
 
-            Location location = new Location(context.getLocator().getSystemId(),
-                    context.getLocator().getLineNumber(),
-                    context.getLocator().getColumnNumber());
+            Locator contextLocator= context.getLocator();
+            String fileName= contextLocator.getSystemId();
+            String normalizedFileName= (String) fNormalizedFileNames.get(fileName);
+            if (normalizedFileName == null) {
+                if (fileName.startsWith("file:")) { //$NON-NLS-1$
+                    normalizedFileName= FileUtils.newFileUtils().fromURI(fileName);
+                    fNormalizedFileNames.put(fileName, normalizedFileName);
+                } else {
+                    normalizedFileName= fileName;
+                }
+            }
+            
+            Target currentTarget= context.getCurrentTarget();
+            Location location = new Location(normalizedFileName,
+                    contextLocator.getLineNumber(),
+                    contextLocator.getColumnNumber());
             task.setLocation(location);
-            task.setOwningTarget(context.getCurrentTarget());
+            task.setOwningTarget(currentTarget);
 
             context.configureId(task, attrs);
 
@@ -159,7 +176,7 @@ public class ProjectHelper extends ProjectHelper2 {
                 ((UnknownElement) parent).addChild(task);
             }  else {
                 // Task included in a target ( including the default one ).
-                context.getCurrentTarget().addTask(task);
+                currentTarget.addTask(task);
             }
 
             // container.addTask(task);
