@@ -604,6 +604,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 				ILaunch launch = launches[i];
 				if (launch.equals(frameLaunch)) {
 					setStackFrame(null);
+					setSourceLookupResult(null);
 				}
 			}
 		}
