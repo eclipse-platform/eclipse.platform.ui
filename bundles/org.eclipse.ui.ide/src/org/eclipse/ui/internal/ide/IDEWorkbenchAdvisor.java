@@ -817,7 +817,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_WIZBAN_EXPORTDIR_WIZ, PATH_WIZBAN+"exportdir_wiz.gif", false); //$NON-NLS-1$
 		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_WIZBAN_EXPORTZIP_WIZ, PATH_WIZBAN+"exportzip_wiz.gif", false); //$NON-NLS-1$
 	
-		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_WIZBAN_RESOURCEWORKINGSET_WIZ, PATH_WIZBAN+"res_workset_wiz.gif", false); //$NON-NLS-1$
+		declareWorkbenchImage(IDEInternalWorkbenchImages.IMG_WIZBAN_RESOURCEWORKINGSET_WIZ, PATH_WIZBAN+"workset_wiz.gif", false); //$NON-NLS-1$
 	
 		declareWorkbenchImage(IDE.SharedImages.IMG_OBJ_PROJECT, PATH_OBJECT+"prj_obj.gif", true); //$NON-NLS-1$
 		declareWorkbenchImage(IDE.SharedImages.IMG_OBJ_PROJECT_CLOSED, PATH_OBJECT+"cprj_obj.gif", true); //$NON-NLS-1$
