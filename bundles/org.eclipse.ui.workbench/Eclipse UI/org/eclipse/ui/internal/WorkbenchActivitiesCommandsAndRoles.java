@@ -422,6 +422,7 @@ public class WorkbenchActivitiesCommandsAndRoles {
 		return contextActivationService;
 	}
 
+	// TODO remove this unused method once nick checks in RCP work (nov 5 2003)
 	public String getName(String commandId) {
 		String name = null;
 
