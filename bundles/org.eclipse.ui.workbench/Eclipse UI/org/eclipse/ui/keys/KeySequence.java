@@ -33,7 +33,7 @@ import org.eclipse.ui.internal.util.Util;
  */
 public final class KeySequence implements Comparable {
 
-	public final static String KEY_STROKE_DELIMITER = " "; //$NON-NLS-1$
+	public final static char KEY_STROKE_DELIMITER = ' '; 
 	public final static String KEY_STROKE_DELIMITERS = KEY_STROKE_DELIMITER + "\b\t\n\f\r\u001b\u007F"; //$NON-NLS-1$
 
 	private final static int HASH_FACTOR = 89;
@@ -182,8 +182,9 @@ public final class KeySequence implements Comparable {
 		StringBuffer stringBuffer = new StringBuffer();
 			
 		while (iterator.hasNext()) {
-			if (i != 0)			
-				stringBuffer.append(Util.translateString(RESOURCE_BUNDLE, localize ? KEY_STROKE_DELIMITER_KEY : null, KEY_STROKE_DELIMITER, false));
+			if (i != 0)							
+				// TODO 1.4 Character.toString(KEY_DELIMITER);
+				stringBuffer.append(Util.translateString(RESOURCE_BUNDLE, localize ? KEY_STROKE_DELIMITER_KEY : null, "" + KEY_STROKE_DELIMITER, false)); //$NON-NLS-1$
 	
 			stringBuffer.append(((KeyStroke) iterator.next()).format(localize));
 			i++;

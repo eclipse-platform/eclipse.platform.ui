@@ -63,7 +63,7 @@ public final class KeyStroke implements Comparable {
 	public final static String FF = "FF"; //$NON-NLS-1$
 	public final static String HOME = "HOME"; //$NON-NLS-1$
 	public final static String INSERT = "INSERT"; //$NON-NLS-1$
-	public final static String KEY_DELIMITER = "+"; //$NON-NLS-1$
+	public final static char KEY_DELIMITER = '+'; //$NON-NLS-1$
 	public final static String KEY_DELIMITERS = KEY_DELIMITER + ""; //$NON-NLS-1$
 	public final static String LF = "LF"; //$NON-NLS-1$
 	public final static String PAGE_DOWN = "PAGE_DOWN"; //$NON-NLS-1$
@@ -302,7 +302,8 @@ public final class KeyStroke implements Comparable {
 		while (iterator.hasNext()) {
 			string = iterator.next().toString();
 			stringBuffer.append(Util.translateString(RESOURCE_BUNDLE, localize ? string : null, string, false));
-			stringBuffer.append(Util.translateString(RESOURCE_BUNDLE, localize ? KEY_DELIMITER_KEY : null, KEY_DELIMITER, false));
+			// TODO 1.4 Character.toString(KEY_DELIMITER);
+			stringBuffer.append(Util.translateString(RESOURCE_BUNDLE, localize ? KEY_DELIMITER_KEY : null, "" + KEY_DELIMITER, false)); //$NON-NLS-1$
 		}
 
 		String name = naturalKey.toString();
