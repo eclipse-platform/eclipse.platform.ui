@@ -65,6 +65,18 @@ public abstract class Dialog extends Window {
 	 * The button bar; <code>null</code> until dialog is layed out.
 	 */
 	private Control buttonBar;
+	
+	/**
+	 * The cancel button; <code>null</code> if no button is created with 
+	 * an ID equal to <code>IDialogConstants.CANCEL_ID</code>.
+	 */
+	private Button cancelButton;
+
+	/**
+	 * The ok button; <code>null</code> if no button is created with 
+	 * an ID equal to <code>IDialogConstants.OK_ID</code>.
+	 */
+	private Button okButton;
 
 	/**
 	 * Font metrics to use for determining pixel sizes.
@@ -308,13 +320,15 @@ protected int convertWidthInCharsToPixels(int chars) {
  * Creates a new button with the given id.
  * <p>
  * The <code>Dialog</code> implementation of this framework method
- * creates a standard push button, registers for selection events
- * including button presses and registers
- * default buttons with its shell.
- * The button id is stored as the buttons client data.
- * Note that the parent's layout is assumed to be a GridLayout and 
- * the number of columns in this layout is incremented.
- * Subclasses may override.
+ * creates a standard push button, registers it for selection events
+ * including button presses, and registers default buttons with its shell.
+ * The button id is stored as the button's client data.  If the button id 
+ * is <code>IDialogConstants.CANCEL_ID</code>, the new button will be 
+ * accessible from <code>getCancelButton()</code>.  If the button id is 
+ * <code>IDialogConstants.OK_ID</code>, the new button will be accesible 
+ * from <code>getOKButton()</code>.  Note that the parent's layout 
+ * is assumed to be a <code>GridLayout</code> and the number of columns in this 
+ * layout is incremented.  Subclasses may override.
  * </p>
  *
  * @param parent the parent composite
@@ -324,6 +338,11 @@ protected int convertWidthInCharsToPixels(int chars) {
  * @param label the label from the button
  * @param defaultButton <code>true</code> if the button is to be the
  *   default button, and <code>false</code> otherwise
+ * 
+ * @return the new button
+ * 
+ * @see getCancelButton
+ * @see getOKButton
  */
 protected Button createButton(Composite parent, int id, String label, boolean defaultButton) {
 	// increment the number of columns in the button bar
@@ -351,6 +370,12 @@ protected Button createButton(Composite parent, int id, String label, boolean de
 		}
 	}
 	button.setFont(parent.getFont());
+	
+	if(id == IDialogConstants.OK_ID)
+		okButton = button;
+	else if(id == IDialogConstants.CANCEL_ID)
+		cancelButton = button;
+	
 	return button;
 }
 /**
@@ -400,7 +425,9 @@ protected Control createButtonBar(Composite parent) {
  * <p>
  * The <code>Dialog</code> implementation of this framework method adds 
  * standard ok and cancel buttons using the <code>createButton</code>
- * framework method. Subclasses may override.
+ * framework method. These standard buttons will be accessible from 
+ * <code>getCancelButton</code>, and <code>getOKButton</code>.
+ * Subclasses may override.
  * </p>
  *
  * @param parent the button bar composite
@@ -493,6 +520,20 @@ protected Control getButtonBar() {
 	return buttonBar;
 }
 /**
+ * Returns the button created when <code>createButton</code> is called 
+ * with an ID of <code>IDialogConstants.CANCEL_ID</code>.  If 
+ * <code>createButton</code> was never called with this parameter, or 
+ * if <code>createButton</code> is overridden, <code>getCancelButton</code>
+ * will return <code>null</code>.
+ * 
+ * @return the cancel button or <code>null</code>
+ * 
+ * @see createButton
+ */
+protected Button getCancelButton() {
+	return cancelButton;
+}
+/**
  * Returns the dialog area control.
  * <p>
  * Clients may call this framework method, but should not override it.
@@ -514,6 +555,19 @@ protected Control getDialogArea() {
  */
 public static Image getImage(String key) {
 	return JFaceResources.getImageRegistry().get(key);
+}
+/**
+ * Returns the button created when <code>createButton</code> is called 
+ * with an ID of <code>IDialogConstants.OK_ID</code>.  If <code>createButton</code> 
+ * was never called with this parameter, or if <code>createButton</code> is 
+ * overridden, <code>getOKButton</code> will return <code>null</code>.
+ * 
+ * @return the OK button or <code>null</code>
+ * 
+ * @see createButton
+ */
+protected Button getOKButton() {
+	return okButton;
 }
 /**
  * Initializes the computation of horizontal and vertical dialog units
