@@ -203,7 +203,17 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 				return RemoteModule.getRemoteModules(this, tag, progress);
 			} else {
 				RemoteFolder root = new RemoteFolder(null, this, Path.EMPTY, tag);
-				return (ICVSRemoteResource[])root.members(progress);
+				ICVSRemoteResource[] resources = (ICVSRemoteResource[])root.members(progress);
+				// There is the off chance that there is a file in the root of the repository.
+				// This is not supported by cvs so we need to make sure there are no files
+				List folders = new ArrayList(resources.length);
+				for (int i = 0; i < resources.length; i++) {
+					ICVSRemoteResource remoteResource = resources[i];
+					if (remoteResource.isContainer()) {
+						folders.add(remoteResource);
+					}
+				}
+				return (ICVSRemoteResource[]) folders.toArray(new ICVSRemoteResource[folders.size()]);
 			}
 		} catch(TeamException e) {
 			throw new CVSException(e.getStatus());
