@@ -11,6 +11,8 @@
 package org.eclipse.core.internal.preferences;
 
 import java.net.URL;
+import java.util.HashSet;
+import java.util.Set;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -28,6 +30,8 @@ public class UserPreferences extends EclipsePreferences {
 	private String qualifier;
 	private IPath location;
 	private IEclipsePreferences loadLevel;
+	// cache which nodes have been loaded from disk
+	private static Set loadedNodes = new HashSet();
 
 	/**
 	 * Default constructor. Should only be called by #createExecutableExtension.
@@ -40,9 +44,17 @@ public class UserPreferences extends EclipsePreferences {
 		super(parent, name);
 		initialize();
 	}
-	
+
 	protected IPath getLocation() {
 		return location;
+	}
+
+	protected boolean isAlreadyLoaded(IEclipsePreferences node) {
+		return loadedNodes.contains(node.name());
+	}
+
+	protected void loaded() {
+		loadedNodes.add(name());
 	}
 
 	/*

@@ -779,7 +779,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		return null;
 	}
 
-	protected void loaded(IEclipsePreferences node) {
+	protected void loaded() {
 		// do nothing
 	}
 
@@ -806,6 +806,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		try {
 			loading = true;
 			result.load(result.getLocation());
+			result.loaded();
 		} catch (BackingStoreException e) {
 			String message = "Exception loading preferences";
 			IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, message, e);

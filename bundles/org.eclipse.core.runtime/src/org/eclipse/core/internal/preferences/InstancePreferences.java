@@ -52,8 +52,8 @@ public class InstancePreferences extends EclipsePreferences {
 		return loadedNodes.contains(node.name());
 	}
 
-	protected void loaded(IEclipsePreferences node) {
-		loadedNodes.add(node.name());
+	protected void loaded() {
+		loadedNodes.add(name());
 	}
 
 	/*
