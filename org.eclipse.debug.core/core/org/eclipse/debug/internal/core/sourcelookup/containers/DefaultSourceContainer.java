@@ -93,7 +93,7 @@ public class DefaultSourceContainer extends CompositeSourceContainer {
 		try{
 			return DebugPlugin.getDefault().getLaunchManager().newSourcePathComputer(fConfiguration);
 		}catch(CoreException e){
-			DebugPlugin.logMessage(SourceLookupMessages.getString("DefaultSourceContainer.1"),e);			
+			DebugPlugin.logMessage(SourceLookupMessages.getString("DefaultSourceContainer.1"),e); //$NON-NLS-1$
 		}
 		return null;
 	}
