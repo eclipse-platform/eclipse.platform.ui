@@ -265,5 +265,11 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 		throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, MessageFormat.format(DebugCoreMessages.getString("LaunchConfigurationType.10"), new String[] {getIdentifier(), mode}), null)); //$NON-NLS-1$
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfigurationType#getSourceLocatorId()
+	 */
+	public String getSourceLocatorId() {
+		return getAttribute("sourceLocatorId"); //$NON-NLS-1$
+	}
 }
 

@@ -185,5 +185,17 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	 * @since 3.0
 	 */
 	public ISourcePathComputer getSourcePathComputer();
+	
+	/**
+	 * Returns the identifier of the persistable source locator to be used with
+	 * launch configurations of this type by default, or <code>null</code> if
+	 * unspecified. Launch configuration types optionally specify this attribue
+	 * in their plug-in XML via the <code>sourceLocatorId</code> attribute.  
+	 *  
+	 * @return the identifier of the persistable source locator to be used with
+	 * launch configurations of this type by default, or <code>null</code>
+	 * @since 3.0
+	 */
+	public String getSourceLocatorId();
 		
 }
