@@ -103,7 +103,7 @@ public class TagInRepositoryOperation extends RemoteOperation implements ITagOpe
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.ITagOperation#recurse()
 	 */
-	public void recurse() {
+	public void doNotRecurse() {
 		addLocalOption(Command.DO_NOT_RECURSE);
 	}
 

@@ -84,7 +84,6 @@ public class ReplaceWithTagAction extends WorkspaceTraversalAction {
 		// Setup the holders
 		final ResourceMapping[][] resourceMappings = new ResourceMapping[][] {null};
 		final CVSTag[] tag = new CVSTag[] {null};
-		final boolean[] recurse = new boolean[] {true};
 		
 		// Show a busy cursor while display the tag selection dialog
 		run(new IRunnableWithProgress() {
@@ -99,14 +98,13 @@ public class ReplaceWithTagAction extends WorkspaceTraversalAction {
 					Policy.bind("ReplaceWithTagAction.message"), //$NON-NLS-1$
 					Policy.bind("TagSelectionDialog.Select_a_Tag_1"), //$NON-NLS-1$
 					TagSelectionDialog.INCLUDE_ALL_TAGS, 
-					!isLogicalModel(getCVSResourceMappings()), /*show recurse*/
+					false, /*show recurse*/
 					IHelpContextIds.REPLACE_TAG_SELECTION_DIALOG); //$NON-NLS-1$
 				dialog.setBlockOnOpen(true);
 				if (dialog.open() == Dialog.CANCEL) {
 					return;
 				}
 				tag[0] = dialog.getResult();
-				recurse[0] = dialog.getRecursive();
 				
 				// For non-projects determine if the tag being loaded is the same as the resource's parent
 				// If it's not, warn the user that they will have strange sync behavior
@@ -124,7 +122,7 @@ public class ReplaceWithTagAction extends WorkspaceTraversalAction {
 		if (resourceMappings[0] == null || resourceMappings[0].length == 0 || tag[0] == null) return;
 		
 		// Peform the replace in the background
-		new ReplaceOperation(getTargetPart(), resourceMappings[0], tag[0] /*, recurse[0]*/).run();
+		new ReplaceOperation(getTargetPart(), resourceMappings[0], tag[0]).run();
 	}
 	
 	/**

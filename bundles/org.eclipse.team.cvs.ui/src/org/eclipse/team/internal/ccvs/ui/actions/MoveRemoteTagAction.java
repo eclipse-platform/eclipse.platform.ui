@@ -42,7 +42,7 @@ public class MoveRemoteTagAction extends TagInRepositoryAction {
 		operation.moveTag();
 		boolean recursive = dialog.getRecursive();
 		if (!recursive)  {
-			operation.recurse();
+			operation.doNotRecurse();
 		}
 		return operation;
 	}

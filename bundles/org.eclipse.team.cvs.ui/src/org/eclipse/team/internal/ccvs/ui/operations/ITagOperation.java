@@ -25,6 +25,6 @@ public interface ITagOperation {
 	 */
 	public abstract boolean isEmpty();
 	public abstract void moveTag();
-	public abstract void recurse();
+	public abstract void doNotRecurse();
     public abstract TagSource getTagSource();
 }
