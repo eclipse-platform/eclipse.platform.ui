@@ -378,7 +378,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		topComp.setLayout(topLayout);
 
 		// Set the things that TitleAreaDialog takes care of
-		setTitle("Create, manage & run launch configurations");
+		setTitle("Create, manage, and run launch configurations");
 		setMessage("Ready to launch");
 		setModeLabelState();
 
