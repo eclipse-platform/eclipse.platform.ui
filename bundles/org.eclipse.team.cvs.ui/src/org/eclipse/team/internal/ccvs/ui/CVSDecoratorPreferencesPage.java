@@ -594,8 +594,10 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 		fTextTab.performOk(store);
 		fIconTab.performOk(store);
 		fGeneralTab.performOk(store);
-		CVSUIPlugin.broadcastPropertyChange(new PropertyChangeEvent(this, CVSUIPlugin.P_DECORATORS_CHANGED, null, null));
-		CVSUIPlugin.getPlugin().savePluginPreferences();
+        if (store.needsSaving()) {
+    		CVSUIPlugin.broadcastPropertyChange(new PropertyChangeEvent(this, CVSUIPlugin.P_DECORATORS_CHANGED, null, null));
+    		CVSUIPlugin.getPlugin().savePluginPreferences();
+        }
 		return true;
 	}
 
