@@ -139,7 +139,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ActionDescriptor;
 import org.eclipse.ui.internal.EditorPluginAction;
 import org.eclipse.ui.internal.texteditor.EditPosition;
@@ -2507,7 +2506,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		styledText.addKeyListener(getCursorListener());
 		
 		if (getHelpContextId() != null)
-			WorkbenchHelp.setHelp(styledText, getHelpContextId());
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(styledText, getHelpContextId());
 			
 		
 		String id= fEditorContextMenuId != null ?  fEditorContextMenuId : DEFAULT_EDITOR_CONTEXT_MENU_ID;

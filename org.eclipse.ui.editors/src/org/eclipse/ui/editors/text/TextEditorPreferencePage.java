@@ -10,15 +10,15 @@
  *******************************************************************************/
 package org.eclipse.ui.editors.text;
 
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Plugin;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Plugin;
 
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.FontFieldEditor;
@@ -28,7 +28,7 @@ import org.eclipse.jface.resource.JFaceResources;
 
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 
@@ -71,7 +71,7 @@ public class TextEditorPreferencePage extends FieldEditorPreferencePage implemen
 	 */
 	public void createControl(Composite parent) {
 		super.createControl(parent);
-		WorkbenchHelp.setHelp(getControl(), ITextEditorHelpContextIds.TEXT_EDITOR_PREFERENCE_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), ITextEditorHelpContextIds.TEXT_EDITOR_PREFERENCE_PAGE);
 	}	
 	
 	/*

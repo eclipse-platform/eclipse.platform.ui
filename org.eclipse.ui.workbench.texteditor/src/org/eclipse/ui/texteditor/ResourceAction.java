@@ -18,7 +18,7 @@ import java.util.ResourceBundle;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
 
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 
 /**
@@ -115,7 +115,7 @@ public abstract class ResourceAction extends Action {
 	 * @param contextId the help context id
 	 */
 	public final void setHelpContextId(String contextId) {
-		WorkbenchHelp.setHelp(this, contextId);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, contextId);
 	}	
 
 	/**

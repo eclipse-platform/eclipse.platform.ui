@@ -25,7 +25,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.texteditor.IAbstractTextEditorHelpContextIds;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
@@ -47,7 +46,7 @@ public class GotoLastEditPositionAction extends Action implements IWorkbenchWind
 	 * Creates a goto last edit action.
 	 */
 	public GotoLastEditPositionAction() {
-		WorkbenchHelp.setHelp(this, IAbstractTextEditorHelpContextIds.GOTO_LAST_EDIT_POSITION_ACTION);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IAbstractTextEditorHelpContextIds.GOTO_LAST_EDIT_POSITION_ACTION);
 		setId(ITextEditorActionDefinitionIds.GOTO_LAST_EDIT_POSITION);
 		setActionDefinitionId(ITextEditorActionDefinitionIds.GOTO_LAST_EDIT_POSITION);
 		setEnabled(false);

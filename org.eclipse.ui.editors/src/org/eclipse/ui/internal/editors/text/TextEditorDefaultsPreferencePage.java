@@ -18,8 +18,6 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-import org.eclipse.core.runtime.IStatus;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
@@ -41,6 +39,8 @@ import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 
+import org.eclipse.core.runtime.IStatus;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.DialogPage;
@@ -50,14 +50,14 @@ import org.eclipse.jface.preference.PreferencePage;
 
 import org.eclipse.jface.text.Assert;
 
+import org.eclipse.ui.editors.text.ITextEditorHelpContextIds;
+
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.editors.text.ITextEditorHelpContextIds;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.editors.text.TextEditorDefaultsPreferencePage.EnumeratedDomain.EnumValue;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
-
-import org.eclipse.ui.internal.editors.text.TextEditorDefaultsPreferencePage.EnumeratedDomain.EnumValue;
 
 
 /**
@@ -449,7 +449,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 	 */
 	public void createControl(Composite parent) {
 		super.createControl(parent);
-		WorkbenchHelp.setHelp(getControl(), ITextEditorHelpContextIds.TEXT_EDITOR_PREFERENCE_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), ITextEditorHelpContextIds.TEXT_EDITOR_PREFERENCE_PAGE);
 	}
 
 	private void handleAppearanceColorListSelection() {	

@@ -18,10 +18,11 @@ import org.eclipse.swt.widgets.Control;
 
 import org.eclipse.jface.preference.PreferencePage;
 
+import org.eclipse.ui.editors.text.ITextEditorHelpContextIds;
+
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.editors.text.ITextEditorHelpContextIds;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 
 
@@ -54,7 +55,7 @@ public class LanguageEditorPreferencePage extends PreferencePage implements IWor
 	 */
 	public void createControl(Composite parent) {
 		super.createControl(parent);
-		WorkbenchHelp.setHelp(getControl(), ITextEditorHelpContextIds.TEXT_EDITOR_PREFERENCE_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), ITextEditorHelpContextIds.TEXT_EDITOR_PREFERENCE_PAGE);
 	}
 
 	/*

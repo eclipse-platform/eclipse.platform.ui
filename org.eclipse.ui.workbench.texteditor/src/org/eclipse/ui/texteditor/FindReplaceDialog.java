@@ -63,7 +63,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.contentassist.ContentAssistHandler;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 
 
@@ -274,7 +273,7 @@ class FindReplaceDialog extends Dialog {
 			shell.setLocation(fLocation);
 		
 		// set help context
-		WorkbenchHelp.setHelp(shell, IAbstractTextEditorHelpContextIds.FIND_REPLACE_DIALOG);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell, IAbstractTextEditorHelpContextIds.FIND_REPLACE_DIALOG);
 
 		// fill in combo contents
 		fFindField.removeModifyListener(fFindModifyListener);

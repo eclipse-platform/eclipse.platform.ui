@@ -17,9 +17,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Preferences;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -33,6 +30,9 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Preferences;
+
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.dialogs.IMessageProvider;
@@ -40,13 +40,13 @@ import org.eclipse.jface.preference.PreferencePage;
 
 import org.eclipse.jface.text.Assert;
 
+import org.eclipse.ui.editors.text.ITextEditorHelpContextIds;
+
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.editors.text.ITextEditorHelpContextIds;
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
-
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.editors.text.AccessibilityPreferencePage.EnumeratedDomain.EnumValue;
+import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 
 /**
  * The preference page for setting the editor options.
@@ -366,7 +366,7 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 	 */
 	public void createControl(Composite parent) {
 		super.createControl(parent);
-		WorkbenchHelp.setHelp(getControl(), ITextEditorHelpContextIds.TEXT_EDITOR_PREFERENCE_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), ITextEditorHelpContextIds.TEXT_EDITOR_PREFERENCE_PAGE);
 	}
 
 	protected Preferences getPreferences() {

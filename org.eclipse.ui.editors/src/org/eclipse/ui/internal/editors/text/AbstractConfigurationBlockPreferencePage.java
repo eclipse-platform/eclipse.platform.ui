@@ -19,7 +19,7 @@ import org.eclipse.jface.preference.PreferencePage;
 
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Abstract preference page which is used to wrap a
@@ -60,7 +60,7 @@ abstract class AbstractConfigurationBlockPreferencePage extends PreferencePage i
 	 */
 	public void createControl(Composite parent) {
 		super.createControl(parent);
-		WorkbenchHelp.setHelp(getControl(), getHelpId());
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), getHelpId());
 	}
 	
 	/*
