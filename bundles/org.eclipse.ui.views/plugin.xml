@@ -52,21 +52,21 @@
             id="org.eclipse.ui.views.ContentOutline">
       </command>
       <keyBinding
-            keySequence="Alt+Shift+Q O"
+            keySequence="M2+M3+Q O"
             contextId="org.eclipse.ui.contexts.window"
             commandId="org.eclipse.ui.views.ContentOutline"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            keySequence="Alt+Shift+Q O"
+            keySequence="M2+M3+Q O"
             contextId="org.eclipse.ui.contexts.window"
             commandId=""
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            keySequence="Command+Alt+Q O"
+            keySequence="M1+M3+Q O"
             contextId="org.eclipse.ui.contexts.window"
             commandId="org.eclipse.ui.views.ContentOutline"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">

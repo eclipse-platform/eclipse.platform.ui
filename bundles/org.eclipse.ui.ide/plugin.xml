@@ -594,82 +594,69 @@
       </keyBinding>
       <keyBinding
             commandId="org.eclipse.ui.navigate.openResource"
-            keySequence="Ctrl+Shift+R"
+            keySequence="M1+M2+R"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             commandId="org.eclipse.ui.project.buildAll"
-            keySequence="Ctrl+B"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
-            commandId="org.eclipse.ui.navigate.openResource"
-            platform="carbon"
-            keySequence="Command+Shift+R"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
-            commandId="org.eclipse.ui.project.buildAll"
-            platform="carbon"
-            keySequence="Command+B"
+            keySequence="M1+B"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             commandId="org.eclipse.ui.navigate.showInQuickMenu"
             contextId="org.eclipse.ui.contexts.window"
-            keySequence="Alt+Shift+W"
+            keySequence="M2+M3+W"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            commandId=""
             contextId="org.eclipse.ui.contexts.window"
-            keySequence="Alt+Shift+W"
+            keySequence="M2+M3+W"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             platform="carbon"
             commandId="org.eclipse.ui.navigate.showInQuickMenu"
             contextId="org.eclipse.ui.contexts.window"
-            keySequence="Command+Alt+W"
+            keySequence="M1+M3+W"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             commandId="org.eclipse.ui.file.newQuickMenu"
             contextId="org.eclipse.ui.contexts.window"
-            keySequence="Alt+Shift+N"
+            keySequence="M2+M3+N"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             platform="carbon"
             commandId=""
             contextId="org.eclipse.ui.contexts.window"
-            keySequence="Alt+Shift+N"
+            keySequence="M2+M3+N"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             platform="carbon"
             commandId="org.eclipse.ui.file.newQuickMenu"
             contextId="org.eclipse.ui.contexts.window"
-            keySequence="Command+Alt+N"
+            keySequence="M2+M3+N"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            keySequence="Alt+Shift+Q X"
+            keySequence="M2+M3+Q X"
             contextId="org.eclipse.ui.contexts.window"
             commandId="org.eclipse.ui.views.ProblemView"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            keySequence="Alt+Shift+Q X"
+            keySequence="M2+M3+Q X"
             contextId="org.eclipse.ui.contexts.window"
             commandId=""
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            keySequence="Command+Alt+Q X"
+            keySequence="M1+M3+Q X"
             contextId="org.eclipse.ui.contexts.window"
             commandId="org.eclipse.ui.views.ProblemView"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
