@@ -60,12 +60,22 @@ public class OpenInCompareAction extends Action {
 	public static SyncInfoCompareInput openCompareEditor(SynchronizeView viewer, SyncInfo info, boolean keepFocus) {
 		SyncInfoCompareInput input = getCompareInput(info);
 		if(input != null) {
-			if (!prefetchFileContents(viewer, info)) return null;
-			IEditorPart editor = findReusableCompareEditor(viewer.getSite().getPage());
-			if(editor != null && editor instanceof IReusableEditor) {
-				CompareUI.reuseCompareEditor(input, (IReusableEditor)editor);
+			IWorkbenchPage page = viewer.getSite().getPage();
+			IEditorPart editor = findReusableCompareEditor(page);			
+			IEditorInput otherInput = editor.getEditorInput();
+			if(otherInput instanceof SyncInfoCompareInput && otherInput.equals(input)) {
+				// simply provide focus to editor
+				page.activate(editor);
 			} else {
-				CompareUI.openCompareEditor(input);
+				// if editor is currently not open on that input either re-use existing
+				// or open a new editor
+				if (!prefetchFileContents(viewer, info)) return null;
+				if(editor != null && editor instanceof IReusableEditor) {
+					page.activate(editor);
+					CompareUI.reuseCompareEditor(input, (IReusableEditor)editor);
+				} else {
+					CompareUI.openCompareEditor(input);
+				}
 			}
 			
 			if(keepFocus) {
