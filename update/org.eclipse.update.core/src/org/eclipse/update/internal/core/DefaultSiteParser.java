@@ -8,6 +8,7 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import org.apache.xerces.parsers.SAXParser;
 import org.eclipse.update.core.AbstractFeature;
@@ -56,9 +57,12 @@ public class DefaultSiteParser extends DefaultHandler {
 		Assert.isTrue(site instanceof AbstractSite);
 		this.site = (AbstractSite)site;
 		
-		ClassLoader l = new URLClassLoader(new URL[]{site.getURL()},null);
-		bundle = ResourceBundle.getBundle("site",Locale.getDefault(),l);
-		
+		try {
+			ClassLoader l = new URLClassLoader(new URL[]{site.getURL()},null);
+			bundle = ResourceBundle.getBundle("site",Locale.getDefault(),l);
+		} catch (MissingResourceException e){
+			//ok, there is no bundle, keep it as null
+		}		
 		parser.parse(new InputSource(this.siteStream));
 	}
 	
@@ -95,8 +99,8 @@ public class DefaultSiteParser extends DefaultHandler {
 	 */
 	private void processSite(Attributes attributes){
 		String infoURL = attributes.getValue("url");
-		infoURL = UpdateManagerPlugin.getDefault().getDescriptor().getResourceString(infoURL,bundle);
-		URL url = UpdateManagerUtils.getURL(site.getInfoURL(),infoURL,DEFAULT_INFO_URL);
+		infoURL = UpdateManagerUtils.getResourceString(infoURL,bundle);
+		URL url = UpdateManagerUtils.getURL(site.getURL(),infoURL,DEFAULT_INFO_URL);
 		site.setInfoURL(url);
 	}
 	
@@ -139,7 +143,7 @@ public class DefaultSiteParser extends DefaultHandler {
 	private void processCategoryDef(Attributes attributes){
 		String name  = attributes.getValue("name");
 		String label = attributes.getValue("label");
-		label = UpdateManagerPlugin.getDefault().getDescriptor().getResourceString(label,bundle);
+		label = UpdateManagerUtils.getResourceString(label,bundle);
 		ICategory category = new DefaultCategory(name,label);
 		site.addCategory(category);		
 	}

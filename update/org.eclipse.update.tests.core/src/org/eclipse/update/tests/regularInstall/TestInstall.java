@@ -23,9 +23,8 @@ public class TestInstall extends UpdateManagerTestCase {
 	private IFeature getFeature1(ISite site){
 		VersionedIdentifier id = new VersionedIdentifier("org.eclipse.update.core.tests.feature1","1.0.0");
 		DefaultPackagedFeature remoteFeature = new DefaultPackagedFeature(id,site);
-		PluginEntry pluginEntry= new PluginEntry();
 		VersionedIdentifier pluginEntryId = new VersionedIdentifier("org.eclipse.update.core.feature1.plugin1","1.1.1");
-		pluginEntry.setIdentifier(pluginEntryId);
+		PluginEntry pluginEntry= new PluginEntry(pluginEntryId);		
 		pluginEntry.setContainer(remoteFeature);
 		pluginEntry.setLabel("FIRST PLUGIN ENTRY");
 		remoteFeature.addPluginEntry(pluginEntry);
@@ -43,7 +42,7 @@ public class TestInstall extends UpdateManagerTestCase {
 		// verify
 		String site = localSite.getURL().getFile();
 		String pluginName= remoteFeature.getPluginEntries()[0].getIdentifier().toString();
-		File pluginFile = new File(site,pluginName);
+		File pluginFile = new File(site,"plugins/"+pluginName);
 		assertTrue(pluginFile.exists());
 
 		//cleanup
@@ -55,9 +54,8 @@ public class TestInstall extends UpdateManagerTestCase {
 	private IFeature getFeature2(ISite site){
 		VersionedIdentifier id = new VersionedIdentifier("org.eclipse.update.core.tests.feature2","1.0.0");
 		DefaultPackagedFeature remoteFeature = new DefaultPackagedFeature(id,site);
-		PluginEntry pluginEntry= new PluginEntry();
 		VersionedIdentifier pluginEntryId = new VersionedIdentifier("org.eclipse.update.core.feature2.plugin2","2.2.2");
-		pluginEntry.setIdentifier(pluginEntryId);
+		PluginEntry pluginEntry= new PluginEntry(pluginEntryId);		
 		pluginEntry.setContainer(remoteFeature);
 		pluginEntry.setLabel("SECOND PLUGIN ENTRY");
 		remoteFeature.addPluginEntry(pluginEntry);
@@ -74,7 +72,7 @@ public class TestInstall extends UpdateManagerTestCase {
 
 		String site = localSite.getURL().getFile();
 		String pluginName= remoteFeature.getPluginEntries()[0].getIdentifier().toString();
-		File pluginFile = new File(site,pluginName);
+		File pluginFile = new File(site,"plugins/"+pluginName);
 		assertTrue(pluginFile.exists());
 
 		//cleanup

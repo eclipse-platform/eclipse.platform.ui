@@ -12,12 +12,12 @@ import java.util.List;
 import org.eclipse.update.internal.core.DefaultFeatureParser;
 /**
  * Abstract Class that implements most of the behavior of a feature
- * A feature ALWAYS belongs to an I Site
+ * A feature ALWAYS belongs to an ISite
  */
-
-
+
+
 public abstract class AbstractFeature implements IFeature {
-
+
 private VersionedIdentifier versionIdentifier;
 	private ISite site;
 	private String label;
@@ -42,7 +42,6 @@ private VersionedIdentifier versionIdentifier;
 		this.label 			= sourceFeature.getLabel();
 		this.url			= sourceFeature.getURL();
 		this.updateInfo 	= sourceFeature.getUpdateInfo();
-		this.infoURL		= sourceFeature.getInfoURL();
 		this.setDiscoveryInfos(sourceFeature.getDiscoveryInfos());
 		this.provider 		= sourceFeature.getProvider();
 		this.description 	= sourceFeature.getDescription();
@@ -71,7 +70,8 @@ private VersionedIdentifier versionIdentifier;
 	 * @see IFeature#getSite()
 	 */
 	public ISite getSite() {
-		if (!isInitialized)init();
+		//if (!isInitialized)init();
+		// site is donein constructor.. avoid recursive pattern.
 		return site;
 	}
 
@@ -79,7 +79,7 @@ private VersionedIdentifier versionIdentifier;
 	 * @see IFeature#getLabel()
 	 */
 	public String getLabel() {
-		if (!isInitialized)init();
+		if (label==null && !isInitialized)init();
 		return label;
 	}
 	
@@ -87,45 +87,39 @@ private VersionedIdentifier versionIdentifier;
 	 * @see IFeature#getURL()
 	 * Do not initialize. Initialization will not populate the url.
 	 * It has to be set at creation time or using the set method 
-	 * Usually done from teh site.
+	 * Usually done from the site when creating the Feature. 
 	 */
 	public URL getURL() {
 		return url;
 	}
 	
-	/**
-	 * Sets the infoURL
-	 * @param infoURL The infoURL to set
-	 */
-	public void setInfoURL(URL infoURL) {
-		this.infoURL = infoURL;
-	}
+	
 
 	/**
 	 * @see IFeature#getUpdateInfo()
 	 */
 	public IInfo getUpdateInfo() {
-		if (!isInitialized)init();		
+		if (updateInfo==null && !isInitialized)init();		
 		return updateInfo;
 	}
 
 	/**
 	 * @see IFeature#getInfoURL()
+	 * @deprecated use getDescription().getURL()
 	 */
 	public URL getInfoURL() {
-		if (!isInitialized)init();		
-		return infoURL;
+		return getDescription().getURL();
 	}
 
 	/**
 	 * @see IFeature#getDiscoveryInfos()
 	 */
 	public IInfo[] getDiscoveryInfos() {
-		if (!isInitialized)init();		
+		if (discoveryInfos==null && !isInitialized)init();		
 		
 		IInfo[] result = null;
 		// FIXME:
-		if (!discoveryInfos.isEmpty()){
+		if (discoveryInfos!=null && !discoveryInfos.isEmpty()){
 			result = (IInfo[])discoveryInfos.toArray(new IInfo[discoveryInfos.size()]);
 		}
 		return result;
@@ -135,7 +129,7 @@ private VersionedIdentifier versionIdentifier;
 	 * @see IFeature#getProvider()
 	 */
 	public String getProvider() {
-		if (!isInitialized)init();		
+		if (provider == null && !isInitialized)init();		
 		return provider;
 	}
 
@@ -143,7 +137,7 @@ private VersionedIdentifier versionIdentifier;
 	 * @see IFeature#getDescription()
 	 */
 	public IInfo getDescription() {
-		if (!isInitialized)init();		
+		if (description==null && !isInitialized)init();		
 		return description;
 	}
 	
@@ -151,7 +145,7 @@ private VersionedIdentifier versionIdentifier;
 	 * @see IFeature#getCopyright()
 	 */
 	public IInfo getCopyright() {
-		if (!isInitialized)init();		
+		if (copyright==null && !isInitialized)init();		
 		return copyright;
 	}
 	
@@ -159,7 +153,7 @@ private VersionedIdentifier versionIdentifier;
 	 * @see IFeature#getLicense()
 	 */
 	public IInfo getLicense() {
-		if (!isInitialized)init();		
+		if (license==null && !isInitialized)init();		
 		return license;
 	}		
 
@@ -178,6 +172,15 @@ private VersionedIdentifier versionIdentifier;
 	public void setLabel(String label) {
 		this.label = label;
 	}
+	
+	/**
+	 * Sets the infoURL
+	 * @param infoURL The infoURL to set
+	 * @deprecated use setDescription
+	 */
+	public void setInfoURL(URL infoURL) {
+		setDescription(new org.eclipse.update.internal.core.Info(infoURL));
+	}	
 	
 	/**
 	 * Sets the url
@@ -202,9 +205,11 @@ private VersionedIdentifier versionIdentifier;
 	 * @param discoveryInfos The discoveryInfos to set
 	 */
 	public void setDiscoveryInfos(IInfo[] discoveryInfos) {
-		this.discoveryInfos = (new ArrayList());
-		for (int i=0; i<discoveryInfos.length; i++){
-			this.discoveryInfos.add(discoveryInfos[i]);
+		if (discoveryInfos != null) {
+			this.discoveryInfos = (new ArrayList());
+			for (int i = 0; i < discoveryInfos.length; i++) {
+				this.discoveryInfos.add(discoveryInfos[i]);
+			}
 		}
 	}
 	
@@ -251,11 +256,12 @@ private VersionedIdentifier versionIdentifier;
 	public void setLicense(IInfo license) {
 		this.license = license;
 	}
-
+	
 	/**
 	 * @see IPluginContainer#getDownloadSize(IPluginEntry)
 	 */
 	public int getDownloadSize(IPluginEntry entry) {
+		//TODO:
 		return 0;
 	}
 
@@ -263,12 +269,14 @@ private VersionedIdentifier versionIdentifier;
 	 * @see IPluginContainer#getInstallSize(IPluginEntry)
 	 */
 	public int getInstallSize(IPluginEntry entry) {
+		//TODO:
 		return 0;
 	}
 	/**
 	 * @see IFeature#getDownloadSize(ISite)
 	 */
 	public long getDownloadSize(ISite site) {
+		//TODO:
 		return 0;
 	}
 
@@ -277,6 +285,7 @@ private VersionedIdentifier versionIdentifier;
 	 * @see IFeature#getInstallSize(ISite)
 	 */
 	public long getInstallSize(ISite site) {
+		//TODO:
 		return 0;
 	}
 
@@ -398,7 +407,7 @@ private void transferStreams(InputStream source, OutputStream destination) throw
 	}
 }
 
-
+
 	/**
 	 * Returns the intersection between two array of PluginEntries.
 	 */
@@ -415,7 +424,7 @@ private void transferStreams(InputStream source, OutputStream destination) throw
 		return (IPluginEntry[])result.toArray();
 	}
 
-
+
 	/**
 	 * @see IPluginContainer#getPluginEntries()
 	 * Does not return null
@@ -525,6 +534,11 @@ private void transferStreams(InputStream source, OutputStream destination) throw
 	
 	
 	
-	
+	
+
+	
+
+	
+
 }
 

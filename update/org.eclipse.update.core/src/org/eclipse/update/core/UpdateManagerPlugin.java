@@ -76,11 +76,13 @@ public class UpdateManagerPlugin extends Plugin {
 
 		String result = null;
 		result = Platform.getDebugOption("org.eclipse.update.core/debug");
-		DEBUG = result.trim().equalsIgnoreCase("true");
-		
-		if (DEBUG){
-			result = Platform.getDebugOption("org.eclipse.update.core/debug/warnings");
-			DEBUG_SHOW_WARNINGS = result.trim().equalsIgnoreCase("true");
+		if (result != null) {
+			DEBUG = result.trim().equalsIgnoreCase("true");
+
+			if (DEBUG) {
+				result = Platform.getDebugOption("org.eclipse.update.core/debug/warnings");
+				DEBUG_SHOW_WARNINGS = result.trim().equalsIgnoreCase("true");
+			}
 		}
 	}
 

@@ -5,7 +5,7 @@
    name="%name"
    version="2.0.0"
    provider-name="%provider-name"
-   class="">
+   class="org.eclipse.update.core.UpdateManagerPlugin">
 <requires>
    <import plugin="org.eclipse.core.runtime"/>
    <import plugin="org.eclipse.core.resources"/>

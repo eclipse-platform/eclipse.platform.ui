@@ -1,22 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE feature SYSTEM "file://localhost/C:/oti/reference/feature.dtd" >
+<!DOCTYPE feature SYSTEM "file://localhost/C:/oti/reference/feature.dtd" [
+]>
+
+
 <feature id="org.eclipse.update.core.tests.feature1" image="feature1.bmp" label="Feature One" nl="us,fr,de" os="OS_WIN32,OS_LINUX" provider-name="Object Technology International" version="1.0.4" ws="WS_WIN32,WS_MOTIF,WS_GTK">
   <description>I believe this is teh description of feature 1, well, feature 1 is an exceptional feature that you should install right NOW on your machine... try it.</description>
-  <copyright>Ok, now, this is a very very complex Copyright
-
-#1 Do you accept it
-
-#2 if you do not accept it would you pay anyway ?
-
-#3 not prepared by a lawyer
-
-Copyright (c) the company</copyright>
+  <copyright>Ok, now, this is a very very complex Copyright #1 Do you accept it #2 if you do not accept it would you pay anyway ? #3 not prepared by a lawyer Copyright (c) the company</copyright>
   <license>Hum... what is a difference between a license and a copyright... ahhhhYou have to accept teh license...Do you accpt it ?</license>
   <url>
-    <update label="URL to update teh feature" url="www.eclipse.org"/>
+    <update label="URL to update teh feature" url="path/feature1/"/>
     <discovery label="Discovery 1" url="http://www.eclipse.org"/>
     <discovery label="Discovery 2" url="http://www.eclipse.org"/>
   </url>
-  <plugin download-size="1500" url="org.eclipse.update.core.tests.feature1.plugin1" id="org.eclipse.update.core.tests.feature1.plugin1" install-size="1000" fragment="false" nl="us" os="OS_WIN32" version="3.5.6" ws="WS_WIN32"/>
+  <plugin download-size="1500" id="org.eclipse.update.core.tests.feature1.plugin1" install-size="1000" fragment="false" nl="us" os="OS_WIN32" version="3.5.6" ws="WS_WIN32"/>
   <plugin download-size="1200" id="org.eclipse.update.core.tests.feature1.plugin2" install-size="978" fragment="false" version="5.0.0"/>
 </feature>

@@ -10,6 +10,20 @@ public class PluginEntry implements IPluginEntry {
 	private IPluginContainer container;
 	private VersionedIdentifier identifier;
 	private String label;
+	
+	/**
+	 * Constructor
+	 */
+	public PluginEntry(VersionedIdentifier identifier) {
+		this.identifier = identifier;
+	}
+	
+	/**
+	 * Constructor
+	 */
+	public PluginEntry(String id, String ver) {
+		this(new VersionedIdentifier(id,ver));
+	}
 
 	/**
 	 * @see IPluginEntry#isFragment()
@@ -39,13 +53,7 @@ public class PluginEntry implements IPluginEntry {
 		return label;
 	}
 
-	/**
-	 * Sets the identifier
-	 * @param identifier The identifier to set
-	 */
-	public void setIdentifier(VersionedIdentifier identifier) {
-		this.identifier = identifier;
-	}
+	
 
 	/**
 	 * Sets the label

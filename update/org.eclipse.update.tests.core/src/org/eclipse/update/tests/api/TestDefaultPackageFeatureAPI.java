@@ -1,12 +1,15 @@
 package org.eclipse.update.tests.api;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import org.eclipse.update.core.AbstractFeature;
 import org.eclipse.update.core.IFeature;
+import org.eclipse.update.core.IInfo;
 import org.eclipse.update.core.ISite;
 import org.eclipse.update.core.VersionedIdentifier;
 import org.eclipse.update.internal.core.DefaultPackagedFeature;
 import org.eclipse.update.internal.core.FileSite;
+import org.eclipse.update.internal.core.Info;
 import org.eclipse.update.internal.core.PluginEntry;
 import org.eclipse.update.tests.UpdateManagerTestCase;
 
@@ -97,12 +100,15 @@ public class TestDefaultPackageFeatureAPI extends UpdateManagerTestCase {
 	 */
 	public void testUpdateURL() {
 		URL url = null;
+		String label = "OTI Site";
 		try {
 			url = new URL("http://www.oti.com/");
+			
 		} catch (java.net.MalformedURLException e){} // impossible eh !
 		AbstractFeature feature = getFeature();
-		feature.setUpdateURL(url);
-		assertEquals(url,feature.getUpdateURL());
+		feature.setUpdateInfo(new Info(label, url));
+		assertEquals(url,feature.getUpdateInfo().getURL());
+		assertEquals(label,feature.getUpdateInfo().getText());
 
 	}
 
@@ -126,14 +132,24 @@ public class TestDefaultPackageFeatureAPI extends UpdateManagerTestCase {
 	 * @see IFeature#testDiscoveryURLs()
 	 */
 	public void testDiscoveryURLs() {
+		IInfo[] urlInfo = new Info[2];
 		URL[] url = new URL[2];
+		String[] label = new String[2];
 		try {
 			url[0] = new URL("http://www.oti.com/");
 			url[1] = new URL("http://eclipse.org/");
+			label[0] = "OTI Site";
+			label[1] = "Eclipse Site";
 		} catch (java.net.MalformedURLException e){} // impossible eh !
 		AbstractFeature feature = getFeature();
-		feature.setDiscoveryURLs(url);
-		assertEquals(url,feature.getDiscoveryURLs());
+		for (int i=0;i<2;i++){
+				urlInfo[i] = new Info(label[i],url[i]);
+		}
+		feature.setDiscoveryInfos(urlInfo);
+		for (int i=0; i<feature.getDiscoveryInfos().length;i++){
+			assertEquals(urlInfo[i],feature.getDiscoveryInfos()[i]);
+		}
+
 
 	}
 
@@ -154,9 +170,40 @@ public class TestDefaultPackageFeatureAPI extends UpdateManagerTestCase {
 	 */
 	public void testDescription() {
 		String desc = "pretty long description as a string with \r\n and \t and \n";
+		IInfo info = new Info(desc);
 		AbstractFeature feature = getFeature();
-		feature.setDescription(desc);
-		assertEquals(desc,feature.getDescription());
+		feature.setDescription(info);
+		assertEquals(desc,feature.getDescription().getText());
+	}
+	
+	/**
+	 * @see IFeature#testDescription()
+	 */
+	public void testDescription1() {
+		URL desc = null;
+		try {
+			desc = new URL("http://www.oti.com");
+		} catch (MalformedURLException e){/*pretty impossible*/}
+		IInfo info = new Info(desc);
+		AbstractFeature feature = getFeature();
+		feature.setDescription(info);
+		assertEquals(desc,feature.getDescription().getURL());
+	}	
+	
+	/**
+	 * @see IFeature#testDescription()
+	 */
+	public void testDescription2() {
+		URL url = null;
+		try {
+			url = new URL("http://www.oti.com");
+		} catch (MalformedURLException e){/*pretty impossible*/}
+		String desc = "pretty long description as a string with \r\n and \t and \n";
+		IInfo info = new Info(desc,url);
+		AbstractFeature feature = getFeature();
+		feature.setDescription(info);
+		assertEquals(desc,feature.getDescription().getText());
+		assertEquals(url,feature.getDescription().getURL());
 	}
 
 

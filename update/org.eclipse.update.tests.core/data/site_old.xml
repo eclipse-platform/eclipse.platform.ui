@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE site SYSTEM "file://localhost/C:/oti/reference/site.dtd" [
+]>
+
+
+<site info="The best site for plugins">
+  <feature id="org.isv.feature3" version="3.4.5">
+    <category name="eclipse/UML"/>
+  </feature>
+  <feature url="foo.feature2.jar" id="org.eclipse.update.core.tests.feature2" version="3.4.6">
+    <category name="eclipse/J2EE"/>
+  </feature>
+  <feature id="org.eclipse.update.core.tests.feature1" version="1.0.0" type="unknown">
+    <category name="eclipse/J2EE"/>
+  </feature>
+  <archive url="www.eclipse.org/pluign1" id="org.eclipse.update.plugin1"/>
+  <archive url="www.eclipse.org/plugin2" id="org.eclipse.update.archive2"/>
+  <archive url="www.eclipse.org/plugin3" id="org.eclipse.update.plugin3"/>
+  <archive url="www.eclipse.org/plugins/plugin4" id="org.eclipse.unknown.plugin"/>
+  <archive url="www.eclipse.org/plugin1" id="org.eclipse.update.core.tests.feature1.foo1"/>
+  <category-def label="J2EE tools" name="eclipse/J2EE"/>
+  <category-def label="EJB Tools" name="eclipse/J2EE/EJB"/>
+  <category-def label="UML tools" name="eclipse/UML"/>
+  <category-def label="Messaging Tools" name="eclipse/B2B"/>
+</site>

@@ -52,20 +52,20 @@ public class FileSite extends URLSite {
 			
 			// TEST: what if SiteURL is not valid ? 
 						
-			File site = new File(getPath());
-			if (!site.exists()){
+			File pluginSite = new File(getPath()+PLUGIN_PATH);
+			if (!pluginSite.exists()){
 				if (!CREATE_PATH) {
 					//FIXME: Serviceability
-					throw new IOException("The Path:"+getPath()+"does not exist.");
+					throw new IOException("The Path:"+pluginSite.toString()+"does not exist.");
 				} else {
 					//FIXME: Serviceability
-					if (!site.mkdirs()) throw new IOException("Cannot create:"+getPath()+"");
+					if (!pluginSite.mkdirs()) throw new IOException("Cannot create:"+pluginSite.toString());
 				}
 			}
 						
 			// create plugin if doesn't exist
 			// FIXME: mkdir or mkdirs ?
-			String pluginPath = getPath()+pluginEntry.getIdentifier().toString();
+			String pluginPath = getPath()+PLUGIN_PATH+pluginEntry.getIdentifier().toString();
 			File pluginDirectory = new File(pluginPath);
 			if (!pluginDirectory.exists()){
 				pluginDirectory.mkdir();

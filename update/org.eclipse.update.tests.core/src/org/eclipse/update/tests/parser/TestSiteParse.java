@@ -11,26 +11,25 @@ import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.*;
 import org.eclipse.update.tests.UpdateManagerTestCase;
 
-public class TestFeatureParse extends UpdateManagerTestCase {
+public class TestSiteParse extends UpdateManagerTestCase {
 	/**
 	 * Constructor for Test1
 	 */
-	public TestFeatureParse(String arg0) {
+	public TestSiteParse(String arg0) {
 		super(arg0);
 	}
 	
 	
 	public void testParse(){
 	
-		String xmlFile = "xmls/feature1.xml";
 		try {		
-			ISite remoteSite = new URLSite(new URL(SOURCE_FILE_SITE));
-			VersionedIdentifier id = new VersionedIdentifier("feature","1.0.0");
-			DefaultPackagedFeature feature = new DefaultPackagedFeature(id,remoteSite);
-			feature.setURL(new URL(remoteSite.getURL(),xmlFile));
+			URL remoteUrl = new URL(SOURCE_FILE_SITE+"/xmls/site1/");
+			ISite remoteSite = new URLSite(remoteUrl);
 			
-			String prov = feature.getProvider();
-			assertEquals(prov,"Object Technology International");
+			IFeature[] feature = remoteSite.getFeatures();
+			ICategory[] categories = remoteSite.getCategories();
+			
+			assertEquals(remoteUrl.toExternalForm()+"info/siteInfo.html",remoteSite.getInfoURL().toExternalForm());
 			
 		} catch (Exception e){
 			fail(e.toString());

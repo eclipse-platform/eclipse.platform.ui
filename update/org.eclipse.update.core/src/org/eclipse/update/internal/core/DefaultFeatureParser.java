@@ -8,6 +8,7 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import org.apache.xerces.parsers.SAXParser;
 import org.eclipse.update.core.AbstractFeature;
@@ -58,8 +59,12 @@ public class DefaultFeatureParser extends DefaultHandler {
 		Assert.isTrue(feature instanceof AbstractFeature);
 		this.feature = (AbstractFeature)feature;
 
-		ClassLoader l = new URLClassLoader(new URL[]{feature.getSite().getURL()},null);
-		bundle = ResourceBundle.getBundle("feature",Locale.getDefault(),l);
+		try {
+			ClassLoader l = new URLClassLoader(new URL[]{feature.getSite().getURL()},null);
+			bundle = ResourceBundle.getBundle("feature",Locale.getDefault(),l);
+		} catch (MissingResourceException e){
+			//ok, there is no bundle, keep it as null
+		}
 		
 		parser.parse(new InputSource(this.featureStream));
 	}
@@ -119,7 +124,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 		//Assert.isTrue(ver.equals(feature.getIdentifier().getVersion()));
 		
 		// Feature Label
-		String label = UpdateManagerPlugin.getDefault().getDescriptor().getResourceString(attributes.getValue("label"),bundle);
+		String label = UpdateManagerUtils.getResourceString(attributes.getValue("label"),bundle);
 		feature.setLabel(label);
 		feature.setProvider(attributes.getValue("provider-name"));
 		//feature.setImage
@@ -133,7 +138,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 	 */
 	private IInfo processInfo(Attributes attributes){
 		String infoURL = attributes.getValue("url");
-		infoURL = UpdateManagerPlugin.getDefault().getDescriptor().getResourceString(infoURL,bundle);
+		infoURL = UpdateManagerUtils.getResourceString(infoURL,bundle);
 		URL url = UpdateManagerUtils.getURL(feature.getSite().getURL(),infoURL,null);
 		Info inf = new Info(url);
 		return inf;
@@ -144,10 +149,10 @@ public class DefaultFeatureParser extends DefaultHandler {
 	 */
 	private IInfo processURLInfo(Attributes attributes){
 		String infoURL = attributes.getValue("url");
-		infoURL = UpdateManagerPlugin.getDefault().getDescriptor().getResourceString(infoURL,bundle);
+		infoURL = UpdateManagerUtils.getResourceString(infoURL,bundle);
 		URL url = UpdateManagerUtils.getURL(feature.getSite().getURL(),infoURL,null);
 		String label = attributes.getValue("url");
-		label = UpdateManagerPlugin.getDefault().getDescriptor().getResourceString(label,bundle);
+		label = UpdateManagerUtils.getResourceString(label,bundle);
 		IInfo inf = new Info(label,url);
 		return inf;
 	}
@@ -165,10 +170,42 @@ public class DefaultFeatureParser extends DefaultHandler {
 	 * process the Category Def info
 	 */
 	private void processPlugin(Attributes attributes){
-	//	String name  = attributes.getValue("name");
-	//	String label = attributes.getValue("label");
-	//	ICategory category = new DefaultCategory(name,label);
-	//	feature.addCategory(category);		
+		String id  = attributes.getValue("id");
+		String ver = attributes.getValue("version");
+		PluginEntry pluginEntry = new PluginEntry(id,ver);
+		
+		String fragment = attributes.getValue("fragment");
+		pluginEntry.setFragment(fragment.trim().equalsIgnoreCase("true"));
+		//os
+		//ws
+		//nl
+		
+		int download_size = 0;
+		String download = attributes.getValue("download-size");
+		if (download==null || download.trim().equals("")){
+			download_size = -1;
+		} else {
+			try{
+				download_size = Integer.valueOf(download).intValue();
+			} catch (NumberFormatException e){
+				//FIXME:
+				e.printStackTrace();
+			}
+		}
+			
+		int install_size = 0;
+		String install = attributes.getValue("install-size");
+		if (install==null || install.trim().equals("")){
+			install_size = -1;
+		} else {
+			try{
+				install_size = Integer.valueOf(install).intValue();
+			} catch (NumberFormatException e){
+				//FIXME:
+				e.printStackTrace();
+			}
+		}				
+	
 	}
 
 	/**

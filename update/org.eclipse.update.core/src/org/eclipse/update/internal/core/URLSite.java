@@ -19,6 +19,15 @@ import org.eclipse.update.core.ISiteChangedListener;
 
 public class URLSite extends AbstractSite {
 
+	/**
+	 * default path under the site where plugins will be installed
+	 */
+	protected String PLUGIN_PATH = "plugins/";
+
+	/**
+	 * default path, under site, where features will be installed
+	 */
+	protected String FEATURE_PATH = "install/features/";
 
 	/**
 	 * plugin entries
@@ -35,12 +44,13 @@ public class URLSite extends AbstractSite {
 	 * @see AbstractSite#getInputStream(IFeature, String)
 	 */
 	public InputStream getInputStream(IFeature sourceFeature, String streamKey) {
-		URL jarURL = null;
+		URL contentURL = null;
 		InputStream result = null;
 		try {
-			String jarFile = sourceFeature.getIdentifier().toString()+File.separator+streamKey;
-			jarURL = new URL(getURL(),jarFile);
-			result = jarURL.openStream();
+			//FIXME: delete ?
+			//String contentFile = sourceFeature.getSite().get.toString()+File.separator+streamKey;
+			contentURL = new URL(getURL(),"plugins/"+streamKey);
+			result = contentURL.openStream();
 		} catch (MalformedURLException e){
 			//FIXME:
 			e.printStackTrace();

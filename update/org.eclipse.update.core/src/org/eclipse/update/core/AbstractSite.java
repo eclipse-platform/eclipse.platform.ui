@@ -17,7 +17,7 @@ import org.eclipse.update.internal.core.DefaultSiteParser;
 public abstract class AbstractSite implements ISite {
 
 	private static final String SITE_XML= "site.xml";
-	private boolean isManageable = false;
+	private boolean isManageable = true;
 	private DefaultSiteParser parser;
 	
 	/**
@@ -49,6 +49,8 @@ public abstract class AbstractSite implements ISite {
 	 */
 	private void initializeSite(){
 		InputStream inStream = null;
+		isManageable = false;		
+		
 		try {
 			URL siteXml = new URL(siteURL,SITE_XML);
 			parser = new DefaultSiteParser(siteXml.openStream(),this);
@@ -104,9 +106,9 @@ public abstract class AbstractSite implements ISite {
 		this.addFeature(localFeature);
 		
 		// notify listeners
-		ISiteChangedListener[] siteListeners = (ISiteChangedListener[])listeners.getListeners();
+		Object[] siteListeners = listeners.getListeners();
 		for (int i =0; i<siteListeners.length;i++){
-			siteListeners[i].featureInstalled(localFeature);
+			((ISiteChangedListener)siteListeners[i]).featureInstalled(localFeature);
 		}
 	}
 	
@@ -200,6 +202,9 @@ public abstract class AbstractSite implements ISite {
 	 * @see ISite#getInfoURL()
 	 */
 	public URL getInfoURL() {
+		if (isManageable){
+			if (infoURL==null) initializeSite();
+		}
 		return infoURL;
 	}
 
@@ -216,10 +221,13 @@ public abstract class AbstractSite implements ISite {
 	 */
 	public ICategory[] getCategories() {
 		ICategory[] result = null;
-		if (categories==null) initializeSite();
-		//FIXME: I do not like this pattern.. List or Array ???
-		if (!categories.isEmpty()){
-			result = (ICategory[])categories.toArray(new ICategory[categories.size()]);
+		if (isManageable) {
+			if (categories == null)
+					initializeSite();
+			//FIXME: I do not like this pattern.. List or Array ???
+			if (!categories.isEmpty()) {
+				result = (ICategory[]) categories.toArray(new ICategory[categories.size()]);
+			}
 		}
 		return result;
 	}
