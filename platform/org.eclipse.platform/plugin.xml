@@ -38,8 +38,8 @@
                title="%intro.title">
             <implementation
                   style="css/shared.css"
-                  os="win32,linux"
-                  ws="win32,gtk"
+                  os="win32"
+                  ws="win32"
                   class="org.eclipse.ui.intro.internal.presentations.BrowserIntroPartImplementation">
             </implementation>
             <implementation
