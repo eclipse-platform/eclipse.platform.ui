@@ -285,7 +285,6 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
     /**
      * Start watching the ticks. When the long operation time has 
      * passed open the dialog.
-     * @param openJob The job to open when ticks are done.
      */
     public void watchTicks() {
         watchTime = System.currentTimeMillis();

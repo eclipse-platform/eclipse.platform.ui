@@ -21,6 +21,10 @@ public class ProgressTreeContentProvider extends ProgressContentProvider
 
     NewProgressViewer viewer;
 
+    /**
+     * Create an instance of the receiver on the viewer.
+     * @param mainViewer
+     */
     public ProgressTreeContentProvider(NewProgressViewer mainViewer) {
         super();
         viewer = mainViewer;
@@ -56,8 +60,7 @@ public class ProgressTreeContentProvider extends ProgressContentProvider
     public Object getParent(Object element) {
         if (element == this)
             return null;
-        else
-            return ((JobTreeElement) element).getParent();
+          return ((JobTreeElement) element).getParent();
     }
 
     /*
@@ -68,8 +71,7 @@ public class ProgressTreeContentProvider extends ProgressContentProvider
     public boolean hasChildren(Object element) {
         if (element == this)
             return ProgressManager.getInstance().hasJobInfos();
-        else
-            return ((JobTreeElement) element).hasChildren();
+       return ((JobTreeElement) element).hasChildren();
     }
 
     /* (non-Javadoc)
