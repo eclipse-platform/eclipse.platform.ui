@@ -191,7 +191,7 @@ class SearchResultViewer extends TableViewer {
 		getTable().removeAll();
 		super.inputChanged(input, oldInput);
 		fMarkerToShow= -1;
-		updateTitle(true);
+		updateTitle();
 		enableActions();
 		if (getItemCount() > 0)
 			selectResult(getTable(), 0);
@@ -423,11 +423,10 @@ class SearchResultViewer extends TableViewer {
 			action.run();
 	}
 
-
 	/**
-	 * Update the title and the title's tooltip
+	 * Update the title
 	 */
-	protected void updateTitle(boolean showZero) {
+	protected void updateTitle() {
 		boolean hasCurrentSearch= SearchManager.getDefault().getCurrentSearch() != null;
 		String title;
 		if (hasCurrentSearch) {
@@ -439,6 +438,14 @@ class SearchResultViewer extends TableViewer {
 			fOuterPart.setTitle(title);
 	}
 
+	/**
+	 * Clear the title
+	 */
+	protected void clearTitle() {
+		String title= SearchMessages.getString("SearchResultView.title"); //$NON-NLS-1$
+		if (title == null || !title.equals(fOuterPart.getTitle()))
+			fOuterPart.setTitle(title);
+	}
 
 	/**
 	 * Sets the message text to be displayed on the status line.
@@ -456,7 +463,6 @@ class SearchResultViewer extends TableViewer {
 		super.handleDispose(event);
 	}
 
-
 	//--- Change event handling -------------------------------------------------
 	
 	/**
@@ -465,7 +471,6 @@ class SearchResultViewer extends TableViewer {
 	protected void handleAddMatch(ISearchResultViewEntry entry) {
 		insert(entry, -1);
 	}
-
 
 	/**
 	 * Handle a single remove.
@@ -483,14 +488,12 @@ class SearchResultViewer extends TableViewer {
 			updateItem(item, entry);
 	}
 
-
 	/**
 	 * Handle remove all.
 	 */
 	protected void handleRemoveAll() {
 		setInput(null);
 	}
-
 
 	/**
 	 * Handle an update of an entry.

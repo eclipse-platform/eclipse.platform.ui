@@ -269,7 +269,7 @@ public class SearchManager implements IResourceChangeListener {
 				display.syncExec(new Runnable() {
 					public void run() {
 						viewer.handleRemoveAll();
-						viewer.updateTitle(false);
+						viewer.clearTitle();
 					}
 				});
 			}
@@ -462,7 +462,7 @@ public class SearchManager implements IResourceChangeListener {
 				while (iter.hasNext()) {
 					SearchResultViewer viewer= (SearchResultViewer)iter.next();
 					viewer.enableActions();
-					viewer.updateTitle(true);
+					viewer.updateTitle();
 				}
 			}
 		};
