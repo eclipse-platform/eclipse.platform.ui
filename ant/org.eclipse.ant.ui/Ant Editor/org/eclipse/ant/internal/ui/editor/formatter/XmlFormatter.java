@@ -40,6 +40,8 @@ import org.eclipse.jface.text.templates.TemplateVariable;
  */
 public class XmlFormatter {
 
+	private static final String POS_CATEGORY= "tempAntFormatterCategory"; //$NON-NLS-1$
+	
     /**
      * Format the text using the ant code formatter.
      * 
@@ -135,16 +137,32 @@ public class XmlFormatter {
 		} catch (BadLocationException e) {
 			return;
 		}
-		
-    	offsetsToVariables(offsets, variables, completionOffset);
+		Position[] positions= null;
+		try {
+			positions= templateDocument.getPositions(POS_CATEGORY);
+		} catch (BadPositionCategoryException e2) {
+		}
+    	//offsetsToVariables(offsets, variables, completionOffset);
+		positionsToVariables(positions, variables, completionOffset);
     	templateBuffer.setContent(newTemplateString, variables);
     }
     
+    private static void positionsToVariables(Position[] positions, TemplateVariable[] variables, int start) {
+		for (int i= 0; i != variables.length; i++) {
+		    TemplateVariable variable= variables[i];
+		    
+			int[] offsets= new int[variable.getOffsets().length];
+			for (int j= 0; j != offsets.length; j++) {
+				offsets[j]= positions[j].getOffset() - start;
+			}
+			
+		 	variable.setOffsets(offsets);   
+		}
+	}	
     private static Document createDocument(String string, Position[] positions) throws IllegalArgumentException {
 		Document doc= new Document(string);
 		try {
 			if (positions != null) {
-				final String POS_CATEGORY= "tempAntFormatterCategory"; //$NON-NLS-1$
 				
 				doc.addPositionCategory(POS_CATEGORY);
 				doc.addPositionUpdater(new DefaultPositionUpdater(POS_CATEGORY) {
@@ -229,7 +247,7 @@ public class XmlFormatter {
 				}		
 			}
 
-			offsets[minVariableIndex][currentIndices[minVariableIndex]]= allOffsets[i] - start + 3;
+			offsets[minVariableIndex][currentIndices[minVariableIndex]]= allOffsets[i] - start;
 			currentIndices[minVariableIndex]++;
 		}
 

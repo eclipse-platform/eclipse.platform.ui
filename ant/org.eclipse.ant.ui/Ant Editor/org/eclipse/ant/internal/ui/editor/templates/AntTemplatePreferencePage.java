@@ -98,4 +98,10 @@ public class AntTemplatePreferencePage extends TemplatePreferencePage {
 			viewer.getDocument().set(""); //$NON-NLS-1$
 		}		
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.texteditor.templates.TemplatePreferencePage#isShowFormatterSetting()
+	 */
+	protected boolean isShowFormatterSetting() {
+		return false;
+	}
 }
