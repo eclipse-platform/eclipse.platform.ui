@@ -16,6 +16,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.viewers.Viewer;
 
 import org.eclipse.core.runtime.IAdaptable;
@@ -26,6 +27,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import org.eclipse.compare.internal.CompareUIPlugin;
+import org.eclipse.compare.internal.DocumentManager;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 
 
@@ -326,6 +328,32 @@ public final class CompareUI {
 	 */
 	public static void removeAllStructureViewerAliases(String type) {
 		CompareUIPlugin.getDefault().removeAllStructureViewerAliases(type);
+	}
+	
+	/**
+	 * @param input
+	 * @return
+	 * @since 3.1
+	 */
+	public static IDocument getDocument(Object input) {
+		return DocumentManager.get(input);
+	}
+
+	/**
+	 * @param input
+	 * @param document
+	 * @since 3.1
+	 */
+	public static void registerDocument(Object input, IDocument document) {
+		DocumentManager.put(input, document);
+	}
+
+	/**
+	 * @param document
+	 * @since 3.1
+	 */
+	public static void unregisterDocument(IDocument document) {
+		DocumentManager.remove(document);
 	}
 }
 

@@ -16,7 +16,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.compare.CompareConfiguration;
 
 /**
- * Toggles a boolean property of an <code>ICompareConfiguration</code>.
+ * Toggles a boolean property of an <code>CompareConfiguration</code>.
  */
 public class ChangePropertyAction extends Action {
 

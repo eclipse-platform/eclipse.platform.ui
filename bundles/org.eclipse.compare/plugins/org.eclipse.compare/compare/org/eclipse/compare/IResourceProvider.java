@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
+ * Copyright (c) 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,11 +8,19 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.compare.internal;
+package org.eclipse.compare;
+
+import org.eclipse.core.resources.IResource;
 
 /**
- * @deprecated Use org.eclipse.compare.IResourceProvider instead
+ * @since 3.1
  */
-public interface IResourceProvider extends org.eclipse.compare.IResourceProvider {
-	// will be removed after 3.1M6
+public interface IResourceProvider {
+
+	/**
+	 * Returns the corresponding resource for this object or <code>null</code>.
+	 *
+	 * @return the corresponding resource or <code>null</code>
+	 */
+	IResource getResource();
 }

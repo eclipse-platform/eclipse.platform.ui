@@ -20,7 +20,7 @@ import org.eclipse.jface.util.Assert;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.compare.internal.IResourceProvider;
+import org.eclipse.compare.IResourceProvider;
 import org.eclipse.compare.internal.Utilities;
 import org.eclipse.compare.structuremergeviewer.IStructureComparator;
 

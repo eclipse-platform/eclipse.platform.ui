@@ -15,7 +15,7 @@ import java.io.BufferedInputStream;
 
 import org.eclipse.swt.graphics.Image;
 
-import org.eclipse.compare.internal.IResourceProvider;
+import org.eclipse.compare.IResourceProvider;
 import org.eclipse.core.resources.IEncodedStorage;
 import org.eclipse.core.resources.IFileState;
 import org.eclipse.core.resources.IResource;

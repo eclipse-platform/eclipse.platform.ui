@@ -10,14 +10,9 @@
  *******************************************************************************/
 package org.eclipse.compare.internal;
 
-import org.eclipse.core.resources.IResource;
-
-public interface IResourceProvider {
-
-	/**
-	 * Returns the corresponding resource for this object or <code>null</code>.
-	 *
-	 * @return the corresponding resource or <code>null</code>
-	 */
-	IResource getResource();
+/**
+ * @deprecated Use org.eclipse.compare.IResourceProvider instead
+ */
+public interface IResourceProvider extends org.eclipse.compare.IResourceProvider {
+	// will be removed after 3.1M6
 }
