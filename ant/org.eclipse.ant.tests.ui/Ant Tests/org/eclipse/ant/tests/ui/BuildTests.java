@@ -11,11 +11,11 @@
 
 package org.eclipse.ant.tests.ui;
 
+import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.ant.internal.ui.model.IAntUIPreferenceConstants;
 import org.eclipse.ant.tests.ui.testplugin.ConsoleLineTracker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.ui.console.IConsoleHyperlink;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.swt.graphics.Color;
 
@@ -87,7 +87,7 @@ public class BuildTests extends AbstractAntUIBuildTest {
 		int offset= 15; //buildfile
 		Color color= getColorAtOffset(offset, ConsoleLineTracker.getDocument());
 		assertNotNull("No color found at " + offset, color);
-		assertEquals(JFaceResources.getColorRegistry().get(IAntUIPreferenceConstants.CONSOLE_INFO_COLOR), color);
+		assertEquals(AntUIPlugin.getPreferenceColor(IAntUIPreferenceConstants.CONSOLE_INFO_COLOR), color);
 		try {
 			offset= ConsoleLineTracker.getDocument().getLineOffset(4) + 10; //echo
 		} catch (BadLocationException e) {
@@ -95,7 +95,7 @@ public class BuildTests extends AbstractAntUIBuildTest {
 		}
 		color= getColorAtOffset(offset, ConsoleLineTracker.getDocument());
 		assertNotNull("No color found at " + offset, color);
-		assertEquals(JFaceResources.getColorRegistry().get(IAntUIPreferenceConstants.CONSOLE_WARNING_COLOR), color);
+		assertEquals(AntUIPlugin.getPreferenceColor(IAntUIPreferenceConstants.CONSOLE_WARNING_COLOR), color);
 	}
 	
 	/**

@@ -14,14 +14,20 @@
 
 package org.eclipse.ant.internal.ui.editor.text;
 
+import org.eclipse.swt.graphics.RGB;
+
 /**
  * The color constants used by the Ant Editor.
  */
 public interface IAntEditorColorConstants {
+	RGB XML_COMMENT =       new RGB(128,   0,   0);
+	RGB PROC_INSTR =        new RGB(128, 128, 128);
+	RGB STRING=             new RGB(  0, 128,   0);
+	RGB DEFAULT=            new RGB(  0,   0,   0);
+	RGB TAG=                new RGB(  0,   0, 128);
 	
 	/**
 	 * The symbolic names for colors used for the various text tokens in the Ant editor
-	 * @see org.eclipse.jface.resource.ColorRegistry
 	 */
 	public static final String XML_COMMENT_COLOR = "org.eclipse.ant.ui.commentsColor"; //$NON-NLS-1$
 	public static final String PROCESSING_INSTRUCTIONS_COLOR = "org.eclipse.ant.ui.processingInstructionsColor"; //$NON-NLS-1$

@@ -58,7 +58,7 @@ public abstract class AbstractAntSourceViewerConfiguration extends SourceViewerC
 	    reconciler.setRepairer(dr, AntEditorPartitionScanner.XML_TAG);
 	
 		damageRepairer= new MultilineDamagerRepairer(null,
-	            new TextAttribute(JFaceResources.getColorRegistry().get(IAntEditorColorConstants.XML_COMMENT_COLOR)));
+	            new TextAttribute(AntUIPlugin.getPreferenceColor(IAntEditorColorConstants.XML_COMMENT_COLOR)));
 	    reconciler.setDamager(damageRepairer, AntEditorPartitionScanner.XML_COMMENT);
 	    reconciler.setRepairer(damageRepairer, AntEditorPartitionScanner.XML_COMMENT);
 	
@@ -76,7 +76,7 @@ public abstract class AbstractAntSourceViewerConfiguration extends SourceViewerC
 		tagScanner.adaptToColorChange();
 		instructionScanner.adaptToColorChange();
 				   
-		damageRepairer.setDefaultTextAttribute(new TextAttribute(JFaceResources.getColorRegistry().get(IAntEditorColorConstants.XML_COMMENT_COLOR)));				  
+		damageRepairer.setDefaultTextAttribute(new TextAttribute(AntUIPlugin.getPreferenceColor(IAntEditorColorConstants.XML_COMMENT_COLOR)));				  
 	}
 
 	public String[] getConfiguredContentTypes(ISourceViewer sourceViewer) {

@@ -37,8 +37,6 @@ import org.eclipse.jdt.ui.actions.IJavaEditorActionDefinitionIds;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultLineTracker;
 import org.eclipse.jface.text.DocumentCommand;
@@ -53,7 +51,6 @@ import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
-import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.IPostSelectionProvider;
 import org.eclipse.jface.viewers.ISelection;
@@ -88,14 +85,6 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
  * The actual editor implementation for Eclipse's Ant integration.
  */
 public class AntEditor extends TextEditor implements IReconcilingParticipant {
-
-	//TODO the framework does not currently support/listen to the color registry
-	//https://bugs.eclipse.org/bugs/show_bug.cgi?id=54554
-	private IPropertyChangeListener fColorChangeListener= new IPropertyChangeListener() {
-		public void propertyChange(PropertyChangeEvent event) {
-			handlePreferenceStoreChanged(event);
-		}
-	};
 	
 	/**
 	 * Updates the Ant outline page selection and this editor's range indicator.
@@ -330,13 +319,6 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant {
         super();
 		setSourceViewerConfiguration(new AntEditorSourceViewerConfiguration(this));
 		setDocumentProvider(new AntEditorDocumentProvider(XMLCore.getDefault()));
-		JFaceResources.getColorRegistry().addListener(fColorChangeListener);
-		
-		//TODO the framework does not currently support/listen to the color registry
-		//https://bugs.eclipse.org/bugs/show_bug.cgi?id=54554
-	//	PreferenceConverter.setValue(getPreferenceStore(), ExtendedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR, JFaceResources.getColorRegistry().getRGB(AntEditorPreferenceConstants.CURRENT_LINE_COLOR));
-	//	PreferenceConverter.setValue(getPreferenceStore(), ExtendedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR, JFaceResources.getColorRegistry().getRGB(AntEditorPreferenceConstants.LINE_NUMBER_RULER_COLOR));
-	//	PreferenceConverter.setValue(getPreferenceStore(), ExtendedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR, JFaceResources.getColorRegistry().getRGB(AntEditorPreferenceConstants.PRINT_MARGIN_COLOR));
     }
 
 
@@ -509,19 +491,6 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant {
 		}
 		
 		sourceViewerConfiguration.changeConfiguration(event);
-		
-		//TODO the framework does not currently support/listen to the color registry
-		//https://bugs.eclipse.org/bugs/show_bug.cgi?id=54554
-		if (property.equals(AntEditorPreferenceConstants.CURRENT_LINE_COLOR)) {
-			PreferenceConverter.setValue(getPreferenceStore(), AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR, JFaceResources.getColorRegistry().getRGB(AntEditorPreferenceConstants.CURRENT_LINE_COLOR));
-			return;
-		} else if (property.equals(AntEditorPreferenceConstants.LINE_NUMBER_RULER_COLOR)) {
-			PreferenceConverter.setValue(getPreferenceStore(), AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR, JFaceResources.getColorRegistry().getRGB(AntEditorPreferenceConstants.LINE_NUMBER_RULER_COLOR));
-			return;
-		} else if (property.equals(AntEditorPreferenceConstants.PRINT_MARGIN_COLOR)) {
-			PreferenceConverter.setValue(getPreferenceStore(), AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR, JFaceResources.getColorRegistry().getRGB(AntEditorPreferenceConstants.PRINT_MARGIN_COLOR));
-			return;
-		}
 							
 		super.handlePreferenceStoreChanged(event);
 	}
@@ -691,7 +660,6 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant {
 	 */
 	public void dispose() {
 		super.dispose();
-		JFaceResources.getColorRegistry().removeListener(fColorChangeListener);
 		if (fEditorSelectionChangedListener != null)  {
 			fEditorSelectionChangedListener.uninstall(getSelectionProvider());
 			fEditorSelectionChangedListener= null;

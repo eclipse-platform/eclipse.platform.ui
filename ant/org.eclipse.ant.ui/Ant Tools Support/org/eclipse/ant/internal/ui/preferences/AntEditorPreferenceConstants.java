@@ -12,6 +12,8 @@ package org.eclipse.ant.internal.ui.preferences;
 
 
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.editors.text.TextEditorPreferenceConstants;
 
 /**
@@ -152,6 +154,8 @@ public class AntEditorPreferenceConstants {
 		store.setDefault(AntEditorPreferenceConstants.CODEASSIST_AUTOINSERT, true);
 		store.setDefault(AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION, true);
 		store.setDefault(AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_DELAY, 500);
+		PreferenceConverter.setDefault(store, AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_BACKGROUND, new RGB(254, 241, 233));
+		PreferenceConverter.setDefault(store, AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_FOREGROUND, new RGB(0, 0, 0));
 		store.setDefault(AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_TRIGGERS, "<${"); //$NON-NLS-1$
 		
 		store.setDefault(AntEditorPreferenceConstants.EDITOR_SPACES_FOR_TABS, false);

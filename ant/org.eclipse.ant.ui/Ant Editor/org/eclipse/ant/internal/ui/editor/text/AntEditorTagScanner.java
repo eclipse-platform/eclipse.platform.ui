@@ -14,7 +14,7 @@
 
 package org.eclipse.ant.internal.ui.editor.text;
 
-import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.rules.IRule;
 import org.eclipse.jface.text.rules.MultiLineRule;
@@ -32,7 +32,8 @@ public class AntEditorTagScanner extends RuleBasedScanner {
 	
     public AntEditorTagScanner() {
     	fStringToken= new Token(
-                			new TextAttribute(JFaceResources.getColorRegistry().get(IAntEditorColorConstants.STRING_COLOR)));
+                			new TextAttribute(
+                				AntUIPlugin.getPreferenceColor(IAntEditorColorConstants.STRING_COLOR)));
                     
 		IRule[] rules= new IRule[3];
 
@@ -46,14 +47,14 @@ public class AntEditorTagScanner extends RuleBasedScanner {
         setRules(rules);
         
         setDefaultReturnToken(
-        		new Token(new TextAttribute(JFaceResources.getColorRegistry().get(IAntEditorColorConstants.TAG_COLOR))));
+        		new Token(new TextAttribute(AntUIPlugin.getPreferenceColor(IAntEditorColorConstants.TAG_COLOR))));
     }
     
     /**
      * Update the text attributes associated with the tokens of this scanner as a color preference has been changed. 
      */
     public void adaptToColorChange() {
-    	((Token)fDefaultReturnToken).setData(new TextAttribute(JFaceResources.getColorRegistry().get(IAntEditorColorConstants.TAG_COLOR)));
-    	fStringToken.setData(new TextAttribute(JFaceResources.getColorRegistry().get(IAntEditorColorConstants.STRING_COLOR)));
+    	((Token)fDefaultReturnToken).setData(new TextAttribute(AntUIPlugin.getPreferenceColor(IAntEditorColorConstants.TAG_COLOR)));
+    	fStringToken.setData(new TextAttribute(AntUIPlugin.getPreferenceColor(IAntEditorColorConstants.STRING_COLOR)));
     }
 }

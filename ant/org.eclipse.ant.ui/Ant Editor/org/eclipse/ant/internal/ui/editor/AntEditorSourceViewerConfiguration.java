@@ -24,9 +24,10 @@ import org.eclipse.ant.internal.ui.editor.text.XMLAnnotationHover;
 import org.eclipse.ant.internal.ui.editor.text.XMLReconcilingStrategy;
 import org.eclipse.ant.internal.ui.editor.text.XMLTextHover;
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
+import org.eclipse.ant.internal.ui.model.ColorManager;
 import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.IAutoIndentStrategy;
 import org.eclipse.jface.text.IDocument;
@@ -43,6 +44,7 @@ import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -88,13 +90,14 @@ public class AntEditorSourceViewerConfiguration extends AbstractAntSourceViewerC
 		contentAssistant.setProposalPopupOrientation(IContentAssistant.PROPOSAL_OVERLAY);
 		contentAssistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_ABOVE);
 		contentAssistant.setInformationControlCreator(getInformationControlCreator(sourceViewer));
-	
-		Color background= JFaceResources.getColorRegistry().get(AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_BACKGROUND);			
+
+		ColorManager manager= ColorManager.getDefault();	
+		Color background= getColor(store, AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_BACKGROUND, manager);			
 		contentAssistant.setContextInformationPopupBackground(background);
 		contentAssistant.setContextSelectorBackground(background);
 		contentAssistant.setProposalSelectorBackground(background);
 
-		Color foreground= JFaceResources.getColorRegistry().get(AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_FOREGROUND);
+		Color foreground= getColor(store, AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_FOREGROUND, manager);
 		contentAssistant.setContextInformationPopupForeground(foreground);
 		contentAssistant.setContextSelectorForeground(foreground);
 		contentAssistant.setProposalSelectorForeground(foreground);
@@ -147,22 +150,28 @@ public class AntEditorSourceViewerConfiguration extends AbstractAntSourceViewerC
 		}
 		return fTextHover;
 	}
+
+	private Color getColor(IPreferenceStore store, String key, ColorManager manager) {
+		RGB rgb= PreferenceConverter.getColor(store, key);
+		return manager.getColor(rgb);
+	}
 	
 	protected void changeConfiguration(PropertyChangeEvent event) {
 		IPreferenceStore store= AntUIPlugin.getDefault().getPreferenceStore();
 		String p= event.getProperty();
 
-		if (AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION.equals(p) && contentAssistant != null) {
+		ColorManager manager= ColorManager.getDefault();
+		if (AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION.equals(p)) {
 			boolean enabled= store.getBoolean(AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION);
 			contentAssistant.enableAutoActivation(enabled);
 		} else if (AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_DELAY.equals(p) && contentAssistant != null) {
 			int delay= store.getInt(AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_DELAY);
 			contentAssistant.setAutoActivationDelay(delay);
 		} else if (AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_FOREGROUND.equals(p) && contentAssistant != null) {
-			Color c= JFaceResources.getColorRegistry().get(AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_FOREGROUND);
+			Color c= getColor(store, AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_FOREGROUND, manager);
 			contentAssistant.setProposalSelectorForeground(c);
 		} else if (AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_BACKGROUND.equals(p) && contentAssistant != null) {
-			Color c= JFaceResources.getColorRegistry().get(AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_BACKGROUND);
+			Color c= getColor(store, AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_BACKGROUND, manager);
 			contentAssistant.setProposalSelectorBackground(c);
 		} else if (AntEditorPreferenceConstants.CODEASSIST_AUTOINSERT.equals(p) && contentAssistant != null) {
 			boolean enabled= store.getBoolean(AntEditorPreferenceConstants.CODEASSIST_AUTOINSERT);

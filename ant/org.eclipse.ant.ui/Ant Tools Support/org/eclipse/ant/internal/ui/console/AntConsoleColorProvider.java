@@ -18,7 +18,6 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.console.ConsoleColorProvider;
 import org.eclipse.debug.ui.console.IConsole;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.custom.StyledText;
@@ -39,19 +38,19 @@ public class AntConsoleColorProvider extends ConsoleColorProvider implements IPr
 	 */
 	public Color getColor(String streamIdentifer) {
 		if (streamIdentifer.equals(IDebugUIConstants.ID_STANDARD_OUTPUT_STREAM)) {
-			return JFaceResources.getColorRegistry().get(IAntUIPreferenceConstants.CONSOLE_INFO_COLOR);
+			return AntUIPlugin.getPreferenceColor(IAntUIPreferenceConstants.CONSOLE_INFO_COLOR);
 		}
 		if (streamIdentifer.equals(IDebugUIConstants.ID_STANDARD_ERROR_STREAM)) {
-			return JFaceResources.getColorRegistry().get(IAntUIPreferenceConstants.CONSOLE_ERROR_COLOR);
+			return AntUIPlugin.getPreferenceColor(IAntUIPreferenceConstants.CONSOLE_ERROR_COLOR);
 		}				
 		if (streamIdentifer.equals(AntStreamsProxy.ANT_DEBUG_STREAM)) {
-			return JFaceResources.getColorRegistry().get(IAntUIPreferenceConstants.CONSOLE_DEBUG_COLOR);
+			return AntUIPlugin.getPreferenceColor(IAntUIPreferenceConstants.CONSOLE_DEBUG_COLOR);
 		}
 		if (streamIdentifer.equals(AntStreamsProxy.ANT_VERBOSE_STREAM)) {
-			return JFaceResources.getColorRegistry().get(IAntUIPreferenceConstants.CONSOLE_VERBOSE_COLOR);
+			return AntUIPlugin.getPreferenceColor(IAntUIPreferenceConstants.CONSOLE_VERBOSE_COLOR);
 		}
 		if (streamIdentifer.equals(AntStreamsProxy.ANT_WARNING_STREAM)) {
-			return JFaceResources.getColorRegistry().get(IAntUIPreferenceConstants.CONSOLE_WARNING_COLOR);
+			return AntUIPlugin.getPreferenceColor(IAntUIPreferenceConstants.CONSOLE_WARNING_COLOR);
 		}
 		return super.getColor(streamIdentifer);
 	}
@@ -73,7 +72,7 @@ public class AntConsoleColorProvider extends ConsoleColorProvider implements IPr
 			console.connect(proxy.getVerboseStreamMonitor(), AntStreamsProxy.ANT_VERBOSE_STREAM);
 		}
 		
-		JFaceResources.getColorRegistry().addListener(this);
+		AntUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
 		super.connect(process, console);
 	}
 	
@@ -128,7 +127,7 @@ public class AntConsoleColorProvider extends ConsoleColorProvider implements IPr
 	 * @see org.eclipse.debug.ui.console.IConsoleColorProvider#disconnect()
 	 */
 	public void disconnect() {
-		JFaceResources.getColorRegistry().removeListener(this);
+		AntUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
 		super.disconnect();
 	}
 }

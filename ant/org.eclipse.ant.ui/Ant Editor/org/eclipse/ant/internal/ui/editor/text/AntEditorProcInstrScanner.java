@@ -14,7 +14,7 @@
 
 package org.eclipse.ant.internal.ui.editor.text;
 
-import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.rules.IRule;
 import org.eclipse.jface.text.rules.RuleBasedScanner;
@@ -33,7 +33,8 @@ public class AntEditorProcInstrScanner extends RuleBasedScanner {
 		IRule[] rules =new IRule[2];
         fProcInstructionToken =
             new Token(
-                new TextAttribute(JFaceResources.getColorRegistry().get(IAntEditorColorConstants.PROCESSING_INSTRUCTIONS_COLOR)));
+                new TextAttribute(
+                    AntUIPlugin.getPreferenceColor(IAntEditorColorConstants.PROCESSING_INSTRUCTIONS_COLOR)));
 
         //Add rule for processing instructions
         rules[0]= new SingleLineRule("<?", "?>", fProcInstructionToken); //$NON-NLS-1$ //$NON-NLS-2$
@@ -43,14 +44,15 @@ public class AntEditorProcInstrScanner extends RuleBasedScanner {
 
         setRules(rules);
         
-        setDefaultReturnToken(new Token(new TextAttribute(JFaceResources.getColorRegistry().get(IAntEditorColorConstants.TEXT_COLOR))));
+        setDefaultReturnToken(new Token(
+        						new TextAttribute(AntUIPlugin.getPreferenceColor(IAntEditorColorConstants.TEXT_COLOR))));
     }
 
 	/**
 	 * Update the text attributes associated with the tokens of this scanner as a color preference has been changed. 
 	 */
 	public void adaptToColorChange() {
-		((Token)fDefaultReturnToken).setData(new TextAttribute(JFaceResources.getColorRegistry().get(IAntEditorColorConstants.TEXT_COLOR)));
-		fProcInstructionToken.setData(new TextAttribute(JFaceResources.getColorRegistry().get(IAntEditorColorConstants.PROCESSING_INSTRUCTIONS_COLOR)));
+		((Token)fDefaultReturnToken).setData(new TextAttribute(AntUIPlugin.getPreferenceColor(IAntEditorColorConstants.TEXT_COLOR)));
+		fProcInstructionToken.setData(new TextAttribute(AntUIPlugin.getPreferenceColor(IAntEditorColorConstants.PROCESSING_INSTRUCTIONS_COLOR)));
 	}
 }

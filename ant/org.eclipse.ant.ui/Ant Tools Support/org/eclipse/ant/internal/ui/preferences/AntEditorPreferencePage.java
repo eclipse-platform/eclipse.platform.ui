@@ -18,11 +18,13 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.ant.internal.ui.editor.text.IAntEditorColorConstants;
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.ant.internal.ui.model.IAntUIHelpContextIds;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.dialogs.IMessageProvider;
+import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -31,12 +33,14 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
@@ -50,7 +54,23 @@ import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
  * The page for setting the editor options.
  */
 public class AntEditorPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
+		
+	private final String[][] fAppearanceColorListModel= new String[][] {
+		{AntPreferencesMessages.getString("AntEditorPreferencePage.lineNumberForegroundColor"), AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR}, //$NON-NLS-1$
+		{AntPreferencesMessages.getString("AntEditorPreferencePage.currentLineHighlighColor"), AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR}, //$NON-NLS-1$
+		{AntPreferencesMessages.getString("AntEditorPreferencePage.printMarginColor"), AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR}, //$NON-NLS-1$
+		{AntPreferencesMessages.getString("AntEditorPreferencePage.Ant_editor_text_1"), IAntEditorColorConstants.TEXT_COLOR, null}, //$NON-NLS-1$
+		{AntPreferencesMessages.getString("AntEditorPreferencePage.Ant_editor_processing_instuctions_2"),  IAntEditorColorConstants.PROCESSING_INSTRUCTIONS_COLOR, null}, //$NON-NLS-1$
+		{AntPreferencesMessages.getString("AntEditorPreferencePage.Ant_editor_constant_strings_3"),  IAntEditorColorConstants.STRING_COLOR, null},  //$NON-NLS-1$
+		{AntPreferencesMessages.getString("AntEditorPreferencePage.Ant_editor_tags_4"),    IAntEditorColorConstants.TAG_COLOR, null},  //$NON-NLS-1$
+		{AntPreferencesMessages.getString("AntEditorPreferencePage.Ant_editor_comments_5"), IAntEditorColorConstants.XML_COMMENT_COLOR, null} //$NON-NLS-1$
+	};
 	
+	private final String[][] fContentAssistColorListModel= new String[][] {
+		{AntPreferencesMessages.getString("AntEditorPreferencePage.backgroundForCompletionProposals"), AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_BACKGROUND }, //$NON-NLS-1$
+		{AntPreferencesMessages.getString("AntEditorPreferencePage.foregroundForCompletionProposals"), AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_FOREGROUND }, //$NON-NLS-1$
+	};
+
 	private OverlayPreferenceStore fOverlayStore;
 	
 	private Map fCheckBoxes= new HashMap();
@@ -78,6 +98,12 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		}
 	};
 	
+	private List fAppearanceColorList;
+	private List fContentAssistColorList;
+	
+	private ColorEditor fAppearanceColorEditor;
+	private ColorEditor fContentAssistColorEditor;
+	
 	private Control fAutoInsertDelayText;
 	private Control fAutoInsertTriggerText;
 	private Label fAutoInsertDelayLabel;
@@ -99,18 +125,34 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN));
 	
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE));
+	
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN));
+	
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH));
 		
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AntEditorPreferenceConstants.EDITOR_SPACES_FOR_TABS));
 		
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_OVERVIEW_RULER));
 	
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER));
 		
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_DELAY));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AntEditorPreferenceConstants.CODEASSIST_AUTOINSERT));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_BACKGROUND));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_FOREGROUND));		
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_TRIGGERS));
+	
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, IAntEditorColorConstants.TEXT_COLOR));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, IAntEditorColorConstants.PROCESSING_INSTRUCTIONS_COLOR));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, IAntEditorColorConstants.STRING_COLOR));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, IAntEditorColorConstants.TAG_COLOR));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, IAntEditorColorConstants.XML_COMMENT_COLOR));
 
 		OverlayPreferenceStore.OverlayKey[] keys= new OverlayPreferenceStore.OverlayKey[overlayKeys.size()];
 		overlayKeys.toArray(keys);
@@ -131,6 +173,13 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		return (Text)labelledTextField[1];
 	}
 
+	private void handleAppearanceColorListSelection() {	
+		int i= fAppearanceColorList.getSelectionIndex();
+		String key= fAppearanceColorListModel[i][1];
+		RGB rgb= PreferenceConverter.getColor(fOverlayStore, key);
+		fAppearanceColorEditor.setColorValue(rgb);		
+	}
+	
 	private Control createAppearancePage(Composite parent) {
 		Font font= parent.getFont();
 
@@ -163,6 +212,80 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		labelText= AntPreferencesMessages.getString("AntEditorPreferencePage.showPrintMargin"); //$NON-NLS-1$
 		addCheckBox(appearanceComposite, labelText, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN, 0);
 
+
+		Label label= new Label(appearanceComposite, SWT.LEFT );
+		label.setFont(font);
+		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.horizontalSpan= 2;
+		gd.heightHint= convertHeightInCharsToPixels(1) / 2;
+		label.setLayoutData(gd);
+		
+		label= new Label(appearanceComposite, SWT.LEFT);
+		label.setFont(font);
+		label.setText(AntPreferencesMessages.getString("AntEditorPreferencePage.appearanceOptions")); //$NON-NLS-1$
+		gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.horizontalSpan= 2;
+		label.setLayoutData(gd);
+
+		Composite editorComposite= new Composite(appearanceComposite, SWT.NONE);
+		editorComposite.setFont(font);
+		layout= new GridLayout();
+		layout.numColumns= 2;
+		layout.marginHeight= 0;
+		layout.marginWidth= 0;
+		editorComposite.setLayout(layout);
+		gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.FILL_VERTICAL);
+		gd.horizontalSpan= 2;
+		editorComposite.setLayoutData(gd);		
+
+		fAppearanceColorList= new List(editorComposite, SWT.SINGLE | SWT.V_SCROLL | SWT.BORDER);
+		fAppearanceColorList.setFont(font);
+		gd= new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL);
+		gd.heightHint= convertHeightInCharsToPixels(8);
+		fAppearanceColorList.setLayoutData(gd);
+						
+		Composite stylesComposite= new Composite(editorComposite, SWT.NONE);
+		stylesComposite.setFont(font);
+		layout= new GridLayout();
+		layout.marginHeight= 0;
+		layout.marginWidth= 0;
+		layout.numColumns= 2;
+		stylesComposite.setLayout(layout);
+		stylesComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		
+		label= new Label(stylesComposite, SWT.LEFT);
+		label.setFont(font);
+		label.setText(AntPreferencesMessages.getString("AntEditorPreferencePage.color")); //$NON-NLS-1$
+		gd= new GridData();
+		gd.horizontalAlignment= GridData.BEGINNING;
+		label.setLayoutData(gd);
+
+		fAppearanceColorEditor= new ColorEditor(stylesComposite);
+		Button foregroundColorButton= fAppearanceColorEditor.getButton();
+		foregroundColorButton.setFont(font);
+		gd= new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalAlignment= GridData.BEGINNING;
+		foregroundColorButton.setLayoutData(gd);
+
+		fAppearanceColorList.addSelectionListener(new SelectionListener() {
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// do nothing
+			}
+			public void widgetSelected(SelectionEvent e) {
+				handleAppearanceColorListSelection();
+			}
+		});
+		foregroundColorButton.addSelectionListener(new SelectionListener() {
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// do nothing
+			}
+			public void widgetSelected(SelectionEvent e) {
+				int i= fAppearanceColorList.getSelectionIndex();
+				String key= fAppearanceColorListModel[i][1];
+				
+				PreferenceConverter.setValue(fOverlayStore, key, fAppearanceColorEditor.getColorValue());
+			}
+		});
 		return appearanceComposite;
 	}
 	
@@ -228,7 +351,81 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		fAutoInsertTriggerLabel= getLabelControl(labelledTextField);
 		fAutoInsertTriggerText= getTextControl(labelledTextField);
 		
+		Label label= new Label(contentAssistComposite, SWT.LEFT);
+		label.setText(AntPreferencesMessages.getString("AntEditorPreferencePage.Code_assist_colo&r_options__5")); //$NON-NLS-1$
+		label.setFont(font);
+		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.horizontalSpan= 2;
+		label.setLayoutData(gd);
+
+		Composite editorComposite= new Composite(contentAssistComposite, SWT.NONE);
+		layout= new GridLayout();
+		layout.numColumns= 2;
+		layout.marginHeight= 0;
+		layout.marginWidth= 0;
+		editorComposite.setLayout(layout);
+		editorComposite.setFont(font);
+		gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.FILL_VERTICAL);
+		gd.horizontalSpan= 2;
+		editorComposite.setLayoutData(gd);		
+
+		fContentAssistColorList= new List(editorComposite, SWT.SINGLE | SWT.V_SCROLL | SWT.BORDER);
+		gd= new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL);
+		gd.heightHint= convertHeightInCharsToPixels(8);
+		fContentAssistColorList.setLayoutData(gd);
+		fContentAssistColorList.setFont(font);
+						
+		Composite stylesComposite= new Composite(editorComposite, SWT.NONE);
+		layout= new GridLayout();
+		layout.marginHeight= 0;
+		layout.marginWidth= 0;
+		layout.numColumns= 2;
+		stylesComposite.setLayout(layout);
+		stylesComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		stylesComposite.setFont(font);
+		
+		label= new Label(stylesComposite, SWT.LEFT);
+		label.setText(AntPreferencesMessages.getString("AntEditorPreferencePage.Col&or__6")); //$NON-NLS-1$
+		label.setFont(font);
+		gd= new GridData();
+		gd.horizontalAlignment= GridData.BEGINNING;
+		label.setLayoutData(gd);
+
+		fContentAssistColorEditor= new ColorEditor(stylesComposite);
+		Button colorButton= fContentAssistColorEditor.getButton();
+		gd= new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalAlignment= GridData.BEGINNING;
+		colorButton.setLayoutData(gd);
+
+		fContentAssistColorList.addSelectionListener(new SelectionListener() {
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// do nothing
+			}
+			public void widgetSelected(SelectionEvent e) {
+				handleContentAssistColorListSelection();
+			}
+		});
+		
+		colorButton.addSelectionListener(new SelectionListener() {
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// do nothing
+			}
+			public void widgetSelected(SelectionEvent e) {
+				int i= fContentAssistColorList.getSelectionIndex();
+				String key= fContentAssistColorListModel[i][1];
+				
+				PreferenceConverter.setValue(fOverlayStore, key, fContentAssistColorEditor.getColorValue());
+			}
+		});
+
 		return contentAssistComposite;
+	}
+	
+	private void handleContentAssistColorListSelection() {	
+		int i= fContentAssistColorList.getSelectionIndex();
+		String key= fContentAssistColorListModel[i][1];
+		RGB rgb= PreferenceConverter.getColor(fOverlayStore, key);
+		fContentAssistColorEditor.setColorValue(rgb);
 	}
 		
 	private void updateAutoactivationControls() {
@@ -271,6 +468,29 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		
 		initializeFields();
 		
+		for (int i= 0; i < fAppearanceColorListModel.length; i++) {
+			fAppearanceColorList.add(fAppearanceColorListModel[i][0]);
+		}
+		fAppearanceColorList.getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				if (fAppearanceColorList != null && !fAppearanceColorList.isDisposed()) {
+					fAppearanceColorList.select(0);
+					handleAppearanceColorListSelection();
+				}
+			}
+		});
+		
+		for (int i= 0; i < fContentAssistColorListModel.length; i++) {
+			fContentAssistColorList.add(fContentAssistColorListModel[i][0]);
+		}
+		fContentAssistColorList.getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				if (fContentAssistColorList != null && !fContentAssistColorList.isDisposed()) {
+					fContentAssistColorList.select(0);
+					handleContentAssistColorListSelection();
+				}
+			}
+		});
 	}
 	
 	private void initializeFields() {
@@ -305,6 +525,10 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 	protected void performDefaults() {
 		fOverlayStore.loadDefaults();
 		initializeFields();
+
+		handleAppearanceColorListSelection();
+		handleContentAssistColorListSelection();
+
 		super.performDefaults();
 	}
 	

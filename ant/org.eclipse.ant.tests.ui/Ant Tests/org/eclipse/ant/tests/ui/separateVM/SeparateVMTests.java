@@ -15,6 +15,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.ant.internal.ui.launchConfigurations.IAntLaunchConfigurationConstants;
+import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.ant.internal.ui.model.IAntUIPreferenceConstants;
 import org.eclipse.ant.tests.ui.AbstractAntUIBuildTest;
 import org.eclipse.ant.tests.ui.testplugin.ConsoleLineTracker;
@@ -24,7 +25,6 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.console.IConsoleHyperlink;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.swt.graphics.Color;
 
@@ -112,7 +112,7 @@ public class SeparateVMTests extends AbstractAntUIBuildTest {
 		int offset= 15; //buildfile
 		Color color= getColorAtOffset(offset, ConsoleLineTracker.getDocument());
 		assertNotNull("No color found at " + offset, color);
-		assertEquals(color, JFaceResources.getColorRegistry().get(IAntUIPreferenceConstants.CONSOLE_INFO_COLOR));
+		assertEquals(color, AntUIPlugin.getPreferenceColor(IAntUIPreferenceConstants.CONSOLE_INFO_COLOR));
 		try {
 			offset= ConsoleLineTracker.getDocument().getLineOffset(2) + 10; //echo link
 		} catch (BadLocationException e) {
@@ -120,7 +120,7 @@ public class SeparateVMTests extends AbstractAntUIBuildTest {
 		}
 		color= getColorAtOffset(offset, ConsoleLineTracker.getDocument());
 		assertNotNull("No color found at " + offset, color);
-		assertEquals(color, JFaceResources.getColorRegistry().get(IAntUIPreferenceConstants.CONSOLE_WARNING_COLOR));
+		assertEquals(color, AntUIPlugin.getPreferenceColor(IAntUIPreferenceConstants.CONSOLE_WARNING_COLOR));
 	}
 	
 	/**
