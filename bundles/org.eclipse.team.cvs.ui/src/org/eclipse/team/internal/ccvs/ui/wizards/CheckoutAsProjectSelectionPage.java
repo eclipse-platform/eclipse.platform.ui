@@ -227,7 +227,7 @@ public class CheckoutAsProjectSelectionPage extends CVSWizardPage {
 	}
 			
 	/**
-	 * Method getValidTargetProjects returns the et of projects that match the provided criteria.
+	 * Method getValidTargetProjects returns the set of projects that match the provided criteria.
 	 * @return IResource
 	 */
 	private IProject[] getProjects(String root, boolean unshared) throws CVSException {
@@ -245,7 +245,7 @@ public class CheckoutAsProjectSelectionPage extends CVSWizardPage {
 						} else if (provider != null && provider.getID().equals(CVSProviderPlugin.getTypeId())) {
 							ICVSFolder cvsFolder = CVSWorkspaceRoot.getCVSFolderFor(project);
 							FolderSyncInfo info = cvsFolder.getFolderSyncInfo();
-							if (root != null && root.equals(info.getRoot())) {
+							if (root != null && info != null && root.equals(info.getRoot())) {
 								validTargets.add(project);
 							}
 						}

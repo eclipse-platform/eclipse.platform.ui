@@ -151,7 +151,7 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 			try {
 				//	Obtain a scheduling rule on the projects were about to overwrite
 				Platform.getJobManager().beginRule(getSchedulingRule(targetProjects));
-				IStatus result = performCheckout(session, resource, targetProjects, Policy.subMonitorFor(pm, 90));
+				IStatus result = performCheckout(session, resource, targetProjects, project != null, Policy.subMonitorFor(pm, 90));
 				return result;
 			} finally {
 				Platform.getJobManager().endRule();
@@ -175,7 +175,7 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 		}
 	}
 
-	private IStatus performCheckout(Session session, ICVSRemoteFolder resource, IProject[] targetProjects, IProgressMonitor pm) throws CVSException {
+	private IStatus performCheckout(Session session, ICVSRemoteFolder resource, IProject[] targetProjects, boolean sendModuleName, IProgressMonitor pm) throws CVSException {
 		// Set the task name of the progress monitor to let the user know
 		// which project we're on. Don't use subTask since that will be
 		// changed when the checkout command is run.
@@ -200,7 +200,7 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 			// Determine if the target project is the same name as the remote folder
 			// in which case we'll use -d to flatten the directory structure
 			IProject project;
-			if (targetProjects.length == 1 && targetProjects[0].getName().equals(resource.getName())) {
+			if (targetProjects.length == 1 && (sendModuleName || targetProjects[0].getName().equals(resource.getName()))) {
 				project = targetProjects[0];
 			} else {
 				project = null;
