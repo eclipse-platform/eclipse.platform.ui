@@ -364,7 +364,7 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 					next.decrementBusy(event.getJob());
 				}
 				JobInfo info = getJobInfo(event.getJob());
-				if (event.getResult().getSeverity() == IStatus.ERROR) {
+				if (event.getResult() != null && event.getResult().getSeverity() == IStatus.ERROR) {
 					errorManager.addError(event.getResult(), event.getJob().getName());
 				}
 				jobs.remove(event.getJob());
