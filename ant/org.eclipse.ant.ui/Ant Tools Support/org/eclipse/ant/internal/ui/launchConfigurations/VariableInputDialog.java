@@ -68,7 +68,6 @@ public class VariableInputDialog extends Dialog {
 		Button button = new Button(inputComp, SWT.PUSH); 
 		button.setText(AntLaunchConfigurationMessages.getString("AddVariableStringAction.3")); //$NON-NLS-1$
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
-		gd.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
 		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
 		gd.widthHint = Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 		button.setLayoutData(gd);
