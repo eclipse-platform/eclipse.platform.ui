@@ -67,6 +67,7 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.model.WorkbenchViewerSorter;
 
 /**
  * The dialog used to edit and launch launch configurations.
@@ -650,6 +651,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		tree.getControl().setLayoutData(gd);
 		tree.setContentProvider(new LaunchConfigurationContentProvider());
 		tree.setLabelProvider(DebugUITools.newDebugModelPresentation());
+		tree.setSorter(new WorkbenchViewerSorter());
 		setTreeViewer(tree);
 		tree.addSelectionChangedListener(this);
 		tree.setInput(ResourcesPlugin.getWorkspace().getRoot());
@@ -984,6 +986,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  		// If selection is the same, don't bother
  		Object obj = getSelectedTreeObject();
  		if (singleSelection && obj != null && obj.equals(firstSelectedElement)) {
+ 			getEditArea().setVisible(true);
  			return;
  		}
  		
