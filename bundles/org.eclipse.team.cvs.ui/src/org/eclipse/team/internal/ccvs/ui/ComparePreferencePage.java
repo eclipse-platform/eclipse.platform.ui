@@ -40,7 +40,7 @@ public class ComparePreferencePage extends CVSFieldEditorPreferencePage {
     protected void createFieldEditors() {
 		addField(new BooleanFieldEditor(
 		        ICVSUIConstants.PREF_CONSIDER_CONTENTS, 
-				Policy.bind("CVSPreferencePage.considerContentsInCompare"),  //$NON-NLS-1$
+				Policy.bind("ComparePreferencePage.4"),  //$NON-NLS-1$
 				BooleanFieldEditor.DEFAULT, 
 				getFieldEditorParent()) {
             protected Button getChangeControl(Composite parent) {
