@@ -132,7 +132,6 @@
             label="%StepReturnAction.label"
             icon="icons/full/clcl16/stepreturn_co.gif"
             helpContextId="step_return_action_context"
-            tooltip="%StepReturnAction.tooltip"
             class="org.eclipse.debug.internal.ui.actions.StepReturnActionDelegate"
             menubarPath="org.eclipse.debug.ui.DebugMenu/stepGroup"
             id="org.eclipse.debug.internal.ui.actions.StepReturnActionDelegate">
@@ -141,7 +140,6 @@
             label="%StepOverAction.label"
             icon="icons/full/clcl16/stepover_co.gif"
             helpContextId="step_over_action_context"
-            tooltip="%StepOverAction.tooltip"
             class="org.eclipse.debug.internal.ui.actions.StepOverActionDelegate"
             menubarPath="org.eclipse.debug.ui.DebugMenu/stepGroup"
             id="org.eclipse.debug.internal.ui.actions.StepOverActionDelegate">
@@ -150,7 +148,6 @@
             label="%StepIntoAction.label"
             icon="icons/full/clcl16/stepinto_co.gif"
             helpContextId="step_into_action_context"
-            tooltip="%StepIntoAction.tooltip"
             class="org.eclipse.debug.internal.ui.actions.StepIntoActionDelegate"
             menubarPath="org.eclipse.debug.ui.DebugMenu/stepGroup"
             id="org.eclipse.debug.internal.ui.actions.StepIntoActionDelegate">
@@ -159,7 +156,6 @@
             label="%TerminateAction.label"
             icon="icons/full/clcl16/terminate_co.gif"
             helpContextId="terminate_action_context"
-            tooltip="%TerminateAction.tooltip"
             class="org.eclipse.debug.internal.ui.actions.TerminateActionDelegate"
             menubarPath="org.eclipse.debug.ui.DebugMenu/stepGroup"
             id="org.eclipse.debug.internal.ui.actions.TerminateActionDelegate">
@@ -168,7 +164,6 @@
             label="%SuspendAction.label"
             icon="icons/full/clcl16/suspend_co.gif"
             helpContextId="suspend_action_context"
-            tooltip="%SuspendAction.tooltip"
             class="org.eclipse.debug.internal.ui.actions.SuspendActionDelegate"
             menubarPath="org.eclipse.debug.ui.DebugMenu/stepGroup"
             id="org.eclipse.debug.internal.ui.actions.SuspendActionDelegate">
@@ -177,7 +172,6 @@
             label="%ResumeAction.label"
             icon="icons/full/clcl16/resume_co.gif"
             helpContextId="resume_action_context"
-            tooltip="%ResumeAction.tooltip"
             class="org.eclipse.debug.internal.ui.actions.ResumeActionDelegate"
             menubarPath="org.eclipse.debug.ui.DebugMenu/stepGroup"
             id="org.eclipse.debug.internal.ui.actions.ResumeActionDelegate">
