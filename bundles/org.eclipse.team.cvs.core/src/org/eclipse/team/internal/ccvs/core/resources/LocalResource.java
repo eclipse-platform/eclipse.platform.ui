@@ -141,22 +141,15 @@ public abstract class LocalResource implements ICVSResource {
 	 * @see ICVSResource#getSyncInfo()
 	 */
 	public ResourceSyncInfo getSyncInfo() throws CVSException {
-		return Synchronizer.getInstance().getSyncInfo(ioResource);
+		return Synchronizer.getInstance().getResourceSync(ioResource);
 	}
 
 	/*
 	 * @see ICVSResource#setSyncInfo(ResourceSyncInfo)
 	 */
 	public void setSyncInfo(ResourceSyncInfo info) throws CVSException {
-		Synchronizer.getInstance().setSyncInfo(ioResource, info);		
+		Synchronizer.getInstance().setResourceSync(ioResource, info);		
 	}
-	
-	/*
-	 * @see ICVSResource#unmanage()
-	 */
-	public void unmanage() throws CVSException {
-		Synchronizer.getInstance().deleteSyncInfo(ioResource);
-	}			
 	
 	/*
 	 * Implement the hashcode on the underlying strings, like it is done in the equals.

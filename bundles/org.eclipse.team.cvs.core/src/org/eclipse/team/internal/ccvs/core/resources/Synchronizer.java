@@ -29,126 +29,176 @@ import org.eclipse.team.internal.ccvs.core.util.ResourceDeltaVisitor;
 import org.eclipse.team.internal.ccvs.core.util.SyncFileUtil;
 
 /**
- * A singleton that provides access to CVS specific information about local CVS 
- * resources.
+ * A singleton that provides access to CVS synchronization information about local CVS 
+ * resources. 
  */
 public class Synchronizer {
 	
 	private static Synchronizer instance;
-	private static Cache cache;
-	
+
 	private class SyncFile {
 		long timestamp = 0;
 		Map config = new HashMap(10);
 	}		
 	
-	private class Cache {
+	// keys = SyncFile values = hashMap of keys = name values = ResourceSyncInfo
+	private Map entriesCache = new HashMap(10);
+		
+	// keys = File values = FolderSyncInfo
+	private Map folderConfigCache = new HashMap(10);
 	
-		// keys = SyncFile values = hashMap of keys = name values = ResourceSyncInfo
-		private Map entriesCache = new HashMap(10);
+	// entry files that are modified in memory but have not been saved
+	private Set invalidatedEntryFiles = new HashSet(10);
+	private Set invalidatedFolderConfigs = new HashSet(10);
 		
-		// keys = File values = FolderSyncInfo
-		private Map folderConfigCache = new HashMap(10);
+	private Synchronizer() {
+	}
+	
+	public static Synchronizer getInstance() {
+		if(instance==null) {
+			instance = new Synchronizer();
+		}
+		return instance;
+	}		
+
+	protected void broadcastSyncChange(File file) throws CVSException {	
+		IResource resource;
+		int depth = IResource.DEPTH_ZERO;
 		
-		// entry files that are modified in memory but have not been saved
-		private Set invalidatedEntryFiles = new HashSet(10);
-		private Set invalidatedFolderConfigs = new HashSet(10);
-		
-		protected void broadcastSyncChange(File file) throws CVSException {	
-			IResource resource;
-			if(file.isDirectory()) {
-				resource = ResourcesPlugin.getWorkspace().getRoot().getContainerForLocation(new Path(file.getAbsolutePath()));
-			} else {
-				resource = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(new Path(file.getAbsolutePath()));
-			}
-			
-			if(resource!=null) {			
-				try {
-					resource.refreshLocal(IResource.DEPTH_ZERO, null);
-				} catch(CoreException e) {
-					throw new CVSException("Error refreshing file from local contents " + file.getAbsolutePath(), e);
-				}
-				TeamPlugin.getManager().broadcastResourceStateChanges(new IResource[] {resource});
-			}
+		if(!file.exists()) {
+			file = file.getParentFile();
+			depth = IResource.DEPTH_ONE;
 		}
 		
-		public FolderSyncInfo getFolderSync(File file, boolean reload) throws CVSException {
-			if(!file.isDirectory()) { 
+		if(file.isDirectory()) {
+			resource = ResourcesPlugin.getWorkspace().getRoot().getContainerForLocation(new Path(file.getAbsolutePath()));
+		} else {
+			resource = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(new Path(file.getAbsolutePath()));
+		}
+			
+		if(resource!=null) {			
+			try {
+				resource.refreshLocal(depth, null);
+			} catch(CoreException e) {
+				throw new CVSException("Error refreshing file from local contents " + file.getAbsolutePath(), e);
+			}
+			TeamPlugin.getManager().broadcastResourceStateChanges(new IResource[] {resource});
+		}
+	}
+	
+	public FolderSyncInfo getFolderSync(File file) throws CVSException {
+		return getFolderSync(file, false);
+	}
+	
+	public ResourceSyncInfo getResourceSync(File file) throws CVSException {
+		return getResourceSync(file, false);		
+	}
+	
+	protected FolderSyncInfo getFolderSync(File file, boolean reload) throws CVSException {
+		if(!file.isDirectory()) { 
+			return null;
+		}
+		SyncFile folderSync = (SyncFile)folderConfigCache.get(file);
+		if(folderSync==null || reload) {
+			folderSync = new SyncFile();
+			FolderSyncInfo info = SyncFileUtil.readFolderConfig(file);
+			
+			// no CVS sub-directory
+			if(info==null) {
 				return null;
 			}
-			SyncFile folderSync = (SyncFile)folderConfigCache.get(file);
-			if(folderSync==null || reload) {
-				folderSync = new SyncFile();
-				folderSync.config.put(file.getName(), SyncFileUtil.readFolderConfig(file));
-				folderConfigCache.put(file, folderSync);
+			folderSync.config.put(file.getName(), info);
+			folderConfigCache.put(file, folderSync);
+		}
+		return (FolderSyncInfo)folderSync.config.get(file.getName());			
+	}
+	
+	protected ResourceSyncInfo getResourceSync(File file, boolean reload) throws CVSException {
+		File entriesFile = new File(SyncFileUtil.getCVSSubdirectory(file.getParentFile()), SyncFileUtil.ENTRIES);
+		SyncFile entriesSync = (SyncFile)entriesCache.get(entriesFile);
+		
+		// read entries file
+		if(entriesSync==null || reload) {
+			entriesSync = new SyncFile();
+			ResourceSyncInfo infos[] = SyncFileUtil.readEntriesFile(file.getParentFile());
+			for (int i = 0; i < infos.length; i++) {
+				entriesSync.config.put(infos[i].getName(), infos[i]);
 			}
-			return (FolderSyncInfo)folderSync.config.get(file.getName());			
+			entriesCache.put(entriesFile, entriesSync);
+		}
+		return (ResourceSyncInfo)entriesSync.config.get(file.getName());
+	}
+
+	public void setFolderSync(File folder, FolderSyncInfo info) throws CVSException {
+		
+		Assert.isNotNull(info);
+					
+		// if parent has the sync folder (e.g. CVS) then ensure that the directory
+		// entry for this folder is added.
+		if(getFolderSync(folder.getParentFile())!=null) {
+			ResourceSyncInfo resourceInfo = new ResourceSyncInfo(folder.getName(), true);
+			setResourceSync(folder, resourceInfo);
 		}
 		
-		public ResourceSyncInfo getResourceSync(File file, boolean reload) throws CVSException {
-			File entriesFile = new File(SyncFileUtil.getCVSSubdirectory(file.getParentFile()), SyncFileUtil.ENTRIES);
-			SyncFile entriesSync = (SyncFile)entriesCache.get(entriesFile);
-			
-			// read entries file
-			if(entriesSync==null || reload) {
-				entriesSync = (SyncFile)entriesCache.get(entriesFile);
-				
-				entriesSync = new SyncFile();
-				ResourceSyncInfo infos[] = SyncFileUtil.readEntriesFile(file.getParentFile());
-				for (int i = 0; i < infos.length; i++) {
-					entriesSync.config.put(infos[i].getName(), infos[i]);
-				}
-				entriesCache.put(entriesFile, entriesSync);
-			}
-			return (ResourceSyncInfo)entriesSync.config.get(file.getName());
-		}
+		// there can only be one sync entry for folders, create a new one
+		folderConfigCache.remove(folder);
+		SyncFile folderSync = new SyncFile();
+		folderSync.config.put(folder.getName(), info);
+		folderConfigCache.put(folder, folderSync);
+		invalidatedFolderConfigs.add(folder);			
+		broadcastSyncChange(folder);
+	}
 
-		public void setFolderSync(File folder, FolderSyncInfo info) throws CVSException {
-						
-			// if parent has the sync folder (e.g. CVS) then ensure that the directory
-			// entry for this folder is added.
-			if(SyncFileUtil.getCVSSubdirectory(folder.getParentFile()).exists()) {
-				ResourceSyncInfo resourceInfo = new ResourceSyncInfo(folder.getName(), true);
-				setResourceSync(folder, resourceInfo);
-			}
-			
-			// there can only be one sync entry for folders, create a new one
-			folderConfigCache.remove(folder);
-			SyncFile folderSync = new SyncFile();
-			folderSync.config.put(folder.getName(), info);
-			folderConfigCache.put(folder, folderSync);
-			invalidatedFolderConfigs.add(folder);			
-			broadcastSyncChange(folder);
-		}
-
-		public void setResourceSync(File file, ResourceSyncInfo info) throws CVSException {
-			File entriesFile = new File(SyncFileUtil.getCVSSubdirectory(file.getParentFile()), SyncFileUtil.ENTRIES);
-									
-			SyncFile entriesSync = (SyncFile)entriesCache.get(entriesFile);
-			if(entriesSync==null) {
-				entriesSync = new SyncFile();
-				entriesCache.put(entriesFile, entriesSync);
-			}			
-			entriesSync.config.put(info.getName(), info);						
+	public void setResourceSync(File file, ResourceSyncInfo info) throws CVSException {
+		
+		Assert.isNotNull(info);
+		
+		File entriesFile = new File(SyncFileUtil.getCVSSubdirectory(file.getParentFile()), SyncFileUtil.ENTRIES);
+								
+		SyncFile entriesSync = (SyncFile)entriesCache.get(entriesFile);
+		if(entriesSync==null) {
+			entriesSync = new SyncFile();
+			entriesCache.put(entriesFile, entriesSync);
+		}			
+		entriesSync.config.put(info.getName(), info);						
+		invalidatedEntryFiles.add(entriesFile);
+		broadcastSyncChange(file);
+	}
+	
+	public void deleteResourceSync(File file) throws CVSException {
+		File entriesFile = new File(SyncFileUtil.getCVSSubdirectory(file.getParentFile()), SyncFileUtil.ENTRIES);
+		SyncFile entriesSync = (SyncFile)entriesCache.get(entriesFile);
+		if(entriesSync!=null) {
+			entriesSync.config.remove(file.getName());
 			invalidatedEntryFiles.add(entriesFile);
 			broadcastSyncChange(file);
-		}
+		}			
+	}
+	
+	public void deleteFolderSync(File folder) throws CVSException {
 		
-		public void deleteResourceSync(File file) throws CVSException {
-			File entriesFile = new File(SyncFileUtil.getCVSSubdirectory(file.getParentFile()), SyncFileUtil.ENTRIES);
-			SyncFile entriesSync = (SyncFile)entriesCache.get(entriesFile);
-			if(entriesSync!=null) {
-				entriesSync.config.remove(file.getName());
-				invalidatedEntryFiles.add(entriesFile);
-				broadcastSyncChange(file);
-			}			
-		}
+		// remove resource sync entries file from the cache
+		File entriesFile = new File(SyncFileUtil.getCVSSubdirectory(folder), SyncFileUtil.ENTRIES);
+		entriesCache.remove(entriesFile);
 		
-		public void save() throws CVSException {
-			for (Iterator it = invalidatedEntryFiles.iterator(); it.hasNext();) {
-				File entryFile = (File) it.next();
-				SyncFile info = (SyncFile)entriesCache.get(entryFile);
-								
+		// remove from parent
+		deleteResourceSync(folder);
+		
+		// remove folder sync
+		folderConfigCache.remove(folder);
+		
+		broadcastSyncChange(folder);
+	}
+	
+	public void save() throws CVSException {
+		for (Iterator it = invalidatedEntryFiles.iterator(); it.hasNext();) {
+			File entryFile = (File) it.next();
+			SyncFile info = (SyncFile)entriesCache.get(entryFile);
+			
+			// entry file may of been deleted from cache by a client calling
+			// deleteFolderSync (e.g. pruning on update).
+			if(info!=null) {
+							
 				// collect all sync infos for this entries file
 				List syncInfos = new ArrayList();
 				for (Iterator it2 = info.config.values().iterator(); it2.hasNext();) {										
@@ -171,16 +221,17 @@ public class Synchronizer {
 				File[] entrySyncFiles = SyncFileUtil.getEntrySyncFiles(entryFile.getParentFile().getParentFile());
 				for (int i = 0; i < entrySyncFiles.length; i++) {
 					broadcastSyncChange(entrySyncFiles[i]);					
-				}				
+				}
 			}
+		}
+		
+		for (Iterator it = invalidatedFolderConfigs.iterator(); it.hasNext();) {
+			File folder = (File) it.next();
+			SyncFile info = (SyncFile)folderConfigCache.get(folder);
 			
-			for (Iterator it = invalidatedFolderConfigs.iterator(); it.hasNext();) {
-				File folder = (File) it.next();
-				SyncFile info = (SyncFile)folderConfigCache.get(folder);
-				
-				// if it was invalidated there should be something to write
-				Assert.isNotNull(info);
-				
+			// folder config may of been deleted from cache by a client calling
+			// deleteFolderSync (e.g. pruning on update).
+			if(info!=null) {	
 				SyncFileUtil.writeFolderConfig(folder, (FolderSyncInfo)info.config.get(folder.getName()));
 				File rootFile = new File(SyncFileUtil.getCVSSubdirectory(folder), SyncFileUtil.ROOT);
 				info.timestamp = rootFile.lastModified();
@@ -189,37 +240,22 @@ public class Synchronizer {
 					broadcastSyncChange(folderSyncFiles[i]);					
 				}				
 			}
-			
-			// clear invalidated 
-			invalidatedEntryFiles = new HashSet(10);
-			invalidatedFolderConfigs = new HashSet(10);
 		}
 		
-		public void clear() {
-			entriesCache.clear();
-			folderConfigCache.clear();
-			
-			// Program error if clear is called with pending changes.
-			Assert.isTrue(!invalidatedEntryFiles.isEmpty() || !invalidatedFolderConfigs.isEmpty());
-						
-			invalidatedEntryFiles.clear();
-			invalidatedFolderConfigs.clear();
-		}
-	}
-		
-	private Synchronizer() {
-		cache = new Cache();
+		// clear invalidated 
+		invalidatedEntryFiles = new HashSet(10);
+		invalidatedFolderConfigs = new HashSet(10);
 	}
 	
-	public static Synchronizer getInstance() {
-		if(instance==null) {
-			instance = new Synchronizer();
-		}
-		return instance;
-	}		
-
-	public void save() throws CVSException {
-		cache.save();
+	public void clearAll() {
+		entriesCache.clear();
+		folderConfigCache.clear();
+		
+		// Program error if clear is called with pending changes.
+		Assert.isTrue(!invalidatedEntryFiles.isEmpty() || !invalidatedFolderConfigs.isEmpty());
+					
+		invalidatedEntryFiles.clear();
+		invalidatedFolderConfigs.clear();
 	}
 	
 	/**
@@ -229,12 +265,12 @@ public class Synchronizer {
 		if (folder instanceof LocalFolder) {
 			LocalFolder fsFolder = (LocalFolder) folder;
 			File file = fsFolder.getLocalFile();
-			cache.getFolderSync(file, true);
+			getFolderSync(file, true);
 			
 			ICVSFile[] files = folder.getFiles();
 			for (int i = 0; i < files.length; i++) {
 				ICVSFile iCVSFile = files[i];
-				cache.getResourceSync(((LocalFile)iCVSFile).getLocalFile(), true);
+				getResourceSync(((LocalFile)iCVSFile).getLocalFile(), true);
 				break;
 			}
 			monitor.worked(1);
@@ -246,39 +282,21 @@ public class Synchronizer {
 			}
 		}
 	}
-
-	/**
-	 * Resource sync info
-	 */
 	
-	public ResourceSyncInfo getSyncInfo(File file) throws CVSException {
-		return cache.getResourceSync(file, false);
-	}
-	
-	public void setSyncInfo(File file, ResourceSyncInfo info) throws CVSException {
-		cache.setResourceSync(file, info);
-	}
-	
-	public void deleteSyncInfo(File file) throws CVSException {
-		cache.deleteResourceSync(file);
-	}
-	
-	/**
-	 * Folder sync info
-	 */
-	
-	public FolderSyncInfo getFolderSyncInfo(File folder) throws CVSException {
-		if(folder.isDirectory()) {
-			return cache.getFolderSync(folder, false);
-		} else {
-			return null;
-		}
+	public void clear(ICVSFolder folder, IProgressMonitor monitor) throws CVSException {
+		if (folder instanceof LocalFolder) {
+			LocalFolder fsFolder = (LocalFolder) folder;
+			deleteFolderSync(fsFolder.getLocalFile());
+			
+			monitor.worked(1);
+			
+			ICVSFolder[] folders = folder.getFolders();
+			for (int i = 0; i < folders.length; i++) {
+				clear(folders[i], monitor);
+			}
+		}	
 	}
 
-	public void setFolderSyncInfo(File folder, FolderSyncInfo info) throws CVSException {
-		cache.setFolderSync(folder, info);
-	}
-	
 	/**
 	 * Utils
 	 */

@@ -85,16 +85,16 @@ public class SyncFileUtil {
 		FileUtil.writeLines(new File(entryFile.getParentFile(),PERMISSIONS), (String[])permissions.toArray(new String[permissions.size()]));
 	}
 	
-	public static FolderSyncInfo readFolderConfig(File parent) throws CVSException {
+	public static FolderSyncInfo readFolderConfig(File folder) throws CVSException {
 		
-		if(!getCVSSubdirectory(parent).exists()) {
+		if(!getCVSSubdirectory(folder).exists()) {
 			return null;
 		}
 		
-		String staticDir = readLine(parent, STATIC);
-		String repo = readLine(parent, REPOSITORY);
-		String root = readLine(parent, ROOT);
-		String tag = readLine(parent, TAG);
+		String staticDir = readLine(folder, STATIC);
+		String repo = readLine(folder, REPOSITORY);
+		String root = readLine(folder, ROOT);
+		String tag = readLine(folder, TAG);
 							
 		boolean isStatic = false;
 		if (staticDir != null)
@@ -171,8 +171,8 @@ public class SyncFileUtil {
 		} 
 	}	
 	
-	public static File getCVSSubdirectory(File parent) {
-		return new File(parent, "CVS");
+	public static File getCVSSubdirectory(File folder) {
+		return new File(folder, "CVS");
 	}
 	
 	public static void mergeEntriesLogFiles(File root) throws CVSException {

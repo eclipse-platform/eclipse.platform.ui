@@ -20,6 +20,8 @@ public class ResourceSyncInfo {
 	
 	private static final String DEFAULT_PERMISSIONS = "u=rw,g=rw,o=r";
 	
+	private static final String DELETED_PREFIX = "-";
+	
 	private int type;
 	private String name;
 	private String revision;
@@ -27,6 +29,7 @@ public class ResourceSyncInfo {
 	private String keywordMode;
 	private CVSEntryLineTag tag;
 	private String permissions;
+	private boolean isDeleted = false;
 
 	public ResourceSyncInfo(String entryLine, String permissions) throws CVSException {
 		setEntryLine(entryLine);
@@ -64,6 +67,11 @@ public class ResourceSyncInfo {
 			result.append(SEPERATOR);
 			result.append(name);
 			result.append(SEPERATOR);
+			
+			if(isDeleted){
+				result.append(DELETED_PREFIX); 
+			}
+				
 			result.append(revision);
 			result.append(SEPERATOR);
 			// in some cases the timestamp not include in entry lines
@@ -114,7 +122,7 @@ public class ResourceSyncInfo {
 		EmptyTokenizer tokenizer = new EmptyTokenizer(entryLine,SEPERATOR);
 
 		name = tokenizer.nextToken();
-		revision = tokenizer.nextToken();
+		setRevision(tokenizer.nextToken());
 		timeStamp = tokenizer.nextToken();
 		keywordMode = tokenizer.nextToken();
 		String tagEntry = tokenizer.nextToken();
@@ -205,8 +213,14 @@ public class ResourceSyncInfo {
 	 * Sets the version
 	 * @param version the version to set
 	 */
-	public void setRevision(String version) {
-		this.revision = version;
+	public void setRevision(String revision) {
+		if(revision.startsWith(DELETED_PREFIX)) {
+			this.revision = revision.substring(DELETED_PREFIX.length());
+			isDeleted = true;
+		} else {
+			this.revision = revision;
+			isDeleted = false;
+		}
 	}
 
 	/**

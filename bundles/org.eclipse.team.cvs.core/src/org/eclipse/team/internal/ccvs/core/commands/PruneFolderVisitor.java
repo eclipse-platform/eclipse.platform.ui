@@ -30,8 +30,8 @@ public class PruneFolderVisitor implements ICVSResourceVisitor {
 		folder.acceptChildren(this);
 		if (folder.getFiles().length == 0 && 
 			folder.getFolders().length == 0) {
-			folder.unmanage();
 			folder.delete();
+			folder.unmanage();
 		}
 	}
 }

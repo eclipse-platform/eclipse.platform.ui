@@ -89,8 +89,8 @@ class Add extends Command {
 	}
 	
 	/**
-	 * If we were successful in adding, then acctually managed
-	 * the folders on disk
+	 * If the add succeeded then folders have to be initialized with the 
+	 * sync info
 	 */
 	protected void finished(boolean succsess) throws CVSException {
 				
@@ -105,15 +105,17 @@ class Add extends Command {
 				
 		for (int i=0; i<mWorkResources.length; i++) {
 			if (mWorkResources[i].isFolder()) {
+				FolderSyncInfo newFolderInfo = new FolderSyncInfo();
 				
 				mFolder = (ICVSFolder) mWorkResources[i];
-				
 				FolderSyncInfo folderInfo = mFolder.getParent().getFolderSyncInfo();
 				
-				folderInfo.setRepository(folderInfo.getRepository() + 
+				newFolderInfo.setRepository(folderInfo.getRepository() + 
 										Client.SERVER_SEPARATOR + mFolder.getName());
+				newFolderInfo.setRoot(folderInfo.getRoot());
+				newFolderInfo.setTag(folderInfo.getTag());
 				
-				mFolder.setFolderSyncInfo(folderInfo);				
+				mFolder.setFolderSyncInfo(newFolderInfo);				
 			}
 		}
 

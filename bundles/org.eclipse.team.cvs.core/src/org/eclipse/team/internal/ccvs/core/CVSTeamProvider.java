@@ -44,7 +44,9 @@ import org.eclipse.team.internal.ccvs.core.resources.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSResourceVisitor;
+import org.eclipse.team.internal.ccvs.core.resources.LocalFile;
 import org.eclipse.team.internal.ccvs.core.resources.LocalFolder;
+import org.eclipse.team.internal.ccvs.core.resources.LocalResource;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteResource;
@@ -719,31 +721,27 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	 */
 	public boolean hasRemote(IResource resource) {
 		try {
-			// This assumes that all projects associated with a provider exists remotely
-			// which is the case presently
-			if (resource.equals(project))
-				return isManaged(resource);
-				
-			ICVSResource child = getChild(resource);
-			if(child.isManaged()) {
-				if(child.isFolder()) { 
-					return true;
+			LocalResource cvsResource;
+			int type = resource.getType();
+			if(type!=IResource.FILE) {
+				cvsResource = new LocalFolder(resource.getLocation().toFile());
+				if(type==IResource.PROJECT) {
+					return ((ICVSFolder)cvsResource).isCVSFolder();
 				} else {
-					ResourceSyncInfo info = child.getSyncInfo();					
-					if(info.getRevision().equals("0")) {
-						return false;
-					} else {
-						return true;
-					}
+					return cvsResource.isManaged();
 				}
-			}
-			return false;					
-		} catch (TeamException e) {
-			// Shouldn't have got an exception. Since we did, log it and return false
-			CVSProviderPlugin.log(e);
+			} else {
+				cvsResource = new LocalFile(resource.getLocation().toFile());
+				ResourceSyncInfo info = cvsResource.getSyncInfo();
+				if(info!=null) {
+					return !info.getRevision().equals("0");
+				} else {
+					return false;
+				}
+			}					
+		} catch(CVSException e) {
 			return false;
 		}
-		
 	}
 	
 	/**

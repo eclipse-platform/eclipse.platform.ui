@@ -239,6 +239,10 @@ public class RemoteFolderTreeBuilder {
 								changedFiles.add(filename);
 								recordDelta(new Path(filename), ADDED);
 								break;
+					case 'R' :
+								changedFiles.add(filename);
+								recordDelta(new Path(filename), UNKNOWN);
+								break;
 					case 'U' : // fall through
 					case 'C' : 
 								changedFiles.add(filename);

@@ -79,6 +79,8 @@ abstract class Command implements ICommand {
 			monitor.beginTask(Policy.bind("Command.server"), 100);			
 			Policy.checkCanceled(monitor);
 			
+			// Ensure that the commands run with the latest contents of the
+			// CVS subdirectory sync files and not the cached values.
 			Synchronizer.getInstance().reload(mRoot, monitor);
 			
 			// Send the options to the server (the command itself has to care
@@ -107,13 +109,14 @@ abstract class Command implements ICommand {
 			}
 			// Finished adds last 10% of work.
 			finished(true);
-					
+								
+			monitor.worked(10);
+		} finally {
+			
 			// This will automatically persist any changes that were made to the
 			// sync info while running a command.
 			Synchronizer.getInstance().save();
-
-			monitor.worked(10);
-		} finally {
+			
 			monitor.done();
 		}
 

@@ -52,11 +52,9 @@ class Removed extends ResponseHandler {
 
 		Assert.isTrue(mFile.exists() && mFile.isManaged());
 		
-		// "unmanage" the folder and delete it ...
-		mFile.unmanage();
+		// delete then unmanage the file
 		mFile.delete();
-
+		mFile.unmanage();
 	}
-
 }
 

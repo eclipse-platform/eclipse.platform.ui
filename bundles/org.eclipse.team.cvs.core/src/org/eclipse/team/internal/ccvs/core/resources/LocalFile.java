@@ -271,8 +271,9 @@ public class LocalFile extends LocalResource implements ICVSFile {
 		if (file.exists()) {
 			file.delete();
 		}
-	
-		boolean success;
+		if (file.exists()) {
+			file.delete();
+		}		boolean success;
 		
 		success = ioResource.renameTo(file.getFile());
 		
@@ -291,5 +292,11 @@ public class LocalFile extends LocalResource implements ICVSFile {
 	public String getRemoteLocation(ICVSFolder stopSearching) throws CVSException {
 		return getParent().getRemoteLocation(stopSearching) + SEPARATOR + getName();
 	}	
+	/*
+	 * @see ICVSResource#unmanage()
+	 */
+	public void unmanage() throws CVSException {
+		Synchronizer.getInstance().deleteResourceSync(ioResource);
+	}
 }
 
