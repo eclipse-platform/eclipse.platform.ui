@@ -620,6 +620,19 @@ public void testGetContents2() throws IOException {
 		fail("3.0");
 	} catch (CoreException e) {
 	}
+	content = new InputStream() {
+		public int read() throws IOException {
+			throw new IOException();
+		}
+	};
+	try {
+		target.setContents(content, IResource.NONE, getMonitor());
+		fail("4.1");
+	} catch (CoreException e) {
+	}
+	assertExistsInWorkspace("4.2", target);
+	assertExistsInFileSystem("4.3", target);
+
 }
 
 /**
