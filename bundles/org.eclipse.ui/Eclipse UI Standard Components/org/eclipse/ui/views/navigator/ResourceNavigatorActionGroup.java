@@ -9,6 +9,7 @@ import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.actions.*;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
@@ -32,6 +33,8 @@ public class ResourceNavigatorActionGroup extends ActionGroup {
 	private AddBookmarkAction addBookmarkAction;
 	private NewWizardAction newWizardAction;
 	private PropertyDialogAction propertyDialogAction;
+	private ImportResourcesAction importAction;
+	private ExportResourcesAction exportAction;
 	
 	private GotoActionGroup gotoGroup;
 	private OpenActionGroup openGroup;
@@ -47,10 +50,13 @@ public class ResourceNavigatorActionGroup extends ActionGroup {
 
 	private void makeActions() {
 		Shell shell = navigator.getSite().getShell();
+		IWorkbench workbench = navigator.getSite().getWorkbenchWindow().getWorkbench();
 		addBookmarkAction = new AddBookmarkAction(shell);
 		newWizardAction = new NewWizardAction();
 		propertyDialogAction =
 			new PropertyDialogAction(shell, navigator.getResourceViewer());
+		importAction = new ImportResourcesAction(workbench);
+		exportAction = new ExportResourcesAction(workbench);
 	}
 	
 	private void makeSubGroups() {
@@ -79,6 +85,7 @@ public class ResourceNavigatorActionGroup extends ActionGroup {
 		boolean onlyFilesSelected =
 			!selection.isEmpty()
 				&& ResourceSelectionUtil.allResourcesAreOfType(selection, IResource.FILE);
+		
 
 		MenuManager newMenu =
 			new MenuManager(ResourceNavigatorMessages.getString("ResourceNavigator.new")); //$NON-NLS-1$
@@ -92,6 +99,12 @@ public class ResourceNavigatorActionGroup extends ActionGroup {
 		refactorGroup.fillContextMenu(menu);
 		menu.add(new Separator());
 		
+		menu.add(importAction);
+		menu.add(exportAction);
+		importAction.setSelection(selection);
+		exportAction.setSelection(selection);
+		menu.add(new Separator());
+				
 		if (onlyFilesSelected) {
 			addBookmarkAction.selectionChanged(selection);
 			menu.add(addBookmarkAction);
@@ -152,6 +165,7 @@ public class ResourceNavigatorActionGroup extends ActionGroup {
 		openGroup.runDefaultAction(selection);
 	}
 	
+
 	/**
  	 * Handles a key pressed event by invoking the appropriate action,
  	 * delegating to the subgroups as necessary.

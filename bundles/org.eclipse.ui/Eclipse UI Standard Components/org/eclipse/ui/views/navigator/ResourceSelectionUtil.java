@@ -68,7 +68,7 @@ public static IStructuredSelection allResources(IStructuredSelection selection, 
 			Object resource = ((IAdaptable) next).getAdapter(IResource.class);
 			if(resource == null)
 				return null;
-			else
+			else if (resourceIsType((IResource)resource, resourceMask))
 				result.add(resource);
 		}
 		else	
