@@ -1217,6 +1217,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 						public void widgetSelected(SelectionEvent e) {
 							fCenterButton.setVisible(false);
 							copyDiffRightToLeft();
+							setCurrentDiff(fCurrentDiff, true);
 						}
 					}
 				);
