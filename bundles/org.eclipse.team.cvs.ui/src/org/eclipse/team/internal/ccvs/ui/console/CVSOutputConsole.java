@@ -91,7 +91,7 @@ public class CVSOutputConsole extends MessageConsole implements IConsoleListener
 		document = new ConsoleDocument();
 		CVSProviderPlugin.getPlugin().setConsoleListener(CVSOutputConsole.this);
 		CVSUIPlugin.getPlugin().getPreferenceStore().addPropertyChangeListener(CVSOutputConsole.this);
-		showConsole();
+		showConsole(false);
 	}
 	
 	/* (non-Javadoc)
@@ -166,13 +166,15 @@ public class CVSOutputConsole extends MessageConsole implements IConsoleListener
 		}
 	}
 	
-	private void showConsole() {
+	private void showConsole(boolean show) {
 		if(showOnMessage) {
 			IConsoleManager manager = ConsolePlugin.getDefault().getConsoleManager();
 			if(! visible) {
 				manager.addConsoles(new IConsole[] {this});
 			}
-			manager.showConsoleView(this);
+			if (show) {
+				manager.showConsoleView(this);
+			}
 		} 
 	}
 	
@@ -310,7 +312,7 @@ public class CVSOutputConsole extends MessageConsole implements IConsoleListener
 				showOnMessage = ((Boolean)value).booleanValue();
 			}
 			if(showOnMessage) {
-				showConsole();
+				showConsole(true);
 			} else {
 				IConsoleManager manager = ConsolePlugin.getDefault().getConsoleManager();
 				manager.removeConsoles(new IConsole[] {this});
