@@ -363,9 +363,9 @@ class EditTemplateDialog extends StatusDialog {
 		});
 
 	 	viewer.prependVerifyKeyListener(new VerifyKeyListener() {
-		public void verifyKey(VerifyEvent event) {
-			handleVerifyKeyPressed(event);
-		}
+			public void verifyKey(VerifyEvent event) {
+				handleVerifyKeyPressed(event);
+			}
 		});
 		
 		return viewer;

@@ -57,6 +57,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.jface.window.Window;
@@ -65,9 +66,9 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
-import org.eclipse.jface.text.templates.TemplateContextType;
 import org.eclipse.jface.text.templates.ContextTypeRegistry;
 import org.eclipse.jface.text.templates.Template;
+import org.eclipse.jface.text.templates.TemplateContextType;
 import org.eclipse.jface.text.templates.persistence.TemplatePersistenceData;
 import org.eclipse.jface.text.templates.persistence.TemplateReaderWriter;
 import org.eclipse.jface.text.templates.persistence.TemplateStore;
@@ -466,8 +467,6 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		
 		SourceViewer viewer= createViewer(parent);
 		viewer.setEditable(false);
-		IDocument document= new Document();
-		viewer.setDocument(document);
 	
 		Control control= viewer.getControl();
 		data= new GridData(GridData.FILL_BOTH);
@@ -490,6 +489,8 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		SourceViewer viewer= new SourceViewer(parent, null, null, false, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 		SourceViewerConfiguration configuration= new SourceViewerConfiguration();
 		viewer.configure(configuration);
+		IDocument document= new Document();
+		viewer.setDocument(document);
 		return viewer;
 	}
 
@@ -503,6 +504,15 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 	}
 	
 	private void selectionChanged1() {		
+		updateViewerInput();
+		
+		updateButtons();
+	}
+	
+	/**
+	 * Updates the pattern viewer.
+	 */
+	protected void updateViewerInput() {
 		IStructuredSelection selection= (IStructuredSelection) fTableViewer.getSelection();
 
 		if (selection.size() == 1) {
@@ -512,11 +522,12 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		} else {		
 			fPatternViewer.getDocument().set(""); //$NON-NLS-1$
 		}
-		
-		updateButtons();
 	}
-	
-	private void updateButtons() {
+
+	/**
+	 * Updates the buttons.
+	 */
+	protected void updateButtons() {
 		IStructuredSelection selection= (IStructuredSelection) fTableViewer.getSelection();
 		int selectionCount= selection.size();
 		int itemCount= fTableViewer.getTable().getItemCount();
@@ -544,7 +555,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		if (it.hasNext()) {
 			template.setContextTypeId(((TemplateContextType) it.next()).getId());
 			
-			EditTemplateDialog dialog= createTemplateEditDialog(template, false, true);
+			Dialog dialog= createTemplateEditDialog(template, false, true);
 			if (dialog.open() == Window.OK) {
 				TemplatePersistenceData data= new TemplatePersistenceData(template, true);
 				fTemplateStore.add(data);
@@ -564,7 +575,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 	 * @param isNameModifiable whether the template name may be modified
 	 * @return an <code>EditTemplateDialog</code> which will be opened.
 	 */
-	protected EditTemplateDialog createTemplateEditDialog(Template template, boolean edit, boolean isNameModifiable) {
+	protected Dialog createTemplateEditDialog(Template template, boolean edit, boolean isNameModifiable) {
 		return new EditTemplateDialog(getShell(), template, edit, isNameModifiable, fContextTypeRegistry);
 	}
 
@@ -582,7 +593,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 	private void edit(TemplatePersistenceData data) {
 		Template oldTemplate= data.getTemplate();
 		Template newTemplate= new Template(oldTemplate);
-		EditTemplateDialog dialog= createTemplateEditDialog(newTemplate, true, true);
+		Dialog dialog= createTemplateEditDialog(newTemplate, true, true);
 		if (dialog.open() == Window.OK) {
 
 			if (!newTemplate.getName().equals(oldTemplate.getName()) &&
@@ -799,5 +810,12 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		String message= TemplateMessages.getString("TemplatePreferencePage.error.write.message"); //$NON-NLS-1$
 		MessageDialog.openError(getShell(), title, message);		
 	}
-		
+	
+	protected SourceViewer getViewer() {
+		return fPatternViewer;
+	}
+	
+	protected TableViewer getTableViewer() {
+		return fTableViewer;
+	}
 }
