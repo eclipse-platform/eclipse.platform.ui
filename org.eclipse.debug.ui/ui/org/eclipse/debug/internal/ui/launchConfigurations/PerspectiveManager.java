@@ -21,14 +21,16 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.WorkbenchException;
 
 /**
  * The perspective manager manages the 'perspective' settings
  * defined by lanuch configurations. Specifically it: <ul>
  * <li>changes perspectives as launches are registered</li>
- * <li>(will) change perspective when a thread suspends</li>
+ * <li>change perspective when a thread suspends</li>
  * <li>(will) open the console when there is program output</li>
  * </ul>
  * 
@@ -159,6 +161,35 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventListener 
 	}
 	
 	/**
+	 * Shows the debug view in the current perspective
+	 * 
+	 * [Issue: finding a view is expensive] 
+	 */
+	protected void showDebugView() {
+		IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();
+		if (window != null) {
+			final IWorkbenchPage page = window.getActivePage();
+			if (page != null) {
+				async(new Runnable() {
+					public void run() {
+						try {
+							IWorkbenchPart view = page.showView(IDebugUIConstants.ID_DEBUG_VIEW);
+							if (view != null) {
+								page.bringToTop(view);
+							}
+						} catch (PartInitException e) {
+							DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(),
+							"Error", 
+							"Unable to show Debug View.",
+							e.getStatus());
+						}
+					}
+				});
+			}
+		}
+	}	
+	
+	/**
 	 * Returns a page in the current workbench window with the
 	 * given identifier, or <code>null</code> if none.
 	 * 
@@ -217,6 +248,11 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventListener 
 							perspectiveId = config.getAttribute(IDebugUIConstants.ATTR_TARGET_SUSPEND_PERSPECTIVE, null);
 						} catch (CoreException e) {
 							switchFailed(e.getStatus(), config.getName());
+						}
+						if (perspectiveId != null) {
+							switchToPerspective(perspectiveId);
+						} else {
+							showDebugView();
 						}
 					}
 				}
