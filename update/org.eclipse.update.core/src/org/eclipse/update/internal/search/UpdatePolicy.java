@@ -186,6 +186,11 @@ public class UpdatePolicy {
 		assertNotNull(ATT_PATTERN, pattern);
 		assertNotNull(ATT_URL, urlName);
 		
+		// empty url means feature is not updateable
+		if (urlName.trim().length() == 0) {
+			addEntry(pattern, null);
+			return;
+		}
 		String decodedValue = URLDecoder.decode(urlName);
 		try {
 			URL url = new URL(decodedValue);
