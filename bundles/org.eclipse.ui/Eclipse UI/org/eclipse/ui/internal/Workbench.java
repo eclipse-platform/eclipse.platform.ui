@@ -243,20 +243,25 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 			}
 		}
 		
-		if (newUpdates) {		
-			Shell shell = null;
-			IWorkbenchWindow window = getActiveWorkbenchWindow();
-			if (window != null) // should never be null
-				shell = window.getShell();
-			if (MessageDialog.openQuestion(
-					shell, 
-					WorkbenchMessages.getString("Updates.title"), //$NON-NLS-1$
-					WorkbenchMessages.getString("Updates.message"))) {	 //$NON-NLS-1$
-				try {
-					SiteManager.handleNewChanges();
-				} catch (CoreException ex) {
-					WorkbenchPlugin.log("Problem opening update manager", ex.getStatus()); //$NON-NLS-1$
-				}
+		if (newUpdates)		
+			showUpdatesDialog();
+	}
+	/**
+	 * Show the new updates dialog
+	 */
+	private void showUpdatesDialog() {
+		Shell shell = null;
+		IWorkbenchWindow window = getActiveWorkbenchWindow();
+		if (window != null) // should never be null
+			shell = window.getShell();
+		if (MessageDialog.openQuestion(
+				shell, 
+				WorkbenchMessages.getString("Updates.title"), //$NON-NLS-1$
+				WorkbenchMessages.getString("Updates.message"))) {	 //$NON-NLS-1$
+			try {
+				SiteManager.handleNewChanges();
+			} catch (CoreException ex) {
+				WorkbenchPlugin.log("Problem opening update manager", ex.getStatus()); //$NON-NLS-1$
 			}
 		}
 	}
