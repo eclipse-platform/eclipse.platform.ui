@@ -7,7 +7,6 @@
     <classpathentry kind="src" path="/org.eclipse.core.resources"/>
     <classpathentry kind="src" path="/org.eclipse.update.core"/>
     <classpathentry exported="true" kind="src" path="/org.eclipse.update.core.linux"/>
-    <classpathentry exported="true" kind="src" path="/org.eclipse.update.core.win32"/>
     <classpathentry kind="src" path="/org.eclipse.tomcat"/>
     <classpathentry kind="src" path="/org.eclipse.help.appserver"/>
     <classpathentry kind="src" path="/org.eclipse.core.boot"/>
