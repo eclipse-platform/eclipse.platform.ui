@@ -247,9 +247,10 @@ public class FastViewBar implements IWindowTrim {
 			}
 		};
 		CellLayout controlLayout = new CellLayout(0)
-			.setMargins(0,0)
+			.setMargins(0, 3)
 			.setDefaultRow(Row.growing())
-			.setDefaultColumn(Row.fixed());
+			.setDefaultColumn(Row.fixed())
+			.setColumn(newSide == SWT.BOTTOM ? 1 : 0, Row.growing());
 		control.setLayout(controlLayout);
 		
 		// When we're on the bottom, add a drag handle. Otherwise, it's impossible to drag the fast view

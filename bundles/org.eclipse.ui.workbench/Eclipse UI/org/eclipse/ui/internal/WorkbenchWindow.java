@@ -2359,4 +2359,29 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
     public ProgressRegion getProgressRegion() {
         return progressRegion;
     }
+
+    /**
+     * Add the argument perspective bar control to the argument side of this
+     * window's trim.
+     * 
+     * @param control
+     *            the perspective bar's control
+     * @param side
+     *            one of <code>SWT.LEFT</code>,<code>SWT.BOTTOM</code>,
+     *            or <code>SWT.RIGHT</code> (only LEFT has been tested)
+	 * @since 3.0
+     */
+    public void addPerspectiveBarToTrim(Control control, int side) {
+        Control reference = null;
+
+        // the perspective bar should go before the fast view bar they're on the
+        // same side and before the status line if on the bottom
+        if (side == fastViewBar.getSide())
+            reference = fastViewBar.getControl();
+        else if(side == SWT.BOTTOM && getWindowConfigurer().getShowStatusLine())
+            reference = getStatusLineManager().getControl();	
+
+		control.setLayoutData(new TrimLayoutData(false, SWT.DEFAULT, SWT.DEFAULT));
+		defaultLayout.addTrim(control, side, reference);
+    }
 }
