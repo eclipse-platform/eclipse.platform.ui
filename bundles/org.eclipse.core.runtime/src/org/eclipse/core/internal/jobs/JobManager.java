@@ -414,8 +414,8 @@ public class JobManager implements IJobManager {
 		//notify listeners outside sync block
 		if (notify)
 			jobListeners.done((Job) job, result);
-		//finally reschedule the job if requested
-		if (rescheduleDelay > InternalJob.T_NONE)
+		//finally reschedule the job if requested and we are still active
+		if (active && rescheduleDelay > InternalJob.T_NONE)
 			job.schedule(rescheduleDelay);
 	}
 
