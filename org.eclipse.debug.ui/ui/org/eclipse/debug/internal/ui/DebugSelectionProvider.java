@@ -20,7 +20,10 @@ import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * Provides debug view selection management/notification for
- * a debug view in a specific workbench page.
+ * a debug view in a specific workbench page. This selection
+ * provider sheilds clients from a debug view openning and closing,
+ * and still provides selection notification/information even
+ * when the debug view is not the active part.
  */
 public class DebugSelectionProvider implements ISelectionProvider, IPartListener, ISelectionChangedListener {
 
