@@ -141,8 +141,7 @@
             class="org.eclipse.debug.internal.ui.actions.StepReturnActionDelegate"
             menubarPath="org.eclipse.ui.run/stepReturnGroup"
             id="org.eclipse.debug.internal.ui.actions.StepReturnActionDelegate"
-            enablesFor="1">
-            <selection class="org.eclipse.debug.core.model.IStep"/>            
+            definitionId= "org.eclipse.debug.internal.ui.actions.StepReturnActionDelegate">            
       </action>
       <action
             label="%StepOverAction.label"
@@ -153,8 +152,7 @@
             class="org.eclipse.debug.internal.ui.actions.StepOverActionDelegate"
             menubarPath="org.eclipse.ui.run/stepOverGroup"
             id="org.eclipse.debug.internal.ui.actions.StepOverActionDelegate"
-            enablesFor="1">
-            <selection class="org.eclipse.debug.core.model.IStep"/>
+            definitionId="org.eclipse.debug.internal.ui.actions.StepOverActionDelegate">
       </action>
       <action
             label="%StepIntoAction.label"
@@ -165,8 +163,7 @@
             class="org.eclipse.debug.internal.ui.actions.StepIntoActionDelegate"
             menubarPath="org.eclipse.ui.run/stepIntoGroup"
             id="org.eclipse.debug.internal.ui.actions.StepIntoActionDelegate"
-            enablesFor="1">
-            <selection class="org.eclipse.debug.core.model.IStep"/>            
+            definitionId="org.eclipse.debug.internal.ui.actions.StepIntoActionDelegate">
       </action>
       <action
             label="%StepWithFiltersAction.label"
@@ -177,8 +174,7 @@
             class="org.eclipse.debug.internal.ui.actions.StepWithFiltersActionDelegate"
             menubarPath="org.eclipse.ui.run/stepIntoGroup"
             id="org.eclipse.debug.internal.ui.actions.StepWithFiltersActionDelegate"
-            enablesFor="1">
-            <selection class="org.eclipse.debug.core.model.IStep"/>            
+            definitionId="org.eclipse.debug.internal.ui.actions.StepWithFiltersActionDelegate">
       </action>      
       <action
             label="%TerminateAction.label"
@@ -188,8 +184,8 @@
             helpContextId="terminate_action_context"
             class="org.eclipse.debug.internal.ui.actions.TerminateActionDelegate"
             menubarPath="org.eclipse.ui.run/stepGroup"
-            id="org.eclipse.debug.internal.ui.actions.TerminateActionDelegate">
-            <selection class="org.eclipse.debug.core.model.ITerminate"/>            
+            id="org.eclipse.debug.internal.ui.actions.TerminateActionDelegate"
+            definitionId="org.eclipse.debug.internal.ui.actions.TerminateActionDelegate">
       </action>
       <action
             label="%SuspendAction.label"
@@ -200,8 +196,7 @@
             class="org.eclipse.debug.internal.ui.actions.SuspendActionDelegate"
             menubarPath="org.eclipse.ui.run/stepGroup"
             id="org.eclipse.debug.internal.ui.actions.SuspendActionDelegate"
-            enablesFor="1">
-			<selection class="org.eclipse.debug.core.model.ISuspendResume"/>               
+            definitionId="org.eclipse.debug.internal.ui.actions.SuspendActionDelegate">            
       </action>
       <action
             label="%ResumeAction.label"
@@ -212,8 +207,7 @@
             class="org.eclipse.debug.internal.ui.actions.ResumeActionDelegate"
             menubarPath="org.eclipse.ui.run/stepGroup"
             id="org.eclipse.debug.internal.ui.actions.ResumeActionDelegate"
-			enablesFor= "1">
-            <selection class="org.eclipse.debug.core.model.ISuspendResume"/> 
+            definitionId="org.eclipse.debug.internal.ui.actions.ResumeActionDelegate">
       </action>
    </actionSet>
 </extension>
@@ -906,29 +900,59 @@
 	<actionDefinition
 		id="org.eclipse.debug.internal.ui.actions.StepWithFiltersActionDelegate"
 		name= "%ActionDefinition.stepWithFilters.name"
-		description="%ActionDefinition.stepWithFilters.description"
-	/>
+		description="%ActionDefinition.stepWithFilters.description"/>
 	<actionDefinition
 		id="org.eclipse.debug.internal.ui.actions.StepIntoActionDelegate"
 		name= "%ActionDefinition.stepInto.name"
-		description="%ActionDefinition.stepInto.description"
-	/>
+		description="%ActionDefinition.stepInto.description"/>
 	<actionDefinition
 		id="org.eclipse.debug.internal.ui.actions.StepOverActionDelegate"
 		name= "%ActionDefinition.stepOver.name"
-		description="%ActionDefinition.stepOver.description"
-	/>
+		description="%ActionDefinition.stepOver.description"/>
 	<actionDefinition
 		id="org.eclipse.debug.internal.ui.actions.StepReturnActionDelegate"
 		name= "%ActionDefinition.stepReturn.name"
-		description="%ActionDefinition.stepReturn.description"
-	/>
+		description="%ActionDefinition.stepReturn.description"/>
+	<actionDefinition
+		id="org.eclipse.debug.internal.ui.actions.ResumeActionDelegate"
+		name= "%ActionDefinition.resume.name"
+		description="%ActionDefinition.resume.description"/>
+	<actionDefinition
+		id="org.eclipse.debug.internal.ui.actions.TerminateActionDelegate"
+		name= "%ActionDefinition.terminate.name"
+		description="%ActionDefinition.terminate.description"/>
+	<actionDefinition
+		id="org.eclipse.debug.internal.ui.actions.SuspendActionDelegate"
+		name= "%ActionDefinition.suspend.name"
+		description="%ActionDefinition.suspend.description"/>
+	<actionDefinition
+		id="org.eclipse.debug.internal.ui.actions.OpenRunConfigurations"
+		name= "%ActionDefinition.openRun.name"
+		description="%ActionDefinition.openRun.description"/>
+    <actionDefinition
+		id="org.eclipse.debug.internal.ui.actions.DebugLastAction"
+		name= "%ActionDefinition.debugLast.name"
+		description="%ActionDefinition.debugLast.description"/>
+    <actionDefinition
+		id="org.eclipse.debug.internal.ui.actions.RunLastAction"
+		name= "%ActionDefinition.runLast.name"
+		description="%ActionDefinition.runLast.description"/>  
+    <actionDefinition
+		id="org.eclipse.debug.internal.ui.actions.OpenDebugConfigurations"
+		name= "%ActionDefinition.openDebug.name"
+		description="%ActionDefinition.openDebug.description"/>
 </extension>
 <extension point="org.eclipse.ui.acceleratorSets">	
 	<acceleratorSet
 		scopeId="org.eclipse.ui.globalScope"
 		configurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-
+		<accelerator key="F8" id="org.eclipse.debug.internal.ui.actions.ResumeActionDelegate" />
+		<accelerator key="" id="org.eclipse.debug.internal.ui.actions.SuspendActionDelegate" />
+		<accelerator key="" id="org.eclipse.debug.internal.ui.actions.TerminateActionDelegate" />
+		<accelerator key="Ctrl+F11" id="org.eclipse.debug.internal.ui.actions.RunLastAction" />
+		<accelerator key="F11" id="org.eclipse.debug.internal.ui.actions.DebugLastAction" />
+		<accelerator key="" id="org.eclipse.debug.internal.ui.actions.OpenRunConfigurations" />
+		<accelerator key="" id="org.eclipse.debug.internal.ui.actions.OpenDebugConfigurations" />
 		<!-- step actions -->
 		<accelerator key="Shift+F5" id="org.eclipse.debug.internal.ui.actions.StepWithFiltersActionDelegate" />
 		<accelerator key="F5" id="org.eclipse.debug.internal.ui.actions.StepIntoActionDelegate" />
