@@ -4,6 +4,7 @@
  */
 package org.eclipse.search.internal.ui;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IWorkspace;
@@ -81,11 +82,12 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 	
 	private IWorkspace fWorkspace;
 	private ISearchPage fCurrentPage;
+	private int fCurrentIndex;
 	private ISelection fSelection;
 	private IEditorPart fEditorPart;
 	private List fDescriptors;
 	private Point fMinSize;
-	private ScopePart fScopePart;
+	private ScopePart[] fScopeParts;
 
 	public SearchDialog(Shell shell, IWorkspace workspace, ISelection selection, IEditorPart editor) {
 		super(shell);
@@ -132,6 +134,7 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 
 	protected Control createPageArea(Composite parent) {
 		int numPages= fDescriptors.size();
+		fScopeParts= new ScopePart[numPages];
 		
 		if (numPages == 0) {
 			Label label= new Label(parent, SWT.CENTER | SWT.WRAP);
@@ -139,26 +142,24 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 			return label;
 		}
 		
-		final int pageIndex= getPreferredPageIndex();
-		boolean showScope= getDescriptorAt(pageIndex).showScopeSection();
+		fCurrentIndex= getPreferredPageIndex();
 
 		BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
 			public void run() {
-				fCurrentPage= getDescriptorAt(pageIndex).createObject();
+				fCurrentPage= getDescriptorAt(fCurrentIndex).createObject();
 			}
 		});
 		
 		fCurrentPage.setContainer(this);
-		
-
-		// Create Search scope
-		fScopePart= new ScopePart(this);
 
 		if (numPages == 1) {
-			Control control= getControl(fCurrentPage, parent);
+			Control control= getControl(fCurrentPage, parent, 0);
 			if (control instanceof Composite) {
-				fScopePart.createPart((Composite)control);
-				fScopePart.setVisible(showScope);
+				boolean showScope= getDescriptorAt(0).showScopeSection();
+				if (showScope) {
+					fScopeParts[0].createPart((Composite)control);
+					fScopeParts[0].setVisible(showScope);
+				}
 			}
 			return control;
 		}
@@ -175,6 +176,7 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 
 			for (int i= 0; i < numPages; i++) {			
 				SearchPageDescriptor descriptor= (SearchPageDescriptor)fDescriptors.get(i);
+
 				final CTabItem item= new CTabItem(folder, SWT.NONE);
 				item.setText(descriptor.getLabel());
 				item.addDisposeListener(new DisposeListener() {
@@ -188,8 +190,8 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 				if (imageDesc != null)
 					item.setImage(imageDesc.createImage());
 				item.setData(descriptor);
-				if (i == pageIndex) {
-					item.setControl(getControl(fCurrentPage, folder));
+				if (i == fCurrentIndex) {
+					item.setControl(getControl(fCurrentPage, folder, i));
 					item.setData(fCurrentPage);
 				}
 			}
@@ -200,11 +202,7 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 				}
 			});
 		
-			folder.setSelection(pageIndex);
-			
-			// Search scope
-			fScopePart.createPart(border);
-			fScopePart.setVisible(showScope);
+			folder.setSelection(fCurrentIndex);
 			
 			return border;
 		}	
@@ -264,14 +262,13 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 			ISearchPage page= (ISearchPage)item.getData();
 			page.setContainer(this);
 			
-			Control newControl= getControl(page, (Composite)event.widget);
+			Control newControl= getControl(page, (Composite)event.widget, item.getParent().getSelectionIndex());
 			item.setControl(newControl);
 		}
 		if (item.getData() instanceof ISearchPage) {
-			boolean showScope= getDescriptorAt(item.getParent().getSelectionIndex()).showScopeSection();
-			fScopePart.setVisible(showScope);
-			resizeDialogIfNeeded(item.getControl());
 			fCurrentPage= (ISearchPage)item.getData();
+			fCurrentIndex= item.getParent().getSelectionIndex();
+			resizeDialogIfNeeded(item.getControl());
 			fCurrentPage.setVisible(true);
 		}
 	}
@@ -310,21 +307,30 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 	 * Implements method from ISearchPageContainer
 	 */	
 	public int getSelectedScope() {
-		return fScopePart.getSelectedScope();
+		if (fScopeParts[fCurrentIndex] == null)
+			// safe code - should not happen
+			return ScopePart.WORKSPACE_SCOPE;
+		else
+			return fScopeParts[fCurrentIndex].getSelectedScope();
 	}
 
 	/*
 	 * Implements method from ISearchPageContainer
 	 */
 	public IWorkingSet[] getSelectedWorkingSets() {
-		return fScopePart.getSelectedWorkingSets();
+		if (fScopeParts[fCurrentIndex] == null)
+			// safe code - should not happen
+			return null;
+		else		
+			return fScopeParts[fCurrentIndex].getSelectedWorkingSets();
 	}
 
 	/*
 	 * Implements method from ISearchPageContainer
 	 */
 	public void setSelectedScope(int scope) {
-		fScopePart.setSelectedScope(scope);
+		if (fScopeParts[fCurrentIndex] != null)
+			fScopeParts[fCurrentIndex].setSelectedScope(scope);
 	}
 
 	/*
@@ -338,14 +344,36 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 	 * Implements method from ISearchPageContainer
 	 */
 	public void setSelectedWorkingSets(IWorkingSet[] workingSets) {
-		fScopePart.setSelectedWorkingSets(workingSets);
+		if (fScopeParts[fCurrentIndex] != null)
+			fScopeParts[fCurrentIndex].setSelectedWorkingSets(workingSets);
 	}
 
-	private Control getControl(ISearchPage page, Composite parent) {
+	private Control getControl(ISearchPage page, Composite parent, int index) {
 		if (page.getControl() == null) {
-			page.createControl(parent);
+			// Page wrapper
+			Composite pageWrapper= new Composite(parent, SWT.NONE);
+			GridLayout layout= new GridLayout();
+			pageWrapper.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL));
+			layout.marginWidth= 0;
+			layout.marginHeight= 0;
+			pageWrapper.setLayout(layout);
+			
+			// The page itself
+			page.createControl(pageWrapper);
+
+			// Search scope
+			boolean showScope= getDescriptorAt(index).showScopeSection();
+			if (showScope) {
+				Composite c= new Composite(pageWrapper, SWT.NONE);
+				layout= new GridLayout();
+				c.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+				c.setLayout(layout);
+				fScopeParts[index]= new ScopePart(this);
+				fScopeParts[index].createPart(c);
+				fScopeParts[index].setVisible(true);
+			}
 		}
-		return page.getControl();
+		return page.getControl().getParent();
 	}
 	
 	private void resizeDialogIfNeeded(Control newControl) {
