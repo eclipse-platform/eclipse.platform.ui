@@ -12,8 +12,7 @@ package org.eclipse.team.internal.ccvs.ui.actions;
 
 import java.util.*;
 
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceVisitor;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.CoreException;
@@ -58,6 +57,9 @@ public abstract class UncommittedChangesDialog extends MappingSelectionDialog {
             return Policy.bind("UncommittedChangesDialog.2"); //$NON-NLS-1$
         } else {
             String label = ResourceMappingResourceDisplayArea.getLabel(mapping);
+            if (mapping.getModelObject() instanceof IFile) {
+                return Policy.bind("UncommittedChangesDialog.4", label); //$NON-NLS-1$
+            }
             return Policy.bind("UncommittedChangesDialog.3", label); //$NON-NLS-1$
         }
     }
@@ -115,4 +117,17 @@ public abstract class UncommittedChangesDialog extends MappingSelectionDialog {
         }
         return false;
     }
+
+
+    public ResourceMapping[] getAllMappings() {
+        return allMappings;
+    }
+    
+    protected boolean includeCancelButton() {
+        if (super.includeCancelButton()) {
+            return getAllMappings().length > 1;
+        }
+        return false;
+    }
+    
 }

@@ -37,6 +37,9 @@ public class ReplaceWithTagAction extends WorkspaceTraversalAction {
         return new UncommittedChangesDialog(shell, Policy.bind("ReplaceWithTagAction.4"), mappings) { //$NON-NLS-1$
             protected String getSingleMappingMessage(ResourceMapping mapping) {
                 String label = ResourceMappingResourceDisplayArea.getLabel(mapping);
+                if (getAllMappings().length == 1) {
+                    return Policy.bind("ReplaceWithTagAction.2", label); //$NON-NLS-1$
+                }
                 return Policy.bind("ReplaceWithTagAction.0", label); //$NON-NLS-1$
             }
 
