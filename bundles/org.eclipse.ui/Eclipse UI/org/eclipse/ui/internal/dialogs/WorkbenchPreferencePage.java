@@ -6,6 +6,7 @@ package org.eclipse.ui.internal.dialogs;
  */
 import org.eclipse.core.resources.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.actions.GlobalBuildAction;
 import org.eclipse.ui.help.*;
 import org.eclipse.ui.internal.*;
 import org.eclipse.ui.part.*;
@@ -430,7 +431,7 @@ public boolean performOk() {
 		// build on all the projects.
 		if (newAutoBuildSetting) {
 			GlobalBuildAction action =
-				new GlobalBuildAction(this.workbench, IncrementalProjectBuilder.AUTO_BUILD);
+				new GlobalBuildAction(this.workbench, getShell(), IncrementalProjectBuilder.AUTO_BUILD);
 			action.doBuild();
 		}
 	}

@@ -21,6 +21,8 @@ import org.eclipse.ui.help.WorkbenchHelp;
  * Workbench global action for building all 
  * contained resources. Handles both full and
  * incremental build.
+ * 
+ * @deprecated Use org.eclipse.ui.actions.GlobalBuildAction instead
  */
 public class GlobalBuildAction extends Action {
 	private int buildType;
