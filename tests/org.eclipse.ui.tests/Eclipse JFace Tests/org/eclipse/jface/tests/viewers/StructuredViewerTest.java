@@ -105,10 +105,10 @@ protected abstract StructuredViewer createViewer(Composite parent);
 		}	
 	}
 	protected void openBrowser() {
-		Display display = Display.getCurrent();
-		if (display != null)
-			display.dispose();
-		fDisplay = new Display();
+		fDisplay = Display.getCurrent();
+		if (fDisplay == null) {
+			fDisplay = new Display();
+		}
 		fShell = new Shell(fDisplay);
 		fShell.setSize(500, 500);
 		fShell.setLayout(new FillLayout());
@@ -153,8 +153,11 @@ public void processEvents() {
 public void tearDown() {
 	processEvents();
 	fViewer = null;
-	fDisplay.dispose();
-	fDisplay = null;
+	if (fShell != null) {
+		fShell.dispose();
+		fShell = null;
+	}
+	// leave the display
 	fRootElement = null;
 }
 	public void testClearSelection() {
