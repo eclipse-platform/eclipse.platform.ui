@@ -86,7 +86,7 @@ function switchTab(nav, newTitle)
      	NavToolbarFrame.document.getElementById("titleText").innerHTML = newTitle;
     else
     	NavToolbarFrame.document.getElementById("titleText").innerHTML = titleArray[nav];
-    	
+       	
 	// show appropriate frame
 	this.currentNavFrame=nav;
  	var iframes = NavFrame.document.body.getElementsByTagName("IFRAME");
@@ -131,14 +131,23 @@ function displayTocFor(topic)
 		NavFrame.toc.location = "toc.jsp?topic="+topic;
 }
 
-function showBookshelf()
+function showBookshelfIcon(show)
 {
+   // show or hide the bookshelf icon on the nav toolbar 
+   // NavToolbarFrame.document.getElementById("iconLayer").style.display = show? "" : "none";
+}
+
+function showBookshelf()
+{ 
+	//showBookshelfIcon(false);
+	
 	switchTab("toc");
 	// load the bookshelf
 	//window.toc.window.location.href = "tocs.jsp";
 	NavFrame.toc.window.location.replace("tocs.jsp");
 	// clear the content page
 	parent.MainFrame.location="home.jsp";
+	setToolbarTitle(" ");
 }
 
 /**
@@ -146,6 +155,8 @@ function showBookshelf()
  */		
 function loadTOC(tocId)
 {
+	//showBookshelfIcon(true);
+	
 	// clear the content page
 	//MainFrame.location="home.jsp?toc="+tocId;
 	

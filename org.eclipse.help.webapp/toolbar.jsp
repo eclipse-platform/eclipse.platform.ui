@@ -113,8 +113,7 @@ BODY {
 		<table width="100%" border="0" cellspacing="0" cellpadding="0" height="100%" style="padding-left:5;">
 			<tr>
 				<td style="font: icon;">
-					<div id="titleText">
-						<%=WebappResources.getString("Content", request)%>
+					<div id="titleText">&nbsp;
 					</div>
 				</td>
 			</tr>

@@ -39,6 +39,7 @@ A {
 	color:WindowText; 
 	height:100%;
 	padding:0px;
+	padding-left:2px;
 	/* this works in ie5.5, but not in ie5.0  */
 	white-space: nowrap;
 }
@@ -95,10 +96,6 @@ document.write(extraStyle);
 
 <% 
 ContentUtil content = new ContentUtil(application, request);
-String bookshelf = WebappResources.getString("Bookshelf", request);
-%>
-	<div id='bookshelf' class='active'><a href='javascript:void 0;' target="MainFrame" onmouseover='window.status="<%=bookshelf%>"'> <nobr> <%=bookshelf%> </nobr> </a></div>
-<%
 Element tocsElement = content.loadTocs();
 if (tocsElement == null) return;
 NodeList tocs = tocsElement.getElementsByTagName("toc");
