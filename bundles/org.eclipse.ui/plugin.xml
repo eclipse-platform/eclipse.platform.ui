@@ -435,6 +435,12 @@
             id="org.eclipse.ui.help.helpSearch">
       </command>
       <command
+            name="%command.dynamicHelp.name"
+            description="%command.dynamicHelp.description"
+            categoryId="org.eclipse.ui.category.help"
+            id="org.eclipse.ui.help.dynamicHelp">
+      </command>      
+      <command
             name="%command.quickStart.name"
             description="%command.quickStart.description"
             categoryId="org.eclipse.ui.category.help"
