@@ -1,6 +1,5 @@
 package org.eclipse.ui.internal.console;
 
-import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.ui.console.ConsolePlugin;
@@ -12,7 +11,7 @@ import org.eclipse.ui.console.IOConsoleOutputStream;
  * @since 3.1
  *
  */
-public class IOConsolePartition implements ITypedRegion {
+public class IOConsolePartition implements IConsolePartition {
 	public static final String OUTPUT_PARTITION_TYPE = ConsolePlugin.getUniqueIdentifier() + ".io_console_output_partition_type"; //$NON-NLS-1$
 	public static final String INPUT_PARTITION_TYPE = ConsolePlugin.getUniqueIdentifier() + ".io_console_input_partition_type"; //$NON-NLS-1$
 

@@ -20,12 +20,12 @@ import org.eclipse.ui.console.IHyperlink;
  */
 public class FollowHyperlinkAction extends Action {
 
-	private IOConsoleViewer viewer;
+	private TextConsoleViewer viewer;
 
     /**
 	 * Constructs a follow link action
 	 */
-	public FollowHyperlinkAction(IOConsoleViewer consoleViewer) {
+	public FollowHyperlinkAction(TextConsoleViewer consoleViewer) {
 	    super(ConsoleMessages.getString("FollowHyperlinkAction.0")); //$NON-NLS-1$
 		setToolTipText(ConsoleMessages.getString("FollowHyperlinkAction.1")); //$NON-NLS-1$
 		this.viewer = consoleViewer;

@@ -5,7 +5,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.console.ConsolePlugin;
-import org.eclipse.ui.console.IOConsole;
+import org.eclipse.ui.console.TextConsole;
 
 /**
  * Toggles console auto-scroll
@@ -15,9 +15,9 @@ import org.eclipse.ui.console.IOConsole;
 public class ScrollLockAction extends Action implements IPropertyChangeListener {
 
 	private IPreferenceStore prefStore = ConsolePlugin.getDefault().getPreferenceStore();
-    private IOConsole fConsole;
+    private TextConsole fConsole;
 	
-	public ScrollLockAction(IOConsole console) {
+	public ScrollLockAction(TextConsole console) {
 		super(ConsoleMessages.getString("ScrollLockAction.0")); //$NON-NLS-1$
 		fConsole = console;
 		

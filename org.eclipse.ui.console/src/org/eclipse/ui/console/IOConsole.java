@@ -19,83 +19,22 @@ import java.util.List;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
-import org.eclipse.jface.text.Document;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.Position;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.ui.WorkbenchEncoding;
-import org.eclipse.ui.internal.console.IOConsoleDocument;
-import org.eclipse.ui.internal.console.IOConsoleHyperlinkPosition;
-import org.eclipse.ui.internal.console.IOConsolePage;
+import org.eclipse.ui.internal.console.ConsoleHyperlinkPosition;
 import org.eclipse.ui.internal.console.IOConsolePartitioner;
-import org.eclipse.ui.part.IPageBookViewPage;
 
 /**
  * A console that displays text, accepts keyboard input from users,
- * provides hyperlinks, and supports regular expression matching.
+ * provides hyperlinks.
  * The console may have multiple output streams connected to it and
  * provides one input stream connected to the keyboard.
- * <p>
- * Pattern match listeners can be registered with a console programmatically
- * or via the <code>org.eclipse.ui.console.consolePatternMatchListeners</code>
- * extension point. Listeners are notified of matches in the console.
- * </p>
  * <p>
  * Clients may instantiate and subclass this class.
  * </p>
  * @since 3.1
- *
  */
-public class IOConsole extends AbstractConsole {
-    	
-	/**
-	 * Property constant indicating the font of this console has changed. 
-	 */
-	public static final String P_FONT = ConsolePlugin.getUniqueIdentifier() + "IOConsole.P_FONT"; //$NON-NLS-1$
-	
-	/**
-	 * Property constant indicating that a font style has changed
-	 */
-	public static final String P_FONT_STYLE = ConsolePlugin.getUniqueIdentifier() + "IOConsole.P_FONT_STYLE"; //$NON-NLS-1$
-	
-	/**
-	 * Property constant indicating the color of a stream has changed. 
-	 */
-	public static final String P_STREAM_COLOR = ConsolePlugin.getUniqueIdentifier()  + "IOConsole.P_STREAM_COLOR";	 //$NON-NLS-1$
-		
-	/**
-	 * Property constant indicating tab size has changed 
-	 */
-	public static final String P_TAB_SIZE = ConsolePlugin.getUniqueIdentifier()  + "IOConsole.P_TAB_SIZE";	 //$NON-NLS-1$
-	
-	/**
-	 * Property constant indicating the width of a fixed width console has changed.
-	 */
-	public static final String P_CONSOLE_WIDTH = ConsolePlugin.getUniqueIdentifier() + "IOConsole.P_CONSOLE_WIDTH"; //$NON-NLS-1$
-	
-	/**
-	 * Property constant indicating that all streams connected to this console have been closed
-	 * and that all queued output has been processed.
-	 */
-	public static final String P_CONSOLE_OUTPUT_COMPLETE = ConsolePlugin.getUniqueIdentifier() + "IOConsole.P_CONSOLE_STREAMS_CLOSED"; //$NON-NLS-1$
-	
-	/**
-	 * Property constant indicating that the auto scrolling should be turned on (or off)
-	 */
-	public static final String P_AUTO_SCROLL = ConsolePlugin.getUniqueIdentifier() + "IOConsole.P_AUTO_SCROLL"; //$NON-NLS-1$
-	
-	/** 
-	 * The font used by this console
-	 */
-	private Font font = null;
-	
-	/**
-	 * The default tab size
-	 */
-	public static final int DEFAULT_TAB_SIZE = 8;
-	
+public class IOConsole extends TextConsole {
 	/**
 	 * The document partitioner
 	 */
@@ -106,27 +45,12 @@ public class IOConsole extends AbstractConsole {
      */
     private IOConsoleInputStream inputStream;
     
-    /**
-     * The current tab width
-     */
-    private int tabWidth = DEFAULT_TAB_SIZE;
-    
-    /**
-     * The current width of the console. Used for fixed width consoles.
-     * A value of <=0 means does not have a fixed width.
-     */
-    private int consoleWidth = -1;
         
     /**
      * Map of client defined attributes
      */
     private HashMap attributes = new HashMap();
    
-    /**
-     * Whether the console srolls to show the end of text as output
-     * is appended.
-     */
-    private boolean autoScroll = true;
         
     /**
      * A collection of open streams connected to this console.
@@ -137,6 +61,7 @@ public class IOConsole extends AbstractConsole {
      * The encoding used to for displaying console output.
      */
     private String fEncoding = WorkbenchEncoding.getWorkbenchDefaultEncoding();
+
     
     /**
      * Constructs a console with the given name, type, image, and the workbench's
@@ -162,18 +87,15 @@ public class IOConsole extends AbstractConsole {
      *  when this console is added/removed from the console manager
      */
     public IOConsole(String name, String consoleType, ImageDescriptor imageDescriptor, String encoding, boolean autoLifecycle) {
-        super(name, imageDescriptor, autoLifecycle);
+        super(name, consoleType, imageDescriptor, autoLifecycle);
         if (encoding != null) {
             fEncoding = encoding;
         }
-        setType(consoleType);
         openStreams = new ArrayList();
         inputStream = new IOConsoleInputStream(this);
         openStreams.add(inputStream);
         partitioner = new IOConsolePartitioner(inputStream, this);
-        Document document = new IOConsoleDocument();
-        document.addPositionCategory(IOConsoleHyperlinkPosition.HYPER_LINK_CATEGORY);
-        partitioner.connect(document);
+        partitioner.connect(getDocument());
     }
     
     /**
@@ -223,23 +145,6 @@ public class IOConsole extends AbstractConsole {
             attributes.put(key, value);
         }
     }
-    
-	/**
-	 * Returns this console's document.
-	 * 
-	 * @return this console's document
-	 */
-    public IDocument getDocument() {
-        return partitioner.getDocument();
-    }
-
-    /*
-     *  (non-Javadoc)
-     * @see org.eclipse.ui.console.IConsole#createPage(org.eclipse.ui.console.IConsoleView)
-     */
-    public IPageBookViewPage createPage(IConsoleView view) {
-        return new IOConsolePage(this, view);
-    }
 
     /**
      * Creates and returns a new output stream which may be used to write to this console.
@@ -271,7 +176,7 @@ public class IOConsole extends AbstractConsole {
      * 
      * @return this console's document partitioner
      */
-    IDocumentPartitioner getPartitioner() {
+    protected IConsoleDocumentPartitioner getPartitioner() {
         return partitioner;
     }
 
@@ -315,83 +220,7 @@ public class IOConsole extends AbstractConsole {
 	    }
 		partitioner.setWaterMarks(low, high);
 	}
-	
-	/**
-	 * Sets whether this console scrolls automatically to show the end of text as
-	 * output is appened to the console.
-	 * 
-	 * @param scroll whether this console scrolls automatically
-	 */
-	public void setAutoScroll(boolean scroll) {
-	    if (scroll != autoScroll) {
-	        autoScroll = scroll;
-	        ConsolePlugin.getStandardDisplay().asyncExec(new Runnable() {
-	            public void run() {
-	                firePropertyChange(IOConsole.this, P_AUTO_SCROLL, new Boolean(!autoScroll), new Boolean(autoScroll));
-	            }
-	        });
-	    }
-	}
-	
-	/**
-	 * Returns whether this console scrolls automatically to show the end of text as
-	 * output is appened to the console.
-	 * 
-	 * @return whether this console scrolls automatically
-	 */	
-	public boolean getAutoScroll() {
-	    return autoScroll;
-	}
-	
-	/**
-	 * Sets the tab width.
-	 * 
-	 * @param newTabWidth the tab width 
-	 */
-    public void setTabWidth(final int newTabWidth) {
-        if (tabWidth != newTabWidth) {
-            final int oldTabWidth = tabWidth;
-            tabWidth = newTabWidth;
-            ConsolePlugin.getStandardDisplay().asyncExec(new Runnable() {
-                public void run() {
-                    firePropertyChange(IOConsole.this, P_TAB_SIZE, new Integer(oldTabWidth), new Integer(tabWidth));           
-                }
-            });
-        }
-    }
-    
-	/**
-	 * Returns the tab width.
-	 * 
-	 * @return tab width
-	 */
-    public int getTabWidth() {
-        return tabWidth;
-    }
 
-	/**
-	 * Returns the font used by this console
-	 * 
-	 * @return font used by this console
-	 */
-    public Font getFont() {
-        return font;
-    }
-    
-	/**
-	 * Sets the font used by this console
-	 * 
-	 * @param font font
-	 */
-    public void setFont(Font newFont) {
-        if (font == null || !font.equals(newFont)) {
-            Font old = font;
-            font = newFont;
-            firePropertyChange(this, IOConsole.P_FONT, old, font);
-        }
-    }
-    
-    
     /**
      * Check if all streams connected to this console are closed. If so,
      * notifiy the partitioner that this console is finished. 
@@ -426,31 +255,6 @@ public class IOConsole extends AbstractConsole {
 		}
     }
     
-    /**
-     * Returns the current width of this console. A value of zero of less 
-     * indicates this console has no fixed width.
-     * 
-     * @return the current width of this console
-     */
-    public int getConsoleWidth() {
-        return consoleWidth;
-    }
-    
-    /**
-     * Sets the width of this console in characters. Any value greater than zero
-     * will cause this console to have a fixed width.
-     * 
-     * @param width the width to make this console. Values of 0 or less imply
-     * the console does not have any fixed width.
-     */
-    public void setConsoleWidth(int width) {
-        if (consoleWidth != width) {
-            int old = consoleWidth;
-            consoleWidth = width;
-            
-            firePropertyChange(this, IOConsole.P_CONSOLE_WIDTH, new Integer(old), new Integer(consoleWidth));
-        }
-    }
 
     /**
      * Adds a hyperlink to this console.
@@ -461,9 +265,9 @@ public class IOConsole extends AbstractConsole {
      * @throws BadLocationException if the specified location is not valid.
      */
     public void addHyperlink(IHyperlink hyperlink, int offset, int length) throws BadLocationException {
-		IOConsoleHyperlinkPosition hyperlinkPosition = new IOConsoleHyperlinkPosition(hyperlink, offset, length); 
+		ConsoleHyperlinkPosition hyperlinkPosition = new ConsoleHyperlinkPosition(hyperlink, offset, length); 
 		try {
-			getDocument().addPosition(IOConsoleHyperlinkPosition.HYPER_LINK_CATEGORY, hyperlinkPosition);
+			getDocument().addPosition(ConsoleHyperlinkPosition.HYPER_LINK_CATEGORY, hyperlinkPosition);
 		} catch (BadPositionCategoryException e) {
 			ConsolePlugin.log(e);
 		} 
@@ -494,117 +298,4 @@ public class IOConsole extends AbstractConsole {
             attributes.clear();
         }
     }
-    
-    /**
-     * Adds the given pattern match listener to this console. The listener will
-     * be connected and receive match notifications.
-     * 
-     * @param listener the listener to add
-     */
-    public void addPatternMatchListener(IPatternMatchListener listener) {
-        partitioner.addPatternMatchListener(listener);
-    }
-    
-    /**
-     * Removes the given pattern match listener from this console. The listener will be
-     * disconnected and will no longer receive match notifications.
-     * 
-     * @param listener the pattern match listener to remove.
-     */
-    public void removePatternMatchListener(IPatternMatchListener listener) {
-        partitioner.removePatternMatchListener(listener);
-    }
-    
-    /**
-     * Returns all hyperlinks in this console.
-     * 
-     * @return all hyperlinks in this console
-     */
-    public IHyperlink[] getHyperlinks() {
-        try {
-            Position[] positions = getDocument().getPositions(IOConsoleHyperlinkPosition.HYPER_LINK_CATEGORY);
-            IHyperlink[] hyperlinks = new IHyperlink[positions.length];
-            for (int i = 0; i < positions.length; i++) {
-                IOConsoleHyperlinkPosition position = (IOConsoleHyperlinkPosition) positions[i];
-                hyperlinks[i] = position.getHyperLink();
-            }
-            return hyperlinks;
-        } catch (BadPositionCategoryException e) {
-            return new IHyperlink[0];
-        }
-    }
-    
-    /**
-     * Returns the hyperlink at the given offset of <code>null</code> if none.
-     * 
-     * @param offset the hyperlink at the given offset of <code>null</code> if none
-     * @return
-     */
-    public IHyperlink getHyperlink(int offset) {
-        try {
-        	IDocument document = getDocument();
-        	if (document != null) {
-	            Position[] positions = document.getPositions(IOConsoleHyperlinkPosition.HYPER_LINK_CATEGORY);
-	            Position position = findPosition(offset, positions);
-	            if (position instanceof IOConsoleHyperlinkPosition) {
-	                return ((IOConsoleHyperlinkPosition) position).getHyperLink();
-	            }
-        	}
-        } catch (BadPositionCategoryException e) {
-        }        
-        return null;
-    }
-    
-    /**
-     * Clears the console.
-     */
-    public void clearConsole() {
-        if (partitioner != null) {
-            partitioner.clearBuffer();
-        }
-    }
-    
-    
-	/**
-	 * Binary search for the position at a given offset.
-	 *
-	 * @param offset the offset whose position should be found
-	 * @return the position containing the offset, or <code>null</code>
-	 */
-	private Position findPosition(int offset, Position[] positions) {
-		
-		if (positions.length == 0)
-			return null;
-			
-		int left= 0;
-		int right= positions.length -1;
-		int mid= 0;
-		Position position= null;
-		
-		while (left < right) {
-			
-			mid= (left + right) / 2;
-				
-			position= positions[mid];
-			if (offset < position.getOffset()) {
-				if (left == mid)
-					right= left;
-				else
-					right= mid -1;
-			} else if (offset > (position.getOffset() + position.getLength() - 1)) {
-				if (right == mid)
-					left= right;
-				else
-					left= mid  +1;
-			} else {
-				left= right= mid;
-			}
-		}
-		
-		position= positions[left];
-		if (offset >= position.getOffset() && (offset < (position.getOffset() + position.getLength()))) {
-			return position;
-		}
-		return null;
-	}
 }

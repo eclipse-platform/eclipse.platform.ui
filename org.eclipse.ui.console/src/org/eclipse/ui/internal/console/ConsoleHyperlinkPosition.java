@@ -19,13 +19,13 @@ import org.eclipse.ui.console.IHyperlink;
  * 
  * @since 3.1
  */
-public class IOConsoleHyperlinkPosition extends Position {
+public class ConsoleHyperlinkPosition extends Position {
     
-	public static final String HYPER_LINK_CATEGORY = ConsolePlugin.getUniqueIdentifier() + ".IO_CONSOLE_HYPERLINK_POSITION"; //$NON-NLS-1$
+	public static final String HYPER_LINK_CATEGORY = ConsolePlugin.getUniqueIdentifier() + ".CONSOLE_HYPERLINK_POSITION"; //$NON-NLS-1$
 	
 	private IHyperlink fLink = null;
 
-	public IOConsoleHyperlinkPosition(IHyperlink link, int offset, int length) {
+	public ConsoleHyperlinkPosition(IHyperlink link, int offset, int length) {
 		super(offset, length);
 		fLink = link;
 	}
@@ -38,7 +38,7 @@ public class IOConsoleHyperlinkPosition extends Position {
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	public boolean equals(Object arg) {
-		return arg instanceof IOConsoleHyperlinkPosition && super.equals(arg) && getHyperLink().equals(((IOConsoleHyperlinkPosition)arg).getHyperLink());
+		return arg instanceof ConsoleHyperlinkPosition && super.equals(arg) && getHyperLink().equals(((ConsoleHyperlinkPosition)arg).getHyperLink());
 	}
 
 	/**

@@ -135,7 +135,24 @@ public abstract class AbstractConsole implements IConsole {
 	 * @since 3.1
 	 */
 	public AbstractConsole(String name, ImageDescriptor imageDescriptor, boolean autoLifecycle) {
+	    this(name, null, imageDescriptor, autoLifecycle);
+	}
+	
+	/**
+	 * Constructs a new console with the given name, type, image and lifecycle.
+	 * 
+	 * @param name console name, cannot be <code>null</code>
+	 * @param consoleType console type identifier or <code>null</code>
+	 * @param imageDescriptor image descriptor, or <code>null</code> if none
+	 * @param autoLifecycle whether this console's lifecycle methods should be called
+	 *  automatically when it is added (<code>initialize()</code>) and removed
+	 *  (<code>destroy()</code>) from the console manager. When <code>false</code>,
+	 *  clients are responsible for calling the lifecycle methdods.
+	 * @since 3.1
+	 */
+	public AbstractConsole(String name, String type, ImageDescriptor imageDescriptor, boolean autoLifecycle) {
 		setName(name);
+		setType(type);
 		setImageDescriptor(imageDescriptor);
 		if (autoLifecycle) {
 		    ConsolePlugin.getDefault().getConsoleManager().addConsoleListener(new Lifecycle());

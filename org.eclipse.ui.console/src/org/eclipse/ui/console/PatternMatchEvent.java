@@ -43,7 +43,7 @@ public class PatternMatchEvent extends EventObject {
      * @param matchOffset the offset at which the match was found
      * @param matchLength the length of the text that matched
      */
-    public PatternMatchEvent(IOConsole console, int matchOffset, int matchLength) {
+    public PatternMatchEvent(TextConsole console, int matchOffset, int matchLength) {
         super(console);
         offset = matchOffset;
         length = matchLength;

@@ -11,7 +11,7 @@
 package org.eclipse.ui.console;
 
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.internal.console.IOConsolePage;
+import org.eclipse.ui.internal.console.TextConsolePage;
 import org.eclipse.ui.part.IPageBookViewPage;
 
 /**
@@ -56,7 +56,7 @@ public class MessageConsole extends IOConsole {
      * @see org.eclipse.ui.console.IConsole#createPage(org.eclipse.ui.console.IConsoleView)
      */
     public IPageBookViewPage createPage(IConsoleView view) {
-        IOConsolePage page = (IOConsolePage) super.createPage(view);
+        TextConsolePage page = (TextConsolePage) super.createPage(view);
         page.setReadOnly();
         return page;
     }

@@ -78,7 +78,7 @@ public class IOConsoleOutputStream extends OutputStream {
         if (newFontStyle != fontStyle) {
             int old = fontStyle;
             fontStyle = newFontStyle;
-            console.firePropertyChange(this, IOConsole.P_FONT_STYLE, new Integer(old), new Integer(fontStyle));
+            console.firePropertyChange(this, IConsoleConstants.P_FONT_STYLE, new Integer(old), new Integer(fontStyle));
         }
     }
     
@@ -109,7 +109,7 @@ public class IOConsoleOutputStream extends OutputStream {
 		Color old = color;
 		if (old == null || !old.equals(newColor)) {
 		    color = newColor;
-		    console.firePropertyChange(this, IOConsole.P_STREAM_COLOR, old, newColor);
+		    console.firePropertyChange(this, IConsoleConstants.P_STREAM_COLOR, old, newColor);
 		}
 	}
 	

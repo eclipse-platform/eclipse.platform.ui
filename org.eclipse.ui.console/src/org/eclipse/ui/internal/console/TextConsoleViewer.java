@@ -44,14 +44,14 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.console.IHyperlink;
-import org.eclipse.ui.console.IOConsole;
+import org.eclipse.ui.console.TextConsole;
 
 /**
  * Viewer used to display an IOConsole
  * 
  * @since 3.1
  */
-public class IOConsoleViewer extends TextViewer implements LineStyleListener, LineBackgroundListener, MouseTrackListener, MouseMoveListener, MouseListener, PaintListener {
+public class TextConsoleViewer extends TextViewer implements LineStyleListener, LineBackgroundListener, MouseTrackListener, MouseMoveListener, MouseListener, PaintListener {
     /**
      * will always scroll with output if value is true.
      */
@@ -59,15 +59,15 @@ public class IOConsoleViewer extends TextViewer implements LineStyleListener, Li
     /**
      * Adapts document to the text widget.
      */
-    private IOConsoleDocumentAdapter documentAdapter;
+    private ConsoleDocumentAdapter documentAdapter;
     private IHyperlink hyperlink;
     private Cursor handCursor;
     private Cursor textCursor;
     private int consoleWidth = -1;
     private IDocumentListener documentListener;
-    private IOConsole console;
+    private TextConsole console;
     
-    public IOConsoleViewer(Composite parent, IOConsole console) {
+    public TextConsoleViewer(Composite parent, TextConsole console) {
         super(parent, SWT.H_SCROLL | SWT.V_SCROLL);
         this.console = console; 
         setDocument(console.getDocument());
@@ -120,7 +120,7 @@ public class IOConsoleViewer extends TextViewer implements LineStyleListener, Li
         String eventString = e.text;
         
         try {
-            IOConsolePartition partition = (IOConsolePartition) doc.getPartition(e.start);
+            IConsolePartition partition = (IConsolePartition) doc.getPartition(e.start);
             if (!partition.isReadOnly()) {
                 boolean isCarriageReturn = false;
                 for (int i = 0; i < legalLineDelimiters.length; i++) {
@@ -370,7 +370,7 @@ public class IOConsoleViewer extends TextViewer implements LineStyleListener, Li
      */
     protected IDocumentAdapter createDocumentAdapter() {
         if(documentAdapter == null) {
-            documentAdapter = new IOConsoleDocumentAdapter(getDocument(), consoleWidth = -1);
+            documentAdapter = new ConsoleDocumentAdapter(getDocument(), consoleWidth = -1);
         }
         return documentAdapter;
     }

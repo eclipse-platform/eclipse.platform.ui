@@ -89,4 +89,60 @@ public interface IConsoleConstants {
      * @since 3.1
      */
     public static final String EXTENSION_POINT_CONSOLE_FACTORIES = "consoleFactories"; //$NON-NLS-1$
+    
+	/**
+	 * Property constant indicating a console's font has changed.
+	 *  
+	 * @since 3.1
+	 */
+	public static final String P_FONT = ConsolePlugin.getUniqueIdentifier() + ".P_FONT"; //$NON-NLS-1$
+	
+	/**
+	 * Property constant indicating that a font style has changed
+	 * 
+	 * @since 3.1
+	 */
+	public static final String P_FONT_STYLE = ConsolePlugin.getUniqueIdentifier() + ".P_FONT_STYLE"; //$NON-NLS-1$
+	
+	/**
+	 * Property constant indicating the color of a stream has changed.
+	 * 
+	 *  @since 3.1
+	 */
+	public static final String P_STREAM_COLOR = ConsolePlugin.getUniqueIdentifier()  + ".P_STREAM_COLOR";	 //$NON-NLS-1$
+		
+	/**
+	 * Property constant indicating tab size has changed
+	 * 
+	 *  @since 3.1
+	 */
+	public static final String P_TAB_SIZE = ConsolePlugin.getUniqueIdentifier()  + ".P_TAB_SIZE";	 //$NON-NLS-1$
+	
+	/**
+	 * Property constant indicating the width of a fixed width console has changed.
+	 * 
+	 * @since 3.1
+	 */
+	public static final String P_CONSOLE_WIDTH = ConsolePlugin.getUniqueIdentifier() + ".P_CONSOLE_WIDTH"; //$NON-NLS-1$
+	
+	/**
+	 * Property constant indicating that all streams connected to this console have been closed
+	 * and that all queued output has been processed.
+	 * 
+	 * @since 3.1
+	 */
+	public static final String P_CONSOLE_OUTPUT_COMPLETE = ConsolePlugin.getUniqueIdentifier() + ".P_CONSOLE_STREAMS_CLOSED"; //$NON-NLS-1$
+	
+	/**
+	 * Property constant indicating that the auto scrolling should be turned on (or off)
+	 * 
+	 * @since 3.1
+	 */
+	public static final String P_AUTO_SCROLL = ConsolePlugin.getUniqueIdentifier() + ".P_AUTO_SCROLL"; //$NON-NLS-1$
+
+    /**
+     * The default tab size
+     */
+    public static final int DEFAULT_TAB_SIZE = 8;
+
 }

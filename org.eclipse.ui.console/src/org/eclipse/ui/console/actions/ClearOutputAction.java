@@ -17,7 +17,7 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsoleConstants;
-import org.eclipse.ui.console.IOConsole;
+import org.eclipse.ui.console.TextConsole;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.console.ConsoleMessages;
 import org.eclipse.ui.internal.console.ConsolePluginImages;
@@ -35,7 +35,7 @@ import org.eclipse.ui.internal.console.IInternalConsoleConstants;
 public class ClearOutputAction extends Action {
 
 	private ITextViewer fViewer;
-	private IOConsole fIOConsole;
+	private TextConsole fIOConsole;
 
 	/**
 	 * Constructs a clear output action.
@@ -59,7 +59,7 @@ public class ClearOutputAction extends Action {
 	 * @param ioConsole I/O console the action is associated with
 	 * @since 3.1
 	 */
-	public ClearOutputAction(IOConsole ioConsole) {
+	public ClearOutputAction(TextConsole ioConsole) {
 		this();
 		fIOConsole = ioConsole;
 	}

@@ -26,7 +26,7 @@ import org.eclipse.swt.custom.TextChangedEvent;
 import org.eclipse.swt.custom.TextChangingEvent;
 
 /**
- * Adapts an IOConsole's document to the viewer StyledText widget. Allows proper line
+ * Adapts a Console's document to the viewer StyledText widget. Allows proper line
  * wrapping of fixed width consoles without having to add line delimeters to the StyledText.
  * 
  * By using this adapter, the offset of any character is the same in both the widget and the
@@ -34,7 +34,7 @@ import org.eclipse.swt.custom.TextChangingEvent;
  * 
  * @since 3.1
  */
-public class IOConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListener {
+public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListener {
     
     private int consoleWidth = -1;
     private ArrayList textChangeListeners;
@@ -45,7 +45,7 @@ public class IOConsoleDocumentAdapter implements IDocumentAdapter, IDocumentList
     private ArrayList lines;
     private Pattern pattern = Pattern.compile("^.*", Pattern.MULTILINE); //$NON-NLS-1$
     
-    public IOConsoleDocumentAdapter(IDocument doc, int width) {
+    public ConsoleDocumentAdapter(IDocument doc, int width) {
         textChangeListeners = new ArrayList();
         consoleWidth = width;
         document = doc;

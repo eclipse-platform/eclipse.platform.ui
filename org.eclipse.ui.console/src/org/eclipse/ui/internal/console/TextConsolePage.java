@@ -48,7 +48,7 @@ import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.console.IConsoleView;
-import org.eclipse.ui.console.IOConsole;
+import org.eclipse.ui.console.TextConsole;
 import org.eclipse.ui.console.actions.ClearOutputAction;
 import org.eclipse.ui.console.actions.TextViewerAction;
 import org.eclipse.ui.part.IPageBookViewPage;
@@ -62,10 +62,10 @@ import org.eclipse.ui.texteditor.IUpdate;
  * @since 3.1
  *
  */
-public class IOConsolePage implements IPageBookViewPage, IPropertyChangeListener, IAdaptable {
+public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListener, IAdaptable {
 
-    private IOConsoleViewer viewer;
-    private IOConsole console;
+    private TextConsoleViewer viewer;
+    private TextConsole console;
     private IPageSite site;
     private IConsoleView consoleView;
     private Map globalActions = new HashMap();
@@ -93,7 +93,7 @@ public class IOConsolePage implements IPageBookViewPage, IPropertyChangeListener
 	};
     
     
-    public IOConsolePage(IOConsole console, IConsoleView view) {
+    public TextConsolePage(TextConsole console, IConsoleView view) {
         this.console = console;
         this.consoleView = view;
     } 
@@ -119,13 +119,13 @@ public class IOConsolePage implements IPageBookViewPage, IPropertyChangeListener
      * @see org.eclipse.ui.part.IPage#createControl(org.eclipse.swt.widgets.Composite)
      */
     public void createControl(Composite parent) {
-		viewer = new IOConsoleViewer(parent, console);
+		viewer = new TextConsoleViewer(parent, console);
 		viewer.setConsoleWidth(console.getConsoleWidth());
 		viewer.setTabWidth(console.getTabWidth());
 		console.addPropertyChangeListener(this);
 		JFaceResources.getFontRegistry().addListener(this);
 		
-		MenuManager manager= new MenuManager("#IOConsole", "#IOConsole");  //$NON-NLS-1$//$NON-NLS-2$
+		MenuManager manager= new MenuManager("#TextConsole", "#TextConsole");  //$NON-NLS-1$//$NON-NLS-2$
 		manager.setRemoveAllWhenShown(true);
 		manager.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager m) {
@@ -138,7 +138,7 @@ public class IOConsolePage implements IPageBookViewPage, IPropertyChangeListener
 		createActions();
 		configureToolBar(getSite().getActionBars().getToolBarManager());
 		
-		getSite().registerContextMenu(ConsolePlugin.getUniqueIdentifier() + ".IOConsole", manager, viewer); //$NON-NLS-1$
+		getSite().registerContextMenu(ConsolePlugin.getUniqueIdentifier() + ".TextConsole", manager, viewer); //$NON-NLS-1$
 		getSite().setSelectionProvider(viewer);
 		
 		viewer.getSelectionProvider().addSelectionChangedListener(selectionChangedListener);
@@ -212,22 +212,22 @@ public class IOConsolePage implements IPageBookViewPage, IPropertyChangeListener
 		Object source = event.getSource();
 		String property = event.getProperty();
 		
-		if (source.equals(console) && IOConsole.P_FONT.equals(property)) {
+		if (source.equals(console) && IConsoleConstants.P_FONT.equals(property)) {
 			setFont(console.getFont());	
-		} else if (IOConsole.P_FONT_STYLE.equals(property)) {
+		} else if (IConsoleConstants.P_FONT_STYLE.equals(property)) {
 		    viewer.getTextWidget().redraw();
-		} else if (property.equals(IOConsole.P_STREAM_COLOR)) {
+		} else if (property.equals(IConsoleConstants.P_STREAM_COLOR)) {
 		    viewer.getTextWidget().redraw();
-		} else if (source.equals(console) && property.equals(IOConsole.P_TAB_SIZE)) {
+		} else if (source.equals(console) && property.equals(IConsoleConstants.P_TAB_SIZE)) {
 		    Integer tabSize = (Integer)event.getNewValue();
 		    viewer.setTabWidth(tabSize.intValue());
-		} else if (source.equals(console) && property.equals(IOConsole.P_CONSOLE_WIDTH)) {
+		} else if (source.equals(console) && property.equals(IConsoleConstants.P_CONSOLE_WIDTH)) {
 		    viewer.setConsoleWidth(console.getConsoleWidth()); 
 		} else if (property.equals(IConsoleConstants.CONSOLE_FONT)) {
 		    viewer.setFont(JFaceResources.getFont(IConsoleConstants.CONSOLE_FONT));
-		} else if (property.equals(IOConsole.P_CONSOLE_OUTPUT_COMPLETE)) {
+		} else if (property.equals(IConsoleConstants.P_CONSOLE_OUTPUT_COMPLETE)) {
 		    viewer.setReadOnly();
-		} else if (property.equals(IOConsole.P_AUTO_SCROLL)) {
+		} else if (property.equals(IConsoleConstants.P_AUTO_SCROLL)) {
 		    setAutoScroll(console.getAutoScroll());
 		}
 	}

@@ -20,7 +20,7 @@ import org.eclipse.jface.text.Position;
 /**
  * A console document. Requires synchronization for multi-threaded access.
  */
-public class IOConsoleDocument extends Document {
+public class ConsoleDocument extends Document {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.IDocument#get(int, int)
@@ -93,7 +93,7 @@ public class IOConsoleDocument extends Document {
 	 */
     protected void completeInitialization() {
         super.completeInitialization();
-        addPositionUpdater(new DefaultPositionUpdater(IOConsoleHyperlinkPosition.HYPER_LINK_CATEGORY));
+        addPositionUpdater(new DefaultPositionUpdater(ConsoleHyperlinkPosition.HYPER_LINK_CATEGORY));
     }
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.IDocument#addPosition(java.lang.String, org.eclipse.jface.text.Position)
