@@ -41,18 +41,16 @@ public class DialogMessageArea extends Object {
 	private CLabel titleLabel;
 	/**
 	 * Create a new instance of the receiver.
-	 *
 	 */
 	public DialogMessageArea() {
 		//No initial behaviour
 	}
 	/**
-	 * Create the contents for the receiver as the children of
-	 * parent. 
-	 * @param parent
-	 * @param style
+	 * Create the contents for the receiver.
+	 * 
+	 * @param parent the Composite that the children will be created in
 	 */
-	public void createContents(Composite parent, int style) {
+	public void createContents(Composite parent) {
 		Display display = parent.getDisplay();
 		Color background = JFaceColors.getBannerBackground(display);
 		Color foreground = JFaceColors.getBannerForeground(display);
@@ -83,17 +81,17 @@ public class DialogMessageArea extends Object {
 		setMessageColors(JFaceColors.getBannerBackground(messageComposite.getDisplay()));
 	}
 	/**
-	 * Set the layoutData for the two controls.
-	 * @param layoutData
+	 * Set the layoutData.
+	 * @param layoutData the layoutData for the title and the
+	 * 	message area composite.
 	 */
 	public void setLayoutData(Object layoutData) {
 		titleLabel.setLayoutData(layoutData);
 		messageComposite.setLayoutData(layoutData);
 	}
 	/**
-	 * Sets the title text and image and disables the message
-	 * area.
-	 * @param titleMessage String
+	 * Show the title.
+	 * @param titleMessage String for the titke
 	 * @param titleImage Image or <code>null</code>
 	 */
 	public void showTitle(String titleMessage, Image titleImage) {
@@ -102,8 +100,9 @@ public class DialogMessageArea extends Object {
 		restoreTitle();
 		return;
 	}
+	
 	/**
-	 * Restore the title to be the displayed entry.
+	 * Enable the title and disable the message text and image.
 	 */
 	public void restoreTitle() {
 		titleLabel.setVisible(true);
@@ -113,12 +112,13 @@ public class DialogMessageArea extends Object {
 	}
 	/**
 	 * Show the new message in the message text and update
-	 * the image. If the type is IMessageProvider.NONE
-	 * show the title.
-	 * Base the background color on whether or
+	 * the image. Base the background color on whether or
 	 * not there are errors.
-	 * @param newMessage
-	 * @param newType
+	 * 
+	 * @param newMessage The new value for the message
+	 * @param newType One of the IMessageProvider constants.
+	 * 	 If newType is IMessageProvider.NONE show the title.
+	 * @see IMessageProvider
 	 */
 	public void updateText(String newMessage, int newType) {
 		Image newImage = null;
@@ -156,8 +156,8 @@ public class DialogMessageArea extends Object {
 		}
 	}
 	/**
-	 * Set the colors of the message area to be the color.
-	 * @param color
+	 * Set the colors of the message area.
+	 * @param color The color to be use in the message area.
 	 */
 	private void setMessageColors(Color color) {
 		messageText.setBackground(color);
@@ -165,8 +165,9 @@ public class DialogMessageArea extends Object {
 		messageImageLabel.setBackground(color);
 	}
 	/**
-	 * Clear the error message. Restore the message if there is one,
-	 * if not restore the title label.
+	 * Clear the error message. Restore the previously
+	 * displayed message if there is one, if not restore 
+	 * the title label.
 	 *
 	 */
 	public void clearErrorMessage() {
