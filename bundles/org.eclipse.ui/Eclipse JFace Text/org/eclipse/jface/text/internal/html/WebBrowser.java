@@ -37,7 +37,7 @@ public class WebBrowser implements IBrowser {
 		int flags= GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL | GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_FILL;
 		controlFrame.setLayoutData(new GridData(flags));
 		
-		controlSite = new OleControlSite(controlFrame, SWT.NONE, "Shell.Explorer");
+		controlSite = new OleControlSite(controlFrame, SWT.NONE, "Shell.Explorer"); //$NON-NLS-1$
 		oleObject = new OleAutomation(controlSite);
 		
 		// initialize control
@@ -72,7 +72,7 @@ public class WebBrowser implements IBrowser {
 	
 	public int navigate(String url) {
 		
-		int[] rgdispid = oleObject.getIDsOfNames(new String[] { "Navigate", "URL" });
+		int[] rgdispid = oleObject.getIDsOfNames(new String[] { "Navigate", "URL" }); //$NON-NLS-1$ //$NON-NLS-2$
 		int dispIdMember = rgdispid[0];
 
 		Variant[] rgvarg = new Variant[] { new Variant(url) };

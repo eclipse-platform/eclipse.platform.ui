@@ -142,15 +142,17 @@ public class MarkerAnnotation extends Annotation {
 			switch (fMarker.getAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO)) {
 				case IMarker.SEVERITY_INFO:
 					name= ISharedImages.IMG_OBJS_INFO_TSK;
+					layer= 3;
 					break;
 				case IMarker.SEVERITY_WARNING:
+					layer= 3;
 					name= ISharedImages.IMG_OBJS_WARN_TSK;
 					break;
 				case IMarker.SEVERITY_ERROR:
+					layer= 4;
 					name= ISharedImages.IMG_OBJS_ERROR_TSK;
 					break;
 			};
-			layer= 3;
 		} else {
 			name= getUnknownImageName(fMarker);
 			layer= 1;

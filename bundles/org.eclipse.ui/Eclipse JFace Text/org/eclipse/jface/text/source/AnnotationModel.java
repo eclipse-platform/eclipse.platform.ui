@@ -7,9 +7,11 @@ package org.eclipse.jface.text.source;
 
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -25,7 +27,7 @@ import org.eclipse.jface.util.Assert;
 public class AnnotationModel implements IAnnotationModel {
 
 	/** The list of managed annotations */
-	protected HashMap fAnnotations;
+	protected Map fAnnotations;
 	/** The list of annotation model listeners */
 	protected ArrayList fAnnotationModelListeners;
 	/** The document conntected with this model */
@@ -38,7 +40,7 @@ public class AnnotationModel implements IAnnotationModel {
 	 * manage any annotations and is not connected to any document.
 	 */
 	public AnnotationModel() {
-		fAnnotations= new HashMap(10);
+		fAnnotations= Collections.synchronizedMap(new HashMap(10));
 		fAnnotationModelListeners= new ArrayList(2);
 	}
 
@@ -219,7 +221,10 @@ public class AnnotationModel implements IAnnotationModel {
 	protected Iterator getAnnotationIterator(boolean cleanup) {
 		if (cleanup)
 			cleanup(false);
-		return fAnnotations.keySet().iterator();
+			
+		synchronized (fAnnotations) {
+			return new ArrayList(fAnnotations.keySet()).iterator();
+		}
 	}
 	
 	/*

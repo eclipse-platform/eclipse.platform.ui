@@ -196,6 +196,12 @@
             id="org.eclipse.ui.edit.text.goto.windowEnd">
       </actionDefinition>
       <actionDefinition
+            id="org.eclipse.ui.edit.text.scroll.lineUp">
+      </actionDefinition>
+      <actionDefinition
+            id="org.eclipse.ui.edit.text.scroll.lineDown">
+      </actionDefinition>
+      <actionDefinition
             id="org.eclipse.ui.edit.text.select.lineUp">
       </actionDefinition>
       <actionDefinition
@@ -457,6 +463,14 @@
          </accelerator>
          <accelerator
                key=""
+               id="org.eclipse.ui.edit.text.scroll.lineUp">
+         </accelerator>
+         <accelerator
+               key=""
+               id="org.eclipse.ui.edit.text.scroll.lineDown">
+         </accelerator>         
+         <accelerator
+               key=""
                id="org.eclipse.ui.edit.text.select.lineUp">
          </accelerator>
          <accelerator
@@ -693,6 +707,14 @@
          <accelerator
                key=""
                id="org.eclipse.ui.edit.text.goto.windowEnd">
+         </accelerator>
+         <accelerator
+               key="Ctrl+ARROW_UP"
+               id="org.eclipse.ui.edit.text.scroll.lineUp">
+         </accelerator>
+         <accelerator
+               key="Ctrl+ARROW_DOWN"
+               id="org.eclipse.ui.edit.text.scroll.lineDown">
          </accelerator>
          <accelerator
                key=""
@@ -1086,6 +1108,48 @@
       </filter>
    </extension>
    <extension
+         point="org.eclipse.ui.popupMenus">         
+	  <viewerContribution 
+    	    id="org.eclipse.ui.texteditor.ruler.context.actions" 
+            targetID="#TextRulerContext">
+		 <action
+            id="org.eclipse.ui.texteditor.TaskRulerAction"
+		    label="%AddTask.label"
+		    tooltip="%AddTask.tooltip"
+		    helpContextId="org.eclipse.ui.AddTask_action_context"
+		    menubarPath="additions"
+		    class="org.eclipse.ui.texteditor.TaskRulerAction">
+         </action>
+         <action
+            id="org.eclipse.ui.texteditor.BookmarkRulerAction"
+            label="%AddBookmark.label"
+            tooltip="%AddBookmark.tooltip"
+		    helpContextId="org.eclipse.ui.bookmark_action_context"
+            menubarPath="additions"
+            class="org.eclipse.ui.texteditor.BookmarkRulerAction">
+         </action>
+	  </viewerContribution>     	
+   </extension>
+   <extension point="org.eclipse.ui.editorActions">
+      <editorContribution
+            id="org.eclipse.ui.texteditor.ruler.actions"
+            targetID="org.eclipse.ui.DefaultTextEditor">
+         <action
+            id="org.eclipse.ui.texteditor.BookmarkRulerAction"
+            actionID="RulerDoubleClick"
+            helpContextId="org.eclipse.ui.bookmark_action_context"
+            label="%Dummy.label"
+            class="org.eclipse.ui.texteditor.BookmarkRulerAction">
+         </action>
+         <action
+            id="org.eclipse.ui.texteditor.SelectRulerAction"
+            actionID="RulerClick"
+            label="%Dummy.label"
+            class="org.eclipse.ui.texteditor.SelectRulerAction">
+         </action>
+	  </editorContribution>	
+   </extension>
+  <extension
          point="org.eclipse.ui.workingSets">
       <workingSet
             id="org.eclipse.ui.resourceWorkingSetPage"

@@ -18,6 +18,7 @@ import org.eclipse.swt.custom.LineBackgroundListener;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.ST;
+import org.eclipse.swt.custom.VerifyKeyListener;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.DisposeEvent;
@@ -45,6 +46,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ScrollBar;
 
+import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -61,7 +63,7 @@ import org.eclipse.jface.viewers.Viewer;
  * 
  * @see ITextViewer
  */  
-public class TextViewer extends Viewer implements ITextViewer, ITextOperationTarget, IWidgetTokenOwner {
+public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtension, ITextOperationTarget, IWidgetTokenOwner {
 	
 	
 	public static boolean TRACE_ERRORS= false;
@@ -355,9 +357,142 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 		}	
 	};
 	
+	/**
+	 * The viewer's manager of registered verify key listeners.
+	 * Uses batches rather than robust iterators because of
+	 * performance issues.
+	 */
+	class VerifyKeyListenersManager implements VerifyKeyListener {
+		
+		class Batch {
+			int index;
+			VerifyKeyListener listener;
+			
+			public Batch(VerifyKeyListener l, int i) {
+				listener= l;
+				index= i;
+			}
+		};
+		
+		private List fListeners= new ArrayList();
+		private List fBatched= new ArrayList();
+		private Iterator fIterator;
+		
+		/*
+		 * @see VerifyKeyListener#verifyKey(VerifyEvent)
+		 */
+		public void verifyKey(VerifyEvent event) {
+			if (fListeners.isEmpty())
+				return;
+				
+			fIterator= fListeners.iterator();
+			while (fIterator.hasNext() && event.doit) {
+				VerifyKeyListener listener= (VerifyKeyListener) fIterator.next();
+				listener.verifyKey(event);
+			}
+			fIterator= null;
+			
+			processBatchedRequests();
+		}
+		
+		private void processBatchedRequests() {
+			if (!fBatched.isEmpty()) {
+				Iterator e= fBatched.iterator();
+				while (e.hasNext()) {
+					Batch batch= (Batch) e.next();
+					insertListener(batch.listener, batch.index);
+				}
+				fBatched.clear();
+			}
+		}
+		
+		/**
+		 * Returns the number of registered verify key listeners.
+		 */
+		public int numberOfListeners() {
+			return fListeners.size();
+		}
+		
+		/**
+		 * Inserts the given listener at the given index or moves it
+		 * to that index.
+		 * 
+		 * @param listener the listener to be inserted
+		 * @param index the index of the listener or -1 for remove
+		 */
+		public void insertListener(VerifyKeyListener listener, int index) {
+			
+			if (index == -1) {
+				removeListener(listener);
+			} else if (listener != null) {
+				
+				if (fIterator != null) {
+					
+					fBatched.add(new Batch(listener, index));
+				
+				} else {
+					
+					int idx= fListeners.indexOf(listener);
+					if (idx != index) {
+						
+						if (idx != -1)
+							fListeners.remove(idx);
+							
+						if (index > fListeners.size())
+							fListeners.add(listener);
+						else
+							fListeners.add(index, listener);
+					}
+					
+					if (fListeners.size() == 1)
+						install();
+				}
+			}
+		}
+		
+		/**
+		 * Removes the given listener.
+		 * 
+		 * @param listener the listener to be removed
+		 */
+		public void removeListener(VerifyKeyListener listener) {
+			if (listener == null)
+				return;
+			
+			if (fIterator != null) {
+				
+				fBatched.add(new Batch(listener, -1));
+			
+			} else {
+				
+				fListeners.remove(listener);
+				if (fListeners.isEmpty())
+					uninstall();
+			
+			}
+		}
+		
+		/**
+		 * Installs this manager.
+		 */
+		private void install() {
+			getTextWidget().addVerifyKeyListener(this);
+		}
+		
+		/**
+		 * Uninstalls this manager.
+		 */
+		private void uninstall() {
+			getTextWidget().removeVerifyKeyListener(this);
+		}
+	};
+	
+	/**
+	 * MISSING
+	 */
 	private class FindReplaceRange implements LineBackgroundListener, ITextListener, IPositionUpdater {		
 
-		private final static String RANGE_CATEGORY= "org.eclipse.jface.text.TextViewer.find.range";
+		private final static String RANGE_CATEGORY= "org.eclipse.jface.text.TextViewer.find.range"; //$NON-NLS-1$
 
 		private Color fHighlightColor;
 		private IRegion fRange;
@@ -492,6 +627,8 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 			if (fTextWidget != null) {
 				Point s= fTextWidget.getSelectionRange();
 				fTextWidget.replaceTextRange(s.x, s.y, text);
+				if (text != null && text.length() > 0)
+					fTextWidget.setSelectionRange(s.x, text.length());
 			}
 		}
 		
@@ -666,6 +803,8 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 	private IFindReplaceTarget fFindReplaceTarget;
 	/** The viewer widget token keeper */
 	private Object fWidgetTokenKeeper;
+	/** The viewer's manager of verify key listeners */
+	private VerifyKeyListenersManager fVerifyKeyListenersManager= new VerifyKeyListenersManager();
 
 	
 	/** Should the auto indent strategies ignore the next edit operation */
@@ -2088,7 +2227,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 				return true;
 			case SHIFT_RIGHT:
 			case SHIFT_LEFT:
-				return isEditable() && fIndentChars != null && isBlockSelected();
+				return isEditable() && fIndentChars != null && fTextWidget.getSelectionCount() > 0;
 			case PREFIX:
 			case STRIP_PREFIX:
 				return isEditable() && fDefaultPrefixChars != null;
@@ -2357,7 +2496,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 
 		} catch (BadLocationException x) {
 			if (TRACE_ERRORS)
-				System.out.println("TextViewer.shiftRight: BadLocationException");
+				System.out.println("TextViewer.shiftRight: BadLocationException"); //$NON-NLS-1$
 		}
 	}
 	
@@ -2420,7 +2559,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 
 		} catch (BadLocationException x) {
 			if (TRACE_ERRORS)
-				System.out.println("TextViewer.shiftLeft: BadLocationException");
+				System.out.println("TextViewer.shiftLeft: BadLocationException"); //$NON-NLS-1$
 		}
 	}
 	
@@ -2650,4 +2789,26 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 		return this;
 	}
 
+	/*
+	 * @see ITextViewerExtension#appendVerifyKeyListener(VerifyKeyListener)
+	 */
+	public void appendVerifyKeyListener(VerifyKeyListener listener) {
+		int index= fVerifyKeyListenersManager.numberOfListeners();
+		fVerifyKeyListenersManager.insertListener(listener, index);
+	}
+	
+	/*
+	 * @see ITextViewerExtension#prependVerifyKeyListener(VerifyKeyListener)
+	 */
+	public void prependVerifyKeyListener(VerifyKeyListener listener) {
+		fVerifyKeyListenersManager.insertListener(listener, 0);
+		
+	}
+	
+	/*
+	 * @see ITextViewerExtension#removeVerifyKeyListener(VerifyKeyListener)
+	 */
+	public void removeVerifyKeyListener(VerifyKeyListener listener) {
+		fVerifyKeyListenersManager.removeListener(listener);
+	}
 }

@@ -45,8 +45,9 @@ class CompletionProposalPopup implements IContentAssistListener {
 	private PopupCloser fPopupCloser= new PopupCloser();
 	private Shell fProposalShell;
 	private Table fProposalTable;
-	private boolean fIgnoreConsumedEvents= false;
+	private boolean fInserting= false;
 	
+	private long fInvocationCounter= 0;
 	private ICompletionProposal[] fFilteredProposals;
 	private ICompletionProposal[] fComputedProposals;
 	private int fInvocationOffset;
@@ -163,38 +164,44 @@ class CompletionProposalPopup implements IContentAssistListener {
 	
 	private void insertProposal(ICompletionProposal p, char trigger, int offset) {
 			
-		// Turn off event consumption while the text is replaced.
-		// This is important for the case that the selection
-		// being inserted contains newlines.
-		fIgnoreConsumedEvents= true;
-		IDocument document= fViewer.getDocument();
+		fInserting= true;
 		
-		if (p instanceof ICompletionProposalExtension) {
-			ICompletionProposalExtension e= (ICompletionProposalExtension) p;
-			e.apply(document, trigger, offset);
-		} else {
-			p.apply(document);
-		}
-		
-		Point selection= p.getSelection(document);
-		if (selection != null) {
-			fViewer.setSelectedRange(selection.x, selection.y);
-			fViewer.revealRange(selection.x, selection.y);
-		}
-		
-		fIgnoreConsumedEvents= false;
-		
-		int position= selection.x + selection.y;
-		IContextInformation info= p.getContextInformation();
-		if (info != null) {				
+		try {
+			IDocument document= fViewer.getDocument();
 			
 			if (p instanceof ICompletionProposalExtension) {
 				ICompletionProposalExtension e= (ICompletionProposalExtension) p;
-				position= e.getContextInformationPosition();
+				e.apply(document, trigger, offset);
+			} else {
+				p.apply(document);
 			}
 			
-			fContentAssistant.showContextInformation(info, position);
+			Point selection= p.getSelection(document);
+			if (selection != null) {
+				fViewer.setSelectedRange(selection.x, selection.y);
+				fViewer.revealRange(selection.x, selection.y);
+			}
+			
+			IContextInformation info= p.getContextInformation();
+			if (info != null) {				
+				
+				int position;
+				if (p instanceof ICompletionProposalExtension) {
+					ICompletionProposalExtension e= (ICompletionProposalExtension) p;
+					position= e.getContextInformationPosition();
+				} else {
+					if (selection == null)
+						selection= fViewer.getSelectedRange();
+					position= selection.x + selection.y;
+				}
+				
+				fContentAssistant.showContextInformation(info, position);
+			}
+		
+		} finally {
+			fInserting= false;
 		}
+
 	}
 	
 	public boolean hasFocus() {
@@ -268,13 +275,9 @@ class CompletionProposalPopup implements IContentAssistListener {
 	}
 	
 	public boolean verifyKey(VerifyEvent e) {
-		if (Helper.okToUse(fProposalShell))
-			return proposalKeyPressed(e);
-		return true;
-	}
-	
-	private boolean proposalKeyPressed(VerifyEvent e) {
-
+		if (!Helper.okToUse(fProposalShell))
+			return true;
+		
 		char key= e.character;
 		if (key == 0) {
 			int newSelection= fProposalTable.getSelectionIndex();
@@ -328,8 +331,32 @@ class CompletionProposalPopup implements IContentAssistListener {
 			e.doit= false;
 			return false;
 
-		} else if (key == 0x1B) {
-			hide(); // Terminate on Esc
+		} else {
+			
+			switch (key) {
+				case 0x1B : // Esc
+					e.doit= false;
+					hide();
+					break;
+					
+				case 0x0D : // Enter
+					e.doit= false;
+					insertSelectedProposal();
+					hide();
+					break;
+					
+				default:
+					ICompletionProposal p= getSelectedProposal();
+					if (p instanceof ICompletionProposalExtension) {
+						ICompletionProposalExtension t= (ICompletionProposalExtension) p;
+						char[] triggers= t.getTriggerCharacters();
+						if (contains(triggers, key)) {		
+							e.doit= false;
+							insertProposal(p, key, fViewer.getSelectedRange().x);
+							hide();
+						}
+					}
+			}
 		}
 		
 		return true;
@@ -342,11 +369,6 @@ class CompletionProposalPopup implements IContentAssistListener {
 			fAdditionalInfoController.handleTableSelectionChanged();
 	}
 	
-	public void processEvent(VerifyEvent event) {
-		if (Helper.okToUse(fProposalShell))
-			proposalProcessEvent(event);
-	}
-
 	private boolean contains(char[] characters, char c) {
 		
 		if (characters == null)
@@ -360,42 +382,10 @@ class CompletionProposalPopup implements IContentAssistListener {
 		return false;
 	}
 	
-	private void proposalProcessEvent(VerifyEvent e) {
-
-		if (fIgnoreConsumedEvents)
-			return;
-			
-		if (e.text == null || e.text.length() == 0) {
+	public void processEvent(VerifyEvent e) {
+		if (!fInserting)
 			filterProposal();
-			return;
-		}
-		
-		if (e.text.equals(fLineDelimiter)) {
-			e.doit= false;
-			insertSelectedProposal();
-			hide();
-			return;
-		}
-		
-		if (e.text.length() == 1) {
-			char trigger= e.text.charAt(0);
-			ICompletionProposal p= getSelectedProposal();
-			if (p instanceof ICompletionProposalExtension) {
-				ICompletionProposalExtension t= (ICompletionProposalExtension) p;
-				char[] triggers= t.getTriggerCharacters();
-				if (contains(triggers, trigger)) {		
-					e.doit= false;
-					insertProposal(p, trigger, fViewer.getSelectedRange().x);
-					hide();
-				}
-			}
-		}
-		
-		filterProposal();
 	}
-	
-	
-	private long fInvocationCounter= 0;
 	
 	private void filterProposal() {
 		++ fInvocationCounter;

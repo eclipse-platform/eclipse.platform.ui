@@ -241,7 +241,7 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 					}
 				}
 			} catch (CoreException x) {
-				handleCoreException(x, "SelectMarkerRulerAction.getMarker");
+				handleCoreException(x, EditorMessages.getString("SelectMarkerRulerAction.getMarker")); //$NON-NLS-1$
 			}
 		}
 

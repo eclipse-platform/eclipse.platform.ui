@@ -7,7 +7,10 @@ package org.eclipse.ui.texteditor;
 
 
 import java.lang.reflect.InvocationTargetException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -15,10 +18,16 @@ import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import org.eclipse.core.internal.plugins.ConfigurationElement;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.IPluginPrerequisite;
+import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -33,7 +42,11 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.ShellAdapter;
+import org.eclipse.swt.events.ShellEvent;
+import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.events.VerifyEvent;
+import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
@@ -46,6 +59,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -65,15 +79,18 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.IFindReplaceTargetExtension;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextInputListener;
 import org.eclipse.jface.text.ITextListener;
 import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.text.ITextViewerExtension;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.TextEvent;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRuler;
+import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.text.source.VerticalRuler;
@@ -96,9 +113,11 @@ import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IReusableEditor;
 import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.ui.internal.EditorPluginAction;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.EditorActionBarContributor;
 import org.eclipse.ui.part.EditorPart;
@@ -136,45 +155,70 @@ import org.eclipse.ui.part.EditorPart;
  * @see org.eclipse.ui.editors.text.TextEditor
  */
 public abstract class AbstractTextEditor extends EditorPart implements ITextEditor, IReusableEditor, ITextEditorExtension {
-	
+
+	private static final String TAG_CONTRIBUTION_TYPE= "editorContribution"; //$NON-NLS-1$
+
 	/**
 	 * Internal element state listener.
 	 */
-	class ElementStateListener implements IElementStateListener {
+	class ElementStateListener implements IElementStateListener, IElementStateListenerExtension {
+		
+			class Validator implements VerifyListener {
+				
+				private boolean fInputChanged;
+				private ITextInputListener fInputListener= new ITextInputListener() {
+					public void inputDocumentAboutToBeChanged(IDocument oldInput, IDocument newInput) {}
+					public void inputDocumentChanged(IDocument oldInput, IDocument newInput) { fInputChanged= true; }
+				};
+				
+				public void verifyText(VerifyEvent e) {
+					
+					ISourceViewer viewer= getSourceViewer();
+					fInputChanged= false;
+					viewer.addTextInputListener(fInputListener);
+					try {
+						validateState(getEditorInput());
+						sanityCheckState(getEditorInput());
+						if (isEditorInputReadOnly() || fInputChanged)
+							e.doit= false;
+					} finally {
+						viewer.removeTextInputListener(fInputListener);
+					}
+				}
+			};
+		
+		private Validator fValidator;
+		
+		/*
+		 * @see IElementStateListenerExtension#elementStateValidationChanged(Object, boolean)
+		 */
+		public void elementStateValidationChanged(Object element, boolean isStateValidated) {
+			if (isStateValidated && fValidator != null) {
+				ISourceViewer viewer= getSourceViewer();
+				if (viewer != null) {
+					StyledText textWidget= viewer.getTextWidget();
+					if (textWidget != null && !textWidget.isDisposed())
+						textWidget.removeVerifyListener(fValidator);
+					fValidator= null;
+				}
+			} else if (!isStateValidated && fValidator == null) {
+				ISourceViewer viewer= getSourceViewer();
+				if (viewer != null) {
+					StyledText textWidget= viewer.getTextWidget();
+					if (textWidget != null && !textWidget.isDisposed()) {
+						fValidator= new Validator();
+						textWidget.addVerifyListener(fValidator);
+					}
+				}
+			}
+		}
 		
 		/*
 		 * @see IElementStateListener#elementDirtyStateChanged
 		 */
 		public void elementDirtyStateChanged(Object element, boolean isDirty) {
-			
-			if (element != null && element.equals(getEditorInput())) {
-				
-				if (isDirty) {
-					
-					validateState((IEditorInput) element);
-					updateStatusField(ITextEditorActionConstants.STATUS_CATEGORY_ELEMENT_STATE);
-					
-					if (!isEditable()) {
-						/* should be replaced with a key verify listener for better appearance */
-						Shell shell= getSite().getShell();
-						if (shell != null) {
-							shell.getDisplay().asyncExec(new Runnable() {
-								public void run() {
-									doRevertToSaved();
-								}
-							});
-						}
-					}
-				}							
+			if (element != null && element.equals(getEditorInput()))
 				firePropertyChange(PROP_DIRTY);
-				
-				/*
-				 * Revert should be undoable
-				 * 
-				if (!isDirty && fSourceViewer != null)
-					fSourceViewer.resetPlugins();
-				*/
-			}
 		}
 		
 		/*
@@ -193,12 +237,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		public void elementContentReplaced(Object element) {
 			if (element != null && element.equals(getEditorInput())) {
 				firePropertyChange(PROP_DIRTY);
-				/*
-				 * Revert should be undoable
-				 * 
-				if (!isDirty && fSourceViewer != null)
-					fSourceViewer.resetPlugins();
-				*/
 				restoreSelection();
 			}
 		}
@@ -255,7 +293,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		
 		private Display fDisplay;
 		
-		/**
+		/*
 		 * @see ITextListener#textChanged(TextEvent)
 		 */
 		public void textChanged(TextEvent event) {
@@ -266,12 +304,56 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			fDisplay.asyncExec(fRunnable);
 		}
 	};
+
+	static class ConfigurationElementComparator implements Comparator {
+		
+		/*
+		 * @see Comparator#compare(Object, Object)
+		 */
+		public int compare(Object object0, Object object1) {
+
+			IConfigurationElement element0= (IConfigurationElement)object0;
+			IConfigurationElement element1= (IConfigurationElement)object1;	
+			
+			if (dependsOn(element0, element1))
+				return -1;
+				
+			if (dependsOn(element1, element0))
+				return +1;
+			
+			return 0;
+		}
+
+		private static boolean dependsOn(IConfigurationElement element0, IConfigurationElement element1) {
+			IPluginDescriptor descriptor0= element0.getDeclaringExtension().getDeclaringPluginDescriptor();
+			IPluginDescriptor descriptor1= element1.getDeclaringExtension().getDeclaringPluginDescriptor();
+			
+			return dependsOn(descriptor0, descriptor1);
+		}
+		
+		private static boolean dependsOn(IPluginDescriptor descriptor0, IPluginDescriptor descriptor1) {
+
+			IPluginRegistry registry= Platform.getPluginRegistry();
+			IPluginPrerequisite[] prerequisites= descriptor0.getPluginPrerequisites();
+
+			for (int i= 0; i < prerequisites.length; i++) {
+				IPluginPrerequisite prerequisite= prerequisites[i];
+				String id= prerequisite.getUniqueIdentifier();			
+				IPluginDescriptor descriptor= registry.getPluginDescriptor(id);
+				
+				if (descriptor != null && (descriptor.equals(descriptor1) || dependsOn(descriptor, descriptor1)))
+					return true;
+			}
+			
+			return false;
+		}
+	}
 	
 	/**
 	 * Internal property change listener.
 	 */
 	class PropertyChangeListener implements IPropertyChangeListener {
-		/**
+		/*
 		 * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
 		 */
 		public void propertyChange(PropertyChangeEvent event) {
@@ -287,7 +369,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		private boolean fIsInstalled= false;
 		private IKeyBindingService fKeyBindingService;
 		
-		/**
+		/*
 		 * @see VerifyKeyListener#verifyKey(VerifyEvent)
 		 */
 		public void verifyKey(VerifyEvent event) {
@@ -311,10 +393,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 					}
 				}
 			}
-			if (fKeyBindingService.processKey(event)) {
-				/* mode handling not yet right */
+			if (fKeyBindingService.processKey(event))
 				event.doit= false;
-			}
 		}
 		
 		/**
@@ -322,8 +402,15 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		 */
 		public void install() {
 			if (!fIsInstalled) {
-				StyledText text= fSourceViewer.getTextWidget();
-				text.addVerifyKeyListener(this);
+				
+				if (fSourceViewer instanceof ITextViewerExtension) {
+					ITextViewerExtension e= (ITextViewerExtension) fSourceViewer;
+					e.prependVerifyKeyListener(this);
+				} else {
+					StyledText text= fSourceViewer.getTextWidget();
+					text.addVerifyKeyListener(this);
+				}
+				
 				fKeyBindingService= getEditorSite().getKeyBindingService();
 				fKeyBindingService.enable(true);
 				fIsInstalled= true;
@@ -335,8 +422,15 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		 */
 		public void uninstall() {
 			if (fIsInstalled) {
-				StyledText text= fSourceViewer.getTextWidget();
-				text.removeVerifyKeyListener(fActivationCodeTrigger);
+				
+				if (fSourceViewer instanceof ITextViewerExtension) {
+					ITextViewerExtension e= (ITextViewerExtension) fSourceViewer;
+					e.removeVerifyKeyListener(this);
+				} else {
+					StyledText text= fSourceViewer.getTextWidget();
+					text.removeVerifyKeyListener(fActivationCodeTrigger);
+				}
+				
 				fIsInstalled= false;
 				fKeyBindingService= null;
 			}
@@ -354,7 +448,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		 * The given action is no longer available for key activation
 		 */
 		public void unregisterActionFromKeyActivation(IAction action) {
-			// No such action available on service
+			// No such action available on the service
 		}
 	};
 	
@@ -380,59 +474,66 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	};
 	
 	/**
-	 * Internal part activation listener
+	 * Internal part and shell activation listener
 	 */
-	class PartListener implements IPartListener {
+	class ActivationListener extends ShellAdapter implements IPartListener {
 		
-		private long fModificationStamp= -1;
+		private IWorkbenchPart fActivePart;
+		private boolean fIsHandlingActivation= false;
 		
-		/**
+		/*
 		 * @see IPartListener#partActivated(IWorkbenchPart)
 		 */
 		public void partActivated(IWorkbenchPart part) {
-			if (part == AbstractTextEditor.this) {
-				
-				IDocumentProvider p= getDocumentProvider();
-				
-				if (fModificationStamp == -1) 
-					fModificationStamp= p.getSynchronizationStamp(getEditorInput());
-					
-				long stamp= p.getModificationStamp(getEditorInput());
-				if (stamp != fModificationStamp) {
-					fModificationStamp= stamp;
-					if (stamp != p.getSynchronizationStamp(getEditorInput()))
-						handleEditorInputChanged();
-				} 
-				
-				updateState(getEditorInput());
-				updateStatusField(ITextEditorActionConstants.STATUS_CATEGORY_ELEMENT_STATE);
-			}
+			fActivePart= part;
+			handleActivation();
 		}
 	
-		/**
+		/*
 		 * @see IPartListener#partBroughtToTop(IWorkbenchPart)
 		 */
 		public void partBroughtToTop(IWorkbenchPart part) {
 		}
 	
-		/**
+		/*
 		 * @see IPartListener#partClosed(IWorkbenchPart)
 		 */
 		public void partClosed(IWorkbenchPart part) {
 		}
 	
-		/**
+		/*
 		 * @see IPartListener#partDeactivated(IWorkbenchPart)
 		 */
 		public void partDeactivated(IWorkbenchPart part) {
+			fActivePart= null;
 		}
 	
-		/**
+		/*
 		 * @see IPartListener#partOpened(IWorkbenchPart)
 		 */
 		public void partOpened(IWorkbenchPart part) {
 		}
 	
+		/*
+		 * @see ShellListener#shellActivated(ShellEvent)
+		 */
+		public void shellActivated(ShellEvent e) {
+			handleActivation();
+		}
+		
+		private void handleActivation() {
+			if (fIsHandlingActivation)
+				return;
+				
+			if (fActivePart == AbstractTextEditor.this) {
+				fIsHandlingActivation= true;
+				try {
+					sanityCheckState(getEditorInput());
+				} finally {
+					fIsHandlingActivation= false;
+				}
+			}
+		}
 	};
 	
 	/**
@@ -461,6 +562,28 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		
 		public int getAction() {
 			return fAction;
+		}
+	};
+	
+	/**
+	 * Internal action for scroll the editor's viewer by a specified number of lines.
+	 */
+	class ScrollLinesAction extends Action {
+		
+		private int fScrollIncrement;
+		
+		public ScrollLinesAction(int scrollIncrement) {
+			fScrollIncrement= scrollIncrement;
+		}
+		
+		/*
+		 * @see IAction#run()
+		 */
+		public void run() {
+			ISourceViewer viewer= getSourceViewer();
+			int topIndex= viewer.getTopIndex();
+			int newTopIndex= Math.max(0, topIndex + fScrollIncrement);
+			viewer.setTopIndex(newTopIndex);
 		}
 	};
 	
@@ -528,6 +651,28 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		// miscellaneous
 		new IdMapEntry(ITextEditorActionDefinitionIds.TOGGLE_OVERWRITE, ST.TOGGLE_OVERWRITE)
 	};
+	
+	
+	/* Status line labels */
+	private final String fReadOnlyLabel = EditorMessages.getString("Editor.statusline.state.readonly.label"); //$NON-NLS-1$
+	private final String fWritableLabel = EditorMessages.getString("Editor.statusline.state.writable.label"); //$NON-NLS-1$
+	private final String fInsertModeLabel = EditorMessages.getString("Editor.statusline.mode.insert.label"); //$NON-NLS-1$
+	private final String fOverwriteModeLabel = EditorMessages.getString("Editor.statusline.mode.overwrite.label"); //$NON-NLS-1$
+	
+	private static class PositionLabelValue {
+		
+		public int fValue;
+		
+		public String toString() {
+			return String.valueOf(fValue);
+		}
+	};
+	
+	private final String fPositionLabelError= EditorMessages.getString("Editor.statusline.position.error.label"); //$NON-NLS-1$
+	private final String fPositionLabelPattern= EditorMessages.getString("Editor.statusline.position.pattern"); //$NON-NLS-1$
+	private final PositionLabelValue fLineLabel= new PositionLabelValue();
+	private final PositionLabelValue fColumnLabel= new PositionLabelValue();
+	private final Object[] fPositionLabelPatternArguments= new Object[] { fLineLabel, fColumnLabel };
 
 	
 	
@@ -569,6 +714,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	private List fSelectionActions= new ArrayList(5);
 	/** The actions marked as content dependent */
 	private List fContentActions= new ArrayList(5);
+	/** The actions marked as property dependent */
+	private List fPropertyActions= new ArrayList(5);
 	/** The editor's action activation codes */
 	private List fActivationCodes= new ArrayList(2);
 	/** The verify key listener for activation code triggering */
@@ -591,8 +738,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	private ITextListener fTextListener= new TextListener();
 	/** The editor's property change listener */
 	private IPropertyChangeListener fPropertyChangeListener= new PropertyChangeListener();
-	/** The editor's part listener */
-	private IPartListener fPartListener= new PartListener();
+	/** The editor's activation listener */
+	private ActivationListener fActivationListener= new ActivationListener();
 	/** The map of the editor's status fields */
 	private Map fStatusFields;
 	/** The editor's cursor listener */
@@ -607,6 +754,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	private int fErrorCorrectionOnSave;
 	/** The incremental find target */
 	private IncrementalFindTarget fIncrementalFindTarget;
+	/** Cached modification stamp of the editor's input */
+	private long fModificationStamp= -1;
+	
+
 	
 	
 	
@@ -997,7 +1148,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			throw new PartInitException(x.getMessage());
 		}
 		
-		getSite().getWorkbenchWindow().getPartService().addPartListener(fPartListener);
+		IWorkbenchWindow window= getSite().getWorkbenchWindow();
+		window.getPartService().addPartListener(fActivationListener);
+		window.getShell().addShellListener(fActivationListener);
 	}
 	
 	/**
@@ -1073,7 +1226,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		if ((fEditorContextMenuId != null && fCompatibilityMode) || fEditorContextMenuId  == null) {
 			String partId= getSite().getId();
 			if (partId != null)
-				getSite().registerContextMenu(partId + ".EditorContext", manager, getSelectionProvider());
+				getSite().registerContextMenu(partId + ".EditorContext", manager, getSelectionProvider()); //$NON-NLS-1$
 		}
 		
 		if (fEditorContextMenuId == null)
@@ -1097,17 +1250,17 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		if ((fRulerContextMenuId != null && fCompatibilityMode) || fRulerContextMenuId  == null) {
 			String partId= getSite().getId();
 			if (partId != null)
-				getSite().registerContextMenu(partId + ".RulerContext", manager, getSelectionProvider());
+				getSite().registerContextMenu(partId + ".RulerContext", manager, getSelectionProvider()); //$NON-NLS-1$
 		}
 		
 		if (fRulerContextMenuId == null)
 			fRulerContextMenuId= DEFAULT_RULER_CONTEXT_MENU_ID;
 			
+		getSite().setSelectionProvider(getSelectionProvider());
+		
 		fActivationCodeTrigger.install();
 		createNavigationActions();
 		createActions();
-		
-		getSite().setSelectionProvider(getSelectionProvider());
 		
 		initializeSourceViewer(getEditorInput());
 	}
@@ -1266,6 +1419,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			fSourceViewer.setEditable(isEditable());
 			fSourceViewer.showAnnotations(model != null);			
 		}
+		
+		if (fElementStateListener instanceof IElementStateListenerExtension) {
+			IElementStateListenerExtension extension= (IElementStateListenerExtension) fElementStateListener;
+			extension.elementStateValidationChanged(input, false);
+		}
 	}
 	
 	/**
@@ -1332,9 +1490,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			if (oldInput != null)
 				getDocumentProvider().disconnect(oldInput);
 			
-				
 			super.setInput(input);
-			
+						
 			updateDocumentProvider(input);
 			
 			IDocumentProvider provider= getDocumentProvider();
@@ -1394,9 +1551,13 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	public void dispose() {
 		
-		if (fPartListener != null) {
-			getSite().getWorkbenchWindow().getPartService().removePartListener(fPartListener);
-			fPartListener= null;
+		if (fActivationListener != null) {
+			IWorkbenchWindow window= getSite().getWorkbenchWindow();
+			window.getPartService().removePartListener(fActivationListener);
+			Shell shell= window.getShell();
+			if (shell != null && !shell.isDisposed())
+				shell.removeShellListener(fActivationListener);
+			fActivationListener= null;
 		}
 		
 		if (fTitleImage != null) {
@@ -1454,6 +1615,21 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		if (fActions != null) {
 			fActions.clear();
 			fActions= null;
+		}
+		
+		if (fSelectionActions != null) {
+			fSelectionActions.clear();
+			fSelectionActions= null;
+		}
+		
+		if (fContentActions != null) {
+			fContentActions.clear();
+			fContentActions= null;
+		}
+		
+		if (fPropertyActions != null) {
+			fPropertyActions.clear();
+			fPropertyActions= null;
 		}
 		
 		if (fActivationCodes != null) {
@@ -1561,7 +1737,34 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 					msg= EditorMessages.getString("Editor.error.refresh.outofsync.message"); //$NON-NLS-1$
 					ErrorDialog.openError(shell, title, msg, x.getStatus());
 				}
+			} else {
+				markEditorAsDirty();
 			}
+		}
+	}
+
+	/**
+	 * Marks this editor and its editor input as dirty.
+	 */
+	private void markEditorAsDirty() {
+		
+		if (isDirty())
+			return;
+			
+		IDocumentProvider provider= getDocumentProvider();
+		if (provider instanceof IDocumentProviderExtension) {
+			
+			provider.removeElementStateListener(fElementStateListener);
+			try {
+				
+				IDocumentProviderExtension extension= (IDocumentProviderExtension) provider;
+				extension.setCanSaveDocument(getEditorInput());
+				firePropertyChange(PROP_DIRTY);
+				
+			} finally {
+				provider.addElementStateListener(fElementStateListener);
+			}
+			
 		}
 	}
 			
@@ -1621,6 +1824,27 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		
 			performSaveOperation(createSaveOperation(false), progressMonitor);
 		}
+	}
+	
+	/**
+	 * Checks the state of the editor input.
+	 */
+	protected void sanityCheckState(IEditorInput input) {
+		
+		IDocumentProvider p= getDocumentProvider();
+		
+		if (fModificationStamp == -1) 
+			fModificationStamp= p.getSynchronizationStamp(input);
+			
+		long stamp= p.getModificationStamp(input);
+		if (stamp != fModificationStamp) {
+			fModificationStamp= stamp;
+			if (stamp != p.getSynchronizationStamp(input))
+				handleEditorInputChanged();
+		} 
+		
+		updateState(getEditorInput());
+		updateStatusField(ITextEditorActionConstants.STATUS_CATEGORY_ELEMENT_STATE);
 	}
 	
 	/**
@@ -1861,8 +2085,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		found.fCharacter= activationCharacter;
 		found.fKeyCode= activationKeyCode;
 		found.fStateMask= activationStateMask;
-		
-		setupActionActivationCodes();
 	}
 	
 	/**
@@ -1887,29 +2109,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	public void removeActionActivationCode(String actionID) {
 		Assert.isNotNull(actionID);
-		
 		ActionActivationCode code= findActionActivationCode(actionID);
-		if (code != null) {
+		if (code != null)
 			fActivationCodes.remove(code);
-			setupActionActivationCodes();
-		}
-	}
-	
-	/**
-	 * Deals with the installation/deinstallation of a 
-	 * key verify listener depending on the number of 
-	 * registered action activation codes.
-	 */
-	private void setupActionActivationCodes() {
-		if (fActivationCodes.isEmpty() && fActivationCodeTrigger.fIsInstalled) {
-			StyledText text= fSourceViewer.getTextWidget();
-			text.removeVerifyKeyListener(fActivationCodeTrigger);
-			fActivationCodeTrigger.fIsInstalled= false;
-		} else if (!fActivationCodes.isEmpty() && !fActivationCodeTrigger.fIsInstalled) {
-			StyledText text= fSourceViewer.getTextWidget();
-			text.addVerifyKeyListener(fActivationCodeTrigger);
-			fActivationCodeTrigger.fIsInstalled= true;
-		}
 	}
 	
 	/*
@@ -1917,7 +2119,46 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	public IAction getAction(String actionID) {
 		Assert.isNotNull(actionID);
-		return (IAction) fActions.get(actionID);
+		IAction action= (IAction) fActions.get(actionID);
+		
+		if (action == null) {
+			action= findContributedAction(actionID);
+			if (action != null)
+				setAction(actionID, action);
+		}
+		
+		return action;
+	}
+	
+	private IAction findContributedAction(String actionID) {
+		IExtensionPoint extensionPoint= Platform.getPluginRegistry().getExtensionPoint(PlatformUI.PLUGIN_ID, "editorActions"); //$NON-NLS-1$
+		if (extensionPoint != null) {
+			IConfigurationElement[] elements= extensionPoint.getConfigurationElements();			
+
+			List actions= new ArrayList();
+			for (int i= 0; i < elements.length; i++) {
+				IConfigurationElement element= elements[i];				
+				if (TAG_CONTRIBUTION_TYPE.equals(element.getName())) {
+					if (!getSite().getId().equals(element.getAttribute("targetID"))) //$NON-NLS-1$
+						continue;
+
+					IConfigurationElement[] children= element.getChildren("action"); //$NON-NLS-1$
+					for (int j= 0; j < children.length; j++) {
+						IConfigurationElement child= children[j];
+						if (actionID.equals(child.getAttribute("actionID"))) //$NON-NLS-1$
+							actions.add(child);
+					}
+				}
+			}
+			Collections.sort(actions, new ConfigurationElementComparator());
+
+			if (actions.size() != 0) {
+				IConfigurationElement element= (IConfigurationElement) actions.get(0);
+				return new EditorPluginAction(element, "class", this); //$NON-NLS-1$
+			}
+		}
+		
+		return null;
 	}
 	
 	/**
@@ -1966,6 +2207,21 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	}
 	
 	/**
+	 * Marks or unmarks the given action to be updated on property changes.
+	 *
+	 * @param actionId the action id
+	 * @param mark <code>true</code> if the action is property dependent
+	 */
+	public void markAsPropertyDependentAction(String actionId, boolean mark) {
+		Assert.isNotNull(actionId);
+		if (mark) {
+			if (!fPropertyActions.contains(actionId))
+				fPropertyActions.add(actionId);
+		} else
+			fPropertyActions.remove(actionId);
+	}
+	
+	/**
 	 * Updates all selection dependent actions.
 	 */
 	protected void updateSelectionDependentActions() {
@@ -1988,19 +2244,41 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	}
 	
 	/**
+	 * Updates all property dependent actions.
+	 */
+	protected void updatePropertyDependentActions() {
+		if (fPropertyActions != null) {
+			Iterator e= fPropertyActions.iterator();
+			while (e.hasNext())
+				updateAction((String) e.next());
+		}
+	}
+	
+	/**
 	 * Creates this editor's standard navigation actions.
 	 * <p>
 	 * Subclasses may extend.
 	 * </p>
 	 */
 	protected void createNavigationActions() {
+		
+		IAction action;
+		
 		StyledText textWidget= getSourceViewer().getTextWidget();
 		for (int i= 0; i < ACTION_MAP.length; i++) {
 			IdMapEntry entry= (IdMapEntry) ACTION_MAP[i];
-			TextNavigationAction action= new TextNavigationAction(textWidget, entry.getAction());
+			action= new TextNavigationAction(textWidget, entry.getAction());
 			action.setActionDefinitionId(entry.getActionId());
 			setAction(entry.getActionId(), action);
 		}
+		
+		action=  new ScrollLinesAction(-1);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SCROLL_LINE_UP);
+		setAction(ITextEditorActionDefinitionIds.SCROLL_LINE_UP, action);
+		
+		action= new ScrollLinesAction(1);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SCROLL_LINE_DOWN);
+		setAction(ITextEditorActionDefinitionIds.SCROLL_LINE_DOWN, action);
 	}
 	
 	/**
@@ -2109,11 +2387,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.LINE_GOTO);
 		setAction(ITextEditorActionConstants.GOTO_LINE, action);
 		
-		setAction(ITextEditorActionConstants.RULER_MANAGE_BOOKMARKS, new MarkerRulerAction(EditorMessages.getResourceBundle(), "Editor.ManageBookmarks.", fVerticalRuler, this, IMarker.BOOKMARK, true)); //$NON-NLS-1$
-		setAction(ITextEditorActionConstants.RULER_MANAGE_TASKS, new MarkerRulerAction(EditorMessages.getResourceBundle(), "Editor.ManageTasks.", fVerticalRuler, this, IMarker.TASK, true)); //$NON-NLS-1$
-		setAction(ITextEditorActionConstants.RULER_DOUBLE_CLICK, getAction(ITextEditorActionConstants.RULER_MANAGE_BOOKMARKS));
-		setAction(ITextEditorActionConstants.RULER_CLICK, new SelectMarkerRulerAction(EditorMessages.getResourceBundle(), "Editor.SelectMarker.", fVerticalRuler, this));
-		
 		markAsContentDependentAction(ITextEditorActionConstants.UNDO, true);
 		markAsContentDependentAction(ITextEditorActionConstants.REDO, true);
 		markAsContentDependentAction(ITextEditorActionConstants.FIND, true);
@@ -2127,6 +2400,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		markAsSelectionDependentAction(ITextEditorActionConstants.DELETE, true);
 		markAsSelectionDependentAction(ITextEditorActionConstants.SHIFT_RIGHT, true);
 		markAsSelectionDependentAction(ITextEditorActionConstants.SHIFT_LEFT, true);
+		
+		markAsPropertyDependentAction(ITextEditorActionConstants.REVERT_TO_SAVED, true);
 		
 		setActionActivationCode(ITextEditorActionConstants.SHIFT_RIGHT,'\t', 0, 0);
 		setActionActivationCode(ITextEditorActionConstants.SHIFT_LEFT, '\t', 0, SWT.SHIFT);
@@ -2246,6 +2521,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @see IAdaptable#getAdapter(Class)
 	 */
 	public Object getAdapter(Class required) {
+		
+		if (IVerticalRulerInfo.class.equals(required))
+			return fVerticalRuler;
+		
 		if (IncrementalFindTarget.class.equals(required)) {
 			if (fIncrementalFindTarget == null) {
 				IEditorActionBarContributor contributor= getEditorSite().getActionBarContributor();
@@ -2256,14 +2535,17 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			}
 			return fIncrementalFindTarget;
 		}
+		
 		if (IFindReplaceTarget.class.equals(required)) {
 			IFindReplaceTarget target= (fSourceViewer == null ? null : fSourceViewer.getFindReplaceTarget());
 			if (target != null && target instanceof IFindReplaceTargetExtension)
 				((IFindReplaceTargetExtension) target).setScopeHighlightColor(fFindScopeHighlightColor);
 			return target;
 		}
+		
 		if (ITextOperationTarget.class.equals(required))
 			return (fSourceViewer == null ? null : fSourceViewer.getTextOperationTarget());
+		
 		return super.getAdapter(required);
 	}
 		
@@ -2433,6 +2715,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	protected void firePropertyChange(int property) {
 		super.firePropertyChange(property);
+		updatePropertyDependentActions();
 	}
 	
 	/*
@@ -2504,13 +2787,13 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			
 			IStatusField field= getStatusField(ITextEditorActionConstants.STATUS_CATEGORY_ELEMENT_STATE);
 			if (field != null)
-				field.setText(isEditorInputReadOnly() ? "Read Only" : "Writable");
+				field.setText(isEditorInputReadOnly() ? fReadOnlyLabel : fWritableLabel);
 		
 		} else if (ITextEditorActionConstants.STATUS_CATEGORY_INPUT_MODE.equals(category)) {
 			
 			IStatusField field= getStatusField(ITextEditorActionConstants.STATUS_CATEGORY_INPUT_MODE);
 			if (field != null)
-				field.setText(isInInsertMode() ? "Insert" : "Overwrite");
+				field.setText(isInInsertMode() ? fInsertModeLabel : fOverwriteModeLabel);
 		}	
 	}
 	
@@ -2539,10 +2822,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			int tabWidth= styledText.getTabs();
 			int column= caret - lineOffset + (tabWidth -1) * occurrences;
 			
-			return ((line + 1) + " : " + (column + 1));
+			fLineLabel.fValue= line + 1;
+			fColumnLabel.fValue= column + 1;
+			return MessageFormat.format(fPositionLabelPattern, fPositionLabelPatternArguments);
 			
 		} catch (BadLocationException x) {
-			return "??";
+			return fPositionLabelError;
 		}
 	}
 	

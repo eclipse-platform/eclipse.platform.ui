@@ -72,13 +72,13 @@ class FindReplaceDialog extends Dialog {
 	private class FindModifyListener implements ModifyListener {
 		public void modifyText(ModifyEvent e) {
 			if (isIncrementalSearch()) {
-				if (fFindField.getText().equals("") && fTarget != null) {
+				if (fFindField.getText().equals("") && fTarget != null) { //$NON-NLS-1$
 					// empty selection at base location
 					int offset= isForwardSearch()
 						? fIncrementalBaseLocation.x + fIncrementalBaseLocation.y
 						: fIncrementalBaseLocation.x;
 					
-					fTarget.findAndSelect(offset, "", isForwardSearch(), isCaseSensitiveSearch(), isWholeWordSearch());
+					fTarget.findAndSelect(offset, "", isForwardSearch(), isCaseSensitiveSearch(), isWholeWordSearch()); //$NON-NLS-1$
 				} else {
 					performSearch();
 				}
@@ -382,15 +382,7 @@ class FindReplaceDialog extends Dialog {
 				if (!fGlobalRadioButton.getSelection())
 					return;
 				
-				if (isIncrementalSearch())
-					initIncrementalBaseLocation();
-
-				if (fTarget != null && fTarget instanceof IFindReplaceTargetExtension) {
-					IFindReplaceTargetExtension extensionTarget= (IFindReplaceTargetExtension) fTarget;
-
-					fOldScope= extensionTarget.getScope();
-					extensionTarget.setScope(null);
-				}
+				useSelectedLines(false);
 			}
 
 			public void widgetDefaultSelected(SelectionEvent e) {
@@ -406,35 +398,46 @@ class FindReplaceDialog extends Dialog {
 				if (!fSelectedRangeRadioButton.getSelection())
 					return;
 
-				if (isIncrementalSearch())
-					initIncrementalBaseLocation();
-				
-				if (fTarget != null && fTarget instanceof IFindReplaceTargetExtension) {
-					IFindReplaceTargetExtension extensionTarget= (IFindReplaceTargetExtension) fTarget;
-
-					IRegion scope;
-					if (fOldScope == null) {
-						Point lineSelection= extensionTarget.getLineSelection();
-						scope= new Region(lineSelection.x, lineSelection.y);
-					} else {
-						scope= fOldScope;
-						fOldScope= null;
-					}
-
-					int offset= isForwardSearch()
-						? scope.getOffset() 
-						: scope.getOffset() + scope.getLength();					
-
-					extensionTarget.setSelection(offset, 0);					
-					extensionTarget.setScope(scope);
-				}
+				useSelectedLines(true);
 			}
-
+			
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
 
 		return panel;
+	}
+
+	private void useSelectedLines(boolean selectedLines) {
+		if (isIncrementalSearch())
+			initIncrementalBaseLocation();
+
+		if (fTarget == null || !(fTarget instanceof IFindReplaceTargetExtension))
+			return;
+
+		IFindReplaceTargetExtension extensionTarget= (IFindReplaceTargetExtension) fTarget;
+
+		if (selectedLines) {
+
+			IRegion scope;
+			if (fOldScope == null) {
+				Point lineSelection= extensionTarget.getLineSelection();
+				scope= new Region(lineSelection.x, lineSelection.y);
+			} else {
+				scope= fOldScope;
+				fOldScope= null;
+			}
+
+			int offset= isForwardSearch()
+				? scope.getOffset() 
+				: scope.getOffset() + scope.getLength();					
+
+			extensionTarget.setSelection(offset, 0);					
+			extensionTarget.setScope(scope);
+		} else {
+			fOldScope= extensionTarget.getScope();
+			extensionTarget.setScope(null);			
+		}
 	}
 
 	/**
@@ -757,6 +760,11 @@ class FindReplaceDialog extends Dialog {
 			fFindField.removeModifyListener(fFindModifyListener);
 			if (selection != null) {
 				fFindField.setText(selection);
+				if (!selection.equals(fTarget.getSelectionText())) {
+					useSelectedLines(true);
+					fGlobalRadioButton.setSelection(false);
+					fSelectedRangeRadioButton.setSelection(true);
+				}
 			} else {
 				if ("".equals(fFindField.getText())) { //$NON-NLS-1$
 					if (fFindHistory.size() > 0)
@@ -1183,8 +1191,8 @@ class FindReplaceDialog extends Dialog {
 		IDialogSettings s= getDialogSettings();
 
 		try {
-			int x= s.getInt("x");
-			int y= s.getInt("y");
+			int x= s.getInt("x"); //$NON-NLS-1$
+			int y= s.getInt("y"); //$NON-NLS-1$
 			fLocation= new Point(x, y);
 		} catch (NumberFormatException e) {
 			fLocation= null;
@@ -1219,8 +1227,8 @@ class FindReplaceDialog extends Dialog {
 		IDialogSettings s= getDialogSettings();
 
 		Point location= getShell().getLocation();
-		s.put("x", location.x);
-		s.put("y", location.y);
+		s.put("x", location.x); //$NON-NLS-1$
+		s.put("y", location.y); //$NON-NLS-1$
 		
 		s.put("wrap", fWrapInit); //$NON-NLS-1$
 		s.put("casesensitive", fCaseInit); //$NON-NLS-1$

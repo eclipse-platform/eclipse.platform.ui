@@ -37,6 +37,7 @@ import org.eclipse.jface.window.Window;
 
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.views.tasklist.TaskPropertiesDialog;
 
 
 
@@ -272,6 +273,13 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 			return;
 		Map attributes= getInitialAttributes();
 		if (fAskForLabel) {
+			if (IMarker.TASK.equals(fMarkerType)) {
+                TaskPropertiesDialog dialog = new TaskPropertiesDialog(getTextEditor().getSite().getShell());
+                dialog.setResource(resource);
+                dialog.setInitialAttributes(attributes);
+                dialog.open();
+                return;
+	        }
 			if (!askForLabel(attributes))
 				return;
 		}

@@ -36,8 +36,11 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IEventConsumer;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.ITextViewerExtension;
 import org.eclipse.jface.text.IViewportListener;
 import org.eclipse.jface.text.IWidgetTokenOwner;
+
+import org.eclipse.ui.texteditor.ITextEditorExtension;
 
 import org.eclipse.jface.util.Assert;
 
@@ -164,7 +167,7 @@ public class ContentAssistant implements IContentAssistant {
 	 * detected, will wait the indicated delay interval before
 	 * activating the content assistant.
 	 */
-	class AutoAssistListener implements IContentAssistListener, Runnable {
+	class AutoAssistListener implements VerifyKeyListener, Runnable {
 		
 		private Thread fThread;
 		private boolean fIsReset= false;
@@ -225,7 +228,7 @@ public class ContentAssistant implements IContentAssistant {
 			return false;
 		}
 		
-		public boolean verifyKey(VerifyEvent e) {
+		public void verifyKey(VerifyEvent e) {
 			
 			int showStyle;
 			int pos= fViewer.getSelectedRange().x;
@@ -240,7 +243,7 @@ public class ContentAssistant implements IContentAssistant {
 				else {
 					if (fThread != null && fThread.isAlive())
 						stop();
-					return true;
+					return;
 				}
 			}
 			
@@ -248,12 +251,8 @@ public class ContentAssistant implements IContentAssistant {
 				reset(showStyle);
 			else
 				start(showStyle);
-			
-			return false;
 		}
 				
-		public void processEvent(VerifyEvent e) {}
-		
 		protected void showAssist(final int showStyle) {
 			Control control= fViewer.getTextWidget();
 			Display d= control.getDisplay();
@@ -587,10 +586,9 @@ public class ContentAssistant implements IContentAssistant {
 	
 	
 	// Content-Assist Listener types
-	final static int AUTO_ASSIST= 0;
-	final static int CONTEXT_SELECTOR= 1;
-	final static int PROPOSAL_SELECTOR= 2;
-	final static int CONTEXT_INFO_POPUP= 3;
+	final static int CONTEXT_SELECTOR= 0;
+	final static int PROPOSAL_SELECTOR= 1;
+	final static int CONTEXT_INFO_POPUP= 2;
 	
 	private IInformationControlCreator fInformationControlCreator;
 	private int fAutoActivationDelay= 500;
@@ -700,15 +698,31 @@ public class ContentAssistant implements IContentAssistant {
 	 */
 	private void manageAutoActivation(boolean start) {			
 		if (start) {
+			
 			if (fViewer != null && fAutoAssistListener == null) {
 				fAutoAssistListener= new AutoAssistListener();
-				addContentAssistListener(fAutoAssistListener, AUTO_ASSIST);
+				if (fViewer instanceof ITextViewerExtension) {
+					ITextViewerExtension extension= (ITextViewerExtension) fViewer;
+					extension.appendVerifyKeyListener(fAutoAssistListener);
+				} else {
+					StyledText textWidget= fViewer.getTextWidget();
+					if (Helper.okToUse(textWidget))
+						textWidget.addVerifyKeyListener(fAutoAssistListener);
+				}
 			}
-		} else {
-			if (fAutoAssistListener != null) {
-				removeContentAssistListener(fAutoAssistListener, AUTO_ASSIST);
-				fAutoAssistListener= null;
+			
+		} else if (fAutoAssistListener != null) {
+				
+			if (fViewer instanceof ITextViewerExtension) {
+				ITextViewerExtension extension= (ITextViewerExtension) fViewer;
+				extension.removeVerifyKeyListener(fAutoAssistListener);
+			} else {
+				StyledText textWidget= fViewer.getTextWidget();
+				if (Helper.okToUse(textWidget))
+					textWidget.removeVerifyKeyListener(fAutoAssistListener);
 			}
+			
+			fAutoAssistListener= null;
 		}
 	}
 	
@@ -1006,16 +1020,12 @@ public class ContentAssistant implements IContentAssistant {
 			
 			fListeners[type]= listener;
 			
-			if (fCloser == null && isCloserNeeded()) {
+			if (getNumberOfListeners() == 1) {
 				fCloser= new Closer();
 				fCloser.install();
-			}
-			
-			if (isListenerHookNeeded()) {
 				fViewer.setEventConsumer(fInternalListener);
 				installKeyListener();
 			}
-			
 			return true;
 		}
 		
@@ -1029,7 +1039,14 @@ public class ContentAssistant implements IContentAssistant {
 		if (!fKeyListenerHooked) {
 			StyledText text= fViewer.getTextWidget();
 			if (Helper.okToUse(text)) {
-				text.addVerifyKeyListener(fInternalListener);
+				
+				if (fViewer instanceof ITextViewerExtension) {
+					ITextViewerExtension e= (ITextViewerExtension) fViewer;
+					e.prependVerifyKeyListener(fInternalListener);
+				} else {
+					text.addVerifyKeyListener(fInternalListener);
+				}
+				
 				fKeyListenerHooked= true;
 			}
 		}
@@ -1068,12 +1085,13 @@ public class ContentAssistant implements IContentAssistant {
 	void removeContentAssistListener(IContentAssistListener listener, int type) {
 		fListeners[type]= null;
 		
-		if (fCloser != null && !isCloserNeeded()) {
-			fCloser.uninstall();
-			fCloser= null;
-		}
+		if (getNumberOfListeners() == 0) {
+			
+			if (fCloser != null) {
+				fCloser.uninstall();
+				fCloser= null;
+			}
 		
-		if (!isListenerHookNeeded()) {
 			uninstallKeyListener();
 			fViewer.setEventConsumer(null);
 		}
@@ -1088,41 +1106,31 @@ public class ContentAssistant implements IContentAssistant {
 		if (fKeyListenerHooked) {
 			StyledText text= fViewer.getTextWidget();
 			if (Helper.okToUse(text)) {
-				text.removeVerifyKeyListener(fInternalListener);
+				
+				if (fViewer instanceof ITextViewerExtension) {
+					ITextViewerExtension e= (ITextViewerExtension) fViewer;
+					e.removeVerifyKeyListener(fInternalListener);
+				} else {
+					text.removeVerifyKeyListener(fInternalListener);
+				}
+				
 				fKeyListenerHooked= false;
 			}
 		}
 	}
 	
 	/**
-	 * Returns whether a closer should be installed.
-	 * A single, shared closer is used to monitor for events
-	 * that should result in any open popups being closed.
+	 * Returns the number of listeners.
 	 *
-	 * @return <code>true</code> if a closer is needed
+	 * @return the number of listeners
 	 */
-	private boolean isCloserNeeded() {
-		// Do not include AUTO_ASSIST as it doesn't need a closer.
-		for (int i= CONTEXT_SELECTOR; i <= CONTEXT_INFO_POPUP; i++) {
+	private int getNumberOfListeners() {
+		int count= 0;
+		for (int i= 0; i <= CONTEXT_INFO_POPUP; i++) {
 			if (fListeners[i] != null)
-				return true;
+				++ count;
 		}
-		return false;
-	}
-	
-	/**
-	 * Returns whether a listener hook should be installed.
-	 * A single, shared listener is used to monitor for events
-	 * that are to be propagated to the registered listeners.
-	 *
-	 * @return <code>true</code> if a listener hook is needed
-	 */
-	private boolean isListenerHookNeeded() {
-		for (int i= AUTO_ASSIST; i <= CONTEXT_INFO_POPUP; i++) {
-			if (fListeners[i] != null)
-				return true;
-		}
-		return false;
+		return count;
 	}
 		
 	/*

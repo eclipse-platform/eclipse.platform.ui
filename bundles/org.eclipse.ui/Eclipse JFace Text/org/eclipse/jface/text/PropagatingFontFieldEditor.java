@@ -47,7 +47,7 @@ public class PropagatingFontFieldEditor extends FontFieldEditor {
 	public PropagatingFontFieldEditor(String name, String labelText, Composite parent, String defaultFontLabel) {
 		super(name, labelText, parent);
 		fParent= parent;
-		fDefaultFontLabel= defaultFontLabel == null ? "" : defaultFontLabel;
+		fDefaultFontLabel= defaultFontLabel == null ? "" : defaultFontLabel; //$NON-NLS-1$
 	}
 	
 	/*

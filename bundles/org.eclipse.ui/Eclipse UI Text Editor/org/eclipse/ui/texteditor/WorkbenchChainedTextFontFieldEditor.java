@@ -39,7 +39,7 @@ public class WorkbenchChainedTextFontFieldEditor extends PropagatingFontFieldEdi
 	 * @param parent the editor's parent widget
 	 */
 	public WorkbenchChainedTextFontFieldEditor(String name, String labelText, Composite parent) {
-		super(name, labelText, parent, EditorMessages.getString("WorkbenchChainedTextFontFieldEditor.defaultWorkbenchTextFont"));
+		super(name, labelText, parent, EditorMessages.getString("WorkbenchChainedTextFontFieldEditor.defaultWorkbenchTextFont")); //$NON-NLS-1$
 	}
 	
 	/**

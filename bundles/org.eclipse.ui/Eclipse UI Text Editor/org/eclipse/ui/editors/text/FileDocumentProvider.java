@@ -493,7 +493,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	 * @see IDocumentProviderExtension#isModifiable(Object)
 	 */
 	public boolean isModifiable(Object element) {
-		if (!hasStateBeenValidated(element)) {
+		if (!isStateValidated(element)) {
 			if (element instanceof IFileEditorInput)
 				return true;
 		}

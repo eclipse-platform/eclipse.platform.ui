@@ -52,7 +52,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 			/** The element's annotation model */
 			public IAnnotationModel fModel;
 			/** Has element state been validated */
-			public boolean fHasStateBeenValidated;
+			public boolean fIsStateValidated;
 			
 			
 			/**
@@ -67,7 +67,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 				fModel= model;
 				fCount= 0;
 				fCanBeSaved= false;
-				fHasStateBeenValidated= false;
+				fIsStateValidated= false;
 			}
 			
 			/**
@@ -513,14 +513,16 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	}
 	
 	/**
-	 * Returns whether <code>validateState</code> has been called for the given element.
+	 * Returns whether <code>validateState</code> has been called for the given element
+	 * since the element's state has potentially been invalidated.
+	 * 
 	 * @param element the element
 	 * @return whether <code>validateState</code> has been called for the given element
 	 */
-	protected boolean hasStateBeenValidated(Object element) {
+	public boolean isStateValidated(Object element) {
 		ElementInfo info= (ElementInfo) fElementInfoMap.get(element);
 		if (info != null)
-			return info.fHasStateBeenValidated;
+			return info.fIsStateValidated;
 		return false;
 	}
 	
@@ -542,7 +544,8 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 		if (info != null) {
 			doValidateState(element, computationContext);
 			updateStateCache(element);
-			info.fHasStateBeenValidated= true;
+			info.fIsStateValidated= true;
+			fireElementStateValidationChanged(element, true);
 		}
 	}
 	
@@ -563,8 +566,43 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 		if (info != null) {
 			boolean wasReadOnly= isReadOnly(element);
 			doUpdateStateCache(element);
-			if (isReadOnly(element) != wasReadOnly)
-				info.fHasStateBeenValidated= false;
+			if (isReadOnly(element) != wasReadOnly) {
+				info.fIsStateValidated= false;
+				fireElementStateValidationChanged(element, false);
+			}
+		}
+	}
+	
+	/*
+	 * @see IDocumentProviderExtension#setCanSaveDocument(Object)
+	 */
+	public void setCanSaveDocument(Object element) {
+		if (element != null) {
+			ElementInfo info= (ElementInfo) fElementInfoMap.get(element);
+			if (info != null) {
+				info.fCanBeSaved= true;
+				removeUnchangedElementListeners(element, info);
+				fireElementDirtyStateChanged(element, info.fCanBeSaved);
+			}
+		}
+	}
+	
+	/**
+	 * Informs all registered element state listeners about a change in the
+	 * state validation of the given element.
+	 *
+	 * @param element the element
+	 * @param isStateValidated
+	 * @see IElementStateListenerExtension#elementValidationStateChanged
+	 */
+	protected void fireElementStateValidationChanged(Object element, boolean isStateValidated) {
+		Iterator e= new ArrayList(fElementStateListeners).iterator();
+		while (e.hasNext()) {
+			Object o= e.next();
+			if (o instanceof IElementStateListenerExtension) {
+				IElementStateListenerExtension l= (IElementStateListenerExtension) o;
+				l.elementStateValidationChanged(element, isStateValidated);
+			}
 		}
 	}
 }

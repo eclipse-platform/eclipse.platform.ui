@@ -45,7 +45,8 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 		ITextEditorActionConstants.SELECT_ALL,
 		ITextEditorActionConstants.FIND,
 		ITextEditorActionConstants.BOOKMARK,
-		ITextEditorActionConstants.PRINT		
+		ITextEditorActionConstants.PRINT,
+		ITextEditorActionConstants.REVERT
 	};
 	
 	/** The status fields to be set to the editor */

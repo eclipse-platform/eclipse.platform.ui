@@ -171,7 +171,7 @@ public class StorageDocumentProvider extends AbstractDocumentProvider {
 					info.fIsModifiable= !readOnly;
 				}
 			} catch (CoreException x) {
-				handleCoreException(x, "StorageDocumentProvider.updateCache");
+				handleCoreException(x, TextEditorMessages.getString("StorageDocumentProvider.updateCache")); //$NON-NLS-1$
 			}
 			info.fUpdateCache= false;
 		}
@@ -188,7 +188,7 @@ public class StorageDocumentProvider extends AbstractDocumentProvider {
 					try {
 						updateCache((IStorageEditorInput) element);
 					} catch (CoreException x) {
-						handleCoreException(x, "StorageDocumentProvider.isReadOnly");
+						handleCoreException(x, TextEditorMessages.getString("StorageDocumentProvider.isReadOnly")); //$NON-NLS-1$
 					}
 				}
 				return info.fIsReadOnly;
@@ -208,7 +208,7 @@ public class StorageDocumentProvider extends AbstractDocumentProvider {
 					try {
 						updateCache((IStorageEditorInput) element);
 					} catch (CoreException x) {
-						handleCoreException(x, "StorageDocumentProvider.isModifiable");
+						handleCoreException(x, TextEditorMessages.getString("StorageDocumentProvider.isModifiable")); //$NON-NLS-1$
 					}
 				}
 				return info.fIsModifiable;
@@ -217,7 +217,6 @@ public class StorageDocumentProvider extends AbstractDocumentProvider {
 		return super.isModifiable(element);
 	}
 	
-
 	/*
 	 * @see AbstractDocumentProvider#doUpdateStateCache(Object)
 	 */

@@ -31,7 +31,7 @@ import org.eclipse.jface.text.IInformationControl;
 public class HoverBrowserControl  implements IInformationControl {
 	
 	/** Name of the file used as input to the web browser */
-	private final static String FILE= "____$html_text___";
+	private final static String FILE= "____$html_text___"; //$NON-NLS-1$
 	
 	/** The hover shell */
 	private Shell fShell;

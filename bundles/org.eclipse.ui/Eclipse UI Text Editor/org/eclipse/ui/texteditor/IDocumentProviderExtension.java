@@ -54,6 +54,13 @@ public interface IDocumentProviderExtension {
 	void validateState(Object element, Object computationContext) throws CoreException;
 	
 	/**
+	 * Returns whether the state of the given element has been validated.
+	 * 
+	 * @param element the element
+	 */
+	boolean isStateValidated(Object element);
+	
+	/**
 	 * Updates the state cache for the given element. This method may change the result returned
 	 * by <code>isReadOnly</code> and <code>isModifiable</code>. If the given element is not
 	 * connected to this document provider, the effect is undefined.
@@ -62,5 +69,14 @@ public interface IDocumentProviderExtension {
 	 * @exception CoreException if validating fails
 	 */
 	void updateStateCache(Object element) throws CoreException;
+	
+	/**
+	 * Marks the document managed for the given element as saveable. I.e.
+	 * <code>canBeSaved(element)</code> will return <code>true</code>
+	 * afterwards.
+	 * 
+	 * @param element the element
+	 */
+	void setCanSaveDocument(Object element);
 }
 

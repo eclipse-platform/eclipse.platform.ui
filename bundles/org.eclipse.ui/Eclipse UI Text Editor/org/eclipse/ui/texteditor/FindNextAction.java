@@ -123,7 +123,7 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 			return;
 			
 		manager.setErrorMessage(EditorMessages.getString("FindNext.Status.noMatch.label")); //$NON-NLS-1$
-		manager.setMessage("");
+		manager.setMessage(""); //$NON-NLS-1$
 	}
 
 	private void statusClear() {

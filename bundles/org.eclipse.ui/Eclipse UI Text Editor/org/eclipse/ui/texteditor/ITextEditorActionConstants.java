@@ -67,7 +67,7 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	 * Name of the action for re-establishing the state after the 
 	 * most recent save operation. 
 	 */
-	static final String REVERT_TO_SAVED= "Revert"; //$NON-NLS-1$
+	static final String REVERT_TO_SAVED= REVERT;
 	/** 
 	 * Name of the action to jump to a certain text line. 
 	 */
@@ -107,15 +107,15 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	/**
 	 * Status category "input position".
 	 */
-	static final String STATUS_CATEGORY_INPUT_POSITION= "InputPosition";
+	static final String STATUS_CATEGORY_INPUT_POSITION= "InputPosition"; //$NON-NLS-1$
 
 	/**
 	 * Status category "input mode".
 	 */
-	static final String STATUS_CATEGORY_INPUT_MODE= "InputMode";
+	static final String STATUS_CATEGORY_INPUT_MODE= "InputMode"; //$NON-NLS-1$
 
 	/**
 	 * Status category "element state".
 	 */
-	static final String STATUS_CATEGORY_ELEMENT_STATE= "ElementState";
+	static final String STATUS_CATEGORY_ELEMENT_STATE= "ElementState"; //$NON-NLS-1$
 }

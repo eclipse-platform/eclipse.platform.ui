@@ -33,7 +33,8 @@ public interface ICompletionProposal {
 	
 	/**
 	 * Returns the new selection after the proposal has been applied to 
-	 * the given document in absolute document coordinates.
+	 * the given document in absolute document coordinates. If it returns
+	 * <code>null</code>, no new selection is set.
 	 *
 	 * @param document the document into which the proposed completion has been inserted
 	 * @return the new selection in absolute document coordinates

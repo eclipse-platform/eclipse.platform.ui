@@ -33,7 +33,7 @@ public class StatusLineContributionItem extends ContributionItem implements ISta
 			
 			GC gc= new GC(parent);
 			gc.setFont(parent.getFont());
-			Point extent= gc.textExtent("MMMMMMMMM");
+			Point extent= gc.textExtent("MMMMMMMMM"); //$NON-NLS-1$
 			gc.dispose();
 			
 			fFixedSize= new Point(extent.x + INDENT * 2, 10);

@@ -5,12 +5,15 @@
 
 package org.eclipse.ui.texteditor;
 
+import java.text.MessageFormat;
+
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.IFindReplaceTargetExtension;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextListener;
 import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.ITextViewerExtension;
 import org.eclipse.jface.text.TextEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
@@ -147,7 +150,6 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 	public void setScope(IRegion scope) {
 	}
 
-	
 	private void install() {
 		if (fInstalled)
 			return;
@@ -155,8 +157,14 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 		fTextViewer.addTextListener(this);
 					
 		StyledText text= fTextViewer.getTextWidget();
-		text.addVerifyKeyListener(this);
 		text.addMouseListener(this);
+		
+		if (fTextViewer instanceof ITextViewerExtension) {
+			ITextViewerExtension e= (ITextViewerExtension) fTextViewer;
+			e.prependVerifyKeyListener(this);
+		} else {
+			text.addVerifyKeyListener(this);
+		}
 		
 		fInstalled= true;
 	}
@@ -165,9 +173,15 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 		fTextViewer.removeTextListener(this);
 
 		StyledText text= fTextViewer.getTextWidget();
-		text.removeVerifyKeyListener(this);
-		text.removeMouseListener(this);			
-
+		text.removeMouseListener(this);
+		
+		if (fTextViewer instanceof ITextViewerExtension) {
+			ITextViewerExtension e= (ITextViewerExtension) fTextViewer;
+			e.removeVerifyKeyListener(this);
+		} else {
+			text.removeVerifyKeyListener(this);
+		}
+		
 		fInstalled= false;
 	}
 	
@@ -196,12 +210,14 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 				fTextViewer.getTextWidget().getDisplay().beep();
 			}
 			
-			statusError("Incremental Find: " + string + " not found");
+			String pattern= EditorMessages.getString("Editor.FindIncremental.not_found.pattern"); //$NON-NLS-1$
+			statusError(MessageFormat.format(pattern, new Object[] { string }));
 
 		} else {
 			fFound= true;
 			fCurrentIndex= index;
-			statusMessage("Incremental Find: " + string);
+			String pattern= EditorMessages.getString("Editor.FindIncremental.found.pattern"); //$NON-NLS-1$
+			statusMessage(MessageFormat.format(pattern, new Object[] { string }));
 		}
 	}
 
@@ -286,7 +302,7 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 						break;
 
 					} else {
-						fFindString.replace(length - 1, length, "");
+						fFindString.replace(length - 1, length, ""); //$NON-NLS-1$
 					}
 	
 					if (fCasePosition == fFindString.length())
@@ -362,13 +378,13 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 	}
 
 	private void statusMessage(String string) {
-		fStatusLine.setErrorMessage("");
+		fStatusLine.setErrorMessage(""); //$NON-NLS-1$
 		fStatusLine.setMessage(string);
 	}
 
 	private void statusError(String string) {
 		fStatusLine.setErrorMessage(string);
-		fStatusLine.setMessage("");
+		fStatusLine.setMessage(""); //$NON-NLS-1$
 	}
 
 	private void statusClear() {
