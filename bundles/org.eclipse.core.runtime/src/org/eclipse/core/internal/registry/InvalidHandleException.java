@@ -11,6 +11,11 @@
 package org.eclipse.core.internal.registry;
 
 public class InvalidHandleException extends IllegalStateException {
+	/**
+	 * Comment for <code>serialVersionUID</code>
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public InvalidHandleException(String message) {
 		super(message);
 	}
