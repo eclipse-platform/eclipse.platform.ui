@@ -41,7 +41,7 @@
 	<imageprovider 
 		id="org.eclipse.ui.searchMarkerProvider"
 		markertype="org.eclipse.search.searchmarker"
-		icon="icons/basic/obj16/searchm_obj.gif">
+		icon="icons/full/obj16/searchm_obj.gif">
 	</imageprovider>
 </extension>
 
