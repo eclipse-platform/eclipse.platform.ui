@@ -18,7 +18,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title><%=data.getWindowTitle()%></title>
-<jsp:include page="livehelp.js.jsp"/>
+<jsp:include page="livehelp_js.jsp"/>
 </head>
 
 <frameset rows="<%="0".equals(data.getBannerHeight())?"":data.getBannerHeight()+","%>45,*">

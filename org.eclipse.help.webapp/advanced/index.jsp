@@ -28,7 +28,7 @@
 <meta HTTP-EQUIV="REFRESH" CONTENT="0;URL=index.jsp?noscript=1">
 </noscript>
 <title><%=data.getWindowTitle()%></title>
-<jsp:include page="livehelp.js.jsp"/>
+<jsp:include page="livehelp_js.jsp"/>
 
 <style type="text/css">
 FRAMESET {
