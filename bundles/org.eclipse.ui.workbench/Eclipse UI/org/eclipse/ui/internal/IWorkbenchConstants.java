@@ -39,6 +39,7 @@ public interface IWorkbenchConstants {
 	public static final String PL_WORKINGSETS = "workingSets"; //$NON-NLS-1$	
 	public static final String PL_STARTUP ="startup"; //$NON-NLS-1$
 	public static final String PL_THEMES ="themes"; //$NON-NLS-1$
+	public static final String PL_FONT_DEFINITIONS = "fontDefinitions"; //$NON-NLS-1$
 		
 	/**
 	 * @deprecated

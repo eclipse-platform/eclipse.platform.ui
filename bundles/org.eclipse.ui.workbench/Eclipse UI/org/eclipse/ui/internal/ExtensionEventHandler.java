@@ -12,6 +12,7 @@
 package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -40,7 +41,6 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IViewReference;
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
@@ -49,6 +49,8 @@ import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.internal.dialogs.PropertyPageContributorManager;
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceNode;
+import org.eclipse.ui.internal.fonts.FontDefinition;
+import org.eclipse.ui.internal.fonts.FontDefinitionReader;
 import org.eclipse.ui.internal.registry.ActionSetPartAssociationsReader;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.ActionSetRegistryReader;
@@ -74,9 +76,9 @@ public class ExtensionEventHandler implements IRegistryChangeListener {
 	private static final String TAG_PROVIDER = "imageprovider";//$NON-NLS-1$
 	private static final String TAG_ACTION_SET_PART_ASSOCIATION ="actionSetPartAssociation"; //$NON-NLS-1$
 
-	IWorkbench workbench;
+	private Workbench workbench;
 	
-	public ExtensionEventHandler(IWorkbench workbench) {
+	public ExtensionEventHandler(Workbench workbench) {
 		this.workbench = workbench;
 	}
 	
@@ -196,7 +198,24 @@ public class ExtensionEventHandler implements IRegistryChangeListener {
 		if (name.equalsIgnoreCase(IWorkbenchConstants.PL_PROPERTY_PAGES)) {
 			loadPropertyPages(ext);
 			return;
-		}		
+		}
+		if (name.equalsIgnoreCase(IWorkbenchConstants.PL_FONT_DEFINITIONS)) {
+			loadFontDefinitions(ext);
+			return;
+		}
+	}	
+
+	private void loadFontDefinitions(IExtension ext) {
+		FontDefinition.clearCache();
+		FontDefinitionReader reader = new FontDefinitionReader();
+		IConfigurationElement [] elements = ext.getConfigurationElements();
+		for (int i = 0; i < elements.length; i++) {
+			reader.readElement(elements[i]);	
+		}
+		
+		Collection fonts = reader.getValues();
+		FontDefinition [] fontDefs = (FontDefinition []) fonts.toArray(new FontDefinition [fonts.size()]);
+		workbench.initializeFonts(fontDefs);
 	}
 	
 	private void loadPropertyPages(IExtension ext) {

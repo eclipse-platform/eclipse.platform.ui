@@ -999,12 +999,21 @@ public final class Workbench implements IWorkbench {
 	 * the color registry.  
 	 */
 	private void initializeFonts() {
-		IPreferenceStore store = getPreferenceStore();
-		FontRegistry registry = JFaceResources.getFontRegistry();
-
 		//Iterate through the definitions and initialize thier
 		//defaults in the preference store.
 		FontDefinition[] definitions = FontDefinition.getDefinitions();
+		initializeFonts(definitions);
+	}
+	
+	/**
+	 * For dynamic UI
+	 * 
+	 * @param definitions the fonts to initialize
+	 * @since 3.0
+	 */
+	public void initializeFonts(FontDefinition[] definitions) {
+		FontRegistry registry = JFaceResources.getFontRegistry();
+		IPreferenceStore store = getPreferenceStore();		
 		ArrayList fontsToSet = new ArrayList();
 
 		for (int i = 0; i < definitions.length; i++) {
@@ -1040,6 +1049,7 @@ public final class Workbench implements IWorkbench {
 			registry.put(update.getId(), registry.getFontData(update.getDefaultsTo()));
 		}
 	}
+
 	/*
 	 * Installs the given font in the font registry.
 	 * 

@@ -15,6 +15,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
+import org.eclipse.ui.internal.fonts.FontDefinition;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -106,6 +107,7 @@ public class UIPlugin extends AbstractUIPlugin {
 		// By default, linking is off.
 		store.setDefault(IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR, false);
 		
+		store.addPropertyChangeListener(FontDefinition.getPreferenceListener());
 		store.addPropertyChangeListener(new PlatformUIPreferenceListener());
 	}
 
