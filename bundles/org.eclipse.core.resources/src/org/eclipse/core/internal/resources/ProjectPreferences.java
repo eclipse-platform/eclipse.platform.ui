@@ -47,7 +47,7 @@ public class ProjectPreferences extends EclipsePreferences {
 		super(null, null);
 	}
 
-	private ProjectPreferences(IEclipsePreferences parent, String name) {
+	private ProjectPreferences(EclipsePreferences parent, String name) {
 		super(parent, name);
 		// cache the segment count
 		String path = absolutePath();
@@ -106,7 +106,7 @@ public class ProjectPreferences extends EclipsePreferences {
 		return loadLevel;
 	}
 
-	protected EclipsePreferences internalCreate(IEclipsePreferences nodeParent, String nodeName, Plugin context) {
+	protected EclipsePreferences internalCreate(EclipsePreferences nodeParent, String nodeName, Plugin context) {
 		return new ProjectPreferences(nodeParent, nodeName);
 	}
 
