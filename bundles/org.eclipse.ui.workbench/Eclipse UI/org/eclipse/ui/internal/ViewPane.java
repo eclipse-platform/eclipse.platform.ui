@@ -21,11 +21,8 @@ import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CLabel;
-import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -56,9 +53,7 @@ import org.eclipse.ui.presentations.IPresentablePart;
  */
 public class ViewPane extends PartPane implements IPropertyListener {
 	private PresentableViewPart presentableAdapter = new PresentableViewPart(this);
-	
-	private CLabel titleLabel;
-	//private CLabel status;
+
 	private boolean busy = false;
 
 	private boolean fast = false;
@@ -207,27 +202,6 @@ public class ViewPane extends PartPane implements IPropertyListener {
 		newPart.setTitle(site.getRegisteredName());
 		site.setPart(newPart);
 		return newPart;
-	}
-
-	/**
-	 * See LayoutPart
-	 */
-	public boolean isDragAllowed(Point p) {
-		// See also similar restrictions in addMoveItems method
-		// No need to worry about fast views as they do not
-		// register for D&D operations
-		return isMoveable() && !overImage(p.x) && !isZoomed();
-	}
-	
-	/*
-	 * Return true if <code>x</code> is over the label image.
-	 */
-	private boolean overImage(int x) {
-		if (titleLabel.getImage() == null) {
-			return false;
-		} else {
-			return x < titleLabel.getImage().getBounds().width;
-		}
 	}
 	
 	/**
@@ -554,13 +528,6 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	public void updateTitles() {
 		presentableAdapter.firePropertyChange(IPresentablePart.PROP_TITLE);
 		
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.PartPane#setImage(org.eclipse.swt.widgets.TabItem, org.eclipse.swt.graphics.Image)
-	 */
-	void setImage(CTabItem item, Image image) {
-		titleLabel.setImage(image);
 	}
 
 	/* (non-Javadoc)
