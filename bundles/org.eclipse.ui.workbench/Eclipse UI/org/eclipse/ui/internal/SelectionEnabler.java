@@ -18,6 +18,8 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -57,6 +59,80 @@ public class SelectionEnabler {
 		public boolean recursive;
 		public String nameFilter;
 	}
+
+	/**
+	 * Hard-wired id of the JFace text plug-in (not on pre-req chain).
+	 */
+	private static final String JFACE_TEXT_PLUG_IN = "org.eclipse.jface.text"; //$NON-NLS-1$
+	
+	/**
+	 * Hard-wired fully qualified name of the text selection class (not on pre-req chain).
+	 */
+	private static final String TEXT_SELECTION_CLASS = "org.eclipse.jface.text.ITextSelection"; //$NON-NLS-1$
+
+	/**
+	 * Cached value of
+	 * <code>org.eclipse.jface.text.ITextSelection.class</code>;
+	 * <code>null</code> if not initialized or not present.
+	 */
+	private static Class iTextSelectionClass = null;
+
+	/**
+	 * Indicates whether the JFace text plug-in is even around.
+	 * Without the JFace text plug-in, text selections are moot.
+	 */
+	private static boolean textSelectionPossible = true;
+
+	/**
+	 * Returns <code>ITextSelection.class</code> or <code>null</code> if the
+	 * class is not available.
+	 * 
+	 * @return <code>ITextSelection.class</code> or <code>null</code> if class
+	 * not available
+	 * @since 3.0
+	 */
+	public static Class getTextSelectionClass() {
+		if (iTextSelectionClass != null) {
+			// tried before and succeeded
+			return iTextSelectionClass;
+		}
+		if (!textSelectionPossible) {
+			// tried before and failed
+			return null;
+		}
+		
+		// JFace text plug-in is not on prereq chain of generic wb plug-in
+		// hence: ITextSelection.class won't compile
+		// and Class.forName("org.eclipse.jface.text.ITextSelection") won't find it
+		// need to be trickier...
+		IPluginDescriptor desc = Platform.getPluginRegistry().getPluginDescriptor(JFACE_TEXT_PLUG_IN); 
+		if (desc == null) {
+			// JFace text plug-in is not around
+			// assume that it will never be around
+			textSelectionPossible = false;
+			return null;
+		}
+		// plug-in is around
+		// it's not our job to activate the plug-in
+		if (!desc.isPluginActivated()) {
+			// assume it might come alive later
+			textSelectionPossible = true;
+			return null;
+		}
+		ClassLoader rcl = desc.getPluginClassLoader();
+		try {
+			Class c = rcl.loadClass(TEXT_SELECTION_CLASS); //$NON-NLS-1$
+			// remember for next time
+			iTextSelectionClass = c;
+			return iTextSelectionClass;
+		} catch (ClassNotFoundException e) {
+			// unable to load ITextSelection - sounds pretty serious
+			// treat as if JFace text plug-in were unavailable
+			textSelectionPossible = false;
+			return null;
+		}
+	}
+
 /**
  * ActionEnabler constructor.
  */
@@ -89,7 +165,6 @@ public boolean isEnabledForSelection(ISelection selection) {
 		return isEnabledFor((IStructuredSelection)selection);
 	}
 
-	// @issue temporary code to deal with dependency on JFace text (optional component of generic workbench)
 	// special case: text selections
 	// Code should read
 	// if (selection instanceof ITextSelection) {
@@ -98,10 +173,9 @@ public boolean isEnabledForSelection(ISelection selection) {
 	// }
 	// use Java reflection to avoid dependence of org.eclipse.jface.text
 	// which is in an optional part of the generic workbench
-	try {
-		// @issue generic wb plug-in class loader will NEVER see org.eclipse.jface.text (not on prereq chain)
-		Class tselClass = Class.forName("org.eclipse.jface.text.ITextSelection"); //$NON-NLS-1$
-		if (tselClass.isInstance(selection)) {
+	Class tselClass = getTextSelectionClass();
+	if (tselClass != null && tselClass.isInstance(selection)) {
+		try {
 			Method m = tselClass.getDeclaredMethod("getLength", new Class[0]); //$NON-NLS-1$
 			Object r = m.invoke(selection, new Object[0]);
 			if (r instanceof Integer) {
@@ -110,15 +184,13 @@ public boolean isEnabledForSelection(ISelection selection) {
 				// should not happen - but enable if it does
 				return true;
 			}
+		} catch (NoSuchMethodException e) {
+			// should not happen - fall through if it does
+		} catch (IllegalAccessException e) {
+			// should not happen - fall through if it does
+		} catch (InvocationTargetException e) {
+			// should not happen - fall through if it does
 		}
-	} catch (ClassNotFoundException e) {
-		// JFace text is not present - fall through
-	} catch (NoSuchMethodException e) {
-		// should not happen - fall through if it does
-	} catch (IllegalAccessException e) {
-		// should not happen - fall through if it does
-	} catch (InvocationTargetException e) {
-		// should not happen - fall through if it does
 	}
 	
 	// all other cases
