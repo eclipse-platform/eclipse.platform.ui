@@ -184,8 +184,13 @@ public class ToolBarContributionItem extends ContributionItem {
         if (checkDisposed()) { return; }
 
         if (coolItem == null && coolBar != null) {
+            ToolBar oldToolBar = toolBarManager.getControl();
             ToolBar toolBar = toolBarManager.createControl(coolBar);
-            //toolBarManager.update(true);
+            if ((oldToolBar != null) && (!oldToolBar.equals(toolBar))) {
+                // We are using the old tool bar, so we need to update.
+                toolBarManager.update(true);
+            }
+            
             // Do not create a coolItem if the toolbar is empty
             if (toolBar.getItemCount() < 1) return;
             int flags = SWT.DROP_DOWN;
@@ -548,6 +553,11 @@ public class ToolBarContributionItem extends ContributionItem {
     public void update(String propertyName) {
         if (checkDisposed()) { return; }
         if (coolItem != null) {
+            IToolBarManager manager = getToolBarManager();
+            if (manager != null) {
+                manager.update(true);
+            }
+            
             if ((propertyName == null)
                     || propertyName.equals(ICoolBarManager.SIZE)) {
                 updateSize(true);

@@ -801,16 +801,10 @@ public class CoolBarManager extends ContributionManager implements
             }
 
             /*
-             * Redraw is turned off if the number of items to be added is above
-             * a certain threshold -- minimizing flicker. It is assumed that
-             * each contribution item will contribute at least one tool bar
-             * item.
+             * Redraw should always be turned off.  One cool item can represent
+             * a new line in the cool bar or many individual tool items.
              */
-            final boolean useRedraw = (visibleItems.size() - (coolItems.length - coolItemsToRemove
-                    .size())) >= REDRAW_LIMIT;
-            if (useRedraw) {
-                coolBar.setRedraw(false);
-            }
+            coolBar.setRedraw(false);
 
             // Dispose of any items in the list to be removed.
             for (int i = coolItemsToRemove.size() - 1; i >= 0; i--) {
@@ -849,6 +843,7 @@ public class CoolBarManager extends ContributionManager implements
                     if (sourceItem.equals(destinationItem)) {
                         sourceIndex++;
                         destinationIndex++;
+                        sourceItem.update();
                         continue;
 
                     } else if ((destinationItem.isSeparator())
@@ -856,6 +851,7 @@ public class CoolBarManager extends ContributionManager implements
                         coolItems[sourceIndex].setData(sourceItem);
                         sourceIndex++;
                         destinationIndex++;
+                        sourceItem.update();
                         continue;
 
                     }
@@ -885,10 +881,8 @@ public class CoolBarManager extends ContributionManager implements
                 }
             }
 
-            // Turn redraw back on if we turned it off above
-            if (useRedraw) {
-                coolBar.setRedraw(true);
-            }
+            // Turn redraw back on
+            coolBar.setRedraw(true);
 
             // Update the wrap indices.
             final int numRows = getNumRows(items) - 1;
