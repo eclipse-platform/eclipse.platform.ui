@@ -102,6 +102,37 @@ public class WizardStepGroup {
 	}
 	
 	/**
+	 * Returns the steps.
+	 */
+	public WizardStep[] getSteps() {
+		if (stepViewer != null) {
+			StepRoot root = (StepRoot)stepViewer.getInput();
+			if (root != null)
+				return root.getSteps();
+		}
+		
+		return new WizardStep[0];
+	}
+	
+	/**
+	 * Sets the current step being worked on. Assumes
+	 * the step provided exist in the steps within the
+	 * group's viewer.
+	 * 
+	 * @param step the wizard step being worked on
+	 */
+	public void setCurrentStep(WizardStep step) {
+		WizardStep oldStep = currentStep;
+		currentStep = step;
+		if (stepViewer != null) {
+			if (oldStep != null)
+				stepViewer.update(oldStep, null);
+			if (currentStep != null)
+				stepViewer.update(currentStep, null);
+		}
+	}
+	
+	/**
 	 * Set the current listener interested when the selection
 	 * state changes.
 	 * 

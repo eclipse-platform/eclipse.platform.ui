@@ -14,6 +14,7 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizardPage;
+import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -23,27 +24,17 @@ import org.eclipse.ui.internal.registry.Category;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 
 /**
- * Standard workbench wizard that creates a new project resource in
- * the workspace.
- * <p>
- * Example:
- * <pre>
- * IWizard wizard = new NewProjectWizard();
- * wizard.init(workbench, selection);
- * WizardDialog dialog = new WizardDialog(shell, wizard);
- * dialog.open();
- * </pre>
- * During the call to <code>open</code>, the wizard dialog is presented to the
- * user. When the user hits Finish, a project resource with the user-specified
- * name is created, the dialog closes, and the call to <code>open</code> returns.
- * </p>
+ * Standard workbench wizard that guides the user to supply
+ * the necessary information to create a project.
  */
-public class NewProjectWizard extends BasicNewResourceWizard {
+public class NewProjectWizard extends MultiStepWizard implements INewWizard {
+	// init method parameters supplied
+	private IWorkbench workbench;
+	private IStructuredSelection selection;
+	
 	// Reference to the pages provided by this wizard
 	private WizardNewProjectCreationPage creationPage;
 	private WizardNewProjectCapabilityPage capabilityPage;
-	private WizardProjectReviewPage reviewPage;
-	private WizardProjectConfigurePage configPage;
 	
 	// Newly created project
 	private IProject newProject;
@@ -69,11 +60,9 @@ public class NewProjectWizard extends BasicNewResourceWizard {
 	}
 
 	/* (non-Javadoc)
-	 * Method declared on IWizard.
+	 * Method declared on MultiStepWizard.
 	 */
-	public void addPages() {
-		super.addPages();
-		
+	protected void addCustomPages() {
 		creationPage = new WizardNewProjectCreationPage("newProjectCreationPage");//$NON-NLS-1$
 		creationPage.setTitle(WorkbenchMessages.getString("NewProjectWizard.title")); //$NON-NLS-1$
 		creationPage.setDescription(WorkbenchMessages.getString("WizardNewProjectCreationPage.description")); //$NON-NLS-1$
@@ -86,16 +75,6 @@ public class NewProjectWizard extends BasicNewResourceWizard {
 		capabilityPage.setInitialProjectCapabilities(initialProjectCapabilities);
 		capabilityPage.setInitialSelectedCategories(initialSelectedCategories);
 		this.addPage(capabilityPage);
-		
-		reviewPage = new WizardProjectReviewPage("newProjectCapabilityPage");//$NON-NLS-1$
-		reviewPage.setTitle(WorkbenchMessages.getString("NewProjectWizard.title")); //$NON-NLS-1$
-		reviewPage.setDescription(WorkbenchMessages.getString("WizardProjectReviewPage.description")); //$NON-NLS-1$
-		this.addPage(reviewPage);
-		
-		configPage = new WizardProjectConfigurePage("projectConfigurePage");//$NON-NLS-1$
-		configPage.setTitle(WorkbenchMessages.getString("NewProjectWizard.title")); //$NON-NLS-1$
-		configPage.setDescription(WorkbenchMessages.getString("WizardProjectConfigurePage.description")); //$NON-NLS-1$
-		this.addPage(configPage);
 	}
 
 	/**
@@ -109,15 +88,42 @@ public class NewProjectWizard extends BasicNewResourceWizard {
 		if (status.isOK()) {
 			Capability[] results = reg.pruneCapabilities(caps);
 			WizardStep[] steps = new WizardStep[results.length + 1];
-			steps[0] = new CreateProjectStep(1, creationPage);
+			steps[0] = new CreateProjectStep(1, creationPage, this);
 			for (int i = 0; i < results.length; i++)
 				steps[i+1] = new InstallCapabilityStep(i+2, results[i]);
-			reviewPage.setSteps(steps);
-			configPage.setSteps(steps);
+			setSteps(steps);
 		} else {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * Method declared on MultiStepWizard.
+	 */
+	protected String getConfigurePageTitle() {
+		return WorkbenchMessages.getString("NewProjectWizard.title");
+	}
+	
+	/* (non-Javadoc)
+	 * Method declared on MultiStepWizard.
+	 */
+	protected String getConfigurePageDescription() {
+		return WorkbenchMessages.getString("WizardProjectConfigurePage.description");
+	}
+	
+	/* (non-Javadoc)
+	 * Method declared on MultiStepWizard.
+	 */
+	protected  String getReviewPageTitle() {
+		return WorkbenchMessages.getString("NewProjectWizard.title");
+	}
+	
+	/* (non-Javadoc)
+	 * Method declared on MultiStepWizard.
+	 */
+	protected String getReviewPageDescription() {
+		return WorkbenchMessages.getString("WizardProjectReviewPage.description");
+	}
+		
 	/**
 	 * Returns the newly created project.
 	 *
@@ -141,7 +147,9 @@ public class NewProjectWizard extends BasicNewResourceWizard {
 	 * Method declared on IWorkbenchWizard.
 	 */
 	public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
-		super.init(workbench, currentSelection);
+		this.workbench = workbench;
+		this.selection = currentSelection;
+		initializeDefaultPageImageDescriptor();
 		setWindowTitle(WorkbenchMessages.getString("NewProjectWizard.windowTitle")); //$NON-NLS-1$
 	}
 
@@ -161,21 +169,6 @@ public class NewProjectWizard extends BasicNewResourceWizard {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on IWizard.
-	 */
-	public boolean performFinish() {
-/*		createNewProject();
-		
-		if (newProject == null)
-			return false;
-	
-		updatePerspective();
-		selectAndReveal(newProject);
-*/	
-		return false;
-	}
-	
 	/**
 	 * Sets the initial categories to be selected.
 	 * 
@@ -205,5 +198,12 @@ public class NewProjectWizard extends BasicNewResourceWizard {
 			initialProjectName = null;
 		else
 			initialProjectName = name.trim();
+	}
+	
+	/**
+	 * Sets the newly created project resource
+	 */
+	/* package */ void setNewProject(IProject project) {
+		newProject = project;
 	}
 }

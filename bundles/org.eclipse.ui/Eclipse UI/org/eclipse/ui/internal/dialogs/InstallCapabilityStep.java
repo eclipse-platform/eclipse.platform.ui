@@ -4,6 +4,7 @@ package org.eclipse.ui.internal.dialogs;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.ui.internal.registry.Capability;
 
 /**
@@ -12,6 +13,7 @@ import org.eclipse.ui.internal.registry.Capability;
  */
 public class InstallCapabilityStep extends WizardStep {
 	private Capability capability;
+	private IWizard wizard;
 	
 	/**
 	 * Creates the capability install step
@@ -35,5 +37,17 @@ public class InstallCapabilityStep extends WizardStep {
 	 */
 	public String getDetails() {
 		return capability.getInstallDetails();
+	}
+	
+	/* (non-Javadoc)
+	 * Method declared on WizardStep.
+	 */
+	public IWizard getWizard() {
+		if (wizard == null) {
+			wizard = capability.getInstallWizard();
+			wizard.addPages();
+		}
+		
+		return wizard;
 	}
 }

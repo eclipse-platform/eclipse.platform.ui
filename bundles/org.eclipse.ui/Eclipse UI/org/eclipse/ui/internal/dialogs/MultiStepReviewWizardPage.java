@@ -21,27 +21,26 @@ import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.misc.WizardStepGroup;
 
 /**
- * Third page for the new project creation wizard. This page
- * allows the user to review the capabilities of the new project.
+ * This page allows the user to review the steps to be done.
  * <p>
  * Example useage:
  * <pre>
- * mainPage = new WizardProjectReviewPage("wizardProjectReviewPage");
+ * mainPage = new MultiStepReviewWizardPage("multiStepReviewPage");
  * mainPage.setTitle("Project");
  * mainPage.setDescription("Review project.");
  * </pre>
  * </p>
  */
-public class WizardProjectReviewPage extends WizardPage {
+public class MultiStepReviewWizardPage extends WizardPage {
 	private Text detailsField;
 	private WizardStepGroup stepGroup;
 
 	/**
-	 * Creates a new project review wizard page.
+	 * Creates a new step review wizard page.
 	 *
 	 * @param pageName the name of this page
 	 */
-	public WizardProjectReviewPage(String pageName) {
+	public MultiStepReviewWizardPage(String pageName) {
 		super(pageName);
 	}
 
@@ -83,7 +82,7 @@ public class WizardProjectReviewPage extends WizardPage {
 		
 		// Add a label to identify the details text field
 		Label label = new Label(composite, SWT.LEFT);
-		label.setText(WorkbenchMessages.getString("WizardProjectReviewPage.detailsLabel")); //$NON-NLS-1$
+		label.setText(WorkbenchMessages.getString("MultiStepReviewWizardPage.detailsLabel")); //$NON-NLS-1$
 		GridData data = new GridData();
 		data.verticalAlignment = SWT.TOP;
 		label.setLayoutData(data);
@@ -100,7 +99,7 @@ public class WizardProjectReviewPage extends WizardPage {
 	 */
 	private void createInstructionsGroup(Composite parent) {
 		Label label = new Label(parent, SWT.LEFT);
-		label.setText(WorkbenchMessages.getString("WizardProjectReviewPage.instructionLabel")); //$NON-NLS-1$
+		label.setText(WorkbenchMessages.getString("MultiStepReviewWizardPage.instructionLabel")); //$NON-NLS-1$
 		GridData data = new GridData();
 		data.verticalAlignment = SWT.TOP;
 		data.horizontalSpan = 2;

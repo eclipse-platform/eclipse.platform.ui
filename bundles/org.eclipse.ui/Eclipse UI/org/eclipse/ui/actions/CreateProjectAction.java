@@ -18,6 +18,7 @@ import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.dialogs.MultiStepWizardDialog;
 import org.eclipse.ui.internal.dialogs.NewProjectWizard;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.registry.Capability;
@@ -146,7 +147,7 @@ public class CreateProjectAction extends Action {
 		wizard.setInitialSelectedCategories(initialSelectedCategories);
 		
 		// Create a wizard dialog.
-		WizardDialog dialog = new WizardDialog(window.getShell(), wizard);
+		WizardDialog dialog = new MultiStepWizardDialog(window.getShell(), wizard);
 		dialog.create();
 		dialog.getShell().setSize( Math.max(SIZING_WIZARD_WIDTH, dialog.getShell().getSize().x), SIZING_WIZARD_HEIGHT );
 		WorkbenchHelp.setHelp(dialog.getShell(), IHelpContextIds.NEW_PROJECT_WIZARD);

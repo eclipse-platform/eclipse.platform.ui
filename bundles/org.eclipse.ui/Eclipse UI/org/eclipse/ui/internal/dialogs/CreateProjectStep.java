@@ -4,6 +4,7 @@ package org.eclipse.ui.internal.dialogs;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
@@ -11,16 +12,18 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  * wizard.
  */
 public class CreateProjectStep extends WizardStep {
-	private WizardNewProjectCreationPage page;
+	private CreateProjectWizard stepWizard;
 	
 	/**
 	 * Creates the project creation step
 	 * 
-	 * @param page the wizard page containing the new project name
+	 * @param number the step order number
+	 * @param page the wizard page containing the new project name and location
+	 * @param wizard the multi-step wizard for collecting new project information
 	 */
-	public CreateProjectStep(int number, WizardNewProjectCreationPage page) {
+	public CreateProjectStep(int number, WizardNewProjectCreationPage page, NewProjectWizard wizard) {
 		super(number);
-		this.page = page;
+		stepWizard = new CreateProjectWizard(page, wizard);
 	}
 
 	/* (non-Javadoc)
@@ -34,7 +37,13 @@ public class CreateProjectStep extends WizardStep {
 	 * Method declared on WizardStep.
 	 */
 	public String getDetails() {
-		return WorkbenchMessages.format("CreateProjectStep.details", new Object[] {page.getProjectName()}); //$NON-NLS-1$
+		return WorkbenchMessages.format("CreateProjectStep.details", new Object[] {stepWizard.getProjectName()}); //$NON-NLS-1$
 	}
 
+	/* (non-Javadoc)
+	 * Method declared on WizardStep.
+	 */
+	public IWizard getWizard() {
+		return stepWizard;
+	}
 }
