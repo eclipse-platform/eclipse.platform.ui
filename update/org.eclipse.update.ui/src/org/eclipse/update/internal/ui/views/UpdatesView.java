@@ -155,7 +155,7 @@ public class UpdatesView
 		}
 	}
 
-	class UpdatesViewSorter extends ViewerSorter {
+	class UpdatesViewSorter extends FeatureSorter {
 		public int category(Object obj) {
 			// Level 0
 			if (obj instanceof DiscoveryFolder)
