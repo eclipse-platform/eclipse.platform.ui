@@ -12,6 +12,7 @@ package org.eclipse.help.internal.browser;
 
 import java.util.*;
 
+import org.eclipse.core.boot.*;
 import org.eclipse.help.browser.*;
 import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.util.*;
@@ -105,7 +106,15 @@ public class CustomBrowser implements IBrowser {
 			String curToken = qTokenizer.nextToken();
 			if (curToken.equals("\"")) {
 				if (withinQuotation) {
-					tokenList.add("\"" + quotedString + "\"");
+					if (BootLoader
+						.OS_WIN32
+						.equalsIgnoreCase(BootLoader.getOS())) {
+						// need to quote URLs on Windows
+						tokenList.add("\"" + quotedString + "\"");
+					} else {
+						// qotes prevent launching on Unix 35673
+						tokenList.add(quotedString);
+					}
 				} else {
 					quotedString = "";
 				}
