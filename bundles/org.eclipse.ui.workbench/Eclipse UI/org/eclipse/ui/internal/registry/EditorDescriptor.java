@@ -27,6 +27,7 @@ import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.ProgramImageDescriptor;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * @see IEditorDescriptor
@@ -96,12 +97,27 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
     /**
      * Create a new instance of an editor descriptor. Limited
      * to internal framework calls.
+     * @param element
+     * @param id2
      */
-    /* package */EditorDescriptor() {
-        super();
+    /* package */EditorDescriptor(String id2, IConfigurationElement element) {
+        setID(id2);
+        setConfigurationElement(element);
     }
 
-    /**
+    
+
+	/**
+	 * Create a new instance of an editor descriptor. Limited
+     * to internal framework calls.
+	 */
+    /* package */ EditorDescriptor() {
+		super();
+	}
+
+
+
+	/**
      * Creates a descriptor for an external program.
      * 
      * @param filename the external editor full path and filename
@@ -232,27 +248,49 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
      * @see IResourceEditorDescriptor
      */
     public ImageDescriptor getImageDescriptor() {
-        if (testImage) {
-            testImage = false;
-            if (imageDesc == null) {
-                // @issue what should be the default image?
-                imageDesc = WorkbenchImages
-                        .getImageDescriptor(ISharedImages.IMG_OBJ_FILE);
-            } else {
-                Image img = imageDesc.createImage(false);
-                if (img == null) {
-                    // @issue what should be the default image?
-                    imageDesc = WorkbenchImages
-                            .getImageDescriptor(ISharedImages.IMG_OBJ_FILE);
-                } else {
-                    img.dispose();
-                }
-            }
-        }
+    	if (testImage) {
+    		testImage = false;
+			if (imageDesc == null) {
+				String imageFileName = getImageFilename();
+				String command = getFileName();
+				if (imageFileName != null && configurationElement != null) {
+					imageDesc = AbstractUIPlugin.imageDescriptorFromPlugin(
+							configurationElement.getNamespace(), imageFileName);
+				} else if (command != null) {
+					imageDesc = WorkbenchImages.getImageDescriptorFromProgram(
+							command, 0);
+				}
+			}
+			verifyImage();    		
+    	}
+    	
         return imageDesc;
     }
 
     /**
+	 * Verifies that the image descriptor generates an image.  If not, the 
+	 * descriptor is replaced with the default image.
+	 * 
+	 * @since 3.1
+	 */
+	private void verifyImage() {
+		if (imageDesc == null) {
+			imageDesc = WorkbenchImages
+         		.getImageDescriptor(ISharedImages.IMG_OBJ_FILE);
+		}
+		else {
+			Image img = imageDesc.createImage(false);
+			if (img == null) {
+			    // @issue what should be the default image?
+			    imageDesc = WorkbenchImages
+			            .getImageDescriptor(ISharedImages.IMG_OBJ_FILE);
+			} else {
+			    img.dispose();
+			}
+		}
+	}
+
+	/**
      * @see IResourceEditorDescriptor
      */
     public String getImageFilename() {
@@ -289,7 +327,7 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
     public String getPluginID() {
     	if (configurationElement != null)
     		return configurationElement.getNamespace();
-    	return null;
+    	return pluginIdentifier;
     }
 
     /**
@@ -304,21 +342,21 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
      * @see org.eclipse.ui.IEditorDescriptor#isInternal
      */
     public boolean isInternal() {
-        return openMode == OPEN_INTERNAL;
+        return getOpenMode() == OPEN_INTERNAL;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IEditorDescriptor#isOpenInPlace
      */
     public boolean isOpenInPlace() {
-        return openMode == OPEN_INPLACE;
+        return getOpenMode() == OPEN_INPLACE;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IEditorDescriptor#isOpenExternal
      */
     public boolean isOpenExternal() {
-        return openMode == OPEN_EXTERNAL;
+        return getOpenMode() == OPEN_EXTERNAL;
     }
 
     /**
@@ -376,15 +414,15 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
      * Save the object values in a IMemento
      */
     protected void saveValues(IMemento memento) {
-        memento.putString(IWorkbenchConstants.TAG_LABEL, editorName);
-        memento.putString(IWorkbenchConstants.TAG_IMAGE, imageFilename);
-        memento.putString(IWorkbenchConstants.TAG_CLASS, className);
-        memento.putString(IWorkbenchConstants.TAG_LAUNCHER, launcherName);
-        memento.putString(IWorkbenchConstants.TAG_FILE, fileName);
-        memento.putString(IWorkbenchConstants.TAG_ID, id);
-        memento.putString(IWorkbenchConstants.TAG_PLUGIN, pluginIdentifier);
+        memento.putString(IWorkbenchConstants.TAG_LABEL, getLabel());
+        memento.putString(IWorkbenchConstants.TAG_IMAGE, getImageFilename());
+        memento.putString(IWorkbenchConstants.TAG_CLASS, getClassName());
+        memento.putString(IWorkbenchConstants.TAG_LAUNCHER, getLauncher());
+        memento.putString(IWorkbenchConstants.TAG_FILE, getFileName());
+        memento.putString(IWorkbenchConstants.TAG_ID, getId());
+        memento.putString(IWorkbenchConstants.TAG_PLUGIN, getPluginId());
 
-        memento.putInteger(IWorkbenchConstants.TAG_OPEN_MODE, openMode);
+        memento.putInteger(IWorkbenchConstants.TAG_OPEN_MODE, getOpenMode());
         // legacy: handle the older attribute names, needed to allow reading of workspace by pre-3.0-RCP eclipses
         memento.putString(IWorkbenchConstants.TAG_INTERNAL, String
                 .valueOf(isInternal()));
@@ -397,6 +435,25 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
     }
 
     /**
+     * Return the open mode of this editor.
+     *
+	 * @return the open mode of this editor
+	 * @since 3.1
+	 */
+	private int getOpenMode() {
+        if (getLauncher() != null) {
+            // open using a launcer
+        	return EditorDescriptor.OPEN_EXTERNAL;
+        } else if (getFileName() != null) {
+            // open using an external editor 	
+            return EditorDescriptor.OPEN_EXTERNAL;
+        } else {
+        	// open using an internal editor
+        	return EditorDescriptor.OPEN_INTERNAL;
+        }
+	}
+
+	/**
      * Set the class name of an internal editor.
      */
     /* package */void setClassName(String newClassName) {
