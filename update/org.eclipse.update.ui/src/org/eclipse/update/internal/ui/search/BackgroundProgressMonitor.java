@@ -9,7 +9,7 @@ public class BackgroundProgressMonitor implements IProgressMonitor {
 	private boolean canceled=false;
 	private String taskName;
 	private String subTaskName;
-	private int totalWorked=0;
+	private double totalWorked=0.0;
 	private int taskCount;
 	private boolean inProgress;
 	private Display display;
@@ -30,7 +30,7 @@ public class BackgroundProgressMonitor implements IProgressMonitor {
 		   	  		public void run() {
 		   	  		// we are late - catch up
 		      			monitor.beginTask(taskName, taskCount);
-		      			monitor.worked(totalWorked);
+		      			monitor.internalWorked(totalWorked);
 		      			if (subTaskName!=null)
 		         			monitor.subTask(subTaskName);
 		   	  		}
@@ -78,13 +78,6 @@ public class BackgroundProgressMonitor implements IProgressMonitor {
 				inProgress = false;
 			}
 		});
-	}
-
-
-	/**
-	 * @see IProgressMonitor#internalWorked(double)
-	 */
-	public void internalWorked(double arg0) {
 	}
 
 
@@ -142,21 +135,27 @@ public class BackgroundProgressMonitor implements IProgressMonitor {
 			}
 		});
 	}
-
-
+	
 	/**
-	 * @see IProgressMonitor#worked(int)
+	 * @see IProgressMonitor#internalWorked(double)
 	 */
-	public void worked(final int amount) {
+	public void internalWorked(final double amount) {
 		totalWorked += amount;
 		display.asyncExec(new Runnable() {
 			public void run() {
 				for (Iterator iter=monitors.iterator(); iter.hasNext();) {
 					IProgressMonitor m = (IProgressMonitor)iter.next();
-					m.worked(amount);
+					m.internalWorked(amount);
 				}
 			}
 		});
+	}
+
+	/**
+	 * @see IProgressMonitor#worked(int)
+	 */
+	public void worked(final int amount) {
+		internalWorked(amount);
 	}
 }
 

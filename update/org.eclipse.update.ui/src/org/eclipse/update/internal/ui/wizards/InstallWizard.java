@@ -143,15 +143,12 @@ public class InstallWizard extends Wizard {
 				throwError(UpdateUIPlugin.getResourceString(KEY_UNABLE));
 			}
 		} else if (job.getJobType() == PendingChange.INSTALL) {
+			targetSite.install(feature, getVerificationListener(), monitor);
 			IFeature oldFeature = job.getOldFeature();
-			boolean success = true;
-			if (oldFeature != null) {
-				success = unconfigure(oldFeature);
-			}
-			if (success)
-				targetSite.install(feature, getVerificationListener(), monitor);
-			else {
-				throwError(UpdateUIPlugin.getResourceString(KEY_OLD));
+			if (oldFeature!=null) {
+				boolean oldSuccess = unconfigure(oldFeature);
+				if (!oldSuccess)
+					throwError(UpdateUIPlugin.getResourceString(KEY_OLD));
 			}
 		} else if (job.getJobType() == PendingChange.CONFIGURE) {
 			configure(job.getFeature());

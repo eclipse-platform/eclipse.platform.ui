@@ -3,17 +3,23 @@ package org.eclipse.update.internal.ui.search;
 import java.net.URL;
 import java.util.*;
 
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.internal.ui.forms.ActivityConstraints;
+import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.model.ISiteAdapter;
+import org.eclipse.update.internal.ui.parts.Sorter;
+import org.eclipse.update.internal.ui.preferences.MainPreferencePage;
 import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 
 public class UpdatesSearchCategory extends SearchCategory {
-	private static final String KEY_CURRENT_SEARCH = "UpdatesSearchCategory.currentSearch";
+	private static final String KEY_CURRENT_SEARCH =
+		"UpdatesSearchCategory.currentSearch";
 
 	class SiteAdapter implements ISiteAdapter {
 		IURLEntry entry;
@@ -38,6 +44,14 @@ public class UpdatesSearchCategory extends SearchCategory {
 		}
 	}
 
+	class JobSorter extends Sorter {
+		public boolean compare(Object left, Object right) {
+			PendingChange job1 = (PendingChange) left;
+			PendingChange job2 = (PendingChange) right;
+			return isNewerVersion(job2.getFeature(), job1.getFeature());
+		}
+	}
+
 	class UpdateQuery implements ISearchQuery {
 		IFeature candidate;
 		ISiteAdapter adapter;
@@ -51,26 +65,42 @@ public class UpdatesSearchCategory extends SearchCategory {
 		public ISiteAdapter getSearchSite() {
 			return adapter;
 		}
-		public IFeature [] getMatchingFeatures(IFeature [] features) {
-			IFeature winner = null;
-			for (int i=0; i<features.length; i++) {
+		public IFeature[] getMatchingFeatures(IFeature[] features) {
+			ArrayList hits = new ArrayList();
+			for (int i = 0; i < features.length; i++) {
 				IFeature feature = features[i];
-				if (isNewerVersion(candidate, feature)) {
-					if (winner == null || isNewerVersion(winner, feature))
-						winner = feature;
-				}
+				if (isNewerVersion(candidate, feature))
+					hits.add(new PendingChange(candidate, feature));
 			}
-			if (winner == null) return new IFeature[0];
-			else return new IFeature[] { winner };
-		}
-		public boolean matches(IFeature feature) {
-			return isNewerVersion(candidate, feature);
+			if (hits.size() == 0)
+				return new IFeature[0];
+			else {
+				IFeature topHit = getFirstValid(hits);
+				if (topHit==null)
+					return new IFeature[0];
+				else
+					return new IFeature[] { topHit };
+			}
 		}
 	}
 
 	private ArrayList candidates;
 
 	public UpdatesSearchCategory() {
+	}
+
+	private IFeature getFirstValid(ArrayList hits) {
+		Object[] array = hits.toArray();
+		JobSorter sorter = new JobSorter();
+		sorter.sortInPlace(array);
+		for (int i = 0; i < array.length; i++) {
+			PendingChange job = (PendingChange) array[i];
+			IStatus status = ActivityConstraints.validatePendingChange(job);
+			if (status == null)
+				return job.getFeature();
+		}
+		// no valid hits
+		return null;
 	}
 
 	public void initialize() {
@@ -92,18 +122,21 @@ public class UpdatesSearchCategory extends SearchCategory {
 			UpdateUIPlugin.logException(e, false);
 		}
 	}
-	
-	private void filterIncludedFeatures(ArrayList candidates) throws CoreException {
-		IFeature [] array = (IFeature[])candidates.toArray(new IFeature[candidates.size()]);
+
+	private void filterIncludedFeatures(ArrayList candidates)
+		throws CoreException {
+		IFeature[] array =
+			(IFeature[]) candidates.toArray(new IFeature[candidates.size()]);
 		// filter out included features so that only top-level features remain on the list
-		for (int i=0; i<array.length; i++) {
+		for (int i = 0; i < array.length; i++) {
 			IFeature feature = array[i];
-			IFeatureReference [] included = feature.getIncludedFeatureReferences();
-			for (int j=0; j<included.length; j++) {
+			IFeatureReference[] included =
+				feature.getIncludedFeatureReferences();
+			for (int j = 0; j < included.length; j++) {
 				IFeatureReference fref = included[j];
 				IFeature ifeature = fref.getFeature();
 				int index = candidates.indexOf(ifeature);
-				if (index!= -1)
+				if (index != -1)
 					candidates.remove(index);
 			}
 		}
@@ -124,10 +157,19 @@ public class UpdatesSearchCategory extends SearchCategory {
 	private boolean isNewerVersion(IFeature feature, IFeature candidate) {
 		VersionedIdentifier fvi = feature.getVersionedIdentifier();
 		VersionedIdentifier cvi = candidate.getVersionedIdentifier();
-		if (!fvi.getIdentifier().equals(cvi.getIdentifier())) return false;
+		if (!fvi.getIdentifier().equals(cvi.getIdentifier()))
+			return false;
 		PluginVersionIdentifier fv = fvi.getVersion();
 		PluginVersionIdentifier cv = cvi.getVersion();
-		return cv.isGreaterThan(fv);
+		String mode = MainPreferencePage.getUpdateVersionsMode();
+		boolean greater = cv.isGreaterThan(fv);
+		if (!greater) return false;
+		if (mode.equals(MainPreferencePage.EQUIVALENT_VALUE))
+			return cv.isEquivalentTo(fv);
+		else if (mode.equals(MainPreferencePage.COMPATIBLE_VALUE))
+			return cv.isCompatibleWith(fv);
+		else
+			return false;
 	}
 
 	public void createControl(Composite parent, FormWidgetFactory factory) {
