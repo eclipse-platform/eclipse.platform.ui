@@ -128,6 +128,7 @@ public abstract class ActionFactory {
 
 	/**
 	 * Creates a new standard action for the given workbench window.
+	 * The action has an id as specified by the particular factory.
 	 * <p>
 	 * Actions automatically register listeners against the workbench window
 	 * so that they can keep their enablement state up to date. Ordinarily, the
@@ -153,7 +154,7 @@ public abstract class ActionFactory {
 	}
 
 	/**
-	 * Workbench action: Close the active editor.
+	 * Workbench action (id "close"): Close the active editor.
 	 * This action maintains its enablement state.
 	 */
 	public static final ActionFactory CLOSE = new ActionFactory("close") { //$NON-NLS-1$
@@ -169,7 +170,7 @@ public abstract class ActionFactory {
 	};
 	
 	/**
-	 * Workbench action: Close all open editors.
+	 * Workbench action (id "closeAll"): Close all open editors.
 	 * This action maintains its enablement state.
 	 */
 	public static final ActionFactory CLOSE_ALL = new ActionFactory("closeAll") { //$NON-NLS-1$
@@ -185,7 +186,7 @@ public abstract class ActionFactory {
 	};
 		
 	/**
-	 * Workbench action: Close all open editors except those with unsaved
+	 * Workbench action (id "closeAllSaved"): Close all open editors except those with unsaved
 	 * changes.
 	 * This action maintains its enablement state.
 	 */
@@ -202,7 +203,7 @@ public abstract class ActionFactory {
 	};
 		
 	/**
-	 * Workbench action: Toggle whether the editor is pinned.
+	 * Workbench action (id "pinEditor"): Toggle whether the editor is pinned.
 	 * This action maintains its enablement state.
 	 */
 	public static final ActionFactory PIN_EDITOR = new ActionFactory("pinEditor") { //$NON-NLS-1$
@@ -218,7 +219,7 @@ public abstract class ActionFactory {
 	};
 		
 	/**
-	 * Workbench action: Save the active editor.
+	 * Workbench action (id "save"): Save the active editor.
 	 * This action maintains its enablement state.
 	 */
 	public static final ActionFactory SAVE = new ActionFactory("save") { //$NON-NLS-1$
@@ -234,7 +235,7 @@ public abstract class ActionFactory {
 	};
 		
 	/**
-	 * Workbench action: Save all open editors with unsaved changes.
+	 * Workbench action (id "saveAll"): Save all open editors with unsaved changes.
 	 * This action maintains its enablement state.
 	 */
 	public static final ActionFactory SAVE_ALL = new ActionFactory("saveAll") { //$NON-NLS-1$
@@ -250,7 +251,7 @@ public abstract class ActionFactory {
 	};
 		
 	/**
-	 * Workbench action: Save As for the active editor.
+	 * Workbench action (id "saveAs"): Save As for the active editor.
 	 * This action maintains its enablement state.
 	 */
 	public static final ActionFactory SAVE_AS = new ActionFactory("saveAs") { //$NON-NLS-1$
@@ -266,7 +267,7 @@ public abstract class ActionFactory {
 	};
 		
 	/**
-	 * Workbench action: Displays the Preferences dialog.
+	 * Workbench action (id "preferences"): Displays the Preferences dialog.
 	 * This action maintains its enablement state.
 	 */
 	public static final ActionFactory PREFERENCES = new ActionFactory("preferences") { //$NON-NLS-1$
@@ -282,7 +283,7 @@ public abstract class ActionFactory {
 	};
 		
 	/**
-	 * Workbench action: Show/hide the editor area.
+	 * Workbench action (id "showEditor"): Show/hide the editor area.
 	 * This action maintains its enablement state.
 	 */
 	public static final ActionFactory SHOW_EDITOR = new ActionFactory("showEditor") { //$NON-NLS-1$
@@ -298,7 +299,7 @@ public abstract class ActionFactory {
 	};
 		
 	/**
-	 * Workbench action: Save the current perspective.
+	 * Workbench action (id "savePerspective"): Save the current perspective.
 	 * This action maintains its enablement state.
 	 */
 	public static final ActionFactory SAVE_PERSPECTIVE = new ActionFactory("savePerspective") { //$NON-NLS-1$
@@ -314,7 +315,7 @@ public abstract class ActionFactory {
 	};
 		
 	/**
-	 * Workbench action: Resets the current perspective.
+	 * Workbench action (id "resetPerspective"): Resets the current perspective.
 	 * This action maintains its enablement state.
 	 */
 	public static final ActionFactory RESET_PERSPECTIVE = new ActionFactory("resetPerspective") { //$NON-NLS-1$
@@ -330,7 +331,7 @@ public abstract class ActionFactory {
 	};
 		
 	/**
-	 * Workbench action: Closes the current perspective.
+	 * Workbench action (id "closePerspective"): Closes the current perspective.
 	 * This action maintains its enablement state.
 	 */
 	public static final ActionFactory CLOSE_PERSPECTIVE = new ActionFactory("closePerspective") { //$NON-NLS-1$
@@ -346,7 +347,7 @@ public abstract class ActionFactory {
 	};
 		
 	/**
-	 * Workbench action: Closes all perspectives.
+	 * Workbench action (id "closeAllPerspectives"): Closes all perspectives.
 	 * This action maintains its enablement state.
 	 */
 	public static final ActionFactory CLOSE_ALL_PERSPECTIVES = new ActionFactory("closeAllPerspectives") { //$NON-NLS-1$
@@ -362,7 +363,7 @@ public abstract class ActionFactory {
 	};
 		
 	/**
-	 * Workbench action: Maximize/restore the active part.
+	 * Workbench action (id "maximize"): Maximize/restore the active part.
 	 * This action maintains its enablement state.
 	 */
 	public static final ActionFactory MAXIMIZE = new ActionFactory("maximize") { //$NON-NLS-1$
@@ -378,7 +379,7 @@ public abstract class ActionFactory {
 	};
 		
 	/**
-	 * Workbench action: Activate the most recently used editor.
+	 * Workbench action (id "activateEditor"): Activate the most recently used editor.
 	 * This action maintains its enablement state.
 	 */
 	public static final ActionFactory ACTIVATE_EDITOR = new ActionFactory("activateEditor") { //$NON-NLS-1$
@@ -394,7 +395,7 @@ public abstract class ActionFactory {
 	};
 		
 	/**
-	 * Workbench action: Edit the action sets.
+	 * Workbench action (id "editActionSets"): Edit the action sets.
 	 * This action maintains its enablement state.
 	 */
 	public static final ActionFactory EDIT_ACTION_SETS = new ActionFactory("editActionSets") { //$NON-NLS-1$
@@ -410,7 +411,7 @@ public abstract class ActionFactory {
 	};
 		
 	/**
-	 * Workbench action: Lock/unlock the workbench window tool bar.
+	 * Workbench action (id "lockToolBar"): Lock/unlock the workbench window tool bar.
 	 * This action maintains its enablement state.
 	 */
 	public static final ActionFactory LOCK_TOOL_BAR = new ActionFactory("lockToolBar") { //$NON-NLS-1$
@@ -426,7 +427,7 @@ public abstract class ActionFactory {
 	};
 		
 	/**
-	 * Workbench action: Show the part pane menu.
+	 * Workbench action (id "showPartPaneMenu"): Show the part pane menu.
 	 * This action maintains its enablement state.
 	 */
 	public static final ActionFactory SHOW_PART_PANE_MENU = new ActionFactory("showPartPaneMenu") { //$NON-NLS-1$
@@ -442,7 +443,7 @@ public abstract class ActionFactory {
 	};
 		
 	/**
-	 * Workbench action: Show the view menu.
+	 * Workbench action (id "showViewMenu"): Show the view menu.
 	 * This action maintains its enablement state.
 	 */
 	public static final ActionFactory SHOW_VIEW_MENU = new ActionFactory("showViewMenu") { //$NON-NLS-1$
@@ -458,7 +459,7 @@ public abstract class ActionFactory {
 	};
 		
 	/**
-	 * Workbench action: Show a list of open (and recently closed) editors.
+	 * Workbench action (id "showOpenEditors"): Show a list of open (and recently closed) editors.
 	 * This action maintains its enablement state.
 	 */
 	public static final ActionFactory SHOW_OPEN_EDITORS = new ActionFactory("showOpenEditors") { //$NON-NLS-1$
@@ -474,7 +475,7 @@ public abstract class ActionFactory {
 	};
 
 	/**
-	 * Workbench action: Next part.
+	 * Workbench action (id "nextPart"): Next part.
 	 * This action maintains its enablement state.
 	 * <p>
 	 * <code>NEXT_PART</code> and <code>PREVIOUS_PART</code>
@@ -496,7 +497,7 @@ public abstract class ActionFactory {
 	};
 		
 	/**
-	 * Workbench action: Previous part.
+	 * Workbench action (id "previousPart"): Previous part.
 	 * This action maintains its enablement state.
 	 * <p>
 	 * <code>NEXT_PART</code> and <code>PREVIOUS_PART</code>
@@ -518,7 +519,7 @@ public abstract class ActionFactory {
 	};
 		
 	/**
-	 * Workbench action: Next editor.
+	 * Workbench action (id "nextEditor"): Next editor.
 	 * This action maintains its enablement state.
 	 * <p>
 	 * <code>NEXT_EDITOR</code> and <code>PREVIOUS_EDITOR</code>
@@ -540,7 +541,7 @@ public abstract class ActionFactory {
 	};
 		
 	/**
-	 * Workbench action: Previous editor.
+	 * Workbench action (id "previousEditor"): Previous editor.
 	 * This action maintains its enablement state.
 	 * <p>
 	 * <code>NEXT_EDITOR</code> and <code>PREVIOUS_EDITOR</code>
@@ -562,7 +563,7 @@ public abstract class ActionFactory {
 	};
 		
 	/**
-	 * Workbench action: Next perspective.
+	 * Workbench action (id "nextPerspective"): Next perspective.
 	 * This action maintains its enablement state.
 	 * <p>
 	 * <code>NEXT_PERSPECTIVE</code> and <code>PREVIOUS_PERSPECTIVE</code>
@@ -584,7 +585,7 @@ public abstract class ActionFactory {
 	};
 		
 	/**
-	 * Workbench action: Previous perspective.
+	 * Workbench action (id "previousPerspective"): Previous perspective.
 	 * This action maintains its enablement state.
 	 * <p>
 	 * <code>NEXT_PERSPECTIVE</code> and <code>PREVIOUS_PERSPECTIVE</code>
@@ -606,7 +607,7 @@ public abstract class ActionFactory {
 	};
 
 	/**
-	 * Workbench action: Quit (close the workbench).
+	 * Workbench action (id "quit"): Quit (close the workbench).
 	 * This action maintains its enablement state.
 	 */
 	public static final ActionFactory QUIT = new ActionFactory("quit") { //$NON-NLS-1$
@@ -622,7 +623,7 @@ public abstract class ActionFactory {
 	};
 		
 	/**
-	 * Workbench action: Forward in the navigation history.
+	 * Workbench action (id "forwardHistory"): Forward in the navigation history.
 	 * This action maintains its enablement state.
 	 */
 	public static final ActionFactory FORWARD_HISTORY = new ActionFactory("forwardHistory") { //$NON-NLS-1$
@@ -638,7 +639,7 @@ public abstract class ActionFactory {
 	};
 		
 	/**
-	 * Workbench action: Backward in the navigation history.
+	 * Workbench action (id "backardHistory"): Backward in the navigation history.
 	 * This action maintains its enablement state.
 	 */
 	public static final ActionFactory BACKWARD_HISTORY = new ActionFactory("backardHistory") { //$NON-NLS-1$
@@ -654,7 +655,7 @@ public abstract class ActionFactory {
 	};
 
 	/**
-	 * Workbench action: Open a new workbench window.
+	 * Workbench action (id "openNewWindow"): Open a new workbench window.
 	 * This action maintains its enablement state.
 	 */
 	public static final ActionFactory OPEN_NEW_WINDOW = new ActionFactory("openNewWindow") { //$NON-NLS-1$
@@ -670,7 +671,7 @@ public abstract class ActionFactory {
 	};
 
 	/**
-	 * Workbench action: Undo.
+	 * Workbench action (id "undo"): Undo.
 	 * This action is a {@link Retarget Retarget} action with 
 	 * id "undo". This action maintains its enablement state.
 	 */
@@ -696,7 +697,7 @@ public abstract class ActionFactory {
 	};
 
 	/**
-	 * Workbench action: Redo.
+	 * Workbench action (id "redo"): Redo.
 	 * This action is a {@link Retarget Retarget} action with 
 	 * id "redo". This action maintains its enablement state.
 	 */
@@ -722,7 +723,7 @@ public abstract class ActionFactory {
 	};
 
 	/**
-	 * Workbench action: Cut.
+	 * Workbench action (id "cut"): Cut.
 	 * This action is a {@link Retarget Retarget} action with 
 	 * id "cut". This action maintains its enablement state.
 	 */
@@ -748,7 +749,7 @@ public abstract class ActionFactory {
 	};
 
 	/**
-	 * Workbench action: Copy.
+	 * Workbench action (id "copy"): Copy.
 	 * This action is a {@link Retarget Retarget} action with 
 	 * id "copy". This action maintains its enablement state.
 	 */
@@ -774,7 +775,7 @@ public abstract class ActionFactory {
 	};
 
 	/**
-	 * Workbench action: Paste.
+	 * Workbench action (id "paste"): Paste.
 	 * This action is a {@link Retarget Retarget} action with 
 	 * id "paste". This action maintains its enablement state.
 	 */
@@ -800,7 +801,7 @@ public abstract class ActionFactory {
 	};
 
 	/**
-	 * Workbench action: Select All.
+	 * Workbench action (id "selectAll"): Select All.
 	 * This action is a {@link Retarget Retarget} action with 
 	 * id "selectAll". This action maintains its enablement state.
 	 */
@@ -819,7 +820,7 @@ public abstract class ActionFactory {
 	};
 
 	/**
-	 * Workbench action: Move.
+	 * Workbench action (id "move"): Move.
 	 * This action is a {@link Retarget Retarget} action with 
 	 * id "move". This action maintains its enablement state.
 	 */
@@ -838,7 +839,7 @@ public abstract class ActionFactory {
 	};
 
 	/**
-	 * Workbench action: Rename.
+	 * Workbench action (id "rename"): Rename.
 	 * This action is a {@link Retarget Retarget} action with 
 	 * id "rename". This action maintains its enablement state.
 	 */
@@ -857,7 +858,7 @@ public abstract class ActionFactory {
 	};
 
 	/**
-	 * Workbench action: Print.
+	 * Workbench action (id "print"): Print.
 	 * This action is a {@link Retarget Retarget} action with 
 	 * id "print". This action maintains its enablement state.
 	 */
@@ -885,7 +886,7 @@ public abstract class ActionFactory {
 	};
 
 	/**
-	 * Workbench action: Find.
+	 * Workbench action (id "find"): Find.
 	 * This action is a {@link Retarget Retarget} action with 
 	 * id "find". This action maintains its enablement state.
 	 */
@@ -909,7 +910,7 @@ public abstract class ActionFactory {
 	};
 
 	/**
-	 * Workbench action: Revert.
+	 * Workbench action (id "revert"): Revert.
 	 * This action is a {@link Retarget Retarget} action with 
 	 * id "revert". This action maintains its enablement state.
 	 */
@@ -928,7 +929,7 @@ public abstract class ActionFactory {
 	};
 
 	/**
-	 * Workbench action: Refresh.
+	 * Workbench action (id "refresh"): Refresh.
 	 * This action is a {@link Retarget Retarget} action with 
 	 * id "refresh". This action maintains its enablement state.
 	 */
@@ -947,7 +948,7 @@ public abstract class ActionFactory {
 	};
 
 	/**
-	 * Workbench action: Properties.
+	 * Workbench action (id "properties"): Properties.
 	 * This action is a {@link Retarget Retarget} action with 
 	 * id "properties". This action maintains its enablement state.
 	 */
@@ -966,7 +967,7 @@ public abstract class ActionFactory {
 	};
 
 	/**
-	 * Workbench action: Delete.
+	 * Workbench action (id "delete"): Delete.
 	 * This action is a {@link Retarget Retarget} action with 
 	 * id "delete". This action maintains its enablement state.
 	 */
@@ -996,7 +997,7 @@ public abstract class ActionFactory {
 	};
 
 	/**
-	 * Workbench action: Go Into.
+	 * Workbench action (id "goInto"): Go Into.
 	 * This action is a {@link Retarget Retarget} action with 
 	 * id "goInto". This action maintains its enablement state.
 	 */
@@ -1015,7 +1016,7 @@ public abstract class ActionFactory {
 	};
 
 	/**
-	 * Workbench action: Up.
+	 * Workbench action (id "up"): Up.
 	 * This action is a {@link Retarget Retarget} action with 
 	 * id "up". This action maintains its enablement state.
 	 */
@@ -1034,7 +1035,7 @@ public abstract class ActionFactory {
 	};
 
 	/**
-	 * Workbench action: Forward.
+	 * Workbench action (id "forward"): Forward.
 	 * This action is a {@link Retarget Retarget} action with 
 	 * id "forward". This action maintains its enablement state.
 	 */
@@ -1053,7 +1054,7 @@ public abstract class ActionFactory {
 	};
 
 	/**
-	 * Workbench action: Back.
+	 * Workbench action (id "back"): Back.
 	 * This action is a {@link Retarget Retarget} action with 
 	 * id "back". This action maintains its enablement state.
 	 */
@@ -1072,7 +1073,7 @@ public abstract class ActionFactory {
 	};
 
 	/**
-	 * Workbench action: Next.
+	 * Workbench action (id "next"): Next.
 	 * This action is a {@link Retarget Retarget} action with 
 	 * id "next". This action maintains its enablement state.
 	 */
@@ -1091,7 +1092,7 @@ public abstract class ActionFactory {
 	};
 
 	/**
-	 * Workbench action: Previous.
+	 * Workbench action (id "previous"): Previous.
 	 * This action is a {@link Retarget Retarget} action with 
 	 * id "previous". This action maintains its enablement state.
 	 */
