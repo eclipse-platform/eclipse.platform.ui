@@ -1060,13 +1060,13 @@ private IEditorPart openEditor(IEditorInput input, String editorID, boolean acti
 			bringToTop(editor);
 		return editor;
 	}
-
+	getClientComposite().setRedraw(false);
 	// Otherwise, create a new one.
 	if(useEditorID)
 		editor = getEditorManager().openEditor(editorID, input);
 	else
 		editor = getEditorManager().openEditor((IFileEditorInput)input,true);
-		
+				
 	if (editor != null) {
 		//firePartOpened(editor);
 		setEditorAreaVisible(true);
@@ -1078,6 +1078,7 @@ private IEditorPart openEditor(IEditorInput input, String editorID, boolean acti
 		}
 		window.firePerspectiveChanged(this, getPerspective(), CHANGE_EDITOR_OPEN);
 	}
+	getClientComposite().setRedraw(true);
 	return editor;
 }
 /**
