@@ -29,10 +29,10 @@ public class NewCVSAnonEclipseConnection extends Action {
 			shell = new Shell(display);
 		}
 		Properties p = new Properties();
-		p.setProperty("connection", "pserver");
-		p.setProperty("user", "anonymous");
-		p.setProperty("host", "dev.eclipse.org");
-		p.setProperty("root", "/home/eclipse");
+		p.setProperty("connection", "pserver"); //$NON-NLS-1$ //$NON-NLS-2$
+		p.setProperty("user", "anonymous"); //$NON-NLS-1$ //$NON-NLS-2$
+		p.setProperty("host", "dev.eclipse.org"); //$NON-NLS-1$ //$NON-NLS-2$
+		p.setProperty("root", "/home/eclipse"); //$NON-NLS-1$ //$NON-NLS-2$
 		NewLocationWizard wizard = new NewLocationWizard(p);
 		WizardDialog dialog = new WizardDialog(shell, wizard);
 		dialog.open();
