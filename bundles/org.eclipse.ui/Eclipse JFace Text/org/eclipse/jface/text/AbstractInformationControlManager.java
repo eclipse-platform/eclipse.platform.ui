@@ -190,9 +190,10 @@ abstract public class AbstractInformationControlManager {
 	 * @param information the information
 	 * @param subjectArea the subject area
 	 */
-	protected void setInformation(String information, Rectangle subjectArea) {
+	protected final void setInformation(String information, Rectangle subjectArea) {
 		fInformation= information;
 		fSubjectArea= subjectArea;
+		presentInformation();
 	}
 	
 	/**
@@ -523,19 +524,24 @@ abstract public class AbstractInformationControlManager {
 	}
 	
 	/**
-	 * Computes information to be displayed as well as the subject area and
-	 * presents this information in the information control.
+	 * Computes information to be displayed as well as the subject area
+	 * and initiates that this information is presented in the information control.
 	 */
 	public void showInformation() {
-		
 		if (!fEnabled)
 			return;
-				
+			
 		fSubjectArea= null;
 		fInformation= null;
-		
 		computeInformation();
-		
+	}
+
+	/**
+	 * Presents the information in the information control or hides the information
+	 * control if no information should be presented. The information has previously
+	 * been set using <code>setInformation</code>.
+	 */
+	protected void presentInformation() {
 		if (fSubjectArea != null && fInformation != null && fInformation.trim().length() > 0)
 			internalShowInformationControl(fSubjectArea, fInformation);
 		else

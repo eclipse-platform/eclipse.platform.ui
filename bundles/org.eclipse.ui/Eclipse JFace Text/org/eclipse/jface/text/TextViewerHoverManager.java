@@ -8,19 +8,25 @@ package org.eclipse.jface.text;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Display;
 
-import org.eclipse.jface.text.AbstractHoverInformationControlManager;
-import org.eclipse.jface.text.IInformationControlCreator;
 
 /**
  * This manager controls the layout, content, visibility, etc. of an information
  * control in reaction to mouse hover events issued by the text widget of a
- * text viewer.
+ * text viewer. It overrides <code>computeInformation</code>, so that the
+ * computation is performed in a dedicated background thread. This implies
+ * that the used <code>ITextHover</code> objects must be capable of 
+ * operating in a non-UI thread.
  */
 class TextViewerHoverManager extends AbstractHoverInformationControlManager {
 	
 	/** The text viewer */
 	private TextViewer fTextViewer;
+	/** The hover information computation thread */
+	private Thread fThread;
+	/** The stopper of the computation thread */
+	private ITextListener fStopper;
 	
 	
 	/**
@@ -33,9 +39,19 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager {
 	public TextViewerHoverManager(TextViewer textViewer, IInformationControlCreator creator) {
 		super(creator);
 		fTextViewer= textViewer;
+		fStopper= new ITextListener() {
+			public void textChanged(TextEvent event) {
+				if (fThread != null) {
+					synchronized (fThread) {
+						fThread.interrupt();
+						fThread= null;
+					}
+				}
+			}
+		};
 	}
 	
-	/**
+	/*
 	 * @see AbstractHoverInformationControlManager#computeInformation
 	 */
 	protected void computeInformation() {
@@ -45,17 +61,72 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager {
 		if (offset == -1)
 			return;
 			
-		ITextHover hover= fTextViewer.getTextHover(offset);
+		final ITextHover hover= fTextViewer.getTextHover(offset);
 		if (hover == null)
 			return;
 			
-		IRegion region= hover.getHoverRegion(fTextViewer, offset);
+		final IRegion region= hover.getHoverRegion(fTextViewer, offset);
 		if (region == null)
 			return;
+			
+		final Rectangle area= computeArea(region);
+		if (area == null || area.isEmpty())
+			return;
 		
-		setInformation(hover.getHoverInfo(fTextViewer, region), computeArea(region));
+		if (fThread == null) {
+			
+			fThread= new Thread() {
+				public void run() {
+					if (fThread != null) {
+						try {
+							String information= hover.getHoverInfo(fTextViewer, region);
+							setInformation(information, area);
+						} finally {
+							if (fTextViewer != null)
+								fTextViewer.removeTextListener(fStopper);
+							fThread= null;
+						}
+					}
+				}
+			};
+			
+			fThread.setDaemon(true);
+			fThread.setPriority(Thread.MIN_PRIORITY);
+			synchronized (fThread) {
+				fTextViewer.addTextListener(fStopper);
+				fThread.start();
+			}
+		}
 	}
 	
+	/*
+	 * @see AbstractInformationControlManager#presentInformation()
+	 */
+	protected void presentInformation() {
+		if (fTextViewer == null)
+			return;
+			
+		StyledText textWidget= fTextViewer.getTextWidget();
+		if (textWidget != null && !textWidget.isDisposed()) {
+			Display display= textWidget.getDisplay();
+			if (display == null)
+				return;
+				
+			display.asyncExec(new Runnable() {
+				public void run() {
+					doPresentInformation();
+				}
+			});
+		}
+	}
+	
+	/*
+	 * @see AbstractInformationControlManager#presentInformation()
+	 */
+	protected void doPresentInformation() {
+		super.presentInformation();
+	}
+
 	/**
 	 * Computes the document offset underlying the given text widget coordinates.
 	 * This method uses a linear search as it cannot make any assumption about

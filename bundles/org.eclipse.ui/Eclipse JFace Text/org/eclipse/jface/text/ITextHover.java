@@ -7,9 +7,10 @@ package org.eclipse.jface.text;
 
 
 /**
- * Provides a hover popup which appears on top of the text viewer with relevant
- * display information. If the text hover does not provide information no
- * hover popup is shown.<p>
+ * Provides a hover popup which appears on top of the text viewer with
+ * relevant display information. If the text hover does not provide information
+ * no hover popup is shown. Any implementer of this interface must be capable of
+ * operating in a non-UI thread.<p>
  * Clients may implement this interface.
  *
  * @see ITextViewer
