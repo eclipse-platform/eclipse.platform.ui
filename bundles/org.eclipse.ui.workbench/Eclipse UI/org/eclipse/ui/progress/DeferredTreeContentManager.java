@@ -11,7 +11,6 @@
 
 package org.eclipse.ui.progress;
 
-import org.eclipse.core.internal.jobs.JobManager;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -20,18 +19,14 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
-
-import org.eclipse.swt.widgets.Control;
-
 import org.eclipse.jface.progress.IElementCollector;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.progress.PendingUpdateAdapter;
 import org.eclipse.ui.internal.progress.ProgressMessages;
-
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
