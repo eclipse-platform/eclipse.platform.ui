@@ -29,7 +29,7 @@ public class ScrollLockAction extends Action {
 	public ScrollLockAction(ConsoleViewer viewer) {
 		super(ActionMessages.getString("ScrollLockAction.Scroll_Lock_1")); //$NON-NLS-1$
 		fConsoleViewer= viewer;
-		setToolTipText(ActionMessages.getString("ScrollLockAction.Scroll_Lock_2")); //$NON-NLS-1$
+		setToolTipText(ActionMessages.getString("ScrollLockAction.Scroll_Lock_1")); //$NON-NLS-1$
 		setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_LOCK));		
 		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_LOCK));
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_LOCK));
