@@ -26,6 +26,10 @@ public abstract class RemoteOperation extends CVSOperation {
 	protected ICVSRemoteResource[] getRemoteResources() {
 		return remoteResources;
 	}
+
+	public void setRemoteResources(ICVSRemoteResource[] remoteResources) {
+		this.remoteResources = remoteResources;
+	}
 	
 	public ICVSResource[] getCVSResources() {
 		ICVSResource[] cvsResources = new ICVSResource[remoteResources.length];

@@ -53,6 +53,7 @@ import org.eclipse.ui.progress.UIJob;
 public class ChangeLogModelProvider extends SynchronizeModelProvider {
 	
 	private Map commentRoots = new HashMap();
+	private RemoteLogOperation logOperation;
 	private boolean shutdown = false;
 	private FetchLogEntriesJob fetchLogEntriesJob;
 	private ChangeLogActionGroup sortGroup;
@@ -200,7 +201,7 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 		private Set syncSets = new HashSet();
 		public FetchLogEntriesJob() {
 			super(Policy.bind("ChangeLogModelProvider.4"));  //$NON-NLS-1$
-			setUser(true);
+			setUser(false);
 		}
 		public boolean belongsTo(Object family) {
 			return family == ISynchronizeManager.FAMILY_SYNCHRONIZE_OPERATION;
@@ -269,8 +270,18 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 	 * @see org.eclipse.team.ui.synchronize.viewers.HierarchicalModelProvider#buildModelObjects(org.eclipse.compare.structuremergeviewer.DiffNode)
 	 */
 	protected IDiffElement[] buildModelObjects(ISynchronizeModelElement node) {
-		if(node == getModelRoot()) {
+		if (node == getModelRoot()) {
+			// Cancel any existing fetching jobs
+			try {
+				if (fetchLogEntriesJob != null && fetchLogEntriesJob.getState() != Job.NONE) {
+					fetchLogEntriesJob.cancel();
+					fetchLogEntriesJob.join();
+				}
+			} catch (InterruptedException e) {
+			}
+			// Clear any cached state
 			commentRoots.clear();
+			// Start building the model from scratch
 			startUpdateJob(getSyncInfoSet());
 		}
 		return new IDiffElement[0];
@@ -300,6 +311,7 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 	
 	private void calculateRoots(SyncInfoSet set, IProgressMonitor monitor) {
 		try {
+			// Decide which nodes we have to fetch log histories
 			SyncInfo[] infos = set.getSyncInfos();
 			ArrayList commentNodes = new ArrayList();
 			ArrayList resourceNodes = new ArrayList();
@@ -310,15 +322,14 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 				} else {
 					resourceNodes.add(info);
 				}
-			}
-			if(! resourceNodes.isEmpty())
-				refreshViewer();
-				
+			}	
 			// Show elements that don't need their log histories retreived
 			for (Iterator it = resourceNodes.iterator(); it.hasNext();) {
 				SyncInfo info = (SyncInfo) it.next();
 				addNewElementFor(info, null, null);
 			}
+			if(! resourceNodes.isEmpty())
+				refreshViewer();
 			
 			// Fetch log histories then add elements
 			SyncInfo[] commentInfos = (SyncInfo[]) commentNodes.toArray(new SyncInfo[commentNodes.size()]);
@@ -413,10 +424,14 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 				remotes.add(remote);
 			}
 		}
+		ICVSRemoteResource[] remoteResources = (ICVSRemoteResource[]) remotes.toArray(new ICVSRemoteResource[remotes.size()]);
 		if(! remotes.isEmpty()) {
-			RemoteLogOperation op = new RemoteLogOperation(null, (ICVSRemoteResource[]) remotes.toArray(new ICVSRemoteResource[remotes.size()]), tag1, tag2);
-			op.execute(monitor);
-			return op;
+			if(logOperation == null) {
+				logOperation = new RemoteLogOperation(null, remoteResources, tag1, tag2);
+			}
+			logOperation.setRemoteResources(remoteResources);
+			logOperation.execute(monitor);
+			return logOperation;
 		}
 		return null;
 	}
@@ -516,14 +531,9 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 		for (int i = 0; i < infos.length; i++) {
 			SyncInfo info = infos[i];
 			IResource local = info.getLocal();
-			ISynchronizeModelElement diffNode = getModelObject(local);
-			if (diffNode != null) {
-				if(diffNode instanceof SyncInfoModelElement) {
-					((SyncInfoModelElement)diffNode).update(info);
-					calculateProperties(diffNode, false);
-				}
-			}
-		}	
+			removeFromViewer(local);
+		}
+		startUpdateJob(new SyncInfoSet(event.getChangedResources()));
 	}
 
 	/* (non-Javadoc)

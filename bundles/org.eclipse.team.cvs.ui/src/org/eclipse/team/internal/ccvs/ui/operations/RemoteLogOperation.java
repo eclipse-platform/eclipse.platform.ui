@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.operations;
 
+import java.util.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,7 +25,7 @@ import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
- * Performs an rlog on the resources
+ * Performs an rlog on the resources and caches the results.
  */
 public class RemoteLogOperation extends RepositoryLocationOperation {
 	
@@ -72,37 +73,44 @@ public class RemoteLogOperation extends RepositoryLocationOperation {
 		Session s = new Session(location, CVSWorkspaceRoot.getCVSFolderFor(ResourcesPlugin.getWorkspace().getRoot()));
 		LogListener listener = new LogListener();
 		
+		ICVSRemoteResource[] remotes = remoteResources;
 		Command.LocalOption[] localOptions;
 		if(tag1 != null && tag2 != null) {
 			localOptions  = new Command.LocalOption[] {RLog.NO_TAGS, RLog.makeTagOption(tag1, tag2)};
 		} else {
 			localOptions  = new Command.LocalOption[] {RLog.NO_TAGS};
-		}
-		
-		try {
-			s.open(Policy.subMonitorFor(monitor, 10));
-			IStatus status = rlog.execute(s,
-					Command.NO_GLOBAL_OPTIONS,
-					localOptions,
-					remoteResources,
-					listener,
-					Policy.subMonitorFor(monitor, 90));
-			collectStatus(status);
-		} finally {
-			s.close();
-		}
-		
-		// Record the log entries for the files we want
-		for (int i = 0; i < remoteResources.length; i++) {
-			ICVSRemoteResource resource = remoteResources[i];
-			if (!resource.isContainer()) {
-				ICVSRemoteFile file = (ICVSRemoteFile)resource;
-				ILogEntry entry = listener.getEntryFor(file);
-				if (entry != null) {
-					entries.put(file, entry);
+			// Optimize the cases were we are only fetching the history for a single revision. If it is
+			// already cached, don't fetch it again.
+			ArrayList unCachedRemotes = new ArrayList();
+			for (int i = 0; i < remoteResources.length; i++) {
+				ICVSRemoteResource r = remoteResources[i];
+				if(entries.get(r) == null) {
+					unCachedRemotes.add(r);
 				}
-				ILogEntry allLogs[] = listener.getEntriesFor(file);
-				allEntries.put(file, allLogs);
+			}
+			remotes = (ICVSRemoteResource[]) unCachedRemotes.toArray(new ICVSRemoteResource[unCachedRemotes.size()]);
+		}
+		if (remotes.length > 0) {
+			try {
+				s.open(Policy.subMonitorFor(monitor, 10));
+				IStatus status = rlog.execute(s, Command.NO_GLOBAL_OPTIONS, localOptions, remotes, listener, Policy.subMonitorFor(monitor, 90));
+				collectStatus(status);
+			} finally {
+				s.close();
+			}
+
+			// Record the log entries for the files we want
+			for (int i = 0; i < remotes.length; i++) {
+				ICVSRemoteResource resource = remotes[i];
+				if (!resource.isContainer()) {
+					ICVSRemoteFile file = (ICVSRemoteFile) resource;
+					ILogEntry entry = listener.getEntryFor(file);
+					if (entry != null) {
+						entries.put(file, entry);
+					}
+					ILogEntry allLogs[] = listener.getEntriesFor(file);
+					allEntries.put(file, allLogs);
+				}
 			}
 		}
 	}
