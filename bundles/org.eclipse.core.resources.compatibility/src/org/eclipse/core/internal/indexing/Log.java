@@ -15,19 +15,6 @@ import java.io.*;
 class Log {
 
 	/**
-	 * Creates the log file in the file system.  The string 
-	 * argument is the name of the page store for which this log will
-	 * be created.
-	 */
-	static void create(String storeName) throws PageStoreException {
-		try {
-			new RandomAccessFile(name(storeName), "rw").close(); //$NON-NLS-1$
-		} catch (IOException e) {
-			throw new PageStoreException(PageStoreException.LogCreateFailure, e);
-		}
-	}
-
-	/**
 	 * Deletes the transaction log from the file system.
 	 */
 	static void delete(String storeName) {

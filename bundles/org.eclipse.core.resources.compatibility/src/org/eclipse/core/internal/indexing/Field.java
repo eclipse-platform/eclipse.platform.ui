@@ -27,24 +27,6 @@ public class Field implements Insertable {
 	/**
 	 * Constructor for a new Field.
 	 */
-	public Field(byte[] bytes, int offset, int length) {
-		this.buffer = new Buffer(bytes);
-		this.offset = offset;
-		this.length = Math.min(bytes.length, length);
-	}
-
-	/**
-	 * Constructor for a new Field.
-	 */
-	public Field(byte[] bytes, FieldDef d) {
-		this.buffer = new Buffer(bytes);
-		this.offset = d.offset;
-		this.length = Math.min(bytes.length, d.length);
-	}
-
-	/**
-	 * Constructor for a new Field.
-	 */
 	public Field(int n) {
 		this.buffer = new Buffer(n);
 		this.offset = 0;
@@ -63,15 +45,6 @@ public class Field implements Insertable {
 	/**
 	 * Constructor for a new Field.
 	 */
-	public Field(Buffer buffer, FieldDef d) {
-		this.buffer = buffer;
-		this.offset = d.offset;
-		this.length = d.length;
-	}
-
-	/**
-	 * Constructor for a new Field.
-	 */
 	public Field(Insertable anObject) {
 		buffer = new Buffer(anObject);
 		offset = 0;
@@ -80,11 +53,6 @@ public class Field implements Insertable {
 
 	public Field clear() {
 		buffer.clear(offset, length);
-		return this;
-	}
-
-	public Field clear(byte value) {
-		buffer.clear(offset, length, value);
 		return this;
 	}
 
@@ -132,20 +100,8 @@ public class Field implements Insertable {
 		return subfield(d).getInt();
 	}
 
-	public long getLong(FieldDef d) {
-		return subfield(d).getLong();
-	}
-
-	public int getUInt(FieldDef d) {
-		return subfield(d).getUInt();
-	}
-
 	public int length() {
 		return length;
-	}
-
-	public int offset() {
-		return offset;
 	}
 
 	public Pointer pointTo(int offset) {
@@ -172,17 +128,7 @@ public class Field implements Insertable {
 		return this;
 	}
 
-	public Field put(FieldDef d, byte[] b) {
-		subfield(d).put(b);
-		return this;
-	}
-
 	public Field put(FieldDef d, int n) {
-		subfield(d).put(n);
-		return this;
-	}
-
-	public Field put(FieldDef d, long n) {
 		subfield(d).put(n);
 		return this;
 	}

@@ -55,10 +55,6 @@ public class ObjectStoreException extends StoreException {
 		this.id = id;
 	}
 
-	public ObjectStoreException(String s) {
-		this(s, null);
-	}
-
 	public ObjectStoreException(String s, Throwable exception) {
 		super(s, exception);
 		this.id = GenericFailure;

@@ -100,17 +100,4 @@ public class ObjectAddress implements Insertable {
 		buf.put(ObjectNumberOffset, 1, objectNumber);
 		return buf.get();
 	}
-
-	/**
-	 * Returns a string representation of the address suitable for printing.
-	 */
-	public String toString() {
-		StringBuffer b = new StringBuffer(10);
-		b.append("("); //$NON-NLS-1$
-		b.append(getPageNumber());
-		b.append(","); //$NON-NLS-1$
-		b.append(getObjectNumber());
-		b.append(")"); //$NON-NLS-1$
-		return b.toString();
-	}
 }

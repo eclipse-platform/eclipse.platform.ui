@@ -46,12 +46,4 @@ public class ObjectID implements Insertable {
 		buf.put(ObjectNumberOffset, 8, objectNumber);
 		return buf.get();
 	}
-
-	public String toString() {
-		StringBuffer b = new StringBuffer();
-		b.append("id("); //$NON-NLS-1$
-		b.append(objectNumber);
-		b.append(")"); //$NON-NLS-1$
-		return b.toString();
-	}
 }

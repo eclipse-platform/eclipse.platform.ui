@@ -84,14 +84,6 @@ public class IndexedStoreException extends StoreException {
 	}
 
 	/**
-	 * IndexedStoreException constructor comment.
-	 */
-	public IndexedStoreException(String s) {
-		super(s);
-		id = GenericError;
-	}
-
-	/**
 	 * Initializes the messages at class load time.
 	 */
 	private static void initializeMessages() {

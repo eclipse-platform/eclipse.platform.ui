@@ -211,13 +211,6 @@ public class PageStore implements Observer {
 	}
 
 	/**
-	 * Throws out the modified pages.
-	 */
-	public void rollback() {
-		modifiedPages.clear();
-	}
-
-	/**
 	 * Writes the modified pages to the page file.
 	 */
 	private void flush() throws PageStoreException {
@@ -459,27 +452,6 @@ public class PageStore implements Observer {
 		return policy;
 	}
 
-	/** 
-	 * Returns the number of read cache hits that have been made on the cache.
-	 */
-	public int numberOfCacheHits() {
-		return numberOfCacheHits;
-	}
-
-	/** 
-	 * Returns the number of read operations that have been done to the underlying file.
-	 */
-	public int numberOfFileReads() {
-		return numberOfFileReads;
-	}
-
-	/**
-	 * Returns the number of write operations that have been done to the underlying file.
-	 */
-	public int numberOfFileWrites() {
-		return numberOfFileWrites;
-	}
-
 	/**
 	 * Returns the number of pages known about in the PageFile.  This can be greater than
 	 * the number of pages actually in the underlying file in the file system if new ones
@@ -487,72 +459,5 @@ public class PageStore implements Observer {
 	 */
 	public int numberOfPages() {
 		return numberOfPages;
-	}
-
-	/** 
-	 * Returns the number of read operations that have been done.
-	 */
-	public int numberOfReads() {
-		return numberOfReads;
-	}
-
-	/**
-	 * Returns the number of write operations that have been done.
-	 */
-	public int numberOfWrites() {
-		return numberOfWrites;
-	}
-
-	/**
-	 * Internal test for page log consistency.  Throws an exception if
-	 * a problem is detected.
-	 */
-	public void testLogging1() throws PageStoreException {
-		LogWriter.putModifiedPages(this, modifiedPages);
-		Map testPages = LogReader.getModifiedPages(this);
-		int m = testPages.size();
-		int n = modifiedPages.size();
-		if (m != n) {
-			throw new PageStoreException("Page set sizes do not match" //$NON-NLS-1$
-					+ m + " " + n); //$NON-NLS-1$
-		}
-		Iterator testPagesStream = testPages.values().iterator();
-		Iterator modifiedPagesStream = modifiedPages.values().iterator();
-		while (testPagesStream.hasNext()) {
-			Page testPage = (Page) testPagesStream.next();
-			Page modifiedPage = (Page) modifiedPagesStream.next();
-			if (testPage.getPageNumber() != modifiedPage.getPageNumber()) {
-				throw new PageStoreException("Page number mismatch at " //$NON-NLS-1$
-						+ testPage.getPageNumber() + " " + modifiedPage.getPageNumber()); //$NON-NLS-1$
-			}
-			if (Buffer.compare(testPage.pageBuffer, modifiedPage.pageBuffer) != 0) {
-				throw new PageStoreException("Page buffer mismatch at " //$NON-NLS-1$
-						+ testPage.getPageNumber());
-			}
-		}
-		Log.delete(name);
-	}
-
-	/**
-	 * Internal test for applying a page log to the file.  Does the 
-	 * equivalent of a flush.
-	 */
-	public void testLogging2() throws PageStoreException {
-		LogWriter.putModifiedPages(this, modifiedPages);
-		modifiedPages = LogReader.getModifiedPages(this);
-		flush();
-	}
-
-	/**
-	 * Internal test for simulating failure after the log is written but before the
-	 * log is applied.  Tests the open sequence.  Does the equivalent of a close and
-	 * open.  Pages must have been put to the store in order for this test to make sense.
-	 * This should look like it does a flush, since the modified pages are written to the
-	 * file.
-	 */
-	public void testLogging3() throws PageStoreException {
-		LogWriter.putModifiedPages(this, modifiedPages);
-		close(false);
-		open(name);
 	}
 }

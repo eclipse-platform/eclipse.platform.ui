@@ -261,8 +261,4 @@ class ObjectPage extends ObjectStorePage {
 			return 0;
 		return SIZE - (ObjectSpaceOffset + usedSpace);
 	}
-
-	public boolean isObjectPage() {
-		return true;
-	}
 }

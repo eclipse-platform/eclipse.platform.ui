@@ -38,13 +38,6 @@ class ObjectHeader implements Insertable {
 		this.objectLength = objectLength;
 	}
 
-	/**
-	 * ObjectHeader constructor comment.
-	 */
-	public ObjectHeader(Field f) throws ObjectStoreException {
-		this(f.get());
-	}
-
 	public int getObjectLength() {
 		return objectLength;
 	}

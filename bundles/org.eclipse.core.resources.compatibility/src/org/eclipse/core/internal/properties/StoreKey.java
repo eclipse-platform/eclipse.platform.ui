@@ -35,17 +35,6 @@ public class StoreKey {
 	}
 
 	/*
-	 * The key is a resource name and property name qualifier
-	 * (i.e. no property name local part)
-	 */
-	public StoreKey(ResourceName resourceName, String qualifier) throws CoreException {
-		super();
-		this.resourceName = resourceName;
-		this.qualifier = qualifier;
-		initializeBytes();
-	}
-
-	/*
 	 * The key is a full key
 	 */
 	public StoreKey(ResourceName resourceName, QualifiedName propertyName) throws CoreException {
@@ -137,14 +126,6 @@ public class StoreKey {
 			// should never happen
 			throw new ResourceException(IResourceStatus.INTERNAL_ERROR, null, CompatibilityMessages.properties_storeProblem, e);
 		}
-	}
-
-	public boolean isFullyDefined() {
-		return (resourceName != null) && (qualifier != null) && (localName != null);
-	}
-
-	public boolean matchPrefix() {
-		return matchPrefix;
 	}
 
 	private String readNullTerminated(ByteArrayInputStream stream) throws IOException {

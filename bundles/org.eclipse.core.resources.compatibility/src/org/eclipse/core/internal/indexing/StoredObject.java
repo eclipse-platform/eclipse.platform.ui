@@ -90,14 +90,6 @@ public abstract class StoredObject extends Observable implements Referable, Inse
 	}
 
 	/**
-	 * Returns the store of the object.
-	 * Subclasses must not override.
-	 */
-	public final ObjectStore getStore() {
-		return store;
-	}
-
-	/**
 	 * Returns the address of the object.
 	 * Subclasses must not override.
 	 */

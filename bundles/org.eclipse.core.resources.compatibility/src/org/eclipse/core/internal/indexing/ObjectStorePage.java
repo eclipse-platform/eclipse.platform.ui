@@ -20,15 +20,5 @@ abstract class ObjectStorePage extends Page {
 		pageBuffer.copyFrom(buffer);
 		materialize();
 	}
-
-	public boolean isObjectPage() {
-		return false;
-	}
-
-	public boolean isSpaceMapPage() {
-		return false;
-	}
-
 	protected abstract void materialize();
-
 }

@@ -196,20 +196,6 @@ public class ObjectStore implements Observer {
 	}
 
 	/**
-	 * Returns the name of the store.
-	 */
-	public String getName() {
-		return pageStore.getName();
-	}
-
-	/**
-	 * Returns the policy used to create objects.
-	 */
-	public AbstractObjectPolicy getPolicy() {
-		return objectPolicy;
-	}
-
-	/**
 	 * Returns the StoredObject at a given address.  This registers the store as an 
 	 * observer of changes to this object.
 	 */

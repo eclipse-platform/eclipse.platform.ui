@@ -19,13 +19,6 @@ public class IndexCursor {
 	private boolean entryRemoved;
 
 	/**
-	 * Default constructor for an IndexCursor.
-	 */
-	private IndexCursor() {
-		super();
-	}
-
-	/**
 	 * Constructor for an IndexCursor.  Cursors should only be constructed
 	 * by the index during an open operation.
 	 */
@@ -107,15 +100,6 @@ public class IndexCursor {
 	}
 
 	/**
-	 * Sets the cursor at the first entry of an index whose key is 
-	 * greater than or equal to that of the argument.  Returns the cursor itself
-	 * for convenience in chaining method invocations.
-	 */
-	public synchronized IndexCursor find(Insertable i) throws IndexedStoreException {
-		return find(i.toByteArray());
-	}
-
-	/**
 	 * Sets the cursor at the first entry of an index.
 	 */
 	public synchronized IndexCursor findFirstEntry() throws IndexedStoreException {
@@ -154,21 +138,6 @@ public class IndexCursor {
 	}
 
 	/**
-	 * Returns the key at the cursor as a string.
-	 * If the cursor is at the beginning or end of the index then return null.
-	 */
-	public synchronized String getKeyAsString() throws IndexedStoreException {
-		byte[] key = getKey();
-		if (key == null)
-			return null;
-		String s = Convert.fromUTF8(key);
-		int i = s.indexOf(0);
-		if (i == -1)
-			return s;
-		return s.substring(0, i);
-	}
-
-	/**
 	 * Returns the byte array holding the value for the current cursor location.  If the cursor is
 	 * at the beginning or end of the index then return null.
 	 * 
@@ -204,17 +173,6 @@ public class IndexCursor {
 		if (value == null)
 			return null;
 		return new ObjectID(value);
-	}
-
-	/**
-	 * Returns the String from the value for the current cursor location.  
-	 * If the cursor is at the beginning or end of the index then return null.
-	 */
-	public synchronized String getValueAsString() throws IndexedStoreException {
-		byte[] value = getValue();
-		if (value == null)
-			return null;
-		return Convert.fromUTF8(value);
 	}
 
 	/**
@@ -270,22 +228,6 @@ public class IndexCursor {
 	}
 
 	/**
-	 * Compares a String to the key in the cursor and 
-	 * returns true if the String is equal to the key at the entry in the cursor.
-	 */
-	public synchronized boolean keyEquals(String s) throws IndexedStoreException {
-		return keyEquals(Convert.toUTF8(s));
-	}
-
-	/**
-	 * Compares an Insertable to the key in the cursor and 
-	 * returns true if the String is equal to the key at the entry in the cursor.
-	 */
-	public synchronized boolean keyEquals(Insertable anObject) throws IndexedStoreException {
-		return keyEquals(anObject.toByteArray());
-	}
-
-	/**
 	 * Compares a byte array to the key in the cursor and 
 	 * returns true if the byte array is a prefix
 	 * of the key at the entry in the cursor.
@@ -320,15 +262,6 @@ public class IndexCursor {
 	}
 
 	/**
-	 * Compares an Insertable to the key in the cursor and 
-	 * returns true if the byte array is a prefix
-	 * of the key at the entry in the cursor.
-	 */
-	public synchronized boolean keyMatches(Insertable anObject) throws IndexedStoreException {
-		return keyMatches(anObject.toByteArray());
-	}
-
-	/**
 	 * Moves the cursor to the next index entry.  
 	 * If the cursor is at the last entry, it becomes unset.
 	 * If the cursor is unset, then it is set to the first entry.
@@ -353,25 +286,6 @@ public class IndexCursor {
 	 */
 	void nodeSplit() throws IndexedStoreException {
 		adjust();
-	}
-
-	/**
-	 * Moves the cursor to the previous index entry.  
-	 * If the cursor is at the first entry, it becomes unset.
-	 * If the cursor is unset, then it is set to the last entry.
-	 * The cursor itself is returned.
-	 * 
-	 * Throws an EntryRemoved condition if the entry at which it has
-	 * been pointing has been removed by another cursor.
-	 */
-	public synchronized IndexCursor previous() throws IndexedStoreException {
-		if (isAtEnd()) {
-			findLastEntry();
-		} else {
-			entryNumber--;
-			adjust();
-		}
-		return this;
 	}
 
 	/**
@@ -484,14 +398,6 @@ public class IndexCursor {
 	 */
 	public synchronized void updateValue(byte[] b) throws IndexedStoreException {
 		updateEntry(b);
-	}
-
-	/**
-	 * Updates the value of the index entry at the cursor.
-	 * If the cursor is at the beginning or end of the index then do nothing.
-	 */
-	public synchronized void updateValue(String s) throws IndexedStoreException {
-		updateValue(Convert.toUTF8(s));
 	}
 
 	/**

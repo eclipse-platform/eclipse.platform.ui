@@ -22,13 +22,6 @@ public abstract class Page extends Observable implements Referable {
 	protected PageStore pageStore;
 
 	/**
-	 * Default constructor.
-	 */
-	protected Page() {
-		super();
-	}
-
-	/**
 	 * Constructs a new page of the given size.
 	 */
 	public Page(int pageNumber, PageStore pageStore) {

@@ -35,13 +35,6 @@ class FieldArray {
 	}
 
 	/**
-	 * Returns the number of fields in the array.
-	 */
-	public int count() {
-		return count;
-	}
-
-	/**
 	 * Returns the ith field of the array.
 	 */
 	public Field fieldAt(int i) {

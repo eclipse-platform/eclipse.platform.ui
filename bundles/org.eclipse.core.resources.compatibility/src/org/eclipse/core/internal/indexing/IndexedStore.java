@@ -218,20 +218,6 @@ public class IndexedStore {
 	}
 
 	/**
-	 * Places an Insertable into the store.
-	 */
-	public synchronized ObjectID createObject(Insertable anObject) throws IndexedStoreException {
-		return createObject(anObject.toByteArray());
-	}
-
-	/**
-	 * Deletes the store if it exists.  Does nothing if it does not exist.
-	 */
-	public static synchronized void delete(String filename) {
-		ObjectStore.delete(filename);
-	}
-
-	/**
 	 * Tests to see if the file acting as the store exists.
 	 */
 	public static synchronized boolean exists(String filename) {
@@ -260,17 +246,6 @@ public class IndexedStore {
 	}
 
 	/**
-	 * @deprecated -- use commit()
-	 */
-	public synchronized void flush() throws IndexedStoreException {
-		try {
-			objectStore.commit();
-		} catch (Exception e) {
-			throw new IndexedStoreException(IndexedStoreException.StoreNotFlushed, e);
-		}
-	}
-
-	/**
 	 * Returns an index given its name.
 	 */
 	public synchronized Index getIndex(String indexName) throws IndexedStoreException {
@@ -290,13 +265,6 @@ public class IndexedStore {
 		} catch (ObjectStoreException e) {
 			throw new IndexedStoreException(IndexedStoreException.MetadataRequestError, e);
 		}
-	}
-
-	/**
-	 * Returns the name of the store.
-	 */
-	public synchronized String getName() {
-		return name;
 	}
 
 	/**
@@ -333,13 +301,6 @@ public class IndexedStore {
 		if (i == -1)
 			return s;
 		return s.substring(0, i);
-	}
-
-	/**
-	 * Returns the object store.
-	 */
-	public synchronized ObjectStore getObjectStore() {
-		return objectStore;
 	}
 
 	/** 
@@ -400,23 +361,6 @@ public class IndexedStore {
 		}
 	}
 
-	/**
-	 * Destroys an Index given its name.
-	 */
-	public synchronized void removeIndex(String indexName) throws IndexedStoreException {
-		byte[] key = Convert.toUTF8(indexName);
-		indexDirectoryCursor.find(key);
-		if (!indexDirectoryCursor.keyMatches(key)) {
-			throw new IndexedStoreException(IndexedStoreException.IndexNotFound);
-		}
-		ObjectAddress address = indexDirectoryCursor.getValueAsObjectAddress();
-		IndexAnchor anchor = acquireAnchor(address);
-		anchor.destroyChildren();
-		anchor.release();
-		removeObject(address);
-		indexDirectoryCursor.remove();
-	}
-
 	/** 
 	 * Removes an object from my store.
 	 */
@@ -463,19 +407,5 @@ public class IndexedStore {
 		ObjectAddress newAddress = insertObject(new BinarySmallObject(b));
 		objectDirectoryCursor.updateValue(newAddress.toByteArray());
 		removeObject(oldAddress);
-	}
-
-	/**
-	 * Updates an object with a String.
-	 */
-	public synchronized void updateObject(ObjectID id, String s) throws IndexedStoreException {
-		updateObject(id, Convert.toUTF8(s));
-	}
-
-	/**
-	 * Updates an object with an Insertable.
-	 */
-	public synchronized void updateObject(ObjectID id, Insertable anObject) throws IndexedStoreException {
-		updateObject(id, anObject.toByteArray());
 	}
 }

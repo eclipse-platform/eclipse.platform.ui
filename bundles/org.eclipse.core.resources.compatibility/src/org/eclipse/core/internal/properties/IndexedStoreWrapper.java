@@ -140,18 +140,6 @@ public class IndexedStoreWrapper {
 		}
 	}
 
-	public synchronized void rollback() {
-		if (store == null)
-			return;
-		try {
-			store.rollback();
-		} catch (Exception e) {
-			String message = NLS.bind(CompatibilityMessages.indexed_couldNotCommit, location.toOSString());
-			ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, location, message, e);
-			ResourcesPlugin.getPlugin().getLog().log(status);
-		}
-	}
-
 	public synchronized String getObjectAsString(ObjectID id) throws CoreException {
 		try {
 			return getStore().getObjectAsString(id);

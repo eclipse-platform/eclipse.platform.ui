@@ -308,10 +308,6 @@ class IndexNode extends IndexedStoreObject {
 		return hi;
 	}
 
-	ObjectAddress getAnchorAddress() {
-		return anchorAddress;
-	}
-
 	/**
 	 * Returns the descriptor field for the node entry at a given index.
 	 */

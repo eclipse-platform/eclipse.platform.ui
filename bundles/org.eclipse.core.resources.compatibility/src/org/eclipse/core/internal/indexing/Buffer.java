@@ -18,13 +18,6 @@ public class Buffer {
 	private static final byte[] ZEROES = new byte[1024];
 
 	/**
-	 * Default constructor.
-	 */
-	protected Buffer() {
-		super();
-	}
-
-	/**
 	 * Create a new buffer using the given byte array as contents.  Note that this has
 	 * the potential for aliasing side effects.
 	 */
@@ -124,16 +117,8 @@ public class Buffer {
 		return result;
 	}
 
-	public byte[] get(FieldDef d) {
-		return get(d.offset, d.length);
-	}
-
 	public Field getField(int offset, int length) {
 		return new Field(this, offset, length);
-	}
-
-	public Field getField(FieldDef d) {
-		return new Field(this, d.offset, d.length);
 	}
 
 	public byte getByte(int offset) {
@@ -144,18 +129,10 @@ public class Buffer {
 		return (int) getLong(offset, length);
 	}
 
-	public int getInt(FieldDef d) {
-		return (int) getLong(d.offset, d.length);
-	}
-
 	public int getUInt(int offset, int length) {
 		int shift = Math.max(0, 32 - (length * 8));
 		int mask = (-1 >>> shift) & Integer.MAX_VALUE;
 		return getInt(offset, length) & mask;
-	}
-
-	public int getUInt(FieldDef d) {
-		return getUInt(d.offset, d.length);
 	}
 
 	public long getLong(int offset, int length) {
@@ -168,20 +145,12 @@ public class Buffer {
 		return v;
 	}
 
-	public long getLong(FieldDef d) {
-		return getLong(d.offset, d.length);
-	}
-
 	public byte[] getByteArray() {
 		return contents;
 	}
 
 	public int length() {
 		return contents.length;
-	}
-
-	public Pointer pointTo(int offset) {
-		return new Pointer(this, offset);
 	}
 
 	public void put(int offset, byte value) {
@@ -197,10 +166,6 @@ public class Buffer {
 		System.arraycopy(source, 0, contents, offset, n);
 	}
 
-	public void put(FieldDef d, byte[] source) {
-		put(d.offset, d.length, source);
-	}
-
 	public void put(int offset, int length, long n) {
 		long v = n;
 		int i = offset + length;
@@ -211,16 +176,8 @@ public class Buffer {
 		}
 	}
 
-	public void put(FieldDef d, long n) {
-		put(d.offset, d.length, n);
-	}
-
 	public void put(int offset, int length, int n) {
 		put(offset, length, (long) n);
-	}
-
-	public void put(FieldDef d, int n) {
-		put(d.offset, d.length, (long) n);
 	}
 
 	public void put(int offset, Insertable source) {

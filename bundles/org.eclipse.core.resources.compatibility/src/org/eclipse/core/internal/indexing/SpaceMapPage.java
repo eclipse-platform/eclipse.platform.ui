@@ -21,28 +21,6 @@ class SpaceMapPage extends ObjectStorePage {
 	}
 
 	/**
-	 * Determines the initial values for the static field SpaceClassSize.
-	 * It is run at development time and the results used for the initializer.  It is
-	 * not used at run time.  There are 16 space classes numbered 0-15.  
-	 * A space class of 0 indicates the page is empty and can hold an object of maximum size.
-	 * Classes 1 to 10 decrease in size in equal steps.  
-	 * The classes 11 to 14 decrease in size in steps of decreasing size.
-	 * Class 15 indicates the page is full.
-	 * This is not run as a static initialization block because the values MUST be absolutely
-	 * inviolable for a given version of an object store.
-	 */
-	public static int[] generateSpaceClassSize() {
-		int[] result = new int[16];
-		int n = (ObjectPage.ObjectSpaceSize - 512) / 10;
-		for (int i = 0; i < 11; i++)
-			result[i] = ObjectPage.ObjectSpaceSize - i * n;
-		for (int i = 11; i < 15; i++)
-			result[i] = result[i - 1] / 2;
-		result[15] = 0;
-		return result;
-	}
-
-	/**
 	 * Creates a new page from a buffer.
 	 */
 	public SpaceMapPage(int pageNumber, byte[] buffer, PageStore pageStore) {
@@ -99,11 +77,6 @@ class SpaceMapPage extends ObjectStorePage {
 		notifyObservers();
 	}
 
-	public boolean isSpaceMapPage() {
-		return true;
-	}
-
 	protected void materialize() {
 	}
-
 }

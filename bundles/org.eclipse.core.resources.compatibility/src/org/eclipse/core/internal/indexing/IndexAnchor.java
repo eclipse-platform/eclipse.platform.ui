@@ -222,12 +222,4 @@ class IndexAnchor extends IndexedStoreObject {
 		node.release();
 		return n;
 	}
-
-	/**
-	 * Returns the root node address.
-	 */
-	ObjectAddress getRootNodeAddress() {
-		return rootNodeAddress;
-	}
-
 }
