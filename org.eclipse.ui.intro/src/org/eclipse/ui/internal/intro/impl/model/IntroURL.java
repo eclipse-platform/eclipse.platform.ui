@@ -27,6 +27,7 @@ import org.eclipse.ui.internal.intro.impl.parts.*;
 import org.eclipse.ui.internal.intro.impl.presentations.*;
 import org.eclipse.ui.internal.intro.impl.util.*;
 import org.eclipse.ui.intro.*;
+import org.eclipse.ui.intro.config.*;
 import org.osgi.framework.*;
 
 /**
@@ -34,7 +35,8 @@ import org.osgi.framework.*;
  * a host. This class holds all logic to execute Intro URL commands, ie: an
  * Intro URL knows how to execute itself.
  */
-public class IntroURL {
+public class IntroURL implements IIntroURL {
+
 
     /**
      * Intro URL constants.
@@ -226,8 +228,7 @@ public class IntroURL {
                 IIntroAction introAction = (IIntroAction) actionObject;
                 IIntroSite site = IntroPlugin.getDefault().getIntroModelRoot()
                         .getPresentation().getIntroPart().getIntroSite();
-                introAction.initialize(site, parameters);
-                introAction.run();
+                introAction.run(site, parameters);
             } else if (actionObject instanceof IAction) {
                 IAction action = (IAction) actionObject;
                 action.run();

@@ -27,6 +27,7 @@ import org.eclipse.ui.help.*;
 import org.eclipse.ui.internal.intro.impl.*;
 import org.eclipse.ui.internal.intro.impl.util.*;
 import org.eclipse.ui.intro.*;
+import org.eclipse.ui.intro.config.*;
 
 /**
  *  

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.intro.impl.parts;
+package org.eclipse.ui.intro.config;
 
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.widgets.*;
@@ -29,7 +29,7 @@ import org.eclipse.ui.intro.*;
 public interface IStandbyContentPart {
 
 	/**
-	 * Creates the SWT controls for this cheat sheet viewer.
+	 * Creates the SWT controls for this standby part.
 	 * <p>
 	 * Clients should not call this method (the intro framework calls this method when
 	 * it needs to, which may be never).
@@ -70,7 +70,7 @@ public interface IStandbyContentPart {
     public void setInput(Object input);
 
 	/**
-	 * Asks this cheat sheet viewer to take focus.
+	 * Asks this standby part to take focus.
 	 * <p>
 	 * Clients should not call this method (the intro framework calls this method at
 	 * appropriate times).
@@ -79,7 +79,7 @@ public interface IStandbyContentPart {
     public void setFocus();
 
 	/**
-	 * Disposes of this cheat sheet viewer.
+	 * Disposes of this standby part.
 	 * <p>
 	 * Clients should not call this method (the intro framework calls this method at
 	 * appropriate times).
