@@ -11,6 +11,98 @@
 <h1>
 Eclipse Platform Build Notes<br>
 Workbench</h1>
+Eclipse Integration Build 20020307
+<h2>
+What's new in this drop</h2>
+
+<h3>
+API changes</h3>
+
+<blockquote><b>IContextComputer, DialogPageContextComputer, and ViewContextComputer</b>
+<br>These classes have been deprecated. See "<a href="#Help Framework">Help
+Framework</a>" below for more details
+<p><b>IWorkbench</b>
+<br>&nbsp;&nbsp;&nbsp; public IWorkbenchPage clonePage(IWorkbenchPage page);
+<br>&nbsp;&nbsp;&nbsp; public IWorkbenchPage openPage(IAdaptable input);
+<br>&nbsp;&nbsp;&nbsp; public IWorkbenchPage openPage(String perspId, IAdaptable
+input, int keyState);
+<br><b>IWorkbenchPreferenceConstants</b>
+<br>&nbsp;&nbsp;&nbsp; public static final String OPEN_NEW_PERSPECTIVE;
+<br>&nbsp;&nbsp;&nbsp; public static final String ALTERNATE_OPEN_NEW_PERSPECTIVE;
+<br>&nbsp;&nbsp;&nbsp; public static final String SHIFT_OPEN_NEW_PERSPECTIVE;
+<br>&nbsp;&nbsp;&nbsp; public static final String PROJECT_OPEN_NEW_PERSPECTIVE;
+<br>&nbsp;&nbsp;&nbsp; public static final String OPEN_PERSPECTIVE_WINDOW;
+<br>&nbsp;&nbsp;&nbsp; public static final String OPEN_PERSPECTIVE_PAGE;
+<br>&nbsp;&nbsp;&nbsp; public static final String OPEN_PERSPECTIVE_REPLACE;
+<br>&nbsp;&nbsp;&nbsp; public static final String NO_NEW_PERSPECTIVE;
+<br><b>OpenNewPageMenu, OpenNewWindowMenu, and OpenPerspectiveMenu</b>
+<br>These IWorkbench methods, IWorkbenchPreferenceConstants constants,
+and 3 classes have all been deprecated. Clients should use the new showPerspective
+methods on IWorkbench. See the ui mailing list for a more details about
+this new API and how clients are expected to use them.</blockquote>
+
+<h3>
+API additions</h3>
+
+<blockquote><b>IMemento</b>
+<br>&nbsp;&nbsp;&nbsp; public String getTextData()
+<br>&nbsp;&nbsp;&nbsp; public void putTextData(String)
+<br>This new API is to allow clients to save text containing tabs, spaces,
+newline, etc characters without these characters being changed. See problem
+report #4378.
+<p><b>ISelectionService</b>
+<br>&nbsp;&nbsp;&nbsp; public void addSelectionListener(String partId,
+ISelectionListener listener);
+<br>&nbsp;&nbsp;&nbsp; public void removeSelectionListener(String partId,
+ISelectionListener listener);
+<br>&nbsp;&nbsp;&nbsp; public ISelection getSelection(String partId);
+<br>This new API allows client to track selection on a specific part. See
+problem report #2668
+<p><b>IWorkbench</b>
+<br>&nbsp;&nbsp;&nbsp; public IWorkbenchPage showPerspective(String perspectiveId,
+IWorkbenchWindow window, IAdaptable input);
+<br>&nbsp;&nbsp;&nbsp; public IWorkbenchPage showPerspective(String perspectiveId,
+IWorkbenchWindow window);
+<br>This new API is to support a more consistent and predictable opening
+of perspective for the user. See the ui mailing list for a more details
+about this new API and how clients are expected to use them.</blockquote>
+
+<h3>
+Other highlights</h3>
+
+<blockquote><a NAME="Help Framework"></a><b>Help framework</b>
+<br>The API of WorkbenchHelp has been updated to reflect changes to the
+API of the help support system. Specifically, nested contexts are no longer
+supported. Thus the WorkbenchHelp API now only accepts a single help context
+id (the old API is deprecated and in the case of an array of contexts only
+the first element is used).
+<p>The types IContextComputer, DialogPageContextComputer, and ViewContextComputer
+have been deprecated. Clients who wish to dynamically compute a help context
+should hook their own help listener then call WorkbenchHelp.displayHelp
+with a context id or IContext.
+<p><b>Marker resolution</b>
+<br>The org.eclipse.ui.markerResolution extension point has been modified
+to accept an IMarkerResolutionGenerator. The generator is passed a marker
+and may return 0..n resolutions for the marker. It is important that the
+generator be targetted as specifically as possible in the xml in order
+to avoid unneeded plug-in loading. Full documentation of this extension
+point and org.eclipse.ui.markerHelp should be available shortly. See the
+readme example for a demostation or thier use.
+<br>&nbsp;</blockquote>
+
+<h2>
+Known deficiencies</h2>
+
+<h2>
+Problem reports fixed</h2>
+<a href="http://dev.eclipse.org/bugs/buglist.cgi?bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&chfield=bug_status&chfieldfrom=2002%2F03%2F05&chfieldto=2002%2F03%2F07&product=Platform&component=UI&cmdtype=doit&&order=Bug+Number">Click
+here</a> to see PRs which have been marked as RESOLVED, VERIFIED or CLOSED
+between 2002/03/05 and 2002/03/07.
+<p>
+<hr SIZE=0 WIDTH="100%">
+<h1>
+Eclipse Platform Build Notes<br>
+Workbench</h1>
 Eclipse Integration Build 20020305
 <h2>
 What's new in this drop</h2>
