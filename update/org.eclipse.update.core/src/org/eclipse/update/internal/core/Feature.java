@@ -143,7 +143,6 @@ public abstract class Feature implements IFeature {
 		this.url = sourceFeature.getURL();
 		this.versionIdentifier = sourceFeature.getIdentifier();
 		this.label = sourceFeature.getLabel();
-		this.url = sourceFeature.getURL();
 		this.updateInfo = sourceFeature.getUpdateInfo();
 		this.setDiscoveryInfos(sourceFeature.getDiscoveryInfos());
 		this.provider = sourceFeature.getProvider();

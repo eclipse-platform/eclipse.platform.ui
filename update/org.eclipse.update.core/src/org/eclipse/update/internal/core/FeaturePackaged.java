@@ -49,6 +49,7 @@ public class FeaturePackaged extends Feature {
 		
 		if (rootURL == null) {
 			// install the Feature info into the TEMP drive
+			// extract teh JAR file
 			SiteFile tempSite = (SiteFile)SiteManager.getTempSite();
 			
 			InputStream inStream = null;
@@ -61,9 +62,11 @@ public class FeaturePackaged extends Feature {
 				}
 				closeFeature();
 			}
-			//rootURL = new URL("jar", null, getURL().toExternalForm() + "!/");
-			// get the path to the Feature
-			rootURL = UpdateManagerUtils.getURL(tempSite.getURL(),SiteFile.INSTALL_FEATURE_PATH+getIdentifier().toString(),null);
+
+			// get the path to the Feature, which is now pon the file system
+			// <TempSite>/install/features/<id>_<ver>/
+			// add '/' as it is a directory
+			rootURL = UpdateManagerUtils.getURL(tempSite.getURL(),SiteFile.INSTALL_FEATURE_PATH+getIdentifier().toString()+"/",null);
 		}
 		return rootURL;
 	}

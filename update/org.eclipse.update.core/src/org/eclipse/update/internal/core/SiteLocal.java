@@ -11,6 +11,7 @@ import java.util.*;
 import org.eclipse.core.boot.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
+import org.xml.sax.SAXException;
 
 /**
  * This class manages the configurations.
@@ -74,20 +75,22 @@ public class SiteLocal implements ILocalSite, IWritable {
 	 * is shared between the workspaces.
 	 */
 	private void initialize() throws CoreException {
-		// FIXME... call VK API getConfigurationLocation which will return a URL
-		IPlatformConfiguration platformConfig = BootLoader2.getPlatformConfiguration();
-		location = platformConfig.getConfigurationLocation();
-		/*try {
-			File config = UpdateManagerPlugin.getPlugin().getStateLocation().toFile();
-			location = new URL("file", null, config.getAbsolutePath()+"/");
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		}*/
 
 		//if the file exists, parse it
 		try {
-			URL configXml = UpdateManagerUtils.getURL(location,SITE_LOCAL_FILE,null);
-			System.out.println("config"+configXml.toExternalForm());
+
+			IPlatformConfiguration platformConfig = BootLoader2.getCurrentPlatformConfiguration();
+			location = platformConfig.getConfigurationLocation();
+			// FIXME... call VK API getConfigurationLocation which will return a URL
+			/*try {
+				File config = UpdateManagerPlugin.getPlugin().getStateLocation().toFile();
+				location = new URL("file", null, config.getAbsolutePath()+"/");
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			}*/
+
+			URL configXml = UpdateManagerUtils.getURL(location, SITE_LOCAL_FILE, null);
+			System.out.println("config" + configXml.toExternalForm());
 			SiteLocalParser parser = new SiteLocalParser(configXml.openStream(), this);
 		}  catch (FileNotFoundException exception) {
 			// file doesn't exist, ok, log it and continue 
@@ -96,9 +99,13 @@ public class SiteLocal implements ILocalSite, IWritable {
 				UpdateManagerPlugin.getPlugin().debug(location.toExternalForm() + " does not exist, there is no previous state or install history we can recover, we shall use default.");
 			}
 			createDefaultConfiguration();
-		} catch (Exception exception) {
+		} catch (SAXException exception) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.ERROR,id,IStatus.OK,"Error during parsing of the install config XML:"+location.toExternalForm(),exception);
+			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Error during parsing of the install config XML:" + location.toExternalForm(), exception);
+			throw new CoreException(status);
+		} catch (IOException exception) {
+			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Cannot find platform configuration" , exception);
 			throw new CoreException(status);
 		}
 
@@ -117,24 +124,23 @@ public class SiteLocal implements ILocalSite, IWritable {
 			//FIXME: location points to a file, not a directory, 
 			// check UpdateManagerUtils.getURL()
 			// use / and File.Separator, ATTN Linux/Unix issues ?
-			addConfiguration(createConfiguration(new URL(location,DEFAULT_CONFIG_FILE), DEFAULT_CONFIG_LABEL));
-			
-		
+			addConfiguration(createConfiguration(new URL(location, DEFAULT_CONFIG_FILE), DEFAULT_CONFIG_LABEL));
+
 			// notify listeners
 			Object[] localSiteListeners = listeners.getListeners();
 			for (int i = 0; i < localSiteListeners.length; i++) {
 				((ISiteLocalChangedListener) localSiteListeners[i]).currentInstallConfigurationChanged(currentConfiguration);
 			}
-		
+
 			//FIXME: the plugin site may not be read-write
 			//the default is USER_EXCLUDE 
-			ConfigurationSite configSite = (ConfigurationSite)SiteManager.createConfigurationSite(site,IPlatformConfiguration.ISitePolicy.USER_EXCLUDE);
+			ConfigurationSite configSite = (ConfigurationSite) SiteManager.createConfigurationSite(site, IPlatformConfiguration.ISitePolicy.USER_EXCLUDE);
 			configSite.setInstallSite(true);
 			currentConfiguration.addConfigurationSite(configSite);
-		
+
 			// FIXME: always save ?
 			this.save();
-			
+
 		} catch (Exception e) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Cannot create the Local Site Object", e);
@@ -163,11 +169,12 @@ public class SiteLocal implements ILocalSite, IWritable {
 	 * sets  a configuration as current
 	 */
 	private void setCurrentConfiguration(IInstallConfiguration configuration) {
-		if (currentConfiguration!=null)	currentConfiguration.setCurrent(false);
+		if (currentConfiguration != null)
+			currentConfiguration.setCurrent(false);
 		configuration.setCurrent(true);
 		currentConfiguration = configuration;
 		//FIXME: revert
-		
+
 		// notify listeners
 		Object[] siteLocalListeners = listeners.getListeners();
 		for (int i = 0; i < siteLocalListeners.length; i++) {
@@ -209,26 +216,26 @@ public class SiteLocal implements ILocalSite, IWritable {
 	 * Saves the site into the config file
 	 */
 	public void save() throws CoreException {
-		
+
 		// Save the current configuration as
 		// the other are already saved
-		((InstallConfiguration)currentConfiguration).save();
+		 ((InstallConfiguration) currentConfiguration).save();
 		// save the local site
 		if (location.getProtocol().equalsIgnoreCase("file")) {
 			File file = null;
 			try {
-				file = new File(UpdateManagerUtils.getURL(location,SITE_LOCAL_FILE,null).getFile());
+				file = new File(UpdateManagerUtils.getURL(location, SITE_LOCAL_FILE, null).getFile());
 				PrintWriter fileWriter = new PrintWriter(new FileOutputStream(file));
 				Writer writer = new Writer();
 				writer.writeSite(this, fileWriter);
-				fileWriter.close(); 
+				fileWriter.close();
 			} catch (FileNotFoundException e) {
 				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Cannot save site into " + file.getAbsolutePath(), e);
 				throw new CoreException(status);
 			} catch (MalformedURLException e) {
 				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Cannot get handle on configuration file " + location.toExternalForm()+" : "+SITE_LOCAL_FILE, e);
+				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Cannot get handle on configuration file " + location.toExternalForm() + " : " + SITE_LOCAL_FILE, e);
 				throw new CoreException(status);
 			}
 		}
@@ -270,7 +277,7 @@ public class SiteLocal implements ILocalSite, IWritable {
 
 	private void writeConfig(String gap, PrintWriter w, IInstallConfiguration config) {
 		w.print(gap + "<" + SiteLocalParser.CONFIG + " ");
-		String URLInfoString = UpdateManagerUtils.getURLAsString(getLocation(),config.getURL());
+		String URLInfoString = UpdateManagerUtils.getURLAsString(getLocation(), config.getURL());
 		w.print("url=\"" + Writer.xmlSafe(URLInfoString) + "\" ");
 
 		if (config.getLabel() != null) {
@@ -283,18 +290,20 @@ public class SiteLocal implements ILocalSite, IWritable {
 	/*
 	 * @see ILocalSite#createConfiguration(String)
 	 */
-	public IInstallConfiguration createConfiguration(URL newFile,String name) throws CoreException {
+	public IInstallConfiguration createConfiguration(URL newFile, String name) throws CoreException {
 		InstallConfiguration result = null;
 		String newFileName = UpdateManagerUtils.getLocalRandomIdentifier(DEFAULT_CONFIG_FILE);
 		try {
-			if (newFile==null) newFile = UpdateManagerUtils.getURL(getLocation(),newFileName,null);
+			if (newFile == null)
+				newFile = UpdateManagerUtils.getURL(getLocation(), newFileName, null);
 			Date currentDate = new Date();
-			if (name==null) name = DEFAULT_CONFIG_LABEL+currentDate.toString();
-			result = new InstallConfiguration(getCurrentConfiguration(),newFile,name);
+			if (name == null)
+				name = DEFAULT_CONFIG_LABEL + currentDate.toString();
+			result = new InstallConfiguration(getCurrentConfiguration(), newFile, name);
 			result.setCreationDate(currentDate);
-		} catch (MalformedURLException e){
+		} catch (MalformedURLException e) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Cannot create a new configuration in:"+newFileName, e);
+			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Cannot create a new configuration in:" + newFileName, e);
 			throw new CoreException(status);
 		}
 		return result;
@@ -305,15 +314,14 @@ public class SiteLocal implements ILocalSite, IWritable {
 	 */
 	public void revertTo(IInstallConfiguration configuration) throws CoreException {
 		// create a configuration
-		IInstallConfiguration newConfiguration = createConfiguration(null,configuration.getLabel());
+		IInstallConfiguration newConfiguration = createConfiguration(null, configuration.getLabel());
 		// process delta
 		// the Configured featuresConfigured are the same as the old configuration
 		// the unconfigured featuresConfigured are the rest...
-		
-		
+
 		// add to the stack which will set up as current
 		addConfiguration(newConfiguration);
-		
+
 	}
 
 }
