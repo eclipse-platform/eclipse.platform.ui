@@ -461,6 +461,11 @@ import org.eclipse.ui.views.IViewRegistry;
                     site.getActionBars().updateActionBars();
                 }
                 
+                // The editor should now be fully created. Exercise its public interface, and sanity-check
+                // it wherever possible. If it's going to throw exceptions or behave badly, it's much better
+                // that it does so now while we can still cancel creation of the part.
+                PartTester.testView(view);
+                
                 ref.setPart(view);
                 ref.refreshFromPart();
                 ref.releaseReferences();

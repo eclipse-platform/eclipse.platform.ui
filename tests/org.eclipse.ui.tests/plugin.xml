@@ -526,6 +526,13 @@
             id="org.eclipse.ui.tests.api.workbenchpart.EditorWithInitRuntimeException"
             extensions="test"/>
       <editor
+            class="org.eclipse.ui.tests.api.workbenchpart.EditorWithInputException"
+            icon="icons/anything.gif"
+            default="true"
+            name="ERROR: exception in getEditorInput"
+            id="org.eclipse.ui.tests.api.workbenchpart.EditorWithInputException"
+            extensions="test"/>
+      <editor
             class="org.eclipse.ui.tests.api.workbenchpart.EditorWithInitException"
             icon="icons/anything.gif"
             default="true"

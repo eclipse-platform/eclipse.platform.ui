@@ -542,6 +542,7 @@ public class WorkbenchMessages extends NLS {
     public static String EditorManager_bad_element_factory;
     public static String EditorManager_create_element_returned_null;
     public static String EditorManager_wrong_createElement_result;
+    public static String EditorManager_editorInputIncorrect;
     
 	public static String EditorPane_errorMessage;
 	public static String EditorPane_moveEditor;
@@ -742,6 +743,7 @@ public class WorkbenchMessages extends NLS {
 	public static String ProblemSavingWorkingSetState_message;
 	public static String ProblemSavingWorkingSetState_title;
 	public static String ProblemRestoringWorkingSetState_message;
+
 	public static String ProblemRestoringWorkingSetState_title;
 
 	public static String WorkingSetEditWizard_title;

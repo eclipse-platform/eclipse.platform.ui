@@ -23,8 +23,10 @@ import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IPropertyListener;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartConstants;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.components.IDisposable;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.util.Util;
@@ -122,7 +124,8 @@ public class PartPropertyProvider implements IPartPropertyProvider, INameable, I
     public Image getTitleImage() {
         if (image == null) {
             if (titleImage == null) {
-                return null;
+                return PlatformUI.getWorkbench().getSharedImages().getImage(
+                        ISharedImages.IMG_DEF_VIEW);
             }
             
             image = getManager().createImageWithDefault(titleImage);

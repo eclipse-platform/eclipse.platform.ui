@@ -837,9 +837,19 @@ public class EditorManager implements IExtensionRemovalHandler {
 			} finally {
 				UIStats.end(UIStats.INIT_PART, part, label);
 			}
-			if (part.getSite() != site)
+
+            // Sanity-check the site
+			if (part.getSite() != site || part.getEditorSite() != site)
 				throw new PartInitException(
 						NLS.bind(WorkbenchMessages.EditorManager_siteIncorrect,  desc.getId() ));
+            
+            // Sanity-check the editor input
+            IEditorInput actualInput = part.getEditorInput();
+            
+            if (actualInput != input)
+                throw new PartInitException(
+                        NLS.bind(WorkbenchMessages.EditorManager_editorInputIncorrect, input.getName(), actualInput.getName() ));
+            
 		} catch (Exception e) {
 			disposeEditorActionBars((EditorActionBars) site.getActionBars());
 			site.dispose();
@@ -1211,6 +1221,11 @@ public class EditorManager implements IExtensionRemovalHandler {
                 UIStats.end(UIStats.CREATE_PART_CONTROL, part, editorID);
             }
 
+            // The editor should now be fully created. Exercise its public interface, and sanity-check
+            // it wherever possible. If it's going to throw exceptions or behave badly, it's much better
+            // that it does so now while we can still cancel creation of the part.
+            PartTester.testEditor(part);
+            
             ref.setPart(part);
             ref.refreshFromPart();
             ref.releaseReferences();
@@ -1255,6 +1270,8 @@ public class EditorManager implements IExtensionRemovalHandler {
 
     }
     
+
+
     /**
      * Save all of the editors in the workbench.  
      * Return true if successful.  Return false if the
