@@ -131,7 +131,7 @@ function doSubmit()
 
 <div style="overflow:auto;height:250px;">
 	<table id="wsTable" width="100%" cellspacing=0 cellpading=0 border=0 align=center >
-		<tr><td style="padding:0px 10px;"><%=WebappResources.getString("WorkingSetName", request)%>
+		<tr><td style="padding:5px 10px 0px 10px;"><%=WebappResources.getString("WorkingSetName", request)%>:
 		</td></tr>
 		<tr><td style="padding:0px 10px;"><input type="text" id="workingSet" name="workingSet" value='<%=isEditMode?data.getWorkingSetName():""%>' maxlength=256 alt='<%=WebappResources.getString("WorkingSetName", request)%>'>
         </td></tr>
@@ -139,7 +139,7 @@ function doSubmit()
     </table>
   
   	<table id="filterTable" width="100%" cellspacing=0 cellpading=0 border=0 align=center  style="background:transparent;">
-		<tr><td><div id="selectBook" style="margin-left:10px;"><%=WebappResources.getString("Select", request)%></div>
+		<tr><td><div id="selectBook" style="padding-top:5px; margin-left:10px;"><%=WebappResources.getString("Select", request)%></div>
 		</td></tr>
 		<tr><td>
 			<div id="booksContainer">
