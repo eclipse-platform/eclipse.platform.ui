@@ -181,8 +181,8 @@ public class AntRunner implements IPlatformRunnable {
 	 * @exception BuildException    Failed to locate a build file
 	 */
 	private File findBuildFile(String start, String suffix) throws BuildException {
-		if (msgOutputLevel >= Project.MSG_INFO)
-			System.out.println(Policy.bind("info.searchingFor",suffix));
+
+		clientListener.messageLogged(Policy.bind("info.searchingFor",suffix), Project.MSG_INFO);
 
 		File parent = new File(new File(start).getAbsolutePath());
 		File file = new File(parent, suffix);
@@ -206,7 +206,7 @@ public class AntRunner implements IPlatformRunnable {
 	/**
 	 * Search for the insert position to keep names a sorted list of Strings
 	 */
-	private static int findTargetPosition(Vector names, String name) {
+	private int findTargetPosition(Vector names, String name) {
 		int res= names.size();
 		for (int i= 0; i < names.size() && res == names.size(); i++) {
 			if (name.compareTo((String) names.elementAt(i)) < 0) {
@@ -228,8 +228,7 @@ public class AntRunner implements IPlatformRunnable {
 		file= new File(filename);
 		filename= file.getParent();
 
-		if (filename != null && msgOutputLevel >= Project.MSG_VERBOSE)
-			System.out.println(Policy.bind("info.searchingIn",filename));
+		clientListener.messageLogged(Policy.bind("info.searchingIn",filename), Project.MSG_VERBOSE);
 
 		return (filename == null) ? null : new File(filename);
 	}
@@ -250,7 +249,7 @@ public class AntRunner implements IPlatformRunnable {
 	/**
 	 * Prints the message of the Throwable if it's not null.
 	 */
-	private static void printMessage(Throwable t) {
+	private void printMessage(Throwable t) {
 		String message= t.getMessage();
 		if (message != null) {
 			System.err.println(message);
@@ -259,7 +258,7 @@ public class AntRunner implements IPlatformRunnable {
 	/**
 	 * Output a formatted list of target names with an optional description
 	 */
-	private static void printTargets(Vector names, Vector descriptions, String heading, int maxlen) {
+	private void printTargets(Vector names, Vector descriptions, String heading, int maxlen) {
 		// now, start printing the targets and their descriptions
 		String lSep= System.getProperty("line.separator");
 		// got a bit annoyed that I couldn't find a pad function
@@ -278,12 +277,13 @@ public class AntRunner implements IPlatformRunnable {
 			}
 			msg.append(lSep);
 		}
-		System.out.println(msg.toString());
+
+		clientListener.messageLogged(msg.toString(), Project.MSG_INFO);
 	}
 	/**
 	 * Print out a list of all targets in the current buildfile
 	 */
-	private static void printTargets(Project project) {
+	private void printTargets(Project project) {
 		// find the target with the longest name
 		int maxLength= 0;
 		Enumeration ptargets= project.getTargets().elements();
@@ -317,30 +317,33 @@ public class AntRunner implements IPlatformRunnable {
 		printTargets(subNames, null, Policy.bind("label.subTargets"), 0);
 	}
 	/**
-	 * Prints the usage of how to use this class to System.out
+	 * Prints the usage of how to use this class to the listener's message log
 	 */
-	private static void printUsage() {
+	private void printUsage() {
 		String lSep= System.getProperty("line.separator");
 		StringBuffer msg= new StringBuffer();
-		msg.append("ant [options] [target [target2 [target3] ...]]" + lSep);
-		msg.append("Options: " + lSep);
-		msg.append("  -help                  print this message" + lSep);
-		msg.append("  -projecthelp           print project help information" + lSep);
-		msg.append("  -version               print the version information and exit" + lSep);
-		msg.append("  -quiet                 be extra quiet" + lSep);
-		msg.append("  -verbose               be extra verbose" + lSep);
-		msg.append("  -debug                 print debugging information" + lSep);
-		msg.append("  -emacs                 produce logging information without adornments" + lSep);
-		msg.append("  -logfile <file>        use given file for log" + lSep);
-		msg.append("  -logger <classname>    the class which is to perform logging" + lSep);
-		msg.append("  -listener <classname>  add an instance of class as a project listener" + lSep);
-		msg.append("  -buildfile <file>      use given buildfile" + lSep);
-		msg.append("  -D<property>=<value>   use value for given property" + lSep);
-		msg.append("  -find <file>           search for buildfile towards the root of the" + lSep);
-		msg.append("                         filesystem and use it" + lSep);
-		System.out.println(msg.toString());
+		msg.append("ant [" + Policy.bind("usage.options") + "] [" 
+					+ Policy.bind("usage.target") + " ["
+					+ Policy.bind("usage.target") + "2 ["
+					+ Policy.bind("usage.target") + "3] ...]]" + lSep);
+		msg.append(Policy.bind("usage.Options") + ": " + lSep);
+		msg.append("  -help                  " + Policy.bind("usage.printMessage") + lSep);
+		msg.append("  -projecthelp           " + Policy.bind("usage.projectHelp") + lSep);
+		msg.append("  -version               " + Policy.bind("usage.versionInfo") + lSep);
+		msg.append("  -quiet                 " + Policy.bind("usage.beQuiet") + lSep);
+		msg.append("  -verbose               " + Policy.bind("usage.beVerbose") + lSep);
+		msg.append("  -debug                 " + Policy.bind("usage.printDebugInfo") + lSep);
+		msg.append("  -emacs                 " + Policy.bind("usage.emacsLog") + lSep);
+		msg.append("  -logfile <file>        " + Policy.bind("usage.useFile") + lSep);
+		msg.append("  -logger <classname>    " + Policy.bind("usage.logClass") + lSep);
+		msg.append("  -listener <classname>  " + Policy.bind("usage.listenerClass") + lSep);
+		msg.append("  -buildfile <file>      " + Policy.bind("usage.fileToBuild") + lSep);
+		msg.append("  -D<property>=<value>   " + Policy.bind("usage.propertiesValues") + lSep);
+		msg.append("  -find <file>           " + Policy.bind("usage.findFileToBuild") + lSep);
+		
+		clientListener.messageLogged(msg.toString(), Project.MSG_INFO);
 	}
-	private static void printVersion() {
+	private void printVersion() {
 		try {
 			Properties props= new Properties();
 			InputStream in= Main.class.getResourceAsStream("/org/apache/tools/ant/version.txt");
@@ -349,12 +352,13 @@ public class AntRunner implements IPlatformRunnable {
 
 			String lSep= System.getProperty("line.separator");
 			StringBuffer msg= new StringBuffer();
-			msg.append("Ant version ");
-			msg.append(props.getProperty("VERSION"));
-			msg.append(" compiled on ");
+			msg.append(Policy.bind("usage.antVersion"));
+			msg.append(props.getProperty("VERSION") + " ");
+			msg.append(Policy.bind("usage.compiledOn"));
 			msg.append(props.getProperty("DATE"));
 			msg.append(lSep);
-			System.out.println(msg.toString());
+			
+			clientListener.messageLogged(msg.toString(), Project.MSG_INFO);
 		} catch (IOException ioe) {
 			System.err.println(Policy.bind("exception.cannotLoadVersionInfo"));
 			System.err.println(ioe.getMessage());
@@ -394,10 +398,10 @@ public class AntRunner implements IPlatformRunnable {
 					System.setOut(out);
 					System.setErr(out);
 				} catch (IOException ioe) {
-					System.out.println(Policy.bind("exception.cannotWriteToLog"));
+					clientListener.messageLogged(Policy.bind("exception.cannotWriteToLog"), Project.MSG_INFO);
 					return;
 				} catch (ArrayIndexOutOfBoundsException aioobe) {
-					System.out.println(Policy.bind("exception.missingLogFile"));
+					clientListener.messageLogged(Policy.bind("exception.missingLogFile"), Project.MSG_INFO);
 					return;
 				}
 			} else if (arg.equals("-buildfile") || arg.equals("-file") || arg.equals("-f")) {
@@ -405,7 +409,7 @@ public class AntRunner implements IPlatformRunnable {
 					buildFile= new File(args[i + 1]);
 					i++;
 				} catch (ArrayIndexOutOfBoundsException aioobe) {
-					System.out.println(Policy.bind("exception.missingBuildFile"));
+					clientListener.messageLogged(Policy.bind("exception.missingBuildFile"), Project.MSG_INFO);
 					return;
 				}
 			} else if (arg.equals("-listener")) {
@@ -413,7 +417,7 @@ public class AntRunner implements IPlatformRunnable {
 					listeners.addElement(args[i + 1]);
 					i++;
 				} catch (ArrayIndexOutOfBoundsException aioobe) {
-					System.out.println(Policy.bind("exception.missingClassName"));
+					clientListener.messageLogged(Policy.bind("exception.missingClassName"), Project.MSG_INFO);
 					return;
 				}
 			} else if (arg.startsWith("-D")) {
@@ -441,7 +445,7 @@ public class AntRunner implements IPlatformRunnable {
 				definedProps.put(name, value);
 			} else if (arg.equals("-logger")) {
 				if (loggerClassname != null) {
-					System.out.println(Policy.bind("exception.multipleLoggers"));
+					clientListener.messageLogged(Policy.bind("exception.multipleLoggers"), Project.MSG_INFO);
 					return;
 				}
 				loggerClassname= args[++i];
@@ -457,7 +461,7 @@ public class AntRunner implements IPlatformRunnable {
 					searchForThis= DEFAULT_BUILD_FILENAME;
 			} else if (arg.startsWith("-")) {
 				// we don't have any more args to recognize!
-				System.out.println(Policy.bind("exception.unknownArgument",arg));
+				clientListener.messageLogged(Policy.bind("exception.unknownArgument",arg), Project.MSG_INFO);
 				printUsage();
 				return;
 			} else 
@@ -476,7 +480,7 @@ public class AntRunner implements IPlatformRunnable {
 
 		// make sure buildfile exists
 		if (!buildFile.getAbsoluteFile().exists()) {
-			System.out.println(Policy.bind("exception.buildFileNotFound",buildFile.toString()));
+			clientListener.messageLogged(Policy.bind("exception.buildFileNotFound",buildFile.toString()), Project.MSG_INFO);
 			throw new BuildException(Policy.bind("error.buildFailed"));
 		}
 
@@ -484,7 +488,7 @@ public class AntRunner implements IPlatformRunnable {
 		// paranoid lets check everything catagory
 
 		if (buildFile.isDirectory()) {
-			System.out.println(Policy.bind("exception.buildFileIsDirectory",buildFile.toString()));
+			clientListener.messageLogged(Policy.bind("exception.buildFileIsDirectory",buildFile.toString()), Project.MSG_INFO);
 			throw new BuildException(Policy.bind("error.buildFailed"));
 		}
 
@@ -531,8 +535,7 @@ public class AntRunner implements IPlatformRunnable {
 		if (!readyToRun)
 			return;
 
-		if (msgOutputLevel >= Project.MSG_INFO)
-			clientListener.messageLogged(Policy.bind("label.buildFile",buildFile.toString()),Project.MSG_INFO);
+		clientListener.messageLogged(Policy.bind("label.buildFile",buildFile.toString()),Project.MSG_INFO);
 
 		EclipseProject project = new EclipseProject();
 

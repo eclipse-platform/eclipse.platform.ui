@@ -20,6 +20,7 @@ import org.apache.tools.ant.Task;
  * certainly be broken (repeatedly) as the API evolves.
  * </p>
  */
+
 public final class AntPlugin extends Plugin {
 	/**
 	 * The single instance of this plug-in runtime class.
@@ -83,9 +84,11 @@ public final class AntPlugin extends Plugin {
 		super(pluginDescriptor);
 		plugin= this;
 	}
-public Map getObjectExtensions() {
-	return objectExtensions;
-}
+	
+	public Map getObjectExtensions() {
+		return objectExtensions;
+	}
+	
 	/**
 	 * Returns this plug-in.
 	 *
@@ -94,47 +97,51 @@ public Map getObjectExtensions() {
 	public static AntPlugin getPlugin() {
 		return plugin;
 	}
-public Map getTaskExtensions() {
-	return taskExtensions;
-}
-public Map getTypeExtensions() {
-	return typeExtensions;
-}
+	
+	public Map getTaskExtensions() {
+		return taskExtensions;
+	}
+
+	public Map getTypeExtensions() {
+		return typeExtensions;
+	}
+
 	/**
 	 * This implementation of the corresponding <code>Plugin</code> method
 	 */
 	public void shutdown() throws CoreException {
 	}
-/**
- * This implementation of the corresponding <code>Plugin</code> method
- */
-public void startup() throws CoreException {
-	IExtensionPoint extensionPoint = getDescriptor().getExtensionPoint(PT_ANTTASKS);
-	if (extensionPoint != null) {
-		IConfigurationElement[] extensions = extensionPoint.getConfigurationElements();
-		taskExtensions = new HashMap(extensions.length);
-		for (int i = 0; i < extensions.length; i++) {
-			String name = extensions[i].getAttribute(NAME);
-			taskExtensions.put(name, extensions[i]);
+
+	/**
+	 * This implementation of the corresponding <code>Plugin</code> method
+	 */
+	public void startup() throws CoreException {
+		IExtensionPoint extensionPoint = getDescriptor().getExtensionPoint(PT_ANTTASKS);
+		if (extensionPoint != null) {
+			IConfigurationElement[] extensions = extensionPoint.getConfigurationElements();
+			taskExtensions = new HashMap(extensions.length);
+			for (int i = 0; i < extensions.length; i++) {
+				String name = extensions[i].getAttribute(NAME);
+				taskExtensions.put(name, extensions[i]);
+			}
+		}
+		extensionPoint = getDescriptor().getExtensionPoint(PT_ANTTYPES);
+		if (extensionPoint != null) {
+			IConfigurationElement[] extensions = extensionPoint.getConfigurationElements();
+			typeExtensions = new HashMap(extensions.length);
+			for (int i = 0; i < extensions.length; i++) {
+				String name = extensions[i].getAttribute(NAME);
+				typeExtensions.put(name, extensions[i]);
+			}
+		}
+		extensionPoint = getDescriptor().getExtensionPoint(PT_ANTOBJECTS);
+		if (extensionPoint != null) {
+			IConfigurationElement[] extensions = extensionPoint.getConfigurationElements();
+			objectExtensions = new HashMap(extensions.length);
+			for (int i = 0; i < extensions.length; i++) {
+				String name = extensions[i].getAttribute(NAME);
+				objectExtensions.put(name, extensions[i]);
+			}
 		}
 	}
-	extensionPoint = getDescriptor().getExtensionPoint(PT_ANTTYPES);
-	if (extensionPoint != null) {
-		IConfigurationElement[] extensions = extensionPoint.getConfigurationElements();
-		typeExtensions = new HashMap(extensions.length);
-		for (int i = 0; i < extensions.length; i++) {
-			String name = extensions[i].getAttribute(NAME);
-			typeExtensions.put(name, extensions[i]);
-		}
-	}
-	extensionPoint = getDescriptor().getExtensionPoint(PT_ANTOBJECTS);
-	if (extensionPoint != null) {
-		IConfigurationElement[] extensions = extensionPoint.getConfigurationElements();
-		objectExtensions = new HashMap(extensions.length);
-		for (int i = 0; i < extensions.length; i++) {
-			String name = extensions[i].getAttribute(NAME);
-			objectExtensions.put(name, extensions[i]);
-		}
-	}
-}
 }
