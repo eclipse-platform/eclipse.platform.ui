@@ -701,7 +701,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 	private IViewPart busyShowView(
 			String viewID, 
 			String secondaryID, 
-			boolean activate)
+			int mode)
 		throws PartInitException {
 		Perspective persp = getActivePerspective();
 		if (persp == null)
@@ -713,8 +713,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 		if (ref != null)
 			view = ref.getView(true);
 		if (view != null) {
-			if (activate)
+			if (mode == VIEW_ACTIVATE)			
 				activate(view);
+			else if (mode == VIEW_VISIBLE)
+				bringToTop(view);
 			return view;
 		}
 
@@ -722,8 +724,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 		view = persp.showView(viewID, secondaryID);
 		if (view != null) {
 			zoomOutIfNecessary(view);
-			if (activate)
+			if (mode == VIEW_ACTIVATE)			
 				activate(view);
+			else if (mode == VIEW_VISIBLE)
+				bringToTop(view);
 			window.firePerspectiveChanged(
 				this,
 				getPerspective(),
@@ -2803,36 +2807,23 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 	 * See IWorkbenchPage.
 	 */
 	public IViewPart showView(String viewID) throws PartInitException {
-		return showView(viewID, null, true);
-	}
-
-	/**
-	 * See IWorkbenchPage.
-	 */
-	public IViewPart showView(
-			String viewID, 
-			String secondaryId) throws PartInitException {
-		return showView(viewID, secondaryId, true);
-	}
-
-	/**
-	 * See IWorkbenchPage.
-	 */
-	private IViewPart showView(String viewID, boolean activate)
-		throws PartInitException {
-		return showView(viewID, null, activate);
+		return showView(viewID, null, VIEW_ACTIVATE);
 	}
 	
-	private IViewPart showView(
+	public IViewPart showView(
 			final String viewID, 
 			final String secondaryID, 
-			final boolean activate) throws PartInitException {
+			final int mode) throws PartInitException {
+		
+		if (!certifyMode(mode)) 
+			throw new IllegalArgumentException(WorkbenchMessages.getString("WorkbenchPage.IllegalViewMode")); //$NON-NLS-1$
+		
 		// Run op in busy cursor.
 		final Object[] result = new Object[1];
 		BusyIndicator.showWhile(null, new Runnable() {
 			public void run() {
 				try {
-					result[0] = busyShowView(viewID, secondaryID, activate);
+					result[0] = busyShowView(viewID, secondaryID, mode);
 				} catch (PartInitException e) {
 					result[0] = e;
 				}
@@ -2844,6 +2835,21 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 			throw (PartInitException) result[0];
 		else
 			throw new PartInitException(WorkbenchMessages.getString("WorkbenchPage.AbnormalWorkbenchCondition")); //$NON-NLS-1$
+	}
+	/**
+	 * @param mode the mode to test
+	 * @return whether the mode is recognized
+	 * @since 3.0
+	 */
+	private boolean certifyMode(int mode) {
+		switch(mode) {
+			case VIEW_ACTIVATE:
+			case VIEW_VISIBLE:
+			case VIEW_CREATE:
+				return true;
+			default:
+				return false;
+		}
 	}
 	/**
 	 * Toggles the visibility of a fast view. If the view is active it is
@@ -3377,11 +3383,4 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 		
 		return new IViewPart [] {part};
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPage#createView(java.lang.String)
-	 */
-	public IViewPart createView(String viewId) throws PartInitException {		
-		return showView(viewId, false);		
-	}	
 }

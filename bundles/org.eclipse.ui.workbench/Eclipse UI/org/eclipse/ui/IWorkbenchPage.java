@@ -140,6 +140,28 @@ public interface IWorkbenchPage extends IPartService, ISelectionService, ICompat
 	public static final String CHANGE_WORKING_SET_REPLACE = "workingSetReplace"; //$NON-NLS-1$	 
 
 	/**
+	 * Show view mode that indicates the view should be made visible and activated.
+	 * 
+	 * @since 3.0
+	 */
+	public static final int VIEW_ACTIVATE = 1;
+
+	/**
+	 * Show view mode that indicates the view should be made visible.
+	 * 
+	 * @since 3.0
+	 */	
+	public static final int VIEW_VISIBLE = 2;
+	
+	/**
+	 * Show view mode that indicates the view should be made created but not necessarily be made 
+	 * visible.
+	 * 
+	 * @since 3.0
+	 */
+	public static final int VIEW_CREATE = 3;
+	
+	/**
 	 * Activates the given part. The part will be brought to the front and
 	 * given focus. The part must belong to this page.
 	 * 
@@ -588,29 +610,37 @@ public interface IWorkbenchPage extends IPartService, ISelectionService, ICompat
 	 *                if the view could not be initialized
 	 */
 	public IViewPart showView(String viewId) throws PartInitException;
-
 	/**
-	 * Shows the view identified by the given view id and secondary id in this 
-	 * page and gives it focus.  If there is a view identified by the given 
-	 * view id and secondary id already open in this page, it is given focus.
+	 * Shows a view in this page with the given id and secondary id.  The behaviour of this method 
+	 * varies based on the supplied mode. If <code>VIEW_ACTIVATE</code> is supplied, the view is 
+	 * focus.  If <code>VIEW_VISIBLE</code> is supplied, then it is made visible but not given 
+	 * focus. Finally, if <code>VIEW_CREATE</code> is supplied the view is created and will only be 
+	 * made visible if it is not created in a folder that already contains visible views.
 	 * <p>
 	 * This allows multiple instances of a particular view to be created.
 	 * They are disambiguated using the secondary id.
 	 * If a secondary id is given, the view must allow multiple instances by
 	 * having specified allowMultiple="true" in its extension.
 	 * </p>
-	 * 
-	 * @param viewId
+	 *   
+ 	 * @param viewId
 	 *            the id of the view extension to use
 	 * @param secondaryId
-	 *            the secondary id to use, or <code>null</code> for no secondary id
-	 * @return the shown view
+	 *            the secondary id to use, or <code>null</code> for no secondary id 
+	 * @param mode
+	 * 			  the activation mode.  Must be <code>VIEW_ACTIVATE</code>, 
+	 * 			  <code>VIEW_VISIBLE</code> or <code>VIEW_CREATE</code>
+	 * @return a view
+	 * @see VIEW_ACTIVATE
+	 * @see VIEW_VISIBLE
+	 * @see VIEW_CREATE
 	 * @exception PartInitException
 	 *                if the view could not be initialized
-     * @since 3.0
+	 * @exception IllegalArgumentException
+	 * 				  if the supplied mode is not valid
+	 * @since 3.0
 	 */
-	public IViewPart showView(String viewId, String secondaryId)
-			throws PartInitException;
+	public IViewPart showView(String viewId, String secondaryId, int mode) throws PartInitException;	
 	
 	/**
 	 * Returns true if the editor is pinned and should not be reused.
@@ -684,27 +714,4 @@ public interface IWorkbenchPage extends IPartService, ISelectionService, ICompat
 	 * @since 3.0
 	 */
 	IViewPart [] getViewStack(IViewPart part);
-	
-	/**
-	 * Creates a view in this page but does not give it focus. If the view is already
-	 * present in this page, then nothing happens.  
-	 * <p>
-	 * The view type is determined by mapping <code>viewId</code> to a view
-	 * extension registered with the workbench. A view id is passed rather than
-	 * a view object to prevent the accidental creation of more than one view
-	 * of a particular type. It also guarantees a consistent lifecycle for
-	 * views, regardless of whether they are created by the user or restored
-	 * from saved data.
-	 * </p>
-	 * 
-	 * <em>EXPERIMENTAL</em>
-	 * 
-	 * @param viewId 
-	 * 				  the id of the view extension to use
-	 * @return a view
-	 * @exception PartInitException
-	 *                if the view could not be initialized
-	 * @since 3.0
-	 */
-	IViewPart createView(String viewId) throws PartInitException;	
 }
