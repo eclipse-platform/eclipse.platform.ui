@@ -22,7 +22,6 @@ import org.eclipse.ant.core.Task;
 import org.eclipse.ant.core.Type;
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.ant.internal.ui.model.IAntUIHelpContextIds;
-import org.eclipse.ant.internal.ui.model.IAntUIPreferenceConstants;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
