@@ -27,6 +27,7 @@ import org.eclipse.ui.internal.WorkbenchWindow;
 class ProgressManagerUtil {
 	private static String PROGRESS_VIEW_ID = "org.eclipse.ui.views.ProgressView"; //$NON-NLS-1$
 	private static String NEW_PROGRESS_ID = "org.eclipse.ui.views.NewProgressView";//$NON-NLS-1$
+	public static long SHORT_OPERATION_TIME = 250;
 	/**
 	 * Return a status for the exception.
 	 * 

@@ -8,17 +8,27 @@
  * IBM - Initial API and implementation
  **********************************************************************/
 package org.eclipse.ui.internal.progress;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.*;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IProgressMonitorWithBlocking;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.IJobChangeListener;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.RectangleAnimation;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.progress.WorkbenchJob;
 /**
@@ -67,11 +77,13 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 		job.cancel();
 		super.cancelPressed();
 	}
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.dialogs.ProgressMonitorDialog#close()
 	 */
 	public boolean close() {
-		job.setProperty(ProgressManager.PROPERTY_IN_DIALOG,new Boolean(false));
+		job.setProperty(ProgressManager.PROPERTY_IN_DIALOG, new Boolean(false));
 		return super.close();
 	}
 	/*
@@ -116,13 +128,15 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 	 */
 	private IJobChangeListener createCloseListener() {
 		return new JobChangeAdapter() {
-			/* (non-Javadoc)
+			/*
+			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.core.runtime.jobs.IJobChangeListener#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
 			 */
 			public void done(IJobChangeEvent event) {
 				//first of all, make sure this listener is removed
 				event.getJob().removeJobChangeListener(this);
-				if(!PlatformUI.isWorkbenchRunning())
+				if (!PlatformUI.isWorkbenchRunning())
 					return;
 				//nothing to do if the dialog is already closed
 				if (getShell() == null)
@@ -148,7 +162,6 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 			}
 		};
 	}
-
 	/**
 	 * Return the ProgressMonitorWithBlocking for the receiver.
 	 * 
@@ -321,7 +334,9 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 			}
 		};
 	}
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.window.Window#open()
 	 */
 	public int open() {
@@ -331,20 +346,32 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 				getBlockingProgressMonitor());
 		return result;
 	}
-	
 	/**
 	 * Opens this dialog for the duration that the given job is running.
 	 */
 	public void show(Job jobToWatch) {
 		job = jobToWatch;
-		//always open the dialog, otherwise the user has 
-		//no indication that the job ran
+		//start with a quick busy indicator. Lock the UI as we
+		//want to preserve modality
+		BusyIndicator.showWhile(PlatformUI.getWorkbench().getDisplay(), new Runnable() {
+			public void run() {
+				try {
+					Thread.sleep(ProgressManagerUtil.SHORT_OPERATION_TIME);
+				} catch (InterruptedException e) {
+					WorkbenchPlugin.log(e.getLocalizedMessage());
+				}
+			}
+		});
+		//if the job is done at this point, we don't need the dialog
+		if (job.getState() == Job.NONE)
+			return;
+		//now open the progress dialog
 		open();
 		// add a listener that will close the dialog when the job completes.
 		IJobChangeListener listener = createCloseListener();
 		job.addJobChangeListener(listener);
 		if (job.getState() == Job.NONE) {
-			//if the job completed before we had a chance to add 
+			//if the job completed before we had a chance to add
 			//the listener, just remove the listener and return
 			job.removeJobChangeListener(listener);
 			close();
