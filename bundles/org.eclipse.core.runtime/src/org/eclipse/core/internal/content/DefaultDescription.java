@@ -19,11 +19,9 @@ import org.eclipse.core.runtime.content.IContentType;
  */
 public final class DefaultDescription implements IContentDescription {
 	private ContentType contentType;
-	private ContentTypeCatalog catalog;
 
-	public DefaultDescription(ContentType contentType, ContentTypeCatalog catalog) {
+	public DefaultDescription(ContentType contentType) {
 		this.contentType = contentType;
-		this.catalog = catalog;
 	}
 
 	public boolean equals(Object obj) {
@@ -33,7 +31,7 @@ public final class DefaultDescription implements IContentDescription {
 	}
 
 	public String getCharset() {
-		return contentType.getDefaultCharset(catalog);
+		return (String) getProperty(CHARSET);
 	}
 
 	public IContentType getContentType() {
@@ -41,9 +39,7 @@ public final class DefaultDescription implements IContentDescription {
 	}
 
 	public Object getProperty(QualifiedName key) {
-		if (key == IContentDescription.CHARSET)
-			return contentType.getDefaultCharset(catalog);
-		return null;
+		return contentType.getDefaultProperty(key);
 	}
 
 	public int hashCode() {

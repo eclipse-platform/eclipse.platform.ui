@@ -20,12 +20,13 @@ public final class ContentDescription implements IContentDescription {
 	private static final String CHARSET_UTF_8 = "UTF-8"; //$NON-NLS-1$
 	private static final byte FLAG_ALL_OPTIONS = 0x01;
 	private static final byte FLAG_IMMUTABLE = 0x02;
-	private IContentType contentType;
+	private ContentType contentType;
 	private byte flags;
 	private Object keys;
 	private Object values;
 
-	public ContentDescription(QualifiedName[] requested) {
+	public ContentDescription(QualifiedName[] requested, ContentType contentType) {
+		this.contentType = contentType;
 		if (requested == IContentDescription.ALL) {
 			flags |= FLAG_ALL_OPTIONS;
 			return;
@@ -67,6 +68,13 @@ public final class ContentDescription implements IContentDescription {
 	 * @see IContentDescription
 	 */
 	public Object getProperty(QualifiedName key) {
+		Object describedProperty = getDescribedProperty(key);
+		if (describedProperty != null)
+			return describedProperty;
+		return contentType.getDefaultProperty(key);
+	}
+
+	private Object getDescribedProperty(QualifiedName key) {
 		// no values have been set
 		if (values == null)
 			return null;
@@ -117,11 +125,6 @@ public final class ContentDescription implements IContentDescription {
 	public void markImmutable() {
 		assertMutable();
 		flags |= FLAG_IMMUTABLE;
-	}
-
-	void setContentType(IContentType contentType) {
-		markImmutable();
-		this.contentType = contentType;
 	}
 
 	/**

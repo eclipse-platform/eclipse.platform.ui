@@ -13,11 +13,14 @@ package org.eclipse.core.tests.runtime.content;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.content.ContentDescription;
+import org.eclipse.core.internal.content.ContentType;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.tests.runtime.RuntimeTest;
 
 public class ContentDescriptionTest extends RuntimeTest {
+	private static final String CT_VOID = PI_RUNTIME_TESTS + '.' + "void";
 	private static final QualifiedName ZOO_PROPERTY = new QualifiedName(PI_RUNTIME_TESTS, "zoo");
 	private static final QualifiedName BAR_PROPERTY = new QualifiedName(PI_RUNTIME_TESTS, "bar");
 	private static final QualifiedName FOO_PROPERTY = new QualifiedName(PI_RUNTIME_TESTS, "foo");
@@ -27,8 +30,12 @@ public class ContentDescriptionTest extends RuntimeTest {
 		super(name);
 	}
 
+	private ContentType getContentType() {
+		return (ContentType) Platform.getContentTypeManager().getContentType(CT_VOID);
+	}
+
 	public void testAllProperties() {
-		ContentDescription description = new ContentDescription(IContentDescription.ALL);
+		ContentDescription description = new ContentDescription(IContentDescription.ALL, getContentType());
 		assertTrue("1.0", description.isRequested(FOO_PROPERTY));
 		assertNull("1.1", description.getProperty(FOO_PROPERTY));
 		description.setProperty(FOO_PROPERTY, "value1");
@@ -39,7 +46,7 @@ public class ContentDescriptionTest extends RuntimeTest {
 		description.setProperty(BAR_PROPERTY, "value2");
 		assertEquals("2.1", "value2", description.getProperty(BAR_PROPERTY));
 		description.setProperty(ZOO_PROPERTY, "value3");
-		assertEquals("2.2", "value3", description.getProperty(ZOO_PROPERTY));		
+		assertEquals("2.2", "value3", description.getProperty(ZOO_PROPERTY));
 		description.markImmutable();
 		try {
 			description.setProperty(FOO_PROPERTY, "value1c");
@@ -50,7 +57,7 @@ public class ContentDescriptionTest extends RuntimeTest {
 	}
 
 	public void testOneProperty() {
-		ContentDescription description = new ContentDescription(new QualifiedName[] {FOO_PROPERTY});
+		ContentDescription description = new ContentDescription(new QualifiedName[] {FOO_PROPERTY}, getContentType());
 		assertTrue("1.0", description.isRequested(FOO_PROPERTY));
 		assertNull("1.1", description.getProperty(FOO_PROPERTY));
 		description.setProperty(FOO_PROPERTY, "value1");
@@ -71,7 +78,7 @@ public class ContentDescriptionTest extends RuntimeTest {
 	}
 
 	public void testZeroProperties() {
-		ContentDescription description = new ContentDescription(new QualifiedName[0]);
+		ContentDescription description = new ContentDescription(new QualifiedName[0], getContentType());
 		assertTrue("1.0", !description.isRequested(FOO_PROPERTY));
 		assertNull("1.1", description.getProperty(FOO_PROPERTY));
 		description.setProperty(FOO_PROPERTY, "value1");
@@ -86,7 +93,7 @@ public class ContentDescriptionTest extends RuntimeTest {
 	}
 
 	public void testMultipleProperties() {
-		ContentDescription description = new ContentDescription(new QualifiedName[] {FOO_PROPERTY, BAR_PROPERTY, ZOO_PROPERTY});
+		ContentDescription description = new ContentDescription(new QualifiedName[] {FOO_PROPERTY, BAR_PROPERTY, ZOO_PROPERTY}, getContentType());
 		assertTrue("1.0", description.isRequested(FOO_PROPERTY));
 		assertNull("1.1", description.getProperty(FOO_PROPERTY));
 		description.setProperty(FOO_PROPERTY, "value1");

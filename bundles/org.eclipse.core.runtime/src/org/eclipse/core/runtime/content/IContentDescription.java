@@ -34,6 +34,10 @@ import org.eclipse.core.runtime.QualifiedName;
  * interface will cause an <code>IllegalStateException</code> to be thrown.  
  * </p>  
  * <p>
+ * Default values for properties can be contributed by plug-ins as part of
+ * the content type definition markup.
+ * </p>
+ * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
@@ -80,7 +84,7 @@ public interface IContentDescription {
 	 * <code>false</code> otherwise
 	 */
 	public boolean isRequested(QualifiedName key);
-	
+
 	/**
 	 * Returns the charset name to be used when reading the contents
 	 * described by this object. 
@@ -104,7 +108,8 @@ public interface IContentDescription {
 	public IContentType getContentType();
 
 	/**
-	 * Returns the value of custom property set by the content interpreter used.  
+	 * Returns the value of custom property set by the content describer,
+	 * or the default value for the property, if one has been defined.
 	 * <p>
 	 * The qualifier part of the property name must be the unique identifier
 	 * of the declaring plug-in (e.g. <code>"com.example.plugin"</code>).

@@ -58,7 +58,6 @@ public final class ContentType implements IContentType {
 	private String baseTypeId;
 	private String aliasTargetId;
 	private IConfigurationElement contentTypeElement;
-	private String defaultCharset;
 	private String userCharset;
 	private IContentDescription defaultDescription;
 	private IContentDescriber describer;
@@ -69,10 +68,11 @@ public final class ContentType implements IContentType {
 	private byte priority;
 	private String simpleId;
 	private byte validation = STATUS_UNKNOWN;
+	private Map defaultProperties;
 
-	public static ContentType createContentType(ContentTypeCatalog catalog, String namespace, String simpleId, String name, byte priority, String[] fileExtensions, String[] fileNames, String baseTypeId, String aliasTargetId, String defaultCharset, IConfigurationElement contentTypeElement) {
+	public static ContentType createContentType(ContentTypeCatalog catalog, String namespace, String simpleId, String name, byte priority, String[] fileExtensions, String[] fileNames, String baseTypeId, String aliasTargetId, Map defaultProperties, IConfigurationElement contentTypeElement) {
 		ContentType contentType = new ContentType(catalog.getManager());
-		contentType.defaultDescription = new DefaultDescription(contentType, catalog);
+		contentType.defaultDescription = new DefaultDescription(contentType);
 		contentType.simpleId = simpleId;
 		contentType.namespace = namespace;
 		contentType.name = name;
@@ -84,7 +84,7 @@ public final class ContentType implements IContentType {
 			for (int i = 0; i < fileExtensions.length; i++)
 				contentType.internalAddFileSpec(catalog, fileExtensions[i], FILE_EXTENSION_SPEC | SPEC_PRE_DEFINED);
 		}
-		contentType.defaultCharset = defaultCharset;
+		contentType.defaultProperties = defaultProperties;
 		contentType.contentTypeElement = contentTypeElement;
 		contentType.baseTypeId = baseTypeId;
 		contentType.aliasTargetId = aliasTargetId;
@@ -224,16 +224,7 @@ public final class ContentType implements IContentType {
 	 * @see IContentType
 	 */
 	public String getDefaultCharset() {
-		return getDefaultCharset(manager.getCatalog());
-	}
-
-	String getDefaultCharset(ContentTypeCatalog catalog) {
-		ContentType aliasTarget = getTarget(catalog, false);
-		if (aliasTarget != null)
-			return aliasTarget.getDefaultCharset(catalog);
-		String currentCharset = userCharset != null ? userCharset : internalGetDefaultCharset(catalog);
-		// an empty string as charset means: no default charset
-		return "".equals(currentCharset) ? null : currentCharset; //$NON-NLS-1$
+		return getDefaultProperty(manager.getCatalog(), IContentDescription.CHARSET);
 	}
 
 	/**
@@ -248,6 +239,20 @@ public final class ContentType implements IContentType {
 		if (aliasTarget != null)
 			return aliasTarget.getDefaultDescription(catalog);
 		return defaultDescription;
+	}
+
+	/**
+	 * Returns the default value for the given property in this content type, or <code>null</code>. 
+	 */
+	String getDefaultProperty(QualifiedName key) {
+		return getDefaultProperty(manager.getCatalog(), key);
+	}
+
+	String getDefaultProperty(ContentTypeCatalog catalog, QualifiedName key) {
+		String propertyValue = getTarget(catalog, true).internalGetDefaultProperty(catalog, key);
+		if ("".equals(propertyValue)) //$NON-NLS-1$
+			return null;
+		return propertyValue;
 	}
 
 	int getDepth(ContentTypeCatalog catalog) {
@@ -433,12 +438,19 @@ public final class ContentType implements IContentType {
 		return true;
 	}
 
-	private String internalGetDefaultCharset(ContentTypeCatalog catalog) {
-		if (defaultCharset == null) {
-			ContentType baseType = getBaseType(catalog);
-			return baseType == null ? null : baseType.getDefaultCharset(catalog);
-		}
-		return defaultCharset;
+	/**
+	 * Returns the default value for a property, recursively if necessary.  
+	 */
+	private String internalGetDefaultProperty(ContentTypeCatalog catalog, QualifiedName key) {
+		// a special case for charset - users can override
+		if (userCharset != null && key.equals(IContentDescription.CHARSET))
+			return userCharset;
+		String defaultValue = defaultProperties == null ? null : (String) defaultProperties.get(key);
+		if (defaultValue != null)
+			return defaultValue;
+		// not defined here, try base type
+		ContentType baseType = getBaseType(catalog);
+		return baseType == null ? null : baseType.internalGetDefaultProperty(catalog, key);
 	}
 
 	IContentDescription internalGetDescriptionFor(ContentTypeCatalog catalog, InputStream buffer, QualifiedName[] options) throws IOException {
@@ -447,20 +459,18 @@ public final class ContentType implements IContentType {
 			return aliasTarget.internalGetDescriptionFor(catalog, buffer, options);
 		if (buffer == null)
 			return defaultDescription;
-		IContentDescriber describer = this.getDescriber(catalog);
-		// no describer - just return the default description
-		if (describer == null)
+		// use temporary local var to avoid sync'ing
+		IContentDescriber tmpDescriber = this.getDescriber(catalog);
+		// no describer - return default description
+		if (tmpDescriber == null)
 			return defaultDescription;
-		ContentDescription description = new ContentDescription(options);
-		describe(describer, false, buffer, description);
-		// if the describer didn't add any details, just return the default
-		// description
+		ContentDescription description = new ContentDescription(options, this);
+		describe(tmpDescriber, false, buffer, description);
+		// the describer didn't add any details, return default description
 		if (!description.isSet())
 			return defaultDescription;
-		// check if any of the defaults need to be applied
-		if (description.isRequested(IContentDescription.CHARSET) && description.getProperty(IContentDescription.CHARSET) == null)
-			description.setProperty(IContentDescription.CHARSET, getDefaultCharset(catalog));
-		description.setContentType(this);
+		// description cannot be changed afterwards
+		description.markImmutable();
 		return description;
 	}
 
@@ -470,21 +480,20 @@ public final class ContentType implements IContentType {
 			return aliasTarget.internalGetDescriptionFor(catalog, buffer, options);
 		if (buffer == null)
 			return defaultDescription;
-		IContentDescriber describer = this.getDescriber(catalog);
-		// no describer - just return the default description
-		if (describer == null)
+		// use temporary local var to avoid sync'ing			
+		IContentDescriber tmpDescriber = this.getDescriber(catalog);
+		// no describer - return default description
+		if (tmpDescriber == null)
 			return defaultDescription;
-		ContentDescription description = new ContentDescription(options);
-		if (!(describer instanceof ITextContentDescriber))
+		ContentDescription description = new ContentDescription(options, this);
+		if (!(tmpDescriber instanceof ITextContentDescriber))
 			throw new UnsupportedOperationException();
-		describe(describer, true, buffer, description);
-		// if the describer didn't add any details, just return the default description
+		describe(tmpDescriber, true, buffer, description);
+		// the describer didn't add any details, return default description
 		if (!description.isSet())
 			return defaultDescription;
-		// check if any of the defaults need to be applied
-		if (description.isRequested(IContentDescription.CHARSET) && description.getProperty(IContentDescription.CHARSET) == null)
-			description.setProperty(IContentDescription.CHARSET, getDefaultCharset(catalog));
-		description.setContentType(this);
+		// description cannot be changed afterwards
+		description.markImmutable();
 		return description;
 	}
 

@@ -856,10 +856,10 @@ public class IContentTypeManagerTest extends RuntimeTest {
 		//		assertEquals("7.2", IContentDescription.BOM_UTF_8, description.getProperty(IContentDescription.BYTE_ORDER_MARK));
 
 		// bug 84354
-		contentTypes = contentTypeManager.findContentTypesFor(getInputStream(XML_ROOT_ELEMENT_NO_DECL,"UTF-8"), "test.txt");
+		contentTypes = contentTypeManager.findContentTypesFor(getInputStream(XML_ROOT_ELEMENT_NO_DECL, "UTF-8"), "test.txt");
 		assertTrue("8.0", contentTypes.length > 0);
 		assertEquals("8.1", contentTypeManager.getContentType(IContentTypeManager.CT_TEXT), contentTypes[0]);
-		
+
 	}
 
 	/**
@@ -911,5 +911,51 @@ public class IContentTypeManagerTest extends RuntimeTest {
 		}
 		IContentType result = manager.findContentTypeFor("test.mytext");
 		assertNull("3.0", result);
+	}
+
+	public void testDefaultProperties() throws IOException /* never actually thrown */{
+		IContentTypeManager contentTypeManager = (LocalContentTypeManager) LocalContentTypeManager.getLocalContentTypeManager();
+		IContentType mytext = contentTypeManager.getContentType(PI_RUNTIME_TESTS + '.' + "mytext");
+		IContentType mytext1 = contentTypeManager.getContentType(PI_RUNTIME_TESTS + '.' + "mytext1");
+		IContentType mytext2 = contentTypeManager.getContentType(PI_RUNTIME_TESTS + '.' + "mytext2");
+		assertNotNull("0.1", mytext);
+		assertNotNull("0.2", mytext1);
+		assertNotNull("0.3", mytext2);
+
+		QualifiedName charset = IContentDescription.CHARSET;
+		QualifiedName localCharset = new QualifiedName(PI_RUNTIME_TESTS, "charset");
+		QualifiedName property1 = new QualifiedName(PI_RUNTIME_TESTS, "property1");
+		QualifiedName property2 = new QualifiedName(PI_RUNTIME_TESTS, "property2");
+		QualifiedName property3 = new QualifiedName(PI_RUNTIME_TESTS, "property3");
+		QualifiedName property4 = new QualifiedName(PI_RUNTIME_TESTS, "property4");
+
+		IContentDescription description;
+
+		description = getDescriptionFor(contentTypeManager, "some contents", null, "abc.tzt", IContentDescription.ALL, true);
+		assertNotNull("1.0", description);
+		assertSame("1.1", mytext, description.getContentType());
+		assertEquals("1.2", "value1", description.getProperty(property1));
+		assertNull("1.3", description.getProperty(property2));
+		assertEquals("1.4", "value3", description.getProperty(property3));
+		assertEquals("1.5", "BAR", description.getProperty(charset));
+
+		description = getDescriptionFor(contentTypeManager, "some contents", null, "abc.tzt1", IContentDescription.ALL, true);
+		assertNotNull("2.0", description);
+		assertSame("2.1", mytext1, description.getContentType());
+		assertEquals("2.2", "value1", description.getProperty(property1));
+		assertEquals("2.3", "value2", description.getProperty(property2));
+		assertNull("2.4", description.getProperty(property3));
+		assertEquals("2.5", "value4", description.getProperty(property4));
+		assertEquals("2.6", "BAR", description.getProperty(charset));
+
+		description = getDescriptionFor(contentTypeManager, "some contents", null, "abc.tzt2", IContentDescription.ALL, true);
+		assertNotNull("3.0", description);
+		assertSame("3.1", mytext2, description.getContentType());
+		assertNull("3.2", description.getProperty(property1));
+		assertNull("3.3", description.getProperty(property2));
+		assertNull("3.4", description.getProperty(property3));
+		assertNull("3.5", description.getProperty(property4));
+		assertNull("3.6", description.getProperty(charset));
+		assertEquals("3.7", "mytext2", description.getProperty(localCharset));
 	}
 }

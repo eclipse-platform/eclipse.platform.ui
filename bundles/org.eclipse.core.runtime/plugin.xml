@@ -18,19 +18,22 @@
 			priority="high"
 			file-extensions="txt">
 			<describer class="org.eclipse.core.internal.content.TextContentDescriber"/>			
+			<property name="bom"/>
+			<property name="charset"/>
 		</content-type>
 		<content-type id="xml" name="%xmlContentTypeName" 	
 			base-type="text"
-			priority="high"			
-			file-extensions="xml"
-			default-charset="UTF-8">
+			priority="high"
+			file-extensions="xml">			
+			<property name="charset" default="UTF-8"/>
 			<describer class="org.eclipse.core.internal.content.XMLContentDescriber"/>
 		</content-type>
 		<!-- a placeholder for setups where JDT's official type is not available -->			
 		<content-type id="properties" name="%propertiesContentTypeName" 
 			base-type="text"
 			alias-for="org.eclipse.jdt.core.javaProperties"
-			file-extensions="properties"
-			default-charset="ISO-8859-1"/>
+			file-extensions="properties">
+			<property name="charset" default="ISO-8859-1"/>
+		</content-type>			
 	</extension>		 
 </plugin>

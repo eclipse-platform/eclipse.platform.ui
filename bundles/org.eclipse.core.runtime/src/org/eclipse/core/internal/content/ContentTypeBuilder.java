@@ -10,9 +10,11 @@
  *******************************************************************************/
 package org.eclipse.core.internal.content;
 
+import java.util.*;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.runtime.Messages;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.osgi.util.NLS;
 
@@ -33,6 +35,21 @@ public class ContentTypeBuilder {
 		if (separatorPosition == -1)
 			baseTypeId = namespace + '.' + baseTypeId;
 		return baseTypeId;
+	}
+
+	private static QualifiedName parseQualifiedName(String namespace, String value) {
+		if (value == null)
+			return null;
+		int separatorPosition = value.lastIndexOf('.');
+		// base type is defined in the same namespace
+		if (separatorPosition == -1)
+			return new QualifiedName(namespace, value);
+		if (separatorPosition == 0 || separatorPosition == value.length() - 1)
+			// invalid value specified
+			return null;
+		namespace = value.substring(0, separatorPosition);
+		String simpleValue = value.substring(separatorPosition + 1);
+		return new QualifiedName(namespace, simpleValue);
 	}
 
 	private static byte parsePriority(String priority) {
@@ -86,8 +103,34 @@ public class ContentTypeBuilder {
 		String[] fileExtensions = Util.parseItems(contentTypeCE.getAttributeAsIs("file-extensions")); //$NON-NLS-1$
 		String baseTypeId = getUniqueId(namespace, contentTypeCE.getAttributeAsIs("base-type")); //$NON-NLS-1$
 		String aliasTargetTypeId = getUniqueId(namespace, contentTypeCE.getAttributeAsIs("alias-for")); //$NON-NLS-1$		
+		IConfigurationElement[] propertyCEs = null;
+		Map defaultProperties = null;
+		if ((propertyCEs = contentTypeCE.getChildren("property")).length > 0) { //$NON-NLS-1$
+			defaultProperties = new HashMap();
+			for (int i = 0; i < propertyCEs.length; i++) {
+				String defaultValue = propertyCEs[i].getAttributeAsIs("default"); //$NON-NLS-1$
+				if (defaultValue == null)
+					// empty string means: default value is null
+					defaultValue = ""; //$NON-NLS-1$
+				String propertyKey = propertyCEs[i].getAttributeAsIs("name"); //$NON-NLS-1$
+				QualifiedName qualifiedKey = parseQualifiedName(namespace, propertyKey);
+				if (qualifiedKey == null) {
+					if (ContentTypeManager.DEBUGGING) {
+						String message = NLS.bind(Messages.content_invalidProperty, propertyKey, getUniqueId(namespace, simpleId));
+						ContentType.log(message, null);
+					}
+					continue;
+				}
+				defaultProperties.put(qualifiedKey, defaultValue);
+			}
+		}
 		String defaultCharset = contentTypeCE.getAttributeAsIs("default-charset"); //$NON-NLS-1$
-		return ContentType.createContentType(catalog, namespace, simpleId, name, priority, fileExtensions, fileNames, baseTypeId, aliasTargetTypeId, defaultCharset, contentTypeCE);
+		if (defaultCharset != null)
+			if (defaultProperties == null)
+				defaultProperties = Collections.singletonMap(IContentDescription.CHARSET, defaultCharset);
+			else if (!defaultProperties.containsKey(IContentDescription.CHARSET))
+				defaultProperties.put(IContentDescription.CHARSET, defaultCharset);
+		return ContentType.createContentType(catalog, namespace, simpleId, name, priority, fileExtensions, fileNames, baseTypeId, aliasTargetTypeId, defaultProperties, contentTypeCE);
 	}
 
 	protected IConfigurationElement[] getConfigurationElements() {

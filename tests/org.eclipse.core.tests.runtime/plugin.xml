@@ -79,20 +79,41 @@
       <!-- end of conflict-related content types -->
 	  <content-type
             file-extensions="tzt"
-            default-charset="BAR"
             name="My Text"
-            id="mytext"/>
+            id="mytext">
+            <property name="property1" default="value1"/>
+            <!-- declares property for documentation purposes only -->
+            <property name="property2"/>            
+            <property name="property3" default="value3"/>
+            <!-- overrides (non-local) parent property definition -->
+            <property name="org.eclipse.core.runtime.charset" default="BAR"/>
+      </content-type>
       <content-type
       		base-type="mytext"
             file-extensions="tzt1"
             name="My Text1"
-            id="mytext1"/>            
+            id="mytext1">
+            <!-- overrides parent property definition by assigning a default value -->
+            <property name="property2" default="value2"/>
+            <!-- overrides parent property definition by clearing the default value -->
+            <property name="property3"/>
+            <property name="property4" default="value4"/>
+      </content-type>
+      <!-- overrides parent charset definition by clearing the default value -->                              
+      <!-- Here we really want to use the deprecated way for defining charsets. -->      
       <content-type
       		base-type="mytext"      
             file-extensions="tzt2"
-            default-charset=""            
+            default-charset=""
             name="My Text2"
-            id="mytext2"/>                        
+            id="mytext2">
+            <property name="property1"/>
+            <property name="property2"/>
+            <property name="property3"/>
+            <property name="property4"/>
+            <!-- Use a local property name clashing with an inherited one -->
+            <property name="charset" default="mytext2"/>
+      </content-type>
       <content-type
             file-names="foo.bar"
             file-extensions="bar"
@@ -106,8 +127,8 @@
             file-extensions="xml2"
             base-type="org.eclipse.core.runtime.xml"
             name="XML Based with Different Extension"
-            default-charset="UTF-16LE"
-            id="xml-based-different-extension"/>
+            id="xml-based-different-extension">
+      </content-type>
       <content-type
             file-names="xml-based.xml"
             base-type="org.eclipse.core.runtime.xml"
@@ -179,6 +200,10 @@
       <content-type
             name="Invalid (Missing identifier)"
             file-names="invalid.missing.identifier"/>            
+      <!-- this content type is used by the content description tests -->
+      <content-type
+            name="Void content type"
+            id="void"/>
    </extension>
    <extension
          point="org.eclipse.core.runtime.adapters">
@@ -190,5 +215,4 @@
          </adapter>
       </factory>
    </extension>
-
 </plugin>

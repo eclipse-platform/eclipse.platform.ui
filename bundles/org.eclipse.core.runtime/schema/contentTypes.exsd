@@ -59,6 +59,7 @@ a file association extends an existing content type by associating new file name
       <complexType>
          <sequence>
             <element ref="describer" minOccurs="0" maxOccurs="1"/>
+            <element ref="property" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -118,7 +119,12 @@ a file association extends an existing content type by associating new file name
          <attribute name="default-charset" type="string">
             <annotation>
                <documentation>
-                  the default charset for this content type, or an empty string, if this content type should not have a default charset even if the parent has one
+                  the default charset for this content type, or an empty string, if this content type should not have a default charset even if the parent has one. This is a convenience attribute, equivalent to specifying:
+&lt;pre&gt;
+  &lt;content-type&gt;
+    &lt;property name=&quot;org.eclipse.core.runtime.charset&quot; default=&quot;charset-name&quot;/&gt;
+  &lt;/content-type&gt;
+&lt;/pre&gt;
                </documentation>
             </annotation>
          </attribute>
@@ -214,6 +220,30 @@ a file association extends an existing content type by associating new file name
       </complexType>
    </element>
 
+   <element name="property">
+      <annotation>
+         <documentation>
+            Declares a property related to this content type, optionally assigning a default value. See &lt;samp&gt;org.eclipse.core.runtime.content.IContentDescription&lt;/samp&gt; for more information on properties.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the name of the property. If the property is being overriden and has been originally defined in a different namespace, a fully qualified property name must be used
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="default" type="string">
+            <annotation>
+               <documentation>
+                  the default value of the property, or an empty string, if this content type should not have a default value for this property even if a parent has one
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
    <annotation>
       <appInfo>
          <meta.section type="since"/>
@@ -228,7 +258,8 @@ a file association extends an existing content type by associating new file name
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         Following is an example of a XML-based content type declaration using the &lt;code&gt;XMLRootElementContentDescriber&lt;/code&gt; (a built-in describer): 
+         Following is an example of a XML-based content type declaration using &lt;code&gt;org.eclipse.core.runtime.content.XMLRootElementContentDescriber&lt;/code&gt;, 
+a built-in describer: 
 &lt;p&gt;
 &lt;pre&gt;
    &lt;extension point=&quot;org.eclipse.core.runtime.contentTypes&quot;&gt; 
@@ -252,13 +283,23 @@ Here is an example of a simple text-based content type that has a specific file 
    &lt;/extension&gt; 
 &lt;/pre&gt;
 &lt;/p&gt;
-In a case like the example above, when we are just trying to associate new file names/extensions to an existing content type, to contribute a file association is usually the best thing to do:
+When there is need to associate new file names/extensions to an existing content type (as opposed to defining a new content type), a plug-in can contribute a file association as seen below. This has the effect of enhancing the definition of the text content type to include files with names following the &quot;*.mytxt&quot; pattern.
 &lt;p&gt;
 &lt;pre&gt;
    &lt;extension point=&quot;org.eclipse.core.runtime.contentTypes&quot;&gt; 
       &lt;file-association 
        content-type=&quot;org.eclipse.core.runtime.text&quot;
        file-extensions=&quot;mytxt&quot;/&gt;
+   &lt;/extension&gt; 
+&lt;/pre&gt;
+&lt;/p&gt;
+Here is an example of a content type that defines properties:
+&lt;pre&gt;
+   &lt;extension point=&quot;org.eclipse.core.runtime.contentTypes&quot;&gt; 
+      &lt;content-type id=&quot;MyContentType&quot;
+       file-extensions=&quot;dat&quot;&gt;
+         &lt;property name=&quot;file-format&quot; value=&quot;1&quot;/&gt;
+      &lt;/content-type&gt;
    &lt;/extension&gt; 
 &lt;/pre&gt;
 &lt;/p&gt;
@@ -273,6 +314,8 @@ In a case like the example above, when we are just trying to associate new file 
          The value of the class attribute in the describer element must represent an 
 implementor of 
 &lt;samp&gt;org.eclipse.core.runtime.content.IContentDescriber&lt;/samp&gt; or &lt;samp&gt;org.eclipse.core.runtime.content.ITextContentDescriber&lt;/samp&gt;.
+
+&lt;samp&gt;org.eclipse.core.runtime.content.IContentDescription&lt;/samp&gt; objects returned by the &lt;samp&gt;org.eclipse.core.runtime.content&lt;/samp&gt; API 
       </documentation>
    </annotation>
 
@@ -301,7 +344,7 @@ Also, the org.eclipse.core.runtime plug-in provides ready-to-use implementations
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2004 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2004, 2005 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made 
 available under the terms of the Common Public License v1.0 which 
 accompanies 

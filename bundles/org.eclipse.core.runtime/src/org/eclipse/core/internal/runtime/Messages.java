@@ -29,6 +29,7 @@ public class Messages extends NLS {
 	public static String content_errorReadingContents;
 	public static String content_errorSavingSettings;
 	public static String content_invalidContentDescriber;
+	public static String content_invalidProperty;	
 	public static String content_missingIdentifier;
 	public static String content_missingName;
 	public static String content_parserConfiguration;
