@@ -174,7 +174,16 @@ public class TextEditorPreferencePage2 extends PreferencePage implements IWorkbe
 		ArrayList listModelItems= new ArrayList();
 		for (Iterator it= descriptors.iterator(); it.hasNext();) {
 			ReferenceProviderDescriptor descriptor= (ReferenceProviderDescriptor) it.next();
-			listModelItems.add(new String[] { descriptor.getId(), descriptor.getLabel() });
+			String label= descriptor.getLabel();
+			int i= label.indexOf('&');
+			while (i >= 0) {
+				if (i < label.length())
+					label= label.substring(0, i) + label.substring(i+1);
+				else
+					label.substring(0, i);
+				i= label.indexOf('&');
+			}
+			listModelItems.add(new String[] { descriptor.getId(), label });
 		}
 		String[][] items= new String[listModelItems.size()][];
 		listModelItems.toArray(items);
