@@ -27,6 +27,8 @@ public class Policy {
 	public static boolean DEBUG_RESTORE_WORKBENCH = DEFAULT;
 	public static boolean DEBUG_START_WORKBENCH = DEFAULT;
 	public static boolean DEBUG_DRAG_DROP = DEFAULT;
+	public static boolean DEBUG_STALE_JOBS = DEFAULT;
+	
 	/**
 	 * Whether to print information about key bindings that are successfully
 	 * recognized within the system (as the keys are pressed).
@@ -94,6 +96,7 @@ public class Policy {
 			DEBUG_HANDLERS = getDebugOption("/trace/handlers"); //$NON-NLS-1$
 			DEBUG_HANDLERS_VERBOSE = getDebugOption("/trace/handlers.verbose"); //$NON-NLS-1$
 			DEBUG_LONG_UI_WARNING = getDebugOption("/debug/uijob.longwarning"); //$NON-NLS-1$
+			DEBUG_STALE_JOBS = getDebugOption("/debug/job.stale"); //$NON-NLS-1$
 			DEBUG_HANDLERS_VERBOSE_COMMAND_ID = Platform.getDebugOption(PlatformUI.PLUGIN_ID + "/trace/handlers.verbose.commandId"); //$NON-NLS-1$
 		}
 	}
