@@ -69,44 +69,45 @@ public class LayoutData extends RequestData {
 	public View[] getViews() {
 		if (views != null)
 			return views;
-		if (HelpSystem.getMode() == HelpSystem.MODE_INFOCENTER) {
-			views =
-				new View[] {
-					new View(
-						"toc",
-						"",
-						preferences.getImagesDirectory()
-							+ "/contents_view.gif"),
-					new View(
-						"search",
-						"",
-						preferences.getImagesDirectory()
-							+ "/search_results_view.gif"),
-					};
-		} else {
-			// workbench or standalone
-			views =
-				new View[] {
-					new View(
-						"toc",
-						"",
-						preferences.getImagesDirectory()
-							+ "/contents_view.gif"),
-					new View(
-						"search",
-						"",
-						preferences.getImagesDirectory()
-							+ "/search_results_view.gif"),
+
+		View tocview =
+			new View(
+				"toc",
+				"",
+				preferences.getImagesDirectory() + "/contents_view.gif");
+		View searchview =
+			new View(
+				"search",
+				"",
+				preferences.getImagesDirectory() + "/search_results_view.gif");
+
+		View linksview = null;
+		View bookmarksview = null;
+		if (HelpSystem.getMode() != HelpSystem.MODE_INFOCENTER) {
+			if (preferences.isLinksView())
+				linksview =
 					new View(
 						"links",
 						"",
-						preferences.getImagesDirectory() + "/links_view.gif"),
+						preferences.getImagesDirectory() + "/links_view.gif");
+			if (preferences.isBookmarksView())
+				bookmarksview =
 					new View(
 						"bookmarks",
 						"",
 						preferences.getImagesDirectory()
-							+ "/bookmarks_view.gif")};
+							+ "/bookmarks_view.gif");
 		}
+
+		if (linksview != null && bookmarksview != null)
+			views = new View[] {tocview,searchview,linksview,bookmarksview};
+		else if (linksview != null)
+			views = new View[] {tocview,searchview,linksview};
+		else if (bookmarksview != null)
+			views = new View[] {tocview, searchview,bookmarksview};
+		else
+			views = new View[] {tocview,searchview};
+			
 		return views;
 	}
 
