@@ -12,10 +12,12 @@
 package org.eclipse.jface.text;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -405,5 +407,38 @@ public class TextUtilities {
 		} else {
 			return document.computePartitioning(offset, length);
 		}
+	}
+	
+	/**
+	 * Computes and returns the partition managing position categories for the
+	 * given document or <code>null</code> if this was impossible.
+	 * 
+	 * @param document the document
+	 * @return the partition managing position categories
+	 * @since 3.0
+	 */
+	public static String[] computePartitionManagingCategories(IDocument document) {
+		if (document instanceof IDocumentExtension3) {
+			IDocumentExtension3 extension3= (IDocumentExtension3) document;
+			String[] partitionings= extension3.getPartitionings();
+			if (partitionings != null) {
+				Set categories= new HashSet(); 
+				for (int i= 0; i < partitionings.length; i++) {
+					IDocumentPartitioner p= extension3.getDocumentPartitioner(partitionings[i]);
+					if (p instanceof IDocumentPartitionerExtension2) {
+						IDocumentPartitionerExtension2 extension2= (IDocumentPartitionerExtension2) p;
+						String[] c= extension2.getManagingPositionCategories();
+						if (c != null) {
+							for (int j= 0; j < c.length; j++) 
+								categories.add(c[j]);
+						}
+					}
+				}
+				String[] result= new String[categories.size()];
+				categories.toArray(result);
+				return result;
+			}
+		}
+		return null;
 	}
 }
