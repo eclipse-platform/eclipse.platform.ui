@@ -14,10 +14,9 @@ package org.eclipse.ant.internal.ui.preferences;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.ant.internal.ui.editor.AbstractAntSourceViewerConfiguration;
+import org.eclipse.ant.internal.ui.AntSourceViewerConfiguration;
 import org.eclipse.ant.internal.ui.editor.formatter.FormattingPreferences;
 import org.eclipse.ant.internal.ui.editor.formatter.XmlFormatter;
-import org.eclipse.ant.internal.ui.editor.templates.AntTemplateViewerConfiguration;
 import org.eclipse.ant.internal.ui.editor.text.AntDocumentSetupParticipant;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -140,7 +139,7 @@ public class AntCodeFormatterPreferencePage extends AbstractAntEditorPreferenceP
 	private Control createPreviewer(Composite parent) {
 		fPreviewViewer = new SourceViewer(parent, null, null, false, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
         
-		AbstractAntSourceViewerConfiguration configuration = new AntTemplateViewerConfiguration();        
+		AntSourceViewerConfiguration configuration = new AntSourceViewerConfiguration();        
 	
 		fPreviewViewer.configure(configuration);
 		fPreviewViewer.setEditable(false);	

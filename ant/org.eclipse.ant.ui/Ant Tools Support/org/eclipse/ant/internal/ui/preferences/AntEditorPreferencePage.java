@@ -15,9 +15,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.ant.internal.ui.AntSourceViewerConfiguration;
 import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
-import org.eclipse.ant.internal.ui.editor.AbstractAntSourceViewerConfiguration;
-import org.eclipse.ant.internal.ui.editor.templates.AntTemplateViewerConfiguration;
 import org.eclipse.ant.internal.ui.editor.text.AntDocumentSetupParticipant;
 import org.eclipse.ant.internal.ui.editor.text.IAntEditorColorConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -769,7 +768,7 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 	private Control createPreviewer(Composite parent) {
 		fPreviewViewer = new SourceViewer(parent, null, null, false, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
         
-		AbstractAntSourceViewerConfiguration configuration = new AntTemplateViewerConfiguration();        
+		AntSourceViewerConfiguration configuration = new AntSourceViewerConfiguration();        
 	
 		fPreviewViewer.configure(configuration);
 		fPreviewViewer.setEditable(false);	
