@@ -1,11 +1,17 @@
+/*******************************************************************************
+ * Copyright (c) 2000,2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.core.internal.runtime;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
-
 import java.io.*;
+import java.text.DateFormat;
 import java.util.*;
 
 import org.eclipse.core.runtime.ILogListener;
@@ -17,110 +23,40 @@ import org.eclipse.core.runtime.IStatus;
 public class PlatformLogWriter implements ILogListener {
 	protected File logFile = null;
 	protected Writer log = null;
-	protected int tabDepth;
-	
-	protected static final String LINE_SEPARATOR;
-	protected static final String TAB_STRING = "  ";
-	
-	protected static final String XML_VERSION = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
+	protected boolean newSession = true;
 
-	protected static final String ATTRIBUTE_DATE = "date";
-	protected static final String ATTRIBUTE_SEVERITY = "severity";
-	protected static final String ATTRIBUTE_PLUGIN_ID = "plugin-id";
-	protected static final String ATTRIBUTE_CODE = "code";
-	protected static final String ATTRIBUTE_MESSAGE = "message";
-	protected static final String ATTRIBUTE_TRACE = "trace";
-	
-	protected static final String ELEMENT_LOG = "log";
-	protected static final String ELEMENT_LOG_ENTRY = "log-entry";
-	protected static final String ELEMENT_STATUS = "status";
-	protected static final String ELEMENT_EXCEPTION = "exception";
+	protected static final String SESSION = "!SESSION";//$NON-NLS-1$
+	protected static final String ENTRY = "!ENTRY";//$NON-NLS-1$
+	protected static final String SUBENTRY = "!SUBENTRY";//$NON-NLS-1$
+	protected static final String MESSAGE = "!MESSAGE";//$NON-NLS-1$
+	protected static final String STACK = "!STACK";//$NON-NLS-1$
+
+	protected static final String LINE_SEPARATOR;
+	protected static final String TAB_STRING = "\t";//$NON-NLS-1$
 
 	static {
-		String s = System.getProperty("line.separator");
-		LINE_SEPARATOR = s == null ? "\n" : s;
+		String s = System.getProperty("line.separator");//$NON-NLS-1$
+		LINE_SEPARATOR = s == null ? "\n" : s;//$NON-NLS-1$
 	}
 
 public PlatformLogWriter(File file) {
 	this.logFile = file;
-	// remove old log file
-	logFile.delete();
 }
 /**
  * This constructor should only be used to pass System.out .
  */
 public PlatformLogWriter(OutputStream out) {
-	log = new OutputStreamWriter(out);
-}
-protected static void appendEscapedChar(StringBuffer buffer, char c) {
-	String replacement = getReplacement(c);
-	if (replacement != null) {
-		buffer.append('&');
-		buffer.append(replacement);
-		buffer.append(';');
-	} else {
-		buffer.append(c);
-	}
-}
-protected static String getEscaped(String s) {
-	StringBuffer result = new StringBuffer(s.length() + 10);
-	for (int i = 0; i < s.length(); ++i)
-		appendEscapedChar(result, s.charAt(i));
-	return result.toString();
-}
-protected static String getReplacement(char c) {
-	// Encode special XML characters into the equivalent character references.
-	// These five are defined by default for all XML documents.
-	switch (c) {
-		case '<' :
-			return "lt";
-		case '>' :
-			return "gt";
-		case '"' :
-			return "quot";
-		case '\'' :
-			return "apos";
-		case '&' :
-			return "amp";
-	}
-	return null;
+	this.log = logForStream(out);
 }
 protected void closeLogFile() throws IOException {
 	try {
-		log.flush();
-		log.close();
+		if (log != null) {
+			log.flush();
+			log.close();
+		}
 	} finally {
 		log = null;
 	}
-}
-/**
- * Returns a string representation of the given severity.
- */
-protected String encodeSeverity(int severity) {
-	switch (severity) {
-		case IStatus.ERROR :
-			return "ERROR";
-		case IStatus.INFO :
-			return "INFO";
-		case IStatus.OK:
-			return "OK";
-		case IStatus.WARNING :
-			return "WARNING";
-	}
-	//unknown severity, just print the integer
-	return Integer.toString(severity);
-}
-protected String encodeStackTrace(Throwable t) {
-	StringWriter sWriter = new StringWriter();
-	PrintWriter pWriter = new PrintWriter(sWriter);
-	pWriter.println();
-	t.printStackTrace(pWriter);
-	pWriter.flush();
-	return sWriter.toString();
-}
-protected void endTag(String name) throws IOException {
-	tabDepth--;
-	printTag('/' + name, null);
 }
 /**
  * @see ILogListener#logging.
@@ -130,10 +66,10 @@ public synchronized void logging(IStatus status, String plugin) {
 	if (logFile != null)
 		openLogFile();
 	if (log == null)
-		log = new OutputStreamWriter(System.err);
+		log = logForStream(System.err);
 	try {
 		try {
-			writeLogEntry(status);
+			write(status, 0);
 		} finally {
 			if (logFile != null)
 				closeLogFile();
@@ -141,16 +77,16 @@ public synchronized void logging(IStatus status, String plugin) {
 				log.flush();
 		}			
 	} catch (Exception e) {
-		System.err.println("An exception occurred while writing to the platform log:");
+		System.err.println("An exception occurred while writing to the platform log:");//$NON-NLS-1$
 		System.err.println(e.getClass().getName() + ": " + e.getMessage());
-		System.err.println("Logging to the console instead.");
+		System.err.println("Logging to the console instead.");//$NON-NLS-1$
 		//we failed to write, so dump log entry to console instead
 		try {
-			log = new OutputStreamWriter(System.err);
-			writeLogEntry(status);
+			log = logForStream(System.err);
+			write(status, 0);
 			log.flush();
 		} catch (Exception e2) {
-			System.err.println("An exception occurred while logging to the console:");
+			System.err.println("An exception occurred while logging to the console:");//$NON-NLS-1$
 			System.err.println(e.getClass().getName() + ": " + e.getMessage());
 		}
 	} finally {
@@ -159,50 +95,29 @@ public synchronized void logging(IStatus status, String plugin) {
 }
 protected void openLogFile() {
 	try {
-		boolean newLog = !logFile.exists();
-		log =new BufferedWriter(new FileWriter(logFile.getAbsolutePath(), true));
-		if (newLog) {
-			println(XML_VERSION);
-			startTag(ELEMENT_LOG, null);
+		log = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(logFile.getAbsolutePath(), true), "UTF-8"));
+		if (newSession) {
+			writeln(SESSION);
+			newSession = false;
 		}
 	} catch (IOException e) {
 		// there was a problem opening the log file so log to the console
-		log = new OutputStreamWriter(System.err);
+		log = logForStream(System.err);
+	}
+}
+protected Writer logForStream(OutputStream output) {
+	try {
+		return new BufferedWriter(new OutputStreamWriter(output, "UTF-8"));//$NON-NLS-1$
+	} catch (UnsupportedEncodingException e) {
+		return new BufferedWriter(new OutputStreamWriter(output));
 	}
 }
 /**
  * Writes the given string to the log, followed by the line terminator string.
  */
-protected void println(String s) throws IOException {
-	log.write(s);
-	log.write(LINE_SEPARATOR);
-}
-protected void printTabulation() throws IOException {
-	for (int i = 0; i < tabDepth; i++)
-		log.write(TAB_STRING);
-}
-
-protected void printTag(String name, HashMap parameters) throws IOException {
-	printTabulation();
-	log.write('<');
-	log.write(name);
-	tabDepth++;
-	if (parameters != null)
-		for (Enumeration enum = Collections.enumeration(parameters.keySet()); enum.hasMoreElements();) {
-			//new line for each attribute if there's more than one
-			if (parameters.size() > 1) {
-				log.write(LINE_SEPARATOR);
-				printTabulation();
-			}
-			log.write(" ");
-			String key = (String) enum.nextElement();
-			log.write(key);
-			log.write("=\"");
-			log.write(getEscaped(String.valueOf(parameters.get(key))));
-			log.write("\"");
-		}
-	tabDepth--;
-	println(">");
+protected void writeln(String s) throws IOException {
+	write(s);
+	writeln();
 }
 /**
  * Shuts down the platform log.
@@ -210,13 +125,8 @@ protected void printTag(String name, HashMap parameters) throws IOException {
 public synchronized void shutdown() {
 	try {
 		if (logFile != null) {
-			try {
-				openLogFile();
-				endTag(ELEMENT_LOG);
-			} finally {
-				closeLogFile();
-				logFile = null;
-			}
+			closeLogFile();
+			logFile = null;
 		} else {
 			if (log != null) {
 				Writer old = log;
@@ -230,43 +140,59 @@ public synchronized void shutdown() {
 		e.printStackTrace();
 	}
 }
-protected void startTag(String name, HashMap parameters) throws IOException {
-	printTag(name, parameters);
-	tabDepth++;
-}
+
 protected void write(Throwable throwable) throws IOException {
 	if (throwable == null)
 		return;
-	HashMap attributes = new HashMap();
-	attributes.put(ATTRIBUTE_MESSAGE, throwable.getMessage());
-	attributes.put(ATTRIBUTE_TRACE, encodeStackTrace(throwable));
-	startTag(ELEMENT_EXCEPTION, attributes);
-	endTag(ELEMENT_EXCEPTION);
+	write(STACK);
+	writeSpace();
+	StringBuffer buffer = new StringBuffer();
+	throwable.printStackTrace(new PrintWriter(log));
 }
-protected void write(IStatus status) throws IOException {
-	HashMap attributes = new HashMap();
-	attributes.put(ATTRIBUTE_SEVERITY, encodeSeverity(status.getSeverity()));
-	attributes.put(ATTRIBUTE_PLUGIN_ID, status.getPlugin());
-	attributes.put(ATTRIBUTE_CODE, Integer.toString(status.getCode()));
-	attributes.put(ATTRIBUTE_MESSAGE, status.getMessage());
-	startTag(ELEMENT_STATUS, attributes); {
-		write(status.getException());
-		if (status.isMultiStatus()) {
-			IStatus[] children = status.getChildren();
-			for (int i = 0; i < children.length; i++) {
-				write(children[i]);
-			}
+
+
+protected void write(IStatus status, int depth) throws IOException {
+	if (depth == 0)
+		write(ENTRY);
+	else
+		write(SUBENTRY);
+	if (depth != 0) {
+		writeSpace();
+		write(Integer.toString(depth));
+	}
+	writeSpace();
+	write(status.getPlugin());
+	writeSpace();
+	write(Integer.toString(status.getSeverity()));
+	writeSpace();
+	write(Integer.toString(status.getCode()));
+	writeSpace();
+	write(new Date().toString());
+	writeln();
+
+	write(MESSAGE);
+	writeSpace();
+	writeln(status.getMessage());
+
+	write(status.getException());
+
+	if (status.isMultiStatus()) {
+		IStatus[] children = status.getChildren();
+		for (int i = 0; i < children.length; i++) {
+			write(children[i], depth+1);
 		}
 	}
-	endTag(ELEMENT_STATUS);
 }
-protected void writeLogEntry(IStatus status) throws IOException {
-	tabDepth = 0;
-	HashMap attributes = new HashMap();
-	attributes.put(ATTRIBUTE_DATE, new Date());
-	startTag(ELEMENT_LOG_ENTRY, attributes);
-	write(status);
-	endTag(ELEMENT_LOG_ENTRY);
+
+protected void writeln() throws IOException {
+	write(LINE_SEPARATOR);
 }
+protected void write(String message) throws IOException {
+	log.write(message);
+}
+protected void writeSpace() throws IOException {
+	write(" ");//$NON-NLS-1$
+}
+
 }
 
