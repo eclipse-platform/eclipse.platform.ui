@@ -11,6 +11,8 @@
 package org.eclipse.ant.ui.internal.preferences;
 
 
+import java.text.MessageFormat;
+
 import org.eclipse.ant.core.Property;
 import org.eclipse.ant.ui.internal.model.AntUIImages;
 import org.eclipse.ant.ui.internal.model.IAntUIConstants;
@@ -61,6 +63,12 @@ final class AntPropertiesLabelProvider extends LabelProvider implements ITableLa
 	 * Method declared on ITableLabelProvider.
 	 */
 	public String getColumnText(Object element, int columnIndex) {
+		if (element instanceof Property) {
+			Property property= (Property) element;
+			if (property.isDefault()) {
+				return element.toString() + MessageFormat.format(AntPreferencesMessages.getString("AntPropertiesLabelProvider.0"), new String[]{property.getPluginLabel()}); //$NON-NLS-1$
+			} 
+		}
 		return element.toString();
 	}
 

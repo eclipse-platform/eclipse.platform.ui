@@ -11,6 +11,7 @@
 package org.eclipse.ant.ui.internal.preferences;
 
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -196,7 +197,7 @@ public class AntTasksPage extends AntPage {
 			text.append(task.getClassName());
 			text.append(')');
 			if (task.isDefault()) {
-				text.append(AntPreferencesMessages.getString("AntTasksPage._[system_task]_3")); //$NON-NLS-1$
+				text.append(MessageFormat.format(AntPreferencesMessages.getString("AntTasksPage.10"), new String[]{task.getPluginLabel()})); //$NON-NLS-1$
 			}
 			return text.toString();
 		}

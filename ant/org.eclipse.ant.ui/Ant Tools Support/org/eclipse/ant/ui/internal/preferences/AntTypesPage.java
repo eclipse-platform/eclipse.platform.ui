@@ -11,6 +11,7 @@
 package org.eclipse.ant.ui.internal.preferences;
 
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -190,7 +191,7 @@ public class AntTypesPage extends AntPage {
 			text.append(type.getClassName());
 			text.append(')');
 			if (type.isDefault()) {
-				text.append(AntPreferencesMessages.getString("AntTypesPage._[system_type]_3")); //$NON-NLS-1$
+				text.append(MessageFormat.format(AntPreferencesMessages.getString("AntTypesPage.10"), new String[]{type.getPluginLabel()})); //$NON-NLS-1$
 			}
 			return text.toString();
 		}
