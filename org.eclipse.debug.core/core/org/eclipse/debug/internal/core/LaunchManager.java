@@ -1628,7 +1628,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 					// Win 95, 98, and ME
 					// SET might not return therefore we pipe into a file
 					IPath stateLocation= DebugPlugin.getDefault().getStateLocation();
-					fileName= stateLocation.toOSString() + File.separator  + "env.txt";
+					fileName= stateLocation.toOSString() + File.separator  + "env.txt"; //$NON-NLS-1$
 					nativeCommand= "command.com /C set > " + fileName; //$NON-NLS-1$
 				} else {
 					// Win NT, 2K, XP
