@@ -189,6 +189,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 	 *           The parent widget the element will be inserted into.
 	 * @param element
 	 *           The element to insert.
+	 * @return int
 	 */
 	protected int indexForElement(Widget parent, Object element) {
 		ViewerSorter sorter = getSorter();
@@ -847,6 +848,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 	 * @param expand
 	 *           <code>true</code> if all nodes on the path should be
 	 *           expanded, and <code>false</code> otherwise
+	 * @return Widget
 	 */
 	protected Widget internalExpand(Object element, boolean expand) {
 
@@ -919,6 +921,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 	 *           the parent item
 	 * @param element
 	 *           the element
+	 * @return Widget
 	 */
 	private Widget internalFindChild(Item parent, Object element) {
 		Item[] items = getChildren(parent);
@@ -937,6 +940,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 	 *           the parent item
 	 * @param element
 	 *           the element
+	 * @return Widget
 	 */
 	private Widget internalFindItem(Item parent, Object element) {
 
@@ -1024,6 +1028,9 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 	/**
 	 * Update the structure and recurse. Items are updated in updateChildren,
 	 * as needed.
+	 * @param widget
+	 * @param element
+	 * @param updateLabels
 	 */
 	private void internalRefreshStruct(
 		Widget widget,
@@ -1123,7 +1130,16 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 	 */
 	public boolean isExpandable(Object element) {
 		ITreeContentProvider cp = (ITreeContentProvider) getContentProvider();
-		return cp != null && cp.hasChildren(element);
+		if(cp == null)
+			return false;
+		
+		if(cp.hasChildren(element)){
+			if(getFilters().length > 0)//If there are filters be sure there is anything
+				return getFilteredChildren(element).length > 0;
+			return true;//No filters then hasChildren is enough
+		}	
+		
+		return false;
 	}
 	/* (non-Javadoc) Method declared on Viewer. */
 	protected void labelProviderChanged() {
@@ -1222,9 +1238,8 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 		Item[] children = getItems(item);
 		if (getExpanded(item) && children != null && children.length > 0) {
 			return rightMostVisibleDescendent(children[children.length - 1]);
-		} else {
-			return item;
-		}
+		} 
+		return item;
 	}
 	/* (non-Javadoc) Method declared on Viewer. */
 	public Item scrollDown(int x, int y) {
