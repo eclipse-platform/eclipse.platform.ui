@@ -240,16 +240,15 @@ public class InternalSiteManager {
 	 * 4 open the stream	
 	 */
 	private static ISite createSite(String siteType, URL url, IProgressMonitor monitor) throws CoreException, InvalidSiteTypeException {
+		if (monitor == null) monitor = new NullProgressMonitor();
 		ISite site = null;
 		ISiteFactory factory = SiteTypeFactory.getInstance().getFactory(siteType);
 
 		try {
-			if (monitor != null)
-				monitor.worked(1);
+			monitor.worked(1);
 			site = createSite(factory, url, monitor);
 		} catch (CoreException e) {
-			if (monitor != null && monitor.isCanceled())
-				return null;
+			if (monitor.isCanceled()) return null;
 
 			// if the URL is pointing to either a file 
 			// or a directory, without reference			
@@ -265,8 +264,7 @@ public class InternalSiteManager {
 					throw Utilities.newCoreException(Policy.bind("InternalSiteManager.UnableToCreateURL", url.toExternalForm() + "+" + Site.SITE_XML), e1);	//$NON-NLS-1$ //$NON-NLS-2$
 				}
 				try {
-					if (monitor != null)
-						monitor.worked(1);
+					monitor.worked(1);
 					site = createSite(factory, urlRetry, monitor);
 				} catch (CoreException e1) {
 					throw Utilities.newCoreException(Policy.bind("InternalSiteManager.UnableToAccessURL", url.toExternalForm()), url.toExternalForm(), urlRetry.toExternalForm(), e, e1);//$NON-NLS-1$
@@ -284,8 +282,7 @@ public class InternalSiteManager {
 				}
 
 				try {
-					if (monitor != null)
-						monitor.worked(1);
+					monitor.worked(1);
 					site = createSite(factory, urlRetry, monitor);
 				} catch (CoreException e1) {
 					throw Utilities.newCoreException(Policy.bind("InternalSiteManager.UnableToAccessURL", url.toExternalForm()), url.toExternalForm(), urlRetry.toExternalForm(), e, e1);//$NON-NLS-1$

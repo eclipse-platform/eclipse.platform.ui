@@ -47,6 +47,8 @@ public class SitePage extends BannerPage implements ISearchProvider {
 		public Object[] getChildren(final Object parent) {
 			if (parent instanceof SiteBookmark) {
 				final SiteBookmark bookmark = (SiteBookmark) parent;
+				if (bookmark.isUnavailable())
+					return new Object[0];
 				final Object[] children =
 					getSiteCatalogWithIndicator(
 						bookmark,
@@ -386,25 +388,11 @@ public class SitePage extends BannerPage implements ISearchProvider {
 
 	private void handleSiteChecked(SiteBookmark bookmark, boolean checked) {
 		bookmark.setSelected(checked);
-		if (checked) {
+		if (checked)
 			bookmark.setIgnoredCategories(new String[0]);
-		} else {
-			Object[] cats =
-				(
-					(TreeContentProvider) treeViewer
-						.getContentProvider())
-						.getChildren(
-					bookmark);
-			ArrayList result = new ArrayList();
-			for (int i = 0; i < cats.length; i++) {
-				if (cats[i] instanceof SiteCategory) {
-					result.add(((SiteCategory) cats[i]).getFullName());
-				}
-			}
-			bookmark.setIgnoredCategories(
-				(String[]) result.toArray(new String[result.size()]));
-		}
-		treeViewer.setSubtreeChecked(bookmark, checked);
+			
+		if (checked || bookmark.isSiteConnected())
+			treeViewer.setSubtreeChecked(bookmark, checked);
 		treeViewer.setGrayed(bookmark, false);
 		updateSearchRequest();
 	}
@@ -446,12 +434,20 @@ public class SitePage extends BannerPage implements ISearchProvider {
 		SiteCategory category,
 		boolean checked) {
 		SiteBookmark bookmark = category.getBookmark();
-		String[] ignored = bookmark.getIgnoredCategories();
+		
 		ArrayList array = new ArrayList();
 
-		for (int i = 0; i < ignored.length; i++) {
-			array.add(ignored[i]);
+		if (bookmark.isSelected()) {
+			String[] ignored = bookmark.getIgnoredCategories();
+			for (int i = 0; i < ignored.length; i++) 
+				array.add(ignored[i]);
+		} else {
+			Object[] categs =
+				getSiteCatalogWithIndicator(bookmark, !bookmark.isSiteConnected());
+			for (int i=0; i<categs.length; i++)
+				array.add(((SiteCategory)categs[i]).getFullName());
 		}
+		
 		if (checked) {
 			array.remove(category.getFullName());
 		} else {
@@ -462,12 +458,8 @@ public class SitePage extends BannerPage implements ISearchProvider {
 			(String[]) array.toArray(new String[array.size()]));
 		searchRunner.setNewSearchNeeded(true);
 
-		Object[] children =
-			(
-				(TreeContentProvider) treeViewer
-					.getContentProvider())
-					.getChildren(
-				category.getBookmark());
+		Object[] children = ((TreeContentProvider) treeViewer.getContentProvider())
+					.getChildren(category.getBookmark());
 		treeViewer.setChecked(bookmark, array.size() < children.length);
 		bookmark.setSelected(array.size() < children.length);
 		treeViewer.setGrayed(
@@ -527,6 +519,9 @@ public class SitePage extends BannerPage implements ISearchProvider {
 		final boolean connect) {
 		final CatalogBag bag = new CatalogBag();
 
+		if (bookmark.isUnavailable())
+			return new Object[0];
+		
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor)
 				throws InvocationTargetException {

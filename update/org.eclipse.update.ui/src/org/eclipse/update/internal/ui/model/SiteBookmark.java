@@ -31,6 +31,7 @@ public class SiteBookmark extends NamedModelObject
 	private String [] ignoredCategories = new String[0];
 	private boolean readOnly = false;
 	private boolean local = false;
+	private boolean unavailable = false;
 
 	public SiteBookmark() {
 	}
@@ -108,21 +109,33 @@ public class SiteBookmark extends NamedModelObject
 	}
 	
 	public void connect(boolean useCache, IProgressMonitor monitor) throws CoreException {
-		if (monitor==null) monitor = new NullProgressMonitor();
-		monitor.beginTask("", 2); //$NON-NLS-1$
-		monitor.subTask(UpdateUI.getFormattedMessage("SiteBookmark.connecting", url.toString())); //$NON-NLS-1$
-		site = SiteManager.getSite(url, useCache, new SubProgressMonitor(monitor, 1));
-		if (site!=null) createCatalog(new SubProgressMonitor(monitor, 1));
-		else
-			catalog = new Vector();
+		try {
+			if (monitor==null) monitor = new NullProgressMonitor();
+			monitor.beginTask("", 2); //$NON-NLS-1$
+			monitor.subTask(UpdateUI.getFormattedMessage("SiteBookmark.connecting", url.toString())); //$NON-NLS-1$
+			site = SiteManager.getSite(url, useCache, new SubProgressMonitor(monitor, 1));
+			if (site!=null) {
+				createCatalog(new SubProgressMonitor(monitor, 1));
+				unavailable = false;
+			} else {
+				catalog = new Vector();
+				unavailable = true;
+			}
+		} catch (CoreException e) {
+			unavailable = true;
+			throw e;
+		}
+	}
+	
+	public boolean isUnavailable() {
+		return unavailable;
 	}
 	
 	private void createCatalog(IProgressMonitor monitor) {
 		catalog = new Vector();
 		otherCategory = new SiteCategory(this, null, null);
 		// Add all the categories
-		ICategory [] categories;
-		categories = site.getCategories();
+		ICategory [] categories = site.getCategories();
 		
 		ISiteFeatureReference [] featureRefs;
 		featureRefs = site.getRawFeatureReferences();
