@@ -118,7 +118,7 @@ public IProject getProject(String name) {
 	Project result = (Project)projectTable.get(name);
 	if (result == null) {
 		IPath path = Path.ROOT.append(name);
-		String message = "resources.projectPath";
+		String message = "Path for project must have only one segment.";
 		Assert.isLegal(path.segmentCount() == ICoreConstants.PROJECT_SEGMENT_LENGTH, message);
 		result = new Project(path, workspace);
 		projectTable.put(name, result);

@@ -1024,11 +1024,11 @@ public Resource newResource(IPath path, int type) {
 	String message;
 	switch (type) {
 		case IResource.FOLDER :
-			message = "resources.resourcePath";
+			message = "Path must include project and resource name.";
 			Assert.isLegal(path.segmentCount() >= ICoreConstants.MINIMUM_FOLDER_SEGMENT_LENGTH , message);
 			return new Folder(path.makeAbsolute(), this);
 		case IResource.FILE :
-			message = "resources.resourcePath";
+			message = "Path must include project and resource name.";
 			Assert.isLegal(path.segmentCount() >= ICoreConstants.MINIMUM_FILE_SEGMENT_LENGTH, message);
 			return new File(path.makeAbsolute(), this);
 		case IResource.PROJECT :
