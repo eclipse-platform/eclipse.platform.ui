@@ -63,7 +63,7 @@ public class ToolbarData extends RequestData {
 		if (isIE() || isMozilla()
 				&& "1.2.1".compareTo(getMozillaVersion()) <= 0) { //$NON-NLS-1$
 			buttonList.add(new ToolbarButton("maximize_restore", //$NON-NLS-1$
-					"", //$NON-NLS-1$
+					getMaximizeTooltip(),
 					preferences.getImagesDirectory() + "/" + "maximize.gif", //$NON-NLS-1$ //$NON-NLS-2$
 					"restore_maximize", false)); //$NON-NLS-1$
 		}
@@ -98,5 +98,11 @@ public class ToolbarData extends RequestData {
 	}
 	public String getRestoreImage() {
 		return preferences.getImagesDirectory() + "/e_restore.gif"; //$NON-NLS-1$
+	}
+	public String getMaximizeTooltip() {
+		return ServletResources.getString("maximize", request); //$NON-NLS-1$
+	}
+	public String getRestoreTooltip() {
+		return ServletResources.getString("restore", request); //$NON-NLS-1$
 	}
 }

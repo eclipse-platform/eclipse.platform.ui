@@ -191,8 +191,12 @@ function toggleFrame(){
 function maximizedChanged(maximizedNotRestored){
 	if(maximizedNotRestored){
 		document.getElementById("maximize_restore").src="<%=data.getRestoreImage()%>";
+		document.getElementById("maximize_restore").setAttribute("title", "<%=data.getRestoreTooltip()%>");
+		document.getElementById("maximize_restore").setAttribute("alt", "<%=data.getRestoreTooltip()%>");
 	}else{
 		document.getElementById("maximize_restore").src="<%=data.getMaximizeImage()%>";
+		document.getElementById("maximize_restore").setAttribute("title", "<%=data.getMaximizeTooltip()%>");
+		document.getElementById("maximize_restore").setAttribute("alt", "<%=data.getMaximizeTooltip()%>");
 	}
 }
 
