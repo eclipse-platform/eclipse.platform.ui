@@ -413,7 +413,7 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 						for (int j = 0; j < featureContentReference.length; j++) {
 							URL url = site.getSiteContentProvider().getArchiveReference(featureContentReference[j].getIdentifier());
 							if (url != null) {
-								// make it relative to teh site
+								// make it relative to the site
 								String path = UpdateManagerUtils.getURLAsString(site.getURL(), url);
 								// add end "/"
 								path += (path.endsWith(File.separator) || path.endsWith("/")) ? "" : "/";

@@ -141,6 +141,7 @@ public class SiteReconciler extends ModelObject implements IWritable {
 				ConfiguredSite configSite = (ConfiguredSite) new BaseSiteLocalFactory().createConfigurationSiteModel((SiteModel) site, sitePolicy.getType());
 				configSite.setPlatformURLString(currentSiteEntry.getURL().toExternalForm());
 				configSite.setPreviousPluginPath(currentSiteEntry.getSitePolicy().getList());
+				configSite.setUpdatable(currentSiteEntry.isUpdateable());
 
 				// Add the features to the list of new found features
 				// and configure it based on reconciliation type
