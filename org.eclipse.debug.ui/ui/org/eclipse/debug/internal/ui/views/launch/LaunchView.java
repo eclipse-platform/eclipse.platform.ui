@@ -695,6 +695,11 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		int length= -1;
 		IRegion region= getLineInformation((ITextEditor)editor, lineNumber);
 		if (region == null) {
+			// use "goto marker" if line info not available
+			IMarker marker= getInstructionPointer(lineNumber, charStart, charEnd);
+			if (marker != null) {
+				editor.gotoMarker(marker);
+			}			
 			return;
 		}
 		if (charStart > 0) {
