@@ -114,8 +114,6 @@ public class SyncView extends ViewPart {
 	
 	private IPartListener partListener;
 	
-	private boolean initialized = false;
-	
 	/**
 	 * Creates a new view.
 	 */
@@ -148,7 +146,6 @@ public class SyncView extends ViewPart {
 		partListener = new PartListener();
 		getViewSite().getWorkbenchWindow().getPartService().addPartListener(partListener);
 		WorkbenchHelp.setHelp(top, IHelpContextIds.SYNC_VIEW);
-		initialized = true;
 	}
 	
 	public void dispose() {
@@ -172,7 +169,7 @@ public class SyncView extends ViewPart {
 				if (activePage == null) return null;
 			}
 			IViewPart part = activePage.findView(VIEW_ID);
-			if (part == null || !((SyncView)part).initialized)
+			if (part == null)
 				part = activePage.showView(VIEW_ID);
 			return (SyncView)part;
 		} catch (PartInitException pe) {
