@@ -194,7 +194,7 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 
 				fFindReplaceState= operationCode;
 				
-				if (found) {
+				if (found && fFindReplaceMatcher.group().length() > 0) {
 					return new Region(fFindReplaceMatcher.start(), fFindReplaceMatcher.group().length());
 				} else {
 					return null;
