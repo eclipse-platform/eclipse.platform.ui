@@ -159,7 +159,7 @@ public class InternalAntRunner {
 	}
 
 	/**
-	 * Adds a build logger.
+	 * Adds a build logger. There can be only one build logger.
 	 * @param className The fully qualified name of the build logger to add
 	 */
 	public void addBuildLogger(String className) {
