@@ -69,7 +69,7 @@ public IExtension[] getExtensions();
  * the plug-in manifest file, resource bundle, runtime libraries,
  * and any other files supplied with this plug-in. This directory is usually
  * read-only. Plug-in relative information should be written to the location 
- * provided by Plugin#getStateLocation.
+ * provided by <code>Plugin.getStateLocation</code>.
  *
  * @return the URL of this plug-in's install directory
  * @see #getPlugin
