@@ -43,6 +43,8 @@ public class UpdatesView
 	private static final String KEY_NEW_SEARCH = "UpdatesView.Popup.newSearch";
 	private static final String KEY_NEW_LOCAL_SITE =
 		"UpdatesView.Popup.newLocalSite";
+	private static final String KEY_SHOW_SEARCH_RESULT =
+		"UpdatesView.Popup.showSearchResult";
 	private static final String KEY_DELETE = "UpdatesView.Popup.delete";
 	private static final String KEY_REFRESH = "UpdatesView.Popup.refresh";
 	private static final String KEY_REFRESH_TOOLTIP =
@@ -84,6 +86,7 @@ public class UpdatesView
 	private Image siteImage;
 	private Image installSiteImage;
 	private Image featureImage;
+	private Image efixImage;
 	private Image errorFeatureImage;
 	private Image categoryImage;
 	private Image discoveryImage;
@@ -91,6 +94,7 @@ public class UpdatesView
 	private Image computerImage;
 	private VolumeLabelProvider volumeLabelProvider;
 	private Action refreshAction;
+	private Action showSearchResultAction;
 	private SearchObject updateSearchObject;
 	private SelectionChangedListener selectionListener;
 	private Hashtable fileImages = new Hashtable();
@@ -146,6 +150,21 @@ public class UpdatesView
 			updateForSelection((IStructuredSelection) event.getSelection());
 		}
 	}
+	
+	class UpdatesViewSorter extends ViewerSorter {
+		public int category(Object obj) {
+			// Level 0
+			if (obj instanceof DiscoveryFolder)
+				return 1;
+			if (obj.equals(updateSearchObject))
+				return 2;
+			if (obj instanceof MyComputer)
+				return 3;
+			if (obj instanceof SiteBookmark || obj instanceof BookmarkFolder || obj instanceof SearchObject)
+				return 4;
+			return super.category(obj);
+		}
+	}
 
 	class SiteProvider
 		extends DefaultContentProvider
@@ -161,9 +180,11 @@ public class UpdatesView
 			if (parent instanceof SiteBookmark) {
 				return getSiteCatalog((SiteBookmark) parent);
 			}
+			/*
 			if (parent instanceof SearchObject) {
 				return ((SearchObject) parent).getChildren(null);
 			}
+			*/
 			if (parent instanceof SearchResultSite) {
 				return ((SearchResultSite) parent).getChildren(null);
 			}
@@ -209,9 +230,11 @@ public class UpdatesView
 			if (parent instanceof BookmarkFolder) {
 				return ((BookmarkFolder) parent).hasChildren();
 			}
+			/*
 			if (parent instanceof SearchObject) {
 				return ((SearchObject) parent).hasChildren();
 			}
+			*/
 			if (parent instanceof MyComputerDirectory) {
 				return ((MyComputerDirectory) parent).hasChildren(parent);
 			}
@@ -300,14 +323,17 @@ public class UpdatesView
 			if (obj instanceof SearchObject) {
 				return getSearchObjectImage((SearchObject) obj);
 			}
-			if (obj instanceof IFeature)
-				return featureImage;
+			if (obj instanceof IFeature) {
+				boolean efix = UpdateUIPlugin.isPatch((IFeature)obj);
+				return efix?efixImage:featureImage;
+			}
 			if (obj instanceof IFeatureAdapter) {
 				IFeatureAdapter adapter = (IFeatureAdapter) obj;
 				IFeature feature = getFeature(adapter);
 				if (feature instanceof MissingFeature)
 					return errorFeatureImage;
-				return featureImage;
+				boolean efix = UpdateUIPlugin.isPatch(feature);
+				return efix?efixImage:featureImage;
 			}
 			return super.getImage(obj);
 		}
@@ -385,9 +411,20 @@ public class UpdatesView
 				performNewLocal();
 			}
 		};
+		
 		WorkbenchHelp.setHelp(newLocalAction, "org.eclipse.update.ui.UpdatesView_newLocalAction");
 		newLocalAction.setText(
 			UpdateUIPlugin.getResourceString(KEY_NEW_LOCAL_SITE));
+
+		showSearchResultAction = new Action() {
+			public void run() {
+				performShowSearchResult();
+			}
+		};
+		WorkbenchHelp.setHelp(newLocalAction, "org.eclipse.update.ui.UpdatesView_showSearchResultAction");
+		showSearchResultAction.setText(
+			UpdateUIPlugin.getResourceString(KEY_SHOW_SEARCH_RESULT));
+
 
 		deleteAction = new DeleteAction();
 		WorkbenchHelp.setHelp(deleteAction, "org.eclipse.update.ui.UpdatesView_deleteAction");
@@ -440,6 +477,7 @@ public class UpdatesView
 		filterEnvironmentAction.setChecked(envValue);
 
 		viewer.addFilter(environmentFilter);
+		viewer.setSorter(new UpdatesViewSorter());
 
 		showCategoriesAction = new Action() {
 			public void run() {
@@ -513,8 +551,13 @@ public class UpdatesView
 		if (canDelete(obj))
 			manager.add(deleteAction);
 		manager.add(new Separator());
+		if (obj instanceof SearchObject) {
+			manager.add(showSearchResultAction);
+			manager.add(new Separator());
+		}
+		
 		super.fillContextMenu(manager);
-		if (obj instanceof SiteBookmark)
+		if (obj instanceof NamedModelObject)
 			manager.add(propertiesAction);
 	}
 
@@ -645,6 +688,25 @@ public class UpdatesView
 			}
 		}
 	}
+	
+	private void performShowSearchResult() {
+		IWorkbenchPage page = UpdateUIPlugin.getActivePage();
+		SearchResultView view = (SearchResultView)page.findView(UpdatePerspective.ID_SEARCH_RESULTS);
+		if (view!=null) {
+			page.bringToTop(view);
+		}
+		else {
+			try {
+				view = (SearchResultView)page.showView(UpdatePerspective.ID_SEARCH_RESULTS);
+				view.setSelectionActive(true);
+			}
+			catch (PartInitException e) {
+				UpdateUIPlugin.logException(e);
+			}
+		}
+		if (view!=null)
+			view.setCurrentSearch((SearchObject)getSelectedObject());
+	}
 
 	private void performRefresh() {
 		IStructuredSelection sel = (IStructuredSelection) viewer.getSelection();
@@ -684,7 +746,7 @@ public class UpdatesView
 					config,
 					dir,
 					true)) {
-				InstallWizard.makeConfigurationCurrent(config);
+				InstallWizard.makeConfigurationCurrent(config, null);
 				InstallWizard.saveLocalSite();
 				UpdateUIPlugin.informRestartNeeded();
 			}
@@ -786,9 +848,12 @@ public class UpdatesView
 		if (child instanceof PendingChange)
 			return;
 		if (child instanceof NamedModelObject
+			/*
 			|| child instanceof SearchResultSite
 			|| child instanceof IFeature
-			|| child instanceof IFeatureAdapter) {
+			|| child instanceof IFeatureAdapter 
+			*/
+			) {
 			UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 			if (parent == null)
 				parent = model;
@@ -803,21 +868,23 @@ public class UpdatesView
 		if (children[0] instanceof PendingChange)
 			return;
 		if (children[0] instanceof NamedModelObject
-			|| children[0] instanceof SearchResultSite) {
+			/*|| children[0] instanceof SearchResultSite */) {
 			viewer.remove(children);
 			viewer.setSelection(new StructuredSelection());
 		}
 	}
 
 	public void objectChanged(Object object, String property) {
-		if (object instanceof SiteBookmark) {
+		if (object instanceof NamedModelObject) {
 			if (property.equals(SiteBookmark.P_NAME)) {
 				viewer.update(object, null);
 			}
-			if (property.equals(SiteBookmark.P_URL)) {
-				viewer.refresh(object);
+			if (object instanceof SiteBookmark) {
+				if (property.equals(SiteBookmark.P_URL)) {
+					viewer.refresh(object);
+				}
 			}
-			viewer.setSelection(viewer.getSelection());
+			//viewer.setSelection(viewer.getSelection());
 		}
 	}
 
@@ -829,6 +896,7 @@ public class UpdatesView
 		siteImage = UpdateUIPluginImages.DESC_SITE_OBJ.createImage();
 		installSiteImage = UpdateUIPluginImages.DESC_LSITE_OBJ.createImage();
 		featureImage = UpdateUIPluginImages.DESC_FEATURE_OBJ.createImage();
+		efixImage = UpdateUIPluginImages.DESC_EFIX_OBJ.createImage();
 		discoveryImage = UpdateUIPluginImages.DESC_PLACES_OBJ.createImage();
 		bookmarkFolderImage =
 			UpdateUIPluginImages.DESC_BFOLDER_OBJ.createImage();
@@ -849,6 +917,7 @@ public class UpdatesView
 		siteImage.dispose();
 		installSiteImage.dispose();
 		featureImage.dispose();
+		efixImage.dispose();
 		errorFeatureImage.dispose();
 		discoveryImage.dispose();
 		bookmarkFolderImage.dispose();

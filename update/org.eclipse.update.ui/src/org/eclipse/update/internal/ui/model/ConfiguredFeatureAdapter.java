@@ -7,6 +7,7 @@
 package org.eclipse.update.internal.ui.model;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 
@@ -19,15 +20,18 @@ public class ConfiguredFeatureAdapter
 	implements IConfiguredFeatureAdapter {
 	private IConfiguredSiteAdapter adapter;
 	private boolean configured;
+	private boolean updated;
 
 	public ConfiguredFeatureAdapter(
 		IConfiguredSiteAdapter adapter,
 		IFeature feature,
 		boolean configured,
+		boolean updated,
 		boolean optional) {
 		super(feature, optional);
 		this.adapter = adapter;
 		this.configured = configured;
+		this.updated = updated;
 	}
 
 	public IConfiguredSite getConfigurationSite() {
@@ -39,6 +43,10 @@ public class ConfiguredFeatureAdapter
 	public boolean isConfigured() {
 		return configured;
 	}
+	
+	public boolean isUpdated() {
+		return updated;
+	}
 	public IFeatureAdapter[] getIncludedFeatures() {
 		try {
 			IFeatureReference[] included =
@@ -49,16 +57,22 @@ public class ConfiguredFeatureAdapter
 				IFeatureReference fref = included[i];
 				IFeature feature;
 				boolean childConfigured=configured;
+				boolean updated = false;
 				try {
-					feature = fref.getFeature();
+					feature = fref.getFeature(!configured, getConfigurationSite());
 					childConfigured = adapter.getConfigurationSite().isConfigured(feature);
+					///*
+					PluginVersionIdentifier refpid = fref.getVersionedIdentifier().getVersion();
+					PluginVersionIdentifier fpid = feature.getVersionedIdentifier().getVersion();
+					updated = !refpid.equals(fpid);
+					//*/
 				} catch (CoreException e) {
-					feature = new MissingFeature(fref);
+					feature = new MissingFeature(getFeature(), fref);
 					childConfigured = false;
 				}
-
+				
 				result[i] =
-					new ConfiguredFeatureAdapter(adapter, feature, childConfigured, fref.isOptional());
+					new ConfiguredFeatureAdapter(adapter, feature, childConfigured, updated, fref.isOptional());
 				result[i].setIncluded(true);
 			}
 			return result;

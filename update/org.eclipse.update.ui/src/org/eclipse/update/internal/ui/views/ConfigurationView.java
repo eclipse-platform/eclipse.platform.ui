@@ -7,11 +7,14 @@ import java.util.ArrayList;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -41,19 +44,30 @@ public class ConfigurationView
 		"ConfigurationView.showUnconfFeatures";
 	private static final String KEY_SHOW_UNCONF_FEATURES_TOOLTIP =
 		"ConfigurationView.showUnconfFeatures.tooltip";
+	private static final String KEY_MISSING_OPTIONAL_STATUS =
+		"ConfigurationView.missingOptionalStatus";
+	private static final String KEY_MISSING_STATUS =
+		"ConfigurationView.missingStatus";
+	private static final String STATE_SHOW_UNCONF =
+		"ConfigurationView.showUnconf";
 	private Image eclipseImage;
 	private Image featureImage;
+	private Image updatedFeatureImage;
 	private Image errorFeatureImage;
 	private Image optionalFeatureImage;
 	private Image warningFeatureImage;
 	private Image unconfFeatureImage;
 	private Image errorUnconfFeatureImage;
 	private Image warningUnconfFeatureImage;
+	private Image efixImage;
+	private Image warningEfixImage;
+	private Image errorEfixImage;
 	private Image siteImage;
 	private Image installSiteImage;
 	private Image linkedSiteImage;
 	private Image configImage;
 	private Image currentConfigImage;
+	private Image modConfigImage;
 	private Image historyImage;
 	private Image savedImage;
 	private boolean initialized;
@@ -84,7 +98,7 @@ public class ConfigurationView
 		"ConfigurationView.statusTitle";
 	private static final String KEY_STATUS_DEFAULT =
 		"ConfigurationView.statusDefault";
-	private static final String KEY_MISSING_FEATURE = 
+	private static final String KEY_MISSING_FEATURE =
 		"ConfigurationView.missingFeature";
 
 	abstract class ViewFolder extends UIModelObject {
@@ -149,25 +163,25 @@ public class ConfigurationView
 		}
 	}
 
-	class UpdateModelChangedListener implements IUpdateModelChangedListener {
-		/**
-		 * @see IUpdateModelChangedListener#objectAdded(Object, Object)
-		 */
-		public void objectsAdded(Object parent, Object[] children) {
-		}
+	class ConfigurationSorter extends ViewerSorter {
+		public int category(Object obj) {
+			// Top level
+			if (obj instanceof ILocalSite)
+				return 1;
+			if (obj.equals(historyFolder))
+				return 2;
+			if (obj.equals(savedFolder))
+				return 3;
 
-		/**
-		 * @see IUpdateModelChangedListener#objectRemoved(Object, Object)
-		 */
-		public void objectsRemoved(Object parent, Object[] children) {
+			return super.category(obj);
 		}
-
-		/**
-		 * @see IUpdateModelChangedListener#objectChanged(Object, String)
-		 */
-		public void objectChanged(Object object, String property) {
+		public int compare(Viewer viewer, Object e1, Object e2) {
+			if (e1 instanceof IInstallConfiguration
+				&& e2 instanceof IInstallConfiguration) {
+				return 0;
+			}
+			return super.compare(viewer, e1, e2);
 		}
-
 	}
 
 	class LocalSiteProvider
@@ -182,7 +196,7 @@ public class ConfigurationView
 				ILocalSite localSite = getLocalSite();
 				if (localSite != null)
 					return new Object[] {
-						getLocalSite(),
+						localSite,
 						historyFolder,
 						savedFolder };
 				else
@@ -217,31 +231,53 @@ public class ConfigurationView
 			return new Object[0];
 		}
 
-		private Object[] getConfigurationSites(IInstallConfiguration config) {
-			IConfiguredSite[] sites = config.getConfiguredSites();
-			Object[] adapters = new Object[sites.length];
-			for (int i = 0; i < sites.length; i++) {
-				adapters[i] = new ConfigurationSiteAdapter(config, sites[i]);
-			}
-			return adapters;
+		private Object[] getConfigurationSites(final IInstallConfiguration config) {
+			final Object[][] bag = new Object[1][];
+			BusyIndicator
+				.showWhile(viewer.getControl().getDisplay(), new Runnable() {
+				public void run() {
+					IConfiguredSite[] sites = config.getConfiguredSites();
+					Object[] adapters = new Object[sites.length];
+					for (int i = 0; i < sites.length; i++) {
+						adapters[i] =
+							new ConfigurationSiteAdapter(config, sites[i]);
+					}
+					bag[0] = adapters;
+				}
+			});
+			return bag[0];
 		}
 
-		private Object[] getConfiguredFeatures(IConfiguredSiteAdapter adapter) {
-			IConfiguredSite csite = adapter.getConfigurationSite();
-			IFeatureReference[] refs = csite.getConfiguredFeatures();
-			ArrayList result = new ArrayList();
-			for (int i = 0; i < refs.length; i++) {
-				IFeatureReference ref = refs[i];
-				IFeature feature;
-				try {
-					feature = ref.getFeature();
-				} catch (CoreException e) {
-					feature = new MissingFeature(ref.getSite(), ref.getURL());
+		private Object[] getConfiguredFeatures(final IConfiguredSiteAdapter adapter) {
+			final Object[][] bag = new Object[1][];
+
+			BusyIndicator
+				.showWhile(viewer.getControl().getDisplay(), new Runnable() {
+				public void run() {
+					IConfiguredSite csite = adapter.getConfigurationSite();
+					IFeatureReference[] refs = csite.getConfiguredFeatures();
+					ArrayList result = new ArrayList();
+					for (int i = 0; i < refs.length; i++) {
+						IFeatureReference ref = refs[i];
+						IFeature feature;
+						try {
+							feature = ref.getFeature();
+						} catch (CoreException e) {
+							feature =
+								new MissingFeature(ref.getSite(), ref.getURL());
+						}
+						result.add(
+							new ConfiguredFeatureAdapter(
+								adapter,
+								feature,
+								true,
+								false,
+								ref.isOptional()));
+					}
+					bag[0] = getRootFeatures(result);
 				}
-				result.add(
-					new ConfiguredFeatureAdapter(adapter, feature, true, ref.isOptional()));
-			}
-			return getRootFeatures(result);
+			});
+			return bag[0];
 		}
 
 		private Object[] getAllFeatures(IConfiguredSiteAdapter adapter) {
@@ -262,6 +298,7 @@ public class ConfigurationView
 						adapter,
 						feature,
 						csite.isConfigured(feature),
+						false,
 						allRefs[i].isOptional()));
 			}
 			return getRootFeatures(result);
@@ -276,7 +313,7 @@ public class ConfigurationView
 						(ConfiguredFeatureAdapter) list.get(i);
 					IFeature feature = cf.getFeature();
 					if (feature != null)
-						addChildFeatures(feature, children);
+						addChildFeatures(feature, cf.getConfigurationSite(), children, cf.isConfigured());
 				}
 				for (int i = 0; i < list.size(); i++) {
 					ConfiguredFeatureAdapter cf =
@@ -292,17 +329,16 @@ public class ConfigurationView
 			return result.toArray();
 		}
 
-		private void addChildFeatures(IFeature feature, ArrayList children) {
+		private void addChildFeatures(IFeature feature, IConfiguredSite csite, ArrayList children, boolean configured) {
 			try {
 				IFeatureReference[] included =
 					feature.getIncludedFeatureReferences();
 				for (int i = 0; i < included.length; i++) {
 					IFeature childFeature;
 					try {
-						childFeature = included[i].getFeature();
+						childFeature = included[i].getFeature(!configured, csite);
 					} catch (CoreException e) {
-						childFeature =
-							new MissingFeature(included[i]);
+						childFeature = new MissingFeature(included[i]);
 					}
 					children.add(childFeature);
 				}
@@ -359,7 +395,9 @@ public class ConfigurationView
 				try {
 					IFeature feature = ((IFeatureAdapter) obj).getFeature();
 					if (feature instanceof MissingFeature) {
-						return UpdateUIPlugin.getFormattedMessage(KEY_MISSING_FEATURE, feature.getLabel());
+						return UpdateUIPlugin.getFormattedMessage(
+							KEY_MISSING_FEATURE,
+							feature.getLabel());
 					}
 					String version =
 						feature
@@ -400,36 +438,56 @@ public class ConfigurationView
 				IInstallConfiguration config = (IInstallConfiguration) obj;
 				if (config.isCurrent())
 					return currentConfigImage;
-				return configImage;
+				boolean currentTimeline = isCurrentTimeline(config);
+				return currentTimeline?configImage:modConfigImage;
 			}
 			return null;
+		}
+		
+		private boolean isCurrentTimeline(IInstallConfiguration config) {
+			ILocalSite localSite = getLocalSite();
+			if (localSite==null) return true;
+			IInstallConfiguration cconfig = localSite.getCurrentConfiguration();
+			return config.getTimeline()==cconfig.getTimeline();
 		}
 
 		private Image getFeatureImage(IFeatureAdapter adapter) {
 			boolean configured = true;
+			boolean updated = false;
+			boolean current = true;
 			if (adapter instanceof IConfiguredFeatureAdapter) {
-				configured =
-					((IConfiguredFeatureAdapter) adapter).isConfigured();
+				IConfiguredFeatureAdapter cadapter = (IConfiguredFeatureAdapter)adapter;
+				configured = cadapter.isConfigured();
+				updated = cadapter.isUpdated();
+				current = cadapter.getInstallConfiguration().isCurrent();
 			}
 			ILocalSite localSite = getLocalSite();
 			try {
 				IFeature feature = adapter.getFeature();
 				if (feature instanceof MissingFeature) {
-					MissingFeature mfeature = (MissingFeature)feature;
-					if (mfeature.isOptional()==false) return errorFeatureImage;
+					MissingFeature mfeature = (MissingFeature) feature;
+					if (mfeature.isOptional() == false)
+						return errorFeatureImage;
 					return optionalFeatureImage;
 				}
-				IStatus status =
-					localSite.getFeatureStatus(feature);
-				int code = status.getCode();
+				int code = IFeature.STATUS_HAPPY;
+				if (current) {
+					IStatus status = localSite.getFeatureStatus(feature);
+					code = getStatusCode(feature, status);
+				}
 				if (configured) {
+					boolean efix = UpdateUIPlugin.isPatch(feature);
 					switch (code) {
 						case IFeature.STATUS_UNHAPPY :
-							return errorFeatureImage;
+							return efix ? errorEfixImage : errorFeatureImage;
 						case IFeature.STATUS_AMBIGUOUS :
-							return warningFeatureImage;
+							return efix
+								? warningEfixImage
+								: warningFeatureImage;
 						default :
-							return featureImage;
+							return updated
+								? updatedFeatureImage
+								: (efix ? efixImage : featureImage);
 					}
 				} else {
 					switch (code) {
@@ -461,7 +519,8 @@ public class ConfigurationView
 			edesc = info.getWindowImage();
 		eclipseImage = edesc.createImage();
 		featureImage = UpdateUIPluginImages.DESC_FEATURE_OBJ.createImage();
-		optionalFeatureImage = UpdateUIPluginImages.DESC_NOTINST_FEATURE_OBJ.createImage();
+		optionalFeatureImage =
+			UpdateUIPluginImages.DESC_NOTINST_FEATURE_OBJ.createImage();
 		edesc =
 			new OverlayIcon(
 				UpdateUIPluginImages.DESC_FEATURE_OBJ,
@@ -480,6 +539,16 @@ public class ConfigurationView
 				UpdateUIPluginImages.DESC_WARNING_CO }
 		});
 		warningFeatureImage = edesc.createImage();
+		edesc =
+			new OverlayIcon(
+				UpdateUIPluginImages.DESC_FEATURE_OBJ,
+				new ImageDescriptor[][] { {
+			}, {
+			}, {
+			}, {
+				UpdateUIPluginImages.DESC_UPDATED_CO }
+		});
+		updatedFeatureImage = edesc.createImage();
 		unconfFeatureImage =
 			UpdateUIPluginImages.DESC_UNCONF_FEATURE_OBJ.createImage();
 
@@ -502,6 +571,26 @@ public class ConfigurationView
 		});
 		warningUnconfFeatureImage = edesc.createImage();
 
+		efixImage = UpdateUIPluginImages.DESC_EFIX_OBJ.createImage();
+		edesc =
+			new OverlayIcon(
+				UpdateUIPluginImages.DESC_EFIX_OBJ,
+				new ImageDescriptor[][] { {
+			}, {
+			}, {
+				UpdateUIPluginImages.DESC_ERROR_CO }
+		});
+		errorEfixImage = edesc.createImage();
+		edesc =
+			new OverlayIcon(
+				UpdateUIPluginImages.DESC_EFIX_OBJ,
+				new ImageDescriptor[][] { {
+			}, {
+			}, {
+				UpdateUIPluginImages.DESC_WARNING_CO }
+		});
+		warningEfixImage = edesc.createImage();
+
 		ImageDescriptor siteDesc = UpdateUIPluginImages.DESC_LSITE_OBJ;
 		siteImage = siteDesc.createImage();
 		ImageDescriptor installSiteDesc = UpdateUIPluginImages.DESC_LSITE_OBJ;
@@ -523,6 +612,14 @@ public class ConfigurationView
 				UpdateUIPluginImages.DESC_CURRENT_CO }
 		});
 		currentConfigImage = cdesc.createImage();
+		cdesc =
+			new OverlayIcon(
+				UpdateUIPluginImages.DESC_CONFIG_OBJ,
+				new ImageDescriptor[][] { {
+			}, {
+				UpdateUIPluginImages.DESC_MOD_CO }
+		});
+		modConfigImage = cdesc.createImage();
 		savedImage = UpdateUIPluginImages.DESC_SAVED_OBJ.createImage();
 		historyImage = UpdateUIPluginImages.DESC_HISTORY_OBJ.createImage();
 	}
@@ -531,11 +628,14 @@ public class ConfigurationView
 		viewer.setContentProvider(new LocalSiteProvider());
 		viewer.setInput(UpdateUIPlugin.getDefault().getUpdateModel());
 		viewer.setLabelProvider(new LocalSiteLabelProvider());
+		viewer.setSorter(new ConfigurationSorter());
 		viewer.addFilter(new ViewerFilter() {
 			public boolean select(Viewer v, Object parent, Object element) {
 				if (element instanceof IConfiguredFeatureAdapter) {
-					IConfiguredFeatureAdapter adapter = (IConfiguredFeatureAdapter)element;
-					if (adapter.isConfigured()) return true;
+					IConfiguredFeatureAdapter adapter =
+						(IConfiguredFeatureAdapter) element;
+					if (adapter.isConfigured())
+						return true;
 					boolean showUnconf = showUnconfFeaturesAction.isChecked();
 					return showUnconf;
 				}
@@ -557,13 +657,18 @@ public class ConfigurationView
 			public void objectChanged(final Object obj, String property) {
 				viewer.getControl().getDisplay().asyncExec(new Runnable() {
 					public void run() {
-						viewer.update(obj, null);
+							//viewer.update(obj, null);
+		//must refresh because name change may
+		// require resort
+	viewer.refresh();
 					}
 				});
 			}
 		};
 		model.addUpdateModelChangedListener(modelListener);
-		WorkbenchHelp.setHelp(viewer.getControl(), "org.eclipse.update.ui.ConfigurationView");
+		WorkbenchHelp.setHelp(
+			viewer.getControl(),
+			"org.eclipse.update.ui.ConfigurationView");
 	}
 
 	private ILocalSite getLocalSite() {
@@ -576,32 +681,46 @@ public class ConfigurationView
 	}
 
 	private Object[] openLocalSite() {
-		try {
-			ILocalSite localSite = SiteManager.getLocalSite();
-			IInstallConfiguration config = localSite.getCurrentConfiguration();
-			IConfiguredSite[] sites = config.getConfiguredSites();
-			Object[] result = new Object[sites.length];
-			for (int i = 0; i < sites.length; i++) {
-				result[i] = new ConfigurationSiteAdapter(config, sites[i]);
+		final Object[][] bag = new Object[1][];
+		BusyIndicator
+			.showWhile(viewer.getControl().getDisplay(), new Runnable() {
+			public void run() {
+				try {
+					ILocalSite localSite = SiteManager.getLocalSite();
+					IInstallConfiguration config =
+						localSite.getCurrentConfiguration();
+					IConfiguredSite[] sites = config.getConfiguredSites();
+					Object[] result = new Object[sites.length];
+					for (int i = 0; i < sites.length; i++) {
+						result[i] =
+							new ConfigurationSiteAdapter(config, sites[i]);
+					}
+					if (!initialized) {
+						config.addInstallConfigurationChangedListener(
+							ConfigurationView.this);
+						initialized = true;
+					}
+					bag[0] = result;
+				} catch (CoreException e) {
+					UpdateUIPlugin.logException(e);
+					bag[0] = new Object[0];
+				}
 			}
-			if (!initialized) {
-				config.addInstallConfigurationChangedListener(this);
-				initialized = true;
-			}
-			return result;
-		} catch (CoreException e) {
-			UpdateUIPlugin.logException(e);
-			return new Object[0];
-		}
+		});
+		return bag[0];
 	}
 
 	public void dispose() {
 		eclipseImage.dispose();
 		featureImage.dispose();
+		updatedFeatureImage.dispose();
 		optionalFeatureImage.dispose();
 		unconfFeatureImage.dispose();
 		errorFeatureImage.dispose();
 		warningFeatureImage.dispose();
+		efixImage.dispose();
+		warningEfixImage.dispose();
+		errorEfixImage.dispose();
 		errorUnconfFeatureImage.dispose();
 		warningUnconfFeatureImage.dispose();
 		siteImage.dispose();
@@ -611,6 +730,7 @@ public class ConfigurationView
 		historyImage.dispose();
 		configImage.dispose();
 		currentConfigImage.dispose();
+		modConfigImage.dispose();
 		if (initialized) {
 			try {
 				ILocalSite localSite = SiteManager.getLocalSite();
@@ -650,8 +770,12 @@ public class ConfigurationView
 	private IInstallConfiguration getSelectedConfiguration(
 		Object obj,
 		boolean onlyPreserved) {
-		if (!onlyPreserved && obj instanceof IInstallConfiguration)
-			return (IInstallConfiguration) obj;
+		if (!onlyPreserved) {
+			if (obj instanceof IInstallConfiguration)
+				return (IInstallConfiguration) obj;
+			if (obj instanceof ILocalSite)
+				return ((ILocalSite) obj).getCurrentConfiguration();
+		}
 		if (obj instanceof PreservedConfiguration)
 			return ((PreservedConfiguration) obj).getConfiguration();
 		return null;
@@ -674,17 +798,26 @@ public class ConfigurationView
 
 	protected void makeActions() {
 		super.makeActions();
+		final IDialogSettings settings =
+			UpdateUIPlugin.getDefault().getDialogSettings();
+		boolean showUnconfState = settings.getBoolean(STATE_SHOW_UNCONF);
 		showUnconfFeaturesAction = new Action() {
 			public void run() {
-				viewer.refresh(getLocalSite());
+				//viewer.refresh(getLocalSite());
+				viewer.refresh();
+				settings.put(
+					STATE_SHOW_UNCONF,
+					showUnconfFeaturesAction.isChecked());
 			}
 		};
-		WorkbenchHelp.setHelp(showUnconfFeaturesAction, "org.eclipse.update.ui.CofigurationView_showUnconfFeaturesAction");
+		WorkbenchHelp.setHelp(
+			showUnconfFeaturesAction,
+			"org.eclipse.update.ui.CofigurationView_showUnconfFeaturesAction");
 		showUnconfFeaturesAction.setText(
 			UpdateUIPlugin.getResourceString(KEY_SHOW_UNCONF_FEATURES));
 		showUnconfFeaturesAction.setImageDescriptor(
 			UpdateUIPluginImages.DESC_UNCONF_FEATURE_OBJ);
-		showUnconfFeaturesAction.setChecked(false);
+		showUnconfFeaturesAction.setChecked(showUnconfState);
 		showUnconfFeaturesAction.setToolTipText(
 			UpdateUIPlugin.getResourceString(KEY_SHOW_UNCONF_FEATURES_TOOLTIP));
 		drillDownAdapter = new DrillDownAdapter(viewer);
@@ -698,7 +831,10 @@ public class ConfigurationView
 					RevertSection.performRevert(target);
 			}
 		};
-		WorkbenchHelp.setHelp(revertAction, "org.eclipse.update.ui.CofigurationView_revertAction");
+		revertAction.setText(UpdateUIPlugin.getResourceString(KEY_RESTORE));
+		WorkbenchHelp.setHelp(
+			revertAction,
+			"org.eclipse.update.ui.CofigurationView_revertAction");
 
 		showStatusAction = new Action() {
 			public void run() {
@@ -713,10 +849,11 @@ public class ConfigurationView
 				}
 			}
 		};
-		WorkbenchHelp.setHelp(showStatusAction, "org.eclipse.update.ui.CofigurationView_showStatusAction");
+		WorkbenchHelp.setHelp(
+			showStatusAction,
+			"org.eclipse.update.ui.CofigurationView_showStatusAction");
 		showStatusAction.setText(
 			UpdateUIPlugin.getResourceString(KEY_SHOW_STATUS));
-		revertAction.setText(UpdateUIPlugin.getResourceString(KEY_RESTORE));
 		preserveAction = new Action() {
 			public void run() {
 				Object obj = getSelectedObject();
@@ -734,7 +871,9 @@ public class ConfigurationView
 				}
 			}
 		};
-		WorkbenchHelp.setHelp(preserveAction, "org.eclipse.update.ui.CofigurationView_preserveAction");
+		WorkbenchHelp.setHelp(
+			preserveAction,
+			"org.eclipse.update.ui.CofigurationView_preserveAction");
 		preserveAction.setText(UpdateUIPlugin.getResourceString(KEY_PRESERVE));
 		removePreservedAction = new Action() {
 			public void run() {
@@ -755,7 +894,9 @@ public class ConfigurationView
 				}
 			}
 		};
-		WorkbenchHelp.setHelp(removePreservedAction, "org.eclipse.update.ui.CofigurationView_removePreservedAction");
+		WorkbenchHelp.setHelp(
+			removePreservedAction,
+			"org.eclipse.update.ui.CofigurationView_removePreservedAction");
 		removePreservedAction.setText(
 			UpdateUIPlugin.getResourceString(KEY_REMOVE_PRESERVED));
 
@@ -764,19 +905,62 @@ public class ConfigurationView
 				performUnlink();
 			}
 		};
-		WorkbenchHelp.setHelp(unlinkAction, "org.eclipse.update.ui.CofigurationView_unlinkAction");
+		WorkbenchHelp.setHelp(
+			unlinkAction,
+			"org.eclipse.update.ui.CofigurationView_unlinkAction");
 		unlinkAction.setText(UpdateUIPlugin.getResourceString(KEY_UNLINK));
 		propertiesAction =
 			new PropertyDialogAction(
 				UpdateUIPlugin.getActiveWorkbenchShell(),
 				viewer);
-		WorkbenchHelp.setHelp(propertiesAction, "org.eclipse.update.ui.CofigurationView_propertiesAction");
+		WorkbenchHelp.setHelp(
+			propertiesAction,
+			"org.eclipse.update.ui.CofigurationView_propertiesAction");
 	}
 
 	private void showFeatureStatus(IFeature feature) throws CoreException {
-		IStatus status = getLocalSite().getFeatureStatus(feature);
+		IStatus status;
+		if (feature instanceof MissingFeature) {
+			MissingFeature missingFeature = (MissingFeature) feature;
+			String msg;
+			int severity;
+
+			if (missingFeature.isOptional()) {
+				severity = IStatus.INFO;
+				msg =
+					UpdateUIPlugin.getResourceString(
+						KEY_MISSING_OPTIONAL_STATUS);
+			} else {
+				severity = IStatus.ERROR;
+				msg = UpdateUIPlugin.getResourceString(KEY_MISSING_STATUS);
+			}
+			status =
+				new Status(
+					severity,
+					UpdateUIPlugin.PLUGIN_ID,
+					IStatus.OK,
+					msg,
+					null);
+		} else {
+			status = getLocalSite().getFeatureStatus(feature);
+		}
 		String title = UpdateUIPlugin.getResourceString(KEY_STATUS_TITLE);
-		switch (status.getSeverity()) {
+		int severity = status.getSeverity();
+		String message = status.getMessage();
+
+		if (severity == IStatus.ERROR
+			&& status.getCode() == IFeature.STATUS_UNHAPPY) {
+			//see if this is a false alarm
+			int code = getStatusCode(feature, status);
+			if (code == IFeature.STATUS_HAPPY) {
+				// This was a patch referencing a
+				// subsumed patch - change to happy.
+				severity = IStatus.INFO;
+				message = null;
+			}
+		}
+
+		switch (severity) {
 			case IStatus.ERROR :
 				ErrorDialog.openError(
 					viewer.getControl().getShell(),
@@ -792,12 +976,9 @@ public class ConfigurationView
 				break;
 			case IStatus.INFO :
 			default :
-				String message = status.getMessage();
 				if (message == null || message.length() == 0)
 					message =
-						UpdateUIPlugin.getFormattedMessage(
-							KEY_STATUS_DEFAULT,
-							feature.getLabel());
+						UpdateUIPlugin.getResourceString(KEY_STATUS_DEFAULT);
 				MessageDialog.openInformation(
 					viewer.getControl().getShell(),
 					title,
@@ -818,7 +999,9 @@ public class ConfigurationView
 			manager.add(revertAction);
 			manager.add(new Separator());
 		}
-		if (config != null && !isPreserved(config)) {
+		if (config != null
+			&& !isPreserved(config)
+			|| obj instanceof ILocalSite) {
 			manager.add(preserveAction);
 		}
 		config = getSelectedConfiguration(obj, true);
@@ -828,7 +1011,7 @@ public class ConfigurationView
 		IConfiguredSite site = getSelectedSite(obj);
 		if (site != null) {
 			IInstallConfiguration cfg = site.getInstallConfiguration();
-			if (cfg!=null && cfg.isCurrent()) {
+			if (cfg != null && cfg.isCurrent()) {
 				try {
 					if (site.isExtensionSite() && !site.isNativelyLinked()) {
 						manager.add(unlinkAction);
@@ -841,8 +1024,11 @@ public class ConfigurationView
 		manager.add(new Separator());
 		drillDownAdapter.addNavigationActions(manager);
 		manager.add(new Separator());
-		if (obj instanceof IFeatureAdapter)
-			manager.add(showStatusAction);
+		if (obj instanceof IConfiguredFeatureAdapter) {
+			IConfiguredFeatureAdapter adapter = (IConfiguredFeatureAdapter)obj;
+			if (adapter.getInstallConfiguration().isCurrent())
+				manager.add(showStatusAction);
+		}
 		super.fillContextMenu(manager);
 		if (obj instanceof PreservedConfiguration
 			|| obj instanceof IInstallConfiguration)
@@ -900,28 +1086,28 @@ public class ConfigurationView
 			UpdateUIPlugin.logException(e);
 		}
 	} /**
-																						 * @see IInstallConfigurationChangedListener#installSiteAdded(ISite)
-																						 */
+																														 * @see IInstallConfigurationChangedListener#installSiteAdded(ISite)
+																														 */
 	public void installSiteAdded(IConfiguredSite csite) {
 		asyncRefresh();
 	} /**
-																						 * @see IInstallConfigurationChangedListener#installSiteRemoved(ISite)
-																						 */
+																														 * @see IInstallConfigurationChangedListener#installSiteRemoved(ISite)
+																														 */
 	public void installSiteRemoved(IConfiguredSite site) {
 		asyncRefresh();
 	} /**
-																						 * @see IConfiguredSiteChangedListener#featureInstalled(IFeature)
-																						 */
+																														 * @see IConfiguredSiteChangedListener#featureInstalled(IFeature)
+																														 */
 	public void featureInstalled(IFeature feature) {
 		asyncRefresh();
 	} /**
-																						 * @see IConfiguredSiteChangedListener#featureUninstalled(IFeature)
-																						 */
+																														 * @see IConfiguredSiteChangedListener#featureUninstalled(IFeature)
+																														 */
 	public void featureRemoved(IFeature feature) {
 		asyncRefresh();
 	} /**
-																						 * @see IConfiguredSiteChangedListener#featureUConfigured(IFeature)
-																						 */
+																														 * @see IConfiguredSiteChangedListener#featureUConfigured(IFeature)
+																														 */
 	public void featureConfigured(IFeature feature) {
 	};
 	/**
@@ -939,7 +1125,8 @@ public class ConfigurationView
 
 	private void asyncRefresh() {
 		Display display = SWTUtil.getStandardDisplay();
-		if (display==null) return;
+		if (display == null)
+			return;
 		if (viewer.getControl().isDisposed())
 			return;
 		display.asyncExec(new Runnable() {
@@ -955,5 +1142,106 @@ public class ConfigurationView
 			invertedArray[i] = array[array.length - 1 - i];
 		}
 		return invertedArray;
+	}
+	private int getStatusCode(IFeature feature, IStatus status) {
+		int code = status.getCode();
+		if (code == IFeature.STATUS_UNHAPPY) {
+			if (status.isMultiStatus()) {
+				IStatus[] children = status.getChildren();
+				for (int i = 0; i < children.length; i++) {
+					IStatus child = children[i];
+					if (child.isMultiStatus())
+						return code;
+					if (child.getCode() != IFeature.STATUS_DISABLED)
+						return code;
+				}
+				// If we are here, global status is unhappy
+				// because one or more included features
+				// is disabled.
+				if (arePatchesObsolete(feature)) {
+					// The disabled included features
+					// are old patches that are now
+					// subsumed by better versions of
+					// the features they were designed to
+					// patch.
+					return IFeature.STATUS_HAPPY;
+				}
+			}
+		}
+		return code;
+	}
+	private boolean arePatchesObsolete(IFeature feature) {
+		// Check all the included features that
+		// are unconfigured, and see if their patch 
+		// references are better than the original.
+		try {
+			IFeatureReference[] irefs = feature.getIncludedFeatureReferences();
+			for (int i = 0; i < irefs.length; i++) {
+				IFeatureReference iref = irefs[i];
+				IFeature ifeature = iref.getFeature();
+				IConfiguredSite csite = ifeature.getSite().getCurrentConfiguredSite();
+				if (!csite.isConfigured(ifeature)) {
+					if (!isPatchHappy(ifeature))
+						return false;
+				}
+			}
+		} catch (CoreException e) {
+			return false;
+		}
+		// All checks went well
+		return true;
+	}
+	private boolean isPatchHappy(IFeature feature) throws CoreException {
+		// If this is a patch and it includes 
+		// another patch and the included patch
+		// is disabled but the feature it was declared
+		// to patch is now newer (and is presumed to
+		// contain the now disabled patch), and
+		// the newer patched feature is enabled,
+		// a 'leap of faith' assumption can be
+		// made:
+
+		// Although the included patch is disabled,
+		// the feature it was designed to patch
+		// is now newer and most likely contains
+		// the equivalent fix and more. Consequently,
+		// we can claim that the status and the error
+		// icon overlay are misleading because
+		// all the right plug-ins are configured.
+		IImport[] imports = feature.getImports();
+		IImport patchReference = null;
+		for (int i = 0; i < imports.length; i++) {
+			IImport iimport = imports[i];
+			if (iimport.isPatch()) {
+				patchReference = iimport;
+				break;
+			}
+		}
+		if (patchReference == null)
+			return false;
+		VersionedIdentifier refVid = patchReference.getVersionedIdentifier();
+
+		// Find the patched feature and 
+		IConfiguredSite csite = feature.getSite().getCurrentConfiguredSite();
+		if (csite == null)
+			return false;
+
+		IFeatureReference[] crefs = csite.getConfiguredFeatures();
+		for (int i = 0; i < crefs.length; i++) {
+			IFeatureReference cref = crefs[i];
+			VersionedIdentifier cvid = cref.getVersionedIdentifier();
+			if (cvid.getIdentifier().equals(refVid.getIdentifier())) {
+				// This is the one.
+				if (cvid.getVersion().isGreaterThan(refVid.getVersion())) {
+					// Bingo: we found the referenced feature
+					// and its version is greater - 
+					// we can assume that it contains better code
+					// than the patch that referenced the
+					// older version.
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }

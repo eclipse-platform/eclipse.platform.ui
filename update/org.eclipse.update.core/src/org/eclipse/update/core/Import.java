@@ -3,10 +3,8 @@ package org.eclipse.update.core;
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
-import java.util.HashMap;
-import java.util.Map;
-
 import org.eclipse.update.core.model.ImportModel;
+import org.eclipse.update.internal.core.UpdateManagerUtils;
 
 /**
  * Convenience implementation of a plug-in dependency.
@@ -19,23 +17,13 @@ import org.eclipse.update.core.model.ImportModel;
  */
 public class Import extends ImportModel implements IImport {
 
-	private static Map table;
-
-	static {
-		table = new HashMap();
-		table.put("compatible", new Integer(IImport.RULE_COMPATIBLE)); //$NON-NLS-1$
-		table.put("perfect", new Integer(IImport.RULE_PERFECT)); //$NON-NLS-1$
-		table.put("equivalent", new Integer(IImport.RULE_EQUIVALENT)); //$NON-NLS-1$
-		table.put("greaterOrHigher", new Integer(IImport.RULE_GREATER_OR_EQUAL));
-		//$NON-NLS-1$
-	}
 
 	/**
 	 * Returns an identifier of the dependent plug-in.
 	 * @see IImport#getIdentifier()
 	 */
 	public VersionedIdentifier getVersionedIdentifier() {
-		return new VersionedIdentifier(getPluginIdentifier(), getPluginVersion());
+		return new VersionedIdentifier(getIdentifier(), getVersion());
 	}
 
 	/**
@@ -43,7 +31,15 @@ public class Import extends ImportModel implements IImport {
 	 * @see IImport#getRule()
 	 */
 	public int getRule() {
-		return ((Integer) table.get(getMatchingRuleName())).intValue();
+		return UpdateManagerUtils.getMatchingRule(getMatchingRuleName());
+	}
+
+	/**
+	 * Returns the dependency kind
+	 * @see org.eclipse.update.core.IImport#getKind()
+	 */
+	public int getKind() {
+		return isFeatureImport()?KIND_FEATURE:KIND_PLUGIN;
 	}
 
 }

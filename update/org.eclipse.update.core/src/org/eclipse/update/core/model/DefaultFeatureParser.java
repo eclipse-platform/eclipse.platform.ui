@@ -7,16 +7,13 @@ package org.eclipse.update.core.model;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.Iterator;
 import java.util.Stack;
 
 import org.apache.xerces.parsers.SAXParser;
 import org.eclipse.core.runtime.*;
-import org.eclipse.update.core.IncludedFeatureReference;
-import org.eclipse.update.core.VersionedIdentifier;
-import org.eclipse.update.internal.core.Policy;
-import org.eclipse.update.internal.core.UpdateManagerPlugin;
+import org.eclipse.update.core.*;
+import org.eclipse.update.internal.core.*;
 import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -90,6 +87,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 		super();
 		this.parser = new SAXParser();
 		this.parser.setContentHandler(this);
+		this.parser.setErrorHandler(this); // 18350		
 		this.factory = factory;
 	}
 
@@ -458,11 +456,27 @@ public class DefaultFeatureParser extends DefaultHandler {
 				stateStack.pop();
 				if (objectStack.peek() instanceof FeatureModel) {
 					featureModel = (FeatureModel) objectStack.peek();
-					if (featureModel.getImportModels().length == 0) {
+					ImportModel [] importModels = featureModel.getImportModels();
+					if (importModels.length == 0) {
 						internalError(
 							Policy.bind("DefaultFeatureParser.RequireStateWithoutImportElement"));
 						//$NON-NLS-1$
 						//$NON-NLS-1$
+					}
+					else {
+						boolean patchMode=false;
+						for (int i=0; i<importModels.length; i++) {
+							ImportModel importModel = importModels[i];
+							if (importModel.isPatch()) {
+								if (patchMode==false)
+									patchMode = true;
+								else {
+									internalError(
+										Policy.bind("DefaultFeatureParser.MultiplePatchImports"));
+									break;
+								}
+							}
+						}
 					}
 				}
 				break;
@@ -1044,10 +1058,25 @@ public class DefaultFeatureParser extends DefaultHandler {
 			
 		// name
 		String name = attributes.getValue("name");
+		
+		// optional
 		String optional = attributes.getValue("optional");
 		boolean isOptional = "true".equalsIgnoreCase(optional);
 		
-		objectStack.push(new IncludedFeatureReference(name,isOptional));
+		// match
+		String ruleName = attributes.getValue("match");
+		int rule = UpdateManagerUtils.getMatchingRule(ruleName);
+		
+		// search location
+		String locationName = attributes.getValue("search_location");
+		int searchLocation = IUpdateConstants.SEARCH_ROOT;
+		if("both".equalsIgnoreCase(locationName))
+			searchLocation = IUpdateConstants.SEARCH_ROOT & IUpdateConstants.SEARCH_SELF;
+		if("root".equalsIgnoreCase(locationName))
+			searchLocation = IUpdateConstants.SEARCH_ROOT;
+		
+		
+		objectStack.push(new IncludedFeatureReference(name,isOptional,rule, searchLocation));
 		objectStack.push(new VersionedIdentifier(id,ver));	
 			
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
@@ -1078,7 +1107,22 @@ public class DefaultFeatureParser extends DefaultHandler {
 	 * process import info
 	 */
 	private void processImport(Attributes attributes) {
-		String id = attributes.getValue("plugin"); //$NON-NLS-1$
+		String pluginID = attributes.getValue("plugin"); //$NON-NLS-1$
+		String featureID = attributes.getValue("feature"); //$NON-NLS-1$
+		
+		if(!(pluginID==null ^ featureID==null)) {
+			internalError(Policy.bind("DefaultFeatureParser.PluginAndFeatureId"));
+			return ;
+		}
+		
+		// since 2.0.2 , manage feature and plugin import
+		String id = null;
+		if (pluginID==null){
+			id = featureID;
+		} else {
+			id=pluginID;
+		}
+		
 		if (id == null || id.trim().equals("")) //$NON-NLS-1$
 			internalError(
 				Policy.bind("DefaultFeatureParser.MissingId", getState(currentState)));
@@ -1088,18 +1132,41 @@ public class DefaultFeatureParser extends DefaultHandler {
 			ImportModel imp = factory.createImportModel();
 			String ver = attributes.getValue("version"); //$NON-NLS-1$
 			String match = attributes.getValue("match"); //$NON-NLS-1$
-						
+			String patch = attributes.getValue("patch");
+
+			imp.setPatch(patch!=null && patch.equalsIgnoreCase("true"));
+
 			if (ver==null){
+				if (imp.isPatch()) {
+					internalError(
+						Policy.bind("DefaultFeatureParser.MissingPatchVersion"));
+				}
 				ver = "0.0.0";
-				match = "greaterOrHigher";
-			} else {
-				if (match==null)
+				match = "greaterOrEqual";
+			} else	if (match==null) {
+				if (imp.isPatch())
+					match = "perfect";
+				else
 					match = "compatible";
 			}
 			
-			imp.setPluginIdentifier(id);
-			imp.setPluginVersion(ver);
+			imp.setIdentifier(id);
+			imp.setVersion(ver);
+			imp.setFeatureImport(featureID!=null);
 			imp.setMatchingRuleName(match);
+			
+			if (imp.isPatch()) {
+				// patch reference must be perfect.
+				if (match!=null && !match.equalsIgnoreCase("perfect")) {
+					internalError(
+						Policy.bind("DefaultFeatureParser.wrongMatchForPatch"));
+				}
+				if (imp.isFeatureImport()==false) {
+					imp.setPatch(false);
+					internalError(
+						Policy.bind("DefaultFeatureParser.patchWithPlugin"));
+				}
+			}
 			objectStack.push(imp);
 
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {

@@ -6,6 +6,7 @@ package org.eclipse.update.internal.ui;
  */
 
 import java.lang.reflect.InvocationTargetException;
+import java.net.*;
 import java.net.Authenticator;
 import java.util.*;
 
@@ -252,12 +253,86 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 		}
 		return (IFeature[]) features.toArray(new IFeature[features.size()]);
 	}
+	
+	public static boolean isPatch(IFeature candidate) {
+		IImport[] imports = candidate.getImports();
+
+		for (int i = 0; i < imports.length; i++) {
+			IImport iimport = imports[i];
+			if (iimport.isPatch())
+				return true;
+		}
+		return false;
+	}
+	
+	public static boolean isPatch(
+		IFeature target,
+		IFeature candidate) {
+		VersionedIdentifier vid = target.getVersionedIdentifier();
+		IImport[] imports = candidate.getImports();
+		IImport reference = null;
+		for (int i = 0; i < imports.length; i++) {
+			IImport iimport = imports[i];
+			if (iimport.isPatch()) {
+				VersionedIdentifier ivid = iimport.getVersionedIdentifier();
+				if (vid.equals(ivid)) {
+					// Bingo.
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	public static IInstallConfiguration getBackupConfigurationFor(IFeature feature) {
+		VersionedIdentifier vid = feature.getVersionedIdentifier();
+		String key = "@"+vid.getIdentifier()+"_"+vid.getVersion();
+		try {
+			ILocalSite lsite = SiteManager.getLocalSite();
+			IInstallConfiguration [] configs = lsite.getPreservedConfigurations();
+			for (int i=0; i<configs.length; i++) {
+				IInstallConfiguration config = configs[i];
+				if (config.getLabel().startsWith(key))
+					return config;
+			}
+		}
+		catch (CoreException e) {
+		}
+		return null;
+	}
+
 	/**
 	 * Gets the database.
 	 * @return Returns a AuthorizationDatabase
 	 */
 	public AuthorizationDatabase getDatabase() {
 		return database;
+	}
+	
+	public static URL getOriginatingURL(String id) {
+		IDialogSettings section = getOriginatingURLSection();
+		String value=section.get(id);
+		if (value!=null) {
+			try {
+				return new URL(value);
+			}
+			catch (MalformedURLException e) {
+			}
+		}
+		return null;
+	}
+	
+	public static void setOriginatingURL(String id, URL url) {
+		IDialogSettings section = getOriginatingURLSection();
+		section.put(id, url.toString());
+	}
+	
+	private static IDialogSettings getOriginatingURLSection() {
+		IDialogSettings settings = getDefault().getDialogSettings();
+		IDialogSettings section = settings.getSection("originatingURLs");
+		if (section==null)
+			section = settings.addNewSection("originatingURLs");
+		return section;
 	}
 
 	private void readInfo() {

@@ -3,19 +3,11 @@ package org.eclipse.update.internal.model;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 
-import org.eclipse.core.boot.BootLoader;
-import org.eclipse.core.boot.IPlatformConfiguration;
-import org.eclipse.core.runtime.*;
-import org.eclipse.update.configuration.*;
-import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.ModelObject;
-import org.eclipse.update.internal.model.*;
-import org.xml.sax.SAXException;
 
 /**
  * This class manages the configurations.
@@ -141,7 +133,7 @@ public class SiteLocalModel extends ModelObject {
 	 */
 	public void setMaximumHistoryCount(int history) {
 		assertIsWriteable();
-		// this.history = history;
+		this.history = history;
 	}
 
 	
@@ -184,6 +176,12 @@ public class SiteLocalModel extends ModelObject {
 	public void setCurrentConfigurationModel(InstallConfigurationModel currentConfiguration) {
 		assertIsWriteable();
 		this.currentConfiguration = currentConfiguration;
+		
+		//2.0.2 set the configuredSite of sites
+		ConfiguredSiteModel[] confSites = currentConfiguration.getConfigurationSitesModel();
+		for (int i = 0; i < confSites.length; i++) {
+			confSites[i].getSiteModel().setConfiguredSiteModel(confSites[i]);
+		}
 	}
 
 	/*

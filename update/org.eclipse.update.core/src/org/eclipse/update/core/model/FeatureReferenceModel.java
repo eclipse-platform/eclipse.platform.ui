@@ -8,10 +8,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.update.core.IFeatureReference;
 import org.eclipse.update.core.IncludedFeatureReference;
-import org.eclipse.update.internal.core.UpdateManagerPlugin;
 import org.eclipse.update.internal.core.UpdateManagerUtils;
 
 /**
@@ -51,18 +48,11 @@ public class FeatureReferenceModel extends ModelObject {
 	 * Constructor FeatureReferenceModel.
 	 * @param ref
 	 */
-	public FeatureReferenceModel(IFeatureReference ref) {
-		try {
-			setFeatureIdentifier(ref.getVersionedIdentifier().getIdentifier());
-			setFeatureVersion(ref.getVersionedIdentifier().getVersion().toString());
-		} catch (CoreException e) {
-			UpdateManagerPlugin.warn("", e);
-		}
-		if (ref instanceof FeatureReferenceModel) {
-			FeatureReferenceModel refModel = (FeatureReferenceModel) ref;
-			setType(refModel.getType());
-			setCategoryNames(refModel.getCategoryNames());
-		}
+	public FeatureReferenceModel(FeatureReferenceModel ref) {
+		setFeatureIdentifier(ref.getFeatureIdentifier());
+		setFeatureVersion(ref.getFeatureVersion());
+		setType(ref.getType());
+		setCategoryNames(ref.getCategoryNames());
 	}
 
 	/**
@@ -301,8 +291,8 @@ public class FeatureReferenceModel extends ModelObject {
 	 * @return IncludedFeatureOptions
 	 */
 	public IncludedFeatureReference getOptions() {
-		return options;
-	}
+			return options;
+		}
 
 	/**
 	 * Sets the options.

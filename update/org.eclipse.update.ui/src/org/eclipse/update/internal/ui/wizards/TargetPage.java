@@ -24,7 +24,7 @@ import org.eclipse.update.internal.ui.*;
 import java.net.URL;
 import java.io.*;
 import org.eclipse.core.boot.IPlatformConfiguration;
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ErrorDialog;
 
 public class TargetPage extends BannerPage {
 	// NL keys
@@ -123,6 +123,8 @@ public class TargetPage extends BannerPage {
 		configListener = new ConfigListener();
 		defaultTargetSite = getDefaultTargetSite(config, pendingChange, false);
 		affinitySite = getAffinitySite(config, pendingChange.getFeature());
+		if (affinitySite==null)
+			affinitySite = pendingChange.getTargetSite();
 	}
 
 	public static IConfiguredSite getDefaultTargetSite(
@@ -302,7 +304,10 @@ public class TargetPage extends BannerPage {
 	private boolean getSiteVisibility(IConfiguredSite site) {
 		// If affinity site is known, only it should be shown
 		if (affinitySite!=null) {
-			return site.equals(affinitySite);
+			// Must compare referenced sites because
+			// configured sites themselves may come from 
+			// different configurations
+			return site.getSite().equals(affinitySite.getSite());
 		}
 			
 		// If this is the default target site, let it show
@@ -380,7 +385,7 @@ public class TargetPage extends BannerPage {
 							KEY_ERROR_REASON,
 							status.getMessage());
 					message = message + "\r\n" + message2;
-					MessageDialog.openError(shell, title, message);
+					ErrorDialog.openError(shell,title,message,status);
 					return false;
 				}
 			}

@@ -3,15 +3,10 @@ package org.eclipse.update.internal.model;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 
-import org.eclipse.core.boot.IPlatformConfiguration;
-import org.eclipse.core.runtime.*;
-import org.eclipse.update.core.*;
-import org.eclipse.update.core.model.*;
+import org.eclipse.update.core.IFeatureReference;
 import org.eclipse.update.core.model.FeatureReferenceModel;
 import org.eclipse.update.core.model.ModelObject;
 import org.eclipse.update.internal.core.UpdateManagerPlugin;
@@ -28,6 +23,9 @@ public class ConfigurationPolicyModel extends ModelObject {
 	private int policy;
 	private List /* of FeatureReferenceModel */configuredFeatureReferences;
 	private List /* of FeatureReferenceModel */unconfiguredFeatureReferences;
+	
+	// since 2.0.2
+	private ConfiguredSiteModel configuredSiteModel;
 
 	/**
 	 * Constructor for ConfigurationPolicyModel.
@@ -38,20 +36,6 @@ public class ConfigurationPolicyModel extends ModelObject {
 		unconfiguredFeatureReferences = new ArrayList();		
 	}
 
-	/**
-	 * Copy Constructor for ConfigurationPolicyModel.
-	 */
-	public ConfigurationPolicyModel(ConfigurationPolicyModel configPolicy) {
-		super();
-		this.policy = configPolicy.getPolicy();
-		configuredFeatureReferences = new ArrayList();
-		configuredFeatureReferences.addAll(Arrays.asList(configPolicy.getConfiguredFeaturesModel()));
-		unconfiguredFeatureReferences = new ArrayList();
-		unconfiguredFeatureReferences.addAll(Arrays.asList(configPolicy.getUnconfiguredFeaturesModel()));
-	}
-
-
-	
 	/**
 	 * @since 2.0
 	 */
@@ -84,6 +68,24 @@ public class ConfigurationPolicyModel extends ModelObject {
 	if (unconfiguredFeatureReferences==null || unconfiguredFeatureReferences.isEmpty())
 			return new FeatureReferenceModel[0];			
 		return (FeatureReferenceModel[]) unconfiguredFeatureReferences.toArray(arrayTypeFor(unconfiguredFeatureReferences));		
+	}
+
+	/**
+	 * Gets the configuredSiteModel.
+	 * @return Returns a ConfiguredSiteModel
+	 * @since 2.0.2
+	 */
+	public ConfiguredSiteModel getConfiguredSiteModel() {
+		return configuredSiteModel;
+	}
+
+	/**
+	 * Sets the configuredSiteModel.
+	 * @param configuredSiteModel The configuredSiteModel to set
+	 * @since 2.0.2
+	 */
+	public void setConfiguredSiteModel(ConfiguredSiteModel configuredSiteModel) {
+		this.configuredSiteModel = configuredSiteModel;
 	}
 
 	/**
@@ -200,18 +202,6 @@ public class ConfigurationPolicyModel extends ModelObject {
 		}
 	}
 	
-	
-	/**
-	 * Sets the configuredFeatureReferences.
-	 * @param configuredFeatureReferences The configuredFeatureReferences to set
-	 */
-	protected void setConfiguredFeatureReferences(IFeatureReference[] featureReferences) {
-		configuredFeatureReferences = new ArrayList();
-		configuredFeatureReferences.addAll(Arrays.asList(featureReferences));
-
-	}
-
-	
 	/**
 	 * Sets the unconfiguredFeatureReferences.
 	 * @param unconfiguredFeatureReferences The unconfiguredFeatureReferences to set
@@ -220,4 +210,18 @@ public class ConfigurationPolicyModel extends ModelObject {
 		unconfiguredFeatureReferences = new ArrayList();
 		unconfiguredFeatureReferences.addAll(Arrays.asList(featureReferences));
 	}
+
+
+	/**
+	 * Sets the configuredFeatureReferences.
+	 * @param configuredFeatureReferences The configuredFeatureReferences to set
+	 */
+	protected void setConfiguredFeatureReferences(IFeatureReference[] featureReferences) {
+		configuredFeatureReferences = new ArrayList();
+		configuredFeatureReferences.addAll(Arrays.asList(featureReferences));
+	
+	}
+
+
+	
 }

@@ -31,11 +31,13 @@ public class NewUpdatesWizardPage extends BannerPage {
 	// NL keys
 	private static final String KEY_TITLE = "NewUpdatesWizard.MainPage.title";
 	private static final String KEY_DESC = "NewUpdatesWizard.MainPage.desc";
+	private static final String KEY_TABLE_LABEL =
+		"NewUpdatesWizard.MainPage.tableLabel";
 	private static final String KEY_SELECT_ALL =
 		"NewUpdatesWizard.MainPage.selectAll";
 	private static final String KEY_DESELECT_ALL =
 		"NewUpdatesWizard.MainPage.deselectAll";
-	private static final String KEY_COUNTER = 
+	private static final String KEY_COUNTER =
 		"NewUpdatesWizard.MainPage.counter";
 	private static final String KEY_C_FEATURE =
 		"NewUpdatesWizard.MainPage.column.feature";
@@ -47,11 +49,18 @@ public class NewUpdatesWizardPage extends BannerPage {
 		"NewUpdatesWizard.MainPage.column.size";
 	private static final String KEY_UNKNOWN_SIZE =
 		"NewUpdatesWizard.MainPage.column.sizeUnknown";
+	private static final String KEY_FILTER_CHECK =
+		"NewUpdatesWizard.MainPage.filterCheck";
+	private static final String KEY_DUPLICATE_WARNING =
+		"NewUpdatesWizard.MainPage.duplicateWarning";
 	private CheckboxTableViewer tableViewer;
 	private IInstallConfiguration config;
 	private Image featureImage;
+	private Image efixImage;
 	private PendingChange[] pendingChanges;
 	private Label counterLabel;
+	private Button filterCheck;
+	private ContainmentFilter filter = new ContainmentFilter();
 
 	class TableContentProvider
 		extends DefaultContentProvider
@@ -72,8 +81,16 @@ public class NewUpdatesWizardPage extends BannerPage {
 		* @see ITableLabelProvider#getColumnImage(Object, int)
 		*/
 		public Image getColumnImage(Object obj, int col) {
-			if (col == 0)
-				return featureImage;
+			if (col == 0) {
+				try {
+					IFeature feature = ((IFeatureAdapter) obj).getFeature();
+					boolean patch = UpdateUIPlugin.isPatch(feature);
+					return patch?efixImage:featureImage;
+				}
+				catch (CoreException e) {
+					return featureImage;
+				}
+			}
 			else
 				return null;
 		}
@@ -114,6 +131,43 @@ public class NewUpdatesWizardPage extends BannerPage {
 		}
 	}
 
+	class ContainmentFilter extends ViewerFilter {
+		public boolean select(Viewer v, Object parent, Object child) {
+			return !isContained((PendingChange) child);
+		}
+		private boolean isContained(PendingChange job) {
+			VersionedIdentifier vid = job.getFeature().getVersionedIdentifier();
+			Object [] selected = tableViewer.getCheckedElements();
+			for (int i = 0; i < selected.length; i++) {
+				PendingChange candidate = (PendingChange)selected[i];
+				if (candidate.equals(job))
+					continue;
+				IFeature feature = candidate.getFeature();
+				if (includes(feature, vid))
+					return true;
+			}
+			return false;
+		}
+		private boolean includes(IFeature feature, VersionedIdentifier vid) {
+			try {
+				IFeatureReference[] irefs =
+					feature.getIncludedFeatureReferences();
+				for (int i = 0; i < irefs.length; i++) {
+					IFeatureReference iref = irefs[i];
+					IFeature ifeature = iref.getFeature();
+					VersionedIdentifier ivid =
+						ifeature.getVersionedIdentifier();
+					if (ivid.equals(vid))
+						return true;
+					if (includes(ifeature, vid))
+						return true;
+				}
+			} catch (CoreException e) {
+			}
+			return false;
+		}
+	}
+
 	/**
 	 * Constructor for ReviewPage
 	 */
@@ -126,6 +180,7 @@ public class NewUpdatesWizardPage extends BannerPage {
 		this.config = config;
 		this.pendingChanges = changes;
 		featureImage = UpdateUIPluginImages.DESC_FEATURE_OBJ.createImage();
+		efixImage = UpdateUIPluginImages.DESC_EFIX_OBJ.createImage();
 		setBannerVisible(false);
 	}
 
@@ -133,6 +188,10 @@ public class NewUpdatesWizardPage extends BannerPage {
 		if (featureImage != null) {
 			featureImage.dispose();
 			featureImage = null;
+		}
+		if (efixImage != null) {
+			efixImage.dispose();
+			efixImage = null;
 		}
 		super.dispose();
 	}
@@ -182,8 +241,26 @@ public class NewUpdatesWizardPage extends BannerPage {
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan = 2;
 		counterLabel.setLayoutData(gd);
+		filterCheck = new Button(client, SWT.CHECK);
+		filterCheck.setText(UpdateUIPlugin.getResourceString(KEY_FILTER_CHECK));
+		filterCheck.setSelection(true);
+		tableViewer.addFilter(filter);
+		filterCheck.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if (filterCheck.getSelection())
+					tableViewer.addFilter(filter);
+				else
+					tableViewer.removeFilter(filter);
+				pageChanged();
+			}
+		});
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.horizontalSpan = 2;
+		filterCheck.setLayoutData(gd);
 		pageChanged();
-		WorkbenchHelp.setHelp(client, "org.eclipse.update.ui.NewUpdatesWizardPage");
+		WorkbenchHelp.setHelp(
+			client,
+			"org.eclipse.update.ui.NewUpdatesWizardPage");
 		return client;
 	}
 
@@ -194,19 +271,42 @@ public class NewUpdatesWizardPage extends BannerPage {
 
 	private void pageChanged() {
 		Object[] checked = tableViewer.getCheckedElements();
+		int totalCount = tableViewer.getTable().getItemCount();
 		setPageComplete(checked.length > 0);
-		String total = ""+pendingChanges.length;
-		String selected = ""+checked.length;
-		counterLabel.setText(UpdateUIPlugin.getFormattedMessage(KEY_COUNTER, 
-					new String [] {selected, total}));
+		String total = "" + totalCount;
+		String selected = "" + checked.length;
+		counterLabel.setText(
+			UpdateUIPlugin.getFormattedMessage(
+				KEY_COUNTER,
+				new String[] { selected, total }));
+		boolean duplicates = false;
+		for (int i = 0; i < checked.length; i++) {
+			PendingChange job = (PendingChange) checked[i];
+			if (filter.isContained(job)) {
+				duplicates = true;
+				break;
+			}
+		}
+		if (!duplicates)
+			setMessage(null);
+		else
+			setMessage(
+				UpdateUIPlugin.getResourceString(KEY_DUPLICATE_WARNING),
+				WARNING);
 	}
 
 	private void createTableViewer(Composite parent) {
+		Label label = new Label(parent, SWT.NULL);
+		label.setText(UpdateUIPlugin.getResourceString(KEY_TABLE_LABEL));
+		GridData gd = new GridData();
+		gd.horizontalSpan = 2;
+		label.setLayoutData(gd);
+		
 		tableViewer =
 			CheckboxTableViewer.newCheckList(
 				parent,
 				SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
-		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd = new GridData(GridData.FILL_BOTH);
 		Table table = tableViewer.getTable();
 		table.setHeaderVisible(true);
 
@@ -252,16 +352,16 @@ public class NewUpdatesWizardPage extends BannerPage {
 		System.arraycopy(selected, 0, jobs, 0, selected.length);
 		return jobs;
 	}
-	
-	public PendingChange [] getSelectedJobsWithLicenses() {
+
+	public PendingChange[] getSelectedJobsWithLicenses() {
 		Object[] selected = tableViewer.getCheckedElements();
 		ArrayList list = new ArrayList();
-		for (int i=0; i<selected.length; i++) {
-			PendingChange job = (PendingChange)selected[i];
+		for (int i = 0; i < selected.length; i++) {
+			PendingChange job = (PendingChange) selected[i];
 			if (UpdateModel.hasLicense(job))
 				list.add(job);
 		}
-		return (PendingChange[])list.toArray(new PendingChange[list.size()]);
+		return (PendingChange[]) list.toArray(new PendingChange[list.size()]);
 	}
-		
+
 }

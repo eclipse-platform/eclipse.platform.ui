@@ -6,6 +6,7 @@ package org.eclipse.update.core;
 
 import java.io.*;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
@@ -20,8 +21,9 @@ import org.eclipse.update.internal.core.UpdateManagerPlugin;
 public class Utilities {
 
 	private static Map entryMap;
+	private static Map timerMap = new HashMap();
 	private static Stack bufferPool;
-	private static final int BUFFER_SIZE = 4096;
+	private static final int BUFFER_SIZE = 4096; //256K
 	private static final DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, Locale.getDefault());
 	private static long tmpseed = (new Date()).getTime();
 	private static String dirRoot = null;
@@ -58,19 +60,17 @@ public class Utilities {
 
 	/**
 	 * Create a new working file. The file is marked for deletion on exit.
-	 * The file is optionally associated with a lookup key.
 	 * 
 	 * @see #lookupLocalFile(String)
 	 * @param tmpDir directory location for new file. Any missing directory
 	 * levels are created (and marked for deletion on exit)
-	 * @param key optional lookup key, or <code>null</code>.
 	 * @param name optional file name, or <code>null</code>. If name is not
 	 * specified, a temporary name is generated.
 	 * @return created working file
 	 * @exception IOException
 	 * @since 2.0
 	 */
-	public static synchronized File createLocalFile(File tmpDir, String key, String name) throws IOException {
+	public static synchronized File createLocalFile(File tmpDir, String name) throws IOException {
 		// create the local file
 		File temp;
 		String filePath;
@@ -87,13 +87,22 @@ public class Utilities {
 		temp.deleteOnExit();
 		verifyPath(temp, true);
 
+		return temp;
+	}
+
+	/**
+	 * The file is associated with a lookup key.
+	 * @param key optional lookup key, or <code>null</code>.
+	 * @param temp the local working file
+	 * @since 2.0.2
+	 */
+	public synchronized static void mapLocalFile(String key, File temp) {
 		// create file association 
 		if (key != null) {
 			if (entryMap == null)
 				entryMap = new HashMap();
 			entryMap.put(key, temp);
 		}
-		return temp;
 	}
 
 	/**
@@ -230,10 +239,9 @@ public class Utilities {
 
 		IStatus childStatus1 = ((CoreException) e1).getStatus();
 		IStatus childStatus2 = ((CoreException) e2).getStatus();
-		int code = (childStatus1.getCode()==childStatus2.getCode())?childStatus1.getCode():IStatus.OK;
+		int code = (childStatus1.getCode() == childStatus2.getCode()) ? childStatus1.getCode() : IStatus.OK;
 		MultiStatus multi = new MultiStatus(id, code, s, null);
-		
-						
+
 		multi.add(childStatus1);
 		multi.addAll(childStatus1);
 		multi.add(childStatus2);
@@ -324,6 +332,26 @@ public class Utilities {
 		if (bufferPool == null)
 			bufferPool = new Stack();
 		bufferPool.push(buf);
+	}
+
+	public static void startTimer(String task) {
+		Date d = new Date();
+		//UpdateManagerPlugin.debug("TIMER: start " + task + " " + format(d));
+		timerMap.put(task, d);
+	}
+
+	public static void stopTimer(String task) {
+		Date d = new Date();
+		//UpdateManagerPlugin.debug("TIMER: stop " + task + " " + format(d));
+		Date start = (Date) timerMap.get(task);
+		if (start == null) {
+			//UpdateManagerPlugin.debug("Unknown task:" + task);
+			return;
+		}
+		long diff = d.getTime() - start.getTime();
+		Date delta = new Date(diff);
+		SimpleDateFormat simple = new SimpleDateFormat("mm:ss:SS");
+		//UpdateManagerPlugin.debug("TIMER:" + task + " " + simple.format(delta));
 	}
 
 }

@@ -11,11 +11,15 @@ package org.eclipse.update.core;
  * Clients may instantiate; not intended to be subclassed by clients.
  * </p> 
  * @see org.eclipse.update.core.VersionedIdentifier
- * @since 2.0
+ * @since 2.0.1
  */
 public class IncludedFeatureReference extends FeatureReference implements IIncludedFeatureReference {
 	private boolean isOptional;
 	private String name;
+	
+	// since 2.0.2
+	private int matchingRule;
+	private int searchLocation;
 
 	/**
 	 * Construct a feature options from a string and a boolean
@@ -24,11 +28,31 @@ public class IncludedFeatureReference extends FeatureReference implements IInclu
 	 * 
 	 * @param name string representation of the feature
 	 * @param isOptional <code>true</code> if the feature is optional, <code>false</code> otherwise.
+	 * @deprecated use other constructor
 	 * @since 2.0.1
 	 */
 	public IncludedFeatureReference(String name, boolean isOptional) {
 		this.isOptional = isOptional;
 		this.name = name;
+		this.matchingRule = IImport.RULE_PERFECT;
+		this.searchLocation=IUpdateConstants.SEARCH_ROOT;
+	}
+
+
+	/**
+	 * Construct a feature options 
+	 * 
+	 * @param name string representation of the feature
+	 * @param isOptional <code>true</code> if the feature is optional, <code>false</code> otherwise.
+	 * @param matchingRule the matching rule
+	 * @param searchLocation the location to search for this feature's updates.
+	 * @since 2.0.2
+	 */
+	public IncludedFeatureReference(String name, boolean isOptional, int matchingRule, int searchLocation) {
+		this.isOptional = isOptional;
+		this.name = name;
+		this.matchingRule = matchingRule;
+		this.searchLocation=searchLocation;
 	}
 
 	/**
@@ -51,4 +75,37 @@ public class IncludedFeatureReference extends FeatureReference implements IInclu
 		return name;
 	}
 
+	/**
+	 * Returns the matching rule for this included feature.
+	 * The rule will determine the ability of the included feature to move version 
+	 * without causing the overall feature to appear broken.
+	 * 
+	 * The default is <code>MATCH_PERFECT</code>
+	 * 
+	 * @see IImport#RULE_PERFECT
+	 * @see IImport#RULE_EQUIVALENT
+	 * @see IImport#RULE_COMPATIBLE
+	 * @see IImport#RULE_GREATER_OR_EQUAL
+	 * @return int representation of feature matching rule.
+	 * @since 2.0.2
+	 */
+	public int getMatch(){
+		return matchingRule;
+	}
+	
+	/**
+	 * Returns the search location for this included feature.
+	 * The location will be used to search updates for this feature.
+	 * 
+	 * The default is <code>SEARCH_ROOT</code>
+	 * 
+	 * @see IFeatureReference#SEARCH_ROOT
+	 * @see IFeatureReference#SEARCH_SELF
+	 * @return int representation of feature searching rule.
+	 * @since 2.0.2
+	 */
+
+	public int getSearchLocation(){
+		return searchLocation;
+	}
 }

@@ -8,23 +8,17 @@ import java.net.URL;
 import java.util.*;
 
 import org.eclipse.core.boot.IPlatformConfiguration;
-import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.update.configuration.*;
 import org.eclipse.update.configuration.IActivity;
 import org.eclipse.update.configuration.IConfiguredSite;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.FeatureReferenceModel;
-import org.eclipse.update.internal.model.ConfigurationActivityModel;
 import org.eclipse.update.internal.model.ConfigurationPolicyModel;
 
 /**
  * 
  */
 public class ConfigurationPolicy extends ConfigurationPolicyModel {
-
-	private IConfiguredSite configuredSite;
 
 	/**
 	 * Constructor for ConfigurationPolicyModel.
@@ -40,7 +34,7 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 		setPolicy(configPolicy.getPolicy());
 		setConfiguredFeatureReferences(configPolicy.getConfiguredFeatures());
 		setUnconfiguredFeatureReferences(configPolicy.getUnconfiguredFeatures());
-		setConfiguredSite(configPolicy.getConfiguredSite());
+		setConfiguredSiteModel(configPolicy.getConfiguredSiteModel());						
 	}
 
 	/**
@@ -136,7 +130,7 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 			if (activity != null) {
 				InstallConfiguration installConfig = (InstallConfiguration) SiteManager.getLocalSite().getCurrentConfiguration();
 				activity.setStatus(IActivity.STATUS_OK);
-				installConfig.addActivityModel((ConfigurationActivityModel) activity);
+				installConfig.addActivity(activity);
 			}
 
 			if (handler != null)
@@ -234,7 +228,7 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 				// everything done ok
 				if (activity != null) {
 					activity.setStatus(IActivity.STATUS_OK);
-					installConfig.addActivityModel((ConfigurationActivityModel) activity);
+					installConfig.addActivity(activity);
 				}
 				success = true;
 			//} else {
@@ -281,7 +275,11 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 		if (getPolicy() == IPlatformConfiguration.ISitePolicy.USER_EXCLUDE) {
 			//	EXCLUDE: return unconfigured plugins MINUS any plugins that
 			//           are configured
+			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_CONFIGURATION)
+				UpdateManagerPlugin.warn("UNCONFIGURED PLUGINS");			
 			String[] unconfigured = getPluginString(site, getUnconfiguredFeatures());
+			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_CONFIGURATION)
+				UpdateManagerPlugin.warn("CONFIGURED PLUGINS");			
 			String[] configured = getPluginString(site, getConfiguredFeatures());
 			pluginsToWrite = delta(configured, unconfigured);
 		} else {
@@ -358,15 +356,7 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 	 * @return Returns a IConfiguredSite
 	 */
 	public IConfiguredSite getConfiguredSite() {
-		return configuredSite;
-	}
-
-	/**
-	 * Sets the configuredSite.
-	 * @param configuredSite The configuredSite to set
-	 */
-	public void setConfiguredSite(IConfiguredSite configuredSite) {
-		this.configuredSite = configuredSite;
+		return (IConfiguredSite)getConfiguredSiteModel();
 	}
 
 	/**
@@ -432,6 +422,8 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 								path += entry.isFragment() ? "fragment.xml" : "plugin.xml";
 								//$NON-NLS-1$ //$NON-NLS-2$
 								pluginsString.add(path);
+								if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_CONFIGURATION)
+									UpdateManagerPlugin.warn("Add plugin: "+path+" to the list");
 							}
 						}
 					}
@@ -468,8 +460,9 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 		List list1 = new ArrayList();
 		list1.addAll(Arrays.asList(allPlugins));
 		for (int i = 0; i < pluginsToRemove.length; i++) {
-			if (list1.contains(pluginsToRemove[i]))
+			if (list1.contains(pluginsToRemove[i])){
 				list1.remove(pluginsToRemove[i]);
+			}
 		}
 
 		String[] resultEntry = new String[list1.size()];
@@ -508,38 +501,5 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 			list1.toArray(resultEntry);
 
 		return resultEntry;
-	}
-
-	/*
-	 * since 2.0.1 we have to check that the parent doesn't consider it
-	 * as optional. 
-	 */
-	private boolean validateNoConfiguredParents(IFeature feature) throws CoreException {
-		if (feature == null) {
-			UpdateManagerPlugin.warn("ConfigurationPolicy: validate Feature is null");
-			return true;
-		}
-
-		IFeatureReference[] parents = UpdateManagerUtils.getParentFeatures(feature, getConfiguredFeatures(), false);
-		if (parents.length == 0)
-			return true;
-
-		// if all parents consider me optional return true
-		IFeatureReference[] parentsOptional = UpdateManagerUtils.getParentFeatures(feature, getConfiguredFeatures(), true);
-		if (parents.length == parentsOptional.length)
-			return true;
-
-		String msg = Policy.bind("ConfigurationPolicy.UnableToDisable", feature.getLabel());
-		UpdateManagerPlugin.warn(msg);
-		IFeature parentFeature = null;
-		for (int i = 0; i < parents.length; i++) {
-			try {
-				parentFeature = parents[i].getFeature();
-			} catch (CoreException e) {
-			}
-			String featureLabel = (parentFeature == null) ? parents[i].getURL().toExternalForm() : parentFeature.getLabel();
-			UpdateManagerPlugin.warn(Policy.bind("ConfigurationPolicy.ParentIsEnable",featureLabel));
-		}
-		return false;
 	}
 }

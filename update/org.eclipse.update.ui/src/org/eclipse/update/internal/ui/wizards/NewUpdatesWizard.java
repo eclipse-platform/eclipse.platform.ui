@@ -16,6 +16,7 @@ import org.eclipse.update.configuration.IConfiguredSite;
 import org.eclipse.update.configuration.IInstallConfiguration;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.InstallAbortedException;
+import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.UpdateUIPlugin;
 import org.eclipse.update.internal.ui.UpdateUIPluginImages;
 import org.eclipse.update.internal.ui.forms.ActivityConstraints;
@@ -105,13 +106,20 @@ public class NewUpdatesWizard extends Wizard {
 			return false;
 		}
 		
+		// Check for duplication conflicts
+		ArrayList conflicts = DuplicateConflictsDialog.computeDuplicateConflicts(selectedJobs, config);
+		if (conflicts!=null) {
+			DuplicateConflictsDialog dialog = new DuplicateConflictsDialog(getShell(), conflicts);
+			if (dialog.open()!=0) return false;
+		}
+		
 		// ok to continue		
 		IRunnableWithProgress operation = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor)
 				throws InvocationTargetException {
 				try {
 					installCount = 0;
-					InstallWizard.makeConfigurationCurrent(config);
+					InstallWizard.makeConfigurationCurrent(config, null);
 					execute(selectedJobs, monitor);
 				} catch (InstallAbortedException e) {
 					throw new InvocationTargetException(e);
@@ -201,12 +209,13 @@ public class NewUpdatesWizard extends Wizard {
 			reinstall=true;
 		}
 		ArrayList optionalElements = new ArrayList();
-		FeatureHierarchyElement.computeElements(
+		boolean hasOptionalFeatures = FeatureHierarchyElement.computeElements(
 			oldFeature,
 			feature,
 			oldFeature != null,
 			optionalElements);
-		optionalFeatures = computeOptionalFeatures(optionalElements, oldFeature!=null);
+		if (hasOptionalFeatures)
+			optionalFeatures = computeOptionalFeatures(optionalElements, oldFeature!=null);
 		IConfiguredSite targetSite =
 			TargetPage.getDefaultTargetSite(config, job);
 		if (optionalFeatures!=null)
@@ -232,7 +241,6 @@ public class NewUpdatesWizard extends Wizard {
 				update,
 				set);
 		}
-		if (set.isEmpty()) return null;
 		return (IFeatureReference[]) set.toArray(
 			new IFeatureReference[set.size()]);
 	}
@@ -265,7 +273,10 @@ public class NewUpdatesWizard extends Wizard {
 	private boolean unconfigure(IFeature feature) throws CoreException {
 		IConfiguredSite site = findConfigSite(feature, config);
 		if (site != null) {
-			return site.unconfigure(feature);
+			PatchCleaner cleaner = new PatchCleaner(site, feature);
+			boolean result = site.unconfigure(feature);
+			cleaner.dispose();
+			return result;
 		}
 		return false;
 	}

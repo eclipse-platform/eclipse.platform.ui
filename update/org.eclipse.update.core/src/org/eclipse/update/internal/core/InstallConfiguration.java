@@ -15,7 +15,6 @@ import org.eclipse.core.runtime.model.PluginDescriptorModel;
 import org.eclipse.core.runtime.model.PluginFragmentModel;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.core.model.FeatureReferenceModel;
 import org.eclipse.update.core.model.SiteModel;
 import org.eclipse.update.internal.model.*;
 
@@ -35,35 +34,29 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 	}
 
 	/*
-	 * default constructor. 
-	 */
-	public InstallConfiguration(URL newLocation, String label) throws MalformedURLException {
-		setLocationURLString(newLocation.toExternalForm());
-		setLabel(label);
-		setCurrent(false);
-		resolve(newLocation, null);
-	}
-
-	/*
 	 * copy constructor
 	 */
 	public InstallConfiguration(IInstallConfiguration config, URL newLocation, String label) throws MalformedURLException {
 		setLocationURLString(newLocation.toExternalForm());
 		setLabel(label);
+		
 		// do not copy list of listeners nor activities
 		// make a copy of the siteConfiguration object
 		if (config != null) {
-			IConfiguredSite[] sites = config.getConfiguredSites();
-			if (sites != null) {
-				for (int i = 0; i < sites.length; i++) {
-					ConfiguredSite configSite = new ConfiguredSite(sites[i]);
+			IConfiguredSite[] csites = config.getConfiguredSites();
+			if (csites != null) {
+				for (int i = 0; i < csites.length; i++) {
+					ConfiguredSite configSite = new ConfiguredSite(csites[i]);
 					addConfigurationSiteModel(configSite);
 				}
-			}
+			}			
 		}
-		// set dummy date as caller can call set date if the
+		
+		// set dummy date and timeline as caller can call set date if the
 		// date on the URL string has to be the same 
-		setCreationDate(new Date());
+		Date now = new Date();
+		setCreationDate(now);
+		setTimeline(now.getTime());
 		setCurrent(false);
 		resolve(newLocation, null);
 	}
@@ -212,8 +205,17 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 
 		// everything done ok
 		activity.setStatus(IActivity.STATUS_OK);
-		this.addActivityModel((ConfigurationActivityModel) activity);
+		this.addActivity(activity);
 	}
+
+	/**
+	 * Method addActivity.
+	 * @param activity
+	 */
+	public void addActivity(IActivity activity) {
+		addActivityModel((ConfigurationActivityModel)activity);
+	}
+
 
 	/*
 	 * 
@@ -233,7 +235,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			activity.setLabel(site.getSite().getURL().toExternalForm());
 			activity.setDate(new Date());
 			activity.setStatus(IActivity.STATUS_OK);
-			this.addActivityModel((ConfigurationActivityModel) activity);
+			this.addActivity(activity);
 		}
 	}
 
@@ -355,9 +357,11 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		try {
 			runtimeConfiguration.save();
 		} catch (IOException e) {
-			throw Utilities.newCoreException(Policy.bind("InstallConfiguration.UnableToSavePlatformConfiguration", runtimeConfiguration.getConfigurationLocation().toExternalForm()), e);
+			CoreException exc = Utilities.newCoreException(Policy.bind("InstallConfiguration.UnableToSavePlatformConfiguration", runtimeConfiguration.getConfigurationLocation().toExternalForm()), e);
 			//$NON-NLS-1$
+			UpdateManagerPlugin.warn("",exc);
 		}
+		
 	}
 
 	/*
@@ -386,7 +390,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			throw Utilities.newCoreException(Policy.bind("InstallConfiguration.UnableToCast"), e);
 			//$NON-NLS-1$
 		}
-
+		
 		// update runtime configuration [18520]
 		// Note: we must not blindly replace the site entries because they
 		//       contain additional runtime state that needs to be preserved.
@@ -499,6 +503,10 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		if ("file".equalsIgnoreCase(getURL().getProtocol())) { //$NON-NLS-1$
 			// the location points to a file
 			File file = new File(getURL().getFile());
+			if (!file.exists()) {
+				//log + 24642 [works for all activities]
+				UpdateManagerPlugin.log(this);	
+			}
 			if (isTransient)
 				file.deleteOnExit();
 			export(file);
@@ -521,6 +529,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		//$NON-NLS-1$ //$NON-NLS-2$
 		long time = (getCreationDate() != null) ? getCreationDate().getTime() : 0L;
 		w.print("date=\"" + time + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
+		w.print("timeline=\"" + getTimeline() + "\" "); //$NON-NLS-1$ //$NON-NLS-2$		
 		w.println(">"); //$NON-NLS-1$
 
 		// site configurations

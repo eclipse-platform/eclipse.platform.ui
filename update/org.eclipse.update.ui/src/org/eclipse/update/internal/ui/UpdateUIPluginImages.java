@@ -64,6 +64,7 @@ public class UpdateUIPluginImages {
 	public static final ImageDescriptor DESC_COMPUTER_OBJ = create(PATH_OBJ, "computer_obj.gif");
 	public static final ImageDescriptor DESC_CONFIG_OBJ = create(PATH_OBJ, "config_obj.gif");
 	public static final ImageDescriptor DESC_FEATURE_OBJ = create(PATH_OBJ, "feature_obj.gif");
+	public static final ImageDescriptor DESC_EFIX_OBJ = create(PATH_OBJ, "efix_obj.gif");
 	public static final ImageDescriptor DESC_FLOPPY_OBJ = create(PATH_OBJ, "floppy_obj.gif");
 	public static final ImageDescriptor DESC_HISTORY_OBJ = create(PATH_OBJ, "history_obj.gif");
 	public static final ImageDescriptor DESC_LSITE_OBJ = create(PATH_OBJ, "lsite_obj.gif");
@@ -76,17 +77,19 @@ public class UpdateUIPluginImages {
 	public static final ImageDescriptor DESC_VREMOTE_OBJ = create(PATH_OBJ, "vremote_obj.gif");
 	public static final ImageDescriptor DESC_VREMOVABLE_OBJ = create(PATH_OBJ, "vremovable_obj.gif");
 	public static final ImageDescriptor DESC_NOTINST_FEATURE_OBJ = create(PATH_OBJ, "notinstalled_feature_obj.gif");	
-
+	public static final ImageDescriptor DESC_SHOW_SEARCH = create(PATH_OBJ, "tsearch_obj.gif");
 
 	
 	/**
 	 * OVR16
 	 */
 	public static final ImageDescriptor DESC_LINKED_CO   = create(PATH_OVR, "linked_co.gif");
+	public static final ImageDescriptor DESC_UPDATED_CO   = create(PATH_OVR, "updated_co.gif");
 	public static final ImageDescriptor DESC_INSTALLABLE_CO = create(PATH_OVR, "installable_co.gif");
 	public static final ImageDescriptor DESC_CURRENT_CO = create(PATH_OVR, "current_co.gif");
 	public static final ImageDescriptor DESC_ERROR_CO = create(PATH_OVR, "error_co.gif");
 	public static final ImageDescriptor DESC_WARNING_CO = create(PATH_OVR, "warning_co.gif");
+	public static final ImageDescriptor DESC_MOD_CO = create(PATH_OVR, "mod_co.gif");
 
 	/**
 	 * VIEW16

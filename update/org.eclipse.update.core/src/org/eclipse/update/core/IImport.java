@@ -20,43 +20,19 @@ import org.eclipse.core.runtime.IAdaptable;
  * @see org.eclipse.update.core.Import
  * @since 2.0
  */
-public interface IImport extends IAdaptable {
+public interface IImport extends IAdaptable, IUpdateConstants {
 
 	/**
-	 * No matching rule specified 
-	 * @since 2.0
+	 * The import relates to a plugin
+	 * @since 2.0.2
 	 */
-	public static final int RULE_NONE = 0;
-
+	public static final int KIND_PLUGIN = 0;
+	
 	/**
-	 * Dependency can be satisfied only with plug-in version matching 
-	 * exactly the specified version.
-	 * @since 2.0
+	 * The import relates to a feature
+	 * @since 2.0.2
 	 */
-	public static final int RULE_PERFECT = 1;
-
-	/**
-	 * Dependency can be satisfied only with plug-in version that is 
-	 * equivalent to the specified version (same major and minor version
-	 * identifier, greater than or equal service identifier).
-	 * @since 2.0
-	 */
-	public static final int RULE_EQUIVALENT = 2;
-
-	/**
-	 * Dependency can be satisfied only with plug-in version that is 
-	 * compatible with the specified version (either is equivalent,
-	 * or greater minor identifier (but same major identifier)).
-	 * @since 2.0
-	 */
-	public static final int RULE_COMPATIBLE = 3;
-
-	/**
-	 * Dependency can be satisfied only with plug-in version that is 
-	 * greater or equal to the specified version.
-	 * @since 2.0
-	 */
-	public static final int RULE_GREATER_OR_EQUAL = 4;
+	public static final int KIND_FEATURE = 1;
 
 	/** 
 	 * Returns an identifier of the dependent plug-in.
@@ -73,4 +49,26 @@ public interface IImport extends IAdaptable {
 	 * @since 2.0 
 	 */
 	public int getRule();
+	
+	/**
+	 * Returns the dependency kind
+	 * 
+	 * @see KIND_PLUGIN
+	 * @see KIND_FEATURE
+	 * @return KIND_PLUGIN if the dependency relates to a plugin, 
+	 * KIND_FEATURE if the dependency relates to a feature.
+	 */
+	public int getKind();
+	
+	/**
+	 * Returns the patch mode. If the import is in patch mode,
+	 * the referenced feature is considered a patch target,
+	 * and the feature that owns the import is patch carrier.
+	 * Patch carrier and patched feature are linked in a
+	 * distinct way: if a patched feature is disabled,
+	 * all the patches are disabled with it.
+	 * @return true if the element represents a patch
+	 * reference, false otherwise.
+	 */
+	public boolean isPatch();
 }
