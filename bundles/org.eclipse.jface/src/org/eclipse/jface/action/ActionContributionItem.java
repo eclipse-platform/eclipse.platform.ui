@@ -428,7 +428,7 @@ public class ActionContributionItem extends ContributionItem {
 	}
 	
 	/**
-	 * Returns the presentation mode, which is the inclusive-or of the 
+	 * Returns the presentation mode, which is the bitwise-or of the 
 	 * <code>MODE_*</code> constants.  The default mode setting is 0, meaning
 	 * that for menu items, both text and image are shown (if present), but for
 	 * tool items, the text is shown only if there is no image.
@@ -624,7 +624,7 @@ public class ActionContributionItem extends ContributionItem {
 	}
 
 	/**
-	 * Sets the presentation mode, which is the inclusive-or of the 
+	 * Sets the presentation mode, which is the bitwise-or of the 
 	 * <code>MODE_*</code> constants.
 	 * 
 	 * @return the presentation mode settings
