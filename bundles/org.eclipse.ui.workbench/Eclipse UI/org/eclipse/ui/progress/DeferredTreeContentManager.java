@@ -209,7 +209,6 @@ public class DeferredTreeContentManager {
 
 				//Prevent extra redraws on deletion and addition
 				treeViewer.getControl().setRedraw(false);
-				clearPlaceholder(placeholder);
 				treeViewer.add(parent, children);
 				treeViewer.getControl().setRedraw(true);
 
