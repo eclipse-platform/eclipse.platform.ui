@@ -222,8 +222,13 @@ public abstract class PerspectiveMenu extends ContributionItem {
 	 * @return an <code>ArrayList<code> of perspective items <code>IPerspectiveDescriptor</code>
 	 */
 	protected ArrayList getPerspectiveItems() {
-		ArrayList list = new ArrayList(MAX_PERSPECTIVE_ITEMS);
-		int emptySlots = MAX_PERSPECTIVE_ITEMS;
+		/* Allow the user to see all the perspectives they have 
+	 	 * selected via Customize Perspective. Bugzilla bug #23445 */
+		ArrayList shortcuts = getPerspectiveShortcuts();		
+		int emptySlots = shortcuts.size();
+		if (emptySlots < MAX_PERSPECTIVE_ITEMS)
+			emptySlots = MAX_PERSPECTIVE_ITEMS;
+		ArrayList list = new ArrayList(emptySlots);
 
 		// Add default perspective.
 		String id = reg.getDefaultPerspective();
@@ -234,7 +239,6 @@ public abstract class PerspectiveMenu extends ContributionItem {
 		}
 
 		// Add perspective shortcuts from the active perspective
-		ArrayList shortcuts = getPerspectiveShortcuts();
 		int size = shortcuts.size();
 		for (int i = 0; i < size && emptySlots > 0; i++) {
 			if (!list.contains(shortcuts.get(i))) {
@@ -258,7 +262,7 @@ public abstract class PerspectiveMenu extends ContributionItem {
 
 		return list;
 	}
-	
+
 	/**
 	 * Returns whether the menu item representing the active perspective
 	 * will have a check mark.
