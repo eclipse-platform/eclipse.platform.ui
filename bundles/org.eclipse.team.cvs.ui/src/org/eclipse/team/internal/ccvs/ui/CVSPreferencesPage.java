@@ -6,11 +6,14 @@ package org.eclipse.team.internal.ccvs.ui;
  */
 
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -134,6 +137,17 @@ public class CVSPreferencesPage
 		considerContentsInCompare.setToolTipText(Policy.bind("CVSPreferencePage.considerContentsInCompareTooltip"));
 		
 		initializeValues();
+		
+		quietnessCombo.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
+				if (getQuietnessOptionFor(quietnessCombo.getSelectionIndex()).equals(Command.SILENT)) {
+					MessageDialog.openWarning(getShell(), Policy.bind("CVSPreferencePage.silentWarningTitle"), Policy.bind("CVSPreferencePage.silentWarningMessage"));
+				}
+			}
+			public void widgetDefaultSelected(SelectionEvent e) {
+				widgetSelected(e);
+			}
+		});
 
 		return composite;
 	}
