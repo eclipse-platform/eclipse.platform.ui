@@ -33,6 +33,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentDescription;
 
 import org.eclipse.core.filebuffers.FileBuffers;
+import org.eclipse.core.filebuffers.IPersistableAnnotationModel;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 
 import org.eclipse.jface.text.DocumentEvent;
@@ -96,6 +97,8 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 	private String fExplicitEncoding;
 	/** Tells whether the file on disk has a BOM. */
 	private boolean fHasBOM;
+	/** The annotation model of this file buffer */
+    private IAnnotationModel fAnnotationModel;
 
 	
 	public JavaTextFileBuffer(TextFileBufferManager manager) {
@@ -113,7 +116,7 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 	 * @see org.eclipse.core.filebuffers.ITextFileBuffer#getAnnotationModel()
 	 */
 	public IAnnotationModel getAnnotationModel() {
-		return null;
+		return fAnnotationModel;
 	}
 
 	/*
@@ -242,6 +245,15 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 			if (fFile != null)
 				fSynchronizationStamp= fFile.lastModified();
 			
+			if (fAnnotationModel instanceof IPersistableAnnotationModel) {
+				IPersistableAnnotationModel persistableModel= (IPersistableAnnotationModel) fAnnotationModel;
+				try {
+				    persistableModel.revert(fDocument);
+				} catch (CoreException x) {
+					fStatus= x.getStatus();
+				}
+			}
+			
 			if (fireDirtyStateChanged)
 				fManager.fireDirtyStateChanged(this, fCanBeSaved);
 			
@@ -275,10 +287,31 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 			fDocument= fManager.createEmptyDocument(getLocation());
 			cacheEncodingState(monitor);
 			setDocumentContent(fDocument, getFileContents(monitor), fEncoding);
+			
+			fAnnotationModel= fManager.createAnnotationModel(getLocation());
+
 		} catch (CoreException x) {
 			fDocument= fManager.createEmptyDocument(getLocation());
 			fStatus= x.getStatus();
 		}
+	}
+	
+	/*
+	 * @see org.eclipse.core.internal.filebuffers.ResourceFileBuffer#connected()
+	 */
+	protected void connected() {
+		super.connected();
+		if (fAnnotationModel != null)
+			fAnnotationModel.connect(fDocument);
+	}
+	
+	/*
+	 * @see org.eclipse.core.internal.filebuffers.ResourceFileBuffer#disconnected()
+	 */
+	protected void disconnected() {
+		if (fAnnotationModel != null)
+			fAnnotationModel.disconnect(fDocument);
+		super.disconnected();
 	}
 
 	protected void cacheEncodingState(IProgressMonitor monitor) {
@@ -342,7 +375,10 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 				// set synchronization stamp to know whether the file synchronizer must become active
 				fSynchronizationStamp= fFile.lastModified();
 				
-				// TODO if there is an annotation model update it here
+				if (fAnnotationModel instanceof IPersistableAnnotationModel) {
+					IPersistableAnnotationModel persistableModel= (IPersistableAnnotationModel) fAnnotationModel;
+					persistableModel.commit(fDocument);
+				}
 				
 			} else {
 				

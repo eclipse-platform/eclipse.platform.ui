@@ -72,10 +72,32 @@ public abstract class JavaFileBuffer extends AbstractFileBuffer  {
 	
 	public void connect() {
 		++ fReferenceCount;
+		if (fReferenceCount == 1)
+			connected();
 	}
-	
+	    
+	/**
+	 * Called when this file buffer has been connected. This is the case when
+	 * there is exactly one connection.
+	 * <p>
+	 * Clients may extend this method.
+	 */
+	protected void connected() {
+	}
+
 	public void disconnect() throws CoreException {
 		-- fReferenceCount;
+		if (fReferenceCount == 0)
+			disconnected();
+	}
+	
+	/**
+	 * Called when this file buffer has been disconnected. This is the case when
+	 * the number of connections drops to <code>0</code>.
+	 * <p>
+	 * Clients may extend this method.
+	 */
+	protected void disconnected() {
 	}
 	
 	/**
