@@ -151,14 +151,18 @@ class WorkbenchMonitorProvider {
 			 */
 			public void internalWorked(double work) {
 				worked += work;
-				updateMessage();
+				//Do not rely on monitor.done() to clear.
+				if(worked >= allWork)
+					done();
+				else
+					updateMessage();
 			}
 
 			/*
 			 * (non-Javadoc) @see org.eclipse.core.runtime.IProgressMonitor#isCanceled()
 			 */
 			public boolean isCanceled() {
-				//TODO: Not clear if there will be cancel at this level
+				//No cancel functionality in status line currently
 				return false;
 			}
 
@@ -166,7 +170,7 @@ class WorkbenchMonitorProvider {
 			 * (non-Javadoc) @see org.eclipse.core.runtime.IProgressMonitor#setCanceled(boolean)
 			 */
 			public void setCanceled(boolean value) {
-				//TODO: Not clear if there will be cancel at this level
+				//No cancel functionality in status line currently
 
 			}
 
@@ -190,8 +194,7 @@ class WorkbenchMonitorProvider {
 			 * (non-Javadoc) @see org.eclipse.core.runtime.IProgressMonitor#worked(int)
 			 */
 			public void worked(int work) {
-				worked += work;
-				updateMessage();
+				internalWorked(work);
 
 			}
 
