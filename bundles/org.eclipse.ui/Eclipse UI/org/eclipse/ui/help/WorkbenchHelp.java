@@ -26,13 +26,14 @@ import org.eclipse.swt.widgets.*;
  * </p>
  * <p>
  * The various <code>setHelp</code> methods allow help to be hooked in to SWT 
- * menus, menu items, and controls, and into JFace actions. In simple cases,
- * this involves furnishing a fixed list of help contents (<code>IContext</code>
- * objects or context ids). In cases more dynamic situations, the list of help
- * contexts can be calculated on the fly (<code>IContextComputer</code>).
- * When the user requests help for one of the established widgets (for instance,
- * by hitting F1), the list of contexts is retrieved (or computed) and passed to
- * the help support system using <code>IHelp.displayHelp(helpContexts,position)</code>.
+ * menus, menu items, and controls, and into JFace actions. This involves 
+ * furnishing a help context id. When the user requests help for one of the 
+ * established widgets (for instance, by hitting F1), the context id is retrieved
+ * and passed to the help support system using <code>IHelp.displayHelp(helpContexts,position)</code>.
+ * </p>
+ * <p>
+ * In cases more dynamic situations, clients may hook their own help listner then
+ * call <code>displayHelp</code> with a context id or <code>IContext</code>.
  * </p>
  * <p>
  * This class provides static methods only; it is not intended to be instantiated
@@ -41,8 +42,7 @@ import org.eclipse.swt.widgets.*;
  *
  * @see org.eclipse.help.IHelp
  * @see #getHelpSupport
- * @see IContextComputer
- */
+  */
 public class WorkbenchHelp {
 	/**
 	 * Key used for stashing help-related data on SWT widgets.
