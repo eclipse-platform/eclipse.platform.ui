@@ -69,6 +69,7 @@ public class JFaceResources {
 	/**
 	 * The symbolic font name for the viewer font 
 	 * (value <code>"org.eclipse.jface.viewerfont"</code>).
+ 	* @deprecated This font is not in use
 	 */
 	public static final String VIEWER_FONT = "org.eclipse.jface.viewerfont";//$NON-NLS-1$
 	
@@ -88,6 +89,7 @@ public class JFaceResources {
 	/**
 	 * The symbolic font name for the window font 
 	 * (value <code>"org.eclipse.jface.windowfont"</code>).
+	 * @deprecated This font is not in use
 	 */
 	public static final String WINDOW_FONT = "org.eclipse.jface.windowfont";//$NON-NLS-1$
 	
@@ -283,6 +285,7 @@ public static Font getTextFont() {
  * </pre>
  *
  * @return the font
+ * @deprecated This font is not in use
  */
 public static Font getViewerFont() {
 	return getFontRegistry().get(VIEWER_FONT);
