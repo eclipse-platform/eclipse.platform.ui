@@ -35,8 +35,20 @@ public class DiscoveryFolder extends BookmarkFolder {
 		for (int i=0; i<entries.length; i++) {
 			IURLEntry entry = entries[i];
 			SiteBookmark bookmark = new SiteBookmark(entry.getAnnotation(), entry.getURL());
-			internalAdd(bookmark);
+			if (!contains(bookmark))
+				internalAdd(bookmark);
 		}
+	}
+	private boolean contains(SiteBookmark bookmark) {
+		for (int i=0; i < children.size(); i++) {
+			Object o = children.get(i);
+			if (o instanceof SiteBookmark) {
+				// note: match on URL, not the label
+				if (bookmark.getURL().equals(((SiteBookmark)o).getURL()))
+					return true;
+			}				
+		}
+		return false;
 	}
 	public Object [] getChildren(Object parent) {
 		if (hasChildren()==false) initialize();
