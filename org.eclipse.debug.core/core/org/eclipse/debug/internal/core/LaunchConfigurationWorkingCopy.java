@@ -389,7 +389,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 			if (isLocal()) {
 				path = getProject().getPluginWorkingLocation(DebugPlugin.getDefault().getDescriptor());
 			} else {
-				path = new Path(getProject().getName());
+				path = getProject().getLocation();
 			}
 			path = path.append(".launches");
 			path = path.append(getName() + "." + LAUNCH_CONFIGURATION_FILE_EXTENSION);

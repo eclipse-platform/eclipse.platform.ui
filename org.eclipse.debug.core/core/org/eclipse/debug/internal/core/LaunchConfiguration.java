@@ -100,7 +100,12 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 * @see ILaunchConfiguration#exists()
 	 */
 	public boolean exists() {
-		return getLocation().toFile().exists();
+		IFile file = getFile();
+		if (file == null) {
+			return getLocation().toFile().exists();
+		} else {
+			return file.exists();
+		}
 	}
 
 	/**
@@ -128,7 +133,8 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 * @see ILaunchConfiguration#getProject()
 	 */
 	public IProject getProject() {
-		if (isLocal()) {
+		IFile file = getFile();
+		if (file == null) {
 			IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 			for (int i = 0; i < projects.length; i++) {
 				if (projects[i].getPluginWorkingLocation(DebugPlugin.getDefault().getDescriptor()).isPrefixOf(getLocation())) {
@@ -139,9 +145,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 			// May have to cache project name at creation
 			return null;
 		} else {
-			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-			IPath rootLocation = root.getLocation();
-			return root.getProject(getLocation().segment(rootLocation.segmentCount()));
+			return file.getProject();
 		}
 	}
 
@@ -156,7 +160,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 * @see ILaunchConfiguration#isLocal()
 	 */
 	public boolean isLocal() {
-		return ResourcesPlugin.getWorkspace().getRoot().getLocation().isPrefixOf(getLocation());
+		return  getFile() == null;
 	}
 
 	/**
@@ -239,6 +243,16 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 */
 	public String getMemento() {
 		return getLocation().toOSString();
+	}
+
+	/**
+	 * Returns the file in the workspace for this configuration or,
+	 * <code>null</code> if none (i.e. if local).
+	 * 
+	 * @return file or <code>null</code> if local
+	 */	
+	private IFile getFile() {
+		return ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(getLocation());
 	}
 
 }
