@@ -42,8 +42,8 @@ public final class RangeDifferencer {
 	
 	/**
 	 * Finds the differences between two <code>IRangeComparator</code>s.
-	 * The differences are returned as a list of <code>RangeDifference</code>s.
-	 * If no differences are detected an empty list is returned.
+	 * The differences are returned as an array of <code>RangeDifference</code>s.
+	 * If no differences are detected an empty array is returned.
 	 * 
 	 * @param left the left range comparator
 	 * @param right the right range comparator
@@ -71,7 +71,8 @@ public final class RangeDifferencer {
 		int row, col;
 
 		// find common prefix
-		for (row= 0; row < rightSize && row < leftSize && rangesEqual(right, row, left, row) == true; ++row);
+		for (row= 0; row < rightSize && row < leftSize && rangesEqual(right, row, left, row) == true; ++row)
+			;
 
 		lastDiagonal[origin]= row;
 		script[origin]= null;
