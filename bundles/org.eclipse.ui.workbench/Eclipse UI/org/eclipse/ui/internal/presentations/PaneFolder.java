@@ -166,6 +166,16 @@ public final class PaneFolder {
 	}
 	
 	/**
+	 * Returns the title area (the empty region to the right of the tabs), in the tab folder's coordinate
+	 * system.  
+	 * 
+	 * @return the title area (the empty region to the right of the tabs)
+	 */
+	public Rectangle getTitleArea() {
+		return titleAreaProxy.getBounds();
+	}
+	
+	/**
 	 * Return the main control for this pane folder
 	 * 
 	 * @return

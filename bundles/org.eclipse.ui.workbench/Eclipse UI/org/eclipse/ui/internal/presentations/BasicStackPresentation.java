@@ -701,11 +701,55 @@ public class BasicStackPresentation extends StackPresentation {
 	public StackDropResult dragOver(Control currentControl, Point location) {
 		// Determine which tab we're currently dragging over
 		Point localPos = tabFolder.getControl().toControl(location);
+				
+		// Ignore drops that are really close to the edge of the tab folder. These will
+		// fall through to the parent, making it easier to split the pane on the same side as
+		// the tabs are located (otherwise, it would be hard to drop a pane on top of a folder
+		// when the tabs are located on top). We ignore the top 1/3 of the tab height
+		
+		Rectangle bounds = tabFolder.getControl().getBounds();
+		bounds.x = 0;
+		bounds.y = 0;
+		
+		if (Geometry.getDistanceFromEdge(bounds, localPos, tabFolder.getTabPosition()) 
+				< tabFolder.getTabHeight() / 3) {
+			return null;
+		}
+		
 		final CTabItem tabUnderPointer = tabFolder.getItem(localPos);
 		
 		// This drop target only deals with tabs... if we're not dragging over
 		// a tab, exit.
 		if (tabUnderPointer == null) {
+			// If we're dragging over the title area, treat this as a drop in the last
+			// tab position.
+			Rectangle titleArea = tabFolder.getTitleArea();
+			if (titleArea.contains(localPos)) {
+				
+				// Make the drag-over rectangle look like a tab at the end of the tab region.
+				// We don't actually know how wide the tab will be when it's dropped, so just
+				// make it 3 times wider than it is tall.
+				Rectangle dropRectangle = Geometry.toDisplay(tabFolder.getControl(), titleArea);
+
+				dropRectangle.width = 3 * dropRectangle.height;
+				
+				// Try to make a rectangle around the area where the tab will be dropped. If we're
+				// dragging a tab from the same folder, this will be in the location currently
+				// occupied by the last tab rather than the area to the right of the tab.
+				if (dragStart >= 0) {
+					int itemCount = tabFolder.getItemCount();
+					
+					if (itemCount > 0) {
+						CTabItem lastItem = tabFolder.getItem(tabFolder.getItemCount() - 1);
+						if (lastItem.isShowing()) {
+							dropRectangle = Geometry.toDisplay(tabFolder.getControl(), lastItem.getBounds());
+						}
+					}
+				}
+				
+				return new StackDropResult(dropRectangle, null);
+			}
+			
 			return null;
 		}
 		

@@ -231,18 +231,17 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 
                 if (dropResult == null) { return null; }
 
-                if (dropResult.getInsertionPoint() == pane.getPresentablePart()) { return null; };
+                //if (dropResult.getInsertionPoint() == pane.getPresentablePart()) { return null; };
                 
                 return new IDropTarget() {
 
                     public void drop() {
                     	
                         // If we're dragging a pane over itself do nothing
-                    	//if (draggedControl == pane.getPresentablePart()) { return; };
+                    	if (dropResult.getInsertionPoint() == pane.getPresentablePart()) { return; };
                     	
                         // Don't worry about reparenting the view if we're
-                        // simply
-                        // rearranging tabs within this folder
+                        // simply rearranging tabs within this folder
                         if (pane.getContainer() != PartStack.this) {
                         	derefPart(pane);
                             pane.reparent(getParent());
