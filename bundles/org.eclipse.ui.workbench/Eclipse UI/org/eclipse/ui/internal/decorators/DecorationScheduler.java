@@ -186,6 +186,7 @@ public class DecorationScheduler {
 				}
 			};
 
+			job.setPriority(Job.DECORATE);
 			job.schedule();
 
 		}
@@ -322,6 +323,7 @@ public class DecorationScheduler {
 			};
 		};
 
+		decorationJob.setPriority(Job.DECORATE);
 		decorationJob.schedule();
 	}
 
