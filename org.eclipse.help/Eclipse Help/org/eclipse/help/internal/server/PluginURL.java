@@ -135,99 +135,44 @@ public class PluginURL extends HelpURL {
 				// In case client locale only contains language info and no country info
 			}
 		}
-
-		/*
-		The code looks up the doc in the following fasion (using en_US as example):
-		1.  It looks for the doc.zip file in "plugin directory/.nl/xx_XX" and unzip the file to retrieve the .html doc file
-		2.  Then, it looks for the doc.zip file in "plugin directory/.nl/xx" and unzip the file to retrieve the .html doc file
-		3.  Then, it looks for the doc.zip file in the root directory of plugin directory and unzip the file to retrieve the default .html doc file
-		4.  Then, it looks for the .html doc file in "plugin directory/.nl/xx_XX"
-		5.  Then, it looks for the .html doc file in "plugin directory/.nl/xx"
-		6.  Then, it looks for the default .html doc file in the root directory of plugin directory
-		*/
-
-		if (inputStream == null) {
-			localePath = ".nl/" + locale.getLanguage() + "_" + locale.getCountry() + "/";
-			inputStream =
-				openStreamFromZip(locale, fileWithoutLocalePath, localePath, purl);
-		}
-		if (inputStream == null) {
-			localePath = ".nl/" + locale.getLanguage() + "/";
-			inputStream =
-				openStreamFromZip(locale, fileWithoutLocalePath, localePath, purl);
-		}
-		if (inputStream == null) {
-			localePath = "./";
-			inputStream =
-				openStreamFromZip(locale, fileWithoutLocalePath, localePath, purl);
-		}
-
-		if (inputStream == null) {
-			fileWithLocalePath =
-				".nl/"
-					+ locale.getLanguage()
-					+ "_"
-					+ locale.getCountry()
-					+ "/"
-					+ fileWithoutLocalePath;
-			inputStream = openStreamFromFile(locale, fileWithLocalePath, purl);
-		}
-		if (inputStream == null) {
-			fileWithLocalePath =
-				".nl/" + locale.getLanguage() + "/" + fileWithoutLocalePath;
-			inputStream = openStreamFromFile(locale, fileWithLocalePath, purl);
-		}
-		if (inputStream == null) {
-			fileWithLocalePath = "./";
-			inputStream = openStreamFromFile(locale, fileWithoutLocalePath, purl);
-		}
-
-		return inputStream;
-
-	}
-	/**
-	 * @return java.io.InputStream
-	 * @param locale java.util.Locale
-	 * @param file java.lang.String
-	 * @param purl java.net.URL
-	 */
-	private InputStream openStreamFromFile(Locale locale, String file, URL purl) {
-		InputStream inputStream = null;
-		try {
-			URL furl = new URL(purl, file);
-
-			try {
-				inputStream = furl.openStream();
-			} catch (IOException e) {
-				inputStream = null;
+		
+		// first try finding the file in doc.zip
+		if(inputStream == null){
+			//IPath zipFilePath = new Path("$nl$/doc.zip");
+			// bug in core, $nl$ does not work
+			IPath zipFilePath = new Path("doc.zip");
+			try{
+				URL zipFileURL = plugin.getPlugin().find(zipFilePath);
+				if(zipFileURL!=null){
+					try{
+						URL jurl =	new URL("jar", "", zipFileURL.toExternalForm()+"!/"+fileWithoutLocalePath);
+						inputStream = jurl.openStream();
+					}catch (IOException ioe){
+						inputStream = null;
+					}
+				}
+			}catch(CoreException ce){
 			}
-		} catch (IOException e) {
-		}
-		return inputStream;
-	}
-	/**
-	 * @return java.io.InputStream
-	 * @param locale java.util.Locale
-	 * @param file java.lang.String
-	 * @param purl java.net.URL
-	 */
-	private InputStream openStreamFromZip(
-		Locale locale,
-		String file,
-		String localePath,
-		URL purl) {
-		InputStream inputStream = null;
-		try {
-			URL jurl =
-				new URL("jar", "", purl.toExternalForm() + localePath + "doc.zip!/" + file);
+		}	
+		
+		// find file on a filesystem
+		if(inputStream == null){
+			//IPath flatFilePath = new Path("$nl$/" + getFile()); 
+			// bug in core, $nl$ does not work
+			IPath flatFilePath = new Path(getFile()); 
+			try{
+				URL flatFileURL = plugin.getPlugin().find(flatFilePath);
+				if(flatFileURL!=null)
+					try{
+						inputStream=flatFileURL.openStream();
+					} catch (IOException e){
+						inputStream = null;
+					}
 
-			try {
-				inputStream = jurl.openStream();
-			} catch (IOException e) {
-				inputStream = null;
+			}catch(CoreException ce){
 			}
-		} catch (IOException e) {
 		}
+
 		return inputStream;
 	}
 }
