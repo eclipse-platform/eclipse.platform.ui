@@ -2034,7 +2034,7 @@ public final class Workbench implements IWorkbench {
 		
 		WorkbenchPage workbenchPage = preferredWindow.getActiveWorkbenchPage();
 		try {
-			workbenchPage.showView(IIntroConstants.INTRO_VIEW_ID, true);
+			workbenchPage.showView(IIntroConstants.INTRO_VIEW_ID);
 			setIntroStandby(introPart, false);
 		} catch (PartInitException e) {
 			WorkbenchPlugin.log(IntroMessages.getString("Intro.could_not_create_part"), new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, IStatus.ERROR, IntroMessages.getString("Intro.could_not_create_part"), e)); //$NON-NLS-1$ //$NON-NLS-2$
