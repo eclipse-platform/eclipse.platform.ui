@@ -419,7 +419,7 @@ public abstract class Plugin implements BundleActivator {
 		}
 		// lazily create preference store
 		// important: set preferences instance field to prevent re-entry
-		preferences = new PreferenceForwarder(getDescriptor().getUniqueIdentifier());
+		preferences = new PreferenceForwarder(bundle.getSymbolicName());
 		// load settings into preference store 
 		loadPluginPreferences();
 
