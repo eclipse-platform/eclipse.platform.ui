@@ -154,6 +154,7 @@ protected int synchronizeExistence(UnifiedTreeNode node, Resource target, int le
 	
 	if (existsInWorkspace) {
 		if (!node.existsInFileSystem()) {
+			//we always keep linked resources, even when the local file is missing
 			if (target.isLocal(IResource.DEPTH_ZERO) && !target.isLinked()) {
 				deleteResource(node, target);
 				resourceChanged = true;
