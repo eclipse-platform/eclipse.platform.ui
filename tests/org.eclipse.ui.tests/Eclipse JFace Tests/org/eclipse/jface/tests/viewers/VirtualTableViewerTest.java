@@ -10,13 +10,14 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
-import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
+
+import org.eclipse.jface.viewers.TableViewer;
 
 /**
  * The TableViewerTest is a test of the SWT#VIRTUAL support in TableViewers,
@@ -157,6 +158,12 @@ public class VirtualTableViewerTest extends TableViewerTest {
 		//based on the assumption that all items 
 		//are created.
 	}
+	
+	  public void testRenameWithSorter() {
+		//This test is no use here as it is
+		//based on the assumption that all items 
+		//are created.
+	  }
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.tests.viewers.StructuredViewerTest#testSorter()

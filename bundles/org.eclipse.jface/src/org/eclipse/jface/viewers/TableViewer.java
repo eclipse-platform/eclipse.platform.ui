@@ -378,7 +378,7 @@ public class TableViewer extends StructuredViewer {
 		if(virtualManager.currentVisibleIndex < 0)//Anything shown yet?
 			return new TableItem[0];
 		
-		TableItem[] visible = new TableItem[virtualManager.currentVisibleIndex];
+		TableItem[] visible = new TableItem[virtualManager.currentVisibleIndex + 1];
 		for (int i = 0; i < visible.length; i++) {
 			visible[i] = table.getItem(i);
 		}
