@@ -18,6 +18,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 
 /**
@@ -54,6 +56,7 @@ import org.eclipse.swt.widgets.*;
 	
 	// SWT widgets
 	protected CLabel fMessageLabel;
+	protected Composite fProgressBarComposite;
 	protected ProgressIndicator fProgressBar;
 	protected ToolBar fToolBar;
 	protected ToolItem fCancelButton;
@@ -81,7 +84,7 @@ import org.eclipse.swt.widgets.*;
 			for (int i= 0; i < children.length; i++) {
 				boolean useWidth= true;
 				Control w= children[i];
-				if (w == fProgressBar && !fProgressIsVisible)
+				if (w == fProgressBarComposite && !fProgressIsVisible)
 					useWidth= false;
 				else if (w == fToolBar && !fCancelButtonIsVisible)
 					useWidth= false;
@@ -114,7 +117,7 @@ import org.eclipse.swt.widgets.*;
 			// Make sure cancel button and progress bar are before contributions.
 			fMessageLabel.moveAbove(null);
 			fToolBar.moveBelow(fMessageLabel);
-			fProgressBar.moveBelow(fToolBar);
+			fProgressBarComposite.moveBelow(fToolBar);
 			
 			Rectangle rect= composite.getClientArea();
 			Control[] children= composite.getChildren();
@@ -126,7 +129,7 @@ import org.eclipse.swt.widgets.*;
 			int totalWidth= -GAP;
 			for (int i= 0; i < count; i++) {
 				Control w= children[i];
-				if (w == fProgressBar && !fProgressIsVisible)
+				if (w == fProgressBarComposite && !fProgressIsVisible)
 					continue;
 				if (w == fToolBar && !fCancelButtonIsVisible)
 					continue;
@@ -171,7 +174,7 @@ import org.eclipse.swt.widgets.*;
 				 * The fix here is to draw the progress bar and
 				 * cancel button off screen if they are not visible.
 				 */
-				if (w == fProgressBar && !fProgressIsVisible ||
+				if (w == fProgressBarComposite && !fProgressIsVisible ||
 					w == fToolBar && !fCancelButtonIsVisible) {
 					w.setBounds(x + rect.width, y, ws[i], h);
 					continue;
@@ -226,8 +229,17 @@ import org.eclipse.swt.widgets.*;
 			}
 		});
 
-		fProgressBar= new ProgressIndicator(this);
-		fProgressBar.setSize(200, 10);
+		// We create a composite to create the progress bar in
+		// so that it can be centered. See bug #32331
+		fProgressBarComposite = new Composite(this, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.horizontalSpacing = 0;
+		layout.verticalSpacing = 0;
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		fProgressBarComposite.setLayout(layout);
+		fProgressBar= new ProgressIndicator(fProgressBarComposite);
+		fProgressBar.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL));
 		
 		fStopButtonCursor= new Cursor(getDisplay(), SWT.CURSOR_ARROW);
 	}
@@ -306,8 +318,8 @@ import org.eclipse.swt.widgets.*;
 			fCancelButtonIsVisible = false;
 			if (fToolBar != null && !fToolBar.isDisposed())
 				fToolBar.setVisible(false);
-			if (fProgressBar != null && !fProgressBar.isDisposed())
-				fProgressBar.setVisible(false);
+			if (fProgressBarComposite != null && !fProgressBarComposite.isDisposed())
+				fProgressBarComposite.setVisible(false);
 			layout();
 		}
 	}
@@ -440,8 +452,8 @@ import org.eclipse.swt.widgets.*;
 			fProgressIsVisible= true;
 			if (fCancelEnabled)
 				showButton();
-			if (fProgressBar != null && !fProgressBar.isDisposed())
-				fProgressBar.setVisible(true);
+			if (fProgressBarComposite != null && !fProgressBarComposite.isDisposed())
+				fProgressBarComposite.setVisible(true);
 			layout();
 		}
 	}
