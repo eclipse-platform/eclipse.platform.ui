@@ -45,6 +45,7 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -3444,5 +3445,118 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 		}
 		
 		return new IViewPart [] {part};
+	}
+	/**
+	 * Allow for programmatically resizing a part.
+	 * <p>
+	 * <em>EXPERIMENTAL</em>
+	 * </p>
+	 * <p>
+	 * Known limitations:
+	 * <ul>
+	 * <li>currently applies only to views</li>
+	 * <li>has no effect when view is zoomed</li>
+	 * </ul> 
+	 */
+	public void resizeView(IViewPart part, int width, int height) {
+		SashInfo sashInfo = new SashInfo();
+		PartPane pane = ((PartSite)part.getSite()).getPane();
+		ILayoutContainer container = pane.getContainer();
+		LayoutTree tree = getPerspectivePresentation().getLayout().root.find(((PartTabFolder)container));
+		
+		// retrieve our layout sashes from the layout tree
+		findSashParts(tree, pane.findSashes(), sashInfo);
+		
+		// first set the width
+		float deltaWidth = width - pane.getBounds().width;
+		if (sashInfo.right != null) {
+			Rectangle rightBounds = sashInfo.rightNode.getBounds();
+			// set the new ratio 
+			sashInfo.right.setRatio(
+				((float) ((deltaWidth + sashInfo.right.getBounds().x) - rightBounds.x))
+					/ ((float) rightBounds.width));		
+			// complete the resize
+			sashInfo.rightNode.setBounds(rightBounds);	
+		}
+		else if (sashInfo.left != null) {
+			Rectangle leftBounds = sashInfo.leftNode.getBounds();
+			// set the ratio
+			sashInfo.left.setRatio(
+				(float) ((sashInfo.left.getBounds().x - deltaWidth) - leftBounds.x)
+					/ ((float) leftBounds.width));			
+			// complete the resize
+			sashInfo.leftNode.setBounds(sashInfo.leftNode.getBounds());
+		}
+
+		// next set the height
+		float deltaHeight = height - pane.getBounds().height;
+		if (sashInfo.bottom != null) {
+			Rectangle bottomBounds = sashInfo.bottomNode.getBounds();
+			// set the new ratio 
+			sashInfo.bottom.setRatio(
+				((float) ((deltaHeight + sashInfo.bottom.getBounds().y) - bottomBounds.y))
+					/ ((float) bottomBounds.height));		
+			// complete the resize
+			sashInfo.bottomNode.setBounds(bottomBounds);	
+		}
+		else if (sashInfo.top != null) {
+			Rectangle topBounds = sashInfo.topNode.getBounds();
+			// set the ratio
+			sashInfo.top.setRatio(
+				(float) ((sashInfo.top.getBounds().y - deltaHeight) - topBounds.y)
+					/ ((float) topBounds.height));			
+			// complete the resize
+			sashInfo.topNode.setBounds(topBounds);
+		}	
+
+	}
+	// provides sash information for the given pane
+	private class SashInfo {
+		private LayoutPartSash right;
+		private LayoutPartSash left;
+		private LayoutPartSash top;
+		private LayoutPartSash bottom;
+		private LayoutTreeNode rightNode;
+		private LayoutTreeNode leftNode;
+		private LayoutTreeNode topNode;
+		private LayoutTreeNode bottomNode;
+	}
+	private void findSashParts(LayoutTree tree, PartPane.Sashes sashes, SashInfo info) {
+		LayoutTree parent = tree.getParent();
+		if (parent == null)
+			return;
+
+		if (parent.part instanceof LayoutPartSash) {
+			// get the layout part sash from this tree node
+			LayoutPartSash sash = (LayoutPartSash) parent.part;			
+			// make sure it has a sash control
+			Control control = sash.getControl();
+			if (control != null) {
+				// check for a vertical sash
+				if (sash.isVertical()) {
+					if (sashes.left == control) {
+						info.left = sash;
+						info.leftNode = parent.findSash(sash);
+					}
+					else if (sashes.right == control) {
+						info.right = sash;
+						info.rightNode = parent.findSash(sash);
+					}
+				}				
+				// check for a horizontal sash
+				else {
+					if (sashes.top == control) {
+						info.top = sash;
+						info.topNode = parent.findSash(sash);	
+					}
+					else if (sashes.bottom == control) {
+						info.bottom = sash;
+						info.bottomNode = parent.findSash(sash);
+					}
+				}
+			}
+		}
+		// recursive call to continue up the tree
+		findSashParts(parent, sashes, info);		
 	}
 }
