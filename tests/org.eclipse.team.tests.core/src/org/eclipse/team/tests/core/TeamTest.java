@@ -18,9 +18,9 @@ import junit.framework.TestSuite;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+import org.eclipse.core.tests.resources.ResourceTest;
 
-public class TeamTest extends EclipseWorkspaceTest {
+public class TeamTest extends ResourceTest {
 	protected static IProgressMonitor DEFAULT_MONITOR = new NullProgressMonitor();
 	protected static final IProgressMonitor DEFAULT_PROGRESS_MONITOR = new NullProgressMonitor();
 

@@ -13,9 +13,9 @@ package org.eclipse.team.tests.ui.synchronize;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+import org.eclipse.core.tests.resources.ResourceTest;
 
-public class AllTeamSynchronizeTests extends EclipseWorkspaceTest {
+public class AllTeamSynchronizeTests extends ResourceTest {
 
 	/**
 	 * Constructor for CVSClientTest.

@@ -12,9 +12,10 @@ package org.eclipse.team.tests.core;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 
-public class AllTeamTests extends EclipseWorkspaceTest {
+import org.eclipse.core.tests.resources.ResourceTest;
+
+public class AllTeamTests extends ResourceTest {
 
 	/**
 	 * Constructor for CVSClientTest.
