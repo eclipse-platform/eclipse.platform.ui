@@ -11,11 +11,11 @@
  	<meta http-equiv="Pragma" content="no-cache">
  	<meta http-equiv="Expires" content="-1">
 	<title>Search</title>
+	<link rel="stylesheet" TYPE="text/css" HREF="toc.css" TITLE="nav">
+    <link rel="stylesheet" TYPE="text/css" HREF="search.css" TITLE="sea">
 	<base target="MainFrame">
 	<script language="JavaScript" src="toc.js"></script>
-    <link rel="stylesheet" TYPE="text/css" HREF="search.css" TITLE="sea">
-    <link rel="stylesheet" TYPE="text/css" HREF="toc.css" TITLE="nav">
-
+	
 <script language="JavaScript">
 function mouseover(img)
 {

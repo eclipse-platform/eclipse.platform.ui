@@ -125,6 +125,9 @@ function mouseClickHandler(e) {
   var treeNode = getContentNode(clickedNode);
 
   if (treeNode != null && treeNode.parentNode.tagName != "BODY") {
+    // mozilla adds styled margin on top of built-in margin.
+    if (isMozilla) treeNode.style.marginLeft = -18;
+    
     if (isCollapsed(treeNode)) {
    	 expand(treeNode);
   	}
@@ -203,6 +206,10 @@ function selectTopic(topic)
  */
 function onloadHandler(title)
 {
+	// little change for mozilla margins
+	if (isMozilla)
+ 		getChildNode(document.body, "UL").style.marginLeft = -18;
+ 		
 	parent.tocTitle=title;
 	if(parent.currentNavFrame=="toc")
 	{
