@@ -236,6 +236,7 @@ public class RepositoryProviderTests extends TeamTest {
 	public void testMoveDeleteHookBetweenProjects() throws CoreException, TeamException {
 		final IProject projectA = getUniqueTestProject("testMoveDeleteHookBetweenProjects_A");
 		final IProject projectB = getUniqueTestProject("testMoveDeleteHookBetweenProjects_B");
+		final IProject projectC = getUniqueTestProject("testMoveDeleteHookBetweenProjects_C");
 		
 		// adding a valid team provider should be fine
 		RepositoryProvider.addNatureToProject(projectA, RepositoryProviderBic.NATURE_ID, null);
@@ -303,19 +304,7 @@ public class RepositoryProviderTests extends TeamTest {
 		resources[0].move(projectB.getFullPath().append("moveFile_new.txt"), false, null);
 		resources[1].move(projectB.getFullPath().append("movedFolder"), false, null);
 		for (int i = 0; i < calledProjectA.length; i++) {
-			assertTrue(calledProjectA[i] && calledProjectB[i]);
-		}
-		
-		// test that moving files/folders from a project without a provider to a project with a provider calls the 
-		// move hooks for the destination
-		calledProjectA[0] = false; calledProjectA[1] = false;
-		calledProjectB[0] = false; calledProjectB[1] = false;
-		IProject projectC = getUniqueTestProject("testMoveDeleteHookBetweenProjects_B");
-		resources = buildResources(projectC, new String[] {"moveFile.txt", "moveFolder/"});
-		resources[0].move(projectB.getFullPath().append("moveFile_new.txt"), false, null);
-		resources[1].move(projectB.getFullPath().append("movedFolder"), false, null);
-		for (int i = 0; i < calledProjectA.length; i++) {
-			assertTrue(calledProjectA[i]==false && calledProjectB[i]);
+			assertTrue(calledProjectA[i]  && calledProjectB[i]==false);
 		}
 		
 		// test that moving files/folders from a project with a provider to a project without a provider calls the
