@@ -55,6 +55,10 @@
             category="org.eclipse.ui.category.file"
             id="org.eclipse.ui.edit.text.removeTrailingWhitespace">
       </command>
+      <handlerSubmission
+      		commandId="org.eclipse.ui.edit.text.removeTrailingWhitespace"
+      		handler="org.eclipse.ui.internal.editors.text.RemoveTrailingWhitespaceHandler">
+      </handlerSubmission>
       <command
             name="%openExternalFile.name"
             category="org.eclipse.ui.category.file"

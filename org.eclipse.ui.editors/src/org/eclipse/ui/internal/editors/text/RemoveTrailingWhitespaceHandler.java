@@ -20,7 +20,7 @@ import org.eclipse.core.filebuffers.manipulation.RemoveTrailingWhitespaceOperati
 
 import org.eclipse.jface.window.Window;
 
-import org.eclipse.ui.editors.text.FileBufferOperationAction;
+import org.eclipse.ui.editors.text.FileBufferOperationHandler;
 
 
 /**
@@ -28,15 +28,14 @@ import org.eclipse.ui.editors.text.FileBufferOperationAction;
  * 
  * @since 3.1
  */
-public class RemoveTrailingWhitespaceAction extends FileBufferOperationAction {
+public class RemoveTrailingWhitespaceHandler extends FileBufferOperationHandler {
 		
-	public RemoveTrailingWhitespaceAction() {
+	public RemoveTrailingWhitespaceHandler() {
 		super(new RemoveTrailingWhitespaceOperation());
-		setText("Remove Trailing &Whitespace");
 	}
 		
 	/*
-	 * @see org.eclipse.ui.internal.editors.text.FileBufferOperationAction#isAcceptableLocation(org.eclipse.core.runtime.IPath)
+	 * @see org.eclipse.ui.editors.text.FileBufferOperationHandler#isAcceptableLocation(org.eclipse.core.runtime.IPath)
 	 */
 	protected boolean isAcceptableLocation(IPath location) {
 		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
@@ -44,7 +43,7 @@ public class RemoveTrailingWhitespaceAction extends FileBufferOperationAction {
 	}
 	
 	/*
-	 * @see org.eclipse.ui.internal.editors.text.FileBufferOperationAction#collectFiles(org.eclipse.core.resources.IResource[])
+	 * @see org.eclipse.ui.editors.text.FileBufferOperationHandler#collectFiles(org.eclipse.core.resources.IResource[])
 	 */
 	protected IFile[] collectFiles(IResource[] resources) {
 		
