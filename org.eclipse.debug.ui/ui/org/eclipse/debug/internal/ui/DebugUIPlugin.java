@@ -722,7 +722,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		} else {
 			Job[] build = Platform.getJobManager().find(ResourcesPlugin.FAMILY_AUTO_BUILD); 
 			if (build.length == 1) {
-				boolean join= waitForBuild(build[0].getState(), buildBeforeLaunch);
+				boolean join= waitForBuild(build[0].getState());
 				if (join) {
 					try {
 						subMonitor = new SubProgressMonitor(monitor, 100);
@@ -749,11 +749,9 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	 * because the build won't begin for an indeterminite amount of time.
 	 * 
 	 * @param buildState the state of the build job
-	 * @param buildBeforeLaunch whether or not the user has specified that they want to build
-	 *  before launching
 	 * @return whether a launch should wait for a build to finish before proceeding
 	 */
-	private static boolean waitForBuild(final int buildState, final boolean buildBeforeLaunch) {
+	private static boolean waitForBuild(final int buildState) {
 		String waitPreference= DebugUIPlugin.getDefault().getPreferenceStore().getString(IDebugUIConstants.PREF_WAIT_FOR_BUILD);
 		if (AlwaysNeverDialog.ALWAYS.equals(waitPreference)) {
 			return true;
