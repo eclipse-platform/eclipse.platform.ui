@@ -42,6 +42,25 @@ public abstract class TextEditorAction extends ResourceAction implements IUpdate
 		setEditor(editor);
 		update();
 	}
+
+	/**
+	 * Creates and initializes the action for the given text editor. The action
+	 * configures its visual representation from the given resource bundle.
+	 *
+	 * @param bundle the resource bundle
+	 * @param prefix a prefix to be prepended to the various resource keys
+	 *   (described in <code>ResourceAction</code> constructor), or 
+	 *   <code>null</code> if none
+	 * @param editor the text editor
+	 * @param style the style of this action
+	 * @see ResourceAction#ResourceAction
+	 * @since 3.0
+	 */
+	protected TextEditorAction(ResourceBundle bundle, String prefix, ITextEditor editor, int style) {
+		super(bundle, prefix, style);
+		setEditor(editor);
+		update();
+	}
 	
 	/**
 	 * Returns the action's text editor.

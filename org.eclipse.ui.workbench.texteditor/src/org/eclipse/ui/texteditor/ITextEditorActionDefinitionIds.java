@@ -392,7 +392,14 @@ public interface ITextEditorActionDefinitionIds extends IWorkbenchActionDefiniti
 	 * Value: <code>"org.eclipse.ui.edit.text.toggleOverwrite"</code>
 	 */
 	public static final String TOGGLE_OVERWRITE= "org.eclipse.ui.edit.text.toggleOverwrite"; //$NON-NLS-1$
-	
+
+	/**
+	 * Action definition id of toggle show selected element only action.
+	 * Value: <code>"org.eclipse.ui.edit.text.toggleShowSelectedElementOnly"</code>
+	 * @since 3.0
+	 */
+	public static final String TOGGLE_SHOW_SELECTED_ELEMENT_ONLY= "org.eclipse.ui.edit.text.toggleShowSelectedElementOnly"; //$NON-NLS-1$
+		
 	/**
 	 * Action definition id of the show ruler context menu action.
 	 * Value: <code>"org.eclipse.ui.edit.text.showRulerContextMenu"</code>
