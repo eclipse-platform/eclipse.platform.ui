@@ -36,8 +36,20 @@ final class Persistence {
 
 		String description = memento.getString(TAG_DESCRIPTION);
 		String id = memento.getString(TAG_ID);
+
+		// TODO deprecated start
+		if ("org.eclipse.ui.globalScope".equals(id)) //$NON-NLS-1$
+			id = null;	
+		// TODO deprecated end
+
 		String name = memento.getString(TAG_NAME);
 		String parentId = memento.getString(TAG_PARENT_ID);
+		
+		// TODO deprecated start
+		if ("org.eclipse.ui.globalScope".equals(parentId)) //$NON-NLS-1$
+			parentId = null;	
+		// TODO deprecated end
+		
 		String pluginId = pluginIdOverride != null ? pluginIdOverride : memento.getString(TAG_PLUGIN_ID);
 		return new ContextDefinition(description, id, name, parentId, pluginId);
 	}

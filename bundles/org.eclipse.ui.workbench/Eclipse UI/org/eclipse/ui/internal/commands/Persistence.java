@@ -69,6 +69,9 @@ final class Persistence {
 		// TODO deprecated start
 		if (keyConfigurationId == null)
 			keyConfigurationId = memento.getString("value"); //$NON-NLS-1$ 
+			
+		if ("org.eclipse.ui.defaultAcceleratorConfiguration".equals(keyConfigurationId)) //$NON-NLS-1$
+			keyConfigurationId = null;			
 		// TODO deprecated end
 	
 		String pluginId = pluginIdOverride != null ? pluginIdOverride : memento.getString(TAG_PLUGIN_ID);
@@ -180,6 +183,12 @@ final class Persistence {
 
 		String commandId = memento.getString(TAG_COMMAND_ID);
 		String contextId = memento.getString(TAG_CONTEXT_ID);
+		
+		// TODO deprecated start
+		if ("org.eclipse.ui.globalScope".equals(contextId)) //$NON-NLS-1$
+			contextId = null;
+		// TODO deprecated end			
+		
 		String pluginId = pluginIdOverride != null ? pluginIdOverride : memento.getString(TAG_PLUGIN_ID);
 		return new ContextBindingDefinition(commandId, contextId, pluginId);
 	}
@@ -247,6 +256,9 @@ final class Persistence {
 		// TODO deprecated start
 		if (contextId == null)
 			contextId = memento.getString("scope"); //$NON-NLS-1$
+			
+		if ("org.eclipse.ui.globalScope".equals(contextId)) //$NON-NLS-1$
+			contextId = null;			
 		// TODO deprecated end		
 
 		String keyConfigurationId = memento.getString(TAG_KEY_CONFIGURATION_ID);
@@ -254,6 +266,9 @@ final class Persistence {
 		// TODO deprecated start
 		if (keyConfigurationId == null)
 			keyConfigurationId = memento.getString("configuration"); //$NON-NLS-1$
+		
+		if ("org.eclipse.ui.defaultAcceleratorConfiguration".equals(keyConfigurationId)) //$NON-NLS-1$
+			keyConfigurationId = null;		
 		// TODO deprecated end		
 
 		KeySequence keySequence = null;
@@ -314,12 +329,21 @@ final class Persistence {
 
 		String description = memento.getString(TAG_DESCRIPTION);
 		String id = memento.getString(TAG_ID);
+
+		// TODO deprecated start
+		if ("org.eclipse.ui.defaultAcceleratorConfiguration".equals(id)) //$NON-NLS-1$
+			id = null;		
+		// TODO deprecated end				
+		
 		String name = memento.getString(TAG_NAME);
 		String parentId = memento.getString(TAG_PARENT_ID);		
 
 		// TODO deprecated start
 		if (parentId == null)
 			parentId = memento.getString("parent"); //$NON-NLS-1$ 
+
+		if ("org.eclipse.ui.defaultAcceleratorConfiguration".equals(parentId)) //$NON-NLS-1$
+			parentId = null;
 		// TODO deprecated end		
 
 		String pluginId = pluginIdOverride != null ? pluginIdOverride : memento.getString(TAG_PLUGIN_ID);

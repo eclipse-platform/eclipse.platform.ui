@@ -147,7 +147,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 	}
 
 	private Button buttonAdd;
-	private Button buttonClear;
+	// TODO private Button buttonClear;
 	private Button buttonRemove;
 	private Button buttonRestore;
 	private Map categoryDefinitionsById;
@@ -582,7 +582,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		tableColumn.setResizable(true);
 		tableColumn.setText(Util.translateString(resourceBundle, "tableColumnContext")); //$NON-NLS-1$
 		tableColumn.pack();
-		tableColumn.setWidth(100); // TODO tableColumn.getWidth() + constant
+		tableColumn.setWidth(75); // TODO tableColumn.getWidth() + constant
 		width += tableColumn.getWidth();
 		tableColumn = new TableColumn(tableKeySequencesForCommand, SWT.NULL, 2);
 		tableColumn.setResizable(true);
@@ -620,6 +620,8 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		labelContextExtends.setLayoutData(gridData);
 		labelKeySequence = new Label(composite, SWT.LEFT);
 		labelKeySequence.setText(Util.translateString(resourceBundle, "labelKeySequence")); //$NON-NLS-1$
+		
+		/* TODO remove?		
 		Composite compositeKeySequence = new Composite(composite, SWT.NULL);
 		gridLayout = new GridLayout();
 		gridLayout.horizontalSpacing = 0;
@@ -630,8 +632,11 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
 		gridData.horizontalSpan = 2;
 		compositeKeySequence.setLayoutData(gridData);
-		textKeySequence = new KeySequenceText(compositeKeySequence);
+		*/
+		
+		textKeySequence = new KeySequenceText(composite /* TODO compositeKeySequence? */);
 		gridData = new GridData();
+		gridData.horizontalSpan = 2;		
 		gridData.widthHint = 300;
 		textKeySequence.setLayoutData(gridData);
 
@@ -641,20 +646,20 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 			}	
 		});
 
+		/* TODO remove?
 		buttonClear = new Button(compositeKeySequence, SWT.FLAT);
 		buttonClear.setImage(IMAGE_CLEAR);
-		/* TODO 
 		gridData = new GridData();
 		gridData.heightHint = 20;
 		gridData.widthHint = 20;
 		buttonClear.setLayoutData(gridData);
-		*/
 
-		buttonClear.addSelectionListener(new SelectionAdapter() {
+				buttonClear.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent selectionEvent) {
 				selectedButtonClear();
 			}	
 		});
+		*/
 
 		labelCommandsForKeySequence = new Label(composite, SWT.LEFT);
 		gridData = new GridData();
@@ -680,7 +685,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		tableColumn.setResizable(true);
 		tableColumn.setText(Util.translateString(resourceBundle, "tableColumnContext")); //$NON-NLS-1$
 		tableColumn.pack();		
-		tableColumn.setWidth(100); // TODO tableColumn.getWidth() + constant
+		tableColumn.setWidth(75); // TODO tableColumn.getWidth() + constant
 		width += tableColumn.getWidth();
 		tableColumn = new TableColumn(tableCommandsForKeySequence, SWT.NULL, 2);
 		tableColumn.setResizable(true);
@@ -821,10 +826,12 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		KeyBindingNode.getKeyBindingDefinitions(tree, KeySequence.getInstance(), 0, preferenceKeyBindingDefinitions);		
 		System.out.println("current: " + preferenceKeyBindingDefinitions);		
 	}
-		
+
+	/* TODO remove?		
 	private void selectedButtonClear() {
 		textKeySequence.clear();
 	}
+	*/
 
 	private void selectedButtonRemove() {
 		String contextId = getContextId();
