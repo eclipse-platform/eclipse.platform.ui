@@ -317,7 +317,6 @@ protected void initializeDefaultPreferences(IPreferenceStore store) {
 		IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_PAGE);
 		
 	FontRegistry registry = JFaceResources.getFontRegistry();
-	String locale = Locale.getDefault().toString();
 	initializeFont(JFaceResources.DIALOG_FONT,  registry, store);
 	initializeFont(JFaceResources.BANNER_FONT,  registry, store);
 	initializeFont(JFaceResources.HEADER_FONT,  registry, store);
