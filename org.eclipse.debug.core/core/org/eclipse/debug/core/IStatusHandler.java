@@ -13,7 +13,7 @@ import org.eclipse.core.runtime.IStatus;
  * or otherwise. Provides a mechanism for separating core (headless)
  * function from UI interaction. The debug plug-in provides a
  * status handlers extension point, against which handlers can
- * register for specific status codes - idetified by plug-in
+ * register for specific status codes - identified by plug-in
  * identifier and plug-in specific status code. The interaction between
  * an object requiring a status handler (source), and the status handler
  * is defined by the source and handler.
@@ -40,7 +40,7 @@ import org.eclipse.core.runtime.IStatus;
  * The attributes are specified as follows:
  * <ul>
  * <li><code>id</code> specifies a unique identifier for this status handler.</li>
- * <li><code>class</code> specifies the fully qualified name of the java class
+ * <li><code>class</code> specifies the fully qualified name of the Java class
  *   that implements <code>IStatusHandler</code>.</li>
  * <li><code>plugin</code> plug-in identifier that corresponds to the
  *   plug-in of the status this handler is registered for (i.e.
