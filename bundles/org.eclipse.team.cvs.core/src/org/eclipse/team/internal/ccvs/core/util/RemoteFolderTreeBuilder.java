@@ -259,12 +259,12 @@ public class RemoteFolderTreeBuilder {
 					new Path(remote.getRemotePath()).append(name), 
 					tagForRemoteFolder(remote, tag)));
 			} else if (revision == ADDED) {
-				children.put(name, new RemoteFile(remote, name, tag));
+				children.put(name, new RemoteFile(remote, name, tagForRemoteFolder(remote, tag)));
 			} else if (revision == UNKNOWN) {
 				// The local resource is out of sync with the remote.
 				// Create a RemoteFile associated with the tag so we are assured of getting the proper revision
 				// (Note: this will replace the RemoteFile added from the local base)
-				children.put(name, new RemoteFile(remote, name, tag));
+				children.put(name, new RemoteFile(remote, name, tagForRemoteFolder(remote, tag)));
 			} else if (revision == DELETED) {
 				// This should have been deleted while creating from the local resources.
 				// If it wasn't, delete it now.
