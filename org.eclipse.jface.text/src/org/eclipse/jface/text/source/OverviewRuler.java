@@ -50,6 +50,7 @@ import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextEvent;
+import org.eclipse.jface.text.source.projection.AnnotationBag;
 
 
 
@@ -92,56 +93,53 @@ public class OverviewRuler implements IOverviewRuler {
 	 */
 	class FilterIterator implements Iterator {
 		
-		private final static int IGNORE= 0;
-		private final static int TEMPORARY= 1;
-		private final static int PERSISTENT= 2;
+		final static int TEMPORARY= 1 << 1;
+		final static int PERSISTENT= 1 << 2;
+		final static int IGNORE_BAGS= 1 << 3;
 		
 		private Iterator fIterator;
 		private Object fType;
 		private Annotation fNext;
-		private int fTemporary;
+		private int fStyle;
 		
-		public FilterIterator() {
-			this(null, IGNORE);
-		}
-		
-		public FilterIterator(Object annotationType) {
-			this(annotationType, IGNORE);
-		}
-		
-		public FilterIterator(Object annotationType, boolean temporary) {
-			this(annotationType, temporary ? TEMPORARY : PERSISTENT);
-		}
-		
-		private FilterIterator(Object annotationType, int temporary) {
+				
+		public FilterIterator(Object annotationType, int style) {
 			fType= annotationType;
-			fTemporary= temporary;
+			fStyle= style;
 			if (fModel != null) {
 				fIterator= fModel.getAnnotationIterator();
 				skip();
 			}
 		}
 		
-		public FilterIterator(Object annotationType, boolean temporary, Iterator iterator) {
+		public FilterIterator(Object annotationType, int style, Iterator iterator) {
 			fType= annotationType;
-			fTemporary= temporary ? TEMPORARY : PERSISTENT;
+			fStyle= style;
 			fIterator= iterator;
 			skip();
 		}
 
 		private void skip() {
+			
+			boolean temp= (fStyle & TEMPORARY) != 0;
+			boolean pers= (fStyle & PERSISTENT) != 0;
+			boolean ignr= (fStyle & IGNORE_BAGS) != 0;
+			
 			while (fIterator.hasNext()) {
 				Annotation next= (Annotation) fIterator.next();
+				
 				if (next.isMarkedDeleted())
+					continue;
+				
+				if (ignr && (next instanceof AnnotationBag))
 					continue;
 					
 				fNext= next;
 				Object annotationType= next.getType();
 				if (fType == null || isSubtype(annotationType)) {
-					if (fTemporary == IGNORE) return;
-					boolean temporary= !next.isPersistent();
-					if (fTemporary == TEMPORARY && temporary) return;
-					if (fTemporary == PERSISTENT && !temporary) return;
+					if (temp && pers) return;
+					if (pers && next.isPersistent()) return;
+					if (temp && !next.isPersistent()) return;
 				}
 			}
 			fNext= null;
@@ -493,12 +491,12 @@ public class OverviewRuler implements IOverviewRuler {
 			if (skip(annotationType))
 				continue;
 			
-			boolean[] temporary= new boolean[] { false, true };
-			for (int t=0; t < temporary.length; t++) {
+			int[] style= new int[] { FilterIterator.PERSISTENT, FilterIterator.TEMPORARY };
+			for (int t=0; t < style.length; t++) {
 			
-				Iterator e= new FilterIterator(annotationType, temporary[t]);
-				Color fill= getFillColor(annotationType, temporary[t]);
-				Color stroke= getStrokeColor(annotationType, temporary[t]);
+				Iterator e= new FilterIterator(annotationType, style[t]);
+				Color fill= getFillColor(annotationType, style[t] == FilterIterator.TEMPORARY);
+				Color stroke= getStrokeColor(annotationType, style[t] == FilterIterator.TEMPORARY);
 				
 				for (int i= 0; e.hasNext(); i++) {
 					
@@ -592,12 +590,12 @@ public class OverviewRuler implements IOverviewRuler {
 			if (skip(annotationType))
 				continue;
 
-			boolean[] temporary= new boolean[] { false, true };
-			for (int t=0; t < temporary.length; t++) {
+			int[] style= new int[] { FilterIterator.PERSISTENT, FilterIterator.TEMPORARY };
+			for (int t=0; t < style.length; t++) {
 
-				Iterator e= new FilterIterator(annotationType, temporary[t], fCachedAnnotations.iterator());
-				Color fill= getFillColor(annotationType, temporary[t]);
-				Color stroke= getStrokeColor(annotationType, temporary[t]);
+				Iterator e= new FilterIterator(annotationType, style[t], fCachedAnnotations.iterator());
+				Color fill= getFillColor(annotationType, style[t] == FilterIterator.TEMPORARY);
+				Color stroke= getStrokeColor(annotationType, style[t] == FilterIterator.TEMPORARY);
 
 				for (int i= 0; e.hasNext(); i++) {
 
@@ -759,7 +757,7 @@ public class OverviewRuler implements IOverviewRuler {
 				
 				Object annotationType= fAnnotationsSortedByLayer.get(i);
 				
-				Iterator e= new FilterIterator(annotationType);
+				Iterator e= new FilterIterator(annotationType, FilterIterator.PERSISTENT | FilterIterator.TEMPORARY);
 				while (e.hasNext() && found == null) {
 					Annotation a= (Annotation) e.next();
 					if (a.isMarkedDeleted())
@@ -1155,7 +1153,7 @@ public class OverviewRuler implements IOverviewRuler {
 			if (skipInHeader(annotationType) || skip(annotationType))
 				continue;
 			
-			for (Iterator e= new FilterIterator(annotationType); e.hasNext();) {
+			for (Iterator e= new FilterIterator(annotationType, FilterIterator.PERSISTENT | FilterIterator.TEMPORARY | FilterIterator.IGNORE_BAGS); e.hasNext();) {
 				if (e.next() != null) {
 					colorType= annotationType;
 					break outer;
@@ -1209,7 +1207,7 @@ public class OverviewRuler implements IOverviewRuler {
 			int count= 0;
 			String annotationTypeLabel= null;
 	
-			for (Iterator e= new FilterIterator(annotationType); e.hasNext();) {
+			for (Iterator e= new FilterIterator(annotationType, FilterIterator.PERSISTENT | FilterIterator.TEMPORARY | FilterIterator.IGNORE_BAGS); e.hasNext();) {
 				Annotation annotation= (Annotation)e.next();
 				if (annotation != null) {
 					if (annotationTypeLabel == null)
