@@ -21,7 +21,10 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
+import org.eclipse.ant.core.IAntClasspathEntry;
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
+import org.eclipse.core.internal.variables.StringVariableManager;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -79,7 +82,7 @@ public class AddCustomDialog extends StatusDialog {
 	private Text nameField;
 	
 	private String name=""; //$NON-NLS-1$
-	private ClasspathEntry library= null;
+	private IAntClasspathEntry library= null;
 	private String className=""; //$NON-NLS-1$
 	
 	private boolean editing= false;
@@ -414,11 +417,13 @@ public class AddCustomDialog extends StatusDialog {
 	
 	/**
 	 *	Answer a handle to the zip file currently specified as being the source.
-	 *	Return null if this file does not exist or is not of valid format.
+	 *	Return <code>null</code> if this file does not exist or is not of valid format.
 	 */
 	private ZipFile getSpecifiedSourceFile() {
 		try {
-			return new ZipFile(sourceNameField.getText());
+			String expanded = sourceNameField.getText();
+			expanded= StringVariableManager.getDefault().performStringSubstitution(expanded);
+			return new ZipFile(expanded);
 		} catch (ZipException e) {
 			StatusInfo status= new StatusInfo();
 			status.setError(AntPreferencesMessages.getString("AddCustomDialog.Bad_Format")); //$NON-NLS-1$
@@ -426,6 +431,10 @@ public class AddCustomDialog extends StatusDialog {
 		} catch (IOException e) {
 			StatusInfo status= new StatusInfo();
 			status.setError(AntPreferencesMessages.getString("AddCustomDialog.Unreadable")); //$NON-NLS-1$
+			updateStatus(status);
+		} catch (CoreException e) {
+			StatusInfo status= new StatusInfo();
+			status.setError("Specified zip file could not be resolved");
 			updateStatus(status);
 		}
 
@@ -570,7 +579,7 @@ public class AddCustomDialog extends StatusDialog {
 		} else {
 			className= ((File)file).getAbsolutePath();
 			IPath classPath= new Path(className);
-			IPath libraryPath= new Path(library.getURL().getPath());
+			IPath libraryPath= new Path(library.getEntryURL().getPath());
 			int matching= classPath.matchingFirstSegments(libraryPath);
 			classPath= classPath.removeFirstSegments(matching);
 			classPath= classPath.setDevice(null);
@@ -590,12 +599,12 @@ public class AddCustomDialog extends StatusDialog {
 		this.name= name;
 	} 
 	
-	protected void setLibrary(ClasspathEntry library) {
+	protected void setLibraryEntry(IAntClasspathEntry library) {
 		this.library= library;
 		editing= true;
 	}
 	
-	protected ClasspathEntry getLibrary() {
+	protected IAntClasspathEntry getLibraryEntry() {
 		return this.library;
 	}
 	
