@@ -40,18 +40,16 @@ public class AntWorkingDirectoryBlock extends WorkingDirectoryBlock {
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		setLaunchConfiguration(configuration);
 		try {
-			if (fDefaultWorkingDirPath == null) {
-				try {
-					fDefaultWorkingDirPath= ExternalToolsUtil.getLocation(configuration).removeLastSegments(1).toOSString();
-				} catch (CoreException e) {
-					//no location
-				}
+			try {
+				fDefaultWorkingDirPath= ExternalToolsUtil.getLocation(configuration).removeLastSegments(1).toOSString();
+			} catch (CoreException e) {
+				//no location
 			}
+			
 			String wd = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, (String)null); //$NON-NLS-1$
 			fWorkspaceDirText.setText(""); //$NON-NLS-1$
 			fWorkingDirText.setText(""); //$NON-NLS-1$
-			boolean sameAsDefault= wd != null && (wd.equals(fDefaultWorkingDirPath) || wd.equals(System.getProperty("user.dir"))); //$NON-NLS-1$
-			if (wd == null || sameAsDefault) {
+			if (wd == null || isSameAsDefault(wd)) {
 				fUseDefaultWorkingDirButton.setSelection(true);
 			} else {
 				IPath path = new Path(wd);
@@ -73,10 +71,19 @@ public class AntWorkingDirectoryBlock extends WorkingDirectoryBlock {
 		}
 	}
 	
+	private boolean isSameAsDefault(String workingDir) {
+		return workingDir == null || (workingDir.equals(fDefaultWorkingDirPath) || workingDir.equals(System.getProperty("user.dir"))); //$NON-NLS-1$
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
+		String wd = getCurrentWorkingDirectory();
+		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, wd);
+	}
+	
+	private String getCurrentWorkingDirectory() {
 		String wd = null;
 		if (isLocalWorkingDirectory()) {
 			wd = getAttributeValueFrom(fWorkingDirText);
@@ -85,13 +92,16 @@ public class AntWorkingDirectoryBlock extends WorkingDirectoryBlock {
 			path = path.makeRelative();
 			wd = path.toString();
 		} 
-		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, wd);
+		if (isSameAsDefault(wd)) {
+			wd= null;
+		}
+		return wd;
 	}
-	
+
 	public void setEnabled(boolean enabled) {
 		fWorkingDirLabel.setEnabled(enabled);
 		fUseDefaultWorkingDirButton.setEnabled(enabled);
-		if(!isDefaultWorkingDirectory()) {
+		if(!isDefaultWorkingDirectory() && enabled) {
 			boolean local = isLocalWorkingDirectory();
 			fWorkingDirText.setEnabled(local);
 			fWorkingDirBrowseButton.setEnabled(local);
@@ -106,6 +116,7 @@ public class AntWorkingDirectoryBlock extends WorkingDirectoryBlock {
 			fWorkspaceDirBrowseButton.setEnabled(false);
 			fLocalDirButton.setEnabled(false);
 			fWorkspaceDirButton.setEnabled(false);
+			fUseDefaultWorkingDirButton.setSelection(isSameAsDefault(getCurrentWorkingDirectory()));
 		}
 	}
 }
