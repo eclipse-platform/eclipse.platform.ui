@@ -44,6 +44,8 @@ import org.eclipse.core.runtime.*;
 	private final static String STORE_PATCH_FILES_ID= PAGE_NAME + ".PATCH_FILES";	//$NON-NLS-1$
 	private final static String STORE_USE_CLIPBOARD_ID= PAGE_NAME + ".USE_CLIPBOARD";	//$NON-NLS-1$
 	
+	static final char SEPARATOR = System.getProperty ("file.separator").charAt (0); //$NON-NLS-1$
+	
 	private boolean fShowError= false;
 	
 	// SWT widgets
@@ -346,12 +348,19 @@ import org.eclipse.core.runtime.*;
 	protected void handlePatchFileBrowseButtonPressed() {
 		FileDialog dialog= new FileDialog(getShell(), SWT.NONE);
 		dialog.setText(PatchMessages.getString("InputPatchPage.SelectPatchFileDialog.title"));		 //$NON-NLS-1$
-		dialog.setFilterPath(getPatchFilePath());
+		String patchFilePath= getPatchFilePath();
+		if (patchFilePath != null) {
+			int lastSegment= patchFilePath.lastIndexOf(SEPARATOR);
+			if (lastSegment > 0) {
+				patchFilePath= patchFilePath.substring(0, lastSegment);
+			}
+		}
+		dialog.setFilterPath(patchFilePath);
 		String res= dialog.open();
 		if (res == null)
 			return;
 		
-		String patchFilePath= dialog.getFileName();
+		patchFilePath= dialog.getFileName();
 		IPath filterPath= new Path(dialog.getFilterPath());
 		IPath path= filterPath.append(patchFilePath).makeAbsolute();	
 		patchFilePath= path.toOSString();
