@@ -21,6 +21,7 @@ public class TocURL extends HelpURL {
 	/**
 	 * @url "/pluginid/tocfile.xml"
 	 * or "/"
+	 * or "/?topic=/pluginid/topic.html"
 	 */
 	public TocURL(String url, String query) {
 		super(url, query);
@@ -38,16 +39,25 @@ public class TocURL extends HelpURL {
 	 */
 	public InputStream openStream() {
 		if ("/".equals(url)) {
-			return serializeTocs();
-		}
+			if (getValue("topic") == null)
+				return serializeTocs();
+			else
+				return serializeToc(findTocContainingTopic(getValue("topic")));
+		} 
 		return serializeToc(url);
 	}
 	/**
 	 * @return InputStream from XML representation of TOC
 	 */
 	private InputStream serializeToc(String tocID) {
-		Toc toc =
+		IToc toc =
 			(Toc) HelpSystem.getTocManager().getToc(tocID, getLocale().toString());
+		return serializeToc(toc);
+	}
+	/**
+	 * @return InputStream from XML representation of TOC
+	 */
+	private InputStream serializeToc(IToc toc) {
 		if (toc == null)
 			return null;
 		StringWriter stWriter = new StringWriter();
@@ -58,6 +68,7 @@ public class TocURL extends HelpURL {
 			return null;
 		}
 	}
+	
 	/**
 	 * @return InputStream from XML representation of TOC list
 	 */
@@ -85,4 +96,32 @@ public class TocURL extends HelpURL {
 			return null;
 		}
 	}
+	
+	/**
+	 * Finds a TOC that contains specified topic
+	 * @param topic the topic href
+	 */
+	public IToc findTocContainingTopic(String topic) {
+		if (topic == null || topic.equals(""))
+			return null;
+
+		int index = topic.indexOf("help:/");
+		if (index != -1)
+			topic = topic.substring(index + 5);
+		index = topic.indexOf('?');
+		if (index != -1)
+			topic = topic.substring(0, index);
+
+		if (topic == null || topic.equals(""))
+			return null;
+
+		IToc[] tocs = HelpSystem.getTocManager().getTocs(getLocale().toString());
+		for (int i=0; i<tocs.length; i++)
+			if (tocs[i].getTopic(topic) != null)
+				return tocs[i];
+
+		// nothing found
+		return null;
+	}
+
 }
