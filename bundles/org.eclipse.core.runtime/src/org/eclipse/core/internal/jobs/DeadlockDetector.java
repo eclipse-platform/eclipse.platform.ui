@@ -493,7 +493,7 @@ class DeadlockDetector {
 
 		boolean rowEmpty = true;
 		int numEmpty = 0;
-		//check is the given row is empty
+		//check if the given row is empty
 		for (int j = 0; j < graph[row].length; j++) {
 			if (graph[row][j] != NO_STATE) {
 				rowEmpty = false;
