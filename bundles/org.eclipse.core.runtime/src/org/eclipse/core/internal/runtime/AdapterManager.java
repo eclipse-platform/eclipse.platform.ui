@@ -147,10 +147,7 @@ private IAdapterFactory getFactory(Class extensibleClass, Class adapter) {
 	// of those interfaces to the table.  
 	classList = computeInterfaceOrder(classList);
 	addFactoriesFor(classList, table);
-	// If there is still nothing, give up
-	if (table.isEmpty())
-		return null;
-	// otherwise, cache the table and do the lookup again.
+	//cache the table and do the lookup again.
 	if (lookup == null)
 		lookup = new Hashtable(5);
 	lookup.put(extensibleClass, table);
