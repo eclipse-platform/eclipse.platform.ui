@@ -16,6 +16,8 @@ package org.eclipse.core.runtime.jobs;
  * This interface is for internal use by the platform-related plug-ins.
  * Clients should not implement this interface.
  * </p>
+ * 
+ * @see IJobManager.setLockListener
  */
 public interface ILockListener {
 	/**
