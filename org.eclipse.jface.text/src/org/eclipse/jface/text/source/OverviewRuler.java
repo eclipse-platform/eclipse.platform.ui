@@ -82,7 +82,7 @@ public class OverviewRuler implements IOverviewRuler {
 		public void modelChanged(IAnnotationModel model) {
 			update();
 		}
-	}
+	};
 	
 	/**
 	 * Filters annotations based on their types.
@@ -175,12 +175,29 @@ public class OverviewRuler implements IOverviewRuler {
 			fIndicatorColor= color;
 		}
 		
+		private void drawBevelRect(GC gc, int x, int y, int w, int h, Color topLeft, Color bottomRight) {
+			gc.setForeground(topLeft);
+			gc.drawLine(x, y, x + w -1, y);
+			gc.drawLine(x, y, x, y + h -1);
+		
+			gc.setForeground(bottomRight);
+			gc.drawLine(x + w, y, x + w, y + h);
+			gc.drawLine(x, y + h, x + w, y + h);
+		}
+		
 		public void paintControl(PaintEvent e) {
+			
 			Point s= fHeader.getSize();
+			
 			if (fIndicatorColor != null) {
 				e.gc.setBackground(fIndicatorColor);
-				e.gc.fillRectangle(INSET, (s.y - (2*ANNOTATION_HEIGHT)) / 2, s.x - (2*INSET), 2*ANNOTATION_HEIGHT);
+				Rectangle r= new Rectangle(INSET, (s.y - (2*ANNOTATION_HEIGHT)) / 2, s.x - (2*INSET), 2*ANNOTATION_HEIGHT);
+				e.gc.fillRectangle(r);
+				Display d= fHeader.getDisplay();
+				if (d != null)
+					drawBevelRect(e.gc, r.x, r.y, r.width -1, r.height -1, d.getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW), d.getSystemColor(SWT.COLOR_WIDGET_HIGHLIGHT_SHADOW));
 			}
+			
 			e.gc.setForeground(fSeparatorColor);
 			e.gc.setLineWidth(1);
 			e.gc.drawLine(0, s.y -1, s.x -1, s.y -1);
