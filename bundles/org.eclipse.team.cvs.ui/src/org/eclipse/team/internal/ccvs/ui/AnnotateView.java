@@ -29,7 +29,10 @@ import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.team.internal.ccvs.core.CVSAnnotateBlock;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
@@ -72,17 +75,21 @@ public class AnnotateView extends ViewPart implements ISelectionChangedListener 
 	
 	
 	public static final String VIEW_ID = "org.eclipse.team.ccvs.ui.AnnotateView"; //$NON-NLS-1$
+	private Composite top;
 
 	public AnnotateView() {
 		super();
 	}
 
 	public void createPartControl(Composite parent) {
-		viewer = new ListViewer(parent, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
-		viewer.setContentProvider(new ArrayContentProvider());
-		viewer.setLabelProvider(new LabelProvider());
-		viewer.addSelectionChangedListener(this);
-		WorkbenchHelp.setHelp(viewer.getControl(), IHelpContextIds.ANNOTATE_VIEW);
+		
+		this.top = parent;
+		
+		// Create default contents
+		Label label = new Label(top, SWT.WRAP);
+		label.setText(Policy.bind("CVSAnnotateView.viewInstructions")); //$NON-NLS-1$
+		label.setLayoutData(new GridData(GridData.FILL_BOTH));
+		top.layout();
 	}
 
 	/**
@@ -106,6 +113,24 @@ public class AnnotateView extends ViewPart implements ISelectionChangedListener 
 	 */
 	public void showAnnotations(ICVSResource cvsResource, Collection cvsAnnotateBlocks, InputStream contents, boolean useHistoryView) throws InvocationTargetException {
 
+		// Remove old viewer
+		Control[] oldChildren = top.getChildren();
+		if (oldChildren != null) {
+			for (int i = 0; i < oldChildren.length; i++) {
+				oldChildren[i].dispose();
+			}
+		}
+
+		viewer = new ListViewer(top, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+		viewer.setContentProvider(new ArrayContentProvider());
+		viewer.setLabelProvider(new LabelProvider());
+		viewer.addSelectionChangedListener(this);
+		viewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
+
+		WorkbenchHelp.setHelp(viewer.getControl(), IHelpContextIds.ANNOTATE_VIEW);
+
+		top.layout();
+		
 		this.cvsResource = cvsResource;
 		this.contents = contents;
 		this.cvsAnnotateBlocks = cvsAnnotateBlocks;
