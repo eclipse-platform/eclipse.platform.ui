@@ -287,7 +287,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 					updateCommandStack();
 			}
 			
-			createNewCurrent();
+			setNewCurrent();
 		}
 		
 		/**
@@ -460,7 +460,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 				if (fCommands.size() > 0 && !fFoldingIntoCompoundChange) {
 					if (!isPrimer())
 						super.updateCommandStack();
-					createNewCurrent();
+					setNewCurrent();
 					return;
 				}
 			}
@@ -667,7 +667,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 			case OperationHistoryEvent.OPERATION_NOT_OK:
 				if (event.getOperation() == fOperation) {
 					listenToTextChanges(true);
-					createNewCurrent();
+					setNewCurrent();
 					fOperation= null;
 					if (fTextViewer instanceof TextViewer)
 						((TextViewer)fTextViewer).ignoreAutoEditStrategies(false);
@@ -865,16 +865,17 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 	 * @since 3.1
 	 */
 	private void initializeCommandStack() {
-	    if (fHistory != null && fUndoContext != null) fHistory.dispose(fUndoContext, true, true);
+	    if (fHistory != null && fUndoContext != null)
+			fHistory.dispose(fUndoContext, true, true);
 
 	}
 	
 	/**
-	 * Creates the new current, open text command.
+	 * Creates the new current, open text command and assigns it to <code>fCurrent</code>.
 	 *
 	 * @since 3.1
 	 */
-	private void createNewCurrent() {
+	private void setNewCurrent() {
 		// if the history is empty, we need to prime it by adding
 		// the new command
 		if (fHistory.getUndoHistory(fUndoContext).length == 0 && 
@@ -1122,7 +1123,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 			initializeCommandStack();
 			
 			// open up the current command and add it to the history.
-			createNewCurrent();
+			setNewCurrent();
 			
 			fPreviousDelete= new TextCommand(fUndoContext);
 			addListeners();
@@ -1153,7 +1154,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		if (isConnected()) {
 			initializeCommandStack();
 			if (fCurrent != null) {
-				createNewCurrent();
+				setNewCurrent();
 			}
 			fFoldingIntoCompoundChange= false;
 			fInserting= false;
