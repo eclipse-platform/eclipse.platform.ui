@@ -5,6 +5,8 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
+import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.ColorFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -49,6 +51,10 @@ public class VariableViewsPreferencePage extends FieldEditorPreferencePage imple
 		
 		addField(new ColorFieldEditor(CHANGED_VARIABLE_RGB, DebugUIMessages.getString("VariableViewsPreferencePage.&Changed_variable_value_color__3"), getFieldEditorParent())); //$NON-NLS-1$
 		
+		createSpacer(getFieldEditorParent(), 1);
+		
+		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_SHOW_DETAIL_PANE, DebugUIMessages.getString("VariableViewPreferencePage.&Show_detail_pane_by_default_1"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
+		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_SHOW_TYPE_NAMES, DebugUIMessages.getString("VariableViewPreferencePage.Show_type_&names_by_default_2"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
 		
 		createSpacer(getFieldEditorParent(), 1);
 		
@@ -70,6 +76,10 @@ public class VariableViewsPreferencePage extends FieldEditorPreferencePage imple
 	
 	protected static void initDefaults(IPreferenceStore store) {
 		store.setDefault(IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_ORIENTATION, IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_UNDERNEATH);
+		
+		store.setDefault(IDebugUIConstants.PREF_SHOW_DETAIL_PANE, false);
+		store.setDefault(IDebugUIConstants.PREF_SHOW_TYPE_NAMES, false);
+		
 		PreferenceConverter.setDefault(store, CHANGED_VARIABLE_RGB, new RGB(255, 0, 0));
 	}
 	
@@ -78,5 +88,5 @@ public class VariableViewsPreferencePage extends FieldEditorPreferencePage imple
 		GridData gd = new GridData();
 		gd.horizontalSpan = columnSpan;
 		label.setLayoutData(gd);
-	}		
+	}
 }

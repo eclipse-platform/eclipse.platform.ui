@@ -141,7 +141,7 @@ public interface IDebugUIConstants {
 	 */
 	public static final String PREF_BUILD_BEFORE_LAUNCH= PLUGIN_ID + ".build_before_launch"; //$NON-NLS-1$
 	/**
-	 * Identifier for the radio button group that consists of the following two preferences.
+	 * Identifier for the radio button group that consists of the following three preferences.
 	 */
 	public static final String PREF_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH_RADIO= PLUGIN_ID + ".save_dirty_editors_before_launch_radio"; //$NON-NLS-1$
 	/**
@@ -183,7 +183,25 @@ public interface IDebugUIConstants {
 	 * 
 	 * @since 2.0
 	 */
-	public static final String PREF_REUSE_EDITOR = PLUGIN_ID + ".reuse_editor"; //$NON-NLS-1$	
+	public static final String PREF_REUSE_EDITOR = PLUGIN_ID + ".reuse_editor"; //$NON-NLS-1$
+	
+	/**
+	 * Boolean preference controlling whether the debugger shows types names
+	 * in its variable view. When <code>true</code> the debugger
+	 * will display type names in new variable views.
+	 * 
+	 * @since 2.0
+	 */
+	public static final String PREF_SHOW_TYPE_NAMES = PLUGIN_ID + ".show_type_names"; //$NON-NLS-1$	
+	
+	/**
+	 * Boolean preference controlling whether the debugger shows the detail pane
+	 * in its variable view. When <code>true</code> the debugger
+	 * will show the detail panes in new variable views.
+	 * 
+	 * @since 2.0
+	 */
+	public static final String PREF_SHOW_DETAIL_PANE = PLUGIN_ID + ".show_detail_pane"; //$NON-NLS-1$	
 		
 	// Debug views
 	

@@ -488,7 +488,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	 */
 	protected void createActions() {
 		IAction action = new ShowTypesAction(getStructuredViewer());
-		action.setChecked(false);
+		action.setChecked(DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_SHOW_TYPE_NAMES));
 		setAction("ShowTypeNames",action); //$NON-NLS-1$
 				
 		action = new ChangeVariableValueAction(getViewer());
@@ -497,7 +497,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		setAction(DOUBLE_CLICK_ACTION, action);
 		
 		action = new ShowDetailPaneAction(this);
-		action.setChecked(false);
+		action.setChecked(DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_SHOW_DETAIL_PANE));
 		setAction("ShowDetailPane", action); //$NON-NLS-1$
 	
 		//detail specific actions
