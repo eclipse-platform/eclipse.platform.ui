@@ -773,7 +773,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			// the current config is about to be deleted ignore this change
 			return;
 		}
- 		updateButtons();
  		
  		if (!isEqual(input, newInput)) {
  			ILaunchConfigurationTabGroup group = getTabGroup();
@@ -795,7 +794,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 			}
  			}
  			getTabViewer().setInput(newInput);
- 			refreshStatus();
  			// bug 14758 - if the newly selected config is dirty, save its changes
  			if (getTabViewer().isDirty()) {
  				getTabViewer().handleApplyPressed();
@@ -905,7 +903,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 *
 	 */
 	protected void handleTabSelectionChanged() {
-		refreshStatus();
+		updateMessage();
 	}
 	 	 	
  	private void setProgressMonitorPart(ProgressMonitorPart part) {
