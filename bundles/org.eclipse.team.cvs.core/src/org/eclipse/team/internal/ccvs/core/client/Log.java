@@ -10,7 +10,10 @@
  ******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.client;
 
-import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.ICVSResource;
+import org.eclipse.team.internal.ccvs.core.client.Command.GlobalOption;
 
 public class Log extends AbstractMessageCommand {
 	/*** Local options: specific to log ***/
@@ -23,6 +26,16 @@ public class Log extends AbstractMessageCommand {
 	protected Log() { }
 	protected String getRequestId() {
 		return "log"; //$NON-NLS-1$
+	}
+	
+	protected ICVSResource[] sendLocalResourceState(Session session, GlobalOption[] globalOptions,
+		LocalOption[] localOptions, ICVSResource[] resources, IProgressMonitor monitor)
+		throws CVSException {			
+		
+		// Send all folders that are already managed to the server
+		boolean sendEmptyFolders = Command.findOption(localOptions, RCS_FILE_NAMES_ONLY.getOption()) != null;
+		new FileStructureVisitor(session, sendEmptyFolders, false /* send modified contents */, monitor).visit(session, resources);
+		return resources;
 	}
 }
 
