@@ -60,7 +60,7 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 		
 	static protected class NullProvider implements IDocumentProvider, IDocumentProviderExtension, IDocumentProviderExtension2, IDocumentProviderExtension3, IStorageDocumentProvider  {
 		
-		static final private IStatus STATUS_ERROR= new Status(IStatus.ERROR, EditorsPlugin.getPluginId(), IStatus.INFO, "Error", null);
+		static final private IStatus STATUS_ERROR= new Status(IStatus.ERROR, EditorsPlugin.getPluginId(), IStatus.INFO, TextEditorMessages.getString("NullProvider.error"), null); //$NON-NLS-1$
 		
 		public void connect(Object element) throws CoreException {}
 		public void disconnect(Object element) {}
