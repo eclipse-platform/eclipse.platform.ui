@@ -34,10 +34,10 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
  * Example usage:
  * <pre>
  * MenuManager menu = ...;
- * IDEActionFactory.IWorkbenchAction closeEditorAction
+ * ActionFactory.IWorkbenchAction closeEditorAction
  * 	  = IDEActionFactory.CLOSE.create(window);
  * menu.add(closeEditorAction);
- * IDEActionFactory.IWorkbenchAction closeProjectAction
+ * ActionFactory.IWorkbenchAction closeProjectAction
  * 	  = IDEActionFactory.CLOSE_PROJECT.create(window);
  * menu.add(closeProjectAction);
  * </pre>
