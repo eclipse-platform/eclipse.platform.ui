@@ -20,7 +20,9 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
@@ -28,8 +30,12 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IMarkerHelpRegistry;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.EditorManager;
+import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.registry.MarkerHelpRegistry;
@@ -529,6 +535,72 @@ public final class IDE {
 		
 		return editor;
 	}
+	
+	/**
+	 * Save all dirty editors in the workbench whose editor input is  
+	 * a child resource of one of the <code>IResource</code>'s provided.
+	 * Opens a dialog to prompt the user if <code>confirm</code> is true. 
+	 * Return true if successful. Return false if the user has cancelled 
+	 * the command.
+	 * 
+	 * @since 3.0
+	 * 
+	 * @param resourceRoots
+	 *            the resource roots under which editor input should be saved,
+	 *            other will be left dirty
+	 * @param confirm
+	 *            prompt the user if true
+	 * @return boolean false if the operation was cancelled.
+	 */
+	public static boolean saveAllEditors(IResource[] resourceRoots, boolean confirm) {
+		final IResource[] finalResources = resourceRoots;
+		final boolean finalConfirm = confirm;
+		final boolean[] result = new boolean[1];
+		result[0] = true;
+
+		if (resourceRoots.length == 0) 
+			return result[0];
+		
+		Platform.run(new SafeRunnable(WorkbenchMessages.getString("ErrorClosing")) { //$NON-NLS-1$
+			public void run() {
+				//Collect dirtyEditors
+				ArrayList dirtyEditors = new ArrayList();
+				
+			    IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
+			    for (int i = 0; i < windows.length; i++) {
+		            IWorkbenchWindow window = windows[i];
+		            IWorkbenchPage[] pages = window.getPages();
+		            for (int j = 0; j < pages.length; j++) {
+		                IWorkbenchPage page = pages[j];
+		                IEditorPart[] dirty = page.getDirtyEditors();
+		                for (int k = 0; k < dirty.length; k++) {
+		                    IEditorPart part = dirty[k];
+		                    IFile file = (IFile) part.getEditorInput().getAdapter(IFile.class);
+		                    if (file != null) {
+		                    	for (int l = 0; l < finalResources.length; l++) {
+		                    		IResource resource = finalResources[l];
+		                    		if (resource.getFullPath().isPrefixOf(file.getFullPath())) {
+		                    			dirtyEditors.add(part);
+		                    			break;
+		                    		}
+		                    }
+		                }
+		            }
+		        }
+
+				}
+				if (dirtyEditors.size() > 0) {
+					IWorkbenchWindow w = Workbench.getInstance().getActiveWorkbenchWindow();
+					if (w == null)
+						w = windows[0];
+					result[0] = EditorManager.saveAll(dirtyEditors, finalConfirm, w);
+				}
+			}
+		});
+		return result[0];
+	}
+
+	
 	
 	/**
 	 * Sets the default editor id for a given file.  This value will be used

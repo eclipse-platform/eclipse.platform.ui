@@ -13,6 +13,7 @@ package org.eclipse.ui.tests.api;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -863,7 +864,91 @@ public class IWorkbenchPageTest extends UITestCase {
 			callTrace.verifyOrder(new String[] { "isDirty", "doSave" }),
 			true);
 	}
+	
+	public void testIDESaveAllEditors() throws Throwable {
+		int total = 3;
 
+		final IFile[] files = new IFile[total];
+		IEditorPart[] editors = new IEditorPart[total];
+		CallHistory[] callTraces = new CallHistory[total];
+		MockEditorPart[] mocks = new MockEditorPart[total];
+
+		proj = FileUtil.createProject("testOpenEditor");
+		for (int i = 0; i < total; i++) {
+			files[i] = FileUtil.createFile(i + ".mock2", proj);
+			editors[i] = IDE.openEditor(fActivePage, files[i]);
+			mocks[i] = (MockEditorPart) editors[i];
+			callTraces[i] = mocks[i].getCallHistory();
+		}
+
+		/*
+			javadoc: If there are no dirty editors this method returns without effect.
+			javadoc: If confirm is true the user is prompted to confirm the command
+		*/
+		//save all clean editors with confirmation
+		assertEquals(IDE.saveAllEditors(new IResource[] {proj}, true), true);
+		for (int i = 0; i < total; i++) {
+			assertEquals(callTraces[i].contains("isDirty"), true);
+			assertEquals(callTraces[i].contains("doSave"), false);
+			callTraces[i].clear();
+		}
+
+		//save all dirty editors with confirmation can't be tested
+
+		/*
+			javadoc: Parameters: confirm - false to save unsaved changes without asking
+		*/
+		//save all clean editors without confirmation
+		assertEquals(IDE.saveAllEditors(new IResource[] {proj}, false), true);
+		for (int i = 0; i < total; i++) {
+			assertEquals(callTraces[i].contains("isDirty"), true);
+			assertEquals(callTraces[i].contains("doSave"), false);
+			callTraces[i].clear();
+		}
+
+		//save all dirty editors with resource that IS NOT a parent
+		// of the contents of the dirty editors without confirmation, this should not 
+		// save any as they are not parented by the resource provided
+		for (int i = 0; i < total; i++)
+			mocks[i].setDirty(true);
+		
+		IResource emptyProj = FileUtil.createProject("testOpenEditorEmptyProject");
+		assertEquals(IDE.saveAllEditors(new IResource[] {emptyProj}, false), true);
+		for (int i = 0; i < total; i++) {
+			// the editors were not in the empty project hence still dirty
+			assertEquals(mocks[i].isDirty(), true);
+			callTraces[i].clear();
+		}
+		
+		//save all dirty editors with resource that IS a parent
+		// of the contents of the editors without confirmation, this should 
+		// save them as they are parented by the resource provided
+		assertEquals(IDE.saveAllEditors(new IResource[] {proj}, false), true);
+		for (int i = 0; i < total; i++) {
+			// the editors were not in the empty project hence still dirty
+			assertEquals(mocks[i].isDirty(), false);
+			assertEquals(callTraces[i].contains("isDirty"), true);
+			assertEquals(callTraces[i].contains("doSave"), true);
+			callTraces[i].clear();
+		}
+		
+		//save all dirty editors with resource that IS NOT a parent
+		// of the contents of the dirty editors without confirmation, this should not 
+		// save any as they are not parented by the resource provided
+		for (int i = 0; i < total; i++)
+			mocks[i].setDirty(true);
+		assertEquals(IDE.saveAllEditors(new IResource[] {}, false), true);
+		for (int i = 0; i < total; i++) {
+			// the editors were not in the empty project hence still dirty
+			assertEquals(mocks[i].isDirty(), true);
+			callTraces[i].clear();
+		}
+		
+		// clear the dirty state so the tearDown does not open a confirm dialog.
+		for (int i = 0; i < total; i++)
+			mocks[i].setDirty(false);
+	}
+	
 	public void testSaveAllEditors() throws Throwable {
 		int total = 3;
 
