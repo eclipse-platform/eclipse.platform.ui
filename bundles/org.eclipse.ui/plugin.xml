@@ -1259,9 +1259,24 @@
       </colorDefinition>
       <colorDefinition
             label="%Color.inactiveTabBGStart"
-            value="COLOR_WHITE"
             categoryId="org.eclipse.ui.presentation.default"
             id="org.eclipse.ui.workbench.INACTIVE_TAB_BG_START">
+         <colorFactory
+               plugin="org.eclipse.ui"
+               class="org.eclipse.ui.internal.themes.RGBContrastFactory">
+            <parameter
+                  name="foreground"
+                  value="COLOR_WIDGET_FOREGROUND">
+            </parameter>
+            <parameter
+                  name="background1"
+                  value="COLOR_WHITE">
+            </parameter>
+            <parameter
+                  name="background2"
+                  value="COLOR_WIDGET_BACKGROUND">
+            </parameter>
+         </colorFactory>
          <description>
             %Color.inactiveTabBGStartDesc
          </description>
