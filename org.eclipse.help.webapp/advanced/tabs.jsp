@@ -79,6 +79,29 @@ IMG {
  
 <script language="JavaScript">
 
+var isMozilla = navigator.userAgent.indexOf('Mozilla') != -1 && parseInt(navigator.appVersion.substring(0,1)) >= 5;
+var isIE = navigator.userAgent.indexOf('MSIE') != -1;
+var linksArray = new Array ("linktoc", "linksearch", "linklinks", "linkbookmarks");
+
+if (isMozilla) {
+  document.addEventListener('keydown', keyDownHandler, true);
+}
+else if (isIE){
+  document.onkeydown = keyDownHandler;
+}
+
+/**
+ * Returns the target node of an event
+ */
+function getTarget(e) {
+	var target;
+  	if (isMozilla)
+  		target = e.target;
+  	else if (isIE)
+   		target = window.event.srcElement;
+
+	return target;
+}
 
 <%
 for (int i=0; i<views.length; i++) {
@@ -134,6 +157,77 @@ function showTab(tab)
  	 // set the image
 	document.getElementById("img"+tab).src = eval(tab).src;
 }
+
+/**
+ * Handler for key down (arrows)
+ */
+function keyDownHandler(e)
+{
+	var key;
+
+	if (isIE) {
+		key = window.event.keyCode;
+	} else if (isMozilla) {
+		key = e.keyCode;
+	}
+		
+	if (key <37 || key > 39) 
+		return true;
+	
+  	var clickedNode = getTarget(e);
+  	if (!clickedNode) return true;
+
+	var linkId="";
+	if (clickedNode.tagName == 'A')
+		linkId=clickedNode.id;
+	else if(clickedNode.tagName == 'TD')
+		linkId="link"+clickedNode.id;
+
+	if (isMozilla)
+  		e.cancelBubble = true;
+  	else if (isIE)
+  		window.event.cancelBubble = true;
+  	if (key == 38 ) { // up arrow
+		if(linkId.length>4){
+			parent.showView(linkId.substring(4, linkId.length));
+			clickedNode.blur();
+			parent.frames.ViewsFrame.focus();
+		}
+  	} else if (key == 39) { // Right arrow, expand
+  		var nextLink=getNextLink(linkId);
+		if(nextLink!=null){
+			document.getElementById(nextLink).focus();
+		}
+  	} else if (key == 37) { // Left arrow,collapse
+   		var previousLink=getPreviousLink(linkId);
+		if(previousLink!=null){
+			document.getElementById(previousLink).focus();
+		}
+ 	}
+  	 			
+  	return false;
+}
+
+function getNextLink(currentLink){
+	for(i=0; i<linksArray.length; i++){
+		if(currentLink==linksArray[i]){
+			if((i+1)<linksArray.length)
+				return linksArray[i+1];
+		}
+	}
+	return linksArray[0];
+}
+
+function getPreviousLink(currentLink){
+	for(i=0; i<linksArray.length; i++){
+		if(currentLink==linksArray[i]){
+			if(i>0)
+				 return linksArray[i-1];
+		}
+	}
+	return linksArray[linksArray.length-1];
+}
+
 </script>
 
 </head>
@@ -164,7 +258,8 @@ function showTab(tab)
 	     <a  href='javascript:parent.showView("<%=views[i].getName()%>");' 
 	         onclick='this.blur();return false;' 
 	         onmouseover="window.status='<%=title%>';return true;" 
-	         onmouseout="window.status='';">
+	         onmouseout="window.status='';"
+	         id="link<%=views[i].getName()%>">
 	         <img alt="<%=title%>" 
 	              title="<%=title%>" 
 	              src="<%=views[i].getImage()%>"
