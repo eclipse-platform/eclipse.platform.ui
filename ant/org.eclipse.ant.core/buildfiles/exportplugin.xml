@@ -30,7 +30,7 @@
 		<copy file="plugin.properties" todir="${dest}"/>
 		<copy file=".classpath" todir="${dest}"/>
 		<copy file=".options" todir="${dest}"/>
-		<ant antfile="scripts/buildExtraJAR.xml" target="build"/>
+		<ant antfile="buildfiles/buildExtraJAR.xml" target="build"/>
 		<copy file="lib/antsupportlib.jar" todir="${dest}/lib"/>
 	</target>
 	
