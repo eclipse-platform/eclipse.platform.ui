@@ -96,7 +96,7 @@
       <wizard
             class="org.eclipse.team.examples.localhistory.LocalHistorySynchronizeWizard"
             icon="icons/full/wizards/synced.gif"
-            description="ExampleSynchronizeSupport.wizard1"
+            description="Synchronize resources with their previous contents in the local history"
             name="Synchronize with Latest From Local History"
             id="ExampleSynchronizeSupport.wizard1"/>
    </extension>
