@@ -738,7 +738,7 @@ public class ProgressManager extends ProgressProvider
 	public void busyCursorWhile(final IRunnableWithProgress runnable)
 			throws InvocationTargetException, InterruptedException {
 		final ProgressMonitorJobsDialog dialog = new ProgressMonitorJobsDialog(
-				ProgressManagerUtil.getDefaultParent());
+				ProgressManagerUtil.getNonModalShell());
 		dialog.setOpenOnRun(false);
 		final InvocationTargetException[] invokes = new InvocationTargetException[1];
 		final InterruptedException[] interrupt = new InterruptedException[1];

@@ -41,7 +41,7 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 	 *            The shell this is parented from.
 	 */
 	public ProgressMonitorFocusJobDialog(Shell parentShell) {
-		super(parentShell == null ? ProgressManagerUtil.getDefaultParent() : parentShell);
+		super(parentShell == null ? ProgressManagerUtil.getNonModalShell() : parentShell);
 		setCancelable(true);
 	}
 	

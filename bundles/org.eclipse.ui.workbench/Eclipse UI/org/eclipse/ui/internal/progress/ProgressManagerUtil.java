@@ -253,6 +253,15 @@ public class ProgressManagerUtil {
 		if (modal != null)
 			return modal;
 
+		return getNonModalShell();
+	}
+
+	/**
+	 * Get the active non modal shell. If there isn't one return
+	 * null.
+	 * @return
+	 */
+	public static Shell getNonModalShell() {
 		IWorkbenchWindow window = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow();
 		if (window != null)
@@ -260,7 +269,6 @@ public class ProgressManagerUtil {
 
 		return null;
 	}
-
 	/**
 	 * Animate the closing of a window given the start position down to the
 	 * progress region.
