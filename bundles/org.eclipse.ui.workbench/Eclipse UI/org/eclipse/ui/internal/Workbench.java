@@ -906,11 +906,6 @@ public class Workbench
 		
         // establish relationship between jface and the command manager
 		CommandResolver.getInstance().setCommandResolver(new CommandResolver.ICallback() {
-			public String guessCommandIdFromActionId(String actionId) {
-				// TODO get rid of this.
-				return null;		
-			}
-
 			public Integer getAccelerator(String commandId) {
 				return ((CommandManager) commandManager).getAccelerator(commandId);		
 			}
@@ -919,22 +914,15 @@ public class Workbench
 				return ((CommandManager) commandManager).getAcceleratorText(commandId);		
 			}	
 
-			public final boolean inContext(final String commandId) {
+			public final boolean isActive(final String commandId) {
 				if (commandId != null) {
 					final ICommand command = commandManager.getCommand(commandId);
 	
-					// TODO broken:
 					if (command != null)
-						return command.isDefined() /*&& command.isActive()*/;
-					
-					// TODO something missing here perhaps?
+						return command.isDefined() && command.isActive();
 				}
 
 				return true;
-			}
-			
-			public final boolean isKeyFilterEnabled() {
-				return Workbench.this.isKeyFilterEnabled();
 			}
 		});
 

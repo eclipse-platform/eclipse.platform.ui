@@ -166,7 +166,7 @@ public boolean isVisible() {
 		CommandResolver.ICallback callback = CommandResolver.getInstance().getCommandResolver();
 		
 		if (callback != null)
-			return callback.inContext(commandId);
+			return callback.isActive(commandId);
 	}
 	
 	return true;	
@@ -657,9 +657,6 @@ public void update(String propertyName) {
 		
 					if (callback != null) {
 						String commandId = action.getActionDefinitionId();
-				
-						if (commandId == null)
-							commandId = callback.guessCommandIdFromActionId(action.getId());
 				
 						if (commandId != null) {
 							accelerator = callback.getAccelerator(commandId);

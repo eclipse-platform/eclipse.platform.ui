@@ -22,12 +22,11 @@ final class CommandEvent implements ICommandEvent {
 	private ICommand command;
 	private boolean definedChanged;
 	private boolean descriptionChanged;
-	private boolean enabledChanged;
 	private boolean imageBindingsChanged;
 	private boolean keySequenceBindingsChanged;
 	private boolean nameChanged;
 
-	CommandEvent(ICommand command, boolean activeChanged, boolean activityBindingsChanged, boolean categoryIdChanged, boolean definedChanged, boolean descriptionChanged, boolean enabledChanged, boolean imageBindingsChanged, boolean keySequenceBindingsChanged, boolean nameChanged) {
+	CommandEvent(ICommand command, boolean activeChanged, boolean activityBindingsChanged, boolean categoryIdChanged, boolean definedChanged, boolean descriptionChanged, boolean imageBindingsChanged, boolean keySequenceBindingsChanged, boolean nameChanged) {
 		if (command == null)
 			throw new NullPointerException();
 		
@@ -37,7 +36,6 @@ final class CommandEvent implements ICommandEvent {
 		this.categoryIdChanged = categoryIdChanged;		
 		this.definedChanged = definedChanged;
 		this.descriptionChanged = descriptionChanged;
-		this.enabledChanged = enabledChanged;
 		this.imageBindingsChanged = imageBindingsChanged;		
 		this.keySequenceBindingsChanged = keySequenceBindingsChanged;		
 		this.nameChanged = nameChanged;
@@ -59,10 +57,6 @@ final class CommandEvent implements ICommandEvent {
 		return descriptionChanged;
 	}
 	
-	public boolean hasEnabledChanged() {
-		return enabledChanged;
-	}
-
 	public boolean hasNameChanged() {
 		return nameChanged;
 	}

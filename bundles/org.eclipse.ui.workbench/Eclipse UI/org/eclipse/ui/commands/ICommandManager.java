@@ -52,23 +52,6 @@ public interface ICommandManager {
 	 * TODO javadoc
 	 */
 	Set getActiveActivityIds();
-
-	/**
-	 * <p>
-	 * Returns the set of identifiers to active commands. This set is not 
-	 * necessarily a subset of the set of identifiers to defined commands.
-	 * </p>
-	 * <p>
-	 * Notification is set to all registered listeners if this attribute 
-	 * changes.
-	 * </p>
-	 *
-	 * @return the set of identifiers to active commands. This set may be 
-	 *         empty, but is guaranteed not to be <code>null</code>. If this set 
-	 *         is not empty, it is guaranteed to only contain instances of 
-	 *         <code>String</code>.
-	 */	
-	Set getActiveCommandIds();	
 	
 	/**
 	 * TODO javadoc
@@ -147,24 +130,7 @@ public interface ICommandManager {
 	 * 		   this set is not empty, it is guaranteed to only contain instances 
 	 * 		   of <code>String</code>.
 	 */	
-	Set getDefinedKeyConfigurationIds();	
-
-	/**
-	 * <p>
-	 * Returns the set of identifiers to enabled commands. This set is not 
-	 * necessarily a subset of the set of identifiers to defined commands.
-	 * </p>
-	 * <p>
-	 * Notification is set to all registered listeners if this attribute 
-	 * changes.
-	 * </p>
-	 *
-	 * @return the set of identifiers to enabled commands. This set may be 
-	 *         empty, but is guaranteed not to be <code>null</code>. If this set 
-	 *         is not empty, it is guaranteed to only contain instances of 
-	 *         <code>String</code>.
-	 */	
-	Set getEnabledCommandIds();
+	Set getDefinedKeyConfigurationIds();
 	
 	/**
 	 * Returns a handle to a key configuration given an identifier.
@@ -198,18 +164,7 @@ public interface ICommandManager {
 	 *                          must only contain instances of 
 	 *                          <code>String</code>.	
 	 */
-	void setActiveActivityIds(Set activeActivityIds);	
-	
-	/**
-	 * Sets the set of identifiers to active commands. 
-	 *
-	 * @param activeCommandIds the set of identifiers to active commands. 
-	 *                         This set may be empty, but it must not be 
-	 *                         <code>null</code>. If this set is not empty, it 
-	 *                         must only contain instances of 
-	 *                         <code>String</code>.	
-	 */
-	void setActiveCommandIds(Set activeCommandIds);
+	void setActiveActivityIds(Set activeActivityIds);
 
 	/**
 	 * TODO javadoc
@@ -225,15 +180,4 @@ public interface ICommandManager {
 	 * TODO javadoc
 	 */
 	void setActivePlatform(String activePlatform);	
-	
-	/**
-	 * Sets the set of identifiers to enabled commands. 
-	 *
-	 * @param enabledCommandIds the set of identifiers to enabled commands. 
-	 *                          This set may be empty, but it must not be 
-	 *                          <code>null</code>. If this set is not empty, it 
-	 *                          must only contain instances of 
-	 *                          <code>String</code>.	
-	 */
-	void setEnabledCommandIds(Set enabledCommandIds);		
 }

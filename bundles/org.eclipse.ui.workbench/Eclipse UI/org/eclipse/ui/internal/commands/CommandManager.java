@@ -113,7 +113,6 @@ public final class CommandManager implements ICommandManager {
 	
 	private Set activeActivityIds = new HashSet();
 	// TODO does this have any use anymore?
-	private Set activeCommandIds = new HashSet();
 	private String activeKeyConfigurationId = null;
 	private String activeLocale = null;
 	private String activePlatform = null;
@@ -129,7 +128,6 @@ public final class CommandManager implements ICommandManager {
 	private Set definedCategoryIds = new HashSet();
 	private Set definedCommandIds = new HashSet();
 	private Set definedKeyConfigurationIds = new HashSet();
-	private Set enabledCommandIds = new HashSet();	
 	private Map imageBindingsByCommandId = new HashMap();		
 	private Map keyConfigurationsById = new WeakHashMap();
 	private Set keyConfigurationsWithListeners = new HashSet();
@@ -202,10 +200,6 @@ public final class CommandManager implements ICommandManager {
 		return Collections.unmodifiableSet(activeActivityIds);
 	}
 
-	public Set getActiveCommandIds() {
-		return Collections.unmodifiableSet(activeCommandIds);
-	}
-
 	public String getActiveKeyConfigurationId() {		
 		return activeKeyConfigurationId;
 	}
@@ -259,10 +253,6 @@ public final class CommandManager implements ICommandManager {
 	public Set getDefinedKeyConfigurationIds() {
 		return Collections.unmodifiableSet(definedKeyConfigurationIds);
 	}
-	
-	public Set getEnabledCommandIds() {
-		return Collections.unmodifiableSet(enabledCommandIds);
-	}	
 
 	public IKeyConfiguration getKeyConfiguration(String keyConfigurationId) {
 		if (keyConfigurationId == null)
@@ -305,24 +295,6 @@ public final class CommandManager implements ICommandManager {
 		if (commandEventsByCommandId != null)
 			notifyCommands(commandEventsByCommandId);	
 	}	
-	
-	public void setActiveCommandIds(Set activeCommandIds) {
-		activeCommandIds = Util.safeCopy(activeCommandIds, String.class);
-		boolean commandManagerChanged = false;
-		Map commandEventsByCommandId = null;
-
-		if (!this.activeCommandIds.equals(activeCommandIds)) {
-			this.activeCommandIds = activeCommandIds;
-			commandManagerChanged = true;	
-			commandEventsByCommandId = updateCommands(commandsById.keySet());	
-		}
-		
-		if (commandManagerChanged)
-			fireCommandManagerChanged(new CommandManagerEvent(this, false, true, false, false, false, false, false, false, false));
-
-		if (commandEventsByCommandId != null)
-			notifyCommands(commandEventsByCommandId);	
-	}
 	
 	public void setActiveKeyConfigurationId(String activeKeyConfigurationId) {
 		boolean commandManagerChanged = false;
@@ -411,25 +383,7 @@ public final class CommandManager implements ICommandManager {
 			}
 			// TODO end temporary
 		}
-	}	
-	
-	public void setEnabledCommandIds(Set enabledCommandIds) {	
-		enabledCommandIds = Util.safeCopy(enabledCommandIds, String.class);
-		boolean commandManagerChanged = false;
-		Map commandEventsByCommandId = null;
-
-		if (!this.enabledCommandIds.equals(enabledCommandIds)) {
-			this.enabledCommandIds = enabledCommandIds;
-			commandManagerChanged = true;	
-			commandEventsByCommandId = updateCommands(this.definedCommandIds);	
-		}
-		
-		if (commandManagerChanged)
-			fireCommandManagerChanged(new CommandManagerEvent(this, false, false, false, false, false, false, false, false, true));
-
-		if (commandEventsByCommandId != null)
-			notifyCommands(commandEventsByCommandId);	
-	}	
+	}
 
 	// TODO private?
 	public static String[] extend(String[] strings) {
@@ -470,7 +424,7 @@ public final class CommandManager implements ICommandManager {
 	private void calculateKeySequenceBindings() {
 		List list = new ArrayList(this.activeActivityIds);
 	
-		// TODO high priority. temporary fix for M3 for automatic inheritance of contexts for the specific case of the java editor scope. 
+		// TODO high priority. temporary fix for M3 for automatic inheritance of activities for the specific case of the java editor scope. 
 		if (list.contains("org.eclipse.jdt.ui.javaEditorScope") && !list.contains("org.eclipse.ui.textEditorScope"))
 			list.add("org.eclipse.ui.textEditorScope");
 
@@ -487,7 +441,7 @@ public final class CommandManager implements ICommandManager {
 		keySequenceBindingsByCommandId = keySequenceBindingMachine.getKeySequenceBindingsByCommandId();
 		
 		// TODO remove
-		//System.out.println("activeContextIds: " + Arrays.asList(activeContextIds));
+		//System.out.println("activeActivityIds: " + Arrays.asList(activeActivityIds));
 		//System.out.println("activeKeyConfigurationIds: " + Arrays.asList(activeKeyConfigurationIds));
 		//System.out.println("activeLocales: " + Arrays.asList(activeLocales));
 		//System.out.println("activePlatforms: " + Arrays.asList(activePlatforms));
@@ -755,15 +709,14 @@ public final class CommandManager implements ICommandManager {
 	}
 	
 	private ICommandEvent updateCommand(Command command) {
-		boolean activeChanged = command.setActive(activeCommandIds.contains(command.getId()));		
-		SortedSet activityBindings = (SortedSet) activityBindingsByCommandId.get(command.getId());
+		SortedSet activityBindings = (SortedSet) activityBindingsByCommandId.get(command.getId());		
+		boolean activeChanged = command.setActive(activityBindings != null ? isActive(activityBindings) : true);		
 		// TODO list to sortedset in api?
 		boolean activityBindingsChanged = command.setActivityBindings(activityBindings != null ? new ArrayList(activityBindings) : Collections.EMPTY_LIST);		
 		ICommandDefinition commandDefinition = (ICommandDefinition) commandDefinitionsById.get(command.getId());
 		boolean categoryIdChanged = command.setCategoryId(commandDefinition != null ? commandDefinition.getCategoryId() : null);				
 		boolean definedChanged = command.setDefined(commandDefinition != null);
 		boolean descriptionChanged = command.setDescription(commandDefinition != null ? commandDefinition.getDescription() : null);		
-		boolean enabledChanged = command.setEnabled(enabledCommandIds.contains(command.getId()));
 		SortedSet imageBindings = (SortedSet) imageBindingsByCommandId.get(command.getId());
 		// TODO list to sortedset in api?
 		boolean imageBindingsChanged = command.setImageBindings(imageBindings != null ? new ArrayList(imageBindings) : Collections.EMPTY_LIST);		
@@ -772,8 +725,8 @@ public final class CommandManager implements ICommandManager {
 		boolean keySequenceBindingsChanged = command.setKeySequenceBindings(keySequenceBindings != null ? new ArrayList(keySequenceBindings) : Collections.EMPTY_LIST);		
 		boolean nameChanged = command.setName(commandDefinition != null ? commandDefinition.getName() : null);
 
-		if (activeChanged || activityBindingsChanged || categoryIdChanged || definedChanged || descriptionChanged || enabledChanged || imageBindingsChanged || keySequenceBindingsChanged || nameChanged)
-			return new CommandEvent(command, activeChanged, activityBindingsChanged, categoryIdChanged, definedChanged, descriptionChanged, enabledChanged, imageBindingsChanged, keySequenceBindingsChanged, nameChanged); 
+		if (activeChanged || activityBindingsChanged || categoryIdChanged || definedChanged || descriptionChanged || imageBindingsChanged || keySequenceBindingsChanged || nameChanged)
+			return new CommandEvent(command, activeChanged, activityBindingsChanged, categoryIdChanged, definedChanged, descriptionChanged, imageBindingsChanged, keySequenceBindingsChanged, nameChanged); 
 		else 
 			return null;
 	}
@@ -909,23 +862,25 @@ public final class CommandManager implements ICommandManager {
 	public IMutableCommandRegistry getMutableCommandRegistry() {
 		return mutableCommandRegistry;
 	}
-	 
-	/* TODO			
-	private boolean inContext(Collection contextBindings) {
-		if (contextBindings.isEmpty())
+	
+	private boolean isActive(Collection activityBindings) {
+		if (activityBindings.isEmpty())
 			return true;
 		
-		Iterator iterator = activeContextIds.iterator();
+		Iterator iterator = activeActivityIds.iterator();
 		
 		while (iterator.hasNext()) {
-			String activeContextId = (String) iterator.next();
+			String activeActivityId = (String) iterator.next();
 			
-			if (contextBindings.contains(new ContextBinding(activeContextId)));
+			if (activityBindings.contains(new ActivityBinding(activeActivityId)));
 				return true;			
 		}
 		
 		return false;
 	}
+	
+	/* TODO			
+
 	
 		HashSet categoryIdsReferencedByCommandDefinitions = new HashSet();
 

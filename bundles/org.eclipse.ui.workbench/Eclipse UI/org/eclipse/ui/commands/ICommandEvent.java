@@ -56,11 +56,6 @@ public interface ICommandEvent {
 	 * TODO javadoc
 	 */	
 	boolean hasDescriptionChanged();	
-	
-	/**
-	 * TODO javadoc
-	 */	
-	boolean hasEnabledChanged();
 
 	/**
 	 * TODO javadoc

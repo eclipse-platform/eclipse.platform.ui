@@ -56,7 +56,6 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.activities.IActivity;
 import org.eclipse.ui.activities.IActivityManager;
-import org.eclipse.ui.activities.NotDefinedException;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.keys.KeySequenceText;
@@ -220,8 +219,58 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		return super.performOk();
 	}
 
+	private static Map getCategoriesByUniqueName() {
+		return null;
+	}
+	
 	public void setVisible(boolean visible) {
 		if (visible == true) {
+			/*
+			Map categoriesByName = new HashMap();	
+			
+			for (Iterator iterator = commandManager.getDefinedCategoryIds().iterator(); iterator.hasNext();) {
+				ICategory category = commandManager.getCategory((String) iterator.next()); 				
+				
+				try {
+					String name = category.getName();
+					
+					if (name != null) {
+						Collection categories = (Collection) categoriesByName.get(name);
+						
+						if (categories == null) {
+							categories = new HashSet();
+							categoriesByName.put(name, categories);					
+						}
+						
+						categories.add(category);								
+					}
+				} catch (org.eclipse.ui.commands.NotDefinedException eNotDefined) {					
+				}
+			}
+			
+			categoryIdsByUniqueName = new HashMap();
+			categoryUniqueNamesById = new HashMap();
+
+			for (Iterator iterator = categoriesByName.entrySet().iterator(); iterator.hasNext();) {
+				Map.Entry entry = (Map.Entry) iterator.next();
+				String name = (String) entry.getKey();
+				Set categories = (Set) entry.getValue();
+				Iterator iterator2 = categories.iterator();				
+				
+				if (categories.size() == 1) {					
+					ICategory category = (ICategory) iterator2.next(); 
+					categoryIdsByUniqueName.put(name, category.getId());
+					categoryUniqueNamesById.put(category.getId(), name);
+				} else while (iterator2.hasNext()) {
+					ICategory category = (ICategory) iterator2.next(); 
+					String uniqueName = MessageFormat.format(Util.translateString(resourceBundle, "uniqueName"), new Object[] { name, category.getId() }); //$NON-NLS-1$
+					categoryIdsByUniqueName.put(uniqueName, category.getId());							
+					categoryUniqueNamesById.put(category.getId(), uniqueName);
+				}
+			}	
+			*/
+			
+			
 			ICommandRegistry extensionCommandRegistry = commandManager.getCommandRegistry();				
 			ICommandRegistry preferenceCommandRegistry = commandManager.getMutableCommandRegistry();
 			List categoryDefinitions = new ArrayList();
@@ -296,15 +345,15 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 					activeKeyConfigurationId = null;
 			}
 			
-			List contextBindingDefinitions = new ArrayList();
-			contextBindingDefinitions.addAll(extensionCommandRegistry.getActivityBindingDefinitions());
-			contextBindingDefinitions.addAll(preferenceCommandRegistry.getActivityBindingDefinitions());
+			List activityBindingDefinitions = new ArrayList();
+			activityBindingDefinitions.addAll(extensionCommandRegistry.getActivityBindingDefinitions());
+			activityBindingDefinitions.addAll(preferenceCommandRegistry.getActivityBindingDefinitions());
 			activityIdsByCommandId = new HashMap();
 			
-			for (Iterator iterator = contextBindingDefinitions.iterator(); iterator.hasNext();) {
-				IActivityBindingDefinition contextBindingDefinition = (IActivityBindingDefinition) iterator.next();
-				String activityId = contextBindingDefinition.getActivityId();
-				String commandId = contextBindingDefinition.getCommandId();
+			for (Iterator iterator = activityBindingDefinitions.iterator(); iterator.hasNext();) {
+				IActivityBindingDefinition activityBindingDefinition = (IActivityBindingDefinition) iterator.next();
+				String activityId = activityBindingDefinition.getActivityId();
+				String commandId = activityBindingDefinition.getCommandId();
 				boolean validActivityId = activityId == null || activityManager.getDefinedActivityIds().contains(activityId);
 				boolean validCommandId = commandDefinitionsById.containsKey(commandId);
 				
@@ -469,7 +518,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 	
 						activities.add(activity);								
 					}
-				} catch (NotDefinedException eActivityNotDefined) {					
+				} catch (org.eclipse.ui.activities.NotDefinedException eNotDefined) {					
 				}
 			}
 			
@@ -1326,7 +1375,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		String[] activeLocales = CommandManager.extend(CommandManager.getPath(commandManager.getActiveLocale(), CommandManager.SEPARATOR));
 		String[] activePlatforms = CommandManager.extend(CommandManager.getPath(commandManager.getActivePlatform(), CommandManager.SEPARATOR));
 		KeySequenceBindingNode.solve(tree, activeKeyConfigurationIds, activePlatforms, activeLocales);		
-		assignmentsByActivityIdByKeySequence = KeySequenceBindingNode.getAssignmentsByContextIdKeySequence(tree, KeySequence.getInstance());
+		assignmentsByActivityIdByKeySequence = KeySequenceBindingNode.getAssignmentsByActivityIdKeySequence(tree, KeySequence.getInstance());
 		setAssignmentsForKeySequence();
 		setAssignmentsForCommand();		
 		String categoryId = getCategoryId();
@@ -1366,7 +1415,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 						labelActivityExtends.setText(Util.translateString(resourceBundle, "extendsGeneral")); //$NON-NLS-1$
 			
 					return;
-				} catch (NotDefinedException eActivityNotDefined) {				
+				} catch (org.eclipse.ui.activities.NotDefinedException eNotDefined) {				
 				}
 			}
 		}
