@@ -545,7 +545,7 @@
             id="org.eclipse.jdt.ui.edit.text.java.correction.assist.proposals">
       </command>
       <keyBinding
-            commandId="org.eclipse.ui.commands.correctionAssistProposals"
+            commandId="org.eclipse.jdt.ui.edit.text.java.correction.assist.proposals"
             keySequence="M1+1"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
