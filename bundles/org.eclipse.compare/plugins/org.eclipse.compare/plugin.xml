@@ -147,6 +147,19 @@
 			</action>
 		</objectContribution>
 			
+		<objectContribution
+			id="org.eclipse.compare.AddFromHistoryAction"
+			objectClass="org.eclipse.core.resources.IContainer" adaptable="true">
+			<action
+				id="addFromHistoryAction"
+				label="%addFromHistoryAction.label"
+				tooltip="%addFromHistoryAction.tooltip"
+				menubarPath="replaceWithMenu"
+				enablesFor="1"
+				class="org.eclipse.compare.internal.AddFromHistoryAction">
+			</action>
+		</objectContribution>
+
 	</extension>
 
 	<extension point="org.eclipse.compare.structureCreators">

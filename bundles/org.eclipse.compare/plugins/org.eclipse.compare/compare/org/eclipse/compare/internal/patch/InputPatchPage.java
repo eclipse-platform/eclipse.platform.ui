@@ -136,7 +136,7 @@ import org.eclipse.compare.internal.Utilities;
 					patcher.parse(new BufferedReader(reader));
 				} catch (IOException ex) {
 					MessageDialog.openError(null,
-						PatchMessages.getString("InputPatchPage.PatchErrorDialog.title_2"), //$NON-NLS-1$ 
+						PatchMessages.getString("InputPatchPage.PatchErrorDialog.title"), //$NON-NLS-1$ 
 						PatchMessages.getString("InputPatchPage.ParseError.message")); //$NON-NLS-1$
 				}
 				
@@ -149,7 +149,7 @@ import org.eclipse.compare.internal.Utilities;
 			Diff[] diffs= patcher.getDiffs();
 			if (diffs == null || diffs.length == 0) {
 				MessageDialog.openError(null,
-					PatchMessages.getString("InputPatchPage.PatchErrorDialog.title_4"),	//$NON-NLS-1$
+					PatchMessages.getString("InputPatchPage.PatchErrorDialog.title"),	//$NON-NLS-1$
 					PatchMessages.getString("InputPatchPage.NoDiffsFound.message"));  //$NON-NLS-1$
 				return this;
 			}
@@ -341,7 +341,7 @@ import org.eclipse.compare.internal.Utilities;
 		fPatchTargets.addSelectionChangedListener(
 			new ISelectionChangedListener() {
 				public void selectionChanged(SelectionChangedEvent event) {
-					fPatchWizard.setTarget(PatchWizard.getResource(event.getSelection()));
+					fPatchWizard.setTargets(PatchWizard.getResource(event.getSelection()));
 					updateWidgetEnablements();
 				}
 			}

@@ -508,6 +508,21 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				h= Math.max(h, fAncestor.getLineRange(fAncestorPos, region).y);
 			return Math.max(h, fRight.getLineRange(fRightPos, region).y);
 		}
+		
+		int getAncestorHeight() {
+			Point region= new Point(0, 0);			
+			return fAncestor.getLineRange(fAncestorPos, region).y;
+		}
+
+		int getLeftHeight() {
+			Point region= new Point(0, 0);			
+			return fLeft.getLineRange(fLeftPos, region).y;
+		}
+
+		int getRightHeight() {
+			Point region= new Point(0, 0);			
+			return fRight.getLineRange(fRightPos, region).y;
+		}
 	}
 
 	//---- MergeTextViewer
@@ -751,7 +766,8 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		fVScrollBar.addListener(SWT.Selection,
 			new Listener() {
 				public void handleEvent(Event e) {
-					scrollVertical(((ScrollBar)e.widget).getSelection(), null);
+					int vpos= ((ScrollBar)e.widget).getSelection();
+					scrollVertical(vpos, vpos, vpos, null);
 				}
 			}
 		);
@@ -796,7 +812,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		
 		Point size= canvas.getSize();
 		
-		int virtualHeight= getVirtualHeight();
+		int virtualHeight= fSynchronizedScrolling ? getVirtualHeight() : getRightHeight();		
 		if (virtualHeight < getViewportHeight())
 			return null;
 		
@@ -805,7 +821,8 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			Iterator e= fAllDiffs.iterator();
 			for (int i= 0; e.hasNext(); i++) {
 				Diff diff= (Diff) e.next();
-				int h= diff.getMaxDiffHeight(fShowAncestor);
+				int h= fSynchronizedScrolling ? diff.getMaxDiffHeight(fShowAncestor)
+											  : diff.getRightHeight();
 				if (useChange(diff.fDirection) && !diff.fIsWhitespace) {
 									
 					yy= (y*size.y)/virtualHeight;
@@ -830,7 +847,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		
 		Point size= canvas.getSize();
 		
-		int virtualHeight= getVirtualHeight();
+		int virtualHeight= fSynchronizedScrolling ? getVirtualHeight() : getRightHeight();		
 		if (virtualHeight < getViewportHeight())
 			return;
 				
@@ -839,7 +856,8 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			Iterator e= fAllDiffs.iterator();
 			for (int i= 0; e.hasNext(); i++) {
 				Diff diff= (Diff) e.next();
-				int h= diff.getMaxDiffHeight(fShowAncestor);
+				int h= fSynchronizedScrolling ? diff.getMaxDiffHeight(fShowAncestor)
+											  : diff.getRightHeight();
 								
 				if (useChange(diff.fDirection) && !diff.fIsWhitespace) {
 					yy= (y*size.y)/virtualHeight;
@@ -875,19 +893,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				y+= h;
 			}
 		}
-		
-		/*
-		if (fVScrollBar != null) {
-			c= Display.getDefault().getSystemColor(SWT.COLOR_WHITE);
-			gc.setForeground(c);
-		
-			yy= (fVScrollBar.getSelection()*size.y)/virtualHeight;
-			hh= (fVScrollBar.getThumb()*size.y)/virtualHeight;
-		
-			gc.setLineWidth(1);
-			gc.drawRectangle(0, yy, BIRDS_EYE_VIEW_WIDTH, hh);
-		}
-		*/
 	}
 	
 	private void refreshBirdsEyeView() {
@@ -2440,7 +2445,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	private void toggleSynchMode() {
 		fSynchronizedScrolling= ! fSynchronizedScrolling;
 		
-		scrollVertical(0, null);
+		scrollVertical(0, 0, 0, null);
 		
 		// throw away central control (Sash or Canvas)
 		Control center= getCenter();
@@ -2950,36 +2955,53 @@ public class TextMergeViewer extends ContentMergeViewer  {
 
 		// vertical scrolling
 		if (!leftIsVisible || !rightIsVisible) {
-			int vpos= 0;
+			int avpos= 0, lvpos= 0, rvpos= 0;
 			
 			MergeSourceViewer allButThis= null;
 			if (leftIsVisible) {
-				vpos= realToVirtualPosition(fLeft, fLeft.getTopIndex());
+				avpos= lvpos= rvpos= realToVirtualPosition(fLeft, fLeft.getTopIndex());
 				allButThis= fLeft;
 			} else if (rightIsVisible) {
-				vpos= realToVirtualPosition(fRight, fRight.getTopIndex());
+				avpos= lvpos= rvpos= realToVirtualPosition(fRight, fRight.getTopIndex());
 				allButThis= fRight;
 			} else if (ancestorIsVisible) {
-				vpos= realToVirtualPosition(fAncestor, fAncestor.getTopIndex());
+				avpos= lvpos= rvpos= realToVirtualPosition(fAncestor, fAncestor.getTopIndex());
 				allButThis= fAncestor;
 			} else {
 				if (fAllDiffs != null) {
+					int vpos= 0;
 					Iterator e= fAllDiffs.iterator();
 					for (int i= 0; e.hasNext(); i++) {
 						Diff diff= (Diff) e.next();
 						if (diff == d)
 							break;
-						vpos+= diff.getMaxDiffHeight(fShowAncestor);
+						if (fSynchronizedScrolling) {
+							vpos+= diff.getMaxDiffHeight(fShowAncestor);
+						} else {
+							avpos+= diff.getAncestorHeight();
+							lvpos+= diff.getLeftHeight();
+							rvpos+= diff.getRightHeight();
+						}
 					}
+					if (fSynchronizedScrolling)
+						avpos= lvpos= rvpos= vpos;
 				}
-				vpos-= fRight.getViewportLines()/4;
-				if (vpos < 0)
-					vpos= 0;
+				int delta= fRight.getViewportLines()/4;
+				avpos-= delta;
+				if (avpos < 0)
+					avpos= 0;
+				lvpos-= delta;
+				if (lvpos < 0)
+					lvpos= 0;
+				rvpos-= delta;
+				if (rvpos < 0)
+					rvpos= 0;
 			}
 							
-			scrollVertical(vpos, allButThis);
+			scrollVertical(avpos, lvpos, rvpos, allButThis);
+			
 			if (fVScrollBar != null)
-				fVScrollBar.setSelection(vpos);
+				fVScrollBar.setSelection(avpos);
 		}
 		
 		// horizontal scrolling
@@ -3148,6 +3170,21 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	}
 	
 	/**
+	 * Calculates height (in lines) of right view by adding the height of the right diffs.
+	 */
+	private int getRightHeight() {
+		int h= 1;
+		if (fAllDiffs != null) {
+			Iterator e= fAllDiffs.iterator();
+			for (int i= 0; e.hasNext(); i++) {
+				Diff diff= (Diff) e.next();
+				h+= diff.getRightHeight();
+			}
+		}
+		return h;
+	}
+	
+	/**
 	 * The height of the TextEditors in lines.
 	 */
 	private int getViewportHeight() {
@@ -3203,66 +3240,56 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		return virtualPos;
 	}
 		
-	private void scrollVertical(int virtualPos, MergeSourceViewer allBut) {
-				
-		if (virtualPos < 0)
-			virtualPos= virtualPos;
+	private void scrollVertical(int avpos, int lvpos, int rvpos, MergeSourceViewer allBut) {
+						
+		int s= 0;
 		
 		if (fSynchronizedScrolling) {
-			int s= 0;
-			
-			if (true) {
-				s= getVirtualHeight() - virtualPos;
-				int height= fRight.getViewportLines()/4;
-				if (s < 0)
-					s= 0;
-				if (s > height)
-					s= height;
-			}
-	
-			fInScrolling= true;
-					
-			if (isThreeWay() && allBut != fAncestor) {
-				int y= virtualToRealPosition(fAncestor, virtualPos+s)-s;
+			s= getVirtualHeight() - rvpos;
+			int height= fRight.getViewportLines()/4;
+			if (s < 0)
+				s= 0;
+			if (s > height)
+				s= height;
+		}
+
+		fInScrolling= true;
+				
+		if (isThreeWay() && allBut != fAncestor) {
+			if (fSynchronizedScrolling || allBut == null) {
+				int y= virtualToRealPosition(fAncestor, avpos+s)-s;
 				fAncestor.vscroll(y);
 			}
-	
-			if (allBut != fLeft) {
-				int y= virtualToRealPosition(fLeft, virtualPos+s)-s;
+		}
+
+		if (allBut != fLeft) {
+			if (fSynchronizedScrolling || allBut == null) {
+				int y= virtualToRealPosition(fLeft, lvpos+s)-s;
 				fLeft.vscroll(y);
 			}
-	
-			if (allBut != fRight) {
-				int y= virtualToRealPosition(fRight, virtualPos+s)-s;
+		}
+
+		if (allBut != fRight) {
+			if (fSynchronizedScrolling || allBut == null) {
+				int y= virtualToRealPosition(fRight, rvpos+s)-s;
 				fRight.vscroll(y);
 			}
-			
-			fInScrolling= false;
-			
-			if (isThreeWay() && fAncestorCanvas != null)
-				fAncestorCanvas.repaint();
-			
-			if (fLeftCanvas != null)
-				fLeftCanvas.repaint();
-			
-			Control center= getCenter();
-			if (center instanceof BufferedCanvas)
-				((BufferedCanvas)center).repaint();
-			
-			if (fRightCanvas != null)
-				fRightCanvas.repaint();
-		} else {
-			if (allBut == fAncestor && fAncestorCanvas != null && isThreeWay())
-				fAncestorCanvas.repaint();
-		
-			if (allBut == fLeft && fLeftCanvas != null)
-				fLeftCanvas.repaint();
-			
-			if (allBut == fRight && fRightCanvas != null)
-				fRightCanvas.repaint();
 		}
 		
-		//refreshBirdsEyeView();
+		fInScrolling= false;
+		
+		if (isThreeWay() && fAncestorCanvas != null)
+			fAncestorCanvas.repaint();
+		
+		if (fLeftCanvas != null)
+			fLeftCanvas.repaint();
+		
+		Control center= getCenter();
+		if (center instanceof BufferedCanvas)
+			((BufferedCanvas)center).repaint();
+		
+		if (fRightCanvas != null)
+			fRightCanvas.repaint();
 	}
 		
 	/**
@@ -3278,7 +3305,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		
 		int viewPosition= realToVirtualPosition(w, ix-ix2);
 				
-		scrollVertical(viewPosition, w);	// scroll all but the given views
+		scrollVertical(viewPosition, viewPosition, viewPosition, w);	// scroll all but the given views
 		
 		if (fVScrollBar != null) {
 			int value= Math.max(0, Math.min(viewPosition, getVirtualHeight() - getViewportHeight()));

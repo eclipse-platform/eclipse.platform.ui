@@ -751,8 +751,10 @@ public class Patcher {
 			Assert.isTrue(false);
 		}
 		
-		if (pm != null)
-			pm.beginTask("Patching", fDiffs.length*WORK_UNIT);
+		if (pm != null) {
+			String message= PatchMessages.getString("Patcher.Task.message");	//$NON-NLS-1$
+			pm.beginTask(message, fDiffs.length*WORK_UNIT);
+		}
 		
 		for (int i= 0; i < fDiffs.length; i++) {
 			

@@ -27,6 +27,7 @@ import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 import org.eclipse.compare.contentmergeviewer.ContentMergeViewer;
@@ -138,6 +139,10 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 					setDirty(true);
 			}
 		};
+		
+		IPreferenceStore ps= configuration.getPreferenceStore();
+		if (ps != null)
+			fStructureCompareOnSingleClick= ps.getBoolean(ComparePreferencePage.OPEN_STRUCTURE_COMPARE);
 	}
 	
 	private boolean structureCompareOnSingleClick() {
@@ -470,13 +475,9 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 						fStructurePane1.setInput(null);
 					} else {
 						Object input= getElement(selection);
-						if (structureCompareOnSingleClick()) {
+						fContentInputPane.setInput(input);
+						if (structureCompareOnSingleClick())
 							fStructurePane1.setInput(input);
-							//if (fStructurePane1.isEmpty())
-								fContentInputPane.setInput(input);
-						} else {
-							fContentInputPane.setInput(input);
-						}
 						fStructurePane2.setInput(null); // clear downstream pane
 						if (fStructurePane1.getInput() != input)
 							fStructurePane1.setInput(null);

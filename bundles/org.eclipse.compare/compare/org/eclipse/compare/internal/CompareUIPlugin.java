@@ -599,10 +599,13 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 		
 		if (in instanceof IStreamContentAccessor) {
 			String type= ITypedElement.TEXT_TYPE;
+			
 			if (in instanceof ITypedElement) {
 				ITypedElement tin= (ITypedElement) in;
-				type= tin.getType();
-			} 
+				String ty= tin.getType();
+				if (ty != null)
+					type= ty;
+			}
 			type= normalizeCase(type);
 			
 			IViewerDescriptor vd= (IViewerDescriptor) fgContentViewerDescriptors.get(type);
@@ -616,6 +619,9 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 			return new SimpleTextViewer(parent);
 		}
 
+		if (!(in instanceof ICompareInput))
+			return null;
+			
 		ICompareInput input= (ICompareInput) in;
 		String type= getType(input);
 		type= normalizeCase(type);

@@ -54,9 +54,10 @@ public class CompareWithPatchAction implements IActionDelegate {
 
 	public void selectionChanged(IAction action, ISelection selection) {
 		fSelection= selection;
-		action.setEnabled(fSelection != null && !fSelection.isEmpty());
+		IResource[] resources= PatchWizard.getResource(fSelection);
+		action.setEnabled(resources != null && resources.length == 1);
 	}
-	
+		
 	public void run(IAction action) {
 		PatchWizard wizard= new PatchWizard(fSelection);
 		

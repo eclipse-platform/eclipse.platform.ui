@@ -5,6 +5,7 @@
 package org.eclipse.compare.internal.patch;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 
 import org.eclipse.swt.graphics.Image;
 
@@ -42,7 +43,7 @@ import org.eclipse.compare.structuremergeviewer.Differencer;
 	 */
 	/* package */ PatchWizard(ISelection selection) {
 		
-		fTarget= getResource(selection);
+		setTargets(getResource(selection));
 
 		fPatcher= new Patcher();
 		
@@ -58,10 +59,19 @@ import org.eclipse.compare.structuremergeviewer.Differencer;
 		}	
 	}
 	
-	static IResource getResource(ISelection selection) {
+	static IResource[] getResource(ISelection selection) {
 		IResource[] rs= Utilities.getResources(selection);
-		if (rs != null && rs.length > 0)
-			return rs[0];
+		ArrayList list= null;
+		for (int i= 0; i < rs.length; i++) {
+			IResource r= rs[i];
+			if (r != null && r.isAccessible()) {
+				if (list == null)
+					list= new ArrayList();
+				list.add(r);
+			}
+		}
+		if (list != null && list.size() > 0)
+			return (IResource[]) list.toArray(new IResource[list.size()]);
 		return null;
 	}
 		
@@ -73,8 +83,8 @@ import org.eclipse.compare.structuremergeviewer.Differencer;
 		return fTarget;
 	}
 	
-	void setTarget(IResource target) {
-		fTarget= target;
+	void setTargets(IResource[] targets) {
+		fTarget= targets[0];	// right now we can only deal with a single selection
 	}
 	
 	/* (non-Javadoc)
