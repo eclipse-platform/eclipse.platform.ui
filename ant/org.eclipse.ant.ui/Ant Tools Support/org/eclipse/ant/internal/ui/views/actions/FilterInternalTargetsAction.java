@@ -26,7 +26,7 @@ public class FilterInternalTargetsAction extends Action {
 		super(AntViewActionMessages.getString("FilterInternalTargetsAction.0")); //$NON-NLS-1$
 		fView = view;
 		setImageDescriptor(AntUIImages.getImageDescriptor(IAntUIConstants.IMG_FILTER_INTERNAL_TARGETS));
-		setToolTipText(AntViewActionMessages.getString("FilterInternalTargetsAction.1")); //$NON-NLS-1$
+		setToolTipText(AntViewActionMessages.getString("FilterInternalTargetsAction.0")); //$NON-NLS-1$
 		setChecked(fView.isFilterInternalTargets());
 	}
 	
