@@ -50,23 +50,23 @@ public class BuildOrderPreferencePage
 	
 	private String[] defaultBuildOrder;
 	private String[] customBuildOrder;
+	
+	//Boolean to indicate if we have looked it up
+	private boolean notCheckedBuildOrder = true;
 
-	private static String UP_LABEL = WorkbenchMessages.getString("BuildOrderPreference.up"); //$NON-NLS-1$
-	private static String DOWN_LABEL = WorkbenchMessages.getString("BuildOrderPreference.down"); //$NON-NLS-1$
-	private static String ADD_LABEL = WorkbenchMessages.getString("BuildOrderPreference.add"); //$NON-NLS-1$
-	private static String REMOVE_LABEL = WorkbenchMessages.getString("BuildOrderPreference.remove"); //$NON-NLS-1$
-	private static String UNSELECTED_PROJECTS = WorkbenchMessages.getString("BuildOrderPreference.selectProject"); //$NON-NLS-1$
-	private static String PROJECT_SELECTION_MESSAGE = WorkbenchMessages.getString("BuildOrderPreference.selectOtherProjects"); //$NON-NLS-1$
-	private static String DEFAULTS_LABEL = WorkbenchMessages.getString("BuildOrderPreference.useDefaults"); //$NON-NLS-1$
-	private static String LIST_LABEL = WorkbenchMessages.getString("BuildOrderPreference.projectBuildOrder"); //$NON-NLS-1$
-	private static String NOTE_LABEL = WorkbenchMessages.getString("BuildOrderPreference.note"); //$NON-NLS-1$
+	private static final String UP_LABEL = WorkbenchMessages.getString("BuildOrderPreference.up"); //$NON-NLS-1$
+	private static final String DOWN_LABEL = WorkbenchMessages.getString("BuildOrderPreference.down"); //$NON-NLS-1$
+	private static final String ADD_LABEL = WorkbenchMessages.getString("BuildOrderPreference.add"); //$NON-NLS-1$
+	private static final String REMOVE_LABEL = WorkbenchMessages.getString("BuildOrderPreference.remove"); //$NON-NLS-1$
+	private static final String UNSELECTED_PROJECTS = WorkbenchMessages.getString("BuildOrderPreference.selectProject"); //$NON-NLS-1$
+	private static final String PROJECT_SELECTION_MESSAGE = WorkbenchMessages.getString("BuildOrderPreference.selectOtherProjects"); //$NON-NLS-1$
+	private static final String DEFAULTS_LABEL = WorkbenchMessages.getString("BuildOrderPreference.useDefaults"); //$NON-NLS-1$
+	private static final String LIST_LABEL = WorkbenchMessages.getString("BuildOrderPreference.projectBuildOrder"); //$NON-NLS-1$
+	private static final String NOTE_LABEL = WorkbenchMessages.getString("Preference.note"); //$NON-NLS-1$
+	private static final String REMOVE_MESSAGE = WorkbenchMessages.getString("BuildOrderPreference.removeNote"); //$NON-NLS-1$
 	
 	// marks projects with unspecified build orders
 	private static final String MARKER = "*"; //$NON-NLS-1$
-	
-	// the index of the first project with an unspecified build order
-	// the rest of the list consists of projects with unspecified build orders
-	private int markedItemsStartIndex = 0;
 	
 	// whether or not the use defaults option was selected when Apply (or OK) was last pressed
 	// (or when the preference page was opened). This represents the most recent applied state.
@@ -175,29 +175,31 @@ protected Control createContents(Composite parent) {
 	composite.setFont(font);
 
 	String[] buildOrder = getCurrentBuildOrder();
-	boolean useDefault = (buildOrder.length < 1);
+	boolean useDefault = (buildOrder == null);
 	
 	createDefaultPathButton(composite, useDefault);
 	// List always enabled so user can scroll list.
-	// Only the button need to be disabled.
+	// Only the buttons need to be disabled.
 	createBuildOrderList(composite, true);
 	createListButtons(composite, !useDefault);
 	
-	// a note about projects with unspecified build orders
-	noteLabel = new Label(composite, SWT.NONE);
-	noteLabel.setText(NOTE_LABEL);
-	noteLabel.setFont(font);
-
-
+	Composite noteComposite =
+		createNoteComposite(font, composite, NOTE_LABEL, REMOVE_MESSAGE);
+	GridData noteData = new GridData();
+	noteData.horizontalSpan = 2;
+	noteComposite.setLayoutData(noteData);
+	
+	//Add in a spacer
+	
+	Label spacer = new Label(composite, SWT.NONE);
+	GridData spacerData = new GridData();
+	spacerData.horizontalSpan = 2;
+	spacer.setLayoutData(spacerData);
+	
 	if (useDefault) {
 		this.buildList.setItems(getDefaultProjectOrder());
-		// if there are no marked items, do not show the note
-		if(markedItemsStartIndex >= buildList.getItemCount())
-			noteLabel.setVisible(false);
 	} else {
 		this.buildList.setItems(buildOrder);
-		// when not using default build order, do not show the note
-		noteLabel.setVisible(false);
 	}
 	
 	return composite;
@@ -308,40 +310,27 @@ private void createListButtons(Composite composite, boolean enableComposite) {
 private void defaultsButtonSelected(boolean selected) {
 	if (selected) {
 		setBuildOrderWidgetsEnablement(false);
-		buildList.setItems(getDefaultProjectOrder());
-		// if there are marked items, make the note visible
-		if(markedItemsStartIndex < buildList.getItemCount())
-			noteLabel.setVisible(true);
+		
 	}
 	else {
 		setBuildOrderWidgetsEnablement(true);
 		String[] buildOrder = getCurrentBuildOrder();
-		if (buildOrder.length < 1) {
-			// Get a copy of the default order and remove markers
-			String[] names = getDefaultProjectOrder();
-			String[] copy = new String[names.length];
-			System.arraycopy(names, 0, copy, 0, names.length);
-			for (int i = markedItemsStartIndex; i < copy.length; i++)
-				copy[i] = names[i].substring(1);
-			buildList.setItems(copy);
-		} else {
+		if (buildOrder == null) 
+			buildList.setItems(getDefaultProjectOrder());
+		else 
 			buildList.setItems(buildOrder);
-		}
-		// make the note invisible
-		noteLabel.setVisible(false);
 	}
 }
 /**
  * Get the project names for the current custom build
  * order stored in the workspace description.
  * 
- * @return java.lang.String[]
+ * @return java.lang.String[] or null if there is no setting
  */
 private String[] getCurrentBuildOrder() {
-	if (customBuildOrder == null) {
+	if (notCheckedBuildOrder) {
 		customBuildOrder = getWorkspace().getDescription().getBuildOrder();
-		if (customBuildOrder == null)
-			customBuildOrder = new String[0];
+		notCheckedBuildOrder = false;
 	}
 	
 	return customBuildOrder;
@@ -363,7 +352,6 @@ private String[] getDefaultProjectOrder() {
 		for (int i = 0; i < foundSize; i++) {
 			defaultBuildOrder[i] = foundProjects[i].getName();
 		}
-		markedItemsStartIndex = foundSize;
 	}
 	
 	return defaultBuildOrder;
