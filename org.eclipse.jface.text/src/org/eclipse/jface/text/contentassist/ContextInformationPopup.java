@@ -504,11 +504,9 @@ class ContextInformationPopup implements IContentAssistListener {
 					change= fContextSelectorTable.getItemCount() - selection;
 					break;
 					
-				case SWT.CTRL:
-				case SWT.SHIFT:
-					return true;
 				default:
-					hideContextSelector();
+					if (e.keyCode != SWT.MOD1 && e.keyCode != SWT.MOD2 && e.keyCode != SWT.MOD3 && e.keyCode != SWT.MOD4)
+						hideContextSelector();
 					return true;
 			}
 			
@@ -547,11 +545,9 @@ class ContextInformationPopup implements IContentAssistListener {
 				case SWT.ARROW_RIGHT:
 					validateContextInformation();
 					break;
-				case SWT.CTRL:
-				case SWT.SHIFT:
-					break;
 				default:
-					hideContextInfoPopup();
+					if (e.keyCode != SWT.MOD1 && e.keyCode != SWT.MOD2 && e.keyCode != SWT.MOD3 && e.keyCode != SWT.MOD4)
+						hideContextInfoPopup();
 					break;
 			}
 			

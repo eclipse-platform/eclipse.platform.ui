@@ -116,7 +116,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 					if (!Helper.okToUse(fProposalShell))
 						return;
 					
-					if (e.character == 0 && e.keyCode == SWT.CTRL)
+					if (e.character == 0 && e.keyCode == SWT.MOD1)
 						selectProposal(fProposalTable.getSelectionIndex(), true);									
 				}
 
@@ -124,7 +124,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 					if (!Helper.okToUse(fProposalShell))
 						return;
 
-					if (e.character == 0 && e.keyCode == SWT.CTRL)
+					if (e.character == 0 && e.keyCode == SWT.MOD1)
 						selectProposal(fProposalTable.getSelectionIndex(), false);				
 				}
 			};
@@ -515,12 +515,9 @@ class CompletionProposalPopup implements IContentAssistListener {
 					newSelection= fProposalTable.getItemCount() - 1;
 					break;
 					
-				case SWT.CTRL :
-				case SWT.SHIFT :
-					return true;
-
 				default :
-					hide();
+					if (e.keyCode != SWT.MOD1 && e.keyCode != SWT.MOD2 && e.keyCode != SWT.MOD3 && e.keyCode != SWT.MOD4)
+						hide();
 					return true;
 			}
 			
