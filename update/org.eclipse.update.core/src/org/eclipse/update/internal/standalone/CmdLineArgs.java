@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.internal.standalone;
+import java.net.*;
 import java.util.*;
 
 import org.eclipse.update.internal.mirror.*;
@@ -32,6 +33,17 @@ public class CmdLineArgs {
 			if (isValidParam(args[i])) {
 				options.put(args[i], args[i + 1]);
 				i++;
+			}
+			// -to should specify a directory
+			// if -to specifies file URL, change it to a directory
+			String to=(String)options.get("-to");
+			if (to!=null && to.startsWith("file:")){
+				try{
+					URL url=new URL(to);
+					options.put("-to", url.getFile());
+					continue;
+				}catch(MalformedURLException mue){
+				}
 			}
 		}
 	}

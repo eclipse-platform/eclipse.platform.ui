@@ -27,15 +27,19 @@ public class MirrorSiteFactory extends BaseSiteFactory {
 		return new MirrorSite(this);
 	}
 	/*
-	 * @see ISiteFactory#createSite(URL,boolean)
+	 * @see ISiteFactory#createSite(URL)
 	 */
 	public ISite createSite(URL url)
 		throws CoreException, InvalidSiteTypeException {
+		return createSite(new File(url.getFile()));
+	}
+	/*
+	 * @see ISiteFactory#createSite(URL)
+	 */
+	public ISite createSite(File siteLocation)
+		throws CoreException, InvalidSiteTypeException {
 
 		InputStream siteStream = null;
-
-		String path = url.getFile();
-		File siteLocation = new File(path);
 
 		if (!siteLocation.exists()) {
 			if (!siteLocation.mkdirs()) {
@@ -53,15 +57,7 @@ public class MirrorSiteFactory extends BaseSiteFactory {
 					siteLocation.getAbsolutePath()),
 				null);
 
-		path = siteLocation.getAbsolutePath().replace(File.separatorChar, '/');
-		try {
-			// ensure URL ends with /
-			if (!path.endsWith("/"))
-				path += "/";
-			url = new URL("file:" + path); //$NON-NLS-1$
-		} catch (MalformedURLException mue) {
-		}
-		MirrorSite site=null;
+		MirrorSite site = null;
 		// parse public features
 		if (new File(siteLocation, Site.SITE_XML).exists()) {
 			try {
@@ -76,14 +72,24 @@ public class MirrorSiteFactory extends BaseSiteFactory {
 			} catch (IOException e) {
 			}
 		}
-		if(site==null){
-			site=(MirrorSite) createSiteMapModel();
+		if (site == null) {
+			site = (MirrorSite) createSiteMapModel();
 		}
 		// parse downloaded plugins and fragments
-		parseDownloadedPluginsAndFragments(site, new File(path,Site.DEFAULT_PLUGIN_PATH));
+		parseDownloadedPluginsAndFragments(
+			site,
+			new File(siteLocation, Site.DEFAULT_PLUGIN_PATH));
 		// parse downloaded features
-		parseDownloadedFeatures(site, new File(path,Site.DEFAULT_FEATURE_PATH));
+		parseDownloadedFeatures(
+			site,
+			new File(siteLocation, Site.DEFAULT_FEATURE_PATH));
 
+		URL url;
+		try {
+			url = siteLocation.toURL();
+		} catch (MalformedURLException mue) {
+			throw Utilities.newCoreException(Policy.bind("SiteMirrorFactory.UnableToCreateUrlFor", siteLocation.getAbsolutePath()), mue); //$NON-NLS-1$
+		}
 		SiteContentProvider contentProvider = null;
 		contentProvider = new SiteFileContentProvider(url);
 
@@ -99,7 +105,10 @@ public class MirrorSiteFactory extends BaseSiteFactory {
 	/**
 	 * 
 	 */
-	private void parseDownloadedPluginsAndFragments(MirrorSite site, File pluginDir) throws CoreException {
+	private void parseDownloadedPluginsAndFragments(
+		MirrorSite site,
+		File pluginDir)
+		throws CoreException {
 		File file = null;
 		String[] dir;
 
@@ -115,7 +124,7 @@ public class MirrorSiteFactory extends BaseSiteFactory {
 						new JarContentReference(null, file);
 					ref = jarReference.peek("plugin.xml", null, null); //$NON-NLS-1$
 					if (ref == null)
-						ref=jarReference.peek("fragment.xml", null, null); //$NON-NLS-1$
+						ref = jarReference.peek("fragment.xml", null, null); //$NON-NLS-1$
 					refString =
 						(ref == null) ? null : ref.asURL().toExternalForm();
 
@@ -132,7 +141,7 @@ public class MirrorSiteFactory extends BaseSiteFactory {
 		} catch (IOException e) {
 			System.out.println(e);
 			e.printStackTrace();
-			
+
 		} catch (SAXException e) {
 			System.out.println(e);
 			e.printStackTrace();
@@ -142,7 +151,8 @@ public class MirrorSiteFactory extends BaseSiteFactory {
 	* Method parseFeature.
 	* @throws CoreException
 	*/
-	private void parseDownloadedFeatures(MirrorSite site, File featureDir) throws CoreException {
+	private void parseDownloadedFeatures(MirrorSite site, File featureDir)
+		throws CoreException {
 		if (featureDir.exists()) {
 			String[] dir;
 			SiteFeatureReferenceModel featureRef;
@@ -157,26 +167,45 @@ public class MirrorSiteFactory extends BaseSiteFactory {
 
 					// check if the JAR file contains a feature.xml
 					currentFeatureFile = new File(featureDir, dir[index]);
-					JarContentReference ref = new JarContentReference("", currentFeatureFile);
+					JarContentReference ref =
+						new JarContentReference("", currentFeatureFile);
 					ContentReference result = null;
 					try {
 						result = ref.peek(Feature.FEATURE_XML, null, null);
 					} catch (IOException e) {
-						UpdateCore.warn("Exception retrieving feature.xml in file:" + currentFeatureFile, e);
+						UpdateCore.warn(
+							"Exception retrieving feature.xml in file:"
+								+ currentFeatureFile,
+							e);
 					}
 					if (result == null) {
-						UpdateCore.warn("Unable to find feature.xml in file:" + currentFeatureFile);
+						UpdateCore.warn(
+							"Unable to find feature.xml in file:"
+								+ currentFeatureFile);
 					} else {
 						featureURL = currentFeatureFile.toURL();
 						featureRef = createFeatureReferenceModel();
 						featureRef.setSiteModel(site);
 						featureRef.setURLString(featureURL.toExternalForm());
 						featureRef.setType(ISite.DEFAULT_PACKAGED_FEATURE_TYPE);
+						featureRef.setFeatureIdentifier(
+							featureRef
+								.getVersionedIdentifier()
+								.getIdentifier());
+						featureRef.setFeatureVersion(
+							featureRef
+								.getVersionedIdentifier()
+								.getVersion()
+								.toString());
 						site.addDownloadedFeatureReferenceModel(featureRef);
 					}
 				}
 			} catch (MalformedURLException e) {
-				throw Utilities.newCoreException(Policy.bind("SiteFileFactory.UnableToCreateURLForFile", newFilePath), e);
+				throw Utilities.newCoreException(
+					Policy.bind(
+						"SiteFileFactory.UnableToCreateURLForFile",
+						newFilePath),
+					e);
 				//$NON-NLS-1$
 			}
 		}

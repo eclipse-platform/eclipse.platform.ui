@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.internal.standalone;
+import java.io.*;
 import java.lang.reflect.*;
 import java.net.*;
 
@@ -36,7 +37,7 @@ public  class EnableCommand extends ScriptedCommand {
 
 			// Get site to enable to
 			if (toSite != null) {
-				URL toSiteURL = new URL(toSite);
+				URL toSiteURL = new File(toSite).toURL();
 				if (SiteManager.getSite(toSiteURL, null) == null) {
 					System.out.println(
 						"Cannot find site " + toSite);

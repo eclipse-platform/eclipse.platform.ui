@@ -78,10 +78,6 @@ public class MirrorSite extends Site {
 						sourceFeature,
 						optionalfeatures,
 						1);
-				if(featureRef==null){
-					//feature was skipped
-					continue;
-				}
 				// Set categories of the new feature
 				ICategory remoteCategories[] =
 					sourceFeatureRefs[i].getCategories();
@@ -109,11 +105,6 @@ public class MirrorSite extends Site {
 				sourceFeatureRefs[i].getFeature(new NullProgressMonitor());
 			SiteFeatureReferenceModel featureRef =
 				mirrorFeature(remoteSite, sourceFeature, optionalfeatures, 1);
-			if(featureRef==null){
-				//feature was skipped
-				continue;
-			}
-
 			// Set categories of the new feature
 			ICategory remoteCategories[] = sourceFeatureRefs[i].getCategories();
 			for (int j = 0; j < remoteCategories.length; j++) {
@@ -153,8 +144,8 @@ public class MirrorSite extends Site {
 					tab
 						+ "Feature "
 						+ sourceFeature.getVersionedIdentifier()
-						+ " already exists.  Skipping.");
-				return null;
+						+ " already exists.  Skipping downloading.");
+				return existingFeatures[e];
 			}
 		}
 
@@ -218,17 +209,17 @@ public class MirrorSite extends Site {
 			provider.getPluginEntryArchiveReferences(pluginsToInstall[i], null);
 		}
 
-//		System.out.println(
-//			tab
-//				+ "Downloading non plug-in archives for "
-//				+ sourceFeature.getVersionedIdentifier()
-//				+ " ...");
-//		// download non-plugin archives
-//		for (int i = 0; i < nonPluginsToInstall.length; i++) {
-//			provider.getNonPluginEntryArchiveReferences(
-//				nonPluginsToInstall[i],
-//				null);
-//		}
+		//		System.out.println(
+		//			tab
+		//				+ "Downloading non plug-in archives for "
+		//				+ sourceFeature.getVersionedIdentifier()
+		//				+ " ...");
+		//		// download non-plugin archives
+		//		for (int i = 0; i < nonPluginsToInstall.length; i++) {
+		//			provider.getNonPluginEntryArchiveReferences(
+		//				nonPluginsToInstall[i],
+		//				null);
+		//		}
 
 		System.out.println(
 			tab
@@ -319,7 +310,6 @@ public class MirrorSite extends Site {
 			ISiteFeatureReference remoteFeatureRef = remoteFeatures[i];
 			try {
 				if (remoteFeatureRef
-					.getFeature(new NullProgressMonitor())
 					.getVersionedIdentifier()
 					.equals(featureReference.getVersionedIdentifier())) {
 					addFeatureReferenceModel(featureReference);
@@ -328,7 +318,10 @@ public class MirrorSite extends Site {
 			}
 		}
 		save();
-		System.out.println("Feature "+featureReference.getVersionedIdentifier()+" added to site.xml.");
+		System.out.println(
+			"Feature "
+				+ featureReference.getVersionedIdentifier()
+				+ " added to site.xml.");
 	}
 	/**
 	 * Adds feature model to site model, removing old feature
@@ -439,7 +432,7 @@ public class MirrorSite extends Site {
 		URLEntryModel description = getDescriptionModel();
 		if (description != null) {
 			writer.println();
-			writeDescription(description, indent2, writer);
+			writeDescription(indent2, writer, description);
 			writer.println();
 		}
 		writeFeatures(indent2, writer);
@@ -498,18 +491,18 @@ public class MirrorSite extends Site {
 					+ "\"");
 			writer.println(">");
 			writeDescription(
-				categoryModels[i].getDescriptionModel(),
 				indent + INDENT,
-				writer);
+				writer,
+				categoryModels[i].getDescriptionModel());
 			writer.print(indent);
 			writer.println("</category-def>");
 			writer.println();
 		}
 	}
 	private void writeDescription(
-		URLEntryModel urlEntryModel,
 		String indent,
-		PrintWriter writer) {
+		PrintWriter writer,
+		URLEntryModel urlEntryModel) {
 		String url = urlEntryModel.getURLString();
 		String text = urlEntryModel.getAnnotationNonLocalized();
 		if (url == null && text == null && text.length() <= 0) {
@@ -631,8 +624,8 @@ public class MirrorSite extends Site {
 				CategoryModel oldCategory = null;
 				try {
 					oldCategory = (CategoryModel) getCategory(name);
-					// TODO fix NPE in Site
 				} catch (NullPointerException npe) {
+					// cannot reproduce npe anymore
 				}
 				if (oldCategory != null) {
 					newCategoryModels.add(oldCategory);

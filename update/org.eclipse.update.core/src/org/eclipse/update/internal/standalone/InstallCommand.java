@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.internal.standalone;
+import java.io.*;
 import java.net.*;
 import java.util.*;
 
@@ -47,7 +48,7 @@ public class InstallCommand extends ScriptedCommand {
 			// Get site to install to
 			IConfiguredSite[] sites = config.getConfiguredSites();
 			if (toSite != null) {
-				URL toSiteURL = new URL(toSite);
+				URL toSiteURL = new File(toSite).toURL();
 				if (SiteManager.getSite(toSiteURL, null) == null) {
 					System.out.println(
 						"Cannot find site to install to: " + toSite);

@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.internal.mirror;
+import java.io.*;
 import java.net.*;
 import java.util.*;
 
@@ -25,18 +26,18 @@ public class MirrorCommand extends ScriptedCommand {
 	private String featureId;
 	private String featureVersion;
 	private String fromSiteUrl;
-	private String toSiteUrl;
+	private String toSiteDir;
 	private MirrorSite mirrorSite;
 
 	public MirrorCommand(
 		String featureId,
 		String featureVersion,
 		String fromSiteUrl,
-		String toSiteUrl) {
+		String toSiteDir) {
 		this.featureId = featureId;
 		this.featureVersion = featureVersion;
 		this.fromSiteUrl = fromSiteUrl;
-		this.toSiteUrl = toSiteUrl;
+		this.toSiteDir = toSiteDir;
 	}
 
 	/**
@@ -93,17 +94,8 @@ public class MirrorCommand extends ScriptedCommand {
 			System.out.println("from must be valid URL");
 			return false;
 		}
-		if (toSiteUrl == null && toSiteUrl.length() <= 0) {
+		if (toSiteDir == null && toSiteDir.length() <= 0) {
 			System.out.println("to parameter missing.");
-			return false;
-		}
-		try {
-			if (!"file".equals(new URL(toSiteUrl).getProtocol())) {
-				System.out.println(
-					"to parameter must be URL with file protocol");
-			}
-		} catch (MalformedURLException mue) {
-			System.out.println("from must be valid URL");
 			return false;
 		}
 		return true;
@@ -112,17 +104,17 @@ public class MirrorCommand extends ScriptedCommand {
 		throws MalformedURLException, CoreException {
 		// Create mirror site
 		if (mirrorSite == null) {
-			if (toSiteUrl != null) {
-				URL toSiteUrl = new URL(this.toSiteUrl);
+			if (toSiteDir != null) {
 				MirrorSiteFactory factory = new MirrorSiteFactory();
 				try {
-					mirrorSite = (MirrorSite) factory.createSite(toSiteUrl);
+					mirrorSite =
+						(MirrorSite) factory.createSite(new File(toSiteDir));
 				} catch (InvalidSiteTypeException iste) {
 				}
 			}
 			if (mirrorSite == null) {
 				System.out.println(
-					"Cannot access site to mirror to: " + toSiteUrl);
+					"Cannot access site to mirror to: " + toSiteDir);
 				return null;
 			}
 		}
@@ -141,11 +133,20 @@ public class MirrorCommand extends ScriptedCommand {
 		throws CoreException {
 		ISiteFeatureReference remoteSiteFeatureReferences[] =
 			remoteSite.getRawFeatureReferences();
-		SiteFeatureReferenceModel existingFeatureModels[]=mirrorSite.getFeatureReferenceModels();
+		SiteFeatureReferenceModel existingFeatureModels[] =
+			mirrorSite.getFeatureReferenceModels();
 		Collection featureReferencesToMirror = new ArrayList();
 
 		PluginVersionIdentifier featureVersionIdentifier = null;
-		if (featureVersion != null) {
+
+		if (featureId == null) {
+			System.out.println(
+				"Parameter feature not specified.  All features on the remote will be mirrored.");
+		}
+		if (featureVersion == null) {
+			System.out.println(
+				"Parameter version not specified.  All versions of features on the remote will be mirrored.");
+		} else {
 			featureVersionIdentifier =
 				new PluginVersionIdentifier(featureVersion);
 		}
@@ -165,16 +166,20 @@ public class MirrorCommand extends ScriptedCommand {
 				// version does not match
 				continue;
 			}
-			
-			for(int e=0; e<existingFeatureModels.length; e++){
-				if(existingFeatureModels[e].getVersionedIdentifier().equals(remoteFeatureVersionedIdentifier)){
-					System.out.println("Feature "+ remoteFeatureVersionedIdentifier +" already mirrored and exposed.");
+
+			for (int e = 0; e < existingFeatureModels.length; e++) {
+				if (existingFeatureModels[e]
+					.getVersionedIdentifier()
+					.equals(remoteFeatureVersionedIdentifier)) {
+					System.out.println(
+						"Feature "
+							+ remoteFeatureVersionedIdentifier
+							+ " already mirrored and exposed.");
 					// feature already mirrored and exposed in site.xml
 					continue;
 				}
 			}
-			
-			
+
 			featureReferencesToMirror.add(remoteSiteFeatureReferences[i]);
 			System.out.println(
 				"Feature "
