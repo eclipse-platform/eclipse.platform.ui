@@ -19,6 +19,7 @@ import org.eclipse.help.internal.util.*;
  */
 public class StreamConsumer extends Thread {
 	BufferedReader bReader;
+	private String lastLine;
 	public StreamConsumer(InputStream inputStream) {
 		super();
 		setDaemon(true);
@@ -28,6 +29,7 @@ public class StreamConsumer extends Thread {
 		try {
 			String line;
 			while (null != (line = bReader.readLine())) {
+				lastLine = line;
 				BrowserLog.log(line);
 			}
 			bReader.close();
@@ -35,4 +37,11 @@ public class StreamConsumer extends Thread {
 			HelpPlugin.logError(Resources.getString("WE001"), ioe);
 		}
 	}
+	/**
+	 * @return last line obtained or null
+	 */
+	public String getLastLine() {
+		return lastLine;
+	}
+
 }
