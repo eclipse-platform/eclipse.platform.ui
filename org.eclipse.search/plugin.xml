@@ -78,6 +78,7 @@
 		sizeHint="250,160"
 		tabPosition="1"
 		extensions="*:1"
+		showScopeSection="true"		
 		class="org.eclipse.search.internal.ui.text.TextSearchPage">
 	</page>
 </extension>

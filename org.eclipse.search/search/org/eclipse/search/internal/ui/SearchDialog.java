@@ -141,6 +141,7 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 		}
 		
 		final int pageIndex= getPreferredPageIndex();
+		boolean showScope= getDescriptorAt(pageIndex).showScopeSection();
 
 		BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
 			public void run() {
@@ -149,14 +150,16 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 		});
 		
 		fCurrentPage.setContainer(this);
+		
 
+		// Create Search scope
 		fScopePart= new ScopePart(this);
 
 		if (numPages == 1) {
 			Control control= getControl(fCurrentPage, parent);
 			if (control instanceof Composite) {
-				// Search scope
 				fScopePart.createPart((Composite)control);
+				fScopePart.setVisible(showScope);
 			}
 			return control;
 		}
@@ -202,6 +205,7 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 			
 			// Search scope
 			fScopePart.createPart(border);
+			fScopePart.setVisible(showScope);
 			
 			return border;
 		}	
@@ -266,9 +270,11 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 			
 			Control newControl= getControl(page, (Composite)event.widget);
 			item.setControl(newControl);
-			resizeDialogIfNeeded(newControl);
 		}
 		if (item.getData() instanceof ISearchPage) {
+			boolean showScope= getDescriptorAt(item.getParent().getSelectionIndex()).showScopeSection();
+			fScopePart.setVisible(showScope);
+			resizeDialogIfNeeded(item.getControl());
 			fCurrentPage= (ISearchPage)item.getData();
 			fCurrentPage.setVisible(true);
 		}

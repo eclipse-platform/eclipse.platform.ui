@@ -41,6 +41,8 @@ public class ScopePart {
 	private static final String STORE_LRU_WORKING_SET_NAME= "lastUsedWorkingSetName"; //$NON-NLS-1$
 	private static IDialogSettings fgSettingsStore;
 
+	private Group fPart;
+
 	// Scope radio buttons
 	private Button fUseWorkspace;
 	private Button fUseSelection;
@@ -190,19 +192,19 @@ public class ScopePart {
 	 * @param parent a widget which will be the parent of the new instance (cannot be null)
 	 */
 	public Composite createPart(Composite parent) {
-		Group group= new Group(parent, SWT.NONE);
-		group.setText(SearchMessages.getString("ScopePart.group.text")); //$NON-NLS-1$
+		fPart= new Group(parent, SWT.NONE);
+		fPart.setText(SearchMessages.getString("ScopePart.group.text")); //$NON-NLS-1$
 
 		GridLayout layout= new GridLayout();
 		layout.numColumns= 3;
-		group.setLayout(layout);
-		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		fPart.setLayout(layout);
+		fPart.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
-		fUseWorkspace= new Button(group, SWT.RADIO);
+		fUseWorkspace= new Button(fPart, SWT.RADIO);
 		fUseWorkspace.setData(new Integer(WORKSPACE_SCOPE));
 		fUseWorkspace.setText(SearchMessages.getString("ScopePart.workspaceScope.text")); //$NON-NLS-1$
 
-		fUseSelection= new Button(group, SWT.RADIO);
+		fUseSelection= new Button(fPart, SWT.RADIO);
 		fUseSelection.setData(new Integer(SELECTION_SCOPE));
 		fUseSelection.setText(SearchMessages.getString("ScopePart.selectedResourcesScope.text")); //$NON-NLS-1$
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
@@ -210,11 +212,11 @@ public class ScopePart {
 		gd.horizontalIndent= 8;
 		fUseSelection.setLayoutData(gd);
 
-		fUseWorkingSet= new Button(group, SWT.RADIO);
+		fUseWorkingSet= new Button(fPart, SWT.RADIO);
 		fUseWorkingSet.setData(new Integer(WORKING_SET_SCOPE));
 		fUseWorkingSet.setText(SearchMessages.getString("ScopePart.workingSetScope.text")); //$NON-NLS-1$
-		fWorkingSetText= new Text(group, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
-		Button chooseWorkingSet= new Button(group, SWT.PUSH);
+		fWorkingSetText= new Text(fPart, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
+		Button chooseWorkingSet= new Button(fPart, SWT.PUSH);
 		chooseWorkingSet.setLayoutData(new GridData());
 		chooseWorkingSet.setText(SearchMessages.getString("ScopePart.workingSetChooseButton.text")); //$NON-NLS-1$
 		SWTUtil.setButtonDimensionHint(chooseWorkingSet);
@@ -247,7 +249,7 @@ public class ScopePart {
 		if (fWorkingSet != null)
 			fWorkingSetText.setText(fWorkingSet.getName());
 
-		return group;
+		return fPart;
 	}
 
 	private void handleScopeChanged(SelectionEvent e) {
@@ -283,5 +285,9 @@ public class ScopePart {
 			}
 		}
 		return false;
+	}
+	
+	void setVisible(boolean state) {
+		fPart.setVisible(state);
 	}
 }

@@ -39,6 +39,7 @@ class SearchPageDescriptor implements Comparable {
 	private final static String SIZE_ATTRIBUTE= "sizeHint"; //$NON-NLS-1$
 	private final static String TAB_POSITION_ATTRIBUTE= "tabPosition"; //$NON-NLS-1$
 	private final static String EXTENSIONS_ATTRIBUTE= "extensions"; //$NON-NLS-1$
+	private final static String SHOW_SCOPE_SECTION_ATTRIBUTE= "showScopeSection"; //$NON-NLS-1$
 	
 	public final static Point UNKNOWN_SIZE= new Point(SWT.DEFAULT, SWT.DEFAULT);
 	
@@ -115,7 +116,15 @@ class SearchPageDescriptor implements Comparable {
 	public String getLabel() {
 		return fElement.getAttribute(LABEL_ATTRIBUTE);
 	}
-	
+
+	/**
+	 * Returns <code>true</code> if the scope section needs
+	 * to be shown in the dialog.
+	 */
+	public boolean showScopeSection() {
+		return Boolean.valueOf(fElement.getAttribute(SHOW_SCOPE_SECTION_ATTRIBUTE)).booleanValue();
+	}
+
 	/**
 	 * Returns the page's preferred size
 	 */
