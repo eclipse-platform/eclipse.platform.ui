@@ -180,7 +180,6 @@ public class CVSProviderPlugin extends Plugin {
 		Policy.localize("org.eclipse.team.internal.ccvs.core.messages"); //$NON-NLS-1$
 
 		// Start the synchronizer first as the startup of CVSProvider may use it.
-		EclipseSynchronizer.startup();
 		CVSProvider.startup();
 		
 		// Initialize CVS change listeners. Note tha the report type is important.
@@ -200,7 +199,6 @@ public class CVSProviderPlugin extends Plugin {
 	public void shutdown() throws CoreException {
 		super.shutdown();
 		CVSProvider.shutdown();
-		EclipseSynchronizer.shutdown();
 		
 		// remove listeners
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
