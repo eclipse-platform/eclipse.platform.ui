@@ -10,11 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.preferences;
 
-import java.text.MessageFormat;
-
 import org.eclipse.ant.core.Property;
-import org.eclipse.ant.core.Task;
-import org.eclipse.ant.core.Type;
 import org.eclipse.ant.internal.core.AntObject;
 import org.eclipse.ant.internal.ui.AntUIImages;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
@@ -45,12 +41,21 @@ public class AntObjectLabelProvider extends LabelProvider implements ITableLabel
 	 * Method declared on ITableLabelProvider.
 	 */
 	public Image getColumnImage(Object element, int columnIndex) {
+        if (columnIndex != 0) {
+            return null;
+        }
 		if (element instanceof Property) {
-			return getPropertyImage();
-		} else if (element instanceof Type){
-			return getTypeImage();
-		} else if (element instanceof Task) {
-			return getTaskImage();
+			Property prop= (Property) element;
+            if (prop.isDefault() && prop.isEclipseRuntimeRequired()) {
+                return AntUIImages.getImage(IAntUIConstants.IMG_ANT_ECLIPSE_RUNTIME_OBJECT);
+            }
+            return null;
+		} else if (element instanceof AntObject){
+            AntObject object= (AntObject) element;
+            if (object.isDefault() && object.isEclipseRuntimeRequired()) {
+                return AntUIImages.getImage(IAntUIConstants.IMG_ANT_ECLIPSE_RUNTIME_OBJECT);
+            }
+            return null;
 		}
 		return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FILE);
 	}
@@ -60,32 +65,43 @@ public class AntObjectLabelProvider extends LabelProvider implements ITableLabel
 	 */
 	public String getColumnText(Object element, int columnIndex) {
 		if (element instanceof Property) {
-			Property property= (Property) element;
-			if (property.isDefault()) {
-				return element.toString() + MessageFormat.format(AntPreferencesMessages.getString("AntObjectLabelProvider.10"), new String[]{property.getPluginLabel()}); //$NON-NLS-1$
-			} 
+			return getPropertyText((Property) element, columnIndex);
 		} else if (element instanceof AntObject) {	
 			AntObject object = (AntObject) element;
-			StringBuffer text= new StringBuffer(object.toString());
-			text.append(" ("); //$NON-NLS-1$
-			text.append(object.getLibraryEntry().getLabel());
-			text.append(": "); //$NON-NLS-1$
-			text.append(object.getClassName());
-			text.append(')');
-			if (object.isDefault()) {
-				text.append(MessageFormat.format(AntPreferencesMessages.getString("AntObjectLabelProvider.10"), new String[]{object.getPluginLabel()})); //$NON-NLS-1$
-			}
-			return text.toString();
+             switch (columnIndex) {
+                case 0:
+                    return object.toString();
+                case 1:
+                    return object.getClassName();
+                case 2:
+                   return object.getLibraryEntry().getLabel();
+                case 3:
+                    return object.getPluginLabel();
+            }
 		}
 		 
 		return element.toString();	
 	}
 	
-	public Image getTypeImage() {
+    public String getPropertyText(Property property, int columnIndex) {
+        switch (columnIndex) {
+            case 0:
+                return property.getName();
+            case 1:
+                return property.getValue(false);
+            case 2:
+                if (property.isDefault()) {
+                    return property.getPluginLabel();
+                }
+        }
+        return null;
+    }
+    
+	public static Image getTypeImage() {
 		return AntUIImages.getImage(IAntUIConstants.IMG_ANT_TYPE);
 	}
 	
-	public Image getTaskImage() {
+	public static Image getTaskImage() {
 		return PlatformUI.getWorkbench().getSharedImages().getImage(IDE.SharedImages.IMG_OBJS_TASK_TSK);
 	}
 
