@@ -24,7 +24,8 @@ import org.eclipse.core.runtime.jobs.Job;
  */
 class ImplicitJobs {
 	/**
-	 * Captures the implicit job state for a given thread. */
+	 * Captures the implicit job state for a given thread. 
+	 */
 	class ThreadJob extends Job {
 		private RuntimeException lastPush = null;
 		protected boolean queued = false;
@@ -129,7 +130,7 @@ class ImplicitJobs {
 		}
 		void push(ISchedulingRule rule) {
 			ISchedulingRule baseRule = getRule();
-			if (baseRule != null && !baseRule.contains(rule))
+			if (baseRule != null && rule != null && !baseRule.contains(rule))
 				illegalPush(rule, baseRule);
 			if (++top >= ruleStack.length) {
 				ISchedulingRule[] newStack = new ISchedulingRule[ruleStack.length * 2];
@@ -174,15 +175,16 @@ class ImplicitJobs {
 		}
 	}
 	/**
-	 * Cached of unused instance that can be reused 
-	 */
-	private ThreadJob jobCache = null;
-	protected JobManager manager;
-	/**
 	 * Maps (Thread->ThreadJob), threads to the currently running job for that
 	 * thread.
 	 */
 	private final Map threadJobs = new HashMap(20);
+	/**
+	 * Cached of unused instance that can be reused 
+	 */
+	private ThreadJob jobCache = null;
+	protected JobManager manager;
+
 	ImplicitJobs(JobManager manager) {
 		this.manager = manager;
 	}
@@ -249,7 +251,8 @@ class ImplicitJobs {
 		return (Job)threadJobs.get(thread);
 	}
 	/**
-	 * Returns a new or reused ThreadJob instance. */
+	 * Returns a new or reused ThreadJob instance. 
+	 */
 	private ThreadJob newThreadJob(ISchedulingRule rule) {
 		if (jobCache != null) {
 			ThreadJob job = jobCache;
@@ -260,7 +263,8 @@ class ImplicitJobs {
 		return new ThreadJob(rule);
 	}
 	/**
-	 * Indicates that a thread job is no longer in use and can be reused. */
+	 * Indicates that a thread job is no longer in use and can be reused. 
+	 */
 	private void recycle(ThreadJob job) {
 		if (jobCache == null) {
 			job.recycle();
