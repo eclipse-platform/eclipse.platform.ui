@@ -142,11 +142,11 @@ public class DebugPlugin extends Plugin {
 	private boolean fShuttingDown= false;
 	
 	/**
-	 * Whether event dispatch is in progress
+	 * Whether event dispatch is in progress (if > 0)
 	 * 
 	 * @since 2.1
 	 */
-	private boolean fDispatching = false;
+	private int fDispatching = 0;
 	
 	/**
 	 * Queue of runnables to execute after event dispatch is
@@ -251,17 +251,15 @@ public class DebugPlugin extends Plugin {
 		if (events == null) {
 			return;
 		} else {
-			fDispatching = true;
-			Object[] listeners= getEventListeners();
-			for (int i= 0; i < listeners.length; i++) {
-				((IDebugEventSetListener)listeners[i]).handleDebugEvents(events);
-			}
-			if (fAsynchRunner != null) {
-				synchronized (fAsynchRunner) {
-					fAsynchRunner.notifyAll();
+			try {
+				setDispatching(true);
+				Object[] listeners= getEventListeners();
+				for (int i= 0; i < listeners.length; i++) {
+					((IDebugEventSetListener)listeners[i]).handleDebugEvents(events);
 				}
+			} finally {
+				setDispatching(false);
 			}
-			fDispatching = false;
 		}
 	}
 	
@@ -283,7 +281,7 @@ public class DebugPlugin extends Plugin {
 			fAsyncThread.start();
 		}
 		fRunnables.add(r);
-		if (!fDispatching) {
+		if (!isDispatching()) {
 			synchronized (fAsynchRunner) {
 				fAsynchRunner.notifyAll();
 			}			
@@ -681,6 +679,31 @@ public class DebugPlugin extends Plugin {
 	private boolean hasEventFilters() {
 		return fEventFilters != null && fEventFilters.size() > 0;
 	}
+	
+	/**
+	 * Sets whether debug events are being dispatched 
+	 */
+	private synchronized void setDispatching(boolean dispatching) {
+		if (dispatching) {
+			fDispatching++;
+		} else {
+			fDispatching--;
+		}
+		if (!isDispatching()) {
+			if (fAsynchRunner != null) {
+				synchronized (fAsynchRunner) {
+					fAsynchRunner.notifyAll();
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Returns whether debug events are being dispatched
+	 */
+	private synchronized boolean isDispatching() {
+		return fDispatching > 0;
+	}	
 
 	/**
 	 * Executes runnables after event dispatch is complete, in
