@@ -66,10 +66,10 @@ public interface IActivity extends Comparable {
 	 * @return the set of activity activity bindings. This set may be empty,
 	 *         but is guaranteed not to be <code>null</code>. If this set is
 	 *         not empty, it is guaranteed to only contain instances of 
-	 * 		   <code>IActivityActivityBinding</code>.
-	 * @see IActivityActivityBinding
+	 * 		   <code>IActivityRequirementBinding</code>.
+	 * @see IActivityRequirementBinding
 	 */
-	Set getActivityActivityBindings();
+	Set getActivityRequirementBindings();
 
 	/**
 	 * Returns the set of activity pattern bindings for this instance.

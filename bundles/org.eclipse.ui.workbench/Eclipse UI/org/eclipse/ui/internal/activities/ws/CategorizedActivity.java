@@ -82,10 +82,10 @@ public class CategorizedActivity implements IActivity {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.activities.IActivity#getActivityActivityBindings()
+	 * @see org.eclipse.ui.activities.IActivity#getActivityRequirementBindings()
 	 */
-	public Set getActivityActivityBindings() {
-		return activity.getActivityActivityBindings();
+	public Set getActivityRequirementBindings() {
+		return activity.getActivityRequirementBindings();
 	}
 
 	/* (non-Javadoc)

@@ -1301,30 +1301,30 @@
             activityId="org.eclipse.activity4"
             categoryId="org.eclipse.category1">
       </categoryActivityBinding>
-      <activityActivityBinding
-            childActivityId="org.eclipse.activity2"
-            parentActivityId="org.eclipse.activity1">
-      </activityActivityBinding>
-      <activityActivityBinding
-            childActivityId="org.eclipse.activity3"
-            parentActivityId="org.eclipse.activity1">
-      </activityActivityBinding>
-      <activityActivityBinding
-            childActivityId="org.eclipse.activity4"
-            parentActivityId="org.eclipse.activity1">
-      </activityActivityBinding>
-      <activityActivityBinding
-            childActivityId="org.eclipse.activity5"
-            parentActivityId="org.eclipse.activity1">
-      </activityActivityBinding>
-      <activityActivityBinding
-            childActivityId="org.eclipse.activity6"
-            parentActivityId="org.eclipse.activity1">
-      </activityActivityBinding>
-      <activityActivityBinding
-            childActivityId="org.eclipse.activity7"
-            parentActivityId="org.eclipse.activity1">
-      </activityActivityBinding>
+      <activityRequirementBinding
+            requiredActivityId="org.eclipse.activity2"
+            activityId="org.eclipse.activity1">
+      </activityRequirementBinding>
+      <activityRequirementBinding
+            requiredActivityId="org.eclipse.activity3"
+            activityId="org.eclipse.activity1">
+      </activityRequirementBinding>
+      <activityRequirementBinding
+            requiredActivityId="org.eclipse.activity4"
+            activityId="org.eclipse.activity1">
+      </activityRequirementBinding>
+      <activityRequirementBinding
+            requiredActivityId="org.eclipse.activity5"
+            activityId="org.eclipse.activity1">
+      </activityRequirementBinding>
+      <activityRequirementBinding
+            requiredActivityId="org.eclipse.activity6"
+            activityId="org.eclipse.activity1">
+      </activityRequirementBinding>
+      <activityRequirementBinding
+            requiredActivityId="org.eclipse.activity7"
+            activityId="org.eclipse.activity1">
+      </activityRequirementBinding>
    </extension>
    <extension
          point="org.eclipse.ui.themes">

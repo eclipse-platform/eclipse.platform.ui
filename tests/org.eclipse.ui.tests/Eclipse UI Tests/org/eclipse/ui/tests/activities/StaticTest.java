@@ -19,7 +19,7 @@ import org.eclipse.ui.activities.ICategory;
 import org.eclipse.ui.activities.IIdentifier;
 import org.eclipse.ui.activities.NotDefinedException;
 import org.eclipse.ui.internal.Workbench;
-import org.eclipse.ui.internal.activities.ActivityActivityBinding;
+import org.eclipse.ui.internal.activities.ActivityRequirementBinding;
 import org.eclipse.ui.internal.activities.CategoryActivityBinding;
 import org.eclipse.ui.tests.util.UITestCase;
 /**
@@ -90,11 +90,11 @@ public class StaticTest extends UITestCase {
 		IActivity first_activity = activityManager
 				.getActivity((String) activityIds.toArray()[0]);
 		// Check activity activity bindings for parent activity
-		Set activityActivityBindings = first_activity
-				.getActivityActivityBindings();
+		Set activityRequirementBindings = first_activity
+				.getActivityRequirementBindings();
 		for (int index = 2; index <= 7; index++) {
-			assertTrue(activityActivityBindings
-					.contains(new ActivityActivityBinding(
+			assertTrue(activityRequirementBindings
+					.contains(new ActivityRequirementBinding(
 							"org.eclipse.activity" + Integer.toString(index),
 							"org.eclipse.activity1")));
 		}

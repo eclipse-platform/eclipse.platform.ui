@@ -29,7 +29,7 @@ import org.eclipse.ui.activities.ActivityEvent;
 import org.eclipse.ui.activities.ActivityManagerEvent;
 import org.eclipse.ui.activities.CategoryEvent;
 import org.eclipse.ui.activities.IActivity;
-import org.eclipse.ui.activities.IActivityActivityBinding;
+import org.eclipse.ui.activities.IActivityRequirementBinding;
 import org.eclipse.ui.activities.IActivityPatternBinding;
 import org.eclipse.ui.activities.ICategory;
 import org.eclipse.ui.activities.ICategoryActivityBinding;
@@ -44,7 +44,7 @@ public final class MutableActivityManager
 	implements IMutableActivityManager {
 
 	private Map activitiesById = new WeakHashMap();
-	private Map activityActivityBindingsByParentActivityId = new HashMap();
+	private Map activityRequirementBindingsByActivityId = new HashMap();
 	private Map activityDefinitionsById = new HashMap();
 	private Map activityPatternBindingsByActivityId = new HashMap();
 	private IActivityRegistry activityRegistry;
@@ -141,16 +141,16 @@ public final class MutableActivityManager
 			String activityId = (String) iterator.next();
 			IActivity activity = getActivity(activityId);
 			Set childActivityIds = new HashSet();
-			Set activityActivityBindings =
-				activity.getActivityActivityBindings();
+			Set activityRequirementBindings =
+				activity.getActivityRequirementBindings();
 
-			for (Iterator iterator2 = activityActivityBindings.iterator();
+			for (Iterator iterator2 = activityRequirementBindings.iterator();
 				iterator2.hasNext();
 				) {
-				IActivityActivityBinding activityActivityBinding =
-					(IActivityActivityBinding) iterator2.next();
+				IActivityRequirementBinding activityRequirementBinding =
+					(IActivityRequirementBinding) iterator2.next();
 				childActivityIds.add(
-					activityActivityBinding.getChildActivityId());
+					activityRequirementBinding.getRequiredActivityId());
 			}
 
 			childActivityIds.removeAll(requiredActivityIds);
@@ -259,14 +259,14 @@ public final class MutableActivityManager
 				iterator.remove();
 		}
 
-		Map activityActivityBindingDefinitionsByParentActivityId =
-			ActivityActivityBindingDefinition
-				.activityActivityBindingDefinitionsByParentActivityId(
-				activityRegistry.getActivityActivityBindingDefinitions());
-		Map activityActivityBindingsByParentActivityId = new HashMap();
+		Map activityRequirementBindingDefinitionsByActivityId =
+			ActivityRequirementBindingDefinition
+				.activityRequirementBindingDefinitionsByActivityId(
+				activityRegistry.getActivityRequirementBindingDefinitions());
+		Map activityRequirementBindingsByActivityId = new HashMap();
 
 		for (Iterator iterator =
-			activityActivityBindingDefinitionsByParentActivityId
+			activityRequirementBindingDefinitionsByActivityId
 				.entrySet()
 				.iterator();
 			iterator.hasNext();
@@ -275,42 +275,42 @@ public final class MutableActivityManager
 			String parentActivityId = (String) entry.getKey();
 
 			if (activityDefinitionsById.containsKey(parentActivityId)) {
-				Collection activityActivityBindingDefinitions =
+				Collection activityRequirementBindingDefinitions =
 					(Collection) entry.getValue();
 
-				if (activityActivityBindingDefinitions != null)
+				if (activityRequirementBindingDefinitions != null)
 					for (Iterator iterator2 =
-						activityActivityBindingDefinitions.iterator();
+						activityRequirementBindingDefinitions.iterator();
 						iterator2.hasNext();
 						) {
-						ActivityActivityBindingDefinition activityActivityBindingDefinition =
-							(ActivityActivityBindingDefinition) iterator2
+						ActivityRequirementBindingDefinition activityRequirementBindingDefinition =
+							(ActivityRequirementBindingDefinition) iterator2
 								.next();
 						String childActivityId =
-							activityActivityBindingDefinition
-								.getChildActivityId();
+							activityRequirementBindingDefinition
+								.getRequiredActivityId();
 
 						if (activityDefinitionsById
 							.containsKey(childActivityId)) {
-							IActivityActivityBinding activityActivityBinding =
-								new ActivityActivityBinding(
+							IActivityRequirementBinding activityRequirementBinding =
+								new ActivityRequirementBinding(
 									childActivityId,
 									parentActivityId);
-							Set activityActivityBindings =
+							Set activityRequirementBindings =
 								(
-									Set) activityActivityBindingsByParentActivityId
+									Set) activityRequirementBindingsByActivityId
 										.get(
 									parentActivityId);
 
-							if (activityActivityBindings == null) {
-								activityActivityBindings = new HashSet();
-								activityActivityBindingsByParentActivityId.put(
+							if (activityRequirementBindings == null) {
+								activityRequirementBindings = new HashSet();
+								activityRequirementBindingsByActivityId.put(
 									parentActivityId,
-									activityActivityBindings);
+									activityRequirementBindings);
 							}
 
-							activityActivityBindings.add(
-								activityActivityBinding);
+							activityRequirementBindings.add(
+								activityRequirementBinding);
 						}
 					}
 			}
@@ -418,8 +418,8 @@ public final class MutableActivityManager
 			}
 		}
 
-		this.activityActivityBindingsByParentActivityId =
-			activityActivityBindingsByParentActivityId;
+		this.activityRequirementBindingsByActivityId =
+			activityRequirementBindingsByActivityId;
 		this.activityDefinitionsById = activityDefinitionsById;
 		this.activityPatternBindingsByActivityId =
 			activityPatternBindingsByActivityId;
@@ -547,13 +547,13 @@ public final class MutableActivityManager
 	}
 
 	private ActivityEvent updateActivity(Activity activity) {
-		Set activityActivityBindings =
-			(Set) activityActivityBindingsByParentActivityId.get(
+		Set activityRequirementBindings =
+			(Set) activityRequirementBindingsByActivityId.get(
 				activity.getId());
-		boolean activityActivityBindingsChanged =
-			activity.setActivityActivityBindings(
-				activityActivityBindings != null
-					? activityActivityBindings
+		boolean activityRequirementBindingsChanged =
+			activity.setActivityRequirementBindings(
+				activityRequirementBindings != null
+					? activityRequirementBindings
 					: Collections.EMPTY_SET);
 		Set activityPatternBindings =
 			(Set) activityPatternBindingsByActivityId.get(activity.getId());
@@ -580,7 +580,7 @@ public final class MutableActivityManager
 					: null);
 		
 
-		if (activityActivityBindingsChanged
+		if (activityRequirementBindingsChanged
 			|| activityPatternBindingsChanged
 			|| definedChanged
 			|| enabledChanged
@@ -588,7 +588,7 @@ public final class MutableActivityManager
 			|| descriptionChanged)
 			return new ActivityEvent(
 				activity,
-				activityActivityBindingsChanged,
+				activityRequirementBindingsChanged,
 				activityPatternBindingsChanged,
 				definedChanged,
 				descriptionChanged,

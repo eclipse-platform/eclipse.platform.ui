@@ -23,40 +23,39 @@ final class Persistence {
 	final static String PACKAGE_FULL = "org.eclipse.ui.activities"; //$NON-NLS-1$
 	final static String PACKAGE_PREFIX = "org.eclipse.ui"; //$NON-NLS-1$
 	final static String TAG_ACTIVITY = "activity"; //$NON-NLS-1$	
-	final static String TAG_ACTIVITY_ACTIVITY_BINDING = "activityActivityBinding"; //$NON-NLS-1$
+	final static String TAG_ACTIVITY_REQUIREMENT_BINDING = "activityRequirementBinding"; //$NON-NLS-1$
 	final static String TAG_DEFAULT_ENABLEMENT = "defaultEnablement"; //$NON-NLS-1$
 	final static String TAG_ACTIVITY_ID = "activityId"; //$NON-NLS-1$	
 	final static String TAG_ACTIVITY_PATTERN_BINDING = "activityPatternBinding"; //$NON-NLS-1$	
 	final static String TAG_CATEGORY = "category"; //$NON-NLS-1$	
 	final static String TAG_CATEGORY_ACTIVITY_BINDING = "categoryActivityBinding"; //$NON-NLS-1$	
 	final static String TAG_CATEGORY_ID = "categoryId"; //$NON-NLS-1$
-	final static String TAG_CHILD_ACTIVITY_ID = "childActivityId"; //$NON-NLS-1$		
+	final static String TAG_REQUIRED_ACTIVITY_ID = "requiredActivityId"; //$NON-NLS-1$		
 	final static String TAG_ID = "id"; //$NON-NLS-1$
 	final static String TAG_NAME = "name"; //$NON-NLS-1$	
-	final static String TAG_PARENT_ACTIVITY_ID = "parentActivityId"; //$NON-NLS-1$
 	final static String TAG_PATTERN = "pattern"; //$NON-NLS-1$	
 	final static String TAG_SOURCE_ID = "sourceId"; //$NON-NLS-1$
 	final static String TAG_DESCRIPTION = "description"; //$NON-NLS-1$
 
-	static ActivityActivityBindingDefinition readActivityActivityBindingDefinition(
+	static ActivityRequirementBindingDefinition readActivityRequirementBindingDefinition(
 		IMemento memento,
 		String sourceIdOverride) {
 		if (memento == null)
 			throw new NullPointerException();
 
-		String childActivityId = memento.getString(TAG_CHILD_ACTIVITY_ID);
-		String parentActivityId = memento.getString(TAG_PARENT_ACTIVITY_ID);
+		String childActivityId = memento.getString(TAG_REQUIRED_ACTIVITY_ID);
+		String parentActivityId = memento.getString(TAG_ACTIVITY_ID);
 		String sourceId =
 			sourceIdOverride != null
 				? sourceIdOverride
 				: memento.getString(TAG_SOURCE_ID);
-		return new ActivityActivityBindingDefinition(
+		return new ActivityRequirementBindingDefinition(
 			childActivityId,
 			parentActivityId,
 			sourceId);
 	}
 
-	static List readActivityActivityBindingDefinitions(
+	static List readActivityRequirementBindingDefinitions(
 		IMemento memento,
 		String name,
 		String sourceIdOverride) {
@@ -72,7 +71,7 @@ final class Persistence {
 
 		for (int i = 0; i < mementos.length; i++)
 			list.add(
-				readActivityActivityBindingDefinition(
+				readActivityRequirementBindingDefinition(
 					mementos[i],
 					sourceIdOverride));
 
@@ -242,47 +241,47 @@ final class Persistence {
 		return list;
 	}
 
-	static void writeActivityActivityBindingDefinition(
+	static void writeActivityRequirementBindingDefinition(
 		IMemento memento,
-		ActivityActivityBindingDefinition activityActivityBindingDefinition) {
-		if (memento == null || activityActivityBindingDefinition == null)
+		ActivityRequirementBindingDefinition activityRequirementBindingDefinition) {
+		if (memento == null || activityRequirementBindingDefinition == null)
 			throw new NullPointerException();
 
 		memento.putString(
-			TAG_CHILD_ACTIVITY_ID,
-			activityActivityBindingDefinition.getChildActivityId());
+			TAG_REQUIRED_ACTIVITY_ID,
+			activityRequirementBindingDefinition.getRequiredActivityId());
 		memento.putString(
-			TAG_PARENT_ACTIVITY_ID,
-			activityActivityBindingDefinition.getParentActivityId());
+				TAG_ACTIVITY_ID,
+			activityRequirementBindingDefinition.getActivityId());
 		memento.putString(
 			TAG_SOURCE_ID,
-			activityActivityBindingDefinition.getSourceId());
+			activityRequirementBindingDefinition.getSourceId());
 	}
 
-	static void writeActivityActivityBindingDefinitions(
+	static void writeActivityRequirementBindingDefinitions(
 		IMemento memento,
 		String name,
-		List activityActivityBindingDefinitions) {
+		List activityRequirementBindingDefinitions) {
 		if (memento == null
 			|| name == null
-			|| activityActivityBindingDefinitions == null)
+			|| activityRequirementBindingDefinitions == null)
 			throw new NullPointerException();
 
-		activityActivityBindingDefinitions =
-			new ArrayList(activityActivityBindingDefinitions);
-		Iterator iterator = activityActivityBindingDefinitions.iterator();
+		activityRequirementBindingDefinitions =
+			new ArrayList(activityRequirementBindingDefinitions);
+		Iterator iterator = activityRequirementBindingDefinitions.iterator();
 
 		while (iterator.hasNext())
 			Util.assertInstance(
 				iterator.next(),
-				ActivityActivityBindingDefinition.class);
+				ActivityRequirementBindingDefinition.class);
 
-		iterator = activityActivityBindingDefinitions.iterator();
+		iterator = activityRequirementBindingDefinitions.iterator();
 
 		while (iterator.hasNext())
-			writeActivityActivityBindingDefinition(
+			writeActivityRequirementBindingDefinition(
 				memento.createChild(name),
-				(ActivityActivityBindingDefinition) iterator.next());
+				(ActivityRequirementBindingDefinition) iterator.next());
 	}
 
 	static void writeActivityDefinition(

@@ -12,7 +12,7 @@ package org.eclipse.ui.tests.activities;
 import java.util.ArrayList;
 import java.util.Iterator;
 import org.eclipse.ui.internal.activities.AbstractActivityRegistry;
-import org.eclipse.ui.internal.activities.ActivityActivityBindingDefinition;
+import org.eclipse.ui.internal.activities.ActivityRequirementBindingDefinition;
 import org.eclipse.ui.internal.activities.ActivityDefinition;
 import org.eclipse.ui.internal.activities.ActivityPatternBindingDefinition;
 import org.eclipse.ui.internal.activities.CategoryActivityBindingDefinition;
@@ -40,13 +40,13 @@ public class DynamicModelActivityRegistry extends AbstractActivityRegistry {
 		activityDefinitions = new ArrayList();
 		categoryActivityBindingDefinitions = new ArrayList();
 		activityPatternBindingDefinitions = new ArrayList();
-		activityActivityBindingDefinitions = new ArrayList();
+		activityRequirementBindingDefinitions = new ArrayList();
 		defaultEnabledActivities = new ArrayList();
 		populateCategoryDefinitions();
 		populateActivityDefinitions();
 		populateCategoryActivityBindingDefinitions();
 		populateActivityPatternBindingDefinitions();
-		populateActivityActivityBindingDefinitions();
+		populateActivityRequirementBindingDefinitions();
 		populateDefaultEnabledActivities();
 	}
 	/**
@@ -65,15 +65,15 @@ public class DynamicModelActivityRegistry extends AbstractActivityRegistry {
 	 * Populate the activity activity binding definitions.
 	 *  
 	 */
-	private void populateActivityActivityBindingDefinitions() {
-		activityActivityBindingDefinitions
-				.add(new ActivityActivityBindingDefinition(
+	private void populateActivityRequirementBindingDefinitions() {
+		activityRequirementBindingDefinitions
+				.add(new ActivityRequirementBindingDefinition(
 						((ActivityDefinition) activityDefinitions.toArray()[0])
 								.getId(),
 						((ActivityDefinition) activityDefinitions.toArray()[1])
 								.getId(), sourceId)); //$NON-NLS-1$
-		activityActivityBindingDefinitions
-				.add(new ActivityActivityBindingDefinition(
+		activityRequirementBindingDefinitions
+				.add(new ActivityRequirementBindingDefinition(
 						((ActivityDefinition) activityDefinitions.toArray()[2])
 								.getId(),
 						((ActivityDefinition) activityDefinitions.toArray()[3])
@@ -205,9 +205,9 @@ public class DynamicModelActivityRegistry extends AbstractActivityRegistry {
 	 * @param childId
 	 *            The child id.
 	 */
-	public void addActivityActivityBinding(String childId, String parentId) {
-		activityActivityBindingDefinitions
-				.add(new ActivityActivityBindingDefinition(childId, parentId,
+	public void addActivityRequirementBinding(String childId, String parentId) {
+		activityRequirementBindingDefinitions
+				.add(new ActivityRequirementBindingDefinition(childId, parentId,
 						sourceId));
 		fireActivityRegistryChanged();
 	}
@@ -219,9 +219,9 @@ public class DynamicModelActivityRegistry extends AbstractActivityRegistry {
 	 * @param childId
 	 *            The child id.
 	 */
-	public void removeActivityActivityBinding(String childId, String parentId) {
-		activityActivityBindingDefinitions
-				.remove(new ActivityActivityBindingDefinition(childId,
+	public void removeActivityRequirementBinding(String childId, String parentId) {
+		activityRequirementBindingDefinitions
+				.remove(new ActivityRequirementBindingDefinition(childId,
 						parentId, sourceId));
 		fireActivityRegistryChanged();
 	}

@@ -19,7 +19,7 @@ import java.util.Set;
 
 import org.eclipse.ui.activities.ActivityEvent;
 import org.eclipse.ui.activities.IActivity;
-import org.eclipse.ui.activities.IActivityActivityBinding;
+import org.eclipse.ui.activities.IActivityRequirementBinding;
 import org.eclipse.ui.activities.IActivityListener;
 import org.eclipse.ui.activities.IActivityPatternBinding;
 import org.eclipse.ui.activities.NotDefinedException;
@@ -30,8 +30,8 @@ final class Activity implements IActivity {
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL = Activity.class.getName().hashCode();
 	private final static Set strongReferences = new HashSet();
-	private Set activityActivityBindings;
-	private transient IActivityActivityBinding[] activityActivityBindingsAsArray;
+	private Set activityRequirementBindings;
+	private transient IActivityRequirementBinding[] activityRequirementBindingsAsArray;
 	private List activityListeners;
 	private Set activityPatternBindings;
 	private transient IActivityPatternBinding[] activityPatternBindingsAsArray;
@@ -69,8 +69,8 @@ final class Activity implements IActivity {
 
 		int compareTo =
 			Util.compare(
-				(Comparable[]) activityActivityBindingsAsArray,
-				(Comparable[]) castedObject.activityActivityBindingsAsArray);
+				(Comparable[]) activityRequirementBindingsAsArray,
+				(Comparable[]) castedObject.activityRequirementBindingsAsArray);
 
 		if (compareTo == 0) {
 			compareTo =
@@ -105,8 +105,8 @@ final class Activity implements IActivity {
 		boolean equals = true;
 		equals
 			&= Util.equals(
-				activityActivityBindings,
-				castedObject.activityActivityBindings);
+				activityRequirementBindings,
+				castedObject.activityRequirementBindings);
 		equals
 			&= Util.equals(
 				activityPatternBindings,
@@ -128,8 +128,8 @@ final class Activity implements IActivity {
 					activityEvent);
 	}
 
-	public Set getActivityActivityBindings() {
-		return activityActivityBindings;
+	public Set getActivityRequirementBindings() {
+		return activityRequirementBindings;
 	}
 
 	public Set getActivityPatternBindings() {
@@ -152,7 +152,7 @@ final class Activity implements IActivity {
 			hashCode = HASH_INITIAL;
 			hashCode =
 				hashCode * HASH_FACTOR
-					+ Util.hashCode(activityActivityBindings);
+					+ Util.hashCode(activityRequirementBindings);
 			hashCode =
 				hashCode * HASH_FACTOR + Util.hashCode(activityPatternBindings);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(defined);
@@ -202,22 +202,22 @@ final class Activity implements IActivity {
 			strongReferences.remove(this);
 	}
 
-	boolean setActivityActivityBindings(Set activityActivityBindings) {
-		activityActivityBindings =
+	boolean setActivityRequirementBindings(Set activityRequirementBindings) {
+		activityRequirementBindings =
 			Util.safeCopy(
-				activityActivityBindings,
-				IActivityActivityBinding.class);
+				activityRequirementBindings,
+				IActivityRequirementBinding.class);
 
 		if (!Util
-			.equals(activityActivityBindings, this.activityActivityBindings)) {
-			this.activityActivityBindings = activityActivityBindings;
-			this.activityActivityBindingsAsArray =
+			.equals(activityRequirementBindings, this.activityRequirementBindings)) {
+			this.activityRequirementBindings = activityRequirementBindings;
+			this.activityRequirementBindingsAsArray =
 				(
-					IActivityActivityBinding[]) this
-						.activityActivityBindings
+					IActivityRequirementBinding[]) this
+						.activityRequirementBindings
 						.toArray(
-					new IActivityActivityBinding[this
-						.activityActivityBindings
+					new IActivityRequirementBinding[this
+						.activityRequirementBindings
 						.size()]);
 			hashCodeComputed = false;
 			hashCode = 0;
@@ -306,7 +306,7 @@ final class Activity implements IActivity {
 		if (string == null) {
 			final StringBuffer stringBuffer = new StringBuffer();
 			stringBuffer.append('[');
-			stringBuffer.append(activityActivityBindings);
+			stringBuffer.append(activityRequirementBindings);
 			stringBuffer.append(',');
 			stringBuffer.append(activityPatternBindings);
 			stringBuffer.append(',');

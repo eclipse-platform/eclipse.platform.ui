@@ -19,72 +19,72 @@ import java.util.Map;
 
 import org.eclipse.ui.internal.util.Util;
 
-public final class ActivityActivityBindingDefinition {
+public final class ActivityRequirementBindingDefinition {
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL =
-		ActivityActivityBindingDefinition.class.getName().hashCode();
+		ActivityRequirementBindingDefinition.class.getName().hashCode();
 
-	static Map activityActivityBindingDefinitionsByParentActivityId(Collection activityActivityBindingDefinitions) {
-		if (activityActivityBindingDefinitions == null)
+	static Map activityRequirementBindingDefinitionsByActivityId(Collection activityRequirementBindingDefinitions) {
+		if (activityRequirementBindingDefinitions == null)
 			throw new NullPointerException();
 
 		Map map = new HashMap();
-		Iterator iterator = activityActivityBindingDefinitions.iterator();
+		Iterator iterator = activityRequirementBindingDefinitions.iterator();
 
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
 			Util.assertInstance(
 				object,
-				ActivityActivityBindingDefinition.class);
-			ActivityActivityBindingDefinition activityActivityBindingDefinition =
-				(ActivityActivityBindingDefinition) object;
+				ActivityRequirementBindingDefinition.class);
+			ActivityRequirementBindingDefinition activityRequirementBindingDefinition =
+				(ActivityRequirementBindingDefinition) object;
 			String parentActivityId =
-				activityActivityBindingDefinition.getParentActivityId();
+				activityRequirementBindingDefinition.getActivityId();
 
 			if (parentActivityId != null) {
-				Collection activityActivityBindingDefinitions2 =
+				Collection activityRequirementBindingDefinitions2 =
 					(Collection) map.get(parentActivityId);
 
-				if (activityActivityBindingDefinitions2 == null) {
-					activityActivityBindingDefinitions2 = new HashSet();
+				if (activityRequirementBindingDefinitions2 == null) {
+					activityRequirementBindingDefinitions2 = new HashSet();
 					map.put(
 						parentActivityId,
-						activityActivityBindingDefinitions2);
+						activityRequirementBindingDefinitions2);
 				}
 
-				activityActivityBindingDefinitions2.add(
-					activityActivityBindingDefinition);
+				activityRequirementBindingDefinitions2.add(
+					activityRequirementBindingDefinition);
 			}
 		}
 
 		return map;
 	}
 
-	private String childActivityId;
+	private String requiredActivityId;
 	private transient int hashCode;
 	private transient boolean hashCodeComputed;
-	private String parentActivityId;
+	private String activityId;
 	private String sourceId;
 	private transient String string;
 
-	public ActivityActivityBindingDefinition(
+	public ActivityRequirementBindingDefinition(
 		String childActivityId,
 		String parentActivityId,
 		String sourceId) {
-		this.childActivityId = childActivityId;
-		this.parentActivityId = parentActivityId;
+		this.requiredActivityId = childActivityId;
+		this.activityId = parentActivityId;
 		this.sourceId = sourceId;
 	}
 
 	public int compareTo(Object object) {
-		ActivityActivityBindingDefinition castedObject =
-			(ActivityActivityBindingDefinition) object;
+		ActivityRequirementBindingDefinition castedObject =
+			(ActivityRequirementBindingDefinition) object;
 		int compareTo =
-			Util.compare(childActivityId, castedObject.childActivityId);
+			Util.compare(requiredActivityId, castedObject.requiredActivityId);
 
 		if (compareTo == 0) {
 			compareTo =
-				Util.compare(parentActivityId, castedObject.parentActivityId);
+				Util.compare(activityId, castedObject.activityId);
 
 			if (compareTo == 0)
 				compareTo = Util.compare(sourceId, castedObject.sourceId);
@@ -94,24 +94,24 @@ public final class ActivityActivityBindingDefinition {
 	}
 
 	public boolean equals(Object object) {
-		if (!(object instanceof ActivityActivityBindingDefinition))
+		if (!(object instanceof ActivityRequirementBindingDefinition))
 			return false;
 
-		ActivityActivityBindingDefinition castedObject =
-			(ActivityActivityBindingDefinition) object;
+		ActivityRequirementBindingDefinition castedObject =
+			(ActivityRequirementBindingDefinition) object;
 		boolean equals = true;
-		equals &= Util.equals(childActivityId, castedObject.childActivityId);
-		equals &= Util.equals(parentActivityId, castedObject.parentActivityId);
+		equals &= Util.equals(requiredActivityId, castedObject.requiredActivityId);
+		equals &= Util.equals(activityId, castedObject.activityId);
 		equals &= Util.equals(sourceId, castedObject.sourceId);
 		return equals;
 	}
 
-	public String getChildActivityId() {
-		return childActivityId;
+	public String getRequiredActivityId() {
+		return requiredActivityId;
 	}
 
-	public String getParentActivityId() {
-		return parentActivityId;
+	public String getActivityId() {
+		return activityId;
 	}
 
 	public String getSourceId() {
@@ -121,8 +121,8 @@ public final class ActivityActivityBindingDefinition {
 	public int hashCode() {
 		if (!hashCodeComputed) {
 			hashCode = HASH_INITIAL;
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(childActivityId);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(parentActivityId);
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(requiredActivityId);
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(activityId);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(sourceId);
 			hashCodeComputed = true;
 		}
@@ -134,9 +134,9 @@ public final class ActivityActivityBindingDefinition {
 		if (string == null) {
 			final StringBuffer stringBuffer = new StringBuffer();
 			stringBuffer.append('[');
-			stringBuffer.append(childActivityId);
+			stringBuffer.append(requiredActivityId);
 			stringBuffer.append(',');
-			stringBuffer.append(parentActivityId);
+			stringBuffer.append(activityId);
 			stringBuffer.append(',');
 			stringBuffer.append(sourceId);
 			stringBuffer.append(']');

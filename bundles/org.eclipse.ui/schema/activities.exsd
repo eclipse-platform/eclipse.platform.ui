@@ -16,7 +16,7 @@ The &lt;code&gt;org.eclipse.ui.activities&lt;/code&gt; extension point is used t
       <complexType>
          <sequence minOccurs="0" maxOccurs="unbounded">
             <element ref="activity"/>
-            <element ref="activityActivityBinding"/>
+            <element ref="activityRequirementBinding"/>
             <element ref="activityPatternBinding"/>
             <element ref="category"/>
             <element ref="categoryActivityBinding"/>
@@ -77,24 +77,24 @@ The &lt;code&gt;org.eclipse.ui.activities&lt;/code&gt; extension point is used t
       </complexType>
    </element>
 
-   <element name="activityActivityBinding">
+   <element name="activityRequirementBinding">
       <annotation>
          <documentation>
-            This element allows one to bind activities to activities. The parent-child relationship can be interpreted as &apos;parent requires child&apos;.  If parent is ever enabled then child is enabled as well.
+            This element allows one to bind activities to activities. The relationship is such that if the activityId is ever enabled then the requiredActivityId is enabled as well.
          </documentation>
       </annotation>
       <complexType>
-         <attribute name="childActivityId" type="string" use="required">
+         <attribute name="requiredActivityId" type="string" use="required">
             <annotation>
                <documentation>
-                  the unique identifier of the child activity to bind
+                  the unique identifier of required activity to bind
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="parentActivityId" type="string" use="required">
+         <attribute name="activityId" type="string" use="required">
             <annotation>
                <documentation>
-                  the unique identifier of the parent activity to bind
+                  the unique identifier of the activity to bind
                </documentation>
             </annotation>
          </attribute>
@@ -225,8 +225,8 @@ The &lt;code&gt;org.eclipse.ui.activities&lt;/code&gt; extension point is used t
       description=&quot;Filters other contributions from com.xyz&quot;
    name=&quot;My Other Activity&quot; /&gt;
   &lt;!-- other activity requires activity --&gt;  
-  &lt;activityActivityBinding parentActivityId=&quot;com.xyz.OtherActivity&quot;
-   childActivityId=&quot;com.xyz.Activity&quot; /&gt;
+  &lt;activityRequirementBinding activityId=&quot;com.xyz.OtherActivity&quot;
+   requiredActivityId=&quot;com.xyz.Activity&quot; /&gt;
   &lt;category id=&quot;com.xyz.Category&quot;
    description=&quot;com.xyz Activities&quot;
    name=&quot;My Category&quot; /&gt;

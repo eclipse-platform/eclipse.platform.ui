@@ -25,7 +25,7 @@ package org.eclipse.ui.activities;
  */
 public final class ActivityEvent {
 	private IActivity activity;
-	private boolean activityActivityBindingsChanged;
+	private boolean activityRequirementBindingsChanged;
 	private boolean activityPatternBindingsChanged;
 	private boolean definedChanged;
 	private boolean enabledChanged;
@@ -37,8 +37,8 @@ public final class ActivityEvent {
 	 * 
 	 * @param activity
      *        the instance of the interface that changed.
-	 * @param activityActivityBindingsChanged
-     *        <code>true</code>, iff the activityActivityBindings property changed.
+	 * @param activityRequirementBindingsChanged
+     *        <code>true</code>, iff the activityRequirementBindings property changed.
 	 * @param activityPatternBindingsChanged
      *        <code>true</code>, iff the activityPatternBindings property changed.
 	 * @param definedChanged
@@ -52,7 +52,7 @@ public final class ActivityEvent {
 	 */
 	public ActivityEvent(
 		IActivity activity,
-		boolean activityActivityBindingsChanged,
+		boolean activityRequirementBindingsChanged,
 		boolean activityPatternBindingsChanged,
 		boolean definedChanged,
 		boolean descriptionChanged,
@@ -62,7 +62,7 @@ public final class ActivityEvent {
 			throw new NullPointerException();
 
 		this.activity = activity;
-		this.activityActivityBindingsChanged = activityActivityBindingsChanged;
+		this.activityRequirementBindingsChanged = activityRequirementBindingsChanged;
 		this.activityPatternBindingsChanged = activityPatternBindingsChanged;
 		this.definedChanged = definedChanged;
 		this.enabledChanged = enabledChanged;
@@ -117,12 +117,12 @@ public final class ActivityEvent {
 	}
 	
 	/**
-	 * Returns whether or not the activityActivityBindings property changed.
+	 * Returns whether or not the activityRequirementBindings property changed.
 	 * 
-	 * @return <code>true</code>, iff the activityActivityBindings property changed.
+	 * @return <code>true</code>, iff the activityRequirementBindings property changed.
 	 */
-	public boolean haveActivityActivityBindingsChanged() {
-		return activityActivityBindingsChanged;
+	public boolean haveActivityRequirementBindingsChanged() {
+		return activityRequirementBindingsChanged;
 	}
 
 	/**

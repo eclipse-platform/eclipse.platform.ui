@@ -16,7 +16,7 @@ import java.util.Collections;
 import java.util.List;
 
 public abstract class AbstractActivityRegistry implements IActivityRegistry {
-	protected List activityActivityBindingDefinitions = Collections.EMPTY_LIST;
+	protected List activityRequirementBindingDefinitions = Collections.EMPTY_LIST;
 	protected List activityDefinitions = Collections.EMPTY_LIST;
 	protected List activityPatternBindingDefinitions = Collections.EMPTY_LIST;
 	private ActivityRegistryEvent activityRegistryEvent;
@@ -53,8 +53,8 @@ public abstract class AbstractActivityRegistry implements IActivityRegistry {
 		}
 	}
 
-	public List getActivityActivityBindingDefinitions() {
-		return activityActivityBindingDefinitions;
+	public List getActivityRequirementBindingDefinitions() {
+		return activityRequirementBindingDefinitions;
 	}
 
 	public List getActivityDefinitions() {

@@ -17,7 +17,7 @@ public interface IActivityRegistry {
 
 	void addActivityRegistryListener(IActivityRegistryListener activityRegistryListener);
 
-	List getActivityActivityBindingDefinitions();
+	List getActivityRequirementBindingDefinitions();
 
 	List getActivityDefinitions();
 

@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.ui.internal.util.ConfigurationElementMemento;
 
 final class ExtensionActivityRegistry extends AbstractActivityRegistry {
-	private List activityActivityBindingDefinitions;
+	private List activityRequirementBindingDefinitions;
 	private List activityDefinitions;
 	private List activityPatternBindingDefinitions;
 	private List categoryActivityBindingDefinitions;
@@ -76,10 +76,10 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 	}
 
 	private void load() throws IOException {
-		if (activityActivityBindingDefinitions == null)
-			activityActivityBindingDefinitions = new ArrayList();
+		if (activityRequirementBindingDefinitions == null)
+			activityRequirementBindingDefinitions = new ArrayList();
 		else
-			activityActivityBindingDefinitions.clear();
+			activityRequirementBindingDefinitions.clear();
 
 		if (activityDefinitions == null)
 			activityDefinitions = new ArrayList();
@@ -115,8 +115,8 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 				configurationElements[i];
 			String name = configurationElement.getName();
 
-			if (Persistence.TAG_ACTIVITY_ACTIVITY_BINDING.equals(name))
-				readActivityActivityBindingDefinition(configurationElement);
+			if (Persistence.TAG_ACTIVITY_REQUIREMENT_BINDING.equals(name))
+				readActivityRequirementBindingDefinition(configurationElement);
 			else if (Persistence.TAG_ACTIVITY.equals(name))
 				readActivityDefinition(configurationElement);
 			else if (Persistence.TAG_ACTIVITY_PATTERN_BINDING.equals(name))
@@ -131,11 +131,11 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 
 		boolean activityRegistryChanged = false;
 
-		if (!activityActivityBindingDefinitions
-			.equals(super.activityActivityBindingDefinitions)) {
-			super.activityActivityBindingDefinitions =
+		if (!activityRequirementBindingDefinitions
+			.equals(super.activityRequirementBindingDefinitions)) {
+			super.activityRequirementBindingDefinitions =
 				Collections.unmodifiableList(
-					activityActivityBindingDefinitions);
+					activityRequirementBindingDefinitions);
 			activityRegistryChanged = true;
 		}
 
@@ -186,15 +186,15 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
         
     }
 
-    private void readActivityActivityBindingDefinition(IConfigurationElement configurationElement) {
-		ActivityActivityBindingDefinition activityActivityBindingDefinition =
-			Persistence.readActivityActivityBindingDefinition(
+    private void readActivityRequirementBindingDefinition(IConfigurationElement configurationElement) {
+		ActivityRequirementBindingDefinition activityRequirementBindingDefinition =
+			Persistence.readActivityRequirementBindingDefinition(
 				new ConfigurationElementMemento(configurationElement),
 				getNamespace(configurationElement));
 
-		if (activityActivityBindingDefinition != null)
-			activityActivityBindingDefinitions.add(
-				activityActivityBindingDefinition);
+		if (activityRequirementBindingDefinition != null)
+			activityRequirementBindingDefinitions.add(
+				activityRequirementBindingDefinition);
 	}
 
 	private void readActivityDefinition(IConfigurationElement configurationElement) {

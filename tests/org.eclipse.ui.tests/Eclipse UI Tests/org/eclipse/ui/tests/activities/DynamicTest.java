@@ -244,7 +244,7 @@ public class DynamicTest extends UITestCase {
 						break;
 					case ACTIVITY_ACTIVITY_BINDINGS_CHANGED :
 						assertTrue(activityEvent
-								.haveActivityActivityBindingsChanged());
+								.haveActivityRequirementBindingsChanged());
 						break;
 					case DESCRIPTION_CHANGED :
 						assertTrue(activityEvent.hasDescriptionChanged());
@@ -288,12 +288,12 @@ public class DynamicTest extends UITestCase {
 		assertTrue(listenerType == -1);
 		// Add activity activity binding as parent
 		listenerType = 9;
-		fixedModelRegistry.addActivityActivityBinding("org.eclipse.activity9", //$NON-NLS-1$
+		fixedModelRegistry.addActivityRequirementBinding("org.eclipse.activity9", //$NON-NLS-1$
 				activity_to_listen.getId());//$NON-NLS-1$
 		assertTrue(listenerType == -1);
 		// Remove activity activity binding as parent
 		listenerType = 9;
-		fixedModelRegistry.removeActivityActivityBinding(
+		fixedModelRegistry.removeActivityRequirementBinding(
 				"org.eclipse.activity9", activity_to_listen.getId());//$NON-NLS-1$
 		assertTrue(listenerType == -1);
 		//		 Update activity name
