@@ -1038,10 +1038,11 @@ public class CVSTeamProvider extends RepositoryProvider {
 						// NOTE: The files are committed as text with conversions even if the
 						//       resource sync info still says "binary".
 						if (filesToCommit.size() != 0) {
+							String keywordChangeComment = Policy.bind("CVSTeamProvider.changingKeywordComment");
 							s.setTextTransferOverride(filesToCommitAsText);
 							result[0] = Command.COMMIT.execute(s, Command.NO_GLOBAL_OPTIONS,
 								new LocalOption[] { Commit.DO_NOT_RECURSE, Commit.FORCE,
-									Commit.makeArgumentOption(Command.MESSAGE_OPTION, comment) },
+									Commit.makeArgumentOption(Command.MESSAGE_OPTION, keywordChangeComment) },
 								(String[]) filesToCommit.toArray(new String[filesToCommit.size()]),
 								null, Policy.subMonitorFor(monitor, filesToCommit.size()));
 							s.setTextTransferOverride(null);
