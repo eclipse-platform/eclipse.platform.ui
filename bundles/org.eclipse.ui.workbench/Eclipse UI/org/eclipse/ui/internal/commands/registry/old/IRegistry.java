@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * TODO javadoc
+ * JAVADOC
  * 
  * <p>
  * This interface is not intended to be implemented or extended by clients.
@@ -29,84 +29,84 @@ import java.util.List;
 public interface IRegistry {
 
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @param registryListener
 	 */	
 	void addRegistryListener(IRegistryListener registryListener);
 	
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @return
 	 */	
 	List getActiveGestureConfigurations();
 
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @return
 	 */	
 	List getActiveKeyConfigurations();
 
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @return
 	 */
 	List getCategories();
 	
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @return
 	 */	
 	List getCommands();
 
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @return
 	 */	
 	List getContextBindings();
 
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @return
 	 */	
 	List getContexts();
 
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @return
 	 */	
 	List getGestureBindings();
 
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @return
 	 */	
 	List getGestureConfigurations();
 	
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @return
 	 */	
 	List getKeyBindings();
 	
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @return
 	 */	
 	List getKeyConfigurations();
 	
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @throws IOException
 	 */	
@@ -114,7 +114,7 @@ public interface IRegistry {
 		throws IOException;
 	
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @param registryListener
 	 */	

@@ -15,7 +15,7 @@ import java.util.SortedSet;
 
 /**
  * <p>
- * TODO javadoc
+ * JAVADOC
  * </p>
  * <p>
  * This interface is not intended to be extended or implemented by clients.
@@ -38,14 +38,14 @@ public interface IContextManager {
 		throws IllegalArgumentException;
 
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 *
 	 * @return
 	 */
 	SortedSet getActiveContextIds();
 
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 *
 	 * @param contextId
 	 * @return
@@ -55,7 +55,7 @@ public interface IContextManager {
 		throws IllegalArgumentException;
 
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 *
 	 * @return
 	 */

@@ -13,7 +13,7 @@ package org.eclipse.ui.commands;
 
 /**
  * <p>
- * TODO javadoc
+ * JAVADOC
  * </p>
  * <p>
  * This interface is not intended to be extended or implemented by clients.
@@ -27,7 +27,7 @@ package org.eclipse.ui.commands;
 public interface ICommandManagerEvent {
 
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @return
 	 */	

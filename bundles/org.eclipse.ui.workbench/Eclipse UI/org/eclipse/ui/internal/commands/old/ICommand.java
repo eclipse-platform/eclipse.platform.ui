@@ -37,7 +37,7 @@ public interface ICommand {
 	void addCommandListener(ICommandListener commandListener);
 
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @throws NotDefinedException
 	 * @throws NotHandledException
@@ -56,7 +56,7 @@ public interface ICommand {
 		throws NotDefinedException, NotHandledException;
 
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @return
 	 * @throws NotDefinedException
@@ -65,7 +65,7 @@ public interface ICommand {
 		throws NotDefinedException;
 
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @return
 	 * @throws NotDefinedException
@@ -74,7 +74,7 @@ public interface ICommand {
 		throws NotDefinedException;
 		
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @return
 	 * @throws NotDefinedException
@@ -83,7 +83,7 @@ public interface ICommand {
 		throws NotDefinedException;
 		
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @return
 	 * @throws NotDefinedException
@@ -92,14 +92,14 @@ public interface ICommand {
 		throws NotDefinedException;
 
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @return
 	 */	
 	String getId();
 	
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @return
 	 * @throws NotDefinedException
@@ -108,7 +108,7 @@ public interface ICommand {
 		throws NotDefinedException;	
 	
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @return
 	 * @throws NotDefinedException
@@ -117,7 +117,7 @@ public interface ICommand {
 		throws NotDefinedException;	
 	
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @return
 	 * @throws NotDefinedException
@@ -126,7 +126,7 @@ public interface ICommand {
 		throws NotDefinedException;
 
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @param propertyName
 	 * @return
@@ -137,7 +137,7 @@ public interface ICommand {
 		throws NotDefinedException, NotHandledException;
 
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @return
 	 * @throws NotDefinedException
@@ -147,7 +147,7 @@ public interface ICommand {
 		throws NotDefinedException, NotHandledException;
 
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @return
 	 */	
@@ -163,7 +163,7 @@ public interface ICommand {
 		throws NotDefinedException, NotHandledException;
 	
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @return
 	 * @throws NotDefinedException

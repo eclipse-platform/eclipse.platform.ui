@@ -16,7 +16,7 @@ import java.util.SortedSet;
 
 /**
  * <p>
- * TODO javadoc
+ * JAVADOC
  * </p>
  * <p>
  * This interface is not intended to be extended or implemented by clients.
@@ -39,7 +39,7 @@ public interface ICommandManager {
 		throws IllegalArgumentException;
 
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 *
 	 * @param commandId
 	 * @return
@@ -49,14 +49,14 @@ public interface ICommandManager {
 		throws IllegalArgumentException;
 
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 *
 	 * @return
 	 */
 	SortedMap getCommandHandlersById();
 
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 *
 	 * @return
 	 */

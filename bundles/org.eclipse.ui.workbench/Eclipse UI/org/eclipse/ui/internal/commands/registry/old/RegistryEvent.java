@@ -12,7 +12,7 @@
 package org.eclipse.ui.internal.commands.registry.old;
 
 /**
- * TODO javadoc
+ * JAVADOC
  * 
  * <p>
  * This class is not intended to be extended by clients.
@@ -28,7 +28,7 @@ public class RegistryEvent {
 	private IRegistry registry;
 
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @param registry
 	 */	
@@ -38,7 +38,7 @@ public class RegistryEvent {
 	}
 
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @return
 	 */		

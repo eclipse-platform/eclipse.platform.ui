@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * TODO javadoc
+ * JAVADOC
  * 
  * <p>
  * This interface is not intended to be implemented or extended by clients.
@@ -29,7 +29,7 @@ import java.util.List;
 public interface IMutableRegistry extends IRegistry {
 
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @throws IOException
 	 */	
@@ -37,7 +37,7 @@ public interface IMutableRegistry extends IRegistry {
 		throws IOException;
 
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @param activeGestureConfigurations
 	 */	
@@ -45,7 +45,7 @@ public interface IMutableRegistry extends IRegistry {
 		throws IllegalArgumentException;
 	
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @param activeKeyConfigurations
 	 */	
@@ -53,7 +53,7 @@ public interface IMutableRegistry extends IRegistry {
 		throws IllegalArgumentException;
 	
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @param categories
 	 */	
@@ -61,7 +61,7 @@ public interface IMutableRegistry extends IRegistry {
 		throws IllegalArgumentException;
 	
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @param commands
 	 */
@@ -69,7 +69,7 @@ public interface IMutableRegistry extends IRegistry {
 		throws IllegalArgumentException;
 
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @param contextBindings
 	 */
@@ -77,7 +77,7 @@ public interface IMutableRegistry extends IRegistry {
 		throws IllegalArgumentException;
 
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @param contexts
 	 */
@@ -85,7 +85,7 @@ public interface IMutableRegistry extends IRegistry {
 		throws IllegalArgumentException;
 	
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @param gestureBindings
 	 */
@@ -93,7 +93,7 @@ public interface IMutableRegistry extends IRegistry {
 		throws IllegalArgumentException;
 	
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @param gestureConfigurations
 	 */
@@ -101,7 +101,7 @@ public interface IMutableRegistry extends IRegistry {
 		throws IllegalArgumentException;
 	
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @param keyBindings
 	 */
@@ -109,7 +109,7 @@ public interface IMutableRegistry extends IRegistry {
 		throws IllegalArgumentException;
 	
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @param keyConfigurations
 	 */

@@ -13,7 +13,7 @@ package org.eclipse.ui.commands;
 
 /**
  * <p>
- * TODO javadoc
+ * JAVADOC
  * </p>
  * <p>
  * This class is not intended to be extended by clients.
@@ -27,14 +27,14 @@ package org.eclipse.ui.commands;
 public class NotHandledException extends Exception {
 
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 */	
 	public NotHandledException() {
 		super();
 	}
 
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 *
 	 * @param s
 	 */	

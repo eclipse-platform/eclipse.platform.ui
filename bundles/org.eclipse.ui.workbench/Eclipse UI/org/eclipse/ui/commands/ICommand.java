@@ -15,7 +15,7 @@ import java.util.SortedSet;
 
 /**
  * <p>
- * TODO javadoc
+ * JAVADOC
  * </p>
  * <p>
  * This interface is not intended to be extended or implemented by clients.
@@ -38,7 +38,7 @@ public interface ICommand {
 		throws IllegalArgumentException;
 
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @return
 	 * @throws NotDefinedException
@@ -47,7 +47,7 @@ public interface ICommand {
 		throws NotDefinedException;
 
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @return
 	 * @throws NotHandledException
@@ -56,42 +56,42 @@ public interface ICommand {
 		throws NotHandledException;
 
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @return
 	 */	
 	SortedSet getContextBindings();
 
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @return
 	 */	
 	SortedSet getGestureBindings();
 		
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @return
 	 */	
 	String getId();
 
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @return
 	 */	
 	SortedSet getImageBindings();
 
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @return
 	 */	
 	SortedSet getKeyBindings();
 	
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @return
 	 * @throws NotDefinedException
@@ -100,7 +100,7 @@ public interface ICommand {
 		throws NotDefinedException;	
 
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @return
 	 * @throws NotDefinedException
@@ -109,7 +109,7 @@ public interface ICommand {
 		throws NotDefinedException;
 	
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @return
 	 * @throws NotDefinedException
@@ -118,14 +118,14 @@ public interface ICommand {
 		throws NotDefinedException;
 
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @return
 	 */	
 	boolean isDefined();
 
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @return
 	 */	

@@ -12,7 +12,7 @@
 package org.eclipse.ui.internal.commands.old;
 
 /**
- * TODO javadoc
+ * JAVADOC
  * 
  * <p>
  * This class is not intended to be extended by clients.
@@ -28,7 +28,7 @@ public class PropertyEvent {
 	private String name;
 
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @param name
 	 * @throws IllegalArgumentException
@@ -44,7 +44,7 @@ public class PropertyEvent {
 	}
 
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @return
 	 */		

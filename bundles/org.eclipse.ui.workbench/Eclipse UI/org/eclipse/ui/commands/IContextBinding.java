@@ -13,7 +13,7 @@ package org.eclipse.ui.commands;
 
 /**
  * <p>
- * TODO javadoc
+ * JAVADOC
  * </p>
  * <p>
  * This interface is not intended to be extended or implemented by clients.
@@ -27,21 +27,21 @@ package org.eclipse.ui.commands;
 public interface IContextBinding {
 
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @return
 	 */	
 	String getCommandId();
 
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @return
 	 */	
 	String getContextId();
 
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @return
 	 */	

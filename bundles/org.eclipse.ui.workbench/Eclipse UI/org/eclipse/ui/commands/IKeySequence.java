@@ -15,7 +15,7 @@ import java.util.List;
 
 /**
  * <p>
- * TODO javadoc
+ * JAVADOC
  * </p>
  * <p>
  * This interface is not intended to be extended or implemented by clients.
@@ -29,7 +29,7 @@ import java.util.List;
 public interface IKeySequence {
 
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @return
 	 */	

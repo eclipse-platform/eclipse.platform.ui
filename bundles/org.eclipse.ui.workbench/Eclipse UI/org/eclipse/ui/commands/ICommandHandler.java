@@ -33,7 +33,7 @@ public interface ICommandHandler {
 	//void addPropertyListener(IPropertyListener propertyListener);
 
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 */	
 	void execute();
 
@@ -43,7 +43,7 @@ public interface ICommandHandler {
 	void execute(Event event);
 
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @param name
 	 * @return
@@ -52,7 +52,7 @@ public interface ICommandHandler {
 	//	throws Exception;
 
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @return
 	 */	

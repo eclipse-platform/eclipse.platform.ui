@@ -15,7 +15,7 @@ import java.util.SortedMap;
 
 /**
  * <p>
- * TODO javadoc
+ * JAVADOC
  * </p>
  * <p>
  * This interface is not intended to be extended or implemented by clients.
@@ -29,7 +29,7 @@ import java.util.SortedMap;
 public interface ICommandHandlerService {
 
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 *
 	 * @param commandId
 	 * @param commandHandler
@@ -48,14 +48,14 @@ public interface ICommandHandlerService {
 		throws IllegalArgumentException;
 		
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 *
 	 * @return
 	 */
 	SortedMap getCommandHandlersById();
 
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 *
 	 * @param commandId
 	 * @throws IllegalArgumentException

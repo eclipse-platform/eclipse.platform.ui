@@ -15,7 +15,7 @@ import java.util.SortedSet;
 
 /**
  * <p>
- * TODO javadoc
+ * JAVADOC
  * </p>
  * <p>
  * This interface is not intended to be extended or implemented by clients.
@@ -29,7 +29,7 @@ import java.util.SortedSet;
 public interface IContextActivationService {
 
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 *
 	 * @param contextId
 	 * @throws IllegalArgumentException
@@ -47,7 +47,7 @@ public interface IContextActivationService {
 		throws IllegalArgumentException;
 
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 *
 	 * @param contextId
 	 * @throws IllegalArgumentException
@@ -56,7 +56,7 @@ public interface IContextActivationService {
 		throws IllegalArgumentException;
 		
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 *
 	 * @return
 	 */

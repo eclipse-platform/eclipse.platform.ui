@@ -12,7 +12,7 @@
 package org.eclipse.ui.internal.commands.registry.old;
 
 /**
- * TODO javadoc
+ * JAVADOC
  * 
  * <p>
  * This interface is not intended to be extended by clients.
@@ -26,7 +26,7 @@ package org.eclipse.ui.internal.commands.registry.old;
 public interface IRegistryListener {
 
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @param registryEvent
 	 */	

@@ -24,21 +24,21 @@ package org.eclipse.ui.internal.commands.old;
 public interface IPropertyListener {
 
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @param propertyEvent
 	 */	
 	void propertyAdded(PropertyEvent propertyEvent);
 	
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @param propertyEvent
 	 */	
 	void propertyChanged(PropertyEvent propertyEvent);
 	
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @param propertyEvent
 	 */	

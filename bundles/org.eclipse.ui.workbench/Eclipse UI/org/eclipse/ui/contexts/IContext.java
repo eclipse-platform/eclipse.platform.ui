@@ -13,7 +13,7 @@ package org.eclipse.ui.contexts;
 
 /**
  * <p>
- * TODO javadoc
+ * JAVADOC
  * </p>
  * <p>
  * This interface is not intended to be extended or implemented by clients.
@@ -36,7 +36,7 @@ public interface IContext {
 		throws IllegalArgumentException;
 
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @return
 	 * @throws NotDefinedException
@@ -45,14 +45,14 @@ public interface IContext {
 		throws NotDefinedException;
 		
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @return
 	 */	
 	String getId();
 	
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @return
 	 * @throws NotDefinedException
@@ -61,7 +61,7 @@ public interface IContext {
 		throws NotDefinedException;	
 
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @return
 	 * @throws NotDefinedException
@@ -70,7 +70,7 @@ public interface IContext {
 		throws NotDefinedException;
 	
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @return
 	 * @throws NotDefinedException
@@ -79,14 +79,14 @@ public interface IContext {
 		throws NotDefinedException;
 
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @return
 	 */	
 	boolean isActive();
 
 	/**
-	 * TODO javadoc
+	 * JAVADOC
 	 * 
 	 * @return
 	 */	
