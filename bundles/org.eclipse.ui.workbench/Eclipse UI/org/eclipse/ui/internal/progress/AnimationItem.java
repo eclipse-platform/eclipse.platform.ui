@@ -194,5 +194,12 @@ public class AnimationItem {
 		
 	}
 	
+	/**
+	 * Get the preferred width of the receiver.
+	 * @return
+	 */
+	public int getPreferredWidth(){
+		return AnimationManager.getInstance().getPreferredWidth() + 5;
+	}
 	
 }

@@ -72,7 +72,7 @@ class AnimationManager {
 
 	List items = Collections.synchronizedList(new ArrayList());
 
-	static AnimationManager getInstance() {
+	public static AnimationManager getInstance() {
 		if (singleton == null)
 			singleton = new AnimationManager();
 		return singleton;
@@ -571,6 +571,19 @@ class AnimationManager {
 		animationDoneJob.setSystem(true);
 		animationDoneJob.schedule();
 
+	}
+	
+	/**
+	 * Get the preferred width for widgets displaying the 
+	 * animation.
+	 * @return int. Return 0 if there is no image data.
+	 */
+	int getPreferredWidth(){
+		if(animatedData == null)
+			return 0;
+		else
+			return animatedData[0].width;
+		
 	}
 
 }

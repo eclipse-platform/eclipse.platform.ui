@@ -36,13 +36,11 @@ import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.action.ToolBarContributionItem;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.jface.window.ColorSchemeService;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.CBanner;
-import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -85,7 +83,6 @@ import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.commands.CommandHandlerServiceFactory;
-import org.eclipse.ui.commands.ICompoundCommandHandlerService;
 import org.eclipse.ui.commands.IMutableCommandHandlerService;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.commands.IWorkbenchWindowCommandSupport;
@@ -97,6 +94,7 @@ import org.eclipse.ui.internal.contexts.ws.WorkbenchWindowContextSupport;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.progress.AnimationItem;
+import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.IActionSet;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
@@ -2223,13 +2221,15 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		fastViewData.top = new FormAttachment(topBar, 0);
 
 		fastViewData.left = new FormAttachment(0);
-		fastViewData.bottom = new FormAttachment(animationItem.getControl(),0);
+		fastViewData.bottom = new FormAttachment(100);
 
 		fastViewBar.getControl().setLayoutData(fastViewData);
+		
+		Point preferred = animationItem.getControl().computeSize(SWT.DEFAULT, SWT.DEFAULT);
 
 		FormData progressData = new FormData();
-		progressData.left = new FormAttachment(0);
-		progressData.right = new FormAttachment(fastViewBar.getControl(), 0, SWT.RIGHT);
+		progressData.left = new FormAttachment(100,animationItem.getPreferredWidth() * -1);
+		progressData.right = new FormAttachment(100);
 		progressData.bottom = new FormAttachment(100);
 		progressData.top = new FormAttachment(getStatusLineManager().getControl(), 0, SWT.TOP);
 
@@ -2237,8 +2237,8 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 
 		FormData statusLineData = new FormData();
 
-		statusLineData.left = new FormAttachment(animationItem.getControl());
-		statusLineData.right = new FormAttachment(100);
+		statusLineData.right = new FormAttachment(animationItem.getControl(),0);
+		statusLineData.left = new FormAttachment(fastViewBar.getControl());
 		statusLineData.bottom = new FormAttachment(100);
 
 		getStatusLineManager().getControl().setLayoutData(statusLineData);
