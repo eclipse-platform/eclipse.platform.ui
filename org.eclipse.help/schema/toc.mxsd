@@ -7,6 +7,23 @@
    </appInfo>
    <documentation>
       For registering an online help contribution for an individual plug-in.
+
+&lt;p&gt;Each plug-in that contributes help files should in general do the following:
+&lt;ul&gt;
+&lt;ul&gt;
+&lt;li&gt;
+author the html files, zip html files into doc.zip, and store the zip file
+in the plug-in directory.&lt;/li&gt;
+
+&lt;li&gt;
+create TOC files that describe Table of Contents for the help and the necessary
+topic interleaving. See the syntax below.&lt;/li&gt;
+
+&lt;li&gt;
+the plugin.xml file should extend the &lt;tt&gt;org.eclipse.help.toc&lt;/tt&gt; extension
+point and specify TOC file(s).&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/ul&gt;
    </documentation>
 </annotation>
 
@@ -45,6 +62,88 @@
             <annotation>
                <documentation>
                   the name of the TOC file which contains the table of contents or section for this plug-in's online help.
+&lt;p&gt;
+&lt;i&gt;&lt;b&gt;Configuration Markup for toc file:&lt;/b&gt;&lt;/i&gt;
+&lt;p&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;!ELEMENT toc (topic | anchor | link)* &gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;!ATTLIST toc link_to CDATA #IMPLIED &gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;!ATTLIST toc label CDATA #REQUIRED &gt;&lt;/tt&gt;
+&lt;p&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;!ELEMENT topic (topic | anchor | link )*
+&gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;!ATTLIST topic label CDATA #REQUIRED &gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;!ATTLIST topic href CDATA #IMPLIED &gt;&lt;/tt&gt;
+&lt;p&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;!ELEMENT anchor EMPTY &gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;!ATTLIST anchor id ID&amp;nbsp; #REQUIRED &gt;&lt;/tt&gt;
+&lt;p&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;!ELEMENT link EMPTY &gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;!ATTLIST link toc CDATA #REQUIRED &gt;&lt;/tt&gt;
+&lt;p&gt;In general, a plug-in that needs to provide online help will define
+its own TOC files. In the end, the help system is configured to be launched
+as some actions, and the path of the TOC file can be used to do so.
+&lt;p&gt;&lt;b&gt;The topic element&lt;/b&gt;
+&lt;p&gt;All help topic element are contributed as part of the toc container
+element. They can have a hierarchical structure, or can be listed as a
+flat list.
+&lt;p&gt;The topic element is the workhorse of structure of Table of Contents.
+There are two typical uses for the topic element:
+&lt;p&gt;1.&amp;nbsp; To provide a link to a documentation file - usually an HTML
+file.
+&lt;br&gt;2.&amp;nbsp; To act as a container for other toc, either in the same manifest
+or another.
+&lt;p&gt;&lt;b&gt;&lt;i&gt;1.&amp;nbsp; Topics as links&lt;/i&gt;&lt;/b&gt;
+&lt;br&gt;The simplest use of a topic is as a link to a documentation file.
+&lt;p&gt;&lt;tt&gt;&amp;lt;topic label="Some concept file" href="concepts/some_file.html"
+/&gt;&lt;/tt&gt;
+&lt;p&gt;The href attribute is relative to the plug-in that the manifest file
+belongs to.&amp;nbsp; If you need to access a file in another plug-in, you
+can use the syntax
+&lt;p&gt;&lt;tt&gt;&amp;lt;topic label="topic in another plug-in" href="../other.plugin.id/concepts/some_other_file.html"
+/&gt;&lt;/tt&gt;
+&lt;p&gt;&lt;b&gt;&lt;i&gt;2.&amp;nbsp; Topics as containers&lt;/i&gt;&lt;/b&gt;
+&lt;br&gt;The next most common use of a topic is to use it as a container for
+other toc.&amp;nbsp; The container topic itself can always refer to a particular
+file as well.
+&lt;p&gt;&lt;tt&gt;&amp;lt;topic label="Integrated Development Environment" href="concepts/ciover.htm"
+&gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp; &amp;lt;topic label="Starting the IDE" href="concepts/blah.htm"
+/&gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp; ...&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;lt;/topic&gt;&lt;/tt&gt;
+&lt;p&gt;&lt;b&gt;The link element&lt;/b&gt;
+&lt;p&gt;The link element allows to link Table of Contents defined in another
+toc file.&amp;nbsp; All the topics from the toc file specified in the toc attribute
+will appear in the table of contents as if they were defined directly in
+place of the link element.&amp;nbsp; To include toc from api.xml file you could
+write
+&lt;p&gt;&lt;tt&gt;&amp;lt;topic label="References" &gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp; ...&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp; &amp;lt;link toc="api.xml" /&gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp; ...&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;lt;/topic&gt;&lt;/tt&gt;
+&lt;p&gt;&lt;b&gt;The anchor element&lt;/b&gt;
+&lt;p&gt;The anchor element defines a point that will allow linking other toc
+files to this navigation, and extending it, without using the link element
+and referencing other toc files from here.&amp;nbsp; To allow inserting Table
+of Contents with more topics after the "ZZZ" document you would define
+an anchor as follows:
+&lt;p&gt;&lt;tt&gt;...&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;lt;topic label="zzz" href="zzz.html" /&gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;lt;anchor id="moreapi" /&gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;...&lt;/tt&gt;
+&lt;p&gt;&lt;b&gt;The toc element&lt;/b&gt;
+&lt;p&gt;The toc element is a Table of Contents that groups topics and other
+elements defined in this file.&amp;nbsp; The label identifies the table of
+contents to the user, when it is displayed to the user.&amp;nbsp; The optional
+link_to attribute allows for linking toc from this file into another toc
+file being higher in the navigation hierarchy.&amp;nbsp; The value of the link_to
+attribute must specify an anchor in another toc file. To link toc from
+myapi.xml to a api.xml file, specified in another plugin you would use
+the syntax
+&lt;p&gt;&lt;tt&gt;&amp;lt;toc link_to="../anotherPlugin/api.xml#moreapi" label="My Tool
+API"/&gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;...&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;lt;toc /&gt;&lt;/tt&gt;
+&lt;p&gt;where # character separates toc file name from the anchor identifier.
+&lt;/p&gt;
+&lt;br&gt;
                </documentation>
                <appInfo>
                   <meta.attribute kind="resource"/>
@@ -78,14 +177,83 @@ the documentation search, even if &lt;samp&gt;topic&lt;/samp&gt; elements in the
       <documentation>
          The following is an example of using the &lt;samp&gt;toc&lt;/samp&gt; extension point.
 
-&lt;p&gt;
+&lt;p&gt;(in file &lt;tt&gt;plugin.xml&lt;/tt&gt;)
 &lt;pre&gt;
-	&lt;extension point="org.eclipse.help.toc"&gt;
-		&lt;toc file="maindocs.html" primary="true"/&gt;
-		&lt;toc file="task.xml"/&gt;
-		&lt;toc file="sample.xml" extradir="samples"/&gt;
-	&lt;/extension&gt;
+ &lt;extension point="org.eclipse.help.toc"&gt;
+  &lt;toc file="maindocs.html" primary="true"/&gt;
+  &lt;toc file="task.xml"/&gt;
+  &lt;toc file="sample.xml" extradir="samples"/&gt;
+ &lt;/extension&gt;
 &lt;/pre&gt;
+&lt;/p&gt;
+
+&lt;p&gt;(in file &lt;tt&gt;maindocs.xml&lt;/tt&gt;)
+&lt;blockquote&gt;&lt;tt&gt;&amp;lt;toc label="Help System Example"&gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;lt;topic label="Introduction" href="intro.html"/&gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;lt;topic label="Tasks"&gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp; &amp;lt;topic label="Creating a Project" href="tasks/task1.html"&gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp; &amp;lt;topic label="Creating a Web Project" href="tasks/task11.html"/&gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp; &amp;lt;topic label="Creating a Java Project" href="tasks/task12.html"/&gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp; &amp;lt;/topic&gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp; &amp;lt;link toc="task.xml" /&gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp; &amp;lt;topic label="Testing a Project" href="tasks/taskn.html"/&gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;lt;/topic&gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;lt;topic label="Samples"&gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp; &amp;lt;topic label="Creating Java Project" href="samples/sample1.html"&gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp; &amp;lt;topic label="Launch a Wizard" href="samples/sample11.html"/&gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp; &amp;lt;topic label="Set Options" href="samples/sample12.html"/&gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp; &amp;lt;topic label="Finish Creating Project" href="samples/sample13.html"/&gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp; &amp;lt;/topic&gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp; &amp;lt;anchor id="samples" /&gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;lt;/topic&gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;lt;/toc&gt;&lt;/tt&gt;&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;br&gt;(in file &lt;tt&gt;tasks.xml&lt;/tt&gt;)
+&lt;blockquote&gt;&lt;tt&gt;&amp;lt;toc label="Building a Project"&gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;lt;topic label="Building a Project" href="build/building.html"&gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp; &amp;lt;topic label="Building a Web Project" href="build/web.html"/&gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp; &amp;lt;topic label="Building a Java Project" href="build/java.html"/&gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;lt;/topic&gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;lt;/toc&gt;&lt;/tt&gt;&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;br&gt;(in file &lt;tt&gt;samples.xml&lt;/tt&gt;)
+&lt;blockquote&gt;&lt;tt&gt;&amp;lt;toc link_to="maindocs.xml#samples" label="Using The
+Compile Tool"&gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;lt;topic label="The Compile Tool Sample" href="compilesample/example.html"&gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp; &amp;lt;topic label="Step 1" href="compilesample/step1.html"/&gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp; &amp;lt;topic label="Step 2" href="compilesample/step2.html"/&gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp; &amp;lt;topic label="Step 3" href="compilesample/step3.html"/&gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp; &amp;lt;topic label="Step 4" href="compilesample/step4.html"/&gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;lt;/topic&gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;lt;/toc&gt;&lt;/tt&gt;&lt;/blockquote&gt;
+
+
+&lt;p&gt;Assuming more documents exists with the path starting with "samples",
+they will not be displayed in the navigation tree, but be accessible using
+search.&amp;nbsp; It is due to the presence of "extradir" attribute in the
+element &lt;tt&gt;&amp;lt;toc file="sample.xml" extradir="samples" /&gt; &lt;/tt&gt;inside&lt;tt&gt;
+plugin.xml &lt;/tt&gt;file. For example searching for "Creating Java Project"
+could return a document "Other Ways of Creating Java Project", which path
+is &lt;tt&gt;samples/sample2.html.&lt;/tt&gt;
+
+&lt;p&gt;
+&lt;b&gt;&lt;em&gt;Internationalization&lt;/em&gt;&lt;/b&gt;
+The TOC XML files can be translated and the resulting copy (with translated
+labels) should be placed in nl/&amp;lt;language&gt;/&amp;lt;country&gt; or nl/&amp;lt;language&gt;
+directory.&amp;nbsp; The &amp;lt;language&gt; and &amp;lt;country&gt; stand for two letter
+language and country codes as used in locale codes.&amp;nbsp; For example,
+Traditional Chinese translations should be placed in the nl/zh/TW directory.&amp;nbsp;
+The nl/&amp;lt;language&gt;/&amp;lt;country&gt; directory has a higher priority than
+nl/&amp;lt;language&gt;.&amp;nbsp; Only if no file is found in the nl/&amp;lt;language&gt;/&amp;lt;country&gt;,
+the file residing in nl/&amp;lt;language&gt; will be used.&amp;nbsp; The the root
+directory of a plugin will be searched last.
+&lt;p&gt;The documentation contained in doc.zip can be localized by creating
+a doc.zip file with translated version of documents, and placing doc.zip
+in
+&lt;br&gt;nl/&amp;lt;language&gt;/&amp;lt;country&gt; or nl/&amp;lt;language&gt; directory. The help
+system will look for the files under this directories before defaulting
+to plugin directory.
+&lt;br&gt;&amp;nbsp;
 &lt;/p&gt;
       </documentation>
    </annotation>

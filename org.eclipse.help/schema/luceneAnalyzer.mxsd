@@ -16,7 +16,7 @@ Since the documentation is mostly human-readable text, it is desired that analyz
 perform language and grammar aware tokenization and normalization of indexed text.
 For some languages, the quality of search increases significantly if stop word removal and stemming is performed
 on the indexed text.
-This extensionpoint allows configuring analyzers for the languages that default help system does not provide language-aware analyzers.
+This extension point allows configuring analyzers for the languages that default help system does not provide language-aware analyzers.
    </documentation>
 </annotation>
 

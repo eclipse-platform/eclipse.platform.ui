@@ -6,7 +6,7 @@
       <meta.schema plugin="org.eclipse.help" id="support" name="Support"/>
    </appInfo>
    <documentation>
-      [Enter description of this extension point]
+      Support for configuring a help system UI. The platform should be configured with no more than one help system UI.
    </documentation>
 </annotation>
 
@@ -65,9 +65,9 @@ interface.
 
 &lt;p&gt;
 &lt;pre&gt;
-	&lt;extension point="org.eclipse.help.support"&gt;
-		&lt;config class="com.example.XYZHelpUI"/&gt;
-	&lt;/extension&gt;
+ &lt;extension point="org.eclipse.help.support"&gt;
+  &lt;config class="com.example.XYZHelpUI"/&gt;
+ &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
       </documentation>
@@ -90,7 +90,7 @@ The implementation should access the help information contributed via the &lt;sa
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         The &lt;samp&gt;org.eclipse.help.workbench&lt;/samp&gt; plug-in contains an implementation of the help system UI.
+         The &lt;samp&gt;org.eclipse.help.ui&lt;/samp&gt; plug-in contains an implementation of the help system UI.
 Although this plug-in is supplied with the Eclipse platform, it is entirely optional and can be safely
 omitted from the platform configuration.
       </documentation>
