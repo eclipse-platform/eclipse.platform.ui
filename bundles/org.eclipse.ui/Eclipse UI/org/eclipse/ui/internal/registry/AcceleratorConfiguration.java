@@ -6,7 +6,9 @@ package org.eclipse.ui.internal.registry;
  */
 
 /**
- *
+ * An accelerator configuration represents a collection of accelerator key to 
+ * action id mappings. Accelerators belong to accelerator sets. Each
+ * accelerator set is assigned to a certain accelerator configurations.
  */
 public class AcceleratorConfiguration {
 	private String id;

@@ -6,7 +6,7 @@ package org.eclipse.ui.internal.registry;
  */
 
 /**
- * 
+ * Captures the attributes of an action definition.
  */
 public class ActionDefinition {
 	private String id;

@@ -11,7 +11,8 @@ import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 
 /**
- * 
+ * This class is used to read action definitions from the platform registry.
+ * Action definitions are stored in an ActionDefinitionRegistry once read.
  */
 public class ActionDefinitionRegistryReader extends RegistryReader {
 	private static final String TAG_ACTION_DEF = "actionDefinition";
@@ -25,7 +26,10 @@ public class ActionDefinitionRegistryReader extends RegistryReader {
 	private static final String ATT_STATE = "state";
 	
 	private ActionDefinitionRegistry actionDefinitions;
-	
+
+	/* (non-Javadoc)
+	 * Method declared in RegistryReader.
+	 */	
 	protected boolean readElement(IConfigurationElement element) {
 		if (!element.getName().equals(TAG_ACTION_DEF))
 			return false;
@@ -68,7 +72,11 @@ public class ActionDefinitionRegistryReader extends RegistryReader {
 		actionDefinitions.add(a);
 		return true;
 	}
-	
+
+	/**
+	 * Reads the action definition extensions within the plugin registry and stores
+	 * the results in the action definition registry.
+	 */	
 	public void readActionDefinitions(IPluginRegistry registry, ActionDefinitionRegistry out) {
 		actionDefinitions = out;
 		readRegistry(registry, IWorkbenchConstants.PLUGIN_ID, IWorkbenchConstants.PL_ACTION_DEFINITIONS);

@@ -314,6 +314,9 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	}
 	/**
 	 * Returns the key binding service in use.
+	 * 
+	 * @return the key binding service in use.
+	 * @since 2.0
 	 */
 	public IKeyBindingService getKeyBindingService() {
 		if (keyBindingService == null)

@@ -6,7 +6,12 @@ package org.eclipse.ui.internal.registry;
  */
 
 /**
- * 
+ * Captures the attributes of a mapping between an accelerator key
+ * and an action id. Accelerators may be specific to a locale and/or platform,
+ * or they may general accelerators applicable to all platforms and locales. If
+ * two accelerators exist, one with locale and/or platform of "all", and the other
+ * with a more specific locale and/or platform, the more specific accelerator is
+ * used.
  */
 public class Accelerator {
 	private static final String DEFAULT_LOCALE  = "all";
