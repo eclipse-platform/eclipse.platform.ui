@@ -165,18 +165,34 @@ public class CopyFilesAndFoldersOperation {
 			null);
 			 		
 		for (int i = 0; i < resources.length; i++) {
-			if (resources[i] != null && resources[i].exists() == false) {
-				String message = WorkbenchMessages.format(
-					"CopyFilesAndFoldersOperation.resourceDeleted",	//$NON-NLS-1$
-					new Object[] {resources[i].getName()});				
-				IStatus status = new Status(
-					IStatus.ERROR, 
-					PlatformUI.PLUGIN_ID, 
-					IStatus.OK, 
-					message, 
-					null);
-				multiStatus.add(status);
-			}
+			IResource resource = resources[i]; 
+			if (resource != null) {
+				IPath location = resource.getLocation();
+				String message = null; 
+				if (location != null) {
+					File file = location.toFile();
+					if (file.exists() == false) {
+						if (resource.isLinked()) {
+							message = WorkbenchMessages.format(
+								"CopyFilesAndFoldersOperation.missingLinkTarget", 	//$NON-NLS-1$
+								new Object[] {resource.getName()});
+						} else {
+							message = WorkbenchMessages.format(
+								"CopyFilesAndFoldersOperation.resourceDeleted",	//$NON-NLS-1$
+								new Object[] {resource.getName()});				
+						}					
+					}
+				}
+				if (message != null) {
+					IStatus status = new Status(
+						IStatus.ERROR, 
+						PlatformUI.PLUGIN_ID, 
+						IStatus.OK, 
+						message, 
+						null);
+					multiStatus.add(status);
+				}
+			} 
 		}
 		return multiStatus;
 	}
@@ -1009,8 +1025,7 @@ public class CopyFilesAndFoldersOperation {
 						"CopyFilesAndFoldersOperation.resourceDeleted",		//$NON-NLS-1$
 						new Object[] {sourceResource.getName()});				
 				}
-			}			
-			if (sourceLocation != null) {
+			} else {
 				if (sourceLocation.equals(destinationLocation)) {
 					return WorkbenchMessages.format(
 						"CopyFilesAndFoldersOperation.sameSourceAndDest", 	//$NON-NLS-1$
