@@ -876,5 +876,14 @@ public void testSetGetFolderPersistentProperty() throws Throwable {
 	// see what happens if we get a non-existant property
 	name = new QualifiedName("itp-test", "testNonProperty");
 	assertNull("2.1", target.getPersistentProperty(name));
+	
+	//set a persistent property with null qualifier
+	name = new QualifiedName(null, "foo");
+	try {
+		target.setPersistentProperty(name, value);
+		fail("3.0");
+	} catch (CoreException e) {
+		//expect an exception
+	}
 }
 }
