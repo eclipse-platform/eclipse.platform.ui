@@ -1040,6 +1040,7 @@ public void refreshLocal(int depth, IProgressMonitor monitor) throws CoreExcepti
  * by the given progress monitor.
  * </p>
  * 
+ * @param flag whether this resource should be considered local
  * @param depth valid values are <code>DEPTH_ZERO</code>, 
  *  <code>DEPTH_ONE</code>, or <code>DEPTH_INFINITE</code>
  * @param monitor a progress monitor, or <code>null</code> if progress
