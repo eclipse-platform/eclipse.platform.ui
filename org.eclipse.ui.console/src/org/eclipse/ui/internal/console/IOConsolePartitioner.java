@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.ui.internal.console;
 
 import java.util.ArrayList;
@@ -25,9 +35,7 @@ import org.eclipse.ui.console.IOConsoleInputStream;
 import org.eclipse.ui.console.IOConsoleOutputStream;
 
 /**
- * This class is new and experimental. It will likely be subject to significant change before
- * it is finalized.
- * 
+ * Partitions an IOConsole's document
  * @since 3.1
  *
  */
@@ -46,6 +54,7 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
 	private int lowWaterMark = -1;
 	private ArrayList updatePartitions;
     private int firstOffset;
+    private boolean connected = false;
 	
 	public IOConsolePartitioner(IOConsoleInputStream inputStream) {
 		this.inputStream = inputStream;
@@ -54,6 +63,11 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
 	public IDocument getDocument() {
 		return document;
 	}
+	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.text.IDocumentPartitioner#connect(org.eclipse.jface.text.IDocument)
+	 */
 	
 	public void connect(IDocument document) {
 		this.document = document;
@@ -64,6 +78,7 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
 		inputPartitions = new ArrayList();
 		updateJob = new DocumentUpdaterJob();
 		updateJob.setSystem(true);
+		connected = true;
 	}
 	
 	
@@ -77,26 +92,51 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
 		});
 	}
 	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.text.IDocumentPartitioner#disconnect()
+	 */
 	public void disconnect() {
 		document = null;
 		partitions = null;
+		connected = false;
 	}
 	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.text.IDocumentPartitioner#documentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
+	 */
 	public void documentAboutToBeChanged(DocumentEvent event) {
 	}
 	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.text.IDocumentPartitioner#documentChanged(org.eclipse.jface.text.DocumentEvent)
+	 */
 	public boolean documentChanged(DocumentEvent event) {
 		return documentChanged2(event) != null;
 	}
 	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.text.IDocumentPartitioner#getLegalContentTypes()
+	 */
 	public String[] getLegalContentTypes() {
 		return new String[] { IOConsolePartition.OUTPUT_PARTITION_TYPE, IOConsolePartition.INPUT_PARTITION_TYPE };
 	}
 	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.text.IDocumentPartitioner#getContentType(int)
+	 */
 	public String getContentType(int offset) {
 		return getPartition(offset).getType();
 	}
 	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.text.IDocumentPartitioner#computePartitioning(int, int)
+	 */
 	public ITypedRegion[] computePartitioning(int offset, int length) {
 		int end = length == 0 ? offset : offset + length - 1;
 		List list = new ArrayList();
@@ -118,6 +158,10 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
 		return (IOConsolePartition[]) list.toArray(new IOConsolePartition[list.size()]);
 	}
 	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.text.IDocumentPartitioner#getPartition(int)
+	 */
 	public ITypedRegion getPartition(int offset) {
 		for (int i = 0; i < partitions.size(); i++) {
 			ITypedRegion partition = (ITypedRegion) partitions.get(i);
@@ -276,7 +320,7 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
 						for (Iterator it = inputPartitions.iterator(); it.hasNext(); ) {
 							IOConsolePartition partition = (IOConsolePartition) it.next();
 							input.append(partition.getString());
-							partition.setReadOnly(true);
+							partition.setReadOnly();
 						}
 						inputStream.appendData(input.toString());
 						inputPartitions.clear();
@@ -326,6 +370,10 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
 			super("IOConsole Updater"); //$NON-NLS-1$
 		}
 		
+        /*
+         *  (non-Javadoc)
+         * @see org.eclipse.core.internal.jobs.InternalJob#run(org.eclipse.core.runtime.IProgressMonitor)
+         */
 		protected IStatus run(IProgressMonitor monitor) {
 			Display display = ConsolePlugin.getStandardDisplay();
 			
@@ -348,16 +396,18 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
 			final String toAppend = buffer.toString();		
 			
 			display.asyncExec(new Runnable() {
-			    public void run() {    
-			        setUpdateInProgress(true);
-			        updatePartitions = finalCopy;
-			        firstOffset = document.getLength();
-			        try {
-			            document.replace(firstOffset, 0, toAppend.toString());
-			        } catch (BadLocationException e) {
+			    public void run() {
+			        if (connected) {
+			            setUpdateInProgress(true);
+			            updatePartitions = finalCopy;
+			            firstOffset = document.getLength();
+			            try {
+			                document.replace(firstOffset, 0, toAppend.toString());
+			            } catch (BadLocationException e) {
+			            }
+			            updatePartitions = null;
+			            setUpdateInProgress(false);
 			        }
-			        updatePartitions = null;
-			        setUpdateInProgress(false);
 			    }
 			});
 			
@@ -372,7 +422,7 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
          * once even if it's called many times.
          */
         public boolean shouldRun() {
-            return pendingPartitions != null && pendingPartitions.size() > 0;
+            return connected && pendingPartitions != null && pendingPartitions.size() > 0;
         }
 	}
 	

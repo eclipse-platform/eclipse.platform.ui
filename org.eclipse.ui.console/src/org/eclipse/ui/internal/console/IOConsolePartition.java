@@ -8,9 +8,7 @@ import org.eclipse.ui.console.IOConsoleInputStream;
 import org.eclipse.ui.console.IOConsoleOutputStream;
 
 /**
- * This class is new and experimental. It will likely be subject to significant change before
- * it is finalized.
- * 
+ * A region in an IOConsole's document.
  * @since 3.1
  *
  */
@@ -96,8 +94,8 @@ public class IOConsolePartition implements ITypedRegion {
         return readOnly;
     }
     
-    public void setReadOnly(boolean newSetting) {
-        readOnly = newSetting;
+    public void setReadOnly() {
+        readOnly = true;
     }
 
 

@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.ui.internal.console;
 
 import org.eclipse.jface.resource.JFaceColors;
@@ -37,11 +47,7 @@ import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.console.IConsoleHyperlink;
 
 /**
- * This class is new and experimental. It will likely be subject to significant change before
- * it is finalized.
- * 
  * @since 3.1
- *
  */
 public class IOConsoleViewer extends TextViewer implements LineStyleListener, LineBackgroundListener, MouseTrackListener, MouseMoveListener, MouseListener, PaintListener {
 
@@ -56,14 +62,14 @@ public class IOConsoleViewer extends TextViewer implements LineStyleListener, Li
         super(parent, SWT.H_SCROLL | SWT.V_SCROLL);
         setDocument(document);
         
-        StyledText text = getTextWidget();
-        text.setDoubleClickEnabled(true);
-        text.addLineStyleListener(this);
-        text.addLineBackgroundListener(this);
-        text.setEditable(true);
-        text.setFont(JFaceResources.getFont(IConsoleConstants.CONSOLE_FONT));
-        text.addMouseTrackListener(this);
-        text.addPaintListener(this);
+        StyledText styledText = getTextWidget();
+        styledText.setDoubleClickEnabled(true);
+        styledText.addLineStyleListener(this);
+        styledText.addLineBackgroundListener(this);
+        styledText.setEditable(true);
+        styledText.setFont(JFaceResources.getFont(IConsoleConstants.CONSOLE_FONT));
+        styledText.addMouseTrackListener(this);
+        styledText.addPaintListener(this);
 		
         document.addDocumentListener(new IDocumentListener() {
             public void documentAboutToBeChanged(DocumentEvent event) {
@@ -83,6 +89,9 @@ public class IOConsoleViewer extends TextViewer implements LineStyleListener, Li
     }
     
     public void setTabWidth(int tabWidth) {
+        StyledText styledText = getTextWidget();
+        styledText.setTabs(tabWidth);
+        styledText.redraw();
     }
     
     /* (non-Javadoc)
@@ -91,7 +100,7 @@ public class IOConsoleViewer extends TextViewer implements LineStyleListener, Li
     protected void handleVerifyEvent(VerifyEvent e) {
         IDocument doc = getDocument();        
         String[] legalLineDelimiters = doc.getLegalLineDelimiters();
-        String text = e.text;
+        String eventString = e.text;
         
         try {
             IOConsolePartition partition = (IOConsolePartition) doc.getPartition(e.start);
@@ -103,7 +112,7 @@ public class IOConsoleViewer extends TextViewer implements LineStyleListener, Li
                         break;
                     }
                 }
-                
+           
                 if (!isCarriageReturn) {
                     super.handleVerifyEvent(e);
                     return;
@@ -117,10 +126,9 @@ public class IOConsoleViewer extends TextViewer implements LineStyleListener, Li
             super.handleVerifyEvent(e);
         } else {
             try {
-                doc.replace(length, 0, text);
+                doc.replace(length, 0, eventString);
             } catch (BadLocationException e1) {
             }
-//            getTextWidget().setCaretOffset(doc.getLength());
             e.doit = false;
         }
     }
@@ -169,55 +177,46 @@ public class IOConsoleViewer extends TextViewer implements LineStyleListener, Li
 	/**
 	 * @see org.eclipse.swt.events.PaintListener#paintControl(org.eclipse.swt.events.PaintEvent)
 	 */
-	public void paintControl(PaintEvent e) {
-		if (hyperlink != null) {
-			IDocument doc = getDocument();
-			StyledText text = getTextWidget();
-			
-			if (doc == null || text == null) {
-				return;
-			}
-			IOConsolePartitioner partitioner = (IOConsolePartitioner)doc.getDocumentPartitioner();
-			if (partitioner == null) {
-				return;
-			}
-			
-			IRegion linkRegion = partitioner.getRegion(hyperlink);
-			if (linkRegion != null) {
-				int start = linkRegion.getOffset();
-				int end = start + linkRegion.getLength();
-
-//				try {
-					Color fontColor = JFaceColors.getActiveHyperlinkText(Display.getCurrent());
-					Color color = e.gc.getForeground();
-					e.gc.setForeground(fontColor);
-					FontMetrics metrics = e.gc.getFontMetrics();
-					int height = metrics.getHeight();
-					int width = metrics.getAverageCharWidth();
-					
-					int startLine = text.getLineAtOffset(start);
-					int endLine = text.getLineAtOffset(end);
-
-					for (int i = startLine; i <= endLine; i++) {
-					    int styleStart = i==startLine ? start : text.getOffsetAtLine(i);
-						int styleEnd = i==endLine ? end : text.getOffsetAtLine(i+1);  
-												
-						Point p1 = text.getLocationAtOffset(styleStart);
-						Point p2 = text.getLocationAtOffset(styleEnd-1);
-						
-						e.gc.drawLine(p1.x, p1.y + height, p2.x + width, p2.y + height);
-						
-//						String content = doc.get(styleStart, styleEnd-styleStart);
-//						e.gc.drawText(content, p1.x, p1.y);
-						
-					}
-					
-					e.gc.setForeground(color);
-//				} catch (BadLocationException ex) {
-//				}
-			}
-		}
-	}
+    public void paintControl(PaintEvent e) {
+        if (hyperlink != null) {
+            IDocument doc = getDocument();
+            StyledText text = getTextWidget();
+            
+            if (doc == null || text == null) {
+                return;
+            }
+            
+            IOConsolePartitioner partitioner = (IOConsolePartitioner)doc.getDocumentPartitioner();
+            if (partitioner == null) {
+                return;
+            }
+            
+            IRegion linkRegion = partitioner.getRegion(hyperlink);
+            if (linkRegion != null) {
+                int start = linkRegion.getOffset();
+                int end = start + linkRegion.getLength();
+                
+                Color fontColor = JFaceColors.getActiveHyperlinkText(Display.getCurrent());
+                Color color = e.gc.getForeground();
+                e.gc.setForeground(fontColor);
+                FontMetrics metrics = e.gc.getFontMetrics();
+                int height = metrics.getHeight();
+                int width = metrics.getAverageCharWidth();
+                
+                int startLine = text.getLineAtOffset(start);
+                int endLine = text.getLineAtOffset(end);
+                
+                for (int i = startLine; i <= endLine; i++) {
+                    int styleStart = i==startLine ? start : text.getOffsetAtLine(i);
+                    int styleEnd = i==endLine ? end : text.getOffsetAtLine(i+1);  
+                    Point p1 = text.getLocationAtOffset(styleStart);
+                    Point p2 = text.getLocationAtOffset(styleEnd-1);
+                    e.gc.drawLine(p1.x, p1.y + height, p2.x + width, p2.y + height);   
+                }
+                e.gc.setForeground(color);
+            }
+        }
+    }
 	
 	protected Cursor getHandCursor() {
 		if (handCursor == null) {
@@ -383,4 +382,14 @@ public class IOConsoleViewer extends TextViewer implements LineStyleListener, Li
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.text.TextViewer#handleDispose()
+     */
+    protected void handleDispose() {
+        super.handleDispose();
+        documentAdapter.dispose();
+        handCursor=null;
+        textCursor=null;
+        hyperlink = null;
+    }
 }

@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.ui.internal.console;
 
 import java.util.ArrayList;
@@ -13,12 +23,22 @@ import org.eclipse.swt.custom.TextChangeListener;
 import org.eclipse.swt.custom.TextChangedEvent;
 import org.eclipse.swt.custom.TextChangingEvent;
 
+/**
+ * Adapts an IOConsole's document to the viewer StyledText widget. Allows proper line
+ * wrapping of fixed width consoles without having to add line delimeters to the StyledText.
+ * 
+ * By using this adapter, the offset of any character is the same in both the widget and the
+ * document.
+ */
 public class IOConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListener {
     private static final String DELIMITER = System.getProperty("line.separator"); //$NON-NLS-1$;
     
     private int consoleWidth = -1;
     private ArrayList textChangeListeners;
     private IDocument document;
+    /*
+     * A list of Strings, every line in the Text Widget represents one String in this list.
+     */
     private ArrayList lines;
     
     public IOConsoleDocumentAdapter(IDocument doc, int width) {
@@ -30,6 +50,10 @@ public class IOConsoleDocumentAdapter implements IDocumentAdapter, IDocumentList
         repairLines(0);
     }
     
+    /*
+     * repairs lines list from the beginning of the line containing the offset of any 
+     * DocumentEvent, to the end of the Document.
+     */
     private void repairLines(int eventOffset) {
         try {
             int docLine = document.getLineOfOffset(eventOffset);
@@ -95,8 +119,10 @@ public class IOConsoleDocumentAdapter implements IDocumentAdapter, IDocumentList
      * @see org.eclipse.swt.custom.StyledTextContent#removeTextChangeListener(org.eclipse.swt.custom.TextChangeListener)
      */
     public synchronized void removeTextChangeListener(TextChangeListener listener) {
-		Assert.isNotNull(listener);
-		textChangeListeners.remove(listener);   
+        if(textChangeListeners != null) {
+            Assert.isNotNull(listener);
+            textChangeListeners.remove(listener);
+        }
     }
 
     /* (non-Javadoc)
@@ -201,29 +227,31 @@ public class IOConsoleDocumentAdapter implements IDocumentAdapter, IDocumentList
      * @see org.eclipse.jface.text.IDocumentListener#documentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
      */
     public synchronized void documentAboutToBeChanged(DocumentEvent event) {
-//        try {
-            TextChangingEvent changeEvent = new TextChangingEvent(this);
-            changeEvent.start = event.fOffset;
-            changeEvent.newText = (event.fText == null ? "" : event.fText); //$NON-NLS-1$
-            changeEvent.replaceCharCount = event.fLength;
-            changeEvent.newCharCount = (event.fText == null ? 0 : event.fText.length());
-            
-            int first = getLineAtOffset(event.fOffset);
-            int last = getLineAtOffset(event.fOffset + event.fLength);
-            changeEvent.replaceLineCount= last - first;
-            
-            int numLines = lines.size();
-            String lastLine = (String)lines.get(numLines-1);
-            changeEvent.newLineCount = countLines(lastLine + event.fText);
-            
-            for (Iterator iter = textChangeListeners.iterator(); iter.hasNext();) {
-                TextChangeListener element = (TextChangeListener) iter.next();
-                element.textChanging(changeEvent);
-            }
-//        } catch (BadLocationException e){
-//        }
+        TextChangingEvent changeEvent = new TextChangingEvent(this);
+        changeEvent.start = event.fOffset;
+        changeEvent.newText = (event.fText == null ? "" : event.fText); //$NON-NLS-1$
+        changeEvent.replaceCharCount = event.fLength;
+        changeEvent.newCharCount = (event.fText == null ? 0 : event.fText.length());
+        
+        int first = getLineAtOffset(event.fOffset);
+        int last = getLineAtOffset(event.fOffset + event.fLength);
+        changeEvent.replaceLineCount= last - first;
+        
+        int numLines = lines.size();
+        String lastLine = (String)lines.get(numLines-1);
+        changeEvent.newLineCount = countLines(lastLine + event.fText);
+        
+        for (Iterator iter = textChangeListeners.iterator(); iter.hasNext();) {
+            TextChangeListener element = (TextChangeListener) iter.next();
+            element.textChanging(changeEvent);
+        }
     }
 
+    /**
+     * Counts the number of lines the viewer's text widget will need to use to 
+     * display the String
+     * @return The number of lines necessary to display the string in the viewer.
+     */
     private int countLines(String string) {
         if (string.equals(DELIMITER)) {
             return 1;
@@ -231,7 +259,7 @@ public class IOConsoleDocumentAdapter implements IDocumentAdapter, IDocumentList
         int delimLength = DELIMITER.length();
         int index = string.indexOf(DELIMITER);
         if (index == -1) {
-            return string.length() / consoleWidth;
+            return consoleWidth > 0 ? string.length() / consoleWidth : 1;
         } else if (index == string.length()-delimLength) {
             int count = 0;
             String firstLine = string.substring(0, index);
@@ -264,7 +292,8 @@ public class IOConsoleDocumentAdapter implements IDocumentAdapter, IDocumentList
     }
 
     /**
-     * @param consoleWidth2
+     * sets consoleWidth, repairs line information, then fires event to the viewer text widget.
+     * @param width The console's width
      */
     public void setWidth(int width) {
         consoleWidth = width;
@@ -274,5 +303,12 @@ public class IOConsoleDocumentAdapter implements IDocumentAdapter, IDocumentList
             TextChangeListener element = (TextChangeListener) iter.next();
             element.textSet(changeEvent);
         }
+    }
+
+
+    public void dispose() {
+        textChangeListeners = null;
+        document = null;
+        lines = null;
     }
 }

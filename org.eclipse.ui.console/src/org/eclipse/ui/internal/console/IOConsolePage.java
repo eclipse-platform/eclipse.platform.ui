@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.ui.internal.console;
 
 import java.util.ArrayList;
@@ -36,7 +46,6 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.console.IConsoleView;
 import org.eclipse.ui.console.IOConsole;
-import org.eclipse.ui.console.IOConsoleOutputStream;
 import org.eclipse.ui.console.actions.ClearOutputAction;
 import org.eclipse.ui.console.actions.TextViewerAction;
 import org.eclipse.ui.part.IPageBookViewPage;
@@ -45,8 +54,7 @@ import org.eclipse.ui.texteditor.FindReplaceAction;
 import org.eclipse.ui.texteditor.IUpdate;
 
 /**
- * This class is new and experimental. It will likely be subject to significant change before
- * it is finalized.
+ * A page for an IOConsole 
  * 
  * @since 3.1
  *
@@ -161,18 +169,12 @@ public class IOConsolePage implements IPageBookViewPage, IPropertyChangeListener
 			setFont(console.getFont());	
 		} else if (IOConsole.P_FONT_STYLE.equals(property)) {
 		    viewer.getTextWidget().redraw();
-		} else if (IOConsole.P_STREAM_COLOR.equals(property) && source instanceof IOConsoleOutputStream) {
-			IOConsoleOutputStream stream = (IOConsoleOutputStream)source;
-			if (stream.getConsole().equals(console)) {
-				viewer.getTextWidget().redraw();
-			}
-		} else if (property.equals(IOConsole.P_INPUT_COLOR)) {
+		} else if (property.equals(IOConsole.P_STREAM_COLOR)) {
 		    viewer.getTextWidget().redraw();
 		} else if (source.equals(console) && property.equals(IOConsole.P_TAB_SIZE)) {
 			if (viewer != null) {
 			    Integer tabSize = (Integer)event.getNewValue();
-				viewer.getTextWidget().setTabs(tabSize.intValue());
-				viewer.getTextWidget().redraw();
+				viewer.setTabWidth(tabSize.intValue());
 			}
 		} else if(source.equals(console) && property.equals(IOConsole.P_WORD_WRAP)) {
 		    viewer.setWordWrap(console.getWordWrap());
@@ -188,17 +190,17 @@ public class IOConsolePage implements IPageBookViewPage, IPropertyChangeListener
 		setGlobalAction(actionBars, ActionFactory.SELECT_ALL.getId(), action);
 		
 		action= new TextViewerAction(viewer, ITextOperationTarget.CUT);
-		action.configureAction("Cut", "Cut", "Cut"); 
+		action.configureAction(ConsoleMessages.getString("IOConsolePage.3"), ConsoleMessages.getString("IOConsolePage.4"), ConsoleMessages.getString("IOConsolePage.5"));  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		action.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_CUT));
 		setGlobalAction(actionBars, ActionFactory.CUT.getId(), action);
 		
 		action= new TextViewerAction(viewer, ITextOperationTarget.COPY);
-		action.configureAction("Copy", "Copy", "Copy");
+		action.configureAction(ConsoleMessages.getString("IOConsolePage.6"), ConsoleMessages.getString("IOConsolePage.7"), ConsoleMessages.getString("IOConsolePage.8")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		action.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
 		setGlobalAction(actionBars, ActionFactory.COPY.getId(), action);
 		
 		action= new TextViewerAction(viewer, ITextOperationTarget.PASTE);
-		action.configureAction("Paste", "Paste", "Paste");
+		action.configureAction(ConsoleMessages.getString("IOConsolePage.9"), ConsoleMessages.getString("IOConsolePage.10"), ConsoleMessages.getString("IOConsolePage.11")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		action.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_PASTE));
 		setGlobalAction(actionBars, ActionFactory.PASTE.getId(), action);
 		
@@ -264,8 +266,6 @@ public class IOConsolePage implements IPageBookViewPage, IPropertyChangeListener
 	}
 
 	protected void configureToolBar(IToolBarManager mgr) {
-//		mgr.appendToGroup(IConsoleConstants.LAUNCH_GROUP, fTerminate);
-//		mgr.appendToGroup(IConsoleConstants.LAUNCH_GROUP, fRemoveTerminated);
 		mgr.appendToGroup(IConsoleConstants.OUTPUT_GROUP, clearOutputAction);
 		mgr.appendToGroup(IConsoleConstants.OUTPUT_GROUP, scrollLockAction);
 	}

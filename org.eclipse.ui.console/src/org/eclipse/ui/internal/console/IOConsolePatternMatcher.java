@@ -9,7 +9,7 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
-import org.eclipse.ui.console.IPatternMatchNotifier;
+import org.eclipse.ui.console.IPatternMatchHandler;
 
 public class IOConsolePatternMatcher implements IDocumentListener {
     
@@ -18,9 +18,9 @@ public class IOConsolePatternMatcher implements IDocumentListener {
     
     private class CompiledPatternMatchNotifier {
         Pattern pattern;
-        IPatternMatchNotifier notifier;
+        IPatternMatchHandler notifier;
         
-        CompiledPatternMatchNotifier(Pattern pattern, IPatternMatchNotifier notifier) {
+        CompiledPatternMatchNotifier(Pattern pattern, IPatternMatchHandler notifier) {
             this.pattern = pattern;
             this.notifier = notifier;
         }
@@ -32,7 +32,7 @@ public class IOConsolePatternMatcher implements IDocumentListener {
         patterns = new ArrayList();
     }
     
-    public void addPatternMatchNotifier(IPatternMatchNotifier matchNotifier) {
+    public void addPatternMatchNotifier(IPatternMatchHandler matchNotifier) {
         synchronized(patterns) {
             if (matchNotifier == null || matchNotifier.getPattern() == null) {
                 throw new IllegalArgumentException("Pattern cannot be null"); //$NON-NLS-1$
@@ -50,7 +50,7 @@ public class IOConsolePatternMatcher implements IDocumentListener {
     }
     
     
-    public void removePatternMatchNotifier(IPatternMatchNotifier matchNotifier) {
+    public void removePatternMatchNotifier(IPatternMatchHandler matchNotifier) {
         synchronized(patterns){
             for (Iterator iter = patterns.iterator(); iter.hasNext();) {
                 CompiledPatternMatchNotifier element = (CompiledPatternMatchNotifier) iter.next();
@@ -86,7 +86,7 @@ public class IOConsolePatternMatcher implements IDocumentListener {
     private void testForMatch(CompiledPatternMatchNotifier compiled, int documentOffset) throws BadLocationException {
         String contents = document.get(documentOffset, document.getLength()-documentOffset);
         Matcher matcher = compiled.pattern.matcher(contents);
-        IPatternMatchNotifier notifier = compiled.notifier;
+        IPatternMatchHandler notifier = compiled.notifier;
         while(matcher.find()) {
             String group = matcher.group();
             if (group.length() > 0) {

@@ -11,27 +11,21 @@
 package org.eclipse.ui.console;
 
 /**
- * A hyperlink in the console. Link behavior is implementation dependent.
- * <p>
- * Clients may implement this interface.
- * </p>
- * @since 3.1
+ * Handles notification that a pattern has been matched to the contents in a console.
  */
-public interface IConsoleHyperlink {
-	
-	/**
-	 * Notification that the mouse has entered this link's region.
-	 */
-	public void linkEntered();
-	
-	/**
-	 * Notification that the mouse has exited this link's region
-	 */
-	public void linkExited();
-	
-	/**
-	 * Notification that this link has been activated. Performs
-	 * context specific linking.
-	 */
-	public void linkActivated();
+public interface IPatternMatchHandler {
+    /**
+     * Returns the pattern to be used for matching.
+     * @return The pattern to be used for matching.
+     */
+    public String getPattern();
+    
+    /**
+     * Handles notification that a match has been found.
+     * @param text The text of the match.
+     * @param offset The offset with the console's document at which the match 
+     * was found.
+     */
+    public void matchFound(String text, int offset);
+    
 }

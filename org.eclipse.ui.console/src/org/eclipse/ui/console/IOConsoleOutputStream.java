@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.ui.console;
 
 import java.io.IOException;
@@ -7,8 +17,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.ui.internal.console.IOConsolePartitioner;
 
 /**
- * This class is new and experimental. It will likely be subject to significant change before
- * it is finalized.
+ * OutputStream used to write to an IOConsole.
  * 
  * @since 3.1
  */
@@ -17,7 +26,7 @@ public class IOConsoleOutputStream extends OutputStream {
 
     private IOConsolePartitioner partitioner;
     private IOConsole console;
-    private boolean activateOnWrite = true;
+    private boolean activateOnWrite = false;
     private Color color;
     private String streamId;
 

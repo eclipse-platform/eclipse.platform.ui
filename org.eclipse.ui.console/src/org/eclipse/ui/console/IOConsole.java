@@ -1,4 +1,17 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+
 package org.eclipse.ui.console;
+
+import java.io.IOException;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.BadLocationException;
@@ -40,12 +53,7 @@ public class IOConsole extends AbstractConsole {
 	 * Property constant indicating the color of a stream has changed. 
 	 */
 	public static final String P_STREAM_COLOR = ConsolePlugin.getUniqueIdentifier()  + "IOConsole.P_STREAM_COLOR";	 //$NON-NLS-1$
-	
-	/**
-	 * Property constant indicating the designated color for user input has changed
-	 */
-	public static final String P_INPUT_COLOR =  ConsolePlugin.getUniqueIdentifier()  + "IOConsole.P_INPUT_COLOR";	 //$NON-NLS-1$
-	
+		
 	/**
 	 * Property constant indicating tab size has changed 
 	 */
@@ -163,27 +171,28 @@ public class IOConsole extends AbstractConsole {
         }
     }
 
-    public void activate() {
-        ConsolePlugin.getDefault().getConsoleManager().showConsoleView(this);
-    }
-
-    public void addPatternMatchNotifier(IPatternMatchNotifier matchNotifier) {
+    public void addPatternMatchNotifier(IPatternMatchHandler matchNotifier) {
         patternMatcher.addPatternMatchNotifier(matchNotifier);
     }
-    public void removePatternMatchNotifier(IPatternMatchNotifier matchNotifier) {
+    public void removePatternMatchNotifier(IPatternMatchHandler matchNotifier) {
         patternMatcher.removePatternMatchNotifier(matchNotifier);
     }    
     
-    public void addHyperlink(IConsoleHyperlink hyperlink, int offset, int length) {
+    public void addHyperlink(IConsoleHyperlink hyperlink, int offset, int length) throws BadLocationException {
 		IOConsoleHyperlinkPosition hyperlinkPosition = new IOConsoleHyperlinkPosition(hyperlink, offset, length); 
 		try {
 			getDocument().addPosition(IOConsoleHyperlinkPosition.HYPER_LINK_CATEGORY, hyperlinkPosition);
 		} catch (BadPositionCategoryException e) {
-			// internal error
 			ConsolePlugin.log(e);
-		} catch (BadLocationException e) {
-			// queue the link
-//			fPendingLinks.add(hyperlinkPosition);
-		}
+		} 
+    }
+    
+    public void dispose() {
+        partitioner.disconnect();
+        try {
+            inputStream.close();
+        } catch (IOException ioe) {
+        }
+        patternMatcher.dispose();
     }
 }
