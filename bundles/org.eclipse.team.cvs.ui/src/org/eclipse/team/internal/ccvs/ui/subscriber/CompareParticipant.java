@@ -103,7 +103,7 @@ public class CompareParticipant extends CVSParticipant implements IPropertyChang
 	 * @see org.eclipse.team.ui.synchronize.AbstractSynchronizeParticipant#getName()
 	 */
 	public String getName() {
-		return Policy.bind("CompareParticipant.0", getSubscriber().getName(), Utils.convertSelection(getSubscriber().roots(), 4)); //$NON-NLS-1$
+		return Policy.bind("CompareParticipant.0", getSubscriber().getName(), Utils.convertSelection(getSubscriber().roots())); //$NON-NLS-1$
 	}
 	
 	/*

@@ -36,6 +36,11 @@ import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 public class SynchronizeView extends PageBookView implements ISynchronizeView, ISynchronizeParticipantListener, IPropertyChangeListener {
 	
 	/**
+	 * Suggested maximum length of participant names when shown in certain menus and dialog.
+	 */
+	public final static int MAX_NAME_LENGTH = 100;
+	
+	/**
 	 * The participant being displayed, or <code>null</code> if none
 	 */
 	private ISynchronizeParticipant activeParticipantRef = null;

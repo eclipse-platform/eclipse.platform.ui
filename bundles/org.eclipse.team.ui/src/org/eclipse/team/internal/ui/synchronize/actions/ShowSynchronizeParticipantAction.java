@@ -13,6 +13,7 @@ package org.eclipse.team.internal.ui.synchronize.actions;
 import org.eclipse.jface.action.Action;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.internal.ui.synchronize.SynchronizeView;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipantReference;
 import org.eclipse.team.ui.synchronize.ISynchronizeView;
 
@@ -39,7 +40,7 @@ public class ShowSynchronizeParticipantAction extends Action {
 	 * @param participant the participant to show
 	 */
 	public ShowSynchronizeParticipantAction(ISynchronizeView view, ISynchronizeParticipantReference ref) {
-		super(ref.getDisplayName(), Action.AS_RADIO_BUTTON);
+		super(Utils.shortenText(SynchronizeView.MAX_NAME_LENGTH, ref.getDisplayName()), Action.AS_RADIO_BUTTON);
 		fPage = ref;
 		fView = view;
 		setImageDescriptor(ref.getDescriptor().getImageDescriptor());

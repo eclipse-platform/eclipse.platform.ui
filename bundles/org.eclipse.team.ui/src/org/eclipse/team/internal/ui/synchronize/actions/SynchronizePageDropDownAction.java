@@ -17,6 +17,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.internal.ui.synchronize.SynchronizeView;
 import org.eclipse.team.internal.ui.wizards.GlobalSynchronizeWizard;
 import org.eclipse.team.ui.TeamImages;
 import org.eclipse.team.ui.TeamUI;
@@ -163,7 +164,7 @@ public class SynchronizePageDropDownAction extends Action implements IMenuCreato
 			ISynchronizeParticipantReference[] refs = TeamUI.getSynchronizeManager().getSynchronizeParticipants();
 			String text = null;
 			if(current != null && refs.length > 0) {
-				text = Policy.bind("GlobalRefreshAction.5", current.getName()); //$NON-NLS-1$
+				text = Policy.bind("GlobalRefreshAction.5", Utils.shortenText(SynchronizeView.MAX_NAME_LENGTH, current.getName())); //$NON-NLS-1$
 				setToolTipText(text);
 				setText(text);
 			} else {

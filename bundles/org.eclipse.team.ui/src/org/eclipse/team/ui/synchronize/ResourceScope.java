@@ -68,7 +68,7 @@ public class ResourceScope extends AbstractSynchronizeScope {
 	 * @see org.eclipse.team.internal.ui.synchronize.ScopableSubscriberParticipant.ISynchronizeScope#getName()
 	 */
 	public String getName() {
-		return Utils.convertSelection(resources, 4);
+		return Utils.convertSelection(resources);
 	}
 	
 	/* (non-Javadoc)

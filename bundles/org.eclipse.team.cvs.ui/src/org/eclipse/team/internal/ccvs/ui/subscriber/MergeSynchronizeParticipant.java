@@ -156,7 +156,7 @@ public class MergeSynchronizeParticipant extends CVSParticipant {
 	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#getName()
 	 */
 	public String getName() {		
-		return Policy.bind("CompareParticipant.0", ((CVSMergeSubscriber)getSubscriber()).getName(), Utils.convertSelection(getSubscriber().roots(), 4));  //$NON-NLS-1$
+		return Policy.bind("CompareParticipant.0", ((CVSMergeSubscriber)getSubscriber()).getName(), Utils.convertSelection(getSubscriber().roots()));  //$NON-NLS-1$
 	}
 	
 	/*

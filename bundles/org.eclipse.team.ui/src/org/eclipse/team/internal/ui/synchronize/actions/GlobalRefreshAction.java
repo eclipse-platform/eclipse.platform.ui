@@ -18,6 +18,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.internal.ui.synchronize.SynchronizeView;
 import org.eclipse.team.internal.ui.wizards.GlobalSynchronizeWizard;
 import org.eclipse.team.ui.TeamImages;
 import org.eclipse.team.ui.TeamUI;
@@ -53,7 +54,7 @@ public class GlobalRefreshAction extends Action implements IMenuCreator, IWorkbe
 		}
 
 		public RefreshParticipantAction(int prefix, ISynchronizeParticipantReference participant) {
-			super("&" + prefix + " " + participant.getDisplayName()); //$NON-NLS-1$ //$NON-NLS-2$
+			super("&" + prefix + " " + Utils.shortenText(SynchronizeView.MAX_NAME_LENGTH, participant.getDisplayName())); //$NON-NLS-1$ //$NON-NLS-2$
 			this.participant = participant;
 			setImageDescriptor(participant.getDescriptor().getImageDescriptor());
 		}
