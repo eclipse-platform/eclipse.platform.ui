@@ -403,10 +403,10 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	/**
 	 * Schedules this job to be run after a specified delay.  After the specified delay,
 	 * the job is added to a queue of waiting jobs, and will be run when it arrives at the 
-	 * beginning of the queue.	Jobs with conflicting scheduling rules are guaranteed
-	 * to run in the order they are scheduled. No guarantees are made about the 
-	 * relative execution order of jobs with unrelated or <code>null</code>
-	 * scheduling rules.
+	 * beginning of the queue.	Jobs of equal priority with conflicting scheduling rules 
+	 * are guaranteed to run in the order they are scheduled. No guarantees are 
+	 * made about the relative execution order of jobs with unrelated or 
+	 * <code>null</code> scheduling rules, or different priorities.
 	 * <p>
 	 * If this job is currently running, it will be rescheduled with the specified
 	 * delay as soon as it finishes.  If this method is called multiple times
