@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationAccess;
+import org.eclipse.jface.text.source.IAnnotationAccessExtension;
 
 import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 
@@ -24,7 +25,7 @@ import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 /**
  * @since 2.1
  */
-public class DefaultMarkerAnnotationAccess implements IAnnotationAccess {
+public class DefaultMarkerAnnotationAccess implements IAnnotationAccess, IAnnotationAccessExtension {
 	
 	/** Constant for the unknown marker type */
 	public final static String UNKNOWN= TextEditorPlugin.PLUGIN_ID + ".unknown";  //$NON-NLS-1$
@@ -117,5 +118,26 @@ public class DefaultMarkerAnnotationAccess implements IAnnotationAccess {
 			return ((IAnnotationExtension)annotation).isTemporary();
 
 		return false;
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.source.IAnnotationAccessExtension#getLabel(org.eclipse.jface.text.source.Annotation)
+	 */
+	public String getTypeLabel(Annotation annotation) {
+		AnnotationPreference preference= null;
+		if (annotation instanceof MarkerAnnotation) {
+			MarkerAnnotation markerAnnotation= (MarkerAnnotation) annotation;
+			IMarker marker= markerAnnotation.getMarker();
+			if (marker != null && marker.exists()) {
+				preference= getAnnotationPreference(marker);
+			}
+		} else if (annotation instanceof IAnnotationExtension) {
+			IAnnotationExtension annotationExtension= (IAnnotationExtension)annotation;
+			preference= getAnnotationPreference(annotationExtension.getMarkerType(), annotationExtension.getSeverity());
+		}
+		if (preference != null)
+			return preference.getPreferenceLabel();
+		
+		return null;
 	}
 }

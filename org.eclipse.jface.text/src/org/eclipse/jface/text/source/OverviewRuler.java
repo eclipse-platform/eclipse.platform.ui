@@ -1016,8 +1016,13 @@ public class OverviewRuler implements IOverviewRuler {
 	 * @since 3.0
 	 */
 	private void updateHeaderToolTipText() {
-		
+
 		if (fHeader == null || fHeader.isDisposed())
+			return;
+
+		fHeader.setToolTipText(null);
+
+		if (!(fAnnotationAccess instanceof IAnnotationAccessExtension))
 			return;
 	
 		String overview= ""; //$NON-NLS-1$
@@ -1030,16 +1035,24 @@ public class OverviewRuler implements IOverviewRuler {
 				continue;
 	
 			int count= 0;
+			String annotationTypeLabel= null;
 	
 			for (Iterator e= new FilterIterator(annotationType); e.hasNext();) {
-				if (e.next() != null) {
+				Annotation annotation= (Annotation)e.next();
+				if (annotation != null) {
+					if (annotationTypeLabel == null)
+						annotationTypeLabel= ((IAnnotationAccessExtension)fAnnotationAccess).getTypeLabel(annotation);
 					count++;
 				}
 			}
-			if (overview.length() > 0)
-				overview += "\n"; //$NON-NLS-1$
-			overview += annotationType + "" + count; //$NON-NLS-1$
+			
+			if (annotationTypeLabel != null) {
+				if (overview.length() > 0)
+					overview += "\n"; //$NON-NLS-1$
+				overview += JFaceTextMessages.getFormattedString("OverviewRulerHeader.toolTipTextEntry", new Object[] {annotationTypeLabel, new Integer(count)}); //$NON-NLS-1$
+			}
 		}
-		fHeader.setToolTipText(overview);
+		if (overview.length() > 0)
+			fHeader.setToolTipText(overview);
 	}
 }

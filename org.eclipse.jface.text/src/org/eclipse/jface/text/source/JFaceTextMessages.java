@@ -11,6 +11,7 @@
 
 package org.eclipse.jface.text.source;
 
+import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
@@ -45,5 +46,21 @@ class JFaceTextMessages {
 		} catch (MissingResourceException e) {
 			return "!" + key + "!";//$NON-NLS-2$ //$NON-NLS-1$
 		}
+	}
+	
+	/**
+	 * Gets a string from the resource bundle and formats it with the argument
+	 * 
+	 * @param key	the string used to get the bundle value, must not be null
+	 * @since 3.0
+	 */
+	public static String getFormattedString(String key, Object[] args) {
+		String format= null;
+		try {
+			format= fgResourceBundle.getString(key);
+		} catch (MissingResourceException e) {
+			return "!" + key + "!";//$NON-NLS-2$ //$NON-NLS-1$
+		}
+		return MessageFormat.format(format, args);
 	}
 }

@@ -1,0 +1,30 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+
+package org.eclipse.jface.text.source;
+
+/**
+ * Extension interface for <code>IAnnotationAccess</code>.
+ * Allows to get a label for the annotation's type.
+ * </code>.
+ * 
+ * @since 3.0
+ */
+public interface IAnnotationAccessExtension {
+
+	/**
+	 * Returns the label for the given annotation's type.
+	 * 
+	 * @param annotation the annotation
+	 * @return the label the given annotation's type or <code>null</code> if no such label exists
+	 */
+	String getTypeLabel(Annotation annotation);
+}
