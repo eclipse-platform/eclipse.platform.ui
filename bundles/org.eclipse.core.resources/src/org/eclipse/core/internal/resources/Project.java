@@ -746,7 +746,10 @@ protected void internalMove(IProjectDescription destDesc, boolean force, IProgre
 			getMarkerManager().moved(this, destProject, IResource.DEPTH_ZERO);
 			monitor.worked(Policy.opWork * 10 / 100);
 
+			// we need to refresh local in case we moved to an existing location
+			// that already had content
 			monitor.subTask(Policy.bind("resources.syncTree"));
+			destProject.refreshLocal(IResource.DEPTH_INFINITE, Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
 		} catch (OperationCanceledException e) {
 			workspace.getWorkManager().operationCanceled();
 			throw e;
@@ -778,19 +781,17 @@ protected void internalMoveContent(IProjectDescription destDesc, boolean force, 
 				rollbackLevel++;
 				// actually move the resources
 				getLocalManager().getStore().move(source.toFile(), destination.toFile(), force, Policy.subMonitorFor(monitor, Policy.opWork * 70 / 100));
-				rollbackLevel++;
-				// now set the description so we get all the other changes too
-//				setDescription(destDesc, Policy.subMonitorFor(monitor, Policy.opWork * 20 / 100));
-			} catch (CoreException e) {
+				rollbackLevel = 0;
+				// we need to refresh local in case we moved to an existing location
+				// that already had content
+				refreshLocal(IResource.DEPTH_INFINITE, Policy.subMonitorFor(monitor, Policy.opWork * 20 / 100));
+			} finally {
 				switch (rollbackLevel) {
-					case 2 :
 					case 1 : 
 						// we set the location in the description but we had a problem moving the resources.
 						sourceDesc.setLocation(source);
 						break;
 				}
-				// rethrow the exception that got us here
-				throw e;
 			}
 		} finally {
 			workspace.endOperation(true, Policy.subMonitorFor(monitor, Policy.buildWork));

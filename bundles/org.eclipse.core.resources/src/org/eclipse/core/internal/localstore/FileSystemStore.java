@@ -114,17 +114,9 @@ public void move(File source, File destination, boolean force, IProgressMonitor 
 		boolean caseRenaming = false;
 		if (!CoreFileSystemLibrary.isCaseSensitive())
 			caseRenaming = source.getAbsolutePath().equalsIgnoreCase(destination.getAbsolutePath());
-		if (!caseRenaming && destination.exists()) {
-			if (!force) {
-				String message = Policy.bind("localstore.resourceExists", destination.getAbsolutePath());
-				throw new ResourceException(IResourceStatus.EXISTS_LOCAL, new Path(destination.getAbsolutePath()), message, null);
-			} else
-				try {
-					delete(destination);
-				} catch (CoreException e) {
-					String message = Policy.bind("localstore.couldnotDelete", destination.getAbsolutePath());
-					throw new ResourceException(IResourceStatus.FAILED_DELETE_LOCAL, new Path(destination.getAbsolutePath()), message, e);
-				}
+		if (!caseRenaming && !force && destination.exists()) {
+			String message = Policy.bind("localstore.resourceExists", destination.getAbsolutePath());
+			throw new ResourceException(IResourceStatus.EXISTS_LOCAL, new Path(destination.getAbsolutePath()), message, null);
 		}
 		if (source.renameTo(destination)) {
 			// double-check to ensure we really did move
@@ -151,16 +143,24 @@ public void move(File source, File destination, boolean force, IProgressMonitor 
 			}
 		} 
 		boolean success = false;
+		boolean canceled = false;
 		try {
 			copy(source, destination, IResource.DEPTH_INFINITE, Policy.subMonitorFor(monitor, 1));
 			success = true;
+		} catch (OperationCanceledException e) {
+			canceled = true;
+			throw e;
 		} finally {
 			if (success)
 				Workspace.clear(source);
 			else {
-				Workspace.clear(destination);
-				String message = Policy.bind("localstore.couldnotMove", source.getAbsolutePath());
-				throw new ResourceException(new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, new Path(source.getAbsolutePath()), message, null));
+				if (!canceled) {
+					// We do not want to delete the destination in case of failure. It might
+					// the case where we already had contents in the destination, so we would
+					// be deleting resources we don't know about and the user might lose data.
+					String message = Policy.bind("localstore.couldnotMove", source.getAbsolutePath());
+					throw new ResourceException(new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, new Path(source.getAbsolutePath()), message, null));
+				}
 			}
 		}
 		monitor.worked(1);
