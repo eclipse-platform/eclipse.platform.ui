@@ -148,8 +148,6 @@ public class EditorPresentation extends BasicStackPresentation {
         openEditorDropDownHandlerSubmission = new HandlerSubmission(null,
                 shell, null, "org.eclipse.ui.window.openEditorDropDown", //$NON-NLS-1$
                 openEditorDropDownHandler, Priority.MEDIUM);
-        PlatformUI.getWorkbench().getCommandSupport().addHandlerSubmission(
-                openEditorDropDownHandlerSubmission);
     }
 
     public void dispose() {
@@ -214,6 +212,18 @@ public class EditorPresentation extends BasicStackPresentation {
         super.setActive(isActive);
 
         updateGradient();
+        /*
+         * this following is to fix bug 57715
+         * when activating the EditorPresentation, add support for drop down list
+         * when disactivating the EditorPresentation, remove support for drop down list
+         */
+        if (openEditorDropDownHandlerSubmission != null)
+	        if (isActive)
+	        	PlatformUI.getWorkbench().getCommandSupport().addHandlerSubmission(
+	                openEditorDropDownHandlerSubmission);
+	        else
+	        	PlatformUI.getWorkbench().getCommandSupport().removeHandlerSubmission(
+	                    openEditorDropDownHandlerSubmission);
     }
 
     /**
