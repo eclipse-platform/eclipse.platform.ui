@@ -84,70 +84,86 @@ public abstract class ImageDescriptor {
     }
 
     /**
-     * Creates and returns a new SWT image for this image descriptor.
-     * Note that each call returns a new SWT image object.
-     * A default image is returned in the event of an error.
-     * <p>
-     * Note: it is still possible for this method to return <code>null</code> in extreme cases,
-     * for example if SWT runs out of image handles.
-     * </p>
-     *
-     * @return a new image or <code>null</code> if the image could not be created
-     */
+	 * Creates and returns a new SWT image for this image descriptor. Note that
+	 * each call returns a new SWT image object. The returned image must be
+	 * explicitly disposed using the image's dispose call. The image will not be
+	 * automatically garbage collected. A default image is returned in the event
+	 * of an error.
+	 * <p>
+	 * Note: it is still possible for this method to return <code>null</code>
+	 * in extreme cases, for example if SWT runs out of image handles.
+	 * </p>
+	 * 
+	 * @return a new image or <code>null</code> if the image could not be
+	 *         created
+	 */
     public Image createImage() {
         return createImage(true);
     }
 
     /**
-     * Creates and returns a new SWT image for this image descriptor.
-     * In the even of an error, a default image is returned if 
-     * <code>returnMissingImageOnError</code> is true, otherwise <code>null</code>
-     * is returned.  
-     * <p>
-     * Note: Even if <code>returnMissingImageOnError</code> is true, 
-     * it is still possible for this method to return <code>null</code> in extreme cases,
-     * for example if SWT runs out of image handles.
-     * </p>
-     *
-     * @param returnMissingImageOnError flag that determines if a default image is returned on error
-     * @return a new image or <code>null</code> if the image could not be created
-     */
+	 * Creates and returns a new SWT image for this image descriptor. The
+	 * returned image must be explicitly disposed using the image's dispose
+	 * call. The image will not be automatically garbage collected. In the event
+	 * of an error, a default image is returned if
+	 * <code>returnMissingImageOnError</code> is true, otherwise
+	 * <code>null</code> is returned.
+	 * <p>
+	 * Note: Even if <code>returnMissingImageOnError</code> is true, it is
+	 * still possible for this method to return <code>null</code> in extreme
+	 * cases, for example if SWT runs out of image handles.
+	 * </p>
+	 * 
+	 * @param returnMissingImageOnError
+	 *            flag that determines if a default image is returned on error
+	 * @return a new image or <code>null</code> if the image could not be
+	 *         created
+	 */
     public Image createImage(boolean returnMissingImageOnError) {
         return createImage(returnMissingImageOnError, Display.getCurrent());
     }
 
     /**
-     * Creates and returns a new SWT image for this image descriptor.
-     * A default image is returned in the event of an error.
-     * <p>
-     * Note: it is still possible for this method to return <code>null</code> in extreme cases,
-     * for example if SWT runs out of image handles.
-     * </p>
-     *
-     * @param device the device on which to create the image
-     * @return a new image or <code>null</code> if the image could not be created
-     * @since 2.0
-     */
+	 * Creates and returns a new SWT image for this image descriptor. The
+	 * returned image must be explicitly disposed using the image's dispose
+	 * call. The image will not be automatically garbage collected. A default
+	 * image is returned in the event of an error.
+	 * <p>
+	 * Note: it is still possible for this method to return <code>null</code>
+	 * in extreme cases, for example if SWT runs out of image handles.
+	 * </p>
+	 * 
+	 * @param device
+	 *            the device on which to create the image
+	 * @return a new image or <code>null</code> if the image could not be
+	 *         created
+	 * @since 2.0
+	 */
     public Image createImage(Device device) {
         return createImage(true, device);
     }
 
     /**
-     * Creates and returns a new SWT image for this image descriptor.
-     * In the even of an error, a default image is returned if 
-     * <code>returnMissingImageOnError</code> is true, otherwise <code>null</code>
-     * is returned.  
-     * <p>
-     * Note: Even if <code>returnMissingImageOnError</code> is true, 
-     * it is still possible for this method to return <code>null</code> in extreme cases,
-     * for example if SWT runs out of image handles.
-     * </p>
-     *
-     * @param returnMissingImageOnError flag that determines if a default image is returned on error
-     * @param device the device on which to create the image
-     * @return a new image or <code>null</code> if the image could not be created
-     * @since 2.0
-     */
+	 * Creates and returns a new SWT image for this image descriptor. The
+	 * returned image must be explicitly disposed using the image's dispose
+	 * call. The image will not be automatically garbage collected. In the even
+	 * of an error, a default image is returned if
+	 * <code>returnMissingImageOnError</code> is true, otherwise
+	 * <code>null</code> is returned.
+	 * <p>
+	 * Note: Even if <code>returnMissingImageOnError</code> is true, it is
+	 * still possible for this method to return <code>null</code> in extreme
+	 * cases, for example if SWT runs out of image handles.
+	 * </p>
+	 * 
+	 * @param returnMissingImageOnError
+	 *            flag that determines if a default image is returned on error
+	 * @param device
+	 *            the device on which to create the image
+	 * @return a new image or <code>null</code> if the image could not be
+	 *         created
+	 * @since 2.0
+	 */
     public Image createImage(boolean returnMissingImageOnError, Device device) {
 
         ImageData data = getImageData();
