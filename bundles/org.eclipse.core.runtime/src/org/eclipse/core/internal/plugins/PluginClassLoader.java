@@ -106,7 +106,7 @@ protected Class findClassParentsSelf(final String name, boolean resolve, Delegat
 			// If the class is loaded in this classloader register it with
 			// the hot swap support.  Need to do this regardless of visibility
 			// because the class was actually loaded.
-//			enableJ9HotSwap(this, result);
+			enableHotSwap(this, result);
 
 			return checkClassVisibility(result, requestor, false);
 		}
@@ -140,7 +140,7 @@ protected Class findClassParentsSelf(final String name, boolean resolve, Delegat
 			// because the class was actually loaded.
 			if (result == null)
 				return null;
-//			enableJ9HotSwap(this, result);
+			enableHotSwap(this, result);
 			return checkClassVisibility(result, requestor, false);
 		} catch (ClassNotFoundException e) {
 			return null;
