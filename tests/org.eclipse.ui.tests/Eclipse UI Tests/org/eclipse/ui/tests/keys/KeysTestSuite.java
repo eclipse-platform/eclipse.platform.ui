@@ -42,5 +42,6 @@ public class KeysTestSuite extends TestSuite {
 		addTest(new TestSuite(Bug43321Test.class));
 		addTest(new TestSuite(Bug43597Test.class));
 		addTest(new TestSuite(Bug43800Test.class));
+		addTest(new TestSuite(Bug44460Test.class));
 	}
 }
