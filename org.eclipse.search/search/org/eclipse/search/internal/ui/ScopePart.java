@@ -175,8 +175,11 @@ public class ScopePart {
 	}
 
 	private void updateSearchPageContainerActionPerformedEnablement() {
-		if (fSearchPageContainer != null)
-			fSearchPageContainer.setPerformActionEnabled(fScope != WORKING_SET_SCOPE || fWorkingSets != null);
+		boolean newState= fScope != WORKING_SET_SCOPE || fWorkingSets != null;
+		if (fSearchPageContainer instanceof SearchDialog)
+			((SearchDialog)fSearchPageContainer).setPerformActionEnabledFromScopePart(newState);
+		else if (fSearchPageContainer != null)
+			fSearchPageContainer.setPerformActionEnabled(newState);
 	}
 
 	/**

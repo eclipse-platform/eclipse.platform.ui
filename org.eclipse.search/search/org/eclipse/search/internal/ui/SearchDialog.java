@@ -101,6 +101,7 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 	private List fDescriptors;
 	private Point fMinSize;
 	private ScopePart[] fScopeParts;
+	private boolean fPageStateIgnoringScopePart;
 
 	public SearchDialog(Shell shell, IWorkspace workspace, ISelection selection, IEditorPart editor, String pageId) {
 		super(shell);
@@ -422,6 +423,25 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 		if (fScopeParts[fCurrentIndex] != null)
 			fScopeParts[fCurrentIndex].setSelectedWorkingSets(workingSets);
 	}
+
+	/*
+	 * Overrides method from ExtendedDialogWindow
+	 */
+	public void setPerformActionEnabled(boolean state) {
+		super.setPerformActionEnabled(state);
+		fPageStateIgnoringScopePart= state;
+	} 
+
+	/**
+	 * Set the enable state of the perform action button.
+	 * <p>
+	 * Note: This is a special method to be called only from the ScopePart
+	 * </p>
+	 */
+	public void setPerformActionEnabledFromScopePart(boolean state) {
+		if (fPageStateIgnoringScopePart)
+			super.setPerformActionEnabled(state);
+	} 
 
 	private Control getControl(ISearchPage page, Composite parent, int index) {
 		if (page.getControl() == null) {
