@@ -25,11 +25,14 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.Job;
 
+import org.eclipse.swt.widgets.Display;
+
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.editors.text.IStorageDocumentProvider;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IElementStateListener;
@@ -67,6 +70,8 @@ public class LastSaveReferenceProvider implements IQuickDiffProviderImplementati
 	 * operation, or <code>null</code>.
 	 */
 	private IProgressMonitor fProgressMonitor;
+	/** The text editor we run upon. */
+	private ITextEditor fEditor;
 
 	/**
 	 * A job to put the reading of file contents into a background.
@@ -109,21 +114,22 @@ public class LastSaveReferenceProvider implements IQuickDiffProviderImplementati
 	 * {@inheritdoc}
 	 */
 	public void dispose() {
-		IDocumentProvider provider= fDocumentProvider;
-		if (provider != null)
-			provider.removeElementStateListener(this);
-		
 		IProgressMonitor monitor= fProgressMonitor;
 		if (monitor != null) {
 			monitor.setCanceled(true);
 		}
 		
+		IDocumentProvider provider= fDocumentProvider;
+		
 		synchronized (fLock) {
+			if (provider != null)
+				provider.removeElementStateListener(this);
 			fEditorInput= null;
 			fDocumentProvider= null;
 			fReference= null;
 			fDocumentRead= false;
 			fProgressMonitor= null;
+			fEditor= null;
 		}
 	}
 
@@ -145,11 +151,13 @@ public class LastSaveReferenceProvider implements IQuickDiffProviderImplementati
 			input= targetEditor.getEditorInput();
 		}
 		
+		
 		// dispose if the editor input or document provider have changed
 		// note that they may serve multiple editors
 		if (provider != fDocumentProvider || input != fEditorInput) {
 			dispose();
 			synchronized (fLock) {
+				fEditor= targetEditor;
 				fDocumentProvider= provider;
 				fEditorInput= input;
 			}
@@ -184,6 +192,7 @@ public class LastSaveReferenceProvider implements IQuickDiffProviderImplementati
 		IDocumentProvider prov= fDocumentProvider;
 		IEditorInput inp= fEditorInput;
 		IDocument doc= fReference;
+		ITextEditor editor= fEditor;
 		
 		if (prov instanceof IStorageDocumentProvider && inp instanceof IFileEditorInput) {
 			
@@ -196,9 +205,6 @@ public class LastSaveReferenceProvider implements IQuickDiffProviderImplementati
 				else
 					return;
 
-			// addElementStateListener adds at most once - no problem to call
-			// repeatedly
-			((IDocumentProvider) provider).addElementStateListener(this);
 			IJobManager jobMgr= Platform.getJobManager();
 			IFile file= input.getFile();
 			
@@ -243,12 +249,46 @@ public class LastSaveReferenceProvider implements IQuickDiffProviderImplementati
 					// been updated in between (dispose or setActiveEditor)
 					fReference= doc;
 					fDocumentRead= true;
+					addElementStateListener(editor, prov);
 				}
 			}
 		}
 	}
 
 	/* utility methods */
+
+	/**
+	 * Adds this as element state listener in the UI thread as it can otherwise 
+	 * conflict with other listener additions, since DocumentProvider is not
+	 * threadsafe.
+	 * 
+	 * @param editor the editor to get the display from
+	 * @param provider the document provider to register as element state listener
+	 */
+	private void addElementStateListener(ITextEditor editor, final IDocumentProvider provider) {
+		// addElementStateListener adds at most once - no problem to call
+		// repeatedly
+		Runnable runnable= new Runnable() {
+			public void run() {
+				synchronized (fLock) {
+					if (fDocumentProvider == provider)
+						provider.addElementStateListener(LastSaveReferenceProvider.this);
+				}
+			}
+		};
+		
+		Display display= null;
+		if (editor != null) {
+			IWorkbenchPartSite site= editor.getSite();
+			if (site != null)
+				site.getWorkbenchWindow().getShell().getDisplay();
+		}
+		
+		if (display != null && !display.isDisposed())
+			display.asyncExec(runnable);
+		else
+			runnable.run();
+	}
 
 	/**
 	 * Gets the contents of <code>file</code> as an input stream.
