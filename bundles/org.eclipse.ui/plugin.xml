@@ -30,6 +30,7 @@
    <extension-point id="activities" name="%ExtPoint.activities" schema="schema/activities.exsd"/>
    <extension-point id="actionSetPartAssociations" name="%ExtPoint.actionSetPartAssociations" schema="schema/actionSetPartAssociations.exsd"/>
    <extension-point id="actionSets" name="%ExtPoint.actionSets" schema="schema/actionSets.exsd"/>
+   <extension-point id="colorDefinitions" name="%ExtPoint.colorDefinitions" schema="schema/colorDefinition.exsd"/>
    <extension-point id="commands" name="%ExtPoint.commands" schema="schema/commands.exsd"/>
    <extension-point id="contexts" name="%ExtPoint.contexts" schema="schema/contexts.exsd"/>
    <extension-point id="decorators" name="%ExtPoint.decorators" schema="schema/decorators.exsd"/>
@@ -49,10 +50,10 @@
    <extension-point id="preferencePages" name="%ExtPoint.preferencePages" schema="schema/preferencePages.exsd"/>
    <extension-point id="propertyPages" name="%ExtPoint.propertyPages" schema="schema/propertyPages.exsd"/>
    <extension-point id="startup" name="%ExtPoint.startup" schema="schema/startup.exsd"/>
+   <extension-point id="themes" name="%ExtPoint.themes"/>
    <extension-point id="viewActions" name="%ExtPoint.viewActions" schema="schema/viewActions.exsd"/>
    <extension-point id="views" name="%ExtPoint.views" schema="schema/views.exsd"/>
    <extension-point id="workingSets" name="%ExtPoint.workingSets" schema="schema/workingSets.exsd"/>
-   <extension-point id="colorDefinitions" name="%ExtPoint.colorDefinitions" schema="schema/colorDefinition.exsd"/>
 
    <extension
          point="org.eclipse.ui.contexts">

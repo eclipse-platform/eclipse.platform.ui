@@ -85,6 +85,13 @@ with this perspective.
                </appInfo>
             </annotation>
          </attribute>
+         <attribute name="theme" type="string">
+            <annotation>
+               <documentation>
+                  The theme to use to customize the UI of tabs and View titlebars.
+               </documentation>
+            </annotation>
+         </attribute>         
       </complexType>
    </element>
 

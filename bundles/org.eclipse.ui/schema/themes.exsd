@@ -1,0 +1,414 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.ui">
+<annotation>
+   <appInfo>
+      <meta.schema plugin="org.eclipse.ui" id="themes" name="Themes"/>
+   </appInfo>
+   <documentation>
+      This extension point is used to customize the UI of tabs and views.
+   </documentation>
+</annotation>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="theme" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a fully qualified identifier of the target extension point
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  an optional identifier of the extension instance
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  an optional name of the extension instance
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+
+   <element name="theme">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="name" icon="icon"/>
+         </appInfo>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="tabTheme" minOccurs="0" maxOccurs="1"/>
+            <element ref="viewTheme" minOccurs="0" maxOccurs="1"/>
+         </sequence>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a unique name that will be used to identify this theme.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a translatable name that will be used in the workbench window menu bar to represent this perspective.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+
+   <element name="viewTheme">
+      <annotation>
+         <documentation>
+            Allows for customization of the look of View titlebars and borders.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="titlebar" minOccurs="0" maxOccurs="1"/>
+         </sequence>
+      </complexType>
+   </element>
+
+   <element name="titlebar">
+      <annotation>
+         <documentation>
+			Allows for UI customization for a view's titlebar
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="activeTextColor" type="string" use="optional">
+            <annotation>
+               <documentation>
+                  The color that the titlebar should be displayed in when a view is active. 
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="deactivatedTextColor" type="string" use="optional">
+            <annotation>
+               <documentation>
+                  The color that the titlebar should be displayed in when a view is inactive. 
+               </documentation>
+            </annotation>
+         </attribute>      
+         <attribute name="normalTextColor" type="string" use="optional">
+            <annotation>
+               <documentation>
+                  The color that the titlebar should be displayed in. 
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="activeBGColor" type="string" use="optional">
+            <annotation>
+               <documentation>
+                  The background color for the view's titlebar when it is active.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="deactivatedBGColor" type="string" use="optional">
+            <annotation>
+               <documentation>
+                  The background color for the view's titlebar when it is not active.
+               </documentation>
+            </annotation>
+         </attribute>      
+         <attribute name="normalBGColor" type="string" use="optional">
+            <annotation>
+               <documentation>
+                The background color for the view's titlebar in normal mode. 
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="activeBGPercents" type="string" use="optional">
+            <annotation>
+               <documentation>
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="deactivatedBGPercents" type="string" use="optional">
+            <annotation>
+               <documentation>
+               </documentation>
+            </annotation>
+         </attribute>      
+         <attribute name="normalBGPercents" type="string" use="optional">
+            <annotation>
+               <documentation>
+               </documentation>
+            </annotation>
+         </attribute>                  
+         <attribute name="font" type="string" use="optional">
+            <annotation>
+               <documentation>
+                  Specify the font to use in the view's titlebar.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="borderStyle" use="optional">
+            <annotation>
+               <documentation>
+                  Specify the borderstyle for the view.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="none">
+                  </enumeration>
+                  <enumeration value="line">
+                  </enumeration>
+               </restriction>
+            </simpleType>            
+         </attribute>
+         <attribute name="gradientDirection" use="optional">
+            <annotation>
+               <documentation>
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="vertical">
+                  </enumeration>
+               </restriction>
+            </simpleType>            
+         </attribute>                  
+      </complexType>
+   </element>
+
+   <element name="tabTheme">
+      <annotation>
+         <documentation>
+            Allows for customization of the look of tabs in a folder.  All folders that are created in the target perspective will have the same customized tab look.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="marginInfo" minOccurs="0" maxOccurs="4"/>
+            <element ref="tabImage" minOccurs="0" maxOccurs="4"/>
+         </sequence>
+         <attribute name="position">
+            <annotation>
+               <documentation>
+                  Position of tabs in a folder; allowed values are top and bottom.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="top">
+                  </enumeration>
+                  <enumeration value="bottom">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+         <attribute name="fixedWidth" type="string" use="optional">
+            <annotation>
+               <documentation>
+                  Have all tabs be a fixed width.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="fixedHeight" type="string" use="optional">
+            <annotation>
+               <documentation>
+                  Have all tabs be a fixed height.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="showInTab">
+            <annotation>
+               <documentation>
+                  Specify what is displayed in a tab.  The display options are - textOnly, iconsAndText and iconsOnly. A tab is associated with a view. The information displayed is retrieved from the view definition.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="iconsOnly">
+                  </enumeration>
+                  <enumeration value="iconsAndText">
+                  </enumeration>
+                  <enumeration value="textOnly">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+         <attribute name="dragInFolder" type="boolean" use="optional">
+            <annotation>
+               <documentation>
+                  Determines if tabs in the folder can be dragged outside of the tab folder to other parts of the workbench.  A value of true allows the tab only to be dragged within the tab folder.  This attribute is optional, if not used the tabbed view will be draggable to any part of the workbench.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="showClose" type="boolean" use="optional">
+            <annotation>
+               <documentation>
+                  Specify whether to show a close button on the tabs. The default is false - close button will not be displayed.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="font" type="string" use="optional">
+            <annotation>
+               <documentation>
+                  Specify the font to use for the tab titles.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="activeTextColor" type="string" use="optional">
+            <annotation>
+               <documentation>
+                  The color that the title should be displayed in when a tab is active. 
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="inactiveTextColor" type="string" use="optional">
+            <annotation>
+               <documentation>
+                  The color that the title should be displayed in when a tab is inactive.  
+               </documentation>
+            </annotation>
+         </attribute>      
+         <attribute name="hoverTextColor" type="string" use="optional">
+            <annotation>
+               <documentation>
+                  The color that the title should be displayed in when a user has the mouse over the tab.  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="borderStyle" use="optional">
+            <annotation>
+               <documentation>
+                  Specify the borderstyle for the tab Folder.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="none">
+                  </enumeration>
+               </restriction>
+            </simpleType>            
+         </attribute>
+         <attribute name="itemMargins" type="string" use="optional">
+            <annotation>
+               <documentation>
+                  Specify the margins (insets) for the tab. Specify in the following format "10|6|-1|-1".  The values correspond to the top,left,bottom,right margins.  A value of -1 indicates that the default should be used.
+               </documentation>
+            </annotation>
+         </attribute>                           
+         <attribute name="showTooltip" type="boolean" use="optional">
+            <annotation>
+               <documentation>
+                  Specify whether a tooltip should be shown for the tabs. Default is false - no tooltip.
+               </documentation>
+            </annotation>
+         </attribute>         
+      </complexType>
+   </element>
+
+   <element name="marginInfo">
+      <annotation>
+         <documentation>
+            Specify the top margin. The margin will be an area below the border line and above the view content area.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="position" use="required">
+            <annotation>
+               <documentation>
+                  Currently only top &amp; all are allowed
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="top">
+                  </enumeration>
+                  <enumeration value="all">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+         <attribute name="color" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The colr that the margin should be displayed in.  This should be specified as parts of an RGB value.  Each part should be a decimal value. For example, specifying &quot;136,178,234&quot; would correspond to a dark blue.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="size" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Specify in pixels how big this margin should be.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="tabImage">
+      <annotation>
+         <documentation>
+            Allows specification of an image to use for the tab&apos;s look for the state defined by imageType.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="imageType" use="required">
+            <annotation>
+               <documentation>
+                  Supported imageType&apos;s are: selected and unselected.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="selected">
+                  </enumeration>
+                  <enumeration value="unselected">
+                  </enumeration>
+                  <enumeration value="closeActive">
+                  </enumeration>
+                  <enumeration value="closeInactive">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+         <attribute name="image" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Specify the image to use for specified imageType.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         &lt;p&gt;
+Copyright (c) 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials are made available under the terms of the Common Public License v1.0 which accompanies this distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html
+      </documentation>
+   </annotation>
+
+</schema>
