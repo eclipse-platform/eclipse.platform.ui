@@ -52,5 +52,18 @@
             class="org.eclipse.ant.internal.core.AntPropertyValueProvider">
       </antProperty>
     </extension>
-
+    
+	<extension 
+		point="org.eclipse.core.runtime.contentTypes"> 
+		<content-type  
+			id="contentTypes.antBuildFile" 
+			name="%antBuildFileContentType.name" 
+			base-type="org.eclipse.core.runtime.xml" 
+			priority="high"> 
+			<describer 
+				class="org.eclipse.core.runtime.content.XMLRootElementContentDescriber"> 
+				<parameter name="element" value="project" /> 
+			</describer> 
+		</content-type> 
+   </extension>
 </plugin>
