@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component xmlns="http://eclipse.org/component"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://eclipse.org/component ../component.xsd "
+   name="JFace">
+ <plugin id="org.eclipse.jface" />
+
+ <package name="org.eclipse.jface.action" >
+   <type name="AbstractGroupMarker" subclass="false"/>
+   <type name="ActionContributionItem" subclass="false"/>
+   <type name="ExternalActionManager" reference="false"/>
+   <type name="GroupMarker" subclass="false"/>
+   <type name="IAction" implement="false"/>
+   <type name="IContributionItem" implement="false"/>
+   <type name="IContributionManagerOverrides" implement="false"/>
+   <type name="IMenuManager" implement="false"/>
+   <type name="Separator" subclass="false"/>
+   <type name="StatusLine" reference="false"/>
+   <type name="SubContributionItem" subclass="false"/>
+   <type name="ToolBarContributionItem" subclass="false"/>
+ </package>
+
+ <package name="org.eclipse.jface.bindings" />
+ <package name="org.eclipse.jface.bindings.keys" />
+ <package name="org.eclipse.jface.bindings.keys.formatting" />
+ <package name="org.eclipse.jface.commands" />
+ <package name="org.eclipse.jface.contexts" />
+ 
+ <package name="org.eclipse.jface.dialogs">
+   <type name="DialogSettings" subclass="false"/>
+ </package>
+
+ <package name="org.eclipse.jface.operation" >
+   <type name="ModalContext" subclass="false" instantiate="false"/>
+ </package>
+
+ <package name="org.eclipse.jface.preference" >
+    <type name="PreferenceConverter" instantiate="false"/>
+    <type name="PreferenceStore" subclass="false"/>
+ </package>
+
+ <package name="org.eclipse.jface.resource" >
+   <type name="ColorRegistry" subclass="false"/>
+   <type name="FontRegistry" subclass="false"/>
+   <type name="ImageCache" subclass="false"/>
+   <type name="ImageRegistry" subclass="false"/>
+   <type name="JFaceResources" instantiate="false" subclass="false"/>
+   <type name="StringConverter" instantiate="false" subclass="false"/>
+ </package>
+
+ <package name="org.eclipse.jface.util" />
+ <package name="org.eclipse.jface.viewers" >
+   <type name="ArrayContentProvider" subclass="false"/>
+   <type name="CheckboxCellEditor" subclass="false"/>
+   <type name="CheckboxTableViewer" subclass="false"/>
+   <type name="CheckboxTreeViewer" subclass="false"/>
+   <type name="ColorCellEditor" subclass="false"/>
+   <type name="ColumnLayoutData" subclass="false"/>
+   <type name="ColumnPixelData" subclass="false"/>
+   <type name="ColumnWeightData" subclass="false"/>
+   <type name="ComboBoxCellEditor" subclass="false"/>
+   <type name="IDecoration" implement="false"/>
+   <type name="ListViewer" subclass="false"/>
+   <type name="StructuredSelection" subclass="false"/>
+   <type name="TableTreeViewer" subclass="false"/>
+   <type name="TableViewer" subclass="false"/>
+   <type name="TextCellEditor" subclass="false"/>
+   <type name="TreeViewer" subclass="false"/>
+   
+ </package>
+
+ <package name="org.eclipse.jface.viewers.deferred" >
+   <type name="IConcurrentModel" implement="false"/>
+  
+ </package>
+
+ <package name="org.eclipse.jface.window" />
+ <package name="org.eclipse.jface.wizard" />
+
+ <component-depends unrestricted="true"/>
+
+</component>
