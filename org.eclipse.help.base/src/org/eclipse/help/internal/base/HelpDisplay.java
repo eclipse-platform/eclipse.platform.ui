@@ -47,20 +47,6 @@ public class HelpDisplay {
 	}
 
 	/**
-	 * Displays a help resource
-	 */
-	private void displayHelpResource(IHelpResource helpResource) {
-		if (helpResource instanceof IToc)
-			displayHelpURL("toc=" + URLEncoder.encode(helpResource.getHref()));
-		else if (helpResource instanceof ITopic)
-			displayHelpURL(
-				"topic="
-					+ URLEncoder.encode(getTopicURL(helpResource.getHref())));
-		else
-			displayHelpResource(helpResource.getHref());
-	}
-
-	/**
 	 * Displays a help resource specified as a url. 
 	 * <ul>
 	 *  <li>a URL in a format that can be returned by
@@ -75,7 +61,7 @@ public class HelpDisplay {
 		// check if this is a toc
 		IToc toc = HelpPlugin.getTocManager().getToc(href, BootLoader.getNL());
 		if (toc != null)
-			displayHelpResource(toc);
+			displayHelpURL("toc=" + URLEncoder.encode(toc.getHref()));
 		else if (
 			href != null
 				&& (href.startsWith("tab=")
