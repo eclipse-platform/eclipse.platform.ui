@@ -127,6 +127,12 @@
             id="org.eclipse.debug.ui.LaunchingPreferencePage">
       </page>
       <page
+            name="%ViewManagementPreferencePage.name"
+            category="org.eclipse.debug.ui.DebugPreferencePage"
+            class="org.eclipse.debug.internal.ui.preferences.ViewManagementPreferencePage"
+            id="org.eclipse.debug.ui.ViewManagementPreferencePage">
+      </page>
+      <page
             name="%ConsolePreferencePage.name"
             category="org.eclipse.debug.ui.DebugPreferencePage"
             class="org.eclipse.debug.internal.ui.preferences.ConsolePreferencePage"
@@ -502,6 +508,17 @@
    </extension>
    <extension
          point="org.eclipse.ui.viewActions">
+      <viewContribution
+            targetID="org.eclipse.debug.ui.DebugView"
+            id="org.eclipse.debug.ui.PulldownActions">
+         <action
+               id="org.eclipse.debug.ui.debugview.pulldown.ViewManagementAction"
+               class="org.eclipse.debug.internal.ui.actions.ViewManagementAction"
+               helpContextId="view_management_action_context"
+               label="%ViewManagementAction.label"
+               menubarPath="additions">
+         </action>
+      </viewContribution>
 <!-- Contributions to Debug View Toolbar -->
       <viewContribution
             targetID="org.eclipse.debug.ui.DebugView"

@@ -11,7 +11,11 @@
 package org.eclipse.debug.internal.ui.views.launch;
 
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+import java.util.StringTokenizer;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -42,7 +46,6 @@ import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.InstructionPointerManager;
 import org.eclipse.debug.internal.ui.actions.AddToFavoritesAction;
 import org.eclipse.debug.internal.ui.actions.EditLaunchConfigurationAction;
-import org.eclipse.debug.internal.ui.actions.AutoManageViewsAction;
 import org.eclipse.debug.internal.ui.sourcelookup.CommonSourceNotFoundEditorInput;
 import org.eclipse.debug.internal.ui.sourcelookup.EditSourceLookupPathAction;
 import org.eclipse.debug.internal.ui.sourcelookup.LookupSourceAction;
@@ -167,15 +170,10 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	private LookupSourceAction fLookupAction = null;
 	
 	/**
-	 * Whether or not this view automatically opens and closes views
-	 * based on debug contexts.
+	 * Collection of perspectives in which views should be
+	 * automatically opened and closed.
 	 */
-	private boolean fAutoManage= true;
-	/**
-	 * Memento key used to store the views setting for automatically
-	 * managing views.
-	 */
-	private static String ATTR_AUTO_MANAGE_VIEWS= "autoManageViews"; //$NON-NLS-1$
+	private List fAutoManagePerspectives= new ArrayList();
 	/**
 	 * Context manager which automatically opens and closes views
 	 * based on debug contexts.
@@ -203,7 +201,6 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 */
 	protected void createActions() {
 		setAction("Properties", new PropertyDialogAction(getSite().getWorkbenchWindow().getShell(), getSite().getSelectionProvider())); //$NON-NLS-1$
-		setAction("AutoManageViews", new AutoManageViewsAction(this)); //$NON-NLS-1$
 		fEditConfigAction = new EditLaunchConfigurationAction();
 		fAddToFavoritesAction = new AddToFavoritesAction();
 		fEditSourceAction = new EditSourceLookupPathAction(this);
@@ -247,6 +244,8 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		
 		// determine if active
 		setActive(getSite().getPage().findView(getSite().getId()) != null);
+		
+		loadAutoManagePerspectives();
 		
 		return lv;
 	}
@@ -418,10 +417,6 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 				}
 			}
 		}
-		String autoManage = memento.getString(ATTR_AUTO_MANAGE_VIEWS);
-		if (autoManage != null) {
-			fAutoManage= Boolean.valueOf(autoManage).booleanValue();
-		}
 		contextListener.init(memento);
 	}
 		
@@ -436,7 +431,6 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		tbm.add(new GroupMarker(IDebugUIConstants.STEP_RETURN_GROUP));
 		tbm.add(new GroupMarker(IDebugUIConstants.EMPTY_STEP_GROUP));
 		tbm.add(new Separator(IDebugUIConstants.RENDER_GROUP));
-		tbm.add(getAction("AutoManageViews")); //$NON-NLS-1$
 	}	
 
 	/* (non-Javadoc)
@@ -501,6 +495,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 			contextListener.updateForSelection(((IStructuredSelection) getViewer().getSelection()).getFirstElement());
 		}
 	}
+
 	
 	/**
 	 * Returns whether this view automatically opens and closes
@@ -509,17 +504,46 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 * views based on contexts
 	 */
 	public boolean isAutoManageViews() {
-		return fAutoManage;
+		IWorkbenchPage page = getViewSite().getWorkbenchWindow().getActivePage();
+		if (page != null) {
+			IPerspectiveDescriptor descriptor = page.getPerspective();
+			if (descriptor != null) {
+				return fAutoManagePerspectives.contains(descriptor.getId());
+			}
+		}
+		return false;
+	}
+	
+	private void loadAutoManagePerspectives() {
+		String prefString = DebugUIPlugin.getDefault().getPreferenceStore().getString(IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES);
+		fAutoManagePerspectives= parseList(prefString);
 	}
 	
 	/**
-	 * Sets whether or not this view will automatically
-	 * open and close views based on contexts.
-	 * @param autoManage whether or not this view should
-	 * automatically manage views based on contexts
+	 * Parses the comma separated string into a list of strings
+	 * 
+	 * @return list
 	 */
-	public void setAutoManageViews(boolean autoManage) {
-		fAutoManage= autoManage;
+	public static List parseList(String listString) {
+		List list = new ArrayList(10);
+		StringTokenizer tokenizer = new StringTokenizer(listString, ","); //$NON-NLS-1$
+		while (tokenizer.hasMoreTokens()) {
+			String token = tokenizer.nextToken();
+			list.add(token);
+		}
+		return list;
+	}
+	
+	/**
+	 * Sets the collection of perspectives in which this 
+	 * view will automatically open and close views based
+	 * on contexts.
+	 * @param perspectiveIds the collection of perspectives
+	 * in which this view should automatically manage views
+	 * based on contexts
+	 */
+	public void setAutoManagePerspectives(List perspectiveIds) {
+		fAutoManagePerspectives= perspectiveIds;
 		updateContextListener();
 	}
 	
@@ -935,7 +959,6 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		menu.add(new GroupMarker(IDebugUIConstants.STEP_OVER_GROUP));
 		menu.add(new GroupMarker(IDebugUIConstants.STEP_RETURN_GROUP));
 		menu.add(new Separator(IDebugUIConstants.RENDER_GROUP));
-		menu.add(getAction("AutoManageViews")); //$NON-NLS-1$
 		menu.add(new Separator(IDebugUIConstants.EMPTY_THREAD_GROUP));
 		menu.add(new Separator(IDebugUIConstants.THREAD_GROUP));
 		menu.add(new Separator(IDebugUIConstants.EMPTY_LAUNCH_GROUP));
@@ -1175,8 +1198,11 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
-		if (event.getProperty().equals(IDebugUIConstants.PREF_REUSE_EDITOR)) {
+		String property = event.getProperty();
+		if (property.equals(IDebugUIConstants.PREF_REUSE_EDITOR)) {
 			fReuseEditor = DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_REUSE_EDITOR);
+		} else if (property.equals(IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES)) {
+			loadAutoManagePerspectives();
 		}
 	}
 
@@ -1206,7 +1232,6 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 				memento.putString(IDebugUIConstants.PREF_REUSE_EDITOR, Integer.toString(index));
 			}
 		}
-		memento.putString(ATTR_AUTO_MANAGE_VIEWS, Boolean.toString(fAutoManage));
 		contextListener.saveState(memento);
 	}
 

@@ -368,6 +368,9 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		prefs.setDefault(IInternalDebugUIConstants.PREF_CONTINUE_WITH_COMPILE_ERROR, MessageDialogWithToggle.PROMPT);
 		prefs.setDefault(IInternalDebugUIConstants.PREF_CONSOLE_SCROLL_LOCK, false);
 		
+		//View Management preference page
+		prefs.setDefault(IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES, IDebugUIConstants.ID_DEBUG_PERSPECTIVE);
+		
 		//ConsolePreferencePage
 		prefs.setDefault(IDebugPreferenceConstants.CONSOLE_WRAP, false);
 		prefs.setDefault(IDebugPreferenceConstants.CONSOLE_WIDTH, 80);

@@ -206,6 +206,15 @@ public interface IDebugUIConstants {
 	 */
 	public static final String PREF_SKIP_BREAKPOINTS_DURING_RUN_TO_LINE= PLUGIN_ID + ".skip_breakpoints_during_run_to_line"; //$NON-NLS-1$
 	
+	/**
+	 * String preference controlling in which perspectives view
+	 * management will occur. The value is a comma-separated list
+	 * of plug-in identifiers.
+	 * 
+	 * @since 3.0
+	 */
+	public static final String PREF_MANAGE_VIEW_PERSPECTIVES= PLUGIN_ID + ".manage_view_perspectives"; //$NON-NLS-1$
+	
 	// Debug views
 	
 	/**
