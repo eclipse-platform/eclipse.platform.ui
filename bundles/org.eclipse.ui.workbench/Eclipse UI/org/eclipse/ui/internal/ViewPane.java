@@ -582,7 +582,7 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	/**
 	 * Make this view pane a fast view
 	 */
-	protected void doMakeFast() {
+	public void doMakeFast() {
 		Control control = getControl();
 		Shell shell = control.getShell();
 		
@@ -1064,7 +1064,7 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.PartPane#addSizeMenuItem(org.eclipse.swt.widgets.Menu)
 	 */
-	protected void addSizeMenuItem(Menu menu) {
+	public void addSizeMenuItem(Menu menu) {
 		if(isMoveable())
 			super.addSizeMenuItem(menu);
 	}
