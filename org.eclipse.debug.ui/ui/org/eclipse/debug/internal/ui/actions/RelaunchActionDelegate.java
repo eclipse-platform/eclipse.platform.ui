@@ -123,7 +123,7 @@ public class RelaunchActionDelegate extends AbstractDebugActionDelegate {
 		try {
 			config.launch(mode, null);		
 		} catch (CoreException ce) {
-			DebugUIPlugin.logError(ce);			
+			DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), "Launch Failed", "An exception occurred while launching.", ce.getStatus());
 		}
 	}
 	
