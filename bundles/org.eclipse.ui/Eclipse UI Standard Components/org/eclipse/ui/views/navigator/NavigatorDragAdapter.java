@@ -40,15 +40,17 @@ public class NavigatorDragAdapter extends DragSourceAdapter {
 	 * @see DragSourceListener#dragFinished
 	 */
 	public void dragFinished(DragSourceEvent event) {
-		if (event.doit && event.detail == DND.DROP_MOVE) {
+		if (event.doit == false) {
+			return;
+		}
+		final int typeMask = IResource.FOLDER | IResource.FILE;
+		DragSource dragSource = (DragSource) event.widget;
+		Control control = dragSource.getControl();
+		Shell shell = control.getShell();
+		IResource[] resources = getSelectedResources(typeMask, shell);
+		
+		if (event.detail == DND.DROP_MOVE) {
 			//delete the old elements
-			final int typeMask = IResource.FOLDER | IResource.FILE;
-
-			DragSource dragSource = (DragSource) event.widget;
-			Control control = dragSource.getControl();
-			Shell shell = control.getShell();
-
-			IResource[] resources = getSelectedResources(typeMask, shell);
 			if (resources == null)
 				return;
 			for (int i = 0; i < resources.length; i++) {
@@ -58,9 +60,20 @@ public class NavigatorDragAdapter extends DragSourceAdapter {
 					e.printStackTrace();
 				}
 			}
+		} else if (event.detail == DND.DROP_TARGET_MOVE) {
+			// file moved for us by OS, no need to delete the resources, just
+			// update the view
+			if (resources == null)
+				return;
+			for (int i = 0; i < resources.length; i++) {
+				try {
+					resources[i].refreshLocal(IResource.DEPTH_INFINITE, null);
+				} catch (CoreException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
-
 	/**
 	 * @see DragSourceListener#dragSetData
 	 */
