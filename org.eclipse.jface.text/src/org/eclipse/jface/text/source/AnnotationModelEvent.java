@@ -11,7 +11,11 @@
 
 package org.eclipse.jface.text.source;
 
+import org.eclipse.jface.text.Position;
+
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -35,7 +39,7 @@ public class AnnotationModelEvent {
 	 * The removed annotations.
 	 * @since 3.0
 	 */
-	private Set fRemovedAnnotations= new HashSet();
+	private Map fRemovedAnnotations= new HashMap();
 	/** 
 	 * The changed annotations.
 	 * @since 3.0 
@@ -46,6 +50,11 @@ public class AnnotationModelEvent {
 	 * @since 3.0
 	 */
 	private boolean fIsWorldChange;
+	/**
+	 * The modification stamp.
+	 * @since 3.0
+	 */
+	private Object fModificationStamp;
 	
 	/**
 	 * Creates a new annotation model event for the given model.
@@ -112,7 +121,20 @@ public class AnnotationModelEvent {
 	 * @since 3.0
 	 */
 	public void annotationRemoved(Annotation annotation) {
-		fRemovedAnnotations.add(annotation);
+		annotationRemoved(annotation, null);
+	}
+
+	/**
+	 * Adds the given annotation to the set of annotations that are reported as
+	 * being removed from the model. If this event is considered a world
+	 * change, it is no longer so after this method has successfully finished.
+	 * 
+	 * @param annotation the removed annotation
+	 * @param position the position of the removed annotation
+	 * @since 3.0
+	 */
+	public void annotationRemoved(Annotation annotation, Position position) {
+		fRemovedAnnotations.put(annotation, position);
 		fIsWorldChange= false;
 	}
 	
@@ -125,8 +147,19 @@ public class AnnotationModelEvent {
 	public Annotation[] getRemovedAnnotations() {
 		int size= fRemovedAnnotations.size();
 		Annotation[] removed= new Annotation[size];
-		fRemovedAnnotations.toArray(removed);
+		fRemovedAnnotations.keySet().toArray(removed);
 		return removed;
+	}
+	
+	/**
+	 * Returns the position of the removed annotation at that point in time
+	 * when the annotation has been removed.
+	 * 
+	 * @param annotation the removed annotation
+	 * @return the position of the removed annotation or <code>null</code>
+	 */
+	public Position getPositionOfRemovedAnnotation(Annotation annotation) {
+		return (Position) fRemovedAnnotations.get(annotation);
 	}
 	
 	/**
@@ -188,5 +221,29 @@ public class AnnotationModelEvent {
 	 */
 	void markWorldChange(boolean isWorldChange) {
 		fIsWorldChange= isWorldChange;
+	}
+	
+	/**
+	 * Returns whether this annotation model event is still valid.
+	 * 
+	 * @return <code>true</code> if this event is still valid, <code>false</code> otherwise
+	 */
+	public boolean isValid() {
+		if (fModificationStamp != null && fAnnotationModel instanceof IAnnotationModelExtension) {
+			IAnnotationModelExtension extension= (IAnnotationModelExtension) fAnnotationModel;
+			return fModificationStamp == extension.getModificationStamp();
+		}
+		return true;
+	}
+	
+	/**
+	 * Seals this event. Any direct modification to the annotation model after the event has been sealed
+	 * invalidates this event.
+	 */
+	public void markSealed() {
+		if (fAnnotationModel instanceof IAnnotationModelExtension) {
+			IAnnotationModelExtension extension= (IAnnotationModelExtension) fAnnotationModel;
+			fModificationStamp= extension.getModificationStamp();
+		}
 	}
 }

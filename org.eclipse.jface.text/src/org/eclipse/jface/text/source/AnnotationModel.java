@@ -86,9 +86,11 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	 * @since 3.0
 	 */
 	private AnnotationModelEvent fModelEvent;
-	
-	
-	
+	/**
+	 * The modification stamp.
+	 * @since 3.0
+	 */
+	private Object fModificationStamp= new Object();
 	
 	/**
 	 * Creates a new annotation model. The annotation is empty, i.e. does not
@@ -113,6 +115,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	 * Returns the annotation map internally used by this annotation model.
 	 * 
 	 * @return the annotation map internally used by this annotation model
+	 * @since 3.0
 	 */
 	protected IAnnotationMap getAnnotationMap() {
 		return (IAnnotationMap) fAnnotations;
@@ -120,6 +123,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	
     /*
      * @see org.eclipse.jface.text.ISynchronizable#getLockObject()
+     * @since 3.0
      */
     public Object getLockObject() {
         return getAnnotationMap().getLockObject();
@@ -132,10 +136,18 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
         getAnnotationMap().setLockObject(lockObject);
     }
     
-    private AnnotationModelEvent getAnnotationModelEvent() {
+    /**
+     * Returns the current annotation model event. This is the event that will be sent out
+     * when calling <code>fireModelChanged</code>.
+     * 
+     * @return the current annotation model event
+     * @since 3.0
+     */
+    protected AnnotationModelEvent getAnnotationModelEvent() {
     	if (fModelEvent == null) {
     		fModelEvent= createAnnotationModelEvent();
     		fModelEvent.markWorldChange(false);
+    		fModificationStamp= fModelEvent;
     	}
     	return fModelEvent;
     }
@@ -224,9 +236,12 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	public void addAnnotationModelListener(IAnnotationModelListener listener) {
 		if (!fAnnotationModelListeners.contains(listener)) {
 			fAnnotationModelListeners.add(listener);
-			if (listener instanceof IAnnotationModelListenerExtension)
-			    ((IAnnotationModelListenerExtension)listener).modelChanged(createAnnotationModelEvent());
-			else
+			if (listener instanceof IAnnotationModelListenerExtension) {
+				IAnnotationModelListenerExtension extension= (IAnnotationModelListenerExtension) listener;
+				AnnotationModelEvent event= createAnnotationModelEvent();
+				event.markSealed();
+			    extension.modelChanged(event);
+			} else
 			    listener.modelChanged(this);
 		}
 	}
@@ -367,9 +382,11 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	 */
 	protected void fireModelChanged(AnnotationModelEvent event) {
 		
+		event.markSealed();
+		
 		if (event.isEmpty())
 			return;
-				
+			
 		ArrayList v= new ArrayList(fAnnotationModelListeners);
 		Iterator e= v.iterator();
 		while (e.hasNext()) {
@@ -515,9 +532,9 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 		return position;
 	}
 	
-	/**
-	 * Removes all annotations from the annotation model and
-	 * informs all model listeners about this change.
+	/*
+	 * @see org.eclipse.jface.text.source.IAnnotationModelExtension#removeAllAnnotations()
+	 * @since 3.0
 	 */
 	public void removeAllAnnotations() {
 		removeAllAnnotations(true);
@@ -537,7 +554,8 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 				Annotation a= (Annotation) e.next();
 				Position p= (Position) fAnnotations.get(a);
 				removePosition(fDocument, p);
-				getAnnotationModelEvent().annotationRemoved(a);
+				p.delete();
+				getAnnotationModelEvent().annotationRemoved(a, p);
 			}
 		}
 		
@@ -564,13 +582,15 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	protected void removeAnnotation(Annotation annotation, boolean fireModelChanged) {
 		if (fAnnotations.containsKey(annotation)) {
 			
+			Position p= null;
 			if (fDocument != null) {
-				Position p= (Position) fAnnotations.get(annotation);
+				p= (Position) fAnnotations.get(annotation);
 				removePosition(fDocument, p);
+				p.delete();
 			}
 				
 			fAnnotations.remove(annotation);
-			getAnnotationModelEvent().annotationRemoved(annotation);
+			getAnnotationModelEvent().annotationRemoved(annotation, p);
 			
 			if (fireModelChanged)
 				fireModelChanged();
@@ -685,5 +705,13 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 			ret.removeAnnotationModelListener(fModelListener);
 		}
 		return ret;
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.source.IAnnotationModelExtension#getModificationStamp()
+	 * @since 3.0
+	 */
+	public Object getModificationStamp() {
+		return fModificationStamp;
 	}
 }
