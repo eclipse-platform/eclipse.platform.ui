@@ -21,7 +21,8 @@ import org.eclipse.jface.resource.GradientRegistry;
 import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.ui.themes.*;
+import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.themes.ITheme;
 
 
 /**
@@ -56,14 +57,13 @@ public final class ThemeElementHelper {
 		FontData [] prefFont = store != null ? PreferenceConverter.getFontDataArray(store, key) : null;
 		FontData [] defaultFont = null;
 		if (definition.getValue() != null)
-		        defaultFont = new FontData [] {StringConverter.asFontData(definition.getValue(), PreferenceConverter.FONTDATA_DEFAULT_DEFAULT)};
+		    defaultFont = new FontData [] {StringConverter.asFontData(definition.getValue(), PreferenceConverter.FONTDATA_DEFAULT_DEFAULT)};
 		else if (definition.getDefaultsTo() != null)
-		    defaultFont = registry.getFontData(definition.getDefaultsTo());
+		    defaultFont = registry.bestDataArray(registry.getFontData(definition.getDefaultsTo()), Workbench.getInstance().getDisplay());
 		else {
 		    // values pushed in from jface property files.  Very ugly.
-		    defaultFont = registry.getFontData(key);
-		}
-		    
+		    defaultFont = registry.bestDataArray(registry.getFontData(key), Workbench.getInstance().getDisplay());
+		}		    
 		
 		if (prefFont == null || prefFont == PreferenceConverter.FONTDATA_ARRAY_DEFAULT_DEFAULT) {
 		    prefFont = defaultFont;
