@@ -55,6 +55,7 @@ public class BuildFailedTracker implements IConsoleLineTracker {
 					fileStart = index + 5;
 				} else {
 					fileStart = text.indexOf("BUILD FAILED:") + 14; //$NON-NLS-1$
+					index= fileStart;
 				}
 				index = text.indexOf(' ', index); //$NON-NLS-1$
 				if (index > 0) {
