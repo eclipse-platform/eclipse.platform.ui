@@ -15,7 +15,7 @@ package org.eclipse.core.resources;
 
 /**
  * This class represents platform specific attributes of files.
- * Any type of attributes can be added, but only the attributes that are 
+ * Any attributes can be added, but only the attributes that are 
  * supported by the platform will be used. These methods do not set the 
  * attributes in the file system.
  * 
