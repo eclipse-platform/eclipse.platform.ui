@@ -361,6 +361,7 @@ public class NewConfigurationView
 					control.getDisplay().asyncExec(new Runnable() {
 						public void run() {
 							treeViewer.refresh();
+							handleSelectionChanged((IStructuredSelection)treeViewer.getSelection());
 						}
 					});
 				}
@@ -832,7 +833,10 @@ public class NewConfigurationView
 	}
 	
 	protected void handleSelectionChanged(SelectionChangedEvent e) {
-		IStructuredSelection ssel = (IStructuredSelection) e.getSelection();
+		handleSelectionChanged((IStructuredSelection)e.getSelection());
+	}
+	
+	protected void handleSelectionChanged(IStructuredSelection ssel) {
 		Object obj = ssel.getFirstElement();
 		if (obj instanceof IFeatureAdapter) {
 			try {
