@@ -44,10 +44,12 @@ public interface IHelpResource {
 	 *  For example. <em>/myplugin/mytoc.xml</em>
 	 *  or <em>/myplugin/references/myclass.html</em>
 	 *  are vaild.
-	 *   <li>string representation of URL to an external document.
+	 *   <li>string representation of URI to an external document.
 	 *   In this case, all special characters have to be enoded
-	 *    such that the URL is appropriate to be opened with a web browser.
-	 *    For example <em>http://eclipse.org/documents/my%20file.html</em> is valid.
+	 *    such that the URI is appropriate to be opened with a web browser.
+	 *    <em>http://eclipse.org/documents/my%20file.html</em> and 
+	 *    <em>jar:file:/c:/my%20sources/src.zip!/mypackage/MyClass.html</em>
+	 *    are examples of valid URIs.
 	 *  </ul>
 	 * </p>
 	 */
