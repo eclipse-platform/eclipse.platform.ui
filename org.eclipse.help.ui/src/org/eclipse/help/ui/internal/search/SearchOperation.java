@@ -31,10 +31,10 @@ public class SearchOperation extends WorkspaceModifyOperation {
 	// Images
 	private static final ImageDescriptor IMAGE_DSCR_SEARCH =
 		ImageDescriptor.createFromURL(
-			WorkbenchResources.getImagePath(IHelpUIConstants.IMAGE_KEY_SEARCH));
+			WorkbenchResources.getImagePath(IHelpUIConstants.IMAGE_FILE_SEARCH));
 	private static final ImageDescriptor IMAGE_DSCR_TOPIC =
 		ImageDescriptor.createFromURL(
-			WorkbenchResources.getImagePath(IHelpUIConstants.IMAGE_KEY_TOPIC));
+			WorkbenchResources.getImagePath(IHelpUIConstants.IMAGE_FILE_TOPIC));
 	// Resource we will be using
 	private static final IResource resource =
 		ResourcesPlugin.getWorkspace().getRoot();

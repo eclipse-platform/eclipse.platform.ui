@@ -40,7 +40,7 @@ public class WorkbenchResources {
 	public static URL getImagePath(String name) {
 		URL imagePathURL = null;
 		try {
-			imagePathURL = new URL(imageURL, resBundle.getString(name));
+			imagePathURL = new URL(imageURL, name);
 			return imagePathURL;
 		} catch (MalformedURLException e) {
 		}

@@ -28,4 +28,6 @@ public interface IHelpUIConstants {
 		HELP_UI_PLUGIN_ID + "searchPage";
 	public static final String IMAGE_KEY_SEARCH = "search_icon";
 	public static final String IMAGE_KEY_TOPIC = "s_topic_icon";
+	public static final String IMAGE_FILE_SEARCH = "search_menu.gif";
+	public static final String IMAGE_FILE_TOPIC = "topic.gif";
 }
