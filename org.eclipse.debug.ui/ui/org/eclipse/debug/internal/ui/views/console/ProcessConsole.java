@@ -176,7 +176,7 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
                 int lowWater = store.getInt(IDebugPreferenceConstants.CONSOLE_LOW_WATER_MARK);
                 setWaterMarks(lowWater, highWater);
             } else {
-                setWaterMarks(-1, -1);
+                setWaterMarks(-2, -1);
             }
         } else if (property.equals(IDebugPreferenceConstants.CONSOLE_TAB_WIDTH)) {
             int tabWidth = store.getInt(IDebugPreferenceConstants.CONSOLE_TAB_WIDTH);
