@@ -139,6 +139,7 @@ public interface IConsole {
 	 * Returns the stream associated with the specified stream identifier.
      * @param streamIdentifier Uniquely idenifies the required stream 
      * @return The stream or null if none found with matching streamIdentifier
+     * @since 3.1
      */
 	public IOConsoleOutputStream getStream(String streamIdentifier);
 }
