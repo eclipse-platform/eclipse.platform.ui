@@ -60,7 +60,8 @@ public class WorkingSetNewWizard extends Wizard {
 			page = workingSetTypePage = new WorkingSetTypePage();
 		}
 		else {
-			page = workingSetEditPage = registry.getWorkingSetPage(descriptors[0].getId());
+			editPageId = descriptors[0].getId();
+			page = workingSetEditPage = registry.getWorkingSetPage(editPageId);
 		}
 		page.setWizard(this);
 		page.setTitle(WorkbenchMessages.getString("WorkingSetNewWizard.page.title")); //$NON-NLS-1$
