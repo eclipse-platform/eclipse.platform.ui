@@ -107,10 +107,12 @@ is used as the button label. The label can contain JFace-encoded mnemonic
 and accelerator information (see example).</li>
 
 <li>
-<b>accelerator</b> - an integer that is used to specify the keycode of the
-accelerator for the action.  This is the integer value resulting from
+<b>accelerator</b> - an integer or String that is used to specify the keycode of the
+accelerator for the action.  The integer value is the value resulting from
 a bitwise OR of zero or more SWT key modifier masks (i.e. SWT.CTRL or SWT.ALT) 
 and a character code.  For example, for Ctrl+Z use <code>SWT.CTRL | 'Z' = (1<<18)|'Z' = 262234</code>.
+The string value is a combination of keys seperated by a +. For example Ctrl+Z is
+specified directly as Ctrl+Z. 
 </li>
 
 <li>
