@@ -273,7 +273,7 @@ public class BrowserIntroPartImplementation extends
         // and returns "about:blank" if we are on a dynamic page
         if (browser != null && browser.getUrl() != null
                 && browser.getUrl().length() > 0
-                && !(browser.getUrl().equals("about:blank"))) {
+                && !(browser.getUrl().equals("about:blank"))) { //$NON-NLS-1$
             String currentURL = browser.getUrl();
             if (currentURL != null) {
                 memento.putString(IIntroConstants.MEMENTO_CURRENT_PAGE_ATT,
