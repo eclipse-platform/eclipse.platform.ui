@@ -55,23 +55,28 @@ public class ReopenEditorMenu extends ContributionItem {
 		}
 		sb.append(" "); //$NON-NLS-1$
 
-		// If the input text is a path, get the filename from the
-		// path's last segment; otherwise, use the input name.
-		String fileName;
-		String pathName = item.getInput().getToolTipText();
+		// IMPORTANT: avoid accessing the item's input since
+		// this can require activating plugins.
+		// Instead, ask the item for the info, which can
+		// consult its memento if it is not restored yet.
+		String fileName = item.getName();
+		String pathName = item.getToolTipText();
+		if (pathName.equals(fileName)) {
+			// tool tip text isn't necessarily a path;
+			// sometimes it's the same as name, so it shouldn't be treated as a path then
+			pathName = "";
+		}
 		IPath path = new Path(pathName);
-		if (path.segmentCount() > 1) {
-			fileName = path.lastSegment();
+		// if last segment in path is the fileName, remove it 
+		if (path.segmentCount() > 1 && path.segment(path.segmentCount() - 1).equals(fileName)) {
 			path = path.removeLastSegments(1);
 			pathName = path.toString();
-		} else {
-			fileName = item.getInput().getName();
 		}
 		
 		if ((fileName.length() + pathName.length()) <= (MAX_TEXT_LENGTH - 4)) {
 			// entire item name fits within maximum length
 			sb.append(fileName);
-			if (path.segmentCount() != 0) {
+			if (pathName.length() > 0) {
 				sb.append("  ["); //$NON-NLS-1$
 				sb.append(pathName);
 				sb.append("]"); //$NON-NLS-1$
@@ -209,25 +214,35 @@ public class ReopenEditorMenu extends ContributionItem {
 		if (page != null) {
 			try {
 				// Fix for 1GF6HQ1: ITPUI:WIN2000 - NullPointerException: opening a .ppt file
-				// Descriptor is null if opened on OLE editor.  .
+				// Descriptor is null if opened on OLE editor.
+				if (!item.isRestored()) {
+					item.restoreState();
+				}
 				IEditorInput input = item.getInput();
 				IEditorDescriptor desc = item.getDescriptor();
-				if (desc == null) {
-					// There's no openEditor(IEditorInput) call, and openEditor(IEditorInput, String)
-					// doesn't allow null id.
-					// However, if id is null, the editor input must be an IFileEditorInput,
-					// so we can use openEditor(IFile).  
-					// Do nothing if for some reason input was not an IFileEditorInput.
-					if (input instanceof IFileEditorInput) {
-						page.openEditor(((IFileEditorInput) input).getFile());
+				if (input == null) {
+					String title = WorkbenchMessages.getString("OpenRecent.errorTitle"); //$NON-NLS-1$
+					MessageDialog.openWarning(fWindow.getShell(), title, "");
+					history.remove(item);
+				}
+				else {
+					if (desc == null) {
+						// There's no openEditor(IEditorInput) call, and openEditor(IEditorInput, String)
+						// doesn't allow null id.
+						// However, if id is null, the editor input must be an IFileEditorInput,
+						// so we can use openEditor(IFile).  
+						// Do nothing if for some reason input was not an IFileEditorInput.
+						if (input instanceof IFileEditorInput) {
+							page.openEditor(((IFileEditorInput) input).getFile());
+						}
+					} else {
+						page.openEditor(input, desc.getId());
 					}
-				} else {
-					page.openEditor(input, desc.getId());
 				}
 			} catch (PartInitException e2) {
 				String title = WorkbenchMessages.getString("OpenRecent.errorTitle"); //$NON-NLS-1$
 				MessageDialog.openWarning(fWindow.getShell(), title, e2.getMessage());
-				history.remove(item.getInput());
+				history.remove(item);
 			}
 		}
 	}
