@@ -14,7 +14,6 @@ import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
@@ -46,12 +45,14 @@ public class NewConfigurationView
 	private static final String KEY_SHOW_UNCONF_FEATURES_TOOLTIP =
 		"ConfigurationView.showUnconfFeatures.tooltip";
 	private static final String STATE_SHOW_UNCONF = "ConfigurationView.showUnconf";
+	private static final String STATE_SHOW_SITES = "ConfigurationView.showSites";
+	private static final String STATE_SHOW_NESTED_FEATURES = "ConfigurationView.showNestedFeatures";
 	private static final String KEY_PRESERVE = "ConfigurationView.Popup.preserve";
 	private static final String KEY_SHOW_STATUS = "ConfigurationView.Popup.showStatus";
 	private static final String KEY_MISSING_FEATURE = "ConfigurationView.missingFeature";
 
-	private Action hideSitesAction;
-	private Action hideNestedFeaturesAction;
+	private Action showSitesAction;
+	private Action showNestedFeaturesAction;
 	private SwapVersionAction swapVersionAction;
 	private FeatureStateAction featureStateAction;
 	private UninstallFeatureAction uninstallFeatureAction;
@@ -71,15 +72,14 @@ public class NewConfigurationView
 		public int category(Object obj) {
 			// sites
 			if (obj instanceof IConfiguredSiteAdapter) {
-				IConfiguredSiteAdapter adapter = (IConfiguredSiteAdapter) obj;
-				IConfiguredSite csite = adapter.getConfiguredSite();
+				IConfiguredSite csite =
+					((IConfiguredSiteAdapter) obj).getConfiguredSite();
 				if (csite.isProductSite())
 					return 1;
 				if (csite.isExtensionSite())
 					return 2;
 				return 3;
 			}
-
 			return super.category(obj);
 		}
 	}
@@ -104,37 +104,30 @@ public class NewConfigurationView
 					return new Object[0];
 			}
 			if (parent instanceof ILocalSite) {
-				return openLocalSite();
+				Object[] csites =  openLocalSite();
+				if (showSitesAction.isChecked())
+					return csites;
+				ArrayList result = new ArrayList();
+				boolean showUnconf = showUnconfFeaturesAction.isChecked();
+				for (int i = 0; i < csites.length; i++) {
+					IConfiguredSiteAdapter adapter = (IConfiguredSiteAdapter) csites[i];
+					Object[] roots = getFeatures(adapter, !showUnconf);
+					for (int j = 0; j < roots.length; j++) {
+						result.add(roots[j]);
+					}
+				}
+				return result.toArray();				
 			}
 
-			if (parent instanceof IInstallConfiguration) {
-				return getConfigurationSites((IInstallConfiguration) parent);
-			}
 			if (parent instanceof IConfiguredSiteAdapter) {
 				IConfiguredSiteAdapter adapter = (IConfiguredSiteAdapter) parent;
 				boolean showUnconf = showUnconfFeaturesAction.isChecked();
 				return getFeatures(adapter, !showUnconf);
 			}
-			if (parent instanceof ConfiguredFeatureAdapter) {
+			if (parent instanceof ConfiguredFeatureAdapter && showNestedFeaturesAction.isChecked()) {
 				return ((ConfiguredFeatureAdapter) parent).getIncludedFeatures(null);
 			}
 			return new Object[0];
-		}
-
-		private Object[] getConfigurationSites(final IInstallConfiguration config) {
-			final Object[][] bag = new Object[1][];
-			BusyIndicator
-				.showWhile(getViewer().getControl().getDisplay(), new Runnable() {
-				public void run() {
-					IConfiguredSite[] sites = config.getConfiguredSites();
-					Object[] adapters = new Object[sites.length];
-					for (int i = 0; i < sites.length; i++) {
-						adapters[i] = new ConfiguredSiteAdapter(config, sites[i]);
-					}
-					bag[0] = adapters;
-				}
-			});
-			return bag[0];
 		}
 
 		public Object getParent(Object child) {
@@ -142,17 +135,19 @@ public class NewConfigurationView
 		}
 		public boolean hasChildren(Object parent) {
 			if (parent instanceof ConfiguredFeatureAdapter) {
-				return ((ConfiguredFeatureAdapter) parent).hasIncludedFeatures(null);
+				return showNestedFeaturesAction.isChecked()
+					&& ((ConfiguredFeatureAdapter) parent).hasIncludedFeatures(null);
 			}
 			if (parent instanceof ConfiguredSiteAdapter) {
 				IConfiguredSite site =
 					((ConfiguredSiteAdapter) parent).getConfiguredSite();
-				boolean showUnconf = showUnconfFeaturesAction.isChecked();
-				if (!showUnconf && site.isEnabled() == false)
-					return false;
+				if (showUnconfFeaturesAction.isChecked())
+					return site.getFeatureReferences().length > 0;
+				return site.getConfiguredFeatures().length > 0;
 			}
 			return true;
 		}
+		
 		public Object[] getElements(Object input) {
 			return getChildren(input);
 		}
@@ -441,35 +436,50 @@ public class NewConfigurationView
 		swapVersionAction = new SwapVersionAction("another version...");
 
 		makeShowUnconfiguredFeaturesAction();
-		makeHideSitesAction();
-		makeHideNestedFeaturesAction();
+		makeShowSitesAction();
+		makeShowNestedFeaturesAction();
 
 	}
 
-	private void makeHideNestedFeaturesAction() {
-		hideNestedFeaturesAction = new Action() {
+	private void makeShowNestedFeaturesAction() {
+		final Preferences pref = UpdateUI.getDefault().getPluginPreferences();
+		pref.setDefault(STATE_SHOW_NESTED_FEATURES, true);
+		showNestedFeaturesAction = new Action() {
 			public void run() {
+				getTreeViewer().refresh();
+				pref.setValue(STATE_SHOW_NESTED_FEATURES, showNestedFeaturesAction.isChecked());
 			}
 		};
-		hideNestedFeaturesAction.setText("Hide Nested Features");
+		showNestedFeaturesAction.setText("Show Nested Features");
+		showNestedFeaturesAction.setImageDescriptor(UpdateUIImages.DESC_FEATURE_OBJ);
+		showNestedFeaturesAction.setChecked(pref.getBoolean(STATE_SHOW_NESTED_FEATURES));
+		showNestedFeaturesAction.setToolTipText("Show Nested Features");
 	}
 
-	private void makeHideSitesAction() {
-		hideSitesAction = new Action() {
+	private void makeShowSitesAction() {
+		final Preferences pref = UpdateUI.getDefault().getPluginPreferences();
+		pref.setDefault(STATE_SHOW_SITES, true);
+		showSitesAction = new Action() {
 			public void run() {
+				getTreeViewer().refresh();
+				pref.setValue(STATE_SHOW_SITES, showSitesAction.isChecked());
+				UpdateUI.getDefault().savePluginPreferences();
 			}
 		};
-		hideSitesAction.setToolTipText("Hide Sites");
+		showSitesAction.setText("Show Sites");
+		showSitesAction.setImageDescriptor(UpdateUIImages.DESC_SITE_OBJ);
+		showSitesAction.setChecked(pref.getBoolean(STATE_SHOW_SITES));
+		showSitesAction.setToolTipText("Show Sites");
 	}
 
 	private void makeShowUnconfiguredFeaturesAction() {
-		final IDialogSettings settings = UpdateUI.getDefault().getDialogSettings();
-		boolean showUnconfState = settings.getBoolean(STATE_SHOW_UNCONF);
+		final Preferences pref = UpdateUI.getDefault().getPluginPreferences();
+		pref.setDefault(STATE_SHOW_UNCONF, false);
 		showUnconfFeaturesAction = new Action() {
 			public void run() {
 				getTreeViewer().refresh();
-				//getTreeViewer().refresh();
-				settings.put(STATE_SHOW_UNCONF, showUnconfFeaturesAction.isChecked());
+				pref.setValue(STATE_SHOW_UNCONF, showUnconfFeaturesAction.isChecked());
+				UpdateUI.getDefault().savePluginPreferences();
 			}
 		};
 		WorkbenchHelp.setHelp(
@@ -478,13 +488,15 @@ public class NewConfigurationView
 		showUnconfFeaturesAction.setText(UpdateUI.getString(KEY_SHOW_UNCONF_FEATURES));
 		showUnconfFeaturesAction.setImageDescriptor(
 			UpdateUIImages.DESC_UNCONF_FEATURE_OBJ);
-		showUnconfFeaturesAction.setChecked(showUnconfState);
+		showUnconfFeaturesAction.setChecked(pref.getBoolean(STATE_SHOW_UNCONF));
 		showUnconfFeaturesAction.setToolTipText(
 			UpdateUI.getString(KEY_SHOW_UNCONF_FEATURES_TOOLTIP));
 	}
 
 	protected void fillActionBars(IActionBars bars) {
 		IToolBarManager tbm = bars.getToolBarManager();
+		tbm.add(showSitesAction);
+		tbm.add(showNestedFeaturesAction);
 		tbm.add(showUnconfFeaturesAction);
 		tbm.add(new Separator());
 		addDrillDownAdapter(bars);
