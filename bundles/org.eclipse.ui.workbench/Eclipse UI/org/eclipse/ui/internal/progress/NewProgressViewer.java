@@ -1614,6 +1614,8 @@ public class NewProgressViewer extends TreeViewer implements FinishedJobs.KeptJo
 	////// SelectionProvider
 
     public ISelection getSelection() {
+    	if (list.isDisposed())
+    		return new StructuredSelection();
     	ArrayList l= new ArrayList();
 		Control[] cs= list.getChildren();
 		for (int i= 0; i < cs.length; i++) {
