@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.core.internal.registry;
 
 import java.io.*;
@@ -23,7 +22,7 @@ public class RegistryCacheWriter {
 	// like a plugin descriptor, extension, extension point, etc. The integer
 	// index value will be used in the cache to allow cross-references in the
 	// cached registry.
-	protected HashMap objectTable = null;
+	protected HashMap objectTable = new HashMap();
 	protected MultiStatus problems = null;
 	protected File cacheFile;
 
@@ -33,22 +32,15 @@ public class RegistryCacheWriter {
 	}
 
 	private int addToObjectTable(Object object) {
-		if (objectTable == null) {
-			objectTable = new HashMap();
-		}
-		objectTable.put(object, new Integer(objectTable.size()));
-		// return the index of the object just added (i.e. size - 1)
-		return (objectTable.size() - 1);
+		int objectIndex = objectTable.size();
+		objectTable.put(object, new Integer(objectIndex));
+		// return the index of the object just added
+		return objectIndex;
 	}
 
 	private int getFromObjectTable(Object object) {
-		if (objectTable != null) {
-			Object objectResult = objectTable.get(object);
-			if (objectResult != null) {
-				return ((Integer) objectResult).intValue();
-			}
-		}
-		return -1;
+		Object objectResult = objectTable.get(object);
+		return objectResult == null ? -1 : ((Integer) objectResult).intValue();
 	}
 
 	public void writeConfigurationElement(ConfigurationElement object, DataOutputStream out) {
