@@ -11,8 +11,6 @@
 package org.eclipse.debug.ui;
 
 import org.eclipse.debug.core.model.IBreakpoint;
-import org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointContainer;
-import org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointContainerFactory;
 
 /**
  * A delegate which creates containers for a breakpoint container factory.

@@ -20,6 +20,8 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
+import org.eclipse.debug.ui.IBreakpointContainer;
+import org.eclipse.debug.ui.IBreakpointContainerFactory;
 import org.eclipse.debug.ui.IBreakpointContainerFactoryDelegate;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.osgi.framework.Bundle;

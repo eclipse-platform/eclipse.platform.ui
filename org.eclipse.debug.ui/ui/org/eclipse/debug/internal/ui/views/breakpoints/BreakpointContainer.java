@@ -11,6 +11,8 @@
 package org.eclipse.debug.internal.ui.views.breakpoints;
 
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.debug.ui.IBreakpointContainer;
+import org.eclipse.debug.ui.IBreakpointContainerFactory;
 import org.eclipse.swt.graphics.Image;
 
 /**

@@ -21,6 +21,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.debug.ui.AbstractBreakpointContainerFactoryDelegate;
+import org.eclipse.debug.ui.IBreakpointContainer;
 import org.eclipse.swt.graphics.Image;
 
 /**

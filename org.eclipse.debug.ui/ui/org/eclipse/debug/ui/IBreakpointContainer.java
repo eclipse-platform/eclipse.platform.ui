@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.views.breakpoints;
+package org.eclipse.debug.ui;
 
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.swt.graphics.Image;

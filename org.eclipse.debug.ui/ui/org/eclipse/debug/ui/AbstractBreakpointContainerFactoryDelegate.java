@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.debug.ui;
 
-import org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointContainerFactory;
 
 /**
  * Abstract implementation of a breakpoint container factory delegate which can

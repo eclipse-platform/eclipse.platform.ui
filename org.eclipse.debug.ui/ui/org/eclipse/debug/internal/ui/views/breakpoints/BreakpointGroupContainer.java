@@ -11,6 +11,7 @@
 package org.eclipse.debug.internal.ui.views.breakpoints;
 
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.debug.ui.IBreakpointContainerFactory;
 
 /**
  * Subclass of breakpoint container which exists to allow action contributions to

@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsView;
-import org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointContainerFactory;
+import org.eclipse.debug.ui.IBreakpointContainerFactory;
 import org.eclipse.jface.action.Action;
 
 /**
