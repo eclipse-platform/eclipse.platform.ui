@@ -1444,9 +1444,12 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @see org.eclipse.jface.text.IWidgetTokenKeeperExtension#setFocus(org.eclipse.jface.text.IWidgetTokenOwner)
 	 * @since 3.0
 	 */
-	public void setFocus(IWidgetTokenOwner owner) {
-		if (fProposalPopup != null)
+	public boolean setFocus(IWidgetTokenOwner owner) {
+		if (fProposalPopup != null) {
 			fProposalPopup.setFocus();
+			return fProposalPopup.hasFocus();
+		}
+		return false;
 	}
 	
 	/**

@@ -485,7 +485,8 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 	/*
 	 * @see org.eclipse.jface.text.IWidgetTokenKeeperExtension#setFocus(org.eclipse.jface.text.IWidgetTokenOwner)
 	 */
-	public void setFocus(IWidgetTokenOwner owner) {
+	public boolean setFocus(IWidgetTokenOwner owner) {
+		return false;
 	}
 }
 

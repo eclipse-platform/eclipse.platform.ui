@@ -4625,8 +4625,7 @@ public class TextViewer extends Viewer implements
 	public boolean moveFocusToWidgetToken() {
 		if (fWidgetTokenKeeper instanceof IWidgetTokenKeeperExtension) {
 			IWidgetTokenKeeperExtension extension= (IWidgetTokenKeeperExtension) fWidgetTokenKeeper;
-			extension.setFocus(this);
-			return true;
+			return extension.setFocus(this);
 		} else  {
 			return false;
 		}

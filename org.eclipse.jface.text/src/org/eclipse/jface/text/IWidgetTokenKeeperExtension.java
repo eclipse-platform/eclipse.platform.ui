@@ -36,9 +36,11 @@ public interface IWidgetTokenKeeperExtension {
 	
 	/**
 	 * Requests the receiver to give focus to its popup shell, hover, or similar. There is
-	 * no assumption made whether the receiver actually succeeded in taking the focus.
+	 * no assumption made whether the receiver actually succeeded in taking the focus. The return 
+	 * value gives a hint whether the receiver tried to take focus.
 	 * 
 	 * @param owner the token owner
+	 * @return <code>true</code> if the receiver tried to take focus, <code>false</code> if it did not.
 	 */
-	void setFocus(IWidgetTokenOwner owner);
+	boolean setFocus(IWidgetTokenOwner owner);
 }

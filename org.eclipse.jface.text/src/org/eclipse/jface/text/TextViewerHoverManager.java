@@ -339,7 +339,8 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 	 * @see org.eclipse.jface.text.IWidgetTokenKeeperExtension#setFocus(org.eclipse.jface.text.IWidgetTokenOwner)
 	 * @since 3.0
 	 */
-	public void setFocus(IWidgetTokenOwner owner) {
+	public boolean setFocus(IWidgetTokenOwner owner) {
+		return false;
 	}
 	
 	/**
