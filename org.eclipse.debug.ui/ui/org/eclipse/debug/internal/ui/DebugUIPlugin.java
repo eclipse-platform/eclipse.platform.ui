@@ -915,6 +915,8 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 						wait = false;
 						break;
 				}
+			} else {
+				wait = waitPref.equals(MessageDialogWithToggle.ALWAYS);
 			}
 		}
 		
