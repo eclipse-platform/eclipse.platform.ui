@@ -1,0 +1,29 @@
+/*
+ * Licensed Materials - Property of IBM,
+ * WebSphere Studio Workbench
+ * (c) Copyright IBM Corp 2000, 2001
+ */
+package org.eclipse.compare;
+
+import org.eclipse.swt.widgets.Composite;
+
+import org.eclipse.jface.viewers.Viewer;
+
+/**
+ * A factory object for <code>Viewer</code>.
+ * <p>
+ * This interface is only required when creating a <code>Viewer</code> from a plugin.xml file.
+ * Since <code>Viewer</code>s have no default constructor they cannot be
+ * instantiated directly with <code>Class.forName</code>.
+ */
+public interface IViewerCreator {
+
+	/**
+	 * Creates a new viewer under the given SWT parent control.
+	 *
+	 * @param parent the SWT parent control under which to create the viewer's SWT control
+	 * @param config a compare configuration the newly created viewer might want to use
+	 * @return a new viewer
+	 */
+	Viewer createViewer(Composite parent, CompareConfiguration config);
+}

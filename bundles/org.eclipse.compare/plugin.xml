@@ -1,0 +1,125 @@
+<?xml version="1.0"?>
+
+<!-- ======================================================================= -->
+<!-- Compare UI Plugin                                                       -->
+<!-- ======================================================================= -->
+
+<plugin
+	name="Compare"
+	id="org.eclipse.compare"
+	version="1.0"
+	vendor-name="IBM"
+	class="org.eclipse.compare.internal.CompareUIPlugin">
+	
+	<requires>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.core.resources"/>
+	</requires>
+
+	<runtime>
+		<library name="compare.jar" >
+			<export name="*"/>
+		</library>
+	</runtime>
+		   
+<!-- Compare extension point definitions -->
+
+	<extension-point
+		name="Structure Creator"
+		id="structureCreators"/>
+		
+	<extension-point
+		name="Structure Merge Viewer"
+		id="structureMergeViewers"/>
+		
+	<extension-point
+		name="Content Merge Viewer"
+		id="contentMergeViewers"/>
+
+	<extension-point
+		name="Content Viewer"
+		id="contentViewers"/>
+
+<!-- Extensions -->
+
+	<extension point="org.eclipse.ui.editors">
+    	<editor id="org.eclipse.compare.CompareEditor"
+      		name="Default Compare Editor"
+ 			icon="icons/basic/ctool16/compare.gif"     	  
+      		class="org.eclipse.compare.internal.CompareEditor"
+			contributorClass="org.eclipse.compare.internal.CompareEditorContributor">
+    	</editor>
+	</extension>
+
+	<extension point="org.eclipse.ui.popupMenus">
+	
+		<objectContribution
+			id="org.eclipse.compare.CompareAction"
+			objectClass="org.eclipse.core.resources.IResource">
+			<menu
+				id="replaceWithMenu"
+				path="additions"
+				label="%ReplaceWithMenu.label">
+				<separator name="replaceWithGroup"/>
+			</menu>
+			<menu
+				id="compareWithMenu"
+				path="additions"
+				label="%CompareWithMenu.label">
+				<separator name="compareWithGroup"/>
+			</menu>
+			<action
+				id="compareWithEachOther"
+				label="%CompareWithEachOtherAction.label"
+				tooltip="%CompareWithEachOtherAction.tooltip"
+				menubarPath="compareWithMenu/compareWithGroup"
+				enablesFor="2+"
+				class="org.eclipse.compare.internal.CompareAction">
+			</action>
+		</objectContribution>
+		
+		<objectContribution
+			id="org.eclipse.compare.ReplaceWithEditionAction"
+			objectClass="org.eclipse.core.resources.IFile">
+			<action
+				id="replaceFromHistory"
+				label="%ReplaceFromHistoryAction.label"
+				tooltip="%ReplaceFromHistoryAction.tooltip"
+				menubarPath="replaceWithMenu/replaceWithGroup"
+				enablesFor="1"
+				class="org.eclipse.compare.internal.ReplaceWithEditionAction">
+			</action>
+		</objectContribution>
+			
+	</extension>
+
+	<extension point="org.eclipse.compare.structureCreators">
+		<structureCreator
+			extensions="zip"
+			class="org.eclipse.compare.internal.ZipStructureCreator">
+		</structureCreator>
+	</extension>
+	
+	<extension point="org.eclipse.compare.contentMergeViewers">
+		<viewer
+			extensions="binary"
+			class="org.eclipse.compare.internal.BinaryCompareViewerCreator">
+		</viewer>
+		<viewer
+			extensions="txt"
+			class="org.eclipse.compare.internal.TextMergeViewerCreator">
+		</viewer>
+		<viewer
+			extensions="gif,jpg"
+			class="org.eclipse.compare.internal.ImageMergeViewerCreator">
+		</viewer>
+	</extension>
+	
+	<extension point="org.eclipse.compare.contentViewers">
+		<viewer
+			extensions="txt"
+			class="org.eclipse.compare.internal.TextViewerCreator">
+		</viewer>
+	</extension>
+
+</plugin>
