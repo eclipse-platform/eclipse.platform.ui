@@ -78,6 +78,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PartInitException;
@@ -548,18 +549,18 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		tbm.update(false);
 		fViewer.addOpenListener(new IOpenListener() {
 			public void open(OpenEvent event) {
-				boolean hasCurrentMatch = showCurrentMatch();
+				boolean hasCurrentMatch = showCurrentMatch(true);
 				if (event.getViewer() instanceof TreeViewer && event.getSelection() instanceof IStructuredSelection) {
 					TreeViewer tv = (TreeViewer) event.getViewer();
 					Object element = ((IStructuredSelection) event.getSelection()).getFirstElement();
 					if (element != null) {
 						tv.setExpandedState(element, !tv.getExpandedState(element));
 						if (!hasCurrentMatch && getDisplayedMatchCount(element) > 0)
-							gotoNextMatch();
+							gotoNextMatch(true);
 					}
 					return;
 				} else if (!hasCurrentMatch) {
-					gotoNextMatch();
+					gotoNextMatch(true);
 				}
 			}
 		});
@@ -665,7 +666,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		return fViewer;
 	}
 
-	private void showMatch(final Match match) {
+	private void showMatch(final Match match, final boolean activateEditor) {
 		ISafeRunnable runnable = new ISafeRunnable() {
 			public void handleException(Throwable exception) {
 				if (exception instanceof PartInitException) {
@@ -680,6 +681,10 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 					showMatch(match, currentPosition.getOffset(), currentPosition.getLength());
 				} else {
 					showMatch(match, match.getOffset(), match.getLength());
+				}
+				IEditorPart newEditor= SearchPlugin.getActivePage().getActiveEditor();
+				if (activateEditor && newEditor != null) {
+					SearchPlugin.getActivePage().activate(newEditor);
 				}
 			}
 		};
@@ -703,13 +708,17 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 * last match.
 	 */
 	public void gotoNextMatch() {
+		gotoNextMatch(false);
+	}
+
+	private void gotoNextMatch(boolean activateEditor) {
 		fCurrentMatchIndex++;
 		Match nextMatch = getCurrentMatch();
 		if (nextMatch == null) {
 			navigateNext(true);
 			fCurrentMatchIndex = 0;
 		}
-		showCurrentMatch();
+		showCurrentMatch(activateEditor);
 	}
 
 	/**
@@ -718,15 +727,18 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 * after the first match.
 	 */
 	public void gotoPreviousMatch() {
+		gotoPreviousMatch(false);
+	}
+
+	private void gotoPreviousMatch(boolean activateEditor) {
 		fCurrentMatchIndex--;
 		Match nextMatch = getCurrentMatch();
 		if (nextMatch == null) {
 			navigateNext(false);
 			fCurrentMatchIndex = getInput().getMatchCount(getFirstSelectedElement()) - 1;
 		}
-		showCurrentMatch();
+		showCurrentMatch(activateEditor);
 	}
-
 	private void navigateNext(boolean forward) {
 		INavigate navigator = null;
 		if (fViewer instanceof TableViewer) {
@@ -737,10 +749,10 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		navigator.navigateNext(forward);
 	}
 
-	private boolean showCurrentMatch() {
+	private boolean showCurrentMatch(boolean activateEditor) {
 		Match currentMatch = getCurrentMatch();
 		if (currentMatch != null) {
-			showMatch(currentMatch);
+			showMatch(currentMatch, activateEditor);
 			return true;
 		} else {
 			return false;
