@@ -124,16 +124,22 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 	 */
 	protected Control createDialogArea(Composite parent) {
 
+		initializeDialogUnits(parent);
+		
+		Font font = parent.getFont();
+		
 		Composite dialogArea = (Composite) super.createDialogArea(parent);
 		//Label over the table
 		Label l = new Label(dialogArea, SWT.NONE);
 		l.setText(WorkbenchMessages.getString("WorkbenchEditorsDialog.label")); //$NON-NLS-1$
+		l.setFont(font);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		l.setLayoutData(data);
 		//Table showing the editors name, full path and perspective
 		editorsTable = new Table(dialogArea, SWT.MULTI | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
 		editorsTable.setLinesVisible(true);
 		editorsTable.setHeaderVisible(true);
+		editorsTable.setFont(font);
 		
 		final GridData tableData = new GridData(GridData.FILL_BOTH);
 		tableData.heightHint = 16 * editorsTable.getItemHeight();
@@ -180,6 +186,7 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 				closeItems(editorsTable.getSelection());
 			}
 		});
+		closeSelected.setFont(font);
 		setButtonLayoutData(closeSelected);
 		
 		//Save editors button
@@ -190,6 +197,7 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 				saveItems(editorsTable.getSelection(),null);
 			}
 		});
+		saveSelected.setFont(font);
 		setButtonLayoutData(saveSelected);
 		
 		//Select clean editors button
@@ -201,6 +209,7 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 				updateButtons();
 			}
 		});
+		selectClean.setFont(font);
 		setButtonLayoutData(selectClean);
 		
 		//Invert selection button
@@ -212,12 +221,15 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 				updateButtons();
 			}
 		});
+		invertSelection.setFont(font);
 		setButtonLayoutData(invertSelection);
 		
 		//Show only active perspective button
 		final Button showAllPerspButton = new Button(dialogArea,SWT.CHECK);
 		showAllPerspButton.setText(WorkbenchMessages.getString("WorkbenchEditorsDialog.showAllPersp")); //$NON-NLS-1$
 		showAllPerspButton.setSelection(showAllPersp);
+		showAllPerspButton.setFont(font);
+		setButtonLayoutData(showAllPerspButton);
 		showAllPerspButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				showAllPersp = showAllPerspButton.getSelection();
