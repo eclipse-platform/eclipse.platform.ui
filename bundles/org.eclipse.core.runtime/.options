@@ -1,5 +1,6 @@
 org.eclipse.core.runtime/debug=true
 org.eclipse.core.runtime/registry/debug=false
+org.eclipse.core.runtime/registry/debug/dump=
 org.eclipse.core.runtime/registry/debug/resolve=false
 org.eclipse.core.runtime/loader/debug=false
 org.eclipse.core.runtime/loader/debug/create=false

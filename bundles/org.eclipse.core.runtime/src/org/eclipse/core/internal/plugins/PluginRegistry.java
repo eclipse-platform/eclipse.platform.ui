@@ -217,21 +217,29 @@ public void flushRegistry() {
 	path.toFile().delete();
 	tempPath.toFile().delete();
 }
-public void debugRegistry() {
-	IPath path = InternalPlatform.getMetaArea().getLocation().append(F_DEBUG_REGISTRY);
-
+public void debugRegistry(String filename) {
+	Path path = new Path(filename);
+	path = (Path)path.makeAbsolute();
+	if (!path.isValidPath(path.toOSString())) {
+		String message = Policy.bind("meta.invalidRegDebug", path.toOSString());
+		IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, message, null);
+		logError(status);
+		return;
+	}
+		
 	try {
 		FileOutputStream fs = new FileOutputStream(path.toOSString());
 		PrintWriter w = new PrintWriter(fs);
 		try {
 			RegistryWriter regWriter = new RegistryWriter();
+			System.out.println(Policy.bind("meta.infoRegDebug", path.toOSString()));
 			regWriter.writePluginRegistry(this, w, 0);
 			w.flush();
 		} finally {
 			w.close();
 		}
 	} catch (IOException ioe) {
-		String message = Policy.bind("meta.unableToCreateRegDebug");
+		String message = Policy.bind("meta.unableToCreateRegDebug", path.toOSString());
 		IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, message, ioe);
 		logError(status);
 	}

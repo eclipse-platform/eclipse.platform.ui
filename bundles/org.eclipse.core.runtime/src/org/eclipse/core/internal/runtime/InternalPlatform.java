@@ -56,6 +56,7 @@ public final class InternalPlatform {
 	// execution options
 	private static final String OPTION_DEBUG = Platform.PI_RUNTIME + "/debug";
 	private static final String OPTION_DEBUG_PLUGINS = Platform.PI_RUNTIME + "/registry/debug";
+	private static final String OPTION_DEBUG_PLUGINS_DUMP = Platform.PI_RUNTIME + "/registry/debug/dump";
 
 	// command line options
 	private static final String LOG = "-consolelog";
@@ -68,6 +69,7 @@ public final class InternalPlatform {
 	// debug support:  set in loadOptions()
 	public static boolean DEBUG = false;
 	public static boolean DEBUG_PLUGINS = false;
+	public static String DEBUG_PLUGINS_DUMP = "";
 
 	private static boolean inVAJ;
 	static {
@@ -522,13 +524,10 @@ public static void loaderShutdown() {
 	assertInitialized();
 	registry.shutdown(null);
 	clearLockFile();
-	if (DEBUG_PLUGINS) {
+	if (DEBUG_PLUGINS && DEBUG_PLUGINS_DUMP.length() != 0) {
 		// We are debugging so output the registry in XML
 		// format.
-		registry.debugRegistry();
-	} else {
-		// get rid of the debug file if it exists
-		registry.flushDebugRegistry();
+		registry.debugRegistry(DEBUG_PLUGINS_DUMP);
 	}
 	
 	if (cacheRegistry) {
@@ -633,6 +632,7 @@ static void loadOptions(Properties bootOptions) {
 	}
 	DEBUG = getBooleanOption(OPTION_DEBUG, false);
 	DEBUG_PLUGINS = getBooleanOption(OPTION_DEBUG_PLUGINS, false);
+	DEBUG_PLUGINS_DUMP = getDebugOption(OPTION_DEBUG_PLUGINS_DUMP);
 	InternalBootLoader.setupOptions();
 }
 /**
