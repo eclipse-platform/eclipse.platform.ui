@@ -229,21 +229,6 @@ public abstract class TextConsole extends AbstractConsole {
             firePropertyChange(this, IConsoleConstants.P_FONT, old, fFont);
         }
     }
-    
-	/**
-	 * Sets whether this console scrolls automatically to show the end of text as
-	 * output is appened to the console.
-	 * 
-	 * @param scroll whether this console scrolls automatically
-     * 
-     * @deprecated Since a console can now exist in more than one ConsoleView in the same
-     *      perspective, autoscroll can not be set on the console itself. It would not be 
-     *      desirable to change the state of scroll lock in every console view.
-     *      This method will be deleted before 3.1.
-     * TODO: delete this method
-	 */
-	public void setAutoScroll(boolean scroll) {
-	}
 	
     /**
      * Clears the console.
