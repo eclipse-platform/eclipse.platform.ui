@@ -561,11 +561,14 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	 */
 	public void saveState(IMemento memento) {
 		super.saveState(memento);
-		int[] weights = getSashForm().getWeights();
-		memento.putInteger(SASH_WEIGHTS+"-Length", weights.length); //$NON-NLS-1$
-		for (int i = 0; i < weights.length; i++) {
-			memento.putInteger(SASH_WEIGHTS+"-"+i, weights[i]); //$NON-NLS-1$
-		}		
+		SashForm sashForm = getSashForm();
+		if (sashForm != null) {
+	        int[] weights = sashForm.getWeights();
+			memento.putInteger(SASH_WEIGHTS+"-Length", weights.length); //$NON-NLS-1$
+			for (int i = 0; i < weights.length; i++) {
+				memento.putInteger(SASH_WEIGHTS+"-"+i, weights[i]); //$NON-NLS-1$
+			}
+		}
 	}
 
 	protected String getDetailPanePreferenceKey() {
