@@ -588,6 +588,11 @@ public class WorkbenchKeyboard {
 	 *            <code>null</code>.
 	 */
 	private void openMultiKeyAssistShell(final Display display) {
+		// Safety check to close an already open shell, if there is one.
+		if (multiKeyAssistShell != null) {
+			multiKeyAssistShell.close();
+		}
+		
 		// Get the status line. If none, then abort.
 		StatusLineContributionItem statusLine = state.getStatusLine();
 		if (statusLine == null) {
