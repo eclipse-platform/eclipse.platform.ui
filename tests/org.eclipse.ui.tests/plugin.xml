@@ -87,7 +87,6 @@
       </view>
       <view
             name="Action Filter Test View 1"
-            menuType="static"
             icon="icons\view.gif"
             class="org.eclipse.ui.tests.api.ListView"
             id="org.eclipse.ui.tests.api.IActionFilterTest1">
@@ -100,7 +99,6 @@
       </view>
       <view
             name="Action Filter Test View 2"
-            menuType="dynamic"
             icon="icons\view.gif"
             class="org.eclipse.ui.tests.api.ListView"
             id="org.eclipse.ui.tests.api.IActionFilterTest2">
@@ -731,28 +729,28 @@
       <decorator
             objectClass="org.eclipse.core.resources.IResource"
             label="Test Decorator"
-            description="The test decorator"
-            tooltip="No tip"
             state="false"
             class="org.eclipse.ui.tests.navigator.TestDecoratorContributor"
             id="org.eclipse.ui.tests.adaptable.decorator">
+            <description>
+            	The test decorator
+            </description>
       </decorator>
       <decorator
             objectClass="org.eclipse.core.resources.IResource"
             adaptable="true"
             label="Null Decorator"
-            description="A null test decorator"
-            tooltip="No tip"
             state="false"
             class="org.eclipse.ui.tests.adaptable.NullLabelDecorator"
             id="org.eclipse.ui.tests.adaptable.nulldecorator">
+            <description>
+            	A null test decorator
+            </description>            
       </decorator>
       <decorator
             lightweight="true"
             adaptable="true"
             label="Lightweight Test Decorator"
-            description="A lightweight test decorator"
-            tooltip="No tip"
             state="false"
             class="org.eclipse.ui.tests.navigator.TestLightweightDecoratorContributor"
             id="org.eclipse.ui.tests.navigator.lightweightdecorator">
@@ -761,6 +759,9 @@
                   name="org.eclipse.core.resources.IResource">
             </objectClass>
          </enablement>
+         <description>
+            	A lightweight test decorator
+          </description> 
       </decorator>
       <decorator
             adaptable="true"
@@ -769,14 +770,15 @@
             lightweight="true"
             quadrant="TOP_LEFT"
             icon="icons/binary_co.gif"
-            label="Declarative Test Decorator"
-            description="A lightweight test decorator"
-            tooltip="No tip">
+            label="Declarative Test Decorator">
          <enablement>
             <objectClass
                   name="org.eclipse.core.resources.IResource">
             </objectClass>
          </enablement>
+          <description>
+            	A lightweight test decorator
+          </description> 
       </decorator>
    </extension>
 <!-- Working set tests -->
