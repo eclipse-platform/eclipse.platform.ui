@@ -131,7 +131,7 @@ public interface IAntModel {
 
     /**
      * Adds a DTD element to the Ant model
-     * Only called if <code>canGetLexicalInfo()</code>() is <code>true</code>
+     * Only called if <code>canGetLexicalInfo()</code> is <code>true</code>
      * @param name the name of the DTD element
      * @param lineNumber the line number of the comment
      * @param columnNumber the column number of the comment
