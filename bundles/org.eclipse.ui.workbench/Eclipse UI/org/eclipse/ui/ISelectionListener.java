@@ -18,7 +18,8 @@ import org.eclipse.jface.viewers.ISelection;
  * This interface may be implemented by clients.
  * </p>
  *
- * @see ISelectionService#addSelectionListener
+ * @see ISelectionService#addSelectionListener(ISelectionListener)
+ * @see ISelectionService#addSelectionListener(String, ISelectionListener)
  * @see org.eclipse.ui.INullSelectionListener
  */
 public interface ISelectionListener {
