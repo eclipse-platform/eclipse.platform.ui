@@ -580,23 +580,11 @@ class CompletionProposalPopup implements IContentAssistListener {
 					selectProposalWithMask(e.stateMask);
 					break;
 				
-				// in linked mode: forward tab inserts and jumps,
-				// plus: don't invalidate the event in order to give LinkedUI a chance 
 				case '\t':
-					hide();
-					break;
-//					e.doit= false;
-//					if (e.stateMask == SWT.SHIFT) break;
-//					else {
-//						selectProposalWithMask(e.stateMask);
-//						break;
-//					}
-//						
-//				case '\t':
-//					e.doit= false;
-//					fProposalShell.setFocus();
-//					return false;
-						
+					e.doit= false;
+					fProposalShell.setFocus();
+					return false;
+					
 				default:			
 					ICompletionProposal p= getSelectedProposal();
 					if (p instanceof ICompletionProposalExtension) {
