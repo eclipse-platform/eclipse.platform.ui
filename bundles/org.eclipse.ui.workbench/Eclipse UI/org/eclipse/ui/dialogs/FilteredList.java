@@ -46,48 +46,55 @@ public class FilteredList extends Composite {
 		 * @param ignoreCase      a flag indicating whether pattern matching is case insensitive or not.
 		 * @param ignoreWildCards a flag indicating whether wildcard characters are interpreted or not.
 		 */
-		void setFilter(String pattern, boolean ignoreCase, boolean ignoreWildCards);
+		void setFilter(
+			String pattern,
+			boolean ignoreCase,
+			boolean ignoreWildCards);
 
 		/**
 		 * Returns <code>true</code> if the object matches the pattern, <code>false</code> otherwise.
 		 * <code>setFilter()</code> must have been called at least once prior to a call to this method.
 		 */
-		boolean match(Object element);	
+		boolean match(Object element);
 	}
-	
+
 	private class DefaultFilterMatcher implements FilterMatcher {
 		private StringMatcher fMatcher;
-		
-		public void setFilter(String pattern, boolean ignoreCase, boolean ignoreWildCards) {
-			fMatcher= new StringMatcher(pattern + '*', ignoreCase, ignoreWildCards);
+
+		public void setFilter(
+			String pattern,
+			boolean ignoreCase,
+			boolean ignoreWildCards) {
+			fMatcher =
+				new StringMatcher(pattern + '*', ignoreCase, ignoreWildCards);
 		}
-		
+
 		public boolean match(Object element) {
 			return fMatcher.match(fLabelProvider.getText(element));
-		}	
+		}
 	}
 
 	private Table fList;
 	private ILabelProvider fLabelProvider;
-	private boolean fMatchEmptyString= true;
+	private boolean fMatchEmptyString = true;
 	private boolean fIgnoreCase;
 	private boolean fAllowDuplicates;
-	private String fFilter= ""; //$NON-NLS-1$
+	private String fFilter = ""; //$NON-NLS-1$
 	private TwoArrayQuickSorter fSorter;
-	
-	private Object[] fElements= new Object[0];
+
+	private Object[] fElements = new Object[0];
 	private Label[] fLabels;
-	private Vector fImages= new Vector();
+	private Vector fImages = new Vector();
 
 	private int[] fFoldedIndices;
 	private int fFoldedCount;
-	
+
 	private int[] fFilteredIndices;
 	private int fFilteredCount;
-	
-	private FilterMatcher fFilterMatcher= new DefaultFilterMatcher();
+
+	private FilterMatcher fFilterMatcher = new DefaultFilterMatcher();
 	private Comparator fComparator;
-	
+
 	private UpdateThread fUpdateThread;
 
 	private static class Label {
@@ -95,39 +102,39 @@ public class FilteredList extends Composite {
 		public final Image image;
 
 		public Label(String string, Image image) {
-			this.string= string;
-			this.image= image;
+			this.string = string;
+			this.image = image;
 		}
-		
+
 		public boolean equals(Label label) {
 			if (label == null)
 				return false;
-				
-			return			
-				string.equals(label.string) &&
-				image.equals(label.image);
+
+			return string.equals(label.string) && image.equals(label.image);
 		}
 	}
 
 	private final class LabelComparator implements Comparator {
 		private boolean fIgnoreCase;
-	
+
 		LabelComparator(boolean ignoreCase) {
-			fIgnoreCase= ignoreCase;
+			fIgnoreCase = ignoreCase;
 		}
-	
+
 		public int compare(Object left, Object right) {
-			Label leftLabel= (Label) left;
-			Label rightLabel= (Label) right;			
+			Label leftLabel = (Label) left;
+			Label rightLabel = (Label) right;
 
 			int value;
-			
+
 			if (fComparator == null) {
-				value= fIgnoreCase
-					? leftLabel.string.compareToIgnoreCase(rightLabel.string)
-					: leftLabel.string.compareTo(rightLabel.string);
+				value =
+					fIgnoreCase
+						? leftLabel.string.compareToIgnoreCase(rightLabel.string)
+						: leftLabel.string.compareTo(rightLabel.string);
 			} else {
-			    value= fComparator.compare(leftLabel.string, rightLabel.string);
+				value =
+					fComparator.compare(leftLabel.string, rightLabel.string);
 			}
 
 			if (value != 0)
@@ -137,16 +144,15 @@ public class FilteredList extends Composite {
 			if (leftLabel.image == null) {
 				return (rightLabel.image == null) ? 0 : -1;
 			} else if (rightLabel.image == null) {
-				return +1;				
+				return +1;
 			} else {
-				return
-					fImages.indexOf(leftLabel.image) -
-					fImages.indexOf(rightLabel.image);
+				return fImages.indexOf(leftLabel.image)
+					- fImages.indexOf(rightLabel.image);
 			}
 		}
-		
-	}	
-	
+
+	}
+
 	/**
 	 * Constructs a new filtered list.
 	 * 
@@ -157,17 +163,21 @@ public class FilteredList extends Composite {
 	 * @param allowDuplicates  specifies whether folding of duplicates is desired
 	 * @param matchEmptyString specifies whether empty filter strings should filter everything or nothing
 	 */
-	public FilteredList(Composite parent, int style, ILabelProvider labelProvider,
-		boolean ignoreCase, boolean allowDuplicates, boolean matchEmptyString)
-	{
+	public FilteredList(
+		Composite parent,
+		int style,
+		ILabelProvider labelProvider,
+		boolean ignoreCase,
+		boolean allowDuplicates,
+		boolean matchEmptyString) {
 		super(parent, SWT.NONE);
 
-		GridLayout layout= new GridLayout();
-		layout.marginHeight= 0;
-		layout.marginWidth= 0;
+		GridLayout layout = new GridLayout();
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
 		setLayout(layout);
-		
-		fList= new Table(this, style);
+
+		fList = new Table(this, style);
 		fList.setLayoutData(new GridData(GridData.FILL_BOTH));
 		fList.setFont(parent.getFont());
 		fList.addDisposeListener(new DisposeListener() {
@@ -177,12 +187,12 @@ public class FilteredList extends Composite {
 					fUpdateThread.requestStop();
 			}
 		});
-		
-		fLabelProvider= labelProvider;
-		fIgnoreCase= ignoreCase;		
-		fSorter= new TwoArrayQuickSorter(new LabelComparator(ignoreCase));
-		fAllowDuplicates= allowDuplicates;
-		fMatchEmptyString= matchEmptyString;
+
+		fLabelProvider = labelProvider;
+		fIgnoreCase = ignoreCase;
+		fSorter = new TwoArrayQuickSorter(new LabelComparator(ignoreCase));
+		fAllowDuplicates = allowDuplicates;
+		fMatchEmptyString = matchEmptyString;
 	}
 
 	/**
@@ -191,23 +201,23 @@ public class FilteredList extends Composite {
 	 */
 	public void setElements(Object[] elements) {
 		if (elements == null) {
-			fElements= new Object[0];
+			fElements = new Object[0];
 		} else {
 			// copy list for sorting
-			fElements= new Object[elements.length];
+			fElements = new Object[elements.length];
 			System.arraycopy(elements, 0, fElements, 0, elements.length);
 		}
-			
-		int length= fElements.length;
+
+		int length = fElements.length;
 
 		// fill labels			
-		fLabels= new Label[length];
-		Set imageSet= new HashSet();
-		for (int i= 0; i != length; i++) {
-			String text= fLabelProvider.getText(fElements[i]);
-			Image image= fLabelProvider.getImage(fElements[i]);
-			
-			fLabels[i]= new Label(text, image);				
+		fLabels = new Label[length];
+		Set imageSet = new HashSet();
+		for (int i = 0; i != length; i++) {
+			String text = fLabelProvider.getText(fElements[i]);
+			Image image = fLabelProvider.getImage(fElements[i]);
+
+			fLabels[i] = new Label(text, image);
 			imageSet.add(image);
 		}
 		fImages.clear();
@@ -215,8 +225,8 @@ public class FilteredList extends Composite {
 
 		fSorter.sort(fLabels, fElements);
 
-		fFilteredIndices= new int[length];	
-		fFoldedIndices= new int[length];
+		fFilteredIndices = new int[length];
+		fFoldedIndices = new int[length];
 
 		updateList();
 	}
@@ -234,45 +244,45 @@ public class FilteredList extends Composite {
 	 */
 	public void setFilterMatcher(FilterMatcher filterMatcher) {
 		Assert.isNotNull(filterMatcher);
-		fFilterMatcher= filterMatcher;
+		fFilterMatcher = filterMatcher;
 	}
-	
+
 	/**
 	 * Sets a custom comparator for sorting the list.
 	 */
 	public void setComparator(Comparator comparator) {
-	    Assert.isNotNull(comparator);
-	    fComparator= comparator;
+		Assert.isNotNull(comparator);
+		fComparator = comparator;
 	}
 
-    /**
-     * Adds a selection listener to the list.
-     * @param listener the selection listener to be added.
-     */
+	/**
+	 * Adds a selection listener to the list.
+	 * @param listener the selection listener to be added.
+	 */
 	public void addSelectionListener(SelectionListener listener) {
 		fList.addSelectionListener(listener);
 	}
 
-    /**
-     * Removes a selection listener from the list.
-     * @param listener the selection listener to be removed.
-     */
+	/**
+	 * Removes a selection listener from the list.
+	 * @param listener the selection listener to be removed.
+	 */
 	public void removeSelectionListener(SelectionListener listener) {
 		fList.removeSelectionListener(listener);
-	}	
+	}
 
-    /**
-     * Sets the selection of the list.
-     * Empty or null array removes selection.
-     * @param selection an array of indices specifying the selection.
-     */
+	/**
+	 * Sets the selection of the list.
+	 * Empty or null array removes selection.
+	 * @param selection an array of indices specifying the selection.
+	 */
 	public void setSelection(int[] selection) {
 		if (selection == null || selection.length == 0)
 			fList.deselectAll();
 		else
 			fList.setSelection(selection);
 	}
-	
+
 	/**
 	 * Returns the selection of the list.
 	 * @return returns an array of indices specifying the current selection.
@@ -280,16 +290,16 @@ public class FilteredList extends Composite {
 	public int[] getSelectionIndices() {
 		return fList.getSelectionIndices();
 	}
-	
+
 	/**
 	 * Returns the selection of the list.
 	 * This is a convenience function for <code>getSelectionIndices()</code>.
 	 * @return returns the index of the selection, -1 for no selection.
 	 */
 	public int getSelectionIndex() {
-		return fList.getSelectionIndex();		
+		return fList.getSelectionIndex();
 	}
-	
+
 	/**
 	 * Sets the selection of the list.
 	 * Empty or null array removes selection.
@@ -300,40 +310,41 @@ public class FilteredList extends Composite {
 			fList.deselectAll();
 			return;
 		}
-		
+
 		if (fElements == null)
 			return;
-		
-		// fill indices
-		int[] indices= new int[elements.length];
-		for (int i= 0; i != elements.length; i++) {
-			int j;			
-			for (j= 0; j != fFoldedCount; j++) {
-				int max= (j == fFoldedCount - 1)
-					? fFilteredCount
-					: fFoldedIndices[j + 1];
 
-				int l;					
-				for (l= fFoldedIndices[j]; l != max; l++) {
+		// fill indices
+		int[] indices = new int[elements.length];
+		for (int i = 0; i != elements.length; i++) {
+			int j;
+			for (j = 0; j != fFoldedCount; j++) {
+				int max =
+					(j == fFoldedCount - 1)
+						? fFilteredCount
+						: fFoldedIndices[j + 1];
+
+				int l;
+				for (l = fFoldedIndices[j]; l != max; l++) {
 					// found matching element?
 					if (fElements[fFilteredIndices[l]].equals(elements[i])) {
-						indices[i]= j;
-						break;	
+						indices[i] = j;
+						break;
 					}
 				}
-				
+
 				if (l != max)
 					break;
 			}
-			
+
 			// not found
 			if (j == fFoldedCount)
 				indices[i] = 0;
 		}
-		
+
 		fList.setSelection(indices);
 	}
-	
+
 	/**
 	 * Returns an array of the selected elements. The type of the elements
 	 * returned in the list are the same as the ones passed with
@@ -344,13 +355,14 @@ public class FilteredList extends Composite {
 		if (fList.isDisposed() || (fList.getSelectionCount() == 0))
 			return new Object[0];
 
-		int[] indices= fList.getSelectionIndices();
-		Object[] elements= new Object[indices.length];
-		
-		for (int i= 0; i != indices.length; i++)
-			elements[i]= fElements[fFilteredIndices[fFoldedIndices[indices[i]]]];
-		
-		return elements;		
+		int[] indices = fList.getSelectionIndices();
+		Object[] elements = new Object[indices.length];
+
+		for (int i = 0; i != indices.length; i++)
+			elements[i] =
+				fElements[fFilteredIndices[fFoldedIndices[indices[i]]]];
+
+		return elements;
 	}
 
 	/**
@@ -358,21 +370,21 @@ public class FilteredList extends Composite {
 	 * @param filter the filter pattern.
 	 */
 	public void setFilter(String filter) {
-		fFilter= (filter == null) ? "" : filter; //$NON-NLS-1$
+		fFilter = (filter == null) ? "" : filter; //$NON-NLS-1$
 
 		updateList();
 	}
 
 	private void updateList() {
-		fFilteredCount= filter();
-		fFoldedCount= fold();
+		fFilteredCount = filter();
+		fFoldedCount = fold();
 
 		if (fUpdateThread != null)
 			fUpdateThread.requestStop();
-		fUpdateThread= new UpdateThread(new TableUpdater(fList, fFoldedCount));
+		fUpdateThread = new UpdateThread(new TableUpdater(fList, fFoldedCount));
 		fUpdateThread.start();
 	}
-	
+
 	/**
 	 * Returns the filter pattern.
 	 * @return returns the filter pattern.
@@ -389,42 +401,43 @@ public class FilteredList extends Composite {
 	public Object[] getFoldedElements(int index) {
 		if ((index < 0) || (index >= fFoldedCount))
 			return null;
-		
-		int start= fFoldedIndices[index];			
-		int count= (index == fFoldedCount - 1)
-			? fFilteredCount - start
-			: fFoldedIndices[index + 1] - start;
-			
-		Object[] elements= new Object[count];
-		for (int i= 0; i != count; i++)
-			elements[i]= fElements[fFilteredIndices[start + i]];
-				
+
+		int start = fFoldedIndices[index];
+		int count =
+			(index == fFoldedCount - 1)
+				? fFilteredCount - start
+				: fFoldedIndices[index + 1] - start;
+
+		Object[] elements = new Object[count];
+		for (int i = 0; i != count; i++)
+			elements[i] = fElements[fFilteredIndices[start + i]];
+
 		return elements;
 	}
 
-    /*
-     * Folds duplicate entries. Two elements are considered as a pair of
-     * duplicates if they coiincide in the rendered string and image.
-     * @return returns the number of elements after folding.
-     */
+	/*
+	 * Folds duplicate entries. Two elements are considered as a pair of
+	 * duplicates if they coiincide in the rendered string and image.
+	 * @return returns the number of elements after folding.
+	 */
 	private int fold() {
 		if (fAllowDuplicates) {
-			for (int i= 0; i != fFilteredCount; i++) 		
-				fFoldedIndices[i]= i; // identity mapping
+			for (int i = 0; i != fFilteredCount; i++)
+				fFoldedIndices[i] = i; // identity mapping
 
-			return fFilteredCount;			
-		
+			return fFilteredCount;
+
 		} else {
-			int k= 0;
-			Label last= null;
-			for (int i= 0; i != fFilteredCount; i++) {
-				int j= fFilteredIndices[i];
-				
-				Label current= fLabels[j];
-				if (! current.equals(last)) {
-					fFoldedIndices[k]= i;
+			int k = 0;
+			Label last = null;
+			for (int i = 0; i != fFilteredCount; i++) {
+				int j = fFilteredIndices[i];
+
+				Label current = fLabels[j];
+				if (!current.equals(last)) {
+					fFoldedIndices[k] = i;
 					k++;
-					last= current;
+					last = current;
 				}
 			}
 			return k;
@@ -433,25 +446,26 @@ public class FilteredList extends Composite {
 
 	/*
 	 * Filters the list with the filter pattern.
-     * @return returns the number of elements after filtering.
+	 * @return returns the number of elements after filtering.
 	 */
 	private int filter() {
-		if (((fFilter == null) || (fFilter.length() == 0)) && !fMatchEmptyString)
+		if (((fFilter == null) || (fFilter.length() == 0))
+			&& !fMatchEmptyString)
 			return 0;
-		
+
 		fFilterMatcher.setFilter(fFilter.trim(), fIgnoreCase, false);
 
-		int k= 0;
-		for (int i= 0; i != fElements.length; i++) {
+		int k = 0;
+		for (int i = 0; i != fElements.length; i++) {
 			if (fFilterMatcher.match(fElements[i]))
-				fFilteredIndices[k++]= i;
-		}			
-						
+				fFilteredIndices[k++] = i;
+		}
+
 		return k;
-	}	
+	}
 
 	private interface IncrementalRunnable extends Runnable {
-		public int getCount();		
+		public int getCount();
 		public void cancel();
 	}
 
@@ -460,63 +474,65 @@ public class FilteredList extends Composite {
 		private final Table fTable;
 		private final int fCount;
 		private int fIndex;
-		
+
 		public TableUpdater(Table table, int count) {
-			fTable= table;
-			fDisplay= table.getDisplay();
-			fCount= count;
+			fTable = table;
+			fDisplay = table.getDisplay();
+			fCount = count;
 		}
-		
+
 		/*
 		 * @see IncrementalRunnable#getCount()
 		 */
 		public int getCount() {
-			return fCount + 1;	
+			return fCount + 1;
 		}
-		
+
 		/*
 		 * @see IncrementalRunnable#cancel()
 		 */
 		public void cancel() {
-			fIndex= 0;
+			fIndex = 0;
 		}
-		
+
 		/*
 		 * @see Runnable#run()
 		 */
 		public void run() {
-			final int index= fIndex++;
+			final int index = fIndex++;
 
 			fDisplay.syncExec(new Runnable() {
 				public void run() {
 					if (fTable.isDisposed())
 						return;
-					
-			 		final int itemCount= fTable.getItemCount();
-					
+
+					final int itemCount = fTable.getItemCount();
+
 					if (index < fCount) {
-						final TableItem item= (index < itemCount)
-							? fTable.getItem(index)
-							: new TableItem(fTable, SWT.NONE);
-	
-						final Label label= fLabels[fFilteredIndices[fFoldedIndices[index]]];
-	
+						final TableItem item =
+							(index < itemCount)
+								? fTable.getItem(index)
+								: new TableItem(fTable, SWT.NONE);
+
+						final Label label =
+							fLabels[fFilteredIndices[fFoldedIndices[index]]];
+
 						item.setText(label.string);
-						item.setImage(label.image);		
+						item.setImage(label.image);
 
 						// select first item
 						if (index == 0) {
-							fTable.setSelection(0);				 		
+							fTable.setSelection(0);
 							fTable.notifyListeners(SWT.Selection, new Event());
 						}
 
-					// finish
+						// finish
 					} else {
-				 		if (fCount < itemCount) {
-				 			fTable.setRedraw(false);
-					 		fTable.remove(fCount, itemCount - 1);
-				 			fTable.setRedraw(true);
-				 		}
+						if (fCount < itemCount) {
+							fTable.setRedraw(false);
+							fTable.remove(fCount, itemCount - 1);
+							fTable.setRedraw(true);
+						}
 
 						// table empty -> no selection
 						if (fCount == 0)
@@ -533,29 +549,32 @@ public class FilteredList extends Composite {
 		private final IncrementalRunnable fRunnable;
 		/** A flag indicating a thread stop request */
 		private boolean fStop;
-		
+
 		/**
 		 * Creates an update thread.
 		 */
 		public UpdateThread(IncrementalRunnable runnable) {
-			fRunnable= runnable;
+			fRunnable = runnable;
 		}
-		
+
 		/**
 		 * Requests the thread to stop.
 		 */
 		public void requestStop() {
-			fStop= true;
+			fStop = true;
 		}
-		
+
 		/**
 		 * @see Runnable#run()
 		 */
 		public void run() {
-			final int count= fRunnable.getCount();
-			for (int i= 0; i != count; i++) {
+			final int count = fRunnable.getCount();
+			for (int i = 0; i != count; i++) {
 				if (i % 50 == 0)
-					try { Thread.sleep(10); } catch (InterruptedException e) {}
+					try {
+						Thread.sleep(10);
+					} catch (InterruptedException e) {
+					}
 
 				if (fStop) {
 					fRunnable.cancel();
@@ -563,7 +582,7 @@ public class FilteredList extends Composite {
 				}
 
 				fRunnable.run();
-			}		
+			}
 		}
 	}
 
