@@ -1,5 +1,10 @@
-//
-// PlantyException.java
+package org.eclipse.ui.externaltools.internal.ant.editor;
+
+/**********************************************************************
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
 //
 // Copyright:
 // GEBIT Gesellschaft fuer EDV-Beratung
@@ -7,7 +12,6 @@
 // Berlin, Duesseldorf, Frankfurt (Germany) 2002
 // All rights reserved.
 //
-package org.eclipse.ui.externaltools.internal.ant.editor;
 
 /**
  * Exception that might be thrown in the Planty context.
