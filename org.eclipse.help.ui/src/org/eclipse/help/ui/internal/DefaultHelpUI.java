@@ -14,6 +14,8 @@ import org.eclipse.help.*;
 import org.eclipse.help.internal.base.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.*;
 
 /**
@@ -28,6 +30,8 @@ import org.eclipse.ui.help.*;
  */
 public class DefaultHelpUI extends AbstractHelpUI {
 	private ContextHelpDialog f1Dialog = null;
+
+	private static final String HELP_VIEW_ID = "org.eclipse.help.ui.HelpView";
 
 	/**
 	 * Constructor.
@@ -71,6 +75,34 @@ public class DefaultHelpUI extends AbstractHelpUI {
 	 *            int positioning information
 	 */
 	public void displayContext(IContext context, int x, int y) {
+		if (context == null)
+			return;
+		IWorkbenchWindow window = PlatformUI.getWorkbench()
+				.getActiveWorkbenchWindow();
+		if (window != null && isActiveShell(window)) {
+			IWorkbenchPage page = window.getActivePage();
+			if (page != null) {
+				try {
+					page.showView(HELP_VIEW_ID);
+					return;
+				} catch (PartInitException e) {
+					// ignore the exception and let
+					// the code default to the context
+					// help dialog
+				}
+			}
+		}
+		displayContextAsInfopop(context, x, y);
+	}
+
+	private boolean isActiveShell(IWorkbenchWindow window) {
+		// Test if the active shell belongs to this window
+		Display display = PlatformUI.getWorkbench().getDisplay();
+		Shell activeShell = display.getActiveShell();
+		return activeShell != null && activeShell.equals(window.getShell());
+	}
+
+	private void displayContextAsInfopop(IContext context, int x, int y) {
 		if (f1Dialog != null)
 			f1Dialog.close();
 		if (context == null)
