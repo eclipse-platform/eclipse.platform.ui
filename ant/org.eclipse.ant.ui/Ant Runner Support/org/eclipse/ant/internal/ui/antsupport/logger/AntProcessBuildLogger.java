@@ -261,6 +261,9 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 	 * @see BuildListener#messageLogged(BuildEvent)
 	 */
 	public void messageLogged(BuildEvent event) {
+		if (event.getPriority() > getMessageOutputLevel()) {
+			return;
+		}
 		logMessage(event.getMessage(), event, -1);
 	}
 	
