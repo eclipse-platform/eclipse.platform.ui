@@ -37,6 +37,8 @@ public class Perspective
 	protected PerspectivePresentation presentation;
 	final static private String VERSION_STRING = "0.016";//$NON-NLS-1$
 	
+	final static private float DEFAULT_FASTVIEW_RATIO = 0.25f;
+	
 	// fields used by fast view resizing via a sash
 	private static final int SASH_SIZE = 3;
 	private static final RGB RGB_COLOR1 = new RGB(132, 130, 132);
@@ -45,14 +47,14 @@ public class Perspective
 	private Color borderColor1;
 	private Color borderColor2;
 	private Color borderColor3;
-	private Map mapFastViewToWidth = new HashMap();
+	private Map mapFastViewToWidthRatio = new HashMap();
 	private Sash fastViewSash;
 	
 	//Number of open editors before reusing. If < 0, use the 
 	//user preference settings.
 	private int reuseEditors = -1;
 
-	// resize listener to update fast view height when
+	// resize listener to update fast view height and width when
 	// window resized.
 	Listener resizeListener = new Listener() {
 		public void handleEvent(Event event) {
@@ -60,7 +62,11 @@ public class Perspective
 				ViewPane pane = getPane(activeFastView);
 				Rectangle bounds = pane.getBounds();
 				bounds.height = Math.max(0, getClientComposite().getSize().y);
+				float ratio = getFastViewWidthRatio(pane.getID());
+				bounds.width = Math.max(0, (int)((float)(getClientComposite().getSize().x) * ratio));
 				pane.setBounds(bounds);
+				fastViewSash.setBounds(bounds.width - SASH_SIZE, bounds.y, SASH_SIZE, bounds.height - SASH_SIZE);
+				fastViewSash.moveAbove(null);
 			}
 		}
 	};
@@ -87,17 +93,21 @@ public class Perspective
 	};
 	private SelectionAdapter selectionListener = new SelectionAdapter () {
 		public void widgetSelected(SelectionEvent e) {
+			if (e.detail == SWT.DRAG && activeFastView != null)
+				checkDragLimit(e);
 			if (e.detail != SWT.DRAG && activeFastView != null) {
 				ViewPane pane = getPane(activeFastView);
 				Rectangle bounds = pane.getBounds();
 				bounds.width = Math.max(0, e.x - bounds.x);
 				pane.setBounds(bounds);
-				mapFastViewToWidth.put(pane.getID(), new Integer(bounds.width));
+				Float newRatio = new Float((float)bounds.width/(float)getClientComposite().getSize().x);
+				mapFastViewToWidthRatio.put(pane.getID(), newRatio);
 				fastViewSash.setBounds(bounds.width - SASH_SIZE, bounds.y, SASH_SIZE, bounds.height - SASH_SIZE);
 				fastViewSash.moveAbove(null);
 			}
 		}
 	};
+
 /**
  * ViewManager constructor comment.
  */
@@ -155,6 +165,17 @@ public boolean bringToTop(IViewPart part) {
 public boolean canCloseView(IViewPart view) {
 	return true;
 }
+
+/**
+ * Prevents the user from making a fast view too narrow or too wide.
+ */
+private void checkDragLimit(SelectionEvent event) {
+	if (event.x < ((float)getClientComposite().getSize().x * IPageLayout.RATIO_MIN))
+		event.x = (int)((float)getClientComposite().getSize().x * IPageLayout.RATIO_MIN);
+	if (event.x > ((float)getClientComposite().getSize().x * IPageLayout.RATIO_MAX))
+		event.x = (int)((float)getClientComposite().getSize().x * IPageLayout.RATIO_MAX);
+}
+
 /**
  * Returns whether a view exists within the perspective.
  */
@@ -212,7 +233,7 @@ public void dispose() {
 		fastViewSash = null;
 	}
 
-	mapFastViewToWidth.clear();
+	mapFastViewToWidthRatio.clear();
 }
 /**
  * See IWorkbenchPage@findView.
@@ -285,6 +306,19 @@ public ArrayList getPerspectiveActions() {
  */
 public PerspectivePresentation getPresentation() {
 	return presentation;
+}
+/**
+ * Retrieves the ratio for the fast view with the given ID. If
+ * the ratio is not known, the default ratio is returned.
+ */
+private float getFastViewWidthRatio(String id) {
+	Float f = (Float)mapFastViewToWidthRatio.get(id);
+	if (f != null) {
+		return f.floatValue();
+	} else {
+		mapFastViewToWidthRatio.put(id, new Float(DEFAULT_FASTVIEW_RATIO));
+		return DEFAULT_FASTVIEW_RATIO;
+	}
 }
 /**
  * Returns the show view actions the page.
@@ -616,9 +650,15 @@ public void restoreState(IMemento memento) {
 			// Get the view details.
 			IMemento childMem = views[x];
 			String viewID = childMem.getString(IWorkbenchConstants.TAG_ID);
-			Integer width = childMem.getInteger(IWorkbenchConstants.TAG_WIDTH);
-			if (width != null)
-				mapFastViewToWidth.put(viewID,width);
+			Float ratio = childMem.getFloat(IWorkbenchConstants.TAG_RATIO);
+			if (ratio == null) {
+				Integer viewWidth = childMem.getInteger(IWorkbenchConstants.TAG_WIDTH);
+				if (viewWidth == null)
+					ratio = new Float(DEFAULT_FASTVIEW_RATIO);
+				else
+					ratio = new Float((float)viewWidth.intValue() / (float)getClientComposite().getSize().x);
+			}
+			mapFastViewToWidthRatio.put(viewID, ratio);
 				
 			// Create and open the view.
 			ViewPane pane = restoreView(childMem,viewID);
@@ -818,9 +858,8 @@ private void saveState(IMemento memento, PerspectiveDescriptor p,
 			IMemento viewMemento = childMem.createChild(IWorkbenchConstants.TAG_VIEW);
 			String id = view.getSite().getId();
 			viewMemento.putString(IWorkbenchConstants.TAG_ID, id);
-			Integer width = (Integer)mapFastViewToWidth.get(id);
-			if (width != null)
-				viewMemento.putInteger(IWorkbenchConstants.TAG_WIDTH,width.intValue());
+			float ratio = getFastViewWidthRatio(id);
+			viewMemento.putFloat(IWorkbenchConstants.TAG_RATIO, ratio);
 			if (active && saveInnerViewState)
 				if(!saveView(view,viewMemento))
 					errors++;
@@ -970,11 +1009,11 @@ private void showFastView(IViewPart part) {
 	ctrl.setEnabled(true); // Add focus support.
 	Composite parent = ctrl.getParent();
 	Rectangle bounds = parent.getClientArea();
-	Integer width = (Integer)mapFastViewToWidth.get(pane.getID());
-	if (width == null)
-		bounds.width = 250;
-	else
-		bounds.width = width.intValue();
+
+	// show fast view at proper ratio to window size
+	float ratio = getFastViewWidthRatio(pane.getID());
+	bounds.width = (int)(ratio*(float)getClientComposite().getSize().x);
+
 	pane.setBounds(bounds);
 	pane.moveAbove(null);
 	pane.setFocus();
