@@ -378,7 +378,8 @@ protected void loadPreferenceStore() {
  */
 protected void refreshPluginActions() {
 	Workbench wb = (Workbench)PlatformUI.getWorkbench();
-	wb.refreshPluginActions(getDescriptor().getUniqueIdentifier());
+	if (wb != null)
+		wb.refreshPluginActions(getDescriptor().getUniqueIdentifier());
 }	
 /**
  * Saves this plug-in's dialog settings.
