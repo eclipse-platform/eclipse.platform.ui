@@ -178,6 +178,8 @@ public class JarVerifier implements IVerifier {
 		
 		try {
 			while (entries.hasMoreElements()) {
+				if (monitor !=null)
+					monitor.worked(1);
 				currentEntry = (JarEntry) entries.nextElement();
 				list.add(currentEntry);
 				in = jarFile.getInputStream(currentEntry);
