@@ -390,8 +390,12 @@ public void showPaneMenu() {
  * Return true if <code>x</code> is over the label image.
  */
 private boolean overImage(CTabItem item,int x) {
-	Rectangle imageBounds = item.getImage().getBounds();
-	return x < (item.getBounds().x + imageBounds.x + imageBounds.width);
+	if (item.getImage() == null) {
+		return false;
+	} else {
+		Rectangle imageBounds = item.getImage().getBounds();
+		return x < (item.getBounds().x + imageBounds.x + imageBounds.width);
+	}
 }		
 /**
  * Create a page and tab for an editor.

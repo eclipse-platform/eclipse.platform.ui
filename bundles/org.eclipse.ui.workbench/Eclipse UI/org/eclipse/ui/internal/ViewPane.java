@@ -280,7 +280,11 @@ public boolean isDragAllowed(Point p) {
  * Return true if <code>x</code> is over the label image.
  */
 private boolean overImage(int x) {
-	return x < titleLabel.getImage().getBounds().width;
+	if (titleLabel.getImage() == null) {
+		return false;
+	} else {
+		return x < titleLabel.getImage().getBounds().width;
+	}
 }
 /**
  * Create a title bar for the pane.
