@@ -17,6 +17,8 @@ import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.internal.WorkbenchMessages;
+
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
 
 /**
@@ -354,7 +356,7 @@ public class DecorationScheduler {
 			 */
 			public void done(IJobChangeEvent event) {
 				//Reschedule if another update came in while we were working
-				if(!pendingUpdate.isEmpty())
+				if(!pendingUpdate.isEmpty() && PlatformUI.isWorkbenchRunning())
 					decorated();
 			}
 		});

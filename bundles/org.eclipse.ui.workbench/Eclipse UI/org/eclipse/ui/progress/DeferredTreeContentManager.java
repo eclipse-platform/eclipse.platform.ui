@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.progress;
 
+import org.eclipse.core.internal.jobs.JobManager;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -29,6 +30,8 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.progress.PendingUpdateAdapter;
 import org.eclipse.ui.internal.progress.ProgressMessages;
+
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
@@ -277,7 +280,10 @@ public class DeferredTreeContentManager {
 			}
 		};
 		clearJob.setSystem(true);
-		clearJob.schedule();
+		
+		//Only schedule if there is a workbench
+		if(PlatformUI.isWorkbenchRunning())
+			clearJob.schedule();
 
 	}
 	

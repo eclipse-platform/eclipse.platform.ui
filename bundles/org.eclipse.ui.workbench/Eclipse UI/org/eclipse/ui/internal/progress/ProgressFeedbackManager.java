@@ -26,6 +26,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
 
 /**
@@ -84,6 +85,10 @@ public class ProgressFeedbackManager {
 			 * (non-Javadoc) @see org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
 			 */
 			public void done(IJobChangeEvent event) {
+				
+				if(!PlatformUI.isWorkbenchRunning())
+					return;
+				
 				statuses[0] = event.getResult();
 				pendingInfos.remove(info);
 				refreshDialog();

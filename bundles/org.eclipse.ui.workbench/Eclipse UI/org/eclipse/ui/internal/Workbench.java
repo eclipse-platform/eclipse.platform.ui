@@ -1660,7 +1660,7 @@ public final class Workbench implements IWorkbench {
 			((DecoratorManager) getDecoratorManager()).shutdown();
 		}
 		activityHelper.shutdown();
-		Platform.getJobManager().shutdown();
+		ProgressManager.getInstance().shutdown();
 	}
 
 	/* (non-Javadoc)
