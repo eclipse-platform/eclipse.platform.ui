@@ -21,6 +21,7 @@ import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.sync.CVSSyncCompareInput;
 import org.eclipse.team.ui.TeamUIPlugin;
@@ -77,16 +78,15 @@ public class SyncAction implements IObjectActionDelegate {
 		String title = Policy.bind("SyncAction.sync");
 		try {
 			IResource[] resources = getResources(selection);
-			SyncView view = (SyncView)TeamUIPlugin.getActivePage().findView(SyncView.VIEW_ID);
+			SyncView view = (SyncView)CVSUIPlugin.getActivePage().findView(SyncView.VIEW_ID);
 			if (view == null) {
-				TeamUIPlugin plugin = TeamUIPlugin.getPlugin();
 				view = SyncView.findInActivePerspective();
 			}
 			if (view != null) {
 				try {
-					TeamUIPlugin.getActivePage().showView(SyncView.VIEW_ID);
+					CVSUIPlugin.getActivePage().showView(SyncView.VIEW_ID);
 				} catch (PartInitException e) {
-					TeamUIPlugin.log(e.getStatus());
+					CVSUIPlugin.log(e.getStatus());
 				}
 				// What happens when resources from the same project are selected?
 				IRemoteSyncElement[] trees = new IRemoteSyncElement[resources.length];
