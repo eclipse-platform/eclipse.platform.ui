@@ -449,7 +449,7 @@
             id="org.eclipse.debug.ui.profileActionSet">
          <menu
                label="%RunMenu.label"
-               path="emptyLaunchGroup"
+               path="additions"
                id="org.eclipse.ui.run">
             <separator
                   name="relaunchGroup">
