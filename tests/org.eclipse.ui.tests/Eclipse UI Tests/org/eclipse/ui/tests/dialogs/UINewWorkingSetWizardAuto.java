@@ -48,12 +48,15 @@ public class UINewWorkingSetWizardAuto extends UIWorkingSetWizardsAuto {
 
     public void testTypePage() throws Throwable {
         IWizardPage page = fWizardDialog.getCurrentPage();
-        assertTrue((page instanceof WorkingSetTypePage) == fWorkingSetDescriptors.length > 1);
+        WorkingSetDescriptor[] descriptors = getEditableWorkingSetDescriptors();
+        
+        // the first page must be the type selection page iff there is more than one working set type
+        assertEquals(descriptors.length > 1, (page instanceof WorkingSetTypePage));
 
         /*
          * Should have at least resourceWorkingSetPage and MockWorkingSet
          */
-        assertTrue(fWorkingSetDescriptors.length >= 2);
+        assertTrue(descriptors.length >= 2);
         if (page instanceof WorkingSetTypePage) {
             WorkingSetTypePage typePage = (WorkingSetTypePage) page;
             List widgets = getWidgets((Composite) page.getControl(),
@@ -62,13 +65,13 @@ public class UINewWorkingSetWizardAuto extends UIWorkingSetWizardsAuto {
             /*
              * Test initial page state
              */
-            assertEquals(fWorkingSetDescriptors.length, table.getItemCount());
+            assertEquals(descriptors.length, table.getItemCount());
             assertTrue(typePage.canFlipToNextPage() == false);
             assertTrue(fWizard.canFinish() == false);
             /*
              * Test page state with page complete input
              */
-            table.setSelection(fWorkingSetDescriptors.length - 1);
+            table.setSelection(descriptors.length - 1);
             table.notifyListeners(SWT.Selection, new Event());
             assertTrue(typePage.canFlipToNextPage());
             assertTrue(fWizard.canFinish() == false);
@@ -86,7 +89,10 @@ public class UINewWorkingSetWizardAuto extends UIWorkingSetWizardsAuto {
         IWizardPage page = fWizardDialog.getCurrentPage();
         IWizardPage defaultEditPage = registry.getDefaultWorkingSetPage();
         String defaultEditPageClassName = defaultEditPage.getClass().getName();
-        assertTrue((page instanceof WorkingSetTypePage) == fWorkingSetDescriptors.length > 1);
+        WorkingSetDescriptor[] descriptors = getEditableWorkingSetDescriptors();
+        
+        // the first page must be the type selection page iff there is more than one working set type
+        assertEquals(descriptors.length > 1, (page instanceof WorkingSetTypePage));
 
         if (page instanceof WorkingSetTypePage) {
             /*
@@ -98,8 +104,8 @@ public class UINewWorkingSetWizardAuto extends UIWorkingSetWizardsAuto {
             Table table = (Table) widgets.get(0);
             TableItem[] items = table.getItems();
             String workingSetName = null;
-            for (int descriptorIndex = 0; descriptorIndex < fWorkingSetDescriptors.length; descriptorIndex++) {
-                WorkingSetDescriptor descriptor = fWorkingSetDescriptors[descriptorIndex];
+            for (int descriptorIndex = 0; descriptorIndex < descriptors.length; descriptorIndex++) {
+                WorkingSetDescriptor descriptor = descriptors[descriptorIndex];
                 if (defaultEditPageClassName.equals(descriptor
                         .getPageClassName())) {
                     workingSetName = descriptor.getName();

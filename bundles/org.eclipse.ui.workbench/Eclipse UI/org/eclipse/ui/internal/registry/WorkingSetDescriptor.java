@@ -184,4 +184,16 @@ public class WorkingSetDescriptor {
     	Bundle bundle= Platform.getBundle(configElement.getDeclaringExtension().getNamespace());
     	return bundle.getState() == Bundle.ACTIVE;
     }
+    
+    /**
+     * Returns whether working sets based on this descriptor are editable.
+     * 
+     * @return <code>true</code> if working sets based on this descriptor are editable; otherwise
+     *  <code>false</code>
+     * 
+     * @since 3.1
+     */
+    public boolean isEditable() {
+        return getPageClassName() != null;
+    }
 }

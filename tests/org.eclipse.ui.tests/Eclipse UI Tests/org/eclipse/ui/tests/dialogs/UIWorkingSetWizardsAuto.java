@@ -59,8 +59,6 @@ public abstract class UIWorkingSetWizardsAuto extends UITestCase {
 
     protected Wizard fWizard;
 
-    protected WorkingSetDescriptor[] fWorkingSetDescriptors;
-
     protected IProject p1;
 
     protected IProject p2;
@@ -140,10 +138,6 @@ public abstract class UIWorkingSetWizardsAuto extends UITestCase {
         WorkbenchHelp.setHelp(fWizardDialog.getShell(),
                 IWorkbenchHelpContextIds.WORKING_SET_NEW_WIZARD);
 
-        WorkingSetRegistry registry = WorkbenchPlugin.getDefault()
-                .getWorkingSetRegistry();
-        fWorkingSetDescriptors = registry.getWorkingSetDescriptors();
-
         IWorkingSetManager workingSetManager = fWorkbench
                 .getWorkingSetManager();
         IWorkingSet[] workingSets = workingSetManager.getWorkingSets();
@@ -170,6 +164,19 @@ public abstract class UIWorkingSetWizardsAuto extends UITestCase {
     protected void doTearDown() throws Exception {
         deleteResources();
         super.doTearDown();
+    }
+    
+    protected WorkingSetDescriptor[] getEditableWorkingSetDescriptors() {
+        WorkingSetRegistry registry = WorkbenchPlugin.getDefault().getWorkingSetRegistry();
+        WorkingSetDescriptor[] all = registry.getWorkingSetDescriptors();
+        ArrayList editable = new ArrayList(all.length);
+        for (int i = 0; i < all.length; i++) {
+            WorkingSetDescriptor descriptor = all[i];
+            if (descriptor.isEditable()) {
+                editable.add(descriptor);
+            }
+        }
+        return (WorkingSetDescriptor[]) editable.toArray(new WorkingSetDescriptor[editable.size()]);
     }
 
 }

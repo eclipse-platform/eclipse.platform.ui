@@ -102,7 +102,7 @@ public interface IWorkingSet extends IPersistableElement {
      * a working set editable the attribute <code>pageClass</code> of
      * the extension defining a working set must be provided.
      * 
-     * @return <code>true</code> if the working set can be edit; otherwise
+     * @return <code>true</code> if the working set can be edited; otherwise
      *  <code>false</code>
      *  
      * @since 3.1
