@@ -278,6 +278,9 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
                 String attributeString = getAttributeStringFromDocumentStringToPrefix(textToSearch);
                 if ("target".equalsIgnoreCase(taskString)) { //$NON-NLS-1$
                 	proposals= getTargetAttributeValueProposals(document, textToSearch, prefix, attributeString);
+                } else if ("refid".equalsIgnoreCase(attributeString)) { //$NON-NLS-1$
+                	proposals= getReferencesValueProposals(prefix);
+
                 } else {
                 	proposals=getAttributeValueProposals(taskString, attributeString, prefix);
                 }
@@ -306,6 +309,26 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 
     }
     
+	private ICompletionProposal[] getReferencesValueProposals(String prefix) {
+		Project project= getProjectNode().getProject();
+		Map references= project.getReferences();
+		Set refIds= references.keySet();
+		if (refIds.isEmpty()) {
+			return new ICompletionProposal[0];
+		}
+			
+		List proposals= new ArrayList(refIds.size());
+		int i= 0;
+		for (Iterator iter = refIds.iterator(); iter.hasNext(); i++) {
+			String refId = (String) iter.next();
+			if (refId.toLowerCase().startsWith(prefix)) {
+				ICompletionProposal proposal = new AntCompletionProposal(refId, cursorPosition - prefix.length(), prefix.length(), refId.length(), null, refId, null, AntCompletionProposal.TASK_PROPOSAL);
+				proposals.add(proposal);
+			}
+		}
+		return (ICompletionProposal[])proposals.toArray(new ICompletionProposal[proposals.size()]);      
+	}
+
 	protected ICompletionProposal[] getTargetAttributeValueProposals(IDocument document, String textToSearch, String prefix, String attributeName) {
 		if (attributeName.equalsIgnoreCase("depends")) { //$NON-NLS-1$
 			return getDependsValueProposals(document, prefix);
