@@ -184,10 +184,10 @@ public class PerspectiveSwitcher {
 	    createControlForLocation(newLocation);
         currentLocation = newLocation;
         showPerspectiveBar();
-        
-        if ((newLocation == TOP_LEFT || newLocation == TOP_RIGHT)
-                && (currentLocation == TOP_LEFT || currentLocation == TOP_RIGHT))
+        if(newLocation == TOP_LEFT || newLocation == TOP_RIGHT) {
         	updatePerspectiveBar();
+        	setCoolItemSize(coolItem);
+        }
 	}
 
 	/**
@@ -329,11 +329,6 @@ public class PerspectiveSwitcher {
 	        createControlForTop();
 	    
 	    perspectiveBar.getControl().addDisposeListener(toolBarListener);
-	    
-	    // the items have been recreated, update the references to them
-	    // in the MRU and sequential lists of items
-	    perspectiveBar.updateLists();
-	    updatePerspectiveBar();
 	}
 
 	private void setPropertyChangeListener() {
@@ -395,23 +390,8 @@ public class PerspectiveSwitcher {
 
 		// adjust the toolbar size to display as many items as possible
 		perspectiveCoolBar.addControlListener(new ControlAdapter() {
-			int visibleItemCount = (perspectiveBar != null) ? perspectiveBar.getVisibleItemCount()
-														    : 0;
 			public void controlResized(ControlEvent e) {
 				setCoolItemSize(coolItem);
-				int visibleItems = perspectiveBar.getVisibleItemCount();
-				
-				if (visibleItems != visibleItemCount) {
-					visibleItemCount = visibleItems;
-					perspectiveBar.rebuildToolBar();
-					// the -1 is added on the next line because the visibleItemCount
-					// does not take in consideration the 'open a perspective' button,
-					// i.e. perspectiveBar.getVisibleItemCount() does not include the 'open
-					// a perspective' button
-					if (visibleItemCount < perspectiveBar.getControl().getItemCount()-1) {
-						perspectiveBar.arrangeToolBar();
-					}
-				}	
 			}
 		});
 		
@@ -704,8 +684,12 @@ public class PerspectiveSwitcher {
 	 * Method to rebuild and update the toolbar when necessary
 	 */
 	void updatePerspectiveBar() {
-		perspectiveBar.rebuildToolBar();
-		perspectiveBar.arrangeToolBar();
+		// Update each item as the text may have to be shortened.
+		IContributionItem [] items = perspectiveBar.getItems();
+		for( int i = 0; i < items.length; i++ )
+			items[i].update();
+		// make sure the selected item is visible
+		perspectiveBar.arrangeToolbar();
 		perspectiveBar.getControl().redraw();
 	}
 

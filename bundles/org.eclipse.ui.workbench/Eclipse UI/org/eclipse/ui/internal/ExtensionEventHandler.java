@@ -815,7 +815,8 @@ class ExtensionEventHandler implements IRegistryChangeListener {
 		for (int i = 0; i < windows.length; i++) {
 			WorkbenchWindow window = (WorkbenchWindow) windows[i];
 			IWorkbenchPage[] pages = window.getPages();
-			for (int j = 0; j < pages.length; j++) {
+			// count in reverse order since we insert perspectives at the beginning
+			for (int j = pages.length - 1; j >=0; j--) {
 				memento = (IMemento) ((WorkbenchPage)pages[j]).getStateMap().remove(id);
 				if (memento == null)
 					continue;
