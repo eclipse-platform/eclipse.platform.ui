@@ -116,6 +116,8 @@ public class DefaultHelp implements IHelp {
 		else
 		{
 			// infoset not found, or no infoset specified, so use current.
+			// We use current, and not default to avoid refresh. 
+			// revisit for inconsistent refresh.
 			infoset = HelpSystem.getNavigationManager().getCurrentInfoSet();
 			// if infoset not found, log it
 			if (infosetId != null && infosetId.trim().length() != 0)

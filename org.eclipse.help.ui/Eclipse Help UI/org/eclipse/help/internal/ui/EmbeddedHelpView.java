@@ -86,11 +86,17 @@ public class EmbeddedHelpView extends ViewPart {
 				infoSet = HelpSystem.getNavigationManager().getInfoSet(lastInfosetId);
 				if (infoSet != null) // plugin still exists
 					HelpSystem.getNavigationManager().setCurrentInfoSet(lastInfosetId);
-			}
+			} 
 			
-			infoSet = HelpSystem.getNavigationManager().getCurrentInfoSet();
+			if (infoSet == null) {
+				// we either have no cashed infoset, or an invalid cached infoset
+				infoSet = HelpSystem.getNavigationManager().getDefaultInfoSet();
+				if (infoSet != null) 
+					HelpSystem.getNavigationManager().setCurrentInfoSet(infoSet.getID());
 
-			// no InfoSets installed at all. Display error dialog, but also handle
+			}
+
+			// No InfoSets installed at all. Display error dialog, but also handle
 			// empty view. Since view is already created, do *not* close for safety. 
 			if (infoSet == null) {
 				errorMessage = WorkbenchResources.getString("WW001");
