@@ -1,12 +1,15 @@
 package org.eclipse.debug.internal.core;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
  
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 
 import org.eclipse.debug.core.DebugEvent;
@@ -14,6 +17,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.IExpressionListener;
 import org.eclipse.debug.core.IExpressionManager;
+import org.eclipse.debug.core.IExpressionsListener;
 import org.eclipse.debug.core.model.IExpression;
 
 /**
@@ -38,14 +42,38 @@ public class ExpressionManager implements IExpressionManager, IDebugEventSetList
 	private ListenerList fListeners = new ListenerList(2);
 	
 	/**
-	 * @see IExpressionManager#addExpression(IExpression, String)
+	 * List of (multi) expressions listeners
+	 */
+	private ListenerList fExpressionsListeners = new ListenerList(2);	
+	
+	// Constants for add/remove/change notification
+	private static final int ADDED = 1;
+	private static final int CHANGED = 2;
+	private static final int REMOVED = 3;
+	
+	/**
+	 * @see IExpressionManager#addExpression(IExpression)
 	 */
 	public void addExpression(IExpression expression) {
-		if (getExpressions0().indexOf(expression) == -1) {
-			getExpressions0().add(expression);
-			fireExpressionAdded(expression);
-		}
+		addExpressions(new IExpression[]{expression});
 	}
+	
+	/**
+	 * @see IExpressionManager#addExpressions(IExpression[])
+	 */
+	public void addExpressions(IExpression[] expressions) {
+		List added = new ArrayList(expressions.length);
+		for (int i = 0; i < expressions.length; i++) {
+			IExpression expression = expressions[i];
+			if (getExpressions0().indexOf(expression) == -1) {
+				added.add(expression);
+				getExpressions0().add(expression);
+			}				
+		}
+		if (!added.isEmpty()) {
+			fireUpdate((IExpression[])added.toArray(new IExpression[added.size()]), ADDED);
+		}
+	}	
 
 	/**
 	 * @see IExpressionManager#getExpressions()
@@ -78,13 +106,25 @@ public class ExpressionManager implements IExpressionManager, IDebugEventSetList
 	 * @see IExpressionManager#removeExpression(IExpression)
 	 */
 	public void removeExpression(IExpression expression) {
-		if (getExpressions0().indexOf(expression) >= 0) {
-			getExpressions0().remove(expression);
-			expression.dispose();
-			fireExpressionRemoved(expression);
-		}
+		removeExpressions(new IExpression[] {expression});
 	}
 
+	/**
+	 * @see IExpressionManager#removeExpressions(IExpression[])
+	 */
+	public void removeExpressions(IExpression[] expressions) {
+		List removed = new ArrayList(expressions.length);
+		for (int i = 0; i < expressions.length; i++) {
+			IExpression expression = expressions[i];
+			if (getExpressions0().remove(expression)) {
+				removed.add(expression);
+			}				
+		}
+		if (!removed.isEmpty()) {
+			fireUpdate((IExpression[])removed.toArray(new IExpression[removed.size()]), REMOVED);
+		}
+	}	
+	
 	/**
 	 * @see IExpressionManager#addExpressionListener(IExpressionListener)
 	 */
@@ -128,62 +168,92 @@ public class ExpressionManager implements IExpressionManager, IDebugEventSetList
 	 */
 	public void handleDebugEvents(DebugEvent[] events) {
 		for (int i = 0; i < events.length; i++) {
+			List changed = null;
 			DebugEvent event = events[i];
 			if (event.getSource() instanceof IExpression) {
 				switch (event.getKind()) {
 					case DebugEvent.CHANGE:
-						fireExpressionChanged((IExpression)event.getSource());
+						if (changed == null) {
+							changed = new ArrayList(1);
+						}
+						changed.add(event.getSource());
 						break;
 					default:
 						break;
 				}
 			} 
+			if (changed != null) {
+				IExpression[] array = (IExpression[])changed.toArray(new IExpression[changed.size()]);
+				fireUpdate(array, CHANGED);
+			}
 		}
 	}
-	
+
 	/**
-	 * Notifies listeners that the given expression has been
-	 * added.
+	 * Notifies listeners of the adds/removes/changes
 	 * 
-	 * @param expression the newly added expression
+	 * @param breakpoints associated breakpoints
+	 * @param deltas or <code>null</code>
+	 * @param update type of change
 	 */
-	protected void fireExpressionAdded(IExpression expression) {
-		Object[] listeners = fListeners.getListeners();
-		for (int i = 0; i < listeners.length; i++) {
-			((IExpressionListener)listeners[i]).expressionAdded(expression);
+	private void fireUpdate(IExpression[] expressions, int update) {
+		// single listeners
+		Object[] copiedListeners= fListeners.getListeners();
+		for (int i= 0; i < copiedListeners.length; i++) {
+			IExpressionListener listener = (IExpressionListener)copiedListeners[i];
+			for (int j = 0; j < expressions.length; j++) {
+				IExpression expression = expressions[j];
+				switch (update) {
+					case ADDED:
+						listener.expressionAdded(expression);
+						break;
+					case REMOVED:
+						listener.expressionRemoved(expression);
+						break;
+					case CHANGED:
+						listener.expressionChanged(expression);		
+						break;
+				}				
+			}
 		}
-	}
-	
-	/**
-	 * Notifies listeners that the given expression has been
-	 * removed.
-	 * 
-	 * @param expression the removed expression
-	 */
-	protected void fireExpressionRemoved(IExpression expression) {
-		Object[] listeners = fListeners.getListeners();
-		for (int i = 0; i < listeners.length; i++) {
-			((IExpressionListener)listeners[i]).expressionRemoved(expression);
-		}
+		
+		// multi listeners
+		copiedListeners = fExpressionsListeners.getListeners();
+		for (int i= 0; i < copiedListeners.length; i++) {
+			IExpressionsListener listener = (IExpressionsListener)copiedListeners[i];
+			switch (update) {
+				case ADDED:
+					listener.expressionsAdded(expressions);
+					break;
+				case REMOVED:
+					listener.expressionsRemoved(expressions);
+					break;
+				case CHANGED:
+					listener.expressionsChanged(expressions);		
+					break;
+			}
+		}		
 	}	
-	
-	/**
-	 * Notifies listeners that the given expression has changed.
-	 * 
-	 * @param expression the changed expression
-	 */
-	protected void fireExpressionChanged(IExpression expression) {
-		Object[] listeners = fListeners.getListeners();
-		for (int i = 0; i < listeners.length; i++) {
-			((IExpressionListener)listeners[i]).expressionChanged(expression);
-		}
-	}		
 
 	/**
 	 * @see IExpressionManager#hasExpressions()
 	 */
 	public boolean hasExpressions() {
 		return !getExpressions0().isEmpty();
+	}
+
+	/**
+	 * @see org.eclipse.debug.core.IExpressionManager#addExpressionListener(org.eclipse.debug.core.IExpressionsListener)
+	 */
+	public void addExpressionListener(IExpressionsListener listener) {
+		fExpressionsListeners.add(listener);
+	}
+
+	/**
+	 * @see org.eclipse.debug.core.IExpressionManager#removeExpressionListener(org.eclipse.debug.core.IExpressionsListener)
+	 */
+	public void removeExpressionListener(IExpressionsListener listener) {
+		fExpressionsListeners.remove(listener);
 	}
 
 }
