@@ -1071,6 +1071,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 
 			if (!rgbString.equals(storeString)) {
 				JFaceResources.getColorRegistry().put(id, rgb);
+				colorValuesToSet.remove(id); // already taken care of.
 				getPreferenceStore().setValue(id, rgbString);
 			}
 		}
@@ -1123,7 +1124,8 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 			String id = (String) i.next();
 			FontData [] fd = (FontData []) fontPreferencesToSet.get(id);
 			JFaceResources.getFontRegistry().put(id, fd);
-			PreferenceConverter.setValue(getPreferenceStore(), id, fd);
+			fontValuesToSet.remove(id); // remove from the value list because it's already been set.
+			getPreferenceStore().setValue(id, PreferenceConverter.getStoredRepresentation(fd));
 		}
 
 		fontPreferencesToSet.clear();
@@ -1139,7 +1141,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 		
 		return true;
     }
-
+    
     /* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
 	 */
