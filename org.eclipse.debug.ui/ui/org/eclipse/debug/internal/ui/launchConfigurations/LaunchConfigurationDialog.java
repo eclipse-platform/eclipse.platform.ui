@@ -1082,7 +1082,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  		}			
  				 		 		 
 		// If a config is selected, update the edit area for it, if a config type is
-		// selected, behave as if user clicked 'New'
+		// selected, clear the edit area
  		if (singleSelection && configSelected) {
  			ILaunchConfiguration config = (ILaunchConfiguration) firstSelectedElement; 			
  			setLastSavedName(config.getName());
@@ -2268,10 +2268,19 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	/**
 	 * @see IDoubleClickListener#doubleClick(DoubleClickEvent)
 	 */
-	public void doubleClick(DoubleClickEvent event) {
-		if (canLaunch()) {
-			handleLaunchPressed();
-		}
+	public void doubleClick(DoubleClickEvent event) {		
+		ISelection selection = event.getSelection();		
+		if (selection instanceof IStructuredSelection) {
+			IStructuredSelection structuredSelection = (IStructuredSelection) selection;
+			Object firstSelected = structuredSelection.getFirstElement();
+			if (firstSelected instanceof ILaunchConfigurationType) {
+				handleNewPressed();
+			} else if (firstSelected instanceof ILaunchConfiguration) {
+				if (canLaunch()) {
+					handleLaunchPressed();
+				}				
+			}
+		}		
 	}
 	
 	/**
