@@ -177,6 +177,8 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		
 		Composite perspComp = new Composite(comp, SWT.NONE);
 		GridLayout perspLayout = new GridLayout();
+		perspLayout.marginHeight = 0;
+		perspLayout.marginWidth = 0;
 		perspLayout.numColumns = 2;
 		perspComp.setLayout(perspLayout);
 		
@@ -200,6 +202,8 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		
 		Composite favComp = new Composite(comp, SWT.NONE);
 		GridLayout favLayout = new GridLayout();
+		favLayout.marginHeight = 0;
+		favLayout.marginWidth = 0;
 		favLayout.numColumns = 1;
 		favComp.setLayout(favLayout);
 		
