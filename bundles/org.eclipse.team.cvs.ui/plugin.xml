@@ -270,10 +270,6 @@
             objectClass="org.eclipse.core.resources.mapping.ResourceMapping"
             adaptable="true"
             id="org.eclipse.team.ccvs.ui.ResourceMapperContributions">
-<!--         <filter
-               name="projectPersistentProperty"
-               value="org.eclipse.team.core.repository=org.eclipse.team.cvs.core.cvsnature">
-         </filter> -->
 		 <enablement>
            <adapt type="org.eclipse.core.resources.mapping.ResourceMapping">
               <test property="org.eclipse.ui.ide.projectPersistentProperty" args="org.eclipse.team.core.repository=org.eclipse.team.cvs.core.cvsnature" />
