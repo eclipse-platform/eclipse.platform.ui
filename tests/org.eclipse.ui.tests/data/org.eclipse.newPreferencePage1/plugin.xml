@@ -18,11 +18,11 @@
          id="testDynamicPreferencePageAddition"
          point="org.eclipse.ui.preferencePages">
       <page
-            class="org.eclipse.ui.dynamic.DynamicPropertyPage"
+            class="org.eclipse.ui.dynamic.DynamicPreferencePage"
             name="dynamic.parentPage"
             id="dynamic.parentPage"/>
       <page
-            class="org.eclipse.ui.dynamic.DynamicPropertyPage"
+            class="org.eclipse.ui.dynamic.DynamicPreferencePage"
             category="dynamic.parentPage"
             name="dynamic.childPage"
             id="dynamic.childPage"/>

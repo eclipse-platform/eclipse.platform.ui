@@ -63,13 +63,13 @@ public class PreferencePageTests extends DynamicTestCase {
 	 * @see org.eclipse.ui.tests.dynamicplugins.DynamicTestCase#getInstallLocation()
 	 */
 	protected String getInstallLocation() {
-		return "data/org.eclipse.newPreferencePage";
+		return "data/org.eclipse.newPreferencePage1";
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.tests.dynamicplugins.DynamicTestCase#getMarkerClass()
 	 */
 	protected String getMarkerClass() {
-		return "org.eclipse.ui.dynamic.DynamicPropertyPage";
+		return "org.eclipse.ui.dynamic.DynamicPreferencePage";
 	}
 }
