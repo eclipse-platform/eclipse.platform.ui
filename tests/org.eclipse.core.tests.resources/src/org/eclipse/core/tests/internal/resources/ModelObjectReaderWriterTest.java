@@ -269,6 +269,49 @@ private void compareNatures (int errorTag, String[] natures, String[] natures2) 
 		assertTrue(errorTag + ".3." + (i + 1), natures[i].equals(natures2[i]));
 	}
 }
+
+public void testInvalidProjectDescription4() throws Throwable {
+	String invalidProjectDescription = 
+		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+		"<projectDescription>\n" +
+		"	<name>abc</name>\n" +
+		"	<comment></comment>\n" +
+		"	<projects>\n" +
+		"	</projects>\n" +
+		"	<buildSpec>\n" +
+		"	</buildSpec>\n" +
+		"	<natures>\n" +
+		"	</natures>\n" +
+		"	<linkedResources>\n" +
+		"		<link>\n" +
+		"			<name>newLink</name>\n" +
+		"			<type>foobar</type>\n" +
+		"			<location>d:/abc/def</location>\n" +
+		"		</link>\n" +
+		"	</linkedResources>\n" +
+		"</projectDescription>";
+
+	IPath root = getWorkspace().getRoot().getLocation();
+	IPath location = root.append("ModelObjectReaderWriterTest.txt");
+	ProjectDescriptionReader reader = new ProjectDescriptionReader();
+	// Write out the project description file
+	ensureDoesNotExistInFileSystem(location.toFile());
+	InputStream stream = new ByteArrayInputStream(invalidProjectDescription.getBytes());
+	createFileInFileSystem(location, stream);
+	ProjectDescription projDesc = reader.read(location);
+	ensureDoesNotExistInFileSystem(location.toFile());
+	
+	assertNotNull ("3.0", projDesc);
+	assertTrue("3.1", projDesc.getName().equals("abc"));
+	assertEquals("3.2", 0, projDesc.getComment().length());
+	assertNull("3.3", projDesc.getLocation());
+	assertEquals("3.4", new IProject[0], projDesc.getReferencedProjects());
+	assertEquals("3.5", new String[0], projDesc.getNatureIds());
+	assertEquals("3.6", new ICommand[0], projDesc.getBuildSpec());
+	LinkDescription link = (LinkDescription)projDesc.getLinks().values().iterator().next();
+	assertEquals("3.7", "newLink", link.getName());
+	assertEquals("3.8", "d:/abc/def", link.getLocation().toString());
+}
 private void compareLinks (int errorTag, HashMap links, HashMap links2) {
 	if (links == null) {
 		assertNull (errorTag + ".4.0", links2);
