@@ -483,6 +483,9 @@ public final class BuilderPropertyPage extends PropertyPage {
 			return;
 		}
 		Object results[]= dialog.getResult();
+		if (results.length == 0) { //OK pressed with nothing selected
+			return;
+		}
 		ILaunchConfiguration config= (ILaunchConfiguration) results[0];
 		ILaunchConfiguration newConfig= null;
 		boolean wasAutobuilding= ResourcesPlugin.getWorkspace().getDescription().isAutoBuilding();
