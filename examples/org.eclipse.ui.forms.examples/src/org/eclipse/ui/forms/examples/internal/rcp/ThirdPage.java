@@ -119,7 +119,7 @@ public class ThirdPage extends FormPage {
 		final ScrolledForm form = mform.getForm();
 		FormToolkit toolkit = mform.getToolkit();
 		Section section = toolkit.createSection(form.getBody(), Section.TWISTIE
-				| Section.TITLE_BAR | Section.DESCRIPTION | Section.EXPANDED);
+				| Section.SHORT_TITLE_BAR | Section.DESCRIPTION | Section.EXPANDED);
 		section.setText(title);
 		section.setDescription(desc);
 		//toolkit.createCompositeSeparator(section);

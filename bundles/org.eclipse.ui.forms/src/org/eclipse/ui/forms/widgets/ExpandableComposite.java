@@ -80,14 +80,22 @@ public class ExpandableComposite extends Composite {
 	public static final int TITLE_BAR = 1 << 8;
 
 	/**
+	 * If this style is used, a short version of the title bar decoration will
+	 * be painted behind the text. This style is useful when a more descrete
+	 * option is needed for the title bar.
+	 * 
+	 * @since 3.1
+	 */
+	public static final int SHORT_TITLE_BAR = 1 << 9;
+
+	/**
 	 * If this style is used, title will not be rendered.
 	 */
 	public static final int NO_TITLE = 1 << 12;
-	
+
 	/**
-	 * By default, text client is right-aligned. If this
-	 * style is used, it will be positioned after the
-	 * text control and vertically centered with it.
+	 * By default, text client is right-aligned. If this style is used, it will
+	 * be positioned after the text control and vertically centered with it.
 	 */
 	public static final int LEFT_TEXT_CLIENT_ALIGNMENT = 1 << 13;
 
@@ -163,7 +171,7 @@ public class ExpandableComposite extends Composite {
 			int thmargin = 0;
 			int tvmargin = 0;
 
-			if ((expansionStyle & TITLE_BAR) != 0) {
+			if (hasTitleBar()) {
 				thmargin = GAP;
 				tvmargin = GAP;
 			}
@@ -198,7 +206,8 @@ public class ExpandableComposite extends Composite {
 				FontMetrics fm = gc.getFontMetrics();
 				int textHeight = fm.getHeight();
 				gc.dispose();
-				if (textClient!=null && (expansionStyle & LEFT_TEXT_CLIENT_ALIGNMENT)!=0) {
+				if (textClient != null
+						&& (expansionStyle & LEFT_TEXT_CLIENT_ALIGNMENT) != 0) {
 					textHeight = Math.max(textHeight, tcsize.y);
 				}
 				int ty = textHeight / 2 - tsize.y / 2 + 1;
@@ -209,23 +218,24 @@ public class ExpandableComposite extends Composite {
 				x += tsize.x + GAP;
 			}
 			if (textLabel != null) {
-				int ty=y;
-				if (textClient!=null && (expansionStyle & LEFT_TEXT_CLIENT_ALIGNMENT)!=0) {
-					if (tsize.y< tcsize.y)
-						ty = tcsize.y/2 - tsize.y/2 + marginHeight + tvmargin;
+				int ty = y;
+				if (textClient != null
+						&& (expansionStyle & LEFT_TEXT_CLIENT_ALIGNMENT) != 0) {
+					if (tsize.y < tcsize.y)
+						ty = tcsize.y / 2 - tsize.y / 2 + marginHeight
+								+ tvmargin;
 				}
 				textLabelCache.setBounds(x, ty, size.x, size.y);
 			}
 			if (textClient != null) {
 				int tcx, tcy;
-				if ((expansionStyle & LEFT_TEXT_CLIENT_ALIGNMENT)!=0) {
+				if ((expansionStyle & LEFT_TEXT_CLIENT_ALIGNMENT) != 0) {
 					tcx = x + size.x + GAP;
-					if (tsize.y>tcsize.y)
+					if (tsize.y > tcsize.y)
 						tcy = tsize.y + marginHeight + tvmargin - tcsize.y;
 					else
 						tcy = y;
-				}
-				else {
+				} else {
 					tcx = clientArea.width - tcsize.x - marginWidth - thmargin;
 					tcy = y;
 				}
@@ -237,7 +247,7 @@ public class ExpandableComposite extends Composite {
 			if (tcsize != null)
 				tbarHeight = Math.max(tbarHeight, tcsize.y);
 			y += tbarHeight;
-			if ((expansionStyle & TITLE_BAR) != 0)
+			if (hasTitleBar())
 				y += tvmargin;
 			if (getSeparatorControl() != null) {
 				y += VSPACE;
@@ -289,7 +299,7 @@ public class ExpandableComposite extends Composite {
 			int thmargin = 0;
 			int tvmargin = 0;
 
-			if ((expansionStyle & TITLE_BAR) != 0) {
+			if (hasTitleBar()) {
 				thmargin = GAP;
 				tvmargin = GAP;
 			}
@@ -326,7 +336,7 @@ public class ExpandableComposite extends Composite {
 				if (expanded && client != null)
 					height += VSPACE;
 			}
-			if ((expansionStyle & TITLE_BAR) != 0)
+			if (hasTitleBar())
 				height += VSPACE;
 			if ((expanded || (expansionStyle & COMPACT) == 0) && client != null) {
 				int cwHint = wHint;
@@ -384,7 +394,7 @@ public class ExpandableComposite extends Composite {
 			}
 			int thmargin = 0;
 
-			if ((expansionStyle & TITLE_BAR) != 0) {
+			if (hasTitleBar()) {
 				thmargin = GAP;
 			}
 			if (size != null)
@@ -425,9 +435,9 @@ public class ExpandableComposite extends Composite {
 			Point tcsize = null;
 			int thmargin = 0;
 
-			if ((expansionStyle & TITLE_BAR) != 0) {
+			if (hasTitleBar()) {
 				thmargin = GAP;
-			}	
+			}
 			if (textClient != null) {
 				tcsize = textClientCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 			}
@@ -481,7 +491,7 @@ public class ExpandableComposite extends Composite {
 		this.expansionStyle = expansionStyle;
 		super.setLayout(new ExpandableLayout());
 		listeners = new Vector();
-		if ((expansionStyle & TITLE_BAR) != 0) {
+		if (hasTitleBar()) {
 			this.addPaintListener(new PaintListener() {
 				public void paintControl(PaintEvent e) {
 					onPaint(e);
@@ -537,13 +547,14 @@ public class ExpandableComposite extends Composite {
 		if (textLabel != null)
 			textLabel.setMenu(getMenu());
 	}
-	
-/**
- * Overrides 'super' to pass the menu to the text label.
- * @param menu the menu from the parent to attach to 
- * this control.
- */
-	
+
+	/**
+	 * Overrides 'super' to pass the menu to the text label.
+	 * 
+	 * @param menu
+	 *            the menu from the parent to attach to this control.
+	 */
+
 	public void setMenu(Menu menu) {
 		if (textLabel != null)
 			textLabel.setMenu(menu);
@@ -742,9 +753,9 @@ public class ExpandableComposite extends Composite {
 	}
 
 	/**
-	 * If TITLE_BAR style is used, title bar decoration will be painted behind
-	 * the text in this method. The default implementation does nothing -
-	 * subclasses are responsible for rendering the title area.
+	 * If TITLE_BAR or SHORT_TITLE_BAR style is used, title bar decoration will
+	 * be painted behind the text in this method. The default implementation
+	 * does nothing - subclasses are responsible for rendering the title area.
 	 * 
 	 * @param e
 	 *            the paint event
@@ -844,5 +855,10 @@ public class ExpandableComposite extends Composite {
 		if (this.textClient != null)
 			this.textClient.dispose();
 		this.textClient = textClient;
+	}
+
+	protected boolean hasTitleBar() {
+		return (getExpansionStyle() & TITLE_BAR) != 0
+				|| (getExpansionStyle() & SHORT_TITLE_BAR) != 0;
 	}
 }
