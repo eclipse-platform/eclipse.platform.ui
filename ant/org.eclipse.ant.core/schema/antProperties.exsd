@@ -25,7 +25,7 @@
          <attribute name="id" type="string">
             <annotation>
                <documentation>
-                   an optional identifier of the extension instance
+                  an optional identifier of the extension instance
                </documentation>
             </annotation>
          </attribute>
@@ -56,7 +56,7 @@
          <attribute name="value" type="string">
             <annotation>
                <documentation>
-               	  The value of the property.
+                  The value of the property.
                   If a value is provided here, the &quot;class&quot; attribute is ignored.
                </documentation>
             </annotation>
@@ -71,20 +71,19 @@
                </appInfo>
             </annotation>
          </attribute>
-         <attribute name="headless" type="string" use="optional">
+         <attribute name="headless" type="string">
             <annotation>
                <documentation>
-                  indicates whether this property is suitable for use in a "headless" Ant environment. If running headless and the attribute is "false", 
+                  indicates whether this property is suitable for use in a &quot;headless&quot; Ant environment. If running headless and the attribute is &quot;false&quot;, 
                   the property will not be set and any specified &lt;samp&gt;org.eclipse.ant.core.IAntPropertyProvider&lt;/samp&gt; will not be instantiated.
                   The implied value is true, when not specified.
                </documentation>
             </annotation>
          </attribute>
-          <attribute name="eclipseRuntime" type="string" use="optional">
+         <attribute name="eclipseRuntime" type="string">
             <annotation>
                <documentation>
-                  indicates whether this property requires the context of the Eclipse runtime to be relevant.
-                  The implied value is true, when not specified.
+                  indicates whether this property should only be considered when run in the same VM as Eclipse. The implied value is true, when not specified.
                </documentation>
             </annotation>
          </attribute>
@@ -118,6 +117,7 @@
 &lt;/p&gt;
       </documentation>
    </annotation>
+
    <annotation>
       <appInfo>
          <meta.section type="apiInfo"/>

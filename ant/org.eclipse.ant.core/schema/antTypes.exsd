@@ -2,11 +2,11 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.ant.core">
 <annotation>
-   <appInfo>
-      <meta.schema plugin="org.eclipse.ant.core" id="antTypes" name="Ant Types"/>
-   </appInfo>
-   <documentation>
-      Allows plug-ins to define arbitrary Ant datatypes for 
+      <appInfo>
+         <meta.schema plugin="org.eclipse.ant.core" id="antTypes" name="Ant Types"/>
+      </appInfo>
+      <documentation>
+         Allows plug-ins to define arbitrary Ant datatypes for 
 use by the Ant infrastructure.  The standard Ant 
 infrastructure allows for the addition of arbitrary 
 datatypes.  Unfortunately, it is unlikely that the 
@@ -17,15 +17,15 @@ should define an extension which plugs into this
 extension-point and maps a datatype name onto a class.  
 The Ant plug-in can then request that the declaring 
 plug-in load the specified class.
-   </documentation>
-</annotation>
+      </documentation>
+   </annotation>
 
    <element name="extension">
       <complexType>
          <sequence>
             <element ref="antType" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
-        <attribute name="point" type="string" use="required">
+         <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
                   a fully qualified identifier of the target extension point
@@ -42,7 +42,7 @@ plug-in load the specified class.
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                 an optional name of the extension instance
+                  an optional name of the extension instance
                </documentation>
             </annotation>
          </attribute>
@@ -86,22 +86,19 @@ for the library containing the type.
                </appInfo>
             </annotation>
          </attribute>
-         <attribute name="headless" type="string" use="optional">
+         <attribute name="headless" type="string">
             <annotation>
                <documentation>
-                  indicates whether this type is suitable for use in a "headless" Ant environment. If running headless and the attribute is "false", 
+                  indicates whether this type is suitable for use in a &quot;headless&quot; Ant environment. If running headless and the attribute is &quot;false&quot;, 
                   the type will not be loaded or defined. As well, the plugin class loader will not be added as a parent classloader to the Ant classloader.
                   The implied value is true, when not specified.
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="eclipseRuntime" type="string" use="optional">
+         <attribute name="eclipseRuntime" type="string">
             <annotation>
                <documentation>
-                  indicates whether this type requires the context of the Eclipse runtime to be successfully defined.
-                   If the type does not required the Eclipse runtime, the plugin classloader(s) will not be available to
-                  load classes when the build occurs outside of the Eclipse runtime context.
-                  The implied value is true, when not specified.
+                  indicates whether this type requires an Eclipse runtime (i.e. must be run in the same VM as Eclipse). The implied value is true, when not specified.
                </documentation>
             </annotation>
          </attribute>
@@ -116,8 +113,8 @@ for the library containing the type.
          The following is an example of an Ant types extension point: 
 &lt;p&gt;
 &lt;pre&gt;
-   &lt;extension point="org.eclipse.ant.core.antTypes"&gt;
-      &lt;antType name="coolType" class="com.example.CoolType" library="lib/antSupport.jar"/&gt;
+   &lt;extension point=&quot;org.eclipse.ant.core.antTypes&quot;&gt;
+      &lt;antType name=&quot;coolType&quot; class=&quot;com.example.CoolType&quot; library=&quot;lib/antSupport.jar&quot;/&gt;
    &lt;/extension&gt; 
 &lt;/pre&gt;
 &lt;/p&gt;
@@ -129,7 +126,7 @@ for the library containing the type.
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         &lt;a href="hglegal.htm"&gt;&lt;img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2003.  All Rights Reserved." BORDER=0 height=14 width=324&gt;&lt;/a&gt;
+         &lt;a href=&quot;hglegal.htm&quot;&gt;&lt;img SRC=&quot;ngibmcpy.gif&quot; ALT=&quot;Copyright IBM Corp. 2000, 2003.  All Rights Reserved.&quot; BORDER=0 height=14 width=324&gt;&lt;/a&gt;
       </documentation>
    </annotation>
 

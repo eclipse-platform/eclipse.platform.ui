@@ -2,11 +2,11 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.ant.core">
 <annotation>
-   <appInfo>
-      <meta.schema plugin="org.eclipse.ant.core" id="antTasks" name="Ant Tasks"/>
-   </appInfo>
-   <documentation>
-      Allows plug-ins to define arbitrary Ant tasks for use 
+      <appInfo>
+         <meta.schema plugin="org.eclipse.ant.core" id="antTasks" name="Ant Tasks"/>
+      </appInfo>
+      <documentation>
+         Allows plug-ins to define arbitrary Ant tasks for use 
 by the Ant infrastructure.  The standard Ant infrastructure 
 allows for the addition of arbitrary tasks.  
 Unfortunately, it is unlikely that the Ant Core plug-in 
@@ -16,8 +16,8 @@ To address this, clients should define an extension
 which plugs into this extension-point and maps a 
 task name onto a class.  The Ant plug-in can then 
 request that the declaring plug-in load the specified class.
-   </documentation>
-</annotation>
+      </documentation>
+   </annotation>
 
    <element name="extension">
       <complexType>
@@ -41,7 +41,7 @@ request that the declaring plug-in load the specified class.
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                 an optional name of the extension instance
+                  an optional name of the extension instance
                </documentation>
             </annotation>
          </attribute>
@@ -85,22 +85,19 @@ for the library containing the task.
                </appInfo>
             </annotation>
          </attribute>
-         <attribute name="headless" type="string" use="optional">
+         <attribute name="headless" type="string">
             <annotation>
                <documentation>
-                  indicates whether this task is suitable for use in a "headless" Ant environment. If running headless and the attribute is "false", 
+                  indicates whether this task is suitable for use in a &quot;headless&quot; Ant environment. If running headless and the attribute is &quot;false&quot;, 
                   the task will not be loaded or defined. As well, the plugin class loader will not be added as a parent classloader to the Ant classloader.
                   The implied value is true, when not specified.
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="eclipseRuntime" type="string" use="optional">
+         <attribute name="eclipseRuntime" type="string">
             <annotation>
                <documentation>
-                  indicates whether this task requires the context of the Eclipse runtime to be successfully defined.
-                  If the task does not required the Eclipse runtime, the plugin classloader(s) will not be available to
-                  load classes when the build occurs outside of the Eclipse runtime context.
-                  The implied value is true, when not specified.
+                  indicates whether this task requires an Eclipse runtime (i.e. must be run in the same VM as Eclipse). The implied value is true, when not specified.
                </documentation>
             </annotation>
          </attribute>
@@ -115,8 +112,8 @@ for the library containing the task.
          The following is an example of an Ant tasks extension point: 
 &lt;p&gt;
 &lt;pre&gt;
-   &lt;extension point="org.eclipse.ant.core.antTasks"&gt;
-      &lt;antTask name="coolTask" class="com.example.CoolTask" library="lib/antSupport.jar"/&gt;
+   &lt;extension point=&quot;org.eclipse.ant.core.antTasks&quot;&gt;
+      &lt;antTask name=&quot;coolTask&quot; class=&quot;com.example.CoolTask&quot; library=&quot;lib/antSupport.jar&quot;/&gt;
    &lt;/extension&gt; 
 &lt;/pre&gt;
 &lt;/p&gt;
@@ -138,7 +135,7 @@ eclipse.incrementalBuild and eclipse.refreshLocal.
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         &lt;a href="hglegal.htm"&gt;&lt;img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2003.  All Rights Reserved." BORDER=0 height=14 width=324&gt;&lt;/a&gt;
+         &lt;a href=&quot;hglegal.htm&quot;&gt;&lt;img SRC=&quot;ngibmcpy.gif&quot; ALT=&quot;Copyright IBM Corp. 2000, 2003.  All Rights Reserved.&quot; BORDER=0 height=14 width=324&gt;&lt;/a&gt;
       </documentation>
    </annotation>
 
