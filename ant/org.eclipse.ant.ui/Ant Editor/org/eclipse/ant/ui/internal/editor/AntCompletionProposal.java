@@ -21,12 +21,6 @@ import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 
-/**
- * @author Darins
- *
- * To change the template for this generated type comment go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
- */
 public class AntCompletionProposal implements ICompletionProposal, ICompletionProposalExtension2 {
 
 	public static final int TASK_PROPOSAL= 0;

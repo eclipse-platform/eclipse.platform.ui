@@ -55,7 +55,6 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.jface.text.contentassist.CompletionProposal;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
@@ -326,7 +325,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
                         proposalInfo += description;
                     }
                     
-                    ICompletionProposal proposal = new CompletionProposal(replacementString, cursorPosition - aPrefix.length(), aPrefix.length(), attrName.length()+2, null, displayString, null, proposalInfo);
+                    ICompletionProposal proposal = new AntCompletionProposal(replacementString, cursorPosition - aPrefix.length(), aPrefix.length(), attrName.length()+2, null, displayString, proposalInfo, AntCompletionProposal.TASK_PROPOSAL);
                     proposals.add(proposal);
                 }       
             }
@@ -360,7 +359,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
                     for (int i = 0; i < items.length; i++) {
                         item= items[i];
                         if(item.toLowerCase().startsWith(aPrefix)) {
-                            ICompletionProposal proposal = new CompletionProposal(item, cursorPosition - aPrefix.length(), aPrefix.length(), item.length(), null, item, null, null);
+                            ICompletionProposal proposal = new AntCompletionProposal(item, cursorPosition - aPrefix.length(), aPrefix.length(), item.length(), null, item, null, AntCompletionProposal.TASK_PROPOSAL);
                             proposals.add(proposal);
                         }
                     }
@@ -409,10 +408,10 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
                 String replacementString = new StringBuffer("${").append(propertyName).append('}').toString();  //$NON-NLS-1$
 				if (displayStringToProposals.get(propertyName) == null) {
                 	ICompletionProposal proposal = 
-		                new CompletionProposal(
+		                new AntCompletionProposal(
 		                    replacementString, replacementOffset, replacementLength, 
-		                    replacementString.length(), image, propertyName, null, 
-		                    additionalPropertyInfo);
+		                    replacementString.length(), image, propertyName,
+		                    additionalPropertyInfo, AntCompletionProposal.PROPERTY_PROPOSAL);
 					proposals.add(proposal);
 					displayStringToProposals.put(propertyName, proposal);
 				}
@@ -494,10 +493,9 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 			replacementOffset--;
 			replacementLength++;
 		}
-		return new CompletionProposal(replacementString, replacementOffset, 
+		return new AntCompletionProposal(replacementString, replacementOffset, 
 			replacementLength, elementName.length() + 2 + additionalProposalOffset, 
-			proposalImage, elementName, 
-			null, proposalInfo);
+			proposalImage, elementName, proposalInfo, AntCompletionProposal.TASK_PROPOSAL);
 	}
 
 	/**
@@ -518,7 +516,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
             if(unclosedTaskElement.getTagName().toLowerCase().startsWith(prefix)) {
                 String replaceString = unclosedTaskElement.getTagName();
                 proposals= new ICompletionProposal[1];
-                proposals[0]= new CompletionProposal(replaceString + '>', cursorPosition - prefix.length(), prefix.length(), replaceString.length()+1, null, replaceString, null, null);
+                proposals[0]= new AntCompletionProposal(replaceString + '>', cursorPosition - prefix.length(), prefix.length(), replaceString.length()+1, null, replaceString, null, AntCompletionProposal.TASK_PROPOSAL);
             }
         }
         if (proposals == null) {
@@ -703,21 +701,8 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
                 }
                 return PROPOSAL_MODE_TASK_PROPOSAL;
             }
-            if(lessThanIndex < greaterThanIndex && "".equals(aPrefix)) { //$NON-NLS-1$
-                
-                // no other regular character may be between '>' and cursor position
-                int actualIndex = aCursorPosition;
-                do {
-                    char ch = stringToPrefix.charAt(--actualIndex);
-                    if(ch != ' ' && ch != '\t' && ch != '\n' && ch != '\r') {
-                        break; // found a character -> no task proposal mode
-                    }
-                } while(actualIndex > greaterThanIndex);  
-
-                // no character found in between                  
-                if(actualIndex == greaterThanIndex) {           
-                    return PROPOSAL_MODE_TASK_PROPOSAL;
-                }
+            if(lessThanIndex < greaterThanIndex) {
+                return PROPOSAL_MODE_TASK_PROPOSAL;
             }
         }
 
