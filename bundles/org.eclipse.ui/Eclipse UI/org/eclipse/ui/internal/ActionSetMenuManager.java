@@ -24,6 +24,25 @@ public ActionSetMenuManager(IMenuManager mgr, String actionSetId) {
 	this.actionSetId = actionSetId;
 }
 /* (non-Javadoc)
+ * Method declared on IMenuManager.
+ */
+public IContributionItem findUsingPath(String path) {
+	IContributionItem item = parentMgr.findUsingPath(path);
+	// Skip any wrappers around the item contribution
+	while (true) {
+		if (item instanceof SubContributionItem) {
+			item = ((SubContributionItem)item).getInnerItem();
+		}
+		else if (item instanceof ActionSetMenuManager) {
+			item = ((ActionSetMenuManager)item).parentMgr;
+		}
+		else {
+			break;
+		}
+	}
+	return item;
+}
+/* (non-Javadoc)
  * Method declared on IContributionManager.
  */
 public IContributionItem[] getItems() {
