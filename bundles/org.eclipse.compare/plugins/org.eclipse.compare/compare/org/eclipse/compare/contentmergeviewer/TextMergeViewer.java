@@ -3577,7 +3577,34 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	
 	//--------------------------------------------------------------------------------
 	
+	void copyAllUnresolvedIncoming() {
+		if (fChangeDiffs != null) {
+			Iterator e= fChangeDiffs.iterator();
+			while (e.hasNext()) {
+				Diff diff= (Diff) e.next();
+				if (isThreeWay() && !fIgnoreAncestor) {
+					switch (diff.fDirection) {
+					case RangeDifference.RIGHT:
+						if (fLeftIsLocal)
+							copy(diff, !fLeftIsLocal, false);
+						break;
+					case RangeDifference.LEFT:
+						if (!fLeftIsLocal)
+							copy(diff, fLeftIsLocal, false);
+						break;
+					default:
+						continue;
+					}
+				}
+			}
+		}
+	}
+	
+	/*
+	 * Copy whole document from one side to the other.
+	 */
 	protected void copy(boolean leftToRight) {
+				
 		if (leftToRight) {
 			if (fLeft.getEnabled()) {
 				// copy text
@@ -3593,19 +3620,27 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			setRightDirty(true);
 			fRightContentsChanged= false;
 		} else {
-			if (fRight.getEnabled()) {
-				// copy text
-				String text= fRight.getTextWidget().getText();
-				fLeft.getTextWidget().setText(text);
-				fLeft.setEnabled(true);
+			if (false) {
+				// not ready for primetime
+				copyAllUnresolvedIncoming();			
+				invalidateLines();
+				refreshBirdsEyeView();
+				return;
 			} else {
-				// delete
-				fLeft.getTextWidget().setText(""); //$NON-NLS-1$
-				fLeft.setEnabled(false);
+				if (fRight.getEnabled()) {
+					// copy text
+					String text= fRight.getTextWidget().getText();
+					fLeft.getTextWidget().setText(text);
+					fLeft.setEnabled(true);
+				} else {
+					// delete
+					fLeft.getTextWidget().setText(""); //$NON-NLS-1$
+					fLeft.setEnabled(false);
+				}
+				fLeftLineCount= fLeft.getLineCount();
+				setLeftDirty(true);
+				fLeftContentsChanged= false;
 			}
-			fLeftLineCount= fLeft.getLineCount();
-			setLeftDirty(true);
-			fLeftContentsChanged= false;
 		}
 		doDiff();
 		invalidateLines();
@@ -3622,7 +3657,26 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		copy(fCurrentDiff, false, false, false);
 	}
 		
+	/*
+	 * Copy the contents of the given diff from one side to the other.
+	 */
 	private void copy(Diff diff, boolean leftToRight, boolean both, boolean gotoNext) {
+		if (copy(diff, leftToRight, both)) {
+			if (gotoNext) {
+				navigate(true, true, true);
+			} else {
+				revealDiff(diff, true);
+				updateControls();
+			}
+		}
+	}
+
+	/*
+	 * Copy the contents of the given diff from one side to the other but
+	 * doesn't reveal anything.
+	 * Returns true if copy was succesful.
+	 */
+	private boolean copy(Diff diff, boolean leftToRight, boolean both) {
 		
 		if (diff != null && !diff.isResolved()) {
 
@@ -3680,14 +3734,10 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			}
 		
 			diff.setResolved(true);
-
-			if (gotoNext) {
-				navigate(true, true, true);
-			} else {
-				revealDiff(diff, true);
-				updateControls();
-			}
+			
+			return true;
 		}
+		return false;
 	}
 
 	//---- scrolling
