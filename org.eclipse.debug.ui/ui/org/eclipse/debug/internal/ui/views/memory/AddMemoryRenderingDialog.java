@@ -34,6 +34,7 @@ import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionEvent;
@@ -72,7 +73,6 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 		 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
 		 */
 		public Image getImage(Object element) {
-			// TODO Auto-generated method stub
 			return null;
 		}
 
@@ -98,15 +98,12 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
 		 */
 		public void dispose() {
-			// TODO Auto-generated method stub
-
 		}
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object, java.lang.String)
 		 */
 		public boolean isLabelProperty(Object element, String property) {
-			// TODO Auto-generated method stub
 			return false;
 		}
 
@@ -114,8 +111,6 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse.jface.viewers.ILabelProviderListener)
 		 */
 		public void removeListener(ILabelProviderListener listener) {
-			// TODO Auto-generated method stub
-
 		}
 
 	}
@@ -249,18 +244,7 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 		specButton.verticalAlignment= GridData.CENTER;
 		addNew.setLayoutData(specButton);
 		
-		fMouseListener =new MouseListener() {
-
-			public void mouseDoubleClick(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			public void mouseDown(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-
+		fMouseListener =new MouseAdapter() {
 			public void mouseUp(MouseEvent e) {
 				AddMemoryBlockAction action = new AddMemoryBlockAction();
 				action.run();
@@ -287,8 +271,6 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 			}
 
 			public void widgetDefaultSelected(SelectionEvent e) {
-				// TODO Auto-generated method stub
-				
 			}};
 		
 		memoryBlock.addSelectionListener(fSelectionListener);
