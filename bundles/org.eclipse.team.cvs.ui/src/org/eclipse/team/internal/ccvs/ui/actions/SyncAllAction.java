@@ -101,6 +101,7 @@ public class SyncAllAction extends SyncAction implements IWorkbenchWindowActionD
 	 */
 	private IResource[] getWorkingSetResources(IResource[] resources, IWorkingSet set) throws CVSException {
 		// get all the resources out of the working set
+		if (set == null) return resources;
 		Set sharedResources = new HashSet();
 		IAdaptable[] adaptables = set.getElements();
 		for (int i = 0; i < adaptables.length; i++) {
