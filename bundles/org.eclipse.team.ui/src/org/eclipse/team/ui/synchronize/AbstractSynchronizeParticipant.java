@@ -40,6 +40,13 @@ import org.eclipse.ui.PartInitException;
  */
 public abstract class AbstractSynchronizeParticipant implements ISynchronizeParticipant {
 	
+	/**
+	 * Property key used in the property change event fired when the pinned
+	 * state of a participant changes.
+	 * TODO: Make public once approval is recieved
+	 */
+	private static final String P_PINNED = "org.eclipse.team.pinned"; //$NON-NLS-1$
+	
 	private final static String CTX_PINNED = "root"; //$NON-NLS-1$
 	
 	// property listeners
@@ -136,6 +143,7 @@ public abstract class AbstractSynchronizeParticipant implements ISynchronizePart
 	public final void setPinned(boolean pinned) {
 		this.pinned = pinned;
 		pinned(pinned);
+		firePropertyChange(this, P_PINNED, Boolean.valueOf(!pinned), Boolean.valueOf(pinned));
 	}
 
 	/* (non-Javadoc)

@@ -15,6 +15,8 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
@@ -23,7 +25,7 @@ import org.eclipse.ui.PlatformUI;
 /**
  * Action that toggles pinned state of a participant
  */
-public class PinParticipantAction extends Action {
+public class PinParticipantAction extends Action implements IPropertyChangeListener {
 
 	private ISynchronizeParticipant participant;
 
@@ -33,8 +35,14 @@ public class PinParticipantAction extends Action {
 	}
 
 	public void setParticipant(ISynchronizeParticipant participant) {
+		if (this.participant != null) {
+			this.participant.removePropertyChangeListener(this);
+		}
 		this.participant = participant;
 		setEnabled(participant != null);
+		if (participant != null) {
+			participant.addPropertyChangeListener(this);
+		}
 		updateState();
 	}
 	
@@ -57,6 +65,15 @@ public class PinParticipantAction extends Action {
 			} catch (InterruptedException e) {
 				// Cancelled. Just ignore
 			}
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
+	 */
+	public void propertyChange(PropertyChangeEvent event) {
+		if (event.getSource() == participant) {
+			updateState();
 		}
 	}
 }

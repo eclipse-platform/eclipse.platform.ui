@@ -10,12 +10,15 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ui.Policy;
+import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.ui.synchronize.SubscriberParticipant;
 
 /**
  * A composite that allows editing a subscriber refresh schedule. A validator can be used to allow
@@ -72,13 +75,7 @@ public class ConfigureSynchronizeScheduleComposite extends Composite {
 		setLayoutData(new GridData());
 		Composite area = this;
 
-		{
-			final Label label = new Label(area, SWT.WRAP);
-			final GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
-			gridData.horizontalSpan = 2;
-			label.setLayoutData(gridData);
-			label.setText(Policy.bind("ConfigureRefreshScheduleDialog.1", schedule.getParticipant().getName()));			 //$NON-NLS-1$
-		}
+		createWrappingLabel(area, Policy.bind("ConfigureRefreshScheduleDialog.1", schedule.getParticipant().getName()), 0, 2); //$NON-NLS-1$
 		{
 			final Label label = new Label(area, SWT.WRAP);
 			final GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
@@ -165,7 +162,13 @@ public class ConfigureSynchronizeScheduleComposite extends Composite {
 		}
 		
 		// update schedule
-		schedule.getParticipant().setRefreshSchedule(schedule);
+		SubscriberParticipant participant = schedule.getParticipant();
+		if (!participant.isPinned() && schedule.isEnabled()) {
+			participant.setPinned(MessageDialog.openQuestion(getShell(), 
+					Policy.bind("ConfigureSynchronizeScheduleComposite.0", Utils.getTypeName(participant)), //$NON-NLS-1$
+					Policy.bind("ConfigureSynchronizeScheduleComposite.1", Utils.getTypeName(participant)))); //$NON-NLS-1$
+		}
+		participant.setRefreshSchedule(schedule);
 	}
 
 	/* (non-Javadoc)
@@ -194,5 +197,18 @@ public class ConfigureSynchronizeScheduleComposite extends Composite {
 	
 	public String getErrorMessage() {
 		return errorMessage;
+	}
+	
+	private Label createWrappingLabel(Composite parent, String text, int indent, int horizontalSpan) {
+		Label label = new Label(parent, SWT.LEFT | SWT.WRAP);
+		label.setText(text);
+		GridData data = new GridData();
+		data.horizontalSpan = horizontalSpan;
+		data.horizontalAlignment = GridData.FILL;
+		data.horizontalIndent = indent;
+		data.grabExcessHorizontalSpace = true;
+		data.widthHint = 400;
+		label.setLayoutData(data);
+		return label;
 	}
 }

@@ -4,6 +4,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.internal.ui.Policy;
+import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.dialogs.DetailsDialog;
 
 /**
@@ -17,7 +18,7 @@ public class ConfigureRefreshScheduleDialog extends DetailsDialog {
 	private SubscriberRefreshSchedule schedule;
 
 	public ConfigureRefreshScheduleDialog(Shell parentShell, SubscriberRefreshSchedule schedule) {
-		super(parentShell, Policy.bind("ConfigureRefreshScheduleDialog.0", schedule.getParticipant().getName())); //$NON-NLS-1$
+		super(parentShell, Policy.bind("ConfigureRefreshScheduleDialog.0", Utils.getTypeName(schedule.getParticipant()))); //$NON-NLS-1$
 		this.schedule = schedule;
 	}
 
