@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
+
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -21,6 +22,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.progress.WorkbenchJob;
+
 /**
  * The AnimationManager is the class that keeps track of the animation items to
  * update.
@@ -29,11 +31,12 @@ public class AnimationManager {
 	private static AnimationManager singleton;
 
 	boolean animated = false;
+
 	private IJobProgressManagerListener listener;
+
 	IAnimationProcessor animationProcessor;
-	
-	WorkbenchJob animationStartJob;
-	WorkbenchJob animationDoneJob;
+
+	WorkbenchJob animationUpdateJob;
 
 	public static AnimationManager getInstance() {
 		if (singleton == null)
@@ -58,39 +61,28 @@ public class AnimationManager {
 
 		listener = getProgressListener();
 		ProgressManager.getInstance().addListener(listener);
-		
-		animationStartJob = new WorkbenchJob(ProgressMessages
+
+		animationUpdateJob = new WorkbenchJob(ProgressMessages
 				.getString("AnimationManager.AnimationStart")) {//$NON-NLS-1$
+
 			/*
 			 * (non-Javadoc)
 			 * 
 			 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
 			 */
 			public IStatus runInUIThread(IProgressMonitor monitor) {
-				if(monitor.isCanceled())
-					return Status.CANCEL_STATUS;
-				animationProcessor.animationStarted();
+
+				if (animated)
+					animationProcessor.animationStarted();
+				else
+					animationProcessor.animationFinished();
 				return Status.OK_STATUS;
 			}
 		};
-		animationStartJob.setSystem(true);
-		
-		animationDoneJob = new WorkbenchJob(ProgressMessages.getString("AnimationManager.DoneJobName")) { //$NON-NLS-1$
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-			 */
-			public IStatus runInUIThread(IProgressMonitor monitor) {
-				if(monitor.isCanceled())
-					return Status.CANCEL_STATUS;
-				animationProcessor.animationFinished();
-				return Status.OK_STATUS;
-			}
-		};
-		animationDoneJob.setSystem(true);
+		animationUpdateJob.setSystem(true);
 
 	}
+
 	/**
 	 * Add an item to the list
 	 * 
@@ -117,6 +109,7 @@ public class AnimationManager {
 	boolean isAnimated() {
 		return animated;
 	}
+
 	/**
 	 * Set whether or not the receiver is animated.
 	 * 
@@ -124,13 +117,9 @@ public class AnimationManager {
 	 */
 	void setAnimated(final boolean bool) {
 		animated = bool;
-		if (bool) {
-			animationStarted();
-		}
-		else{
-			animationFinished();
-		}
+		animationUpdateJob.schedule(100);
 	}
+
 	/**
 	 * Dispose the images in the receiver.
 	 */
@@ -139,11 +128,10 @@ public class AnimationManager {
 		ProgressManager.getInstance().removeListener(listener);
 	}
 
-
-
 	private IJobProgressManagerListener getProgressListener() {
 		return new IJobProgressManagerListener() {
 			Set jobs = Collections.synchronizedSet(new HashSet());
+
 			/*
 			 * (non-Javadoc)
 			 * 
@@ -152,6 +140,7 @@ public class AnimationManager {
 			public void addJob(JobInfo info) {
 				incrementJobCount(info);
 			}
+
 			/*
 			 * (non-Javadoc)
 			 * 
@@ -164,6 +153,7 @@ public class AnimationManager {
 				else
 					removeJob(info);
 			}
+
 			/*
 			 * (non-Javadoc)
 			 * 
@@ -178,6 +168,7 @@ public class AnimationManager {
 					addJob(currentInfos[i]);
 				}
 			}
+
 			/*
 			 * (non-Javadoc)
 			 * 
@@ -186,6 +177,7 @@ public class AnimationManager {
 			public void removeJob(JobInfo info) {
 				decrementJobCount(info.getJob());
 			}
+
 			/*
 			 * (non-Javadoc)
 			 * 
@@ -194,6 +186,7 @@ public class AnimationManager {
 			public boolean showsDebug() {
 				return false;
 			}
+
 			private void incrementJobCount(JobInfo info) {
 				//Don't count the animate job itself
 				if (isNotTracked(info))
@@ -202,7 +195,7 @@ public class AnimationManager {
 					setAnimated(true);
 				jobs.add(info.getJob());
 			}
-			
+
 			/*
 			 * Decrement the job count for the job
 			 */
@@ -211,14 +204,17 @@ public class AnimationManager {
 				if (jobs.isEmpty())
 					setAnimated(false);
 			}
+
 			/**
 			 * If this is one of our jobs or not running then don't bother.
 			 */
 			private boolean isNotTracked(JobInfo info) {
 				//We always track errors
 				Job job = info.getJob();
-				return job.getState() != Job.RUNNING || animationProcessor.isProcessorJob(job);
+				return job.getState() != Job.RUNNING
+						|| animationProcessor.isProcessorJob(job);
 			}
+
 			/*
 			 * (non-Javadoc)
 			 * 
@@ -227,6 +223,7 @@ public class AnimationManager {
 			public void addGroup(GroupInfo info) {
 				//Don't care about groups
 			}
+
 			/*
 			 * (non-Javadoc)
 			 * 
@@ -235,6 +232,7 @@ public class AnimationManager {
 			public void removeGroup(GroupInfo group) {
 				//Don't care about groups
 			}
+
 			/*
 			 * (non-Javadoc)
 			 * 
@@ -246,25 +244,6 @@ public class AnimationManager {
 		};
 	}
 
-
-	/**
-	 * The animation has started. Get the items to do any s other start
-	 * behaviour.
-	 */
-	private void animationStarted() {
-		
-		animationDoneJob.cancel();
-		animationStartJob.schedule();
-	}
-	/**
-	 * The animation has finished. Get the items to do any finish
-	 * behaviour.
-	 */
-	private void animationFinished() {
-		
-		animationStartJob.cancel();
-		animationDoneJob.schedule();
-	}
 	/**
 	 * Get the preferred width for widgets displaying the animation.
 	 * 
@@ -273,6 +252,5 @@ public class AnimationManager {
 	int getPreferredWidth() {
 		return animationProcessor.getPreferredWidth();
 	}
-	
 
 }
