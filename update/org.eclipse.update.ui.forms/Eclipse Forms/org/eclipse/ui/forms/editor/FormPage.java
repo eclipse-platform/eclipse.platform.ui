@@ -16,25 +16,33 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.widgets.Form;
+import org.eclipse.ui.part.EditorPart;
 
 /**
  *
  */
-public abstract class FormPage implements IFormPage {
+public class FormPage extends EditorPart implements IFormPage {
 	private FormEditor editor;
 	private ManagedForm mform;
 	private boolean active;
-	private IEditorInput input;
-	private IEditorSite site;
 	private int index;
-	
-	public FormPage() {
+	private String id;
+	private String title;
+
+	public FormPage(String id, String title) {
+		this.id = id;
+		this.title = title;
 	}
-	
+
+	public void init(IEditorSite site, IEditorInput input) {
+		setSite(site);
+		setInput(input);
+	}
+
 	public void initialize(FormEditor editor) {
 		this.editor = editor;
 	}
-	
+
 	public FormEditor getEditor() {
 		return editor;
 	}
@@ -55,35 +63,6 @@ public abstract class FormPage implements IFormPage {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IEditorPart#getEditorInput()
-	 */
-	public IEditorInput getEditorInput() {
-		return input;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IEditorPart#getEditorSite()
-	 */
-	public IEditorSite getEditorSite() {
-		return site;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IEditorPart#init(org.eclipse.ui.IEditorSite, org.eclipse.ui.IEditorInput)
-	 */
-	public void init(IEditorSite site, IEditorInput input)
-		throws PartInitException {
-		this.site = site;
-		this.input = input;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPart#addPropertyListener(org.eclipse.ui.IPropertyListener)
-	 */
-	public void addPropertyListener(IPropertyListener listener) {
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createPartControl(Composite parent) {
@@ -101,12 +80,13 @@ public abstract class FormPage implements IFormPage {
 	public void dispose() {
 		mform.dispose();
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPart#getSite()
-	 */
-	public IWorkbenchPartSite getSite() {
-		return site;
+	
+	public String getId() {
+		return id;
+	}
+	
+	public String getTitle() {
+		return title;
 	}
 
 	/* (non-Javadoc)
@@ -114,19 +94,6 @@ public abstract class FormPage implements IFormPage {
 	 */
 	public Image getTitleImage() {
 		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPart#getTitleToolTip()
-	 */
-	public String getTitleToolTip() {
-		return getTitle();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPart#removePropertyListener(org.eclipse.ui.IPropertyListener)
-	 */
-	public void removePropertyListener(IPropertyListener listener) {
 	}
 
 	/* (non-Javadoc)
@@ -142,11 +109,17 @@ public abstract class FormPage implements IFormPage {
 	public void doSave(IProgressMonitor monitor) {
 		mform.commit(true);
 	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISaveablePart#doSaveAs()
-	 */
+	 */	
 	public void doSaveAs() {
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISaveablePart#isSaveAsAllowed()
+	 */	
+	public boolean isSaveAsAllowed() {
+		return false;
 	}
 
 	/* (non-Javadoc)
@@ -156,32 +129,14 @@ public abstract class FormPage implements IFormPage {
 		return mform.isDirty();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.ISaveablePart#isSaveAsAllowed()
-	 */
-	public boolean isSaveAsAllowed() {
-		return false;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.ISaveablePart#isSaveOnCloseNeeded()
-	 */
-	public boolean isSaveOnCloseNeeded() {
-		return isDirty();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-	 */
-	public Object getAdapter(Class adapter) {
-		return null;
-	}
-	
 	public void setIndex(int index) {
 		this.index = index;
 	}
 	
 	public int getIndex() {
 		return index;
+	}
+	public boolean isSource() {
+		return false;
 	}
 }

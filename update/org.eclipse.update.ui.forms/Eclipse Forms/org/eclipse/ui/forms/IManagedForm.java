@@ -39,4 +39,10 @@ public interface IManagedForm {
  * @return the managed parts
  */	
 	IFormPart [] getParts();
+	
+/**
+ * Sets the input of this page to the provided object.
+ * @param input the new page input
+ */
+	void setInput(Object input);
 }

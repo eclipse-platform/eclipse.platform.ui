@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.forms.editor;
 
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.*;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.events.KeyEvent;
@@ -20,20 +19,21 @@ import org.eclipse.ui.internal.IWorkbenchConstants;
 
 /**
  * Implementation of <code>IKeyBindingService</code> for nested editors.
- * "Virtualizes" the key binding service by keeping the outer key binding service
- * up to date for the currently active nested editor.
+ * "Virtualizes" the key binding service by keeping the outer key binding
+ * service up to date for the currently active nested editor.
  */
 public class MultiPageKeyBindingService implements IKeyBindingService {
 
 	private MultiPageKeyBindingEditorSite fSite;
-	private String[] fScopes = new String[] { IWorkbenchConstants.DEFAULT_ACCELERATOR_SCOPE_ID };
+	private String[] fScopes =
+		new String[] { IWorkbenchConstants.DEFAULT_ACCELERATOR_SCOPE_ID };
 	private HashMap fCommandIdToActionMap = new HashMap();
 
 	public MultiPageKeyBindingService(MultiPageKeyBindingEditorSite site) {
 		fSite = site;
 	}
 
-	/** 
+	/**
 	 * Is the corresponding nested editor active?
 	 */
 	private boolean isActive() {
@@ -42,14 +42,18 @@ public class MultiPageKeyBindingService implements IKeyBindingService {
 
 	public void activate() {
 		// register all actions with the outer service
-		for (Iterator i = fCommandIdToActionMap.values().iterator(); i.hasNext();) {
+		for (Iterator i = fCommandIdToActionMap.values().iterator();
+			i.hasNext();
+			) {
 			getOuterService().registerAction((IAction) i.next());
 		}
 	}
 
 	public void deactivate() {
 		// deregister all actions from the outer service
-		for (Iterator i = fCommandIdToActionMap.values().iterator(); i.hasNext();) {
+		for (Iterator i = fCommandIdToActionMap.values().iterator();
+			i.hasNext();
+			) {
 			getOuterService().unregisterAction((IAction) i.next());
 		}
 	}
@@ -77,7 +81,7 @@ public class MultiPageKeyBindingService implements IKeyBindingService {
 	}
 
 	public void registerAction(IAction action) {
-		// remember the registered action and forward to the outer service 
+		// remember the registered action and forward to the outer service
 		// if the corresponding nested editor is active
 		String command = action.getActionDefinitionId();
 		if (command != null) {
@@ -88,7 +92,7 @@ public class MultiPageKeyBindingService implements IKeyBindingService {
 	}
 
 	public void unregisterAction(IAction action) {
-		// forget the registered action and forward to the outer service 
+		// forget the registered action and forward to the outer service
 		// if the corresponding nested editor is active
 		String command = action.getActionDefinitionId();
 		if (command != null) {

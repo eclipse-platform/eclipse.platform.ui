@@ -27,10 +27,15 @@ public interface IFormPage extends IEditorPart {
  */
 	void initialize(FormEditor editor);
 	
+/**
+ * Returns the editor this page belongs to.
+ * @return the form editor
+ */
 	FormEditor getEditor();
 /**
- * Returns the managed form of this page.
- * @return the managed form
+ * Returns the managed form of this page, unless this is a source page.
+ * @return the managed form or <samp>null</samp> if this is a source
+ * page.
  */
 	IManagedForm getManagedForm();
 /**
@@ -42,8 +47,39 @@ public interface IFormPage extends IEditorPart {
  * <code>false</code> otherwise. 
  */
 	void setActive(boolean active);
+/**
+ * Returns <samp>true</samp> if page is currently active,
+ * false if not. 
+ * @return <samp>true</samp> for active page.
+ */
 	boolean isActive();
+/**
+ * Returns the control associated with this page.
+ * @return the control of this page if created or <samp>null</samp>
+ * if the page has not been shown yet.
+ */
 	Control getPartControl();
+/**
+ * Page must have a unique id that can be used to show it 
+ * without knowing its relative position in the editor.
+ * @return the unique page identifier
+ */
+	String getId();
+/**
+ * Returns the position of the page in the editor.
+ * @return the zero-based index of the page in the editor.
+ */
 	int getIndex();
+/**
+ * Sets the position of the page in the editor.
+ * @param index the zero-based index of the page in the editor.
+ */
 	void setIndex(int index);
+/**
+ * Tests whether this page shows the editor input in the raw (source)
+ * form.
+ * @return <samp>true</samp> if the page shows editor input source,
+ * <samp>false</samp> if this is a form page.
+ */
+	boolean isSource();
 }
