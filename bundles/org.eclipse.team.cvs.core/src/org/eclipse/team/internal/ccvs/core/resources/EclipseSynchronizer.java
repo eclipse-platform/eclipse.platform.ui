@@ -624,7 +624,10 @@ public class EclipseSynchronizer {
 		try {
 			IContainer parent = resource.getParent();
 			HashMap children = (HashMap)resource.getParent().getSessionProperty(RESOURCE_SYNC_KEY);
-			Assert.isNotNull(children);
+			if (children == null) {
+				// There should be sync info but it was missing. Report the error
+				throw new CVSException(Policy.bind("EclipseSynchronizer.folderSyncInfoMissing", parent.getFullPath().toString())); //$NON-NLS-1$
+			}
 			return (ResourceSyncInfo) children.get(resource.getName());
 		} catch(CoreException e) {
 			throw CVSException.wrapException(e);
@@ -667,7 +670,10 @@ public class EclipseSynchronizer {
 	private static Collection /* of ResourceSyncInfo */ getCachedResourceSyncForChildren(IContainer container) throws CVSException {
 		try {
 			HashMap children = (HashMap)container.getSessionProperty(RESOURCE_SYNC_KEY);
-			Assert.isNotNull(children);
+			if (children == null) {
+				// There should be sync info but it was missing. Report the error
+				throw new CVSException(Policy.bind("EclipseSynchronizer.folderSyncInfoMissing", container.getFullPath().toString())); //$NON-NLS-1$
+			}
 			return children.values();
 		} catch(CoreException e) {
 			throw CVSException.wrapException(e);
@@ -735,7 +741,10 @@ public class EclipseSynchronizer {
 	private static FolderSyncInfo getCachedFolderSync(IContainer container) throws CVSException {
 		try {
 			FolderSyncInfo info = (FolderSyncInfo)container.getSessionProperty(FOLDER_SYNC_KEY);
-			Assert.isNotNull(info);
+			if (info == null) {
+				// There should be sync info but it was missing. Report the error
+				throw new CVSException(Policy.bind("EclipseSynchronizer.folderSyncInfoMissing", container.getFullPath().toString())); //$NON-NLS-1$
+			}
 			if (info == NULL_FOLDER_SYNC_INFO) return null;
 			return info;
 		} catch (CoreException e) {
