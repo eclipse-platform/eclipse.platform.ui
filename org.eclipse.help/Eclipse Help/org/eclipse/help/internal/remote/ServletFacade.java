@@ -21,8 +21,6 @@ import org.eclipse.help.internal.*;
  */
 public class ServletFacade implements IPlatformRunnable {
 
-	final static String errorString =
-		"<html><body>The topic that you have requested is not available. The link may be wrong, or you may not have the corresponding product feature installed. This online help only includes documentation for features that are installed.</body></html>";
 	/**
 	 * StandaloneHelpSystem constructor comment.
 	 */
