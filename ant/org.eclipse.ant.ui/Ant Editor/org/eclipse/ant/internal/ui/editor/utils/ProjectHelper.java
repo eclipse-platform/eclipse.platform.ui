@@ -155,7 +155,7 @@ public class ProjectHelper extends ProjectHelper2 {
             String normalizedFileName= (String) fNormalizedFileNames.get(fileName);
             if (normalizedFileName == null) {
                 if (fileName.startsWith("file:")) { //$NON-NLS-1$
-                    normalizedFileName= FileUtils.newFileUtils().fromURI(fileName);
+                    normalizedFileName= getFileUtils().fromURI(fileName);
                     fNormalizedFileNames.put(fileName, normalizedFileName);
                 } else {
                     normalizedFileName= fileName;
