@@ -94,8 +94,8 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 			}
 			getTextWidget().setEditable(!doc.isReadOnly());
 			if (isVisible()) {
-				revealEndOfDocument();
 				paintDocument();
+				revealEndOfDocument();
 			}
 		}
 	}
@@ -137,11 +137,16 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 	 */
 	protected void revealEndOfDocument() {
 		IDocument doc= getDocument();
-		int docLength= doc.getLength();
-		if (docLength > 0) {
-			StyledText widget= getTextWidget();
-			widget.setCaretOffset(docLength);
-			widget.showSelection();
+		int lines = doc.getNumberOfLines();
+		try {
+			// lines are 0-based
+			int offset = doc.getLineOffset(lines - 1);
+			if (offset > 0) {
+				StyledText widget= getTextWidget();
+				widget.setCaretOffset(offset);
+				widget.showSelection();
+			}
+		} catch (BadLocationException e) {
 		}
 	}
 
