@@ -40,7 +40,7 @@ import org.osgi.util.tracker.ServiceTracker;
 public final class InternalPlatform implements IPlatform {
 	private BundleContext context;
 	private IExtensionRegistry registry;
-	private Plugin runtimeInstance; //Keep track of the plugin object for runtime in case the backward compatibility is run.
+	private Plugin runtimeInstance; // Keep track of the plugin object for runtime in case the backward compatibility is run.
 	private ServiceTracker userLocation = null;
 	private ServiceTracker instanceLocation = null;
 	private ServiceTracker configurationLocation = null;
@@ -66,7 +66,6 @@ public final class InternalPlatform implements IPlatform {
 	private static String password = "";
 	private static String keyringFile;
 
-	
 	// Command line args as seen by the Eclipse runtime. allArgs does NOT
 	// include args consumed by the underlying framework (e.g., OSGi)
 	private static String[] allArgs = new String[0];
@@ -76,21 +75,8 @@ public final class InternalPlatform implements IPlatform {
 	private static boolean splashDown = false;
 	private static String pluginCustomizationFile = null;
 
-	/**
-	 * Whether to write the version.ini file on shutdown.
-	 */
-	private static boolean writeVersion = true;
-
 	private ArrayList groupProviders = new ArrayList(3);
-	private IProduct product;
-
-	// TODO the following fields will be deleted before 3.0 ships
-	// registry index - used to store last modified times for
-	// registry caching
-	// ASSUMPTION:  Only the plugin registry in 'registry' above will be cached
-	private static Map regIndex = null;
-	// TODO end of obsolete field area.
-	
+	private IProduct product;	
 	
 	/**
 	 * Name of the plug-in customization file (value "plugin_customization.ini")
@@ -137,8 +123,6 @@ public final class InternalPlatform implements IPlatform {
 	private static final String KEY_DOUBLE_PREFIX = "%%"; //$NON-NLS-1$
 
 	private static final String PLUGIN_PATH = ".plugin-path"; //$NON-NLS-1$
-	private static final String METADATA_VERSION_KEY = "org.eclipse.core.runtime"; //$NON-NLS-1$
-	private static final int METADATA_VERSION_VALUE = 1;
 
 	// Eclipse System Properties
 	public static final String PROP_PRODUCT = "eclipse.product"; //$NON-NLS-1$
@@ -195,34 +179,18 @@ public final class InternalPlatform implements IPlatform {
 	 * @see Platform
 	 */
 	public URL asLocalURL(URL url) throws IOException {
-		//TODO: this is bogus - only to satisfy clients that want to resolve bundle2 URLs
-		if (url.getProtocol().equals("bundle2")) { //$NON-NLS-1$
-			String bundleName = url.getHost();
-			Bundle bundle = getBundle(bundleName.substring(0, bundleName.indexOf('_')));
-
-			if (bundle != null) {
-				URL localURL = bundle.getEntry(url.getPath());
-				if (localURL != null)
-					return localURL;
-			}
-			return url;
-		}
-
 		URL result = url;
-
 		// If this is a platform URL get the local URL from the PlatformURLConnection
-		if (result.getProtocol().equals(PlatformURLHandler.PROTOCOL)){
+		if (result.getProtocol().equals(PlatformURLHandler.PROTOCOL))
 			result = asActualURL(url);
-		}
 
 		// If the result is a bundleentry or bundleresouce URL then 
 		// convert it to a file URL.  This will end up extracting the 
 		// bundle entry to cache if the bundle is packaged as a jar.
 		if (result.getProtocol().startsWith(PlatformURLHandler.BUNDLE)) {
 			URLConverter urlConverter = getURLConverter();
-			if (urlConverter == null) {
+			if (urlConverter == null) 
 				throw new IOException("url.noaccess");
-			}
 			result = urlConverter.convertToFileURL(result);
 		}
 
@@ -320,7 +288,7 @@ public final class InternalPlatform implements IPlatform {
 		if (location == null)
 			return null;
 		// TODO assumes the instance location is a file: URL
-		return new Path(location.getURL().getFile());
+		return new Path(location.getURL().getPath());
 	}
 
 
@@ -410,12 +378,11 @@ public final class InternalPlatform implements IPlatform {
 	public void start(BundleContext context) {
 		this.context = context;
 		initializeLocationTrackers();
-		// TODO figure out how to do the splash.  This really should be something that is in the OSGi implementation
 		endOfInitializationHandler = getSplashHandler();
 		processCommandLine(infoService.getCommandLineArgs());
 		debugTracker = new ServiceTracker(context, DebugOptions.class.getName(), null);
 		debugTracker.open();
-		options = (DebugOptions) debugTracker.getService(); //TODO This is not good, but is avoids problems
+		options = (DebugOptions) debugTracker.getService(); 
 		initializeDebugFlags();
 		initialized = true;
 		getMetaArea();
@@ -451,8 +418,6 @@ public final class InternalPlatform implements IPlatform {
 		//shutdown all running jobs
 		JobManager.shutdown();
 		debugTracker.close();
-//		if (writeVersion)
-//			writeVersion();
 		initialized = false;
 	}
 
@@ -523,13 +488,6 @@ public final class InternalPlatform implements IPlatform {
 				found = true;
 			}
 
-			// look for the flag to turn off using package prefixes
-			if (args[i].equalsIgnoreCase(NO_PACKAGE_PREFIXES)) {
-				// ignored
-				// PluginClassLoader.usePackagePrefixes = false;
-				found = true;
-			}
-			
 			// look for the flag to turn off the workspace metadata version check
 			if (args[i].equalsIgnoreCase(NO_VERSION_CHECK)) {
 				System.setProperty(PROP_NO_VERSION_CHECK, "true"); //$NON-NLS-1$
@@ -544,6 +502,11 @@ public final class InternalPlatform implements IPlatform {
 			if (args[i].equalsIgnoreCase(CLASSLOADER_PROPERTIES)) 
 				found = true;				// ignored
 
+			// look for the flag to turn off using package prefixes
+			if (args[i].equalsIgnoreCase(NO_PACKAGE_PREFIXES)) {
+				found = true;				// ignored
+			}
+			
 			// done checking for args.  Remember where an arg was found 
 			if (found) {
 				configArgs[configArgIndex++] = i;
@@ -1186,212 +1149,5 @@ public final class InternalPlatform implements IPlatform {
 	}
 	public void unregisterBundleGroupProvider(IBundleGroupProvider provider) {
 		groupProviders.remove(provider);		
-	}
-
-	
-	
-	
-	// TODO to be removed before 3.0 ships
-
-	public void lockInstanceData() throws CoreException {
-		getMetaArea().createLockFile();
-	}
-	public void unlockInstanceData() {
-		getMetaArea().clearLockFile();
-	}
-	public void setKeyringLocation(String keyringFile) {
-		getMetaArea().setKeyringFile(keyringFile);
-	}
-
-	public void setInstanceLocation(IPath value) throws IllegalStateException {
-		try {
-			setInstanceLocation(value.toFile().toURL());
-		} catch (MalformedURLException e) {
-		}
-	}
-	public void setInstanceLocation(URL value) throws IllegalStateException {
-		Location location = getInstanceLocation();
-		if (location == null)
-			throw new IllegalStateException("Instance location service could not be found");
-		location.setURL(value, false);
-	}
-	public IPath getConfigurationMetadataLocation() {
-		Location location = getConfigurationLocation();
-		if (location == null)
-			return null;
-		String result = location.getURL().toExternalForm();
-		if (result.startsWith("file:"))
-			return new Path(result.substring(5));
-		throw new IllegalStateException("Configuration location is not a file: URL - " + result);
-	}
-	
-	public String[] getAllArgs() {
-		return getCommandLineArgs();
-	}
-	public String[] getFrameworkArgs() {
-		return frameworkArgs;
-	}
-
-	// TODO remove this method by M8
-	/**
-	 * Return whether the workspace metadata version matches the expected version. 
-	 * 
-	 * @return <code>true</code> if they match, <code>false</code> if not
-	 */
-	private boolean checkVersionNoPrompt() {
-		// temporary testing hook to allow the UI team to turn runtime locking off and test their locking.
-		if (System.getProperty("eclipse.ui.testing") != null)
-			return true;
-
-		File pluginsDir = getMetaArea().getMetadataLocation().append(DataArea.F_PLUGIN_DATA).toFile();
-		if (!pluginsDir.exists())
-			return true;
-
-		int version = -1;
-		File versionFile = getMetaArea().getVersionPath().toFile();
-		if (versionFile.exists()) {
-			try {
-				// Although the version file is not spec'ed to be a Java properties file,
-				// it happens to follow the same format currently, so using Properties
-				// to read it is convenient.
-				Properties props = new Properties();
-				FileInputStream is = new FileInputStream(versionFile);
-				try {
-					props.load(is);
-				} finally {
-					try {
-						is.close();
-					} finally {
-						// ignore
-					}
-				}
-				String prop = props.getProperty(METADATA_VERSION_KEY);
-				// let any NumberFormatException be caught below
-				if (prop != null)
-					version = Integer.parseInt(prop);
-			} catch (Exception e) {
-				// Fail silently. Not a catastrophe if we can't read the version file. We don't
-				// want to fail execution.
-				log(new Status(IStatus.ERROR, PI_RUNTIME, 1, Policy.bind("meta.checkVersion", versionFile.toString()), e)); //$NON-NLS-1$
-			}
-		}
-		return version == METADATA_VERSION_VALUE;
-	}
-
-	/** 
-	 * Write out the version of the metadata into a known file. Overwrite
-	 * any existing file contents.
-	 */
-	private void writeVersion() {
-		File versionFile = getMetaArea().getVersionPath().toFile();
-		try {
-			OutputStream output = new BufferedOutputStream(new FileOutputStream(versionFile));
-			try {
-				String versionLine = METADATA_VERSION_KEY + "=" + METADATA_VERSION_VALUE; //$NON-NLS-1$
-				output.write(versionLine.getBytes("UTF-8")); //$NON-NLS-1$
-			} finally {
-				output.close();
-			}
-		} catch (Exception e) {
-			// Fail silently. Not a catastrophe if we can't write the version file. We don't
-			// want to fail execution.
-			log(new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, 1, Policy.bind("meta.writeVersion", versionFile.toString()), e)); //$NON-NLS-1$
-		}
-	}
-
-	// TODO remove this method by M8
-	/**
-	 * Check whether the workspace metadata version matches the expected version. 
-	 * If not, prompt the user for whether to proceed, or exit with no changes.
-	 * Side effects: none
-	 * 
-	 * @return <code>true</code> to proceed, <code>false</code> to exit with no changes
-	 */
-	private boolean checkVersionPrompt() {
-		if (checkVersionNoPrompt())
-			return true;
-
-		// run the version check ui class to prompt the user
-		String appId = "org.eclipse.ui.versioncheck.prompt"; //$NON-NLS-1$
-		IPlatformRunnable runnable = loaderGetRunnable(appId);
-		// If there is no UI to confirm the metadata version difference, then just proceed.		
-		if (runnable == null)
-			return true;
-		try {
-			Object result = runnable.run(null);
-			return Boolean.TRUE.equals(result);
-		} catch (Exception e) {
-			// Fail silently since we don't have a UI, but don't proceed if we can't prompt the user.
-			log(new Status(IStatus.ERROR, PI_RUNTIME, 1, Policy.bind("meta.versionCheckRun", appId), null)); //$NON-NLS-1$
-			return false;
-		}
-	}
-
-	/**
-	 * Check whether the workspace metadata version matches the expected version. 
-	 * If not, prompt the user for whether to proceed, or exit with no changes.
-	 * Side effects: 
-	 * <ul>
-	 * <li>remember whether to write the metadata version on exit</li>
-	 * <li>bring down the splash screen if exiting</li>
-	 * </ul> 
-	 * 
-	 * @return <code>true</code> to proceed, <code>false</code> to exit with no changes
-	 */
-	public boolean loaderCheckVersion() {
-		// if not doing the version check, then proceed with no check or prompt
-		boolean noVersionCheck = "true".equals(System.getProperty("eclipse.noVersionCheck")); //$NON-NLS-1$
-		boolean proceed = noVersionCheck || checkVersionPrompt();
-		// remember whether to write the version on exit;
-		// don't write it if the user cancelled
-		writeVersion = proceed;
-		// bring down the splash screen if the user cancelled,
-		// since the application won't
-		if (!proceed)
-			endSplash();
-		return proceed;
-	}
-	/**
-	 * Internal method for finding and returning a runnable instance of the 
-	 * given class as defined in the specified plug-in.
-	 * The returned object is initialized with the supplied arguments.
-	 * <p>
-	 * This method is used by the platform boot loader; is must
-	 * not be called directly by client code.
-	 * </p>
-	 * @see BootLoader
-	 */
-	public IPlatformRunnable loaderGetRunnable(String applicationName) {
-		assertInitialized();
-		IExtension extension = getRegistry().getExtension(PI_RUNTIME, PT_APPLICATIONS, applicationName);
-		if (extension == null)
-			return null;
-		IConfigurationElement[] configs = extension.getConfigurationElements();
-		if (configs.length == 0)
-			return null;
-		try {
-			IConfigurationElement config = configs[0];
-			return (IPlatformRunnable) config.createExecutableExtension("run"); //$NON-NLS-1$
-		} catch (CoreException e) {
-			getLog(context.getBundle()).log(e.getStatus());
-			return null;
-		} catch (Throwable t) {
-			t.printStackTrace(System.err);
-			return null;
-		}
-	}
-
-	public void addLastModifiedTime(String pathKey, long lastModTime) {
-		if (regIndex == null)
-			regIndex = new HashMap(30);
-		regIndex.put(pathKey, new Long(lastModTime));
-	}
-	public Map getRegIndex() {
-		return regIndex;
-	}
-	public void clearRegIndex() {
-		regIndex = null;
-	}
-
-	
+	}	
 }

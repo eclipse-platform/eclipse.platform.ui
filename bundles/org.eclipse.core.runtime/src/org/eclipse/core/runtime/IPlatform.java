@@ -674,32 +674,6 @@ public interface IPlatform {
 	 */
 	public Location getInstanceLocation();
 			
-	
-	
-	// TODO remove these methods before 3.0 ships
-	/**
-	 * Lock the instance data. 
-	 * The method throws a CoreException if the lock can not be acquired or 
-	 * an IllegalStateException if no instance data has been specified.
-	 * @deprecated will be removed before 3.0 ships  Use getInstanceLocation().lock()
-	 * @since 3.0
-	 */
-	public void lockInstanceData() throws CoreException, IllegalStateException;
-
-	/**
-	 * Unlock the instance data. 
-	 * @since 3.0
-	 * @deprecated will be removed before 3.0 ships  Use getInstanceLocation().release()
-	 */
-	public void unlockInstanceData() throws IllegalStateException;
-	/**
-	 * Set the location of the keyring file. 
-	 * Throws an IllegalStateException if the file as already been set explicitly or the authorization mechanism used before.
-	 * @param keyringFile, the location of the keyring file
-	 * @since 3.0
-	 * @deprecated will be removed before 3.0 ships.  
-	 */
-	public void setKeyringLocation(String keyringFile) throws IllegalStateException;
 	/**
 	 * Checks if the specified bundle is a fragment bundle.
 	 * @return true if the specified bundle is a fragment bundle; otherwise false is returned.
@@ -735,18 +709,6 @@ public interface IPlatform {
      * highest version, or <tt>null</tt> if no bundle is found.
      */
 	public Bundle getBundle(String symbolicName);	
-	/**
-	 * Returns the location in the filesystem of the configuration information 
-	 * used to run this instance of Eclipse.  The configuration area typically
-	 * contains the list of plug-ins available for use, various user setttings
-	 * (those shared across different instances of the same configuration)
-	 * and any other such data needed by plug-ins.
-	 * 
-	 * @return the path indicating the directory containing the configuration 
-	 * information for this running Eclipse.
-	 * @deprecated see getConfigurationLocation This method will be removed by M8
-	 */
-	public IPath getConfigurationMetadataLocation();
 	
 	/**
 	 * Returns the content type manager.
@@ -756,21 +718,6 @@ public interface IPlatform {
 	public IContentTypeManager getContentTypeManager();
 	
 	/**
-	 * Returns all command line arguments specified when the running framework was started.
-	 * @return the array of command line arguments.
-	 * @deprecated will be removed before 3.0 ships.  
-	 */
-	public String[] getAllArgs();
-	
-	/**
-	 * Returns the arguments consumed by the framework implementation itself.  Which
-	 * arguments are consumed is implementation specific.
-	 * @return the array of command line arguments consumed by the framework.
-	 * @deprecated will be removed before 3.0 ships.  
-	 */
-	public String[] getFrameworkArgs();
-
-	/**
 	 * Returns whether the platform is running.
 	 *
 	 * @return <code>true</code> if the platform is running, 
@@ -778,4 +725,3 @@ public interface IPlatform {
 	 */
 	public boolean isRunning();
 }
-
