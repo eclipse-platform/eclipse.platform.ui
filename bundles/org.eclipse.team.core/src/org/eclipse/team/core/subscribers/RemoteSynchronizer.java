@@ -51,13 +51,13 @@ public abstract class RemoteSynchronizer {
 	 * whether to cache file contents during the refresh or to
 	 * allow them to be fetched when request.
 	 * 
-	 * @param resources the resources to refresh
+	 * @param resource the resource to refresh
 	 * @param depth the depth of the operation
 	 * @param cacheFileContentsHint a hint which indicates whether file contents will be used
 	 * @param monitor the progress monitor
 	 * @return the resources whose remote has changed since the last refresh
 	 * @throws TeamException
 	 */
-	public abstract IResource[] refresh(IResource[] resources, int depth, boolean cacheFileContentsHint, IProgressMonitor monitor) throws TeamException;
+	public abstract IResource[] refresh(IResource resource, int depth, boolean cacheFileContentsHint, IProgressMonitor monitor) throws TeamException;
 
 }

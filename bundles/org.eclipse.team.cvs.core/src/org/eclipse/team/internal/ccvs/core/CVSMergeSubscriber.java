@@ -65,8 +65,8 @@ public class CVSMergeSubscriber extends CVSSyncTreeSubscriber implements IResour
 	private static final byte[] NO_REMOTE = new byte[0];
 	
 
-	protected IResource[] refreshRemote(IResource[] resources, int depth, IProgressMonitor monitor) throws TeamException {
-		IResource[] remoteChanges = super.refreshRemote(resources, depth, monitor);
+	protected IResource[] refreshRemote(IResource resource, int depth, IProgressMonitor monitor) throws TeamException {
+		IResource[] remoteChanges = super.refreshRemote(resource, depth, monitor);
 		adjustMergedResources(remoteChanges);
 		return remoteChanges;
 	}

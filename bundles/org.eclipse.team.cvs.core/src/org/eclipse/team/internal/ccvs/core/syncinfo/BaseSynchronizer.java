@@ -63,7 +63,7 @@ public class BaseSynchronizer extends RemoteSynchronizer {
 	 * @see org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSynchronizer#refresh(org.eclipse.core.resources.IResource[], int, boolean, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public IResource[] refresh(
-		IResource[] resources,
+		IResource resource,
 		int depth,
 		boolean cacheFileContentsHint,
 		IProgressMonitor monitor)

@@ -37,7 +37,7 @@ public class MergedSynchronizer extends RemoteBytesSynchronizer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.sync.ResourceSynchronizer#refresh(org.eclipse.core.resources.IResource[], int, boolean, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public IResource[] refresh(IResource[] resources, int depth, boolean cacheFileContentsHint, IProgressMonitor monitor) throws TeamException {
+	public IResource[] refresh(IResource resource, int depth, boolean cacheFileContentsHint, IProgressMonitor monitor) throws TeamException {
 		try {
 			monitor.beginTask(null, 100);
 			return new IResource[0];

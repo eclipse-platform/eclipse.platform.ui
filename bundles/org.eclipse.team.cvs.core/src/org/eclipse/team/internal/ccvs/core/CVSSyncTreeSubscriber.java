@@ -22,7 +22,10 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.ComparisonCriteria;
@@ -113,7 +116,16 @@ public abstract class CVSSyncTreeSubscriber extends TeamSubscriber {
 		}	
 		try {
 			// Filter and return only phantoms associated with the remote synchronizer.
-			IResource[] members = ((IContainer)resource).members(true /* include phantoms */);
+			IResource[] members;
+			try {
+				members = ((IContainer)resource).members(true /* include phantoms */);
+			} catch (CoreException e) {
+				if (!isSupervised(resource)) {
+					// The resource is no longer supervised so ignore the exception and return that there are no members
+					return new IResource[0];
+				}
+				throw e;
+			}
 			List filteredMembers = new ArrayList(members.length);
 			for (int i = 0; i < members.length; i++) {
 				IResource member = members[i];
@@ -209,30 +221,54 @@ public abstract class CVSSyncTreeSubscriber extends TeamSubscriber {
 	 */
 	public void refresh(IResource[] resources, int depth, IProgressMonitor monitor) throws TeamException {
 		monitor = Policy.monitorFor(monitor);
+		List errors = new ArrayList();
 		try {
-			// Take a guess at the work involved for refreshing the base and remote trees
+			monitor.beginTask(null, 100 * resources.length);
+			for (int i = 0; i < resources.length; i++) {
+				IResource resource = resources[i];
+				IStatus status = refresh(resource, depth, Policy.subMonitorFor(monitor, 100));
+				if (!status.isOK()) {
+					errors.add(status);
+				}
+			}
+		} finally {
+			monitor.done();
+		} 
+		if (!errors.isEmpty()) {
+			throw new CVSException(new MultiStatus(CVSProviderPlugin.ID, 0, 
+					(IStatus[]) errors.toArray(new IStatus[errors.size()]), 
+					"Errors occurred during refresh of {0}" + getName(), null));
+		}
+	}
+
+	public IStatus refresh(IResource resource, int depth, IProgressMonitor monitor) {
+		monitor = Policy.monitorFor(monitor);
+		try {
+			// Take a guess at the work involved for refreshing the base and remote tree
 			int baseWork = getCacheFileContentsHint() ? 10 : 30;
 			int remoteWork = 100;
 			monitor.beginTask(null, baseWork + remoteWork);
-			IResource[] baseChanges = refreshBase(resources, depth, Policy.subMonitorFor(monitor, baseWork));
-			IResource[] remoteChanges = refreshRemote(resources, depth, Policy.subMonitorFor(monitor, remoteWork));
-		
+			IResource[] baseChanges = refreshBase(resource, depth, Policy.subMonitorFor(monitor, baseWork));
+			IResource[] remoteChanges = refreshRemote(resource, depth, Policy.subMonitorFor(monitor, remoteWork));
+			
 			Set allChanges = new HashSet();
 			allChanges.addAll(Arrays.asList(remoteChanges));
 			allChanges.addAll(Arrays.asList(baseChanges));
 			IResource[] changedResources = (IResource[]) allChanges.toArray(new IResource[allChanges.size()]);
 			fireTeamResourceChange(TeamDelta.asSyncChangedDeltas(this, changedResources));
+			return Status.OK_STATUS;
+		} catch (TeamException e) {
+			return new CVSStatus(IStatus.ERROR, "An error occurred refreshing {0}: {1}" + resource.getFullPath().toString() +  e.getMessage(), e);
 		} finally {
 			monitor.done();
 		} 
 	}
-
-	protected IResource[] refreshBase(IResource[] resources, int depth, IProgressMonitor monitor) throws TeamException {
-		return getBaseSynchronizer().refresh(resources, depth, getCacheFileContentsHint(), monitor);
+	protected IResource[] refreshBase(IResource resource, int depth, IProgressMonitor monitor) throws TeamException {
+		return getBaseSynchronizer().refresh(resource, depth, getCacheFileContentsHint(), monitor);
 	}
 
-	protected IResource[] refreshRemote(IResource[] resources, int depth, IProgressMonitor monitor) throws TeamException {
-		return getRemoteSynchronizer().refresh(resources, depth,  getCacheFileContentsHint(), monitor);
+	protected IResource[] refreshRemote(IResource resource, int depth, IProgressMonitor monitor) throws TeamException {
+		return getRemoteSynchronizer().refresh(resource, depth,  getCacheFileContentsHint(), monitor);
 	}
 
 	/* (non-Javadoc)
