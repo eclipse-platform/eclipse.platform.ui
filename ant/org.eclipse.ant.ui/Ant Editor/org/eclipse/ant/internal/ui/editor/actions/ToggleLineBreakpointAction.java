@@ -32,8 +32,6 @@ public class ToggleLineBreakpointAction implements IToggleBreakpointsTarget {
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#toggleLineBreakpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void toggleLineBreakpoints(IWorkbenchPart part, ISelection selection) throws CoreException {
-		ITextSelection textSelection = (ITextSelection) selection;
-		int lineNumber = textSelection.getStartLine();
 		IEditorPart editorPart = (IEditorPart)part;
 		IEditorInput editorInput = editorPart.getEditorInput();
 		IResource resource= null;
@@ -44,6 +42,9 @@ public class ToggleLineBreakpointAction implements IToggleBreakpointsTarget {
 			Display.getCurrent().beep();
             return;
 		}
+		
+		ITextSelection textSelection = (ITextSelection) selection;
+		int lineNumber = textSelection.getStartLine();
 		IBreakpoint[] breakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(IAntDebugConstants.ID_ANT_DEBUG_MODEL);
 		for (int i = 0; i < breakpoints.length; i++) {
 			IBreakpoint breakpoint = breakpoints[i];
