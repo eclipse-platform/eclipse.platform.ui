@@ -138,13 +138,15 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin {
 	protected void initializeDefaultPreferences(IPreferenceStore prefs) {
 		prefs.setDefault(IPreferenceConstants.PROMPT_FOR_MIGRATION, true);
 		
+		prefs.setDefault(IPreferenceConstants.ANT_FIND_BUILD_FILE_NAMES, "build.xml"); //$NON-NLS-1$
+		
 		PreferenceConverter.setDefault(prefs, IPreferenceConstants.CONSOLE_ERROR_RGB, new RGB(255, 0, 0)); // red - exactly the same as debug Consol
 		PreferenceConverter.setDefault(prefs, IPreferenceConstants.CONSOLE_WARNING_RGB, new RGB(255, 100, 0)); // orange
 		PreferenceConverter.setDefault(prefs, IPreferenceConstants.CONSOLE_INFO_RGB, new RGB(0, 0, 255)); // blue
 		PreferenceConverter.setDefault(prefs, IPreferenceConstants.CONSOLE_VERBOSE_RGB, new RGB(0, 200, 125)); // green
 		PreferenceConverter.setDefault(prefs, IPreferenceConstants.CONSOLE_DEBUG_RGB, new RGB(0, 0, 0)); // black
 		
-		// Planty color preferences
+		// Ant Editor color preferences
 		PreferenceConverter.setDefault(prefs, IAntEditorColorConstants.P_DEFAULT, IAntEditorColorConstants.DEFAULT);
 		PreferenceConverter.setDefault(prefs, IAntEditorColorConstants.P_PROC_INSTR, IAntEditorColorConstants.PROC_INSTR);
 		PreferenceConverter.setDefault(prefs, IAntEditorColorConstants.P_STRING, IAntEditorColorConstants.STRING);
