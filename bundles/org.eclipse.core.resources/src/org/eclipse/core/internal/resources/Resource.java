@@ -762,13 +762,12 @@ public String getName() {
  * @see IResource#getParent
  */
 public IContainer getParent() {
-	IPath parent = path.removeLastSegments(1);
-	if (parent.isRoot() || parent.isEmpty())
+	int segments = path.segmentCount();
+	if (segments == 1)
 		return null;
-	if (parent.segmentCount() == 1)
-		return workspace.getRoot().getProject(parent.lastSegment());
-	else
-		return workspace.getRoot().getFolder(parent);
+	if (segments == 2)
+		return workspace.getRoot().getProject(path.segment(0));
+	return (IFolder)workspace.newResource(path.removeLastSegments(1), IResource.FOLDER);
 }
 /**
  * @see IResource
