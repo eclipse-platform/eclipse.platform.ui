@@ -423,14 +423,6 @@ protected boolean updateSelection(IStructuredSelection selection) {
 }
 	
 /**
- * Handle a key release.
- */
-public void handleKeyReleased(KeyEvent event) {
-	if (event.character == SWT.DEL && event.stateMask == 0 && isEnabled()) {
-		run();
-	}
-}
-/**
  * Ask the user whether the given resource should be deleted
  * despite being out of sync with the file system.
  * @param resource the out of sync resource
