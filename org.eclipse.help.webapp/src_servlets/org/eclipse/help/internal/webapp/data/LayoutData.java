@@ -43,10 +43,11 @@ public class LayoutData extends RequestData {
 	}
 
 	public String getBannerHeight() {
-		if (getBannerURL() == null)
-			return "0";
-		else
-			return preferences.getBannerHeight();
+		String height = preferences.getBannerHeight();
+		if (height == null || height.length() == 0) {
+			height = "0";
+		}
+		return height;
 	}
 
 	public String getContentURL() {
