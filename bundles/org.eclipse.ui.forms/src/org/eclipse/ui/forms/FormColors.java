@@ -99,15 +99,32 @@ public class FormColors {
 	 */
 	protected void initializeColorTable() {
 		createColor(SEPARATOR, 152, 170, 203);
-		String osname = System.getProperty("os.name").toLowerCase();
-		if (osname.startsWith("mac os"))
-			createColor(TITLE, getSystemColor(SWT.COLOR_LIST_FOREGROUND));
-		else
-			createColor(TITLE, getSystemColor(SWT.COLOR_LIST_SELECTION));
+		createTitleColor();
 		RGB border = getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT);
 		RGB black = new RGB(0,0,0);
 		createColor(BORDER, blend(border, black, 80));
 	}
+	
+	private void createTitleColor() {
+		/*
+		String osname = System.getProperty("os.name").toLowerCase();		
+		if (osname.startsWith("mac os"))
+			createColor(TITLE, getSystemColor(SWT.COLOR_LIST_FOREGROUND));
+		else
+			createColor(TITLE, getSystemColor(SWT.COLOR_LIST_SELECTION));
+		*/
+		RGB rgb = getSystemColor(SWT.COLOR_LIST_SELECTION);
+		RGB white = new RGB(255, 255, 255);
+		RGB black = new RGB(0, 0, 0);
+		// test too light
+		if (testTwoPrimaryColors(rgb, 120, 151))
+			rgb = blend(rgb, black, 80);
+		else
+			if (testTwoPrimaryColors(rgb, 150, 256))
+				rgb = blend(rgb, black, 60);
+		createColor(TITLE, rgb);
+	}
+	
 /**
  * Allocates colors for the section tool bar (all the keys that
  * start with TB). Since these colors are only needed when
@@ -356,4 +373,18 @@ public class FormColors {
 			return getBackground();
 		return getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
 	}
+	private boolean testTwoPrimaryColors(RGB rgb, int from, int to) {
+		int total = 0;
+		if (testPrimaryColor(rgb.red, from, to))
+			total++;
+		if (testPrimaryColor(rgb.green, from, to))
+			total++;
+		if (testPrimaryColor(rgb.blue, from, to))
+			total++;
+		return total>=2;
+	}
+	
+	private boolean testPrimaryColor(int value, int from, int to) {
+		return value > from && value < to;
+	}	
 }
