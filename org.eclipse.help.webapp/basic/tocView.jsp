@@ -19,7 +19,7 @@
 </head>
 
 
-<body bgcolor="#FFFFFF" text="#000000">
+<body bgcolor="<%=prefs.getBasicViewBackground()%>" text="<%=prefs.getBasicViewFont()%>">
 <table border="0" cellpadding="0" cellspacing="0">
 <%
 	for (int toc=0; toc<data.getTocCount(); toc++) {

@@ -58,18 +58,34 @@ public class WebappPreferences {
 	}
 
 	public String getToolbarBackground() {
-		return prefs.getString("toolbarBackground");
+		return prefs.getString("advanced.toolbarBackground");
+	}
+
+	public String getBasicToolbarBackground() {
+		return prefs.getString("basic.toolbarBackground");
 	}
 
 	public String getToolbarFont() {
-		return prefs.getString("toolbarFont");
+		return prefs.getString("advanced.toolbarFont");
+	}
+
+	public String getBasicToolbarFont() {
+		return prefs.getString("basic.toolbarFont");
 	}
 
 	public String getViewBackground() {
-		return prefs.getString("viewBackground");
+		return prefs.getString("advanced.viewBackground");
+	}
+
+	public String getBasicViewBackground() {
+		return prefs.getString("basic.viewBackground");
 	}
 
 	public String getViewFont() {
-		return prefs.getString("viewFont");
+		return prefs.getString("advanced.viewFont");
+	}
+
+	public String getBasicViewFont() {
+		return prefs.getString("basic.viewFont");
 	}
 }
