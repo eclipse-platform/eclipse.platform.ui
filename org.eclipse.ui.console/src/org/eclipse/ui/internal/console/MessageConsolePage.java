@@ -42,6 +42,7 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.console.IConsoleView;
@@ -178,10 +179,10 @@ public class MessageConsolePage implements IPageBookViewPage, IAdaptable, IPrope
 	 * @param menu menu
 	 */
 	protected void contextMenuAboutToShow(IMenuManager menu) {
-		menu.add((IAction)fGlobalActions.get(IWorkbenchActionConstants.COPY));
-		menu.add((IAction)fGlobalActions.get(IWorkbenchActionConstants.SELECT_ALL));						
+		menu.add((IAction)fGlobalActions.get(ActionFactory.COPY.getId()));
+		menu.add((IAction)fGlobalActions.get(ActionFactory.SELECT_ALL.getId()));						
 		menu.add(new Separator("FIND")); //$NON-NLS-1$
-		menu.add((IAction)fGlobalActions.get(IWorkbenchActionConstants.FIND));
+		menu.add((IAction)fGlobalActions.get(ActionFactory.FIND.getId()));
 		menu.add((IAction)fGlobalActions.get(ITextEditorActionConstants.GOTO_LINE));
 		menu.add(fClearOutputAction);
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
@@ -226,14 +227,14 @@ public class MessageConsolePage implements IPageBookViewPage, IAdaptable, IPrope
 		action.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
 		action.setDisabledImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY_DISABLED));
 		action.setHoverImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY_HOVER));		
-		setGlobalAction(actionBars, IWorkbenchActionConstants.COPY, action);
+		setGlobalAction(actionBars, ActionFactory.COPY.getId(), action);
 		action= new TextViewerAction(getViewer(), ITextOperationTarget.SELECT_ALL);
 		action.configureAction(ConsoleMessages.getString("MessageConsolePage.Select_&All@Ctrl+A_12"), ConsoleMessages.getString("MessageConsolePage.Select_All"), ConsoleMessages.getString("MessageConsolePage.Select_All")); //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
-		setGlobalAction(actionBars, IWorkbenchActionConstants.SELECT_ALL, action);
+		setGlobalAction(actionBars, ActionFactory.SELECT_ALL.getId(), action);
 		
 		//XXX Still using "old" resource access
 		ResourceBundle bundle= ResourceBundle.getBundle("org.eclipse.ui.internal.console.ConsoleMessages"); //$NON-NLS-1$
-		setGlobalAction(actionBars, IWorkbenchActionConstants.FIND, new FindReplaceAction(bundle, "find_replace_action.", getConsoleView())); //$NON-NLS-1$
+		setGlobalAction(actionBars, ActionFactory.FIND.getId(), new FindReplaceAction(bundle, "find_replace_action.", getConsoleView())); //$NON-NLS-1$
 	
 		action= new TextViewerGotoLineAction(getViewer());
 		setGlobalAction(actionBars, ITextEditorActionConstants.GOTO_LINE, action);
@@ -252,8 +253,8 @@ public class MessageConsolePage implements IPageBookViewPage, IAdaptable, IPrope
 			}
 		});
 		
-		fSelectionActions.add(IWorkbenchActionConstants.COPY);
-		fSelectionActions.add(IWorkbenchActionConstants.FIND);
+		fSelectionActions.add(ActionFactory.COPY.getId());
+		fSelectionActions.add(ActionFactory.FIND.getId());
 	}
 	
 	protected void updateSelectionDependentActions() {
