@@ -6,7 +6,7 @@ package org.eclipse.core.internal.resources;
  */
 
 public class MarkerSet {
-	protected static final int MINIMUM_SIZE = 10;
+	protected static final int MINIMUM_SIZE = 5;
 	protected int elementCount = 0;
 	protected IMarkerSetElement[] elements;
 public MarkerSet() {
