@@ -352,6 +352,7 @@ public class EditorRegistry implements IEditorRegistry {
 			}   */
 
 			EditorDescriptor editor = new EditorDescriptor();
+			editor.setOpenMode(EditorDescriptor.OPEN_EXTERNAL);
 			editor.setProgram(programs[i]);
 
 			// determine the program icon this editor would need (do not let it be cached in the workbench registry)

@@ -256,9 +256,15 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable {
 			// legacy: handle the older attribute names, needed to allow reading of pre-3.0-RCP workspaces 
 			boolean internal = new Boolean(memento.getString(IWorkbenchConstants.TAG_INTERNAL)).booleanValue();
 			boolean openInPlace = new Boolean(memento.getString(IWorkbenchConstants.TAG_OPEN_IN_PLACE)).booleanValue();
-			openMode = 0;
-			if (internal) openMode |= OPEN_INTERNAL;
-			if (openInPlace) openMode |= OPEN_INPLACE;
+			if (internal) {
+				openMode = OPEN_INTERNAL;
+			} else {
+				if (openInPlace) {
+					openMode = OPEN_INPLACE;
+				} else {
+					openMode = OPEN_EXTERNAL;
+				}
+			}
 		}
 
 		String programName = memento.getString(IWorkbenchConstants.TAG_PROGRAM_NAME);
@@ -283,10 +289,10 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable {
 		// legacy: handle the older attribute names, needed to allow reading of workspace by pre-3.0-RCP eclipses
 		memento.putString(
 				IWorkbenchConstants.TAG_INTERNAL,
-				String.valueOf((openMode & OPEN_INTERNAL) != 0));
+				String.valueOf(isInternal()));
 		memento.putString(
 				IWorkbenchConstants.TAG_OPEN_IN_PLACE,
-				String.valueOf((openMode & OPEN_INPLACE) != 0));
+				String.valueOf(isOpenInPlace()));
 		
 		if (this.program != null)
 			memento.putString(
