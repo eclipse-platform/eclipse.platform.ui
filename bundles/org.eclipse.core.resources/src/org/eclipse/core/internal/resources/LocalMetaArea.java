@@ -134,7 +134,7 @@ public class LocalMetaArea implements ICoreConstants {
 		IPath prefix = getLocation().append(F_SAFE_TABLE);
 		// if the plugin is the resources plugin, we return the master table
 		// location
-		if (pluginId.equals(ResourcesPlugin.getPlugin().getDescriptor().getUniqueIdentifier()))
+		if (pluginId.equals(ResourcesPlugin.PI_RESOURCES))
 			return prefix.append(pluginId); // master table
 		int saveNumber = getWorkspace().getSaveManager().getSaveNumber(pluginId);
 		return prefix.append(pluginId + "." + saveNumber); //$NON-NLS-1$

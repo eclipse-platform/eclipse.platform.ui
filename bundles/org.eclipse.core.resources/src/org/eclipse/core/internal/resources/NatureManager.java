@@ -203,7 +203,7 @@ public class NatureManager implements ILifecycleListener, IManager {
 	 * Finds the nature extension, and initializes and returns an instance.
 	 */
 	protected IProjectNature createNature(Project project, String natureID) throws CoreException {
-		IExtension extension = Platform.getPluginRegistry().getExtension(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_NATURES, natureID);
+		IExtension extension = Platform.getExtensionRegistry().getExtension(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_NATURES, natureID);
 		if (extension == null) {
 			String message = Policy.bind("resources.natureExtension", natureID); //$NON-NLS-1$
 			throw new ResourceException(Platform.PLUGIN_ERROR, project.getFullPath(), message, null);
@@ -441,7 +441,7 @@ public class NatureManager implements ILifecycleListener, IManager {
 	protected void lazyInitialize() {
 		if (descriptors != null)
 			return;
-		IExtensionPoint point = Platform.getPluginRegistry().getExtensionPoint(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_NATURES);
+		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_NATURES);
 		IExtension[] extensions = point.getExtensions();
 		descriptors = new HashMap(extensions.length * 2 + 1);
 		for (int i = 0, imax = extensions.length; i < imax; i++) {

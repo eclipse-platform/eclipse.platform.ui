@@ -11,7 +11,7 @@
 package org.eclipse.core.internal.resources;
 
 import java.util.Arrays;
-import org.eclipse.core.boot.BootLoader;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.osgi.service.environment.Constants;
 
 /**
@@ -29,7 +29,7 @@ public abstract class OS {
 		//setup the invalid names
 		char[] chars = null;
 		String[] names = null;
-		INSTALLED_PLATFORM = BootLoader.getOS();
+		INSTALLED_PLATFORM = Platform.getOS();
 		if (INSTALLED_PLATFORM.equals(Constants.OS_WIN32)) {
 			//list taken from http://support.microsoft.com/support/kb/articles/q177/5/06.asp
 			chars = new char[] {'\\', '/', ':', '*', '?', '"', '<', '>', '|'};
@@ -62,4 +62,3 @@ public abstract class OS {
 		return true;
 	}
 }
-
