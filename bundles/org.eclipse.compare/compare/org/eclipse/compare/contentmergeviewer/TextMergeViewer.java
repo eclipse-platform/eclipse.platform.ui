@@ -1091,10 +1091,15 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		if (actionBars != null) {
 			for (int i= 0; i < GLOBAL_ACTIONS.length; i++) {
 				IAction action= null; 
-				if (part != null)
+				if (part != null) {
 					action= part.getAction(TEXT_ACTIONS[i]);
-				if (i == 7)
-					i= 7;
+					if (action == null && TEXT_ACTIONS[i].equals(MergeSourceViewer.SAVE_ID)) {			
+						if (part == fLeft)
+							action= fLeftSaveAction;
+						else
+							action= fRightSaveAction;
+					}
+				}
 				actionBars.setGlobalActionHandler(GLOBAL_ACTIONS[i], action);
 			}
 			actionBars.updateActionBars();
