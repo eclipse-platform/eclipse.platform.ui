@@ -66,7 +66,7 @@
          <meta.section type="since"/>
       </appInfo>
       <documentation>
-         [Enter the first release in which this extension point appears.]
+         3.0
       </documentation>
    </annotation>
 
@@ -75,7 +75,17 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         [Enter extension point usage example here.]
+         Following is an example of an adapter declaration.  This example declares that this plug-in will provide an adapter factory that will adapt objects of type IFile to objects of type MyFile.
+&lt;p&gt;
+   &lt;extension
+         id=&quot;coolProvider&quot;
+         point=&quot;org.eclipse.core.resources.refreshProviders&quot;&gt;
+      &lt;refreshProvider
+            name=&quot;Cool Refresh Provider&quot;
+            class=&quot;com.xyz.CoolRefreshProvider&quot;&gt;
+      &lt;/refreshProvider&gt;
+   &lt;/extension&gt;
+&lt;/p&gt;
       </documentation>
    </annotation>
 
@@ -84,7 +94,7 @@
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         [Enter API information here.]
+         Refresh provider implementations must subclass the abstract type &lt;tt&gt;RefreshProvider&lt;/tt&gt; in the &lt;tt&gt;org.eclipse.core.resources.refresh&lt;/tt&gt; package.  Refresh requests and failures should be forward to the provide &lt;tt&gt;IRefreshResult&lt;/tt&gt;.  Clients must also provide an implementation of &lt;tt&gt;IRefreshMonitor&lt;/tt&gt; through which the workspace can request that refresh monitors be uninstalled.
       </documentation>
    </annotation>
 
@@ -93,7 +103,7 @@
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         [Enter information about supplied implementation of this extension point.]
+         The &lt;tt&gt;org.eclipse.core.resources.win32&lt;/tt&gt; fragment provides a native refresh monitor that uses win32 file system notification callbacks.  The workspace also supplies a default naive polling-based monitor that can be used for file systems that do not have native refresh callbacks available.
       </documentation>
    </annotation>
 
@@ -102,7 +112,9 @@
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         
+         &lt;p&gt;
+Copyright (c) 2004 IBM Corporation and others.
+All rights reserved. This program and the accompanying materials are made available under the terms of the Common Public License v1.0 which accompanies this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/cpl-v10.html&quot;&gt;http://www.eclipse.org/legal/cpl-v10.html&lt;/a&gt;
       </documentation>
    </annotation>
 
