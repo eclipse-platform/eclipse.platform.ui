@@ -31,7 +31,7 @@ import org.apache.tools.ant.Target;
 import org.apache.tools.ant.util.StringUtils;
 import org.eclipse.ant.internal.ui.antsupport.InternalAntRunner;
 import org.eclipse.ant.internal.ui.antsupport.RemoteAntMessages;
-import org.eclipse.ant.internal.ui.antsupport.logger.util.AntDebugUtil;
+import org.eclipse.ant.internal.ui.antsupport.logger.util.AntDebugState;
 
 /**
  * Parts adapted from org.eclipse.jdt.internal.junit.runner.RemoteTestRunner
@@ -334,7 +334,7 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 	private void marshalTargetMessage(BuildEvent event) {
 		Target target= event.getTarget();
 		String msg= target.getName() + ':';
-		Location location= AntDebugUtil.getLocation(target);
+		Location location= AntDebugState.getLocation(target);
 		
 		StringBuffer message= new StringBuffer(MessageIds.TARGET);
 		message.append(Project.MSG_INFO);

@@ -17,7 +17,6 @@ import java.util.List;
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.Location;
 import org.eclipse.ant.internal.ui.antsupport.logger.util.AntDebugState;
-import org.eclipse.ant.internal.ui.antsupport.logger.util.AntDebugUtil;
 import org.eclipse.ant.internal.ui.antsupport.logger.util.IDebugBuildLogger;
 import org.eclipse.ant.internal.ui.debug.IAntDebugController;
 import org.eclipse.ant.internal.ui.debug.model.AntDebugTarget;
@@ -57,7 +56,7 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 	 */
 	public void taskFinished(BuildEvent event) {
 		super.taskFinished(event);
-		AntDebugUtil.taskFinished(fDebugState);
+		fDebugState.taskFinished();
 	}
 	
 	/* (non-Javadoc)
@@ -65,11 +64,11 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 	 */
 	public void taskStarted(BuildEvent event) {
         super.taskStarted(event);
-        AntDebugUtil.taskStarted(event, fDebugState);
+		fDebugState.taskStarted(event);
 	}
 	
 	public synchronized void waitIfSuspended() {
-		IBreakpoint breakpoint= breakpointAtLineNumber(getBreakpointLocation());
+		IBreakpoint breakpoint= breakpointAtLineNumber(fDebugState.getBreakpointLocation());
 		if (breakpoint != null) {
 			 fAntDebugTarget.breakpointHit(breakpoint);
 			 try {
@@ -128,7 +127,7 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 	 * @see org.eclipse.ant.internal.ui.debug.IAntDebugController#stepOver()
 	 */
 	public synchronized void stepOver() {
-		AntDebugUtil.stepOver(fDebugState);
+		fDebugState.stepOver();
 	}
 
 	/* (non-Javadoc)
@@ -155,7 +154,7 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 			return;
 		}
 	    StringBuffer propertiesRepresentation= new StringBuffer();
-		fDebugState.marshalProperties(propertiesRepresentation, true);
+		fDebugState.marshallProperties(propertiesRepresentation, true);
 		if (fAntDebugTarget.getThreads().length > 0) {
 			((AntThread) fAntDebugTarget.getThreads()[0]).newProperties(propertiesRepresentation.toString());
 		}
@@ -166,7 +165,7 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 	 */
 	public void getStackFrames() {
 		StringBuffer stackRepresentation= new StringBuffer();
-		AntDebugUtil.marshalStack(stackRepresentation, fDebugState);
+		fDebugState.marshalStack(stackRepresentation);
 		((AntThread) fAntDebugTarget.getThreads()[0]).buildStack(stackRepresentation.toString());
 	}
     
@@ -174,8 +173,8 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
         if (fBreakpoints == null || location == null || location == Location.UNKNOWN_LOCATION) {
             return null;
         }
-        int lineNumber= AntDebugUtil.getLineNumber(location);
-        File locationFile= new File(AntDebugUtil.getFileName(location));
+        int lineNumber= fDebugState.getLineNumber(location);
+        File locationFile= new File(fDebugState.getFileName(location));
         for (int i = 0; i < fBreakpoints.size(); i++) {
             ILineBreakpoint breakpoint = (ILineBreakpoint) fBreakpoints.get(i);
             int breakpointLineNumber;
@@ -199,7 +198,7 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
      * @see org.apache.tools.ant.BuildListener#targetStarted(org.apache.tools.ant.BuildEvent)
      */
     public void targetStarted(BuildEvent event) {
-		AntDebugUtil.targetStarted(event, fDebugState);
+		fDebugState.targetStarted(event);
 		waitIfSuspended();
 		super.targetStarted(event);
     }
@@ -211,14 +210,4 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 		super.targetFinished(event);
 		fDebugState.setTargetExecuting(null);
 	}	
-	
-	private Location getBreakpointLocation() {
-		if (fDebugState.getCurrentTask() != null) {
-			return fDebugState.getCurrentTask().getLocation();
-		}
-		if (fDebugState.considerTargetBreakpoints() && fDebugState.getTargetExecuting() != null) {
-			return AntDebugUtil.getLocation(fDebugState.getTargetExecuting());
-		}
-		return null;
-	}
 }

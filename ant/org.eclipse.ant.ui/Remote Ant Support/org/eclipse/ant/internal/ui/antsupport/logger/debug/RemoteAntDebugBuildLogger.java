@@ -26,7 +26,6 @@ import org.apache.tools.ant.Location;
 import org.apache.tools.ant.Task;
 import org.eclipse.ant.internal.ui.antsupport.logger.RemoteAntBuildLogger;
 import org.eclipse.ant.internal.ui.antsupport.logger.util.AntDebugState;
-import org.eclipse.ant.internal.ui.antsupport.logger.util.AntDebugUtil;
 import org.eclipse.ant.internal.ui.antsupport.logger.util.DebugMessageIds;
 import org.eclipse.ant.internal.ui.antsupport.logger.util.IDebugBuildLogger;
 
@@ -80,7 +79,7 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
 							}
 						} if (message.startsWith(DebugMessageIds.STEP_OVER)){
 							synchronized(RemoteAntDebugBuildLogger.this) {
-								AntDebugUtil.stepOver(RemoteAntDebugBuildLogger.this.fDebugState);
+								fDebugState.stepOver();
 							}
 						} else if (message.startsWith(DebugMessageIds.SUSPEND)) {
 							synchronized(RemoteAntDebugBuildLogger.this) {
@@ -192,7 +191,7 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
 	 */
 	public void taskStarted(BuildEvent event) {
         super.taskStarted(event);
-		AntDebugUtil.taskStarted(event, fDebugState);
+		fDebugState.taskStarted(event);
 	}
 	
 	/* (non-Javadoc)
@@ -200,13 +199,13 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
 	 */
 	public synchronized void taskFinished(BuildEvent event) {
 		super.taskFinished(event);
-		AntDebugUtil.taskFinished(fDebugState);
+		fDebugState.taskFinished();
 	}
 	
 	public synchronized void waitIfSuspended() {
 		String detail= null;
 		boolean shouldSuspend= true;
-		RemoteAntBreakpoint breakpoint= breakpointAtLineNumber(getBreakpointLocation());
+		RemoteAntBreakpoint breakpoint= breakpointAtLineNumber(fDebugState.getBreakpointLocation());
 		if (breakpoint != null) {
 			detail= breakpoint.toMarshallString();
 			fDebugState.setShouldSuspend(false);
@@ -262,8 +261,8 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
 		if (fBreakpoints == null || location == null || location == Location.UNKNOWN_LOCATION) {
 			return null;
 		}
-		String fileName= AntDebugUtil.getFileName(location);
-		int lineNumber= AntDebugUtil.getLineNumber(location);
+		String fileName= fDebugState.getFileName(location);
+		int lineNumber= fDebugState.getLineNumber(location);
 		for (int i = 0; i < fBreakpoints.size(); i++) {
 			RemoteAntBreakpoint breakpoint = (RemoteAntBreakpoint) fBreakpoints.get(i);
 			if (breakpoint.isAt(fileName, lineNumber)) {
@@ -283,13 +282,13 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
 	
 	protected void marshallStack() {
 	    StringBuffer stackRepresentation= new StringBuffer();
-	    AntDebugUtil.marshalStack(stackRepresentation, fDebugState);
+	    fDebugState.marshalStack(stackRepresentation);
 	    sendRequestResponse(stackRepresentation.toString());
 	}
 	
 	protected void marshallProperties() {
 	    StringBuffer propertiesRepresentation= new StringBuffer();
-		fDebugState.marshalProperties(propertiesRepresentation, false);
+		fDebugState.marshallProperties(propertiesRepresentation, false);
 	    sendRequestResponse(propertiesRepresentation.toString());
 	}
 	
@@ -321,7 +320,7 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
 	 * @see org.apache.tools.ant.BuildListener#targetStarted(org.apache.tools.ant.BuildEvent)
 	 */
 	public void targetStarted(BuildEvent event) {
-		AntDebugUtil.targetStarted(event, fDebugState);
+		fDebugState.targetStarted(event);
 		if (!fSentProcessId) {
 			establishConnection();
 		}
@@ -344,14 +343,4 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
             fRequestPort= Integer.parseInt(requestPortProperty);
         }
     } 
-	
-	private Location getBreakpointLocation() {
-		if (fDebugState.getCurrentTask() != null) {
-			return fDebugState.getCurrentTask().getLocation();
-		}
-		if (fDebugState.considerTargetBreakpoints() && fDebugState.getTargetExecuting() != null) {
-			return AntDebugUtil.getLocation(fDebugState.getTargetExecuting());
-		}
-		return null;
-	}
 }

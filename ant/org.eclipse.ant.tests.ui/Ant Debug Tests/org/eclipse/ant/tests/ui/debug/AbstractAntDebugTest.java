@@ -576,6 +576,25 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 		assertNotNull("Program did not suspend.", suspendee);
 		return (AntThread) suspendee;
 	}
+	
+	/**
+	 * Performs a step over in the given stack frame and expects to hit a breakpoint as part
+	 * of the step over
+	 * 
+	 * @param frame stack frame to step in
+	 * @throws DebugException 
+	 */
+	protected AntThread stepOverToHitBreakpoint(AntStackFrame frame) throws DebugException {
+		org.eclipse.ant.tests.ui.testplugin.DebugEventWaiter waiter= new DebugElementKindEventDetailWaiter(DebugEvent.SUSPEND, AntThread.class, DebugEvent.BREAKPOINT);
+		waiter.setTimeout(DEFAULT_TIMEOUT);
+		
+		frame.stepOver();
+		
+		Object suspendee= waiter.waitForEvent();
+		setEventSet(waiter.getEventSet());
+		assertNotNull("Program did not suspend.", suspendee);
+		return (AntThread) suspendee;
+	}
 
 	/**
 	 * Performs a step into in the given stack frame and returns when complete.
