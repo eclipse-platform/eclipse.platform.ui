@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Control;
  * to a composite vertical ruler. A composite vertical ruler is a vertical ruler
  * with a dynamically changing appearance and behavior depending on its
  * actual arrangement of ruler columns. A vertical ruler column supports a
- * subset of the contract of a full vertical ruler.
+ * subset of the contract of a  vertical ruler.
  * 
  * @see org.eclipse.jface.text.source.CompositeRuler
  * @since 2.0

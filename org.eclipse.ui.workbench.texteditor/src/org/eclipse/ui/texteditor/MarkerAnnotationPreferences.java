@@ -28,21 +28,37 @@ import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 
 
 /**
+ * Objects of this class provide access to all extensions declared for the <code>markerAnnotationSpecification</code> extension point.
+ * The extensions are represented as instances of <code>AnnotationPreference</code>.
+ * 
  * @since 2.1
  */
 public class MarkerAnnotationPreferences {
 	
+	/** The list of extensions */
 	private List fPreferences;
 	
+	/**
+	 * Creates a new marker annotation preferences accessor.
+	 */
 	public MarkerAnnotationPreferences() {
 	}
 	
+	/**
+	 * Returns all extensions provided for the <code>markerAnnotationSpecification</code> extension point.
+	 * 
+	 * @return all extensions provided for the <code>markerAnnotationSpecification</code> extension point
+	 */
 	public List getAnnotationPreferences() {
 		if (fPreferences == null)
 			initialize();
 		return fPreferences;
 	}
 	
+	/**
+	 * Reads all extensions provided for the <code>markerAnnotationSpecification</code> extension point and
+	 * translates them into <code>AnnotationPreference</code> objects.
+	 */
 	private void initialize() {
 		
 		// initialize lists - indicates that the initialization happened
@@ -59,7 +75,13 @@ public class MarkerAnnotationPreferences {
 			}
 		}
 	}
-
+	
+	/**
+	 * Creates a <code>AnnotationPreference</code> the given configuration element.
+	 * 
+	 * @param element the configuration element
+	 * @return the created annotation preference
+	 */
 	private AnnotationPreference createSpec(IConfigurationElement element) {
 		
 		String s;

@@ -57,7 +57,10 @@ import org.eclipse.jface.text.TextEvent;
 /**
  * Ruler presented next to a source viewer showing all annotations of the
  * viewer's annotation model in a compact format, i.e. using the same height as
- * the source viewer.
+ * the source viewer.<p>
+ * Clients usually instantiate and configure objects of this class.
+ * 
+ * @since 2.1
  */
 public class OverviewRuler implements IOverviewRuler {
 	
@@ -85,7 +88,8 @@ public class OverviewRuler implements IOverviewRuler {
 	};
 	
 	/**
-	 * Filters annotations based on their types.
+	 * Enumerates the annotations of a specified type and characteristics
+	 * of the associated annotation model.
 	 */
 	class FilterIterator implements Iterator {
 		
@@ -162,6 +166,9 @@ public class OverviewRuler implements IOverviewRuler {
 		}
 	};
 	
+	/**
+	 * The painter of the overview ruler's header.
+	 */
 	class HeaderPainter implements PaintListener {
 		
 		private Color fIndicatorColor;
@@ -237,19 +244,26 @@ public class OverviewRuler implements IOverviewRuler {
 	private IAnnotationAccess fAnnotationAccess;
 	/** The header painter */
 	private HeaderPainter fHeaderPainter;
-	
+	/** The list of annotation types to be shown in this ruler */
 	private Set fAnnotationTypes= new HashSet();
+	/** The list of annotation types to be shown in the header of this ruler */
 	private Set fHeaderAnnotationTypes= new HashSet();
+	/** The mapping between annotation types and drawing layers */
 	private Map fAnnotationTypes2Layers= new HashMap();
+	/** The mapping between annotation types and colors */
 	private Map fAnnotationTypes2Colors= new HashMap();
+	/** The color manager */
 	private ISharedTextColors fSharedTextColors;
 	
 	
 	
 	/**
-	 * Constructs a vertical ruler with the given width.
+	 * Constructs a overview ruler of the given width using the given annotation access and the given
+	 * color manager.
 	 *
+	 * @param annotationAccess the annotation access
 	 * @param width the width of the vertical ruler
+	 * @param sharedColors the color manager
 	 */
 	public OverviewRuler(IAnnotationAccess annotationAccess, int width, ISharedTextColors sharedColors) {
 		fAnnotationAccess= annotationAccess;
@@ -363,6 +377,8 @@ public class OverviewRuler implements IOverviewRuler {
 
 	/**
 	 * Double buffer drawing.
+	 * 
+	 * @param dest the gc to draw into
 	 */
 	private void doubleBufferPaint(GC dest) {
 		
@@ -398,6 +414,11 @@ public class OverviewRuler implements IOverviewRuler {
 		dest.drawImage(fBuffer, 0, 0);
 	}
 	
+	/** 
+	 * Draws this overview ruler.
+	 * 
+	 * @param gc the gc to draw into
+	 */
 	private void doPaint(GC gc) {
 		
 		if (fTextViewer == null)
@@ -482,6 +503,12 @@ public class OverviewRuler implements IOverviewRuler {
 		}
 	}
 	
+	/**
+	 * Draws this overview ruler. Uses <code>ITextViewerExtension3</code> for
+	 * its implementation. Will replace <code>doPaint(GC)</code>.
+	 * 
+	 * @param gc the gc to draw into
+	 */
 	private void doPaint1(GC gc) {
 
 		if (fTextViewer == null)
@@ -591,6 +618,15 @@ public class OverviewRuler implements IOverviewRuler {
 		}
 	}
 	
+	/**
+	 * Translates a given y-coordinate of this ruler into the corresponding
+	 * document lines. The number of lines depends on the concrete scaling
+	 * given as the ration between the height of this ruler and the length
+	 * of the document.
+	 * 
+	 * @param y_coordinate the y-coordinate
+	 * @return the corresponding document lines
+	 */
 	private int[] toLineNumbers(int y_coordinate) {
 					
 		StyledText textWidget=  fTextViewer.getTextWidget();
@@ -630,6 +666,12 @@ public class OverviewRuler implements IOverviewRuler {
 		return lines;
 	}
 	
+	/**
+	 * Returns the position of the first annotation found in the given line range.
+	 * 
+	 * @param lineNumbers the line range
+	 * @return the position of the first found annotation
+	 */
 	private Position getAnnotationPosition(int[] lineNumbers) {
 		if (lineNumbers[0] == -1)
 			return null;
@@ -662,11 +704,10 @@ public class OverviewRuler implements IOverviewRuler {
 	}
 
 	/**
-	 * Returns the line which best corresponds to one of
-	 * the underlying annotations at the given y ruler coordinate.
+	 * Returns the line which  corresponds best to one of
+	 * the underlying annotations at the given y-coordinate.
 	 * 
-	 * @return the best matching line or <code>-1</code> if no such line can be
-	 * found
+	 * @return the best matching line or <code>-1</code> if no such line can be found
 	 */
 	private int findBestMatchingLineNumber(int[] lineNumbers) {
 		if (lineNumbers == null || lineNumbers.length < 1)
@@ -682,6 +723,11 @@ public class OverviewRuler implements IOverviewRuler {
 		}
 	}
 
+	/**
+	 * Handles mouse clicks.
+	 * 
+	 * @param event the mouse button down event
+	 */
 	private void handleMouseDown(MouseEvent event) {
 		if (fTextViewer != null) {
 			int[] lines= toLineNumbers(event.y);
@@ -695,6 +741,11 @@ public class OverviewRuler implements IOverviewRuler {
 		fLastMouseButtonActivityLine= toDocumentLineNumber(event.y);
 	}
 	
+	/**
+	 * Handles mouse moves.
+	 * 
+	 * @param event the mouse move event
+	 */
 	private void handleMouseMove(MouseEvent event) {
 		if (fTextViewer != null) {
 			int[] lines= toLineNumbers(event.y);
@@ -721,12 +772,8 @@ public class OverviewRuler implements IOverviewRuler {
 		fAnnotationTypes.remove(annotationType);
 	}
 		
-	/**
-	 * Sets the layer at which annotations of the given annotation type are
-	 * drawn. Layers are drawn in ascending order.
-	 * 
-	 * @param annotationType
-	 * @param layer
+	/*
+	 * @see org.eclipse.jface.text.source.IOverviewRuler#setAnnotationTypeLayer(java.lang.Object, int)
 	 */
 	public void setAnnotationTypeLayer(Object annotationType, int layer) {
 		if (layer >= 0)
@@ -753,10 +800,25 @@ public class OverviewRuler implements IOverviewRuler {
 			fAnnotationTypes2Colors.remove(annotationType);
 	}
 	
+	/**
+	 * Returns whether annotation of the given annotation type should be skipped by the drawing routine.
+	 * 
+	 * @param annotationType the annotation type
+	 * @return <code>true</code> if annotation of the given type should be skipped
+	 */
 	private boolean skip(Object annotationType) {
 		return !fAnnotationTypes.contains(annotationType);
 	}
 	
+	/**
+	 * Returns a specification of a color that lies between the given
+	 * foreground and background color using the given scale factor.
+	 * 
+	 * @param fg the foreground color
+	 * @param bg the background color
+	 * @param scale the scale factor
+	 * @return the interpolated color
+	 */
 	private static RGB interpolate(RGB fg, RGB bg, double scale) {
 		return new RGB(
 			(int) ((1.0-scale) * fg.red + scale * bg.red),
@@ -765,16 +827,35 @@ public class OverviewRuler implements IOverviewRuler {
 		);
 	}
 	
+	/**
+	 * Returns the grey value in which the given color would be drawn in grey-scale.
+	 * 
+	 * @param rgb the color
+	 * @return the grey-scale value
+	 */
 	private static double greyLevel(RGB rgb) {
 		if (rgb.red == rgb.green && rgb.green == rgb.blue)
 			return rgb.red;
 		return  (0.299 * rgb.red + 0.587 * rgb.green + 0.114 * rgb.blue + 0.5);
 	}
 	
+	/**
+	 * Returns whether the given color is dark or light depending on the colors grey-scale level.
+	 * 
+	 * @param rgb the color
+	 * @return <code>true</code> if the color is dark, <code>false</code> if it is light
+	 */
 	private static boolean isDark(RGB rgb) {
 		return greyLevel(rgb) > 128;
 	}
 	
+	/**
+	 * Returns a color based on the color configured for the given annotation type and the given scale factor.
+	 * 
+	 * @param annotationType the annotation type
+	 * @param scale the scale factor
+	 * @return the computed color
+	 */
 	private Color getColor(Object annotationType, double scale) {
 		Color base= (Color) fAnnotationTypes2Colors.get(annotationType);
 		if (base == null)
@@ -793,10 +874,24 @@ public class OverviewRuler implements IOverviewRuler {
 		return fSharedTextColors.getColor(interpolate(baseRGB, background, scale));
 	}
 	
+	/**
+	 * Returns the stroke color for the given annotation type and characteristics.
+	 * 
+	 * @param annotationType the annotation type
+	 * @param temporary <code>true</code> if for temporary annotations
+	 * @return the stroke color
+	 */
 	private Color getStrokeColor(Object annotationType, boolean temporary) {
 		return getColor(annotationType, temporary ? 0.5 : 0.2);
 	}
 	
+	/**
+	 * Returns the fill color for the given annotation type and characteristics.
+	 * 
+	 * @param annotationType the annotation type
+	 * @param temporary <code>true</code> if for temporary annotations
+	 * @return the fill color
+	 */
 	private Color getFillColor(Object annotationType, boolean temporary) {
 		return getColor(annotationType, temporary ? 0.9 : 0.6);
 	}
@@ -865,6 +960,9 @@ public class OverviewRuler implements IOverviewRuler {
 		fHeaderAnnotationTypes.remove(annotationType);
 	}
 	
+	/**
+	 * Updates the header of this ruler.
+	 */
 	private void updateHeader() {
 		
 		if (fHeader == null || fHeader.isDisposed())

@@ -334,6 +334,13 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 		}
 	}
 	
+	/**
+	 * Draws the vertical ruler w/o drawing the Canvas background. Uses
+	 * <code>ITExtViewerExtension3</code> for its implementation. Will replace
+	 * <code>doPaint(GC)</code>.
+	 * 
+	 * @param gc  the gc to draw into
+	 */
 	protected void doPaint1(GC gc) {
 
 		if (fModel == null || fTextViewer == null)
@@ -411,7 +418,6 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 			}	
 		}
 	}
-	
 		
 	/**
 	 * Redraws the vertical ruler.
@@ -476,6 +482,14 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 		return widgetLine2ModelLine(fTextViewer, line);
 	}
 	
+	/**
+	 * Returns the line of the viewer's document that corresponds to the given widget line.
+	 * 
+	 * @param viewer the viewer
+	 * @param widgetLine the widget line
+	 * @return the corresponding line of the viewer's document
+	 * @since 2.1
+	 */
 	protected final static int widgetLine2ModelLine(ITextViewer viewer, int widgetLine) {
 		
 		if (viewer instanceof ITextViewerExtension3) {

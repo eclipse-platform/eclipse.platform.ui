@@ -38,7 +38,9 @@ import org.eclipse.jface.text.reconciler.IReconciler;
  * SWT based implementation of <code>ISourceViewer</code>. The same rules apply 
  * as for <code>TextViewer</code>. A source viewer uses an <code>IVerticalRuler</code>
  * as its annotation presentation area. The vertical ruler is a small strip shown left
- * of the viewer's text widget.<p>
+ * of the viewer's text widget. A source viewer uses an <code>IOverviewRuler</code>
+ * as its presentation area for the annotation overview. The overview ruler is a small strip
+ * shown right of the viewer's text widget.<p>
  * Clients are supposed to instantiate a source viewer and subsequently to communicate
  * with it exclusively using the <code>ISourceViewer</code> interface. Clients should not
  * subclass this class as it is rather likely that subclasses will be broken by future releases. 
@@ -47,7 +49,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 
 
 	/**
-	 * Layout of a source viewer. Vertical ruler and text widget are shown side by side.
+	 * Layout of a source viewer. Vertical ruler, text widget, and overview ruler are shown side by side.
 	 */
 	class RulerLayout extends Layout {
 		
@@ -169,14 +171,16 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 	}
 	
 	/**
-	 * Constructs a new source viewer. The vertical ruler and the overview
-	 * ruler are initially visible. The viewer has not yet been initialized with
-	 * a source viewer configuration.
+	 * Constructs a new source viewer. The vertical ruler is initially visible. 
+	 * The overview ruler visibility is controlled by the value of <code>showAnnotationsOverview</code>.
+	 * The viewer has not yet been initialized with a source viewer configuration.
 	 *
 	 * @param parent the parent of the viewer's control
 	 * @param verticalRuler the vertical ruler used by this source viewer
 	 * @param overviewRuler the overview ruler
+	 * @param showAnnotationsOverview <code>true</code> if the overview ruler should be visible, <code>false</code> otherwise
 	 * @param styles the SWT style bits
+	 * @since 2.1
 	 */
 	public SourceViewer(Composite parent, IVerticalRuler verticalRuler, IOverviewRuler overviewRuler, boolean showAnnotationsOverview, int styles) {
 		super();
@@ -190,7 +194,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 	}
 	
 	/*
-	 * @see TextViewer#createControl
+	 * @see TextViewer#createControl(Composite, int)
 	 */
 	protected void createControl(Composite parent, int styles) {
 		
@@ -210,7 +214,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 	}
 	
 	/*
-	 * @see TextViewer#getControl
+	 * @see TextViewer#getControl()
 	 */
 	public Control getControl() {
 		if (fComposite != null)
@@ -219,14 +223,14 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 	}
 	
 	/*
-	 * @see ISourceViewer#setAnnotationHover
+	 * @see ISourceViewer#setAnnotationHover(IAnnotationHover)
 	 */
 	public void setAnnotationHover(IAnnotationHover annotationHover) {
 		fAnnotationHover= annotationHover;
 	}
 	
 	/*
-	 * @see ISourceViewer#configure
+	 * @see ISourceViewer#configure(SourceViewerConfiguration)
 	 */
 	public void configure(SourceViewerConfiguration configuration) {
 		
@@ -293,6 +297,9 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 		activatePlugins();
 	}
 	
+	/**
+	 * After this method has been executed the caller knows that any installed annotation hover has been installed.
+	 */
 	protected void ensureAnnotationHoverManagerInstalled() {
 		if (fVerticalRuler != null && fAnnotationHover != null && fVerticalRulerHoveringController == null && fHoverControlCreator != null) {
 			fVerticalRulerHoveringController= new AnnotationBarHoverManager(fVerticalRuler, this, fAnnotationHover, fHoverControlCreator);
@@ -300,6 +307,9 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 		}
 	}
 	
+	/**
+	 * After this method has been executed the caller knows that any installed overview hover has been installed.
+	 */
 	protected void ensureOverviewHoverManagerInstalled() {
 		if (fOverviewRuler != null &&  fAnnotationHover != null  && fOverviewRulerHoveringController == null && fHoverControlCreator != null)	{
 			fOverviewRulerHoveringController= new OverviewRulerHoverManager(fOverviewRuler, this, fAnnotationHover, fHoverControlCreator);
@@ -308,7 +318,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 	}
 	
 	/*
-	 * @see TextViewer#activatePlugins
+	 * @see TextViewer#activatePlugins()
 	 */
 	public void activatePlugins() {
 		ensureAnnotationHoverManagerInstalled();
@@ -375,7 +385,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 	}
 	
 	/*
-	 * @see ISourceViewer#getAnnotationModel
+	 * @see ISourceViewer#getAnnotationModel()
 	 */
 	public IAnnotationModel getAnnotationModel() {
 		if (fVisualAnnotationModel != null)
@@ -384,7 +394,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 	}
 	
 	/*
-	 * @see TextViewer#handleDispose
+	 * @see TextViewer#handleDispose()
 	 */
 	protected void handleDispose() {
 		
@@ -437,7 +447,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 	}
 	
 	/*
-	 * @see ITextOperationTarget#canDoOperation
+	 * @see ITextOperationTarget#canDoOperation(int)
 	 */
 	public boolean canDoOperation(int operation) {
 		
@@ -463,7 +473,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 	}
 	
 	/*
-	 * @see ITextOperationTarget#doOperation
+	 * @see ITextOperationTarget#doOperation(int)
 	 */
 	public void doOperation(int operation) {
 		
@@ -523,14 +533,14 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 	}
 		
 	/*
-	 * @see ISourceViewer#setRangeIndicator
+	 * @see ISourceViewer#setRangeIndicator(Annotation)
 	 */
 	public void setRangeIndicator(Annotation rangeIndicator) {
 		fRangeIndicator= rangeIndicator;
 	}
 		
 	/*
-	 * @see ISourceViewer#setRangeIndication 	 
+	 * @see ISourceViewer#setRangeIndication(int, int, boolean)
 	 */
 	public void setRangeIndication(int start, int length, boolean moveCursor) {
 		
@@ -544,7 +554,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 	}
 	
 	/*
-	 * @see ISourceViewer#getRangeIndication
+	 * @see ISourceViewer#getRangeIndication()
 	 */
 	public IRegion getRangeIndication() {
 		if (fRangeIndicator != null && fVisualAnnotationModel != null) {
@@ -557,7 +567,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 	}
 	
 	/*
-	 * @see ISourceViewer#removeRangeIndication
+	 * @see ISourceViewer#removeRangeIndication()
 	 */
 	public void removeRangeIndication() {
 		if (fRangeIndicator != null && fVisualAnnotationModel != null)
@@ -584,6 +594,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 	
 	/*
 	 * @see org.eclipse.jface.text.source.ISourceViewerExtension#showAnnotationsOverview(boolean)
+	 * @since 2.1
 	 */
 	public void showAnnotationsOverview(boolean show) {
 		boolean old= fIsOverviewRulerVisible;

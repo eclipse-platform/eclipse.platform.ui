@@ -17,7 +17,8 @@ import org.eclipse.swt.widgets.Control;
  * This interface defines a visual component which may serve
  * text viewers as an overview annotation presentation area.  This means,
  * presentation of annotations is independent from the actual viewport of
- * the text viewer. The ruler shows annotations of the viewer's whole document
+ * the text viewer. The annotations of the viewer's whole document are 
+ * visible in the overview ruler.
  * 
  * This interfaces comprises three contracts:
  * <ul>

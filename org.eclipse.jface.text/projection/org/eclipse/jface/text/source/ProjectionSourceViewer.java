@@ -29,17 +29,24 @@ import org.eclipse.jface.text.ProjectionDocument;
 import org.eclipse.jface.text.ProjectionDocumentManager;
 
 
+/**
+ * A projection source viewer is a source viewer which does not support the concept of a visible region. Instead it supports
+ * to dynamically hide and show regions of its document. Uses <code>ProjectionDocumentManager</code> as it internal slave document manager.<p>
+ * This class is for internal use only.
+ * 
+ * @since 2.1
+ */
 public class ProjectionSourceViewer extends SourceViewer implements ISourceViewer, ITextViewerExtension3 {
 	
 	/** The projection annotation model */
 	private IAnnotationModel fProjectionAnnotationModel;
 	
-	
 	/**
-	 * Constructor for ProjectionSourceViewer.
-	 * @param parent
-	 * @param ruler
-	 * @param styles
+	 * Creates a new projection source viewer.
+	 * 
+	 * @param parent the SWT parent control
+	 * @param ruler the vertical ruler
+	 * @param styles the SWT style bits
 	 */
 	public ProjectionSourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
 		super(parent, ruler, styles);
@@ -59,7 +66,7 @@ public class ProjectionSourceViewer extends SourceViewer implements ISourceViewe
 	}
 	
 	/*
-	 * @see TextViewer#handleDispose
+	 * @see TextViewer#handleDispose()
 	 */
 	protected void handleDispose() {
 		
@@ -72,29 +79,31 @@ public class ProjectionSourceViewer extends SourceViewer implements ISourceViewe
 	}
 	
 	/**
-	 * Returns the projectionAnnotationModel.
-	 * @return IAnnotationModel
+	 * Returns the projection annotation model.
+	 * 
+	 * @return the projection annotation model
 	 */
 	public IAnnotationModel getProjectionAnnotationModel() {
 		return fProjectionAnnotationModel;
 	}
 
 	/**
-	 * Sets the projectionAnnotationModel.
-	 * @param projectionAnnotationModel The projectionAnnotationModel to set
+	 * Sets the projection annotation model.
+	 * 
+	 * @param projectionAnnotationModel the projection annotation model 
 	 */
 	public void setProjectionAnnotationModel(IAnnotationModel projectionAnnotationModel) {
 		fProjectionAnnotationModel= projectionAnnotationModel;
 	}
 	
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.jface.text.TextViewer#createSlaveDocumentManager()
 	 */
 	protected ISlaveDocumentManager createSlaveDocumentManager() {
 		return new ProjectionDocumentManager();
 	}
 
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.jface.text.TextViewer#updateVisibleDocument(org.eclipse.jface.text.IDocument, int, int)
 	 */
 	protected boolean updateVisibleDocument(IDocument visibleDocument, int visibleRegionOffset, int visibleRegionLength) throws BadLocationException {
@@ -108,8 +117,8 @@ public class ProjectionSourceViewer extends SourceViewer implements ISourceViewe
 	/**
 	 * Hides the given range by collapsing it.
 	 *
-	 * @param offset
-	 * @param length
+	 * @param offset the offset of the range to hide
+	 * @param length the length of the range to hide
 	 */
 	public void collapse(int offset, int length) {
 		
@@ -171,8 +180,8 @@ public class ProjectionSourceViewer extends SourceViewer implements ISourceViewe
 	/**
 	 * Makes all hidden ranges in the given range visible again.
 	 *
-	 * @param offset
-	 * @param length
+	 * @param offset the offset of the range
+	 * @param length the length of the range
 	 */
 	public void expand(int offset, int length) {
 		if (getVisibleDocument() instanceof ProjectionDocument) {
@@ -200,38 +209,44 @@ public class ProjectionSourceViewer extends SourceViewer implements ISourceViewe
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.jface.text.ITextViewer#getVisibleRegion()
 	 */
 	public IRegion getVisibleRegion() {
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.jface.text.TextViewer#getVisibleRegionOffset()
 	 */
 	protected int getVisibleRegionOffset() {
 		return -1;
 	}
 
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.jface.text.TextViewer#internalGetVisibleRegion()
 	 */
 	protected IRegion internalGetVisibleRegion() {
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.jface.text.ITextViewer#overlapsWithVisibleRegion(int,int)
 	 */
 	public boolean overlapsWithVisibleRegion(int offset, int length) {
 		return false;
 	}
 	
+	/*
+	 * @see org.eclipse.jface.text.TextViewer#getVisibleDocument()
+	 */
 	public IDocument getVisibleDocument() {
 		return super.getVisibleDocument();
 	}
 	
+	/*
+	 * @see org.eclipse.jface.text.TextViewer#handleVerifyEvent(org.eclipse.swt.events.VerifyEvent)
+	 */
 	protected void handleVerifyEvent(VerifyEvent e) {
 		IRegion modelRange= event2ModelRange(e);
 		Iterator iterator= fProjectionAnnotationModel.getAnnotationIterator();

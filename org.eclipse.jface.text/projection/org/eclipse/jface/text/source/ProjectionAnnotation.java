@@ -22,7 +22,15 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Position;
 
 /**
- * ProjectionAnnotation.java
+ * Annotation used to represent the projection of a master document onto
+ * a <code>ProjectionDocument</code>. A projection annotation can be either
+ * expanded or collapsed. If expaned it corresponds to a fragment of the
+ * projection document. If collapsed, it represents a region of the master document
+ * that does not have a corresponding fragment in the projection document. <p>
+ * Draws itself in a tree like fashion.<p>
+ * This class if for internal use only.
+ * 
+ * @since 2.1
  */
 public class ProjectionAnnotation extends Annotation {
 	
@@ -33,11 +41,16 @@ public class ProjectionAnnotation extends Annotation {
 	private static final int MIDDLE= PIXELS + INNER_MARGIN + LEGS;
 	private static final int SIZE= 2 * MIDDLE + PIXELS;
 
-	
+	/** The range in the master document */
 	private Position fProjectionRange;
+	/** The state of this annotation */
 	private boolean fIsFolded= false;
 	
-	
+	/** 
+	 * Creates a new projection annotation for the given range of the master document.
+	 * 
+	 * @param range the range.
+	 */
 	public ProjectionAnnotation(Position range) {
 		fProjectionRange= range;
 	}
@@ -63,6 +76,11 @@ public class ProjectionAnnotation extends Annotation {
 		gc.setForeground(fg);
 	}
 	
+	/**
+	 * Toogles the state of this annotation and updates the given viewer accordingly.
+	 * 
+	 * @param viewer the viewer
+	 */
 	public void run(ITextViewer viewer) {
 		
 		if (viewer instanceof ProjectionSourceViewer) {
@@ -92,8 +110,9 @@ public class ProjectionAnnotation extends Annotation {
 	}
 	
 	/**
-	 * Returns the fIsFolded.
-	 * @return boolean
+	 * Returns the state of this annotation.
+	 * 
+	 * @return <code>true</code> if collapsed 
 	 */
 	public boolean isFolded() {
 		return fIsFolded;

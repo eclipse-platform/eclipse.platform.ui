@@ -17,12 +17,13 @@ import org.eclipse.swt.widgets.Control;
 
 /**
  * A vertical ruler is a visual component which may serve
- * text viewers as a line oriented annotation presentation 
- * area. The ruler info provides interested clients with the
+ * text viewers as an annotation presentation 
+ * area. The vertical ruler info provides interested clients with the
  * mapping and interaction aspect of the vertical ruler. This
  * covers the mapping between coordinates of the ruler's
  * control and line numbers based on the connected text viewer's
  * document.
+ * 
  * @since 2.0
  */
 public interface IVerticalRulerInfo {

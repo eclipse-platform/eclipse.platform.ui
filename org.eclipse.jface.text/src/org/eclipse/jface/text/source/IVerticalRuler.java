@@ -19,19 +19,23 @@ import org.eclipse.jface.text.ITextViewer;
 
 
 /**
- * This interface defines a visual component which may serve
- * text viewers as a line oriented annotation presentation 
- * area. This interfaces comprises three contracts:
+ * This interface defines a visual component which may serve text viewers as an annotation presentation 
+ * area. Implementers of this interface have to define the presentation modus. This can either depend
+ * on the connected viewer's view port or not. If the modus is view port dependent the ruler only shows 
+ * those annotations that are attached to document regions that are visible in the view port. If independent,
+ * the presented annotations can also be attached to invisible document regions.
+ * 
+ * This interfaces comprises three contracts:
  * <ul>
- * <li>	The vertical ruler retrieves the annotations it presents from an annotation model.
- * <li>	The ruler is a visual component which must be integrated in a hierarchy of SWT controls.
+ * <li> The vertical ruler retrieves the annotations it presents from an annotation model.
+ * <li> The ruler is a visual component which must be integrated in a hierarchy of SWT controls.
  * <li> The ruler provides interested clients with mapping and
  * 		interaction information. This covers the mapping between
  * 		coordinates of the ruler's control and line numbers based 
  * 		on the connected text viewer's document (<code>IVerticalRulerInfo</code>).
  * </ul>
  * Clients may implement this interface or use the default implementation provided
- * by <code>VerticalRuler</code>.
+ * by <code>CompositeRuler</code> and <code>VerticalRuler</code>.
  *  
  * @see ITextViewer
  * @see IVerticalRulerInfo
@@ -40,9 +44,6 @@ public interface IVerticalRuler extends IVerticalRulerInfo {
 
 	/**
 	 * Associates an annotation model with this ruler.
-	 * If the ruler is visible it must display those annotions
-	 * of the annotation model whose visual representation overlaps
-	 * with the viewport of the rulers source viewer.
 	 * A value <code>null</code> is acceptable and clears the ruler.
 	 *
 	 * @param model the new annotation model, may be <code>null</code>

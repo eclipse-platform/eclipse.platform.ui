@@ -27,26 +27,36 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
 
 /**
- * Highlights the peer character matching the character at the current
- * selection.
+ * Highlights the peer character matching the character near the caret position. This
+ * painter can be configured with an <code>ICharacterPairMatcher</code>.
+ * Clients instantiate and configure object of this class.
+ * 
+ * @since 2.1
  */
 public final class MatchingCharacterPainter implements IPainter, PaintListener {
-			
-	private boolean fIsActive= false;
-	private ISourceViewer fSourceViewer;
-	private StyledText fTextWidget;
-	private Color fColor;
 	
+	/** Indicates whether this painter is active */
+	private boolean fIsActive= false;
+	/** The source viewer this painter is associated with */
+	private ISourceViewer fSourceViewer;
+	/** The viewer's widget */
+	private StyledText fTextWidget;
+	/** The color in which to highlight the peer character */
+	private Color fColor;
+	/** The paint position manager */
 	private IPaintPositionManager fPaintPositionManager;
+	/** The startegy for finding matching characters */
 	private ICharacterPairMatcher fMatcher;
+	/** The position tracking the matching characters */
 	private Position fPairPosition= new Position(0, 0);
+	/** The anchor indicating whether the character is left or right of the caret */
 	private int fAnchor;
 
 	
 	/**
 	 * Creates a new MatchingCharacterPainter for the given source viewer using
 	 * the given character pair matcher. The character matcher is not adopted by
-	 * this painter. Thus,  it is not disposed. However, this painters requires
+	 * this painter. Thus,  it is not disposed. However, this painter requires
 	 * exlucsive access to the given pair matcher.
 	 * 
 	 * @param sourceViewer
@@ -58,6 +68,11 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 		fTextWidget= sourceViewer.getTextWidget();
 	}
 	
+	/**
+	 * Sets the color in which to highlight the match character.
+	 * 
+	 * @param color the color
+	 */
 	public void setColor(Color color) {
 		fColor= color;
 	}
@@ -97,6 +112,11 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 			handleDrawRequest(event.gc);
 	}
 	
+	/**
+	 * Handles a redraw request.
+	 * 
+	 * @param gc the gc to draw into.
+	 */
 	private void handleDrawRequest(GC gc) {
 		
 		if (fPairPosition.isDeleted)
@@ -129,6 +149,13 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 			draw(gc, offset + length -1, 1);
 	}
 	
+	/**
+	 * Highlights the given widget region.
+	 * 
+	 * @param gc the gc to draw into
+	 * @param offset the offset of the widget region
+	 * @param length the length of the widget region
+	 */
 	private void draw(GC gc, int offset, int length) {
 		if (gc != null) {
 			Point left= fTextWidget.getLocationAtOffset(offset);

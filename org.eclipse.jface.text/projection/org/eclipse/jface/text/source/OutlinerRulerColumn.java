@@ -25,21 +25,25 @@ import org.eclipse.jface.text.Position;
 
 
 /**
- * OutlinerRulerColumn.java
+ * A ruler column for controlling the behavior of a <code>ProjectionSourceViewer</code>.
+ * This class is for internal use only.
+ * 
+ * @since 2.1
  */
 public class OutlinerRulerColumn extends AnnotationRulerColumn {
 
 	/**
-	 * Constructor for OutlinerRulerColumn.
-	 * @param model
-	 * @param width
+	 * Creates a new outliner ruler column.
+	 * 
+	 * @param model the column's annotation model
+	 * @param width the width in pixels
 	 */
 	public OutlinerRulerColumn(IAnnotationModel model, int width) {
 		super(model, width);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.source.ProjectionRulerColumn#mouseDoubleClicked(int)
+	/*
+	 * @see org.eclipse.jface.text.source.AnnotationRulerColumn#mouseDoubleClicked(int)
 	 */
 	protected void mouseDoubleClicked(int line) {
 		ProjectionAnnotation annotation= findAnnotation(line);
@@ -48,8 +52,11 @@ public class OutlinerRulerColumn extends AnnotationRulerColumn {
 	}
 	
 	/**
-	 * Method findAnnotation.
-	 * @return ProjectionAnnotation
+	 * Returns the projection annotation of the column's annotation
+	 * model that contains the given line.
+	 * 
+	 * @param line the line
+	 * @return the projection annotation containing the given line
 	 */
 	private ProjectionAnnotation findAnnotation(int line) {
 		IAnnotationModel model= getModel();
@@ -69,10 +76,11 @@ public class OutlinerRulerColumn extends AnnotationRulerColumn {
 	}
 	
 	/**
-	 * Method contains.
-	 * @param p
-	 * @param line
-	 * @return boolean
+	 * Returns whether the given position contains the given line.
+	 * 
+	 * @param p the position
+	 * @param line the line
+	 * @return <code>true</code> if the given position contains the given line, <code>false</code> otherwise
 	 */
 	private boolean contains(Position p, int line) {
 		
@@ -95,7 +103,7 @@ public class OutlinerRulerColumn extends AnnotationRulerColumn {
 		return false;
 	}
 	
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.jface.text.source.IVerticalRulerColumn#createControl(org.eclipse.jface.text.source.CompositeRuler, org.eclipse.swt.widgets.Composite)
 	 */
 	public Control createControl(CompositeRuler parentRuler, Composite parentControl) {

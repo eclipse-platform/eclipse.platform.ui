@@ -46,7 +46,8 @@ import org.eclipse.jface.text.TextEvent;
 
 /**
  * A vertical ruler column displaying line numbers.
- * Clients may use this class as is.
+ * Clients usually instantiate and configure object of this class.
+ * 
  * @since 2.0
  */
 public final class LineNumberRulerColumn implements IVerticalRulerColumn {
@@ -98,9 +99,13 @@ public final class LineNumberRulerColumn implements IVerticalRulerColumn {
 	 */
 	class MouseHandler implements MouseListener, MouseMoveListener, MouseTrackListener {
 		
+		/** The cached view port size */
 		private int fCachedViewportSize;
+		/** The area of the line at which line selection started */
 		private IRegion fStartLine;
+		/** The number of the line at which line selection started */
 		private int fStartLineNumber;
+		/** The auto scroll direction */
 		private int fAutoScrollDirection;
 	
 		/*
@@ -156,6 +161,10 @@ public final class LineNumberRulerColumn implements IVerticalRulerColumn {
 		public void mouseHover(MouseEvent event) {
 		}
 				
+		/**
+		 * Called when line drag selection started. Adds mouse move and track
+		 * listeners to this column's control.
+		 */
 		private void startSelecting() {
 			try {
 				
@@ -174,12 +183,22 @@ public final class LineNumberRulerColumn implements IVerticalRulerColumn {
 			}
 		}
 		
+		/**
+		 * Called when line drag selection stopped. Removes all previously
+		 * installed listeners from this column's control.
+		 */
 		private void stopSelecting() {
 			// drag selection stopped
 			fCanvas.removeMouseMoveListener(this);
 			fCanvas.removeMouseTrackListener(this);
 		}
 		
+		/**
+		 * Expands the line selection from the remembered start line to the
+		 * given line.
+		 * 
+		 * @param lineNumber the line to which to expand the selection
+		 */
 		private void expandSelection(int lineNumber) {
 			try {
 				
@@ -198,15 +217,18 @@ public final class LineNumberRulerColumn implements IVerticalRulerColumn {
 			}
 		}
 		
-		/*
-		 * Follows the scheme of StyledText. 
+		/**
+		 * Called when auto scrolling stopped. Clears the auto scroll direction.
 		 */
 		private void stopAutoScroll() {
 			fAutoScrollDirection= SWT.NULL;
 		}		
 		
-		/*
-		 * Follows the scheme of StyledText. 
+		/**
+		 * Called on drag selection.
+		 * 
+		 * @param event the mouse event caught by the mouse move listener
+		 * @return <code>true</code> if scrolling happend, <code>false</code> otherwise
 		 */
 		private boolean autoScroll(MouseEvent event) {
 			Rectangle area= fCanvas.getClientArea();
@@ -225,8 +247,10 @@ public final class LineNumberRulerColumn implements IVerticalRulerColumn {
 			return false;
 		}
 		
-		/*
-		 * Follows the scheme of StyledText. 
+		/**
+		 * Scrolls the viewer into the given direction.
+		 * 
+		 * @param direction the scroll direction
 		 */
 		private void autoScroll(int direction) {
 						
@@ -271,6 +295,11 @@ public final class LineNumberRulerColumn implements IVerticalRulerColumn {
 			}
 		}
 		
+		/**
+		 * Returns the viewer's first visible line, even if only partially visible.
+		 * 
+		 * @return the viewer's first visible line
+		 */
 		private int getInclusiveTopIndex() {
 			if (fCachedTextWidget != null && !fCachedTextWidget.isDisposed()) {	
 				int top= fCachedTextViewer.getTopIndex();
@@ -393,6 +422,8 @@ public final class LineNumberRulerColumn implements IVerticalRulerColumn {
 	/**
 	 * Layouts the enclosing viewer to adapt the layout to changes of the
 	 * size of the individual components.
+	 * 
+	 * @param redraw <code>true</code> if this column can be redrawn
 	 */
 	protected void layout(boolean redraw) {
 		if (!redraw) {
@@ -609,6 +640,12 @@ public final class LineNumberRulerColumn implements IVerticalRulerColumn {
 		}
 	}
 	
+	/**
+	 * Draws the ruler column. Uses <code>ITextViewerExtension3</code> for the
+	 * implementation. Will replace <code>doPinat(GC)</code>.
+	 * 
+	 * @param gc the gc to draw into
+	 */
 	private void doPaint1(GC gc) {
 
 		if (fCachedTextViewer == null)
@@ -669,7 +706,7 @@ public final class LineNumberRulerColumn implements IVerticalRulerColumn {
 	}
 	
 	/*
-	 * @see IVerticalRulerColumn#redraw
+	 * @see IVerticalRulerColumn#redraw()
 	 */
 	public void redraw() {
 		

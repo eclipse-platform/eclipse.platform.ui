@@ -16,7 +16,9 @@ import org.eclipse.swt.graphics.Font;
 
 
 /**
- * Extension interface for <code>IVerticalRuler</code>.
+ * Extension interface for <code>IVerticalRuler</code>. Allows to set the font of the
+ * vertical ruler and to set the location of the last mouse button activity.
+ * 
  * @since 2.0
  */
 public interface IVerticalRulerExtension {

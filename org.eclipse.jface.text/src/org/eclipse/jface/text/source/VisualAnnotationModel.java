@@ -57,7 +57,7 @@ class VisualAnnotationModel extends AnnotationModel implements IAnnotationModelL
 	}
 	
 	/*
-	 * @see IAnnotationModel#addAnnotationModelListener
+	 * @see IAnnotationModel#addAnnotationModelListener(IAnnotationModelListener)
 	 */
 	public void addAnnotationModelListener(IAnnotationModelListener listener) {
 
@@ -68,7 +68,7 @@ class VisualAnnotationModel extends AnnotationModel implements IAnnotationModelL
 	}
 	
 	/*
-	 * @see IAnnotationModel#connect
+	 * @see IAnnotationModel#connect(IDocument)
 	 */
 	public void connect(IDocument document) {
 		super.connect(document);
@@ -77,7 +77,7 @@ class VisualAnnotationModel extends AnnotationModel implements IAnnotationModelL
 	}
 	
 	/*
-	 * @see IAnnotationModel#disconnect
+	 * @see IAnnotationModel#disconnect(IDocument)
 	 */
 	public void disconnect(IDocument document) {
 		super.disconnect(document);
@@ -86,7 +86,7 @@ class VisualAnnotationModel extends AnnotationModel implements IAnnotationModelL
 	}
 	
 	/*
-	 * @see IAnnotationModel#getAnnotationIterator
+	 * @see IAnnotationModel#getAnnotationIterator()
 	 */
 	public Iterator getAnnotationIterator() {
 		
@@ -107,7 +107,7 @@ class VisualAnnotationModel extends AnnotationModel implements IAnnotationModelL
 	}
 	
 	/*
-	 * @see IAnnotationModel#getPosition
+	 * @see IAnnotationModel#getPosition(Annotation)
 	 */
 	public Position getPosition(Annotation annotation) {
 		
@@ -122,7 +122,7 @@ class VisualAnnotationModel extends AnnotationModel implements IAnnotationModelL
 	}
 		
 	/*
-	 * @see IAnnotationModelListener#modelChanged
+	 * @see IAnnotationModelListener#modelChanged(IAnnotationModel)
 	 */
 	public void modelChanged(IAnnotationModel model) {
 		if (model == fModel) {
@@ -174,7 +174,7 @@ class VisualAnnotationModel extends AnnotationModel implements IAnnotationModelL
 	}
 	
 	/*
-	 * @see IAnnotationModel#removeAnnotationModelListener
+	 * @see IAnnotationModel#removeAnnotationModelListener(IAnnotationModelListener)
 	 */
 	public void removeAnnotationModelListener(IAnnotationModelListener listener) {
 		super.removeAnnotationModelListener(listener);
