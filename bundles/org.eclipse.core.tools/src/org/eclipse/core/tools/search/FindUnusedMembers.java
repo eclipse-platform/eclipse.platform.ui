@@ -25,14 +25,14 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 /*
  * Class that removes field declarations which aren't referenced.
  */
-public class FindUnusedMethods implements IRunnableWithProgress {
+public class FindUnusedMembers implements IRunnableWithProgress {
 	private boolean headerWritten = false;
 	private final Writer output;
 
 	ICompilationUnit unit;
-	protected int unusedMethodCount = 0;
+	protected int unusedMemberCount = 0;
 
-	public FindUnusedMethods(ICompilationUnit unit, Writer output) {
+	public FindUnusedMembers(ICompilationUnit unit, Writer output) {
 		super();
 		this.unit = unit;
 		this.output = output;
@@ -46,29 +46,27 @@ public class FindUnusedMethods implements IRunnableWithProgress {
 	}
 
 	public void doSearchType(IType type, IProgressMonitor monitor) throws JavaModelException, IOException {
-		RefactoringStatus result = new RefactoringStatus();
 
 		// Search for references
 		IMethod[] methods = type.getMethods();
-		monitor.beginTask("Searching for references.", methods.length); //$NON-NLS-1$
+		IField[] fields= type.getFields();
+		monitor.beginTask("Searching for references.", methods.length + fields.length); //$NON-NLS-1$
 		try {
 			for (int i = 0; i < methods.length; i++) {
 				if (monitor.isCanceled())
 					throw new OperationCanceledException();
-				IMethod method = methods[i];
-				String name = method.getElementName();
-				monitor.subTask("Searching for references to: " + name); //$NON-NLS-1$
-				// search for references
-				ICompilationUnit[] affectedUnits = RefactoringSearchEngine.findAffectedCompilationUnits(SearchPattern.createPattern(method, IJavaSearchConstants.REFERENCES), RefactoringScopeFactory.create(type), new SubProgressMonitor(monitor, 1), result);
-				// there are references so go to the next field
-				if (affectedUnits.length > 0)
+				if (hasReferences(methods[i], monitor))
 					continue;
-				if (!headerWritten) {
-					headerWritten = true;
-					output.write("\n\n" + type.getFullyQualifiedName()); //$NON-NLS-1$
-				}
-				writeResult(method);
-				unusedMethodCount++;
+				writeResult(methods[i]);
+				unusedMemberCount++;
+			}
+			for (int i = 0; i < fields.length; i++) {
+				if (monitor.isCanceled())
+					throw new OperationCanceledException();
+				if (hasReferences(fields[i], monitor))
+					continue;
+				writeResult(fields[i]);
+				unusedMemberCount++;
 			}
 
 			if (monitor.isCanceled())
@@ -78,8 +76,13 @@ public class FindUnusedMethods implements IRunnableWithProgress {
 		}
 	}
 
+	private boolean hasReferences(IMember member, IProgressMonitor monitor) throws JavaModelException {
+		ICompilationUnit[] affectedUnits = RefactoringSearchEngine.findAffectedCompilationUnits(SearchPattern.createPattern(member, IJavaSearchConstants.REFERENCES), RefactoringScopeFactory.create(member.getDeclaringType()), new SubProgressMonitor(monitor, 1), new RefactoringStatus());
+		return affectedUnits.length > 0;
+	}
+
 	public int getUnusedMethodCount() {
-		return unusedMethodCount;
+		return unusedMemberCount;
 	}
 
 	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
@@ -95,6 +98,13 @@ public class FindUnusedMethods implements IRunnableWithProgress {
 			throw new InvocationTargetException(e);
 		}
 	}
+	
+	private void writeHeader(IType type) throws IOException {
+		if (!headerWritten) {
+			headerWritten = true;
+			output.write("\n\n" + type.getFullyQualifiedName()); //$NON-NLS-1$
+		}
+	}
 
 	/**
 	 * @param method
@@ -103,6 +113,7 @@ public class FindUnusedMethods implements IRunnableWithProgress {
 	 * @throws IllegalArgumentException 
 	 */
 	private void writeResult(IMethod method) throws IOException, IllegalArgumentException, JavaModelException {
+		writeHeader(method.getDeclaringType());
 		output.write("\n\t");//$NON-NLS-1$
 		output.write(Signature.toString(method.getReturnType()));
 		output.write(" "); //$NON-NLS-1$
@@ -115,5 +126,12 @@ public class FindUnusedMethods implements IRunnableWithProgress {
 				output.write(","); //$NON-NLS-1$
 		}
 		output.write(")"); //$NON-NLS-1$
+	}
+	private void writeResult(IField field) throws IOException, IllegalArgumentException, JavaModelException {
+		writeHeader(field.getDeclaringType());
+		output.write("\n\t"); //$NON-NLS-1$
+		output.write(Signature.toString(field.getTypeSignature()));
+		output.write(" "); //$NON-NLS-1$
+		output.write(field.getElementName());
 	}
 }

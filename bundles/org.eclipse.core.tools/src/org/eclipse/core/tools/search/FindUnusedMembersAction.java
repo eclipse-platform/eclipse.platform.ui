@@ -22,7 +22,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.ui.*;
 
-public class FindUnusedMethodsAction implements IObjectActionDelegate {
+public class FindUnusedMembersAction implements IObjectActionDelegate {
 
 	private IStructuredSelection selection;
 	private int unusedCount;
@@ -83,7 +83,7 @@ public class FindUnusedMethodsAction implements IObjectActionDelegate {
 	}
 
 	protected void traverseCU(ICompilationUnit unit, Writer output) throws InvocationTargetException, InterruptedException {
-		FindUnusedMethods search = new FindUnusedMethods(unit, output);
+		FindUnusedMembers search = new FindUnusedMembers(unit, output);
 		PlatformUI.getWorkbench().getProgressService().run(true, true, search);
 		unusedCount += search.getUnusedMethodCount();
 	}

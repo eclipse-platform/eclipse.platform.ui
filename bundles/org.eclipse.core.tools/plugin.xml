@@ -146,11 +146,11 @@
             id="org.eclipse.core.tools.contribution2"
             objectClass="org.eclipse.jdt.core.IJavaElement">
          <action
-               label="Find Unreferenced Methods"
-               class="org.eclipse.core.tools.search.FindUnusedMethodsAction"
+               label="Find Unreferenced Members"
+               class="org.eclipse.core.tools.search.FindUnusedMembersAction"
                menubarPath="additions"
                enablesFor="*"
-               id="org.eclipse.core.tools.search.FindUnusedMethodsAction">
+               id="org.eclipse.core.tools.search.FindUnusedMembersAction">
          </action>
       </objectContribution>
    </extension>
