@@ -33,7 +33,8 @@ import org.eclipse.ui.internal.forms.widgets.*;
  * <p>Since 3.1, left/right arrow keys can be used to control the
  * expansion state. If several expandable composites are created in
  * the same parent, up/down arrow keys can be used to traverse
- * between them.
+ * between them. Expandable text accepts mnemonics and mnemonic
+ * activation will toggle the expansion state.
  * 
  * @see Section
  * @since 3.0
