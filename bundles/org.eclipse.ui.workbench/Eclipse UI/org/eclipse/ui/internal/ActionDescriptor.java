@@ -119,7 +119,8 @@ public ActionDescriptor(IConfigurationElement actionElement, int targetType, Obj
 	}
 	menuPath = mpath;
 	menuGroup = mgroup;
-	if ((tpath != null) && tpath.equals("Normal")) tpath = "";
+	if ((tpath != null) && tpath.equals("Normal")) //$NON-NLS-1$
+		tpath = ""; //$NON-NLS-1$
 	toolbarId = tpath;
 	toolbarGroupId = tgroup;
 
