@@ -14,40 +14,69 @@ import org.eclipse.debug.core.variables.IContextLaunchVariable;
 import org.eclipse.debug.core.variables.ILaunchVariableManager;
 import org.eclipse.debug.core.variables.ISimpleLaunchVariable;
 
+/**
+ * Implementation of the debug platform's launch variable manager.
+ * 
+ * @see LaunchVariableManager
+ */
 public class LaunchVariableManager implements ILaunchVariableManager {
 	
 	private static SimpleLaunchVariableRegistry fgSimpleVariableRegistry= new SimpleLaunchVariableRegistry();
 	private static ContextLaunchVariableRegistry fgContextVariableRegistry= new ContextLaunchVariableRegistry();
 	private static RefreshLaunchVariableRegistry fgRefreshVariableRegistry= new RefreshLaunchVariableRegistry();
 
+	/**
+	 * @see ILaunchVariableManager#getContextVariable(String)
+	 */
 	public IContextLaunchVariable getContextVariable(String name) {
 		return fgContextVariableRegistry.getVariable(name);
 	}
-
+	
+	/**
+	 * @see ILaunchVariableManager#getContextVariables()
+	 */
 	public IContextLaunchVariable[] getContextVariables() {
 		return fgContextVariableRegistry.getVariables();
 	}
 
+	/**
+	 * @see ILaunchVariableManager#getRefreshVariable(String)
+	 */
 	public IContextLaunchVariable getRefreshVariable(String name) {
 		return fgRefreshVariableRegistry.getVariable(name);
 	}
 
+	/**
+	 * @see ILaunchVariableManager#getRefreshVariables()
+	 */
 	public IContextLaunchVariable[] getRefreshVariables() {
 		return fgRefreshVariableRegistry.getVariables();
 	}
 
+	/**
+	 * @see ILaunchVariableManager#addSimpleVariables(ISimpleLaunchVariable[])
+	 */
 	public void addSimpleVariables(ISimpleLaunchVariable[] variables) {
 		fgSimpleVariableRegistry.addVariables(variables);
 	}
 
+	/**
+	 * @see ILaunchVariableManager#removeSimpleVariables(ISimpleLaunchVariable[])
+	 */
 	public void removeSimpleVariables(ISimpleLaunchVariable[] variables) {
 		fgSimpleVariableRegistry.removeVariables(variables);
 	}
 
+	/**
+	 * @see ILaunchVariableManager#getSimpleVariable(String)
+	 */
 	public ISimpleLaunchVariable getSimpleVariable(String name) {
 		return fgSimpleVariableRegistry.getVariable(name);
 	}
 
+	/**
+	 * @see ILaunchVariableManager#getSimpleVariables()
+	 */
 	public ISimpleLaunchVariable[] getSimpleVariables() {
 		return fgSimpleVariableRegistry.getVariables();
 	}

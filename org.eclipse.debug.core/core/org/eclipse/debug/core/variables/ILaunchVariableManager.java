@@ -10,6 +10,21 @@
  *******************************************************************************/
 package org.eclipse.debug.core.variables;
 
+/**
+ * The launch variable manager provides access to registered simple,
+ * context, and refresh launch variables. Simple variables are loaded
+ * via extension, added programatically, and persisted in the preferences.
+ * Context and refresh variables are loaded via extension.
+ * <p>
+ * The singleton instance of the launch variable manager is accessible
+ * from <code>org.eclipse.debug.core.DebugPlugin</code>.
+ * <p>
+ * Clients are not intended to implement this interface.
+ * <p>
+ * @since 3.0
+ * @see org.eclipse.debug.core.variables.ISimpleLaunchVariable
+ * @see org.eclipse.debug.core.variables.IContextLaunchVariable
+ */
 public interface ILaunchVariableManager {
 	/**
 	 * Returns the context variable with the given name or <code>null</code>
