@@ -1,0 +1,21 @@
+<html><head><title>Connections</title>
+<LINK REL=STYLESHEET HREF=../book.css CHARSET=ISO-8859-1 TYPE=text/css>
+<meta NAME="keywords" content="">
+<meta NAME="since" content="">
+</head><body><h2>Connections</h2>
+<p>Since: <br>
+Last Modified: $Date: 2004/05/31 14:22:48 $</p>
+
+<p>Test that authentication, connection errors result in appropriate error messages and that these don't pollute the log file or console. to setup for these tests
+ensure there are a couple of shared projects in your workspace.</p>
+<ul>
+<li>Clear you log file before starting the tests and turn on the CVS quick diff provider.
+<li>Perform an update, a synchronize, and open a file. The log should be empty and the operations should succeed.
+<li>Disconnect from the network.
+<li>Open a file. The CVS quick diff will fail and an error should be in the log.
+<li>Synchronize all the shared projects. One error explaining the failures should be returned.
+<li>Change the connection properties of one of the projects to point to an 
+<li>Expand the location in the CVS repositories view.
+</ul>
+
+</body></html>

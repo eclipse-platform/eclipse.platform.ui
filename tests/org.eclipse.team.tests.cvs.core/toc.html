@@ -55,6 +55,9 @@ Platforms</font></b> </div>
 <ul>
 <li><a href="#00004.html">Repositories View</a>
 <ul>
+<li><a href="#repoview_basics00001.html">Basics</a>
+<ul>
+</ul>
 <li><a href="#00007.html">Check Out - prompts</a>
 <ul>
 </ul>
@@ -62,6 +65,39 @@ Platforms</font></b> </div>
 <ul>
 </ul>
 <li><a href="#datetags_repoview00001.html">Date Tags</a>
+<ul>
+</ul>
+</ul>
+<li><a href="#00026.html">Sharing</a>
+<ul>
+<li><a href="#00027.html">Sharing as a subfolder</a>
+<ul>
+</ul>
+<li><a href="#sharingbasics00001.html">Basics</a>
+<ul>
+</ul>
+<li><a href="#00028.html">Reconnecting an existing project</a>
+<ul>
+</ul>
+<li><a href="#00050.html">Sharing a new project</a>
+<ul>
+</ul>
+<li><a href="#project_sets00001.html">Project Sets</a>
+<ul>
+</ul>
+</ul>
+<li><a href="#00044.html">Replacing</a>
+<ul>
+<li><a href="#00045.html">With latest</a>
+<ul>
+</ul>
+<li><a href="#00046.html">With another branch of version</a>
+<ul>
+</ul>
+<li><a href="#00047.html">With file revision</a>
+<ul>
+</ul>
+<li><a href="#update_command00001.html">Updating</a>
 <ul>
 </ul>
 </ul>
@@ -97,6 +133,9 @@ Platforms</font></b> </div>
 <li><a href="#00049.html">Decorations</a>
 <ul>
 </ul>
+<li><a href="#commit_stes00001.html">Commit Sets Layout</a>
+<ul>
+</ul>
 </ul>
 <li><a href="#00012.html">Merging</a>
 <ul>
@@ -107,18 +146,9 @@ Platforms</font></b> </div>
 <ul>
 </ul>
 </ul>
-<li><a href="#00026.html">Sharing</a>
+<li><a href="#00029.html">Patching</a>
 <ul>
-<li><a href="#00027.html">Sharing as a subfolder</a>
-<ul>
-</ul>
-<li><a href="#00028.html">Reconnecting an existing project</a>
-<ul>
-</ul>
-<li><a href="#00050.html">Sharing a new project</a>
-<ul>
-</ul>
-<li><a href="#project_sets00001.html">Project Sets</a>
+<li><a href="#00030.html">Importing a zip over a shared project</a>
 <ul>
 </ul>
 </ul>
@@ -143,12 +173,6 @@ Platforms</font></b> </div>
 <ul>
 </ul>
 <li><a href="#00025.html">Synchronize View Settings</a>
-<ul>
-</ul>
-</ul>
-<li><a href="#00029.html">Patching</a>
-<ul>
-<li><a href="#00030.html">Importing a zip over a shared project</a>
 <ul>
 </ul>
 </ul>
@@ -185,28 +209,45 @@ Platforms</font></b> </div>
 <ul>
 </ul>
 </ul>
-<li><a href="#00044.html">Replacing</a>
+<li><a href="#watch_edit00001.html">Watch/Edit</a>
 <ul>
-<li><a href="#00045.html">With latest</a>
-<ul>
-</ul>
-<li><a href="#00046.html">With another branch of version</a>
+<li><a href="#watch_edit_basic00001.html">Basic scenarios</a>
 <ul>
 </ul>
-<li><a href="#00047.html">With file revision</a>
+<li><a href="#watch_edit_editorsview00001.html">Editors View</a>
 <ul>
 </ul>
 </ul>
+<li><a href="#perf00001.html">Performance</a>
+<ul>
+<li><a href="#perf00002.html">Timings</a>
+<ul>
+</ul>
+<li><a href="#perf00004.html">Resource Data Structures</a>
+<ul>
+</ul>
+<li><a href="#perf00005.html">Looking For Leaks</a>
+<ul>
+</ul>
+<li><a href="#perf00006.html">Team Data Structures</a>
+<ul>
+</ul>
+</ul>
+<li><a href="#failures00001.html">Failure Cases</a>
+<ul>
+<li><a href="#connections00001.html">Connections</a>
+<ul>
+</ul>
+<li><a href="#auth_problems00001.html">Authentication Problems</a>
+<ul>
+</ul>
+</ul>
+<li><a href="#misc00001.html">Misc</a>
+<ul>
 <li><a href="#00042.html">CVS Console</a>
 <ul>
 </ul>
-<li><a href="#commit_sets00001.html">Commit Sets</a>
-<ul>
-</ul>
 <li><a href="#encoding00001.html">Encoding Support</a>
-<ul>
-</ul>
-<li><a href="#teamupdate00001.html">Update</a>
 <ul>
 </ul>
 <li><a href="#passwords00001.html">Password Management</a>
@@ -216,11 +257,29 @@ Platforms</font></b> </div>
 <ul>
 </ul>
 </ul>
+</ul>
 <h1>Repositories View</h1>
+<a name="repoview_basics00001.html">
+<h2>Basics</h2>
+<p>Since: <br>
+Last Modified: $Date: 2004/05/31 14:22:48 $</p>
+
+<p>You should be able to create a repo connection from the toolbar of the view or via the context menu. Try expanding, searching for branches. Also, 
+try the failures cases from <a href="html/connections00001.html">Connections</a>.
+Things to try:
+<ul>
+<li>Create repo locations for different connection types: ext, pserver, extssh.
+<li>Expanding project nodes should process the children in the background and the view should remain responsive while this is happening. When children nodes are added to the 
+tree the tree shouldn't be too jumpy.
+</ul>
+</p>
+
+
+
 <a name="00007.html">
 <h2>Check Out - prompts</h2>
 <p>Since: 3.0 M5<br>
-Last Modified: $Date: 2004/02/25 20:34:42 $</p><body>
+Last Modified: $Date: 2004/02/25 20:34:42 $</p>
 <ul>
   <li>Select a project in HEAD</li>
   <li>Perform a Checkout</li>
@@ -233,23 +292,199 @@ Last Modified: $Date: 2004/02/25 20:34:42 $</p><body>
 
 <a name="checkoutwizard00001.html">
 
-
-<h3>Checkout Wizard Availability</h3>
+<h2>Checkout Wizard</h2>
+<p>Since: <br>
+Last Modified: $Date: 2004/05/31 20:01:23 $</p><body>
 <p>The checkout wizard should be available from the following parts of the workbench: import, new project, empty workspace CVS synchronize action, toolbar in CVS perspective.</p>
 <h3>Sniff</h3>
 <p>You should be able to create a new repo location and checkout a project entirely from the wizard.</p>
 
 <a name="datetags_repoview00001.html">
-
+<h2>Date Tags</h2>
+<p>Since: <br>
+Last Modified: $Date: 2004/05/31 20:01:23 $</p><body>
 
 <h3>Date Tags</h3>
+
+
+<h1>Sharing</h1>
+<a name="00027.html">
+<h2>Sharing as a subfolder</h2>
+<p>Since: 3.0 M6<br>
+Last Modified: $Date: 2004/02/25 20:34:42 $</p>
+
+<p>Perform the following steps:</p>
+<ol>
+  <li>Create a new project</li>
+  <li>Select Team>Share</li>
+  <li>Select a repository and click next</li>
+  <li>Enter a path with at least two segments as the remote module name</li>
+  <li>Click Finish</li>
+</ol>
+<p>Ensure that the project was shared properly (i.e. remote folders were created).
+
+<a name="sharingbasics00001.html">
+<h2>Basics</h2>
+<p>Since: <br>
+Last Modified: $Date: 2004/05/31 14:22:48 $</p>
+
+<p>Single select a project and select share.</p>
+<ul>
+<li>Should only be available if the project is not shared.
+<li>Menu item should be available from the Project top level menu.
+<li>Wizard should allow you to cancel at any time and un-map the project. Note that some resources may of been committed via the wizard that will remain committed.
+</ul>
+
+
+<a name="00028.html">
+<h2>Reconnecting an existing project</h2>
+<p>Since: 3.0 M6<br>
+Last Modified: $Date: 2004/05/31 20:01:23 $</p>
+<p>
+The following scenario represents how a user would reconnect a project that does
+not contain CVS meta-data to it's remote counterpart. It is assumed that the local project 
+was derived from a previous version of the remote project but both the local project and
+the remote may have been modified since then.
+</p>
+<h3>Scenario 1: Existing location using project name</h3>
+<p>Perform the following steps:</p>
+<ol>
+  <li>Load an existing project (using Checkout or you could import a plug-in project from the target area)</li>
+  <li>Disconnect the project and indicate that CVS meta-data is to be deleted</li>
+  <li>Modify some local resources</li>
+  <li>Optionally, modify the remote contents of some resources using a separate checkout</li>
+  <li>Perform a Team>Share Project and select CVS (if there is more than one 
+  repository provider available).</li>
+  <li>Select the repository the project was loaded from and click Next.</li>
+  <li>Use the project name as the module name. Click Next.</li>
+  <li>In the tag page, select HEAD as the branch to share with and click Next</li>
+  <li>In the sharing page, only the files that do not have the same contents
+  as the server should appear. Perform a Mark as Merged or Commit on these 
+  files.
+  <li>Click Finish.</li>
+</ol>
+
+<h3>Scenario 1: New location using curstom module name</h3>
+<p>Perform the following steps:</p>
+<ol>
+  <li>Load an existing project using Checkout As and a different name</li>
+  <li>Disconnect the project and indicate that CVS meta-data is to be deleted</li>
+  <li>Discard the repository location<li>
+  <li>Modify some local resources</li>
+  <li>Optionally, modify the remote contents of some resources using a separate checkout</li>
+  <li>Perform a Team>Share Project and select CVS (if there is more than one 
+  repository provider available).</li>
+  <li>Select to create a new repository and click Next</li>
+  <li>Enter the repository information for the repository and click Next</li>
+  <li>Enter the name of the module that the project was loaded from. Click Next.</li>
+  <li>In the tag page, select HEAD as the branch to share with and click Next</li>
+  <li>In the sharing page, only the files that do not have the same contents
+  as the server should appear. Perform a Mark as Merged or Commit on these 
+  files.
+  <li>Click Finish.</li>
+</ol>
+
+
+<a name="00050.html">
+<h2>Sharing a new project</h2>
+<p>Since: 3.0 M8<br>
+Last Modified: $Date: 2004/03/18 21:04:58 $</p>
+
+<h3>Scenario 1: Existing location using project name</h3>
+<p>Perform the following steps:</p>
+<ol>
+  <li>Create a new project that does not exist in the repository</li>
+  <li>Select Team>Share and select CVS (if there is more than one 
+  repository provider available).</li>
+  <li>Select a repository and click Next</li>
+  <li>Use the project name as the module name. Click Next.</li>
+  <li>After a time, the last page should show the outgoing changes in the project.
+  Commit the changes from the synchronize pane.</li>
+  <li>Click Finish</li>
+</ol>
+
+<h3>Scenario 2: New location using different name</h3>
+<p>Perform the following steps:</p>
+<ol>
+  <li>Create a new project</li>
+  <li>Select Team>Share and select CVS (if there is more than one 
+  repository provider available).</li>
+  <li>Select to create a new repository and click Next</li>
+  <li>Enter the repository information for a new repository and click Next</li>
+  <li>Enter a single segment module name that does not exist in the repository and click Next.</li>
+  <li>After a time, the last page should show the outgoing changes in the project.
+  Commit the changes from the synchronize pane.</li>
+  <li>Click Finish</li>
+</ol>
+
+<a name="project_sets00001.html">
+<h2>Project Sets</h2>
+<p>Since: 2.1 <br>
+Last Modified: $Date: 2004/05/31 20:01:23 $</p>
+
+<ul>
+<li>Create a project set from a workspace with multiple projects shared with CVS. The shared projects in the workspace should include projects shared with the following: branch, version, date, and HEAD.
+<li>Start with an empty workspace and import the projects using the import projects sets wizard.
+<li>You should be prompted for a password and username for the locations.
+<li>Ensure that the projects are checked out correctly and against the correct tag.
+</ul>
+
+
+<h1>Replacing</h1>
+<a name="00045.html">
+<h2>With latest</h2>
+<p>Since: <br>
+Last Modified: $Date: 2004/03/09 20:51:17 $</p>
+
+<p>Ensure that replace srubs the local resources leaving to outgoing changes. And verify the following:
+<ul>
+<li>
+</ul>
+
+
+<a name="00046.html">
+<h2>With another branch of version</h2>
+<p>Since: <br>
+Last Modified: $Date: 2004/03/09 20:51:17 $</p>
+
+<p>Check the following for all cases of replace:
+<ul>
+<li>decorators are updated in the navigator/packages view and synchronize view.
+<li>if a version is loaded that you can't commit to it
+<li>if a branch is loaded, that you can commit to it.
+</ul>
+
+
+<a name="00047.html">
+<h2>With file revision</h2>
+<p>Since: <br>
+Last Modified: $Date: 2004/03/15 22:00:31 $</p>
+
+<ul>
+<li>If the file isn't managed the action should no appear.
+<li>If the file doesn't have any revisions you should be prompted
+<li>If the file has revisions you should be prompted with the list of revisions in a compare dialog
+<li>In the compare dialog you can select any revision and compare changes but merging isn't supported
+<li>If a revision is selected the Replace button should be enabled. Otherwise it should be disabled
+<li>If you selected the replace button the file should contain the contents of the revision selected. The dialog will also close.
+<li>Ensure that the titles are ok (e.g. dialog title, structure pane title...)
+</ul>
+
+
+<a name="update_command00001.html">
+<h2>Updating</h2>
+<p>Since: 2.0 <br>
+Last Modified: $Date: 2004/05/31 14:22:48 $</p>
+
+<p>You can run an update and open the console to see the files that are being updated.</p>
+<p>You can run the update and switch to another branch, this should keep your outgoing changes and update all other non-changed files.</p>
 
 
 <h1>Comparing</h1>
 <a name="00009.html">
 <h2>Remote resources</h2>
 <p>Since: 3.0 M5<br>
-Last Modified: $Date: 2004/03/15 22:00:31 $</p><body>
+Last Modified: $Date: 2004/03/15 22:00:31 $</p>
 <h4>Compare With... in Repositories view </h4>
 <p>Perform the following steps:</p>
 <ol>
@@ -281,7 +516,9 @@ Last Modified: $Date: 2004/03/15 22:00:31 $</p><body>
 
 
 <a name="00039.html">
-
+<h2>Compare with another branch or version</h2>
+<p>Since: M8<br>
+Last Modified: $Date: 2004/03/15 22:00:31 $</p>
 <p>
 You should be able to select a project/folder/resource and compare againts
 another branch or version. Multi-select should work across projects in 
@@ -316,15 +553,19 @@ be made to the following cases:
 </ul>
 
 <a name="00040.html">
-
+<h2>Reverting deleted resources</h2>
+<p>Since: M8<br>
+Last Modified: $Date: 2004/03/09 20:51:17 $</p>
 
 You should be able to restore a deleted revision from the CVS server. 
 
 
 <a name="quickdiff00001.html">
 
+<h2>Quick Diff</h2>
+<p>Since: <br>
+Last Modified: $Date: 2004/05/31 20:01:23 $</p>
 
-<h3>CVS QuickDiff</h3>
 <p>Enable CVS quick diff for text and java files via the Workbench > Editors > QuickDiff preference. Then try the following
 scenarios.</p>
 
@@ -351,7 +592,7 @@ annotations are removed and the file is clean.
 <a name="00011.html">
 <h2>Sync View operations and selection</h2>
 <p>Since: 3.0 M5<br>
-Last Modified: $Date: 2004/02/25 20:34:42 $</p><body>
+Last Modified: $Date: 2004/02/25 20:34:42 $</p>
 <p>Ensure Commit and Update buttons:</p>
 <ul>
   <li>operate on all applicable visible changes</li>
@@ -393,7 +634,7 @@ Last Modified: $Date: 2004/02/25 20:34:42 $</p><body>
 <h2>Sync View modes and working sets</h2>
 
 <p>Since: 3.0 M5<br>
-Last Modified: $Date: 2004/02/25 20:34:42 $</p><body>
+Last Modified: $Date: 2004/02/25 20:34:42 $</p>
 Ensure that choosing modes and working sets 
 <ul>
 <li>result in proper filtering 
@@ -403,7 +644,9 @@ Ensure that choosing modes and working sets
 
 
 <a name="00048.html">
-
+<h2>Performing a Synchronize</h2>
+<p>Since: M8<br>
+Last Modified: $Date: 2004/03/25 16:39:41 $</p>
 
 
 <p>
@@ -453,7 +696,9 @@ each case. One for Team > Sync and another for refresh from the sync view.
 
 
 <a name="00049.html">
-
+<h2>Decorations</h2>
+<p>Since: M8<br>
+Last Modified: $Date: 2004/03/17 14:30:32 $</p>
 
 There are many standard decorations in the sync view. Most significant are the propagated flags.
 
@@ -475,18 +720,27 @@ from the sync view the branch name should appear.
 </p>
 
 
+<a name="commit_stes00001.html">
+<h2>Commit Sets Layout</h2>
+<p>Since: <br>
+Last Modified: $Date: 2004/05/31 14:22:48 $</p>
+
+
+
 <h1>Merging</h1>
 <a name="00013.html">
 <h2>Sync View operations and selection</h2>
 <p>Since: 3.0 M5<br>
-Last Modified: $Date: 2004/02/25 20:34:42 $</p><body>
+Last Modified: $Date: 2004/02/25 20:34:42 $</p>
 <ul>
 <li>Same scenarios as <a href="html/00011.html">Sync View operations and selection</a> except you can't commit.
 <li>Test mark as merged (ensure that it can work on large data sets
 </ul>
 
 <a name="00022.html">
-
+<h2>Performing a Merge</h2>
+<p>Since: M8<br>
+Last Modified: $Date: 2004/03/25 16:39:41 $</p>
 
 <h3>Scenario 1: Merge in Dialog</h3>
 <ol>
@@ -516,114 +770,38 @@ The new updates should appear.
 </ol>
 
 
-<h1>Sharing</h1>
-<a name="00027.html">
-<h2>Sharing as a subfolder</h2>
+<h1>Patching</h1>
+<a name="00030.html">
+<h2>Importing a zip over a shared project</h2>
 <p>Since: 3.0 M6<br>
 Last Modified: $Date: 2004/02/25 20:34:42 $</p>
 
+<p>This scenario captures one means of patching. It assumes that a zip file contains 
+a previous version of a project that has been modified in some way and added to
+a zip archive (without CVS directories).</p>
+
 <p>Perform the following steps:</p>
 <ol>
-  <li>Create a new project</li>
-  <li>Select Team>Share</li>
-  <li>Select a repository and click next</li>
-  <li>Enter a path with at least two segments as the remote module name</li>
-  <li>Click Finish</li>
+  <li>Load the project from CVS (using Checkout or some other means)</li>
+  <li>Import the zip over the loaded project.</li>
+  <li>Ensure that the sync states are Outgoing for all resources from the zip file.</li>
+  <li>Ensure that all folders from the zip file (except new ones)
+  are marked as in-sync and all files (except new ones) are outgoing changes.
+  <li>Changing the comparison criteria to compare contents should not contact the server
+  and should leave only the resources that differ in the sync view. Perform a 
+  Mark As Merged and a Commit on these resources.</li>
+  <li>Changing the comparison criteria back to revision number will reveal all the files
+  whose content did not change, perform a Mark as merged on these resources followed by 
+  a Team>Update on the project in the Navigator (Note: This could be handled better).</li>
+  <li>After the update, ensure the project has no out-of-sync resources.</li>
 </ol>
-<p>Ensure that the project was shared properly (i.e. remote folders were created).
-
-<a name="00028.html">
-
-<p>
-The following scenario represents how a user would reconnect a project that does
-not contain CVS meta-data to it's remote counterpart. It is assumed that the local project 
-was derived from a previous version of the remote project but both the local project and
-the remote may have been modified since then.
-</p>
-<h3>Scenario 1: Existing location using project name</h3>
-<p>Perform the following steps:</p>
-<ol>
-  <li>Load an existing project (using Checkout or you could import a plug-in project from the target area)</li>
-  <li>Disconnect the project and indicate that CVS meta-data is to be deleted</li>
-  <li>Modify some local resources</li>
-  <li>Optionally, modify the remote contents of some resources using a separate checkout</li>
-  <li>Perform a Team>Share Project and select CVS (if there is more than one 
-  repository provider available).</li>
-  <li>Select the repository the project was loaded from and click Next.</li>
-  <li>Use the project name as the module name. Click Next.</li>
-  <li>In the tag page, select HEAD as the branch to share with and click Next</li>
-  <li>In the sharing page, only the files that do not have the same contents
-  as the server should appear. Perform a Mark as Merged or Commit on these 
-  files.
-  <li>Click Finish.</li>
-</ol>
-
-<h3>Scenario 1: New location using curstom module name</h3>
-<p>Perform the following steps:</p>
-<ol>
-  <li>Load an existing project using Checkout As and a different name</li>
-  <li>Disconnect the project and indicate that CVS meta-data is to be deleted</li>
-  <li>Discard the repository location<li>
-  <li>Modify some local resources</li>
-  <li>Optionally, modify the remote contents of some resources using a separate checkout</li>
-  <li>Perform a Team>Share Project and select CVS (if there is more than one 
-  repository provider available).</li>
-  <li>Select to create a new repository and click Next</li>
-  <li>Enter the repository information for the repository and click Next</li>
-  <li>Enter the name of the module that the project was loaded from. Click Next.</li>
-  <li>In the tag page, select HEAD as the branch to share with and click Next</li>
-  <li>In the sharing page, only the files that do not have the same contents
-  as the server should appear. Perform a Mark as Merged or Commit on these 
-  files.
-  <li>Click Finish.</li>
-</ol>
-
-
-<a name="00050.html">
-
-
-<h3>Scenario 1: Existing location using project name</h3>
-<p>Perform the following steps:</p>
-<ol>
-  <li>Create a new project that does not exist in the repository</li>
-  <li>Select Team>Share and select CVS (if there is more than one 
-  repository provider available).</li>
-  <li>Select a repository and click Next</li>
-  <li>Use the project name as the module name. Click Next.</li>
-  <li>After a time, the last page should show the outgoing changes in the project.
-  Commit the changes from the synchronize pane.</li>
-  <li>Click Finish</li>
-</ol>
-
-<h3>Scenario 2: New location using different name</h3>
-<p>Perform the following steps:</p>
-<ol>
-  <li>Create a new project</li>
-  <li>Select Team>Share and select CVS (if there is more than one 
-  repository provider available).</li>
-  <li>Select to create a new repository and click Next</li>
-  <li>Enter the repository information for a new repository and click Next</li>
-  <li>Enter a single segment module name that does not exist in the repository and click Next.</li>
-  <li>After a time, the last page should show the outgoing changes in the project.
-  Commit the changes from the synchronize pane.</li>
-  <li>Click Finish</li>
-</ol>
-
-<a name="project_sets00001.html">
-
-
-<h3>Project Sets</h3>
-<ul>
-<li>Create a project set from a workspace with multiple projects shared with CVS. The shared projects in the workspace should include projects shared with the following: branch, version, date, and HEAD.
-<li>Start with an empty workspace and import the projects using the import projects sets wizard.
-<li>You should be prompted for a password and username for the locations.
-<li>Ensure that the projects are checked out correctly and against the correct tag.
-</ul>
 
 
 <h1>Resource History</h1>
 <a name="00018.html">
-
+<h2>Editor Linking</h2>
+<p>Since: 3.0 M5<br>
+Last Modified: $Date: 2004/02/25 20:34:42 $</p>
 
 <ol>
   <li>Open the Resource History view and enable editor linking</li>
@@ -638,7 +816,9 @@ the remote may have been modified since then.
 
 
 <a name="00024.html">
-
+<h2>Annotate</h2>
+<p>Since: 3.0 M6<br>
+Last Modified: $Date: 2004/02/25 20:34:42 $</p>
 
 <h4>Annotate action should be available from</h4>
 <ul>
@@ -675,7 +855,9 @@ of the currently selected change in the annotate view.
 
 <h1>Concurrency</h1>
 <a name="00021.html">
-
+<h2>Close and disconnect</h2>
+<p>Since: 3.0 M5<br>
+Last Modified: $Date: 2004/02/25 20:34:42 $</p>
 
 <h4>Background refresh and disconnect</h4>
 <ol>
@@ -720,7 +902,9 @@ of the currently selected change in the annotate view.
 
 <h1>Restarting Workbench</h1>
 <a name="00019.html">
-
+<h2>Crash Recovery</h2>
+<p>Since: 3.0 M5<br>
+Last Modified: $Date: 2004/02/25 20:34:42 $</p>
 
 <p>Scenario 1</p>
 <ol>
@@ -746,7 +930,9 @@ of the currently selected change in the annotate view.
 
 
 <a name="00025.html">
-
+<h2>Synchronize View Settings</h2>
+<p>Since: 3.0 M6<br>
+Last Modified: $Date: 2004/02/25 20:34:42 $</p>
 
 <h4>Saved between sessions</h4>
 <p>The following GUI preferences in the Synchronize View are persisted between workbench 
@@ -759,47 +945,28 @@ should be maintained for each participant. The persisted settings are:</p>
 <li>working set
 </ul>
 
-<h1>Patching</h1>
-<a name="00030.html">
-
-
-<p>This scenario captures one means of patching. It assumes that a zip file contains 
-a previous version of a project that has been modified in some way and added to
-a zip archive (without CVS directories).</p>
-
-<p>Perform the following steps:</p>
-<ol>
-  <li>Load the project from CVS (using Checkout or some other means)</li>
-  <li>Import the zip over the loaded project.</li>
-  <li>Ensure that the sync states are Outgoing for all resources from the zip file.</li>
-  <li>Ensure that all folders from the zip file (except new ones)
-  are marked as in-sync and all files (except new ones) are outgoing changes.
-  <li>Changing the comparison criteria to compare contents should not contact the server
-  and should leave only the resources that differ in the sync view. Perform a 
-  Mark As Merged and a Commit on these resources.</li>
-  <li>Changing the comparison criteria back to revision number will reveal all the files
-  whose content did not change, perform a Mark as merged on these resources followed by 
-  a Team>Update on the project in the Navigator (Note: This could be handled better).</li>
-  <li>After the update, ensure the project has no out-of-sync resources.</li>
-</ol>
-
-
 <h1>SSH2</h1>
 <a name="00029a.html">
-
+<h2>Server version compatibiliity</h2>
+<p>Since: M6<br>
+Last Modified: $Date: 2004/02/25 20:34:42 $</p>
 
 This test is to ensure that the ssh2 connection method properly delagates to ssh1
 when the server only supports ssh1. 
 
 
 <a name="00030a.html">
-
+<h2>Proxies</h2>
+<p>Since: <br>
+Last Modified: $Date: 2004/02/25 20:34:42 $</p>
 
 Using HTTP and SOCKS5 proxies.
 
 
 <a name="00031.html">
-
+<h2>Key Generation</h2>
+<p>Since: <br>
+Last Modified: $Date: 2004/02/10 17:06:35 $</p>
 
 You should be able to generate private/public keys in the SSH2 preference
 page. Here are some scenarios for testing:
@@ -810,7 +977,9 @@ page. Here are some scenarios for testing:
 </ul>
 
 <a name="00032.html">
-
+<h2>General use</h2>
+<p>Since: <br>
+Last Modified: $Date: 2004/05/31 20:01:23 $</p>
 
 This tests the prompting and usage of the SSH2 connection method:
 <ul>
@@ -822,26 +991,34 @@ your known_hosts file.
 
 <h1>Annotate</h1>
 <a name="00034.html">
-
+<h2>Show Annotation Action</h2>
+<p>Since: 3.0 M3<br>
+Last Modified: $Date: 2004/02/25 20:34:42 $</p>
 
 Answer comes here.
 
 
 <h1>Label Decorations</h1>
 <a name="00036.html">
-
+<h2>Enablement at startup</h2>
+<p>Since: <br>
+Last Modified: $Date: 2004/02/25 20:34:42 $</p>
 
 Answer comes here.
 
 
 <a name="00037.html">
-
+<h2>Customizations</h2>
+<p>Since: <br>
+Last Modified: $Date: 2004/02/25 20:34:42 $</p>
 
 Answer comes here.
 
 
 <a name="00038.html">
-
+<h2>Decorations in the Synchronize pages</h2>
+<p>Since: M8<br>
+Last Modified: $Date: 2004/05/31 20:01:23 $</p>
 <p>
 CVS text label decorations should be visible in the CVS synchronize participants. We don't bother to show
 the images because the sync view already shows the state images. The labels should also update if the
@@ -853,36 +1030,330 @@ remote is shown.</p>
 
 
 
-<h1>Replacing</h1>
-<a name="00045.html">
+<h1>Watch/Edit</h1>
+<a name="watch_edit_basic00001.html">
+<h2>Basic scenarios</h2>
+<p>Since: <br>
+Last Modified: $Date: 2004/05/31 14:22:48 $</p>
+
+<h3>Basic scenarios</h3>
 
 
-Answer comes here.
+<a name="watch_edit_editorsview00001.html">
+<h2>Editors View</h2>
+<p>Since: <br>
+Last Modified: $Date: 2004/05/31 14:22:48 $</p>
+
+<h3>Editors View</h3>
 
 
-<a name="00046.html">
+<h1>Performance</h1>
+<a name="perf00002.html">
+<h2>Timings</h2>
+<p>Since: 3.0<br>
+Last Modified: $Date: 2004/06/01 13:53:59 $</p>
 
+This section contains various timing results and comparisons.
 
-Answer comes here.
+<h3>Overview</h3>
 
+The purpose of this section is to provide a small set of tests that can 
+be used to benchmark the Eclipse CVS client. The areas tested are:
 
-<a name="00047.html">
+<ol>
+<li>Checkout
+<li>Synchronizing
+<li>Updating
+</ol>
 
+<h3>Setup</h3>
 
-<h3>Replace the local resource with other revisions</h3>
+The following should be considered when obtaining timings:
+
 <ul>
-<li>If the file isn't managed the action should no appear.
-<li>If the file doesn't have any revisions you should be prompted
-<li>If the file has revisions you should be prompted with the list of revisions in a compare dialog
-<li>In the compare dialog you can select any revision and compare changes but merging isn't supported
-<li>If a revision is selected the Replace button should be enabled. Otherwise it should be disabled
-<li>If you selected the replace button the file should contain the contents of the revision selected. The dialog will also close.
-<li>Ensure that the titles are ok (e.g. dialog title, structure pane title...)
+<li>The Progress view in verbose mode can add 20% or more to times. 
+In regular mode, it can still add a bit to the time. For these timings,
+the view was open but hidden.
+<li>The Console view can add as much as 20% to times. For these tests,
+the console was turned off entirely.
+<li>Running an eclipse operation several times will "warm-up" the code path
+due to JIT. The timings for Eclipse were usually the secodn or third
+timing obtained.
+</ul>
+
+The following numbers were obtained on a 2.8GHz PC running GTK, Sun 14.2
+with autobuild off and operations run in the forground. The project used was 
+org.eclipse.jdt.tests.refactoring. It has a large number of folders and files 
+which give interesting times. The date the timings were obtained were May 31st, 2004
+so similar numbers can be obtained for comparison using the project snapshot at that time 
+(which can be obtained using a Date tag).
+
+<h3>Checkout</h3>
+
+Checkout of org.eclipse.jdt.tests.refactoring as of 2004/05/31. The timings are
+in "mm:ss" and were obtained by obervation (i.e. stopwatch).
+
+<ul>
+<li>Eclipse 3.0 over pserver: 3:00 to 3:30 (several timings)
+<ul>
+<li>Timings increased slightly with progress view visible and considerably
+with progress view in verbose mode.
+</ul>
+<li>CLI over pserver: 3:00 (1 timing)
+</ul>
+
+<h3>Synchronize</h3>
+
+Synchronizing of org.eclipse.jdt.tests.refactoring as of 2004/05/31. The timings are
+in "mm:ss" and were obtained by obervation (i.e. stopwatch).
+
+<h4>Synchronize with no changes</h4>
+
+<ul>
+<li>Eclipse 3.0 over pserver: 0:45
+<li>CLI over pserver: 0:42 ("cvs -n update")
+</ul>
+
+<h4>Synchronize with all outgoing, no incoming</h4>
+
+<ul>
+<li>Eclipse 3.0 over pserver: 1:00
+<li>CLI over pserver: 2:20 ("cvs -n update")
+</ul>
+
+<h4>Synchronize with incoming changes</h4>
+
+Incoming changes were simulated by loading version v20040106 and
+then removing the tag (using a special utility action). This resulted 
+in 393 incoming changes.
+
+<ul>
+<li>Eclipse 3.0 over pserver: 0:55
+<li>CLI over pserver: 0:45 ("cvs -n update")
+</ul>
+
+The timing for Eclipse also includes the status command to fetch the revisions for the 393 incoming changes.
+
+<h3>Update</h3>
+
+These timings were obtained using Team>Update for Eclipse and "cvs update ." for the CLI.
+
+<h4>Update with no changes</h4>
+
+<ul>
+<li>Eclipse 3.0 over pserver: 1:15, 1:25 (2 timings)
+<li>CLI over pserver: 1:15 ("cvs update")
+</ul>
+
+<h4>Update with all false outgoing changes (using touch) </h4>
+
+<ul>
+<li>Eclipse 3.0 over pserver: 2:20
+<li>CLI over pserver: 2:20
+</ul>
+
+<h4>Update with incoming changes</h4>
+
+Incoming changes were simulated by loading version v20040106 and
+then removing the tag (using a special utility action). This resulted 
+in 393 incoming changes.
+
+<ul>
+<li>Eclipse 3.0 over pserver: 1:55
+<li>CLI over pserver: 1:55 ("cvs -n update")
 </ul>
 
 
-<a name="00042.html">
+<a name="perf00004.html">
+<h2>Resource Data Structures</h2>
+<p>Since: 3.0<br>
+Last Modified: $Date: 2004/06/01 13:53:59 $</p>
 
+This section contains results on memory footprint of CVS in the Core resource
+plugin data structures. More specifically, CVS uses the session and persistant property
+caches along with the synchronizer.
+
+<h3>CVS Workspace Sync info caches</h3>
+
+Checking of the cahce usage requires the use of the Core spy tools. To
+obtain the memory footprint, perform the following steps.
+
+<ol>
+<li>Install the Core Spy Tools
+<li>Launch Eclipse
+<li>Checkout several projects
+<li>Open the Element Tree Spy to get the memory footprint. At the
+time of writting, CVS is the main user of these structures. In future
+test, ensure that others are not contributing to the tally.
+<li>Disconnect all the projects
+<li>The Element Tree Spy memory footprint should be reduced accordingly
+</ol>
+
+The following snapshot of the resource element tree was taken after checking out all of the projects
+(294 as of 2004/05/31) in dev.eclipse.org.
+
+<pre>
+Total resource count: 89,466
+	Team private: 10,186
+	Phantom: 4,055
+	Markers: 0
+	SyncInfo: 10,432
+Number of layers: 15
+Number of nodes: 89,514
+Number of non-identical strings: 48,456
+Total memory used by nodes: 23,141,343
+	Nodes and ResourceInfo: 8,586,108
+	Strings: 3,584,724
+	Markers: 0
+	Sync info: 1,447,861
+	Session properties: 9,522,650
+		class [B: 2,618,076
+		class [Ljava.lang.Object;: 2,564,448
+		class org.eclipse.core.internal.utils.ObjectMap: 1,700,240
+		class [C: 1,454,994
+		class java.lang.Long: 610,800
+		class java.lang.String: 286,580
+		class org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo: 285,292
+		class java.util.ArrayList: 768
+		class org.eclipse.team.internal.ccvs.core.util.StringMatcher: 660
+		class org.eclipse.team.internal.ccvs.core.util.FileNameMatcher: 320
+		class [Ljava.lang.String;: 300
+		class org.eclipse.core.runtime.QualifiedName: 160
+		class java.lang.Object: 12
+The top 20 equal but non-identical strings are:
+	A.java->2,002
+	in->1,219
+	plugin.xml->913
+	out->794
+	A_out.java->489
+	A_in.java->487
+	eclipse->431
+	org->421
+	Test.java->412
+	B.java->345
+	build.properties->297
+	I.java->269
+	internal->256
+	about.html->253
+	plugin.properties->243
+	.cvsignore->227
+	.classpath->209
+	ui->185
+	src->184
+	package.html->165
+</pre>
+
+<h3>CVS Merge memory usage</h3>
+Merging in CVS makes use of the Core synchronizer. Perform the following steps 
+with the Core Spy Tool installed to
+ensure proper memory management.
+
+<ol>
+<li>Checkout one or more projects
+<li>Open the Element Tree Spy to get the memory footprint. 
+<li>Perform a merge
+<li>Open the Element Tree Spy to get the memory footprint. The only increase
+should be in the synchronizer.
+<li>Remove the merge from the sync view
+<li>The Element Tree Spy memory footprint should be reduced accordingly
+</ol>
+
+<a name="perf00005.html">
+<h2>Looking For Leaks</h2>
+<p>Since: <br>
+Last Modified: $Date: 2004/06/01 13:53:59 $</p>
+
+<h3>Removing synchronize view entries</h3>
+
+<ol>
+<li>Start with an empty synchronize view
+<li>Create an entry in the Synchronize view for each of the following cases:
+	<ul>
+	<li>Team>Synchronize
+	<li>Compare with>Branch or Version
+	<li>Team>Merge
+	</ul>
+<li>Open the context menu
+<li>Select all mode and layout combinations
+<li>Remove the entry (making the sync view empty).
+<li>Select an item in another view
+<li>Using a memory profiler, look for instances of the following classes:
+	<ul>
+	<li>ISynchronizeParticipant
+	<li>SynchronizeModelElement
+	<li>SyncInfo/SyncInfoSet
+	</ul>
+</ol>
+
+<h3>Closing the Synchronize view</h3>
+
+Close all instances of the Synchronize view and ensure that no instances
+of ISynchronizeView remain.
+
+
+<a name="perf00006.html">
+<h2>Team Data Structures</h2>
+<p>Since: <br>
+Last Modified: $Date: 2004/06/01 13:53:59 $</p>
+
+The Team component provides several data strucutures that can be used to 
+cache resource synchronization state and resource variants for improved 
+performance. The plan is to provide tools to interogate these caches in the 3.1 timeframe.
+
+These caches include:
+
+<ul>
+<li>Resource Variant cache
+<li>SubsciberParticipant/SyncInfoSet
+</ul>
+
+<h3>CVS Specific data structures</h3>
+
+CVS uses several caches to improve performance. Tools should be provided to query the
+size of these caches as well.
+
+<ul>
+<li>Console (caches contents while not visible)
+<li>Resource History View log entry cache
+<li>Commit Sets log entry cache
+</ul>
+
+
+<h1>Failure Cases</h1>
+<a name="connections00001.html">
+<h2>Connections</h2>
+<p>Since: <br>
+Last Modified: $Date: 2004/05/31 14:22:48 $</p>
+
+<p>Test that authentication, connection errors result in appropriate error messages and that these don't pollute the log file or console. to setup for these tests
+ensure there are a couple of shared projects in your workspace.</p>
+<ul>
+<li>Clear you log file before starting the tests and turn on the CVS quick diff provider.
+<li>Perform an update, a synchronize, and open a file. The log should be empty and the operations should succeed.
+<li>Disconnect from the network.
+<li>Open a file. The CVS quick diff will fail and an error should be in the log.
+<li>Synchronize all the shared projects. One error explaining the failures should be returned.
+<li>Change the connection properties of one of the projects to point to an 
+<li>Expand the location in the CVS repositories view.
+</ul>
+
+
+<a name="auth_problems00001.html">
+<h2>Authentication Problems</h2>
+<p>Since: <br>
+Last Modified: $Date: 2004/05/31 14:22:48 $</p>
+
+<p>Test the error reporting when authentication fails due to either, invalid username, password, hostname. This should be
+tried with each CVS connection method: pserver, extssh, ext.
+
+</p>
+
+
+<h1>Misc</h1>
+<a name="00042.html">
+<h2>CVS Console</h2>
+<p>Since: <br>
+Last Modified: $Date: 2004/05/31 20:01:23 $</p>
 
 There are a couple of preferences that controls the behavior and presentation of the console. These are:
 <ul>
@@ -890,34 +1361,26 @@ There are a couple of preferences that controls the behavior and presentation of
 </ul>
 
 
-<a name="commit_sets00001.html">
-
-
-<h3>Commit Sets Layout</h3>
-
-
 <a name="encoding00001.html">
-
+<h2>Encoding Support</h2>
+<p>Since: 3.0 M9<br>
+Last Modified: $Date: 2004/05/31 20:05:52 $</p>
 
 Answer comes here.
 
 
-<a name="teamupdate00001.html">
-
-
-<h3>Update Wizard</h3>
-<p>You can run an update and open the console to see the files that are being updated.</p>
-<p>You can run the update and switch to another branch, this should keep your outgoing changes and update all other non-changed files.</p>
-
-
 <a name="passwords00001.html">
-
+<h2>Password Management</h2>
+<p>Since: 3.0 M9<br>
+Last Modified: $Date: 2004/05/31 20:05:52 $</p>
 
 <h3>Password Management</h3>
 
 
 <a name="ext_connection_method00001.html">
-
+<h2>EXT</h2>
+<p>Since: 2.0 <br>
+Last Modified: $Date: 2004/05/31 20:05:52 $</p>
 
 <h3>Ext connection method</h3>
 

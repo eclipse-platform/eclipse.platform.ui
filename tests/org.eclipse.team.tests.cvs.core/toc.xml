@@ -2,11 +2,35 @@
 <?NLS TYPE="org.eclipse.help.toc"?>
 <toc label="CVS Testing">
         <topic label="Repositories View" href="html/00004.html">
+            <topic label="Basics" href="html/repoview_basics00001.html">
+            </topic>
             <topic label="Check Out - prompts" href="html/00007.html">
             </topic>
             <topic label="Check Out Wizard" href="html/checkoutwizard00001.html">
             </topic>
             <topic label="Date Tags" href="html/datetags_repoview00001.html">
+            </topic>
+        </topic>
+        <topic label="Sharing" href="html/00026.html">
+            <topic label="Sharing as a subfolder" href="html/00027.html">
+            </topic>
+            <topic label="Basics" href="html/sharingbasics00001.html">
+            </topic>
+            <topic label="Reconnecting an existing project" href="html/00028.html">
+            </topic>
+            <topic label="Sharing a new project" href="html/00050.html">
+            </topic>
+            <topic label="Project Sets" href="html/project_sets00001.html">
+            </topic>
+        </topic>
+        <topic label="Replacing" href="html/00044.html">
+            <topic label="With latest" href="html/00045.html">
+            </topic>
+            <topic label="With another branch of version" href="html/00046.html">
+            </topic>
+            <topic label="With file revision" href="html/00047.html">
+            </topic>
+            <topic label="Updating" href="html/update_command00001.html">
             </topic>
         </topic>
         <topic label="Comparing" href="html/00008.html">
@@ -30,6 +54,8 @@
             </topic>
             <topic label="Decorations" href="html/00049.html">
             </topic>
+            <topic label="Commit Sets Layout" href="html/commit_stes00001.html">
+            </topic>
         </topic>
         <topic label="Merging" href="html/00012.html">
             <topic label="Sync View operations and selection" href="html/00013.html">
@@ -37,14 +63,8 @@
             <topic label="Performing a Merge" href="html/00022.html">
             </topic>
         </topic>
-        <topic label="Sharing" href="html/00026.html">
-            <topic label="Sharing as a subfolder" href="html/00027.html">
-            </topic>
-            <topic label="Reconnecting an existing project" href="html/00028.html">
-            </topic>
-            <topic label="Sharing a new project" href="html/00050.html">
-            </topic>
-            <topic label="Project Sets" href="html/project_sets00001.html">
+        <topic label="Patching" href="html/00029.html">
+            <topic label="Importing a zip over a shared project" href="html/00030.html">
             </topic>
         </topic>
         <topic label="Resource History" href="html/00014.html">
@@ -61,10 +81,6 @@
             <topic label="Crash Recovery" href="html/00019.html">
             </topic>
             <topic label="Synchronize View Settings" href="html/00025.html">
-            </topic>
-        </topic>
-        <topic label="Patching" href="html/00029.html">
-            <topic label="Importing a zip over a shared project" href="html/00030.html">
             </topic>
         </topic>
         <topic label="SSH2" href="html/00028a.html">
@@ -89,36 +105,36 @@
             <topic label="Decorations in the Synchronize pages" href="html/00038.html">
             </topic>
         </topic>
-        <topic label="Replacing" href="html/00044.html">
-            <topic label="With latest" href="html/00045.html">
+        <topic label="Watch/Edit" href="html/watch_edit00001.html">
+            <topic label="Basic scenarios" href="html/watch_edit_basic00001.html">
             </topic>
-            <topic label="With another branch of version" href="html/00046.html">
+            <topic label="Editors View" href="html/watch_edit_editorsview00001.html">
             </topic>
-            <topic label="With file revision" href="html/00047.html">
-            </topic>
-        </topic>
-        <topic label="CVS Console" href="html/00042.html">
-        </topic>
-        <topic label="Commit Sets" href="html/commit_sets00001.html">
-        </topic>
-        <topic label="Encoding Support" href="html/encoding00001.html">
-        </topic>
-        <topic label="Update" href="html/teamupdate00001.html">
-        </topic>
-        <topic label="Password Management" href="html/passwords00001.html">
-        </topic>
-        <topic label="EXT" href="html/ext_connection_method00001.html">
         </topic>
         <topic label="Performance" href="html/perf00001.html">
             <topic label="Timings" href="html/perf00002.html">
             </topic>
-            <topic label="Memory Footprint" href="html/perf00003.html">
-                <topic label="Resource Data Structures" href="html/perf00004.html">
+           <topic label="Resource Data Structures" href="html/perf00004.html">
                 </topic>
                 <topic label="Looking For Leaks" href="html/perf00005.html">
                 </topic>
                 <topic label="Team Data Structures" href="html/perf00006.html">
                 </topic>
+        </topic>
+        <topic label="Failure Cases" href="html/failures00001.html">
+            <topic label="Connections" href="html/connections00001.html">
+            </topic>
+            <topic label="Authentication Problems" href="html/auth_problems00001.html">
+            </topic>
+        </topic>
+        <topic label="Misc" href="html/misc00001.html">
+            <topic label="CVS Console" href="html/00042.html">
+            </topic>
+            <topic label="Encoding Support" href="html/encoding00001.html">
+            </topic>
+            <topic label="Password Management" href="html/passwords00001.html">
+            </topic>
+            <topic label="EXT" href="html/ext_connection_method00001.html">
             </topic>
         </topic>
 </toc>
