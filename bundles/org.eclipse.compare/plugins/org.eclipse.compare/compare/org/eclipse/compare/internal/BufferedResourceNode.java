@@ -56,7 +56,21 @@ public class BufferedResourceNode extends ResourceNode {
 			
 			IResource resource= getResource();
 			if (resource instanceof IFile) {
-				ByteArrayInputStream is= new ByteArrayInputStream(getContent());
+
+				byte[] bytes= getContent();
+				/*
+				String enc1= getEncoding();
+				String enc2= Utilities.getCharset((IFile)resource);
+				if (! enc1.equals(enc2)) {
+					try {
+						String content= new String(bytes, enc1);
+						bytes= content.getBytes(enc2);
+					} catch (UnsupportedEncodingException e) {
+						// ignore
+					}
+				}
+				*/
+				ByteArrayInputStream is= new ByteArrayInputStream(bytes);
 				try {
 					IFile file= (IFile) resource;
 					if (file.exists())
