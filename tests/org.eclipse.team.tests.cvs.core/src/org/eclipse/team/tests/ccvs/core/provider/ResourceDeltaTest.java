@@ -112,6 +112,16 @@ public class ResourceDeltaTest extends EclipseTest {
 		assertAdditionMarkerFor(folder, true);
 	}
 	
+	public void testOrphanedSubsubtree() throws TeamException, CoreException {
+		IProject project = createProject("testOrphanedSubsubtree", new String[] { "changed.txt", "deleted.txt", "folder1/", "folder1/a.txt", "folder1/folder2/b.txt"});
+		IFolder folder = project.getFolder(new Path("folder1"));
+		folder.move(new Path("sub/moved"), false, false, null);
+		folder = project.getFolder(new Path("sub/moved"));
+		ICVSFolder cvsFolder = CVSWorkspaceRoot.getCVSFolderFor(folder);
+		assertNotManaged(cvsFolder);
+		assertAdditionMarkerFor(folder, true);
+	}
+	
 	public void testDeletionHandling() throws TeamException, CoreException {
 		IProject project = createProject("testDeletionHandling", new String[] { "changed.txt", "deleted.txt", "folder1/", "folder1/a.txt", "folder1/folder2/b.txt"});
 		addResources(project, new String[] {"added.txt"}, false);
