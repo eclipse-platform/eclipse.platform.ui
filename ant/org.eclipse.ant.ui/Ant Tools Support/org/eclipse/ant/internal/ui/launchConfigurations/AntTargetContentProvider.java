@@ -162,15 +162,4 @@ public class AntTargetContentProvider implements IStructuredContentProvider {
 	public void setFilterInternalTargets(boolean filter) {
 		fFilterInternalTargets= filter;
 	}
-	
-	/**
-	 * Sorts the targets by the given column.
-	 * @param column one of:
-	 *   0 - target name
-	 *   1 - target description
-	 *   anything else - default order (unsorted)
-	 */
-	public void sort(int column) {
-		
-	}
 }
