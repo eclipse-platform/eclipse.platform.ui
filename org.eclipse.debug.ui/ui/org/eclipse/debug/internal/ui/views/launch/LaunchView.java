@@ -891,8 +891,8 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 					editor = fEditor;
 					page.bringToTop(editor);
 				} else {
-					page.closeEditor(fEditor, false);
 					editor = openEditor(page, input, id);
+					page.closeEditor(fEditor, false);
 					fEditor = editor;
 				}
 			}
