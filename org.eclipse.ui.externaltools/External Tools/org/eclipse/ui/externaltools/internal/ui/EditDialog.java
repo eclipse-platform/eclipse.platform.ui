@@ -393,7 +393,9 @@ public class EditDialog extends TitleAreaDialog {
 				DirectorySelectionDialog dialog = new DirectorySelectionDialog(getShell());
 				dialog.open();
 				Object[] results = dialog.getResult();
-				String selectedDirectory = (String)results[0];
+				String selectedDirectory = null;
+				if (results != null && results.length > 0)
+					selectedDirectory = (String)results[0];
 				if (selectedDirectory != null) {
 					directoryField.setText(selectedDirectory);
 				}
