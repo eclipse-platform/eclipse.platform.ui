@@ -331,7 +331,7 @@ protected void showPaneMenu(Control parent,Point point,boolean isFastView) {
 	});
 	item.setEnabled(!isZoomed && !isFastView && canZoom);
 
-	addPinEditorItem(aMenu);
+//	addPinEditorItem(aMenu);
 	
 	new MenuItem(aMenu, SWT.SEPARATOR);
 	
