@@ -84,8 +84,6 @@ public class CVSDecorationRunnable implements Runnable {
 			// will block if there are no resources to be decorated
 			IResource resource = notifier.next();
 
-			System.out.println("Decorating: " + resource.getFullPath());
-
 			// it is possible that the resource to be decorated is no longer associated
 			// with a CVS provider. This could happen if the team nature was removed
 			// between the time the decoration event was posted to the thread and the time
