@@ -589,7 +589,7 @@ public class AntCorePreferences {
 			urls.append(',');
 		}
 		
-		prefs.setValue(IAntCoreConstants.PREFERENCE_URLS, urls.toString());
+		prefs.setValue(IAntCoreConstants.PREFERENCE_ANT_URLS, urls.toString());
 	}
 	
 	protected void updatePropertyFiles(Preferences prefs) {
