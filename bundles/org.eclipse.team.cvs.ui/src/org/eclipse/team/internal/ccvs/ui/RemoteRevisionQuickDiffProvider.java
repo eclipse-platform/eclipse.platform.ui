@@ -200,11 +200,13 @@ public class RemoteRevisionQuickDiffProvider implements IQuickDiffReferenceProvi
 	private boolean computeChange(IProgressMonitor monitor) throws TeamException {
 		boolean needToUpdateReferenceDocument = false;
 		if(fReferenceInitialized) {
-			SyncInfo info = getSyncState(getFileFromEditor());
-			// check if 
+			SyncInfo info = getSyncState(getFileFromEditor());	
 			if(info == null && fLastSyncState != null) {
 				return true;
+			} else if(info == null) {
+				return false;
 			}
+			
 			int kind = info.getKind();			
 			if(fLastSyncState == null) {
 				needToUpdateReferenceDocument = true;
