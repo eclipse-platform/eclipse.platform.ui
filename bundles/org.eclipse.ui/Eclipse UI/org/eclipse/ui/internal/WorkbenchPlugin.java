@@ -399,6 +399,8 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		store.setDefault("ENABLE_CONFIGURABLE_PROJECT_WIZARD", false); //$NON-NLS-1$
 		// Temporary option to enable working sets
 		store.setDefault("ENABLE_WORKING_SETS", false); //$NON-NLS-1$		
+		// Temporary option to enable new menu organization
+		store.setDefault("ENABLE_NEW_MENUS", true); //$NON-NLS-1$		
 
 		FontRegistry registry = JFaceResources.getFontRegistry();
 		initializeFont(JFaceResources.DIALOG_FONT, registry, store);
