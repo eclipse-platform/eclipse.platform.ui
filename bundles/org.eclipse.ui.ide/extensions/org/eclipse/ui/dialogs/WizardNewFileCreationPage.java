@@ -16,8 +16,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -217,8 +219,22 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
             if (linkTargetPath != null)
                 fileHandle.createLink(linkTargetPath,
                         IResource.ALLOW_MISSING_LOCAL, monitor);
-            else
+            else {
+                IPath path = fileHandle.getFullPath();
+                IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+                int numSegments= path.segmentCount();
+                if (numSegments > 2 && !root.getFolder(path.removeLastSegments(1)).exists()) {
+                    // If the direct parent of the path doesn't exist, try to create the
+                    // necessary directories.
+                    for (int i= numSegments - 2; i > 0; i--) {
+                        IFolder folder = root.getFolder(path.removeLastSegments(i));
+                        if (!folder.exists()) {
+                            folder.create(false, true, monitor);
+                        }
+                    }
+                }
                 fileHandle.create(contents, false, monitor);
+            }
         } catch (CoreException e) {
             // If the file already existed locally, just refresh to get contents
             if (e.getStatus().getCode() == IResourceStatus.PATH_OCCUPIED)

@@ -397,7 +397,7 @@ public class ResourceAndContainerGroup implements Listener {
             return false;
         }
 
-        if (!(new Path("")).isValidSegment(resourceName)) { //$NON-NLS-1$
+        if (!(new Path("")).isValidPath(resourceName)) { //$NON-NLS-1$
             problemType = PROBLEM_NAME_INVALID;
             problemMessage = NLS.bind(IDEWorkbenchMessages.ResourceGroup_invalidFilename, resourceName);
             return false;

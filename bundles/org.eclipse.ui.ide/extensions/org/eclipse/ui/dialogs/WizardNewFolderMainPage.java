@@ -16,6 +16,7 @@ import java.util.Iterator;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -197,8 +198,22 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
                 if (linkTargetPath != null)
                     folderHandle.createLink(linkTargetPath,
                             IResource.ALLOW_MISSING_LOCAL, monitor);
-                else
+                else {
+	                IPath path = folderHandle.getFullPath();
+	                IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+	                int numSegments= path.segmentCount();
+	                if (numSegments > 2 && !root.getFolder(path.removeLastSegments(1)).exists()) {
+	                    // If the direct parent of the path doesn't exist, try to create the
+	                    // necessary directories.
+	                    for (int i= numSegments - 2; i > 0; i--) {
+	                        IFolder folder = root.getFolder(path.removeLastSegments(i));
+	                        if (!folder.exists()) {
+	                            folder.create(false, true, monitor);
+	                        }
+	                    }
+	                }
                     folderHandle.create(false, true, monitor);
+                }
             }
         } catch (CoreException e) {
             // If the folder already existed locally, just refresh to get contents
