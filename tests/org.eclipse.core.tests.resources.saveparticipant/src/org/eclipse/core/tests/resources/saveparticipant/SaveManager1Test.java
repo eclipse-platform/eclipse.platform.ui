@@ -200,8 +200,14 @@ public void testBuilder() {
 	IProject project = getWorkspace().getRoot().getProject(PROJECT_1);
 	assertTrue("0.0", project.isAccessible());
 
-	// Create and set a build spec for the project
 	try {
+		// Make sure autobuild is on
+		if (!getWorkspace().isAutoBuilding()) {
+			IWorkspaceDescription wsDesc = getWorkspace().getDescription();
+			wsDesc.setAutoBuilding(true);
+			getWorkspace().setDescription(wsDesc);
+		}
+		// Create and set a build spec for the project
 		IProjectDescription description = project.getDescription();
 		ICommand command = description.newCommand();
 		command.setBuilderName(DeltaVerifierBuilder.BUILDER_NAME);
