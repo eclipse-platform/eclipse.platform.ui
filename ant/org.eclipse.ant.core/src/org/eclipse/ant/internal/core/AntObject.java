@@ -43,4 +43,11 @@ public abstract class AntObject {
 	public void setLibrary(URL library) {
 		fLibrary = library;
 	}
+	
+	/**
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return fName;
+	}
 }
