@@ -9,14 +9,18 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.TeamPlugin;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.HistoryView;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.ui.actions.TeamAction;
@@ -36,8 +40,18 @@ public class ShowHistoryAction extends TeamAction {
 					resources.add(next);
 					continue;
 				}
+				if (next instanceof IFile) {
+					IFile file = (IFile)next;
+					CVSTeamProvider provider = (CVSTeamProvider)TeamPlugin.getManager().getProvider(file.getProject());
+					try {
+						resources.add(provider.getRemoteResource(file));
+					} catch (TeamException e) {
+						CVSUIPlugin.log(e.getStatus());
+						return null;
+					}
+				}
 				if (next instanceof IAdaptable) {
-					IAdaptable a = (IAdaptable) next;
+					IAdaptable a = (IAdaptable)next;
 					Object adapter = a.getAdapter(ICVSRemoteFile.class);
 					if (adapter instanceof ICVSRemoteFile) {
 						resources.add(adapter);
