@@ -302,6 +302,7 @@ public class InternalSiteManager {
 		BaseSiteLocalFactory factory = new BaseSiteLocalFactory();
 		ConfigurationSite configSite = (ConfigurationSite)factory.createConfigurationSiteModel((SiteMapModel)site,policy);
 		configSite.setPlatformURLString(site.getURL().toExternalForm());
+		configSite.setInstallSite(true);
 		
 		// obtain the list of plugins
 		IPlatformConfiguration runtimeConfiguration = BootLoader.getCurrentPlatformConfiguration();		
