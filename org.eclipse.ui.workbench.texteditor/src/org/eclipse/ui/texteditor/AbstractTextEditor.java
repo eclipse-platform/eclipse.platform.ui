@@ -37,6 +37,8 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.ST;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.VerifyKeyListener;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DropTarget;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
@@ -2202,6 +2204,29 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	}
 	
 	/**
+	 * Initializes the drag and drop support for the given viewer based on
+	 * provided editor adapter for drop target listeners.
+	 * 
+	 * @param viewer the viewer
+	 * @since 3.0
+	 */
+	protected void initializeDragAndDrop(ISourceViewer viewer) {
+		ITextEditorDropTargetListener listener= (ITextEditorDropTargetListener) getAdapter(ITextEditorDropTargetListener.class);
+		
+		if (listener == null) {
+			Object object= Platform.getAdapterManager().loadAdapter(this, "org.eclipse.ui.texteditor.ITextEditorDropTargetListener");
+			if (object instanceof ITextEditorDropTargetListener)
+				listener= (ITextEditorDropTargetListener)object;
+		}
+		
+		if (listener != null) {
+			DropTarget dropTarget = new DropTarget(viewer.getTextWidget(), DND.DROP_COPY | DND.DROP_MOVE);
+			dropTarget.setTransfer(listener.getTransfers());
+			dropTarget.addDropListener(listener);
+		}
+	}
+	
+	/**
 	 * The <code>AbstractTextEditor</code> implementation of this 
 	 * <code>IWorkbenchPart</code> method creates the vertical ruler and
 	 * source viewer.
@@ -2229,6 +2254,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		initializeViewerFont(fSourceViewer);
 		initializeViewerColors(fSourceViewer);
 		initializeFindScopeColor(fSourceViewer);
+		initializeDragAndDrop(fSourceViewer);
 		
 		StyledText styledText= fSourceViewer.getTextWidget();
 
@@ -4236,6 +4262,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			}
 			return null;
 		}
+		
+		if (Control.class.equals(required))
+			return fSourceViewer != null ? fSourceViewer.getTextWidget() : null;
 		
 		return super.getAdapter(required);
 	}
