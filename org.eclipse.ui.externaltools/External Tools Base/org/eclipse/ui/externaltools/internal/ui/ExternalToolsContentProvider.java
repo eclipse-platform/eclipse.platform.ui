@@ -58,7 +58,7 @@ public class ExternalToolsContentProvider implements IStructuredContentProvider 
 	
 	public void remove(IStructuredSelection selection) {
 		Object[] array= selection.toArray();
-		elements.remove(array);
+		elements.removeAll(Arrays.asList(array));
 		viewer.remove(array);
 	}
 }
