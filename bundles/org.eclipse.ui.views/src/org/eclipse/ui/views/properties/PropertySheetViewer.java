@@ -220,13 +220,15 @@ class PropertySheetViewer extends Viewer {
         }
 
         tree.addControlListener(new ControlAdapter() {
-			public void controlResized(ControlEvent e) {
-				Rectangle area = tree.getClientArea();
-				TreeColumn[] columns = tree.getColumns();
-				columns[0].setWidth(area.width * 40 / 100);
-				columns[1].setWidth(area.width - columns[0].getWidth() - 4);
-			}
-		});
+            public void controlResized(ControlEvent e) {
+                Rectangle area = tree.getClientArea();
+                TreeColumn[] columns = tree.getColumns();
+                if (area.width > 0 && columns[0].getWidth() == 0) {
+                    columns[0].setWidth(area.width * 40 / 100);
+                    columns[1].setWidth(area.width - columns[0].getWidth() - 4);
+                }
+            }
+        });
 
     }
 
