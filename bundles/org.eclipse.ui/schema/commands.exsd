@@ -240,6 +240,13 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="allowInDialogs" type="boolean">
+            <annotation>
+               <documentation>
+                  Whether this key binding should be made available in dialogs.  This can be used to make common text editing commands available in dialogs.  By default, this value is considered to be false.  Its use is entirely optional.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -288,6 +295,13 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
       </complexType>
    </element>
 
+<!--element name="sequence">
+      <complexType>
+         <sequence>
+            <element ref="stroke" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+      </complexType>
+   </element-->
 <!--element name="stroke">
       <complexType>
          <attribute name="value" type="string">
@@ -297,13 +311,6 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
                </documentation>
             </annotation>
          </attribute>
-      </complexType>
-   </element-->
-<!--element name="sequence">
-      <complexType>
-         <sequence>
-            <element ref="stroke" minOccurs="1" maxOccurs="unbounded"/>
-         </sequence>
       </complexType>
    </element-->
    <element name="context">
