@@ -609,7 +609,7 @@ public class ConfigurationView
 	/**
 	 * @see IConfiguredSiteChangedListener#featureUninstalled(IFeature)
 	 */
-	public void featureUninstalled(IFeature feature) {
+	public void featureRemoved(IFeature feature) {
 		//viewer.remove(feature);
 		viewer.refresh();
 	}

@@ -274,7 +274,7 @@ public class ConfiguredSite
 			// notify listeners
 			Object[] siteListeners= listeners.getListeners();
 			for (int i= 0; i < siteListeners.length; i++) {
-				((IConfiguredSiteChangedListener) siteListeners[i]).featureUninstalled(
+				((IConfiguredSiteChangedListener) siteListeners[i]).featureRemoved(
 					feature);
 			}
 		} catch (CoreException e) {
