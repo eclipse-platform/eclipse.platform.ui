@@ -25,6 +25,7 @@ import org.eclipse.ant.internal.ui.editor.outline.XMLCore;
 import org.eclipse.ant.internal.ui.editor.text.AnnotationAccess;
 import org.eclipse.ant.internal.ui.editor.text.AntEditorDocumentProvider;
 import org.eclipse.ant.internal.ui.editor.text.IAntEditorColorConstants;
+import org.eclipse.ant.internal.ui.editor.text.IReconcilingParticipant;
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.ant.internal.ui.model.AntUtil;
 import org.eclipse.ant.internal.ui.model.IAntUIHelpContextIds;
@@ -42,6 +43,7 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultLineTracker;
 import org.eclipse.jface.text.DocumentCommand;
+import org.eclipse.jface.text.IAutoIndentStrategy;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ILineTracker;
 import org.eclipse.jface.text.IRegion;
@@ -84,7 +86,7 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 /**
  * The actual editor implementation for Eclipse's Ant integration.
  */
-public class AntEditor extends TextEditor {
+public class AntEditor extends TextEditor implements IReconcilingParticipant {
 
 	//TODO the framework does not currently support/listen to the color registry
 	//https://bugs.eclipse.org/bugs/show_bug.cgi?id=54554
@@ -149,7 +151,7 @@ public class AntEditor extends TextEditor {
 			if (selection instanceof ITextSelection) {
 				ITextSelection textSelection= (ITextSelection)selection;
 				int offset= textSelection.getOffset();
-				node= getAntModel().getNode(offset);
+				node= getAntModel().getNode(offset, false);
 			}
 		
 			if (AntUIPlugin.getDefault().getPreferenceStore().getBoolean(IAntUIPreferenceConstants.OUTLINE_LINK_WITH_EDITOR)) {
@@ -365,8 +367,8 @@ public class AntEditor extends TextEditor {
     }
    
 	/* (non-Javadoc)
-     * Method declared on IAdaptable
-     */
+	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+	 */
     public Object getAdapter(Class key) {
         if (key.equals(IContentOutlinePage.class)) {
 			return getOutlinePage();
@@ -451,7 +453,6 @@ public class AntEditor extends TextEditor {
                     textWidget.setRedraw(true);
                 }
             }
-            
         } else if (moveCursor) {
             resetHighlightRange();
         }
@@ -557,14 +558,8 @@ public class AntEditor extends TextEditor {
 		return new AnnotationAccess();
 	}
 	
-	/**
-	 * Creates the source viewer to be used by this editor.
-	 * Subclasses may re-implement this method.
-	 *
-	 * @param parent the parent control
-	 * @param ruler the vertical ruler
-	 * @param styles style bits
-	 * @return the source viewer
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#createSourceViewer(org.eclipse.swt.widgets.Composite, org.eclipse.jface.text.source.IVerticalRuler, int)
 	 */
 	protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
 		fOverviewRuler= createOverviewRuler(getSharedColors());
@@ -735,15 +730,32 @@ public class AntEditor extends TextEditor {
 		if (getSelectionProvider() == null) {
 			return;
 		}
+		AntElementNode node= getNode();
+		synchronizeOutlinePage(node, checkIfOutlinePageActive);
+		
+	}
+	
+	protected void synchronize(boolean checkIfOutlinePageActive) {
+		if (getSelectionProvider() == null) {
+			return;
+		}
+		AntElementNode node= getNode();
+		if (AntUIPlugin.getDefault().getPreferenceStore().getBoolean(IAntUIPreferenceConstants.OUTLINE_LINK_WITH_EDITOR)) {
+			synchronizeOutlinePage(node, checkIfOutlinePageActive);
+		}
+		setSelection(node, false);
+		
+	}
+	
+	private AntElementNode getNode() {
 		AntElementNode node= null;
 		ISelection selection= getSelectionProvider().getSelection();
 		if (selection instanceof ITextSelection) {
 			ITextSelection textSelection= (ITextSelection)selection;
 			int offset= textSelection.getOffset();
-			node= getAntModel().getNode(offset);
+			node= getAntModel().getNode(offset, false);
 		}
-		synchronizeOutlinePage(node, checkIfOutlinePageActive);
-		
+		return node;
 	}
 	
 	protected void synchronizeOutlinePage(AntElementNode node, boolean checkIfOutlinePageActive) {
@@ -754,16 +766,22 @@ public class AntEditor extends TextEditor {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.editor.text.IReconcilingParticipant#reconciled()
+	 */
 	public void reconciled() {
-		if (AntUIPlugin.getDefault().getPreferenceStore().getBoolean(IAntUIPreferenceConstants.OUTLINE_LINK_WITH_EDITOR)) {
-			Shell shell= getSite().getShell();
-			if (shell != null && !shell.isDisposed()) {
-				shell.getDisplay().asyncExec(new Runnable() {
-					public void run() {
-						synchronizeOutlinePage(true);
-					}
-				});
-			}
+		IAutoIndentStrategy strategy= getSourceViewerConfiguration().getAutoIndentStrategy(null, null);
+		if (strategy instanceof AntAutoIndentStrategy) {
+			((AntAutoIndentStrategy)strategy).reconciled();
+		}
+		
+		Shell shell= getSite().getShell();
+		if (shell != null && !shell.isDisposed()) {
+			shell.getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					synchronize(true);
+				}
+			});
 		}
 	}
 	
