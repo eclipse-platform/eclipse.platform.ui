@@ -204,6 +204,7 @@ public class EclipseController implements EclipseLifeCycleListener {
 	}
 
 	public void eclipseEnded() {
+		eclipseEnded = true;
 		connection.reset();
 	}
 	private void obtainLock() throws IOException {
