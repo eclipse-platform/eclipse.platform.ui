@@ -7,14 +7,16 @@ package org.eclipse.team.internal.ccvs.ui.wizards;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -23,14 +25,16 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Cursor;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.CVSStatus;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
+import org.eclipse.team.ccvs.core.ICVSFile;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 
@@ -47,12 +51,57 @@ import org.eclipse.team.internal.ccvs.ui.Policy;
  */
 public class KSubstWizard extends Wizard {
 	private KSubstOption defaultKSubst;
-	private KSubstChangeSet changeSet;
+
+	private final IResource[] resources;
+	private final int depth;
+	private List changeList = null;
+	private KSubstOption changeOption = null;
 
 	private KSubstWizardSelectionPage mainPage;
 	private KSubstWizardSummaryPage summaryPage;
 	private KSubstWizardSharedFilesPage sharedFilesPage;
 	private KSubstWizardDirtyFilesPage dirtyFilesPage;
+	
+	public class KSubstChangeElement {
+		public static final int ADDED_FILE = 1;
+		public static final int CHANGED_FILE = 2;
+		public static final int UNCHANGED_FILE = 4;
+	
+		private IFile file;
+		private int classification;
+		private boolean excluded;
+		private KSubstOption fromKSubst;
+		private KSubstOption toKSubst;
+		
+		private KSubstChangeElement(IFile file, int classification, boolean excluded, KSubstOption fromKSubst, KSubstOption toKSubst) {
+			this.file = file;
+			this.classification = classification;
+			this.excluded = excluded;
+			this.fromKSubst = fromKSubst;
+			this.toKSubst = toKSubst;
+		}
+		public boolean matchesFilter(int filter) {
+			return (classification & filter) != 0;
+		}
+		public boolean isExcluded() {
+			return excluded;
+		}
+		public void setExcluded(boolean excluded) {
+			this.excluded = excluded;
+		}
+		public boolean isNewKSubstMode() {
+			return ! fromKSubst.equals(toKSubst);
+		}
+		public void setKSubst(KSubstOption toKSubst) {
+			this.toKSubst = toKSubst;
+		}
+		public KSubstOption getKSubst() {
+			return toKSubst;
+		}
+		public IFile getFile() {
+			return file;
+		}
+	}
 	
 	/**
 	 * Creates a wizard to set the keyword substitution mode for the specified resources.
@@ -64,7 +113,8 @@ public class KSubstWizard extends Wizard {
 	public KSubstWizard(IResource[] resources, int depth, KSubstOption defaultOption) {
 		super();
 		this.defaultKSubst = defaultOption;
-		this.changeSet = new KSubstChangeSet(resources, depth);
+		this.resources = resources;
+		this.depth = depth;
 		setWindowTitle(Policy.bind("KSubstWizard.title"));
 	}
 
@@ -88,7 +138,7 @@ public class KSubstWizard extends Wizard {
 		// add summary page
 		pageTitle = Policy.bind("KSubstWizardSummaryPage.pageTitle"); //$NON-NLS-1$
 		pageDescription = Policy.bind("KSubstWizardSummaryPage.pageDescription"); //$NON-NLS-1$
-		summaryPage = new KSubstWizardSummaryPage(pageTitle);
+		summaryPage = new KSubstWizardSummaryPage(pageTitle, false);
 		summaryPage.setDescription(pageDescription);
 		summaryPage.setTitle(pageTitle);
 		addPage(summaryPage);
@@ -123,7 +173,6 @@ public class KSubstWizard extends Wizard {
 	}
 	
 	public IWizardPage getPreviousPage(IWizardPage page) {
-		computeAffectedFiles();
 		if (page == summaryPage) {
 			if (sharedFilesPage.includeSharedFiles() && prepareDirtyFilesPage()) return dirtyFilesPage;
 			if (prepareSharedFilesPage()) return sharedFilesPage;
@@ -163,10 +212,9 @@ public class KSubstWizard extends Wizard {
 					try {
 						monitor.beginTask("", 10000);
 						monitor.setTaskName(Policy.bind("KSubstWizard.working"));
-						computeAffectedFiles();
-						Map table = getProviderMapping(changeSet.getChangeSet(KSubstChangeSet.ADDED_FILES |
-							(sharedFilesPage.includeSharedFiles() ? KSubstChangeSet.UNCHANGED_FILES |
-								(dirtyFilesPage.includeDirtyFiles() ? KSubstChangeSet.CHANGED_FILES : 0) : 0)));
+						computeChangeList(mainPage.getKSubstOption());
+						Map table = getProviderMapping();
+						
 						int workPerProvider = 10000 / (table.size() + 1);
 						monitor.worked(workPerProvider);
 						for (Iterator it = table.entrySet().iterator(); it.hasNext();) {
@@ -237,70 +285,115 @@ public class KSubstWizard extends Wizard {
 	}
 
 	private boolean prepareDirtyFilesPage() {
-		Cursor busyCursor = new Cursor(getContainer().getShell().getDisplay(), SWT.CURSOR_WAIT);
-		try {
-			getContainer().getShell().setCursor(busyCursor);
-			computeAffectedFiles();
-			Collection files = changeSet.getFileSet(KSubstChangeSet.CHANGED_FILES);
-			dirtyFilesPage.setDirtyFilesList(files);
-			return files.size() != 0;
-		} finally {
-			getContainer().getShell().setCursor(null);
-			busyCursor.dispose();
-		}
+		BusyIndicator.showWhile(getContainer().getShell().getDisplay(), new Runnable() {
+			public void run() {
+				computeChangeList(mainPage.getKSubstOption());
+				dirtyFilesPage.setChangeList(changeList);
+			}
+		});
+		return ! dirtyFilesPage.isListEmpty();
 	}
 
 	private boolean prepareSharedFilesPage() {
-		Cursor busyCursor = new Cursor(getContainer().getShell().getDisplay(), SWT.CURSOR_WAIT);
-		try {
-			getContainer().getShell().setCursor(busyCursor);
-			computeAffectedFiles();
-			Collection files = changeSet.getFileSet(KSubstChangeSet.CHANGED_FILES | KSubstChangeSet.UNCHANGED_FILES);
-			sharedFilesPage.setSharedFilesList(files);
-			return files.size() != 0;
-		} finally {
-			getContainer().getShell().setCursor(null);
-			busyCursor.dispose();
-		}
+		BusyIndicator.showWhile(getContainer().getShell().getDisplay(), new Runnable() {
+			public void run() {
+				computeChangeList(mainPage.getKSubstOption());
+				sharedFilesPage.setChangeList(changeList);
+			}
+		});
+		return ! sharedFilesPage.isListEmpty();
 	}
 	
 	private void prepareSummaryPage() {
-		Cursor busyCursor = new Cursor(getContainer().getShell().getDisplay(), SWT.CURSOR_WAIT);
-		try {
-			getContainer().getShell().setCursor(busyCursor);
-			computeAffectedFiles();
-			Map affectedFiles = changeSet.getChangeSet(KSubstChangeSet.ADDED_FILES |
-				(sharedFilesPage.includeSharedFiles() ? KSubstChangeSet.UNCHANGED_FILES |
-					(dirtyFilesPage.includeDirtyFiles() ? KSubstChangeSet.CHANGED_FILES : 0) : 0));
-			summaryPage.setChangeSet(affectedFiles);
-		} finally {
-			getContainer().getShell().setCursor(null);
-			busyCursor.dispose();
-		}
-	}
-
-	private void computeAffectedFiles() {
-		try {
-			changeSet.computeAffectedFiles(mainPage.getKSubstOption());
-		} catch (TeamException e) {
-			ErrorDialog.openError(getShell(), Policy.bind("KSubstWizard.problemsMessage"), null, e.getStatus()); //$NON-NLS-1$
-		}
-	}
-
-	private Map getProviderMapping(Map affectedFiles) {
-		Map table = new HashMap();
-		for (Iterator it = affectedFiles.entrySet().iterator(); it.hasNext();) {
-			Map.Entry entry = (Map.Entry) it.next();
-			IFile file = (IFile) entry.getKey();
-			KSubstOption toKSubst = (KSubstOption) entry.getValue();
-			// classify file according to its provider
-			RepositoryProvider provider = RepositoryProvider.getProvider(file.getProject(), CVSProviderPlugin.getTypeId());
-			Map providerMap = (Map) table.get(provider);
-			if (providerMap == null) {
-				providerMap = new HashMap();
-				table.put(provider, providerMap);
+		BusyIndicator.showWhile(getContainer().getShell().getDisplay(), new Runnable() {
+			public void run() {
+				computeChangeList(mainPage.getKSubstOption());
+				summaryPage.setChangeList(changeList, getFilters());
 			}
-			providerMap.put(file, toKSubst);
+		});
+	}
+	
+	/**
+	 * @param ksubst the desired keyword substitution mode, if null chooses for each file:
+	 *         <code>KSubstOption.fromPattern(fileName).isBinary() ? KSUBST_BINARY : KSUBST_TEXT</code>
+	 */
+	private void computeChangeList(final KSubstOption ksubst) {
+		if (changeList != null) {
+			if (changeOption == ksubst) return;
+			changeList.clear();
+		} else {
+			changeList = new ArrayList();
+		}
+		changeOption = ksubst;
+		// recurse over all specified resources, considering each exactly once
+		final Set seen = new HashSet();
+		for (int i = 0; i < resources.length; i++) {
+			final IResource currentResource = resources[i];
+			try {
+				currentResource.accept(new IResourceVisitor() {
+					public boolean visit(IResource resource) throws CoreException {
+						try {
+							if (resource.getType() == IResource.FILE && resource.exists() && ! seen.contains(resource)) {
+								seen.add(resource);
+								IFile file = (IFile) resource;
+								ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor(file);
+								if (cvsFile.isManaged()) {
+									ResourceSyncInfo info = cvsFile.getSyncInfo();
+									// classify the change
+									final int classification;
+									if (info.isAdded()) {
+										classification = KSubstChangeElement.ADDED_FILE;
+									} else if (info.isDeleted()) {
+										return true;
+									} else if (cvsFile.isModified()) {
+										classification = KSubstChangeElement.CHANGED_FILE;
+									} else {
+										classification = KSubstChangeElement.UNCHANGED_FILE;
+									}
+									// determine the to/from substitution modes
+									KSubstOption fromKSubst = KSubstOption.fromMode(info.getKeywordMode());
+									KSubstOption toKSubst = ksubst;
+									if (ksubst == null) {
+										toKSubst = KSubstOption.fromPattern(file.getName());
+									}
+									changeList.add(new KSubstChangeElement(file, classification, false, fromKSubst, toKSubst));
+								}
+							}
+						} catch (TeamException e) {
+							throw new CoreException(e.getStatus());
+						}
+						// always return true and let the depth determine if children are visited
+						return true;
+					}
+				}, depth, false);
+			} catch (CoreException e) {
+				ErrorDialog.openError(getShell(), Policy.bind("KSubstWizard.problemsMessage"), null, e.getStatus()); //$NON-NLS-1$
+			}
+		}
+	}
+
+	private int getFilters() {
+		return KSubstChangeElement.ADDED_FILE |
+			(sharedFilesPage.includeSharedFiles() ? KSubstChangeElement.UNCHANGED_FILE |
+			(dirtyFilesPage.includeDirtyFiles() ? KSubstChangeElement.CHANGED_FILE : 0) : 0);
+	}
+	
+	private Map getProviderMapping() {
+		Map table = new HashMap();
+		int filter = getFilters();
+		for (Iterator it = changeList.iterator(); it.hasNext();) {
+			KSubstChangeElement change = (KSubstChangeElement) it.next();
+			if (! change.isExcluded() && change.isNewKSubstMode() && change.matchesFilter(filter)) {
+				// classify file according to its provider
+				IFile file = change.getFile();
+				RepositoryProvider provider = RepositoryProvider.getProvider(file.getProject(), CVSProviderPlugin.getTypeId());
+				Map providerMap = (Map) table.get(provider);
+				if (providerMap == null) {
+					providerMap = new HashMap();
+					table.put(provider, providerMap);
+				}
+				providerMap.put(file, change.toKSubst);
+			}
 		}
 		return table;
 	}

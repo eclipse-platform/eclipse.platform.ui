@@ -204,7 +204,7 @@ public abstract class CVSWizardPage extends WizardPage {
 	}
 	
 	/**
-	 * Creates a ListViewer whose input is a Collection of IFiles.
+	 * Creates a ListViewer whose input is an array of IFiles.
 	 * 
 	 * @param parent  the parent of the viewer
 	 * @param title  the text for the title label
@@ -216,9 +216,7 @@ public abstract class CVSWizardPage extends WizardPage {
 		ListViewer listViewer = new ListViewer(parent, SWT.READ_ONLY | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
 		listViewer.setContentProvider(new IStructuredContentProvider() {
 			public Object[] getElements(Object inputElement) {
-				Collection collection = (Collection) inputElement;
-				if (collection == null) return new IFile[0];
-				return (IFile[]) collection.toArray(new IFile[collection.size()]);
+				return (Object[]) inputElement;
 			}
 			public void dispose() {
 			}

@@ -14,6 +14,7 @@ import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.ui.ResizableWizardDialog;
 import org.eclipse.team.internal.ccvs.ui.wizards.KSubstWizard;
 import org.eclipse.team.ui.actions.TeamAction;
 
@@ -29,7 +30,7 @@ public class SetKeywordSubstitutionAction extends TeamAction {
 	public void run(IAction action) {
 		final IResource[] resources = getSelectedResources();
 		KSubstWizard wizard = new KSubstWizard(resources, IResource.DEPTH_INFINITE, previousOption);
-		WizardDialog dialog = new WizardDialog(getShell(), wizard);
+		WizardDialog dialog = new ResizableWizardDialog(getShell(), wizard);
 		dialog.setMinimumPageSize(350, 250);
 		dialog.open();
 		previousOption = wizard.getKSubstOption();

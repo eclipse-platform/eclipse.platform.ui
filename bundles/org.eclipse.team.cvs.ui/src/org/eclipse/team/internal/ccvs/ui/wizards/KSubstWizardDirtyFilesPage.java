@@ -5,18 +5,19 @@ package org.eclipse.team.internal.ccvs.ui.wizards;
  * All Rights Reserved.
  */
 
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.wizards.KSubstWizard.KSubstChangeElement;
 
 /**
  * Page to warn user about uncommitted outgoing changes.
@@ -55,7 +56,19 @@ public class KSubstWizardDirtyFilesPage extends CVSWizardPage {
 		return includeDirtyFiles;
 	}
 	
-	public void setDirtyFilesList(Collection files) {
-		listViewer.setInput(files);
+	public void setChangeList(List changes) {
+		List filteredFiles = new ArrayList();
+		for (Iterator it = changes.iterator(); it.hasNext();) {
+			KSubstChangeElement change = (KSubstChangeElement) it.next();
+			if (change.matchesFilter(KSubstChangeElement.CHANGED_FILE)) {
+				filteredFiles.add(change.getFile());
+			}
+		}
+		listViewer.setInput(filteredFiles.toArray());
+	}
+	
+	public boolean isListEmpty() {
+		// returns true iff the list is empty after filtering
+		return listViewer.getList().getItemCount() == 0;
 	}
 }
