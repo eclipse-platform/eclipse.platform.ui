@@ -22,27 +22,28 @@
 <!-- **************** TESTS ******************* -->
 
   <extension point="org.eclipse.core.tests.harness.tests">
-    <test id="org.eclipse.team.tests.cvs.core.AllTests">
+    
+    <test id="cvs.all">
       <run class="org.eclipse.team.tests.ccvs.core.AllTests"/>
     </test>
-    <test id="org.eclipse.team.tests.cvs.core.ProviderTests">
+    
+    <test id="cvs.provider">
       <run class="org.eclipse.team.tests.ccvs.core.provider.AllTests"/>
     </test>
-    <test id="org.eclipse.team.tests.cvs.core.CompatibilityTest">
+    
+    <test id="cvs.compatibility">
       <run class="org.eclipse.team.tests.ccvs.core.compatible.AllTests"/>
     </test>
-    <test id="org.eclipse.team.tests.cvs.core.CVSResources">
+    
+    <test id="cvs.resources">
       <run class="org.eclipse.team.tests.ccvs.core.cvsresources.AllTests"/>
     </test>
-    <test id="org.eclipse.team.tests.cvs.core.CurrentTest">
-      <run class="org.eclipse.team.tests.ccvs.core.compatible.CurrentTest"/>
-    </test>
     
-    <test id="sync">
+    <test id="cvs.sync">
       <run class="org.eclipse.team.tests.ccvs.core.provider.SyncElementTest"/>
     </test>
     
-     <test id="remote">
+     <test id="cvs.remote">
       <run class="org.eclipse.team.tests.ccvs.core.provider.RemoteResourceTest"/>
     </test>
   </extension>
