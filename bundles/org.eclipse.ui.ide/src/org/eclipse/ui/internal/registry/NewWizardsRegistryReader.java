@@ -370,6 +370,9 @@ public WizardCollectionElement getWizardElements() {
 	return wizardElements;
 }
 protected Object[] getWizardCollectionElements() {
+	if (!areWizardsRead()) {
+		readWizards();
+	}
 	return wizardElements.toArray();
 }
 }

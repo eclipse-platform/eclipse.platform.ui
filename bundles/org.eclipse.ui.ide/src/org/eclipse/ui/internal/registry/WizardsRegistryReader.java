@@ -163,6 +163,9 @@ protected boolean areWizardsRead() {
 	return wizards != null;
 }
 protected Object[] getWizardCollectionElements() {
+	if (!areWizardsRead()) {
+		readWizards();
+	}
 	return wizards.toArray();
 }
 }
