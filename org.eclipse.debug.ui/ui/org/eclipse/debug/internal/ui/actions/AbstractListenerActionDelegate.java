@@ -9,7 +9,6 @@ import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventListener;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.views.DebugSelectionManager;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Shell;
@@ -167,7 +166,7 @@ public abstract class AbstractListenerActionDelegate extends AbstractDebugAction
 					if (getPage() != null) {
 						IWorkbenchWindow window= getPage().getWorkbenchWindow();
 						if (window != null && window.getShell() != null && !window.getShell().isDisposed()) {
-							ISelection selection= DebugSelectionManager.getDefault().getSelection(page,IDebugUIConstants.ID_DEBUG_VIEW);
+							ISelection selection= page.getSelection(IDebugUIConstants.ID_DEBUG_VIEW);
 							update(getAction(), selection);
 						}
 					}

@@ -68,7 +68,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.texteditor.FindReplaceAction;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.IUpdate;
@@ -76,7 +78,7 @@ import org.eclipse.ui.texteditor.IUpdate;
 /**
  * This view shows variables and their values for a particular stack frame
  */
-public class VariablesView extends AbstractDebugEventHandlerView implements ISelectionChangedListener, 
+public class VariablesView extends AbstractDebugEventHandlerView implements ISelectionListener, 
 																	IPropertyChangeListener,
 																	IValueDetailListener,
 																	IDebugExceptionHandler {
@@ -197,27 +199,14 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	 * @see IWorkbenchPart#dispose()
 	 */
 	public void dispose() {
-		// listen to selection in debug view
-		DebugSelectionManager.getDefault().removeSelectionChangedListener(this, getSite().getPage(), IDebugUIConstants.ID_DEBUG_VIEW);	
+		getSite().getPage().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
 		DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
-		getDetailDocument().removeDocumentListener(getDetailDocumentListener());
 		Viewer viewer = getViewer();
 		if (viewer != null) {
 			((VariablesViewer)viewer).dispose();
+			getDetailDocument().removeDocumentListener(getDetailDocumentListener());
 		}
 		super.dispose();
-	}
-
-	/** 
-	 * The <code>VariablesView</code> listens for selection changes in the <code>LaunchesView</code>
-	 *
-	 * @see ISelectionListener#selectionChanged(IWorkbenchPart, ISelection)
-	 */
-	public void selectionChanged(SelectionChangedEvent event) {
-		ISelection sel = event.getSelection();
-		if (sel instanceof IStructuredSelection) {
-			setViewerInput((IStructuredSelection)sel);
-		}
 	}
 
 	protected void setViewerInput(IStructuredSelection ssel) {
@@ -334,7 +323,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		createDetailContextMenu(dv.getTextWidget());
 		
 		// listen to selection in debug view
-		DebugSelectionManager.getDefault().addSelectionChangedListener(this, getSite().getPage(), IDebugUIConstants.ID_DEBUG_VIEW);
+		getSite().getPage().addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
 		setEventHandler(createEventHandler(vv));
 		
 		return vv;
@@ -453,7 +442,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	 * Initializes the viewer input on creation
 	 */
 	protected void setInitialContent() {
-		ISelection selection = DebugSelectionManager.getDefault().getSelection(getSite().getPage(), IDebugUIConstants.ID_DEBUG_VIEW);
+		ISelection selection= getSite().getPage().getSelection(IDebugUIConstants.ID_DEBUG_VIEW);
 		if (!selection.isEmpty() && selection instanceof IStructuredSelection) {
 			setViewerInput((IStructuredSelection) selection);
 		}
@@ -802,5 +791,15 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	
 	protected VariablesViewSelectionProvider getVariablesViewSelectionProvider() {
 		return fSelectionProvider;
+	}
+	/** 
+	 * The <code>VariablesView</code> listens for selection changes in the <code>LaunchesView</code>
+	 *
+	 * @see ISelectionListener#selectionChanged(IWorkbenchPart, ISelection)
+	 */
+	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
+		if (selection instanceof IStructuredSelection) {
+			setViewerInput((IStructuredSelection) selection);
+		}
 	}
 }

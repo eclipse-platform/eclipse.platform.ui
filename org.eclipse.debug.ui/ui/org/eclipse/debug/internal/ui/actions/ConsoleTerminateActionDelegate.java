@@ -7,7 +7,6 @@ package org.eclipse.debug.internal.ui.actions;
  
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.views.ConsoleView;
-import org.eclipse.debug.internal.ui.views.DebugSelectionManager;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
@@ -41,12 +40,12 @@ public class ConsoleTerminateActionDelegate extends TerminateActionDelegate {
 	public void init(IViewPart view) {
 		super.init(view);
 		//listen to selections in the launch view
-		DebugSelectionManager.getDefault().addSelectionChangedListener(this, getWindow(), IDebugUIConstants.ID_DEBUG_VIEW);
+		getWindow().getSelectionService().addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
 	}
 	
 	public void dispose() {
 		super.dispose();
-		DebugSelectionManager.getDefault().removeSelectionChangedListener(this, getWindow(), IDebugUIConstants.ID_DEBUG_VIEW);	
+		getWindow().getSelectionService().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);	
 	}
 	
 	protected void update(IAction action, ISelection s) {

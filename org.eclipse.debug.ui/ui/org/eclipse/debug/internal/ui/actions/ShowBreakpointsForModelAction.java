@@ -17,16 +17,15 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
-import org.eclipse.debug.internal.ui.views.DebugSelectionManager;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
@@ -34,7 +33,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
  * of the selected debug element in the launch view.
  * 
  */
-public class ShowBreakpointsForModelAction extends ToggleFilterAction implements ISelectionChangedListener {
+public class ShowBreakpointsForModelAction extends ToggleFilterAction implements ISelectionListener {
 
 	/**
 	 * The view associated with this action
@@ -73,7 +72,7 @@ public class ShowBreakpointsForModelAction extends ToggleFilterAction implements
 		setId(DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier() + ".ShowBreakpointsForModelAction"); //$NON-NLS-1$
 		
 		// listen to selection changes in the debug view
-		DebugSelectionManager.getDefault().addSelectionChangedListener(this, view.getSite().getPage(), IDebugUIConstants.ID_DEBUG_VIEW);
+		view.getSite().getPage().addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
 		setView(view);
 		WorkbenchHelp.setHelp(
 			this,
@@ -96,15 +95,13 @@ public class ShowBreakpointsForModelAction extends ToggleFilterAction implements
 	}
 	
 	public void dispose() {
-		DebugSelectionManager.getDefault().removeSelectionChangedListener(this, getView().getSite().getPage(), IDebugUIConstants.ID_DEBUG_VIEW);
+		getView().getSite().getPage().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
 	}
 	
 	/**
-	 * @see ISelectionChangedListener#selectionChanged(SelectionChangedEvent)
+	 * @see ISelectionListener#selectionChanged(IWorkbenchPart, ISelection)
 	 */
-	public void selectionChanged(SelectionChangedEvent event) {
-		
-		ISelection selection= event.getSelection();
+	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection ss= (IStructuredSelection)selection;
 			List identifiers= getIdentifiers(ss);
@@ -147,6 +144,7 @@ public class ShowBreakpointsForModelAction extends ToggleFilterAction implements
 			} 
 		}
 	}
+
 	
 	/**
 	 * Selection has changed in the debug view
@@ -186,4 +184,5 @@ public class ShowBreakpointsForModelAction extends ToggleFilterAction implements
 		}
 		return identifiers;
 	}
+	
 }

@@ -11,7 +11,6 @@ import java.util.Map;
 
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
 import org.eclipse.debug.internal.ui.LazyModelPresentation;
-import org.eclipse.debug.internal.ui.views.DebugSelectionManager;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
@@ -238,9 +237,6 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 		if (getViewer() instanceof StructuredViewer) {
 			((StructuredViewer)getViewer()).addDoubleClickListener(this);	
 		}
-		// notify the selection manager that a debug view has been
-		// created/realized.
-		DebugSelectionManager.getDefault().registerView(this);
 		// create the message page
 		setMessagePage(new MessagePage());
 		getMessagePage().createControl(getPageBook());

@@ -10,22 +10,21 @@ import java.util.Iterator;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.views.DebugSelectionManager;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
-public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowActionDelegate, IViewActionDelegate, ISelectionChangedListener {
+public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowActionDelegate, IViewActionDelegate, ISelectionListener {
 	
 	/**
 	 * The underlying action for this delegate
@@ -59,7 +58,7 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	 * @see IWorkbenchWindowActionDelegate#dispose()
 	 */
 	public void dispose(){
-		DebugSelectionManager.getDefault().removeSelectionChangedListener(this, DebugUIPlugin.getActiveWorkbenchWindow(), IDebugUIConstants.ID_DEBUG_VIEW);
+		DebugUIPlugin.getActiveWorkbenchWindow().getSelectionService().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
 	}
 
 	/**
@@ -67,7 +66,7 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	 */
 	public void init(IWorkbenchWindow window){
 		// listen to selection changes in the debug view
-		DebugSelectionManager.getDefault().addSelectionChangedListener(this, window, IDebugUIConstants.ID_DEBUG_VIEW);
+		window.getSelectionService().addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
 	}
 
 	/**
@@ -280,13 +279,10 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	}	
 	
 	/**
-	 * Track selection changes in the launch view.
-	 * 
-	 * @see ISelectionChangedListener#selectionChanged(SelectionChangedEvent)
-	 * @see DebugSelectionManager
+	 * @see ISelectionListener#selectionChanged(IWorkbenchPart, ISelection)
 	 */
-	public void selectionChanged(SelectionChangedEvent event) {
-		update(getAction(), event.getSelection());
+	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
+		update(getAction(), selection);
 	}
 	
 	protected void setAction(IAction action) {

@@ -35,6 +35,7 @@ import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.ITextInputListener;
 import org.eclipse.jface.text.TextViewer;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.Viewer;
@@ -43,16 +44,17 @@ import org.eclipse.swt.custom.VerifyKeyListener;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.texteditor.FindReplaceAction;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.IUpdate;
 
-public class ConsoleView extends AbstractDebugEventHandlerView implements IDocumentListener, ISelectionChangedListener, ILaunchListener {
+public class ConsoleView extends AbstractDebugEventHandlerView implements IDocumentListener, ISelectionListener, ILaunchListener {
 
 	protected ClearOutputAction fClearOutputAction= null;
 
@@ -76,7 +78,7 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 		getSite().setSelectionProvider(cv.getSelectionProvider());
 		
 		// listen to selection changes in the debug view
-		DebugSelectionManager.getDefault().addSelectionChangedListener(this,getSite().getPage(), IDebugUIConstants.ID_DEBUG_VIEW);
+		getSite().getPage().addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
 		// listen to launches
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
 		
@@ -291,7 +293,7 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 	}
 	
 	public void dispose() {
-		DebugSelectionManager.getDefault().removeSelectionChangedListener(this, getSite().getPage(), IDebugUIConstants.ID_DEBUG_VIEW);
+		getSite().getPage().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
 		if (getConsoleViewer() != null) {
 			getConsoleViewer().dispose();
 		}
@@ -312,16 +314,6 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 	 */
 	public void documentChanged(DocumentEvent arg0) {
 		updateAction(ITextEditorActionConstants.FIND);
-	}
-	
-	/**
-	 * Change to show the document associated with the 
-	 * selection in the debug view.
-	 * 
-	 * @see ISelectionChangedListener#selectionChanged(SelectionChangedEvent)
-	 */
-	public void selectionChanged(SelectionChangedEvent event) {
-		setViewerInput(DebugUITools.getCurrentProcess());
 	}
 
 	public ConsoleViewer getConsoleViewer() {
@@ -375,6 +367,13 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 	 * @see ILaunchListener#launchChanged(ILaunch)
 	 */
 	public void launchChanged(ILaunch launch) {
+	}
+	
+	/**
+	 * @see ISelectionListener#selectionChanged(IWorkbenchPart, ISelection)
+	 */
+	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
+		setViewerInput(DebugUITools.getCurrentProcess());
 	}
 }
 
