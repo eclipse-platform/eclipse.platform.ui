@@ -392,7 +392,7 @@
 			base-type="org.eclipse.core.runtime.xml"
 			priority="high">
 			<describer class="org.eclipse.core.runtime.content.XMLRootElementContentDescriber">
-				<parameter name="element" value="project" />
+				<parameter name="element" value="testObjectStateContentTypeElement" />
 			</describer>
 		</content-type>
    </extension>
