@@ -45,7 +45,7 @@ public class RefreshBuildFilesAction extends Action implements IUpdate {
 	 * determining which buildfiles to refresh.
 	 */
 	public RefreshBuildFilesAction(AntView view) {
-		super(AntViewActionMessages.getString("RefreshBuildFilesAction.Refresh_Buildfiles_1"), AntUIImages.getImageDescriptor(IAntUIConstants.IMG_ACTION_REFRESH)); //$NON-NLS-1$
+		super(AntViewActionMessages.getString("RefreshBuildFilesAction.Refresh_Buildfiles_1"), AntUIImages.getImageDescriptor(IAntUIConstants.IMG_REFRESH)); //$NON-NLS-1$
 		setToolTipText(AntViewActionMessages.getString("RefreshBuildFilesAction.Refresh_Buildfiles_1")); //$NON-NLS-1$
 		this.view = view;
 		WorkbenchHelp.setHelp(this, IAntUIHelpContextIds.REFRESH_BUILDFILE_ACTION);

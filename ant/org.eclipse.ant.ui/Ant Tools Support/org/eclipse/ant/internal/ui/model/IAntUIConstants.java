@@ -33,11 +33,6 @@ public interface IAntUIConstants {
 
 	// ------- Images -------
 	/**
-	 * Refresh action image
-	 */
-	public static final String IMG_ACTION_REFRESH = PLUGIN_ID + ".IMG_ACTION_REFRESH"; //$NON-NLS-1$
-
-	/**
 	 * Main tab image.
 	 */
 	public static final String IMG_TAB_MAIN = PLUGIN_ID + ".IMG_TAB_MAIN"; //$NON-NLS-1$
@@ -77,6 +72,7 @@ public interface IAntUIConstants {
 	public static final String IMG_FILTER_INTERNAL_TARGETS= PLUGIN_ID + ".filterInternalTargets"; //$NON-NLS-1$
 	public static final String IMG_FILTER_PROPERTIES= PLUGIN_ID + ".filterProperties"; //$NON-NLS-1$
 	public static final String IMG_SORT_OUTLINE= PLUGIN_ID + ".sortOutline"; //$NON-NLS-1$
+	public static final String IMG_REFRESH = PLUGIN_ID + ".IMG_REFRESH"; //$NON-NLS-1$
 	 
 	//	Overlays
 	 public static final String IMG_OVR_ERROR = PLUGIN_ID + ".ovrError";  //$NON-NLS-1$

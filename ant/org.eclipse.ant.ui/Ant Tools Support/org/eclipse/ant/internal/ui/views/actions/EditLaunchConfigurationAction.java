@@ -15,7 +15,9 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.ant.internal.ui.launchConfigurations.AntLaunchShortcut;
+import org.eclipse.ant.internal.ui.model.AntUIImages;
 import org.eclipse.ant.internal.ui.model.AntUtil;
+import org.eclipse.ant.internal.ui.model.IAntUIConstants;
 import org.eclipse.ant.internal.ui.model.IAntUIHelpContextIds;
 import org.eclipse.ant.internal.ui.views.AntView;
 import org.eclipse.ant.internal.ui.views.elements.AntNode;
@@ -31,7 +33,8 @@ import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.texteditor.IUpdate;
 
 /**
- * Action for activating a target node selected in the ant view
+ * Action for editing the launch configuration associated with the current 
+ * Ant build file in the AntView.
  */
 public class EditLaunchConfigurationAction extends Action implements IUpdate {
 	
@@ -39,8 +42,9 @@ public class EditLaunchConfigurationAction extends Action implements IUpdate {
 	private ProjectNode projectNode;
 	
 	public EditLaunchConfigurationAction(AntView view) {
-		super(AntViewActionMessages.getString("EditLaunchConfigurationAction.Properties")); //$NON-NLS-1$
-		setDescription(AntViewActionMessages.getString("EditLaunchConfigurationAction.Edit")); //$NON-NLS-1$
+		super(AntViewActionMessages.getString("EditLaunchConfigurationAction.1")); //$NON-NLS-1$
+		setDescription(AntViewActionMessages.getString("EditLaunchConfigurationAction.2")); //$NON-NLS-1$
+		setImageDescriptor(AntUIImages.getImageDescriptor(IAntUIConstants.IMG_TAB_ANT_TARGETS));
 		this.view= view;
 		WorkbenchHelp.setHelp(this, IAntUIHelpContextIds.EDIT_LAUNCH_CONFIGURATION_ACTION);
 	}
@@ -133,11 +137,6 @@ public class EditLaunchConfigurationAction extends Action implements IUpdate {
 		setEnabled(enabled);
 	}
 
-	/**
-	 * Method getProjectNode.
-	 * @param antNode
-	 * @return ProjectNode
-	 */
 	private ProjectNode getProjectNode(AntNode antNode) {
 		AntNode parentNode= null;
 		if (antNode instanceof ProjectNode) {

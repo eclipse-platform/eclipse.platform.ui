@@ -77,6 +77,7 @@ public class AntUIImages {
 		declareRegistryImage(IAntUIConstants.IMG_FILTER_INTERNAL_TARGETS, LOCALTOOL + "filter_internal_targets.gif"); //$NON-NLS-1$
 		declareRegistryImage(IAntUIConstants.IMG_FILTER_PROPERTIES, LOCALTOOL + "filter_properties.gif"); //$NON-NLS-1$
 		declareRegistryImage(IAntUIConstants.IMG_SORT_OUTLINE, LOCALTOOL + "alpha_mode.gif"); //$NON-NLS-1$
+		declareRegistryImage(IAntUIConstants.IMG_REFRESH, LOCALTOOL + "refresh.gif"); //$NON-NLS-1$
 		// Ant View Labels
 		declareRegistryImage(IAntUIConstants.IMG_ANT_PROJECT, OBJECT + "ant_buildfile.gif"); //$NON-NLS-1$
 		declareRegistryImage(IAntUIConstants.IMG_ANT_TARGET, OBJECT + "targetpublic_obj.gif"); //$NON-NLS-1$

@@ -220,16 +220,15 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	 */
 	private void fillContextMenu(Viewer viewer, IMenuManager menu) {
 		if (viewer == projectViewer) {
-			menu.add(addBuildFileAction);
-			menu.add(new Separator());
 			menu.add(runTargetAction);
-			menu.add(refreshBuildFilesAction);
+			menu.add(editConfigAction);
+			menu.add(new Separator());
 			addOpenWithMenu(menu);
 			menu.add(new Separator());
+			menu.add(addBuildFileAction);
 			menu.add(removeProjectAction);
 			menu.add(removeAllAction);
-			menu.add(new Separator());
-			menu.add(editConfigAction);
+			menu.add(refreshBuildFilesAction);
 		}
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
@@ -719,7 +718,10 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	}
 
 	/**
-	 * @return
+	 * Returns whether internal targets are currently being filtered out of
+	 * the view.
+	 * 
+	 * @return whether or not internal targets are being filtered out
 	 */
 	public boolean isFilterInternalTargets() {
 		if (projectContentProvider != null) {
@@ -729,7 +731,9 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	}
 
 	/**
-	 * @param b
+	 * Sets whether internal targets should be filtered out of the view.
+	 * 
+	 * @param filter whether or not internal targets should be filtered out
 	 */
 	public void setFilterInternalTargets(boolean filter) {
 		if (projectContentProvider != null) {
