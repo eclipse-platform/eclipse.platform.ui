@@ -23,6 +23,10 @@ public class SetupManager {
 		public SetupException(String message, Throwable cause) {
 			super(message, cause);
 		}
+
+		public SetupException(String message) {
+			super(message);
+		}
 	}
 
 	private static SetupManager instance;
@@ -77,10 +81,12 @@ public class SetupManager {
 	}
 
 	protected SetupManager() throws SetupException {
-		setups = new HashSet();
+		setups = new ArrayList();
 		setupById = new HashMap();
 		try {
 			loadSetups();
+		} catch (SetupException e) {
+			throw e;
 		} catch (Exception e) {
 			throw new SetupException("Problems initializing SetupManager", e);
 		}
@@ -161,15 +167,17 @@ public class SetupManager {
 			setupById.put(newSetup.getId(), newSetup);
 	}
 
-	private void loadSetups() throws ParserConfigurationException, FactoryConfigurationError, SAXException, IOException {
+	private void loadSetups() throws ParserConfigurationException, FactoryConfigurationError, SAXException, IOException, SetupException {
 		String setupFilesProperty = System.getProperty(SETUP_FILES, "default-setup.xml");
 		String[] setupFileNames = parseItems(setupFilesProperty);
 		File[] setupFiles = new File[setupFileNames.length];
 		int found = 0;
 		for (int i = 0; i < setupFiles.length; i++) {
 			setupFiles[found] = new File(setupFileNames[i]);
-			if (!setupFiles[found].isFile())
-				continue;
+			if (!setupFiles[found].isFile()) {
+				System.out.println("No setup files found at '" + setupFiles[i].getAbsolutePath() + "'. ");
+				continue;				
+			}
 			found++;
 		}
 		if (found == 0) {
@@ -177,7 +185,8 @@ public class SetupManager {
 				System.out.println("No setup descriptions found, only the default setup will be available");
 				return;
 			}
-			throw new IllegalArgumentException("No setup files found at '" + setupFilesProperty + "'. Ensure you are specifying the path for an existing setup file (e.g. -Dsetup.files=<setup-file-location1>[...,<setup-file-locationN>])");
+			// no setup files found, and we are not in dev mode... sorry 
+			throw new SetupException("No setup descriptions found. Ensure you are specifying the path for an existing setup file (e.g. -Dsetup.files=<setup-file-location1>[...,<setup-file-locationN>])");
 		}
 		DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 		for (int fileIndex = 0; fileIndex < found; fileIndex++) {

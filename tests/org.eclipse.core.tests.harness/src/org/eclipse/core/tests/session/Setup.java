@@ -80,7 +80,7 @@ public class Setup implements Cloneable {
 	 * @see #getDefaultInstallLocation()
 	 * @see #getDefaultInstanceLocation()
 	 * @see #getDefaultVMLocation()
-	 * @return
+	 * @return a setup with all default settings
 	 */
 	static Setup getDefaultSetup(SetupManager manager) {
 		Setup defaultSetup = new Setup(manager);
@@ -198,6 +198,17 @@ public class Setup implements Cloneable {
 		return (String[]) commandLine.toArray(new String[commandLine.size()]);
 	}
 
+	public String getEclipseArgsLine() {
+		List eclipseArgs = new ArrayList();
+		fillEclipseArgs(eclipseArgs);
+		StringBuffer result = new StringBuffer();
+		for (Iterator i = eclipseArgs.iterator(); i.hasNext();) {
+			result.append(i.next());
+			result.append(' ');
+		}
+		return result.length() > 0 ? result.substring(0, result.length() - 1) : null;
+	}
+
 	public String getEclipseArgument(String key) {
 		return (String) eclipseArguments.get(key);
 	}
@@ -222,8 +233,29 @@ public class Setup implements Cloneable {
 		return (Map) systemProperties.clone();
 	}
 
+	public String getSystemPropertiesLine() {
+		List sysProperties = new ArrayList();
+		fillSystemProperties(sysProperties);
+		StringBuffer result = new StringBuffer();
+		for (Iterator i = sysProperties.iterator(); i.hasNext();) {
+			result.append(i.next());
+			result.append(' ');
+		}
+		return result.length() > 0 ? result.substring(0, result.length() - 1) : null;	}
+
 	public int getTimeout() {
 		return timeout;
+	}
+
+	public String getVMArgsLine() {
+		List vmArgs = new ArrayList();
+		fillVMArgs(vmArgs);
+		StringBuffer result = new StringBuffer();
+		for (Iterator i = vmArgs.iterator(); i.hasNext();) {
+			result.append(i.next());
+			result.append(' ');
+		}
+		return result.length() > 0 ? result.substring(0, result.length() - 1) : null;
 	}
 
 	public String getVMArgument(String key) {
