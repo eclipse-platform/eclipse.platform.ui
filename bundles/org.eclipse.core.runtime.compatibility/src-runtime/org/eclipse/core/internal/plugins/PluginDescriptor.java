@@ -40,16 +40,13 @@ public class PluginDescriptor implements IPluginDescriptor {
 	private Object[] cachedClasspath = null; // cached value of class loader's classpath
 	private org.osgi.framework.Bundle bundleOsgi;
 	private PluginActivator activator;
-	
-	static final String PLUGIN_URL = PlatformURLHandler.PROTOCOL + PlatformURLHandler.PROTOCOL_SEPARATOR + "/" + PlatformURLPluginConnection.PLUGIN + "/"; //$NON-NLS-1$ //$NON-NLS-2$
 
+	static final String PLUGIN_URL = PlatformURLHandler.PROTOCOL + PlatformURLHandler.PROTOCOL_SEPARATOR + "/" + PlatformURLPluginConnection.PLUGIN + "/"; //$NON-NLS-1$ //$NON-NLS-2$
 	// constants
 	static final String VERSION_SEPARATOR = "_"; //$NON-NLS-1$
-
 	private static final String DEFAULT_BUNDLE_NAME = "plugin"; //$NON-NLS-1$
 	private static final String KEY_PREFIX = "%"; //$NON-NLS-1$
 	private static final String KEY_DOUBLE_PREFIX = "%%"; //$NON-NLS-1$
-
 	// Places to look for library files 
 	private static String[] WS_JAR_VARIANTS = buildWSVariants();
 	private static String[] OS_JAR_VARIANTS = buildOSVariants();
@@ -73,7 +70,6 @@ public class PluginDescriptor implements IPluginDescriptor {
 	private static String[] buildNLVariants(String nl) {
 		ArrayList result = new ArrayList();
 		IPath base = new Path("nl"); //$NON-NLS-1$
-
 		IPath path = new Path(nl.replace('_', '/'));
 		while (path.segmentCount() > 0) {
 			result.add(base.append(path).toString());
@@ -86,10 +82,11 @@ public class PluginDescriptor implements IPluginDescriptor {
 		return (String[]) result.toArray(new String[result.size()]);
 	}
 	private static String[] buildVanillaVariants() {
-		return new String[] { "" }; //$NON-NLS-1$
+		return new String[]{""}; //$NON-NLS-1$
 	}
 
 	synchronized public void doPluginDeactivation() {
+		pluginObject.setPluginActivator(null);
 		pluginObject = null;
 		active = false;
 		activePending = false;
@@ -669,54 +666,27 @@ public class PluginDescriptor implements IPluginDescriptor {
 		// constructor or startup() method, and waits on those
 		// threads before returning (ie. calls join()).
 
-		boolean errorExit = true;
-		//A backward compatible plugin being started through a call to start on its bundle
-		if (bundleOsgi.getState() == Bundle.STARTING) {
-			//		check if already activated or pending
-			if (pluginActivationEnter()) {
-				try {
-					internalDoPluginActivation();
-					errorExit = false;
-				} finally {
-					pluginActivationExit(errorExit);
-				}
+		// sanity checking
+		if ((bundleOsgi.getState() & (Bundle.RESOLVED | Bundle.STARTING | Bundle.ACTIVE)) == 0)
+			throw new IllegalArgumentException();
+		// plug-in hasn't been activated yet - start bundle
+		if (bundleOsgi.getState() == Bundle.RESOLVED)
+			try {
+				bundleOsgi.start();
+			} catch (BundleException e) {
+				throwException(Policy.bind("plugin.startupProblems", e.toString()), e);
 			}
+		if (pluginObject != null) 
 			return;
-		}
-
-		//A new bundle that someone is trying to use as a plugin
-		if (bundleOsgi.getState() == Bundle.ACTIVE && pluginObject == null) {
-			if (pluginActivationEnter()) {
-				try {
-					internalDoPluginActivation();
-					errorExit = false;
-				} finally {
-					pluginActivationExit(errorExit);
-				}
-			}
-			return;
-		}
-
-		//A backward compatible plugin is being started through PluginDescriptor#getPlugin()
-		try {
-			bundleOsgi.start();
-			// here we know the bundle is active. If the bundle does not use PluginActivator  
-			// the plug-in activation (and plugin object creation) must be forced by hand 
-			// (otherwise the first case above would handle it)
-			if (pluginObject == null) {
-				if (pluginActivationEnter()) {
-					try {
-						internalDoPluginActivation();
-						errorExit = false;
-					} finally {
-						pluginActivationExit(errorExit);
-					}
-				}
-				return;
-			}			
-		} catch (BundleException e) {
-			throwException(Policy.bind("plugin.startupProblems",getId()), e);
-		}
+		boolean errorExit = true;			
+		//	check if already activated or pending		
+		if (pluginActivationEnter()) 
+			try {
+				internalDoPluginActivation();
+				errorExit = false;
+			} finally {
+				pluginActivationExit(errorExit);
+			}	
 	}
 
 	private String getPluginClass() {
@@ -745,7 +715,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 		// find the correct constructor
 		Constructor construct = null;
 		try {
-			construct = runtimeClass.getConstructor(new Class[] { IPluginDescriptor.class });
+			construct = runtimeClass.getConstructor(new Class[]{IPluginDescriptor.class});
 		} catch (NoSuchMethodException eNoConstructor) {
 			errorMsg = Policy.bind("plugin.instantiateClassError", getId(), pluginClassName); //$NON-NLS-1$
 			throwException(errorMsg, eNoConstructor);
@@ -753,7 +723,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 
 		// create a new instance
 		try {
-			pluginObject = (Plugin) construct.newInstance(new Object[] { this });
+			pluginObject = (Plugin) construct.newInstance(new Object[]{this});
 		} catch (ClassCastException e) {
 			errorMsg = Policy.bind("plugin.notPluginClass", pluginClassName); //$NON-NLS-1$
 			throwException(errorMsg, e);
@@ -762,7 +732,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 			throwException(errorMsg, e);
 		}
 	}
-
+	//XXX Consider removing this method - no known clients
 	public void start() throws CoreException {
 		// run startup()
 		final String message = Policy.bind("plugin.startupProblems", getId()); //$NON-NLS-1$

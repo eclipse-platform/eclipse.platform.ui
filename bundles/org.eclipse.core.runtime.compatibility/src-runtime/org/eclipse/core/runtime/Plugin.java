@@ -217,16 +217,6 @@ public abstract class Plugin {
 		String key = descriptor.getUniqueIdentifier() + "/debug"; //$NON-NLS-1$
 		String value = InternalPlatform.getDefault().getOption(key);
 		this.debug = value == null ? false : value.equalsIgnoreCase("true"); //$NON-NLS-1$
-
-		// on plugin start, find and start the corresponding bundle.
-		bundle = InternalPlatform.getDefault().getBundleContext().getBundle(descriptor.getUniqueIdentifier());
-		try {
-			if ((bundle.getState() & (Bundle.STARTING | Bundle.ACTIVE | Bundle.STOPPING)) == 0)
-				bundle.start();
-		} catch (BundleException e) {
-			// TODO do nothing for now
-			e.printStackTrace();
-		}
 	}
 	/**
 	 * Returns a URL for the given path.  Returns <code>null</code> if the URL
@@ -694,10 +684,7 @@ public abstract class Plugin {
 	 * @exception CoreException if this method fails to shut down
 	 *   this plug-in
 	 */
-	public void shutdown() throws CoreException {
-		((PluginDescriptor) descriptor).doPluginDeactivation();
-		activator = null;
-	}
+	public void shutdown() throws CoreException {}
 
 	/**
 	 * Starts up this plug-in.
