@@ -87,7 +87,7 @@ public long getLastModified() {
 public IPath getPath() {
 	byte[] pathBytes = new byte[key.length - SIZE_KEY_SUFFIX];
 	System.arraycopy(key, 0, pathBytes, 0, pathBytes.length);
-	return new Path(new String(pathBytes));
+	return new Path(Convert.fromUTF8(pathBytes));
 }
 public UniversalUniqueIdentifier getUUID() {
 	return uuid;
