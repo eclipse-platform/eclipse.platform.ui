@@ -305,15 +305,12 @@ public Text getTextControl(Composite parent) {
 		switch (validateStrategy) {
 			case VALIDATE_ON_KEY_STROKE :
 				textField.addKeyListener(new KeyAdapter() {
-					public void keyPressed(KeyEvent e) {
-						valueChanged();
-					}
 					
 					/* (non-Javadoc)
 					 * @see org.eclipse.swt.events.KeyAdapter#keyReleased(org.eclipse.swt.events.KeyEvent)
 					 */
 					public void keyReleased(KeyEvent e) {
-						refreshValidState();
+						valueChanged();
 					}
 				});
 
