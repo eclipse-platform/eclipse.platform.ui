@@ -362,7 +362,8 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 		IDocument document= fViewer.getDocument();
 		if (document != null)
-			document.removeDocumentListener(fDocumentListener);		
+			document.removeDocumentListener(fDocumentListener);
+		fDocumentEvents.clear();		
 
 		StyledText styledText= fViewer.getTextWidget();
 		if (fKeyListener != null && styledText != null && !styledText.isDisposed())
