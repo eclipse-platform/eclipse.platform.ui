@@ -11,7 +11,6 @@ import org.xml.sax.SAXException;
 public class TocFile {
 
 	protected Toc toc;
-	protected boolean tocParsed = false;
 
 	protected String plugin;
 	protected String href;
