@@ -113,7 +113,7 @@ public class TreeTest extends ViewerTest {
 	}
 
 	/**
-	 * Test addition to the menu.
+	 * Test addition to the tree.
 	 * 
 	 */
 	public void testAdd() {
@@ -123,6 +123,29 @@ public class TreeTest extends ViewerTest {
 			TestTreeElement input = new TestTreeElement(0, null);
 			viewer.setInput(input);
 			input.createChildren(TEST_COUNT);
+			processEvents();
+			startMeasuring();
+			viewer.add(input, input.children);
+			processEvents();
+			stopMeasuring();
+		}
+
+		commitMeasurements();
+		assertPerformance();
+	}
+	
+	/**
+	 * Test addition to the tree with the items presorted.
+	 * 
+	 */
+	public void atestAddPreSort() {
+		openBrowser();
+		for (int i = 0; i < 25; i++) {
+
+			TestTreeElement input = new TestTreeElement(0, null);
+			viewer.setInput(input);
+			input.createChildren(TEST_COUNT);
+			viewer.getSorter().sort(viewer,input.children);
 			processEvents();
 			startMeasuring();
 			viewer.add(input, input.children);
