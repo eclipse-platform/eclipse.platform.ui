@@ -58,6 +58,10 @@ public class AbstractLaunchToolbarAction extends AbstractLaunchHistoryAction {
 		addToMenu(menu, new OrganizeFavoritesAction(getLaunchGroupIdentifier()), -1);
 	}
 	
+	/**
+	 * Returns an action to open the launch dialog
+	 * @since 3.1
+	 */
 	protected IAction getOpenDialogAction() {
 		return new OpenLaunchDialogAction(getLaunchGroupIdentifier());
 	}
