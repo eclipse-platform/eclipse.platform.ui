@@ -94,7 +94,7 @@ public abstract class TemplateVariableResolver {
 		String[] bindings= resolveAll(context);
 		if (bindings.length != 0)
 			variable.setValues(bindings);
-		if (bindings.length > 0)
+		if (bindings.length > 1)
 			variable.setUnambiguous(false);
 		else
 			variable.setUnambiguous(isUnambiguous(context));
