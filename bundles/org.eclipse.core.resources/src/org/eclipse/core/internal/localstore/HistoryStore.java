@@ -26,6 +26,9 @@ public class HistoryStore {
 	protected BlobStore blobStore;
 	private IndexedStoreWrapper store;
 	private final static String INDEX_FILE = ".index"; //$NON-NLS-1$
+	
+	//flag used inside stateAlreadyExists to prevent creating an array
+	protected boolean stateAlreadyExists;
 
 public HistoryStore(Workspace workspace, IPath location, int limit) {
 	this.workspace = workspace;
@@ -200,19 +203,19 @@ public void clean() {
 		ResourcesPlugin.getPlugin().getLog().log(status);
 	}
 }
-private boolean stateAlreadyExists(IPath path, final UniversalUniqueIdentifier uuid, long lastModifiedTime) {
-	final boolean[] rc = new boolean[] {false};
+protected boolean stateAlreadyExists(IPath path, final UniversalUniqueIdentifier uuid) {
+	stateAlreadyExists = false;
 	IHistoryStoreVisitor visitor = new IHistoryStoreVisitor() {
 		public boolean visit(HistoryStoreEntry entry) throws IndexedStoreException {
 			if (uuid.equals(entry.getUUID())) {
-				rc[0] = true;
+				stateAlreadyExists = true;
 				return false;
 			}
 			return true;
 		}
 	};
 	accept(path, visitor, false);
-	return rc[0];
+	return stateAlreadyExists;
 }
 /**
  * Copies the history store information from the source path given destination path.
@@ -261,7 +264,7 @@ public void copyHistory(final IPath source, final IPath destination) {
 				return false;
 			}
 			path = destination.append(path.removeFirstSegments(prefixSegments));
-			if (!stateAlreadyExists(path, entry.getUUID(), entry.getLastModified())) {
+			if (!stateAlreadyExists(path, entry.getUUID())) {
 				matches.add(path);
 				addState(path, entry.getUUID(), entry.getLastModified());
 			}
