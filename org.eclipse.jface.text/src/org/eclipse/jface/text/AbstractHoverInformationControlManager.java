@@ -55,8 +55,6 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		
 		/** The closer's subject control */
 		private Control fSubjectControl;
-		/** The closer's information control */
-		private IInformationControl fInformationControl;
 		/** The subject area */
 		private Rectangle fSubjectArea;
 		/** Indicates whether this closer is active */
@@ -79,7 +77,6 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		 * @see IInformationControlCloser#setHoverControl(IHoverControl)
 		 */
 		public void setInformationControl(IInformationControl control) {
-			fInformationControl= control;
 		}
 		
 		/*
@@ -288,7 +285,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 			fShellDeactivatedWhileComputing= false;
 			
 			fHoverEventStateMask= event.stateMask;
-			fHoverEventLocation= new Point(event.x, event.y);
+			fHoverEvent= event;
 			fHoverArea= new Rectangle(event.x - EPSILON, event.y - EPSILON, 2 * EPSILON, 2 * EPSILON );
 			if (fHoverArea.x < 0) fHoverArea.x= 0;
 			if (fHoverArea.y < 0) fHoverArea.y= 0;
@@ -389,8 +386,8 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		
 	/** The mouse tracker on the subject control */
 	private MouseTracker fMouseTracker= new MouseTracker();
-	/** The remembered hover event location */
-	private Point fHoverEventLocation= new Point(-1, -1);
+	/** The remembered hover event */
+	private MouseEvent fHoverEvent= null;
 	/** The remembered hover event sate mask of the keyboard modifiers */
 	private int fHoverEventStateMask= 0;
 	
@@ -463,7 +460,17 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 	 * @return the location of the most recent mouse hover event
 	 */
 	protected Point getHoverEventLocation() {
-		return fHoverEventLocation;
+		return fHoverEvent != null ? new Point(fHoverEvent.x, fHoverEvent.y) : new Point(-1, -1);
+	}
+
+	/**
+	 * Returns the most recent mouse hover event.
+	 * 
+	 * @return the most recent mouse hover event or <code>null</code>
+	 * @since 3.0
+	 */
+	protected MouseEvent getHoverEvent() {
+		return fHoverEvent;
 	}
 
  	/**
