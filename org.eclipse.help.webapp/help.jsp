@@ -41,7 +41,7 @@
 	 */
 	function parseQueryString (str) 
 	{
-	    str = str ? str : unescape(window.location.href);
+	    str = str ? str : window.location.href;
 	    var longquery = str.split("?");
 	    if (longquery.length <= 1) return "";
 	    var query = longquery[1];
