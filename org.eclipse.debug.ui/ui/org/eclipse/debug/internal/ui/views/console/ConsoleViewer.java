@@ -137,16 +137,18 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 	 */
 	protected void revealEndOfDocument() {
 		if (isAutoScroll()) {
-			IDocument doc= getDocument();
+			IDocument doc = getDocument();
 			int lines = doc.getNumberOfLines();
 			try {
 				// lines are 0-based
-				int offset = doc.getLineOffset(lines - 1);
-				if (offset > 0) {
-					StyledText widget= getTextWidget();
-					widget.setCaretOffset(offset);
+				int lineStartOffset = doc.getLineOffset(lines - 1);
+				StyledText widget= getTextWidget();
+				if (lineStartOffset > 0) {
+					widget.setCaretOffset(lineStartOffset);
 					widget.showSelection();
 				}
+				int lineEndOffset = lineStartOffset + doc.getLineLength(lines - 1);
+				widget.setCaretOffset(lineEndOffset);
 			} catch (BadLocationException e) {
 			}
 		}
