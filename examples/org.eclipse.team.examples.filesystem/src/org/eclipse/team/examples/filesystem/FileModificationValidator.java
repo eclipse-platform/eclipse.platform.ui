@@ -28,16 +28,14 @@ import org.eclipse.team.core.TeamException;
  * only has two methods and their implementation is straight forward.
  */
 public final class FileModificationValidator implements IFileModificationValidator {
-	//Used to avoid creating multiple copies of the OK status:
-	private static final IStatus OK_STATUS = new Status(Status.OK, FileSystemPlugin.ID, Status.OK, Policy.bind("ok"), null); //$NON-NLS-1$
-
-	private SimpleAccessOperations operations;
+	
+	private FileSystemOperations operations;
 
 	/**
 	 * Constructor for FileModificationValidator.
 	 */
 	public FileModificationValidator(RepositoryProvider provider) {
-		operations = ((FileSystemProvider)provider).getSimpleAccess();
+		operations = ((FileSystemProvider)provider).getOperations();
 	}
 
 	/**
@@ -50,9 +48,9 @@ public final class FileModificationValidator implements IFileModificationValidat
 		try {
 			operations.checkout(resources, IResource.DEPTH_INFINITE, null);
 		} catch (TeamException e) {
-			return new Status(Status.ERROR, FileSystemPlugin.ID, Status.ERROR, e.getLocalizedMessage(), e);
+			return new Status(IStatus.ERROR, FileSystemPlugin.ID, 0, e.getLocalizedMessage(), e);
 		}
-		return OK_STATUS;
+		return Status.OK_STATUS;
 	}
 
 	/**
@@ -79,7 +77,11 @@ public final class FileModificationValidator implements IFileModificationValidat
 	 * @see org.eclipse.core.resources.IFileModificationValidator#validateSave(IFile)
 	 */
 	public IStatus validateSave(IFile file) {
-		return checkout(new IResource[] { file });
+		if (file.isReadOnly()) {
+			return checkout(new IResource[] { file });
+		} else {
+			return Status.OK_STATUS;
+		}
 	}
 
 }

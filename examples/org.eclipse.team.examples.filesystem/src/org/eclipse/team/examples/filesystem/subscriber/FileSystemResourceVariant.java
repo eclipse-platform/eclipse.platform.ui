@@ -11,10 +11,10 @@
 package org.eclipse.team.examples.filesystem.subscriber;
 
 import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Date;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -57,11 +57,7 @@ public class FileSystemResourceVariant extends CachedResourceVariant {
 	 * @see org.eclipse.team.core.variants.CachedResourceVariant#fetchContents(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	protected void fetchContents(IProgressMonitor monitor) throws TeamException {
-		try {
-			setContents(new BufferedInputStream(new FileInputStream(ioFile)), monitor);
-		} catch (FileNotFoundException e) {
-			throw new TeamException("Failed to fetch contents for " + getFilePath(), e);
-		}
+		setContents(getContents(), monitor);
 	}
 	
 	/* (non-Javadoc)
@@ -69,7 +65,7 @@ public class FileSystemResourceVariant extends CachedResourceVariant {
 	 */
 	protected String getCachePath() {
 		// append the timestamp to the file path to give each variant a unique path
-		return getFilePath() + " " + ioFile.lastModified();
+		return getFilePath() + " " + ioFile.lastModified(); //$NON-NLS-1$
 	}
 	
 	private String getFilePath() {
@@ -128,7 +124,27 @@ public class FileSystemResourceVariant extends CachedResourceVariant {
 	 * Return the files contained by the file of this resource variant.
 	 * @return the files contained by the file of this resource variant.
 	 */
-	public File[] members() {
-		return ioFile.listFiles();
+	public FileSystemResourceVariant[] members() {
+		if (isContainer()) {
+			java.io.File[] members = ioFile.listFiles();
+			FileSystemResourceVariant[] result = new FileSystemResourceVariant[members.length];
+			for (int i = 0; i < members.length; i++) {
+				result[i] = new FileSystemResourceVariant(members[i]);
+			}
+			return result;
+		} else {
+			return new FileSystemResourceVariant[0];
+		}
+	}
+
+	/**
+	 * @return
+	 */
+	public InputStream getContents() throws TeamException {
+		try {
+			return new BufferedInputStream(new FileInputStream(ioFile));
+		} catch (FileNotFoundException e) {
+			throw new TeamException("Failed to fetch contents for " + getFilePath(), e);
+		}
 	}
 }

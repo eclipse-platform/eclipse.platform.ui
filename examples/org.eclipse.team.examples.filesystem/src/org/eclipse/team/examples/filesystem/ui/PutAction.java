@@ -44,7 +44,7 @@ public class PutAction extends FileSystemAction {
 						FileSystemProvider provider = (FileSystemProvider) iter.next();
 						List list = (List) table.get(provider);
 						IResource[] providerResources = (IResource[]) list.toArray(new IResource[list.size()]);
-						provider.getSimpleAccess().checkin(providerResources, IResource.DEPTH_INFINITE, subMonitor);
+						provider.getOperations().checkin(providerResources, IResource.DEPTH_INFINITE, isOverrideIncoming(), subMonitor);
 					}
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);
@@ -53,5 +53,13 @@ public class PutAction extends FileSystemAction {
 				}
 			}
 		}, Policy.bind("PutAction.problemMessage"), PROGRESS_DIALOG); //$NON-NLS-1$
+	}
+	
+	/**
+	 * Indicate whether the put shoudl override incoming changes.
+	 * @return whether the put shoudl override incoming changes.
+	 */
+	protected boolean isOverrideIncoming() {
+		return false;
 	}
 }

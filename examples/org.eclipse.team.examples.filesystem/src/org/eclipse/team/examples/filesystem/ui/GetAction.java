@@ -41,7 +41,7 @@ public class GetAction extends FileSystemAction {
 						FileSystemProvider provider = (FileSystemProvider) iter.next();
 						List list = (List) table.get(provider);
 						IResource[] providerResources = (IResource[]) list.toArray(new IResource[list.size()]);
-						provider.getSimpleAccess().get(providerResources, IResource.DEPTH_INFINITE, subMonitor);
+						provider.getOperations().get(providerResources, IResource.DEPTH_INFINITE, isOverwriteOutgoing(), subMonitor);
 					}
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);
@@ -50,5 +50,14 @@ public class GetAction extends FileSystemAction {
 				}
 			}
 		}, Policy.bind("GetAction.problemMessage"), PROGRESS_DIALOG); //$NON-NLS-1$
+	}
+	
+	/**
+	 * Indicate whether the action should overwrite outgoing changes.
+	 * By default, the get action does not override local modifications.
+	 * @return whether the action should overwrite outgoing changes.
+	 */
+	protected boolean isOverwriteOutgoing() {
+		return false;
 	}
 }

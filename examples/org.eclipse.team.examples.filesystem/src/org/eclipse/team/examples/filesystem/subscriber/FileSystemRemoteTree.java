@@ -37,16 +37,7 @@ public class FileSystemRemoteTree extends ThreeWayRemoteTree {
 	 * @see org.eclipse.team.core.variants.AbstractResourceVariantTree#fetchMembers(org.eclipse.team.core.variants.IResourceVariant, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	protected IResourceVariant[] fetchMembers(IResourceVariant variant, IProgressMonitor progress) throws TeamException {
-		if (variant.isContainer()) {
-			java.io.File[] members = ((FileSystemResourceVariant)variant).members();
-			FileSystemResourceVariant[] result = new FileSystemResourceVariant[members.length];
-			for (int i = 0; i < members.length; i++) {
-				result[i] = new FileSystemResourceVariant(members[i]);
-			}
-			return result;
-		} else {
-			return new IResourceVariant[0];
-		}
+		return ((FileSystemResourceVariant)variant).members();
 	}
 	
 	/* (non-Javadoc)

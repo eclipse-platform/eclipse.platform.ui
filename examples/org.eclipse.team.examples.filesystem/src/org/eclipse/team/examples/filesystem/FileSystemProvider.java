@@ -151,15 +151,11 @@ public class FileSystemProvider extends RepositoryProvider {
 	}
 
 	/**
-	 * Return an instance of <code>SimpleAccessOperations</code> that provides the
-	 * operations for transfering data to and from the provider's location.
-	 * Note: The interface <code>SimpleAccessOperations</code> is not part of the official
-	 * Team API. We use it here for convenience.
-	 * 
-	 * @see org.eclipse.team.core.RepositoryProvider#getSimpleAccess()
+	 * Return an object that provides the operations for transfering data 
+	 * to and from the provider's location.
 	 */
-	public SimpleAccessOperations getSimpleAccess() {
-		return new FileSystemSimpleAccessOperations(this);
+	public FileSystemOperations getOperations() {
+		return new FileSystemOperations(this);
 	}
 	/**
 	 * @see org.eclipse.team.core.RepositoryProvider#getFileModificationValidator()
