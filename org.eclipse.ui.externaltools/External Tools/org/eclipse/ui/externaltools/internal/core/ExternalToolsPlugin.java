@@ -24,7 +24,7 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin {
 	public static final String PLUGIN_ID = "org.eclipse.ui.externaltools"; //$NON-NLS-1$;
 	/*package*/ static final String LOG_CONSOLE_ID = PLUGIN_ID + ".LogConsoleView"; //$NON-NLS-1$;
 	
-	public static final String IMG_ANT_SCRIPT= "icons/full/obj16/ant_file.gif"; //$NON-NLS-1$;
+	public static final String IMG_ANT_TOOL= "icons/full/obj16/ant_file.gif"; //$NON-NLS-1$;
 	public static final String IMG_BUILDER= "icons/full/obj16/builder.gif"; //$NON-NLS-1$;
 	public static final String IMG_JAR_FILE = "icons/full/obj16/jar_l_obj.gif"; //$NON-NLS-1$;
 	public static final String IMG_CLASSPATH = "icons/full/obj16/classpath.gif"; //$NON-NLS-1$;

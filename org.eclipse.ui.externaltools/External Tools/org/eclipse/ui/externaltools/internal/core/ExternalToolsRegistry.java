@@ -58,9 +58,9 @@ public final class ExternalToolsRegistry {
 	public ExternalTool getExternalTool(String name) {
 		Iterator enum = externalTools.iterator();
 		while (enum.hasNext()) {
-			ExternalTool script = (ExternalTool)enum.next();
-			if (script.getName().equals(name))
-				return script;
+			ExternalTool tool = (ExternalTool)enum.next();
+			if (tool.getName().equals(name))
+				return tool;
 		}
 		return null;
 	}
@@ -76,8 +76,8 @@ public final class ExternalToolsRegistry {
 	 * Sets the external tools for the registry.
 	 * Causes them to be saved to disk.
 	 */
-	public boolean setExternalTools(ArrayList scripts) {
-		this.externalTools = scripts;
+	public boolean setExternalTools(ArrayList tools) {
+		this.externalTools = tools;
 		return saveExternalTools();
 	}
 	
@@ -94,12 +94,12 @@ public final class ExternalToolsRegistry {
 			reader = new InputStreamReader(input, "utf-8"); //$NON-NLS-1$
 			XMLMemento memento = XMLMemento.createReadRoot(reader);
 			
-			// Get the tool script children element
-			IMemento[] scripts = memento.getChildren(TAG_TOOL);
-			externalTools = new ArrayList(scripts.length);
-			for (int i = 0; i < scripts.length; i++) {
+			// Get the external tool children element
+			IMemento[] tools = memento.getChildren(TAG_TOOL);
+			externalTools = new ArrayList(tools.length);
+			for (int i = 0; i < tools.length; i++) {
 				HashMap args = new HashMap();
-				IMemento[] entries = scripts[i].getChildren(TAG_ENTRY);
+				IMemento[] entries = tools[i].getChildren(TAG_ENTRY);
 				for (int j = 0; j < entries.length; j++) {
 					String key = entries[j].getString(TAG_KEY);
 					if (key != null) {
@@ -107,9 +107,9 @@ public final class ExternalToolsRegistry {
 						args.put(key, value);
 					}
 				}
-				ExternalTool script = ExternalTool.fromArgumentMap(args);
-				if (script != null)
-					externalTools.add(script);
+				ExternalTool tool = ExternalTool.fromArgumentMap(args);
+				if (tool != null)
+					externalTools.add(tool);
 			}
 		}
 		catch (FileNotFoundException e) {
@@ -143,13 +143,13 @@ public final class ExternalToolsRegistry {
 		XMLMemento memento = XMLMemento.createWriteRoot(TAG_EXTERNALTOOLS);
 		Iterator enum = externalTools.iterator();
 		while (enum.hasNext()) {
-			IMemento scriptMemento = memento.createChild(TAG_TOOL);
-			ExternalTool script = (ExternalTool)enum.next();
-			Map args = script.toArgumentMap();
+			IMemento toolMemento = memento.createChild(TAG_TOOL);
+			ExternalTool tool = (ExternalTool)enum.next();
+			Map args = tool.toArgumentMap();
 			Iterator entries = args.entrySet().iterator();
 			while (entries.hasNext()) {
 				Map.Entry entry = (Map.Entry)entries.next();
-				IMemento entryMemento = scriptMemento.createChild(TAG_ENTRY);
+				IMemento entryMemento = toolMemento.createChild(TAG_ENTRY);
 				entryMemento.putString(TAG_KEY, (String)entry.getKey());
 				entryMemento.putTextData((String)entry.getValue());
 			}

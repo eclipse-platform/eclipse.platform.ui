@@ -33,7 +33,7 @@ public abstract class ExternalToolsRunner {
 	 * are responsible for showing the execution log if
 	 * specified in the context.
 	 */
-	public abstract void execute(IProgressMonitor monitor, IRunnerContext scriptContext) throws CoreException;
+	public abstract void execute(IProgressMonitor monitor, IRunnerContext runnerContext) throws CoreException;
 	
 	/**
 	 * Handles exceptions that may occur while running.
@@ -48,8 +48,8 @@ public abstract class ExternalToolsRunner {
 	/**
 	 * Starts the monitor to show progress while running.
 	 */
-	protected final void startMonitor(IProgressMonitor monitor, IRunnerContext scriptContext, int workAmount) {
-		String label = ToolMessages.format("ExternalToolsRunner.runningScriptLabel", new Object[] {scriptContext.getName()}); //$NON-NLS-1$;
+	protected final void startMonitor(IProgressMonitor monitor, IRunnerContext runnerContext, int workAmount) {
+		String label = ToolMessages.format("ExternalToolsRunner.runningToolLabel", new Object[] {runnerContext.getName()}); //$NON-NLS-1$;
 		monitor.beginTask(label, workAmount);
 	}
 }

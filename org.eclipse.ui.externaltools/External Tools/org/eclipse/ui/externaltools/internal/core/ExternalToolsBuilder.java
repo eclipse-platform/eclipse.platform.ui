@@ -41,9 +41,9 @@ public final class ExternalToolsBuilder extends IncrementalProjectBuilder {
 	 * Method declared on IncrementalProjectBuilder.
 	 */
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
-		ExternalTool script = ExternalTool.fromArgumentMap(args);
-		if (script != null) {
-			DefaultRunnerContext context = new DefaultRunnerContext(script, getProject(), PlatformUI.getWorkbench().getWorkingSetManager());
+		ExternalTool tool = ExternalTool.fromArgumentMap(args);
+		if (tool != null) {
+			DefaultRunnerContext context = new DefaultRunnerContext(tool, getProject(), PlatformUI.getWorkbench().getWorkingSetManager());
 			context.run(monitor);
 		}
 		

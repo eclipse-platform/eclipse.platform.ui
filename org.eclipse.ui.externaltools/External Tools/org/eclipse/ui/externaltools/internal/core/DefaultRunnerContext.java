@@ -192,7 +192,7 @@ public final class DefaultRunnerContext implements IRunnerContext {
 				if (scope.name == null || tool.REFRESH_SCOPE_NONE.equals(scope.name)) {
 					runner.execute(monitor, this);
 				} else {
-					monitor.beginTask(ToolMessages.getString("DefaultRunnerContext.runningToolScript"), 100); //$NON-NLS-1$
+					monitor.beginTask(ToolMessages.getString("DefaultRunnerContext.runningExternalTool"), 100); //$NON-NLS-1$
 					runner.execute(new SubProgressMonitor(monitor, 70), this);
 					refreshResources(new SubProgressMonitor(monitor, 30), scope.name, scope.argument);
 				}

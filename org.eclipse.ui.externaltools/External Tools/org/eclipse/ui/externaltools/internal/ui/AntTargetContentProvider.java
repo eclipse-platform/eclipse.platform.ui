@@ -13,7 +13,7 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.ui.externaltools.internal.core.AntTargetList;
 
 /**
- * Content provider for targets within an Ant script
+ * Content provider for targets within an Ant file
  */
 public class AntTargetContentProvider implements IStructuredContentProvider {
 	/**

@@ -463,14 +463,14 @@ public class EditDialog extends TitleAreaDialog {
 	private void validateFields() {
 		String value = nameField.getText().trim();
 		if (value.length() < 1) {
-			setMessage(ToolMessages.getString("EditDialog.noScriptName"), IMessageProvider.NONE); //$NON-NLS-1$
+			setMessage(ToolMessages.getString("EditDialog.noToolName"), IMessageProvider.NONE); //$NON-NLS-1$
 			getButton(IDialogConstants.OK_ID).setEnabled(false);
 			return;
 		}
 		
 		value = locationField.getText().trim();
 		if (value.length() < 1) {
-			setMessage(ToolMessages.getString("EditDialog.noScriptLocation"), IMessageProvider.NONE); //$NON-NLS-1$
+			setMessage(ToolMessages.getString("EditDialog.noToolLocation"), IMessageProvider.NONE); //$NON-NLS-1$
 			getButton(IDialogConstants.OK_ID).setEnabled(false);
 			return;
 		}
@@ -479,7 +479,7 @@ public class EditDialog extends TitleAreaDialog {
 		
 		File file = new File(value);
 		if (!file.exists()) {
-			setMessage(ToolMessages.getString("EditDialog.missingScriptLocation"), IMessageProvider.WARNING); //$NON-NLS-1$
+			setMessage(ToolMessages.getString("EditDialog.missingToolLocation"), IMessageProvider.WARNING); //$NON-NLS-1$
 			return;
 		}
 		
@@ -487,7 +487,7 @@ public class EditDialog extends TitleAreaDialog {
 		if (value.length() > 0) {
 			file = new File(value);
 			if (!file.exists()) {
-				setMessage(ToolMessages.getString("EditDialog.missingScriptDirectory"), IMessageProvider.WARNING); //$NON-NLS-1$
+				setMessage(ToolMessages.getString("EditDialog.missingToolDirectory"), IMessageProvider.WARNING); //$NON-NLS-1$
 				return;
 			}
 		}

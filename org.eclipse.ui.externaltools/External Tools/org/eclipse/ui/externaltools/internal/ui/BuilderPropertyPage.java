@@ -25,7 +25,7 @@ import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.externaltools.internal.core.*;
 
 /**
- * Property page to add tool scripts in between builders.
+ * Property page to add external tools in between builders.
  */
 public final class BuilderPropertyPage extends PropertyPage {
 	private Table builderTable;
@@ -89,12 +89,12 @@ public final class BuilderPropertyPage extends PropertyPage {
 			EditDialog dialog;
 			dialog = new EditDialog(getShell(), null);
 			dialog.open();
-			ExternalTool script = dialog.getExternalTool();
-			if (script == null) {
+			ExternalTool tool = dialog.getExternalTool();
+			if (tool == null) {
 				return null;
 			}
 			ICommand command = getInputProject().getDescription().newCommand();
-			return script.toBuildCommand(command);
+			return tool.toBuildCommand(command);
 		} catch(CoreException e) {
 			handleException(e);
 			return null;
@@ -105,14 +105,14 @@ public final class BuilderPropertyPage extends PropertyPage {
 	 * Edits an exisiting build command that invokes an external tool.
 	 */
 	private void editTool(ICommand command) {
-		ExternalTool script = ExternalTool.fromArgumentMap(command.getArguments());
-		if (script == null)
+		ExternalTool tool = ExternalTool.fromArgumentMap(command.getArguments());
+		if (tool == null)
 			return;
 		EditDialog dialog;
-		dialog = new EditDialog(getShell(), script);
+		dialog = new EditDialog(getShell(), tool);
 		dialog.open();
-		script = dialog.getExternalTool();
-		script.toBuildCommand(command);
+		tool = dialog.getExternalTool();
+		tool.toBuildCommand(command);
 	}
 	
 	/**
@@ -138,7 +138,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 	 * Method declared on PreferencePage.
 	 */
 	protected Control createContents(Composite parent) {
-		antImage = ExternalToolsPlugin.getDefault().getImageDescriptor(ExternalToolsPlugin.IMG_ANT_SCRIPT).createImage();
+		antImage = ExternalToolsPlugin.getDefault().getImageDescriptor(ExternalToolsPlugin.IMG_ANT_TOOL).createImage();
 		builderImage = ExternalToolsPlugin.getDefault().getImageDescriptor(ExternalToolsPlugin.IMG_BUILDER).createImage();
 		imagesToDispose.add(antImage);
 		imagesToDispose.add(builderImage);
@@ -162,7 +162,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 		layout.numColumns = 2;
 		tableAndButtons.setLayout(layout);
 	
-		// table of builders and scripts		
+		// table of builders and tools		
 		builderTable = new Table(tableAndButtons, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
 		builderTable.setLayoutData(new GridData(GridData.FILL_BOTH));
 		TableLayout tableLayout = new TableLayout();
@@ -391,12 +391,12 @@ public final class BuilderPropertyPage extends PropertyPage {
 	private void updateCommandItem(TableItem item, ICommand command) {
 		String builderID = command.getBuilderName();
 		if (builderID.equals(ExternalToolsBuilder.ID)) {
-			ExternalTool script = ExternalTool.fromArgumentMap(command.getArguments());
-			item.setText(script.getName());
-			if (script.TOOL_TYPE_ANT.equals(script.getType())) {
+			ExternalTool tool = ExternalTool.fromArgumentMap(command.getArguments());
+			item.setText(tool.getName());
+			if (tool.TOOL_TYPE_ANT.equals(tool.getType())) {
 				item.setImage(antImage);
 			} else {
-				Image image = imageForProgram(script.getLocation());
+				Image image = imageForProgram(tool.getLocation());
 				item.setImage(image);
 			}
 		} else {

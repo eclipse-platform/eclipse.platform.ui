@@ -39,7 +39,7 @@ public final class ToolUtil {
 
 	/**
 	 * Builds a variable tag that will be auto-expanded before
-	 * the script is run.
+	 * the tool is run.
 	 * 
 	 * @param varName the name of a known variable (one of the VAR_* constants)
 	 * @param varArgument an optional argument for the variable, <code>null</code> if none
@@ -52,7 +52,7 @@ public final class ToolUtil {
 	
 	/**
 	 * Builds a variable tag that will be auto-expanded before
-	 * the script is run.
+	 * the tool is run.
 	 * 
 	 * @param varName the name of a known variable (one of the VAR_* constants)
 	 * @param varArgument an optional argument for the variable, <code>null</code> if none
@@ -70,7 +70,7 @@ public final class ToolUtil {
 	
 	/**
 	 * Builds a variable tag for each argument that will be auto-expanded before
-	 * the script is run.
+	 * the tool is run.
 	 * 
 	 * @param varName the name of a known variable (one of the VAR_* constants)
 	 * @param varArguments a list of arguments for each variable
@@ -174,7 +174,7 @@ public final class ToolUtil {
 	}
 	
 	/**
-	 * Returns the tool script runner for the specified
+	 * Returns the tool runner for the specified
 	 * type, or <code>null</code> if none registered.
 	 */
 	public static ExternalToolsRunner getRunner(String type) {

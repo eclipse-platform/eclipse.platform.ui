@@ -15,7 +15,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.ui.externaltools.internal.core.ToolMessages;
 
 /**
- * Ant script target label provider
+ * Ant target label provider
  */
 public class AntTargetLabelProvider extends LabelProvider {
 	private ArrayList selectedTargets = null;

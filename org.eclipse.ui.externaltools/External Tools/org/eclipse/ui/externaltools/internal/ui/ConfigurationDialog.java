@@ -122,7 +122,7 @@ public class ConfigurationDialog extends TitleAreaDialog {
 
 		Label label = new Label(listComp, SWT.LEFT);
 		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		label.setText(ToolMessages.getString("ConfigurationDialog.scriptList")); //$NON-NLS-1$
+		label.setText(ToolMessages.getString("ConfigurationDialog.toolList")); //$NON-NLS-1$
 		
 		listViewer = new ListViewer(listComp, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		listViewer.getList().setLayoutData(new GridData(GridData.FILL_BOTH));

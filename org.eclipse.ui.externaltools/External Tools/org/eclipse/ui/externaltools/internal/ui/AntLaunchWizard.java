@@ -21,7 +21,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.externaltools.internal.core.*;
 
 /**
- * The wizard to run an Ant script file when the Run Ant...
+ * The wizard to run an Ant file when the Run Ant...
  * context menu action is choosen by the user.
  * <p>
  * Note: Currently there is only one page in this wizard.
@@ -29,7 +29,7 @@ import org.eclipse.ui.externaltools.internal.core.*;
  */
 public class AntLaunchWizard extends Wizard {
 	/**
-	 * The file that contains the Ant script.
+	 * The file that contains the Ant file.
 	 */
 	private IFile antFile = null;
 
@@ -39,12 +39,12 @@ public class AntLaunchWizard extends Wizard {
 	private AntTargetList targetList = null;
 
 	/**
-	 * The tool script representing Ant script
+	 * The external tool representing the Ant file
 	 */
 	private ExternalTool antTool = null;
 
 	/**
-	 * Whether the tool script is new for this wizard
+	 * Whether the external tool is new for this wizard
 	 */
 	private boolean isNewTool = false;
 	
@@ -103,7 +103,7 @@ public class AntLaunchWizard extends Wizard {
 	 * Method declared on IWizard.
 	 */
 	public boolean performFinish() {
-		updateScript();
+		updateTool();
 		if (antTool.getShowLog()) {
 			ToolUtil.showLogConsole(window);
 			ToolUtil.clearLogDocument();
@@ -140,9 +140,9 @@ public class AntLaunchWizard extends Wizard {
 	}
 
 	/**
-	 * Method updateScript.
+	 * Method updateTool.
 	 */
-	private void updateScript() {
+	private void updateTool() {
 		StringBuffer buf = new StringBuffer(page1.getArguments());
 		String[] targets = page1.getSelectedTargets();
 		ToolUtil.buildVariableTags(ExternalTool.VAR_ANT_TARGET, targets, buf);
@@ -150,11 +150,11 @@ public class AntLaunchWizard extends Wizard {
 		antTool.setArguments(buf.toString());
 		antTool.setShowLog(page1.getShowLog());
 
-		ArrayList scripts = ExternalToolsPlugin.getDefault().getRegistry().getExternalTools();
+		ArrayList tools = ExternalToolsPlugin.getDefault().getRegistry().getExternalTools();
 		if (isNewTool) {
-			scripts.add(antTool);
+			tools.add(antTool);
 			isNewTool = false;
 		}
-		ExternalToolsPlugin.getDefault().getRegistry().setExternalTools(scripts);
+		ExternalToolsPlugin.getDefault().getRegistry().setExternalTools(tools);
 	}
 }

@@ -142,7 +142,7 @@ public class AntLaunchWizardPage extends WizardPage {
 	
 	/**
 	 * Returns whether the users wants messages from running
-	 * the script displayed in the console
+	 * the tool displayed in the console
 	 */
 	public boolean getShowLog() {
 		return showLog.getSelection();
