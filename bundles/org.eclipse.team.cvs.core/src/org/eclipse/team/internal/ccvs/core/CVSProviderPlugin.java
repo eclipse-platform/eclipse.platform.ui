@@ -10,6 +10,8 @@
  ******************************************************************************/
 package org.eclipse.team.internal.ccvs.core;
  
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -22,11 +24,13 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.client.Command;
@@ -60,6 +64,9 @@ public class CVSProviderPlugin extends Plugin {
 	public static final String PT_AUTHENTICATOR = "authenticator"; //$NON-NLS-1$
 	public static final String PT_CONNECTIONMETHODS = "connectionmethods"; //$NON-NLS-1$
 	
+	// Directory to cache file contents
+	private static final String CACHE_DIRECTORY = ".cache"; //$NON-NLS-1$
+		
 	private QuietOption quietness;
 	private int compressionLevel = DEFAULT_COMPRESSION_LEVEL;
 	private KSubstOption defaultTextKSubstOption = DEFAULT_TEXT_KSUBST_OPTION;
@@ -244,6 +251,8 @@ public class CVSProviderPlugin extends Plugin {
 		workspace.addResourceChangeListener(metaFileSyncListener, IResourceChangeEvent.PRE_AUTO_BUILD);
 		workspace.addResourceChangeListener(addDeleteMoveListener, IResourceChangeEvent.POST_AUTO_BUILD);
 		CVSProviderPlugin.getPlugin().addResourceStateChangeListener(addDeleteMoveListener);
+		
+		createCacheDirectory();
 	}
 	
 	/**
@@ -258,6 +267,8 @@ public class CVSProviderPlugin extends Plugin {
 		workspace.removeResourceChangeListener(projectDescriptionListener);
 		workspace.removeResourceChangeListener(metaFileSyncListener);
 		workspace.removeResourceChangeListener(addDeleteMoveListener);
+		
+		deleteCacheDirectory();
 	}
 		
 	/*
@@ -463,5 +474,43 @@ public class CVSProviderPlugin extends Plugin {
 		this.replaceUnmanaged = replaceUnmanaged;
 	}
 
+	private void createCacheDirectory() {
+		try {
+			IPath cacheLocation = getStateLocation().append(CACHE_DIRECTORY);
+			File file = cacheLocation.toFile();
+			if (file.exists()) {
+				deleteFile(file);
+			}
+			file.mkdir();
+		} catch (IOException e) {
+			log(new Status(IStatus.ERROR, ID, 0, Policy.bind("CVSProviderPlugin.errorCreatingCache", e.getMessage()), e)); //$NON-NLS-1$
+		}
+	}
+			
+	private void deleteCacheDirectory() {
+		try {
+			IPath cacheLocation = getStateLocation().append(CACHE_DIRECTORY);
+			File file = cacheLocation.toFile();
+			if (file.exists()) {
+				deleteFile(file);
+			}
+		} catch (IOException e) {
+			log(new Status(IStatus.ERROR, ID, 0, Policy.bind("CVSProviderPlugin.errorDeletingCache", e.getMessage()), e)); //$NON-NLS-1$
+		}
+	}
+	
+	private void deleteFile(File file) throws IOException {
+		if (file.isDirectory()) {
+			File[] children = file.listFiles();
+			for (int i = 0; i < children.length; i++) {
+				deleteFile(children[i]);
+			}
+		}
+		file.delete();
+	}
+	
+	public File getCacheFileFor(String path) throws IOException {
+		return new File(getStateLocation().append(CACHE_DIRECTORY).toFile(), path);
+	}
 }
 

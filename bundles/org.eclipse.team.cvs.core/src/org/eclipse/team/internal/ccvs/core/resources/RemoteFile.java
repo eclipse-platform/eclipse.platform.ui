@@ -5,8 +5,13 @@ package org.eclipse.team.internal.ccvs.core.resources;
  * All Rights Reserved.
  */
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -14,9 +19,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteResource;
@@ -48,6 +53,9 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
  */
 public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 
+	// Contents will be cahced to disk when this thrshold is exceeded
+	private static final int CACHING_THRESHOLD = 32768;
+	
 	// cache for file contents received from the server
 	private byte[] contents;
 	// cach the log entry for the remote file
@@ -162,8 +170,26 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	/**
 	 * @see ICVSRemoteFile#getContents()
 	 */
-	public InputStream getContents(IProgressMonitor monitor) {
+	public InputStream getContents(IProgressMonitor monitor) throws CVSException {
 		if (contents == null) {
+			// First, check to see if there's a cached contents for the file
+			try {
+				try {
+					File ioFile = CVSProviderPlugin.getPlugin().getCacheFileFor(getCacheRelativePath());
+					if (ioFile.exists()) {
+						return new BufferedInputStream(new FileInputStream(ioFile));
+					}
+				} catch (IOException e) {
+					// Try to purge the cache and continue
+					File ioFile = CVSProviderPlugin.getPlugin().getCacheFileFor(getCacheRelativePath());
+					if (ioFile.exists()) {
+						ioFile.delete();
+					}
+				}
+			} catch (IOException e) {
+				// We will end up here if we couldn't read or delete the cache file
+				throw new CVSException(new CVSStatus(IStatus.ERROR, 0, Policy.bind("RemoteFile.errorRetrievingFromCache", e.getMessage()), e));//$NON-NLS-1$
+			}
 			monitor = Policy.monitorFor(monitor);
 			monitor.beginTask(Policy.bind("RemoteFile.getContents"), 100); //$NON-NLS-1$
 			try {
@@ -194,10 +220,19 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 				// If the update succeeded but no contents were retreived from the server
 				// than we can assume that the remote file has no contents.
 				if (contents == null) {
-					contents = new byte[0];
+					// The above is true unless there is a cache file
+					try {
+						File ioFile = CVSProviderPlugin.getPlugin().getCacheFileFor(getCacheRelativePath());
+						if (ioFile.exists()) {
+							return new BufferedInputStream(new FileInputStream(ioFile));
+						} else {
+							contents = new byte[0];
+						}
+					} catch (IOException e) {
+						// Something is wrong with the cached file so signal an error.
+						throw new CVSException(new CVSStatus(IStatus.ERROR, 0, Policy.bind("RemoteFile.errorRetrievingFromCache", e.getMessage()), e));//$NON-NLS-1$
+					}
 				}
-			} catch(CVSException e) {
-				return null;
 			} finally {
 				monitor.done();
 			}
@@ -374,6 +409,17 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	}		
 	
 	public InputStream getContents() throws CVSException {
+		if (contents == null) {
+			// Check for cached contents for the file
+			try {
+				File ioFile = CVSProviderPlugin.getPlugin().getCacheFileFor(getCacheRelativePath());
+				if (ioFile.exists()) {
+					return new BufferedInputStream(new FileInputStream(ioFile));
+				}
+			} catch (IOException e) {
+				throw new CVSException(new CVSStatus(IStatus.ERROR, 0, Policy.bind("RemoteFile.errorRetrievingFromCache", e.getMessage()), e));//$NON-NLS-1$
+			}
+		}
 		return new ByteArrayInputStream(contents == null ? new byte[0] : contents);
 	}
 
@@ -381,14 +427,48 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 		try {
 			try {
 				byte[] buffer = new byte[1024];
-				ByteArrayOutputStream out = new ByteArrayOutputStream();
+				ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+				OutputStream out = byteStream;
 				int read;
-				while ((read = stream.read(buffer)) >= 0) {
-					Policy.checkCanceled(monitor);
-					out.write(buffer, 0, read);
+				try {
+					try {
+						while ((read = stream.read(buffer)) >= 0) {
+							Policy.checkCanceled(monitor);
+							out.write(buffer, 0, read);
+							// Detect when the file is getting too big to keep in memory
+							// and switch to a caching strategy for the contents of the file
+							if (out == byteStream && byteStream.size() > CACHING_THRESHOLD) {
+								// Get the cache file to write to
+								File ioFile = CVSProviderPlugin.getPlugin().getCacheFileFor(getCacheRelativePath());
+								if ( ! ioFile.getParentFile().exists()) {
+									ioFile.getParentFile().mkdirs();
+								}
+								// Switch streams
+								byteStream.close();
+								out = new BufferedOutputStream(new FileOutputStream(ioFile));
+								// Write what we've read so far
+								out.write(byteStream.toByteArray());
+								// Continue looping until the whole file is read
+							}
+						}
+					} finally {
+						out.close();
+					}
+				} catch (IOException e) {
+					// Make sure we don't leave the cache file around as it may not have the right contents
+					if (byteStream != out) {
+						File ioFile = CVSProviderPlugin.getPlugin().getCacheFileFor(getCacheRelativePath());
+						if (ioFile.exists()) {
+							ioFile.delete();
+						}
+					}
+					throw e;
 				}
-				out.close();
-				contents = out.toByteArray();
+
+				// Set the contents if we didn't cahce them
+				if (out == byteStream) {
+					contents = byteStream.toByteArray();
+				}
 			} finally {
 				stream.close();
 			}
@@ -475,5 +555,18 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 			return false;
 		RemoteFile remote = (RemoteFile) target;
 		return super.equals(target) && remote.getRevision().equals(getRevision());
+	}
+	
+	/* 
+	 * Return the cache relative path for the receiver as
+	 *   host/cvs/root/module/path/.#filename revision
+	 */
+	private String getCacheRelativePath() {
+		ICVSRepositoryLocation location = getRepository();
+		IPath path = new Path(location.getHost());
+		path = path.append(location.getRootDirectory());
+		path = path.append(parent.getRepositoryRelativePath());
+		path = path.append(getName() + ' ' + getRevision());
+		return path.toString();
 	}
 }
