@@ -323,6 +323,7 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 		if (console == null) {
 			fPinned = false;	
 		} else {
+			fPinned = false; // need this off to change displayed console
 			display(console);
 			fPinned = true;
 		}
