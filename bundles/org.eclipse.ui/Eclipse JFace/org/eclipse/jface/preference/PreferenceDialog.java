@@ -700,6 +700,9 @@ protected boolean showPage(IPreferenceNode node) {
 	// (this allows lazy page control creation)
 	if (currentPage.getControl() == null) 
 		currentPage.createControl(pageContainer);
+		
+	//Layout the new widgets so the resize is correct
+	pageContainer.layout(true);
 
 	// Force calculation of the page's description label because
 	// label can be wrapped.
