@@ -25,9 +25,10 @@ public class DebugActionGroupsLabelProvider extends LabelProvider {
 		String label = UNKNOWN;
 		if (element instanceof DebugActionGroup) {
 			label = ((DebugActionGroup) element).getName();
-		}
-		if (element instanceof DebugActionGroupAction) {
+		} else if (element instanceof DebugActionGroupAction) {
 			label = ((DebugActionGroupAction) element).getName();
+		} else if (element instanceof String) {
+			label= (String)element;
 		}
 		return label;
 	}

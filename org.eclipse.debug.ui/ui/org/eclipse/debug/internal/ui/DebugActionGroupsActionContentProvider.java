@@ -35,9 +35,13 @@ public class DebugActionGroupsActionContentProvider implements IStructuredConten
 			}
 		}
 		if (actionContributionItems != null) {
-			return actionContributionItems.toArray();
+			if (actionContributionItems.isEmpty()) {
+				return new String[]{"Updated when Debug perspective activated"};
+			} else {
+				return actionContributionItems.toArray();
+			}
 		} else {
-			return new Object[]{};
+			return new String[]{"Updated when Debug perspective activated"};
 		}
 	}
 	/**
