@@ -95,8 +95,11 @@ public abstract class Refactoring extends PlatformObject {
 		pm.beginTask("", 11); //$NON-NLS-1$
 		RefactoringStatus result= new RefactoringStatus();
 		result.merge(checkInitialConditions(new SubProgressMonitor(pm, 1)));
-		if (!result.hasFatalError())
-			result.merge(checkFinalConditions(new SubProgressMonitor(pm, 10)));	
+		if (!result.hasFatalError()) {
+			if (pm.isCanceled())
+				throw new OperationCanceledException();
+			result.merge(checkFinalConditions(new SubProgressMonitor(pm, 10)));
+		}	
 		pm.done();
 		return result;
 	}

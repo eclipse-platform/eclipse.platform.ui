@@ -131,6 +131,8 @@ public abstract class ProcessorBasedRefactoring extends Refactoring {
 			pm.done();
 			return result;
 		}
+		if (pm.isCanceled())
+			throw new OperationCanceledException();
 		
 		fParticipants= getProcessor().loadParticipants(result, fSharedParticipants);
 		if (fParticipants == null) 
@@ -163,6 +165,8 @@ public abstract class ProcessorBasedRefactoring extends Refactoring {
 		pm.beginTask("", fParticipants.length + 2); //$NON-NLS-1$
 		pm.setTaskName(RefactoringCoreMessages.getString("ProcessorBasedRefactoring.create_change")); //$NON-NLS-1$
 		Change processorChange= getProcessor().createChange(new SubProgressMonitor(pm, 1));
+		if (pm.isCanceled())
+			throw new OperationCanceledException();
 		
 		List changes= new ArrayList();
 		Map participantMap= new HashMap();
