@@ -170,9 +170,15 @@ public class PresentationReconciler implements IPresentationReconciler {
 		 	
 		 	if (de == null) {
 		 		
-		 		IRegion visible= fViewer.getVisibleRegion();
-		 		IRegion region= new Region(e.getOffset() + visible.getOffset(), e.getLength());
-		 		processDamage(region, fViewer.getDocument());
+		 		if (e.getOffset() == 0 && e.getLength() == 0 && e.getText() == null) {
+			 		// redraw state change
+			 		IDocument d= fViewer.getDocument();
+			 		processDamage(new Region(0, d.getLength()), d);
+		 		} else {
+			 		IRegion visible= fViewer.getVisibleRegion();
+			 		IRegion region= new Region(e.getOffset() + visible.getOffset(), e.getLength());
+			 		processDamage(region, fViewer.getDocument());
+		 		}
 		 		
 		 	} else {
 			 	
