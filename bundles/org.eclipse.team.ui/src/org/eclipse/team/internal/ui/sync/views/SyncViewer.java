@@ -460,7 +460,7 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 			}
 		};
 
-		Display.getDefault().asyncExec(new Runnable() {
+		Display.getDefault().syncExec(new Runnable() {
 			public void run() {
 				if (!hasRunnableContext()) return;				
 				SyncViewer.this.run(runnable);
