@@ -11,7 +11,7 @@
 package org.eclipse.ui.internal.ide.dialogs;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.window.Window;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.dialogs.InstallCapabilityStep.IProjectProvider;
@@ -49,7 +49,7 @@ public abstract class MultiStepCapabilityWizard extends MultiStepWizard
                 ProjectPerspectiveChoiceDialog dialog;
                 dialog = new ProjectPerspectiveChoiceDialog(window, perspIds);
                 dialog.open();
-                if (dialog.getReturnCode() == Dialog.OK)
+                if (dialog.getReturnCode() == Window.OK)
                     window = dialog.showChosenPerspective();
             }
 

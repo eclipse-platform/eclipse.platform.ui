@@ -21,6 +21,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -108,7 +109,7 @@ public class CreateProjectWizard extends Wizard {
             } else {
                 // Unexpected runtime exceptions and errors may still occur.
                 Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog().log(
-                        new Status(Status.ERROR, PlatformUI.PLUGIN_ID, 0, t
+                        new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, t
                                 .toString(), t));
                 MessageDialog
                         .openError(

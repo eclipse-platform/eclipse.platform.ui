@@ -12,10 +12,10 @@
 package org.eclipse.ui.views.markers.internal;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.window.Window;
 import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.actions.SelectionProviderAction;
@@ -61,7 +61,7 @@ public class ActionResolveMarker extends SelectionProviderAction {
         }
         MarkerResolutionSelectionDialog d = new MarkerResolutionSelectionDialog(
                 part.getSite().getShell(), resolutions);
-        if (d.open() != Dialog.OK)
+        if (d.open() != Window.OK)
             return;
         Object[] result = d.getResult();
         if (result != null && result.length > 0)
