@@ -94,8 +94,9 @@ import org.xml.sax.helpers.XMLReaderAdapter;
  * Derived from the original Ant ProjectHelperImpl class.
  * Changes:
  *  All logging is turned off as the Project we are dealing with is a "temp"
- * project that has no registered build listeners.  NLS'ed  Able to parse based
- * on String instead of a file
+ *  project that has no registered build listeners.  
+ * NLS'ed  
+ * Able to parse based on String instead of a file
  */
 
 public class ProjectHelperImpl extends org.apache.tools.ant.helper.ProjectHelperImpl {
