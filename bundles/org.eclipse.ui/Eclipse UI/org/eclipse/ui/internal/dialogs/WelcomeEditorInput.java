@@ -39,7 +39,12 @@ public WelcomeEditorInput() {
 					return;
 				}
 			};
-		} 
+		}
+		public boolean equals(Object o) {
+			if((o != null) && (o instanceof WelcomeEditorInput))
+				return true;
+			return false;
+		}
 		public String getToolTipText() {
 			return WorkbenchMessages.getString("WelcomeEditor.title"); //$NON-NLS-1$	
 		}
