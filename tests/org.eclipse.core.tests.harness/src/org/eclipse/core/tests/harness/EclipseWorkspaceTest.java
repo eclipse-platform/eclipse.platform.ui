@@ -1,10 +1,15 @@
 package org.eclipse.core.tests.harness;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+
+import java.io.*;
+
+import junit.framework.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import java.io.*;
-import java.util.*;
-import junit.framework.*;
 
 /**
  * Tests which use the Eclipse Platform workspace.

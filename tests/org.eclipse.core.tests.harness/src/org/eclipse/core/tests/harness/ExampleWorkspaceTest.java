@@ -1,11 +1,17 @@
 package org.eclipse.core.tests.harness;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+
+import java.io.InputStream;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import java.io.*;
-import java.util.*;
-import junit.framework.*;
-import junit.textui.TestRunner;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
 
 /**
  * Tests which use the Eclipse Platform workspace.

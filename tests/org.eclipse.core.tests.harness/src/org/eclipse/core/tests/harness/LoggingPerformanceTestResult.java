@@ -1,8 +1,14 @@
 package org.eclipse.core.tests.harness;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+
 import java.io.*;
 import java.util.Enumeration;
-import junit.framework.*;
+
+import junit.framework.TestFailure;
 /**
  * A LoggingPerformanceTestResult adds the ability to create an HTML or
  * other output file, and have test results written to that file instead

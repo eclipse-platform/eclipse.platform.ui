@@ -1,12 +1,18 @@
 package org.eclipse.core.tests.harness;
 
-import org.eclipse.core.boot.IPlatformRunnable;
-import org.eclipse.core.runtime.*;
-import java.lang.reflect.Method;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.*;
+
 import junit.framework.Test;
 import junit.textui.TestRunner;
-import java.util.*;
+import org.eclipse.core.boot.IPlatformRunnable;
+import org.eclipse.core.runtime.*;
 
 public class EclipseTestHarnessApplication implements IPlatformRunnable {
 	protected List tests;

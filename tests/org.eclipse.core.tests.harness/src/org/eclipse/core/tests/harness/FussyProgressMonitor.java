@@ -1,6 +1,10 @@
 package org.eclipse.core.tests.harness;
 
-import junit.framework.Assert;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+
 import junit.framework.AssertionFailedError;
 
 /**

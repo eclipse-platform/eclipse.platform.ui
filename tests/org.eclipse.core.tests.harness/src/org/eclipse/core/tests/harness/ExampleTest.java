@@ -1,9 +1,16 @@
 package org.eclipse.core.tests.harness;
 
-import org.eclipse.core.runtime.*;
-import java.util.*;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+
+import java.util.Arrays;
+import java.util.Comparator;
+
 import junit.framework.*;
-import junit.textui.TestRunner;
+import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.Platform;
 
 /**
  * Tests which use the Eclipse Platform runtime only.

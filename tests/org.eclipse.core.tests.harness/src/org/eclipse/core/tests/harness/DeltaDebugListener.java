@@ -1,10 +1,13 @@
 package org.eclipse.core.tests.harness;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 
-// non api import because the visit uses toDebugString()
 import org.eclipse.core.internal.events.ResourceDelta;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.CoreException;
 
 
 public class DeltaDebugListener implements IResourceChangeListener {
