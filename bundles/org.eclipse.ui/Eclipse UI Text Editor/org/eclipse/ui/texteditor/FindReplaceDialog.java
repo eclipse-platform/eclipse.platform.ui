@@ -12,16 +12,47 @@ Contributors:
 package org.eclipse.ui.texteditor;
 
 
-import java.text.MessageFormat;import java.util.ArrayList;import java.util.List;import java.util.ResourceBundle;import org.eclipse.core.runtime.Platform;import org.eclipse.swt.SWT;import org.eclipse.swt.events.ModifyEvent;import org.eclipse.swt.events.ModifyListener;import org.eclipse.swt.events.SelectionAdapter;import org.eclipse.swt.events.SelectionEvent;import org.eclipse.swt.events.SelectionListener;import org.eclipse.swt.events.ShellAdapter;import org.eclipse.swt.events.ShellEvent;import org.eclipse.swt.graphics.Image;import org.eclipse.swt.graphics.Point;import org.eclipse.swt.graphics.Rectangle;import org.eclipse.swt.layout.GridData;import org.eclipse.swt.layout.GridLayout;import org.eclipse.swt.widgets.Button;import org.eclipse.swt.widgets.Combo;import org.eclipse.swt.widgets.Composite;import org.eclipse.swt.widgets.Control;import org.eclipse.swt.widgets.Group;import org.eclipse.swt.widgets.Label;import org.eclipse.swt.widgets.Shell;import org.eclipse.jface.action.IStatusLineManager;
-import org.eclipse.jface.dialogs.Dialog;import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.text.IFindReplaceTarget;import org.eclipse.jface.text.IFindReplaceTargetExtension;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.ShellAdapter;
+import org.eclipse.swt.events.ShellEvent;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.core.runtime.Platform;
+
+import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.text.IFindReplaceTarget;
+import org.eclipse.jface.text.IFindReplaceTargetExtension;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
-import org.eclipse.ui.IEditorActionBarContributor;
+
+import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;import org.eclipse.ui.help.WorkbenchHelp;import org.eclipse.ui.part.EditorActionBarContributor;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.part.EditorActionBarContributor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 
@@ -1098,17 +1129,13 @@ class FindReplaceDialog extends Dialog {
 		} else if (fTarget.getSelectionText() != null) {
 			// the cursor is set to the end or beginning of the selected text
 			Point selection= fTarget.getSelection();
-			if (forwardSearch)
-				findReplacePosition= selection.x;
-			else
-				findReplacePosition= selection.x + selection.y;
+			findReplacePosition= selection.x;
 		}
 		
 		if (fTarget instanceof IFindReplaceTargetExtension)
 			((IFindReplaceTargetExtension) fTarget).setReplaceAllMode(true);
 
 		try {
-			int length= findString.length();
 			int index= 0;
 			while (index != -1) {
 				index= fTarget.findAndSelect(findReplacePosition, findString, forwardSearch, caseSensitive, wholeWord);
@@ -1116,7 +1143,7 @@ class FindReplaceDialog extends Dialog {
 					if (forwardSearch)
 						findReplacePosition= index + replaceString.length();					
 					else
-						findReplacePosition= index;
+						findReplacePosition= index - replaceString.length();
 					fTarget.replaceSelection(replaceString);
 					replaceCount++;
 				}
