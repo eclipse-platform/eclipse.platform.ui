@@ -126,5 +126,12 @@ public class SiteURL extends Site {
 		return new FeaturePackaged(featureURL,this);
 	}
 
+	/**
+	 * Method parseSite.
+	 */
+	protected void parseSite() throws CoreException {
+		//does nothing
+	}
+
 }
 

@@ -18,11 +18,8 @@ package org.eclipse.update.core;
  * on local installation sites and linked sites)
  * </ul>
  */ 
-public interface ILocalSite extends ISite {
-	// FIXME: VK: post pass 1 ILocalSite will not extend ISite. Instead,
-	//            the caller will need to get the actual r/w ISite(s)
-	//            by calling getCurrentConfiguration().getInstallSites()
-	
+public interface ILocalSite {
+
 	/**
 	 * Return the current configuration object
 	 * 

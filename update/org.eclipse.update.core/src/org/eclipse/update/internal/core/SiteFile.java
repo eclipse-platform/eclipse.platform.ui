@@ -4,6 +4,7 @@ package org.eclipse.update.internal.core;
  * All Rights Reserved.
  */
 import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.eclipse.core.runtime.*;
@@ -35,16 +36,16 @@ public class SiteFile extends SiteURL {
 	/**
 	 * @see IPluginContainer#store(IPluginEntry, String, InputStream)
 	 */
-	public void store(IPluginEntry pluginEntry,String contentKey,InputStream inStream) throws CoreException {
+	public void store(IPluginEntry pluginEntry, String contentKey, InputStream inStream) throws CoreException {
 
-		String path = UpdateManagerUtils.getPath(getURL());			
-   		String pluginPath =	path + DEFAULT_PLUGIN_PATH + pluginEntry.getIdentifier().toString();
-   		pluginPath += pluginPath.endsWith(File.separator)?contentKey:File.separator+contentKey;
+		String path = UpdateManagerUtils.getPath(getURL());
+		String pluginPath = path + DEFAULT_PLUGIN_PATH + pluginEntry.getIdentifier().toString();
+		pluginPath += pluginPath.endsWith(File.separator) ? contentKey : File.separator + contentKey;
 		try {
 			UpdateManagerUtils.copyToLocal(inStream, pluginPath);
 		} catch (IOException e) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.ERROR,id,IStatus.OK,"Error creating file:"+pluginPath,e);
+			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Error creating file:" + pluginPath, e);
 			throw new CoreException(status);
 		} finally {
 			try {
@@ -58,16 +59,16 @@ public class SiteFile extends SiteURL {
 	/**
 	 * store Feature files
 	 */
-	public void storeFeatureInfo(	VersionedIdentifier featureIdentifier, String contentKey,InputStream inStream)  throws CoreException {
+	public void storeFeatureInfo(VersionedIdentifier featureIdentifier, String contentKey, InputStream inStream) throws CoreException {
 
-		String path = UpdateManagerUtils.getPath(getURL());			
+		String path = UpdateManagerUtils.getPath(getURL());
 		String featurePath = path + INSTALL_FEATURE_PATH + featureIdentifier.toString();
-   		featurePath += featurePath.endsWith(File.separator)?contentKey:File.separator+contentKey;			
+		featurePath += featurePath.endsWith(File.separator) ? contentKey : File.separator + contentKey;
 		try {
 			UpdateManagerUtils.copyToLocal(inStream, featurePath);
 		} catch (IOException e) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.ERROR,id,IStatus.OK,"Error creating file:"+featurePath,e);
+			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Error creating file:" + featurePath, e);
 			throw new CoreException(status);
 		} finally {
 			try {
@@ -78,20 +79,49 @@ public class SiteFile extends SiteURL {
 		}
 
 	}
-	
+
 	/*
 	 * @see AbstractSite#getDefaultFeature(URL)
 	 */
 	public IFeature getDefaultFeature(URL featureURL) {
-		return new FeatureExecutable(featureURL,this);
+		return new FeatureExecutable(featureURL, this);
 	}
 
 	/**
 	 * We do not need to optimize the download
 	 * As the archives are already available on the file system
 	 */
-	public boolean optimize(){
+	public boolean optimize() {
 		return false;
+	}
+
+	/**
+	 * Method parseSite.
+	 */
+	protected void parseSite() throws CoreException {
+		String path = UpdateManagerUtils.getPath(getURL());
+		String featurePath = path + INSTALL_FEATURE_PATH;
+		File featureFile = new File(featurePath);
+		if (featureFile.exists()) {
+			String[] dir;
+			FeatureReference featureRef;
+			URL featureURL;
+			try {
+				dir = featureFile.list();
+				for (int index = 0; index < dir.length; index++) {
+					featureURL = new URL("file", null, featurePath + dir[index]);
+					featureRef = new FeatureReference(this, featureURL);
+					addFeatureReference(featureRef);
+				}
+			} catch (MalformedURLException e) {
+				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+				IStatus status = new Status(IStatus.ERROR,id,IStatus.OK,"Error during parsing of the site:"+featurePath,e);
+				throw new CoreException(status);
+			}
+
+			//FIXME: handle the archives
+		}
+
 	}
 
 }

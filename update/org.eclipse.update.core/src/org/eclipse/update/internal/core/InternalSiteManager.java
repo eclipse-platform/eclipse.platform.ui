@@ -49,32 +49,7 @@ public class InternalSiteManager {
 	 * the user has access to (either read only or read write)
 	 */
 	public static ILocalSite getLocalSite() throws CoreException {
-		//FIXME: right now just the *plugins* directory	
-		// Hack for testing until the LocalSite object and API are created
-		// should not be releasaed in final product	
-		if (localSite==null){
-			try {
-			URL installURL = UpdateManagerPlugin.getPlugin().getDescriptor().getInstallURL();
-			URL resolvedURL = Platform.resolve(installURL);
-			String externalForm = UpdateManagerUtils.getPath(resolvedURL);						
-			
-			// teh result is <path>/<plugin path>/<aplugin>/
-			// transform in <apth>/ <plugin Path>/
-			int index = externalForm.lastIndexOf("/");
-			if (externalForm.endsWith("/")){
-				 externalForm = externalForm.substring(0,index);
-				 index = externalForm.lastIndexOf("/")+1;
-			}
-			URL newURL = null;
-			newURL = new URL(resolvedURL.getProtocol(), resolvedURL.getHost(),externalForm.substring(0,index));
-			localSite = new SiteLocal(newURL);
-			} catch (Exception e){
-				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-				IStatus status = new Status(IStatus.ERROR,id,IStatus.OK,"Cannot create the Local Site Object",e);
-				throw new CoreException(status);
-			} 
-			
-		}
+		if (localSite==null) localSite = new SiteLocal();
 		return localSite;
 	}
 

@@ -4,6 +4,7 @@ package org.eclipse.update.internal.core;
  * All Rights Reserved.
  */
 import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.*;
@@ -25,7 +26,7 @@ public abstract class Site implements ISite {
 
 	public static final String SITE_FILE = "site";
 	public static final String SITE_XML= SITE_FILE+".xml";
-	private boolean isManageable = true;
+	private boolean isManageable = false;
 	private boolean isInitialized = false;
 	private SiteParser parser;
 	
@@ -54,18 +55,20 @@ public abstract class Site implements ISite {
 	
 	/**
 	 * Initializes the site by reading the site.xml file
+	 * 
 	 */
 	private void initializeSite() throws CoreException {
-		isManageable = false;		
-		
 		try {
 			URL siteXml = new URL(siteURL,SITE_XML);
 			parser = new SiteParser(siteXml.openStream(),this);
-			isManageable = true;		 	
+			isManageable = true;
+				 	
 		} catch (FileNotFoundException e){
+			//attempt to parse the site if possible
+			parseSite();
 			// log not manageable site
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS){
-				System.out.println(siteURL.toExternalForm()+" is not manageable by Update Manager: Couldn't find the site.xml file.");
+				UpdateManagerPlugin.getPlugin().debug(siteURL.toExternalForm()+" is not manageable by Update Manager: Couldn't find the site.xml file.");
 			}
 		} catch (Exception e){
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
@@ -153,6 +156,12 @@ public abstract class Site implements ISite {
 	public abstract IFeature getDefaultFeature(URL featureURL);
 
 	/**
+	 * parse the physical site to initialize the site object
+	 * @throws CoreException
+	 */
+	protected abstract void parseSite() throws CoreException;
+
+	/**
 	 * returns true if we need to optimize the install by copying the 
 	 * archives in teh TEMP directory prior to install
 	 * Default is true
@@ -193,12 +202,10 @@ public abstract class Site implements ISite {
 	 */
 	public IFeatureReference[] getFeatureReferences() {
 		IFeatureReference[] result = new IFeatureReference[0];
-		if (isManageable){
 			if (!(features==null || features.isEmpty())){
 				result = new IFeatureReference[features.size()];
 				features.toArray(result);
 			}
-		}
 		return result;
 	}
 	
@@ -219,13 +226,11 @@ public abstract class Site implements ISite {
 	 */
 	public IInfo[] getArchives() {
 		IInfo[] result = new IInfo[0];
-		if (isManageable){
 			if (archives==null && !isInitialized) logNotInitialized();
 			if (!(archives==null || archives.isEmpty())){
 				result = new IInfo[archives.size()];
 				archives.toArray(result);
 			}
-		}
 		return result;
 	}
 	
@@ -276,7 +281,7 @@ public abstract class Site implements ISite {
 		if (getArchiveURLfor(archive.getText())!=null){
 			// DEBUG:		
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS){
-				System.out.println("The Archive with ID:"+archive.getText()+" already exist on the site.");		
+				UpdateManagerPlugin.getPlugin().debug("The Archive with ID:"+archive.getText()+" already exist on the site.");		
 			}
 		}else {
 			this.archives.add(archive);

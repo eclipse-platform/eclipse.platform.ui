@@ -20,10 +20,10 @@ public interface IInstallConfiguration {
 	/**
 	 * Returns an array of features accessible through this configuration.
 	 * 
-	 * @return IFeature[] accessible features. Returns an empty array
+	 * @return IFeatureReference[] accessible features. Returns an empty array
 	 * if there are no accessible features
 	 */
-	public IFeature[] getFeatures();
+	public IFeatureReference[] getFeatures();
 	
 	/**
 	 * Returns an array of local install sites that can be used as 

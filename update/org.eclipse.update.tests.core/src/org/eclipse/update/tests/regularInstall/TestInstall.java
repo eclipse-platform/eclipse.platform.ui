@@ -115,18 +115,20 @@ public class TestInstall extends UpdateManagerTestCase {
 		}
 
 		assertNotNull("Cannot find help.jar on site", remoteFeature);
-		ISite localSite = SiteManager.getLocalSite();
-		localSite.install(remoteFeature, null);
+		ILocalSite localSite = SiteManager.getLocalSite();
+		ISite site = localSite.getCurrentConfiguration().getInstallSites()[0];
+		site.install(remoteFeature, null);
 
-		String site = UpdateManagerUtils.getPath(localSite.getURL());			
+
 		IPluginEntry[] entries = remoteFeature.getPluginEntries();
 		assertTrue("no plugins entry", (entries != null && entries.length != 0));
 
+		String sitePath = UpdateManagerUtils.getPath(site.getURL());			
 		String pluginName = entries[0].getIdentifier().toString();
-		File pluginFile = new File(site, Site.DEFAULT_PLUGIN_PATH + pluginName);
+		File pluginFile = new File(sitePath, Site.DEFAULT_PLUGIN_PATH + pluginName);
 		assertTrue("plugin info not installed locally", pluginFile.exists());
 
-		File featureFile = new File(site, SiteFile.INSTALL_FEATURE_PATH + remoteFeature.getIdentifier().toString());
+		File featureFile = new File(sitePath, SiteFile.INSTALL_FEATURE_PATH + remoteFeature.getIdentifier().toString());
 		assertTrue("feature info not installed locally", featureFile.exists());
 
 		//cleanup

@@ -142,7 +142,7 @@ public class FeaturePackaged extends Feature {
 
 			// DEBUG:
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_INSTALL) {
-				System.out.println("the feature on TEMP file is :" + resolvedURL.toExternalForm());
+				UpdateManagerPlugin.getPlugin().debug("the feature on TEMP file is :" + resolvedURL.toExternalForm());
 			}
 		} catch (IOException e) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
