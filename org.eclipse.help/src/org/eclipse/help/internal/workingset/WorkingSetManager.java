@@ -294,7 +294,7 @@ public class WorkingSetManager {
 				}
 			}
 			
-			AdaptableHelpResource toc = HelpSystem.getWorkingSetManager().getAdaptableToc(href);
+			AdaptableHelpResource toc = getAdaptableToc(href);
 
 			if (toc == null)
 				return null;

@@ -46,7 +46,7 @@ public class AdaptableTopic extends AdaptableHelpResource {
 		toc.saveState(element);
 		AdaptableHelpResource[] topics = toc.getChildren();
 		for (int i=0; i<topics.length; i++)
-			if (topics[i].equals(this))		
+			if (topics[i] == this)		
 				element.setAttribute("topic", String.valueOf(i));
 	}
 }
