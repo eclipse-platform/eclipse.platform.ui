@@ -15,6 +15,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.ui.actions.CVSAction;
 import org.eclipse.team.internal.ccvs.ui.model.CVSTagElement;
 import org.eclipse.team.internal.ccvs.ui.model.RemoteProjectsElement;
+import org.eclipse.team.internal.ui.actions.TeamAction;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
@@ -54,11 +55,11 @@ public class RemoteProjectsView extends RemoteViewPart {
 	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-		Object[] selected = CVSAction.getSelectedResources(selection, ICVSRepositoryLocation.class);
+		Object[] selected = TeamAction.getSelectedAdaptables(selection, ICVSRepositoryLocation.class);
 		if (selected.length != 0) {
 			root.setRoot((ICVSRepositoryLocation)selected[0]);
 		} else {
-			selected = CVSAction.getSelectedResources(selection, CVSTagElement.class);
+			selected = TeamAction.getSelectedAdaptables(selection, CVSTagElement.class);
 			if (selected.length != 0) {
 				CVSTagElement element = (CVSTagElement)selected[0];
 				root.setRoot(element.getRoot());

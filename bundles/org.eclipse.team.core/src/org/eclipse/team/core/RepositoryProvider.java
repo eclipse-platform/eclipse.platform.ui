@@ -387,9 +387,7 @@ public abstract class RepositoryProvider implements IProjectNature {
 				}
 			}
 		} catch(CoreException e) {
-			TeamPlugin.log(e.getStatus());
-		} catch(TeamException e) {
-			TeamPlugin.log(e.getStatus());
+			TeamPlugin.log(e);
 		}
 		return null;
 	}
@@ -437,8 +435,6 @@ public abstract class RepositoryProvider implements IProjectNature {
 		} catch(CoreException e) {
 			// would happen if provider nature id is not registered with the resources plugin
 			TeamPlugin.log(new Status(IStatus.WARNING, TeamPlugin.ID, 0, Policy.bind("RepositoryProviderTypeRepositoryProvider_not_registered_as_a_nature_id___3", id), e)); //$NON-NLS-1$
-		} catch(TeamException e) {
-			TeamPlugin.log(e.getStatus());
 		}
 		return null;
 	}

@@ -6,7 +6,7 @@
         <listEntry value="org.eclipse.debug.ui.launchGroup.debug"/>
         <listEntry value="org.eclipse.debug.ui.launchGroup.run"/>
     </listAttribute>
-    <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="org.eclipse.team.tests.ccvs.core.cvsresources.EclipseSynchronizerTest"/>
+    <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="org.eclipse.team.tests.ccvs.core.subscriber.CVSSubscriberTest"/>
     <booleanAttribute key="org.eclipse.jdt.junit.KEEPRUNNING_ATTR" value="false"/>
     <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="org.eclipse.team.tests.cvs.core"/>
     <stringAttribute key="org.eclipse.pde.junit.APPLICATION_NAME" value="org.eclipse.pde.junit.coretestapplication"/>

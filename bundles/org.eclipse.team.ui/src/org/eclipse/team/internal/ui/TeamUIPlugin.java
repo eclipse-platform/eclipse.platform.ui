@@ -45,6 +45,7 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 
 	private static TeamUIPlugin instance;
 	public static final String ID = "org.eclipse.team.ui"; //$NON-NLS-1$
+	public static final String PT_SUBSCRIBER_MENUS = "subscriberMenus"; //$NON-NLS-1$
 	
 	private static List propertyChangeListeners = new ArrayList(5);
 
@@ -128,6 +129,16 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 	 */
 	public static void log(IStatus status) {
 		getPlugin().getLog().log(status);
+	}
+	
+	/**
+	 * Convenience method for logging a TeamException in such a way that the
+	 * stacktrace is logged as well.
+	 * @param e
+	 */
+	public static void log(TeamException e) {
+		IStatus status = e.getStatus();
+		log (new Status(status.getSeverity(), status.getPlugin(), status.getCode(), status.getMessage(), e));
 	}
 	
 	public static void runWithProgress(Shell parent, boolean cancelable,

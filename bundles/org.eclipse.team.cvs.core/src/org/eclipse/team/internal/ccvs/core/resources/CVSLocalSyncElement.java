@@ -83,7 +83,7 @@ public class CVSLocalSyncElement extends LocalSyncElement {
 	/*
 	 * @see LocalSyncElement#isIgnored(IResource)
 	 */
-	protected boolean isIgnored(IResource child) {
+	public boolean isIgnored(IResource child) {
 		ICVSResource cvsResource = getCVSResourceFor(getLocal());
 		if(cvsResource==null || !cvsResource.isFolder() ) {
 			return false;

@@ -90,12 +90,15 @@ public class EclipseTest extends EclipseWorkspaceTest {
 	 */
 	public IResource[] addResources(IContainer container, String[] hierarchy, boolean checkin) throws CoreException, TeamException {
 		IResource[] newResources = buildResources(container, hierarchy, false);
-		getProvider(container).add(newResources, IResource.DEPTH_ZERO, DEFAULT_MONITOR);
-		if (checkin)
-			getProvider(container).checkin(newResources, IResource.DEPTH_ZERO, DEFAULT_MONITOR);
+		addResources(newResources);
+		if (checkin) commitResources(newResources, IResource.DEPTH_ZERO);
 		return newResources;
 	}
 	
+	protected void addResources(IResource[] newResources) throws TeamException, CoreException {
+		if (newResources.length == 0) return;
+		getProvider(newResources[0]).add(newResources, IResource.DEPTH_ZERO, DEFAULT_MONITOR);
+	}
 	/**
 	 * Perform a CVS edit of the given resources
 	 */
@@ -150,8 +153,7 @@ public class EclipseTest extends EclipseWorkspaceTest {
 			}
 		}
 		IResource[] resources = (IResource[])changedResources.toArray(new IResource[changedResources.size()]);
-		if (checkin)
-			getProvider(container).checkin(resources, IResource.DEPTH_ZERO, DEFAULT_MONITOR);
+		if (checkin) commitResources(resources, IResource.DEPTH_ZERO);
 		return resources;
 	}
 	
@@ -160,22 +162,29 @@ public class EclipseTest extends EclipseWorkspaceTest {
 	 */
 	public IResource[] deleteResources(IContainer container, String[] hierarchy, boolean checkin) throws CoreException, TeamException {
 		IResource[] resources = getResources(container, hierarchy);
-		getProvider(container).delete(resources, DEFAULT_MONITOR);
+		deleteResources(resources);
 		if (checkin)
-			getProvider(container).checkin(resources, IResource.DEPTH_ZERO, DEFAULT_MONITOR);
+			commitResources(resources, IResource.DEPTH_ZERO);
 		return resources;
 	}
 	
+	protected void deleteResources(IResource[] resources) throws TeamException, CoreException {
+		if (resources.length == 0) return;
+		getProvider(resources[0]).delete(resources, DEFAULT_MONITOR);
+	}
 	/**
 	 * Unmanage the resources
 	 */
 	public void unmanageResources(IContainer container, String[] hierarchy) throws CoreException, TeamException {
 		IResource[] resources = getResources(container, hierarchy);
+		unmanageResources(resources);
+	}
+	
+	protected void unmanageResources(IResource[] resources) throws TeamException, CoreException {
 		for (int i=0;i<resources.length;i++) {
 			CVSWorkspaceRoot.getCVSResourceFor(resources[i]).unmanage(null);
 		}
 	}
-	
 	/**
 	 * Update the resources from an existing container with the changes from the CVS repository
 	 */
@@ -197,8 +206,12 @@ public class EclipseTest extends EclipseWorkspaceTest {
 		getProvider(project).update(new IResource[] {project}, options, tag, true /*createBackups*/, DEFAULT_MONITOR);
 	}
 	
-	public void commitProject(IProject project) throws TeamException {
-		getProvider(project).checkin(new IResource[] {project}, IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
+	public void commitProject(IProject project) throws TeamException, CoreException {
+		commitResources(project, true);
+	}
+	
+	public void commitResources(IContainer container, boolean deep) throws TeamException, CoreException {
+		commitResources(new IResource[] {container }, deep?IResource.DEPTH_INFINITE:IResource.DEPTH_ZERO);
 	}
 	
 	/**
@@ -206,10 +219,17 @@ public class EclipseTest extends EclipseWorkspaceTest {
 	 */
 	public IResource[] commitResources(IContainer container, String[] hierarchy) throws CoreException, TeamException {
 		IResource[] resources = getResources(container, hierarchy);
-		getProvider(container).checkin(resources, IResource.DEPTH_ZERO, DEFAULT_MONITOR);
+		commitResources(resources, IResource.DEPTH_ZERO);
 		return resources;
 	}
 	
+	/*
+	 * Commit the provided resources which must all be in the same project
+	 */
+	protected void commitResources(IResource[] resources, int depth) throws TeamException, CoreException {
+		if (resources.length == 0) return;
+		getProvider(resources[0]).checkin(resources, depth, DEFAULT_MONITOR);
+	}
 	/**
 	 * Commit the resources from an existing container to the CVS repository
 	 */
@@ -240,9 +260,6 @@ public class EclipseTest extends EclipseWorkspaceTest {
 		return result;
 	}
 
-	public void checkinResources(IContainer container, boolean deep) throws TeamException {
-		getProvider(container).checkin(new IResource[] {container}, deep?IResource.DEPTH_INFINITE:IResource.DEPTH_ZERO, DEFAULT_MONITOR);
-	}
 	/*
 	 * Checkout a copy of the project into a project with the given postfix
 	 */
@@ -613,7 +630,7 @@ public class EclipseTest extends EclipseWorkspaceTest {
 		return getRandomContents(RANDOM_CONTENT_SIZE);
 	}
 	
-	protected void setContentsAndEnsureModified(IFile file) throws CoreException, CVSException {
+	protected void setContentsAndEnsureModified(IFile file) throws CoreException, TeamException {
 		setContentsAndEnsureModified(file, getRandomContents().toString());
 	}
 	

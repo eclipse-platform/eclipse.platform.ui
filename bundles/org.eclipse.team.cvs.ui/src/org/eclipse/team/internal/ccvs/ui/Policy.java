@@ -90,7 +90,10 @@ public class Policy {
 	 */
 	public static void checkCanceled(IProgressMonitor monitor) {
 		if (monitor.isCanceled())
-			throw new OperationCanceledException();
+			cancelOperation();
+	}
+	public static void cancelOperation() {
+		throw new OperationCanceledException();
 	}
 	public static IProgressMonitor monitorFor(IProgressMonitor monitor) {
 		if (monitor == null)

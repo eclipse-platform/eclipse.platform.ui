@@ -136,8 +136,6 @@ public class UpdateMergeAction extends UpdateSyncAction {
 			}
 		} catch(CoreException e) {
 			throw new CVSException(Policy.bind("UpdateMergeActionProblems_merging_remote_resources_into_workspace_1"), e); //$NON-NLS-1$
-		} catch(TeamException e) {
-			throw new CVSException(Policy.bind("UpdateMergeActionProblems_merging_remote_resources_into_workspace_2"), e); //$NON-NLS-1$
 		}
 	}
 

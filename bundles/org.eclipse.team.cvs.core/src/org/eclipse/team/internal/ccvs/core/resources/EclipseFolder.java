@@ -341,14 +341,17 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 			
 			IContainer container = (IContainer)getIResource();
 			
-			if (!isCVSFolder()) {
-				return container.exists();
-			}
-			
+			// TODO: Added optimization to avoid loading sync info if possible
+			// This will place a modified indicator on non-cvs folders
+			// (i.e. the call to getModifiedState will cache a session property)
 			int state = EclipseSynchronizer.getInstance().getModificationState(getIResource());
-	
+			
 			boolean modified;
 			if (state == ICVSFile.UNKNOWN) {
+				
+				if (!isCVSFolder()) {
+					return container.exists();
+				}
 				
 				// We have no cached info for the folder. We'll need to check directly,
 				// caching as go. This will recursively determined the modified state

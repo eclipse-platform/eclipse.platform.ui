@@ -42,10 +42,12 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.Team;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.subscribers.TeamProvider;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.QuietOption;
@@ -83,6 +85,8 @@ public class CVSProviderPlugin extends Plugin {
 
 	// cvs plugin extension points and ids
 	public static final String ID = "org.eclipse.team.cvs.core"; //$NON-NLS-1$
+	
+	public static final QualifiedName CVS_WORKSPACE_SUBSCRIBER_ID = new QualifiedName(CVSSubscriberFactory.ID, "workspace-subscriber");
 	public static final String PT_AUTHENTICATOR = "authenticator"; //$NON-NLS-1$
 	public static final String PT_CONNECTIONMETHODS = "connectionmethods"; //$NON-NLS-1$
 	public static final String PT_FILE_MODIFICATION_VALIDATOR = "filemodificationvalidator"; //$NON-NLS-1$
@@ -128,6 +132,8 @@ public class CVSProviderPlugin extends Plugin {
 	private List repositoryListeners = new ArrayList();
 	private static List decoratorEnablementListeners = new ArrayList();
 	
+	private CVSWorkspaceSubscriber cvsWorkspaceSubscriber;
+	
 	/**
 	 * The identifier for the CVS nature
 	 * (value <code>"org.eclipse.team.cvs.core.nature"</code>).
@@ -150,10 +156,11 @@ public class CVSProviderPlugin extends Plugin {
 	/**
 	 * Convenience method for logging CVSExceptiuons to the plugin log
 	 */
-	public static void log(TeamException e) {
+	public static void log(CoreException e) {
 		// For now, we'll log the status. However we should do more
 		log(e.getStatus());
 	}
+	
 	public static void log(IStatus status) {
 		// For now, we'll log the status. However we should do more
 		getPlugin().getLog().log(status);
@@ -305,6 +312,12 @@ public class CVSProviderPlugin extends Plugin {
 		CVSProviderPlugin.addResourceStateChangeListener(addDeleteMoveListener);
 		
 		createCacheDirectory();
+		
+		cvsWorkspaceSubscriber = new CVSWorkspaceSubscriber(
+				CVS_WORKSPACE_SUBSCRIBER_ID, 
+				"CVS Workspace",  
+				"Synchronizes the CVS managed resources in your workspace with their associated remote location");
+		TeamProvider.registerSubscriber(cvsWorkspaceSubscriber);
 	}
 	
 	/**

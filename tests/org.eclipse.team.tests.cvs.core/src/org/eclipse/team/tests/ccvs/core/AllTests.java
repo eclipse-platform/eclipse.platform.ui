@@ -12,6 +12,10 @@ package org.eclipse.team.tests.ccvs.core;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.eclipse.team.tests.ccvs.core.cvsresources.AllTestsCVSResources;
+import org.eclipse.team.tests.ccvs.core.provider.AllTestsProvider;
+import org.eclipse.team.tests.ccvs.core.subscriber.AllTestsTeamSubscriber;
+
 public class AllTests extends EclipseTest {
 
 	/**
@@ -35,8 +39,9 @@ public class AllTests extends EclipseTest {
 	public static Test suite() {
 		TestSuite suite = new TestSuite();
 		//suite.addTest(org.eclipse.team.tests.ccvs.core.compatible.AllTestsCompatibility.suite());
-		suite.addTest(org.eclipse.team.tests.ccvs.core.cvsresources.AllTestsCVSResources.suite());
-		suite.addTest(org.eclipse.team.tests.ccvs.core.provider.AllTestsProvider.suite());
+		suite.addTest(AllTestsCVSResources.suite());
+		suite.addTest(AllTestsProvider.suite());
+		suite.addTest(AllTestsTeamSubscriber.suite());
 		return new CVSTestSetup(suite);
 	}
 }

@@ -146,9 +146,7 @@ public class SyncFileChangeListener implements IResourceChangeListener {
 				EclipseSynchronizer.getInstance().syncFilesChanged((IContainer[])changedContainers.toArray(new IContainer[changedContainers.size()]));
 			}			
 		} catch(CoreException e) {
-			CVSProviderPlugin.log(e.getStatus());
-		} catch(CVSException e) {
-			CVSProviderPlugin.log(e.getStatus());
+			CVSProviderPlugin.log(e);
 		}
 	}
 	

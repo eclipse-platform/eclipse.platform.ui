@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -70,6 +71,13 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 	protected FolderSyncInfo folderInfo;
 	private ICVSRemoteResource[] children;
 	private ICVSRepositoryLocation repository;
+	
+	public static RemoteFolder fromBytes(IResource local, byte[] bytes) throws CVSException {
+		Assert.isNotNull(bytes);
+		Assert.isTrue(local.getType() != IResource.FILE);
+		FolderSyncInfo syncInfo = FolderSyncInfo.getFolderSyncInfo(bytes);
+		return new RemoteFolder(null, local.getName(), CVSProviderPlugin.getPlugin().getRepository(syncInfo.getRoot()), syncInfo.getRepository(), syncInfo.getTag(), syncInfo.getIsStatic());
+	}
 	
 	/**
 	 * Constructor for RemoteFolder.
@@ -807,4 +815,15 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 		return new ResourceSyncInfo(getName());
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.core.resources.RemoteResource#getSyncBytes()
+	 */
+	public byte[] getSyncBytes() {
+		try {
+			return folderInfo.getBytes();
+		} catch (CVSException e) {
+			// This shouldn't even happen
+			return null;
+		}
+	}
 }

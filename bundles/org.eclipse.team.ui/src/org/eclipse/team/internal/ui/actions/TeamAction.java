@@ -11,6 +11,7 @@
 package org.eclipse.team.internal.ui.actions;
 
 
+import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -43,8 +44,10 @@ import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionDelegate;
 
@@ -72,72 +75,93 @@ public abstract class TeamAction extends ActionDelegate implements IObjectAction
 	private IWorkbenchPart targetPart;
 
 	/**
+	 * Creates an array of the given class type containing all the
+	 * objects in the selection that adapt to the given class.
+	 * 
+	 * @param selection
+	 * @param c
+	 * @return
+	 */
+	public static Object[] getSelectedAdaptables(ISelection selection, Class c) {
+		ArrayList result = null;
+		if (!selection.isEmpty()) {
+			result = new ArrayList();
+			Iterator elements = ((IStructuredSelection) selection).iterator();
+			while (elements.hasNext()) {
+				Object adapter = getAdapter(elements.next(), c);
+				if (c.isInstance(adapter)) {
+					result.add(adapter);
+				}
+			}
+		}
+		if (result != null && !result.isEmpty()) {
+			return (Object[])result.toArray((Object[])Array.newInstance(c, result.size()));
+		}
+		return (Object[])Array.newInstance(c, 0);
+	}
+	
+	/**
+	 * Find the object associated with the given object when it is adapted to
+	 * the provided class. Null is returned if the given object does not adapt
+	 * to the given class
+	 * 
+	 * @param selection
+	 * @param c
+	 * @return Object
+	 */
+	public static Object getAdapter(Object adaptable, Class c) {
+		if (c.isInstance(adaptable)) {
+			return adaptable;
+		}
+		if (adaptable instanceof IAdaptable) {
+			IAdaptable a = (IAdaptable) adaptable;
+			Object adapter = a.getAdapter(c);
+			if (c.isInstance(adapter)) {
+				return adapter;
+			}
+		}
+		return null;
+	}
+	
+	/**
 	 * Returns the selected projects.
 	 * 
 	 * @return the selected projects
 	 */
 	protected IProject[] getSelectedProjects() {
-		ArrayList projects = null;
-		if (!selection.isEmpty()) {
-			projects = new ArrayList();
-			Iterator elements = ((IStructuredSelection) selection).iterator();
-			while (elements.hasNext()) {
-				Object next = elements.next();
-				if (next instanceof IProject) {
-					projects.add(next);
-					continue;
-				}
-				if (next instanceof IAdaptable) {
-					IAdaptable a = (IAdaptable) next;
-					Object adapter = a.getAdapter(IResource.class);
-					if (adapter instanceof IProject) {
-						projects.add(adapter);
-						continue;
-					}
-				}
+		IResource[] selectedResources = getSelectedResources();
+		if (selectedResources.length == 0) return new IProject[0];
+		ArrayList projects = new ArrayList();
+		for (int i = 0; i < selectedResources.length; i++) {
+			IResource resource = selectedResources[i];
+			if (resource.getType() == IResource.PROJECT) {
+				projects.add(resource);
 			}
 		}
-		if (projects != null && !projects.isEmpty()) {
-			IProject[] result = new IProject[projects.size()];
-			projects.toArray(result);
-			return result;
-		}
-		return new IProject[0];
+		return (IProject[]) projects.toArray(new IProject[projects.size()]);
 	}
+	
+	/**
+	 * Returns an array of the given class type c that contains all
+	 * instances of c that are either contained in the selection or
+	 * are adapted from objects contained in the selection.
+	 * 
+	 * @param c
+	 * @return
+	 */
+	protected Object[] getSelectedResources(Class c) {
+		return getSelectedAdaptables(selection, c);
+	}
+	
 	/**
 	 * Returns the selected resources.
 	 * 
 	 * @return the selected resources
 	 */
 	protected IResource[] getSelectedResources() {
-		ArrayList resources = null;
-		if (!selection.isEmpty()) {
-			resources = new ArrayList();
-			Iterator elements = ((IStructuredSelection) selection).iterator();
-			while (elements.hasNext()) {
-				Object next = elements.next();
-				if (next instanceof IResource) {
-					resources.add(next);
-					continue;
-				}
-				if (next instanceof IAdaptable) {
-					IAdaptable a = (IAdaptable) next;
-					Object adapter = a.getAdapter(IResource.class);
-					if (adapter instanceof IResource) {
-						resources.add(adapter);
-						continue;
-					}
-				}
-			}
-		}
-		if (resources != null && !resources.isEmpty()) {
-			IResource[] result = new IResource[resources.size()];
-			resources.toArray(result);
-			return result;
-		}
-		return new IResource[0];
+		return (IResource[])getSelectedResources(IResource.class);
 	}
-
+	
 	/**
 	 * Convenience method for getting the current shell.
 	 * 
@@ -147,7 +171,11 @@ public abstract class TeamAction extends ActionDelegate implements IObjectAction
 		if (shell != null) {
 			return shell;
 		} else {
-			return TeamUIPlugin.getPlugin().getWorkbench().getActiveWorkbenchWindow().getShell();
+			IWorkbench workbench = TeamUIPlugin.getPlugin().getWorkbench();
+			if (workbench == null) return null;
+			IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
+			if (window == null) return null;
+			return window.getShell();
 		}
 	}
 	/**
@@ -391,4 +419,5 @@ public abstract class TeamAction extends ActionDelegate implements IObjectAction
 			return null;
 		}
 	}
+
 }

@@ -11,9 +11,7 @@
 package org.eclipse.team.internal.ccvs.core.resources;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -50,57 +48,6 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
 	 */
 	private ISynchronizer getWorkspaceSynchronizer() {
 		return ResourcesPlugin.getWorkspace().getSynchronizer();
-	}
-
-	/**
-	 * Convert a FolderSyncInfo into a byte array that can be stored
-	 * in the workspace synchronizer
-	 */
-	private byte[] getBytes(FolderSyncInfo info) throws CVSException {
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		DataOutputStream dos = new DataOutputStream(out);
-		try {
-			dos.writeUTF(info.getRoot());
-			dos.writeUTF(info.getRepository());
-			CVSEntryLineTag tag = info.getTag();
-			if (tag == null) {
-				dos.writeUTF(""); //$NON-NLS-1$
-			} else {
-				dos.writeUTF(tag.toString());
-			}
-			dos.writeBoolean(info.getIsStatic());
-			dos.close();
-		} catch (IOException e) {
-			throw CVSException.wrapException(e);
-		}
-		return out.toByteArray();
-	}
-
-	/**
-	 * Convert a byte array that was created using getBytes(FolderSyncInfo)
-	 * into a FolderSyncInfo
-	 */
-	private FolderSyncInfo getFolderSyncInfo(byte[] bytes) throws CVSException {
-		ByteArrayInputStream in = new ByteArrayInputStream(bytes);
-		DataInputStream dis = new DataInputStream(in);
-		String root;
-		String repository;
-		CVSEntryLineTag tag;
-		boolean isStatic;
-		try {
-			root = dis.readUTF();
-			repository = dis.readUTF();
-			String tagName = dis.readUTF();
-			if (tagName.length() == 0) {
-				tag = null;
-			} else {
-				tag = new CVSEntryLineTag(tagName);
-			}
-			isStatic = dis.readBoolean();
-		} catch (IOException e) {
-			throw CVSException.wrapException(e);
-		}
-		return new FolderSyncInfo(repository, root, tag, isStatic);
 	}
 	
 	/**
@@ -177,7 +124,7 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
 		try {
 			byte[] bytes = getWorkspaceSynchronizer().getSyncInfo(FOLDER_SYNC_KEY, container);
 			if (bytes == null) return null;
-			return getFolderSyncInfo(bytes);
+			return FolderSyncInfo.getFolderSyncInfo(bytes);
 		} catch (CoreException e) {
 			throw CVSException.wrapException(e);
 		}
@@ -201,7 +148,7 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
 				}
 			} else {
 				ensureWorkspaceModifiable(container);
-				getWorkspaceSynchronizer().setSyncInfo(FOLDER_SYNC_KEY, container, getBytes(info));
+				getWorkspaceSynchronizer().setSyncInfo(FOLDER_SYNC_KEY, container, info.getBytes());
 			}
 		} catch (CoreException e) {
 			throw CVSException.wrapException(e);

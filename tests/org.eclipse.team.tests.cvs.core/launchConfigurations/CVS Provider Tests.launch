@@ -3,10 +3,10 @@
     <booleanAttribute key="org.eclipse.pde.junit.DELETE_WORKSPACE" value="true"/>
     <stringAttribute key="org.eclipse.pde.junitWORKSPACE_LOCATION" value="C:\Eclipse\Latest-Eclipse-Drop\eclipse\runtime-test-workspace"/>
     <listAttribute key="org.eclipse.debug.ui.favoriteGroups">
-        <listEntry value="org.eclipse.debug.ui.launchGroup.debug"/>
         <listEntry value="org.eclipse.debug.ui.launchGroup.run"/>
+        <listEntry value="org.eclipse.debug.ui.launchGroup.debug"/>
     </listAttribute>
-    <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="org.eclipse.team.tests.ccvs.core.provider.AllTestsProvider"/>
+    <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="org.eclipse.team.tests.ccvs.core.subscriber.AllTestsTeamSubscriber"/>
     <booleanAttribute key="org.eclipse.jdt.junit.KEEPRUNNING_ATTR" value="false"/>
     <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="org.eclipse.team.tests.cvs.core"/>
     <stringAttribute key="org.eclipse.pde.junit.APPLICATION_NAME" value="org.eclipse.pde.junit.coretestapplication"/>

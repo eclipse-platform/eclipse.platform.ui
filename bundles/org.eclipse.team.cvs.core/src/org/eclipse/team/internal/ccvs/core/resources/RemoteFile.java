@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -57,6 +59,7 @@ import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.NotifyInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.core.util.Assert;
 
 /**
  * This class provides the implementation of ICVSRemoteFile and IManagedFile for
@@ -89,6 +92,22 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 			return null;
 		}
 		RemoteFile file = new RemoteFile(parent, syncBytes);
+		parent.setChildren(new ICVSRemoteResource[] {file});
+		return file;
+	}
+	
+	public static RemoteFile fromBytes(IResource local, byte[] bytes, byte[] parentBytes) throws CVSException {
+		Assert.isNotNull(bytes);
+		Assert.isTrue(local.getType() == IResource.FILE);
+		RemoteFolder parent = RemoteFolder.fromBytes(local.getParent(), parentBytes);
+		RemoteFile file = new RemoteFile(parent, bytes);
+		parent.setChildren(new ICVSRemoteResource[] {file});
+		return file;
+	}
+	
+	public static RemoteFile getRemote(IFile local, byte[] bytes) throws CVSException {
+		RemoteFolder parent = (RemoteFolder)CVSWorkspaceRoot.getRemoteResourceFor(local.getParent());
+		RemoteFile file = new RemoteFile(parent, bytes);
 		parent.setChildren(new ICVSRemoteResource[] {file});
 		return file;
 	}
@@ -613,7 +632,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	/**
 	 * @see org.eclipse.team.internal.ccvs.core.ICVSFile#getSyncBytes()
 	 */
-	public byte[] getSyncBytes() throws CVSException {
+	public byte[] getSyncBytes() {
 		return syncBytes;
 	}
 	/**
@@ -623,4 +642,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 		setSyncInfo(new ResourceSyncInfo(syncBytes), ICVSFile.UNKNOWN);
 	}
 
+	public String toString() {
+		return super.toString() + " " + getRevision();
+	}
 }

@@ -11,11 +11,17 @@
 package org.eclipse.team.internal.ccvs.core.syncinfo;
 
  
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.resources.*;
-import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.team.internal.ccvs.core.resources.CVSEntryLineTag;
+import org.eclipse.team.internal.ccvs.core.util.Assert;
 
 /**
  * Value (immutable) object that represents workspace state information about the contents of a
@@ -243,5 +249,56 @@ public class FolderSyncInfo {
 		if (other == null) return false;
 		return (this.getRoot().equals(other.getRoot()) 
 			&& this.getRepository().equals(other.getRepository())) ;
+	}
+
+/**
+	 * Convert a FolderSyncInfo into a byte array that can be stored
+	 * in the workspace synchronizer
+	 */
+	public byte[] getBytes() throws CVSException {
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		DataOutputStream dos = new DataOutputStream(out);
+		try {
+			dos.writeUTF(getRoot());
+			dos.writeUTF(getRepository());
+			CVSEntryLineTag t = getTag();
+			if (t == null) {
+				dos.writeUTF(""); //$NON-NLS-1$
+			} else {
+				dos.writeUTF(t.toString());
+			}
+			dos.writeBoolean(getIsStatic());
+			dos.close();
+		} catch (IOException e) {
+			throw CVSException.wrapException(e);
+		}
+		return out.toByteArray();
+	}
+
+	/**
+	 * Convert a byte array that was created using getBytes(FolderSyncInfo)
+	 * into a FolderSyncInfo
+	 */
+	public static FolderSyncInfo getFolderSyncInfo(byte[] bytes) throws CVSException {
+		ByteArrayInputStream in = new ByteArrayInputStream(bytes);
+		DataInputStream dis = new DataInputStream(in);
+		String root;
+		String repository;
+		CVSEntryLineTag tag;
+		boolean isStatic;
+		try {
+			root = dis.readUTF();
+			repository = dis.readUTF();
+			String tagName = dis.readUTF();
+			if (tagName.length() == 0) {
+				tag = null;
+			} else {
+				tag = new CVSEntryLineTag(tagName);
+			}
+			isStatic = dis.readBoolean();
+		} catch (IOException e) {
+			throw CVSException.wrapException(e);
+		}
+		return new FolderSyncInfo(repository, root, tag, isStatic);
 	}
 }

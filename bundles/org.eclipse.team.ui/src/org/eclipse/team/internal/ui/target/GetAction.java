@@ -154,9 +154,7 @@ public class GetAction extends TargetAction {
 			return true;
 		} catch(CoreException e) {
 			TeamUIPlugin.handle(e);
-		} catch(TeamException e) {
-			TeamUIPlugin.handle(e);
-		}		
+		}	
 		return false;
 	}
 	

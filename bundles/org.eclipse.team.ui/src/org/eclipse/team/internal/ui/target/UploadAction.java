@@ -101,8 +101,6 @@ public class UploadAction extends TargetAction {
 					};
 				} catch (CoreException e) {
 					throw new InvocationTargetException(e);
-				} catch (TeamException e) {
-					throw new InvocationTargetException(e);
 				} finally {
 					monitor.done();
 				}

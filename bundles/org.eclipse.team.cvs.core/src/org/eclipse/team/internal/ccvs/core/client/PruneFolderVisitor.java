@@ -26,9 +26,9 @@ import org.eclipse.team.internal.ccvs.core.ICVSResourceVisitor;
  * and deletes them. Of course it is starting at the leaves of the
  * recusion (the folders that do not have subfolders).
  */
-class PruneFolderVisitor implements ICVSResourceVisitor {
+public class PruneFolderVisitor implements ICVSResourceVisitor {
 	
-	private Session session;
+	private ICVSFolder localRoot;
 	
 	public PruneFolderVisitor() {
 	}
@@ -37,7 +37,14 @@ class PruneFolderVisitor implements ICVSResourceVisitor {
 	 * This method is used to visit a set of ICVSResources.
 	 */
 	public void visit(Session s, ICVSResource[] resources) throws CVSException {
-		session = s;
+		visit(s.getLocalRoot(), resources);
+	}
+	
+	/**
+	 * This method is used to visit a set of ICVSResources.
+	 */
+	public void visit(ICVSFolder root, ICVSResource[] resources) throws CVSException {
+		localRoot = root;
 		
 		// Visit the resources
 		Set prunableParents = new HashSet();
@@ -54,7 +61,6 @@ class PruneFolderVisitor implements ICVSResourceVisitor {
 			pruneFolderAndParentsIfAppropriate(cvsFolder);
 		}
 	}
-	
 	/**
 	 * @see ICVSResourceVisitor#visitFile(IManagedFile)
 	 */
@@ -75,7 +81,7 @@ class PruneFolderVisitor implements ICVSResourceVisitor {
 	private void pruneFolderIfAppropriate(ICVSFolder folder) throws CVSException {
 		// Only prune managed folders that are not the root of the operation
 		if (folder.exists() && folder.isManaged() 
-			&& ! folder.equals(session.getLocalRoot())
+			&& ! folder.equals(getLocalRoot())
 			&& folder.members(ICVSFolder.ALL_EXISTING_MEMBERS).length == 0) {
 			
 			// Delete the folder but keep a phantom for local folders
@@ -83,6 +89,10 @@ class PruneFolderVisitor implements ICVSResourceVisitor {
 		}
 	}
 	
+	private ICVSFolder getLocalRoot() {
+		return localRoot;
+	}
+
 	/**
 	 * Attemp to prunt the given folder. If the folder is pruned, attempt to prune it's parent.
 	 */

@@ -181,7 +181,7 @@ public class CVSProviderTest extends EclipseTest {
 		addResources(copy, new String[] { "added.txt", "folder2/", "folder2/added.txt" }, false);
 		changeResources(copy, new String[] {"changed.txt"}, false);
 		deleteResources(copy, new String[] {"deleted.txt"}, false);
-		checkinResources(copy, true);
+		commitResources(copy, true);
 		
 		// Tag the original, checkout the tag and compare with original
 		CVSTag v1Tag = new CVSTag("v1", CVSTag.VERSION);

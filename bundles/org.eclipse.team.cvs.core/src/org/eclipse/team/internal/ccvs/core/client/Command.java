@@ -628,6 +628,9 @@ public abstract class Command extends Request {
 	 * Valid for: add commit import
 	 */
 	public static LocalOption makeArgumentOption(LocalOption option, String argument) {
+		if(argument == null) {
+			argument = "";
+		}
 		return new LocalOption(option.getOption(), argument);  //$NON-NLS-1$
 	}
 	

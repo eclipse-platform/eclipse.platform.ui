@@ -84,6 +84,10 @@ public class TeamImages {
 		createImageDescriptor(ISharedImages.IMG_CHECKEDIN_OVR, baseURL);
 		createImageDescriptor(ISharedImages.IMG_CHECKEDOUT_OVR, baseURL);
 		
+		// Collapse all
+		createImageDescriptor(ISharedImages.IMG_COLLAPSE_ALL, baseURL);
+		createImageDescriptor(ISharedImages.IMG_COLLAPSE_ALL_ENABLED, baseURL);
+		
 		// Target Management Icons
 		createImageDescriptor(UIConstants.IMG_SITE_ELEMENT, baseURL);
 		

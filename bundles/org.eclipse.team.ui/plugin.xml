@@ -24,6 +24,7 @@
 
 <extension-point id="configurationWizards" name="%configurationWizards" schema="schema/configurationWizards.exsd"/>
 <extension-point id="targetConfigWizards" name="%targetWizards"/>
+<extension-point id="subscriberMenus" name="%subscriberMenus"/>
 
 <!-- **************** PREFERENCES ******************* -->
    <extension
@@ -175,12 +176,20 @@
 	</category>
 	<view
 		id="org.eclipse.team.ui.sync.SyncView"
-		name="%SyncView.name"
+		name="%OldSyncView.name"
 		icon="icons/full/cview16/synch_synch.gif"
 		fastViewWidthRatio="0.75"
 		category="org.eclipse.team.ui"
 		class="org.eclipse.team.internal.ui.sync.SyncView">
 	</view>
+      <view
+        id="org.eclipse.team.sync.views.SyncViewer"
+      	name="%SyncView.name"
+        icon="icons/full/cview16/synch_synch.gif"
+        fastViewWidthRatio="0.25"
+        category="org.eclipse.team.ui"
+        class="org.eclipse.team.internal.ui.sync.views.SyncViewer">
+      </view>
 </extension>	
 
 <!-- ****************** Import Wizards ********************* -->

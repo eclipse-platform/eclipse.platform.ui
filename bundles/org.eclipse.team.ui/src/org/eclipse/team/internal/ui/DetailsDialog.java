@@ -260,5 +260,34 @@ abstract public class DetailsDialog extends Dialog {
 		this.imageKey = imageKey;
 	}
 
-
+	protected static final int LABEL_WIDTH_HINT = 400;
+	protected Label createWrappingLabel(Composite parent, String text) {
+		Label label = new Label(parent, SWT.LEFT | SWT.WRAP);
+		label.setText(text);
+		GridData data = new GridData();
+		data.horizontalSpan = 1;
+		data.horizontalAlignment = GridData.FILL;
+		data.horizontalIndent = 0;
+		data.grabExcessHorizontalSpace = true;
+		data.widthHint = LABEL_WIDTH_HINT;
+		label.setLayoutData(data);
+		return label;
+	}
+	
+	protected Composite createComposite(Composite parent) {
+		Composite composite = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
+		layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
+		layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
+		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
+		composite.setLayout(layout);
+		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		composite.setFont(parent.getFont());
+		return composite;
+	}
+	
+	protected boolean isDetailsVisible() {
+		return detailsCreated;
+	}
 }

@@ -31,9 +31,10 @@ import org.eclipse.team.core.TeamException;
  */
 public class CVSException extends TeamException {
 
-	/*
-	 * Helpers for creating CVS exceptions
-	 */
+	public CVSException(CoreException e) {
+		super(e);
+	}
+
 	public CVSException(int severity, int code, String message, Throwable e) {
 		super(new CVSStatus(severity, code, message, null));
 	}
@@ -57,10 +58,7 @@ public class CVSException extends TeamException {
 	/*
 	 * Static helper methods for creating exceptions
 	 */
-	public static CVSException wrapException(
-		IResource resource,
-		String message,
-		IOException e) {
+	public static CVSException wrapException(IResource resource, String message, IOException e) {
 		// NOTE: we should record the resource somehow
 		// We should also inlcude the IO message
 		return new CVSException(new CVSStatus(IStatus.ERROR, IO_FAILED, message, e));
@@ -89,23 +87,10 @@ public class CVSException extends TeamException {
 	}
 	
 	public static CVSException wrapException(CoreException e) {
-		IStatus status = e.getStatus();
-		// If the exception is not a multi-status, wrap the exception to keep the original stack trace.
-		// If the exception is a multi-status, the interesting stack traces should be in the childen already
-		if ( ! status.isMultiStatus()) {
-			status = new CVSStatus(status.getSeverity(), status.getCode(), status.getMessage(), e);
-		}
-		return new CVSException(status);
-	}
-	
-	/*
-	 * Static helper methods for creating exceptions
-	 */
-	public static CVSException wrapException(TeamException e) {
-		if (e instanceof CVSException)
+		if (e instanceof CVSException) { 
 			return (CVSException)e;
-		else
-			return new CVSException(e.getStatus());
+		}
+		return new CVSException(e);
 	}
 	
 	public CoreException toCoreException() {

@@ -71,14 +71,12 @@ class UpdatedHandler extends ResponseHandler {
 		return null;
 	}
 
-	public void handle(Session session, String localDir,
-		IProgressMonitor monitor) throws CVSException {
+	public void handle(Session session, String localDir, IProgressMonitor monitor) throws CVSException {
 		// read additional data for the response
 		String repositoryFile = session.readLine();
 		String entryLine = session.readLine();
+		byte[] entryBytes = entryLine.getBytes();
 		String permissionsLine = session.readLine();
-		// temporary sync info for parsing the line received from the server
-		ResourceSyncInfo info = new ResourceSyncInfo(entryLine, permissionsLine, null);
 
 		// clear file update modifiers
 		Date modTime = session.getModTime();
@@ -87,15 +85,16 @@ class UpdatedHandler extends ResponseHandler {
 		// Get the local file
 		String fileName = repositoryFile.substring(repositoryFile.lastIndexOf("/") + 1); //$NON-NLS-1$
 		ICVSFolder mParent = getExistingFolder(session, localDir);
-		ICVSFile mFile = mParent.getFile(fileName);
+		ICVSFile mFile = getTargetFile(mParent, fileName, entryBytes);
 		
-		boolean binary = info.getKeywordMode().isBinary();
-		boolean readOnly = info.getPermissions().indexOf(READ_ONLY_FLAG) == -1;
+		boolean binary = ResourceSyncInfo.isBinary(entryBytes);
+		boolean readOnly = permissionsLine.indexOf(READ_ONLY_FLAG) == -1;
 		
 		// The file may have been set as read-only by a previous checkout/update
 		if (mFile.isReadOnly()) mFile.setReadOnly(false);
+		
 		try {
-			session.receiveFile(mFile, binary, handlerType, monitor);
+			receiveTargetFile(session, mFile, entryLine, modTime, binary, readOnly, monitor);
 		} catch (CVSException e) {
 			if (e.getStatus().getCode() == IResourceStatus.CASE_VARIANT_EXISTS) {
 				// Record that we have a case collision and continue;
@@ -105,12 +104,22 @@ class UpdatedHandler extends ResponseHandler {
 				throw e;
 			}
 		}
-		if (readOnly) mFile.setReadOnly(true);
+	}
+
+	protected ICVSFile getTargetFile(ICVSFolder mParent, String fileName, byte[] entryBytes) throws CVSException {
+		return mParent.getFile(fileName);
+	}
+	
+	protected void receiveTargetFile(Session session, ICVSFile mFile, String entryLine, Date modTime, boolean binary, boolean readOnly, IProgressMonitor monitor) throws CVSException {
+		
+		// receive the file contents from the server
+		session.receiveFile(mFile, binary, handlerType, monitor);
 		
 		// Set the timestamp in the file and get it again so that we use the *real* timestamp
 		// in the sync info. The os may not actually set the time we provided :)
 		mFile.setTimeStamp(modTime);
 		modTime = mFile.getTimeStamp();
+		ResourceSyncInfo info = new ResourceSyncInfo(entryLine, null, null);
 		MutableResourceSyncInfo newInfoWithTimestamp = info.cloneMutable();
 		newInfoWithTimestamp.setTimeStamp(modTime);
 		int modificationState = ICVSFile.UNKNOWN;
@@ -123,5 +132,7 @@ class UpdatedHandler extends ResponseHandler {
 			CVSProviderPlugin.getPlugin().getFileModificationManager().updated(mFile);
 		}
 		mFile.setSyncInfo(newInfoWithTimestamp, modificationState);
+		if (readOnly) mFile.setReadOnly(true);
 	}
+	
 }

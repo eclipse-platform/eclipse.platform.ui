@@ -111,7 +111,7 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 	/*
 	 * @see LocalSyncElement#isIgnored(IResource)
 	 */
-	protected boolean isIgnored(IResource resource) {
+	public boolean isIgnored(IResource resource) {
 		return localSync.isIgnored(resource);
 	}
 	/*

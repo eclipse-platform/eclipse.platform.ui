@@ -248,8 +248,6 @@ public abstract class SyncCompareInput extends CompareEditorInput {
 			return diffRoot;
 		} catch (CoreException e) {
 			throw new InvocationTargetException(e);
-		} catch (TeamException e) {
-			throw new InvocationTargetException(e);
 		}
 	}
 	

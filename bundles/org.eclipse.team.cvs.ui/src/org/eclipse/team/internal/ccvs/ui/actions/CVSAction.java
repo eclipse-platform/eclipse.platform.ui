@@ -278,50 +278,6 @@ abstract public class CVSAction extends TeamAction {
 	protected boolean needsToSaveDirtyEditors() {
 		return false;
 	}
-
-	/**
-	 * Find the object associated with the selected object that is adapted to
-	 * the provided class.
-	 * 
-	 * @param selection
-	 * @param c
-	 * @return Object
-	 */
-	public static Object getAdapter(Object selection, Class c) {
-		if (c.isInstance(selection)) {
-			return selection;
-		}
-		if (selection instanceof IAdaptable) {
-			IAdaptable a = (IAdaptable) selection;
-			Object adapter = a.getAdapter(c);
-			if (c.isInstance(adapter)) {
-				return adapter;
-			}
-		}
-		return null;
-	}
-	
-	protected Object[] getSelectedResources(Class c) {
-		return getSelectedResources(selection, c);
-	}
-	
-	public static Object[] getSelectedResources(ISelection selection, Class c) {
-		ArrayList result = null;
-		if (!selection.isEmpty()) {
-			result = new ArrayList();
-			Iterator elements = ((IStructuredSelection) selection).iterator();
-			while (elements.hasNext()) {
-				Object adapter = getAdapter(elements.next(), c);
-				if (c.isInstance(adapter)) {
-					result.add(adapter);
-				}
-			}
-		}
-		if (result != null && !result.isEmpty()) {
-			return (Object[])result.toArray(new Object[result.size()]);
-		}
-		return new Object[0];
-	}
 	
 	/**
 	 * Returns the selected CVS resources

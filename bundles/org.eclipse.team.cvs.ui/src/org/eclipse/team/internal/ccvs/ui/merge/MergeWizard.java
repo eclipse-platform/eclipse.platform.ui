@@ -11,11 +11,17 @@
 package org.eclipse.team.internal.ccvs.ui.merge;
 
 
-import org.eclipse.compare.CompareUI;
+import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.subscribers.TeamProvider;
+import org.eclipse.team.internal.ccvs.core.CVSMergeSubscriber;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
@@ -30,7 +36,7 @@ public class MergeWizard extends Wizard {
 	IResource[] resources;
 
 	public void addPages() {
-		
+		setNeedsProgressMonitor(true);
 		// when merging multiple resources, use the tags found on the first selected
 		// resource. This makes sense because you would typically merge resources that
 		// have a common context and are versioned and branched together.
@@ -59,9 +65,10 @@ public class MergeWizard extends Wizard {
 		
 		CVSTag startTag = startPage.getTag();
 		CVSTag endTag = endPage.getTag();				
-		CompareUI.openCompareEditorOnPage(
-		  new MergeEditorInput(resources, startTag, endTag),
-		  activePage);
+		
+		// registering the subscriber
+		final CVSMergeSubscriber s = new CVSMergeSubscriber(resources, startTag, endTag);
+		TeamProvider.registerSubscriber(s);
 		return true;
 	}
 	

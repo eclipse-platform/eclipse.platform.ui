@@ -136,7 +136,7 @@ public class ModuleTest extends EclipseTest {
 	}
 	
 	// XXX Temporary method of checkout (i.e. with vcm_meta
-	protected IProject checkoutProject(String projectName, CVSTag tag) throws TeamException {
+	protected IProject checkoutProject(String projectName, CVSTag tag) throws TeamException, CoreException {
 		IProject project = super.checkoutProject(getWorkspace().getRoot().getProject(projectName), null, tag);
 		ICVSFolder parent = (ICVSFolder)CVSWorkspaceRoot.getCVSResourceFor(project);
 		ICVSResource vcmmeta = CVSWorkspaceRoot.getCVSResourceFor(project.getFile(".vcm_meta"));

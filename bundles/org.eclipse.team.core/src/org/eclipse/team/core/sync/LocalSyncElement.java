@@ -112,4 +112,12 @@ public abstract class LocalSyncElement implements ILocalSyncElement {
 			throw new TeamException(e.getStatus());
 		}
 	}
+	
+	public boolean equals(Object other) {
+		if(other == this) return true;
+		if(other instanceof ILocalSyncElement) {
+			return getLocal().equals(((ILocalSyncElement)other).getLocal());
+		}
+		return false;
+	}
 }

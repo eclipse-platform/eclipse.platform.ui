@@ -202,5 +202,21 @@ public abstract class RemoteResource extends PlatformObject implements ICVSRemot
 	public int hashCode() {
 		return getRepositoryRelativePath().hashCode();
 	}
+	
+	/**
+	 * Method which returns an array of bytes that can be used to recreate the remote handle.
+	 * To recreate the remote handle, invoke the <code>fromBytes</code> method on either
+	 * RemoteFolder or RemoteFile.
+	 * 
+	 * TODO: It would be nice to have a method on RmeoteResource to recreate the handles
+	 * but the file requires the bytes for the parent folder since this folder may not
+	 * exist locally.
+	 * 
+	 * @return
+	 */
+	abstract public byte[] getSyncBytes();
 
+	public String toString() {
+		return "Remote " + (isContainer() ? "Folder: " : "File: ") + getName();
+	}
 }

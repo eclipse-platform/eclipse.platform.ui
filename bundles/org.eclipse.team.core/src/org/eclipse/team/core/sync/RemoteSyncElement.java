@@ -170,6 +170,7 @@ public abstract class RemoteSyncElement extends LocalSyncElement implements IRem
 	 * @see ILocalSyncElement#getSyncKind(int, IProgressMonitor)
 	 */
 	public int getSyncKind(int granularity, IProgressMonitor progress) {
+		progress = Policy.monitorFor(progress);
 		int description = IN_SYNC;
 	
 		IResource local = getLocal();

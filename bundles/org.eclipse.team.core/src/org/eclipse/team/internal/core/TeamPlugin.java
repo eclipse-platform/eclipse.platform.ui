@@ -100,6 +100,13 @@ final public class TeamPlugin extends Plugin {
 		plugin.getLog().log(status);
 	}
 	
+	/**
+	 * Returns the plug-in's log
+	 */
+	public static void log(CoreException e) {
+		log(e.getStatus());
+	}
+	
 	/*
 	 * Static helper methods for creating exceptions
 	 */
