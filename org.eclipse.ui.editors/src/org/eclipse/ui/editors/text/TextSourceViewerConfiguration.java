@@ -11,9 +11,11 @@
 package org.eclipse.ui.editors.text;
 
 import org.eclipse.jface.preference.IPreferenceStore;
+
 import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
+
 import org.eclipse.ui.texteditor.ExtendedTextEditorPreferenceConstants;
 
 /**
@@ -24,11 +26,16 @@ import org.eclipse.ui.texteditor.ExtendedTextEditorPreferenceConstants;
 public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 	
 	/**
-	 * Preference store used to initialize this configuration.
+	 * New preference store used to initialize this configuration.
+	 * <p>
+	 * XXX: Note that this is work in progress and still subject to change.
+	 *      The reason why this is is called "new" is because at other places
+	 * 		we have a legacy preference store.
+	 * </p>
 	 * 
 	 * @since 3.0
 	 */
-	private IPreferenceStore fPreferenceStore;
+	private IPreferenceStore fNewPreferenceStore;
 
 	/**
 	 * A noop implementation of <code>IAnnotationHover</code> that will trigger the text editor
@@ -62,7 +69,7 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 	 * @since 3.0
 	 */
 	public TextSourceViewerConfiguration(IPreferenceStore preferenceStore) {
-		fPreferenceStore= preferenceStore;
+		fNewPreferenceStore= preferenceStore;
 	}
 	
 	/*
@@ -77,20 +84,8 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 	 * @since 3.0
 	 */
 	public int getTabWidth(ISourceViewer sourceViewer) {
-		if (getPreferenceStore() == null)
+		if (fNewPreferenceStore == null)
 			return super.getTabWidth(sourceViewer);
-		return getPreferenceStore().getInt(ExtendedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH);
-	}
-
-	/**
-	 * Returns the preference store used by this configuration to initialize
-	 * the individual bits and pieces.
-	 * 
-	 * @return the preference store used to initialize this configuration
-	 * 
-	 * @since 3.0
-	 */
-	protected IPreferenceStore getPreferenceStore() {
-		return fPreferenceStore;
+		return fNewPreferenceStore.getInt(ExtendedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH);
 	}
 }

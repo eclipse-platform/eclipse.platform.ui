@@ -279,7 +279,7 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
 		if (fSourceViewerDecorationSupport != null)
-			fSourceViewerDecorationSupport.install(getPreferenceStore());
+			fSourceViewerDecorationSupport.install(getNewPreferenceStore());
 		
 		if (isPrefQuickDiffAlwaysOn())
 			showChangeInformation(true);
@@ -289,7 +289,7 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 	 * Tells whether the overview ruler is visible.
 	 */
 	protected boolean isOverviewRulerVisible() {
-		IPreferenceStore store= getPreferenceStore();
+		IPreferenceStore store= getNewPreferenceStore();
 		return store != null ? store.getBoolean(OVERVIEW_RULER) : false;
 	}
 
@@ -390,7 +390,7 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 		
 		// get diff model if it exists already
 		IAnnotationModel differ= model.getAnnotationModel(IChangeRulerColumn.QUICK_DIFF_MODEL_ID);
-		IPreferenceStore store= getPreferenceStore();
+		IPreferenceStore store= getNewPreferenceStore();
 		
 		// create diff model if it doesn't
 		if (differ == null && store != null) {
@@ -476,7 +476,7 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 	 * @return <code>true</code> if the line numbers should be visible
 	 */
 	protected boolean isLineNumberRulerVisible() {
-		IPreferenceStore store= getPreferenceStore();
+		IPreferenceStore store= getNewPreferenceStore();
 		return store != null ? store.getBoolean(LINE_NUMBER_RULER) : false;
 	}
 
@@ -487,7 +487,7 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 	 * @return <code>true</code> if the line numbers should be visible
 	 */
 	protected boolean isPrefQuickDiffAlwaysOn() {
-		IPreferenceStore store= getPreferenceStore();
+		IPreferenceStore store= getNewPreferenceStore();
 		return store != null ? store.getBoolean(ExtendedTextEditorPreferenceConstants.QUICK_DIFF_ALWAYS_ON) : false;
 	}
 	
@@ -498,7 +498,7 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 	 */
 	protected void initializeLineNumberRulerColumn(LineNumberRulerColumn rulerColumn) {
 		ISharedTextColors sharedColors= getSharedColors();
-		IPreferenceStore store= getPreferenceStore();
+		IPreferenceStore store= getNewPreferenceStore();
 		if (store != null) {
 		
 			RGB rgb=  null;
@@ -537,7 +537,7 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 	 */
 	private void initializeChangeRulerColumn(IChangeRulerColumn changeColumn) {
 		ISharedTextColors sharedColors= getSharedColors();
-		IPreferenceStore store= getPreferenceStore();
+		IPreferenceStore store= getNewPreferenceStore();
 	
 		if (store != null) {
 			ISourceViewer v= getSourceViewer();
@@ -659,7 +659,7 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 	 */
 	protected IVerticalRuler createVerticalRuler() {
 		CompositeRuler ruler= createCompositeRuler();
-		IPreferenceStore store= getPreferenceStore();
+		IPreferenceStore store= getNewPreferenceStore();
 		if (ruler != null && store != null) {
 			for (Iterator iter=  ruler.getDecoratorIterator(); iter.hasNext();) {
 				IVerticalRulerColumn column= (IVerticalRulerColumn)iter.next();
@@ -730,7 +730,7 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 			}
 
 			if (ExtendedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH.equals(property)) {
-				sourceViewer.getTextWidget().setTabs(getPreferenceStore().getInt(ExtendedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH));
+				sourceViewer.getTextWidget().setTabs(getNewPreferenceStore().getInt(ExtendedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH));
 				return;
 			}
 
