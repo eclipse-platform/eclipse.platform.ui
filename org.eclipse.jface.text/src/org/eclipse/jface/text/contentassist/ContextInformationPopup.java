@@ -61,12 +61,22 @@ class ContextInformationPopup implements IContentAssistListener {
 	 * @since 2.0
 	 */
 	static class ContextFrame {
-		public int fBeginOffset;
-		public int fOffset;
-		public int fVisibleOffset;
-		public IContextInformation fInformation;
-		public IContextInformationValidator fValidator;
-		public IContextInformationPresenter fPresenter;
+		
+		final int fBeginOffset;
+		final int fOffset;
+		final int fVisibleOffset;
+		final IContextInformation fInformation;
+		final IContextInformationValidator fValidator;
+		final IContextInformationPresenter fPresenter;
+				
+		public ContextFrame(IContextInformation information, int beginOffset, int offset, int visibleOffset, IContextInformationValidator validator, IContextInformationPresenter presenter) {
+			fInformation = information;
+			fBeginOffset = beginOffset;
+			fOffset = offset;
+			fVisibleOffset = visibleOffset;
+			fValidator = validator;
+			fPresenter = presenter;
+		}
 		
 		/*
 		 * @see java.lang.Object#equals(java.lang.Object)
@@ -78,6 +88,13 @@ class ContextInformationPopup implements IContentAssistListener {
 				return fInformation.equals(frame.fInformation) && fBeginOffset == frame.fBeginOffset;
 			}
 			return super.equals(obj);
+		}
+		
+		/*
+		 * @see java.lang.Object#hashCode()
+		 */
+		public int hashCode() {
+			return (fInformation.hashCode() << 16) | fBeginOffset;
 		}
 	}
 
@@ -276,15 +293,11 @@ class ContextInformationPopup implements IContentAssistListener {
 		IContextInformationValidator validator= fContentAssistSubjectControlAdapter.getContextInformationValidator(fContentAssistant, offset);
 		
 		if (validator != null) {
-			ContextFrame current= new ContextFrame();
-			current.fInformation= information;
-			current.fBeginOffset= (information instanceof IContextInformationExtension) ? ((IContextInformationExtension) information).getContextInformationPosition() : offset;
-			if (current.fBeginOffset == -1) current.fBeginOffset= offset;
-			current.fOffset= offset;
-			current.fVisibleOffset= fContentAssistSubjectControlAdapter.getWidgetSelectionRange().x - (offset - current.fBeginOffset);
-			current.fValidator= validator;
-			current.fPresenter= fContentAssistSubjectControlAdapter.getContextInformationPresenter(fContentAssistant, offset);
-			return current;
+			int beginOffset= (information instanceof IContextInformationExtension) ? ((IContextInformationExtension) information).getContextInformationPosition() : offset;
+			if (beginOffset == -1) beginOffset= offset;
+			int visibleOffset= fContentAssistSubjectControlAdapter.getWidgetSelectionRange().x - (offset - beginOffset);
+			IContextInformationPresenter presenter = fContentAssistSubjectControlAdapter.getContextInformationPresenter(fContentAssistant, offset);
+			return new ContextFrame(information, beginOffset, offset, visibleOffset, validator, presenter);
 		}
 		
 		return null;

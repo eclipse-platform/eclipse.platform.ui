@@ -21,11 +21,11 @@ import org.eclipse.jface.text.Assert;
 public final class ContextInformation implements IContextInformation {
 	
 	/** The name of the context. */
-	private String fContextDisplayString;
+	private final String fContextDisplayString;
 	/** The information to be displayed. */
-	private String fInformationDisplayString;
+	private final String fInformationDisplayString;
 	/** The image to be displayed. */
-	private Image fImage;
+	private final Image fImage;
 
 	/**
 	 * Creates a new context information without an image.
@@ -66,6 +66,14 @@ public final class ContextInformation implements IContextInformation {
 			return equals;
 		}
 		return false;
+	}
+	
+	/*
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+	 	int low= fContextDisplayString != null ? fContextDisplayString.hashCode() : 0;
+	 	return (fInformationDisplayString.hashCode() << 16) | low;
 	}
 	
 	/*
