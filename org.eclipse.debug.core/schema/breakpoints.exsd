@@ -1,0 +1,122 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.debug.core">
+<annotation>
+   <appInfo>
+      <meta.schema plugin="org.eclipse.debug.core" id="breakpoints" name="Breakpoints"/>
+   </appInfo>
+   <documentation>
+      This extension point defines a mechanism for defining new types of breakpoints.
+   </documentation>
+</annotation>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="breakpoint" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="breakpoint">
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  specifies a unique identifier for this breakpoint type.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="markerType" type="string" use="required">
+            <annotation>
+               <documentation>
+                  specifies the fully qualified identifier (id) of the corresponding marker definition for breakpoints of this type.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  specifies the fully qualified name of the java class that implements &lt;samp&gt;IBreakpoint&lt;/samp&gt;.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.debug.core.model.Breakpoint"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         The following is an example of a launch configuration type extension point:
+
+&lt;p&gt;
+&lt;pre&gt;
+ &lt;extension point="org.eclipse.debug.core.breakpoint"&gt;
+  &lt;breakpoint
+   id="com.example.ExampleBreakpoint"
+   markerType="com.example.ExampleBreakpointMarker"
+   class="com.example.ExampleBreakpointImpl"&gt;
+  &lt;/breakpoint&gt;
+ &lt;/extension&gt;
+&lt;/pre&gt;
+&lt;/p&gt;
+
+In the example above, the specified type of breakpoint is implemented by the class "com.example.BreakpointImpl".
+There is an associated marker definition for "com.example.ExampleBreakpointMarker", defining the attributes of this breakpoint.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         Value of the attribute &lt;b&gt;class&lt;/b&gt; must be a fully qualified name of a Java class that implements the interface &lt;b&gt;org.eclipse.debug.core.model.IBreakpoint&lt;/b&gt;.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         [Enter information about supplied implementation of this extension point.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+</schema>

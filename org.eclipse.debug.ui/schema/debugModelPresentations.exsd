@@ -1,0 +1,124 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.debug.ui">
+<annotation>
+   <appInfo>
+      <meta.schema plugin="org.eclipse.debug.ui" id="debugModelPresentations" name="Debug Model Presentation"/>
+   </appInfo>
+   <documentation>
+      This extension point allows tools to handle the 
+presentation aspects of a debug model. 
+A debug model presentation is responsible for 
+providing labels, images, and editors for elements 
+in a specific debug model.
+   </documentation>
+</annotation>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="debugModelPresentation" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="debugModelPresentation">
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the identifier of the debug model this presentation is responsible for
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  fully qualifed name of a Java class that implements the 
+&lt;samp&gt;org.eclipse.debug.ui.IDebugModelPresentation&lt;/samp&gt;
+interface.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.debug.ui.IDebugModelPresentation"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         The following is an example of a view filter extension point:
+
+&lt;p&gt;
+&lt;pre&gt;
+   &lt;extension point = "org.eclipse.debug.ui.debugModelPresentations"&gt; 
+       &lt;debugModelPresentation 
+           class = "com.example.JavaModelPresentation"
+      	   id = "com.example.JavaDebugModel"
+       &lt;/debugModelPresentation&gt; 
+   &lt;/extension&gt; 
+&lt;/pre&gt;
+&lt;/p&gt;
+In the example above, the class 
+&lt;samp&gt;com.example.JavaModelPresentation&lt;/samp&gt; will be 
+used to render and present debug elements originating 
+from the debug model identified by 
+&lt;samp&gt;com.example.JavaDebugModel&lt;/samp&gt;.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         Value of the action attribute &lt;samp&gt;class&lt;/samp&gt; must be a fully 
+qualified class name of a Java class that implements 
+&lt;samp&gt;org.eclipse.debug.ui.IDebugModelPresentation&lt;/samp&gt;.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+</schema>

@@ -21,12 +21,12 @@
 </runtime>
 
 <!-- Extension points -->
-<extension-point id="launchers" name="%launcherExtensionPointName"/>
-<extension-point id="breakpoints" name="%breakpointExtensionPointName"/>
-<extension-point id="launchConfigurationTypes" name="%launchConfigurationTypeNameExtensionPointName"/>
-<extension-point id="launchConfigurationComparators" name="%launchConfigurationComparatorsExtensionPointName"/>
-<extension-point id="statusHandlers" name="%statusHandlerExtensionPointName"/>
-<extension-point id="sourceLocators" name="%sourceLocatorsExtensionPointName"/>
+<extension-point id="breakpoints" name="%breakpointExtensionPointName" schema= "schema/breakpoints.exsd"/>
+<extension-point id="launchConfigurationComparators" name="%launchConfigurationComparatorsExtensionPointName" schema= "schema/launchConfigurationComparators.exsd"/>
+<extension-point id="launchConfigurationTypes" name="%launchConfigurationTypeNameExtensionPointName" schema= "schema/launchConfigurationTypes.exsd"/>
+<extension-point id="launchers" name="%launcherExtensionPointName" schema= "schema/launchers.exsd"/>
+<extension-point id="sourceLocators" name="%sourceLocatorsExtensionPointName" schema= "schema/sourceLocators.exsd"/>
+<extension-point id="statusHandlers" name="%statusHandlerExtensionPointName" schema= "schema/statusHandlers.exsd"/>
 
 <!-- Extensions -->
 <extension id="breakpointMarker" point="org.eclipse.core.resources.markers">

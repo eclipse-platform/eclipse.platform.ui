@@ -1,0 +1,170 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.debug.core">
+<annotation>
+   <appInfo>
+      <meta.schema plugin="org.eclipse.debug.core" id="launchConfigurationTypes" name="Launch Configuration Types"/>
+   </appInfo>
+   <documentation>
+      This extension point provides a configurable mechanism for launching applications.
+Each launch configuration type has a name, supports one or more modes (run and/or debug), and specifies a delegate
+responsible for the implementation of launching an application.
+   </documentation>
+</annotation>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="launchConfigurationType" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="launchConfigurationType">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="name"/>
+         </appInfo>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="fileExtension" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  specifies a unique identifier for this launch configuration type.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="delegate" type="string" use="required">
+            <annotation>
+               <documentation>
+                  specifies the fully qualified name of the Java class that implements &lt;samp&gt;ILaunchConfigurationDelegate&lt;/samp&gt;.
+Launch configuration instances of this type will delegate to instances of this class to perform launching.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.debug.core.model.ILaunchConfigurationDelegate"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="modes" type="string" use="required">
+            <annotation>
+               <documentation>
+                  specifies a comma-separated list of the modes this type of lauch configuration supports - "run" and/or "debug".
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  specifies a human-readable name for this type of launch configuration.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="public" type="boolean">
+            <annotation>
+               <documentation>
+                  specifies whether this launch configuration type is accessible by users.  Defaults to true if not specified.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="fileExtension">
+      <complexType>
+         <attribute name="extension" type="string" use="required">
+            <annotation>
+               <documentation>
+                  specifies a file extension that this launch configuration type
+can be used for.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="default" type="boolean">
+            <annotation>
+               <documentation>
+                  specifies whether this launch configuration type should be the default launch configuration type for the specified file extension.  Defaults to false if not specified.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         The following is an example of a launch configuration type extension point:
+
+&lt;p&gt;
+&lt;pre&gt;
+	&lt;extension point="org.eclipse.debug.core.launchConfigurationTypes"&gt;
+		&lt;launchConfigurationType
+			id="com.example.ExampleIdentifier"
+			delegate="com.example.ExampleLaunchConfigurationDelegate"
+			modes="run,debug"
+			name="Example Application"&gt;
+			&lt;fileExtension extension="txt" default="true"/&gt;
+			&lt;fileExtension extension="gif" default="false"/&gt;
+		&lt;/launchConfigurationType&gt;
+	&lt;/extension&gt;
+&lt;/pre&gt;
+&lt;/p&gt;
+
+In the example above, the specified type of launch configuration supports both run and debug modes. 
+The launch configuration is applicable to .txt and .gif files, and is the default launch configuration for .txt files.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         Value of the attribute &lt;b&gt;delegate&lt;/b&gt; must be a fully qualified name of a Java class that implements the interface &lt;b&gt;org.eclipse.debug.core.model.ILaunchConfigurationDelegate&lt;/b&gt;.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         [Enter information about supplied implementation of this extension point.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+</schema>

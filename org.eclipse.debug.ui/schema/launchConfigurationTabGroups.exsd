@@ -1,0 +1,125 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.debug.ui">
+<annotation>
+   <appInfo>
+      <meta.schema plugin="org.eclipse.debug.ui" id="launchConfigurationTabGroups" name="Launch Configuration Tab Groups"/>
+   </appInfo>
+   <documentation>
+      This extension point provides a mechanism for contributing a group of tabls to the launch configuration
+dialog for a type of launch configuration.
+   </documentation>
+</annotation>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="launchConfigurationTabGroup" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="launchConfigurationTabGroup">
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  specifies a unique identifier for this launch configuration tab group.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="type" type="string" use="required">
+            <annotation>
+               <documentation>
+                  specifies a launch configuration type that this tab group is applicable to (corresponds to the id of a
+launch configuration type extension).
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  specifies a fully qualified name of a Java class that implements &lt;samp&gt;ILaunchConfigurationTabGroup&lt;/samp&gt;.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         The following is an example of a launch configuration tab group extension point:
+
+&lt;p&gt;
+&lt;pre&gt;
+ &lt;extension point="org.eclipse.debug.ui.launchConfigurationTabGroups"&gt;
+  &lt;launchConfigurationTabGroup
+   id="com.example.ExampleTabGroup"
+   type="com.example.ExampleLaunchConfigurationTypeIdentifier"
+   class="com.example.ExampleLaunchConfigurationTabGroupClass"&gt;
+  &lt;/launchConfigurationTabGroup&gt;
+ &lt;/extension&gt;
+&lt;/pre&gt;
+&lt;/p&gt;
+
+In the above example, the contributed tab group will be shown for the launch configuration type with
+identifier &lt;samp&gt;com.example.ExampleLaunchConfigurationTypeIdentifier&lt;/samp&gt;.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         Value of the attribute &lt;b&gt;class&lt;/b&gt; must be a fully qualified name of a Java class that implements the 
+interface &lt;b&gt;org.eclipse.debug.ui.ILaunchConfigurationTabGroup&lt;/b&gt;.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         [Enter information about supplied implementation of this extension point.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+</schema>

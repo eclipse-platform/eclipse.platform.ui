@@ -1,0 +1,132 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.debug.core">
+<annotation>
+   <appInfo>
+      <meta.schema plugin="org.eclipse.debug.core" id="statusHandlers" name="Status Handlers"/>
+   </appInfo>
+   <documentation>
+      This extension point provides a mechanism for separating the generation and resolution of an error.
+The interaction between the source of the error and the resolution is client-defined.
+It is a client responsibility to look up and delegate to status handlers when an error condition occurs.
+   </documentation>
+</annotation>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="statusHandler" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="statusHandler">
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  specifies a unique identifier for this status handler.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  specifies the fully qualified name of the Java class that implements IStatusHandler.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.debug.core.IStatusHandler"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="plugin" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Plug-in identifier that corresponds to the plug-in of the status this handler is registered for.  (i.e. IStatus.getPlugin()).
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="code" type="string" use="required">
+            <annotation>
+               <documentation>
+                  specifies the status code this handler is registered for.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         The following is an example of a status handler extension point:
+
+&lt;p&gt;
+&lt;pre&gt;
+	&lt;extension point="org.eclipse.debug.core.statusHandlers"&gt;
+		&lt;statusHandler
+			id="com.example.ExampleIdentifier"
+			class="com.example.ExampleStatusHandler"
+			plugin="com.example.ExamplePluginId"
+			code="123"&gt;
+		&lt;/statusHandler&gt;
+	&lt;/extension&gt;
+&lt;/pre&gt;
+&lt;/p&gt;
+
+In the example above, the specified status handler will be registered for to handle status objects with a plug-in identifier of 
+&lt;samp&gt;com.example.ExamplePluginId&lt;/samp&gt; and a status code of &lt;samp&gt;123&lt;/samp&gt;.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         Value of the attribute &lt;b&gt;class&lt;/b&gt; must be a fully qualified name of a Java class that implements the interfact &lt;b&gt;org.eclipse.debug.core.IStatusHandler&lt;/b&gt;.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         [Enter information about supplied implementation of this extension point.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+</schema>

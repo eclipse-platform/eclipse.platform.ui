@@ -1,0 +1,119 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.debug.ui">
+<annotation>
+   <appInfo>
+      <meta.schema plugin="org.eclipse.debug.ui" id="launchConfigurationTypeImages" name="Launch Configuration Type Images"/>
+   </appInfo>
+   <documentation>
+      This extension point provides a way to associate an image with a launch configuration type.
+   </documentation>
+</annotation>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="launchConfigurationTypeImage" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="launchConfigurationTypeImage">
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  specifies a unique identifier for this launch configuration type image.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="configTypeID" type="string" use="required">
+            <annotation>
+               <documentation>
+                  specifies the fully qualified ID of a launch configuration type.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="icon" type="string" use="required">
+            <annotation>
+               <documentation>
+                  specifies the plugin-relative path of an image file.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         The following is an example of a launch configuration type image extension point:
+
+&lt;p&gt;
+&lt;pre&gt;
+	&lt;extension point="org.eclipse.debug.ui.launchConfigurationTypeImages"&gt;
+		&lt;launchConfigurationTypeImage
+			id="com.example.FirstLaunchConfigurationTypeImage"
+			configTypeID="com.example.FirstLaunchConfigurationType"
+			icon="icons/FirstLaunchConfigurationType.gif"&gt;
+		&lt;/launchConfigurationTypeImage&gt;
+	&lt;/extension&gt;
+&lt;/pre&gt;
+&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         [Enter API information here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         [Enter information about supplied implementation of this extension point.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+</schema>
