@@ -434,11 +434,9 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * @see ILaunchManager#setDefaultLaunchConfigurationType(IResource, String)
 	 */
 	public void setDefaultLaunchConfigurationType(IResource resource, String configTypeID) {		
-		if (configTypeID != null) {
-			try {
-				resource.setPersistentProperty(fgQualNameDefaultConfigType, configTypeID);
-			} catch (CoreException ce) {
-			}
+		try {
+			resource.setPersistentProperty(fgQualNameDefaultConfigType, configTypeID);
+		} catch (CoreException ce) {
 		}
 	}
 	
