@@ -193,6 +193,7 @@ public class IEHost implements Runnable, ICommandStateChangedListener {
 		try {
 			webBrowser = new WebBrowser(composite);
 			webBrowser.addCommandStateChangedListener(this);
+			webBrowser.navigate("about:blank");
 		} catch (HelpWorkbenchException hwe) {
 			System.err.println(ieResources.getString("WE027", hwe.getMessage()));
 		}
