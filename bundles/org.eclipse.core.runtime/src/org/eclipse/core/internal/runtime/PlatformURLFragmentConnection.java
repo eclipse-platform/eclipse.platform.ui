@@ -16,12 +16,13 @@ import java.io.*;
 import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.internal.boot.*;
-import org.eclipse.core.internal.plugins.FragmentDescriptor;
+import org.eclipse.core.runtime.model.PluginFragmentModel;
+import org.eclipse.core.runtime.model.PluginRegistryModel;
  
 public class PlatformURLFragmentConnection extends PlatformURLConnection {
 
 	// fragment/ protocol
-//	private FragmentDescriptor fd = null;
+	private PluginFragmentModel fd = null;
 	private static boolean isRegistered = false;
 	public static final String FRAGMENT = "fragment";
 public PlatformURLFragmentConnection(URL url) {
@@ -31,27 +32,34 @@ protected boolean allowCaching() {
 	return true;
 }
 protected URL resolve() throws IOException {
-	
 	String spec = url.getFile().trim();
-	if (spec.startsWith("/")) spec = spec.substring(1);
-	int ix;
-	String ref;
-	String id;
-	PluginVersionIdentifier vid;
-	String rest;
-	URL result;
+	if (spec.startsWith("/")) 
+		spec = spec.substring(1);
+	if (!spec.startsWith(FRAGMENT)) 
+		throw new IOException("Unsupported protocol variation "+url.toString());
+	int ix = spec.indexOf("/",FRAGMENT.length()+1);
+	String ref = ix==-1 ? spec.substring(FRAGMENT.length()+1) : spec.substring(FRAGMENT.length()+1,ix);
+	String id = getId(ref);
+	String vid = getVersion(ref);
+	PluginRegistryModel registry = (PluginRegistryModel)Platform.getPluginRegistry();
+	fd = (vid==null ? registry.getFragment(id) : registry.getFragment(id,vid));
+	if (fd == null)
+		throw new IOException("Unable to resolve fragment "+url.toString());
+	URL result = new URL (fd.getLocation());
+	if (ix == -1 || (ix + 1) >= spec.length()) 
+		return result;
+	else
+		return new URL(result, spec.substring(ix+1));
+}
 
-	if (!spec.startsWith(FRAGMENT)) throw new IOException("Unsupported protocol variation "+url.toString());
+private String getId(String spec) {
+	int i = spec.lastIndexOf('_');
+	return i >= 0 ? spec.substring(i) : spec;
+}
 
-	ix = spec.indexOf("/",FRAGMENT.length()+1);
-	ref = ix==-1 ? spec.substring(FRAGMENT.length()+1) : spec.substring(FRAGMENT.length()+1,ix);
-	id = FragmentDescriptor.getUniqueIdentifierFromString(ref);
-	vid = FragmentDescriptor.getVersionIdentifierFromString(ref);
-	IPluginRegistry r = Platform.getPluginRegistry();
-	fd = (FragmentDescriptor)(vid==null ? r.getFragmentDescriptor(id) : r.getFragmentDescriptor(id,vid));
-	if (fd == null) throw new IOException("Unable to resolve fragment "+url.toString());
-	result = (ix==-1 || (ix+1)>=spec.length()) ? fd.getInstallURLInternal() : new URL(fd.getInstallURLInternal(),spec.substring(ix+1));
-	return result;
+private String getVersion(String spec) {
+	int i = spec.lastIndexOf('_');
+	return i >= 0 ? spec.substring(i, spec.length() - i) : "";
 }
 public static void startup() {
 	
