@@ -654,7 +654,7 @@ private static MultiStatus loadRegistry(URL[] pluginPath) {
 	IPath tempPath = getMetaArea().getBackupFilePathFor(path);
 	DataInputStream input = null;
 	registry = null;
-	if (cacheRegistry) {
+	if (path.toFile().exists() && cacheRegistry) {
 		try {
 			input = new DataInputStream(new BufferedInputStream(new SafeFileInputStream(path.toOSString(), tempPath.toOSString())));
 			try {
