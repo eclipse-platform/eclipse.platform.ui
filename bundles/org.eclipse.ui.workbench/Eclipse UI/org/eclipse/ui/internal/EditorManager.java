@@ -714,15 +714,26 @@ public class EditorManager {
 		
 		final String label = part.getTitle();
 		try {
-			UIStats.start(UIStats.INIT_PART,label);
-			part.init(site, input);
-		} finally {
-			UIStats.end(UIStats.INIT_PART,label);
+			try {
+				UIStats.start(UIStats.INIT_PART,label);
+				part.init(site, input);
+			} finally {
+				UIStats.end(UIStats.INIT_PART,label);
+			}
+								
+			if (part.getSite() != site)
+				throw new PartInitException(WorkbenchMessages.format("EditorManager.siteIncorrect", new Object[] { desc.getId()})); //$NON-NLS-1$
 		}
-		
-		
-		if (part.getSite() != site)
-			throw new PartInitException(WorkbenchMessages.format("EditorManager.siteIncorrect", new Object[] { desc.getId()})); //$NON-NLS-1$
+		catch (Exception e) {
+			disposeEditorActionBars((EditorActionBars) site.getActionBars());
+			site.dispose();
+			if (e instanceof PartInitException)
+				throw (PartInitException) e;
+			
+			//the following error message is reused because we cannot introduce
+			//new strings into the maintenence stream
+			throw new PartInitException(WorkbenchMessages.format("EditorManager.unableToInstantiate", new Object[] { desc.getId(), e}), e); //$NON-NLS-1$
+		}
 	}
 	/*
 	 * See IWorkbenchPage.
