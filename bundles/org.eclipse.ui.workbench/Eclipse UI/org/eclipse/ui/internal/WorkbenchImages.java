@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.ui.internal;
 
 import java.net.MalformedURLException;
@@ -16,7 +15,10 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
@@ -296,6 +298,7 @@ public static void declareImage(String symbolicName, ImageDescriptor descriptor,
 public static Image getImage(String symbolicName) {
 	return getImageRegistry().get(symbolicName);
 }
+
 /**
  * Returns the image descriptor stored under the given symbolic name.
  * If there isn't any value associated with the name then <code>null
@@ -308,96 +311,115 @@ public static Image getImage(String symbolicName) {
 public static ImageDescriptor getImageDescriptor(String symbolicName) {
 	return (ImageDescriptor)descriptors.get(symbolicName);
 }
+
 /**
- * Convenience Method.
- * Returns an ImageDescriptor whose path, relative to the plugin containing 
- * the <code>extension</code> is <code>subdirectoryAndFilename</code>.
- * If there isn't any value associated with the name then <code>null
- * </code> is returned.
- *
- * This method is convenience and only intended for use by the workbench because it
- * explicitly uses the workbench's registry for caching/retrieving images from other
- * extensions -- other plugins must user their own registry. 
- * This convenience method is subject to removal.
- *
- * Note:
- * subdirectoryAndFilename must not have any leading "." or path separators / or \
- * ISV's should use  icons/mysample.gif and not ./icons/mysample.gif
- *
- * Note:
- * This consults the plugin for extension and obtains its installation location.
- * all requested images are assumed to be in a directory below and relative to that
- * plugins installation directory.
+ * Returns an image descriptor for an image file located within the plug-in
+ * that contributed the given extension.
+ * <p>
+ * This is a convenience method. It does nothing special (in particular, it does
+ * not touch the workbench's internal image registry).
+ * </p>
+ * <p>
+ * Note: the relative path must not have a leading "." or path separator /
+ * Clients should use a path like "icons/mysample.gif", rather than 
+ * "./icons/mysample.gif" or "/icons/mysample.gif".
+ * </p>
+ * <p>
+ * Note: This consults the plug-in registry and obtains its installation
+ * location. All requested images are assumed to be in a directory below and
+ * relative to that plug-in's installation directory or one of its fragments.
+ * </p>
+ * 
+ * @param pluginDescriptor the plug-in containing the image file
+ * @param subdirectoryAndFilename the path of the image file, relative to the
+ * root of the plug-in
+ * @return an image descriptor, or <code>null</code> if no image could be found
  */
 public static ImageDescriptor getImageDescriptorFromExtension(IExtension extension, String subdirectoryAndFilename) {
-	Assert.isNotNull(extension);
-	Assert.isNotNull(subdirectoryAndFilename);
-	return getImageDescriptorFromPlugin(extension.getDeclaringPluginDescriptor(),subdirectoryAndFilename);
+	if (extension == null || subdirectoryAndFilename == null) {
+		throw new IllegalArgumentException();
+	}
+	IPluginDescriptor plugin = extension.getDeclaringPluginDescriptor();
+	return getImageDescriptorFromPlugin(plugin, subdirectoryAndFilename);
 }
+
 /**
- * Convenience Method.
- * Return an ImageDescriptor whose path relative to the plugin described 
- * by <code>pluginDescriptor</code> or one of its fragments is 
- * <code>subdirectoryAndFilename</code>.
- * Returns <code>null</code>if no image could be found.
- *
- * This method is convenience and only intended for use by the workbench because it
- * explicitly uses the workbench's registry for caching/retrieving images from other
- * extensions -- other plugins must user their own registry. 
- * This convenience method is subject to removal.
- *
- * Note:
- * subdirectoryAndFilename must not have any leading "." or path separators / or \
- * ISV's should use  icons/mysample.gif and not ./icons/mysample.gif
- *
- * Note:
- * This consults the plugin for extension and obtains its installation location.
- * all requested images are assumed to be in a directory below and relative to that
- * plugins installation directory or one of its fragments.
+ * Returns an image descriptor for an image file located within the given 
+ * plug-in.
+ * <p>
+ * This is a convenience method. It does nothing special (in particular, it does
+ * not touch the workbench's internal image registry).
+ * </p>
+ * <p>
+ * Note: the relative path must not have a leading "." or path separator /
+ * Clients should use a path like "icons/mysample.gif", rather than 
+ * "./icons/mysample.gif" or "/icons/mysample.gif".
+ * </p>
+ * <p>
+ * Note: This consults the plug-in registry and obtains its installation
+ * location. All requested images are assumed to be in a directory below and
+ * relative to that plug-in's installation directory or one of its fragments.
+ * </p>
+ * 
+ * @param pluginDescriptor the plug-in containing the image file
+ * @param subdirectoryAndFilename the path of the image file, relative to the
+ * root of the plug-in
+ * @return an image descriptor, or <code>null</code> if no image could be found
  */
 public static ImageDescriptor getImageDescriptorFromPlugin(IPluginDescriptor pluginDescriptor, String subdirectoryAndFilename) {
-	Assert.isNotNull(pluginDescriptor);
-	Assert.isNotNull(subdirectoryAndFilename);
+	if (pluginDescriptor == null || subdirectoryAndFilename == null) {
+		throw new IllegalArgumentException();
+	}
 	URL fullPathString = pluginDescriptor.find(new Path(subdirectoryAndFilename));
 	if (fullPathString != null) {
 		return ImageDescriptor.createFromURL(fullPathString);
 	}
+	// @issue add explanation of why following code is not redundant
 	URL path = pluginDescriptor.getInstallURL();
 	try {
-		fullPathString = new URL(path,subdirectoryAndFilename);
+		fullPathString = new URL(path, subdirectoryAndFilename);
 		return ImageDescriptor.createFromURL(fullPathString);
 	} catch (MalformedURLException e) {
 	}
 	return null;
 }
+
 /**
- * Convenience Method.
- * Returns an ImageDescriptor whose path, relative to the plugin (within given id)
- * is <code>subdirectoryAndFilename</code>.
- * If there isn't any value associated with the name then <code>null
- * </code> is returned.
- *
- * This method is convenience and only intended for use by the workbench because it
- * explicitly uses the workbench's registry for caching/retrieving images from other
- * extensions -- other plugins must user their own registry. 
- * This convenience method is subject to removal.
- *
- * Note:
- * subdirectoryAndFilename must not have any leading "." or path separators / or \
- * ISV's should use  icons/mysample.gif and not ./icons/mysample.gif
- *
- * Note:
- * This consults the plugin for extension and obtains its installation location.
- * all requested images are assumed to be in a directory below and relative to that
- * plugins installation directory.
+ * Returns an image descriptor for an image file located within the given 
+ * plug-in.
+ * <p>
+ * This is a convenience method. It does nothing special (in particular, it does
+ * not touch the workbench's internal image registry).
+ * </p>
+ * <p>
+ * Note: the relative path must not have a leading "." or path separator /
+ * Clients should use a path like "icons/mysample.gif", rather than 
+ * "./icons/mysample.gif" or "/icons/mysample.gif".
+ * </p>
+ * <p>
+ * Note: This consults the plug-in registry and obtains its installation
+ * location. All requested images are assumed to be in a directory below and
+ * relative to that plug-in's installation directory or one of its fragments.
+ * </p>
+ * 
+ * @param pluginId the id of the plug-in containing the image file
+ * @param subdirectoryAndFilename the path of the image file, relative to the
+ * root of the plug-in
+ * @return an image descriptor, or <code>null</code> if no image could be found
  */
-public static ImageDescriptor getImageDescriptorFromPluginID(String pluginId, String subdirectoryAndFilename) {
-	Assert.isNotNull(pluginId);
-	Assert.isNotNull(subdirectoryAndFilename);
-	return getImageDescriptorFromPlugin(
-				Platform.getPluginRegistry().getPluginDescriptor(pluginId),
-				subdirectoryAndFilename);
+public static ImageDescriptor getImageDescriptorFromPlugin(String pluginId, String subdirectoryAndFilename) {
+	if (pluginId == null || subdirectoryAndFilename == null) {
+		throw new IllegalArgumentException();
+	}
+	// go for the plug-in descriptor - avoid activating the plug-in
+	IPluginDescriptor plugin = Platform.getPluginRegistry().getPluginDescriptor(pluginId);
+	if (plugin == null) {
+		// no plug-in -> no image
+		return null;
+	}
+	return getImageDescriptorFromPlugin(plugin, subdirectoryAndFilename);
 }
+
 /**
  * Convenience Method.
  * Returns an ImageDescriptor obtained from an external program.
@@ -424,16 +446,17 @@ public static ImageDescriptor getImageDescriptorFromProgram(String filename, int
 	}
 	return desc;
 }
+
 /**
  * Returns the ImageRegistry.
  */
-
 public static ImageRegistry getImageRegistry() {
 	if (imageRegistry == null) {
 		initializeImageRegistry();
 	}
 	return imageRegistry;
 }
+
 /**
  *  Initialize the image registry by declaring all of the required
  *  graphics. This involves creating JFace image descriptors describing
