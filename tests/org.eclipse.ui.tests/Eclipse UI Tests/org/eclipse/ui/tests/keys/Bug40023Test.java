@@ -1,13 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2000, 2003 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Common Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ * Contributors: IBM Corporation - initial API and implementation
+ ******************************************************************************/
 
 package org.eclipse.ui.tests.keys;
 
@@ -17,14 +15,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
+
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.keys.KeyStroke;
 import org.eclipse.ui.keys.ParseException;
 import org.eclipse.ui.tests.util.UITestCase;
+
+import org.eclipse.ui.internal.Workbench;
 
 /**
  * Tests Bug 40023
@@ -78,7 +79,8 @@ public class Bug40023Test extends UITestCase {
 	 * @throws ParseException
 	 *             If the key binding cannot be parsed.
 	 */
-	public void testCheckOnCheckbox() throws CoreException, FileNotFoundException, IOException, ParseException {
+	public void testCheckOnCheckbox()
+		throws CoreException, FileNotFoundException, IOException, ParseException {
 		// Open a window to run the test.
 		IWorkbenchWindow window = openTestWindow();
 		Workbench workbench = (Workbench) window.getWorkbench();
@@ -92,7 +94,7 @@ public class Bug40023Test extends UITestCase {
 		List keyStrokes = new ArrayList();
 		keyStrokes.add(KeyStroke.getInstance(keySequenceText));
 		Event event = new Event();
-		workbench.workbenchActivitiesCommandsAndRoles.press(keyStrokes, event);
+		workbench.getKeyboard().press(keyStrokes, event);
 
 		// Check that the "Lock Toolbars" menu item is now checked.
 		Shell shell = window.getShell();

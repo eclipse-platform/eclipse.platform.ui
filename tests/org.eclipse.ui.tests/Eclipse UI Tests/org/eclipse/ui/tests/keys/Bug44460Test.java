@@ -1,13 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2000, 2003 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Common Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ * Contributors: IBM Corporation - initial API and implementation
+ ******************************************************************************/
 
 package org.eclipse.ui.tests.keys;
 
@@ -22,18 +20,21 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.internal.Workbench;
-import org.eclipse.ui.internal.WorkbenchActivitiesCommandsAndRoles;
-import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.tests.util.UITestCase;
+
+import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.internal.WorkbenchPage;
+import org.eclipse.ui.internal.keys.WorkbenchKeyboard;
 
 /**
  * Test for Bug 44460.
@@ -92,9 +93,9 @@ public class Bug44460Test extends UITestCase {
 		ctrlShiftT.stateMask = SWT.SHIFT | SWT.CTRL;
 		ctrlShiftT.character = 'T';
 		ctrlShiftT.keyCode = 't';
-		List keyStrokes = WorkbenchActivitiesCommandsAndRoles.generatePossibleKeyStrokes(ctrlShiftT);
+		List keyStrokes = WorkbenchKeyboard.generatePossibleKeyStrokes(ctrlShiftT);
 		Workbench workbench = (Workbench) window.getWorkbench();
-		workbench.workbenchActivitiesCommandsAndRoles.press(keyStrokes, null);
+		workbench.getKeyboard().press(keyStrokes, null);
 
 		// Test that only two child shells are open (default).
 		Shell windowShell = window.getShell();

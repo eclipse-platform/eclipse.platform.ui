@@ -1,13 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2000, 2003 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Common Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ * Contributors: IBM Corporation - initial API and implementation
+ ******************************************************************************/
 
 package org.eclipse.ui.internal;
 
@@ -104,6 +102,7 @@ import org.eclipse.ui.internal.activities.IObjectActivityManager;
 import org.eclipse.ui.internal.activities.ObjectActivityManager;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.internal.fonts.FontDefinition;
+import org.eclipse.ui.internal.keys.WorkbenchKeyboard;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.misc.UIStats;
@@ -111,13 +110,14 @@ import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.internal.testing.WorkbenchTestable;
 
 /**
- * The workbench class represents the top of the Eclipse user interface. 
- * Its primary responsability is the management of workbench windows, dialogs,
+ * The workbench class represents the top of the Eclipse user interface. Its
+ * primary responsability is the management of workbench windows, dialogs,
  * wizards, and other workbench-related windows.
  * <p>
  * Note that any code that is run during the creation of a workbench instance
  * should not required access to the display.
- * </p><p>
+ * </p>
+ * <p>
  * Note that this internal class changed significantly between 2.1 and 3.0.
  * Applications that used to define subclasses of this internal class need to
  * be rewritten to use the new workbench advisor API.
@@ -155,24 +155,26 @@ public final class Workbench implements IWorkbench {
 	private boolean runEventLoop = true;
 	private boolean isStarting = true;
 	private boolean isClosing = false;
-	
+
 	/**
 	 * PlatformUI return code (as opposed to IPlatformRunnable return code).
 	 */
 	private int returnCode;
-	
+
 	private ListenerList windowListeners = new ListenerList();
-	
+
 	/**
 	 * Advisor providing application-specific configuration and customization
 	 * of the workbench.
+	 * 
 	 * @since 3.0
 	 */
 	private WorkbenchAdvisor advisor;
 
 	/**
-	 * Object for configuring the workbench. Lazily initialized to
-	 * an instance unique to the workbench instance.
+	 * Object for configuring the workbench. Lazily initialized to an instance
+	 * unique to the workbench instance.
+	 * 
 	 * @since 3.0
 	 */
 	private WorkbenchConfigurer workbenchConfigurer;
@@ -180,9 +182,12 @@ public final class Workbench implements IWorkbench {
 	/**
 	 * Creates a new workbench.
 	 * 
-	 * @param display the display to be used for all UI interactions with the workbench
-	 * @param advisor the application-specific advisor that configures and
-	 * specializes this workbench instance
+	 * @param display
+	 *            the display to be used for all UI interactions with the
+	 *            workbench
+	 * @param advisor
+	 *            the application-specific advisor that configures and
+	 *            specializes this workbench instance
 	 * @since 3.0
 	 */
 	private Workbench(Display display, WorkbenchAdvisor advisor) {
@@ -190,25 +195,24 @@ public final class Workbench implements IWorkbench {
 
 		if (instance != null) {
 			throw new IllegalStateException(WorkbenchMessages.getString("Workbench.CreatingWorkbenchTwice")); //$NON-NLS-1$
-		}		
+		}
 		Assert.isNotNull(display);
 		Assert.isNotNull(advisor);
 		this.advisor = advisor;
 		this.display = display;
-		Workbench.instance = this;		
+		Workbench.instance = this;
 	}
-	
+
 	/**
-	 * Returns the one and only instance of the workbench, if there
-	 * is one.
+	 * Returns the one and only instance of the workbench, if there is one.
 	 * 
-	 * @return the workbench, or <code>null</code> if the workbench has
-	 * not been created, or has been created and already completed
+	 * @return the workbench, or <code>null</code> if the workbench has not
+	 *         been created, or has been created and already completed
 	 */
 	public static final Workbench getInstance() {
 		return instance;
 	}
-	
+
 	/**
 	 * Creates the workbench and associates it with the the given display and
 	 * workbench advisor, and runs the workbench UI. This entails processing
@@ -221,14 +225,17 @@ public final class Workbench implements IWorkbench {
 	 * The display passed in must be the default display.
 	 * </p>
 	 * 
-	 * @param display the display to be used for all UI interactions with the workbench
-	 * @param advisor the application-specific advisor that configures and
-	 * specializes the workbench
-	 * @return return code {@link PlatformUI#RETURN_OK RETURN_OK} for normal
-	 * exit; {@link PlatformUI#RETURN_RESTART RETURN_RESTART} if the workbench
-	 * was terminated with a call to
-	 * {@link IWorkbench#restart IWorkbench.restart}; other values reserved
-	 * for future use
+	 * @param display
+	 *            the display to be used for all UI interactions with the
+	 *            workbench
+	 * @param advisor
+	 *            the application-specific advisor that configures and
+	 *            specializes the workbench
+	 * @return return code {@link PlatformUI#RETURN_OK RETURN_OK}for normal
+	 *         exit; {@link PlatformUI#RETURN_RESTART RETURN_RESTART}if the
+	 *         workbench was terminated with a call to
+	 *         {@link IWorkbench#restart IWorkbench.restart}; other values
+	 *         reserved for future use
 	 */
 	public static final int createAndRunWorkbench(Display display, WorkbenchAdvisor advisor) {
 		// create the workbench instance
@@ -237,19 +244,20 @@ public final class Workbench implements IWorkbench {
 		int returnCode = workbench.runUI();
 		return returnCode;
 	}
-	
+
 	/**
 	 * Creates the <code>Display</code> to be used by the workbench.
 	 * 
 	 * @return the display
 	 */
 	public static Display createDisplay() {
-		// setup the application name used by SWT to lookup resources on some platforms
+		// setup the application name used by SWT to lookup resources on some
+		// platforms
 		String applicationName = WorkbenchPlugin.getDefault().getAppName();
 		if (applicationName != null) {
 			Display.setAppName(applicationName);
 		}
-		
+
 		// create the display
 		Display newDisplay = null;
 		if (Policy.DEBUG_SWT_GRAPHICS) {
@@ -259,18 +267,17 @@ public final class Workbench implements IWorkbench {
 		} else {
 			newDisplay = new Display();
 		}
-		
+
 		// workaround for 1GEZ9UR and 1GF07HN
 		newDisplay.setWarnings(false);
 
-		//Set the priority higher than normal so as to be higher 
+		//Set the priority higher than normal so as to be higher
 		//than the JobManager.
-		Thread.currentThread().setPriority(
-				Math.min(Thread.MAX_PRIORITY, Thread.NORM_PRIORITY + 1));
+		Thread.currentThread().setPriority(Math.min(Thread.MAX_PRIORITY, Thread.NORM_PRIORITY + 1));
 
 		return newDisplay;
 	}
-	
+
 	/**
 	 * Returns the testable object facade, for use by the test harness.
 	 * 
@@ -284,72 +291,76 @@ public final class Workbench implements IWorkbench {
 		return testableObject;
 	}
 
-	private IMutableActivityManager activityManager;	
-	/* TODO private */ ICommandManager commandManager;
+	private IMutableActivityManager activityManager;
+	/* TODO private */
+	ICommandManager commandManager;
 	private WorkbenchActivityService workbenchActivityService;
-	private final ICompoundActivityService compoundActivityService = ActivityServiceFactory.getCompoundActivityService();
+	private final ICompoundActivityService compoundActivityService =
+		ActivityServiceFactory.getCompoundActivityService();
 	// TODO reduce visibility
-	public WorkbenchActivitiesCommandsAndRoles workbenchActivitiesCommandsAndRoles = new WorkbenchActivitiesCommandsAndRoles(this);	
-	private WorkbenchActivityHelper activityHelper;	
-	
+	public WorkbenchActivitiesCommandsAndRoles workbenchActivitiesCommandsAndRoles =
+		new WorkbenchActivitiesCommandsAndRoles(this);
+	private final WorkbenchKeyboard keyboard = new WorkbenchKeyboard(this);
+	private WorkbenchActivityHelper activityHelper;
+
 	public IActivityManager getActivityManager() {
 		return activityManager;
 	}
-	
+
 	public void setEnabledActivityIds(Set enabledActivityIds) {
 		activityManager.setEnabledActivityIds(enabledActivityIds);
 	}
-	
+
 	public ICommandManager getCommandManager() {
 		return commandManager;
 	}
 
 	public IActivityService getActivityService() {
 		return workbenchActivityService;
-	}	
+	}
 
 	public ICompoundActivityService getCompoundActivityService() {
 		return compoundActivityService;
 	}
-	
-	
+
 	private volatile boolean keyFilterDisabled;
-	private final Object keyFilterMutex = new Object();	
-	
+	private final Object keyFilterMutex = new Object();
+
 	public final void disableKeyFilter() {
 		synchronized (keyFilterMutex) {
-			final Display display = Display.getCurrent();
-			display.removeFilter(SWT.KeyDown, workbenchActivitiesCommandsAndRoles.keySequenceBindingFilter);
-			display.removeFilter(SWT.Traverse, workbenchActivitiesCommandsAndRoles.keySequenceBindingFilter);
+			Display currentDisplay = getDisplay();
+			Listener keyFilter = keyboard.getFilter();
+			currentDisplay.removeFilter(SWT.KeyDown, keyFilter);
+			currentDisplay.removeFilter(SWT.Traverse, keyFilter);
 			keyFilterDisabled = true;
 		}
 	}
 
 	public final void enableKeyFilter() {
 		synchronized (keyFilterMutex) {
-			final Display display = Display.getCurrent();
-			display.addFilter(SWT.KeyDown, workbenchActivitiesCommandsAndRoles.keySequenceBindingFilter);
-			display.addFilter(SWT.Traverse, workbenchActivitiesCommandsAndRoles.keySequenceBindingFilter);
+			Display currentDisplay = getDisplay();
+			Listener keyFilter = keyboard.getFilter();
+			currentDisplay.addFilter(SWT.KeyDown, keyFilter);
+			currentDisplay.addFilter(SWT.Traverse, keyFilter);
 			keyFilterDisabled = false;
 		}
 	}
-	
+
 	public final boolean isKeyFilterEnabled() {
 		synchronized (keyFilterMutex) {
 			return !keyFilterDisabled;
 		}
-	}	
-	
-	
-	/* (non-Javadoc)
-	 * Method declared on IWorkbench.
+	}
+
+	/*
+	 * (non-Javadoc) Method declared on IWorkbench.
 	 */
 	public void addWindowListener(IWindowListener l) {
 		windowListeners.add(l);
 	}
-	
-	/* (non-Javadoc)
-	 * Method declared on IWorkbench.
+
+	/*
+	 * (non-Javadoc) Method declared on IWorkbench.
 	 */
 	public void removeWindowListener(IWindowListener l) {
 		windowListeners.remove(l);
@@ -357,6 +368,9 @@ public final class Workbench implements IWorkbench {
 
 	/**
 	 * Fire window opened event.
+	 * 
+	 * @param window
+	 *            The window which just opened; should not be <code>null</code>.
 	 */
 	protected void fireWindowOpened(IWorkbenchWindow window) {
 		Object list[] = windowListeners.getListeners();
@@ -366,13 +380,16 @@ public final class Workbench implements IWorkbench {
 	}
 	/**
 	 * Fire window closed event.
+	 * 
+	 * @param window
+	 *            The window which just closed; should not be <code>null</code>.
 	 */
 	protected void fireWindowClosed(IWorkbenchWindow window) {
 		if (activatedWindow == window) {
 			// Do not hang onto it so it can be GC'ed
 			activatedWindow = null;
 		}
-					
+
 		Object list[] = windowListeners.getListeners();
 		for (int i = 0; i < list.length; i++) {
 			((IWindowListener) list[i]).windowClosed(window);
@@ -380,6 +397,9 @@ public final class Workbench implements IWorkbench {
 	}
 	/**
 	 * Fire window activated event.
+	 * 
+	 * @param window
+	 *            The window which was just activated; should not be <code>null</code>.
 	 */
 	protected void fireWindowActivated(IWorkbenchWindow window) {
 		Object list[] = windowListeners.getListeners();
@@ -389,6 +409,9 @@ public final class Workbench implements IWorkbench {
 	}
 	/**
 	 * Fire window deactivated event.
+	 * 
+	 * @param window
+	 *            The window which was just deactivated; should not be <code>null</code>.
 	 */
 	protected void fireWindowDeactivated(IWorkbenchWindow window) {
 		Object list[] = windowListeners.getListeners();
@@ -400,12 +423,13 @@ public final class Workbench implements IWorkbench {
 	/**
 	 * Closes the workbench. Assumes that the busy cursor is active.
 	 * 
-	 * @param force true if the close is mandatory, and false if the close is
-	 * allowed to fail
+	 * @param force
+	 *            true if the close is mandatory, and false if the close is
+	 *            allowed to fail
 	 * @return true if the close succeeded, and false otherwise
 	 */
 	private boolean busyClose(final boolean force) {
-		
+
 		// save any open editors if they are dirty
 		isClosing = saveAllEditors(!force);
 		if (!force && !isClosing) {
@@ -445,7 +469,7 @@ public final class Workbench implements IWorkbench {
 					} else {
 						message = WorkbenchMessages.format("ErrorClosingOneArg", new Object[] { e.getMessage()}); //$NON-NLS-1$
 					}
-	
+
 					if (!MessageDialog.openQuestion(null, WorkbenchMessages.getString("Error"), message)) { //$NON-NLS-1$
 						isClosing = false;
 					}
@@ -471,8 +495,8 @@ public final class Workbench implements IWorkbench {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on IWorkbench.
+	/*
+	 * (non-Javadoc) Method declared on IWorkbench.
 	 */
 	public boolean saveAllEditors(boolean confirm) {
 		final boolean finalConfirm = confirm;
@@ -511,13 +535,14 @@ public final class Workbench implements IWorkbench {
 		});
 		return result[0];
 	}
-	
+
 	/**
 	 * Opens a new workbench window and page with a specific perspective.
-	 *
+	 * 
 	 * Assumes that busy cursor is active.
 	 */
-	private IWorkbenchWindow busyOpenWorkbenchWindow(String perspID, IAdaptable input) throws WorkbenchException {
+	private IWorkbenchWindow busyOpenWorkbenchWindow(String perspID, IAdaptable input)
+		throws WorkbenchException {
 		// Create a workbench window (becomes active window)
 		WorkbenchWindow newWindow = newWorkbenchWindow();
 		newWindow.create(); // must be created before adding to window manager
@@ -532,27 +557,32 @@ public final class Workbench implements IWorkbench {
 		return newWindow;
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on IWorkbench.
+	/*
+	 * (non-Javadoc) Method declared on IWorkbench.
 	 */
 	public boolean close() {
 		return close(PlatformUI.RETURN_OK, false);
 	}
 	/**
-	 * Closes the workbench, returning the given return code from the run method.
-	 * If forced, the workbench is closed no matter what.
+	 * Closes the workbench, returning the given return code from the run
+	 * method. If forced, the workbench is closed no matter what.
 	 * 
-	 * @param returnCode {@link PlatformUI#RETURN_OK RETURN_OK} for normal exit; 
-	 * {@link PlatformUI#RETURN_RESTART RETURN_RESTART} if the workbench was terminated
-	 * with a call to {@link IWorkbench#restart IWorkbench.restart}; 
-	 * {@link PlatformUI#RETURN_UNSTARTABLE RETURN_UNSTARTABLE} if the workbench could
-	 * not be started; other values reserved for future use
-	 * @param force true to force the workbench close, and false for a "soft"
-	 * close that can be canceled
+	 * @param returnCode
+	 *            {@link PlatformUI#RETURN_OK RETURN_OK}for normal exit;
+	 *            {@link PlatformUI#RETURN_RESTART RETURN_RESTART}if the
+	 *            workbench was terminated with a call to
+	 *            {@link IWorkbench#restart IWorkbench.restart};
+	 *            {@link PlatformUI#RETURN_UNSTARTABLE RETURN_UNSTARTABLE}if
+	 *            the workbench could not be started; other values reserved for
+	 *            future use
+	 * @param force
+	 *            true to force the workbench close, and false for a "soft"
+	 *            close that can be canceled
 	 * @return true if the close was successful, and false if the close was
-	 * canceled
+	 *         canceled
 	 */
-	/* package */ boolean close(int returnCode, final boolean force) {
+	/* package */
+	boolean close(int returnCode, final boolean force) {
 		this.returnCode = returnCode;
 		final boolean[] ret = new boolean[1];
 		BusyIndicator.showWhile(null, new Runnable() {
@@ -562,14 +592,15 @@ public final class Workbench implements IWorkbench {
 		});
 		return ret[0];
 	}
-	
-	/* (non-Javadoc)
-	 * Method declared on IWorkbench.
+
+	/*
+	 * (non-Javadoc) Method declared on IWorkbench.
 	 */
 	public IWorkbenchWindow getActiveWorkbenchWindow() {
 		// Display will be null if SWT has not been initialized or
 		// this method was called from wrong thread.
-		// @issue if this is called from the wrong thread, this should fail, not return null -- general workbench thread safety issue
+		// @issue if this is called from the wrong thread, this should fail,
+		// not return null -- general workbench thread safety issue
 		Display display = Display.getCurrent();
 		if (display == null)
 			return null;
@@ -583,14 +614,14 @@ public final class Workbench implements IWorkbench {
 				return (IWorkbenchWindow) data;
 			shell = shell.getParent();
 		}
-		
+
 		// Look for the window that was last known being
 		// the active one
 		WorkbenchWindow win = getActivatedWindow();
 		if (win != null) {
 			return win;
 		}
-		
+
 		// Look at all the shells and pick the first one
 		// that is a workbench window.
 		Shell shells[] = display.getShells();
@@ -599,7 +630,7 @@ public final class Workbench implements IWorkbench {
 			if (data instanceof IWorkbenchWindow)
 				return (IWorkbenchWindow) data;
 		}
-		
+
 		// Can't find anything!
 		return null;
 	}
@@ -613,17 +644,16 @@ public final class Workbench implements IWorkbench {
 		}
 		return editorHistory;
 	}
-	/* (non-Javadoc)
-	 * Method declared on IWorkbench.
+	/*
+	 * (non-Javadoc) Method declared on IWorkbench.
 	 */
 	public IEditorRegistry getEditorRegistry() {
 		return WorkbenchPlugin.getDefault().getEditorRegistry();
 	}
-	
+
 	/*
-	 * Returns the number for a new window.  This will be the first
-	 * number > 0 which is not used to identify another window in
-	 * the workbench.
+	 * Returns the number for a new window. This will be the first number > 0
+	 * which is not used to identify another window in the workbench.
 	 */
 	private int getNewWindowNumber() {
 		// Get window list.
@@ -651,29 +681,29 @@ public final class Workbench implements IWorkbench {
 		}
 		return count + 1;
 	}
-	
-	/* (non-Javadoc)
-	 * Method declared on IWorkbench.
+
+	/*
+	 * (non-Javadoc) Method declared on IWorkbench.
 	 */
 	public IPerspectiveRegistry getPerspectiveRegistry() {
 		return WorkbenchPlugin.getDefault().getPerspectiveRegistry();
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on IWorkbench.
+	/*
+	 * (non-Javadoc) Method declared on IWorkbench.
 	 */
 	public PreferenceManager getPreferenceManager() {
 		return WorkbenchPlugin.getDefault().getPreferenceManager();
 	}
-	/* (non-Javadoc)
-	 * Method declared on IWorkbench.
+	/*
+	 * (non-Javadoc) Method declared on IWorkbench.
 	 */
 	public IPreferenceStore getPreferenceStore() {
 		return WorkbenchPlugin.getDefault().getPreferenceStore();
 	}
-	
-	/* (non-Javadoc)
-	 * Method declared on IWorkbench.
+
+	/*
+	 * (non-Javadoc) Method declared on IWorkbench.
 	 */
 	public ISharedImages getSharedImages() {
 		return WorkbenchPlugin.getDefault().getSharedImages();
@@ -683,7 +713,8 @@ public final class Workbench implements IWorkbench {
 	 * 
 	 * @return the window manager
 	 */
-	/* package */ WindowManager getWindowManager() {
+	/* package */
+	WindowManager getWindowManager() {
 		return windowManager;
 	}
 
@@ -695,16 +726,16 @@ public final class Workbench implements IWorkbench {
 		path = path.append(DEFAULT_WORKBENCH_STATE_FILENAME);
 		return path.toFile();
 	}
-	
-	/* (non-Javadoc)
-	 * Method declared on IWorkbench.
+
+	/*
+	 * (non-Javadoc) Method declared on IWorkbench.
 	 */
 	public int getWorkbenchWindowCount() {
 		return windowManager.getWindowCount();
 	}
-	
-	/* (non-Javadoc)
-	 * Method declared on IWorkbench.
+
+	/*
+	 * (non-Javadoc) Method declared on IWorkbench.
 	 */
 	public IWorkbenchWindow[] getWorkbenchWindows() {
 		Window[] windows = windowManager.getWindows();
@@ -712,80 +743,88 @@ public final class Workbench implements IWorkbench {
 		System.arraycopy(windows, 0, dwindows, 0, windows.length);
 		return dwindows;
 	}
-	
-	/* (non-Javadoc)
-	 * Method declared on IWorkbench.
+
+	/*
+	 * (non-Javadoc) Method declared on IWorkbench.
 	 */
 	public IWorkingSetManager getWorkingSetManager() {
 		return WorkbenchPlugin.getDefault().getWorkingSetManager();
 	}
-		
+
 	/**
 	 * Initializes the workbench now that the display is created.
-	 *
-	 * @param windowImage the descriptor of the image to be used in the corner
-	 * of each window, or <code>null</code> if none
+	 * 
+	 * @param windowImage
+	 *            the descriptor of the image to be used in the corner of each
+	 *            window, or <code>null</code> if none
 	 * @return true if init succeeded.
 	 */
-	private boolean init(ImageDescriptor windowImage, Display display) {		
-		// create an activity manager		
+	private boolean init(ImageDescriptor windowImage, Display display) {
+		// create an activity manager
 		activityManager = ActivityManagerFactory.getMutableActivityManager();
-		activityManager.addActivityManagerListener(workbenchActivitiesCommandsAndRoles.activityManagerListener);                   
-		
+		activityManager.addActivityManagerListener(
+			workbenchActivitiesCommandsAndRoles.activityManagerListener);
+
 		// create a command manager
-		commandManager = CommandManagerFactory.getCommandManager(); 
-		commandManager.addCommandManagerListener(workbenchActivitiesCommandsAndRoles.commandManagerListener);
-		
+		commandManager = CommandManagerFactory.getCommandManager();
+		commandManager.addCommandManagerListener(
+			workbenchActivitiesCommandsAndRoles.commandManagerListener);
+
 		// establish relationship between jface and the command manager
 		CommandResolver.getInstance().setCommandResolver(new CommandResolver.ICallback() {
-			
+
 			public Integer getAccelerator(String commandId) {
 				Integer accelerator = null;
 				ICommand command = commandManager.getCommand(commandId);
-				
+
 				if (command.isDefined()) {
-					List keySequenceBindings = command.getKeySequenceBindings();	
+					List keySequenceBindings = command.getKeySequenceBindings();
 
 					if (!keySequenceBindings.isEmpty()) {
-						IKeySequenceBinding keySequenceBinding = (IKeySequenceBinding) keySequenceBindings.get(0);
+						IKeySequenceBinding keySequenceBinding =
+							(IKeySequenceBinding) keySequenceBindings.get(0);
 						KeySequence keySequence = keySequenceBinding.getKeySequence();
 						List keyStrokes = keySequence.getKeyStrokes();
-						
+
 						if (keyStrokes.size() == 1) {
 							KeyStroke keyStroke = (KeyStroke) keyStrokes.get(0);
-							accelerator = new Integer(KeySupport.convertKeyStrokeToAccelerator(keyStroke));
+							accelerator =
+								new Integer(KeySupport.convertKeyStrokeToAccelerator(keyStroke));
 						}
 					}
 				}
 
 				return accelerator;
-			}	
-			
+			}
+
 			public String getAcceleratorText(String commandId) {
 				String acceleratorText = null;
 				ICommand command = commandManager.getCommand(commandId);
-				
+
 				if (command.isDefined()) {
-					List keySequenceBindings = command.getKeySequenceBindings();	
+					List keySequenceBindings = command.getKeySequenceBindings();
 
 					if (!keySequenceBindings.isEmpty()) {
-						IKeySequenceBinding keySequenceBinding = (IKeySequenceBinding) keySequenceBindings.get(0);
+						IKeySequenceBinding keySequenceBinding =
+							(IKeySequenceBinding) keySequenceBindings.get(0);
 						acceleratorText = keySequenceBinding.getKeySequence().format();
 					}
 				}
 
 				return acceleratorText;
 			}
-			
+
 			public boolean isAcceleratorInUse(int accelerator) {
-				KeySequence keySequence = KeySequence.getInstance(KeySupport.convertAcceleratorToKeyStroke(accelerator));
-				return commandManager.isPerfectMatch(keySequence) || commandManager.isPartialMatch(keySequence);
-			}					
-			
+				KeySequence keySequence =
+					KeySequence.getInstance(KeySupport.convertAcceleratorToKeyStroke(accelerator));
+				return commandManager.isPerfectMatch(keySequence)
+					|| commandManager.isPartialMatch(keySequence);
+			}
+
 			public final boolean isActive(final String commandId) {
 				if (commandId != null) {
 					final ICommand command = commandManager.getCommand(commandId);
-	
+
 					if (command != null)
 						return command.isDefined() && command.isActive();
 				}
@@ -795,9 +834,10 @@ public final class Workbench implements IWorkbench {
 		});
 
 		workbenchActivitiesCommandsAndRoles.updateActiveActivityIds();
-		display.addFilter(SWT.Traverse, workbenchActivitiesCommandsAndRoles.keySequenceBindingFilter);
-		display.addFilter(SWT.KeyDown, workbenchActivitiesCommandsAndRoles.keySequenceBindingFilter);
-		display.addFilter(SWT.FocusOut, workbenchActivitiesCommandsAndRoles.modeCleaner);
+		Listener keyFilter = keyboard.getFilter();
+		display.addFilter(SWT.Traverse, keyFilter);
+		display.addFilter(SWT.KeyDown, keyFilter);
+		display.addFilter(SWT.FocusOut, keyFilter);
 		addWindowListener(workbenchActivitiesCommandsAndRoles.windowListener);
 		workbenchActivitiesCommandsAndRoles.updateActiveCommandIdsAndActiveActivityIds();
 
@@ -809,9 +849,9 @@ public final class Workbench implements IWorkbench {
 
 		// create workbench window manager
 		windowManager = new WindowManager();
-		
+
 		workbenchActivityService = new WorkbenchActivityService(this);
-		workbenchActivityService.start();		
+		workbenchActivityService.start();
 
 		// allow the workbench configurer to initialize
 		getWorkbenchConfigurer().init();
@@ -820,14 +860,15 @@ public final class Workbench implements IWorkbench {
 		initializeFonts();
 		initializeColors();
 
-		// now that the workbench is sufficiently initialized, let the advisor have a turn.
+		// now that the workbench is sufficiently initialized, let the advisor
+		// have a turn.
 		advisor.initialize(getWorkbenchConfigurer());
-		
+
 		// configure use of color icons in toolbars
 		boolean useColorIcons = getPreferenceStore().getBoolean(IPreferenceConstants.COLOR_ICONS);
 		ActionContributionItem.setUseColorIconsInToolbars(useColorIcons);
-		
-		// initialize workbench single-click vs double-click behavior	
+
+		// initialize workbench single-click vs double-click behavior
 		initializeSingleClickOption();
 
 		// deadlock code
@@ -842,13 +883,12 @@ public final class Workbench implements IWorkbench {
 		if (avoidDeadlock) {
 			UILockListener uiLockListener = new UILockListener(display);
 			Platform.getJobManager().setLockListener(uiLockListener);
-			display.setSynchronizer(
-				new UISynchronizer(display, uiLockListener));
+			display.setSynchronizer(new UISynchronizer(display, uiLockListener));
 		}
 
 		// initialize activities
-		activityHelper = WorkbenchActivityHelper.getInstance();        
-		
+		activityHelper = WorkbenchActivityHelper.getInstance();
+
 		// attempt to restore a previous workbench state
 		try {
 			UIStats.start(UIStats.RESTORE_WORKBENCH, "Workbench"); //$NON-NLS-1$
@@ -867,7 +907,7 @@ public final class Workbench implements IWorkbench {
 		}
 
 		forceOpenPerspective();
-		
+
 		isStarting = false;
 		return true;
 	}
@@ -877,7 +917,8 @@ public final class Workbench implements IWorkbench {
 		boolean openOnSingleClick = store.getBoolean(IPreferenceConstants.OPEN_ON_SINGLE_CLICK);
 		boolean selectOnHover = store.getBoolean(IPreferenceConstants.SELECT_ON_HOVER);
 		boolean openAfterDelay = store.getBoolean(IPreferenceConstants.OPEN_AFTER_DELAY);
-		int singleClickMethod = openOnSingleClick ? OpenStrategy.SINGLE_CLICK : OpenStrategy.DOUBLE_CLICK;
+		int singleClickMethod =
+			openOnSingleClick ? OpenStrategy.SINGLE_CLICK : OpenStrategy.DOUBLE_CLICK;
 		if (openOnSingleClick) {
 			if (selectOnHover)
 				singleClickMethod |= OpenStrategy.SELECT_ON_HOVER;
@@ -898,49 +939,45 @@ public final class Workbench implements IWorkbench {
 		//defaults in the preference store.
 		FontDefinition[] definitions = FontDefinition.getDefinitions();
 		ArrayList fontsToSet = new ArrayList();
-		
-		for (int i = 0; i < definitions.length; i++) {            
+
+		for (int i = 0; i < definitions.length; i++) {
 			installFont(definitions[i].getId(), registry, store);
 		}
-        
-		// post-process the defaults to allow for out-of-order specification.  
+
+		// post-process the defaults to allow for out-of-order specification.
 		for (int i = 0; i < definitions.length; i++) {
-			FontDefinition definition = definitions[i];            
-			String defaultsTo = definition.getDefaultsTo();            
-			if (defaultsTo != null){
+			FontDefinition definition = definitions[i];
+			String defaultsTo = definition.getDefaultsTo();
+			if (defaultsTo != null) {
 				PreferenceConverter.setDefault(
 					store,
 					definition.getId(),
-					PreferenceConverter.
-						getDefaultFontDataArray(store,defaultsTo));
-                
+					PreferenceConverter.getDefaultFontDataArray(store, defaultsTo));
+
 				//If there is no value in the registry pass though the mapping
-				if(!registry.hasValueFor(definition.getId())) {
+				if (!registry.hasValueFor(definition.getId())) {
 					fontsToSet.add(definition);
 				}
-			}            
-		}		
-		
-		
+			}
+		}
+
 		/*
-		 * Now that all of the font have been initialized anything
-		 * that is still at its defaults and has a defaults to
-		 * needs to have its value set in the registry.
-		 * Post process to be sure that all of the fonts have the correct
-		 * setting before there is an update.
-		 */		
+		 * Now that all of the font have been initialized anything that is
+		 * still at its defaults and has a defaults to needs to have its value
+		 * set in the registry. Post process to be sure that all of the fonts
+		 * have the correct setting before there is an update.
+		 */
 		Iterator updateIterator = fontsToSet.iterator();
-		while(updateIterator.hasNext()){
+		while (updateIterator.hasNext()) {
 			FontDefinition update = (FontDefinition) updateIterator.next();
-			registry.put(update.getId(),registry.getFontData(update.getDefaultsTo()));
+			registry.put(update.getId(), registry.getFontData(update.getDefaultsTo()));
 		}
 	}
 	/*
 	 * Installs the given font in the font registry.
 	 * 
-	 * @param fontKey the font key
-	 * @param registry the font registry
-	 * @param store the preference store from which to obtain font data
+	 * @param fontKey the font key @param registry the font registry @param
+	 * store the preference store from which to obtain font data
 	 */
 	private void installFont(String fontKey, FontRegistry registry, IPreferenceStore store) {
 		if (store.isDefault(fontKey))
@@ -948,7 +985,7 @@ public final class Workbench implements IWorkbench {
 		FontData[] font = PreferenceConverter.getFontDataArray(store, fontKey);
 		registry.put(fontKey, font);
 	}
-	
+
 	/*
 	 * Initialize the workbench images.
 	 * 
@@ -956,17 +993,22 @@ public final class Workbench implements IWorkbench {
 	 */
 	private void initializeImages(ImageDescriptor windowImage) {
 		if (windowImage != null) {
-			WorkbenchImages.getImageRegistry().put(IWorkbenchGraphicConstants.IMG_OBJS_DEFAULT_PROD, windowImage);
-			Image image = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_OBJS_DEFAULT_PROD);
+			WorkbenchImages.getImageRegistry().put(
+				IWorkbenchGraphicConstants.IMG_OBJS_DEFAULT_PROD,
+				windowImage);
+			Image image =
+				WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_OBJS_DEFAULT_PROD);
 			if (image != null) {
 				Window.setDefaultImage(image);
 			}
 		} else {
 			// Avoid setting a missing image as the window default image
-			WorkbenchImages.getImageRegistry().put(IWorkbenchGraphicConstants.IMG_OBJS_DEFAULT_PROD, ImageDescriptor.getMissingImageDescriptor());
+			WorkbenchImages.getImageRegistry().put(
+				IWorkbenchGraphicConstants.IMG_OBJS_DEFAULT_PROD,
+				ImageDescriptor.getMissingImageDescriptor());
 		}
 	}
-	
+
 	/*
 	 * Initialize the workbench colors.
 	 * 
@@ -978,38 +1020,40 @@ public final class Workbench implements IWorkbench {
 	}
 
 	/**
-	 * Returns <code>true</code> if the workbench is in the process of closing.
+	 * Returns <code>true</code> if the workbench is in the process of
+	 * closing.
 	 */
 	public boolean isClosing() {
 		return isClosing;
 	}
-	
+
 	/*
 	 * Returns true if the workbench is in the process of starting
 	 */
-	/* package */ boolean isStarting() {
+	/* package */
+	boolean isStarting() {
 		return isStarting;
-	}
-	
- 	/*
- 	 * Creates a new workbench window.
- 	 * 
- 	 * @return the new workbench window
-    */
- 	private WorkbenchWindow newWorkbenchWindow() {
- 		return new WorkbenchWindow(getNewWindowNumber());
 	}
 
 	/*
-	 * If a perspective was specified on the command line (-perspective)
-	 * then force that perspective to open in the active window.
-	 */	
+	 * Creates a new workbench window.
+	 * 
+	 * @return the new workbench window
+	 */
+	private WorkbenchWindow newWorkbenchWindow() {
+		return new WorkbenchWindow(getNewWindowNumber());
+	}
+
+	/*
+	 * If a perspective was specified on the command line (-perspective) then
+	 * force that perspective to open in the active window.
+	 */
 	private void forceOpenPerspective() {
 		if (getWorkbenchWindowCount() == 0) {
 			// there should be an open window by now, bail out.
 			return;
 		}
-		
+
 		String perspId = null;
 		String[] commandLineArgs = Platform.getCommandLineArgs();
 		for (int i = 0; i < commandLineArgs.length - 1; i++) {
@@ -1042,7 +1086,7 @@ public final class Workbench implements IWorkbench {
 	 * Create the initial workbench window.
 	 */
 	private void openFirstTimeWindow() {
-		
+
 		// create the workbench window
 		WorkbenchWindow newWindow = newWorkbenchWindow();
 		newWindow.create();
@@ -1050,23 +1094,25 @@ public final class Workbench implements IWorkbench {
 
 		// Create the initial page.
 		try {
-			newWindow.openPage(getPerspectiveRegistry().getDefaultPerspective(), getAdvisor().getDefaultWindowInput());
+			newWindow.openPage(
+				getPerspectiveRegistry().getDefaultPerspective(),
+				getAdvisor().getDefaultWindowInput());
 		} catch (WorkbenchException e) {
 			ErrorDialog.openError(newWindow.getShell(), WorkbenchMessages.getString("Problems_Opening_Page"), //$NON-NLS-1$
 			e.getMessage(), e.getStatus());
 		}
 		newWindow.open();
 	}
-	
+
 	/*
 	 * Create the workbench UI from a persistence file.
 	 * 
-	 * @return RESTORE_CODE_OK if a window was opened,
-	 * RESTORE_CODE_RESET if no window was opened but one should be,
-	 * and RESTORE_CODE_EXIT if the workbench should close immediately
+	 * @return RESTORE_CODE_OK if a window was opened, RESTORE_CODE_RESET if no
+	 * window was opened but one should be, and RESTORE_CODE_EXIT if the
+	 * workbench should close immediately
 	 */
 	private int openPreviousWorkbenchState() {
-		
+
 		if (!getWorkbenchConfigurer().getSaveAndRestore()) {
 			return RESTORE_CODE_RESET;
 		}
@@ -1094,9 +1140,7 @@ public final class Workbench implements IWorkbench {
 				}
 				if (!valid) {
 					reader.close();
-					MessageDialog.openError(
-						(Shell) null,
-						WorkbenchMessages.getString("Restoring_Problems"), //$NON-NLS-1$
+					MessageDialog.openError((Shell) null, WorkbenchMessages.getString("Restoring_Problems"), //$NON-NLS-1$
 					WorkbenchMessages.getString("Invalid_workbench_state_ve")); //$NON-NLS-1$
 					stateFile.delete();
 					result[0] = RESTORE_CODE_RESET;
@@ -1107,14 +1151,12 @@ public final class Workbench implements IWorkbench {
 				// We no longer support the release 1.0 format
 				if (VERSION_STRING[0].equals(version)) {
 					reader.close();
-					boolean ignoreSavedState = new MessageDialog(
-						null, 
-						WorkbenchMessages.getString("Workbench.incompatibleUIState"), //$NON-NLS-1$
-						null,
-						WorkbenchMessages.getString("Workbench.incompatibleSavedStateVersion"), //$NON-NLS-1$
-						MessageDialog.WARNING,
-						new String[] {IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL}, 
-						0).open() == 0; 	// OK is the default
+						boolean ignoreSavedState = new MessageDialog(null, WorkbenchMessages.getString("Workbench.incompatibleUIState"), //$NON-NLS-1$
+		null, WorkbenchMessages.getString("Workbench.incompatibleSavedStateVersion"), //$NON-NLS-1$
+	MessageDialog.WARNING,
+		new String[] { IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL },
+		0).open() == 0;
+					// OK is the default
 					if (ignoreSavedState) {
 						stateFile.delete();
 						result[0] = RESTORE_CODE_RESET;
@@ -1128,11 +1170,9 @@ public final class Workbench implements IWorkbench {
 				IStatus restoreResult = restoreState(memento);
 				reader.close();
 				if (restoreResult.getSeverity() == IStatus.ERROR) {
-					ErrorDialog.openError(
-						null,
-						WorkbenchMessages.getString("Workspace.problemsTitle"), //$NON-NLS-1$
-						WorkbenchMessages.getString("Workbench.problemsRestoringMsg"), //$NON-NLS-1$
-						restoreResult);
+					ErrorDialog.openError(null, WorkbenchMessages.getString("Workspace.problemsTitle"), //$NON-NLS-1$
+					WorkbenchMessages.getString("Workbench.problemsRestoringMsg"), //$NON-NLS-1$
+					restoreResult);
 				}
 			}
 			public void handleException(Throwable e) {
@@ -1147,18 +1187,19 @@ public final class Workbench implements IWorkbench {
 			result[0] = RESTORE_CODE_RESET;
 		return result[0];
 	}
-	
-	/* (non-Javadoc)
-	 * Method declared on IWorkbench.
+
+	/*
+	 * (non-Javadoc) Method declared on IWorkbench.
 	 */
 	public IWorkbenchWindow openWorkbenchWindow(IAdaptable input) throws WorkbenchException {
 		return openWorkbenchWindow(getPerspectiveRegistry().getDefaultPerspective(), input);
 	}
-	
-	/* (non-Javadoc)
-	 * Method declared on IWorkbench.
+
+	/*
+	 * (non-Javadoc) Method declared on IWorkbench.
 	 */
-	public IWorkbenchWindow openWorkbenchWindow(final String perspID, final IAdaptable input) throws WorkbenchException {
+	public IWorkbenchWindow openWorkbenchWindow(final String perspID, final IAdaptable input)
+		throws WorkbenchException {
 		// Run op in busy cursor.
 		final Object[] result = new Object[1];
 		BusyIndicator.showWhile(null, new Runnable() {
@@ -1186,39 +1227,36 @@ public final class Workbench implements IWorkbench {
 		XMLMemento memento = XMLMemento.createWriteRoot(IWorkbenchConstants.TAG_WORKBENCH);
 		IStatus status = saveState(memento);
 		if (status.getSeverity() != IStatus.OK) {
-			ErrorDialog.openError((Shell)null,
-				WorkbenchMessages.getString("Workbench.problemsSaving"),  //$NON-NLS-1$
+			ErrorDialog.openError((Shell) null, WorkbenchMessages.getString("Workbench.problemsSaving"), //$NON-NLS-1$
 			WorkbenchMessages.getString("Workbench.problemsSavingMsg"), //$NON-NLS-1$
 			status);
 		}
 		return memento;
 	}
-	
-	/* (non-Javadoc)
-	 * Method declared on IWorkbench.
+
+	/*
+	 * (non-Javadoc) Method declared on IWorkbench.
 	 */
 	public boolean restart() {
 		// this is the return code from run() to trigger a restart
 		return close(PlatformUI.RETURN_RESTART, false);
 	}
-	
+
 	/*
 	 * Restores the state of the previously saved workbench
 	 */
 	private IStatus restoreState(IMemento memento) {
 
-		MultiStatus result = new MultiStatus(
-			PlatformUI.PLUGIN_ID,IStatus.OK,
-			WorkbenchMessages.getString("Workbench.problemsRestoring"),null); //$NON-NLS-1$
+		MultiStatus result = new MultiStatus(PlatformUI.PLUGIN_ID, IStatus.OK, WorkbenchMessages.getString("Workbench.problemsRestoring"), null); //$NON-NLS-1$
 		IMemento childMem;
 		try {
-			UIStats.start(UIStats.RESTORE_WORKBENCH,"MRUList"); //$NON-NLS-1$
+			UIStats.start(UIStats.RESTORE_WORKBENCH, "MRUList"); //$NON-NLS-1$
 			IMemento mruMemento = memento.getChild(IWorkbenchConstants.TAG_MRU_LIST); //$NON-NLS-1$
 			if (mruMemento != null) {
 				result.add(getEditorHistory().restoreState(mruMemento));
 			}
 		} finally {
-			UIStats.end(UIStats.RESTORE_WORKBENCH,"MRUList"); //$NON-NLS-1$
+			UIStats.end(UIStats.RESTORE_WORKBENCH, "MRUList"); //$NON-NLS-1$
 		}
 		// Get the child windows.
 		IMemento[] children = memento.getChildren(IWorkbenchConstants.TAG_WINDOW);
@@ -1231,11 +1269,13 @@ public final class Workbench implements IWorkbench {
 
 			// allow the application to specify an initial perspective to open
 			// @issue temporary workaround for ignoring initial perspective
-//			String initialPerspectiveId = getAdvisor().getInitialWindowPerspectiveId();
-//			if (initialPerspectiveId != null) {
-//				IPerspectiveDescriptor desc = getPerspectiveRegistry().findPerspectiveWithId(initialPerspectiveId);
-//				result.merge(newWindow.restoreState(childMem, desc));
-//			}
+			//			String initialPerspectiveId =
+			// getAdvisor().getInitialWindowPerspectiveId();
+			//			if (initialPerspectiveId != null) {
+			//				IPerspectiveDescriptor desc =
+			// getPerspectiveRegistry().findPerspectiveWithId(initialPerspectiveId);
+			//				result.merge(newWindow.restoreState(childMem, desc));
+			//			}
 			result.merge(newWindow.restoreState(childMem, null));
 			windowManager.add(newWindow);
 			try {
@@ -1249,12 +1289,13 @@ public final class Workbench implements IWorkbench {
 	}
 
 	/**
-	 * Returns an array of all plugins that extend the 
-	 * <code>org.eclipse.ui.startup</code> extension point.
+	 * Returns an array of all plugins that extend the <code>org.eclipse.ui.startup</code>
+	 * extension point.
 	 */
 	public IPluginDescriptor[] getEarlyActivatedPlugins() {
 		IPluginRegistry registry = Platform.getPluginRegistry();
-		IExtensionPoint point = registry.getExtensionPoint(PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_STARTUP);
+		IExtensionPoint point =
+			registry.getExtensionPoint(PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_STARTUP);
 		IExtension[] extensions = point.getExtensions();
 		IPluginDescriptor result[] = new IPluginDescriptor[extensions.length];
 		for (int i = 0; i < extensions.length; i++) {
@@ -1262,24 +1303,31 @@ public final class Workbench implements IWorkbench {
 		}
 		return result;
 	}
-	
+
 	/*
-	 * Starts all plugins that extend the <code>org.eclipse.ui.startup</code>
-	 * extension point, and that the user has not disabled via the preference page.
+	 * Starts all plugins that extend the <code> org.eclipse.ui.startup </code>
+	 * extension point, and that the user has not disabled via the preference
+	 * page.
 	 */
 	private void startPlugins() {
 		Runnable work = new Runnable() {
 			IPreferenceStore store = getPreferenceStore();
-			final String pref = store.getString(IPreferenceConstants.PLUGINS_NOT_ACTIVATED_ON_STARTUP);
+			final String pref =
+				store.getString(IPreferenceConstants.PLUGINS_NOT_ACTIVATED_ON_STARTUP);
 			public void run() {
 				IPluginRegistry registry = Platform.getPluginRegistry();
-				IExtensionPoint point = registry.getExtensionPoint(PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_STARTUP);
+				IExtensionPoint point =
+					registry.getExtensionPoint(
+						PlatformUI.PLUGIN_ID,
+						IWorkbenchConstants.PL_STARTUP);
 				IExtension[] extensions = point.getExtensions();
 				for (int i = 0; i < extensions.length; i++) {
 					IExtension extension = extensions[i];
-					// Look for the class attribute in the startup element first
+					// Look for the class attribute in the startup element
+					// first
 					IConfigurationElement[] configElements = extension.getConfigurationElements();
-					// There should only be one configuration element and it should
+					// There should only be one configuration element and it
+					// should
 					// be named "startup".
 					IConfigurationElement startupElement = null;
 					for (int j = 0; j < configElements.length && startupElement == null; j++) {
@@ -1296,8 +1344,10 @@ public final class Workbench implements IWorkbench {
 					} else {
 						startupName = null;
 					}
-					// If the startup element doesn't specify a class, use the plugin class
-					final IPluginDescriptor pluginDescriptor = extension.getDeclaringPluginDescriptor();
+					// If the startup element doesn't specify a class, use the
+					// plugin class
+					final IPluginDescriptor pluginDescriptor =
+						extension.getDeclaringPluginDescriptor();
 					SafeRunnable code = new SafeRunnable() {
 						public void run() throws Exception {
 							String id =
@@ -1309,7 +1359,10 @@ public final class Workbench implements IWorkbench {
 									Plugin plugin = pluginDescriptor.getPlugin();
 									startup = (IStartup) plugin;
 								} else {
-									startup = (IStartup) WorkbenchPlugin.createExtension(startElement, IWorkbenchConstants.TAG_CLASS);
+									startup =
+										(IStartup) WorkbenchPlugin.createExtension(
+											startElement,
+											IWorkbenchConstants.TAG_CLASS);
 								}
 								startup.earlyStartup();
 							}
@@ -1331,15 +1384,17 @@ public final class Workbench implements IWorkbench {
 	 * Internal method for running the workbench UI. This entails processing
 	 * and dispatching events until the workbench is closed or restarted.
 	 * 
-	 * @return return code {@link PlatformUI#RETURN_OK RETURN_OK} for normal exit; 
-	 * {@link PlatformUI#RETURN_RESTART RETURN_RESTART} if the workbench was terminated
-	 * with a call to {@link IWorkbench#restart IWorkbench.restart}; 
-	 * {@link PlatformUI#RETURN_UNSTARTABLE RETURN_UNSTARTABLE} if the workbench could
-	 * not be started; other values reserved for future use
+	 * @return return code {@link PlatformUI#RETURN_OK RETURN_OK}for normal
+	 *         exit; {@link PlatformUI#RETURN_RESTART RETURN_RESTART}if the
+	 *         workbench was terminated with a call to
+	 *         {@link IWorkbench#restart IWorkbench.restart};
+	 *         {@link PlatformUI#RETURN_UNSTARTABLE RETURN_UNSTARTABLE}if the
+	 *         workbench could not be started; other values reserved for future
+	 *         use
 	 * @since 3.0
 	 */
 	private int runUI() {
-		UIStats.start(UIStats.START_WORKBENCH,"Workbench"); //$NON-NLS-1$
+		UIStats.start(UIStats.START_WORKBENCH, "Workbench"); //$NON-NLS-1$
 
 		try {
 			// react to display close event by closing workbench nicely
@@ -1348,39 +1403,39 @@ public final class Workbench implements IWorkbench {
 					event.doit = close();
 				}
 			});
-			
+
 			// install backstop to catch exceptions thrown out of event loop
 			Window.IExceptionHandler handler = new ExceptionHandler();
 			Window.setExceptionHandler(handler);
-			
+
 			// initialize workbench and restore or open one window
-			
+
 			boolean initOK = init(WorkbenchPlugin.getDefault().getWindowImage(), display);
-			
+
 			// drop the splash screen now that a workbench window is up
 			Platform.endSplash();
-			
+
 			// let the advisor run its start up code
 			if (initOK) {
 				advisor.postStartup(); // may trigger a close/restart
 			}
-			
+
 			if (initOK && runEventLoop) {
 				// start eager plug-ins
 				startPlugins();
-				
+
 				display.asyncExec(new Runnable() {
 					public void run() {
-						UIStats.end(UIStats.START_WORKBENCH,"Workbench"); //$NON-NLS-1$
+						UIStats.end(UIStats.START_WORKBENCH, "Workbench"); //$NON-NLS-1$
 					}
 				});
-				
+
 				getWorkbenchTestable().init(display, this);
-				
+
 				// the event loop
 				runEventLoop(handler, display);
 			}
-			
+
 			// shutdown in an orderly way after event loop finishes
 			shutdown();
 		} finally {
@@ -1389,7 +1444,7 @@ public final class Workbench implements IWorkbench {
 				display.dispose();
 			}
 		}
-		
+
 		// restart or exit based on returnCode
 		Workbench.instance = null;
 		return returnCode;
@@ -1410,14 +1465,12 @@ public final class Workbench implements IWorkbench {
 			}
 		}
 	}
-	
+
 	/*
 	 * Saves the current state of the workbench so it can be restored later on
 	 */
 	private IStatus saveState(IMemento memento) {
-		MultiStatus result = new MultiStatus(
-			PlatformUI.PLUGIN_ID,IStatus.OK,
-			WorkbenchMessages.getString("Workbench.problemsSaving"),null); //$NON-NLS-1$
+		MultiStatus result = new MultiStatus(PlatformUI.PLUGIN_ID, IStatus.OK, WorkbenchMessages.getString("Workbench.problemsSaving"), null); //$NON-NLS-1$
 
 		// Save the version number.
 		memento.putString(IWorkbenchConstants.TAG_VERSION, VERSION_STRING[1]);
@@ -1432,7 +1485,7 @@ public final class Workbench implements IWorkbench {
 		result.add(getEditorHistory().saveState(memento.createChild(IWorkbenchConstants.TAG_MRU_LIST))); //$NON-NLS-1$
 		return result;
 	}
-	
+
 	/*
 	 * Save the workbench UI in a persistence file.
 	 */
@@ -1455,14 +1508,17 @@ public final class Workbench implements IWorkbench {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on IWorkbench.
+	/*
+	 * (non-Javadoc) Method declared on IWorkbench.
 	 */
-	public IWorkbenchPage showPerspective(String perspectiveId, IWorkbenchWindow window) throws WorkbenchException {
+	public IWorkbenchPage showPerspective(String perspectiveId, IWorkbenchWindow window)
+		throws WorkbenchException {
 		Assert.isNotNull(perspectiveId);
 
-		// If the specified window has the requested perspective open, then the window
-		// is given focus and the perspective is shown. The page's input is ignored.
+		// If the specified window has the requested perspective open, then the
+		// window
+		// is given focus and the perspective is shown. The page's input is
+		// ignored.
 		WorkbenchWindow win = (WorkbenchWindow) window;
 		if (win != null) {
 			WorkbenchPage page = win.getActiveWorkbenchPage();
@@ -1479,7 +1535,8 @@ public final class Workbench implements IWorkbench {
 			}
 		}
 
-		// If another window that has the workspace root as input and the requested
+		// If another window that has the workspace root as input and the
+		// requested
 		// perpective open and active, then the window is given focus.
 		IAdaptable input = advisor.getDefaultWindowInput();
 		IWorkbenchWindow[] windows = getWorkbenchWindows();
@@ -1498,7 +1555,7 @@ public final class Workbench implements IWorkbench {
 						if (perspectiveId.equals(persp.getDesc().getId())) {
 							Shell shell = win.getShell();
 							shell.open();
-							if(shell.getMinimized())
+							if (shell.getMinimized())
 								shell.setMinimized(false);
 							return page;
 						}
@@ -1507,8 +1564,10 @@ public final class Workbench implements IWorkbench {
 			}
 		}
 
-		// Otherwise the requested perspective is opened and shown in the specified
-		// window or in a new window depending on the current user preference for opening
+		// Otherwise the requested perspective is opened and shown in the
+		// specified
+		// window or in a new window depending on the current user preference
+		// for opening
 		// perspectives, and that window is given focus.
 		win = (WorkbenchWindow) window;
 		if (win != null) {
@@ -1525,7 +1584,8 @@ public final class Workbench implements IWorkbench {
 				IWorkbenchWindow newWindow = openWorkbenchWindow(perspectiveId, input);
 				return newWindow.getActivePage();
 			} else {
-				IPerspectiveDescriptor desc = getPerspectiveRegistry().findPerspectiveWithId(perspectiveId);
+				IPerspectiveDescriptor desc =
+					getPerspectiveRegistry().findPerspectiveWithId(perspectiveId);
 				if (desc == null)
 					throw new WorkbenchException(WorkbenchMessages.getString("WorkbenchPage.ErrorRecreatingPerspective")); //$NON-NLS-1$
 				win.getShell().open();
@@ -1541,13 +1601,18 @@ public final class Workbench implements IWorkbench {
 		throw new WorkbenchException(WorkbenchMessages.format("Workbench.showPerspectiveError", new Object[] { perspectiveId })); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on IWorkbench.
+	/*
+	 * (non-Javadoc) Method declared on IWorkbench.
 	 */
-	public IWorkbenchPage showPerspective(String perspectiveId, IWorkbenchWindow window, IAdaptable input) throws WorkbenchException {
+	public IWorkbenchPage showPerspective(
+		String perspectiveId,
+		IWorkbenchWindow window,
+		IAdaptable input)
+		throws WorkbenchException {
 		Assert.isNotNull(perspectiveId);
 
-		// If the specified window has the requested perspective open and the same requested
+		// If the specified window has the requested perspective open and the
+		// same requested
 		// input, then the window is given focus and the perspective is shown.
 		boolean inputSameAsWindow = false;
 		WorkbenchWindow win = (WorkbenchWindow) window;
@@ -1598,9 +1663,12 @@ public final class Workbench implements IWorkbench {
 			}
 		}
 
-		// If the specified window has the same requested input but not the requested
-		// perspective, then the window is given focus and the perspective is opened and shown
-		// on condition that the user preference is not to open perspectives in a new window.
+		// If the specified window has the same requested input but not the
+		// requested
+		// perspective, then the window is given focus and the perspective is
+		// opened and shown
+		// on condition that the user preference is not to open perspectives in
+		// a new window.
 		win = (WorkbenchWindow) window;
 		if (inputSameAsWindow && win != null) {
 			IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
@@ -1608,7 +1676,8 @@ public final class Workbench implements IWorkbench {
 
 			if (IPreferenceConstants.OPM_NEW_WINDOW != mode) {
 				IWorkbenchPage page = win.getActiveWorkbenchPage();
-				IPerspectiveDescriptor desc = getPerspectiveRegistry().findPerspectiveWithId(perspectiveId);
+				IPerspectiveDescriptor desc =
+					getPerspectiveRegistry().findPerspectiveWithId(perspectiveId);
 				if (desc == null)
 					throw new WorkbenchException(WorkbenchMessages.getString("WorkbenchPage.ErrorRecreatingPerspective")); //$NON-NLS-1$
 				win.getShell().open();
@@ -1628,7 +1697,8 @@ public final class Workbench implements IWorkbench {
 			if (page != null)
 				persp = page.getPerspective();
 			if (persp == null) {
-				IPerspectiveDescriptor desc = getPerspectiveRegistry().findPerspectiveWithId(perspectiveId);
+				IPerspectiveDescriptor desc =
+					getPerspectiveRegistry().findPerspectiveWithId(perspectiveId);
 				if (desc == null)
 					throw new WorkbenchException(WorkbenchMessages.getString("WorkbenchPage.ErrorRecreatingPerspective")); //$NON-NLS-1$
 				win.getShell().open();
@@ -1640,7 +1710,8 @@ public final class Workbench implements IWorkbench {
 			}
 		}
 
-		// Otherwise the requested perspective is opened and shown in a new window, and the
+		// Otherwise the requested perspective is opened and shown in a new
+		// window, and the
 		// window is given focus.
 		IWorkbenchWindow newWindow = openWorkbenchWindow(perspectiveId, input);
 		return newWindow.getActivePage();
@@ -1652,27 +1723,27 @@ public final class Workbench implements IWorkbench {
 	private void shutdown() {
 		// shutdown application-specific portions first
 		advisor.postShutdown();
-		
+
 		// shutdown the rest of the workbench
 		WorkbenchColors.shutdown();
 		JFaceColors.disposeColors();
-		if(getDecoratorManager() != null) {
+		if (getDecoratorManager() != null) {
 			((DecoratorManager) getDecoratorManager()).shutdown();
 		}
 		activityHelper.shutdown();
 		ProgressManager.getInstance().shutdown();
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on IWorkbench.
+	/*
+	 * (non-Javadoc) Method declared on IWorkbench.
 	 */
 	public IDecoratorManager getDecoratorManager() {
 		return WorkbenchPlugin.getDefault().getDecoratorManager();
 	}
 
 	/*
-	 * Returns the workbench window which was last known being
-	 * the active one, or <code>null</code>.
+	 * Returns the workbench window which was last known being the active one,
+	 * or <code> null </code> .
 	 */
 	private WorkbenchWindow getActivatedWindow() {
 		if (activatedWindow != null) {
@@ -1681,55 +1752,59 @@ public final class Workbench implements IWorkbench {
 				return activatedWindow;
 			}
 		}
-		
+
 		return null;
 	}
-	
+
 	/*
-	 * Sets the workbench window which was last known being the
-	 * active one, or <code>null</code>.
+	 * Sets the workbench window which was last known being the active one, or
+	 * <code> null </code> .
 	 */
-	/* package */ void setActivatedWindow(WorkbenchWindow window) {
+	/* package */
+	void setActivatedWindow(WorkbenchWindow window) {
 		activatedWindow = window;
 	}
-	
+
 	/**
 	 * Returns the unique object that applications use to configure the
 	 * workbench.
 	 * <p>
 	 * IMPORTANT This method is declared package-private to prevent regular
-	 * plug-ins from downcasting IWorkbench to Workbench and getting
-	 * hold of the workbench configurer that would allow them to tamper with the
-	 * workbench. The workbench configurer is available only to the application.
+	 * plug-ins from downcasting IWorkbench to Workbench and getting hold of
+	 * the workbench configurer that would allow them to tamper with the
+	 * workbench. The workbench configurer is available only to the
+	 * application.
 	 * </p>
 	 */
-	/* package */ WorkbenchConfigurer getWorkbenchConfigurer() {
+	/* package */
+	WorkbenchConfigurer getWorkbenchConfigurer() {
 		if (workbenchConfigurer == null) {
 			workbenchConfigurer = new WorkbenchConfigurer();
 		}
 		return workbenchConfigurer;
 	}
-	
+
 	/**
 	 * Returns the workbench advisor that created this workbench.
 	 * <p>
 	 * IMPORTANT This method is declared package-private to prevent regular
-	 * plug-ins from downcasting IWorkbench to Workbench and getting
-	 * hold of the workbench advisor that would allow them to tamper with the
+	 * plug-ins from downcasting IWorkbench to Workbench and getting hold of
+	 * the workbench advisor that would allow them to tamper with the
 	 * workbench. The workbench advisor is internal to the application.
 	 * </p>
 	 */
-	/* package */ WorkbenchAdvisor getAdvisor() {
+	/* package */
+	WorkbenchAdvisor getAdvisor() {
 		return advisor;
 	}
-	
-	/* (non-Javadoc)
-	 * Method declared on IWorkbench.
+
+	/*
+	 * (non-Javadoc) Method declared on IWorkbench.
 	 */
 	public Display getDisplay() {
 		return display;
 	}
-	
+
 	/**
 	 * Returns the default perspective id.
 	 * 
@@ -1750,7 +1825,19 @@ public final class Workbench implements IWorkbench {
 	public IAdaptable getDefaultWindowInput() {
 		return getAdvisor().getDefaultWindowInput();
 	}
-	
+
+	/**
+	 * An accessor for the keyboard interface this workbench is using. This can
+	 * be used by external class to get a reference with which they can
+	 * simulate key presses in the key binding architecture. This is used for
+	 * testing purposes currently.
+	 * 
+	 * @return A reference to the workbench keyboard interface; never <code>null</code>.
+	 */
+	public WorkbenchKeyboard getKeyboard() {
+		return keyboard;
+	}
+
 	/**
 	 * Returns the id of the preference page that should be presented most
 	 * prominently.
@@ -1762,7 +1849,9 @@ public final class Workbench implements IWorkbench {
 		return id;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbench
 	 * @since 3.0
 	 */
@@ -1771,18 +1860,22 @@ public final class Workbench implements IWorkbench {
 		return WorkbenchPlugin.getDefault().getElementFactory(factoryId);
 	}
 
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbench#getActivityManager(java.lang.String, boolean)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.IWorkbench#getActivityManager(java.lang.String,
+	 *      boolean)
 	 */
 	public IObjectActivityManager getObjectActivityManager(String id, boolean create) {
-//		if(RoleManager.getInstance().isFiltering())
-		return ObjectActivityManager.getManager(id,create);
-//		else
-//		return null;
+		//		if(RoleManager.getInstance().isFiltering())
+		return ObjectActivityManager.getManager(id, create);
+		//		else
+		//		return null;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbench#getProgressService()
 	 */
 	public IProgressService getProgressService() {
