@@ -189,23 +189,34 @@ public class ObjectActionContributorManager extends ObjectContributorManager {
 		if (objects == null || objects.size() == 0)
 			return null;
 
+		// Quickly handle the easy case...
 		if (objects.size() == 1) {
 			List results = new ArrayList(1);
 			results.add(objects.get(0).getClass());
 			return results;
 		}
 
+		// Compute all the super classes for the first element
+		// and then all of the interfaces for the first element
+		// and it's super classes.
 		List classes = computeClassOrder(objects.get(0).getClass());
 		List interfaces = computeInterfaceOrder(classes);
 		boolean classesEmpty = classes.isEmpty();
 		boolean interfacesEmpty = interfaces.isEmpty();
+		
 		for (int i = 1; i < objects.size(); i++) {
+			// Compute all the super classes for the current element
 			List results = computeClassOrder(objects.get(i).getClass());
 			if (!classesEmpty) {
 				classesEmpty = true;
 				if (results.isEmpty()) {
+					// When no super classes, then it is obvious there
+					// are no common super classes with the first element
+					// so clear its list.
 					classes.clear();
 				} else {
+					// Remove any super classes of the first element that 
+					// are not in the current element's super classes list.
 					for (int j = 0; j < classes.size(); j++) {
 						if (classes.get(j) != null) {
 							classesEmpty = false;
@@ -218,11 +229,18 @@ public class ObjectActionContributorManager extends ObjectContributorManager {
 			}
 			
 			if (!interfacesEmpty) {
+				// Compute all the interfaces for the current element
+				// and all of its super classes.
 				results = computeInterfaceOrder(results);
 				interfacesEmpty = true;
 				if (results.isEmpty()) {
+					// When no interfaces, the it is obvious there are
+					// no common interfaces between this current element
+					// and the first element, so clear its list.
 					interfaces.clear();
 				} else {
+					// Remove any interfaces of the first element that
+					// are not in the current element's interfaces list.
 					for (int j = 0; j < interfaces.size(); j++) {
 						if (interfaces.get(j) != null) {
 							interfacesEmpty = false;
@@ -235,24 +253,39 @@ public class ObjectActionContributorManager extends ObjectContributorManager {
 			}
 
 			if (interfacesEmpty && classesEmpty) {
+				// As soon as we detect nothing in common, just exit.
 				return null;
 			}
 		}
 		
 		ArrayList results = new ArrayList(4);
+		ArrayList superClasses = new ArrayList(4);
 		if (!classesEmpty) {
 			for (int j = 0; j < classes.size(); j++) {
 				if (classes.get(j) != null) {
-					results.add(classes.get(j));
-					break;
+					superClasses.add(classes.get(j));
 				}
+			}
+			// Just keep the first super class
+			if (!superClasses.isEmpty()) {
+				results.add(superClasses.get(0));
 			}
 		}
 
-		if (!interfacesEmpty) {		
+		if (!interfacesEmpty) {
+			// Do no include the interfaces belonging to the common
+			// super classes as these will be calculated again later
+			// in addContributors method.
+			List dropInterfaces = null;
+			if (!superClasses.isEmpty()) {
+				dropInterfaces = computeInterfaceOrder(superClasses);
+			}
+			
 			for (int j = 0; j < interfaces.size(); j++) {
 				if (interfaces.get(j) != null) {
-					results.add(interfaces.get(j));
+					if (dropInterfaces != null && !dropInterfaces.contains(interfaces.get(j))) {
+						results.add(interfaces.get(j));
+					}
 				}
 			}
 		}
