@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- File written by PDE 1.0 -->
+<plugin
+   id="org.eclipse.compare.examples"
+   name="%pluginName"
+   version="2.1.0"
+   provider-name="%providerName">
+
+<!-- Required plugins -->
+
+<requires>
+   <import plugin="org.eclipse.ui"/>
+   <import plugin="org.eclipse.core.resources"/>
+   <import plugin="org.eclipse.compare"/>
+</requires>
+
+<!-- Runtime -->
+
+<runtime>
+   <library name="compareexamples.jar">
+      <export name="*"/>
+   </library>
+</runtime>
+
+<!-- Extension points -->
+
+<!-- Extensions -->
+<extension
+	point="org.eclipse.compare.contentMergeViewers">
+	<viewer
+		extensions="kv"
+		class="org.eclipse.compare.examples.structurecreator.TextMergeViewerCreator">
+	</viewer>
+</extension>
+
+<extension
+	point="org.eclipse.compare.structureCreators">
+	<structureCreator
+		extensions="kv"
+		class="org.eclipse.compare.examples.structurecreator.KeyValuePairStructureCreator">
+	</structureCreator>
+</extension>
+
+</plugin>
