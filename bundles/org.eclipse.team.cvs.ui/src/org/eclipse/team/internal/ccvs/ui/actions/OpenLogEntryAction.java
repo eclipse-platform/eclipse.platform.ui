@@ -73,7 +73,7 @@ public class OpenLogEntryAction extends TeamAction {
 					}
 				}
 			}
-		}, Policy.bind("OpenLogEntryAction.open"), this.PROGRESS_DIALOG);
+		}, Policy.bind("OpenLogEntryAction.open"), PROGRESS_BUSYCURSOR);
 	}
 	/*
 	 * @see TeamAction#isEnabled()
