@@ -76,20 +76,23 @@ public class ReentrantLock {
 			// The scheduling rule is either the project or the resource's parent
 			ISchedulingRule rule = getRuleForResoure(resource);
 			if (rule != NULL_SCHEDULING_RULE) {
+				boolean success = false;
 				try {
 					Platform.getJobManager().beginRule(rule, monitor);
-				} catch (RuntimeException e) {
-					try {
+					success = true;
+				} finally {
+					if (!success) {
 						// The begin was cancelled (or some other problem occurred).
-						// Free the scheduling rule and throw the cancel
+						// Free the scheduling rule
 						// so the clients of ReentrantLock don't need to
 						// do an endRule when the operation is cancelled.
-						Platform.getJobManager().endRule(rule);
-					} catch (RuntimeException e1) {
-						// Log and ignore so the original exception is not lost
-						CVSProviderPlugin.log(CVSException.wrapException(e1));
+						try {
+							Platform.getJobManager().endRule(rule);
+						} catch (RuntimeException e1) {
+							// Log and ignore so the original exception is not lost
+							CVSProviderPlugin.log(CVSException.wrapException(e1));
+						}
 					}
-					throw e;
 				}
 			}
 			addRule(rule);
