@@ -52,6 +52,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	private static final int RESTORE_CODE_EXIT = 2;
 	private static final String WELCOME_EDITOR_ID = "org.eclipse.ui.internal.dialogs.WelcomeEditor";  //$NON-NLS-1$
 	private static final String INSTALLED_FEATURES = "installedFeatures";
+	private static final String FEATURES_CHANGE_STAMP = "features_change_stamp";
 	
 
 	private WindowManager windowManager;
@@ -1112,9 +1113,17 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	 * Reads the about info for all the configured features.
 	 */
 	private void readFeaturesInfo() {
-		// get the previous features
-		VersionedIdentifier featureEntries[] = collectFeatures();
+
+		long featuresStamp = BootLoader.getCurrentPlatformConfiguration().getFeaturesChangeStamp();
 		IDialogSettings settings = WorkbenchPlugin.getDefault().getDialogSettings();
+		boolean newFeatures = true;
+		try {
+			newFeatures = settings.getLong(FEATURES_CHANGE_STAMP) != featuresStamp;
+		}  catch (NumberFormatException e) {
+		}
+		if(newFeatures)
+			settings.put(FEATURES_CHANGE_STAMP,featuresStamp);
+			
 		String[] oldFeaturesArray = settings.getArray(INSTALLED_FEATURES);
 		List oldFeatures = null;
 		if (oldFeaturesArray != null)
@@ -1123,27 +1132,33 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		ArrayList aboutInfos = new ArrayList();
 		ArrayList newAboutInfos = new ArrayList();
 		
-		String[] idArray = new String[featureEntries.length];	
-		for (int i = 0; i < featureEntries.length; i++) {
-			VersionedIdentifier entry = featureEntries[i];
-			String id = entry.getIdentifier();
-			PluginVersionIdentifier vid = entry.getVersion();
-			String versionedId = id + ":" + vid;
-			idArray[i] = versionedId;
-
-			try {
-				AboutInfo info = new AboutInfo(id, vid);
-				aboutInfos.add(info);
-				if (oldFeatures != null && !oldFeatures.contains(versionedId))
-					// only report a feature as new if we have a previous record of old features
-					newAboutInfos.add(info);
-			} catch (RuntimeException e) {
-				if (WorkbenchPlugin.DEBUG) // only report ini problems if the -debug command line argument is used
-					WorkbenchPlugin.log("Error parsing version \"" + vid + "\" for plugin: " + id + " in Workbench.readFeaturesInfo()");
-				// continue
+				
+		if(newFeatures) {
+			//Keep all references to VersionedIdentifier. Do not want to activate
+			//update plugin unless needed.
+			VersionedIdentifier featureEntries[] = collectFeatures();
+			String[] idArray = new String[featureEntries.length];	
+			for (int i = 0; i < featureEntries.length; i++) {
+				VersionedIdentifier entry = (VersionedIdentifier)featureEntries[i];
+				String id = entry.getIdentifier();
+				PluginVersionIdentifier vid = entry.getVersion();
+				String versionedId = id + ":" + vid;
+				idArray[i] = versionedId;
+	
+				try {
+					AboutInfo info = new AboutInfo(id, vid);
+					aboutInfos.add(info);
+					if (oldFeatures != null && !oldFeatures.contains(versionedId))
+						// only report a feature as new if we have a previous record of old features
+						newAboutInfos.add(info);
+				} catch (RuntimeException e) {
+					if (WorkbenchPlugin.DEBUG) // only report ini problems if the -debug command line argument is used
+						WorkbenchPlugin.log("Error parsing version \"" + vid + "\" for plugin: " + id + " in Workbench.readFeaturesInfo()");
+					// continue
+				}
 			}
+			settings.put(INSTALLED_FEATURES, idArray);
 		}
-		settings.put(INSTALLED_FEATURES, idArray);
 
 		// ensure a consistent ordering
 		Collections.sort(aboutInfos, new Comparator() {
