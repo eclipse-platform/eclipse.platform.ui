@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.debug.core" id="simpleLaunchVariables" name="Simple Launch Variables"/>
       </appInfo>
       <documentation>
-         This extension point defines a mechanism for defining simple launch configuration variables.
+         This extension point defines a mechanism for defining simple launch configuration variables. Simple launch variables are sets of key/value pairs (both strings) that can be used as attribute values in launch configuration types which support variable expansion.
       </documentation>
    </annotation>
 
@@ -71,7 +71,16 @@
          </attribute>
       </complexType>
    </element>
-
+   
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         3.0
+      </documentation>
+   </annotation>
+   
    <annotation>
       <appInfo>
          <meta.section type="examples"/>

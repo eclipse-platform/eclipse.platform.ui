@@ -27,9 +27,9 @@
    <extension-point id="launchers" name="%launcherExtensionPointName" schema="schema/launchers.exsd"/>
    <extension-point id="sourceLocators" name="%sourceLocatorsExtensionPointName" schema="schema/sourceLocators.exsd"/>
    <extension-point id="statusHandlers" name="%statusHandlerExtensionPointName" schema="schema/statusHandlers.exsd"/>
-   <extension-point id="simpleLaunchVariables" name="%simpleLaunchVariablesName"/>
+   <extension-point id="simpleLaunchVariables" name="%simpleLaunchVariablesName" schema="schema/simpleLaunchVariables.exsd"/>
    <extension-point id="contextLaunchVariables" name="%contextLaunchVariablesName" schema="schema/contextLaunchVariables.exsd"/>
-   <extension-point id="refreshLaunchVariables" name="%refreshLaunchVariablesName"/>
+   <extension-point id="refreshLaunchVariables" name="%refreshLaunchVariablesName" schema="schema/refreshLaunchVariables.exsd"/>
 
 <!-- Extensions -->
    <extension

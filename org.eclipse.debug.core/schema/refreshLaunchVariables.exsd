@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.debug.core" id="contextLaunchVariables" name="Context Launch Variables"/>
       </appInfo>
       <documentation>
-         This extension point defines a mechanism for defining context launch configuration variables. Context launch variables derive their value dynamically based on a context, usually the resource selected in the UI. Context launch variables can be used as attribute values in launch configuration types which support variable expansion.
+         This extension point defines a mechanism for defining refresh launch variables. Refresh launch variables are context launch variables that expand to a set of resources. These resources are intended to be refreshed when a launch configuration is exectured.
       </documentation>
    </annotation>
 
@@ -79,13 +79,13 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-The following is a definition of a context launch variable that expands to the name of the selected resource:
+The following is a definition of a refresh launch variable that expands to  the selected resource:
 &lt;pre&gt;
- &lt;extension point="org.eclipse.debug.core.contextLaunchVariables"&gt;
+ &lt;extension point="org.eclipse.debug.core.refreshLaunchVariables"&gt;
    &lt;variable 
-      name="resource_name"
-      expanderClass="com.example.ResourceNameExpander"
-      description="The name of the selected resource"
+      name="resource"
+      expanderClass="com.example.RefreshResourceExpander"
+      description="The selected resource"
    &lt;/variable&gt;
  &lt;/extension&gt;
 &lt;/pre&gt;
