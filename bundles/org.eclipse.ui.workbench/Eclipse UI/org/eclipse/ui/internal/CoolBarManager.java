@@ -56,10 +56,6 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	 * Stack for remembering positions of coolitems that have been removed.
 	 */
 	private ArrayList rememberedPositions = new ArrayList();
-	/** 
-	 * Table for remembering coolitem layouts.
-	 */
-	private Hashtable toolBarLayouts = new Hashtable();
 	
 	private class RestoreItemData {
 		CoolItemPosition savedPosition;
@@ -839,9 +835,6 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 		rememberPositions = false;
 		rememberedPositions = new ArrayList();
 	}
-	void saveToolBarLayout(CoolBarContributionItem cbItem) {
-		toolBarLayouts.put(cbItem.getId(), cbItem.getToolBarManager().getItems());
-	}
 	void setLayoutFor(Perspective perspective) {
 		rememberedPositions = new ArrayList();
 		setLayout(perspective.getToolBarLayout());
@@ -1028,17 +1021,6 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 		} else {
 			coolItem.setSize(new Point(coolWidth, coolSize.y));
 		} 
-	}
-	void setToolBarLayout(CoolBarContributionItem cbItem) {
-		IContributionItem[] items = (IContributionItem[])toolBarLayouts.get(cbItem.getId());
-		if (items != null) {
-			CoolItemToolBarManager tBarMgr = cbItem.getToolBarManager();
-			for (int i=0; i<items.length; i++) {
-				IContributionItem item = items[i];
-				tBarMgr.add(item);
-			}	
-			toolBarLayouts.remove(cbItem.getId());
-		}
 	}
 	/**
 	 */

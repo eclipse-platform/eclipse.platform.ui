@@ -239,7 +239,6 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
 		protected void contributeAdjunctCoolbarAction(ActionDescriptor ad, ActionSetActionBars bars) {
 			String toolBarId = ad.getToolbarId();
 			String toolGroupId = ad.getToolbarGroupId();
-			String beforeGroupId = ad.getBeforeToolbarGroupId();;
 
 			String contributingId = bars.getActionSetId();
 			CoolBarManager coolBarMgr = ((CoolItemToolBarManager)bars.getToolBarManager()).getParentManager();
@@ -261,15 +260,12 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
 					coolBarMgr.insertAfter(refItem.getId(), cbItem);
 				}
 			}
-			
 			activeManager = cbItem.getToolBarManager();		
 			IContributionItem groupMarker = activeManager.find(toolGroupId);
 			if (groupMarker == null) {
-				// disable the beforeGroup processing for now
 				activeManager.addAdjunctGroup(toolGroupId, contributingId);
-//				activeManager.addAdjunctGroupBefore(toolGroupId, contributingId, beforeGroupId);
-			}
-			activeManager.addToGroup(toolGroupId, contributingId, actionContribution);		 
+			} 			
+			activeManager.addAdjunctItemToGroup(toolGroupId, contributingId, actionContribution);		 
 		}
 		/**
 		 * Contributes action from the action descriptor into the cool bar manager.
@@ -319,9 +315,9 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
 			activeManager = cbItem.getToolBarManager();		
 			IContributionItem groupMarker = activeManager.find(toolGroupId);
 			if (groupMarker == null) {
-				activeManager.addBaseGroup(toolGroupId);
-			}
-			activeManager.addToGroup(toolGroupId, contributingId, actionContribution);		 
+				activeManager.addBaseGroup(toolGroupId, true);
+			} 			
+			activeManager.addBaseItemToGroup(toolGroupId, actionContribution);		 
 		}
 		/* (non-Javadoc)
 		 * Method declared on Basic Contribution.

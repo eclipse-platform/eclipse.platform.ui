@@ -24,7 +24,6 @@ public class ActionDescriptor {
 	private String id;
 	private String menuGroup;
 	private String toolbarGroupId;
-	private String beforeToolbarGroupId;
 	
 	public static final int T_POPUP=0x1;
 	public static final int T_VIEW=0x2;
@@ -102,17 +101,11 @@ public ActionDescriptor(IConfigurationElement actionElement, int targetType, Obj
 	}
 	if (targetType == T_POPUP && mgroup == null)
 		mgroup = IWorkbenchActionConstants.MB_ADDITIONS;
-	String tbeforegroup = null;
 	if (tpath != null) {
 		int loc = tpath.lastIndexOf('/');
 		if (loc != -1) {
 			tgroup = tpath.substring(loc + 1);
 			tpath = tpath.substring(0, loc);
-			loc = tpath.lastIndexOf('/');
-			if (loc != -1) {
-				tbeforegroup = tpath.substring(loc + 1);
-				tpath = tpath.substring(0, loc);
-			}
 		} else {
 			tgroup = tpath;
 			tpath = null;
@@ -122,7 +115,6 @@ public ActionDescriptor(IConfigurationElement actionElement, int targetType, Obj
 	menuGroup = mgroup;
 	toolbarId = tpath;
 	toolbarGroupId = tgroup;
-	beforeToolbarGroupId = tbeforegroup;
 
 	// Create action.
 	action = createAction(targetType, actionElement, target, defId, style);
@@ -211,13 +203,6 @@ private PluginAction createAction(int targetType, IConfigurationElement actionEl
  */
 public PluginAction getAction() {
 	return action;
-}
-/**
- * Returns the named slot (group) in the tool bar where this
- * action's toolbar group should be before.
- */
-public String getBeforeToolbarGroupId() {
-	return beforeToolbarGroupId;
 }
 /**
  * Returns action's id as defined in the registry.

@@ -554,17 +554,17 @@ public class WorkbenchActionBuilder {
 	
 		CoolItemToolBarManager tBarMgr =(CoolItemToolBarManager) toolsManager;
 		String id = IWorkbenchActionConstants.TOOLBAR_FILE;
-		tBarMgr.addGroup(IWorkbenchActionConstants.NEW_GROUP, id);
+		tBarMgr.addBaseGroup(IWorkbenchActionConstants.NEW_GROUP, true);
 		tBarMgr.add(newWizardDropDownAction);
-		tBarMgr.addGroupMarker(IWorkbenchActionConstants.NEW_EXT, id);
-		tBarMgr.addGroupMarker(IWorkbenchActionConstants.SAVE_GROUP, id);
+		tBarMgr.addBaseGroup(IWorkbenchActionConstants.NEW_EXT, false);
+		tBarMgr.addBaseGroup(IWorkbenchActionConstants.SAVE_GROUP, false);
 		tBarMgr.add(saveAction);
 		tBarMgr.add(saveAsAction);
-		tBarMgr.addGroupMarker(IWorkbenchActionConstants.SAVE_EXT, id);
+		tBarMgr.addBaseGroup(IWorkbenchActionConstants.SAVE_EXT, false);
 		tBarMgr.add(printAction);
-		tBarMgr.addGroup(IWorkbenchActionConstants.BUILD_GROUP, id);
-		tBarMgr.addGroupMarker(IWorkbenchActionConstants.BUILD_EXT, id);
-		tBarMgr.addGroup(IWorkbenchActionConstants.MB_ADDITIONS, id);
+		tBarMgr.addBaseGroup(IWorkbenchActionConstants.BUILD_GROUP, true);
+		tBarMgr.addBaseGroup(IWorkbenchActionConstants.BUILD_EXT, false);
+		tBarMgr.addBaseGroup(IWorkbenchActionConstants.MB_ADDITIONS, true);
 		
 		// Only add the manual incremental build if auto build off
 		if (!ResourcesPlugin.getWorkspace().isAutoBuilding()) {
@@ -1067,11 +1067,11 @@ public class WorkbenchActionBuilder {
 		}
 		coolBarItem.setVisible(true);
 		CoolItemToolBarManager tBarMgr =(CoolItemToolBarManager) coolBarItem.getToolBarManager();
-		tBarMgr.addGroup(IWorkbenchActionConstants.HISTORY_GROUP, IWorkbenchActionConstants.TOOLBAR_NAVIGATE);
+		tBarMgr.addBaseGroup(IWorkbenchActionConstants.HISTORY_GROUP, true);
 		tBarMgr.add(backwardHistoryAction);
 		tBarMgr.add(forwardHistoryAction);
 		
-		tBarMgr.addGroup(IWorkbenchActionConstants.PIN_GROUP, IWorkbenchActionConstants.TOOLBAR_NAVIGATE);
+		tBarMgr.addBaseGroup(IWorkbenchActionConstants.PIN_GROUP, true);
 		cBarMgr.update(true);
 	}
 
