@@ -287,6 +287,8 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 						//parent of the currently selected stack frame
 						return;
 					}
+				} else {
+					return;
 				}
 			}
 		
