@@ -226,7 +226,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		int leftLine= diff.leftStart() + region.getOffset();
 		String replacement;
 		if (leftLine >= diff.leftEnd()) // restoring a deleted line?
-			replacement= new String();
+			replacement= ""; //$NON-NLS-1$
 		else {
 			int lOffset= fLeftDocument.getLineOffset(leftLine);
 			int lLength= fLeftDocument.getLineLength(leftLine);

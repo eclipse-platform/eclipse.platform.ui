@@ -149,7 +149,7 @@ public final class DiffRegion extends Annotation implements ILineDiffInfo {
 				try {
 					ret[i]= doc.get(doc.getLineOffset(startLine + i), doc.getLineLength(startLine + i));
 				} catch (BadLocationException e) {
-					ret[i]= new String();
+					ret[i]= ""; //$NON-NLS-1$
 				}
 			}
 			return ret;
