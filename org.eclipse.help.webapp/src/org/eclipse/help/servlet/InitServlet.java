@@ -22,6 +22,7 @@ public class InitServlet extends HttpServlet {
 	private Eclipse eclipse;
 	private Tocs tocs;
 	private Search search;
+	private Links links;
 
 	/**
 	 * Initializes eclipse
@@ -49,6 +50,10 @@ public class InitServlet extends HttpServlet {
 			// initialize and save the search
 			search = new Search(context);
 			context.setAttribute("org.eclipse.help.search", search);
+	
+			// initialize and save the links
+			links = new Links(context);
+			context.setAttribute("org.eclipse.help.links", links);
 			
 		} catch (Throwable e) {
 			log(resBundle.getString("problemInit"), e);

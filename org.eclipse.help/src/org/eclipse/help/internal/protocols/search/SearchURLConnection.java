@@ -1,3 +1,7 @@
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 package org.eclipse.help.internal.protocols.search;
 import java.io.*;
 import java.net.*;
@@ -5,7 +9,7 @@ import org.eclipse.help.internal.util.Logger;
 public class SearchURLConnection extends URLConnection {
 	private SearchURL searchURL = null;
 	/**
-	 * Constructor for HelpURLConnection
+	 * Constructor for SearchURLConnection
 	 */
 	public SearchURLConnection(URL url) {
 		super(url);

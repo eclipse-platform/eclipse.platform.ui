@@ -1,4 +1,4 @@
-<%@ page import="org.eclipse.help.servlet.Search" errorPage="err.jsp"%>
+<%@ page import="org.eclipse.help.servlet.Links" errorPage="err.jsp"%>
 
 <% 
 	// calls the utility class to initialize the application
@@ -10,13 +10,40 @@
 
 <html>
 <head>
+ 	<meta http-equiv="Pragma" content="no-cache">
+ 	<meta http-equiv="Expires" content="-1">
 	<title>Links</title>
+	<base target="MainFrame">
+	<script language="JavaScript" src="toc.js"></script>
+    <link rel="stylesheet" TYPE="text/css" HREF="search.css" TITLE="sea">
+    <link rel="stylesheet" TYPE="text/css" HREF="toc.css" TITLE="nav">
+
+<script language="JavaScript">
+function mouseover(img)
+{
+	img.className="hover";
+	window.event.cancelBubble = true;
+}
+function mouseout(img)
+{
+	img.className="normal";
+	window.event.cancelBubble = true;
+}
+
+</script>
+
 </head>
 
-<body>
-f1 links
+
+<body style="background-color: Window;" >
+ 
 <%
-	out.println(request.getParameter("contextId"));
+	// Generate the links
+	Links links = (Links)application.getAttribute("org.eclipse.help.links");
+	if (links != null){
+		links.generateResults(request.getQueryString(), out);
+	}
 %>
+
 </body>
 </html>
