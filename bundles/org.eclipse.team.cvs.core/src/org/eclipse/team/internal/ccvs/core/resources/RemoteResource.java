@@ -5,6 +5,7 @@ package org.eclipse.team.internal.ccvs.core.resources;
  * All Rights Reserved.
  */
  
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.team.core.TeamException;
@@ -12,8 +13,6 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
-import org.eclipse.team.internal.ccvs.core.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
@@ -158,4 +157,12 @@ public abstract class RemoteResource extends PlatformObject implements ICVSRemot
 		// ensure that clients are not trying to set sync info on remote handles.
 		Assert.isTrue(false);
 	}
+
+	/**
+	 * @see org.eclipse.team.internal.ccvs.core.ICVSResource#getIResource()
+	 */
+	public IResource getIResource() throws CVSException {
+		return null;
+	}
+
 }

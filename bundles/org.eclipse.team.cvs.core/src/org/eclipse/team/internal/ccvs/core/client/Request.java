@@ -53,6 +53,7 @@ public abstract class Request {
 		registerResponseHandler(new ValidRequestsHandler());
 		registerResponseHandler(new ModuleExpansionHandler());
 		registerResponseHandler(new MTHandler());
+		registerResponseHandler(new NotifiedHandler());
 	}
 	protected static void registerResponseHandler(ResponseHandler handler) {
 		responseHandlers.put(handler.getResponseID(), handler);

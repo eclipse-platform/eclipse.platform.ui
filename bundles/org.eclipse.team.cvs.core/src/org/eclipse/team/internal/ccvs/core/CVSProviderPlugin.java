@@ -82,6 +82,7 @@ public class CVSProviderPlugin extends Plugin {
 	private String cvsRshCommand = DEFAULT_CVS_RSH;
 	private String cvsServer = DEFAULT_CVS_SERVER;
 	private IConsoleListener consoleListener;
+	private boolean watchEditEnabled = true;
 	
 	private static CVSProviderPlugin instance;
 	
@@ -390,6 +391,14 @@ public class CVSProviderPlugin extends Plugin {
 	
 	public void setPromptOnFolderDelete(boolean prompt) {
 		promptOnFolderDelete = prompt;
+	}
+	
+	public boolean isWatchEditEnabled() {
+		return watchEditEnabled;
+	}
+	
+	public void setWatchEditEnabled(boolean enabled) {
+		watchEditEnabled = enabled;
 	}
 	
 	private static List listeners = new ArrayList();

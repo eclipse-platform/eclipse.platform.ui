@@ -53,6 +53,7 @@ import org.eclipse.team.internal.ccvs.core.client.Command.QuietOption;
 import org.eclipse.team.internal.ccvs.core.client.listeners.LogListener;
 import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.core.syncinfo.NotifyInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 
@@ -119,12 +120,19 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	}
 
 	/**
-	 * @see ICVSResource#accept(IManagedVisitor)
+	 * @see ICVSResource#accept(ICVSResourceVisitor)
 	 */
 	public void accept(ICVSResourceVisitor visitor) throws CVSException {
 		visitor.visitFile(this);
 	}
 
+	/**
+	 * @see ICVSResource#accept(ICVSResourceVisitor, boolean)
+	 */
+	public void accept(ICVSResourceVisitor visitor, boolean recurse) throws CVSException {
+		visitor.visitFile(this);
+	}
+	
 	/**
 	 * @see ICVSRemoteFile#getContents()
 	 */
@@ -408,9 +416,9 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	}
 
 	/**
-	 * @see IManagedFile#moveTo(IManagedFile)
+	 * @see ICVSFile#moveTo(String)
 	 */
-	public void copyTo(String mFile) throws CVSException, ClassCastException {		
+	public void copyTo(String mFile) throws CVSException {		
 		// Do nothing
 	}
 	
@@ -536,4 +544,33 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 		out.write(byteStream.toByteArray());
 		return out;
 	}
+
+	/**
+	 * @see org.eclipse.team.internal.ccvs.core.ICVSFile#checkout(int)
+	 */
+	public void edit(int notifications) throws CVSException {
+		// do nothing
+	}
+
+	/**
+	 * @see org.eclipse.team.internal.ccvs.core.ICVSFile#uncheckout()
+	 */
+	public void unedit() throws CVSException {
+		// do nothing
+	}
+
+	/**
+	 * @see org.eclipse.team.internal.ccvs.core.ICVSFile#notificationCompleted()
+	 */
+	public void notificationCompleted() {
+		// do nothing
+	}
+
+	/**
+	 * @see org.eclipse.team.internal.ccvs.core.ICVSFile#getPendingNotification()
+	 */
+	public NotifyInfo getPendingNotification() throws CVSException {
+		return null;
+	}
+
 }

@@ -257,4 +257,11 @@ abstract class EclipseResource implements ICVSResource, Comparable {
 		return resource.getFullPath().toString().compareTo(other.resource.getFullPath().toString());
 	}
 
+	/**
+	 * @see org.eclipse.team.internal.ccvs.core.ICVSResource#getIResource()
+	 */
+	public IResource getIResource() throws CVSException {
+		return resource;
+	}
+
 }

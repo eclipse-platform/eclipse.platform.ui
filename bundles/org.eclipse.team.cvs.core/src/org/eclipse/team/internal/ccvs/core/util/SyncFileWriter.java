@@ -20,24 +20,19 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.resources.CVSEntryLineTag;
-import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
+import org.eclipse.team.internal.ccvs.core.syncinfo.NotifyInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 
 /*
@@ -58,6 +53,9 @@ public class SyncFileWriter {
 	public static final String ENTRIES = "Entries"; //$NON-NLS-1$
 	//private static final String PERMISSIONS = "Permissions"; //$NON-NLS-1$
 	public static final String ENTRIES_LOG="Entries.Log"; //$NON-NLS-1$
+	public static final String NOTIFY = "Notify"; //$NON-NLS-1$
+	public static final String BASE_DIRNAME = "Base"; //$NON-NLS-1$
+	public static final String BASEREV = "Baserev"; //$NON-NLS-1$
 	
 	// the local workspace file that contains pattern for ignored resources
 	public static final String IGNORE_FILE = ".cvsignore"; //$NON-NLS-1$
@@ -250,7 +248,63 @@ public class SyncFileWriter {
 			throw CVSException.wrapException(e);
 		}
 	}
+
+	/**
+	 * Reads the CVS/Notify file from the specified folder and returns NotifyInfo instances 
+	 * for the data stored therein. If the folder does not have a CVS subdirectory then <code>null</code> is returned.
+	 */
+	public static NotifyInfo[] readAllNotifyInfo(IContainer parent) throws CVSException {
+		IFolder cvsSubDir = getCVSSubdirectory(parent);
+		if (! cvsSubDir.exists()) return null;
+
+		// process Notify file contents
+		String[] entries = readLines(cvsSubDir.getFile(NOTIFY));
+		if (entries == null) return null;
+		Map infos = new TreeMap();
+		for (int i = 0; i < entries.length; i++) {
+			String line = entries[i];
+			if(!"".equals(line)) { //$NON-NLS-1$
+				NotifyInfo info = new NotifyInfo(parent, line);
+				infos.put(info.getName(), info);			
+			}
+		}
+		
+		return (NotifyInfo[])infos.values().toArray(new NotifyInfo[infos.size()]);
+	}
 	
+	/**
+	 * Writes the CVS/Notify file to the specified folder using the data contained in the 
+	 * specified NotifyInfo instances. A CVS subdirectory must already exist (an exception 
+	 * is thrown if it doesn't).
+	 */
+	public static void writeAllNotifyInfo(IContainer parent, NotifyInfo[] infos) throws CVSException {
+		// get the CVS directory
+		IFolder cvsSubDir = getCVSSubdirectory(parent);
+		// write lines will throw an exception if the CVS directoru does not exist
+		
+		if (infos.length == 0) {
+			// if there are no notify entries, delete the notify file
+			try {
+				IFile notifyFile = cvsSubDir.getFile(NOTIFY);
+				if(notifyFile.exists()) {
+					notifyFile.delete(IResource.NONE, null);
+				}
+			} catch (CoreException e) {
+				throw CVSException.wrapException(e);
+			}
+		} else {
+			// format file contents
+			String[] entries = new String[infos.length];
+			for (int i = 0; i < infos.length; i++) {
+				NotifyInfo info = infos[i];
+				entries[i] = info.getNotifyLine();
+			}
+	
+			// write Notify entries
+			writeLines(cvsSubDir.getFile(NOTIFY), entries);
+		}
+	}
+		
 	/**
 	 * Returns the CVS subdirectory for this folder.
 	 */
@@ -373,4 +427,31 @@ public class SyncFileWriter {
 			throw CVSException.wrapException(e);
 		}
 	}
+	/**
+	 * Method writeFileToBaseDirectory.
+	 * 
+	 * @param file
+	 * @param info
+	 */
+	public static void writeFileToBaseDirectory(IFile file, ResourceSyncInfo info) throws CVSException {
+		try {
+			IContainer cvsFolder = getCVSSubdirectory(file.getParent());
+			IFolder baseFolder = cvsFolder.getFolder(new Path(BASE_DIRNAME));
+			if (!baseFolder.exists()) {
+				baseFolder.create(false /* force */, true /* local */, null);
+			}
+			IFile target = baseFolder.getFile(new Path(file.getName()));
+			if (target.exists()) {
+				// XXX Should ensure that we haven't already copied it
+				// XXX write the revision to the CVS/Baserev file
+				target.setContents(file.getContents(), false /* force */, false /* history */, null);
+			} else {
+				// should use copy to ensure timestamp is the same
+				target.create(file.getContents(), false /* force */, null);
+			}
+		} catch (CoreException e) {
+			throw CVSException.wrapException(e);
+		}
+	}
+
 }

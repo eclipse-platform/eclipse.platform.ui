@@ -65,6 +65,11 @@ public class CVSDateFormatter {
 		return passTwo.toString();
 	}
 	
+	static public String dateToNotifyServer(Date date) {
+		serverFormat.setTimeZone(TimeZone.getTimeZone("GMT"));//$NON-NLS-1$
+		return serverFormat.format(date) + " GMT"; //$NON-NLS-1$
+	}
+	
 	/*
 	 * Converts timezone text from date string from CVS server and
 	 * returns a timezone representing the received timezone.
