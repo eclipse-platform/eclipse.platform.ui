@@ -38,6 +38,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextListener;
 import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.ITextViewerExtension;
 import org.eclipse.jface.text.IViewportListener;
 import org.eclipse.jface.text.TextEvent;
 
@@ -70,6 +71,12 @@ public final class LineNumberRulerColumn implements IVerticalRulerColumn {
 			if (!event.getViewerRedrawState())
 				return;
 			
+			if (computeNumberOfDigits()) {
+				computeIndentations();
+				layout();
+				return;
+			}
+				
 			if (fSensitiveToTextChanges || event.getDocumentEvent() == null) {
 				if (fCanvas != null && !fCanvas.isDisposed()) {
 					Display d= fCanvas.getDisplay();
@@ -84,9 +91,6 @@ public final class LineNumberRulerColumn implements IVerticalRulerColumn {
 			}
 		}
 	};
-	
-	/** Maximal number of digits visible in the ruler column. */
-	private final static int MAXDIGITS= 5;
 	
 	/** This column's parent ruler */
 	private CompositeRuler fParentRuler;
@@ -112,15 +116,14 @@ public final class LineNumberRulerColumn implements IVerticalRulerColumn {
 	private Color fForeground;
 	/** The background color */
 	private Color fBackground;
-	/** Digit place holder for line number exceeding the MAXDIGITS length */
-	private String fDigitPlaceHolder;
+	/** Cached number of displayed digits */
+	private int fCachedNumberOfDigits= -1;
 	
 	
 	/**
 	 * Constructs a new vertical ruler column.
 	 */
 	public LineNumberRulerColumn() {
-		fDigitPlaceHolder= JFaceTextMessages.getString("LineNumberRulerColumn.prefix_placeholder");  //$NON-NLS-1$
 	}
 	
 	/**
@@ -168,7 +171,48 @@ public final class LineNumberRulerColumn implements IVerticalRulerColumn {
 	public int getWidth() {
 		return fIndentation[0];
 	}
+	
+	/**
+	 * Computes the number of digits to be displayed. Returns
+	 * <code>true</code> if the number of digits changed compared
+	 * to the previous call of this method. If the method is called
+	 * for the first time, the return value is also <code>true</code>.
+	 * 
+	 * @return the number of digits to be displayed
+	 */
+	protected boolean computeNumberOfDigits() {
 		
+		IDocument document= fCachedTextViewer.getDocument();
+		int lines= document == null ? 0 : document.getNumberOfLines();
+		
+		int digits= 2;
+		while (lines > Math.pow(10, digits) -1) {
+			++digits;
+		}
+		
+		if (fCachedNumberOfDigits != digits) {
+			fCachedNumberOfDigits= digits;
+			return true;
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * Layouts the enclosing viewer to adapt the layout to changes of the
+	 * size of the individual components.
+	 */
+	protected void layout() {
+		if (fCachedTextViewer instanceof ITextViewerExtension) {
+			ITextViewerExtension extension= (ITextViewerExtension) fCachedTextViewer;
+			Control control= extension.getControl();
+			if (control instanceof Composite && !control.isDisposed()) {
+				Composite composite= (Composite) control;
+				composite.layout(true);
+			}
+		}
+	}
+	
 	/**
 	 * Computes the indentations for the given font and stores them in
 	 * <code>fIndentation</code>.
@@ -180,13 +224,13 @@ public final class LineNumberRulerColumn implements IVerticalRulerColumn {
 			gc.setFont(fCanvas.getFont());
 			NumberFormat nf= NumberFormat.getInstance();
 			
-			fIndentation= new int[MAXDIGITS + 1];
+			fIndentation= new int[fCachedNumberOfDigits + 1];
 			
-			double number= Math.pow(10, MAXDIGITS) - 1;
+			double number= Math.pow(10, fCachedNumberOfDigits) - 1;
 			Point p= gc.stringExtent(nf.format(number));
 			fIndentation[0]= p.x;
 			
-			for (int i= 1; i <= MAXDIGITS; i++) {
+			for (int i= 1; i <= fCachedNumberOfDigits; i++) {
 				number= Math.pow(10, i) - 1;
 				p= gc.stringExtent(nf.format(number));
 				fIndentation[i]= fIndentation[0] - p.x;
@@ -253,6 +297,7 @@ public final class LineNumberRulerColumn implements IVerticalRulerColumn {
 		if (fFont != null)
 			fCanvas.setFont(fFont);
 			
+		computeNumberOfDigits();
 		computeIndentations();
 		return fCanvas;
 	}
@@ -384,17 +429,8 @@ public final class LineNumberRulerColumn implements IVerticalRulerColumn {
 				break;
 				
 			String s= Integer.toString(line + 1);
-			int length= s.length();
-			if (length <= MAXDIGITS) {
-				int indentation= fIndentation[s.length()];
-				gc.drawString(nf.format(line + 1), indentation, y);
-			} else {
-				StringBuffer buffer= new StringBuffer();
-				buffer.append(s.substring(length - MAXDIGITS, length));
-				if (MAXDIGITS >= 2)
-					buffer.replace(0, 2, fDigitPlaceHolder);
-				gc.drawString(buffer.toString(), 0, y);
-			}
+			int indentation= fIndentation[s.length()];
+			gc.drawString(nf.format(line + 1), indentation, y);
 		}
 	}
 	
@@ -422,6 +458,7 @@ public final class LineNumberRulerColumn implements IVerticalRulerColumn {
 		fFont= font;
 		if (fCanvas != null && !fCanvas.isDisposed()) {
 			fCanvas.setFont(fFont);
+			computeNumberOfDigits();
 			computeIndentations();
 		}
 	}
