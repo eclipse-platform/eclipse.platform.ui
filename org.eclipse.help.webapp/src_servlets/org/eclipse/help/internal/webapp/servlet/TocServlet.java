@@ -23,17 +23,6 @@ import org.eclipse.help.internal.toc.*;
 public class TocServlet extends HttpServlet {
 	public final static String TOC = "toc";
 	private String locale;
-	private EclipseConnector connector;
-
-	/**
-	 */
-	public void init() throws ServletException {
-		try {
-			connector = new EclipseConnector(getServletContext());
-		} catch (Throwable e) {
-			throw new ServletException(e);
-		}
-	}
 
 	/**
 	 * Called by the server (via the <code>service</code> method) to
