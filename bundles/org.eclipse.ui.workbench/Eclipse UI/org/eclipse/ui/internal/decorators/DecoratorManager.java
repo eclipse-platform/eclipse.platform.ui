@@ -327,31 +327,6 @@ public class DecoratorManager
 	}
 
 	/**
-	 * Add interface Class objects to the result list based
-	 * on the class hierarchy. Interfaces will be searched
-	 * based on their position in the result list.
-	 */
-	private void internalComputeInterfaceOrder(
-		Class[] interfaces,
-		List result,
-		Map seen) {
-		List newInterfaces = new ArrayList(seen.size());
-		for (int i = 0; i < interfaces.length; i++) {
-			Class interfac = interfaces[i];
-			if (seen.get(interfac) == null) {
-				result.add(interfac);
-				seen.put(interfac, interfac);
-				newInterfaces.add(interfac);
-			}
-		}
-		for (Iterator newList = newInterfaces.iterator(); newList.hasNext();)
-			internalComputeInterfaceOrder(
-				((Class) newList.next()).getInterfaces(),
-				result,
-				seen);
-	}
-
-	/**
 	 * Return the enabled full decorator definitions.
 	 * @return FullDecoratorDefinition[]
 	 */
