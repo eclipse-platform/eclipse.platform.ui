@@ -14,6 +14,11 @@ package org.eclipse.ui.console;
 import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.swt.custom.StyleRange;
 
+/**
+ * A document partitioner for a console.
+ * 
+ * @since 3.1
+ */
 public interface IConsoleDocumentPartitioner extends IDocumentPartitioner {
     public void clearBuffer();
     public boolean isReadOnly(int offset);
