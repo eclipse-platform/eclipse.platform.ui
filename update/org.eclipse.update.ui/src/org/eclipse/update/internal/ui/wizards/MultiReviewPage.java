@@ -119,7 +119,7 @@ public class MultiReviewPage extends BannerPage {
 					feature.getIncludedFeatureReferences();
 				for (int i = 0; i < irefs.length; i++) {
 					IFeatureReference iref = irefs[i];
-					IFeature ifeature = iref.getFeature();
+					IFeature ifeature = iref.getFeature(null);
 					VersionedIdentifier ivid =
 						ifeature.getVersionedIdentifier();
 					if (ivid.equals(vid))

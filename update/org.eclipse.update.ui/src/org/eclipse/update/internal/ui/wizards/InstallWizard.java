@@ -323,13 +323,13 @@ public class InstallWizard extends Wizard {
 			for (int i = 0; csites != null && i < csites.length; i++) {
 				IFeatureReference[] refs = csites[i].getConfiguredFeatures();
 				for (int j = 0; refs != null && j < refs.length; j++) {
-					IFeature parent = refs[j].getFeature();
+					IFeature parent = refs[j].getFeature(null);
 					IFeatureReference[] children =
 						parent.getIncludedFeatureReferences();
 					for (int k = 0;
 						children != null && k < children.length;
 						k++) {
-						IFeature child = children[k].getFeature();
+						IFeature child = children[k].getFeature(null);
 						if (feature.equals(child))
 							return true;
 					}
@@ -372,7 +372,7 @@ public class InstallWizard extends Wizard {
 		IFeatureReference[] included = feature.getIncludedFeatureReferences();
 		for (int i = 0; i < included.length; i++) {
 			IFeatureReference iref = included[i];
-			IFeature ifeature = iref.getFeature();
+			IFeature ifeature = iref.getFeature(null);
 			// find other features and unconfigure
 			String id = iref.getVersionedIdentifier().getIdentifier();
 			IFeature[] sameIds =
@@ -397,7 +397,7 @@ public class InstallWizard extends Wizard {
 			IFeatureReference ref = refs[i];
 			VersionedIdentifier refVid = ref.getVersionedIdentifier();
 			if (feature.getVersionedIdentifier().equals(refVid))
-				return ref.getFeature();
+				return ref.getFeature(null);
 		}
 		return null;
 	}
@@ -432,7 +432,7 @@ public class InstallWizard extends Wizard {
 						UpdateUI.setOriginatingURL(id, url);
 				} else {
 					try {
-						IFeature ifeature = iref.getFeature();
+						IFeature ifeature = iref.getFeature(null);
 						preserveOriginatingURLs(ifeature, optionalFeatures);
 					} catch (CoreException e) {
 						// Silently ignore

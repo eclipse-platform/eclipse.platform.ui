@@ -60,7 +60,7 @@ public class UpdatesSearchCategory extends SearchCategory {
 		}
 		public IFeature getFeature() {
 			try {
-				return ref.getFeature();
+				return ref.getFeature(null);
 			}
 			catch (CoreException e) {
 				return null;
@@ -160,7 +160,7 @@ public class UpdatesSearchCategory extends SearchCategory {
 
 		public PendingChange getJob() {
 			try {
-				IFeature feature = ref.getFeature();
+				IFeature feature = ref.getFeature(null);
 				return new PendingChange(candidate, feature);
 			} catch (CoreException e) {
 				return null;
@@ -235,7 +235,7 @@ public class UpdatesSearchCategory extends SearchCategory {
 				for (int i=0; i<children.length; i++) {
 					IIncludedFeatureReference ref = children[i];
 					try {
-						IFeature child = ref.getFeature();
+						IFeature child = ref.getFeature(null);
 						// If we are here, the child is not missing.
 						// Check it's children recursively.
 						if (isMissingOptionalChildren(child))

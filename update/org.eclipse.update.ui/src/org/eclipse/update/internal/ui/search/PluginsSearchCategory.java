@@ -76,7 +76,7 @@ public class PluginsSearchCategory extends SearchCategory {
 
 				for (int i = 0; i < refs.length; i++) {
 					try {
-						IFeature feature = refs[i].getFeature();
+						IFeature feature = refs[i].getFeature(null);
 						if (matches(feature))
 							result.add(feature);
 						if (monitor.isCanceled()) break;

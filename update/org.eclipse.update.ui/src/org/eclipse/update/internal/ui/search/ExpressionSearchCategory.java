@@ -97,7 +97,7 @@ public class ExpressionSearchCategory extends SearchCategory {
 		monitor.beginTask("", references.length);
 		for (int i=0; i<references.length; i++) {
 			try {
-				IFeature feature = references[i].getFeature();
+				IFeature feature = references[i].getFeature(null);
 				result.add(feature);
 			}
 			catch (CoreException e) {

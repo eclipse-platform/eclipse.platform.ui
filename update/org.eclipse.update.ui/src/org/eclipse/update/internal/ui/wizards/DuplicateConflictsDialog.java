@@ -242,7 +242,7 @@ public class DuplicateConflictsDialog extends MessageDialog {
 			IFeatureReference[] refs = csite.getConfiguredFeatures();
 			for (int j = 0; j < refs.length; j++) {
 				try {
-					addEntry(refs[j].getFeature(), csite, table);
+					addEntry(refs[j].getFeature(null), csite, table);
 				} catch (CoreException e) {
 					// don't let one bad feature stop the loop
 				}
@@ -308,7 +308,7 @@ public class DuplicateConflictsDialog extends MessageDialog {
 			}
 			if (add)
 				computeNewFeature(
-					iref.getFeature(),
+					iref.getFeature(null),
 					csite,
 					table,
 					optionalFeatures);

@@ -184,7 +184,7 @@ public class TargetPage extends BannerPage {
 			for (int j = 0; j < refs.length; j++) {
 				IFeatureReference ref = refs[j];
 				try {
-					IFeature feature = ref.getFeature();
+					IFeature feature = ref.getFeature(null);
 					if (featureID.equals(
 								feature
 								.getVersionedIdentifier()

@@ -253,7 +253,7 @@ public class UpdateUI extends AbstractUIPlugin {
 		Vector result = new Vector();
 
 		for (int i = 0; i < references.length; i++) {
-			IFeature feature = references[i].getFeature();
+			IFeature feature = references[i].getFeature(null);
 			String id = feature.getVersionedIdentifier().getIdentifier();
 			if (featureId.equals(id)) {
 				result.add(feature);

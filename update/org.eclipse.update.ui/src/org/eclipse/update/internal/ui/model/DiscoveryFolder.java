@@ -21,7 +21,7 @@ public class DiscoveryFolder extends BookmarkFolder {
 				IFeatureReference[] refs = csite.getConfiguredFeatures();
 				for (int j = 0; j < refs.length; j++) {
 					IFeatureReference ref = refs[j];
-					IFeature feature = ref.getFeature();
+					IFeature feature = ref.getFeature(null);
 					IURLEntry[] entries = feature.getDiscoverySiteEntries();
 					if (entries.length > 0) {
 						// Only add discovery sites if
@@ -45,7 +45,7 @@ public class DiscoveryFolder extends BookmarkFolder {
 				// Ignore self
 				if (candidate.equals(ref))
 					continue;
-				IFeature cfeature = candidate.getFeature();
+				IFeature cfeature = candidate.getFeature(null);
 				IFeatureReference[] irefs =
 					cfeature.getIncludedFeatureReferences();
 				for (int j = 0; j < irefs.length; j++) {

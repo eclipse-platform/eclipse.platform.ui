@@ -179,7 +179,7 @@ public class UpdateModel implements IAdaptable {
 	}
 	public static boolean hasOptionalFeatures(IFeatureReference fref) {
 		try {
-			return hasOptionalFeatures(fref.getFeature());
+			return hasOptionalFeatures(fref.getFeature(null));
 		} catch (CoreException e) {
 			return false;
 		}
@@ -192,7 +192,7 @@ public class UpdateModel implements IAdaptable {
 				if (iref.isOptional())
 					return true;
 				// see if it has optional children
-				IFeature child = iref.getFeature();
+				IFeature child = iref.getFeature(null);
 				if (hasOptionalFeatures(child))
 					return true;
 			}

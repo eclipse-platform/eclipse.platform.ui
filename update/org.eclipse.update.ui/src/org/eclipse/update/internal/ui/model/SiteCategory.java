@@ -118,12 +118,9 @@ private static final String KEY_OTHER_DESCRIPTION= "SiteCategory.other.descripti
 						IFeatureAdapter adapter = (IFeatureAdapter)child;
 						monitor.subTask(adapter.getFastLabel());
 						try {
-							adapter.getFeature(null);
+							adapter.getFeature(monitor);
 						}
 						catch (CoreException e) {
-						}
-						finally {
-							monitor.worked(1);
 						}
 					}
 				}

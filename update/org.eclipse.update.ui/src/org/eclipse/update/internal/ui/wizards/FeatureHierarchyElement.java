@@ -123,7 +123,7 @@ public class FeatureHierarchyElement {
 			return true;
 		if (isOptional() && oldFeatureRef != null) {
 			try {
-				IFeature oldFeature = oldFeatureRef.getFeature();
+				IFeature oldFeature = oldFeatureRef.getFeature(null);
 				IConfiguredSite csite =
 					InstallWizard.findConfigSite(oldFeature, config);
 				return csite.isConfigured(oldFeature);
@@ -135,7 +135,7 @@ public class FeatureHierarchyElement {
 
 	public IFeature getFeature() {
 		try {
-			IFeature feature = newFeatureRef.getFeature();
+			IFeature feature = newFeatureRef.getFeature(null);
 			return feature;
 		} catch (CoreException e) {
 			return null;
@@ -175,7 +175,7 @@ public class FeatureHierarchyElement {
 	 */
 	private String getFeatureLabel(IFeatureReference featureRef)
 		throws CoreException {
-		IFeature feature = featureRef.getFeature();
+		IFeature feature = featureRef.getFeature(null);
 		return feature.getLabel()
 			+ " "
 			+ feature.getVersionedIdentifier().getVersion().toString();
@@ -198,9 +198,9 @@ public class FeatureHierarchyElement {
 			try {
 				IFeature oldFeature = null;
 				IFeature newFeature = null;
-				newFeature = newFeatureRef.getFeature();
+				newFeature = newFeatureRef.getFeature(null);
 				if (oldFeatureRef != null)
-					oldFeature = oldFeatureRef.getFeature();
+					oldFeature = oldFeatureRef.getFeature(null);
 				optionalChildren =
 					computeElements(oldFeature, newFeature, update, children);
 				for (int i = 0; i < children.size(); i++) {
@@ -283,7 +283,7 @@ public class FeatureHierarchyElement {
 					&& oldRef instanceof IIncludedFeatureReference
 					&& ((IIncludedFeatureReference) oldRef).isOptional()) {
 					try {
-						oldRef.getFeature();
+						oldRef.getFeature(null);
 					} catch (CoreException e) {
 						// missing
 						oldRef = null;
@@ -321,7 +321,7 @@ public class FeatureHierarchyElement {
 	}
 	private static boolean hasOlderVersion(IFeatureReference newRef) {
 		try {
-			IFeature feature = newRef.getFeature();
+			IFeature feature = newRef.getFeature(null);
 			VersionedIdentifier vid = feature.getVersionedIdentifier();
 			PluginVersionIdentifier version = vid.getVersion();
 			String mode = MainPreferencePage.getUpdateVersionsMode();
@@ -351,7 +351,7 @@ public class FeatureHierarchyElement {
 	 */
 	public static Object[] getIncludedFeatures(IFeatureReference ref) {
 		try {
-			IFeature feature = ref.getFeature();
+			IFeature feature = ref.getFeature(null);
 			return getIncludedFeatures(feature);
 		} catch (CoreException e) {
 		}
