@@ -6,10 +6,8 @@
  */
 package org.eclipse.ui.forms.widgets;
 
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.*;
 
 /**
  * @author dejan
@@ -29,6 +27,6 @@ class LayoutComposite extends Composite {
 		if (layout instanceof ColumnLayout)
 			return ((ColumnLayout) layout).computeSize(this, wHint, hHint,
 					changed);
-		return super.computeSize(SWT.DEFAULT, SWT.DEFAULT, changed);
+		return super.computeSize(wHint, hHint, changed);
 	}
 }

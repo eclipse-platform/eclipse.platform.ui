@@ -29,6 +29,13 @@ public class ColumnLayoutData {
 	 * SWT.DEFAULT).
 	 */
 	public int heightHint = SWT.DEFAULT;
+	public static final int LEFT = 1;
+	public static final int CENTER = 2;
+	public static final int RIGHT = 3;
+	public static final int FILL = 4;
+	
+	public int horizontalAlignment = FILL;
+	
 	/**
 	 * Creates the new instance of the class.
 	 * 
@@ -41,4 +48,5 @@ public class ColumnLayoutData {
 		this.widthHint = wHint;
 		this.heightHint = hHint;
 	}
+	public ColumnLayoutData() {}
 }

@@ -73,6 +73,14 @@ public class ScrolledPageBook extends SharedScrolledComposite {
 		pages.put(key, page);
 		return page;
 	}
+
+	public Composite getContainer() {
+		return pageBook;
+	}
+	
+	public void registerPage(Object key, Composite page) {
+		pages.put(key, page);
+	}
 /**
  * 
  * @param key
@@ -95,11 +103,12 @@ public class ScrolledPageBook extends SharedScrolledComposite {
 			pageBook.showPage(page);
 			if (currentPage!=null && currentPage!=page) {
 				// switching pages - force layout
-				page.layout(true);
+				page.layout(false);
 			}
 			currentPage = page;
-		} else
+		} else {
 			showEmptyPage();
+		}
 		reflow(true);
 	}
 /**

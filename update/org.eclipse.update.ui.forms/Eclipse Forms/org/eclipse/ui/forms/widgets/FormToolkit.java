@@ -204,7 +204,7 @@ public class FormToolkit {
 	 */
 
 	public Composite createComposite(Composite parent, int style) {
-		Composite composite = new Composite(parent, style);
+		Composite composite = new LayoutComposite(parent, style);
 		composite.setBackground(colors.getBackground());
 		composite.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent e) {
@@ -516,8 +516,8 @@ public class FormToolkit {
 	 *            the form parent
 	 * @return the form widget
 	 */
-	public Form createForm(Composite parent, int style) {
-		Form form = new Form(parent, style);
+	public Form createForm(Composite parent) {
+		Form form = new Form(parent);
 		form.setExpandHorizontal(true);
 		form.setExpandVertical(true);
 		form.setBackground(colors.getBackground());
@@ -525,8 +525,13 @@ public class FormToolkit {
 		form.setFont(JFaceResources.getHeaderFont());
 		return form;
 	}
-	public Form createForm(Composite parent) {
-		return createForm(parent, SWT.H_SCROLL|SWT.V_SCROLL);
+	
+	public FormContent createFormContent(Composite parent) {
+		FormContent formContent = new FormContent(parent, SWT.NULL);
+		formContent.setBackground(colors.getBackground());
+		formContent.setForeground(colors.getColor(FormColors.TITLE));
+		formContent.setFont(JFaceResources.getHeaderFont());
+		return formContent;
 	}
 	
 	/**
