@@ -20,8 +20,6 @@ import java.util.*;
 	private String				destinationFilename;
 	private IProgressMonitor	monitor;
 
-	//By default we don't export projects
-	private	int					leadupStartDepth = 1;
 	private List				resourcesToExport;
 	private IResource			resource;
 	private List				errorTable = new ArrayList(1);  //IStatus
@@ -131,8 +129,11 @@ protected void exportResource(IResource resource) throws InterruptedException {
 		return;
 
 	if (resource.getType() == IResource.FILE) {
-		String destinationName =
-			resource.getFullPath().removeFirstSegments(leadupStartDepth).toString();
+		String destinationName;
+		if(createLeadupStructure)
+		 	destinationName = resource.getFullPath().toString();
+		else
+			destinationName = resource.getName();
 		monitor.subTask(destinationName);
 
 		try {
@@ -177,9 +178,6 @@ protected void exportSpecifiedResources() throws InterruptedException {
 	
 	while (resources.hasNext()) {
 		IResource currentResource = (IResource)resources.next();
-		if (resource == null && !createLeadupStructure)
-			leadupStartDepth = currentResource.getFullPath().segmentCount() - 1;
-
 		exportResource(currentResource);
 	}
 }
@@ -217,17 +215,6 @@ public IStatus getStatus() {
 protected void initialize() throws IOException {
 	exporter = new ZipFileExporter(destinationFilename,useCompression,generateManifestFile);
 
-	if (resource == null) 	// ie.- no parent resource was specified
-		leadupStartDepth = 1;
-	else {
-		leadupStartDepth = resource.getFullPath().segmentCount();
-
-		if (resource.getType() == IResource.FILE)
-			leadupStartDepth--;
-			
-		if (createLeadupStructure)
-			leadupStartDepth = Math.min(1,leadupStartDepth);
-	}
 }
 /**
  *  Answer a boolean indicating whether the passed child is a descendent
