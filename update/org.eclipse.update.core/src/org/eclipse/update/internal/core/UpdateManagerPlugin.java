@@ -82,23 +82,7 @@ public class UpdateManagerPlugin extends Plugin {
 			DEBUG_SHOW_WEB = getBooleanDebugOption("org.eclipse.update.core/debug/web", false);
 		}
 
-		startupWebInstallHandler();
-	}
-
-	/**
-	 * @see Plugin#shutdown()
-	 */
-	public void shutdown() throws CoreException {
-		if (appServer != null) {
-			boolean stopOK = appServer.stop();
-			if (DEBUG_SHOW_WEB) {
-				if (stopOK)
-					debug("Web app server stopped");
-				else
-					debug("Failed to stop web app server");
-			}
-		}
-
+//		startupWebInstallHandler();
 	}
 
 	private void startupWebInstallHandler() throws CoreException {
@@ -109,21 +93,18 @@ public class UpdateManagerPlugin extends Plugin {
 				debug("Unable to obtain web app server");
 			return;
 		}
-
-		// configure web install handler 
-
-		// start a listener port for the web install handler
-		if (!localAppServer.start()) {
-			localAppServer = null;
+		
+		// configure web install handler
+		if (!localAppServer.add("install", "org.eclipse.update.webapp", "")) {
 			if (DEBUG_SHOW_WEB)
-				debug("Failed to start web app server");
+				debug("Unable to configure web install handler");
 			return;
 		}
 
 		appServerHost = localAppServer.getHost();
 		appServerPort = localAppServer.getPort();
 		if (DEBUG_SHOW_WEB)
-			debug("Web app server started on " + appServerHost + ":" + appServerPort);
+			debug("Web install handler configured on " + appServerHost + ":" + appServerPort);
 	}
 
 	public static IAppServer getWebAppServer() throws CoreException {
