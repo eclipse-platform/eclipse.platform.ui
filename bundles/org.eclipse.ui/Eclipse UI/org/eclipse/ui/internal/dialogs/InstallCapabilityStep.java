@@ -54,8 +54,10 @@ public class InstallCapabilityStep extends WizardStep {
 	public IWizard getWizard() {
 		if (wizard == null) {
 			wizard = capability.getInstallWizard();
-			wizard.init(workbench, StructuredSelection.EMPTY, projectProvider.getProject());
-			wizard.addPages();
+			if (wizard != null) {
+				wizard.init(workbench, StructuredSelection.EMPTY, projectProvider.getProject());
+				wizard.addPages();
+			}
 		}
 		
 		return wizard;

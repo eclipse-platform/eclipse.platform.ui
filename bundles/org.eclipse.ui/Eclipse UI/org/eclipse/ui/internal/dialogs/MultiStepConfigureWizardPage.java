@@ -354,6 +354,16 @@ public class MultiStepConfigureWizardPage extends WizardPage {
 				WizardStep step = steps[stepIndex];
 				stepGroup.setCurrentStep(step);
 				IWizard stepWizard = step.getWizard();
+				int tries = 0;
+				while (stepWizard == null && tries++ < 3) {
+					boolean tryAgain = wizardDialog.getMultiStepWizard().handleMissingStepWizard(step);
+					if (!tryAgain)
+						break;
+					else
+						stepWizard = step.getWizard();
+				}
+				if (stepWizard == null)
+					break;
 				setWizard(stepWizard);
 				if (stepWizard.getPageCount() > 0)
 					return;

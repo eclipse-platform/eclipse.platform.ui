@@ -8,6 +8,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.ui.IWorkbench;
@@ -119,6 +120,17 @@ public class UpdateProjectCapabilityWizard extends MultiStepWizard implements IP
 		IWizardPage page = super.getStartingPage();
 		buildSteps();
 		return page;
+	}
+
+	/* (non-Javadoc)
+	 * Method declared on MultiStepWizard.
+	 */
+	/* package */ boolean handleMissingStepWizard(WizardStep step) {
+		MessageDialog.openError(
+			getShell(),
+			WorkbenchMessages.getString("UpdateProjectCapabilityWizard.errorTitle"), //$NON-NLS-1$
+			WorkbenchMessages.format("UpdateProjectCapabilityWizard.noWizard", new Object[] {step.getLabel()})); //$NON-NLS-1$
+		return false;
 	}
 
 	/**

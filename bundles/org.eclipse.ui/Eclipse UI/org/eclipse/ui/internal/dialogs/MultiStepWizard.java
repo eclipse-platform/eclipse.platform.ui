@@ -121,6 +121,14 @@ public abstract class MultiStepWizard extends Wizard {
 	}
 	
 	/**
+	 * Handles the problem of a missing step wizard.
+	 * 
+	 * @return <code>true</code> to retry, <code>false</code> to terminate
+	 * 		multi step wizard dialog.
+	 */
+	/* package */ abstract boolean handleMissingStepWizard(WizardStep step);
+	
+	/**
 	 * Returns whether the wizard is configuring steps
 	 */
 	/* package */ boolean isConfigureStepMode() {

@@ -72,6 +72,13 @@ public class MultiStepWizardDialog extends WizardDialog {
 		}
 	}	
 
+	/**
+	 * Returns the multi-step wizard for this dialog
+	 */
+	/* package */ MultiStepWizard getMultiStepWizard() {
+		return multiStepWizard;
+	}
+	
 	/* (non-Javadoc)
 	 * Method declared on WizardDialog.
 	 */

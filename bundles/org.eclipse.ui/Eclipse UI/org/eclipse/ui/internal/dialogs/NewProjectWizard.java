@@ -12,6 +12,7 @@ import org.eclipse.core.resources.IProjectNatureDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizardPage;
@@ -162,6 +163,17 @@ public class NewProjectWizard extends MultiStepWizard implements INewWizard, IPr
 				return capabilityPage;
 		}
 		return super.getNextPage(page);
+	}
+
+	/* (non-Javadoc)
+	 * Method declared on MultiStepWizard.
+	 */
+	/* package */ boolean handleMissingStepWizard(WizardStep step) {
+		MessageDialog.openError(
+			getShell(),
+			WorkbenchMessages.getString("NewProjectWizard.errorTitle"), //$NON-NLS-1$
+			WorkbenchMessages.format("NewProjectWizard.noWizard", new Object[] {step.getLabel()})); //$NON-NLS-1$
+		return false;
 	}
 
 	/* (non-Javadoc)
