@@ -56,6 +56,7 @@ public class AntClasspathTab extends JavaClasspathTab {
 		createButton(pathButtonComp, new AddJarAction(fClasspathViewer));
 		createButton(pathButtonComp, new AddExternalJarAction(fClasspathViewer, DIALOG_SETTINGS_PREFIX));
 		createButton(pathButtonComp, new AddFolderAction(fClasspathViewer));
+		createButton(pathButtonComp, new AddVariableStringAction(fClasspathViewer));
 		RuntimeClasspathAction action= new RestoreDefaultEntriesAction(fClasspathViewer, this);
 		createButton(pathButtonComp, action);
 		action.setEnabled(true);
