@@ -350,7 +350,7 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 		for (Iterator iter = fBreakpoints.iterator(); iter.hasNext(); ) {
 			RemoteAntBreakpoint breakpoint = (RemoteAntBreakpoint) iter.next();
 			if (breakpoint.equals(equivalentBreakpoint)) {
-				fBreakpoints.remove(breakpoint);
+				iter.remove();
 				return;
 			}
 		}

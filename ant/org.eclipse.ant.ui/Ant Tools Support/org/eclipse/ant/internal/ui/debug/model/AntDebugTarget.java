@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.debug.model;
 
+import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.debug.IAntDebugConstants;
 import org.eclipse.core.internal.variables.StringVariableManager;
 import org.eclipse.core.resources.IMarker;
@@ -219,34 +220,44 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget {
 	 * @see org.eclipse.debug.core.IBreakpointListener#breakpointAdded(org.eclipse.debug.core.model.IBreakpoint)
 	 */
 	public void breakpointAdded(IBreakpoint breakpoint) {
-		if (supportsBreakpoint(breakpoint)) {
-			try {
-				if (breakpoint.isEnabled()) {
-					try {
-						StringBuffer message= new StringBuffer(DebugMessageIds.ADD_BREAKPOINT);
-						message.append(DebugMessageIds.MESSAGE_DELIMITER);
-						message.append(breakpoint.getMarker().getResource().getLocation().toOSString());
-						message.append(DebugMessageIds.MESSAGE_DELIMITER);
-						message.append(((ILineBreakpoint)breakpoint).getLineNumber());
-						sendRequest(message.toString());
-					} catch (CoreException e) {
-					}
-				}
-			} catch (CoreException e) {
-			}
-		}
+		sendBreakpointRequest(breakpoint, true);
 	}
 	
-	/* (non-Javadoc)
+	private void sendBreakpointRequest(IBreakpoint breakpoint, boolean add) {
+	    if (!supportsBreakpoint(breakpoint)) {
+	        return;
+	    }
+        StringBuffer message= new StringBuffer();
+        if (add) {
+            try {
+                if (!breakpoint.isEnabled()) {
+                    return;
+                }
+            } catch (CoreException e) {
+                AntUIPlugin.log(e);
+               return;
+            }
+            message.append(DebugMessageIds.ADD_BREAKPOINT);
+        } else {
+            message.append(DebugMessageIds.REMOVE_BREAKPOINT);
+        }
+        message.append(DebugMessageIds.MESSAGE_DELIMITER);
+        message.append(breakpoint.getMarker().getResource().getLocation().toOSString());
+        message.append(DebugMessageIds.MESSAGE_DELIMITER);
+        try {
+            message.append(((ILineBreakpoint)breakpoint).getLineNumber());
+            sendRequest(message.toString());
+        } catch (CoreException ce) {
+            AntUIPlugin.log(ce);
+            return;
+        }
+    }
+
+    /* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IBreakpointListener#breakpointRemoved(org.eclipse.debug.core.model.IBreakpoint, org.eclipse.core.resources.IMarkerDelta)
 	 */
 	public void breakpointRemoved(IBreakpoint breakpoint, IMarkerDelta delta) {
-		if (supportsBreakpoint(breakpoint)) {
-			try {
-				sendRequest(DebugMessageIds.REMOVE_BREAKPOINT + ((ILineBreakpoint)breakpoint).getLineNumber());
-			} catch (CoreException e) {
-			}
-		}
+		sendBreakpointRequest(breakpoint, false);
 	}
 	
 	/* (non-Javadoc)
