@@ -38,10 +38,18 @@ import org.eclipse.swt.widgets.Display;
  * and providing an implementation for the <code>getImageData</code>
  * method.
  * </p>
+ * <p>
+ * There are two ways to get an Image from an ImageDescriptor. The method
+ * createImage will always return a new Image which must be disposed by
+ * the caller. Alternatively, createResource() returns a shared
+ * Image. When the caller is done with an image obtained from createResource,
+ * they must call destroyResource() rather than disposing the Image directly.
+ * The result of createResource() can be safely cast to an Image. 
+ * </p>
  *
  * @see org.eclipse.swt.graphics.Image
  */
-public abstract class ImageDescriptor {
+public abstract class ImageDescriptor extends DeviceResourceDescriptor {
 
     /** 
      * A small red square used to warn that an image cannot be created.
@@ -69,7 +77,57 @@ public abstract class ImageDescriptor {
     public static ImageDescriptor createFromFile(Class location, String filename) {
         return new FileImageDescriptor(location, filename);
     }
+    
+    /**
+     * Creates and returns a new image descriptor given ImageData
+     * describing the image.
+     * 
+     * @since 3.1 
+     *
+     * @param data contents of the image
+     * @return newly created image descriptor
+     */
+    public static ImageDescriptor createFromImageData(ImageData data) {
+        return new ImageDataImageDescriptor(data);
+    }
+    
+    /**
+     * Creates and returns a new image descriptor for the given image. Note 
+     * that disposing the original Image will cause the descriptor to become invalid.  
+     * 
+     * <p>
+     * Performance note: If the device that created the Image is known, it 
+     * is more efficient to use createFromImage(Image, Device).
+     * This method should only be used in those rare situations where
+     * the device is unknown.
+     * </p>
+     * 
+     * @since 3.1 
+     *
+     * @param img image to create
+     * @return a newly created image descriptor
+     */
+    public static ImageDescriptor createFromImage(Image img) {
+        return new ImageDataImageDescriptor(img);
+    }
 
+    /**
+     * Creates and returns a new image descriptor for the given image. This
+     * method takes the Device that created the Image as an argument, allowing
+     * the original Image to be reused if the descriptor is asked for another
+     * Image on the same device. Note that disposing the original Image will 
+     * cause the descriptor to become invalid.
+     * 
+     * @since 3.1 
+     *
+     * @param img image to create
+     * @param theDevice the device that was used to create the Image
+     * @return a newly created image descriptor
+     */
+    public static ImageDescriptor createFromImage(Image img, Device theDevice) {
+        return new ImageDataImageDescriptor(img, theDevice);
+    }
+    
     /**
      * Creates and returns a new image descriptor from a URL.
      *
@@ -83,6 +141,24 @@ public abstract class ImageDescriptor {
         return new URLImageDescriptor(url);
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.resource.DeviceResourceDescriptor#createResource(org.eclipse.swt.graphics.Device)
+     */
+    public Object createResource(Device device) throws DeviceResourceException {
+        Image result = createImage(false, device);
+        if (result == null) {
+            throw new DeviceResourceException(this);
+        }
+        return result;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.resource.DeviceResourceDescriptor#destroyResource(Object)
+     */
+    public void destroyResource(Object previouslyCreatedObject) {
+        ((Image)previouslyCreatedObject).dispose();
+    }
+    
     /**
 	 * Creates and returns a new SWT image for this image descriptor. Note that
 	 * each call returns a new SWT image object. The returned image must be
@@ -170,9 +246,8 @@ public abstract class ImageDescriptor {
         if (data == null) {
             if (!returnMissingImageOnError) {
                 return null;
-            } else {
-                data = DEFAULT_IMAGE_DATA;
             }
+            data = DEFAULT_IMAGE_DATA;
         }
 
         /*
@@ -193,8 +268,8 @@ public abstract class ImageDescriptor {
                 } catch (SWTException nextException) {
                     return null;
                 }
-            } else
-                return null;
+            }
+            return null;
         }
     }
 

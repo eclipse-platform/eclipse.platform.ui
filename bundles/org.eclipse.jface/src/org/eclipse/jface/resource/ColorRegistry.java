@@ -180,6 +180,17 @@ public class ColorRegistry extends ResourceRegistry {
         Assert.isNotNull(symbolicName);
         return (RGB) stringToRGB.get(symbolicName);
     }
+    
+    /**
+     * Returns the color descriptor associated with the given symbolic color name.
+     * @since 3.1 
+     *
+     * @param symbolicName
+     * @return the color descriptor associated with the given symbolic color name.
+     */
+    public ColorDescriptor getColorDescriptor(String symbolicName) {
+        return ColorDescriptor.createFrom(getRGB(symbolicName));
+    }
 
     /* (non-Javadoc)
      * @see org.eclipse.jface.resource.ResourceRegistry#clearCaches()

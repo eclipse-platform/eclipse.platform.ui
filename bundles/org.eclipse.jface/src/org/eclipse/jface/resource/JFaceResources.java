@@ -11,12 +11,15 @@
 package org.eclipse.jface.resource;
 
 import java.text.MessageFormat;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * Utility methods to access JFace-specific resources.
@@ -36,6 +39,11 @@ import org.eclipse.swt.graphics.Image;
  */
 public class JFaceResources {
 
+    /**
+     * Map of Display onto DeviceResourceManager. Holds all the resources for the associated display.
+     */
+    private static final Map registries = new HashMap();
+    
     /**
      * The symbolic font name for the banner font 
      * (value <code>"org.eclipse.jface.bannerfont"</code>).
@@ -158,6 +166,47 @@ public class JFaceResources {
     }
 
     /**
+     * Returns the global resource manager for the given display
+     * 
+     * @since 3.1
+     *
+     * @param toQuery display to query
+     * @return the global resource manager for the given display
+     */
+    public static ResourceManager getResources(final Display toQuery) {
+        ResourceManager reg = (ResourceManager)registries.get(toQuery); 
+        
+        if (reg == null) {
+            final DeviceResourceManager mgr = new DeviceResourceManager(toQuery);
+            reg = mgr;
+            registries.put(toQuery, reg);
+            toQuery.disposeExec(new Runnable() {
+                /* (non-Javadoc)
+                 * @see java.lang.Runnable#run()
+                 */
+                public void run() {
+                    mgr.dispose();
+                    registries.remove(toQuery);
+                }
+            });
+        }
+        
+        return reg;
+    }
+    
+    /**
+     * Returns the ResourceManager for the current display. May only
+     * be called from a UI thread.
+     * 
+     * @since 3.1
+     *
+     * @return the global ResourceManager for the current display
+     */
+    public static ResourceManager getResources() {
+        return getResources(Display.getCurrent());
+    }
+    
+    /**
      * Returns the JFace's standard font.
      * Convenience method equivalent to
      * <pre>
@@ -257,7 +306,7 @@ public class JFaceResources {
      */
     public static ImageRegistry getImageRegistry() {
         if (imageRegistry == null)
-            imageRegistry = new ImageRegistry();
+            imageRegistry = new ImageRegistry(getResources(Display.getCurrent()));
         return imageRegistry;
     }
 

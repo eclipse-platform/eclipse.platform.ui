@@ -14,13 +14,14 @@
 package org.eclipse.jface.resource;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.widgets.Display;
 
 /**
@@ -42,20 +43,62 @@ import org.eclipse.swt.widgets.Display;
  * </p>
  */
 public class ImageRegistry {
-
-    /**
-     * Table of known images keyed by symbolic image name
-     * (key type: <code>String</code>, 
-     *  value type: <code>org.eclipse.swt.graphics.Image</code>
-     *  or <code>ImageDescriptor</code>).
-     */
-    private Map table = null;
-
     /**
      * display used when getting images
      */
     private Display display;
 
+    private ResourceManager manager;
+
+    private Map table;
+    
+    /**
+     * Contains the data for an entry in the registry. 
+     */
+    private static class Entry {
+        protected Image image;
+
+        protected ImageDescriptor descriptor;
+    }
+    
+    private static class OriginalImageDescriptor extends ImageDescriptor {
+        private Image original;
+        private int refCount = 0;
+        private Device originalDisplay;
+        
+        public OriginalImageDescriptor(Image original, Device originalDisplay) {
+            this.original = original;
+            this.originalDisplay = originalDisplay;
+        }
+        
+        public Object createResource(Device device) throws DeviceResourceException {
+            if (device == originalDisplay) {
+                refCount++;
+                return original;
+            }
+            return super.createResource(device);
+        }
+        
+        public void destroyResource(Object toDispose) {
+            if (original == toDispose) {
+                refCount--;
+                if (refCount == 0) {
+                    original.dispose();
+                    original = null;
+                }
+            } else {
+                super.destroyResource(toDispose);
+            }
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.jface.resource.ImageDescriptor#getImageData()
+         */
+        public ImageData getImageData() {
+            return original.getImageData();
+        }
+    };
+    
     /**
      * Creates an empty image registry.
      * <p>
@@ -67,6 +110,15 @@ public class ImageRegistry {
         this(Display.getCurrent());
     }
 
+    public ImageRegistry(ResourceManager manager) {
+        Assert.isNotNull(manager);
+        Device dev = manager.getDevice();
+        if (dev instanceof Display) {
+            this.display = (Display)dev;
+        }
+        this.manager = manager;
+    }
+    
     /**
      * Creates an empty image registry.
      * 
@@ -75,15 +127,14 @@ public class ImageRegistry {
      *        to use this registry
      */
     public ImageRegistry(Display display) {
-        super();
-        Assert.isNotNull(display);
-        hookDisplayDispose(display);
-        this.display = display;
+        this(JFaceResources.getResources(display));
     }
 
     /**
      * Returns the image associated with the given key in this registry, 
      * or <code>null</code> if none.
+     *
+     * @deprecated use getDescriptor(String)
      *
      * @param key the key
      * @return the image, or <code>null</code> if none
@@ -94,48 +145,53 @@ public class ImageRegistry {
         if (key == null) {
             return null;
         }
-        /**
-         * NOTE, for backwards compatibility the following images are supported
-         * here, they should never be disposed, hence we explicitly return them 
-         * rather then registering images that SWT will dispose.  
-         * 
-         * Applications should go direclty to SWT for these icons.
-         * 
-         * @see Display.getSystemIcon(int ID)
-         */
-        int swtKey = -1;
-        if (key.equals(Dialog.DLG_IMG_INFO)) {
-            swtKey = SWT.ICON_INFORMATION;
-        }
-        if (key.equals(Dialog.DLG_IMG_QUESTION)) {
-            swtKey = SWT.ICON_QUESTION;
-        }
-        if (key.equals(Dialog.DLG_IMG_WARNING)) {
-            swtKey = SWT.ICON_WARNING;
-        }
-        if (key.equals(Dialog.DLG_IMG_ERROR)) {
-            swtKey = SWT.ICON_ERROR;
-        }
-        // if we actually just want to return an SWT image do so without
-        // looking in the registry
-        if (swtKey != -1) {
-            final Image[] image = new Image[1];
-            final int id = swtKey;
-            display.syncExec(new Runnable() {
-                public void run() {
-                    image[0] = display.getSystemImage(id);
-                }
-            });
-            return image[0];
+        
+        if (display != null) {
+            /**
+             * NOTE, for backwards compatibility the following images are supported
+             * here, they should never be disposed, hence we explicitly return them 
+             * rather then registering images that SWT will dispose.  
+             * 
+             * Applications should go direclty to SWT for these icons.
+             * 
+             * @see Display.getSystemIcon(int ID)
+             */
+            int swtKey = -1;
+            if (key.equals(Dialog.DLG_IMG_INFO)) {
+                swtKey = SWT.ICON_INFORMATION;
+            }
+            if (key.equals(Dialog.DLG_IMG_QUESTION)) {
+                swtKey = SWT.ICON_QUESTION;
+            }
+            if (key.equals(Dialog.DLG_IMG_WARNING)) {
+                swtKey = SWT.ICON_WARNING;
+            }
+            if (key.equals(Dialog.DLG_IMG_ERROR)) {
+                swtKey = SWT.ICON_ERROR;
+            }
+            // if we actually just want to return an SWT image do so without
+            // looking in the registry
+            if (swtKey != -1) {
+                final Image[] image = new Image[1];
+                final int id = swtKey;
+                display.syncExec(new Runnable() {
+                    public void run() {
+                        image[0] = display.getSystemImage(id);
+                    }
+                });
+                return image[0];
+            }
         }
 
         Entry entry = getEntry(key);
         if (entry == null) {
             return null;
         }
-        if (entry.image == null && entry.descriptor != null) {
-            entry.image = entry.descriptor.createImage();
+        
+        if (entry.image == null) {
+            entry.image = manager.createImageWithDefault(entry.descriptor);
         }
+        
         return entry.image;
     }
 
@@ -152,39 +208,8 @@ public class ImageRegistry {
         if (entry == null) {
             return null;
         }
+        
         return entry.descriptor;
-    }
-
-    /**
-     * Shut downs this resource registry and disposes of all registered images.
-     */
-    void handleDisplayDispose() {
-        // remove reference to display
-        display = null;
-        //Do not bother if the table was never used
-        if (table == null)
-            return;
-
-        for (Iterator e = table.values().iterator(); e.hasNext();) {
-            Entry entry = (Entry) e.next();
-            if (entry.image != null) {
-                entry.image.dispose();
-            }
-        }
-        table = null;
-    }
-
-    /**
-     * Hook a dispose listener on the SWT display.
-     *
-     * @param hookDisplay the Display
-     */
-    private void hookDisplayDispose(Display hookDisplay) {
-    	hookDisplay.disposeExec(new Runnable() {
-            public void run() {
-                handleDisplayDispose();
-            }
-        });
     }
 
     /**
@@ -202,14 +227,15 @@ public class ImageRegistry {
         Entry entry = getEntry(key);
         if (entry == null) {
             entry = new Entry();
-            putEntry(key, entry);
+            getTable().put(key, entry);
         }
-        if (entry.image == null) {
-            entry.descriptor = descriptor;
-            return;
+        
+        if (entry.image != null) {
+            throw new IllegalArgumentException(
+                    "ImageRegistry key already in use: " + key); //$NON-NLS-1$            
         }
-        throw new IllegalArgumentException(
-                "ImageRegistry key already in use: " + key); //$NON-NLS-1$
+        
+        entry.descriptor = descriptor;
     }
 
     /**
@@ -228,16 +254,23 @@ public class ImageRegistry {
      */
     public void put(String key, Image image) {
         Entry entry = getEntry(key);
+        
         if (entry == null) {
             entry = new Entry();
-            putEntry(key, entry);
         }
-        if (entry.image == null && entry.descriptor == null) {
-            entry.image = image;
-            return;
+        
+        if (entry.image != null) {
+            throw new IllegalArgumentException(
+                    "ImageRegistry key already in use: " + key); //$NON-NLS-1$            
         }
-        throw new IllegalArgumentException(
-                "ImageRegistry key already in use: " + key); //$NON-NLS-1$
+        
+        entry.image = image;
+        entry.descriptor = new OriginalImageDescriptor(image, manager.getDevice());
+        
+        try {
+            manager.create(entry.descriptor);
+        } catch (DeviceResourceException e) {            
+        }
     }
 
     /**
@@ -247,25 +280,11 @@ public class ImageRegistry {
      * @param key the key
      */
     public void remove(String key) {
-        if (table == null)
-            return;
-
-        Entry entry = (Entry) getTable().remove(key);
-        if (entry != null) {
-            if (entry.image != null && !entry.image.isDisposed()) {
-                entry.image.dispose();
-            }
-            entry.image = null;
+        ImageDescriptor descriptor = getDescriptor(key);
+        if (descriptor != null) {
+            manager.destroy(descriptor);
+            getTable().remove(key);
         }
-    }
-
-    /**
-     * Contains the data for an entry in the registry. 
-     */
-    private static class Entry {
-        protected Image image;
-
-        protected ImageDescriptor descriptor;
     }
 
     private Entry getEntry(String key) {
@@ -282,5 +301,4 @@ public class ImageRegistry {
         }
         return table;
     }
-
 }

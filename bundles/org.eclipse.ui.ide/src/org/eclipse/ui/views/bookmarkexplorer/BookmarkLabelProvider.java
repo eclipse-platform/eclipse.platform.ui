@@ -14,6 +14,7 @@ package org.eclipse.ui.views.bookmarkexplorer;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
@@ -25,6 +26,7 @@ class BookmarkLabelProvider extends LabelProvider implements
         ITableLabelProvider {
 
     private Image image;
+    private ImageDescriptor desc;
 
     final static int COLUMN_ICON = 0;
 
@@ -37,8 +39,8 @@ class BookmarkLabelProvider extends LabelProvider implements
     final static int COLUMN_LOCATION = 4;
 
     public BookmarkLabelProvider(BookmarkNavigator view) {
-        ImageDescriptor desc = view.getImageDescriptor("obj16/bkmrk_tsk.gif"); //$NON-NLS-1$
-        image = desc.createImage();
+        desc = view.getImageDescriptor("obj16/bkmrk_tsk.gif"); //$NON-NLS-1$
+        image = JFaceResources.getResources().createImageWithDefault(desc);
     }
 
     /* (non-Javadoc)
@@ -46,7 +48,7 @@ class BookmarkLabelProvider extends LabelProvider implements
      */
     public void dispose() {
         if (image != null) {
-            image.dispose();
+            JFaceResources.getResources().destroyImage(desc);
             image = null;
         }
     }

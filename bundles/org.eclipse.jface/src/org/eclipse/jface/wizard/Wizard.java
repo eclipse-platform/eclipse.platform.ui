@@ -107,7 +107,7 @@ public abstract class Wizard implements IWizard {
      * The default page image descriptor, used for creating a default page image
      * if required; <code>null</code> if none.
      */
-    private ImageDescriptor defaultImageDescriptor = null;
+    private ImageDescriptor defaultImageDescriptor = JFaceResources.getImageRegistry().getDescriptor(DEFAULT_IMAGE);
 
     /**
      * The color of the wizard title bar; <code>null</code> if none.
@@ -198,7 +198,7 @@ public abstract class Wizard implements IWizard {
         }
         // dispose of image
         if (defaultImage != null) {
-            defaultImage.dispose();
+            JFaceResources.getResources().destroyImage(defaultImageDescriptor);
             defaultImage = null;
         }
     }
@@ -214,13 +214,10 @@ public abstract class Wizard implements IWizard {
      * (non-Javadoc) Method declared on IWizard.
      */
     public Image getDefaultPageImage() {
-        if (defaultImage != null)
-            return defaultImage;
-        if (defaultImageDescriptor != null) {
-            defaultImage = defaultImageDescriptor.createImage();
-            return defaultImage;
+        if (defaultImage == null) {
+            defaultImage = JFaceResources.getResources().createImageWithDefault(defaultImageDescriptor);
         }
-        return JFaceResources.getImageRegistry().get(DEFAULT_IMAGE);
+        return defaultImage;
     }
 
     /*

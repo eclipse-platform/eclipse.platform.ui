@@ -26,5 +26,6 @@ public class AllTests extends TestSuite {
     public AllTests() {
         addTestSuite(ImageRegistryTest.class);
         addTestSuite(ImageCacheTest.class);
+        addTestSuite(ResourceManagerTest.class);
     }
 }

@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.window.Window;
@@ -29,8 +30,6 @@ import org.eclipse.ui.IWorkbenchPart2;
 import org.eclipse.ui.IWorkbenchPartConstants;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.ReferenceCounter;
-import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.util.Util;
@@ -99,12 +98,8 @@ public abstract class WorkbenchPart implements IWorkbenchPart2,
      * loaded by <code>setInitializationData</code>. Subclasses may extend.
      */
     public void dispose() {
-        ReferenceCounter imageCache = WorkbenchImages.getImageCache();
-        Image image = (Image) imageCache.get(imageDescriptor);
-        if (image != null) {
-            int count = imageCache.removeRef(imageDescriptor);
-            if (count <= 0)
-                image.dispose();
+        if (imageDescriptor != null) {
+            JFaceResources.getResources().destroyImage(imageDescriptor);
         }
 
         // Clear out the property change listeners as we
@@ -257,18 +252,7 @@ public abstract class WorkbenchPart implements IWorkbenchPart2,
         if (imageDescriptor == null)
             return;
 
-        /* remember the image in a separatly from titleImage,
-         * since it must be disposed even if the titleImage is changed
-         * to something else*/
-        ReferenceCounter imageCache = WorkbenchImages.getImageCache();
-        Image image = (Image) imageCache.get(imageDescriptor);
-        if (image != null) {
-            imageCache.addRef(imageDescriptor);
-        } else {
-            image = imageDescriptor.createImage();
-            imageCache.put(imageDescriptor, image);
-        }
-        titleImage = image;
+        titleImage = JFaceResources.getResources().createImageWithDefault(imageDescriptor);
     }
 
     /**
@@ -316,6 +300,10 @@ public abstract class WorkbenchPart implements IWorkbenchPart2,
             return;
         this.titleImage = titleImage;
         firePropertyChange(IWorkbenchPart.PROP_TITLE);
+        if (imageDescriptor != null) {
+            JFaceResources.getResources().destroyImage(imageDescriptor);
+            imageDescriptor = null;
+        }
     }
 
     /**
