@@ -996,7 +996,7 @@ public class LinkedModeUI {
 			
 			if (fTargets[i].fAnnotationModel != null) {
 				fTargets[i].fAnnotationModel.removeAllAnnotations();
-				fTargets[i].fAnnotationModel.disconnect(fCurrentTarget.getViewer().getDocument());
+				fTargets[i].fAnnotationModel.disconnect(fTargets[i].getViewer().getDocument());
 				fTargets[i].fAnnotationModel= null;
 			}
 			
