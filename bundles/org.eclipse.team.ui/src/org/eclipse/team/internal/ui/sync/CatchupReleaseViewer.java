@@ -10,7 +10,6 @@ import java.util.Iterator;
 
 import org.eclipse.compare.BufferedContent;
 import org.eclipse.compare.CompareConfiguration;
-import org.eclipse.compare.CompareEditorInput;
 import org.eclipse.compare.IEditableContent;
 import org.eclipse.compare.ITypedElement;
 import org.eclipse.compare.NavigationAction;
@@ -45,6 +44,7 @@ import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
@@ -78,7 +78,7 @@ import org.eclipse.ui.views.navigator.ResourceNavigator;
  * not contain references to workbench actions. Actions should be contributed
  * by the view.
  */
-public abstract class CatchupReleaseViewer extends DiffTreeViewer implements ISelectionChangedListener {
+public abstract class CatchupReleaseViewer extends DiffTreeViewer {
 	
 	class ShowInNavigatorAction extends Action implements ISelectionChangedListener {
 		IViewSite viewSite;
@@ -435,9 +435,6 @@ public abstract class CatchupReleaseViewer extends DiffTreeViewer implements ISe
 		showNext.setCompareEditorInput(diffModel);
 		showPrevious.setCompareEditorInput(diffModel);
 		
-		// Add a selection listener to set the left label
-		addSelectionChangedListener(this);
-		
 		// Add a double-click listener for expanding/contracting
 		getTree().addListener(SWT.MouseDoubleClick, new Listener() {
 			public void handleEvent(Event e) {
@@ -572,12 +569,10 @@ public abstract class CatchupReleaseViewer extends DiffTreeViewer implements ISe
 	}
 	
 	/**
-	 * Notifies that the selection has changed.
-	 *
-	 * @param event event object describing the change
+	 * @see org.eclipse.jface.viewers.StructuredViewer#handleOpen(SelectionEvent)
 	 */
-	public void selectionChanged(SelectionChangedEvent event) {
-		ISelection selection = event.getSelection();
+	protected void handleOpen(SelectionEvent event) {
+		ISelection selection = getSelection();
 		if (!selection.isEmpty() && selection instanceof IStructuredSelection) {
 			IStructuredSelection structured = (IStructuredSelection)selection;
 			Object selected = structured.getFirstElement();
@@ -585,6 +580,7 @@ public abstract class CatchupReleaseViewer extends DiffTreeViewer implements ISe
 				updateLabels(((TeamFile)selected).getMergeResource());
 			}
 		}
+		super.handleOpen(event);
 	}
 	
 	/**
