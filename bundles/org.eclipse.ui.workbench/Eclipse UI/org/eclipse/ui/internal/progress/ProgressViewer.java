@@ -46,6 +46,7 @@ public class ProgressViewer extends StructuredViewer {
 	private FontMetrics fontMetrics;	
 
 	private int numShowItems = 1;
+	private int maxCharacterWidth;
 	
 	/**
 	 * Create a new instance of the receiver with the supplied
@@ -53,10 +54,12 @@ public class ProgressViewer extends StructuredViewer {
 	 * @param parent The composite the Canvas is created in
 	 * @param style style bits for the canvas
 	 * @param itemsToShow the number of items this will show
+	 * @param numChars The number of characters for the width hint.
 	 */
-	ProgressViewer(Composite parent,int style, int itemsToShow) {
+	ProgressViewer(Composite parent,int style, int itemsToShow, int numChars) {
 		super();
 		numShowItems = itemsToShow;
+		maxCharacterWidth = numChars;
 		canvas = new Canvas(parent, style);
 		hookControl(canvas);
 		// Compute and store a font metric
@@ -185,9 +188,9 @@ public class ProgressViewer extends StructuredViewer {
 		FontMetrics fm = gc.getFontMetrics();
 		int charWidth = fm.getAverageCharWidth();
 		int charHeight = fm.getHeight();
-		int maxWidth = display.getBounds().width / 3;
+		int maxWidth = display.getBounds().width / 2;
 		int maxHeight = display.getBounds().height / 6;
-		int fontWidth = charWidth * 36;
+		int fontWidth = charWidth * maxCharacterWidth;
 		int fontHeight = charHeight * numShowItems;
 		if (maxWidth < fontWidth)
 			fontWidth = maxWidth;

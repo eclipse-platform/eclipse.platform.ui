@@ -39,7 +39,7 @@ public class ProgressViewerLabelProvider extends LabelProvider {
 			return null;
 		Display display = control.getDisplay();
 		GC gc = new GC(display);
-		int maxWidth = control.getBounds().width;
+		int maxWidth = control.getBounds().width - 5;
 		if (gc.textExtent(textValue).x < maxWidth) {
 			gc.dispose();
 			return textValue;

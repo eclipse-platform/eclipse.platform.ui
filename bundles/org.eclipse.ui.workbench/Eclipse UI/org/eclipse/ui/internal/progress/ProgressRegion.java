@@ -9,6 +9,8 @@
  **********************************************************************/
 package org.eclipse.ui.internal.progress;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
@@ -27,6 +29,7 @@ public class ProgressRegion {
 	ProgressViewer viewer;
 	AnimationItem item;
 	Composite region;
+	WorkbenchWindow workbenchWindow;
 	
 	/**
 	 * Create a new instance of the receiver.
@@ -42,6 +45,9 @@ public class ProgressRegion {
 	 * @return
 	 */
 	public Control createContents(Composite parent, WorkbenchWindow window) {
+		
+		workbenchWindow = window;
+		
 		region = new Composite(parent, SWT.BORDER | SWT.FLAT);
 		
 		FormLayout regionLayout = new FormLayout();
@@ -59,7 +65,7 @@ public class ProgressRegion {
 		itemData.width = AnimationManager.getInstance().getPreferredWidth() + 5;
 		itemControl.setLayoutData(itemData);
 		
-		viewer = new ProgressViewer(region, SWT.NONE, 1);
+		viewer = new ProgressViewer(region, SWT.NONE, 1,36);
 		viewer.setUseHashlookup(true);
 		Control viewerControl = viewer.getControl();
 
@@ -74,6 +80,15 @@ public class ProgressRegion {
 		viewerData.width = preferredSize.x + margin;
 		viewerData.height = preferredSize.y;
 		viewerControl.setLayoutData(viewerData);
+		
+		viewerControl.addMouseListener(new MouseAdapter(){
+			/* (non-Javadoc)
+			 * @see org.eclipse.swt.events.MouseAdapter#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
+			 */
+			public void mouseDoubleClick(MouseEvent e) {
+				ProgressManagerUtil.openProgressView(workbenchWindow);
+			}
+		});
 		
 		IContentProvider provider = new ProgressViewerContentProvider(viewer);
 		viewer.setContentProvider(provider);
