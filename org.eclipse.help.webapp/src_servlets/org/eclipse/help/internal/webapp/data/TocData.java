@@ -173,7 +173,6 @@ public class TocData extends RequestData {
 	 * @return true if TOC should be visible
 	 */
 	public boolean isEnabled(int toc) {
-		ITocElement[] tocs = HelpPlugin.getTocManager().getTocs(getLocale());
 		if(!isEnabled(tocs[toc])){
 			return false;
 		}
