@@ -579,7 +579,11 @@ public final class Team {
 	}
 
 	/**
-	 * @return
+	 * Return the default ignore infos
+	 * (i.e. those that are specified in
+	 * plugin manifests).
+	 * @return the default ignore infos.
+	 * @since 3.0
 	 */
 	public static IIgnoreInfo[] getDefaultIgnores() {
 		SortedMap gIgnore = new TreeMap();
@@ -589,7 +593,11 @@ public final class Team {
 	}
 
 	/**
-	 * @return
+	 * Return the default file type bindings
+	 * (i.e. those that are specified in
+	 * plugin manifests).
+	 * @return the default file type bindings
+	 * @since 3.0
 	 */
 	public static IFileTypeInfo[] getDefaultTypes() {
 		SortedMap gTypes = new TreeMap();

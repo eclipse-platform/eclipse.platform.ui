@@ -40,6 +40,11 @@ public abstract class ProjectSetCapability {
 	 * released a 3.0 plugin yet. This method is
 	 * called before project set export and import and can be used by
 	 * other clients who work with project sets.
+	 * 
+	 * @param type the provider type instance
+	 * @param capability the capability that was obtained from the provider type
+	 * 
+	 * @since 3.0
 	 */
 	public static void ensureBackwardsCompatible(RepositoryProviderType type, ProjectSetCapability capability) {
 		if (capability != null) {
@@ -85,6 +90,8 @@ public abstract class ProjectSetCapability {
 	 * 		the context in which the references are created
 	 * 		(not <code>null</code>)
 	 * @param monitor a progress monitor
+	 * 
+	 * @since 3.0
 	 */
 	public void projectSetCreated(File file, ProjectSetSerializationContext context, IProgressMonitor monitor) {
 		// Invoke old method by default
@@ -100,7 +107,10 @@ public abstract class ProjectSetCapability {
 	 * will be able to consume it and load the corresponding project.
 	 * <p>
 	 * This default implementation simply throws an exception
-	 * indicating that no references can be created.
+	 * indicating that no references can be created unless there 
+	 * is an IProjectSetSerializer registered for the repository
+	 * provider type in which case the operation is delegated to the 
+	 * serializer.
 	 * Subclasses are expected to override.
 	 * 
 	 * @since 3.0
@@ -147,7 +157,10 @@ public abstract class ProjectSetCapability {
 	 * has successfully completed.
 	 * <p>
 	 * This default implementation simply throws an exception
-	 * indicating that no projects can be loaded.
+	 * indicating that no projects can be loaded unless there 
+	 * is an IProjectSetSerializer registered for the repository
+	 * provider type in which case the operation is delegated to the 
+	 * serializer.
 	 * Subclasses are expected to override.
 	 * 
 	 * @since 3.0

@@ -14,6 +14,12 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Status;
 
+/**
+ * Status that is returned from some Team operations or is the payload of
+ * some TeamExceptions.
+ * 
+ * @since 3.0
+ */
 public class TeamStatus extends Status implements ITeamStatus {
 
 	private IResource resource;

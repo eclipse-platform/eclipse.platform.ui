@@ -53,18 +53,40 @@ public class TeamException extends CoreException {
 	// The operation cannot be performed due to a conflict with other work.
 	public static final int CONFLICT = -7;
 
+	/**
+	 * Create a <code>TeamException</code> which contains the given status object.
+	 * @param status the status for this exception
+	 */
 	public TeamException(IStatus status) {
 		super(status);	
 	}
 
+	/**
+	 * Create a <code>TeamException</code> with an
+	 * error status that contains the given message and 
+	 * throwable.
+	 * @param message the message for the exception
+	 * @param e an associated exception
+	 * @since 3.0
+	 */
 	public TeamException(String message, Throwable e) {
 		super(new Status(IStatus.ERROR, TeamPlugin.ID, 0, message, e));
 	}
 	
+	/**
+	 * Create a <code>TeamException</code> with an
+	 * error status that contains the given message.
+	 * @param message the message for the exception
+	 */
 	public TeamException(String message) {
 		this(message, null);
 	}
 	
+	/**
+	 * Create a <code>TeamException</code> that wraps the given <code>CoreException</code>
+	 * @param e a <code>CoreException</code>
+	 * @since 3.0
+	 */
 	protected TeamException(CoreException e) {		
 		super(asStatus(e));
 	}
@@ -74,6 +96,12 @@ public class TeamException extends CoreException {
 		return new Status(status.getSeverity(), status.getPlugin(), status.getCode(), status.getMessage(), e);
 	}
 
+	/**
+	 * Return a <code>TeamException</code> for the given exception.
+	 * @param e an exception
+	 * @return a <code>TeamException</code> for the given exception
+	 * @since 3.0
+	 */
 	public static TeamException asTeamException(CoreException e) {
 		if (e instanceof TeamException) { 
 			return (TeamException)e;
@@ -81,8 +109,11 @@ public class TeamException extends CoreException {
 		return new TeamException(e);
 	}
 	
-	/*
-	 * Static helper methods for creating exceptions
+	/**
+	 * Return a <code>TeamException</code> for the given exception.
+	 * @param e an exception
+	 * @return a <code>TeamException</code> for the given exception
+	 * @since 3.0
 	 */
 	public static TeamException asTeamException(InvocationTargetException e) {
 		Throwable target = e.getTargetException();

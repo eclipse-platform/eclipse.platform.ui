@@ -15,6 +15,8 @@ import org.eclipse.core.runtime.IStatus;
 
 /**
  * Defines the status codes used in the status of exceptions and errors relating to Team.
+ * 
+ * @since 3.0
  */
 public interface ITeamStatus extends IStatus {
 	

@@ -17,7 +17,7 @@ import org.eclipse.core.resources.IProject;
 
 /**
  * The context in which project serialization occurs.
- * The class may be subclasses to represent different serialization contexts.
+ * The class may be subclassed to represent different serialization contexts.
  * 
  * @since 3.0
  */
@@ -34,8 +34,7 @@ public class ProjectSetSerializationContext {
 	
 	/**
 	 * Create a serialization context and set the filename of the file 
-	 * that does or is to contain the project
-	 * set.
+	 * that does or is to contain the project set.
 	 * @param filename a filename or <code>null</code>
 	 */
 	public ProjectSetSerializationContext(String filename) {
