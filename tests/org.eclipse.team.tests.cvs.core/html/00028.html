@@ -1,16 +1,17 @@
-<html><head><title>Reconnecting to existing</title>
+<html><head><title>Reconnecting an existing project</title>
 <LINK REL=STYLESHEET HREF=../book.css CHARSET=ISO-8859-1 TYPE=text/css>
 <meta NAME="keywords" content="">
 <meta NAME="since" content="">
-</head><h2>Reconnecting to existing</h2>
+</head><h2>Reconnecting an existing project</h2>
 <p>Since: 3.0 M6<br>
-Last Modified: $Date: 2004/01/13 18:46:26 $</p><body>
+Last Modified: $Date: 2004/02/25 20:34:42 $</p><body>
 <p>
 The following scenario represents how a user would reconnect a project that does
 not contain CVS meta-data to it's remote counterpart. It is assumed that the local project 
 was derived from a previous version of the remote project but both the local project and
 the remote may have been modified since then.
 </p>
+<h3>Scenario 1: Existing location using project name</h3>
 <p>Perform the following steps:</p>
 <ol>
   <li>Load an existing project (using Checkout or some other means)</li>
@@ -19,19 +20,33 @@ the remote may have been modified since then.
   <li>Optionally, modify the remote contents of some resources using a separate checkout</li>
   <li>Perform a Team>Share Project and select CVS (if there is more than one 
   repository provider available).</li>
-  <li>Select the repository the project was loaded from and click OK.</li>
-  <li>You will be prompted that the project already exists. Click Yes to continue.
-  In the next dialog that appears, select HEAD as the branch to share with.</li>
-  <li>Click Finish. This will close the wizard and show the sync view.</li>
-  <li>When the background job is completed, ensure that all folders (except new ones)
-  are marked as in-sync and all files (except new ones) are conflicting additions.
-  <li>Changing the comparison criteria to compare contents should not contact the server
-  and should leave only the resources that differ in the sync view. Perform a 
-  Mark As Merged and a Commit on these resources.</li>
-  <li>Changing the comparison criteria back to revision number will reveal all the files
-  whose content did not change, perform a Mark as merged on these resources followed by 
-  a Team>Update on the project in the Navigator (Note: This could be handled better).</li>
-  <li>After the update, ensure the project has no out-of-sync resources.</li>
+  <li>Select the repository the project was loaded from and click Next.</li>
+  <li>Use the project name as the module name. Click Next.</li>
+  <li>In the tag page, select HEAD as the branch to share with and click Next</li>
+  <li>In the sharing page, only the files that do not have the same contents
+  as the server should appear. Perform a Mark as Merged or Commit on these 
+  files.
+  <li>Click Finish.</li>
+</ol>
+
+<h3>Scenario 1: New location using curstom module name</h3>
+<p>Perform the following steps:</p>
+<ol>
+  <li>Load an existing project using Checkout As and a different name</li>
+  <li>Disconnect the project and indicate that CVS meta-data is to be deleted</li>
+  <li>Discard the repository location<li>
+  <li>Modify some local resources</li>
+  <li>Optionally, modify the remote contents of some resources using a separate checkout</li>
+  <li>Perform a Team>Share Project and select CVS (if there is more than one 
+  repository provider available).</li>
+  <li>Select to create a new repository and click Next</li>
+  <li>Enter the repository information for the repository and click Next</li>
+  <li>Enter the name of the module that the project was loaded from. Click Next.</li>
+  <li>In the tag page, select HEAD as the branch to share with and click Next</li>
+  <li>In the sharing page, only the files that do not have the same contents
+  as the server should appear. Perform a Mark as Merged or Commit on these 
+  files.
+  <li>Click Finish.</li>
 </ol>
 
 </body></html>

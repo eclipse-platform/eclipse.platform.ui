@@ -53,7 +53,9 @@
             <topic label="Sharing" href="html/00026.html">
                 <topic label="Sharing as a subfolder" href="html/00027.html">
                 </topic>
-                <topic label="Reconnecting to existing" href="html/00028.html">
+                <topic label="Reconnecting an existing project" href="html/00028.html">
+                </topic>
+                <topic label="Sharing a new project" href="html/00050.html">
                 </topic>
             </topic>
             <topic label="Patching" href="html/00029.html">
