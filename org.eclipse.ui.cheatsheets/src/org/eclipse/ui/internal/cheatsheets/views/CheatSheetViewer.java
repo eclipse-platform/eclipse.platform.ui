@@ -16,6 +16,7 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Cursor;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.cheatsheets.*;
@@ -33,6 +34,8 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 	private String currentID;
 	private int currentItemNum;
 	private boolean hascontent = false;
+	// Use tp indicate if an invalid cheat sheet id was specified via setInput.
+	private boolean invalidCheatSheetId = false;
 
 	private CheatSheetParser parser;
 	private CheatSheet cheatSheet;
@@ -52,12 +55,13 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 	private ArrayList viewItemList = new ArrayList();
 
 	//Composites
-	private Composite parent;
+	private Composite control;
 
 	private Cursor busyCursor;
 	
 	private ErrorPage errorPage;
 	private CheatSheetPage cheatSheetPage;
+	private Label howToBegin;
 
 	/**
 	 * The constructor.
@@ -174,8 +178,6 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 	}
 
 	/*package*/ void advanceSubItem(ImageHyperlink mylabel, boolean markAsCompleted, int subItemIndex) {
-		//		System.out.println("Advancing a sub item!! Item Number: " + subItemIndex);
-//		String subItemID = null;
 		Label l = null;
 		ArrayList list = null;
 		SubItemCompositeHolder sich = null;
@@ -187,9 +189,6 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 			ciws = (CoreItem) currentItem;
 
 		if (ciws != null) {
-//			Item item = ((ViewItem) ciws).item;
-//			if (item.getSubItems() != null && item.getSubItems().size()>0)
-//				subItemID = ((ItemWithSubItems) ci).getSubItem(subItemIndex).getID();
 			list = ciws.getListOfSubItemCompositeHolders();
 			sich = (SubItemCompositeHolder) list.get(subItemIndex);
 			l = sich.getIconLabel();
@@ -589,13 +588,29 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 	 * @param parent the parent control
 	 */
 	public void createPartControl(Composite parent) {
-		this.parent = parent;
+		control = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		layout.verticalSpacing = 0;
+		layout.horizontalSpacing = 0;
+		layout.numColumns = 1;
+		control.setLayout(layout);
+		// TODO: this can be used if the ICheatSheetViewer.dispose() is removed
+//		control.addDisposeListener(new DisposeListener(){
+//			public void widgetDisposed(DisposeEvent e) {
+//				dispose();
+//			}
+//		});
+
+		howToBegin = new Label(control, SWT.WRAP);
+		howToBegin.setText(CheatSheetPlugin.getResourceString(ICheatSheetResource.INITIAL_VIEW_DIRECTIONS));
+		howToBegin.setLayoutData(new GridData(GridData.FILL_BOTH));
+
 		Display display = parent.getDisplay();
 
 		busyCursor = new Cursor(display, SWT.CURSOR_WAIT);
 
-//TODO: this was only for when a memento was present! Now what?
-//		initCheatSheetView();
 		if(contentElement != null) {
 			initCheatSheetView();
 		}
@@ -615,9 +630,8 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 		if (busyCursor != null)
 			busyCursor.dispose();
 
-		if (parent != null)
-			parent.dispose();
-
+		if (control != null)
+			control.dispose();
 	}
 
 	/* (non-Javadoc)
@@ -640,13 +654,7 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 	 * @see org.eclipse.ui.cheatsheets.ICheatSheetViewer#getControl()
 	 */
 	public Control getControl() {
-		if(errorPage != null) {
-			return errorPage.getControl();
-		}
-		if(cheatSheetPage != null) {
-			return cheatSheetPage.getControl();
-		}
-		return null;
+		return control;
 	}
 
 	/**
@@ -716,11 +724,6 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 	}
 	
 	private void initCheatSheetView() {
-		// Confirm that we have content to render, if not return.
-		if(contentURL == null) {
-			return;
-		}
-
 		//Re-initialize list to store items collapsed by expand/restore action on c.s. toolbar.
 		expandRestoreList = new ArrayList();
 
@@ -737,6 +740,11 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 		errorPage = null;
 		cheatSheetPage = null;
 		
+		if(howToBegin != null) {
+			howToBegin.dispose();
+			howToBegin = null;
+		}
+		
 		// read our contents;
 		// add checker here in case file could not be parsed.  No file parsed, no composite should
 		// be created.
@@ -744,15 +752,19 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 		if(!parsedOK){
 			// Exception thrown during parsing.
 			// Something is wrong with the Cheat sheet content file at the xml level.
-			errorPage = new ErrorPage();
-			errorPage.createPart(parent);
+			if(invalidCheatSheetId) {
+				errorPage = new ErrorPage(CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_CHEATSHEET_DOESNOT_EXIST));
+			} else {
+				errorPage = new ErrorPage();
+			}
+			errorPage.createPart(control);
 			hascontent = true;
-			parent.layout(true);
+			control.layout(true);
 			return;
 		}
 		
 		cheatSheetPage = new CheatSheetPage(cheatSheet, viewItemList, this);
-		cheatSheetPage.createPart(parent);
+		cheatSheetPage.createPart(control);
 		hascontent = true;
 		listOfContentItems = cheatSheet.getItems();
 
@@ -760,7 +772,7 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 
 		checkSavedState();
 
-		parent.layout(true);
+		control.layout(true);
 
 		if (currentItem != null && !currentItem.isCompleted())
 			currentItem.getMainItemComposite().setFocus();
@@ -880,7 +892,7 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 
 	private void setContent(CheatSheetElement element) {
 
-		if (element == null || element.equals(contentElement))
+		if (element != null && element.equals(contentElement))
 			return;
 
 		if (contentURL != null)
@@ -893,35 +905,38 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 
 		// Set the current content to new content
 		this.contentElement = element;
-		currentID = element.getID();
-
-		//		System.out.println("The cheatsheet id loaded is: " + currentID); //$NON-NLS-1$
-
-		Bundle bundle = null;
-		if(element != null)
-			try{
-				String pluginId = element.getConfigurationElement().getDeclaringExtension().getNamespace();
-				bundle = Platform.getBundle(pluginId);
-			} catch (Exception e) {
-				// do nothing
-			}
-		if (bundle != null) {
-			this.contentURL = Platform.find(bundle, new Path("$nl$").append(element.getContentFile())); //$NON-NLS-1$
-		}
-
-		if (contentURL == null) {
-			URL checker;
-			try {
-				checker = new URL(element.getContentFile());
-				if (checker.getProtocol().equals("http")) { //$NON-NLS-1$
-					this.contentURL = checker;
+		if (element == null) {
+			currentID = null;
+			this.contentURL = null;
+		} else {
+			currentID = element.getID();
+	
+			Bundle bundle = null;
+			if(element != null)
+				try{
+					String pluginId = element.getConfigurationElement().getDeclaringExtension().getNamespace();
+					bundle = Platform.getBundle(pluginId);
+				} catch (Exception e) {
+					// do nothing
 				}
-			} catch (MalformedURLException mue) {
+			if (bundle != null) {
+				this.contentURL = Platform.find(bundle, new Path("$nl$").append(element.getContentFile())); //$NON-NLS-1$
+			}
+	
+			if (contentURL == null) {
+				URL checker;
+				try {
+					checker = new URL(element.getContentFile());
+					if (checker.getProtocol().equals("http")) { //$NON-NLS-1$
+						this.contentURL = checker;
+					}
+				} catch (MalformedURLException mue) {
+				}
 			}
 		}
 
 		// Initialize the view with the new contents
-		if (parent != null) {
+		if (control != null) {
 			initCheatSheetView();
 		}
 	}
@@ -947,6 +962,14 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 			throw new IllegalArgumentException();
 		}
 		CheatSheetElement element = CheatSheetRegistryReader.getInstance().findCheatSheet(id);
+		if(element == null) {
+			String message = CheatSheetPlugin.formatResourceString(ICheatSheetResource.ERROR_INVALID_CHEATSHEET_ID, new Object[] {id});
+			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, null);
+			CheatSheetPlugin.getPlugin().getLog().log(status);
+			invalidCheatSheetId = true;
+		} else {
+			invalidCheatSheetId = false;
+		}
 		setContent(element);
 
 		// Update most recently used cheat sheets list.
@@ -964,6 +987,7 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 		element.setID(id);
 		element.setContentFile(url.toString());
 
+		invalidCheatSheetId = false;
 		setContent(element);
 	}
 
