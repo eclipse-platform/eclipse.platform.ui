@@ -17,8 +17,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.preference.IPreferenceStore;
 
-import org.eclipse.jface.text.hyperlink.DefaultHyperlinkController;
-import org.eclipse.jface.text.hyperlink.IHyperlinkController;
+import org.eclipse.jface.text.hyperlink.DefaultHyperlinkPresenter;
+import org.eclipse.jface.text.hyperlink.IHyperlinkPresenter;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.jface.text.hyperlink.URLHyperlinkDetector;
 import org.eclipse.jface.text.source.IAnnotationHover;
@@ -43,14 +43,12 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 	 * to set up annotation hover support.
 	 */
 	private static class NullHover implements IAnnotationHover {
-
 		/*
 		 * @see org.eclipse.jface.text.source.IAnnotationHover#getHoverInfo(org.eclipse.jface.text.source.ISourceViewer, int)
 		 */
 		public String getHoverInfo(ISourceViewer sourceViewer, int lineNumber) {
 			return null;
 		}
-		
 	}
 
 	
@@ -87,19 +85,14 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 	}
 	
 	/*
-	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getHyperlinksEnabled(org.eclipse.jface.text.source.ISourceViewer)
-	 * @since 3.1
-	 */
-	public boolean getHyperlinksEnabled(ISourceViewer sourceViewer) {
-		return fPreferenceStore.getBoolean(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINKS_ENABLED);
-	}
-	
-	/*
 	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getHyperlinkDetectors(org.eclipse.jface.text.source.ISourceViewer)
 	 * @since 3.1
 	 */
 	public IHyperlinkDetector[] getHyperlinkDetectors(ISourceViewer sourceViewer) {
 		if (sourceViewer == null)
+			return null;
+		
+		if (!fPreferenceStore.getBoolean(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINKS_ENABLED))
 			return null;
 		
 		return new IHyperlinkDetector[] {
@@ -122,11 +115,11 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 	}
 	
 	/*
-	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getHyperlinkController(org.eclipse.jface.text.source.ISourceViewer)
+	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getHyperlinkPresenter(org.eclipse.jface.text.source.ISourceViewer)
 	 * @since 3.1
 	 */
-	public IHyperlinkController getHyperlinkController(ISourceViewer sourceViewer) {
-		return new DefaultHyperlinkController(fPreferenceStore);
+	public IHyperlinkPresenter getHyperlinkPresenter(ISourceViewer sourceViewer) {
+		return new DefaultHyperlinkPresenter(fPreferenceStore);
 	}
 	
 	/**

@@ -17,7 +17,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 
-import org.eclipse.jface.text.hyperlink.DefaultHyperlinkController;
+import org.eclipse.jface.text.hyperlink.DefaultHyperlinkPresenter;
 
 
 /**
@@ -309,7 +309,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * @see org.eclipse.jface.preference.PreferenceConverter
 	 * @since 3.1
 	 */
-	public final static String EDITOR_HYPERLINK_COLOR= DefaultHyperlinkController.HYPERLINK_COLOR;
+	public final static String EDITOR_HYPERLINK_COLOR= DefaultHyperlinkPresenter.HYPERLINK_COLOR;
 	
 	/**
   	* Initializes the given preference store with the default values.

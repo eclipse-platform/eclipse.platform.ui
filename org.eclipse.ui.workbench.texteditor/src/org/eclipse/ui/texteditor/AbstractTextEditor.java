@@ -21,7 +21,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.StringTokenizer;
 
 import org.osgi.framework.Bundle;
 
@@ -111,6 +110,7 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextEvent;
 import org.eclipse.jface.text.TextSelection;
+import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.ISourceViewer;
@@ -3207,35 +3207,21 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		if (PREFERENCE_HYPERLINKS_ENABLED.equals(property)) {
 			ITextViewer viewer= getSourceViewer();
 			if (viewer instanceof ITextViewerExtension6) {
-				boolean isEnabled= fPreferenceStore.getBoolean(PREFERENCE_HYPERLINKS_ENABLED);
+				IHyperlinkDetector[] detectors= getSourceViewerConfiguration().getHyperlinkDetectors(getSourceViewer());
+				int stateMask= getSourceViewerConfiguration().getHyperlinkStateMask(getSourceViewer());
 				ITextViewerExtension6 textViewer6= (ITextViewerExtension6)viewer;
-				textViewer6.setHyperlinksEnabled(isEnabled);
+				textViewer6.setHyperlinkDetectors(detectors, stateMask);
 			}
 			return;
-			
 		}
 		
 		if (PREFERENCE_HYPERLINK_KEY_MODIFIER.equals(property)) {
 			ITextViewer viewer= getSourceViewer();
 			if (viewer instanceof ITextViewerExtension6) {
 				ITextViewerExtension6 textViewer6= (ITextViewerExtension6)viewer;
-				String modifiers= fPreferenceStore.getString(PREFERENCE_HYPERLINK_KEY_MODIFIER);
-				int modifierMask= computeStateMask(modifiers);
-				if (modifierMask == -1) {
-					// Fall back to stored state mask
-					modifierMask= fPreferenceStore.getInt(PREFERENCE_HYPERLINK_KEY_MODIFIER_MASK);
-				}
-				textViewer6.setHyperlinkStateMask(modifierMask);
-			}
-			return;
-		}
-		
-		if (PREFERENCE_HYPERLINK_KEY_MODIFIER_MASK.equals(property)) {
-			ITextViewer viewer= getSourceViewer();
-			if (viewer instanceof ITextViewerExtension6) {
-				ITextViewerExtension6 textViewer6= (ITextViewerExtension6)viewer;
-				int modifierMask= fPreferenceStore.getInt(PREFERENCE_HYPERLINK_KEY_MODIFIER_MASK);
-				textViewer6.setHyperlinkStateMask(modifierMask);
+				IHyperlinkDetector[] detectors= getSourceViewerConfiguration().getHyperlinkDetectors(getSourceViewer());
+				int stateMask= getSourceViewerConfiguration().getHyperlinkStateMask(getSourceViewer());
+				textViewer6.setHyperlinkDetectors(detectors, stateMask);
 			}
 			return;
 		}
@@ -5199,48 +5185,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			return overlap != null;
 		}
 		return viewer.overlapsWithVisibleRegion(offset, length);
-	}
-	
-	/**
-	 * Maps the localized modifier name to a code in the same
-	 * manner as #findModifier.
-	 *
-	 * @param modifierName the modifier name
-	 * @return the SWT modifier bit, or <code>0</code> if no match was found
-	 * @since 3.1
-	 */
-	protected static final int findLocalizedModifier(String modifierName) {
-		if (modifierName == null)
-			return 0;
-		
-		if (modifierName.equalsIgnoreCase(Action.findModifierString(SWT.CTRL)))
-			return SWT.CTRL;
-		if (modifierName.equalsIgnoreCase(Action.findModifierString(SWT.SHIFT)))
-			return SWT.SHIFT;
-		if (modifierName.equalsIgnoreCase(Action.findModifierString(SWT.ALT)))
-			return SWT.ALT;
-		if (modifierName.equalsIgnoreCase(Action.findModifierString(SWT.COMMAND)))
-			return SWT.COMMAND;
-
-		return 0;
-	}
-
-	protected static final int computeStateMask(String modifiers) {
-		if (modifiers == null)
-			return -1;
-	
-		if (modifiers.length() == 0)
-			return SWT.NONE;
-
-		int stateMask= 0;
-		StringTokenizer modifierTokenizer= new StringTokenizer(modifiers, ",;.:+-* "); //$NON-NLS-1$
-		while (modifierTokenizer.hasMoreTokens()) {
-			int modifier= findLocalizedModifier(modifierTokenizer.nextToken());
-			if (modifier == 0 || (stateMask & modifier) == modifier)
-				return -1;
-			stateMask= stateMask | modifier;
-		}
-		return stateMask;
 	}
 	
 	/*

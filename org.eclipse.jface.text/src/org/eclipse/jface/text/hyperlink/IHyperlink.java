@@ -25,12 +25,12 @@ import org.eclipse.jface.text.IRegion;
  * @since 3.1
  */
 public interface IHyperlink {
-	IRegion getRegion();
+	IRegion getHyperlinkRegion();
 	
 	/**
 	 * Optional label for this type of hyperlink.
 	 * <p>
-	 * This type label can be used by {@link IHyperlinkController}s
+	 * This type label can be used by {@link IHyperlinkPresenter}s
 	 * which show several hyperlinks at once.
 	 * </p>
 	 * 
@@ -47,7 +47,7 @@ public interface IHyperlink {
 	 * 
 	 * @return the text or <code>null</code> if none.
 	 */
-	String getText();
+	String getHyperlinkText();
 	
 	/**
 	 * Opens the given hyperlink.

@@ -43,7 +43,7 @@ import org.eclipse.jface.text.Region;
  * 
  * @since 3.1
  */
-public class DefaultHyperlinkManager implements IHyperlinkManager, KeyListener, MouseListener, MouseMoveListener, FocusListener {
+public class HyperlinkManager implements KeyListener, MouseListener, MouseMoveListener, FocusListener {
 
 	/**
 	 * Detection strategy.
@@ -63,53 +63,20 @@ public class DefaultHyperlinkManager implements IHyperlinkManager, KeyListener, 
 			return fName;
 		}
 	}
+
 	
-
-	/**
-	 * A named preference that controls if hyperlinks are turned on or off.
-	 * <p>
-	 * Value is of type <code>Boolean</code>.
-	 * </p>
-	 * 
-	 * @since 3.1
-	 */
-	public static final String HYPERLINKS_ENABLED= "hyperlinksEnabled"; //$NON-NLS-1$
-
-	/**
-	 * A named preference that controls the key modifier for hyperlinks.
-	 * <p>
-	 * Value is of type <code>String</code>.
-	 * </p>
-	 * 
-	 * @since 3.1
-	 */
-	public static final String HYPERLINK_KEY_MODIFIER= "hyperlinkKeyModifier"; //$NON-NLS-1$
-
-	/**
-	 * A named preference that controls the key modifier mask for hyperlinks.
-	 * The value is only used if the value of <code>EHYPERLINK_KEY_MODIFIER</code>
-	 * cannot be resolved to valid SWT modifier bits.
-	 * <p>
-	 * Value is of type <code>String</code>.
-	 * </p>
-	 * 
-	 * @see #HYPERLINK_KEY_MODIFIER
-	 * @since 3.1
-	 */
-	public static final String HYPERLINK_KEY_MODIFIER_MASK= "hyperlinkKeyModifierMask"; //$NON-NLS-1$
-
 	/**
 	 * The first detected hyperlink is passed to the
-	 * hyperlink controller and no further detector
+	 * hyperlink presenter and no further detector
 	 * is consulted.
 	 */
 	public static final DETECTION_STRATEGY FIRST= new DETECTION_STRATEGY("first"); //$NON-NLS-1$
 	
 	/**
 	 * All detected hyperlinks from all detectors are collected
-	 * and passed to the hyperlink controller.
+	 * and passed to the hyperlink presenter.
 	 * <p>
-	 * This strategy is only allowed if {@link IHyperlinkController#canShowMultipleHyperlinks()}
+	 * This strategy is only allowed if {@link IHyperlinkPresenter#canShowMultipleHyperlinks()}
 	 * returns <code>true</code>.
 	 * </p>
 	 */
@@ -118,9 +85,9 @@ public class DefaultHyperlinkManager implements IHyperlinkManager, KeyListener, 
 	/**
 	 * All detected hyperlinks from all detectors are collected
 	 * and all those with the longest region are passed to the
-	 * hyperlink controller.
+	 * hyperlink presenter.
 	 * <p>
-	 * This strategy is only allowed if {@link IHyperlinkController#canShowMultipleHyperlinks()}
+	 * This strategy is only allowed if {@link IHyperlinkPresenter#canShowMultipleHyperlinks()}
 	 * returns <code>true</code>.
 	 * </p>
 	 */
@@ -129,7 +96,7 @@ public class DefaultHyperlinkManager implements IHyperlinkManager, KeyListener, 
 	/**
 	 * All detected hyperlinks from all detectors are collected
 	 * and form all those with the longest region only the first
-	 * one is passed to the hyperlink controller.
+	 * one is passed to the hyperlink presenter.
 	 */
 	public static final DETECTION_STRATEGY LONGEST_REGION_FIRST= new DETECTION_STRATEGY("first with longest region"); //$NON-NLS-1$
 
@@ -139,13 +106,13 @@ public class DefaultHyperlinkManager implements IHyperlinkManager, KeyListener, 
 	/** The session is active. */
 	private boolean fActive;
 	/** The key modifier mask. */
-	private int fKeyModifierMask;
+	private int fHyperlinkStateMask;
 	/** The active hyperlinks. */
 	private IHyperlink[] fActiveHyperlinks;
 	/** The hyperlink detectors. */
 	private IHyperlinkDetector[] fHyperlinkDetectors;
-	/** The hyperlink controller. */
-	private IHyperlinkController fHyperlinkController;
+	/** The hyperlink presenter. */
+	private IHyperlinkPresenter fHyperlinkPresenter;
 	/** The detection strategy. */
 	private final DETECTION_STRATEGY fDetectionStrategy;
 
@@ -155,23 +122,27 @@ public class DefaultHyperlinkManager implements IHyperlinkManager, KeyListener, 
 	 * 
 	 * @param detectionStrategy the detection strategy one of {{@link #ALL}, {@link #FIRST}, {@link #LONGEST_REGION_ALL}, {@link #LONGEST_REGION_FIRST}}
 	 */
-	public DefaultHyperlinkManager(DETECTION_STRATEGY detectionStrategy) {
+	public HyperlinkManager(DETECTION_STRATEGY detectionStrategy) {
 		Assert.isNotNull(detectionStrategy);
 		fDetectionStrategy= detectionStrategy;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.hyperlink.IHyperlinkManager#install(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.hyperlink.IHyperlinkController, org.eclipse.jface.text.hyperlink.IHyperlinkDetector[], int)
-	 * @since 3.1
+	/**
+	 * Installs this hyperlink manager with the given arguments.
+	 * 
+	 * @param textViewer the text viewer
+	 * @param hyperlinkPresenter the hyperlink presenter
+	 * @param hyperlinkDetectors the array of hyperlink detectors, must not be empty
+	 * @param eventStateMask the SWT event state mask to activate hyperlink mode
 	 */
-	public void install(ITextViewer textViewer, IHyperlinkController hyperlinkController, IHyperlinkDetector[] hyperlinkDetectors, int keyModifierMask) {
+	public void install(ITextViewer textViewer, IHyperlinkPresenter hyperlinkPresenter, IHyperlinkDetector[] hyperlinkDetectors, int eventStateMask) {
 		Assert.isNotNull(textViewer);
-		Assert.isNotNull(hyperlinkController);
+		Assert.isNotNull(hyperlinkPresenter);
 		fTextViewer= textViewer;
-		fHyperlinkController= hyperlinkController;
-		Assert.isLegal(!fHyperlinkController.canShowMultipleHyperlinks() && (fDetectionStrategy == FIRST || fDetectionStrategy == LONGEST_REGION_FIRST)); 
+		fHyperlinkPresenter= hyperlinkPresenter;
+		Assert.isLegal(!fHyperlinkPresenter.canShowMultipleHyperlinks() && (fDetectionStrategy == FIRST || fDetectionStrategy == LONGEST_REGION_FIRST)); 
 		setHyperlinkDetectors(hyperlinkDetectors);
-		setKeyModifierMask(keyModifierMask);
+		setHyperlinkStateMask(eventStateMask);
 		
 		StyledText text= fTextViewer.getTextWidget();			
 		if (text == null || text.isDisposed())
@@ -182,12 +153,17 @@ public class DefaultHyperlinkManager implements IHyperlinkManager, KeyListener, 
 		text.addMouseMoveListener(this);
 		text.addFocusListener(this);
 		
-		fHyperlinkController.install(fTextViewer);
+		fHyperlinkPresenter.install(fTextViewer);
 	}
 	
-	/*
-	 * @see org.eclipse.jface.text.hyperlink.IHyperlinkManager#setHyperlinkDetectors(org.eclipse.jface.text.hyperlink.IHyperlinkDetector[])
-	 * @since 3.1
+	/**
+	 * Sets the hyperlink detectors for this hyperlink manager.
+	 * <p>
+	 * It is allowed to call this method after this
+	 * hyperlink manger has been installed.
+	 * </p>
+	 * 
+	 * @param hyperlinkDetectors and array of hyperlink detectors, must not be empty
 	 */
 	public void setHyperlinkDetectors(IHyperlinkDetector[] hyperlinkDetectors) {
 		Assert.isTrue(hyperlinkDetectors != null && hyperlinkDetectors.length > 0);
@@ -200,17 +176,22 @@ public class DefaultHyperlinkManager implements IHyperlinkManager, KeyListener, 
 		}
 	}
 	
-	/*
-	 * @see org.eclipse.jface.text.hyperlink.IHyperlinkManager#setKeyModifierMask(int)
-	 * @since 3.1
+	/**
+	 * Sets the SWT event state mask which in combination
+	 * with the left mouse button triggers the hyperlink mode.
+	 * <p>
+	 * It is allowed to call this method after this
+	 * hyperlink manger has been installed.
+	 * </p>
+	 *  
+	 * @param eventStateMask the SWT event state mask to activate hyperlink mode
 	 */
-	public void setKeyModifierMask(int keyModifierMask) {
-		fKeyModifierMask= keyModifierMask;
+	public void setHyperlinkStateMask(int eventStateMask) {
+		fHyperlinkStateMask= eventStateMask;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.hyperlink.IHyperlinkManager#uninstall()
-	 * @since 3.1
+	/**
+	 * Uninstalls this hyperlink manager. 
 	 */
 	public void uninstall() {
 		deactivate();
@@ -222,9 +203,9 @@ public class DefaultHyperlinkManager implements IHyperlinkManager, KeyListener, 
 			text.removeMouseMoveListener(this);
 			text.removeFocusListener(this);
 		}
-		fHyperlinkController.uninstall();
+		fHyperlinkPresenter.uninstall();
 		
-		fHyperlinkController= null;
+		fHyperlinkPresenter= null;
 		fTextViewer= null;
 		fHyperlinkDetectors= null;
 	}
@@ -233,7 +214,7 @@ public class DefaultHyperlinkManager implements IHyperlinkManager, KeyListener, 
 		if (!fActive)
 			return;
 
-		fHyperlinkController.deactivate();
+		fHyperlinkPresenter.hideHyperlinks();
 		fActive= false;
 	}
 
@@ -269,7 +250,7 @@ public class DefaultHyperlinkManager implements IHyperlinkManager, KeyListener, 
 			Iterator iter= new ArrayList(allHyperlinks).iterator();
 			while (iter.hasNext()) {
 				IHyperlink hyperlink= (IHyperlink)iter.next();
-				if (hyperlink.getRegion().getLength() < maxLength)
+				if (hyperlink.getHyperlinkRegion().getLength() < maxLength)
 					allHyperlinks.remove(hyperlink);
 			}
 		}
@@ -286,7 +267,7 @@ public class DefaultHyperlinkManager implements IHyperlinkManager, KeyListener, 
 		Iterator iter= hyperlinks.iterator();
 		int length= Integer.MIN_VALUE;
 		while (iter.hasNext()) {
-			IRegion region= ((IHyperlink)iter.next()).getRegion();
+			IRegion region= ((IHyperlink)iter.next()).getHyperlinkRegion();
 			if (region.getLength() < length)
 				continue;
 			length= region.getLength();
@@ -328,7 +309,7 @@ public class DefaultHyperlinkManager implements IHyperlinkManager, KeyListener, 
 			return;	
 		}
 
-		if (event.keyCode != fKeyModifierMask) {
+		if (event.keyCode != fHyperlinkStateMask) {
 			deactivate();
 			return;
 		}
@@ -375,7 +356,7 @@ public class DefaultHyperlinkManager implements IHyperlinkManager, KeyListener, 
 		if (!fActive)
 			return;
 			
-		if (event.stateMask != fKeyModifierMask) {
+		if (event.stateMask != fHyperlinkStateMask) {
 			deactivate();
 			return;	
 		}
@@ -416,7 +397,7 @@ public class DefaultHyperlinkManager implements IHyperlinkManager, KeyListener, 
 		}
 		
 		if (!fActive) {
-			if (event.stateMask != fKeyModifierMask)
+			if (event.stateMask != fHyperlinkStateMask)
 				return;
 			// modifier was already pressed
 			fActive= true;
@@ -435,11 +416,11 @@ public class DefaultHyperlinkManager implements IHyperlinkManager, KeyListener, 
 	
 		fActiveHyperlinks= findHyperlinks();
 		if (fActiveHyperlinks == null || fActiveHyperlinks.length == 0) {
-			fHyperlinkController.deactivate();
+			fHyperlinkPresenter.hideHyperlinks();
 			return;
 		}
 		
-		fHyperlinkController.activate(fActiveHyperlinks);
+		fHyperlinkPresenter.showHyperlinks(fActiveHyperlinks);
 	}
 
 	/*

@@ -31,8 +31,8 @@ import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.IUndoManager;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.formatter.IContentFormatter;
-import org.eclipse.jface.text.hyperlink.DefaultHyperlinkController;
-import org.eclipse.jface.text.hyperlink.IHyperlinkController;
+import org.eclipse.jface.text.hyperlink.DefaultHyperlinkPresenter;
+import org.eclipse.jface.text.hyperlink.IHyperlinkPresenter;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.jface.text.hyperlink.URLHyperlinkDetector;
 import org.eclipse.jface.text.information.IInformationPresenter;
@@ -333,19 +333,6 @@ public class SourceViewerConfiguration {
 	}
 	
 	/**
-	 * Returns the whether hyperlinks are enabled in the
-	 * given source viewer.
-	 * This implementation always returns the <code>true</code>.
-	 *
-	 * @param sourceViewer the source viewer to be configured by this configuration
-	 * @return <code>true</code> if hyperlinks are enabled 
-	 * @since 3.1
-	 */
-	public boolean getHyperlinksEnabled(ISourceViewer sourceViewer) {
-		return true;
-	}
-
-	/**
 	 * Returns the hyperlink detectors which be used to detect hyperlinks
 	 * in the given source viewer. This
 	 * implementation always returns an array with an URL hyperlink detector.
@@ -362,15 +349,15 @@ public class SourceViewerConfiguration {
 	}
 
 	/**
-	 * Returns the hyperlink controller for the given source viewer.
-	 * This implementation always returns the {@link DefaultHyperlinkController}.
+	 * Returns the hyperlink presenter for the given source viewer.
+	 * This implementation always returns the {@link DefaultHyperlinkPresenter}.
 	 * 
 	 * @param sourceViewer the source viewer to be configured by this configuration
-	 * @return the hyperlink controller or <code>null</code> if no hyperlink support should be installed
+	 * @return the hyperlink presenter or <code>null</code> if no hyperlink support should be installed
 	 * @since 3.1
 	 */
-	public IHyperlinkController getHyperlinkController(ISourceViewer sourceViewer) {
-		return new DefaultHyperlinkController((IPreferenceStore)null);
+	public IHyperlinkPresenter getHyperlinkPresenter(ISourceViewer sourceViewer) {
+		return new DefaultHyperlinkPresenter((IPreferenceStore)null);
 	}
 	
 	/**
@@ -379,10 +366,10 @@ public class SourceViewerConfiguration {
 	 * This implementation always returns the {@link SWT#MOD1}.
 	 *
 	 * @param sourceViewer the source viewer to be configured by this configuration
-	 * @return the state mask for 
+	 * @return the SWT event state mask to activate hyperlink mode
 	 * @since 3.1
 	 */
 	public int getHyperlinkStateMask(ISourceViewer sourceViewer) {
-		return SWT.CTRL;
+		return SWT.MOD1;
 	}
 }

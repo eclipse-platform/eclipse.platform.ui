@@ -45,16 +45,14 @@ public class URLHyperlink implements IHyperlink {
 	}
 
 	/*
-	 * @see org.eclipse.jdt.internal.ui.javaeditor.IHyperlink#getRegion()
-	 * @since 3.1
+	 * @see org.eclipse.jdt.internal.ui.javaeditor.IHyperlink#getHyperlinkRegion()
 	 */
-	public IRegion getRegion() {
+	public IRegion getHyperlinkRegion() {
 		return fRegion;
 	}
 
 	/*
 	 * @see org.eclipse.jdt.internal.ui.javaeditor.IHyperlink#open()
-	 * @since 3.1
 	 */
 	public void open() {
 		if (fURLString != null) {
@@ -74,17 +72,15 @@ public class URLHyperlink implements IHyperlink {
 
 	/*
 	 * @see org.eclipse.jdt.internal.ui.javaeditor.IHyperlink#getTypeLabel()
-	 * @since 3.1
 	 */
 	public String getTypeLabel() {
 		return null;
 	}
 
 	/*
-	 * @see org.eclipse.jdt.internal.ui.javaeditor.IHyperlink#getText()
-	 * @since 3.1
+	 * @see org.eclipse.jdt.internal.ui.javaeditor.IHyperlink#getHyperlinkText()
 	 */
-	public String getText() {
+	public String getHyperlinkText() {
 		return null;
 	}
 }

@@ -45,7 +45,7 @@ import org.eclipse.jface.text.TextPresentation;
 
 
 /**
- * The default hyperlink controller underlines the
+ * The default hyperlink presenter underlines the
  * link and colors the line and the text with
  * the given color.
  * <p>
@@ -54,7 +54,7 @@ import org.eclipse.jface.text.TextPresentation;
  * 
  * @since 3.1
  */
-public class DefaultHyperlinkController implements IHyperlinkController, ITextPresentationListener, PaintListener, ITextInputListener, IDocumentListener, IPropertyChangeListener {
+public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, ITextPresentationListener, PaintListener, ITextInputListener, IDocumentListener, IPropertyChangeListener {
 
 	/**
 	 * A named preference that holds the color used for hyperlinks.
@@ -65,7 +65,6 @@ public class DefaultHyperlinkController implements IHyperlinkController, ITextPr
 	 *
 	 * @see org.eclipse.jface.resource.StringConverter
 	 * @see org.eclipse.jface.preference.PreferenceConverter
-	 * @since 3.1
 	 */
 	public final static String HYPERLINK_COLOR= "hyperlinkColor"; //$NON-NLS-1$
 
@@ -87,29 +86,28 @@ public class DefaultHyperlinkController implements IHyperlinkController, ITextPr
 
 
 	/**
-	 * Creates a new default hyperlink controller which uses
+	 * Creates a new default hyperlink presenter which uses
 	 * {@link #HYPERLINK_COLOR} to read the color from the given preference store.
 	 * 
 	 * @param store the preference store
 	 */
-	public DefaultHyperlinkController(IPreferenceStore store) {
+	public DefaultHyperlinkPresenter(IPreferenceStore store) {
 		fPreferenceStore= store;
 		fDisposeColor= true;
 	}
 	
 	/**
-	 * Creates a new default hyperlink controller.
+	 * Creates a new default hyperlink presenter.
 	 * 
 	 * @param color the hyperlink color, to be disposed by the caller
 	 */
-	public DefaultHyperlinkController(Color color) {
+	public DefaultHyperlinkPresenter(Color color) {
 		fDisposeColor= false;
 		fColor= color;
 	}
 	
 	/*
 	 * @see org.eclipse.jdt.internal.ui.javaeditor.IHyperlinkControl#canShowMultipleHyperlinks()
-	 * @since 3.1
 	 */
 	public boolean canShowMultipleHyperlinks() {
 		return false;
@@ -117,26 +115,23 @@ public class DefaultHyperlinkController implements IHyperlinkController, ITextPr
 	
 	/*
 	 * @see org.eclipse.jdt.internal.ui.javaeditor.IHyperlinkControl#activate(org.eclipse.jdt.internal.ui.javaeditor.IHyperlink[])
-	 * @since 3.1
 	 */
-	public void activate(IHyperlink[] hyperlinks) {
+	public void showHyperlinks(IHyperlink[] hyperlinks) {
 		Assert.isLegal(hyperlinks != null && hyperlinks.length == 1);
-		highlightRegion(hyperlinks[0].getRegion());
+		highlightRegion(hyperlinks[0].getHyperlinkRegion());
 		activateCursor();
 	}
 	
 	/*
 	 * @see org.eclipse.jdt.internal.ui.javaeditor.IHyperlinkControl#deactivate()
-	 * @since 3.1
 	 */
-	public void deactivate() {
+	public void hideHyperlinks() {
 		repairRepresentation();
 		fRememberedPosition= null;
 	}
 
 	/*
 	 * @see org.eclipse.jdt.internal.ui.javaeditor.IHyperlinkControl#install(org.eclipse.jface.text.ITextViewer)
-	 * @since 3.1
 	 */
 	public void install(ITextViewer textViewer) {
 		Assert.isNotNull(textViewer);
@@ -158,7 +153,6 @@ public class DefaultHyperlinkController implements IHyperlinkController, ITextPr
 
 	/*
 	 * @see org.eclipse.jdt.internal.ui.javaeditor.IHyperlinkControl#uninstall()
-	 * @since 3.1
 	 */
 	public void uninstall() {
 		fTextViewer.removeTextInputListener(this);
@@ -193,7 +187,6 @@ public class DefaultHyperlinkController implements IHyperlinkController, ITextPr
 	
 	/*
 	 * @see org.eclipse.jface.text.ITextPresentationListener#applyTextPresentation(org.eclipse.jface.text.TextPresentation)
-	 * @since 3.1
 	 */
 	public void applyTextPresentation(TextPresentation textPresentation) {
 		if (fActiveRegion == null)
@@ -413,7 +406,7 @@ public class DefaultHyperlinkController implements IHyperlinkController, ITextPr
 				if (widget != null && !widget.isDisposed()) {
 					widget.getDisplay().asyncExec(new Runnable() {
 						public void run() {
-							deactivate();
+							hideHyperlinks();
 						}
 					});
 				}
@@ -421,7 +414,7 @@ public class DefaultHyperlinkController implements IHyperlinkController, ITextPr
 			} else {
 				fActiveRegion= null;
 				fRememberedPosition= null;
-				deactivate();
+				hideHyperlinks();
 			}
 		}
 	}
@@ -432,7 +425,7 @@ public class DefaultHyperlinkController implements IHyperlinkController, ITextPr
 	public void inputDocumentAboutToBeChanged(IDocument oldInput, IDocument newInput) {
 		if (oldInput == null)
 			return;
-		deactivate();
+		hideHyperlinks();
 		oldInput.removeDocumentListener(this);
 	}
 
@@ -473,7 +466,6 @@ public class DefaultHyperlinkController implements IHyperlinkController, ITextPr
 
 	/*
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
-	 * @since 3.1
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
 		if (!HYPERLINK_COLOR.equals(event.getProperty()))

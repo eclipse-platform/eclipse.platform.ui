@@ -349,13 +349,10 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 		
 		setHoverControlCreator(configuration.getInformationControlCreator(this));
 		
-		if (configuration.getHyperlinksEnabled(this)) {
-			setHyperlinkController(configuration.getHyperlinkController(this));
-			setHyperlinkStateMask(configuration.getHyperlinkStateMask(this));
-			IHyperlinkDetector[] hyperlinkDetectors= configuration.getHyperlinkDetectors(this);
-			if (hyperlinkDetectors != null)
-				setHyperlinkDetectors(hyperlinkDetectors);
-		}
+		setHyperlinkPresenter(configuration.getHyperlinkPresenter(this));
+		IHyperlinkDetector[] hyperlinkDetectors= configuration.getHyperlinkDetectors(this);
+		int eventStateMask= configuration.getHyperlinkStateMask(this);
+		setHyperlinkDetectors(hyperlinkDetectors, eventStateMask);
 		
 		// install content type specific plug-ins
 		String[] types= configuration.getConfiguredContentTypes(this);
@@ -552,7 +549,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 			fOverviewRulerHoveringController= null;
 		}
 		
-		setHyperlinksEnabled(false);
+		setHyperlinkDetectors(null, SWT.NONE);
 	}
 	
 	/*

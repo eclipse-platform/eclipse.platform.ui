@@ -14,12 +14,11 @@ import org.eclipse.jface.text.ITextViewer;
 
 
 /**
- * A hyperlink controller displays the given hyperlinks on
- * the installed text viewer and allows to select one
- * on of the hyperlinks.
+ * A hyperlink presenter shows hyperlinks on the installed text viewer
+ * and allows to pick one on of the hyperlinks.
  * <p>
  * Clients may implement this interface. A default implementation is provided
- * through {@link org.eclipse.jface.text.hyperlink.DefaultHyperlinkController}.
+ * through {@link org.eclipse.jface.text.hyperlink.DefaultHyperlinkPresenter}.
  * </p>
  * <p>
  * NOTE: This API is work in progress and may change before the final API freeze. (FIXME)
@@ -27,19 +26,19 @@ import org.eclipse.jface.text.ITextViewer;
  * 
  * @since 3.1
  */
-public interface IHyperlinkController {
+public interface IHyperlinkPresenter {
 
 	/**
-	 * Tells whether this controller is able to handle
+	 * Tells whether this presenter is able to handle
 	 * more than one hyperlink.
 	 * 
-	 * @return <code>true</code> if this controller can handle more than one hyperlink
+	 * @return <code>true</code> if this presenter can handle more than one hyperlink
 	 */
 	boolean canShowMultipleHyperlinks();
 	
 	/**
-	 * Activates the this hyperlink controller on the installed
-	 * text viewer for the given hyperlinks.
+	 * Tells this hyperlink presenter to show the given
+	 * hyperlinks on the installed text viewer.
 	 * 
 	 * @param hyperlinks the hyperlinks to show
 	 * @throws IllegalArgumentException if
@@ -48,22 +47,23 @@ public interface IHyperlinkController {
 	 * 				<li>{@link #canShowMultipleHyperlinks()} returns <code>false</code> and <code>hyperlinks</code> contains more than one element</li>
 	 * 			</ul>  
 	 */
-	void activate(IHyperlink[] hyperlinks) throws IllegalArgumentException;
+	void showHyperlinks(IHyperlink[] hyperlinks) throws IllegalArgumentException;
 
 	/**
-	 * Deactivates this hyperlink controller.
+	 * Tells this hyperlink presenter to hide the hyperlinks
+	 * requested to be shown by {@link #showHyperlinks(IHyperlink[])}.
 	 */
-	void deactivate();
+	void hideHyperlinks();
 
 	/**
-	 * Installs this hyperlink controller on the given text viewer.
+	 * Installs this hyperlink presenter on the given text viewer.
 	 * 
 	 * @param textViewer the text viewer
 	 */
 	void install(ITextViewer textViewer);
 
 	/**
-	 * Uninstalls this hyperlink controller.
+	 * Uninstalls this hyperlink presenter.
 	 */
 	void uninstall();
 }

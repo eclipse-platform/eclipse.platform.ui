@@ -27,23 +27,9 @@ public interface ITextViewerExtension6 {
 	
 	/**
 	 * Sets this viewer's hyperlinkDetectors for the given content type.
-	 *
-	 * @param hyperlinkDetectors the new list of hyperlink detectors, must not be empty
-	 * @throws IllegalArgumentException if hyperlinkDetectors is <code>null</code> or empty 
+	 * @param hyperlinkDetectors	the new array of hyperlink detectors, <code>null</code>
+	 * 									or an empty array to disable hyperlinking
+	 * @param eventStateMask		the SWT event state mask to activate hyperlink mode
 	 */
-	void setHyperlinkDetectors(IHyperlinkDetector[] hyperlinkDetectors) throws IllegalArgumentException;
-
-	/**
-	 * Sets whether hyperlinking is enabled or not.
-	 * 
-	 * @param state <code>true</code> if enabled 
-	 */
-	void setHyperlinksEnabled(boolean state);
-	
-	/**
-	 * Sets the hyperlink state mask.
-	 * 
-	 * @param hyperlinkStateMask the hyperlink state mask
-	 */
-	public void setHyperlinkStateMask(int hyperlinkStateMask);
+	void setHyperlinkDetectors(IHyperlinkDetector[] hyperlinkDetectors, int eventStateMask);
 }
