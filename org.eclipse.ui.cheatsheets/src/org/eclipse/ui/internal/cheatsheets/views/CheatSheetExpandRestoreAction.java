@@ -12,16 +12,19 @@ package org.eclipse.ui.internal.cheatsheets.views;
 
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.ui.internal.cheatsheets.*;
+import org.eclipse.ui.internal.cheatsheets.CheatSheetPlugin;
 
 /**
  * Action used to enable / disable method filter properties
  */
 public class CheatSheetExpandRestoreAction extends Action {
-	private CheatSheetView theview;
+	private CheatSheetViewer viewer;
+	private boolean collapsed = false;
 
-	public CheatSheetExpandRestoreAction(String title, boolean initValue, CheatSheetView theview) {
+	public CheatSheetExpandRestoreAction(String title, boolean initValue, CheatSheetViewer viewer) {
 		super(title);
-		this.theview = theview;
+		this.viewer = viewer;
 		
 		setChecked(initValue);
 	}
@@ -30,7 +33,20 @@ public class CheatSheetExpandRestoreAction extends Action {
 	 * @see Action#actionPerformed
 	 */
 	public void run() {
-		theview.toggleExpandRestore();	
+		viewer.toggleExpandRestore();	
 	}
-		
+	
+	public boolean isCollapsed() {
+		return collapsed;
+	}
+
+	public void setCollapsed(boolean value) {
+		super.setChecked(value);
+		collapsed = value;
+		if(value) {
+			setToolTipText(CheatSheetPlugin.getResourceString(ICheatSheetResource.RESTORE_ALL_TOOLTIP));
+		} else {
+			setToolTipText(CheatSheetPlugin.getResourceString(ICheatSheetResource.COLLAPSE_ALL_BUT_CURRENT_TOOLTIP));
+		}
+	}
 }

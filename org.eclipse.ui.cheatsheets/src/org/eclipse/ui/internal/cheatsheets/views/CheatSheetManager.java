@@ -26,11 +26,11 @@ public class CheatSheetManager implements ICheatSheetManager {
 //	private Hashtable listenerMap = new Hashtable(20);
 	private Hashtable viewListenerMap = new Hashtable(20);
 	private Hashtable dataTable = null;
-	private CheatSheetView csview;
+	private CheatSheetViewer csview;
 
 	//Package protected:  We don't want anyone else creating instances of this class.	
-	CheatSheetManager(String id, CheatSheetView csv) {
-		csview = csv;
+	CheatSheetManager(String id, CheatSheetViewer viewer) {
+		csview = viewer;
 		cheatsheetID = id;
 	}
 

@@ -41,6 +41,10 @@ public abstract class Page {
 	public Page() {
 	}
 
+	public Control getControl() {
+		return cheatSheetComposite;
+	}
+
 	public void createPart(Composite parent) {
 		init(parent.getDisplay());
 

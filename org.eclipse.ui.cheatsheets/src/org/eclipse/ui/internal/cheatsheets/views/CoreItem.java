@@ -18,6 +18,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.internal.cheatsheets.*;
@@ -42,8 +43,8 @@ public class CoreItem extends ViewItem {
 	 * @param parent
 	 * @param contentItem
 	 */
-	public CoreItem(FormToolkit toolkit, ScrolledForm form, IContainsContent contentItem, Color itemColor, CheatSheetView theview) {
-		super(toolkit, form, contentItem, itemColor, theview);
+	public CoreItem(FormToolkit toolkit, ScrolledForm form, IContainsContent contentItem, Color itemColor, CheatSheetViewer viewer) {
+		super(toolkit, form, contentItem, itemColor, viewer);
 	}
 
 	/**
@@ -77,7 +78,7 @@ public class CoreItem extends ViewItem {
 				//Need to log exception here. 
 				IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, CheatSheetPlugin.getResourceString(ICheatSheetResource.LESS_THAN_2_SUBITEMS), e);
 				CheatSheetPlugin.getPlugin().getLog().log(status);
-				org.eclipse.jface.dialogs.ErrorDialog.openError(theview.getViewSite().getShell(), CheatSheetPlugin.getResourceString(ICheatSheetResource.LESS_THAN_2_SUBITEMS), null, status);
+				org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), CheatSheetPlugin.getResourceString(ICheatSheetResource.LESS_THAN_2_SUBITEMS), null, status);
 			}
 			return;
 		}
@@ -108,7 +109,7 @@ public class CoreItem extends ViewItem {
 			toolkit.adapt(startButton, true, true);
 			startButton.addHyperlinkListener(new HyperlinkAdapter() {
 				public void linkActivated(HyperlinkEvent e) {
-					theview.runPerformAction(startButton);
+					viewer.runPerformAction(startButton);
 				}
 			});
 		}
@@ -117,7 +118,7 @@ public class CoreItem extends ViewItem {
 			toolkit.adapt(skipButton, true, true);
 			skipButton.addHyperlinkListener(new HyperlinkAdapter() {
 				public void linkActivated(HyperlinkEvent e) {
-					theview.advanceItem(skipButton, false);
+					viewer.advanceItem(skipButton, false);
 				}
 			});
 		}
@@ -126,7 +127,7 @@ public class CoreItem extends ViewItem {
 			toolkit.adapt(completeButton, true, true);
 			completeButton.addHyperlinkListener(new HyperlinkAdapter() {
 				public void linkActivated(HyperlinkEvent e) {
-					theview.advanceItem(completeButton, true);
+					viewer.advanceItem(completeButton, true);
 				}
 			});
 		}
@@ -194,7 +195,7 @@ public class CoreItem extends ViewItem {
 				toolkit.adapt(startButton, true, true);
 				startButton.addHyperlinkListener(new HyperlinkAdapter() {
 					public void linkActivated(HyperlinkEvent e) {
-						theview.runSubItemPerformAction(startButton, fi);
+						viewer.runSubItemPerformAction(startButton, fi);
 					}
 				});
 			}
@@ -204,7 +205,7 @@ public class CoreItem extends ViewItem {
 				toolkit.adapt(skipButton, true, true);
 				skipButton.addHyperlinkListener(new HyperlinkAdapter() {
 					public void linkActivated(HyperlinkEvent e) {
-						theview.advanceSubItem(skipButton, false, fi);
+						viewer.advanceSubItem(skipButton, false, fi);
 					}
 				});
 			}
@@ -214,7 +215,7 @@ public class CoreItem extends ViewItem {
 				toolkit.adapt(completeButton, true, true);
 				completeButton.addHyperlinkListener(new HyperlinkAdapter() {
 					public void linkActivated(HyperlinkEvent e) {
-						theview.advanceSubItem(completeButton, true, fi);
+						viewer.advanceSubItem(completeButton, true, fi);
 					}
 				});
 			}

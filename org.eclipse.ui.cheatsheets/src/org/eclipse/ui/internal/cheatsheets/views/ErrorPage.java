@@ -21,14 +21,6 @@ import org.eclipse.ui.internal.cheatsheets.*;
 
 public class ErrorPage extends Page {
 
-	public ErrorPage() {
-		super();
-	}
-
-	public void createPart(Composite parent) {
-		super.createPart(parent);
-	}
-
 	protected void createInfoArea(Composite parent) {
 		super.createInfoArea(parent);
 

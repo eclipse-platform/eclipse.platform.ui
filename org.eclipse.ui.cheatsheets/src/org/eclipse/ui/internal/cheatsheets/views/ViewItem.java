@@ -20,6 +20,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.cheatsheets.*;
 import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.widgets.*;
@@ -60,7 +61,7 @@ public abstract class ViewItem {
 
 	private Composite parent;
 	private Image skipImage;
-	protected CheatSheetView theview;
+	protected CheatSheetViewer viewer;
 	private Composite titleComposite;
 	protected Color white;
 	protected FormToolkit toolkit;
@@ -73,14 +74,14 @@ public abstract class ViewItem {
 	/**
 	 * Constructor for ViewItem.
 	 */
-	public ViewItem(FormToolkit toolkit, ScrolledForm form, IContainsContent contentItem, Color itemColor, CheatSheetView theview) {
+	public ViewItem(FormToolkit toolkit, ScrolledForm form, IContainsContent contentItem, Color itemColor, CheatSheetViewer viewer) {
 		super();
 		this.toolkit = toolkit;
 		this.form = form;
 		this.parent = form.getBody();
 		this.contentItem = contentItem;
 		this.itemColor = itemColor;
-		this.theview = theview;
+		this.viewer = viewer;
 		lightGrey = new Color(parent.getDisplay(), HIGHLIGHT_RGB);
 		darkGrey = new Color(parent.getDisplay(), darkGreyRGB);
 		buttonCompositeList = new ArrayList(10);
@@ -355,7 +356,7 @@ public abstract class ViewItem {
 		if (bundle == null) {
 			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_FINDING_PLUGIN_FOR_ACTION), null);
 			CheatSheetPlugin.getPlugin().getLog().log(status);
-			org.eclipse.jface.dialogs.ErrorDialog.openError(theview.getSite().getShell(), CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_FINDING_PLUGIN_FOR_ACTION), null, status);
+			org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_FINDING_PLUGIN_FOR_ACTION), null, status);
 			return VIEWITEM_DONOT_ADVANCE;
 		}
 		Class actionClass;
@@ -365,7 +366,7 @@ public abstract class ViewItem {
 		} catch (Exception e) {
 			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_LOADING_CLASS_FOR_ACTION), e);
 			CheatSheetPlugin.getPlugin().getLog().log(status);
-			org.eclipse.jface.dialogs.ErrorDialog.openError(theview.getSite().getShell(), CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_LOADING_CLASS_FOR_ACTION), null, status);
+			org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_LOADING_CLASS_FOR_ACTION), null, status);
 			return VIEWITEM_DONOT_ADVANCE;
 		}
 		try {
@@ -373,7 +374,7 @@ public abstract class ViewItem {
 		} catch (Exception e) {
 			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_CREATING_CLASS_FOR_ACTION), e);
 			CheatSheetPlugin.getPlugin().getLog().log(status);
-			org.eclipse.jface.dialogs.ErrorDialog.openError(theview.getSite().getShell(), CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_CREATING_CLASS_FOR_ACTION), null, status);
+			org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_CREATING_CLASS_FOR_ACTION), null, status);
 
 			//logActionLinkError(pluginId, className);
 			return VIEWITEM_DONOT_ADVANCE;

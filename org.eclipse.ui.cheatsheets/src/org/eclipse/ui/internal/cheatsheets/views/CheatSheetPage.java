@@ -27,13 +27,13 @@ public class CheatSheetPage extends Page {
 
 	private CheatSheetDomParser parser;
 	private ArrayList viewItemList;
-	private CheatSheetView cheatSheetView;
+	private CheatSheetViewer viewer;
 
-	public CheatSheetPage(CheatSheetDomParser parser, ArrayList viewItemList, CheatSheetView cheatSheetView) {
+	public CheatSheetPage(CheatSheetDomParser parser, ArrayList viewItemList, CheatSheetViewer cheatSheetViewer) {
 		super();
 		this.parser = parser;
 		this.viewItemList = viewItemList;
-		this.cheatSheetView = cheatSheetView;
+		this.viewer = cheatSheetViewer;
 	}
 
 	public void createPart(Composite parent) {
@@ -53,7 +53,7 @@ public class CheatSheetPage extends Page {
 	protected void createInfoArea(Composite parent) {
 		super.createInfoArea(parent);
 	
-		IntroItem myintro = new IntroItem(toolkit, form, parser.getIntroItem(), darkGrey, cheatSheetView);
+		IntroItem myintro = new IntroItem(toolkit, form, parser.getIntroItem(), darkGrey, viewer);
 	
 		myintro.setItemColor(myintro.lightGrey);
 		myintro.setBold(true);
@@ -64,7 +64,7 @@ public class CheatSheetPage extends Page {
 		for (int i = 0; i < items.size(); i++) {
 			Color color = (i%2) == 0 ? backgroundColor : lightGrey;
 
-			CoreItem coreItem = new CoreItem(toolkit, form, (IContainsContent)items.get(i), color, cheatSheetView);
+			CoreItem coreItem = new CoreItem(toolkit, form, (IContainsContent)items.get(i), color, viewer);
 			viewItemList.add(coreItem);
 		}
 	}

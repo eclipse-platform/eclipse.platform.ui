@@ -33,8 +33,8 @@ public class IntroItem extends ViewItem {
 	 * @param parent
 	 * @param contentItem
 	 */
-	public IntroItem(FormToolkit toolkit, ScrolledForm form, Item contentItem, Color itemColor, CheatSheetView theview) {
-		super(toolkit, form, contentItem, itemColor, theview);
+	public IntroItem(FormToolkit toolkit, ScrolledForm form, Item contentItem, Color itemColor, CheatSheetViewer viewer) {
+		super(toolkit, form, contentItem, itemColor, viewer);
 
 	}
 
@@ -91,7 +91,7 @@ public class IntroItem extends ViewItem {
 		toolkit.adapt(startButton, true, true);
 		startButton.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
-				theview.advanceIntroItem();
+				viewer.advanceIntroItem();
 			}
 		});
 		buttonCompositeList.add(buttonComposite);
