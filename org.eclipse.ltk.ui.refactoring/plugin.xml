@@ -4,7 +4,8 @@
    id="org.eclipse.ltk.ui.refactoring"
    name="%pluginName"
    version="3.0.0"
-   provider-name="%providerName">
+   provider-name="%providerName"
+   class="org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin">
 
    <runtime>
       <library name="refui.jar">
@@ -20,7 +21,34 @@
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.text"/>
       <import plugin="org.eclipse.ltk.core.refactoring"/>
+      <import plugin="org.eclipse.jdt.core"/>
+      <import plugin="org.eclipse.jface.text"/>
       <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.compare"/>
+      <import plugin="org.eclipse.ui.workbench.texteditor"/>
    </requires>
+
+   <extension-point id="statusContextViewers" name="%statusViewerExtensionPoint"/>
+   <extension-point id="changePreviewViewers" name="%changeViewerExtensionPoint"/>
+
+   <extension point="org.eclipse.ltk.ui.refactoring.statusContextViewers">
+      <statusContextViewer
+            class="org.eclipse.ltk.internal.ui.refactoring.FileStatusContextViewer"
+            id="org.eclipse.ltk.internal.ui.refactoring.fileStatusContextViewer">
+         <enablement>
+            <instanceof value="org.eclipse.ltk.core.refactoring.FileStatusContext"/>
+         </enablement>
+      </statusContextViewer>
+   </extension>
+   
+   <extension point="org.eclipse.ltk.ui.refactoring.changePreviewViewers">
+      <changePreviewViewer
+            class="org.eclipse.ltk.internal.ui.refactoring.TextChangePreviewViewer"
+            id="org.eclipse.ltk.internal.ui.refactoring.textChangePreviewViewer">
+         <enablement>
+            <instanceof value="org.eclipse.ltk.core.refactoring.TextChange"/>
+         </enablement>
+      </changePreviewViewer>
+   </extension>
 
 </plugin>

@@ -10,12 +10,22 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 
+import org.eclipse.jface.resource.ImageRegistry;
+
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import org.eclipse.ltk.ui.refactoring.IRefactoringUIStatusCodes;
@@ -23,6 +33,12 @@ import org.eclipse.ltk.ui.refactoring.IRefactoringUIStatusCodes;
 public class RefactoringUIPlugin extends AbstractUIPlugin {
 	
 	private static RefactoringUIPlugin fgDefault;
+	
+	/**
+	 * The id of the refactoring plug-in (value <code>"org.eclipse.ltk.ui.refactoring"</code>).
+	 * check if this isn't the same as getpluginId().
+	 */	
+	public static final String ID_PLUGIN= "org.eclipse.ltk.ui.refactoring"; //$NON-NLS-1$
 	
 	public RefactoringUIPlugin(IPluginDescriptor descriptor) {
 		super(descriptor);
@@ -50,6 +66,10 @@ public class RefactoringUIPlugin extends AbstractUIPlugin {
 		ResourcesPlugin.getPlugin().getLog().log(status);
 	}
 	
+	public static void logErrorMessage(String message) {
+		log(new Status(IStatus.ERROR, getPluginId(), IRefactoringUIStatusCodes.INTERNAL_ERROR, message, null));
+	}	
+	
 	public static void logRemovedListener(Throwable t) {
 		IStatus status= new Status(
 			IStatus.ERROR, getPluginId(), 
@@ -58,4 +78,26 @@ public class RefactoringUIPlugin extends AbstractUIPlugin {
 			t);
 		ResourcesPlugin.getPlugin().getLog().log(status);
 	}
+	
+	public static IEditorPart[] getInstanciatedEditors() {
+		List result= new ArrayList(0);
+		IWorkbench workbench= getDefault().getWorkbench();
+		IWorkbenchWindow[] windows= workbench.getWorkbenchWindows();
+		for (int windowIndex= 0; windowIndex < windows.length; windowIndex++) {
+			IWorkbenchPage[] pages= windows[windowIndex].getPages();
+			for (int pageIndex= 0; pageIndex < pages.length; pageIndex++) {
+				IEditorReference[] references= pages[pageIndex].getEditorReferences();
+				for (int refIndex= 0; refIndex < references.length; refIndex++) {
+					IEditorPart editor= references[refIndex].getEditor(false);
+					if (editor != null)
+						result.add(editor);
+				}
+			}
+		}
+		return (IEditorPart[])result.toArray(new IEditorPart[result.size()]);
+	}	
+	
+	protected ImageRegistry createImageRegistry() {
+		return RefactoringPluginImages.getImageRegistry();
+	}	
 }

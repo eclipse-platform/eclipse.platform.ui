@@ -34,6 +34,8 @@ public abstract class IRefactoringCoreStatusCodes {
 	/** 
 	 * Status code (value 10001) indicating that a bad location exception has 
 	 * occurred during change execution.
+	 * 
+	 * @see org.eclipse.jface.text.BadLocationException
 	 */ 
 	public static final int BAD_LOCATION= 10001;
 	
