@@ -474,6 +474,7 @@ public static Test suite() {
 	suite.addTest(new IResourceTest("testGetLocalLocation"));
 	suite.addTest(new IResourceTest("testGetModificationStamp"));
 	suite.addTest(new IResourceTest("testReadOnly"));
+	suite.addTest(new IResourceTest("testConstants"));
 	suite.addTest(new IResourceTest("testDelete")); // make sure that last test has side effects
 	return suite;
 }
@@ -586,6 +587,36 @@ public void testAddLocalProject() throws CoreException {
 	project1.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
 	project2.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
 }
+
+/**
+ * Tests various resource constants.
+ */
+public void testConstants() {
+	
+	// IResource constants (all have fixed values)
+	assertEquals("1.0", 0, IResource.NONE);
+	
+	assertEquals("2.1", 0x1, IResource.FILE);
+	assertEquals("2.2", 0x2, IResource.FOLDER);
+	assertEquals("2.3", 0x4, IResource.PROJECT);
+	assertEquals("2.4", 0x8, IResource.ROOT);
+	
+	assertEquals("3.1", 0, IResource.DEPTH_ZERO);
+	assertEquals("3.2", 1, IResource.DEPTH_ONE);
+	assertEquals("3.1", 2, IResource.DEPTH_INFINITE);
+	
+	assertEquals("4.1", -1, IResource.NULL_STAMP);
+	
+	assertEquals("5.1", 0x1, IResource.FORCE);
+	assertEquals("5.2", 0x2, IResource.KEEP_HISTORY);
+	assertEquals("5.3", 0x4, IResource.DELETE_PROJECT_CONTENT);
+	
+	// IContainer constants (all have fixed values)
+	assertEquals("6.1", 0x1, IContainer.INCLUDE_PHANTOMS);
+	assertEquals("6.2", 0x2, IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
+	
+}
+
 /**
  * Performs black box testing of the following method:
  *     void copy(IPath, boolean, IProgressMonitor)
