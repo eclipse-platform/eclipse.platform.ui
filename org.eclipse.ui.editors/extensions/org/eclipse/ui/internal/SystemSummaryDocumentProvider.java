@@ -35,11 +35,14 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.model.PluginFragmentModel;
+
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.IAnnotationModel;
+
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.AbstractDocumentProvider;
+
 import org.eclipse.update.configuration.IActivity;
 import org.eclipse.update.configuration.IInstallConfiguration;
 import org.eclipse.update.configuration.ILocalSite;
@@ -114,8 +117,7 @@ class SystemSummaryDocumentProvider extends AbstractDocumentProvider {
 	 * Appends a timestamp.
 	 */
 	private void appendTimestamp(PrintWriter writer) {
-		writer.print("*** Date: "); //$NON-NLS-1$
-		writer.println(new Date());
+		writer.println(SystemSummaryMessages.getFormattedString("SystemSummary.timeStamp", new Date())); //$NON-NLS-1$
 	}
 	
 	/*
@@ -123,7 +125,7 @@ class SystemSummaryDocumentProvider extends AbstractDocumentProvider {
 	 */
 	private void appendProperties(PrintWriter writer) {
 		writer.println();
-		writer.println("*** System properties:"); //$NON-NLS-1$
+		writer.println(SystemSummaryMessages.getString("SystemSummary.systemProperties")); //$NON-NLS-1$
 		Properties properties= System.getProperties();
 		SortedSet set= new TreeSet(new Comparator() {
 			public int compare(Object o1, Object o2) {
@@ -147,7 +149,7 @@ class SystemSummaryDocumentProvider extends AbstractDocumentProvider {
 	 */
 	private void appendFeatures(PrintWriter writer) {
 		writer.println();
-		writer.println("*** Features:"); //$NON-NLS-1$
+		writer.println(SystemSummaryMessages.getString("SystemSummary.features")); //$NON-NLS-1$
 
 		AboutInfo[] featuresArray = ((Workbench)PlatformUI.getWorkbench()).getConfigurationInfo().getFeaturesInfo();
 		SortedSet set= new TreeSet(new Comparator() {
@@ -163,10 +165,8 @@ class SystemSummaryDocumentProvider extends AbstractDocumentProvider {
 		Iterator i= set.iterator();
 		while(i.hasNext()) {
 			AboutInfo info = (AboutInfo)i.next();
-			writer.print(info.getFeatureId());
-			writer.print(" (");
-			writer.print(info.getVersion());
-			writer.println(")");
+			String[] args= new String[] {info.getFeatureId(), info.getVersion()};
+			writer.println(SystemSummaryMessages.getFormattedString("SystemSummary.featureVersion", args)); //$NON-NLS-1$
 		}
 	}	
 
@@ -175,7 +175,7 @@ class SystemSummaryDocumentProvider extends AbstractDocumentProvider {
 	 */
 	private void appendRegistry(PrintWriter writer) {
 		writer.println();
-		writer.println("*** Plugin Registry:"); //$NON-NLS-1$
+		writer.println(SystemSummaryMessages.getString("SystemSummary.pluginRegistry")); //$NON-NLS-1$
 		IPluginDescriptor[] descriptors= Platform.getPluginRegistry().getPluginDescriptors();
 		SortedSet set= new TreeSet(new Comparator() {
 			public int compare(Object o1, Object o2) {
@@ -190,19 +190,15 @@ class SystemSummaryDocumentProvider extends AbstractDocumentProvider {
 		Iterator i= set.iterator();
 		while(i.hasNext()) {
 			PluginDescriptor descriptor= (PluginDescriptor)i.next();
-			writer.print(descriptor.getUniqueIdentifier());
-			writer.print(" (");
-			writer.print(descriptor.getVersionIdentifier().toString());
-			writer.println(")");
+			String[] args= new String[] {descriptor.getUniqueIdentifier(), descriptor.getVersionIdentifier().toString()};
+			writer.println(SystemSummaryMessages.getFormattedString("SystemSummary.descriptorIdVersion", args)); //$NON-NLS-1$
 			PluginFragmentModel[] fragments= descriptor.getFragments();
 			if (fragments != null) {
 				for(int j= 0, length= fragments.length; j < length; j++) {
 					PluginFragmentModel fragment= fragments[j];
 					writer.print('\t');
-					writer.print(fragment.getId());
-					writer.print(" (");
-					writer.print(fragment.getVersion());
-					writer.print(")");
+					args= new String[] {fragment.getId(), fragment.getVersion()};
+					writer.print(SystemSummaryMessages.getFormattedString("SystemSummary.fragmentIdVersion", args)); //$NON-NLS-1$
 				}
 				writer.println();
 			}
@@ -224,7 +220,7 @@ class SystemSummaryDocumentProvider extends AbstractDocumentProvider {
 			writer.println("Error exporting user preferences " + e.toString()); //$NON-NLS-1$
 		}				
 		writer.println();
-		writer.println("*** User Preferences:"); //$NON-NLS-1$
+		writer.println(SystemSummaryMessages.getString("SystemSummary.userPreferences")); //$NON-NLS-1$
 
 		BufferedReader reader = null;
 		try {
@@ -239,7 +235,7 @@ class SystemSummaryDocumentProvider extends AbstractDocumentProvider {
 			reader.close();
 			reader= null;			
 		} catch (IOException e) {
-			writer.println("Error reading user preference file " + e.toString()); //$NON-NLS-1$
+			writer.println("Error reading user preference file " + e.toString()) ;//$NON-NLS-1$		
 		}
 					
 		if (reader != null) {
@@ -257,7 +253,7 @@ class SystemSummaryDocumentProvider extends AbstractDocumentProvider {
 	 */
 	private void appendUpdateManagerLog(PrintWriter writer) {
 		writer.println();
-		writer.println("*** Update Manager Log:"); //$NON-NLS-1$
+		writer.println(SystemSummaryMessages.getString("SystemSummary.updateManagerLog")); //$NON-NLS-1$
 		ILocalSite site;
 		try {
 			site = SiteManager.getLocalSite();
@@ -270,21 +266,16 @@ class SystemSummaryDocumentProvider extends AbstractDocumentProvider {
 			writer.println();
 			if (i>0)
 				writer.println("----------------------------------------------------"); //$NON-NLS-1$
-			writer.print("Configuration=");
-			writer.println(configurations[i].getLabel());
-			writer.print("Current configuration=");
-			writer.println(configurations[i].isCurrent());
+
+			writer.println(SystemSummaryMessages.getFormattedString("SystemSummary.configuration", configurations[i].getLabel())); //$NON-NLS-1$
+			writer.println(SystemSummaryMessages.getFormattedString("SystemSummary.isCurrentConfiguration", "" + configurations[i].isCurrent())); //$NON-NLS-1$ //$NON-NLS-2$
 			IActivity[] activities = configurations[i].getActivities();
 			for (int j = 0; j < activities.length; j++) {
 				writer.println();
-				writer.print("Date=");	
-				writer.println(activities[j].getDate());
-				writer.print("Target=");			
-				writer.println(activities[j].getLabel());
-				writer.print("Action=");			
-				writer.println(getActionLabel(activities[j]));
-				writer.print("Status=");			
-				writer.println(getStatusLabel(activities[j]));
+				writer.println(SystemSummaryMessages.getFormattedString("SystemSummary.date", activities[j].getDate())); //$NON-NLS-1$
+				writer.println(SystemSummaryMessages.getFormattedString("SystemSummary.target", activities[j].getLabel())); //$NON-NLS-1$
+				writer.println(SystemSummaryMessages.getFormattedString("SystemSummary.action", getActionLabel(activities[j]))); //$NON-NLS-1$
+				writer.println(SystemSummaryMessages.getFormattedString("SystemSummary.status", getStatusLabel(activities[j]))); //$NON-NLS-1$
 			}
 		}
 	}
@@ -296,7 +287,7 @@ class SystemSummaryDocumentProvider extends AbstractDocumentProvider {
 		File log= new File(InternalPlatform.getMetaArea().getLogLocation().toOSString());
 		if (log.exists()) {
 			writer.println();
-			writer.println("*** Error Log:"); //$NON-NLS-1$
+			writer.println(SystemSummaryMessages.getString("SystemSummary.errorLog")); //$NON-NLS-1$
 	
 			BufferedReader reader = null;
 			try {
@@ -327,37 +318,36 @@ class SystemSummaryDocumentProvider extends AbstractDocumentProvider {
 		int action = activity.getAction();
 		switch (action) {
 			case IActivity.ACTION_CONFIGURE:
-				return "Enabled";
+				return SystemSummaryMessages.getString("SystemSummary.activity.enabled"); //$NON-NLS-1$
 			case IActivity.ACTION_FEATURE_INSTALL:
-				return "Feature installed";
+				return SystemSummaryMessages.getString("SystemSummary.activity.featureInstalled"); //$NON-NLS-1$
 			case IActivity.ACTION_FEATURE_REMOVE:
-				return "Feature removed";
+				return SystemSummaryMessages.getString("SystemSummary.activity.featureRemoved"); //$NON-NLS-1$
 			case IActivity.ACTION_SITE_INSTALL:
-				return "Site installed";
+				return SystemSummaryMessages.getString("SystemSummary.activity.siteInstalled"); //$NON-NLS-1$
 			case IActivity.ACTION_SITE_REMOVE:
-				return "Site removed";
+				return SystemSummaryMessages.getString("SystemSummary.activity.siteRemoved"); //$NON-NLS-1$
 			case IActivity.ACTION_UNCONFIGURE:
-				return "Disabled";
+				return SystemSummaryMessages.getString("SystemSummary.activity.disabled"); //$NON-NLS-1$
 			case IActivity.ACTION_REVERT:
-				return "Revert";
+				return SystemSummaryMessages.getString("SystemSummary.activity.revert"); //$NON-NLS-1$
 			case IActivity.ACTION_RECONCILIATION:
-				return "Reconcile";				
+				return SystemSummaryMessages.getString("SystemSummary.activity.reconcile"); //$NON-NLS-1$
 			case IActivity.ACTION_ADD_PRESERVED:
-				return "Preserved";					
+				return SystemSummaryMessages.getString("SystemSummary.activity.preserved"); //$NON-NLS-1$
 			default:
-				return "Unknown";		
+				return SystemSummaryMessages.getString("SystemSummary.activity.unknown"); //$NON-NLS-1$
 		}
 	}
-	
+
 	private String getStatusLabel(IActivity activity) {
 		switch (activity.getStatus()) {
 			case IActivity.STATUS_OK:
-				return "Success";
+				return SystemSummaryMessages.getString("SystemSummary.activity.status.success"); //$NON-NLS-1$
 			case IActivity.STATUS_NOK:
-				return "Failure";
+				return SystemSummaryMessages.getString("SystemSummary.activity.status.failure"); //$NON-NLS-1$
 		}
-		return "Unknown";
+		return SystemSummaryMessages.getString("SystemSummary.activity.status.unknown"); //$NON-NLS-1$
 	}
-	
 }
 

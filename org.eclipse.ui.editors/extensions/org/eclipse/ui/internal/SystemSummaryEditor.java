@@ -85,8 +85,8 @@ public class SystemSummaryEditor extends AbstractTextEditor {
 		} catch (IOException ioe) {
 			MessageDialog.openError(
 				getSite().getShell(),
-				WorkbenchMessages.getString("SystemSummary.saveErrorTitle"),
-				WorkbenchMessages.format("SystemSummary.saveErrorMessage", new Object[]{filename, ioe.getMessage() == null ? "" : ioe.getMessage()}));
+				SystemSummaryMessages.getString("SystemSummary.saveErrorTitle"), //$NON-NLS-1$
+				SystemSummaryMessages.getFormattedString("SystemSummary.saveErrorMessage", new Object[]{filename, ioe.getMessage() == null ? "" : ioe.getMessage()})); //$NON-NLS-1$ //$NON-NLS-2$ 
 		}
 		if (writer != null) {
 			try {
@@ -107,7 +107,7 @@ public class SystemSummaryEditor extends AbstractTextEditor {
 			lastUsedPath= ""; //$NON-NLS-1$
 		}
 		FileDialog dialog= new FileDialog(getEditorSite().getShell(), SWT.SINGLE);
-		dialog.setText(WorkbenchMessages.getString("SystemSummary.dialogTitle")); //$NON-NLS-1$
+		dialog.setText(SystemSummaryMessages.getString("SystemSummary.dialogTitle")); //$NON-NLS-1$
 		dialog.setFilterPath(lastUsedPath);
 		String filename= dialog.open();
 		if (filename != null)
