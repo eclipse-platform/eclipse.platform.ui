@@ -155,7 +155,7 @@ public void appendContents(InputStream source, boolean force, boolean keepHistor
  * is recommended except in circumstances where past states of the files are of
  * no conceivable interest to the user. Note that local history is maintained
  * with each individual project, and gets discarded when a project is deleted
- * from the workspace.
+ * from the workspace. This flag is ignored if the file was not previously local.
  * </p>
  * <p>
  * Update flags other than <code>FORCE</code> and <code>KEEP_HISTORY</code> 
