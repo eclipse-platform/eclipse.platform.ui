@@ -58,7 +58,7 @@ is used to create the correct concrete feature implementation.
                   fully qualified name of the factory class for the identified feature type
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.update.core.IFeatureFactory"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.update.configuration.IInstallDeltaHandler"/>
                </appInfo>
             </annotation>
          </attribute>

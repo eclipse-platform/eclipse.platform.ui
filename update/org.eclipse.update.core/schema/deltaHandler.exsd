@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.update.core.org.eclipse.update.core">
+<schema targetNamespace="org.eclipse.update.core">
 <annotation>
    <appInfo>
-      <meta.schema plugin="org.eclipse.update.core.org.eclipse.update.core" id="siteTypes" name="Install/Update Concrete Site Type Implementation Factory"/>
+      <meta.schema plugin="org.eclipse.update.core" id="deltaHandler" name="Install/Update Delta Handler"/>
    </appInfo>
    <documentation>
       [Enter description of this extension point]
@@ -13,7 +13,6 @@
    <element name="extension">
       <complexType>
          <sequence>
-            <element ref="site-factory" minOccurs="1" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -39,14 +38,16 @@
       </complexType>
    </element>
 
-   <element name="site-factory">
+   <element name="display">
       <complexType>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  fully qualified name of the factory class for the identified
-site type
+                  
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="java"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>

@@ -45,6 +45,7 @@ public class TestRevert extends UpdateManagerTestCase {
 		IFeatureReference featureRef2 = remoteSite.getFeatureReferences()[1];
 		IFeature feature = featureRef.getFeature();
 		
+		// old config, no features installed
 		IInstallConfiguration old = site.getCurrentConfiguration();
 		ConfigurationPolicy excludepolicy = new ConfigurationPolicy();
 		excludepolicy.setPolicy(IPlatformConfiguration.ISitePolicy.USER_EXCLUDE);
@@ -52,37 +53,37 @@ public class TestRevert extends UpdateManagerTestCase {
 		excludepolicy.setConfiguredSite(oldConfigSite);		
 		((ConfiguredSiteModel)oldConfigSite).setConfigurationPolicyModel((ConfigurationPolicyModel)excludepolicy);
 		
+		// install one feature
 		IInstallConfiguration newConfig = site.cloneCurrentConfiguration();
-		newConfig.setLabel("new Label");
 		IConfiguredSite configSite = newConfig.getConfiguredSites()[0];
 		if (!configSite.getSite().equals(oldConfigSite.getSite())) fail("Config sites are not equals");
 		site.addConfiguration(newConfig);		
 		IFeatureReference installedFeature = configSite.install(feature,null,null);
 		site.save();
 
+		// unconfigure it
 		configSite.unconfigure(installedFeature.getFeature());
 
+		// install another feature
 		IFeature feature2 = featureRef2.getFeature();
 		IInstallConfiguration newConfig2 = site.cloneCurrentConfiguration();
-		//newConfig.setLabel("new Label");		
 		IConfiguredSite anotherConfigSite = newConfig2.getConfiguredSites()[0];
 		if (!anotherConfigSite.getSite().equals(oldConfigSite.getSite())) fail("Config sites are not equals");		
 		site.addConfiguration(newConfig2);		
 		anotherConfigSite.install(feature2,null,null);
 		site.save();
 
+		// revert to old state where no feature where configured
 		site.revertTo(old,null,null);
 		site.save();
 		
 		// check
-		// there are 4 configuration
 		String time = ""+site.getCurrentConfiguration().getCreationDate().getTime();
 		File file = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocationURL(),"Config"+time+".xml").getFile());
 		assertTrue("new configuration does not exist", file.exists());
 		
 		
-		// teh current one points to a real fature
-		// does not throw error.
+		//find configured site
 		IConfiguredSite newConfigSite = null;
 		IConfiguredSite[] sites = site.getCurrentConfiguration().getConfiguredSites();
 		for (int i = 0; i < sites.length; i++) {
@@ -95,7 +96,7 @@ public class TestRevert extends UpdateManagerTestCase {
 
 		int oldNumber = oldConfigSite.getConfiguredFeatures().length;
 		int newNumber = newConfigSite.getConfiguredFeatures().length;		
-		assertTrue("Wrong number of configured features",oldNumber==newNumber);
+		assertTrue("Wrong number of configured features old:"+oldNumber+" new:"+newNumber,oldNumber==newNumber);
 		
 		// test only 2 install config in local site
 		assertTrue("wrong number of unconfigured features",((ConfiguredSite)newConfigSite).getConfigurationPolicy().getUnconfiguredFeatures().length==2);
