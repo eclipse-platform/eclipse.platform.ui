@@ -86,8 +86,10 @@ TABLE {
 	<tr border=1>
 	<td align=left valign=center ><div id="toolbarTitle" style="position:relative; text-indent:4px; font-weight:bold;"> &nbsp;<%=WebappResources.getString("Content", request)%> </div></td>
 	<td align=right >
+	<!--
 		<a  href="#" onclick="parent.resynch(this);"><img src="../images/synch_toc_nav.gif" alt='<%=WebappResources.getString("Synch", request)%>' border="0" ></a>&nbsp;
-		<a  href="#" onclick="parent.resynch(this);"><img src="../images/print_edit.gif" alt='<%=WebappResources.getString("Print", request)%>' border="0" ></a>&nbsp;
+	-->
+		<a  href="#" onclick="parent.printContent(this);"><img src="../images/print_edit.gif" alt='<%=WebappResources.getString("Print", request)%>' border="0" ></a>&nbsp;
 	</td>
 	</tr>
 	</table>	

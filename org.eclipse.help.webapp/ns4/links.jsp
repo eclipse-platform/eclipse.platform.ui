@@ -22,9 +22,9 @@
 -->
 
 <style type="text/css">
+
 BODY {
-	background-color: Window;
-	font: icon;
+	font: 8pt Tahoma;
 	margin-top:5px;
 	margin-left:5px;
 	padding:0;
@@ -41,7 +41,7 @@ BODY {
 
 A {
 	text-decoration:none; 
-	color:WindowText; 
+	color:black; 
 	padding:0px;
 	white-space: nowrap;
 	cursor:default;
@@ -49,21 +49,21 @@ A {
 
 
 TABLE {
-	background-color: Window;
-	font: icon;
+	font: 8pt Tahoma;
 	width:100%;
 }
 
 
-.icon {
-	background-image: url("../images/topic_obj.gif");
-	background-position:center left;
-	background-repeat:no-repeat;
-	width:16px;
+IMG {
+	border:0px;
+	margin:0px;
+	padding:0px;
+	margin-right:4px;
 }
 
+
+
 .list {
-	background-color: Window;
 	padding:2px;
 }
      
@@ -103,7 +103,7 @@ if(request.getParameter("contextId")!=null)
 	}
 %>
 
-<table id='list'  cellspacing='0' >
+<table id='list'  cellspacing='0' nowrap>
 
 <%
 	for (int i = 0; i < topics.getLength(); i++) 
@@ -125,10 +125,12 @@ if(request.getParameter("contextId")!=null)
 			href = "javascript:void 0";
 %>
 
-<tr class='list'>
-	<td class='icon'>&nbsp;</td>
+<tr class='list' nowrap align=left>
+	<td align='left' nowrap width="16">
+		<img src="../images/topic_obj.gif" border=0>
+	</td>
 	<td align='left' class='label' nowrap>
-		<a href='<%=href%>' onclick='parent.parent.setToolbarTitle("<%=UrlUtil.JavaScriptEncode(tocLabel)%>")'><%=label%></a>
+		<a href='<%=href%>' onclick='parent.parent.setToolbarTitle("<%=UrlUtil.JavaScriptEncode(tocLabel)%>")' title="<%=label%>"><%=label%></a>
 	</td>
 </tr>
 
