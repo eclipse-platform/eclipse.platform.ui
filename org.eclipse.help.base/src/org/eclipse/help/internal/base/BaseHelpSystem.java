@@ -182,7 +182,7 @@ public final class BaseHelpSystem {
 						webappPlugin,
 						Path.EMPTY);
 				} catch (CoreException e) {
-					HelpBasePlugin.logError(HelpBaseResources.getString("E043"), e);
+					HelpBasePlugin.logError(HelpBaseResources.getString("E042"), e);
 					return false;
 				}
 			}
@@ -190,7 +190,7 @@ public final class BaseHelpSystem {
 			try {
 				WebappManager.start("help", webappPlugin, Path.EMPTY);
 			} catch (CoreException e) {
-				HelpBasePlugin.logError(HelpBaseResources.getString("E042"), e);
+				HelpBasePlugin.logError(HelpBaseResources.getString("E043"), e);
 				return false;
 			}
 			getInstance().webappRunning = true;
