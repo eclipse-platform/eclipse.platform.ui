@@ -38,7 +38,7 @@ public class OrderedLock implements ILock {
 	/**
 	 * The thread of the operation that currently owns the lock.
 	 */
-	private Thread currentOperationThread;
+	private volatile Thread currentOperationThread;
 	/**
 	 * Records the number of successive acquires in the same
 	 * thread. The thread is released only when the depth
@@ -185,9 +185,6 @@ public class OrderedLock implements ILock {
 	 * Returns the thread of the current operation, or <code>null</code> if
 	 * there is no current operation
 	 */
-// TODO: This was removed to help solve a deadlock. (bug 42234)
-// is this the right answer?
-//	public synchronized Thread getCurrentOperationThread() {
 	public Thread getCurrentOperationThread() {
 		return currentOperationThread;
 	}
