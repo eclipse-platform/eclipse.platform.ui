@@ -4,6 +4,7 @@ package org.eclipse.ui.internal.misc;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.program.Program;
@@ -14,7 +15,7 @@ import org.eclipse.ui.internal.WorkbenchImages;
  * The external program image descriptor is the descriptor used to
  * handle images that are from a Program.
  */
-public class ExternalProgramImageDescriptor extends org.eclipse.jface.resource.ImageDescriptor {
+public class ExternalProgramImageDescriptor extends ImageDescriptor {
 	
 	public Program program;
 /**
