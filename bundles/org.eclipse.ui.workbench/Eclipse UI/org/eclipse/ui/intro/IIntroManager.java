@@ -19,7 +19,7 @@ import org.eclipse.ui.IWorkbenchWindow;
  * The initial behavior of the intro part is controlled by the application
  * from its workbench adviser (typically by code in the advisor's
  * {@link org.eclipse.ui.application.WorkbenchAdvisor#preStartup()}
- * or {@link org.eclipse.ui.application.WorkbenchAdvisor#preWindowOpen(org.eclipse.ui.application.IWorkbenchWindowConfigurer)})
+ * or {@link org.eclipse.ui.application.WorkbenchAdvisor#postWindowCreate(org.eclipse.ui.application.IWorkbenchWindowConfigurer)})
  * methods.
  * </p>
  * <p>
