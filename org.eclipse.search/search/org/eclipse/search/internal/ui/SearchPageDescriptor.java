@@ -50,6 +50,7 @@ class SearchPageDescriptor implements Comparable {
 	// dialog store id constants
 	private final static String SECTION_ID= "Search"; //$NON-NLS-1$
 	private final static String STORE_ENABLED_PAGE_IDS= SECTION_ID + ".enabledPageIds"; //$NON-NLS-1$
+	private final static String STORE_PROCESSED_PAGE_IDS= SECTION_ID + ".processedPageIds"; //$NON-NLS-1$
 	
 	private static List fgEnabledPageIds;
 	
@@ -183,27 +184,48 @@ class SearchPageDescriptor implements Comparable {
 			if (enabledDescriptors[i] instanceof SearchPageDescriptor)
 				fgEnabledPageIds.add(((SearchPageDescriptor)enabledDescriptors[i]).getId());
 		}
-		getDialogSettings().put(STORE_ENABLED_PAGE_IDS, (String[])fgEnabledPageIds.toArray(new String[fgEnabledPageIds.size()]));
+		storeEnabledPageIds();
 	}
 
 	private static List getEnabledPageIds() {
 		if (fgEnabledPageIds == null) {
-			String[] pageIds= getDialogSettings().getArray(STORE_ENABLED_PAGE_IDS);
-			if (pageIds == null) {
-				// Enable all pages
-				Iterator iter= SearchPlugin.getDefault().getSearchPageDescriptors().iterator();
-				List initiallyEnabledDescriptors= new ArrayList(5);
-				while (iter.hasNext()) {
-					SearchPageDescriptor desc= (SearchPageDescriptor)iter.next();
-					if (desc.isInitiallyEnabled())
-						initiallyEnabledDescriptors.add(desc);
-				}
-				setEnabled(initiallyEnabledDescriptors.toArray());
+			List descriptors= SearchPlugin.getDefault().getSearchPageDescriptors();
+			
+			String[] enabledPageIds= getDialogSettings().getArray(STORE_ENABLED_PAGE_IDS);
+			if (enabledPageIds == null)
+				fgEnabledPageIds= new ArrayList(descriptors.size());
+			else
+				fgEnabledPageIds= new ArrayList(Arrays.asList(enabledPageIds));
+			
+
+			List processedPageIds;
+			String[] processedPageIdsArr= getDialogSettings().getArray(STORE_PROCESSED_PAGE_IDS);
+			if (processedPageIdsArr == null)
+				processedPageIds= new ArrayList(descriptors.size());
+			else
+				processedPageIds= new ArrayList(Arrays.asList(processedPageIdsArr));
+			
+			// Enable pages based on contribution
+			Iterator iter= descriptors.iterator();
+			while (iter.hasNext()) {
+				SearchPageDescriptor desc= (SearchPageDescriptor)iter.next();
+				if (processedPageIds.contains(desc.getId()))
+					continue;
 				
-			} else
-				fgEnabledPageIds= Arrays.asList(pageIds);
+				processedPageIds.add(desc.getId());
+				if (desc.isInitiallyEnabled())
+					fgEnabledPageIds.add(desc.getId());
+			}
+
+			getDialogSettings().put(STORE_PROCESSED_PAGE_IDS, (String[])processedPageIds.toArray(new String[processedPageIds.size()]));
+			storeEnabledPageIds();
 		}
 		return fgEnabledPageIds;
+	}
+
+	private static void storeEnabledPageIds() {
+		getDialogSettings().put(STORE_ENABLED_PAGE_IDS, (String[])fgEnabledPageIds.toArray(new String[fgEnabledPageIds.size()]));
+		SearchPlugin.getDefault().savePluginPreferences();
 	}
 
 	private static IDialogSettings getDialogSettings() {
