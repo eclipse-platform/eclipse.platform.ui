@@ -15,6 +15,7 @@ import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.osgi.framework.*;
 
 /**
  * Wrapper for a plugin class loader.
@@ -23,27 +24,21 @@ import org.eclipse.core.runtime.*;
  * properly return the list of url's (it misses required jars, etc.)
  */
 public class PluginClassLoaderWrapper extends URLClassLoader {
-	private ClassLoader pluginLoader;
+	private Bundle bundle;
 	private String plugin;
 
 	public PluginClassLoaderWrapper(String plugin) {
 		super(new URL[0]);
 		this.plugin = plugin;
-		ClassLoader pluginLoader =
-			Platform
-				.getPluginRegistry()
-				.getPluginDescriptor(plugin)
-				.getPluginClassLoader();
-
-		this.pluginLoader = pluginLoader;
+		this.bundle=Platform.getBundle(plugin);
 	}
 
 	public Class loadClass(String className) throws ClassNotFoundException {
-		return pluginLoader.loadClass(className);
+		return bundle.loadClass(className);
 	}
 
 	public URL getResource(String resName) {
-		return pluginLoader.getResource(resName);
+		return bundle.getResource(resName);
 	}
 
 	/**
@@ -79,7 +74,7 @@ public class PluginClassLoaderWrapper extends URLClassLoader {
 
 	private List getPluginClasspath(String pluginId) {
 		List urls = new ArrayList();
-		IPluginDescriptor pd =
+		IPluginDescriptor pd = // TODO remove compatibility requirement
 			Platform.getPluginRegistry().getPluginDescriptor(pluginId);
 		if (pd == null)
 			return urls;
@@ -96,12 +91,12 @@ public class PluginClassLoaderWrapper extends URLClassLoader {
 		return urls;
 	}
 
-	private List getPrereqClasspath(IPluginDescriptor plugin) {
+	private List getPrereqClasspath(IPluginDescriptor plugin) {// TODO remove compatibility requirement
 		ArrayList urls = new ArrayList();
 		IPluginPrerequisite[] prereqs = plugin.getPluginPrerequisites();
 		for (int i = 0; i < prereqs.length; i++) {
 			String id = prereqs[i].getUniqueIdentifier();
-			IPluginDescriptor pd =
+			IPluginDescriptor pd = // TODO remove compatibility requirement
 				Platform.getPluginRegistry().getPluginDescriptor(id);
 
 			ClassLoader loader = pd.getPluginClassLoader();
