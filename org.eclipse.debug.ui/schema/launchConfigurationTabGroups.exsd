@@ -6,7 +6,7 @@
       <meta.schema plugin="org.eclipse.debug.ui" id="launchConfigurationTabGroups" name="Launch Configuration Tab Groups"/>
    </appInfo>
    <documentation>
-      This extension point provides a mechanism for contributing a group of tabls to the launch configuration
+      This extension point provides a mechanism for contributing a group of tab to the launch configuration
 dialog for a type of launch configuration.
    </documentation>
 </annotation>
@@ -81,9 +81,9 @@ launch configuration type extension).
 &lt;pre&gt;
  &lt;extension point="org.eclipse.debug.ui.launchConfigurationTabGroups"&gt;
   &lt;launchConfigurationTabGroup
-   id="com.example.ExampleTabGroup"
-   type="com.example.ExampleLaunchConfigurationTypeIdentifier"
-   class="com.example.ExampleLaunchConfigurationTabGroupClass"&gt;
+      id="com.example.ExampleTabGroup"
+      type="com.example.ExampleLaunchConfigurationTypeIdentifier"
+      class="com.example.ExampleLaunchConfigurationTabGroupClass"&gt;
   &lt;/launchConfigurationTabGroup&gt;
  &lt;/extension&gt;
 &lt;/pre&gt;
@@ -101,15 +101,6 @@ identifier &lt;samp&gt;com.example.ExampleLaunchConfigurationTypeIdentifier&lt;/
       <documentation>
          Value of the attribute &lt;b&gt;class&lt;/b&gt; must be a fully qualified name of a Java class that implements the 
 interface &lt;b&gt;org.eclipse.debug.ui.ILaunchConfigurationTabGroup&lt;/b&gt;.
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="implementation"/>
-      </appInfo>
-      <documentation>
-         [Enter information about supplied implementation of this extension point.]
       </documentation>
    </annotation>
 

@@ -45,13 +45,6 @@ in a specific debug model.
 
    <element name="debugModelPresentation">
       <complexType>
-         <attribute name="id" type="string" use="required">
-            <annotation>
-               <documentation>
-                  the identifier of the debug model this presentation is responsible for
-               </documentation>
-            </annotation>
-         </attribute>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
@@ -64,6 +57,20 @@ interface.
                </appInfo>
             </annotation>
          </attribute>
+          <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the identifier of the debug model this presentation is responsible for
+               </documentation>
+            </annotation>
+         </attribute>
+          <attribute name="detailsViewerConfiguration" type="string" use="optional">
+            <annotation>
+               <documentation>
+                  the fully qualified name of the Java class that is an instance of org.eclipse.jface.text.source.SourceViewerConfiguration. When specified, the source viewer configuration will be used in the "details" area of the variables and expressions view when displaying the details of an element from the debug model associated with this debug model presentation. When unspecified, a default configuration is used. 
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -72,14 +79,14 @@ interface.
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         The following is an example of a view filter extension point:
+         The following is an example of a debug model presentations extension point:
 
 &lt;p&gt;
 &lt;pre&gt;
    &lt;extension point = "org.eclipse.debug.ui.debugModelPresentations"&gt; 
        &lt;debugModelPresentation 
            class = "com.example.JavaModelPresentation"
-      	   id = "com.example.JavaDebugModel"
+           id = "com.example.JavaDebugModel"
        &lt;/debugModelPresentation&gt; 
    &lt;/extension&gt; 
 &lt;/pre&gt;

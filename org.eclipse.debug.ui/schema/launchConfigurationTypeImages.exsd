@@ -51,7 +51,7 @@
          <attribute name="configTypeID" type="string" use="required">
             <annotation>
                <documentation>
-                  specifies the fully qualified ID of a launch configuration type.
+                  specifies the fully qualified ID of a launch configuration type.(in 2.1, this attribute can also be specified using the "type" attribute, to be consistent with the launchConfigurationTabGroups extension point).
                </documentation>
             </annotation>
          </attribute>
@@ -79,22 +79,13 @@
 &lt;pre&gt;
 	&lt;extension point="org.eclipse.debug.ui.launchConfigurationTypeImages"&gt;
 		&lt;launchConfigurationTypeImage
-			id="com.example.FirstLaunchConfigurationTypeImage"
-			configTypeID="com.example.FirstLaunchConfigurationType"
-			icon="icons/FirstLaunchConfigurationType.gif"&gt;
+			  id="com.example.FirstLaunchConfigurationTypeImage"
+			  configTypeID="com.example.FirstLaunchConfigurationType"
+			  icon="icons/FirstLaunchConfigurationType.gif"&gt;
 		&lt;/launchConfigurationTypeImage&gt;
 	&lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         [Enter API information here.]
       </documentation>
    </annotation>
    
