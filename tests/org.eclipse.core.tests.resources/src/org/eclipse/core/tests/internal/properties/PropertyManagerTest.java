@@ -120,7 +120,7 @@ public class PropertyManagerTest extends LocalStoreTest {
 				//delete the project while the threads are still running
 				target.getProject().delete(IResource.NONE, getMonitor());
 			} catch (CoreException e) {
-				fail("1.99." + i);
+				fail("1.99." + i, e);
 			}
 			join(threads);
 			if (errorPointer[0] != null)
