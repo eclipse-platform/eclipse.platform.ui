@@ -32,6 +32,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.misc.Policy;
 
 /**
  * The ProgressMonitorJobsDialog is the progress monitor dialog used by the
@@ -107,7 +108,7 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
                     .getString("ProgressMonitorJobsDialog.DetailsTitle")); //$NON-NLS-1$
         } else {
             //Abort if there are no jobs visible
-            if (ProgressManager.getInstance().getRootElements(false).length == 0) {
+            if (ProgressManager.getInstance().getRootElements(Policy.DEBUG_SHOW_SYSTEM_JOBS).length == 0) {
                 detailsButton.setEnabled(false);
                 return;
             }
@@ -128,7 +129,7 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
             });
 
             ProgressTreeContentProvider provider = new ProgressTreeContentProvider(
-                    viewer, true);
+                    viewer, !Policy.DEBUG_SHOW_SYSTEM_JOBS);
             viewer.setContentProvider(provider);
             viewer.setInput(provider);
             viewer.setLabelProvider(new ProgressLabelProvider());

@@ -68,6 +68,10 @@ import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.util.ImageSupport;
 import org.eclipse.ui.progress.IProgressConstants;
 
+/**
+ * The NewProgressViewer is the viewer for progress using
+ * progress monitors.
+ */
 public class NewProgressViewer extends TreeViewer implements
         FinishedJobs.KeptJobsListener {
 
@@ -1380,8 +1384,15 @@ public class NewProgressViewer extends TreeViewer implements
         Job job = ji.getJob();
         if (job != null && job == highlightJob)
             return false;
-        if (job == null || job.isSystem() || job.getState() == Job.SLEEPING)
+        
+        if (job == null || job.getState() == Job.SLEEPING)
             return true;
+        
+        if(job.isSystem()){
+        	if(getContentProvider() instanceof ProgressContentProvider)
+        		return ((ProgressContentProvider) getContentProvider()).filterDebug;
+        	return false;
+        }
         return false;
     }
 

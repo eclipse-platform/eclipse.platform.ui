@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 
+import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
 /**
@@ -17,16 +18,19 @@ import org.eclipse.jface.viewers.Viewer;
  * listen to the progress changes.
  */
 public abstract class ProgressContentProvider implements
-        IProgressUpdateCollector {
+        IProgressUpdateCollector, IStructuredContentProvider {
 
-    private boolean filterDebug;
+	/**
+	 * Return whether or not we are filtering debug items.
+	 */
+    protected boolean filterDebug;
 
     /**
      * Create a new instance of the receiver with all of the
      * default values.  
      */
     public ProgressContentProvider() {
-        this(false);
+        this(!ProgressViewUpdater.getSingleton().debug);
     }
 
     /**
@@ -47,7 +51,7 @@ public abstract class ProgressContentProvider implements
      */
     public Object[] getElements(Object inputElement) {
 
-        return ProgressManager.getInstance().getRootElements(showDebug());
+        return ProgressManager.getInstance().getRootElements(!filterDebug);
     }
 
     /*
@@ -69,24 +73,4 @@ public abstract class ProgressContentProvider implements
         //No change when input changes
     }
 
-    /**
-     * Return whether or not this content provider shows debug
-     * items
-     * @return boolean
-     */
-    private boolean showDebug() {
-        if (filterDebug)
-            return false;
-        else
-            return ProgressViewUpdater.getSingleton().debug;
-    }
-
-    /**
-     * Set whether or not we always filter debug. Default is
-     * <code>false</code>.
-     * @param filterDebug The filterDebug to set.
-     */
-    public void setFilterDebug(boolean filterDebug) {
-        this.filterDebug = filterDebug;
-    }
 }

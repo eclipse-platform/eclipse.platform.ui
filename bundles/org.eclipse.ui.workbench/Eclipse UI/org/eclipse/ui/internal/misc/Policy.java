@@ -39,6 +39,9 @@ public class Policy {
 
     public static boolean DEBUG_DRAG_DROP = DEFAULT;
 
+    /**
+     * Flag to log stale jobs
+     */
     public static boolean DEBUG_STALE_JOBS = DEFAULT;
 
     public static boolean DEBUG_INCLUDE_TIMINGS = DEFAULT;
@@ -89,6 +92,12 @@ public class Policy {
      * longer than 100ms.
      */
     public static boolean DEBUG_LONG_UI_WARNING = DEFAULT;
+    
+    /**
+     * Whether or not to show system jobs at all times.
+     */
+    public static boolean DEBUG_SHOW_SYSTEM_JOBS = DEFAULT;
+    
 
     /**
      * Which command identifier to print handler information for.  This
@@ -118,6 +127,7 @@ public class Policy {
             DEBUG_HANDLERS = getDebugOption("/trace/handlers"); //$NON-NLS-1$
             DEBUG_HANDLERS_VERBOSE = getDebugOption("/trace/handlers.verbose"); //$NON-NLS-1$
             DEBUG_LONG_UI_WARNING = getDebugOption("/debug/uijob.longwarning"); //$NON-NLS-1$
+            DEBUG_SHOW_SYSTEM_JOBS = getDebugOption("/debug/showSystemJobs"); //$NON-NLS-1$
             DEBUG_STALE_JOBS = getDebugOption("/debug/job.stale"); //$NON-NLS-1$
             DEBUG_HANDLERS_VERBOSE_COMMAND_ID = Platform
                     .getDebugOption(PlatformUI.PLUGIN_ID

@@ -20,7 +20,7 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
  * viewers.
  */
 public class ProgressViewerContentProvider extends ProgressContentProvider
-        implements IStructuredContentProvider {
+         {
     ProgressViewer progressViewer;
 
     /**
@@ -112,7 +112,7 @@ public class ProgressViewerContentProvider extends ProgressContentProvider
      */
     public Object[] getElements(Object inputElement) {
         JobTreeElement[] elements = ProgressManager.getInstance()
-                .getRootElements(false);
+                .getRootElements(!filterDebug);
         return getDisplayedValues(elements);
     }
 

@@ -30,6 +30,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
@@ -332,7 +333,7 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
      * @return ProgressTreeContentProvider
      */
     private ProgressTreeContentProvider getContentProvider() {
-        return new ProgressTreeContentProvider(viewer, true) {
+        return new ProgressTreeContentProvider(viewer, !Policy.DEBUG_SHOW_SYSTEM_JOBS) {
             /*
              * (non-Javadoc)
              * 
