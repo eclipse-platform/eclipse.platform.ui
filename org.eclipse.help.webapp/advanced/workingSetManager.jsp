@@ -164,7 +164,7 @@ function newWorkingSet() {
 	// move the dialog just a bit higher than the middle
 	if (t-50 > 0) t = t-50;
 		
-	workingSetDialog = window.open("workingSet.jsp?operation=add&workingSet="+getWorkingSet(), "workingSetDialog", "resizeable=no,height="+h+",width="+w +",left="+l+",top="+t);
+	workingSetDialog = window.open("workingSet.jsp?operation=add&workingSet="+escape(getWorkingSet())+"&encoding=js", "workingSetDialog", "resizeable=no,height="+h+",width="+w +",left="+l+",top="+t);
 	workingSetDialog.focus(); 
 }
 
@@ -186,7 +186,7 @@ function editWorkingSet() {
 	// move the dialog just a bit higher than the middle
 	if (t-50 > 0) t = t-50;
 		
-	workingSetDialog = window.open("workingSet.jsp?operation=edit&workingSet="+getWorkingSet(), "workingSetDialog", "resizeable=no,height="+h+",width="+w+",left="+l+",top="+t );
+	workingSetDialog = window.open("workingSet.jsp?operation=edit&workingSet="+escape(getWorkingSet())+"&encoding=js", "workingSetDialog", "resizeable=no,height="+h+",width="+w+",left="+l+",top="+t );
 	workingSetDialog.focus(); 
 }
 
