@@ -4,8 +4,8 @@ package org.eclipse.help.ui.internal.browser;
  * All Rights Reserved.
  */
 import org.eclipse.core.runtime.Preferences;
-import org.eclipse.help.internal.ui.*;
-import org.eclipse.help.internal.ui.util.WorkbenchResources;
+import org.eclipse.help.ui.internal.*;
+import org.eclipse.help.ui.internal.util.WorkbenchResources;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;

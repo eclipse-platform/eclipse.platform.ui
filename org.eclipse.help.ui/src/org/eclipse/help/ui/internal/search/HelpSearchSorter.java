@@ -3,7 +3,7 @@
  * All Rights Reserved.
  */
 package org.eclipse.help.ui.internal.search;
-import org.eclipse.help.internal.ui.*;
+import org.eclipse.help.ui.internal.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.search.ui.ISearchResultViewEntry;
 /**

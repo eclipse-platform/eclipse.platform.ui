@@ -5,7 +5,7 @@
 package org.eclipse.help.ui.internal.browser.aix;
 import java.io.IOException;
 
-import org.eclipse.help.internal.ui.util.StreamConsumer;
+import org.eclipse.help.ui.internal.util.StreamConsumer;
 import org.eclipse.help.ui.browser.*;
 public class NetscapeFactory implements IBrowserFactory {
 	/**

@@ -1,4 +1,4 @@
-package org.eclipse.help.internal.ui;
+package org.eclipse.help.ui.internal;
 /*
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.

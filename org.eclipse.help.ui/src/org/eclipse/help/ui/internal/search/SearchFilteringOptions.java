@@ -8,8 +8,8 @@ import java.util.List;
 
 import org.eclipse.help.IToc;
 import org.eclipse.help.internal.HelpSystem;
-import org.eclipse.help.internal.ui.IHelpUIConstants;
-import org.eclipse.help.internal.ui.util.WorkbenchResources;
+import org.eclipse.help.ui.internal.IHelpUIConstants;
+import org.eclipse.help.ui.internal.util.WorkbenchResources;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.*;

@@ -8,8 +8,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 
 import org.eclipse.help.IToc;
-import org.eclipse.help.internal.ui.IHelpUIConstants;
-import org.eclipse.help.internal.ui.util.*;
+import org.eclipse.help.ui.internal.IHelpUIConstants;
+import org.eclipse.help.ui.internal.util.*;
 import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.search.ui.*;
 import org.eclipse.swt.SWT;

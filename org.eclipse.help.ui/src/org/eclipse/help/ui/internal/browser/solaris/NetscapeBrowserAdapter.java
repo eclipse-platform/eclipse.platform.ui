@@ -4,7 +4,7 @@
  */
 package org.eclipse.help.ui.internal.browser.solaris;
 import java.io.IOException;
-import org.eclipse.help.internal.ui.util.StreamConsumer;
+import org.eclipse.help.ui.internal.util.StreamConsumer;
 import org.eclipse.help.ui.browser.IBrowser;
 public class NetscapeBrowserAdapter implements IBrowser {
 	// delay that it takes the browser to start responding

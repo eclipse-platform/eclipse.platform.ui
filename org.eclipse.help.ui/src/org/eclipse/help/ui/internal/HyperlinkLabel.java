@@ -3,7 +3,7 @@
  * All Rights Reserved.
  */
 
-package org.eclipse.help.internal.ui;
+package org.eclipse.help.ui.internal;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;

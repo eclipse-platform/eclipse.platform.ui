@@ -9,7 +9,7 @@
 	id = "org.eclipse.help.ui"
 	version = "2.0.0"
 	provider-name = "%providerName"
-	class="org.eclipse.help.internal.ui.WorkbenchHelpPlugin">
+	class="org.eclipse.help.ui.internal.WorkbenchHelpPlugin">
 
 	<requires>
 		<import plugin="org.apache.xerces"/>
@@ -31,7 +31,7 @@
 
 	<!-- Default Help UI  -->
    	<extension point="org.eclipse.help.support">
-		<config class="org.eclipse.help.internal.ui.DefaultHelp"/>
+		<config class="org.eclipse.help.ui.internal.DefaultHelp"/>
 	</extension>
 
 	<!-- Preference pages -->
@@ -58,7 +58,7 @@
 			<action id="org.eclipse.help.internal.ui.HelpAction"
 				menubarPath="help/helpEnd"
 				label="%helpcontents"
-				class="org.eclipse.help.internal.ui.HelpContentsAction"
+				class="org.eclipse.help.ui.internal.HelpContentsAction"
 				icon="icons/view.gif"
 				helpContextId="org.eclipse.help.ui.helpContentsMenu"
 				tooltip="%openhelpcontents"/>
@@ -76,7 +76,7 @@
 				label="%openHelpSearchPageAction.label"
 				helpContextId="org.eclipse.help.ui.helpSearchMenu"
 	        	icon="icons/searchview.gif"
-				class="org.eclipse.help.internal.ui.OpenHelpSearchPageAction"/>
+				class="org.eclipse.help.ui.internal.OpenHelpSearchPageAction"/>
 
 		</actionSet>
 	</extension>

@@ -6,8 +6,8 @@ package org.eclipse.help.ui.internal.browser;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.internal.ui.WorkbenchHelpPlugin;
-import org.eclipse.help.internal.ui.util.*;
+import org.eclipse.help.ui.internal.WorkbenchHelpPlugin;
+import org.eclipse.help.ui.internal.util.*;
 import org.eclipse.help.internal.util.Logger;
 import org.eclipse.help.ui.browser.*;
 

@@ -5,8 +5,8 @@
 package org.eclipse.help.ui.internal.browser.linux;
 import java.io.*;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.help.internal.ui.WorkbenchHelpPlugin;
-import org.eclipse.help.internal.ui.util.StreamConsumer;
+import org.eclipse.help.ui.internal.WorkbenchHelpPlugin;
+import org.eclipse.help.ui.internal.util.StreamConsumer;
 import org.eclipse.help.ui.browser.IBrowser;
 public class MozillaBrowserAdapter implements IBrowser {
 	// delay that it takes mozilla to start responding
