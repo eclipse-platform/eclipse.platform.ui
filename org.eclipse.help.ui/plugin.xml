@@ -112,10 +112,11 @@
          
       </engine>
       <engine
+            scopeFactory="org.eclipse.help.ui.internal.search.EclipseOrgScopeFactory"
             label="Eclipse.org"
             class="org.eclipse.help.ui.internal.search.EclipseOrg"
-            pageClass="org.eclipse.help.ui.internal.search.EclipseOrgPage"
-            id="org.eclipse.help.ui.eclipse">
+            id="org.eclipse.help.ui.eclipseorg"
+            pageClass="org.eclipse.help.ui.internal.search.EclipseOrgPage">
          <description>
             Searches mailing lists, news groups, articles and other documents on Eclipse.org web site.
          </description>
