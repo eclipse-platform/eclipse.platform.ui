@@ -153,6 +153,10 @@ public void run(IProgressMonitor monitor) throws CoreException {
 		// run
 		Method run = classInternalAntRunner.getMethod("run", null); //$NON-NLS-1$
 		run.invoke(runner, null);
+	} catch (NoClassDefFoundError e) {
+		throw new CoreException(new Status(IStatus.ERROR, PI_ANTCORE, ERROR_RUNNING_SCRIPT, Policy.bind("error.incorrectClasspath"), e)); //$NON-NLS-1$
+	} catch (ClassNotFoundException e) {
+		throw new CoreException(new Status(IStatus.ERROR, PI_ANTCORE, ERROR_RUNNING_SCRIPT, Policy.bind("error.incorrectClasspath"), e)); //$NON-NLS-1$
 	} catch (InvocationTargetException e) {
 		Throwable realException = e.getTargetException();
 		throw new CoreException(new Status(IStatus.ERROR, PI_ANTCORE, ERROR_RUNNING_SCRIPT, Policy.bind("error.buildFailed"), realException)); //$NON-NLS-1$
