@@ -81,7 +81,6 @@ public void createControl(Composite parent) {
 
 	// Create view form.	
 	control = new ViewForm(parent, getStyle());
-	control.setFont(getFont());
 	control.marginWidth = 0;
 	control.marginHeight = 0;
 

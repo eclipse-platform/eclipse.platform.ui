@@ -236,7 +236,6 @@ protected void createTitleBar() {
 	// ISV action bar.
 	isvToolBar = new ToolBar(control, SWT.FLAT | SWT.WRAP);
 	hookFocus(isvToolBar);
-	isvToolBar.setFont(getFont());
 	control.setTopCenter(isvToolBar);
 	isvToolBar.addMouseListener(new MouseAdapter(){
 		public void mouseDoubleClick(MouseEvent event) {
