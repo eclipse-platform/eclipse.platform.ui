@@ -255,11 +255,15 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	public void postStartup() {
 		refreshFromLocal();
 		enableAutoBuild();
-		try {
-			openWelcomeEditors();
-		} catch (WorkbenchException e) {
-			IDEWorkbenchPlugin.log("Fail to open remaining welcome editors.", e.getStatus()); //$NON-NLS-1$
+				
+		if (!openIntro()) { // only try to open the editors if there is no intro in the system
+			try {
+				openWelcomeEditors();
+			} catch (WorkbenchException e) {
+				IDEWorkbenchPlugin.log("Fail to open remaining welcome editors.", e.getStatus()); //$NON-NLS-1$
+			}
 		}
+		
 		checkUpdates();
 	}
 
@@ -1092,6 +1096,27 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		configurer.declareImage(symbolicName, desc, shared);
 	}
 	
+	
+	/** 
+	 * @return Returns <code>true</code> if there is a known intro part in the system, 
+     * <code>false</code> otherwise
+	 */
+	private boolean openIntro() {
+		if (IDEWorkbenchPlugin.getDefault().getPreferenceStore().getBoolean(IDEInternalPreferences.INTRO)) { 
+			IWorkbenchWindow window = configurer.getWorkbench().getActiveWorkbenchWindow();
+			if (window == null) {
+				if (configurer.getWorkbench().getWorkbenchWindowCount() > 0) {
+					window = configurer.getWorkbench().getWorkbenchWindows()[0];
+				} 
+			}
+			
+			if (window != null) {
+				configurer.getWorkbench().showIntro(window);
+				IDEWorkbenchPlugin.getDefault().getPreferenceStore().setValue(IDEInternalPreferences.INTRO, false);
+			}	
+		}
+	return configurer.getWorkbench().getIntroRegistry().getIntroCount() > 0;
+	}	
 	
 	public void fillActionBars(IWorkbenchWindow window, IActionBarConfigurer actionConfigurer, int flags) {
 		

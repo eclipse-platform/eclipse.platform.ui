@@ -755,11 +755,10 @@ public final class Workbench implements IWorkbench {
 		// create workbench window manager
 		windowManager = new WindowManager();
 
-		IIntroRegistry introRegistry = WorkbenchPlugin.getDefault().getIntroRegistry();
+		IIntroRegistry introRegistry = getIntroRegistry();
 		if (introRegistry.getIntroCount() > 0) {
 			introDescriptor = (IntroDescriptor) introRegistry.getIntros()[0];
-		}
-		
+		}		
 		
 		// begin the initialization of the activity, command, and context
 		// mangers
@@ -2036,11 +2035,7 @@ public final class Workbench implements IWorkbench {
 		WorkbenchPage workbenchPage = preferredWindow.getActiveWorkbenchPage();
 		try {
 			workbenchPage.showView(IIntroConstants.INTRO_VIEW_ID, true);
-			try {			
-				introPart.standbyStateChanged(isIntroStandby(introPart));
-			} catch (RuntimeException e) {
-				WorkbenchPlugin.log(IntroMessages.getString("Intro.could_not_update_state"), new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, IStatus.ERROR, IntroMessages.getString("Intro.could_not_update_state"), e)); //$NON-NLS-1$ //$NON-NLS-2$
-			}		
+			setIntroStandby(introPart, false);
 		} catch (PartInitException e) {
 			WorkbenchPlugin.log(IntroMessages.getString("Intro.could_not_create_part"), new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, IStatus.ERROR, IntroMessages.getString("Intro.could_not_create_part"), e)); //$NON-NLS-1$ //$NON-NLS-2$
 		}		
@@ -2122,7 +2117,12 @@ public final class Workbench implements IWorkbench {
 		return introDescriptor;
 	}
 	
-	/**
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbench#getIntroRegistry()
+	 */
+	public IIntroRegistry getIntroRegistry() {
+		return WorkbenchPlugin.getDefault().getIntroRegistry();
+	}	/**
 	 * The currently active introPart in this workspace, <code>null</code> if none.
 	 */
 	private IIntroPart introPart;

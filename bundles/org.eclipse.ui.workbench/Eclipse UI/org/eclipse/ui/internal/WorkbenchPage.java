@@ -1224,10 +1224,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage  implements IWorkbenc
 	 * See IWorkbenchPage@findView.
 	 */
 	public IViewPart findView(String id) {
-		Perspective persp = getActivePerspective();
-		if (persp == null)
-			return null;
-		IViewReference ref = persp.findView(id);
+		IViewReference ref = findViewReference(id);
 		if (ref == null)
 			return null;
 
@@ -1238,6 +1235,16 @@ public class WorkbenchPage extends CompatibleWorkbenchPage  implements IWorkbenc
 		if (ctrl == null)
 			pane.createControl(getClientComposite());
 		return view;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchPage#findViewReference(java.lang.String)
+	 */
+	public IViewReference findViewReference(String viewId) {
+		Perspective persp = getActivePerspective();
+		if (persp == null)
+			return null;
+		return persp.findView(viewId);
 	}
 	/**
 	 * Fire part activation out.
@@ -1660,11 +1667,16 @@ public class WorkbenchPage extends CompatibleWorkbenchPage  implements IWorkbenc
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchPage#hideView(org.eclipse.ui.IViewReference)
+	 */
 	public void hideView(IViewReference ref) {
+		if (ref == null)
+			return;
 		IWorkbenchPart part = ref.getPart(false);
 		if (part != null) {
 			hideView((IViewPart) part);
-		} else if (isFastView(ref)) {
+		} else {
 			hideView(getActivePerspective(), ref);
 		}
 	}
@@ -3304,5 +3316,31 @@ public class WorkbenchPage extends CompatibleWorkbenchPage  implements IWorkbenc
 	//for dynamic UI
 	protected void addPerspective(Perspective persp) {
 		perspList.add(persp);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchPage#getViewStack(org.eclipse.ui.IViewPart)
+	 */
+	public IViewPart [] getViewStack(IViewPart part) {
+		// Sanity check.
+		Perspective persp = getActivePerspective();
+		if (persp == null || !certifyPart(part))
+			return null;		
+		
+		ILayoutContainer container = ((PartSite)part.getSite()).getPane().getContainer();
+		if (container instanceof PartTabFolder) {
+			PartTabFolder folder = (PartTabFolder) container;
+			ArrayList list = new ArrayList(folder.getChildren().length);
+			for (int i = 0; i < folder.getChildren().length; i++) {
+				LayoutPart layoutPart = folder.getChildren()[i];
+				if (layoutPart instanceof ViewPane) {					
+					IViewPart view = findView(((ViewPane)layoutPart).getViewReference().getId());
+					if (view != null)
+						list.add(view);
+}
+			}
+			return (IViewPart []) list.toArray(new IViewPart [list.size()]);
+		}
+		return new IViewPart [] {part};
 	}
 }
