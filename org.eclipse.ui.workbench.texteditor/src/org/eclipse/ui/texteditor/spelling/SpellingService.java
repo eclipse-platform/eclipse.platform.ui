@@ -95,7 +95,7 @@ public class SpellingService {
 	 */
 	public void check(final IDocument document, final IRegion[] regions, final SpellingContext context, final ISpellingProblemCollector collector, final IProgressMonitor monitor) {
 		try {
-			collector.beginReporting();
+			collector.beginCollecting();
 			if (fPreferences.getBoolean(PREFERENCE_SPELLING_ENABLED))
 				try {
 					final ISpellingEngine engine= createEngine(fPreferences);
@@ -113,7 +113,7 @@ public class SpellingService {
 					TextEditorPlugin.getDefault().getLog().log(x.getStatus());
 				}
 		} finally {
-			collector.endReporting();
+			collector.endCollecting();
 		}
 	}
 

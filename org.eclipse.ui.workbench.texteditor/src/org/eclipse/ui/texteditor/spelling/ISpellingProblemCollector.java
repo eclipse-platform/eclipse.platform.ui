@@ -37,16 +37,16 @@ public interface ISpellingProblemCollector {
 	public void accept(SpellingProblem problem);
 
 	/**
-	 * Notification sent before starting the problem reporting. This method
+	 * Notification sent before starting to collect problems. This method
 	 * will be called by the spelling infrastructure and is not intended
 	 * to be called by clients.
 	 */
-	public void beginReporting();
+	public void beginCollecting();
 
 	/**
-	 * Notification sent after completing the problem reporting. This method
+	 * Notification sent after completing to collect problems. This method
 	 * will be called by the spelling infrastructure and is not intended
 	 * to be called by clients.
 	 */
-	public void endReporting();
+	public void endCollecting();
 }
