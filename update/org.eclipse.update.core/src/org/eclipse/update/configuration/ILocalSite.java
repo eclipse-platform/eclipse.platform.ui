@@ -1,149 +1,144 @@
 package org.eclipse.update.configuration;
-
 /*
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
- 
-import java.io.File;
-import java.net.URL;
+
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.update.core.*;
 
-
- 
 /**
- * Interface defining the behavior of a local site. Local site is
- * a reflection of a user installation configuration. It is a collection of
- * <ul>
- * <li>zero or more local installation directories. These can be used
- * as sites to locally install additional features
- * <li>zero or more linked installation directories. These are used
- * as sites to access additional features. In general they are read-only
- * <li>configuration information specifying which features are actually
- * configured for use on this local site (a subset of features found
- * on local installation sites and linked sites)
- * </ul>
- */ 
+ * Local Site.
+ * Represents the local installation. It consists of the current
+ * configuration and the configuration history. A local site
+ * manages the number of configuration histories kept. It also allows
+ * specific configuration histories to be saved.
+ * 
+ * @since 2.0
+ */
 public interface ILocalSite extends IAdaptable {
-	
 
 	/**
-	 * Return the current configuration object.
-	 * This is the Configuration that will be saved.
+	 * Return the current configuration.
 	 * 
-	 * @return IInstallConfiguration
+	 * @return current configuration
 	 * @since 2.0 
 	 */
-	
 	IInstallConfiguration getCurrentConfiguration();
-	
+
 	/**
-	 * Returns an array of configuration objects representing the local
-	 * site change history. The current configuration is part of the history.
+	 * Return configuration history.
 	 * 
-	 * @return IInstallConfiguration[] configuration history. Returns
-	 * an empty array is there is no history
+	 * @return an array of configurations, or an empty array.
 	 * @since 2.0 
 	 */
+	public IInstallConfiguration[] getConfigurationHistory();
 
-	IInstallConfiguration [] getConfigurationHistory();
-	
 	/**
-	 * Reverts the Current Configuration to an old configuration.
+	 * Reverts the local site to use the specified configuration.
+	 * The result of this operation is a new configuration that
+	 * contains the same configured features as the specified configuration.
+	 * The new configuration becomes the current configuration.
 	 * 
-	 * Creates a new configuration based on the old one
-	 * and calculate the delta between the old configuration and the current one
-	 * Then set the newly created configuration as the current one
+	 * @param configuration configuration state to revert to
+	 * @param monitor progress monitor
+	 * @param handler problem handler
+	 * @exception CoreException
+	 * @since 2.0 
+	 */
+	public void revertTo(
+		IInstallConfiguration configuration,
+		IProgressMonitor monitor,
+		IProblemHandler handler)
+		throws CoreException;
+
+	/**
+	 * Creates a new configuration containing the same state as the 
+	 * specified configuration. The new configuration is not added to
+	 * this lical site.
 	 * 
-	 * @param IInstallConfiguration the configuration to use
+	 * @return cloned configuration
+	 * @exception CoreException
 	 * @since 2.0 
 	 */
+	public IInstallConfiguration cloneCurrentConfiguration() throws CoreException;
 
-	void revertTo(IInstallConfiguration configuration, IProgressMonitor monitor,IProblemHandler handler) throws CoreException;
-	
 	/**
-	 * creates a new currentConfiguration based on the current configuration
-	 * The newly created configuration is NOT added to the local site
+	 * Adds the specified configuration to this local site.
+	 * The new configuration becomes the current one.
 	 * 
-	 * ILocalSite site = SiteManager.getLocalSite();
+	 * @param config the configuration
+	 * @since 2.0 
+	 */
+	public void addConfiguration(IInstallConfiguration config);
+
+	/**
+	 * Saves the local site state
 	 * 
-	 * The following line creates a new current configuration in the local site
-	 * IInstallConfiguration currentConfig = site.createNewCurrentConfiguration(null,"new Label"); 
-	 * IConfiguredSite configSite = -obtain a configuration site from the InstallConfigurationModel-
-	 * configSite.install(IFeature,IProgressMonitor);
+	 * @exception CoreException
+	 * @since 2.0 
+	 */
+	public void save() throws CoreException;
+
+	/**
+	 * Indicates how many configuration histories should be maintained.
+	 * Histories beyond the specified count are automatically deleted.
 	 * 
-	 * the following line saves the state of the configuration
-	 * currentConfig.save();
+	 * @return number of past configurations to keep as history
+	 * @since 2.0 
+	 */
+	public int getMaximumHistoryCount();
+
+	/**
+	 * Sets the number of past configurations to keep in history
 	 * 
+	 * @param history number of configuration to keep
 	 * @since 2.0 
 	 */
-
-	IInstallConfiguration cloneCurrentConfiguration() throws CoreException;
+	public void setMaximumHistoryCount(int history);
 
 	/**
-	 * Adds a new configuration to the LocalSite
-	 * The new configuration becomes the current one
+	 * Adds a site change listener
+	 * 
+	 * @param listener the listener
 	 * @since 2.0 
 	 */
+	public void addLocalSiteChangedListener(ILocalSiteChangedListener listener);
 
-	void addConfiguration(IInstallConfiguration config);
-	
 	/**
-	 * Saves and persists the localSite. Also saves and persists the current Configuration
+	 * Removes a site listener
+	 * 
+	 * @param listener the listener
 	 * @since 2.0 
 	 */
+	public void removeLocalSiteChangedListener(ILocalSiteChangedListener listener);
 
-	void save() throws CoreException;
-		
 	/**
-	 * returns the maximum number of InstallConfigurationModel in teh history
+	 * Save the specified configuration. Saved configurations are 
+	 * not deleted based on the history count. They must be explicitly
+	 * removed.
+	 * 
+	 * @param configuration the configuration to save
+	 * @exception CoreException
 	 * @since 2.0 
 	 */
+	public void addToPreservedConfigurations(IInstallConfiguration configuration)
+		throws CoreException;
 
-	int getMaximumHistoryCount();
-	
 	/**
-	 * sets the maximum InstallConfigurationModel of the history
+	 * Removes the specified configuration from the list of previously
+	 * saved configurations.
+	 * 
+	 * @param configuration the configuration to remove
 	 * @since 2.0 
 	 */
+	public void removeFromPreservedConfigurations(IInstallConfiguration configuration);
 
-	void setMaximumHistoryCount(int history);
-	
-	
 	/**
+	 * Return the list of saved configurations
+	 * 
+	 * @return an array of configurations, or an empty array.
 	 * @since 2.0 
 	 */
-	void addLocalSiteChangedListener(ILocalSiteChangedListener listener);
-
-	/**
-	 * @since 2.0 
-	 */
-	void removeLocalSiteChangedListener(ILocalSiteChangedListener listener);
-	
-
-	/**
-	 * @since 2.0 
-	 */
-	void addToPreservedConfigurations(IInstallConfiguration configuration) throws CoreException;
-
-	/**
-	 * @since 2.0 
-	 */
-	void removeFromPreservedConfigurations(IInstallConfiguration configuration);
-
-	/**
-	 * @since 2.0 
-	 */	
-	IInstallConfiguration[] getPreservedConfigurations();
-	
-	/**
-	 * @since 2.0 
-	 */	
-	IInstallConfiguration findPreservedConfigurationFor(IInstallConfiguration configuration);
-
+	public IInstallConfiguration[] getPreservedConfigurations();
 	
 }
-

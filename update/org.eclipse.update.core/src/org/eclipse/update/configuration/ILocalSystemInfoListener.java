@@ -1,7 +1,6 @@
 package org.eclipse.update.configuration;
-
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
  
