@@ -1437,27 +1437,32 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 				//expected
 			}
 			//TODO This test is failing
-//			//can't transfer a rule when the destination already owns an unrelated rule
-//			TestBarrier barrier = new TestBarrier();
-//			ISchedulingRule unrelatedRule = new PathRule("UnrelatedRule");
-//			JobRuleRunner ruleRunner = new JobRuleRunner("testTransferFailure", unrelatedRule, barrier, 1, false);
-//			ruleRunner.schedule();
-//			//wait for runner to start
-//			barrier.waitForStatus(TestBarrier.STATUS_START);
-//			//let it acquire the rule
-//			barrier.setStatus(TestBarrier.STATUS_WAIT_FOR_RUN);
-//			barrier.waitForStatus(TestBarrier.STATUS_RUNNING);
-//			//transferring the calling thread's rule to the background job should fail
-//			//because the destination thread already owns a rule
-//			try {
-//				manager.transferRule(rule, ruleRunner.getThread());
-//				fail("1.2");
-//			} catch (RuntimeException e) {
-//				//expected
-//			}
-//			//let the background job finish
-//			barrier.setStatus(TestBarrier.STATUS_WAIT_FOR_DONE);
-//			barrier.waitForStatus(TestBarrier.STATUS_DONE);
+			//can't transfer a rule when the destination already owns an unrelated rule
+			TestBarrier barrier = new TestBarrier();
+			ISchedulingRule unrelatedRule = new PathRule("UnrelatedRule");
+			JobRuleRunner ruleRunner = new JobRuleRunner("testTransferFailure", unrelatedRule, barrier, 1, false);
+			ruleRunner.schedule();
+			//wait for runner to start
+			barrier.waitForStatus(TestBarrier.STATUS_START);
+			//let it acquire the rule
+			barrier.setStatus(TestBarrier.STATUS_WAIT_FOR_RUN);
+			barrier.waitForStatus(TestBarrier.STATUS_RUNNING);
+			//transferring the calling thread's rule to the background job should fail
+			//because the destination thread already owns a rule
+			try {
+				manager.transferRule(rule, ruleRunner.getThread());
+				fail("1.2");
+			} catch (RuntimeException e) {
+				//expected
+			}
+			//let the background job finish
+			barrier.setStatus(TestBarrier.STATUS_WAIT_FOR_DONE);
+			barrier.waitForStatus(TestBarrier.STATUS_DONE);
+			try {
+				ruleRunner.join();
+			} catch (InterruptedException e1) {
+				fail("1.99", e1);
+			}
 		} finally {
 			manager.endRule(rule);
 		}
