@@ -16,7 +16,9 @@ import org.eclipse.swt.widgets.*;
 public class PropertyDialog extends PreferenceDialog {
 	private ISelection selection;	
 	
-	private static final String PROP_DLG_LAST_SELECTION = "property_dialog_last_selection";//$NON-NLS-1$
+	//The id of the last page that was selected
+	private static String lastPropertyId = null;
+	
 /**
  * The constructor.
  */
@@ -45,7 +47,14 @@ public void setSelection(ISelection newSelection) {
  * Get the name of the selected item preference
  */
 protected String getSelectedNodePreference(){
-	return PROP_DLG_LAST_SELECTION;
+	return lastPropertyId;
+}
+
+/**
+ * Get the name of the selected item preference
+ */
+protected void setSelectedNodePreference(String pageId){
+	lastPropertyId = pageId;
 }
 
 }

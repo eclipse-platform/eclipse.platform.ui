@@ -33,7 +33,9 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 	 */
 	public static final String PREF_DLG_TITLE_IMG = "preference_dialog_title_image";//$NON-NLS-1$
 	public static final String PREF_DLG_IMG_TITLE_ERROR = "preference_dialog_title_error_image";//$NON-NLS-1$
-	private static final String PREF_DLG_LAST_SELECTION = "preference_dialog_last_selection";//$NON-NLS-1$
+	
+	//The id of the last page that was selected
+	private static String lastPreferenceId = null;
 	
 	static {
 		ImageRegistry reg = JFaceResources.getImageRegistry();
@@ -566,16 +568,23 @@ protected void selectSavedItem() {
  * Get the name of the selected item preference
  */
 protected String getSelectedNodePreference(){
-	return PREF_DLG_LAST_SELECTION;
+	return lastPreferenceId;
 }
+
+/**
+ * Get the name of the selected item preference
+ */
+protected void setSelectedNodePreference(String pageId){
+	lastPreferenceId = pageId;
+}
+
 
 /**
  * Get the node that was last selected in the dialog store.
  * If there is no match then return the first one,
  */
 private TreeItem getLastSelectedNode(TreeItem[] items){
-	String lastSelectedNode = 
-		WorkbenchPlugin.getDefault().getDialogSettings().get( getSelectedNodePreference());
+	String lastSelectedNode = getSelectedNodePreference();
 		
 	if(lastSelectedNode == null)
 		return items[0];
@@ -615,7 +624,7 @@ private TreeItem findNodeMatching(TreeItem[] items, String nodeId){
  * the last selection in case of an error.
  */
 private void clearSelectedNode(){
-	WorkbenchPlugin.getDefault().getDialogSettings().put( getSelectedNodePreference(),"");
+	setSelectedNodePreference(null);
 }
 
 /**
@@ -623,7 +632,7 @@ private void clearSelectedNode(){
  */
 private void setSelectedNode(){
 	
-	String storeValue = "";
+	String storeValue = null;
 	
 	if(tree.getSelectionCount() == 1){
 		TreeItem currentSelection = tree.getSelection()[0];
@@ -632,7 +641,7 @@ private void setSelectedNode(){
 			storeValue = ((IPreferenceNode) data).getId();
 	}
 	
-	WorkbenchPlugin.getDefault().getDialogSettings().put( getSelectedNodePreference(),storeValue);
+	setSelectedNodePreference(storeValue);
 }
 		
 /**
