@@ -53,7 +53,6 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 class NewWizardNewPage
 	implements ISelectionChangedListener, IDoubleClickListener {
 	private WizardCollectionElement wizardCategories;
-	private IWorkbench workbench;
 	private NewWizardSelectionPage page;
 	private IDialogSettings settings;
 
@@ -79,7 +78,6 @@ class NewWizardNewPage
 		IWorkbench aWorkbench,
 		WizardCollectionElement wizardCategories) {
 		this.page = mainPage;
-		this.workbench = aWorkbench;
 		this.wizardCategories = wizardCategories;
 	}
 	public void activate() {
