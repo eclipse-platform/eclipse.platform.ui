@@ -137,6 +137,13 @@ public class Capability extends WorkbenchAdapter implements IAdaptable {
 	/* (non-Javadoc)
 	 * Method declared on IWorkbenchAdapter.
 	 */
+	public ImageDescriptor getImageDescriptor(Object object) {
+		return getIconDescriptor();
+	}
+	
+	/* (non-Javadoc)
+	 * Method declared on IWorkbenchAdapter.
+	 */
 	public String getLabel(Object o) {
 		return getName();
 	}
@@ -152,7 +159,8 @@ public class Capability extends WorkbenchAdapter implements IAdaptable {
 		if (icon == null && isValid()) {
 			IExtension extension = element.getDeclaringExtension();
 			String location = element.getAttribute(ATT_ICON);
-			icon = WorkbenchImages.getImageDescriptorFromExtension(extension, location);
+			if (location != null && location.length() > 0)
+				icon = WorkbenchImages.getImageDescriptorFromExtension(extension, location);
 		}
 		return icon;
 	}

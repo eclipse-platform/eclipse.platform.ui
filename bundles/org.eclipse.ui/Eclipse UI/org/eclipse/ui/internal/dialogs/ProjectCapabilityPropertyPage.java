@@ -78,8 +78,9 @@ public class ProjectCapabilityPropertyPage extends PropertyPage {
 		label.setText(instructions);
 		
 		Capability[] caps = reg.getProjectCapabilities(getProject());
+		Capability[] disabledCaps = reg.getProjectDisabledCapabilities(getProject());
 		ICategory[] cats = new ICategory[0];
-		capabilityGroup = new ProjectCapabilitySelectionGroup(cats, caps, reg);
+		capabilityGroup = new ProjectCapabilitySelectionGroup(cats, caps, disabledCaps, reg);
 		return capabilityGroup.createContents(parent);
 	}
 	

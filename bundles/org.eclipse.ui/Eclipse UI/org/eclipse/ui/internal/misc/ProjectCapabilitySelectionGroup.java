@@ -12,15 +12,21 @@ Contributors:
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Map;
+
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.internal.WorkbenchMessages;
@@ -41,12 +47,14 @@ public class ProjectCapabilitySelectionGroup {
 	private CapabilityRegistry registry;
 	private ICategory[] initialCategories;
 	private Capability[] initialCapabilities;
+	private Capability[] disabledCapabilities;
 	private boolean modified = false;
 	private Text descriptionText;
 	private CheckboxTableViewer checkboxViewer;
 	private ICheckStateListener checkStateListener;
 	private ArrayList visibleCapabilities = new ArrayList();
 	private ArrayList checkedCapabilities = new ArrayList();
+	private Collection disabledCaps;
 
 	// For a given capability as key, the value will be a list of
 	// other capabilities that require the capability. Also,
@@ -88,9 +96,22 @@ public class ProjectCapabilitySelectionGroup {
 	 * @param registry all available capabilities registered by plug-ins
 	 */
 	public ProjectCapabilitySelectionGroup(ICategory[] categories, Capability[] capabilities, CapabilityRegistry registry) {
+		this(categories, capabilities, null, registry);
+	}
+
+	/**
+	 * Creates a new instance of the <code>ProjectCapabilitySelectionGroup</code>
+	 * 
+	 * @param categories the initial collection of valid categories to select
+	 * @param capabilities the intial collection of valid capabilities to select
+	 * @param disabledCapabilities the collection of capabilities to show as disabled
+	 * @param registry all available capabilities registered by plug-ins
+	 */
+	public ProjectCapabilitySelectionGroup(ICategory[] categories, Capability[] capabilities, Capability[] disabledCapabilities, CapabilityRegistry registry) {
 		super();
 		this.initialCategories = categories;
 		this.initialCapabilities = capabilities;
+		this.disabledCapabilities = disabledCapabilities;
 		this.registry = registry;
 	}
 
@@ -104,34 +125,45 @@ public class ProjectCapabilitySelectionGroup {
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
+		layout.makeColumnsEqualWidth = true;
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
+		// Composite for category label and list...
+		Composite catComposite = new Composite(composite, SWT.NONE);
+		catComposite.setLayout(new GridLayout());
+		catComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		
 		// Add a label to identify the list viewer of categories
-		Label categoryLabel = new Label(composite, SWT.LEFT);
+		Label categoryLabel = new Label(catComposite, SWT.LEFT);
 		categoryLabel.setText(WorkbenchMessages.getString("ProjectCapabilitySelectionGroup.categories")); //$NON-NLS-1$
 		GridData data = new GridData();
 		data.verticalAlignment = SWT.TOP;
 		categoryLabel.setLayoutData(data);
 		
-		// Add a label to identify the checkbox tree viewer of capabilities
-		Label capabilityLabel = new Label(composite, SWT.LEFT);
-		capabilityLabel.setText(WorkbenchMessages.getString("ProjectCapabilitySelectionGroup.capabilities")); //$NON-NLS-1$
-		data = new GridData();
-		data.verticalAlignment = SWT.TOP;
-		capabilityLabel.setLayoutData(data);
-		
 		// List viewer of all available categories
-		ListViewer listViewer = new ListViewer(composite);
+		ListViewer listViewer = new ListViewer(catComposite);
 		listViewer.getList().setLayoutData(new GridData(GridData.FILL_BOTH));
 		listViewer.setLabelProvider(new WorkbenchLabelProvider());
 		listViewer.setContentProvider(getContentProvider());
 		listViewer.setInput(getAvailableCategories());
 		
+		// Composite for capability label and table...
+		Composite capComposite = new Composite(composite, SWT.NONE);
+		capComposite.setLayout(new GridLayout());
+		capComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		
+		// Add a label to identify the checkbox tree viewer of capabilities
+		Label capabilityLabel = new Label(capComposite, SWT.LEFT);
+		capabilityLabel.setText(WorkbenchMessages.getString("ProjectCapabilitySelectionGroup.capabilities")); //$NON-NLS-1$
+		data = new GridData();
+		data.verticalAlignment = SWT.TOP;
+		capabilityLabel.setLayoutData(data);
+		
 		// Checkbox tree viewer of capabilities in selected categories
-		checkboxViewer = CheckboxTableViewer.newCheckList(composite, SWT.TOP | SWT.BORDER);
+		checkboxViewer = CheckboxTableViewer.newCheckList(capComposite, SWT.SINGLE | SWT.TOP | SWT.BORDER);
 		checkboxViewer.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
-		checkboxViewer.setLabelProvider(new WorkbenchLabelProvider());
+		checkboxViewer.setLabelProvider(new CapabilityLabelProvider());
 		checkboxViewer.setContentProvider(getContentProvider());
 		checkboxViewer.setInput(visibleCapabilities);
 
@@ -272,8 +304,6 @@ public class ProjectCapabilitySelectionGroup {
 		Collections.sort(results, categoryComparator);
 		if (registry.getMiscCategory() != null)
 			results.add(registry.getMiscCategory());
-		if (registry.getUnknownCategory() != null)
-			results.add(registry.getUnknownCategory());
 		return results;
 	}
 	
@@ -341,12 +371,28 @@ public class ProjectCapabilitySelectionGroup {
 	}
 	
 	/**
+	 * Returns whether the category is considered disabled
+	 */
+	private boolean isDisabledCapability(Capability cap) {
+		if (disabledCaps == null) {
+			if (disabledCapabilities == null)
+				disabledCaps = new ArrayList(0);
+			else
+				disabledCaps = Arrays.asList(disabledCapabilities);
+		}
+		return disabledCaps.contains(cap);
+	}
+
+	/**
 	 * Populate the dependents map based on the
 	 * current set of capabilities.
 	 */
 	private void populateDependents() {
+		if (initialCapabilities == null)
+			return;
+			
 		LinkedList capabilities = new LinkedList();
-		capabilities.addAll(checkedCapabilities);
+		capabilities.addAll(Arrays.asList(initialCapabilities));
 			
 		while (!capabilities.isEmpty()) {
 			// Retrieve the target capability
@@ -380,7 +426,10 @@ public class ProjectCapabilitySelectionGroup {
 	 * current set of capabilities.
 	 */
 	private void populateMemberships() {
-		Iterator enum = checkedCapabilities.iterator();
+		if (initialCapabilities == null)
+			return;
+			
+		Iterator enum = (Arrays.asList(initialCapabilities)).iterator();
 		while (enum.hasNext()) {
 			Capability cap = (Capability)enum.next();
 			String[] ids = registry.getMembershipSetIds(cap);
@@ -396,6 +445,26 @@ public class ProjectCapabilitySelectionGroup {
 	 * capabilities are also checked.
 	 */
 	private void handleCapabilityChecked(Capability capability) {
+		// Cannot allow a disabled capability to be checked
+		if (isDisabledCapability(capability)) {
+			MessageDialog.openWarning(
+				checkboxViewer.getControl().getShell(),
+				WorkbenchMessages.getString("ProjectCapabilitySelectionGroup.errorTitle"), //$NON-NLS-1$
+				WorkbenchMessages.format("ProjectCapabilitySelectionGroup.disabledCapability", new Object[] {capability.getName()})); //$NON-NLS-1$
+			checkboxViewer.setChecked(capability, false);
+			return;
+		}
+		
+		// Cannot allow an invalid capability to be checked
+		if (!capability.isValid()) {
+			MessageDialog.openWarning(
+				checkboxViewer.getControl().getShell(),
+				WorkbenchMessages.getString("ProjectCapabilitySelectionGroup.errorTitle"), //$NON-NLS-1$
+				WorkbenchMessages.format("ProjectCapabilitySelectionGroup.invalidCapability", new Object[] {capability.getName()})); //$NON-NLS-1$
+			checkboxViewer.setChecked(capability, false);
+			return;
+		}
+
 		// Is there a membership set problem...
 		String[] ids = registry.getMembershipSetIds(capability);
 		for (int i = 0; i < ids.length; i++) {
@@ -427,7 +496,7 @@ public class ProjectCapabilitySelectionGroup {
 				for (int i = 0; i < prereqCapabilities.length; i++) {
 					// If the prerequisite is missing, warn the user and
 					// do not allow the check to proceed.
-					if (prereqCapabilities[i] == null) {
+					if (prereqCapabilities[i] == null || isDisabledCapability(prereqCapabilities[i]) || !prereqCapabilities[i].isValid()) {
 						MessageDialog.openWarning(
 							checkboxViewer.getControl().getShell(),
 							WorkbenchMessages.getString("ProjectCapabilitySelectionGroup.errorTitle"), //$NON-NLS-1$
@@ -635,6 +704,44 @@ public class ProjectCapabilitySelectionGroup {
 				text = cap.getDescription();
 		}
 		descriptionText.setText(text);
+	}
+	
+	class CapabilityLabelProvider extends LabelProvider {
+		private Map imageTable;
+		
+		public void dispose() {
+			if (imageTable != null) {
+				Iterator enum = imageTable.values().iterator();
+				while (enum.hasNext())
+					((Image) enum.next()).dispose();
+				imageTable = null;
+			}
+		}
+
+		public Image getImage(Object element) {
+			ImageDescriptor descriptor = ((Capability) element).getIconDescriptor();
+			if (descriptor == null)
+				return null;
+			
+			//obtain the cached image corresponding to the descriptor
+			if (imageTable == null) {
+				 imageTable = new Hashtable(40);
+			}
+			Image image = (Image) imageTable.get(descriptor);
+			if (image == null) {
+				image = descriptor.createImage();
+				imageTable.put(descriptor, image);
+			}
+			return image;
+		}
+
+		public String getText(Object element) {
+			Capability cap = (Capability) element;
+			String text = cap.getName();
+			if (isDisabledCapability(cap))
+				text = WorkbenchMessages.format("ProjectCapabilitySelectionGroup.disabledLabel", new Object[] {text}); //$NON-NLS-1$
+			return text;
+		}
 	}
 }
 

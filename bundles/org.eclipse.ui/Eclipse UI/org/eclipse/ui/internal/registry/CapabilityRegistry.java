@@ -32,9 +32,6 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  * capabilities.
  */
 public class CapabilityRegistry extends WorkbenchAdapter implements IAdaptable {
-	public static final String UNKNOWN_NAME = WorkbenchMessages.getString("Capability.unknownCategory"); //$NON-NLS-1$
-	public static final String UNKNOWN_ID = "org.eclipse.ui.internal.unknownCategory"; //$NON-NLS-1$
-
 	private static final String[] EMPTY_ID_LIST = new String[0];
 	private static final Capability[] EMPTY_CAP_LIST = new Capability[0];
 	
@@ -42,7 +39,6 @@ public class CapabilityRegistry extends WorkbenchAdapter implements IAdaptable {
 	private ArrayList capabilities;
 	private ArrayList categories;
 	private Category miscCategory;
-	private Category unknownCategory;
 	
 	/**
 	 * Creates a new instance of <code>CapabilityRegistry</code>
@@ -214,14 +210,6 @@ public class CapabilityRegistry extends WorkbenchAdapter implements IAdaptable {
 	}
 	
 	/**
-	 * Returns the unknown category, or <code>null</code>
-	 * if none.
-	 */
-	public ICategory getUnknownCategory() {
-		return unknownCategory;
-	}
-	
-	/**
 	 * Returns the capability ids that are prerequisites
 	 * of the specified capability.
 	 */
@@ -280,6 +268,38 @@ public class CapabilityRegistry extends WorkbenchAdapter implements IAdaptable {
 	}
 	
 	/**
+	 * Returns the capabilities assigned to the specified project
+	 * that are consideed disabled by core.
+	 */
+	public Capability[] getProjectDisabledCapabilities(IProject project) {
+		try {
+			String[] natureIds = project.getDescription().getNatureIds();
+			ArrayList results = new ArrayList(natureIds.length);
+			for (int i = 0; i < natureIds.length; i++) {
+				if (!project.isNatureEnabled(natureIds[i])) {
+					Capability cap = (Capability)natureToCapability.get(natureIds[i]);
+					if (cap == null) {
+						cap = new Capability(natureIds[i]);
+						mapCapability(cap);
+					}
+					results.add(cap);
+				}
+			}
+			
+			if (results.size() == 0) {
+				return EMPTY_CAP_LIST;
+			} else {
+				Capability[] caps = new Capability[results.size()];
+				results.toArray(caps);
+				return caps;
+			}
+		}
+		catch (CoreException e) {
+			return EMPTY_CAP_LIST;
+		}
+	}
+	
+	/**
 	 * Returns whether the registry contains any capabilities.
 	 */
 	public boolean hasCapabilities() {
@@ -322,9 +342,9 @@ public class CapabilityRegistry extends WorkbenchAdapter implements IAdaptable {
 	private void mapCapability(Capability cap) {
 		// Map to category
 		if (!cap.isValid()) {
-			if (unknownCategory == null)
-				unknownCategory = new Category(UNKNOWN_ID, UNKNOWN_NAME);
-			unknownCategory.addElement(cap);
+			if (miscCategory == null)
+				miscCategory = new Category();
+			miscCategory.addElement(cap);
 		} else {
 			Category cat = null;
 			String catPath = cap.getCategoryPath();
