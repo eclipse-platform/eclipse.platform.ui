@@ -13,6 +13,7 @@ package org.eclipse.debug.internal.ui.views.launch;
 
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
+import org.eclipse.debug.ui.ILazyLabelListener;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
@@ -26,7 +27,9 @@ import org.eclipse.swt.widgets.Widget;
 /**
  * The launch viewer displays a tree of launches.
  */
-public class LaunchViewer extends TreeViewer {
+public class LaunchViewer extends TreeViewer implements ILazyLabelListener {
+	
+	LaunchView fView;
 		
 	/**
 	 * Overridden to fix bug 39709 - duplicate items in launch viewer. The
@@ -42,9 +45,10 @@ public class LaunchViewer extends TreeViewer {
 		}
 	}
 
-	public LaunchViewer(Composite parent) {
+	public LaunchViewer(Composite parent, LaunchView view) {
 		super(new Tree(parent, SWT.MULTI));
 		setUseHashlookup(true);
+		fView= view;
 	}
 			
 	/**
@@ -81,6 +85,32 @@ public class LaunchViewer extends TreeViewer {
 		getControl().setRedraw(false);
 		super.refresh(element);
 		getControl().setRedraw(true);
+	}
+
+	/*
+	 * @see org.eclipse.debug.ui.ILazyLabelListener#lazyTextComputed(java.lang.Object, java.lang.String)
+	 */
+	public void lazyTextsComputed(final Object[] elements,final String[] texts) {
+		fView.asyncExec(new Runnable() {
+			public void run() {
+				for (int i= 0, length= elements.length; i < length; i++) {
+					((Item)findItem(elements[i])).setText(texts[i]);
+				}
+			}
+		});
+	}
+
+	/*
+	 * @see org.eclipse.debug.ui.ILazyLabelListener#lazyImagesComputed(Object[], Image[])
+	 */
+	public void lazyImagesComputed(final Object[] elements, final Image[] images) {
+		fView.asyncExec(new Runnable() {
+			public void run() {
+				for (int i= 0, length= elements.length; i < length; i++) {
+					((Item)findItem(elements[i])).setImage(images[i]);
+				}
+			}
+		});
 	}
 }
 

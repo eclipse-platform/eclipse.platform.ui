@@ -76,6 +76,7 @@ import org.eclipse.swt.graphics.Image;
  * @see org.eclipse.debug.core.model.IDebugElement
  * @see org.eclipse.jface.viewers.ILabelProvider
  * @see org.eclipse.debug.ui.IDebugView
+ * @see org.eclipse.debug.ui.ILazyDebugModelPresentation
  */
 
 public interface IDebugModelPresentation extends ILabelProvider, ISourcePresentation {
