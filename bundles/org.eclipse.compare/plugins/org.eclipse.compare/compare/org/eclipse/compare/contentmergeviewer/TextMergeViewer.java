@@ -1804,6 +1804,14 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	}
 	
 	private void selectFirstDiff() {
+		
+		if (fLeft == null || fRight == null) {
+			return;
+		}
+		if (fLeft.getDocument() == null || fRight.getDocument() == null) {
+			return;
+		}
+		
 		Diff firstDiff= null;
 		if (CompareNavigator.getDirection(fComposite))
 			firstDiff= findNext(fRight, fChangeDiffs, -1, -1, false);

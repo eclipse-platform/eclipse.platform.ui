@@ -221,13 +221,13 @@ public class MergeSourceViewer extends SourceViewer
 	 */
 	public Point getLineRange(Position p, Point region) {
 		
-		if (p == null) {
+		IDocument doc= getDocument();
+		
+		if (p == null || doc == null) {
 			region.x= 0;
 			region.y= 0;
 			return region;
 		}
-		
-		IDocument doc= getDocument();
 		
 		int start= p.getOffset();
 		int length= p.getLength();
