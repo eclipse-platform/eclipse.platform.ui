@@ -31,13 +31,11 @@ public class ConfigurationActivator implements BundleActivator {
 
 	private static BundleContext context;
 	private ServiceTracker platformTracker;
-	private ServiceTracker converterTracker;
 	private ServiceRegistration configurationFactorySR;
 	private String[] allArgs;
 
 	// location used to put the generated manfests
 	private String cacheLocation = (String) System.getProperties().get("osgi.manifest.cache");
-	private IPluginConverter converter;
 	private Set ignore;
 	private BundleListener reconcilerListener;
 	private IPlatform platform;
@@ -67,7 +65,6 @@ public class ConfigurationActivator implements BundleActivator {
 		if (DEBUG)
 			System.out.println("Starting update configurator...");
 		computeIgnoredBundles();
-		converter = acquireConverter();
 		installBundles();
 	}
 
@@ -134,8 +131,6 @@ public class ConfigurationActivator implements BundleActivator {
 		
 		platform = null;
 		releasePlatform();
-		converter = null;
-		releaseConverter();
 		writePlatformConfigurationTimeStamp();
 		configurationFactorySR.unregister();
 	}
@@ -160,13 +155,6 @@ public class ConfigurationActivator implements BundleActivator {
 		platformTracker = null;
 	}
 	
-	private void releaseConverter() {
-		if (converterTracker == null)
-			return;
-		converterTracker.close();
-		converterTracker = null;
-	}
-	
 	private IPlatform acquirePlatform() {
 		if (platformTracker == null) {
 			platformTracker = new ServiceTracker(context, IPlatform.class.getName(), null);
@@ -183,21 +171,6 @@ public class ConfigurationActivator implements BundleActivator {
 		return result;
 	}
 
-	private IPluginConverter acquireConverter() {
-		if (converterTracker == null) {
-			converterTracker = new ServiceTracker(context, IPluginConverter.class.getName(), null);
-			converterTracker.open();
-		}
-		IPluginConverter result = (IPluginConverter) converterTracker.getService();
-		while (result == null) {
-			try {
-				platformTracker.waitForService(1000);
-				result = (IPluginConverter) converterTracker.getService();
-			} catch (InterruptedException ie) {
-			}
-		}
-		return result;
-	}
 	private void installBundles() {
 		URL installURL = platform.getInstallURL();
 		ServiceReference reference = context.getServiceReference(StartLevel.class.getName());
