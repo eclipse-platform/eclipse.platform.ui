@@ -37,15 +37,15 @@ public class DirectorySourceContainerType extends AbstractSourceContainerTypeDel
 			if ("directory".equals(element.getNodeName())) { //$NON-NLS-1$
 				String string = element.getAttribute("path"); //$NON-NLS-1$
 				if (string == null || string.length() == 0) {
-					abort(SourceLookupMessages.getString("DirectorySourceContainerType.10"), null); //$NON-NLS-1$
+					abort(SourceLookupMessages.DirectorySourceContainerType_10, null); //$NON-NLS-1$
 				}
 				String nest = element.getAttribute("nest"); //$NON-NLS-1$
 				boolean nested = "true".equals(nest); //$NON-NLS-1$
 				return new DirectorySourceContainer(new Path(string), nested);
 			}
-			abort(SourceLookupMessages.getString("DirectorySourceContainerType.11"), null); //$NON-NLS-1$
+			abort(SourceLookupMessages.DirectorySourceContainerType_11, null); //$NON-NLS-1$
 		}
-		abort(SourceLookupMessages.getString("DirectorySourceContainerType.12"), null); //$NON-NLS-1$
+		abort(SourceLookupMessages.DirectorySourceContainerType_12, null); //$NON-NLS-1$
 		return null;
 	}
 	

@@ -98,7 +98,7 @@ public class DefaultSourceContainer extends CompositeSourceContainer {
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#getName()
 	 */
 	public String getName() {
-		return SourceLookupMessages.getString("DefaultSourceContainer.0"); //$NON-NLS-1$
+		return SourceLookupMessages.DefaultSourceContainer_0; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

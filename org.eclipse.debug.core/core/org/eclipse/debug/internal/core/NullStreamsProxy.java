@@ -71,7 +71,7 @@ public class NullStreamsProxy implements IStreamsProxy2 {
                     } catch (IOException e) {
                     }
                 }
-            }, DebugCoreMessages.getString("NullStreamsProxy.0")); //$NON-NLS-1$
+            }, DebugCoreMessages.NullStreamsProxy_0); //$NON-NLS-1$
             thread.start();
             
         }

@@ -190,7 +190,7 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 				public void run() {
 					read();
 				}
-			}, DebugCoreMessages.getString("OutputStreamMonitor.label")); //$NON-NLS-1$
+			}, DebugCoreMessages.OutputStreamMonitor_label); //$NON-NLS-1$
 			fThread.start();
 		}
 	}

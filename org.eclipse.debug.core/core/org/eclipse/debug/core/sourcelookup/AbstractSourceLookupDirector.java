@@ -141,7 +141,7 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 					if (single == null) {
 						single = e;
 					} else if (multiStatus == null) {
-						multiStatus = new MultiStatus(DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, new IStatus[]{single.getStatus()}, SourceLookupMessages.getString("AbstractSourceLookupDirector.19"), null); //$NON-NLS-1$
+						multiStatus = new MultiStatus(DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, new IStatus[]{single.getStatus()}, SourceLookupMessages.AbstractSourceLookupDirector_19, null); //$NON-NLS-1$
 						multiStatus.add(e.getStatus());
 					} else {
 						multiStatus.add(e.getStatus());
@@ -236,15 +236,15 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 			Element element = (Element)list.item(i);
 			String typeId = element.getAttribute(CONTAINER_TYPE_ATTR);
 			if (typeId == null || typeId.equals("")) {	 //$NON-NLS-1$
-				abort(SourceLookupMessages.getString("AbstractSourceLookupDirector.11"), null); //$NON-NLS-1$
+				abort(SourceLookupMessages.AbstractSourceLookupDirector_11, null); //$NON-NLS-1$
 			}
 			ISourceContainerType type = DebugPlugin.getDefault().getLaunchManager().getSourceContainerType(typeId);
 			if(type == null) {
-				abort(MessageFormat.format(SourceLookupMessages.getString("AbstractSourceLookupDirector.12"), new String[]{typeId}), null); //$NON-NLS-1$
+				abort(MessageFormat.format(SourceLookupMessages.AbstractSourceLookupDirector_12, new String[]{typeId}), null); //$NON-NLS-1$
 			}			
 			String memento = element.getAttribute(CONTAINER_MEMENTO_ATTR);
 			if (memento == null || memento.equals("")) {	 //$NON-NLS-1$
-				abort(SourceLookupMessages.getString("AbstractSourceLookupDirector.13"), null); //$NON-NLS-1$
+				abort(SourceLookupMessages.AbstractSourceLookupDirector_13, null); //$NON-NLS-1$
 			}
 			ISourceContainer container = type.createSourceContainer(memento);
 			containers.add(container);
@@ -396,7 +396,7 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 	    }
 		Element rootElement = DebugPlugin.parseDocument(memento);		
 		if (!rootElement.getNodeName().equalsIgnoreCase(DIRECTOR_ROOT_NODE)) { 
-			abort(SourceLookupMessages.getString("AbstractSourceLookupDirector.14"), null); //$NON-NLS-1$
+			abort(SourceLookupMessages.AbstractSourceLookupDirector_14, null); //$NON-NLS-1$
 		}
 		NodeList list = rootElement.getChildNodes();
 		int length = list.getLength();

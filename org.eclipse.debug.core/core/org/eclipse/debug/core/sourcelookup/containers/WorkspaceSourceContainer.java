@@ -41,7 +41,7 @@ public class WorkspaceSourceContainer extends CompositeSourceContainer {
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#getName()
 	 */
 	public String getName() {
-		return SourceLookupMessages.getString("WorkspaceSourceContainer.0"); //$NON-NLS-1$
+		return SourceLookupMessages.WorkspaceSourceContainer_0; //$NON-NLS-1$
 	}
 		
 	/* (non-Javadoc)

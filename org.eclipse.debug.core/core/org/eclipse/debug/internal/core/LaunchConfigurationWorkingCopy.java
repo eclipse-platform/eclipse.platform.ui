@@ -255,7 +255,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 			throw new DebugException(
 				new Status(
 					IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
-					DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.getString("LaunchConfigurationWorkingCopy.{0}_occurred_generating_launch_configuration_XML._1"), new String[]{e.toString()}), null //$NON-NLS-1$
+					DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.LaunchConfigurationWorkingCopy__0__occurred_generating_launch_configuration_XML__1, new String[]{e.toString()}), null //$NON-NLS-1$
 					)
 				);		
 		}
@@ -283,7 +283,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 				throw new DebugException(
 					new Status(
 					 IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
-					 DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.getString("LaunchConfigurationWorkingCopy.{0}_occurred_generating_launch_configuration_XML._1"), new String[]{ie.toString()}), null //$NON-NLS-1$
+					 DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.LaunchConfigurationWorkingCopy__0__occurred_generating_launch_configuration_XML__1, new String[]{ie.toString()}), null //$NON-NLS-1$
 					)
 				);				
 			}
@@ -295,7 +295,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 				throw new DebugException(
 					new Status(
 					 IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
-					 DebugException.REQUEST_FAILED, DebugCoreMessages.getString("LaunchConfigurationWorkingCopy.Specified_container_for_launch_configuration_does_not_exist_2"), null //$NON-NLS-1$
+					 DebugException.REQUEST_FAILED, DebugCoreMessages.LaunchConfigurationWorkingCopy_Specified_container_for_launch_configuration_does_not_exist_2, null //$NON-NLS-1$
 					)
 				);				
 			}
@@ -306,7 +306,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 				throw new DebugException(
 					new Status(
 						 IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
-						 DebugException.REQUEST_FAILED, DebugCoreMessages.getString("LaunchConfigurationWorkingCopy.5"), null //$NON-NLS-1$
+						 DebugException.REQUEST_FAILED, DebugCoreMessages.LaunchConfigurationWorkingCopy_5, null //$NON-NLS-1$
 					));
 			}
 			if (!file.exists()) {

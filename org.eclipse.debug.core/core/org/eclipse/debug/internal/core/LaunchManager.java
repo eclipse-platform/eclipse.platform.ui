@@ -553,7 +553,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 					} else {
 						IFile file = ((LaunchConfiguration) config).getFile();
 						if (file == null) {
-							throw createDebugException(MessageFormat.format(DebugCoreMessages.getString("LaunchManager.30"), new String[] {config.getName()}), null); //$NON-NLS-1$
+							throw createDebugException(MessageFormat.format(DebugCoreMessages.LaunchManager_30, new String[] {config.getName()}), null); //$NON-NLS-1$
 						}
 						stream = file.getContents();
 					}
@@ -579,7 +579,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		
 			} else {
 				throw createDebugException(
-					MessageFormat.format(DebugCoreMessages.getString("LaunchManager.does_not_exist"), new String[]{config.getName(), config.getLocation().toOSString()}), null); //$NON-NLS-1$
+					MessageFormat.format(DebugCoreMessages.LaunchManager_does_not_exist, new String[]{config.getName(), config.getLocation().toOSString()}), null); //$NON-NLS-1$
 			}
 		}
 		return info;
@@ -591,7 +591,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 */
 	private void throwException(ILaunchConfiguration config, Throwable e) throws DebugException {
 		IPath path = config.getLocation();
-		throw createDebugException(MessageFormat.format(DebugCoreMessages.getString("LaunchManager.{0}_occurred_while_reading_launch_configuration_file_{1}._1"), new String[]{e.toString(), path.toOSString()}), e); //$NON-NLS-1$
+		throw createDebugException(MessageFormat.format(DebugCoreMessages.LaunchManager__0__occurred_while_reading_launch_configuration_file__1___1, new String[]{e.toString(), path.toOSString()}), e); //$NON-NLS-1$
 	}
 	
 	/**
@@ -1015,7 +1015,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 			new DebugException(
 				new Status(
 				 IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
-				 DebugException.REQUEST_FAILED, DebugCoreMessages.getString("LaunchManager.Invalid_launch_configuration_index._18"), null //$NON-NLS-1$
+				 DebugException.REQUEST_FAILED, DebugCoreMessages.LaunchManager_Invalid_launch_configuration_index__18, null //$NON-NLS-1$
 				)
 			);		
 			
@@ -1201,7 +1201,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 				} else {
 					// invalid status handler
 					IStatus s = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugException.INTERNAL_ERROR,
-					MessageFormat.format(DebugCoreMessages.getString("LaunchManager.Invalid_source_locator_extentsion_defined_by_plug-in___{0}______id___not_specified_12"), new String[] {configurationElement.getNamespace()} ), null);  //$NON-NLS-1$
+					MessageFormat.format(DebugCoreMessages.LaunchManager_Invalid_source_locator_extentsion_defined_by_plug_in____0_______id___not_specified_12, new String[] {configurationElement.getNamespace()} ), null);  //$NON-NLS-1$
 					DebugPlugin.log(s);
 				}
 			}
@@ -1225,7 +1225,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 				} else {
 					// invalid status handler
 					IStatus s = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugException.INTERNAL_ERROR,
-					MessageFormat.format(DebugCoreMessages.getString("LaunchManager.Invalid_launch_configuration_comparator_extension_defined_by_plug-in_{0}_-_attribute_not_specified_1"), new String[] {configurationElement.getNamespace()}), null); //$NON-NLS-1$
+					MessageFormat.format(DebugCoreMessages.LaunchManager_Invalid_launch_configuration_comparator_extension_defined_by_plug_in__0____attribute_not_specified_1, new String[] {configurationElement.getNamespace()}), null); //$NON-NLS-1$
 					DebugPlugin.log(s);
 				}
 			}
@@ -1240,7 +1240,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		IConfigurationElement config = (IConfigurationElement)fSourceLocators.get(identifier);
 		if (config == null) {
 			throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugException.INTERNAL_ERROR,
-				MessageFormat.format(DebugCoreMessages.getString("LaunchManager.Source_locator_does_not_exist__{0}_13"), new String[] {identifier} ), null)); //$NON-NLS-1$
+				MessageFormat.format(DebugCoreMessages.LaunchManager_Source_locator_does_not_exist___0__13, new String[] {identifier} ), null)); //$NON-NLS-1$
 		} 
 		IPersistableSourceLocator sourceLocator = (IPersistableSourceLocator)config.createExecutableExtension("class"); //$NON-NLS-1$
 		if (sourceLocator instanceof AbstractSourceLookupDirector) {
@@ -1405,7 +1405,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
 		 */
 		public void handleException(Throwable exception) {
-			IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, DebugCoreMessages.getString("LaunchManager.An_exception_occurred_during_launch_change_notification._1"), exception); //$NON-NLS-1$
+			IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, DebugCoreMessages.LaunchManager_An_exception_occurred_during_launch_change_notification__1, exception); //$NON-NLS-1$
 			DebugPlugin.log(status);
 		}
 
@@ -1467,7 +1467,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
 		 */
 		public void handleException(Throwable exception) {
-			IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, DebugCoreMessages.getString("LaunchManager.An_exception_occurred_during_launch_change_notification._1"), exception); //$NON-NLS-1$
+			IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, DebugCoreMessages.LaunchManager_An_exception_occurred_during_launch_change_notification__1, exception); //$NON-NLS-1$
 			DebugPlugin.log(status);
 		}
 
@@ -1557,7 +1557,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
 		 */
 		public void handleException(Throwable exception) {
-			IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, DebugCoreMessages.getString("LaunchManager.An_exception_occurred_during_launch_configuration_change_notification._3"), exception); //$NON-NLS-1$
+			IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, DebugCoreMessages.LaunchManager_An_exception_occurred_during_launch_configuration_change_notification__3, exception); //$NON-NLS-1$
 			DebugPlugin.log(status);
 		}
 
