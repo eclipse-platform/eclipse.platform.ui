@@ -397,7 +397,7 @@ class AnimationManager {
 				showingError = manager.hasErrorsDisplayed();
 				jobs.clear();
 				setAnimated(false);
-				JobInfo[] currentInfos = manager.getJobInfos();
+				JobInfo[] currentInfos = manager.getJobInfos(showsDebug());
 				for (int i = 0; i < currentInfos.length; i++) {
 					JobInfo info = currentInfos[i];
 					if (manager.isNonDisplayableJob(info.getJob(), showsDebug()))

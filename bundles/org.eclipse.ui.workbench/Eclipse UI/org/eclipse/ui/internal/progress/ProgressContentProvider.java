@@ -57,7 +57,8 @@ public class ProgressContentProvider implements ITreeContentProvider {
 	 */
 	public Object[] getElements(Object inputElement) {
 
-		return ProgressViewUpdater.getSingleton().filterInfos(ProgressManager.getInstance().getJobInfos());
+		return ProgressManager.getInstance().getJobInfos(
+				ProgressViewUpdater.getSingleton().debug);
 
 	}
 

@@ -10,9 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 
@@ -34,7 +32,6 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 	Job updateJob;
 	UpdatesInfo currentInfo = new UpdatesInfo();
 	Object updateLock = new Object();
-	private Collection filteredJobs = Collections.synchronizedList(new ArrayList());
 	boolean debug = false;
 
 	/**
@@ -262,19 +259,14 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 	 */
 	public void refresh(JobInfo info) {
 
-		if (isNonDisplayableJob(info.getJob()))
+		if (isUpdateJob(info.getJob()))
 			return;
 
 		synchronized (updateLock) {
-			//If we never displayed this job then add it instead.
-			if (isFiltered(info.getJob())) {
-				add(info);
-				removeFromFiltered(info.getJob());
-			} else
-				currentInfo.refresh(info);
+			currentInfo.refresh(info);
 		}
 		//Add in a 100ms delay so as to keep priority low
-		ProgressViewUpdater.getSingleton().scheduleUpdate();
+		scheduleUpdate();
 
 	}
 
@@ -283,13 +275,12 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 	 */
 	public void refreshAll() {
 
-		filteredJobs.clear();
 		synchronized (updateLock) {
 			currentInfo.updateAll = true;
 		}
 
 		//Add in a 100ms delay so as to keep priority low
-		updateJob.schedule(100);
+		scheduleUpdate();
 
 	}
 
@@ -298,14 +289,14 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 	 */
 	public void add(JobInfo info) {
 
-		if (isNonDisplayableJob(info.getJob()))
-			addToFiltered(info.getJob());
-		else {
-			synchronized (updateLock) {
-				currentInfo.add(info);
-			}
-			updateJob.schedule(100);
+		if (isUpdateJob(info.getJob()))
+			return;
+		
+		synchronized (updateLock) {
+			currentInfo.add(info);
 		}
+		scheduleUpdate();
+		
 
 	}
 
@@ -314,84 +305,29 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 	 */
 	public void remove(JobInfo info) {
 
-		removeFromFiltered(info.getJob());
-		if (isNonDisplayableJob(info.getJob()))
+		if (isUpdateJob(info.getJob()))
 			return;
+		
 		synchronized (updateLock) {
 			currentInfo.remove(info);
 		}
-		updateJob.schedule(100);
-	}
-
-	/**
-	 * Add job to the list of filtered jobs.
-	 * 
-	 * @param job
-	 */
-	void addToFiltered(Job job) {
-		filteredJobs.add(job);
-	}
-
-	/**
-	 * Remove job from the list of fitlered jobs.
-	 * 
-	 * @param job
-	 */
-	void removeFromFiltered(Job job) {
-		filteredJobs.remove(job);
-	}
-
-	/**
-	 * Return whether or not the job is currently filtered.
-	 * 
-	 * @param job
-	 * @return
-	 */
-	boolean isFiltered(Job job) {
-		return filteredJobs.contains(job);
-	}
-
-	/**
-	 * Return whether or not this job is currently displayable.
-	 * 
-	 * @param job
-	 * @param debug
-	 *           If the listener is in debug mode.
-	 * @return
-	 */
-	boolean isNonDisplayableJob(Job job) {
-
-		//	Never display the update job
-		if (job == updateJob)
-			return true;
-
-		if (debug) //Always display in debug mode
-			return false;
-		else
-			return job.isSystem() || job.getState() == Job.SLEEPING;
+		scheduleUpdate();
 	}
 
 	/*
 	 * (non-Javadoc) @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#showsDebug()
 	 */
 	public boolean showsDebug() {
-		return true;
+		return debug;
 	}
 
 	/**
-	 * Return the list of infos filtered for what we are displaying.
-	 * @param infos
-	 * @return Object[]
+	 * Return whether or not this is the update job. This is used
+	 * to determine if a final refresh is required.
+	 * @param job
+	 * @return
 	 */
-	Object[] filterInfos(JobInfo[] infos) {
-		ArrayList result = new ArrayList();
-		for (int i = 0; i < infos.length; i++) {
-			if (isNonDisplayableJob(infos[i].getJob()))
-				addToFiltered(infos[i].getJob());
-			else
-				result.add(infos[i]);
-		}
-		return result.toArray();
+	boolean isUpdateJob(Job job){
+		return job.equals(updateJob);
 	}
-
 }
