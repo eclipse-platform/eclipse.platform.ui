@@ -10,11 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide;
 
-import org.eclipse.jface.action.Action;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.action.ActionContributionItem;
-import org.eclipse.jface.action.CoolBarManager;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
@@ -26,7 +24,6 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.ToolBarContributionItem;
 import org.eclipse.jface.action.ToolBarManager;
-
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener;
@@ -575,33 +572,51 @@ public final class WorkbenchActionBuilder {
 		// about should always be at the bottom				
 		menu.add(new Separator());
 		menu.add(aboutAction);
-			
-		/*
+		
+		/*		
+		final IMutableContextActivationService contextActivationServiceA = ContextActivationServiceFactory.getMutableContextActivationService();
+		contextActivationServiceA.setActiveContextIds(new HashSet(Collections.singletonList("A")));
+
+		final IMutableContextActivationService contextActivationServiceB = ContextActivationServiceFactory.getMutableContextActivationService();
+		contextActivationServiceB.setActiveContextIds(new HashSet(Collections.singletonList("B")));				
+		
 		menu.add(new Separator());
 		
-		final IMutableContextActivationService workbenchContextActivationService = ContextActivationServiceFactory.getMutableContextActivationService();
-		workbenchContextActivationService.setActiveContextIds(new HashSet(Collections.singletonList("A")));
-
-		final IMutableContextActivationService workbenchPageContextActivationService = ContextActivationServiceFactory.getMutableContextActivationService();
-		workbenchPageContextActivationService.setActiveContextIds(new HashSet(Collections.singletonList("B")));				
-		
-		menu.add(new Action("Add A to the workbench") {
+		menu.add(new Action("Add context A to the workbench") {
 			public void run() {
 				IWorkbench workbench = PlatformUI.getWorkbench();
-				IWorkbenchContextSupport workbenchContextSupport = (IWorkbenchContextSupport) workbench.getAdapter(IWorkbenchContextSupport.class);
-				workbenchContextSupport.getCompoundContextActivationService().addContextActivationService(workbenchContextActivationService);
+				IWorkbenchContextSupport workbenchContextSupport = (IWorkbenchContextSupport) workbench.getContextSupport();
+				workbenchContextSupport.getCompoundContextActivationService().addContextActivationService(contextActivationServiceA);
 			}
 		});
 
-		menu.add(new Action("Remove A from the workbench") {
+		menu.add(new Action("Remove context A from the workbench") {
 			public void run() {
 				IWorkbench workbench = PlatformUI.getWorkbench();
-				IWorkbenchContextSupport workbenchContextSupport = (IWorkbenchContextSupport) workbench.getAdapter(IWorkbenchContextSupport.class);
-				workbenchContextSupport.getCompoundContextActivationService().removeContextActivationService(workbenchContextActivationService);
+				IWorkbenchContextSupport workbenchContextSupport = (IWorkbenchContextSupport) workbench.getContextSupport();
+				workbenchContextSupport.getCompoundContextActivationService().removeContextActivationService(contextActivationServiceA);
 			}
 		});
 		
-		menu.add(new Action("Add B to the workbench page") {
+		menu.add(new Action("Add context B to the workbench") {
+			public void run() {
+				IWorkbench workbench = PlatformUI.getWorkbench();
+				IWorkbenchContextSupport workbenchContextSupport = (IWorkbenchContextSupport) workbench.getContextSupport();
+				workbenchContextSupport.getCompoundContextActivationService().addContextActivationService(contextActivationServiceB);
+			}
+		});
+
+		menu.add(new Action("Remove context B from the workbench") {
+			public void run() {
+				IWorkbench workbench = PlatformUI.getWorkbench();
+				IWorkbenchContextSupport workbenchContextSupport = (IWorkbenchContextSupport) workbench.getContextSupport();
+				workbenchContextSupport.getCompoundContextActivationService().removeContextActivationService(contextActivationServiceB);
+			}
+		});
+		
+		menu.add(new Separator());
+		
+		menu.add(new Action("Add context A to the workbench page") {
 			public void run() {
 				IWorkbench workbench = PlatformUI.getWorkbench();
 				IWorkbenchWindow workbenchWindow = workbench.getActiveWorkbenchWindow();
@@ -610,14 +625,14 @@ public final class WorkbenchActionBuilder {
 					IWorkbenchPage workbenchPage = workbenchWindow.getActivePage();
 					
 					if (workbenchPage != null) {					
-						IWorkbenchPageContextSupport workbenchPageContextSupport = (IWorkbenchPageContextSupport) workbenchPage.getAdapter(IWorkbenchPageContextSupport.class);
-						workbenchPageContextSupport.getCompoundContextActivationService().addContextActivationService(workbenchPageContextActivationService);
+						IWorkbenchPageContextSupport workbenchPageContextSupport = (IWorkbenchPageContextSupport) workbenchPage.getContextSupport();
+						workbenchPageContextSupport.getCompoundContextActivationService().addContextActivationService(contextActivationServiceA);
 					}
 				}
 			}
 		});
-
-		menu.add(new Action("Remove B from the workbench page") {
+		
+		menu.add(new Action("Remove context A from the workbench page") {
 			public void run() {
 				IWorkbench workbench = PlatformUI.getWorkbench();
 				IWorkbenchWindow workbenchWindow = workbench.getActiveWorkbenchWindow();
@@ -626,13 +641,175 @@ public final class WorkbenchActionBuilder {
 					IWorkbenchPage workbenchPage = workbenchWindow.getActivePage();
 					
 					if (workbenchPage != null) {					
-						IWorkbenchPageContextSupport workbenchPageContextSupport = (IWorkbenchPageContextSupport) workbenchPage.getAdapter(IWorkbenchPageContextSupport.class);
-						workbenchPageContextSupport.getCompoundContextActivationService().removeContextActivationService(workbenchPageContextActivationService);
+						IWorkbenchPageContextSupport workbenchPageContextSupport = (IWorkbenchPageContextSupport) workbenchPage.getContextSupport();
+						workbenchPageContextSupport.getCompoundContextActivationService().removeContextActivationService(contextActivationServiceA);
 					}
 				}
 			}
-		});	
-		*/	
+		});		
+		
+		menu.add(new Action("Add context B to the workbench page") {
+			public void run() {
+				IWorkbench workbench = PlatformUI.getWorkbench();
+				IWorkbenchWindow workbenchWindow = workbench.getActiveWorkbenchWindow();
+
+				if (workbenchWindow != null) {
+					IWorkbenchPage workbenchPage = workbenchWindow.getActivePage();
+					
+					if (workbenchPage != null) {					
+						IWorkbenchPageContextSupport workbenchPageContextSupport = (IWorkbenchPageContextSupport) workbenchPage.getContextSupport();
+						workbenchPageContextSupport.getCompoundContextActivationService().addContextActivationService(contextActivationServiceB);
+					}
+				}
+			}
+		});
+
+		menu.add(new Action("Remove context B from the workbench page") {
+			public void run() {
+				IWorkbench workbench = PlatformUI.getWorkbench();
+				IWorkbenchWindow workbenchWindow = workbench.getActiveWorkbenchWindow();
+
+				if (workbenchWindow != null) {
+					IWorkbenchPage workbenchPage = workbenchWindow.getActivePage();
+					
+					if (workbenchPage != null) {					
+						IWorkbenchPageContextSupport workbenchPageContextSupport = (IWorkbenchPageContextSupport) workbenchPage.getContextSupport();
+						workbenchPageContextSupport.getCompoundContextActivationService().removeContextActivationService(contextActivationServiceB);
+					}
+				}
+			}
+		});
+		
+		IHandler handlerA = new IHandler() {
+			public void execute() {
+			}
+			
+			public void execute(Event event) {
+			}
+			
+			public boolean isEnabled() {
+				return false;
+			}
+		};
+		
+		IHandler handlerB = new IHandler() {
+			public void execute() {
+			}
+			
+			public void execute(Event event) {
+			}
+			
+			public boolean isEnabled() {
+				return false;
+			}
+		};		
+		
+		final IMutableCommandHandlerService commandHandlerServiceA = CommandHandlerServiceFactory.getMutableCommandHandlerService();
+		commandHandlerServiceA.setHandlersByCommandId(new HashMap(Collections.singletonMap("command", handlerA)));
+
+		final IMutableCommandHandlerService commandHandlerServiceB = CommandHandlerServiceFactory.getMutableCommandHandlerService();
+		commandHandlerServiceB.setHandlersByCommandId(new HashMap(Collections.singletonMap("command", handlerB)));				
+				
+		menu.add(new Separator());
+		
+		menu.add(new Action("Add handler A to the workbench") {
+			public void run() {
+				IWorkbench workbench = PlatformUI.getWorkbench();
+				IWorkbenchCommandSupport workbenchCommandSupport = (IWorkbenchCommandSupport) workbench.getCommandSupport();
+				workbenchCommandSupport.getCompoundCommandHandlerService().addCommandHandlerService(commandHandlerServiceA);
+			}
+		});
+
+		menu.add(new Action("Remove handler A from the workbench") {
+			public void run() {
+				IWorkbench workbench = PlatformUI.getWorkbench();
+				IWorkbenchCommandSupport workbenchCommandSupport = (IWorkbenchCommandSupport) workbench.getCommandSupport();
+				workbenchCommandSupport.getCompoundCommandHandlerService().removeCommandHandlerService(commandHandlerServiceA);
+			}
+		});
+		
+		menu.add(new Action("Add handler B to the workbench") {
+			public void run() {
+				IWorkbench workbench = PlatformUI.getWorkbench();
+				IWorkbenchCommandSupport workbenchCommandSupport = (IWorkbenchCommandSupport) workbench.getCommandSupport();
+				workbenchCommandSupport.getCompoundCommandHandlerService().addCommandHandlerService(commandHandlerServiceB);
+			}
+		});
+
+		menu.add(new Action("Remove handler B from the workbench") {
+			public void run() {
+				IWorkbench workbench = PlatformUI.getWorkbench();
+				IWorkbenchCommandSupport workbenchCommandSupport = (IWorkbenchCommandSupport) workbench.getCommandSupport();
+				workbenchCommandSupport.getCompoundCommandHandlerService().removeCommandHandlerService(commandHandlerServiceB);
+			}
+		});
+
+		menu.add(new Separator());
+		
+		menu.add(new Action("Add handler A to the workbench page") {
+			public void run() {
+				IWorkbench workbench = PlatformUI.getWorkbench();
+				IWorkbenchWindow workbenchWindow = workbench.getActiveWorkbenchWindow();
+
+				if (workbenchWindow != null) {
+					IWorkbenchPage workbenchPage = workbenchWindow.getActivePage();
+					
+					if (workbenchPage != null) {					
+						IWorkbenchPageCommandSupport workbenchPageCommandSupport = (IWorkbenchPageCommandSupport) workbenchPage.getCommandSupport();
+						workbenchPageCommandSupport.getCompoundCommandHandlerService().addCommandHandlerService(commandHandlerServiceA);
+					}
+				}
+			}
+		});
+
+		menu.add(new Action("Remove handler A from the workbench page") {
+			public void run() {
+				IWorkbench workbench = PlatformUI.getWorkbench();
+				IWorkbenchWindow workbenchWindow = workbench.getActiveWorkbenchWindow();
+
+				if (workbenchWindow != null) {
+					IWorkbenchPage workbenchPage = workbenchWindow.getActivePage();
+					
+					if (workbenchPage != null) {					
+						IWorkbenchPageCommandSupport workbenchPageCommandSupport = (IWorkbenchPageCommandSupport) workbenchPage.getCommandSupport();
+						workbenchPageCommandSupport.getCompoundCommandHandlerService().removeCommandHandlerService(commandHandlerServiceA);
+					}
+				}
+			}
+		});
+		
+		menu.add(new Action("Add handler B to the workbench page") {
+			public void run() {
+				IWorkbench workbench = PlatformUI.getWorkbench();
+				IWorkbenchWindow workbenchWindow = workbench.getActiveWorkbenchWindow();
+
+				if (workbenchWindow != null) {
+					IWorkbenchPage workbenchPage = workbenchWindow.getActivePage();
+					
+					if (workbenchPage != null) {					
+						IWorkbenchPageCommandSupport workbenchPageCommandSupport = (IWorkbenchPageCommandSupport) workbenchPage.getCommandSupport();
+						workbenchPageCommandSupport.getCompoundCommandHandlerService().addCommandHandlerService(commandHandlerServiceB);
+					}
+				}
+			}
+		});
+
+		menu.add(new Action("Remove handler B from the workbench page") {
+			public void run() {
+				IWorkbench workbench = PlatformUI.getWorkbench();
+				IWorkbenchWindow workbenchWindow = workbench.getActiveWorkbenchWindow();
+
+				if (workbenchWindow != null) {
+					IWorkbenchPage workbenchPage = workbenchWindow.getActivePage();
+					
+					if (workbenchPage != null) {					
+						IWorkbenchPageCommandSupport workbenchPageCommandSupport = (IWorkbenchPageCommandSupport) workbenchPage.getCommandSupport();
+						workbenchPageCommandSupport.getCompoundCommandHandlerService().removeCommandHandlerService(commandHandlerServiceB);
+					}
+				}
+			}
+		});
+		*/
 		
 		return menu;
 	}
