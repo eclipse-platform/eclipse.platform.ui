@@ -116,7 +116,7 @@ public class WelcomeEditor extends EditorPart {
  */
 public WelcomeEditor() {
 	super();
-	setTitle(IDEWorkbenchMessages.getString("WelcomeEditor.title")); //$NON-NLS-1$
+	setPartName(IDEWorkbenchMessages.getString("WelcomeEditor.title")); //$NON-NLS-1$
 	copyAction = new WelcomeEditorCopyAction(this);
 	copyAction.setEnabled(false);	
 }

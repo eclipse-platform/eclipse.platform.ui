@@ -192,14 +192,14 @@ public class ViewPane extends PartPane implements IPropertyListener {
 			public void setSite(IWorkbenchPartSite site) {
 				super.setSite(site);
 			}
-			public void setTitle(String title) {
-				super.setTitle(title);
+			public void setPartName(String title) {
+				super.setPartName(title);
 			}
 		}
 		ErrorViewPart newPart = new ErrorViewPart();
 		PartSite site = (PartSite) oldPart.getSite();
 		newPart.setSite(site);
-		newPart.setTitle(site.getRegisteredName());
+		newPart.setPartName(site.getRegisteredName());
 		site.setPart(newPart);
 		return newPart;
 	}

@@ -1178,7 +1178,7 @@ public class ResourceNavigator
 		if (input == null
 			|| input.equals(workspace)
 			|| input.equals(workspace.getRoot())) {
-			setTitle(viewName);
+			setContentDescription(""); //$NON-NLS-1$
 			if (workingSet != null) {
 				setTitleToolTip(ResourceNavigatorMessages.format(
 					"ResourceNavigator.workingSetToolTip", //$NON-NLS-1$
@@ -1191,10 +1191,7 @@ public class ResourceNavigator
 		else {
 			ILabelProvider labelProvider = (ILabelProvider) getTreeViewer().getLabelProvider();
 			String inputToolTip = getFrameToolTipText(input);
-			
-			setTitle(ResourceNavigatorMessages.format(
-				"ResourceNavigator.title", //$NON-NLS-1$
-				new Object[] {viewName, labelProvider.getText(input)}));
+			setContentDescription(labelProvider.getText(input));
 			if (workingSet != null) {
 				setTitleToolTip(ResourceNavigatorMessages.format(
 					"ResourceNavigator.workingSetInputToolTip", //$NON-NLS-1$

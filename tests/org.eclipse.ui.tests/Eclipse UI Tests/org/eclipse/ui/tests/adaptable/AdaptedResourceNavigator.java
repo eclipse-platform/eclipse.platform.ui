@@ -516,15 +516,12 @@ public class AdaptedResourceNavigator
 		if (input == null
 			|| input.equals(workspace)
 			|| input.equals(workspace.getRoot())) {
-			setTitle(viewName);
+			setContentDescription(""); //$NON-NLS-1$
 			setTitleToolTip(""); //$NON-NLS-1$
 		} else {
 			ILabelProvider labelProvider =
 				(ILabelProvider) getViewer().getLabelProvider();
-			setTitle(
-				ResourceNavigatorMessages.format(
-					"ResourceNavigator.title",
-					new Object[] { viewName, labelProvider.getText(input)}));
+			setContentDescription(labelProvider.getText(input));
 			//$NON-NLS-1$
 			setTitleToolTip(getToolTipText(input));
 		}

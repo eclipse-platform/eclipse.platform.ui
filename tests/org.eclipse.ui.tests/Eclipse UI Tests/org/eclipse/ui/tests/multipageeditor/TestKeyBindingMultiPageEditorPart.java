@@ -105,7 +105,7 @@ public final class TestKeyBindingMultiPageEditorPart extends EditorPart {
             throws PartInitException {
         setInput(input);
         setSite(site);
-        setTitle("Editor"); //$NON-NLS-1$
+        setPartName("Editor"); //$NON-NLS-1$
         setTitleImage(input.getImageDescriptor().createImage());
         setTitleToolTip("Moooooo"); //$NON-NLS-1$
     }

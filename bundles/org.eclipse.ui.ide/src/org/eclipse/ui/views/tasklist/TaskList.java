@@ -1607,16 +1607,10 @@ public class TaskList extends ViewPart {
 	 * Updates the title of the view.  Should be called when filters change.
 	 */
 	void updateTitle() {
-		String viewName = getConfigurationElement().getAttribute("name"); //$NON-NLS-1$
 		TaskListContentProvider provider =
 			(TaskListContentProvider) getTableViewer().getContentProvider();
 		String summary = provider.getTitleSummary();
-		if ("".equals(summary)) { //$NON-NLS-1$
-			setTitle(viewName);
-		} else {
-			String title = TaskListMessages.format("TaskList.title", new Object[] { viewName, summary }); //$NON-NLS-1$
-			setTitle(title);
-		}
+		setContentDescription(summary);
 	}
 
 	/**

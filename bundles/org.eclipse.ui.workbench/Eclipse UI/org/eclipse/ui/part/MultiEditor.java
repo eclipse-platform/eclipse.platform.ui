@@ -107,7 +107,7 @@ public abstract class MultiEditor extends EditorPart {
 	public void init(IEditorSite site, MultiEditorInput input) throws PartInitException {
 		setInput(input);
 		setSite(site);
-		setTitle(input.getName());
+		setPartName(input.getName());
 		setTitleToolTip(input.getToolTipText());
 	}
 	/*

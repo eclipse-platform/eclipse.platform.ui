@@ -597,10 +597,7 @@ public abstract class MarkerView extends TableView {
 		} else {
 			status = Messages.format("filter.matchedMessage", new Object[] { new Integer(filteredCount), new Integer(totalCount)}); //$NON-NLS-1$
 		}
-		String newTitle = Messages.format("view.title", new String[] { viewName, status }); //$NON-NLS-1$
-		if (!newTitle.equals(currentTitle)) {
-			setTitle(newTitle);
-		}
+		setContentDescription(status);
 	}
 	
 	/**
@@ -718,7 +715,16 @@ public abstract class MarkerView extends TableView {
 		return currentMarkers;
 	}
 	
+	/**
+	 * Returns the total number of markers. Should not be called while the marker
+	 * list is still updating.
+	 * 
+	 * @return the total number of markers in the workspace (including everything that doesn't pass the filters)
+	 */
 	int getTotalMarkers() {
+		// The number of visible markers should never exceed the total number of markers in
+		// the workspace. If this assertation fails, it probably indicates some sort of concurrency problem
+		// (most likely, getTotalMarkers was called while we were still computing the marker lists)
 		Assert.isTrue(totalMarkers >= currentMarkers.getItemCount());
 
 		return totalMarkers;
