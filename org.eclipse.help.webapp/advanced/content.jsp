@@ -51,8 +51,8 @@ function onloadHandler(e)
 	if(h<=19){
 		return; <%-- no need to resize up to 19px --%>
 	}
-	document.getElementById("contentFrameset").setAttribute("rows", <%=data.isIE()?"11":"14"%>+h+",*"); <%-- default 24, 27 for mozilla --%>
-	window.ContentToolbarFrame.document.getElementById("titleTextTableDiv").style.height=(<%=data.isIE()?"9":"11"%>+h)+"px"; <%-- default 22 --%>
+	document.getElementById("contentFrameset").setAttribute("rows", (11+h)+",*"); <%-- default 24 --%>
+	window.ContentToolbarFrame.document.getElementById("titleTextTableDiv").style.height=(9+h)+"px"; <%-- default 22 --%>
 <%}%>
 }
 </script>
