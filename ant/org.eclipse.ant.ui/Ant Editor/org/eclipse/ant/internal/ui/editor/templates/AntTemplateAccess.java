@@ -15,6 +15,8 @@ import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.templates.ContextTypeRegistry;
 import org.eclipse.jface.text.templates.persistence.TemplateStore;
+import org.eclipse.ui.editors.text.templates.ContributionContextTypeRegistry;
+import org.eclipse.ui.editors.text.templates.ContributionTemplateStore;
 
 
 public class AntTemplateAccess {
@@ -28,7 +30,7 @@ public class AntTemplateAccess {
 	private TemplateStore fStore;
 	
 	/** The context type registry. */
-	private ContextTypeRegistry fRegistry;
+	private ContributionContextTypeRegistry fRegistry;
 	
 	private AntTemplateAccess() {
 	}
@@ -52,7 +54,7 @@ public class AntTemplateAccess {
 	 */
 	public TemplateStore getTemplateStore() {
 		if (fStore == null) {
-			fStore= new TemplateStore(getContextTypeRegistry(),AntUIPlugin.getDefault().getPreferenceStore(), CUSTOM_TEMPLATES_KEY);
+			fStore= new ContributionTemplateStore(getContextTypeRegistry(),AntUIPlugin.getDefault().getPreferenceStore(), CUSTOM_TEMPLATES_KEY);
 			try {
 				fStore.load();
 			} catch (IOException e) {
@@ -70,7 +72,7 @@ public class AntTemplateAccess {
 	public ContextTypeRegistry getContextTypeRegistry() {
 		if (fRegistry == null) {
 			// create and configure the contexts available in the template editor
-			fRegistry= new ContextTypeRegistry();
+			fRegistry= new ContributionContextTypeRegistry();
 			fRegistry.addContextType(BuildFileContextType.BUILDFILE_CONTEXT_TYPE);
 			fRegistry.addContextType(TaskContextType.TASK_CONTEXT_TYPE);
 		}
