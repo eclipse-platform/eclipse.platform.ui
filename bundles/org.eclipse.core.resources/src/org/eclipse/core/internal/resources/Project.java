@@ -131,13 +131,25 @@ public void checkAccessible(int flags) throws CoreException {
 /**
  * Checks validity of the given project description.
  */
-protected void checkDescription(IProject project, IProjectDescription desc) throws CoreException {
-	if (desc.getLocation() == null)
+protected void checkDescription(IProject project, IProjectDescription desc, boolean moving) throws CoreException {
+	IPath location = desc.getLocation();
+	if (location == null)
 		return;
 	String message = Policy.bind("resources.invalidProjDesc");
 	MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INVALID_VALUE, message, null);
 	status.merge(workspace.validateName(desc.getName(), IResource.PROJECT));
-	status.merge(workspace.validateProjectLocation(project, desc.getLocation()));
+	if (moving) {
+		// if we got here from a move call then we should check the location in the description since
+		// its possible that we want to do a rename without moving the contents. (and we shouldn't
+		// throw an Overlapping mapping exception in this case) So if the source description's location
+		// is null (we are using the default) or if the locations aren't equal, then validate the location
+		// of the new description. Otherwise both locations aren't null and they are equal so ignore validation.
+		IProjectDescription sourceDesc = internalGetDescription();
+		if (sourceDesc.getLocation() == null || !locationsEqual(sourceDesc, desc))
+			status.merge(workspace.validateProjectLocation(project, location));
+	} else
+		// otherwise continue on like before
+		status.merge(workspace.validateProjectLocation(project, location));
 	if (!status.isOK())
 		throw new ResourceException(status);
 }
@@ -271,7 +283,7 @@ public void create(IProjectDescription description, IProgressMonitor monitor) th
 			ProjectInfo info = (ProjectInfo) getResourceInfo(false, false);
 			checkDoesNotExist();
 			if (description != null)
-				checkDescription(this, description);
+				checkDescription(this, description, false);
 
 			workspace.beginOperation(true);
 			workspace.createResource(this, false);
@@ -557,7 +569,7 @@ protected void internalCopy(IProjectDescription destDesc, boolean force, IProgre
 			// and assert for programming errors. See checkCopyRequirements for more information.
 			assertCopyRequirements(destPath, IResource.PROJECT);
 			Project destProject = (Project) workspace.getRoot().getProject(destName);
-			checkDescription(destProject, destDesc);
+			checkDescription(destProject, destDesc, false);
 			IProjectDescription sourceDesc = internalGetDescription();
 			workspace.changing(this);
 
@@ -686,7 +698,7 @@ protected void internalMove(IProjectDescription destDesc, boolean force, IProgre
 			// and assert for programming errors. See checkMoveRequirements for more information.
 			assertMoveRequirements(destPath, IResource.PROJECT);
 			Project destProject = (Project) workspace.getRoot().getProject(destName);
-			checkDescription(destProject, destDesc);
+			checkDescription(destProject, destDesc, true);
 			IProjectDescription sourceDesc = internalGetDescription();
 			workspace.changing(this);
 
@@ -739,8 +751,11 @@ protected void internalMove(IProjectDescription destDesc, boolean force, IProgre
 			// clear the builders for the destination project
 			info.setBuilders(null);
 
-			// delete the source
-			delete(true, force, Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
+			// delete the source. only delete content if we actually moved content
+			if (sourceDesc.getLocation() != null && locationsEqual(sourceDesc, destDesc))
+				delete(false, force, Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
+			else
+				delete(true, force, Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
 
 			// tell the marker manager that we moved so the marker deltas are ok
 			getMarkerManager().moved(this, destProject, IResource.DEPTH_ZERO);
@@ -769,7 +784,7 @@ protected void internalMoveContent(IProjectDescription destDesc, boolean force, 
 			IPath source = getLocation();
 			ResourceInfo info = getResourceInfo(false, false);
 			checkAccessible(getFlags(info));
-			checkDescription(this, destDesc);
+			checkDescription(this, destDesc, false);
 			IProjectDescription sourceDesc = internalGetDescription();
 			workspace.beginOperation(true);
 			int rollbackLevel = 0;
@@ -1088,7 +1103,7 @@ protected void internalChangeCase(IProjectDescription destDesc, boolean force, I
 			// and assert for programming errors. See checkMoveRequirements for more information.
 			assertMoveRequirements(destPath, IResource.PROJECT);
 			Project destProject = (Project) workspace.getRoot().getProject(destName);
-			checkDescription(destProject, destDesc);
+			checkDescription(destProject, destDesc, true);
 			IProjectDescription sourceDesc = internalGetDescription();
 			workspace.changing(this);
 
