@@ -19,6 +19,7 @@ import java.util.Set;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -133,7 +134,7 @@ public class TextSearchVisitor extends TypedResourceVisitor {
 				reader= new BufferedReader(new StringReader(s));
 			} else {
 				InputStream stream= file.getContents(false);
-				reader= new BufferedReader(new InputStreamReader(stream));
+				reader= new BufferedReader(new InputStreamReader(stream, ResourcesPlugin.getEncoding()));
 			}
 			StringBuffer sb= new StringBuffer(100);
 			int lineCounter= 1;
