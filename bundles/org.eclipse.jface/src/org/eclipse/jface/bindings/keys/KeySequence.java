@@ -232,6 +232,7 @@ public class KeySequence extends TriggerSequence implements Comparable {
 		final List prefixTriggers = new ArrayList();
 		final List prefixes = new ArrayList();
 		final int numberOfPrefixes = triggers.size() - 1;
+		prefixes.add(KeySequence.getInstance());
 		for (int i = 0; i < numberOfPrefixes; i++) {
 			prefixTriggers.add(triggers.get(i));
 			prefixes.add(KeySequence.getInstance(prefixTriggers));

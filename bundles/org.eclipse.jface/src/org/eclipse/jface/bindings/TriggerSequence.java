@@ -126,9 +126,8 @@ public abstract class TriggerSequence {
 	 * </p>
 	 * <p>
 	 * For example, consider a trigger sequence that consists of four triggers:
-	 * A, B, C and D. The prefixes would be "A", "A B", and "A B C". The list of
-	 * prefixes must always be one less than the size of the trigger list. If
-	 * there are no triggers, then the prefix list is empty as well.
+	 * A, B, C and D. The prefixes would be "", "A", "A B", and "A B C". The
+	 * list of prefixes must always be the same as the size of the trigger list.
 	 * </p>
 	 * 
 	 * @return The list of possible prefixes for this sequence. This list must
