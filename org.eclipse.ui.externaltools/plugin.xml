@@ -93,14 +93,14 @@
 
 	<extension point="org.eclipse.ui.views">
 		<category 
-			id="org.eclipse.ui.externaltools.views"
-			name="%CategoryView.externalTools">
+			id="org.eclipse.ui.externaltools.ant.views"
+			name="%CategoryView.antViews">
 		</category>
       <view
             id="org.eclipse.ui.externaltools.AntView"
             name="%View.antView"
             icon="icons/full/cview16/ant_view.gif"
-            category="org.eclipse.ui.externaltools.views"
+            category="org.eclipse.ui.externaltools.ant.views"
             fastViewWidthRatio="0.40"
             class="org.eclipse.ui.externaltools.internal.ant.view.AntView">
       </view>
