@@ -25,11 +25,6 @@ import org.eclipse.jface.text.Assert;
  */
 public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn implements IVerticalRulerInfo, IVerticalRulerInfoExtension, IChangeRulerColumn {
 	
-	/** Width of the triangle displayed for deleted lines. */
-	private final static int fTriangleWidth= 7;
-	/** The height of the triangle displayed for deleted lines. */
-	private final static int fTriangleHeight= 3;
-
 	/**
 	 * Internal listener class that will update the ruler when the underlying model changes.
 	 */
@@ -135,26 +130,6 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 				gc.fillRectangle(0, y, width, lineheight);
 			}
 
-			/* Deletion Indicator
-			 * It consists of a line across the column and a triangle as shown for a deleted
-			 * line below the line 50:
-			 * ('x' means its colored)
-			 * 
-			 * 1, 2, 3 show the points of the triangle painted.
-			 * 
-			 *      0				  width
-			 *		|					| 
-			 * 		---------------------        - y
-			 * 		|	 ---   --   	|
-			 * 		|	|	  |  |		1_
-			 * 		|	 --   |  |	   x|   ^
-			 * 		|	   |  |  |	 xxx|   |  fTriangleHeight / 2
-			 * 		|	---    --  xxxxx|   |
-			 * 		xxxxxxxxxxxx0xxxxxxx2_  v    _   y + lineheight
-			 * 					|		|
-			 * 					<------>
-			 * 					 fTriangleWidth	
-			 */
 			int delBefore= info.getRemovedLinesAbove();
 			int delBelow= info.getRemovedLinesBelow();
 			if (delBefore > 0 || delBelow > 0) {
@@ -162,26 +137,12 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 				gc.setBackground(deletionColor);
 				gc.setForeground(deletionColor);
 
-				int[] triangle= new int[6];
-				triangle[0]= width - fTriangleWidth;
-				triangle[1]= y;
-				triangle[2]= width;
-				triangle[3]= y - fTriangleHeight;
-				triangle[4]= width;
-				triangle[5]= y + fTriangleHeight;
-
 				if (delBefore > 0) {
 					gc.drawLine(0, y, width, y);
-					gc.fillPolygon(triangle);
 				}
 
 				if (delBelow > 0) {
-					triangle[1] += lineheight;
-					triangle[3] += lineheight;
-					triangle[5] += lineheight;
-
 					gc.drawLine(0, y + lineheight, width, y + lineheight);
-					gc.fillPolygon(triangle);
 				}
 				gc.setForeground(getForeground());
 			}
