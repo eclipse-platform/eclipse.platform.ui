@@ -115,7 +115,7 @@ abstract class Command implements ICommand {
 			
 			// This will automatically persist any changes that were made to the
 			// sync info while running a command.
-			Synchronizer.getInstance().save();
+			Synchronizer.getInstance().save(monitor);
 			
 			monitor.done();
 		}

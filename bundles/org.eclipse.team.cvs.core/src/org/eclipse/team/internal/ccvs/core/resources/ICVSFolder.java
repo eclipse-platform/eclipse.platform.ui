@@ -51,11 +51,6 @@ public interface ICVSFolder extends ICVSResource {
 	ICVSFile getFile(String name) throws CVSException;
 
 	/**
-	 * Answers if a child resource with the given name exists.
-	 */
-	boolean childExists(String path);
-	
-	/**
 	 * Return the child resource at the given path relative to
 	 * the receiver.
 	 */

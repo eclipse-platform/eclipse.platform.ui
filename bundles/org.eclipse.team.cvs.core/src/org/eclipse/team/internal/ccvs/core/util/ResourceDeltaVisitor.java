@@ -19,10 +19,11 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.core.Policy;
-import org.eclipse.team.ccvs.core.CVSTeamProvider;
 
 public abstract class ResourceDeltaVisitor implements IResourceDeltaVisitor {
 
@@ -85,13 +86,22 @@ public abstract class ResourceDeltaVisitor implements IResourceDeltaVisitor {
 				break;
 			case IResourceDelta.CHANGED :
 				if ((delta.getFlags() & IResourceDelta.MOVED_TO) > 0)
-					addAddition(project, project.getFile(delta.getMovedToPath()));
+					addAddition(project, getResourceFor(project, resource, delta.getMovedToPath()));
 				if ((delta.getFlags() & IResourceDelta.MOVED_FROM) > 0)
-					addRemoval(project, project.getFile(delta.getMovedFromPath()));
+					addRemoval(project, getResourceFor(project, resource, delta.getMovedFromPath()));
 				addChange(project, resource);
 				break;
 		}
 		return true;
+	}
+	
+	protected IResource getResourceFor(IProject container, IResource destination, IPath originating) {
+		switch(destination.getType()) {
+			case IResource.FILE : return container.getFile(originating); 			
+			case IResource.FOLDER: return container.getFolder(originating);
+			case IResource.PROJECT: return ResourcesPlugin.getWorkspace().getRoot().getProject(originating.toString());
+		}
+		return destination;
 	}
 	
 	private void addChange(IProject project, IResource resource) {

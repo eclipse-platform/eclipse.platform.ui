@@ -10,6 +10,7 @@ import java.io.FileFilter;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.commands.FileNameMatcher;
@@ -234,6 +235,6 @@ public class LocalFolder extends LocalResource implements ICVSFolder {
 	 * @see ICVSResource#unmanage()
 	 */
 	public void unmanage() throws CVSException {
-		Synchronizer.getInstance().deleteFolderSync(ioResource);
+		Synchronizer.getInstance().deleteFolderSync(ioResource, new NullProgressMonitor());
 	}
 }

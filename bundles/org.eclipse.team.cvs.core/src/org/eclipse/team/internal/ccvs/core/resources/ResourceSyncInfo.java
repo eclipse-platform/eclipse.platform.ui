@@ -310,16 +310,28 @@ public class ResourceSyncInfo {
 
 		EmptyTokenizer tokenizer = new EmptyTokenizer(entryLine,SEPERATOR);
 
-		name = tokenizer.nextToken();
-		setRevision(tokenizer.nextToken());
-		timeStamp = tokenizer.nextToken();
-		keywordMode = tokenizer.nextToken();
-		String tagEntry = tokenizer.nextToken();
-		
 		if(tokenizer.countTokens() != 5) {
 			throw new CVSException("Malformed entry line: " + entryLine);
 		}
 		
+		name = tokenizer.nextToken();
+		
+		if(name.length()==0) {
+			throw new CVSException("Malformed entry line, missing name: " + entryLine);
+		}
+		
+		String rev = tokenizer.nextToken();
+		
+		if(rev.length()==0 && !isDirectory()) {
+			throw new CVSException("Malformed entry line, missing revision: " + entryLine);
+		} else {
+			setRevision(rev);
+		}
+	
+		timeStamp = tokenizer.nextToken();
+		keywordMode = tokenizer.nextToken();
+		String tagEntry = tokenizer.nextToken();
+						
 		if(tagEntry.length()>0) {
 			tag = new CVSEntryLineTag(tagEntry);
 		} else {

@@ -315,7 +315,7 @@ public class RemoteFolderTreeBuilder {
 			Client.UPDATE,
 			new String[] {"-n"}, 
 			updateLocalOptions,
-			new String[] {path.removeFirstSegments(1).toString()}, 
+			new String[] {localPath.toString()}, 
 			remoteRoot,
 			monitor,
 			getPrintStream(),

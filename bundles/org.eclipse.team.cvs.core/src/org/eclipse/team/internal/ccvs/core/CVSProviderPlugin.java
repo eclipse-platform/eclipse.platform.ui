@@ -21,7 +21,6 @@ import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProvider;
 import org.eclipse.team.internal.ccvs.core.Policy;
-import org.eclipse.team.internal.ccvs.core.util.DirtyDeltaVisitor;
 import org.eclipse.team.internal.ccvs.core.util.ProjectDescriptionManager;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 
@@ -95,8 +94,6 @@ public class CVSProviderPlugin extends Plugin {
 	 */
 	public void startup() throws CoreException {
 		Policy.localize("org.eclipse.team.internal.ccvs.core.messages");
-		DirtyDeltaVisitor visitor = new DirtyDeltaVisitor();
-		visitor.register();
 		CVSProvider.initialize();
 	}
 	

@@ -35,6 +35,10 @@ public class SyncFileUtil {
 		if(!getCVSSubdirectory(parent).exists()) {
 			return new ResourceSyncInfo[0];
 		}
+		
+		// The Eclipse CVS client does not write to the Entries.log file. Thus
+		// merging is required for external command line client compatibility.
+		mergeEntriesLogFiles(parent);
 				
 		Map infos = new TreeMap();
 		String[] entries = getContents(parent, ENTRIES);
