@@ -10,11 +10,15 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.console;
 
+import java.io.IOException;
+
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.core.model.IStreamsProxy;
+import org.eclipse.debug.core.model.IStreamsProxy2;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.DebugUITools;
@@ -24,6 +28,10 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
@@ -55,6 +63,32 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
     private IPageBookViewPage fPage;
 
     private IConsoleView fView;
+    
+    private class EOFListener implements KeyListener {
+
+        /* (non-Javadoc)
+         * @see org.eclipse.swt.events.KeyListener#keyPressed(org.eclipse.swt.events.KeyEvent)
+         */
+        public void keyPressed(KeyEvent e) {
+            if (e.stateMask == SWT.CTRL && e.keyCode == 122) {
+                IStreamsProxy proxy = getProcess().getStreamsProxy();
+                if (proxy instanceof IStreamsProxy2) {
+                    IStreamsProxy2 proxy2 = (IStreamsProxy2) proxy;
+                    try {
+                        proxy2.closeInputStream();
+                    } catch (IOException e1) {
+                    }
+                }
+            }
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.swt.events.KeyListener#keyReleased(org.eclipse.swt.events.KeyEvent)
+         */
+        public void keyReleased(KeyEvent e) {
+        }
+        
+    }
 		
     /* (non-Javadoc)
      * @see org.eclipse.ui.console.IConsolePageParticipant#init(IPageBookViewPage, IConsole)
@@ -75,15 +109,19 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
         // contribute to toolbar
         IActionBars actionBars = fPage.getSite().getActionBars();
         configureToolBar(actionBars.getToolBarManager());
+        
+        // add key listener for EOF
+        // TODO: should be a command with key-binding 
+        ((StyledText)page.getControl()).addKeyListener(new EOFListener());
+        
     }
     
     /* (non-Javadoc)
      * @see org.eclipse.ui.console.IConsolePageParticipant#dispose()
      */
-    public void dispose() {        
+    public void dispose() {                
         fPage.getSite().getPage().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
 		DebugPlugin.getDefault().removeDebugEventListener(this);
-
 		if (fRemoveTerminated != null) {
 			fRemoveTerminated.dispose();
 			fRemoveTerminated = null;

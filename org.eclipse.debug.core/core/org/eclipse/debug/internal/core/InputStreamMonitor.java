@@ -44,6 +44,11 @@ public class InputStreamMonitor {
 	private Object fLock;
 	
 	/**
+	 * Wether the underlying output stream has been closed
+	 */
+	private boolean fClosed = false;
+	
+	/**
 	 * Creates an input stream monitor which writes
 	 * to system in via the given output stream.
 	 */
@@ -98,10 +103,12 @@ public class InputStreamMonitor {
 		while (fThread != null) {
 			writeNext();
 		}
-		try {
-			fStream.close();
-		} catch (IOException e) {
-			DebugPlugin.log(e);
+		if (!fClosed) {
+			try {
+			    fStream.close();
+			} catch (IOException e) {
+				DebugPlugin.log(e);
+			}
 		}
 	}
 	
@@ -109,7 +116,7 @@ public class InputStreamMonitor {
 	 * Write the text in the queue to the stream.
 	 */
 	protected void writeNext() {
-		while (!fQueue.isEmpty()) {
+		while (!fQueue.isEmpty() && !fClosed) {
 			String text = (String)fQueue.firstElement();
 			fQueue.removeElementAt(0);
 			try {
@@ -126,5 +133,19 @@ public class InputStreamMonitor {
 		} catch (InterruptedException e) {
 		}
 	}
+
+    /**
+     * Closes the output stream attached to the standard input stream of this
+     * monitor's process.
+     */
+    public void closeInputStream() throws IOException {
+        if (!fClosed) {
+            fClosed = true;
+            fStream.close();
+        } else {
+            throw new IOException();
+        }
+        
+    }
 }
 

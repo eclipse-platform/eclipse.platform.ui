@@ -15,13 +15,14 @@ import java.io.IOException;
 
 import org.eclipse.debug.core.model.IStreamMonitor;
 import org.eclipse.debug.core.model.IStreamsProxy;
+import org.eclipse.debug.core.model.IStreamsProxy2;
 
 /**
  * Standard implementation of a streams proxy for s 
  * StreamsProxy
  */
 
-public class StreamsProxy implements IStreamsProxy {
+public class StreamsProxy implements IStreamsProxy, IStreamsProxy2 {
 	/**
 	 * The monitor for the output stream (connected to standard out of the process)
 	 */
@@ -107,5 +108,17 @@ public class StreamsProxy implements IStreamsProxy {
 			throw new IOException();
 		}
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.core.model.IStreamsProxy2#closeInputStream()
+     */
+    public void closeInputStream() throws IOException {
+        if (!fClosed) {
+            fInputMonitor.closeInputStream();
+        } else {
+            throw new IOException();
+        }
+        
+    }
 
 }
