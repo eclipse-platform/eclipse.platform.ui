@@ -1,16 +1,21 @@
-/*
- * Created on May 22, 2003
- *
- * To change this generated comment go to 
- * Window>Preferences>Java>Code Generation>Code Template
- */
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.compare.tests;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+
 /**
- * @author weinand
+ * Test some non-UI areas of the compare plugin.
  */
 public class AllTests {
 
@@ -18,6 +23,7 @@ public class AllTests {
 		TestSuite suite= new TestSuite("Test for org.eclipse.compare.tests"); //$NON-NLS-1$
 		//$JUnit-BEGIN$
 		suite.addTestSuite(DocLineComparatorTest.class);
+		suite.addTestSuite(FilterTest.class);
 		//$JUnit-END$
 		return suite;
 	}
