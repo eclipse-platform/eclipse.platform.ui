@@ -11,6 +11,7 @@
 package org.eclipse.team.internal.ccvs.ui.operations;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 import org.eclipse.core.resources.*;
@@ -25,6 +26,7 @@ import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.ui.IWorkbenchPart;
 /**
@@ -369,12 +371,42 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 		return new File(project.getParent().getLocation().toFile(), project.getName());
 	}
 	
-	/**
-	 * @param project
-	 * @return
-	 */
 	private boolean promptToOverwrite(ICVSRemoteFolder remoteFolder, IProject project) {
-		return promptToOverwrite(Policy.bind("CheckoutOperation.confirmOverwrite"), getOverwritePromptMessage(remoteFolder, project)); //$NON-NLS-1$
+		// First, if the project exists in the workspace, prompt
+		if (project.exists()) {
+			if (!promptToOverwrite(
+					Policy.bind("CheckoutOperation.confirmOverwrite"),  //$NON-NLS-1$
+					Policy.bind("CheckoutOperation.thisResourceExists", project.getName(), getRemoteModuleName(remoteFolder)))) { //$NON-NLS-1$
+				return false;
+			}
+		}
+		// Even if the project exists, check the target location
+		IPath path = getTargetLocationFor(project);
+		File localLocation = null;
+		if (path == null) {
+			try {
+				// There is no custom location. However, still prompt
+				// if the project directory in the workspace directory 
+				// would be overwritten.
+				if (!project.exists() || project.getDescription().getLocation() != null) {
+					localLocation = getFileLocation(project);
+				}
+			} catch (CoreException e) {
+				CVSUIPlugin.log(e);
+			}
+		} else {
+			localLocation = path.toFile();
+		}
+		if (localLocation != null && localLocation.exists()) {
+			try {
+				return (promptToOverwrite(
+						Policy.bind("CheckoutOperation.confirmOverwrite"),  //$NON-NLS-1$
+						Policy.bind("CheckoutOperation.thisExternalFileExists", localLocation.getCanonicalPath(), getRemoteModuleName(remoteFolder)))); //$NON-NLS-1$
+			} catch (IOException e) {
+				CVSUIPlugin.log(CVSException.wrapException(e));
+			}
+		}
+		return true;
 	}
 
 	protected String getOverwritePromptMessage(ICVSRemoteFolder remoteFolder, IProject project) {
