@@ -200,10 +200,21 @@ public class CloseResourceAction extends WorkspaceAction implements IResourceCha
 	/**
 	 * The <code>CloseResourceAction</code> implementation of this
 	 * <code>SelectionListenerAction</code> method ensures that this action is
-	 * enabled only if all of the selected resources are projects.
+	 * enabled only if one of the selections is an open project.
 	 */
 	protected boolean updateSelection(IStructuredSelection s) {
-		return super.updateSelection(s) && selectionIsOfType(IProject.PROJECT);
+		// don't call super since we want to enable if open project is selected.
+		if (!selectionIsOfType(IResource.PROJECT))
+			return false;
+
+		Iterator resources = getSelectedResources().iterator();
+		while (resources.hasNext()) {
+			IProject currentResource = (IProject) resources.next();
+			if (currentResource.isOpen()) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	/**
