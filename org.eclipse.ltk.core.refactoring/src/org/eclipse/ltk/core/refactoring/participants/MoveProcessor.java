@@ -17,6 +17,10 @@ package org.eclipse.ltk.core.refactoring.participants;
  * For example, a Java type move processor also updates all references in Java
  * code to the type to be moved.
  * <p>
+ * This class should be subclassed by clients wishing to provide a special move
+ * processor.
+ * </p>
+ * <p>
  * The main purpose of this class is type safety for the generic move
  * refactoring
  * </p>

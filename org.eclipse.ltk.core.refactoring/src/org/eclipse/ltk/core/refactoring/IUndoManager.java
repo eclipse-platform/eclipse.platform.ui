@@ -18,8 +18,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * to add change objects to the undo stack and <code>performUndo</code> and <code>
  * performRedo</code> to undo or redo changes.
  * <p>
- * This interface is not intended to be implemented. Clients should use the  method 
- * {@link RefactoringCore#getUndoManager()} to access the refactoring undo manager.
+ * This interface is not intended to be implemented by clients. Clients should use the  
+ * method {@link RefactoringCore#getUndoManager()} to access the refactoring undo manager.
  * </p>
  * 
  * @since 3.0

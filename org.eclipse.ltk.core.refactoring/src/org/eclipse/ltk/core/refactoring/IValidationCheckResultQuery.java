@@ -17,8 +17,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * returned a status unequal {@link org.eclipse.ltk.core.refactoring.RefactoringStatus#OK}
  * should be executed or not.
  * <p>
- * Clients should be aware that the <code>proceed</code> method can be called
- * from a non user interface thread.
+ * Clients should be aware that the methods defined by this interface can be
+ * called from a non UI thread.
+ * </p>
+ * <p>
+ * The interface may be implemented by clients.
  * </p>
  * 
  * @since 3.0

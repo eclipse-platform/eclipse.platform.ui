@@ -17,8 +17,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ltk.internal.core.refactoring.Assert;
 
 /**
- * Represents a generic change to the workbench. An <code>Change</code> object 
- * is typically created by calling <code>Refactoring.createChange()</code>.
+ * An abstract base implementation for object represents a generic change 
+ * to the workbench. A <code>Change</code> object is typically created by 
+ * calling <code>Refactoring.createChange()</code>. This class should be
+ * subclassed by clients wishing to provide new changes.
  * <p>
  * Changes are best executed by using a {@link PerformChangeOperation}. If clients
  * execute a change directly then the following life cycle has to be honored:
@@ -74,6 +76,9 @@ import org.eclipse.ltk.internal.core.refactoring.Assert;
  * implementors should be aware that not providing an undo object for a change 
  * object that is part of a larger change tree will result in the fact that for
  * the whole change tree no undo object will be present.    
+ * </p>
+ * <p>
+ * Clients may subclass this class.
  * </p>
  * 
  * @since 3.0
@@ -135,14 +140,14 @@ public abstract class Change implements IAdaptable {
 	 * 
 	 * @param parent the parent of this change or <code>null</code>
 	 */
-	public void setParent(Change parent) {
+	/* package */ void setParent(Change parent) {
 		if (parent != null)
 			Assert.isTrue(fParent == null);
 		fParent= parent;
 	}
 	
 	/**
-	 * Hook method to initialize some internal state to provide an adequat answer
+	 * Hook method to initialize some internal state to provide an adequate answer
 	 * for the <code>isValid</code> method. This method gets called after a change
 	 * or a whole change tree has been created. 
 	 * <p>

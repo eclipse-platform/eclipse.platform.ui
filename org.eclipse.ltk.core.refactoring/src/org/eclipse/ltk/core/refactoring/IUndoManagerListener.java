@@ -13,7 +13,9 @@ package org.eclipse.ltk.core.refactoring;
 
 /**
  * Listener to monitor state changes of an {@link IUndoManager}.
- * 
+ * <p>
+ * Clients may implement this interface to listen to undo manger changes.
+ * </p>
  * @since 3.0
  */
 public interface IUndoManagerListener {

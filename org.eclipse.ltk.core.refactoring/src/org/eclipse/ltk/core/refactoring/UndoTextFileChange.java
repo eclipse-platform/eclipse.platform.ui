@@ -37,7 +37,10 @@ import org.eclipse.ltk.internal.core.refactoring.ContentStamps;
  * This class is not intended to be instantiated by clients. It is
  * usually created by a <code>TextFileChange</code> object.
  * </p>
- * 
+ * <p>
+ * The class should be subclassed by clients also subclassing <code>
+ * TextFileChange</code> to provide a proper undo change object.
+ * </p>
  * @since 3.0
  */
 public class UndoTextFileChange extends Change {

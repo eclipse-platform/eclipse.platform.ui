@@ -15,7 +15,9 @@ import org.eclipse.ltk.internal.core.refactoring.Assert;
 /**
  * Copy arguments describe the data that a processor
  * provides to its copy participants.
- * 
+ * <p>
+ * This class is not intended to be subclassed by clients.
+ * </p>
  * @since 3.0
  */
 public class CopyArguments extends RefactoringArguments {

@@ -29,7 +29,10 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 /**
  * An abstract base implementation for refactorings that are split into
  * one refactoring processor and 0..n participants.
- * 
+ * <p>
+ * This class should be subclassed by clients wishing to provide a special
+ * refactoring which uses a processor/participant architecture.
+ * </p>
  * @since 3.0 
  */
 public abstract class ProcessorBasedRefactoring extends Refactoring {

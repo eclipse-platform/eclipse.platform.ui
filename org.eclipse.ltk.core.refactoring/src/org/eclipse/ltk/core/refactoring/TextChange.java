@@ -55,9 +55,8 @@ import org.eclipse.ltk.internal.core.refactoring.Changes;
  * preview allowing clients to map an original edit to an executed edit. The
  * executed edit can then be used to determine its position in the preview.
  * </p>
- * 
  * <p> 
- * Note: this class is not intented to be subclassed outside the refactoring
+ * Note: this class is not intended to be subclassed outside the refactoring
  * framework.
  * </p>
  * 

@@ -19,6 +19,9 @@ package org.eclipse.ltk.core.refactoring;
  * viewer can be registered via the extension point <code>
  * org.eclipse.ltk.ui.refactoring.statusContextViewers</code>. 
  * </p>
+ * <p>
+ * This class may be subclassed by clients.
+ * </p>
  * 
  * @since 3.0
  */

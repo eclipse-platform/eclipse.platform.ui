@@ -18,7 +18,7 @@ package org.eclipse.ltk.core.refactoring.participants;
  * <p>
  * Copy participants are registered via the extension point <code>
  * org.eclipse.ltk.core.refactoring.copyParticipants</code>. Extensions to
- * this extension point must therefore extend this abstract class
+ * this extension point must therefore extend this abstract class.
  * </p>
  * 
  * @since 3.0

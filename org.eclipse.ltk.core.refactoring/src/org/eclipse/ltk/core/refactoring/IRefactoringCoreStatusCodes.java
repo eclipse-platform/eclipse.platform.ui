@@ -13,7 +13,7 @@ package org.eclipse.ltk.core.refactoring;
 /**
  * Status codes used by the refactoring core plug-in.
  * <p>
- * This interface is not intended to be implemented by clients.
+ * Note: this interface is not intended to be implemented by clients.
  * </p>
  * 
  * @see org.eclipse.core.runtime.Status

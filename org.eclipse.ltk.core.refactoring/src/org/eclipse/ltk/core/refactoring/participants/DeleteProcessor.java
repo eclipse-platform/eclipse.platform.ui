@@ -17,6 +17,10 @@ package org.eclipse.ltk.core.refactoring.participants;
  * operation. For example, a Java delete processor could also delete additional
  * Java elements which refer to the elements to be deleted.
  * <p>
+ * This class should be subclassed by clients wishing to provide a special delete
+ * processor.
+ * </p>
+ * <p>
  * The main purpose of this class is type safety for the generic delete
  * refactoring
  * </p>

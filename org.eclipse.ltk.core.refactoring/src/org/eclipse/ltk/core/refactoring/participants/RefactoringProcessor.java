@@ -42,6 +42,10 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
  * any methods are called on it. Therefore a processor must be able to deal with
  * unsaved resources.
  * </p>
+ * <p>
+ * This class should be subclassed by clients wishing to provide special refactoring 
+ * processor.
+ * </p>
  * 
  * @since 3.0
  */

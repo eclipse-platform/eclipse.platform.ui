@@ -40,6 +40,10 @@ import org.eclipse.ltk.internal.core.refactoring.ParticipantDescriptor;
  * methods are called on it. Therefore a participant must be able to deal with unsaved
  * resources.
  * </p>
+ * <p>
+ * This class should be subclassed by clients wishing to provide special refactoring 
+ * participants extension points.
+ * </p>
  * 
  * @see org.eclipse.ltk.core.refactoring.participants.RefactoringProcessor
  * 

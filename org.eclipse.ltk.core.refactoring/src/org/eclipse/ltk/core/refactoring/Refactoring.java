@@ -52,6 +52,9 @@ import org.eclipse.core.runtime.SubProgressMonitor;
  * are called on it. Therefore a refactoring must be able to deal with unsaved
  * resources.
  * </p>
+ * <p>
+ * The class should be subclassed by clients wishing to implement new refactorings. 
+ * </p>
  * 
  * @since 3.0
  */

@@ -31,7 +31,10 @@ import org.eclipse.ltk.internal.core.refactoring.ContentStamps;
 
 /**
  * A special {@link TextChange} that operates on a <code>IFile</code>.
- * 
+ * <p>
+ * The class should be subclassed by clients which need to perform 
+ * special operation when acquiring or releasing a document. 
+ * </p>
  * @since 3.0 
  */
 public class TextFileChange extends TextChange {

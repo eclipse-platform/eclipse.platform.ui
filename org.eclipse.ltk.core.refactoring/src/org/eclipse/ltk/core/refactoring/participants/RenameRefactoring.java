@@ -15,6 +15,9 @@ import org.eclipse.ltk.internal.core.refactoring.Assert;
 /**
  * A generic rename refactoring. The actual refactoring is done
  * by the rename processor passed to the constructor.
+ * <p>
+ * This class is not intended to be subclassed by clients.
+ * </p>
  * 
  * @since 3.0
  */

@@ -13,7 +13,9 @@ package org.eclipse.ltk.core.refactoring;
 /**
  * This adapter class provides default implementations for the
  * methods described by the {@link IUndoManagerListener} interface.
- * 
+ * <p>
+ * This class may be subclassed by clients.
+ * </p>
  * @since 3.0
  */
 public class UndoManagerAdapter implements IUndoManagerListener {

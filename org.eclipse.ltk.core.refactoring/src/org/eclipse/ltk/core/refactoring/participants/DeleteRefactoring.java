@@ -15,7 +15,9 @@ import org.eclipse.ltk.internal.core.refactoring.Assert;
 /**
  * A generic delete refactoring. The actual refactoring is done
  * by the delete processor passed to the constructor.
- * 
+ * <p>
+ * This class is not intended to be subclassed by clients.
+ * </p>
  * @since 3.0
  */
 public class DeleteRefactoring extends ProcessorBasedRefactoring {

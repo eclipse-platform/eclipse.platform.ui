@@ -31,6 +31,9 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
  * refactoring preview tree. When rendering the change tree the children 
  * of a synthetic composite change will be shown as children of the
  * parent change.
+ * <p>
+ * Clients may subclass this class.
+ * </p>
  * 
  * @see Change
  * 

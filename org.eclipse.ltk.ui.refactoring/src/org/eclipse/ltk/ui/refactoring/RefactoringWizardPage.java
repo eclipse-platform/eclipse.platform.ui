@@ -26,7 +26,7 @@ import org.eclipse.ltk.core.refactoring.Refactoring;
  * Adding them to a normal {@linkplain org.eclipse.jface.wizard.Wizard wizard}
  * result in an exception.
  * <p> 
- * Note: this class is not intended to be extended by clients. Clients should
+ * Note: this class is not intended to be subclassed by clients. Clients should
  * extend {@link org.eclipse.ltk.ui.refactoring.UserInputWizardPage}.
  * </p>
  * 

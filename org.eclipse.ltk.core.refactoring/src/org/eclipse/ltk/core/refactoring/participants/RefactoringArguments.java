@@ -18,6 +18,10 @@ package org.eclipse.ltk.core.refactoring.participants;
  * in signatures. This helps to distinguish between the element to
  * be refactored and the arguments needed to carry out the refactoring.
  * </p>
+ * <p>
+ * This class should be subclassed by clients wishing to provide special
+ * refactoring arguments for special participants.
+ * </p>
  * 
  * @since 3.0
  */

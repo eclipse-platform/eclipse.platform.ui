@@ -15,6 +15,9 @@ import org.eclipse.ltk.internal.core.refactoring.Assert;
 /**
  * Rename arguments describe the data that a processor
  * provides to its rename participants.
+ * <p>
+ * This class is not intended to be subclassed by clients.
+ * </p>
  * 
  * @since 3.0
  */

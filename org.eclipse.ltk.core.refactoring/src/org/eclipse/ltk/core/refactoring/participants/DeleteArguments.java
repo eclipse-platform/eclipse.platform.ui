@@ -13,6 +13,9 @@ package org.eclipse.ltk.core.refactoring.participants;
 /**
  * Delete arguments describes the data that a processor provides 
  * to its delete participants.
+ * <p>
+ * This class is not intended to be subclassed by clients.
+ * </p>
  *  
  * @since 3.0
  */

@@ -18,6 +18,10 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 /**
  * A condition checker can be used to share condition checks
  * across the main processor and all its associated participants.
+ * <p>
+ * This interface should be implemented by clients wishing to provide a
+ * special refactoring processor with special shared condition checks. 
+ * </p>
  * 
  * @see org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext
  * 
