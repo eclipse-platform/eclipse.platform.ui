@@ -18,11 +18,10 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.BooleanFieldEditor;
-import org.eclipse.jface.resource.JFaceResources;
 
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
+import org.eclipse.ui.preferences.ViewSettingsDialog;
 
 import org.eclipse.ui.internal.util.PrefUtil;
 
@@ -30,11 +29,10 @@ import org.eclipse.ui.internal.util.PrefUtil;
  * The JobsViewPreferenceDialog is the dialog that
  * allows the user to set the preferences.
  */
-public class JobsViewPreferenceDialog extends Dialog {
+public class JobsViewPreferenceDialog extends ViewSettingsDialog {
 
 	BooleanFieldEditor verboseEditor;
-	
-	private static int DEFAULTS_BUTTON_ID = 25;
+
 
 	/**
 	 * Create a new instance of the receiver.
@@ -81,48 +79,15 @@ public class JobsViewPreferenceDialog extends Dialog {
 		verboseEditor.store();
 		super.okPressed();
 	}
+
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#buttonPressed(int)
+	 * @see org.eclipse.ui.internal.preferences.ViewSettingsDialog#performDefaults()
 	 */
-	protected void buttonPressed(int buttonId) {
-		if(buttonId == DEFAULTS_BUTTON_ID)
-			performDefaults();
-		super.buttonPressed(buttonId);
-	}
-	
-	 /**
-     * Performs special processing when this dialog Defaults button has been pressed.
-     * <p>
-     * This is a framework hook method for subclasses to do special things when
-     * the Defaults button has been pressed.
-     * Subclasses may override, but should call <code>super.performDefaults</code>.
-     * </p>
-     */
-	private void performDefaults() {
+	protected void performDefaults() {
 		verboseEditor.loadDefault();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
-	 */
-	protected void createButtonsForButtonBar(Composite parent) {
-		parent.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-		createButton(parent, DEFAULTS_BUTTON_ID,
-				JFaceResources.getString("defaults"), false); //$NON-NLS-1$
-		
-		Label l = new Label(parent, SWT.NONE);
-		l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-		l = new Label(parent, SWT.NONE);
-		l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-		GridLayout layout = (GridLayout) parent.getLayout();
-		layout.numColumns += 2;
-		layout.makeColumnsEqualWidth = false;
-
-		super.createButtonsForButtonBar(parent);
-	}
+	
 
 }
