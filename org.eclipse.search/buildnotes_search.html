@@ -1,177 +1,189 @@
 <!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en">
 <html>
 <head>
-                
+                    
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-                
+                    
   <meta name="GENERATOR" content="Mozilla/4.75 [en] (WinNT; U) [Netscape]">
-                
+                    
   <meta name="Author" content="IBM">
   <title>Eclipse Platform Release Notes - Search</title>
 </head>
   <body>
-        
-<h1> Eclipse Platform Build Notes<br>
-    Search</h1>
-     Eclipse Integration Build 20020129 
-<h1>   </h1>
- 
-<h2>What's new in this drop</h2>
- 
-<ul>
-   <li>A new attribute called <i>showScopeSection</i> has been added to the 
-markup language for Search pages. If this attribute is missing or set to 
-   <tt>false</tt> then the scope section is not shown in the Search dialog. 
-To see the scope section this attribute has to be set to <tt>true</tt>. Plug-ins 
-which add their own Search page and want to see the scope section will have 
-to add the new attribute to their plugin.xml</li>
- 
-</ul>
- 
-<h3> API changes</h3>
- 
-<ul>
-   <li>Activation of the Search view has been moved from the dialog to the
- individual Search page. Plug-ins which want the Search page to appear when
- Search is invoked have to call <tt>SearchUI.activateSearchResultView()</tt><br>
-   </li>
- 
-</ul>
- 
-<h3> API additions</h3>
- 
-<h3> Other highlights</h3>
- 
-<h2> Known deficiencies</h2>
- 
-<h2> Problem reports fixed</h2>
- <a href="http://dev.eclipse.org/bugs/show_bug.cgi?id=7918">7918</a>
-    Missing busy cursor in search dialog when flipping pages<br>
- <a href="http://dev.eclipse.org/bugs/show_bug.cgi?id=7919">7919</a>
-     Search: scope section doesn't apply to Help search<br>
- <a href="http://dev.eclipse.org/bugs/show_bug.cgi?id=8024">8024</a>
-     SearchResultsView opens without calling SearchUI.activateSearchView<br>
- <a href="http://dev.eclipse.org/bugs/show_bug.cgi?id=8025">8025</a>
-     Scope section added to ISearchPage<br>
- 
-<h2> Problem reports closed</h2>
-<a href="http://dev.eclipse.org/bugs/show_bug.cgi?id=8456">8456</a>
-     Widget is disposed error in Search<br>
-<br>
- <br>
- 
-<hr size="1" width="100%"><br>
- <br>
- 
-<h1> Eclipse Platform Build Notes<br>
-    Search</h1>
-    Eclipse Integration Build 20020122    
+<h1>Eclipse Platform Build Notes<br>
+     Search</h1>
+     Eclipse Integration Build 20002xyy     
 <h2> What's new in this drop</h2>
-     
 <h3> API changes</h3>
-     
 <h3> API additions</h3>
-     
 <h3> Other highlights</h3>
-       
 <h2> Known deficiencies</h2>
-     
 <h2> Problem reports fixed</h2>
-   <a href="http://dev.eclipse.org/bugs/show_bug.cgi?id=7813">7813</a>
-    NPE in SearchPageDescriptor.readExtensionScorePairs/StringTo<br>
+<a href="http://dev.eclipse.org/bugs/show_bug.cgi?id=8611">8611</a>
+      NPE in text search with Compare to a Version editor open<br>
+<h2> Problem reports closed</h2>
+<hr size="1" width="100%"><br>
+<br>
+          
+<h1> Eclipse Platform Build Notes<br>
+     Search</h1>
+      Eclipse Integration Build 20020129  
+<h1>   </h1>
+   
+<h2>What's new in this drop</h2>
+   
+<ul>
+    <li>A new attribute called <i>showScopeSection</i> has been added to
+the  markup language for Search pages. If this attribute is missing or set
+to     <tt>false</tt> then the scope section is not shown in the Search dialog.
+ To see the scope section this attribute has to be set to <tt>true</tt>.
+Plug-ins  which add their own Search page and want to see the scope section
+will have  to add the new attribute to their plugin.xml</li>
+   
+</ul>
+   
+<h3> API changes</h3>
+   
+<ul>
+    <li>Activation of the Search view has been moved from the dialog to the 
+ individual Search page. Plug-ins which want the Search page to appear when 
+ Search is invoked have to call <tt>SearchUI.activateSearchResultView()</tt><br>
+    </li>
+   
+</ul>
+   
+<h3> API additions</h3>
+   
+<h3> Other highlights</h3>
+   
+<h2> Known deficiencies</h2>
+   
+<h2> Problem reports fixed</h2>
+  <a href="http://dev.eclipse.org/bugs/show_bug.cgi?id=7918">7918</a>
+     Missing busy cursor in search dialog when flipping pages<br>
+  <a href="http://dev.eclipse.org/bugs/show_bug.cgi?id=7919">7919</a>
+      Search: scope section doesn't apply to Help search<br>
+  <a href="http://dev.eclipse.org/bugs/show_bug.cgi?id=8024">8024</a>
+      SearchResultsView opens without calling SearchUI.activateSearchView<br>
+  <a href="http://dev.eclipse.org/bugs/show_bug.cgi?id=8025">8025</a>
+      Scope section added to ISearchPage<br>
    
 <h2> Problem reports closed</h2>
-  <a href="http://dev.eclipse.org/bugs/show_bug.cgi?id=4066">4066</a>
-   Default extension in text search is often wrong (1GHFMPL)<br>
-   <br>
-       
+ <a href="http://dev.eclipse.org/bugs/show_bug.cgi?id=8456">8456</a>
+      Widget is disposed error in Search<br>
+ <br>
+  <br>
+   
 <hr size="1" width="100%">   
-<h1> Eclipse Platform Build Notes<br>
-    Search</h1>
-    Eclipse Integration Build 20011218    
+<h1>Eclipse Platform Build Notes<br>
+     Search</h1>
+     Eclipse Integration Build 20020122     
 <h2> What's new in this drop</h2>
-        
+       
 <h3> API changes</h3>
-        
+       
 <h3> API additions</h3>
-        
+       
 <h3> Other highlights</h3>
-    APIs added for 2.0 are now flagged with <b>@since 2.0</b>.    
+         
 <h2> Known deficiencies</h2>
-        
+       
 <h2> Problem reports fixed</h2>
-    <a href="http://dev.eclipse.org/bugs/show_bug.cgi?id=6836">6836</a>
-    Working Sets Dialog: Mnemonics, issues    
-<p> </p>
+    <a href="http://dev.eclipse.org/bugs/show_bug.cgi?id=7813">7813</a>
+     NPE in SearchPageDescriptor.readExtensionScorePairs/StringTo<br>
      
+<h2> Problem reports closed</h2>
+   <a href="http://dev.eclipse.org/bugs/show_bug.cgi?id=4066">4066</a>
+    Default extension in text search is often wrong (1GHFMPL)<br>
+    <br>
+         
 <hr size="1" width="100%">    
 <h1> Eclipse Platform Build Notes<br>
-    Search</h1>
-    Eclipse Integration Build 20011211    
+     Search</h1>
+     Eclipse Integration Build 20011218     
 <h2> What's new in this drop</h2>
-        
+          
 <h3> API changes</h3>
-        
+          
 <h3> API additions</h3>
-        
+          
 <h3> Other highlights</h3>
-        
+     APIs added for 2.0 are now flagged with <b>@since 2.0</b>.     
 <h2> Known deficiencies</h2>
-        
+          
 <h2> Problem reports fixed</h2>
-    <a href="http://dev.eclipse.org/bugs/show_bug.cgi?id=5868">5868</a>
-    Define working set does too much work in the UI thread <br>
-   <a href="http://dev.eclipse.org/bugs/show_bug.cgi?id=5620">5620</a>
-    Search: control keys for navigating the list of search results    
+     <a href="http://dev.eclipse.org/bugs/show_bug.cgi?id=6836">6836</a>
+     Working Sets Dialog: Mnemonics, issues     
 <p> </p>
-     
-<hr size="1" width="100%">    
+       
+<hr size="1" width="100%">     
 <h1> Eclipse Platform Build Notes<br>
-    Search</h1>
-    Eclipse Integration Build 20011206    
+     Search</h1>
+     Eclipse Integration Build 20011211     
 <h2> What's new in this drop</h2>
-        
+          
 <h3> API changes</h3>
-        
+          
 <h3> API additions</h3>
-        
+          
 <h3> Other highlights</h3>
-        
+          
 <h2> Known deficiencies</h2>
-        
+          
 <h2> Problem reports fixed</h2>
-    <a href="http://dev.eclipse.org/bugs/show_bug.cgi?id=6119">6119</a>
-    cannot delete a working set <br>
-   <a href="http://dev.eclipse.org/bugs/show_bug.cgi?id=6264">6264</a>
-    Search results don't have initial selection    
+     <a href="http://dev.eclipse.org/bugs/show_bug.cgi?id=5868">5868</a>
+     Define working set does too much work in the UI thread <br>
+    <a href="http://dev.eclipse.org/bugs/show_bug.cgi?id=5620">5620</a>
+     Search: control keys for navigating the list of search results     
 <p> </p>
-     
-<hr size="1" width="100%">    
+       
+<hr size="1" width="100%">     
 <h1> Eclipse Platform Build Notes<br>
-    Search</h1>
-    Eclipse Integration Build 20011204    
+     Search</h1>
+     Eclipse Integration Build 20011206     
 <h2> What's new in this drop</h2>
-        
+          
 <h3> API changes</h3>
-        
+          
 <h3> API additions</h3>
-        
+          
 <h3> Other highlights</h3>
-        
+          
 <h2> Known deficiencies</h2>
-        
+          
 <h2> Problem reports fixed</h2>
-    <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=3954">3954</a>
-    Search dialog does not need parentheses around label (1GF86BN) <br>
-   <a href="http://dev.eclipse.org/bugs/show_bug.cgi?id=6435">6435</a>
-    Search again should move search to top of MRU list    
+     <a href="http://dev.eclipse.org/bugs/show_bug.cgi?id=6119">6119</a>
+     cannot delete a working set <br>
+    <a href="http://dev.eclipse.org/bugs/show_bug.cgi?id=6264">6264</a>
+     Search results don't have initial selection     
 <p> </p>
-     
-<hr size="1" width="100%">    
+       
+<hr size="1" width="100%">     
 <h1> Eclipse Platform Build Notes<br>
-    Search</h1>
-    Note: Previous build notes have been included in <i>Eclipse Platform
+     Search</h1>
+     Eclipse Integration Build 20011204     
+<h2> What's new in this drop</h2>
+          
+<h3> API changes</h3>
+          
+<h3> API additions</h3>
+          
+<h3> Other highlights</h3>
+          
+<h2> Known deficiencies</h2>
+          
+<h2> Problem reports fixed</h2>
+     <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=3954">3954</a>
+     Search dialog does not need parentheses around label (1GF86BN) <br>
+    <a href="http://dev.eclipse.org/bugs/show_bug.cgi?id=6435">6435</a>
+     Search again should move search to top of MRU list     
+<p> </p>
+       
+<hr size="1" width="100%">     
+<h1> Eclipse Platform Build Notes<br>
+     Search</h1>
+     Note: Previous build notes have been included in <i>Eclipse Platform 
 Build   Notes - Java Development Tooling UI.</i> <br>
-   &nbsp;    
+    &nbsp;     
 </body>
 </html>
