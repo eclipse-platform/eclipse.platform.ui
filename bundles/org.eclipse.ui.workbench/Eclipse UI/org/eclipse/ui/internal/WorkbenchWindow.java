@@ -696,6 +696,8 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	    // and the perspective switcher, and supports some configurations
 	    // on the left right and bottom
 		topBar = new CBanner(shell, SWT.NONE);
+		//TODO: temporary remove this and listen on the property
+	    topBar.setSimple(false);
 	    
 		CacheWrapper coolbarCacheWrapper = new CacheWrapper(topBar);
 		
