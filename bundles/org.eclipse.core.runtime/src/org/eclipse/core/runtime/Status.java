@@ -1,9 +1,14 @@
+/**********************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.core.runtime;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import org.eclipse.core.internal.runtime.Assert;
 
@@ -167,25 +172,25 @@ protected void setSeverity(int severity) {
  */
 public String toString() {
 	StringBuffer buf = new StringBuffer();
-	buf.append("Status ");
+	buf.append("Status "); //$NON-NLS-1$
 	if (severity == OK) {
-		buf.append("OK");
+		buf.append("OK"); //$NON-NLS-1$
 	} else if (severity == ERROR) {
-		buf.append("ERROR");
+		buf.append("ERROR"); //$NON-NLS-1$
 	} else if (severity == WARNING) {
-		buf.append("WARNING");
+		buf.append("WARNING"); //$NON-NLS-1$
 	} else if (severity == INFO) {
-		buf.append("INFO");
+		buf.append("INFO"); //$NON-NLS-1$
 	} else {
-		buf.append("severity=");
+		buf.append("severity="); //$NON-NLS-1$
 		buf.append(severity);
 	}
 	buf.append(pluginId);
-	buf.append(" code=");
+	buf.append(" code="); //$NON-NLS-1$
 	buf.append(code);
-	buf.append(" ");
+	buf.append(' ');
 	buf.append(message);
-	buf.append(" ");
+	buf.append(' ');
 	buf.append(exception);
 	return buf.toString();
 }

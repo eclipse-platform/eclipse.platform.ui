@@ -69,7 +69,7 @@ public static URL appendTrailingSlash(URL url){
 	try {
 		return new URL(url.getProtocol(), url.getHost(), url.getPort(), file + "/"); //$NON-NLS-1$
 	} catch(MalformedURLException e){
-		Assert.isTrue(false, "internal error");
+		Assert.isTrue(false, "internal error"); //$NON-NLS-1$
 	}
 	return null;
 }
@@ -96,7 +96,7 @@ public static URL getChild(URL parent, String member){
 	try {
 		return new URL(parent.getProtocol(), parent.getHost(), parent.getPort(), file + member);
 	} catch(MalformedURLException e){
-		Assert.isTrue(false, "internal error");
+		Assert.isTrue(false, "internal error"); //$NON-NLS-1$
 	}
 	return null;
 }
@@ -335,7 +335,7 @@ public static URL getRoot(URL url) {
 	try {
 		return new URL(url.getProtocol(), url.getHost(), url.getPort(), "/"); //$NON-NLS-1$
 	} catch(MalformedURLException e){
-		Assert.isTrue(false, "internal error");
+		Assert.isTrue(false, "internal error"); //$NON-NLS-1$
 	}
 
 	return null;

@@ -1,9 +1,15 @@
+/**********************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.core.runtime;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 import org.eclipse.core.internal.runtime.Assert;
 import java.util.*;
 import java.io.File;
@@ -46,13 +52,13 @@ public class Path implements IPath, Cloneable {
 	private static final String[] NO_SEGMENTS = new String[0];
 
 	/** Constant root path string (<code>"/"</code>). */
-	private static final String ROOT_STRING = "/";
+	private static final String ROOT_STRING = "/"; //$NON-NLS-1$
 
 	/** Constant value containing the root path with no device. */
 	public static final Path ROOT = new Path(ROOT_STRING);
 
 	/** Constant empty string value. */
-	private static final String EMPTY_STRING = "";
+	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
 	/** Constant value containing the empty path with no device. */
 	public static final Path EMPTY = new Path(EMPTY_STRING);
@@ -116,7 +122,7 @@ public IPath addFileExtension(String extension) {
 	int len = segments.length;
 	String[] newSegments = new String[len];
 	System.arraycopy(segments, 0, newSegments, 0, len-1);
-	newSegments[len-1] = segments[len-1] + "." + extension;
+	newSegments[len-1] = segments[len-1] + "." + extension; //$NON-NLS-1$
 	return new Path(device, newSegments, separators);
 }
 /* (Intentionally not included in javadoc)
@@ -137,14 +143,14 @@ public IPath addTrailingSeparator() {
  */
 public IPath append(String tail) {
 	//optimize addition of a single segment
-	if (tail.indexOf(SEPARATOR) == -1 && tail.indexOf("\\") == -1) {
+	if (tail.indexOf(SEPARATOR) == -1 && tail.indexOf("\\") == -1) { //$NON-NLS-1$
 		int tailLength = tail.length();
 		if (tailLength < 3) {
 			//some special cases
-			if (tailLength == 0 || ".".equals(tail)) {
+			if (tailLength == 0 || ".".equals(tail)) { //$NON-NLS-1$
 				return this;
 			}
-			if ("..".equals(tail))
+			if ("..".equals(tail)) //$NON-NLS-1$
 				return removeLastSegments(1);
 		}
 		//just add the segment
@@ -186,7 +192,7 @@ public IPath append(IPath tail) {
 	Path result = new Path(device, newSegments, 
 		(separators & (HAS_LEADING | IS_UNC)) | (tail.hasTrailingSeparator() ? HAS_TRAILING : 0));
 	String tailFirstSegment = newSegments[myLen];
-	if (tailFirstSegment.equals("..") || tailFirstSegment.equals(".")) {
+	if (tailFirstSegment.equals("..") || tailFirstSegment.equals(".")) { //$NON-NLS-1$ //$NON-NLS-2$
 		result.canonicalize();
 	}
 	return result;
@@ -204,7 +210,7 @@ private boolean canonicalize() {
 	//look for segments that need canonicalizing
 	for (int i = 0, max = segments.length; i < max; i++) {
 		String segment = segments[i];
-		if (segment.charAt(0) == '.' && (segment.equals("..") || segment.equals("."))) {
+		if (segment.charAt(0) == '.' && (segment.equals("..") || segment.equals("."))) { //$NON-NLS-1$ //$NON-NLS-2$
 			//path needs to be canonicalized
 			collapseParentReferences();
 			//paths of length 0 have no trailing separator
@@ -236,7 +242,7 @@ private void collapseParentReferences() {
 	int stackPointer = 0;
 	for (int i = 0; i < segmentCount; i++) {
 		String segment = segments[i];
-		if (segment.equals("..")) {
+		if (segment.equals("..")) { //$NON-NLS-1$
 			if (stackPointer==0) {
 				// if the stack is empty we are going out of our scope 
 				// so we need to accumulate segments.  But only if the original
@@ -246,14 +252,14 @@ private void collapseParentReferences() {
 					stack[stackPointer++] = segment;//stack push
 			} else {
 				// if the top is '..' then we are accumulating segments so don't pop
-				if ("..".equals(stack[stackPointer-1]))
-					stack[stackPointer++] = "..";
+				if ("..".equals(stack[stackPointer-1])) //$NON-NLS-1$
+					stack[stackPointer++] = ".."; //$NON-NLS-1$
 				else
 					stackPointer--;//stack pop
 			}
 			//collapse current references
 		} else
-			if (!segment.equals(".") || (i == 0 && !isAbsolute()))
+			if (!segment.equals(".") || (i == 0 && !isAbsolute())) //$NON-NLS-1$
 				stack[stackPointer++] = segment;//stack push
 	}
 	//if the number of segments hasn't changed, then no modification needed
@@ -276,7 +282,7 @@ private String collapseSlashes(String path) {
 		return path;
 	// check for an occurence of // in the path.  Start at index 1 to ensure we skip leading UNC //
 	// If there are no // then there is nothing to collapse so just return.
-	if (path.indexOf("//", 1) == -1)
+	if (path.indexOf("//", 1) == -1) //$NON-NLS-1$
 		return path;
 	// We found an occurence of // in the path so do the slow collapse.
 	char[] result = new char[path.length()];
@@ -446,7 +452,7 @@ public String getFileExtension() {
 	if (lastSegment == null) {
 		return null;
 	}
-	int index = lastSegment.lastIndexOf(".");
+	int index = lastSegment.lastIndexOf("."); //$NON-NLS-1$
 	if (index == -1) {
 		return null;
 	}
@@ -570,7 +576,7 @@ public boolean isUNC() {
  */
 public boolean isValidPath(String path) {
 	// We allow "//" at the beginning for UNC paths
-	if (path.indexOf("//") > 0) {
+	if (path.indexOf("//") > 0) { //$NON-NLS-1$
 		return false;
 	}
 	Path test = new Path(path);
@@ -619,7 +625,7 @@ public IPath makeAbsolute() {
 	//may need canonicalizing if it has leading ".." or "." segments
 	if (result.segmentCount() > 0) {
 		String first = result.segment(0);
-		if (first.equals("..") || first.equals(".")) {
+		if (first.equals("..") || first.equals(".")) { //$NON-NLS-1$ //$NON-NLS-2$
 			result.canonicalize();
 		}
 	}
@@ -672,7 +678,7 @@ public int matchingFirstSegments(IPath anotherPath) {
  */
 public IPath removeFileExtension() {
 	String extension = getFileExtension();
-	if (extension == null || extension.equals("")) {
+	if (extension == null || extension.equals("")) { //$NON-NLS-1$
 		return this;
 	}
 	String lastSegment = lastSegment();
@@ -748,7 +754,7 @@ public String[] segments() {
  */
 public IPath setDevice(String value) {
 	if (value != null) {
-		Assert.isTrue(value.indexOf(IPath.DEVICE_SEPARATOR) == (value.length() - 1), "Last character should be the device separator");
+		Assert.isTrue(value.indexOf(IPath.DEVICE_SEPARATOR) == (value.length() - 1), "Last character should be the device separator"); //$NON-NLS-1$
 	}
 	return new Path(value, segments, separators);
 }
@@ -841,7 +847,7 @@ public IPath uptoSegment(int count) {
 		return Path.EMPTY;
 	if (count >= segments.length)
 		return this;
-	Assert.isTrue(count > 0, "Invalid parameter to Path.uptoSegment");
+	Assert.isTrue(count > 0, "Invalid parameter to Path.uptoSegment"); //$NON-NLS-1$
 	String[] newSegments = new String[count];
 	System.arraycopy(segments, 0, newSegments, 0, count);
 	return new Path(device, newSegments, separators);

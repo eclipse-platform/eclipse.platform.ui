@@ -1,9 +1,14 @@
+/**********************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.core.runtime;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import java.io.PrintStream;
 import java.io.PrintWriter;
@@ -54,7 +59,7 @@ public void printStackTrace() {
 public void printStackTrace(PrintStream output) {
 	synchronized (output) {
 		if (status.getException() != null) {
-			output.print(getClass().getName() + "[" + status.getCode() + "]: ");
+			output.print(getClass().getName() + "[" + status.getCode() + "]: "); //$NON-NLS-1$ //$NON-NLS-2$
 			status.getException().printStackTrace(output);
 		} else
 			super.printStackTrace(output);
@@ -68,7 +73,7 @@ public void printStackTrace(PrintStream output) {
 public void printStackTrace(PrintWriter output) {
 	synchronized (output) {
 		if (status.getException() != null) {
-			output.print(getClass().getName() + "[" + status.getCode() + "]: ");
+			output.print(getClass().getName() + "[" + status.getCode() + "]: "); //$NON-NLS-1$ //$NON-NLS-2$
 			status.getException().printStackTrace(output);
 		} else
 			super.printStackTrace(output);

@@ -1,9 +1,14 @@
+/**********************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.core.runtime;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import org.eclipse.core.internal.runtime.Assert;
 
@@ -116,14 +121,14 @@ public void merge(IStatus status) {
  */
 public String toString() {
 	StringBuffer buf = new StringBuffer(super.toString());
-	buf.append(" children=[");
+	buf.append(" children=["); //$NON-NLS-1$
 	for (int i = 0; i < children.length; i++) {
 		if (i != 0) {
-			buf.append(" ");
+			buf.append(" "); //$NON-NLS-1$
 		}
 		buf.append(children[i].toString());
 	}
-	buf.append("]");
+	buf.append("]"); //$NON-NLS-1$
 	return buf.toString();
 }
 }

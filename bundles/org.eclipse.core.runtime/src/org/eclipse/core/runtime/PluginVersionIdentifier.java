@@ -1,9 +1,14 @@
+/**********************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.core.runtime;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import java.util.Vector;
 import java.util.StringTokenizer;
@@ -52,9 +57,9 @@ public final class PluginVersionIdentifier {
 	private int major = 0;
 	private int minor = 0;
 	private int service = 0;
-	private String qualifier = "";
+	private String qualifier = ""; //$NON-NLS-1$
 	
-	private static final String	SEPARATOR = ".";
+	private static final String SEPARATOR = "."; //$NON-NLS-1$
 /**
  * Creates a plug-in version identifier from its components.
  * 
@@ -81,12 +86,12 @@ public PluginVersionIdentifier(int major, int minor, int service, String qualifi
 	// have passed by the assert).
 
 	if (major < 0)
-		Assert.isTrue(false, Policy.bind("parse.postiveMajor", major + "." + minor + "." + service + "." + qualifier));
+		Assert.isTrue(false, Policy.bind("parse.postiveMajor", major + SEPARATOR + minor + SEPARATOR + service + SEPARATOR + qualifier)); //$NON-NLS-1$
 	if (minor < 0)
-		Assert.isTrue(false, Policy.bind("parse.postiveMinor", major + "." + minor + "." + service + "." + qualifier));
+		Assert.isTrue(false, Policy.bind("parse.postiveMinor", major + SEPARATOR + minor + SEPARATOR + service + SEPARATOR + qualifier)); //$NON-NLS-1$
 	if (service < 0)
-		Assert.isTrue(false,  Policy.bind("parse.postiveService", major + "." + minor + "." + service + "." + qualifier));
-	if (qualifier == null) qualifier = "";
+		Assert.isTrue(false,  Policy.bind("parse.postiveService", major + SEPARATOR + minor + SEPARATOR + service + SEPARATOR + qualifier)); //$NON-NLS-1$
+	if (qualifier == null) qualifier = ""; //$NON-NLS-1$
 	
 	this.major = major;
 	this.minor = minor;
@@ -118,16 +123,16 @@ public PluginVersionIdentifier(String versionId) {
 	// have passed by the assert).
 
 	if (versionId == null)
-		Assert.isNotNull(null, Policy.bind("parse.emptyPluginVersion"));
+		Assert.isNotNull(null, Policy.bind("parse.emptyPluginVersion")); //$NON-NLS-1$
 	String s = versionId.trim();
-	if (s.equals(""))
-		Assert.isTrue(false, Policy.bind("parse.emptyPluginVersion"));
+	if (s.equals("")) //$NON-NLS-1$
+		Assert.isTrue(false, Policy.bind("parse.emptyPluginVersion")); //$NON-NLS-1$
 	if (s.startsWith(SEPARATOR))
-		Assert.isTrue(false, Policy.bind("parse.separatorStartVersion", s));
+		Assert.isTrue(false, Policy.bind("parse.separatorStartVersion", s)); //$NON-NLS-1$
 	if (s.endsWith(SEPARATOR))
-		Assert.isTrue(false, Policy.bind("parse.separatorEndVersion", s));
+		Assert.isTrue(false, Policy.bind("parse.separatorEndVersion", s)); //$NON-NLS-1$
 	if (s.indexOf(SEPARATOR+SEPARATOR)!=-1)
-		Assert.isTrue(false, Policy.bind("parse.doubleSeparatorVersion", s));
+		Assert.isTrue(false, Policy.bind("parse.doubleSeparatorVersion", s)); //$NON-NLS-1$
 	
 	StringTokenizer st = new StringTokenizer(s, SEPARATOR);
 	Vector elements = new Vector(4);
@@ -139,36 +144,36 @@ public PluginVersionIdentifier(String versionId) {
 	int elementSize = elements.size();
 	
 	if (elementSize <= 0)
-		Assert.isTrue(false, Policy.bind("parse.oneElementPluginVersion", s));
+		Assert.isTrue(false, Policy.bind("parse.oneElementPluginVersion", s)); //$NON-NLS-1$
 	if (elementSize > 4)
-		Assert.isTrue(false, Policy.bind("parse.fourElementPluginVersion", s));
+		Assert.isTrue(false, Policy.bind("parse.fourElementPluginVersion", s)); //$NON-NLS-1$
 
 	try {
 		this.major = (new Integer((String)elements.elementAt(0))).intValue();
 	} catch (NumberFormatException nfe) {
-		Assert.isTrue(false,Policy.bind("parse.numericMajorComponent", s));
+		Assert.isTrue(false,Policy.bind("parse.numericMajorComponent", s)); //$NON-NLS-1$
 	}
 
 	try {
 		if (elementSize>=2) this.minor = (new Integer((String)elements.elementAt(1))).intValue();
 	} catch (NumberFormatException nfe) {
-		Assert.isTrue(false,Policy.bind("parse.numericMinorComponent", s));
+		Assert.isTrue(false,Policy.bind("parse.numericMinorComponent", s)); //$NON-NLS-1$
 	}
 
 	try {
 		if (elementSize>=3) this.service = (new Integer((String)elements.elementAt(2))).intValue();
 	} catch (NumberFormatException nfe) {
-		Assert.isTrue(false,Policy.bind("parse.numericServiceComponent", s));
+		Assert.isTrue(false,Policy.bind("parse.numericServiceComponent", s)); //$NON-NLS-1$
 	}
 	
 	if (elementSize>=4) this.qualifier = verifyQualifier((String)elements.elementAt(3));
 	
 	if (this.major < 0)
-		Assert.isTrue(false, Policy.bind("parse.postiveMajor", s));
+		Assert.isTrue(false, Policy.bind("parse.postiveMajor", s)); //$NON-NLS-1$
 	if (this.minor < 0)
-		Assert.isTrue(false, Policy.bind("parse.postiveMinor", s));
+		Assert.isTrue(false, Policy.bind("parse.postiveMinor", s)); //$NON-NLS-1$
 	if (this.service < 0)
-		Assert.isTrue(false, Policy.bind("parse.postiveService", s));
+		Assert.isTrue(false, Policy.bind("parse.postiveService", s)); //$NON-NLS-1$
 }
 /**
  * Compare version identifiers for equality. Identifiers are
@@ -190,7 +195,7 @@ public boolean equals(Object object) {
  */
 public int hashCode() {
 	int code = major + minor + service; // R1.0 result
-	if (qualifier.equals(""))
+	if (qualifier.equals("")) //$NON-NLS-1$
 		return code;
 	else
 		return code + qualifier.hashCode();
@@ -378,7 +383,7 @@ public boolean isPerfect(PluginVersionIdentifier id) {
 public boolean isGreaterThan(PluginVersionIdentifier id) {
 
 	if (id == null) {
-		if (major==0 && minor==0 && service==0 && qualifier.equals("")) return false;
+		if (major==0 && minor==0 && service==0 && qualifier.equals("")) return false; //$NON-NLS-1$
 		else return true;
 	}
 
@@ -401,7 +406,7 @@ public boolean isGreaterThan(PluginVersionIdentifier id) {
  */
 public String toString() {
 	String base = major+SEPARATOR+minor+SEPARATOR+service; // R1.0 result
-	if (qualifier.equals(""))
+	if (qualifier.equals("")) //$NON-NLS-1$
 		return base;
 	else
 		return base + SEPARATOR + qualifier;

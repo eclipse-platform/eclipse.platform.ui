@@ -127,118 +127,118 @@ public static String decipherLabel(byte labelValue) {
 	// e.g. return "<" + IModel.REGISTRY + ">"
 	switch (labelValue) {
 		case REGISTRY_LABEL:
-			return "<registry>";
+			return "<registry>"; //$NON-NLS-1$
 		case REGISTRY_RESOLVED_LABEL:
-			return "<resolved>";
+			return "<resolved>"; //$NON-NLS-1$
 		case PLUGIN_LABEL:
-			return "<plugin>";
+			return "<plugin>"; //$NON-NLS-1$
 		case REGISTRY_END_LABEL:
-			return "<endregistry>";
+			return "<endregistry>"; //$NON-NLS-1$
 		case READONLY_LABEL:
-			return "<readonly>";
+			return "<readonly>"; //$NON-NLS-1$
 		case NAME_LABEL:
-			return "<name>";
+			return "<name>"; //$NON-NLS-1$
 		case ID_LABEL:
-			return "<id>";
+			return "<id>"; //$NON-NLS-1$
 		case PLUGIN_PROVIDER_NAME_LABEL:
-			return "<provider>";
+			return "<provider>"; //$NON-NLS-1$
 		case VERSION_LABEL:
-			return "<version>";
+			return "<version>"; //$NON-NLS-1$
 		case PLUGIN_CLASS_LABEL:
-			return "<class>";
+			return "<class>"; //$NON-NLS-1$
 		case PLUGIN_LOCATION_LABEL:
-			return "<location>";
+			return "<location>"; //$NON-NLS-1$
 		case PLUGIN_ENABLED_LABEL:
-			return "<enabled>";
+			return "<enabled>"; //$NON-NLS-1$
 		case PLUGIN_REQUIRES_LABEL:
-			return "<requires>";
+			return "<requires>"; //$NON-NLS-1$
 		case PLUGIN_LIBRARY_LABEL:
-			return "<library>";
+			return "<library>"; //$NON-NLS-1$
 		case PLUGIN_EXTENSION_LABEL:
-			return "<extension>";
+			return "<extension>"; //$NON-NLS-1$
 		case PLUGIN_EXTENSION_POINT_LABEL:
-			return "<extensionPoint>";
+			return "<extensionPoint>"; //$NON-NLS-1$
 		case PLUGIN_END_LABEL:
-			return "<endplugin>";
+			return "<endplugin>"; //$NON-NLS-1$
 		case REQUIRES_MATCH_LABEL:
-			return "<match>";
+			return "<match>"; //$NON-NLS-1$
 		case REQUIRES_EXPORT_LABEL:
-			return "<export>";
+			return "<export>"; //$NON-NLS-1$
 		case REQUIRES_RESOLVED_VERSION_LABEL:
-			return "<resolved_version>";
+			return "<resolved_version>"; //$NON-NLS-1$
 		case REQUIRES_PLUGIN_NAME_LABEL:
-			return "<requires_plugin_name>";
+			return "<requires_plugin_name>"; //$NON-NLS-1$
 		case REQUIRES_END_LABEL:
-			return "<endrequires>";
+			return "<endrequires>"; //$NON-NLS-1$
 		case LIBRARY_EXPORTS_LENGTH_LABEL:
-			return "<exports-length>";
+			return "<exports-length>"; //$NON-NLS-1$
 		case LIBRARY_EXPORTS_LABEL:
-			return "<exports>";
+			return "<exports>"; //$NON-NLS-1$
 		case LIBRARY_END_LABEL:
-			return "<endlibrary>";
+			return "<endlibrary>"; //$NON-NLS-1$
 		case EXTENSION_POINT_SCHEMA_LABEL:
-			return "<schema>";
+			return "<schema>"; //$NON-NLS-1$
 		case EXTENSION_POINT_END_LABEL:
-			return "<endextensionPoint>";
+			return "<endextensionPoint>"; //$NON-NLS-1$
 		case EXTENSION_EXT_POINT_NAME_LABEL:
-			return "<extension-extPt-name>";
+			return "<extension-extPt-name>"; //$NON-NLS-1$
 		case SUBELEMENTS_LENGTH_LABEL:
-			return "<subElements-length>";
+			return "<subElements-length>"; //$NON-NLS-1$
 		case EXTENSION_END_LABEL:
-			return "<endextension>";
+			return "<endextension>"; //$NON-NLS-1$
 		case CONFIGURATION_ELEMENT_LABEL:
-			return "<configuration-element>";
+			return "<configuration-element>"; //$NON-NLS-1$
 		case VALUE_LABEL:
-			return "<value>";
+			return "<value>"; //$NON-NLS-1$
 		case PROPERTIES_LENGTH_LABEL:
-			return "<properties-length>";
+			return "<properties-length>"; //$NON-NLS-1$
 		case CONFIGURATION_ELEMENT_END_LABEL:
-			return "<endconfiguration-element>";
+			return "<endconfiguration-element>"; //$NON-NLS-1$
 		case CONFIGURATION_PROPERTY_LABEL:
-			return "<configuration-property>";
+			return "<configuration-property>"; //$NON-NLS-1$
 		case CONFIGURATION_PROPERTY_END_LABEL:
-			return "<endconfiguration-property>";
+			return "<endconfiguration-property>"; //$NON-NLS-1$
 		case PLUGIN_PARENT_LABEL:
-			return "<parentRegistry>";
+			return "<parentRegistry>"; //$NON-NLS-1$
 		case CONFIGURATION_ELEMENT_PARENT_LABEL:
-			return "<ConfigurationElementParent>";
+			return "<ConfigurationElementParent>"; //$NON-NLS-1$
 		case PLUGIN_INDEX_LABEL:
-			return "<pluginIndex>";
+			return "<pluginIndex>"; //$NON-NLS-1$
 		case EXTENSION_INDEX_LABEL:
-			return "<extensionIndex>";
+			return "<extensionIndex>"; //$NON-NLS-1$
 		case EXTENSION_POINT_PARENT_LABEL:
-			return "<ExtensionPointParent>";
+			return "<ExtensionPointParent>"; //$NON-NLS-1$
 		case EXTENSION_POINT_EXTENSIONS_LENGTH_LABEL:
-			return "<extensionPointExtensionsLength>";
+			return "<extensionPointExtensionsLength>"; //$NON-NLS-1$
 		case EXTENSION_POINT_EXTENSIONS_LABEL:
-			return "<extensionPointExtensions>";
+			return "<extensionPointExtensions>"; //$NON-NLS-1$
 		case EXTENSION_PARENT_LABEL:
-			return "<extensionParent>";
+			return "<extensionParent>"; //$NON-NLS-1$
 		case CONFIGURATION_ELEMENT_INDEX_LABEL:
-			return "<configElementIndex>";
+			return "<configElementIndex>"; //$NON-NLS-1$
 		case REGISTRY_INDEX_LABEL:
-			return "<registryIndex>";
+			return "<registryIndex>"; //$NON-NLS-1$
 		case FRAGMENT_END_LABEL:
-			return "<fragmentEnd>";
+			return "<fragmentEnd>"; //$NON-NLS-1$
 		case FRAGMENT_INDEX_LABEL:
-			return "<fragmentIndex>";
+			return "<fragmentIndex>"; //$NON-NLS-1$
 		case FRAGMENT_LABEL:
-			return "<fragment>";
+			return "<fragment>"; //$NON-NLS-1$
 		case FRAGMENT_PLUGIN_LABEL:
-			return "<fragmentPlugin>";
+			return "<fragmentPlugin>"; //$NON-NLS-1$
 		case FRAGMENT_PLUGIN_MATCH_LABEL:
-			return "<fragmentPluginMatch>";
+			return "<fragmentPluginMatch>"; //$NON-NLS-1$
 		case FRAGMENT_PLUGIN_VERSION_LABEL:
-			return "<fragmentPluginVersion>";
+			return "<fragmentPluginVersion>"; //$NON-NLS-1$
 		case REQUIRES_OPTIONAL_LABEL:
-			return "<requiresOptional>";
+			return "<requiresOptional>"; //$NON-NLS-1$
 		case SOURCE_LABEL:
-			return "<source>";
+			return "<source>"; //$NON-NLS-1$
 		case TYPE_LABEL:
-			return "<type>";
+			return "<type>"; //$NON-NLS-1$
 	}
 
-	return "<unknown label>";
+	return "<unknown label>"; //$NON-NLS-1$
 }
 public boolean interpretHeaderInformation(DataInputStream in) {
 	try {
@@ -1173,7 +1173,7 @@ public PluginFragmentModel readPluginFragment(DataInputStream in, boolean debugF
 						String name = fragment.getName();
 						if (name == null)
 							name = new String ("<unknown name>"); //$NON-NLS-1$
-						debug ("Unexpected byte code " + decipherLabel(inByte) + " reading fragment " + name); //$NON-NLS-1$
+						debug ("Unexpected byte code " + decipherLabel(inByte) + " reading fragment " + name); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 					fragment = null;
 					done = true;

@@ -77,7 +77,7 @@ public PluginParser(Factory factory) {
 private static void initializeParser() {
 	parser = new SAXParser();
 	try {
-	 	((SAXParser)parser).setFeature("http://xml.org/sax/features/string-interning", true);
+	 	((SAXParser)parser).setFeature("http://xml.org/sax/features/string-interning", true); //$NON-NLS-1$
 	} catch (SAXException e) {
 		// In case support for this feature is removed
 	}

@@ -84,12 +84,12 @@ public byte cipher(byte datum) throws Exception {
 	return cipher(data)[0];
 }
 private byte[] getSeed() throws Exception {
-	MessageDigest messageDigest = MessageDigest.getInstance("SHA");
+	MessageDigest messageDigest = MessageDigest.getInstance("SHA"); //$NON-NLS-1$
 	return messageDigest.digest(password.getBytes("UTF8")); //$NON-NLS-1$
 }
 private byte[] nextRandom(int length) throws Exception {
 	if (secureRandom == null) {
-		secureRandom = SecureRandom.getInstance("SHA1PRNG");
+		secureRandom = SecureRandom.getInstance("SHA1PRNG"); //$NON-NLS-1$
 		secureRandom.setSeed(getSeed());
 	}
 	byte[] nextRandom = new byte[length];

@@ -51,7 +51,7 @@ public final class InternalPlatform {
 	private static Properties options = null;
 	private static AuthorizationDatabase keyring = null;
 	private static String keyringFile = null;
-	private static String password = "";
+	private static String password = ""; //$NON-NLS-1$
 	private static boolean splashDown = false;
 	private static boolean cacheRegistry = true;
 	private static String pluginCustomizationFile = null;
@@ -63,28 +63,28 @@ public final class InternalPlatform {
 	 * Name of the plug-in customization file (value "plugin_customization.ini")
 	 * located in the root of the primary feature plug-in.
 	 */
-	private static final String PLUGIN_CUSTOMIZATION_FILE_NAME = "plugin_customization.ini";
+	private static final String PLUGIN_CUSTOMIZATION_FILE_NAME = "plugin_customization.ini"; //$NON-NLS-1$
 
 	// default plugin data
-	private static final String PI_XML = "org.apache.xerces";
-	private static final String PLUGINSDIR = "plugins/";
-	private static final String XML_LOCATION = "plugins/" + PI_XML + "/";
+	private static final String PI_XML = "org.apache.xerces"; //$NON-NLS-1$
+	private static final String PLUGINSDIR = "plugins/"; //$NON-NLS-1$
+	private static final String XML_LOCATION = "plugins/" + PI_XML + "/"; //$NON-NLS-1$ //$NON-NLS-2$
 	
 	// execution options
-	private static final String OPTION_DEBUG = Platform.PI_RUNTIME + "/debug";
-	private static final String OPTION_DEBUG_SYSTEM_CONTEXT = Platform.PI_RUNTIME + "/debug/context";
-	private static final String OPTION_DEBUG_STARTUP = Platform.PI_RUNTIME + "/timing/startup";
-	private static final String OPTION_DEBUG_SHUTDOWN = Platform.PI_RUNTIME + "/timing/shutdown";
-	private static final String OPTION_DEBUG_PLUGINS = Platform.PI_RUNTIME + "/registry/debug";
-	private static final String OPTION_DEBUG_PLUGINS_DUMP = Platform.PI_RUNTIME + "/registry/debug/dump";
-	private static final String OPTION_DEBUG_PREFERENCES = Platform.PI_RUNTIME + "/preferences/debug";
+	private static final String OPTION_DEBUG = Platform.PI_RUNTIME + "/debug"; //$NON-NLS-1$
+	private static final String OPTION_DEBUG_SYSTEM_CONTEXT = Platform.PI_RUNTIME + "/debug/context"; //$NON-NLS-1$
+	private static final String OPTION_DEBUG_STARTUP = Platform.PI_RUNTIME + "/timing/startup"; //$NON-NLS-1$
+	private static final String OPTION_DEBUG_SHUTDOWN = Platform.PI_RUNTIME + "/timing/shutdown"; //$NON-NLS-1$
+	private static final String OPTION_DEBUG_PLUGINS = Platform.PI_RUNTIME + "/registry/debug"; //$NON-NLS-1$
+	private static final String OPTION_DEBUG_PLUGINS_DUMP = Platform.PI_RUNTIME + "/registry/debug/dump"; //$NON-NLS-1$
+	private static final String OPTION_DEBUG_PREFERENCES = Platform.PI_RUNTIME + "/preferences/debug"; //$NON-NLS-1$
 
 	// command line options
-	private static final String LOG = "-consolelog";
-	private static final String KEYRING = "-keyring";
-	private static final String PASSWORD = "-password";
-	private static final String NOREGISTRYCACHE = "-noregistrycache";
-	private static final String PLUGIN_CUSTOMIZATION = "-plugincustomization";
+	private static final String LOG = "-consolelog"; //$NON-NLS-1$
+	private static final String KEYRING = "-keyring"; //$NON-NLS-1$
+	private static final String PASSWORD = "-password"; //$NON-NLS-1$
+	private static final String NOREGISTRYCACHE = "-noregistrycache"; //$NON-NLS-1$
+	private static final String PLUGIN_CUSTOMIZATION = "-plugincustomization"; //$NON-NLS-1$
 	
 	// debug support:  set in loadOptions()
 	public static boolean DEBUG = false;
@@ -153,7 +153,7 @@ public static URL asLocalURL(URL url) throws IOException {
 	if (!(connection instanceof PlatformURLConnection))
 		return url;
 	String file = connection.getURL().getFile();
-	if (file.endsWith("/") && !file.endsWith(PlatformURLHandler.JAR_SEPARATOR))
+	if (file.endsWith("/") && !file.endsWith(PlatformURLHandler.JAR_SEPARATOR)) //$NON-NLS-1$
 		throw new IOException();
 	return ((PlatformURLConnection) connection).getURLAsLocal();
 }
@@ -196,7 +196,7 @@ private static synchronized void createLockFile() throws CoreException {
 	}
 	try {
 		//open the lock file so other instances can't co-exist
-		lockRAF = new RandomAccessFile(lockFile, "rw");
+		lockRAF = new RandomAccessFile(lockFile, "rw"); //$NON-NLS-1$
 		lockRAF.writeByte(0);
 	} catch (IOException e) {
 		String message = Policy.bind("meta.failCreateLock", lockLocation); //$NON-NLS-1$
@@ -289,11 +289,11 @@ private static URL[] getAugmentedPluginPath(URL[] pluginPath) {
 	//        does not have logical reference to plug-in-specific
 	//        function
 		
-	IPath result = metaArea.getLocation().append(PlatformMetaArea.F_PLUGIN_DATA).append("org.eclipse.scripting").append("plugin.xml");
+	IPath result = metaArea.getLocation().append(PlatformMetaArea.F_PLUGIN_DATA).append("org.eclipse.scripting").append("plugin.xml"); //$NON-NLS-1$ //$NON-NLS-2$
 	String userScriptName = result.toString();
 	URL userScriptUrl = null;
 	try {
-		userScriptUrl = new URL("file",null,0,userScriptName);
+		userScriptUrl = new URL("file",null,0,userScriptName); //$NON-NLS-1$
 	} catch(MalformedURLException e) {
 		return pluginPath;
 	}
@@ -312,7 +312,7 @@ public static Map getAuthorizationInfo(URL serverUrl, String realm, String authS
 }
 public static boolean getBooleanOption(String option, boolean defaultValue) {
 	String optionValue = options.getProperty(option);
-	return (optionValue != null && optionValue.equalsIgnoreCase("true"))  || defaultValue;
+	return (optionValue != null && optionValue.equalsIgnoreCase("true"))  || defaultValue; //$NON-NLS-1$
 }
 /**
  * @see Platform
@@ -446,7 +446,7 @@ public static IPlatformRunnable loaderGetRunnable(String applicationName) {
 		return null;
 	try {
 		IConfigurationElement config = configs[0];
-		return (IPlatformRunnable) config.createExecutableExtension("run");
+		return (IPlatformRunnable) config.createExecutableExtension("run"); //$NON-NLS-1$
 	} catch (CoreException e) {
 		getRuntimePlugin().getLog().log(e.getStatus());
 		return null;
@@ -621,7 +621,7 @@ static void loadOptions(Properties bootOptions) {
  * details any problems/issues encountered during this process.
  */
 private static MultiStatus loadRegistry(URL[] pluginPath) {
-	MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind("parse.registryProblems"), null);
+	MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind("parse.registryProblems"), null); //$NON-NLS-1$
 	InternalFactory factory = new InternalFactory(problems);
 
 	IPath path = getMetaArea().getRegistryPath();
@@ -733,7 +733,7 @@ private static String[] processCommandLine(String[] args) {
 			continue;
 		}
 		// check for args with parameters
-		if (i == args.length - 1 || args[i + 1].startsWith("-")) 
+		if (i == args.length - 1 || args[i + 1].startsWith("-"))  //$NON-NLS-1$
 			continue;
 		String arg = args[++i];
 
@@ -837,7 +837,7 @@ public static void setPluginRegistry(IPluginRegistry value) {
 private static void setupMetaArea(String locationString) throws CoreException {
 	location = new Path(locationString);
 	if (!location.isAbsolute())
-		location = new Path(System.getProperty("user.dir")).append(location);
+		location = new Path(System.getProperty("user.dir")).append(location); //$NON-NLS-1$
 	// must create the meta area first as it defines all the other locations.
 	if (location.toFile().exists()) {
 		if (!location.toFile().isDirectory()) {

@@ -1,11 +1,16 @@
+/**********************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.core.runtime.model;
 
 import org.eclipse.core.internal.runtime.Assert;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 /**
  * A runtime library declared in a plug-in.  Libraries contribute elements to the search path.
@@ -33,12 +38,12 @@ public class LibraryModel extends PluginModelObject {
 	/**
 	 * Constant string (value "code") indicating the code library type.
 	 */
-	public static final String CODE = "code";
+	public static final String CODE = "code"; //$NON-NLS-1$
 	
 	/**
 	 * Constant string (value "resource") indicating the resource library type.
 	 */
-	public static final String RESOURCE = "resource";
+	public static final String RESOURCE = "resource"; //$NON-NLS-1$
 	
 /**
  * Creates a new library model in which all fields
@@ -93,9 +98,9 @@ public void setExports(String[] value) {
 		isFullyExported = false;
 	} else {
 		for (int i = 0; i < value.length; i++) {
-			if (!value[i].equals(""))
+			if (!value[i].equals("")) //$NON-NLS-1$
 				isExported = true;
-			if (value[i].equals("*"))
+			if (value[i].equals("*")) //$NON-NLS-1$
 				isFullyExported = true;
 		}
 	}

@@ -1,9 +1,14 @@
+/**********************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.core.runtime;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 /**
  * A progress monitor that uses the a given amount of work ticks
@@ -122,7 +127,7 @@ public void done() {
 	double remaining = (double) parentTicks - sentToParent;
 	if (remaining > 0) 
 		super.internalWorked(remaining);
-	subTask("");
+	subTask(""); //$NON-NLS-1$
 	sentToParent = 0;
 }
 /* (Intentionally not javadoc'd)
@@ -151,7 +156,7 @@ public void subTask(String name) {
 
 	String label = name;
 	if ((style & PREPEND_MAIN_LABEL_TO_SUBTASK) != 0 && mainTaskLabel != null && mainTaskLabel.length() > 0) {
-		label = mainTaskLabel + " " + label;
+		label = mainTaskLabel + ' ' + label;
 	}
 	super.subTask(label);
 }

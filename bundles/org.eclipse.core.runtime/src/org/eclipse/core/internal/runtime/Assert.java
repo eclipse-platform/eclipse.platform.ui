@@ -75,7 +75,7 @@ public static void isNotNull(Object object) {
  */
 public static void isNotNull(Object object, String message) {
 	if (object == null)
-		throw new AssertionFailedException("null argument:" + message);
+		throw new AssertionFailedException("null argument:" + message); //$NON-NLS-1$
 }
 /** Asserts that the given boolean is <code>true</code>. If this
  * is not the case, some kind of unchecked exception is thrown.
@@ -98,7 +98,7 @@ public static boolean isTrue(boolean expression) {
  */
 public static boolean isTrue(boolean expression, String message) {
 	if (!expression)
-		throw new AssertionFailedException("assertion failed: "+message);
+		throw new AssertionFailedException("assertion failed: "+message); //$NON-NLS-1$
 	return expression;
 }
 }

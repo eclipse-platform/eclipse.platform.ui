@@ -220,16 +220,16 @@ public abstract class Plugin  {
  */
 public Plugin(IPluginDescriptor descriptor) {
 	Assert.isNotNull(descriptor);
-	Assert.isTrue(!descriptor.isPluginActivated(), Policy.bind("plugin.deactivatedLoad", this.getClass().getName(), descriptor.getUniqueIdentifier() + " is not activated"));
+	Assert.isTrue(!descriptor.isPluginActivated(), Policy.bind("plugin.deactivatedLoad", this.getClass().getName(), descriptor.getUniqueIdentifier() + " is not activated")); //$NON-NLS-1$ //$NON-NLS-2$
 	String className = ((PluginDescriptor) descriptor).getPluginClass();
 	if (this.getClass() == DefaultPlugin.class) 
-		Assert.isTrue(className == null || className.equals(""), Policy.bind("plugin.mismatchRuntime", descriptor.getUniqueIdentifier()));
+		Assert.isTrue(className == null || className.equals(""), Policy.bind("plugin.mismatchRuntime", descriptor.getUniqueIdentifier())); //$NON-NLS-1$ //$NON-NLS-2$
 	else 
-		Assert.isTrue(this.getClass().getName().equals(className), Policy.bind("plugin.mismatchRuntime", descriptor.getUniqueIdentifier()));
+		Assert.isTrue(this.getClass().getName().equals(className), Policy.bind("plugin.mismatchRuntime", descriptor.getUniqueIdentifier())); //$NON-NLS-1$
 	this.descriptor = descriptor;
-	String key = descriptor.getUniqueIdentifier() + "/debug";
+	String key = descriptor.getUniqueIdentifier() + "/debug"; //$NON-NLS-1$
 	String value = Platform.getDebugOption(key);
-	this.debug = value == null ? false : value.equalsIgnoreCase("true");
+	this.debug = value == null ? false : value.equalsIgnoreCase("true"); //$NON-NLS-1$
 }
 /**
  * Returns a URL for the given path.  Returns <code>null</code> if the URL
@@ -340,7 +340,7 @@ public final IPath getStateLocation() {
 public final Preferences getPluginPreferences() {
 	if (preferences != null) {
 		if (InternalPlatform.DEBUG_PREFERENCES) {
-			System.out.println("Plugin preferences already loaded for " + getDescriptor().getUniqueIdentifier());
+			System.out.println("Plugin preferences already loaded for " + getDescriptor().getUniqueIdentifier()); //$NON-NLS-1$
 		}
 		// N.B. preferences instance field set means already created
 		// and initialized (or in process of being initialized)
@@ -348,7 +348,7 @@ public final Preferences getPluginPreferences() {
 	}
 		
 	if (InternalPlatform.DEBUG_PREFERENCES) {
-		System.out.println("Loading preferences for plugin " + getDescriptor().getUniqueIdentifier());
+		System.out.println("Loading preferences for plugin " + getDescriptor().getUniqueIdentifier()); //$NON-NLS-1$
 	}
 	// lazily create preference store
 	// important: set preferences instance field to prevent re-entry
@@ -363,7 +363,7 @@ public final Preferences getPluginPreferences() {
 	// 3. override with defaults from primary feature or command line
 	applyExternalPluginDefaultOverrides();
 	if (InternalPlatform.DEBUG_PREFERENCES) {
-		System.out.println("Completed loading preferences for plugin " + getDescriptor().getUniqueIdentifier());
+		System.out.println("Completed loading preferences for plugin " + getDescriptor().getUniqueIdentifier()); //$NON-NLS-1$
 	}
 	return preferences;
 }
@@ -383,13 +383,13 @@ private void loadPluginPreferences() {
 	if (!prefFile.exists()) {
 		// no preference file - that's fine
 		if (InternalPlatform.DEBUG_PREFERENCES) {
-			System.out.println("Plugin preference file " + prefFile + " not found.");
+			System.out.println("Plugin preference file " + prefFile + " not found."); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return;
 	}
 	
 	if (InternalPlatform.DEBUG_PREFERENCES) {
-		System.out.println("Loading preferences from " + prefFile);
+		System.out.println("Loading preferences from " + prefFile); //$NON-NLS-1$
 	}
 	// load preferences from file
 	SafeFileInputStream in = null;
@@ -399,7 +399,7 @@ private void loadPluginPreferences() {
 	} catch (IOException e) {
 		// problems loading preference store - quietly ignore
 		if (InternalPlatform.DEBUG_PREFERENCES) {
-			System.out.println("IOException encountered loading preference file " + prefFile);
+			System.out.println("IOException encountered loading preference file " + prefFile); //$NON-NLS-1$
 			e.printStackTrace();
 		}
 	} finally {
@@ -409,23 +409,23 @@ private void loadPluginPreferences() {
 			} catch (IOException e) {
 				// ignore problems with close
 				if (InternalPlatform.DEBUG_PREFERENCES) {
-					System.out.println("IOException encountered closing preference file " + prefFile);
+					System.out.println("IOException encountered closing preference file " + prefFile); //$NON-NLS-1$
 					e.printStackTrace();
 				}
 			}
 		}
 	}
 	if (InternalPlatform.DEBUG_PREFERENCES) {
-		System.out.println("Preferences now set as follows:");
+		System.out.println("Preferences now set as follows:"); //$NON-NLS-1$
 		String[] prefNames = preferences.propertyNames();
 		for (int i = 0; i < prefNames.length; i++) {
 			String value = preferences.getString(prefNames[i]);
-			System.out.println("\t" + prefNames[i] + " = " + value);
+			System.out.println("\t" + prefNames[i] + " = " + value); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		prefNames = preferences.defaultPropertyNames();
 		for (int i = 0; i < prefNames.length; i++) {
 			String value = preferences.getDefaultString(prefNames[i]);
-			System.out.println("\tDefault values: " + prefNames[i] + " = " + value);
+			System.out.println("\tDefault values: " + prefNames[i] + " = " + value); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 }
@@ -535,7 +535,7 @@ private void applyInternalPluginDefaultOverrides() {
 
 	if (baseURL == null) {
 		if (InternalPlatform.DEBUG_PREFERENCES) {
-			System.out.println("Plugin preference file " + PREFERENCES_DEFAULT_OVERRIDE_FILE_NAME + " not found.");
+			System.out.println("Plugin preference file " + PREFERENCES_DEFAULT_OVERRIDE_FILE_NAME + " not found."); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return;
 	}
@@ -543,13 +543,13 @@ private void applyInternalPluginDefaultOverrides() {
 	if (!iniFile.exists()) {
 		// no preference file - that's fine
 		if (InternalPlatform.DEBUG_PREFERENCES) {
-			System.out.println("Plugin preference file " + iniFile + " not found.");
+			System.out.println("Plugin preference file " + iniFile + " not found."); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return;
 	}
 
 	if (InternalPlatform.DEBUG_PREFERENCES) {
-		System.out.println("Loading preferences from " + iniFile);
+		System.out.println("Loading preferences from " + iniFile); //$NON-NLS-1$
 	}
 	Properties overrides = new Properties();
 	SafeFileInputStream in = null;
@@ -559,7 +559,7 @@ private void applyInternalPluginDefaultOverrides() {
 	} catch (IOException e) {
 		// cannot read ini file - fail silently
 		if (InternalPlatform.DEBUG_PREFERENCES) {
-			System.out.println("IOException encountered loading preference file " +
+			System.out.println("IOException encountered loading preference file " + //$NON-NLS-1$
 				iniFile);
 			e.printStackTrace();
 		}
@@ -572,7 +572,7 @@ private void applyInternalPluginDefaultOverrides() {
 		} catch (IOException e) {
 			// ignore problems closing file
 			if (InternalPlatform.DEBUG_PREFERENCES) {
-				System.out.println("IOException encountered closing preference file " +
+				System.out.println("IOException encountered closing preference file " + //$NON-NLS-1$
 					iniFile);
 				e.printStackTrace();
 			}
@@ -586,16 +586,16 @@ private void applyInternalPluginDefaultOverrides() {
 		preferences.setDefault(key, value);
 	}
 	if (InternalPlatform.DEBUG_PREFERENCES) {
-		System.out.println("Preferences now set as follows:");
+		System.out.println("Preferences now set as follows:"); //$NON-NLS-1$
 		String[] prefNames = preferences.propertyNames();
 		for (int i = 0; i < prefNames.length; i++) {
 			String value = preferences.getString(prefNames[i]);
-			System.out.println("\t" + prefNames[i] + " = " + value);
+			System.out.println("\t" + prefNames[i] + " = " + value); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		prefNames = preferences.defaultPropertyNames();
 		for (int i = 0; i < prefNames.length; i++) {
 			String value = preferences.getDefaultString(prefNames[i]);
-			System.out.println("\tDefault values: " + prefNames[i] + " = " + value);
+			System.out.println("\tDefault values: " + prefNames[i] + " = " + value); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 }

@@ -22,8 +22,8 @@ public class PlatformURLPluginHandlerFactory implements URLStreamHandlerFactory 
 	IConfigurationElement ce = null;
 	
 	private static final String URL_HANDLERS_POINT = "org.eclipse.core.runtime.urlHandlers"; //$NON-NLS-1$
-	private static final String PROTOCOL = "protocol";
-	private static final String HANDLER = "class";
+	private static final String PROTOCOL = "protocol"; //$NON-NLS-1$
+	private static final String HANDLER = "class"; //$NON-NLS-1$
 public PlatformURLPluginHandlerFactory(IConfigurationElement ce) {
 	super();
 	this.ce = ce;	
