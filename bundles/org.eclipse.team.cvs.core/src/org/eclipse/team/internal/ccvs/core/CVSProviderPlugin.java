@@ -32,6 +32,15 @@ public class CVSProviderPlugin extends Plugin {
 	 */
 	public static final int DEFAULT_TIMEOUT = 60;
 	private int communicationsTimeout = DEFAULT_TIMEOUT;
+
+	/**
+	 * Boolean which determines if empty directories received
+	 * from the server should be pruned
+	 */
+	public static final boolean DEFAULT_PRUNE = true;
+	private boolean pruneEmptyDirectories = DEFAULT_PRUNE; 
+
+	private String quietness = "";
 	
 	public static final String ID = "org.eclipse.team.cvs.core";
 	public static final String PT_AUTHENTICATOR = "authenticator";
@@ -69,18 +78,35 @@ public class CVSProviderPlugin extends Plugin {
 	}
 
 	/**
+	 * Returns the singleton plug-in instance.
+	 * 
+	 * @return the plugin instance
+	 */
+	public static CVSProviderPlugin getPlugin() {
+		return instance;
+	}
+	
+	/**
 	 * Get the ICVSProvider
 	 */
 	public static ICVSProvider getProvider() {
 		return CVSProvider.getInstance();
 	}
-	
+
 	/**
-	 * Get the communications timeout value in seconds
+	 * Should the CVS adapter prune empty directories
 	 */
-	public int getTimeout() {
-		return communicationsTimeout;
+	public boolean getPruneEmptyDirectories() {
+		return pruneEmptyDirectories;
 	}
+
+	/**
+	 * Set whether the CVS adapter should prune empty directories
+	 */
+	public void setPruneEmptyDirectories(boolean prune) {
+		pruneEmptyDirectories = prune;
+	}
+
 	/**
 	 * Set the timeout value for communications to a value in seconds.
 	 * The value must be greater than or equal 0. If is it 0, there is no timeout.
@@ -89,6 +115,29 @@ public class CVSProviderPlugin extends Plugin {
 		this.communicationsTimeout = Math.max(0, timeout);
 	}
 
+	/**
+	 * Get the communications timeout value in seconds
+	 */
+	public int getTimeout() {
+		return communicationsTimeout;
+	}
+	
+	/**
+	 * Set the quietness option to use with cvs commands.
+	 * Can be "", "-q" or "-Q"
+	 */
+	public void setQuietness(String option) {
+		if ("".equals(option) || "-q".equals(option) || "-Q".equals(option))
+			this.quietness = option;
+	}
+
+	/**
+	 * Get the quietness option for commands
+	 */
+	public String getQuietness() {
+		return quietness;
+	}
+	
 	/**
 	 * @see Plugin#startup()
 	 */

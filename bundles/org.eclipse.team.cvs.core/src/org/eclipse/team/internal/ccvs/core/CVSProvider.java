@@ -142,10 +142,11 @@ public class CVSProvider implements ICVSProvider {
 				module = sourceModule;
 			}
 			// Add the options related to the CVSTag
-			if ((tag == null) || (tag.getType() == tag.HEAD))
+			if ((tag == null) || (tag.getType() == tag.HEAD)) {
 				// Prune empty directories (since not implied as with -D or -r)
-				localOptions.add(Client.PRUNE_OPTION);
-			else {
+				if (CVSProviderPlugin.getPlugin().getPruneEmptyDirectories()) 
+					localOptions.add(Client.PRUNE_OPTION);
+			} else {
 				if (tag.getType() == CVSTag.DATE) {
 					localOptions.add("-D");
 					localOptions.add(tag.getName());
@@ -158,7 +159,7 @@ public class CVSProvider implements ICVSProvider {
 			// Perform a checkout
 			Client.execute(
 					Client.CHECKOUT,
-					new String[0],
+					getDefaultGlobalOptions(),
 					(String[])localOptions.toArray(new String[localOptions.size()]),
 					new String[]{module},
 					root,
@@ -298,6 +299,13 @@ public class CVSProvider implements ICVSProvider {
 		return (String[])result.toArray(new String[result.size()]);
 	}
 	
+	public static String[] getDefaultGlobalOptions() {
+		if ("".equals(CVSProviderPlugin.getPlugin().getQuietness()))
+			return Client.EMPTY_ARGS_LIST;
+		else
+			return new String[] {CVSProviderPlugin.getPlugin().getQuietness()};
+	}
+	
 	/**
 	 * Return the singleton instance of CVSProvider
 	 */
@@ -416,7 +424,7 @@ public class CVSProvider implements ICVSProvider {
 			// Perform a import
 			Client.execute(
 					Client.IMPORT,
-					new String[] {},
+					getDefaultGlobalOptions(),
 					(String[])localOptions.toArray(new String[localOptions.size()]),
 					new String[]{module, vendor, tag},
 					root,

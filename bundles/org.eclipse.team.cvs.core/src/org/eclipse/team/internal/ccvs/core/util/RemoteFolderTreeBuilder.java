@@ -265,7 +265,7 @@ public class RemoteFolderTreeBuilder {
 				buildRemoteTree(connection, localFolder, remoteFolder, localPath.append(name), monitor);
 				// Record any children that are empty
 				if (pruneEmptyDirectories() && remoteFolder.getChildren().length == 0) {
-					// Only attempt to prune if the local folder is also empty
+					// Only attempt to prune if the local folder is also empty.
 					if ((localFolder == null) || (localFolder.getFiles().length == 0 && localFolder.getFolders().length == 0))
 						emptyChildren.add(remoteFolder);
 				}
@@ -468,7 +468,7 @@ public class RemoteFolderTreeBuilder {
 	}
 	
 	private boolean pruneEmptyDirectories() {
-		return true;
+		return CVSProviderPlugin.getPlugin().getPruneEmptyDirectories();
 	}
 	/*
 	 * Record the deltas in a double map where the outer key is the parent directory

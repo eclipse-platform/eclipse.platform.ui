@@ -148,6 +148,13 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	protected void initializePreferences() {
 		IPreferenceStore store = getPreferenceStore();
 		store.setDefault(ICVSUIConstants.PREF_SHOW_COMMENTS, true);
+		store.setDefault(ICVSUIConstants.PREF_PRUNE_EMPTY_DIRECTORIES, CVSProviderPlugin.DEFAULT_PRUNE);
+		store.setDefault(ICVSUIConstants.PREF_TIMEOUT, CVSProviderPlugin.DEFAULT_TIMEOUT);
+		
+		// Forward the values to the CVS plugin
+		CVSProviderPlugin.getPlugin().setPruneEmptyDirectories(store.getBoolean(ICVSUIConstants.PREF_PRUNE_EMPTY_DIRECTORIES));
+		CVSProviderPlugin.getPlugin().setTimeout(store.getInt(ICVSUIConstants.PREF_TIMEOUT));
+		CVSProviderPlugin.getPlugin().setQuietness(CVSPreferencesPage.getQuietnessOptionFor(store.getInt(ICVSUIConstants.PREF_QUIETNESS)));
 	}
 
 	/**

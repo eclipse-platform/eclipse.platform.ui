@@ -1,44 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin
-  name="%pluginName"
-  id="org.eclipse.team.cvs.core"
-  version="2.0.0"
-  class="org.eclipse.team.ccvs.core.CVSProviderPlugin"
-  provider-name="Object Technology International, Inc."
->
+	name="%pluginName"
+	id="org.eclipse.team.cvs.core"
+	version="2.0.0"
+	class="org.eclipse.team.ccvs.core.CVSProviderPlugin"
+	provider-name="Object Technology International, Inc.">
 
-  <requires>
-   <import plugin="org.eclipse.core.resources"/>
-   <import plugin="org.eclipse.team.core"/>
-   <import plugin="org.apache.xerces"/>
-  </requires>
+	<requires>
+		<import plugin="org.eclipse.core.resources"/>
+		<import plugin="org.eclipse.team.core"/>
+		<import plugin="org.apache.xerces"/>
+	</requires>
 
-  <runtime>
-    <library name="cvs.jar">
-      <export name="*"/>
-    </library>
-  </runtime>
+	<runtime>
+		<library name="cvs.jar">
+			<export name="*"/>
+		</library>
+	</runtime>
 
-  <extension-point name="Authenticator" id="authenticator"/>
+	<!-- *************** Extension Points **************** -->
+	<extension-point name="Authenticator" id="authenticator"/>
+	<extension-point name="ConnectionMethods" id="connectionmethods"/>
 
-  <extension-point name="ConnectionMethods" id="connectionmethods"/>
-  
-  <extension id="pserver" point="org.eclipse.team.cvs.core.connectionmethods">
-    <adapter>
-      <run class="org.eclipse.team.internal.ccvs.core.connection.PServerConnectionMethod">
-        <parameter name="trace" value="false" /> 
-      </run>
-    </adapter>
-  </extension>
+	<!-- *************** Conection Methods **************** -->
+	<extension id="pserver" point="org.eclipse.team.cvs.core.connectionmethods">
+		<adapter>
+			<run class="org.eclipse.team.internal.ccvs.core.connection.PServerConnectionMethod">
+				<parameter name="trace" value="false" /> 
+			</run>
+		</adapter>
+	</extension>
 
-  <extension id="CVSProvider" point="org.eclipse.team.core.providers">
-     <providers natureId="org.eclipse.team.cvs.core.cvsnature"/>
-  </extension>
+	<!-- *************** Team Provider **************** -->
+	<extension id="CVSProvider" point="org.eclipse.team.core.providers">
+		<providers natureId="org.eclipse.team.cvs.core.cvsnature"/>
+	</extension>
 
-  <extension point="org.eclipse.core.resources.natures" id="cvsnature" name="%cvsNature">
-	 <runtime>
-  		<run class="org.eclipse.team.ccvs.core.CVSTeamProvider"/> 
-	 </runtime>
-  </extension>
+	<!-- *************** Project Nature **************** -->
+	<extension point="org.eclipse.core.resources.natures" id="cvsnature" name="%cvsNature">
+		<runtime>
+			<run class="org.eclipse.team.ccvs.core.CVSTeamProvider"/> 
+		</runtime>
+	</extension>
  
 </plugin>

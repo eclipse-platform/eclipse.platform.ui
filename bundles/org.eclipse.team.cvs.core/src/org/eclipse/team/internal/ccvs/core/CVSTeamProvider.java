@@ -35,6 +35,7 @@ import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.CVSDiffException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSProvider;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.Client;
 import org.eclipse.team.internal.ccvs.core.Policy;
@@ -298,7 +299,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		if (!folders.isEmpty())
 			Client.execute(
 				Client.ADD,
-				new String[0],
+				getDefaultGlobalOptions(),
 				new String[0],
 				(String[])folders.toArray(new String[folders.size()]),
 				managedProject,
@@ -307,7 +308,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		if (!textfiles.isEmpty())
 			Client.execute(
 				Client.ADD,
-				new String[0],
+				getDefaultGlobalOptions(),
 				new String[0],
 				(String[])textfiles.toArray(new String[textfiles.size()]),
 				managedProject,
@@ -320,7 +321,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 			// We should check if files are text or not!
 			Client.execute(
 				Client.ADD,
-				new String[0],
+				getDefaultGlobalOptions(),
 				(String[])localOptions.toArray(new String[localOptions.size()]),
 				(String[])binaryfiles.toArray(new String[binaryfiles.size()]),
 				managedProject,
@@ -350,7 +351,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		// Commit the resources
 		Client.execute(
 			Client.COMMIT,
-			DEFAULT_GLOBAL_OPTIONS,
+			getDefaultGlobalOptions(),
 			(String[])localOptions.toArray(new String[localOptions.size()]),
 			arguments,
 			managedProject,
@@ -435,7 +436,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		// Remove the files remotely
 		Client.execute(
 			Client.REMOVE,
-			new String[0],
+			getDefaultGlobalOptions(),
 			new String[0],
 			(String[])files.toArray(new String[files.size()]),
 			managedProject,
@@ -461,7 +462,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		try {
 			Client.execute(
 				Client.DIFF,
-				DEFAULT_GLOBAL_OPTIONS,
+				getDefaultGlobalOptions(),
 				(String[])localOptions.toArray(new String[localOptions.size()]),
 				arguments,
 				managedProject,
@@ -514,81 +515,6 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 			throw e;
 		}
 	}
-	/**
-	 * Temporary method to allow fixing a resources types
-	 */
-	public void fixFileType(IResource[] resources,int depth, IProgressMonitor progress) throws TeamException {
-
-		// Build the arguments list and record any errors.
-		// We need to visit children resources depending on the depth.
-		final TeamException[] eHolder = new TeamException[1];		final List textfiles = new ArrayList(resources.length);
-		final List binaryfiles = new ArrayList(resources.length);
-		final IFileTypeRegistry registry = TeamPlugin.getFileTypeRegistry();
-		for (int i=0;i<resources.length;i++) {
-			checkIsChild(resources[i]);
-			try {
-				resources[i].accept(new IResourceVisitor() {
-					public boolean visit(IResource resource) {
-						try {
-							if ((resource.getType() == IResource.FILE) && (isManaged(resource))) {
-								String name = resource.getFullPath().removeFirstSegments(1).toString();
-								String extension = resource.getFileExtension();
-								if ((extension != null) && ("true".equals(registry.getValue(extension, "isAscii"))))
-									textfiles.add(name);
-								else
-									binaryfiles.add(name);
-							}
-						} catch (TeamException e) {
-							eHolder[0] = e;
-							// If there was a problem, don't visit the children
-							return false;
-						}
-						// Always return true and let the depth determine if children are visited
-						return true;
-					}
-				}, depth, false);
-			} catch (CoreException e) {
-				throw wrapException(e);
-			}
-		}
-		// If an exception occured during the visit, throw it here
-		if (eHolder[0] != null)
-			throw eHolder[0];
-	
-		if (!textfiles.isEmpty()) {
-				List localOptions = new ArrayList();
-				localOptions.add(Client.KO_OPTION); // disable keyword substitution
-				Client.execute(
-					Client.ADMIN,
-					new String[0],
-					(String[])localOptions.toArray(new String[localOptions.size()]),
-					(String[])textfiles.toArray(new String[textfiles.size()]),
-					managedProject,
-					progress,
-					getPrintStream());
-		}
-		if (!binaryfiles.isEmpty()) {
-			// Build the local options
-			List localOptions = new ArrayList();
-			localOptions.add(Client.KB_OPTION); // disable keyword substitution
-			Client.execute(
-				Client.ADMIN,
-				new String[0],
-				(String[])localOptions.toArray(new String[localOptions.size()]),
-				(String[])binaryfiles.toArray(new String[binaryfiles.size()]),
-				managedProject,
-				progress,
-				getPrintStream());
-		}
-		
-		// Update the options on the local files
-		List localOptions = new ArrayList();
-		if (depth != IResource.DEPTH_INFINITE)
-			// If depth = zero or 1, use -l
-			localOptions.add(Client.LOCAL_OPTION);
-		localOptions.add("-A");
-		update(resources, depth, (String[])localOptions.toArray(new String[localOptions.size()]), progress);
-	}
 	
 	/**
 	 * Replace the local version of the provided resources with the remote using "cvs update -C ..."
@@ -612,7 +538,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 			
 		Client.execute(
 			Client.UPDATE,
-			new String[0],
+			getDefaultGlobalOptions(),
 			(String[])localOptions.toArray(new String[localOptions.size()]),
 			arguments,
 			managedProject,
@@ -636,6 +562,10 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	public String getConnectionMethod(IResource resource) throws TeamException {
 		checkIsChild(resource);
 		return CVSRepositoryLocation.fromString(managedProject.getFolderSyncInfo().getRoot()).getMethod().getName();
+	}
+	
+	private String[] getDefaultGlobalOptions() {
+		return CVSProvider.getDefaultGlobalOptions();
 	}
 	
 	/**
@@ -876,7 +806,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 
 		Client.execute(
 			Client.REMOVE,
-			new String[0],
+			getDefaultGlobalOptions(),
 			new String[0], 
 			new String[] {source.removeFirstSegments(1).toString()},
 			managedProject,
@@ -884,7 +814,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 			getPrintStream());
 		Client.execute(
 			Client.ADD,
-			new String[0],
+			getDefaultGlobalOptions(),
 			new String[0], // We'll need to copy options from old entry
 			new String[] {resource.getFullPath().removeFirstSegments(1).toString()},
 			managedProject,
@@ -966,7 +896,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		
 		Client.execute(
 			Client.TAG,
-			new String[] {},
+			getDefaultGlobalOptions(),
 			(String[])localOptions.toArray(new String[localOptions.size()]),
 			arguments,
 			managedProject,
@@ -991,9 +921,8 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		if (depth == IResource.DEPTH_INFINITE) {
 			// if depth = infinite, look for new directories
 			localOptions.add(Client.DEEP_OPTION);
-			// For now, prune empty directories
-			// This must be done by the client! (not the server)
-			localOptions.add(Client.PRUNE_OPTION);
+			if (CVSProviderPlugin.getPlugin().getPruneEmptyDirectories())
+				localOptions.add(Client.PRUNE_OPTION);
 		}
 		else
 			// If depth = zero or 1, use -l
@@ -1011,7 +940,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 			
 		Client.execute(
 			Client.UPDATE,
-			DEFAULT_GLOBAL_OPTIONS,
+			getDefaultGlobalOptions(),
 			localOptions,
 			arguments,
 			managedProject,
