@@ -203,6 +203,7 @@ public class ConsoleView extends ViewPart {
 	public void dispose() {
 		if (fConsoleViewer != null) {
 			fConsoleViewer.dispose();
+			fConsoleViewer= null;
 		}
 		super.dispose();
 	}

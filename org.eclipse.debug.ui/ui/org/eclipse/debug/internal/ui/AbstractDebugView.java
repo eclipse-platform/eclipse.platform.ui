@@ -39,6 +39,7 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 
 	public void dispose() {
 		getSite().getPage().removePartListener(this);
+		fViewer= null;
 		super.dispose();
 	}
 	
