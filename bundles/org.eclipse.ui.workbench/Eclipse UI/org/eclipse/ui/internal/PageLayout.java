@@ -614,6 +614,12 @@ public class PageLayout implements IPageLayout {
 
 		// Create the placeholder.
 		PartPlaceholder newPart = new PartPlaceholder(viewId);
+		
+		LayoutPart refPart = getRefPart(refId);
+		if (refPart != null) {
+			newPart.setContainer(refPart.getContainer());
+		}		
+		
 		stackPart(newPart, viewId, refId);
 	}
 
