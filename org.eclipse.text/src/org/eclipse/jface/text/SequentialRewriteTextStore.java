@@ -152,7 +152,7 @@ public class SequentialRewriteTextStore implements ITextStore {
 						return fSource.get(offset - delta, length);	
 						
 					} else if (offset >= replace.newOffset && offset + length <= replace.newOffset + replace.text.length()) {
-						return replace.text.substring(offset - replace.newOffset, length);
+						return replace.text.substring(offset - replace.newOffset, offset - replace.newOffset + length);
 						
 					} else if (offset >= replace.newOffset + replace.text.length()) {
 						delta= getDelta(replace);
