@@ -925,7 +925,8 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		}
 		
 		fScrollCanvas= new Canvas(composite, SWT.V_SCROLL);
-		Rectangle trim= fScrollCanvas.computeTrim(0, 0, 0, 0);
+		//Rectangle trim= fScrollCanvas.computeTrim(0, 0, 0, 0);
+		Rectangle trim= fLeft.getTextWidget().computeTrim(0, 0, 0, 0);
 		fTopInset= trim.y;
 		
 		fVScrollBar= fScrollCanvas.getVerticalBar();
@@ -1942,7 +1943,8 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		
 		int scrollbarWidth= 0;
 		if (fSynchronizedScrolling && fScrollCanvas != null)
-			scrollbarWidth= fScrollCanvas.computeTrim(0, 0, 0, 0).width;
+			//scrollbarWidth= fScrollCanvas.computeTrim(0, 0, 0, 0).width;
+			scrollbarWidth= fLeft.getTextWidget().computeTrim(0, 0, 0, 0).width;
 		int rightTextWidth= width2-scrollbarWidth;
 		if (fRightCanvas != null)
 			rightTextWidth-= fMarginWidth;
