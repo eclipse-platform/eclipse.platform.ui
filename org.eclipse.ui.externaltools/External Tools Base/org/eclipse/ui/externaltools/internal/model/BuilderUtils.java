@@ -43,11 +43,21 @@ public class BuilderUtils {
 
 	public static final String LAUNCH_CONFIG_HANDLE = "LaunchConfigHandle"; //$NON-NLS-1$
 
+	/**
+	 * Constant used to find a builder using the 3.0-interim format
+	 */
 	public static final String BUILDER_FOLDER_NAME= ".externalToolBuilders"; //$NON-NLS-1$
+	/**
+	 * Constant used to represent the current project in the 3.0-final format.
+	 */
+	public static final String PROJECT_TAG= "<project>"; //$NON-NLS-1$
 	
 	public static final String VERSION_1_0= "1.0"; //$NON-NLS-1$
 	public static final String VERSION_2_1= "2.1"; //$NON-NLS-1$
-	public static final String VERSION_3_0= "3.0"; //$NON-NLS-1$
+	// The format shipped up to and including Eclipse 3.0 RC1
+	public static final String VERSION_3_0_interim= "3.0.interim"; //$NON-NLS-1$
+	// The format shipped in Eclipse 3.0 final
+	public static final String VERSION_3_0_final= "3.0"; //$NON-NLS-1$
 	
 	// Extension point constants.
 	private static final String TAG_CONFIGURATION_MAP= "configurationMap"; //$NON-NLS-1$
@@ -80,13 +90,21 @@ public class BuilderUtils {
 		}
 		if (configuration != null) {
 			version[0]= VERSION_2_1;
+		} else if (configHandle.startsWith(PROJECT_TAG)) {
+			version[0]= VERSION_3_0_final;
+			IPath path= new Path(configHandle);
+			IFile file= project.getFile(path.removeFirstSegments(1));
+			if (file.exists()) {
+				configuration= manager.getLaunchConfiguration(file);
+			} 
 		} else {
 			// If the memento failed, try treating the handle as a file name.
-			// This is the format used in 3.0.
-			version[0]= VERSION_3_0;
+			// This is the format used in 3.0 RC1.
+			version[0]= VERSION_3_0_interim;
 			IPath path= new Path(BUILDER_FOLDER_NAME).append(configHandle);
 			IFile file= project.getFile(path);
 			if (file.exists()) {
+				version[0]= VERSION_3_0_interim;
 				configuration= manager.getLaunchConfiguration(file);
 			}
 		}
@@ -159,10 +177,11 @@ public class BuilderUtils {
 				}
 			}
 			args= new HashMap();
-			// Launch configuration builders are stored by their name only.
-			// The config's location is recreated dynamically based on the
-			// containing project.
-			args.put(LAUNCH_CONFIG_HANDLE, config.getFile().getName());
+			// Launch configuration builders are stored with a project-relative path
+			StringBuffer buffer= new StringBuffer(PROJECT_TAG);
+			// Append the project-relative path (workspace path minus first segment)
+			buffer.append('/').append(config.getFile().getFullPath().removeFirstSegments(1));
+			args.put(LAUNCH_CONFIG_HANDLE, buffer.toString());
 		}
 		command.setBuilderName(ExternalToolBuilder.ID);
 		command.setArguments(args);
