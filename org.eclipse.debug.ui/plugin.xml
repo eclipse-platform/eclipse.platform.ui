@@ -39,16 +39,6 @@
    </perspective>
 </extension>
 <extension
-      point="org.eclipse.ui.propertyPages">
-   <page
-         objectClass="org.eclipse.core.resources.IResource"
-         name="%LaunchConfigurationTypePropertyPage.name"
-         class="org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationTypePropertyPage"
-         id="org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationTypePropertyPage"
-         adaptable="true">
-   </page>
-</extension>
-<extension
       point="org.eclipse.ui.views">
    <category
          name="%DebugViewsCategory.name"

@@ -108,20 +108,9 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	
 	/**
 	 * Constant for use as local name part of <code>QualifiedName</code>
-	 * for persisting the default launcher.
-	 */
-	private static final String DEFAULT_LAUNCHER= "launcher"; //$NON-NLS-1$
-	
-	/**
-	 * Constant for use as local name part of <code>QualifiedName</code>
 	 * for persisting the default launch configuration type.
 	 */
 	private static final String DEFAULT_CONFIG_TYPE = "defaultLaunchConfigurationType"; //$NON-NLS-1$
-	
-	/**
-	 * Constant used for reading and writing the default config type to metadata.
-	 */ 
-	private static final QualifiedName fgQualNameDefaultConfigType = new QualifiedName(DebugPlugin.getUniqueIdentifier(), DEFAULT_CONFIG_TYPE);
 	
 	/**
 	 * Types of notifications
@@ -286,41 +275,6 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	}
 	
 	/**
-	 * @see ILaunchManager#getDefaultLaunchConfigurationType(IResource)
-	 */
-	public ILaunchConfigurationType getDefaultLaunchConfigurationType(IResource resource, boolean considerResourceOnly) {
-		
-		try {
-			// First check on the resource itself
-			String defaultConfigTypeID = resource.getPersistentProperty(fgQualNameDefaultConfigType);
-			if (defaultConfigTypeID != null) {
-				ILaunchConfigurationType type = getLaunchConfigurationType(defaultConfigTypeID);
-				if (type != null) {
-					return type;
-				}
-			} else  if (considerResourceOnly) {
-				return null;
-			}
-			
-			// Next work up the resource's containment chain looking for a resource that
-			// specifies a default config type
-			IResource candidateResource = resource.getParent();
-			while (!(candidateResource instanceof IWorkspaceRoot)) {
-				defaultConfigTypeID = candidateResource.getPersistentProperty(fgQualNameDefaultConfigType);
-				if (defaultConfigTypeID != null) {
-					return getLaunchConfigurationType(defaultConfigTypeID);
-				}
-				candidateResource = candidateResource.getParent();
-			}
-		} catch (CoreException ce) {
-			DebugPlugin.log(ce);
-		}
-			
-		// Otherwise, return the default associated with the resource's file extension
-		return getDefaultLaunchConfigurationType(resource.getFileExtension());
-	}
-	
-	/**
 	 * @see ILaunchManager#getDefaultLaunchConfigurationType(String)
 	 */
 	public ILaunchConfigurationType getDefaultLaunchConfigurationType(String fileExtension) {
@@ -390,13 +344,6 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 */
 	public void removeLaunchListener(ILaunchListener listener) {
 		fListeners.remove(listener);
-	}
-	
-	/**
-	 * @see ILaunchManager#setDefaultLaunchConfigurationType(IResource, String)
-	 */
-	public void setDefaultLaunchConfigurationType(IResource resource, String configTypeID) throws CoreException {		
-		resource.setPersistentProperty(fgQualNameDefaultConfigType, configTypeID);
 	}
 	
 	/**

@@ -623,7 +623,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		IResource resource = getResourceContext();
 		ILaunchConfigurationType type = null;
 		if (resource != null) {
-			type = getLaunchManager().getDefaultLaunchConfigurationType(resource, false);
+			type = getLaunchManager().getDefaultLaunchConfigurationType(resource.getFileExtension());
 		}
 		return type;		
 	}

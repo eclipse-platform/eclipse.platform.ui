@@ -173,21 +173,6 @@ public interface ILaunchManager {
 	public void removeLaunchConfigurationListener(ILaunchConfigurationListener listener);	
 	
 	/**
-	 * Returns the default launch configuration type for the specified resource, 
-	 * or <code>null</code> if there is none.  If <code>considerResourceOnly</code>
-	 * is <code>true</code>,  only the specified resource will be considered when looking
-	 * for a default launch configuration type, otherwise the resource's containment
-	 * hierarchy will be checked for a default launch configuration type, then the
-	 * resource's file extension will be checked.
-	 * 
-	 * @param considerResourceOnly flag that indicates whether to consider only the specified
-	 *  resource or its containers and file extension as well
-	 * @param resource the resource whose default launch configuration type will be returned
-	 * @since 2.0
-	 */
-	public ILaunchConfigurationType getDefaultLaunchConfigurationType(IResource resource, boolean considerResourceOnly);
-
-	/**
 	 * Returns the default launch configuration type for the specified file extension, 
 	 * or <code>null</code> if there is none.
 	 * 
@@ -214,20 +199,6 @@ public interface ILaunchManager {
 	 * @since 2.0
 	 */
 	public ILaunchConfigurationType[] getAllLaunchConfigurationTypesFor(String fileExtension);
-
-	/**
-	 * Set the specified launch configuration type as the default for the specified resource.
-	 * When looking for a default launch configuration type, the usual method is to start at
-	 * the resource and work up the containment chain until some resource specifies a default
-	 * launch configuration type, or until the containment chain is exhausted.
-	 * 
-	 * @param resource the workbench resource whose default launch configuration type is being set
-	 * @param configTypeID ID String of the launch configuration type that is being set as the default for 
-	 *  the specified resource
-	 * @exception CoreException if unable to set the default launch configuration type
-	 * @since 2.0
-	 */
-	public void setDefaultLaunchConfigurationType(IResource resource, String configTypeID) throws CoreException;
 
 	/**
 	 * Set the specified launch configuration type as the default for resources with the specified
