@@ -72,7 +72,7 @@ public class OpenRemoteFileAction extends TeamAction {
 					}
 				}
 			}
-		}, Policy.bind("OpenRemoteFileAction.open"), this.PROGRESS_DIALOG);
+		}, Policy.bind("OpenRemoteFileAction.open"), this.PROGRESS_BUSYCURSOR);
 	}
 	/*
 	 * @see TeamAction#isEnabled()

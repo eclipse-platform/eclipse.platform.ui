@@ -24,7 +24,7 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.RepositoryManager;
-import org.eclipse.team.internal.ccvs.ui.model.Tag;
+import org.eclipse.team.internal.ccvs.ui.model.BranchTag;
 import org.eclipse.team.ui.actions.TeamAction;
 
 public class AutoDefineTagsAction extends TeamAction {
@@ -69,7 +69,7 @@ public class AutoDefineTagsAction extends TeamAction {
 				ICVSRemoteFile[] files = getSelectedRemoteFiles();
 				for (int i = 0; i < files.length; i++) {
 					ICVSRemoteFile file = files[i];
-					ICVSRepositoryLocation root = getRemoteRoot(file);
+					ICVSRepositoryLocation root = file.getRepository();
 					Set tagSet = new HashSet();
 					ILogEntry[] entries = null;
 					try {
@@ -88,9 +88,11 @@ public class AutoDefineTagsAction extends TeamAction {
 					while (it.hasNext()) {
 						ICVSTag tag = (ICVSTag)it.next();
 						if (tag.isBranch()) {
-							manager.addBranchTag(root, new Tag(tag.getName(), true, root));
+							manager.addBranchTag(root, new BranchTag(tag.getName(), root));
 						} else {
-							manager.addVersionTag(root, new Tag(tag.getName(), false, root));
+							// Problem: need to get the root remote project. Can't do this without
+							// additional API.
+							//manager.addVersionTag(root, new Tag(tag.getName(), false, root));
 						}
 					}
 				}
@@ -104,8 +106,5 @@ public class AutoDefineTagsAction extends TeamAction {
 		ICVSRemoteFile[] resources = getSelectedRemoteFiles();
 		if (resources.length == 0) return false;
 		return true;
-	}
-	protected ICVSRepositoryLocation getRemoteRoot(ICVSRemoteFile file) {
-		return file.getRepository();
 	}
 }

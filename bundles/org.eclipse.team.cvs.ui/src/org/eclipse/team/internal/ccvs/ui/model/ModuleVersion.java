@@ -7,25 +7,39 @@ package org.eclipse.team.internal.ccvs.ui.model;
  
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
-import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
-public class VersionCategory extends CVSModelElement implements IAdaptable {
-	private ICVSRepositoryLocation repository;
-	
+/**
+ * This class represents a version of a module in the repository.
+ * The children are remote resources.
+ */
+public class ModuleVersion extends CVSModelElement implements IAdaptable {
+	ICVSRemoteFolder resource;
+	String tag;
+	RemoteModule parent;
+		
 	/**
-	 * ProjectVersionsCategory constructor.
+	 * RemoteProject constructor.
 	 */
-	public VersionCategory(ICVSRepositoryLocation repo) {
-		super();
-		this.repository = repo;
+	public ModuleVersion(ICVSRemoteFolder resource, String tag, RemoteModule parent) {
+		this.resource = resource;
+		this.tag = tag;
+		this.parent = parent;
+	}
+	
+	public String getTag() {
+		return tag;
+	}
+	public ICVSRemoteResource getCVSResource() {
+		return resource;
 	}
 	
 	/**
@@ -46,54 +60,51 @@ public class VersionCategory extends CVSModelElement implements IAdaptable {
 	 */
 	public Object[] getChildren(Object o) {
 		try {
-			ICVSRemoteResource[] resources = repository.members("HEAD", new NullProgressMonitor());
-			Object[] result = new Object[resources.length];
-			for (int i = 0; i < resources.length; i++) {
-				result[i] = new RemoteModule((ICVSRemoteFolder)resources[i], this);
-			}
-			return result;
+			return resource.members(new NullProgressMonitor());
 		} catch (TeamException e) {
+			CVSUIPlugin.log(e.getStatus());
 			return null;
 		}
 	}
-
+	
 	/**
-	 * Returns an image descriptor to be used for displaying an object in the workbench.
-	 * Returns null if there is no appropriate image.
-	 *
-	 * @param object The object to get an image descriptor for.
+	 * Returns an image to be used for displaying an object in the desktop.
+	 * @param object The object to get an image for.
+	 * @param owner The viewer that the image will be used in.  The image will
+	 * be disposed when this viewer is closed.  If the owner is null, a new 
+	 * image is returned, and the caller is responsible for disposing it.
 	 */
 	public ImageDescriptor getImageDescriptor(Object object) {
-		return CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_VERSIONS_CATEGORY);
+		return PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER);
 	}
-
+	
 	/**
 	 * Returns the name of this element.  This will typically
 	 * be used to assign a label to this object when displayed
-	 * in the UI.  Returns an empty string if there is no appropriate
-	 * name for this object.
-	 *
-	 * @param object The object to get a label for.
+	 * in the UI.
 	 */
 	public String getLabel(Object o) {
-		return "Versions";
-	}
-
-	/**
-	 * Returns the logical parent of the given object in its tree.
-	 * Returns null if there is no parent, or if this object doesn't
-	 * belong to a tree.
-	 *
-	 * @param object The object to get the parent for.
-	 */
-	public Object getParent(Object o) {
-		return repository;
+		return resource.getName() + " " + tag;
 	}
 	
+	/**
+	 * Returns the logical parent of the given object in its tree.
+	 */
+	public Object getParent(Object o) {
+		return parent;
+	}
+
 	/**
 	 * Return the repository the given element belongs to.
 	 */
 	public ICVSRepositoryLocation getRepository(Object o) {
-		return repository;
+		return resource.getRepository();
+	}
+	
+	/** (Non-javadoc)
+	 * For debugging purposes only.
+	 */
+	public String toString() {
+		return "ProjectVersion(" + resource.getName() + ")";
 	}
 }

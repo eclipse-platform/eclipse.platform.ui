@@ -14,7 +14,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 public class CVSAdapterFactory implements IAdapterFactory {
 	private Object fileAdapter = new RemoteFileElement();
 	private Object folderAdapter = new RemoteFolderElement();
-	private Object rootAdapter = new RemoteRootElement();
+	private Object rootAdapter = new CVSRepositoryRootElement();
 
 	/** (Non-javadoc)
 	 * Method declared on IAdapterFactory.

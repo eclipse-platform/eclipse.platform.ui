@@ -7,27 +7,39 @@ package org.eclipse.team.internal.ccvs.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.team.ccvs.core.ICVSRemoteFile;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.team.ccvs.core.CVSTeamProvider;
+import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.core.ITeamManager;
+import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.internal.ccvs.ui.RepositoryManager;
+import org.eclipse.team.internal.ccvs.ui.model.BranchCategory;
+import org.eclipse.team.internal.ccvs.ui.model.BranchTag;
 import org.eclipse.team.ui.actions.TeamAction;
 
 /**
- * RemoveRootAction removes a repository
+ * DefineTagAction remembers a tag by name
  */
-public class RemoveRootAction extends TeamAction {
+public class DefineBranchAction extends TeamAction {
 	/**
-	 * Returns the selected remote files
+	 * Returns the selected remote roots
 	 */
 	protected ICVSRepositoryLocation[] getSelectedRemoteRoots() {
 		ArrayList resources = null;
@@ -40,10 +52,14 @@ public class RemoveRootAction extends TeamAction {
 					resources.add(next);
 					continue;
 				}
+				if (next instanceof BranchCategory) {
+					resources.add(((BranchCategory)next).getRepository(next));
+					continue;
+				}
 				if (next instanceof IAdaptable) {
 					IAdaptable a = (IAdaptable) next;
 					Object adapter = a.getAdapter(ICVSRepositoryLocation.class);
-					if (adapter instanceof ICVSRemoteFile) {
+					if (adapter instanceof ICVSRepositoryLocation) {
 						resources.add(adapter);
 						continue;
 					}
@@ -63,14 +79,19 @@ public class RemoveRootAction extends TeamAction {
 	public void run(IAction action) {
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
-				ICVSRepositoryLocation[] roots = getSelectedRemoteRoots();
-				if (roots.length == 0) return;
-				RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();
-				for (int i = 0; i < roots.length; i++) {
-					manager.removeRoot(roots[i]);
-				}
+				final ICVSRepositoryLocation[] roots = getSelectedRemoteRoots();
+				if (roots.length != 1) return;
+				Shell shell = getShell();
+				shell.getDisplay().syncExec(new Runnable() {
+					public void run() {
+						InputDialog dialog = new InputDialog(getShell(), Policy.bind("DefineBranchAction.enterTag"), Policy.bind("DefineBranchAction.enterTagLong"), null, null);
+						if (dialog.open() == InputDialog.OK) {
+							CVSUIPlugin.getPlugin().getRepositoryManager().addBranchTag(roots[0], new BranchTag(dialog.getValue(), roots[0]));
+						}
+					}
+				});
 			}
-		}, Policy.bind("RemoveRootAction.removeRoot"), this.PROGRESS_DIALOG);
+		}, Policy.bind("DefineBranchAction.tag"), this.PROGRESS_BUSYCURSOR);
 
 	}
 	/*
@@ -78,7 +99,8 @@ public class RemoveRootAction extends TeamAction {
 	 */
 	protected boolean isEnabled() throws TeamException {
 		ICVSRepositoryLocation[] roots = getSelectedRemoteRoots();
-		return roots.length > 0;
+		if (roots.length != 1) return false;
+		return true;
 	}
 }
 
