@@ -11,35 +11,49 @@
 package org.eclipse.core.runtime;
 
 /**
-* A runtime library declared in a plug-in.  Libraries contribute elements to the search path.
-* These contributions are specified as a path to a directory or Jar file.  This path is always
-* considered to be relative to the containing plug-in.  
-* <p>
-* Libraries are typed.  The type is used to determine to which search path the library's
-* contribution should be added.  The valid types are: <code>CODE</code> and
-* <code>RESOURCE</code>.  
-* </p>
-* <p>
-* This interface is not intended to be implemented by clients.
-* </p>
+ * A runtime library declared in a plug-in.  Libraries contribute elements to the search path.
+ * These contributions are specified as a path to a directory or Jar file.  This path is always
+ * considered to be relative to the containing plug-in.  
  * <p>
- * <b>Note</b>: This is obsolete API that will be replaced in time with
- * the OSGI-based Eclipse Platform Runtime introduced with Eclipse 3.0.
- * This API will be deprecated once the APIs for the new Eclipse Platform
- * Runtime achieve their final and stable form (post-3.0). </p>
-*
-* @see IPluginDescriptor#getRuntimeLibraries 
-*/
+ * Libraries are typed.  The type is used to determine to which search path the library's
+ * contribution should be added.  The valid types are: <code>CODE</code> and
+ * <code>RESOURCE</code>.  
+ * </p><p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
+ *
+ * @see IPluginDescriptor#getRuntimeLibraries 
+ * TODO @deprecated 
+ * In Eclipse 3.0 the plug-in classpath representation was changed.  Clients of 
+ * <code>ILibrary</code> are directed to the headers associated with the relevant bundle.
+ * In particular, the <code>Bundle-Classpath</code> header contains all available information
+ * about the classpath of a plug-in.  Having retrieved the header, the {@link org.eclipse.osgi.util.ManifestElement}
+ * helper class can be used to parse the value and discover the individual 
+ * class path entries.  
+ * <p>
+ * Note that this new structure does not include information on 
+ * which packages are exported or present in the listed classpath entries. This 
+ * information is no longer relevant.
+ * </p><p>
+ * See {@link IPluginDescriptor} for information on the relationship between plug-in 
+ * descriptors and bundles.
+ * </p><p>
+ * This interface must only be used by plug-ins 
+ * which explicitly require the org.eclipse.core.runtime.compatibility plug-in.
+ * </p>
+ */
 public interface ILibrary {
 	/**
 	 * Constant string (value "code") indicating the code library type.
 	 * @see LibraryModel#CODE
+	 * TODO @deprecated As of Eclipse 3.0 library types are obsolete.
 	 */
 	public static final String CODE = "code"; //$NON-NLS-1$
 
 	/**
 	 * Constant string (value "resource") indicating the resource library type.
 	 * @see LibraryModel#RESOURCE
+	 * TODO @deprecated As of Eclipse 3.0 library types are obsolete.
 	 */
 	public static final String RESOURCE = "resource"; //$NON-NLS-1$
 
@@ -53,6 +67,7 @@ public interface ILibrary {
 	 * (no filtering).
 	 *
 	 * @return the content filters, or <code>null</codel> if none
+	 * TODO @deprecated 
 	 */
 	public String[] getContentFilters();
 	/**
@@ -61,6 +76,7 @@ public interface ILibrary {
 	 *
 	 * @return the path of the library
 	 * @see IPluginDescriptor#getInstallURL
+	 * TODO @deprecated 
 	 */
 	public IPath getPath();
 	/**
@@ -69,6 +85,7 @@ public interface ILibrary {
 	 * @return the type of this library.   The valid types are: <code>CODE</code> and <code>RESOURCE</code>.
 	 * @see #CODE
 	 * @see #RESOURCE
+	 * TODO @deprecated 
 	 */
 	public String getType();
 	/**
@@ -80,6 +97,7 @@ public interface ILibrary {
 	 *
 	 * @return <code>true</code> if the library is exported, <code>false</code>
 	 *    if it is private
+	 * TODO @deprecated 
 	 */
 	public boolean isExported();
 	/**
@@ -88,6 +106,7 @@ public interface ILibrary {
 	 *
 	 * @return <code>true</code> if the library is fully exported, and
 	 *    <code>false</code> if it is private or has filtered content
+	 * TODO @deprecated 
 	 */
 	public boolean isFullyExported();
 	/**
@@ -96,6 +115,7 @@ public interface ILibrary {
 	 * 
 	 * @return the array of package prefixes or <code>null</code>
 	 * @since 2.1
+	 * TODO @deprecated 
 	 */
 	public String[] getPackagePrefixes();
 }

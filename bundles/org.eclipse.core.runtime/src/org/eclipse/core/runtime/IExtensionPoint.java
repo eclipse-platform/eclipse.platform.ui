@@ -44,27 +44,14 @@ public interface IExtensionPoint {
 	 * support (see org.eclipse.core.runtime.compatibility) is installed.  </p>
 	 *
 	 * @return the plug-in that declares this extension point
+	 * TODO @deprecated IPluginDescriptor is not part of the new runtime and its function
+	 * has been split over several parts of the new runtime.  This method
+	 * is not available (returns null) if the compatibility layer is not installed.  Use getNamespace()
+	 * to get the symbolic id of the declaring plugin.  See IPluginDescriptor to see how to 
+	 * update your usecases.
 	 */
 	public IPluginDescriptor getDeclaringPluginDescriptor();
 
-	/**
-	 * Returns the identifier of the parent of this extension point.  This value can be used
-	 * in various global facilities to discover the actual parent.
-	 * <p>
-	 * <b>Note</b>: This is an early access API to the new OSGI-based Eclipse 3.0
-	 * Platform Runtime. Because the APIs for the new runtime have not yet been fully
-	 * stabilized, they should only be used by clients needing to take particular
-	 * advantage of new OSGI-specific functionality, and only then with the understanding
-	 * that these APIs may well change in incompatible ways until they reach
-	 * their finished, stable form (post-3.0). </p>
-	 * 
-	 * @return the idenifier of the parent
-	 * @see Platform.getBundle(String)
-	 * @since 3.0
-	 * @deprecated Use #getNamespace instead. This method is going to be removed 
-	 * after M8 
-	 */
-	public String getParentIdentifier();
 	/**
 	 * Returns the namespace for this extension point. This value can be used
 	 * in various global facilities to discover this extension point's provider.

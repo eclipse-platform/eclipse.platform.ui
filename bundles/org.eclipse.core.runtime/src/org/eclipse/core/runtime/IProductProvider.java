@@ -18,7 +18,7 @@ package org.eclipse.core.runtime;
  * Products are normally defined and installed in the system using extensions to the 
  * <code>org.eclipse.core.runtime.products</code> extension point.  In cases where 
  * the notion of product is defined by alternate means (e.g., primary feature), an <code>IProductProvider</code>
- * can be installed in this extension point (using an executable extension).  The provider
+ * can be installed in this extension point using an executable extension.  The provider
  * then acts as a proxy for the product extensions that represent the products installed.
  * </p>
  * 
@@ -28,12 +28,14 @@ package org.eclipse.core.runtime;
 public interface IProductProvider {
 	/**
 	 * Returns the human-readable name of this product provider.
+	 * 
 	 * @return the name of this product provider
 	 */
 	public String getName();
 	
 	/**
 	 * Returns the products provided by this provider.
+	 * 
 	 * @return the products provided by this provider
 	 */
 	public IProduct[] getProducts();

@@ -22,17 +22,50 @@ import java.util.*;
  * been started. In contrast, a plug-in's runtime object 
  * (<code>getPlugin</code>) generally runs plug-in-defined code.
  * </p>
+ * <p>This interface is not intended to be implemented by clients.
+ * </p>
+ *
+ * TODO @deprecated 
+ * <code>IPluginDescriptor</code> was refactored in Eclipse 3.0.
+ * Most of the functionality has moved to {@link Platform} and the 
+ * plug-in descriptor has been replaced with the OSGi <code>Bundle</code> 
+ * object.
  * <p>
- * This interface is not intended to be implemented by clients.
+ * This interface must only be used by plug-ins 
+ * which explicitly require the org.eclipse.core.runtime.compatibility plug-in.
  * </p>
  * <p>
- * <b>Note</b>: This is obsolete API that will be replaced in time with
- * the OSGI-based Eclipse Platform Runtime introduced with Eclipse 3.0.
- * This API will be deprecated once the APIs for the new Eclipse Platform
- * Runtime achieve their final and stable form (post-3.0). Furthermore, this 
- * API is only functional if the org.eclipse.core.runtime.compatibility plug-in
- * is present (and resolved) in the system.</p>
- *
+ * For most uses the bundle object can be treated as an opaque token
+ * representing your plug-in to the system -- It must be supplied to various 
+ * <code>Platform</code> methods but need not be interrogated itself.
+ * There are a small number of plug-in descriptor method equivalents 
+ * supplied by <code>Bundle</code> itself.  The details are spelled out
+ * in the comments on each <code>IPluginDescriptor</code> method.
+ * </p>
+ * <p>
+ * Clients of this interface have a reference to an <code>IPluginDescriptor</code> 
+ * corresponding to a plug-in.  To adapt to the deprecation, the bundle corresponding
+ * to the plug-in generally needs to be acquired. There are several cases:
+ * <ul>
+ * <li>the descriptor was discovered using methods such as 
+ * <code>IPluginRegistry.getPluginDescriptor()</code>.  The code should be 
+ * updated to use one of the bundle discovery mechanisms such as 
+ * <code>Platform.getBundle()</code>.
+ * </li>
+ * <li>the descriptor is from the plug-in itself.  The code should be updated to
+ * use the plug-in's bundle instead.
+ * </li>
+ * <li>the descriptor is supplied by a third party.  The plug-in writer must 
+ * cooperate with that party to obtain a bundle rather than a descriptor.
+ * </li>
+ * </ul>
+ * </p>
+ * <p>
+ * The resulting bundle object can be used
+ * to carry out the adaptation steps outlined for each of the 
+ * <code>IPluginDescriptor</code> methods.
+ * </p>
+ * 
  * @see #getPlugin
  */
 public interface IPluginDescriptor {
@@ -44,6 +77,13 @@ public interface IPluginDescriptor {
 	 *
 	 * @param extensionName the simple identifier of the extension (e.g. <code>"main"</code>).
 	 * @return the extension, or <code>null</code>
+	 * TODO @deprecated 
+	 * Use 
+	 * <pre>
+	 *     Platform.getExtensionRegistry().getExtension(id + "." + extensionName) 
+	 * </pre>
+	 * where <code>id</code> is the symbolic name of the bundle associated with 
+	 * the relevant plug-in.
 	 */
 	public IExtension getExtension(String extensionName);
 	/**
@@ -52,6 +92,13 @@ public interface IPluginDescriptor {
 	 *
 	 * @param extensionPointId the simple identifier of the extension point (e.g. <code>"wizard"</code>).
 	 * @return the extension point, or <code>null</code>
+	 * TODO @deprecated  
+	 * Use 
+	 * <pre>
+	 *     Platform.getExtensionRegistry().getExtensionPoint(id, extensionPointId) 
+	 * </pre>
+	 * where <code>id</code> is the symbolic name of the bundle associated with 
+	 * the relevant plug-in.
 	 */
 	public IExtensionPoint getExtensionPoint(String extensionPointId);
 	/**
@@ -59,6 +106,13 @@ public interface IPluginDescriptor {
 	 * Returns an empty array if this plug-in does not declare any extension points.
 	 *
 	 * @return the extension points declared by this plug-in
+	 * TODO @deprecated 
+	 * Use 
+	 * <pre>
+	 *     Platform.getExtensionRegistry().getExtensionPoints(id) 
+	 * </pre>
+	 * where <code>id</code> is the symbolic name of the bundle associated with 
+	 * the relevant plug-in.
 	 */
 	public IExtensionPoint[] getExtensionPoints();
 	/**
@@ -66,6 +120,13 @@ public interface IPluginDescriptor {
 	 * Returns an empty array if this plug-in does not declare any extensions.
 	 *
 	 * @return the extensions declared by this plug-in
+	 * TODO @deprecated 
+	 * Use 
+	 * <pre>
+	 *     Platform.getExtensionRegistry().getExtensions(id) 
+	 * </pre>
+	 * where <code>id</code> is the symbolic name of the bundle associated with 
+	 * the relevant plug-in.
 	 */
 	public IExtension[] getExtensions();
 	/**
@@ -79,8 +140,14 @@ public interface IPluginDescriptor {
 	 * @return the URL of this plug-in's install directory
 	 * @see #getPlugin
 	 * @see Plugin#getStateLocation
+	 * TODO @deprecated 
+	 * Use 
+	 * <pre>
+	 *     bundle.getEntry("");
+	 * </pre>
+	 * where <code>bundle</code> is the bundle associated with 
+	 * the relevant plug-in.
 	 */
-	// TODO need a insulator for this on Platform
 	public URL getInstallURL();
 	/**
 	 * Returns a displayable label for this plug-in.
@@ -93,8 +160,14 @@ public interface IPluginDescriptor {
 	 * @return a displayable string label for this plug-in,
 	 *    possibly the empty string
 	 * @see #getResourceString 
+	 * TODO @deprecated 
+	 * Use 
+	 * <pre>
+	 *     bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_NAME) 
+	 * </pre>
+	 * where <code>bundle</code> is the bundle associated with 
+	 * the relevant plug-in.
 	 */
-	// TODO need a insulator for this on Platform.  it should do the translation for us
 	public String getLabel();
 	/**
 	 * Returns the plug-in runtime object corresponding to this
@@ -109,6 +182,18 @@ public interface IPluginDescriptor {
 	 * @exception CoreException 
 	 *   if this plug-in's runtime object could not be created.
 	 * @see #isPluginActivated
+	 * TODO @deprecated 
+	 * In Eclipse 3.0 plug-in runtime objects are not globally managed and
+	 * so are not generically accessible.  Rather, each plug-in is free to declare
+	 * API which exposes the plug-in runtime object (e.g., <code>MyPlugin.getInstance()</code>).
+	 * 
+	 * If this method is being used to activate a plug-in then the following code is
+	 * equivalent:
+	 * <pre>
+	 *     bundle.start()
+	 * </pre>
+	 * where <code>bundle</code> is the bundle associated with 
+	 * the relevant plug-in.
 	 */
 	public Plugin getPlugin() throws CoreException;
 	/**
@@ -148,16 +233,34 @@ public interface IPluginDescriptor {
 	 * @see IConfigurationElement#createExecutableExtension
 	 * @see #isPluginActivated
 	 * @see #getResourceBundle
+	 * TODO @deprecated 
+	 * Use 
+	 * <pre>
+	 *     bundle.loadClass(className)
+	 * </pre>
+	 * where <code>bundle</code> is the bundle associated with 
+	 * the relevant plug-in.
 	 */
-	// TODO need a insulator for this on Platform
 	public ClassLoader getPluginClassLoader();
 	/**
-	* Returns a list of plug-in prerequisites required
-	* for correct execution of this plug-in.
-	*
-	* @return an array of plug-in prerequisites, or an empty array
-	* if no prerequisites were specified
-	*/
+	 * Returns a list of plug-in prerequisites required
+	 * for correct execution of this plug-in.
+	 *
+	 * @return an array of plug-in prerequisites, or an empty array
+	 * if no prerequisites were specified
+	 * TODO @deprecated 
+	 * Use 
+	 * <pre>
+	 *     import org.eclipse.osgi.util.ManifestElement;
+	 *     import org.osgi.framework.Constants;
+	 *     ...
+	 *     String requires = bundle.getHeaders().get(Constants.REQUIRE_BUNDLE);
+	 *     ManifestElement[] elements = ManifestElement.parseHeader(Constants.REQUIRE_BUNDLE, requires);
+	 * </pre>
+	 * where <code>bundle</code> is the bundle associated with 
+	 * the relevant plug-in.  The resultant elements array contains one
+	 * entry for each required plug-in.
+	 */
 	public IPluginPrerequisite[] getPluginPrerequisites();
 	/**
 	 * Returns the name of the provider of this plug-in.
@@ -170,8 +273,14 @@ public interface IPluginDescriptor {
 	 * @see #getResourceString 
 	 *
 	 * @return the name of the provider, possibly the empty string
+	 * TODO @deprecated
+	 * Use 
+	 * <pre>
+	 *     bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_VENDOR) 
+	 * </pre>
+	 * where <code>bundle</code> is the bundle associated with 
+	 * the relevant plug-in.
 	 */
-// TODO need a insulator for this on Platform.  It shoudl do the translation for us
 	public String getProviderName();
 	/**
 	 * Returns this plug-in's resource bundle for the current locale. 
@@ -184,6 +293,13 @@ public interface IPluginDescriptor {
 	 *
 	 * @return the resource bundle
 	 * @exception MissingResourceException if the resource bundle was not found
+	 * TODO @deprecated 
+	 * Use 
+	 * <pre>
+	 *     Platform.getResourceBundle(bundle)
+	 * </pre>
+	 * where <code>bundle</code> is the bundle associated with 
+	 * the relevant plug-in.
 	 */
 	public ResourceBundle getResourceBundle() throws MissingResourceException;
 	/**
@@ -206,6 +322,13 @@ public interface IPluginDescriptor {
 	 * @param value the value
 	 * @return the resource string
 	 * @see #getResourceBundle
+	 * TODO @deprecated 
+	 * Use 
+	 * <pre>
+	 *     Platform.getResourceString(bundle, value)
+	 * </pre>
+	 * where <code>bundle</code> is the bundle associated with 
+	 * the relevant plug-in.
 	 */
 	public String getResourceString(String value);
 	/**
@@ -236,17 +359,35 @@ public interface IPluginDescriptor {
 	 * </p>
 	 *
 	 * @param value the value
-	 * @param bundle the resource bundle
+	 * @param resourceBundle the resource bundle
 	 * @return the resource string
 	 * @see #getResourceBundle
+	 * TODO @deprecated 
+	 * Use 
+	 * <pre>
+	 *     Platform.getResourceString(bundle, value, resourceBundle) 
+	 * </pre>
+	 * where <code>bundle</code> is the bundle associated with 
+	 * the relevant plug-in.
 	 */
-	public String getResourceString(String value, ResourceBundle bundle);
+	public String getResourceString(String value, ResourceBundle resourceBundle);
 	/**
 	 * Returns all runtime libraries declared by this plug-in.
 	 * Returns an empty array if this plug-in has no runtime libraries.
 	 *
 	 * @return the runtime libraries declared by this plug-in
-	 * 
+	 * TODO @deprecated 
+	 * Use 
+	 * <pre>
+	 *     import org.eclipse.osgi.util.ManifestElement;
+	 *     import org.osgi.framework.Constants;
+	 *     ...
+	 *     String requires = bundle.getHeaders().get(Constants.BUNDLE_CLASSPATH);
+	 *     ManifestElement[] elements = ManifestElement.parseHeader(Constants.BUNDLE_CLASSPATH, requires);
+	 * </pre>
+	 * where <code>bundle</code> is the bundle associated with 
+	 * the relevant plug-in.  The resultant elements array contains one
+	 * entry for each entry on the bundle's classpath..
 	 */
 	public ILibrary[] getRuntimeLibraries();
 	/**
@@ -254,14 +395,28 @@ public interface IPluginDescriptor {
 	 * This identifier is a non-empty string and is unique 
 	 * within the plug-in registry.
 	 *
-	 * @return the unique identifier of the plug-in 
-	 *		(e.g. <code>"org.eclipse.core.runtime"</code>)
+	 * @return the unique identifier of the plug-in (e.g. <code>"org.eclipse.core.runtime"</code>)
+	 * TODO @deprecated 
+	 * Use 
+	 * <pre>
+	 *     bundle.getSymbolicName() 
+	 * </pre>
+	 * where <code>bundle</code> is the bundle associated with 
+	 * the relevant plug-in.
 	 */
 	public String getUniqueIdentifier();
 	/**
 	 * Returns the version identifier of this plug-in.
 	 *
 	 * @return the plug-in version identifier
+	 * TODO @deprecated 
+	 * Use 
+	 * <pre>
+	 *     String version = bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_VERSION);
+	 *     new PluginVersionIdentifier(version); 
+	 * </pre>
+	 * where <code>bundle</code> is the bundle associated with 
+	 * the relevant plug-in.
 	 */
 	public PluginVersionIdentifier getVersionIdentifier();
 	/**
@@ -272,6 +427,13 @@ public interface IPluginDescriptor {
 	 * @return <code>true</code> if this plug-in is activated, and
 	 *   <code>false</code> otherwise
 	 * @see #getPlugin
+	 * TODO @deprecated 
+	 * Use 
+	 * <pre>
+	 *     bundle.getState == org.osgi.framework.Constants.ACTIVE 
+	 * </pre>
+	 * where <code>bundle</code> is the bundle associated with 
+	 * the relevant plug-in.
 	 */
 	public boolean isPluginActivated();
 	/**
@@ -283,6 +445,13 @@ public interface IPluginDescriptor {
 	 * necessary to perform a 'resolve' on this URL.
 	 * 
 	 * @since 2.0
+	 * TODO @deprecated 
+	 * Use 
+	 * <pre>
+	 *     Platform.find(bundle, file) 
+	 * </pre>
+	 * where <code>bundle</code> is the bundle associated with 
+	 * the relevant plug-in.
 	 */
 	public URL find(IPath path);
 	/**
@@ -330,25 +499,13 @@ public interface IPluginDescriptor {
 	 * necessary to perform a 'resolve' on this URL.
 	 * 
 	 * @since 2.0
+	 * TODO @deprecated 
+	 * Use 
+	 * <pre>
+	 *     Platform.find(bundle, path, override) 
+	 * </pre>
+	 * where <code>bundle</code> is the bundle associated with 
+	 * the relevant plug-in.
 	 */
 	public URL find(IPath path, Map override);
-	/**
-	 * Returns whether the plug-in described by this descriptor
-	 * is a pre-3.0 style plugin and requires backward compatibility support.
-	 * Invoking this method will not cause the
-	 * plug-in to be activated.
-	 * <p>
-	 * <b>Note</b>: This is an early access API to the new OSGI-based Eclipse 3.0
-	 * Platform Runtime. Because the APIs for the new runtime have not yet been fully
-	 * stabilized, they should only be used by clients needing to take particular
-	 * advantage of new OSGI-specific functionality, and only then with the understanding
-	 * that these APIs may well change in incompatible ways until they reach
-	 * their finished, stable form (post-3.0). </p>
-	 *
-	 * @return <code>true</code> if this plug-in requires backward compatibility, and
-	 *   <code>false</code> otherwise
-	 * @since 3.0
-	 */
-	//TODO remove this - not useful anymore
-	public boolean isLegacy();
 }

@@ -58,7 +58,7 @@ public class ExtensionPoint extends RegistryModelObject implements IExtensionPoi
 		return null;
 	}
 	public String getUniqueIdentifier() {
-		return this.getParentIdentifier() + "." + getSimpleIdentifier(); //$NON-NLS-1$
+		return this.getNamespace() + "." + getSimpleIdentifier(); //$NON-NLS-1$
 	}
 	public void setExtensions(IExtension[] value) {
 		extensions = value;
@@ -70,9 +70,6 @@ public class ExtensionPoint extends RegistryModelObject implements IExtensionPoi
 	public void setSimpleIdentifier(String value) {
 		assertIsWriteable();
 		id = value;
-	}
-	public String getParentIdentifier() {
-		return getNamespace();
 	}
 	public String getNamespace() {
 		BundleModel parent = (BundleModel) getParent();
@@ -102,6 +99,6 @@ public class ExtensionPoint extends RegistryModelObject implements IExtensionPoi
 		return value;
 	}
 	public IPluginDescriptor getDeclaringPluginDescriptor() {
-		return CompatibilityHelper.getPluginDescriptor(getParentIdentifier());
+		return CompatibilityHelper.getPluginDescriptor(getNamespace());
 	}
 }

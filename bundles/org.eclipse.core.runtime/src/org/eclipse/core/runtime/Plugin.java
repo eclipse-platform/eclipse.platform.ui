@@ -24,9 +24,15 @@ import org.osgi.service.prefs.BackingStoreException;
 /**
  * The abstract superclass of all plug-in runtime class
  * implementations. A plug-in subclasses this class and overrides
+ * the appropriate life cycle methods in order to react to the life cycle 
+ * requests automatically issued by the platform.
+ * 
+ * TODO conditionla life cycle despcriont
  * the <code>startup</code> and <code>shutdown</code> methods 
- * in order to react to life cycle requests automatically issued
- * by the platform.
+ * 
+ * TODO plugins are implemented on top of bunldes.  Unless otherwise neded, 
+ * more people can successfully ignore these bundles
+ * 
  * <p>
  * Conceptually, the plug-in runtime class represents the entire plug-in
  * rather than an implementation of any one particular extension the
@@ -47,6 +53,9 @@ import org.osgi.service.prefs.BackingStoreException;
  * <p>
  * Instances of plug-in runtime classes are automatically created 
  * by the platform in the course of plug-in activation.
+ * 
+ * TODO conditional description of constructors
+ * 
  * <b>Clients must never explicitly instantiate a plug-in runtime class</b>.
  * </p>
  * <p>
@@ -55,7 +64,7 @@ import org.osgi.service.prefs.BackingStoreException;
  * runtime object. This way, code in other parts of the plug-in
  * implementation without direct access to the plug-in runtime object
  * can easily obtain a reference to it, and thence to any plug-in-wide
- * resources recorded on it. An example follows:
+ * resources recorded on it. An example for Eclipse 3.0 follows:
  * <pre>
  *     package myplugin;
  *     public class MyPluginClass extends Plugin {
@@ -63,8 +72,8 @@ import org.osgi.service.prefs.BackingStoreException;
  *
  *         public static MyPluginClass getInstance() { return instance; }
  *
- *         public void MyPluginClass(IPluginDescriptor descriptor) {
- *             super(descriptor);
+ *         public void MyPluginClass() {
+ *             super();
  *             instance = this;
  *             // ... other initialization
  *         }
@@ -73,86 +82,6 @@ import org.osgi.service.prefs.BackingStoreException;
  * </pre>
  * In the above example, a call to <code>MyPluginClass.getInstance()</code>
  * will always return an initialized instance of <code>MyPluginClass</code>.
- * </p>
- * <p>
- * The static method <code>Platform.getPlugin()</code>
- * can be used to locate a plug-in's runtime object by name.
- * The extension initialization would contain the following code:
- * <pre>
- *     Plugin myPlugin = Platform.getPlugin("com.example.myplugin");
- * </pre>
- * 
- * Another typical implementation pattern for plug-in classes
- * is handling of any initialization files required by the plug-in.
- * Typically, each plug-in will ship one or more default files
- * as part of the plug-in install. The executing plug-in will
- * use the defaults on initial startup (or when explicitly requested
- * by the user), but will subsequently rewrite any modifications
- * to the default settings into one of the designated plug-in
- * working directory locations. An example of such an implementation
- * pattern is illustrated below:
- * <pre>
- * package myplugin;
- * public class MyPlugin extends Plugin {
- *
- *     private static final String INI = "myplugin.ini"; 
- *     private Properties myProperties = null;
- *
- *     public void startup() throws CoreException {
- *         try {
- *             InputStream input = null;
- *             // look for working properties.  If none, use shipped defaults 
- *             File file = getStateLocation().append(INI).toFile();
- *             if (!file.exists()) {			
- *                 URL base = getDescriptor().getInstallURL();
- *                 input = (new URL(base,INI)).openStream();
- *             } else 
- *                 input = new FileInputStream(file);
- * 
- *             // load properties 
- *             try {
- *                 myProperties = new Properties();
- *                 myProperties.load(input);
- *             } finally {
- *                 try {
- *                     input.close();
- *                 } catch (IOException e) {
- *                     // ignore failure on close
- *                 }
- *             }
- *         } catch (Exception e) {
- *             throw new CoreException(
- *                 new Status(IStatus.ERROR, getDescriptor().getUniqueIdentifier(),
- *                     0, "Problems starting plug-in myplugin", e));
- *         }
- *     }
- *
- *     public void shutdown() throws CoreException { 
- *         // save properties in plugin state location (r/w)
- *         try {
- *             FileOutputStream output = null; 
- *             try {
- *                 output = new FileOutputStream(getStateLocation().append(INI)); 
- *                 myProperties.store(output, null);
- *             } finally {
- *                 try {
- *                     output.close();
- *                 } catch (IOException e) {
- *                     // ignore failure on close
- *                 }
- *             }
- *         } catch (Exception e) {
- *             throw new CoreException(
- *                 new Status(IStatus.ERROR, getDescriptor().getUniqueIdentifier(),
- *                     0, "Problems shutting down plug-in myplugin", e));
- *         }
- *     }
- *
- *     public Properties getProperties() {	
- *         return myProperties; 
- *     }
- * }
- * </pre>
  * </p>
  */
 public abstract class Plugin implements BundleActivator {
@@ -167,15 +96,15 @@ public abstract class Plugin implements BundleActivator {
 
 	/**
 	 * The bundle associated this plug-in
-	 * @since 3.0
 	 */
-	protected Bundle bundle;
+	private Bundle bundle;
 	
 	/**
 	 * The context in which this plug-in operates.  Note that this value is private and should not be
 	 * shared with others as this posses a security risk.
 	 */
-	private BundleContext context;		//TODO Why don't we make this protected and/or expose a protected method. This will avoid people to have to keep their copy of the context
+	// TODO consider removing this field.  It is used only in start()
+	private BundleContext context;		
 	/**
 	 * The debug flag for this plug-in.  The flag is false by default.
 	 * It can be set to true either by the plug-in itself or in the platform 
@@ -183,8 +112,7 @@ public abstract class Plugin implements BundleActivator {
 	 */
 	private boolean debug = false;
 
-	/** The plug-in descriptor.
-	 */
+	/** The plug-in descriptor.  */
 	private IPluginDescriptor descriptor;
 
 	/**
@@ -197,6 +125,7 @@ public abstract class Plugin implements BundleActivator {
 	 * </p>
 	 * 
 	 * @since 2.0
+	 * TODO @deprecated TODO see DJ for details
 	 */
 	public static final String PREFERENCES_DEFAULT_OVERRIDE_BASE_NAME = "preferences"; //$NON-NLS-1$
 	public static final String PREFERENCES_DEFAULT_OVERRIDE_FILE_NAME = PREFERENCES_DEFAULT_OVERRIDE_BASE_NAME + ".ini"; //$NON-NLS-1$
@@ -210,13 +139,14 @@ public abstract class Plugin implements BundleActivator {
 	private PreferenceForwarder preferences = null;
 
 	/**
-	 * Creates a new plug-in runtime object.
-	 * <p>
-	 * Plug-in runtime classes are <code>BundleActivators</code> and so must
-	 * have an default constructor.  This method is called by the runtime when the associated 
-	 * bundle is being activated.  The resultant instance is not managed by the runtime and
+	 * Creates a new plug-in runtime object.  This method is called by the platform
+	 * if this class is used as a <code>BundleActivator</code>.  This method is not 
+	 * needed/used if this plug-in requries the org.eclipse.core.runtime.compatibility plug-in.  
+	 * Subclasses of <code>Plugin</code> 
+	 * must call this method first in their constructors.  
+	 * 
+	 * The resultant instance is not managed by the runtime and
 	 * so should be remembered by the client (typically using a Singleton pattern).
-	 * This method will never be called for plug-ins operating in compatibility mode.
 	 * <b>Clients must never explicitly call this method.</b>
 	 * </p> 
 	 * <p>
@@ -224,13 +154,6 @@ public abstract class Plugin implements BundleActivator {
 	 * strongly recommended that this method avoid synchronized blocks or other thread locking mechanisms,
 	 * as this would lead to deadlock vulnerability.
 	 * </p>
-	 * <p>
-	 * <b>Note</b>: This is an early access API to the new OSGI-based Eclipse 3.0
-	 * Platform Runtime. Because the APIs for the new runtime have not yet been fully
-	 * stabilized, they should only be used by clients needing to take particular
-	 * advantage of new OSGI-specific functionality, and only then with the understanding
-	 * that these APIs may well change in incompatible ways until they reach
-	 * their finished, stable form (post-3.0). </p>
 	 * 
 	 * @since 3.0
 	 */
@@ -240,11 +163,10 @@ public abstract class Plugin implements BundleActivator {
 	 * Creates a new plug-in runtime object associated with the given bundle context.
 	 * The resultant instance is not managed by the runtime and
 	 * so should be remembered by the client (typically using a Singleton pattern).
-	 * This method must never be called for plug-ins operating in compatibility mode.
+	 * This method must never be called for plug-ins which require the compatibility layer.
 	 * <p>
-	 * Plug-in runtime classes are <code>BundleActivators</code> and so must
-	 * have an default constructor.
-	 * Clients may call this method if they are not using this class as their bundle activator.
+	 * This constructor is only required if this class is <b>not</b> to be used as a bundle
+	 * activator.  In that case, your <code>BundleActivator</code> may call this method.
 	 * </p><p>
 	 * Note: The class loader typically has monitors acquired during invocation of this method.  It is 
 	 * strongly recommended that this method avoid synchronized blocks or other thread locking mechanisms,
@@ -261,6 +183,9 @@ public abstract class Plugin implements BundleActivator {
 	 * @param context the bundle context
 	 * @since 3.0
 	 */
+	// TODO can we remove this?  It added so you could have a different bundle
+	// activator.  That case is somewhat spurious and can be handled by the 
+	// zero arg constructor and calling start().
 	public Plugin(BundleContext context) {
 		this.context = context;
 	}
@@ -284,6 +209,12 @@ public abstract class Plugin implements BundleActivator {
 	 *
 	 * @param descriptor the plug-in descriptor
 	 * @see #getDescriptor()
+	 * TODO @deprecated
+ 	 * In Eclipse 3.0 this constructor has been replaced by {@link #Plugin()}.
+	 * Implementations of <code>MyPlugin(IPluginDescriptor descriptor)</code> should be changed to 
+	 * <code>MyPlugin()</code> and call <code>super()</code> instead of <code>super(descriptor)</code>.
+	 * The <code>MyPlugin(IPluginDescriptor descriptor)</code> constructor is called only for plug-ins 
+	 * which explicitly require the org.eclipse.core.runtime.compatibility plug-in.
 	 */
 	public Plugin(IPluginDescriptor descriptor) {
 		Assert.isNotNull(descriptor);
@@ -338,7 +269,13 @@ public abstract class Plugin implements BundleActivator {
 	 * Runtime achieve their final and stable form (post-3.0). </p>
 	 *
 	 * @return the plug-in descriptor for this plug-in runtime object
+	 * TODO @deprecated 
+	 * <code>IPluginDescriptor</code> was refactored in Eclipse 3.0.
+	 * The <code>getDescriptor()</code> method may only be called by plug-ins 
+	 * which explicitly require the org.eclipse.core.runtime.compatibility plug-in.
+	 * See the comments on {@link IPluginDescriptor} and its methods for details.
 	 */
+	// TODO throw IllegalStateException if compatibility is not around.
 	public final IPluginDescriptor getDescriptor() {
 		if (descriptor!=null)
 			return descriptor;
@@ -402,6 +339,7 @@ public abstract class Plugin implements BundleActivator {
 	 * @see Preferences#setValue(String, String)
 	 * @see Preferences#setToDefault(String)
 	 * @since 2.0
+	 * TODO @deprecated TODO see DJ for details
 	 */
 	public final Preferences getPluginPreferences() {
 		if (preferences != null) {
@@ -439,6 +377,7 @@ public abstract class Plugin implements BundleActivator {
 	 * @see Preferences#store(OutputStream, String)
 	 * @see Preferences#needsSaving()
 	 * @since 2.0
+	 * TODO @deprecated TODO see DJ for details
 	 */
 	public final void savePluginPreferences() {
 		if (preferences == null || !preferences.needsSaving()) {
@@ -639,13 +578,16 @@ public abstract class Plugin implements BundleActivator {
 	 * </p>
 	 * <b>Clients must never explicitly call this method.</b>
 	 * <p>
-	 * <b>Note</b>: This is obsolete API that will be replaced in time with
-	 * the OSGI-based Eclipse Platform Runtime introduced with Eclipse 3.0.
-	 * This API will be deprecated once the APIs for the new Eclipse Platform
-	 * Runtime achieve their final and stable form (post-3.0). </p>
 	 *
 	 * @exception CoreException if this method fails to shut down
 	 *   this plug-in
+	 * TODO @deprecated 
+	 * In Eclipse 3.0 this method has been replaced by {@link Plugin#stop(BundleContext context)}.
+	 * Implementations of <code>shutdown()</code> should be changed to override 
+	 * <code>stop(BundleContext context)</code> and call <code>super.stop(context)</code> 
+	 * instead of <code>super.shutdown()</code>.
+	 * The <code>shutdown()</code> method is called only for plug-ins which explicitly require the 
+	 * org.eclipse.core.runtime.compatibility plug-in.
 	 */
 	public void shutdown() throws CoreException {
 		Method m;
@@ -704,12 +646,15 @@ public abstract class Plugin implements BundleActivator {
 	 * </p>
 	 * <b>Clients must never explicitly call this method.</b>
 	 * <p>
-	 * <b>Note</b>: This is obsolete API that will be replaced in time with
-	 * the OSGI-based Eclipse Platform Runtime introduced with Eclipse 3.0.
-	 * This API will be deprecated once the APIs for the new Eclipse Platform
-	 * Runtime achieve their final and stable form (post-3.0). </p>
 	 *
 	 * @exception CoreException if this plug-in did not start up properly
+	 * TODO @deprecated 
+	 * In Eclipse 3.0 this method has been replaced by {@link Plugin#start(BundleContext context)}.
+	 * Implementations of <code>startup()</code> should be changed to extend
+	 * <code>start(BundleContext context)</code> and call <code>super.start(context)</code>
+	 * instead of <code>super.startup()</code>.
+	 * The <code>startup()</code> method is called only for plug-ins which explicitly require the 
+	 * org.eclipse.core.runtime.compatibility plug-in.
 	 */
 	public void startup() throws CoreException {
 	}
@@ -754,21 +699,16 @@ public abstract class Plugin implements BundleActivator {
 	 * as this would lead to deadlock vulnerability.
 	 * </p>
 	 * <p>
-	 * Note 4: This method is not called on plug-ins operating in compatibility mode.
+	 * Note 4: The supplied bundle context represents the plug-in to the OSGi framework.
+	 * For security reasons, it is strongly recommended that this object should not be divulged.
 	 * </p>
 	 * <b>Clients must never explicitly call this method.</b>
-	 * <p>
-	 * <b>Note</b>: This is an early access API to the new OSGI-based Eclipse 3.0
-	 * Platform Runtime. Because the APIs for the new runtime have not yet been fully
-	 * stabilized, they should only be used by clients needing to take particular
-	 * advantage of new OSGI-specific functionality, and only then with the understanding
-	 * that these APIs may well change in incompatible ways until they reach
-	 * their finished, stable form (post-3.0). </p>
 	 *
+	 * @param context the bundle context for this plug-in
 	 * @exception BundleException if this plug-in did not start up properly
 	 * @since 3.0
 	 */
-	public void start(BundleContext context) throws Exception{
+	public void start(BundleContext context) throws Exception {
 		this.context = context;
 		bundle = context.getBundle();
 		descriptor = CompatibilityHelper.getPluginDescriptor(bundle.getSymbolicName());
@@ -799,19 +739,13 @@ public abstract class Plugin implements BundleActivator {
 	 * that do not complete in a timely fashion.
 	 * </p>
 	 * <p>
-	 * Note 3: This method is not called on plug-ins operating in compatibility mode.
+	 * Note 3: The supplied bundle context represents the plug-in to the OSGi framework.
+	 * For security reasons, it is strongly recommended that this object should not be divulged.
 	 * </p>
 	 * <b>Clients must never explicitly call this method.</b>
-	 * <p>
-	 * <b>Note</b>: This is an early access API to the new OSGI-based Eclipse 3.0
-	 * Platform Runtime. Because the APIs for the new runtime have not yet been fully
-	 * stabilized, they should only be used by clients needing to take particular
-	 * advantage of new OSGI-specific functionality, and only then with the understanding
-	 * that these APIs may well change in incompatible ways until they reach
-	 * their finished, stable form (post-3.0). </p>
-	 *
-	 * @exception BundleException if this method fails to shut down
-	 *   this plug-in
+	 * 
+	 * @param context the bundle context for this plug-in
+	 * @exception BundleException if this method fails to shut down this plug-in
 	 * @since 3.0
 	 */
 	public void stop(BundleContext context) throws Exception {
@@ -819,19 +753,12 @@ public abstract class Plugin implements BundleActivator {
 	}
 	
 	/**
-	 * Returns the bundle
-	 * <p>
-	 * <b>Note</b>: This is an early access API to the new OSGI-based Eclipse 3.0
-	 * Platform Runtime. Because the APIs for the new runtime have not yet been fully
-	 * stabilized, they should only be used by clients needing to take particular
-	 * advantage of new OSGI-specific functionality, and only then with the understanding
-	 * that these APIs may well change in incompatible ways until they reach
-	 * their finished, stable form (post-3.0). </p>
+	 * Returns the bundle associated with this plug-in.
 	 * 
 	 * @return the associated bundle
 	 * @since 3.0
 	 */
-	public Bundle getBundle() {
+	public final Bundle getBundle() {
 		return bundle;
 	}
 }

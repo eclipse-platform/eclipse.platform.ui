@@ -28,8 +28,6 @@ import org.osgi.framework.*;
 public class PluginDescriptor implements IPluginDescriptor {
 
 	private static final String PLUGIN_CLASS = "Plugin-Class"; //$NON-NLS-1$
-	//TODO remove this
-	private static final String LEGACY = "Legacy"; //$NON-NLS-1$
 	private boolean active = false; // plugin is active
 	private volatile boolean activePending = false; // being activated
 	private boolean deactivated = false; // plugin deactivated due to startup errors
@@ -47,6 +45,22 @@ public class PluginDescriptor implements IPluginDescriptor {
 		active = false;
 		activePending = false;
 		deactivated = false;
+	}
+	/**
+	 * convert a list of comma-separated tokens into an array
+	 *TODO This method is not used. 
+	 */
+	private static String[] getArrayFromList(String prop) {
+		if (prop == null || prop.trim().equals("")) //$NON-NLS-1$
+			return new String[0];
+		Vector list = new Vector();
+		StringTokenizer tokens = new StringTokenizer(prop, ","); //$NON-NLS-1$
+		while (tokens.hasMoreTokens()) {
+			String token = tokens.nextToken().trim();
+			if (!token.equals("")) //$NON-NLS-1$
+				list.addElement(token);
+		}
+		return list.isEmpty() ? new String[0] : (String[]) list.toArray(new String[0]);
 	}
 	/**
 	 * @see IPluginDescriptor
@@ -175,9 +189,6 @@ public class PluginDescriptor implements IPluginDescriptor {
 	 * @see IPluginDescriptor
 	 */
 	public ILibrary[] getRuntimeLibraries() {
-		if (!isLegacy())		//TODO Remove this check
-			return new ILibrary[0];
-
 		ArrayList allLibraries = new ArrayList();
 		ArrayList allBundes = new ArrayList();
 		allBundes.add(bundleOsgi);
@@ -239,9 +250,6 @@ public class PluginDescriptor implements IPluginDescriptor {
 
 	
 	public IPluginPrerequisite[] getPluginPrerequisites() {
-		if (!isLegacy())	//TODO Remove this check
-			return new IPluginPrerequisite[0];
-
 		BundleDescription description = Platform.getPlatformAdmin().getState(false).getBundle(bundleOsgi.getBundleId());
 		BundleSpecification[] specs = description.getRequiredBundles();
 		
@@ -449,10 +457,6 @@ public class PluginDescriptor implements IPluginDescriptor {
 		bundleOsgi = b;
 		if( (b.getState() & Bundle.ACTIVE) != 0 )
 			active = true;
-	}
-	//TODO remove this 
-	public boolean isLegacy() {
-		return new Boolean((String) bundleOsgi.getHeaders().get(LEGACY)).booleanValue(); //$NON-NLS-1$
 	}
 
 	public Bundle getBundle() {

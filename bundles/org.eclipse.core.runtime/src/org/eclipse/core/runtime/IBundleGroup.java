@@ -53,14 +53,14 @@ public interface IBundleGroup {
 	 */
 	public String getVersion();
 	/**
-	 * Returns a text description of this bundle group
+	 * Returns a text description of this bundle group.
 	 * @return text description of this bundle group
 	 */
 	public String getDescription();
 	
 	/**
 	 * Returns the name of the provider of this bundle group.
-	 * @return the name of the provider or null if none
+	 * @return the name of the provider or <code>null</code> if none
 	 */
 	public String getProviderName();
 	
@@ -72,9 +72,9 @@ public interface IBundleGroup {
 
 	/**
 	 * Returns the property of this bundle group with the given key.
-	 * null is returned if there is no such key/value pair.
+	 * <code>null</code> is returned if there is no such key/value pair.
 	 * @param key the name of the property to return
-	 * @return the value associated with the given key
+	 * @return the value associated with the given key or <code>null</code> if none
 	 */
 	public String getProperty(String key);
 }

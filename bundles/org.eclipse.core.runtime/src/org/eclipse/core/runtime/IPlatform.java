@@ -630,7 +630,7 @@ public interface IPlatform {
 
 	/**
 	 * Returns the product which was selected when running this Eclipse instance
-	 * or null if none
+	 * or <code>null</code> if none
 	 * @return the current product or null if none
 	 */
 	public IProduct getProduct();

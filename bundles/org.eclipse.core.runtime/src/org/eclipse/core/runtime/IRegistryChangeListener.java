@@ -14,14 +14,15 @@ import java.util.EventListener;
 
 /**
  * A registry change listener is notified of changes to extensions points in the 
- * registry.
- * These changes arise from subsequent manipulation of the registry after 
+ * registry.  These changes arise from subsequent manipulation of the registry after 
  * it was initially created.
  * <p>
  * Clients may implement this interface.
  * </p>
  * 
  * @since 3.0
+ * @see IExtensionRegistry
+ * @see IRegistryChangeEvent
  */
 public interface IRegistryChangeListener extends EventListener {
 	/**
@@ -30,8 +31,7 @@ public interface IRegistryChangeListener extends EventListener {
 	 * <p>
 	 * The supplied event gives details. This event object (and the deltas in it) is valid 
 	 * only for the duration of the invocation of this method.
-	 * </p>
-	 * <p>
+	 * </p> <p>
 	 * Note: This method is called by the platform; it is not intended
 	 * to be called directly by clients.
 	 * </p>

@@ -10,11 +10,13 @@
  *******************************************************************************/
 package org.eclipse.core.runtime;
 /**
- * Registry change events describe changes to the registry. 
+ * Registry change events describe changes to the extension registry. 
  * <p> 
  * This interface is not intended to be implemented by clients.
  * </p>
  * @since 3.0
+ * @see IExtensionRegistry
+ * @see IRegistryChangeListener
  */
 public interface IRegistryChangeEvent {
 	/** 
@@ -24,6 +26,7 @@ public interface IRegistryChangeEvent {
 	 * @return  all extension deltas 
 	 */
 	public IExtensionDelta[] getExtensionDeltas();
+
 	/** 
 	 * Returns all extension deltas for the given namespace. Returns an empty array if there are
 	 * no deltas in this event for any extension points provided in the given namespace. 
@@ -32,6 +35,7 @@ public interface IRegistryChangeEvent {
 	 * @return all extension deltas for the given namespace 
 	 */
 	public IExtensionDelta[] getExtensionDeltas(String namespace);
+
 	/** 
 	 * Returns all the extension deltas for the given namespace and extension point. Returns an 
 	 * empty array if there are no deltas in this event for the given extension point.
@@ -42,6 +46,7 @@ public interface IRegistryChangeEvent {
 	 * @return all extension deltas for the given extension point
 	 */
 	public IExtensionDelta[] getExtensionDeltas(String namespace, String extensionPoint);
+
 	/** 
 	 * Returns the delta for the given namespace, extension point and extension. 
 	 * Returns <code>null</code> if none exists in this event.

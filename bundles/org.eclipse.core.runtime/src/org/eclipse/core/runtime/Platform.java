@@ -416,9 +416,13 @@ public final class Platform {
 	 * @param id the unique identifier of the desired plug-in 
 	 *		(e.g., <code>"com.example.acme"</code>).
 	 * @return the plug-in runtime object, or <code>null</code>
+	 * TODO @deprecated If the compatibility layer is installed, this method works
+	 * as described above.  If the compatibility layer is not installed, <code>null</code>
+	 * is returned in all cases.
 	 */
 	public static Plugin getPlugin(String id) {
 		try {
+			// TODO check for a null registry (no compatibiity layer) and return null.
 			IPluginDescriptor pd = getPluginRegistry().getPluginDescriptor(id);
 			if (pd == null)
 				return null;
@@ -441,6 +445,10 @@ public final class Platform {
 	 *
 	 * @return the plug-in registry
 	 * @see IPluginRegistry
+	 * TODO @deprecated 
+	 * <code>IPluginRegistry</code> was refactored in Eclipse 3.0.
+	 * This method only works if the compatibility layer is present and must not be used otherwise.
+	 * See the comments on {@link IPluginRegistry} and its methods for details.
 	 */
 	public static IPluginRegistry getPluginRegistry() {
 		Bundle compatibility = org.eclipse.core.internal.runtime.InternalPlatform.getDefault().getBundle(IPlatform.PI_RUNTIME_COMPATIBILITY);

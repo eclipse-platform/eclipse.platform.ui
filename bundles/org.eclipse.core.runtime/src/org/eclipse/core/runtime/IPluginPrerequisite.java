@@ -26,6 +26,27 @@ import org.eclipse.core.runtime.PluginVersionIdentifier;
  * Runtime achieve their final and stable form (post-3.0). </p>
  *
  * @see IPluginDescriptor#getPluginPrerequisites
+ * TODO @deprecated 
+ * In Eclipse 3.0 the plug-in prerequisite representation was changed.  Clients of 
+ * <code>IPluginPrerequisite</code> are directed to the headers associated with the relevant bundle.
+ * In particular, the <code>Require-Bundle</code> header contains all available information
+ * about the prerequisites of a plug-in.  Having retrieved the header, the {@link org.eclipse.osgi.util.ManifestElement}
+ * helper class can be used to parse the value and discover the individual 
+ * prerequisite plug-ins.  
+ * <p>
+ * See {@link IPluginDescriptor} for information on the relationship between plug-in 
+ * descriptors and bundles.
+ * </p><p>
+ * This interface must only be used by plug-ins 
+ * which explicitly require the org.eclipse.core.runtime.compatibility plug-in.
+ * </p>
+
+ * 
+ *  * TODO @deprecated This is part of the IPluginRegistry sturcture which
+ * has been deprecated.  Users of this should instead look for the Bundle-Requires
+ * header in the manifest of the appropriate bundle.  Having retrieved the header, 
+ * ManifestElement can be used to parse the value and discover the individual 
+ * required bundles.  
  */
 public interface IPluginPrerequisite {
 	/**
@@ -34,12 +55,14 @@ public interface IPluginPrerequisite {
 	 * or null, if the dependency is not resolved.
 	 * 
 	 * @return the plug-in version identifier, or null
+	 * TODO @deprecated 
 	 */
 	public PluginVersionIdentifier getResolvedVersionIdentifier();
 	/**
 	 * Returns the plug-in identifier of the prerequisite plug-in.
 	 * 
 	 * @return the plug-in identifier
+	 * TODO @deprecated 
 	 */
 	public String getUniqueIdentifier();
 	/**
@@ -48,6 +71,7 @@ public interface IPluginPrerequisite {
 	 * 
 	 * @return the plug-in version identifier, or <code>null</code> if 
 	 *    none was specified
+	 * TODO @deprecated 
 	 */
 	public PluginVersionIdentifier getVersionIdentifier();
 	/**
@@ -61,6 +85,7 @@ public interface IPluginPrerequisite {
 	 * 
 	 * @return <code>true</code> if this prerequisite plug-in is exposed,
 	 *    <code>false</code> otherwise
+	 * TODO @deprecated 
 	 */
 	public boolean isExported();
 	/**
@@ -71,6 +96,7 @@ public interface IPluginPrerequisite {
 	 * @return <code>true</code> if greater or equal match is allowed,
 	 *   <code>false</code> otherwise.
 	 * @since 2.0
+	 * TODO @deprecated 
 	 */
 	public boolean isMatchedAsGreaterOrEqual();
 	/**
@@ -79,6 +105,7 @@ public interface IPluginPrerequisite {
 	 *
 	 * @return <code>true</code> if compatible match is allowed,
 	 *   <code>false</code> if exact match is required.
+	 * TODO @deprecated 
 	 */
 	public boolean isMatchedAsCompatible();
 	/**
@@ -89,6 +116,7 @@ public interface IPluginPrerequisite {
 	 * @return <code>true</code> if only equivalent identifier match
 	 * satisfies this dependency, <code>false</code> otherwise.
 	 * @since 2.0
+	 * TODO @deprecated 
 	 */
 	public boolean isMatchedAsEquivalent();
 	/**
@@ -100,6 +128,7 @@ public interface IPluginPrerequisite {
 	 * identifier match satisfies this dependency,
 	 * <code>false</code> otherwise.
 	 * @since 2.0
+	 * TODO @deprecated 
 	 */
 	public boolean isMatchedAsPerfect();
 	/**
@@ -110,6 +139,7 @@ public interface IPluginPrerequisite {
 	 * @return <code>true</code> if only exact identifier match
 	 * satisfies this dependency, <code>false</code> if compatible
 	 * plug-in will satisfy this dependency.
+	 * TODO @deprecated 
 	 */
 	public boolean isMatchedAsExact();
 	/**
@@ -117,6 +147,7 @@ public interface IPluginPrerequisite {
 	 * prerequisite is missing, this plugin is disabled.  
 	 *
 	 * @return <code>true</code> if this prerequisite is optional, <code>false</code> otherwise
+	 * TODO @deprecated 
 	 */
 	public boolean isOptional();
 }
