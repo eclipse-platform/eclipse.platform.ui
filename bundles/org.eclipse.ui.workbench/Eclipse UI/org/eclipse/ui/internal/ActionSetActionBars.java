@@ -51,8 +51,6 @@ public class ActionSetActionBars extends SubActionBars {
 	public void dispose() {
 		super.dispose();
 		if (coolItemToolBarMgr == null) return;
-		CoolBarManager parentMgr = (CoolBarManager)coolItemToolBarMgr.getParentManager();
-
 		IContributionItem[] items = coolItemToolBarMgr.getItems();
 		// remove the action set's items from its action bar, don't use 
 		// removeAll since other items from other actions sets may be in

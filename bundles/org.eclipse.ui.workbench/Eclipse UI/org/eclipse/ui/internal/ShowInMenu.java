@@ -46,7 +46,7 @@ import org.eclipse.ui.part.ShowInContext;
  */
 public class ShowInMenu extends ContributionItem {
 	
-private static final String NO_TARGETS_MSG = WorkbenchMessages.getString("Workbench.showInNoTargets");
+private static final String NO_TARGETS_MSG = WorkbenchMessages.getString("Workbench.showInNoTargets"); //$NON-NLS-1$
  
 private IWorkbenchWindow window;
 	
