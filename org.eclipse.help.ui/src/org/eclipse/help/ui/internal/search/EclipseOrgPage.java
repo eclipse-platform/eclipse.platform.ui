@@ -56,7 +56,7 @@ public class EclipseOrgPage extends RootScopePage {
         });
         
         searchArticles = new Button(composite, SWT.RADIO);
-        searchArticles.setText("Search web pages"); 
+        searchArticles.setText("Search articles"); 
         gd = new GridData();
         searchArticles.setLayoutData(gd);
         searchArticles.addSelectionListener(new SelectionAdapter() {
