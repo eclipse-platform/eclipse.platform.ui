@@ -19,8 +19,8 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
- *	Template implementation of a registry reader that creates objects
- *	representing registry contents. Typically, an extension
+ * Template implementation of a registry reader that creates objects
+ * representing registry contents. Typically, an extension
  * contains one element, but this reader handles multiple
  * elements per extension.
  *

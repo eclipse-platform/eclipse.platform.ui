@@ -65,7 +65,7 @@ public MarkerImageProviderRegistry() {
 			return false;
 		}
 		public void readRegistry() {
-		    readRegistry(Platform.getPluginRegistry(), PlatformUI.PLUGIN_ID, IDEWorkbenchPlugin.PL_MARKER_IMAGE_PROVIDER);
+		    readRegistry(Platform.getPluginRegistry(), IDEWorkbenchPlugin.IDE_WORKBENCH, IDEWorkbenchPlugin.PL_MARKER_IMAGE_PROVIDER);
 		}
 	}
 	

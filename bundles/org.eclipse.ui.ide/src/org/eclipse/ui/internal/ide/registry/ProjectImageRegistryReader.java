@@ -14,7 +14,6 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
@@ -68,6 +67,6 @@ protected boolean readElement(IConfigurationElement element) {
  */
 public void readProjectNatureImages(IPluginRegistry in, ProjectImageRegistry out) {
 	registry = out;
-	readRegistry(in, PlatformUI.PLUGIN_ID, IDEWorkbenchPlugin.PL_PROJECT_NATURE_IMAGES);
+	readRegistry(in, IDEWorkbenchPlugin.IDE_WORKBENCH, IDEWorkbenchPlugin.PL_PROJECT_NATURE_IMAGES);
 }
 }

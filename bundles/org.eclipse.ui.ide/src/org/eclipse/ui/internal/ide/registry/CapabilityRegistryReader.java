@@ -125,6 +125,6 @@ public class CapabilityRegistryReader extends IDERegistryReader{
 	 */
 	public void read(IPluginRegistry registry, CapabilityRegistry out) {
 		capabilityRegistry = out;
-		readRegistry(registry, PlatformUI.PLUGIN_ID, IDEWorkbenchPlugin.PL_CAPABILITIES);
+		readRegistry(registry, IDEWorkbenchPlugin.IDE_WORKBENCH, IDEWorkbenchPlugin.PL_CAPABILITIES);
 	}
 }
