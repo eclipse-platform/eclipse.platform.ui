@@ -330,5 +330,22 @@
             pattern=".*">
       </filter>
    </extension>
+   <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            objectClass="org.eclipse.core.resources.IProject"
+            adaptable="true"
+            name="%PropertyPages.project.reference"
+            class="org.eclipse.ui.internal.ide.dialogs.ProjectReferencePage"
+            id="org.eclipse.ui.propertypages.project.reference">
+      </page>
+      <page
+            objectClass="org.eclipse.core.resources.IResource"
+            adaptable="true"
+            name="%PropertyPages.info.file"
+            class="org.eclipse.ui.internal.ide.dialogs.ResourceInfoPage"
+            id="org.eclipse.ui.propertypages.info.file">
+      </page>
+   </extension>
 
 </plugin>
