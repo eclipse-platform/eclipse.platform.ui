@@ -79,48 +79,4 @@ public interface IModel {
 	public static final String PROPERTY = "property";
 	public static final String PROPERTY_NAME = "name";
 	public static final String PROPERTY_VALUE = "value";
-
-	public static final String COMPONENT = "component";
-	public static final String COMPONENT_LABEL = "label";
-	public static final String COMPONENT_ID = "id";
-	public static final String COMPONENT_VERSION = "version";
-	public static final String COMPONENT_PROVIDER = "provider-name";
-
-	public static final String COMPONENT_DESCRIPTION = "description";
-
-	public static final String COMPONENT_URL = "url";
-
-	public static final String COMPONENT_PLUGIN = "plugin";
-	public static final String COMPONENT_PLUGIN_LABEL = "label";
-	public static final String COMPONENT_PLUGIN_ID = "id";
-	public static final String COMPONENT_PLUGIN_VERSION = "version";
-
-	public static final String COMPONENT_FRAGMENT = "fragment";
-	public static final String COMPONENT_FRAGMENT_LABEL = "label";
-	public static final String COMPONENT_FRAGMENT_ID = "id";
-	public static final String COMPONENT_FRAGMENT_VERSION = "version";
-
-	public static final String CONFIGURATION = "configuration";
-	public static final String CONFIGURATION_LABEL = "label";
-	public static final String CONFIGURATION_ID = "id";
-	public static final String CONFIGURATION_VERSION = "version";
-	public static final String CONFIGURATION_PROVIDER = "provider-name";
-	public static final String CONFIGURATION_APPLICATION = "application";
-
-	public static final String CONFIGURATION_DESCRIPTION = "description";
-
-	public static final String CONFIGURATION_URL = "url";
-
-	public static final String CONFIGURATION_COMPONENT = "component";
-	public static final String CONFIGURATION_COMPONENT_LABEL = "label";
-	public static final String CONFIGURATION_COMPONENT_ID = "id";
-	public static final String CONFIGURATION_COMPONENT_VERSION = "version";
-	public static final String CONFIGURATION_COMPONENT_ALLOW_UPGRADE = "allowUpgrade";
-	public static final String CONFIGURATION_COMPONENT_OPTIONAL = "optional";
-
-	public static final String URL_UPDATE = "update";
-	public static final String URL_DISCOVERY = "discovery";
-	public static final String URL_URL = "url";
-	public static final String URL_LABEL = "label";
-
 }

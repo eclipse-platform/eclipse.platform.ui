@@ -50,10 +50,6 @@ public class PluginParser extends DefaultHandler implements IModel {
 	private final int PLUGIN_REQUIRES_IMPORT_STATE = 9;
 	private final int CONFIGURATION_ELEMENT_STATE = 10;
 	private final int FRAGMENT_STATE = 11;
-	private final int CONFIGURATION_STATE = 12;
-	private final int COMPONENT_STATE = 13;
-	private final int DESCRIPTION_STATE = 14;
-	private final int URL_STATE = 15;
 
 	// Keep a group of vectors as a temporary scratch space.  These
 	// vectors will be used to populate arrays in the plugin descriptor
@@ -82,6 +78,8 @@ private static void initializeParser() {
 
 public void characters(char[] ch, int start, int length) {
 	int state = ((Integer) stateStack.peek()).intValue();
+	if (state != CONFIGURATION_ELEMENT_STATE)
+		return;
 	if (state == CONFIGURATION_ELEMENT_STATE) {
 		// Accept character data within an element, is when it is
 		// part of a configuration element (i.e. an element within an EXTENSION element
@@ -90,17 +88,7 @@ public void characters(char[] ch, int start, int length) {
 		String newValue = value.trim();
 		if (!newValue.equals("") || newValue.length() != 0)
 			currentConfigElement.setValue(newValue);
-		return;
 	} 
-	if (state == DESCRIPTION_STATE) {
-		// Accept character data within an element, is when it is part of a component or configuration 
-		// description element (i.e. an element within a COMPONENT or CONFIGURATION element
-		InstallModel model = (InstallModel) objectStack.peek();
-		String value = new String(ch, start, length).trim();
-		if (!value.equals("") || value.length() != 0)
-			model.setDescription(value);
-		return;
-	} 		
 }
 public void endDocument() {
 }
@@ -226,14 +214,6 @@ public void endElement(String uri, String elementName, String qName) {
 				((ConfigurationElementModel) parent).setSubElements(newValues);
 			}
 			break;
-		case DESCRIPTION_STATE:
-			if (elementName.equals(COMPONENT_DESCRIPTION) || elementName.equals(CONFIGURATION_DESCRIPTION))
-				stateStack.pop();
-			break;
-		case URL_STATE:
-			if (elementName.equals(COMPONENT_URL) || elementName.equals(CONFIGURATION_URL)) 
-				stateStack.pop();
-			break;
 	}
 }
 public void error(SAXParseException ex) {
@@ -242,62 +222,6 @@ public void error(SAXParseException ex) {
 public void fatalError(SAXParseException ex) throws SAXException {
 	logStatus(ex);
 	throw ex;
-}
-
-public void handleComponentState(String elementName, Attributes attributes) {
-
-	if (elementName.equals(COMPONENT_DESCRIPTION)) {
-		stateStack.push(new Integer(DESCRIPTION_STATE));
-		return;
-	}
-	if (elementName.equals(COMPONENT_URL)) {
-		stateStack.push(new Integer(URL_STATE));
-		return;
-	}
-	if (elementName.equals(COMPONENT_PLUGIN)) {
-		parseComponentPluginAttributes(attributes);
-		return;
-	}
-	if (elementName.equals(COMPONENT_FRAGMENT)) {
-		parseComponentFragmentAttributes(attributes);
-		return;
-	}
-	// If we get to this point, the element name is one we don't currently accept.
-	// Set the state to indicate that this element will be ignored
-	stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
-	internalError(Policy.bind("parse.unknownElement", COMPONENT, elementName));
-}
-
-public void handleConfigurationState(String elementName, Attributes attributes) {
-
-	if (elementName.equals(CONFIGURATION_DESCRIPTION)) {
-		stateStack.push(new Integer(DESCRIPTION_STATE));
-		return;
-	}
-	if (elementName.equals(CONFIGURATION_URL)) {
-		stateStack.push(new Integer(URL_STATE));
-		return;
-	}
-	if (elementName.equals(CONFIGURATION_COMPONENT)) {
-		parseComponentAttributes(attributes);
-		ComponentModel component = (ComponentModel)objectStack.pop();
-		ConfigurationModel config = (ConfigurationModel)objectStack.peek();
-		Object components = addObject(component, config.getComponents());
-		config.setComponents((ComponentModel[])components);
-		return;
-	}
-	// If we get to this point, the element name is one we don't currently accept.
-	// Set the state to indicate that this element will be ignored
-	stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
-	internalError(Policy.bind("parse.unknownElement", CONFIGURATION, elementName));
-}
-
-
-public void handleDescriptionState(String elementName, Attributes attributes) {
-
-	// We ignore all elements (if there are any)
-	stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
-	internalError(Policy.bind("parse.unknownElement", CONFIGURATION_DESCRIPTION, elementName));
 }
 
 public void handleExtensionPointState(String elementName, Attributes attributes) {
@@ -336,18 +260,10 @@ public void handleInitialState(String elementName, Attributes attributes) {
 		if (elementName.equals(FRAGMENT)) {
 			stateStack.push(new Integer(FRAGMENT_STATE));
 			parseFragmentAttributes(attributes);
-		} else
-			if (elementName.equals(COMPONENT)) {
-				stateStack.push(new Integer(COMPONENT_STATE));
-				parseComponentAttributes(attributes);
-			} else
-				if (elementName.equals(CONFIGURATION)) {
-					stateStack.push(new Integer(CONFIGURATION_STATE));
-					parseConfigurationAttributes(attributes);
-				} else {
-					stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
-					internalError(Policy.bind("parse.unknownTopElement", elementName));
-				}
+		} else {
+			stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
+			internalError(Policy.bind("parse.unknownTopElement", elementName));
+		}
 }
 public void handleLibraryExportState(String elementName, Attributes attributes) {
 
@@ -466,50 +382,6 @@ public void handleRuntimeState(String elementName, Attributes attributes) {
 	internalError(Policy.bind("parse.unknownElement", RUNTIME, elementName));
 }
 
-private Object addObject(Object newElement, Object[] container) {
-	Object[] result = new ComponentModel[container == null ? 1 : container.length + 1];
-	if (container != null) 
-		System.arraycopy(container, 0, result, 0, container.length);
-	result[result.length - 1] = newElement;
-	return result;
-}
-private URLModel[] addURLElement(URLModel newElement, URLModel[] container) {
-	URLModel[] result = new URLModel[container == null ? 1 : container.length + 1];
-	if (container != null) 
-		System.arraycopy(container, 0, result, 0, container.length);
-	result[result.length - 1] = newElement;
-	return result;
-}
-private PluginDescriptorModel[] addPluginDescriptorElement(PluginDescriptorModel newElement, PluginDescriptorModel[] container) {
-	PluginDescriptorModel[] result = new PluginDescriptorModel[container == null ? 1 : container.length + 1];
-	if (container != null) 
-		System.arraycopy(container, 0, result, 0, container.length);
-	result[result.length - 1] = newElement;
-	return result;
-}
-private PluginFragmentModel[] addPluginFragmentElement(PluginFragmentModel newElement, PluginFragmentModel[] container) {
-	PluginFragmentModel[] result = new PluginFragmentModel[container == null ? 1 : container.length + 1];
-	if (container != null) 
-		System.arraycopy(container, 0, result, 0, container.length);
-	result[result.length - 1] = newElement;
-	return result;
-}
-public void handleURLState(String elementName, Attributes attributes) {
-	URLModel url = null;
-	InstallModel model = (InstallModel)objectStack.peek();
-	if (elementName.equals(URL_UPDATE)) {
-		url = parseURLAttributes(attributes);
-		model.setUpdates((URLModel [])addURLElement(url, model.getUpdates()));
-		return; 
-	} else
-		if (elementName.equals(URL_DISCOVERY)) {
-			url = parseURLAttributes(attributes);
-			model.setDiscoveries((URLModel [])addURLElement(url, model.getDiscoveries()));
-			return; 
-		}
-	// We ignore all elements (if there are any)
-	stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
-}
 public void ignoreableWhitespace(char[] ch, int start, int length) {
 }
 private void logStatus(SAXParseException ex) {
@@ -528,129 +400,11 @@ private void logStatus(SAXParseException ex) {
 		msg = Policy.bind("parse.errorNameLineColumn", new String[] { name, Integer.toString(ex.getLineNumber()), Integer.toString(ex.getColumnNumber()), ex.getMessage()});
 	factory.error(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, msg, ex));
 }
-synchronized public InstallModel parseInstall(InputSource in) throws Exception {
-	locationName = in.getSystemId();
-	parser.parse(in);
-	return (InstallModel) objectStack.pop();
-}
 
 synchronized public PluginModel parsePlugin(InputSource in) throws Exception {
 	locationName = in.getSystemId();
 	parser.parse(in);
 	return (PluginModel) objectStack.pop();
-}
-
-public void parseComponentAttributes(Attributes attributes) {
-
-	ComponentModel current = factory.createComponentModel();
-	objectStack.push(current);
-
-	// process attributes
-	int len = attributes.getLength();
-	for (int i = 0; i < len; i++) {
-		String attrName = attributes.getLocalName(i);
-		String attrValue = attributes.getValue(i).trim();
-
-		if (attrName.equals(COMPONENT_ID))
-			current.setId(attrValue);
-		else
-			if (attrName.equals(COMPONENT_LABEL))
-				current.setName(attrValue);
-			else
-				if (attrName.equals(COMPONENT_VERSION))
-					current.setVersion(attrValue);
-				else
-					if (attrName.equals(COMPONENT_PROVIDER))
-						current.setProviderName(attrValue);
-					else
-						internalError(Policy.bind("parse.unknownAttribute", COMPONENT, attrName));
-	}
-}
-
-public void parseComponentFragmentAttributes(Attributes attributes) {
-
-	PluginFragmentModel current = factory.createPluginFragment();
-
-	// process attributes
-	int len = attributes.getLength();
-	for (int i = 0; i < len; i++) {
-		String attrName = attributes.getLocalName(i);
-		String attrValue = attributes.getValue(i).trim();
-
-		if (attrName.equals(COMPONENT_FRAGMENT_ID))
-			current.setId(attrValue);
-		else
-			if (attrName.equals(COMPONENT_FRAGMENT_LABEL))
-				current.setName(attrValue);
-			else
-				if (attrName.equals(COMPONENT_FRAGMENT_VERSION))
-					current.setVersion(attrValue);
-				else
-					internalError(Policy.bind("parse.unknownAttribute", COMPONENT_FRAGMENT, attrName));
-	}
-	
-	ComponentModel componentModel = (ComponentModel)objectStack.peek();
-	PluginFragmentModel fragments[] = componentModel.getFragments();
-	fragments = (PluginFragmentModel [])addPluginFragmentElement(current,fragments);
-	componentModel.setFragments(fragments);
-}
-
-public void parseComponentPluginAttributes(Attributes attributes) {
-
-	PluginDescriptorModel current = factory.createPluginDescriptor();
-
-	// process attributes
-	int len = attributes.getLength();
-	for (int i = 0; i < len; i++) {
-		String attrName = attributes.getLocalName(i);
-		String attrValue = attributes.getValue(i).trim();
-
-		if (attrName.equals(COMPONENT_PLUGIN_ID))
-			current.setId(attrValue);
-		else
-			if (attrName.equals(COMPONENT_PLUGIN_LABEL))
-				current.setName(attrValue);
-			else
-				if (attrName.equals(COMPONENT_PLUGIN_VERSION))
-					current.setVersion(attrValue);
-				else
-					internalError(Policy.bind("parse.unknownAttribute", COMPONENT_PLUGIN, attrName));
-	}
-	
-	ComponentModel componentModel = (ComponentModel)objectStack.peek();
-	PluginDescriptorModel plugins[] = componentModel.getPlugins();
-	plugins = (PluginDescriptorModel [])addPluginDescriptorElement(current,plugins);
-	componentModel.setPlugins(plugins);
-}
-
-public void parseConfigurationAttributes(Attributes attributes) {
-
-	ConfigurationModel current = factory.createConfiguration();
-	objectStack.push(current);
-
-	// process attributes
-	int len = attributes.getLength();
-	for (int i = 0; i < len; i++) {
-		String attrName = attributes.getLocalName(i);
-		String attrValue = attributes.getValue(i).trim();
-
-		if (attrName.equals(CONFIGURATION_ID))
-			current.setId(attrValue);
-		else
-			if (attrName.equals(CONFIGURATION_LABEL))
-				current.setName(attrValue);
-			else
-				if (attrName.equals(CONFIGURATION_VERSION))
-					current.setVersion(attrValue);
-				else
-					if (attrName.equals(CONFIGURATION_PROVIDER))
-						current.setProviderName(attrValue);
-					else
-						if (attrName.equals(CONFIGURATION_APPLICATION))
-							current.setApplication(attrValue);
-					else
-						internalError(Policy.bind("parse.unknownAttribute", CONFIGURATION, attrName));
-	}
 }
 
 public void parseConfigurationElementAttributes(Attributes attributes) {
@@ -887,24 +641,6 @@ public void parsePluginRequiresImport(Attributes attributes) {
 public void parseRequiresAttributes(Attributes attributes) {
 }
 
-public URLModel parseURLAttributes(Attributes attributes) {
-	URLModel current = factory.createURL();
-
-	// process attributes
-	int len = (attributes != null) ? attributes.getLength() : 0;
-	for (int i = 0; i < len; i++) {
-		String attrName = attributes.getLocalName(i);
-		String attrValue = attributes.getValue(i).trim();
-
-		if (attrName.equals(URL_URL))
-			current.setURL(attrValue);
-		else
-			if (attrName.equals(URL_LABEL))
-				current.setName(attrValue);
-	}
-	return current;
-}
-
 static String replace(String s, String from, String to) {
 	String str = s;
 	int fromLen = from.length();
@@ -954,18 +690,6 @@ public void startElement(String uri, String elementName, String qName, Attribute
 			break;
 		case PLUGIN_REQUIRES_IMPORT_STATE :
 			handleRequiresImportState(elementName, attributes);
-			break;
-		case COMPONENT_STATE:
-			handleComponentState(elementName, attributes);
-			break;
-		case CONFIGURATION_STATE :
-			handleConfigurationState(elementName, attributes);
-			break;
-		case DESCRIPTION_STATE :
-			handleDescriptionState(elementName, attributes);
-			break;
-		case URL_STATE :
-			handleURLState(elementName, attributes);
 			break;
 		default :
 			stateStack.push(new Integer(IGNORED_ELEMENT_STATE));

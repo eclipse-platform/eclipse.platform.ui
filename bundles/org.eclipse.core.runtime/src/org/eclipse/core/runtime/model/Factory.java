@@ -33,24 +33,6 @@ public Factory(MultiStatus status) {
 }
 
 /**
- * Returns a new component model which is not initialized.
- *
- * @return a new component model
- */
-public ComponentModel createComponentModel() {
-	return new ComponentModel();
-}
-
-/**
- * Returns a new configuration model which is not initialized.
- *
- * @return a new configuration model
- */
-public ConfigurationModel createConfiguration() {
-	return new ConfigurationModel();
-}
-
-/**
  * Returns a new configuration element model which is not initialized.
  *
  * @return a new configuration element model
@@ -58,6 +40,7 @@ public ConfigurationModel createConfiguration() {
 public ConfigurationElementModel createConfigurationElement() {
 	return new ConfigurationElementModel();
 }
+
 /**
  * Returns a new configuration property model which is not initialized.
  *
@@ -66,6 +49,7 @@ public ConfigurationElementModel createConfigurationElement() {
 public ConfigurationPropertyModel createConfigurationProperty() {
 	return new ConfigurationPropertyModel();
 }
+
 /**
  * Returns a new extension model which is not initialized.
  *
