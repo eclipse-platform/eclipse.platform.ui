@@ -175,7 +175,7 @@ public class AddMemoryBlockAction extends Action implements ISelectionListener, 
 				IMemoryBlockRetrievalExtension memRetrieval = (IMemoryBlockRetrievalExtension)standardMemRetrieval;
 				
 				// get extended memory block with the expression entered
-				IMemoryBlockExtension memBlock = memRetrieval.getExtendedMemoryBlock(expression, ((IDebugElement)elem));
+				IMemoryBlockExtension memBlock = memRetrieval.getExtendedMemoryBlock(expression, elem);
 				
 				// add block to memory block manager
 				if (memBlock != null)
