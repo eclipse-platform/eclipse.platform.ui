@@ -249,8 +249,10 @@ public void testDeleteResources2() {
 		public void run(IProgressMonitor monitor) throws CoreException {
 			for (int i = 0; i < projects.length; i++) {
 				IResource[] children = projects[i].members();
-				for (int j = 0; j < children.length; j++)
-					children[j].delete(false, getMonitor());
+				for (int j = 0; j < children.length; j++) {
+					if (!children[j].getName().equals(".project"))
+						children[j].delete(false, getMonitor());
+				}
 			}
 		}
 	};
@@ -303,7 +305,10 @@ public void testDeleteResources2() {
 	// there should be no sync info for any resources except the project
 	visitor = new IResourceVisitor() {
 		public boolean visit(IResource resource) throws CoreException {
-			if (resource.getType() == IResource.ROOT || resource.getType() == IResource.PROJECT)
+			int type = resource.getType();
+			if (type == IResource.ROOT || type == IResource.PROJECT)
+				return true;
+			if (type == IResource.FILE && resource.getParent().getType() == IResource.PROJECT && resource.getName().equals(".project")) 
 				return true;
 			assertNull("5.0." + resource.getFullPath(), synchronizer.getSyncInfo(qname, resource));
 			return true;
