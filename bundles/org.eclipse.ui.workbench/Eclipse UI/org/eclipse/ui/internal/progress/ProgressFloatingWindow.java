@@ -49,7 +49,7 @@ class ProgressFloatingWindow extends AssociatedWindow {
 			Control associatedControl) {
 		super(workbenchWindow.getShell(), associatedControl);
 		this.window = workbenchWindow;
-		setShellStyle(SWT.RESIZE);
+		setShellStyle(SWT.NO_TRIM);
 	}
 	/*
 	 * (non-Javadoc)
@@ -78,7 +78,7 @@ class ProgressFloatingWindow extends AssociatedWindow {
 	 * @see org.eclipse.jface.window.Window#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createContents(Composite root) {
-		createButtons(root);
+		Control buttonBar = createButtons(root);
 		viewer = new TableViewer(root, SWT.MULTI) {
 			/*
 			 * (non-Javadoc)
@@ -97,7 +97,7 @@ class ProgressFloatingWindow extends AssociatedWindow {
 		setBackground(viewer.getControl());
 		FormData tableData = new FormData();
 		tableData.left = new FormAttachment(0);
-		tableData.right = new FormAttachment(100);
+		tableData.right = new FormAttachment(buttonBar,0);
 		tableData.top = new FormAttachment(0);
 		viewer.getTable().setLayoutData(tableData);
 		initContentProvider();
@@ -168,8 +168,7 @@ class ProgressFloatingWindow extends AssociatedWindow {
 		size.x += 5;
 		size.y += 5;
 		int maxSize = getMaximumSize(viewer.getTable().getDisplay());
-		if (size.x > maxSize)
-			;
+		if (size.x > maxSize);
 		size.x = maxSize;
 		getShell().setSize(size);
 		moveShell(getShell());
