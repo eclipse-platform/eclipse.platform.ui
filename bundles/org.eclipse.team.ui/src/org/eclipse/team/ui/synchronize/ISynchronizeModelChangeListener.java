@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.team.ui.synchronize;
 
-
 /**
  * Listener that gets informed when the model created by the model provider is created or updated.
  * <p>

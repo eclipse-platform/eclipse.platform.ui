@@ -18,15 +18,15 @@ import org.eclipse.team.internal.ui.TeamUIPlugin;
 
 /**
  * Configures the model, actions and label decorations of an 
- * {@link ISynchronizePage}. Clients can
+ * {@link ISynchronizePage}. Clients can:
  * <ul> 
  * <li>set properties to affect the page contents and react to property changes
  * <li>add and configure the actions available to the user (context menu,
  * toolbar and view menu)
  * </ul>
- * 
+ * <p>
  * This interface is not intended to be implemented by clients.
- * 
+ * </p>
  * @since 3.0
  */
 public interface ISynchronizePageConfiguration {

@@ -144,6 +144,8 @@ public class WorkspaceSynchronizeParticipant extends ScopableSubscriberParticipa
 		configuration.addActionContribution(new WorkspaceActionContribution());
 		configuration.setSupportedModes(ISynchronizePageConfiguration.ALL_MODES);
 		configuration.setMode(ISynchronizePageConfiguration.BOTH_MODE);
+		
+		// non-api use of SynchronizePageConfiguration
 		configuration.setProperty(SynchronizePageConfiguration.P_MODEL_MANAGER, new ChangeLogModelManager(configuration));
 		
 		// Add context menu groups here to give the client displaying the

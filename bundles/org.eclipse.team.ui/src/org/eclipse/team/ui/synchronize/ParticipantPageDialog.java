@@ -16,8 +16,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.ui.*;
-import org.eclipse.team.ui.SaveablePartDialog;
-import org.eclipse.team.ui.TeamUI;
 
 /**
  * A dialog that displays the option of adding the participant to the {@link org.eclipse.team.ui.synchronize.ISynchronizeManager}

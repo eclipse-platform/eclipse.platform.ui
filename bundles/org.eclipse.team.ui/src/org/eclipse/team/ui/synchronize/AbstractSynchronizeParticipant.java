@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,20 +10,13 @@
  *******************************************************************************/
 package org.eclipse.team.ui.synchronize;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.ISafeRunnable;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.ListenerList;
-import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.util.*;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.Policy;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.registry.SynchronizeParticipantDescriptor;
 import org.eclipse.team.internal.ui.synchronize.SynchronizePageConfiguration;
 import org.eclipse.team.ui.TeamImages;
@@ -31,10 +24,11 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.PartInitException;
 
 /**
- * AbstractSynchronizeParticipant is the abstract base class for all
- * synchronize view participants. It provides default lifecycle support
- * for participants.
- * 
+ * This class is the abstract base class for all synchronize view participants. Clients must subclass
+ * this class instead of directly implementing {@link AbstractSynchronizeParticipant}.
+ * <p>
+ * This class provides lifecycle support and hooks for configuration of synchronize view pages.
+ * </p>
  * @see ISynchronizeParticipant
  * @since 3.0
  */
@@ -46,6 +40,7 @@ public abstract class AbstractSynchronizeParticipant implements ISynchronizePart
 	 */
 	public static final String P_PINNED = "org.eclipse.team.pinned"; //$NON-NLS-1$
 	
+	// key for persisting the pinned state of a participant
 	private final static String CTX_PINNED = "root"; //$NON-NLS-1$
 	
 	// property listeners
@@ -100,29 +95,30 @@ public abstract class AbstractSynchronizeParticipant implements ISynchronizePart
 		}
 	}
 
+	/**
+	 * Default constructor is a no-op. Subclasses that are persistable must support a no-arg constructor
+	 * and 
+	 */
 	public AbstractSynchronizeParticipant() {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.console.IConsole#getName()
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#getName()
 	 */
 	public String getName() {
 		return fName;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.console.IConsole#getImageDescriptor()
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#getImageDescriptor()
 	 */
 	public ImageDescriptor getImageDescriptor() {
 		return fImageDescriptor;
 	}
 
+
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.sync.ISynchronizeParticipant#getId()
+	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#getId()
 	 */
 	public String getId() {
 		return fId;
@@ -153,7 +149,7 @@ public abstract class AbstractSynchronizeParticipant implements ISynchronizePart
 	}
 	
 	/**
-	 * Called when the pinned state is changed.
+	 * Called when the pinned state is changed. Allows subclasses to react to pin state changes.
 	 *  
 	 * @param pinned whether the participant is pinned.
 	 */
@@ -185,10 +181,8 @@ public abstract class AbstractSynchronizeParticipant implements ISynchronizePart
 		return true;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.console.IConsole#addPropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#addPropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
 	 */
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
 		if (fListeners == null) {
@@ -197,10 +191,8 @@ public abstract class AbstractSynchronizeParticipant implements ISynchronizePart
 		fListeners.add(listener);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.console.IConsole#removePropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#removePropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
 	 */
 	public void removePropertyChangeListener(IPropertyChangeListener listener) {
 		if (fListeners != null) {
@@ -211,14 +203,10 @@ public abstract class AbstractSynchronizeParticipant implements ISynchronizePart
 	/**
 	 * Notify all listeners that the given property has changed.
 	 * 
-	 * @param source
-	 *            the object on which a property has changed
-	 * @param property
-	 *            identifier of the property that has changed
-	 * @param oldValue
-	 *            the old value of the property, or <code>null</code>
-	 * @param newValue
-	 *            the new value of the property, or <code>null</code>
+	 * @param source the object on which a property has changed
+	 * @param property identifier of the property that has changed
+	 * @param oldValue the old value of the property, or <code>null</code>
+	 * @param newValue the new value of the property, or <code>null</code>
 	 */
 	public void firePropertyChange(Object source, String property, Object oldValue, Object newValue) {
 		if (fListeners == null) {
@@ -228,11 +216,8 @@ public abstract class AbstractSynchronizeParticipant implements ISynchronizePart
 		notifier.notify(new PropertyChangeEvent(source, property, oldValue, newValue));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement,
-	 *      java.lang.String, java.lang.Object)
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement, java.lang.String, java.lang.Object)
 	 */
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException {
 		//	Save config element.
@@ -263,7 +248,7 @@ public abstract class AbstractSynchronizeParticipant implements ISynchronizePart
 	}
 
 	/**
-	 * Sets the name of this console to the specified value and notifies
+	 * Sets the name of this participant to the specified value and notifies
 	 * property listeners of the change.
 	 * 
 	 * @param name the new name
@@ -275,7 +260,7 @@ public abstract class AbstractSynchronizeParticipant implements ISynchronizePart
 	}
 	
 	/**
-	 * Sets the image descriptor for this console to the specified value and
+	 * Sets the image descriptor for this participant to the specified value and
 	 * notifies property listeners of the change.
 	 * 
 	 * @param imageDescriptor the new image descriptor
@@ -333,10 +318,10 @@ public abstract class AbstractSynchronizeParticipant implements ISynchronizePart
 	}
 
 	/**
-	 * This method is invoked after a page configuration is created but before 
-	 * it is returned by the <code>createPageConfiguration</code> method.
-	 * Subclasses can implement this method to tailor the configuration
-	 * in ways appropriate to the participant.
+	 * This method is invoked after a page configuration is created but before it is returned by the 
+	 * <code>createPageConfiguration</code> method. Subclasses can implement this method to
+	 * tailor the configuration in ways appropriate to the participant.
+	 * 
 	 * @param configuration the newly create page configuration
 	 */
 	protected abstract void initializeConfiguration(ISynchronizePageConfiguration configuration);

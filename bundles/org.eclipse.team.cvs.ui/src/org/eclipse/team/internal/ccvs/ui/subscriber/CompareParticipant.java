@@ -154,8 +154,10 @@ public class CompareParticipant extends CVSParticipant implements IPropertyChang
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 				NON_MODAL_CONTEXT_MENU_CONTRIBUTION_GROUP);
 		configuration.addActionContribution(new CompareParticipantActionContribution());
-		if(localTag != null)
+		if(localTag != null) {
+			// non-api use of SynchronizePageConfiguration
 			configuration.setProperty(SynchronizePageConfiguration.P_MODEL_MANAGER, new ChangeLogModelManager(configuration, localTag, getTag()));
+		}
 	}
 	
 	/* (non-Javadoc)

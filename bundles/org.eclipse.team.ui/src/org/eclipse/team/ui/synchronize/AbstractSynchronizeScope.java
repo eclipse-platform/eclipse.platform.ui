@@ -24,7 +24,7 @@ import org.eclipse.ui.IMemento;
  * instances.
  * <p>
  * Clients are not expected to subclass this class.
- * 
+ * </p>
  * @see SubscriberParticipant
  * @since 3.0
  */
@@ -35,8 +35,14 @@ public abstract class AbstractSynchronizeScope implements ISynchronizeScope {
 	 */
 	private static final String CTX_SUBSCRIBER_SCOPE_TYPE = TeamUIPlugin.ID + ".SCOPE_TYPE"; //$NON-NLS-1$
 	
+	/*
+	 * Scope change listeners
+	 */
+	private ListenerList listeners = new ListenerList();
+	
 	/**
 	 * Save the scope to the given memento
+	 * 
 	 * @param scope a scope
 	 * @param memento a memento
 	 */
@@ -47,6 +53,7 @@ public abstract class AbstractSynchronizeScope implements ISynchronizeScope {
 	
 	/**
 	 * Restore a scope from the given memento
+	 * 
 	 * @param scope a scope
 	 * @param memento a memento
 	 */
@@ -72,8 +79,6 @@ public abstract class AbstractSynchronizeScope implements ISynchronizeScope {
 		}
 		return name.substring(lastDot + 1); //$NON-NLS-1$
 	}
-	
-	private ListenerList listeners = new ListenerList();
 	
 	/**
 	 * Constuctor a scope from scratch
@@ -115,6 +120,7 @@ public abstract class AbstractSynchronizeScope implements ISynchronizeScope {
 	
 	/**
 	 * Fires the given property change event to all registered listsners.
+	 * 
 	 * @param event the property change event to be fired
 	 */
 	protected void firePropertyChangedEvent(final PropertyChangeEvent event) {
@@ -142,6 +148,7 @@ public abstract class AbstractSynchronizeScope implements ISynchronizeScope {
 	/**
 	 * Persist the state of this scope. Clients must persist enough additional
 	 * state to know what type (i.e. subclass) of scope to be recreated.
+	 * 
 	 * @param memento the memento into which the scope is to be saved
 	 */
 	public void saveState(IMemento memento) {
@@ -150,6 +157,7 @@ public abstract class AbstractSynchronizeScope implements ISynchronizeScope {
 	
 	/**
 	 * Method invoked from the contructor which repopulats the fields of this scope
+	 * 
 	 * @param memento the memento into which the scope was previously saved
 	 */
 	protected void init(IMemento memento) {

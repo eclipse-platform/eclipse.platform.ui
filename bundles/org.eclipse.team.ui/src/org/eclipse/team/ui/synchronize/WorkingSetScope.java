@@ -10,25 +10,19 @@
  *******************************************************************************/
 package org.eclipse.team.ui.synchronize;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-
+import java.util.*;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.Utils;
-import org.eclipse.ui.IMemento;
-import org.eclipse.ui.IWorkingSet;
-import org.eclipse.ui.IWorkingSetManager;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.*;
 
 /**
  * A synchronize scope whose roots are defined by a working set.
  * <p>
  * Clients are not expected to subclass this class.
+ * </p>
  * @since 3.0
  */
 public class WorkingSetScope extends AbstractSynchronizeScope implements IPropertyChangeListener {
@@ -36,12 +30,12 @@ public class WorkingSetScope extends AbstractSynchronizeScope implements IProper
 	/*
 	 * Constants used to save and restore this scope
 	 */
-	/*
-	 * Constants used to save and restore this scope
-	 */
 	private final static String CTX_SETS = "workingset_scope_sets"; //$NON-NLS-1$
 	private final static String CTX_SET_NAME = "workingset_scope_name"; //$NON-NLS-1$
 	
+	/*
+	 * The working sets associated with this scope
+	 */
 	private IWorkingSet[] sets;
 	
 	/**
@@ -63,7 +57,7 @@ public class WorkingSetScope extends AbstractSynchronizeScope implements IProper
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ui.synchronize.ScopableSubscriberParticipant.SubscriberScope#getName()
+	 * @see org.eclipse.team.ui.synchronize.ISynchronizeScope#getName()
 	 */
 	public String getName() {
 		if (sets.length == 0) {
@@ -80,8 +74,9 @@ public class WorkingSetScope extends AbstractSynchronizeScope implements IProper
 		return name.toString();
 	}
 	
+
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ui.synchronize.ScopableSubscriberParticipant.SubscriberScope#getRoots()
+	 * @see org.eclipse.team.ui.synchronize.ISynchronizeScope#getRoots()
 	 */
 	public IResource[] getRoots() {
 		if (sets.length == 0) {
@@ -120,8 +115,7 @@ public class WorkingSetScope extends AbstractSynchronizeScope implements IProper
 			if (add) {
 				roots.add(newResource);
 			}
-		}
-		
+		}	
 	}
 
 	/* (non-Javadoc)
@@ -129,19 +123,19 @@ public class WorkingSetScope extends AbstractSynchronizeScope implements IProper
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getProperty() == IWorkingSetManager.CHANGE_WORKING_SET_CONTENT_CHANGE) {
-			IWorkingSet newSet = (IWorkingSet)event.getNewValue();
+			IWorkingSet newSet = (IWorkingSet) event.getNewValue();
 			for (int i = 0; i < sets.length; i++) {
 				IWorkingSet set = sets[i];
-			if (newSet == set) {
-				fireRootsChanges();
+				if (newSet == set) {
+					fireRootsChanges();
 					return;
+				}
 			}
 		}
 	}
-	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ui.synchronize.ScopableSubscriberParticipant.SubscriberScope#dispose()
+	 * @see org.eclipse.team.ui.synchronize.ISynchronizeScope#dispose()
 	 */
 	public void dispose() {
 		super.dispose();
@@ -160,13 +154,14 @@ public class WorkingSetScope extends AbstractSynchronizeScope implements IProper
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.AbstractSynchronizeScope#init(org.eclipse.ui.IMemento)
 	 */
 	protected void init(IMemento memento) {
 		super.init(memento);
 		IMemento[] rootNodes = memento.getChildren(CTX_SETS);
-		if(rootNodes != null) {
+		if (rootNodes != null) {
 			List sets = new ArrayList();
 			for (int i = 0; i < rootNodes.length; i++) {
 				IMemento rootNode = rootNodes[i];
@@ -174,8 +169,9 @@ public class WorkingSetScope extends AbstractSynchronizeScope implements IProper
 				IWorkingSet set = PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSet(setName);
 				if (set != null) {
 					sets.add(set);
+				}
+			}
+			this.sets = (IWorkingSet[]) sets.toArray(new IWorkingSet[sets.size()]);
 		}
 	}
-			this.sets = (IWorkingSet[]) sets.toArray(new IWorkingSet[sets.size()]);
-}	}
 }
