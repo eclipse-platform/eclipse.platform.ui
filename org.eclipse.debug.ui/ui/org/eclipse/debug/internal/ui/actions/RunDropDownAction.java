@@ -33,5 +33,12 @@ public class RunDropDownAction extends LaunchDropDownAction {
 	public LaunchConfigurationHistoryElement[] getHistory() {
 		return DebugUIPlugin.getDefault().getRunHistory();
 	}
+	
+	/**
+	 * @see LaunchDropDownAction#getFavorites()
+	 */
+	public LaunchConfigurationHistoryElement[] getFavorites() {
+		return DebugUIPlugin.getDefault().getRunFavorites();
+	}		
 }
 

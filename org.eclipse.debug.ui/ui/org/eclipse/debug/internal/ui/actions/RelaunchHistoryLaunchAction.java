@@ -10,6 +10,7 @@ import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationHistoryElement;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -29,10 +30,14 @@ public class RelaunchHistoryLaunchAction extends Action {
 		fLaunch= launch;
 		setText(launch.getLabel());
 		ImageDescriptor descriptor= null;
-		if (launch.getMode().equals(ILaunchManager.DEBUG_MODE)) {
-			descriptor= DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_ACT_DEBUG);
+		if (launch.getLaunchConfiguration() != null) {
+			descriptor = DebugUITools.getDefaultImageDescriptor(launch.getLaunchConfiguration());
 		} else {
-			descriptor= DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_ACT_RUN);
+			if (launch.getMode().equals(ILaunchManager.DEBUG_MODE)) {
+				descriptor= DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_ACT_DEBUG);
+			} else {
+				descriptor= DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_ACT_RUN);
+			}
 		}
 
 		if (descriptor != null) {

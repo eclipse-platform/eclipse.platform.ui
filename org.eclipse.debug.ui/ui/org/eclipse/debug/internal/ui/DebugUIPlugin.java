@@ -144,6 +144,16 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 	protected Vector fRunHistory;
 	
 	/**
+	 * The most recent debug launches
+	 */
+	protected Vector fDebugFavorites;
+	
+	/**
+	 * The most recent run launches
+	 */
+	protected Vector fRunFavorites;	
+	
+	/**
 	 * Event filters for the debug UI
 	 */
 	protected ListenerList fEventFilters = new ListenerList(2);
@@ -194,6 +204,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 	private static final String HISTORY_MEMENTO_ATT = "memento";
 	private static final String HISTORY_MODE_ATT = "mode";
 	private static final String HISTORY_LABEL_ATT = "label";
+	private static final String HISTORY_FAVORITE_ATT = "favorite";
 	
 	/**
 	 * Returns whether the debug UI plug-in is in trace
@@ -672,8 +683,53 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 	 */	
 	public LaunchConfigurationHistoryElement[] getDebugHistory() {
 		return getHistoryArray(fDebugHistory);
+	}
+	
+	/**
+	 * Returns an array of the favorite debug launches, which can be empty.
+	 *
+	 * @return an array of launches
+	 */	
+	public LaunchConfigurationHistoryElement[] getDebugFavorites() {
+		return getHistoryArray(fDebugFavorites);
+	}
+	
+	/**
+	 * Sets the favorite debug launches, which can be empty.
+	 *
+	 * @param favorites an array of launches
+	 */	
+	public void setDebugFavorites(Vector favorites) {
+		fDebugFavorites = favorites;
 	}	
 	
+	/**
+	 * Sets the recent debug launches, which can be empty.
+	 *
+	 * @param hsitory an array of launches
+	 */	
+	public void setDebugHistory(Vector history) {
+		fDebugHistory = history;
+	}	
+	
+	/**
+	 * Sets the recent run launches, which can be empty.
+	 *
+	 * @param hsitory an array of launches
+	 */	
+	public void setRunHistory(Vector history) {
+		fRunHistory = history;
+	}			
+	
+	/**
+	 * Sets the favorite run launches, which can be empty.
+	 *
+	 * @param favorites an array of launches
+	 */	
+	public void setRunFavorites(Vector favorites) {
+		fRunFavorites = favorites;
+	}
+		
 	/**
 	 * Returns an array of the most recent run launches, which can be empty.
 	 *
@@ -682,6 +738,15 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 	public LaunchConfigurationHistoryElement[] getRunHistory() {
 		return getHistoryArray(fRunHistory);
 	}
+	
+	/**
+	 * Returns an array of the favorite run launches, which can be empty.
+	 *
+	 * @return an array of launches
+	 */
+	public LaunchConfigurationHistoryElement[] getRunFavorites() {
+		return getHistoryArray(fRunFavorites);
+	}	
 	
 	protected LaunchConfigurationHistoryElement[] getHistoryArray(Vector history) {
 		LaunchConfigurationHistoryElement[] array = new LaunchConfigurationHistoryElement[history.size()];
@@ -753,6 +818,8 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 	protected void setEmptyLaunchHistories() {
 		fRunHistory = new Vector(MAX_HISTORY_SIZE);
 		fDebugHistory = new Vector(MAX_HISTORY_SIZE);
+		setRunFavorites(new Vector(MAX_HISTORY_SIZE));
+		setDebugFavorites(new Vector(MAX_HISTORY_SIZE));		
 	}
 	
 	/**
@@ -774,8 +841,8 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 		// ToDo: Do we need an equivalent of 'public' for launch config types?
 		//
 		//if (isVisible(launch.getLauncher())) {
-			updateNewHistory(ILaunchManager.DEBUG_MODE, fDebugHistory, launch);
-			updateNewHistory(ILaunchManager.RUN_MODE, fRunHistory, launch);
+			updateNewHistory(ILaunchManager.DEBUG_MODE, fDebugHistory, fDebugFavorites, launch);
+			updateNewHistory(ILaunchManager.RUN_MODE, fRunHistory, fRunFavorites, launch);
 		//}
 	}
 	
@@ -796,7 +863,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 	/**
 	 * Add the given launch to the specified history if the launcher supports the mode.  
 	 */
-	protected void updateNewHistory(String mode, Vector history, ILaunch launch) {
+	protected void updateNewHistory(String mode, Vector history, Vector favorites, ILaunch launch) {
 		
 		// First make sure the launch configuration exists, supports the mode of the history list,
 		// and isn't private
@@ -822,8 +889,15 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 			fRecentLaunch = item;
 		}
 		
+		// Look for an equivalent launch in the favorites
+		int index = findConfigInHistoryList(favorites, item.getLaunchConfiguration());
+		if (index >= 0) {
+			// a favorite, do not add to history
+			return;
+		}
+		
 		// Look for an equivalent launch in the history list
-		int index = findConfigInHistoryList(history, item.getLaunchConfiguration());
+		index = findConfigInHistoryList(history, item.getLaunchConfiguration());
 		
 		//It's already listed as the most recent launch, so nothing to do
 		if (index == 0) {
@@ -918,9 +992,12 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 		Element historyRootElement = doc.createElement(HISTORY_ROOT_NODE); 
 		doc.appendChild(historyRootElement);
 		
-		List all = new ArrayList(fDebugHistory.size() + fRunHistory.size());
+		List all = new ArrayList(fDebugHistory.size() + fDebugFavorites.size() + fRunHistory.size() + fRunFavorites.size());
+		all.addAll(fDebugFavorites);
+		all.addAll(fRunFavorites);
 		all.addAll(fDebugHistory);
 		all.addAll(fRunHistory);
+		
 
 		Iterator iter = all.iterator();
 		while (iter.hasNext()) {
@@ -973,13 +1050,14 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 		entry.setAttribute(HISTORY_MEMENTO_ATT, memento); 
 		entry.setAttribute(HISTORY_MODE_ATT, element.getMode());		
 		entry.setAttribute(HISTORY_LABEL_ATT, element.getLabel());		 
+		entry.setAttribute(HISTORY_FAVORITE_ATT, (new Boolean(element.isFavorite())).toString());
 	}
 	
 	protected void setOldAttributes(Element entry, LaunchConfigurationHistoryElement element) {
 		entry.setAttribute("launcherId", element.getLauncherIdentifier()); //$NON-NLS-1$
 		entry.setAttribute("elementMemento", element.getElementMemento()); //$NON-NLS-1$
 		entry.setAttribute(HISTORY_LABEL_ATT, element.getLabel()); 
-		entry.setAttribute(HISTORY_MODE_ATT, element.getMode());		 	
+		entry.setAttribute(HISTORY_MODE_ATT, element.getMode());
 	}
 		
 	protected IPath getHistoryFilePath() {
@@ -1055,10 +1133,18 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 				if (entry.getNodeName().equalsIgnoreCase(HISTORY_LAUNCH_NODE)) { 
 					LaunchConfigurationHistoryElement item = createHistoryElement(entry);
 					if (item != null) {
-						if (item.getMode().equals(ILaunchManager.DEBUG_MODE)) {
-							fDebugHistory.add(item);
+						if (item.isFavorite()) {
+							if (item.getMode().equals(ILaunchManager.DEBUG_MODE)) {
+								fDebugFavorites.add(item);
+							} else {
+								fRunFavorites.add(item);
+							}							
 						} else {
-							fRunHistory.add(item);
+							if (item.getMode().equals(ILaunchManager.DEBUG_MODE)) {
+								fDebugHistory.add(item);
+							} else {
+								fRunHistory.add(item);
+							}
 						}
 					}
 				} else if (entry.getNodeName().equalsIgnoreCase(HISTORY_LAST_LAUNCH_NODE)) { 
@@ -1083,13 +1169,17 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 	protected LaunchConfigurationHistoryElement createNewHistoryElement(Element entry) {
 		String memento = entry.getAttribute(HISTORY_MEMENTO_ATT); 
 		String mode = entry.getAttribute(HISTORY_MODE_ATT);       
-		String label = entry.getAttribute(HISTORY_LABEL_ATT);     
+		String label = entry.getAttribute(HISTORY_LABEL_ATT);
+		String fav = entry.getAttribute(HISTORY_FAVORITE_ATT)     ;
 		ILaunchConfiguration launchConfig = getLaunchManager().getLaunchConfiguration(memento);
+		LaunchConfigurationHistoryElement hist = null;
 		if (launchConfig.exists()) {
-			return new LaunchConfigurationHistoryElement(launchConfig, mode, label);
-		} else {
-			return null;
-		}
+			hist = new LaunchConfigurationHistoryElement(launchConfig, mode, label);
+			if (fav != null) {
+				hist.setFavorite(Boolean.valueOf(fav).booleanValue());
+			}
+		} 
+		return hist;
 	}
 	
 	protected LaunchConfigurationHistoryElement createOldHistoryElement(Element entry) {

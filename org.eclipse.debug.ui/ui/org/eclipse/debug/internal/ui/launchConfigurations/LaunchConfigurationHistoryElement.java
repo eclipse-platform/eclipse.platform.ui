@@ -60,6 +60,11 @@ public class LaunchConfigurationHistoryElement {
 	 * The label for the launch
 	 */
 	private String fLabel;
+	
+	/**
+	 * Whether this history element representa a 'favorite'
+	 */
+	private boolean fFavorite = false;
 
 	public LaunchConfigurationHistoryElement(ILaunchConfiguration launchConfiguration, 
 											  String mode,
@@ -136,6 +141,28 @@ public class LaunchConfigurationHistoryElement {
 	 */
 	public String getLabel() {
 		return fLabel;
+	}
+	
+	/**
+	 * Returns whether this history element represents
+	 * a favorite launch configuration.
+	 * 
+	 * @return whether this history element represents
+	 * a favorite launch configuration
+	 */
+	public boolean isFavorite() {
+		return fFavorite;
+	}
+	
+	/**
+	 * Sets whether this history element represents
+	 * a favorite launch configuration.
+	 * 
+	 * @param favorite whether this history element represents
+	 * a favorite launch configuration
+	 */	
+	public void setFavorite(boolean favorite) {
+		fFavorite = favorite;
 	}
 	
 	// TXN

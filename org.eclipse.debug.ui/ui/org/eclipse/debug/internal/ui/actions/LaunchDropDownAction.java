@@ -69,18 +69,32 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 	}
 
 	protected Menu createMenu(Menu menu) {
+		
+		LaunchConfigurationHistoryElement[] favoriteList = getFavorites();
+		int total = 0;
+		for (int i = 0; i < favoriteList.length; i++) {
+			LaunchConfigurationHistoryElement launch= favoriteList[i];
+			RelaunchHistoryLaunchAction newAction= new RelaunchHistoryLaunchAction(launch);
+			createMenuForAction(menu, newAction, total + 1);
+			total++;
+		}		
+		
+		//used in the tool bar drop down for the cascade launch with menu
+		if (favoriteList.length > 0) {
+			new MenuItem(menu, SWT.SEPARATOR);
+		}		
+		
 		LaunchConfigurationHistoryElement[] historyList= getHistory();
-		int count= 0;
 		for (int i = 0; i < historyList.length; i++) {
 			LaunchConfigurationHistoryElement launch= historyList[i];
 			RelaunchHistoryLaunchAction newAction= new RelaunchHistoryLaunchAction(launch);
-			createMenuForAction(menu, newAction, i+1);
-			count++;
+			createMenuForAction(menu, newAction, total+1);
+			total++;;
 		}
 		
 		if (getLaunchAction() != null) {
 			//used in the tool bar drop down for the cascade launch with menu
-			if (count > 0) {
+			if (historyList.length > 0) {
 				new MenuItem(menu, SWT.SEPARATOR);
 			}
 		
@@ -120,6 +134,11 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 	 * Returns an array of previous launches applicable to this drop down.
 	 */
 	public abstract LaunchConfigurationHistoryElement[] getHistory();
+	
+	/**
+	 * Returns an array of favorites applicable to this drop down.
+	 */
+	public abstract LaunchConfigurationHistoryElement[] getFavorites();	
 	
 	/**
 	 * Returns the mode (e.g., 'run' or 'debug') of this drop down.

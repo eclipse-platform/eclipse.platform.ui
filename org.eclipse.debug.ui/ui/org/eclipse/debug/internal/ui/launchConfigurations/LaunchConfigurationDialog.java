@@ -43,6 +43,8 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -79,7 +81,8 @@ import org.eclipse.ui.model.WorkbenchViewerSorter;
 public class LaunchConfigurationDialog extends TitleAreaDialog 
 										implements ISelectionChangedListener, 
 													ILaunchConfigurationListener, 
-													ILaunchConfigurationDialog {
+													ILaunchConfigurationDialog, 
+													IDoubleClickListener {
 
 	/**
 	 * The tree of launch configurations
@@ -663,7 +666,8 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		setTreeViewer(tree);
 		tree.addSelectionChangedListener(this);
 		tree.setInput(ResourcesPlugin.getWorkspace().getRoot());
-		tree.expandAll();		
+		tree.expandAll();
+		tree.addDoubleClickListener(this);
 		
 		Button newButton = new Button(c, SWT.PUSH | SWT.CENTER);
 		newButton.setText("Ne&w");
@@ -2138,6 +2142,15 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			name = "";
 		}
 		return generateUniqueNameFrom(name);
+	}
+
+	/**
+	 * @see IDoubleClickListener#doubleClick(DoubleClickEvent)
+	 */
+	public void doubleClick(DoubleClickEvent event) {
+		if (canLaunch()) {
+			handleLaunchPressed();
+		}
 	}
 
 }
