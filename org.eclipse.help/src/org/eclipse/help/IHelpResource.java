@@ -13,7 +13,7 @@ package org.eclipse.help;
 * A help resource, usually a help topic.
  * <p>
  * This interface models a help resource. In general, help resources are either
- * html help files, or xml TOC files.
+ * html help files, or table of contents XML files.
  * </p>
  * @since 2.0
  */

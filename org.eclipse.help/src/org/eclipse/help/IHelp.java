@@ -104,7 +104,7 @@ public interface IHelp {
 	 * The help system makes no guarantee that all the help resources can be displayed or how they are displayed.
 	 * </p>
 	 * @see IHelp#displayHelpResource(String)
-	 * @param helpResource the URL of the help resource.
+	 * @param helpResource the help resource to display.
 	 * @since 2.0
 	 */
 	public void displayHelpResource(IHelpResource helpResource);
