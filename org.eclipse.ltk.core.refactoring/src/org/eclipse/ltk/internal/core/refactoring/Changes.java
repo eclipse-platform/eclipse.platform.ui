@@ -29,8 +29,12 @@ public class Changes {
 		if (!status.isOK())
 			result.merge(RefactoringStatus.create(status));
 		status= Resources.makeCommittable(filesToModify, null);
-		if (!status.isOK())
+		if (!status.isOK()) {
 			result.merge(RefactoringStatus.create(status));
+			if (!result.hasFatalError()) {
+				result.addFatalError(RefactoringCoreMessages.getString("Changes.validateEdit")); //$NON-NLS-1$
+			}
+		}
 		return result;
 	}
 	

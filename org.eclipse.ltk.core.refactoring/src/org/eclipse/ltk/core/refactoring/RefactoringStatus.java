@@ -329,9 +329,10 @@ public class RefactoringStatus {
 	 * Creates a new <code>RefactorngStatus</code> from the given <code>IStatus</code>. An
 	 * OK status is mapped to an OK refactoring status, an information status is mapped 
 	 * to a warning refactoring status, a warning status is mapped to an error refactoring 
-	 * status and an error status is mapped to a fatal refactoring status. If the status
-	 * is a <code>MultiStatus</code> the first level of children of the status will be added
-	 * as refactoring status entries to the created refactoring status.
+	 * status and an error or cancel status is mapped to a fatal refactoring status. An unknown
+	 * status is converted into a fatal error status as well. If the status is a <code>MultiStatus
+	 * </code> the first level of children of the status will be added as refactoring status 
+	 * entries to the created refactoring status.
 	 * 
 	 * @param status the status to create a refactoring status from
 	 * @return the refactoring status
@@ -344,14 +345,18 @@ public class RefactoringStatus {
 
 		if (!status.isMultiStatus()) {
 			switch (status.getSeverity()) {
+				case IStatus.OK :
+					return new RefactoringStatus();
 				case IStatus.INFO :
 					return RefactoringStatus.createWarningStatus(status.getMessage());
 				case IStatus.WARNING :
 					return RefactoringStatus.createErrorStatus(status.getMessage());
 				case IStatus.ERROR :
 					return RefactoringStatus.createFatalErrorStatus(status.getMessage());
+				case IStatus.CANCEL :
+					return RefactoringStatus.createFatalErrorStatus(status.getMessage());
 				default :
-					return new RefactoringStatus();
+					return RefactoringStatus.createFatalErrorStatus(status.getMessage());
 			}
 		} else {
 			IStatus[] children= status.getChildren();

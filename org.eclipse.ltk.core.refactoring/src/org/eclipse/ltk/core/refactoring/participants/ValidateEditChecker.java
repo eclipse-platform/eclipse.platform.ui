@@ -24,6 +24,7 @@ import org.eclipse.core.resources.IResource;
 
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.internal.core.refactoring.Assert;
+import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
 import org.eclipse.ltk.internal.core.refactoring.Resources;
 
 /**
@@ -85,8 +86,12 @@ public class ValidateEditChecker implements IConditionChecker {
 		if (!status.isOK())
 			result.merge(RefactoringStatus.create(status));
 		status= Resources.makeCommittable(resources, fContext);
-		if (!status.isOK())
+		if (!status.isOK()) {
 			result.merge(RefactoringStatus.create(status));
+			if (!result.hasFatalError()) {
+				result.addFatalError(RefactoringCoreMessages.getString("ValidateEditChecker.failed")); //$NON-NLS-1$
+			}
+		}
 		return result;
 	}
 }
