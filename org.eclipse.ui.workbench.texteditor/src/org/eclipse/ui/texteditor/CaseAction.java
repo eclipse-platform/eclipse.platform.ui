@@ -12,13 +12,12 @@ package org.eclipse.ui.texteditor;
 
 import java.util.ResourceBundle;
 
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.ITextDoubleClickStrategy;
-import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Point;
+
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.source.ISourceViewer;
 
 /**
  * Action that converts the current selection to lower case.
@@ -82,13 +81,17 @@ public class CaseAction extends ResourceAction implements IUpdate {
 			// if the selection is emtpy, we select the word / string using the viewer's 
 			// doubleclick strategy
 			if (sel.y == 0)  {
-				SourceViewerConfiguration svc= fEditor.getSourceViewerConfiguration(); // never null when viewer instantiated
-				String partition= document.getContentType(sel.x);
-				ITextDoubleClickStrategy dcs= svc.getDoubleClickStrategy(viewer, partition);
-				if (dcs != null) {
-					dcs.doubleClicked(viewer);
-					sel= viewer.getSelectedRange();
-				} 
+				
+				// TODO find a better way to do this although there are multiple partitionings on a single document
+				
+//				String partition= getContentType(viewer, document, sel.x);
+//				SourceViewerConfiguration svc= fEditor.getSourceViewerConfiguration(); // never null when viewer instantiated
+//				ITextDoubleClickStrategy dcs= svc.getDoubleClickStrategy(viewer, partition);
+//				if (dcs != null) {
+//					dcs.doubleClicked(viewer);
+//					sel= viewer.getSelectedRange();
+//				}
+ 
 				if (sel.y == 0)
 					return;	// if the selection is still empty, we're done
 			}

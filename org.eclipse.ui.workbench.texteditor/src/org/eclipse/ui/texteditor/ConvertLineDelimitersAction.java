@@ -13,6 +13,7 @@ package org.eclipse.ui.texteditor;
 
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -26,9 +27,9 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension;
-import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.IRewriteTarget;
+import org.eclipse.jface.text.TextUtilities;
 
 
 /**
@@ -147,11 +148,7 @@ public class ConvertLineDelimitersAction extends TextEditorAction {
 			if (document instanceof IDocumentExtension)
 				((IDocumentExtension) document).startSequentialRewrite(true);
 
-			IDocumentPartitioner partitioner= document.getDocumentPartitioner();
-			if (partitioner != null) {
-				partitioner.disconnect();
-				document.setDocumentPartitioner(null);
-			}
+			Map partitioners= TextUtilities.removeDocumentPartitioners(document);
 			
 			try {
 				for (int i= 0; i < lineCount; i++) {
@@ -172,10 +169,8 @@ public class ConvertLineDelimitersAction extends TextEditorAction {
 
 			} finally {
 
-				if (partitioner != null) {
-					partitioner.connect(document);
-					document.setDocumentPartitioner(partitioner);
-				}
+				if (partitioners != null)
+					TextUtilities.addDocumentPartitioners(document, partitioners);
 									
 				if (document instanceof IDocumentExtension)
 					((IDocumentExtension) document).stopSequentialRewrite();
