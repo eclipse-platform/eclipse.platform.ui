@@ -17,7 +17,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -60,6 +59,11 @@ public class ConsoleDocumentManager implements ILaunchListener {
 	protected IDocumentProvider fDefaultDocumentProvider = null;
 	
 	/**
+	 * Map of processes for a launch to compute removed processes
+	 */
+	private Map fProcesses;
+	
+	/**
 	 * @see ILaunchListener#launchRemoved(ILaunch)
 	 */
 	public void launchRemoved(ILaunch launch) {
@@ -67,20 +71,31 @@ public class ConsoleDocumentManager implements ILaunchListener {
 	}
 	
 	protected void removeLaunch(ILaunch launch) {
-		IProcess[] processes= launch.getProcesses();
-		IConsoleManager manager = ConsolePlugin.getDefault().getConsoleManager(); 
+		IProcess[] processes= launch.getProcesses(); 
 		for (int i= 0; i < processes.length; i++) {
 			IProcess iProcess = processes[i];
-			IConsole console = getConsole(iProcess);
-			// TODO: we can remove > 1 at once
-			if (console != null) {
-				manager.removeConsoles(new IConsole[]{console});
-			}
-			IDocumentProvider provider = getDocumentProvider();
-			provider.disconnect(iProcess);
+			removeProcess(iProcess);
 		}		
+		if (fProcesses != null) {
+			fProcesses.remove(launch);
+		}
 	}
 	
+	/**
+	 * Removes the console and document associated with the given process.
+	 * 
+	 * @param iProcess process to clean up
+	 */
+	private void removeProcess(IProcess iProcess) {
+		IConsole console = getConsole(iProcess);
+		if (console != null) {
+			IConsoleManager manager = ConsolePlugin.getDefault().getConsoleManager();
+			manager.removeConsoles(new IConsole[]{console});
+		}
+		IDocumentProvider provider = getDocumentProvider();
+		provider.disconnect(iProcess);
+	}
+
 	/**
 	 * Returns the console for the given process, or <code>null</code> if none.
 	 * 
@@ -113,25 +128,32 @@ public class ConsoleDocumentManager implements ILaunchListener {
 	 * @see ILaunchListener#launchChanged(ILaunch)
 	 */
 	public void launchChanged(final ILaunch launch) {
-		if (launch.getProcesses().length > 0) {	
-			DebugUIPlugin.getStandardDisplay().syncExec(new Runnable () {
-				public void run() {
-					IProcess[] processes= launch.getProcesses();
-					for (int i= 0; i < processes.length; i++) {
-						if (getConsoleDocument(processes[i]) == null) {
-							IProcess process = processes[i];
-							IDocumentProvider provider = getDocumentProvider();
-							try {
-								provider.connect(process);
-							} catch (CoreException e) {
-							}
-							ProcessConsole pc = new ProcessConsole(process);
-							ConsolePlugin.getDefault().getConsoleManager().addConsoles(new IConsole[]{pc});
+		DebugUIPlugin.getStandardDisplay().syncExec(new Runnable () {
+			public void run() {
+				IProcess[] processes= launch.getProcesses();
+				for (int i= 0; i < processes.length; i++) {
+					if (getConsoleDocument(processes[i]) == null) {
+						// create new document
+						IProcess process = processes[i];
+						IDocumentProvider provider = getDocumentProvider();
+						try {
+							provider.connect(process);
+						} catch (CoreException e) {
 						}
+						ProcessConsole pc = new ProcessConsole(process);
+						ConsolePlugin.getDefault().getConsoleManager().addConsoles(new IConsole[]{pc});
 					}
 				}
-			});
-		}
+				List removed = getRemovedProcesses(launch);
+				if (removed != null) {
+					Iterator iterator = removed.iterator();
+					while (iterator.hasNext()) {
+						IProcess p = (IProcess) iterator.next();
+						removeProcess(p);
+					}
+				}
+			}
+		});
 	}
 	
 	/**
@@ -185,6 +207,9 @@ public class ConsoleDocumentManager implements ILaunchListener {
 			removeLaunch(launch);
 		}
 		launchManager.removeLaunchListener(this);
+		if (fProcesses != null) {
+			fProcesses.clear();
+		}
 	}
 	
 	/**
@@ -296,5 +321,52 @@ public class ConsoleDocumentManager implements ILaunchListener {
 			}
 		}
 		return lineNotifier;		
+	}
+	
+	/**
+	 * Returns the processes that have been removed from the given
+	 * launch, or <code>null</code> if none.
+	 * 
+	 * @param launch launch that has changed
+	 * @return removed processes or <code>null</code>
+	 */
+	private List getRemovedProcesses(ILaunch launch) {
+		List removed = null;
+		if (fProcesses == null) {
+			fProcesses = new HashMap();
+		}
+		IProcess[] old = (IProcess[]) fProcesses.get(launch);
+		IProcess[] curr = launch.getProcesses();
+		if (old != null) {
+			for (int i = 0; i < old.length; i++) {
+				IProcess process = old[i];
+				if (!contains(curr, process)) {
+					if (removed == null) {
+						removed = new ArrayList();
+					}
+					removed.add(process);
+				}
+			}
+		}
+		// update cache with current processes
+		fProcesses.put(launch, curr);
+		return removed;
+	}
+	
+	/**
+	 * Returns whether the given object is contained in the list.
+	 * 
+	 * @param list list to search
+	 * @param object object to search for
+	 * @return whether the given object is contained in the list
+	 */
+	private boolean contains(Object[] list, Object object) {
+		for (int i = 0; i < list.length; i++) {
+			Object object2 = list[i];
+			if (object2.equals(object)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }
