@@ -28,6 +28,7 @@ import org.eclipse.ui.views.tasklist.TaskPropertiesDialog;
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
+ * @since 2.1
  */
 public class AddTaskAction extends SelectionListenerAction {
 	/**
