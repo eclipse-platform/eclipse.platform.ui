@@ -48,13 +48,18 @@ public ToggleEditorsVisibilityAction(IWorkbenchWindow window) {
  * Implementation of method defined on <code>IAction</code>.
  */
 public void run() {
-	boolean visible = workbenchWindow.getActivePage().isEditorAreaVisible();
+	IWorkbenchPage page = workbenchWindow.getActivePage();
+	if (page == null) {
+		return;
+	}
+	
+	boolean visible = page.isEditorAreaVisible();
 	if (visible) {
-		workbenchWindow.getActivePage().setEditorAreaVisible(false);
+		page.setEditorAreaVisible(false);
 		setText(WorkbenchMessages.getString("ToggleEditor.showEditors")); //$NON-NLS-1$
 	}
 	else {
-		workbenchWindow.getActivePage().setEditorAreaVisible(true);
+		page.setEditorAreaVisible(true);
 		setText(WorkbenchMessages.getString("ToggleEditor.hideEditors")); //$NON-NLS-1$
 	}
 }

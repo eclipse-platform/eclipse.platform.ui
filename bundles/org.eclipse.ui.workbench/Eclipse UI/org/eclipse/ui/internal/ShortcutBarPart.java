@@ -117,11 +117,13 @@ public class ShortcutBarPart extends LayoutPart {
 				IViewReference ref = (IViewReference) itemData;
 				WorkbenchPage page = (WorkbenchPage) getWorkbenchWindow().getActivePage();
 
-				if (deactivatedPart == null) {
+				if (deactivatedPart == null && page != null) {
 					deactivatedPart = page.getActivePart();
 				}
 				lastFastView = (IViewPart)ref.getPart(true);
-				page.activate(lastFastView);
+				if (page != null) {
+					page.activate(lastFastView);
+				}
 			}
 		}
 		/**
@@ -135,7 +137,7 @@ public class ShortcutBarPart extends LayoutPart {
 
 				// activate the part that was active prior to the fast view.
 				// hides the fast view.
-				if (activePage == partPage) {
+				if (activePage == partPage && partPage != null) {
 					partPage.activate(deactivatedPart);
 				}
 				deactivatedPart = null;

@@ -572,12 +572,14 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 				p.activate(editor);
 			} else {
 				IWorkbenchPage p = window.getActivePage();
-				try {
-					if(desc != null)
-						p.openEditor(input,desc.getId(),true);
-					else if(input instanceof IFileEditorInput)
-						p.openEditor(((IFileEditorInput)input).getFile());
-				} catch (PartInitException e) {
+				if (p != null) {
+					try {
+						if(desc != null)
+							p.openEditor(input,desc.getId(),true);
+						else if(input instanceof IFileEditorInput)
+							p.openEditor(((IFileEditorInput)input).getFile());
+					} catch (PartInitException e) {
+					}
 				}
 			}
 		}

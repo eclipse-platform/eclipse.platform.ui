@@ -74,22 +74,25 @@ public class NavigationHistoryAction extends PageEventAction implements IWorkben
 	public Menu getMenu(Control parent) {
 		dispose();
 		historyMenu = new Menu(parent);
-		final NavigationHistory history = (NavigationHistory)getWorkbenchWindow().getActivePage().getNavigationHistory();
-		NavigationHistoryEntry[] entries;
-		if (forward) entries = history.getForwardEntries();
-		else entries = history.getBackwardEntries();
-		for (int i=0; i<entries.length; i++) {
-			if (i > MAX_HISTORY_LENGTH) break;
-			String text = entries[i].getHistoryText();
-			if (text != null) {
-				MenuItem item = new MenuItem(historyMenu, SWT.NONE);
-				item.setData(entries[i]);
-				item.setText(text);
-				item.addSelectionListener(new SelectionAdapter() {
-					public void widgetSelected(SelectionEvent e) {
-						history.shiftCurrentEntry((NavigationHistoryEntry)e.widget.getData());
-					}
-				});
+		IWorkbenchPage page = getWorkbenchWindow().getActivePage();
+		if (page != null) {
+			final NavigationHistory history = (NavigationHistory)page.getNavigationHistory();
+			NavigationHistoryEntry[] entries;
+			if (forward) entries = history.getForwardEntries();
+			else entries = history.getBackwardEntries();
+			for (int i=0; i<entries.length; i++) {
+				if (i > MAX_HISTORY_LENGTH) break;
+				String text = entries[i].getHistoryText();
+				if (text != null) {
+					MenuItem item = new MenuItem(historyMenu, SWT.NONE);
+					item.setData(entries[i]);
+					item.setText(text);
+					item.addSelectionListener(new SelectionAdapter() {
+						public void widgetSelected(SelectionEvent e) {
+							history.shiftCurrentEntry((NavigationHistoryEntry)e.widget.getData());
+						}
+					});
+				}
 			}
 		}
 		return historyMenu;

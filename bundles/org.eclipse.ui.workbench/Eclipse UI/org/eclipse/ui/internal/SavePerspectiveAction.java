@@ -60,8 +60,12 @@ public void saveSingleton() {
 		buttons,
 		0
 	);
-	if (d.open() == 0)
-		window.getActivePage().savePerspective();
+	if (d.open() == 0) {
+		IWorkbenchPage page = window.getActivePage();
+		if (page != null) {
+			page.savePerspective();
+		}
+	}
 }
 
 /**
@@ -74,7 +78,10 @@ public void saveNonSingleton() {
 
 	// Get persp name.
 	SavePerspectiveDialog dlg = new SavePerspectiveDialog(window.getShell(), reg);
-	IPerspectiveDescriptor description = reg.findPerspectiveWithId(window.getActivePage().getPerspective().getId());
+	IPerspectiveDescriptor description = null;
+	IWorkbenchPage page = window.getActivePage();
+	if (page != null)
+		description = reg.findPerspectiveWithId(page.getPerspective().getId());
 	dlg.setInitialSelection(description);
 	if (dlg.open() != IDialogConstants.OK_ID)
 		return;
@@ -92,7 +99,6 @@ public void saveNonSingleton() {
 	}
 
 	// Save state.
-	IWorkbenchPage page = window.getActivePage();
 	if (page != null) {
 		page.savePerspectiveAs(desc);
 	}

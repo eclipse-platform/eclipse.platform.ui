@@ -49,7 +49,7 @@ public class ShowFastViewContribution extends ContributionItem {
 			item.setData(FAST_VIEW, ref);
 			
 			// Select the active fast view's icon.
-			if (ref == ((WorkbenchPage)window.getActivePage()).getActiveFastView()) {
+			if (ref == page.getActiveFastView()) {
 				item.setSelection(true);
 			} else {
 				item.setSelection(false);
