@@ -12,8 +12,11 @@ package org.eclipse.help.ui.internal;
 
 import java.net.URL;
 
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.help.IContext;
+import org.eclipse.help.browser.IBrowser;
 import org.eclipse.help.internal.base.BaseHelpSystem;
+import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.ui.internal.views.ContextHelpWindow;
 import org.eclipse.help.ui.internal.views.HelpView;
 import org.eclipse.jface.window.Window;
@@ -30,6 +33,8 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.browser.IWebBrowser;
+import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.help.AbstractHelpUI;
 import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.intro.IIntroPart;
@@ -49,12 +54,57 @@ public class DefaultHelpUI extends AbstractHelpUI {
 	private ContextHelpWindow f1Window = null;
 
 	private static final String HELP_VIEW_ID = "org.eclipse.help.ui.HelpView"; //$NON-NLS-1$
+	
+	class ExternalWorkbenchBrowser implements IBrowser {
+		public ExternalWorkbenchBrowser() {
+		}
+		
+		private IWebBrowser getExternalBrowser() {
+			try {
+				IWorkbenchBrowserSupport support = PlatformUI.getWorkbench().getBrowserSupport();
+				return support.getExternalBrowser();
+			}
+			catch (PartInitException e) {
+				return null;
+			}
+		}
+		public void close() {
+		}
+
+		public boolean isCloseSupported() {
+			return false;
+		}
+
+		public void displayURL(String url) throws Exception {
+			IWebBrowser browser = getExternalBrowser();
+			if (browser!=null) {
+				browser.openURL(new URL(url));
+			}
+		}
+
+		public boolean isSetLocationSupported() {
+			return false;
+		}
+
+		public boolean isSetSizeSupported() {
+			return false;
+		}
+
+		public void setLocation(int x, int y) {
+		}
+
+		public void setSize(int width, int height) {
+		}
+	}
 
 	/**
 	 * Constructor.
 	 */
 	public DefaultHelpUI() {
 		super();
+		// register external browser. This will cause the help system
+		// to use workbench external browser instead of its own.
+		BaseHelpSystem.getInstance().setBrowserInstance(new ExternalWorkbenchBrowser());
 	}
 
 	/**
@@ -156,12 +206,20 @@ public class DefaultHelpUI extends AbstractHelpUI {
 	public void displayContext(IContext context, int x, int y) {
 		if (context == null)
 			return;
+		Preferences pref = HelpBasePlugin.getDefault().getPluginPreferences();
+		boolean winfopop = pref.getBoolean(IHelpUIConstants.P_WINDOW_INFOPOP);
+		boolean dinfopop = pref.getBoolean(IHelpUIConstants.P_DIALOG_INFOPOP);
+		
 		IWorkbenchWindow window = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow();
 		Shell activeShell = getActiveShell();
 		if (window != null && isActiveShell(activeShell, window)) {
 			IWorkbenchPage page = window.getActivePage();
 			if (page != null) {
+				if (winfopop) {
+					displayContextAsInfopop(context, x, y);
+					return;
+				}
 				try {
 					IWorkbenchPart activePart = page.getActivePart();
 					Control c = window.getShell().getDisplay().getFocusControl();
@@ -181,11 +239,12 @@ public class DefaultHelpUI extends AbstractHelpUI {
 		// check the dialog
 		if (activeShell!=null) {
 			Object data = activeShell.getData();
-			if (data instanceof Window) {
+			if (data instanceof Window && !dinfopop) {
 				displayContextAsHelpPane(activeShell, context);
 				return;
 			}
 		}
+		//we are here either as a fallback or because of the user preferences
 		displayContextAsInfopop(context, x, y);
 	}
 	

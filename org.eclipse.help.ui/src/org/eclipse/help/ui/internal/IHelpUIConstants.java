@@ -15,6 +15,9 @@ package org.eclipse.help.ui.internal;
 public interface IHelpUIConstants {
 	// Help UI pluging id with a "." for convenience.
 	public static final String HELP_UI_PLUGIN_ID = HelpUIPlugin.PLUGIN_ID + "."; //$NON-NLS-1$
+	// Preference ids
+	public static final String P_WINDOW_INFOPOP = "window_infopop";//$NON-NLS-1$
+	public static final String P_DIALOG_INFOPOP = "dialog_infopop";//$NON-NLS-1$		
 	// F1 ids
 	public static final String F1_SHELL = HELP_UI_PLUGIN_ID + "f1Shell"; //$NON-NLS-1$
 	public static final String PREF_PAGE_BROWSERS = HELP_UI_PLUGIN_ID
@@ -23,6 +26,7 @@ public interface IHelpUIConstants {
 			+ "prefPageAppServer"; //$NON-NLS-1$
 	public static final String PREF_PAGE_CUSTOM_BROWSER_PATH = HELP_UI_PLUGIN_ID
 			+ "prefPageCustomBrowserPath"; //$NON-NLS-1$
+	
 	public static final String IMAGE_FILE_F1TOPIC = "obj16/topic_small.gif"; //$NON-NLS-1$
 	
 	// Help view images

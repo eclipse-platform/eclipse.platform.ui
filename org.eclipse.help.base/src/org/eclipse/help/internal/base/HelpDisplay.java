@@ -170,6 +170,7 @@ public class HelpDisplay {
 		}
 
 		try {
+			/*
 			if (helpURL == null || helpURL.length() == 0) {
 				BaseHelpSystem.getHelpBrowser(forceExternal).displayURL(
 						getFramesetURL());
@@ -183,6 +184,17 @@ public class HelpDisplay {
 				BaseHelpSystem.getHelpBrowser(forceExternal)
 						.displayURL(helpURL);
 			}
+			*/
+			if (helpURL == null || helpURL.length() == 0) {
+				helpURL = getFramesetURL();
+			} else if (helpURL.startsWith("tab=") //$NON-NLS-1$
+					|| helpURL.startsWith("toc=") //$NON-NLS-1$
+					|| helpURL.startsWith("topic=") //$NON-NLS-1$
+					|| helpURL.startsWith("contextId=")) { //$NON-NLS-1$
+				helpURL = getFramesetURL() + "?" + helpURL; //$NON-NLS-1$
+			}
+			BaseHelpSystem.getHelpBrowser(forceExternal)
+						.displayURL(helpURL);
 		} catch (Exception e) {
 			HelpBasePlugin.logError(
 					"An exception occurred while launching help.", e); //$NON-NLS-1$

@@ -394,7 +394,7 @@ public class BrowserManager {
 		alwaysUseExternal = alwaysExternal || !isEmbeddedBrowserPresent();
 	}
 
-	private boolean isAlwaysUseExternal() {
+	public boolean isAlwaysUseExternal() {
 		if (!isEmbeddedBrowserPresent()) {
 			return true;
 		}

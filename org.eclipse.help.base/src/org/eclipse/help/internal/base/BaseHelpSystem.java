@@ -117,10 +117,22 @@ public final class BaseHelpSystem {
 			getInstance().bookmarkManager = new BookmarkManager();
 		}
 		return getInstance().bookmarkManager;
-	}	
+	}
+
+	/**
+	 * Allows Help UI to plug-in a soft adapter that delegates
+	 * all the work to the workbench browser support.
+	 * @since 3.1
+	 * @param browser the instance to use when external
+	 * browser is needed
+	 */
+
+	public synchronized void setBrowserInstance(IBrowser browser) {
+		this.browser = browser;
+	}
 
 	public static synchronized IBrowser getHelpBrowser(boolean forceExternal) {
-		if (!forceExternal) {
+		if (!forceExternal && !BrowserManager.getInstance().isAlwaysUseExternal()) {
 			if (getInstance().internalBrowser == null)
 				getInstance().internalBrowser = BrowserManager.getInstance()
 						.createBrowser(false);

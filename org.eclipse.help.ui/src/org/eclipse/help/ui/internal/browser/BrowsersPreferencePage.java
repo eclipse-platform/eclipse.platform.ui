@@ -9,19 +9,29 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.ui.internal.browser;
+import java.util.Iterator;
+
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.help.internal.base.HelpBasePlugin;
-import org.eclipse.help.internal.browser.*;
-import org.eclipse.help.ui.internal.*;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.preference.*;
+import org.eclipse.help.internal.browser.BrowserManager;
+import org.eclipse.help.ui.internal.HelpUIResources;
+import org.eclipse.help.ui.internal.IHelpUIConstants;
+import org.eclipse.jface.preference.IPreferenceNode;
+import org.eclipse.jface.preference.PreferenceManager;
+import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.PreferenceLinkArea;
+import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 /**
  * Preference page for selecting default web browser.
  */
@@ -29,11 +39,19 @@ public class BrowsersPreferencePage extends PreferencePage
 		implements
 			IWorkbenchPreferencePage {
 	private Button alwaysExternal;
+	private static final String WBROWSER_PAGE_ID = "org.eclipse.ui.browser.preferencePage";//$NON-NLS-1$
+/*
 	private Button[] externalBrowsers;
 	private Button customBrowserRadio;
 	private Label customBrowserPathLabel;
 	private Text customBrowserPath;
 	private Button customBrowserBrowse;
+*/
+	private Button whelpAsViewButton;
+	private Button whelpAsInfopopButton;
+	
+	private Button dhelpAsWindowButton;
+	private Button dhelpAsInfopopButton;
 	/**
 	 * Creates preference page controls on demand.
 	 * 
@@ -53,7 +71,7 @@ public class BrowsersPreferencePage extends PreferencePage
 		mainComposite.setLayout(layout);
 		Label description = new Label(mainComposite, SWT.NULL);
 		description.setText(HelpUIResources.getString("select_browser")); //$NON-NLS-1$
-		createSpacer(mainComposite);
+		//createSpacer(mainComposite);
 		if (BrowserManager.getInstance().isEmbeddedBrowserPresent()) {
 			alwaysExternal = new Button(mainComposite, SWT.CHECK);
 			alwaysExternal
@@ -63,8 +81,9 @@ public class BrowsersPreferencePage extends PreferencePage
 			alwaysExternal.setSelection(HelpBasePlugin.getDefault()
 					.getPluginPreferences().getBoolean(
 							BrowserManager.ALWAYS_EXTERNAL_BROWSER_KEY));
-			createSpacer(mainComposite);
+			//createSpacer(mainComposite);
 		}
+/*
 		Label tableDescription = new Label(mainComposite, SWT.NULL);
 		tableDescription.setText(HelpUIResources.getString("current_browser")); //$NON-NLS-1$
 		//data = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
@@ -118,10 +137,71 @@ public class BrowsersPreferencePage extends PreferencePage
 		externalBrowsersComposite.setSize(externalBrowsersComposite
 				.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		createCustomBrowserPathPart(mainComposite);
+		*/
 		org.eclipse.jface.dialogs.Dialog.applyDialogFont(mainComposite);
+		createLinkArea(mainComposite);
 		createSpacer(mainComposite);
+		createDynamicHelpArea(mainComposite);
 		return mainComposite;
 	}
+
+	private void createLinkArea(Composite parent) {
+		PreferenceManager manager = PlatformUI.getWorkbench().getPreferenceManager();
+		IPreferenceNode node = getPreferenceNode(WBROWSER_PAGE_ID);
+		if (node!=null) {
+			PreferenceLinkArea linkArea = new PreferenceLinkArea(parent,
+					SWT.WRAP,
+					WBROWSER_PAGE_ID,
+					"See <a>''{0}''</a> for external web browser in use.",
+					(IWorkbenchPreferenceContainer)getContainer(),
+					null);
+		}
+	}
+
+	private void createDynamicHelpArea(Composite parent) {
+		Group group = new Group(parent, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		group.setLayout(layout);
+		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		group.setText("Open window context help");
+		whelpAsViewButton = new Button(group, SWT.RADIO);
+		whelpAsViewButton.setText("in a dynamic help view");
+		whelpAsInfopopButton = new Button(group, SWT.RADIO);
+		whelpAsInfopopButton.setText("in an infopop");
+		boolean winfopop = HelpBasePlugin.getDefault()
+		.getPluginPreferences().getBoolean(IHelpUIConstants.P_WINDOW_INFOPOP);
+		whelpAsViewButton.setSelection(!winfopop);
+		whelpAsInfopopButton.setSelection(winfopop);
+		
+		
+		layout = new GridLayout();
+		layout.numColumns = 2;
+		group = new Group(parent, SWT.NONE);
+		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));		
+		group.setLayout(layout);
+		group.setText("Open dialog context help");
+		dhelpAsWindowButton = new Button(group, SWT.RADIO);
+		dhelpAsWindowButton.setText("in a dynamic help window");
+		dhelpAsInfopopButton = new Button(group, SWT.RADIO);
+		dhelpAsInfopopButton.setText("in an infopop");
+		boolean dinfopop = HelpBasePlugin.getDefault()
+		.getPluginPreferences().getBoolean(IHelpUIConstants.P_DIALOG_INFOPOP);
+		dhelpAsWindowButton.setSelection(!dinfopop);
+		dhelpAsInfopopButton.setSelection(dinfopop);
+	}
+	
+    private IPreferenceNode getPreferenceNode(String pageId) {
+        Iterator iterator = PlatformUI.getWorkbench().getPreferenceManager()
+                .getElements(PreferenceManager.PRE_ORDER).iterator();
+        while (iterator.hasNext()) {
+            IPreferenceNode next = (IPreferenceNode) iterator.next();
+            if (next.getId().equals(pageId))
+                return next;
+        }
+        return null;
+    }
+	/*
 	private void createCustomBrowserPathPart(Composite mainComposite) {
 		Font font = mainComposite.getFont();
 		// vertical space
@@ -174,6 +254,7 @@ public class BrowsersPreferencePage extends PreferencePage
 		});
 		setCustomBrowserPathEnabled();
 	}
+	*/
 	/**
 	 * @see IWorkbenchPreferencePage
 	 */
@@ -189,6 +270,7 @@ public class BrowsersPreferencePage extends PreferencePage
 	 * </p>
 	 */
 	protected void performDefaults() {
+		/*
 		String defaultBrowserID = BrowserManager.getInstance()
 				.getDefaultBrowserID();
 		for (int i = 0; i < externalBrowsers.length; i++) {
@@ -201,11 +283,23 @@ public class BrowsersPreferencePage extends PreferencePage
 				.getPluginPreferences().getDefaultString(
 						CustomBrowser.CUSTOM_BROWSER_PATH_KEY));
 		setCustomBrowserPathEnabled();
+		*/
 		if (alwaysExternal != null) {
 			alwaysExternal.setSelection(HelpBasePlugin.getDefault()
 					.getPluginPreferences().getDefaultBoolean(
 							BrowserManager.ALWAYS_EXTERNAL_BROWSER_KEY));
 		}
+		
+		boolean winfopop = HelpBasePlugin.getDefault()
+		.getPluginPreferences().getDefaultBoolean(IHelpUIConstants.P_WINDOW_INFOPOP);
+		whelpAsViewButton.setSelection(!winfopop);
+		whelpAsInfopopButton.setSelection(winfopop);		
+		
+		boolean dinfopop = HelpBasePlugin.getDefault()
+		.getPluginPreferences().getDefaultBoolean(IHelpUIConstants.P_DIALOG_INFOPOP);
+		dhelpAsWindowButton.setSelection(!dinfopop);
+		dhelpAsInfopopButton.setSelection(dinfopop);		
+		
 		super.performDefaults();
 	}
 	/**
@@ -213,6 +307,7 @@ public class BrowsersPreferencePage extends PreferencePage
 	 */
 	public boolean performOk() {
 		Preferences pref = HelpBasePlugin.getDefault().getPluginPreferences();
+		/*
 		for (int i = 0; i < externalBrowsers.length; i++) {
 			if (externalBrowsers[i].getSelection()) {
 				// set new current browser
@@ -226,12 +321,15 @@ public class BrowsersPreferencePage extends PreferencePage
 		}
 		pref.setValue(CustomBrowser.CUSTOM_BROWSER_PATH_KEY, customBrowserPath
 				.getText());
+				*/
 		if (alwaysExternal != null) {
 			pref.setValue(BrowserManager.ALWAYS_EXTERNAL_BROWSER_KEY,
 					alwaysExternal.getSelection());
 			BrowserManager.getInstance().setAlwaysUseExternal(
 					alwaysExternal.getSelection());
 		}
+		pref.setValue(IHelpUIConstants.P_WINDOW_INFOPOP, whelpAsInfopopButton.getSelection());
+		pref.setValue(IHelpUIConstants.P_DIALOG_INFOPOP, dhelpAsInfopopButton.getSelection());		
 		HelpBasePlugin.getDefault().savePluginPreferences();
 		return true;
 	}
@@ -248,10 +346,12 @@ public class BrowsersPreferencePage extends PreferencePage
 		data.verticalAlignment = GridData.BEGINNING;
 		spacer.setLayoutData(data);
 	}
+	/*
 	private void setCustomBrowserPathEnabled() {
 		boolean enabled = customBrowserRadio.getSelection();
 		customBrowserPathLabel.setEnabled(enabled);
 		customBrowserPath.setEnabled(enabled);
 		customBrowserBrowse.setEnabled(enabled);
 	}
+	*/
 }
