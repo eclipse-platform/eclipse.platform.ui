@@ -142,17 +142,19 @@ public abstract class Job extends InternalJob {
 	}
 	/**
 	 * Returns whether this job belongs to the given family.  Job families are
-	 * represented as strings that are not interpreted or specified in any way
+	 * represented as objects that are not interpreted or specified in any way
 	 * by the job manager.  Thus, a job can choose to belong to any number of
 	 * families.
 	 * 
 	 * <p>Clients may override this method.  This default implementation always returns
-	 * <code>false</code>.
+	 * <code>false</code>.  Overriding implementations must return <code>false</code>
+	 * for families they do not recognize.
 	 * </p>
 	 * 
-	 * @return true if this job belongs to the given family, and false otherwise.
+	 * @return <code>true</code> if this job belongs to the given family, and 
+	 * <code>false</code> otherwise.
 	 */
-	public boolean belongsTo(String family) {
+	public boolean belongsTo(Object family) {
 		return false;
 	}
 	/**

@@ -138,7 +138,7 @@ public abstract class InternalJob implements Comparable {
 		} else
 			previous.addLast(entry);
 	}
-	public boolean belongsTo(String family) {
+	public boolean belongsTo(Object family) {
 		return false;
 	}
 	/**

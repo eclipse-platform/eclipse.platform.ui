@@ -42,15 +42,15 @@ public interface IJobManager {
 	 */
 	public void addJobChangeListener(IJobChangeListener listener);
 	/**
-	 * Stops all jobs in the given job family.  Jobs in the family that are currently waiting
+	 * Cancels all jobs in the given job family.  Jobs in the family that are currently waiting
 	 * will be removed from the queue.  Sleeping jobs will be discarded without having 
 	 * a chance to wake up.  Currently executing jobs will be asked to cancel but there 
 	 * is no guarantee that they will do so.
 	 * 
-	 * @param family the name of the job family to cancel
-	 * @see Job#belongsTo(String)
+	 * @param family the job family to cancel
+	 * @see Job#belongsTo(Object)
 	 */
-	public void cancel(String family);
+	public void cancel(Object family);
 	/**
 	 * Returns the job that is currently running in this thread, or null if there
 	 * is no currently running job.
@@ -62,10 +62,10 @@ public interface IJobManager {
 	 * 
 	 * If no jobs are found, an empty array is returned.
 	 * 
-	 * @param family the name of the job family to find
-	 * @see Job#belongsTo(String)
+	 * @param family the job family to find
+	 * @see Job#belongsTo(Object)
 	 */
-	public Job[] find(String family);
+	public Job[] find(Object family);
 	/**
 	 * Creates a new lock object.  All lock objects supplied by the job manager
 	 * know about each other and will always avoid circular deadlock amongst
@@ -112,14 +112,13 @@ public interface IJobManager {
 	 * 
 	 * Sleeping jobs can be resumed using <code>wakeUp</code>.
 	 * 
-	 * @param family the name of the job family to put to sleep
-	 * @see Job#belongsTo(String)
+	 * @param family the job family to put to sleep
+	 * @see Job#belongsTo(Object)
 	 */
-	public void sleep(String family);
+	public void sleep(Object family);
 	/**
 	 * Waits until a job is finished.  This method will block the calling thread until the 
-	 * job has finished executing.  Feedback on how the wait is progressing is provided 
-	 * to a progress monitor.  If the job is not currently waiting, sleeping,
+	 * job has finished executing.  If the job is not currently waiting, sleeping,
 	 * or running, this method returns immediately.
 	 * 
 	 * <p>
@@ -130,18 +129,14 @@ public interface IJobManager {
 	 * </p>
 	 * 
 	 * @param job the job to wait for
-	 * @param monitor Progress monitor for reporting progress on how the
-	 * wait is progressing, or null if no progress monitoring is required.
 	 * @exception InterruptedException if this thread is interrupted while waiting
 	 * @see ILock
 	 */
-	public void wait(Job job, IProgressMonitor monitor) throws InterruptedException;
+	public void wait(Job job) throws InterruptedException;
 	/**
-	 * Waits until all jobs of the given family are finished. 
-	 * If a family of <code>null</code> is specified, waits until all waiting
-	 * and executing jobs are finished.  This method will block the calling 
-	 * thread until all such jobs have finished executing.  Feedback on how 
-	 * the wait is progressing is provided to the given progress monitor.
+	 * Waits until all jobs of the given family are finished.  This method will block the 
+	 * calling thread until all such jobs have finished executing.  Feedback on how 
+	 * the wait is progressing is provided to a progress monitor.
 	 * 
 	 * <p>
 	 * If the calling thread owns any locks, the locks may be released during the
@@ -154,18 +149,18 @@ public interface IJobManager {
 	 * another thread continues to add jobs of the given family.
 	 * </p>
 	 * 
-	 * @param family the name of the job family to wait for
+	 * @param family the job family to wait for
 	 * @param monitor Progress monitor for reporting progress on how the
-	 * wait is progressing, or null if no progress monitoring is required.
+	 * wait is progressing, or <code>null</code> if no progress monitoring is required.
 	 * @exception InterruptedException if this thread is interrupted while waiting
-	 * @see Job#belongsTo(String)
+	 * @see Job#belongsTo(Object)
 	 */
-	public void wait(String family, IProgressMonitor monitor) throws InterruptedException;
+	public void wait(Object family, IProgressMonitor monitor) throws InterruptedException;
 	/**
 	 * Resumes scheduling of all sleeping jobs in the given family.  This method
 	 * has no effect on jobs in the family that are not currently sleeping.
-	 * @see Job#belongsTo(String)
+	 * @see Job#belongsTo(Object)
 	 */
-	public void wakeUp(String family);
+	public void wakeUp(Object family);
 
 }
