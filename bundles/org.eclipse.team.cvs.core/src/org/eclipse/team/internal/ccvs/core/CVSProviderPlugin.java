@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -86,7 +87,10 @@ public class CVSProviderPlugin extends Plugin {
 	
 	// Directory to cache file contents
 	private static final String CACHE_DIRECTORY = ".cache"; //$NON-NLS-1$
-		
+	
+	private Hashtable cacheFileNames;
+	private int cacheDirSize;
+	
 	private QuietOption quietness;
 	private int compressionLevel = DEFAULT_COMPRESSION_LEVEL;
 	private KSubstOption defaultTextKSubstOption = DEFAULT_TEXT_KSUBST_OPTION;
@@ -518,6 +522,8 @@ public class CVSProviderPlugin extends Plugin {
 				deleteFile(file);
 			}
 			file.mkdir();
+			cacheFileNames = new Hashtable();
+			cacheDirSize = 0;
 		} catch (IOException e) {
 			log(new Status(IStatus.ERROR, ID, 0, Policy.bind("CVSProviderPlugin.errorCreatingCache", e.getMessage()), e)); //$NON-NLS-1$
 		}
@@ -530,6 +536,8 @@ public class CVSProviderPlugin extends Plugin {
 			if (file.exists()) {
 				deleteFile(file);
 			}
+			cacheFileNames = null;
+			cacheDirSize = 0;
 		} catch (IOException e) {
 			log(new Status(IStatus.ERROR, ID, 0, Policy.bind("CVSProviderPlugin.errorDeletingCache", e.getMessage()), e)); //$NON-NLS-1$
 		}
@@ -546,7 +554,14 @@ public class CVSProviderPlugin extends Plugin {
 	}
 	
 	public File getCacheFileFor(String path) throws IOException {
-		return new File(getStateLocation().append(CACHE_DIRECTORY).toFile(), path);
+		String physicalPath;
+		if (cacheFileNames.containsKey(path)) {
+			physicalPath = (String)cacheFileNames.get(path);
+		} else {
+			physicalPath = String.valueOf(cacheDirSize++);
+			cacheFileNames.put(path, physicalPath);
+		}
+		return new File(getStateLocation().append(CACHE_DIRECTORY).toFile(), physicalPath);
 	}
 	
 	/*
