@@ -49,26 +49,24 @@ public class PreferenceConverter {
 	 * (black, <code>RGB(0,0,0)</code>).
 	 */
 	public static final RGB COLOR_DEFAULT_DEFAULT = new RGB(0, 0, 0);
+	private static final String ENTRY_SEPARATOR = ";"; //$NON-NLS-1$
+
 
 	/**
 	 * The default-default value for <code>FontData</code> preferences.
 	 */
 	public static final FontData[] FONTDATA_ARRAY_DEFAULT_DEFAULT;
+	public static final FontData FONTDATA_DEFAULT_DEFAULT;
 	static {
 		Shell shell = new Shell();
 		FONTDATA_ARRAY_DEFAULT_DEFAULT = shell.getFont().getFontData();
 		shell.dispose();
-	}
-
-	private static final String ENTRY_SEPARATOR = ";"; //$NON-NLS-1$
-
-	/**
-	 * The default-default value for <code>FontData</code> preferences.
-	 * This is left in for compatibility purposes. It is recommended that
-	 * FONTDATA_ARRAY_DEFAULT_DEFAULT is actually used. 
-	 */
-	public static final FontData FONTDATA_DEFAULT_DEFAULT;
-	static {
+		/**
+		 * The default-default value for <code>FontData</code> preferences.
+		 * This is left in for compatibility purposes. It is recommended that
+		 * FONTDATA_ARRAY_DEFAULT_DEFAULT is actually used.
+		 */
+		
 		FONTDATA_DEFAULT_DEFAULT = FONTDATA_ARRAY_DEFAULT_DEFAULT[0];
 	}
 
