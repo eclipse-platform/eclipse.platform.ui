@@ -198,7 +198,7 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
             <annotation>
                <documentation>
                   The key sequence to assign to the command. Key sequences consist of one or more key strokes, where a key stroke consists of a key on the keyboard, optionally pressed in combination with one or more of the following modifiers: Ctrl, Alt, Shift, and Command. Key strokes are separated by spaces, and modifiers are separated by &apos;+&apos; characters.
-@deprecate Please user &quot;keySequence&quot; instead.
+@deprecate Please use &quot;keySequence&quot; instead.
                </documentation>
             </annotation>
          </attribute>
@@ -279,6 +279,13 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
       </complexType>
    </element>
 
+<!--element name="sequence">
+      <complexType>
+         <sequence>
+            <element ref="stroke" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+      </complexType>
+   </element-->
 <!--element name="stroke">
       <complexType>
          <attribute name="value" type="string">
@@ -288,13 +295,6 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
                </documentation>
             </annotation>
          </attribute>
-      </complexType>
-   </element-->
-<!--element name="sequence">
-      <complexType>
-         <sequence>
-            <element ref="stroke" minOccurs="1" maxOccurs="unbounded"/>
-         </sequence>
       </complexType>
    </element-->
    <element name="context">
