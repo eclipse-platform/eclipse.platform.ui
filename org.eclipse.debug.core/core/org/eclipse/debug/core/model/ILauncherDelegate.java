@@ -121,7 +121,8 @@ public interface ILauncherDelegate {
 	
 	/**
 	 * Returns the object represented by the given memento, or <code>null</code>
-	 * if unable to re-create an element from the given memento.
+	 * if unable to re-create an element from the given memento, or if
+	 * the given object no longer exists.
 	 * 
 	 * @param memento a memento created by this delegate
 	 * @return the object represented by the memento, or <code>null</code>
