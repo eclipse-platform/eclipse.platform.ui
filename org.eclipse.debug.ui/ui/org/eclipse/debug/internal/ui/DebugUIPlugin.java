@@ -5,7 +5,7 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
-import java.util.*;import org.eclipse.core.resources.*;import org.eclipse.core.runtime.*;import org.eclipse.debug.core.*;import org.eclipse.debug.core.model.*;import org.eclipse.debug.ui.IDebugUIConstants;import org.eclipse.debug.ui.IDebugUIEventFilter;import org.eclipse.jface.preference.IPreferenceStore;import org.eclipse.jface.preference.PreferenceConverter;import org.eclipse.jface.resource.ImageRegistry;import org.eclipse.jface.text.*;import org.eclipse.jface.util.ListenerList;import org.eclipse.jface.viewers.*;import org.eclipse.swt.custom.BusyIndicator;import org.eclipse.swt.graphics.RGB;import org.eclipse.swt.widgets.Display;import org.eclipse.swt.widgets.Shell;import org.eclipse.ui.*;import org.eclipse.ui.IWorkbenchPreferenceConstants;import org.eclipse.ui.model.IWorkbenchAdapter;import org.eclipse.ui.plugin.AbstractUIPlugin;
+import java.util.*;import org.eclipse.core.resources.*;import org.eclipse.core.runtime.*;import org.eclipse.debug.core.*;import org.eclipse.debug.core.model.*;import org.eclipse.debug.ui.IDebugUIConstants;import org.eclipse.debug.ui.IDebugUIEventFilter;import org.eclipse.jface.preference.IPreferenceStore;import org.eclipse.jface.preference.PreferenceConverter;import org.eclipse.jface.resource.ImageRegistry;import org.eclipse.jface.text.*;import org.eclipse.jface.util.ListenerList;import org.eclipse.jface.viewers.*;import org.eclipse.swt.custom.BusyIndicator;import org.eclipse.swt.graphics.RGB;import org.eclipse.swt.widgets.Display;import org.eclipse.swt.widgets.Shell;import org.eclipse.ui.*;import org.eclipse.ui.model.IWorkbenchAdapter;import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * The Debug UI Plugin.
