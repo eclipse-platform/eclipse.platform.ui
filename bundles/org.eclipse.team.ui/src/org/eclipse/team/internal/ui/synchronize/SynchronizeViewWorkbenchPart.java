@@ -30,7 +30,7 @@ public class SynchronizeViewWorkbenchPart implements IWorkbenchPart {
 	 */
 	public boolean equals(Object obj) {
 		return (obj instanceof SynchronizeViewWorkbenchPart) &&
-		participant.equals(((SynchronizeViewWorkbenchPart)participant).getParticipant());
+		    participant.equals(((SynchronizeViewWorkbenchPart)obj).getParticipant());
 	}
 
 	/* (non-Javadoc)
