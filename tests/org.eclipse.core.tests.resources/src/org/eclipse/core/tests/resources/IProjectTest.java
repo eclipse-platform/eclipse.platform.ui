@@ -13,7 +13,6 @@ package org.eclipse.core.tests.resources;
 import java.util.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -165,7 +164,7 @@ public class IProjectTest extends EclipseWorkspaceTest {
 		}
 		//do some tests with invalid names
 		names = new String[0];
-		if (BootLoader.getOS().equals(Constants.OS_WIN32)) {
+		if (Platform.getOS().equals(Constants.OS_WIN32)) {
 			//invalid windows names
 			names = new String[] {"prn", "nul", "con", "aux", "clock$", "com1", "com2", "com3", "com4", "com5", "com6", "com7", "com8", "com9", "lpt1", "lpt2", "lpt3", "lpt4", "lpt5", "lpt6", "lpt7", "lpt8", "lpt9", "AUX", "con.foo", "LPT4.txt", "*", "?", "\"", "<", ">", "|"};
 		} else {
@@ -187,7 +186,7 @@ public class IProjectTest extends EclipseWorkspaceTest {
 		}
 
 		//do some tests with valid names that are *almost* invalid
-		if (BootLoader.getOS().equals(Constants.OS_WIN32)) {
+		if (Platform.getOS().equals(Constants.OS_WIN32)) {
 			//these names are valid on windows
 			names = new String[] {"hello.prn.txt", "null", "con3", "foo.aux", "lpt0", "com0", "com10", "lpt10", ",", "'", ";"};
 		} else {
@@ -2299,7 +2298,31 @@ public class IProjectTest extends EclipseWorkspaceTest {
 		assertTrue("6.5", projectLocation.toFile().exists());
 		assertTrue("6.6", fileLocation.toFile().exists());
 	}
-
+	/**
+	 * Tests creating a project at a location that contains URL escape sequences or spaces.
+	 */
+	public void testProjectLocationWithEscapes() {
+		IProject project1 = getWorkspace().getRoot().getProject("Project1");
+		IPath root = getWorkspace().getRoot().getLocation().removeLastSegments(1).append("temp");
+		IPath location = root.append("%20foo bar");
+		IProjectDescription desc = getWorkspace().newProjectDescription(project1.getName());
+		desc.setLocation(location);
+		try {
+			project1.create(desc, getMonitor());
+			project1.open(null);
+			
+			assertTrue("1.0", project1.exists());
+			assertTrue("1.1", project1.isAccessible());
+			assertEquals("1.2", location, project1.getLocation());
+			assertEquals("1.3", location, project1.getRawLocation());
+			
+			project1.delete(IResource.FORCE, getMonitor());
+		} catch (CoreException e) {
+			fail("1.99", e);
+		} finally {
+			Workspace.clear(location.toFile());
+		}
+	}
 	public void testProjectLocationValidation() {
 
 		// validation of the initial project should be ok
@@ -2345,6 +2368,7 @@ public class IProjectTest extends EclipseWorkspaceTest {
 		assertTrue("4.1", !getWorkspace().validateProjectLocation(project3, root.append("project2")).isOK());
 		assertTrue("4.2", !getWorkspace().validateProjectLocation(project3, root.append("project2/foo")).isOK());
 		assertTrue("4.3", getWorkspace().validateProjectLocation(project3, null).isOK());
+		assertTrue("4.4", getWorkspace().validateProjectLocation(project3, root.append("%20foo")).isOK());
 
 		try {
 			project1.delete(true, getMonitor());
