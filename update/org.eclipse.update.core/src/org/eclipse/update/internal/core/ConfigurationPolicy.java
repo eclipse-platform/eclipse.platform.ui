@@ -95,7 +95,7 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel implements ICo
 		}
 
 		if (unconfigure) {
-			//Start UOW ?
+			// FIXME: Start UOW ?
 			ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_UNCONFIGURE);
 			activity.setLabel(feature.getFeature().getVersionIdentifier().toString());
 			activity.setDate(new Date());
@@ -185,18 +185,22 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel implements ICo
 	 * @since 2.0
 	 */
 	public IFeatureReference[] getConfiguredFeatures() {
-		if (getConfiguredFeaturesModel().length==0)
-			return new IFeatureReference[0];		
-		return (IFeatureReference[])getConfiguredFeaturesModel();
+		FeatureReferenceModel[] result = getConfiguredFeaturesModel();
+		if (result.length == 0)
+			return new IFeatureReference[0];
+		else
+			return (IFeatureReference[])result;
 	}
 
 	/**
 	 * @since 2.0
 	 */
 	public IFeatureReference[] getUnconfiguredFeatures() {
-		if (getUnconfiguredFeaturesModel().length==0)
+		FeatureReferenceModel[] result = getUnconfiguredFeaturesModel();
+		if (result.length == 0)
 			return new IFeatureReference[0];
-		return (IFeatureReference[])getUnconfiguredFeaturesModel();
+		else
+			return (IFeatureReference[])result;
 	}
 
 }

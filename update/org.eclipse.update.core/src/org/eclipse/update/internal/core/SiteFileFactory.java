@@ -102,7 +102,7 @@ public class SiteFileFactory extends BaseSiteFactory {
 			throw new CoreException(status);
 		} finally {
 			try {
-				siteStream.close();
+				if (siteStream!=null) siteStream.close();
 			} catch (Exception e) {
 			}
 		}
