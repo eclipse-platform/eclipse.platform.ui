@@ -25,6 +25,7 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.EditorInputTransfer;
 import org.eclipse.ui.part.MarkerTransfer;
 import org.eclipse.ui.part.ResourceTransfer;
@@ -84,7 +85,7 @@ public class EditorAreaDropAdapter extends DropTargetAdapter {
 					page.openEditor(editorInput, editorId);
 				}
 			} catch (PartInitException e) {
-				//do nothing, user may have been trying to drag a marker with no associated file
+				// @issue need to handle this better
 			}
 		}
 			
@@ -94,11 +95,11 @@ public class EditorAreaDropAdapter extends DropTargetAdapter {
 			IMarker[] markers = (IMarker[]) event.data;
 			try { //open all the markers
 				for (int i = 0; i < markers.length; i++) {
-					// @issue need to call appropriate code snippets to open editor on marker
-					page.openEditor(null, null);
+					IDE.openEditor(page, markers[i], true);
 				}
 			} catch (PartInitException e) {
-				//do nothing, user may have been trying to drag a marker with no associated file
+				// do nothing, user may have been trying to drag a marker with no associated file
+				// @issue need to handle this better
 			}
 		}
 
@@ -109,12 +110,12 @@ public class EditorAreaDropAdapter extends DropTargetAdapter {
 			try { //open all the files
 				for (int i = 0; i < files.length; i++) {
 					if (files[i] instanceof IFile) {
-						// @issue need to call appropriate code snippets to open editor on IFile
-						page.openEditor(null, null);
+						IDE.openEditor(page, (IFile) files[i], true);
 					}
 				}
 			} catch (PartInitException e) {
 				//do nothing, user may have been trying to drag a folder
+				// @issue need to handle this better
 			}
 		}
 			
