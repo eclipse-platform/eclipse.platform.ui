@@ -31,17 +31,6 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
  * @see LocalFile
  */
 public class LocalFile extends LocalResource implements ICVSFile {
-
-	/**
-	 * Constants for file transfer transformations to the CVS server.
-	 */
-	protected static final String PLATFORM_NEWLINE = System.getProperty("line.separator");
-	protected static final String SERVER_NEWLINE = "\n";
-	
-	protected static final byte[] PLATFORM_NEWBYTE = PLATFORM_NEWLINE.getBytes();
-	protected static final byte[] SERVER_NEWBYTE = SERVER_NEWLINE.getBytes();
-
-	
 	/**
 	 * Create a handle based on the given local resource.
 	 */
@@ -96,60 +85,6 @@ public class LocalFile extends LocalResource implements ICVSFile {
 
 	public boolean isFolder() {
 		return false;
-	}
-	
-	protected static void transferText(InputStream in, OutputStream out, long size, String title, boolean toServer, IProgressMonitor monitor) throws IOException {
-
-		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-		transferWithProgress(in, buffer, size, title, monitor);
-
-		byte[] contents = null;
-		boolean needEOLConversion = !PLATFORM_NEWLINE.equals(SERVER_NEWLINE);
-		if (toServer) {
-			if (needEOLConversion) {
-				contents = Util.replace(buffer.toByteArray(), PLATFORM_NEWBYTE, SERVER_NEWBYTE);
-			} else {
-				contents = buffer.toByteArray();
-			}
-			// Send the size to the server
-			out.write(("" + contents.length).getBytes());
-			out.write(SERVER_NEWLINE.getBytes());
-		} else {
-			if (needEOLConversion) {
-				contents = Util.replace(buffer.toByteArray(), PLATFORM_NEWBYTE, SERVER_NEWBYTE);
-				contents = Util.replace(contents, SERVER_NEWBYTE, PLATFORM_NEWBYTE);
-			} else {
-				contents = buffer.toByteArray();
-			}
-		}
-		out.write(contents);
-	}
-		
-	protected static void transferWithProgress(InputStream in, OutputStream out, long size, String title, IProgressMonitor monitor) throws IOException {
-
-		byte[] BUFFER = new byte[4096];
-
-		// This special transfer utility will show progress to
-		// the monitor for files that are bigger than 25K
-		boolean progress = size > 25000;
-		int read = 0;
-		long totalRead = 0;
-		long ksize = size / 1024;
-
-		monitor.subTask(Policy.bind("LocalFile.transferNoSize", title));
-
-		// buffer size is smaller than MAXINT...
-		int toRead = (int) Math.min(BUFFER.length, size);
-		synchronized (BUFFER) {
-			while ((totalRead < size) && (read = in.read(BUFFER, 0, toRead)) != -1) {
-				if (progress && totalRead > 0) {
-					monitor.subTask(Policy.bind("LocalFile.transfer", new Object[] { title, new Long(totalRead / 1024), new Long(ksize)}));
-				}
-				totalRead += read;
-				out.write(BUFFER, 0, read);
-				toRead = (int) Math.min(BUFFER.length, size - totalRead);
-			}
-		}
 	}
 	
 	public boolean isDirty() throws CVSException {

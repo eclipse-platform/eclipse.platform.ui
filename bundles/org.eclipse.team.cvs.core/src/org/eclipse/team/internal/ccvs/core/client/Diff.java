@@ -48,7 +48,7 @@ public class Diff extends Command {
 		LocalOption[] localOptions, ICVSResource[] resources, IProgressMonitor monitor)
 		throws CVSException {			
 
-		checkArgumentsManaged(resources);
+		checkResourcesManaged(resources);
 		FileStructureVisitor fsVisitor = new DiffStructureVisitor(session, false, false,  monitor);
 		for (int i = 0; i < resources.length; i++) {
 			resources[i].accept(fsVisitor);

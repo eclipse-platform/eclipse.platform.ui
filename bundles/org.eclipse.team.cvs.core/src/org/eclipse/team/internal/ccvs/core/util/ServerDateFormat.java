@@ -30,22 +30,19 @@ public class ServerDateFormat extends SimpleDateFormat {
 	/**
 	 * "18 Oct 2001 20:21:13 -0350" => long since 1970
 	 */
-	public long parseMill(String text) throws ParseException {
-
-		// FIXME this cuts the timezone which we do not 
-		//       want
+	public Date toDate(String text) throws ParseException {
+		// FIXME this cuts the timezone which we do not want
 		if (text.indexOf("-") != -1) {
 			text = text.substring(0,text.indexOf("-"));
 		}
-		
-		return parse(text).getTime();
+		return parse(text);
 	}
 
 	/**
 	 * long since 1970 => "18 Oct 2001 20:21:13 -0350"
 	 */	
-	public String formatMill(long millSec) {
-		return format(new Date(millSec));
+	public String formatDate(Date date) {
+		return format(date);
 	}
 		
 }

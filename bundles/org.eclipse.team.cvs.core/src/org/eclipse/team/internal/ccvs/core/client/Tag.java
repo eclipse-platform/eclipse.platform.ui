@@ -20,12 +20,12 @@ public class Tag extends Command {
 		return "tag";
 	}
 
-	protected ICVSResource[] computeWorkResources(Session session, String[] arguments, LocalOption[] localOptions)
-		throws CVSException {
+	protected ICVSResource[] computeWorkResources(Session session, LocalOption[] localOptions,
+		String[] arguments) throws CVSException {
 		if (arguments.length < 1) throw new IllegalArgumentException();
 		String[] allButFirst = new String[arguments.length - 1];
 		System.arraycopy(arguments, 1, allButFirst, 0, arguments.length - 1);
-		return super.computeWorkResources(session, allButFirst, localOptions);
+		return super.computeWorkResources(session, localOptions, allButFirst);
 	}
 
 	protected void sendLocalResourceState(Session session, GlobalOption[] globalOptions,

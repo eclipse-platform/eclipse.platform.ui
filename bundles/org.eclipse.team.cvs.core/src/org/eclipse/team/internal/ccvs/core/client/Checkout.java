@@ -38,8 +38,8 @@ public class Checkout extends Command {
 		return "co";
 	}
 	
-	protected ICVSResource[] computeWorkResources(Session session, String[] arguments, LocalOption[] localOptions)
-		throws CVSException {
+	protected ICVSResource[] computeWorkResources(Session session, LocalOption[] localOptions,
+		String[] arguments) throws CVSException {
 		if (arguments.length < 1 && ! FETCH_MODULE_ALIASES.isElementOf(localOptions)) throw new IllegalArgumentException();
 		return new ICVSResource[0];
 	}
@@ -60,7 +60,7 @@ public class Checkout extends Command {
 	}
 
 	protected void sendLocalWorkingDirectory(Session session) throws CVSException {
-		session.sendDefaultRootDirectory();
+		session.sendConstructedRootDirectory();
 	}
 
 	

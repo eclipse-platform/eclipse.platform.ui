@@ -144,8 +144,17 @@ public abstract class Command {
 	protected ICommandOutputListener getDefaultCommandOutputListener() {
 		return DEFAULT_OUTPUT_LISTENER;
 	}
-	
+
 	/**
+	 * Sends the command's arguments to the server.
+	 * [template method]
+	 * <p>
+	 * The default implementation sends all arguments.  Subclasses may override
+	 * this method to provide alternate behaviour.
+	 * </p>
+	 * 
+	 * @param session the CVS session
+	 * @param arguments the arguments that were supplied by the caller of execute()
 	 */
 	protected void sendArguments(Session session, String[] arguments) throws CVSException {
 		for (int i = 0; i < arguments.length; ++i) {
@@ -209,7 +218,7 @@ public abstract class Command {
 		if (localRoot.isCVSFolder()) {
 			session.sendLocalRootDirectory();
 		} else {
-			session.sendDefaultRootDirectory();
+			session.sendConstructedRootDirectory();
 		}
 	}
 
@@ -218,12 +227,16 @@ public abstract class Command {
 	 * [template method]
 	 * <p>
 	 * The default implementation assumes that all arguments supplied to the
-	 * command represent resources in the local root so that these resources
-	 * can be more easily manipulated.  Subclasses must override this method
-	 * if this assumption is false.
+	 * command represent resources in the local root that are to be manipulated.
+	 * Subclasses must override this method if this assumption does not hold.
+	 * </p>
+	 * @param session the CVS session
+	 * @param localOptions the command local options
+	 * @param arguments the command arguments
+	 * @return the resource arguments for the command
 	 */
-	protected ICVSResource[] computeWorkResources(Session session, String[] arguments, LocalOption[] localOptions)
-		throws CVSException {
+	protected ICVSResource[] computeWorkResources(Session session,
+		LocalOption[] localOptions, String[] arguments) throws CVSException {
 		ICVSFolder localRoot = session.getLocalRoot();
 
 		if (arguments.length == 0) {
@@ -253,7 +266,7 @@ public abstract class Command {
 	 */
 	protected void sendFileStructure(Session session, ICVSResource[] resources,
 		boolean modifiedOnly, boolean emptyFolders, IProgressMonitor monitor) throws CVSException {
-		checkArgumentsManaged(resources);
+		checkResourcesManaged(resources);
 		FileStructureVisitor fsVisitor = new FileStructureVisitor(session, modifiedOnly, emptyFolders,  monitor);
 		for (int i = 0; i < resources.length; i++) {
 			resources[i].accept(fsVisitor);
@@ -261,31 +274,28 @@ public abstract class Command {
 	}
 
 	/**
-	 * Checks that all the workResources are managed Resources.
-	 * (For folders we check isCVSFolder, because of a project-folder
-	 * that is not managed, because it is not registerd in the 
-	 * parent-folder<br>
+	 * Checks that all work resources are managed.
 	 * 
-	 * @throws CVSException if not all the arguments are
-	 *          managed
+	 * @param resources the resource arguments for the command
+	 * @throws CVSException if some resources are not managed
 	 */
-	protected void checkArgumentsManaged(ICVSResource[] mWorkResources) throws CVSException {
-
-		for (int i = 0; i < mWorkResources.length; i++) {
-			if (mWorkResources[i].isFolder()) {
-				if (!((ICVSFolder) mWorkResources[i]).isCVSFolder()) {
-					throw new CVSException("Argument " + mWorkResources[i].getName() + "is not managed");
-				}
-			} else {
-				if (!mWorkResources[i].getParent().isCVSFolder()) {
-					throw new CVSException("Argument " + mWorkResources[i].getParent() + "is not managed");
-				}
+	protected void checkResourcesManaged(ICVSResource[] resources) throws CVSException {
+		for (int i = 0; i < resources.length; ++i) {
+			ICVSFolder folder;
+			/// XXX should perhaps use a visitor instead of type checking
+			if (resources[i].isFolder()) folder = (ICVSFolder) resources[i];
+			else folder = resources[i].getParent();
+			if (! folder.isCVSFolder()) {
+				throw new CVSException("Argument " + folder.getName() + "is not managed");
 			}
 		}
 	}
-	
+
 	/**
-	 * Reload the sync info for all arguments this command will be running on.
+	 * Reloads the sync info for all resource arguments.
+	 * 
+	 * @param resources the resource arguments for the command
+	 * @param monitor the progress monitor
 	 */
 	private void reloadSyncInfo(ICVSResource[] resources, IProgressMonitor monitor) throws CVSException {
 		try {
@@ -302,7 +312,10 @@ public abstract class Command {
 	}
 	
 	/**
-	 * Reload the sync info for all arguments this command will be running on.
+	 * Saves the sync info for all resource arguments.
+	 * 
+	 * @param resources the resource arguments for the command
+	 * @param monitor the progress monitor
 	 */
 	private void saveSyncInfo(ICVSResource[] resources, IProgressMonitor monitor) throws CVSException {
 		try {
@@ -319,25 +332,41 @@ public abstract class Command {
 	}
 	
 	/**
+	 * Executes a CVS command.
+	 * <p>
+	 * Dispatches the commands, retrieves the results, and determines whether or
+	 * not an error occurred.  A listener may be supplied to capture message text
+	 * that would normally be written to the standard error and standard output
+	 * streams of a command line CVS client.
+	 * </p>
+	 * @param session the open CVS session
+	 * @param globalOptions the array of global options, or NO_GLOBAL_OPTIONS
+	 * @param localOptions the array of local options, or NO_LOCAL_OPTIONS
+	 * @param arguments the array of arguments (usually filenames relative to localRoot), or NO_ARGUMENTS
+	 * @param listener the command output listener, or null to discard all messages
+	 * @param monitor the progress monitor
+	 * @return a status code indicating success or failure of the operation
+	 * @throws CVSException if a fatal error occurs (e.g. connection timeout)
 	 */
 	public IStatus execute(Session session, GlobalOption[] globalOptions,
 		LocalOption[] localOptions, String[] arguments, ICommandOutputListener listener,
-		IProgressMonitor monitor)
-		throws CVSException {
+		IProgressMonitor monitor) throws CVSException {
 		ICVSResource[] resources = null;
+		/*** setup progress monitor ***/
+		monitor = Policy.monitorFor(monitor);
+		monitor.beginTask(Policy.bind("Command.server"), 100);
+		Policy.checkCanceled(monitor);
 		try {
-			session.setNoLocalChanges(DO_NOT_CHANGE.isElementOf(globalOptions));
-			session.setModTime(null);
-
-			monitor = Policy.monitorFor(monitor);
-			monitor.beginTask(Policy.bind("Command.server"), 100);
-			Policy.checkCanceled(monitor);
-	
+			/*** prepare for command ***/
 			// Ensure that the commands run with the latest contents of the CVS subdirectory sync files 
 			// and not the cached values. Allow 10% of work.
-			resources = computeWorkResources(session, arguments, localOptions);
+			resources = computeWorkResources(session, localOptions, arguments);
 			reloadSyncInfo(resources, Policy.subMonitorFor(monitor, 10));
 			Policy.checkCanceled(monitor);
+
+			// clear stale command state from previous runs
+			session.setNoLocalChanges(DO_NOT_CHANGE.isElementOf(globalOptions));
+			session.setModTime(null);
 	
 			/*** initiate command ***/
 			// send global options
@@ -356,7 +385,6 @@ public abstract class Command {
 			sendLocalWorkingDirectory(session);
 			// send arguments
 			sendArguments(session, arguments);
-			
 			// send command
 			session.sendCommand(getCommandId());
 
@@ -371,7 +399,7 @@ public abstract class Command {
 			return status;
 		} finally {
 			// Give the synchronizer a chance to persist any pending changes.
-			if(resources!=null) {
+			if(resources != null) {
 				saveSyncInfo(resources, Policy.subMonitorFor(monitor, 5));
 			}
 			monitor.done();
@@ -379,7 +407,13 @@ public abstract class Command {
 	}
 	
 	/**
+	 * Processes the responses arising from command execution.
 	 * 
+	 * @param session the open CVS session
+	 * @param listener the command output listener, or null to discard all messages
+	 * @param consoleListener the console listener, or null to discard all messages
+	 * @param monitor the progress monitor
+	 * @return a status code indicating success or failure of the operation
 	 */
 	private IStatus processResponses(Session session, ICommandOutputListener listener,
 		IProgressMonitor monitor) throws CVSException {
@@ -488,20 +522,6 @@ public abstract class Command {
 			this.option = option;
 			this.argument = argument;
 		}
-		/*
-		 * Returns the text string representing this option
-		 * @return the option
-		 *
-		public String getOption() {
-			return option;
-		}*/
-		/*
-		 * Returns the (optional) argument for this option
-		 * @return the argument, or null if none provided
-		 *
-		public String getArgument() {
-			return argument;
-		}*/
 		/**
 		 * Determines if this option is an element of an array of options
 		 * @param array the array of options

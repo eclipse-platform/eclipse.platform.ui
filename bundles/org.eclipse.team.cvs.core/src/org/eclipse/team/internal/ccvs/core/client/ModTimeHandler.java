@@ -20,7 +20,7 @@ import org.eclipse.team.internal.ccvs.core.util.ServerDateFormat;
  * as follows:<br>
  * <pre>
  *   [...]
- *   Mod-time 18 Oct 2001 20:21:13 -0350\n
+ *   Mod-time 18 Oct 2001 20:21:13 -0330\n
  *   [...]
  * </pre>
  * Then we parse and remember the date for use in subsequent
@@ -36,7 +36,7 @@ class ModTimeHandler extends ResponseHandler {
 	public void handle(Session session, String timeStamp,
 		IProgressMonitor monitor) throws CVSException {
 		try {
-			session.setModTime(new Date(dateFormatter.parseMill(timeStamp)));
+			session.setModTime(dateFormatter.toDate(timeStamp));
 		} catch (ParseException e) {
 			throw new CVSException(Policy.bind("ModTimeHandler.invalidFormat", timeStamp), e);
 		}

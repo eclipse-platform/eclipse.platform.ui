@@ -57,7 +57,7 @@ abstract class AbstractStructureVisitor implements ICVSResourceVisitor {
 		local = mFolder.getRelativePath(session.getLocalRoot());
 
 		if (constructFolder && mFolder.exists()) {
-			session.sendConstructedDirectory(local, local);
+			session.sendConstructedDirectory(local);
 			lastFolderSend = mFolder;
 			return;
 		}
@@ -67,7 +67,7 @@ abstract class AbstractStructureVisitor implements ICVSResourceVisitor {
 			// folder we have to send the parent-folder to have this questionable below this parent-folder.
 			Assert.isTrue(mFolder.getParent().isCVSFolder());
 			sendFolder(mFolder.getParent(), constructFolder, sendQuestionable);
-			session.sendQuestionable(mFolder.getName());
+			session.sendQuestionable(mFolder);
 			return;
 		}
 
@@ -112,7 +112,7 @@ abstract class AbstractStructureVisitor implements ICVSResourceVisitor {
 			// A unmanaged, locally non-existant file results from the explicit use of the file name as a command argument
 			if (sendQuestionable) {
 				if (mFile.exists()) {
-					session.sendQuestionable(mFile.getName());
+					session.sendQuestionable(mFile);
 				}
 				return;
 			}

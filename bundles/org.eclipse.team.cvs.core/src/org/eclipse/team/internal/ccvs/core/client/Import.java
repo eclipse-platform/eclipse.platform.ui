@@ -23,8 +23,8 @@ public class Import extends Command {
 		return "import";
 	}
 
-	protected ICVSResource[] computeWorkResources(Session session, String[] arguments, LocalOption[] localOptions)
-		throws CVSException {
+	protected ICVSResource[] computeWorkResources(Session session, LocalOption[] localOptions,
+		String[] arguments) throws CVSException {
 		if (arguments.length < 3) throw new IllegalArgumentException();
 		return new ICVSResource[0];
 	}
@@ -46,7 +46,7 @@ public class Import extends Command {
 	}
 
 	protected void sendLocalWorkingDirectory(Session session) throws CVSException {
-		session.sendDefaultRootDirectory();
+		session.sendConstructedRootDirectory();
 	}
 
 }

@@ -14,6 +14,8 @@ import java.util.Date;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Policy;
@@ -27,6 +29,26 @@ import org.eclipse.team.internal.ccvs.core.resources.LocalFolder;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 
+/**
+ * Maintains CVS communication state for the lifetime of a connection
+ * to a remote repository.  This class covers the initialization, use,
+ * and eventual shutdown of a dialogue between a CVS client and a
+ * remote server.  This dialogue may be monitored through the use of
+ * a console.
+ * 
+ * Initially the Session is in a CLOSED state during which communication
+ * with the server cannot take place.  Once OPENED, any number of commands
+ * may be issued serially to the server, one at a time.  When finished, the
+ * Session MUST be CLOSED once again to prevent eventual local and/or
+ * remote resource exhaustion.  The session can either be discarded, or
+ * re-opened for use with the same server though no state is persisted from
+ * previous connections except for console attributes.
+ * 
+ * CVSExceptions are thrown only as a result of unrecoverable errors.  Once
+ * this happens, commands must no longer be issued to the server.  If the
+ * Session is in the OPEN state, it is still the responsibility of the
+ * caller to CLOSE it before moving on.
+ */
 public class Session {
 	public static final String CURRENT_LOCAL_FOLDER = ".";
 	public static final String CURRENT_REMOTE_FOLDER = "";
@@ -63,43 +85,72 @@ public class Session {
 	private byte[] transferBuffer = null;
 
 	/**
-	 * Creates a new CVS session.
+	 * Creates a new CVS session, initially in the CLOSED state.
+	 * By default, command output is directed to the console.
 	 * 
-	 * @param location
+	 * @param location the CVS repository location used for this session
 	 * @param localRoot represents the current working directory of the client
 	 */
 	public Session(ICVSRepositoryLocation location, ICVSFolder localRoot) {
 		this(location, localRoot, true);
 	}
 	
+	/**
+	 * Creates a new CVS session, initially in the CLOSED state.
+	 * 
+	 * @param location the CVS repository location used for this session
+	 * @param localRoot represents the current working directory of the client
+	 * @param outputToConsole if true, command output is directed to the console
+	 */
 	public Session(ICVSRepositoryLocation location, ICVSFolder localRoot, boolean outputToConsole) {
 		this.location = (CVSRepositoryLocation) location;
 		this.localRoot = localRoot;
 		this.outputToConsole = outputToConsole;
 	}
 	
+	/**
+	 * Opens, authenticates and initializes a connection to the server specified
+	 * for the remote location.
+	 *
+	 * @param monitor the progress monitor
+	 * @throws IllegalStateException if the Session is not in the CLOSED state
+	 */
 	public void open(IProgressMonitor monitor) throws CVSException {
 		if (connection != null) throw new IllegalStateException();
 		connection = location.openConnection(monitor);
 		
-		// Tell the serves the names of the responses we can handle
+		// tell the server the names of the responses we can handle
 		connection.writeLine("Valid-responses " + Command.makeResponseList());
 
-		// Ask for the set of valid requests
+		// ask for the set of valid requests
+		boolean saveOutputToConsole = outputToConsole;
+		outputToConsole = false;
 		Command.VALID_REQUESTS.execute(this, Command.NO_GLOBAL_OPTIONS, Command.NO_LOCAL_OPTIONS,
 			Command.NO_ARGUMENTS, null, monitor);
+		outputToConsole = saveOutputToConsole;
 
-		// Set the root directory on the server for this connection
-		connection.writeLine("Root " + location.getRootDirectory());
+		// set the root directory on the server for this connection
+		connection.writeLine("Root " + getRepositoryRoot());
 	}		
 	
+	/**
+	 * Closes a connection to the server.
+	 *
+	 * @throws IllegalStateException if the Session is not in the OPEN state
+	 */
 	public void close() throws CVSException {
-		/// ?
 		if (connection == null) throw new IllegalStateException();
 		connection.close();
 		connection = null;
+		validRequests = null;
 	}
 	
+	/**
+	 * Determines if the server supports the specified request.
+	 * 
+	 * @param request the request string to verify
+	 * @return true iff the request is supported
+	 */
 	public boolean isValidRequest(String request) {
 		return (validRequests == null) ||
 			(validRequests.indexOf(" " + request + " ") != -1);
@@ -129,15 +180,43 @@ public class Session {
 
 	/**
 	 * Returns the local root folder for this session.
+	 * <p>
+	 * Generally speaking, specifies the "current working directory" at
+	 * the time of invocation of an equivalent CVS command-line client.
+	 * </p>
 	 * 
-	 * @returns the local root folder
+	 * @return the local root folder
 	 */
 	public ICVSFolder getLocalRoot() {
 		return localRoot;
 	}
 
 	/**
+	 * Returns the repository root folder for this session.
+	 * <p>
+	 * Specifies the unqualified path to the CVS repository root folder
+	 * on the server.
+	 * </p>
+	 * 
+	 * @return the repository root folder
+	 */
+	public String getRepositoryRoot() {
+		return location.getRootDirectory();
+	}
+	
+	/**
+	 * Returns an object representing the CVS repository location for this session.
+	 * 
+	 * @return the CVS repository location
+	 */
+	public ICVSRepositoryLocation getCVSRepositoryLocation() {
+		return location;
+	}
+
+	/**
 	 * Receives a line of text minus the newline from the server.
+	 * 
+	 * @return the line of text
 	 */
 	public String readLine() throws CVSException {
 		return connection.readLine();
@@ -146,7 +225,7 @@ public class Session {
 	/**
 	 * Sends a line of text followed by a newline to the server.
 	 * 
-	 * @param line the line
+	 * @param line the line of text
 	 */
 	public void writeLine(String line) throws CVSException {
 		connection.writeLine(line);
@@ -154,14 +233,13 @@ public class Session {
 
 	/**
 	 * Sends an argument to the server.
-	 * <p>
-	 * e.g. sendArgument("Hello\nWorld\n  Hello World") is sent as
-	 * <ul>
-	 *   <li>Argument Hello</li>
-	 *   <li>Argumentx World</li>
-	 *   <li>Argumentx Hello World</li>
-	 * </ul></p>
-	 * 
+	 * <p>e.g. sendArgument("Hello\nWorld\n  Hello World") sends:
+	 * <pre>
+	 *   Argument Hello \n
+	 *   Argumentx World \n
+	 *   Argumentx Hello World \n
+	 * </pre></p>
+	 *
 	 * @param arg the argument to send
 	 */
 	public void sendArgument(String arg) throws CVSException {
@@ -177,13 +255,14 @@ public class Session {
 		connection.writeLine(arg.substring(oldPos));
 	}
 
+	/**
+	 * Sends a command to the server and flushes any output buffers.
+	 * 
+	 * @param commandId the string associated with the command to be executed
+	 */
 	public void sendCommand(String commandId) throws CVSException {
 		connection.writeLine(commandId);
 		connection.flush();
-	}
-
-	public void sendKopt(String arg) throws CVSException {
-		connection.writeLine("Kopt " + arg);
 	}
 
 	/**
@@ -217,56 +296,98 @@ public class Session {
 		}
 	}
 
+	/**
+	 * Sends a Static-directory request to the server.
+	 * <p>
+	 * Indicates that the directory specified in the most recent Directory request
+	 * is static.  No new files will be checked out into this directory unless
+	 * explicitly requested.
+	 * </p>
+	 */
 	public void sendStaticDirectory() throws CVSException {
 		connection.writeLine("Static-directory");
 	}
-	
+
 	/**
-	 * The Directory request is sent as:
-	 * <ul>
-	 * 		<li>Directory localdir
-	 * 		<li>repository_root/remotedir
-	 * </ul>
+	 * Sends a Directory request to the server with a constructed path.
+	 * <p>
+	 * It may be necessary at times to guess the remote path of a directory since
+	 * it does not exist yet.  In this case we construct a remote path based on the
+	 * local path by prepending the local path with the repository root.  This may
+	 * not work in the presence of modules, so only use it for creating new projects.
+	 * </p><p>
+	 * Note: A CVS repository root can end with a trailing slash. The CVS server
+	 *       expects that the repository root sent contain this extra slash. Including
+	 *       the foward slash in addition to the absolute remote path makes for a string
+	 *       containing two consecutive slashes (e.g. /home/cvs/repo//projecta/a.txt).
+	 *       This is valid in the CVS protocol.
+	 * </p>
+	 */
+	public void sendConstructedDirectory(String localDir) throws CVSException {
+		sendDirectory(localDir, getRepositoryRoot() + "/" + localDir);
+	}
+
+	/**
+	 * Sends a Directory request to the server.
+	 * <p>e.g. sendDirectory("local_dir", "remote_dir") sends:
+	 * <pre>
+	 *   Directory local_dir
+	 *   repository_root/remote_dir
+	 * </pre></p>
 	 * 
-	 * This note is copied from an old version:
-	 * [Note: A CVS repository root can end with a trailing slash. The CVS server
-	 * expects that the repository root sent contain this extra slash. Including
-	 * the foward slash in addition to the absolute remote path makes for a string
-	 * containing two consecutive slashes (e.g. /home/cvs/repo//projecta/a.txt).
-	 * This is valid in the CVS protocol.]
+	 * @param localDir the path of the local directory relative to localRoot
+	 * @param remoteDir the path of the remote directory relative to repositoryRoot
 	 */
-	public void sendConstructedDirectory(String local, String remote) throws CVSException {
-		// FIXME I do not know wether this method is "ModuleFile-safe"
-		connection.writeLine("Directory " + local);
-		connection.writeLine(location.getRootDirectory() + "/" + remote);
+	public void sendDirectory(String localDir, String remoteDir) throws CVSException {
+		if (localDir.length() == 0) localDir = ".";
+		connection.writeLine("Directory " + localDir);
+		connection.writeLine(remoteDir);
 	}
 
 	/**
-	 * The Directory request is sent as:
-	 * <ul>
-	 * 		<li>Directory localdir
-	 * 		<li>repository_root/remotedir
-	 * </ul>
+	 * Sends a Directory request for the localRoot.
 	 */
-	public void sendDirectory(String local, String remote) throws CVSException {
-		if (local.length() == 0) local = Session.CURRENT_LOCAL_FOLDER;
-		connection.writeLine("Directory " + local);
-		connection.writeLine(remote);
-	}
-	
 	public void sendLocalRootDirectory() throws CVSException {
-		sendDirectory(CURRENT_LOCAL_FOLDER, localRoot.getRemoteLocation(localRoot));
-	}
-	
-	public void sendDefaultRootDirectory() throws CVSException {
-		sendConstructedDirectory(Session.CURRENT_LOCAL_FOLDER, CURRENT_REMOTE_FOLDER);
+		sendDirectory(".", localRoot.getRemoteLocation(localRoot));
 	}
 
-	
+	/**
+	 * Sends a Directory request for the localRoot with a constructed path.
+	 * <p>
+	 * Use this when creating a new project that does not exist in the repository.
+	 * </p>
+	 * @see #sendConstructedDirectory
+	 */
+	public void sendConstructedRootDirectory() throws CVSException {
+		sendConstructedDirectory("");
+	}
+
+	/**
+	 * Sends an Entry request to the server.
+	 * <p>
+	 * Indicates that a file is managed (but it may not exist locally).  Sends
+	 * the file's entry line to the server to indicate the version that was
+	 * previously checked out.
+	 * </p><p>
+	 * Note: The most recent Directory request must have specified the file's
+	 *       parent folder.
+	 * </p>
+	 * 
+	 * @param entryLine the formatted entry line of the managed file.
+	 */
 	public void sendEntry(String entryLine) throws CVSException {
 		connection.writeLine("Entry " + entryLine);
 	}
 
+	/**
+	 * Sends a global options to the server.
+	 * <p>e.g. sendGlobalOption("-n") sends:
+	 * <pre>
+	 *   Global_option -n \n
+	 * </pre></p>
+	 * 
+	 * @param option the global option to send
+	 */
 	public void sendGlobalOption(String option) throws CVSException {
 		connection.writeLine("Global_option " + option);
 	}
@@ -287,10 +408,33 @@ public class Session {
 		connection.writeLine("Unchanged " + file.getName());
 	}
 	
-	public void sendQuestionable(String filename) throws CVSException {
-		connection.writeLine("Questionable " + filename);
+	/**
+	 * Sends a Questionable request to the server.
+	 * <p>
+	 * Indicates that a file exists locally but is unmanaged.  Asks the server
+	 * whether or not the file should be ignored in subsequent CVS operations.
+	 * The reply to the request occurs in the form of special M-type message
+	 * responses prefixed with '?' when the next command is executed.
+	 * </p><p>
+	 * Note: The most recent Directory request must have specified the file's
+	 *       parent folder.
+	 * </p>
+	 * 
+	 * @param resource the local file or folder
+	 */
+	public void sendQuestionable(ICVSResource resource) throws CVSException {
+		connection.writeLine("Questionable " + resource.getName());
 	}
 
+	/**
+	 * Sends a Sticky tag request to the server.
+	 * <p>
+	 * Indicates that the directory specified in the most recent Directory request
+	 * has a sticky tag or date, and sends the tag's contents.
+	 * </p>
+	 * 
+	 * @param tag the sticky tag associated with the directory
+	 */
 	public void sendSticky(String tag) throws CVSException {
 		connection.writeLine("Sticky " + tag);
 	}
@@ -557,32 +701,48 @@ public class Session {
 			throw CVSException.wrapException(e);
 		}
 	}	 
-	
-	public ICVSRepositoryLocation getCVSRepositoryLocation() {
-		return location;
-	}
 
+	/**
+	 * Stores the value of the last Mod-time response encountered.
+	 * Valid only for the duration of a single CVS command.
+	 */
 	void setModTime(Date modTime) {
 		this.modTime = modTime;
 	}
 	
+	/**
+	 * Returns the stored value of the last Mod-time response,
+	 * or null if there was none while processing the current command.
+	 */
 	Date getModTime() {
 		return modTime;
 	}
 	
-	boolean isNoLocalChanges() {
-		return noLocalChanges;
-	}
-	
-	boolean isOutputToConsole() {
-		return outputToConsole;
-	}
-	
+	/**
+	 * Stores true if the -n global option was specified for the current command.
+	 * Valid only for the duration of a single CVS command.
+	 */
 	void setNoLocalChanges(boolean noLocalChanges) {
 		this.noLocalChanges = noLocalChanges;
 	}
 	
+	/**
+	 * Returns true if the -n global option was specified for the current command,
+	 * false otherwise.
+	 */
+	boolean isNoLocalChanges() {
+		return noLocalChanges;
+	}
+	
+	/**
+	 * Callback hook for the ValidRequestsHandler to specify the set of valid
+	 * requests for this session.
+	 */
 	void setValidRequests(String validRequests) {
 		this.validRequests = " " + validRequests + " ";
+	}
+
+	boolean isOutputToConsole() {
+		return outputToConsole;
 	}
 }

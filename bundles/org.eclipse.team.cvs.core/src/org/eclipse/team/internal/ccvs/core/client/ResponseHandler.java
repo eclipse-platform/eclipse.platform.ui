@@ -64,7 +64,7 @@ public abstract class ResponseHandler {
 		if (! folder.exists()) folder.mkdir();
 		if (! folder.isCVSFolder()) {
 			folder.setFolderSyncInfo(new FolderSyncInfo(
-				Util.getRelativePath(session.getCVSRepositoryLocation().getRootDirectory(), repositoryDir),
+				Util.getRelativePath(session.getRepositoryRoot(), repositoryDir),
 				session.getCVSRepositoryLocation().getLocation(),
 				null, false));
 		}

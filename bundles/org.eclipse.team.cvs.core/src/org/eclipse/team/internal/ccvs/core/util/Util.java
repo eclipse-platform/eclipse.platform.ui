@@ -279,50 +279,6 @@ public class Util {
 			return prefix + Session.SERVER_SEPARATOR + suffix;
 	}
 	
-	/*
-	/**
-	 * Transfer an InputStream to an OutputStream
-	 * and update the monitor in between.
-	 * 
-	 * Used for saving files from server
-	 * on disc, etc.
-	 *
-	public static void transferWithProgress(
-		InputStream in,
-		OutputStream out,
-		long size,
-		IProgressMonitor monitor,
-		String title)
-		throws IOException {
-		// This special transfer utility will show progress to
-		// the monitor for files that are bigger than 25K
-		boolean progress = size > 25000;
-		int read = 0;
-		long totalRead = 0;
-		long ksize = size / 1024;
-		// buffer size is smaller than MAXINT...
-		int toRead = (int) Math.min(BUFFER.length, size);
-		synchronized (BUFFER) {
-			while ((totalRead < size) && (read = in.read(BUFFER, 0, toRead)) != -1) {
-				if (progress && totalRead > 0) {
-					monitor.subTask(
-						CVSPlugin.getResourceString(
-							"StreamUtil.monitor",
-							new Object[] { title, new Long(totalRead / 1024), new Long(ksize)}));
-					monitor.worked(read);
-				}
-				totalRead += read;
-				out.write(BUFFER, 0, read);
-				toRead = (int) Math.min(BUFFER.length, size - totalRead);
-			}
-		}
-	}
-	*/
-	/*
-	public static void convertNewlines(IManagedFile mFile) throws CVSException {
-		mFile.setContent(mFile.getContent());
-	}
-	*/
 	
 	public static void logError(String message, Throwable throwable) {
 		CVSProviderPlugin.log(new Status(IStatus.ERROR, CVSProviderPlugin.ID, IStatus.ERROR, message, throwable));

@@ -35,7 +35,7 @@ public class Commit extends Command {
 		visitor = new FileStructureVisitor(session, true, false, monitor);
 
 		// Get the folders we want to work on
-		checkArgumentsManaged(resources);
+		checkResourcesManaged(resources);
 		
 		// Send all changed files to the server	
 		for (int i = 0; i < resources.length; i++) {
