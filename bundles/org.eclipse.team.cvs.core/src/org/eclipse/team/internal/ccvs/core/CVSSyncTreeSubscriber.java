@@ -37,6 +37,7 @@ import org.eclipse.team.core.subscribers.TeamSubscriber;
 import org.eclipse.team.core.subscribers.TeamDelta;
 import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.Policy;
 
 /**
  * This class provides common funtionality for three way sychronizing
@@ -239,7 +240,7 @@ public abstract class CVSSyncTreeSubscriber extends TeamSubscriber {
 		if (!errors.isEmpty()) {
 			throw new CVSException(new MultiStatus(CVSProviderPlugin.ID, 0, 
 					(IStatus[]) errors.toArray(new IStatus[errors.size()]), 
-					"Errors occurred during refresh of {0}" + getName(), null));
+					Policy.bind("CVSSyncTreeSubscriber.1", getName()), null)); //$NON-NLS-1$
 		}
 	}
 
@@ -260,7 +261,7 @@ public abstract class CVSSyncTreeSubscriber extends TeamSubscriber {
 			fireTeamResourceChange(TeamDelta.asSyncChangedDeltas(this, changedResources));
 			return Status.OK_STATUS;
 		} catch (TeamException e) {
-			return new CVSStatus(IStatus.ERROR, "An error occurred refreshing {0}: {1}" + resource.getFullPath().toString() +  e.getMessage(), e);
+			return new CVSStatus(IStatus.ERROR, Policy.bind("CVSSyncTreeSubscriber.2", resource.getFullPath().toString(), e.getMessage()), e); //$NON-NLS-1$
 		} finally {
 			monitor.done();
 		} 
