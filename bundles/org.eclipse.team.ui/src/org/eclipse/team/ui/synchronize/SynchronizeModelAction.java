@@ -208,9 +208,9 @@ public abstract class SynchronizeModelAction extends BaseSelectionListenerAction
 	 */
 	public void selectionChanged(ISelection selection) {
 		if (selection instanceof IStructuredSelection) {
-			selectionChanged((IStructuredSelection)selection);
+			super.selectionChanged((IStructuredSelection)selection);
 		} else {
-			selectionChanged(StructuredSelection.EMPTY);
+			super.selectionChanged(StructuredSelection.EMPTY);
 		}
 		
 	}
