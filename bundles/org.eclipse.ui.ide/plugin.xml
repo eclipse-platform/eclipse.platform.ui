@@ -264,6 +264,18 @@
                id="org.eclipse.ui.OpenWorkspaceFile">
          </action>
       </actionSet>
+      <actionSet
+            label="%KeyBindingActionSet.label"
+            visible="true"
+            id="org.eclipse.ui.actionSet.keyBindings">
+         <action
+               label="%KeyBindingActionSet.showKeyAssist.label"
+               class="org.eclipse.ui.internal.handlers.ShowKeyAssistHandler"
+               menubarPath="help/group.main"
+               id="org.eclipse.ui.actions.showKeyAssistHandler"
+               definitionId="org.eclipse.ui.window.showKeyAssist">
+         </action>
+      </actionSet>
    </extension>
    <extension
          point="org.eclipse.ui.decorators">
@@ -318,28 +330,28 @@
       <page
             name="%PreferencePages.FileEditors"
             category="org.eclipse.ui.preferencePages.Editors"
-            class="org.eclipse.ui.internal.dialogs.FileEditorsPreferencePage"
+            class="org.eclipse.ui.ExtensionFactory:fileAssociationsPreferencePage"
             id="org.eclipse.ui.preferencePages.FileEditors">
          <keywordReference id="org.eclipse.ui.ide.editing"/>
       </page>
       <page
             name="%PreferencePages.Views"
             category="org.eclipse.ui.preferencePages.Workbench"
-            class="org.eclipse.ui.internal.dialogs.ViewsPreferencePage"
+            class="org.eclipse.ui.ExtensionFactory:appearancePreferencePage"
             id="org.eclipse.ui.preferencePages.Views">
          <keywordReference id="org.eclipse.ui.ide.appearance"/>
       </page>
       <page
             name="%PreferencePages.ColorsAndFonts"
             category="org.eclipse.ui.preferencePages.Views"
-            class="org.eclipse.ui.internal.themes.ColorsAndFontsPreferencePage"
+            class="org.eclipse.ui.ExtensionFactory:colorsAndFontsPreferencePage"
             id="org.eclipse.ui.preferencePages.ColorsAndFonts">
          <keywordReference id="org.eclipse.ui.ide.appearance"/>
       </page>
       <page
             name="%PreferencePages.Decorators"
             category="org.eclipse.ui.preferencePages.Views"
-            class="org.eclipse.ui.internal.dialogs.DecoratorsPreferencePage"
+            class="org.eclipse.ui.ExtensionFactory:decoratorsPreferencePage"
             id="org.eclipse.ui.preferencePages.Decorators">
          <keywordReference id="org.eclipse.ui.ide.appearance"/>
       </page>
@@ -379,7 +391,7 @@
       <page
             name="%PreferencePages.Keys"
             category="org.eclipse.ui.preferencePages.Workbench"
-            class="org.eclipse.ui.internal.keys.KeysPreferencePage"
+            class="org.eclipse.ui.ExtensionFactory:keysPreferencePage"
             id="org.eclipse.ui.preferencePages.Keys">
       </page>
       <page
@@ -401,7 +413,7 @@
             name="%Views.Progress"
             icon="icons/full/eview16/pview.gif"
             category="org.eclipse.ui"
-            class="org.eclipse.ui.internal.progress.JobView"
+            class="org.eclipse.ui.ExtensionFactory:progressView"
             id="org.eclipse.ui.views.ProgressView">
       </view>
       <view
@@ -712,18 +724,6 @@
                class="org.eclipse.ui.internal.ide.update.InstallWizardAction"
                menubarPath="help/org.eclipse.update.ui.updateMenu/group0"
                id="org.eclipse.update.ui.newUpdates">
-         </action>
-      </actionSet>
-      <actionSet
-            label="%KeyBindingActionSet.label"
-            visible="true"
-            id="org.eclipse.ui.actionSet.keyBindings">
-         <action
-               label="%KeyBindingActionSet.showKeyAssist.label"
-               class="org.eclipse.ui.internal.handlers.ShowKeyAssistHandler"
-               menubarPath="help/group.main"
-               id="org.eclipse.ui.actions.showKeyAssistHandler"
-               definitionId="org.eclipse.ui.window.showKeyAssist">
          </action>
       </actionSet>
    </extension>
