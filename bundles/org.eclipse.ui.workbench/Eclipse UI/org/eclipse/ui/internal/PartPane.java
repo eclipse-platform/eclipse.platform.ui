@@ -12,6 +12,7 @@ package org.eclipse.ui.internal;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.SafeRunnable;
@@ -122,12 +123,13 @@ public abstract class PartPane extends LayoutPart implements Listener {
      */
     protected void createChildControl() {
         final IWorkbenchPart part[] = new IWorkbenchPart[] { partReference
-                .getPart(false) };
+                .getPart(true) };
         if (part[0] == null)
             return;
 
+        Assert.isNotNull(control);
+        
         // must call createControl(..) first.
-        // TODO: should only really call this method from createControl()
         if (control == null)
             return;
 
@@ -213,9 +215,6 @@ public abstract class PartPane extends LayoutPart implements Listener {
 
         // Create a title bar.
         createTitleBar();
-
-        // Create content.
-        createChildControl();
 
         // When the pane or any child gains focus, notify the workbench.
         control.addListener(SWT.Activate, this);
@@ -337,9 +336,10 @@ public abstract class PartPane extends LayoutPart implements Listener {
      * Shows the receiver if <code>visible</code> is true otherwise hide it.
      */
     public void setVisible(boolean makeVisible) {
+        if (makeVisible) {
+        	createChildControl();
+        }
         super.setVisible(makeVisible);
-        if (makeVisible) //Make sure that the part is restored.
-            partReference.getPart(true);
     }
 
     /**

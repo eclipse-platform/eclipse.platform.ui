@@ -18,6 +18,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.resource.JFaceColors;
+import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
@@ -129,12 +130,11 @@ public class ViewPane extends PartPane implements IPropertyListener {
 
     protected void createChildControl() {
         final IWorkbenchPart part[] = new IWorkbenchPart[] { partReference
-                .getPart(false) };
+                .getPart(true) };
         if (part[0] == null)
             return;
 
-        if (control == null)
-            return;
+        Assert.isNotNull(control);
 
         super.createChildControl();
 
