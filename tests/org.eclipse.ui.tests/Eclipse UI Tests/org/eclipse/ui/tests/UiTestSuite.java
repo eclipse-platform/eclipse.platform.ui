@@ -29,6 +29,7 @@ import org.eclipse.ui.tests.menus.MenusTestSuite;
 import org.eclipse.ui.tests.multipageeditor.MultiPageEditorTestSuite;
 import org.eclipse.ui.tests.navigator.NavigatorTestSuite;
 import org.eclipse.ui.tests.preferences.PreferencesTestSuite;
+import org.eclipse.ui.tests.presentations.PresentationsTestSuite;
 import org.eclipse.ui.tests.propertysheet.PropertySheetTestSuite;
 import org.eclipse.ui.tests.themes.ThemesTestSuite;
 import org.eclipse.ui.tests.util.PlatformUtil;
@@ -73,5 +74,6 @@ public class UiTestSuite extends TestSuite {
         addTest(new ThemesTestSuite());
         addTest(new IntroTestSuite());
         addTest(new MenusTestSuite());
+        addTest(new PresentationsTestSuite());
     }
 }

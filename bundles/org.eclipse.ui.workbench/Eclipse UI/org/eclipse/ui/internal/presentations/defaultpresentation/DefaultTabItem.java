@@ -89,6 +89,16 @@ public class DefaultTabItem extends WidgetTabItem {
         
         String newName = tabItem.getParent().getSingle() ? longName : shortName;
         
+        StringBuffer title = new StringBuffer(newName.length());
+        for (int i = 0; i < newName.length(); i++) {
+            char character = newName.charAt(i);
+            title.append(character);
+            if (character == '&') {
+                title.append(character); // escape ampersand
+            }
+        }
+        newName = title.toString();
+        
         if (!Util.equals(newName, tabItem.getText())) {
             tabItem.setText(newName);
         }
