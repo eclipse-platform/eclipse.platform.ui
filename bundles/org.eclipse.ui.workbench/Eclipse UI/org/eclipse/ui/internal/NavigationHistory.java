@@ -224,8 +224,8 @@ private void printEntries() {
 	if (false) {
 		int size= history.size();
 		for (int i= 0; i < size; i++) {
-			String append= activeEntry == i ? ">>" : "";
-			System.out.println(append + "Index: " + i + " " + history.get(i));	
+			String append= activeEntry == i ? ">>" : ""; //$NON-NLS-1$ //$NON-NLS-2$
+			System.out.println(append + "Index: " + i + " " + history.get(i));	//$NON-NLS-1$ //$NON-NLS-2$
 		};
 	}
 }
@@ -322,7 +322,7 @@ protected void shiftCurrentEntry(NavigationHistoryEntry entry) {
 		NavigationHistoryEntry entry = (NavigationHistoryEntry)list.get(i);
 		IMemento childMem = memento.createChild(IWorkbenchConstants.TAG_ITEM);
 		if(entry == cEntry)
-			childMem.putString(IWorkbenchConstants.TAG_ACTIVE,"true");
+			childMem.putString(IWorkbenchConstants.TAG_ACTIVE,"true"); //$NON-NLS-1$
 		entry.saveState(childMem,list);
 	}
 }
@@ -347,7 +347,7 @@ protected void shiftCurrentEntry(NavigationHistoryEntry entry) {
 			break;
 		}
 		// Clear out history if "blank" entries.  Fix for 27317.
-		if (entryText.equals("")) {
+		if (entryText.equals("")) { //$NON-NLS-1$
 			oldHistory = true;
 			break;
 		}

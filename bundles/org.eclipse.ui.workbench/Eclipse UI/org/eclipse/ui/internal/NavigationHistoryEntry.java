@@ -39,7 +39,7 @@ public class NavigationHistoryEntry {
 			historyText = location.getText();
 		}
 		// ensure that the historyText is initialized to something
-		if (historyText == null || historyText.equals("")) {
+		if (historyText == null || historyText.equals("")) { //$NON-NLS-1$
 			historyText = part.getTitle();
 		}
 	}
@@ -112,7 +112,7 @@ public class NavigationHistoryEntry {
 			// be saved.  Doing so handles cases where getText() value 
 			// may be dynamic. 
 			String text = location.getText();
-			if ((text == null) || text.equals("")) {
+			if ((text == null) || text.equals("")) { //$NON-NLS-1$
 				text = historyText;
 			} else {
 				historyText = text;
@@ -224,7 +224,7 @@ public class NavigationHistoryEntry {
      * Method declared on Object.
      */	
 	public String toString() {
-		return "Input<" + editorInput + "> Input<" + editorInput + "> Details<" + location + ">";
+		return "Input<" + editorInput + "> Input<" + editorInput + "> Details<" + location + ">"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	}
 	/**
 	 * Disposes this entry and its location.
