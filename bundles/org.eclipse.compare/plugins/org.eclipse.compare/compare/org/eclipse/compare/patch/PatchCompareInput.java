@@ -27,13 +27,16 @@ import org.eclipse.compare.internal.*;
 	private DiffNode fRoot;
 	private IResource fResource;
 	private Diff[] fDiffs;
+	private int fStripPrefixSegments;
 
 	
 	/**
 	 * Creates an compare editor input for the given selection.
 	 */
-	/* package */ PatchCompareInput(CompareConfiguration config, ISelection s, Diff[] diffs, String patchName) {
+	/* package */ PatchCompareInput(CompareConfiguration config, ISelection s, Diff[] diffs,
+						String patchName, int strip) {
 		super(config);
+		fStripPrefixSegments= strip;
 		IResource[] selection= Utilities.getResources(s);
 		if (selection.length == 1)
 			fResource= selection[0];		
@@ -59,13 +62,9 @@ import org.eclipse.compare.internal.*;
 			// process diffs
 			for (int i= 0; i < fDiffs.length; i++) {
 				Diff diff= fDiffs[i];
-				
-				// strip of first component
-				String path= diff.fOldName;
-				int pos= path.indexOf('/');
-				if (pos >= 0)
-					path= path.substring(pos+1);
-				
+				IPath path= diff.getPath();
+				if (fStripPrefixSegments > 0 && fStripPrefixSegments < path.segmentCount())
+					path= path.removeFirstSegments(fStripPrefixSegments);
 				createPath(fRoot, rootFolder, path, diff);
 				pm.worked(1);
 			}			
@@ -126,23 +125,19 @@ import org.eclipse.compare.internal.*;
 		}
 	}
 
-	/* package */ void createPath(DiffContainer root, IContainer folder, String path, Diff diff) {
-		int pos= path.indexOf('/');
-		if (pos >= 0) {
-			String dir= path.substring(0, pos);
-			IFolder f= folder.getFolder(new Path(dir));
-			IDiffElement child= root.findChild(dir);
+	/* package */ void createPath(DiffContainer root, IContainer folder, IPath path, Diff diff) {
+		if (path.segmentCount() > 1) {
+			IFolder f= folder.getFolder(path.uptoSegment(1));
+			IDiffElement child= root.findChild(path.segment(0));
 			if (child == null) {
 				ResourceNode rn= new ResourceNode(f);
 				child= new DiffNode(root, Differencer.CHANGE, null, rn, rn);
 			}
 			if (child instanceof DiffContainer)
-				createPath((DiffContainer)child, f, path.substring(pos+1), diff);
+				createPath((DiffContainer)child, f, path.removeFirstSegments(1), diff);
 		} else {
-			// leaf
-			IFile file= folder.getFile(new Path(path));
-			BufferedResourceNode rn= new BufferedResourceNode(file);			
-			
+			// a leaf
+			BufferedResourceNode rn= new BufferedResourceNode(folder.getFile(path));						
 			new DiffNode(root, diff.getType(), null, rn, new PatchedResource(rn, diff, path));
 		}
 	}

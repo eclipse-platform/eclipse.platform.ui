@@ -21,8 +21,10 @@ import org.eclipse.compare.internal.*;
 	private final static String DIALOG_SETTINGS_KEY= "PatchWizard"; //$NON-NLS-1$
 
 	private boolean fHasNewDialogSettings;
+	
 	private Diff[] fDiffs;
 	private ISelection fSelection;
+	
 	private InputPatchPage fPatchWizardPage;
 	private PreviewPatchPage fPreviewPatchPage;
 	
@@ -46,22 +48,17 @@ import org.eclipse.compare.internal.*;
 		}
 	}
 	
-	/*package */ IFile existsInSelection(String path) {
-		if (fSelection == null || fSelection.isEmpty())
-			return null;
-		
-		IPath p= new Path(path);
-		if (p.segmentCount() > 1)
-			p= p.removeFirstSegments(1);
-		
-		IResource[] selection= Utilities.getResources(fSelection);
-		for (int i= 0; i < selection.length; i++) {
-			IResource r= selection[i];
-			if (r instanceof IContainer) {
-				IContainer c= (IContainer) r;
-				if (c.exists(p))
-					return c.getFile(p);
-			}
+	/*package */ IFile existsInSelection(IPath path) {
+		if (fSelection != null && !fSelection.isEmpty()) {
+			IResource[] selection= Utilities.getResources(fSelection);
+			for (int i= 0; i < selection.length; i++) {
+				IResource r= selection[i];
+				if (r instanceof IContainer) {
+					IContainer c= (IContainer) r;
+					if (c.exists(path))
+						return c.getFile(path);
+				}
+			} 
 		}
 		return null;
 	}
@@ -73,7 +70,7 @@ import org.eclipse.compare.internal.*;
 	/* package */ void setDiffs(Diff[] diffs) {
 		fDiffs= diffs;
 	}
-			
+				
 	/* (non-Javadoc)
 	 * Method declared on IWizard.
 	 */
@@ -92,8 +89,9 @@ import org.eclipse.compare.internal.*;
 		CompareConfiguration cc= new CompareConfiguration();
 		cc.setProperty(CompareEditor.CONFIRM_SAVE_PROPERTY, new Boolean(false));
 
+		int strip= fPreviewPatchPage.getStripPrefixSegments();
 		CompareUI.openCompareEditor(
-			new PatchCompareInput(cc, fSelection, fDiffs, fPatchWizardPage.getPatchName()));
+			new PatchCompareInput(cc, fSelection, fDiffs, fPatchWizardPage.getPatchName(), strip));
 
 		// Save the dialog settings
 		if (fHasNewDialogSettings) {

@@ -35,7 +35,7 @@ import org.eclipse.compare.internal.Utilities;
 	private final static String STORE_PATCH_FILE_ID= PAGE_NAME + ".PATCH_FILE";	//$NON-NLS-1$
 	private final static String STORE_PATCH_FILES_ID= PAGE_NAME + ".PATCH_FILES";	//$NON-NLS-1$
 	private final static String STORE_USE_CLIPBOARD_ID= PAGE_NAME + ".USE_CLIPBOARD";	//$NON-NLS-1$
-	
+
 	// help IDs
 	private final static String PATCH_HELP_CONTEXT_ID= "PatchWizardHelpId";	
 	
@@ -95,7 +95,7 @@ import org.eclipse.compare.internal.Utilities;
 				}
 			}
 		);
-	
+			
 		restoreWidgetValues();
 
 		updateWidgetEnablements();
@@ -109,6 +109,7 @@ import org.eclipse.compare.internal.Utilities;
 	 */
 	public IWizardPage getNextPage() {
 		if (true) {
+			
 			Diff[] diffs= null;
 			Reader reader= null;
 			if (getUseClipboard()) {
@@ -178,16 +179,16 @@ import org.eclipse.compare.internal.Utilities;
 	 */
 	private Composite createPatchFileGroup(Composite parent) {
 		
-		Composite sourceContainerGroup= new Composite(parent, SWT.NONE);
+		Composite group= new Composite(parent, SWT.NONE);
 		GridLayout layout= new GridLayout();
 		layout.numColumns= 3;
-		sourceContainerGroup.setLayout(layout);
-		sourceContainerGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
+		group.setLayout(layout);
+		group.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
 	
-		new Label(sourceContainerGroup, SWT.NONE).setText("Patch File:");
+		new Label(group, SWT.NONE).setText("Patch File:");
 	
 		// source name entry field
-		fPatchFileNameField= new Combo(sourceContainerGroup, SWT.BORDER);
+		fPatchFileNameField= new Combo(group, SWT.BORDER);
 		GridData data= new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 		data.widthHint= SIZING_TEXT_FIELD_WIDTH;
 		fPatchFileNameField.setLayoutData(data);
@@ -209,7 +210,7 @@ import org.eclipse.compare.internal.Utilities;
 		);
 	
 		// patch file browse button
-		fPatchFileBrowseButton= new Button(sourceContainerGroup, SWT.PUSH);
+		fPatchFileBrowseButton= new Button(group, SWT.PUSH);
 		fPatchFileBrowseButton.setText("Browse...");
 		fPatchFileBrowseButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 		//SWTUtil.setButtonDimensionHint(fDestinationBrowseButton);
@@ -224,7 +225,7 @@ import org.eclipse.compare.internal.Utilities;
 	
 		fPatchFileNameField.setFocus();
 		
-		return sourceContainerGroup;
+		return group;
 	}
 
 	/**
@@ -354,7 +355,7 @@ import org.eclipse.compare.internal.Utilities;
 			// set patch file path
 			String patchFilePath= settings.get(STORE_PATCH_FILES_ID);
 			if (patchFilePath != null)
-				setSourceName(patchFilePath);	
+				setSourceName(patchFilePath);
 		} else
 			System.out.println("restoreWidgetValues: no dialog settings");
 	}
@@ -400,7 +401,7 @@ import org.eclipse.compare.internal.Utilities;
 		if (fPatchFileNameField != null)
 			return fPatchFileNameField.getText();
 		return "";
-	}
+	} 
 
 	/**
 	 * Creates a new label with a bold font.

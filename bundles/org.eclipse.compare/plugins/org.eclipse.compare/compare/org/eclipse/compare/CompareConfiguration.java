@@ -6,7 +6,7 @@ package org.eclipse.compare;
 
 import java.util.HashMap;
 
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.*;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.*;
@@ -82,6 +82,12 @@ public class CompareConfiguration {
 		fgImages[Differencer.CONFLICTING + Differencer.DELETION]= CompareUIPlugin.getImageDescriptor("ovr16/confdel_ov.gif"); //$NON-NLS-1$
 		fgImages[Differencer.CONFLICTING + Differencer.CHANGE]= CompareUIPlugin.getImageDescriptor("ovr16/confchg_ov.gif"); //$NON-NLS-1$
 		// end PR 1GEHGTZ
+		
+		if (false) {
+			ImageDescriptor tmp= fgImages[Differencer.ADDITION];
+			fgImages[Differencer.ADDITION]= fgImages[Differencer.DELETION];
+			fgImages[Differencer.DELETION]= tmp;
+		}
 	}
 
 	private ListenerList fListeners= new ListenerList();
@@ -124,7 +130,9 @@ public class CompareConfiguration {
 	public Image getImage(int kind) {
 		Image image= fImages[kind & 15];
 		if (image == null) {
-			image= fgImages[kind & 15].createImage();
+			ImageDescriptor id= fgImages[kind & 15];
+			if (id != null)				
+				image= id.createImage();
 			fImages[kind & 15]= image;
 		}
 		return image;

@@ -6,45 +6,36 @@ package org.eclipse.compare.patch;
 
 import java.util.*;
 import java.io.*;
+
+import org.eclipse.core.runtime.IPath;
+
 import org.eclipse.compare.structuremergeviewer.Differencer;
 
 
 /* package */ class Diff {
-	
-	private static final String DEV_NULL= "/dev/null";
-	
-	String fOldName, fNewName;
-	String fOldRevision= "", fNewRevision= "";
+		
+	IPath fOldPath, fNewPath;
 	long fOldDate, fNewDate;	// if 0: no file
 	List fHunks= new ArrayList();
 	
- 	/* package */ Diff(String oldName, long oldDate, String newName, long newDate) {
+ 	/* package */ Diff(IPath oldPath, long oldDate, IPath newPath, long newDate) {
 		
-		int pos= oldName.lastIndexOf(':');
-		if (pos >= 0) {
-			//fOldRevision= oldName.substring(pos+1);
-			oldName= oldName.substring(0, pos);
-		}
-		
-		pos= newName.lastIndexOf(':');
-		if (pos >= 0) {
-			//fNewRevision= newName.substring(pos+1);
-			newName= newName.substring(0, pos);
-		}
-		
-		if (DEV_NULL.equals(oldName)) {
+		if (oldPath == null)
 			oldDate= 0;
-			oldName= newName;
-		}
-		if (DEV_NULL.equals(newName)) {
+			
+		if (newPath == null)
 			newDate= 0;
-			newName= oldName;
-		}
 		
-		fOldName= oldName;
+		fOldPath= oldPath;
 		fOldDate= oldDate;
-		fNewName= newName;
+		fNewPath= newPath;
 		fNewDate= newDate;	
+	}
+	
+	IPath getPath() {
+		if (fOldPath != null)
+			return fOldPath;
+		return fNewPath;
 	}
 	
 	void finish() {
@@ -52,7 +43,7 @@ import org.eclipse.compare.structuremergeviewer.Differencer;
 			Hunk h= (Hunk) fHunks.get(0);
 			if (h.fNewLength == 0) {
 				fNewDate= 0;
-				fNewName= fOldName;
+				fNewPath= fOldPath;
 			}
 		}
 	}
@@ -69,12 +60,19 @@ import org.eclipse.compare.structuremergeviewer.Differencer;
 		return Differencer.CHANGE;
 	}
 	
-	/* package */ String getDescription() {
+	/* package */ String getDescription(int strip) {
+		IPath path= fOldPath;
 		if (fOldDate == 0)
-			return "+ " + fNewName;
-		if (fNewDate == 0)
-			return "- " + fOldName;
-		return "! " + fOldName;
+			path= fNewPath;
+		if (strip > 0 && strip < path.segmentCount())
+			path= path.removeFirstSegments(strip);
+		String s= path.toOSString();
+		return s;
+//		if (fOldDate == 0)
+//			return "+ " + s;
+//		if (fNewDate == 0)
+//			return "- " + s;
+//		return "! " + s;
 	}
 	
 //	/* package */ int tryPatch(BufferedReader reader) {
@@ -130,7 +128,7 @@ import org.eclipse.compare.structuremergeviewer.Differencer;
 	}
 
 	/* package */ void dump() {
-		System.out.println(getDescription());
+		System.out.println(getDescription(0));
 		Iterator iter= fHunks.iterator();
 		while (iter.hasNext()) {
 			Hunk hunk= (Hunk) iter.next();

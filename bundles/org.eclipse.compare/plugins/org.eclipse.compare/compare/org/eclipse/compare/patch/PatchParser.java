@@ -9,10 +9,14 @@ import java.util.*;
 import java.text.*;
 
 import org.eclipse.jface.util.Assert;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 
 /* package */ class PatchParser {
 		
+	private static final String DEV_NULL= "/dev/null";
+
 	// diff formats
 	private static final int CONTEXT= 0;
 	private static final int ED= 1;
@@ -25,7 +29,7 @@ import org.eclipse.jface.util.Assert;
 		new SimpleDateFormat("yyyy/MM/dd kk:mm:ss"),
 		new SimpleDateFormat("EEE MMM dd kk:mm:ss yyyy", Locale.US)
 	};
-	
+		
 	//---- public methods
 	
 	/* package */ PatchParser() {
@@ -90,8 +94,8 @@ import org.eclipse.jface.util.Assert;
 			
 		String[] newArgs= split(line.substring(4));
 	
-		Diff diff= new Diff(extractFileName(oldArgs, 0), extractDate(oldArgs, 1),
-				   			extractFileName(newArgs, 0), extractDate(newArgs, 1));
+		Diff diff= new Diff(extractPath(oldArgs, 0), extractDate(oldArgs, 1),
+				   			extractPath(newArgs, 0), extractDate(newArgs, 1));
 		diffs.add(diff);
 				   
 		int[] oldRange= new int[2];
@@ -130,7 +134,21 @@ import org.eclipse.jface.util.Assert;
 						continue;
 					case '\\':
 						if (line.startsWith("No newline at end of file", 2)) {
-							// FIXME: we need to remove line terminator from last line
+							int lastIndex= lines.size();
+							if (lastIndex > 0) {
+								line= (String) lines.get(lastIndex-1);
+								int end= line.length()-1;
+								char lc= line.charAt(end);
+								if (lc == '\n') {
+									end--;
+									if (end > 0 && line.charAt(end-1) == '\r')
+										end--;
+								} else if (lc == '\r') {
+									end--;
+								}
+								line= line.substring(0, end);
+								lines.set(lastIndex-1, line);
+							}
 							continue;
 						}
 						break;
@@ -161,8 +179,8 @@ import org.eclipse.jface.util.Assert;
 		
 		String[] newArgs= split(line.substring(4));
 						
-		Diff diff= new Diff(extractFileName(oldArgs, 0), extractDate(oldArgs, 1),
-				   			extractFileName(newArgs, 0), extractDate(newArgs, 1));
+		Diff diff= new Diff(extractPath(oldArgs, 0), extractDate(oldArgs, 1),
+				   			extractPath(newArgs, 0), extractDate(newArgs, 1));
 		diffs.add(diff);
 				   
 		int[] oldRange= new int[2];
@@ -237,6 +255,10 @@ import org.eclipse.jface.util.Assert;
 		}
 	}
 	
+	/**
+	 * Creates a List of lines in the unified format from
+	 * two Lists of lines in the 'classic' format.
+	 */
 	private List unifyLines(List oldLines, List newLines) {
 		List result= new ArrayList();
 
@@ -389,10 +411,20 @@ import org.eclipse.jface.util.Assert;
 		return -1;
 	}
 	
-	private String extractFileName(String[] args, int n) {
-		if (n < args.length)
-			return args[n];
-		return "???";
+	/**
+	 * Returns null if file name is "/dev/null".
+	 */
+	private IPath extractPath(String[] args, int n) {
+		if (n < args.length) {
+			String path= args[n];
+			if (DEV_NULL.equals(path))
+				return null;
+			int pos= path.lastIndexOf(':');
+			if (pos >= 0)
+				path= path.substring(0, pos);
+			return new Path(path);
+		}
+		return null;
 	}
 	
 	/**

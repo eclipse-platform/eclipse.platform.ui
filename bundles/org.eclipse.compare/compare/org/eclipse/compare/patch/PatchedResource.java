@@ -6,6 +6,8 @@ package org.eclipse.compare.patch;
 
 import java.io.*;
 
+import org.eclipse.core.runtime.IPath;
+
 import org.eclipse.compare.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.graphics.Image;
@@ -15,13 +17,13 @@ import org.eclipse.swt.graphics.Image;
 	
 	Diff fDiff;
 	IStreamContentAccessor fCurrent;
-	String fName;
+	IPath fPath;
 	byte[] fContent;
 	
-	/* package */ PatchedResource(IStreamContentAccessor current, Diff diff, String name) {
+	/* package */ PatchedResource(IStreamContentAccessor current, Diff diff, IPath path) {
 		fDiff= diff;
 		fCurrent= current;
-		fName= name;
+		fPath= path;
 	}
 	
 	public InputStream getContents() throws CoreException {
@@ -51,20 +53,13 @@ import org.eclipse.swt.graphics.Image;
 	}
 	
 	public String getName() {
-		return fName;
+		return fPath.toOSString();
 	}
 	
 	public String getType() {
-		int pos= fName.indexOf('.');
-		if (pos >= 0)
-			return fName.substring(pos+1);
-//		if (fResource instanceof IContainer)
-//			return ITypedElement.FOLDER_TYPE;
-//		if (fResource != null) {
-//			String s= fResource.getFileExtension();
-//			if (s != null)
-//				return s;
-//		}
+		String type= fPath.getFileExtension();
+		if (type != null)
+			return type;
 		return ITypedElement.UNKNOWN_TYPE;
 	}
 
