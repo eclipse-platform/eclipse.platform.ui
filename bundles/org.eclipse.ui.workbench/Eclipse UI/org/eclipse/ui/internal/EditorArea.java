@@ -10,9 +10,13 @@ import java.util.*;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.part.EditorInputTransfer;
+import org.eclipse.ui.part.MarkerTransfer;
+import org.eclipse.ui.part.ResourceTransfer;
 
 /**
  * Represents the area set aside for editor workbooks.
@@ -27,12 +31,15 @@ public class EditorArea extends PartSashContainer {
 	private IPartDropListener partDropListener;
 	private ArrayList editorWorkbooks = new ArrayList(3);
 	private EditorWorkbook activeEditorWorkbook;
+	private DropTarget dropTarget;
+	private DropTargetAdapter dropTargetAdapter;
 	
-public EditorArea(String editorId, IPartDropListener listener, Listener mouseDownListener) {
+public EditorArea(String editorId, IPartDropListener listener, Listener mouseDownListener, DropTargetAdapter dropTargetListener) {
 	super(editorId);
 
 	this.partDropListener = listener;
 	this.mouseDownListener = mouseDownListener;
+	this.dropTargetAdapter = dropTargetListener;
 	createDefaultWorkbook();
 }
 /**
@@ -309,5 +316,26 @@ public void updateTabList() {
 	}
 }
 
+
+	/**
+	 * @see org.eclipse.ui.internal.LayoutPart#createControl(org.eclipse.swt.widgets.Composite)
+	 */
+	public void createControl(Composite parent) {
+		super.createControl(parent);
+		//let the user drop files/editor input on the editor area
+		addDropSupport();		
+	}
+	private void addDropSupport() {
+		if (dropTarget == null) {
+			Transfer[] types = new Transfer[] {
+					EditorInputTransfer.getInstance(), 
+					ResourceTransfer.getInstance(),
+					MarkerTransfer.getInstance() };
+		
+			dropTarget = new DropTarget(getControl(), DND.DROP_DEFAULT);
+			dropTarget.setTransfer(types);
+			dropTarget.addDropListener(dropTargetAdapter);
+		}
+	}
 
 }

@@ -1657,7 +1657,7 @@ protected void onDeactivate() {
 public IEditorPart openEditor(IFile file) 
 	throws PartInitException
 {
-	return openEditor(new FileEditorInput(file),null,true,false,null);
+	return openEditor(new FileEditorInput(file),null,true,false,null, false);
 }
 /**
  * See IWorkbenchPage.
@@ -1665,7 +1665,7 @@ public IEditorPart openEditor(IFile file)
 public IEditorPart openEditor(IFile file, String editorID)
 	throws PartInitException 
 {
-	return openEditor(new FileEditorInput(file),editorID,true,true,file);
+	return openEditor(new FileEditorInput(file),editorID,true,true,file, false);
 }
 /**
  * See IWorkbenchPage.
@@ -1673,7 +1673,7 @@ public IEditorPart openEditor(IFile file, String editorID)
 public IEditorPart openEditor(IFile file, String editorID,boolean activate)
 	throws PartInitException 
 {
-	return openEditor(new FileEditorInput(file),editorID,activate,editorID != null,file);
+	return openEditor(new FileEditorInput(file),editorID,activate,editorID != null,file, false);
 }
 /**
  * See IWorkbenchPage.
@@ -1705,9 +1705,9 @@ public IEditorPart openEditor(IMarker marker, boolean activate)
 	// Create a new editor.
 	IEditorPart editor = null;
 	if (editorID == null)
-		editor = openEditor(new FileEditorInput(file),null,activate,false,null);
+		editor = openEditor(new FileEditorInput(file),null,activate,false,null, false);
 	else 
-		editor = openEditor(new FileEditorInput(file),editorID,activate,true,file);
+		editor = openEditor(new FileEditorInput(file),editorID,activate,true,file, false);
 
 	// Goto the bookmark.
 	if (editor != null)
@@ -1728,12 +1728,61 @@ public IEditorPart openEditor(IEditorInput input, String editorID)
 public IEditorPart openEditor(IEditorInput input, String editorID, boolean activate) 
 	throws PartInitException
 {
-	return openEditor(input,editorID,activate,true,null);
+	return openEditor(input,editorID,activate,true,null, false);
+}
+/**
+ * Method openInternalEditor.
+ * @param input
+ * @param editorId
+ */
+public IEditorPart openInternalEditor(IEditorInput input, String editorId)
+	throws PartInitException {
+	return openEditor(input,editorId,true,true,null, true);
+
+}
+/**
+ * Method openInternalEditor.
+ * @param iMarker
+ */
+public IEditorPart openInternalEditor(IMarker marker)
+	throws PartInitException {
+	// Get the resource.
+	IFile file = (IFile)marker.getResource();
+
+	// Get the preferred editor id.
+	String editorID = null;
+	try {
+		editorID = (String)marker.getAttribute(EDITOR_ID_ATTR);
+	}
+	catch (CoreException e) {
+		WorkbenchPlugin.log(WorkbenchMessages.getString("WorkbenchPage.ErrorExtractingEditorIDFromMarker"), e.getStatus()); //$NON-NLS-1$
+		return null;
+	}
+
+	// Create a new editor.
+	IEditorPart editor = null;
+	if (editorID == null)
+		editor = openEditor(new FileEditorInput(file),null,true,false,null, true);
+	else
+		editor = openEditor(new FileEditorInput(file),editorID,true,true,file, true);
+
+	// Goto the bookmark.
+	if (editor != null)
+		editor.gotoMarker(marker);
+	return editor;
+}
+/**
+ * Method openInternalEditor.
+ * @param iFile
+ */
+public IEditorPart openInternalEditor(IFile file)
+	throws PartInitException {
+	return openEditor(new FileEditorInput(file),null,true,false,null, true);
 }
 /**
  * See IWorkbenchPage.
  */
-private IEditorPart openEditor(IEditorInput input, String editorID, boolean activate,boolean useEditorID,IFile file) 
+private IEditorPart openEditor(IEditorInput input, String editorID, boolean activate,boolean useEditorID,IFile file, boolean forceInternal) 
 	throws PartInitException
 {			
 	// If an editor already exists for the input use it.
@@ -1785,9 +1834,9 @@ private IEditorPart openEditor(IEditorInput input, String editorID, boolean acti
 	IEditorReference ref = null;
 
 	if(useEditorID)
-		ref = getEditorManager().openEditor(editorID, input,true);
+		ref = getEditorManager().openEditor(editorID, input,true, forceInternal);
 	else
-		ref = getEditorManager().openEditor(null,input,true);
+		ref = getEditorManager().openEditor(null,input,true, forceInternal);
 		
 	if(ref != null) {
 		editor = ref.getEditor(true);

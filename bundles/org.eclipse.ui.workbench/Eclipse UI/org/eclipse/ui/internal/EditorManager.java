@@ -288,7 +288,7 @@ public class EditorManager {
 	/*
 	 * @see IWorkbenchPage.
 	 */
-	private IEditorReference openEditorFromInput(IEditorReference ref,IEditorInput editorInput, boolean setVisible) throws PartInitException {
+	private IEditorReference openEditorFromInput(IEditorReference ref,IEditorInput editorInput, boolean setVisible, boolean forceInternal) throws PartInitException {
 		if (!(editorInput instanceof IFileEditorInput))
 			throw new PartInitException(
 				WorkbenchMessages.format(
@@ -300,7 +300,7 @@ public class EditorManager {
 		// If there is a registered editor for the file use it.
 		EditorDescriptor desc = (EditorDescriptor) getEditorRegistry().getDefaultEditor(file);
 		if (desc != null) {
-			return openEditorFromDescriptor(ref,desc, input);
+			return openEditorFromDescriptor(ref,desc, input, forceInternal);
 		}
 
 		// Try to open an OLE editor.
@@ -313,19 +313,22 @@ public class EditorManager {
 			wb.getEditorHistory().add(input, desc);
 			return ref;
 		}
-
-		// Try to open a system editor.
-		if (testForSystemEditor(file)) {
-			openSystemEditor(file);
-			Workbench wb = (Workbench) window.getWorkbench();
-			wb.getEditorHistory().add(input, desc);
-			return null;
+		
+		//only open a system file if an external editor is permitted.
+		if (!forceInternal) {
+			// Try to open a system editor.
+			if (testForSystemEditor(file)) {
+				openSystemEditor(file);
+				Workbench wb = (Workbench) window.getWorkbench();
+				wb.getEditorHistory().add(input, desc);
+				return null;
+			}
 		}
 
 		// There is no registered editor.  
 		// Use the default text editor.
 		desc = (EditorDescriptor) getEditorRegistry().getDefaultEditor();
-		return openEditorFromDescriptor(ref,desc, input);
+		return openEditorFromDescriptor(ref,desc, input, forceInternal);
 	}
 	/*
 	 * Prompt the user to save the reusable editor.
@@ -386,16 +389,16 @@ public class EditorManager {
 	/*
 	 * See IWorkbenchPage.
 	 */	
-	public IEditorReference openEditor(String editorId,IEditorInput input,boolean setVisible) throws PartInitException {
+	public IEditorReference openEditor(String editorId,IEditorInput input,boolean setVisible, boolean forceInternal) throws PartInitException {
 		if(editorId == null) {
-			return openEditorFromInput(new Editor(),input,setVisible);
+			return openEditorFromInput(new Editor(),input,setVisible, forceInternal);
 		} else {
 			IEditorRegistry reg = getEditorRegistry();
 			EditorDescriptor desc = (EditorDescriptor) reg.findEditor(editorId);
 			if (desc == null) {
 				throw new PartInitException(WorkbenchMessages.format("EditorManager.unknownEditorIDMessage", new Object[] { editorId })); //$NON-NLS-1$
 			}
-			IEditorReference result = openEditorFromDescriptor(new Editor(),desc, input);
+			IEditorReference result = openEditorFromDescriptor(new Editor(),desc, input, forceInternal);
 			if(input instanceof IFileEditorInput) {
 				IFile file = ((IFileEditorInput)input).getFile();
 				if(file != null) {
@@ -417,7 +420,7 @@ public class EditorManager {
 	/*
 	 * Open a new 
 	 */
-	private IEditorReference openEditorFromDescriptor(IEditorReference ref,EditorDescriptor desc, IEditorInput input) throws PartInitException {
+	private IEditorReference openEditorFromDescriptor(IEditorReference ref,EditorDescriptor desc, IEditorInput input, boolean forceInternal) throws PartInitException {
 		IEditorReference result = ref;
 		if (desc.isInternal()) {
 			result = reuseInternalEditor(desc, input);
@@ -434,15 +437,22 @@ public class EditorManager {
 				((Editor)ref).setPart(cEditor);
 				createEditorTab(ref, desc, input, true);
 			}
-		} else if (desc.getId().equals(IWorkbenchConstants.SYSTEM_EDITOR_ID)) {
+		} else if (!forceInternal && desc.getId().equals(IWorkbenchConstants.SYSTEM_EDITOR_ID)) {
 			if (input instanceof IFileEditorInput) {
 				openSystemEditor(((IFileEditorInput) input).getFile());
 				result = null;
 			} else
 				throw new PartInitException(WorkbenchMessages.getString("EditorManager.systemEditorError")); //$NON-NLS-1$
-		} else {
+		} else if (!forceInternal) {
 			openExternalEditor(desc, input);
 			result = null;
+		} else { //use default text editor
+			desc = (EditorDescriptor) getEditorRegistry().getDefaultEditor();
+			result = reuseInternalEditor(desc, input);
+			if (result == null) {
+				result = ref;
+				openInternalEditor(ref,desc, input, true);
+			}
 		}
 		Workbench wb = (Workbench) window.getWorkbench();
 		wb.getEditorHistory().add(input, desc);
@@ -845,7 +855,7 @@ public class EditorManager {
 					String workbookID = editorMem.getString(IWorkbenchConstants.TAG_WORKBOOK);
 					editorPresentation.setActiveEditorWorkbookFromID(workbookID);
 					if (desc == null) {
-						openEditorFromInput(ref,editorInput, false);
+						openEditorFromInput(ref,editorInput, false, false);
 					} else {
 						openInternalEditor(ref,desc, editorInput, false);
 					}

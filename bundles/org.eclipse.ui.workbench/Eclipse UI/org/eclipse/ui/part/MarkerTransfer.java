@@ -103,7 +103,7 @@ protected void javaToNative(Object object, TransferData transferData) {
 	 * ... repeat last four for each subsequent marker
 	 * see writeMarker for the (Marker) format.
 	 */
-	IMarker[] markers = (IMarker[]) object;
+	Object[] markers = (Object[]) object;
 	lazyInit(markers);
 
 	ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
@@ -117,7 +117,7 @@ protected void javaToNative(Object object, TransferData transferData) {
 
 		/* write markers */
 		for (int i = 0; i < markers.length; i++) {
-			writeMarker(markers[i], out);
+			writeMarker((IMarker)markers[i], out);
 		}
 		out.close();
 		bytes = byteOut.toByteArray();
@@ -132,10 +132,10 @@ protected void javaToNative(Object object, TransferData transferData) {
 /**
  * Initializes the transfer mechanism if necessary.
  */
-private void lazyInit(IMarker[] markers) {
+private void lazyInit(Object[] markers) {
 	if (workspace == null) {
 		if (markers != null && markers.length > 0) {
-			this.workspace = markers[0].getResource().getWorkspace();
+			this.workspace = ((IMarker)markers[0]).getResource().getWorkspace();
 		}
 	}
 }
