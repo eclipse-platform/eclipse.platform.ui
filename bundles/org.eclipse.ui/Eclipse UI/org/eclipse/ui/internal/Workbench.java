@@ -626,40 +626,51 @@ private IWorkbenchPage openNewPage(final String perspID, final IAdaptable input,
 
 /**
  * Opens a new page with the default perspective.
- * The "Open Perspective" preference is consulted and implemented.
+ * The "Open Perspective" and "Reuse Perspective" preferences are consulted and implemented.
  */
-public IWorkbenchPage openPage(final IAdaptable input) 
+public IWorkbenchPage openPage(IAdaptable input) 
 	throws WorkbenchException 
 {
 	return openPage(getPerspectiveRegistry().getDefaultPerspective(), input, 0);
 }
 /**
- * Opens a new workbench page with a specific perspective.
- * The "Open Perspective" preference is consulted and implemented.
+ * Opens a new workbench page with a specified perspective and input.
+ * The "Open Perspective" and "Reuse Perspective" preferences are consulted and implemented.
  */
-public IWorkbenchPage openPage(final String perspID, final IAdaptable input,
-	int keyStateMask) throws WorkbenchException 
+public IWorkbenchPage openPage(String perspId, IAdaptable input, int keyStateMask) throws WorkbenchException 
 {
+	Assert.isNotNull(perspId);
+	
+	// If there's an existing page with the same input and perspective, switch to it.
+	IWorkbenchPage page = findPage(input, perspId);
+	if (page != null) {
+		IWorkbenchWindow win = page.getWorkbenchWindow();
+		win.getShell().open();
+		win.setActivePage(page);
+		return page;
+	}	
+	
 	// If "reuse" and a page already exists for the input, reuse it.
 	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-	boolean version2 = store.getBoolean(IPreferenceConstants.REUSE_PERSPECTIVES);
-	if (version2 && (input != null)) {
-		IWorkbenchPage page = findPage(input);
+	boolean reuse = store.getBoolean(IPreferenceConstants.REUSE_PERSPECTIVES);
+	if (reuse && input != null) {
+		page = findPage(input, null);
 		if (page != null) {
+			// look up perspective first in case it fails
+			IPerspectiveDescriptor desc = getPerspectiveRegistry().findPerspectiveWithId(perspId);
+			if (desc == null)
+				throw new WorkbenchException(WorkbenchMessages.getString("WorkbenchPage.ErrorRecreatingPerspective")); //$NON-NLS-1$
+				
 			IWorkbenchWindow win = page.getWorkbenchWindow();
 			win.getShell().open();
 			win.setActivePage(page);
-			PerspectiveDescriptor desc = (PerspectiveDescriptor)WorkbenchPlugin
-				.getDefault().getPerspectiveRegistry().findPerspectiveWithId(perspID);
-			if (desc == null)
-				throw new WorkbenchException(WorkbenchMessages.getString("WorkbenchPage.ErrorRecreatingPerspective")); //$NON-NLS-1$
 			page.setPerspective(desc);
 			return page;
 		}
 	}
 	
 	// The page does not exist.  Create it.
-	return openNewPage(perspID, input, keyStateMask);
+	return openNewPage(perspId, input, keyStateMask);
 }
 /**
  * Return the alternate mask for this platform. It is control on win32 and
@@ -708,15 +719,26 @@ public IWorkbenchWindow openWorkbenchWindow(final String perspID, final IAdaptab
 		throw new WorkbenchException(WorkbenchMessages.getString("Abnormal_Workbench_Conditi")); //$NON-NLS-1$
 }
 /**
- * Reteturns the first page open on a particular input.
+ * Returns the first page open on a particular input and perspective id (optional).
  */
-private IWorkbenchPage findPage(IAdaptable input) {
-	IWorkbenchWindow [] windows = getWorkbenchWindows();
-	for (int nX = 0; nX < windows.length; nX ++) {
-		WorkbenchWindow win = (WorkbenchWindow)windows[nX];
-		IWorkbenchPage page = win.findPage(input);
-		if (page != null)
+private IWorkbenchPage findPage(IAdaptable input, String perspId) {
+	// be sure to check the active window first
+	WorkbenchWindow active = (WorkbenchWindow) getActiveWorkbenchWindow();
+	if (active != null) {
+		IWorkbenchPage page = active.findPage(input, perspId);
+		if (page != null) {
 			return page;
+		}
+	}
+	IWorkbenchWindow [] windows = getWorkbenchWindows();
+	for (int i = 0; i < windows.length; i++) {
+		WorkbenchWindow win = (WorkbenchWindow) windows[i];
+		if (win != active) {
+			IWorkbenchPage page = win.findPage(input, perspId);
+			if (page != null) {
+				return page;
+			}
+		}
 	}
 	return null;
 }

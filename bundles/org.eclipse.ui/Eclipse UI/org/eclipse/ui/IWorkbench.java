@@ -110,46 +110,65 @@ public IMarkerHelpRegistry getMarkerHelpRegistry();
  *
  * @return a list of open windows
  */
-public IWorkbenchWindow [] getWorkbenchWindows();
+public IWorkbenchWindow[] getWorkbenchWindows();
 /**
- * Creates and opens a new workbench page.  If the user preference for 
- * "Open Perspective" is "in current window", the page will be created in
- * the current window.  Otherwise, it will be created in a new window.
- * The perspective of the new page is the default perspective.
- * On return, the new window and new page will be active.
- *
+ * Shows a workbench page with the given input using the default perspective.
+ * Same as calling <code>openPage(input, getPerspectiveRegistry().getDefaultPerspective())</code>.
+ * 
  * @param input the page input, or <code>null</code> if there is no current input.
  *		This is used to seed the input for the new page's views.
- * @return the new workbench page
+ * @return the workbench page which was opened or activated
  * @exception WorkbenchException if a new page could not be opened
  * @since 2.0
  */
 public IWorkbenchPage openPage(IAdaptable input) 
 	throws WorkbenchException;
 /**
- * Creates and opens a new workbench page.  If the user preference for 
- * "Open Perspective" is "in current window", the page will be created in
- * the current window.  Otherwise, it will be created in a new window.
- * The perspective of the new page is defined by the specified perspective ID.  
- * On return, the new window and new page will be active.
+ * Shows a workbench page with the given input and perspective.
+ * This may either create a new page or reuse an existing page,
+ * depending on workbench preferences such as the "Open Perspective"
+ * and "Reuse Perspectives" settings.
+ * <p>
+ * The exact policy for this is controlled by the workbench, and is subject to change.
+ * The current policy is as follows:
+ * <ul>
+ * <li>
+ * If there is an existing page with the given perspective and the same input,
+ * it is activated instead of creating a new one.
+ * </li>
+ * <li>
+ * Otherwise, if the "Reuse Perspectives" setting is checked and there is an 
+ * existing page with the same input, it is activated and its perspective is
+ * switched to the given perpective.
+ * </li>
+ * <li>
+ * Otherwise, a new page is created with the given perspective. 
+ * If the user preference for "Open Perspective" is "In a new window", 
+ * the page is created in a new window.  
+ * Otherwise, it is created in the current window.
+ * On return, the new window and new page are active.
+ * </li>
+ * </ul>
+ * </p>
  * <p>
  * In most cases where this method is used, the caller is tightly coupled to
  * a particular perspective, and may even define it in the registry.
- * A static variable is often used to identify the perspective Id in 
- * java code.
- * </p><p>
- * A complete list of the perspectives is the workbench can be retrieved 
- * from the perspective registry, found on IWorkbenchPlugin.
  * </p>
- * @param perspectiveId the perspective id for the window's initial page
+ * <p>
+ * A complete list of available perspectives can be retrieved from the perspective 
+ * registry.
+ * </p>
+ * 
+ * @param perspId the perspective id to show
  * @param input the page input, or <code>null</code> if there is no current input.
- *		This is used to seed the input for the new page's views.
+ *		This is used to seed the input for the page's views
  * @param keyState the state of the keyboard modifier keys, or 0 if undefined
- * @return the new workbench page
+ * @return the workbench page which was opened or activated
  * @exception WorkbenchException if a new page could not be opened
+ * @see #getPerspectiveRegistry
  * @since 2.0
  */
-public IWorkbenchPage openPage(String perspID, IAdaptable input, int keyState) 
+public IWorkbenchPage openPage(String perspId, IAdaptable input, int keyState) 
 	throws WorkbenchException;
 /**
  * Creates and opens a new workbench window with one page.  The perspective of
@@ -173,7 +192,7 @@ public IWorkbenchPage openPage(String perspID, IAdaptable input, int keyState)
  * @exception WorkbenchException if a new window and page could not be opened
  * 
  * @deprecated As of 2.0, the explicit creation of workbench windows is discouraged
- * @see IWorkbench#openPage(String, IAdaptable)
+ * @see IWorkbench#openPage(String, IAdaptable, int)
  */
 public IWorkbenchWindow openWorkbenchWindow(String perspID, IAdaptable input)
 	throws WorkbenchException;

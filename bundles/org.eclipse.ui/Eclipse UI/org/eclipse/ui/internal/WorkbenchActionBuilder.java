@@ -270,8 +270,8 @@ private void createMenuBar() {
 	MenuManager subMenu = new MenuManager(WorkbenchMessages.getString("Workbench.navigation")); //$NON-NLS-1$
 	popup.add(subMenu);
 	subMenu.add(activateEditorAction);
-	subMenu.add(showViewMenuAction);
 	subMenu.add(showPartPaneMenuAction);
+	subMenu.add(showViewMenuAction);
 	subMenu.add(nextEditorAction);
 	subMenu.add(prevEditorAction);
 	subMenu.add(nextPartAction);

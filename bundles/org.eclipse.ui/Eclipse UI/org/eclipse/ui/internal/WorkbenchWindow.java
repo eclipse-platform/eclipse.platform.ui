@@ -35,9 +35,6 @@ import java.util.List;
 /**
  * A window within the workbench.
  */
-// NOTE: Once IDesktopWindow is removed, then the WorkbenchWindow class definition should change
-// to say IWorkbenchWindow instead. When making the change to IWorkbenchWindow, do not 
-// forget to remove the old methods from IDesktopWindow that were kept for backward compatibility.
 public class WorkbenchWindow extends ApplicationWindow
 	implements IWorkbenchWindow
 {
@@ -614,15 +611,17 @@ public boolean okToClose() {
  * Opens a new page.
  * @deprecated 
  */
-public IWorkbenchPage openPage(final String perspID, final IAdaptable input) 
+public IWorkbenchPage openPage(final String perspId, final IAdaptable input) 
 	throws WorkbenchException 
 {
+	Assert.isNotNull(perspId);
+	
 	// Run op in busy cursor.
 	final Object [] result = new Object[1];
 	BusyIndicator.showWhile(null, new Runnable() {
 		public void run() {
 			try {
-				result[0] = busyOpenPage(perspID, input);
+				result[0] = busyOpenPage(perspId, input);
 			} catch (WorkbenchException e) {
 				result[0] = e;
 			}
@@ -645,18 +644,43 @@ public IWorkbenchPage openPage(IAdaptable input)
 	return openPage(workbench.getPerspectiveRegistry().getDefaultPerspective(), 
 		input);
 }
+
 /**
- * Returns the first page with a given input.
+ * Returns the first page with the given input and perspective id (optional).
  */
-protected IWorkbenchPage findPage(IAdaptable input) {
-	IWorkbenchPage [] pages = getPages();
-	for (int nY = 0; nY < pages.length; nY ++) {
-		IAdaptable test = pages[nY].getInput();
-		if (input == test)
-			return pages[nY];
+protected IWorkbenchPage findPage(IAdaptable input, String perspId) {
+	// be sure to check the active page first
+	IWorkbenchPage active = getActivePage();
+	if (active != null) {
+		if (pageMatches(active, input, perspId)) {
+			return active;
+		}
+	}
+	IWorkbenchPage[] pages = getPages();
+	for (int i = 0; i < pages.length; i++) {
+		if (pages[i] != active) {
+			if (pageMatches(pages[i], input, perspId)) {
+				return pages[i];
+			}
+		}
 	}
 	return null;
 }
+
+/**
+ * Returns whether the page matches the given input and perspective id (optional).
+ */
+private boolean pageMatches(IWorkbenchPage page, IAdaptable input, String perspId) {
+	IAdaptable test = page.getInput();
+	if (input == null ? test == null : input.equals(test)) {
+		if (perspId == null || perspId.equals(page.getPerspective().getId())) {
+			return true;
+		}
+	}
+	return false;
+}
+
+
 /*
  * Removes an listener from the part service.
  */
