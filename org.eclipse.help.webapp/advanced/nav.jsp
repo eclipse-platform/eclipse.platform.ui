@@ -29,10 +29,10 @@ HTML {
 } else {
 %>
 FRAMESET {
-	border-top:2px groove;
-	border-left:2px groove;
+	border-top:1px solid ThreeDShadow;
+	border-left:1px solid ThreeDShadow;
 	border-right:3px ridge ThreeDHighlight;
-	border-bottom:2px inset ThreeDShadow;
+	border-bottom:2px solid ThreeDShadow;
 }
 <%
 }

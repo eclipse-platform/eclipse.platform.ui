@@ -43,7 +43,15 @@ BODY {
 }
 
 #tdborder {
-	border-bottom:1px solid ThreeDShadow; 
+	border-top:1px solid <%=prefs.getViewBackground()%>;
+	border-left:1px solid <%=prefs.getViewBackground()%>;
+<%
+if (data.isMozilla()) { 
+%>
+	border-bottom:1px solid ThreeDShadow;
+<%
+}
+%> 
 }
 td.button {
 <%
@@ -158,9 +166,7 @@ if (data.getScript() != null) {
 			</tr>
 		</table>
 	</div>
-<%
-if (data.isMozilla()) {
-%>
+
 	<div id="borderLayer" style="position:absolute; z-index:2; left:0; top:0; height:100%; width:100%; ">
 		<table width="100%" border="0" cellspacing="0" cellpadding="0" height="100% ">
 			<tr>
@@ -170,9 +176,7 @@ if (data.isMozilla()) {
 			</tr>
 		</table>
 	</div>
-<%
-}
-%>	
+	
 	<div id="iconLayer" style="position:absolute; z-index:3; left:0; top:0; height:100%; width:100%;">
 		<table width="100%" border="0" cellspacing="1" cellpadding="0" height="100%">
 			<tr>
