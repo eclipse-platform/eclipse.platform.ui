@@ -1,28 +1,38 @@
 /**********************************************************************
  * Copyright (c) 2000,2002 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors: 
  * IBM - Initial API and implementation
  **********************************************************************/
 package org.eclipse.core.internal.boot;
 
+import com.ibm.oti.vm.VM;
 import java.io.*;
 import java.net.*;
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
 import java.util.*;
-
-import com.ibm.oti.vm.VM;
+import org.eclipse.core.boot.BootLoader;
 
 public abstract class DelegatingURLClassLoader extends URLClassLoader {
 
+	// table to hold the set of all class loader prefixs.  This is a temporary solution until
+	// we can integrate this value into the plugin's library declaration.
+	protected static Properties prefixTable = new Properties();
+	static {
+		initializePrefixTable();
+	}
+
 	// loader base
 	protected URL base;
-
+	
+	// class name prefixs that this loader can load
+	protected String[] prefixs = null;
+	
 	// delegation chain
 	protected DelegateLoader[] imports = null;
 
@@ -131,7 +141,7 @@ public abstract class DelegatingURLClassLoader extends URLClassLoader {
 			}
 		}
 	}
-	
+
 private static String[] buildJarVariants() {
 	ArrayList result = new ArrayList();
 	
@@ -164,6 +174,77 @@ private static String[] buildLibraryVariants() {
 	}
 	result.add (""); //$NON-NLS-1$
 	return (String[])result.toArray(new String[result.size()]);
+}
+
+/**
+ * The package prefix table is a mapping of plug-in id to the list of package
+ * prefixes that the plug-in knows about. This information comes from a file
+ * in java.utils.Properties format and could either be specified by the user or
+ * is in a default location. Try to load this table from the file and initialize the values.
+ * <p>
+ * If there was problems loading the table then just return, the code elsewhere 
+ * should handle the case where the table is not initialized.  */
+private static void initializePrefixTable() {
+	if (!InternalBootLoader.useClassLoaderProperties())
+		return;
+	InputStream input = null;
+
+	String filename = InternalBootLoader.getClassLoaderPropertiesFilename();
+	// If the user didn't specify a filename to use, use a default
+	if (filename == null)
+		filename = InternalBootLoader.getDefaultClassLoaderPropertiesFilename();
+
+	String errorMessage = "Error opening: " + filename + ". Continuing execution without using classloader performance enhancement.";
+
+	// Try to convert the filename to a URL. If that fails then try a java.io.File
+	try {
+		input = new URL(filename).openStream();
+	} catch (MalformedURLException e) {
+		// ignore and try to create a file path from the arg
+		try {
+			input = new BufferedInputStream(new FileInputStream(filename));
+		} catch (FileNotFoundException ex) {
+			// inform the user that a problem occurred and return
+			System.err.println(errorMessage);
+			ex.printStackTrace();
+			return;
+		}
+	} catch (IOException e) {
+		// inform the user that a problem occurred and return
+		System.err.println(errorMessage);
+		e.printStackTrace();
+		return;
+	}
+	
+	// Load the properties file. It could be local or remote, specified by the user or not.
+	try {
+		try {
+			prefixTable.load(input);
+		} finally {
+			input.close();
+		}
+	} catch (IOException e) {
+		// Tell the user that there was a problem loading the file 
+		// but don't let that stop us from continuing execution.
+		System.err.println(errorMessage);
+		e.printStackTrace();
+	}
+}
+
+/**
+ * convert a list of comma-separated tokens into an array
+ */
+protected static String[] getArrayFromList(String prop) {
+	if (prop == null || prop.trim().equals("")) //$NON-NLS-1$
+		return new String[0];
+	Vector list = new Vector();
+	StringTokenizer tokens = new StringTokenizer(prop, ","); //$NON-NLS-1$
+	while (tokens.hasMoreTokens()) {
+		String token = tokens.nextToken().trim();
+		if (!token.equals("")) //$NON-NLS-1$
+			list.addElement(token);
+	}
+	return list.isEmpty() ? new String[0] : (String[]) list.toArray(new String[0]);
 }
 
 public DelegatingURLClassLoader(URL[] codePath, URLContentFilter[] codeFilters, URL[] resourcePath, URLContentFilter[] resourceFilters, ClassLoader parent) {
@@ -380,6 +461,29 @@ protected Class findClassParents(String name, boolean resolve) {
  * path. Any URLs referring to JAR files are loaded and opened as needed
  * until the class is found.   Search on the parent chain and then self.
  *
+ * @param name the name of the class
+ * @param resolve whether or not to resolve the class if found
+ * @param requestor class loader originating the request
+ * @param checkParents whether the parent of this loader should be consulted
+ * @return the resulting class
+ */
+protected Class findClassParentsSelf(final String name, boolean resolve, DelegatingURLClassLoader requestor, boolean checkParents) {
+	if (prefixs == null || prefixs.length == 0)
+		return internalFindClassParentsSelf(name, resolve, requestor, checkParents);
+	for (int i = 0; i < prefixs.length; i++) {
+		if (name.startsWith(prefixs[i]))
+			return internalFindClassParentsSelf(name, resolve, requestor, checkParents);
+	}
+	if (checkParents)
+		return findClassParents(name, resolve);
+	return null;
+}
+
+/**
+ * Finds and loads the class with the specified name from the URL search
+ * path. Any URLs referring to JAR files are loaded and opened as needed
+ * until the class is found.   Search on the parent chain and then self.
+ *
  * Subclasses should implement this method.
  *
  * @param name the name of the class
@@ -388,7 +492,10 @@ protected Class findClassParents(String name, boolean resolve) {
  * @param checkParents whether the parent of this loader should be consulted
  * @return the resulting class
  */
-protected abstract Class findClassParentsSelf(String name, boolean resolve, DelegatingURLClassLoader requestor, boolean checkParents);
+protected abstract Class internalFindClassParentsSelf(final String name, boolean resolve, DelegatingURLClassLoader requestor, boolean checkParents);
+
+
+
 /**
  * Finds and loads the class with the specified name from the URL search
  * path. Any URLs referring to JAR files are loaded and opened as needed
@@ -656,6 +763,11 @@ public URL getResource(String name) {
 	}
 	return result;
 }
+
+/**
+ * Returns the id to use to lookup class prefixs for this loader
+ */
+protected abstract String getPrefixId();
 private URL getURLforClass(Class clazz) {
 	ProtectionDomain pd = clazz.getProtectionDomain();
 	if (pd != null) {

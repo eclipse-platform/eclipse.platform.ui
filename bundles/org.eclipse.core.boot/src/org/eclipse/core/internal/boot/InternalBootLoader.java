@@ -1,9 +1,9 @@
 /*******************************************************************************
  * Copyright (c) 2000, 2002 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
  * IBM - Initial API and implementation
@@ -59,7 +59,7 @@ public final class InternalBootLoader {
 	
 	private static final String PLATFORM_ENTRYPOINT = "org.eclipse.core.internal.runtime.InternalPlatform"; //$NON-NLS-1$
 	private static final String BOOTNAME = "org.eclipse.core.boot"; //$NON-NLS-1$
-	private static final String RUNTIMENAME = "org.eclipse.core.runtime"; //$NON-NLS-1$
+	/*package*/ static final String RUNTIMENAME = "org.eclipse.core.runtime"; //$NON-NLS-1$
 	private static final String PLUGINSDIR = "plugins/"; //$NON-NLS-1$
 	private static final String LIBRARY = "library"; //$NON-NLS-1$
 	private static final String EXPORT = "export"; //$NON-NLS-1$
@@ -68,7 +68,7 @@ public final class InternalBootLoader {
 	private static final String META_AREA = ".metadata"; //$NON-NLS-1$
 	private static final String WORKSPACE = "workspace"; //$NON-NLS-1$
 	private static final String PLUGIN_PATH = ".plugin-path"; //$NON-NLS-1$
-	private static final String BOOTDIR = PLUGINSDIR + BOOTNAME + "/"; //$NON-NLS-1$
+	private static String BOOTDIR;
 	private static final String RUNTIMEDIR = PLUGINSDIR + RUNTIMENAME + "/"; //$NON-NLS-1$
 	private static final String OPTIONS = ".options"; //$NON-NLS-1$
 	// While we recognize the SunOS operating system, we change
@@ -77,6 +77,9 @@ public final class InternalBootLoader {
 	// While we recognize the i386 architecture, we change
 	// this internally to be x86.
 	private static final String INTERNAL_ARCH_I386 = "i386"; //$NON-NLS-1$
+
+	private static boolean useClassLoaderProperties = false;
+	private static String classLoaderPropertiesFilename = null;
 
 	/** 
 	 * Execution options for the Runtime plug-in.  They are defined here because
@@ -112,7 +115,8 @@ public final class InternalBootLoader {
 	private static final String OS = "-os"; //$NON-NLS-1$
 	private static final String ARCH = "-arch"; //$NON-NLS-1$
 	private static final String NL = "-nl"; //$NON-NLS-1$
-	
+	private static final String CLASSLOADER_PROPERTIES = "-classloaderProperties"; //$NON-NLS-1$
+
 /**
  * Private constructor to block instance creation.
  */
@@ -228,6 +232,18 @@ public static URL getInstallURL() {
 		throw new RuntimeException(Policy.bind("error.fatal", e.getMessage())); //$NON-NLS-1$
 	}
 	return installURL;
+}
+/**
+ * Initialize the BOOTDIR variable. This code is copied from the getInstallURL() code and
+ * should be merged. */
+static void initializeBootDir() {
+	URL url = InternalBootLoader.class.getProtectionDomain().getCodeSource().getLocation();
+	BOOTDIR = decode(url.getFile());
+	if (BOOTDIR.endsWith("/")) //$NON-NLS-1$
+		BOOTDIR = BOOTDIR.substring(0, BOOTDIR.length() - 1);
+	int index = BOOTDIR.lastIndexOf('/');
+	//strip off boot jar/bin, boot plugin and plugins dir.  Be sure to leave a trailing /
+	BOOTDIR = BOOTDIR.substring(0, index+1);
 }
 /**
  * Returns a string representation of the given URL String.  This converts
@@ -496,7 +512,7 @@ private static int hexToByte(byte b) {
 		case 'F':
 		case 'f':return 15;
 		default:
-			throw new IllegalArgumentException("Switch error decoding URL");
+			throw new IllegalArgumentException("Switch error decoding URL"); //$NON-NLS-1$
 	}
 }
 /**
@@ -518,6 +534,10 @@ private static String[] initialize(URL pluginPathLocation/*R1.0 compatibility*/,
 	String[] appArgs = processCommandLine(args);
 	// Do setupSystemContext() ASAP after processCommandLine
 	setupSystemContext();
+
+	// call before referencing DelegatingURLClassLoader
+	initializeBootDir();
+
 	// setup the devClassPath if any
 	DelegatingURLClassLoader.devClassPath = devClassPath;
 
@@ -560,7 +580,23 @@ public static boolean isRunning() {
 public static boolean isStarting() {
 	return starting;
 }
-
+/**
+ * Return a boolean value indicating whether or not the user requested
+ * to read the classloader properties file for performance enhancement. */
+static boolean useClassLoaderProperties() {
+	return useClassLoaderProperties;
+}
+/**
+ * Return the name of the file to be used for the class loader properties.  */
+static String getClassLoaderPropertiesFilename() {
+	return classLoaderPropertiesFilename;
+}
+/**
+ * Return the default name for the class loader properties file.
+ */
+static String getDefaultClassLoaderPropertiesFilename() {
+	return BOOTDIR + "classloader.properties"; //$NON-NLS-1$
+}
 private static void loadOptions() {
 	// if no debug option was specified, don't even bother to try.
 	// Must ensure that the options slot is null as this is the signal to the
@@ -615,6 +651,7 @@ private static String[] processCommandLine(String[] args) throws Exception {
 	for (int i = 0; i < args.length; i++) {
 		boolean found = false;
 		// check for args without parameters (i.e., a flag arg)
+
 		// check if debug should be enabled for the entire platform
 		// If this is the last arg or there is a following arg (i.e., arg+1 has a leading -), 
 		// simply enable debug.  Otherwise, assume that that the following arg is
@@ -622,6 +659,15 @@ private static String[] processCommandLine(String[] args) throws Exception {
 		if (args[i].equalsIgnoreCase(DEBUG) && ((i + 1 == args.length) || ((i + 1 < args.length) && (args[i + 1].startsWith("-"))))) { //$NON-NLS-1$
 			found = true;
 			debugRequested = true;
+		}
+
+		// check to see if we should be using a the classloader package prefix file.
+		// If this is the last arg or there is a following arg (i.e., arg+1 has a leading -), 
+		// simply enable the option.  Otherwise, assume that that the following arg is
+		// actually the filename of the file.  This will be processed below.
+		if (args[i].equalsIgnoreCase(CLASSLOADER_PROPERTIES) && ((i + 1 == args.length) || ((i + 1 < args.length) && (args[i + 1].startsWith("-"))))) { //$NON-NLS-1$
+			useClassLoaderProperties = true;
+			found = true;
 		}
 
 		// check if development mode should be enabled for the entire platform
@@ -650,6 +696,13 @@ private static String[] processCommandLine(String[] args) throws Exception {
 			found = true;
 			debugRequested = true;
 			debugOptionsFilename = arg;
+		}
+
+		// look for the classloader package prefix file location.  
+		if (args[i - 1].equalsIgnoreCase(CLASSLOADER_PROPERTIES)) {
+			found = true;
+			useClassLoaderProperties = true;
+			classLoaderPropertiesFilename = arg;
 		}
 
 		// look for the development mode and class path entries.  

@@ -11,14 +11,13 @@
 
 package org.eclipse.core.internal.plugins;
 
-import java.net.URL;
-import java.util.ArrayList;
-
-import org.eclipse.core.boot.BootLoader;
-import org.eclipse.core.internal.boot.DelegatingURLClassLoader;
-import org.eclipse.core.internal.boot.URLContentFilter;
-import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.boot.BootLoader;
+import org.eclipse.core.internal.boot.*;
+import org.eclipse.core.internal.runtime.Policy;
+import java.io.File;
+import java.util.*;
+import java.net.URL;
 
 /**
  * Plugin class loader.
@@ -42,6 +41,8 @@ public PluginClassLoader(URL[] codePath, URLContentFilter[] codeFilters, URL[] r
 	super(codePath, codeFilters, resourcePath, resourceFilters, parent);
 	this.descriptor = descriptor;
 	base = descriptor.getInstallURL();
+	// prime the prefix list.  XXX eventually this will change to read an extension for this plugin
+	prefixs = getArrayFromList((String)prefixTable.get(getPrefixId()));
 	debugConstruction(); // must have initialized loader
 
 	//	Note: initializeImportedLoaders() is called by PluginDescriptor.getPluginClassLoader().
@@ -83,7 +84,7 @@ public String debugId() {
  * @param checkParents whether the parent of this loader should be consulted
  * @return the resulting class
  */
-protected Class findClassParentsSelf(final String name, boolean resolve, DelegatingURLClassLoader requestor, boolean checkParents) {
+protected Class internalFindClassParentsSelf(final String name, boolean resolve, DelegatingURLClassLoader requestor, boolean checkParents) {
 	Class result = null;
 	synchronized (this) {
 		// check the cache.  If we find something, check to see if its visible.
@@ -161,6 +162,12 @@ protected Class findClassParentsSelf(final String name, boolean resolve, Delegat
 public PluginDescriptor getPluginDescriptor() {
 	return descriptor;
 }
+/**
+ * Returns the id to use to lookup class prefixs for this loader
+ */
+protected String getPrefixId() {
+	return descriptor.getUniqueIdentifier();
+ }
 public void initializeImportedLoaders() {
 	PluginDescriptor desc = getPluginDescriptor();
 	IPluginPrerequisite[] prereqs = desc.getPluginPrerequisites();

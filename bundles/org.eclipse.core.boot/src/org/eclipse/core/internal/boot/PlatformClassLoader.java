@@ -27,10 +27,18 @@ public PlatformClassLoader(URL[] searchPath, URLContentFilter[] filters, ClassLo
 	this.base = base;
 	if (singleton == null)
 		singleton = this;
+	prefixs = getArrayFromList((String)prefixTable.get(getPrefixId()));
 	debugConstruction(); // must have initialized loader
 }
 protected String debugId() {
 	return "PLATFORM"; //$NON-NLS-1$
+}
+
+/**
+ * Returns the id to use to lookup class prefixs for this loader
+ */
+protected String getPrefixId() {
+	return InternalBootLoader.RUNTIMENAME;
 }
 /**
  * Finds and loads the class with the specified name from the URL search
@@ -46,7 +54,7 @@ protected String debugId() {
  * @param checkParents whether to check the parent loader
  * @return the resulting class
  */
-protected Class findClassParentsSelf(final String name, boolean resolve, DelegatingURLClassLoader requestor, boolean checkParents) {
+protected Class internalFindClassParentsSelf(final String name, boolean resolve, DelegatingURLClassLoader requestor, boolean checkParents) {
 	Class result = null;
 	synchronized (this) {
 		// check the cache.  If we find something, check to see if its visible.
