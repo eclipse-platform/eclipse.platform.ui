@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.help" id="luceneAnalyzer" name="Lucene Analyzer"/>
       </appInfo>
       <documentation>
-         This extension oint is used to register text analyzers for use by help when indexng and searching documentation.
+         This extension point is used to register text analyzers for use by help when indexing and searching documentation.
 &lt;p&gt;
 Help exploits capabilities of the Lucene search engine, that allows indexing of token streams (streams of words).
 Analyzers create tokens from the character stream.  They examine text content and provide tokens for use with the index.
@@ -16,7 +16,9 @@ Since the documentation is mostly human-readable text, it is desired that analyz
 perform language and grammar aware tokenization and normalization of indexed text.
 For some languages, the quality of search increases significantly if stop word removal and stemming is performed
 on the indexed text.
-This extension point allows configuring analyzers for the languages that default help system does not provide language-aware analyzers.
+&lt;p&gt;
+The analyzer contributed to this extension point will override the one provided by the Eclipse help system for a given locale.
+&lt;/p&gt;
       </documentation>
    </annotation>
 
@@ -112,9 +114,7 @@ number of search hits by making search case-sensitive.
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         Help system comes with English and German analyzers, that are configured to be used for en and de locales respectively.
-These analyzers perform stop word filtering, lowercase filtering, and stemming.  For languages that no analyzers are 
-configured, help uses a simple analyzer that performs lowercase filtering and English stop word filtering.
+         The Eclipse help system provides analyzers for all languages. For English and German, the analyzers perform stop word filtering, lowercase filtering, and stemming. For all the other languages the supplied analyzer only performs lowercase filtering.
       </documentation>
    </annotation>
 
