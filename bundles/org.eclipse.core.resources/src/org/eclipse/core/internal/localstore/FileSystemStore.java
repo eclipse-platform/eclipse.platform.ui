@@ -84,14 +84,35 @@ public void delete(File target) throws CoreException {
 		throw new ResourceException(IResourceStatus.FAILED_DELETE_LOCAL, new Path(target.getAbsolutePath()), message, null);
 	}
 }
+/**
+ * Deletes the given file recursively, adding failure info to
+ * the provided status object.
+ */
 public boolean delete(File root, MultiStatus status) {
+	return delete(root, root.getAbsolutePath(), status);
+}
+/**
+ * Deletes the given file recursively, adding failure info to
+ * the provided status object.  The filePath is passed as a parameter
+ * to optimize java.io.File object creation.
+ */
+private boolean delete(File root, String filePath, MultiStatus status) {
 	boolean failedRecursive = false;
 	if (root.isDirectory()) {
 		String[] list = root.list();
-		if (list != null)
-			for (int i = 0; i < list.length; i++)
+		if (list != null) {
+			int parentLength = filePath.length();
+			for (int i = 0, imax = list.length; i < imax; i++) {
+				//optimized creation of child path object
+				StringBuffer childBuffer = new StringBuffer(parentLength+list[i].length()+1);
+				childBuffer.append(filePath);
+				childBuffer.append(File.separatorChar);
+				childBuffer.append(list[i]);
+				String childName = childBuffer.toString();
 				// try best effort on all children so put logical OR at end
-				failedRecursive = !delete(new java.io.File(root, list[i]), status) || failedRecursive;
+				failedRecursive = !delete(new java.io.File(childName), childName, status) || failedRecursive;
+			}
+		}
 	}
 	boolean failedThis = false;
 	try {
