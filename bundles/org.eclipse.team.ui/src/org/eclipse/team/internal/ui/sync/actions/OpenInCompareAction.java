@@ -54,7 +54,7 @@ public class OpenInCompareAction extends Action {
 	private void openEditor() {
 		CompareEditorInput input = getCompareInput();
 		if(input != null) {
-			prefetchFileContents();
+			if (!prefetchFileContents()) return;
 			IEditorPart editor = reuseCompareEditor((SyncInfoCompareInput)input);
 			if(editor != null && editor instanceof IReusableEditor) {
 				CompareUI.openCompareEditor(input);
@@ -71,13 +71,14 @@ public class OpenInCompareAction extends Action {
 	/*
 	 * Prefetching the file contents will cache them for use by the compare editor
 	 */
-	private void prefetchFileContents() {
+	private boolean prefetchFileContents() {
 		ISelection selection = viewer.getViewer().getSelection();
 		Object obj = ((IStructuredSelection)selection).getFirstElement();
 		SyncInfo info = getSyncInfo(obj);
 		final IRemoteResource remote = info.getRemote();
 		final IRemoteResource base = info.getBase();
 		if (remote != null || base != null) {
+			final boolean[] ok = new boolean[] { true };
 			viewer.run(new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					try {
@@ -88,13 +89,17 @@ public class OpenInCompareAction extends Action {
 							base.getContents(Policy.subMonitorFor(monitor, 100));
 						monitor.done();
 					} catch (TeamException e) {
+						ok[0] = false;
+						// The sync viewer will show the error to the user so we need only abort the action
 						throw new InvocationTargetException(e);
 					}
 				}
 			});
+			return ok[0];
 		}
+		return true;
 	}
-
+	
 	private CompareEditorInput getCompareInput() {
 		ISelection selection = viewer.getViewer().getSelection();
 		Object obj = ((IStructuredSelection)selection).getFirstElement();
