@@ -300,11 +300,10 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 		viewer.setContentProvider(provider);
 		viewer.setInput(provider);
 		viewer.setLabelProvider(new ProgressLabelProvider());
-		GridData data = new GridData();
+		GridData data = new GridData(GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL | GridData.FILL_BOTH);
 		data.horizontalSpan = 2;
 		int heightHint = convertHeightInCharsToPixels(10);
 		data.heightHint = heightHint;
-		data.horizontalAlignment = GridData.FILL;
 		viewer.getControl().setLayoutData(data);
 	}
 	/**
