@@ -49,7 +49,7 @@ public void accept(final IResourceProxyVisitor fastVisitor, int memberFlags) thr
 			proxy.requestor = requestor;
 			proxy.info = info;
 			try {
-				fastVisitor.visit(proxy);
+				return fastVisitor.visit(proxy);
 			} catch (CoreException e) {
 				signal[0] = e;
 				//throw an exception to bail out of the traversal
@@ -57,7 +57,6 @@ public void accept(final IResourceProxyVisitor fastVisitor, int memberFlags) thr
 			} finally {
 				proxy.reset();
 			}
-			return true;
 		}
 	};
 	try {
