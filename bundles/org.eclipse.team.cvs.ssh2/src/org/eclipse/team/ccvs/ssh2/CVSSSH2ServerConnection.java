@@ -10,13 +10,15 @@
  ******************************************************************************/
 package org.eclipse.team.ccvs.ssh2;
 import java.io.*;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.IServerConnection;
 import org.eclipse.team.internal.ccvs.core.connection.CVSAuthenticationException;
 import org.eclipse.team.internal.ccvs.ssh.SSHServerConnection;
+import org.eclipse.team.internal.core.streams.*;
+
 import com.jcraft.jsch.*;
-import org.eclipse.team.ccvs.ssh2.Policy;
 public class CVSSSH2ServerConnection implements IServerConnection {
 	private static final String COMMAND = "cvs server"; //$NON-NLS-1$
 	private ICVSRepositoryLocation location;
@@ -35,8 +37,28 @@ public class CVSSSH2ServerConnection implements IServerConnection {
 			ssh1.close();
 			return;
 		}
-		if (channel != null)
-			channel.disconnect();
+		try {
+			if (inputStream != null) {
+				try {
+					inputStream.close();
+				} catch (IOException e) {
+					// Ignore I/O Exception on close
+				}
+			}
+		} finally {
+			try {
+				if (outputStream != null) {
+					try {
+						outputStream.close();
+					} catch (IOException e) {
+						// Ignore I/O Exception on close
+					}
+				}
+			} finally {
+				if (channel != null)
+					channel.disconnect();
+			}
+		} 
 	}
 	public InputStream getInputStream() {
 		if (ssh1 != null) {
@@ -86,8 +108,19 @@ public class CVSSSH2ServerConnection implements IServerConnection {
 				}
 				break;
 			}
-			inputStream = channel_in;
-			outputStream = channel_out;
+			int timeout = location.getTimeout();
+			inputStream = new PollingInputStream(new TimeoutInputStream(new FilterInputStream(channel_in) {
+						public void close() throws IOException {
+							// Don't close the underlying stream as it belongs to the session
+						}
+					},
+					8192 /*bufferSize*/, 1000 /*readTimeout*/, -1 /*closeTimeout*/, true /* growWhenFull */), timeout > 0 ? timeout : 1, monitor);
+			outputStream = new PollingOutputStream(new TimeoutOutputStream(new FilterOutputStream(channel_out) {
+						public void close() throws IOException {
+							// Don't close the underlying stream as it belongs to the session
+						}
+					},
+					8192 /*buffersize*/, 1000 /*writeTimeout*/, 1000 /*closeTimeout*/), timeout > 0 ? timeout : 1, monitor);
 		} catch (JSchException e) {
 			if (e.toString().indexOf("invalid server's version string") == -1) { //$NON-NLS-1$
 				throw new CVSAuthenticationException(e.toString(), CVSAuthenticationException.NO_RETRY);
