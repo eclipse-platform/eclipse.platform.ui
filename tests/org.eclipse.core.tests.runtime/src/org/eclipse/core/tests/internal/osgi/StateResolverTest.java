@@ -156,24 +156,20 @@ public class StateResolverTest extends AbstractStateTest {
 		assertFullyResolved("5.5", b5);
 		assertFullyResolved("5.6", b6);
 	}
-	//TODO: remove or enable, depending on what we decide about
-	// State#getDependentBundles
-	//	public void testDependentBundles() throws BundleException {
-	//		State state = buildComplexState();
-	//		state.resolve();
-	//		BundleDescription[] dependent;
-	//		dependent = state.getDependentBundles(new
-	// BundleDescription[]{state.getBundle(2)});
-	//		assertEquals("1.0", 1, dependent.length);
-	//		assertEquals("1.1", state.getBundle(2), dependent[0]);
-	//		dependent = ((SimpleState) state).getDependentBundles(new
-	// BundleDescription[]{state.getBundle(1)});
-	//		assertEquals("2.0", 4, dependent.length);
-	//		assertContains("2.1", dependent, state.getBundle(1));
-	//		assertContains("2.2", dependent, state.getBundle(2));
-	//		assertContains("2.3", dependent, state.getBundle(4));
-	//		assertContains("2.4", dependent, state.getBundle(6));
-	//	}
+	public void testDependentBundles() throws BundleException {
+		State state = buildComplexState();
+		state.resolve();
+		BundleDescription[] dependent;
+		dependent = StateHelper.getDependentBundles(new BundleDescription[]{state.getBundle(2)});
+		assertEquals("1.0", 1, dependent.length);
+		assertEquals("1.1", state.getBundle(2), dependent[0]);
+		dependent = StateHelper.getDependentBundles(new BundleDescription[]{state.getBundle(1)});
+		assertEquals("2.0", 4, dependent.length);
+		assertContains("2.1", dependent, state.getBundle(1));
+		assertContains("2.2", dependent, state.getBundle(2));
+		assertContains("2.3", dependent, state.getBundle(4));
+		assertContains("2.4", dependent, state.getBundle(6));
+	}
 	public void testLinkageChange() throws BundleException {
 		State state = buildEmptyState();
 		// don't add b1 for now
