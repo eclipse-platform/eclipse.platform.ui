@@ -60,4 +60,8 @@
     </ant>
   </target>
 
+  <!--This target runs the performance test suites and collects results.-->
+  <target name="performance">
+  </target>
+	
 </project>
