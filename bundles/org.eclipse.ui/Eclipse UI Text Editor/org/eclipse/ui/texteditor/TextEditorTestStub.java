@@ -26,8 +26,8 @@ public class TextEditorTestStub {
 	 * Gives access to an instance of FindReplaceDialog.
 	 * @return FindReplaceDialog an instance of FindReplaceDialog.
 	 */
-	public static FindReplaceDialog newFindReplaceDialog(Shell parentShell, String windowTitle, Image windowImage) {
-		return new FindReplaceDialog(parentShell, windowTitle, windowImage);
+	public static FindReplaceDialog newFindReplaceDialog(Shell parentShell) {
+		return new FindReplaceDialog(parentShell);
 	}
 }
 
