@@ -10,6 +10,7 @@ http://www.eclipse.org/legal/cpl-v10.html
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
+import org.eclipse.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.debug.internal.ui.actions.RemoveAllTerminatedAction;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.Action;
@@ -25,7 +26,7 @@ public class ConsoleRemoveAllTerminatedAction extends Action {
 	public ConsoleRemoveAllTerminatedAction() {
 		ImageDescriptor imageDescriptor = DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_REMOVE_ALL);
 		setImageDescriptor(imageDescriptor);
-		setText("Remove All Terminated Launches");
+		setText(ActionMessages.getString("ConsoleRemoveAllTerminatedAction.Remove_All_Terminated_1")); //$NON-NLS-1$
 	}
 
 	public void run() {

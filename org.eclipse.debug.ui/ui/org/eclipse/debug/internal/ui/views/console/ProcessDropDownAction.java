@@ -67,16 +67,15 @@ class ProcessDropDownAction extends Action implements IMenuCreator {
 		if (processes.length > 0) {
 			addMenuSeparator();
 		}
-		
-		if (terminatedLaunches) {
-			Action action = new ConsoleRemoveAllTerminatedAction();
-			addActionToMenu(fMenu, action);
-			addMenuSeparator();
-		}
-		
+				
 		Action action = new ShowCurrentProcessAction(fView);
 		action.setChecked(mode == ConsoleView.MODE_CURRENT_PROCESS);
 		addActionToMenu(fMenu, action);
+		
+		if (terminatedLaunches) {
+			action = new ConsoleRemoveAllTerminatedAction();
+			addActionToMenu(fMenu, action);
+		}		
 			
 		return fMenu;
 	}
