@@ -189,12 +189,14 @@ public void update(boolean force) {
 			// remove obsolete items
 			for (int i = toRemove.size(); --i >= 0;) {
 				ToolItem item = (ToolItem) toRemove.get(i);
-				Control ctrl = item.getControl();
-				if (ctrl != null) {
-					item.setControl(null);
-					ctrl.dispose();
+				if (!item.isDisposed()) {
+					Control ctrl = item.getControl();
+					if (ctrl != null) {
+						item.setControl(null);
+						ctrl.dispose();
+					}
+					item.dispose();
 				}
-				item.dispose();
 			}
 
 			// add new items
