@@ -226,7 +226,16 @@ abstract class EclipseResource implements ICVSResource, Comparable {
 	public byte[] getSyncBytes() throws CVSException {
 		return EclipseSynchronizer.getInstance().getSyncBytes(getIResource());
 	}
-		
+	
+	/*
+	 * @see org.eclipse.team.internal.ccvs.core.ICVSFile#setSyncBytes(byte[])
+	 */
+	public void setSyncBytes(byte[] syncBytes) throws CVSException {
+		if (getParent().isCVSFolder()) {
+			EclipseSynchronizer.getInstance().setSyncBytes(getIResource(), syncBytes);
+		}
+	}
+	
 	/*
 	 * @see ICVSResource#getSyncInfo()
 	 */

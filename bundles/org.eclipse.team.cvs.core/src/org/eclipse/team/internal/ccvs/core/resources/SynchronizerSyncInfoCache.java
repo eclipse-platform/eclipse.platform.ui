@@ -33,6 +33,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
+import org.eclipse.team.internal.ccvs.core.util.Util;
 
 /**
  * This cache uses session properties to hold the bytes representing the sync
@@ -257,26 +258,12 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 				// ensure that the sync info is not already set to the same thing.
 				// We do this to avoid causing a resource delta when the sync info is 
 				// initially loaded (i.e. the synchronizer has it and so does the Entries file
-				if (oldBytes == null || !equals(syncBytes, oldBytes))
+				if (oldBytes == null || !Util.equals(syncBytes, oldBytes))
 					getWorkspaceSynchronizer().setSyncInfo(RESOURCE_SYNC_KEY, resource, syncBytes);
 			}
 		} catch (CoreException e) {
 			throw CVSException.wrapException(e);
 		}
-	}
-	
-	/**
-	 * Method equals.
-	 * @param syncBytes
-	 * @param oldBytes
-	 * @return boolean
-	 */
-	private boolean equals(byte[] syncBytes, byte[] oldBytes) {
-		if (syncBytes.length != oldBytes.length) return false;
-		for (int i = 0; i < oldBytes.length; i++) {
-			if (oldBytes[i] != syncBytes[i]) return false;
-		}
-		return true;
 	}
 
 	/**

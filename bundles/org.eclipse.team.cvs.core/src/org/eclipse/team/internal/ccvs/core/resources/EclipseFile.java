@@ -572,14 +572,7 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 		EclipseSynchronizer.getInstance().flushDirtyCache(getIFile(), IResource.DEPTH_ZERO);
 
 	}
-	/**
-	 * @see org.eclipse.team.internal.ccvs.core.ICVSFile#setSyncBytes(byte[])
-	 */
-	public void setSyncBytes(byte[] syncBytes) throws CVSException {
-		if (getParent().isCVSFolder()) {
-			EclipseSynchronizer.getInstance().setSyncBytes(getIFile(), syncBytes);
-		}
-	}
+	
 	/**
 	 * @see org.eclipse.team.internal.ccvs.core.resources.EclipseResource#run(org.eclipse.team.internal.ccvs.core.ICVSRunnable, org.eclipse.core.runtime.IProgressMonitor)
 	 */

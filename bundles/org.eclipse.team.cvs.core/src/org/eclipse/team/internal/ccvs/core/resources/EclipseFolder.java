@@ -36,6 +36,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.core.util.Util;
 
 /**
  * Implements the ICVSFolder interface on top of an 
@@ -207,7 +208,12 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 				synchronizer.setFolderSync((IContainer)resource, folderInfo);
 				// the server won't add directories as sync info, therefore it must be done when
 				// a directory is shared with the repository.
-				setSyncInfo(new ResourceSyncInfo(getName()));
+				byte[] newSyncBytes = new ResourceSyncInfo(getName()).getBytes();
+				byte[] oldSyncBytes = getSyncBytes();
+				// only set the bytes if the new differes from the old.
+				// this avoids unnecessary saving of sync files
+				if (oldSyncBytes == null || ! Util.equals(newSyncBytes, oldSyncBytes))
+					setSyncBytes(newSyncBytes);
 				// if the sync info changed from null, we may need to adjust the ancestors
 				if (oldInfo == null) {
 					int count = synchronizer.getDirtyCount((IContainer)getIResource());

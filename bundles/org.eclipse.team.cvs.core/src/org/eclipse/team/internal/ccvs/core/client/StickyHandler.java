@@ -60,9 +60,12 @@ class StickyHandler extends ResponseHandler {
 		FolderSyncInfo syncInfo = folder.getFolderSyncInfo();
 		// Added to ignore sync info for workspace root
 		if (syncInfo == null) return;
-		folder.setFolderSyncInfo(new FolderSyncInfo(syncInfo.getRepository(),
+		FolderSyncInfo newInfo = new FolderSyncInfo(syncInfo.getRepository(),
 			syncInfo.getRoot(), tag != null ? new CVSEntryLineTag(tag) : null,
-			syncInfo.getIsStatic()));
+			syncInfo.getIsStatic());
+		// only set the sync info if it has changed
+		if (!syncInfo.equals(newInfo))
+			folder.setFolderSyncInfo(newInfo);
 	}
 }
 

@@ -304,4 +304,18 @@ public class Util {
 		System.arraycopy(bytes, start + 1, result, 0, length);
 		return result;
 	}
+	
+	/**
+	 * Method equals.
+	 * @param syncBytes
+	 * @param oldBytes
+	 * @return boolean
+	 */
+	public static boolean equals(byte[] syncBytes, byte[] oldBytes) {
+		if (syncBytes.length != oldBytes.length) return false;
+		for (int i = 0; i < oldBytes.length; i++) {
+			if (oldBytes[i] != syncBytes[i]) return false;
+		}
+		return true;
+	}
 }

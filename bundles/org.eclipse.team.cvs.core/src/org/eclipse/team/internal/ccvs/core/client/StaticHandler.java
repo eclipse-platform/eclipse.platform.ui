@@ -54,8 +54,11 @@ class StaticHandler extends ResponseHandler {
 		FolderSyncInfo syncInfo = folder.getFolderSyncInfo();
 		// Added to ignore sync info for workspace root
 		if (syncInfo == null) return;
-		folder.setFolderSyncInfo(new FolderSyncInfo(syncInfo.getRepository(),
-			syncInfo.getRoot(), syncInfo.getTag(), setStaticDirectory));
+		FolderSyncInfo newInfo = new FolderSyncInfo(syncInfo.getRepository(),
+			syncInfo.getRoot(), syncInfo.getTag(), setStaticDirectory);
+		// only set the sync info if it has changed
+		if (!syncInfo.equals(newInfo))
+			folder.setFolderSyncInfo(newInfo);
 	}
 }
 
