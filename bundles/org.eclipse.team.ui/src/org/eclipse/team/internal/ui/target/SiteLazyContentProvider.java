@@ -8,11 +8,8 @@ public class SiteLazyContentProvider extends WorkbenchContentProvider {
 		if (element == null) {
 			return false;
 		}
-		if(element instanceof SiteElement) {
-			return true;
-		}
 		// the + box will always appear, but then disappear
 		// if not needed after you first click on it.
-		return super.hasChildren(element);
+		return true;	// just always return true to avoid going to server
 	}
 }
