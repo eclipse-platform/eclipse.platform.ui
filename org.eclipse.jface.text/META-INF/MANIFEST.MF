@@ -1,0 +1,34 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %pluginName
+Bundle-SymbolicName: org.eclipse.jface.text
+Bundle-Version: 3.1.0
+Bundle-ClassPath: jfacetext.jar
+Bundle-Vendor: %providerName
+Bundle-Localization: plugin
+Export-Package: 
+ org.eclipse.jface.contentassist,
+ org.eclipse.jface.contentassist.images,
+ org.eclipse.jface.internal.text,
+ org.eclipse.jface.internal.text.link.contentassist,
+ org.eclipse.jface.text,
+ org.eclipse.jface.text.contentassist,
+ org.eclipse.jface.text.formatter,
+ org.eclipse.jface.text.hyperlink,
+ org.eclipse.jface.text.information,
+ org.eclipse.jface.text.link,
+ org.eclipse.jface.text.presentation,
+ org.eclipse.jface.text.reconciler,
+ org.eclipse.jface.text.rules,
+ org.eclipse.jface.text.source,
+ org.eclipse.jface.text.source.projection,
+ org.eclipse.jface.text.source.projection.images,
+ org.eclipse.jface.text.templates,
+ org.eclipse.jface.text.templates.persistence
+Require-Bundle: 
+ org.eclipse.core.runtime,
+ org.eclipse.text;visibility:=reexport,
+ org.eclipse.swt,
+ org.eclipse.jface,
+ org.eclipse.core.commands
+Eclipse-AutoStart: true

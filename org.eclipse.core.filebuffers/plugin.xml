@@ -1,23 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<plugin
-   id="org.eclipse.core.filebuffers"
-   name="%pluginName"
-   version="3.1.0"
-   provider-name="%providerName"
-   class="org.eclipse.core.internal.filebuffers.FileBuffersPlugin">
-
-   <runtime>
-      <library name="filebuffers.jar">
-         <export name="*"/>
-      </library>
-   </runtime>
-   <requires>
-      <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.core.resources"/>
-      <import plugin="org.eclipse.text"/>
-   </requires>
-
+<plugin>
 
    <extension-point id="documentCreation" name="%documentCreationPoint" schema="schema/documentCreation.exsd"/>
    <extension-point id="documentSetup" name="%documentSetupPoint" schema="schema/documentSetup.exsd"/>

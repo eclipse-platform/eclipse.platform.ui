@@ -1,0 +1,25 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %pluginName
+Bundle-SymbolicName: org.eclipse.ui.editors; singleton:=true
+Bundle-Version: 3.1.0
+Bundle-ClassPath: editors.jar
+Bundle-Activator: org.eclipse.ui.internal.editors.text.EditorsPlugin
+Bundle-Vendor: %providerName
+Bundle-Localization: plugin
+Export-Package: 
+ org.eclipse.ui.editors.text,
+ org.eclipse.ui.editors.text.templates,
+ org.eclipse.ui.internal.editors.quickdiff,
+ org.eclipse.ui.internal.editors.text,
+ org.eclipse.ui.internal.texteditor,
+ org.eclipse.ui.texteditor
+Require-Bundle: 
+ org.eclipse.core.runtime,
+ org.eclipse.ui.ide,
+ org.eclipse.ui.workbench.texteditor,
+ org.eclipse.ui,
+ org.eclipse.jface.text,
+ org.eclipse.core.filebuffers;visibility:=reexport,
+ org.eclipse.core.resources
+Eclipse-AutoStart: true

@@ -1,0 +1,25 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %pluginName
+Bundle-SymbolicName: org.eclipse.ui.workbench.texteditor; singleton:=true
+Bundle-Version: 3.1.0
+Bundle-ClassPath: texteditor.jar
+Bundle-Activator: org.eclipse.ui.internal.texteditor.TextEditorPlugin
+Bundle-Vendor: %providerName
+Bundle-Localization: plugin
+Export-Package: 
+ org.eclipse.ui.contentassist,
+ org.eclipse.ui.internal.texteditor,
+ org.eclipse.ui.internal.texteditor.quickdiff,
+ org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer,
+ org.eclipse.ui.internal.texteditor.spelling,
+ org.eclipse.ui.texteditor,
+ org.eclipse.ui.texteditor.link,
+ org.eclipse.ui.texteditor.quickdiff,
+ org.eclipse.ui.texteditor.spelling,
+ org.eclipse.ui.texteditor.templates
+Require-Bundle: 
+ org.eclipse.core.runtime,
+ org.eclipse.jface.text,
+ org.eclipse.ui
+Eclipse-AutoStart: true

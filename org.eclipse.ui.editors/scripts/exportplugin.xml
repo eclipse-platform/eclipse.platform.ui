@@ -23,6 +23,9 @@
 		<copy file="plugin.properties" todir="${dest}"/>
 		<copy todir= "${dest}/icons">
 			<fileset dir="icons"/>
+		</copy>
+		<copy todir= "${dest}/META-INF">
+			<fileset dir="META-INF"/>
 		</copy>		
 		<zip zipfile="${dest}/editorssrc.zip">
 		    <fileset dir="src" />

@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %pluginName
+Bundle-SymbolicName: org.eclipse.text
+Bundle-Version: 3.1.0
+Bundle-ClassPath: text.jar
+Bundle-Vendor: %providerName
+Bundle-Localization: plugin
+Export-Package: 
+ org.eclipse.jface.text,
+ org.eclipse.jface.text.link,
+ org.eclipse.jface.text.projection,
+ org.eclipse.jface.text.source,
+ org.eclipse.jface.text.templates,
+ org.eclipse.text.edits
+Eclipse-AutoStart: true
