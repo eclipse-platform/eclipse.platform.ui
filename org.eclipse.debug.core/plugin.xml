@@ -1,37 +1,59 @@
-<?xml version="1.0"?>
-
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- File written by PDE 1.0 -->
 <plugin
-    name = "DebugTools"
-    id = "org.eclipse.debug.core" 
-    version = "0.105.0"
-    vendor-name = "OTI"
-    class="org.eclipse.debug.core.DebugPlugin">
+   id="org.eclipse.debug.core"
+   name="DebugTools"
+   version="0.105.0"
+   provider-name="Object Technology International, Inc."
+   class="org.eclipse.debug.core.DebugPlugin">
+
+<!-- Required plugins -->
 
 <requires>
-  <import plugin="org.apache.xerces"/>
-  <import plugin="org.eclipse.core.resources"/>
+   <import plugin="org.apache.xerces"/>
+   <import plugin="org.eclipse.core.resources"/>
 </requires>
 
+<!-- Runtime -->
+
 <runtime>
-  <library name="dtcore.jar" > 
-     <export name= "*" />
-  </library>
+   <library name="dtcore.jar">
+      <export name="*"/>
+   </library>
 </runtime>
 
-<extension-point name="Launcher" id="launchers"/>
+<!-- Extension points -->
 
-<extension id="breakpoint" point="org.eclipse.core.resources.markers">
-	<super type="org.eclipse.core.resources.marker"/>
-	<persistent value="true"/>
-	<attribute name="modelIdentifier"/>
-	<attribute name="enabled"/>
+<extension-point id="launchers" name="Launcher"/>
+
+<!-- Extensions -->
+<extension
+      id="breakpoint"
+      point="org.eclipse.core.resources.markers">
+   <super
+         type="org.eclipse.core.resources.marker">
+   </super>
+   <persistent
+         value="true">
+   </persistent>
+   <attribute
+         name="modelIdentifier">
+   </attribute>
+   <attribute
+         name="enabled">
+   </attribute>
 </extension>
-
-<extension id="lineBreakpoint" point="org.eclipse.core.resources.markers">
-	<super type="org.eclipse.debug.core.breakpoint"/>
-	<super type="org.eclipse.core.resources.textmarker"/>
-	<persistent value="true"/>
+<extension
+      id="lineBreakpoint"
+      point="org.eclipse.core.resources.markers">
+   <super
+         type="org.eclipse.debug.core.breakpoint">
+   </super>
+   <super
+         type="org.eclipse.core.resources.textmarker">
+   </super>
+   <persistent
+         value="true">
+   </persistent>
 </extension>
-
 </plugin>
-

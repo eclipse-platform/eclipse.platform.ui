@@ -6,7 +6,6 @@
     <classpathentry kind="lib"
         path="C:/eclipse/plugins/org.eclipse.core.runtime/runtime.jar" sourcepath="C:/eclipse/plugins/org.eclipse.core.runtime/runtimesrc.zip"/>
     <classpathentry kind="lib"
-        path="C:/eclipse/plugins/org.eclipse.core.resources/resources.jar"
-        rootpath="" sourcepath="C:/eclipse/plugins/org.eclipse.core.resources/resourcessrc.zip"/>
+        path="C:/eclipse/plugins/org.eclipse.core.resources/resources.jar" sourcepath="C:/eclipse/plugins/org.eclipse.core.resources/resourcessrc.zip"/>
     <classpathentry kind="output" path="bin"/>
 </classpath>
