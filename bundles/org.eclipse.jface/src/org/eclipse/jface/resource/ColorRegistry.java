@@ -116,18 +116,17 @@ public class ColorRegistry extends ResourceRegistry {
     /**
      * Create a new <code>Color</code> on the receivers <code>Display</code>.
      * 
-     * @param symbolicName the symbolic color name.
      * @param rgb the <code>RGB</code> data for the color.
      * @return the new <code>Color</code> object.
      */
-    private Color createColor(String symbolicName, RGB rgb) {
+    private Color createColor(RGB rgb) {
         return new Color(display, rgb);
     }
 
     /**
      * Dispose of all of the <code>Color</code>s in this iterator.
      * 
-     * @param Iterator over <code>Collection</code> of <code>Color</code>
+     * @param iterator over <code>Collection</code> of <code>Color</code>
      */
     private void disposeColors(Iterator iterator) {
         while (iterator.hasNext()) {
@@ -156,7 +155,7 @@ public class ColorRegistry extends ResourceRegistry {
         if (result == null)
             return null;
 
-        color = createColor(symbolicName, (RGB) result);
+        color = createColor((RGB) result);
 
         stringToColor.put(symbolicName, color);
 
