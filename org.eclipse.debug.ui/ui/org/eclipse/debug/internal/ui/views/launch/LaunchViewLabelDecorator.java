@@ -312,12 +312,11 @@ public class LaunchViewLabelDecorator extends LabelProvider implements ILabelDec
 								resumedThreads.add(thread);
 							}
 						}
-					} else {
-						synchronized (fCurrentStackFrameLock) {
-							fCurrentStackFrame= null;
-						}
 					}
 					fLabelProvider.textComputed(element, fJobPresentation.getText(element));
+					synchronized (fCurrentStackFrameLock) {
+						fCurrentStackFrame= null;
+					}
 					computedElements.add(element);
 				}
 				labelsComputed(computedElements.toArray());
