@@ -1,5 +1,10 @@
 package org.eclipse.team.internal.ccvs.ui.model;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+ 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
