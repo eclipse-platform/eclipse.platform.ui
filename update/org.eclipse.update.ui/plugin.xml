@@ -22,7 +22,7 @@
    </requires>
 
 
-   <extension-point id="searchCategory" name="Search Category" schema="schema/searchCategory.xsd"/>
+   <extension-point id="searchCategory" name="Search Category" schema="schema/searchCategory.exsd"/>
 
    <extension
          point="org.eclipse.ui.actionSets">
