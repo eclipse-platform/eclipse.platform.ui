@@ -28,9 +28,9 @@
 			includeAntRuntime="yes"
 			bootclasspath="${bootclasspath}" 
 			classpath="${basedir}/../org.eclipse.core.runtime/bin;
-					${eclipse.home}/plugins/org.eclipse.core.runtime${version.suffix.old}/runtime.jar;
+					${eclipse.home}/plugins/org.eclipse.core.runtime${version.suffix}/runtime.jar;
 					${basedir}/../org.eclipse.osgi/bin;
-					${eclipse.home}/plugins/org.eclipse.osgi${version.suffix.old}/osgi.jar;
+					${eclipse.home}/plugins/org.eclipse.osgi${version.suffix}/osgi.jar;
 					${basedir}/bin">
 			<src path="src_ant/"/>
 		</javac>
