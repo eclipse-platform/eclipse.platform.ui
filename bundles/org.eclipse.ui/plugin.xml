@@ -1044,6 +1044,7 @@
             id="org.eclipse.ui.internal.introview">
       </view>
       <stickyView
+      		location="RIGHT"
             id="org.eclipse.ui.internal.introview">
       </stickyView>
    </extension>

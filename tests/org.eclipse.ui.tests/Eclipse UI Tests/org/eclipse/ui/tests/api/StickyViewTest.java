@@ -31,17 +31,34 @@ public class StickyViewTest extends UITestCase {
         super(testName);
     }
 
+
+    public void testStackPlacementRight() {
+        testStackPlacement("Right");
+    }
+    
+    public void testStackPlacementLeft() {
+        testStackPlacement("Left");
+    }
+    
+    public void testStackPlacementTop() {
+        testStackPlacement("Top");
+    }
+    
+    public void testStackPlacementBottom() {
+        testStackPlacement("Bottom");
+    }
+
     /**
      * Tests to ensure that sticky views are opened in the same stack.
      */
-    public void testStackPlacement() {
+    private void testStackPlacement(String location) {
         IWorkbenchWindow window = openTestWindow();
         IWorkbenchPage page = window.getActivePage();
         
         try {
-            IViewPart part1 = page.showView("org.eclipse.ui.tests.api.StickyView1");
+            IViewPart part1 = page.showView("org.eclipse.ui.tests.api.StickyView" + location + "1");
             assertNotNull(part1);
-            IViewPart part2 = page.showView("org.eclipse.ui.tests.api.StickyView2");
+            IViewPart part2 = page.showView("org.eclipse.ui.tests.api.StickyView" + location + "2");
             assertNotNull(part2);
             IViewPart [] stack = page.getViewStack(part1);
 
@@ -51,6 +68,7 @@ public class StickyViewTest extends UITestCase {
         } catch (PartInitException e) {
             fail(e.getMessage());
         }
+        
     }
     
     /**
@@ -61,7 +79,7 @@ public class StickyViewTest extends UITestCase {
         IWorkbenchPage page = window.getActivePage();
         
         try {
-            IViewPart part1 = page.showView("org.eclipse.ui.tests.api.StickyView1");
+            IViewPart part1 = page.showView("org.eclipse.ui.tests.api.StickyViewRight1");
             assertNotNull(part1);
 
             IViewPart [] stack = page.getViewStack(part1);
@@ -91,9 +109,9 @@ public class StickyViewTest extends UITestCase {
         IWorkbenchWindow window = openTestWindow();   
         IWorkbenchPage page = window.getActivePage();
         try {
-            page.showView("org.eclipse.ui.tests.api.StickyView1");
+            page.showView("org.eclipse.ui.tests.api.StickyViewRight1");
             page.resetPerspective();
-            assertNotNull(page.findView("org.eclipse.ui.tests.api.StickyView1"));
+            assertNotNull(page.findView("org.eclipse.ui.tests.api.StickyViewRight1"));
         } catch (PartInitException e) {
             fail(e.getMessage());
         }        
@@ -107,9 +125,9 @@ public class StickyViewTest extends UITestCase {
         IWorkbenchPage page = window.getActivePage();
         
         try {
-            page.showView("org.eclipse.ui.tests.api.StickyView1");
+            page.showView("org.eclipse.ui.tests.api.StickyViewRight1");
             page.setPerspective(WorkbenchPlugin.getDefault().getPerspectiveRegistry().findPerspectiveWithId("org.eclipse.ui.tests.api.SessionPerspective"));            
-            assertNotNull(page.findView("org.eclipse.ui.tests.api.StickyView1"));
+            assertNotNull(page.findView("org.eclipse.ui.tests.api.StickyViewRight1"));
         } catch (PartInitException e) {
             fail(e.getMessage());
         }

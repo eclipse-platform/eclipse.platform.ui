@@ -563,11 +563,56 @@ private void loadPredefinedPersp(
 	PageLayout layout = new PageLayout(container, getViewFactory(), editorArea, descriptor);
 	layout.setFixed(descriptor.getFixed());
 
-	// add the placeholder for the sticky folder and its contents
-	IPlaceholderFolderLayout stickyFolder = layout.createPlaceholderFolder(IStickyViewDescriptor.STICKY_FOLDER, IPageLayout.RIGHT, .75f, IPageLayout.ID_EDITOR_AREA);
-	IStickyViewDescriptor [] descs = WorkbenchPlugin.getDefault().getViewRegistry().getStickyViews();
-	for (int i = 0; i < descs.length; i++) {
-    	stickyFolder.addPlaceholder(descs[i].getId());
+	// add the placeholders for the sticky folders and their contents	
+	IPlaceholderFolderLayout stickyFolderRight = null, 
+		stickyFolderLeft = null, 
+		stickyFolderTop = null, 
+		stickyFolderBottom = null;
+	
+	IStickyViewDescriptor [] descs = WorkbenchPlugin
+										.getDefault()
+										.getViewRegistry()
+										.getStickyViews();
+	for (int i = 0; i < descs.length; i++) {	    
+	    String id = descs[i].getId();
+        switch(descs[i].getLocation()) {
+	    	case IPageLayout.RIGHT:
+	    	    if (stickyFolderRight == null)
+	    	        stickyFolderRight = layout.createFolder(
+	    	                IStickyViewDescriptor.STICKY_FOLDER_RIGHT, 
+	    	                IPageLayout.RIGHT, 
+	    	                .75f, 
+	    	                IPageLayout.ID_EDITOR_AREA);
+	    	    stickyFolderRight.addPlaceholder(id);
+	    		break;
+	    	case IPageLayout.LEFT:
+	    	    if (stickyFolderLeft == null)
+	    	        stickyFolderLeft = layout.createFolder(
+	    	                IStickyViewDescriptor.STICKY_FOLDER_LEFT, 
+	    	                IPageLayout.LEFT, 
+	    	                .25f, 
+	    	                IPageLayout.ID_EDITOR_AREA);
+	    	    stickyFolderLeft.addPlaceholder(id);
+	    		break;
+	    	case IPageLayout.TOP:
+	    	    if (stickyFolderTop == null)
+	    	        stickyFolderTop = layout.createFolder(
+	    	                IStickyViewDescriptor.STICKY_FOLDER_TOP, 
+	    	                IPageLayout.TOP, 
+	    	                .25f, 
+	    	                IPageLayout.ID_EDITOR_AREA);
+	    	    stickyFolderTop.addPlaceholder(id);
+	    		break;
+	    	case IPageLayout.BOTTOM:
+	    	    if (stickyFolderBottom == null)
+	    	        stickyFolderBottom = layout.createFolder(
+	    	                IStickyViewDescriptor.STICKY_FOLDER_BOTTOM, 
+	    	                IPageLayout.BOTTOM, 
+	    	                .75f, 
+	    	                IPageLayout.ID_EDITOR_AREA);
+	    	    stickyFolderBottom.addPlaceholder(id);
+	    		break;
+	    }    	
     }
 
 	// Run layout engine.

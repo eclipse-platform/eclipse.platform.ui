@@ -169,7 +169,7 @@ If no value is supplied, a default ratio will be used.
    <element name="stickyView">
       <annotation>
          <documentation>
-            A sticky view is a view that will appear by default across all perspectives in a window once opened.  It will initially appear to the right of the editor area but nothing prevents it from being moved or closed by the user.  Please note that usage of this element should be done with great care and should only be applied to views that truely have a need to live across perspectives.
+            A sticky view is a view that will appear by default across all perspectives in a window once it is opened.  Its initial placement is governemed by the location attribute, but nothing prevents it from being moved or closed by the user.  Use of this element will only cause a placeholder for the view to be created, it will not show the view.  Please note that usage of this element should be done with great care and should only be applied to views that truely have a need to live across perspectives.
          </documentation>
       </annotation>
       <complexType>
@@ -179,6 +179,25 @@ If no value is supplied, a default ratio will be used.
                   the id of the view to be made sticky.
                </documentation>
             </annotation>
+         </attribute>
+         <attribute name="location">
+            <annotation>
+               <documentation>
+                  optional attribute that specifies the location of the sticky view relative to the editor area.  If absent, the view will be docked to the right of the editor area.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="RIGHT">
+                  </enumeration>
+                  <enumeration value="LEFT">
+                  </enumeration>
+                  <enumeration value="TOP">
+                  </enumeration>
+                  <enumeration value="BOTTOM">
+                  </enumeration>
+               </restriction>
+            </simpleType>
          </attribute>
       </complexType>
    </element>

@@ -17,7 +17,10 @@ package org.eclipse.ui.internal.registry;
  * @since 3.0
  */
 public interface IStickyViewDescriptor {
-    public static final String STICKY_FOLDER = "stickyFolder"; //$NON-NLS-1$
+    public static final String STICKY_FOLDER_RIGHT = "stickyFolderRight"; //$NON-NLS-1$
+    public static final String STICKY_FOLDER_LEFT = "stickyFolderLeft"; //$NON-NLS-1$
+    public static final String STICKY_FOLDER_TOP = "stickyFolderTop"; //$NON-NLS-1$
+    public static final String STICKY_FOLDER_BOTTOM = "stickyFolderBottom"; //$NON-NLS-1$
     
     /**
      * Return the id of the view to be made sticky.
@@ -32,4 +35,13 @@ public interface IStickyViewDescriptor {
      * @return the namespace in which this descriptor was declared
      */
     public String getNamespace();
+    
+    /**
+     * Return the location of this sticky view.  Must be one of 
+     * <code>IPageLayout.LEFT</code>, <code>IPageLayout.RIGHT</code>, 
+     * <code>IPageLayout.TOP</code>, or <code>IPageLayout.BOTTOM</code>.
+     * 
+     * @return the location
+     */
+    public int getLocation();
 }
