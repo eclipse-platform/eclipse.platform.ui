@@ -156,7 +156,6 @@ public abstract class BasicPerformanceTest extends UITestCase {
 	 *            the dimension to show in the summary
 	 */
 	private void tagAsGlobalSummary(String shortName, Dimension dimension) {
-		System.out.println("GLOBAL " + shortName);
 		tester.tagAsGlobalSummary(shortName, dimension);
 	}
 
@@ -172,17 +171,14 @@ public abstract class BasicPerformanceTest extends UITestCase {
 	 *            an array of dimensions to show in the summary
 	 */
 	private void tagAsGlobalSummary(String shortName, Dimension[] dimensions) {
-		System.out.println("GLOBAL " + shortName);
 		tester.tagAsGlobalSummary(shortName, dimensions);
 	}
 	
 	private void tagAsSummary(String shortName, Dimension[] dimensions) {
-		System.out.println("LOCAL " + shortName);
 		tester.tagAsSummary(shortName, dimensions);
 	}
 	
 	private void tagAsSummary(String shortName, Dimension dimension) {
-		System.out.println("LOCAL " + shortName);
 		tester.tagAsSummary(shortName, dimension);
 	}
 	

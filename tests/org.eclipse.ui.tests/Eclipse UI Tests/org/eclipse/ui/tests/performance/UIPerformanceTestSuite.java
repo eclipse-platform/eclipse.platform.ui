@@ -22,14 +22,15 @@ public class UIPerformanceTestSuite extends TestSuite {
      * Returns the suite. This is required to use the JUnit Launcher.
      */
     public static Test suite() {
-        return new UIPerformanceTestSuite();
+    	return new UIPerformanceTestSetup(new UIPerformanceTestSuite());
     }
 
     /**
      * Construct the test suite.
      */
     public UIPerformanceTestSuite() {
-        addTest(new TestSuite(PerspectiveSwitchTest.class));
-        addTest(new TestSuite(EditorSwitchTest.class));
+        addTest(new WorkbenchPerformanceSuite());
+        addTest(new ViewPerformanceSuite());
+        addTest(new EditorPerformanceSuite());
     }
 }
