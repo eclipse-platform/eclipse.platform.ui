@@ -40,9 +40,9 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.ICommandManager;
+import org.eclipse.ui.commands.IKeySequenceBinding;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.KeyStroke;
 import org.eclipse.ui.keys.SWTKeySupport;
 
@@ -141,48 +141,54 @@ public class CyclePartAction extends PageEventAction {
 				//printKeyEvent(e);
 				//System.out.println("accelerat:\t" + accelerator + "\t (" +
 				// KeySupport.formatStroke(Stroke.create(accelerator), true) +
-				// ")");
+                // ")");
 
-				boolean acceleratorForward = false;
-				boolean acceleratorBackward = false;
-				ICommandManager commandManager = PlatformUI.getWorkbench().getCommandSupport().getCommandManager();
+                boolean acceleratorForward = false;
+                boolean acceleratorBackward = false;
 
-				if (commandForward != null) {
-				    if (forwardKeySequenceBindings != null) {
-				        Iterator iterator = forwardKeySequenceBindings.iterator();
+                if (commandForward != null) {
+                    if (forwardKeySequenceBindings != null) {
+                        Iterator iterator = forwardKeySequenceBindings
+                                .iterator();
 
-						while (iterator.hasNext()) {
-                            KeySequence keySequenceBinding = (KeySequence) iterator.next();
-
-							// Compare the last key stroke of the binding.
-							List keyStrokes = keySequenceBinding.getKeyStrokes();
-							if ((!keyStrokes.isEmpty())
-								&& (keyStrokes.get(keyStrokes.size() - 1).equals(keyStroke))) {
-								acceleratorForward = true;
-								break;
-							}
-						}
-					}
-				}
-
-				if (commandBackward != null) {
-				    if (backwardKeySequenceBindings != null) {
-				        Iterator iterator = backwardKeySequenceBindings.iterator();
-
-						while (iterator.hasNext()) {
-							KeySequence keySequenceBinding = (KeySequence) iterator
+                        while (iterator.hasNext()) {
+                            IKeySequenceBinding keySequenceBinding = (IKeySequenceBinding) iterator
                                     .next();
 
-							// Compare the last key stroke of the binding.
-							List keyStrokes = keySequenceBinding.getKeyStrokes();
-							if ((!keyStrokes.isEmpty())
-									&& (keyStrokes.get(keyStrokes.size() - 1).equals(keyStroke))) {
-								acceleratorBackward = true;
-								break;
-							}
-						}
-					}
-				}
+                            // Compare the last key stroke of the binding.
+                            List keyStrokes = keySequenceBinding
+                                    .getKeySequence().getKeyStrokes();
+                            if ((!keyStrokes.isEmpty())
+                                    && (keyStrokes.get(keyStrokes.size() - 1)
+                                            .equals(keyStroke))) {
+                                acceleratorForward = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if (commandBackward != null) {
+                    if (backwardKeySequenceBindings != null) {
+                        Iterator iterator = backwardKeySequenceBindings
+                                .iterator();
+
+                        while (iterator.hasNext()) {
+                            IKeySequenceBinding keySequenceBinding = (IKeySequenceBinding) iterator
+                                    .next();
+
+                            // Compare the last key stroke of the binding.
+                            List keyStrokes = keySequenceBinding
+                                    .getKeySequence().getKeyStrokes();
+                            if ((!keyStrokes.isEmpty())
+                                    && (keyStrokes.get(keyStrokes.size() - 1)
+                                            .equals(keyStroke))) {
+                                acceleratorBackward = true;
+                                break;
+                            }
+                        }
+                    }
+                }
 
 				if (character == SWT.CR || character == SWT.LF)
 					ok(dialog, table);
