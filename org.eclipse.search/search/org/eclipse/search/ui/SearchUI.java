@@ -161,15 +161,21 @@ public final class SearchUI {
 	 * The goto action can decide to use or ignore this preference.
 	 *
 	 * <p>
+	 * [Issue: Work in progress - not yet stable.]
+	 * </p>
+	 * <p>
 	 * [Issue: Always returns <code>true</code> yet due to bug 6784.]
 	 * </p>
+	 * <p>
+	 * [Issue: Bug is now fixed and method. But because it is not yet clear if
+	 *         old style should be supported. Therefore returning <code>false</code>]
+	 * </p>
 	 * 
-	 * @param name the name the working set
 	 * @return <code>true</code> if editors should be reused for showing search results
 	 * @since 2.0
 	 */
 	public static boolean reuseEditor() {
-		return true;
+		return false;
 	}
 
 	/**
