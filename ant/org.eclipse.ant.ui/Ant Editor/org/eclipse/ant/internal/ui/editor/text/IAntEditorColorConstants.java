@@ -19,9 +19,13 @@ package org.eclipse.ant.internal.ui.editor.text;
  */
 public interface IAntEditorColorConstants {
 	
-	public static final String P_XML_COMMENT = "org.eclipse.ant.ui.commentsColor"; //$NON-NLS-1$
-	public static final String P_PROC_INSTR = "org.eclipse.ant.ui.processingInstructionsColor"; //$NON-NLS-1$
-	public static final String P_STRING = "org.eclipse.ant.ui.constantStringsColor"; //$NON-NLS-1$
-	public static final String P_DEFAULT = "org.eclipse.ant.ui.textColor"; //$NON-NLS-1$
-	public static final String P_TAG = "org.eclipse.ant.ui.tagsColor"; //$NON-NLS-1$
+	/**
+	 * The symbolic names for colors used for the various text tokens in the Ant editor
+	 * @see org.eclipse.jface.resource.ColorRegistry
+	 */
+	public static final String XML_COMMENT_COLOR = "org.eclipse.ant.ui.commentsColor"; //$NON-NLS-1$
+	public static final String PROCESSING_INSTRUCTIONS_COLOR = "org.eclipse.ant.ui.processingInstructionsColor"; //$NON-NLS-1$
+	public static final String STRING_COLOR = "org.eclipse.ant.ui.constantStringsColor"; //$NON-NLS-1$
+	public static final String TEXT_COLOR = "org.eclipse.ant.ui.textColor"; //$NON-NLS-1$
+	public static final String TAG_COLOR = "org.eclipse.ant.ui.tagsColor"; //$NON-NLS-1$
 }

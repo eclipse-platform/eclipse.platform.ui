@@ -33,7 +33,7 @@ public class AntEditorProcInstrScanner extends RuleBasedScanner {
 		IRule[] rules =new IRule[2];
         fProcInstructionToken =
             new Token(
-                new TextAttribute(JFaceResources.getColorRegistry().get(IAntEditorColorConstants.P_PROC_INSTR)));
+                new TextAttribute(JFaceResources.getColorRegistry().get(IAntEditorColorConstants.PROCESSING_INSTRUCTIONS_COLOR)));
 
         //Add rule for processing instructions
         rules[0]= new SingleLineRule("<?", "?>", fProcInstructionToken); //$NON-NLS-1$ //$NON-NLS-2$
@@ -43,14 +43,14 @@ public class AntEditorProcInstrScanner extends RuleBasedScanner {
 
         setRules(rules);
         
-        setDefaultReturnToken(new Token(new TextAttribute(JFaceResources.getColorRegistry().get(IAntEditorColorConstants.P_DEFAULT))));
+        setDefaultReturnToken(new Token(new TextAttribute(JFaceResources.getColorRegistry().get(IAntEditorColorConstants.TEXT_COLOR))));
     }
 
 	/**
 	 * Update the text attributes associated with the tokens of this scanner as a color preference has been changed. 
 	 */
 	public void adaptToColorChange() {
-		((Token)fDefaultReturnToken).setData(new TextAttribute(JFaceResources.getColorRegistry().get(IAntEditorColorConstants.P_DEFAULT)));
-		fProcInstructionToken.setData(new TextAttribute(JFaceResources.getColorRegistry().get(IAntEditorColorConstants.P_PROC_INSTR)));
+		((Token)fDefaultReturnToken).setData(new TextAttribute(JFaceResources.getColorRegistry().get(IAntEditorColorConstants.TEXT_COLOR)));
+		fProcInstructionToken.setData(new TextAttribute(JFaceResources.getColorRegistry().get(IAntEditorColorConstants.PROCESSING_INSTRUCTIONS_COLOR)));
 	}
 }

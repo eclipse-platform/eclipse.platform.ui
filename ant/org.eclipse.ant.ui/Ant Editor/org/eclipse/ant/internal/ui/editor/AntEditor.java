@@ -384,11 +384,11 @@ public class AntEditor extends TextEditor {
 	 */
 	protected boolean affectsTextPresentation(PropertyChangeEvent event) {
 		String property= event.getProperty();
-		return property.equals(IAntEditorColorConstants.P_DEFAULT) ||
-		property.equals(IAntEditorColorConstants.P_PROC_INSTR) ||
-		property.equals(IAntEditorColorConstants.P_STRING) ||
-		property.equals(IAntEditorColorConstants.P_TAG) ||
-		property.equals(IAntEditorColorConstants.P_XML_COMMENT);
+		return property.equals(IAntEditorColorConstants.TEXT_COLOR) ||
+		property.equals(IAntEditorColorConstants.PROCESSING_INSTRUCTIONS_COLOR) ||
+		property.equals(IAntEditorColorConstants.STRING_COLOR) ||
+		property.equals(IAntEditorColorConstants.TAG_COLOR) ||
+		property.equals(IAntEditorColorConstants.XML_COMMENT_COLOR);
 	}
 	
 	/* (non-Javadoc)
