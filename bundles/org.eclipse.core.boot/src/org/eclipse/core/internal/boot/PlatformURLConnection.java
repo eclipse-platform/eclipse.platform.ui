@@ -294,7 +294,8 @@ void setResolvedURL(URL url) throws IOException {
 		isJar = -1 != ix;
 		// Resolved URLs containing !/ separator are assumed to be jar URLs.
 		// If the resolved protocol is not jar, new jar URL is created.
-		if (isJar && !url.getProtocol().equals(PlatformURLHandler.JAR)) url = new URL(PlatformURLHandler.JAR,null,-1,url.toExternalForm());
+		if (isJar && !url.getProtocol().equals(PlatformURLHandler.JAR)) 
+			url = new URL(PlatformURLHandler.JAR,"",-1,url.toExternalForm());
 		resolvedURL=url;
 	}
 }
