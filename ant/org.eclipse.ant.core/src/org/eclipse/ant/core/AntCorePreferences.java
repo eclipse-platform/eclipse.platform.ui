@@ -64,7 +64,6 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	/**
 	 * When a preference changes, update the in-memory cache of the preference.
 	 * @see org.eclipse.core.runtime.Preferences.IPropertyChangeListener#propertyChange(org.eclipse.core.runtime.Preferences.PropertyChangeEvent)
-	 * @since 2.1
 	 */
 	public void propertyChange(Preferences.PropertyChangeEvent event) {
 		Preferences prefs = AntCorePlugin.getPlugin().getPluginPreferences();
@@ -689,7 +688,6 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	 * Returns the custom user properties specified for Ant builds.
 	 * 
 	 * @return the properties defined for Ant builds.
-	 * @since 2.1
 	 */
 	public Property[] getCustomProperties() {
 		return customProperties;
@@ -699,7 +697,6 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	 * Returns the custom property files specified for Ant builds.
 	 * 
 	 * @return the property files defined for Ant builds.
-	 * @since 2.1
 	 */
 	public String[] getCustomPropertyFiles() {
 		return customPropertyFiles;
@@ -756,7 +753,6 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	 * changes, updatePluginPreferences must be called.
 	 * 
 	 * @param the absolute paths defining the property files to use.
-	 * @since 2.1
 	 */
 	public void setCustomPropertyFiles(String[] paths) {
 		customPropertyFiles = paths;
@@ -767,7 +763,6 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	 * changes, updatePluginPreferences must be called.
 	 * 
 	 * @param the properties defining the Ant properties
-	 * @since 2.1
 	 */
 	public void setCustomProperties(Property[] properties) {
 		customProperties = properties;
@@ -949,7 +944,6 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	 * May be set to <code>null</code>.
 	 * 
 	 * @param the fully qualified path to Ant home
-	 * @since 2.1
 	 */
 	public void setAntHome(String antHome) {
 		this.antHome= antHome;
@@ -960,7 +954,6 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	 * May be <code>null</code> if Ant home has not been set.
 	 * 
 	 * @return the fully qualified path to Ant home
-	 * @since 2.1
 	 */
 	public String getAntHome() {
 		return antHome;
