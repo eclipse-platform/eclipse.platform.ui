@@ -331,7 +331,7 @@ private URL findNL(URL install, IPath path, Map override) {
 		if (nl.length() == 0)
 			done = true;
 		else {
-			int i = nl.lastIndexOf('_');
+			int i = nl.lastIndexOf('/');
 			if (i < 0)
 				nl = "";
 			else
