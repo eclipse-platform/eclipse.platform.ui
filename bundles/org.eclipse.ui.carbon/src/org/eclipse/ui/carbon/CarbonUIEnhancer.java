@@ -43,7 +43,7 @@ public class CarbonUIEnhancer implements IStartup {
 			try {
 				fgAboutActionName= resourceBundle.getString("AboutAction.name");	//$NON-NLS-1$
 			} catch (MissingResourceException e) {
-				fgAboutActionName= "About Eclipse...";
+				fgAboutActionName= "About Eclipse...";	//$NON-NLS-1$
 			}
 		}
 	}
@@ -133,7 +133,7 @@ public class CarbonUIEnhancer implements IStartup {
 	}
 	
 	/**
-	 * Locate an action in the current menubar by name.
+	 * Locate and run an action in the current menubar by name.
 	 */
 	private int runAction(String name) {
 		IWorkbenchWindow window= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
