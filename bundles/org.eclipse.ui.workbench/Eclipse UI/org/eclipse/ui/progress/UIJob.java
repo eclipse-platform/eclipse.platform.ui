@@ -31,10 +31,12 @@ public abstract class UIJob extends Job {
 
 	/**
 	 * Create a new instance of the receiver with the supplied name.
+	 * <b>NOTE:<b> It is recommended that <code>UIJob(String,Display></code>
+	 * is used if possible so as to prevent unneccessary creation
+	 * of the workbench or a display by the jobs mechanism.
 	 * 
 	 * @param name the job name
 	 * 
-	 * @deprecated use UIJob(Display, String)
 	 */
 	public UIJob(String name) {
 		this(Display.getDefault(), name);
