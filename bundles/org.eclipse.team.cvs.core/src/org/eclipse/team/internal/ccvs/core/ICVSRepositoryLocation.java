@@ -86,5 +86,11 @@ public interface ICVSRepositoryLocation  extends IAdaptable {
 	 * Return the username 
 	 */
 	public String getUsername();
+	
+	/**
+	 * Validate that the receiver can be used to connect to a repository.
+	 * An exception is thrown if connection fails
+	 */
+	public void validateConnection() throws CVSException;
 }
 

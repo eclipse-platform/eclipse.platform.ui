@@ -10,6 +10,7 @@ import java.net.URL;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -68,7 +69,7 @@ public class WorkbenchUserAuthenticator implements IUserAuthenticator {
 		}
 	
 		if (result[0] == null) {
-			throw new CVSOperationCancelledException(Policy.bind("WorkbenchUserAuthenticator.cancelled"));
+			throw new OperationCanceledException(Policy.bind("WorkbenchUserAuthenticator.cancelled"));
 		}
 	
 		updateAndCache(location, userinfo, result[0], result[1]);

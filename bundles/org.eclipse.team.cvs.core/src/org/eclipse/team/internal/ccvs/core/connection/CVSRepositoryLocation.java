@@ -332,10 +332,9 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	 * information, the method returns. Otherwise, an exception
 	 * indicating the problem is throw.
 	 */
-	public boolean validateConnection() throws CVSException {
+	public void validateConnection() throws CVSException {
 		try {
 			openConnection().close();
-			return true;
 		} catch (CVSException e) {
 			// If the validation failed, dispose of any cached info
 			dispose();
