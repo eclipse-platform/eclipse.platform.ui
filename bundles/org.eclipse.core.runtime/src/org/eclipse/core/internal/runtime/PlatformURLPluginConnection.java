@@ -37,7 +37,7 @@ protected URL resolve() throws IOException {
 	String id = getId(ref);
 	String vid = getVersion(ref);
 	PluginRegistryModel registry = (PluginRegistryModel)Platform.getPluginRegistry();
-	pd = vid==null ? registry.getPlugin(id) : registry.getPlugin(id,vid);
+	pd = (vid==null || vid.equals("")) ? registry.getPlugin(id) : registry.getPlugin(id,vid);
 	if (pd == null)
 		throw new IOException("Unable to resolve plug-in " + url.toString());
 	URL result = new URL (pd.getLocation());
