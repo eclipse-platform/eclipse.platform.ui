@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.internal.variables.StringVariableManager;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -27,6 +26,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.variables.IStringVariableManager;
+import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
@@ -109,7 +110,8 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
         try {
             file = configuration.getAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_FILE, (String) null);
             if (file != null) {
-                file = StringVariableManager.getDefault().performStringSubstitution(file);
+                IStringVariableManager stringVariableManager = VariablesPlugin.getDefault().getStringVariableManager();
+                file = stringVariableManager.performStringSubstitution(file);
                 append = configuration.getAttribute(IDebugUIConstants.ATTR_APPEND_TO_FILE, false);
             }
         } catch (CoreException e) {
