@@ -489,13 +489,10 @@ protected void initializeBounds() {
 		Shell shell= getShell();
 		if (shell != null) {
 			Button defaultButton= shell.getDefaultButton();
-			if (defaultButton != null && isContained(buttonBar, defaultButton)) {
-				Composite container= defaultButton.getParent();
+			if (defaultButton != null && isContained(buttonBar, defaultButton))
 				defaultButton.moveBelow(null);
-			}
 		}
 	}
-	
 	super.initializeBounds();
 }
 
@@ -504,16 +501,11 @@ protected void initializeBounds() {
  * container.
  */
 private boolean isContained(Control container, Control c) {
-	if (container instanceof Composite) {
-		Composite composite= (Composite) container;
-		Control[] children= composite.getChildren();
-		if (children != null) {
-			for (int i= 0; i < children.length; i++) {
-				Control child= children[i];
-				if (child == c || isContained(child, c))
-					return true;
-			}
-		}
+	Composite parent;
+	while ((parent= c.getParent()) != null) {
+		if (parent == container)
+			return true;
+		c= parent;
 	}
 	return false;
 }
