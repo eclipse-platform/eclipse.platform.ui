@@ -13,6 +13,7 @@ import java.io.*;
 import java.net.URL;
 import java.net.MalformedURLException;
 import java.util.*;
+import java.util.zip.CRC32;
 
 /**
  * The about info class;
@@ -31,6 +32,10 @@ public class AboutInfo extends NewConfigurationInfo {
 	private ImageDescriptor featureImage;
 	private String aboutText;
 	private URL welcomePageURL;
+	private String featureImageName;
+	private Long featureImageCRC;
+	private boolean calculatedImageCRC = false;
+	private final static int BYTE_ARRAY_SIZE = 2048;
 
 	/**
 	 * Constructs a new instance of the about info.
@@ -60,7 +65,74 @@ public class AboutInfo extends NewConfigurationInfo {
 	public ImageDescriptor getFeatureImage() {
 		return featureImage;
 	}
-	
+
+	/**
+	 * Returns the name of the feature image as supplied in the properties file.
+	 * 
+	 * @return the name of the feature image, or <code>null</code> if none
+	 */
+	public String getFeatureImageName() {
+		return featureImageName;
+	}
+
+	/**
+	 * Returns the CRC of the feature image as supplied in the properties file.
+	 * 
+	 * @return the CRC of the feature image, or <code>null</code> if none
+	 */
+	public Long getFeatureImageCRC() {
+		if (!calculatedImageCRC && featureImageName != null) {
+			featureImageCRC = calculateFeatureImageCRC();
+			calculatedImageCRC = true;
+		}
+		return featureImageCRC;
+	}
+
+	/**
+	 * Calculate a CRC for the feature image
+	 */
+	private Long calculateFeatureImageCRC() {
+		URL url = null;
+		if (featureImageName != null) {
+			url = getDescriptor().find(new Path("$nl$").append(featureImageName));
+		}
+		if (url == null)
+			return null;
+		// Get the image bytes
+		InputStream in = null;
+		ByteArrayOutputStream out = null;
+		try {
+			in = url.openStream();	
+			out = new ByteArrayOutputStream();
+			byte[] buffer = new byte[BYTE_ARRAY_SIZE];
+			int readResult = BYTE_ARRAY_SIZE;
+			while (readResult == BYTE_ARRAY_SIZE) {
+				readResult = in.read(buffer);
+				if (readResult > 0) 
+					out.write(buffer, 0, readResult);
+			}
+			byte[] contents = out.toByteArray();
+			// Calculate the crc
+			CRC32 crc = new CRC32();
+			crc.update(contents);
+			return new Long(crc.getValue());
+		} catch (IOException e) {
+			return null;
+		} finally {
+			if (in != null)
+				try {
+					in.close();
+				} catch (IOException e) {
+				}
+			if (out != null)
+				try {
+					out.close();
+				} catch (IOException e) {
+				}
+		}
+	}	
+		
+
 	/**
 	 * Returns a label for the feature, we use the descriptor label
 	 */
@@ -237,6 +309,7 @@ public class AboutInfo extends NewConfigurationInfo {
 
 		aboutImage = getImage(ini, "largeImage"); //$NON-NLS-1$
 
+		featureImageName = (String) ini.get("featureImage"); //$NON-NLS-1$
 		featureImage = getImage(ini, "featureImage"); //$NON-NLS-1$
 
 		welcomePageURL = getURL(ini, "welcomePage");

@@ -249,7 +249,7 @@ protected Control createDialogArea(Composite parent) {
 	featureContainer.setLayoutData(data);
 	
 	Workbench workbench = (Workbench)PlatformUI.getWorkbench();
-	final AboutInfo[] infoArray = workbench.getFeaturesInfo();
+	final AboutInfo[] infoArray = getFeaturesInfo();
 	for (int i = 0; i < infoArray.length; i++) {
 		ImageDescriptor desc = infoArray[i].getFeatureImage();
 		Image image = null;
@@ -324,6 +324,53 @@ protected Control createDialogArea(Composite parent) {
 
 	return outer;
 }
+/**
+ * Returns the feature infos ensuring that none have duplicate icons and
+ * excluding the primary feature.
+ */
+private AboutInfo[] getFeaturesInfo() {
+	AboutInfo[] rawArray = ((Workbench)PlatformUI.getWorkbench()).getFeaturesInfo();
+	// quickly exclude any that do not have an image
+	ArrayList infoList = new ArrayList();
+	for (int i = 0; i < rawArray.length; i++) {
+		if (rawArray[i].getFeatureImageName() != null)
+			infoList.add(rawArray[i]); 
+	}
+	AboutInfo[] infoArray = (AboutInfo[])infoList.toArray(new AboutInfo[infoList.size()]);
+	
+	// now exclude those with duplicate images
+	infoList = new ArrayList();
+	if (aboutInfo != null 
+		&& aboutInfo.getFeatureImageName() != null)
+		// add the primary feature now, we will remove it later
+		infoList.add(aboutInfo);
+	for (int i = 0; i < infoArray.length; i++) {
+		if (infoArray[i].getFeatureImageName() == null) 
+			break;
+		// check for identical name
+		boolean add = true;
+		for (int j = 0; j < infoList.size(); j++) {
+			AboutInfo current = (AboutInfo)infoList.get(j);
+			if (current.getFeatureImageName().equals(infoArray[i].getFeatureImageName())) {
+				// same name
+				// we have to check if the CRC's are identical
+				Long crc1 = current.getFeatureImageCRC();
+				Long crc2 = infoArray[i].getFeatureImageCRC();
+				if (crc1 == null ? false : crc1.equals(crc2)) {
+					// duplicate
+					add = false;
+					break;
+				}
+			}
+		}
+		if (add)
+			infoList.add(infoArray[i]);
+	}	
+	infoList.remove(aboutInfo);
+	return (AboutInfo[])infoList.toArray(new AboutInfo[infoList.size()]);
+}
+
+
 /**
  * Open a link
  */
