@@ -308,8 +308,8 @@ public abstract class JUnitTestCase extends TestCase {
 			
 	}
 	
-	protected static void assertSynchronizerEmtpy() {
-		if (!Synchronizer.getInstance().isEmpty() && CVSTestSetup.DEBUG)
+	protected static void assertSynchronizerEmpty() {
+		if (!Synchronizer.getInstance().isEmpty() /* && CVSTestSetup.DEBUG */)
 			Synchronizer.getInstance().dump();
 		assertTrue(Synchronizer.getInstance().isEmpty());
 	}

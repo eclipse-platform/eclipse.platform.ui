@@ -68,7 +68,7 @@ public class LocalFileTest extends JUnitTestCase {
 	public void tearDown() throws CVSException {
 		folder1.delete();
 		Synchronizer.getInstance().reload(folder1,new NullProgressMonitor());
-		assertSynchronizerEmtpy();			
+		assertSynchronizerEmpty();			
 		assertTrue(!folder1.exists());
 	}
 

@@ -103,7 +103,7 @@ public class LocalFolderTest extends JUnitTestCase {
 	public void tearDown() throws CVSException {
 		folder1.delete();
 		Synchronizer.getInstance().reload(folder1,new NullProgressMonitor());
-		assertSynchronizerEmtpy();
+		assertSynchronizerEmpty();
 		assertTrue(!folder1.exists());
 	}
 
@@ -398,7 +398,7 @@ public class LocalFolderTest extends JUnitTestCase {
 		
 		file1a.setSyncInfo(new ResourceSyncInfo(entryLineExtra2,null,null));
 		Synchronizer.getInstance().save(new NullProgressMonitor());
-		Synchronizer.getInstance().reload(file1a.getParent().getParent().getParent(),new NullProgressMonitor());
+		Synchronizer.getInstance().reload(file1a.getParent(),new NullProgressMonitor());
 		assertEquals(file1.getSyncInfo().getEntryLine(true),entryLineExtra2);	
 	}
 	

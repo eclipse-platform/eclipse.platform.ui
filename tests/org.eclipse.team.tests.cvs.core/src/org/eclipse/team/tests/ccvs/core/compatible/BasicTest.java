@@ -47,7 +47,7 @@ public class BasicTest extends JUnitTestCase {
 	public void tearDown() throws CVSException {
 		env1.tearDown();
 		env2.tearDown();
-		assertSynchronizerEmtpy();
+		assertSynchronizerEmpty();
 	}
 	
 	public void testAdd() throws Exception {
