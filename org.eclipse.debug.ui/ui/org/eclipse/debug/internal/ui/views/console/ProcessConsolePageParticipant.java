@@ -23,8 +23,6 @@ import org.eclipse.debug.core.model.IStreamsProxy2;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.jface.action.IMenuListener;
-import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -54,7 +52,7 @@ import org.eclipse.ui.part.ShowInContext;
  * 
  * @since 3.1
  */
-public class ProcessConsolePageParticipant implements IConsolePageParticipant, IShowInSource, IShowInTargetList, IDebugEventSetListener, ISelectionListener, IMenuListener {
+public class ProcessConsolePageParticipant implements IConsolePageParticipant, IShowInSource, IShowInTargetList, IDebugEventSetListener, ISelectionListener {
 	
 	// actions
 	private ConsoleTerminateAction fTerminate;
@@ -211,14 +209,6 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
             fView.display(fConsole);
         }
 	}
-
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.action.IMenuListener#menuAboutToShow(org.eclipse.jface.action.IMenuManager)
-     */
-    public void menuAboutToShow(IMenuManager manager) {
-        manager.add(fTerminate);
-        manager.add(fRemoveTerminated);
-    }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.console.IConsolePageParticipant#activated()

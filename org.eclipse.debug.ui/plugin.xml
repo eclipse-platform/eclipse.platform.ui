@@ -2273,4 +2273,28 @@ M4 = Platform-specific fourth key
           	label="%CustomGroups.label"
           	icon="icons/full/obj16/brkp_grp.gif"/>
     </extension>
+    <extension
+          point="org.eclipse.ui.popupMenus">
+       <viewerContribution
+             targetID="org.eclipse.debug.ui.ProcessConsoleType.#TextConsole"
+             id="org.eclipse.debug.ui.processConsoleContextMenu">
+          <action
+                label="%RemoveAllTerminatedAction.label"
+                tooltip="%RemoveAllTerminatedAction.tooltip"
+                icon="icons/full/elcl16/rem_all_co.gif"
+                class="org.eclipse.debug.internal.ui.views.console.ConsoleRemoveAllTerminatedActionDelegate"
+                menubarPath="additions"
+                id="org.eclipse.debug.ui.consoleRemoveAllTerminatedAction"/>
+          <action
+                label="%TerminateAction.label"
+                tooltip="%TerminateAction.tooltip"
+                icon="icons/full/elcl16/terminate_co.gif"
+                class="org.eclipse.debug.internal.ui.views.console.ConsoleTerminateActionDelegate"
+                menubarPath="additions"
+                id="org.eclipse.debug.ui.consoleTerminateAction"/>
+       </viewerContribution>
+    </extension>
+    
+    <!-- Console action contributions -->
+    
 </plugin>

@@ -47,7 +47,6 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.console.actions.ClearOutputAction;
 import org.eclipse.ui.console.actions.TextViewerAction;
 import org.eclipse.ui.internal.console.ConsoleMessages;
-import org.eclipse.ui.internal.console.ConsoleView;
 import org.eclipse.ui.internal.console.FollowHyperlinkAction;
 import org.eclipse.ui.part.IPageBookViewPage;
 import org.eclipse.ui.part.IPageSite;
@@ -56,6 +55,13 @@ import org.eclipse.ui.texteditor.IUpdate;
 
 /**
  * A page for a text console.
+ * <p>
+ * Clients may contribute actions to the context menu of a text console page
+ * using the <code>org.eclipse.ui.popupMenus</code> extension point. The context
+ * menu identifier for a text console page is the associated console's type
+ * suffixed with <code>.#TextConsole</code>. When a console does not specify 
+ * a type, the context menu id is <code>#TextConsole</code>.
+ * </p>
  * <p>
  * Clients may subclass this class.
  * </p>
@@ -133,7 +139,11 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
 		fConsole.addPropertyChangeListener(this);
 		JFaceResources.getFontRegistry().addListener(this);
 		
-		MenuManager manager= new MenuManager("#TextConsole", "#TextConsole");  //$NON-NLS-1$//$NON-NLS-2$
+		String id = "#TextConsole"; //$NON-NLS-1$
+		if (getConsole().getType() != null) {
+		    id = getConsole().getType() + "." + id; //$NON-NLS-1$
+		}
+		MenuManager manager= new MenuManager("#TextConsole", id);  //$NON-NLS-1$//$NON-NLS-2$
 		manager.setRemoveAllWhenShown(true);
 		manager.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager m) {
@@ -146,7 +156,7 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
 		createActions();
 		configureToolBar(getSite().getActionBars().getToolBarManager());
 		
-		getSite().registerContextMenu(ConsolePlugin.getUniqueIdentifier() + ".TextConsole", manager, fViewer); //$NON-NLS-1$
+		getSite().registerContextMenu(id, manager, fViewer); //$NON-NLS-1$
 		getSite().setSelectionProvider(fViewer);
 		
 		fViewer.getSelectionProvider().addSelectionChangedListener(selectionChangedListener);
@@ -327,7 +337,6 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
 		if (doc == null) {
 			return;
 		}
-	 
 
 		menuManager.add((IAction)fGlobalActions.get(ActionFactory.CUT.getId()));
 		menuManager.add((IAction)fGlobalActions.get(ActionFactory.COPY.getId()));
@@ -340,9 +349,6 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
 		menuManager.add(fClearOutputAction);
 		
 		menuManager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-		
-		// TODO: hack to let participants contribute to context menu
-		((ConsoleView)getConsoleView()).menuAboutToShow(menuManager);
 	}
 
 	protected void configureToolBar(IToolBarManager mgr) {

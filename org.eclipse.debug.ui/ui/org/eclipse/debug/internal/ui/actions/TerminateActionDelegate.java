@@ -65,7 +65,7 @@ public class TerminateActionDelegate extends AbstractListenerActionDelegate {
 	 * @see ListenerActionDelegate#doHandleDebugEvent(DebugEvent)
 	 */
 	protected void doHandleDebugEvent(DebugEvent event) {	
-		if (event.getKind() == DebugEvent.TERMINATE) {
+		if (event.getKind() == DebugEvent.TERMINATE || event.getKind() == DebugEvent.CREATE) {
 			update(getAction(), getSelection());
 		}
 	}

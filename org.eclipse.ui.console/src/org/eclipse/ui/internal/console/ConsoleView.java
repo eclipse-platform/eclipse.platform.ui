@@ -15,8 +15,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.jface.action.IMenuListener;
-import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -46,7 +44,7 @@ import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
  * 
  * @since 3.0
  */
-public class ConsoleView extends PageBookView implements IConsoleView, IConsoleListener, IPropertyChangeListener, IMenuListener, IPartListener2 {
+public class ConsoleView extends PageBookView implements IConsoleView, IConsoleListener, IPropertyChangeListener, IPartListener2 {
 	
 	/**
 	 * Whether this console is pinned.
@@ -502,29 +500,6 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
             }
         }
         return adpater;
-    }
-
-    /* (non-Javadoc)
-     * 
-     * TODO: This is an undocumented hack to allow page participants to fill a context menu.
-     * Not yet API. Page participants that are IMenuListeners will be consulted to add to the
-     * given context menu.
-     * 
-     * @see org.eclipse.jface.action.IMenuListener#menuAboutToShow(org.eclipse.jface.action.IMenuManager)
-     */
-    public void menuAboutToShow(IMenuManager manager) {
-        IConsole console = getConsole();
-        if (console != null) {
-            IConsolePageParticipant[] participants = (IConsolePageParticipant[]) fConsoleToPageParticipants.get(console);
-            for (int i = 0; i < participants.length; i++) {
-                IConsolePageParticipant participant = participants[i];
-                if (participant instanceof IMenuListener) {
-                    // TODO: should be done in a safe runnable
-                    ((IMenuListener)participant).menuAboutToShow(manager);
-                }
-            }
-        }
-        
     }
 
 	/* (non-Javadoc)
