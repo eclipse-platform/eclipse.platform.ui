@@ -224,9 +224,50 @@ public class SyncInfo implements IAdaptable {
 	public boolean equals(Object other) {
 		if(other == this) return true;
 		if(other instanceof SyncInfo) {
-			return getLocal().equals(((SyncInfo)other).getLocal());
+			return equalNodes(this, (SyncInfo)other);
 		}
 		return false;
+	}
+	
+	private boolean equalNodes(SyncInfo node1, SyncInfo node2) {		
+			if(node1 == null || node2 == null) {
+				return false;
+			}
+		
+			// First, ensure the local resources are equals
+			IResource local1 = null;
+			if (node1.getLocal() != null)
+				local1 = node1.getLocal();
+			IResource local2 = null;
+			if (node2.getLocal() != null)
+				local2 = node2.getLocal();
+			if (!equalObjects(local1, local2)) return false;
+		
+			// Next, ensure the base resources are equal
+			IRemoteResource base1 = null;
+			if (node1.getBase() != null)
+				base1 = node1.getBase();
+			IRemoteResource base2 = null;
+			if (node2.getBase() != null)
+				base2 = node2.getBase();
+			if (!equalObjects(base1, base2)) return false;
+
+			// Finally, ensure the remote resources are equal
+			IRemoteResource remote1 = null;
+			if (node1.getRemote() != null)
+				remote1 = node1.getRemote();
+			IRemoteResource remote2 = null;
+			if (node2.getRemote() != null)
+					remote2 = node2.getRemote();
+			if (!equalObjects(remote1, remote2)) return false;
+		
+			return true;
+		}
+	
+	private boolean equalObjects(Object o1, Object o2) {
+		if (o1 == null && o2 == null) return true;
+		if (o1 == null || o2 == null) return false;
+		return o1.equals(o2);
 	}
 	
 	/* (non-Javadoc)
