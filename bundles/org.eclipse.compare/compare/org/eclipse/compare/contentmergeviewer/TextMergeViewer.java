@@ -1120,11 +1120,17 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				if (diff != null) {
 					switch (type) {
 					case 'A':
-						return diff.fAncestorPos.offset;
+						if (diff.fAncestorPos != null)
+							return diff.fAncestorPos.offset;
+						break;
 					case 'L':
-						return diff.fLeftPos.offset;
+						if (diff.fLeftPos != null)
+							return diff.fLeftPos.offset;
+						break;
 					case 'R':
-						return diff.fRightPos.offset;
+						if (diff.fRightPos != null)
+							return diff.fRightPos.offset;
+						break;
 					}
 				}
 			}
