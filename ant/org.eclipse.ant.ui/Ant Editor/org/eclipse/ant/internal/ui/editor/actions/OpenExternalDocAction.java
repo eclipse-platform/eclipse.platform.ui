@@ -23,6 +23,7 @@ import org.eclipse.ant.internal.ui.model.AntModel;
 import org.eclipse.ant.internal.ui.model.AntProjectNode;
 import org.eclipse.ant.internal.ui.model.AntTargetNode;
 import org.eclipse.ant.internal.ui.model.AntTaskNode;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
@@ -34,9 +35,22 @@ import org.eclipse.ui.IEditorPart;
  * This action opens the selected tasks manual page in an external 
  * browser. 
  */
-public class OpenExternalDocAction implements IEditorActionDelegate {
+public class OpenExternalDocAction extends Action implements IEditorActionDelegate {
 		
 	private AntEditor fEditor;
+	
+	public OpenExternalDocAction() {
+	}
+	
+	public OpenExternalDocAction(AntEditor antEditor) {
+		fEditor= antEditor;
+		setActionDefinitionId("org.eclipse.ant.ui.openExternalDoc"); //$NON-NLS-1$
+		antEditor.getSite().getKeyBindingService().registerAction(this);
+
+		setText(AntEditorActionMessages.getString("OpenExternalDocAction.1")); //$NON-NLS-1$
+		setDescription(AntEditorActionMessages.getString("OpenExternalDocAction.2")); //$NON-NLS-1$
+		setToolTipText(AntEditorActionMessages.getString("OpenExternalDocAction.2")); //$NON-NLS-1$
+	}
 	
     private Shell getShell() {
        return fEditor.getEditorSite().getShell();
@@ -102,6 +116,7 @@ public class OpenExternalDocAction implements IEditorActionDelegate {
 
 	private URL getBaseLocation() throws MalformedURLException {
 		// TODO allow user to set location
+		//https://bugs.eclipse.org/bugs/show_bug.cgi?id=77386
 		return new URL("http://ant.apache.org/manual/"); //$NON-NLS-1$
 	}
 	
@@ -114,8 +129,10 @@ public class OpenExternalDocAction implements IEditorActionDelegate {
      */
     public void setActiveEditor(IAction action, IEditorPart targetEditor) {
         fEditor= (AntEditor) targetEditor;
+        if (fEditor != null) {
+        	fEditor.getSite().getKeyBindingService().registerAction(this);
+        }
     }
-
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
@@ -167,4 +184,10 @@ public class OpenExternalDocAction implements IEditorActionDelegate {
     	
         return null;
     }
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.IAction#run()
+	 */
+	public void run() {
+		run(null);
+	}
 }

@@ -19,6 +19,7 @@ import java.util.ResourceBundle;
 
 import org.eclipse.ant.internal.ui.editor.actions.FoldingActionGroup;
 import org.eclipse.ant.internal.ui.editor.actions.OpenDeclarationAction;
+import org.eclipse.ant.internal.ui.editor.actions.OpenExternalDocAction;
 import org.eclipse.ant.internal.ui.editor.actions.TogglePresentationAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
@@ -41,6 +42,7 @@ public class AntEditorActionContributor extends TextEditorActionContributor {
 	protected RetargetTextEditorAction fContentFormat;
 	private OpenDeclarationAction fOpenDeclarationAction;
 	private TogglePresentationAction fTogglePresentation;
+	private OpenExternalDocAction fOpenExternalDocAction;
 
 	public AntEditorActionContributor() {
 		super();
@@ -52,6 +54,7 @@ public class AntEditorActionContributor extends TextEditorActionContributor {
 	
 	protected void initializeActions(AntEditor editor) {	 
 		fOpenDeclarationAction= new OpenDeclarationAction(editor);
+		fOpenExternalDocAction= new OpenExternalDocAction(editor);
 	}
 	
 	private void doSetActiveEditor(IEditorPart part) {
@@ -79,6 +82,9 @@ public class AntEditorActionContributor extends TextEditorActionContributor {
 			if (fOpenDeclarationAction != null) {
 				fOpenDeclarationAction.setEditor(antEditor);		
 			}
+			if (fOpenExternalDocAction != null) {
+				fOpenExternalDocAction.setActiveEditor(null, antEditor);		
+			}
 		}
 		
 		if (fTogglePresentation != null) {
@@ -98,6 +104,7 @@ public class AntEditorActionContributor extends TextEditorActionContributor {
 		IMenuManager navigateMenu= menu.findMenuUsingPath(IWorkbenchActionConstants.M_NAVIGATE);
 		if (navigateMenu != null) {
 			navigateMenu.appendToGroup(IWorkbenchActionConstants.OPEN_EXT, fOpenDeclarationAction);
+			navigateMenu.appendToGroup(IWorkbenchActionConstants.OPEN_EXT, fOpenExternalDocAction);
 			navigateMenu.setVisible(true);
 		}
 	}
