@@ -228,11 +228,14 @@ protected IPath getContainerFullPath() {
 
 	//make the path absolute to allow for optional leading slash
 	IPath testPath = getResourcePath();
+	
+	if(testPath.equals(workspace.getRoot().getFullPath()))
+		return testPath;
 
 	IStatus result =
 		workspace.validatePath(
 			testPath.toString(),
-			IResource.PROJECT | IResource.FOLDER);
+			IResource.PROJECT | IResource.FOLDER | IResource.ROOT);
 	if (result.isOK()) {
 		return testPath;
 	}

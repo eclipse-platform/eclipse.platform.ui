@@ -146,9 +146,13 @@ public ImportOperation(IPath containerPath, IImportStructureProvider provider, I
  * @exception CoreException if this method failed
  */
 IContainer createContainersFor(IPath path) throws CoreException {
-	// 1FV0B3Y: ITPUI:ALL - sub progress monitors granularity issues
 
 	IContainer currentFolder = (IContainer) destinationContainer;
+	
+	//Needs to be handles differently at the root
+	if(currentFolder.getType() == IResource.ROOT)
+		return createFromRoot(path);
+		
 	int segmentCount = path.segmentCount();
 
 	
@@ -160,6 +164,33 @@ IContainer createContainersFor(IPath path) throws CoreException {
 
 	return currentFolder;
 }
+
+/**
+ * Creates the folders that appear in the specified resource path
+ * assuming that the destinationContainer begins at the root. Do not create projects.
+ *
+ * @param path the relative path of the resource
+ * @return the container resource coresponding to the given path
+ * @exception CoreException if this method failed
+ */
+private IContainer createFromRoot(IPath path) throws CoreException {
+		
+	int segmentCount = path.segmentCount();
+	
+	//Assume the project exists 
+	IContainer currentFolder = 
+		((IWorkspaceRoot) destinationContainer).getProject(path.segment(0));
+	
+	for (int i = 1; i < segmentCount; i++) {
+		currentFolder = currentFolder.getFolder(new Path(path.segment(i)));
+		if (!currentFolder.exists()) 
+			((IFolder) currentFolder).create(false,true,null);
+	}
+
+	return currentFolder;
+}
+
+
 /**
  * Deletes the given resource. If the resource fails to be deleted, adds a
  * status object to the list to be returned by <code>getResult</code>.

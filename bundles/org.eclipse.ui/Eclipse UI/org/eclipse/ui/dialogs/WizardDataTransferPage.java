@@ -16,7 +16,10 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
+
 import java.util.Vector;
 import java.util.List;
 import java.util.Arrays;
@@ -168,7 +171,12 @@ protected boolean determinePageCompletion() {
  * @return org.eclipse.core.runtime.IPath
  */
 protected IPath getPathFromText(Text textField) {
-	return (new Path(textField.getText())).makeAbsolute();
+	String text = textField.getText();
+	//Do not make an empty path absolute so as not to confuse with the root
+	if(text.length() == 0)
+		return new Path(text);
+	else
+		return (new Path(text)).makeAbsolute();
 }
 /**
  * Queries the user to supply a container resource.
