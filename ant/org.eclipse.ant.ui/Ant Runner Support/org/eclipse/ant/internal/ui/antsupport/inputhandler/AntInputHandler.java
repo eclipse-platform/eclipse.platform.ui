@@ -50,16 +50,21 @@ public class AntInputHandler extends DefaultInputHandler {
 				String prompt = getPrompt(request);
 		       	String title= AntSupportMessages.getString("AntInputHandler.Ant_Input_Request_1"); //$NON-NLS-1$
 				IInputValidator validator= new IInputValidator() {
-					public String isValid(String value) {
+					private boolean fFirstValidation =true;
+                    public String isValid(String value) {
 						request.setInput(value);
 						if (request.isInputValid()) {
 							return null;
 						} 
+						if (fFirstValidation) {
+						    fFirstValidation= false;
+						    return ""; //$NON-NLS-1$
+						}
 						return AntSupportMessages.getString("AntInputHandler.Invalid_input_2"); //$NON-NLS-1$
 					}
 				};
 		
-				InputDialog dialog= new InputDialog(null, title, prompt, "", validator); //$NON-NLS-1$
+				InputDialog dialog= new InputDialog(null, title, prompt, null, validator);
 				if (dialog.open() != Window.OK) {
 					problem[0]= new BuildException(AntSupportMessages.getString("AntInputHandler.Unable_to_respond_to_<input>_request_4")); //$NON-NLS-1$
 				}
