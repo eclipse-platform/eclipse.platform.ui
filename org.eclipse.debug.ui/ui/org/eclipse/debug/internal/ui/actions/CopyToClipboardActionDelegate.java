@@ -134,7 +134,7 @@ public class CopyToClipboardActionDelegate extends AbstractDebugActionDelegate {
 	 * remove the child.
 	 */
 	protected Iterator pruneSelection() {
-		TreeItem[] selection= (TreeItem[]) getViewer().getTree().getSelection();
+		TreeItem[] selection= getViewer().getTree().getSelection();
 		List items= new ArrayList(selection.length);
 		for (int i = 0; i < selection.length; i++) {
 			TreeItem item= selection[i];
