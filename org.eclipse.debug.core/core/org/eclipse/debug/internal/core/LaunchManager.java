@@ -677,37 +677,39 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	}
 	
 	private List getLaunchConfigurationTypeList() {
-		if (fLaunchConfigurationTypes == null) {
-			getWorkspace().addResourceChangeListener(this);
-			initializeLaunchConfigurationTypes();
-		}
+		initializeLaunchConfigurationTypes();
 		return fLaunchConfigurationTypes;
 	}
 	
-	private void initializeLaunchConfigurationTypes() {
-		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.getUniqueIdentifier(), DebugPlugin.EXTENSION_POINT_LAUNCH_CONFIGURATION_TYPES);
-		IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
-		fLaunchConfigurationTypes= new ArrayList(infos.length);
-		for (int i= 0; i < infos.length; i++) {
-			IConfigurationElement configurationElement = infos[i];
-			LaunchConfigurationType configType = new LaunchConfigurationType(configurationElement); 			
-			fLaunchConfigurationTypes.add(configType);
-		}		
+	private synchronized void initializeLaunchConfigurationTypes() {
+		if (fLaunchConfigurationTypes == null) {
+			getWorkspace().addResourceChangeListener(this);
+			IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.getUniqueIdentifier(), DebugPlugin.EXTENSION_POINT_LAUNCH_CONFIGURATION_TYPES);
+			IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
+			fLaunchConfigurationTypes= new ArrayList(infos.length);
+			for (int i= 0; i < infos.length; i++) {
+				IConfigurationElement configurationElement = infos[i];
+				LaunchConfigurationType configType = new LaunchConfigurationType(configurationElement); 			
+				fLaunchConfigurationTypes.add(configType);
+			}
+		}
 	}
 	
 	/**
 	 * Initializes contributed launch delegates (i.e. delegates contributed
 	 * to an existing launch configuration type).
 	 */
-	private void initializeContributedDelegates() {
-		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.getUniqueIdentifier(), DebugPlugin.EXTENSION_POINT_LAUNCH_DELEGATES);
-		IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
-		fContributedDelegates= new ArrayList(infos.length);
-		for (int i= 0; i < infos.length; i++) {
-			IConfigurationElement configurationElement = infos[i];
-			ContributedDelegate delegate = new ContributedDelegate(configurationElement); 			
-			fContributedDelegates.add(delegate);
-		}		
+	private synchronized void initializeContributedDelegates() {
+		if (fContributedDelegates == null) {
+			IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.getUniqueIdentifier(), DebugPlugin.EXTENSION_POINT_LAUNCH_DELEGATES);
+			IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
+			fContributedDelegates= new ArrayList(infos.length);
+			for (int i= 0; i < infos.length; i++) {
+				IConfigurationElement configurationElement = infos[i];
+				ContributedDelegate delegate = new ContributedDelegate(configurationElement); 			
+				fContributedDelegates.add(delegate);
+			}
+		}
 	}	
 	
 	/**
@@ -717,9 +719,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * @return list of ContributedDelegate
 	 */
 	protected List getContributedDelegates() {
-		if (fContributedDelegates == null) {
-			initializeContributedDelegates();
-		}
+		initializeContributedDelegates();
 		return fContributedDelegates;
 	}
 	/**
@@ -1099,53 +1099,55 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * @exception CoreException if an exception occurs reading
 	 *  the extensions
 	 */
-	private void initializeSourceLocators() {
-		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.getUniqueIdentifier(), DebugPlugin.EXTENSION_POINT_SOURCE_LOCATORS);
-		IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
-		fSourceLocators= new HashMap(infos.length);
-		for (int i= 0; i < infos.length; i++) {
-			IConfigurationElement configurationElement = infos[i];
-			String id = configurationElement.getAttribute("id"); //$NON-NLS-1$			
-			if (id != null) {
-				fSourceLocators.put(id,configurationElement);
-			} else {
-				// invalid status handler
-				IStatus s = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugException.INTERNAL_ERROR,
-				MessageFormat.format(DebugCoreMessages.getString("LaunchManager.Invalid_source_locator_extentsion_defined_by_plug-in___{0}______id___not_specified_12"), new String[] {configurationElement.getDeclaringExtension().getNamespace()} ), null);  //$NON-NLS-1$
-				DebugPlugin.log(s);
+	private synchronized void initializeSourceLocators() {
+		if (fSourceLocators == null) {
+			IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.getUniqueIdentifier(), DebugPlugin.EXTENSION_POINT_SOURCE_LOCATORS);
+			IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
+			fSourceLocators= new HashMap(infos.length);
+			for (int i= 0; i < infos.length; i++) {
+				IConfigurationElement configurationElement = infos[i];
+				String id = configurationElement.getAttribute("id"); //$NON-NLS-1$			
+				if (id != null) {
+					fSourceLocators.put(id,configurationElement);
+				} else {
+					// invalid status handler
+					IStatus s = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugException.INTERNAL_ERROR,
+					MessageFormat.format(DebugCoreMessages.getString("LaunchManager.Invalid_source_locator_extentsion_defined_by_plug-in___{0}______id___not_specified_12"), new String[] {configurationElement.getDeclaringExtension().getNamespace()} ), null);  //$NON-NLS-1$
+					DebugPlugin.log(s);
+				}
 			}
-		}			
+		}
 	}
 	
 	
 	/**
 	 * Load comparator extensions.
 	 */
-	private void initializeComparators() {
-		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.getUniqueIdentifier(), DebugPlugin.EXTENSION_POINT_LAUNCH_CONFIGURATION_COMPARATORS);
-		IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
-		fComparators = new HashMap(infos.length);
-		for (int i= 0; i < infos.length; i++) {
-			IConfigurationElement configurationElement = infos[i];
-			String attr = configurationElement.getAttribute("attribute"); //$NON-NLS-1$			
-			if (attr != null) {
-				fComparators.put(attr, new LaunchConfigurationComparator(configurationElement));
-			} else {
-				// invalid status handler
-				IStatus s = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugException.INTERNAL_ERROR,
-				MessageFormat.format(DebugCoreMessages.getString("LaunchManager.Invalid_launch_configuration_comparator_extension_defined_by_plug-in_{0}_-_attribute_not_specified_1"), new String[] {configurationElement.getDeclaringExtension().getNamespace()}), null); //$NON-NLS-1$
-				DebugPlugin.log(s);
+	private synchronized void initializeComparators() {
+		if (fComparators == null) {
+			IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.getUniqueIdentifier(), DebugPlugin.EXTENSION_POINT_LAUNCH_CONFIGURATION_COMPARATORS);
+			IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
+			fComparators = new HashMap(infos.length);
+			for (int i= 0; i < infos.length; i++) {
+				IConfigurationElement configurationElement = infos[i];
+				String attr = configurationElement.getAttribute("attribute"); //$NON-NLS-1$			
+				if (attr != null) {
+					fComparators.put(attr, new LaunchConfigurationComparator(configurationElement));
+				} else {
+					// invalid status handler
+					IStatus s = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugException.INTERNAL_ERROR,
+					MessageFormat.format(DebugCoreMessages.getString("LaunchManager.Invalid_launch_configuration_comparator_extension_defined_by_plug-in_{0}_-_attribute_not_specified_1"), new String[] {configurationElement.getDeclaringExtension().getNamespace()}), null); //$NON-NLS-1$
+					DebugPlugin.log(s);
+				}
 			}
-		}			
+		}
 	}
 		
 	/**
 	 * @see ILaunchManager#newSourceLocator(String)
 	 */
 	public IPersistableSourceLocator newSourceLocator(String identifier) throws CoreException {
-		if (fSourceLocators == null) {
-			initializeSourceLocators();
-		}
+		initializeSourceLocators();
 		IConfigurationElement config = (IConfigurationElement)fSourceLocators.get(identifier);
 		if (config == null) {
 			throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugException.INTERNAL_ERROR,
@@ -1174,9 +1176,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * Returns comparators, loading if required
 	 */
 	protected Map getComparators() {
-		if (fComparators == null) {
-			initializeComparators();
-		}
+		initializeComparators();
 		return fComparators;
 	}
 	
@@ -1516,20 +1516,22 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * @exception CoreException if an exception occurs reading
 	 *  the extensions
 	 */
-	private void initializeLaunchModes() {
-		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.getUniqueIdentifier(), DebugPlugin.EXTENSION_POINT_LAUNCH_MODES);
-		IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
-		fLaunchModes = new HashMap();
-		for (int i= 0; i < infos.length; i++) {
-			IConfigurationElement configurationElement = infos[i];
-			try {
-				ILaunchMode mode = new LaunchMode(configurationElement);
-				fLaunchModes.put(mode.getIdentifier(), mode);
-			} catch (CoreException e) {
-				DebugPlugin.log(e);
+	private synchronized void initializeLaunchModes() {
+		if (fLaunchModes == null) {
+			IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.getUniqueIdentifier(), DebugPlugin.EXTENSION_POINT_LAUNCH_MODES);
+			IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
+			fLaunchModes = new HashMap();
+			for (int i= 0; i < infos.length; i++) {
+				IConfigurationElement configurationElement = infos[i];
+				try {
+					ILaunchMode mode = new LaunchMode(configurationElement);
+					fLaunchModes.put(mode.getIdentifier(), mode);
+				} catch (CoreException e) {
+					DebugPlugin.log(e);
+				}
+				
 			}
-			
-		}			
+		}
 	}
 	
 	/** 
@@ -1682,7 +1684,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	/**
 	 * Initializes source container type and source path computer extensions.
 	 */
-	private void initializeSourceContainerTypes() {
+	private synchronized void initializeSourceContainerTypes() {
 		if (sourceContainerTypes == null) {
 			IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.getUniqueIdentifier(), DebugPlugin.EXTENSION_POINT_SOURCE_CONTAINER_TYPES);
 			IConfigurationElement[] extensions = extensionPoint.getConfigurationElements();
@@ -1730,9 +1732,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * @see org.eclipse.debug.core.ILaunchManager#getLaunchModes()
 	 */
 	public ILaunchMode[] getLaunchModes() {
-		if (fLaunchModes == null) {
-			initializeLaunchModes();
-		}
+		initializeLaunchModes();
 		Collection collection = fLaunchModes.values();
 		return (ILaunchMode[]) collection.toArray(new ILaunchMode[collection.size()]);
 	}
@@ -1741,9 +1741,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * @see org.eclipse.debug.core.ILaunchManager#getLaunchMode(java.lang.String)
 	 */
 	public ILaunchMode getLaunchMode(String mode) {
-		if (fLaunchModes == null) {
-			initializeLaunchModes();
-		}
+		initializeLaunchModes();
 		return (ILaunchMode) fLaunchModes.get(mode);
 	}
 }
