@@ -519,7 +519,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		gridData = new GridData(GridData.FILL_BOTH);
 		gridData.heightHint = 50;
 		gridData.horizontalSpan = 2;
-		gridData.widthHint = 520;
+		gridData.widthHint = "carbon".equals(SWT.getPlatform()) ? 520 : 420;
 		tableAssignmentsForKeySequence.setLayoutData(gridData);		
 		TableColumn tableColumnDelta = new TableColumn(tableAssignmentsForKeySequence, SWT.NULL, 0);
 		tableColumnDelta.setResizable(false);
@@ -596,7 +596,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		gridData = new GridData(GridData.FILL_BOTH);
 		gridData.heightHint = 50;
 		gridData.horizontalSpan = 2;
-		gridData.widthHint = 520;
+		gridData.widthHint = "carbon".equals(SWT.getPlatform()) ? 520 : 420;
 		tableAssignmentsForCommand.setLayoutData(gridData);		
 		tableColumnDelta = new TableColumn(tableAssignmentsForCommand, SWT.NULL, 0);
 		tableColumnDelta.setResizable(false);
