@@ -426,7 +426,7 @@ public class EditorManager {
 	 */
 	private IEditorReference openEditorFromDescriptor(IEditorReference ref, EditorDescriptor desc, IEditorInput input) throws PartInitException {
 		IEditorReference result = ref;
-		if (desc.isOpenInternal()) {
+		if (desc.isInternal()) {
 			result = reuseInternalEditor(desc, input);
 			if (result == null) {
 				result = ref;

@@ -216,21 +216,21 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IEditorDescriptor#isOpenInternal()
+	 * @see org.eclipse.ui.IEditorDescriptor#isInternal
 	 */
-	public boolean isOpenInternal() {
+	public boolean isInternal() {
 		return openMode == OPEN_INTERNAL;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IEditorDescriptor#isOpenInPlace()
+	 * @see org.eclipse.ui.IEditorDescriptor#isOpenInPlace
 	 */
 	public boolean isOpenInPlace() {
 		return openMode == OPEN_INPLACE;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IEditorDescriptor#isOpenExternal()
+	 * @see org.eclipse.ui.IEditorDescriptor#isOpenExternal
 	 */
 	public boolean isOpenExternal() {
 		return openMode == OPEN_EXTERNAL;

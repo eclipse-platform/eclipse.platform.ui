@@ -57,18 +57,18 @@ public interface IEditorDescriptor extends IWorkbenchPartDescriptor {
 	public String getLabel();
 	
 	/**
-	 * Returns whether this editor descriptor will open an editor
+	 * Returns whether this editor descriptor will open a regular editor
 	 * part inside the editor area.
 	 * 
 	 * @return <code>true</code> if editor is inside editor area, and
 	 * <code>false</code> otherwise
 	 * @since 3.0
 	 */
-	public boolean isOpenInternal();
+	public boolean isInternal();
 	
 	/**
-	 * Returns whether this editor descriptor will open an editor
-	 * in-place inside the editor area.
+	 * Returns whether this editor descriptor will open an external
+	 * editor in-place inside the editor area.
 	 * 
 	 * @return <code>true</code> if editor is in-place, and <code>false</code>
 	 * otherwise
@@ -77,7 +77,7 @@ public interface IEditorDescriptor extends IWorkbenchPartDescriptor {
 	public boolean isOpenInPlace();
 
 	/**
-	 * Returns whether this editor descriptor will open an editor
+	 * Returns whether this editor descriptor will open an external editor
 	 * in a new window outside the workbench.
 	 * 
 	 * @return <code>true</code> if editor is external, and <code>false</code>

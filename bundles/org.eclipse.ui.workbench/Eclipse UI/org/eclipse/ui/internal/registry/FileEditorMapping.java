@@ -84,7 +84,7 @@ public class FileEditorMapping extends Object implements IFileEditorMapping, Clo
 	   		return;
         String pluginId = editor.getPluginID();
         if (pluginId == null) {
-           if(editor.isOpenInternal())
+           if(editor.isInternal())
            		return;
            //If it is external enable it for everything
            pluginId = IObjectActivityManager.ENABLED_ALL_PATTERN;
