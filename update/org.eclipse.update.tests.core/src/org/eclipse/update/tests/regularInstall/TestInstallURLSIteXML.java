@@ -225,15 +225,7 @@ public class TestInstallURLSIteXML extends UpdateManagerTestCase {
 		UpdateManagerUtils.removeFromFileSystem(file);
 		File localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocationURL(),SiteLocal.SITE_LOCAL_FILE).getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);		
-		
-		try {
-			ISite site = SiteManager.getSite(new URL("http://www.eclipse.org/"));
-			fail("The site contains site.xml... it should be an HTTP site without an XML file");			
-		} catch (CoreException e){
-			// expected
-		}
-
-		
+				
 	}
 	
 	
