@@ -607,7 +607,18 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		 * @since 2.0
 		 */
 		public void unregisterActionFromKeyActivation(IAction action) {
-			// No such action available on the service
+			if (action.getActionDefinitionId() != null)
+				fKeyBindingService.unregisterAction(action);
+		}
+
+		/**
+		 * Sets the keybindings scopes for this editor.
+		 * @param keyBindingScopes the keybinding scopes
+		 * @since 2.1
+		 */
+		public void setScopes(String[] keyBindingScopes) {
+			if (keyBindingScopes != null && keyBindingScopes.length > 0)
+				fKeyBindingService.setScopes(keyBindingScopes);
 		}
 	};
 	
@@ -1353,6 +1364,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @since 2.1
 	 */
 	private boolean fIsStateValidationEnabled= true;
+	/**
+	 * The key binding scopes of this editor.
+	 * @since 2.1
+	 */
+	private String[] fKeyBindingScopes;
 	
 	
 	/**
@@ -1524,6 +1540,16 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	protected void setHelpContextId(String helpContextId) {
 		Assert.isNotNull(helpContextId);
 		fHelpContextId= helpContextId;
+	}
+	
+	/**
+	 * Sets the keybinding scopes for this editor.
+	 * 
+	 * @param scopes the scopes 
+	 */
+	protected void setKeyBindingScopes(String[] scopes) {
+		Assert.isTrue(scopes != null && scopes.length > 0);
+		fKeyBindingScopes= scopes;
 	}
 	
 	/**
@@ -1980,7 +2006,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			
 		getSite().setSelectionProvider(getSelectionProvider());
 		
-		fActivationCodeTrigger.install();
+		initializeActivationCodeTrigger();
+		
 		createNavigationActions();
 		createAccessibilityActions();
 		createActions();
@@ -1988,6 +2015,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		initializeSourceViewer(getEditorInput());
 		
 		JFaceResources.getFontRegistry().addListener(fFontPropertyChangeListener);
+	}
+	
+	private void initializeActivationCodeTrigger() {
+		fActivationCodeTrigger.install();
+		fActivationCodeTrigger.setScopes(fKeyBindingScopes);
 	}
 	
 	/**

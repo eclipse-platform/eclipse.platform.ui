@@ -160,6 +160,7 @@ public class TextEditor extends StatusTextEditor {
 		setRulerContextMenuId("#TextRulerContext"); //$NON-NLS-1$
 		setHelpContextId(ITextEditorHelpContextIds.TEXT_EDITOR);
 		setPreferenceStore(EditorsPlugin.getDefault().getPreferenceStore());
+		setKeyBindingScopes(new String[] { "org.eclipse.ui.textEditorScope" });  //$NON-NLS-1$
 	}
 	
 	/*
