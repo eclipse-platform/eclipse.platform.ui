@@ -181,7 +181,7 @@ private int getCategoryOrder(IMarker marker) {
 				return 3;
 		}
 	} else if (MarkerUtil.isMarkerType(marker, IMarker.TASK)) {
-		return 0;
+		return 4;
 	}
 	return 1000;
 }
