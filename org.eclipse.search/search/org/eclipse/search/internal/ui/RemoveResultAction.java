@@ -17,6 +17,8 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
+import org.eclipse.search.ui.ISearchResultViewEntry;
+
 import org.eclipse.search.internal.ui.util.ExceptionHandler;
 
 class RemoveResultAction extends Action {
@@ -25,7 +27,7 @@ class RemoveResultAction extends Action {
 
 	public RemoveResultAction(ISelectionProvider provider, boolean stringsDependOnMatchCount) {
 		fSelectionProvider= provider;
-		if (!stringsDependOnMatchCount || getSelectedEntriesCount() > 1) {
+		if (!stringsDependOnMatchCount || usePluralLabel()) {
 			setText(SearchMessages.getString("SearchResultView.removeEntries.text")); //$NON-NLS-1$
 			setToolTipText(SearchMessages.getString("SearchResultView.removeEntries.tooltip")); //$NON-NLS-1$
 		}
@@ -70,11 +72,19 @@ class RemoveResultAction extends Action {
 		return (IMarker[])markers.toArray(new IMarker[markerCount]);
 	}
 
-	protected int getSelectedEntriesCount() {
+	private boolean usePluralLabel() {
 		ISelection s= fSelectionProvider.getSelection();
 		if (s == null || s.isEmpty() || !(s instanceof IStructuredSelection))
-			return 0;
+			return false;
 		IStructuredSelection selection= (IStructuredSelection)s;
-		return selection.size();
+
+		if (selection.size() != 1)
+			return true;
+
+		Object firstElement= selection.getFirstElement();
+		if (firstElement instanceof ISearchResultViewEntry)
+			return ((ISearchResultViewEntry)firstElement).getMatchCount() > 1;
+		else
+			return false;
 	}
 }
