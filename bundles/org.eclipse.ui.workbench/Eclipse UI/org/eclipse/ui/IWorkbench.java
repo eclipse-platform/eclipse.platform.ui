@@ -19,6 +19,7 @@ import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.help.IWorkbenchHelpSystem;
 import org.eclipse.ui.intro.IIntroManager;
+import org.eclipse.ui.operations.IWorkbenchOperationSupport;
 import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.themes.IThemeManager;
 
@@ -124,10 +125,30 @@ public interface IWorkbench {
     public IEditorRegistry getEditorRegistry();
 
     /**
-     * Returns the perspective registry for the workbench.
-     * 
-     * @return the workbench perspective registry
-     */
+	 * <p>
+	 * Returns the operation support for the workbench.
+	 * </p>
+	 * <p>
+	 * Note: This method is part of a new API under development. It has been
+	 * added to builds so that clients can start using the new features.
+	 * However, it may change significantly before reaching stability. It is
+	 * being made available at this early stage to solicit feedback with the
+	 * understanding that any code that uses this API may be broken as the API
+	 * evolves.
+	 * </p>
+	 * 
+	 * @return the workbench operation support
+	 * 
+	 * @since 3.1
+	 * @experimental
+	 */
+	public IWorkbenchOperationSupport getOperationSupport();
+
+    /**
+	 * Returns the perspective registry for the workbench.
+	 * 
+	 * @return the workbench perspective registry
+	 */
     public IPerspectiveRegistry getPerspectiveRegistry();
 
     /**

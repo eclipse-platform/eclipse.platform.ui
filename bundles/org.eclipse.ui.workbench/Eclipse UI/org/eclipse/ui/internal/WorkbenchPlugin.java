@@ -50,6 +50,8 @@ import org.eclipse.ui.internal.themes.ThemeRegistry;
 import org.eclipse.ui.internal.themes.ThemeRegistryReader;
 import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.internal.util.SWTResourceUtil;
+import org.eclipse.ui.operations.IWorkbenchOperationSupport;
+import org.eclipse.ui.operations.WorkbenchOperationSupport;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.presentations.AbstractPresentationFactory;
 import org.osgi.framework.Bundle;
@@ -133,6 +135,9 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
     private ProductInfo productInfo = null;
 
     private IntroRegistry introRegistry;
+    
+    private IWorkbenchOperationSupport operationSupport;
+    
 
     /**
      * Create an instance of the WorkbenchPlugin. The workbench plugin is
@@ -450,6 +455,20 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
         }
         return introRegistry;
     }
+    
+    /**
+	 * Returns the operation support.
+	 * 
+	 * @return the workbench operation support.
+	 * @since 3.1
+	 */
+    public IWorkbenchOperationSupport getOperationSupport() {
+        if (operationSupport == null) {
+        	operationSupport = new WorkbenchOperationSupport();
+        }
+        return operationSupport;
+    }
+    
 
     /**
      * Get the preference manager.
@@ -728,6 +747,10 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
         if (workingSetManager != null) {
         	workingSetManager.dispose();
         	workingSetManager= null;
+        }
+        if (operationSupport != null) {
+        	operationSupport.dispose();
+        	operationSupport = null;
         }
         SWTResourceUtil.shutdown();
     }
