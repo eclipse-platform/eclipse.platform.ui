@@ -111,9 +111,11 @@ public class TreeContentProviderNode implements Comparable, IAdaptable {
 	 * @see java.lang.Object#toString()
 	 */	
 	public String toString() {
+		if (name == null)
+			return value.toString();		
 		if (value == null)
 			return name;
-		return name + " = " + value.toString(); //$NON-NLS-1$ //$NON-NLS-2$
+		return name + " = " + value; //$NON-NLS-1$
 	}
 
 	/**
