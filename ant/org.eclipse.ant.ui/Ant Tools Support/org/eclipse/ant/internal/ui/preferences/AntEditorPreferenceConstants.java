@@ -64,7 +64,7 @@ public class AntEditorPreferenceConstants {
 	 * </p>
 	 * @since 3.0
 	 */
-	public final static String CODEASSIST_USER_DEFINED_TASKS= "content_assist_userDefinedTasks"; //$NON-NLS-1$
+	public final static String CODEASSIST_USER_DEFINED_TASKS= "content_assist_userDefinedTasks"; //$NON-NLS-1$	
 	
 	/**
 	 * The symbolic names for colors for displaying code assist proposals
@@ -72,11 +72,6 @@ public class AntEditorPreferenceConstants {
 	 */
 	public final static String CODEASSIST_PROPOSALS_BACKGROUND= "org.eclipse.ant.ui.codeAssistProposalsBackgroundColor"; //$NON-NLS-1$
 	public final static String CODEASSIST_PROPOSALS_FOREGROUND= "org.eclipse.ant.ui.codeAssistProposalsForegroundColor"; //$NON-NLS-1$		
-	public static final String CURRENT_LINE_COLOR = "org.eclipse.ant.ui.currentLineHightlightColor"; //$NON-NLS-1$
-	public static final String LINE_NUMBER_RULER_COLOR = "org.eclipse.ant.ui.lineNumberForegroundColor"; //$NON-NLS-1$
-	public static final String PRINT_MARGIN_COLOR = "org.eclipse.ant.ui.printMarginColor"; //$NON-NLS-1$	
-	
-	
 	/**
 	 * A named preference that specifies if the editor uses spaces for tabs.
 	 * <p>
