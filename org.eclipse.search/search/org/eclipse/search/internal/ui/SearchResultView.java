@@ -3,7 +3,8 @@
  * All Rights Reserved.
  */
 package org.eclipse.search.internal.ui;
-
+
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,9 +36,11 @@ import org.eclipse.search.ui.IActionGroupFactory;
 import org.eclipse.search.ui.IContextMenuContributor;
 import org.eclipse.search.ui.IGroupByKeyComputer;
 import org.eclipse.search.ui.ISearchResultView;
-
+
+
 public class SearchResultView extends ViewPart implements ISearchResultView {
-
+
+
 	private static Map fgLabelProviders= new HashMap(5);;
 	
 	private SearchResultViewer fViewer;
@@ -104,7 +107,8 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 	}
 	
 	//---- IWorkbenchPart ------------------------------------------------------
-
+
+
 	public void setFocus() {
 		fViewer.getControl().setFocus();
 	}
@@ -138,7 +142,8 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 			return (ILabelProvider)fgLabelProviders.get(pageId);
 		return null;
 	}
-	public ILabelProvider getLabelProvider() {
+
+	public ILabelProvider getLabelProvider() {
 		IBaseLabelProvider labelProvider= fViewer.getLabelProvider();
 		if (labelProvider instanceof SearchResultLabelProvider)
 			return ((SearchResultLabelProvider)labelProvider).getLabelProvider();
@@ -163,20 +168,24 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 			}
 		});
 	}
-
+
+
 	Display getDisplay() {
 		return fViewer.getControl().getDisplay();
 	}	
-
+
+
 	//---- ISearchResultView --------------------------------------------------
-
+
+
 	/*
 	 * Implements method from ISearchResultView
 	 */
 	public ISelection getSelection() {
 		return fViewer.getSelection();
 	}
-	/*
+
+	/*
 	 * Implements method from ISearchResultView
 	 */
 	public void searchStarted(
@@ -285,7 +294,8 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 		}
 		entry.add(marker);
 	}
-
+
+
 	/*
 	 * Implements method from ISearchResultView
 	 */

@@ -3,7 +3,8 @@
  * All Rights Reserved.
  */
 package org.eclipse.search.internal.ui;
-import java.util.Collections;
+
+import java.util.Collections;
 import java.util.Iterator;
 
 import org.eclipse.swt.SWTError;
