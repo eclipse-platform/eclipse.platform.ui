@@ -15,7 +15,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IAction;
@@ -27,8 +29,10 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.dialogs.WizardCollectionElement;
 import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
@@ -50,6 +54,9 @@ public class NewWizardMenu extends ContributionItem {
 	private IWorkbenchWindow window;
 
 	private boolean dirty = true;
+	
+	private static final String NO_TARGETS_MSG = WorkbenchMessages.getString("Workbench.noApplicableItems"); //$NON-NLS-1$
+	
 	private IMenuListener menuListener = new IMenuListener() {
 		public void menuAboutToShow(IMenuManager manager) {
 			manager.markDirty();
@@ -91,6 +98,11 @@ public class NewWizardMenu extends ContributionItem {
 	private void fillMenu(IContributionManager innerMgr) {
 		// Remove all.
 		innerMgr.removeAll();
+
+		IWorkbenchPart sourcePart = getSourcePart();
+		if (sourcePart == null) {
+			return;
+		}
 
 		if (this.enabled) {
 			// Add new project ..
@@ -171,6 +183,19 @@ public class NewWizardMenu extends ContributionItem {
 	public void setEnabled(boolean enabledValue) {
 		this.enabled = enabledValue;
 	}
+	
+	private IWorkbenchPart getSourcePart() {
+		IWorkbenchPage page = getWindow().getActivePage();
+		if (page != null) {
+			return page.getActivePart();
+		}
+		return null;
+	}
+	
+	protected IWorkbenchWindow getWindow() {
+		return window;
+	}
+	
 	/**
 	 * Removes all listeners from the containing workbench window.
 	 * <p>
@@ -195,6 +220,11 @@ public class NewWizardMenu extends ContributionItem {
 		MenuManager manager = new MenuManager();
 		fillMenu(manager);
 		IContributionItem items[] = manager.getItems();
+		if(items.length == 0){
+			MenuItem item = new MenuItem(menu, SWT.NONE);
+			item.setText(NO_TARGETS_MSG);
+			item.setEnabled(false);
+		}
 		for (int i = 0; i < items.length; i++) {
 			items[i].fill(menu, index++);
 		}
