@@ -180,51 +180,52 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 */
 	public String showProposals(final boolean autoActivated) {
 		
-		if (fKeyListener == null) {
+		if (fKeyListener == null)
 			fKeyListener= new ProposalSelectionListener();
-		}
 
 		final Control control= fContentAssistSubjectControlAdapter.getControl();
 		
-		// add the listener before computing the proposals so we don't move the caret 
-		// when the user types fast.
-		if (!Helper.okToUse(fProposalShell) && control != null && !control.isDisposed())
+		if (!Helper.okToUse(fProposalShell) && control != null && !control.isDisposed()) {
+			
+			// add the listener before computing the proposals so we don't move the caret 
+			// when the user types fast.
 			fContentAssistSubjectControlAdapter.addKeyListener(fKeyListener);
 
-		BusyIndicator.showWhile(control.getDisplay(), new Runnable() {
-			public void run() {
-				
-				fInvocationOffset= fContentAssistSubjectControlAdapter.getSelectedRange().x;
-				fFilterOffset= fInvocationOffset;
-				fComputedProposals= computeProposals(fInvocationOffset);
-				
-				int count= (fComputedProposals == null ? 0 : fComputedProposals.length);
-				if (count == 0) {
+			BusyIndicator.showWhile(control.getDisplay(), new Runnable() {
+				public void run() {
 					
-					if (!autoActivated)
-						control.getDisplay().beep();
+					fInvocationOffset= fContentAssistSubjectControlAdapter.getSelectedRange().x;
+					fFilterOffset= fInvocationOffset;
+					fComputedProposals= computeProposals(fInvocationOffset);
 					
-					hide();
-				
-				} else {
-					
-					if (count == 1 && !autoActivated && fContentAssistant.isAutoInserting()) {
+					int count= (fComputedProposals == null ? 0 : fComputedProposals.length);
+					if (count == 0) {
 						
-						insertProposal(fComputedProposals[0], (char) 0, 0, fInvocationOffset);
+						if (!autoActivated)
+							control.getDisplay().beep();
+						
 						hide();
 					
 					} else {
-					
-						if (fLineDelimiter == null)
-							fLineDelimiter= fContentAssistSubjectControlAdapter.getLineDelimiter();
 						
-						createProposalSelector();
-						setProposals(fComputedProposals);
-						displayProposals();
+						if (count == 1 && !autoActivated && fContentAssistant.isAutoInserting()) {
+							
+							insertProposal(fComputedProposals[0], (char) 0, 0, fInvocationOffset);
+							hide();
+						
+						} else {
+						
+							if (fLineDelimiter == null)
+								fLineDelimiter= fContentAssistSubjectControlAdapter.getLineDelimiter();
+							
+							createProposalSelector();
+							setProposals(fComputedProposals);
+							displayProposals();
+						}
 					}
 				}
-			}
-		});
+			});
+		}
 		
 		return getErrorMessage();
 	}
