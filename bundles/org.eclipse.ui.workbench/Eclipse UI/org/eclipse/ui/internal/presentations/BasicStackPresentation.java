@@ -55,18 +55,18 @@ public class BasicStackPresentation extends StackPresentation {
 		public void minimize(CTabFolderEvent event) {
 			event.doit = false;
 			if (mousedownState == site.getState()) {
-				site.setState(IPresentationSite.STATE_MINIMIZED);
+				site.setState(IStackPresentationSite.STATE_MINIMIZED);
 			}
 		}
 		
 		public void restore(CTabFolderEvent event) {
 			event.doit = false;
-			site.setState(IPresentationSite.STATE_RESTORED);
+			site.setState(IStackPresentationSite.STATE_RESTORED);
 		}
 		
 		public void maximize(CTabFolderEvent event) {
 			event.doit = false;
-			site.setState(IPresentationSite.STATE_MAXIMIZED);
+			site.setState(IStackPresentationSite.STATE_MAXIMIZED);
 		}
 	};
 	
@@ -90,10 +90,10 @@ public class BasicStackPresentation extends StackPresentation {
 		public void mouseDoubleClick(MouseEvent e) {
 			CTabItem newItem = tabFolder.getItem(new Point(e.x, e.y));
 			
-			if (site.getState() == IPresentationSite.STATE_MAXIMIZED) {
-				site.setState(IPresentationSite.STATE_RESTORED);
+			if (site.getState() == IStackPresentationSite.STATE_MAXIMIZED) {
+				site.setState(IStackPresentationSite.STATE_RESTORED);
 			} else {
-				site.setState(IPresentationSite.STATE_MAXIMIZED);
+				site.setState(IStackPresentationSite.STATE_MAXIMIZED);
 			}
 		}
 		
@@ -150,13 +150,10 @@ public class BasicStackPresentation extends StackPresentation {
 			}
 		}	
 	};
-	private StateContribution stateContribution;
-	
+
 	public BasicStackPresentation(CTabFolder control, IStackPresentationSite stackSite) {
 		tabFolder = control;
 		site = stackSite;
-		stateContribution = new StateContribution(stackSite);
-		systemMenuManager.add(stateContribution);
 		
 		// listener to switch between visible tabItems
 		tabFolder.addListener(SWT.Selection, selectionListener);
@@ -443,8 +440,8 @@ public class BasicStackPresentation extends StackPresentation {
 	 * @see org.eclipse.ui.internal.skins.Presentation#setState(int)
 	 */
 	public void setState(int state) {
-		tabFolder.setMinimized(state == IPresentationSite.STATE_MINIMIZED);
-		tabFolder.setMaximized(state == IPresentationSite.STATE_MAXIMIZED);
+		tabFolder.setMinimized(state == IStackPresentationSite.STATE_MINIMIZED);
+		tabFolder.setMaximized(state == IStackPresentationSite.STATE_MAXIMIZED);
 	}
 	
 	/* (non-Javadoc)
