@@ -105,8 +105,6 @@ public class PageContentForm implements IIntroConstants {
      */
     private Composite createPageTableComposite(AbstractIntroPage page,
             Composite parent) {
-        int childDivCount = page.getChildrenOfType(AbstractIntroElement.DIV).length;
-        childDivCount = childDivCount == 0 ? 1 : childDivCount;
         Composite client = toolkit.createComposite(parent);
         TableWrapLayout layout = new TableWrapLayout();
         layout.topMargin = 0;
@@ -114,7 +112,7 @@ public class PageContentForm implements IIntroConstants {
         layout.leftMargin = 0;
         layout.rightMargin = 0;
         int numColumns = styleManager.getPageNumberOfColumns();
-        layout.numColumns = numColumns < 1 ? childDivCount : numColumns;
+        layout.numColumns = numColumns == 0 ? 1 : numColumns;
         client.setLayout(layout);
 
         // parent has TableWrapLayout, and so update layout of this child.

@@ -120,7 +120,7 @@ public class PageStyleManager extends SharedStyleManager {
 
 
     public int getNumberOfColumns(IntroDiv group) {
-        String key = page.getId() + "." + group.getId() + ".layout.ncolumns"; //$NON-NLS-1$ //$NON-NLS-2$
+        String key = createGroupKey(group) + ".layout.ncolumns";
         return getIntProperty(key);
     }
 

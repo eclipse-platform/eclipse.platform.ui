@@ -44,20 +44,19 @@ public class PageForm implements IIntroConstants, IPropertyListener {
     private HyperlinkAdapter hyperlinkAdapter = new HyperlinkAdapter() {
 
         public void linkActivated(HyperlinkEvent e) {
-            ImageHyperlink imageLink = (ImageHyperlink) e.getSource();
-            IntroLink introLink = (IntroLink) imageLink.getData(INTRO_LINK);
-            IntroURLParser parser = new IntroURLParser(introLink.getUrl());
+            String url = (String) e.getHref();
+            IntroURLParser parser = new IntroURLParser(url);
             if (parser.hasIntroUrl()) {
                 // execute the action embedded in the IntroURL
                 parser.getIntroURL().execute();
                 return;
             } else if (parser.hasProtocol()) {
-                Util.openBrowser(introLink.getUrl());
+                Util.openBrowser(url);
                 return;
             }
-            DialogUtil.displayInfoMessage(imageLink.getShell(), IntroPlugin
-                    .getString("HyperlinkAdapter.urlIs") //$NON-NLS-1$
-                    + introLink.getUrl());
+            DialogUtil.displayInfoMessage(((Control) e.getSource()).getShell(),
+                    IntroPlugin.getString("HyperlinkAdapter.urlIs") //$NON-NLS-1$
+                            + " " + url); //$NON-NLS-1$
         }
 
         public void linkEntered(HyperlinkEvent e) {
@@ -147,7 +146,7 @@ public class PageForm implements IIntroConstants, IPropertyListener {
     }
 
     /**
-     * Creates an Image Hyperlink from an IntroLink. Model object is cached.
+     * Creates an Image Hyperlink from an IntroLink. Model object is NOT cached.
      * 
      * @param body
      * @param link
@@ -174,8 +173,7 @@ public class PageForm implements IIntroConstants, IPropertyListener {
         // each link is centered in cell.
         GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_CENTER);
         imageLink.setLayoutData(gd);
-        // cache the intro link model object for description and URL.
-        imageLink.setData(INTRO_LINK, link);
+        imageLink.setHref(link.getUrl());
         imageLink.addHyperlinkListener(hyperlinkAdapter);
         return imageLink;
     }

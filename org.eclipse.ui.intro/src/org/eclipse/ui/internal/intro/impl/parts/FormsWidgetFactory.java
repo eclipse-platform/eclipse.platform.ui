@@ -210,6 +210,7 @@ public class FormsWidgetFactory {
         }
         linkControl.setText(link.getLabel());
         linkControl.setFont(IIntroConstants.DEFAULT_FONT);
+        linkControl.setHref(link.getUrl());
         linkControl.addHyperlinkListener(hyperlinkAdapter);
         //Util.highlight(linkControl, SWT.COLOR_DARK_YELLOW);
         return control;
