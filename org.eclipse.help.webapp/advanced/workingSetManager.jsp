@@ -145,15 +145,14 @@ function closeWorkingSetDialog()
 </head>
 
 <body onload="enableButtons()" onunload="closeWorkingSetDialog()">
-
+<form>
 <div style="overflow:auto;height:250px;width:100%;">
- 
   	<table id="filterTable" cellspacing=0 cellpading=0 border=0 align=center  style="background:<%=prefs.getToolbarBackground()%>;margin-top:5px;width:100%;">
 		<tr><td>
-			<input id="alldocs" type="radio" name="workingSet" value="none" onclick="enableButtons()"><%=WebappResources.getString("All", request)%>
+			<input id="alldocs" type="radio" name="workingSet" onclick="enableButtons()"><%=WebappResources.getString("All", request)%>
 		</td></tr>
 		<tr><td>
-			<input id="selectws" type="radio" name="workingSet" value="workingSet" onclick="enableButtons()"><%=WebappResources.getString("selectWorkingSet", request)%>:		
+			<input id="selectws" type="radio" name="workingSet"  onclick="enableButtons()"><%=WebappResources.getString("selectWorkingSet", request)%>:		
 		</td></tr>
 		<tr><td>
 			<div id="workingSetContainer" style="overflow:auto; height:150px;">
@@ -184,7 +183,6 @@ for (int i=0; i<wsets.length; i++)
 %>
 
 </table>
-
 			</div>
 		</td></tr>
 		<tr id="actionsTable" valign="bottom"><td>
@@ -220,7 +218,7 @@ for (int i=0; i<wsets.length; i++)
 		</td></tr>
 	</table>
 </div>
-
+</form>
 <script language="JavaScript">
 	var selected = selectTopicById('<%=workingSetId%>');
 	if (!selected)
