@@ -352,6 +352,8 @@ public class ProgressManager extends ProgressProvider implements
      */
     private void createChangeListener() {
         changeListener = new JobChangeAdapter() {
+        	
+        	
             /*
              * (non-Javadoc)
              * 
@@ -366,29 +368,6 @@ public class ProgressManager extends ProgressProvider implements
                     IJobBusyListener next = (IJobBusyListener) startListeners
                             .next();
                     next.incrementBusy(event.getJob());
-                }
-                if (event.getJob().isUser()) {
-                    boolean noDialog = shouldRunInBackground();
-                    if (!noDialog) {
-                        final IJobChangeEvent finalEvent = event;
-                        WorkbenchJob showJob = new WorkbenchJob(
-                                ProgressMessages
-                                        .getString("ProgressManager.showInDialogName")) { //$NON-NLS-1$
-                            /*
-                             * (non-Javadoc)
-                             * 
-                             * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-                             */
-                            public IStatus runInUIThread(
-                                    IProgressMonitor monitor) {
-                                showInDialog(null, finalEvent.getJob());
-                                return Status.OK_STATUS;
-                            }
-                        };
-                        showJob.setSystem(true);
-                        showJob.schedule();
-                        return;
-                    }
                 }
             }
 
@@ -430,6 +409,29 @@ public class ProgressManager extends ProgressProvider implements
              */
             public void scheduled(IJobChangeEvent event) {
                 updateFor(event);
+                if (event.getJob().isUser()) {
+                    boolean noDialog = shouldRunInBackground();
+                    if (!noDialog) {
+                        final IJobChangeEvent finalEvent = event;
+                        WorkbenchJob showJob = new WorkbenchJob(
+                                ProgressMessages
+                                        .getString("ProgressManager.showInDialogName")) { //$NON-NLS-1$
+                            /*
+                             * (non-Javadoc)
+                             * 
+                             * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+                             */
+                            public IStatus runInUIThread(
+                                    IProgressMonitor monitor) {
+                                showInDialog(null, finalEvent.getJob());
+                                return Status.OK_STATUS;
+                            }
+                        };
+                        showJob.setSystem(true);
+                        showJob.schedule();
+                        return;
+                    }
+                }
             }
 
             /**
@@ -545,7 +547,7 @@ public class ProgressManager extends ProgressProvider implements
      * Get the JobInfo for the job. If it does not exist create it.
      * 
      * @param job
-     * @return
+     * @return JobInfo
      */
     JobInfo getJobInfo(Job job) {
         JobInfo info = (JobInfo) jobs.get(job);
@@ -681,7 +683,8 @@ public class ProgressManager extends ProgressProvider implements
      * @param job
      * @param debug
      *            If the listener is in debug mode.
-     * @return
+     * @return boolean <code>true</code> if the job is not 
+     * displayed.
      */
     boolean isNonDisplayableJob(Job job, boolean debug) {
         if (isNeverDisplayedJob(job))
@@ -695,7 +698,8 @@ public class ProgressManager extends ProgressProvider implements
      * Return whether or not this job is ever displayable.
      * 
      * @param job
-     * @return
+     * @return boolean <code>true</code> if it is never
+     * displayed.
      */
     private boolean isNeverDisplayedJob(Job job) {
         return job == null;
@@ -705,7 +709,7 @@ public class ProgressManager extends ProgressProvider implements
      * Return the current job infos filtered on debug mode.
      * 
      * @param debug
-     * @return
+     * @return JobInfo[] 
      */
     public JobInfo[] getJobInfos(boolean debug) {
         synchronized (jobs) {
