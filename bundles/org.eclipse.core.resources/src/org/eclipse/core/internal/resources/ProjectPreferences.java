@@ -41,6 +41,7 @@ public class ProjectPreferences extends EclipsePreferences {
 	// cache which nodes have been loaded from disk
 	protected static Set loadedNodes = new HashSet();
 	private boolean isWriting;
+	private boolean initialized = false;
 
 	class SortedProperties extends Properties {
 
@@ -82,11 +83,26 @@ public class ProjectPreferences extends EclipsePreferences {
 
 	private ProjectPreferences(EclipsePreferences parent, String name) {
 		super(parent, name);
+		
 		// cache the segment count
 		String path = absolutePath();
 		segmentCount = getSegmentCount(path);
-		if (segmentCount < 2)
+
+		if (segmentCount == 1) {
+			if (initialized) 
+				return;
+			// the children are all of the projects in the workspace
+			try {
+				synchronized (this) {
+					IProject[] allProjects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+					for (int i=0; i<allProjects.length; i++)
+						addChild(allProjects[i].getName(), null);
+				}
+			} finally {
+				initialized = true;
+			}
 			return;
+		}
 
 		// cache the project name
 		String projectName = getSegment(path, 1);
@@ -96,6 +112,22 @@ public class ProjectPreferences extends EclipsePreferences {
 		// cache the qualifier
 		if (segmentCount > 2)
 			qualifier = getSegment(path, 2);
+		
+		if (segmentCount != 2)
+			return;
+
+		// else segmentCount == 2 so we initialize the children
+		if (initialized) 
+			return;
+		try {
+			synchronized (this) {
+				String[] names = computeChildren(project.getLocation());
+				for (int i = 0; i < names.length; i++)
+					addChild(names[i], null);
+			}
+		} finally {
+			initialized = true;
+		}
 	}
 
 	/*
