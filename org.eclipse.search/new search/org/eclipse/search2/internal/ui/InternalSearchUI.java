@@ -26,6 +26,8 @@ import org.eclipse.search.ui.ISearchResultManager;
 import org.eclipse.search.ui.SearchUI;
 
 import org.eclipse.search.internal.ui.SearchPlugin;
+import org.eclipse.search.internal.ui.SearchPreferencePage;
+import org.eclipse.search.internal.ui.util.ExceptionHandler;
 
 import org.eclipse.search2.internal.ui.text.PositionTracker;
 
@@ -215,9 +217,9 @@ public class InternalSearchUI {
 	}
 
 	public void activateSearchView() {
-		IWorkbenchWindow window= SearchPlugin.getActiveWorkbenchWindow();
 		String defaultPerspectiveId= SearchUI.getDefaultPerspectiveId();
 		if (defaultPerspectiveId != null) {
+			IWorkbenchWindow window= window= SearchPlugin.getActiveWorkbenchWindow();
 			if (window != null && window.getShell() != null && !window.getShell().isDisposed()) {
 				try {
 					PlatformUI.getWorkbench().showPerspective(defaultPerspectiveId, window);
@@ -226,11 +228,15 @@ public class InternalSearchUI {
 				}
 			}
 		}
+
 		try {
-			window.getActivePage().showView(SEARCH_VIEW_ID);
+			IViewPart viewPart= SearchPlugin.getActivePage().findView(SEARCH_VIEW_ID);
+			if (viewPart == null || SearchPreferencePage.isViewBroughtToFront()) {
+				SearchPlugin.getActivePage().showView(SEARCH_VIEW_ID);
+			}
 		} catch (PartInitException ex) {
-			// TODO Auto-generated catch block
-		}
+			ExceptionHandler.handle(ex, SearchMessages.getString("Search.Error.openResultView.title"), SearchMessages.getString("Search.Error.openResultView.message")); //$NON-NLS-2$ //$NON-NLS-1$
+		}	
 	}
 
 	public ISearchResultManager getSearchManager() {
