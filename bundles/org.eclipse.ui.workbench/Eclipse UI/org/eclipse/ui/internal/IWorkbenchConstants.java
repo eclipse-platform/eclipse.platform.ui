@@ -78,6 +78,8 @@ public interface IWorkbenchConstants {
     
     /**
      * The extension point for keyword definitions.
+     * 
+     * @since 3.1
      */
 	public static final String PL_KEYWORDS = "keywords"; //$NON-NLS-1$
 

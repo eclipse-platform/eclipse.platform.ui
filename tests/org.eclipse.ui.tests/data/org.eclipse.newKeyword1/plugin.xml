@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin
+   id="newKeyword1"
+   name="newKeyword1 Plug-in"
+   version="1.0.0">
+
+   <runtime>
+   </runtime>
+   <requires>
+      <import plugin="org.eclipse.ui"/>
+   </requires>
+   <extension
+         id="testDynamicKeywordAddition"
+         point="org.eclipse.ui.keywords">
+      <keyword
+            label="dynamicKeyword1"
+            id="dynamicKeyword1"/>
+   </extension>
+ 
+
+</plugin>

@@ -13,36 +13,23 @@ package org.eclipse.ui.internal.preferences;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
-import java.util.Map;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.IPreferencePage;
 import org.eclipse.jface.preference.PreferenceNode;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.IWorkbenchConstants;
-import org.eclipse.ui.internal.registry.KeywordRegistryReader;
+import org.eclipse.ui.internal.keywords.KeywordRegistry;
 
 /**
  * The WorkbenchPreferenceExtensionNode is the abstract class for all property
  * and page nodes in the workbench.
  * 
+ * @since 3.1
  */
 public abstract class WorkbenchPreferenceExtensionNode extends PreferenceNode {
 
-	private static Map keywords;
-	
 	private Collection keywordReferences;
-
-	private Collection keywordLabels;
-	
-	static{
-	     KeywordRegistryReader keywordReader = new KeywordRegistryReader();
-         keywordReader
-         	.readRegistry(Platform.getExtensionRegistry(), PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_KEYWORDS);
-        setKeywords(keywordReader.getKeywords());
-	}
 
 	/**
 	 * Create a new instance of the reciever.
@@ -96,40 +83,28 @@ public abstract class WorkbenchPreferenceExtensionNode extends PreferenceNode {
 	public Collection getKeywordReferences() {
 		return keywordReferences;
 	}
-	
-	/**
-	 * Get the mapping of keyword ids to human readable Strings.
-	 * @return Map
-	 */
-	public static Map getKeywords() {
-		return keywords;
-	}
-	/**
-	 * Set the mapping of keyword ids to human readable Strings.
-	 * @param keywordMappings 
-	 */
-	public static void setKeywords(Map keywordMappings) {
-		keywords = keywordMappings;
-	}
 
 	/**
 	 * Get the labels of all of the keywords of the receiver.
-	 * @return Collection of String or <code>null</code> if there
-	 * are no keyword references.
+	 * 
+	 * @return Collection of <code>String</code>.  Never <code>null</code>.
 	 */
 	public Collection getKeywordLabels() {
 		if(keywordReferences == null)
-			return null;
-		if(keywordLabels == null){
-			keywordLabels = new ArrayList(0);
-			Iterator referenceIterator = keywordReferences.iterator();
-			while(referenceIterator.hasNext()){
-				Object label = keywords.get(referenceIterator.next());
-				if(label != null)
-					keywordLabels.add(label);
-			}
+			return Collections.EMPTY_LIST;
+		
+		// TODO: this value should be cached and the keywords extension point
+		// should be monitored for changes. Doing this will require adding
+		// lifecycle to this class so that listeners can be cleaned up.
+		Collection keywordLabels = new ArrayList(keywordReferences.size());
+		Iterator referenceIterator = keywordReferences.iterator();
+		while(referenceIterator.hasNext()){
+			Object label = KeywordRegistry.getInstance().getKeywordLabel(
+					(String) referenceIterator.next());
+			if(label != null)
+				keywordLabels.add(label);
 		}
+		
 		return keywordLabels;
 	}
-
 }

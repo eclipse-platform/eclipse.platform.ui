@@ -11,14 +11,9 @@
 package org.eclipse.ui.internal.dialogs;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Shell;
+import java.util.Map;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceNode;
@@ -34,9 +29,13 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
-
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
-
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.preferences.WorkbenchPreferenceExtensionNode;
 
@@ -82,6 +81,14 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 
 	protected TreeViewer createTreeViewer(Composite parent) {
 		PatternFilter filter = new PatternFilter() {
+			/**
+			 * TODO: this cache is needed because
+			 * WorkbenchPreferenceExtensionNode.getKeywordLabels() is expensive.
+			 * When it tracks keyword changes effectivly than this cache can be
+			 * removed.
+			 */
+			private Map keywordCache = new HashMap();
+			
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
 				ITreeContentProvider contentProvider = (ITreeContentProvider) getTreeViewer()
 						.getContentProvider();
@@ -100,8 +107,14 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 				if(node instanceof WorkbenchPreferenceExtensionNode){
 					WorkbenchPreferenceExtensionNode workbenchNode =
 						(WorkbenchPreferenceExtensionNode) node;
-					Collection keywordCollection = workbenchNode.getKeywordLabels();
-					if(keywordCollection == null)
+					
+					Collection keywordCollection = (Collection) keywordCache
+							.get(node);
+					if (keywordCollection == null) {
+						keywordCollection = workbenchNode.getKeywordLabels();
+						keywordCache.put(node, keywordCollection);
+					}
+					if(keywordCollection.isEmpty())
 						return false;
 					Iterator keywords = keywordCollection.iterator();
 					while(keywords.hasNext()){
