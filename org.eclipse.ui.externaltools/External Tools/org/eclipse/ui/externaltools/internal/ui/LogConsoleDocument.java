@@ -57,14 +57,30 @@ public class LogConsoleDocument {
 		initializeOutputStructure();		
 	}
 
-	public void append(String message, int priority) {
-		
+	public void append(final String message, final int priority) {
+		if (views.size() == 0)
+			return;
+		((LogConsoleView)views.get(0)).getViewSite().getShell().getDisplay().syncExec(new Runnable() {
+			public void run() {
+				int start = getDocument().getLength();
+				try {
+					// Append new message to the end of the document. This
+					// avoids console flicker when messages are appended.
+					getDocument().replace(start, 0, message);
+				} catch (BadLocationException e) {
+				}
+				setOutputLevelColor(priority, start, message.length());
+			}
+		});		
 		for (int i=0; i < views.size(); i++) {
 			((LogConsoleView)views.get(i)).append(message, priority);	
 		}
 	}
 	
 	private void addRangeStyle(int start, int length, Color color) {
+		// Don't add a StyleRange if the length is 0.
+		if (length == 0)
+			return;	
 		if (styleRanges.size() != 0) {
 			StyleRange lastStyle = (StyleRange) styleRanges.get(styleRanges.size()-1);
 			if (color.equals(lastStyle.foreground))
