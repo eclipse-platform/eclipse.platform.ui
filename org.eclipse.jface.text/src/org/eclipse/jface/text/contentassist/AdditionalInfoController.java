@@ -62,8 +62,10 @@ class AdditionalInfoController extends AbstractInformationControlManager impleme
 	/** Indicates whether the display delay has been reset */
 	private boolean fIsReset= false;
 	/** Object to synchronize display thread and table selection changes */
-	private Object fMutex= new Object();
-	/** Object to synchronize initial display of additional info */
+	private final Object fMutex= new Object();
+	/** Thread access lock. */
+	private final Object fThreadAccess= new Object();
+	/** Object to synchronize initial display of additonal info */
 	private Object fStartSignal;
 	/** The table selection listener */
 	private SelectionListener fSelectionListener= new TableSelectionListener();
@@ -99,15 +101,19 @@ class AdditionalInfoController extends AbstractInformationControlManager impleme
 		Assert.isTrue(control instanceof Table);
 		fProposalTable= (Table) control;
 		fProposalTable.addSelectionListener(fSelectionListener);
-		fThread= new Thread(this, JFaceTextMessages.getString("InfoPopup.info_delay_timer_name")); //$NON-NLS-1$
+		synchronized (fThreadAccess) {
+	 		if (fThread != null)
+	 			fThread.interrupt();
+			fThread= new Thread(this, JFaceTextMessages.getString("InfoPopup.info_delay_timer_name")); //$NON-NLS-1$
 		
-		fStartSignal= new Object();
-		synchronized (fStartSignal) {
-			fThread.start();
-			try {
-				// wait until thread is ready
-				fStartSignal.wait();
-			} catch (InterruptedException x) {
+			fStartSignal= new Object();
+			synchronized (fStartSignal) {
+				fThread.start();
+				try {
+					// wait until thread is ready
+					fStartSignal.wait();
+				} catch (InterruptedException x) {
+				}
 			}
 		}
 	}
@@ -115,11 +121,13 @@ class AdditionalInfoController extends AbstractInformationControlManager impleme
 	/*
 	 * @see AbstractInformationControlManager#disposeInformationControl()
 	 */	
-	 public void disposeInformationControl() {
+	public void disposeInformationControl() {
 		
-		if (fThread != null) {
-			fThread.interrupt();
-			fThread= null;
+		synchronized (fThreadAccess) {
+			if (fThread != null) {
+				fThread.interrupt();
+				fThread= null;
+			}
 		}
 		
 		if (fProposalTable != null && !fProposalTable.isDisposed()) {
@@ -171,7 +179,11 @@ class AdditionalInfoController extends AbstractInformationControlManager impleme
 		} catch (InterruptedException e) {
 		}
 		
-		fThread= null;
+		synchronized (fThreadAccess) {
+			// only null fThread if it is us!
+			if (Thread.currentThread() == fThread)
+				fThread= null;
+		}
 	}
 	
 	/**
