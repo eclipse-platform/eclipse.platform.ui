@@ -14,6 +14,7 @@ public abstract class AntObject {
 	protected String fClassName;
 	protected URL fLibrary;
 	protected String fName;
+	private boolean fIsDefault= false;
 	
 	/**
 	 * Gets the className.
@@ -50,4 +51,23 @@ public abstract class AntObject {
 	public String toString() {
 		return fName;
 	}
+	/**
+	 * Returns whether this ant object has been created because of an extension
+	 * point definition.
+	 * @return boolean
+	 */
+	public boolean isDefault() {
+		return fIsDefault;
+	}
+
+	/**
+	 * Sets that this ant object has been created by the appropriate extension
+	 * point.
+	 * @param isDefault Whether this ant object has been created because of an
+	 * extension point defintion.
+	 */
+	public void setIsDefault(boolean isDefault) {
+		this.fIsDefault = isDefault;
+	}
+
 }
