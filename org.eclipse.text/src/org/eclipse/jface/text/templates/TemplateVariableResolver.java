@@ -22,10 +22,10 @@ import org.eclipse.jface.text.Assert;
 public class TemplateVariableResolver {
 
 	/** Type of this resolver. */
-	private String fType;
+	private String fType= null;
 
 	/** Description of the type resolved by this resolver. */
-	private String fDescription;
+	private String fDescription= null;
 	
 	/**
 	 * Creates an instance of <code>TemplateVariableResolver</code>.
@@ -39,11 +39,15 @@ public class TemplateVariableResolver {
 	}
 	
 	/**
-	 * Creates an empty instance. This constructor exists only so resolvers can
-	 * be contributed via an extension point.
+	 * Creates an empty instance.
+	 * <p>
+	 * This is a framework-only constructor that exists only so that resolvers
+	 * can be contributed via an extension point and that should not be called
+	 * in client code except for subclass constructors; use
+	 * {@link #TemplateVariableResolver(String, String)} instead.
+	 * </p>
 	 */
-	protected TemplateVariableResolver() {
-		
+	public TemplateVariableResolver() {
 	}
 	
 	/**
@@ -132,24 +136,34 @@ public class TemplateVariableResolver {
 	}
 	
 	/**
-	 * Sets the description. This method is public due to implementation
-	 * details and may not be called by clients outside the framework.
+	 * Sets the description.
+	 * <p>
+	 * This is a framework-only method that exists only so that resolvers
+	 * can be contributed via an extension point and that should not be called
+	 * in client code; use {@link #TemplateVariableResolver(String, String)} instead.
+	 * </p>
 	 * 
 	 * @param description the description of this resolver
 	 */
 	public final void setDescription(String description) {
 		Assert.isNotNull(description);
+		Assert.isTrue(fDescription == null); // may only be called once when initialized
 		fDescription= description;
 	}
 	
 	/**
-	 * Sets the type. This method is public due to implementation
-	 * details and may not be called by clients outside the framework.
+	 * Sets the type.
+	 * <p>
+	 * This is a framework-only method that exists only so that resolvers
+	 * can be contributed via an extension point and that should not be called
+	 * in client code; use {@link #TemplateVariableResolver(String, String)} instead.
+	 * </p>
 	 * 
 	 * @param type the type of this resolver
 	 */
 	public final void setType(String type) {
 		Assert.isNotNull(type);
+		Assert.isTrue(fType == null); // may only be called once when initialized
 		fType= type;
 	}
 }

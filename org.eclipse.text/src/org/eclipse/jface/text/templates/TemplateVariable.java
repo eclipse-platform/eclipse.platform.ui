@@ -14,8 +14,8 @@ import org.eclipse.jface.text.Assert;
 
 /**
  * A <code>TemplateVariable</code> represents a set of positions into a
- * <code>TemplateBuffer</code> with identical content each. <code>TemplateVariableResolver</code>
- * s can be used to resolve a template variable to a symbol available from the
+ * <code>TemplateBuffer</code> with identical content each. <code>TemplateVariableResolver</code>s
+ * can be used to resolve a template variable to a symbol available from the
  * <code>TemplateContext</code>.
  * 
  * @see TemplateVariableResolver
@@ -41,7 +41,8 @@ public class TemplateVariable {
 	private String[] fValues;
 	
 	/**
-	 * Creates a template variable.
+	 * Creates a template variable. The type is used as the name of the
+	 * variable.
 	 * 
 	 * @param type the type of the variable
 	 * @param defaultValue the default value of the variable
@@ -55,15 +56,43 @@ public class TemplateVariable {
 	/**
 	 * Creates a template variable.
 	 * 
+	 * @param type the type of the variable
+	 * @param name the name of the variable
+	 * @param defaultValue the default value of the variable
+	 * @param offsets the array of offsets of the variable
+	 * @param length the length of the variable
+	 */
+	public TemplateVariable(String type, String name, String defaultValue, int[] offsets, int length) {
+		this(type, name, new String[] { defaultValue }, offsets, length);
+	}
+
+	/**
+	 * Creates a template variable with multiple possible values. The type is
+	 * used as the name of the template.
+	 * 
 	 * @param type the type of the template variable
 	 * @param values the values available at this variable, non-empty
 	 * @param offsets the array of offsets of the variable
 	 * @param length the length of the variable
 	 */
 	public TemplateVariable(String type, String[] values, int[] offsets, int length) {
+		this(type, type, values, offsets, length);
+	}
+
+	/**
+	 * Creates a template variable with multiple possible values.
+	 * 
+	 * @param type the type of the variable
+	 * @param name the name of the variable
+	 * @param values the values available at this variable, non-empty
+	 * @param offsets the array of offsets of the variable
+	 * @param length the length of the variable
+	 */
+	public TemplateVariable(String type, String name, String[] values, int[] offsets, int length) {
 		Assert.isNotNull(type);
+		Assert.isNotNull(name);
 		fType= type;
-		fName= fType;
+		fName= name;
 		setValues(values);
 		setOffsets(offsets);
 		setUnambiguous(false);
@@ -165,9 +194,9 @@ public class TemplateVariable {
 	}
 
 	/**
-	 * Returns <code>true</code> if the variable is unambiguously, <code>false</code> otherwise.
+	 * Returns <code>true</code> if the variable is unambiguously resolved, <code>false</code> otherwise.
 	 * 
-	 * @return <code>true</code> if the variable is unambiguously, <code>false</code> otherwise
+	 * @return <code>true</code> if the variable is unambiguously resolved, <code>false</code> otherwise
 	 */	
 	public boolean isUnambiguous() {
 	 	return fIsUnambiguous;   

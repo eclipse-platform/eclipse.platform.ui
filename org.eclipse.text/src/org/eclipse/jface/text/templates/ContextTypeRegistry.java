@@ -11,6 +11,7 @@
 package org.eclipse.jface.text.templates;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -29,16 +30,37 @@ public class ContextTypeRegistry {
 	 * @param contextType the context type to add
 	 */	
 	public void addContextType(ContextType contextType) {
-		fContextTypes.put(contextType.getName(), contextType);
+		fContextTypes.put(contextType.getId(), contextType);
 	}
 	
 	/**
-	 * Returns the context type if the name is valid, <code>null</code> otherwise.
+	 * Returns the context type if the id is valid, <code>null</code> otherwise.
 	 * 
-	 * @param name the name of the context type to retrieve
+	 * @param id the id of the context type to retrieve
 	 * @return the context type if <code>name</code> is valid, <code>null</code> otherwise
 	 */
-	public ContextType getContextType(String name) {
-		return (ContextType) fContextTypes.get(name);
+	public ContextType getContextType(String id) {
+		return (ContextType) fContextTypes.get(id);
+	}
+
+	/**
+	 * Returns the id of the default context type.
+	 * 
+	 * @return the id of the default context type
+	 */
+	public String getDefaultTypeId() {
+		for (Iterator it= fContextTypes.keySet().iterator(); it.hasNext();) {
+			return (String) it.next();
+		}
+		return null;
+	}
+
+	/**
+	 * Returns all identifiers of registered context types.
+	 * 
+	 * @return all identifiers of registered context types
+	 */
+	public String[] getTypeIds() {
+		return (String[]) fContextTypes.keySet().toArray(new String[0]);
 	}
 }

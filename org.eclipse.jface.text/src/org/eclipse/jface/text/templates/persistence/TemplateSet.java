@@ -59,6 +59,7 @@ import org.eclipse.jface.text.templates.TemplateMessages;
 public class TemplateSet {
 
 	private static final String NAME_ATTRIBUTE= "name"; //$NON-NLS-1$
+	private static final String ID_ATTRIBUTE= "id"; //$NON-NLS-1$
 	private static final String DESCRIPTION_ATTRIBUTE= "description"; //$NON-NLS-1$
 	private static final String CONTEXT_ATTRIBUTE= "context"; //$NON-NLS-1$
 	private static final String ENABLED_ATTRIBUTE= "enabled"; //$NON-NLS-1$
@@ -81,12 +82,12 @@ public class TemplateSet {
 	 * 
 	 * @see #addFromStream(InputStream, boolean, boolean)
 	 */
-	public void addFromFile(File file, boolean allowDuplicates) throws CoreException {
+	public void addFromFile(File file, boolean allowDuplicates, ResourceBundle bundle) throws CoreException {
 		InputStream stream= null;
 
 		try {
 			stream= new FileInputStream(file);
-			addFromStream(stream, allowDuplicates, false, null);
+			addFromStream(stream, allowDuplicates, false, bundle);
 
 		} catch (IOException e) {
 			throwReadException(e);
@@ -155,7 +156,6 @@ public class TemplateSet {
 				
 				String message= validateTemplate(template);
 				if (message == null) {
-					template.setEnabled(enabled);
 					if (!allowDuplicates) {
 						Template[] templates= getTemplates(name);
 						for (int k= 0; k < templates.length; k++) {
@@ -208,9 +208,9 @@ public class TemplateSet {
 	}
 
 	protected String validateTemplate(Template template) throws CoreException {
-		ContextType type= fRegistry.getContextType(template.getContextTypeName());
+		ContextType type= fRegistry.getContextType(template.getContextTypeId());
 		if (type == null) {
-			return "Unknown context type: " + template.getContextTypeName(); //$NON-NLS-1$
+			return "Unknown context type: " + template.getContextTypeId(); //$NON-NLS-1$
 		}
 		return type.validate(template.getPattern());
 	}
@@ -275,13 +275,9 @@ public class TemplateSet {
 				attributes.setNamedItem(description);
 	
 				Attr context= document.createAttribute(CONTEXT_ATTRIBUTE);
-				context.setValue(template.getContextTypeName());
+				context.setValue(template.getContextTypeId());
 				attributes.setNamedItem(context);			
 
-				Attr enabled= document.createAttribute(ENABLED_ATTRIBUTE);
-				enabled.setValue(template.isEnabled() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
-				attributes.setNamedItem(enabled);
-				
 				Text pattern= document.createTextNode(template.getPattern());
 				node.appendChild(pattern);			
 			}		

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jface.text.templates;
 
+import org.eclipse.jface.text.Assert;
+
 /**
  * A template consisting of a name and a pattern.
  * 
@@ -22,11 +24,9 @@ public class Template {
 	/** A description of this template */
 	private String fDescription;
 	/** The name of the context type of this template */
-	private String fContextTypeName;
+	private String fContextTypeId;
 	/** The template pattern. */
 	private String fPattern;
-	/** A flag indicating if the template is active or not. */
-	private boolean fEnabled= true;
 
 	/**
 	 * Creates an empty template.
@@ -41,47 +41,29 @@ public class Template {
 	 * @param template the template to copy
 	 */
 	public Template(Template template) {
-		this(template.getName(), template.getDescription(), template.getContextTypeName(), template.getPattern());	
+		this(template.getName(), template.getDescription(), template.getContextTypeId(), template.getPattern());	
 	}
 
 	/**
 	 * Creates a template.
 	 * 
-	 * @param name the name of the template.
-	 * @param description the description of the template.
-	 * @param contextTypeName the name of the context type in which the template can be applied.
-	 * @param pattern the template pattern.
+	 * @param name the name of the template
+	 * @param description the description of the template
+	 * @param contextTypeId the id of the context type in which the template can be applied
+	 * @param pattern the template pattern
 	 */		
-	public Template(String name, String description, String contextTypeName, String pattern) {
-		fName= name;
-		fDescription= description;
-		fContextTypeName= contextTypeName;
-		fPattern= pattern;
-	}
-	
-	/*
-	 * @see Object#equals(Object)
-	 */
-	public boolean equals(Object object) {
-		if (!(object instanceof Template))
-			return false;
-			
-		Template template= (Template) object;
-
-		if (template == this)
-			return true;		
-
-		return
-			template.fName.equals(fName) &&
-			template.fPattern.equals(fPattern) &&
-			template.fContextTypeName.equals(fContextTypeName);
+	public Template(String name, String description, String contextTypeId, String pattern) {
+		setDescription(description);
+		setName(name);
+		setContext(contextTypeId);
+		setPattern(pattern);
 	}
 	
 	/*
 	 * @see Object#hashCode()
 	 */
 	public int hashCode() {
-		return fName.hashCode() ^ fPattern.hashCode() ^ fContextTypeName.hashCode();
+		return fName.hashCode() ^ fPattern.hashCode() ^ fContextTypeId.hashCode();
 	}
 
 	/**
@@ -90,6 +72,7 @@ public class Template {
 	 * @param description the new description
 	 */
 	public void setDescription(String description) {
+		Assert.isNotNull(description);
 		fDescription= description;
 	}
 	
@@ -105,19 +88,20 @@ public class Template {
 	/**
 	 * Sets the name of the context type in which the template can be applied.
 	 * 
-	 * @param contextTypeName the new context type name
+	 * @param contextTypeId the new context type name
 	 */
-	public void setContext(String contextTypeName) {
-		fContextTypeName= contextTypeName;
+	public void setContext(String contextTypeId) {
+		Assert.isNotNull(contextTypeId);
+		fContextTypeId= contextTypeId;
 	}
 	
 	/**
-	 * Returns the name of the context type in which the template can be applied.
+	 * Returns the id of the context type in which the template can be applied.
 	 * 
-	 * @return the name of the context type in which the template can be applied
+	 * @return the id of the context type in which the template can be applied
 	 */
-	public String getContextTypeName() {
-		return fContextTypeName;
+	public String getContextTypeId() {
+		return fContextTypeId;
 	}
 
 	/**
@@ -157,24 +141,6 @@ public class Template {
 	}
 	
 	/**
-	 * Sets the enable state of the template.
-	 * 
-	 * @param enable the new enable state of the template
-	 */
-	public void setEnabled(boolean enable) {
-		fEnabled= enable;	
-	}
-	
-	/**
-	 * Returns <code>true</code> if template is enabled, <code>false</code> otherwise.
-	 * 
-	 * @return <code>true</code> if template is enabled, <code>false</code> otherwise
-	 */
-	public boolean isEnabled() {
-		return fEnabled;	
-	}
-	
-	/**
 	 * Returns <code>true</code> if template is enabled and matches the context,
 	 * <code>false</code> otherwise.
 	 * 
@@ -184,7 +150,24 @@ public class Template {
 	 * <code>false</code> otherwise
 	 */
 	public boolean matches(String prefix, String contextTypeName) {
-		return fEnabled && fContextTypeName.equals(contextTypeName);
+		return fContextTypeId.equals(contextTypeName);
 	}
 
+	/*
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object o) {
+		if (!(o instanceof Template))
+			return false;
+			
+		Template t= (Template) o;
+		if (t == this)
+			return true;		
+
+		return t.fName.equals(fName)
+				&& t.fPattern.equals(fPattern)
+				&& t.fContextTypeId.equals(fContextTypeId) 
+				&& t.fDescription.equals(fDescription);
+	}
+	
 }
