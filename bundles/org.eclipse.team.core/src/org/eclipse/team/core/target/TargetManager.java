@@ -44,13 +44,20 @@ import org.eclipse.team.internal.core.target.LocationMapping;
 public class TargetManager {
 	private static final String TARGET_SITES_FILE = ".targetSites"; //$NON-NLS-1$
 
-	private static QualifiedName TARGET_MAPPINGS =
+	private static final QualifiedName TARGET_MAPPINGS =
 		new QualifiedName("org.eclipse.team.core.target", "mappings"); //$NON-NLS-1$ //$NON-NLS-2$
 
 	private static Map factories = new Hashtable();
 	private static List sites = new ArrayList();
 	private static List listeners = new ArrayList();
 
+	//Key for persistent property to denote the project as having target management
+	private static final QualifiedName PROP_KEY =
+		new QualifiedName("org.eclipse.team", "target"); //$NON-NLS-1$ //$NON-NLS-2$
+		
+	//Key to signify the kind of target.  We only have one at the moment
+	private static final String BASIC_TARGET_KEY = "basic";	//$NON-NLS-1$ 
+		
 	public static void startup() {
 		ResourcesPlugin.getWorkspace().getSynchronizer().add(TARGET_MAPPINGS);
 		readLocations();
@@ -94,7 +101,7 @@ public class TargetManager {
 				TARGET_MAPPINGS,
 				project,
 				mapping.encode());
-		   project.setPersistentProperty(new QualifiedName("org.eclipse.team", "target"), "basic");
+		   project.setPersistentProperty(PROP_KEY, BASIC_TARGET_KEY);
   		} catch (CoreException e) {
 			throw new TeamException(Policy.bind("TargetManager.Problems_mapping_project", project.getName()), e); //$NON-NLS-1$
 		} catch (IOException e) {
@@ -116,7 +123,7 @@ public class TargetManager {
 				provider.deregister(project);
 				s.flushSyncInfo(TARGET_MAPPINGS, project, IResource.DEPTH_ZERO);
 			}
-		   project.setPersistentProperty(new QualifiedName("org.eclipse.team", "target"), null);	// null arg removes
+		   project.setPersistentProperty(PROP_KEY, null);	// null arg removes
 		} catch (CoreException e) {
 			throw new TeamException(Policy.bind("TargetManager.problemsUnmapping", project.getName()), e); //$NON-NLS-1$
 		}
