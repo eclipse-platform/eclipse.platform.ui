@@ -161,7 +161,7 @@ private void setDefaultContentDescription() {
 	String title = getTitle();
 	
 	if (Util.equals(partName, title)) {
-		internalSetContentDescription("");
+		internalSetContentDescription(""); //$NON-NLS-1$
 	} else {
 		internalSetContentDescription(title);
 	}

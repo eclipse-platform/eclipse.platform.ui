@@ -191,8 +191,8 @@ public class CleanDialog extends MessageDialog {
 			ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.CLEAN_BUILD, monitor);
 		else {
 			  try {
-			    monitor.beginTask(IDEWorkbenchMessages.getString("CleanDialog.taskName"),    
-			      selection.length); //$NON-NLS-1$
+			    monitor.beginTask(IDEWorkbenchMessages.getString("CleanDialog.taskName"), //$NON-NLS-1$
+			      selection.length);
 			    for (int i = 0; i < selection.length; i++)
 			      ((IProject)selection[i]).build(
 			        IncrementalProjectBuilder.CLEAN_BUILD, 
