@@ -33,8 +33,6 @@ public class WorkspacePreferences extends WorkspaceDescription {
 	
 	public final static String PROJECT_SEPARATOR = ":"; //$NON-NLS-1$
 
-	private IWorkspaceDescription defaults;
-
 	public WorkspacePreferences() {
 		super("Workspace"); //$NON-NLS-1$
 		this.preferences = ResourcesPlugin.getPlugin().getPluginPreferences();
@@ -179,7 +177,6 @@ public class WorkspacePreferences extends WorkspaceDescription {
 		copyFromTo(this, target);
 	}
 	public void setDefaults(IWorkspaceDescription defaults) {
-		this.defaults = defaults;
 		preferences.setDefault(ResourcesPlugin.PREF_AUTO_BUILDING, defaults.isAutoBuilding());
 		preferences.setDefault(ResourcesPlugin.PREF_BUILD_ORDER, convertStringArraytoString(defaults.getBuildOrder()));
 		preferences.setDefault(ResourcesPlugin.PREF_DEFAULT_BUILD_ORDER, defaults.getBuildOrder() == null);
@@ -206,6 +203,4 @@ public class WorkspacePreferences extends WorkspaceDescription {
 		else if (property.equals(ResourcesPlugin.PREF_MAX_BUILD_ITERATIONS)) 
 			super.setMaxBuildIterations(preferences.getInt(ResourcesPlugin.PREF_MAX_BUILD_ITERATIONS));		
 	}
-
-
 }
