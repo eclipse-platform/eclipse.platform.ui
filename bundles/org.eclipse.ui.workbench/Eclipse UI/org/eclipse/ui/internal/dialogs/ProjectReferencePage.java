@@ -54,22 +54,26 @@ public class ProjectReferencePage extends PropertyPage {
 
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
-		layout.marginWidth = 0;
-		layout.marginHeight = 0;
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		composite.setFont(font);
 
+		initialize();
+
+		createDescriptionLabel(composite);
+
 		listViewer =
 			CheckboxTableViewer.newCheckList(composite, SWT.TOP | SWT.BORDER);
 		listViewer.getTable().setFont(font);
-		GridData data = new GridData();
-		data.horizontalAlignment = GridData.FILL;
+		GridData data = new GridData(GridData.FILL_BOTH);
 		data.grabExcessHorizontalSpace = true;
-		data.heightHint =
-			getDefaultFontHeight(
-				listViewer.getTable(),
-				PROJECT_LIST_MULTIPLIER);
+
+		//Only set a height hint if it will not result in a cut off dialog
+		if (DialogUtil.inRegularFontMode(parent))
+			data.heightHint =
+				getDefaultFontHeight(
+					listViewer.getTable(),
+					PROJECT_LIST_MULTIPLIER);
 		listViewer.getTable().setLayoutData(data);
 		listViewer.getTable().setFont(font);
 
@@ -93,24 +97,7 @@ public class ProjectReferencePage extends PropertyPage {
 
 		return composite;
 	}
-	/* (non-Javadoc)
-	 * Method declared on IDialogPage.
-	 */
-	public void createControl(Composite parent) {
-		initialize();
 
-		Composite content = new Composite(parent, SWT.NULL);
-		GridLayout layout = new GridLayout();
-		layout.marginHeight = layout.marginWidth = 0;
-		content.setLayout(layout);
-		content.setFont(parent.getFont());
-
-		createDescriptionLabel(content);
-
-		createContents(content);
-
-		setControl(content);
-	}
 	/**
 	 * Returns a content provider for the list dialog. It
 	 * will return all projects in the workspace except
