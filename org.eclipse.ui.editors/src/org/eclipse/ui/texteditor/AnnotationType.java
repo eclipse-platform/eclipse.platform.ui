@@ -29,10 +29,18 @@ public class AnnotationType {
 		return fSuperTypes;
 	}
 	
+	/**
+	 * For internal use only.
+	 * Visibility will be changed to default.
+	 */
 	public AnnotationPreference getPreference() {
 		return fPreference;
 	}
 	
+	/**
+	 * For internal use only.
+	 * Visibility will be changed to default.
+	 */
 	public void setAnnotationPreference(AnnotationPreference preference) {
 		fPreference= preference;
 	}
