@@ -220,6 +220,17 @@ public void testHasTrailingSeparator() {
 	assertTrue("2.3", !new Path("//first/second/third").hasTrailingSeparator());
 	assertTrue("2.4", !new Path("c:/first/second/third").hasTrailingSeparator());
 	assertTrue("2.5", !new Path("c:first/second/third").hasTrailingSeparator());
+	
+	//paths of length 0 never have a trailing separator
+	assertTrue("3.0", !new Path("/first/").removeLastSegments(1).hasTrailingSeparator());
+	assertTrue("3.1", !new Path("/first/").removeFirstSegments(1).hasTrailingSeparator());
+	assertTrue("3.2", !new Path("/").hasTrailingSeparator());
+	assertTrue("3.3", !new Path("/first/").append("..").hasTrailingSeparator());
+	assertTrue("3.4", !new Path("/first/").append(new Path("..")).hasTrailingSeparator());
+	assertTrue("3.5", !new Path("/first/../").hasTrailingSeparator());
+	assertTrue("3.6", !Path.ROOT.addTrailingSeparator().hasTrailingSeparator());
+	assertTrue("3.7", !Path.EMPTY.addTrailingSeparator().hasTrailingSeparator());
+	
 }
 public void testIsAbsolute() {
 	
@@ -284,11 +295,12 @@ public void testIsUNC() {
 	
 	assertTrue("3.0", !new Path("c:/a/b").isUNC());
 	assertTrue("3.1", !new Path("c:a/b").isUNC());
-	
+	assertTrue("3.2", !new Path("/F/../").isUNC());
+		
 	// positive
-	assertTrue("3.0", new Path("//").isUNC());
-	assertTrue("3.1", new Path("//a").isUNC());
-	assertTrue("3.2", new Path("//a/b").isUNC());
+	assertTrue("4.0", new Path("//").isUNC());
+	assertTrue("4.1", new Path("//a").isUNC());
+	assertTrue("4.2", new Path("//a/b").isUNC());
 }
 public void testLastSegment() {
 
