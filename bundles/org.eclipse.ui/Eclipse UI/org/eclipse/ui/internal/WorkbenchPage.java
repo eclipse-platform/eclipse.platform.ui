@@ -619,7 +619,7 @@ public boolean closeAllSavedEditors() {
 			activationList.remove(editor);
 			if(part != null) {
 				firePartClosed(part);
-				part.dispose();
+				disposePart(part);
 			}
 		}
 	}
@@ -658,7 +658,7 @@ public boolean closeAllEditors(boolean save) {
 		IEditorPart editor = (IEditorPart)editors[i].getPart(false);
 		if(editor != null) {
 			firePartClosed(editor);
-			editor.dispose();
+			disposePart(editor);
 		}
 	}
 	activationList.removeEditors();
@@ -710,7 +710,7 @@ public boolean closeEditor(IEditorPart editor, boolean save) {
 	// Close the part.
 	getEditorManager().closeEditor(ref);
 	firePartClosed(editor);
-	editor.dispose();
+	disposePart(editor);
 	// Notify interested listeners
 	window.firePerspectiveChanged(this, getPerspective(), CHANGE_EDITOR_CLOSE);
 	
@@ -896,6 +896,16 @@ private void deactivatePart(IWorkbenchPart part) {
 		site.getPane().showFocus(false);
 	}
 }
+private void disposePart(final IWorkbenchPart part) {
+	Platform.run(new SafeRunnable() {
+		public void run() {
+			part.dispose();
+		}
+		public void handleException(Throwable e) {
+			//Exception has already being logged by Core. Do nothing.
+		}
+	});
+}
 /**
  * Cleanup.
  */
@@ -976,7 +986,7 @@ private void disposePerspective(Perspective persp) {
 		if (!exists) {
 			firePartClosed(view);
 			activationList.remove(view);
-			view.dispose();
+			disposePart(view);
 		}
 	}
 }
@@ -1369,7 +1379,7 @@ public void hideView(IViewPart view) {
 	boolean exists = viewFactory.hasView(view.getSite().getId());
 	if (!exists) {
 		firePartClosed(view);
-		view.dispose();
+		disposePart(view);
 		activationList.remove(view);		
 	}
 	

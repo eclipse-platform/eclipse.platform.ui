@@ -16,7 +16,9 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.*;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 
@@ -185,7 +187,7 @@ protected IEditorSite createSite(IEditorPart editor){
 public void dispose() {
 	for (int i = 0; i < nestedEditors.size(); ++i) {
 		IEditorPart editor = (IEditorPart) nestedEditors.get(i);
-		editor.dispose();
+		disposePart(editor);		
 	}
 	nestedEditors.clear();
 }
@@ -412,6 +414,16 @@ protected void pageChange(int newPageIndex) {
 		}
 	}
 }
+private void disposePart(final IWorkbenchPart part) {
+	Platform.run(new SafeRunnable() {
+		public void run() {
+			part.dispose();
+		}
+		public void handleException(Throwable e) {
+			//Exception has already being logged by Core. Do nothing.
+		}
+	});
+}
 /**
  * Removes the page with the given index from this multi-page editor.
  * The controls for the page are disposed of; if the page has an editor, 
@@ -429,7 +441,7 @@ public void removePage(int pageIndex) {
 	// dispose editor (if any)
 	if (editor != null) {
 		nestedEditors.remove(editor);
-		editor.dispose();
+		disposePart(editor);
 	}
 }
 /**
