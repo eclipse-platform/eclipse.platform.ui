@@ -275,6 +275,11 @@ public class CVSSyncInfo extends SyncInfo {
 		if (! local.getParent().isCVSFolder())
 			return;
 		
+		// Ensure that the folder exists locally
+		if (! local.exists()) {
+			local.mkdir();
+		}
+		
 		// If the folder already has CVS info, check that the remote and local match
 		if(local.isManaged() && local.isCVSFolder()) {
 			// Verify that the root and repository are the same
@@ -287,11 +292,6 @@ public class CVSSyncInfo extends SyncInfo {
 			}
 			// The folders are in sync so just return
 			return;
-		}
-		
-		// Ensure that the folder exists locally
-		if (! local.exists()) {
-			local.mkdir();
 		}
 		
 		// Since the parent is managed, this will also set the resource sync info. It is
