@@ -84,6 +84,10 @@ public class SearchIndex {
 	 * @return true if success
 	 */
 	public boolean addDocument(String name, URL url) {
+		if (HelpPlugin.DEBUG_SEARCH) {
+			System.out.println(
+				"SearchIndex.addDocument(" + name + ", " + url + ")");
+		}
 		try {
 			Document doc = new Document();
 			doc.add(Field.Keyword("name", name));
@@ -122,6 +126,7 @@ public class SearchIndex {
 			return false;
 		}
 	}
+
 	/**
 	 * Starts additions.
 	 * To be called before adding documents.
@@ -181,6 +186,9 @@ public class SearchIndex {
 	 * @return true if success
 	 */
 	public boolean removeDocument(String name) {
+		if (HelpPlugin.DEBUG_SEARCH) {
+			System.out.println("SearchIndex.removeDocument(" + name + ")");
+		}
 		Term term = new Term("name", name);
 		try {
 			ir.delete(term);
