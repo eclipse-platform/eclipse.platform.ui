@@ -11,7 +11,7 @@
 
 package org.eclipse.ui.roles;
 
-import org.eclipse.ui.internal.csm.roles.RoleManager;
+import org.eclipse.ui.internal.roles.RoleManager;
 
 /**
  * <p>

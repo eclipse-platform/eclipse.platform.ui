@@ -19,7 +19,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.Dialog;
 
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.csm.activities.SwapActivityHelper;
+import org.eclipse.ui.internal.activities.ui.SwapActivityHelper;
 
 /**
  * Activates the Activity configuration dialog. Can be replaced by addition to
