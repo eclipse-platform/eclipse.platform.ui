@@ -23,13 +23,28 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.search.internal.core.ISearchScope;
 import org.eclipse.search.internal.ui.SearchMessages;
+import org.eclipse.search.internal.ui.SearchPlugin;
+
 import org.eclipse.search.ui.NewSearchUI;
 
 public class TextSearchEngine {
 	
-
+	/**
+	 * @param workspace Current worspave
+	 * @param scope Search scope
+	 * @param visitDerived Select to visit derived resource
+	 * @param collector
+	 * @param matchLocator
+	 * @return Returns the status
+	 * @deprecated Use {@link #search(ISearchScope, boolean, ITextSearchResultCollector, MatchLocator)} instead
+	 */
 	public IStatus search(IWorkspace workspace, ISearchScope scope, boolean visitDerived, ITextSearchResultCollector collector, MatchLocator matchLocator) {
-		return search(scope, visitDerived, collector, matchLocator, true);
+		return search(scope, visitDerived, collector, matchLocator);
+	}
+	
+	public IStatus search(ISearchScope scope, boolean visitDerived, ITextSearchResultCollector collector, MatchLocator matchLocator) {
+		boolean disableNIOSearch= SearchPlugin.getDefault().getPluginPreferences().getBoolean("org.eclipse.search.disableNIOSearch"); //$NON-NLS-1$
+		return search(scope, visitDerived, collector, matchLocator, !disableNIOSearch);
 	}
 	
 	public IStatus search(ISearchScope scope, boolean visitDerived, ITextSearchResultCollector collector, MatchLocator matchLocator, boolean allowNIOSearch) {

@@ -79,7 +79,7 @@ public class FileSearchQuery implements ISearchQuery {
 		final AbstractTextSearchResult textResult= (AbstractTextSearchResult) getSearchResult();
 		textResult.removeAll();
 		ITextSearchResultCollector collector= new TextSearchResultCollector(textResult, pm);
-		return new TextSearchEngine().search(fScope, fVisitDerived, collector, new MatchLocator(fSearchString, isCaseSensitive(), isRegexSearch()), true);
+		return new TextSearchEngine().search(fScope, fVisitDerived, collector, new MatchLocator(fSearchString, isCaseSensitive(), isRegexSearch()));
 	}
 
 	public String getLabel() {
@@ -120,7 +120,7 @@ public class FileSearchQuery implements ISearchQuery {
 	public IStatus searchInFile(final AbstractTextSearchResult result, final IProgressMonitor monitor, IFile file) {
 		ITextSearchResultCollector collector= new TextSearchResultCollector(result, monitor);
 		SearchScope scope= new SearchScope("", new IResource[] { file }); //$NON-NLS-1$
-		return new TextSearchEngine().search(scope, fVisitDerived, collector, new MatchLocator(fSearchString, isCaseSensitive(), isRegexSearch()), true);
+		return new TextSearchEngine().search(scope, fVisitDerived, collector, new MatchLocator(fSearchString, isCaseSensitive(), isRegexSearch()));
 	}
 	
 	public boolean isRegexSearch() {
