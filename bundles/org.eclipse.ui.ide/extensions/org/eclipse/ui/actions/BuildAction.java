@@ -40,7 +40,7 @@ import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
-import org.eclipse.ui.internal.ide.actions.BuildSetAction;
+import org.eclipse.ui.internal.ide.actions.BuildUtilities;
 
 /**
  * Standard actions for full and incremental builds of the selected project(s).
@@ -203,7 +203,7 @@ public class BuildAction extends WorkspaceAction {
     	//update enablement based on active window and part
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		if (window != null) {
-			selectionChanged(new StructuredSelection(BuildSetAction.findSelectedProjects(window)));
+			selectionChanged(new StructuredSelection(BuildUtilities.findSelectedProjects(window)));
 		}
 		return super.isEnabled();
 	}
@@ -284,7 +284,7 @@ public class BuildAction extends WorkspaceAction {
      * preference.
      */
     void saveAllResources() {
-        List projects = getSelectedResources();
+        List projects = getProjectsToBuild();
         if (projects == null || projects.isEmpty())
             return;
 
@@ -326,7 +326,7 @@ public class BuildAction extends WorkspaceAction {
      */
     protected boolean updateSelection(IStructuredSelection s) {
         projectsToBuild = null;
-        return !ResourcesPlugin.getWorkspace().isAutoBuilding()
-                && super.updateSelection(s) && getProjectsToBuild().size() > 0;
+        IProject[] projects = (IProject[]) getProjectsToBuild().toArray(new IProject[0]);
+        return BuildUtilities.isEnabled(projects, IncrementalProjectBuilder.INCREMENTAL_BUILD);
     }
 }
