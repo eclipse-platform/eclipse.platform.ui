@@ -19,7 +19,6 @@ import org.eclipse.debug.core.ILaunchesListener;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStackFrame;
-import org.eclipse.debug.core.model.ISuspendResume;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.InstructionPointerManager;
@@ -31,24 +30,11 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
  * Handles debug events, updating the launch view and viewer.
  */
 public class LaunchViewEventHandler extends AbstractDebugEventHandler implements ILaunchesListener {
-		
-	/**
-	 * Stack frame counts keyed by thread.  Used to optimize thread refreshing.
-	 */
-	private HashMap fStackFrameCountByThread = new HashMap(5);
 	/**
 	 * The timer used to time step and evaluation events. The timer allows
 	 * the UI to not refresh during fast evaluations and steps.
 	 */
 	private ThreadTimer fThreadTimer= new ThreadTimer();
-	
-	/**
-	 * During a suspend event callback, some views may resume
-	 * the thread to perform an evaluation. This flag is set
-	 * when that state is detected so that the view can be
-	 * properly refreshed when the evaluation completes.
-	 */
-	private boolean fEvaluatingForSuspend= false;
 	
 	/**
 	 * Constructs an event handler for the given launch view.
@@ -70,89 +56,81 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 		Object suspendee = null;
 		for (int i = 0; i < events.length; i++) {
 			DebugEvent event = events[i];
-			Object element= event.getSource();
-			if (!(element instanceof IStackFrame || element instanceof IThread || element instanceof IDebugTarget || element instanceof IProcess)) {
+			Object source= event.getSource();
+			if (!(source instanceof IStackFrame || source instanceof IThread || source instanceof IDebugTarget || source instanceof IProcess)) {
 				// the launch view is not interested in any other types of elements
 				return;
 			}
 			switch (event.getKind()) {
 				case DebugEvent.CREATE :
-					insert(element);
-					if (element instanceof IDebugTarget) {
-						ILaunch launch= ((IDebugTarget)element).getLaunch();
+					insert(source);
+					if (source instanceof IDebugTarget) {
+						ILaunch launch= ((IDebugTarget)source).getLaunch();
 						getLaunchView().autoExpand(launch, true, true);
 					}
 					break;
 				case DebugEvent.TERMINATE :
-					removeInstructionPointerAnnotations(element);
-					if (element instanceof IThread) {
-						clearSourceSelection((IThread)element);
-						fStackFrameCountByThread.remove(element);
-						fThreadTimer.getTimedOutThreads().remove(element);
-						remove(element);
+					removeInstructionPointerAnnotations(source);
+					if (source instanceof IThread) {
+						clearSourceSelection((IThread)source);
+						fThreadTimer.getTimedOutThreads().remove(source);
+						remove(source);
 					} else {
 						clearSourceSelection(null);
-						Object parent = ((ITreeContentProvider)getTreeViewer().getContentProvider()).getParent(element);
+						Object parent = ((ITreeContentProvider)getTreeViewer().getContentProvider()).getParent(source);
 						refresh(parent);
 					}
 					break;
 				case DebugEvent.RESUME :
-					doHandleResumeEvent(event, element);
+					doHandleResumeEvent(event, source);
 					break;
 				case DebugEvent.SUSPEND :
-					if (suspendee == null || !suspendee.equals(element)) {
-						doHandleSuspendEvent(element, event);
-						suspendee = element;
+					if (suspendee == null || !suspendee.equals(source)) {
+						doHandleSuspendEvent(source, event);
+						suspendee = source;
 					}
 					break;
 				case DebugEvent.CHANGE :
-					if (element instanceof IStackFrame) {
+					if (source instanceof IStackFrame) {
 						IStackFrame lastFrame= getLaunchView().getStackFrame();
-						if (element.equals(lastFrame)) {
+						if (source.equals(lastFrame)) {
 							getLaunchView().setStackFrame(null);
 						}
 					}
 					if (event.getDetail() == DebugEvent.STATE) {
-						labelChanged(element);
+						labelChanged(source);
 					} else {
 						//structural change
-						refresh(element);
+						refresh(source);
 					}
 					break;
 			}
 		}
 	}
-		
-	protected void doHandleResumeEvent(DebugEvent event, Object element) {
+	
+	/**
+	 * Handles the given resume event with the given source.
+	 */
+	protected void doHandleResumeEvent(DebugEvent event, Object source) {
 		if (!event.isEvaluation()) {
-			removeInstructionPointerAnnotations(element);
+			removeInstructionPointerAnnotations(source);
 		}
 		if (event.isEvaluation() || event.isStepStart()) {
 			// Do not update for step starts and evaluation
 			// starts immediately. Instead, start the timer.
-			IThread thread= getThread(element);
+			IThread thread= getThread(source);
 			if (thread != null) {
 				fThreadTimer.startTimer(thread);
 			}
 			return;
-		}
-		if (element instanceof ISuspendResume && !event.isEvaluation()) {
-			if (((ISuspendResume)element).isSuspended()) {
-				IThread thread = getThread(element);
-				if (thread != null) {								
-					resetStackFrameCount(thread);
-				}
-				return;
-			}
-		}		
+		}	
 		clearSourceSelection(null);
-		refresh(element);
-		if (element instanceof IThread) {
-			selectAndReveal(element);
-			resetStackFrameCount((IThread)element);
+		refresh(source);
+		if (source instanceof IThread) {
+			selectAndReveal(source);
 			return;
 		}	
-		labelChanged(element);
+		labelChanged(source);
 	}
 	
 	/**
@@ -164,12 +142,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 	protected void updateRunningThread(IThread thread) {
 		labelChanged(thread);
 		getLaunchViewer().updateStackFrameIcons(thread);
-		resetStackFrameCount(thread);
 		getLaunchView().clearSourceSelection();
-	}
-	
-	protected void resetStackFrameCount(IThread thread) {
-		fStackFrameCountByThread.put(thread, new Integer(0));
 	}
 
 	protected void doHandleSuspendEvent(Object element, DebugEvent event) {
@@ -180,7 +153,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 			}
 			
 			boolean wasTimedOut= fThreadTimer.getTimedOutThreads().remove(thread);
-			if (event.isEvaluation() && ((event.getDetail() & DebugEvent.EVALUATION_IMPLICIT) != 0) && !fEvaluatingForSuspend) {
+			if (event.isEvaluation() && ((event.getDetail() & DebugEvent.EVALUATION_IMPLICIT) != 0)) {
 				if (thread != null && wasTimedOut) {
 					// Refresh the thread label when a timed out evaluation finishes.
 					// This is necessary because the timeout updates
@@ -190,7 +163,6 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 				// Don't refresh fully for evaluation completion.
 				return;
 			}
-			fEvaluatingForSuspend= false;
 		}
 		if (element instanceof IThread) {
 			doHandleSuspendThreadEvent((IThread)element, event);
@@ -210,74 +182,17 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 	}
 	
 	/**
-	 * This method exists to provide some optimization for refreshing suspended
-	 * threads.  If the number of stack frames has changed from the last suspend, 
-	 * we do a full refresh on the thread.  Otherwise, we only do a surface-level
-	 * refresh on the thread, then refresh each of the children, which eliminates
-	 * flicker when do quick stepping (e.g., holding down the F6 key) within a method.
+	 * Updates the given thread for the given suspend event.
 	 */
 	protected void doHandleSuspendThreadEvent(IThread thread, DebugEvent event) {
 		// if the thread has already resumed, do nothing
 		if (!thread.isSuspended()) {
-			fEvaluatingForSuspend= true;
 			return;
 		}
-		
-		// Get the current stack frames from the thread
-		IStackFrame[] stackFrames = null;
-		try {
-			stackFrames = thread.getStackFrames();
-		} catch (DebugException de) {
-			DebugUIPlugin.log(de);
-			return;
-		}
-		
-		int currentStackFrameCount = stackFrames.length;
-		
-		// Retrieve the old and current counts of stack frames for this thread
-		int oldStackFrameCount = 0;
-		Integer oldStackFrameCountObject = (Integer)fStackFrameCountByThread.get(thread);
-		if (oldStackFrameCountObject != null) {
-			oldStackFrameCount = oldStackFrameCountObject.intValue();
-		}
-		
-		// Compare old & current stack frame counts.  We need to refresh the thread
-		// parent if there are fewer stack frame children
-		boolean refreshNeeded = true;
-		if (currentStackFrameCount == oldStackFrameCount) {
-			refreshNeeded = false;
-		}
-		
-		// Auto-expand the thread.  If we are also refreshing the thread,
-		// then we don't need to worry about any children, since refreshing
-		// the parent handles this.  Only select the thread if this wasn't the end
+		// Auto-expand the thread. Only select the thread if this wasn't the end
 		// of an evaluation
 		boolean evaluationEvent = event.isEvaluation();
-		getLaunchView().autoExpand(thread, refreshNeeded, !evaluationEvent);
-		if (refreshNeeded) {
-			// Update the stack frame count for the thread
-			oldStackFrameCountObject = new Integer(currentStackFrameCount);
-			fStackFrameCountByThread.put(thread, oldStackFrameCountObject);
-			return;
-		} else {
-			labelChanged(thread);
-		}
-		
-		// Auto-expand each stack frame child.  This has the effect of adding 
-		// any new stack frames, and updating any existing stack frames
-		if ((stackFrames != null) && (currentStackFrameCount > 0)) {
-			for (int i = currentStackFrameCount - 1; i > 0; i--) {
-				getLaunchView().autoExpand(stackFrames[i], true, false);				
-			}
-			
-			// If an evaluation just finished, don't auto-expand since this 
-			// forces the top stack frame to get re-selected, which may not have been the
-			// stack frame that was previously selected
-			if (!evaluationEvent) {
-				// Treat the first stack frame differently, since we want to select it
-				getLaunchView().autoExpand(stackFrames[0], true, true);				
-			}
-		}
+		getLaunchView().autoExpand(thread, true, !evaluationEvent);
 	}
 	
 	/**
