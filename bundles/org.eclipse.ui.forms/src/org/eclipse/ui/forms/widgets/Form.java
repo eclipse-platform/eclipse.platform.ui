@@ -106,8 +106,7 @@ public class Form extends Composite {
 					height = extent.y;
 				}
 				gc.dispose();
-			}
-			if (toolBarManager != null) {
+				if (toolBarManager != null) {
 				ToolBar toolBar = toolBarManager.getControl();
 				if (toolBar != null) {
 					toolbarCache.setControl(toolBar);
@@ -116,6 +115,7 @@ public class Form extends Composite {
 						width += TITLE_GAP;
 					width += tbsize.x;
 					height = Math.max(height, tbsize.y);
+				}
 				}
 			}
 			if (backgroundImage!=null && !backgroundImageClipped) {
@@ -149,7 +149,7 @@ public class Form extends Composite {
 			int height = 0;
 			Point tbsize = null;
 			int twidth = carea.width - TITLE_HMARGIN * 2;
-			if (toolBarManager != null) {
+			if (text!=null && toolBarManager != null) {
 				ToolBar toolBar = toolBarManager.getControl();
 				if (toolBar != null) {
 				    toolbarCache.setControl(toolBar);
@@ -254,6 +254,9 @@ public class Form extends Composite {
 	 */
 	public void setText(String text) {
 		this.text = text;
+		if (toolBarManager != null) {
+			toolBarManager.getControl().setVisible(text!=null);
+		}
 		layout();
 		redraw();
 	}
