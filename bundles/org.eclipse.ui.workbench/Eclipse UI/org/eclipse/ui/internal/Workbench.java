@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
@@ -74,13 +76,11 @@ import org.eclipse.ui.ILocalWorkingSetManager;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
-import org.eclipse.ui.IService;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
-import org.eclipse.ui.IWorkbenchServices;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
@@ -89,7 +89,9 @@ import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
+import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
+import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.help.IWorkbenchHelpSystem;
 import org.eclipse.ui.internal.activities.ws.WorkbenchActivitySupport;
@@ -211,6 +213,12 @@ public final class Workbench implements IWorkbench {
 	 * <code>largeUpdateStart()</code> and <code>largeUpdateEnd()</code>.
 	 */
 	private int largeUpdates = 0;
+	
+	/**
+	 * The map of services maintained by the workbench. These services are
+	 * initialized during workbench during the <code>init</code> method.
+	 */
+	final Map services = new HashMap();
 
 	/**
 	 * Creates a new workbench.
@@ -846,27 +854,25 @@ public final class Workbench implements IWorkbench {
 
 		// begin the initialization of the activity, command, and context
 		// managers
-
 		workbenchActivitySupport = new WorkbenchActivitySupport();
 		activityHelper = ActivityPersistanceHelper.getInstance();
 
-		/*
-		 * TODO This is the beginning of the new services support for commands
-		 * and such like. This needs to be further thought out.
-		 */
+		// Initialize the command, context and binding services.
 		commandManager = new CommandManager();
-		final CommandService commandService = new CommandService(commandManager);
-		services[IWorkbenchServices.COMMAND] = commandService;
+		final CommandService commandService = new CommandService(
+				commandManager);
+		services.put(ICommandService.class, commandService);
 		commandService.readRegistryAndPreferences();
 		ContextManager.DEBUG = Policy.DEBUG_CONTEXTS;
 		contextManager = new ContextManager();
-		services[IWorkbenchServices.CONTEXT] = new ContextService(
+		final IContextService contextService = new ContextService(
 				contextManager);
+		services.put(IContextService.class, contextService);
 		BindingManager.DEBUG = Policy.DEBUG_KEY_BINDINGS;
 		bindingManager = new BindingManager(contextManager);
 		final IBindingService bindingService = new BindingService(
 				bindingManager);
-		services[IWorkbenchServices.BINDING] = bindingService;
+		services.put(IBindingService.class, bindingService);
 		bindingService.readRegistryAndPreferences(commandService);
 
 		/*
@@ -2242,21 +2248,6 @@ public final class Workbench implements IWorkbench {
 		return WorkbenchHelpSystem.getInstance();
 	}
 
-	private IService[] services = new IService[5];
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IWorkbench#getService(int)
-	 */
-	public IService getService(int type) {
-		if ((type >= 0) && (type < services.length)) {
-			return services[type];
-		}
-
-		return null;
-	}
-
 	public IViewRegistry getViewRegistry() {
 		return WorkbenchPlugin.getDefault().getViewRegistry();
 	}
@@ -2286,5 +2277,13 @@ public final class Workbench implements IWorkbench {
 	 */
 	public IWizardRegistry getExportWizardRegistry() {
 		return WorkbenchPlugin.getDefault().getExportWizardRegistry();
+	}
+
+	public final Object getService(final Object key) {
+		return services.get(key);
+	}
+
+	public final boolean hasService(final Object key) {
+		return services.containsKey(key);
 	}
 }

@@ -37,8 +37,8 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchServices;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.components.ComponentException;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.Policy;
@@ -324,8 +324,14 @@ public final class WorkbenchKeyboard {
 	public WorkbenchKeyboard(Workbench associatedWorkbench) {
 		workbench = associatedWorkbench;
 		state = new KeyBindingState(associatedWorkbench);
-		bindingService = (IBindingService) workbench
-				.getService(IWorkbenchServices.BINDING);
+		try {
+			bindingService = (IBindingService) workbench
+					.getService(IBindingService.class);
+		} catch (final ComponentException e) {
+			throw new RuntimeException(
+					"Could not get either the binding or the command service from the workbench", //$NON-NLS-1$
+					e);
+		}
 		workbench.addWindowListener(windowListener);
 	}
 

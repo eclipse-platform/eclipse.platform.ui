@@ -87,10 +87,10 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.IWorkbenchServices;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.components.ComponentException;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -1210,12 +1210,18 @@ public final class KeysPreferencePage extends PreferencePage implements
 
 	public final void init(final IWorkbench workbench) {
 		activityManager = workbench.getActivitySupport().getActivityManager();
-		bindingService = (IBindingService) workbench
-				.getService(IWorkbenchServices.BINDING);
-		commandService = (ICommandService) workbench
-				.getService(IWorkbenchServices.COMMAND);
-		contextService = (IContextService) workbench
-				.getService(IWorkbenchServices.CONTEXT);
+		try {
+			bindingService = (IBindingService) workbench
+					.getService(IBindingService.class);
+			commandService = (ICommandService) workbench
+					.getService(ICommandService.class);
+			contextService = (IContextService) workbench
+					.getService(IContextService.class);
+		} catch (final ComponentException e) {
+			// TODO Reconsider what to do in this case?
+			throw new RuntimeException("Could not initialize preference page", //$NON-NLS-1$
+					e);
+		}
 
 		// TODO Add a help context.
 		// helpSystem = workbench.getHelpSystem();

@@ -41,10 +41,10 @@ import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
-import org.eclipse.ui.IWorkbenchServices;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.components.ComponentException;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.keys.IBindingService;
 
@@ -430,12 +430,18 @@ public class CyclePartAction extends PageEventAction {
 		 * will not change while the dialog is open, but the context will. Bug
 		 * 55581.
 		 */
-		final IBindingService bindingService = (IBindingService) PlatformUI
-				.getWorkbench().getService(IWorkbenchServices.BINDING);
-		forwardTriggerSequences = bindingService
-				.getActiveBindingsFor(commandForward);
-		backwardTriggerSequences = bindingService
-				.getActiveBindingsFor(commandBackward);
+		try {
+			final IBindingService bindingService = (IBindingService) PlatformUI
+					.getWorkbench().getService(IBindingService.class);
+			forwardTriggerSequences = bindingService
+					.getActiveBindingsFor(commandForward);
+			backwardTriggerSequences = bindingService
+					.getActiveBindingsFor(commandBackward);
+		} catch (final ComponentException e) {
+			// TODO Should we do something else here?
+			throw new RuntimeException(
+					"Could not get binding service from workbench", e); //$NON-NLS-1$
+		}
 
 		final IWorkbenchContextSupport contextSupport = page
 				.getWorkbenchWindow().getWorkbench().getContextSupport();
@@ -511,10 +517,17 @@ public class CyclePartAction extends PageEventAction {
 	 *            the action
 	 */
 	public void setBackwardActionDefinitionId(String actionDefinitionId) {
-		final ICommandService commandService = (ICommandService) getWorkbenchWindow()
-				.getWorkbench().getService(IWorkbenchServices.COMMAND);
-		final Command command = commandService.getCommand(actionDefinitionId);
-		commandBackward = new ParameterizedCommand(command, null);
+		try {
+			final ICommandService commandService = (ICommandService) getWorkbenchWindow()
+					.getWorkbench().getService(ICommandService.class);
+			final Command command = commandService
+					.getCommand(actionDefinitionId);
+			commandBackward = new ParameterizedCommand(command, null);
+		} catch (final ComponentException e) {
+			// TODO What should we do in this case?
+			throw new RuntimeException(
+					"Could not get command service from workbench", e); //$NON-NLS-1$
+		}
 	}
 
 	/**
@@ -524,10 +537,17 @@ public class CyclePartAction extends PageEventAction {
 	 *            the action
 	 */
 	public void setForwardActionDefinitionId(String actionDefinitionId) {
-		final ICommandService commandService = (ICommandService) getWorkbenchWindow()
-				.getWorkbench().getService(IWorkbenchServices.COMMAND);
-		final Command command = commandService.getCommand(actionDefinitionId);
-		commandForward = new ParameterizedCommand(command, null);
+		try {
+			final ICommandService commandService = (ICommandService) getWorkbenchWindow()
+					.getWorkbench().getService(ICommandService.class);
+			final Command command = commandService
+					.getCommand(actionDefinitionId);
+			commandForward = new ParameterizedCommand(command, null);
+		} catch (final ComponentException e) {
+			// TODO What should we do in this case?
+			throw new RuntimeException(
+					"Could not get command service from workbench", e); //$NON-NLS-1$
+		}
 	}
 
 	/**
