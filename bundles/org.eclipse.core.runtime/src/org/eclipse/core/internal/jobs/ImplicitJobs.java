@@ -91,7 +91,7 @@ class ImplicitJobs {
 		 * Schedule the job and block the calling thread until the job starts running
 		 */
 		void joinRun(IProgressMonitor monitor) {
-			if (monitor.isCanceled())
+			if (isCanceled(monitor))
 				throw new OperationCanceledException();
 			running = false;
 			//check if there is a blocking thread before trying to schedule
@@ -171,7 +171,7 @@ class ImplicitJobs {
 		 * Reset all of this job's fields so it can be reused.  Returns false if
 		 * reuse is not possible
 		 */
-		public boolean recycle() {
+		boolean recycle() {
 			//don't recycle if still running for any reason
 			if (getState() != Job.NONE)
 				return false;
@@ -207,6 +207,9 @@ class ImplicitJobs {
 			if (monitor instanceof IProgressMonitorWithBlocking)
 				 ((IProgressMonitorWithBlocking) monitor).clearBlocked();
 		}
+		/** (non-Javadoc)
+		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+		 */
 		public IStatus run(IProgressMonitor monitor) {
 			synchronized (this) {
 				running = true;
@@ -214,7 +217,7 @@ class ImplicitJobs {
 			}
 			return Job.ASYNC_FINISH;
 		}
-		public void setRealJob(Job realJob) {
+		void setRealJob(Job realJob) {
 			this.realJob = realJob;
 		}
 		/**
