@@ -167,13 +167,17 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 
 	private final IPropertyChangeListener propertyChangeListener = new IPropertyChangeListener() {
 		public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-			if (IPreferenceConstants.EDITOR_TAB_POSITION.equals(propertyChangeEvent.getProperty()) || (IPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS.equals(propertyChangeEvent.getProperty())) && tabFolder != null) {
-				int tabLocation = preferenceStore.getInt(IPreferenceConstants.EDITOR_TAB_POSITION); 
-				boolean multi = preferenceStore.getBoolean(IPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS); 						
-				tabFolder.setTabPosition(tabLocation);				
-				tabFolder.setSingleTab(!multi);
+			boolean multiChanged = IPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS.equals(propertyChangeEvent.getProperty());
+			boolean styleChanged = IPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS.equals(propertyChangeEvent.getProperty());
+			if ((multiChanged || styleChanged) && tabFolder != null) {
+				if (multiChanged) {
+					boolean multi = preferenceStore.getBoolean(IPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS);					
+					tabFolder.setSingleTab(!multi);
+				} else {
+					boolean simple = preferenceStore.getBoolean(IPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS);
+					tabFolder.setSimpleTab(simple);
+				}
 				Iterator iterator = getEditorList().iterator();
-				
 				while (iterator.hasNext())
 				    updateItem((EditorPane) iterator.next());
 			}
@@ -184,19 +188,20 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 		usePulldown = preferenceStore.getBoolean(IPreferenceConstants.EDITORLIST_PULLDOWN_ACTIVE);
 
 		preferenceStore.addPropertyChangeListener(propertyChangeListener);
-		int tabLocation = preferenceStore.getInt(IPreferenceConstants.EDITOR_TAB_POSITION); 
-		boolean multi = preferenceStore.getBoolean(IPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS); 						
-	    int style = SWT.CLOSE | SWT.BORDER | tabLocation | (multi ? SWT.MULTI : SWT.SINGLE);
+		
+		boolean multi = preferenceStore.getBoolean(IPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS);
+		boolean simple = preferenceStore.getBoolean(IPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS);
+		
+	    int style = SWT.CLOSE | SWT.BORDER | (multi ? SWT.MULTI : SWT.SINGLE);
 		
 		tabFolder = new CTabFolder(parent, style);
+		tabFolder.setSimpleTab(simple);
+	
 		//tabFolder.setBorderVisible(true);
 		ColorSchemeService.setTabColors(tabFolder);
 
 		// prevent close button and scroll buttons from taking focus
 		tabFolder.setTabList(new Control[0]);
-
-		// set the tab style to non-simple
-		tabFolder.setSimpleTab(false);
 		
 		// redirect drop request to the workbook
 		tabFolder.setData(this);
@@ -661,9 +666,6 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 			Math.min(r.height, MAX_ITEMS * ((Table) editorList.getControl()).getItemHeight());
 		Rectangle bounds = tabFolder.getClientArea();
 		Point point = new Point(bounds.x + bounds.width - width, bounds.y);
-		if (tabLocation == SWT.BOTTOM) {
-			point.y = bounds.y + bounds.height - height - 1;
-		}
 		point = tabFolder.toDisplay(point);
 		point = parent.toControl(point);
 		listComposite.setBounds(listComposite.computeTrim(point.x, point.y, width, height));

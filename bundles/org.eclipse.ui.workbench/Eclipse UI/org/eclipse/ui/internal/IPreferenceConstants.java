@@ -174,4 +174,19 @@ public interface IPreferenceConstants {
 	 * @since 3.0
 	 */
 	public static String SHOW_MULTIPLE_EDITOR_TABS = "SHOW_MULTIPLE_EDITOR_TABS"; //$NON-NLS-1$	
+	
+	/**
+	 * Workbench preference id for whether the workbench should show traditional style tabs in
+	 * editors and views.
+	 * 
+	 * Boolean-valued: <code>true</code> if editors and views should use a traditional style of tab and
+	 * <code>false</code> if editors should show new style tab (3.0 style)
+	 * <p>
+	 * The default value for this preference is: <code>false</code>
+	 * </p>
+	 * 
+	 * @since 3.0
+	 */
+	public static String SHOW_TRADITIONAL_STYLE_TABS = "SHOW_TRADITIONAL_STYLE_TABS"; //$NON-NLS-1$
+	
 }

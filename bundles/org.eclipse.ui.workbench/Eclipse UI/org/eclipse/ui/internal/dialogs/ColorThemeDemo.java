@@ -19,7 +19,9 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.internal.ColorSchemeService;
+import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchColors;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 
 /**
@@ -64,7 +66,7 @@ public class ColorThemeDemo {
 		sampleComposite.setData(gridData);
 			
 		sampleTabFolder = new CTabFolder(sampleComposite, SWT.BORDER);
-		sampleTabFolder.setSimpleTab(false);
+		sampleTabFolder.setSimpleTab(WorkbenchPlugin.getDefault().getPreferenceStore().getBoolean(IPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS));
 		sampleTabFolder.setData(new GridData(GridData.FILL_BOTH));
 		CTabItem temp = new CTabItem(sampleTabFolder, SWT.NONE);
 		temp.setText("Console");

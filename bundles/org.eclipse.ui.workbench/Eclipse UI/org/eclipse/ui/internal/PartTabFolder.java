@@ -81,8 +81,6 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 	private static final int STATE_RESTORED = 1;
 	private static final int STATE_MAXIMIZED = 2;
 	
-	private static int tabLocation = -1; // Initialized in constructor.
-
 	private IPreferenceStore preferenceStore = WorkbenchPlugin.getDefault().getPreferenceStore();
 
 	private CTabFolder tabFolder;
@@ -178,13 +176,6 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 		//I think so since a PartTabFolder is
 		//not used on more than one page.
 		this.page = page;
-
-		// Get the location of the tabs from the preferences
-		if (tabLocation == -1)
-			tabLocation =
-				WorkbenchPlugin.getDefault().getPreferenceStore().getInt(
-					IPreferenceConstants.VIEW_TAB_POSITION);
-
 	}
 	/**
 	 * Add a part at an index.
@@ -327,9 +318,9 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 	
 	private final IPropertyChangeListener propertyChangeListener = new IPropertyChangeListener() {
 		public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-			if (IPreferenceConstants.VIEW_TAB_POSITION.equals(propertyChangeEvent.getProperty()) && tabFolder != null) {
-				int tabLocation = preferenceStore.getInt(IPreferenceConstants.VIEW_TAB_POSITION); 
-				tabFolder.setTabPosition(tabLocation);
+			if (IPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS.equals(propertyChangeEvent.getProperty()) && tabFolder != null) {
+				boolean simple = preferenceStore.getBoolean(IPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS); 
+				tabFolder.setSimpleTab(simple);
 			}
 		}
 	};	
@@ -341,19 +332,12 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 	
 		// Create control.	
 		this.parent = parent;
-		
+
 		preferenceStore.addPropertyChangeListener(propertyChangeListener);
-		int tabLocation = preferenceStore.getInt(IPreferenceConstants.VIEW_TAB_POSITION); 
+		boolean simple = preferenceStore.getBoolean(IPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS); 
 		
-		// TODO probably won't work, given the code above..
-		if (tabPosition == -1) {
-			if (tabThemeDescriptor != null)
-				tabPosition = tabThemeDescriptor.getTabPosition();
-			else
-				tabPosition = tabLocation;
-		}
-		
-		tabFolder = new CTabFolder(parent, tabLocation | SWT.BORDER | SWT.CLOSE);
+		tabFolder = new CTabFolder(parent, SWT.BORDER | SWT.CLOSE);
+		tabFolder.setSimpleTab(simple);
 		
 		FontRegistry fontRegistry = page.getTheme().getFontRegistry();
 	    tabFolder.setFont(fontRegistry.get("org.eclipse.workbench.tabFont")); //$NON-NLS-1$		
@@ -363,9 +347,6 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 		
 		// do not support icons in unselected tabs.
 		tabFolder.setUnselectedImageVisible(false);
-		
-		// set the tab style to non-simple
-		tabFolder.setSimpleTab(false);
 			
 		//tabFolder.setBorderVisible(true);
 		// set basic colors

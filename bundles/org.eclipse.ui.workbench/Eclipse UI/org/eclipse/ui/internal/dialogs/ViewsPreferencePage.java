@@ -52,7 +52,12 @@ public class ViewsPreferencePage
 	implements IWorkbenchPreferencePage {
 
 	private Button showTextOnPerspectiveBar;
-
+	
+	/*
+	 * change the tab style of the workbench
+	 */
+	private Button showTraditionalStyleTabs;
+	
 	/*
 	 * Editors for working with colors in the Views/Appearance preference page 
 	 */
@@ -156,6 +161,8 @@ public class ViewsPreferencePage
 
 		createShowTextOnPerspectiveBarPref(composite);
 
+		createShowTraditionalStyleTabsPref(composite);
+		
 		createNoteComposite(font, composite, NOTE_LABEL, APPLY_MESSAGE);
 
 		Group colorComposite = new Group(composite, SWT.NONE);
@@ -310,6 +317,18 @@ public class ViewsPreferencePage
 	}
 	
 	/**
+	 * Create the button and text that support setting the preference for showing
+	 * text labels on the perspective switching bar
+	 */
+	protected void createShowTraditionalStyleTabsPref(Composite composite) {
+		showTraditionalStyleTabs = new Button(composite, SWT.CHECK);
+		showTraditionalStyleTabs.setText("Show &traditional style tabs");
+		showTraditionalStyleTabs.setFont(composite.getFont());
+		showTraditionalStyleTabs.setSelection(getPreferenceStore().getBoolean(IPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS));
+		setButtonLayoutData(showTraditionalStyleTabs);
+	}
+	
+	/**
 	 * Set the two supplied controls to be beside each other.
 	 */
 	private void attachControls(Control leftControl, Control rightControl) {
@@ -351,6 +370,7 @@ public class ViewsPreferencePage
 			WorkbenchPlugin.getDefault().getPreferenceStore();
 
 		showTextOnPerspectiveBar.setSelection(store.getDefaultBoolean(IPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR));
+		showTraditionalStyleTabs.setSelection(store.getDefaultBoolean(IPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS));
 		
 		colorIconsEditor.loadDefault();
 		errorColorEditor.loadDefault();
@@ -378,6 +398,7 @@ public class ViewsPreferencePage
 		IPreferenceStore store = getPreferenceStore();
 
 		store.setValue(IPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR, showTextOnPerspectiveBar.getSelection());
+		store.setValue(IPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS, showTraditionalStyleTabs.getSelection());
 		
 		colorIconsEditor.store();
 		errorColorEditor.store();
