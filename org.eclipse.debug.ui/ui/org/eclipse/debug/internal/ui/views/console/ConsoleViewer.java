@@ -75,6 +75,12 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 	private boolean fVisible = false;
 	
 	protected InternalDocumentListener fInternalDocumentListener= new InternalDocumentListener();
+	
+	/**
+	 * Whether the console scrolls as output is appended.
+	 */
+	private boolean fAutoScroll = true;
+	
 	/**
 	 * Internal document listener.
 	 */
@@ -138,17 +144,19 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 	 * Reveals (makes visible) the end of the current document
 	 */
 	protected void revealEndOfDocument() {
-		IDocument doc= getDocument();
-		int lines = doc.getNumberOfLines();
-		try {
-			// lines are 0-based
-			int offset = doc.getLineOffset(lines - 1);
-			if (offset > 0) {
-				StyledText widget= getTextWidget();
-				widget.setCaretOffset(offset);
-				widget.showSelection();
+		if (isAutoScroll()) {
+			IDocument doc= getDocument();
+			int lines = doc.getNumberOfLines();
+			try {
+				// lines are 0-based
+				int offset = doc.getLineOffset(lines - 1);
+				if (offset > 0) {
+					StyledText widget= getTextWidget();
+					widget.setCaretOffset(offset);
+					widget.showSelection();
+				}
+			} catch (BadLocationException e) {
 			}
-		} catch (BadLocationException e) {
 		}
 	}
 
@@ -464,6 +472,24 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 			}
 		}
 	}
+	
+	/**
+	 * Sets whether this viewer should auto-scroll as output is appended to the
+	 * document.
+	 * 
+	 * @param scroll
+	 */
+	public void setAutoScroll(boolean scroll) {
+		fAutoScroll = scroll;
+	}
+	
+	/**
+	 * Returns whether this viewer should auto-scroll as output is appended to
+	 * the document.
+	 */
+	public boolean isAutoScroll() {
+		return fAutoScroll;
+	}	
 
 }
 

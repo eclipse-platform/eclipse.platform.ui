@@ -51,10 +51,13 @@ import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.texteditor.FindReplaceAction;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.IUpdate;
@@ -64,6 +67,8 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 	protected ClearOutputAction fClearOutputAction= null;
 	protected FollowHyperlinkAction fFollowLinkAction = null;
 	protected ProcessDropDownAction fProcessDropDownAction = null;
+	protected ScrollLockAction fScrollLockAction = null;
+	private boolean fIsLocked = false;
 
 	protected Map fGlobalActions= new HashMap(10);
 	protected List fSelectionActions = new ArrayList(3);
@@ -273,6 +278,9 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 		
 		fFollowLinkAction = new FollowHyperlinkAction(getConsoleViewer());
 		fProcessDropDownAction = new ProcessDropDownAction(this);
+		fScrollLockAction = new ScrollLockAction(getConsoleViewer());
+		fScrollLockAction.setChecked(fIsLocked);
+		getConsoleViewer().setAutoScroll(!fIsLocked);
 						
 		actionBars.updateActionBars();
 		
@@ -306,8 +314,10 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 	 */
 	protected void configureToolBar(IToolBarManager mgr) {
 		mgr.add(new Separator(IDebugUIConstants.LAUNCH_GROUP));
+		mgr.add(new Separator(IDebugUIConstants.OUTPUT_GROUP));
 		mgr.add(fClearOutputAction);
 		mgr.add(fProcessDropDownAction);
+		mgr.add(fScrollLockAction);
 	}
 
 	/**
@@ -503,4 +513,32 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 			}
 		}
 	}
+	
+	/**
+	 * Save scroll lock.
+	 * 
+	 * @see org.eclipse.ui.IViewPart#saveState(org.eclipse.ui.IMemento)
+	 */
+	public void saveState(IMemento memento) {
+		super.saveState(memento);
+		if (fScrollLockAction != null) {
+			memento.putString(getViewSite().getId() + ".scrollLock", new Boolean(fScrollLockAction.isChecked()).toString()); //$NON-NLS-1$
+		}
+	}
+
+	/**
+	 * Restore scroll lock.
+	 * 
+	 * @see org.eclipse.ui.IViewPart#init(org.eclipse.ui.IViewSite, org.eclipse.ui.IMemento)
+	 */
+	public void init(IViewSite site, IMemento memento) throws PartInitException {
+		super.init(site, memento);
+		if (memento != null) {
+			String lock = memento.getString(site.getId() + ".scrollLock"); //$NON-NLS-1$
+			if (lock != null) {
+				fIsLocked = new Boolean(lock).booleanValue(); 
+			}
+		}
+	}
+
 }

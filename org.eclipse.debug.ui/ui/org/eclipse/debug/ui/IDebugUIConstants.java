@@ -303,6 +303,13 @@ public interface IDebugUIConstants {
 	public static final String IMG_LCL_DISCONNECT= "IMG_LCL_DISCONNECT"; //$NON-NLS-1$
 	
 	/**
+	 * Scroll lock action image identifier
+	 * 
+	 * @since 2.1
+	 */
+	public static final String IMG_LCL_LOCK = "IMG_LCL_LOCK"; //$NON-NLS-1$	
+	
+	/**
 	 * Content assist action image identifier.
 	 */
 	public static final String IMG_LCL_CONTENT_ASSIST= "IMG_LCL_CONTENT_ASSIST"; //$NON-NLS-1$
@@ -504,6 +511,12 @@ public interface IDebugUIConstants {
 	 * Identifier for a launch group in a menu (value <code>"launchGroup"</code>).
 	 */
 	public static final String LAUNCH_GROUP = "launchGroup"; //$NON-NLS-1$
+	
+	/**
+	 * Identifier for an output group in a menu (value
+	 * <code>"outputGroup"</code>).
+	 */
+	public static final String OUTPUT_GROUP = "outputGroup"; //$NON-NLS-1$	
 	
 	/** 
 	 * Identifier for an empty group preceding a
