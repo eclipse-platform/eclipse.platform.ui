@@ -412,7 +412,6 @@ public class EditorList {
 			if(items.length == 0) {
 				return;
 			}
-			editorsTable.getParent().pack();
 		}
 	}
 	
