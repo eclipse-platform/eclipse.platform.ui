@@ -189,6 +189,8 @@ public class TargetPage extends BannerPage {
 				updateStatus(((IStructuredSelection) selection).getFirstElement());
 			}
 		});
+		
+		if (config!=null)
 		config.addInstallConfigurationChangedListener(configListener);
 	}
 

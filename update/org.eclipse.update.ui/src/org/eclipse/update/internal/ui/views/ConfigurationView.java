@@ -247,13 +247,14 @@ public class ConfigurationView
 					ConfiguredFeatureAdapter cf =
 						(ConfiguredFeatureAdapter) list.get(i);
 					IFeature feature = cf.getFeature();
-					addChildFeatures(feature, children);
+					if (feature!=null)
+						addChildFeatures(feature, children);
 				}
 				for (int i = 0; i < list.size(); i++) {
 					ConfiguredFeatureAdapter cf =
 						(ConfiguredFeatureAdapter) list.get(i);
 					IFeature feature = cf.getFeature();
-					if (isChildFeature(feature, children) == false)
+					if (feature!=null && isChildFeature(feature, children) == false)
 						result.add(cf);
 				}
 			} catch (CoreException e) {
