@@ -619,12 +619,12 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
      * @see org.eclipse.ui.console.IConsoleDocumentPartitioner#computeStyleRange(int, int)
      */
     public StyleRange[] getStyleRanges(int offset, int length) {
-        IOConsolePartition[] partitions = (IOConsolePartition[])computePartitioning(offset, length);
-        StyleRange[] styles = new StyleRange[partitions.length];        
-        for (int i = 0; i < partitions.length; i++) {                
-            int rangeStart = Math.max(partitions[i].getOffset(), offset);
-            int rangeLength = partitions[i].getLength();
-            styles[i] = partitions[i].getStyleRange(rangeStart, rangeLength);
+        IOConsolePartition[] computedPartitions = (IOConsolePartition[])computePartitioning(offset, length);
+        StyleRange[] styles = new StyleRange[computedPartitions.length];        
+        for (int i = 0; i < computedPartitions.length; i++) {                
+            int rangeStart = Math.max(computedPartitions[i].getOffset(), offset);
+            int rangeLength = computedPartitions[i].getLength();
+            styles[i] = computedPartitions[i].getStyleRange(rangeStart, rangeLength);
         }
         return styles;
     }
