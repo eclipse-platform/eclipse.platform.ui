@@ -48,6 +48,15 @@
             id="org.eclipse.debug.ui.DebugPerspective">
       </perspective>
    </extension>
+      <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.debug.ui.DebugPerspective">
+         <actionSet
+               id="org.eclipse.ui.NavigateActionSet">
+         </actionSet>
+      </perspectiveExtension>
+   </extension>
    <extension
          point="org.eclipse.ui.views">
       <category
