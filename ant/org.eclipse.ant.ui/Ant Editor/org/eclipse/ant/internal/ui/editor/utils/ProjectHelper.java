@@ -66,32 +66,110 @@ package org.eclipse.ant.internal.ui.editor.utils;
  */
  
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
+import org.apache.tools.ant.helper.AntXMLContext;
+import org.apache.tools.ant.helper.ProjectHelper2;
+import org.apache.tools.ant.util.FileUtils;
+import org.apache.tools.ant.util.JAXPUtils;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
+import org.xml.sax.XMLReader;
 
 /**
- * Derived from the original Ant ProjectHelper class
+ * Derived from the original Ant ProjectHelper2 class
  */
-public class ProjectHelper extends org.apache.tools.ant.ProjectHelper {
+public class ProjectHelper extends ProjectHelper2 {
 
-    /**
-     * That is the one method that was needed and why copying of this package
-     * from ant 1.5 had to be done. Other than usual Ant processing, here we don't
-     * work on a file but on a string.
-     * 
-     * @param project the project
-     * @param aWholeDocumentString the string that contains the whole docoment
-     * that we want to configure the project on.
-     * 
-     * @author Alf Schiefelbein
+	/**
+	 * helper for path -> URI and URI -> path conversions.
+	 */
+	private static FileUtils fu = FileUtils.newFileUtils();
+	
+	/**
+	 * The buildfile that is to be parsed. Must be set if parsing is to
+	 * be successful.
+	 */
+	private File buildFile= null;
+	
+     /**
+     * Parses the project file, configuring the project as it goes.
+     *
+     * @param project the current project
+     * @param source  the xml source
+     * @param handler the root handler to use (contains the current context)
+     * @exception BuildException if the configuration is invalid or cannot
+     *                           be read
      */
-    public static void configureProject(Project project, File aFile, String aWholeDocumentString) throws BuildException {
-        ProjectHelperImpl helper = (ProjectHelperImpl)getProjectHelper();
-        helper.parse(project, aFile, aWholeDocumentString);
+    public void parse(Project project, Object source, RootHandler handler) throws BuildException {
+
+    	if (!(source instanceof String)) {
+    		super.parse(project, source, handler);
+    	}
+    	
+        Reader stream= new StringReader((String)source);
+             
+        InputSource inputSource = null;
+
+        try {
+            /**
+             * SAX 2 style parser used to parse the given file.
+             */
+            XMLReader parser = JAXPUtils.getNamespaceXMLReader();
+
+            String uri = null;
+            if (buildFile != null) {
+                uri = fu.toURI(buildFile.getAbsolutePath());
+            }
+
+            inputSource = new InputSource(stream);
+            if (uri != null) {
+                inputSource.setSystemId(uri);
+            }
+
+            AntXMLContext context= (AntXMLContext)project.getReference("ant.parsing.context"); //$NON-NLS-1$
+            context.setBuildFile(buildFile);
+            
+            parser.setContentHandler(handler);
+            parser.setEntityResolver(handler);
+            parser.setErrorHandler(handler);
+            parser.setDTDHandler(handler);
+            parser.parse(inputSource);
+        } catch (SAXParseException exc) {
+        	//ignore as we will be parsing incomplete source
+        } catch (SAXException exc) {
+        	//ignore as we will be parsing incomplete source
+        } catch (FileNotFoundException exc) {
+            throw new BuildException(exc);
+        } catch (UnsupportedEncodingException exc) {
+              throw new BuildException(exc);
+        } catch (IOException exc) {
+            throw new BuildException(exc);
+        } finally {
+            if (stream != null) {
+                try {
+                	stream.close();
+                } catch (IOException ioe) {
+                    // ignore this
+                }
+            }
+        }
     }
-    
-	public static org.apache.tools.ant.ProjectHelper getProjectHelper() throws BuildException {
-		return new ProjectHelperImpl();
+
+	/**
+	 * Sets the buildfile that is about to be parsed or <code>null</code> if
+	 * parsing has completed.
+	 * 
+	 * @param file The buildfile about to be parsed
+	 */
+	public void setBuildFile(File file) {
+		buildFile= file;
 	}
 }

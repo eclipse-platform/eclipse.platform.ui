@@ -35,6 +35,7 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Target;
 import org.apache.tools.ant.Task;
+import org.apache.tools.ant.UnknownElement;
 import org.apache.tools.ant.taskdefs.Available;
 import org.apache.tools.ant.taskdefs.Parallel;
 import org.apache.tools.ant.taskdefs.PathConvert;
@@ -144,6 +145,8 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 	
 	private String errorMessage;
 	
+	private ProjectHelper projectHelper;
+	
 	/**
 	 * Constructor for AntEditorCompletionProcessor.
 	 */
@@ -158,6 +161,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 				AntUIPlugin.log(e);
 			}
 		}
+		projectHelper= new ProjectHelper();
 	}
 
     /**
@@ -937,8 +941,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
         /* 
          * Ant's parsing facilities always works on a file, therefore we need
          * to determine the actual location of the file. Though the file 
-         * contents will not be parsed. We parse the passed document string 
-         * that is passed.
+         * contents will not be parsed. We parse the passed document string.
          */
         File file = getEditedFile();
         String filePath= ""; //$NON-NLS-1$
@@ -948,7 +951,9 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
         project.setUserProperty("ant.file", filePath); //$NON-NLS-1$
 
         try {
-            ProjectHelper.configureProject(project, file, document.get());  // File will be parsed here
+        	projectHelper.setBuildFile(file);
+            projectHelper.parse(project, document.get());  // File will be parsed here
+            projectHelper.setBuildFile(null);
         }
         catch(BuildException e) {
             // ignore a build exception on purpose, since we also parse invalid
@@ -981,6 +986,15 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 			for (int i = 0; i < tasks.length; i++) {
 				Task task = tasks[i];                
 
+				if (task instanceof UnknownElement) {
+					try {
+						task.maybeConfigure();
+					} catch (BuildException be) {
+						continue;
+					}
+					task= ((UnknownElement)task).getTask();
+				}
+				
 				// sequential
 				if(task instanceof Sequential) {
 					// (T)

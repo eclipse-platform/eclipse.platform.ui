@@ -31,8 +31,8 @@ import junit.framework.TestSuite;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
-import org.apache.tools.ant.ProjectHelper;
 import org.eclipse.ant.internal.ui.editor.AntEditorSaxDefaultHandler;
+import org.eclipse.ant.internal.ui.editor.utils.ProjectHelper;
 import org.eclipse.ant.tests.ui.editor.support.TestTextCompletionProcessor;
 import org.eclipse.ant.tests.ui.testplugin.AbstractAntUITest;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
@@ -188,7 +188,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
 		antProject.setUserProperty("ant.file", file.getAbsolutePath());
 
         // File will be parsed here
-        ProjectHelper helper = ProjectHelper.getProjectHelper();
+		org.apache.tools.ant.ProjectHelper helper = org.apache.tools.ant.ProjectHelper.getProjectHelper();
         antProject.addReference("ant.projectHelper", helper); //$NON-NLS-1$
         helper.parse(antProject, file);
         Map map = antProject.getProperties();
@@ -592,7 +592,9 @@ public class CodeCompletionTest extends AbstractAntUITest {
 		buff.append("<property file=\"buildtest1.properties\" />\n");
 		buff.append("<target name=\"main\" depends=\"properties\">\n");
 	   try {
-		   org.eclipse.ant.internal.ui.editor.utils.ProjectHelper.configureProject(antProject, file, buff.toString());  // File will be parsed here
+	   		ProjectHelper projectHelper= new ProjectHelper();
+	   		projectHelper.setBuildFile(file);
+	   		projectHelper.parse(antProject, buff.toString());  // File will be parsed here
 	   }
 	   catch (BuildException e) {
 		   	//ignore a build exception on purpose
