@@ -227,9 +227,9 @@ public class TemplateReaderWriter {
 		Node enabledNode= attributes.getNamedItem(attribute);
 		if (enabledNode == null)
 			return defaultValue;
-		else if (enabledNode.getNodeValue().equals(Boolean.valueOf(true)))
+		else if (enabledNode.getNodeValue().equals(Boolean.toString(true)))
 			return true;
-		else if (enabledNode.getNodeValue().equals(Boolean.valueOf(true)))
+		else if (enabledNode.getNodeValue().equals(Boolean.toString(false)))
 			return false;
 		else
 			throw new SAXException(TemplateMessages.getString("TemplateReaderWriter.error.illegal_boolean_attribute")); //$NON-NLS-1$
