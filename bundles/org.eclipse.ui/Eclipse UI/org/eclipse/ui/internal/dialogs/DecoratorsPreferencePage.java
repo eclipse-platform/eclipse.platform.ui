@@ -44,37 +44,24 @@ public class DecoratorsPreferencePage
 			new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
 		mainComposite.setLayoutData(data);
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
 		mainComposite.setLayout(layout);
 
 		Label topLabel = new Label(mainComposite, SWT.NULL);
 		topLabel.setText(
 			WorkbenchMessages.getString("DecoratorsPreferencePage.explanation"));
-		GridData topData = new GridData();
-		topData.horizontalSpan = 2;
-		topLabel.setLayoutData(topData);
 
-		//Create an intermediate composite to facilitate tab traversal
-		Composite definitionsComposite = new Composite(mainComposite, SWT.NULL);
-		definitionsComposite.setLayout(new GridLayout());
-		GridData definitionsData =
-			new GridData(
-				GridData.VERTICAL_ALIGN_BEGINNING
-					| GridData.FILL_VERTICAL
-					| GridData.GRAB_VERTICAL);
-		definitionsComposite.setLayoutData(definitionsData);
 
-		Label decoratorsLabel = new Label(definitionsComposite, SWT.NULL);
+		Label decoratorsLabel = new Label(mainComposite, SWT.NULL);
 		decoratorsLabel.setText(
 			WorkbenchMessages.getString("DecoratorsPreferencePage.decoratorsLabel"));
 
 		// Checkbox tree viewer of capabilities in selected categories
 		checkboxViewer =
 			CheckboxTableViewer.newCheckList(
-				definitionsComposite,
+				mainComposite,
 				SWT.SINGLE | SWT.TOP | SWT.BORDER);
 		checkboxViewer.getTable().setLayoutData(
-			new GridData(GridData.FILL_BOTH | GridData.FILL_VERTICAL));
+			new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL));
 		checkboxViewer.setLabelProvider(new LabelProvider() {
 			public Image getImage(Object element) {
 				return null;
