@@ -326,8 +326,7 @@ public class EditionSelectionDialog extends Dialog {
 				if (children != null)
 					for (int i= 0; i < children.length; i++)
 						current.add(children[i]);
-			} else
-				return null; 	// error
+			}
 			
 			final IStructureCreator sc= structureCreator;
 			
