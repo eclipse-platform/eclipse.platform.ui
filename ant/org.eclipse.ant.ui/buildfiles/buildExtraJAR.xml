@@ -39,12 +39,13 @@
 			 		${basedir}/../org.apache.ant/ant.jar;
 			 		${basedir}/bin;
 			 		${swt.jar};
-			 		${basedir}/../org.eclipse.jface/jface.jar;
 			 		${basedir}/../org.eclipse.text/text.jar;
 			 		${basedir}/../org.eclipse.ant.core/bin;
 			 		${basedir}/../org.eclipse.core.resources/bin;
 			 		${basedir}/../org.eclipse.debug.core/bin;
+			 		${basedir}/../org.eclipse.debug.ui/dtui.jar;
 			 		${basedir}/../org.eclipse.debug.ui/bin;
+			 		${basedir}/../org.eclipse.jface/jface.jar;
 			 		${basedir}/../org.eclipse.jface/bin;
 			 		${basedir}/../org.eclipse.text/bin;
 			 		${basedir}/../org.eclipse.swt/bin;">
