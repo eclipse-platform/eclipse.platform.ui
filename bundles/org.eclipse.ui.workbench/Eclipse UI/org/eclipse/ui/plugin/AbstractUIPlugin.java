@@ -642,28 +642,37 @@ public abstract class AbstractUIPlugin extends Plugin {
 	 * default values. If this method is reimplemented, do not override
 	 * <code>initializeDefaultPluginPreferences()</code>.
 	 * </p>
-	 *
+	 * 
 	 * @param store the preference store to fill
+	 * 
+     * @deprecated this is only called if the runtime compatibility layer is
+     *             present. See {@link #initializeDefaultPluginPreferences}.
 	 */
 	protected void initializeDefaultPreferences(IPreferenceStore store) {
+	    // spec'ed to do nothing
 	}
 
 	/**
-	 * The <code>AbstractUIPlugin</code> implementation of this 
-	 * <code>Plugin</code> method forwards to 
-	 * <code>initializeDefaultPreferences(IPreferenceStore)</code>.
-	 * <p>
-	 * A subclass may reimplement this method to set default values for the core
-	 * runtime preference store in the standard way. This is the recommended way
-	 * to do this. 
-	 * The older <code>initializeDefaultPreferences(IPreferenceStore)</code> method
-	 * serves a similar purpose. If this method is reimplemented, do not send super,
-	 * and do not override <code>initializeDefaultPreferences(IPreferenceStore)</code>.
-	 * </p>
-	 * 
-	 * @see #initializeDefaultPreferences
-	 * @since 2.0
-	 */
+     * The <code>AbstractUIPlugin</code> implementation of this
+     * <code>Plugin</code> method forwards to
+     * <code>initializeDefaultPreferences(IPreferenceStore)</code>.
+     * <p>
+     * A subclass may reimplement this method to set default values for the core
+     * runtime preference store in the standard way. This is the recommended way
+     * to do this. The older
+     * <code>initializeDefaultPreferences(IPreferenceStore)</code> method
+     * serves a similar purpose. If this method is reimplemented, do not send
+     * super, and do not override
+     * <code>initializeDefaultPreferences(IPreferenceStore)</code>.
+     * </p>
+     * 
+     * @deprecated this is only called if the runtime compatibility layer is
+     *             present. See the deprecated comment in
+     *             {@link Plugin#initializeDefaultPluginPreferences}.
+     * 
+     * @see #initializeDefaultPreferences
+     * @since 2.0
+     */
 	protected void initializeDefaultPluginPreferences() {
 		// N.B. by the time this method is called, the plug-in has a 
 		// core runtime preference store (no default values)
@@ -696,6 +705,7 @@ public abstract class AbstractUIPlugin extends Plugin {
 	 * @see #getImageRegistry
 	 */
 	protected void initializeImageRegistry(ImageRegistry reg) {
+	    // spec'ed to do nothing
 	}
 
 	/**
@@ -765,6 +775,7 @@ public abstract class AbstractUIPlugin extends Plugin {
 	 * this method does.
 	 */
 	protected void loadPreferenceStore() {
+	    // do nothing by default 
 	}
 
 	/**
@@ -804,6 +815,7 @@ public abstract class AbstractUIPlugin extends Plugin {
 				getStateLocation().append(FN_DIALOG_SETTINGS).toOSString();
 			dialogSettings.save(readWritePath);
 		} catch (IOException e) {
+		    // spec'ed to ignore problems
 		}
 	}
 
