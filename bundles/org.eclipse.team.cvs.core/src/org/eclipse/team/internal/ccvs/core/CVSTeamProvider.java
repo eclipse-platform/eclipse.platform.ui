@@ -161,7 +161,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 		// we no longer need the sync info cached. This does not affect the actual CVS
 		// meta directories on disk, and will remain unless a client calls unmanage().
 		try {
-			EclipseSynchronizer.getInstance().flush(getProject(), true, true /*flush deep*/, null);
+			EclipseSynchronizer.getInstance().deconfigure(getProject(), null);
 		} catch(CVSException e) {
 			throw new CoreException(e.getStatus());
 		}

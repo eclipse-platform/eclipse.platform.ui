@@ -465,7 +465,6 @@ public class EclipseSynchronizer {
 			// purge from memory too if we were asked to
 			if (purgeCache) {
 				sessionPropertyCache.purgeCache(root, deep);
-				synchronizerCache.purgeCache(root, deep);
 			} 
 	
 			// prepare for the operation again if we cut the last one short
@@ -478,6 +477,18 @@ public class EclipseSynchronizer {
 			endOperation(Policy.subMonitorFor(monitor, 1));
 			monitor.done();
 		}
+	}
+
+	public void deconfigure(final IProject project, IProgressMonitor monitor) throws CVSException {
+		run(new ICVSRunnable() {
+			public void run(IProgressMonitor monitor) throws CVSException {
+				flush(project, true, true, monitor);
+				
+				// forget about pruned folders however the top level pruned folder will have resource sync (e.g. 
+				// a line in the Entry file). As a result the folder is managed but is not a CVS folder.
+				synchronizerCache.purgeCache(project, true);
+			}
+		}, monitor);
 	}
 
 	private void purgeCache(IResource resource, boolean deep) throws CVSException {

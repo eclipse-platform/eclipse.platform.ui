@@ -340,9 +340,10 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 			monitor.beginTask(Policy.bind("EclipseFolder.isModifiedProgress", resource.getFullPath().toString()), 1000); //$NON-NLS-1$
 			
 			IContainer container = (IContainer)getIResource();
-			boolean shared = isCVSFolder();
-	
-			if (!shared) return true;
+			
+			if (!isCVSFolder()) {
+				return container.exists();
+			}
 			
 			int state = EclipseSynchronizer.getInstance().getModificationState(getIResource());
 	
@@ -397,5 +398,4 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 			
 		return false;
 	}
-
 }
