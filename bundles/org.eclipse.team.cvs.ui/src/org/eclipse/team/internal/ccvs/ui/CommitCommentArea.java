@@ -38,7 +38,7 @@ import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 public class CommitCommentArea extends DialogArea {
 
 	private static final int WIDTH_HINT = 350;
-	private static final int HEIGHT_HINT = 50;
+	private static final int HEIGHT_HINT = 150;
 	
 	private Text text;
 	private Combo previousCommentsCombo;

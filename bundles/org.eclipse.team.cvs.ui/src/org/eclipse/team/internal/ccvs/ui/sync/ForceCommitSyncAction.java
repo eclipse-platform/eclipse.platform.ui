@@ -37,7 +37,6 @@ import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.internal.ccvs.ui.ReleaseCommentDialog;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
 import org.eclipse.team.internal.ui.sync.ChangedTeamContainer;
 import org.eclipse.team.internal.ui.sync.ITeamNode;
@@ -95,15 +94,12 @@ public class ForceCommitSyncAction extends MergeAction {
 		
 		// prompt to get comment and any resources to be added to version control
 		final RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();
-		ReleaseCommentDialog dialog = promptForComment(manager, syncSet.getResources(), unadded);
-		if (dialog == null) {
-			// User cancelled.
-			return null;
-		}
-		final String comment = dialog.getComment();
+		IResource[] toBeAdded = promptForResourcesToBeAdded(manager, unadded);
+		if (toBeAdded == null) return null; // User cancelled.
+		final String comment = promptForComment(manager, syncSet.getResources());
+		if (comment == null) return null; // User cancelled.
 		
 		// remove unshared resources that were not selected by the user
-		IResource[] toBeAdded = dialog.getResourcesToAdd();
 		if (unadded != null && unadded.length > 0) {
 			List resourcesToRemove = new ArrayList(unadded.length);
 			for (int i = 0; i < unadded.length; i++) {
@@ -294,10 +290,14 @@ public class ForceCommitSyncAction extends MergeAction {
 	 * Note: This method is designed to be overridden by test cases.
 	 * @return the comment, or null to cancel
 	 */
-	protected ReleaseCommentDialog promptForComment(RepositoryManager manager, IResource[] resourcesToCommit, IResource[] unadded) {
-		return manager.promptForComment(getShell(), resourcesToCommit, unadded);
+	protected String promptForComment(RepositoryManager manager, IResource[] resourcesToCommit) {
+		return manager.promptForComment(getShell(), resourcesToCommit);
 	}
 
+	private IResource[] promptForResourcesToBeAdded(RepositoryManager manager, IResource[] unadded) {
+		return manager.promptForResourcesToBeAdded(getShell(), unadded);
+	}
+	
 	protected void removeNonApplicableNodes(SyncSet set, int syncMode) {
 		set.removeOutgoingNodes();
 		if (syncMode != SyncView.SYNC_BOTH) {

@@ -29,7 +29,6 @@ import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.internal.ccvs.ui.ReleaseCommentDialog;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
@@ -52,10 +51,9 @@ public class CommitAction extends WorkspaceAction {
 				try {
 					// search for any non-added, non-ignored resources in the selection
 					IResource[] unadded = getUnaddedResources(resources, monitor);
-					ReleaseCommentDialog dialog = promptForComment(manager, resources, unadded);
-					if (dialog == null) return;
-					comment[0] = dialog.getComment();
-					resourcesToBeAdded[0] = dialog.getResourcesToAdd();
+					resourcesToBeAdded[0] = promptForResourcesToBeAdded(manager, unadded);
+					if (resourcesToBeAdded[0] == null) return;
+					comment[0] = promptForComment(manager, resources);
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);
 				}
@@ -164,10 +162,13 @@ public class CommitAction extends WorkspaceAction {
 	 * Prompts the user for a release comment.
 	 * @return the comment, or null to cancel
 	 */
-	protected ReleaseCommentDialog promptForComment(RepositoryManager manager, IResource[] resourcesToCommit, IResource[] unadded) {
-		return manager.promptForComment(getShell(), resourcesToCommit, unadded);
+	protected String promptForComment(RepositoryManager manager, IResource[] resourcesToCommit) {
+		return manager.promptForComment(getShell(), resourcesToCommit);
 	}
 	
+	private IResource[] promptForResourcesToBeAdded(RepositoryManager manager, IResource[] unadded) {
+		return manager.promptForResourcesToBeAdded(getShell(), unadded);
+	}
 	/**
 	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#getErrorTitle()
 	 */

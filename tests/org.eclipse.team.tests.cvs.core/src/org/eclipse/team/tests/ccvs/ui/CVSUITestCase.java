@@ -36,7 +36,6 @@ import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
-import org.eclipse.team.internal.ccvs.ui.ReleaseCommentDialog;
 import org.eclipse.team.internal.ccvs.ui.actions.AddToWorkspaceAction;
 import org.eclipse.team.internal.ccvs.ui.actions.CommitAction;
 import org.eclipse.team.internal.ccvs.ui.actions.ReplaceWithRemoteAction;
@@ -359,9 +358,11 @@ public class CVSUITestCase extends LoggingTestCase {
 			protected int promptForConflicts(SyncSet syncSet) {
 				return 0; // yes! sync conflicting changes
 			}
-			protected ReleaseCommentDialog promptForComment(RepositoryManager manager, IResource[] resourcesToCommit, IResource[] unadded) {
-				ReleaseCommentDialog dialog = new ReleaseCommentDialog(null, resourcesToCommit, unadded); // use our comment
-				return dialog;
+			protected String promptForComment(RepositoryManager manager, IResource[] resourcesToCommit) {
+				return comment;
+			}
+			protected IResource[] promptForResourcesToBeAdded(RepositoryManager manager, IResource[] unadded) {
+				return unadded;
 			}
 		};
 		commitAction.run();
@@ -371,9 +372,11 @@ public class CVSUITestCase extends LoggingTestCase {
 			protected int promptForConflicts(SyncSet syncSet) {
 				return 0; // yes! sync conflicting changes
 			}
-			protected ReleaseCommentDialog promptForComment(RepositoryManager manager, IResource[] resourcesToCommit, IResource[] unadded) {
-				ReleaseCommentDialog dialog = new ReleaseCommentDialog(null, resourcesToCommit, unadded); // use our comment
-				return dialog;
+			protected String promptForComment(RepositoryManager manager, IResource[] resourcesToCommit) {
+				return comment;
+			}
+			protected IResource[] promptForResourcesToBeAdded(RepositoryManager manager, IResource[] unadded) {
+				return unadded;
 			}
 		};
 		forceCommitAction.run();

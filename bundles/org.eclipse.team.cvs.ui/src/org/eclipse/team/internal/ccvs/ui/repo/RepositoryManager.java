@@ -50,6 +50,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.ui.AddToVersionControlDialog;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.IRepositoryListener;
 import org.eclipse.team.internal.ccvs.ui.Policy;
@@ -561,13 +562,11 @@ public class RepositoryManager {
 	}
 	
 	/**
-	 * Return the ReleaseCommentDialog or null if canceled. 
-	 * The comment and unadded resources to add  can be retrieved from the dialog.
-	 * Persist the entered release comment for the next caller.
+	 * Return the entered comment or null if canceled.
 	 */
-	public ReleaseCommentDialog promptForComment(final Shell shell, IResource[] resourcesToCommit, final IResource[] unadded) {
+	public String promptForComment(final Shell shell, IResource[] resourcesToCommit) {
 		final int[] result = new int[1];
-		final ReleaseCommentDialog dialog = new ReleaseCommentDialog(shell, resourcesToCommit, unadded); 
+		final ReleaseCommentDialog dialog = new ReleaseCommentDialog(shell, resourcesToCommit); 
 		shell.getDisplay().syncExec(new Runnable() {
 			public void run() {
 				result[0] = dialog.open();
@@ -575,9 +574,32 @@ public class RepositoryManager {
 			}
 		});
 		if (result[0] != ReleaseCommentDialog.OK) return null;
-		return dialog;
+		return dialog.getComment();
 	}
 	
+	/**
+	 * Prompt to add all or some of the provided resources to version control.
+	 * The value null is returned if the dialog is cancelled.
+	 * 
+	 * @param shell
+	 * @param unadded
+	 * @return IResource[]
+	 */
+	public IResource[] promptForResourcesToBeAdded(Shell shell, IResource[] unadded) {
+		if (unadded == null) return new IResource[0];
+		if (unadded.length == 0) return unadded;
+		final IResource[][] result = new IResource[1][0];
+		result[0] = null;
+		final AddToVersionControlDialog dialog = new AddToVersionControlDialog(shell, unadded);
+		shell.getDisplay().syncExec(new Runnable() {
+			public void run() {
+				int code = dialog.open();
+				if (code == ReleaseCommentDialog.OK)
+					result[0] = dialog.getResourcesToAdd();
+			}
+		});
+		return result[0];
+	}
 	/**
 	 * Commit the given resources to their associated providers.
 	 * 
