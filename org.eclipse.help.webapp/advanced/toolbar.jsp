@@ -185,7 +185,7 @@ if(buttons.length > 0){
 }
 %>
 
-<table id="container" width="100%" border="0" cellspacing="0" cellpadding="0" height="100%" style='padding-left:<%=data.isIE()?"5px":"8px"%>;'>
+<table id="container" width="100%" border="0" cellspacing="0" cellpadding="0" height="100%" style='padding-<%=isRTL?"right":"left"%>:<%=data.isIE()?"5px":"8px"%>;'>
 
 	<tr>
 		<td nowrap style="font: <%=prefs.getToolbarFont()%>" valign="middle">
