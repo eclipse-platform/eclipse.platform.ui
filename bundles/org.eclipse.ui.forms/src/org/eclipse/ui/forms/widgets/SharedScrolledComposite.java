@@ -43,7 +43,8 @@ public abstract class SharedScrolledComposite extends ScrolledComposite {
 	 */
 	public void setForeground(Color fg) {
 		super.setForeground(fg);
-		getContent().setForeground(fg);
+		if (getContent()!=null)
+			getContent().setForeground(fg);
 	}
 	/**
 	 * Sets the background of the control and its content.
@@ -53,7 +54,8 @@ public abstract class SharedScrolledComposite extends ScrolledComposite {
 	 */
 	public void setBackground(Color bg) {
 		super.setBackground(bg);
-		getContent().setBackground(bg);
+		if (getContent()!=null)
+			getContent().setBackground(bg);
 	}
 	/**
 	 * Sets the font of the form. This font will be used to render the title
@@ -61,7 +63,19 @@ public abstract class SharedScrolledComposite extends ScrolledComposite {
 	 */
 	public void setFont(Font font) {
 		super.setFont(font);
-		getContent().setFont(font);
+		if (getContent()!=null)
+			getContent().setFont(font);
+	}
+	/**
+	 * Overrides 'super' to pass the proper colors and font
+	 */
+	public void setContent(Control content) {
+		super.setContent(content);
+		if (content!=null) {
+			content.setForeground(getForeground());
+			content.setBackground(getBackground());
+			content.setFont(getFont());
+		}
 	}
 	/**
 	 * If content is set, transfers focus to the content.
