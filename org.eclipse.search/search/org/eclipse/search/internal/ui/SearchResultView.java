@@ -99,8 +99,10 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 	}
 	
 	public void dispose() {
-		SearchManager.getDefault().removeSearchChangeListener(fViewer);
-		fViewer= null;
+		if (fViewer != null) {
+			SearchManager.getDefault().removeSearchChangeListener(fViewer);
+			fViewer= null;
+		}
 		super.dispose();
 	}
 	

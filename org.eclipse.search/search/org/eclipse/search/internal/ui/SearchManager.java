@@ -313,6 +313,7 @@ public class SearchManager implements IResourceChangeListener {
 	}
 
 	void removeSearchChangeListener(SearchResultViewer viewer) {
+		Assert.isNotNull(viewer);
 		fListeners.remove(viewer);
 	}
 	/**
