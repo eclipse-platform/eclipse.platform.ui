@@ -20,6 +20,8 @@ import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
 
+import org.eclipse.jface.text.Assert;
+
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -63,14 +65,35 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 		ITextEditorActionConstants.REVERT
 	};
 	
+	/**
+	 * Status field definition.
+	 * @since 3.0
+	 */
+	private static class StatusFieldDef {
+
+		private String category;
+		private String actionId;
+		private boolean visible;
+		private int widthInChars;
+		
+		private StatusFieldDef(String category, String actionId, boolean visible, int widthInChars) {
+			Assert.isNotNull(category);
+			this.category= category;
+			this.actionId= actionId;
+			this.visible= visible;
+			this.widthInChars= widthInChars;
+		}
+	}
+	
 	/** 
 	 * The status fields to be set to the editor
 	 * @since 2.0
 	 */
-	private final static String[][] STATUSFIELDS= {
-		{ ITextEditorActionConstants.STATUS_CATEGORY_ELEMENT_STATE, null },
-		{ ITextEditorActionConstants.STATUS_CATEGORY_INPUT_MODE, ITextEditorActionDefinitionIds.TOGGLE_OVERWRITE },
-		{ ITextEditorActionConstants.STATUS_CATEGORY_INPUT_POSITION, ITextEditorActionConstants.GOTO_LINE }
+	private final static StatusFieldDef[] STATUS_FIELD_DEFS= {
+		new StatusFieldDef(ITextEditorActionConstants.STATUS_CATEGORY_FIND_FIELD, null, false, EditorMessages.getString("Editor.FindIncremental.reverse.name").length() + 15), //$NON-NLS-1$
+		new StatusFieldDef(ITextEditorActionConstants.STATUS_CATEGORY_ELEMENT_STATE, null, true, StatusLineContributionItem.DEFAULT_WIDTH_IN_CHARS),
+		new StatusFieldDef(ITextEditorActionConstants.STATUS_CATEGORY_INPUT_MODE, ITextEditorActionDefinitionIds.TOGGLE_OVERWRITE, true, StatusLineContributionItem.DEFAULT_WIDTH_IN_CHARS),
+		new StatusFieldDef(ITextEditorActionConstants.STATUS_CATEGORY_INPUT_POSITION, ITextEditorActionConstants.GOTO_LINE, true, StatusLineContributionItem.DEFAULT_WIDTH_IN_CHARS)
 	};
 	
 	/**
@@ -128,8 +151,10 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 		fGotoLine.setActionDefinitionId(ITextEditorActionDefinitionIds.LINE_GOTO);
 		
 		fStatusFields= new HashMap(3);
-		for (int i= 0; i < STATUSFIELDS.length; i++)
-			fStatusFields.put(STATUSFIELDS[i], new StatusLineContributionItem(STATUSFIELDS[i][0]));
+		for (int i= 0; i < STATUS_FIELD_DEFS.length; i++) {
+			StatusFieldDef fieldDef= STATUS_FIELD_DEFS[i];
+			fStatusFields.put(fieldDef, new StatusLineContributionItem(fieldDef.category, fieldDef.visible, fieldDef.widthInChars));
+		}
 	}
 	
 	/**
@@ -165,8 +190,8 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 			
 		if (fActiveEditorPart instanceof ITextEditorExtension) {
 			ITextEditorExtension extension= (ITextEditorExtension) fActiveEditorPart;
-			for (int i= 0; i < STATUSFIELDS.length; i++)
-				extension.setStatusField(null, STATUSFIELDS[i][0]);
+			for (int i= 0; i < STATUS_FIELD_DEFS.length; i++)
+				extension.setStatusField(null, STATUS_FIELD_DEFS[i].category);
 		}
 
 		fActiveEditorPart= part;
@@ -184,12 +209,12 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 		fIncrementalFindReverse.setAction(getAction(editor, ITextEditorActionConstants.FIND_INCREMENTAL_REVERSE));
 		fGotoLine.setAction(getAction(editor, ITextEditorActionConstants.GOTO_LINE));
 		
-		for (int i= 0; i < STATUSFIELDS.length; i++) {
-			StatusLineContributionItem statusField= (StatusLineContributionItem) fStatusFields.get(STATUSFIELDS[i]);
-			statusField.setActionHandler(getAction(editor, STATUSFIELDS[i][1]));
+		for (int i= 0; i < STATUS_FIELD_DEFS.length; i++) {
 			if (fActiveEditorPart instanceof ITextEditorExtension) {
+				StatusLineContributionItem statusField= (StatusLineContributionItem) fStatusFields.get(STATUS_FIELD_DEFS[i]);
+				statusField.setActionHandler(getAction(editor, STATUS_FIELD_DEFS[i].actionId));
 				ITextEditorExtension extension= (ITextEditorExtension) fActiveEditorPart;
-				extension.setStatusField(statusField, STATUSFIELDS[i][0]);
+				extension.setStatusField(statusField, STATUS_FIELD_DEFS[i].category);
 			}
 		}
 	}
@@ -231,8 +256,8 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 	 */
 	public void contributeToStatusLine(IStatusLineManager statusLineManager) {
 		super.contributeToStatusLine(statusLineManager);
-		for (int i= 0; i < STATUSFIELDS.length; i++)
-			statusLineManager.add((IContributionItem) fStatusFields.get(STATUSFIELDS[i]));
+		for (int i= 0; i < STATUS_FIELD_DEFS.length; i++)
+			statusLineManager.add((IContributionItem)fStatusFields.get(STATUS_FIELD_DEFS[i]));
 	}
 	
 	/*
