@@ -5,13 +5,20 @@ package org.eclipse.team.internal.ccvs.ui.sync;
  * All Rights Reserved.
  */
  
+import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.team.ccvs.core.ICVSRemoteFile;
+import org.eclipse.team.ccvs.core.ICVSRemoteResource;
+import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.ui.sync.CatchupReleaseViewer;
+import org.eclipse.team.ui.sync.MergeResource;
 import org.eclipse.team.ui.sync.SyncView;
 
 public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
@@ -30,16 +37,12 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 		if (syncMode == SyncView.SYNC_OUTGOING) {
 			manager.add(new Separator());
 			commitAction.update();
-//			delRemoteAction.update();
 			manager.add(commitAction);
-//			manager.add(delRemoteAction);
 		}
 		if (syncMode == SyncView.SYNC_INCOMING) {
 			manager.add(new Separator());
 			getAction.update();
-//			delLocalAction.update();
 			manager.add(getAction);
-//			manager.add(delLocalAction);
 		}
 	}
 	
@@ -50,15 +53,41 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 		Shell shell = getControl().getShell();
 		commitAction = new CommitMergeAction(diffModel, this, IRemoteSyncElement.OUTGOING, Policy.bind("CVSCatchupReleaseViewer.checkIn"), shell);
 		getAction = new GetMergeAction(diffModel, this, IRemoteSyncElement.INCOMING, Policy.bind("CVSCatchupReleaseViewer.get"), shell);
-/*		delRemoteAction = new MergeAction(diffModel, this, MergeAction.DELETE_REMOTE, IRemoteSyncElement.OUTGOING, "Delete Remote") {
-			protected boolean isMatchingKind(int kind) {
-				return kind == (IRemoteSyncElement.OUTGOING | IRemoteSyncElement.DELETION);
+	}
+	
+	/**
+	 * Provide CVS-specific labels for the editors.
+	 */
+	protected void updateLabels(MergeResource resource) {
+		CompareConfiguration config = getCompareConfiguration();
+		String name = resource.getName();
+		config.setLeftLabel(Policy.bind("CVSCatchupReleaseViewer.workspaceFile", name));
+	
+		IRemoteSyncElement syncTree = resource.getSyncElement();
+		IRemoteResource remote = syncTree.getRemote();
+		if (remote != null) {
+			try {
+				String revision = ((ICVSRemoteFile)remote).getRevision();
+				config.setRightLabel(Policy.bind("CVSCatchupReleaseViewer.repositoryFileRevision", new Object[] {name, revision}));
+			} catch (TeamException e) {
+				CVSUIPlugin.log(e.getStatus());
+				config.setRightLabel(Policy.bind("CVSCatchupReleaseViewer.repositoryFile", name));
 			}
-	 	};
-		delLocalAction = new MergeAction(diffModel, this, MergeAction.DELETE_LOCAL, IRemoteSyncElement.INCOMING, "Delete Local") {
-			protected boolean isMatchingKind(int kind) {
-				return kind == (IRemoteSyncElement.INCOMING | IRemoteSyncElement.DELETION);
+		} else {
+			config.setRightLabel(Policy.bind("CVSCatchupReleaseViewer.noRepositoryFile"));
+		}
+	
+		IRemoteResource base = syncTree.getBase();
+		if (base != null) {
+			try {
+				String revision = ((ICVSRemoteFile)base).getRevision();
+				config.setAncestorLabel(Policy.bind("CVSCatchupReleaseViewer.commonFileRevision", new Object[] {name, revision} ));
+			} catch (TeamException e) {
+				CVSUIPlugin.log(e.getStatus());
+				config.setRightLabel(Policy.bind("CVSCatchupReleaseViewer.commonFile", name));
 			}
-	 	};*/
+		} else {
+			config.setAncestorLabel(Policy.bind("CVSCatchupReleaseViewer.noCommonFile"));
+		}
 	}
 }
