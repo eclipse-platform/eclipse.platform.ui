@@ -342,6 +342,7 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 							}
 						};
 						showJob.schedule();
+						showJob.setSystem(true);
 						return;
 					}
 				}
