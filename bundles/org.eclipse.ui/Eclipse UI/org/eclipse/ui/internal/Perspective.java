@@ -813,13 +813,14 @@ public void restoreState() {
 			}
 			mapFastViewToWidthRatio.put(viewID, ratio);
 				
-			IViewReference ref = viewFactory.getView(viewID);
-			if(ref == null) {
-				WorkbenchPlugin.log("Could not create view: '" + viewID + "'."); //$NON-NLS-1$
-				continue;
-			}		
-			page.addPart(ref);
-			fastViews.add(ref.getPart(true));
+			// Create and open the view.
+			try {
+				IViewReference ref = viewFactory.createView(viewID);
+				page.addPart(ref);
+				fastViews.add(ref.getPart(true));
+			} catch (PartInitException e) {
+				errors.add(e.getStatus());
+			}
 		}
 	}
 
