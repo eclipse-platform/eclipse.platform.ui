@@ -41,7 +41,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	private static final String TRUE = "true"; //$NON-NLS-1$
 	protected static final String VERSION_KEY = "eclipse.preferences.version"; //$NON-NLS-1$
 	protected static final String VERSION_VALUE = "1"; //$NON-NLS-1$
-	protected static final String PATH_SEPARATOR = Character.toString(IPath.SEPARATOR);
+	protected static final String PATH_SEPARATOR = new Character(IPath.SEPARATOR).toString();
 	protected static final String DOUBLE_SLASH = "//"; //$NON-NLS-1$
 	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
@@ -1047,7 +1047,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 				return;
 			parentFile.mkdirs();
 			// set append to be false so we overwrite current settings.
-			output = new BufferedOutputStream(new FileOutputStream(location.toFile(), false));
+			output = new BufferedOutputStream(new FileOutputStream(location.toOSString(), false));
 			table.store(output, null);
 		} catch (IOException e) {
 			String message = Policy.bind("preferences.saveException", location.toString()); //$NON-NLS-1$
