@@ -209,8 +209,26 @@ public class IDEEditorsPreferencePage extends EditorsPreferencePage {
         if(clearUserSettings)
         	IDEEncoding.clearUserEncodings();
             
-        IDEEncoding.setResourceEncoding(setting);
+        if(hasNewEncoding(setting))
+        	IDEEncoding.setResourceEncoding(setting);
 
         return super.performOk();
     }
+    
+    /**
+	 * Return whether or not the encoding setting changed.
+	 * @param encodingSetting the setting from the page.
+	 * @return boolean <code>true</code> if the resource encoding
+	 * needs to be set.
+	 */
+	private boolean hasNewEncoding(String encodingSetting) {
+		
+		String resourceEncoding = IDEEncoding.getResourceEncoding();		
+		
+		if(encodingSetting == null){
+			//Changed if default is selected and there is no setting
+			return resourceEncoding != null && resourceEncoding.length() > 0;
+		}
+		return !(encodingSetting.equals(resourceEncoding));
+	}
 }
