@@ -24,9 +24,9 @@ public class DocumentTemplateContext extends TemplateContext {
 	/** The text of the document. */
 	private final IDocument fDocument;
 	/** The completion offset. */
-	private final int fCompletionOffset;
+	private int fCompletionOffset;
 	/** The completion length. */
-	private final int fCompletionLength;
+	private int fCompletionLength;
 
 	/**
 	 * Creates a document template context.
@@ -68,12 +68,30 @@ public class DocumentTemplateContext extends TemplateContext {
 	}
 	
 	/**
+	 * Sets the completion offset.
+	 * 
+	 * @param newOffset the new completion offset
+	 */
+	protected void setCompletionOffset(int newOffset) {
+		fCompletionOffset= newOffset;
+	}
+	
+	/**
 	 * Returns the completion length within the string of the context.
 	 * 
 	 * @return the completion length within the string of the context
 	 */
 	public int getCompletionLength() {
 		return fCompletionLength;
+	}
+	
+	/**
+	 * Sets the completion length.
+	 * 
+	 * @param newLength the new completion length
+	 */
+	protected void setCompletionLength(int newLength) {
+		fCompletionLength= newLength;
 	}
 	
 	/**

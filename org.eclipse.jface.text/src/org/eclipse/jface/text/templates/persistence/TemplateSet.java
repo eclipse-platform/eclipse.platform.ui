@@ -69,9 +69,11 @@ public class TemplateSet {
 	// FIXME move constants somewhere else
 	private static final int TEMPLATE_PARSE_EXCEPTION= 10002;
 	private static final int TEMPLATE_IO_EXCEPTION= 10005;
+	private ContextTypeRegistry fRegistry;
 	
-	public TemplateSet(String templateTag) {
+	public TemplateSet(String templateTag, ContextTypeRegistry registry) {
 		fTemplateTag= templateTag;
+		fRegistry= registry;
 	}
 	
 	/**
@@ -203,7 +205,7 @@ public class TemplateSet {
 	}
 
 	protected String validateTemplate(Template template) throws CoreException {
-		ContextType type= ContextTypeRegistry.getInstance().getContextType(template.getContextTypeName());
+		ContextType type= fRegistry.getContextType(template.getContextTypeName());
 		if (type == null) {
 			return "Unknown context type: " + template.getContextTypeName(); //$NON-NLS-1$
 		}
