@@ -51,9 +51,9 @@ public abstract class UserInputWizardPage extends RefactoringWizardPage {
 	
 	/**
 	 * Returns <code>true</code> if this is the last user input page in the stack
-	 * of input pages; <code>false</code> otherwise. The last user input page isn't
-	 * necessarily the page after which the refactoring's precondition has to 
-	 * triggered. For wizards implementing a dynamic work flow the may happen for
+	 * of input pages; <code>false</code> otherwise. The last user input page is not
+	 * necessarily the page after which the refactoring's precondition has to be
+	 * triggered. For wizards implementing a dynamic work flow, this may happen for
 	 * other pages as well.
 	 * 
 	 * @return whether this is the last user input page or not.
@@ -64,10 +64,10 @@ public abstract class UserInputWizardPage extends RefactoringWizardPage {
 	
 	/**
 	 * Triggers the refactoring's condition checking and returns either the
-	 * error wizard page or a preview page depending on the outcome of the
+	 * error wizard page or a preview page, depending on the outcome of the
 	 * precondition checking.
 	 * 
-	 * @return either the error or the preview page depending on the refactoring's
+	 * @return either the error or the preview page, depending on the refactoring's
 	 *  precondition checking
 	 */
 	protected final IWizardPage computeSuccessorPage() {
