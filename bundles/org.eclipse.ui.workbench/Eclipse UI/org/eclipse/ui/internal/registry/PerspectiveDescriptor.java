@@ -42,7 +42,6 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor {
 	
 	private static final String ATT_ID="id";//$NON-NLS-1$
 	private static final String ATT_DEFAULT = "default";//$NON-NLS-1$
-	private static final String ATT_DESC="description";//$NON-NLS-1$
 	private static final String ATT_NAME="name";//$NON-NLS-1$
 	private static final String ATT_ICON="icon";//$NON-NLS-1$
 	private static final String ATT_CLASS="class";//$NON-NLS-1$
@@ -63,7 +62,7 @@ public PerspectiveDescriptor(String id, String label,PerspectiveDescriptor origi
 /**
  * Create a descriptor from a config element.
  */
-public PerspectiveDescriptor(IConfigurationElement configElement)
+public PerspectiveDescriptor(IConfigurationElement configElement, String desc)
 	throws CoreException
 {
 	super();
@@ -72,7 +71,7 @@ public PerspectiveDescriptor(IConfigurationElement configElement)
 	label = configElement.getAttribute(ATT_NAME);
 	className = configElement.getAttribute(ATT_CLASS);
 	singleton = (configElement.getAttributeAsIs(ATT_SINGLETON) != null);
-	description = configElement.getAttribute(ATT_DESC);
+	description = desc;
 
 	// Sanity check.
 	if ((label == null) || (className == null)) {

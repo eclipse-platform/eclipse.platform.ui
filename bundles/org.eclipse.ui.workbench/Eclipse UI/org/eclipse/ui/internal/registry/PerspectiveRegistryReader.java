@@ -34,7 +34,8 @@ public PerspectiveRegistryReader() {
 protected boolean readElement(IConfigurationElement element) {
 	if (element.getName().equals(TAG_LAYOUT)) {
 		try {
-			PerspectiveDescriptor desc = new PerspectiveDescriptor(element);
+			String descText = getDescription(element);
+			PerspectiveDescriptor desc = new PerspectiveDescriptor(element, descText);
 			registry.addPerspective(desc);
 		} catch (CoreException e) {
 			// log an error since its not safe to open a dialog here
