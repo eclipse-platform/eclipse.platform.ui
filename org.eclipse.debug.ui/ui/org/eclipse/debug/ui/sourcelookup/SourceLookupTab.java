@@ -48,11 +48,11 @@ public class SourceLookupTab extends AbstractLaunchConfigurationTab {
 		Composite comp = new Composite(parent, SWT.NONE);
 		setControl(comp);
 		GridLayout topLayout = new GridLayout();
+		topLayout.marginWidth = 0;
+		topLayout.marginHeight = 0;
 		topLayout.numColumns = 1;
 		comp.setLayout(topLayout);
 		comp.setFont(parent.getFont());
-		
-		createVerticalSpacer(comp, 1);
 		
 		fSourceLookupPanel = new SourceLookupPanel();
 		fSourceLookupPanel.setLaunchConfigurationDialog(

@@ -106,8 +106,6 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		GridLayout topLayout = new GridLayout();
 		comp.setLayout(topLayout);
 		comp.setFont(font);
-
-		createVerticalSpacer(comp, 1);
 		
 		Composite radioComp = new Composite(comp, SWT.NONE);
 		GridLayout radioLayout = new GridLayout();

@@ -126,8 +126,6 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 		mainComposite.setLayoutData(gd);
 		mainComposite.setFont(parent.getFont());
 		
-		createVerticalSpacer(mainComposite, 1);
-		
 		fRefreshButton = createCheckButton(mainComposite, StringSubstitutionMessages.getString("RefreshTab.31")); //$NON-NLS-1$
 		fRefreshButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
