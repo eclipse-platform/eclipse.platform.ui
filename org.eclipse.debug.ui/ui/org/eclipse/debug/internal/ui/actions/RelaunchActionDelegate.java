@@ -11,6 +11,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 
 public class RelaunchActionDelegate extends AbstractDebugActionDelegate {
 	
@@ -67,7 +68,7 @@ public class RelaunchActionDelegate extends AbstractDebugActionDelegate {
 			launch= ((IProcess)element).getLaunch();
 		}
 		
-		return launch != null && launch.getLaunchConfiguration() != null;
+		return launch != null && launch.getLaunchConfiguration() != null && LaunchConfigurationManager.isVisible(launch.getLaunchConfiguration());
 	}
 			
 	/**
