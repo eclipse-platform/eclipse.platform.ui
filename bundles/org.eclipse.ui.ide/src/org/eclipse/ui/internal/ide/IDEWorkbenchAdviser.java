@@ -190,7 +190,10 @@ public class IDEWorkbenchAdviser extends WorkbenchAdviser {
 	 */
 	public void initialize(IWorkbenchConfigurer configurer) {
 		// remember for future reference
-		this.configurer = configurer;		
+		this.configurer = configurer;	
+		
+		// make sure we always save and restore workspace state
+		configurer.setSaveAndRestore(true);
 
 		// setup the event loop exception handler
 		exceptionHandler = new IDEExceptionHandler(configurer);
