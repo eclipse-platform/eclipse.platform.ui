@@ -39,7 +39,6 @@ import org.eclipse.jface.text.ITextViewer;
  *  
  * @see ITextViewer
  * @see IVerticalRulerInfo
- * @since 2.1
  */
 public interface IVerticalRuler extends IVerticalRulerInfo {
 
