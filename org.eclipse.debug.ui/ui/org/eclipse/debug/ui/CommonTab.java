@@ -79,6 +79,8 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	private Text fSharedLocationText;
 	private Button fSharedLocationButton;
 	
+	protected Button fRunInBackgroundButton;
+	
 	/**
 	 * Check box list for specifying favorites
 	 */
@@ -199,6 +201,29 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 					updateLaunchConfigurationDialog();
 				}
 			});
+		
+		createVerticalSpacer(comp, 1);
+		createRunInBackgroundComponent(comp);
+	}
+
+	/**
+	 * Creates the controls needed to edit the run in background
+	 * attribute of an external tool
+	 *
+	 * @param parent the composite to create the controls in
+	 */
+	protected void createRunInBackgroundComponent(Composite parent) {
+		fRunInBackgroundButton = new Button(parent, SWT.CHECK);
+		fRunInBackgroundButton.setText("Run in bac&kground");
+		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		data.horizontalSpan = 2;
+		fRunInBackgroundButton.setLayoutData(data);
+		fRunInBackgroundButton.setFont(parent.getFont());
+		fRunInBackgroundButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				updateLaunchConfigurationDialog();
+			}
+		});
 	}
 
 	
@@ -300,6 +325,27 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		updateLocalSharedFromConfig(configuration);
 		updateSharedLocationFromConfig(configuration);
 		updateFavoritesFromConfig(configuration);
+		updateRunInBackground(configuration);
+	}
+	
+	protected void updateRunInBackground(ILaunchConfiguration configuration) { 
+		fRunInBackgroundButton.setSelection(isRunInBackground(configuration));
+	}
+	
+	/**
+	 * Returns whether the given configuration should be run in the background.
+	 * 
+	 * @param configuration the configuration
+	 * @return whether the configuration is configured to run in the background
+	 */
+	public static boolean isRunInBackground(ILaunchConfiguration configuration) {
+		boolean runInBackground= true;
+		try {
+			runInBackground= configuration.getAttribute(IDebugUIConstants.ATTR_RUN_IN_BACKGROUND, true);
+		} catch (CoreException ce) {
+			DebugUIPlugin.log(ce);
+		}
+		return runInBackground;
 	}
 	
 	private void updateLocalSharedFromConfig(ILaunchConfiguration config) {
@@ -453,6 +499,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		config.setContainer(null);
+		config.setAttribute(IDebugUIConstants.ATTR_RUN_IN_BACKGROUND, true);
 	}
 
 	/**
@@ -461,6 +508,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		updateConfigFromLocalShared(configuration);
 		updateConfigFromFavorites(configuration);
+		setAttribute(IDebugUIConstants.ATTR_RUN_IN_BACKGROUND, configuration, fRunInBackgroundButton.getSelection(), true);
 	}
 
 	/**

@@ -160,12 +160,6 @@ public interface IExternalToolConstants {
 	public static final String ATTR_RUN_BUILD_KINDS = PLUGIN_ID + ".ATTR_RUN_BUILD_KINDS"; //$NON-NLS-1$
 	
 	/**
-	 * Boolean attribute indicating if an external tool should be run in the
-	 * background. Default value is <code>false</code>.
-	 */
-	public static final String ATTR_RUN_IN_BACKGROUND = PLUGIN_ID + ".ATTR_RUN_IN_BACKGROUND"; //$NON-NLS-1$
-	
-	/**
 	 * Boolean attribute indicating if the console should be shown on external
 	 * tool output. Default value is <code>false</code>.
 	 */

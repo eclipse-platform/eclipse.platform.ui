@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsUtil;
+import org.eclipse.ui.externaltools.internal.registry.ExternalToolMigration;
 
 /**
  * This project builder implementation will run an external tool or tools during the
@@ -128,6 +129,11 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 	private void launchBuild(int kind, ILaunchConfiguration config, IProgressMonitor monitor) throws CoreException {
 		monitor.subTask(MessageFormat.format(ExternalToolsModelMessages.getString("ExternalToolBuilder.Running_{0}..._1"), new String[] { config.getName()})); //$NON-NLS-1$
 		buildStarted(kind);
+		// The default value for "run in background" is true in debug core. If
+		// the user doesn't go through the UI, the new attribute won't be set. This means
+		// that existing Ant builders will try to run in the background (and likely conflict with
+		// each other) without migration.
+		config= ExternalToolMigration.migrateRunInBackground(config);
 		config.launch(ILaunchManager.RUN_MODE, monitor);
 		buildEnded();
 	}

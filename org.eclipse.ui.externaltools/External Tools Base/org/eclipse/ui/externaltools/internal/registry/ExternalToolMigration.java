@@ -17,11 +17,13 @@ import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.variables.ILaunchVariableManager;
 import org.eclipse.debug.core.variables.LaunchVariableUtil;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 
@@ -130,7 +132,7 @@ public final class ExternalToolMigration {
 		config.setAttribute(IExternalToolConstants.ATTR_WORKING_DIRECTORY, (String) commandArgs.get(TAG_WORK_DIR));
 		config.setAttribute(IExternalToolConstants.ATTR_CAPTURE_OUTPUT, TRUE.equals(commandArgs.get(TAG_CAPTURE_OUTPUT)));
 		config.setAttribute(IExternalToolConstants.ATTR_SHOW_CONSOLE, TRUE.equals(commandArgs.get(TAG_SHOW_CONSOLE)));
-		config.setAttribute(IExternalToolConstants.ATTR_RUN_IN_BACKGROUND, TRUE.equals(commandArgs.get(TAG_RUN_BKGRND)));
+		config.setAttribute(IDebugUIConstants.ATTR_RUN_IN_BACKGROUND, TRUE.equals(commandArgs.get(TAG_RUN_BKGRND)));
 		config.setAttribute(IExternalToolConstants.ATTR_PROMPT_FOR_ARGUMENTS, TRUE.equals(commandArgs.get(TAG_PROMPT_ARGS)));
 		config.setAttribute(LaunchVariableUtil.ATTR_REFRESH_SCOPE, (String) commandArgs.get(TAG_REFRESH_SCOPE));
 		config.setAttribute(LaunchVariableUtil.ATTR_REFRESH_RECURSIVE, TRUE.equals(commandArgs.get(TAG_REFRESH_RECURSIVE)));
@@ -236,7 +238,7 @@ public final class ExternalToolMigration {
 		// Collect the rest of the information
 		config.setAttribute(IExternalToolConstants.ATTR_SHOW_CONSOLE, TRUE.equals(args.get(TAG_TOOL_SHOW_LOG)));
 		config.setAttribute(IExternalToolConstants.ATTR_CAPTURE_OUTPUT, TRUE.equals(args.get(TAG_TOOL_SHOW_LOG)));
-		config.setAttribute(IExternalToolConstants.ATTR_RUN_IN_BACKGROUND, FALSE.equals(args.get(TAG_TOOL_BLOCK)));
+		config.setAttribute(IDebugUIConstants.ATTR_RUN_IN_BACKGROUND, FALSE.equals(args.get(TAG_TOOL_BLOCK)));
 		config.setAttribute(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, (String) args.get(TAG_TOOL_BUILD_TYPES));
 		config.setAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, arguments);
 		config.setAttribute(IExternalToolConstants.ATTR_WORKING_DIRECTORY, (String) args.get(TAG_TOOL_DIRECTORY));
@@ -280,5 +282,34 @@ public final class ExternalToolMigration {
 			name= (String) commandArgs.get(TAG_TOOL_NAME);
 		}
 		return name;
-	}	
+	}
+	
+	public static ILaunchConfiguration migrateRunInBackground(ILaunchConfiguration config) {
+		String noValueFlag= "NoValue"; //$NON-NLS-1$
+		String attr= null;
+		try {
+			attr = config.getAttribute(IDebugUIConstants.ATTR_RUN_IN_BACKGROUND, noValueFlag);
+		} catch (CoreException e) {
+			// Exception will occur if the attribute is set because the attribute is actually a boolean.
+			return config;
+		}
+		if (noValueFlag.equals(attr)) {
+			String ATTR_RUN_IN_BACKGROUND= IExternalToolConstants.PLUGIN_ID + ".ATTR_SHOW_CONSOLE"; //$NON-NLS-1$
+			boolean runInBackground= false;
+			try {
+				runInBackground = config.getAttribute(ATTR_RUN_IN_BACKGROUND, runInBackground);
+			} catch (CoreException e) {
+				ExternalToolsPlugin.getDefault().log("An exception occurred accessing external tool's \"run in background\" attribute", e);
+			}
+			ILaunchConfigurationWorkingCopy workingCopy;
+			try {
+				workingCopy = config.getWorkingCopy();
+				workingCopy.setAttribute(IDebugUIConstants.ATTR_RUN_IN_BACKGROUND, runInBackground);
+				config= workingCopy.doSave();
+			} catch (CoreException e) {
+				ExternalToolsPlugin.getDefault().log("An exception occured attempting to migrate external tool's \"run in background\" attribute", e);
+			}
+		}
+		return config;
+	}
 }

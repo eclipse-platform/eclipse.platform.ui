@@ -180,23 +180,6 @@ public class ExternalToolsUtil {
 	}
 
 	/**
-	 * Returns whether the given configuration is to be run in the background.
-	 * 
-	 * @param configuration the configuration for which the background state should
-	 * 		be determined.
-	 * @return whether the given configuration is to be run in the background
-	 * @throws CoreException if unable to access the associated attribute
-	 */
-	public static boolean isBackground(ILaunchConfiguration configuration) throws CoreException {
-		boolean defaultValue= true;
-		if (configuration.getCategory().equals(IExternalToolConstants.ID_EXTERNAL_TOOLS_BUILDER_LAUNCH_CATEGORY)) {
-			// Project builders are not run in the background by default.
-			defaultValue= false;
-		}
-		return configuration.getAttribute(IExternalToolConstants.ATTR_RUN_IN_BACKGROUND, defaultValue);
-	}
-
-	/**
 	 * Returns whether the given launch configuration is enabled. This property
 	 * is intended only to apply to external tool builder configurations and
 	 * determines whether the project builder will launch the configuration

@@ -23,10 +23,6 @@ import org.eclipse.ui.help.WorkbenchHelp;
 
 public class ProgramMainTab extends ExternalToolsMainTab {
 
-	public ProgramMainTab(boolean runInBackgroundDefaultValue) {
-		super(runInBackgroundDefaultValue);
-	}
-
 	/**
 	 * Prompts the user for a program location within the workspace and sets the
 	 * location as a String containing the workspace_loc variable or

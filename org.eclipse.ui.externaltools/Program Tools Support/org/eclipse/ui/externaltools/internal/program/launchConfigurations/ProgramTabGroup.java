@@ -24,7 +24,7 @@ public class ProgramTabGroup extends AbstractLaunchConfigurationTabGroup {
 	 */
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
 		ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[] {
-			new ProgramMainTab(true),
+			new ProgramMainTab(),
 			new RefreshTab(),
 			new EnvironmentTab(),
 			new CommonTab()

@@ -58,26 +58,16 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 	protected Button fileWorkingDirectoryButton;
 	protected Button workspaceWorkingDirectoryButton;
 
-	protected Button runBackgroundButton;
 	protected Text argumentField;
 	protected Button variableButton;
 
 	protected SelectionAdapter selectionAdapter;
-	
-	/**
-	 * The default value to use for the IExternalToolConstants.ATTR_RUN_IN_BACKGROUND attribute.
-	 */
-	private boolean runInBackgroundAttributeDefaultValue;
 	
 	protected ModifyListener modifyListener = new ModifyListener() {
 		public void modifyText(ModifyEvent e) {
 			updateLaunchConfigurationDialog();
 		}
 	};
-
-	public ExternalToolsMainTab(boolean runInBackgroundDefaultValue) {
-		runInBackgroundAttributeDefaultValue= runInBackgroundDefaultValue;
-	}
 	
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
@@ -96,7 +86,6 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		createWorkDirectoryComponent(mainComposite);
 		createArgumentComponent(mainComposite);
 		createVerticalSpacer(mainComposite, 2);
-		createRunBackgroundComponent(mainComposite);
 	}
 	
 	/**
@@ -256,22 +245,6 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		instruction.setLayoutData(data);
 		instruction.setFont(font);
 	}
-
-	/**
-	 * Creates the controls needed to edit the run in background
-	 * attribute of an external tool
-	 *
-	 * @param parent the composite to create the controls in
-	 */
-	protected void createRunBackgroundComponent(Composite parent) {
-		runBackgroundButton = new Button(parent, SWT.CHECK);
-		runBackgroundButton.setText(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Run_tool_in_bac&kground_4")); //$NON-NLS-1$
-		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		data.horizontalSpan = 2;
-		runBackgroundButton.setLayoutData(data);
-		runBackgroundButton.setFont(parent.getFont());
-		runBackgroundButton.addSelectionListener(getSelectionAdapter());
-	}
 	
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
@@ -286,7 +259,6 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		updateLocation(configuration);
 		updateWorkingDirectory(configuration);
 		updateArgument(configuration);
-		updateRunBackground(configuration);
 	}
 	
 	protected void updateWorkingDirectory(ILaunchConfiguration configuration) {
@@ -322,16 +294,6 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		argumentField.setText(arguments);
 	}
 
-	protected void updateRunBackground(ILaunchConfiguration configuration) {
-		boolean runInBackground= true;
-		try {
-			runInBackground= configuration.getAttribute(IExternalToolConstants.ATTR_RUN_IN_BACKGROUND, runInBackgroundAttributeDefaultValue);
-		} catch (CoreException ce) {
-			ExternalToolsPlugin.getDefault().log(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Error_reading_configuration_7"), ce); //$NON-NLS-1$
-		}
-		runBackgroundButton.setSelection(runInBackground);
-	}
-
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
@@ -349,8 +311,6 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		} else {
 			configuration.setAttribute(IExternalToolConstants.ATTR_WORKING_DIRECTORY, workingDirectory);
 		}
-		
-		setAttribute(IExternalToolConstants.ATTR_RUN_IN_BACKGROUND, configuration, runBackgroundButton.getSelection(), runInBackgroundAttributeDefaultValue);
 
 		String arguments= argumentField.getText().trim();
 		if (arguments.length() == 0) {

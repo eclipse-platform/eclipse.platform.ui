@@ -726,6 +726,15 @@ public interface IDebugUIConstants {
 	 */
 	public static final String ATTR_ENVIRONMENT_VARIABLES = PLUGIN_ID + ".environmentVariables"; //$NON-NLS-1$
 	
+	/**
+	 * Launch configuration attribute - a boolean value indicating whether a
+	 * configuration should be run in the background. Default value is the
+	 * value of the ATTR_DEFAULT_RUN_IN_BACKGROUND attribute.
+	 * 
+	 * @since 3.0
+	 */
+	public static final String ATTR_RUN_IN_BACKGROUND = PLUGIN_ID + ".ATTR_RUN_IN_BACKGROUND"; //$NON-NLS-1$
+	
 	// Extension points
 	
 	/**

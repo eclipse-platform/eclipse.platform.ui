@@ -11,6 +11,7 @@
 package org.eclipse.debug.ui;
 
 
+import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.CoreException;
@@ -45,6 +46,8 @@ import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPro
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
 import org.eclipse.debug.ui.launchVariables.ILaunchVariableComponentManager;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
@@ -486,9 +489,7 @@ public class DebugUITools {
 	
 	/**
 	 * Saves and builds the workspace according to current preference settings, and
-	 * launches the given launch configuration in the specified mode in a background
-	 * Job with progress reported via the Job. Exceptions are reported in the Progress
-	 * view.
+	 * launches the given launch configuration in the specified mode.
 	 * 
 	 * @param configuration the configuration to launch
 	 * @param mode launch mode - run or debug
@@ -496,33 +497,103 @@ public class DebugUITools {
 	 */
 	public static void launch(final ILaunchConfiguration configuration, final String mode) {
 		if (DebugUIPlugin.preLaunchSave()) {
-			Job job= new Job(MessageFormat.format(DebugUIMessages.getString("DebugUITools.3"), new String[] { configuration.getName() })) { //$NON-NLS-1$
-				public IStatus run(IProgressMonitor monitor) {
-					try {
-						buildAndLaunch(configuration, mode, monitor);
-					} catch (CoreException e) {
-						final IStatus status= e.getStatus();
-						IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(status);
-						if (handler == null) {
-							return status;
-						}
-						final LaunchGroupExtension group = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(configuration, mode);
-						if (group == null) {
-							return status;
-						}
-						Runnable r = new Runnable() {
-							public void run() {
-								openLaunchConfigurationDialogOnGroup(DebugUIPlugin.getShell(), new StructuredSelection(configuration), group.getIdentifier(), status);
-							}
-						};
-						DebugUIPlugin.getStandardDisplay().asyncExec(r);
-					}
-					return Status.OK_STATUS;
-				}
-			};
-			job.setPriority(Job.INTERACTIVE);
-			job.schedule();
+			boolean runInBackground= true;
+			try {
+				runInBackground= configuration.getAttribute(IDebugUIConstants.ATTR_RUN_IN_BACKGROUND, true);
+			} catch (CoreException e) {
+				DebugUIPlugin.log(e);
+			}
+			if (runInBackground) {
+				launchInBackground(configuration, mode);
+			} else {
+				launchInForeground(configuration, mode);
+			}
 		}
+	}
+	
+	/**
+	 * Builds the workspace according to current preference settings and
+	 * launches the given launch configuration in the specified mode in a the
+	 * foreground with a progress dialog. Reports any exceptions that occur
+	 * in an error dialog.
+	 * 
+	 * @param configuration the configuration to launch
+	 * @param mode launch mode
+	 * @since 3.0
+	 */
+	public static void launchInForeground(final ILaunchConfiguration configuration, final String mode) {
+		ProgressMonitorDialog dialog = new ProgressMonitorDialog(DebugUIPlugin.getShell());
+		IRunnableWithProgress runnable = new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+				try {
+					buildAndLaunch(configuration, mode, monitor);
+				} catch (CoreException e) {
+					throw new InvocationTargetException(e);
+				}
+			}		
+		};
+		try {
+			dialog.run(true, true, runnable);
+		} catch (InvocationTargetException e) {
+			Throwable targetException = e.getTargetException();
+			Throwable t = e;
+			if (targetException instanceof CoreException) {
+				t = targetException;
+			}
+			if (t instanceof CoreException) {
+				CoreException ce = (CoreException)t;
+				IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(ce.getStatus());
+				if (handler != null) {
+					LaunchGroupExtension group = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(configuration, mode);
+					if (group != null) {
+						openLaunchConfigurationDialogOnGroup(DebugUIPlugin.getShell(), new StructuredSelection(configuration), group.getIdentifier(), ce.getStatus());
+						return;
+					}
+				}
+			}
+			DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), DebugUIMessages.getString("DebugUITools.Error_1"), DebugUIMessages.getString("DebugUITools.Exception_occurred_during_launch_2"), t); //$NON-NLS-1$ //$NON-NLS-2$
+		} catch (InterruptedException e) {
+			// cancelled
+		}
+	}
+	
+	/**
+	 * Builds the workspace according to current preference settings and
+	 * launches the given launch configuration in the specified mode in a background
+	 * Job with progress reported via the Job. Exceptions are reported in the Progress
+	 * view.
+	 * 
+	 * @param configuration the configuration to launch
+	 * @param mode launch mode
+	 * @since 3.0
+	 */
+	public static void launchInBackground(final ILaunchConfiguration configuration, final String mode) {
+		Job job= new Job(MessageFormat.format(DebugUIMessages.getString("DebugUITools.3"), new String[] { configuration.getName() })) { //$NON-NLS-1$
+			public IStatus run(IProgressMonitor monitor) {
+				try {
+					buildAndLaunch(configuration, mode, monitor);
+				} catch (CoreException e) {
+					final IStatus status= e.getStatus();
+					IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(status);
+					if (handler == null) {
+						return status;
+					}
+					final LaunchGroupExtension group = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(configuration, mode);
+					if (group == null) {
+						return status;
+					}
+					Runnable r = new Runnable() {
+						public void run() {
+							openLaunchConfigurationDialogOnGroup(DebugUIPlugin.getShell(), new StructuredSelection(configuration), group.getIdentifier(), status);
+						}
+					};
+					DebugUIPlugin.getStandardDisplay().asyncExec(r);
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		job.setPriority(Job.INTERACTIVE);
+		job.schedule();
 	}
 	
 	/**
