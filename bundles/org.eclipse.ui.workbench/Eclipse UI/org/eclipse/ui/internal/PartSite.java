@@ -28,9 +28,9 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.SubActionBars;
-import org.eclipse.ui.commands.old.ICommandHandlerService;
+import org.eclipse.ui.commands.ICommandHandlerService;
 import org.eclipse.ui.contexts.IContextActivationService;
-import org.eclipse.ui.internal.commands.old.SimpleHandlerService;
+import org.eclipse.ui.internal.commands.CommandHandlerService;
 import org.eclipse.ui.internal.contexts.ContextActivationService;
 
 /**
@@ -256,7 +256,7 @@ public class PartSite implements IWorkbenchPartSite {
 	 */
 	public IKeyBindingService getKeyBindingService() {
 		if (keyBindingService == null) {
-			keyBindingService = new KeyBindingService(getContextActivationService(), getHandlerService());
+			keyBindingService = new KeyBindingService(getHandlerService(), getContextActivationService());
 			
 			if (this instanceof EditorSite) {
 				EditorActionBuilder.ExternalContributor contributor = (EditorActionBuilder.ExternalContributor) ((EditorSite) this).getExtensionActionBarContributor();
@@ -291,7 +291,7 @@ public class PartSite implements IWorkbenchPartSite {
 
 	public ICommandHandlerService getHandlerService() {
 		if (handlerService == null)
-			handlerService = new SimpleHandlerService();
+			handlerService = new CommandHandlerService();
 
 		return handlerService;		
 	}

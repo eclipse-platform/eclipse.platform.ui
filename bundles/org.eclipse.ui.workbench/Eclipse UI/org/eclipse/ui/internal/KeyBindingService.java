@@ -13,26 +13,23 @@ package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.IKeyBindingService;
-import org.eclipse.ui.commands.old.ICommandHandlerService;
+import org.eclipse.ui.commands.ICommandHandlerService;
 import org.eclipse.ui.contexts.IContextActivationService;
 import org.eclipse.ui.internal.commands.old.ActionHandler;
 
 final class KeyBindingService implements IKeyBindingService {
 	
-	private SortedMap handlerMap = new TreeMap();
+	private ICommandHandlerService commandHandlerService;
 	private IContextActivationService contextActivationService;
-	private ICommandHandlerService handlerService;
 	private List scopes = new ArrayList();
 		
-	KeyBindingService(IContextActivationService contextService, ICommandHandlerService handlerService) {
+	KeyBindingService(ICommandHandlerService commandHandlerService, IContextActivationService contextActivationService) {
 		super();
-		this.contextActivationService = contextService;
-		this.handlerService = handlerService;	
+		this.contextActivationService = contextActivationService;
+		this.commandHandlerService = commandHandlerService;	
 	}
 
 	public String[] getScopes() {
@@ -54,18 +51,14 @@ final class KeyBindingService implements IKeyBindingService {
 	public void registerAction(IAction action) {
     	String command = action.getActionDefinitionId();
 
-		if (command != null) {
-			handlerMap.put(command, new ActionHandler(action));		
-			handlerService.setHandlerMap(handlerMap);
-		}
+		if (command != null)
+			commandHandlerService.addCommandHandler(command, new ActionHandler(action));		
     }
     
 	public void unregisterAction(IAction action) {   		
     	String command = action.getActionDefinitionId();
 
-		if (command != null) {
-			handlerMap.remove(command);
-			handlerService.setHandlerMap(handlerMap);
-		}
+		if (command != null)
+			commandHandlerService.removeCommandHandler(command);
     }	
 }

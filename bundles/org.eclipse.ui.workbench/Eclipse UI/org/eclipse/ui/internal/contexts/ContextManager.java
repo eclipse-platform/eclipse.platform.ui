@@ -169,7 +169,7 @@ public final class ContextManager implements IContextManager {
 		
 		if (!contextChanges.isEmpty()) {
 			this.contextElementsById = contextElementsById;		
-			SortedSet definedContextIds = (SortedSet) contextElementsById.keySet();
+			SortedSet definedContextIds = new TreeSet(contextElementsById.keySet());
 
 			if (!Util.equals(definedContextIds, this.definedContextIds)) {	
 				this.definedContextIds = definedContextIds;

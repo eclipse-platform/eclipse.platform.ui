@@ -11,7 +11,9 @@
 
 package org.eclipse.ui.commands;
 
-import java.util.SortedSet;
+import java.util.SortedMap;
+
+import org.eclipse.ui.commands.old.ICommandHandler;
 
 /**
  * <p>
@@ -26,33 +28,25 @@ import java.util.SortedSet;
  * 
  * @since 3.0
  */
-public interface ICommandActivationService {
+public interface ICommandHandlerService {
 
 	/**
 	 * TODO javadoc
 	 *
 	 * @param commandId
+	 * @param commandHandler
 	 * @throws IllegalArgumentException
 	 */	
-	void activateCommand(String commandId)
+	void addCommandHandler(String commandId, ICommandHandler commandHandler)
 		throws IllegalArgumentException;
 
 	/**
-	 * Registers an ICommandActivationServiceListener instance with this command activation service.
+	 * Registers an ICommandHandlerServiceListener instance with this command handler service.
 	 *
-	 * @param commandActivationServiceListener the ICommandActivationServiceListener instance to register.
+	 * @param commandHandlerServiceListener the ICommandHandlerServiceListener instance to register.
 	 * @throws IllegalArgumentException
 	 */	
-	void addCommandActivationServiceListener(ICommandActivationServiceListener commandActivationServiceListener)
-		throws IllegalArgumentException;
-
-	/**
-	 * TODO javadoc
-	 *
-	 * @param commandId
-	 * @throws IllegalArgumentException
-	 */	
-	void deactivateCommand(String commandId)
+	void addCommandHandlerServiceListener(ICommandHandlerServiceListener commandHandlerServiceListener)
 		throws IllegalArgumentException;
 		
 	/**
@@ -60,14 +54,23 @@ public interface ICommandActivationService {
 	 *
 	 * @return
 	 */
-	SortedSet getActiveCommandIds();
+	SortedMap getCommandHandlersById();
+
+	/**
+	 * TODO javadoc
+	 *
+	 * @param commandId
+	 * @throws IllegalArgumentException
+	 */	
+	void removeCommandHandler(String commandId)
+		throws IllegalArgumentException;
 	
 	/**
-	 * Unregisters an ICommandActivationServiceListener instance with this command activation services.
+	 * Unregisters an ICommandHandlerServiceListener instance with this command handler services.
 	 *
-	 * @param commandActivationServiceListener the ICommandActivationServiceListener instance to unregister.
+	 * @param commandHandlerServiceListener the ICommandHandlerServiceListener instance to unregister.
 	 * @throws IllegalArgumentException
 	 */
-	void removeCommandActivationServiceListener(ICommandActivationServiceListener commandActivationServiceListener)
+	void removeCommandHandlerServiceListener(ICommandHandlerServiceListener commandHandlerServiceListener)
 		throws IllegalArgumentException;
 }

@@ -58,7 +58,7 @@ final class RegistryReader extends org.eclipse.ui.internal.registry.RegistryRead
 		if (Persistence.TAG_COMMAND.equals(name))
 			return readCommand(element);
 
-		return false;
+		return true; // TODO return false once commands extension point is complete
 	}
 
 	private String getPluginId(IConfigurationElement element) {

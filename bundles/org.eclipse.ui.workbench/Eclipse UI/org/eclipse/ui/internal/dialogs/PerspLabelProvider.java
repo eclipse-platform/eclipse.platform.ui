@@ -12,10 +12,12 @@ package org.eclipse.ui.internal.dialogs;
 
 import java.util.HashMap;
 import java.util.Iterator;
+
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;

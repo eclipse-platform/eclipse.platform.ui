@@ -169,7 +169,7 @@ public final class CommandManager implements ICommandManager {
 		
 		if (!commandChanges.isEmpty()) {
 			this.commandElementsById = commandElementsById;		
-			SortedSet definedCommandIds = (SortedSet) commandElementsById.keySet();
+			SortedSet definedCommandIds = new TreeSet(commandElementsById.keySet());
 
 			if (!Util.equals(definedCommandIds, this.definedCommandIds)) {	
 				this.definedCommandIds = definedCommandIds;

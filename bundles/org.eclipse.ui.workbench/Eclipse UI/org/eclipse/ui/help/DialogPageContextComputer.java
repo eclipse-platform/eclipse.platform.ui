@@ -10,12 +10,13 @@
  *******************************************************************************/
 package org.eclipse.ui.help;
 
+import java.util.ArrayList;
+
 import org.eclipse.help.IContext;
 import org.eclipse.jface.dialogs.IDialogPage;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.events.HelpEvent;
 import org.eclipse.swt.widgets.Control;
-import java.util.*;
 
 /**
  * For determining the help context for controls in a dialog page.

@@ -16,9 +16,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.SortedMap;
 import java.util.SortedSet;
-import java.util.TreeMap;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -81,13 +79,13 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.commands.old.ICommandHandlerService;
+import org.eclipse.ui.commands.ICommandHandlerService;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.commands.CommandHandlerService;
 import org.eclipse.ui.internal.commands.old.ActionHandler;
 import org.eclipse.ui.internal.commands.old.ContextAndHandlerManager;
 import org.eclipse.ui.internal.commands.old.Manager;
 import org.eclipse.ui.internal.commands.old.SequenceMachine;
-import org.eclipse.ui.internal.commands.old.SimpleHandlerService;
 import org.eclipse.ui.internal.commands.util.old.Sequence;
 import org.eclipse.ui.internal.commands.util.old.Stroke;
 import org.eclipse.ui.internal.dialogs.MessageDialogWithToggle;
@@ -106,7 +104,6 @@ public class WorkbenchWindow
 	implements IWorkbenchWindow {
 
 	private ContextAndHandlerManager contextAndHandlerManager;
-	private ICommandHandlerService handlerService;
 	private int number;
 	private Workbench workbench;
 	private PageList pageList = new PageList();
@@ -424,19 +421,16 @@ public class WorkbenchWindow
 			contextAndHandlerManager.update();
 	}
 
+	private ICommandHandlerService handlerService;
+
 	public ICommandHandlerService getHandlerService() {
 		if (handlerService == null)
-			handlerService = new SimpleHandlerService();
+			handlerService = new CommandHandlerService();
 
 		return handlerService;
 	}
 
-	private SortedMap actionSetsCommandIdToActionMap = new TreeMap();
-	private SortedMap globalActionsCommandIdToActionMap = new TreeMap();
-
 	void registerActionSets(IActionSet[] actionSets) {
-		actionSetsCommandIdToActionMap.clear();
-
 		for (int i = 0; i < actionSets.length; i++) {
 			if (actionSets[i] instanceof PluginActionSet) {
 				PluginActionSet pluginActionSet =
@@ -448,38 +442,17 @@ public class WorkbenchWindow
 					String command = pluginAction.getActionDefinitionId();
 
 					if (command != null)
-						actionSetsCommandIdToActionMap.put(
-							command,
-							pluginAction);
+						getHandlerService().addCommandHandler(command, new ActionHandler(pluginAction));
 				}
 			}
 		}
-
-		updateHandlerMap();
 	}
 
 	void registerGlobalAction(IAction globalAction) {
 		String command = globalAction.getActionDefinitionId();
 
-		if (command != null) {
-			globalActionsCommandIdToActionMap.put(command, globalAction);
-			updateHandlerMap();
-		}
-	}
-
-	private void updateHandlerMap() {
-		SortedMap actionMap = new TreeMap();
-		actionMap.putAll(globalActionsCommandIdToActionMap);
-		actionMap.putAll(actionSetsCommandIdToActionMap);		
-		Iterator iterator = actionMap.entrySet().iterator();
-		SortedMap handlerMap = new TreeMap();
-		
-		while (iterator.hasNext()) {
-			Map.Entry entry = (Map.Entry) iterator.next();
-			handlerMap.put(entry.getKey(), new ActionHandler((IAction) entry.getValue()));				
-		}
-		
-		getHandlerService().setHandlerMap(handlerMap);
+		if (command != null)
+			getHandlerService().addCommandHandler(command, new ActionHandler(globalAction));
 	}
 
 	/*
@@ -1198,7 +1171,7 @@ public class WorkbenchWindow
 	 */
 	public KeyBindingService getKeyBindingService() {
 		if (keyBindingService == null) {
-			keyBindingService = new KeyBindingService(workbench.getContextActivationService(), getHandlerService());
+			keyBindingService = new KeyBindingService(getHandlerService(), workbench.getContextActivationService());
 			updateActiveActions();
 		}
 

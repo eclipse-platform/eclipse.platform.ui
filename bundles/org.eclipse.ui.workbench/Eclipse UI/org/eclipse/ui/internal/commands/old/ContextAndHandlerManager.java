@@ -43,10 +43,10 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
-import org.eclipse.ui.commands.old.CommandHandlerServiceEvent;
+import org.eclipse.ui.commands.ICommandHandlerService;
+import org.eclipse.ui.commands.ICommandHandlerServiceEvent;
+import org.eclipse.ui.commands.ICommandHandlerServiceListener;
 import org.eclipse.ui.commands.old.ICommandHandler;
-import org.eclipse.ui.commands.old.ICommandHandlerService;
-import org.eclipse.ui.commands.old.ICommandHandlerServiceListener;
 import org.eclipse.ui.contexts.IContextActivationService;
 import org.eclipse.ui.contexts.IContextManager;
 import org.eclipse.ui.contexts.IContextManagerEvent;
@@ -77,7 +77,7 @@ public class ContextAndHandlerManager implements IContextResolver {
 	};
 
 	private final ICommandHandlerServiceListener handlerServiceListener = new ICommandHandlerServiceListener() {
-		public void handlerServiceChanged(CommandHandlerServiceEvent handlerServiceEvent) {
+		public void commandHandlerServiceChanged(ICommandHandlerServiceEvent commandHandlerServiceEvent) {
 			update();
 		}
 	};
@@ -137,7 +137,7 @@ public class ContextAndHandlerManager implements IContextResolver {
 		contextManager = ((Workbench) workbench).getContextManager(); // TODO temporary cast
 		contextManager.addContextManagerListener(contextManagerListener);		
 		workbenchWindowHandlerService = ((WorkbenchWindow) workbenchWindow).getHandlerService();
-		workbenchWindowHandlerService.addHandlerServiceListener(handlerServiceListener);
+		workbenchWindowHandlerService.addCommandHandlerServiceListener(handlerServiceListener);
 		workbenchWindow.getStatusLineManager().add(modeContributionItem);							
 		reset();
 
@@ -185,12 +185,12 @@ public class ContextAndHandlerManager implements IContextResolver {
 
 		if (this.activeWorkbenchPartHandlerService != activeWorkbenchPartHandlerService) {
 			if (this.activeWorkbenchPartHandlerService != null)
-				this.activeWorkbenchPartHandlerService.removeHandlerServiceListener(handlerServiceListener);				
+				this.activeWorkbenchPartHandlerService.removeCommandHandlerServiceListener(handlerServiceListener);				
 			
 			this.activeWorkbenchPartHandlerService = activeWorkbenchPartHandlerService;
 			
 			if (this.activeWorkbenchPartHandlerService != null)
-				this.activeWorkbenchPartHandlerService.addHandlerServiceListener(handlerServiceListener);
+				this.activeWorkbenchPartHandlerService.addCommandHandlerServiceListener(handlerServiceListener);
 				
 			start = true;
 			update();				
@@ -237,7 +237,7 @@ public class ContextAndHandlerManager implements IContextResolver {
 	private ICommandHandler getHandler(String command) {
 		if (command != null) {
 			if (activeWorkbenchPartHandlerService != null) {
-				SortedMap handlerMap = activeWorkbenchPartHandlerService.getHandlerMap();
+				SortedMap handlerMap = activeWorkbenchPartHandlerService.getCommandHandlersById();
 				
 				if (handlerMap != null) {
 					Object object = handlerMap.get(command);
@@ -248,7 +248,7 @@ public class ContextAndHandlerManager implements IContextResolver {
 			}
 
 			if (workbenchWindowHandlerService != null) {
-				SortedMap handlerMap = workbenchWindowHandlerService.getHandlerMap();
+				SortedMap handlerMap = workbenchWindowHandlerService.getCommandHandlersById();
 				
 				if (handlerMap != null) {
 					Object object = handlerMap.get(command);

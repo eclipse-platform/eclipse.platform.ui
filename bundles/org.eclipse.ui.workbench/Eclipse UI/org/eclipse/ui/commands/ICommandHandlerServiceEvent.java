@@ -24,12 +24,12 @@ package org.eclipse.ui.commands;
  * 
  * @since 3.0
  */
-public interface ICommandActivationServiceEvent {
+public interface ICommandHandlerServiceEvent {
 
 	/**
 	 * TODO javadoc
 	 * 
 	 * @return
 	 */	
-	ICommandActivationService getCommandActivationService();
+	ICommandHandlerService getCommandHandlerService();
 }
