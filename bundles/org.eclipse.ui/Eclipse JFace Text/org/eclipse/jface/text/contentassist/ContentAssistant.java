@@ -922,8 +922,11 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper {
 	 */
 	public void uninstall() {
 		
-		fProposalPopup.hide();
-		fContextInfoPopup.hide();
+		if (fProposalPopup != null)
+			fProposalPopup.hide();
+			
+		if (fContextInfoPopup != null)
+			fContextInfoPopup.hide();
 		
 		manageAutoActivation(false);
 		
