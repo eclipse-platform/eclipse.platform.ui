@@ -76,20 +76,20 @@
 		</actionSet>
 	</extension>
 
-<extension point="org.eclipse.ui.actionDefinitions">
-	<actionDefinition
-		id="org.eclipse.ui.externaltools.ExternalToolMenuDelegateToolbar"
-		name= "%ActionDefinition.externalToolMenuDelegateToolbar.name"
-		description="%ActionDefinition.externalToolMenuDelegateToolbar.description"/>
-</extension>
+	<extension point="org.eclipse.ui.actionDefinitions">
+		<actionDefinition
+			id="org.eclipse.ui.externaltools.ExternalToolMenuDelegateToolbar"
+			name= "%ActionDefinition.externalToolMenuDelegateToolbar.name"
+			description="%ActionDefinition.externalToolMenuDelegateToolbar.description"/>
+	</extension>
 
-<extension point="org.eclipse.ui.acceleratorSets">	
-	<acceleratorSet
-		scopeId="org.eclipse.ui.globalScope"
-		configurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-		<accelerator key="" id="org.eclipse.ui.externaltools.ExternalToolMenuDelegateToolbar"/>
-	</acceleratorSet>
-</extension>
+	<extension point="org.eclipse.ui.acceleratorSets">	
+		<acceleratorSet
+			scopeId="org.eclipse.ui.globalScope"
+			configurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+			<accelerator key="" id="org.eclipse.ui.externaltools.ExternalToolMenuDelegateToolbar"/>
+		</acceleratorSet>
+	</extension>
 
 	<extension point="org.eclipse.ui.views">
 		<category 
@@ -103,6 +103,49 @@
             category="org.eclipse.ui.externaltools.views"
             class="org.eclipse.ui.externaltools.internal.ant.view.AntView">
       </view>
+	</extension>
+	
+	<extension point="org.eclipse.ui.perspectiveExtensions">
+		<perspectiveExtension 
+    		targetID="org.eclipse.ui.resourcePerspective">
+    		<view id="org.eclipse.ui.externaltools.AntView" 
+       		 	relative="org.eclipse.ui.views.ContentOutline" 
+    			relationship="stack"
+    			visible="false"/> 
+    		<viewShortcut id="org.eclipse.ui.externaltools.AntView"/>
+	    </perspectiveExtension>
+    	<perspectiveExtension 
+    		targetID="org.eclipse.jdt.ui.JavaBrowsingPerspective">
+    		<view id="org.eclipse.ui.externaltools.AntView" 
+       		 	relative="org.eclipse.ui.views.ContentOutline" 
+    			relationship="stack"
+    			visible="false"/> 
+    		<viewShortcut id="org.eclipse.ui.externaltools.AntView"/>
+	    </perspectiveExtension>
+    	<perspectiveExtension 
+    		targetID="org.eclipse.jdt.ui.JavaPerspective">
+	    	<view id="org.eclipse.ui.externaltools.AntView" 
+	        	relative="org.eclipse.ui.views.ContentOutline" 
+	    		relationship="stack"
+	    		visible="false"/> 
+	    	<viewShortcut id="org.eclipse.ui.externaltools.AntView"/>
+	    </perspectiveExtension>
+	    <perspectiveExtension 
+	    	targetID="org.eclipse.jdt.ui.JavaHierarchyPerspective">
+	    	<view id="org.eclipse.ui.externaltools.AntView" 
+	        	relative="org.eclipse.ui.views.ContentOutline" 
+	    		relationship="stack"
+	    		visible="false"/> 
+	    	<viewShortcut id="org.eclipse.ui.externaltools.AntView"/>
+	    </perspectiveExtension>
+	    <perspectiveExtension 
+	    	targetID="org.eclipse.debug.ui.DebugPerspective">
+	    	<view id="org.eclipse.ui.externaltools.AntView" 
+	        	relative="org.eclipse.ui.views.ContentOutline" 
+	    		relationship="stack"
+	    		visible="false"/> 
+	    	<viewShortcut id="org.eclipse.ui.externaltools.AntView"/>
+	    </perspectiveExtension>
 	</extension>
 
 	<extension point="org.eclipse.ui.preferencePages">
