@@ -24,20 +24,21 @@ public class WatchEditPreferencePage extends CVSFieldEditorPreferencePage {
 	private RadioGroupFieldEditor actionEditor;
 	private IPreferenceStore store;
 
-	/**
-	 * @see org.eclipse.team.internal.ccvs.ui.CVSPreferencePage#getPageHelpContextId()
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.CVSFieldEditorPreferencePage#getPageHelpContextId()
 	 */
 	protected String getPageHelpContextId() {
 		return IHelpContextIds.WATCH_EDIT_PREFERENCE_PAGE;
 	}
-	/**
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.CVSFieldEditorPreferencePage#getPageDescription()
 	 */
 	protected String getPageDescription() {
 		return Policy.bind("WatchEditPreferencePage.description"); //$NON-NLS-1$;
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors()
 	 */
 	protected void createFieldEditors() {
@@ -74,17 +75,11 @@ public class WatchEditPreferencePage extends CVSFieldEditorPreferencePage {
 	private boolean isEditEnabled() {
 		return store.getString(ICVSUIConstants.PREF_EDIT_ACTION).equals(ICVSUIConstants.PREF_EDIT_PROMPT_EDIT);
 	}
-	
-	/**
-	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
-	 */
-	public boolean performOk() {
-		if (!super.performOk()) return false;
-		pushPreferences();
-		return true;
-	}
 
-	private void pushPreferences() {
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.CVSFieldEditorPreferencePage#pushPreferences()
+	 */
+	protected void pushPreferences() {
 		store = getCVSPreferenceStore();
 		Preferences target = CVSProviderPlugin.getPlugin().getPluginPreferences();
 		target.setValue(

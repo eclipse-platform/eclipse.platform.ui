@@ -73,4 +73,20 @@ public abstract class CVSFieldEditorPreferencePage extends FieldEditorPreference
 	 */
 	protected abstract String getPageDescription();
 	
+	/**
+	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
+	 */
+	public boolean performOk() {
+		if (!super.performOk()) return false;
+		pushPreferences();
+		return true;
+	}
+
+    /**
+     * Push the preferences to the Core plugin as required
+     */
+    protected void pushPreferences() {
+        // Do nothing by default
+    }
+	
 }

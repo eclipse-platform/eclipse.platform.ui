@@ -20,6 +20,7 @@ import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.core.Assert;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
+import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.team.ui.synchronize.ISynchronizePageSite;
 import org.eclipse.team.ui.synchronize.SyncInfoCompareInput;
 import org.eclipse.ui.*;
@@ -32,11 +33,11 @@ import org.eclipse.ui.*;
  */
 public class OpenInCompareAction extends Action {
 	
-	private String name;
 	private ISynchronizePageSite site;
+    private final ISynchronizeParticipant participant;
 	
-	public OpenInCompareAction(ISynchronizePageSite site, String name) {
-		this.name = name;
+	public OpenInCompareAction(ISynchronizePageSite site, ISynchronizeParticipant participant) {
+		this.participant = participant;
 		this.site = site;
 		Utils.initAction(this, "action.openInCompareEditor."); //$NON-NLS-1$
 	}
@@ -49,19 +50,19 @@ public class OpenInCompareAction extends Action {
 				SyncInfo info = ((SyncInfoModelElement) obj).getSyncInfo();
 				if (info != null) {
 				    // Use the open strategy to decide if the editor or the sync view should have focus
-					openCompareEditor(name, info, !OpenStrategy.activateOnOpen(), site);
+					openCompareEditor(participant, info, !OpenStrategy.activateOnOpen(), site);
 				}
 			}
 		}
 	}
 	
-	public static SyncInfoCompareInput openCompareEditor(String name, SyncInfo info, boolean keepFocus, ISynchronizePageSite site) {		
+	public static SyncInfoCompareInput openCompareEditor(ISynchronizeParticipant participant, SyncInfo info, boolean keepFocus, ISynchronizePageSite site) {		
 		Assert.isNotNull(info);
-		Assert.isNotNull(name);
+		Assert.isNotNull(participant);
 			
 		if(info.getLocal().getType() != IResource.FILE) return null;
 		
-		SyncInfoCompareInput input = new SyncInfoCompareInput(name, info);
+		SyncInfoCompareInput input = new SyncInfoCompareInput(participant, info);
 	
 		IWorkbenchPage page = null;
 		if(site == null) {

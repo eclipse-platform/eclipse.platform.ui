@@ -94,6 +94,7 @@ public interface IHelpContextIds {
 	public static final String DECORATORS_PREFERENCE_PAGE = PREFIX + "decorators_preference_page_context"; //$NON-NLS-1$
 	public static final String WATCH_EDIT_PREFERENCE_PAGE = PREFIX + "watch_edit_preference_page_context"; //$NON-NLS-1$
 	public static final String PASSWORD_MANAGEMENT_PAGE = PREFIX + "password_management_preference_page_context"; //$NON-NLS-1$
+	public static final String COMPARE_PREFERENCE_PAGE = PREFIX + "cvs_compare_preference_page_context"; //$NON-NLS-1$
 
 	// Views
 	public static final String CONSOLE_VIEW = PREFIX + "console_view_context"; //$NON-NLS-1$

@@ -20,6 +20,7 @@ import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
 import org.eclipse.team.internal.ui.synchronize.SynchronizePageConfiguration;
+import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.ISynchronizePageSite;
 import org.eclipse.ui.*;
@@ -35,12 +36,12 @@ import org.eclipse.ui.actions.ActionFactory;
 public class NavigateAction extends Action {
 	private final boolean next;
 	private ISynchronizePageSite site;
-	private String title;
 	private ISynchronizePageConfiguration configuration;
+    private final ISynchronizeParticipant participant;
 	
-	public NavigateAction(ISynchronizePageSite site, String title, ISynchronizePageConfiguration configuration, boolean next) {
+	public NavigateAction(ISynchronizePageSite site, ISynchronizeParticipant participant, ISynchronizePageConfiguration configuration, boolean next) {
 		this.site = site;
-		this.title = title;
+        this.participant = participant;
 		this.configuration = configuration;
 		this.next = next;
 		IActionBars bars = site.getActionBars();
@@ -83,7 +84,7 @@ public class NavigateAction extends Action {
 		if(info.getLocal().getType() != IResource.FILE) {
 			if(! nav.gotoDifference(next)) {
 				info = getSyncInfoFromSelection();
-				OpenInCompareAction.openCompareEditor(getTitle(), info, true /* keep focus */, site);
+				OpenInCompareAction.openCompareEditor(participant, info, true /* keep focus */, site);
 			}
 			return;
 		}
@@ -102,14 +103,14 @@ public class NavigateAction extends Action {
 					if(navigator.selectChange(next)) {
 						if(! nav.gotoDifference(next)) {
 							info = getSyncInfoFromSelection();
-							OpenInCompareAction.openCompareEditor(getTitle(), info, true /* keep focus */, site);
+							OpenInCompareAction.openCompareEditor(participant, info, true /* keep focus */, site);
 						}
 					}				
 				}
 			} else {
 				// otherwise, select the next change and open a compare editor which will automatically
 				// show the first change.
-				OpenInCompareAction.openCompareEditor(getTitle(), info, true /* keep focus */, site);
+				OpenInCompareAction.openCompareEditor(participant, info, true /* keep focus */, site);
 			}
 		}
 	}
@@ -123,9 +124,5 @@ public class NavigateAction extends Action {
 		} else {
 			return null;
 		}
-	}
-	
-	private String getTitle() {
-		return title;
 	}
 }

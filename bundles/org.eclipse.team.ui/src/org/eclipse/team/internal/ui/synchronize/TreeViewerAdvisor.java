@@ -92,8 +92,8 @@ public class TreeViewerAdvisor extends StructuredViewerAdvisor {
 				ISynchronizeParticipant participant = configuration.getParticipant();
 				ISynchronizePageSite site = configuration.getSite();
 
-				gotoNext = new NavigateAction(site, participant.getName(), configuration, true /*next*/);		
-				gotoPrevious = new NavigateAction(site, participant.getName(), configuration, false /*previous*/);
+				gotoNext = new NavigateAction(site, participant, configuration, true /*next*/);		
+				gotoPrevious = new NavigateAction(site, participant, configuration, false /*previous*/);
 			}
 		}
 		public void fillContextMenu(IMenuManager manager) {

@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.team.ui.synchronize;
 
+import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.core.runtime.IExecutableExtension;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.ui.*;
@@ -217,4 +219,16 @@ public interface ISynchronizeParticipant extends IExecutableExtension {
 	 * @param listener a property listener
 	 */
 	public void removePropertyChangeListener(IPropertyChangeListener listener);
+	
+	/**
+	 * Update the labels in the given configuration using information from the provided
+	 * element. The configuration is used to configure the compare editor used to display
+	 * the given sync info.
+	 * @param element the sync model element whose contents are about to be displayed to the user
+	 * @param config the compare configuration that willbe used to configure the compare editor
+	 * @param monitor a progress monitor that can be used if contacting a server to configure the labels
+	 * 
+	 * @since 3.1
+	 */
+	public void updateLabels(ISynchronizeModelElement element, CompareConfiguration config, IProgressMonitor monitor);
 }

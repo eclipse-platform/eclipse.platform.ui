@@ -58,6 +58,7 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 	private IResource resource;
 	private long timestamp;
 	private boolean isSaving = false;
+    private ISynchronizeParticipant participant;
 
 	/*
 	 * This class exists so that we can force the text merge viewers to update by
@@ -92,7 +93,22 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 		initializeContentChangeListeners();
 	}
 	
-	/* (non-Javadoc)
+	/**
+	 * Creates a compare editor input based on an existing <code>SyncInfo</code>
+	 * from the given particpant.
+	 * 
+	 * @param particpant the participant from which the sync info was obtained. The
+	 * name of the particpant is used as the description which is displayed to the user.
+	 * @param sync the <code>SyncInfo</code> used as the base for the compare input.
+     * 
+     * @since 3.1
+     */
+    public SyncInfoCompareInput(ISynchronizeParticipant participant, SyncInfo sync) {
+        this(participant.getName(), sync);
+        this.participant = participant;
+    }
+
+    /* (non-Javadoc)
 	 * @see org.eclipse.compare.CompareEditorInput#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	public Control createContents(Composite parent) {
@@ -191,7 +207,11 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 		// update the title now that the remote revision number as been fetched
 		// from the server
 		setTitle(getTitle());
-		Utils.updateLabels(node.getSyncInfo(), getCompareConfiguration());
+		if (participant != null) {
+		    participant.updateLabels(node, getCompareConfiguration(), monitor);
+		} else {
+		    Utils.updateLabels(node.getSyncInfo(), getCompareConfiguration());
+		}
 		try {
 			node.cacheContents(monitor);
 		} catch (TeamException e) {

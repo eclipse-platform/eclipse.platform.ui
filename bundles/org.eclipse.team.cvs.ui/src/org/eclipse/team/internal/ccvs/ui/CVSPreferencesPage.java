@@ -54,13 +54,11 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 	private Combo ksubstCombo;
 	private Button usePlatformLineend;
 	private List ksubstOptions;
-	private Button considerContentsInCompare;
 	private Button replaceUnmanaged;
 	private Button repositoriesAreBinary;
 	private Button determineVersionEnabled;
 	private Button confirmMoveTag;
 	private Button debugProtocol;
-	private Button showCompareRevisionInDialog;
 	
 	private Button never;
 	private Button prompt;
@@ -166,15 +164,13 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 	protected Control createContents(Composite parent) {
 		Composite composite = createComposite(parent, 2);
 
-		pruneEmptyDirectoriesField = createCheckBox(composite, Policy.bind("CVSPreferencePage.pruneEmptyDirectories")); //$NON-NLS-1$
-		considerContentsInCompare = createCheckBox(composite, Policy.bind("CVSPreferencePage.considerContentsInCompare")); //$NON-NLS-1$		
+		pruneEmptyDirectoriesField = createCheckBox(composite, Policy.bind("CVSPreferencePage.pruneEmptyDirectories")); //$NON-NLS-1$	
 		replaceUnmanaged = createCheckBox(composite, Policy.bind("CVSPreferencePage.replaceUnmanaged")); //$NON-NLS-1$
 		repositoriesAreBinary = createCheckBox(composite, Policy.bind("CVSPreferencePage.repositoriesAreBinary")); //$NON-NLS-1$
 		determineVersionEnabled = createCheckBox(composite, Policy.bind("CVSPreferencePage.determineVersionEnabled")); //$NON-NLS-1$
 		confirmMoveTag = createCheckBox(composite, Policy.bind("CVSPreferencePage.confirmMoveTag")); //$NON-NLS-1$
 		debugProtocol = createCheckBox(composite, Policy.bind("CVSPreferencePage.debugProtocol")); //$NON-NLS-1$
 		usePlatformLineend = createCheckBox(composite, Policy.bind("CVSPreferencePage.lineend")); //$NON-NLS-1$
-		showCompareRevisionInDialog = createCheckBox(composite, Policy.bind("CVSPreferencePage.showCompareMergeInSync")); //$NON-NLS-1$
 			
 		createLabel(composite, ""); createLabel(composite, ""); //$NON-NLS-1$ //$NON-NLS-2$
 		
@@ -239,7 +235,6 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		WorkbenchHelp.setHelp(ksubstCombo, IHelpContextIds.PREF_KEYWORDMODE);
 		WorkbenchHelp.setHelp(usePlatformLineend, IHelpContextIds.PREF_LINEEND);
 		WorkbenchHelp.setHelp(timeoutValue, IHelpContextIds.PREF_COMMS_TIMEOUT);
-		WorkbenchHelp.setHelp(considerContentsInCompare, IHelpContextIds.PREF_CONSIDER_CONTENT);
 		WorkbenchHelp.setHelp(replaceUnmanaged, IHelpContextIds.PREF_REPLACE_DELETE_UNMANAGED);
 		WorkbenchHelp.setHelp(repositoriesAreBinary, IHelpContextIds.PREF_TREAT_NEW_FILE_AS_BINARY);
 		WorkbenchHelp.setHelp(determineVersionEnabled, IHelpContextIds.PREF_DETERMINE_SERVER_VERSION);
@@ -282,7 +277,6 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 	private void initializeValues() {
 		IPreferenceStore store = getPreferenceStore();
 		pruneEmptyDirectoriesField.setSelection(store.getBoolean(ICVSUIConstants.PREF_PRUNE_EMPTY_DIRECTORIES));
-		showCompareRevisionInDialog.setSelection(store.getBoolean(ICVSUIConstants.PREF_SHOW_COMPARE_REVISION_IN_DIALOG));
 		timeoutValue.setText(new Integer(store.getInt(ICVSUIConstants.PREF_TIMEOUT)).toString());
 		repositoriesAreBinary.setSelection(store.getBoolean(ICVSUIConstants.PREF_REPOSITORIES_ARE_BINARY));
 		quietnessCombo.add(Policy.bind("CVSPreferencePage.notquiet")); //$NON-NLS-1$
@@ -299,7 +293,6 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		}
 		ksubstCombo.select(getKSubstComboIndexFor(store.getString(ICVSUIConstants.PREF_TEXT_KSUBST)));
 		usePlatformLineend.setSelection(store.getBoolean(ICVSUIConstants.PREF_USE_PLATFORM_LINEEND));
-		considerContentsInCompare.setSelection(store.getBoolean(ICVSUIConstants.PREF_CONSIDER_CONTENTS));
 		replaceUnmanaged.setSelection(store.getBoolean(ICVSUIConstants.PREF_REPLACE_UNMANAGED));
 		determineVersionEnabled.setSelection(store.getBoolean(ICVSUIConstants.PREF_DETERMINE_SERVER_VERSION));
 		confirmMoveTag.setSelection(store.getBoolean(ICVSUIConstants.PREF_CONFIRM_MOVE_TAG));
@@ -341,14 +334,12 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		}
 		store.setValue(ICVSUIConstants.PREF_TEXT_KSUBST, mode);
 		store.setValue(ICVSUIConstants.PREF_USE_PLATFORM_LINEEND, usePlatformLineend.getSelection());
-		store.setValue(ICVSUIConstants.PREF_CONSIDER_CONTENTS, considerContentsInCompare.getSelection());
 		store.setValue(ICVSUIConstants.PREF_REPLACE_UNMANAGED, replaceUnmanaged.getSelection());
 		store.setValue(ICVSUIConstants.PREF_SAVE_DIRTY_EDITORS, getSaveRadio());
 		store.setValue(ICVSUIConstants.PREF_REPOSITORIES_ARE_BINARY, repositoriesAreBinary.getSelection());
 		store.setValue(ICVSUIConstants.PREF_DETERMINE_SERVER_VERSION, determineVersionEnabled.getSelection());
 		store.setValue(ICVSUIConstants.PREF_CONFIRM_MOVE_TAG, confirmMoveTag.getSelection());
 		store.setValue(ICVSUIConstants.PREF_DEBUG_PROTOCOL, debugProtocol.getSelection());
-		store.setValue(ICVSUIConstants.PREF_SHOW_COMPARE_REVISION_IN_DIALOG, showCompareRevisionInDialog.getSelection());
 		
 		CVSProviderPlugin.getPlugin().setReplaceUnmanaged(
 			store.getBoolean(ICVSUIConstants.PREF_REPLACE_UNMANAGED));
@@ -400,7 +391,6 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		repositoriesAreBinary.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_REPOSITORIES_ARE_BINARY));
 		confirmMoveTag.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_CONFIRM_MOVE_TAG));
 		debugProtocol.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_DEBUG_PROTOCOL));
-		showCompareRevisionInDialog.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_SHOW_COMPARE_REVISION_IN_DIALOG));
 	}
 
    private void createSaveCombo(Composite composite) {

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.ui.synchronize;
 
+import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.*;
@@ -325,4 +326,18 @@ public abstract class AbstractSynchronizeParticipant implements ISynchronizePart
 	 * @param configuration the newly create page configuration
 	 */
 	protected abstract void initializeConfiguration(ISynchronizePageConfiguration configuration);
+	
+	/**
+	 * Update the labels in the given configuration using information from the provided
+	 * element. The configuration is used to configure the compare editor used to display
+	 * the given sync info.
+	 * @param element the sync model element whose contents are about to be displayed to the user
+	 * @param config the compare configuration that willbe used to configure the compare editor
+	 * @param monitor a progress monitor that can be used if contacting a server to configure the labels
+	 * 
+	 * @since 3.1
+	 */
+	public void updateLabels(ISynchronizeModelElement element, CompareConfiguration config, IProgressMonitor monitor) {
+	    // Do nothing, by default
+	}
 }

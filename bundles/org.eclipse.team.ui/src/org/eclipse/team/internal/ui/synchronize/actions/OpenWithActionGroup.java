@@ -17,6 +17,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.synchronize.ISynchronizePageSite;
+import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
 import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.actions.OpenWithMenu;
@@ -30,11 +31,11 @@ public class OpenWithActionGroup extends ActionGroup {
 
 	private OpenFileInSystemEditorAction openFileAction;
 	private OpenInCompareAction openInCompareAction;
-	private String name;
 	private ISynchronizePageSite site;
+    private final ISynchronizeParticipant participant;
 
-	public OpenWithActionGroup(ISynchronizePageSite site, String name) {
-		this.name = name;
+	public OpenWithActionGroup(ISynchronizePageSite site, ISynchronizeParticipant participant) {
+		this.participant = participant;
 		this.site = site;
 		makeActions();
 	}
@@ -43,7 +44,7 @@ public class OpenWithActionGroup extends ActionGroup {
 		IWorkbenchSite ws = site.getWorkbenchSite();
 		if (ws != null) {
 			openFileAction = new OpenFileInSystemEditorAction(ws.getPage());
-			openInCompareAction = new OpenInCompareAction(site, name);
+			openInCompareAction = new OpenInCompareAction(site, participant);
 		}
 	}
 

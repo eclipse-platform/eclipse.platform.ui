@@ -665,6 +665,15 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
+            name="%ComparePreferencePage.name"
+            category="org.eclipse.team.cvs.ui.CVSPreferences"
+            class="org.eclipse.team.internal.ccvs.ui.ComparePreferencePage"
+            id="org.eclipse.team.cvs.ui.ComparePreferences">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
             name="%ConsolePreferencePage.name"
             category="org.eclipse.team.cvs.ui.CVSPreferences"
             class="org.eclipse.team.internal.ccvs.ui.console.ConsolePreferencesPage"

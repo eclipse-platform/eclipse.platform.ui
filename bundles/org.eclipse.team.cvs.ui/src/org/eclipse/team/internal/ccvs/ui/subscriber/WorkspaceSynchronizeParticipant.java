@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.subscriber;
 
+import org.eclipse.compare.CompareConfiguration;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.ui.actions.*;
@@ -167,4 +169,12 @@ public class WorkspaceSynchronizeParticipant extends ScopableSubscriberParticipa
 	protected ISynchronizeParticipantDescriptor getDescriptor() {
 		return TeamUI.getSynchronizeManager().getParticipantDescriptor(ID);
 	}
+	
+	/* (non-Javadoc)
+     * @see org.eclipse.team.ui.synchronize.SubscriberParticipant#updateLabels(org.eclipse.team.ui.synchronize.ISynchronizeModelElement, org.eclipse.compare.CompareConfiguration, org.eclipse.core.runtime.IProgressMonitor)
+     */
+    public void updateLabels(ISynchronizeModelElement element, CompareConfiguration config, IProgressMonitor monitor) {
+        super.updateLabels(element, config, monitor);
+        CVSParticipant.updateLabelsForCVS(element, config, monitor);
+    }
 }

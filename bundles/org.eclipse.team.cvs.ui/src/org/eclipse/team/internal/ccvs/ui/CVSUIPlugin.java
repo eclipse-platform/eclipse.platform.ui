@@ -594,6 +594,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		store.setDefault(ICVSUIConstants.PREF_DEBUG_PROTOCOL, false);
 		store.setDefault(ICVSUIConstants.PREF_WARN_REMEMBERING_MERGES, true);
 		store.setDefault(ICVSUIConstants.PREF_SHOW_COMPARE_REVISION_IN_DIALOG, false);
+		store.setDefault(ICVSUIConstants.PREF_SHOW_AUTHOR_IN_EDITOR, false);
 		
 		PreferenceConverter.setDefault(store, ICVSUIConstants.PREF_CONSOLE_COMMAND_COLOR, new RGB(0, 0, 0));
 		PreferenceConverter.setDefault(store, ICVSUIConstants.PREF_CONSOLE_MESSAGE_COLOR, new RGB(0, 0, 255));

@@ -397,7 +397,7 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 										} finally {
 											// Update the labels even if the content wasn't fetched correctly. This is
 											// required because the selection would still of changed.
-											Utils.updateLabels(node.getSyncInfo(), cc);
+										    participant.updateLabels(node, cc, monitor);
 										}
 									}
 								});
