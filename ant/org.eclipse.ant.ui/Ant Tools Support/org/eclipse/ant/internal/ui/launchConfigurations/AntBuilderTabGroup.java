@@ -26,6 +26,7 @@ public class AntBuilderTabGroup extends AbstractLaunchConfigurationTabGroup {
 			new AntMainTab(),
 			new RefreshTab(),
 			new AntTargetsTab(),
+			new AntClasspathTab(),
 			new AntPropertiesTab(),
 			new AntJRETab(),
 			new AntEnvironmentTab(),
