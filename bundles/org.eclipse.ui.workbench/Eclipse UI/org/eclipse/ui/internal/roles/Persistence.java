@@ -68,7 +68,7 @@ final class Persistence {
 		return list;
 	}
 
-	static IRoleDefinition readRoleDefinition(
+	static ICategoryDefinition readRoleDefinition(
 		IMemento memento,
 		String pluginIdOverride) {
 		if (memento == null)
@@ -81,7 +81,7 @@ final class Persistence {
 			pluginIdOverride != null
 				? pluginIdOverride
 				: memento.getString(TAG_PLUGIN_ID);
-		return new RoleDefinition(description, id, name, pluginId);
+		return new CategoryDefinition(description, id, name, pluginId);
 	}
 
 	static List readRoleDefinitions(
@@ -146,7 +146,7 @@ final class Persistence {
 
 	static void writeRoleDefinition(
 		IMemento memento,
-		IRoleDefinition roleDefinition) {
+		ICategoryDefinition roleDefinition) {
 		if (memento == null || roleDefinition == null)
 			throw new NullPointerException();
 
@@ -167,14 +167,14 @@ final class Persistence {
 		Iterator iterator = roleDefinitions.iterator();
 
 		while (iterator.hasNext())
-			Util.assertInstance(iterator.next(), IRoleDefinition.class);
+			Util.assertInstance(iterator.next(), ICategoryDefinition.class);
 
 		iterator = roleDefinitions.iterator();
 
 		while (iterator.hasNext())
 			writeRoleDefinition(
 				memento.createChild(name),
-				(IRoleDefinition) iterator.next());
+				(ICategoryDefinition) iterator.next());
 	}
 
 	private Persistence() {

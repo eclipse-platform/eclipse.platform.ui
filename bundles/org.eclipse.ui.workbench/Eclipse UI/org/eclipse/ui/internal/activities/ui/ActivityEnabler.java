@@ -36,11 +36,9 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.ViewerSorter;
 
 import org.eclipse.ui.activities.IMutableActivityManager;
-import org.eclipse.ui.internal.roles.ui.RoleContentProvider;
-import org.eclipse.ui.internal.roles.ui.RoleLabelProvider;
 import org.eclipse.ui.roles.IActivityBinding;
-import org.eclipse.ui.roles.IRole;
-import org.eclipse.ui.roles.IRoleManager;
+import org.eclipse.ui.roles.ICategory;
+import org.eclipse.ui.roles.ICategoryManager;
 
 /**
  * A simple control provider that will allow the user to toggle on/off the
@@ -55,7 +53,7 @@ public class ActivityEnabler {
 	private CheckboxTableViewer categoryViewer;
 	private Set checkedInSession = new HashSet(7),
 		uncheckedInSession = new HashSet(7);
-	private IRoleManager roleManager;
+	private ICategoryManager roleManager;
 
 	/**
 	 * Create a new instance.
@@ -67,7 +65,7 @@ public class ActivityEnabler {
 	 */
 	public ActivityEnabler(
 		IMutableActivityManager activityManager,
-		IRoleManager roleManager) {
+		ICategoryManager roleManager) {
 		this.activityManager = activityManager;
 		this.roleManager = roleManager;
 	}
@@ -106,8 +104,8 @@ public class ActivityEnabler {
 			categoryViewer = new CheckboxTableViewer(mainComposite);
 			categoryViewer.getControl().setLayoutData(
 				new GridData(GridData.FILL_BOTH));
-			categoryViewer.setContentProvider(new RoleContentProvider());
-			categoryViewer.setLabelProvider(new RoleLabelProvider(roleManager));
+			categoryViewer.setContentProvider(new CategoryContentProvider());
+			categoryViewer.setLabelProvider(new CategoryLabelProvider(roleManager));
 			categoryViewer.setSorter(new ViewerSorter());
 			categoryViewer.setInput(roleManager);
 			categoryViewer.setSelection(new StructuredSelection());
@@ -161,7 +159,7 @@ public class ActivityEnabler {
 	 * @return all activity ids in the category.
 	 */
 	private Collection getCategoryActivities(String categoryId) {
-		IRole category = roleManager.getRole(categoryId);
+		ICategory category = roleManager.getRole(categoryId);
 		Set activityBindings = category.getActivityBindings();
 		List roleActivities = new ArrayList(10);
 		for (Iterator j = activityBindings.iterator(); j.hasNext();) {

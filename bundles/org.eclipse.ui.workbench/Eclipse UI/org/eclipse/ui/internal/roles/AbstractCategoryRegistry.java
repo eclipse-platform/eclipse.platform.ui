@@ -15,18 +15,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-abstract class AbstractRoleRegistry implements IRoleRegistry {
+abstract class AbstractCategoryRegistry implements ICategoryRegistry {
 
 	protected List activityBindingDefinitions = Collections.EMPTY_LIST;
 	protected List roleDefinitions = Collections.EMPTY_LIST;
 
-	private RoleRegistryEvent roleRegistryEvent;
+	private CategoryRegistryEvent roleRegistryEvent;
 	private List roleRegistryListeners;
 
-	protected AbstractRoleRegistry() {
+	protected AbstractCategoryRegistry() {
 	}
 
-	public void addRoleRegistryListener(IRoleRegistryListener roleRegistryListener) {
+	public void addRoleRegistryListener(ICategoryRegistryListener roleRegistryListener) {
 		if (roleRegistryListener == null)
 			throw new NullPointerException();
 
@@ -41,10 +41,10 @@ abstract class AbstractRoleRegistry implements IRoleRegistry {
 		if (roleRegistryListeners != null) {
 			for (int i = 0; i < roleRegistryListeners.size(); i++) {
 				if (roleRegistryEvent == null)
-					roleRegistryEvent = new RoleRegistryEvent(this);
+					roleRegistryEvent = new CategoryRegistryEvent(this);
 
 				(
-					(IRoleRegistryListener) roleRegistryListeners.get(
+					(ICategoryRegistryListener) roleRegistryListeners.get(
 						i)).roleRegistryChanged(
 					roleRegistryEvent);
 			}
@@ -59,7 +59,7 @@ abstract class AbstractRoleRegistry implements IRoleRegistry {
 		return roleDefinitions;
 	}
 
-	public void removeRoleRegistryListener(IRoleRegistryListener roleRegistryListener) {
+	public void removeRoleRegistryListener(ICategoryRegistryListener roleRegistryListener) {
 		if (roleRegistryListener == null)
 			throw new NullPointerException();
 

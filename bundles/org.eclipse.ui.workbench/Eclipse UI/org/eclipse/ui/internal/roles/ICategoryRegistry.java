@@ -13,13 +13,13 @@ package org.eclipse.ui.internal.roles;
 
 import java.util.List;
 
-public interface IRoleRegistry {
+public interface ICategoryRegistry {
 
-	void addRoleRegistryListener(IRoleRegistryListener roleRegistryListener);
+	void addRoleRegistryListener(ICategoryRegistryListener roleRegistryListener);
 
 	List getActivityBindingDefinitions();
 
 	List getRoleDefinitions();
 
-	void removeRoleRegistryListener(IRoleRegistryListener roleRegistryListener);
+	void removeRoleRegistryListener(ICategoryRegistryListener roleRegistryListener);
 }

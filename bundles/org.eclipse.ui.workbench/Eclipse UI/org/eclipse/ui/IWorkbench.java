@@ -22,7 +22,7 @@ import org.eclipse.ui.activities.ICompoundActivityService;
 import org.eclipse.ui.activities.IObjectActivityManager;
 import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.progress.IProgressService;
-import org.eclipse.ui.roles.IRoleManager;
+import org.eclipse.ui.roles.ICategoryManager;
 
 /**
  * A workbench is the root object for the Eclipse Platform user interface.
@@ -407,7 +407,7 @@ public ICommandManager getCommandManager();
  * 		   <code>null</code>.
  * @since 3.0
  */
-public IRoleManager getRoleManager();
+public ICategoryManager getRoleManager();
 
 /**
  * Returns the activity service for the workbench.

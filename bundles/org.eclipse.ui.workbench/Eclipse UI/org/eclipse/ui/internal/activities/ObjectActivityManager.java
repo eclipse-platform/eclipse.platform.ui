@@ -29,7 +29,7 @@ import org.eclipse.ui.activities.IActivityManagerListener;
 import org.eclipse.ui.activities.IMutableActivityManager;
 import org.eclipse.ui.activities.IObjectActivityManager;
 import org.eclipse.ui.activities.IObjectContributionRecord;
-import org.eclipse.ui.roles.IRoleManager;
+import org.eclipse.ui.roles.ICategoryManager;
 
 /**
  * Provides a registry of id-&gt;object mappings (likely derived from extension
@@ -157,7 +157,7 @@ public class ObjectActivityManager implements IObjectActivityManager {
 	/**
 	 * The <code>IRoleManager</code> to which this manager is bound.
 	 */
-	private IRoleManager roleManager;
+	private ICategoryManager roleManager;
 
 	/**
 	 * Create an instance with the given id that is bound to the provided
@@ -173,7 +173,7 @@ public class ObjectActivityManager implements IObjectActivityManager {
 	public ObjectActivityManager(
 		String id,
 		IMutableActivityManager activityManager,
-		IRoleManager roleManager) {
+		ICategoryManager roleManager) {
 		if (id == null) {
 			throw new IllegalArgumentException();
 		}

@@ -25,34 +25,34 @@ import java.util.WeakHashMap;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.roles.IActivityBinding;
-import org.eclipse.ui.roles.IRole;
-import org.eclipse.ui.roles.IRoleManager;
-import org.eclipse.ui.roles.IRoleManagerListener;
-import org.eclipse.ui.roles.RoleEvent;
-import org.eclipse.ui.roles.RoleManagerEvent;
+import org.eclipse.ui.roles.ICategory;
+import org.eclipse.ui.roles.ICategoryManager;
+import org.eclipse.ui.roles.ICategoryManagerListener;
+import org.eclipse.ui.roles.CategoryEvent;
+import org.eclipse.ui.roles.CategoryManagerEvent;
 
-public final class RoleManager implements IRoleManager {
+public final class CategoryManager implements ICategoryManager {
 
 	private Map activityBindingsByRoleId = new HashMap();
 	private Set definedRoleIds = new HashSet();
 	private Map roleDefinitionsById = new HashMap();
 	private List roleManagerListeners;
-	private IRoleRegistry roleRegistry;
+	private ICategoryRegistry roleRegistry;
 	private Map rolesById = new WeakHashMap();
 	private Set rolesWithListeners = new HashSet();
 
-	public RoleManager() {
-		this(new ExtensionRoleRegistry(Platform.getExtensionRegistry()));
+	public CategoryManager() {
+		this(new ExtensionCategoryRegistry(Platform.getExtensionRegistry()));
 	}
 
-	public RoleManager(IRoleRegistry roleRegistry) {
+	public CategoryManager(ICategoryRegistry roleRegistry) {
 		if (roleRegistry == null)
 			throw new NullPointerException();
 
 		this.roleRegistry = roleRegistry;
 
-		this.roleRegistry.addRoleRegistryListener(new IRoleRegistryListener() {
-			public void roleRegistryChanged(RoleRegistryEvent roleRegistryEvent) {
+		this.roleRegistry.addRoleRegistryListener(new ICategoryRegistryListener() {
+			public void roleRegistryChanged(CategoryRegistryEvent roleRegistryEvent) {
 				readRegistry();
 			}
 		});
@@ -60,7 +60,7 @@ public final class RoleManager implements IRoleManager {
 		readRegistry();
 	}
 
-	public void addRoleManagerListener(IRoleManagerListener roleManagerListener) {
+	public void addRoleManagerListener(ICategoryManagerListener roleManagerListener) {
 		if (roleManagerListener == null)
 			throw new NullPointerException();
 
@@ -71,14 +71,14 @@ public final class RoleManager implements IRoleManager {
 			roleManagerListeners.add(roleManagerListener);
 	}
 
-	private void fireRoleManagerChanged(RoleManagerEvent roleManagerEvent) {
+	private void fireRoleManagerChanged(CategoryManagerEvent roleManagerEvent) {
 		if (roleManagerEvent == null)
 			throw new NullPointerException();
 
 		if (roleManagerListeners != null)
 			for (int i = 0; i < roleManagerListeners.size(); i++)
 				(
-					(IRoleManagerListener) roleManagerListeners.get(
+					(ICategoryManagerListener) roleManagerListeners.get(
 						i)).roleManagerChanged(
 					roleManagerEvent);
 	}
@@ -87,14 +87,14 @@ public final class RoleManager implements IRoleManager {
 		return Collections.unmodifiableSet(definedRoleIds);
 	}
 
-	public IRole getRole(String roleId) {
+	public ICategory getRole(String roleId) {
 		if (roleId == null)
 			throw new NullPointerException();
 
-		Role role = (Role) rolesById.get(roleId);
+		Category role = (Category) rolesById.get(roleId);
 
 		if (role == null) {
-			role = new Role(this, roleId);
+			role = new Category(this, roleId);
 			updateRole(role);
 			rolesById.put(roleId, role);
 		}
@@ -112,8 +112,8 @@ public final class RoleManager implements IRoleManager {
 			) {
 			Map.Entry entry = (Map.Entry) iterator.next();
 			String roleId = (String) entry.getKey();
-			RoleEvent roleEvent = (RoleEvent) entry.getValue();
-			Role role = (Role) rolesById.get(roleId);
+			CategoryEvent roleEvent = (CategoryEvent) entry.getValue();
+			Category role = (Category) rolesById.get(roleId);
 
 			if (role != null)
 				role.fireRoleChanged(roleEvent);
@@ -125,12 +125,12 @@ public final class RoleManager implements IRoleManager {
 		roleDefinitions.addAll(roleRegistry.getRoleDefinitions());
 		Map roleDefinitionsById =
 			new HashMap(
-				RoleDefinition.roleDefinitionsById(roleDefinitions, false));
+				CategoryDefinition.roleDefinitionsById(roleDefinitions, false));
 
 		for (Iterator iterator = roleDefinitionsById.values().iterator();
 			iterator.hasNext();
 			) {
-			IRoleDefinition roleDefinition = (IRoleDefinition) iterator.next();
+			ICategoryDefinition roleDefinition = (ICategoryDefinition) iterator.next();
 			String name = roleDefinition.getName();
 
 			if (name == null || name.length() == 0)
@@ -195,13 +195,13 @@ public final class RoleManager implements IRoleManager {
 		Map roleEventsByRoleId = updateRoles(rolesById.keySet());
 
 		if (roleManagerChanged)
-			fireRoleManagerChanged(new RoleManagerEvent(this, true));
+			fireRoleManagerChanged(new CategoryManagerEvent(this, true));
 
 		if (roleEventsByRoleId != null)
 			notifyRoles(roleEventsByRoleId);
 	}
 
-	public void removeRoleManagerListener(IRoleManagerListener roleManagerListener) {
+	public void removeRoleManagerListener(ICategoryManagerListener roleManagerListener) {
 		if (roleManagerListener == null)
 			throw new NullPointerException();
 
@@ -209,15 +209,15 @@ public final class RoleManager implements IRoleManager {
 			roleManagerListeners.remove(roleManagerListener);
 	}
 
-	private RoleEvent updateRole(Role role) {
+	private CategoryEvent updateRole(Category role) {
 		Set activityBindings = (Set) activityBindingsByRoleId.get(role.getId());
 		boolean activityBindingsChanged =
 			role.setActivityBindings(
 				activityBindings != null
 					? activityBindings
 					: Collections.EMPTY_SET);
-		IRoleDefinition roleDefinition =
-			(IRoleDefinition) roleDefinitionsById.get(role.getId());
+		ICategoryDefinition roleDefinition =
+			(ICategoryDefinition) roleDefinitionsById.get(role.getId());
 		boolean definedChanged = role.setDefined(roleDefinition != null);
 		boolean descriptionChanged =
 			role.setDescription(
@@ -232,7 +232,7 @@ public final class RoleManager implements IRoleManager {
 			|| definedChanged
 			|| descriptionChanged
 			|| nameChanged)
-			return new RoleEvent(
+			return new CategoryEvent(
 				role,
 				activityBindingsChanged,
 				definedChanged,
@@ -247,10 +247,10 @@ public final class RoleManager implements IRoleManager {
 
 		for (Iterator iterator = roleIds.iterator(); iterator.hasNext();) {
 			String roleId = (String) iterator.next();
-			Role role = (Role) rolesById.get(roleId);
+			Category role = (Category) rolesById.get(roleId);
 
 			if (role != null) {
-				RoleEvent roleEvent = updateRole(role);
+				CategoryEvent roleEvent = updateRole(role);
 
 				if (roleEvent != null)
 					roleEventsByRoleId.put(roleId, roleEvent);

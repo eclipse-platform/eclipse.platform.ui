@@ -24,13 +24,13 @@ import org.eclipse.core.runtime.registry.IRegistryChangeEvent;
 import org.eclipse.core.runtime.registry.IRegistryChangeListener;
 import org.eclipse.ui.internal.util.ConfigurationElementMemento;
 
-final class ExtensionRoleRegistry extends AbstractRoleRegistry {
+final class ExtensionCategoryRegistry extends AbstractCategoryRegistry {
 	private List activityBindingDefinitions;
 
 	private IExtensionRegistry extensionRegistry;
 	private List roleDefinitions;
 
-	ExtensionRoleRegistry(IExtensionRegistry extensionRegistry) {
+	ExtensionCategoryRegistry(IExtensionRegistry extensionRegistry) {
 		if (extensionRegistry == null)
 			throw new NullPointerException();
 
@@ -128,7 +128,7 @@ final class ExtensionRoleRegistry extends AbstractRoleRegistry {
 	}
 
 	private void readRoleDefinition(IConfigurationElement configurationElement) {
-		IRoleDefinition roleDefinition =
+		ICategoryDefinition roleDefinition =
 			Persistence.readRoleDefinition(
 				new ConfigurationElementMemento(configurationElement),
 				getPluginId(configurationElement));

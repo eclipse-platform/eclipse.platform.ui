@@ -22,7 +22,7 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.activities.IMutableActivityManager;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.activities.ui.ActivityEnabler;
-import org.eclipse.ui.roles.IRoleManager;
+import org.eclipse.ui.roles.ICategoryManager;
 
 /**
  * Activates the Activity configuration dialog. 
@@ -32,14 +32,14 @@ import org.eclipse.ui.roles.IRoleManager;
 public class ActivityEnablerAction extends Action implements ActionFactory.IWorkbenchAction {
     protected ActivityEnabler enabler;
 	private IMutableActivityManager activityManager;
-	private IRoleManager roleManager;
+	private ICategoryManager roleManager;
 
     /**
      * Create a new instance of the receiver.
      * 
      * @since 3.0
      */
-    public ActivityEnablerAction(IMutableActivityManager activityManager, IRoleManager roleManager) {
+    public ActivityEnablerAction(IMutableActivityManager activityManager, ICategoryManager roleManager) {
         super(WorkbenchMessages.getString("ActivityEnablementAction.text")); //$NON-NLS-1$
         this.activityManager = activityManager;
         this.roleManager = roleManager;

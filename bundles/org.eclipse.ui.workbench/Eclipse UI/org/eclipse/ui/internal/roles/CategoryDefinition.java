@@ -19,11 +19,11 @@ import java.util.Map;
 
 import org.eclipse.ui.internal.util.Util;
 
-final class RoleDefinition implements Comparable, IRoleDefinition {
+final class CategoryDefinition implements Comparable, ICategoryDefinition {
 
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL =
-		RoleDefinition.class.getName().hashCode();
+		CategoryDefinition.class.getName().hashCode();
 
 	static Map roleDefinitionsById(
 		Collection roleDefinitions,
@@ -36,8 +36,8 @@ final class RoleDefinition implements Comparable, IRoleDefinition {
 
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
-			Util.assertInstance(object, IRoleDefinition.class);
-			IRoleDefinition roleDefinition = (IRoleDefinition) object;
+			Util.assertInstance(object, ICategoryDefinition.class);
+			ICategoryDefinition roleDefinition = (ICategoryDefinition) object;
 			String id = roleDefinition.getId();
 
 			if (allowNullIds || id != null)
@@ -58,8 +58,8 @@ final class RoleDefinition implements Comparable, IRoleDefinition {
 
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
-			Util.assertInstance(object, IRoleDefinition.class);
-			IRoleDefinition roleDefinition = (IRoleDefinition) object;
+			Util.assertInstance(object, ICategoryDefinition.class);
+			ICategoryDefinition roleDefinition = (ICategoryDefinition) object;
 			String name = roleDefinition.getName();
 
 			if (allowNullNames || name != null) {
@@ -86,7 +86,7 @@ final class RoleDefinition implements Comparable, IRoleDefinition {
 	private String pluginId;
 	private transient String string;
 
-	RoleDefinition(
+	CategoryDefinition(
 		String description,
 		String id,
 		String name,
@@ -98,7 +98,7 @@ final class RoleDefinition implements Comparable, IRoleDefinition {
 	}
 
 	public int compareTo(Object object) {
-		RoleDefinition castedObject = (RoleDefinition) object;
+		CategoryDefinition castedObject = (CategoryDefinition) object;
 		int compareTo = Util.compare(description, castedObject.description);
 
 		if (compareTo == 0) {
@@ -116,10 +116,10 @@ final class RoleDefinition implements Comparable, IRoleDefinition {
 	}
 
 	public boolean equals(Object object) {
-		if (!(object instanceof RoleDefinition))
+		if (!(object instanceof CategoryDefinition))
 			return false;
 
-		RoleDefinition castedObject = (RoleDefinition) object;
+		CategoryDefinition castedObject = (CategoryDefinition) object;
 		boolean equals = true;
 		equals &= Util.equals(description, castedObject.description);
 		equals &= Util.equals(id, castedObject.id);

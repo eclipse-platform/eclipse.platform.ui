@@ -30,7 +30,7 @@ import java.util.Set;
  * @see IRoleManagerListener
  * @see RoleManagerFactory
  */
-public interface IRoleManager {
+public interface ICategoryManager {
 
 	/**
 	 * Registers an instance of <code>IRoleManagerListener</code> to listen
@@ -43,7 +43,7 @@ public interface IRoleManager {
 	 *            which is already registered with this instance, no operation
 	 *            is performed.
 	 */
-	void addRoleManagerListener(IRoleManagerListener roleManagerListener);
+	void addRoleManagerListener(ICategoryManagerListener roleManagerListener);
 
 	/**
 	 * <p>
@@ -67,7 +67,7 @@ public interface IRoleManager {
 	 *            an identifier. Must not be <code>null</code>
 	 * @return a handle to an role.
 	 */
-	IRole getRole(String roleId);
+	ICategory getRole(String roleId);
 
 	/**
 	 * Unregisters an instance of <code>IRoleManagerListener</code> listening
@@ -80,5 +80,5 @@ public interface IRoleManager {
 	 *            which is not already registered with this instance, no
 	 *            operation is performed.
 	 */
-	void removeRoleManagerListener(IRoleManagerListener roleManagerListener);
+	void removeRoleManagerListener(ICategoryManagerListener roleManagerListener);
 }

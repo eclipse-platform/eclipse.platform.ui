@@ -17,15 +17,15 @@ import java.util.Set;
 
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.roles.IActivityBinding;
-import org.eclipse.ui.roles.IRole;
-import org.eclipse.ui.roles.IRoleListener;
+import org.eclipse.ui.roles.ICategory;
+import org.eclipse.ui.roles.ICategoryListener;
 import org.eclipse.ui.roles.NotDefinedException;
-import org.eclipse.ui.roles.RoleEvent;
+import org.eclipse.ui.roles.CategoryEvent;
 
-final class Role implements IRole {
+final class Category implements ICategory {
 
 	private final static int HASH_FACTOR = 89;
-	private final static int HASH_INITIAL = Role.class.getName().hashCode();
+	private final static int HASH_INITIAL = Category.class.getName().hashCode();
 
 	private Set activityBindings;
 	private transient IActivityBinding[] activityBindingsAsArray;
@@ -37,10 +37,10 @@ final class Role implements IRole {
 	private String id;
 	private String name;
 	private List roleListeners;
-	private RoleManager roleManager;
+	private CategoryManager roleManager;
 	private transient String string;
 
-	Role(RoleManager roleManager, String id) {
+	Category(CategoryManager roleManager, String id) {
 		if (roleManager == null || id == null)
 			throw new NullPointerException();
 
@@ -48,7 +48,7 @@ final class Role implements IRole {
 		this.id = id;
 	}
 
-	public void addRoleListener(IRoleListener roleListener) {
+	public void addRoleListener(ICategoryListener roleListener) {
 		if (roleListener == null)
 			throw new NullPointerException();
 
@@ -62,7 +62,7 @@ final class Role implements IRole {
 	}
 
 	public int compareTo(Object object) {
-		Role castedObject = (Role) object;
+		Category castedObject = (Category) object;
 		int compareTo =
 			Util.compare(
 				(Comparable[]) activityBindingsAsArray,
@@ -87,10 +87,10 @@ final class Role implements IRole {
 	}
 
 	public boolean equals(Object object) {
-		if (!(object instanceof Role))
+		if (!(object instanceof Category))
 			return false;
 
-		Role castedObject = (Role) object;
+		Category castedObject = (Category) object;
 		boolean equals = true;
 		equals &= Util.equals(activityBindings, castedObject.activityBindings);
 		equals &= Util.equals(defined, castedObject.defined);
@@ -100,13 +100,13 @@ final class Role implements IRole {
 		return equals;
 	}
 
-	void fireRoleChanged(RoleEvent roleEvent) {
+	void fireRoleChanged(CategoryEvent roleEvent) {
 		if (roleEvent == null)
 			throw new NullPointerException();
 
 		if (roleListeners != null)
 			for (int i = 0; i < roleListeners.size(); i++)
-				 ((IRoleListener) roleListeners.get(i)).roleChanged(roleEvent);
+				 ((ICategoryListener) roleListeners.get(i)).roleChanged(roleEvent);
 	}
 
 	public Set getActivityBindings() {
@@ -149,7 +149,7 @@ final class Role implements IRole {
 		return defined;
 	}
 
-	public void removeRoleListener(IRoleListener roleListener) {
+	public void removeRoleListener(ICategoryListener roleListener) {
 		if (roleListener == null)
 			throw new NullPointerException();
 

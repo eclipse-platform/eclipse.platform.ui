@@ -11,7 +11,13 @@
 
 package org.eclipse.ui.internal.roles;
 
-public interface IRoleRegistryListener {
+public interface ICategoryDefinition extends Comparable {
 
-	void roleRegistryChanged(RoleRegistryEvent roleRegistryEvent);
+	String getDescription();
+
+	String getId();
+
+	String getName();
+
+	String getPluginId();
 }

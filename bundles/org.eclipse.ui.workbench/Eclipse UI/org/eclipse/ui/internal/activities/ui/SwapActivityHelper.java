@@ -34,8 +34,8 @@ import org.eclipse.ui.activities.IActivity;
 import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.activities.IMutableActivityManager;
 import org.eclipse.ui.roles.IActivityBinding;
-import org.eclipse.ui.roles.IRole;
-import org.eclipse.ui.roles.IRoleManager;
+import org.eclipse.ui.roles.ICategory;
+import org.eclipse.ui.roles.ICategoryManager;
 
 /**
  * Utility class that will create controls (two lists and swap buttons) for
@@ -106,11 +106,11 @@ public class SwapActivityHelper {
 	 * @since 3.0
 	 */
 	private boolean belongsToARole(String activityId) {
-		IRoleManager roleManager = PlatformUI.getWorkbench().getRoleManager();
+		ICategoryManager roleManager = PlatformUI.getWorkbench().getRoleManager();
 		for (Iterator roleItr = roleManager.getDefinedRoleIds().iterator();
 			roleItr.hasNext();
 			) {
-			IRole role = roleManager.getRole((String) roleItr.next());
+			ICategory role = roleManager.getRole((String) roleItr.next());
 			for (Iterator bindingItr = role.getActivityBindings().iterator();
 				bindingItr.hasNext();
 				) {

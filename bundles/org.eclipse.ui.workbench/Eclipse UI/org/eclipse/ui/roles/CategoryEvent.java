@@ -27,13 +27,13 @@ package org.eclipse.ui.roles;
  * @see IRole
  * @see IRoleListener#roleChanged
  */
-public final class RoleEvent {
+public final class CategoryEvent {
 
 	private boolean activityBindingsChanged;
 	private boolean definedChanged;
 	private boolean descriptionChanged;
 	private boolean nameChanged;
-	private IRole role;
+	private ICategory role;
 
 	/**
 	 * TODO javadoc
@@ -44,8 +44,8 @@ public final class RoleEvent {
 	 * @param descriptionChanged
 	 * @param nameChanged
 	 */
-	public RoleEvent(
-		IRole role,
+	public CategoryEvent(
+		ICategory role,
 		boolean activityBindingsChanged,
 		boolean definedChanged,
 		boolean descriptionChanged,
@@ -66,7 +66,7 @@ public final class RoleEvent {
 	 * @return the instance of <code>IRole</code> that has changed.
 	 *         Guaranteed not to be <code>null</code>.
 	 */
-	public IRole getRole() {
+	public ICategory getRole() {
 		return role;
 	}
 

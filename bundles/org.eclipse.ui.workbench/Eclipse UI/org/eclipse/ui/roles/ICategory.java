@@ -42,7 +42,7 @@ import java.util.Set;
  * @see IRoleListener
  * @see IRoleManager
  */
-public interface IRole extends Comparable {
+public interface ICategory extends Comparable {
 
 	/**
 	 * Registers an instance of <code>IRoleListener</code> to listen for
@@ -55,7 +55,7 @@ public interface IRole extends Comparable {
 	 *            already registered with this instance, no operation is
 	 *            performed.
 	 */
-	void addRoleListener(IRoleListener roleListener);
+	void addRoleListener(ICategoryListener roleListener);
 
 	/**
 	 * <p>
@@ -140,5 +140,5 @@ public interface IRole extends Comparable {
 	 *            is not already registered with this instance, no operation is
 	 *            performed.
 	 */
-	void removeRoleListener(IRoleListener roleListener);
+	void removeRoleListener(ICategoryListener roleListener);
 }

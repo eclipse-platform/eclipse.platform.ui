@@ -11,7 +11,7 @@
 
 package org.eclipse.ui.roles;
 
-import org.eclipse.ui.internal.roles.RoleManager;
+import org.eclipse.ui.internal.roles.CategoryManager;
 
 /**
  * <p>
@@ -27,7 +27,7 @@ import org.eclipse.ui.internal.roles.RoleManager;
  * @since 3.0
  * @see IRoleManager
  */
-public final class RoleManagerFactory {
+public final class CategoryManagerFactory {
 
 	/**
 	 * Creates a new instance of IRoleManager.
@@ -37,14 +37,14 @@ public final class RoleManagerFactory {
 	 *         contract of <code>IRoleManager</code>. Guaranteed not to be
 	 *         <code>null</code>.
 	 */
-	public static IRoleManager getRoleManager() {
-		return new RoleManager();
+	public static ICategoryManager getRoleManager() {
+		return new CategoryManager();
 	}
 
 	/**
 	 * Private constructor to ensure that <code>RoleManagerFactory</code> can
 	 * not be instantiated.
 	 */
-	private RoleManagerFactory() {
+	private CategoryManagerFactory() {
 	}
 }

@@ -27,10 +27,10 @@ package org.eclipse.ui.roles;
  * @see IRoleManager
  * @see IRoleManagerListener#roleManagerChanged
  */
-public final class RoleManagerEvent {
+public final class CategoryManagerEvent {
 
 	private boolean definedRoleIdsChanged;
-	private IRoleManager roleManager;
+	private ICategoryManager roleManager;
 
 	/**
 	 * TODO javadoc
@@ -38,8 +38,8 @@ public final class RoleManagerEvent {
 	 * @param roleManager
 	 * @param definedRoleIdsChanged
 	 */
-	public RoleManagerEvent(
-		IRoleManager roleManager,
+	public CategoryManagerEvent(
+		ICategoryManager roleManager,
 		boolean definedRoleIdsChanged) {
 		if (roleManager == null)
 			throw new NullPointerException();
@@ -54,7 +54,7 @@ public final class RoleManagerEvent {
 	 * @return the instance of <code>IRoleManager</code> that has changed.
 	 *         Guaranteed not to be <code>null</code>.
 	 */
-	public IRoleManager getRoleManager() {
+	public ICategoryManager getRoleManager() {
 		return roleManager;
 	}
 

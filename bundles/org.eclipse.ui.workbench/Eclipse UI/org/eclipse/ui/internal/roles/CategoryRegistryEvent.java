@@ -11,18 +11,18 @@
 
 package org.eclipse.ui.internal.roles;
 
-final class RoleRegistryEvent {
+final class CategoryRegistryEvent {
 
-	private IRoleRegistry roleRegistry;
+	private ICategoryRegistry roleRegistry;
 
-	RoleRegistryEvent(IRoleRegistry roleRegistry) {
+	CategoryRegistryEvent(ICategoryRegistry roleRegistry) {
 		if (roleRegistry == null)
 			throw new NullPointerException();
 
 		this.roleRegistry = roleRegistry;
 	}
 
-	public IRoleRegistry getRoleRegistry() {
+	public ICategoryRegistry getRoleRegistry() {
 		return roleRegistry;
 	}
 }

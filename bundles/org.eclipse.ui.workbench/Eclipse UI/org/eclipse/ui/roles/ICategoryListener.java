@@ -28,7 +28,7 @@ package org.eclipse.ui.roles;
  * @see IRole#removeRoleListener
  * @see RoleEvent
  */
-public interface IRoleListener {
+public interface ICategoryListener {
 
 	/**
 	 * Notifies that one or more attributes of an instance of <code>IRole</code>
@@ -37,5 +37,5 @@ public interface IRoleListener {
 	 * @param role
 	 *            the role event. Guaranteed not to be <code>null</code>.
 	 */
-	void roleChanged(RoleEvent roleEvent);
+	void roleChanged(CategoryEvent roleEvent);
 }

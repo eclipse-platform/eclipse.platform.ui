@@ -8,14 +8,14 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.roles.ui;
+package org.eclipse.ui.internal.activities.ui;
 
 import org.eclipse.swt.graphics.Image;
 
 import org.eclipse.jface.viewers.LabelProvider;
 
-import org.eclipse.ui.roles.IRole;
-import org.eclipse.ui.roles.IRoleManager;
+import org.eclipse.ui.roles.ICategory;
+import org.eclipse.ui.roles.ICategoryManager;
 import org.eclipse.ui.roles.NotDefinedException;
 
 /**
@@ -25,9 +25,9 @@ import org.eclipse.ui.roles.NotDefinedException;
  * 
  * @since 3.0
  */
-public class RoleLabelProvider extends LabelProvider {
+public class CategoryLabelProvider extends LabelProvider {
 
-	private IRoleManager roleManager;
+	private ICategoryManager roleManager;
 
 	/**
 	 * Create a new instance of the receiver.
@@ -35,7 +35,7 @@ public class RoleLabelProvider extends LabelProvider {
 	 * @param roleManager
 	 * @since 3.0
 	 */
-	public RoleLabelProvider(IRoleManager roleManager) {
+	public CategoryLabelProvider(ICategoryManager roleManager) {
 		this.roleManager = roleManager;
 	}
 
@@ -52,7 +52,7 @@ public class RoleLabelProvider extends LabelProvider {
 	 * @param role
 	 * @return @since 3.0
 	 */
-	private String getRoleText(IRole role) {
+	private String getRoleText(ICategory role) {
 		try {
 			return role.getName();
 		} catch (NotDefinedException e) {
@@ -68,8 +68,8 @@ public class RoleLabelProvider extends LabelProvider {
 	public String getText(Object element) {
 		if (element instanceof String) {
 			return getRoleText(roleManager.getRole((String) element));
-		} else if (element instanceof IRole) {
-			return getRoleText((IRole) element);
+		} else if (element instanceof ICategory) {
+			return getRoleText((ICategory) element);
 		} else {
 			throw new IllegalArgumentException();
 		}

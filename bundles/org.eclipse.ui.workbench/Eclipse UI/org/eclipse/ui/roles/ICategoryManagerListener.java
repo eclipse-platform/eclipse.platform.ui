@@ -28,7 +28,7 @@ package org.eclipse.ui.roles;
  * @see IRoleManager#removeRoleManagerListener
  * @see RoleManagerEvent
  */
-public interface IRoleManagerListener {
+public interface ICategoryManagerListener {
 
 	/**
 	 * Notifies that one or more attributes of an instance of <code>IRoleManager</code>
@@ -37,5 +37,5 @@ public interface IRoleManagerListener {
 	 * @param roleManagerEvent
 	 *            the role manager event. Guaranteed not to be <code>null</code>.
 	 */
-	void roleManagerChanged(RoleManagerEvent roleManagerEvent);
+	void roleManagerChanged(CategoryManagerEvent roleManagerEvent);
 }
