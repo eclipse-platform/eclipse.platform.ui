@@ -26,7 +26,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.internal.ide.ResourceUtil;
+import org.eclipse.ui.ide.ResourceUtil;
 
 /**
  * This class contains convenience methods used by the various build commands

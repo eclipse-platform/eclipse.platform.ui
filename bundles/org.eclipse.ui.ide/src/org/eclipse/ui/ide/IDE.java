@@ -37,7 +37,6 @@ import org.eclipse.ui.internal.EditorManager;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.internal.ide.ResourceUtil;
 import org.eclipse.ui.internal.ide.registry.MarkerHelpRegistry;
 import org.eclipse.ui.internal.ide.registry.MarkerHelpRegistryReader;
 import org.eclipse.ui.part.FileEditorInput;
