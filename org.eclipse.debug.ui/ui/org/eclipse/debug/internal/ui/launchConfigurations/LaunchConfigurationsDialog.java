@@ -544,16 +544,13 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		Composite comp = new Composite(parent, SWT.NONE);
 		setSelectionArea(comp);
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 3;
+		layout.numColumns = 1;
 		layout.marginHeight = 0;
 		layout.marginWidth = 5;
 		comp.setLayout(layout);
 		comp.setFont(font);
 		
 		setTreeLabel(new Label(comp, SWT.NONE));
-		GridData gd = new GridData();
-		gd.horizontalSpan = 3;
-		getTreeLabel().setLayoutData(gd);
 		getTreeLabel().setFont(font);
 		getTreeLabel().setText(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Launch_Con&figurations__1")); //$NON-NLS-1$
 		
@@ -562,11 +559,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		Viewer viewer = fLaunchConfigurationView.getViewer();
 		Control control = viewer.getControl();
 		
-		gd = new GridData(GridData.FILL_BOTH);
-		gd.horizontalSpan = 3;
-		// Set width hint to 0 to force tree to only be as wide as the combined
-		// width of the 'New' & 'Delete' buttons.  Otherwise tree wants to be much wider.
-		gd.widthHint = 0;
+		GridData gd = new GridData(GridData.FILL_BOTH);
 		control.setLayoutData(gd);
 		control.setFont(font);
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -581,10 +574,21 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		fDoubleClickAction = new DoubleClickAction();
 		fLaunchConfigurationView.setAction(IDebugView.DOUBLE_CLICK_ACTION, fDoubleClickAction);
 		
-		Button newButton = SWTUtil.createPushButton(comp, LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Ne&w_13"), null); //$NON-NLS-1$
+		Composite buttonComposite= new Composite(comp, SWT.NONE);
+		layout= new GridLayout(2, false);
+		layout.marginHeight= 0;
+		layout.marginWidth= 0;
+		buttonComposite.setLayout(layout);
+		gd= new GridData(GridData.FILL_HORIZONTAL);
+		buttonComposite.setLayoutData(gd);
+		
+		Button newButton = SWTUtil.createPushButton(buttonComposite, LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Ne&w_13"), null); //$NON-NLS-1$
 		setButtonActionNew(new ButtonActionNew(newButton.getText(), newButton));
 		
-		Button deleteButton = SWTUtil.createPushButton(comp, LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Dele&te_14"), null); //$NON-NLS-1$
+		Button deleteButton = SWTUtil.createPushButton(buttonComposite, LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Dele&te_14"), null); //$NON-NLS-1$
+		gd= (GridData)deleteButton.getLayoutData();
+		gd.horizontalAlignment= GridData.BEGINNING;
+		gd.grabExcessHorizontalSpace= true;
 		setButtonActionDelete(new ButtonActionDelete(deleteButton.getText(), deleteButton));
 		
 		AbstractLaunchConfigurationAction.IConfirmationRequestor requestor =
