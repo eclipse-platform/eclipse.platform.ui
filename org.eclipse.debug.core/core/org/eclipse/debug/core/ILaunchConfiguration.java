@@ -63,7 +63,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * 
 	 * @see IPersistableSourceLocator
 	 */
-	public static final String ATTR_SOURCE_LOCATOR_ID = DebugPlugin.PLUGIN_ID + ".source_locator_id"; //$NON-NLS-1$
+	public static final String ATTR_SOURCE_LOCATOR_ID = DebugPlugin.getUniqueIdentifier() + ".source_locator_id"; //$NON-NLS-1$
 	
 	/**
 	 * Launch configuration attribute storing a memento of a 
@@ -75,7 +75,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * 
 	 * @see IPersistableSourceLocator 
 	 */
-	public static final String ATTR_SOURCE_LOCATOR_MEMENTO = DebugPlugin.PLUGIN_ID + ".source_locator_memento"; //$NON-NLS-1$
+	public static final String ATTR_SOURCE_LOCATOR_MEMENTO = DebugPlugin.getUniqueIdentifier() + ".source_locator_memento"; //$NON-NLS-1$
 	
 	/**
 	 * Launches this configuration in the specified mode by delegating to

@@ -662,7 +662,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		// If there is no name, complain
 		if (currentName.length() < 1) {
 			throw new CoreException(new Status(IStatus.ERROR,
-												 DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
+												 DebugUIPlugin.getUniqueIdentifier(),
 												 0,
 												 LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Name_required_for_launch_configuration_11"), //$NON-NLS-1$
 												 null));			
@@ -677,7 +677,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		IStatus status = ResourcesPlugin.getWorkspace().validateName(currentName, IResource.FILE);
 		if (status.getCode() != IStatus.OK) {
 			throw new CoreException(new Status(IStatus.ERROR,
-												 DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
+												 DebugUIPlugin.getUniqueIdentifier(),
 												 0,
 												 status.getMessage(),
 												 null));									
@@ -686,7 +686,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		// Otherwise, if there's already a config with the same name, complain
 		if (getLaunchManager().isExistingLaunchConfigurationName(currentName)) {
 			throw new CoreException(new Status(IStatus.ERROR,
-												 DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
+												 DebugUIPlugin.getUniqueIdentifier(),
 												 0,
 												 LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Launch_configuration_already_exists_with_this_name_12"), //$NON-NLS-1$
 												 null));						

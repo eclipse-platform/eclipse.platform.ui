@@ -85,10 +85,8 @@ import org.xml.sax.SAXException;
  * The Debug UI Plugin.
  *
  */
-public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
-															   ILaunchConfigurationListener {															   
-															   	
-
+public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, ILaunchConfigurationListener {															   
+									   	
 	/**
 	 * The singleton debug plugin instance
 	 */
@@ -211,6 +209,19 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 	 */
 	public static DebugUIPlugin getDefault() {
 		return fgDebugUIPlugin;
+	}
+	
+	/**
+	 * Convenience method which returns the unique identifier of this plugin.
+	 */
+	public static String getUniqueIdentifier() {
+		if (getDefault() == null) {
+			// If the default instance is not yet initialized,
+			// return a static identifier. This identifier must
+			// match the plugin id defined in plugin.xml
+			return "org.eclipse.debug.ui"; //$NON-NLS-1$
+		}
+		return getDefault().getDescriptor().getUniqueIdentifier();
 	}
 
 	public static IDebugModelPresentation getModelPresentation() {
@@ -1156,7 +1167,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 				message= null;
 			}
 		} else {
-			status= new Status(IStatus.ERROR, getDefault().getDescriptor().getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR, "Error within Debug UI: ", t); //$NON-NLS-1$	
+			status= new Status(IStatus.ERROR, getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR, "Error within Debug UI: ", t); //$NON-NLS-1$	
 		}
 		ErrorDialog.openError(shell, title, message, status);
 	}
@@ -1176,7 +1187,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 	 * @param t throwable to log 
 	 */
 	public static void log(Throwable t) {
-		IStatus status= new Status(IStatus.ERROR, getDefault().getDescriptor().getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR, "Error logged from Debug UI: ", t); //$NON-NLS-1$
+		IStatus status= new Status(IStatus.ERROR, getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR, "Error logged from Debug UI: ", t); //$NON-NLS-1$
 		log(status);
 	}
 	
@@ -1199,7 +1210,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 	public static void logErrorMessage(String message) {
 		// this message is intentionally not internationalized, as an exception may
 		// be due to the resource bundle itself
-		log(new Status(IStatus.ERROR, getDefault().getDescriptor().getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR, "Internal message logged from Debug UI: " + message, null)); //$NON-NLS-1$	
+		log(new Status(IStatus.ERROR, getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR, "Internal message logged from Debug UI: " + message, null)); //$NON-NLS-1$	
 	}
 	
 	/**

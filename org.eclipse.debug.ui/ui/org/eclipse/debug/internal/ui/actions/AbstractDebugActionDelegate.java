@@ -76,7 +76,7 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 		IStructuredSelection selection= getSelection();
 		
 		final Iterator enum= selection.iterator();
-		String pluginId= DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier();
+		String pluginId= DebugUIPlugin.getUniqueIdentifier();
 		final MultiStatus ms= 
 			new MultiStatus(pluginId, DebugException.REQUEST_FAILED, getStatusMessage(), null); 
 		BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {

@@ -315,7 +315,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		try {
 			IConfigurationElement config = (IConfigurationElement)fBreakpointExtensions.get(marker.getType());
 			if (config == null) {
-				throw new DebugException(new Status(IStatus.ERROR, DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(), 
+				throw new DebugException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), 
 					DebugException.CONFIGURATION_INVALID, MessageFormat.format(DebugCoreMessages.getString("BreakpointManager.Missing_breakpoint_definition"), new String[] {marker.getType()}), null)); //$NON-NLS-1$
 			}
 			breakpoint = (IBreakpoint)config.createExecutableExtension(CLASS);
@@ -361,7 +361,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		try {
 			String id= breakpoint.getModelIdentifier();
 			if (id == null) {
-				throw new DebugException(new Status(IStatus.ERROR, DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(), 
+				throw new DebugException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), 
 					DebugException.CONFIGURATION_INVALID, DebugCoreMessages.getString("BreakpointManager.Missing_model_identifier"), null)); //$NON-NLS-1$
 			}
 		} catch (CoreException e) {

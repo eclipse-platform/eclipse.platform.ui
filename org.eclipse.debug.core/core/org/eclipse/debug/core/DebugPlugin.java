@@ -40,12 +40,6 @@ import org.eclipse.debug.internal.core.RuntimeProcess;
  * </p>
  */
 public class DebugPlugin extends Plugin {
-	
-	/**
-	 * Debug plug-in identifier
-	 * (value <code>"org.eclipse.debug.core"</code>).
-	 */
-	public static final String PLUGIN_ID = "org.eclipse.debug.core"; //$NON-NLS-1$
 		
 	/**
 	 * Simple identifier constant (value <code>"launchConfigurationTypes"</code>)
@@ -141,6 +135,19 @@ public class DebugPlugin extends Plugin {
 	 */
 	private static void setDefault(DebugPlugin plugin) {
 		fgDebugPlugin = plugin;
+	}
+	
+	/**
+	 * Convenience method which returns the unique identifier of this plugin.
+	 */
+	public static String getUniqueIdentifier() {
+		if (getDefault() == null) {
+			// If the default instance is not yet initialized,
+			// return a static identifier. This identifier must
+			// match the plugin id defined in plugin.xml
+			return "org.eclipse.debug.core"; //$NON-NLS-1$
+		}
+		return getDefault().getDescriptor().getUniqueIdentifier();
 	}
 
 	/**
@@ -415,7 +422,7 @@ public class DebugPlugin extends Plugin {
 		if (getDefault().isDebugging()) {
 			// this message is intentionally not internationalized, as an exception may
 			// be due to the resource bundle itself
-			log(new Status(IStatus.ERROR, getDefault().getDescriptor().getUniqueIdentifier(), INTERNAL_ERROR, "Internal message logged from Debug Core: " + message, null)); //$NON-NLS-1$
+			log(new Status(IStatus.ERROR, getUniqueIdentifier(), INTERNAL_ERROR, "Internal message logged from Debug Core: " + message, null)); //$NON-NLS-1$
 		}
 	}
 	
@@ -436,7 +443,7 @@ public class DebugPlugin extends Plugin {
 	 * @since 2.0
 	 */
 	public static void log(Throwable t) {
-		IStatus status= new Status(IStatus.ERROR, getDefault().getDescriptor().getUniqueIdentifier(), INTERNAL_ERROR, "Error logged from Debug Core: ", t); //$NON-NLS-1$
+		IStatus status= new Status(IStatus.ERROR, getUniqueIdentifier(), INTERNAL_ERROR, "Error logged from Debug Core: ", t); //$NON-NLS-1$
 		log(status);
 	}
 	

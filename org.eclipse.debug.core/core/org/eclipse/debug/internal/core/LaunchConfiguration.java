@@ -128,7 +128,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 * @return status
 	 */
 	protected IStatus newStatus(String message, int code, Throwable e) {
-		return new Status(IStatus.ERROR, DebugPlugin.PLUGIN_ID, code, message, e);
+		return new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), code, message, e);
 	}
 	
 	/**
@@ -308,7 +308,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 			if (isLocal()) {
 				if (!(getLocation().toFile().delete())) {
 					throw new DebugException(
-						new Status(Status.ERROR, DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
+						new Status(Status.ERROR, DebugPlugin.getUniqueIdentifier(),
 						 DebugException.REQUEST_FAILED, DebugCoreMessages.getString("LaunchConfiguration.Failed_to_delete_launch_configuration._1"), null) //$NON-NLS-1$
 					);
 				}

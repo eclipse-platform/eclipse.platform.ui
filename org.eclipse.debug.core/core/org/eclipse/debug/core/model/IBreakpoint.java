@@ -67,13 +67,13 @@ public interface IBreakpoint extends IAdaptable {
 	 * Root breakpoint marker type	
 	 * (value <code>"org.eclipse.debug.core.breakpoint"</code>).
 	 */
-	public static final String BREAKPOINT_MARKER = DebugPlugin.PLUGIN_ID + ".breakpointMarker"; //$NON-NLS-1$
+	public static final String BREAKPOINT_MARKER = DebugPlugin.getUniqueIdentifier() + ".breakpointMarker"; //$NON-NLS-1$
 	
 	/**
 	 * Line breakpoint marker type
 	 * (value <code>"org.eclipse.debug.core.lineBreakpoint"</code>).
 	 */
-	public static final String LINE_BREAKPOINT_MARKER = DebugPlugin.PLUGIN_ID + ".lineBreakpointMarker"; //$NON-NLS-1$
+	public static final String LINE_BREAKPOINT_MARKER = DebugPlugin.getUniqueIdentifier() + ".lineBreakpointMarker"; //$NON-NLS-1$
 			
 	/**
 	 * Enabled breakpoint marker attribute (value <code>"org.eclipse.debug.core.enabled"</code>).

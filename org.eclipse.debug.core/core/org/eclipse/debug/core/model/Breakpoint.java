@@ -248,7 +248,7 @@ public abstract class Breakpoint extends PlatformObject implements IBreakpoint {
 	protected IMarker ensureMarker() throws DebugException {
 		IMarker m = getMarker();
 		if (m == null || !m.exists()) {
-			throw new DebugException(new Status(IStatus.ERROR, DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(), DebugException.REQUEST_FAILED,
+			throw new DebugException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED,
 				DebugCoreMessages.getString("Breakpoint.no_associated_marker"), null)); //$NON-NLS-1$
 		}
 		return m;

@@ -62,7 +62,7 @@ public class EnableBreakpointsAction implements IViewActionDelegate, IPartListen
 			return;
 		}
 		Iterator enum= selection.iterator();
-		MultiStatus ms= new MultiStatus(DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(), DebugException.REQUEST_FAILED, ActionMessages.getString("EnableBreakpointAction.Enable_breakpoint(s)_failed_2"), null); //$NON-NLS-1$
+		MultiStatus ms= new MultiStatus(DebugUIPlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, ActionMessages.getString("EnableBreakpointAction.Enable_breakpoint(s)_failed_2"), null); //$NON-NLS-1$
 		while (enum.hasNext()) {
 			IBreakpoint breakpoint = (IBreakpoint) enum.next();
 			try {

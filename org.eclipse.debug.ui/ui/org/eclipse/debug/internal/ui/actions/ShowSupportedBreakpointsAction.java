@@ -84,7 +84,7 @@ public class ShowSupportedBreakpointsAction extends ToggleFilterAction implement
 		setViewer(viewer);
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_OBJS_DEBUG_TARGET));
 		setChecked(false);
-		setId(DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier() + ".ShowSupportedBreakpointsAction"); //$NON-NLS-1$
+		setId(DebugUIPlugin.getUniqueIdentifier() + ".ShowSupportedBreakpointsAction"); //$NON-NLS-1$
 		
 		setView(view);
 		WorkbenchHelp.setHelp(
