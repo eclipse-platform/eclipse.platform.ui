@@ -252,10 +252,8 @@ public class SearchManager implements IResourceChangeListener {
 						viewer.setPageId(search.getPageId());
 						viewer.setInput(getCurrentResults());
 						viewer.setSelection(fCurrentSearch.getSelection(), true);
-						if (viewer.getSelectedEntriesCount() == 0 && !getCurrentResults().isEmpty())
-							viewer.setSelection(new StructuredSelection(getCurrentResults().get(0)));
-						if (search.getActionGroupFactory() != null)
-							viewer.setActionGroupFactory(search.getActionGroupFactory());
+						viewer.setSelection(new StructuredSelection(getCurrentResults().get(0)));
+						viewer.setActionGroupFactory(search.getActionGroupFactory());
 					}
 				});
 			}
@@ -401,13 +399,10 @@ public class SearchManager implements IResourceChangeListener {
 		while (iter.hasNext()) {
 			SearchResultViewer viewer= (SearchResultViewer)iter.next();
 			viewer.setPageId(search.getPageId());
-			if (search.getContextMenuContributor() != null)
-				viewer.setContextMenuTarget(search.getContextMenuContributor());
-			if (search.getActionGroupFactory() != null) {
-				viewer.setActionGroupFactory(search.getActionGroupFactory());
-			}
+			viewer.setContextMenuTarget(search.getContextMenuContributor());
 			viewer.setGotoMarkerAction(search.getGotoMarkerAction());
 			viewer.setInput(getCurrentResults());
+			viewer.setActionGroupFactory(search.getActionGroupFactory());
 		}
 	}
 	
