@@ -78,7 +78,7 @@ public interface IWorkbenchCommandSupport {
      * 
      * @param handlerSubmissions
      *            The submissions to be removed; must not be <code>null</code>,
-     *            and must contain instance of <code>HandlerSubmission</code>
+     *            and must contain instances of <code>HandlerSubmission</code>
      *            only.
      */
     void removeHandlerSubmissions(Collection handlerSubmissions);
