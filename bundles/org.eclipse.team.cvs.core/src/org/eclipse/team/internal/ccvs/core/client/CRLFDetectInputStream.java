@@ -10,16 +10,11 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.client;
 
-import java.io.FilterInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.ICVSFile;
-import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.team.internal.ccvs.core.*;
 
 /**
  * Stream which detects CRLF in text file contents recieved from the server
@@ -30,7 +25,7 @@ public class CRLFDetectInputStream extends FilterInputStream {
 	private String filename;
 	private boolean reported = false;
 
-	protected CRLFDetectInputStream(InputStream in, ICVSFile file) {
+	protected CRLFDetectInputStream(InputStream in, ICVSStorage file) {
 		super(in);
 		try {
 			this.filename = getFileName(file);
@@ -39,16 +34,22 @@ public class CRLFDetectInputStream extends FilterInputStream {
 		}
 	}
 
-	private String getFileName(ICVSFile file) throws CVSException {
-		String fileName = file.getRepositoryRelativePath();
-		if (fileName == null) {
-			IResource resource = file.getIResource();
-			if (resource == null) {
-				fileName = file.getName();
-			} else {
-				// Use the resource path if there is one since the remote pat
-				fileName = file.getIResource().getFullPath().toString();
+	private String getFileName(ICVSStorage storage) throws CVSException {
+		String fileName;
+		if (storage instanceof ICVSFile) {
+			ICVSFile file = (ICVSFile)storage;
+			fileName = file.getRepositoryRelativePath();
+			if (fileName == null) {
+				IResource resource = file.getIResource();
+				if (resource == null) {
+					fileName = file.getName();
+				} else {
+					// Use the resource path if there is one since the remote pat
+					fileName = file.getIResource().getFullPath().toString();
+				}
 			}
+		} else {
+			fileName = storage.getName();
 		}
 		return fileName;
 	}

@@ -24,6 +24,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
@@ -562,5 +563,12 @@ public class Util {
 			CVSProviderPlugin.log(CVSException.wrapException(e));
 			return new int[0];
 		}
+	}
+
+	public static String toTruncatedPath(ICVSStorage file, ICVSFolder localRoot, int i) {
+		if (file instanceof ICVSResource) {
+			return toTruncatedPath((ICVSResource)file, localRoot, i);
+		}
+		return file.getName();
 	}
 }

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core;
 
-import java.io.InputStream;
 import java.util.Date;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -25,7 +24,7 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
  * 
  * @see ICVSResource
  */
-public interface ICVSFile extends ICVSResource {
+public interface ICVSFile extends ICVSResource, ICVSStorage {
 	
 	// Constants used to indicate the type of updated response from the server
 	public static final int UPDATED = 1;
@@ -44,33 +43,6 @@ public interface ICVSFile extends ICVSResource {
 	public static final int UNKNOWN = 0;
 	public static final int CLEAN = 1;
 	public static final int DIRTY = 2;
-	
-	/**
-	 * Answers the size of the file. 
-	 */
-	long getSize();
-	
- 	/**
-	 * Gets an input stream for reading from the file.
-	 * It is the responsibility of the caller to close the stream when finished.
- 	 */
-	InputStream getContents() throws CVSException;
-	
-	/**
-	 * Set the contents of the file to the contents of the provided input stream.
-	 * 
-	 * This method is used by the command framework and should not be used by other clients.
-	 * Other clients should set the contents of the underlying <code>IFile</code> which
-	 * can be obtained using <code>getIResource()</code>.
-	 * 
-	 * @param responseType the type of reponse that was received from the server
-	 * 
-	 *    UPDATED - could be a new file or an existing file
-	 *    MERGED - merging remote changes with local changes. Failure could result in loss of local changes
-	 *    CREATED - contents for a file that doesn't exist locally
-	 *    UPDATE_EXISTING - Replacing a local file with no local changes with remote changes.
-	 */
-	public void setContents(InputStream stream, int responseType, boolean keepLocalHistory, IProgressMonitor monitor) throws CVSException;
 
 	/**
 	 * Answers the workspace synchronization information for this resource. This would 
