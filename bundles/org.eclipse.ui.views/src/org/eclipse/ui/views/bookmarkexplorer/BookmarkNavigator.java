@@ -8,20 +8,64 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.action.*;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ColumnLayoutData;
+import org.eclipse.jface.viewers.ColumnPixelData;
+import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.IOpenListener;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.OpenEvent;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.TableLayout;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.dnd.*;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DragSourceAdapter;
+import org.eclipse.swt.dnd.DragSourceEvent;
+import org.eclipse.swt.dnd.DragSourceListener;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.ScrollBar;
+import org.eclipse.swt.widgets.Scrollable;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.part.CellEditorActionHandler;
 import org.eclipse.ui.part.MarkerTransfer;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -41,13 +85,33 @@ import org.eclipse.ui.views.navigator.ShowInNavigatorAction;
  * </p>
  */
 public class BookmarkNavigator extends ViewPart {
-	private StructuredViewer viewer;
+	private Table table;
+	private TableViewer viewer;
 	private OpenBookmarkAction openAction;
 	private CopyBookmarkAction copyAction;
 	private RemoveBookmarkAction removeAction;
 	private SelectAllAction selectAllAction;
 	private ShowInNavigatorAction showInNavigatorAction;
+	private SortByAction sortByDescriptionAction;
+	private SortByAction sortByResourceAction;
+	private SortByAction sortByFolderAction;
+	private SortByAction sortByLineAction;
+	private ChangeSortDirectionAction sortAscendingAction;
+	private ChangeSortDirectionAction sortDescendingAction;	 
 	private IMemento memento;
+	private TextCellEditor descriptionEditor;
+	private CellEditorActionHandler editorActionHandler;
+	private BookmarkSorter sorter;
+	
+	private final String columnHeaders[] = {"", "Description", "Resource",
+												"In Folder", "Location"};
+												
+	private ColumnLayoutData columnLayouts[] = {
+		new ColumnPixelData(19, false),
+		new ColumnWeightData(200),
+		new ColumnWeightData(75),
+		new ColumnWeightData(150),
+		new ColumnWeightData(60)};												
 	
 	// Persistance tags.
 	private static final String TAG_SELECTION = "selection"; //$NON-NLS-1$
@@ -56,6 +120,53 @@ public class BookmarkNavigator extends ViewPart {
 	private static final String TAG_RESOURCE = "resource";//$NON-NLS-1$
 	private static final String TAG_VERTICAL_POSITION = "verticalPosition";//$NON-NLS-1$
 	private static final String TAG_HORIZONTAL_POSITION = "horizontalPosition";//$NON-NLS-1$
+	private static final String TAG_SORTER = "sorter";//$NON-NLS-1$
+	
+	class SortByAction extends Action {
+		
+		private int column;
+		
+		public SortByAction(int column) {
+			if (column < BookmarkConstants.COLUMN_DESCRIPTION || column > BookmarkConstants.COLUMN_LOCATION)
+				column = BookmarkConstants.COLUMN_DESCRIPTION;
+			else 
+				this.column = column;
+		}
+
+		public void run() {
+			sorter.setTopPriority(column);
+			updateSortState();
+			viewer.refresh();
+			IDialogSettings workbenchSettings = getPlugin().getDialogSettings();
+			IDialogSettings settings = workbenchSettings.getSection("BookmarkSortState");//$NON-NLS-1$
+			if (settings == null)
+				settings = workbenchSettings.addNewSection("BookmarkSortState");//$NON-NLS-1$
+			sorter.saveState(settings);
+		}
+	}
+
+	class ChangeSortDirectionAction extends Action {
+		
+		private int direction;
+		
+		public ChangeSortDirectionAction(int direction) {
+			if (direction == BookmarkConstants.SORT_ASCENDING || direction == BookmarkConstants.SORT_DESCENDING)
+				this.direction = direction;
+			else 
+				this.direction = BookmarkConstants.SORT_ASCENDING;
+		}
+
+		public void run() {
+			sorter.setDirection(direction);
+			updateSortState();
+			viewer.refresh();
+			IDialogSettings workbenchSettings = getPlugin().getDialogSettings();
+			IDialogSettings settings = workbenchSettings.getSection("BookmarkSortState");//$NON-NLS-1$
+			if (settings == null)
+				settings = workbenchSettings.addNewSection("BookmarkSortState");//$NON-NLS-1$
+			sorter.saveState(settings);
+		}
+	}
 
 /**
  * Creates the bookmarks view.
@@ -132,17 +243,34 @@ void addContributions() {
  * Method declared on IWorkbenchPart.
  */
 public void createPartControl(Composite parent) {
-	viewer = new TreeViewer(new Tree(parent, SWT.MULTI));
+	createTable(parent);
+	viewer = new TableViewer(table);
+	createColumns();
+	
+	sorter = new BookmarkSorter();
 	viewer.setContentProvider(new BookmarkContentProvider(this));
 	viewer.setLabelProvider(new BookmarkLabelProvider(this));
 	viewer.setInput(ResourcesPlugin.getWorkspace().getRoot());
+	viewer.setSorter(sorter);
+
+	IDialogSettings workbenchSettings = getPlugin().getDialogSettings();
+	IDialogSettings settings = workbenchSettings.getSection("BookmarkSortState");//$NON-NLS-1$
+	if(settings == null)
+		settings = workbenchSettings.addNewSection("BookmarkSortState");//$NON-NLS-1$
+	else
+		sorter.restoreState(settings);
+
 	addContributions();
 	initDragAndDrop();
+	createSortActions();
+	fillActionBars();
+	updateSortState();
 
 	if(memento != null) restoreState(memento);
 	memento = null;
 
 	WorkbenchHelp.setHelp(viewer.getControl(), IBookmarkHelpContextIds.BOOKMARK_VIEW);
+	
 }
 /**
  * Notifies this listener that the menu is about to be shown by
@@ -308,6 +436,9 @@ void restoreState(IMemento memento) {
 			bar.setSelection(position);
 		} catch (NumberFormatException e){}
 	}
+	
+	updateSortState();
+	viewer.refresh();
 }
 public void saveState(IMemento memento) {
 	if(viewer == null) {
@@ -336,6 +467,7 @@ public void saveState(IMemento memento) {
 	bar = scrollable.getHorizontalBar();
 	position = bar != null ? bar.getSelection():0;
 	memento.putString(TAG_HORIZONTAL_POSITION,String.valueOf(position));
+	
 }
 /* (non-Javadoc)
  * Method declared on IWorkbenchPart.
@@ -344,4 +476,116 @@ public void setFocus() {
 	if (viewer != null) 
 		viewer.getControl().setFocus();
 }
+
+void createColumns() {
+	SelectionListener headerListener = new SelectionAdapter() {
+		/**
+		 * Handles the case of user selecting the
+		 * header area.
+		 * <p>If the column has not been selected previously,
+		 * it will set the sorter of that column to be
+		 * the current tasklist sorter. Repeated
+		 * presses on the same column header will
+		 * toggle sorting order (ascending/descending).
+		 */
+		public void widgetSelected(SelectionEvent e) {
+			// column selected - need to sort
+			int column = table.indexOf((TableColumn) e.widget);
+			if (column == sorter.getTopPriority())
+				sorter.reverse();
+			else {
+				sorter.setTopPriority(column);
+				sorter.setDirection(BookmarkConstants.SORT_ASCENDING);
+			}
+			updateSortState();
+			viewer.refresh();
+			IDialogSettings workbenchSettings = getPlugin().getDialogSettings();
+			IDialogSettings settings = workbenchSettings.getSection("BookmarkSortState");//$NON-NLS-1$
+			if (settings == null)
+				settings = workbenchSettings.addNewSection("BookmarkSortState");//$NON-NLS-1$
+			sorter.saveState(settings);
+		}
+	};
+	
+	
+	TableLayout layout = new TableLayout();
+	table.setLayout(layout);
+	table.setHeaderVisible(true);
+	for (int i = 0; i < columnHeaders.length; i++) {
+		layout.addColumnData(columnLayouts[i]);
+		TableColumn tc = new TableColumn(table, SWT.NONE,i);
+		tc.setResizable(columnLayouts[i].resizable);
+		tc.setText(columnHeaders[i]);
+		tc.addSelectionListener(headerListener);
+	}
+}
+
+/**
+ * Creates the table control.
+ */
+void createTable(Composite parent) {
+	table = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI | SWT.FULL_SELECTION);
+	table.setLinesVisible(true);
+	//table.setLayout(new TableLayout());
+}
+
+/**
+ * Fills the local tool bar and menu manager with actions.
+ */
+void fillActionBars() {
+	IActionBars actionBars = getViewSite().getActionBars();
+	IMenuManager menu = actionBars.getMenuManager();
+	IMenuManager submenu =
+		new MenuManager("Sort"); //$NON-NLS-1$
+	menu.add(submenu);
+	submenu.add(sortByDescriptionAction);
+	submenu.add(sortByResourceAction);
+	submenu.add(sortByFolderAction);
+	submenu.add(sortByLineAction);
+	submenu.add(new Separator());
+	submenu.add(sortAscendingAction);
+	submenu.add(sortDescendingAction);
+}
+
+void createSortActions() {
+	sortByDescriptionAction = new SortByAction(BookmarkConstants.COLUMN_DESCRIPTION);
+	sortByDescriptionAction.setText(columnHeaders[BookmarkConstants.COLUMN_DESCRIPTION]);
+	sortByResourceAction = new SortByAction(BookmarkConstants.COLUMN_RESOURCE);
+	sortByResourceAction.setText(columnHeaders[BookmarkConstants.COLUMN_RESOURCE]);
+	sortByFolderAction = new SortByAction(BookmarkConstants.COLUMN_FOLDER);
+	sortByFolderAction.setText(columnHeaders[BookmarkConstants.COLUMN_FOLDER]);
+	sortByLineAction = new SortByAction(BookmarkConstants.COLUMN_LOCATION);
+	sortByLineAction.setText(columnHeaders[BookmarkConstants.COLUMN_LOCATION]);
+	sortAscendingAction = new ChangeSortDirectionAction(BookmarkConstants.SORT_ASCENDING);
+	sortAscendingAction.setText("Ascending");
+	sortDescendingAction = new ChangeSortDirectionAction(BookmarkConstants.SORT_DESCENDING);
+	sortDescendingAction.setText("Descending");
+}
+
+void updateSortState() {
+	int column = sorter.getTopPriority();
+	sortByDescriptionAction.setChecked(false);
+	sortByResourceAction.setChecked(false);
+	sortByFolderAction.setChecked(false);
+	sortByLineAction.setChecked(false);
+	if (column == BookmarkConstants.COLUMN_DESCRIPTION)
+		sortByDescriptionAction.setChecked(true);
+	else if (column == BookmarkConstants.COLUMN_RESOURCE)
+		sortByResourceAction.setChecked(true);
+	else if (column == BookmarkConstants.COLUMN_FOLDER)
+		sortByFolderAction.setChecked(true);
+	else
+		sortByLineAction.setChecked(true);
+	
+	int direction = sorter.getDirection();
+	if (direction == BookmarkConstants.SORT_ASCENDING) {
+		sortAscendingAction.setChecked(true);
+		sortDescendingAction.setChecked(false);
+	}
+	else {
+		sortDescendingAction.setChecked(true);
+		sortAscendingAction.setChecked(false);
+	}
+}
+
 }

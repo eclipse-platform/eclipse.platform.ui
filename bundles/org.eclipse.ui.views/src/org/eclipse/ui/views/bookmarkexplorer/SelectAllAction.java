@@ -6,7 +6,7 @@ package org.eclipse.ui.views.bookmarkexplorer;
  */
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
@@ -22,8 +22,8 @@ public SelectAllAction(BookmarkNavigator view) {
 public void run() {
 	Viewer viewer = getView().getViewer();
 	Control control = viewer.getControl();
-	if (control instanceof Tree) {
-		((Tree) control).selectAll();
+	if (control instanceof Table) {
+		((Table) control).selectAll();
 		viewer.setSelection(viewer.getSelection(), false);
 	}
 }

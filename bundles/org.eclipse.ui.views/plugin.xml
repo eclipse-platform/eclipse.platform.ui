@@ -19,4 +19,29 @@
       <import plugin="org.eclipse.ui.workbench"/>
    </requires>
 
+	<extension point="org.eclipse.ui.popupMenus"> 
+		<viewerContribution 
+			id="org.eclipse.ui.views.bookmarkexplorer.editbookmarkaction.bookmarkexplorer"
+			targetID="org.eclipse.ui.views.BookmarkNavigator">
+			<action
+				id="org.eclipse.ui.views.bookmarkexplorer.editbookmarkaction"
+				label="Properties"
+				menubarPath="additions"
+				enablesFor="1" 
+				class="org.eclipse.ui.views.bookmarkexplorer.EditBookmarkAction"> 
+				<enablement>
+					<and>
+						<objectState
+							name="resourceType"
+							value="1">
+						</objectState>
+						<objectClass
+							name="org.eclipse.core.resources.IMarker">
+						</objectClass>
+					</and>
+				</enablement>
+			</action> 
+		</viewerContribution> 
+	</extension>
+
 </plugin>
