@@ -43,6 +43,7 @@ public abstract class Command extends Request {
 	/*** Command singleton instances ***/
 	public final static Add ADD = new Add();
 	public final static Admin ADMIN = new Admin();
+	public final static Annotate ANNOTATE = new Annotate();
 	public final static Checkout CHECKOUT = new Checkout();
 	public final static Commit COMMIT = new Commit();
 	public final static Diff DIFF = new Diff();

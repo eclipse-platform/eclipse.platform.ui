@@ -57,6 +57,7 @@ import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.actions.CVSAction;
+import org.eclipse.team.internal.ccvs.ui.actions.ShowAnnotationAction;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.help.WorkbenchHelp;
 
@@ -66,6 +67,7 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 	TableViewer viewer;
 	Action getContentsAction;
 	Action getRevisionAction;
+	Action getAnnotateAction;
 	Shell shell;
 	
 	private HistoryTableProvider historyTableProvider;
@@ -200,6 +202,7 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 				public void menuAboutToShow(IMenuManager mm) {
 					mm.add(getContentsAction);
 					mm.add(getRevisionAction);
+					mm.add(getAnnotateAction);
 				}
 			}
 		);
@@ -210,11 +213,13 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 				if (!(selection instanceof IStructuredSelection)) {
 					getContentsAction.setEnabled(false);
 					getRevisionAction.setEnabled(false);
+					getAnnotateAction.setEnabled(false);
 					return;
 				}
 				IStructuredSelection ss = (IStructuredSelection)selection;
 				getContentsAction.setEnabled(ss.size() == 1);
 				getRevisionAction.setEnabled(ss.size() == 1);
+				getAnnotateAction.setEnabled(ss.size() == 1);
 			}	
 		});
 		
@@ -222,6 +227,7 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 		WorkbenchHelp.setHelp(table, IHelpContextIds.COMPARE_REVISIONS_VIEW);
 		WorkbenchHelp.setHelp(getContentsAction, IHelpContextIds.GET_FILE_CONTENTS_ACTION);
 		WorkbenchHelp.setHelp(getRevisionAction, IHelpContextIds.GET_FILE_REVISION_ACTION);
+		WorkbenchHelp.setHelp(getAnnotateAction, IHelpContextIds.GET_ANNOTATE_ACTION);
 		
 		return viewer;
 	}
@@ -244,6 +250,27 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 		cc.setRightLabel(rightLabel);
 	}
 	private void initializeActions() {
+		
+		getAnnotateAction = new Action(Policy.bind("HistoryView.getAnnotateAction"), null) { //$NON-NLS-1$
+			public void run() {
+				try {
+						IStructuredSelection selection = (IStructuredSelection)viewer.getSelection();
+						if (selection.size() != 1) return;
+						VersionCompareDiffNode node = (VersionCompareDiffNode)selection.getFirstElement();
+						ResourceEditionNode right = (ResourceEditionNode)node.getRight();
+						ICVSRemoteResource edition = right.getRemoteResource();
+						ShowAnnotationAction annotateAction = new ShowAnnotationAction();
+						annotateAction.execute(edition);
+
+				} catch (InterruptedException e) {
+					// Do nothing
+					return;
+				} catch (InvocationTargetException e) {
+					handle(e);
+				}
+			}
+		};
+		
 		getContentsAction = new Action(Policy.bind("HistoryView.getContentsAction"), null) { //$NON-NLS-1$
 			public void run() {
 				try {

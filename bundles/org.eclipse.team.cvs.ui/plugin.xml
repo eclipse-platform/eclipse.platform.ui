@@ -153,6 +153,14 @@
                id="org.eclipse.team.ccvs.ui.showHistory">
          </action>
          <action
+               label="%ShowAnnotationAction.label"
+               tooltip="%ShowAnnotationAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.ShowAnnotationAction"
+               menubarPath="team.main/group2"
+               helpContextId="org.eclipse.team.cvs.ui.get_annotate_action_context"
+               id="org.eclipse.team.ccvs.ui.showAnnotation">
+         </action>
+         <action
                label="%CompareWithRevisionAction.label"
                tooltip="%CompareWithRevisionAction.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.CompareWithRevisionAction"
@@ -433,6 +441,13 @@
                helpContextId="org.eclipse.team.cvs.ui.show_in_history_action_context"
                id="org.eclipse.team.ccvs.ui.showHistory">
          </action>
+         <action
+               label="%ShowAnnotationAction.label"
+               tooltip="%ShowAnnotationAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.ShowAnnotationAction"
+               helpContextId="org.eclipse.team.cvs.ui.get_annotate_action_context"
+               id="org.eclipse.team.ccvs.ui.showAnnotation">
+         </action>
       </objectContribution>
       <objectContribution
             objectClass="org.eclipse.team.internal.ccvs.core.ILogEntry"
@@ -451,6 +466,13 @@
                enablesFor="2"
                helpContextId="org.eclipse.team.cvs.ui.compare_remote_resources_action_context"
                id="org.eclipse.team.ccvs.ui.compareLogEntries">
+         </action>
+         <action
+               label="%ShowAnnotationAction.label"
+               tooltip="%ShowAnnotationAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.ShowAnnotationAction"
+               helpContextId="org.eclipse.team.cvs.ui.get_annotate_action_context"
+               id="org.eclipse.team.ccvs.ui.showAnnotation">
          </action>
       </objectContribution>
       <objectContribution
@@ -584,7 +606,13 @@
             class="org.eclipse.team.internal.ccvs.ui.EditorsView"
             id="org.eclipse.team.ccvs.ui.EditorsView">
       </view>
-      
+      <view
+            name="%AnnotateView.name"
+            icon="icons/full/cview16/annotate_view.gif"
+            category="org.eclipse.team.ccvs.ui"
+            class="org.eclipse.team.internal.ccvs.ui.AnnotateView"
+            id="org.eclipse.team.ccvs.ui.AnnotateView">
+      </view>
    </extension>
 <!-- **************** Preferences ******************* -->
    <extension
@@ -710,10 +738,17 @@
                 relative="org.eclipse.ui.views.ResourceNavigator"
                 visible="false"
                 relationship="stack"/>
+           <view id="org.eclipse.team.ccvs.ui.AnnotateView"
+                relative="org.eclipse.ui.views.ResourceNavigator"
+                visible="false"
+                relationship="stack"/>
       </perspectiveExtension>
 	<perspectiveExtension 
 		targetID="org.eclipse.team.cvs.ui.cvsPerspective">
 		<actionSet id="org.eclipse.team.cvs.ui.CVSActionSet"/>
+		<view id="org.eclipse.team.ccvs.ui.AnnotateView"
+        		relative="org.eclipse.team.ccvs.ui.RepositoriesView"
+                relationship="stack"/>
 	</perspectiveExtension>
    </extension>
 
