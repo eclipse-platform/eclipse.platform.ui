@@ -483,6 +483,7 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
         if (reference == null) {
         	if (moveCursor) {
         		 resetHighlightRange();
+                 markInNavigationHistory();
         	}
         	return;
         } 
@@ -525,6 +526,7 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
                 sourceViewer.revealRange(offset, length);
                 // Selected region begins one index after offset
                 sourceViewer.setSelectedRange(offset, length); 
+                markInNavigationHistory();
             }
         } catch (IllegalArgumentException x) {
         	AntUIPlugin.log(x);
