@@ -180,7 +180,7 @@ public class ProgressManager extends ProgressProvider
 			JobInfo info = getJobInfo(job);
 			info.clearTaskInfo();
 			info.clearChildren();
-			runnableMonitors.remove(this);
+			runnableMonitors.remove(job);
 			if (listener != null)
 				listener.done();
 		}
