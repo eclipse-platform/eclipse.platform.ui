@@ -1312,4 +1312,40 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 		});
 		assertIsBinary(project.getFile("binary.gif"));
 	}
+	
+	/**
+	 * Bug 48467
+	 * 
+	 * Files imported into CVS may have revision number 1.1.1.1.
+	 * A subsequent commit will raise the revision to 1.2.
+	 * We had code that would ignore the new sync bytes in the
+	 * sync view because the new revision was shorter than the old one.
+	 */
+	public void testSyncAfterImport() throws CoreException {
+		// First, use "cvs import" to add a project to CVS
+		String[] resources = new String[] { "file.txt" };
+		IProject project = getUniqueTestProject(getName());
+		buildResources(project, resources, true);
+		importProject(project);
+		
+		// Now, check out the project
+		IProject copy = getWorkspace().getRoot().getProject(project.getName() + "copy");
+		checkout(getRepository(), copy, project.getName(), null, DEFAULT_MONITOR);
+		ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor(copy.getFile("file.txt"));
+		assertTrue("File in wrong state", cvsFile.isManaged() && cvsFile.getSyncInfo().getRevision().equals("1.1.1.1"));
+		
+		// Check out another and commit a change to the file
+		IProject anotherCopy = checkoutCopy(copy, "another");
+		cvsFile = CVSWorkspaceRoot.getCVSFileFor(anotherCopy.getFile("file.txt"));
+		assertTrue("File in wrong state", cvsFile.isManaged() && cvsFile.getSyncInfo().getRevision().equals("1.1.1.1"));
+		setContentsAndEnsureModified(anotherCopy.getFile("file.txt"));
+		commitProject(anotherCopy);
+		
+		// Assert that the change shows up in original
+		assertSyncEquals("testSyncAfterImport sync check", copy,
+				new String[] {"file.txt"},
+				true, new int[] { 
+				SyncInfo.INCOMING | SyncInfo.CHANGE
+		});
+	}
 }

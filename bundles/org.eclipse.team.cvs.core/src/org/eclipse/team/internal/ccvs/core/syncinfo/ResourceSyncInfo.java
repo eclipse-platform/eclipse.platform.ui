@@ -926,11 +926,6 @@ public class ResourceSyncInfo {
 		if (localRevision.equals(ADDED_REVISION)) {
 			return (remoteDigits.length >= 2);
 		}
-		if (localDigits.length > remoteDigits.length) {
-			// If there are more digits in the local revision then there is
-			// no way that the remote is later on the same branch
-			return false;
-		}
 		if (localDigits.length < remoteDigits.length) {
 			// If there are more digits in the remote revision then all
 			// the leading digits must match
@@ -941,8 +936,11 @@ public class ResourceSyncInfo {
 			}
 			return true;
 		}
-		// They are the same length so the last digit must differ and all others must be the same
-		for (int i = 0; i < localDigits.length - 1; i++) {
+		// They are the same length or the local is longer.
+		// The last digit must differ and all others must be the same.
+		// If the local is longer, ignore the addition numbers
+		// (this can occur as the result on an import)
+		for (int i = 0; i < remoteDigits.length - 1; i++) {
 			int localDigit = localDigits[i];
 			int remoteDigit = remoteDigits[i];
 			if (remoteDigit != localDigit) return false;
