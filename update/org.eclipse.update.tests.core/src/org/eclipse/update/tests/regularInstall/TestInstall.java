@@ -278,8 +278,7 @@ public class TestInstall extends UpdateManagerTestCase {
 
 		try {
 			SiteManager.getSite(new URL("http://www.eclipse.org/"));
-			// FIXME apparently works !!!
-			//		fail("The site contains site.xml... it should be an HTTP site without an XML file");			
+			fail("The site contains site.xml... it should be an HTTP site without an XML file");			
 		} catch (CoreException e) {
 			// expected
 		}

@@ -107,7 +107,10 @@ public class TestRevert extends UpdateManagerTestCase {
 		assertTrue("Wrong number of configured features old:"+oldNumber+" new:"+newNumber,oldNumber==newNumber);
 		
 		// test only 2 install config in local site
-		assertTrue("wrong number of unconfigured features",((ConfiguredSite)newConfigSite).getConfigurationPolicy().getUnconfiguredFeatures().length==2);
+		int newNumberUnconfiguredFeatures = ((ConfiguredSite)newConfigSite).getConfigurationPolicy().getUnconfiguredFeatures().length;
+		int oldNumberUnconfiguredFeatures = ((ConfiguredSite)oldConfigSite).getConfigurationPolicy().getUnconfiguredFeatures().length;		
+		//FIXME wrong calculation
+		assertEquals("wrong number of unconfigured features",oldNumberUnconfiguredFeatures,newNumberUnconfiguredFeatures);
 		
 		// cleanup
 		localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocationURL(),SiteLocal.SITE_LOCAL_FILE).getFile());

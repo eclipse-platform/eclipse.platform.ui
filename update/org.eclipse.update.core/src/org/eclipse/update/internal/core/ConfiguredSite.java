@@ -230,8 +230,6 @@ public class ConfiguredSite
 					listener.featureInstalled(installedFeature);
 				}
 			}
-			// check if this is a primary feature
-			// FIXME
 		} catch (CoreException e) {
 			// not ok, set Activity status
 			activity.setStatus(IActivity.STATUS_NOK);

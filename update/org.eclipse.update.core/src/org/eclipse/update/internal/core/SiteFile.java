@@ -231,7 +231,6 @@ public class SiteFile extends Site {
 		IPluginEntry[] siteEntries = this.getPluginEntries();
 		entriesToInstall = UpdateManagerUtils.diff(entriesToInstall, siteEntries);
 
-		// FIXME Intersection for NonPluginEntry (using Install Handler)
 		try {
 			result =
 				feature.getFeatureContentProvider().getDownloadSizeFor(entriesToInstall,
@@ -261,7 +260,6 @@ public class SiteFile extends Site {
 		IPluginEntry[] siteEntries = this.getPluginEntries();
 		entriesToInstall = UpdateManagerUtils.diff(entriesToInstall, siteEntries);
 
-		// FIXME Intersection for NonPluginEntry (using Install Handler)
 		try {
 			result =
 				feature.getFeatureContentProvider().getInstallSizeFor(entriesToInstall,
