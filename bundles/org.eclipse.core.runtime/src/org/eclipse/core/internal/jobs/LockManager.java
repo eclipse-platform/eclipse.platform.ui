@@ -135,23 +135,24 @@ public class LockManager {
 		if (locks == null)
 			return;
 		try {
+			Deadlock found = null;
 			synchronized (locks) {
-				Deadlock found = locks.lockWaitStart(thread, lock);
-				// if deadlock was detected, the found variable will contain all the information about it,
-				// including which locks to suspend for which thread to resolve the deadlock.
-				if (found != null) {
-					ISchedulingRule[] toSuspend = found.getLocks();
-					LockState[] suspended = new LockState[toSuspend.length];
-					for (int i = 0; i < toSuspend.length; i++)
-						suspended[i] = LockState.suspend((OrderedLock) toSuspend[i]);
-					synchronized (suspendedLocks) {
-						Stack prevLocks = (Stack) suspendedLocks.get(found.getCandidate());
-						if (prevLocks == null)
-							prevLocks = new Stack();
-						prevLocks.push(suspended);
-						suspendedLocks.put(found.getCandidate(), prevLocks);
-					}
-				}
+				found = locks.lockWaitStart(thread, lock);
+			}
+			if (found == null)
+				return;
+			// if deadlock was detected, the found variable will contain all the information about it,
+			// including which locks to suspend for which thread to resolve the deadlock.
+			ISchedulingRule[] toSuspend = found.getLocks();
+			LockState[] suspended = new LockState[toSuspend.length];
+			for (int i = 0; i < toSuspend.length; i++)
+				suspended[i] = LockState.suspend((OrderedLock) toSuspend[i]);
+			synchronized (suspendedLocks) {
+				Stack prevLocks = (Stack) suspendedLocks.get(found.getCandidate());
+				if (prevLocks == null)
+					prevLocks = new Stack();
+				prevLocks.push(suspended);
+				suspendedLocks.put(found.getCandidate(), prevLocks);
 			}
 		} catch (Exception e) {
 			handleInternalError(e);
