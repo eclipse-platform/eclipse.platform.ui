@@ -22,6 +22,7 @@ import org.eclipse.ui.internal.intro.impl.*;
 import org.eclipse.ui.internal.intro.impl.model.*;
 import org.eclipse.ui.internal.intro.impl.swt.*;
 import org.eclipse.ui.internal.intro.impl.util.*;
+import org.eclipse.ui.intro.config.*;
 
 /**
  * This is a UI Forms based implementation of an Intro Part Presentation.
@@ -66,9 +67,14 @@ public class FormIntroPartImplementation extends
                     navigateBackward();
                     if (isURL(getCurrentLocation()))
                         Util.openBrowser(getCurrentLocation());
-                    else
+                    else {
                         // Set current page, and this will triger regen.
+                        CustomizableIntroPart currentIntroPart = (CustomizableIntroPart) IntroPlugin
+                                .getIntro();
+                        currentIntroPart.getControl().setRedraw(false);
                         getModelRoot().setCurrentPageId(getCurrentLocation());
+                        currentIntroPart.getControl().setRedraw(true);
+                    }
                 }
             }
 
@@ -94,9 +100,14 @@ public class FormIntroPartImplementation extends
                     navigateForward();
                     if (isURL(getCurrentLocation()))
                         Util.openBrowser(getCurrentLocation());
-                    else
+                    else {
                         // Set current page, and this will triger regen.
+                        CustomizableIntroPart currentIntroPart = (CustomizableIntroPart) IntroPlugin
+                                .getIntro();
+                        currentIntroPart.getControl().setRedraw(false);
                         getModelRoot().setCurrentPageId(getCurrentLocation());
+                        currentIntroPart.getControl().setRedraw(true);
+                    }
                 }
             }
             updateNavigationActionsState();
@@ -117,8 +128,12 @@ public class FormIntroPartImplementation extends
         public void run() {
             IntroHomePage rootPage = getModelRoot().getHomePage();
             if (getModelRoot().isDynamic()) {
+                CustomizableIntroPart currentIntroPart = (CustomizableIntroPart) IntroPlugin
+                        .getIntro();
+                currentIntroPart.getControl().setRedraw(false);
                 getModelRoot().setCurrentPageId(rootPage.getId());
                 updateHistory(rootPage.getId());
+                currentIntroPart.getControl().setRedraw(true);
             }
         }
     };
@@ -276,14 +291,11 @@ public class FormIntroPartImplementation extends
                 // If page ID was not set properly. exit.
                 return;
 
-            // avoid flicker.
-            mainPageBook.setRedraw(false);
             // if we are showing a regular intro page, or if the Home Page has a
             // regular page layout, set the page id to the static PageForm id.
             if (!mainPageBook.hasPage(pageId))
                 pageId = PageForm.PAGE_FORM_ID;
             mainPageBook.showPage(pageId);
-            mainPageBook.setRedraw(true);
         }
     }
 
@@ -297,9 +309,12 @@ public class FormIntroPartImplementation extends
         toolBarManager.update(true);
         actionBars.updateActionBars();
         updateNavigationActionsState();
+
     }
 
-    protected void standbyStateChanged(boolean standby) {
+
+
+    public void standbyStateChanged(boolean standby) {
         if (standby) {
             homeAction.setEnabled(false);
             forwardAction.setEnabled(false);

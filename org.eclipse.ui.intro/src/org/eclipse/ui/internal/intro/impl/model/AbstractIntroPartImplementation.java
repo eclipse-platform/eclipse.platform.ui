@@ -244,7 +244,7 @@ public abstract class AbstractIntroPartImplementation {
      * 
      * @param standby
      */
-    protected void standbyStateChanged(boolean standby) {
+    public void standbyStateChanged(boolean standby) {
         // do nothing.
     }
 

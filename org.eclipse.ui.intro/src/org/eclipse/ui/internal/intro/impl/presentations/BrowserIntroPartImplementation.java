@@ -310,7 +310,7 @@ public class BrowserIntroPartImplementation extends
         updateNavigationActionsState();
     }
 
-    protected void standbyStateChanged(boolean standby) {
+    public void standbyStateChanged(boolean standby) {
         if (standby) {
             homeAction.setEnabled(false);
             forwardAction.setEnabled(false);
