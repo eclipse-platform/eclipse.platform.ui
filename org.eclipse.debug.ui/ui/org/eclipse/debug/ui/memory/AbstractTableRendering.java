@@ -2399,7 +2399,7 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 					baseAddress = new BigInteger("0"); //$NON-NLS-1$
 			}
 			
-			Object[] connected = ((IMemoryBlockExtension)mem).getConnected();				
+			Object[] connected = ((IMemoryBlockExtension)mem).getConnections();				
 			
 			// if the base address has changed, update cursor
 			// and this is the first time this memory block is enabled

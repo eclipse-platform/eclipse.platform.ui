@@ -20,6 +20,7 @@ package org.eclipse.debug.core.model;
  * add other attributes to a memory byte, as required.
  * </p>
  * @since 3.1
+ * @see org.eclipse.debug.core.model.IMemoryBlockExtension
  */
 public class MemoryByte {
 	
@@ -40,8 +41,6 @@ public class MemoryByte {
 	 * suspend event.
 	 * 
 	 * @see org.eclipse.debug.core.DebugEvent#SUSPEND
-	 * 
-	 * TODO: should this say DebugEvent#CHANGED? what it the correlation?
 	 */
 	public static final byte	CHANGED		= 0x04;
 	
