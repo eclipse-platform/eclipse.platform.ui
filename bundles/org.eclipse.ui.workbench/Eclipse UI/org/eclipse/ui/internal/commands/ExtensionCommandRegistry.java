@@ -22,13 +22,10 @@ import org.eclipse.core.runtime.IExtensionDelta;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.IRegistryChangeListener;
-import org.eclipse.ui.IMemento;
 import org.eclipse.ui.commands.IHandler;
 import org.eclipse.ui.internal.util.ConfigurationElementMemento;
 
 public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
-
-    private List activeKeyConfigurationDefinitions;
 
     private List categoryDefinitions;
 
@@ -43,10 +40,6 @@ public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
      * <code>load</code>.
      */
     private List handlers;
-
-    private List keyConfigurationDefinitions;
-
-    private List keySequenceBindingDefinitions;
 
     public ExtensionCommandRegistry(IExtensionRegistry extensionRegistry) {
         if (extensionRegistry == null)
@@ -92,10 +85,6 @@ public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
     }
 
     private void load() throws IOException {
-        if (activeKeyConfigurationDefinitions == null)
-            activeKeyConfigurationDefinitions = new ArrayList();
-        else
-            activeKeyConfigurationDefinitions.clear();
 
         if (categoryDefinitions == null)
             categoryDefinitions = new ArrayList();
@@ -118,58 +107,8 @@ public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
         else
             imageBindingDefinitions.clear();
 
-        if (keyConfigurationDefinitions == null)
-            keyConfigurationDefinitions = new ArrayList();
-        else
-            keyConfigurationDefinitions.clear();
-
-        if (keySequenceBindingDefinitions == null)
-            keySequenceBindingDefinitions = new ArrayList();
-        else
-            keySequenceBindingDefinitions.clear();
-
         // TODO deprecated start
         IConfigurationElement[] deprecatedConfigurationElements = extensionRegistry
-                .getConfigurationElementsFor("org.eclipse.ui.acceleratorSets"); //$NON-NLS-1$
-
-        for (int i = 0; i < deprecatedConfigurationElements.length; i++) {
-            IConfigurationElement deprecatedConfigurationElement = deprecatedConfigurationElements[i];
-            String name = deprecatedConfigurationElement.getName();
-
-            if ("acceleratorSet".equals(name)) { //$NON-NLS-1$
-                IMemento memento = new ConfigurationElementMemento(
-                        deprecatedConfigurationElement);
-                String keyConfigurationId = memento
-                        .getString("configurationId"); //$NON-NLS-1$
-                String scopeId = memento.getString("scopeId"); //$NON-NLS-1$		
-                IConfigurationElement[] deprecatedConfigurationElements2 = deprecatedConfigurationElement
-                        .getChildren("accelerator"); //$NON-NLS-1$
-
-                for (int j = 0; j < deprecatedConfigurationElements2.length; j++) {
-                    IConfigurationElement deprecatedConfigurationElement2 = deprecatedConfigurationElements2[j];
-                    KeySequenceBindingDefinition keySequenceBindingDefinition = Persistence
-                            .readKeySequenceBindingDefinition(
-                                    new ConfigurationElementMemento(
-                                            deprecatedConfigurationElement2),
-                                    getNamespace(deprecatedConfigurationElement2));
-
-                    if (keySequenceBindingDefinition != null) {
-                        keySequenceBindingDefinition = new KeySequenceBindingDefinition(
-                                scopeId, keySequenceBindingDefinition
-                                        .getCommandId(), keyConfigurationId,
-                                keySequenceBindingDefinition.getKeySequence(),
-                                keySequenceBindingDefinition.getLocale(),
-                                keySequenceBindingDefinition.getPlatform(),
-                                keySequenceBindingDefinition.getSourceId());
-
-                        keySequenceBindingDefinitions
-                                .add(keySequenceBindingDefinition);
-                    }
-                }
-            }
-        }
-
-        deprecatedConfigurationElements = extensionRegistry
                 .getConfigurationElementsFor("org.eclipse.ui.actionDefinitions"); //$NON-NLS-1$
 
         for (int i = 0; i < deprecatedConfigurationElements.length; i++) {
@@ -194,8 +133,6 @@ public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
                 readCommandDefinition(configurationElement);
             else if (Persistence.TAG_HANDLER.equals(name))
                 readHandlerSubmissionDefinition(configurationElement);
-            else if (Persistence.TAG_KEY_SEQUENCE_BINDING.equals(name))
-                readKeySequenceBindingDefinition(configurationElement);
         }
 
         boolean commandRegistryChanged = false;
@@ -220,13 +157,6 @@ public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
         if (!imageBindingDefinitions.equals(super.imageBindingDefinitions)) {
             super.imageBindingDefinitions = Collections
                     .unmodifiableList(imageBindingDefinitions);
-            commandRegistryChanged = true;
-        }
-
-        if (!keySequenceBindingDefinitions
-                .equals(super.keySequenceBindingDefinitions)) {
-            super.keySequenceBindingDefinitions = Collections
-                    .unmodifiableList(keySequenceBindingDefinitions);
             commandRegistryChanged = true;
         }
 
@@ -271,16 +201,5 @@ public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
 
         if (handler != null)
             handlers.add(handler);
-    }
-
-    private void readKeySequenceBindingDefinition(
-            IConfigurationElement configurationElement) {
-        KeySequenceBindingDefinition keySequenceBindingDefinition = Persistence
-                .readKeySequenceBindingDefinition(
-                        new ConfigurationElementMemento(configurationElement),
-                        getNamespace(configurationElement));
-
-        if (keySequenceBindingDefinition != null)
-            keySequenceBindingDefinitions.add(keySequenceBindingDefinition);
     }
 }

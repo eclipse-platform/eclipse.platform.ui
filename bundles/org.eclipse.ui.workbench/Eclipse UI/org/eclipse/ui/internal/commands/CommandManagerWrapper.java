@@ -27,13 +27,11 @@ import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.commands.contexts.ContextManagerEvent;
 import org.eclipse.core.commands.contexts.IContextManagerListener;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.bindings.BindingManagerEvent;
 import org.eclipse.jface.bindings.IBindingManagerListener;
 import org.eclipse.jface.bindings.Scheme;
 import org.eclipse.jface.bindings.TriggerSequence;
-import org.eclipse.jface.bindings.keys.KeyBinding;
 import org.eclipse.jface.bindings.keys.ParseException;
 import org.eclipse.ui.commands.CommandManagerEvent;
 import org.eclipse.ui.commands.ICategory;
@@ -543,55 +541,6 @@ public final class CommandManagerWrapper implements ICommandManager,
 		definedHandlers.clear();
 		definedHandlers.addAll(commandRegistry.getHandlers());
 		definedHandlers.addAll(mutableCommandRegistry.getHandlers());
-
-		// Copy in the key bindings.
-		List commandRegistryKeySequenceBindingDefinitions = new ArrayList(
-				commandRegistry.getKeySequenceBindingDefinitions());
-		validateKeySequenceBindingDefinitions(commandRegistryKeySequenceBindingDefinitions);
-		List mutableCommandRegistryKeySequenceBindingDefinitions = new ArrayList(
-				mutableCommandRegistry.getKeySequenceBindingDefinitions());
-		validateKeySequenceBindingDefinitions(mutableCommandRegistryKeySequenceBindingDefinitions);
-		final Set bindings = new HashSet();
-		final Iterator registryBindingItr = commandRegistryKeySequenceBindingDefinitions
-				.iterator();
-		while (registryBindingItr.hasNext()) {
-			final KeySequenceBindingDefinition definition = (KeySequenceBindingDefinition) registryBindingItr
-					.next();
-			try {
-				final org.eclipse.jface.bindings.keys.KeySequence keySequence = org.eclipse.jface.bindings.keys.KeySequence
-						.getInstance(definition.getKeySequence().toString());
-				final String commandId = definition.getCommandId();
-				final String schemeId = definition.getKeyConfigurationId();
-				final String contextId = definition.getContextId();
-				final String locale = definition.getLocale();
-				final String platform = definition.getPlatform();
-				bindings.add(new KeyBinding(keySequence, commandId, schemeId,
-						contextId, locale, platform, null, Binding.SYSTEM));
-			} catch (final ParseException e) {
-				// Ignore this binding.
-			}
-		}
-		final Iterator preferenceBindingItr = mutableCommandRegistryKeySequenceBindingDefinitions
-				.iterator();
-		while (preferenceBindingItr.hasNext()) {
-			final KeySequenceBindingDefinition definition = (KeySequenceBindingDefinition) preferenceBindingItr
-					.next();
-			try {
-				final org.eclipse.jface.bindings.keys.KeySequence keySequence = org.eclipse.jface.bindings.keys.KeySequence
-						.getInstance(definition.getKeySequence().toString());
-				final String commandId = definition.getCommandId();
-				final String schemeId = definition.getKeyConfigurationId();
-				final String contextId = definition.getContextId();
-				final String locale = definition.getLocale();
-				final String platform = definition.getPlatform();
-				bindings.add(new KeyBinding(keySequence, commandId, schemeId,
-						contextId, locale, platform, null, Binding.USER));
-			} catch (final ParseException e) {
-				// Ignore this binding.
-			}
-		}
-		bindingManager.setBindings((Binding[]) bindings
-				.toArray(new Binding[bindings.size()]));
 	}
 
 	public void removeCommandManagerListener(

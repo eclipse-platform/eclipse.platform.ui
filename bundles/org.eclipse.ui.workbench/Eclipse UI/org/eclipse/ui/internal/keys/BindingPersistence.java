@@ -15,6 +15,9 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.StringTokenizer;
 
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -23,7 +26,16 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.bindings.Scheme;
+import org.eclipse.jface.bindings.keys.IKeyLookup;
+import org.eclipse.jface.bindings.keys.KeyBinding;
+import org.eclipse.jface.bindings.keys.KeyLookupFactory;
+import org.eclipse.jface.bindings.keys.KeySequence;
+import org.eclipse.jface.bindings.keys.KeyStroke;
+import org.eclipse.jface.bindings.keys.ParseException;
+import org.eclipse.jface.bindings.keys.SWTKeySupport;
+import org.eclipse.jface.contexts.IContextIds;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.swt.SWT;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
@@ -42,9 +54,6 @@ import org.eclipse.ui.keys.IBindingService;
  * development for Eclipse 3.1. This class -- its existence, its name and its
  * methods -- are in flux. Do not use this class yet.
  * </p>
- * <p>
- * TODO Add methods for reading the extension registry and the preference store.
- * </p>
  * 
  * @since 3.1
  */
@@ -53,7 +62,18 @@ public final class BindingPersistence {
 	/**
 	 * The name of the attribute storing the command id for a binding.
 	 */
+	private static final String ATTRIBUTE_COMMAND = "command"; //$NON-NLS-1$
+
+	/**
+	 * The name of the attribute storing the command id for a binding.
+	 */
 	private static final String ATTRIBUTE_COMMAND_ID = "commandId"; //$NON-NLS-1$
+
+	/**
+	 * The name of the configuration attribute storing the scheme id for a
+	 * binding.
+	 */
+	private static final String ATTRIBUTE_CONFIGURATION = "configuration"; //$NON-NLS-1$
 
 	/**
 	 * The name of the attribute storing the context id for a binding.
@@ -118,6 +138,17 @@ public final class BindingPersistence {
 	private static final String ATTRIBUTE_SCHEME_ID = ATTRIBUTE_KEY_CONFIGURATION_ID; //$NON-NLS-1$
 
 	/**
+	 * The name of the scope attribute for a binding.
+	 */
+	private static final String ATTRIBUTE_SCOPE = "scope"; //$NON-NLS-1$
+
+	/**
+	 * The name of the string attribute (key sequence) for a binding in the
+	 * commands extension point.
+	 */
+	private static final String ATTRIBUTE_STRING = "string"; //$NON-NLS-1$
+
+	/**
 	 * The name of the deprecated attribute of the deprecated
 	 * <code>activeKeyConfiguration</code> element in the commands extension
 	 * point.
@@ -132,7 +163,7 @@ public final class BindingPersistence {
 
 	/**
 	 * The name of the deprecated accelerator configuration element. This
-	 * element was used in 2.1.x and earlier to defined groups of what are now
+	 * element was used in 2.1.x and earlier to define groups of what are now
 	 * called schemes.
 	 */
 	private static final String ELEMENT_ACCELERATOR_CONFIGURATION = "acceleratorConfiguration"; //$NON-NLS-1$
@@ -154,6 +185,11 @@ public final class BindingPersistence {
 	 * 'keyBinding' for legacy reasons.
 	 */
 	private static final String ELEMENT_BINDING = "keyBinding"; //$NON-NLS-1$
+
+	/**
+	 * The name of the key binding element in the commands extension point.
+	 */
+	private static final String ELEMENT_KEY_BINDING = "keyBinding"; //$NON-NLS-1$
 
 	/**
 	 * The name of the deprecated key configuration element in the commands
@@ -182,12 +218,93 @@ public final class BindingPersistence {
 	private static final int INDEX_ACTIVE_SCHEME = 0;
 
 	/**
+	 * The index of the binding definition configuration elements in the indexed
+	 * array.
+	 * 
+	 * @see BindingPersistence#read(BindingManager)
+	 */
+	private static final int INDEX_BINDING_DEFINITIONS = 1;
+
+	/**
 	 * The index of the scheme definition configuration elements in the indexed
 	 * array.
 	 * 
 	 * @see BindingPersistence#read(BindingManager)
 	 */
-	private static final int INDEX_SCHEME_DEFINITIONS = 1;
+	private static final int INDEX_SCHEME_DEFINITIONS = 2;
+
+	/**
+	 * The name of the default scope in 2.1.x.
+	 */
+	private static final String LEGACY_DEFAULT_SCOPE = "org.eclipse.ui.globalScope"; //$NON-NLS-1$
+
+	/**
+	 * A look-up map for 2.1.x style <code>string</code> keys on a
+	 * <code>keyBinding</code> element.
+	 */
+	private static final Map r2_1KeysByName = new HashMap();
+
+	static {
+		final IKeyLookup lookup = KeyLookupFactory.getDefault();
+		r2_1KeysByName.put(IKeyLookup.BACKSPACE_NAME, lookup
+				.formalKeyLookupInteger(IKeyLookup.BACKSPACE_NAME));
+		r2_1KeysByName.put(IKeyLookup.TAB_NAME, lookup
+				.formalKeyLookupInteger(IKeyLookup.TAB_NAME));
+		r2_1KeysByName.put(IKeyLookup.RETURN_NAME, lookup
+				.formalKeyLookupInteger(IKeyLookup.RETURN_NAME));
+		r2_1KeysByName.put(IKeyLookup.ENTER_NAME, lookup
+				.formalKeyLookupInteger(IKeyLookup.ENTER_NAME));
+		r2_1KeysByName.put(IKeyLookup.ESCAPE_NAME, lookup
+				.formalKeyLookupInteger(IKeyLookup.ESCAPE_NAME));
+		r2_1KeysByName.put(IKeyLookup.ESC_NAME, lookup
+				.formalKeyLookupInteger(IKeyLookup.ESC_NAME));
+		r2_1KeysByName.put(IKeyLookup.DELETE_NAME, lookup
+				.formalKeyLookupInteger(IKeyLookup.DELETE_NAME));
+		r2_1KeysByName.put(IKeyLookup.SPACE_NAME, lookup
+				.formalKeyLookupInteger(IKeyLookup.SPACE_NAME));
+		r2_1KeysByName.put(IKeyLookup.ARROW_UP_NAME, lookup
+				.formalKeyLookupInteger(IKeyLookup.ARROW_UP_NAME));
+		r2_1KeysByName.put(IKeyLookup.ARROW_DOWN_NAME, lookup
+				.formalKeyLookupInteger(IKeyLookup.ARROW_DOWN_NAME));
+		r2_1KeysByName.put(IKeyLookup.ARROW_LEFT_NAME, lookup
+				.formalKeyLookupInteger(IKeyLookup.ARROW_LEFT_NAME));
+		r2_1KeysByName.put(IKeyLookup.ARROW_RIGHT_NAME, lookup
+				.formalKeyLookupInteger(IKeyLookup.ARROW_RIGHT_NAME));
+		r2_1KeysByName.put(IKeyLookup.PAGE_UP_NAME, lookup
+				.formalKeyLookupInteger(IKeyLookup.PAGE_UP_NAME));
+		r2_1KeysByName.put(IKeyLookup.PAGE_DOWN_NAME, lookup
+				.formalKeyLookupInteger(IKeyLookup.PAGE_DOWN_NAME));
+		r2_1KeysByName.put(IKeyLookup.HOME_NAME, lookup
+				.formalKeyLookupInteger(IKeyLookup.HOME_NAME));
+		r2_1KeysByName.put(IKeyLookup.END_NAME, lookup
+				.formalKeyLookupInteger(IKeyLookup.END_NAME));
+		r2_1KeysByName.put(IKeyLookup.INSERT_NAME, lookup
+				.formalKeyLookupInteger(IKeyLookup.INSERT_NAME));
+		r2_1KeysByName.put(IKeyLookup.F1_NAME, lookup
+				.formalKeyLookupInteger(IKeyLookup.F1_NAME));
+		r2_1KeysByName.put(IKeyLookup.F2_NAME, lookup
+				.formalKeyLookupInteger(IKeyLookup.F2_NAME));
+		r2_1KeysByName.put(IKeyLookup.F3_NAME, lookup
+				.formalKeyLookupInteger(IKeyLookup.F3_NAME));
+		r2_1KeysByName.put(IKeyLookup.F4_NAME, lookup
+				.formalKeyLookupInteger(IKeyLookup.F4_NAME));
+		r2_1KeysByName.put(IKeyLookup.F5_NAME, lookup
+				.formalKeyLookupInteger(IKeyLookup.F5_NAME));
+		r2_1KeysByName.put(IKeyLookup.F6_NAME, lookup
+				.formalKeyLookupInteger(IKeyLookup.F6_NAME));
+		r2_1KeysByName.put(IKeyLookup.F7_NAME, lookup
+				.formalKeyLookupInteger(IKeyLookup.F7_NAME));
+		r2_1KeysByName.put(IKeyLookup.F8_NAME, lookup
+				.formalKeyLookupInteger(IKeyLookup.F8_NAME));
+		r2_1KeysByName.put(IKeyLookup.F9_NAME, lookup
+				.formalKeyLookupInteger(IKeyLookup.F9_NAME));
+		r2_1KeysByName.put(IKeyLookup.F10_NAME, lookup
+				.formalKeyLookupInteger(IKeyLookup.F10_NAME));
+		r2_1KeysByName.put(IKeyLookup.F11_NAME, lookup
+				.formalKeyLookupInteger(IKeyLookup.F11_NAME));
+		r2_1KeysByName.put(IKeyLookup.F12_NAME, lookup
+				.formalKeyLookupInteger(IKeyLookup.F12_NAME));
+	}
 
 	/**
 	 * Inserts the given element into the indexed two-dimensional array in the
@@ -227,6 +344,37 @@ public final class BindingPersistence {
 	}
 
 	/**
+	 * Converts a 2.1.x style key sequence (as parsed from the
+	 * <code>string</code> attribute of the <code>keyBinding</code>) to a
+	 * 3.1 key sequence.
+	 * 
+	 * @param r21KeySequence
+	 *            The sequence of 2.1.x key strokes that should be converted
+	 *            into a 3.1 key sequence; never <code>null</code>.
+	 * @return A 3.1 key sequence; never <code>null</code>.
+	 */
+	private static final KeySequence convert2_1Sequence(int[] r21KeySequence) {
+		final int r21KeySequenceLength = r21KeySequence.length;
+		final KeyStroke[] keyStrokes = new KeyStroke[r21KeySequenceLength];
+		for (int i = 0; i < r21KeySequenceLength; i++)
+			keyStrokes[i] = convert2_1Stroke(r21KeySequence[i]);
+
+		return KeySequence.getInstance(keyStrokes);
+	}
+
+	/**
+	 * Converts a 2.1.x style key stroke (as parsed from the <code>string</code>
+	 * attribute of the <code>keyBinding</code> to a 3.1 key stroke.
+	 * 
+	 * @param r21Stroke
+	 *            The 2.1.x stroke to convert; must never be <code>null</code>.
+	 * @return A 3.1 key stroke; never <code>null</code>.
+	 */
+	private static final KeyStroke convert2_1Stroke(final int r21Stroke) {
+		return SWTKeySupport.convertAcceleratorToKeyStroke(r21Stroke);
+	}
+
+	/**
 	 * Returns the default scheme identifier for the currently running
 	 * application.
 	 * 
@@ -241,57 +389,103 @@ public final class BindingPersistence {
 	}
 
 	/**
-	 * Writes the given active scheme and bindings to the preference store. Only
-	 * bindings that are of the <code>Binding.USER</code> type will be
-	 * written; the others will be ignored.
+	 * Parses a 2.1.x <code>string</code> attribute of the
+	 * <code>keyBinding</code> element.
 	 * 
-	 * @param activeScheme
-	 *            The scheme which should be persisted; may be <code>null</code>.
-	 * @param bindings
-	 *            The bindings which should be persisted; may be
-	 *            <code>null</code>
-	 * @throws IOException
-	 *             If something happens while trying to write to the workbench
-	 *             preference store.
+	 * @param string
+	 *            The string to parse; must not be <code>null</code>.
+	 * @return An array of integer values -- each integer representing a single
+	 *         key stroke. This array may be empty, but it is never
+	 *         <code>null</code>.
 	 */
-	public static final void persist(final Scheme activeScheme,
-			final Binding[] bindings) throws IOException {
-		// Print out debugging information, if requested.
-		if (DEBUG) {
-			System.out.println("BINDINGS >> Persisting active scheme '" //$NON-NLS-1$
-					+ activeScheme.getId() + "'"); //$NON-NLS-1$
-			System.out.println("BINDINGS >> Persisting bindings"); //$NON-NLS-1$
+	private static final int[] parse2_1Sequence(final String string) {
+		final StringTokenizer stringTokenizer = new StringTokenizer(string);
+		final int length = stringTokenizer.countTokens();
+		final int[] strokes = new int[length];
+
+		for (int i = 0; i < length; i++)
+			strokes[i] = parse2_1Stroke(stringTokenizer.nextToken());
+
+		return strokes;
+	}
+
+	/**
+	 * Parses a single 2.1.x key stroke string, as provided by
+	 * <code>parse2_1Sequence</code>.
+	 * 
+	 * @param string
+	 *            The string to parse; must not be <code>null</code>.
+	 * @return An single integer value representing this key stroke.
+	 */
+	private static final int parse2_1Stroke(final String string) {
+		final StringTokenizer stringTokenizer = new StringTokenizer(string,
+				KeyStroke.KEY_DELIMITER, true);
+
+		// Copy out the tokens so we have random access.
+		final int size = stringTokenizer.countTokens();
+		final String[] tokens = new String[size];
+		for (int i = 0; stringTokenizer.hasMoreTokens(); i++) {
+			tokens[i] = stringTokenizer.nextToken();
 		}
 
-		// Write the simple preference key to the UI preference store.
-		writeActiveScheme(activeScheme);
+		int value = 0;
+		if (size % 2 == 1) {
+			String token = tokens[size - 1];
+			final Integer integer = (Integer) r2_1KeysByName.get(token
+					.toUpperCase());
 
-		// Build the XML block for writing the bindings and active scheme.
-		final XMLMemento xmlMemento = XMLMemento
-				.createWriteRoot(EXTENSION_COMMANDS);
-		if (activeScheme != null) {
-			writeActiveScheme(xmlMemento, activeScheme);
-		}
-		if (bindings != null) {
-			final int bindingsLength = bindings.length;
-			for (int i = 0; i < bindingsLength; i++) {
-				final Binding binding = bindings[i];
-				if (binding.getType() == Binding.USER) {
-					writeBinding(xmlMemento, binding);
+			if (integer != null)
+				value = integer.intValue();
+			else if (token.length() == 1)
+				value = token.toUpperCase().charAt(0);
+
+			if (value != 0) {
+				for (int i = 0; i < size - 1; i++) {
+					token = tokens[i];
+
+					if (i % 2 == 0) {
+						if (token.equalsIgnoreCase(IKeyLookup.CTRL_NAME)) {
+							if ((value & SWT.CTRL) != 0) {
+								return 0;
+							}
+
+							value |= SWT.CTRL;
+
+						} else if (token.equalsIgnoreCase(IKeyLookup.ALT_NAME)) {
+							if ((value & SWT.ALT) != 0) {
+								return 0;
+							}
+
+							value |= SWT.ALT;
+
+						} else if (token
+								.equalsIgnoreCase(IKeyLookup.SHIFT_NAME)) {
+							if ((value & SWT.SHIFT) != 0) {
+								return 0;
+							}
+
+							value |= SWT.SHIFT;
+
+						} else if (token
+								.equalsIgnoreCase(IKeyLookup.COMMAND_NAME)) {
+							if ((value & SWT.COMMAND) != 0) {
+								return 0;
+							}
+
+							value |= SWT.COMMAND;
+
+						} else {
+							return 0;
+
+						}
+
+					} else if (!KeyStroke.KEY_DELIMITER.equals(token))
+						return 0;
 				}
 			}
 		}
 
-		// Write the XML block to the workbench preference store.
-		final IPreferenceStore preferenceStore = WorkbenchPlugin.getDefault()
-				.getPreferenceStore();
-		final Writer writer = new StringWriter();
-		try {
-			xmlMemento.save(writer);
-			preferenceStore.setValue(EXTENSION_COMMANDS, writer.toString());
-		} finally {
-			writer.close();
-		}
+		return value;
 	}
 
 	/**
@@ -307,8 +501,9 @@ public final class BindingPersistence {
 		// Create the extension registry mementos.
 		final IExtensionRegistry registry = Platform.getExtensionRegistry();
 		int activeSchemeElementCount = 0;
+		int bindingDefinitionCount = 0;
 		int schemeDefinitionCount = 0;
-		final IConfigurationElement[][] indexedConfigurationElements = new IConfigurationElement[2][];
+		final IConfigurationElement[][] indexedConfigurationElements = new IConfigurationElement[3][];
 
 		// Sort the commands extension point based on element name.
 		final IConfigurationElement[] commandsExtensionPoint = registry
@@ -317,17 +512,23 @@ public final class BindingPersistence {
 			final IConfigurationElement configurationElement = commandsExtensionPoint[i];
 			final String name = configurationElement.getName();
 
-			// Check if it is an active scheme identifier.
-			if (ELEMENT_ACTIVE_KEY_CONFIGURATION.equals(name)) {
+			// Check if it is a binding definition.
+			if (ELEMENT_KEY_BINDING.equals(name)) {
 				addElementToIndexedArray(configurationElement,
-						indexedConfigurationElements, INDEX_ACTIVE_SCHEME,
-						activeSchemeElementCount++);
+						indexedConfigurationElements,
+						INDEX_BINDING_DEFINITIONS, bindingDefinitionCount++);
 
 				// Check if it is a scheme defintion.
 			} else if (ELEMENT_KEY_CONFIGURATION.equals(name)) {
 				addElementToIndexedArray(configurationElement,
 						indexedConfigurationElements, INDEX_SCHEME_DEFINITIONS,
 						schemeDefinitionCount++);
+
+				// Check if it is an active scheme identifier.
+			} else if (ELEMENT_ACTIVE_KEY_CONFIGURATION.equals(name)) {
+				addElementToIndexedArray(configurationElement,
+						indexedConfigurationElements, INDEX_ACTIVE_SCHEME,
+						activeSchemeElementCount++);
 			}
 		}
 
@@ -368,6 +569,10 @@ public final class BindingPersistence {
 				schemeDefinitionCount, bindingManager);
 		readActiveScheme(indexedConfigurationElements[INDEX_ACTIVE_SCHEME],
 				activeSchemeElementCount, preferenceMemento, bindingManager);
+		readBindingsFromCommandsExtensionPoint(
+				indexedConfigurationElements[INDEX_BINDING_DEFINITIONS],
+				bindingDefinitionCount, bindingManager);
+		readBindingsFromPreferences(preferenceMemento, bindingManager);
 	}
 
 	/**
@@ -495,6 +700,244 @@ public final class BindingPersistence {
 	}
 
 	/**
+	 * Reads all of the binding definitions from the commands extension point.
+	 * 
+	 * @param configurationElements
+	 *            The configuration elements in the commands extension point;
+	 *            must not be <code>null</code>, but may be empty.
+	 * @param configurationElementCount
+	 *            The number of configuration elements that are really in the
+	 *            array.
+	 * @param bindingManager
+	 *            The binding manager to which the bindings should be added;
+	 *            must not be <code>null</code>.
+	 */
+	private static final void readBindingsFromCommandsExtensionPoint(
+			final IConfigurationElement[] configurationElements,
+			final int configurationElementCount,
+			final BindingManager bindingManager) {
+		for (int i = 0; i < configurationElementCount; i++) {
+			final IConfigurationElement configurationElement = configurationElements[i];
+
+			/*
+			 * Read out the command id. Doing this before determining if the key
+			 * binding is actually valid is a bit wasteful. However, it is
+			 * helpful to have the command identifier when logging syntax
+			 * errors.
+			 */
+			String commandId = configurationElement
+					.getAttribute(ATTRIBUTE_COMMAND_ID);
+			if ((commandId == null) || (commandId.length() == 0)) {
+				commandId = configurationElement
+						.getAttribute(ATTRIBUTE_COMMAND);
+			}
+			if ((commandId != null) && (commandId.length() == 0)) {
+				commandId = null;
+			}
+
+			// Read out the scheme id.
+			String schemeId = configurationElement
+					.getAttribute(ATTRIBUTE_KEY_CONFIGURATION_ID);
+			if ((schemeId == null) || (schemeId.length() == 0)) {
+				schemeId = configurationElement
+						.getAttribute(ATTRIBUTE_CONFIGURATION);
+				if ((schemeId == null) || (schemeId.length() == 0)) {
+					// The scheme id should never be null. This is invalid.
+					WorkbenchPlugin
+							.log("Key bindings need a scheme or key configuration.  I believe this binding was defined by '" //$NON-NLS-1$
+									+ configurationElement.getNamespace()
+									+ '\'');
+					continue;
+				}
+			}
+
+			// Read out the context id.
+			String contextId = configurationElement
+					.getAttribute(ATTRIBUTE_CONTEXT_ID);
+			if ((contextId == null) || (contextId.length() == 0)) {
+				contextId = configurationElement.getAttribute(ATTRIBUTE_SCOPE);
+				if (LEGACY_DEFAULT_SCOPE.equals(contextId)) {
+					contextId = null;
+				}
+			}
+			if ((contextId == null) || (contextId.length() == 0)) {
+				contextId = IContextIds.CONTEXT_ID_WINDOW;
+			}
+
+			// Read out the key sequence.
+			String keySequenceText = configurationElement
+					.getAttribute(ATTRIBUTE_KEY_SEQUENCE);
+			KeySequence keySequence = null;
+			if ((keySequenceText == null) || (keySequenceText.length() == 0)) {
+				keySequenceText = configurationElement
+						.getAttribute(ATTRIBUTE_STRING);
+				if ((keySequenceText == null)
+						|| (keySequenceText.length() == 0)) {
+					// The key sequence should never be null. This is pointless
+					WorkbenchPlugin
+							.log("Defining a key binding with no key sequence or string has no effect.  I believe this binding was defined by '" //$NON-NLS-1$
+									+ configurationElement.getNamespace()
+									+ "'.  The command id was '" //$NON-NLS-1$
+									+ commandId + "'."); //$NON-NLS-1$
+					continue;
+				}
+
+				// The key sequence is in the old-style format.
+				keySequence = convert2_1Sequence(parse2_1Sequence(keySequenceText));
+
+			} else {
+				// The key sequence is in the new-style format.
+				try {
+					keySequence = KeySequence.getInstance(keySequenceText);
+				} catch (final ParseException e) {
+					WorkbenchPlugin.log("Could not parse '" + keySequenceText //$NON-NLS-1$
+							+ "'.  I believe this binding was defined by '" //$NON-NLS-1$
+							+ configurationElement.getNamespace()
+							+ "'.  The command id was '" //$NON-NLS-1$
+							+ commandId + "'."); //$NON-NLS-1$
+					continue;
+				}
+				if (keySequence.isEmpty() || !keySequence.isComplete()) {
+					WorkbenchPlugin
+							.log("Key bindings should not have an empty or incomplete key sequence: '" //$NON-NLS-1$
+									+ keySequence
+									+ "'.  I believe this binding was defined by '" //$NON-NLS-1$
+									+ configurationElement.getNamespace()
+									+ "'.  The command id was '" //$NON-NLS-1$
+									+ contextId + "'."); //$NON-NLS-1$
+					continue;
+				}
+
+			}
+
+			// Read out the locale and platform.
+			String locale = configurationElement.getAttribute(ATTRIBUTE_LOCALE);
+			if ((locale != null) && (locale.length() == 0)) {
+				locale = null;
+			}
+			String platform = configurationElement
+					.getAttribute(ATTRIBUTE_PLATFORM);
+			if ((platform != null) && (platform.length() == 0)) {
+				platform = null;
+			}
+
+			final Binding binding = new KeyBinding(keySequence, commandId,
+					schemeId, contextId, locale, platform, null, Binding.SYSTEM);
+			bindingManager.addBinding(binding);
+		}
+	}
+
+	/**
+	 * Reads all of the binding definitions from the preferences.
+	 * 
+	 * @param preferences
+	 *            The memento for the commands preferences key.
+	 * @param bindingManager
+	 *            The binding manager to which the bindings should be added;
+	 *            must not be <code>null</code>.
+	 */
+	private static final void readBindingsFromPreferences(
+			final IMemento preferences, final BindingManager bindingManager) {
+		if (preferences != null) {
+			final IMemento[] preferenceMementos = preferences
+					.getChildren(ELEMENT_ACTIVE_KEY_CONFIGURATION);
+			int preferenceMementoCount = preferenceMementos.length;
+			for (int i = preferenceMementoCount - 1; i >= 0; i--) {
+				final IMemento memento = preferenceMementos[i];
+
+				// Read out the scheme id.
+				String schemeId = memento
+						.getString(ATTRIBUTE_KEY_CONFIGURATION_ID);
+				if ((schemeId == null) || (schemeId.length() == 0)) {
+					schemeId = memento.getString(ATTRIBUTE_CONFIGURATION);
+					if ((schemeId == null) || (schemeId.length() == 0)) {
+						// The scheme id should never be null. This is invalid.
+						WorkbenchPlugin
+								.log("Key bindings need a scheme or key configuration.  This binding came from preferences."); //$NON-NLS-1$
+					}
+				}
+
+				// Read out the context id.
+				String contextId = memento.getString(ATTRIBUTE_CONTEXT_ID);
+				if ((contextId == null) || (contextId.length() == 0)) {
+					contextId = memento.getString(ATTRIBUTE_SCOPE);
+					if (LEGACY_DEFAULT_SCOPE.equals(contextId)) {
+						contextId = null;
+					}
+				}
+				if ((contextId == null) || (contextId.length() == 0)) {
+					contextId = IContextIds.CONTEXT_ID_WINDOW;
+				}
+
+				// Read out the key sequence.
+				String keySequenceText = memento
+						.getString(ATTRIBUTE_KEY_SEQUENCE);
+				KeySequence keySequence = null;
+				if ((keySequenceText == null)
+						|| (keySequenceText.length() == 0)) {
+					keySequenceText = memento.getString(ATTRIBUTE_STRING);
+					if ((keySequenceText == null)
+							|| (keySequenceText.length() == 0)) {
+						/*
+						 * The key sequence should never be null. This is
+						 * pointless
+						 */
+						WorkbenchPlugin
+								.log("Key bindings need a key sequence or string.  This binding came from preferences."); //$NON-NLS-1$
+						continue;
+					}
+
+					// The key sequence is in the old-style format.
+					keySequence = convert2_1Sequence(parse2_1Sequence(keySequenceText));
+
+				} else {
+					// The key sequence is in the new-style format.
+					try {
+						keySequence = KeySequence.getInstance(keySequenceText);
+					} catch (final ParseException e) {
+						WorkbenchPlugin.log("Could not parse: '" //$NON-NLS-1$
+								+ keySequenceText
+								+ "'.  This binding came from preferences."); //$NON-NLS-1$
+						continue;
+					}
+					if (keySequence.isEmpty() || !keySequence.isComplete()) {
+						WorkbenchPlugin
+								.log("Key bindings cannot use an empty or incomplete key sequence: '" //$NON-NLS-1$
+										+ keySequence
+										+ "'.  This binding came from preferences."); //$NON-NLS-1$
+						continue;
+					}
+
+				}
+
+				// Read out the command id.
+				String commandId = memento.getString(ATTRIBUTE_COMMAND_ID);
+				if ((commandId == null) || (commandId.length() == 0)) {
+					commandId = memento.getString(ATTRIBUTE_COMMAND);
+				}
+				if ((commandId != null) && (commandId.length() == 0)) {
+					commandId = null;
+				}
+
+				// Read out the locale and platform.
+				String locale = memento.getString(ATTRIBUTE_LOCALE);
+				if ((locale != null) && (locale.length() == 0)) {
+					locale = null;
+				}
+				String platform = memento.getString(ATTRIBUTE_PLATFORM);
+				if ((platform != null) && (platform.length() == 0)) {
+					platform = null;
+				}
+
+				final Binding binding = new KeyBinding(keySequence, commandId,
+						schemeId, contextId, locale, platform, null,
+						Binding.USER);
+				bindingManager.addBinding(binding);
+			}
+		}
+	}
+
+	/**
 	 * Reads all of the scheme definitions from the registry.
 	 * 
 	 * @param configurationElements
@@ -504,7 +947,8 @@ public final class BindingPersistence {
 	 *            The number of configuration elements that are really in the
 	 *            array.
 	 * @param bindingManager
-	 *            The binding manager to which the schemes should be added.
+	 *            The binding manager to which the schemes should be added; must
+	 *            not be <code>null</code>.
 	 */
 	private static final void readSchemes(
 			final IConfigurationElement[] configurationElements,
@@ -515,19 +959,85 @@ public final class BindingPersistence {
 
 			// Read out the attributes.
 			final String id = configurationElement.getAttribute(ATTRIBUTE_ID);
-			final String name = configurationElement
-					.getAttribute(ATTRIBUTE_NAME);
-			final String description = configurationElement
+			if ((id == null) || (id.length() == 0)) {
+				// The id cannot be null or empty.
+				continue;
+			}
+			String name = configurationElement.getAttribute(ATTRIBUTE_NAME);
+			if ((name != null) && (name.length() == 0)) {
+				name = null;
+			}
+			String description = configurationElement
 					.getAttribute(ATTRIBUTE_DESCRIPTION);
+			if ((description != null) && (description.length() == 0)) {
+				description = null;
+			}
 			String parentId = configurationElement
 					.getAttribute(ATTRIBUTE_PARENT_ID);
-			if (parentId == null) {
+			if ((parentId != null) && (parentId.length() == 0)) {
 				parentId = configurationElement.getAttribute(ATTRIBUTE_PARENT);
+				if ((parentId != null) && (parentId.length() == 0)) {
+					parentId = null;
+				}
 			}
 
 			// Define the scheme.
 			final Scheme scheme = bindingManager.getScheme(id);
 			scheme.define(name, description, parentId);
+		}
+	}
+
+	/**
+	 * Writes the given active scheme and bindings to the preference store. Only
+	 * bindings that are of the <code>Binding.USER</code> type will be
+	 * written; the others will be ignored.
+	 * 
+	 * @param activeScheme
+	 *            The scheme which should be persisted; may be <code>null</code>.
+	 * @param bindings
+	 *            The bindings which should be persisted; may be
+	 *            <code>null</code>
+	 * @throws IOException
+	 *             If something happens while trying to write to the workbench
+	 *             preference store.
+	 */
+	public static final void write(final Scheme activeScheme,
+			final Binding[] bindings) throws IOException {
+		// Print out debugging information, if requested.
+		if (DEBUG) {
+			System.out.println("BINDINGS >> Persisting active scheme '" //$NON-NLS-1$
+					+ activeScheme.getId() + "'"); //$NON-NLS-1$
+			System.out.println("BINDINGS >> Persisting bindings"); //$NON-NLS-1$
+		}
+
+		// Write the simple preference key to the UI preference store.
+		writeActiveScheme(activeScheme);
+
+		// Build the XML block for writing the bindings and active scheme.
+		final XMLMemento xmlMemento = XMLMemento
+				.createWriteRoot(EXTENSION_COMMANDS);
+		if (activeScheme != null) {
+			writeActiveScheme(xmlMemento, activeScheme);
+		}
+		if (bindings != null) {
+			final int bindingsLength = bindings.length;
+			for (int i = 0; i < bindingsLength; i++) {
+				final Binding binding = bindings[i];
+				if (binding.getType() == Binding.USER) {
+					writeBinding(xmlMemento, binding);
+				}
+			}
+		}
+
+		// Write the XML block to the workbench preference store.
+		final IPreferenceStore preferenceStore = WorkbenchPlugin.getDefault()
+				.getPreferenceStore();
+		final Writer writer = new StringWriter();
+		try {
+			xmlMemento.save(writer);
+			preferenceStore.setValue(EXTENSION_COMMANDS, writer.toString());
+		} finally {
+			writer.close();
 		}
 	}
 

@@ -101,11 +101,6 @@ public final class PreferenceCommandRegistry extends
                 List commandDefinitions = Collections
                         .unmodifiableList(Persistence.readCommandDefinitions(
                                 memento, Persistence.TAG_COMMAND, null));
-                List keySequenceBindingDefinitions = Collections
-                        .unmodifiableList(Persistence
-                                .readKeySequenceBindingDefinitions(memento,
-                                        Persistence.TAG_KEY_SEQUENCE_BINDING,
-                                        null));
                 boolean commandRegistryChanged = false;
 
                 if (!categoryDefinitions.equals(this.categoryDefinitions)) {
@@ -115,12 +110,6 @@ public final class PreferenceCommandRegistry extends
 
                 if (!commandDefinitions.equals(this.commandDefinitions)) {
                     this.commandDefinitions = commandDefinitions;
-                    commandRegistryChanged = true;
-                }
-
-                if (!keySequenceBindingDefinitions
-                        .equals(this.keySequenceBindingDefinitions)) {
-                    this.keySequenceBindingDefinitions = keySequenceBindingDefinitions;
                     commandRegistryChanged = true;
                 }
 
@@ -147,9 +136,6 @@ public final class PreferenceCommandRegistry extends
                 Persistence.TAG_CATEGORY, categoryDefinitions);
         Persistence.writeCommandDefinitions(xmlMemento,
                 Persistence.TAG_COMMAND, commandDefinitions);
-        Persistence.writeKeySequenceBindingDefinitions(xmlMemento,
-                Persistence.TAG_KEY_SEQUENCE_BINDING,
-                keySequenceBindingDefinitions);
         Writer writer = new StringWriter();
 
         try {

@@ -128,17 +128,21 @@ public final class CharacterKey extends NaturalKey {
 		TAB = new CharacterKey(lookup.formalKeyLookup(IKeyLookup.TAB_NAME));
 		VT = new CharacterKey(lookup.formalKeyLookup(IKeyLookup.VT_NAME));
 
-		characterKeysByName.put(CharacterKey.BS.toString(), CharacterKey.BS);
-		characterKeysByName.put(CharacterKey.CR.toString(), CharacterKey.CR);
-		characterKeysByName.put(CharacterKey.DEL.toString(), CharacterKey.DEL);
-		characterKeysByName.put(CharacterKey.ESC.toString(), CharacterKey.ESC);
-		characterKeysByName.put(CharacterKey.FF.toString(), CharacterKey.FF);
-		characterKeysByName.put(CharacterKey.LF.toString(), CharacterKey.LF);
-		characterKeysByName.put(CharacterKey.NUL.toString(), CharacterKey.NUL);
-		characterKeysByName.put(CharacterKey.SPACE.toString(),
-				CharacterKey.SPACE);
-		characterKeysByName.put(CharacterKey.TAB.toString(), CharacterKey.TAB);
-		characterKeysByName.put(CharacterKey.VT.toString(), CharacterKey.VT);
+		characterKeysByName.put(IKeyLookup.BS_NAME, CharacterKey.BS);
+		characterKeysByName.put(IKeyLookup.BACKSPACE_NAME, CharacterKey.BS);
+		characterKeysByName.put(IKeyLookup.CR_NAME, CharacterKey.CR);
+		characterKeysByName.put(IKeyLookup.ENTER_NAME, CharacterKey.CR);
+		characterKeysByName.put(IKeyLookup.RETURN_NAME, CharacterKey.CR);
+		characterKeysByName.put(IKeyLookup.DEL_NAME, CharacterKey.DEL);
+		characterKeysByName.put(IKeyLookup.DELETE_NAME, CharacterKey.DEL);
+		characterKeysByName.put(IKeyLookup.ESC_NAME, CharacterKey.ESC);
+		characterKeysByName.put(IKeyLookup.ESCAPE_NAME, CharacterKey.ESC);
+		characterKeysByName.put(IKeyLookup.FF_NAME, CharacterKey.FF);
+		characterKeysByName.put(IKeyLookup.LF_NAME, CharacterKey.LF);
+		characterKeysByName.put(IKeyLookup.NUL_NAME, CharacterKey.NUL);
+		characterKeysByName.put(IKeyLookup.SPACE_NAME, CharacterKey.SPACE);
+		characterKeysByName.put(IKeyLookup.TAB_NAME, CharacterKey.TAB);
+		characterKeysByName.put(IKeyLookup.VT_NAME, CharacterKey.VT);
 	}
 
 	/**
