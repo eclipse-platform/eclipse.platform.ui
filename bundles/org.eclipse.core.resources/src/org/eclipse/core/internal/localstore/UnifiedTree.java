@@ -250,21 +250,10 @@ protected Object[] getLocalList(UnifiedTreeNode node, String location) {
 	String[] list = new java.io.File(location).list();
 	if (list == null)
 		return list;
-	return getSorter().sort(list);
-}
-
-/**
- * helper method to reduce garbage generation
- */
-protected Sorter getSorter() {
-	if (sorter == null) {
-		sorter = new Sorter() {
-			public boolean compare(Object elementOne, Object elementTwo) {
-				return ((String) elementTwo).compareTo((String) elementOne) > 0;
-			}
-		};
-	}
-	return sorter;
+	int size = list.length;
+	if (size > 1)
+		quickSort(list, 0 , size-1);
+	return list;
 }
 protected Workspace getWorkspace() {
 	return (Workspace) root.getWorkspace();
@@ -318,5 +307,32 @@ protected void removeNodeChildrenFromQueue(UnifiedTreeNode node) throws CoreExce
 public void setRoot(IResource root) {
 	this.root = root;
 	this.rootLocalLocation = root.getLocation();
+}
+/**
+ * Sorts the given array of strings in place.  This is
+ * not using the sorting framework to avoid casting overhead.
+ */
+protected void quickSort(String[] strings, int left, int right) {
+	int originalLeft = left;
+	int originalRight = right;
+	String mid = strings[ (left + right) / 2];
+	do {
+		while (mid.compareTo(strings[left]) > 0)
+			left++;
+		while (strings[right].compareTo(mid) > 0)
+			right--;
+		if (left <= right) {
+			String tmp = strings[left];
+			strings[left] = strings[right];
+			strings[right] = tmp;
+			left++;
+			right--;
+		}
+	} while (left <= right);
+	if (originalLeft < right)
+		quickSort(strings, originalLeft, right);
+	if (left < originalRight)
+		quickSort(strings, left, originalRight);
+	return;
 }
 }
