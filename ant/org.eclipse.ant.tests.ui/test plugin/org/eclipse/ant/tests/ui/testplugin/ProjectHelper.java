@@ -43,7 +43,7 @@ public class ProjectHelper {
 	public static final IPath TEST_RESOURCES_DIR= new Path("testresources");	
 	public static final IPath TEST_LIB_DIR= new Path("testlib");
 	
-	public static final String PROJECT_NAME= "AntUITests";
+	public static final String PROJECT_NAME= "Ant UI Tests";
 	
 	/**
 	 * Creates a IProject.
