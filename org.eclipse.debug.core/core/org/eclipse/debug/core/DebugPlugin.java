@@ -16,8 +16,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
@@ -51,6 +53,7 @@ import org.eclipse.debug.internal.core.LogicalStructureManager;
 import org.eclipse.debug.internal.core.memory.MemoryBlockManager;
 import org.eclipse.debug.internal.core.sourcelookup.SourceLookupMessages;
 import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
+import org.eclipse.osgi.service.environment.Constants;
 import org.osgi.framework.BundleContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -1060,6 +1063,133 @@ public class DebugPlugin extends Plugin {
 	private static void abort(String message, Throwable exception) throws CoreException {
 		IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, message, exception);
 		throw new CoreException(status);
+	}
+	
+	/**
+	 * Utility class to parse command line arguments.
+	 * 
+	 * @since 3.1
+	 */
+	private static class ArgumentParser {
+		private String fArgs;
+		private int fIndex= 0;
+		private int ch= -1;
+		
+		public ArgumentParser(String args) {
+			fArgs= args;
+		}
+		
+		public String[] parseArguments() {
+			List v= new ArrayList();
+			
+			ch= getNext();
+			while (ch > 0) {
+				if (Character.isWhitespace((char)ch)) {
+					ch= getNext();	
+				} else {
+					if (ch == '"') {
+					    StringBuffer buf = new StringBuffer();
+					    buf.append('"');
+						buf.append(parseString());
+						buf.append('"');
+						v.add(buf.toString());
+					} else {
+						v.add(parseToken());
+					}
+				}
+			}
+	
+			String[] result= new String[v.size()];
+			v.toArray(result);
+			return result;
+		}
+		
+		private int getNext() {
+			if (fIndex < fArgs.length())
+				return fArgs.charAt(fIndex++);
+			return -1;
+		}
+		
+		private String parseString() {
+			ch= getNext();
+			if (ch == '"') {
+				ch= getNext();
+				return ""; //$NON-NLS-1$
+			}
+			StringBuffer buf= new StringBuffer();
+			while (ch > 0 && ch != '"') {
+				if (ch == '\\') {
+					ch= getNext();
+					if (ch != '"') {           // Only escape double quotes
+						buf.append('\\');
+					} else {
+						if (Platform.getOS().equals(Constants.OS_WIN32)) {
+							// @see Bug 26870. Windows requires an extra escape for embedded strings
+							buf.append('\\');
+						}
+					}
+				}
+				if (ch > 0) {
+					buf.append((char)ch);
+					ch= getNext();
+				}
+			}
+			ch= getNext();
+			return buf.toString();
+		}
+		
+		private String parseToken() {
+			StringBuffer buf= new StringBuffer();
+			
+			while (ch > 0 && !Character.isWhitespace((char)ch)) {
+				if (ch == '\\') {
+					ch= getNext();
+					if (Character.isWhitespace((char)ch)) {
+						// end of token, don't lose trailing backslash
+						buf.append('\\');
+						return buf.toString();
+					}
+					if (ch > 0) {
+						if (ch != '"') {           // Only escape double quotes
+							buf.append('\\');
+						} else {
+							if (Platform.getOS().equals(Constants.OS_WIN32)) {
+								// @see Bug 26870. Windows requires an extra escape for embedded strings
+								buf.append('\\');
+							}
+						}
+						buf.append((char)ch);
+						ch= getNext();
+					} else if (ch == -1) {     // Don't lose a trailing backslash
+						buf.append('\\');
+					}
+				} else if (ch == '"') {
+					buf.append(parseString());
+				} else {
+					buf.append((char)ch);
+					ch= getNext();
+				}
+			}
+			return buf.toString();
+		}
+	}
+	
+	/**
+	 * Prarses the given command line into seperate arguments that can be passed to
+	 * <code>DebugPlugin.exec(String[], File)</code>. Embedded quotes and slashes
+	 * are escaped.
+	 * 
+	 * @param args command line arguments as a single string
+	 * @return individual arguments
+	 * @since 3.1
+	 */
+	public static String[] parseArguments(String args) {
+		if (args == null)
+			return new String[0];
+		ArgumentParser parser= new ArgumentParser(args);
+		String[] res= parser.parseArguments();
+		
+		return res;
 	}	
 }
 
