@@ -15,7 +15,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -28,6 +27,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -40,6 +40,7 @@ import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
+import org.eclipse.ui.internal.ide.actions.BuildSetAction;
 
 /**
  * Standard actions for full and incremental builds of the selected project(s).
@@ -194,7 +195,19 @@ public class BuildAction extends WorkspaceAction {
             throws CoreException {
         ((IProject) resource).build(buildType, monitor);
     }
-
+    
+    /* (non-Javadoc)
+     * Method declared on Action
+     */
+    public boolean isEnabled() {
+    	//update enablement based on active window and part
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		if (window != null) {
+			selectionChanged(new StructuredSelection(BuildSetAction.findSelectedProjects(window)));
+		}
+		return super.isEnabled();
+	}
+    
     /**
      * Returns whether the user's preference is set to automatically save modified
      * resources before a manual build is done.
@@ -259,7 +272,6 @@ public class BuildAction extends WorkspaceAction {
      * open editors so that the updated contents will be used for building.
      */
     public void run() {
-
         // Save all resources prior to doing build
         saveAllResources();
 

@@ -23,6 +23,7 @@ import org.eclipse.ui.internal.ide.TipsAndTricksAction;
 import org.eclipse.ui.internal.ide.actions.BuildCleanAction;
 import org.eclipse.ui.internal.ide.actions.OpenWorkspaceAction;
 import org.eclipse.ui.internal.ide.actions.ProjectPropertyDialogAction;
+import org.eclipse.ui.internal.ide.actions.RetargetActionWithDefault;
 import org.eclipse.ui.internal.ide.actions.ToggleAutoBuildAction;
 
 /**
@@ -149,7 +150,7 @@ public final class IDEActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            RetargetAction action = new RetargetAction(getId(),
+            RetargetAction action = new RetargetActionWithDefault(getId(),
                     IDEWorkbenchMessages.getString("Workbench.buildProject")); //$NON-NLS-1$
             action.setToolTipText(IDEWorkbenchMessages
                     .getString("Workbench.buildProjectToolTip")); //$NON-NLS-1$

@@ -11,12 +11,6 @@ package org.eclipse.ui.internal.ide.actions;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
@@ -30,43 +24,29 @@ import org.eclipse.ui.internal.ide.dialogs.CleanDialog;
  * 
  * @since 3.0
  */
-public class BuildCleanAction extends Action implements
-        ActionFactory.IWorkbenchAction {
-    private IWorkbenchWindow window;
+public class BuildCleanAction extends Action implements ActionFactory.IWorkbenchAction {
+	private IWorkbenchWindow window;
 
-    public BuildCleanAction(IWorkbenchWindow window) {
-        super(IDEWorkbenchMessages.getString("Workbench.buildClean")); //$NON-NLS-1$
-        setActionDefinitionId("org.eclipse.ui.project.cleanAction"); //$NON-NLS-1$
-        this.window = window;
-    }
+	/**
+	 * Creates a new BuildCleanAction
+	 * 
+	 * @param window The window for parenting this action
+	 */
+	public BuildCleanAction(IWorkbenchWindow window) {
+		super(IDEWorkbenchMessages.getString("Workbench.buildClean")); //$NON-NLS-1$
+		setActionDefinitionId("org.eclipse.ui.project.cleanAction"); //$NON-NLS-1$
+		this.window = window;
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.actions.ActionFactory.IWorkbenchAction#dispose()
-     */
-    public void dispose() {
-        //nothing to dispose
-    }
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.actions.ActionFactory.IWorkbenchAction#dispose()
+	 */
+	public void dispose() {
+		//nothing to dispose
+	}
 
-    public void run() {
-        ISelection selection = window.getSelectionService().getSelection();
-        IProject[] selected = null;
-        if (selection != null && !selection.isEmpty()
-                && selection instanceof IStructuredSelection) {
-            selected = BuildSetAction
-                    .extractProjects(((IStructuredSelection) selection)
-                            .toArray());
-        } else {
-            //see if we can extract a selected project from the active editor
-            IWorkbenchPart part = window.getPartService().getActivePart();
-            if (part instanceof IEditorPart) {
-                IEditorInput input = ((IEditorPart) part).getEditorInput();
-                if (input instanceof IFileEditorInput)
-                    selected = new IProject[] { ((IFileEditorInput) input)
-                            .getFile().getProject() };
-            }
-        }
-        if (selected == null)
-            selected = new IProject[0];
-        new CleanDialog(window, selected).open();
-    }
+	public void run() {
+		IProject[] selected = BuildSetAction.findSelectedProjects(window);
+		new CleanDialog(window, selected).open();
+	}
 }

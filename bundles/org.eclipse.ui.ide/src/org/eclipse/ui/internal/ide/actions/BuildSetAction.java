@@ -10,15 +10,20 @@
 package org.eclipse.ui.internal.ide.actions;
 
 import java.util.HashSet;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.actions.BuildAction;
@@ -57,6 +62,33 @@ public class BuildSetAction extends Action {
         }
         return (IProject[]) projects.toArray(new IProject[projects.size()]);
     }
+
+	/**
+	 * Finds and returns the selected projects in the given window
+	 * @param window The window to find the selection in
+	 * 
+	 * @return The selected projects, or an empty array if no selection could be found.
+	 */
+	public static IProject[] findSelectedProjects(IWorkbenchWindow window) {
+		if (window == null)
+			return new IProject[0];
+		ISelection selection = window.getSelectionService().getSelection();
+		IProject[] selected = null;
+		if (selection != null && !selection.isEmpty() && selection instanceof IStructuredSelection) {
+			selected = BuildSetAction.extractProjects(((IStructuredSelection) selection).toArray());
+		} else {
+			//see if we can extract a selected project from the active editor
+			IWorkbenchPart part = window.getPartService().getActivePart();
+			if (part instanceof IEditorPart) {
+				IEditorInput input = ((IEditorPart) part).getEditorInput();
+				if (input instanceof IFileEditorInput)
+					selected = new IProject[] {((IFileEditorInput) input).getFile().getProject()};
+			}
+		}
+		if (selected == null)
+			selected = new IProject[0];
+		return selected;
+	}
 
     /**
      * Creates a new action that builds the provided working set when run

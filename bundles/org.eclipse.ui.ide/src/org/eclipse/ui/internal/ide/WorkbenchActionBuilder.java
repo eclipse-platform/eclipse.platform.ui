@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide;
 
+import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.action.ActionContributionItem;
@@ -33,6 +34,7 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.actions.BuildAction;
 import org.eclipse.ui.actions.ContributionItemFactory;
 import org.eclipse.ui.actions.NewWizardMenu;
 import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
@@ -44,6 +46,7 @@ import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.ide.actions.BuildSetMenu;
 import org.eclipse.ui.internal.ide.actions.QuickMenuAction;
+import org.eclipse.ui.internal.ide.actions.RetargetActionWithDefault;
 import org.eclipse.ui.internal.util.StatusLineContributionItem;
 
 /**
@@ -258,7 +261,9 @@ public final class WorkbenchActionBuilder {
             }
 
             public void pageOpened(IWorkbenchPage page) {
-                // do nothing
+                // set default build handler -- can't be done until the shell is available
+                IAction buildHandler = new BuildAction(page.getWorkbenchWindow().getShell(), IncrementalProjectBuilder.INCREMENTAL_BUILD);
+            	((RetargetActionWithDefault)buildProjectAction).setDefaultHandler(buildHandler);
             }
         };
         getWindow().addPageListener(pageListener);
