@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.update.internal.core;
 import java.io.*;
+import java.net.*;
 
 //import org.eclipse.update.internal.core.net.http.IContext;
 //import org.eclipse.update.internal.core.net.http.client.IStatusCodes;
@@ -23,9 +24,22 @@ public class FileResponse extends Response {
 	/**
 	 * 
 	 */
-	public FileResponse(InputStream in) {
+	public FileResponse(URL url) {
 		//super(IStatusCodes.HTTP_OK,"", context, in);
-		super(in);
+		super(url);
 	}
 
+	public InputStream getInputStream() throws IOException {
+		return url.openStream();
+	}
+	
+	public long getLastModified() {
+		if (lastModified == 0) {
+			File f = new File(url.getFile());
+			if (f.isDirectory())
+				f = new File(f, "site.xml");
+			lastModified = f.lastModified();
+		}
+		return lastModified;
+	}
 }

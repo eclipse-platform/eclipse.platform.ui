@@ -20,7 +20,8 @@ public class Response {
 	protected URL url;
 	protected InputStream in;
 	protected URLConnection connection;
-
+	protected long lastModified;
+	
 	/**
 	 * 
 	 */
@@ -95,5 +96,21 @@ public class Response {
 		}
 		return "";
 	}
-
+	
+	/**
+	 * Returns the timestamp of last modification to the resource
+	 * @return
+	 */
+	public long getLastModified() {
+		if (lastModified == 0) {
+			if (connection == null) 
+				try {
+					connection = url.openConnection();
+				} catch (IOException e) {
+				}
+			if (connection != null)
+				lastModified = connection.getLastModified();
+		}
+		return lastModified;
+	}
 }

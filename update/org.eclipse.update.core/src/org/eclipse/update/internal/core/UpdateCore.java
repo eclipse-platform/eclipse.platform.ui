@@ -270,7 +270,7 @@ public class UpdateCore extends Plugin {
 		Response response = null;
 		
 		if ("file".equals(url.getProtocol())){
-			response = new FileResponse(url.openStream());
+			response = new FileResponse(url);
 		} else {
 			response = new HttpResponse(url);
 		}

@@ -42,6 +42,7 @@ public class HttpResponse extends Response {
 		throws IOException, CoreException {
 		if (in == null && url != null) {
 			connection = url.openConnection();
+			lastModified = connection.getLastModified();
 			if (monitor != null && connection instanceof HttpURLConnection) {
 				this.in =
 					openStreamWithCancel(

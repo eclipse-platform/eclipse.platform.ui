@@ -54,6 +54,8 @@ public class ContentReference {
 	
 	// <true> if a copy of a Contentreferenec in a temp local directory
 	private boolean tempLocal = false;
+	
+	private long lastModified;
 
 	/*
 	 * do not allow default contruction
@@ -262,5 +264,40 @@ public class ContentReference {
 	 */
 	protected void setTempLocal(boolean tempLocal) {
 		this.tempLocal = tempLocal;
+	}
+	
+	/**
+	 * Sets the timestamp the content was last modified.
+	 * @param timestamp
+	 * @since 3.0
+	 */
+	public void setLastModified(long timestamp) {
+		this.lastModified = timestamp;
+	}
+	
+	/**
+	 * Returns the timestamp when the content was last modified
+	 * @return
+	 * @since 3.0
+	 */
+	public long getLastModified() {
+		if (lastModified == 0) {
+			if (file != null) 
+				lastModified = file.lastModified();
+			else if (url != null) {
+				if (response == null) {
+					try {
+						URL resolvedURL = URLEncoder.encode(url);
+						response = UpdateCore.getPlugin().get(resolvedURL);
+					} catch (MalformedURLException e) {
+						// return 0
+					} catch (IOException e) {
+						// return 0
+					}
+				}
+				lastModified = response.getLastModified();
+			} 
+		}
+		return lastModified;
 	}
 }

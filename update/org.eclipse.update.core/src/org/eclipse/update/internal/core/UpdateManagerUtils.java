@@ -741,4 +741,19 @@ public static class Writer {
 		writer.init(file,encoding);
 		return writer;
 	}
+	
+	public static boolean isSameTimestamp(URL url, long timestamp) {	
+		try {
+			URL resolvedURL = URLEncoder.encode(url);
+			Response response = UpdateCore.getPlugin().get(resolvedURL);
+			long remoteLastModified = response.getLastModified();
+			// 2 seconds tolerance, as some OS's may round up the time stamp
+			// to the closest second. For safety, we make it 2 seconds.
+			return Math.abs(remoteLastModified - timestamp)/1000 <= 2;
+		} catch (MalformedURLException e) {
+			return false;
+		} catch (IOException e) {
+			return false;
+		}
+	}
 }

@@ -37,6 +37,8 @@ public class InternalSiteManager {
 
 	// cache found sites
 	private static Map sites = new HashMap();
+	// cache timestamps
+	private static Map siteTimestamps = new HashMap();
 	public static boolean globalUseCache = true;
 
 	// true if an exception occured creating localSite
@@ -70,6 +72,18 @@ public class InternalSiteManager {
 		}
 		return localSite;
 	}
+	
+	private static boolean isValidCachedSite(URL siteURL) {
+		if (!sites.containsKey(siteURL))
+			return false;
+			
+		Long timestamp = (Long)siteTimestamps.get(siteURL);
+		if (timestamp == null)
+			return false;
+		long localLastModified = timestamp.longValue();
+		
+		return UpdateManagerUtils.isSameTimestamp(siteURL, localLastModified);
+	}
 
 	/*
 	 * @see ILocalSite#getSite(URL)
@@ -83,7 +97,7 @@ public class InternalSiteManager {
 
 		// use cache if set up globally (globalUseCache=true)
 		// and passed as parameter (useCache=true)
-		if ((useCache && globalUseCache) && sites.containsKey(siteURL)) {
+		if ((useCache && globalUseCache) && isValidCachedSite(siteURL)) {
 			site = (ISite) sites.get(siteURL);
 			return site;
 		}
@@ -131,8 +145,15 @@ public class InternalSiteManager {
 			}
 		}
 
-		if (site != null)
+		if (site != null) {
 			sites.put(siteURL, site);
+			try {
+				Response response = UpdateCore.getPlugin().get(URLEncoder.encode(siteURL));
+				siteTimestamps.put(siteURL, new Long(response.getLastModified()));
+			} catch (MalformedURLException e) {
+			} catch (IOException e) {
+			}
+		}
 
 		//flush the JarFile we may hold on to
 		// we keep the temp not to create them again
@@ -140,7 +161,10 @@ public class InternalSiteManager {
 
 		//flush mapping of downloaded JAR files
 		// FIXME : provide better cache flushing after 2.1
-		Utilities.flushLocalFile();
+		// FIXED: everything downloaded is cached and timestamped.
+		//        Timestamps are compared to lastModifed on the server
+		//        and we download only when there is a differenc
+		// Utilities.flushLocalFile();
 
 		return site;
 	}

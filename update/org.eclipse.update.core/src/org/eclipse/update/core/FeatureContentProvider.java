@@ -169,15 +169,17 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 		
 		synchronized(keyLock) {
 			localFile = Utilities.lookupLocalFile(key);
-			if (localFile != null)
-				return ref.createContentReference(ref.getIdentifier(), localFile);
+			if (localFile != null) {
+				// check if the cached file is still valid (no newer version on server)
+				if (UpdateManagerUtils.isSameTimestamp(ref.asURL(), localFile.lastModified()))
+					return ref.createContentReference(ref.getIdentifier(), localFile);
+			}
 			// 
 			// download the referenced file into local temporary area
 			InputStream is = null;
 			OutputStream os = null;
-			localFile = Utilities.createLocalFile(getWorkingDirectory(), null /*name*/
-			);
-			boolean sucess = false;
+			localFile = Utilities.createLocalFile(getWorkingDirectory(), null);
+			boolean success = false;
 			if (monitor != null) {
 				if (monitor instanceof MultiDownloadMonitor) {
 					monitor.setTotalCount(ref.getInputSize());
@@ -211,8 +213,8 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 				long timeInseconds = (stop.getTime()-start.getTime())/1000; // time in milliseconds /1000 = time in seconds
 				InternalSiteManager.downloaded(ref.getInputSize(),(timeInseconds),ref.asURL());
 				
-				sucess = true;
-				
+				success = true;
+
 				// file is downloaded succesfully, map it 
 				Utilities.mapLocalFile(key,localFile);
 			} catch (ClassCastException e) {
@@ -220,7 +222,7 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 			} finally {
 				//Do not close IS if user cancel,
 				//closing IS will read the entire Stream until the end
-				if (sucess && is != null)
+				if (success && is != null)
 					try {
 						is.close();
 					} catch (IOException e) {
@@ -230,6 +232,11 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 						os.close(); // should flush buffer stream
 					} catch (IOException e) {
 					}
+					
+				if (success){
+					// set the timestamp on the temp file to match the remote timestamp
+					localFile.setLastModified(ref.getLastModified());
+				}	
 				if (monitor != null && !(monitor instanceof MultiDownloadMonitor))
 					monitor.restoreState();
 			}
