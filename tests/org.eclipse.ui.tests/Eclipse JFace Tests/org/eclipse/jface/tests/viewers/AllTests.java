@@ -26,6 +26,7 @@ public class AllTests {
 		suite.addTest(new TestSuite(ListViewerTest.class));
 		suite.addTest(new TestSuite(CheckboxTableViewerTest.class));
 		suite.addTest(new TestSuite(CheckboxTreeViewerTest.class));
+		suite.addTest(new TestSuite(ComboViewerTest.class));
 		return suite;
 	}
 }

@@ -12,6 +12,7 @@ package org.eclipse.jface.tests.viewers;
 
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
+import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -38,6 +39,8 @@ protected void doInsert(TestModelChange change) {
 	}
 	else if (fViewer instanceof AbstractTreeViewer) {
 		((AbstractTreeViewer) fViewer).add(change.getParent(), change.getChildren());
+	} else if (fViewer instanceof ComboViewer) {
+		((ComboViewer)fViewer).add(change.getChildren());
 	}
 	else {
 		Assert.isTrue(false, "Unknown kind of viewer");
@@ -60,6 +63,8 @@ protected void doRemove(TestModelChange change) {
 	}
 	else if (fViewer instanceof AbstractTreeViewer) {
 		((AbstractTreeViewer) fViewer).remove(change.getChildren());
+	} else if (fViewer instanceof ComboViewer) {
+		((ComboViewer) fViewer).remove(change.getChildren());
 	}
 	else {
 		Assert.isTrue(false, "Unknown kind of viewer");
