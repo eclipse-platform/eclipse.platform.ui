@@ -34,6 +34,6 @@ public void setPropertyStore(PropertyStore value) {
  * Overrides parent's behaviour since sync information is not
  * stored on the workspace root.
  */
-public synchronized void setSyncInfo(QualifiedName id, byte[] value) {
+public void setSyncInfo(QualifiedName id, byte[] value) {
 }
 }
