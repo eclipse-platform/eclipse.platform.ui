@@ -256,24 +256,6 @@ public abstract class SafeUpdateAction extends CVSSubscriberAction {
 	}
 	
 	/**
-	 * Prompt to overwrite those resources that could not be safely updated
-	 * Note: This method is designed to be overridden by test cases.
-	 * 
-	 * @return whether to perform the overwrite
-	 */
-	protected boolean promptForOverwrite(final SyncInfoSet syncSet) {
-		final int[] result = new int[] {Dialog.CANCEL};
-		final Shell shell = getShell();
-		shell.getDisplay().syncExec(new Runnable() {
-			public void run() {
-				UpdateDialog dialog = new UpdateDialog(shell, syncSet);
-				result[0] = dialog.open();
-			}
-		});
-		return (result[0] == UpdateDialog.YES);
-	}
-	
-	/**
 	 * Warn user that some files could not be updated.
 	 * Note: This method is designed to be overridden by test cases.
 	 */

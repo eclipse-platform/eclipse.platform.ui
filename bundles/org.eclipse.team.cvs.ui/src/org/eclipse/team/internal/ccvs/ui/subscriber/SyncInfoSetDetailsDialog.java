@@ -76,7 +76,7 @@ public abstract class SyncInfoSetDetailsDialog extends DetailsDialog {
 	 * @param composite
 	 */
 	private void addResourcesArea(Composite composite) {
-		createWrappingLabel(composite, detailsTitle);
+		//createWrappingLabel(composite, detailsTitle);
 		// add the selectable checkbox list
 		
 		listViewer = CheckboxTableViewer.newCheckList(composite, SWT.BORDER);

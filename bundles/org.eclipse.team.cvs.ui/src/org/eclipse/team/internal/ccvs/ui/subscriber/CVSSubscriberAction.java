@@ -24,7 +24,9 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.SyncInfo;
 import org.eclipse.team.internal.ccvs.core.CVSException;
@@ -140,7 +142,7 @@ public abstract class CVSSubscriberAction extends SubscriberAction {
 	 * @param syncSet
 	 * @return
 	 */
-	protected IRunnableWithProgress getRunnable(final SyncInfoSet syncSet) {
+	public IRunnableWithProgress getRunnable(final SyncInfoSet syncSet) {
 		return new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				try {
@@ -253,5 +255,23 @@ public abstract class CVSSubscriberAction extends SubscriberAction {
 			resources.add(nodes[i].getLocal());
 		}
 		return (IResource[]) resources.toArray(new IResource[resources.size()]);
+	}
+
+	/**
+	 * Prompt to overwrite those resources that could not be safely updated
+	 * Note: This method is designed to be overridden by test cases.
+	 * 
+	 * @return whether to perform the overwrite
+	 */
+	protected boolean promptForOverwrite(final SyncInfoSet syncSet) {
+		final int[] result = new int[] {Dialog.CANCEL};
+		final Shell shell = getShell();
+		shell.getDisplay().syncExec(new Runnable() {
+			public void run() {
+				UpdateDialog dialog = new UpdateDialog(shell, syncSet);
+				result[0] = dialog.open();
+			}
+		});
+		return (result[0] == UpdateDialog.YES);
 	}
 }
