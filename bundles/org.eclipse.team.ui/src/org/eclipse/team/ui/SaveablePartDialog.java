@@ -62,14 +62,6 @@ public class SaveablePartDialog extends ResizableDialog {
 		Dialog.applyDialogFont(parent2);
 		return parent;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#buttonPressed(int)
-	 */
-	protected void buttonPressed(int buttonId) {
-		saveChanges();
-		super.buttonPressed(buttonId);
-	}
 		
 	/* (non-Javadoc)
 	 * @see org.eclipse.compare.internal.ResizableDialog#close()
@@ -83,7 +75,12 @@ public class SaveablePartDialog extends ResizableDialog {
 	 * Save any changes to the compare editor.
 	 */
 	private void saveChanges() {
-		if (input.isDirty() && MessageDialog.openConfirm(getShell(), Policy.bind("ParticipantCompareDialog.2"), Policy.bind("ParticipantCompareDialog.3"))) {						 //$NON-NLS-1$ //$NON-NLS-2$
+		MessageDialog dialog = new MessageDialog(
+				getShell(), Policy.bind("ParticipantCompareDialog.2"), null,  //$NON-NLS-1$
+				Policy.bind("ParticipantCompareDialog.3"), MessageDialog.QUESTION, new String[]{IDialogConstants.YES_LABEL, //$NON-NLS-1$
+				IDialogConstants.NO_LABEL}, 0); // YES is the default
+			
+		if (input.isDirty() && dialog.open() == IDialogConstants.YES_ID) {
 			BusyIndicator.showWhile(null, new Runnable() {
 				public void run() {
 					input.doSave(new NullProgressMonitor());
