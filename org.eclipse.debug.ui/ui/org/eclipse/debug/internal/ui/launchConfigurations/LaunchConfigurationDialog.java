@@ -924,7 +924,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		comp.setLayout(layout);
 		
 		Label treeLabel = new Label(comp, SWT.NONE);
-		treeLabel.setText("Launch Con&figurations:");
+		treeLabel.setText(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Launch_Con&figurations__1")); //$NON-NLS-1$
 		GridData gd = new GridData();
 		gd.horizontalSpan = 3;
 		treeLabel.setLayoutData(gd);

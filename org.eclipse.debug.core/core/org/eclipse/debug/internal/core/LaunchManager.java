@@ -676,7 +676,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	public String generateUniqueLaunchConfigurationNameFrom(String namePrefix) {
 		int index = 1;
 		String baseName = namePrefix;
-		int copyIndex = baseName.lastIndexOf(" (");
+		int copyIndex = baseName.lastIndexOf(" ("); //$NON-NLS-1$
 		if (copyIndex > -1) {
 			String trailer = baseName.substring(copyIndex + 1);
 			try {
@@ -689,7 +689,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		try {
 			while (isExistingLaunchConfigurationName(newName)) {
 				StringBuffer buffer = new StringBuffer(baseName);
-				buffer.append(" (");
+				buffer.append(" ("); //$NON-NLS-1$
 				buffer.append(String.valueOf(index));
 				index++;
 				buffer.append(')');
