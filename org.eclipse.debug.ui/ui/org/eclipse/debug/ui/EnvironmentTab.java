@@ -202,7 +202,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		label.setFont(font);
 		label.setText(LaunchConfigurationsMessages.getString("EnvironmentTab.Environment_variables_to_set__3")); //$NON-NLS-1$
 		// Create table
-		environmentTable = new TableViewer(tableComposite);
+		environmentTable = new TableViewer(tableComposite, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI | SWT.FULL_SELECTION);
 		Table table = environmentTable.getTable();
 		TableLayout tableLayout = new TableLayout();
 		table.setLayout(tableLayout);
