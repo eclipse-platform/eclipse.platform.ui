@@ -68,12 +68,7 @@ public class SiteFile extends Site {
 		IFeature localFeature = createExecutableFeature(sourceFeature);
 
 		IFeatureReference localFeatureReference = null;
-		try{
-			localFeatureReference = sourceFeature.install(localFeature, verificationListener, monitor);
-		} catch (InstallAbortedException e){
-			// warn user
-			UpdateManagerPlugin.warn("Install aborted:");
-		}
+		localFeatureReference = sourceFeature.install(localFeature, verificationListener, monitor);
 			
 		return localFeatureReference;
 	}

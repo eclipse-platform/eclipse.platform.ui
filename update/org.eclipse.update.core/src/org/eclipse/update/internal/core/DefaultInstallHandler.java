@@ -128,11 +128,8 @@ public class DefaultInstallHandler extends BaseInstallHandler {
 		int result = listener.prompt(verificationResult);
 
 		if (result == IVerificationListener.CHOICE_ABORT) {
-			CoreException exp= Utilities
-				.newCoreException(Policy.bind("JarVerificationService.CancelInstall"),
-			//$NON-NLS-1$
-			verificationResult.getVerificationException());
-			throw new InstallAbortedException(exp);
+			Exception e = verificationResult.getVerificationException();
+			throw new InstallAbortedException(Policy.bind("JarVerificationService.CancelInstall"),e);
 		}
 		if (result == IVerificationListener.CHOICE_ERROR) {
 			throw Utilities

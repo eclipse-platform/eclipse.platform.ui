@@ -174,14 +174,21 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 	}
 
 	public static void log(IStatus status, boolean showErrorDialog) {
-		if (showErrorDialog)
-			ErrorDialog.openError(
+		if (status.getSeverity()!=IStatus.INFO){
+			if (showErrorDialog)
+				ErrorDialog.openError(
+					getActiveWorkbenchShell(),
+					null,
+					null,
+					status);
+			//ResourcesPlugin.getPlugin().getLog().log(status);
+			Platform.getPlugin("org.eclipse.core.runtime").getLog().log(status);
+		} else {
+			MessageDialog.openInformation(
 				getActiveWorkbenchShell(),
 				null,
-				null,
-				status);
-		//ResourcesPlugin.getPlugin().getLog().log(status);
-		Platform.getPlugin("org.eclipse.core.runtime").getLog().log(status);
+				status.getMessage());			
+		}
 	}
 
 	public static IFeature[] searchSite(

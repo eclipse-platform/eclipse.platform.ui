@@ -4,7 +4,7 @@ package org.eclipse.update.core.model;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.*;
 
 /**
  * Exception thrown when the user cancelled an installation.
@@ -19,7 +19,7 @@ public class InstallAbortedException extends CoreException {
 	 * 
 	 * @since 2.0
 	 */
-	public InstallAbortedException(CoreException exp) {
-		super(exp.getStatus());
+	public InstallAbortedException(String msg,Exception e) {
+		super(new Status(IStatus.INFO,"org.eclipse.update.core",IStatus.OK,msg,e));
 	}
 }

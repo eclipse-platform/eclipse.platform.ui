@@ -678,10 +678,8 @@ public class Feature extends FeatureModel implements IFeature {
 	 * Installation has been cancelled, abort and revert
 	 */
 	private void abort() throws CoreException {
-		// throws an exception that will be caught by the install
-		// the install will abort the consumer.	 	
-		CoreException exp = Utilities.newCoreException(Policy.bind("Feature.InstallationCancelled"), null); //$NON-NLS-1$
-		throw new InstallAbortedException(exp);
+		String msg = Policy.bind("Feature.InstallationCancelled"); //$NON-NLS-1$
+		throw new InstallAbortedException(msg,null);
 	}
 
 	/*
@@ -840,12 +838,9 @@ public class Feature extends FeatureModel implements IFeature {
 				int result = verificationListener.prompt(vr);
 
 				if (result == IVerificationListener.CHOICE_ABORT) {
-					CoreException exp = Utilities
-						.newCoreException(
-							Policy.bind("JarVerificationService.CancelInstall"),
-					//$NON-NLS-1$
-					vr.getVerificationException());
-					throw new InstallAbortedException(exp);
+					String msg = Policy.bind("JarVerificationService.CancelInstall"); //$NON-NLS-1$
+					Exception e = vr.getVerificationException();
+					throw new InstallAbortedException(msg,e);
 				}
 				if (result == IVerificationListener.CHOICE_ERROR) {
 					throw Utilities
