@@ -845,7 +845,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		SWTUtil.setButtonDimensionHint(saveButton);
 		getSaveButton().addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
-				handleSavePressed();
+				handleApplyPressed();
 			}
 		});
 		
@@ -1527,7 +1527,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		
 		// If they hit 'Yes', save the working copy 
 		if (selectedButton == 0) {
-			handleSavePressed();
+			saveConfig();
 		}
 		
 		return true;
@@ -1723,9 +1723,14 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	}
 	
 	/**
-	 * Notification that the 'save' button has been pressed
+	 * Notification that the 'apply' button has been pressed
 	 */
-	protected void handleSavePressed() {
+	protected void handleApplyPressed() {
+		saveConfig();
+		getTreeViewer().setSelection(new StructuredSelection(fUnderlyingConfig));
+	}
+	
+	protected void saveConfig() {
 		try {
 			// trim name
 			Text widget = getNameTextWidget();
@@ -1736,8 +1741,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			return;
 		}
 		
-		// Do the UI-related things required after a save
-		updateButtons();
+		updateButtons();		
 	}
 	
 	/**
