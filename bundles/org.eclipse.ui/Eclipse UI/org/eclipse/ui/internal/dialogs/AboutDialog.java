@@ -142,7 +142,8 @@ protected void configureShell(Shell newShell) {
  * @param parent the button bar composite
  */
 protected void createButtonsForButtonBar(Composite parent) {
-	createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
+	Button b = createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
+	b.setFocus();
 }
 /**
  * Creates and returns the contents of the upper part 
@@ -314,6 +315,7 @@ protected Control createDialogArea(Composite parent) {
 			new AboutPluginsDialog(getShell()).open();
 		}
 	});
+	
 	return outer;
 }
 
