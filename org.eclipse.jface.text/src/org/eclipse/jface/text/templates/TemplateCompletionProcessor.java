@@ -77,12 +77,31 @@ public abstract class TemplateCompletionProcessor implements IContentAssistProce
 				continue;
 			}
 			if (template.matches(prefix, context.getContextType().getId()))
-				matches.add(createProposal(template, context, region, getRelevance(template, prefix)));
+				matches.add(createProposal(template, context, (IRegion) region, getRelevance(template, prefix)));
 		}
 
 		Collections.sort(matches, fgProposalComparator);
 
 		return (ICompletionProposal[]) matches.toArray(new ICompletionProposal[matches.size()]);
+	}
+
+	/**
+	 * Creates a new proposal.
+	 * <p>
+	 * Forwards to {@link #createProposal(Template, TemplateContext, IRegion, int)}.
+	 * Do neither call nor override.
+	 * </p>
+	 * 
+	 * @param template the template to be applied by the proposal
+	 * @param context the context for the proposal
+	 * @param region the region the proposal applies to
+	 * @param relevance the relevance of the proposal
+	 * @return a new <code>ICompletionProposal</code> for
+	 *         <code>template</code>
+	 * @deprecated use the version specifying <code>IRegion</code> as third parameter
+	 */
+	protected ICompletionProposal createProposal(Template template, TemplateContext context, Region region, int relevance) {
+		return createProposal(template, context, (IRegion) region, relevance);
 	}
 
 	/**
@@ -100,7 +119,7 @@ public abstract class TemplateCompletionProcessor implements IContentAssistProce
 	 * @return a new <code>ICompletionProposal</code> for
 	 *         <code>template</code>
 	 */
-	protected ICompletionProposal createProposal(Template template, TemplateContext context, Region region, int relevance) {
+	protected ICompletionProposal createProposal(Template template, TemplateContext context, IRegion region, int relevance) {
 		return new TemplateProposal(template, context, region, getImage(template), relevance);
 	}
 
