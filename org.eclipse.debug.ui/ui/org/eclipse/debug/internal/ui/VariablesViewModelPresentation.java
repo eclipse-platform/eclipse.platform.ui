@@ -11,7 +11,7 @@ public class VariablesViewModelPresentation extends DelegatingModelPresentation 
 	 */
 	public String getText(Object element) {
 		StringBuffer string= new StringBuffer();
-		StringTokenizer tokenizer= new StringTokenizer(super.getText(element), "\b\f\n\r\t\\", true);
+		StringTokenizer tokenizer= new StringTokenizer(super.getText(element), "\b\f\n\r\t\\", true); //$NON-NLS-1$
 		String token;
 		while (tokenizer.hasMoreTokens()) {
 			token= tokenizer.nextToken();
@@ -20,22 +20,22 @@ public class VariablesViewModelPresentation extends DelegatingModelPresentation 
 			} else {
 				switch (token.charAt(0)) {
 					case '\b':
-						string.append("\\b");
+						string.append("\\b"); //$NON-NLS-1$
 						break;
 					case '\f':
-						string.append("\\f");
+						string.append("\\f"); //$NON-NLS-1$
 						break;
 					case '\n':
-						string.append("\\n");
+						string.append("\\n"); //$NON-NLS-1$
 						break;
 					case '\r':
-						string.append("\\r");
+						string.append("\\r"); //$NON-NLS-1$
 						break;
 					case '\t':
-						string.append("\\t");
+						string.append("\\t"); //$NON-NLS-1$
 						break;
 					case '\\':
-						string.append("\\\\");
+						string.append("\\\\"); //$NON-NLS-1$
 						break;
 					default:
 						string.append(token);
