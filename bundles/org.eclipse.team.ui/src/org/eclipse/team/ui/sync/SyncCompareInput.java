@@ -11,7 +11,6 @@ import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.CompareEditorInput;
 import org.eclipse.compare.structuremergeviewer.DiffContainer;
 import org.eclipse.compare.structuremergeviewer.DiffNode;
-import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.compare.structuremergeviewer.ICompareInputChangeListener;
 import org.eclipse.compare.structuremergeviewer.IDiffContainer;
@@ -178,14 +177,6 @@ public abstract class SyncCompareInput extends CompareEditorInput {
 			catchupReleaseViewer.collapseAll();
 			catchupReleaseViewer.setSelection(new StructuredSelection());
 		}
-	}
-
-	/**
-	 * Returns true if we have unsaved changes.
-	 */
-	public boolean isSaveNeeded() {
-		// All changes take effect immediately, so never need to save.
-		return diffRoot.hasChildren();
 	}
 
 	/**
@@ -393,5 +384,39 @@ public abstract class SyncCompareInput extends CompareEditorInput {
 				update.run();
 			}
 		}
+	}
+	
+	public boolean saveIfNecessary() {
+		if (! isSaveNeeded()) return true;
+		
+		final boolean[] result = new boolean[] { false };
+		getShell().getDisplay().syncExec(new Runnable() {
+			public void run() {
+				try {
+					result[0] = MessageDialog.openQuestion(getShell(), Policy.bind("SyncView.saveTitle"),
+						Policy.bind("SyncView.saveMessage"));
+					if (result[0]) {
+						ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
+							public void run(IProgressMonitor monitor) throws CoreException {
+								saveChanges(monitor);
+							}
+						}, new NullProgressMonitor());
+					}
+				} catch (CoreException e) {
+					IStatus status = e.getStatus();
+					ErrorDialog.openError(getShell(), status.getMessage(), Policy.bind("SyncView.errorSaving"), status);
+					result[0] = false;
+				}
+			}
+		});
+		return result[0];
+	}
+
+	/*	
+	 * HACK until Compare fixes dirtyness PR#14378
+	 */
+	public void saveChanges(IProgressMonitor monitor) throws CoreException {
+		super.saveChanges(monitor);
+		setDirty(false);
 	}
 }

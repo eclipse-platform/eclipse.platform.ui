@@ -32,7 +32,9 @@ import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.UIConstants;
 import org.eclipse.team.ui.TeamUIPlugin;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.ViewPart;
 
@@ -84,6 +86,24 @@ public class SyncView extends ViewPart {
 	private SyncModeAction incomingMode;
 	private SyncModeAction outgoingMode;
 	private SyncModeAction freeMode;
+
+	private class PartListener implements IPartListener {
+		public void partActivated(IWorkbenchPart part) {
+		}
+		public void partBroughtToTop(IWorkbenchPart part) {
+		}
+		public void partClosed(IWorkbenchPart part) {
+		}
+		public void partDeactivated(IWorkbenchPart part) {
+			if (part == SyncView.this && input != null) {
+				input.saveIfNecessary();
+			}
+		}
+		public void partOpened(IWorkbenchPart part) {
+		}
+	}
+	
+	private IPartListener partListener;
 	
 	/**
 	 * Creates a new view.
@@ -113,8 +133,20 @@ public class SyncView extends ViewPart {
 		showDefaultContents();
 		
 		initializeSyncModes();
+		// add part listener
+		partListener = new PartListener();
+		getViewSite().getWorkbenchWindow().getPartService().addPartListener(partListener);
 	}
 	
+	public void dispose() {
+		// remove part listener
+		if (partListener != null) {
+			getViewSite().getWorkbenchWindow().getPartService().removePartListener(partListener);
+			partListener = null;
+		}
+		super.dispose();
+	}
+
 	/**
 	 * Makes the sync view visible in the active perspective. If there
 	 * isn't a sync view registered <code>null</code> is returned.
