@@ -127,7 +127,7 @@ class SectionLayout extends Layout {
 				hsize = header.computeSize(availableWidth, SWT.DEFAULT, flush);
 			   	header.setBounds(0, y, availableWidth, hsize.y);
 		   	if (toggle!=null) {
-	   			int ty = y + hsize.y - toggleSize.y;
+	   			int ty = y + hsize.y - toggleSize.y; // + vspacing;
 		   			toggle.setBounds(width-toggleSize.x, ty, toggleSize.x, toggleSize.y);
 		   		}
 			}
