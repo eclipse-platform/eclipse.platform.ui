@@ -151,4 +151,30 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
+	 */
+	protected void createButtonsForButtonBar(Composite parent) {
+		super.createButtonsForButtonBar(parent);
+		detailsButton.setCursor(arrowCursor);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.ProgressMonitorDialog#clearCursors()
+	 */
+	protected void clearCursors() {
+		if (detailsButton != null && !detailsButton.isDisposed()) {
+			detailsButton.setCursor(null);
+		}
+		super.clearCursors();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.ProgressMonitorDialog#setOperationCancelButtonEnabled(boolean)
+	 */
+	protected void setOperationCancelButtonEnabled(boolean b) {
+		super.setOperationCancelButtonEnabled(b);
+		detailsButton.setEnabled(b);
+	}
+
 }
