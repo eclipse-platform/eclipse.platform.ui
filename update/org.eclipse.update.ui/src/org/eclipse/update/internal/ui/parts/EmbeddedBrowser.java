@@ -21,6 +21,11 @@ public class EmbeddedBrowser implements IUpdateFormPage {
 	private Control control;
 	private Combo addressCombo;
 	private Object input;
+	private MultiPageView view;
+	
+	public EmbeddedBrowser(MultiPageView view) {
+		this.view = view;
+	}
 	
 	public void setInput(Object input) {
 		this.input = input;
@@ -299,6 +304,13 @@ public class EmbeddedBrowser implements IUpdateFormPage {
 	 */
 	public boolean isVisible() {
 		return true;
+	}
+
+	/**
+	 * @see IUpdateFormPage#getView()
+	 */
+	public MultiPageView getView() {
+		return view;
 	}
 
 }

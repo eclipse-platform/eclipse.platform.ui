@@ -58,6 +58,7 @@ public class UpdateUIPluginImages {
 	 * Frequently used images
 	 */
 	public static final String IMG_FORM_BANNER = NAME_PREFIX+"FORM_BANNER";
+	public static final String IMG_FORM_UNDERLINE = NAME_PREFIX + "FORM_UNDERLINE";
 
 	/**
 	 * OBJ16
@@ -101,6 +102,7 @@ public class UpdateUIPluginImages {
 	 * WIZ
 	 */
 	public static final ImageDescriptor DESC_FORM_BANNER  = create(PATH_WIZBAN, "form_banner.gif");
+	public static final ImageDescriptor DESC_FORM_UNDERLINE  = create(PATH_WIZBAN, "form_underline.gif");
 	public static final ImageDescriptor DESC_PROVIDER = create(PATH_WIZBAN, "provider.gif");
 	public static final ImageDescriptor DESC_ITEM = create(PATH_WIZBAN, "topic.gif");
 
@@ -150,7 +152,7 @@ public static Image getImageFromPlugin(
 private static final void initialize() {
 	PLUGIN_REGISTRY = new ImageRegistry();
 	manage(IMG_FORM_BANNER, DESC_FORM_BANNER);
-
+	manage(IMG_FORM_UNDERLINE, DESC_FORM_UNDERLINE);
 }
 
 private static URL makeImageURL(String prefix, String name) {

@@ -43,18 +43,14 @@ public void createPages() {
 	MainPage mainPage =
 		new MainPage(this, "Update Home");
 	addPage(HOME_PAGE, mainPage);
-/*
-		DetailsPage detailsPage = 
-			new DetailsPage(this, "Details");
+	DetailsPage detailsPage = 
+		new DetailsPage(this, "Details");
 		addPage(DETAILS_PAGE, detailsPage);
-	}
-	else {
+	if (SWT.getPlatform().equals("win32")) {
 		EmbeddedBrowser browser = 
-			new EmbeddedBrowser();
-		firstPageId = BROWSER_PAGE;
+			new EmbeddedBrowser(this);
 	   	addPage(BROWSER_PAGE, browser);
 	}
-*/
 }
 	
 public void showURL(String url) {
@@ -73,11 +69,7 @@ public void createPartControl(Composite parent) {
 }
 
 private void showDetails(Object el) {
-	if (SWT.getPlatform().equals("win32")) {
-		showTransformedPage(el);
-	}
-	else
-		showPage(DETAILS_PAGE, el);
+	showPage(DETAILS_PAGE, el);
 }
 
 private void showTransformedPage(Object el) {
@@ -162,10 +154,7 @@ private void fillActionBars() {
 }
 
 private void performHome() {
-	if (SWT.getPlatform().equals("win32"))
-		showPage(BROWSER_PAGE, HOME_URL);
-	else
-	   	showPage(HOME_PAGE);
+   	showPage(HOME_PAGE);
 }
 
 private boolean canPeformBackward() {

@@ -25,6 +25,7 @@ public void dispose() {
 public void initialize(Object modelObject) {
 	setHeadingText("Welcome to Eclipse Update");
 	setHeadingImage(UpdateUIPluginImages.get(UpdateUIPluginImages.IMG_FORM_BANNER));
+	setHeadingUnderlineImage(UpdateUIPluginImages.get(UpdateUIPluginImages.IMG_FORM_UNDERLINE));
 	super.initialize(modelObject);
 	//((Composite)getControl()).layout(true);
 }
@@ -37,7 +38,9 @@ protected void createContents(Composite parent) {
 	HTMLTableLayout layout = new HTMLTableLayout();
 	parent.setLayout(layout);
 	layout.leftMargin = layout.rightMargin = 10;
-	//layout.horizontalSpacing = 15;
+	layout.topMargin = 15;
+	layout.horizontalSpacing = 0;
+	layout.verticalSpacing = 0;
 	layout.numColumns = 2;
 	
 	FormWidgetFactory factory = getFactory();
@@ -48,8 +51,8 @@ protected void createContents(Composite parent) {
 	IHyperlinkListener listener;
 
 	listener = new HyperlinkAdapter() {
-		public void linkActivated() {
-			//showView(UpdatePerspective.ID_LOCAL_SITE);
+		public void linkActivated(Control link) {
+			showView(UpdatePerspective.ID_LOCAL_SITE);
 		}
 	};
 	topic = factory.createLabel(parent, null);
@@ -57,19 +60,20 @@ protected void createContents(Composite parent) {
 	link = factory.createHeadingLabel(parent, null);
 	link.setText("Feature Updates");
 	factory.turnIntoHyperlink(link, listener);
-	
+
+	factory.createLabel(parent, null);	
 	text = factory.createLabel(parent, null, SWT.WRAP);	
 	text.setText(
 	"To check for updates for features you have installed, "+
 	"go to the \"My Eclipse\" view and expand \"Available Updates\" folder. "+
 	"You can drag new updates into the Checklist folder.\n");
 	TableData td = new TableData();
-	td.colspan = 2;
+	//td.colspan = 2;
 	text.setLayoutData(td);
 	
 	listener = new HyperlinkAdapter() {
-		public void linkActivated() {
-			//showView(UpdatePerspective.ID_SITES);
+		public void linkActivated(Control link) {
+			showView(UpdatePerspective.ID_SITES);
 		}
 	};
 	topic = factory.createLabel(parent, null);
@@ -77,7 +81,8 @@ protected void createContents(Composite parent) {
 	link = factory.createHeadingLabel(parent, null);
 	link.setText("New Feature Installs");
 	factory.turnIntoHyperlink(link, listener);
-	
+
+	factory.createLabel(parent, null);	
 	text = factory.createLabel(parent, null, SWT.WRAP);
 	text.setText(
 	"To install new features, open \"Update Sites\" view and expand"+
@@ -85,12 +90,12 @@ protected void createContents(Composite parent) {
 	"read about them in the \"Details\" view. If you want to install a feature, "+
 	"just drag it into the \"Checklist\" view.\n");
 	td = new TableData();
-	td.colspan = 2;
+	//td.colspan = 2;
 	text.setLayoutData(td);
 	
 	listener = new HyperlinkAdapter() {
-		public void linkActivated() {
-			//showView(UpdatePerspective.ID_LOCAL_SITE);
+		public void linkActivated(Control link) {
+			showView(UpdatePerspective.ID_LOCAL_SITE);
 		}
 	};
 	topic = factory.createLabel(parent, null);
@@ -98,18 +103,19 @@ protected void createContents(Composite parent) {
 	link = factory.createHeadingLabel(parent, null);
 	link.setText("Uninstalling Features");
 	factory.turnIntoHyperlink(link, listener);
-	
+
+	factory.createLabel(parent, null);		
 	text = factory.createLabel(parent, null, SWT.WRAP);
 	text.setText("To uninstall a feature, open \"My Eclipse\" view, "+
 	"expand \"Installed Features\" folder, select the desired feature and drag it "+
 	"into the \"Checklist\" folder.\n");
 	td = new TableData();
-	td.colspan = 2;
+	//td.colspan = 2;
 	text.setLayoutData(td);
 
 	listener = new HyperlinkAdapter() {
-		public void linkAdapter() {
-			//showView(UpdatePerspective.ID_HISTORY);
+		public void linkActivated(Control link) {
+			showView(UpdatePerspective.ID_HISTORY);
 		}
 	};
 	topic = factory.createLabel(parent, null);
@@ -117,11 +123,12 @@ protected void createContents(Composite parent) {
 	link = factory.createHeadingLabel(parent, null);
 	link.setText("Installation History");
 	factory.turnIntoHyperlink(link, listener);
+	factory.createLabel(parent, null);	
 	text = factory.createLabel(parent, null, SWT.WRAP);
 	text.setText("You can review your installation history or revert to one of the previous stable states."+
 	" To do so, open \"Update History\" view.\n");
 	td = new TableData();
-	td.colspan = 2;
+	//td.colspan = 2;
 	text.setLayoutData(td);
 }
 

@@ -38,6 +38,7 @@ private Composite control;
 private Composite client;
 private final static int HMARGIN = 5;
 private final static int VMARGIN = 5;
+private Image headingUnderlineImage;
 
 class WebFormLayout extends Layout {
 
@@ -52,23 +53,6 @@ protected void layout(Composite parent, boolean changed) {
 	client.setBounds(x, y, csize.x, csize.y);
 }
 
-private int getHeadingHeight(Composite parent) {
-	int width = parent.getSize().x;
-	int height =0;
-	int imageHeight = 0;
-	if (getHeadingImage()!=null) {
-		Rectangle ibounds = getHeadingImage().getBounds();
-		imageHeight = ibounds.height;
-	}
-	GC gc = new GC(parent);
-	gc.setFont(titleFont);
-	int textWidth = width - 2*HMARGIN;
-	height = FormText.computeWrapHeight(gc, getHeadingText(), textWidth);
-	height += 2*VMARGIN;
-	height = Math.max(height, imageHeight);
-	return height;
-}
-
 protected Point computeSize(Composite parent, int wHint, int hHint, boolean changed) {
 	int width = wHint;
 	int height = 0;
@@ -117,6 +101,27 @@ public Control createControl(Composite parent) {
 	return scrollComposite;
 }
 
+private int getHeadingHeight(Composite parent) {
+	int width = parent.getSize().x;
+	int height =0;
+	int imageHeight = 0;
+	if (getHeadingImage()!=null) {
+		Rectangle ibounds = getHeadingImage().getBounds();
+		imageHeight = ibounds.height;
+	}
+	GC gc = new GC(parent);
+	gc.setFont(titleFont);
+	int textWidth = width - 2*HMARGIN;
+	height = FormText.computeWrapHeight(gc, getHeadingText(), textWidth);
+	height += 2*VMARGIN;
+	height = Math.max(height, imageHeight);
+	if (headingUnderlineImage!=null) {
+		Rectangle ibounds = headingUnderlineImage.getBounds();
+		height += ibounds.height;
+	}
+	return height;
+}
+
 protected void createContents(Composite parent) {
 }
 
@@ -128,6 +133,14 @@ public void setHeadingVisible(boolean newHeadingVisible) {
 	super.setHeadingVisible(newHeadingVisible);
 	if (control != null)
 		control.layout();
+}
+
+public Image getHeadingUnderlineImage() {
+	return headingUnderlineImage;
+}
+
+public void setHeadingUnderlineImage(Image image) {
+	this.headingUnderlineImage = image;
 }
 
 public void propertyChange(PropertyChangeEvent event) {
@@ -149,6 +162,10 @@ private void paint(PaintEvent e) {
 		gc.setForeground(getHeadingForeground());
 	gc.setFont(titleFont);
 	FormText.paintWrapText(gc, size, getHeadingText(), HMARGIN, VMARGIN);
+	if (headingUnderlineImage!=null) {
+		int y = getHeadingHeight((Composite)control) - headingUnderlineImage.getBounds().height;
+		gc.drawImage(headingUnderlineImage, 0, y);
+	}
 }
 
 }

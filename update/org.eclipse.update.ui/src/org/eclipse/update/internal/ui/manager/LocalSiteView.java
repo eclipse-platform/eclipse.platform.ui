@@ -308,31 +308,31 @@ class FakeLocalSite implements ILocalSite {
 		new FakeFeature(this, "org.eclipse.platform", 
 		"1.0.0", "Eclipse Base Platform", 
 		otiURL, "Object Technology International Inc.",
-"The Platform project provides the core frameworks and\n"+
-"services upon which all plug-in extensions are created.\n"+
-"It also provides the runtime in which plug-ins are loaded,\n"+
-"integrated, and executed. The Platform project's purpose is \n"+
-"to enable other tool developers to build and deliver really \n"+
+"The Platform project provides the core frameworks and "+
+"services upon which all plug-in extensions are created. "+
+"It also provides the runtime in which plug-ins are loaded, "+
+"integrated, and executed. The Platform project's purpose is "+
+"to enable other tool developers to build and deliver really "+
 "nice integrated tools."
 		));
 		features.add(
 		new FakeFeature(this, "org.eclipse.jdt", 
 		"1.0.0", "Java Development Tooling (JDT)", 
 		otiURL, "Object Technology International Inc.",
-"The JDT project provides tool plug-ins that implement a Java\n"+
-"IDE that supports the development of Java applications including\n"+
-"Eclipse plug-ins. The JDT project allows Eclipse to be a\n"+
+"The JDT project provides tool plug-ins that implement a Java "+
+"IDE that supports the development of Java applications including "+
+"Eclipse plug-ins. The JDT project allows Eclipse to be a "+
 "development environment for itself."
 		));
 		features.add(
 		new FakeFeature(this, "org.eclipse.pde", 
 		"1.0.0", "Plug-in Development Environment (PDE)", 
 		ibmURL, "International Business Machines Corp.",
-"The PDE project extends the Platform and the JDT to provide\n"+
-"views and editors that make it easier to build plug-ins for\n"+
-"Eclipse. The PDE helps you figure out what extension points\n"+
-"are available, how to plug into them, and helps you put together\n"+
-"your code in plug-in format. The PDE makes integrating plug-ins\n"+
+"The PDE project extends the Platform and the JDT to provide "+
+"views and editors that make it easier to build plug-ins for "+
+"Eclipse. The PDE helps you figure out what extension points "+
+"are available, how to plug into them, and helps you put together "+
+"your code in plug-in format. The PDE makes integrating plug-ins "+
 "easy and fun."
 		));
 	}
