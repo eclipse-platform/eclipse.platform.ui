@@ -117,8 +117,7 @@ public Integer getInteger(String key);
  * Returns the string value of the given key.
  *
  * @param key the key
- * @return the value, or <code>null</code> if the key was not found or was found
- *  but was not an integer
+ * @return the value, or <code>null</code> if the key was not found
  */
 public String getString(String key);
 /**
