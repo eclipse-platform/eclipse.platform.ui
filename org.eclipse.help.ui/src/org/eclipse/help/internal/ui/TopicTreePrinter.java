@@ -86,7 +86,7 @@ public class TopicTreePrinter
 			try {
 				pMonDialog.run(true, true, this);
 			} catch (Exception e) {
-				System.out.println("Exception in pmon" + e);
+				Logger.logError(WorkbenchResources.getString("WE007"),e);
 			}
 		} else {
 			endPrinting();
@@ -253,7 +253,6 @@ public class TopicTreePrinter
 			try {
 				Thread.currentThread().sleep(200);
 			} catch (InterruptedException e) {
-				e.printStackTrace();
 			}
 		}
 	}
