@@ -104,7 +104,7 @@ public class EnableDisableBreakpointAction extends SelectionProviderAction imple
 	 * @see IBreakpointListener
 	 */
 	public void breakpointChanged(IMarker breakpoint, IMarkerDelta delta) {
-		final Display display= Display.getDefault();
+		Display display= Display.getDefault();
 		if (display.isDisposed()) {
 			return;
 		}
