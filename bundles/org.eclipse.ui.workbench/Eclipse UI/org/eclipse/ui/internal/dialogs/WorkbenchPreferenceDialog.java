@@ -11,8 +11,6 @@
 package org.eclipse.ui.internal.dialogs;
 
 import java.io.File;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.CoreException;
@@ -39,10 +37,9 @@ import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.window.Window;
 
-import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.roles.ObjectActivityManager;
+import org.eclipse.ui.internal.roles.RoleManager;
 
 
 
@@ -80,13 +77,7 @@ public class WorkbenchPreferenceDialog extends PreferenceDialog {
 	 */
 	private final static String[] DIALOG_PREFERENCE_EXTENSIONS = new String[] {"*."+PREFERENCE_EXT, "*.*"}; //$NON-NLS-2$ //$NON-NLS-1$
     
-    /**
-     * The set of currently active pages, as described by the 
-     * ObjectContextManager corresponding to the preference page class.  
-     * This field can go away when we introduce caching into the ObjectActivityManager.
-     */
-    private Collection activePages = Collections.EMPTY_SET;
-    
+  
 	/**
 	 * Creates a new preference dialog under the control of the given preference 
 	 * manager.
@@ -97,9 +88,6 @@ public class WorkbenchPreferenceDialog extends PreferenceDialog {
 	public WorkbenchPreferenceDialog(Shell parentShell, PreferenceManager manager) {
 		super(parentShell, manager);
 
- 		// populate the activePages collection.  Note that if this dialog ever becomes capable of responding to role changes without exiting, then this update may need to be done elsewhere.
-        ObjectActivityManager prefManager = ObjectActivityManager.getManager(IWorkbenchConstants.PL_PREFERENCES, true);
-        activePages = prefManager.getActiveObjects();
 	}
 		
 	/* (non-Javadoc)
@@ -282,8 +270,13 @@ public class WorkbenchPreferenceDialog extends PreferenceDialog {
 	 * @see org.eclipse.jface.preference.PreferenceDialog#createTreeItemFor(org.eclipse.swt.widgets.Widget, org.eclipse.jface.preference.IPreferenceNode)
 	 */
 	protected void createTreeItemFor(Widget parent, IPreferenceNode node) {
-		if (node instanceof WorkbenchPreferenceNode && !activePages.contains(node)) {
+		if (!(node instanceof WorkbenchPreferenceNode)) {
             return;
+		}		
+		
+		if(RoleManager.getInstance().isFiltering()){
+			if(!RoleManager.getInstance().isEnabledId(node.getId()))
+				return;
 		}
 		super.createTreeItemFor(parent, node);
 	}    
