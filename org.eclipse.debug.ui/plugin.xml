@@ -135,11 +135,7 @@
             tooltip="%StepReturnAction.tooltip"
             class="org.eclipse.debug.internal.ui.actions.StepReturnActionDelegate"
             menubarPath="org.eclipse.debug.ui.DebugMenu/stepGroup"
-            enablesFor="1"
             id="org.eclipse.debug.internal.ui.actions.StepReturnActionDelegate">
-         <selection
-               class="org.eclipse.debug.core.model.IStep">
-         </selection>
       </action>
       <action
             label="%StepOverAction.label"
@@ -148,11 +144,7 @@
             tooltip="%StepOverAction.tooltip"
             class="org.eclipse.debug.internal.ui.actions.StepOverActionDelegate"
             menubarPath="org.eclipse.debug.ui.DebugMenu/stepGroup"
-            enablesFor="1"
             id="org.eclipse.debug.internal.ui.actions.StepOverActionDelegate">
-         <selection
-               class="org.eclipse.debug.core.model.IStep">
-         </selection>
       </action>
       <action
             label="%StepIntoAction.label"
@@ -161,11 +153,7 @@
             tooltip="%StepIntoAction.tooltip"
             class="org.eclipse.debug.internal.ui.actions.StepIntoActionDelegate"
             menubarPath="org.eclipse.debug.ui.DebugMenu/stepGroup"
-            enablesFor="1"
             id="org.eclipse.debug.internal.ui.actions.StepIntoActionDelegate">
-         <selection
-               class="org.eclipse.debug.core.model.IStep">
-         </selection>
       </action>
       <action
             label="%TerminateAction.label"
@@ -174,11 +162,7 @@
             tooltip="%TerminateAction.tooltip"
             class="org.eclipse.debug.internal.ui.actions.TerminateActionDelegate"
             menubarPath="org.eclipse.debug.ui.DebugMenu/stepGroup"
-            enablesFor="+"
             id="org.eclipse.debug.internal.ui.actions.TerminateActionDelegate">
-         <selection
-               class="org.eclipse.debug.core.model.ITerminate">
-         </selection>
       </action>
       <action
             label="%SuspendAction.label"
@@ -187,11 +171,7 @@
             tooltip="%SuspendAction.tooltip"
             class="org.eclipse.debug.internal.ui.actions.SuspendActionDelegate"
             menubarPath="org.eclipse.debug.ui.DebugMenu/stepGroup"
-            enablesFor="+"
             id="org.eclipse.debug.internal.ui.actions.SuspendActionDelegate">
-         <selection
-               class="org.eclipse.debug.core.model.ISuspendResume">
-         </selection>
       </action>
       <action
             label="%ResumeAction.label"
@@ -200,11 +180,7 @@
             tooltip="%ResumeAction.tooltip"
             class="org.eclipse.debug.internal.ui.actions.ResumeActionDelegate"
             menubarPath="org.eclipse.debug.ui.DebugMenu/stepGroup"
-            enablesFor="+"
             id="org.eclipse.debug.internal.ui.actions.ResumeActionDelegate">
-         <selection
-               class="org.eclipse.debug.core.model.ISuspendResume">
-         </selection>
       </action>
    </actionSet>
 </extension>

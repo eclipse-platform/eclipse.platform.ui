@@ -10,21 +10,26 @@ import java.util.Iterator;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.views.DebugSelectionManager;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.IDebugViewAdapter;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
-public abstract class ControlActionDelegate implements IWorkbenchWindowActionDelegate, IViewActionDelegate {
+public abstract class ControlActionDelegate implements IWorkbenchWindowActionDelegate, IViewActionDelegate, ISelectionChangedListener {
 	
+	/**
+	 * The underlying action for this delegate
+	 */
+	private IAction fAction;
 	/**
 	 * This action's view part, or <code>null</code>
 	 * if not installed in a view.
@@ -90,41 +95,36 @@ public abstract class ControlActionDelegate implements IWorkbenchWindowActionDel
 	 * @see IWorkbenchWindowActionDelegate#dispose()
 	 */
 	public void dispose(){
+		DebugSelectionManager.getDefault().removeSelectionChangedListener(this, DebugUIPlugin.getActiveWorkbenchWindow(), IDebugUIConstants.ID_DEBUG_VIEW);
 	}
 
 	/**
 	 * @see IWorkbenchWindowActionDelegate#init(IWorkbenchWindow)
 	 */
 	public void init(IWorkbenchWindow window){
+		// listen to selection changes in the debug view
+		DebugSelectionManager.getDefault().addSelectionChangedListener(this, window, IDebugUIConstants.ID_DEBUG_VIEW);
 	}
 
 	/**
 	 * @see IActionDelegate#run(IAction)
 	 */
 	public void run(IAction action){
+		setAction(action);
 		run();
 	}
 
 	/**
-	 * Only interested in selection changes in the launches view.
 	 * Set the icons for this action on the first selection changed
-	 * event.  This is necessary because the XML currently only
+	 * event. This is necessary because the XML currently only
 	 * supports setting the enabled icon.  
 	 * 
 	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection s) {
 		initialize(action);		
-			
-		if (getView() == null) {
-			// global action - update with debug view selection
-			IDebugViewAdapter view= getDebugView();
-			if (view != null) {
-				ISelection sel = view.getViewer().getSelection();
-				update(action, sel);
-			}
-		} else {
-			// view specific action - use the view's selection
+		setAction(action);
+		if (getView() != null) {
 			update(action, s);
 		}
 	}
@@ -169,23 +169,6 @@ public abstract class ControlActionDelegate implements IWorkbenchWindowActionDel
 	 */
 	protected boolean enableForMultiSelection() {
 		return true;
-	}
-	
-	/**
-	 * Returns the debug view, or <code>null</code> if none.
-	 */
-	protected IDebugViewAdapter getDebugView() {		
-		IWorkbenchWindow window= DebugUIPlugin.getActiveWorkbenchWindow();
-		if (window != null) {
-			IWorkbenchPage page = window.getActivePage();
-			if (page != null) {
-				IViewPart part = page.findView(IDebugUIConstants.ID_DEBUG_VIEW);
-				if (part != null) {
-					return (IDebugViewAdapter)part.getAdapter(IDebugViewAdapter.class);
-				}
-			}
-		}
-		return null;
 	}
 		
 	/**
@@ -283,4 +266,21 @@ public abstract class ControlActionDelegate implements IWorkbenchWindowActionDel
 	private void setSelection(IStructuredSelection selection) {
 		fSelection = selection;
 	}	
+	
+	/**
+	 * Track selection changes in the launch view.
+	 * 
+	 * @see ISelectionChangedListener#selectionChanged(SelectionChangedEvent)
+	 */
+	public void selectionChanged(SelectionChangedEvent event) {
+		update(getAction(), event.getSelection());
+	}
+	
+	protected void setAction(IAction action) {
+		fAction = action;
+	}
+
+	protected IAction getAction() {
+		return fAction;
+	}
 }
