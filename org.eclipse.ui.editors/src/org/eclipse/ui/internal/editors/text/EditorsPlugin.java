@@ -10,9 +10,13 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.editors.text;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -28,14 +32,10 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  */
 public class EditorsPlugin extends AbstractUIPlugin {
 
-	private static EditorsPlugin fgInst;
-	public EditorsPlugin(IPluginDescriptor descriptor) {
-		super(descriptor);
-		fgInst= this;
-	}
-
+	private static EditorsPlugin fgInstance;
+	
 	public static EditorsPlugin getDefault() {
-		return fgInst;
+		return fgInstance;
 	}
 	
 	public static void log(IStatus status) {
@@ -49,7 +49,7 @@ public class EditorsPlugin extends AbstractUIPlugin {
 	public static void logErrorMessage(String message) {
 		log(new Status(IStatus.ERROR, getPluginId(), IEditorsStatusConstants.INTERNAL_ERROR, message, null));
 	}
-
+	
 	public static void logErrorStatus(String message, IStatus status) {
 		if (status == null) {
 			logErrorMessage(message);
@@ -63,11 +63,41 @@ public class EditorsPlugin extends AbstractUIPlugin {
 	public static void log(Throwable e) {
 		log(new Status(IStatus.ERROR, getPluginId(), IEditorsStatusConstants.INTERNAL_ERROR, TextEditorMessages.getString("EditorsPlugin.internal_error"), e)); //$NON-NLS-1$
 	}
+	
+	
+	
+	private FileEditorInputAdapterFactory fFileEditorInputAdapterFactory;
+	
+	
+	public EditorsPlugin(IPluginDescriptor descriptor) {
+		super(descriptor);
+		fgInstance= this;
+	}
 
-	/* (non-Javadoc)
+
+	/*
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#initializeDefaultPreferences(org.eclipse.jface.preference.IPreferenceStore)
 	 */
 	protected void initializeDefaultPreferences(IPreferenceStore store) {
 		TextEditorPreferenceConstants.initializeDefaultValues(store);
+	}
+	
+	/*
+	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#startup()
+	 */
+	public void startup() throws CoreException {
+		super.startup();
+		fFileEditorInputAdapterFactory= new FileEditorInputAdapterFactory();
+		IAdapterManager manager= Platform.getAdapterManager();		
+		manager.registerAdapters(fFileEditorInputAdapterFactory, IFile.class);
+	}
+	
+	/*
+	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#shutdown()
+	 */
+	public void shutdown() throws CoreException {
+		IAdapterManager manager= Platform.getAdapterManager();		
+		manager.unregisterAdapters(fFileEditorInputAdapterFactory);
+		super.shutdown();
 	}
 }

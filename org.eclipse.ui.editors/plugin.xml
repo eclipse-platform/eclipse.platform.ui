@@ -24,7 +24,6 @@
       <import plugin="org.eclipse.core.filebuffers"/>
    </requires>
 
-   
    <extension
       point="org.eclipse.ui.preferencePages">
       <page
@@ -40,11 +39,19 @@
       <provider
             class="org.eclipse.ui.editors.text.TextFileDocumentProvider"
             inputTypes="org.eclipse.ui.IStorageEditorInput"
-            id="org.eclipse.ui.editors.text.TextFileDocumentProvider">
+            id="org.eclipse.ui.editors.text.StorageDocumentProvider">
       </provider>
    </extension>
 
-<!-- version on disk quick diff reference provider -->
+   <extension
+      point="org.eclipse.ui.documentProviders">
+      <provider
+            class="org.eclipse.ui.editors.text.TextFileDocumentProvider"
+            inputTypes="org.eclipse.ui.internal.editors.text.JavaFileEditorInput"
+            id="org.eclipse.ui.editors.text.ExternalFileDocumentProvider">
+      </provider>
+   </extension>
+
    <extension
       point="org.eclipse.ui.workbench.texteditor.quickDiffReferenceProvider">
       <referenceprovider
@@ -55,7 +62,6 @@
       </referenceprovider>
    </extension>
    
-<!-- quick diff context menu -->
    <extension
       point="org.eclipse.ui.popupMenus">
       <viewerContribution
@@ -71,5 +77,33 @@
          </action>
       </viewerContribution>
    </extension>
+   
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            name="%openExternalFile.label"
+            description="%openExternalFile.description"
+            category="org.eclipse.ui.category.file"
+            id="org.eclipse.ui.edit.text.openExternalFile">
+      </command>
+   </extension>
+
+   
+	<extension
+		point="org.eclipse.ui.actionSets">
+		<actionSet
+			label="%openExternalFileActionSet.label"
+			visible="true"
+			id="org.eclipse.ui.edit.text.actionSet.openExternalFile">
+			<action
+				id="org.eclipse.ui.edit.text.openExternalFile"
+				label="%openExternalFile.label"
+				tooltip="%openExternalFile.description"
+				menubarPath="file/new.ext"
+				class="org.eclipse.ui.internal.editors.text.OpenExternalFileAction"
+				definitionId="org.eclipse.ui.edit.text.openExternalFile"
+				helpContextId="open_text_editor_action_context"/>
+		</actionSet>		
+	</extension>
 
 </plugin>

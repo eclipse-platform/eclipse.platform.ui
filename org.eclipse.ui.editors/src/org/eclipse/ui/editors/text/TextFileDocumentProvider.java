@@ -29,7 +29,10 @@ import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.core.internal.filebuffers.ContainerGenerator;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -170,10 +173,12 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 		}
 
 		/*
-		 * @see org.eclipse.core.buffer.text.IBufferedFileListener#underlyingFileMoved(org.eclipse.core.buffer.text.IBufferedFile, org.eclipse.core.resources.IFile)
+		 * @see org.eclipse.core.buffer.text.IBufferedFileListener#underlyingFileMoved(org.eclipse.core.buffer.text.IBufferedFile, org.eclipse.core.runtime.IPath)
 		 */
-		public void underlyingFileMoved(IFileBuffer file, IFile target) {
-			IEditorInput input= target == null ? null : new FileEditorInput(target);
+		public void underlyingFileMoved(IFileBuffer file, IPath newLocation) {
+			IWorkspace workspace=ResourcesPlugin.getWorkspace();
+			IFile newFile= workspace.getRoot().getFile(newLocation);
+			IEditorInput input= newFile == null ? null : new FileEditorInput(newFile);
 			List list= new ArrayList(fElementStateListeners);
 			Iterator e= list.iterator();
 			while (e.hasNext()) {
@@ -289,19 +294,41 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 		return new FileInfo();
 	}
 	
+	/**
+	 * Returns the workspace file at the given location or <code>null</code> if
+	 * the location is not a valid location in the workspace.
+	 * 
+	 * @param location the location
+	 * @return the workspace file at the location or <code>null</code>
+	 */
+	protected IFile getWorkspaceFileAtLocation(IPath location) {
+//		IWorkspace workspace= ResourcesPlugin.getWorkspace();
+//		return workspace.getRoot().getFileForLocation(location);
+		return null;
+	}
+	
 	protected FileInfo createFileInfo(Object element) throws CoreException {
-		if (element instanceof IFileEditorInput) {
-			IFileEditorInput input= (IFileEditorInput) element;
-			
-			IFile file= input.getFile();
+		
+		IPath location= null;
+		if (element instanceof IAdaptable) {
+			IAdaptable adaptable= (IAdaptable) element;
+			ILocationProvider provider= (ILocationProvider) adaptable.getAdapter(ILocationProvider.class);
+			if (provider != null)
+				location= provider.getPath(element);
+		}
+		
+		if (location != null) {
 			ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
-			manager.connect(file, getProgressMonitor());
-			manager.requestSynchronizationContext(file);
-			ITextFileBuffer f= manager.getTextFileBuffer(file);
+			manager.connect(location, getProgressMonitor());
+			manager.requestSynchronizationContext(location);
+			ITextFileBuffer fileBuffer= manager.getTextFileBuffer(location);
 			
 			FileInfo info= createEmptyFileInfo();
-			info.fTextFileBuffer= f;
-			info.fModel= createAnnotationModel(file);
+			info.fTextFileBuffer= fileBuffer;
+			
+			IFile file= getWorkspaceFileAtLocation(location);
+			if (file != null && file.exists())
+				info.fModel= createAnnotationModel(file);
 			return info;
 		}
 		return null;
@@ -334,9 +361,9 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 	protected void disposeFileInfo(Object element, FileInfo info) {
 		IFileBufferManager manager= FileBuffers.getTextFileBufferManager();
 		try {
-			IFile file= info.fTextFileBuffer.getUnderlyingFile();
-			manager.releaseSynchronizationContext(file);
-			manager.disconnect(file, getProgressMonitor());
+			IPath location= info.fTextFileBuffer.getLocation();
+			manager.releaseSynchronizationContext(location);
+			manager.disconnect(location, getProgressMonitor());
 		} catch (CoreException x) {
 			handleCoreException(x, "FileDocumentProvider.disposeElementInfo"); //$NON-NLS-1$
 		}
@@ -404,12 +431,8 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 	 */
 	public long getModificationStamp(Object element) {
 		FileInfo info= (FileInfo) fFileInfoMap.get(element);
-		if (info != null)  {
-			File file= getSystemFile(info);
-			if (file != null)
-				return file.lastModified();
-			return info.fTextFileBuffer.getUnderlyingFile().getModificationStamp();
-		}
+		if (info != null)
+			return info.fTextFileBuffer.getModifcationStamp();
 		return getParentProvider().getModificationStamp(element);
 	}
 
@@ -649,8 +672,7 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 	}
 	
 	protected File getSystemFile(FileInfo info)  {
-		IFile file= info.fTextFileBuffer.getUnderlyingFile();
-		IPath path= file.getLocation();
+		IPath path= info.fTextFileBuffer.getLocation();
 		return path == null ? null : path.toFile();		
 	}
 	
