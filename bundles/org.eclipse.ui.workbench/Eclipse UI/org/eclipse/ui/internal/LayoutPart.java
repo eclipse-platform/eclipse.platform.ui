@@ -34,7 +34,6 @@ abstract public class LayoutPart implements IWorkbenchDropTarget {
 	protected ILayoutContainer container;
 	protected String id;
 
-	private Boolean visible;
 	private ListenerList propertyListeners = new ListenerList(1);
 
 	public static final String PROP_VISIBILITY = "PROP_VISIBILITY"; //$NON-NLS-1$
@@ -210,8 +209,8 @@ abstract public class LayoutPart implements IWorkbenchDropTarget {
 	 */
 	public boolean isVisible() {
 		Control ctrl = getControl();
-		if (ctrl != null)
-			return visible == Boolean.TRUE ? true : false;
+		if (ctrl != null && !ctrl.isDisposed())
+			return ctrl.isVisible();
 		return false;
 	}
 	/**
@@ -219,17 +218,17 @@ abstract public class LayoutPart implements IWorkbenchDropTarget {
 	 */
 	public void setVisible(boolean makeVisible) {
 		Control ctrl = getControl();
-		if (ctrl != null) {
-			if (visible != null && makeVisible == visible.booleanValue())
-				return;
+		if (ctrl != null && !ctrl.isDisposed()) {
+		    if (makeVisible == ctrl.getVisible())
+		        return;
 
-			visible = makeVisible ? Boolean.TRUE : Boolean.FALSE;
 			ctrl.setVisible(makeVisible);
 			final Object[] listeners = propertyListeners.getListeners();
 			if (listeners.length > 0) {
 				Boolean oldValue = makeVisible ? Boolean.FALSE : Boolean.TRUE;
+				Boolean newValue = makeVisible ? Boolean.TRUE : Boolean.FALSE;
 				PropertyChangeEvent event =
-					new PropertyChangeEvent(this, PROP_VISIBILITY, oldValue, visible);
+					new PropertyChangeEvent(this, PROP_VISIBILITY, oldValue, newValue);
 				for (int i = 0; i < listeners.length; ++i)
 					 ((IPropertyChangeListener) listeners[i]).propertyChange(event);
 			}
