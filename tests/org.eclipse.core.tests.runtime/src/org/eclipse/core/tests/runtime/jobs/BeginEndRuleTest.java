@@ -176,12 +176,10 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 		//number of times to start each rule
 		int NUM_REPEATS = 10;
 
-		RuleSetA.conflict = true;
 		Job[] jobs = new Job[NUM_THREADS];
-
-		jobs[0] = new JobRuleRunner("Job1", new RuleSetA(), status, 0, NUM_REPEATS, true);
-		jobs[1] = new JobRuleRunner("Job2", new RuleSetB(), status, 1, NUM_REPEATS, true);
-		jobs[2] = new JobRuleRunner("Job3", new RuleSetC(), status, 2, NUM_REPEATS, true);
+		jobs[0] = new JobRuleRunner("Job1", new PathRule("/A"), status, 0, NUM_REPEATS, true);
+		jobs[1] = new JobRuleRunner("Job2", new PathRule("/A/B"), status, 1, NUM_REPEATS, true);
+		jobs[2] = new JobRuleRunner("Job3", new PathRule("/A/B/C"), status, 2, NUM_REPEATS, true);
 		//jobs[3] = new JobRuleRunner("Job4", new RuleSetD(), status, 3, NUM_REPEATS, true);
 		//jobs[4] = new JobRuleRunner("Job5", new RuleSetE(), status, 4, NUM_REPEATS, true);
 
@@ -267,9 +265,9 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 	public void _testOtherRules() {
 		try {
 			for(int i = 0; i < 100; i++) {
-				testSimpleRuleStarting();
+				//testSimpleRuleStarting();
 				System.out.println("Done Simple " + (i+1));
-				testComplexRuleStarting();
+				//testComplexRuleStarting();
 				System.out.println("Done Complex " + (i+1));
 			}
 		} catch(Throwable t) {
@@ -284,12 +282,9 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 		final int[] status = { StatusChecker.STATUS_WAIT_FOR_START, StatusChecker.STATUS_WAIT_FOR_START };
 		//number of repetitions of beginning and ending the rule
 		final int NUM_REPEATS = 10;
-		//set the two rules to conflict with each other
-		RuleSetA.conflict = true;
 		Job[] jobs = new Job[2];
-
-		jobs[0] = new JobRuleRunner("Job1", new RuleSetB(), status, 0, NUM_REPEATS, false);
-		jobs[1] = new JobRuleRunner("Job2", new RuleSetD(), status, 1, NUM_REPEATS, false);
+		jobs[0] = new JobRuleRunner("Job1", new PathRule("/A"), status, 0, NUM_REPEATS, false);
+		jobs[1] = new JobRuleRunner("Job2", new PathRule("/A/B"), status, 1, NUM_REPEATS, false);
 
 		//schedule both jobs to start their execution
 		jobs[0].schedule();
@@ -366,16 +361,14 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 		assertEquals("6.4", Job.NONE, jobs[1].getState());
 		assertEquals("6.5", IStatus.OK, jobs[0].getResult().getSeverity());
 		assertEquals("6.6", IStatus.OK, jobs[1].getResult().getSeverity());
-		
-		RuleSetA.conflict = false;
 	}
 	public void testComplexRuleContainment() {
 		ISchedulingRule rules[] = new ISchedulingRule[4];
 
-		rules[0] = new RuleSetA();
-		rules[1] = new RuleSetB();
-		rules[2] = new RuleSetC();
-		rules[3] = new RuleSetD();
+		rules[0] = new PathRule("/A");
+		rules[1] = new PathRule("/A/B");
+		rules[2] = new PathRule("/A/B/C");
+		rules[3] = new PathRule("/A/D");
 
 		//adding multiple rules in correct order
 		int RULE_REPEATS = 10;
@@ -465,8 +458,8 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 		manager.endRule(rule1);
 	}
 	public void testNestedCase() {
-		ISchedulingRule rule1 = new RuleSetA();
-		ISchedulingRule rule2 = new RuleSetB();
+		ISchedulingRule rule1 = new PathRule("/A");
+		ISchedulingRule rule2 = new PathRule("/A/B");
 
 		//ending an outer rule before an inner one
 		manager.beginRule(rule1, null);
@@ -566,10 +559,10 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 	public void testRuleContainment() {
 		ISchedulingRule rules[] = new ISchedulingRule[4];
 
-		rules[0] = new RuleSetA();
-		rules[1] = new RuleSetB();
-		rules[2] = new RuleSetC();
-		rules[3] = new RuleSetD();
+		rules[0] = new PathRule("/A");
+		rules[1] = new PathRule("/A/B");
+		rules[2] = new PathRule("/A/B/C");
+		rules[3] = new PathRule("/A/D");
 
 		//simple addition of rules in incorrect containment order
 		manager.beginRule(rules[1], null);
@@ -623,9 +616,9 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 		//starting several rules on this thread, and trying to end them from other threads
 		ISchedulingRule rules[] = new ISchedulingRule[3];
 
-		rules[0] = new RuleSetA();
-		rules[1] = new RuleSetB();
-		rules[2] = new RuleSetC();
+		rules[0] = new PathRule("/A");
+		rules[1] = new PathRule("/A/B");
+		rules[2] = new PathRule("/A/C");
 		
 		//end the rules right after starting them
 		for (int i = 0; i < rules.length; i++) {

@@ -325,8 +325,7 @@ public class DeadlockDetectionTest extends TestCase {
 		final int NUM_JOBS = 3;
 		final int[] status = new int[NUM_JOBS];
 		Arrays.fill(status, StatusChecker.STATUS_WAIT_FOR_START);
-		RuleHierarchy.reset();
-		final ISchedulingRule[] rules = {new RuleHierarchy(), new RuleHierarchy(), new RuleHierarchy()};
+		final ISchedulingRule[] rules = {new PathRule("/A"), new PathRule("/A/B"), new PathRule("/A/C")};
 		final ILock[] locks = {manager.newLock(), manager.newLock()};
 		Job[] jobs = new Job[NUM_JOBS];
 		
@@ -436,8 +435,7 @@ public class DeadlockDetectionTest extends TestCase {
 		final int NUM_JOBS = 3;
 		final int[] status = new int[NUM_JOBS];
 		Arrays.fill(status, StatusChecker.STATUS_WAIT_FOR_START);
-		RuleHierarchy.reset();
-		final ISchedulingRule[] rules = {new RuleHierarchy(), new RuleHierarchy(), new RuleHierarchy()};
+		final ISchedulingRule[] rules = {new PathRule("/A"), new PathRule("/A/B"), new PathRule("/A/C")};
 		final ILock lock = manager.newLock();
 		Job[] jobs = new Job[NUM_JOBS];
 		
@@ -540,8 +538,7 @@ public class DeadlockDetectionTest extends TestCase {
 		final int NUM_JOBS = 3;
 		final int[] status = new int[NUM_JOBS];
 		Arrays.fill(status, StatusChecker.STATUS_WAIT_FOR_START);
-		RuleHierarchy.reset();
-		final ISchedulingRule[] rules = {new RuleHierarchy(), new RuleHierarchy(), new RuleHierarchy()};
+		final ISchedulingRule[] rules = {new PathRule("/A"), new PathRule("/A/B"), new PathRule("/A/C")};
 		final IProgressMonitor first = new BlockingMonitor(status, 1);
 		final IProgressMonitor second = new BlockingMonitor(status, 2);
 		Job[] jobs = new Job[NUM_JOBS];
@@ -630,9 +627,9 @@ public class DeadlockDetectionTest extends TestCase {
 	 */
 	public void testBeginRuleCancelAfterWait() {
 		final JobManager manager = JobManager.getInstance();
-		final ISchedulingRule rule1 = new RuleSetA();
-		final ISchedulingRule rule2 = new RuleSetB();
-		RuleSetA.conflict = true;
+		final ISchedulingRule rule1 = new PathRule("/A");
+		final ISchedulingRule rule2 = new PathRule("/A/B");
+		
 		final int[] status = {StatusChecker.STATUS_WAIT_FOR_START, StatusChecker.STATUS_WAIT_FOR_START};
 		final IProgressMonitor canceller = new FussyProgressMonitor();
 		
@@ -686,7 +683,6 @@ public class DeadlockDetectionTest extends TestCase {
 		StatusChecker.waitForStatus(status, StatusChecker.STATUS_DONE);
 		int i = 0;
 		waitForCompletion(ruleOwner);
-		RuleSetA.conflict = false;
 		//the underlying graph should now be empty
 		assertTrue("Cancelled rule not removed from graph.", manager.getLockManager().isEmpty());
 	}
@@ -699,8 +695,7 @@ public class DeadlockDetectionTest extends TestCase {
 		final int NUM_JOBS = 4;
 		final int[] status = new int[NUM_JOBS];
 		Arrays.fill(status, StatusChecker.STATUS_WAIT_FOR_START);
-		RuleHierarchy.reset();
-		final ISchedulingRule[] rules = {new RuleHierarchy(), new RuleHierarchy(), new RuleHierarchy(), new RuleHierarchy()};
+		final ISchedulingRule[] rules = {new PathRule("/A"), new PathRule("/A/B"), new PathRule("/A/C"), new PathRule("/A/B/D")};
 		Job[] jobs = new Job[NUM_JOBS];
 		
 		jobs[0] = new Job("Test 0") {
@@ -820,8 +815,7 @@ public class DeadlockDetectionTest extends TestCase {
 		final int NUM_JOBS = 5;
 		final int[] status = new int[NUM_JOBS];
 		Arrays.fill(status, StatusChecker.STATUS_WAIT_FOR_START);
-		RuleHierarchy.reset();
-		final ISchedulingRule[] rules = {new RuleHierarchy(), new RuleHierarchy(), new RuleHierarchy()};
+		final ISchedulingRule[] rules = {new PathRule("/A"), new PathRule("/A/B"), new PathRule("/A/C")};
 		Job[] jobs = new Job[NUM_JOBS];
 		
 		jobs[0] = new Job("Test 0") {
@@ -1035,8 +1029,7 @@ public class DeadlockDetectionTest extends TestCase {
 		final JobManager manager = JobManager.getInstance();
 		final int NUM_LOCKS = 5;
 		final int [] status = {StatusChecker.STATUS_WAIT_FOR_START};
-		RuleHierarchy.reset();
-		final ISchedulingRule[] rules = {new RuleHierarchy(), new RuleHierarchy(), new RuleHierarchy(), new RuleHierarchy(), new RuleHierarchy()};
+		final ISchedulingRule[] rules = {new PathRule("/A"), new PathRule("/A/B"), new PathRule("/A/C"), new PathRule("/A/B/D"), new PathRule("/A/C/E")};
 		final ILock[] locks = {manager.newLock(), manager.newLock(), manager.newLock(), manager.newLock(), manager.newLock()};
 		Job[] jobs = new Job[NUM_LOCKS*3];
 		final Random random = new Random();

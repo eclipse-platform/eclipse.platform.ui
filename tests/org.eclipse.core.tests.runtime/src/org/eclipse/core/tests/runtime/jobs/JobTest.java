@@ -95,7 +95,7 @@ public class JobTest extends TestCase {
 		shortJob.setRule(new IdentityRule());
 		assertTrue("1.1", (shortJob.getRule() instanceof IdentityRule));
 		
-		ISchedulingRule rule = new RuleSetA();
+		ISchedulingRule rule = new PathRule("/A");
 		shortJob.setRule(rule);
 		assertTrue("1.2", shortJob.getRule() == rule);
 		
@@ -156,7 +156,7 @@ public class JobTest extends TestCase {
 		assertTrue("1.0", shortJob.getRule() instanceof IdentityRule);
 		shortJob.schedule(1000000);
 		try {
-			shortJob.setRule(new RuleSetA());
+			shortJob.setRule(new PathRule("/A"));
 			fail("1.1");
 		} catch (RuntimeException e) {
 			//should fail
@@ -167,7 +167,7 @@ public class JobTest extends TestCase {
 		
 		while(shortJob.getState() != Job.NONE) {
 			try {
-				shortJob.setRule(new RuleSetB());
+				shortJob.setRule(new PathRule("/A/B"));
 				fail("2.0");
 			}  catch (RuntimeException e1) {
 				//should fail
@@ -180,8 +180,8 @@ public class JobTest extends TestCase {
 		}
 		
 		//after the job has finished executing, the scheduling rule for it can once again be reset
-		shortJob.setRule(new RuleSetD());
-		assertTrue("1.2", shortJob.getRule() instanceof RuleSetD);
+		shortJob.setRule(new PathRule("/A/B/C/D"));
+		assertTrue("1.2", shortJob.getRule() instanceof PathRule);
 		shortJob.setRule(null);
 		assertTrue("1.3", shortJob.getRule() == null);
 	}
