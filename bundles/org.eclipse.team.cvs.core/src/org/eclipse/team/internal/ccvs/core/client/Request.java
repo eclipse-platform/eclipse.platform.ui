@@ -53,8 +53,11 @@ public abstract class Request {
 		registerResponseHandler(new ValidRequestsHandler());
 		registerResponseHandler(new ModuleExpansionHandler());		
 	}
-	private static void registerResponseHandler(ResponseHandler handler) {
+	protected static void registerResponseHandler(ResponseHandler handler) {
 		responseHandlers.put(handler.getResponseID(), handler);
+	}
+	protected static void removeResponseHandler(String responseID) {
+		responseHandlers.remove(responseID);
 	}
 	private static ResponseHandler getResponseHandler(String responseID) {
 		return (ResponseHandler)responseHandlers.get(responseID);
@@ -143,6 +146,27 @@ public abstract class Request {
 					(IStatus[]) accumulatedStatus.toArray(new IStatus[accumulatedStatus.size()]),
 					argument, null);
 			// handle message responses
+			} else if (response.equals("MT")) {  //$NON-NLS-1$
+				// Handle the MT response
+				MTHandler handler = (MTHandler) responseHandlers.get(response);
+				if (handler != null) {
+					handler.handle(session, argument, monitor);
+				} else {
+					throw new CVSException(new org.eclipse.core.runtime.Status(IStatus.ERROR,
+						CVSProviderPlugin.ID, CVSException.IO_FAILED,
+						Policy.bind("Command.unsupportedResponse", response, argument), null)); //$NON-NLS-1$
+				}
+				// If a line is available, pass it on to the message listener 
+				// and console as if it were an M response
+				if (handler.isLineAvailable()) {
+					String line = handler.getLine();
+					IStatus status = listener.messageLine(line, session.getLocalRoot(), monitor);
+					if (status != ICommandOutputListener.OK) accumulatedStatus.add(status);
+					if (session.isOutputToConsole()) {
+						IConsoleListener consoleListener = CVSProviderPlugin.getPlugin().getConsoleListener();
+						if (consoleListener != null) consoleListener.messageLineReceived(line);
+					}
+				}
 			} else if (response.equals("M")) {  //$NON-NLS-1$
 				IStatus status = listener.messageLine(argument, session.getLocalRoot(), monitor);
 				if (status != ICommandOutputListener.OK) accumulatedStatus.add(status);

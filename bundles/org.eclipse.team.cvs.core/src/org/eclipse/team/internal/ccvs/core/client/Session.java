@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.ICVSFile;
 import org.eclipse.team.ccvs.core.ICVSFolder;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
@@ -146,6 +147,13 @@ public class Session {
 			connection = location.openConnection(Policy.subMonitorFor(monitor, 50));
 			hasBeenConnected = true;
 			
+			// If we're connected to a CVSNT server, accept MT. Otherwise don't
+			if (isCVSNT()) {
+				Request.registerResponseHandler(new MTHandler());
+			} else {
+				Request.removeResponseHandler("MT");
+			}
+			
 			// tell the server the names of the responses we can handle
 			connection.writeLine("Valid-responses " + Request.makeResponseList()); //$NON-NLS-1$
 	
@@ -154,6 +162,17 @@ public class Session {
 	
 			// set the root directory on the server for this connection
 			connection.writeLine("Root " + getRepositoryRoot()); //$NON-NLS-1$
+		} catch (CVSException e) {
+			// If there is a failure opening, make sure we're closed
+			if (connection != null) {
+				hasBeenConnected = false;
+				try {
+					close();
+				} catch (CVSException ex) {
+					CVSProviderPlugin.log(ex);
+				}
+			}
+			throw e;
 		} finally {
 			monitor.done();
 		}
@@ -189,7 +208,7 @@ public class Session {
 	}
 	
 	public boolean isCVSNT() {
-		return location.getRootDirectory().indexOf(':') >= 0;
+		return location.getRootDirectory().indexOf(':') == 1;
 	}
 
 	/**
