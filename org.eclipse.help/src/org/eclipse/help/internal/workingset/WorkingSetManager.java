@@ -13,9 +13,11 @@ package org.eclipse.help.internal.workingset;
 import java.io.*;
 import java.util.*;
 
-import org.apache.xerces.dom.*;
-import org.apache.xerces.parsers.*;
-import org.apache.xml.serialize.*;
+import javax.xml.parsers.*;
+import javax.xml.transform.*;
+import javax.xml.transform.dom.*;
+import javax.xml.transform.stream.*;
+
 import org.eclipse.core.boot.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.*;
@@ -82,6 +84,9 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 	private PropertyChange.ListenerList propertyChangeListeners =
 		new PropertyChange.ListenerList();
 	private AdaptableTocsArray root;
+	
+	private static final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+	private static final TransformerFactory transformerFactory = TransformerFactory.newInstance();
 
 	/**
 	 * Constructor
@@ -248,18 +253,20 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 
 				InputSource inputSource = new InputSource(reader);
 				inputSource.setSystemId(stateFile.toString());
+				
+				DocumentBuilder parser = documentBuilderFactory.newDocumentBuilder();
+				Document d=parser.parse(inputSource);
 
-				DOMParser parser = new DOMParser();
-				parser.parse(inputSource);
-				if (parser.getDocument() == null)
-					return false;
-
-				Element rootElement = parser.getDocument().getDocumentElement();
+				Element rootElement = d.getDocumentElement();
 				restoreWorkingSetState(rootElement);
 				input.close();
 
 				return true;
-
+			} catch (ParserConfigurationException pce) {
+				String msg = Resources.getString("WorkingSetManager.PCE");
+				HelpPlugin.logError(msg, pce);
+				HelpPlugin.logError(Resources.getString("E041"), pce);
+				return false;
 			} catch (SAXException se) {
 				String msg = Resources.getString("E018", stateFile.toString());
 				HelpPlugin.logError(msg, se);
@@ -359,29 +366,39 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 	 * Saves the working sets in the persistence store
 	 */
 	public synchronized boolean saveState() {
-		Document doc = new DocumentImpl();
-		Element rootElement = doc.createElement("workingSets");
-		doc.appendChild(rootElement);
-
-		saveWorkingSetState(rootElement);
-
-		File stateFile = getWorkingSetStateFile();
+		File stateFile=null;
 		try {
+			DocumentBuilder docBuilder = documentBuilderFactory.newDocumentBuilder();
+			Document doc = docBuilder.newDocument();
+			Element rootElement = doc.createElement("workingSets");
+			doc.appendChild(rootElement);
+
+			saveWorkingSetState(rootElement);
+
+			stateFile = getWorkingSetStateFile();
 			stateFile.getParentFile().mkdir();
 			FileOutputStream stream = new FileOutputStream(stateFile);
+			
+			Transformer transformer=transformerFactory.newTransformer();
+			transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+			DOMSource source = new DOMSource(doc);
+			StreamResult result = new StreamResult(stream);
 
-			OutputFormat format = new OutputFormat();
-			format.setEncoding("UTF-8");
-			Serializer serializer =
-				SerializerFactory.getSerializerFactory("xml").makeSerializer(
-					stream,
-					format);
-
-			serializer.asDOMSerializer().serialize(doc);
-			stream.close();
+			transformer.transform(source,result);
+ 			stream.close();
 			return true;
+		}catch (ParserConfigurationException pce){
+			String msg = Resources.getString("WorkingSetManager.PCE");
+			HelpPlugin.logError(msg, pce);
+			return false;
+		}catch (TransformerException e){
+			// TODO
+			return false;
 		} catch (IOException e) {
-			stateFile.delete();
+			if(stateFile!=null){
+				stateFile.delete();
+			}
 			String message = Resources.getString("E40");
 			HelpPlugin.logError(message, null);
 			return false;

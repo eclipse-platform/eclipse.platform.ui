@@ -12,7 +12,8 @@ package org.eclipse.help.internal.context;
 import java.io.*;
 import java.text.*;
 
-import org.apache.xerces.parsers.*;
+import javax.xml.parsers.*;
+
 import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.util.*;
 import org.xml.sax.*;
@@ -26,13 +27,15 @@ public class ContextsFileParser extends DefaultHandler {
 	boolean seenDescription = false;
 	ContextsFile contextsFile;
 	private ContextsBuilder builder;
+	private final static SAXParserFactory factory =
+		SAXParserFactory.newInstance();
 	public ContextsFileParser(ContextsBuilder builder) {
 		super();
 		this.builder = builder;
 	}
 	/**
-	  * Receive notification of character data.
-	  */
+	 * Receive notification of character data.
+	 */
 	public void characters(char ch[], int start, int length)
 		throws SAXException {
 		if (seenDescription)
@@ -44,8 +47,8 @@ public class ContextsFileParser extends DefaultHandler {
 		}
 	}
 	/**
-	  * Receive notification of the end of an element.
-	  */
+	 * Receive notification of the end of an element.
+	 */
 	public void endElement(String namespaceURI, String localName, String qName)
 		throws SAXException {
 		// make sure that no error has already occurred before adding to stack.
@@ -95,8 +98,8 @@ public class ContextsFileParser extends DefaultHandler {
 		return message;
 	}
 	/**
-	  * Receive notification of the beginning of an element.
-	  */
+	 * Receive notification of the beginning of an element.
+	 */
 	public void startElement(
 		String namespaceURI,
 		String localName,
@@ -112,7 +115,7 @@ public class ContextsFileParser extends DefaultHandler {
 			// the current StringBuffer of description.
 			// ie: there are many bold start tags in the stack, but we appended
 			// the tag only once to the description string.
-			// eg: (b) some text (b) more test (/b) more text (/b) will result 
+			// eg: (b) some text (b) more test (/b) more text (/b) will result
 			// in all of the sentence being bold.
 			if (!(stack.peek()).equals(ContextsNode.BOLD_TAG))
 				buffer.append(ContextsNode.BOLD_TAG);
@@ -150,22 +153,36 @@ public class ContextsFileParser extends DefaultHandler {
 				+ contextsFile.getHref();
 		inputSource.setSystemId(file);
 		try {
-			SAXParser parser = new SAXParser();
-			parser.setFeature(
-				"http://apache.org/xml/features/nonvalidating/load-external-dtd",
-				false);
-			parser.setErrorHandler(this);
-			parser.setContentHandler(this);
-			parser.parse(inputSource);
+			SAXParser parser = factory.newSAXParser();
+			parser.parse(inputSource, this);
 			is.close();
+		} catch (ParserConfigurationException pce) {
+			HelpPlugin.logError(
+				Resources.getString("ContextsFileParser.PCE"),
+				pce);
 		} catch (SAXException se) {
 			HelpPlugin.logError("", se);
 		} catch (IOException ioe) {
 			String msg = Resources.getString("E009", file);
 			HelpPlugin.logError(msg, ioe);
-			// now pass it to the RuntimeHelpStatus object explicitly because we
+			// now pass it to the RuntimeHelpStatus object explicitly because
+			// we
 			// still need to display errors even if Logging is turned off.
 			RuntimeHelpStatus.getInstance().addParseError(msg, file);
 		}
 	}
+
+	/**
+	 * @see EntityResolver This method implementation prevents loading external
+	 *      entities instead of calling
+	 *      org.apache.xerces.parsers.SaxParser.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd",false);
+	 */
+	public InputSource resolveEntity(String publicId, String systemId) {
+		InputSource source =
+			new InputSource(new ByteArrayInputStream(new byte[0]));
+		source.setPublicId(publicId);
+		source.setSystemId(systemId);
+		return source;
+	}
+
 }

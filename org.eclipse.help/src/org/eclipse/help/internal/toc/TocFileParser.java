@@ -13,19 +13,20 @@ import java.io.*;
 import java.text.*;
 import java.util.*;
 
-import org.apache.xerces.parsers.*;
+import javax.xml.parsers.*;
+
 import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.util.*;
 import org.xml.sax.*;
 import org.xml.sax.helpers.*;
 /**
- * Used to create TocFile's Toc object
- * from contributed toc xml file.
+ * Used to create TocFile's Toc object from contributed toc xml file.
  */
 class TocFileParser extends DefaultHandler {
 	protected TocBuilder builder;
 	protected FastStack elementStack;
 	protected TocFile tocFile;
+	private static SAXParserFactory factory = SAXParserFactory.newInstance();
 	private static XMLParserPool parserPool = new XMLParserPool();
 	/**
 	 * Constructor
@@ -39,7 +40,8 @@ class TocFileParser extends DefaultHandler {
 	 */
 	public void error(SAXParseException ex) throws SAXException {
 		String message = getMessage("E024", ex);
-		//Error parsing Table of Contents file, URL: %1 at Line:%2 Column:%3 %4
+		//Error parsing Table of Contents file, URL: %1 at Line:%2 Column:%3
+		// %4
 		HelpPlugin.logError(message, null);
 		RuntimeHelpStatus.getInstance().addParseError(
 			message,
@@ -51,7 +53,8 @@ class TocFileParser extends DefaultHandler {
 	public void fatalError(SAXParseException ex) throws SAXException {
 		// create message string from exception
 		String message = getMessage("E025", ex);
-		//Failed to parse Table of Contents file, URL: %1 at Line:%2 Column:%3 %4
+		//Failed to parse Table of Contents file, URL: %1 at Line:%2 Column:%3
+		// %4
 		HelpPlugin.logError(message, ex);
 		RuntimeHelpStatus.getInstance().addParseError(
 			message,
@@ -83,13 +86,15 @@ class TocFileParser extends DefaultHandler {
 		try {
 			SAXParser parser = parserPool.obtainParser();
 			try {
-				parser.setErrorHandler(this);
-				parser.setContentHandler(this);
-				parser.parse(inputSource);
+				parser.parse(inputSource, this);
 				is.close();
 			} finally {
 				parserPool.releaseParser(parser);
 			}
+		} catch (ParserConfigurationException pce) {
+			String msg = Resources.getString("TocFileParser.PCE");
+			//SAXParser implementation could not be loaded.
+			HelpPlugin.logError(msg, pce);
 		} catch (SAXException se) {
 			String msg = Resources.getString("E026", file);
 			//Error loading Table of Contents file %1.
@@ -98,7 +103,8 @@ class TocFileParser extends DefaultHandler {
 			String msg = Resources.getString("E026", file);
 			//Error loading Table of Contents file %1.
 			HelpPlugin.logError(msg, ioe);
-			// now pass it to the RuntimeHelpStatus object explicitly because we
+			// now pass it to the RuntimeHelpStatus object explicitly because
+			// we
 			// still need to display errors even if Logging is turned off.
 			RuntimeHelpStatus.getInstance().addParseError(msg, file);
 		}
@@ -140,22 +146,34 @@ class TocFileParser extends DefaultHandler {
 		throws SAXException {
 		elementStack.pop();
 	}
+
+	/**
+	 * @see EntityResolver This method implementation prevents loading external
+	 *      entities instead of calling
+	 *      org.apache.xerces.parsers.SaxParser.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd",false);
+	 */
+	public InputSource resolveEntity(String publicId, String systemId) {
+		InputSource source =
+			new InputSource(new ByteArrayInputStream(new byte[0]));
+		source.setPublicId(publicId);
+		source.setSystemId(systemId);
+		return source;
+	}
+
 	/**
 	 * This class maintain pool of parsers that can be used for parsing TOC
 	 * files. The parsers should be returned to the pool for reuse.
 	 */
 	static class XMLParserPool {
 		private ArrayList pool = new ArrayList();
-		private SAXParser obtainParser() throws SAXException {
+		private SAXParser obtainParser()
+			throws ParserConfigurationException, SAXException {
 			SAXParser p;
 			int free = pool.size();
 			if (free > 0) {
 				p = (SAXParser) pool.remove(free - 1);
 			} else {
-				p = new SAXParser();
-				p.setFeature(
-					"http://apache.org/xml/features/nonvalidating/load-external-dtd",
-					false);
+				p = factory.newSAXParser();
 			}
 			return p;
 		}
