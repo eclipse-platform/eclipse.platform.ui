@@ -45,23 +45,30 @@ package org.eclipse.ui.application;
  * to {@link PlatformUI#createAndRunWorkbench PlatformUI.createAndRunWorkbench}):
  * <ul>
  * <li><code>initialize</code> - called first; before any windows; use to
- * register things; IWorkench.close not an option</li>
+ * register things</li>
  * <li><code>preStartup</code> - called second; after initialize but
  * before first window is opened; use to temporarily disable things during
- * startup or restore; IWorkench.close not an option</li>
+ * startup or restore</li>
  * <li><code>postStartup</code> - called third; after first window is
- * opened; use to reenable things temporarily disabled in previous step;
- * IWorkench.close not an option</li>
+ * opened; use to reenable things temporarily disabled in previous step</li>
+ * <li><code>postRestore</code> - called after the workbench and its windows
+ * has been recreated from a previously saved state; use to adjust the
+ * restored workbench</li>
  * <li><code>preWindowOpen</code> - called as each window is being opened; 
- *  use to configure the window; IWorkench.close not an option</li>
+ *  use to configure the window</li>
+ * <li><code>postWindowRestore</code> - called after a window has been
+ * recreated from a previously saved state; use to adjust the restored
+ * window</li>
  * <li><code>postWindowClose</code> - called as each window is being closed; 
- *  use to unhook listeners, etc.; IWorkench.close not an option</li>
+ *  use to unhook listeners, etc.</li>
+ * <li><code>eventLoopException</code> - called to handle the case where the
+ * event loop has crashed; use to inform the user that things are not well</li>
  * <li><code>preShutdown</code> - called just after event loop has terminated
  * but before any windows have been closed; use to deregister things registered
- * during initialize; IWorkench.close not an option</li>
+ * during initialize</li>
  * <li><code>postShutdown</code> - called last; after event loop has terminated
  * and all windows have been closed; use to deregister things registered during
- * initialize; IWorkench.close not an option</li>
+ * initialize</li>
  * </ul>
  * </p>
  * 
@@ -122,6 +129,22 @@ public abstract class WorkbenchAdviser {
 	}
 
 	/**
+	 * Performs arbitrary actions after the workbench and its windows have been
+	 * restored, but before the main event loop is run.
+	 * <p>
+	 * This method is called after previously-saved windows have been recreated,
+	 * and before <code>postStartup</code>. This method is not called when the
+	 * workbench is started for the very first time, or if workbench state is
+	 * not saved or restored. Clients must not call this method.
+	 * The default implementation does nothing. Subclasses may override.
+	 * It is okay to <code>IWorkbench.close()</code> from this method.
+	 * </p>
+	 */
+	public void postRestore() {
+		// do nothing
+	}
+
+	/**
 	 * Performs arbitrary finalization before the workbench is about to
 	 * shut down.
 	 * <p>
@@ -150,6 +173,33 @@ public abstract class WorkbenchAdviser {
 	}
 	
 	/**
+	 * Performs arbitrary actions when the event loop crashes (the code that
+	 * handles a UI event throws an exception that is not caught).
+	 * <p>
+	 * This method is called when the code handling a UI event throws an
+	 * exception. In a perfectly functioning application, this method would
+	 * never be called. In practice, it comes into play when there is bugs
+	 * in the code that trigger unchecked runtime exceptions. It is also
+	 * activated when the system runs short of memory, etc. 
+	 * Fatal errors (ThreadDeath) are not passed on to this method, as there
+	 * is nothing that could be done.
+	 * 
+	 * Clients must not call this method.
+	 * The default implementation makes an emergency exit from the workbench
+	 * after logging the problem. Subclasses may override or extend
+	 * this method, but must be especially careful when handling Errors.
+	 * </p>
+	 * 
+	 * @param exception the uncaught exception that was thrown inside the UI
+	 * event loop
+	 * @issue Does this also get called when a dialog event loop crashes?
+	 */
+	public void eventLoopException(Throwable exception) {
+		// TODO: carefully log the problem
+		// TODO: call IWorkbenchConfigurer.emergencyClose()
+	}
+
+	/**
 	 * Performs arbitrary actions before the given workbench window is
 	 * opened.
 	 * <p>
@@ -167,6 +217,26 @@ public abstract class WorkbenchAdviser {
 		// do nothing
 	}
 	
+	/**
+	 * Performs arbitrary actions after the given workbench window has been
+	 * restored.
+	 * <p>
+	 * This method is called after a previously-saved window have been
+	 * recreated. This method is not called when a new window is created from
+	 * scratch. This method is never called when a workbench is started for the
+	 * very first time, or when workbench state is not saved or restored.
+	 * Clients must not call this method.
+	 * The default implementation does nothing. Subclasses may override.
+	 * It is okay to <code>IWorkbench.close()</code> from this method.
+	 * </p>
+	 * 
+	 * @param configurer an object for configuring the particular workbench
+	 * window just restored
+	 */
+	public void postWindowRestore(IWorkbenchWindowConfigurer configurer) {
+		// do nothing
+	}
+
 	/**
 	 * Performs arbitrary actions after the given workbench window is
 	 * closed.
@@ -200,22 +270,6 @@ public abstract class WorkbenchAdviser {
 	 * @issue investigate whether there's a better way to handle these
 	 */
 	public boolean isApplicationMenu(IWorkbenchWindowConfigurer configurer, String menuId) {
-		return true;
-	}
-	
-	/**
-	 * Return whether the given id is that of a cool item for the given window.
-	 * <p>
-	 * The default implementation returns true. Subclasses may override.
-	 * </p>
-	 * 
-	 * @param configurer an object for configuring the workbench window
-	 * @param id the coll item id
-	 * @return <code>true</code> for a cool item, and <code>false</code>
-	 * otherwise
-	 * @issue investigate whether there's a better way to handle these
-	 */
-	public boolean isWorkbenchCoolItemId(IWorkbenchWindowConfigurer configurer, String id) {
 		return true;
 	}
 }
