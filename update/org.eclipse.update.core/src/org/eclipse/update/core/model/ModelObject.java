@@ -16,6 +16,7 @@ import java.util.Set;
 
 import org.eclipse.update.internal.core.Assert;
 import org.eclipse.update.internal.core.Policy;
+import org.eclipse.core.runtime.PlatformObject;
 
 /**
  * An object which has the general characteristics of all elements
@@ -25,7 +26,7 @@ import org.eclipse.update.internal.core.Policy;
  * </p>
  */
 
-public abstract class ModelObject {
+public abstract class ModelObject extends PlatformObject {
 	
 	private boolean readOnly = false;
 	
