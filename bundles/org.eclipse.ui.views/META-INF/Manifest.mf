@@ -1,0 +1,31 @@
+Bundle-Version: 
+ 3.0.0
+Bundle-ClassPath: 
+ views.jar
+Bundle-Activator: 
+ org.eclipse.core.runtime.compatibility.PluginActivator
+Plugin-Class: 
+ org.eclipse.ui.internal.ViewsPlugin
+Import-Bundle: 
+ org.eclipse.core.resources,
+ org.eclipse.help,
+ org.eclipse.jface,
+ org.eclipse.ui.workbench
+Bundle-Name: 
+ org.eclipse.ui.views
+Export-Package-Split: 
+ org.eclipse.ui.internal,
+ org.eclipse.ui.actions
+Export-Package: 
+ org.eclipse.ui.views.properties,
+ org.eclipse.ui.views.framelist,
+ org.eclipse.ui.views.bookmarkexplorer,
+ org.eclipse.ui.views.navigator,
+ org.eclipse.ui.views.markers.internal,
+ org.eclipse.ui.views.markers,
+ org.eclipse.ui.views.contentoutline,
+ org.eclipse.ui.views.tasklist
+DynamicImport-Package: 
+ *
+Legacy: 
+ true
