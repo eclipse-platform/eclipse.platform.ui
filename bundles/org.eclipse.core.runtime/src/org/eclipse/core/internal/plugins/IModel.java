@@ -23,6 +23,11 @@ public interface IModel {
 	public static final String FRAGMENT_VERSION = "version";
 	public static final String FRAGMENT_PLUGIN_ID = "plugin-id";
 	public static final String FRAGMENT_PLUGIN_VERSION = "plugin-version";
+	public static final String FRAGMENT_PLUGIN_MATCH = "match";
+	public static final String FRAGMENT_PLUGIN_MATCH_PERFECT = "perfect";
+	public static final String FRAGMENT_PLUGIN_MATCH_EQUIVALENT = "equivalent";
+	public static final String FRAGMENT_PLUGIN_MATCH_COMPATIBLE = "compatible";
+	public static final String FRAGMENT_PLUGIN_MATCH_GREATER_OR_EQUAL = "greaterOrEqual";
 
 	public static final String PLUGIN = "plugin";
 	public static final String PLUGIN_ID = "id";

@@ -5,6 +5,7 @@ package org.eclipse.core.runtime.model;
  * All Rights Reserved.
  */
 
+import org.eclipse.core.internal.runtime.Assert;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 
 /**
@@ -16,15 +17,37 @@ import org.eclipse.core.runtime.PluginVersionIdentifier;
  */
 public class PluginFragmentModel extends PluginModel {
 
+	public static final byte FRAGMENT_MATCH_UNSPECIFIED = 0;
+	public static final byte FRAGMENT_MATCH_PERFECT = 1;
+	public static final byte FRAGMENT_MATCH_EQUIVALENT = 2;
+	public static final byte FRAGMENT_MATCH_COMPATIBLE = 3;
+	public static final byte FRAGMENT_MATCH_GREATER_OR_EQUAL = 4;
+
 	// DTD properties (included in plug-in manifest)
 	private String plugin = null;
 	private String pluginVersion = null;
+	private byte pluginMatch = FRAGMENT_MATCH_UNSPECIFIED;
 /**
  * Creates a new plug-in descriptor model in which all fields
  * are <code>null</code>.
  */
 public PluginFragmentModel() {
 	super();
+}
+/**
+ * Returns a byte code indicating the type of match this fragment requires
+ * when trying to find its associated plugin.
+ * The byte code can be any one of the following:
+ * FRAGMENT_MATCH_UNSPECIFIED			initial value
+ * FRAGMENT_MATCH_PERFECT				perfectly equal match
+ * FRAGMENT_MATCH_EQUIVALENT			equivalent match
+ * FRAGMENT_MATCH_COMPATIBLE			compatible match
+ * FRAGMENT_MATCH_GREATER_OR_EQUAL		greater than or equal to match
+ *
+ * @return a byte code indicating the type of match this fragment requires
+ */
+public byte getMatch() {
+	return pluginMatch;
 }
 /**
  * Returns the fully qualified name of the plug-in for which this is a fragment
@@ -53,6 +76,27 @@ public String getPluginId() {
  */
 public String getPluginVersion() {
 	return pluginVersion;
+}
+/**
+ * Sets the type of match this fragment requires when trying to
+ * find its associated plugin.  The value parameter may be any
+ * one of the following:
+ * FRAGMENT_MATCH_UNSPECIFIED			initial value
+ * FRAGMENT_MATCH_PERFECT				perfectly equal match
+ * FRAGMENT_MATCH_EQUIVALENT			equivalent match
+ * FRAGMENT_MATCH_COMPATIBLE			compatible match
+ * FRAGMENT_MATCH_GREATER_OR_EQUAL		greater than or equal to match
+ * This object must not be read-only.
+ *
+ * @param value the type of match required with the associated plugin
+ */
+public void setMatch(byte value) {
+	assertIsWriteable();
+	Assert.isTrue ((value == FRAGMENT_MATCH_PERFECT) ||
+	               (value == FRAGMENT_MATCH_EQUIVALENT) ||
+	               (value == FRAGMENT_MATCH_COMPATIBLE) ||
+	               (value == FRAGMENT_MATCH_GREATER_OR_EQUAL));
+	pluginMatch = value;
 }
 /**
  * Sets the fully qualified name of the plug-in for which this is a fragment

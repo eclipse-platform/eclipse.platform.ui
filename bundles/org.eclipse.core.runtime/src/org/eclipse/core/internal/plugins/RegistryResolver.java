@@ -683,7 +683,41 @@ private void linkFragments() {
 				error (Policy.bind("parse.fragmentMissingIdName"));
 			continue;
 		}
-		PluginDescriptorModel plugin = reg.getPlugin(fragment.getPluginId(), fragment.getPluginVersion());
+		
+		// Now find a plugin that fits the matching criteria specified for this fragment and
+		// its related plugin
+		PluginDescriptorModel plugin = null;
+		IndexEntry ix = (IndexEntry) idmap.get(fragment.getPluginId());
+		byte matchType = fragment.getMatch();
+		for (Iterator list = ix.versions().iterator(); list.hasNext() && plugin == null;) {
+			PluginDescriptorModel pd = (PluginDescriptorModel) list.next();
+			if (pd.getEnabled()) {
+				// return the highest version that fits the matching criteria
+				switch (matchType) {
+					case PluginFragmentModel.FRAGMENT_MATCH_PERFECT:
+						if (getVersionIdentifier(pd).isPerfect(new PluginVersionIdentifier(fragment.getPluginVersion())))
+							plugin = pd;
+						break;
+					case PluginFragmentModel.FRAGMENT_MATCH_EQUIVALENT:
+						if (getVersionIdentifier(pd).isEquivalentTo(new PluginVersionIdentifier(fragment.getPluginVersion())))
+							plugin = pd;
+						break;
+					case PluginFragmentModel.FRAGMENT_MATCH_COMPATIBLE:
+					case PluginFragmentModel.FRAGMENT_MATCH_UNSPECIFIED:
+						if (getVersionIdentifier(pd).isCompatibleWith(new PluginVersionIdentifier(fragment.getPluginVersion())))
+							plugin = pd;
+						break;
+					case PluginFragmentModel.FRAGMENT_MATCH_GREATER_OR_EQUAL:
+						if (getVersionIdentifier(pd).isGreaterOrEqualTo(new PluginVersionIdentifier(fragment.getPluginVersion())))
+							plugin = pd;
+						break;
+				}
+				if (plugin != null) {
+					break;
+				}
+			}
+		}
+
 		if (plugin == null) {
 			// We couldn't find this fragment's plugin
 			error (Policy.bind("parse.missingFragmentPd", fragment.getPluginId(), fragment.getId()));
@@ -717,10 +751,18 @@ private void removeConstraintFor(PluginPrerequisiteModel prereq) {
 }
 private void resolve() {
 
-	// Add all the fragments to their associated plugin
-	linkFragments();
+	// Start by putting each plugin in the idmap.  We are
+	// going to need this for the call to linkFragments.
 	PluginDescriptorModel[] pluginList = reg.getPlugins();
 	idmap = new HashMap();
+	for (int i = 0; i < pluginList.length; i++) {
+		add(pluginList[i]);
+	}
+	// Add all the fragments to their associated plugin
+	linkFragments();
+	// Now we have to cycle through the plugin list again
+	// to assimilate all the fragment information and 
+	// check for 'required' fields.
 	for (int i = 0; i < pluginList.length; i++) {
 		if (pluginList[i].getFragments() != null) {
 			// Take all the information in each fragment and
@@ -746,7 +788,6 @@ private void resolve() {
 		// have an idmap entry.  Multiple versions will have only
 		// one entry but will be sorted in version order (largest
 		// to smallest).
-		add(pluginList[i]);
 	}
 	
 	// resolve root descriptors

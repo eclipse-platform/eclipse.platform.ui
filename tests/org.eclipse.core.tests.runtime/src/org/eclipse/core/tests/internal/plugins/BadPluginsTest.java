@@ -91,7 +91,7 @@ public void badElements() {
 public void badAttributes() {
 	String[] badAttrs = {
 		"badPluginAttributesTest", 
-		"badFragmentAttributesTest", 
+		"badFragment1AttributesTest", 
 		"badExtensionPointAttributesTest", 
 		"badExtensionAttributesTest",
 		"badRequiresImport1AttributesTest",
@@ -99,6 +99,7 @@ public void badAttributes() {
 		"badRequiresImport3AttributesTest",
 		"badLibrary1AttributesTest",
 		"badLibrary2AttributesTest",
+		"badFragment2AttributesTest", 
 	};
 	String[] errorMessages = {
 		"Unknown attribute a-bad-attribute for element plugin ignored.",
@@ -107,9 +108,10 @@ public void badAttributes() {
 		"Unknown attribute hello for element extension ignored.",
 		"Unknown attribute badImportAttr for element import ignored.",
 		"notTrue is not a valid value for the attribute \"export\".   Use \"true\" or \"false\".",
-		"incompatible is not a valid value for the attribute \"match\".   Use \"exact\" or \"compatible\".",
+		"incompatible is not a valid value for the attribute \"match\".   Use \"perfect\", \"equivalent\", \"compatible\" or \"greaterOrEqual\".",
 		"Unknown attribute badAttribute for element library ignored.",
 		"Unknown attribute badExportAttribute for element library ignored.",
+		"nothing is not a valid value for the attribute \"match\".   Use \"perfect\", \"equivalent\", \"compatible\" or \"greaterOrEqual\".",
 	};
 	
 	PluginDescriptor tempPlugin = (PluginDescriptor)Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.core.tests.runtime");
@@ -128,7 +130,8 @@ public void badAttributes() {
 			pluginURLs[0] = pURL;
 			IPluginRegistry registry = ParseHelper.doParsing (factory, pluginURLs, false);
 			String id = null;
-			if (badAttrs[i].equals("badFragmentAttributesTest")) {
+			if ((badAttrs[i].equals("badFragment1AttributesTest")) ||
+			    (badAttrs[i].equals("badFragment2AttributesTest"))) {
 				PluginFragmentModel[] fragmentDescriptors = ((PluginRegistryModel)registry).getFragments();
 				assertTrue(i + ".0 Only one fragment", fragmentDescriptors.length == 1);
 				PluginFragmentModel fragment = (PluginFragmentModel)fragmentDescriptors[0];

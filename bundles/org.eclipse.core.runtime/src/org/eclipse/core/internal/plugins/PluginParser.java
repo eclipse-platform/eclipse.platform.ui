@@ -741,23 +741,30 @@ public void parseFragmentAttributes(Attributes attributes) {
 
 		if (attrName.equals(FRAGMENT_ID))
 			current.setId(attrValue);
-		else
-			if (attrName.equals(FRAGMENT_NAME))
-				current.setName(attrValue);
+		else if (attrName.equals(FRAGMENT_NAME))
+			current.setName(attrValue);
+		else if (attrName.equals(FRAGMENT_VERSION))
+			current.setVersion(attrValue);
+		else if (attrName.equals(FRAGMENT_PROVIDER))
+			current.setProviderName(attrValue);
+		else if (attrName.equals(FRAGMENT_PLUGIN_ID))
+			current.setPlugin(attrValue);
+		else if (attrName.equals(FRAGMENT_PLUGIN_VERSION))
+			current.setPluginVersion(attrValue);
+		else if (attrName.equals(FRAGMENT_PLUGIN_MATCH)) {
+			if (FRAGMENT_PLUGIN_MATCH_PERFECT.equals(attrValue))
+				current.setMatch(PluginFragmentModel.FRAGMENT_MATCH_PERFECT);
+			else if (FRAGMENT_PLUGIN_MATCH_EQUIVALENT.equals(attrValue))
+				current.setMatch(PluginFragmentModel.FRAGMENT_MATCH_EQUIVALENT);
+			else if (FRAGMENT_PLUGIN_MATCH_COMPATIBLE.equals(attrValue))
+				current.setMatch(PluginFragmentModel.FRAGMENT_MATCH_COMPATIBLE);
+			else if (FRAGMENT_PLUGIN_MATCH_GREATER_OR_EQUAL.equals(attrValue))
+				current.setMatch(PluginFragmentModel.FRAGMENT_MATCH_GREATER_OR_EQUAL);
 			else
-				if (attrName.equals(FRAGMENT_VERSION))
-					current.setVersion(attrValue);
-				else
-					if (attrName.equals(FRAGMENT_PROVIDER))
-						current.setProviderName(attrValue);
-					else
-						if (attrName.equals(FRAGMENT_PLUGIN_ID))
-							current.setPlugin(attrValue);
-						else
-							if (attrName.equals(FRAGMENT_PLUGIN_VERSION))
-								current.setPluginVersion(attrValue);
-							else
-								internalError(Policy.bind("parse.unknownAttribute", FRAGMENT, attrName));
+				internalError(Policy.bind("parse.validMatch", attrValue));
+		}
+		else
+			internalError(Policy.bind("parse.unknownAttribute", FRAGMENT, attrName));
 	}
 }
 
