@@ -104,7 +104,7 @@ public class RefreshSubscriberJob extends WorkspaceJob {
 	}
 
 	public boolean shouldRun() {
-		return getSubscriber() != null && getResources() != null;
+		return getSubscriber() != null;
 	}
 		
 	public boolean belongsTo(Object family) {		
