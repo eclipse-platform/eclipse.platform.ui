@@ -144,6 +144,11 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	private IDEWorkbenchActivityHelper activityHelper = null;
 	
 	/**
+	 * Signals that the welcome editors and/or intros have been opened.
+	 */
+	private boolean editorsAndIntrosOpened = false;
+	
+	/**
 	 * Creates a new workbench advisor instance.
 	 */
 	protected IDEWorkbenchAdvisor() {
@@ -240,14 +245,6 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	public void postStartup() {
 		refreshFromLocal();
 				
-		if (!openIntro()) { // only try to open the editors if there is no intro in the system
-			try {
-				openWelcomeEditors();
-			} catch (WorkbenchException e) {
-				IDEWorkbenchPlugin.log("Fail to open remaining welcome editors.", e.getStatus()); //$NON-NLS-1$
-			}
-		}
-		
 		checkUpdates();
 	}
 
@@ -629,16 +626,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	 * Open the welcome editor for the primary feature and
 	 * for any newly installed features.
 	 */
-	private void openWelcomeEditors() throws WorkbenchException {
-		IWorkbenchWindow window = configurer.getWorkbench().getActiveWorkbenchWindow();
-		if (window == null) {
-			if (configurer.getWorkbench().getWorkbenchWindowCount() > 0) {
-				window = configurer.getWorkbench().getWorkbenchWindows()[0];
-			} else {
-				return;
-			}
-		}
-
+	private void openWelcomeEditors(IWorkbenchWindow window) throws WorkbenchException {
 		if (IDEWorkbenchPlugin.getDefault().getPreferenceStore().getBoolean(IDEInternalPreferences.WELCOME_DIALOG)) {
 			// Show the welcome page for the primary feature the first time the workbench opens.
 			AboutInfo primaryInfo = IDEWorkbenchPlugin.getDefault().getPrimaryInfo();
@@ -1018,20 +1006,11 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	 * @return Returns <code>true</code> if there is a known intro part in the system, 
      * <code>false</code> otherwise
 	 */
-	private boolean openIntro() {
+	private boolean openIntro(IWorkbenchWindow window) {
 		if (IDEWorkbenchPlugin.getDefault().getPreferenceStore().getBoolean(IDEInternalPreferences.INTRO)) { 
-			IWorkbenchWindow window = configurer.getWorkbench().getActiveWorkbenchWindow();
-			if (window == null) {
-				if (configurer.getWorkbench().getWorkbenchWindowCount() > 0) {
-					window = configurer.getWorkbench().getWorkbenchWindows()[0];
-				} 
-			}
-			
-			if (window != null) {
-				if (configurer.getWorkbench().showIntro(window, false) != null) {
-					IDEWorkbenchPlugin.getDefault().getPreferenceStore().setValue(IDEInternalPreferences.INTRO, false);
-					return true;
-				}
+			if (configurer.getWorkbench().showIntro(window, false) != null) {
+				IDEWorkbenchPlugin.getDefault().getPreferenceStore().setValue(IDEInternalPreferences.INTRO, false);
+				return true;
 			}	
 		}
 		return false;
@@ -1075,4 +1054,22 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		return WORKBENCH_PREFERENCE_CATEGORY_ID;
 	}
 
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.application.WorkbenchAdvisor#postWindowCreate(org.eclipse.ui.application.IWorkbenchWindowConfigurer)
+     */
+    public void postWindowCreate(IWorkbenchWindowConfigurer windowConfigurer) {
+        super.postWindowCreate(windowConfigurer);
+        if (editorsAndIntrosOpened) 
+            return;
+        
+        editorsAndIntrosOpened = true;
+        
+		if (!openIntro(windowConfigurer.getWindow())) { // only try to open the editors if there is no intro in the system
+			try {
+				openWelcomeEditors(windowConfigurer.getWindow());
+			} catch (WorkbenchException e) {
+				IDEWorkbenchPlugin.log("Fail to open remaining welcome editors.", e.getStatus()); //$NON-NLS-1$
+			}
+		}
+    }
 }
