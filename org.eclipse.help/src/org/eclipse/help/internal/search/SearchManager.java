@@ -4,13 +4,9 @@
  */
 package org.eclipse.help.internal.search;
 
-import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.*;
-import org.eclipse.help.internal.HelpSystem;
-import org.eclipse.help.internal.toc.Toc;
 import org.eclipse.help.internal.util.*;
 
 /**
@@ -74,63 +70,6 @@ public class SearchManager {
 	}
 
 	/**
-	 * Returns the documents to be added to index. 
-	 * The collection consists of the associated PluginURL objects.
-	 */
-	private Collection getAddedDocuments(SearchIndex index) {
-		// Get the list of added plugins
-		Collection addedPlugins = index.getDocPlugins().getAdded();
-		if (addedPlugins == null || addedPlugins.isEmpty())
-			return new ArrayList(0);
-		// get the list of all navigation urls. 
-		Set urls = getAllDocuments(index.getLocale());
-		ArrayList addedDocs = new ArrayList(urls.size());
-		for (Iterator docs = urls.iterator(); docs.hasNext();) {
-			String url = (String) docs.next();
-			// only process documents that can be indexed
-			if (!isIndexable(url))
-				continue;
-			// Assume the url is /pluginID/path_to_topic.html
-			int i = url.indexOf('/', 1);
-			String plugin = i == -1 ? "" : url.substring(1, i);
-			if (addedPlugins.contains(plugin))
-				try {
-					addedDocs.add(
-						new URL("help:" + url + "?lang=" + index.getLocale()));
-				} catch (MalformedURLException mue) {
-				}
-		}
-		return addedDocs;
-	}
-	/**
-	 * Returns the documents to be removed from index. 
-	 * The collection consists of the associated PluginURL objects.
-	 */
-	private Collection getRemovedDocuments(SearchIndex index) {
-		// Get the list of removed plugins
-		Collection removedPlugins = index.getDocPlugins().getRemoved();
-		if (removedPlugins == null || removedPlugins.isEmpty())
-			return new ArrayList(0);
-		// get the list of indexed docs. This is a hashtable  (url, plugin)
-		HelpProperties indexedDocs = index.getIndexedDocs();
-		ArrayList removedDocs = new ArrayList(indexedDocs.size());
-		for (Iterator docs = indexedDocs.keySet().iterator();
-			docs.hasNext();
-			) {
-			String url = (String) docs.next();
-			// Assume the url is /pluginID/path_to_topic.html
-			int i = url.indexOf('/', 1);
-			String plugin = i == -1 ? "" : url.substring(1, i);
-			if (removedPlugins.contains(plugin))
-				try {
-					removedDocs.add(
-						new URL("help:" + url + "?lang=" + index.getLocale()));
-				} catch (MalformedURLException mue) {
-				}
-		}
-		return removedDocs;
-	}
-	/**
 	 * Searches index for documents containing an expression.
 	 */
 	public void search(
@@ -190,10 +129,7 @@ public class SearchManager {
 						progressDistrib.removeMonitor(pm);
 						return;
 					}
-					Collection removedDocs = getRemovedDocuments(index);
-					Collection addedDocs = getAddedDocuments(index);
-					IndexingOperation indexer =
-						new IndexingOperation(index, removedDocs, addedDocs);
+					IndexingOperation indexer = new IndexingOperation(index);
 					indexer.execute(progressDistrib);
 				} catch (OperationCanceledException oce) {
 					progressDistrib.operationCanceled();
@@ -204,44 +140,6 @@ public class SearchManager {
 		} finally {
 			progressDistrib.removeMonitor(pm);
 		}
-	}
-	private boolean isIndexable(String url) {
-		String fileName = url.toLowerCase();
-		return fileName.endsWith(".htm")
-			|| fileName.endsWith(".html")
-			|| fileName.endsWith(".txt")
-			|| fileName.endsWith(".xml");
-	}
-	/**
-	 * Returns the collection of href's for all the help topics.
-	 */
-	private Set getAllDocuments(String locale) {
-		HashSet hrefs = new HashSet();
-		IToc[] tocs = HelpSystem.getTocManager().getTocs(locale);
-		for (int i = 0; i < tocs.length; i++) {
-			ITopic[] topics = tocs[i].getTopics();
-			for (int j = 0; j < topics.length; j++) {
-				add(topics[j], hrefs);
-			}
-			if (tocs[i] instanceof Toc) {
-				topics = ((Toc) tocs[i]).getExtraTopics();
-				for (int j = 0; j < topics.length; j++) {
-					add(topics[j], hrefs);
-				}
-			}
-		}
-		return hrefs;
-	}
-	/**
-	 * Adds the topic and its subtopics to the list of documents
-	 */
-	private void add(ITopic topic, Set hrefs) {
-		String href = topic.getHref();
-		if (href != null && !href.equals("") && !href.startsWith("http://"))
-			hrefs.add(href);
-		ITopic[] subtopics = topic.getSubtopics();
-		for (int i = 0; i < subtopics.length; i++)
-			add(subtopics[i], hrefs);
 	}
 	/**
 	 * Closes all indexes.

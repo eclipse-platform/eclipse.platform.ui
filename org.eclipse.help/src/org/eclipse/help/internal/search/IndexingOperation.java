@@ -8,6 +8,9 @@ import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.help.*;
+import org.eclipse.help.internal.*;
+import org.eclipse.help.internal.toc.*;
 import org.eclipse.help.internal.util.*;
 
 /**
@@ -16,9 +19,7 @@ import org.eclipse.help.internal.util.*;
  * It is used Internally by SlowIndex and returned by its getIndexUpdateOperation() method.
  */
 class IndexingOperation {
-	private Collection addedDocs = null;
 	private int numAdded;
-	private Collection removedDocs = null;
 	private int numRemoved;
 	private SearchIndex index = null;
 	// Constants for alocating progress among subtasks.
@@ -35,25 +36,8 @@ class IndexingOperation {
 	 * @param removedDocs collection of removed documents, including changed ones
 	 * @param addedDocs collection of new documents, including changed ones
 	 */
-	public IndexingOperation(
-		SearchIndex ix,
-		Collection removedDocs,
-		Collection addedDocs) {
+	public IndexingOperation(SearchIndex ix) {
 		this.index = ix;
-		this.removedDocs = removedDocs;
-		this.addedDocs = addedDocs;
-		numRemoved = this.removedDocs.size();
-		numAdded = this.addedDocs.size();
-		workTotal =
-			(numRemoved + numAdded) * WORK_PREPARE
-				+ numAdded * WORK_INDEXDOC
-				+ (numRemoved + numAdded) * WORK_SAVEINDEX;
-
-		if (numRemoved > 0) {
-			workTotal += (numRemoved + numAdded) * WORK_PREPARE
-				+ numRemoved * WORK_DELETEDOC
-				+ (numRemoved + numAdded) * WORK_SAVEINDEX;
-		}
 	}
 
 	private void checkCancelled(IProgressMonitor pm)
@@ -70,7 +54,21 @@ class IndexingOperation {
 	 */
 	protected void execute(IProgressMonitor pm)
 		throws OperationCanceledException, IndexingException {
+		Collection removedDocs = getRemovedDocuments(index);
+		numRemoved = removedDocs.size();
+		Collection addedDocs = getAddedDocuments(index);
+		numAdded = addedDocs.size();
 
+		workTotal =
+			(numRemoved + numAdded) * WORK_PREPARE
+				+ numAdded * WORK_INDEXDOC
+				+ (numRemoved + numAdded) * WORK_SAVEINDEX;
+
+		if (numRemoved > 0) {
+			workTotal += (numRemoved + numAdded) * WORK_PREPARE
+				+ numRemoved * WORK_DELETEDOC
+				+ (numRemoved + numAdded) * WORK_SAVEINDEX;
+		}
 		// if collection is empty, we may return right away
 		// need to check if we have to do anything to the progress monitor
 		if (numRemoved + numAdded <= 0) {
@@ -80,12 +78,13 @@ class IndexingOperation {
 
 		LazyProgressMonitor monitor = new LazyProgressMonitor(pm);
 		monitor.beginTask("", workTotal);
-		removeDocuments(monitor);
-		addDocuments(monitor);
+		removeDocuments(monitor, removedDocs);
+		addDocuments(monitor, addedDocs);
 		monitor.done();
 	}
 
-	private void addDocuments(IProgressMonitor pm) throws IndexingException {
+	private void addDocuments(IProgressMonitor pm, Collection addedDocs)
+		throws IndexingException {
 		// Do not check here if (addedDocs.size() > 0), always perform add batch
 		// to ensure that index is created and saved even if no new documents exist
 
@@ -116,7 +115,7 @@ class IndexingOperation {
 			throw new IndexingException();
 	}
 
-	private void removeDocuments(IProgressMonitor pm)
+	private void removeDocuments(IProgressMonitor pm, Collection removedDocs)
 		throws IndexingException {
 
 		pm.subTask(Resources.getString("Preparing_for_indexing"));
@@ -162,5 +161,102 @@ class IndexingOperation {
 		return name;
 	}
 	public class IndexingException extends Exception {
+	}
+	/**
+	 * Returns the documents to be added to index. 
+	 * The collection consists of the associated PluginURL objects.
+	 */
+	private Collection getAddedDocuments(SearchIndex index) {
+		// Get the list of added plugins
+		Collection addedPlugins = index.getDocPlugins().getAdded();
+		if (addedPlugins == null || addedPlugins.isEmpty())
+			return new ArrayList(0);
+		// get the list of all navigation urls. 
+		Set urls = getAllDocuments(index.getLocale());
+		ArrayList addedDocs = new ArrayList(urls.size());
+		for (Iterator docs = urls.iterator(); docs.hasNext();) {
+			String url = (String) docs.next();
+			// only process documents that can be indexed
+			if (!isIndexable(url))
+				continue;
+			// Assume the url is /pluginID/path_to_topic.html
+			int i = url.indexOf('/', 1);
+			String plugin = i == -1 ? "" : url.substring(1, i);
+			if (addedPlugins.contains(plugin))
+				try {
+					addedDocs.add(
+						new URL("help:" + url + "?lang=" + index.getLocale()));
+				} catch (MalformedURLException mue) {
+				}
+		}
+		return addedDocs;
+	}
+
+	/**
+	 * Returns the documents to be removed from index. 
+	 * The collection consists of the associated PluginURL objects.
+	 */
+	private Collection getRemovedDocuments(SearchIndex index) {
+		// Get the list of removed plugins
+		Collection removedPlugins = index.getDocPlugins().getRemoved();
+		if (removedPlugins == null || removedPlugins.isEmpty())
+			return new ArrayList(0);
+		// get the list of indexed docs. This is a hashtable  (url, plugin)
+		HelpProperties indexedDocs = index.getIndexedDocs();
+		ArrayList removedDocs = new ArrayList(indexedDocs.size());
+		for (Iterator docs = indexedDocs.keySet().iterator();
+			docs.hasNext();
+			) {
+			String url = (String) docs.next();
+			// Assume the url is /pluginID/path_to_topic.html
+			int i = url.indexOf('/', 1);
+			String plugin = i == -1 ? "" : url.substring(1, i);
+			if (removedPlugins.contains(plugin))
+				try {
+					removedDocs.add(
+						new URL("help:" + url + "?lang=" + index.getLocale()));
+				} catch (MalformedURLException mue) {
+				}
+		}
+		return removedDocs;
+	}
+	/**
+	 * Adds the topic and its subtopics to the list of documents
+	 */
+	private void add(ITopic topic, Set hrefs) {
+		String href = topic.getHref();
+		if (href != null && !href.equals("") && !href.startsWith("http://"))
+			hrefs.add(href);
+		ITopic[] subtopics = topic.getSubtopics();
+		for (int i = 0; i < subtopics.length; i++)
+			add(subtopics[i], hrefs);
+	}
+	/**
+	 * Returns the collection of href's for all the help topics.
+	 */
+	private Set getAllDocuments(String locale) {
+		HashSet hrefs = new HashSet();
+		IToc[] tocs = HelpSystem.getTocManager().getTocs(locale);
+		for (int i = 0; i < tocs.length; i++) {
+			ITopic[] topics = tocs[i].getTopics();
+			for (int j = 0; j < topics.length; j++) {
+				add(topics[j], hrefs);
+			}
+			if (tocs[i] instanceof Toc) {
+				topics = ((Toc) tocs[i]).getExtraTopics();
+				for (int j = 0; j < topics.length; j++) {
+					add(topics[j], hrefs);
+				}
+			}
+		}
+		return hrefs;
+	}
+
+	private boolean isIndexable(String url) {
+		String fileName = url.toLowerCase();
+		return fileName.endsWith(".htm")
+			|| fileName.endsWith(".html")
+			|| fileName.endsWith(".txt")
+			|| fileName.endsWith(".xml");
 	}
 }

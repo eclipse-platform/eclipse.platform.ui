@@ -7,6 +7,7 @@ package org.eclipse.help.internal.search;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.zip.*;
 
 import org.apache.lucene.document.*;
 import org.apache.lucene.index.*;
@@ -42,22 +43,38 @@ public class SearchIndex {
 	 * @param analyzerDesc the analyzer used to index
 	 */
 	public SearchIndex(String locale, AnalyzerDescriptor analyzerDesc) {
+		this(
+			locale,
+			analyzerDesc,
+			new File(
+				HelpPlugin.getDefault().getStateLocation().toOSString()
+					+ File.separator
+					+ "nl"
+					+ File.separator
+					+ locale));
+	}
+	/**
+	 * Constructor.
+	 * @param locale the locale this index uses
+	 * @param analyzerDesc the analyzer used to index
+	 */
+	public SearchIndex(
+		String locale,
+		AnalyzerDescriptor analyzerDesc,
+		File indexDir) {
 		super();
 		this.locale = locale;
-		analyzerDescriptor = analyzerDesc;
-		String helpStatePath =
-			HelpPlugin.getDefault().getStateLocation().toOSString();
-		String searchStatePath =
-			helpStatePath + File.separator + "nl" + File.separator + locale;
-		indexDir = new File(searchStatePath);
+		this.indexDir = indexDir;
+		this.analyzerDescriptor = analyzerDesc;
 		inconsistencyFile =
 			new File(indexDir.getParentFile(), locale + ".inconsistent");
-		analyzerVersionFile =
-			new File(
-				searchStatePath + File.separator + ANALYZER_VERSION_FILENAME);
+		analyzerVersionFile = new File(indexDir, ANALYZER_VERSION_FILENAME);
 		indexedDocsFile =
 			"nl" + File.separator + locale + File.separator + INDEXED_DOCS_FILE;
 		parser = new HTMLDocParser();
+		if (!exists()) {
+			unzipProductIndex();
+		}
 	}
 	/**
 	 * Indexes one document from a stream.
@@ -68,6 +85,7 @@ public class SearchIndex {
 	 */
 	public boolean addDocument(String name, URL url) {
 		try {
+			System.out.println("adding document " + name + " " + url);
 			Document doc = new Document();
 			doc.add(Field.Keyword("name", name));
 
@@ -162,6 +180,7 @@ public class SearchIndex {
 	 * @return true if success
 	 */
 	public boolean removeDocument(String name) {
+		System.out.println("adding document " + name);
 		Term term = new Term("name", name);
 		try {
 			ir.delete(term);
@@ -336,7 +355,7 @@ public class SearchIndex {
 	 * If analyzer has changed to incompatible one,
 	 * index is treated as inconsistent as well.
 	 */
-	private boolean isInconsistent() {
+	public boolean isInconsistent() {
 		if (inconsistencyFile.exists()) {
 			return true;
 		}
@@ -345,7 +364,7 @@ public class SearchIndex {
 	/**
 	 * Writes or deletes inconsistency flag file
 	 */
-	private void setInconsistent(boolean inconsistent) {
+	public void setInconsistent(boolean inconsistent) {
 		if (inconsistent) {
 			try {
 				// parent directory already created by beginAddBatch on new index
@@ -371,6 +390,84 @@ public class SearchIndex {
 		if (searcher != null) {
 			try {
 				searcher.close();
+			} catch (IOException ioe) {
+			}
+		}
+	}
+	/**
+	 * Returns the indexDir.
+	 * @return File
+	 */
+	public File getIndexDir() {
+		return indexDir;
+	}
+	/**
+	 * Finds and unzips prebuild index specified in preferences
+	 */
+	private void unzipProductIndex() {
+		String indexPluginId =
+			HelpPlugin.getDefault().getPluginPreferences().getString(
+				"productIndex");
+		if (indexPluginId == null && indexPluginId.length() <= 0) {
+			return;
+		}
+		InputStream zipIn =
+			ResourceLocator.openFromPlugin(
+				indexPluginId,
+				"doc_index.zip",
+				getLocale());
+		if (zipIn == null) {
+			return;
+		}
+		byte[] buf = new byte[8192];
+		File destDir = getIndexDir();
+		ZipInputStream zis = new ZipInputStream(zipIn);
+		FileOutputStream fos = null;
+		try {
+			ZipEntry zEntry;
+			while ((zEntry = zis.getNextEntry()) != null) {
+				// if it is empty directory, create it
+				if (zEntry.isDirectory()) {
+					new File(destDir, zEntry.getName()).mkdirs();
+					continue;
+				}
+				// if it is a file, extract it
+				String filePath = zEntry.getName();
+				int lastSeparator = filePath.lastIndexOf("/");
+				String fileDir = "";
+				String fileName =
+					filePath.substring(lastSeparator + 1, filePath.length());
+				if (lastSeparator >= 0) {
+					fileDir = filePath.substring(0, lastSeparator);
+				}
+				//create directory for a file
+				new File(destDir, fileDir).mkdirs();
+				//write file
+				File outFile = new File(destDir, filePath);
+				fos = new FileOutputStream(outFile);
+				int n = 0;
+				while ((n = zis.read(buf)) >= 0) {
+					fos.write(buf, 0, n);
+				}
+				fos.close();
+			}
+			if (Logger.DEBUG)
+				Logger.logDebugMessage(
+					"SearchIndex",
+					"Prebuilt index restored to " + destDir + ".");
+
+		} catch (IOException ioe) {
+			if (fos != null) {
+				try {
+					fos.close();
+				} catch (IOException ioe2) {
+				}
+			}
+		} finally {
+			try {
+				zipIn.close();
+				if (zis != null)
+					zis.close();
 			} catch (IOException ioe) {
 			}
 		}
