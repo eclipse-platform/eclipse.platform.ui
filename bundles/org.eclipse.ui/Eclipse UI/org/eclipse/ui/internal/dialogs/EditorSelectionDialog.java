@@ -134,6 +134,7 @@ protected Control createDialogArea(Composite parent) {
 	editorTable = new Table(contents, SWT.SINGLE | SWT.BORDER);
 	editorTable.addListener(SWT.Selection, this);
 	editorTable.addListener(SWT.DefaultSelection, this);
+	editorTable.addListener(SWT.MouseDoubleClick, this);
 	data = new GridData();
 	data.widthHint = convertHorizontalDLUsToPixels(TABLE_WIDTH);
 	data.horizontalAlignment= data.FILL;
@@ -281,6 +282,10 @@ public IEditorDescriptor getSelectedEditor() {
 	return selectedEditor;
 }
 public void handleEvent(Event event) {
+	if (event.type == SWT.MouseDoubleClick){
+		handleDoubleClickEvent();
+		return;
+	}
 	if (event.widget == externalButton) {
 		fillEditorTable();
 	} else if (event.widget == browseExternalEditorsButton) {
@@ -344,6 +349,12 @@ protected void promptForExternalEditor() {
 		newImages[newImages.length-1] = image;
 		externalEditorImages = newImages;
 	}
+}
+/**
+ * Handle a double click event on the list
+ */
+protected void handleDoubleClickEvent() {
+	buttonPressed(IDialogConstants.OK_ID);
 }
 /**
  *  Use the dialog store to restore widget values to the values that they held
