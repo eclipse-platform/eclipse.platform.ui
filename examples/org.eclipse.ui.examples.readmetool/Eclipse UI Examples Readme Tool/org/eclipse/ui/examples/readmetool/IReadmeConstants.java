@@ -18,6 +18,10 @@ public interface IReadmeConstants {
 	public static final String ATT_CLASS = "class"; //$NON-NLS-1$
 	public static final String PP_SECTION_PARSER = "sectionParser"; //$NON-NLS-1$
 
+	// Global actions
+	public static final String RETARGET2 = PREFIX + "retarget2";
+	public static final String LABELRETARGET3 = PREFIX + "labelretarget3";
+
 	// Preference constants
 	public static final String PRE_CHECK1=PREFIX+"check1"; //$NON-NLS-1$
 	public static final String PRE_CHECK2=PREFIX+"check2"; //$NON-NLS-1$

@@ -6,8 +6,10 @@ package org.eclipse.ui.examples.readmetool;
  */
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.resources.*;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.ui.model.*;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -16,6 +18,7 @@ import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.PluginTransfer;
 import org.eclipse.ui.views.contentoutline.*;
 import org.eclipse.swt.dnd.*;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
@@ -25,6 +28,22 @@ import org.eclipse.swt.widgets.Menu;
  */
 public class ReadmeContentOutlinePage extends ContentOutlinePage {
 	protected IFile input;
+	
+	class OutlineAction extends Action {
+		private Shell shell;
+		public OutlineAction(String label) {
+			super(label);
+		}
+		public void setShell(Shell shell) {
+			this.shell = shell;
+		}
+		public void run() {
+			MessageDialog.openInformation(shell,
+				MessageUtil.getString("Readme_Outline"),  //$NON-NLS-1$
+				MessageUtil.getString("ReadmeOutlineActionExecuted")); //$NON-NLS-1$
+		}
+	}
+	
 /**
  * Creates a new ReadmeContentOutlinePage.
  */
@@ -56,6 +75,16 @@ public void createControl(Composite parent) {
 	viewer.getTree().setMenu(menu);
 	// Be sure to register it so that other plug-ins can add actions.
 	getSite().registerContextMenu("org.eclipse.ui.examples.readmetool.outline", menuMgr, viewer);  //$NON-NLS-1$
+
+	getSite().getActionBars().setGlobalActionHandler(
+		IReadmeConstants.RETARGET2, 
+		new OutlineAction(MessageUtil.getString("Outline_Action2")));  //$NON-NLS-1$
+
+	OutlineAction action = new OutlineAction(MessageUtil.getString("Outline_Action3")); //$NON-NLS-1$
+	action.setToolTipText(MessageUtil.getString("Readme_Outline_Action3")); //$NON-NLS-1$
+	getSite().getActionBars().setGlobalActionHandler(
+		IReadmeConstants.LABELRETARGET3, 
+		action);  
 }
 /**
  * Gets the content outline for a given input element.
