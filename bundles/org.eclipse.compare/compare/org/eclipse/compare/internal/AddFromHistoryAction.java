@@ -67,12 +67,13 @@ public class AddFromHistoryAction implements IActionDelegate {
 				if (dialog == null)
 					dialog= new AddFromHistoryDialog(parentShell, bundle);
 					
-				if (dialog.select(container, states)) {
-					IFile file= dialog.getSelectedFile();
-					IFileState fileState= dialog.getSelectedFileState();
-					if (file != null && fileState != null) {	
+				if (dialog.select(container, states)) {		
+							
+					AddFromHistoryDialog.HistoryInput[] selected= dialog.getSelected();				
+
+					if (selected != null && selected.length > 0) {	
 						try {
-							updateWorkspace(bundle, parentShell, file, fileState);
+							updateWorkspace(bundle, parentShell, selected);
 	
 						} catch (InterruptedException x) {
 							// Do nothing. Operation has been canceled by user.
@@ -99,18 +100,27 @@ public class AddFromHistoryAction implements IActionDelegate {
 	}
 	
 	private void updateWorkspace(final ResourceBundle bundle, Shell shell,
-					final IFile file, final IFileState fileState)
+					final AddFromHistoryDialog.HistoryInput[] selected)
 									throws InvocationTargetException, InterruptedException {
 		
 		WorkspaceModifyOperation operation= new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor pm) throws InvocationTargetException {
 				try {
 					String taskName= Utilities.getString(bundle, "taskName"); //$NON-NLS-1$
-					pm.beginTask(taskName, IProgressMonitor.UNKNOWN);
+					pm.beginTask(taskName, selected.length);
 					
-					createContainers(file);
-					file.create(fileState.getContents(), false, pm);
-										
+					for (int i= 0; i < selected.length; i++) {
+						IFile file= selected[i].fFile;
+						IFileState fileState= selected[i].fFileState;
+						createContainers(file);
+						
+						SubProgressMonitor subMonitor= new SubProgressMonitor(pm, 1);
+						try {
+							file.create(fileState.getContents(), false, subMonitor);
+						} finally {
+							subMonitor.done();
+						}
+					}
 				} catch (CoreException e) {
 					throw new InvocationTargetException(e);
 				} finally {

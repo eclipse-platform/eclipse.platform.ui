@@ -46,9 +46,55 @@ public class AddFromHistoryDialog extends ResizableDialog {
 			return fFileState.getModificationTime();
 		}
 	}
+	
+	static class FileHistory {
+		private IFile fFile;
+		private IFileState[] fStates;
+		private int fSelected;
+		
+		FileHistory(IFile file) {
+			fFile= file;
+		}
+		
+		IFile getFile() {
+			return fFile;
+		}
+		
+		IFileState[] getStates() {
+			if (fStates == null) {
+				try {
+					fStates= fFile.getHistory(new NullProgressMonitor());
+				} catch (CoreException ex) {
+				}
+			}
+			return fStates;
+		}
+		
+		IFileState getSelectedState() {
+			return getStates()[fSelected];
+		}
+		
+		void setSelected(IFileState state) {
+			for (int i= 0; i < fStates.length; i++) {
+				if (fStates[i] == state) {
+					fSelected= i;
+					return;
+				}
+			}
+		}
+		
+		HistoryInput getHistoryInput() {
+			return new HistoryInput(fFile, getSelectedState());
+		}
+		
+		boolean isSelected(int index) {
+			return index == fSelected;
+		}
+	}
 
 	private CompareConfiguration fCompareConfiguration;
-	private HistoryInput fSelectedItem;
+	private ArrayList fArrayList= new ArrayList();
+	private FileHistory fCurrentFileHistory;
 
 	// SWT controls
 	private CompareViewerSwitchingPane fContentPane;
@@ -95,27 +141,25 @@ public class AddFromHistoryDialog extends ResizableDialog {
 				TableItem ti= new TableItem(fMemberTable, SWT.NONE);
 				ti.setImage(CompareUI.getImage(file));
 				ti.setText(path);
-				ti.setData(file);
+				ti.setData(new FileHistory(file));
 			}
 		}
 		
 		open();
 		
-		return (getReturnCode() == OK) && (fSelectedItem != null);
+		return (getReturnCode() == OK) && (fArrayList.size() > 0);
 	}
-	
-	IFile getSelectedFile() {
-		if (fSelectedItem != null)
-			return fSelectedItem.fFile;
-		return null;
+		
+	HistoryInput[] getSelected() {
+		HistoryInput[] selected= new HistoryInput[fArrayList.size()];
+		Iterator iter= fArrayList.iterator();
+		for (int i= 0; iter.hasNext(); i++) {
+			FileHistory h= (FileHistory) iter.next();
+			selected[i]= h.getHistoryInput();
+		}
+		return selected;
 	}
-			
-	IFileState getSelectedFileState() {
-		if (fSelectedItem != null)
-			return fSelectedItem.fFileState;
-		return null;
-	}
-			
+				
 	protected synchronized Control createDialogArea(Composite parent) {
 		
 		getShell().setText(Utilities.getString(fBundle, "title")); //$NON-NLS-1$
@@ -139,20 +183,33 @@ public class AddFromHistoryDialog extends ResizableDialog {
 		Splitter hsplitter= new Splitter(vsplitter,  SWT.HORIZONTAL);
 		
 		fMemberPane= new CompareViewerPane(hsplitter, SWT.BORDER | SWT.FLAT);
-		fMemberTable= new Table(fMemberPane, SWT.H_SCROLL + SWT.V_SCROLL);
+		fMemberTable= new Table(fMemberPane, SWT.CHECK | SWT.H_SCROLL | SWT.V_SCROLL);
 		fMemberTable.addSelectionListener(
 			new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
-					handleMemberSelect(e.item);
+					if (e.detail == SWT.CHECK) {
+						if (e.item instanceof TableItem) {
+							TableItem ti= (TableItem) e.item;
+							if (ti.getChecked())
+								fArrayList.add(ti.getData());
+							else
+								fArrayList.remove(ti.getData());
+								
+							if (fCommitButton != null)
+								fCommitButton.setEnabled(fArrayList.size() > 0);
+						}
+					} else {
+						handleMemberSelect(e.item);
+					}
 				}
 			}
 		);
-		
+				
 		fMemberPane.setContent(fMemberTable);
 		
 		fEditionPane= new CompareViewerPane(hsplitter, SWT.BORDER | SWT.FLAT);
 		
-		fEditionTree= new Tree(fEditionPane, SWT.H_SCROLL + SWT.V_SCROLL);
+		fEditionTree= new Tree(fEditionPane, SWT.H_SCROLL | SWT.V_SCROLL);
 		fEditionTree.addSelectionListener(
 			new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
@@ -177,33 +234,34 @@ public class AddFromHistoryDialog extends ResizableDialog {
 	 */
 	private void handleMemberSelect(Widget w) {
 		Object data= w.getData();
-		if (data instanceof IFile) {
-			IFile file= (IFile) data;
-			IFileState[] states= null;
-			try {
-				states= file.getHistory(new NullProgressMonitor());
-			} catch (CoreException ex) {
-			}
+		if (data instanceof FileHistory) {
+			
+			FileHistory h= (FileHistory) data;
+			fCurrentFileHistory= h;
+			
+			IFile file= h.getFile();
+			IFileState[] states= h.getStates();
 			
 			fEditionPane.setImage(CompareUI.getImage(file));
 			String pattern= Utilities.getString(fBundle, "treeTitleFormat"); //$NON-NLS-1$
 			String title= MessageFormat.format(pattern, new Object[] { file.getName() });
 			fEditionPane.setText(title);
 			
-			if (fEditionTree != null) {
+			if (fEditionTree != null) {			
 				fEditionTree.removeAll();
 				for (int i= 0; i < states.length; i++) {
-					addEdition(new HistoryInput(file, states[i]));
+					addEdition(new HistoryInput(file, states[i]), h.isSelected(i));
 				}
 			}
-		}
+		} else
+			fCurrentFileHistory= null;
 	}
 	
 	/**
 	 * Adds the given Pair to the edition tree.
 	 * It takes care of creating tree nodes for different dates.
 	 */
-	private void addEdition(HistoryInput input) {
+	private void addEdition(HistoryInput input, boolean isSelected) {
 		if (fEditionTree == null || fEditionTree.isDisposed())
 			return;
 		
@@ -214,9 +272,7 @@ public class AddFromHistoryDialog extends ResizableDialog {
 		TreeItem lastDay= null;
 		if (days.length > 0)
 			lastDay= days[days.length-1];
-		
-		boolean first= lastDay == null;
-				
+						
 		long ldate= state.getModificationTime();		
 		long day= dayNumber(ldate);
 		Date date= new Date(ldate);
@@ -243,8 +299,8 @@ public class AddFromHistoryDialog extends ResizableDialog {
 		ti.setImage(fTimeImage);
 		ti.setText(DateFormat.getTimeInstance().format(date));
 		ti.setData(input);
-		
-		if (first) {
+
+		if (isSelected) {
 			lastDay.setExpanded(true);
 			fEditionTree.setSelection(new TreeItem[] { ti });
 			feedContent(ti);
@@ -263,22 +319,25 @@ public class AddFromHistoryDialog extends ResizableDialog {
 		
 		return (date + localTimeOffset) / ONE_DAY_MS;
 	}
-		
+	
+	/**
+	 * Feeds the tree viewer's selection to the contentviewer
+	 */
 	private void feedContent(Widget w) {
 		if (fContentPane != null && !fContentPane.isDisposed()) {
 			Object o= w.getData();
 			if (o instanceof HistoryInput) {
-				fSelectedItem= (HistoryInput) o;
-				fContentPane.setInput(fSelectedItem);
-				fContentPane.setText(getEditionLabel(fSelectedItem));
+				HistoryInput selected= (HistoryInput) o;
+				fContentPane.setInput(selected);
+				fContentPane.setText(getEditionLabel(selected));
 				fContentPane.setImage(fTimeImage);
+				
+				if (fCurrentFileHistory != null)
+					fCurrentFileHistory.setSelected(selected.fFileState);
 			} else {
-				fSelectedItem= null;
 				fContentPane.setInput(null);
 			}
 		}
-		if (fCommitButton != null)
-			fCommitButton.setEnabled(fSelectedItem != null);
 	}
 	
 	protected String getEditionLabel(HistoryInput input) {
