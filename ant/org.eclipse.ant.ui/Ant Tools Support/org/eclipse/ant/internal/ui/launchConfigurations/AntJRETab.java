@@ -409,6 +409,7 @@ public class AntJRETab extends JavaJRETab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
+		setLaunchConfigurationWorkingCopy(workingCopy);
 		warningShown= false;
 		super.activated(workingCopy);
 	}
