@@ -449,9 +449,6 @@ public class InstallHandlerProxy implements IInstallHandler {
 		// features being installed from a server (eg. http protocol)
 		// the URL will most likely be to a local file copy containing the
 		// unpacked feature jar.
-		// FIXME: this is not clean. Our packaged features get unpacked
-		// when the feature is selected (so UI can get at the contents) but
-		// this is not guaranteed to be the behavior forever
 		ContentReference baseRef =
 			feature.getFeatureContentProvider().getFeatureManifestReference(null);
 		URL base = null;
