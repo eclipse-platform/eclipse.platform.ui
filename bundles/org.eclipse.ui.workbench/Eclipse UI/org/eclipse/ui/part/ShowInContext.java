@@ -9,7 +9,7 @@ Contributors:
     IBM - Initial implementation
 ************************************************************************/
 
-package org.eclipse.ui.dialogs;
+package org.eclipse.ui.part;
 
 import org.eclipse.jface.viewers.ISelection;
 
@@ -20,6 +20,8 @@ import org.eclipse.jface.viewers.ISelection;
  *
  * @see IShowInSource
  * @see IShowInTarget
+ * 
+ * @since 2.1
  */
 public class ShowInContext {
 	

@@ -217,17 +217,19 @@ public void addPlaceholder(String viewId, int relationship, float ratio, String 
 
 /**
  * Adds an item to the Show In... prompter.
- * The id must name a view extension contributed to the 
- * workbench's extension point (named <code>"org.eclipse.ui.views"</code>).
+ * The id must name a view contributed to the workbench's view extension point 
+ * (named <code>"org.eclipse.ui.views"</code>).
  *
  * @param id the view id
+ * 
+ * @since 2.1
  */
 public void addShowInPart(String id);
 
 /**
  * Adds a view to the Show View menu.
- * The id must name a view extension contributed to the 
- * workbench's extension point (named <code>"org.eclipse.ui.views"</code>).
+ * The id must name a view contributed to the workbench's view extension point 
+ * (named <code>"org.eclipse.ui.views"</code>).
  *
  * @param id the view id
  */

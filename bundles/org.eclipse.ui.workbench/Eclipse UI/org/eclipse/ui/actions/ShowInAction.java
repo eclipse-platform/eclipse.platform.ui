@@ -27,10 +27,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.dialogs.IShowInSource;
-import org.eclipse.ui.dialogs.IShowInTarget;
 import org.eclipse.ui.dialogs.ListDialog;
-import org.eclipse.ui.dialogs.ShowInContext;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
@@ -40,6 +37,9 @@ import org.eclipse.ui.internal.dialogs.ViewLabelProvider;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.registry.IViewDescriptor;
 import org.eclipse.ui.internal.registry.IViewRegistry;
+import org.eclipse.ui.part.IShowInSource;
+import org.eclipse.ui.part.IShowInTarget;
+import org.eclipse.ui.part.ShowInContext;
 
 /**
  * This action opens the Show In prompter, allowing the user to choose a view 
@@ -48,6 +48,8 @@ import org.eclipse.ui.internal.registry.IViewRegistry;
  * @see org.eclipse.ui.dialogs.ShowInContext
  * @see org.eclipse.ui.dialogs.IShowInSource
  * @see org.eclipse.ui.dialogs.IShowInTarget
+ * 
+ * @since 2.1
  */
 public class ShowInAction extends Action {
 

@@ -524,6 +524,7 @@ public interface IWorkbenchActionConstants {
 	 * (value <code>"showIn"</code>).
 	 * 
 	 * @see org.eclipse.ui.actions.ShowInAction
+	 * @since 2.1
 	 */
 	public static final String SHOW_IN = "showIn";	//$NON-NLS-1$
 
