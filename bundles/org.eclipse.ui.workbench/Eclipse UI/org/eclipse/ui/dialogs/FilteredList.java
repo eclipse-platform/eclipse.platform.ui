@@ -547,6 +547,7 @@ public class FilteredList extends Composite {
 			fDisplay.syncExec(new Runnable() {
 				public void run() {
 					fTable.setSelection(indices);
+					fTable.notifyListeners(SWT.Selection, new Event());
 				}
 			});
 
@@ -596,7 +597,11 @@ public class FilteredList extends Composite {
 				fRunnable.run();
 			}
 
-			if (indices != null)
+			if (indices == null){
+				if(count > 0)
+					fRunnable.updateSelection(new int[]{0});
+			}				
+			else
 				fRunnable.updateSelection(indices);
 			requestStop();
 
