@@ -277,7 +277,10 @@ function onloadHandler(toc, title, tocDescription, isTopicSelected)
 	if (!isTopicSelected)
 	{
 		if (tocDescription.indexOf("javascript:") == 0)
-			parent.parent.MainFrame.location="home.jsp?title="+escape(title);
+			if (isMozilla)
+				parent.parent.MainFrame.location="home.jsp?title="+escape(title);
+			else
+				parent.parent.MainFrame.location="home.jsp?titleJS13="+escape(title);
 		else
 			parent.parent.MainFrame.location = tocDescription;
 	}

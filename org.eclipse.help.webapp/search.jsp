@@ -1,8 +1,18 @@
-<%@ page import="org.eclipse.help.servlet.*" errorPage="err.jsp" contentType="text/html; charset=UTF-8"%>
+<%@ page import="java.util.Locale,org.eclipse.help.servlet.*" errorPage="err.jsp" contentType="text/html; charset=UTF-8"%>
 
 <% 
 	// calls the utility class to initialize the application
 	application.getRequestDispatcher("/servlet/org.eclipse.help.servlet.InitServlet").include(request,response);
+%>
+
+<%
+	String agent=request.getHeader("User-Agent").toLowerCase(Locale.US);
+	boolean ie   = (agent.indexOf("msie") != -1);
+	boolean mozilla  = (!ie && (agent.indexOf("mozilla/5")!=-1));
+	String searchWordParName = "searchWord";
+	if(!mozilla){
+		searchWordParName = "searchWordJS13";
+	}	
 %>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
@@ -111,7 +121,7 @@ function saveSelectedBooks(books)
 
 function openAdvanced()
 {
-	advancedDialog = window.open("advanced.jsp?searchWord="+escape(document.getElementById("searchWord").value), "advancedDialog", "height="+h+",width="+w );
+	advancedDialog = window.open("advanced.jsp?<%=searchWordParName%>="+escape(document.getElementById("searchWord").value), "advancedDialog", "height="+h+",width="+w );
 	advancedDialog.focus(); 
 }
 
@@ -132,7 +142,7 @@ function doSearch()
 	if (!searchWord || searchWord == "")
 		return;
 	else
-		parent.doSearch("searchWord="+escape(searchWord)+"&maxHits="+maxHits);
+		parent.doSearch("<%=searchWordParName%>="+escape(searchWord)+"&maxHits="+maxHits);
 }
 
 /* not  called for now */

@@ -1,8 +1,25 @@
-<%@ page import="org.eclipse.help.servlet.*, org.w3c.dom.*" errorPage="err.jsp" contentType="text/html; charset=UTF-8"%>
+<%@ page import="java.util.Locale,org.eclipse.help.servlet.*, org.w3c.dom.*" errorPage="err.jsp" contentType="text/html; charset=UTF-8"%>
 
 <% 
 	// calls the utility class to initialize the application
 	application.getRequestDispatcher("/servlet/org.eclipse.help.servlet.InitServlet").include(request,response);
+%>
+
+<%
+	String agent=request.getHeader("User-Agent").toLowerCase(Locale.US);
+	boolean ie   = (agent.indexOf("msie") != -1);
+	boolean mozilla  = (!ie && (agent.indexOf("mozilla/5")!=-1));
+	String searchWordParName = "searchWord";
+	String scopeParName = "scope";
+	if(!mozilla){
+		searchWordParName = "searchWordJS13";
+		scopeParName = "scopeJS13";
+	}	
+%>
+<%
+	String sQuery=request.getQueryString();
+	sQuery=UrlUtil.changeParameterEncoding(sQuery, "searchWordJS13", "searchWord");
+	String searchWord=UrlUtil.getRequestParameter(sQuery, "searchWord");
 %>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
@@ -119,14 +136,14 @@ function doAdvancedSearch()
 		{
 			if (buttons[i].type != "checkbox") continue;
 			if (buttons[i].checked == false) continue;
-			scope += "&scope="+escape(buttons[i].name);
+			scope += "&<%=scopeParName%>="+escape(buttons[i].name);
 		}
 		
 		// persist selection
 		window.opener.saveSelectedBooks(getSelectedBooks());
 		
 		window.opener.document.forms["searchForm"].searchWord.value = searchWord;
-		var query = "searchWord="+escape(searchWord)+"&maxHits="+maxHits + scope;
+		var query = "<%=searchWordParName%>="+escape(searchWord)+"&maxHits="+maxHits + scope;
 		window.opener.parent.doSearch(query);
 		window.opener.focus();
 		window.close();
@@ -198,7 +215,7 @@ function onloadHandler()
 	<table id="searchTable" width="100%" cellspacing=0 cellpading=0 border=0 align=center >
 		<tr><td style="padding:0px 10px;"><%=WebappResources.getString("SearchExpression", request)%>
 		</td></tr>
-		<tr><td style="padding:0px 10px;"><input type="text" id="searchWord" name="searchWord" value='<%=UrlUtil.getRequestParameter(request, "searchWord")!=null?UrlUtil.getRequestParameter(request, "searchWord"):""%>' maxlength=256 alt='<%=WebappResources.getString("SearchExpression", request)%>'>
+		<tr><td style="padding:0px 10px;"><input type="text" id="searchWord" name="searchWord" value='<%=searchWord!=null?searchWord:""%>' maxlength=256 alt='<%=WebappResources.getString("SearchExpression", request)%>'>
           	  	<input type="hidden" name="maxHits" value="500" >
         </td></tr>
         <tr><td style="padding:0px 10px;"><%=WebappResources.getString("expression_label", request)%>
