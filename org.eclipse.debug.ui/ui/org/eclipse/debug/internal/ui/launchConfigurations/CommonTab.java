@@ -36,7 +36,6 @@ import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
-import sun.security.krb5.internal.i;
 
 /**
  * This tab appears in the LaunchConfigurationDialog for all launch configuration

@@ -55,9 +55,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
-import sun.security.krb5.internal.i;
-import sun.security.krb5.internal.crypto.c;
-import sun.security.krb5.internal.crypto.e;
 
 /**
  * The dialog used to edit and launch launch configurations.
