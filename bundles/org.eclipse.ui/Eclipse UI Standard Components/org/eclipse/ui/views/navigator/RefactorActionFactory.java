@@ -12,11 +12,8 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IViewSite;
-import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.*;
 import org.eclipse.ui.actions.*;
-import org.eclipse.ui.internal.TextActionHandler;
 
 /**
  * The RefactorActionFactory is the factory for
