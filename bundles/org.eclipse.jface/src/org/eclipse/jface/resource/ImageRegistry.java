@@ -89,6 +89,7 @@ public class ImageRegistry {
 	 *
 	 * @param key the key
 	 * @return the descriptor, or <code>null</code> if none
+	 * @since 2.1
 	 */
 	public ImageDescriptor getDescriptor(String key) {
 		Entry entry = (Entry)table.get(key);
