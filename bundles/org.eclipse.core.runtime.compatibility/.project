@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>org.eclipse.core.runtime.compatibility</name>
+	<comment></comment>
+	<projects>
+		<project>org.eclipse.core.runtime.osgi</project>
+		<project>org.eclipse.osgi</project>
+		<project>org.eclipse.osgi.util</project>
+		<project>org.eclipse.update.configurator</project>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>org.eclipse.jdt.core.javabuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+		<nature>org.eclipse.jdt.core.javanature</nature>
+	</natures>
+</projectDescription>
