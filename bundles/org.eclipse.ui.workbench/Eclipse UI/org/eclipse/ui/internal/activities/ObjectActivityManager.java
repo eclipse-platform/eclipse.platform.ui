@@ -26,7 +26,6 @@ import org.eclipse.ui.activities.IActivityListener;
 import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.activities.IObjectActivityManager;
 import org.eclipse.ui.activities.IObjectContributionRecord;
-import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.roles.IRoleManager;
 
 /**
@@ -61,8 +60,7 @@ public class ObjectActivityManager implements IObjectActivityManager {
     public static ObjectActivityManager getManager(String id, boolean create) {
         ObjectActivityManager manager = (ObjectActivityManager) managersMap.get(id);
         if (manager == null && create) {
-            Workbench workbench = ((Workbench) PlatformUI.getWorkbench());
-            manager = new ObjectActivityManager(id, workbench.getActivityManager(), workbench.getRoleManager());
+            manager = new ObjectActivityManager(id, PlatformUI.getWorkbench().getActivityManager(), PlatformUI.getWorkbench().getRoleManager());
             managersMap.put(id, manager);
         }
         return manager;

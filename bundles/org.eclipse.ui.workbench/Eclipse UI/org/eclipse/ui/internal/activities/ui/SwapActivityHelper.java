@@ -32,7 +32,6 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.IActivity;
 import org.eclipse.ui.activities.IActivityManager;
-import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.roles.IActivityBinding;
 import org.eclipse.ui.roles.IRole;
 import org.eclipse.ui.roles.IRoleManager;
@@ -132,7 +131,7 @@ public class SwapActivityHelper {
 
         createSwapButtons(swapComposite);
 
-        IActivityManager activityManager = ((Workbench) PlatformUI.getWorkbench()).getActivityManager();
+        IActivityManager activityManager = PlatformUI.getWorkbench().getActivityManager();
         Set activityIds = activityManager.getDefinedActivityIds();
 
         List active = new ArrayList(), potential = new ArrayList();
@@ -161,7 +160,7 @@ public class SwapActivityHelper {
 	 * @since 3.0
 	 */
     private boolean belongsToARole(String activityId) {
-        IRoleManager roleManager = ((Workbench) PlatformUI.getWorkbench()).getRoleManager();
+        IRoleManager roleManager = PlatformUI.getWorkbench().getRoleManager();
         for (Iterator roleItr = roleManager.getDefinedRoleIds().iterator(); roleItr.hasNext();) {
             IRole role = roleManager.getRole((String) roleItr.next());
             for (Iterator bindingItr = role.getActivityBindings().iterator(); bindingItr.hasNext();) {
@@ -231,7 +230,7 @@ public class SwapActivityHelper {
 	 * @since 3.0
 	 */
     public void updateActivityStates() {
-        IActivityManager activityManager = ((Workbench) PlatformUI.getWorkbench()).getActivityManager();
+        IActivityManager activityManager = PlatformUI.getWorkbench().getActivityManager();
 
         Set finalState = new HashSet(activityManager.getEnabledActivityIds());
 

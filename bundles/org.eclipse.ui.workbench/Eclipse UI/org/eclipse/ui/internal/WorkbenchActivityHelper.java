@@ -81,7 +81,7 @@ public class WorkbenchActivityHelper {
 	 * @since 3.0
 	 */
     public static boolean isEnabled(String idToMatchAgainst) {
-        return isEnabled(((Workbench) PlatformUI.getWorkbench()).getActivityManager(), idToMatchAgainst);
+        return isEnabled(PlatformUI.getWorkbench().getActivityManager(), idToMatchAgainst);
     }
 
     /**
@@ -128,7 +128,6 @@ public class WorkbenchActivityHelper {
         // TODO start enables all activities by default unless command line
 		// parameter -activities is specified
 
-        Workbench workbench = (Workbench) PlatformUI.getWorkbench();
         String[] commandLineArgs = Platform.getCommandLineArgs();
         boolean activities = false;
 
@@ -139,7 +138,7 @@ public class WorkbenchActivityHelper {
             }
 
         if (!activities) {
-            IActivityManager activityManager = workbench.getActivityManager();
+            IActivityManager activityManager = PlatformUI.getWorkbench().getActivityManager();
             activityManager.setEnabledActivityIds(activityManager.getDefinedActivityIds());
         }
 
@@ -160,7 +159,7 @@ public class WorkbenchActivityHelper {
 	 * @since 3.0
 	 */
     public static void enableActivities(String id) {
-        IActivityManager activityManager = ((Workbench) PlatformUI.getWorkbench()).getActivityManager();
+        IActivityManager activityManager = PlatformUI.getWorkbench().getActivityManager();
         Set activities = new HashSet(activityManager.getEnabledActivityIds());
         for (Iterator i = activityManager.getDefinedActivityIds().iterator(); i.hasNext();) {
             String activityId = (String) i.next();
@@ -352,7 +351,7 @@ public class WorkbenchActivityHelper {
         //allow for switching off and on of roles
         //        if (!store.isDefault(PREFIX + FILTERING_ENABLED))
         //            setFiltering(store.getBoolean(PREFIX + FILTERING_ENABLED));
-        IActivityManager activityManager = ((Workbench) PlatformUI.getWorkbench()).getActivityManager();
+        IActivityManager activityManager = PlatformUI.getWorkbench().getActivityManager();
         Iterator values = activityManager.getDefinedActivityIds().iterator();
         Set enabledActivities = new HashSet();
         while (values.hasNext()) {
@@ -371,7 +370,7 @@ public class WorkbenchActivityHelper {
     private void saveEnabledStates() {
         IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
         //        store.setValue(PREFIX + FILTERING_ENABLED, isFiltering());
-        IActivityManager activityManager = ((Workbench) PlatformUI.getWorkbench()).getActivityManager();
+        IActivityManager activityManager = PlatformUI.getWorkbench().getActivityManager();
         Iterator values = activityManager.getDefinedActivityIds().iterator();
         while (values.hasNext()) {
             IActivity activity = activityManager.getActivity((String) values.next());

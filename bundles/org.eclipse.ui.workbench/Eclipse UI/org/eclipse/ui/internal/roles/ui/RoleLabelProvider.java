@@ -10,10 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.roles.ui;
 
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
+
+import org.eclipse.jface.viewers.LabelProvider;
+
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.roles.IRole;
 import org.eclipse.ui.roles.NotDefinedException;
 
@@ -47,7 +48,7 @@ public class RoleLabelProvider extends LabelProvider {
 	 */
     public String getText(Object element) {
         if (element instanceof String) {
-            return getRoleText(((Workbench) PlatformUI.getWorkbench())
+            return getRoleText(PlatformUI.getWorkbench()
                     .getRoleManager()
                     .getRole((String) element));
         }
