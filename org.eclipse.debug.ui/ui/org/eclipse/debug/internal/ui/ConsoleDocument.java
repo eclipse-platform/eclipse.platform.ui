@@ -21,8 +21,6 @@ import org.eclipse.swt.widgets.Display;
 public class ConsoleDocument extends AbstractDocument implements IDebugEventListener {
 
 	private boolean fClosed= false;
-	
-	protected boolean fCanWrite= true;
 
 	protected IProcess fProcess;
 	private IStreamsProxy fProxy;
@@ -79,7 +77,6 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventList
 	 */
 	protected void fireDocumentChanged(DocumentEvent event) {
 		super.fireDocumentChanged(event);
-		
 		String eventText= event.getText();
 		if (eventText == null || 0 >= eventText.length() || eventText.length() > 2) {
 			return;
@@ -87,28 +84,18 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventList
 		String[] lineDelimiters= event.getDocument().getLegalLineDelimiters();
 		for (int i= 0; i < lineDelimiters.length; i++) {
 			if (lineDelimiters[i].equals(eventText)) {
-				String inText= event.getDocument().get();
-				inText= inText.substring(fNewStreamWriteEnd, inText.length());
-				if (inText.length() == 0) {
-					return;
-				}					
-				if (fCanWrite) {
-					final String input= inText;
-					Runnable runnable= new Runnable() {
-						public void run() {
-							try {
-								fCanWrite= false;
-								fProxy.write(input);
-								fCanWrite= true;
-							} catch (IOException ioe) {
-								DebugUIUtils.logError(ioe);
-							}
-						}
-					};
-					Thread proxyWriter= new Thread(runnable);
-					proxyWriter.start();		
+				try {
+					String inText= event.getDocument().get();
+					inText= inText.substring(fNewStreamWriteEnd, inText.length());
+					if (inText.length() == 0) {
+						return;
+					}
+					fProxy.write(inText);
 					fLastStreamWriteEnd= getLength();
-				} 
+					return;
+				} catch (IOException ioe) {
+					DebugUIUtils.logError(ioe);
+				}
 			}
 		}
 	}
