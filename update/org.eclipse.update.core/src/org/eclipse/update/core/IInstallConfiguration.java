@@ -87,7 +87,7 @@ public interface IInstallConfiguration extends IAdaptable {
 	void export(File exportFile) throws CoreException;
 	
 	/**
-	 * Returns the Activities that were performed to get this InstallConfiguration.
+	 * Returns the Activities that were performed to get this InstallConfigurationModel.
 	 * 
 	 * There is always at least one Activity
 	 * 

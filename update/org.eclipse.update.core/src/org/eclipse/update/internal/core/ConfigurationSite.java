@@ -13,65 +13,32 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.IFeatureReference;
+import org.eclipse.update.core.model.ConfigurationActivityModel;
+import org.eclipse.update.core.model.ConfigurationPolicyModel;
+import org.eclipse.update.core.model.ConfigurationSiteModel;
+import org.eclipse.update.core.model.FeatureReferenceModel;
+import org.eclipse.update.core.model.InstallConfigurationParser;
+import org.eclipse.update.core.model.SiteMapModel;
 
 /**
  * 
  */
-public class ConfigurationSite implements IConfigurationSite, IWritable {
+public class ConfigurationSite extends ConfigurationSiteModel implements IConfigurationSite, IWritable {
 
-	private ISite site;
-	private IConfigurationPolicy policy;
-	private boolean installable = false;
 	/**
 	 * Constructor
 	 */
 	public ConfigurationSite(ISite site, IConfigurationPolicy policy) {
-		this.site = site;
-		this.policy = policy;
+		setSiteModel((SiteMapModel)site);
+		setConfigurationPolicyModel((ConfigurationPolicyModel)policy);
 	}
 
 	/**
 	 * Copy Constructor
 	 */
 	public ConfigurationSite(IConfigurationSite configSite) {
-		this.site = configSite.getSite();
-		this.policy = new ConfigurationPolicy(configSite.getConfigurationPolicy());
-		this.installable = configSite.isInstallSite();
-	}
-
-	/*
-	 * @see IConfigurationSite#getSite()
-	 */
-	public ISite getSite() {
-		return site;
-	}
-
-	/*
-	 * @see IConfigurationSite#getPolicy()
-	 */
-	public IConfigurationPolicy getConfigurationPolicy() {
-		return policy;
-	}
-
-	/*
-	 * @see IConfigurationSite#setPolicy(IConfigurationPolicy)
-	 */
-	public void setConfigurationPolicy(IConfigurationPolicy policy) {
-		this.policy = policy;
-	}
-
-	/*
-	 * @see IConfigurationSite#isInstallSite()
-	 */
-	public boolean isInstallSite() {
-		return installable;
-	}
-
-	/*
-	 * @see IConfigurationSite#setInstallSite(booelan)
-	 */
-	public void setInstallSite(boolean installable) {
-		this.installable = installable;
+		this(configSite.getSite(),configSite.getConfigurationPolicy());
+		setInstallSite(configSite.isInstallSite());
 	}
 
 	/*
@@ -87,9 +54,9 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 			increment += " ";
 
 		w.println(gap + "<" + InstallConfigurationParser.CONFIGURATION_SITE + " ");
-		w.println(gap + increment + "url=\"" + getSite().getURL().toExternalForm() + "\"");
-		w.println(gap + increment + "policy=\"" + getConfigurationPolicy().getPolicy() + "\" ");
-		String install = installable ? "true" : "false";
+		w.println(gap + increment + "url=\"" + ((ISite)getSite()).getURL().toExternalForm() + "\"");
+		w.println(gap + increment + "policy=\"" + getConfigurationPolicyModel().getPolicy() + "\" ");
+		String install = isInstallSite() ? "true" : "false";
 		w.print(gap + increment + "install=\"" + install + "\" ");
 		w.println(">");
 		w.println("");
@@ -114,7 +81,7 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 		}
 
 		// unconfigured features ref
-		featuresReferences = ((ConfigurationPolicy) getConfigurationPolicy()).getUnconfiguredFeatures();
+		featuresReferences = ((ConfigurationPolicy) getConfigurationPolicyModel()).getUnconfiguredFeatures();
 		if (featuresReferences != null) {
 			for (int index = 0; index < featuresReferences.length; index++) {
 				IFeatureReference element = featuresReferences[index];
@@ -141,9 +108,9 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 	 * @see IConfigurationSite#install(IFeature, IProgressMonitor)
 	 */
 	public IFeatureReference install(IFeature feature, IProgressMonitor monitor) throws CoreException {
-		if (!installable) {
+		if (!isInstallSite()) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.WARNING, id, IStatus.OK, "The site is not considered to be installable:" + site.getURL().toExternalForm(), null);
+			IStatus status = new Status(IStatus.WARNING, id, IStatus.OK, "The site is not considered to be installable:" + ((ISite)getSite()).getURL().toExternalForm(), null);
 			throw new CoreException(status);
 		}
 
@@ -154,7 +121,7 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 		activity.setDate(new Date());
 
 		try {
-			installedFeature = getSite().install(feature, monitor);
+			installedFeature = ((ISite)getSite()).install(feature, monitor);
 			configure(installedFeature);
 
 			// everything done ok
@@ -164,7 +131,7 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 			activity.setStatus(IActivity.STATUS_NOK);
 			throw e;
 		} finally {
-			((InstallConfiguration) SiteManager.getLocalSite().getCurrentConfiguration()).addActivity(activity);
+			((InstallConfiguration) SiteManager.getLocalSite().getCurrentConfiguration()).addActivityModel((ConfigurationActivityModel)activity);
 		}
 
 		return installedFeature;
@@ -174,9 +141,9 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 	 * @see IConfigurationSite#remove(IFeature, IProgressMonitor)
 	 */
 	public void remove(IFeature feature, IProgressMonitor monitor) throws CoreException {
-		if (!installable) {
+		if (!isInstallSite()) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.WARNING, id, IStatus.OK, "The site is not considered to be installable, you cannot uninstall from it either:" + site.getURL().toExternalForm(), null);
+			IStatus status = new Status(IStatus.WARNING, id, IStatus.OK, "The site is not considered to be installable, you cannot uninstall from it either:" + ((ISite)getSite()).getURL().toExternalForm(), null);
 			throw new CoreException(status);
 		}
 
@@ -187,10 +154,10 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 
 		try {
 			IFeatureReference referenceToUnconfigure = null;
-			IFeatureReference[] featureRef = getSite().getFeatureReferences();
+			FeatureReferenceModel[] featureRef = getSiteModel().getFeatureReferenceModels();
 			for (int i = 0; i < featureRef.length; i++) {
-				referenceToUnconfigure= featureRef[i];
-				if (referenceToUnconfigure.getURL().equals(feature.getURL())) {
+				if (featureRef[i].getURL().equals(feature.getURL())) {
+					referenceToUnconfigure = (IFeatureReference) featureRef[i];
 					break;
 				}
 			}
@@ -202,7 +169,7 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 			} else {
 				//FIXME warn, no reference found for this feature
 			}
-			getSite().remove(feature, monitor);
+			((ISite)getSite()).remove(feature, monitor);
 
 			// everything done ok
 			activity.setStatus(IActivity.STATUS_OK);
@@ -211,7 +178,7 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 			activity.setStatus(IActivity.STATUS_NOK);
 			throw e;
 		} finally {
-			((InstallConfiguration) SiteManager.getLocalSite().getCurrentConfiguration()).addActivity(activity);
+			((InstallConfiguration) SiteManager.getLocalSite().getCurrentConfiguration()).addActivityModel((ConfigurationActivityModel)activity);
 		}
 	}
 
@@ -219,21 +186,23 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 	 * @see IConfigurationSite#configure(IFeatureReference)
 	 */
 	public void configure(IFeatureReference feature) throws CoreException {
-		((ConfigurationPolicy) getConfigurationPolicy()).configure(feature);
+		((ConfigurationPolicy) getConfigurationPolicyModel()).configure(feature);
 	}
 
 	/*
 	 * @see IConfigurationSite#unconfigure(IFeatureReference)
 	 */
 	public void unconfigure(IFeatureReference feature, IProblemHandler handler) throws CoreException {
-		((ConfigurationPolicy) getConfigurationPolicy()).unconfigure(feature, handler);
+		((ConfigurationPolicy) getConfigurationPolicyModel()).unconfigure(feature, handler);
 	}
 
 	/*
 	 * @see IConfigurationSite#getConfiguredFeatures()
 	 */
 	public IFeatureReference[] getConfiguredFeatures() {
-		return getConfigurationPolicy().getConfiguredFeatures();
+		FeatureReferenceModel[] ref = getConfigurationPolicyModel().getConfiguredFeaturesModel();
+		if (ref.length==0) return new IFeatureReference[0];
+		return (IFeatureReference[])ref;
 	}
 
 	/**
@@ -244,7 +213,7 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 		IFeatureReference[] configuredFeatures = processConfiguredFeatures(handler);
 
 		// we only care about unconfigured features if the Site policy is USER_EXCLUDE
-		if (getConfigurationPolicy().getPolicy() == IPlatformConfiguration.ISitePolicy.USER_EXCLUDE) {
+		if (getConfigurationPolicyModel().getPolicy() == IPlatformConfiguration.ISitePolicy.USER_EXCLUDE) {
 			List featureToUnconfigure = processUnconfiguredFeatures();
 
 			// ok
@@ -262,7 +231,7 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 				IFeatureReference element = (IFeatureReference) iter.next();
 				try {
 					element.getFeature();
-					((ConfigurationPolicy) getConfigurationPolicy()).addUnconfiguredFeatureReference(element);
+					((ConfigurationPolicy) getConfigurationPolicyModel()).addUnconfiguredFeatureReference((FeatureReferenceModel)element);
 				} catch (CoreException e) {
 					// feature does not exist ?
 					// FIXME: shoudl we remove from list ? maybe keep it ? if this is a URL or temporary issue
@@ -308,7 +277,7 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 			IConfigurationSite[] configSites = element.getConfigurationSites();
 			for (int j = 0; j < configSites.length; j++) {
 				IConfigurationSite configSite = configSites[j];
-				if (configSite.getSite().getURL().equals(getSite().getURL())) {
+				if (configSite.getSite().getURL().equals(((ISite)getSite()).getURL())) {
 					featureToUnconfigure.addAll(Arrays.asList(configSite.getConfigurationPolicy().getUnconfiguredFeatures()));
 					featureToUnconfigure.addAll(Arrays.asList(configSite.getConfigurationPolicy().getConfiguredFeatures()));
 				}
@@ -424,5 +393,26 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 		return found;
 	}
 
+
+	/*
+	 * @see IConfigurationSite#setConfigurationPolicy(IConfigurationPolicy)
+	 */
+	public void setConfigurationPolicy(IConfigurationPolicy policy) {
+		setConfigurationPolicyModel((ConfigurationPolicyModel)policy);
+	}
+
+	/*
+	 * @see IConfigurationSite#getConfigurationPolicy()
+	 */
+	public IConfigurationPolicy getConfigurationPolicy() {
+		return (IConfigurationPolicy)getConfigurationPolicyModel();
+	}
+
+	/*
+	 * @see IConfigurationSite#getSite()
+	 */
+	public ISite getSite() {
+		return (ISite)getSiteModel();
+	}
 
 }

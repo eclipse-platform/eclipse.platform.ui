@@ -5,77 +5,21 @@ package org.eclipse.update.internal.core;
  */
  
 import java.io.PrintWriter;
-import java.util.Date;
 
 import org.eclipse.update.core.IActivity;
+import org.eclipse.update.core.model.ConfigurationActivityModel;
+import org.eclipse.update.core.model.InstallConfigurationParser;
 
-public class ConfigurationActivity implements IActivity, IWritable {
-	
-	private String label;
-	private int action;
-	private Date date;
-	private int status;
+public class ConfigurationActivity extends ConfigurationActivityModel implements IActivity, IWritable {
 	
 
 	/**
-	 * Constructor for ConfigurationActivity.
+	 * Constructor for ConfigurationActivityModel.
 	 */
 	public ConfigurationActivity(int action) {
 		super();
-		this.action = action;
-		this.status = STATUS_NOK; 
-	}
-
-	/*
-	 * @see IActivity#getAction()
-	 */
-	public int getAction() {
-		return action;
-	}
-
-	/*
-	 * @see IActivity#getDate()
-	 */
-	public Date getDate() {
-		return date;
-	}
-
-	/*
-	 * @see IActivity#getStatus()
-	 */
-	public int getStatus() {
-		return status;
-	}
-
-	/**
-	 * Sets the date.
-	 * @param date The date to set
-	 */
-	public void setDate(Date date) {
-		this.date = date;
-	}
-
-	/**
-	 * Sets the status.
-	 * @param status The status to set
-	 */
-	public void setStatus(int status) {
-		this.status = status;
-	}
-
-	/*
-	 * @see IActivity#getLabel()
-	 */
-	public String getLabel() {
-		return label;
-	}
-
-	/**
-	 * Sets the label.
-	 * @param label The label to set
-	 */
-	public void setLabel(String label) {
-		this.label = label;
+		setAction(action);
+		setStatus(STATUS_NOK); 
 	}
 
 	/*
@@ -91,12 +35,12 @@ public class ConfigurationActivity implements IActivity, IWritable {
 		
 		
 		w.print(gap + "<" + InstallConfigurationParser.ACTIVITY + " ");
-		w.println("action=\""+action+"\" ");
-		if (label!=null){
-			w.println(gap+"label=\""+Writer.xmlSafe(label)+"\" ");
+		w.println("action=\""+getAction()+"\" ");
+		if (getLabel()!=null){
+			w.println(gap+"label=\""+Writer.xmlSafe(getLabel())+"\" ");
 		}
-		w.println("date=\"" + date.getTime() + "\" ");
-		w.print("status=\""+status+"\"");
+		w.println("date=\"" + getDate().getTime() + "\" ");
+		w.print("status=\""+getStatus()+"\"");
 		w.println(">");
 		w.println("");
 		

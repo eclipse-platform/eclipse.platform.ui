@@ -17,14 +17,7 @@ public interface IConfigurationPolicy {
 
 	int getPolicy();
 	
-	/**
-	 * return the list of filtered features based on the policy (include/exclude list)
-	 * @see org.eclipse.core.boot.IPlatformConfiguration.ISitePolicy#getList()
-	 * @since 2.0 
-	 */
-
-	IFeatureReference[] getFilteredFeatures(IFeatureReference[] featuresToFilter);
-	
+		
 	/**
 	 * Returns teh configured features for this Site based on the current policy
 	 * @since 2.0 

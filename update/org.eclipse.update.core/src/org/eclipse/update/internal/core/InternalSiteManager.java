@@ -42,8 +42,9 @@ public class InternalSiteManager {
 	 * the user has access to (either read only or read write)
 	 */
 	public static ILocalSite getLocalSite() throws CoreException {
-		if (localSite == null)
-			localSite = new SiteLocal();
+		if (localSite == null){
+			localSite = SiteLocal.getLocalSite();
+		}
 		return localSite;
 	}
 

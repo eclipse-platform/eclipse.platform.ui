@@ -1,4 +1,4 @@
-package org.eclipse.update.internal.core;
+package org.eclipse.update.core.model;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2002.

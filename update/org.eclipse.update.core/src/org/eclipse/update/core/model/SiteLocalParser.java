@@ -1,4 +1,4 @@
-package org.eclipse.update.internal.core;
+package org.eclipse.update.core.model;
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
@@ -14,15 +14,14 @@ import java.util.ResourceBundle;
 
 import org.apache.xerces.parsers.SAXParser;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.update.core.IFeatureReference;
-import org.eclipse.update.core.IURLEntry;
 import org.eclipse.update.core.ILocalSite;
+import org.eclipse.update.internal.core.Assert;
+import org.eclipse.update.internal.core.UpdateManagerPlugin;
+import org.eclipse.update.internal.core.UpdateManagerUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
@@ -33,7 +32,7 @@ public class SiteLocalParser extends DefaultHandler {
 
 	private SAXParser parser;
 	private InputStream siteStream;
-	private SiteLocal site;
+	private SiteLocalModel site;
 	private String text;
 	public static final String SITE = "localsite";
 	public static final String CONFIG = "config";
@@ -55,12 +54,12 @@ public class SiteLocalParser extends DefaultHandler {
 		parser.setContentHandler(this);
 
 		this.siteStream = siteStream;
-		Assert.isTrue(site instanceof SiteLocal);
-		this.site = (SiteLocal) site;
+		Assert.isTrue(site instanceof SiteLocalModel);
+		this.site = (SiteLocalModel) site;
 
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
-			UpdateManagerPlugin.getPlugin().debug("Start parsing localsite:" + ((SiteLocal) site).getLocation().toExternalForm());
+			UpdateManagerPlugin.getPlugin().debug("Start parsing localsite:" + ((SiteLocalModel) site).getLocationURLString());
 		}
 
 		bundle = getResourceBundle();
@@ -74,13 +73,13 @@ public class SiteLocalParser extends DefaultHandler {
 	private ResourceBundle getResourceBundle() throws IOException, CoreException {
 		ResourceBundle bundle = null;
 		try {
-			ClassLoader l = new URLClassLoader(new URL[] { site.getLocation()}, null);
-			bundle = ResourceBundle.getBundle(SiteLocal.SITE_LOCAL_FILE, Locale.getDefault(), l);
+			ClassLoader l = new URLClassLoader(new URL[] { site.getLocationURL()}, null);
+			bundle = ResourceBundle.getBundle(SiteLocalModel.SITE_LOCAL_FILE, Locale.getDefault(), l);
 		} catch (MissingResourceException e) {
 			//ok, there is no bundle, keep it as null
 			//DEBUG:
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
-				UpdateManagerPlugin.getPlugin().debug(e.getLocalizedMessage() + ":" + site.getLocation().toExternalForm());
+				UpdateManagerPlugin.getPlugin().debug(e.getLocalizedMessage() + ":" + site.getLocationURLString());
 			}
 		}
 		return bundle;
@@ -115,7 +114,9 @@ public class SiteLocalParser extends DefaultHandler {
 			}
 
 		} catch (MalformedURLException e) {
-			throw new SAXException("error processing URL. Check the validity of the URLs", e);
+			throw new SAXException("Error processing URL. Check the validity of the URLs", e);
+		} catch (IOException e) {
+			throw new SAXException("Error resolving URL in XML file.", e);
 		} catch (CoreException e) {
 			throw new SAXException("Error during creation of Config Site:", e);
 		}
@@ -151,19 +152,23 @@ public class SiteLocalParser extends DefaultHandler {
 	/** 
 	 * process the Config info
 	 */
-	private void processConfig(Attributes attributes) throws MalformedURLException, CoreException {
+	private void processConfig(Attributes attributes) throws MalformedURLException, IOException, CoreException {
 
 		// url
-		URL url = UpdateManagerUtils.getURL(site.getLocation(), attributes.getValue("url"), null);
+		URL url = UpdateManagerUtils.getURL(site.getLocationURL(), attributes.getValue("url"), null);
 		String label = attributes.getValue("label");
 		label = UpdateManagerUtils.getResourceString(label, bundle);
-		InstallConfiguration config = new InstallConfiguration(url, label);
+		InstallConfigurationModel config = new InstallConfigurationModel();
+		config.setLocationURLString(url.toExternalForm());
+		config.setLabel(label);
+		config.resolve(url,getResourceBundle());
+		config.initialize();
 
 		// add the config
 		if (preserved) {
-			site.addPreservedInstallConfiguration(config);
+			site.addPreservedInstallConfigurationModel(config);
 		} else {
-			site.addConfiguration(config);
+			site.addConfigurationModel(config);
 		}
 
 		// DEBUG:		

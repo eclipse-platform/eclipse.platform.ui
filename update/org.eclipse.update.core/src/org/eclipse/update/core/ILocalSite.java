@@ -89,7 +89,7 @@ public interface ILocalSite {
 	 * 
 	 * The following line creates a new current configuration in the local site
 	 * IInstallConfiguration currentConfig = site.createNewCurrentConfiguration(null,"new Label"); 
-	 * IConfigurationSite configSite = -obtain a configuration site from the InstallConfiguration-
+	 * IConfigurationSite configSite = -obtain a configuration site from the InstallConfigurationModel-
 	 * configSite.install(IFeature,IProgressMonitor);
 	 * 
 	 * the following line saves the state of the configuration
@@ -118,14 +118,14 @@ public interface ILocalSite {
 	void save() throws CoreException;
 	
 	/**
-	 * returns the maximum number of InstallConfiguration in teh history
+	 * returns the maximum number of InstallConfigurationModel in teh history
 	 * @since 2.0 
 	 */
 
 	int getMaximumHistory();
 	
 	/**
-	 * sets the maximum InstallConfiguration of the history
+	 * sets the maximum InstallConfigurationModel of the history
 	 * @since 2.0 
 	 */
 

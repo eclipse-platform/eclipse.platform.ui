@@ -4,6 +4,7 @@ package org.eclipse.update.internal.core;
  * All Rights Reserved.
  */
 import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 
@@ -11,96 +12,61 @@ import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.core.model.ConfigurationActivityModel;
+import org.eclipse.update.core.model.ConfigurationSiteModel;
+import org.eclipse.update.core.model.InstallConfigurationModel;
+import org.eclipse.update.core.model.InstallConfigurationParser;
 import org.xml.sax.SAXException;
 
 /**
- * An InstallConfiguration is 
+ * An InstallConfigurationModel is 
  * 
  */
 
-public class InstallConfiguration implements IInstallConfiguration, IWritable {
+public class InstallConfiguration extends InstallConfigurationModel implements IInstallConfiguration, IWritable {
+
+	
 	private ListenersList listeners = new ListenersList();
-	private boolean isCurrent;
-	private URL location;
-	private Date date;
-	private String label;
-	private List activities;
-	private List configurationSites;
-	/*
+
+	/**
 	 * default constructor. Create
 	 */
-	public InstallConfiguration(URL newLocation, String label) throws CoreException {
-		this.location = newLocation;
-		this.label = label;
-		this.isCurrent = false;
-		initialize();
+	public InstallConfiguration(URL newLocation, String label) throws MalformedURLException {
+		setLocationURLString(newLocation.toExternalForm());
+		setLabel(label);
+		setCurrent(false);
+		resolve(newLocation,null);
 	}
-	/*
+	
+	/**
 	 * copy constructor
 	 */
-	public InstallConfiguration(IInstallConfiguration config, URL newLocation, String label) {
-		this.location = newLocation;
-		this.label = label;
-		// do not copy list of listeners nor activities
-		// ake a copy of the siteConfiguration object
-		if (config != null) {
-			configurationSites = new ArrayList();
-			IConfigurationSite[] sites = config.getConfigurationSites();
-			if (sites != null) {
-				for (int i = 0; i < sites.length; i++) {
-					addConfigSite(new ConfigurationSite(sites[i]));
-				}
-			}
-		}
-		// set dummy date as caller can call set date if the
-		// date on the URL string has to be the same 
-		date = new Date();
-		this.isCurrent = false;
+	public InstallConfiguration(IInstallConfiguration config, URL newLocation, String label) throws MalformedURLException {
+		super((InstallConfigurationModel)config,newLocation.toExternalForm(),label);
+		resolve(newLocation,null);
 	}
+
 	/**
-	 * initialize the configurations from the persistent model.
-	 */
-	private void initialize() throws CoreException {
-		try {
-			new InstallConfigurationParser(location.openStream(), this);
-		} catch (FileNotFoundException exception) {
-			// file doesn't exist, ok, log it and continue 
-			// log no config
-			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
-				UpdateManagerPlugin.getPlugin().debug(location.toExternalForm() + " does not exist, the local site is not in synch with the filesystem and is pointing to a file taht doesn;t exist.");
-			}
-		} catch (SAXException exception) {
-			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Error during parsing of the install config XML:" + location.toExternalForm(), exception);
-			throw new CoreException(status);
-		} catch (IOException exception) {
-			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Error during file access :", exception);
-			throw new CoreException(status);
-		}
-	}
-	/*
-	 * @see IInstallConfiguration#getConfigurationSites()
+	 * 
 	 */
 	public IConfigurationSite[] getConfigurationSites() {
-		IConfigurationSite[] sites = new IConfigurationSite[0];
-		if (configurationSites != null && !configurationSites.isEmpty()) {
-			sites = new IConfigurationSite[configurationSites.size()];
-			configurationSites.toArray(sites);
-		}
-		return sites;
+		if (getConfigurationSitesModel().length==0)
+			return new IConfigurationSite[0];
+		return (IConfigurationSite[])getConfigurationSitesModel();
 	}
+
+	
 	/*
 	 * @see IInstallConfiguration#addConfigurationSite(IConfigurationSite)
 	 */
 	public void addConfigurationSite(IConfigurationSite site) {
-		if (!isCurrent)
+		if (!isCurrent())
 			return;
 		//Start UOW ?
 		ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_SITE_INSTALL);
 		activity.setLabel(site.getSite().getURL().toExternalForm());
 		activity.setDate(new Date());
-		addConfigSite(site);
+		addConfigurationSiteModel((ConfigurationSiteModel)site);
 		// notify listeners
 		Object[] configurationListeners = listeners.getListeners();
 		for (int i = 0; i < configurationListeners.length; i++) {
@@ -108,49 +74,19 @@ public class InstallConfiguration implements IInstallConfiguration, IWritable {
 		}
 		// everything done ok
 		activity.setStatus(IActivity.STATUS_OK);
-		this.addActivity(activity);
+		this.addActivityModel((ConfigurationActivityModel)activity);
 	}
-	/**
-	 * Adds the configuration to teh list
-	 * is called when adding a Site or parsing the XML file
-	 * in this case we do not want to create a new activity, so we do not want t call
-	 * addConfigurationSite()
-	 */
-	/*package*/
-	void addConfigSite(IConfigurationSite site) {
-		if (configurationSites == null) {
-			configurationSites = new ArrayList(0);
-		}
-		configurationSites.add(site);
-	}
-	/*
-	 * @see IInstallConfiguration#removeConfigurationSite(IConfigurationSite)
-	 */
+
 	public void removeConfigurationSite(IConfigurationSite site) {
-		if (!isCurrent)
-			return;
-		//FIXME: remove should make sure we synchronize
-		if (configurationSites != null) {
-			configurationSites.remove(site);
-			// notify listeners
+		
+		if (removeConfigurationSiteModel((ConfigurationSiteModel)site)){// notify listeners
 			Object[] configurationListeners = listeners.getListeners();
 			for (int i = 0; i < configurationListeners.length; i++) {
 				((IInstallConfigurationChangedListener) configurationListeners[i]).installSiteRemoved(site);
 			}
 		}
 	}
-	/*
-	 * @see IInstallConfiguration#isCurrent()
-	 */
-	public boolean isCurrent() {
-		return isCurrent;
-	}
-	/*
-	 *  @see IInstallConfiguration#setCurrent(boolean)
-	 */
-	public void setCurrent(boolean isCurrent) {
-		this.isCurrent = isCurrent;
-	}
+
 	/*
 	 * @see IInstallConfiguration#addInstallConfigurationChangedListener(IInstallConfigurationChangedListener)
 	 */
@@ -182,72 +118,14 @@ public class InstallConfiguration implements IInstallConfiguration, IWritable {
 			throw new CoreException(status);
 		}
 	}
-	/*
-	 * @see IInstallConfiguration#getActivities()
-	 */
-	public IActivity[] getActivities() {
-		IActivity[] result = new IActivity[0];
-		if (activities != null && !activities.isEmpty()) {
-			result = new IActivity[activities.size()];
-			activities.toArray(result);
-		}
-		return result;
-	}
-	/**
-	 * Adds an activity
-	 */
-	public void addActivity(IActivity activity) {
-		if (activities == null)
-			activities = new ArrayList(0);
-		activities.add(activity);
-	}
-	/*
-	 * @see IInstallConfiguration#getCreationDate()
-	 */
-	public Date getCreationDate() {
-		return date;
-	}
-	/**
-	 * Sets the date.
-	 * @param date The date to set
-	 */
-	public void setCreationDate(Date date) {
-		this.date = date;
-	}
-	/*
-	 * @see IInstallConfiguration#getURL()
-	 */
-	public URL getURL() {
-		return location;
-	}
-	/**
-	 * Sets the URL.
-	 * @param location The URL to set
-	 */
-	public void setURL(URL location) {
-		this.location = location;
-	}
-	/*
-	 * @see IInstallConfiguration#getLabel()
-	 */
-	public String getLabel() {
-		return label;
-	}
-	/**
-	 * Sets the label.
-	 * @param label The label to set
-	 */
-	public void setLabel(String label) {
-		this.label = label;
-	}
 	/**
 	 * Deletes the configuration from its URL/location
 	 */
 	public void remove() {
 		// save the configuration
-		if (location.getProtocol().equalsIgnoreCase("file")) {
+		if (getURL().getProtocol().equalsIgnoreCase("file")) {
 			// the location points to a file
-			File file = UpdateManagerUtils.decodeFile(location);
+			File file = UpdateManagerUtils.decodeFile(getURL());
 			UpdateManagerUtils.removeFromFileSystem(file);
 		}
 	}
@@ -260,9 +138,9 @@ public class InstallConfiguration implements IInstallConfiguration, IWritable {
 		
 		// Write info for the next runtime
 		IPlatformConfiguration runtimeConfiguration = BootLoader.getCurrentPlatformConfiguration();
-		Iterator iterConfigurationSites = configurationSites.iterator();
-		while (iterConfigurationSites.hasNext()) {
-			IConfigurationSite element = (IConfigurationSite) iterConfigurationSites.next();
+		ConfigurationSiteModel[] configurationSites = getConfigurationSitesModel();
+		for (int i = 0; i < configurationSites.length; i++) {
+			IConfigurationSite element = (IConfigurationSite) configurationSites[i];
 			ConfigurationPolicy configurationPolicy = (ConfigurationPolicy) element.getConfigurationPolicy();
 			String[] pluginPath = configurationPolicy.getPluginPath(element.getSite());
 			IPlatformConfiguration.ISitePolicy sitePolicy = runtimeConfiguration.createSitePolicy(configurationPolicy.getPolicy(), pluginPath);
@@ -289,9 +167,9 @@ public class InstallConfiguration implements IInstallConfiguration, IWritable {
 	 */
 	public void saveConfigurationFile() throws CoreException {
 		// save the configuration
-		if (location.getProtocol().equalsIgnoreCase("file")) {
+		if (getURL().getProtocol().equalsIgnoreCase("file")) {
 			// the location points to a file
-			File file = UpdateManagerUtils.decodeFile(location);
+			File file = UpdateManagerUtils.decodeFile(getURL());
 			export(file);
 		}
 	}
@@ -306,22 +184,22 @@ public class InstallConfiguration implements IInstallConfiguration, IWritable {
 		for (int i = 0; i < IWritable.INDENT; i++)
 			increment += " ";
 		w.print(gap + "<" + InstallConfigurationParser.CONFIGURATION + " ");
-		w.print("date=\"" + date.getTime() + "\" ");
+		w.print("date=\"" + getCreationDate().getTime() + "\" ");
 		w.println(">");
 		w.println("");
 		// site configurations
-		if (configurationSites != null) {
-			Iterator iter = configurationSites.iterator();
-			while (iter.hasNext()) {
-				ConfigurationSite element = (ConfigurationSite) iter.next();
+		if (getConfigurationSitesModel() != null) {
+			ConfigurationSiteModel[] sites = getConfigurationSitesModel();
+	 		for (int i = 0; i < sites.length; i++) {
+				ConfigurationSite element = (ConfigurationSite) sites[i];
 				((IWritable) element).write(indent + IWritable.INDENT, w);
 			}
 		}
 		// activities
-		if (activities != null && !activities.isEmpty()) {
-			Iterator iter = activities.iterator();
-			while (iter.hasNext()) {
-				ConfigurationActivity element = (ConfigurationActivity) iter.next();
+		if (getActivityModel()!=null) {
+			ConfigurationActivityModel[] activities = getActivityModel();
+			for (int i = 0; i < activities.length; i++) {
+				ConfigurationActivity element = (ConfigurationActivity) activities[i];
 				((IWritable) element).write(indent + IWritable.INDENT, w);
 			}
 		}
@@ -348,13 +226,13 @@ public class InstallConfiguration implements IInstallConfiguration, IWritable {
 		}
 		// create list of all the sites that map the *old* sites
 		// we want the intersection between teh old sites and teh current sites
-		if (configurationSites != null) {
+		if (getConfigurationSitesModel() != null) {
 			// for each current site, ask the old site
 			// to calculate the delta 
-			Iterator currentSites = configurationSites.iterator();
+			ConfigurationSiteModel[] currentSites = getConfigurationSitesModel();
 			String key = null;
-			while (currentSites.hasNext()) {
-				IConfigurationSite element = (IConfigurationSite) currentSites.next();
+			for (int i = 0; i < currentSites.length; i++) {
+				IConfigurationSite element = (IConfigurationSite) currentSites[i];
 				key = element.getSite().getURL().toExternalForm();
 				IConfigurationSite oldSite = (IConfigurationSite) oldSitesMap.get(key);
 				if (oldSite != null) {
@@ -362,8 +240,12 @@ public class InstallConfiguration implements IInstallConfiguration, IWritable {
 				}
 			}
 			// the new configuration has the exact same sites as the old configuration
-			configurationSites = new ArrayList(0);
-			configurationSites.addAll(oldSitesMap.values());
+			Collection sites = oldSitesMap.values();
+			Iterator iter = sites.iterator();
+			while (iter.hasNext()) {
+				ConfigurationSiteModel element = (ConfigurationSiteModel) iter.next();
+				addConfigurationSiteModel(element);
+			}
 		}
 	}
 		/*
@@ -371,6 +253,15 @@ public class InstallConfiguration implements IInstallConfiguration, IWritable {
 	 */
 	public Object getAdapter(Class adapter) {
 		return null;
+	}
+
+	/*
+	 * @see IInstallConfiguration#getActivities()
+	 */
+	public IActivity[] getActivities() {
+		if (getActivityModel().length==0)
+			return new IActivity[0];
+		return (IActivity[])getActivityModel();
 	}
 
 }

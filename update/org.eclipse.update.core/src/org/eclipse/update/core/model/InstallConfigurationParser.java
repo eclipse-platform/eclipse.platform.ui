@@ -1,17 +1,33 @@
-package org.eclipse.update.internal.core;
+package org.eclipse.update.core.model;
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.*;
-import java.util.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.Date;
+import java.util.Locale;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 import org.apache.xerces.parsers.SAXParser;
-import org.eclipse.core.runtime.*;
-import org.eclipse.update.core.*;
-import org.xml.sax.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.update.core.IFeatureReference;
+import org.eclipse.update.core.IInstallConfiguration;
+import org.eclipse.update.core.ISite;
+import org.eclipse.update.core.SiteManager;
+import org.eclipse.update.internal.core.Assert;
+import org.eclipse.update.internal.core.FeatureReference;
+import org.eclipse.update.internal.core.UpdateManagerPlugin;
+import org.eclipse.update.internal.core.UpdateManagerUtils;
+import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
@@ -22,8 +38,9 @@ public class InstallConfigurationParser extends DefaultHandler {
 
 	private SAXParser parser;
 	private InputStream siteStream;
-	private InstallConfiguration config;
-	private ConfigurationSite configSite;
+	private URL siteURL;
+	private InstallConfigurationModel config;
+	private ConfigurationSiteModel configSite;
 	public static final String CONFIGURATION = "configuration";
 	public static final String CONFIGURATION_SITE = "site";
 	public static final String FEATURE = "feature";
@@ -34,14 +51,14 @@ public class InstallConfigurationParser extends DefaultHandler {
 	/**
 	 * Constructor for DefaultSiteParser
 	 */
-	public InstallConfigurationParser(InputStream siteStream, IInstallConfiguration config) throws IOException, SAXException, CoreException {
+	public InstallConfigurationParser(InputStream siteStream, InstallConfigurationModel config) throws IOException, SAXException, CoreException {
 		super();
 		parser = new SAXParser();
 		parser.setContentHandler(this);
 
 		this.siteStream = siteStream;
-		Assert.isTrue(config instanceof InstallConfiguration);
-		this.config = (InstallConfiguration) config;
+		Assert.isTrue(config instanceof InstallConfigurationModel);
+		this.config = (InstallConfigurationModel) config;
 
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
@@ -60,7 +77,7 @@ public class InstallConfigurationParser extends DefaultHandler {
 		ResourceBundle bundle = null;
 		try {
 			ClassLoader l = new URLClassLoader(new URL[] { config.getURL()}, null);
-			bundle = ResourceBundle.getBundle(SiteLocal.SITE_LOCAL_FILE, Locale.getDefault(), l);
+			bundle = ResourceBundle.getBundle(SiteLocalModel.SITE_LOCAL_FILE, Locale.getDefault(), l);
 		} catch (MissingResourceException e) {
 			//ok, there is no bundle, keep it as null
 			//DEBUG:
@@ -119,7 +136,7 @@ public class InstallConfigurationParser extends DefaultHandler {
 
 		//site url
 		String urlString = attributes.getValue("url");
-		URL siteURL = new URL(urlString);
+		siteURL = new URL(urlString);
 		ISite site = SiteManager.getSite(siteURL);
 
 		// policy
@@ -127,7 +144,7 @@ public class InstallConfigurationParser extends DefaultHandler {
 		int policy = Integer.parseInt(policyString);
 
 		// confguration site
-		configSite = (ConfigurationSite) SiteManager.createConfigurationSite(site, policy);
+		configSite = (ConfigurationSiteModel) SiteManager.createConfigurationSite(site, policy);
 
 		// install
 		String installString = attributes.getValue("install");
@@ -135,7 +152,7 @@ public class InstallConfigurationParser extends DefaultHandler {
 		configSite.setInstallSite(installable);
 
 		// add to install configuration
-		config.addConfigSite(configSite);
+		config.addConfigurationSiteModel(configSite);
 
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
@@ -151,23 +168,22 @@ public class InstallConfigurationParser extends DefaultHandler {
 
 		// url
 		String path = UpdateManagerUtils.encode(attributes.getValue("url"));
-		URL url = UpdateManagerUtils.getURL(configSite.getSite().getURL(), path, null);
+		URL url = UpdateManagerUtils.getURL(siteURL, path, null);
 		
 		// configured ?
 		String configuredString = attributes.getValue("configured");
 		boolean configured = configuredString.trim().equalsIgnoreCase("true")?true:false;
 
 		if (url != null) {
-			//IFeatureReference ref = ((Site) configSite.getSite()).getFeatureReferences(url);
 			IFeatureReference ref = new FeatureReference();
-			ref.setSite(configSite.getSite());
+			ref.setSite((ISite)configSite.getSiteModel());
 			ref.setURL(url);
 			if (ref != null)
 				if (configured){
-					((ConfigurationPolicy)configSite.getConfigurationPolicy()).addConfiguredFeatureReference(ref);					
+					(configSite.getConfigurationPolicyModel()).addConfiguredFeatureReference((FeatureReferenceModel)ref);					
 				}
 				else
-					((ConfigurationPolicy)configSite.getConfigurationPolicy()).addUnconfiguredFeatureReference(ref);
+					(configSite.getConfigurationPolicyModel()).addUnconfiguredFeatureReference((FeatureReferenceModel)ref);
 
 			// DEBUG:		
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
@@ -191,7 +207,8 @@ public class InstallConfigurationParser extends DefaultHandler {
 		int action = Integer.parseInt(actionString);
 
 		// create
-		ConfigurationActivity activity = new ConfigurationActivity(action);
+		ConfigurationActivityModel activity = new ConfigurationActivityModel();
+		activity.setAction(action);
 
 		// label
 		String label = attributes.getValue("label");
@@ -208,7 +225,7 @@ public class InstallConfigurationParser extends DefaultHandler {
 		int status = Integer.parseInt(statusString);
 		activity.setStatus(status);
 		
-		config.addActivity(activity);
+		config.addActivityModel(activity);
 
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {

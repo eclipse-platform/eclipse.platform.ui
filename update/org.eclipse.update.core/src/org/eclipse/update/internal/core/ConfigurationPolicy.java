@@ -11,103 +11,29 @@ import java.util.*;
 import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.core.model.ConfigurationActivityModel;
+import org.eclipse.update.core.model.ConfigurationPolicyModel;
+import org.eclipse.update.core.model.FeatureReferenceModel;
 
 /**
  * 
  */
-public class ConfigurationPolicy implements IConfigurationPolicy {
+public class ConfigurationPolicy extends ConfigurationPolicyModel implements IConfigurationPolicy {
 
-	private int policy;
-	private List configuredFeatureReferences;
-	private List unconfiguredFeatureReferences;
 
 	/**
-	 * Constructor for ConfigurationPolicy.
+	 * Constructor for ConfigurationPolicyModel.
 	 */
 	public ConfigurationPolicy(int policy) {
 		super();
-		this.policy = policy;
+		setPolicy(policy);
 	}
 
 	/**
-	 * Copy Constructor for ConfigurationPolicy.
-	 */
-	public ConfigurationPolicy(IConfigurationPolicy configPolicy) {
-		super();
-		this.policy = configPolicy.getPolicy();
-		configuredFeatureReferences = new ArrayList(0);
-		configuredFeatureReferences.addAll(Arrays.asList(configPolicy.getConfiguredFeatures()));
-		unconfiguredFeatureReferences = new ArrayList(0);
-		unconfiguredFeatureReferences.addAll(Arrays.asList(configPolicy.getUnconfiguredFeatures()));
-
-	}
-
-	/*
-	 * @see IConfigurationPolicy#getPolicy()
-	 */
-	public int getPolicy() {
-		return policy;
-	}
-
-	/*
-	 * @see IConfigurationPolicy#getFilteredFeatures(IFeatureReference[])
-	 */
-	public IFeatureReference[] getFilteredFeatures(IFeatureReference[] featuresToFilter) {
-
-		IFeatureReference[] result = new IFeatureReference[0];
-		if (configuredFeatureReferences != null && !configuredFeatureReferences.isEmpty()) {
-			result = new IFeatureReference[configuredFeatureReferences.size()];
-			configuredFeatureReferences.toArray(result);
-		}
-		return result;
-	}
-
-	/**
-	 * Adds a feature reference
-	 * is package because is called by the parser 
-	 * The parse just adds, without knowing if it is configured or not
-	 */
-	/*
-	 * @see IConfigurationSite#getConfiguredFeatures()
-	 */
-	public IFeatureReference[] getConfiguredFeatures() {
-		IFeatureReference[] result = new IFeatureReference[0];
-		if (configuredFeatureReferences != null && !configuredFeatureReferences.isEmpty()) {
-			result = new IFeatureReference[configuredFeatureReferences.size()];
-			configuredFeatureReferences.toArray(result);
-		}
-		return result;
-	}
-
-	/*
-	 * @see IConfigurationPolicy#getUnconfiguredFeatures()
-	 */
-	public IFeatureReference[] getUnconfiguredFeatures() {
-		IFeatureReference[] result = new IFeatureReference[0];
-		if (unconfiguredFeatureReferences != null && !unconfiguredFeatureReferences.isEmpty()) {
-			result = new IFeatureReference[unconfiguredFeatureReferences.size()];
-			unconfiguredFeatureReferences.toArray(result);
-		}
-		return result;
-
-	}
-
-	/*
-	 * @see IConfigurationSite#isConfigured(IFeatureReference)
+	 * @since 2.0
 	 */
 	public boolean isConfigured(IFeatureReference feature) {
-		boolean result = false;
-
-		// return true if the feature is part of the configured list
-		Iterator iter = configuredFeatureReferences.iterator();
-		String featureURLString = feature.getURL().toExternalForm();
-		while (iter.hasNext() && !result) {
-			IFeatureReference element = (IFeatureReference) iter.next();
-			if (element.getURL().toExternalForm().trim().equalsIgnoreCase(featureURLString)) {
-				result = true;
-			}
-		}
-		return result;
+		return super.isConfigured((FeatureReferenceModel) feature);
 	}
 
 	/**
@@ -121,11 +47,11 @@ public class ConfigurationPolicy implements IConfigurationPolicy {
 		activity.setLabel(feature.getFeature().getVersionIdentifier().toString());
 		activity.setDate(new Date());
 
-		addConfiguredFeatureReference(feature);
+		addConfiguredFeatureReference((FeatureReferenceModel)feature);
 
 		// everything done ok
 		activity.setStatus(IActivity.STATUS_OK);
-		((InstallConfiguration) SiteManager.getLocalSite().getCurrentConfiguration()).addActivity(activity);
+		((InstallConfiguration) SiteManager.getLocalSite().getCurrentConfiguration()).addActivityModel((ConfigurationActivityModel)activity);
 	}
 
 	/**
@@ -162,11 +88,11 @@ public class ConfigurationPolicy implements IConfigurationPolicy {
 			activity.setLabel(feature.getFeature().getVersionIdentifier().toString());
 			activity.setDate(new Date());
 
-			addUnconfiguredFeatureReference(feature);
+			addUnconfiguredFeatureReference((FeatureReferenceModel)feature);
 
 			// everything done ok
 			activity.setStatus(IActivity.STATUS_OK);
-			((InstallConfiguration) SiteManager.getLocalSite().getCurrentConfiguration()).addActivity(activity);
+			((InstallConfiguration) SiteManager.getLocalSite().getCurrentConfiguration()).addActivityModel((ConfigurationActivityModel)activity);
 		}
 	}
 
@@ -192,20 +118,20 @@ public class ConfigurationPolicy implements IConfigurationPolicy {
 		String[] result = new String[0];
 
 		// which features
-		Iterator iter = null;
-		if (policy == IPlatformConfiguration.ISitePolicy.USER_EXCLUDE) {
-			if (unconfiguredFeatureReferences != null)
-				iter = unconfiguredFeatureReferences.iterator();
+		IFeatureReference[] arrayOfFeatureRef = null;
+		if (getPolicy() == IPlatformConfiguration.ISitePolicy.USER_EXCLUDE) {
+			if (getUnconfiguredFeatures() != null)
+				arrayOfFeatureRef = getUnconfiguredFeatures();
 		} else {
-			if (configuredFeatureReferences != null)
-				iter = configuredFeatureReferences.iterator();
+			if (getConfiguredFeatures() != null)
+				arrayOfFeatureRef = getConfiguredFeatures();
 		}
 
 		// obtain path for each feature
-		if (iter != null) {
+		if (arrayOfFeatureRef != null) {
 			List pluginsString = new ArrayList(0);
-			while (iter.hasNext()) {
-				IFeatureReference element = (IFeatureReference) iter.next();
+			for (int i = 0; i < arrayOfFeatureRef.length; i++) {
+				IFeatureReference element = arrayOfFeatureRef[i];
 				IFeature feature = element.getFeature();
 				IPluginEntry[] entries = feature.getPluginEntries();
 
@@ -239,73 +165,22 @@ public class ConfigurationPolicy implements IConfigurationPolicy {
 		return result;
 	}
 
+	
+	
+	
+	
 	/**
-	 * 
+	 * @since 2.0
 	 */
-	private void remove(IFeatureReference feature, List list) {
-		String featureURLString = feature.getURL().toExternalForm();
-		boolean found = false;
-		Iterator iter = list.iterator();
-		while (iter.hasNext() && !found) {
-			IFeatureReference element = (IFeatureReference) iter.next();
-			if (element.getURL().toExternalForm().trim().equalsIgnoreCase(featureURLString)) {
-				list.remove(element);
-				found = true;
-			}
-		}
+	public IFeatureReference[] getConfiguredFeatures() {
+		return (IFeatureReference[])getConfiguredFeatures();
 	}
 
 	/**
-	 * 
+	 * @since 2.0
 	 */
-	private void add(IFeatureReference feature, List list) {
-		String featureURLString = feature.getURL().toExternalForm();
-		boolean found = false;
-		Iterator iter = list.iterator();
-		while (iter.hasNext() && !found) {
-			IFeatureReference element = (IFeatureReference) iter.next();
-			if (element.getURL().toExternalForm().trim().equalsIgnoreCase(featureURLString)) {
-				found = true;
-			}
-		}
-
-		if (!found) {
-			list.add(feature);
-		}
-	}
-
-	/**
-	 * adds a feature in the configuredReference list
-	 * also used by the parser to avoid creating another activity
-	 */
-	void addConfiguredFeatureReference(IFeatureReference feature) {
-		if (configuredFeatureReferences == null)
-			configuredFeatureReferences = new ArrayList(0);
-		add(feature, configuredFeatureReferences);
-
-		// when user configure a feature,
-		// we have to remove it from unconfigured feature if it exists
-		// because the user doesn't know...
-		if (unconfiguredFeatureReferences != null) {
-			remove(feature, unconfiguredFeatureReferences);
-		}
-
-	}
-
-	/**
-	 * adds a feature in teh list
-	 * also used by the parser to avoid creating another activity
-	 */
-	void addUnconfiguredFeatureReference(IFeatureReference feature) {
-		if (unconfiguredFeatureReferences == null)
-			unconfiguredFeatureReferences = new ArrayList(0);
-		add(feature, unconfiguredFeatureReferences);
-
-		// an unconfigured feature is always from a configured one no ?
-		// unless it was parsed right ?
-		if (configuredFeatureReferences != null) {
-			remove(feature, configuredFeatureReferences);
-		}
+	public IFeatureReference[] getUnconfiguredFeatures() {
+		return (IFeatureReference[])getUnconfiguredFeatures();
 	}
 
 }
