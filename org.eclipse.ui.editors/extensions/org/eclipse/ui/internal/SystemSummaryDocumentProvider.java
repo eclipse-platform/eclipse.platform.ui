@@ -170,7 +170,7 @@ class SystemSummaryDocumentProvider extends AbstractDocumentProvider {
 
 		for (int i = 0; i < featuresArray.length; i++) {
 			IFeatureEntry info = featuresArray[i];
-			String[] args= new String[] {info.getFeatureIdentifier(), info.getFeatureVersion()};
+			String[] args= new String[] {info.getFeatureIdentifier(), info.getFeatureVersion(), info.getFeaturePluginIdentifier()};
 			writer.println(SystemSummaryMessages.getFormattedString("SystemSummary.featureVersion", args)); //$NON-NLS-1$
 		}
 	}	
@@ -195,14 +195,14 @@ class SystemSummaryDocumentProvider extends AbstractDocumentProvider {
 		Iterator i= set.iterator();
 		while(i.hasNext()) {
 			PluginDescriptor descriptor= (PluginDescriptor)i.next();
-			String[] args= new String[] {descriptor.getUniqueIdentifier(), descriptor.getVersionIdentifier().toString()};
+			String[] args= new String[] {descriptor.getUniqueIdentifier(), descriptor.getVersionIdentifier().toString(), descriptor.getLabel()};
 			writer.println(SystemSummaryMessages.getFormattedString("SystemSummary.descriptorIdVersion", args)); //$NON-NLS-1$
 			PluginFragmentModel[] fragments= descriptor.getFragments();
 			if (fragments != null) {
 				for(int j= 0, length= fragments.length; j < length; j++) {
 					PluginFragmentModel fragment= fragments[j];
 					writer.print('\t');
-					args= new String[] {fragment.getId(), fragment.getVersion()};
+					args= new String[] {fragment.getId(), fragment.getVersion(), fragment.getName()};
 					writer.print(SystemSummaryMessages.getFormattedString("SystemSummary.fragmentIdVersion", args)); //$NON-NLS-1$
 				}
 				writer.println();
