@@ -132,7 +132,7 @@
 				menubarPath="org.eclipse.search.menu/internalDialogGroup"
 				label="%openSearchDialogAction.label"
 				tooltip="%openSearchDialogAction.tooltip"
-				icon="icons/full/ctool16/search.gif"
+				icon="icons/full/etool16/search.gif"
 				helpContextId="open_search_dialog_action_context"
 				class="org.eclipse.search.internal.ui.OpenSearchDialogAction"/>
 	     </actionSet>
@@ -144,11 +144,11 @@
 		   name="%searchResultViewName"
 		   category="org.eclipse.ui"
 		   class="org.eclipse.search.internal.ui.SearchResultView"
-		   icon="icons/full/cview16/searchres.gif">
+		   icon="icons/full/eview16/searchres.gif">
 		</view>
       	<view
             name="%newSearchResultViewName"
-            icon="icons/full/cview16/searchres.gif"
+            icon="icons/full/eview16/searchres.gif"
             category="org.eclipse.ui"
             class="org.eclipse.search2.internal.ui.SearchView"
             id="org.eclipse.search.ui.views.SearchView">
@@ -186,7 +186,7 @@
 			pageId="org.eclipse.search.internal.ui.text.TextSearchPage"
 			label="%ResourcenameSorter.label"
 			tooltip="%ResourcenameSorter.tooltip"
-			icon="icons/full/clcl16/search_sortmatch.gif"
+			icon="icons/full/elcl16/search_sortmatch.gif"
 			class="org.eclipse.search.internal.ui.text.ResourcenameSorter">
 		</sorter>
 		<sorter
@@ -194,7 +194,7 @@
 			pageId="org.eclipse.search.internal.ui.text.TextSearchPage"
 			label="%ResourcePathSorter.label"
 			tooltip="%ResourcePathSorter.tooltip"
-			icon="icons/full/clcl16/search_sortmatch.gif"
+			icon="icons/full/elcl16/search_sortmatch.gif"
 			class="org.eclipse.search.internal.ui.text.ResourcePathSorter">
 		</sorter>
 	</extension>
