@@ -13,9 +13,11 @@ package org.eclipse.jface.text.source.projection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.jface.resource.ImageDescriptor;
 
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationPresentation;
@@ -28,7 +30,6 @@ import org.eclipse.jface.text.source.IAnnotationPresentation;
  * document that does not have a corresponding segment in the projection
  * document.
  * <p>
- * Internal class. Do not use. Public only for testing purposes.
  * 
  * @since 3.0
  */
@@ -39,16 +40,12 @@ public class ProjectionAnnotation extends Annotation implements IAnnotationPrese
 	 */
 	public static final String TYPE= "org.eclipse.projection";
 		
-	private static final boolean PLUS= false;
-	private static final int COLOR= SWT.COLOR_DARK_GRAY;
 	
-	private static final int OUTER_MARGIN= 1;
-	private static final int INNER_MARGIN= 1;
-	private static final int PIXELS= 1;
-	private static final int LEGS= 2;
-	private static final int MIDDLE= PIXELS + INNER_MARGIN + LEGS;
-	private static final int SIZE= 2 * MIDDLE + PIXELS;
-
+	private static final int COLOR= SWT.COLOR_DARK_GRAY;
+	private static Image fgCollapsedImage;
+	private static Image fgExpandedImage;
+	
+	
 	/** The state of this annotation */
 	private boolean fIsCollapsed= false;
 	/** Indicates whether this annotation should be painted as range */
@@ -69,96 +66,55 @@ public class ProjectionAnnotation extends Annotation implements IAnnotationPrese
 	public void setRangeIndication(boolean rangeIndication) {
 		fIsRangeIndication= rangeIndication;
 	}
-	
-	private void paintPlus(GC gc, Canvas canvas, Rectangle rectangle) {
-		Color fg= gc.getForeground();
-		gc.setForeground(canvas.getDisplay().getSystemColor(COLOR));
-					
-
-		Rectangle r= new Rectangle(rectangle.x + OUTER_MARGIN, rectangle.y + OUTER_MARGIN, SIZE -1 , SIZE -1);
-		gc.drawRectangle(r);
-		gc.drawLine(r.x + PIXELS + INNER_MARGIN, r.y + MIDDLE, r.x + r.width - PIXELS - INNER_MARGIN , r.y + MIDDLE);
-		if (fIsCollapsed) {
-			gc.drawLine(r.x + MIDDLE, r.y + PIXELS + INNER_MARGIN, r.x + MIDDLE, r.y + r.height - PIXELS - INNER_MARGIN);
-		} else {
-			gc.drawLine(r.x + MIDDLE, r.y + r.height, r.x + MIDDLE, rectangle.y + rectangle.height - OUTER_MARGIN);
-			gc.drawLine(r.x + MIDDLE, rectangle.y + rectangle.height - OUTER_MARGIN, r.x + r.width - INNER_MARGIN, rectangle.y + rectangle.height - OUTER_MARGIN);
-		}
 			
-		gc.setForeground(fg);		
-	}
-	
-	private int[] computePolygon(Rectangle rectangle) {
-		
-		int leftX= rectangle.x;
-		int rightX= rectangle.x + rectangle.width;
-		int middleX= (leftX + rightX)/2;
-		
-		int upperY= rectangle.y;
-		int lowerY= rectangle.y + rectangle.height;
-		int middleY= (upperY + lowerY)/2;
-		
-		if (isCollapsed()) {
-			Point upperLeft= new Point(leftX, upperY - 1);
-			Point middleRight= new Point(rightX, middleY);
-			Point lowerLeft= new Point(leftX, lowerY);
-			return new int[] {upperLeft.x, upperLeft.y, middleRight.x, middleRight.y, lowerLeft.x, lowerLeft.y};
-		} else {
-			Point middleLeft= new Point(leftX, upperY);
-			Point middleRight= new Point(rightX, upperY);
-			Point lowerMiddle= new Point(middleX, lowerY);
-			return new int[] {middleLeft.x, middleLeft.y, middleRight.x , middleRight.y, lowerMiddle.x, lowerMiddle.y };
-		}
-	}
-	
-	private Rectangle computeRectangle(Rectangle rectangle, int lineHeight) {		
-		final int MARGIN= 2;
-		int leftX= rectangle.x + MARGIN;
-		int length= rectangle.width - 2*MARGIN;
-		int yDelta= (lineHeight - length)/2;
-		int upperY= rectangle.y + yDelta;
-		return new Rectangle(leftX, upperY, length, length);
-	}
-	
-	private Point paintTriangle(GC gc, Canvas canvas, Rectangle rectangle) {
-		Point endPoint= null;
-		int lineHeight= gc.getFontMetrics().getHeight();
-		int[] polygon= computePolygon(computeRectangle(rectangle, lineHeight));
-		if (isCollapsed()) {
-			Color bg= gc.getBackground();
-			gc.setBackground(canvas.getDisplay().getSystemColor(COLOR));
-			gc.fillPolygon(polygon);
-			gc.setBackground(bg);
-		} else {
-			Color fg= gc.getForeground();
-			gc.setForeground(canvas.getDisplay().getSystemColor(COLOR));
-			gc.drawPolygon(polygon);
-			gc.setForeground(fg);
-			endPoint= new Point(polygon[polygon.length -2], polygon[polygon.length -1] + 2);
-		}
-		return endPoint;
-	}
-	
-	private void paintRangeIndication(GC gc, Canvas canvas, Rectangle rectangle, Point startPoint) {
+	private void drawRangeIndication(GC gc, Canvas canvas, Rectangle r) {
 		final int MARGIN= 3;
 		Color fg= gc.getForeground();
 		gc.setForeground(canvas.getDisplay().getSystemColor(COLOR));
+		
 		gc.setLineWidth(1);
-		gc.drawLine(startPoint.x, startPoint.y, startPoint.x, rectangle.y + rectangle.height - MARGIN);
-		gc.drawLine(startPoint.x, rectangle.y + rectangle.height - MARGIN, rectangle.x + rectangle.width - MARGIN, rectangle.y + rectangle.height - MARGIN);
+		gc.drawLine(r.x + 4, r.y + 12, r.x + 4, r.y + r.height - MARGIN);
+		gc.drawLine(r.x + 4, r.y + r.height - MARGIN, r.x + r.width - MARGIN, r.y + r.height - MARGIN);
 		gc.setForeground(fg);
 	}
 	
 	/*
-	 * @see org.eclipse.jface.text.source.Annotation#paint(org.eclipse.swt.graphics.GC, org.eclipse.swt.widgets.Canvas, org.eclipse.swt.graphics.Rectangle)
+	 * @see org.eclipse.jface.text.source.IAnnotationPresentation#paint(org.eclipse.swt.graphics.GC, org.eclipse.swt.widgets.Canvas, org.eclipse.swt.graphics.Rectangle)
 	 */
 	public void paint(GC gc, Canvas canvas, Rectangle rectangle) {
-		if (PLUS)
-			paintPlus(gc, canvas, rectangle);
-		else {
-			Point p= paintTriangle(gc, canvas, rectangle);
-			if (p != null && fIsRangeIndication)
-				paintRangeIndication(gc, canvas, rectangle, p);
+		Image image= getImage(canvas.getDisplay());
+		if (image != null) {
+			drawImage(image, gc, canvas, rectangle, SWT.CENTER, SWT.TOP);
+			if (fIsRangeIndication)
+				drawRangeIndication(gc, canvas, rectangle);
+		}
+	}
+	
+	private Image getImage(Display display) {
+		initializeImages(display);
+		return isCollapsed() ? fgCollapsedImage : fgExpandedImage;
+	}
+	
+	private void initializeImages(Display display) {
+		if (fgCollapsedImage == null) {
+			
+			ImageDescriptor descriptor= ImageDescriptor.createFromFile(ProjectionAnnotation.class, "images/collapsed.gif"); //$NON-NLS-1$
+			fgCollapsedImage= descriptor.createImage(display);
+			descriptor= ImageDescriptor.createFromFile(ProjectionAnnotation.class, "images/expanded.gif"); //$NON-NLS-1$
+			fgExpandedImage= descriptor.createImage(display);
+			
+			display.disposeExec(new Runnable() {
+				public void run() {
+					if (fgCollapsedImage != null) {
+						fgCollapsedImage.dispose();
+						fgCollapsedImage= null;
+					}
+					if (fgExpandedImage != null) {
+						fgExpandedImage.dispose();
+						fgExpandedImage= null;
+					}
+				}
+			});
 		}
 	}
 	
