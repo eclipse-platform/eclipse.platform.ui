@@ -421,7 +421,13 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 	 */
 	protected void becomesVisible() {
 		super.becomesVisible();
-		getViewer().refresh();
+        CheckboxTreeViewer viewer = getCheckboxViewer();
+        ISelection selection = viewer.getSelection();
+        viewer.getControl().setRedraw(false);
+        ((BreakpointsContentProvider)viewer.getContentProvider()).reorganize();
+        initializeCheckedState();
+        viewer.setSelection(new StructuredSelection(selection));
+        viewer.getControl().setRedraw(true);
 	}
 
 	/* (non-Javadoc)
