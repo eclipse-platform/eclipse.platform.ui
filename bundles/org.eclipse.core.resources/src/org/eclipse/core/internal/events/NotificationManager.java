@@ -12,7 +12,6 @@ package org.eclipse.core.internal.events;
 
 import java.util.*;
 import org.eclipse.core.internal.resources.*;
-import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.internal.watson.ElementTree;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -114,7 +113,7 @@ public class NotificationManager implements IManager, ILifecycleListener {
 
 	public void addListener(IResourceChangeListener listener, int eventMask) {
 		listeners.add(listener, eventMask);
-		if (Policy.TRACE_LISTENERS)
+		if (ResourceStats.TRACE_LISTENERS)
 			ResourceStats.listenerAdded(listener);
 	}
 
@@ -275,7 +274,7 @@ public class NotificationManager implements IManager, ILifecycleListener {
 			for (int i = 0; i < resourceListeners.length; i++) {
 				if ((type & resourceListeners[i].eventMask) != 0) {
 					final IResourceChangeListener listener = resourceListeners[i].listener;
-					if (Policy.TRACE_LISTENERS)
+					if (ResourceStats.TRACE_LISTENERS)
 						ResourceStats.startNotify(listener);
 					Platform.run(new ISafeRunnable() {
 						public void handleException(Throwable e) {
@@ -286,7 +285,7 @@ public class NotificationManager implements IManager, ILifecycleListener {
 							listener.resourceChanged(event);
 						}
 					});
-					if (Policy.TRACE_LISTENERS)
+					if (ResourceStats.TRACE_LISTENERS)
 						ResourceStats.endNotify();
 				}
 			}
@@ -298,7 +297,7 @@ public class NotificationManager implements IManager, ILifecycleListener {
 
 	public void removeListener(IResourceChangeListener listener) {
 		listeners.remove(listener);
-		if (Policy.TRACE_LISTENERS)
+		if (ResourceStats.TRACE_LISTENERS)
 			ResourceStats.listenerRemoved(listener);
 	}
 

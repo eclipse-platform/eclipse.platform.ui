@@ -42,7 +42,7 @@ public class DelayedSnapshotJob extends Job {
 		if (ResourcesPlugin.getWorkspace() == null)
 			return Status.OK_STATUS;
 		try {
-			if (Policy.TRACE_SNAPSHOT)
+			if (ResourceStats.TRACE_SNAPSHOT)
 				ResourceStats.startSnapshot();
 			return saveManager.save(ISaveContext.SNAPSHOT, null, Policy.monitorFor(null));
 		} catch (CoreException e) {
@@ -50,7 +50,7 @@ public class DelayedSnapshotJob extends Job {
 		} finally {
 			saveManager.operationCount = 0;
 			saveManager.snapshotRequested = false;
-			if (Policy.TRACE_SNAPSHOT)
+			if (ResourceStats.TRACE_SNAPSHOT)
 				ResourceStats.endSnapshot();
 		}
 	}

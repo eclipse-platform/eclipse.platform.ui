@@ -33,10 +33,6 @@ public class Policy {
 	public static boolean DEBUG_PREFERENCES = false;
 	public static boolean DEBUG_STRINGS = false;
 
-	public static boolean TRACE_BUILDERS = false;
-	public static boolean TRACE_LISTENERS = false;
-	public static boolean TRACE_SNAPSHOT = false;
-
 	// Get timing information for restoring data
 	public static boolean DEBUG_RESTORE = false;
 	public static boolean DEBUG_RESTORE_MARKERS = false;
@@ -59,7 +55,6 @@ public class Policy {
 		//init debug options
 		if (ResourcesPlugin.getPlugin().isDebugging()) {
 			String sTrue = Boolean.TRUE.toString();
-			String sFalse = Boolean.FALSE.toString();
 			DEBUG_BUILD_FAILURE = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/build/failure")); //$NON-NLS-1$ 
 			DEBUG_NEEDS_BUILD = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/build/needbuild")); //$NON-NLS-1$ 
 			DEBUG_BUILD_INVOKING = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/build/invoking")); //$NON-NLS-1$ 
@@ -68,10 +63,6 @@ public class Policy {
 			DEBUG_HISTORY = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/history")); //$NON-NLS-1$ 
 			DEBUG_PREFERENCES = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/preferences")); //$NON-NLS-1$
 			DEBUG_STRINGS = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/strings")); //$NON-NLS-1$
-
-			TRACE_BUILDERS = !sFalse.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/perf/builders")); //$NON-NLS-1$
-			TRACE_LISTENERS = !sFalse.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/perf/listeners")); //$NON-NLS-1$
-			TRACE_SNAPSHOT = !sFalse.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/perf/snapshot")); //$NON-NLS-1$
 
 			DEBUG_RESTORE_MARKERS = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/restore/markers")); //$NON-NLS-1$ 
 			DEBUG_RESTORE_SYNCINFO = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/restore/syncinfo")); //$NON-NLS-1$ 

@@ -18,9 +18,16 @@ import org.eclipse.core.runtime.PerformanceStats;
  * a builder running, an editor opening, etc.
  */
 public class ResourceStats {
-	private static final String PERF_LISTENERS = ResourcesPlugin.PI_RESOURCES + "/perf/listeners"; //$NON-NLS-1$
-	private static final String PERF_BUILDERS = ResourcesPlugin.PI_RESOURCES + "/perf/builders"; //$NON-NLS-1$
-	private static final String PERF_SNAPSHOT = ResourcesPlugin.PI_RESOURCES + "/perf/snapshot"; //$NON-NLS-1$
+	//performance event names
+	public static final String EVENT_LISTENERS = ResourcesPlugin.PI_RESOURCES + "/perf/listeners"; //$NON-NLS-1$
+	public static final String EVENT_BUILDERS = ResourcesPlugin.PI_RESOURCES + "/perf/builders"; //$NON-NLS-1$
+	public static final String EVENT_SNAPSHOT = ResourcesPlugin.PI_RESOURCES + "/perf/snapshot"; //$NON-NLS-1$
+
+	//performance event enablement
+	public static boolean TRACE_BUILDERS = PerformanceStats.isEnabled(ResourceStats.EVENT_BUILDERS);
+	public static boolean TRACE_LISTENERS = PerformanceStats.isEnabled(ResourceStats.EVENT_LISTENERS);
+	public static boolean TRACE_SNAPSHOT = PerformanceStats.isEnabled(ResourceStats.EVENT_SNAPSHOT);
+
 	/**
 	 * The start time of the current build or notification
 	 */
@@ -65,7 +72,7 @@ public class ResourceStats {
 	 */
 	public static void listenerAdded(IResourceChangeListener listener) {
 		if (listener != null)
-			PerformanceStats.getStats(PERF_LISTENERS, listener.getClass().getName());
+			PerformanceStats.getStats(EVENT_LISTENERS, listener.getClass().getName());
 	}
 
 	/**
@@ -73,23 +80,23 @@ public class ResourceStats {
 	 */
 	public static void listenerRemoved(IResourceChangeListener listener) {
 		if (listener != null)
-			PerformanceStats.removeStats(PERF_LISTENERS, listener.getClass().getName());
+			PerformanceStats.removeStats(EVENT_LISTENERS, listener.getClass().getName());
 	}
 
 	public static void startBuild(IncrementalProjectBuilder builder) {
-		currentStats = PerformanceStats.getStats(PERF_BUILDERS, builder);
+		currentStats = PerformanceStats.getStats(EVENT_BUILDERS, builder);
 		currentContext = builder.getProject().getName();
 		currentStart = System.currentTimeMillis();
 	}
 
 	public static void startNotify(IResourceChangeListener listener) {
-		currentStats = PerformanceStats.getStats(PERF_LISTENERS, listener);
+		currentStats = PerformanceStats.getStats(EVENT_LISTENERS, listener);
 		currentContext = null;
 		currentStart = System.currentTimeMillis();
 	}
 
 	public static void startSnapshot() {
-		currentStats = PerformanceStats.getStats(PERF_SNAPSHOT, ResourcesPlugin.getWorkspace());
+		currentStats = PerformanceStats.getStats(EVENT_SNAPSHOT, ResourcesPlugin.getWorkspace());
 		currentContext = null;
 		currentStart = System.currentTimeMillis();
 	}
