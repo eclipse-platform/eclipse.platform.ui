@@ -119,7 +119,6 @@ public class ResourceNavigator
 			if (IWorkingSetManager.CHANGE_WORKING_SET_REMOVE.equals(property) && 
 				oldValue == filterWorkingSet) {
 				setWorkingSet(null);
-				getResourceViewer().refresh();
 			}
 			else
 			if (IWorkingSetManager.CHANGE_WORKING_SET_NAME_CHANGE.equals(property) && 
@@ -561,7 +560,6 @@ public class ResourceNavigator
 			
 			if (workingSet != null) {
 				setWorkingSet(workingSet);
-				getResourceViewer().refresh();
 			}
 		}
 	}
@@ -803,6 +801,7 @@ public class ResourceNavigator
 			settings.put(STORE_WORKING_SET, "");
 		}
 		updateTitle();		
+		getResourceViewer().refresh();
 	}
 	/**
 	 * Updates the action bar actions for the given selection.
@@ -833,26 +832,34 @@ public class ResourceNavigator
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkingSet workingSet = workingSetFilter.getWorkingSet();
 					
-		if (workingSet != null) {
-			setTitle(ResourceNavigatorMessages.format(
-				"ResourceNavigator.title", //$NON-NLS-1$
-				new Object[] {viewName, workingSet.getName()}));
-			setTitleToolTip(getToolTipText(input));
-		}
-		else
 		if (input == null
 			|| input.equals(workspace)
 			|| input.equals(workspace.getRoot())) {
 			setTitle(viewName);
-			setTitleToolTip(""); //$NON-NLS-1$
+			if (workingSet != null) {
+				setTitleToolTip(ResourceNavigatorMessages.format(
+					"ResourceNavigator.workingSetToolTip", //$NON-NLS-1$
+					new Object[] {workingSet.getName()}));
+			}
+			else {
+				setTitleToolTip(""); //$NON-NLS-1$
+			}
 		} 
 		else {
 			ILabelProvider labelProvider = (ILabelProvider) getTreeViewer().getLabelProvider();
-
+			String inputToolTip = getToolTipText(input);
+			
 			setTitle(ResourceNavigatorMessages.format(
 				"ResourceNavigator.title", //$NON-NLS-1$
 				new Object[] {viewName, labelProvider.getText(input)}));
-			setTitleToolTip(getToolTipText(input));
+			if (workingSet != null) {
+				setTitleToolTip(ResourceNavigatorMessages.format(
+					"ResourceNavigator.workingSetInputToolTip", //$NON-NLS-1$
+					new Object[] {inputToolTip, workingSet.getName()}));
+			}
+			else {
+				setTitleToolTip(inputToolTip);
+			}
 		}
 	}
 		

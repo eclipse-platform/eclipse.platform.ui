@@ -77,7 +77,6 @@ public void run() {
 	else
 	if (navigator.getWorkingSet() != workingSet) {
 		navigator.setWorkingSet(workingSet);
-		navigator.getResourceViewer().refresh();
 	}
 }
 
