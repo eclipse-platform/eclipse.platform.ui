@@ -2245,7 +2245,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		};
 					
 		try {
-			getSite().getWorkbenchWindow().getWorkbench().getProgressService().run(false, true, runnable);
+//			When using the progress service always a modal dialog pops up. The site should be asked for a runnable context
+//			which could be the workbench window or the progress service, depending on what the site represents.
+//			getSite().getWorkbenchWindow().getWorkbench().getProgressService().run(false, true, runnable);
+			
+			getSite().getWorkbenchWindow().run(false, true, runnable);
+			
 		} catch (InterruptedException x) {
 		} catch (InvocationTargetException x) {
 			Throwable t= x.getTargetException();
