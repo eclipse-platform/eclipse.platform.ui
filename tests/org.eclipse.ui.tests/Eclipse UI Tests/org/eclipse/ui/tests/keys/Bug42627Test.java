@@ -11,8 +11,8 @@
 
 package org.eclipse.ui.tests.keys;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.action.Action;
+//import org.eclipse.core.runtime.CoreException;
+//import org.eclipse.jface.action.Action;
 import org.eclipse.ui.tests.util.UITestCase;
 
 /**
@@ -38,11 +38,11 @@ public class Bug42627Test extends UITestCase {
 	 * 
 	 * @since 3.0
 	 */
-	private class DummyAction extends Action {
-		// Nothing to implement
-	}
+//	private class DummyAction extends Action {
+//		// Nothing to implement
+//	}
 
-	private boolean logged;
+//	private boolean logged;
 
 	/**
 	 * Constructor for Bug42627Test.
@@ -59,7 +59,7 @@ public class Bug42627Test extends UITestCase {
 	 */
 	protected void setUp() throws Exception {
 		super.setUp();
-		logged = false;
+//		logged = false;
 	}
 
 	/**
@@ -68,7 +68,7 @@ public class Bug42627Test extends UITestCase {
 	 * @throws CoreException
 	 *            If something fails when trying to open a new project.
 	 */
-	public void testLogUndefined() throws CoreException {
+	public void testLogUndefined() /*throws CoreException*/ {
 		// TODO No log is being generated.  What was Chris' fix?
 //		IWorkbenchWindow window = openTestWindow();
 //		ResourcesPlugin.getPlugin().getLog().addLogListener(new ILogListener() {
@@ -85,7 +85,6 @@ public class Bug42627Test extends UITestCase {
 //		EditorSite site = (EditorSite) editor.getSite();
 //		site.getActionBars().setGlobalActionHandler("Bogus action name that hopefully will not exist", new DummyAction()); //$NON-NLS-1$
 //		window.getShell().setFocus();
-//		while (Display.getCurrent().readAndDispatch());
-//		assertTrue("Nothing has been logged", logged); //$NON-NLS-1$
+//		assertTrue("Nothing has been logged.", logged); //$NON-NLS-1$
 	}
 }
