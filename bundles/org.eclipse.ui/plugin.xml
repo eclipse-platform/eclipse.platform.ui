@@ -585,11 +585,6 @@
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            commandId="org.eclipse.ui.edit.delete"
-            keySequence="DEL"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
             commandId="org.eclipse.ui.edit.selectAll"
             keySequence="Ctrl+A"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
@@ -1106,12 +1101,6 @@
       </keyConfiguration>
       
 <!-- New 3.0 key binding work: Standard configuration -->
-<!-- Delete -->
-      <keyBinding
-            commandId="org.eclipse.ui.edit.delete"
-            keySequence="DEL"
-            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
-      </keyBinding>
 <!-- Toggle overwrite -->
       <keyBinding
             commandId="org.eclipse.ui.edit.text.toggleOverwrite"
