@@ -512,19 +512,19 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 					info = createInfoFromXML(stream);
 					fLaunchConfigurations.put(config, info);
 				} catch (FileNotFoundException e) {
-					throw createDebugException(MessageFormat.format(DebugCoreMessages.getString("LaunchManager.{0}_occurred_while_reading_launch_configuration_file._1"), new String[]{e.toString()}), e); //$NON-NLS-1$					
+					throwException(config, e);					
 				} catch (SAXException e) {
-					throw createDebugException(MessageFormat.format(DebugCoreMessages.getString("LaunchManager.{0}_occurred_while_reading_launch_configuration_file._1"), new String[]{e.toString()}), e); //$NON-NLS-1$					
+					throwException(config, e);					
 				} catch (ParserConfigurationException e) {
-					throw createDebugException(MessageFormat.format(DebugCoreMessages.getString("LaunchManager.{0}_occurred_while_reading_launch_configuration_file._1"), new String[]{e.toString()}), e); //$NON-NLS-1$					
+					throwException(config, e);					
 				} catch (IOException e) {
-					throw createDebugException(MessageFormat.format(DebugCoreMessages.getString("LaunchManager.{0}_occurred_while_reading_launch_configuration_file._1"), new String[]{e.toString()}), e); //$NON-NLS-1$					
+					throwException(config, e);					
 				} finally {
 					if (stream != null) {
 						try {
 							stream.close();
 						} catch (IOException e) {
-							throw createDebugException(MessageFormat.format(DebugCoreMessages.getString("LaunchManager.{0}_occurred_while_reading_launch_configuration_file._1"), new String[]{e.toString()}), e); //$NON-NLS-1$					
+							throwException(config, e);					
 						}
 					}
 				}
@@ -535,7 +535,16 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 			}
 		}
 		return info;
-	}	
+	}
+	
+	/**
+	 * Throws a debug exception with the given throwable that occurred
+	 * while processing the given configuration.
+	 */
+	private void throwException(ILaunchConfiguration config, Throwable e) throws DebugException {
+		IPath path = config.getLocation();
+		throw createDebugException(MessageFormat.format(DebugCoreMessages.getString("LaunchManager.{0}_occurred_while_reading_launch_configuration_file_{1}._1"), new String[]{e.toString(), path.toOSString()}), e); //$NON-NLS-1$
+	}
 	
 	/**
 	 * Return an instance of DebugException containing the specified message and Throwable.
