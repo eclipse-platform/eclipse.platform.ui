@@ -27,7 +27,7 @@ import org.eclipse.ui.internal.dialogs.WorkingSetSelectionDialog;
  * @see IWorkingSetManager
  * @since 2.0
  */
-public class WorkingSetManager implements IWorkingSetManager, IResourceChangeListener, IResourceDeltaVisitor {
+public class WorkingSetManager implements IWorkingSetManager {
 	// Working set persistence
 	private static final String WORKING_SET_STATE_FILENAME = "workingsets.xml"; //$NON-NLS-1$
 	/**
@@ -39,12 +39,6 @@ public class WorkingSetManager implements IWorkingSetManager, IResourceChangeLis
 	private List recentWorkingSets = new ArrayList();
 	private ListenerList propertyChangeListeners = new ListenerList();
 
-	/**
-	 * Creates a new instance of the receiver.
-	 */
-	public WorkingSetManager() {
-		WorkbenchPlugin.getPluginWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
-	}
 	/**
 	 * Implements IWorkingSetManager.
 	 * 
@@ -209,20 +203,6 @@ public class WorkingSetManager implements IWorkingSetManager, IResourceChangeLis
 		firePropertyChange(CHANGE_WORKING_SET_REMOVE, workingSet, null);
 	}
 	/**
-	 * Removes a deleted resource from any working set that contains it.
-	 * 
-	 * @param event the resource change event
-	 * @see IResourceChangeListener#resourceChanged
-	 */
-	public void resourceChanged(IResourceChangeEvent event) {
-		IResourceDelta delta = event.getDelta();
-		try {
-			delta.accept(this);
-		} catch (CoreException e) {
-			WorkbenchPlugin.log("Problem updating working sets", e.getStatus()); //$NON-NLS-1$	
-		}
-	}
-	/**
 	 * Restores the list of most recently used working sets from the 
 	 * persistence store.
 	 * 
@@ -369,49 +349,6 @@ public class WorkingSetManager implements IWorkingSetManager, IResourceChangeLis
 				persistable.saveState(workingSetMemento);
 			}
 		}
-	}
-	/**
-	 * Implements IResourceDeltaVisitor.
-	 * Removes deleted resources from any working set that contains 
-	 * them.
-	 * 
-	 * @see IResourceDeltaVisitor#visit(IResourceDelta)
-	 */
-	public boolean visit(IResourceDelta delta) throws CoreException {
-		boolean visitChildren = false;
-
-		if (delta.getKind() == IResourceDelta.CHANGED) {
-			visitChildren = true;
-		} else if (delta.getKind() == IResourceDelta.REMOVED) {
-			IPath deltaPath = delta.getResource().getFullPath();
-			Iterator iterator = workingSets.iterator();
-
-			while (iterator.hasNext()) {
-				IWorkingSet workingSet = (IWorkingSet) iterator.next();
-				IAdaptable[] items = workingSet.getElements();
-				int itemCount = items.length;
-
-				for (int i = 0; i < items.length; i++) {
-					IResource workingSetResource = (IResource) items[i].getAdapter(IResource.class);
-
-					if (workingSetResource != null && deltaPath.isPrefixOf(workingSetResource.getFullPath())) {
-						items[i] = null;
-						itemCount--;
-					}
-				}
-				if (itemCount != items.length) {
-					IAdaptable[] newItems = new IAdaptable[itemCount];
-
-					for (int i = 0, j = 0; i < items.length; i++) {
-						if (items[i] != null) {
-							newItems[j++] = items[i];
-						}
-					}
-					workingSet.setElements(newItems);
-				}
-			}
-		}
-		return visitChildren;
 	}
 	/**
 	 * Saves all working sets and fires a property change event for 
