@@ -317,17 +317,6 @@ public void showViewMenu(){
 }
 
 /* (non-Javadoc)
- * @see org.eclipse.ui.internal.LayoutPart#targetPartFor(org.eclipse.ui.internal.IWorkbenchDragSource)
- */
-public LayoutPart targetPartFor(IWorkbenchDragSource dragSource) {
-	return this;
-}
-
-public int getType() {
-	return EDITOR;
-}
-
-/* (non-Javadoc)
  * @see org.eclipse.ui.internal.LayoutPart#getPresentablePart()
  */
 public IPresentablePart getPresentablePart() {

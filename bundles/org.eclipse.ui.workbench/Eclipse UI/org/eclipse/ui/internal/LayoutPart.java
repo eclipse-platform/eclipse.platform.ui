@@ -13,8 +13,6 @@ package org.eclipse.ui.internal;
  *      - Fix for bug 10025 - Resizing views should not use height ratios
 **********************************************************************/
 
-import java.util.Collection;
-
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.ListenerList;
@@ -31,7 +29,7 @@ import org.eclipse.ui.presentations.IPresentablePart;
  * A presentation part is used to build the presentation for the
  * workbench.  Common subclasses are pane and folder.
  */
-abstract public class LayoutPart implements IWorkbenchDropTarget {
+abstract public class LayoutPart {
 	protected ILayoutContainer container;
 	protected String id;
 
@@ -285,37 +283,8 @@ abstract public class LayoutPart implements IWorkbenchDropTarget {
 		return this;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.IWorkbenchDropTarget#getType()
-	 */
-	public int getType() {
-		return UNDEFINED;
-	}
-
 	public IPresentablePart getPresentablePart() {
-		// TODO: write me
 		return null;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.IWorkbenchDropTarget#targetPartFor(org.eclipse.ui.internal.IWorkbenchDragSource)
-	 */
-	public LayoutPart targetPartFor(IWorkbenchDragSource dragSource) {
-		return null;
-	}
-	
-	protected void addDropTargets(Collection result, ILayoutContainer container){
-		LayoutPart[] parts = container.getChildren();
-		for (int i = 0; i < parts.length; i++) {
-			parts[i].addDropTargets(result);
-		}
-	}
-		
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.IWorkbenchDropTarget#addDropTargets(java.util.Collection)
-	 */
-	public void addDropTargets(Collection result) {
-		result.add(this);
 	}
 
 	public boolean resizesVertically() {

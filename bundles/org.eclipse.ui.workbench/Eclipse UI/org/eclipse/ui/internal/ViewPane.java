@@ -1056,31 +1056,6 @@ public class ViewPane extends PartPane implements IPropertyListener {
 		if (isMoveable())
 			super.doZoom();
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.IWorkbenchDragSource#getType()
-	 */
-	public int getType() {
-		return VIEW;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.LayoutPart#targetPartFor(org.eclipse.ui.internal.IWorkbenchDragSource)
-	 */
-	public LayoutPart targetPartFor(IWorkbenchDragSource dragSource) {
-		// When zoomed, its like we are not part of the
-		// tab folder so return the view.
-		if (isZoomed())
-			return this;
-
-		// Make use of the container if a tab folder
-		ILayoutContainer container = getContainer();
-		if (container instanceof PartTabFolder)
-			return (PartTabFolder) container;
-		else
-			return this;
-	}
-	
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.LayoutPart#setContainer(org.eclipse.ui.internal.ILayoutContainer)

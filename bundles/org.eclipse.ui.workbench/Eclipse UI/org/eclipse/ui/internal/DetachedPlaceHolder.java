@@ -11,10 +11,8 @@
 package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
-import java.util.Collection;
 
 import org.eclipse.swt.graphics.Rectangle;
-
 import org.eclipse.ui.IMemento;
 
 public class DetachedPlaceHolder extends PartPlaceholder implements ILayoutContainer {
@@ -111,14 +109,6 @@ public class DetachedPlaceHolder extends PartPlaceholder implements ILayoutConta
 			LayoutPart child = (LayoutPart) children.get(i);
 			childMem.putString(IWorkbenchConstants.TAG_ID, child.getID());
 		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.IWorkbenchDropTarget#addDropTargets(java.util.Collection)
-	 */
-	public void addDropTargets(Collection result) {
-		addDropTargets(result,this);
-		
 	}
 	
 	public void findSashes(LayoutPart part, PartPane.Sashes sashes) {
