@@ -11,6 +11,9 @@
 
 package org.eclipse.ui.internal.editors.text;
 
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
+
 
 
 /**
@@ -34,8 +37,15 @@ public class AnnotationsPreferencePage extends AbstractConfigurationBlockPrefere
 	 * @see org.eclipse.ui.internal.editors.text.AbstractConfigurationBlockPreferencePage#setDescription()
 	 */
 	protected void setDescription() {
-		String description= TextEditorMessages.getString("AnnotationConfigurationBlock.description"); //$NON-NLS-1$
+		String description= TextEditorMessages.getString("AnnotationsConfigurationBlock.description"); //$NON-NLS-1$
 		setDescription(description);
+	}
+	
+	/*
+	 * @see org.eclipse.jface.preference.PreferencePage#createDescriptionLabel(org.eclipse.swt.widgets.Composite)
+	 */
+	protected Label createDescriptionLabel(Composite parent) {
+		return null;
 	}
 	
 	/*

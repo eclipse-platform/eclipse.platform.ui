@@ -15,25 +15,45 @@ import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.List;
 
 import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.jface.viewers.IColorProvider;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.Viewer;
 
 import org.eclipse.jface.text.Assert;
 
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.texteditor.AnnotationPreference;
 import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
 
@@ -44,43 +64,143 @@ import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
  * @since 3.0
  */
 class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
+	private static final class ListItem {
+		final String label;
+		final Image image;
+		final String colorKey;
+		final String highlightKey;
+		final String overviewRulerKey;
+		final String textStyleKey;
+		final String textKey;
+		final String verticalRulerKey;
+
+		ListItem(String label, Image image, String colorKey, String textKey, String overviewRulerKey, String highlightKey, String verticalRulerKey, String textStyleKey) {
+			this.label= label;
+			this.image= image;
+			this.colorKey= colorKey;
+			this.highlightKey= highlightKey;
+			this.overviewRulerKey= overviewRulerKey;
+			this.textKey= textKey;
+			this.textStyleKey= textStyleKey;
+			this.verticalRulerKey= verticalRulerKey;
+		}
+	}
 	
+	private static final class ItemContentProvider implements IStructuredContentProvider {
+
+		public Object[] getElements(Object inputElement) {
+			return (ListItem[]) inputElement;
+		}
+
+		public void dispose() {
+		}
+
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		}
+	}
+	
+	private final class ItemLabelProvider extends LabelProvider implements IColorProvider {
+		
+		public String getText(Object element) {
+			return ((ListItem) element).label;
+		}
+		
+		
+		public Image getImage(Object element) {
+			ListItem item= (ListItem) element;
+//			if (item.verticalRulerKey != null && fStore.getBoolean(item.verticalRulerKey))
+			return item.image;
+//			return null; // don't show icon if preference is not to show in vertical ruler
+			// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=80793
+			// returning null does not remove a once set image.
+			// always show the image until then.	
+		}
+
+
+		public Color getForeground(Object element) {
+			return null;
+		}
+
+		/*
+		 * @see org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.Object)
+		 */
+		public Color getBackground(Object element) {
+			String key= ((ListItem) element).highlightKey;
+			if (key != null && fStore.getBoolean(key)) {
+				RGB color= PreferenceConverter.getColor(fStore, ((ListItem)element).colorKey);
+				color= interpolate(color, new RGB(255, 255, 255), 0.6);
+				return EditorsPlugin.getDefault().getSharedTextColors().getColor(color);
+			}
+			return null;
+		}
+		
+		/**
+		 * Returns a specification of a color that lies between the given
+		 * foreground and background color using the given scale factor.
+		 * 
+		 * @param fg the foreground color
+		 * @param bg the background color
+		 * @param scale the scale factor
+		 * @return the interpolated color
+		 */
+		private RGB interpolate(RGB fg, RGB bg, double scale) {
+			return new RGB(
+				(int) ((1.0-scale) * fg.red + scale * bg.red),
+				(int) ((1.0-scale) * fg.green + scale * bg.green),
+				(int) ((1.0-scale) * fg.blue + scale * bg.blue)
+			);
+		}
+	}
+	
+	private static class ArrayLabelProvider extends LabelProvider {
+		public String getText(Object element) {
+			return ((String[]) element)[0].toString();
+		}
+	}
+	
+	/* copied from DefaultMarkerAnnotationAccess */
+	public static final String ERROR_SYSTEM_IMAGE= "error"; //$NON-NLS-1$
+	public static final String WARNING_SYSTEM_IMAGE= "warning"; //$NON-NLS-1$
+	public static final String INFO_SYSTEM_IMAGE= "info"; //$NON-NLS-1$
+	public static final String TASK_SYSTEM_IMAGE= "task"; //$NON-NLS-1$
+	public static final String BOOKMARK_SYSTEM_IMAGE= "bookmark"; //$NON-NLS-1$
+	
+	private final static Map MAPPING;
+
+	static {
+		MAPPING= new HashMap();
+		MAPPING.put(ERROR_SYSTEM_IMAGE, ISharedImages.IMG_OBJS_ERROR_TSK);
+		MAPPING.put(WARNING_SYSTEM_IMAGE, ISharedImages.IMG_OBJS_WARN_TSK);
+		MAPPING.put(INFO_SYSTEM_IMAGE, ISharedImages.IMG_OBJS_INFO_TSK);
+		MAPPING.put(TASK_SYSTEM_IMAGE, IDE.SharedImages.IMG_OBJS_TASK_TSK);
+		MAPPING.put(BOOKMARK_SYSTEM_IMAGE, IDE.SharedImages.IMG_OBJS_BKMRK_TSK);
+	}
+	
+	final static String[] HIGHLIGHT= new String[] {TextEditorMessages.getString("AnnotationsConfigurationBlock.HIGHLIGHT"), ""}; //$NON-NLS-1$ //$NON-NLS-2$
+	final static String[] UNDERLINE= new String[] {TextEditorMessages.getString("AnnotationsConfigurationBlock.UNDERLINE"), AnnotationPreference.STYLE_UNDERLINE}; //$NON-NLS-1$
+	final static String[] BOX= new String[] {TextEditorMessages.getString("AnnotationsConfigurationBlock.BOX"), AnnotationPreference.STYLE_BOX}; //$NON-NLS-1$
+	final static String[] IBEAM= new String[] {TextEditorMessages.getString("AnnotationsConfigurationBlock.IBEAM"), AnnotationPreference.STYLE_IBEAM}; //$NON-NLS-1$
+	final static String[] SQUIGGLES= new String[] {TextEditorMessages.getString("AnnotationsConfigurationBlock.SQUIGGLES"), AnnotationPreference.STYLE_SQUIGGLES}; //$NON-NLS-1$
+
+	
+
 	private OverlayPreferenceStore fStore;
 	private ColorEditor fAnnotationForegroundColorEditor;
 
 	private Button fShowInTextCheckBox;
-	private Combo fDecorationStyleCombo;
-	private Button fHighlightInTextCheckBox;
 	private Button fShowInOverviewRulerCheckBox;
 	private Button fShowInVerticalRulerCheckBox;
 	
-	private List fAnnotationList;
-	private final String[][] fAnnotationColorListModel;
+	private StructuredViewer fAnnotationTypeViewer;
+	private final ListItem[] fListModel;
 
-	
-//	/**
-//	 * List of master/slave listeners when there's a dependency.
-//	 * 
-//	 * @see #createDependency(Button, String, Control)
-//	 * @since 3.0
-//	 */
-//	private ArrayList fMasterSlaveListeners= new ArrayList();
-
-	private final String[][] fAnnotationDecorationListModel= new String[][] {
-			{TextEditorMessages.getString("AnnotationConfigurationBlock.NONE"), AnnotationPreference.STYLE_NONE}, //$NON-NLS-1$
-			{TextEditorMessages.getString("AnnotationConfigurationBlock.SQUIGGLES"), AnnotationPreference.STYLE_SQUIGGLES}, //$NON-NLS-1$
-			{TextEditorMessages.getString("AnnotationConfigurationBlock.UNDERLINE"), AnnotationPreference.STYLE_UNDERLINE}, //$NON-NLS-1$
-			{TextEditorMessages.getString("AnnotationConfigurationBlock.BOX"), AnnotationPreference.STYLE_BOX}, //$NON-NLS-1$
-			{TextEditorMessages.getString("AnnotationConfigurationBlock.IBEAM"), AnnotationPreference.STYLE_IBEAM} //$NON-NLS-1$
-		};
-
-	
+	private ComboViewer fDecorationViewer;
 	public AnnotationsConfigurationBlock(OverlayPreferenceStore store) {
 		Assert.isNotNull(store);
 		MarkerAnnotationPreferences markerAnnotationPreferences= new MarkerAnnotationPreferences();
 		fStore= store;
 		fStore.addKeys(createOverlayStoreKeys(markerAnnotationPreferences));
-		fAnnotationColorListModel= createAnnotationTypeListModel(markerAnnotationPreferences);
+		fListModel= createAnnotationTypeListModel(markerAnnotationPreferences);
 	}
 	
 	private OverlayPreferenceStore.OverlayKey[] createOverlayStoreKeys(MarkerAnnotationPreferences preferences) {
@@ -105,18 +225,20 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 		return keys;
 	}
 
+	/*
+	 * @see org.eclipse.ui.internal.editors.text.IPreferenceConfigurationBlock#createControl(org.eclipse.swt.widgets.Composite)
+	 */
 	public Control createControl(Composite parent) {
 		
 		PixelConverter pixelConverter= new PixelConverter(parent);
 
 		Composite composite= new Composite(parent, SWT.NULL);
-		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		GridLayout layout= new GridLayout();
 		layout.numColumns= 2;
 		composite.setLayout(layout);
 				
 		Label label= new Label(composite, SWT.LEFT);
-		label.setText(TextEditorMessages.getString("AnnotationConfigurationBlock.annotationPresentationOptions")); //$NON-NLS-1$
+		label.setText(TextEditorMessages.getString("AnnotationsConfigurationBlock.annotationPresentationOptions")); //$NON-NLS-1$
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan= 2;
 		label.setLayoutData(gd);
@@ -131,11 +253,13 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 		gd.horizontalSpan= 2;
 		editorComposite.setLayoutData(gd);		
 
-		fAnnotationList= new List(editorComposite, SWT.SINGLE | SWT.V_SCROLL | SWT.BORDER);
-		gd= new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL);
+		fAnnotationTypeViewer= new TableViewer(editorComposite, SWT.SINGLE | SWT.V_SCROLL | SWT.BORDER);
+		fAnnotationTypeViewer.setLabelProvider(new ItemLabelProvider());
+		fAnnotationTypeViewer.setContentProvider(new ItemContentProvider());
+		gd= new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false);
 		gd.heightHint= pixelConverter.convertHeightInCharsToPixels(20);
-		fAnnotationList.setLayoutData(gd);
-						
+		fAnnotationTypeViewer.getControl().setLayoutData(gd);
+		
 		Composite optionsComposite= new Composite(editorComposite, SWT.NONE);
 		layout= new GridLayout();
 		layout.marginHeight= 0;
@@ -144,47 +268,52 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 		optionsComposite.setLayout(layout);
 		optionsComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		fShowInTextCheckBox= new Button(optionsComposite, SWT.CHECK);
-        fShowInTextCheckBox.setText(TextEditorMessages.getString("AnnotationConfigurationBlock.showInText")); //$NON-NLS-1$
+		label= new Label(optionsComposite, SWT.LEFT);
+		label.setText(TextEditorMessages.getString("AnnotationsConfigurationBlock.labels.showIn")); //$NON-NLS-1$
+		label.setFont(JFaceResources.getFontRegistry().getBold(JFaceResources.DIALOG_FONT));
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalAlignment= GridData.BEGINNING;
         gd.horizontalSpan= 2;
+        label.setLayoutData(gd);
+        
+		// we only allow to set either "show in text" or "highlight in text", but not both
+        
+		fShowInTextCheckBox= new Button(optionsComposite, SWT.CHECK);
+		fShowInTextCheckBox.setText(TextEditorMessages.getString("AnnotationsConfigurationBlock.showInText")); //$NON-NLS-1$
+		gd= new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalAlignment= GridData.BEGINNING;
+		gd.horizontalIndent= 20;
 		fShowInTextCheckBox.setLayoutData(gd);
 		
-		fDecorationStyleCombo= new Combo(optionsComposite, SWT.READ_ONLY);
-		for(int i= 0; i < fAnnotationDecorationListModel.length; i++)
-			fDecorationStyleCombo.add(fAnnotationDecorationListModel[i][0]);
+		fDecorationViewer= new ComboViewer(optionsComposite, SWT.READ_ONLY);
+		fDecorationViewer.setContentProvider(new ArrayContentProvider());
+		fDecorationViewer.setLabelProvider(new ArrayLabelProvider());
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalAlignment= GridData.BEGINNING;
-        gd.horizontalSpan= 2;
-		gd.horizontalIndent= 20;
-		fDecorationStyleCombo.setLayoutData(gd);
+		fDecorationViewer.getControl().setLayoutData(gd);
+		fDecorationViewer.setInput(new Object[] {HIGHLIGHT, SQUIGGLES, BOX, UNDERLINE, IBEAM});
 		
-		fHighlightInTextCheckBox= new Button(optionsComposite, SWT.CHECK);
-		fHighlightInTextCheckBox.setText(TextEditorMessages.getString("AnnotationConfigurationBlock.highlightInText")); //$NON-NLS-1$
+		fShowInOverviewRulerCheckBox= new Button(optionsComposite, SWT.CHECK);
+        fShowInOverviewRulerCheckBox.setText(TextEditorMessages.getString("AnnotationsConfigurationBlock.showInOverviewRuler")); //$NON-NLS-1$
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalAlignment= GridData.BEGINNING;
 		gd.horizontalSpan= 2;
-		fHighlightInTextCheckBox.setLayoutData(gd);
-		
-		fShowInOverviewRulerCheckBox= new Button(optionsComposite, SWT.CHECK);
-        fShowInOverviewRulerCheckBox.setText(TextEditorMessages.getString("AnnotationConfigurationBlock.showInOverviewRuler")); //$NON-NLS-1$
-		gd= new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalAlignment= GridData.BEGINNING;
-        gd.horizontalSpan= 2;
+		gd.horizontalIndent= 20;
 		fShowInOverviewRulerCheckBox.setLayoutData(gd);
 		
 		fShowInVerticalRulerCheckBox= new Button(optionsComposite, SWT.CHECK);
-		fShowInVerticalRulerCheckBox.setText(TextEditorMessages.getString("AnnotationConfigurationBlock.showInVerticalRuler")); //$NON-NLS-1$
+		fShowInVerticalRulerCheckBox.setText(TextEditorMessages.getString("AnnotationsConfigurationBlock.showInVerticalRuler")); //$NON-NLS-1$
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalAlignment= GridData.BEGINNING;
 		gd.horizontalSpan= 2;
+		gd.horizontalIndent= 20;
 		fShowInVerticalRulerCheckBox.setLayoutData(gd);
 		
 		label= new Label(optionsComposite, SWT.LEFT);
-		label.setText(TextEditorMessages.getString("AnnotationConfigurationBlock.color")); //$NON-NLS-1$
+		label.setText(TextEditorMessages.getString("AnnotationsConfigurationBlock.color")); //$NON-NLS-1$
 		gd= new GridData();
 		gd.horizontalAlignment= GridData.BEGINNING;
+		gd.horizontalIndent= 20;
 		label.setLayoutData(gd);
 
 		fAnnotationForegroundColorEditor= new ColorEditor(optionsComposite);
@@ -193,12 +322,8 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 		gd.horizontalAlignment= GridData.BEGINNING;
 		foregroundColorButton.setLayoutData(gd);
 
-		fAnnotationList.addSelectionListener(new SelectionListener() {
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// do nothing
-			}
-			
-			public void widgetSelected(SelectionEvent e) {
+		fAnnotationTypeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
 				handleAnnotationListSelection();
 			}
 		});
@@ -209,23 +334,25 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 			}
 			
 			public void widgetSelected(SelectionEvent e) {
-				int i= fAnnotationList.getSelectionIndex();
-				String key= fAnnotationColorListModel[i][2];
-				fStore.setValue(key, fShowInTextCheckBox.getSelection());
-				String decorationKey= fAnnotationColorListModel[i][6];
-				fDecorationStyleCombo.setEnabled(decorationKey != null && fShowInTextCheckBox.getSelection());
-			}
-		});
-		
-		fHighlightInTextCheckBox.addSelectionListener(new SelectionListener() {
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// do nothing
-			}
-			
-			public void widgetSelected(SelectionEvent e) {
-				int i= fAnnotationList.getSelectionIndex();
-				String key= fAnnotationColorListModel[i][4];
-				fStore.setValue(key, fHighlightInTextCheckBox.getSelection());
+				ListItem item= getSelectedItem();
+				final boolean value= fShowInTextCheckBox.getSelection();
+				if (value) {
+					// enable whatever is in the dropdown
+					String[] decoration= (String[]) ((IStructuredSelection) fDecorationViewer.getSelection()).getFirstElement();
+					if (HIGHLIGHT.equals(decoration))
+						fStore.setValue(item.highlightKey, true);
+					else
+						fStore.setValue(item.textKey, true);
+				} else {
+					// disable both
+					if (item.textKey != null)
+						fStore.setValue(item.textKey, false);
+					if (item.highlightKey != null)
+						fStore.setValue(item.highlightKey, false);
+				}
+				fStore.setValue(item.textKey, value);
+				updateDecorationViewer(item, false);
+				fAnnotationTypeViewer.refresh(item);
 			}
 		});
 		
@@ -235,9 +362,9 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 			}
 			
 			public void widgetSelected(SelectionEvent e) {
-				int i= fAnnotationList.getSelectionIndex();
-				String key= fAnnotationColorListModel[i][3];
-				fStore.setValue(key, fShowInOverviewRulerCheckBox.getSelection());
+				ListItem item= getSelectedItem();
+				fStore.setValue(item.overviewRulerKey, fShowInOverviewRulerCheckBox.getSelection());
+				fAnnotationTypeViewer.refresh(item);
 			}
 		});
 		
@@ -247,9 +374,9 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 			}
 			
 			public void widgetSelected(SelectionEvent e) {
-				int i= fAnnotationList.getSelectionIndex();
-				String key= fAnnotationColorListModel[i][5];
-				fStore.setValue(key, fShowInVerticalRulerCheckBox.getSelection());
+				ListItem item= getSelectedItem();
+				fStore.setValue(item.verticalRulerKey, fShowInVerticalRulerCheckBox.getSelection());
+				fAnnotationTypeViewer.refresh(item);
 			}
 		});
 		
@@ -259,37 +386,45 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 			}
 			
 			public void widgetSelected(SelectionEvent e) {
-				int i= fAnnotationList.getSelectionIndex();
-				String key= fAnnotationColorListModel[i][1];
-				PreferenceConverter.setValue(fStore, key, fAnnotationForegroundColorEditor.getColorValue());
+				ListItem item= getSelectedItem();
+				PreferenceConverter.setValue(fStore, item.colorKey, fAnnotationForegroundColorEditor.getColorValue());
+				fAnnotationTypeViewer.refresh(item);
 			}
 		});
 		
-		fDecorationStyleCombo.addSelectionListener(new SelectionListener() {
+		fDecorationViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+
 			/*
-			 * @see org.eclipse.swt.events.SelectionListener#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
+			 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 			 */
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// do nothing
-			}
-			
-			/*
-			 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
-			public void widgetSelected(SelectionEvent e) {
-				int i= fAnnotationList.getSelectionIndex();
-				String key= fAnnotationColorListModel[i][6];
-				if (key != null) {
-					for (int j= 0; j < fAnnotationDecorationListModel.length; j++) {
-						if (fAnnotationDecorationListModel[j][0].equals(fDecorationStyleCombo.getText())) {
-							fStore.setValue(key, fAnnotationDecorationListModel[j][1]);
-							break;
+			public void selectionChanged(SelectionChangedEvent event) {
+				String[] decoration= (String[]) ((IStructuredSelection) fDecorationViewer.getSelection()).getFirstElement();
+				ListItem item= getSelectedItem();
+				
+				if (fShowInTextCheckBox.getSelection()) {
+					if (HIGHLIGHT.equals(decoration)) {
+						fStore.setValue(item.highlightKey, true);
+						if (item.textKey != null) {
+							fStore.setValue(item.textKey, false);
+							if (item.textStyleKey != null)
+								fStore.setValue(item.textStyleKey, AnnotationPreference.STYLE_NONE);
+						}
+					} else {
+						if (item.highlightKey != null)
+							fStore.setValue(item.highlightKey, false);
+						if (item.textKey != null) {
+							fStore.setValue(item.textKey, true);
+							if (item.textStyleKey != null)
+								fStore.setValue(item.textStyleKey, decoration[1]);
 						}
 					}
 				}
-			}
+				
+				fAnnotationTypeViewer.refresh(item);
+			}			
 		});
 		
+		composite.layout();
 		return composite;
 	}
 	
@@ -297,8 +432,6 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 	 * @see PreferencePage#performOk()
 	 */
 	public void performOk() {
-//		restoreFromPreferences();
-//		initializeFields();
 	}
 	
 	/*
@@ -311,46 +444,21 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 	}
 	
 	private void handleAnnotationListSelection() {
-		int i= fAnnotationList.getSelectionIndex();
+		ListItem item= getSelectedItem();
 		
-		String key= fAnnotationColorListModel[i][1];
-		RGB rgb= PreferenceConverter.getColor(fStore, key);
+		RGB rgb= PreferenceConverter.getColor(fStore, item.colorKey);
 		fAnnotationForegroundColorEditor.setColorValue(rgb);
 		
-		key= fAnnotationColorListModel[i][2];
-		boolean showInText = fStore.getBoolean(key);
-		fShowInTextCheckBox.setSelection(showInText);
+		boolean highlight= item.highlightKey == null ? false : fStore.getBoolean(item.highlightKey);
+		boolean showInText = item.textKey == null ? false : fStore.getBoolean(item.textKey);
+		fShowInTextCheckBox.setSelection(showInText || highlight);
+		
+		updateDecorationViewer(item, true);
 
-		key= fAnnotationColorListModel[i][6];
-		if (key != null) {
-			fDecorationStyleCombo.setEnabled(showInText);
-			for (int j= 0; j < fAnnotationDecorationListModel.length; j++) {
-				String value= fStore.getString(key);
-				if (fAnnotationDecorationListModel[j][1].equals(value)) {
-					fDecorationStyleCombo.setText(fAnnotationDecorationListModel[j][0]);
-					break;
-				}
-			}
-		} else {
-			fDecorationStyleCombo.setEnabled(false);
-			fDecorationStyleCombo.setText(fAnnotationDecorationListModel[1][0]); // set selection to squiggles if the key is not there (legacy support)
-		}
+		fShowInOverviewRulerCheckBox.setSelection(fStore.getBoolean(item.overviewRulerKey));
 		
-		key= fAnnotationColorListModel[i][3];
-		fShowInOverviewRulerCheckBox.setSelection(fStore.getBoolean(key));
-		
-		key= fAnnotationColorListModel[i][4];
-		if (key != null) {
-			fHighlightInTextCheckBox.setSelection(fStore.getBoolean(key));
-			fHighlightInTextCheckBox.setEnabled(true);
-		} else {
-			fHighlightInTextCheckBox.setSelection(false);
-			fHighlightInTextCheckBox.setEnabled(false);
-		}
-		
-		key= fAnnotationColorListModel[i][5];
-		if (key != null) {
-			fShowInVerticalRulerCheckBox.setSelection(fStore.getBoolean(key));
+		if (item.verticalRulerKey != null) {
+			fShowInVerticalRulerCheckBox.setSelection(fStore.getBoolean(item.verticalRulerKey));
 			fShowInVerticalRulerCheckBox.setEnabled(true);
 		} else {
 			fShowInVerticalRulerCheckBox.setSelection(true);
@@ -358,30 +466,35 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 		}
 	}
 	
+	
+	
 	public void initialize() {
-		
-		for (int i= 0; i < fAnnotationColorListModel.length; i++)
-			fAnnotationList.add(fAnnotationColorListModel[i][0]);
-		fAnnotationList.getDisplay().asyncExec(new Runnable() {
+	    
+		fAnnotationTypeViewer.setInput(fListModel);
+		fAnnotationTypeViewer.getControl().getDisplay().asyncExec(new Runnable() {
 			public void run() {
-				if (fAnnotationList != null && !fAnnotationList.isDisposed()) {
-					fAnnotationList.select(0);
-					handleAnnotationListSelection();
+				if (fAnnotationTypeViewer != null && !fAnnotationTypeViewer.getControl().isDisposed()) {
+					fAnnotationTypeViewer.setSelection(new StructuredSelection(fListModel[0]));
 				}
 			}
 		});
+		
 	}
 
-	private String[][] createAnnotationTypeListModel(MarkerAnnotationPreferences preferences) {
+	private ListItem[] createAnnotationTypeListModel(MarkerAnnotationPreferences preferences) {
 		ArrayList listModelItems= new ArrayList();
 		Iterator e= preferences.getAnnotationPreferences().iterator();
+		
 		while (e.hasNext()) {
 			AnnotationPreference info= (AnnotationPreference) e.next();
 			if (info.isIncludeOnPreferencePage()) {
 				String label= info.getPreferenceLabel();
 				if (containsMoreThanOne(preferences.getAnnotationPreferences().iterator(), label))
 					label += " (" + info.getAnnotationType() + ")";  //$NON-NLS-1$//$NON-NLS-2$
-				listModelItems.add(new String[] { label, info.getColorPreferenceKey(), info.getTextPreferenceKey(), info.getOverviewRulerPreferenceKey(), info.getHighlightPreferenceKey(), info.getVerticalRulerPreferenceKey(), info.getTextStylePreferenceKey()});
+				
+				Image image= getImage(info);
+				
+				listModelItems.add(new ListItem(label, image, info.getColorPreferenceKey(), info.getTextPreferenceKey(), info.getOverviewRulerPreferenceKey(), info.getHighlightPreferenceKey(), info.getVerticalRulerPreferenceKey(), info.getTextStylePreferenceKey()));
 			}
 		}
 		
@@ -390,13 +503,13 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 			 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 			 */
 			public int compare(Object o1, Object o2) {
-				if (!(o2 instanceof String[]))
+				if (!(o2 instanceof ListItem))
 					return -1;
-				if (!(o1 instanceof String[]))
+				if (!(o1 instanceof ListItem))
 					return 1;
 				
-				String label1= ((String[])o1)[0];
-				String label2= ((String[])o2)[0];
+				String label1= ((ListItem)o1).label;
+				String label2= ((ListItem)o2).label;
 				
 				return Collator.getInstance().compare(label1, label2);
 				
@@ -404,9 +517,55 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 		};
 		Collections.sort(listModelItems, comparator);
 		
-		String[][] items= new String[listModelItems.size()][];
+		ListItem[] items= new ListItem[listModelItems.size()];
 		listModelItems.toArray(items);
 		return items;
+	}
+	
+	/**
+	 * Returns the image for the given annotation and the given annotation preferences or
+	 * <code>null</code> if there is no such image.
+	 * 
+	 * @param preference the annotation preference
+	 * @return the image or <code>null</code>
+	 * @since 3.1
+	 */
+	private Image getImage(AnnotationPreference preference) {
+		
+		ImageRegistry registry= EditorsPlugin.getDefault().getImageRegistry();
+
+		String annotationType= (String) preference.getAnnotationType();
+		if (annotationType == null)
+			return null;
+		
+		Image image= registry.get(annotationType);
+		if (image == null) {
+			ImageDescriptor descriptor= preference.getImageDescriptor();
+			if (descriptor != null) {
+				registry.put(annotationType, descriptor);
+				image= registry.get(annotationType);
+			} else {
+				String key= translateSymbolicImageName(preference.getSymbolicImageName());
+				if (key != null) {
+					ISharedImages sharedImages= PlatformUI.getWorkbench().getSharedImages();
+					image= sharedImages.getImage(key);
+				}
+			}
+		}
+		
+		return image;
+	}
+
+	/**
+	 * Translates the given symbolic image name into the according symbolic image name
+	 * the {@link org.eclipse.ui.ISharedImages} understands.
+	 * 
+	 * @param symbolicImageName the symbolic system image name to be translated
+	 * @return the shared image name
+	 * @since 3.1
+	 */
+	private String translateSymbolicImageName(String symbolicImageName) {
+		return (String) MAPPING.get(symbolicImageName);
 	}
 	
 	private boolean containsMoreThanOne(Iterator annotationPrefernceIterator, String label) {
@@ -424,30 +583,58 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 		return false;
 	}
 	
-//	private static void indent(Control control) {
-//		GridData gridData= new GridData();
-//		gridData.horizontalIndent= 20;
-//		control.setLayoutData(gridData);		
-//	}
-	
-//	private void createDependency(final Button master, String masterKey, final Control slave) {
-//		indent(slave);
-//		boolean masterState= fStore.getBoolean(masterKey);
-//		slave.setEnabled(masterState);
-//		SelectionListener listener= new SelectionListener() {
-//			public void widgetSelected(SelectionEvent e) {
-//				slave.setEnabled(master.getSelection());
-//			}
-//
-//			public void widgetDefaultSelected(SelectionEvent e) {}
-//		};
-//		master.addSelectionListener(listener);
-//		fMasterSlaveListeners.add(listener);
-//	}
-
 	/*
 	 * @see IPreferenceConfigurationBlock#dispose()
 	 */
 	public void dispose() {
+	}
+
+	private ListItem getSelectedItem() {
+		return (ListItem) ((IStructuredSelection) fAnnotationTypeViewer.getSelection()).getFirstElement();
+	}
+
+	private void updateDecorationViewer(ListItem item, boolean changed) {
+		// decoration selection: if the checkbox is enabled, there is
+		// only one case where the combois not enabled: if both the highlight and textStyle keys are null
+		final boolean enabled= fShowInTextCheckBox.getSelection() && !(item.highlightKey == null && item.textStyleKey == null);
+		fDecorationViewer.getControl().setEnabled(enabled);
+		
+		if (changed) {
+			String[] selection= null;
+			ArrayList list= new ArrayList();
+			
+			// highlighting
+			if (item.highlightKey != null) {
+				list.add(HIGHLIGHT);
+				if (fStore.getBoolean(item.highlightKey))
+					selection= HIGHLIGHT;
+			}
+			
+			// legacy default= squiggly lines
+			list.add(SQUIGGLES);
+			
+			// advanced styles
+			if (item.textStyleKey != null) {
+				list.add(UNDERLINE);
+				list.add(BOX);
+				list.add(IBEAM);
+			}
+			
+			// set selection
+			if (selection == null) {
+				String val= item.textStyleKey == null ? SQUIGGLES[1] : fStore.getString(item.textStyleKey);
+				for (Iterator iter= list.iterator(); iter.hasNext();) {
+					String[] elem= (String[]) iter.next();
+					if (elem[1].equals(val)) {
+						selection= elem;
+						break;
+					}
+				}
+			}
+			
+			fDecorationViewer.setInput(list.toArray(new Object[list.size()]));
+			if (selection != null)
+				fDecorationViewer.setSelection(new StructuredSelection((Object) selection), true);
+		}
 	}
 }
