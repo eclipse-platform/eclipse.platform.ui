@@ -832,18 +832,6 @@ public void refreshLocal(int depth, IProgressMonitor monitor) throws CoreExcepti
 }
 /**
  * @see IResource
- * @deprecated since 0.104 use #setLocal(boolean, int, IProgressMonitor)
- */
-public void setLocal(boolean flag, int depth) {
-	try {
-		setLocal(flag, depth, null);
-	} catch (CoreException e) {
-		// FIXME: decide what to do here. log? throw? nothing?
-		ResourcesPlugin.getPlugin().getLog().log(e.getStatus());
-	}
-}
-/**
- * @see IResource
  */
 public void setLocal(boolean flag, int depth, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
