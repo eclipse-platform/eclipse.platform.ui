@@ -398,12 +398,6 @@ private boolean isContentChange(IProject project, IProjectDescription destinatio
 	return !sourceDescription.getLocation().equals(destinationDescription.getLocation());
 }
 /**
- * Returns <code>true</code> if we are doing a change in the case of the project name.
- */
-private boolean isCaseChange(IProject project, IProjectDescription description) {
-	return !project.getName().equals(description.getName()) && project.getName().equalsIgnoreCase(description.getName());
-}
-/**
  * @see IResourceTree#isSynchronized
  */
 public boolean isSynchronized(IResource resource, int depth) {
@@ -1092,13 +1086,6 @@ public void standardMoveProject(IProject source, IProjectDescription description
 	} finally {
 		monitor.done();
 	}
-}
-/**
- * Moves any children of this project to their new location in the file system.
- */
-private void moveLinkedChildren(IProject source, IProjectDescription description, int updateFlags, IProgressMonitor monitor) {
-	
-
 }
 /**
  * Move the contents of the specified file from the source location to the destination location.
