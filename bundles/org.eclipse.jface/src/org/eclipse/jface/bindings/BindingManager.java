@@ -11,6 +11,7 @@
 package org.eclipse.jface.bindings;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -207,12 +208,19 @@ public final class BindingManager implements IContextManagerListener,
 	 * guaranteed to never be <code>null</code>.
 	 */
 	private final ContextManager contextManager;
+	
+	/**
+	 * The number of defined schemes.
+	 */
+	private int definedSchemeCount = 0;
 
 	/**
-	 * The set of all identifiers for schemes that are defined. This value may
-	 * be empty, but is never <code>null</code>.
+	 * The set of all schemes that are defined. This value may be empty, and it
+	 * may be <code>null</code>. There are only
+	 * <code>definedSchemeCount</code> real values in the array. The rest are
+	 * all <code>null</code>.
 	 */
-	private final Set definedSchemeIds = new HashSet();
+	private Scheme[] definedSchemes = null;
 
 	/**
 	 * The collection of listener to this binding manager. This collection is
@@ -903,17 +911,19 @@ public final class BindingManager implements IContextManagerListener,
 	 * @param commandId
 	 *            The identifier for the command whose bindings you wish to
 	 *            find. This argument may be <code>null</code>.
-	 * @return The collection of active triggers (<code>TriggerSequence</code>)
+	 * @return The array of active triggers (<code>TriggerSequence</code>)
 	 *         for a particular command identifier. This value is guaranteed to
 	 *         never be <code>null</code>, but it may be empty.
 	 */
-	public final Collection getActiveBindingsFor(final String commandId) {
+	public final TriggerSequence[] getActiveBindingsFor(final String commandId) {
 		final Object object = getActiveBindingsByCommandId().get(commandId);
 		if (object instanceof Collection) {
-			return (Collection) object;
+			final Collection collection = (Collection) object;
+			return (TriggerSequence[]) collection
+					.toArray(new TriggerSequence[collection.size()]);
 		}
-		
-		return Collections.EMPTY_LIST;
+
+		return new TriggerSequence[0];
 	}
 
 	/**
@@ -941,35 +951,38 @@ public final class BindingManager implements IContextManagerListener,
 	 * This method completes in <code>O(1)</code>.
 	 * </p>
 	 * 
-	 * @return The set of all bindings. This value may be <code>null</code>
+	 * @return The array of all bindings. This value may be <code>null</code>
 	 *         and it may be empty.
 	 */
-	public final Set getBindings() {
+	public final Binding[] getBindings() {
 		if (bindings == null) {
 			return null;
 		}
 
-		final HashSet returnValue = new HashSet();
-		for (int i = 0; i < bindingCount; i++) {
-			returnValue.add(bindings[i]);
-		}
-
+		final Binding[] returnValue = new Binding[bindingCount];
+		System.arraycopy(bindings, 0, returnValue, 0, bindingCount);
 		return returnValue;
 	}
 
 	/**
 	 * <p>
-	 * Returns the set of identifiers for those schemes that are defined.
+	 * Returns the array of schemes that are defined.
 	 * </p>
 	 * <p>
 	 * This method completes in <code>O(1)</code>.
 	 * </p>
 	 * 
-	 * @return The set of defined scheme identifiers; this value may be empty,
-	 *         but it is never <code>null</code>.
+	 * @return The array of defined schemes; this value may be empty, but it is
+	 *         never <code>null</code>.
 	 */
-	public final Set getDefinedSchemeIds() {
-		return Collections.unmodifiableSet(definedSchemeIds);
+	public final Scheme[] getDefinedSchemes() {
+		if ((definedSchemes == null) || (definedSchemeCount == 0)) {
+			return new Scheme[0];
+		}
+		
+		final Scheme[] returnValue = new Scheme[definedSchemeCount];
+		System.arraycopy(definedSchemes, 0, returnValue, 0, definedSchemeCount);
+		return returnValue;
 	}
 
 	/**
@@ -1705,13 +1718,52 @@ public final class BindingManager implements IContextManagerListener,
 		if (schemeEvent.hasDefinedChanged()) {
 			final Scheme scheme = schemeEvent.getScheme();
 
-			final String schemeId = scheme.getId();
 			final boolean schemeIdAdded = scheme.isDefined();
 			boolean activeSchemeChanged = false;
 			if (schemeIdAdded) {
-				definedSchemeIds.add(schemeId);
+				/*
+				 * Add the defined scheme to the array -- creating and growing
+				 * the array as necessary. 
+				 */
+				if (definedSchemes == null) {
+					definedSchemes = new Scheme[] { scheme };
+					definedSchemeCount = 1;
+
+				} else if (definedSchemeCount < definedSchemes.length) {
+					definedSchemes[definedSchemeCount++] = scheme;
+
+				} else {
+					// Double the array size.
+					final Scheme[] newArray = new Scheme[definedSchemes.length * 2];
+					System.arraycopy(definedSchemes, 0, newArray, 0,
+							definedSchemes.length);
+					definedSchemes = newArray;
+					definedSchemes[definedSchemeCount++] = scheme;
+				}
 			} else {
-				definedSchemeIds.remove(schemeId);
+				/*
+				 * Remove the scheme from the array of defined scheme, but do
+				 * not compact the array.
+				 */
+				if (definedSchemes != null) {
+					boolean found = false;
+					for (int i = 0; i < definedSchemeCount; i++) {
+						if (scheme == definedSchemes[i]) {
+							found = true;
+						}
+						if (found) {
+							if (i + 1 < definedSchemes.length) {
+								definedSchemes[i] = definedSchemes[i + 1];
+							} else {
+								definedSchemes[i] = null;
+							}
+						}
+					}
+					if (found) {
+						definedSchemeCount--;
+					}
+				}
+				
 				if (activeScheme == scheme) {
 					activeScheme = null;
 					activeSchemeIds = null;
@@ -1723,7 +1775,7 @@ public final class BindingManager implements IContextManagerListener,
 			}
 
 			fireBindingManagerChanged(new BindingManagerEvent(this, false,
-					activeSchemeChanged, schemeId, schemeIdAdded,
+					activeSchemeChanged, scheme, schemeIdAdded,
 					!schemeIdAdded, false, false));
 		}
 	}
@@ -1811,21 +1863,22 @@ public final class BindingManager implements IContextManagerListener,
 	 * </p>
 	 * 
 	 * @param bindings
-	 *            The new set of bindings; may be <code>null</code>. This set
+	 *            The new array of bindings; may be <code>null</code>. This set
 	 *            is copied into a local data structure.
 	 */
-	public final void setBindings(final Set bindings) {
-		if (Util.equals(this.bindings, bindings)) {
+	public final void setBindings(final Binding[] bindings) {
+		if (Arrays.equals(this.bindings, bindings)) {
 			return; // nothing has changed
 		}
 
-		if ((bindings == null) || (bindings.isEmpty())) {
+		if ((bindings == null) || (bindings.length == 0)) {
 			this.bindings = null;
 			bindingCount = 0;
 		} else {
-			this.bindings = (Binding[]) bindings.toArray(new Binding[bindings
-					.size()]);
-			bindingCount = bindings.size();
+			final int bindingsLength = bindings.length;
+			this.bindings = new Binding[bindingsLength];
+			System.arraycopy(bindings, 0, this.bindings, 0, bindingsLength);
+			bindingCount = bindingsLength;
 		}
 		clearCache();
 	}

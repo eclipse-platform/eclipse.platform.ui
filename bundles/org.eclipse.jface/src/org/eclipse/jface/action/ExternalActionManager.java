@@ -12,7 +12,6 @@
 package org.eclipse.jface.action;
 
 import java.text.MessageFormat;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -214,13 +213,12 @@ public final class ExternalActionManager {
 		 * @see org.eclipse.jface.action.ExternalActionManager.ICallback#getAccelerator(String)
 		 */
 		public final Integer getAccelerator(final String commandId) {
-			final Collection activeBindings = bindingManager
+			final TriggerSequence[] activeBindings = bindingManager
 					.getActiveBindingsFor(commandId);
-			final Iterator bindingItr = activeBindings.iterator();
+			final int activeBindingsCount = activeBindings.length;
 			Integer accelerator = null;
-			while (bindingItr.hasNext()) {
-				final TriggerSequence triggerSequence = (TriggerSequence) bindingItr
-						.next();
+			for (int i = 0; i < activeBindingsCount; i++) {
+				final TriggerSequence triggerSequence = (TriggerSequence) activeBindings[i];
 				final Trigger[] triggers = triggerSequence.getTriggers();
 
 				if (triggers.length == 1) {
@@ -241,14 +239,13 @@ public final class ExternalActionManager {
 		 * @see org.eclipse.jface.action.ExternalActionManager.ICallback#getAcceleratorText(String)
 		 */
 		public final String getAcceleratorText(final String commandId) {
-			final Collection activeBindings = bindingManager
+			final TriggerSequence[] activeBindings = bindingManager
 					.getActiveBindingsFor(commandId);
-			final Iterator bindingItr = activeBindings.iterator();
+			final int activeBindingsCount = activeBindings.length;
 			String acceleratorText = null;
 
-			if (bindingItr.hasNext()) {
-				final TriggerSequence triggerSequence = (TriggerSequence) bindingItr
-						.next();
+			for (int i = 0; i < activeBindingsCount; i++) {
+				final TriggerSequence triggerSequence = activeBindings[i];
 				acceleratorText = triggerSequence.format();
 			}
 

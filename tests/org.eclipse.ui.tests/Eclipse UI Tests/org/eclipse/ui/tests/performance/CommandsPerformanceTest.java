@@ -229,7 +229,7 @@ public final class CommandsPerformanceTest extends BasicPerformanceTest {
 				.setActiveScheme((Scheme) schemes.get(schemes.size() - 1));
 
 		// Create the deletion markers.
-		final Set bindings = new HashSet();
+		final Binding[] bindings = new Binding[bindingCount];
 		for (int i = 0; i < deletionMarkers; i++) {
 			/*
 			 * Set-up the locale and platform. These are based on the numbers
@@ -274,7 +274,7 @@ public final class CommandsPerformanceTest extends BasicPerformanceTest {
 			// Construct the binding.
 			final Binding binding = new KeyBinding(keySequence, commandId,
 					schemeId, contextId, locale, platform, null, type);
-			bindings.add(binding);
+			bindings[i] = binding;
 		}
 
 		/*
@@ -327,7 +327,7 @@ public final class CommandsPerformanceTest extends BasicPerformanceTest {
 			// Construct the binding.
 			final Binding binding = new KeyBinding(keySequence, commandId,
 					schemeId, contextId, locale, platform, null, type);
-			bindings.add(binding);
+			bindings[i + deletionMarkers] = binding;
 		}
 		bindingManager.setBindings(bindings);
 	}

@@ -23,6 +23,7 @@ import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.bindings.BindingManagerEvent;
 import org.eclipse.jface.bindings.IBindingManagerListener;
 import org.eclipse.jface.bindings.Scheme;
+import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.bindings.keys.KeyBinding;
 import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.ParseException;
@@ -214,13 +215,13 @@ public final class BindingManagerTest extends UITestCase {
 	 */
 	public final void testGetActiveBindingsFor() throws NotDefinedException {
 		// Test with a null argument.
-		final Collection activeBindingsForNull = bindingManager
+		final TriggerSequence[] activeBindingsForNull = bindingManager
 				.getActiveBindingsFor(null);
 		assertNotNull("The active bindings for a command should never be null",
 				activeBindingsForNull);
 		assertTrue(
 				"The active binding for a null command should always be empty",
-				activeBindingsForNull.isEmpty());
+				activeBindingsForNull.length == 0);
 
 		// Test a simple case.
 		final Context context = contextManager.getContext("na");
@@ -239,11 +240,11 @@ public final class BindingManagerTest extends UITestCase {
 				null, Binding.SYSTEM);
 		bindingManager.addBinding(binding);
 
-		final Collection bindings = bindingManager
+		final TriggerSequence[] bindings = bindingManager
 				.getActiveBindingsFor(commandId);
-		assertEquals("There should be one binding", 1, bindings.size());
+		assertEquals("There should be one binding", 1, bindings.length);
 		assertSame("The binding should match", TestBinding.TRIGGER_SEQUENCE,
-				bindings.iterator().next());
+				bindings[0]);
 	}
 
 	/**
@@ -270,18 +271,17 @@ public final class BindingManagerTest extends UITestCase {
 		final Binding binding = new TestBinding(null, "schemeId", "contextId",
 				null, null, Binding.SYSTEM);
 		bindingManager.addBinding(binding);
-		final Set bindings = bindingManager.getBindings();
-		assertEquals("There should be one binding", 1, bindings.size());
-		assertSame("The binding should be the same", binding, bindings
-				.iterator().next());
+		final Binding[] bindings = bindingManager.getBindings();
+		assertEquals("There should be one binding", 1, bindings.length);
+		assertSame("The binding should be the same", binding, bindings[0]);
 
 		/*
 		 * Check that modifying this set does not modify the internal data
 		 * structures.
 		 */
-		bindings.clear();
-		assertEquals("There should still be one binding", 1, bindingManager
-				.getBindings().size());
+		bindings[0] = null;
+		assertNotNull("There should be no change",
+				bindingManager.getBindings()[0]);
 	}
 
 	/**
@@ -289,35 +289,33 @@ public final class BindingManagerTest extends UITestCase {
 	 */
 	public final void testGetDefinedSchemeIds() {
 		// Starting condition.
-		assertTrue("The set of defined scheme ids should start empty",
-				bindingManager.getDefinedSchemeIds().isEmpty());
+		assertTrue("The set of defined schemes should start empty",
+				bindingManager.getDefinedSchemes().length == 0);
 
 		// Retrieving a scheme shouldn't change anything.
-		final String schemeId = "schemeId";
-		final Scheme scheme = bindingManager.getScheme(schemeId);
+		final Scheme scheme = bindingManager.getScheme("schemeId");
 		assertTrue(
-				"The set of defined scheme ids should still be empty after a get",
-				bindingManager.getDefinedSchemeIds().isEmpty());
+				"The set of defined schemes should still be empty after a get",
+				bindingManager.getDefinedSchemes().length == 0);
 
 		// Defining the scheme should change things.
 		scheme.define("name", "description", null);
-		final Set definedSchemes = bindingManager.getDefinedSchemeIds();
-		assertEquals("There should be one defined scheme id", 1, definedSchemes
-				.size());
-		assertSame("The defined scheme id should match", schemeId,
-				definedSchemes.iterator().next());
-		try {
-			definedSchemes.clear();
-			fail("The API should not expose internal collections");
-		} catch (final UnsupportedOperationException e) {
-			// Success
-		}
+		Scheme[] definedSchemes = bindingManager.getDefinedSchemes();
+		assertEquals("There should be one defined scheme id", 1,
+				definedSchemes.length);
+		assertSame("The defined scheme id should match", scheme,
+				definedSchemes[0]);
+
+		definedSchemes[0] = null;
+		definedSchemes = bindingManager.getDefinedSchemes();
+		assertSame("The API should not expose internal collections", scheme,
+				definedSchemes[0]);
 
 		// Undefining the scheme should also change things.
 		scheme.undefine();
 		assertTrue(
-				"The set of define scheme ids should be empty after an undefine",
-				bindingManager.getDefinedSchemeIds().isEmpty());
+				"The set of defined schemes should be empty after an undefine",
+				bindingManager.getDefinedSchemes().length == 0);
 	}
 
 	/**
@@ -360,9 +358,9 @@ public final class BindingManagerTest extends UITestCase {
 				.getInstance("CTRL+F CTRL+F");
 		final Binding partialMatchBinding1 = new KeyBinding(partialMatch1,
 				"partial1", "na", "na", null, null, null, Binding.SYSTEM);
-		final Set bindings = new HashSet();
-		bindings.add(perfectMatchBinding);
-		bindings.add(partialMatchBinding1);
+		final Binding[] bindings = new Binding[2];
+		bindings[0] = perfectMatchBinding;
+		bindings[1] = partialMatchBinding1;
 		bindingManager.setBindings(bindings);
 		Map partialMatches = bindingManager.getPartialMatches(perfectMatch);
 		assertTrue("A partial match should override a perfect match",
@@ -375,9 +373,8 @@ public final class BindingManagerTest extends UITestCase {
 				.getInstance("CTRL+F CTRL+F CTRL+F");
 		final Binding partialMatchBinding2 = new KeyBinding(partialMatch2,
 				"partial2", "na", "na", null, null, null, Binding.SYSTEM);
-		bindings.clear();
-		bindings.add(partialMatchBinding1);
-		bindings.add(partialMatchBinding2);
+		bindings[0] = partialMatchBinding1;
+		bindings[1] = partialMatchBinding2;
 		bindingManager.setBindings(bindings);
 		partialMatches = bindingManager.getPartialMatches(perfectMatch);
 		assertEquals("There should be two partial matches", 2, partialMatches
@@ -390,8 +387,7 @@ public final class BindingManagerTest extends UITestCase {
 						.get(partialMatch2));
 
 		// SCENARIO 3
-		bindings.add(perfectMatchBinding);
-		bindingManager.setBindings(bindings);
+		bindingManager.addBinding(perfectMatchBinding);
 		partialMatches = bindingManager.getPartialMatches(KeySequence
 				.getInstance());
 		assertEquals("There should be three partial matches", 3, partialMatches
@@ -439,9 +435,9 @@ public final class BindingManagerTest extends UITestCase {
 				.getInstance("CTRL+F CTRL+F");
 		final Binding partialMatchBinding1 = new KeyBinding(partialMatch1,
 				"partial1", "na", "na", null, null, null, Binding.SYSTEM);
-		final Set bindings = new HashSet();
-		bindings.add(perfectMatchBinding);
-		bindings.add(partialMatchBinding1);
+		final Binding[] bindings = new Binding[2];
+		bindings[0] = perfectMatchBinding;
+		bindings[1] = partialMatchBinding1;
 		bindingManager.setBindings(bindings);
 		String actualCommandId = bindingManager.getPerfectMatch(perfectMatch);
 		assertSame("This should be a perfect match", perfectMatchBinding
@@ -452,16 +448,14 @@ public final class BindingManagerTest extends UITestCase {
 				.getInstance("CTRL+F CTRL+F CTRL+F");
 		final Binding partialMatchBinding2 = new KeyBinding(partialMatch2,
 				"partial2", "na", "na", null, null, null, Binding.SYSTEM);
-		bindings.clear();
-		bindings.add(partialMatchBinding1);
-		bindings.add(partialMatchBinding2);
+		bindings[0] = partialMatchBinding1;
+		bindings[1] = partialMatchBinding2;
 		bindingManager.setBindings(bindings);
 		actualCommandId = bindingManager.getPerfectMatch(perfectMatch);
 		assertNull("This should be no perfect matches", actualCommandId);
 
 		// SCENARIO 3
-		bindings.add(perfectMatchBinding);
-		bindingManager.setBindings(bindings);
+		bindingManager.addBinding(perfectMatchBinding);
 		actualCommandId = bindingManager.getPerfectMatch(KeySequence
 				.getInstance());
 		assertNull("This should be no perfect matches for an empty sequence",
@@ -521,9 +515,9 @@ public final class BindingManagerTest extends UITestCase {
 				.getInstance("CTRL+F CTRL+F");
 		final Binding partialMatchBinding1 = new KeyBinding(partialMatch1,
 				"partial1", "na", "na", null, null, null, Binding.SYSTEM);
-		final Set bindings = new HashSet();
-		bindings.add(perfectMatchBinding);
-		bindings.add(partialMatchBinding1);
+		final Binding[] bindings = new Binding[2];
+		bindings[0] = perfectMatchBinding;
+		bindings[1] = partialMatchBinding1;
 		bindingManager.setBindings(bindings);
 		assertTrue("A perfect match should be overridden by a partial",
 				bindingManager.isPartialMatch(perfectMatch));
@@ -533,15 +527,14 @@ public final class BindingManagerTest extends UITestCase {
 				.getInstance("CTRL+F CTRL+F CTRL+F");
 		final Binding partialMatchBinding2 = new KeyBinding(partialMatch2,
 				"partial2", "na", "na", null, null, null, Binding.SYSTEM);
-		bindings.clear();
-		bindings.add(partialMatchBinding1);
-		bindings.add(partialMatchBinding2);
+		bindings[0] = partialMatchBinding1;
+		bindings[1] = partialMatchBinding2;
 		bindingManager.setBindings(bindings);
 		assertTrue("Two partial matches should count as a partial",
 				bindingManager.isPartialMatch(perfectMatch));
 
 		// SCENARIO 3
-		bindings.add(perfectMatchBinding);
+		bindingManager.addBinding(perfectMatchBinding);
 		bindingManager.setBindings(bindings);
 		assertTrue("An empty sequence matches everything partially",
 				bindingManager.isPartialMatch(KeySequence.getInstance()));
@@ -579,9 +572,9 @@ public final class BindingManagerTest extends UITestCase {
 				.getInstance("CTRL+F CTRL+F");
 		final Binding partialMatchBinding1 = new KeyBinding(partialMatch1,
 				"partial1", "na", "na", null, null, null, Binding.SYSTEM);
-		final Set bindings = new HashSet();
-		bindings.add(perfectMatchBinding);
-		bindings.add(partialMatchBinding1);
+		final Binding[] bindings = new Binding[2];
+		bindings[0] = perfectMatchBinding;
+		bindings[1] = partialMatchBinding1;
 		bindingManager.setBindings(bindings);
 		assertTrue("This should be a perfect match", bindingManager
 				.isPerfectMatch(perfectMatch));
@@ -591,16 +584,14 @@ public final class BindingManagerTest extends UITestCase {
 				.getInstance("CTRL+F CTRL+F CTRL+F");
 		final Binding partialMatchBinding2 = new KeyBinding(partialMatch2,
 				"partial2", "na", "na", null, null, null, Binding.SYSTEM);
-		bindings.clear();
-		bindings.add(partialMatchBinding1);
-		bindings.add(partialMatchBinding2);
+		bindings[0] = partialMatchBinding1;
+		bindings[1] = partialMatchBinding2;
 		bindingManager.setBindings(bindings);
 		assertTrue("This should be no perfect matches", !bindingManager
 				.isPerfectMatch(perfectMatch));
 
 		// SCENARIO 3
-		bindings.add(perfectMatchBinding);
-		bindingManager.setBindings(bindings);
+		bindingManager.addBinding(perfectMatchBinding);
 		assertTrue("This should be no perfect matches", !bindingManager
 				.isPerfectMatch(KeySequence.getInstance()));
 	}
@@ -650,7 +641,7 @@ public final class BindingManagerTest extends UITestCase {
 		bindingManager.removeBindings(TestBinding.TRIGGER_SEQUENCE, "na", "na",
 				"zh", "gtk", null, Binding.USER);
 		assertEquals("There should be four bindings left", 4, bindingManager
-				.getBindings().size());
+				.getBindings().length);
 		assertNotNull("There should be four active bindings", bindingManager
 				.getActiveBindingsFor("command1"));
 		assertNotNull("There should be four active bindings", bindingManager
@@ -715,20 +706,20 @@ public final class BindingManagerTest extends UITestCase {
 		final String commandId = "commandId";
 		bindingManager.setBindings(null);
 		assertTrue("There should be no active bindings", bindingManager
-				.getActiveBindingsFor(commandId).isEmpty());
+				.getActiveBindingsFor(commandId).length == 0);
 
 		// ADD BINDING
 		final Binding binding = new TestBinding(commandId, "na", "na", null,
 				null, Binding.SYSTEM);
-		final Set bindings = new HashSet();
-		bindings.add(binding);
+		final Binding[] bindings = new Binding[1];
+		bindings[0] = binding;
 		bindingManager.setBindings(bindings);
-		final Collection activeBindings = bindingManager
+		final TriggerSequence[] activeBindings = bindingManager
 				.getActiveBindingsFor(commandId);
-		assertEquals("There should be one active binding", 1, activeBindings
-				.size());
+		assertEquals("There should be one active binding", 1,
+				activeBindings.length);
 		assertSame("The binding should be the one we set",
-				TestBinding.TRIGGER_SEQUENCE, activeBindings.iterator().next());
+				TestBinding.TRIGGER_SEQUENCE, activeBindings[0]);
 	}
 
 	/**
@@ -763,14 +754,14 @@ public final class BindingManagerTest extends UITestCase {
 				null, Binding.SYSTEM);
 		bindingManager.addBinding(binding);
 		assertTrue("The binding shouldn't be active", bindingManager
-				.getActiveBindingsFor(commandId).isEmpty());
+				.getActiveBindingsFor(commandId).length == 0);
 		bindingManager.setLocale("xx_XX");
-		final Collection activeBindings = bindingManager
+		final TriggerSequence[] activeBindings = bindingManager
 				.getActiveBindingsFor(commandId);
-		assertEquals("The binding should become active", 1, activeBindings
-				.size());
+		assertEquals("The binding should become active", 1,
+				activeBindings.length);
 		assertSame("The binding should be the same",
-				TestBinding.TRIGGER_SEQUENCE, activeBindings.iterator().next());
+				TestBinding.TRIGGER_SEQUENCE, activeBindings[0]);
 	}
 
 	/**
@@ -805,13 +796,13 @@ public final class BindingManagerTest extends UITestCase {
 				"atari", Binding.SYSTEM);
 		bindingManager.addBinding(binding);
 		assertTrue("The binding shouldn't be active", bindingManager
-				.getActiveBindingsFor(commandId).isEmpty());
+				.getActiveBindingsFor(commandId).length == 0);
 		bindingManager.setPlatform("atari");
-		final Collection activeBindings = bindingManager
+		final TriggerSequence[] activeBindings = bindingManager
 				.getActiveBindingsFor(commandId);
-		assertEquals("The binding should become active", 1, activeBindings
-				.size());
+		assertEquals("The binding should become active", 1,
+				activeBindings.length);
 		assertSame("The binding should be the same",
-				TestBinding.TRIGGER_SEQUENCE, activeBindings.iterator().next());
+				TestBinding.TRIGGER_SEQUENCE, activeBindings[0]);
 	}
 }

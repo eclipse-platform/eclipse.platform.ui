@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.keys;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
@@ -21,6 +20,7 @@ import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.bindings.Scheme;
+import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.tests.util.UITestCase;
 
@@ -94,19 +94,17 @@ public final class BindingInteractionsTest extends UITestCase {
 
 		final Binding binding1 = new TestBinding("conflict1", "na", "na", null,
 				null, Binding.SYSTEM);
+		bindingManager.addBinding(binding1);
 		final Binding binding2 = new TestBinding("conflict2", "na", "na", null,
 				null, Binding.SYSTEM);
-		final Set bindings = new HashSet();
-		bindings.add(binding1);
-		bindings.add(binding2);
-		bindingManager.setBindings(bindings);
+		bindingManager.addBinding(binding2);
 
-		Collection activeBindings = bindingManager
+		TriggerSequence[] activeBindings = bindingManager
 				.getActiveBindingsFor(binding1.getCommandId());
-		assertTrue("Neither binding should be active", activeBindings.isEmpty());
+		assertTrue("Neither binding should be active", activeBindings.length == 0);
 		activeBindings = bindingManager.getActiveBindingsFor(binding2
 				.getCommandId());
-		assertTrue("Neither binding should be active", activeBindings.isEmpty());
+		assertTrue("Neither binding should be active", activeBindings.length == 0);
 	}
 
 	/**
@@ -132,12 +130,10 @@ public final class BindingInteractionsTest extends UITestCase {
 
 		final Binding binding1 = new TestBinding("parent", "na", "parent",
 				null, null, Binding.SYSTEM);
+		bindingManager.addBinding(binding1);
 		final Binding binding2 = new TestBinding("child", "na", "child", null,
 				null, Binding.SYSTEM);
-		final Set bindings = new HashSet();
-		bindings.add(binding1);
-		bindings.add(binding2);
-		bindingManager.setBindings(bindings);
+		bindingManager.addBinding(binding2);
 
 		// Only "parent"
 		final Set activeContextIds = new HashSet();
@@ -188,12 +184,10 @@ public final class BindingInteractionsTest extends UITestCase {
 
 		final Binding binding1 = new TestBinding(null, "na", "na", null, null,
 				Binding.USER);
+		bindingManager.addBinding(binding1);
 		final Binding binding2 = new TestBinding("system", "na", "na", null,
 				null, Binding.SYSTEM);
-		final Set bindings = new HashSet();
-		bindings.add(binding1);
-		bindings.add(binding2);
-		bindingManager.setBindings(bindings);
+		bindingManager.addBinding(binding2);
 		assertEquals("The user should be able to remove bindings", null,
 				bindingManager.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE));
 	}
@@ -226,10 +220,10 @@ public final class BindingInteractionsTest extends UITestCase {
 				null, Binding.SYSTEM);
 		final Binding binding3 = new TestBinding(null, "na", "na", null,
 				"not the current platform", Binding.SYSTEM);
-		final Set bindings = new HashSet();
-		bindings.add(binding1);
-		bindings.add(binding2);
-		bindings.add(binding3);
+		final Binding[] bindings = new Binding[3];
+		bindings[0] = binding1;
+		bindings[1] = binding2;
+		bindings[2] = binding3;
 		bindingManager.setBindings(bindings);
 		assertEquals(
 				"A binding should not cause a deletion if its locale or platform doesn't match",
@@ -260,15 +254,13 @@ public final class BindingInteractionsTest extends UITestCase {
 
 		final Binding binding1 = new TestBinding(null, "na", "na", null, null,
 				Binding.USER);
+		bindingManager.addBinding(binding1);
 		final Binding binding2 = new TestBinding("system", "na", "na", null,
 				null, Binding.SYSTEM);
+		bindingManager.addBinding(binding2);
 		final Binding binding3 = new TestBinding("user", "na", "na", null,
 				null, Binding.USER);
-		final Set bindings = new HashSet();
-		bindings.add(binding1);
-		bindings.add(binding2);
-		bindings.add(binding3);
-		bindingManager.setBindings(bindings);
+		bindingManager.addBinding(binding3);
 		assertEquals("The user redefine a particular binding", binding3
 				.getCommandId(), bindingManager
 				.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE));
@@ -295,17 +287,15 @@ public final class BindingInteractionsTest extends UITestCase {
 
 		final Binding generalBinding = new TestBinding("general", scheme
 				.getId(), context.getId(), null, null, Binding.SYSTEM);
+		bindingManager.addBinding(generalBinding);
 		final Binding cancelOnPlatform = new TestBinding(null, scheme.getId(),
 				context.getId(), null, bindingManager.getPlatform(),
 				Binding.SYSTEM);
+		bindingManager.addBinding(cancelOnPlatform);
 		final Binding userOverride = new TestBinding("user", scheme.getId(),
 				context.getId(), null, bindingManager.getPlatform(),
 				Binding.USER);
-		final Set bindings = new HashSet();
-		bindings.add(generalBinding);
-		bindings.add(cancelOnPlatform);
-		bindings.add(userOverride);
-		bindingManager.setBindings(bindings);
+		bindingManager.addBinding(userOverride);
 		assertEquals("The user redefine a binding deleted in the system",
 				userOverride.getCommandId(), bindingManager
 						.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE));
@@ -351,9 +341,9 @@ public final class BindingInteractionsTest extends UITestCase {
 
 		// Test to see that only the child is active.
 		assertTrue("The parent should not be active", bindingManager
-				.getActiveBindingsFor(parent).isEmpty());
-		assertTrue("The child should be active", !bindingManager
-				.getActiveBindingsFor(child).isEmpty());
+				.getActiveBindingsFor(parent).length == 0);
+		assertTrue("The child should be active", bindingManager
+				.getActiveBindingsFor(child).length != 0);
 	}
 
 	/**
@@ -379,15 +369,13 @@ public final class BindingInteractionsTest extends UITestCase {
 
 		final Binding binding1 = new TestBinding("base", "na", "na", null,
 				null, Binding.SYSTEM);
+		bindingManager.addBinding(binding1);
 		final Binding binding2 = new TestBinding(null, "na", "na", Locale
 				.getDefault().toString(), null, Binding.SYSTEM);
+		bindingManager.addBinding(binding2);
 		final Binding binding3 = new TestBinding("locale-specific", "na", "na",
 				Locale.getDefault().toString(), null, Binding.SYSTEM);
-		final Set bindings = new HashSet();
-		bindings.add(binding1);
-		bindings.add(binding2);
-		bindings.add(binding3);
-		bindingManager.setBindings(bindings);
+		bindingManager.addBinding(binding3);
 		assertEquals(
 				"A plug-in developer should be able to change a binding for a locale",
 				binding3.getCommandId(), bindingManager
@@ -417,15 +405,13 @@ public final class BindingInteractionsTest extends UITestCase {
 
 		final Binding binding1 = new TestBinding("base", "na", "na", null,
 				null, Binding.SYSTEM);
+		bindingManager.addBinding(binding1);
 		final Binding binding2 = new TestBinding(null, "na", "na", null, SWT
 				.getPlatform(), Binding.SYSTEM);
+		bindingManager.addBinding(binding2);
 		final Binding binding3 = new TestBinding("platform-specific", "na",
 				"na", null, SWT.getPlatform(), Binding.SYSTEM);
-		final Set bindings = new HashSet();
-		bindings.add(binding1);
-		bindings.add(binding2);
-		bindings.add(binding3);
-		bindingManager.setBindings(bindings);
+		bindingManager.addBinding(binding3);
 		assertEquals(
 				"A plug-in developer should be able to change a binding for a platform",
 				binding3.getCommandId(), bindingManager
@@ -465,12 +451,10 @@ public final class BindingInteractionsTest extends UITestCase {
 
 		final Binding binding1 = new TestBinding("child", "child", "na", null,
 				null, Binding.SYSTEM);
+		bindingManager.addBinding(binding1);
 		final Binding binding2 = new TestBinding("parent", "parent", "na",
 				null, null, Binding.SYSTEM);
-		final Set bindings = new HashSet();
-		bindings.add(binding1);
-		bindings.add(binding2);
-		bindingManager.setBindings(bindings);
+		bindingManager.addBinding(binding2);
 		assertEquals("The binding from the child scheme should be active",
 				binding1.getCommandId(), bindingManager
 						.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE));
@@ -508,12 +492,10 @@ public final class BindingInteractionsTest extends UITestCase {
 		final Binding binding1 = new TestBinding("parent",
 				parentScheme.getId(), childContext.getId(), null, null,
 				Binding.SYSTEM);
+		bindingManager.addBinding(binding1);
 		final Binding binding2 = new TestBinding("child", childScheme.getId(),
 				parentContext.getId(), null, null, Binding.SYSTEM);
-		final Set bindings = new HashSet();
-		bindings.add(binding1);
-		bindings.add(binding2);
-		bindingManager.setBindings(bindings);
+		bindingManager.addBinding(binding2);
 		assertEquals("The binding from the child scheme should be active",
 				binding2.getCommandId(), bindingManager
 						.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE));
@@ -552,12 +534,10 @@ public final class BindingInteractionsTest extends UITestCase {
 
 		final Binding binding1 = new TestBinding("child", "child", "na", null,
 				null, Binding.SYSTEM);
+		bindingManager.addBinding(binding1);
 		final Binding binding2 = new TestBinding("parent", "parent", "na",
 				null, null, Binding.USER);
-		final Set bindings = new HashSet();
-		bindings.add(binding1);
-		bindings.add(binding2);
-		bindingManager.setBindings(bindings);
+		bindingManager.addBinding(binding2);
 		assertEquals("The binding from the child scheme should be active",
 				binding1.getCommandId(), bindingManager
 						.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE));
@@ -586,12 +566,10 @@ public final class BindingInteractionsTest extends UITestCase {
 
 		final Binding binding1 = new TestBinding("sibling1", "na", "sibling1",
 				null, null, Binding.SYSTEM);
+		bindingManager.addBinding(binding1);
 		final Binding binding2 = new TestBinding("sibling2", "na", "sibling2",
 				null, null, Binding.SYSTEM);
-		final Set bindings = new HashSet();
-		bindings.add(binding1);
-		bindings.add(binding2);
-		bindingManager.setBindings(bindings);
+		bindingManager.addBinding(binding2);
 
 		// One sibling active
 		final Set activeContextIds = new HashSet();
@@ -649,12 +627,10 @@ public final class BindingInteractionsTest extends UITestCase {
 
 		final Binding binding1 = new TestBinding("user", "na", "na", null,
 				null, Binding.USER);
+		bindingManager.addBinding(binding1);
 		final Binding binding2 = new TestBinding("system", "na", "na", null,
 				null, Binding.SYSTEM);
-		final Set bindings = new HashSet();
-		bindings.add(binding1);
-		bindings.add(binding2);
-		bindingManager.setBindings(bindings);
+		bindingManager.addBinding(binding2);
 		assertEquals("The user-defined binding should be active", binding1
 				.getCommandId(), bindingManager
 				.getPerfectMatch(TestBinding.TRIGGER_SEQUENCE));

@@ -55,20 +55,20 @@ public final class BindingManagerEvent {
 	private final BindingManager manager;
 
 	/**
-	 * The identifier of the scheme that became defined or undefined. This value
-	 * may be <code>null</code> if no scheme changed its defined state.
+	 * The scheme that became defined or undefined. This value may be
+	 * <code>null</code> if no scheme changed its defined state.
 	 */
-	private final String schemeId;
+	private final Scheme scheme;
 
 	/**
-	 * Whether the given scheme id became defined.
+	 * Whether the given scheme became defined.
 	 */
-	private final boolean schemeIdDefined;
+	private final boolean schemeDefined;
 
 	/**
-	 * Whether the given scheme id became undefined.
+	 * Whether the given scheme became undefined.
 	 */
-	private final boolean schemeIdUndefined;
+	private final boolean schemeUndefined;
 
 	/**
 	 * Creates a new instance of this class.
@@ -80,13 +80,13 @@ public final class BindingManagerEvent {
 	 *            Whether the active bindings have changed.
 	 * @param activeSchemeChanged
 	 *            true, iff the active scheme changed.
-	 * @param schemeId
-	 *            The scheme identifier that became defined or undefined;
-	 *            <code>null</code> if no scheme changed state.
-	 * @param schemeIdDefined
+	 * @param scheme
+	 *            The scheme that became defined or undefined; <code>null</code>
+	 *            if no scheme changed state.
+	 * @param schemeDefined
 	 *            <code>true</code> if the given scheme became defined;
 	 *            <code>false</code> otherwise.
-	 * @param schemeIdUndefined
+	 * @param schemeUndefined
 	 *            <code>true</code> if the given scheme became undefined;
 	 *            <code>false</code> otherwise.
 	 * @param localeChanged
@@ -96,19 +96,19 @@ public final class BindingManagerEvent {
 	 */
 	public BindingManagerEvent(final BindingManager manager,
 			final boolean activeBindingsChanged,
-			final boolean activeSchemeChanged, final String schemeId,
-			final boolean schemeIdDefined, final boolean schemeIdUndefined,
+			final boolean activeSchemeChanged, final Scheme scheme,
+			final boolean schemeDefined, final boolean schemeUndefined,
 			final boolean localeChanged, final boolean platformChanged) {
 		if (manager == null)
 			throw new NullPointerException(
 					"A binding manager event needs a binding manager"); //$NON-NLS-1$
 
-		if (schemeIdDefined || schemeIdUndefined) {
-			if (schemeId == null) {
+		if (schemeDefined || schemeUndefined) {
+			if (scheme == null) {
 				throw new NullPointerException(
 						"If a scheme changed defined state, then there should be a scheme identifier"); //$NON-NLS-1$
 			}
-		} else if (schemeId != null) {
+		} else if (scheme != null) {
 			throw new IllegalArgumentException(
 					"The scheme has not changed defined state"); //$NON-NLS-1$
 		}
@@ -116,9 +116,9 @@ public final class BindingManagerEvent {
 		this.manager = manager;
 		this.activeBindingsChanged = activeBindingsChanged;
 		this.activeSchemeChanged = activeSchemeChanged;
-		this.schemeId = schemeId;
-		this.schemeIdDefined = schemeIdDefined;
-		this.schemeIdUndefined = schemeIdUndefined;
+		this.scheme = scheme;
+		this.schemeDefined = schemeDefined;
+		this.schemeUndefined = schemeUndefined;
 		this.localeChanged = localeChanged;
 		this.platformChanged = platformChanged;
 	}
@@ -134,12 +134,12 @@ public final class BindingManagerEvent {
 	}
 
 	/**
-	 * Returns the scheme identifier for the scheme that changed.
+	 * Returns the scheme that changed.
 	 * 
-	 * @return The identifier for the changed scheme
+	 * @return The changed scheme
 	 */
-	public final String getSchemeId() {
-		return schemeId;
+	public final Scheme getScheme() {
+		return scheme;
 	}
 
 	/**
@@ -151,10 +151,22 @@ public final class BindingManagerEvent {
 		return activeSchemeChanged;
 	}
 
+	/**
+	 * Returns whether the locale has changed
+	 * 
+	 * @return <code>true</code> if the locale changed; <code>false</code>
+	 *         otherwise.
+	 */
 	public boolean hasLocaleChanged() {
 		return localeChanged;
 	}
 
+	/**
+	 * Returns whether the platform has changed
+	 * 
+	 * @return <code>true</code> if the platform changed; <code>false</code>
+	 *         otherwise.
+	 */
 	public boolean hasPlatformChanged() {
 		return platformChanged;
 	}
@@ -170,20 +182,20 @@ public final class BindingManagerEvent {
 	}
 
 	/**
-	 * Returns whether or not the scheme identifier became defined
+	 * Returns whether or not the scheme became defined
 	 * 
-	 * @return <code>true</code> if the scheme identifier became defined.
+	 * @return <code>true</code> if the scheme became defined.
 	 */
-	public final boolean isSchemeIdDefined() {
-		return schemeIdDefined;
+	public final boolean isSchemeDefined() {
+		return schemeDefined;
 	}
 
 	/**
-	 * Returns whether or not the scheme identifier became undefined
+	 * Returns whether or not the scheme became undefined
 	 * 
-	 * @return <code>true</code> if the scheme identifier became undefined.
+	 * @return <code>true</code> if the scheme became undefined.
 	 */
-	public final boolean isSchemeIdUndefined() {
-		return schemeIdUndefined;
+	public final boolean isSchemeUndefined() {
+		return schemeUndefined;
 	}
 }
