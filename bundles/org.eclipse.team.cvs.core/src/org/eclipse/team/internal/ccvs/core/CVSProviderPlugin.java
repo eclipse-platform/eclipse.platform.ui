@@ -52,6 +52,8 @@ public class CVSProviderPlugin extends Plugin {
 	public static final boolean DEFAULT_FETCH = true;
 	// communication timeout with the server
 	public static final int DEFAULT_TIMEOUT = 60;
+	// file transfer compression level (0 - 9)
+	public static final int DEFAULT_COMPRESSION_LEVEL = 0;
 
 	// cvs plugin extension points and ids
 	public static final String ID = "org.eclipse.team.cvs.core"; //$NON-NLS-1$
@@ -59,6 +61,7 @@ public class CVSProviderPlugin extends Plugin {
 	public static final String PT_CONNECTIONMETHODS = "connectionmethods"; //$NON-NLS-1$
 	
 	private QuietOption quietness;
+	private int compressionLevel = DEFAULT_COMPRESSION_LEVEL;
 	private int communicationsTimeout = DEFAULT_TIMEOUT;
 	private boolean pruneEmptyDirectories = DEFAULT_PRUNE;
 	private boolean fetchAbsentDirectories = DEFAULT_FETCH;
@@ -129,6 +132,21 @@ public class CVSProviderPlugin extends Plugin {
 	 */
 	public static String getTypeId() {
 		return NATURE_ID;
+	}
+	
+	/**
+	 * Sets the file transfer compression level. (if supported)
+	 * Valid levels are: 0 (disabled), 1 (worst/fastest) - 9 (best/slowest)
+	 */
+	public void setCompressionLevel(int level) {
+		compressionLevel = level;
+	}
+
+	/**
+	 * Gets the file transfer compression level.
+	 */
+	public int getCompressionLevel() {
+		return compressionLevel;
 	}
 
 	/**

@@ -63,6 +63,8 @@ import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 import org.eclipse.team.internal.ccvs.core.resources.CVSRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
+import org.eclipse.team.internal.ccvs.core.streams.CRLFtoLFInputStream;
+import org.eclipse.team.internal.ccvs.core.streams.LFtoCRLFInputStream;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
@@ -99,11 +101,8 @@ import org.eclipse.team.internal.ccvs.core.util.PrepareForReplaceVisitor;
  * have them appear in Eclipse. This may be changed in the future.
  */
 public class CVSTeamProvider extends RepositoryProvider {
-	private static final int CR_BYTE = 0x0D;
-	private static final int LF_BYTE = 0x0A;
 	private static final boolean IS_CRLF_PLATFORM = Arrays.equals(
-		System.getProperty("line.separator").getBytes(), //$NON-NLS-1$
-		new byte[] { CR_BYTE, LF_BYTE });
+		System.getProperty("line.separator").getBytes(), new byte[] { '\r', '\n' }); //$NON-NLS-1$
 
 	private CVSWorkspaceRoot workspaceRoot;
 	private IProject project;
@@ -1055,47 +1054,19 @@ public class CVSTeamProvider extends RepositoryProvider {
 		throws CVSException {
 		try {
 			// convert delimiters in memory
-			boolean changed = false;
-			InputStream is = null;
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			InputStream is = new BufferedInputStream(file.getContents());
 			try {
-				is = new BufferedInputStream(file.getContents());
-				boolean seenCR = false;
-				int c;
-				while ((c = is.read()) != -1) {
-					if (c == LF_BYTE) {
-						if (useCRLF) {
-							bos.write(CR_BYTE);
-							if (! seenCR) changed = true; // added CR
-						} else {
-							if (seenCR) changed = true; // stripped CR
-						}
-						bos.write(LF_BYTE);
-						seenCR = false;
-					} else {
-						if (seenCR) {
-							bos.write(CR_BYTE); // preserve orphaned carriage returns
-							seenCR = false;
-						}
-						if (c == CR_BYTE) {
-							seenCR = true;
-						} else {
-							bos.write(c);
-						}
-					}
-				}
-				if (seenCR) {
-					bos.write(CR_BYTE); // preserve orphaned carriage returns
-				}
-			} finally {
-				if (is != null) is.close();
+				is = new CRLFtoLFInputStream(is);
+				if (useCRLF) is = new LFtoCRLFInputStream(is);
+				for (int b; (b = is.read()) != -1;) bos.write(b);
 				bos.close();
+			} finally {
+				is.close();
 			}
-			if (changed) {
-				// write file back to disk with corrected delimiters if changes were made
-				ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
-				file.setContents(bis, false /*force*/, true /*keepHistory*/, progress);
-			}
+			// write file back to disk with corrected delimiters if changes were made
+			ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
+			file.setContents(bis, false /*force*/, false /*keepHistory*/, progress);
 		} catch (CoreException e) {
 			throw CVSException.wrapException(file, Policy.bind("CVSTeamProvider.cleanLineDelimitersException"), e); //$NON-NLS-1$
 		} catch (IOException e) {

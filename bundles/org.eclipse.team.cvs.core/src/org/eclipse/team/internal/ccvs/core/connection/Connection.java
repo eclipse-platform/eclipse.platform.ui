@@ -5,7 +5,6 @@ package org.eclipse.team.internal.ccvs.core.connection;
  * All Rights Reserved.
  */
  
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -40,7 +39,7 @@ public class Connection {
 	private ICVSRepositoryLocation fCVSRoot;
 	private String fCVSRootDirectory;
 	private boolean fIsEstablished;
-	private BufferedInputStream fResponseStream;
+	private InputStream fResponseStream;
 	private byte[] readLineBuffer = new byte[256];
 
 	public Connection(ICVSRepositoryLocation cvsroot, IServerConnection serverConnection) {
@@ -104,7 +103,7 @@ public class Connection {
 		if (!isEstablished())
 			return null;
 		if (fResponseStream == null)
-			fResponseStream = new BufferedInputStream(serverConnection.getInputStream());
+			fResponseStream = serverConnection.getInputStream();
 		return fResponseStream;	
 	}
 

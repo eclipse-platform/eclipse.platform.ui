@@ -13,10 +13,11 @@ import java.io.InterruptedIOException;
 import java.io.OutputStream;
 import java.net.Socket;
 
-import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.ccvs.core.*;
-import org.eclipse.team.ccvs.core.*;
+import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.ccvs.core.IServerConnection;
+import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.team.internal.ccvs.core.streams.*;
 
 /**
  * A connection used to talk to an cvs pserver.
@@ -73,8 +74,21 @@ public class PServerConnection implements IServerConnection {
 	 * @see Connection#doClose()
 	 */
 	public void close() throws IOException {
-		fSocket.close();
-		fSocket= null;
+		try {
+			if (inputStream != null) inputStream.close();
+		} finally {
+			inputStream = null;
+			try {
+				if (outputStream != null) outputStream.close();
+			} finally {
+				outputStream = null;
+				try {
+					if (fSocket != null) fSocket.close();
+				} finally {
+					fSocket = null;
+				}
+			}
+		}
 	}
 
 	/**
@@ -91,16 +105,17 @@ public class PServerConnection implements IServerConnection {
 		monitor.worked(1);
 		
 		fSocket = createSocket();
+		boolean connected = false;
 		try {
-			this.inputStream = new BufferedInputStream(fSocket.getInputStream());
-			this.outputStream = new BufferedOutputStream(fSocket.getOutputStream());
+			this.inputStream = new BufferedInputStream(new PollingInputStream(fSocket.getInputStream(),
+				cvsroot.getTimeout(), monitor));
+			this.outputStream = new PollingOutputStream(new TimeoutOutputStream(
+				fSocket.getOutputStream(), 8192 /*bufferSize*/, 1000 /*writeTimeout*/, 1000 /*closeTimeout*/),
+				cvsroot.getTimeout(), monitor);
 			authenticate();
-		} catch (IOException e) {
-			cleanUpAfterFailedConnection();
-			throw e;
-		} catch (CVSAuthenticationException e) {
-			cleanUpAfterFailedConnection();
-			throw e;
+			connected = true;
+		} finally {
+			if (! connected) cleanUpAfterFailedConnection();
 		}
 	}
 
@@ -212,7 +227,7 @@ public class PServerConnection implements IServerConnection {
 			// If we get this exception, chances are the host is not responding
 			throw new InterruptedIOException(Policy.bind("PServerConnection.socket", new Object[] {cvsroot.getHost()}));//$NON-NLS-1$
 		}
-		result.setSoTimeout(cvsroot.getTimeout() * 1000);
+		result.setSoTimeout(1000); // 1 second between timeouts
 		return result;
 	}
 

@@ -19,6 +19,9 @@ import java.net.Socket;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.connection.CVSAuthenticationException;
+import org.eclipse.team.internal.ccvs.core.streams.PollingInputStream;
+import org.eclipse.team.internal.ccvs.core.streams.PollingOutputStream;
+import org.eclipse.team.internal.ccvs.core.streams.TimeoutOutputStream;
 
 public class Client {
 	// client identification string
@@ -335,10 +338,13 @@ public void connect(IProgressMonitor monitor) throws IOException, CVSAuthenticat
 
 			}
 			if (timeout >= 0) {
-				socket.setSoTimeout(timeout * 1000);
+				socket.setSoTimeout(1000);
 			}
-			socketIn = new BufferedInputStream(socket.getInputStream());
-			socketOut = new BufferedOutputStream(socket.getOutputStream());
+			socketIn = new BufferedInputStream(new PollingInputStream(socket.getInputStream(),
+				timeout > 0 ? timeout : 1, monitor));
+			socketOut = new PollingOutputStream(new TimeoutOutputStream(
+				socket.getOutputStream(), 8192 /*bufferSize*/, 1000 /*writeTimeout*/, 1000 /*closeTimeout*/),
+				timeout > 0 ? timeout : 1, monitor);
 		}
 
 		// read the ssh server id. The socket creation may of failed if the
@@ -371,13 +377,9 @@ public void connect(IProgressMonitor monitor) throws IOException, CVSAuthenticat
 		os = new StandardOutputStream();
 
 		connected = true;
-	} catch (IOException e) {
-		// If an exception occurs while connected, make sure we disconnect before passing the exception on
-		try {
-			cleanup();
-		} finally {
-			throw e;
-		}
+	// If an exception occurs while connected, make sure we disconnect before passing the exception on
+	} finally {
+		if (! connected) cleanup();
 	}
 }
 /**

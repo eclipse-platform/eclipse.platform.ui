@@ -5,6 +5,7 @@ package org.eclipse.team.internal.ccvs.core.connection;
  * All Rights Reserved.
  */
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -14,6 +15,7 @@ import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.ccvs.core.IServerConnection;
 import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.team.internal.ccvs.core.streams.*;
 
 /**
  * Implements a connection method which invokes an external tool to 
@@ -50,9 +52,17 @@ public class ExtConnection implements IServerConnection {
 	 * Closes the connection.
 	 */
 	public void close() throws IOException {
-		inputStream.close();
-		outputStream.close();
-		process.destroy();
+		try {
+			if (inputStream != null) inputStream.close();
+		} finally {
+			inputStream = null;
+			try {
+				if (outputStream != null) outputStream.close();
+			} finally {
+				outputStream = null;
+				process.destroy();
+			}
+		}
 	}
 	
 	/**
@@ -87,30 +97,52 @@ public class ExtConnection implements IServerConnection {
 		int port = location.getPort();
 		if (port == location.USE_DEFAULT_PORT)
 			port = DEFAULT_PORT;
-		try {
-			// The command line doesn't support the use of a port
-			if (port != DEFAULT_PORT)
-				throw new IOException(Policy.bind("EXTServerConnection.invalidPort")); //$NON-NLS-1$
-					
-			if(CVS_RSH == null || CVS_SERVER == null) {
-				throw new IOException(Policy.bind("EXTServerConnection.varsNotSet"));				 //$NON-NLS-1$
-			}		
+			
+		// The command line doesn't support the use of a port
+		if (port != DEFAULT_PORT)
+			throw new IOException(Policy.bind("EXTServerConnection.invalidPort")); //$NON-NLS-1$
 				
-			process =	Runtime.getRuntime().exec(command);
+		if(CVS_RSH == null || CVS_SERVER == null) {
+			throw new IOException(Policy.bind("EXTServerConnection.varsNotSet"));				 //$NON-NLS-1$
+		}
 
-			inputStream = process.getInputStream();
-			outputStream = process.getOutputStream();
-		} catch (IOException ex) {
-			try {
-				close();
-			} finally {
-				throw new IOException(Policy.bind("EXTServerConnection.ioError", CVS_RSH)); //$NON-NLS-1$
+		boolean connected = false;
+		try {
+			process = Runtime.getRuntime().exec(command);
+
+			inputStream = new PollingInputStream(new TimeoutInputStream(process.getInputStream(),
+				8192 /*bufferSize*/, 1000 /*readTimeout*/, -1 /*closeTimeout*/), location.getTimeout(), monitor);
+			outputStream = new PollingOutputStream(new TimeoutOutputStream(process.getOutputStream(),
+				8192 /*buffersize*/, 1000 /*writeTimeout*/, 1000 /*closeTimeout*/), location.getTimeout(), monitor);
+
+			// XXX need to do something more useful with stderr
+			// discard the input to prevent the process from hanging due to a full pipe
+			Thread thread = new DiscardInputThread(process.getErrorStream());
+			connected = true;
+		} finally {
+			if (! connected) {
+				try {
+					close();
+				} finally {
+					throw new IOException(Policy.bind("EXTServerConnection.ioError", CVS_RSH)); //$NON-NLS-1$
+				}
 			}
-		} catch (RuntimeException e) {
+		}
+	}
+	
+	private static class DiscardInputThread extends Thread {
+		private InputStream in;
+		public DiscardInputThread(InputStream in) {
+			this.in = in;
+		}
+		public void run() {
 			try {
-				close();
-			} finally {
-				throw new IOException(Policy.bind("EXTServerConnection.ioError", CVS_RSH)); //$NON-NLS-1$
+				try {
+					while (in.read() != -1);
+				} finally {
+					in.close();
+				}
+			} catch (IOException e) {
 			}
 		}
 	}

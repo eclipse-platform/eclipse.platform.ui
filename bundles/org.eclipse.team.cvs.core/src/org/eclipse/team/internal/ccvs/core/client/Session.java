@@ -6,15 +6,21 @@ package org.eclipse.team.internal.ccvs.core.client;
  */
  
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.ICVSFile;
 import org.eclipse.team.ccvs.core.ICVSFolder;
@@ -24,8 +30,11 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.connection.Connection;
+import org.eclipse.team.internal.ccvs.core.streams.CRLFtoLFInputStream;
+import org.eclipse.team.internal.ccvs.core.streams.LFtoCRLFInputStream;
+import org.eclipse.team.internal.ccvs.core.streams.ProgressMonitorInputStream;
+import org.eclipse.team.internal.ccvs.core.streams.SizeConstrainedInputStream;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
-import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 
 /**
@@ -57,20 +66,10 @@ public class Session {
 	private static int TRANSFER_BUFFER_SIZE = 8192;
 	// update progress bar in increments of this size (in bytes)
 	//   no incremental progress shown for files smaller than this size
-	private static long TRANSFER_PROGRESS_INCREMENT = 32768;
+	private static int TRANSFER_PROGRESS_INCREMENT = 32768;
 
-	// the platform's line termination sequence
-	private static final byte[] PLATFORM_NEWLINE_BYTES =
-		System.getProperty("line.separator").getBytes();  //$NON-NLS-1$ // at least one byte long
-	// the server's line termination sequence
-	private static final int SERVER_NEWLINE_BYTE = 0x0a; // exactly one byte long
-	private static final byte[] SERVER_NEWLINE_BYTES = new byte[] { SERVER_NEWLINE_BYTE };
-	// true iff newlines must be converted between platform and server formats
-	private static boolean MUST_CONVERT_NEWLINES = PLATFORM_NEWLINE_BYTES.length != 1
-		&& PLATFORM_NEWLINE_BYTES[0] != SERVER_NEWLINE_BYTE;
-		
-	// VCM 1.0 comitted files using CR/LF as a delimiter
-	private static final int CARRIAGE_RETURN_BYTE = 0x0d;
+	private static final boolean IS_CRLF_PLATFORM = Arrays.equals(
+		System.getProperty("line.separator").getBytes(), new byte[] { '\r', '\n' }); //$NON-NLS-1$
 
 	private CVSRepositoryLocation location;
 	private ICVSFolder localRoot;
@@ -80,13 +79,11 @@ public class Session {
 	private Date modTime = null;
 	private boolean noLocalChanges = false;
 	private boolean createBackups = true;
+	private int compressionLevel = 0;
 	private List expansions;
 	private Collection /* of ICVSFile */ textTransferOverrideSet = null;
 	private boolean hasBeenConnected = false;
 
-	// a shared buffer used for file transfers
-	private byte[] transferBuffer = null;
-	
 	// The resource bundle key that provides the file sending message
 	private String sendFileTitleKey;
 
@@ -159,9 +156,23 @@ public class Session {
 	
 			// ask for the set of valid requests
 			Request.VALID_REQUESTS.execute(this, Policy.subMonitorFor(monitor, 50));
-	
+			
 			// set the root directory on the server for this connection
 			connection.writeLine("Root " + getRepositoryRoot()); //$NON-NLS-1$
+
+			// enable compression
+			compressionLevel = CVSProviderPlugin.getPlugin().getCompressionLevel();
+			if (compressionLevel != 0 && isValidRequest("gzip-file-contents")) {
+				// Enable the use of CVS 1.8 per-file compression mechanism.
+				// The newer Gzip-stream request seems to be problematic due to Java's
+				// GZIPInputStream tendency to block on read() rather than to return a
+				// partially filled buffer.  The latter option would be better since it
+				// can make more effective use of the code dictionary, if it can be made
+				// to work...
+				connection.writeLine("gzip-file-contents " + Integer.toString(compressionLevel));
+			} else {
+				compressionLevel = 0;
+			}
 		} catch (CVSException e) {
 			// If there is a failure opening, make sure we're closed
 			if (connection != null) {
@@ -518,14 +529,6 @@ public class Session {
 	}
 
 	/**
-	 * Gets the shared file transfer buffer.
-	 */
-	private byte[] getTransferBuffer() {
-		if (transferBuffer == null) transferBuffer = new byte[TRANSFER_BUFFER_SIZE];
-		return transferBuffer;
-	}
-	
-	/**
 	 * Sends a file to the remote CVS server, possibly translating line delimiters.
 	 * <p>
 	 * Line termination sequences are automatically converted to linefeeds only
@@ -538,87 +541,60 @@ public class Session {
 	 * @param isBinary is true if the file should be sent without translation
 	 * @param monitor the progress monitor
 	 */
-	public void sendFile(ICVSFile file, boolean isBinary, IProgressMonitor monitor)
-		throws CVSException {
+	public void sendFile(ICVSFile file, boolean isBinary, IProgressMonitor monitor) throws CVSException {
 		// check overrides
 		if (textTransferOverrideSet != null &&
 			textTransferOverrideSet.contains(file)) isBinary = false;
 
 		// update progress monitor
-		String title = Policy.bind(getSendFileTitleKey(), new Object[]{ Util.toTruncatedPath(file, localRoot, 3) }); //$NON-NLS-1$
+		final String title = Policy.bind(getSendFileTitleKey(), new Object[]{ Util.toTruncatedPath(file, localRoot, 3) }); //$NON-NLS-1$
 		monitor.subTask(Policy.bind("Session.transferNoSize", title)); //$NON-NLS-1$
 		// obtain an input stream for the file and its size
 		long size = file.getSize();
 		OutputStream out = connection.getOutputStream();
-		InputStream in = file.getContents();
 		try {
-			if (isBinary || PLATFORM_NEWLINE_BYTES.length == 1) {
-				writeLine(Long.toString(size));
-				if (! isBinary && MUST_CONVERT_NEWLINES) {
-					/*** convert newlines on-the-fly ***/
-					transferWithProgress(in, out, size,
-						PLATFORM_NEWLINE_BYTES[0], SERVER_NEWLINE_BYTES, monitor, title);
-				} else {
-					/*** perform no conversion ***/
-					transferWithProgress(in, out, size, 0, null, monitor, title);
-				}
-			} else {
-				// implies file is text, and we must convert newlines since size of platform newline
-				// sequence is not 1, but the server's is
-				/*** convert newlines in memory, since file size may change ***/
-				Assert.isTrue(size < Integer.MAX_VALUE);
-				int fsize = (int) size;
-				byte[] fileContents;
-				if (fsize <= TRANSFER_BUFFER_SIZE) fileContents = getTransferBuffer();
-				else fileContents = new byte[fsize];
-				// translate the file from non-LF delimiters in memory and
-				// compute its reduced size
-				try {
-					// read exactly _size_ bytes
-					try {
-						for (int pos = 0, read; pos < fsize; pos += read) {
-							Policy.checkCanceled(monitor);
-							read = in.read(fileContents, pos, fsize - pos);
-							if (read == -1) {
-								// file ended prematurely
-								throw new IOException(Policy.bind("Session.readError"));//$NON-NLS-1$
-							}
-						}
-					} finally {
-						in.close(); // remember to close the source file
-						in = null;
-					}
-				} catch (IOException e) {
-					throw CVSException.wrapException(e);
-				}
-				// convert platform line termination sequences
-				// conservative since it leaves any partial sequences alone (like stray CR's)
-				// assumes no prefix of a sequence
-				int cur = 0, match = 0;
-				for (int pos = 0; pos < fsize; ++pos) {
-					byte b = fileContents[pos];
-					if (PLATFORM_NEWLINE_BYTES[match] == b) {
-						if (match == PLATFORM_NEWLINE_BYTES.length - 1) {
-							b = SERVER_NEWLINE_BYTE;
-							cur -= match;
-							match = 0;
-						} else match += 1;
-					} else {
-						match = 0;
-					}
-					fileContents[cur++] = b;
-				}
-				// send file
-				writeLine(Integer.toString(cur));
-				in = new ByteArrayInputStream(fileContents, 0, cur);
-				transferWithProgress(in, out, cur, 0, null, monitor, title);
-			}
-		} finally {
+			InputStream in = file.getContents();
 			try {
-				if (in != null) in.close();
-			} catch (IOException e) {
-				throw CVSException.wrapException(e);
+				byte[] buffer = new byte[TRANSFER_BUFFER_SIZE];
+				if (! isBinary && IS_CRLF_PLATFORM || compressionLevel != 0) {
+					// this affects the file size, spool the converted copy to an in-memory buffer
+					if (! isBinary && IS_CRLF_PLATFORM) in = new CRLFtoLFInputStream(in);
+					ByteArrayOutputStream bout = new ByteArrayOutputStream();
+					OutputStream zout;
+					if (compressionLevel != 0) {
+						try {
+							zout = new GZIPOutputStream(bout); // apparently does not support specifying compression level
+						} catch (IOException e) {
+							throw CVSException.wrapException(e);
+						}
+					} else {
+						zout = bout;
+					}
+					for (int count; (count = in.read(buffer)) != -1;) zout.write(buffer, 0, count);
+					zout.close();
+					byte[] contents = bout.toByteArray();
+					in.close();
+					in = new ByteArrayInputStream(contents);
+					size = contents.length;
+				}
+				// setup progress monitoring
+				in = new ProgressMonitorInputStream(in, size, TRANSFER_PROGRESS_INCREMENT, monitor) {
+					protected void updateMonitor(long bytesRead, long bytesTotal, IProgressMonitor monitor) {
+						if (bytesRead == 0) return;
+						monitor.subTask(Policy.bind("Session.transfer", //$NON-NLS-1$
+							new Object[] { title, Long.toString(bytesRead >> 10), Long.toString(bytesTotal >> 10) }));
+					}
+				};
+				// send the file
+				String sizeLine = Long.toString(size);
+				if (compressionLevel != 0) sizeLine = "z" + sizeLine;
+				writeLine(sizeLine);
+				for (int count; (count = in.read(buffer)) != -1;) out.write(buffer, 0, count);
+			} finally {
+				in.close();
 			}
+		} catch (IOException e) {
+			throw CVSException.wrapException(e);
 		}
 	}
 
@@ -644,108 +620,44 @@ public class Session {
 			textTransferOverrideSet.contains(file)) isBinary = false;
 
 		// update progress monitor
-		String title = Policy.bind("Session.receiving", new Object[]{ Util.toTruncatedPath(file, localRoot, 3) }); //$NON-NLS-1$
+		final String title = Policy.bind("Session.receiving", new Object[]{ Util.toTruncatedPath(file, localRoot, 3) }); //$NON-NLS-1$
 		monitor.subTask(Policy.bind("Session.transferNoSize", title)); //$NON-NLS-1$
 		// get the file size from the server
 		long size;
+		boolean compressed = false;
 		try {
-			size = Long.parseLong(readLine(), 10);
+			String sizeLine = readLine();
+			if (sizeLine.charAt(0) == 'z') {
+				compressed = true;
+				sizeLine = sizeLine.substring(1);
+			}
+			size = Long.parseLong(sizeLine, 10);
 		} catch (NumberFormatException e) {
 			throw new CVSException(Policy.bind("Session.badInt"), e); //$NON-NLS-1$
 		}
-		// Set the contents of the file using the stream wrapper
-		FileInputStreamWrapper wrapper = new FileInputStreamWrapper(connection.getInputStream(), size, isBinary, title, monitor);
-		file.setContents(wrapper.getInputStream(), responseType, true, monitor);
-	}
-	
-	/**
-	 * Transfers a file to or from the remove CVS server, possibly expanding line delimiters.
-	 * <p>
-	 * Line termination sequences are only converted upon request by specifying an
-	 * array containing the expected sequence of bytes representing an outbound newline,
-	 * and a single byte representing an inbound newline.  If null is passed for the
-	 * former, the file is assumed to have binary contents, hence no translation is
-	 * performed.
-	 * </p><p>
-	 * Translation is performed on-the-fly, so the file need not fit in available memory.
-	 * </p>
-	 * @param in the input stream
-	 * @param out the output stream
-	 * @param size the source file size
-	 * @param newlineIn the single byte for a received newline, ignored if binary
-	 * @param newlineOut the sequence of bytes for sent newline, or null if binary
-	 * @param monitor the progress monitor
-	 * @param title the name of the file being received (as shown in the monitor)
-	 */
-	private void transferWithProgress(InputStream in, OutputStream out,
-		long size, int newlineIn, byte[] newlineOut, IProgressMonitor monitor, String title)
-		throws CVSException {
-		long nextProgressThresh = TRANSFER_PROGRESS_INCREMENT;
-		Long ksize = new Long(size / 1024);
-		try {
-			byte[] buffer = getTransferBuffer();
-			final int wfirst, wlast;
-			if (newlineOut != null) {
-				wfirst = buffer.length / 2;
-				wlast = buffer.length - newlineOut.length - 1; // reserve space for newline & stray CR
-			} else {
-				wfirst = buffer.length;
-				wlast = wfirst;
+		// create an input stream that spans the next 'size' bytes from the connection
+		InputStream in = new SizeConstrainedInputStream(connection.getInputStream(), size, true /*discardOnClose*/);
+		// setup progress monitoring
+		in = new ProgressMonitorInputStream(in, size, TRANSFER_PROGRESS_INCREMENT, monitor) {
+			protected void updateMonitor(long bytesRead, long bytesTotal, IProgressMonitor monitor) {
+				if (bytesRead == 0) return;
+				monitor.subTask(Policy.bind("Session.transfer", //$NON-NLS-1$
+					new Object[] { title, Long.toString(bytesRead >> 10), Long.toString(bytesTotal >> 10) }));
 			}
-			int wpos = wfirst;
-			// read exactly _size_ bytes
-			boolean fixCRLF = (newlineIn == SERVER_NEWLINE_BYTE);
-			boolean seenCR = false; // only true if fixCRLF and last byte was a CR
-			for (long totalRead = 0; totalRead < size;) {
-				Policy.checkCanceled(monitor);
-				int read = in.read(buffer, 0, (int) Math.min(wfirst, size - totalRead));
-				if (read == -1) {
-					// file ended prematurely
-					throw new IOException(Policy.bind("Session.readError")); //$NON-NLS-1$
-				}
-				totalRead += read;
-				if (newlineOut == null) {
-					// dump binary data
-					out.write(buffer, 0, read);
-				} else {
-					// filter newline sequences in memory from first half of buffer into second half
-					// then dump to output stream
-					for (int p = 0; p < read; ++p) {
-						final byte b = buffer[p];
-						if (b == CARRIAGE_RETURN_BYTE && fixCRLF) {
-							seenCR = true;
-						} else {
-							if (b == newlineIn) {
-								// if fixCRLF we ignore previous CR (if there was one)
-								// replace newlineIn with newlineOut
-								for (int x = 0; x < newlineOut.length; ++x) buffer[wpos++] = newlineOut[x];
-							} else {
-								if (seenCR) buffer[wpos++] = CARRIAGE_RETURN_BYTE; // preserve stray CR's
-								buffer[wpos++] = b;
-							}
-							seenCR = false;
-						}
-						if (wpos >= wlast) {
-							// flush output buffer
-							out.write(buffer, wfirst, wpos - wfirst);
-							wpos = wfirst;
-						}
-					}
-				}
-				// update progress monitor
-				if (totalRead > nextProgressThresh) {
-					monitor.subTask(Policy.bind("Session.transfer", //$NON-NLS-1$
-							new Object[] { title, new Long(totalRead / 1024), ksize}));
-					nextProgressThresh = totalRead + TRANSFER_PROGRESS_INCREMENT;
-				}
+		};
+		// if compression enabled, decompress on the fly
+		if (compressed) {
+			try {
+				in = new GZIPInputStream(in);
+			} catch (IOException e) {
+				throw CVSException.wrapException(e);
 			}
-			// flush pending buffered output
-			if (seenCR) buffer[wpos++] = CARRIAGE_RETURN_BYTE; // preserve stray CR's
-			if (wpos != wfirst) out.write(buffer, wfirst, wpos - wfirst);
-		} catch (IOException e) {
-			throw CVSException.wrapException(e);
 		}
-	}	 
+		// if not binary, translate line delimiters on the fly
+		if (! isBinary && IS_CRLF_PLATFORM) in = new LFtoCRLFInputStream(in);
+		// write the file locally
+		file.setContents(in, responseType, true, new NullProgressMonitor());
+	}
 
 	/**
 	 * Stores the value of the last Mod-time response encountered.
