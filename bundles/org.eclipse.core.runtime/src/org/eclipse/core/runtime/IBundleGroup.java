@@ -12,6 +12,21 @@ package org.eclipse.core.runtime;
 
 import org.osgi.framework.Bundle;
 
+/**
+ * Bundle groups represent a logical collection of plug-ins (aka bundles).  Bundle
+ * groups do not contain their constituents but rather collect them together under
+ * a common label.  The main role of a bundle group is to report to the system
+ * (e.g., the About dialog) what bundles have been installed.  They are not intended
+ * for use in managing the set of bundles they represent.
+ * <p>
+ * Since the bulk of the branding related information is specific to the consumer, 
+ * bundle groups also carry an arbitrary set of properties.  The valid set of 
+ * key-value pairs and their interpretation defined by the consumer in the 
+ * target environment.
+ * </p>
+ * @see IBundleGroupProvider
+ * @since 3.0
+ */
 public interface IBundleGroup {
 
 	/**
@@ -19,14 +34,12 @@ public interface IBundleGroup {
 	 * their identifier and their version.
 	 * @see getVersion()
 	 * @return the identifier for this bundle group
-	 * @since 3.0
 	 */
 	public String getIdentifier();
 
 	/**
 	 * Returns the human-readable name of this bundle group.
 	 * @return the human-readable name
-	 * @since 3.0
 	 */
 	public String getName();
 
@@ -36,27 +49,23 @@ public interface IBundleGroup {
 	 * by the combination of their identifier and their version.
 	 * @see getIdentifier
 	 * @return the string form of this bundle group's version
-	 * @since 3.0
 	 */
 	public String getVersion();
 	/**
 	 * Returns a text description of this bundle group
 	 * @return text description of this bundle group
-	 * @since 3.0
 	 */
 	public String getDescription();
 	
 	/**
 	 * Returns the name of the provider of this bundle group.
 	 * @return the name of the provider or null if none
-	 * @since 3.0
 	 */
 	public String getProviderName();
 	
 	/**
 	 * Returns a list of all bundles supplied by this bundle group.  
 	 * @return the bundles supplied by this bundle group
-	 * @since 3.0
 	 */
 	public Bundle getBundles();
 
@@ -65,7 +74,6 @@ public interface IBundleGroup {
 	 * null is returned if there is no such key/value pair.
 	 * @param key the name of the property to return
 	 * @return the value associated with the given key
-	 * @since 3.0
 	 */
 	public String getProperty(String key);
 }

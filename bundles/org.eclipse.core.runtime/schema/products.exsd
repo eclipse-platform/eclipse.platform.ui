@@ -6,13 +6,19 @@
          <meta.schema plugin="org.eclipse.core.runtime" id="products" name="%productsName"/>
       </appInfo>
       <documentation>
-         [Enter description of this extension point.]
+         Products are the Eclipse unit of branding.  Product extensions are supplied by plug-ins wishing to define one or more products.  There must be one product per extension as the extension id is used in processing and identifying the product.
+&lt;p&gt;
+There are two possible forms of product extension, static and dynamic.  Static product extensions directly contain all relevant information about the product.  Dynamic product extensions identify a class (an &lt;code&gt;IProductProvider&lt;/code&gt;) which is capable of defining one or more products when queried.
       </documentation>
    </annotation>
 
    <element name="extension">
       <complexType>
          <sequence>
+            <choice>
+               <element ref="product"/>
+               <element ref="provider"/>
+            </choice>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -40,46 +46,81 @@
 
    <element name="product">
       <complexType>
-         <attribute name="id" type="string" use="required">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
+         <sequence>
+            <element ref="property"/>
+         </sequence>
          <attribute name="application" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  the default application to run when running this product
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="image" type="string">
-            <annotation>
-               <documentation>
-                  
+                  the human-readable name of this product
                </documentation>
             </annotation>
          </attribute>
          <attribute name="description" type="string">
             <annotation>
                <documentation>
-                  
+                  the human-readable description of this product
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="perspective" type="string">
+      </complexType>
+   </element>
+
+   <element name="property">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="name"/>
+         </appInfo>
+      </annotation>
+      <complexType>
+         <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  the key under which this property is stored
                </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="value" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the value of this property
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="provider">
+      <annotation>
+         <documentation>
+            details of a product provider
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="run"/>
+         </sequence>
+      </complexType>
+   </element>
+
+   <element name="run">
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the fully-qualified name of a class which implements 
+&lt;samp&gt;org.eclipse.core.runtime.IProductProvider&lt;/samp&gt;.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.core.runtime.IProductProvider"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -90,7 +131,7 @@
          <meta.section type="since"/>
       </appInfo>
       <documentation>
-         [Enter the first release in which this extension point appears.]
+         3.0
       </documentation>
    </annotation>
 
@@ -99,7 +140,33 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         [Enter extension point usage example here.]
+         Following is an example of static product declaration: 
+&lt;p&gt;
+&lt;pre&gt;
+   &lt;extension id=&quot;coolProduct&quot; point=&quot;org.eclipse.core.runtime.products&quot;&gt; 
+      &lt;product name=&quot;%coolName&quot; application=&quot;coolApplication&quot; description=&quot;%coolDescription&quot;&gt; 
+          &lt;parameter name=&quot;windowImage&quot; value=&quot;window.gif&quot;/&gt; 
+          &lt;parameter name=&quot;aboutImage&quot; value=&quot;image.gif&quot;/&gt; 
+          &lt;parameter name=&quot;featureImage&quot; value=&quot;feature.gif&quot;/&gt; 
+          &lt;parameter name=&quot;aboutText&quot; value=&quot;%aboutText&quot;/&gt; 
+          &lt;parameter name=&quot;appName&quot; value=&quot;CoolApp&quot;/&gt; 
+          &lt;parameter name=&quot;welcomePage&quot; value=&quot;$nl$/welcome.xml&quot;/&gt; 
+      &lt;/product&gt; 
+   &lt;/extension&gt; 
+&lt;/pre&gt;
+&lt;/p&gt;
+
+The following is an example of a dynamic product (product provider) declaration:
+Following is an example of an application declaration: 
+&lt;p&gt;
+&lt;pre&gt;
+   &lt;extension id=&quot;coolProvider&quot; point=&quot;org.eclipse.core.runtime.products&quot;&gt; 
+      &lt;provider&gt; 
+         &lt;run class=&quot;com.example.productProvider&quot;/&gt; 
+      &lt;/provider&gt; 
+   &lt;/extension&gt; 
+&lt;/pre&gt;
+&lt;/p&gt;
       </documentation>
    </annotation>
 
@@ -108,7 +175,7 @@
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         [Enter API information here.]
+         Static product extensions provided here are represented at runtime by instances of &lt;code&gt;IProduct&lt;/code&gt;.  Dynamic product extensions must identify an implementor of &lt;code&gt;IProductProvider&lt;/code&gt;.
       </documentation>
    </annotation>
 
@@ -117,7 +184,7 @@
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         [Enter information about supplied implementation of this extension point.]
+         No implementations of &lt;code&gt;IProductProvider&lt;/code&gt; are supplied.
       </documentation>
    </annotation>
 
@@ -126,7 +193,9 @@
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         
+         &lt;p&gt;
+Copyright (c) 2004 IBM Corporation and others.
+All rights reserved. This program and the accompanying materials are made available under the terms of the Common Public License v1.0 which accompanies this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/cpl-v10.html&quot;&gt;http://www.eclipse.org/legal/cpl-v10.html&lt;/a&gt;
       </documentation>
    </annotation>
 

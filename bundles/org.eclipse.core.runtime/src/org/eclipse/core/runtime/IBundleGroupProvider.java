@@ -10,18 +10,25 @@
  *******************************************************************************/
 package org.eclipse.core.runtime;
 
+/**
+ * Bundle group providers define groups of plug-ins which have been installed in
+ * the current system.  Typically, a configuration agent (i.e., plug-in installer) will 
+ * define a bundle group provider so that it can report to the system the list 
+ * of plug-ins it has installed.
+ * 
+ * @see IBundleGroup
+ * @since 3.0
+ */
 public interface IBundleGroupProvider {
 	/**
 	 * Returns the human-readable name of this bundle group provider.
 	 * @return the name of this bundle group provider
-	 * @since 3.0
 	 */
 	public String getName();
 	
 	/**
 	 * Returns the bundle groups provided by this provider.
 	 * @return the bundle groups provided by this provider
-	 * @since 3.0
 	 */
 	public IBundleGroup[] getBundleGroups();
 }
