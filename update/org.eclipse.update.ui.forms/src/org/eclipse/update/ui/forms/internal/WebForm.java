@@ -222,5 +222,10 @@ public class WebForm extends AbstractSectionForm {
 			gc.drawImage(headingUnderlineImage, 0, y);
 		}
 	}
+	public void setHeadingText(String headingText) {
+		super.setHeadingText(headingText);
+		if (control!=null)
+			control.redraw();
+	}
 
 }
