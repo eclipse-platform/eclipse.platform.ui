@@ -316,6 +316,8 @@ protected String debugProject() {
 	return currentBuilder.getProject().getFullPath().toString();
 }
 public void deleting(IProject project) {
+	//make sure the builder persistent info is deleted for the project move case
+	setBuildersPersistentInfo(project, null);
 }
 protected IncrementalProjectBuilder getBuilder(String builderName, IProject project) throws CoreException {
 	Hashtable builders = getBuilders(project);
@@ -576,8 +578,15 @@ protected void removeBuilders(IProject project, String builderId) throws CoreExc
  * in the builder spec, and that have a last built state, even if they 
  * have not been instantiated this session.
  */
-public void setBuildersPersistentInfo(IProject project, Map map) throws CoreException {
-	project.setSessionProperty(K_BUILD_MAP, map);
+public void setBuildersPersistentInfo(IProject project, Map map) {
+	try {
+		project.setSessionProperty(K_BUILD_MAP, map);
+	} catch (CoreException e) {
+		//project is missing -- build state will be lost
+		//can't throw an exception because this happens on startup
+		IStatus error = new ResourceStatus(IStatus.ERROR, 1, project.getFullPath(), "Project missing in setBuildersPersistentInfo", null);
+		ResourcesPlugin.getPlugin().getLog().log(error);
+	}
 }
 public void shutdown(IProgressMonitor monitor) {
 }
