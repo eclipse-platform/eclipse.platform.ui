@@ -26,6 +26,7 @@ import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.operations.CVSOperation;
 import org.eclipse.team.internal.ccvs.ui.operations.CheckoutMultipleProjectsOperation;
+import org.eclipse.team.internal.ccvs.ui.operations.CheckoutSingleProjectOperation;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
 
@@ -120,6 +121,26 @@ public class CheckoutOperationTests extends EclipseTest {
 		} catch (InterruptedException e) {
 			fail("Operation should not have been interrupted");
 		}
+	}
+	
+	public void testCheckoutAs() throws TeamException, CoreException, IOException {
+		IProject project = createProject("testCheckoutAs", new String[] { "changed.txt", "deleted.txt", "folder1/", "folder1/a.txt" });
+		IProject copy = ResourcesPlugin.getWorkspace().getRoot().getProject(project.getName() + "-copy");
 		
+		// checkout the project to the default location		
+		try {
+			CVSOperation op = new CheckoutSingleProjectOperation(
+				null /* shell */, 
+				(ICVSRemoteFolder)CVSWorkspaceRoot.getRemoteResourceFor(project),
+				copy,
+				null /*target location*/,
+				false);
+			op.setCVSRunnableContext(new HeadlessCVSRunnableContext());
+			op.run();
+		} catch (InterruptedException e) {
+			fail("Operation should not have been interrupted");
+		}
+		
+		assertEquals(project, copy);
 	}
 }

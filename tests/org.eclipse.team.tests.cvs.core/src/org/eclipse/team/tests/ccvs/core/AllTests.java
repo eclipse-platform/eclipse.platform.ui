@@ -15,6 +15,7 @@ import junit.framework.TestSuite;
 import org.eclipse.team.tests.ccvs.core.cvsresources.AllTestsCVSResources;
 import org.eclipse.team.tests.ccvs.core.provider.AllTestsProvider;
 import org.eclipse.team.tests.ccvs.core.subscriber.AllTestsTeamSubscriber;
+import org.eclipse.team.tests.ccvs.ui.unit.AllUIUnitTests;
 
 public class AllTests extends EclipseTest {
 
@@ -42,6 +43,7 @@ public class AllTests extends EclipseTest {
 		suite.addTest(AllTestsCVSResources.suite());
 		suite.addTest(AllTestsProvider.suite());
 		suite.addTest(AllTestsTeamSubscriber.suite());
+		suite.addTest(AllUIUnitTests.suite());
 		return new CVSTestSetup(suite);
 	}
 }
