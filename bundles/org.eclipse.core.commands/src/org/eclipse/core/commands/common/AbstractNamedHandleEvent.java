@@ -16,11 +16,6 @@ package org.eclipse.core.commands.common;
  * An event fired from a <code>NamedHandleObject</code>. This provides
  * notification of changes to the defined state, the name and the description.
  * </p>
- * <p>
- * <em>EXPERIMENTAL</em>. The commands architecture is currently under
- * development for Eclipse 3.1. This class -- its existence, its name and its
- * methods -- are in flux. Do not use this class yet.
- * </p>
  */
 public abstract class AbstractNamedHandleEvent extends AbstractBitSetEvent {
 

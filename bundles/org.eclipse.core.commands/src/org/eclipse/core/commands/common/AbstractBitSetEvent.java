@@ -15,11 +15,6 @@ package org.eclipse.core.commands.common;
  * An event that carries with it two or more boolean values.  This provides a
  * single integer value which can then be used as a bit set.
  * </p>
- * <p>
- * <em>EXPERIMENTAL</em>. The commands architecture is currently under
- * development for Eclipse 3.1. This class -- its existence, its name and its
- * methods -- are in flux. Do not use this class yet.
- * </p>
  * 
  * @since 3.1
  */
