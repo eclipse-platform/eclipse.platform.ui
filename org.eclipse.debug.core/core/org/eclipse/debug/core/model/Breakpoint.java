@@ -155,7 +155,7 @@ public abstract class Breakpoint extends PlatformObject implements IBreakpoint {
 				}
 			};
 			
-		workspace.run(runnable, null);
+		workspace.run(runnable, null, 0, null);
 	}
 	
 	/**
@@ -177,7 +177,7 @@ public abstract class Breakpoint extends PlatformObject implements IBreakpoint {
 				}
 			};
 			
-		workspace.run(runnable, null);
+		workspace.run(runnable, null, 0, null);
 	}
 
 	/**
@@ -199,7 +199,7 @@ public abstract class Breakpoint extends PlatformObject implements IBreakpoint {
 				}
 			};
 			
-		workspace.run(runnable, null);
+		workspace.run(runnable, null, 0, null);
 	}
 
 	/**
@@ -221,7 +221,7 @@ public abstract class Breakpoint extends PlatformObject implements IBreakpoint {
 				}
 			};
 			
-		workspace.run(runnable, null);
+		workspace.run(runnable, null, 0, null);
 	}
 
 	/**
@@ -242,7 +242,7 @@ public abstract class Breakpoint extends PlatformObject implements IBreakpoint {
 				}
 			};
 			
-		workspace.run(runnable, null);
+		workspace.run(runnable, null, 0, null);
 	}
 
 	/**

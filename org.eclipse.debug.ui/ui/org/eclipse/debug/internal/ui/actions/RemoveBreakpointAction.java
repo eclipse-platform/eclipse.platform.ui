@@ -55,7 +55,7 @@ public class RemoveBreakpointAction extends AbstractRemoveActionDelegate {
 			}
 		};
 		try {
-			ResourcesPlugin.getWorkspace().run(runnable, null);
+			ResourcesPlugin.getWorkspace().run(runnable, null, 0, null);
 		} catch (CoreException ce) {
 			ms.merge(ce.getStatus());
 		}

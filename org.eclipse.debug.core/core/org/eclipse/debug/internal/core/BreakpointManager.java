@@ -38,6 +38,7 @@ import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointListener;
@@ -185,7 +186,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 					ResourcesPlugin.getWorkspace().deleteMarkers((IMarker[])delete.toArray(new IMarker[delete.size()]));
 				}
 			};
-			fork(wr);
+			fork(null, wr);
 		}
 		return (IMarker[])persisted.toArray(new IMarker[persisted.size()]);
 	}
@@ -351,7 +352,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 					}					
 				}
 			};
-			getWorkspace().run(r, null);
+			getWorkspace().run(r, null, 0, null);
 		}
 	}	
 	
@@ -436,7 +437,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 			// Need to suppress change notification, since this is really
 			// an add notification			
 			fSuppressChange.addAll(update);
-			getWorkspace().run(r, null);
+			getWorkspace().run(r, null, 0, null);
 			fSuppressChange.removeAll(update);
 			fireUpdate(update, null, ADDED);
 		}			
@@ -540,7 +541,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 					}
 				};
 				try {
-					getWorkspace().run(wRunnable, null);
+					getWorkspace().run(wRunnable, null, 0, null);
 				} catch (CoreException e) {
 				}
 			}
@@ -691,11 +692,11 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		fBreakpoints = breakpoints;
 	}
 	
-	protected void fork(final IWorkspaceRunnable wRunnable) {
+	protected void fork(final ISchedulingRule rule, final IWorkspaceRunnable wRunnable) {
 		Runnable runnable= new Runnable() {
 			public void run() {
 				try {
-					getWorkspace().run(wRunnable, null);
+					getWorkspace().run(wRunnable, rule, 0, null);
 				} catch (CoreException ce) {
 					DebugPlugin.log(ce);
 				}

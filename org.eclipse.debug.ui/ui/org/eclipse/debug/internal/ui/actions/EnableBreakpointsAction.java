@@ -105,7 +105,7 @@ public class EnableBreakpointsAction implements IViewActionDelegate, IPartListen
 		};
 		
 		try {
-			ResourcesPlugin.getWorkspace().run(runnable, new NullProgressMonitor());
+			ResourcesPlugin.getWorkspace().run(runnable, null, 0, new NullProgressMonitor());
 		} catch (CoreException e) {
 			// Exceptions are handled by runnable
 		}

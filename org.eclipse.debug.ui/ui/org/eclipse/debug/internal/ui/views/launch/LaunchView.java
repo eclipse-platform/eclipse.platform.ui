@@ -564,7 +564,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		};
 		
 		try {
-			workspace.run(runnable, null);
+			workspace.run(runnable, null, 0, null);
 		} catch (CoreException ce) {
 			DebugUIPlugin.log(ce);
 		}
