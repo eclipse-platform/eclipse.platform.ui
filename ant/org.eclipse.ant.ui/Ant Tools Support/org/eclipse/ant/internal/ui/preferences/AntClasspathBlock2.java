@@ -252,8 +252,14 @@ public class AntClasspathBlock2 {
 	
 	private void addJars(TreeViewer viewer) {
 		List allURLs= new ArrayList();
-		//TODO not sure this is currect
-		allURLs.addAll(Arrays.asList(currentParent.getEntries()));
+		if (currentParent != null) {
+			allURLs.addAll(Arrays.asList(currentParent.getEntries()));
+		} else {
+			Object[] entries= antContentProvider.getModel().getURLEntries(ClasspathModel.USER);
+			if (entries != null) {
+				allURLs.addAll(Arrays.asList(entries));
+			}
+		}
 		
 		ViewerFilter filter= new ArchiveFilter(allURLs);
 		
@@ -440,19 +446,24 @@ public class AntClasspathBlock2 {
 	 */
 	private void tableSelectionChanged(IStructuredSelection selection, AntClasspathContentProvider2 contentProvider) {
 		
-		
 		boolean notEmpty = !selection.isEmpty();
 		Iterator selected = selection.iterator();
 		boolean first = false;
 		boolean last = false;
 		boolean canRemove= true;
+		boolean haveGlobalEntrySelected= false;
 		
 		while (selected.hasNext()) {
 			IClasspathEntry element = (IClasspathEntry) selected.next();
-			if (element instanceof GlobalClasspathEntries) {
+			
+			if (element instanceof GlobalClasspathEntries && !showExternalJARButton) {
 				canRemove= false;
 			}
-			Object[] childEntries = contentProvider.getChildren(element.getParent());
+			IClasspathEntry parent= element.getParent();
+			if (parent instanceof GlobalClasspathEntries) {
+				haveGlobalEntrySelected= true;
+			}
+			Object[] childEntries = contentProvider.getChildren(parent);
 			List entries = Arrays.asList(childEntries);
 			int lastEntryIndex = entries.size() - 1;
 			if (!first && entries.indexOf(element) == 0) {
@@ -464,8 +475,22 @@ public class AntClasspathBlock2 {
 		}
 
 		boolean canAdd= false;
-		if (notEmpty) {
-			canAdd= resolveCurrentParent(selection);
+		if (showExternalJARButton) {
+			if (!notEmpty) {
+				canAdd= true;
+				currentParent= antContentProvider.getModel();
+			} else {
+				resolveCurrentParent(selection);
+				if (currentParent.getParent() != antContentProvider.getModel()) {
+					first= true;
+					last= true;
+				}
+				if (haveGlobalEntrySelected) {
+					canRemove= false;
+				}
+			}
+		} else {
+			canAdd= resolveCurrentParent(selection) && notEmpty;	
 		}
 		if (addJARButton != null) {
 			addJARButton.setEnabled(canAdd);
@@ -628,7 +653,15 @@ public class AntClasspathBlock2 {
 			Object[] antURLs= antContentProvider.getModel().getURLEntries(ClasspathModel.GLOBAL);
 			boolean valid= !JARPresent(antURLs, TOOLS).isEmpty();
 			if (!valid) {
-				valid= MessageDialogWithToggle.openQuestion(AntUIPlugin.getActiveWorkbenchWindow().getShell(), AntPreferencesMessages.getString("AntClasspathBlock.31"), AntPreferencesMessages.getString("AntClasspathBlock.32"), IAntUIPreferenceConstants.ANT_TOOLS_JAR_WARNING, AntPreferencesMessages.getString("AntClasspathBlock.33"), AntUIPlugin.getDefault().getPreferenceStore()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				antURLs= antContentProvider.getModel().getURLEntries(ClasspathModel.GLOBAL_USER);
+				valid= !JARPresent(antURLs, TOOLS).isEmpty();
+				if (!valid) {
+					antURLs= antContentProvider.getModel().getURLEntries(ClasspathModel.USER);
+					valid= !JARPresent(antURLs, TOOLS).isEmpty();
+					if (!valid) {
+						valid= MessageDialogWithToggle.openQuestion(AntUIPlugin.getActiveWorkbenchWindow().getShell(), AntPreferencesMessages.getString("AntClasspathBlock.31"), AntPreferencesMessages.getString("AntClasspathBlock.32"), IAntUIPreferenceConstants.ANT_TOOLS_JAR_WARNING, AntPreferencesMessages.getString("AntClasspathBlock.33"), AntUIPlugin.getDefault().getPreferenceStore()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					}
+				}
 			}
 			if (!valid) {
 				container.setErrorMessage(AntPreferencesMessages.getString("AntClasspathBlock.34")); //$NON-NLS-1$
@@ -649,6 +682,10 @@ public class AntClasspathBlock2 {
 			if (suffixes.isEmpty()) {
 				Object[] userURLs=  antContentProvider.getModel().getURLEntries(ClasspathModel.GLOBAL_USER);
 				suffixes= JARPresent(userURLs, XERCES);
+				if (suffixes.isEmpty()) {
+					userURLs=  antContentProvider.getModel().getURLEntries(ClasspathModel.USER);
+					suffixes= JARPresent(userURLs, XERCES);
+				}
 			}
 			if (sameVM && !suffixes.isEmpty()) {
 				valid= MessageDialogWithToggle.openQuestion(treeViewer.getControl().getShell(), AntPreferencesMessages.getString("AntClasspathBlock.35"), MessageFormat.format(AntPreferencesMessages.getString("AntClasspathBlock.36"), new Object[]{suffixes.get(0)}), IAntUIPreferenceConstants.ANT_XERCES_JARS_WARNING, AntPreferencesMessages.getString("AntClasspathBlock.33"), AntUIPlugin.getDefault().getPreferenceStore()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -671,6 +708,9 @@ public class AntClasspathBlock2 {
 	}
 	
 	private List JARPresent(Object[] classpathEntries, String[] suffixes) {
+		if (classpathEntries == null) {
+			return Collections.EMPTY_LIST;
+		}
 		List found= new ArrayList(2);
 		for (int i = 0; i < classpathEntries.length; i++) {
 			String file;

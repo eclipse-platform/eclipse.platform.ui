@@ -32,14 +32,18 @@ public class AntClasspathContentProvider2 implements ITreeContentProvider {
 		
 	public void add(IClasspathEntry parent, Object child) {
 		Object newEntry= null;
-		if (parent == null) {
+		if (parent == null || parent == model) {
 			newEntry= model.addEntry(child);
+			parent= model;
 		} else if (parent instanceof GlobalClasspathEntries) {
 			newEntry= model.createEntry(child, parent);
 			((GlobalClasspathEntries)parent).addEntry((ClasspathEntry)newEntry);
-		}
+		} 
 		if (newEntry != null) {
-			treeViewer.add(getParent(newEntry), newEntry);
+			treeViewer.add(parent, newEntry);
+			treeViewer.setExpandedState(parent, true);
+			treeViewer.reveal(newEntry);
+			refresh();
 		}
 	}
 	
@@ -47,6 +51,7 @@ public class AntClasspathContentProvider2 implements ITreeContentProvider {
 		Object newEntry= model.addEntry(entryType, child);
 		if (newEntry != null) {
 			treeViewer.add(getParent(newEntry), newEntry);
+			refresh();
 		}
 	}
 
@@ -65,7 +70,7 @@ public class AntClasspathContentProvider2 implements ITreeContentProvider {
 	}
 	public void removeAllGlobalAntClasspathEntries() {
 		model.removeAll(ClasspathModel.GLOBAL);
-		treeViewer.refresh();
+		refresh();
 	}
 
 	/**
@@ -157,16 +162,12 @@ public class AntClasspathContentProvider2 implements ITreeContentProvider {
 		
 		return null;
 	}
-	
-	public void remove(Object o) {
-		model.remove(o);
-		treeViewer.remove(o);
-	}
 
 	public void remove(IStructuredSelection selection) {
 		Object[] array= selection.toArray();
 		model.removeAll(array);
-		treeViewer.refresh();
+		treeViewer.remove(array);
+		refresh();
 	}
 
 	public Object[] getGlobalUserClasspathEntries() {
@@ -189,9 +190,7 @@ public class AntClasspathContentProvider2 implements ITreeContentProvider {
 	public ClasspathModel getModel() {
 		return model;
 	}
-	/**
-	 * @param refreshEnabled The refreshEnabled to set.
-	 */
+
 	public void setRefreshEnabled(boolean refreshEnabled) {
 		this.refreshEnabled = refreshEnabled;
 		treeViewer.getTree().setRedraw(refreshEnabled);

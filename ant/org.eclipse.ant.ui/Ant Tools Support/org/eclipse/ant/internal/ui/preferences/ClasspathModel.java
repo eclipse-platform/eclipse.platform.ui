@@ -14,6 +14,7 @@ package org.eclipse.ant.internal.ui.preferences;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -63,9 +64,17 @@ public class ClasspathModel extends AbstractClasspathEntry {
 		IClasspathEntry entryParent= null;
 		switch (entryType) {
 			case GLOBAL :
+				if (globalEntry == null) {
+					String name= "Global Ant Classpath";
+					globalEntry= createGlobalEntry(new URL[0], name);
+				}
 				entryParent= globalEntry;
 				break;
 			case GLOBAL_USER :
+				if (userGlobalEntry == null) {
+					String name= "Global User Ant Classpath";
+					userGlobalEntry= createGlobalEntry(new URL[0], name);
+				}
 				entryParent= userGlobalEntry;
 				break;
 			default :
@@ -96,15 +105,23 @@ public class ClasspathModel extends AbstractClasspathEntry {
 		Object[] classpathEntries= null;
 		switch (entryType) {
 			case GLOBAL :
-				 classpathEntries= globalEntry.getEntries();
+				if (globalEntry != null) {
+					classpathEntries= globalEntry.getEntries();
+				}
 				break;
 			case GLOBAL_USER :
-				classpathEntries= userGlobalEntry.getEntries();
+				if (userGlobalEntry != null) {
+					classpathEntries= userGlobalEntry.getEntries();
+				}
 				break;
 			case USER : 
 				classpathEntries= getUserEntries();
+				break;
 			default :
 				return null;
+		}
+		if (classpathEntries == null) {
+			return null;
 		}
 		Object[] entries= new Object[classpathEntries.length];
 		Object entry;
@@ -131,17 +148,25 @@ public class ClasspathModel extends AbstractClasspathEntry {
 	}
 
 	public void removeAll() {
-		globalEntry.removeAll();
-		userGlobalEntry.removeAll();
+		if (globalEntry != null) {
+			globalEntry.removeAll();
+		} 
+		if (userGlobalEntry != null) {
+			userGlobalEntry.removeAll();
+		}
 	}
 	
 	public void removeAll(int entryType) {
 		switch (entryType) {
 			case GLOBAL :
-				globalEntry.removeAll();
+				if (globalEntry != null) {
+					globalEntry.removeAll();
+				}
 				break;
 			case GLOBAL_USER :
-				userGlobalEntry.removeAll();
+				if (userGlobalEntry != null) {
+					userGlobalEntry.removeAll();
+				}
 				break;
 			default :
 				break;
@@ -156,9 +181,11 @@ public class ClasspathModel extends AbstractClasspathEntry {
 				IClasspathEntry entryParent= ((ClasspathEntry)object).getParent();
 				if (entryParent instanceof GlobalClasspathEntries) {
 					((GlobalClasspathEntries)entryParent).removeEntry((ClasspathEntry) object);
-				} else if (entryParent instanceof ClasspathModel) {
-					((ClasspathModel)entryParent).remove(object);
+				} else {
+					remove(object);
 				}
+			} else {
+				remove(object);
 			}
 		}
 	}
@@ -237,7 +264,11 @@ public class ClasspathModel extends AbstractClasspathEntry {
 			}
 			buff.append(AntUtil.ATTRIBUTE_SEPARATOR);
 		}
-		return buff.substring(0, buff.length() - 1);
+		if (buff.length() > 0) {
+			return buff.substring(0, buff.length() - 1);
+		} else {
+			return ""; //$NON-NLS-1$
+		}
 	}
 	
 	public ClasspathModel(String serializedClasspath) {
@@ -255,7 +286,7 @@ public class ClasspathModel extends AbstractClasspathEntry {
 				} catch (MalformedURLException e) {
 					entry= string;
 				}
-				createEntry(entry, this);
+				childEntries.add(createEntry(entry, this));
 			}
 		}
 	}
