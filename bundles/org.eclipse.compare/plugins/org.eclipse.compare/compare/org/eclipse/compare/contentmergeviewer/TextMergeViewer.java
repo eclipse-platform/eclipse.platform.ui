@@ -1439,7 +1439,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		boolean leftToRight= false;
 		boolean rightToLeft= false;
 		
-		if (fCurrentDiff != null) {
+		if (fCurrentDiff != null && isThreeWay() && !fIgnoreAncestor) {
 			IMergeViewerContentProvider cp= getMergeContentProvider();
 			if (cp != null) {
 				rightToLeft= cp.isLeftEditable(getInput());
