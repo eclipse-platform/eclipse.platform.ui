@@ -139,6 +139,25 @@ public class CodeCompletionTest extends AbstractAntUITest {
         assertContains("alf", proposals);
 
     }
+    
+	/**
+	* Test the code completion for "unquoted" properties.
+	* See bug 40871
+	*/
+   public void testUnquotedPropertyProposals() {
+	   TestTextCompletionProcessor processor = new TestTextCompletionProcessor();
+
+	   String documentText = "<project default=\"test\"><property name=\"prop1\" value=\"val1\" />\n";
+	   documentText += "<property name=\"prop2\" value=\"val2\" />\n";
+	   documentText += "<property name=\"alf\" value=\"horst\" />\n";
+	   documentText += "<echo>${</echo>";
+	   processor.setLineNumber(4);
+	   processor.setColumnNumber(8);
+	   int cursorPos = documentText.length() - 7;
+	   ICompletionProposal[] proposals = processor.getPropertyProposals(documentText, "", cursorPos);
+	   assertTrue(proposals.length >= 3);
+	   assertContains("alf", proposals);
+	  }
  
  	/**
  	 * Asserts that <code>displayString</code> is in one of the 
@@ -390,6 +409,9 @@ public class CodeCompletionTest extends AbstractAntUITest {
 	   assertEquals(5, mode);
 	   mode = processor.determineProposalMode("<project><target name=\"${ja.bl\"", 30, "ja.bl");
 	   assertEquals(5, mode);
+	  
+		mode = processor.determineProposalMode("<project><target><echo>${", 25, "");
+		assertEquals(5, mode);
    }
     
 	/**

@@ -633,12 +633,18 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
         
         int startOfWordToken = anOffset;
         
+        char token= 'a';
+        if (startOfWordToken > 0) {
+			token= aDocumentText.charAt(startOfWordToken - 1);
+        }
+        
         while (startOfWordToken > 0 
-                && (Character.isJavaIdentifierPart(aDocumentText.charAt(startOfWordToken - 1)) 
-                    || '.' == aDocumentText.charAt(startOfWordToken - 1)
-					|| '-' == aDocumentText.charAt(startOfWordToken - 1))
-                && !('$' == aDocumentText.charAt(startOfWordToken - 1))) {
+                && (Character.isJavaIdentifierPart(token) 
+                    || '.' == token
+					|| '-' == token)
+                && !('$' == token)) {
             startOfWordToken--;
+			token= aDocumentText.charAt(startOfWordToken - 1);
         }
         
         if (startOfWordToken != anOffset) {
@@ -690,7 +696,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
             if(taskString != null && isNamedTaskKnown(taskString)) {
                 return PROPOSAL_MODE_ATTRIBUTE_VALUE_PROPOSAL;
             }
-        } else {  // Task proposal
+        } else {  // Possibly a Task proposal
             int spaceIndex = stringToPrefix.lastIndexOf(' ');
             int lessThanIndex = stringToPrefix.lastIndexOf('<');
             int greaterThanIndex = stringToPrefix.lastIndexOf('>');
@@ -704,23 +710,32 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
                 return PROPOSAL_MODE_TASK_PROPOSAL;
             }
             if(lessThanIndex < greaterThanIndex) {
-                return PROPOSAL_MODE_TASK_PROPOSAL;
+            	if (isPropertyProposalMode(stringToPrefix)) {
+				   return PROPOSAL_MODE_PROPERTY_PROPOSAL;
+			   }
+               return PROPOSAL_MODE_TASK_PROPOSAL;
             }
         }
 
         // Property proposal
-        if(stringToPrefix.length() >= 2) {
-	        String lastTwoChars = stringToPrefix.substring(stringToPrefix.length()-2, stringToPrefix.length());
-	        if(lastTwoChars.equals("${") || //$NON-NLS-1$
-	            stringToPrefix.charAt(stringToPrefix.length()-1) == '$') {
-	                return PROPOSAL_MODE_PROPERTY_PROPOSAL;
-	        }
+		if (isPropertyProposalMode(stringToPrefix)) {
+			return PROPOSAL_MODE_PROPERTY_PROPOSAL;
         }
         	            
         return PROPOSAL_MODE_NONE;
     }
 
 
+	private boolean isPropertyProposalMode(String stringToPrefix) {
+		if(stringToPrefix.length() >= 2) {
+			String lastTwoChars = stringToPrefix.substring(stringToPrefix.length()-2, stringToPrefix.length());
+			if(lastTwoChars.equals("${") || //$NON-NLS-1$
+				stringToPrefix.charAt(stringToPrefix.length()-1) == '$') {
+					return true;
+			}
+		}
+		return false;
+	}
     /**
      * Returns the last occuring task string in the specified string.
      * <P>
