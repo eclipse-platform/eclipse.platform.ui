@@ -49,16 +49,5 @@ public interface IDecoratorManager extends ILabelDecorator {
 	 * @throws CoreException if the decorator cannot be instantiated
 	 */
 	void setEnabled(String decoratorId, boolean enabled) throws CoreException;		
-	
-	/**
-	 * Fire listeners as enabled state of some decorators has changed.
-	 * This should be handled by the decorator itself by
-	 * keeping track of calls to addListener(ILabelProviderListener) 
-	 * and removeListener(ILabelProviderListener)and sending 
-	 * labelProviderChanged(LabelProviderChangedEvent) to the added 
-	 * ILabelProviderListener.
-	 * @deprecated 
-	 */
-	public void reset();
 
 }
