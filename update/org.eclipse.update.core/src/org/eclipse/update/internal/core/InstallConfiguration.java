@@ -27,11 +27,9 @@ import org.xml.sax.SAXException;
 
 public class InstallConfiguration extends InstallConfigurationModel implements IInstallConfiguration, IWritable {
 
-	
-
 	private ListenersList listeners = new ListenersList();
 
-	public InstallConfiguration(){
+	public InstallConfiguration() {
 	}
 
 	/**
@@ -41,10 +39,9 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		setLocationURLString(newLocation.toExternalForm());
 		setLabel(label);
 		setCurrent(false);
-		resolve(newLocation,null);
+		resolve(newLocation, null);
 	}
-	
-	
+
 	/*
 	 * copy constructor
 	 */
@@ -66,9 +63,8 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		// date on the URL string has to be the same 
 		setCreationDate(new Date());
 		setCurrent(false);
-		resolve(newLocation,null);
+		resolve(newLocation, null);
 	}
-	
 
 	/**
 	 * 
@@ -82,14 +78,14 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 	}
 
 	public void addConfigurationSite(IConfigurationSite site) {
-		if (!isCurrent() && isReadOnly() )
+		if (!isCurrent() && isReadOnly())
 			return;
-			
+
 		//Start UOW ?
 		ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_SITE_INSTALL);
 		activity.setLabel(site.getSite().getURL().toExternalForm());
 		activity.setDate(new Date());
-		ConfigurationSiteModel configSiteModel = (ConfigurationSiteModel)site;
+		ConfigurationSiteModel configSiteModel = (ConfigurationSiteModel) site;
 		addConfigurationSiteModel(configSiteModel);
 		configSiteModel.setInstallConfigurationModel(this);
 		// notify listeners
@@ -99,28 +95,26 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		}
 		// everything done ok
 		activity.setStatus(IActivity.STATUS_OK);
-		this.addActivityModel((ConfigurationActivityModel)activity);
+		this.addActivityModel((ConfigurationActivityModel) activity);
 	}
 
-
-	
 	/*
 	 * add multiple sites in one activity
 	 */
 	public void setConfigurationSites(IConfigurationSite[] site) {
-		if (!isCurrent() && isReadOnly() )
+		if (!isCurrent() && isReadOnly())
 			return;
-		
-		if (site==null)
+
+		if (site == null)
 			return;
-			
+
 		//Start UOW ?
 		ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_SITE_INSTALL);
 		activity.setLabel("Multiple site install");
-		activity.setDate(new Date());		
+		activity.setDate(new Date());
 
 		for (int index = 0; index < site.length; index++) {
-			ConfigurationSiteModel configSiteModel = (ConfigurationSiteModel)site[index];
+			ConfigurationSiteModel configSiteModel = (ConfigurationSiteModel) site[index];
 			addConfigurationSiteModel(configSiteModel);
 			configSiteModel.setInstallConfigurationModel(this);
 			// notify listeners
@@ -129,15 +123,15 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 				((IInstallConfigurationChangedListener) configurationListeners[i]).installSiteAdded(site[index]);
 			}
 		}
-		
+
 		// everything done ok
 		activity.setStatus(IActivity.STATUS_OK);
-		this.addActivityModel((ConfigurationActivityModel)activity);
+		this.addActivityModel((ConfigurationActivityModel) activity);
 	}
 
 	public void removeConfigurationSite(IConfigurationSite site) {
-		
-		if (removeConfigurationSiteModel((ConfigurationSiteModel)site)){// notify listeners
+
+		if (removeConfigurationSiteModel((ConfigurationSiteModel) site)) { // notify listeners
 			Object[] configurationListeners = listeners.getListeners();
 			for (int i = 0; i < configurationListeners.length; i++) {
 				((IInstallConfigurationChangedListener) configurationListeners[i]).installSiteRemoved(site);
@@ -193,7 +187,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 	public void save() throws CoreException {
 		// save the file
 		saveConfigurationFile();
-		
+
 		// Write info for the next runtime
 		IPlatformConfiguration runtimeConfiguration = BootLoader.getCurrentPlatformConfiguration();
 		ConfigurationSiteModel[] configurationSites = getConfigurationSitesModel();
@@ -203,23 +197,28 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			String[] pluginPath = configurationPolicy.getPluginPath(element.getSite());
 			IPlatformConfiguration.ISitePolicy sitePolicy = runtimeConfiguration.createSitePolicy(configurationPolicy.getPolicy(), pluginPath);
 			IPlatformConfiguration.ISiteEntry siteEntry = runtimeConfiguration.findConfiguredSite(element.getSite().getURL());
-			if (siteEntry!=null){
+			if (siteEntry == null) {
+				siteEntry = runtimeConfiguration.createSiteEntry(element.getSite().getURL(),sitePolicy);
+			}
+			
+			if (siteEntry != null) {
 				siteEntry.setSitePolicy(sitePolicy);
 			} else {
 				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Platform configuration not found :"+element.getSite().getURL().toExternalForm(), null);
-				throw new CoreException(status);				
-			}
-			try {
-				runtimeConfiguration.save();
-			} catch (IOException e) {
-				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Cannot save Platform Configuration ", e);
+				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Platform configuration not found :" + element.getSite().getURL().toExternalForm(), null);
 				throw new CoreException(status);
-			}
+			}			
+		}
+		
+		try {
+			runtimeConfiguration.save();
+		} catch (IOException e) {
+			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Cannot save Platform Configuration ", e);
+			throw new CoreException(status);
 		}
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -248,13 +247,13 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		// site configurations
 		if (getConfigurationSitesModel() != null) {
 			ConfigurationSiteModel[] sites = getConfigurationSitesModel();
-	 		for (int i = 0; i < sites.length; i++) {
+			for (int i = 0; i < sites.length; i++) {
 				ConfigurationSite element = (ConfigurationSite) sites[i];
 				((IWritable) element).write(indent + IWritable.INDENT, w);
 			}
 		}
 		// activities
-		if (getActivityModel()!=null) {
+		if (getActivityModel() != null) {
 			ConfigurationActivityModel[] activities = getActivityModel();
 			for (int i = 0; i < activities.length; i++) {
 				ConfigurationActivity element = (ConfigurationActivity) activities[i];
@@ -275,11 +274,10 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 	 * 
 	 */
 	public void revertTo(IInstallConfiguration configuration, IProgressMonitor monitor, IProblemHandler handler) throws CoreException, InterruptedException {
-		
-		
+
 		IConfigurationSite[] oldConfigSites = configuration.getConfigurationSites();
 		IConfigurationSite[] nowConfigSites = this.getConfigurationSites();
-				
+
 		// create a hashtable of the *old* sites
 		Map oldSitesMap = new Hashtable(0);
 		for (int i = 0; i < oldConfigSites.length; i++) {
@@ -303,16 +301,16 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			// the old configuration in the Map are either as-is because they don't exist
 			// in the current one, or they are the delta from the current one to the old one
 			Collection sites = oldSitesMap.values();
-			if (sites!=null && !sites.isEmpty()){
+			if (sites != null && !sites.isEmpty()) {
 				ConfigurationSiteModel[] sitesModel = new ConfigurationSiteModel[sites.size()];
 				sites.toArray(sitesModel);
 				setConfigurationSiteModel(sitesModel);
 			}
 		}
 	}
-		/*
-	 * @see IAdaptable#getAdapter(Class)
-	 */
+	/*
+	* @see IAdaptable#getAdapter(Class)
+	*/
 	public Object getAdapter(Class adapter) {
 		return null;
 	}
@@ -321,9 +319,9 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 	 * @see IInstallConfiguration#getActivities()
 	 */
 	public IActivity[] getActivities() {
-		if (getActivityModel().length==0)
+		if (getActivityModel().length == 0)
 			return new IActivity[0];
-		return (IActivity[])getActivityModel();
+		return (IActivity[]) getActivityModel();
 	}
 
 }

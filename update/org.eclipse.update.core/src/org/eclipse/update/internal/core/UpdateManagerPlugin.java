@@ -31,8 +31,8 @@ public class UpdateManagerPlugin extends Plugin {
 	
 	// web install
 	private static IAppServer appServer = null;
-	private static String appServerHost = null;
-	private static int appServerPort = 0;
+	private static String appServerHost = "127.0.0.1";
+	private static int appServerPort = 1333;
 	
 	/**
 	 * The constructor.
@@ -99,6 +99,8 @@ public class UpdateManagerPlugin extends Plugin {
 	private void startupWebInstallHandler() throws CoreException {
 		// get handle for the web app server
 		appServer = getWebAppServer();
+		appServer.setAddress(appServerHost,appServerPort);
+		appServer.add("updatetests", "org.eclipse.update.tests.core", "webserver");		
 		if (appServer == null) {
 			if (DEBUG_SHOW_WEB)
 				debug("Unable to obtain web app server");
@@ -119,9 +121,10 @@ public class UpdateManagerPlugin extends Plugin {
 		appServerPort = appServer.getPort();
 		if (DEBUG_SHOW_WEB)
 			debug("Web app server started on " + appServerHost + ":" + appServerPort);
+debug("Web app server started on " + appServerHost + ":" + appServerPort);			
 	}
 	
-	private IAppServer getWebAppServer() throws CoreException {
+	public IAppServer getWebAppServer() throws CoreException {
 		// FIXME: this code needs to be exposed as an API on some core class
 		
 		// get the app server extension from the system plugin registry	

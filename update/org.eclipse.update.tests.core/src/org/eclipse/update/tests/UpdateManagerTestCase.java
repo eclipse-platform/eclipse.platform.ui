@@ -13,6 +13,7 @@ import java.util.*;
 import junit.framework.TestCase;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.update.internal.core.UpdateManagerPlugin;
 import org.eclipse.update.internal.core.UpdateManagerUtils;
 /**
  * All Help System Test cases must subclass this base Testcase.
@@ -109,11 +110,11 @@ public abstract class UpdateManagerTestCase extends TestCase {
 	}
 
 	protected static String getHttpHost(){
-		return UpdateTestsPlugin.getPlugin().getAppServer().getHost();
+		return UpdateManagerPlugin.getWebAppServerHost();
 	}
 
 	protected static int getHttpPort(){
-		return UpdateTestsPlugin.getPlugin().getAppServer().getPort();
+		return UpdateManagerPlugin.getWebAppServerPort();
 	}
 
 }
