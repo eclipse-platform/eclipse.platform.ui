@@ -488,7 +488,8 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 				}
 		
 			} else {
-				throw createDebugException(DebugCoreMessages.getString("LaunchManager.Launch_configuration_does_not_exist._6"), null); //$NON-NLS-1$
+				throw createDebugException(
+					MessageFormat.format(DebugCoreMessages.getString("LaunchManager.does_not_exist"), new String[]{config.getName(), config.getLocation().toOSString()}), null); //$NON-NLS-1$
 			}
 		}
 		return info;
