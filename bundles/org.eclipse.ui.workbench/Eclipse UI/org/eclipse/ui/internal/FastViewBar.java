@@ -116,12 +116,18 @@ class FastViewBar implements IWindowTrim {
 		
 		Listener listener = new Listener() {
 			public void handleEvent(Event event) {
+				Point loc = new Point(event.x, event.y);
 				if (event.type == SWT.MenuDetect) {
-					showFastViewBarPopup(new Point(event.x, event.y));
+					showFastViewBarPopup(loc);
+				} else if (event.type == SWT.MouseDown) {
+					if (getViewAt(getToolBar().toDisplay(loc)) == null) {
+						Perspective persp = window.getActiveWorkbenchPage().getActivePerspective();
+						
+						persp.setActiveFastView(null, 0);
+					}
 				}
 			}
 		};
-
 		GridLayout controlLayout = new GridLayout();
 		controlLayout.numColumns = 1;
 		controlLayout.marginHeight = 0;
@@ -140,6 +146,7 @@ class FastViewBar implements IWindowTrim {
 		}
 		fastViewBar.createControl(control);
 		getToolBar().addListener(SWT.MenuDetect, listener);
+		getToolBar().addListener(SWT.MouseDown, listener);
 		
 		IDragSource fastViewDragSource = new AbstractDragSource() {
 			
@@ -422,8 +429,6 @@ class FastViewBar implements IWindowTrim {
 			}
 			
 			visible = shouldExpand;
-			//control.layout(true);
-			//control.getParent().layout();
 		}
 	}
 	
