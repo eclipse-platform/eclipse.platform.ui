@@ -145,7 +145,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
-import org.eclipse.ui.internal.ActionDescriptor;
 import org.eclipse.ui.internal.EditorPluginAction;
 import org.eclipse.ui.internal.texteditor.EditPosition;
 import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
@@ -3941,7 +3940,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				element= (IConfigurationElement)actions.get(0);
 			
 			// FIXME: see https://bugs.eclipse.org/bugs/show_bug.cgi?id=82256
-			String defId= element.getAttribute(ActionDescriptor.ATT_DEFINITION_ID);
+			final String ATT_DEFINITION_ID = "definitionId";//$NON-NLS-1$
+			String defId= element.getAttribute(ATT_DEFINITION_ID);
 			return new EditorPluginAction(element, this, defId, IAction.AS_UNSPECIFIED); //$NON-NLS-1$			
 		}
 		
