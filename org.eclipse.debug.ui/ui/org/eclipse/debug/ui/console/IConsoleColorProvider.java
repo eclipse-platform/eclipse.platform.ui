@@ -11,31 +11,31 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.swt.graphics.Color;
 
 /**
- * Provides content for a console. When a process is added to a registered
- * launch the debug plug-in creates a console document for the process. By
- * default, a document is created which is contected to the standard input,
- * output, and error streams associated with the process. A client may override
- * the default behavior by specifying a custom content providier for a process
- * type. A proccess type is defined via the process attribute
- * <code>IProcess.ATTR_PROCESS_TYPE</code>.
+ * Provides coloring for a console document. When a process is added to a
+ * registered launch the debug plug-in creates a console document for the
+ * process. By default, a document is created which is contected to the standard
+ * input, output, and error streams associated with the process. A client may
+ * override the default coloring by specifying a custom content providier for a
+ * process type. A proccess type is defined via the process attribute
+ * <code>IProcess. ATTR_PROCESS_TYPE</code>.
  * <p>
- * A console document content provider extension is defined in <code>plugin.xml</code>.
- * Following is an example definition of a console document content provider
- * extension.
+ * A console document color provider extension is defined in <code>plugin.
+ * xml</code>. Following is an example definition of a console document color
+ * provider extension.
  * <pre>
- * &lt;extension point="org.eclipse.debug.ui.consoleDocumentContentProviders"&gt;
- *   &lt;consoleDocumentContentProvider 
- *      id="com.example.ExampleConsoleDocumentContentProvider"
- *      class="com.example.ExampleConsoleDocumentContentProviderClass"
+ * &lt;extension point="org.eclipse.debug.ui.consoleDocumentColorProviders"&gt;
+ *   &lt;consoleDocumentColorProvider 
+ *      id="com.example.ExampleConsoleDocumentColorProvider"
+ *      class="com.example.ExampleConsoleDocumentColorProviderClass"
  *      processType="ExampleProcessType"&gt;
- *   &lt;/consoleDocumentContentProvider&gt;
+ *   &lt;/consoleDocumentColorProvider&gt;
  * &lt;/extension&gt;
  * </pre>
  * The attributes are specified as follows:
  * <ul>
- * <li><code>id</code> specifies a unique identifier for this content provider.</li>
+ * <li><code>id</code> specifies a unique identifier for this color provider.</li>
  * <li><code>class</code> specifies a fully qualified name of a Java class
- *  that implements <code>IConsoleContentProvider</code>.</li>
+ *  that implements <code>IConsoleColorProvider</code>.</li>
  * <li><code>processType</code> specifies the identifier of the process type
  * this content provider is associated with (which corresponds to the
  * <code>ATTR_PROCESS_TYPE</code> attribute on a process).</li>
@@ -50,13 +50,13 @@ import org.eclipse.swt.graphics.Color;
  * @since 2.1
  */
 
-public interface IConsoleContentProvider {
+public interface IConsoleColorProvider {
 
 	/**
-	 * Returns whether the console associated with this content provider's
+	 * Returns whether the console associated with this color provider's
 	 * process can accept keyboard input. This attribute may change over the life
 	 * of a process/document.
-	 * 	 * @return whether the console associated with this content provider's
+	 * 	 * @return whether the console associated with this color provider's
 	 * process can accept keyboard input	 */
 	public boolean isReadOnly();
 	
@@ -66,13 +66,13 @@ public interface IConsoleContentProvider {
 	public Color getColor(String streamIdentifer);
 	
 	/**
-	 * Connects this content provider to the given process and console document.
-	 * This content provider should connect its streams to the given console
+	 * Connects this color provider to the given process and console document.
+	 * This color provider should connect its streams to the given console
 	 * document.
 	 * 	 * @param process	 * @param partitioner	 */
 	public void connect(IProcess process, IConsole console);
 	
 	/**
-	 * Disconnects this content provider.	 */
+	 * Disconnects this color provider.	 */
 	public void disconnect();
 }

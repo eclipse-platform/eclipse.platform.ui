@@ -14,9 +14,9 @@ import org.eclipse.jface.text.ITextStore;
 
 public class ConsoleDocument extends AbstractDocument {
 	
-	private IConsoleContentProvider fContentProvider = null;
+	private IConsoleColorProvider fContentProvider = null;
 	
-	public ConsoleDocument(IConsoleContentProvider contentProvider) {
+	public ConsoleDocument(IConsoleColorProvider contentProvider) {
 		fContentProvider = contentProvider;
 		setTextStore(newTextStore());	
 		setLineTracker(new DefaultLineTracker());

@@ -28,7 +28,7 @@ public class ConsoleDocumentProvider extends AbstractDocumentProvider {
 	protected IDocument createDocument(Object element) throws CoreException {
 		if (element instanceof IProcess) {
 			IProcess process = (IProcess)element;
-			IConsoleContentProvider contentProvider = getContentProvider(process);
+			IConsoleColorProvider contentProvider = getContentProvider(process);
 			ConsoleDocument doc= new ConsoleDocument(contentProvider);
 			IDocumentPartitioner partitioner = new ConsoleDocumentPartitioner(process, contentProvider);
 			partitioner.connect(doc);
@@ -67,16 +67,30 @@ public class ConsoleDocumentProvider extends AbstractDocumentProvider {
 
 	/**
 	 * Returns a content provider for the given process.
-	 *  	 * @param process	 * @return IConsoleContentProvider	 */
-	protected IConsoleContentProvider getContentProvider(IProcess process) {
+	 *  	 * @param process	 * @return IConsoleColorProvider	 */
+	protected IConsoleColorProvider getContentProvider(IProcess process) {
 		String type = process.getAttribute(IProcess.ATTR_PROCESS_TYPE);
-		IConsoleContentProvider contentProvider = null;
+		IConsoleColorProvider contentProvider = null;
 		if (type != null) {
 			contentProvider = ConsoleDocumentManager.getDefault().getContentProvider(type);
 		}
 		if (contentProvider == null) {
-			contentProvider = new ConsoleContentProvider();
+			contentProvider = new ConsoleColorProvider();
 		}
 		return contentProvider;
+	}
+	
+	/**
+	 * Returns the line tracker for this console, or <code>null</code> if none.
+	 * 
+	 * @param process
+	 * @return line tracker, or <code>null</code>
+	 */
+	protected ConsoleDocumentLineTracker getLineTracker(IProcess process) {
+		String type = process.getAttribute(IProcess.ATTR_PROCESS_TYPE);
+		if (type != null) {
+			// TODO:
+		}
+		return null;
 	}
 }

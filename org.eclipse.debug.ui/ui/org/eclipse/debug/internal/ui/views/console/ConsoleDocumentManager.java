@@ -309,12 +309,12 @@ public class ConsoleDocumentManager implements ILaunchListener {
 	/**
 	 * Returns a new console document content provider extension for the given
 	 * process type, or <code>null</code> if none.
-	 * 	 * @param type corresponds to <code>IProcess.ATTR_PROCESS_TYPE</code>	 * @return IConsoleContentProvider	 */
-	public IConsoleContentProvider getContentProvider(String type) {
+	 * 	 * @param type corresponds to <code>IProcess.ATTR_PROCESS_TYPE</code>	 * @return IConsoleColorProvider	 */
+	public IConsoleColorProvider getContentProvider(String type) {
 		if (fContentProviders == null) {
 			fContentProviders = new HashMap();
 			IPluginDescriptor descriptor = DebugUIPlugin.getDefault().getDescriptor();
-			IExtensionPoint extensionPoint = descriptor.getExtensionPoint(IDebugUIConstants.EXTENSION_POINT_CONSOLE_CONTENT_PROVIDERS);
+			IExtensionPoint extensionPoint = descriptor.getExtensionPoint(IDebugUIConstants.EXTENSION_POINT_CONSOLE_COLOR_PROVIDERS);
 			IConfigurationElement[] elements = extensionPoint.getConfigurationElements();
 			for (int i = 0; i < elements.length; i++) {
 				IConfigurationElement extension = elements[i];
@@ -325,8 +325,8 @@ public class ConsoleDocumentManager implements ILaunchListener {
 		if (extension != null) {
 			try {
 				Object contentProvider = extension.createExecutableExtension("class"); //$NON-NLS-1$
-				if (contentProvider instanceof IConsoleContentProvider) {
-					return (IConsoleContentProvider)contentProvider;
+				if (contentProvider instanceof IConsoleColorProvider) {
+					return (IConsoleColorProvider)contentProvider;
 				} else {
 					DebugUIPlugin.logErrorMessage(MessageFormat.format(DebugUIViewsMessages.getString("ConsoleDocumentManager.Invalid_extension_{0}_-_class_must_be_an_instance_of_IConsoleDocumentContentProvider._1"),new String[]{extension.getDeclaringExtension().getUniqueIdentifier()} )); //$NON-NLS-1$
 				}

@@ -241,7 +241,7 @@ public interface IDebugUIConstants {
 	/**
 	 * Identifier for the standard out stream.
 	 * 
-	 * @see org.eclipse.debug.ui.console.IConsoleContentProvider#getColor(String)
+	 * @see org.eclipse.debug.ui.console.IConsoleColorProvider#getColor(String)
 	 * @since 2.1
 	 */
 	public static final String ID_STANDARD_OUTPUT_STREAM = IDebugUIConstants.PLUGIN_ID + ".ID_STANDARD_OUTPUT_STREAM";
@@ -249,7 +249,7 @@ public interface IDebugUIConstants {
 	/**
 	 * Identifier for the standard error stream.
 	 *
-	 * @see org.eclipse.debug.ui.console.IConsoleContentProvider#getColor(String)
+	 * @see org.eclipse.debug.ui.console.IConsoleColorProvider#getColor(String)
 	 * @since 2.1
 	 */	
 	public static final String ID_STANDARD_ERROR_STREAM = IDebugUIConstants.PLUGIN_ID + ".ID_STANDARD_ERROR_STREAM";
@@ -257,7 +257,7 @@ public interface IDebugUIConstants {
 	/**
 	 * Identifier for the standard input stream.
 	 *
-	 * @see org.eclipse.debug.ui.console.IConsoleContentProvider#getColor(String)
+	 * @see org.eclipse.debug.ui.console.IConsoleColorProvider#getColor(String)
 	 * @since 2.1
 	 */	
 	public static final String ID_STANDARD_INPUT_STREAM = IDebugUIConstants.PLUGIN_ID + ".ID_STANDARD_INPUT_STREAM";
@@ -691,12 +691,12 @@ public interface IDebugUIConstants {
 	public static final String EXTENSION_POINT_LAUNCH_CONFIGURATION_TYPE_IMAGES = "launchConfigurationTypeImages"; //$NON-NLS-1$	
 	
 	/**
-	 * Console document content provider extension point identifier
-	 * (value <code>"consoleDocumentContentProviders"</code>).
+	 * Console document color provider extension point identifier
+	 * (value <code>"consoleColorProviders"</code>).
 	 * 
 	 * @since 2.1
 	 */
-	public static final String EXTENSION_POINT_CONSOLE_CONTENT_PROVIDERS = "consoleContentProviders";	 //$NON-NLS-1$
+	public static final String EXTENSION_POINT_CONSOLE_COLOR_PROVIDERS = "consoleColorProviders";	 //$NON-NLS-1$
 	
 	/**
 	 * Launch groups extension point identifier (value

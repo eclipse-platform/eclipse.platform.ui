@@ -48,7 +48,7 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 	private boolean fKilled= false;
 
 	protected IProcess fProcess;
-	protected IConsoleContentProvider fContentProvider;
+	protected IConsoleColorProvider fContentProvider;
 	private IStreamsProxy fProxy;
 	protected List fStreamListeners = new ArrayList(2);
 	
@@ -412,7 +412,7 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 		}
 	}
 	
-	public ConsoleDocumentPartitioner(IProcess process, IConsoleContentProvider contentProvider) {
+	public ConsoleDocumentPartitioner(IProcess process, IConsoleColorProvider contentProvider) {
 		fProcess= process;
 		fContentProvider = contentProvider;
 	}
@@ -682,7 +682,7 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 		return fProcess.isTerminated();
 	}
 
-	protected IConsoleContentProvider getContentProvider() {
+	protected IConsoleColorProvider getContentProvider() {
 		return fContentProvider;
 	}
 
@@ -706,6 +706,13 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 	 */
 	public IDocument getDocument() {
 		return fDocument;
+	}
+
+	/**
+	 * @see org.eclipse.debug.ui.console.IConsole#getProcess()
+	 */
+	public IProcess getProcess() {
+		return fProcess;
 	}
 
 }

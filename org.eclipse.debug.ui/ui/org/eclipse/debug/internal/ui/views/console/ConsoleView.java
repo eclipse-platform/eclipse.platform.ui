@@ -75,7 +75,7 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 	class EmptyConsoleDocument extends ConsoleDocument {
 		
 		public EmptyConsoleDocument() {
-			super(new ConsoleContentProvider());
+			super(new ConsoleColorProvider());
 		}
 		
 		protected ITextStore newTextStore() {

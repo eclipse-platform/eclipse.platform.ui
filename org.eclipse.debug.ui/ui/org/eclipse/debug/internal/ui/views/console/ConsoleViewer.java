@@ -252,7 +252,7 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 		if (partitioner != null) {
 			Runnable r = new Runnable() {
 				public void run() {
-					IConsoleContentProvider contentProvider = partitioner.getContentProvider();
+					IConsoleColorProvider contentProvider = partitioner.getContentProvider();
 					ITypedRegion[] regions = partitioner.computePartitioning(0, getDocument().getLength());
 					StyleRange[] styles = new StyleRange[regions.length];
 					for (int i = 0; i < regions.length; i++) {
@@ -363,7 +363,7 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 			int end = start + fHyperLink.getLength();
 			IDocument doc = getDocument();
 			ConsoleDocumentPartitioner partitioner = (ConsoleDocumentPartitioner)getDocument().getDocumentPartitioner();
-			IConsoleContentProvider contentProvider = partitioner.getContentProvider();
+			IConsoleColorProvider contentProvider = partitioner.getContentProvider();
 			try {
 				ITypedRegion partition = doc.getPartition(start);
 				Color fontColor = e.gc.getForeground();

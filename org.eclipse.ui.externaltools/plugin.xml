@@ -139,10 +139,10 @@
       	</extraClasspathEntry>
     </extension>
 	
-	<extension point="org.eclipse.debug.ui.consoleContentProviders">
+	<extension point="org.eclipse.debug.ui.consoleColorProviders">
 		<consoleContentProvider 
-			id="org.eclipse.ant.consoleContentProvider" 
-			class="org.eclipse.ui.externaltools.internal.ant.launchConfigurations.AntConsoleContentProvider"
+			id="org.eclipse.ant.consoleColorProvider" 
+			class="org.eclipse.ui.externaltools.internal.ant.launchConfigurations.AntConsoleColorProvider"
 			processType="ant">
 		</consoleContentProvider>
 	</extension>  	

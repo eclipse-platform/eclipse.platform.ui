@@ -9,17 +9,17 @@ http://www.eclipse.org/legal/cpl-v10.html
 
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.console.ConsoleContentProvider;
+import org.eclipse.debug.ui.console.ConsoleColorProvider;
 import org.eclipse.debug.ui.console.IConsole;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.IPreferenceConstants;
 
 
-public class AntConsoleContentProvider extends ConsoleContentProvider {
+public class AntConsoleColorProvider extends ConsoleColorProvider {
 	
 	/**
-	 * @see org.eclipse.debug.internal.ui.views.console.IConsoleContentProvider#getColor(java.lang.String)
+	 * @see org.eclipse.debug.internal.ui.views.console.IConsoleColorProvider#getColor(java.lang.String)
 	 */
 	public Color getColor(String streamIdentifer) {
 		if (streamIdentifer.equals(IDebugUIConstants.ID_STANDARD_OUTPUT_STREAM)) {
@@ -41,7 +41,7 @@ public class AntConsoleContentProvider extends ConsoleContentProvider {
 	}
 
 	/**
-	 * @see org.eclipse.debug.internal.ui.views.console.IConsoleContentProvider#connect(org.eclipse.debug.core.model.IProcess, org.eclipse.debug.internal.ui.views.console.IConsole)
+	 * @see org.eclipse.debug.internal.ui.views.console.IConsoleColorProvider#connect(org.eclipse.debug.core.model.IProcess, org.eclipse.debug.internal.ui.views.console.IConsole)
 	 */
 	public void connect(IProcess process, IConsole console) {
 		AntStreamsProxy proxy = (AntStreamsProxy)process.getStreamsProxy();
