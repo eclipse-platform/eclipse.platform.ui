@@ -83,7 +83,7 @@ public class JobListeners implements IJobChangeListener {
 					size = local.size();
 					for (int i = 0; i < size; i++) {
 						//note: tolerate concurrent modification
-						IJobChangeListener listener = (IJobChangeListener) global.get(i);
+						IJobChangeListener listener = (IJobChangeListener) local.get(i);
 						if (listener != null)
 							doit.notify(listener, job, result);
 					}
