@@ -279,15 +279,33 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
          * processing.
          */
         if ((newShell != null) && (!newShell.isDisposed())
-                && (newShell.getParent() != null)) {
-            List newSubmissions = new ArrayList();
+                && (newShell.getParent() != null)
+                && (registeredWindows.get(newShell) != null)) {
+            final List newSubmissions = new ArrayList();
             newSubmissions.add(new EnabledSubmission(newShell, null,
                     CONTEXT_ID_DIALOG_AND_WINDOW));
             newSubmissions.add(new EnabledSubmission(newShell, null,
                     CONTEXT_ID_DIALOG));
-            addEnabledSubmissions(newSubmissions);
-            registeredWindows.put(newShell, newSubmissions);
+            registeredWindows.put(null, newSubmissions);
             submissionsProcessed = true;
+
+            /*
+             * Make sure the submissions will be removed in event of disposal.
+             * This is really just a paranoid check. The "oldSubmissions" code
+             * above should take care of this.
+             */
+            newShell.addDisposeListener(new DisposeListener() {
+
+                /*
+                 * (non-Javadoc)
+                 * 
+                 * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
+                 */
+                public void widgetDisposed(DisposeEvent e) {
+                    registeredWindows.remove(null);
+                    removeEnabledSubmissions(newSubmissions);
+                }
+            });
         }
 
         // If we still haven't reprocessed the submissions, then do it now.
@@ -330,8 +348,7 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
     /**
      * If you use this method, I will break your legs.
      * 
-     * TODO See WorkbenchKeyboard.  Switch to private when Bug 56231 is 
-     * resolved.
+     * TODO See WorkbenchKeyboard. Switch to private when Bug 56231 is resolved.
      */
     public void processEnabledSubmissions(boolean force,
             final Shell newActiveShell) {
