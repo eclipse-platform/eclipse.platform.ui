@@ -24,8 +24,8 @@ public class DecoratorDefinition {
 	private String objectClass;
 	private String description;
 	private ILabelDecorator decorator;
-	private boolean enabled = false;
 	private boolean adaptable;
+	private boolean enabled;
 	private String id;
 	private IConfigurationElement element;
 
@@ -40,6 +40,7 @@ public class DecoratorDefinition {
 		String decoratorDescription,
 		String className,
 		boolean isAdaptable,
+		boolean initEnabled,
 		IConfigurationElement configElement) {
 		this.id = identifier;
 		this.name = label;
@@ -47,6 +48,7 @@ public class DecoratorDefinition {
 		this.adaptable = isAdaptable;
 		this.element = configElement;
 		this.description = decoratorDescription;
+		this.enabled = initEnabled;
 	}
 
 	/**

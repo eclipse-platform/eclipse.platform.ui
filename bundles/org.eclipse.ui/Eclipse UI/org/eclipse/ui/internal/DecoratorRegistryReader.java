@@ -30,6 +30,7 @@ class DecoratorRegistryReader extends RegistryReader {
 	private static String ATT_ADAPTABLE = "adaptable"; //$NON-NLS-1$
 	private static String ATT_ID = "id"; //$NON-NLS-1$
 	private static String ATT_DESCRIPTION = "description"; //$NON-NLS-1$
+	private static String ATT_ENABLED = "state"; //$NON-NLS-1$
 	private static String P_TRUE = "true"; //$NON-NLS-1$
 
 	/**
@@ -59,9 +60,11 @@ class DecoratorRegistryReader extends RegistryReader {
 			description = descriptions[0].getValue();
 
 		boolean adaptable = P_TRUE.equals(element.getAttribute(ATT_ADAPTABLE));
+		
+		boolean enabled = P_TRUE.equals(element.getAttribute(ATT_ENABLED));
 
 		values.add(
-			new DecoratorDefinition(id, name, description, className, adaptable, element));
+			new DecoratorDefinition(id, name, description, className, adaptable, enabled, element));
 
 		return true;
 
