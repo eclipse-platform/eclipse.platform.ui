@@ -200,17 +200,14 @@ public final class ContextManager implements IContextManager {
 		SortedMap contextDefinitionsById = ContextDefinition.sortedMapById(contextDefinitions);
 		SortedSet definedContextIds = new TreeSet(contextDefinitionsById.keySet());		
 		boolean contextManagerChanged = false;
-		SortedSet updatedContextIds = null;
 
 		if (!this.definedContextIds.equals(definedContextIds)) {
 			this.definedContextIds = definedContextIds;
 			contextManagerChanged = true;	
 		}
 
-		if (!this.contextDefinitionsById.equals(contextDefinitionsById)) {
-			this.contextDefinitionsById = contextDefinitionsById;	
-			updatedContextIds = updateContexts(this.definedContextIds);	
-		}
+		this.contextDefinitionsById = contextDefinitionsById;
+		SortedSet updatedContextIds = updateContexts(this.definedContextIds);	
 		
 		if (contextManagerChanged)
 			fireContextManagerChanged();

@@ -28,7 +28,6 @@ import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.ICommandManagerEvent;
 import org.eclipse.ui.commands.ICommandManagerListener;
-import org.eclipse.ui.commands.IContextBinding;
 import org.eclipse.ui.commands.IKeyConfiguration;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.commands.registry.CategoryDefinition;
@@ -39,6 +38,7 @@ import org.eclipse.ui.internal.commands.registry.ICommandDefinition;
 import org.eclipse.ui.internal.commands.registry.ICommandRegistry;
 import org.eclipse.ui.internal.commands.registry.ICommandRegistryEvent;
 import org.eclipse.ui.internal.commands.registry.ICommandRegistryListener;
+import org.eclipse.ui.internal.commands.registry.IContextBindingDefinition;
 import org.eclipse.ui.internal.commands.registry.IKeyConfigurationDefinition;
 import org.eclipse.ui.internal.commands.registry.KeyConfigurationDefinition;
 import org.eclipse.ui.internal.commands.registry.PluginCommandRegistry;
@@ -77,7 +77,13 @@ public final class CommandManager implements ICommandManager {
 	private SortedMap keyConfigurationDefinitionsById = new TreeMap();
 	private SortedMap keyConfigurationsById = new TreeMap();	
 	private PluginCommandRegistry pluginCommandRegistry;
+	private List pluginContextBindingDefinitions = Collections.EMPTY_LIST;
+	private List pluginImageBindingDefinitions = Collections.EMPTY_LIST;
+	private List pluginKeyBindingDefinitions = Collections.EMPTY_LIST;
 	private PreferenceCommandRegistry preferenceCommandRegistry;
+	private List preferenceContextBindingDefinitions = Collections.EMPTY_LIST;
+	private List preferenceImageBindingDefinitions = Collections.EMPTY_LIST;
+	private List preferenceKeyBindingDefinitions = Collections.EMPTY_LIST;	
 
 	private CommandManager() {
 		if (pluginCommandRegistry == null)
@@ -224,7 +230,7 @@ public final class CommandManager implements ICommandManager {
 			this.activeContextIds = activeContextIds;
 			activeContextIdsAsSet = new TreeSet(this.activeContextIds);			
 			commandManagerChanged = true;			
-			// TODO this could change key bindings			
+			calculateKeyBindings();		
 			updatedCommandIds = updateCommands(this.definedCommandIds);	
 		}
 		
@@ -235,12 +241,78 @@ public final class CommandManager implements ICommandManager {
 			notifyCommands(updatedCommandIds);
 	}
 
-	public void setActiveLocale(String locale) {		
-		// TODO this could change image bindings or key bindings		
+	public void setActiveLocale(String activeLocale) {
+		if (activeLocale == null)
+			throw new NullPointerException();
+		
+		boolean commandManagerChanged = false;
+		SortedSet updatedCommandIds = null;
+
+		if (!this.activeLocale.equals(activeLocale)) {
+			this.activeLocale = activeLocale;
+			commandManagerChanged = true;			
+			calculateImageBindings();
+			calculateKeyBindings();		
+			updatedCommandIds = updateCommands(this.definedCommandIds);	
+		}
+		
+		if (commandManagerChanged)
+			fireCommandManagerChanged();
+
+		if (updatedCommandIds != null)
+			notifyCommands(updatedCommandIds);
 	}
 	
-	public void setActivePlatform(String platform) {
-		// TODO this could change image bindings or key bindings
+	public void setActivePlatform(String activePlatform) {
+		if (activePlatform == null)
+			throw new NullPointerException();
+		
+		boolean commandManagerChanged = false;
+		SortedSet updatedCommandIds = null;
+
+		if (!this.activePlatform.equals(activePlatform)) {
+			this.activePlatform = activePlatform;
+			commandManagerChanged = true;			
+			calculateImageBindings();
+			calculateKeyBindings();			
+			updatedCommandIds = updateCommands(this.definedCommandIds);	
+		}
+		
+		if (commandManagerChanged)
+			fireCommandManagerChanged();
+
+		if (updatedCommandIds != null)
+			notifyCommands(updatedCommandIds);
+	}
+
+	private void calculateContextBindings() {
+		List contextBindingDefinitions = new ArrayList();		
+		contextBindingDefinitions.addAll(pluginContextBindingDefinitions);
+		contextBindingDefinitions.addAll(preferenceContextBindingDefinitions);
+		contextBindingsByCommandId.clear();
+		Iterator iterator = contextBindingDefinitions.iterator();
+			
+		while (iterator.hasNext()) {
+			IContextBindingDefinition contextBindingDefinition = (IContextBindingDefinition) iterator.next();			
+			String commandId = contextBindingDefinition.getCommandId();
+			String contextId = contextBindingDefinition.getContextId();
+			SortedSet sortedSet = (SortedSet) contextBindingsByCommandId.get(commandId);
+				
+			if (sortedSet == null) {
+				sortedSet = new TreeSet();
+				contextBindingsByCommandId.put(commandId, sortedSet);						
+			}
+				
+			sortedSet.add(new ContextBinding(contextId));
+		}
+	}
+
+	private void calculateImageBindings() {
+		// TODO
+	}
+	
+	private void calculateKeyBindings() {
+		// TODO
 	}
 
 	private void fireCommandManagerChanged() {
@@ -262,13 +334,16 @@ public final class CommandManager implements ICommandManager {
 		return preferenceCommandRegistry;
 	}
 
-	private boolean inContext(List contextBindings) {
-		Iterator iterator = contextBindings.iterator();
+	private boolean inContext(SortedSet contextBindings) {
+		if (contextBindings.isEmpty())
+			return true;
+		
+		Iterator iterator = activeContextIds.iterator();
 		
 		while (iterator.hasNext()) {
-			IContextBinding contextBinding = (IContextBinding) iterator.next();
+			String activeContextId = (String) iterator.next();
 			
-			if (activeContextIds.contains(contextBinding.getContextId()))
+			if (contextBindings.contains(new ContextBinding(activeContextId)));
 				return true;			
 		}
 		
@@ -343,28 +418,23 @@ public final class CommandManager implements ICommandManager {
 		categoryDefinitions.addAll(preferenceCommandRegistry.getCategoryDefinitions());		
 		SortedMap categoryDefinitionsById = CategoryDefinition.sortedMapById(categoryDefinitions);
 		SortedSet definedCategoryIds = new TreeSet(categoryDefinitionsById.keySet());	
+		pluginContextBindingDefinitions = pluginCommandRegistry.getContextBindingDefinitions();
+		preferenceContextBindingDefinitions = preferenceCommandRegistry.getContextBindingDefinitions();
 		List commandDefinitions = new ArrayList();
 		commandDefinitions.addAll(pluginCommandRegistry.getCommandDefinitions());
 		commandDefinitions.addAll(preferenceCommandRegistry.getCommandDefinitions());
 		SortedMap commandDefinitionsById = CommandDefinition.sortedMapById(commandDefinitions);
 		SortedSet definedCommandIds = new TreeSet(commandDefinitionsById.keySet());		
+		pluginImageBindingDefinitions = pluginCommandRegistry.getImageBindingDefinitions();
+		preferenceImageBindingDefinitions = preferenceCommandRegistry.getImageBindingDefinitions();
+		pluginKeyBindingDefinitions = pluginCommandRegistry.getKeyBindingDefinitions();
+		preferenceKeyBindingDefinitions = preferenceCommandRegistry.getKeyBindingDefinitions();
 		List keyConfigurationDefinitions = new ArrayList();
 		keyConfigurationDefinitions.addAll(pluginCommandRegistry.getKeyConfigurationDefinitions());
 		keyConfigurationDefinitions.addAll(preferenceCommandRegistry.getKeyConfigurationDefinitions());
 		SortedMap keyConfigurationDefinitionsById = KeyConfigurationDefinition.sortedMapById(keyConfigurationDefinitions);
-		SortedSet definedKeyConfigurationIds = new TreeSet(keyConfigurationDefinitionsById.keySet());	
-
-		List pluginContextBindingDefinitions = pluginCommandRegistry.getContextBindingDefinitions();
-		List preferenceContextBindingDefinitions = preferenceCommandRegistry.getContextBindingDefinitions();
-		List pluginImageBindingDefinitions = pluginCommandRegistry.getImageBindingDefinitions();
-		List preferenceImageBindingDefinitions = preferenceCommandRegistry.getImageBindingDefinitions();
-		List pluginKeyBindingDefinitions = pluginCommandRegistry.getKeyBindingDefinitions();
-		List preferenceKeyBindingDefinitions = preferenceCommandRegistry.getKeyBindingDefinitions();
-		
+		SortedSet definedKeyConfigurationIds = new TreeSet(keyConfigurationDefinitionsById.keySet());				
 		boolean commandManagerChanged = false;
-		SortedSet updatedCategoryIds = null;
-		SortedSet updatedCommandIds = null;
-		SortedSet updatedKeyConfigurationIds = null;
 
 		if (!this.activeKeyConfigurationId.equals(activeKeyConfigurationId)) {
 			this.activeKeyConfigurationId = activeKeyConfigurationId;
@@ -376,19 +446,9 @@ public final class CommandManager implements ICommandManager {
 			commandManagerChanged = true;	
 		}
 
-		if (!this.categoryDefinitionsById.equals(categoryDefinitionsById)) {
-			this.categoryDefinitionsById = categoryDefinitionsById;	
-			updatedCategoryIds = updateCategories(this.definedCategoryIds);	
-		}
-
 		if (!this.definedCommandIds.equals(definedCommandIds)) {
 			this.definedCommandIds = definedCommandIds;
-			commandManagerChanged = true;	
-		}
-
-		if (!this.commandDefinitionsById.equals(commandDefinitionsById)) {
-			this.commandDefinitionsById = commandDefinitionsById;	
-			updatedCommandIds = updateCommands(this.definedCommandIds);	
+			commandManagerChanged = true;
 		}
 
 		if (!this.definedKeyConfigurationIds.equals(definedKeyConfigurationIds)) {
@@ -396,10 +456,15 @@ public final class CommandManager implements ICommandManager {
 			commandManagerChanged = true;	
 		}
 
-		if (!this.keyConfigurationDefinitionsById.equals(keyConfigurationDefinitionsById)) {
-			this.keyConfigurationDefinitionsById = keyConfigurationDefinitionsById;	
-			updatedKeyConfigurationIds = updateKeyConfigurations(this.definedKeyConfigurationIds);	
-		}
+		this.categoryDefinitionsById = categoryDefinitionsById;	
+		this.commandDefinitionsById = commandDefinitionsById;
+		this.keyConfigurationDefinitionsById = keyConfigurationDefinitionsById;
+		calculateContextBindings();
+		calculateImageBindings();
+		calculateKeyBindings();
+		SortedSet updatedCategoryIds = updateCategories(this.definedCategoryIds);	
+		SortedSet updatedCommandIds = updateCommands(this.definedCommandIds);	
+		SortedSet updatedKeyConfigurationIds = updateKeyConfigurations(this.definedKeyConfigurationIds);	
 
 		if (commandManagerChanged)
 			fireCommandManagerChanged();
@@ -440,11 +505,11 @@ public final class CommandManager implements ICommandManager {
 
 	private boolean updateCommand(Command command) {
 		boolean updated = false;
-		List contextBindings = (List) contextBindingsByCommandId.get(command.getId());
+		SortedSet contextBindings = (SortedSet) contextBindingsByCommandId.get(command.getId());
 		updated |= command.setActive(inContext(contextBindings));
 		ICommandDefinition commandDefinition = (ICommandDefinition) commandDefinitionsById.get(command.getId());
 		updated |= command.setCategoryId(commandDefinition != null ? commandDefinition.getCategoryId() : null);
-		updated |= command.setContextBindings(contextBindings != null ? contextBindings : Collections.EMPTY_LIST);
+		updated |= command.setContextBindings(contextBindings != null ? new ArrayList(contextBindings) : Collections.EMPTY_LIST);
 		updated |= command.setDefined(commandDefinition != null);
 		updated |= command.setDescription(commandDefinition != null ? commandDefinition.getDescription() : null);
 		updated |= command.setHelpId(commandDefinition != null ? commandDefinition.getHelpId() : null);
