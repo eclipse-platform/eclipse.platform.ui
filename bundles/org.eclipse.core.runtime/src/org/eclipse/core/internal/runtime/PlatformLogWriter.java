@@ -11,7 +11,6 @@
 package org.eclipse.core.internal.runtime;
 
 import java.util.ArrayList;
-
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.framework.log.FrameworkLogEntry;
 

@@ -11,7 +11,6 @@
 package org.eclipse.core.internal.runtime;
 
 import java.util.*;
-
 import org.eclipse.core.runtime.*;
 
 /**

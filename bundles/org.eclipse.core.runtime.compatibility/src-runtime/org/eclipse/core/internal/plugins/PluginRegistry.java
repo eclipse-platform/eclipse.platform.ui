@@ -13,19 +13,9 @@ package org.eclipse.core.internal.plugins;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
 import org.eclipse.core.internal.runtime.InternalPlatform;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.core.runtime.IPluginDescriptor;
-import org.eclipse.core.runtime.IPluginRegistry;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.PluginVersionIdentifier;
+import org.eclipse.core.runtime.*;
 import org.osgi.framework.*;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleListener;
 
 //TODO 1: this class must be made thread safe (query methods must be sync'd as well)
 public class PluginRegistry implements IPluginRegistry {

@@ -11,7 +11,6 @@
 package org.eclipse.core.internal.registry;
 
 import java.util.*;
-
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionDelta;
 

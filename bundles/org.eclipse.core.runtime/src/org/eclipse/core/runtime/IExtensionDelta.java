@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.core.runtime;
 
-import org.eclipse.core.runtime.IExtensionPoint;
-
 /**
  * An extension delta represents changes to the extension registry.
  * <p>

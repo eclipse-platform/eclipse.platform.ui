@@ -13,7 +13,6 @@ package org.eclipse.core.internal.registry;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.runtime.IPlatform;
 import org.eclipse.core.runtime.MultiStatus;

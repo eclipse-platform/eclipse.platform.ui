@@ -12,7 +12,6 @@ package org.eclipse.core.internal.registry;
 
 import java.util.Arrays;
 import java.util.Map;
-
 import org.eclipse.core.runtime.IExtensionDelta;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
 

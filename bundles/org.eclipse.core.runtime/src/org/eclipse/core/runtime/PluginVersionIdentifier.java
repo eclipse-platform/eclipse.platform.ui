@@ -10,9 +10,10 @@
  *******************************************************************************/
 package org.eclipse.core.runtime;
 
-import java.util.Vector;
 import java.util.StringTokenizer;
-import org.eclipse.core.internal.runtime.*;
+import java.util.Vector;
+import org.eclipse.core.internal.runtime.Assert;
+import org.eclipse.core.internal.runtime.Policy;
 
 /**
  * <p>

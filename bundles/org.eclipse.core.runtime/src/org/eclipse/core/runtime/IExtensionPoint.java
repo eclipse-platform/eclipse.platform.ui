@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.core.runtime;
 
-import org.eclipse.core.runtime.IPluginDescriptor;
-
 /**
  * An extension point declared in a plug-in.
  * Except for the list of extensions plugged in to it, the information 

@@ -15,8 +15,8 @@ import java.util.HashMap;
 import java.util.List;
 import org.eclipse.core.internal.model.PluginMap;
 import org.eclipse.core.internal.model.RegistryResolver;
-import org.eclipse.core.internal.runtime.Assert;
 import org.eclipse.core.internal.plugins.InternalPlatform;
+import org.eclipse.core.internal.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
 
 /**

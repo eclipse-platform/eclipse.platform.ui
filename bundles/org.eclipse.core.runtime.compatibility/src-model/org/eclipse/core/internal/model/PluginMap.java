@@ -11,7 +11,6 @@
 package org.eclipse.core.internal.model;
 
 import java.util.*;
-
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.core.runtime.model.PluginModel;

@@ -10,9 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.runtime;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.channels.FileLock;
 
 //TODO Given the callers, it should be removed 
