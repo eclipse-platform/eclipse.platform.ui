@@ -74,8 +74,6 @@ public class NewWizardAction
 	
 	/**
 	 *	Create a new instance of this class.
-	 * @deprecated Use {@link IDEActionFactory#NEW IDEActionFactory.NEW} instead
-	 * @issue document this deprecation (contingent upon IDEActionFactory being public)
 	 */
 	public NewWizardAction(IWorkbenchWindow window) {
 		super(IDEWorkbenchMessages.getString("NewWizardAction.text")); //$NON-NLS-1$

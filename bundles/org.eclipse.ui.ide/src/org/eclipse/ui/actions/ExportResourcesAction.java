@@ -75,9 +75,6 @@ public class ExportResourcesAction
 
 	/**
 	 * Create a new instance of this class.
-	 * 
-	 * @deprecated Use {@link IDEActionFactory#EXPORT IDEActionFactory.EXPORT} instead
-	 * @issue document this deprecation (contingent upon IDEActionFactory being public)
 	 */
 	public ExportResourcesAction(IWorkbenchWindow window) {
 		this(window, IDEWorkbenchMessages.getString("ExportResourcesAction.text")); //$NON-NLS-1$
@@ -85,9 +82,6 @@ public class ExportResourcesAction
 
 	/**
 	 * Create a new instance of this class.
-	 * 
-	 * @deprecated Use {@link IDEActionFactory#EXPORT IDEActionFactory.EXPORT} instead
-	 * @issue document this deprecation (contingent upon IDEActionFactory being public)
 	 */
 	public ExportResourcesAction(IWorkbenchWindow window, String label) {
 		super(label); //$NON-NLS-1$

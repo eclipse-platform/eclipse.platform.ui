@@ -50,9 +50,6 @@ public class QuickStartAction
 	
 	/**
 	 * Creates an instance of this action, for use in the given window.
-	 * 
-	 * @deprecated Use {@link IDEActionFactory#QUICK_START IDEActionFactory.QUICK_START} instead
-	 * @issue document this deprecation (contingent upon IDEActionFactory being public)
 	 */
 	public QuickStartAction(IWorkbenchWindow window) {
 		super(IDEWorkbenchMessages.getString("QuickStart.text")); //$NON-NLS-1$

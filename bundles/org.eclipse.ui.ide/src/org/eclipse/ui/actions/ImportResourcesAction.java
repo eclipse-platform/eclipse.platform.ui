@@ -76,8 +76,6 @@ public class ImportResourcesAction
 
 	/**
 	 * Create a new instance of this class
-	 * @deprecated Use {@link IDEActionFactory#IMPORT IDEActionFactory.IMPORT} instead
-	 * @issue document this deprecation (contingent upon IDEActionFactory being public)
 	 */
 	public ImportResourcesAction(IWorkbenchWindow window) {
 		super(IDEWorkbenchMessages.getString("ImportResourcesAction.text")); //$NON-NLS-1$

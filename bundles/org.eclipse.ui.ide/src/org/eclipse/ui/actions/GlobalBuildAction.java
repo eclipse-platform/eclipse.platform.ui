@@ -89,9 +89,6 @@ public GlobalBuildAction(IWorkbench workbench, Shell shell, int type) {
  * @param type the type of build; one of
  *  <code>IncrementalProjectBuilder.INCREMENTAL_BUILD</code> or 
  *  <code>IncrementalProjectBuilder.FULL_BUILD</code>
- * @deprecated Use {@link IDEActionFactory#FULL_BUILD IDEActionFactory.FULL_BUILD}
- * or Use {@link IDEActionFactory#INCREMENTAL_BUILD IDEActionFactory.INCREMENTAL_BUILD} instead
- * @issue document this deprecation (contingent upon IDEActionFactory being public)
  */
 public GlobalBuildAction(IWorkbenchWindow window, int type) {
 	if (window == null) {
