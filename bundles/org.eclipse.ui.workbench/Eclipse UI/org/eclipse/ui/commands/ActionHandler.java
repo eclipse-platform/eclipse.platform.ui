@@ -30,6 +30,12 @@ public final class ActionHandler extends AbstractHandler {
 
     private final static String ATTRIBUTE_ENABLED = "enabled"; //$NON-NLS-1$
 
+    /* TODO This should be changed.
+     * CommandManager should not look for this attribute (search by string "handled" to find it..).
+     * Instead, code in workbench should be changed such that if a RetargetAction loses its action,
+     * this ActionHandler instance's corresponding HandlerSubmission should be removed.
+     * In any case, this attribute especially should never be made public.
+     */ 
     private final static String ATTRIBUTE_HANDLED = "handled"; //$NON-NLS-1$
 
     private final static String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
