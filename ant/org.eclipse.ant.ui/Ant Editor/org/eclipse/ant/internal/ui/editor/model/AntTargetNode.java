@@ -32,7 +32,7 @@ public class AntTargetNode extends AntElementNode {
 			setIsErrorNode(true);
 		}
 		
-		if (targetName.equals(fTarget.getProject().getDefaultTarget())) {
+		if (isDefaultTarget()) {
 			targetName= targetName + AntModelMessages.getString("AntTargetNode.2"); //$NON-NLS-1$
 		}
 		return targetName;
@@ -40,5 +40,13 @@ public class AntTargetNode extends AntElementNode {
 	
 	public Target getTarget() {
 		return fTarget;
+	}
+	
+	public boolean isDefaultTarget() {
+		String targetName= fTarget.getName();
+		if (targetName == null) {
+			return false;
+		}
+		return targetName.equals(fTarget.getProject().getDefaultTarget());
 	}
 }
