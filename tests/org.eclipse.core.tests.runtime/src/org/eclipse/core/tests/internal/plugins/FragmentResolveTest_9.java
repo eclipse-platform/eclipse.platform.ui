@@ -36,6 +36,7 @@ public void fullTest() {
 			pluginPath = tempPlugin.getLocation().concat("Plugin_Testing/fragment.resolve.9/fragment" + (i + 1) + ".xml");
 			pluginURLs[1] = new URL (pluginPath);
 		} catch (java.net.MalformedURLException e) {
+			fail("0.0.1 Unexpected exception - " + e.getMessage());
 		}
 		IPluginRegistry registry = ParseHelper.doParsing(factory, pluginURLs, true);
 		IPluginDescriptor pd = registry.getPluginDescriptor("tests.a");

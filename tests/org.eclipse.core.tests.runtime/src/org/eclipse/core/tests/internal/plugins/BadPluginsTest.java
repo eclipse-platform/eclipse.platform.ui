@@ -25,6 +25,7 @@ public static Test suite() {
 	TestSuite suite = new TestSuite();
 	suite.addTest(new BadPluginsTest("badElements"));
 	suite.addTest(new BadPluginsTest("badAttributes"));
+	suite.addTest(new BadPluginsTest("badFragment"));
 	return suite;
 }
 
@@ -152,6 +153,56 @@ public void badAttributes() {
 			}
 		}
 	} catch (Exception e) {}
+}
+
+public void badFragment() {
+	String[] badAttrs = {
+		"badFragmentsTest", 
+	};
+	String[] errorMessages = {
+		"Plugin descriptor org.eclipse.not.there not found for fragment badFragmentsTest.  Fragment ignored.",
+	};
+	
+	PluginDescriptor tempPlugin = (PluginDescriptor)Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.core.tests.runtime");
+	try {
+		for (int i = 0; i < badAttrs.length; i++) {
+			MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, "badPluginsTestProblems", null);
+			InternalFactory factory = new InternalFactory(problems);
+			String[] pluginPath = new String[2];
+			pluginPath[0] = tempPlugin.getLocation().concat("Plugin_Testing/badPluginsTest/badFragmentsPluginTest.xml");
+			pluginPath[1] = tempPlugin.getLocation().concat("Plugin_Testing/badPluginsTest/" + badAttrs[i] + ".xml");
+			URL pluginURLs[] = new URL[2];
+			for (int j = 0; j < pluginURLs.length; j++) {
+				URL pURL = null;
+				try {
+					pURL = new URL (pluginPath[j]);
+				} catch (java.net.MalformedURLException e) {
+					assertTrue("Bad URL for " + pluginPath[j], true);
+				}
+				pluginURLs[j] = pURL;
+			}
+			IPluginRegistry registry = ParseHelper.doParsing (factory, pluginURLs, true);
+			String id = null;
+			PluginFragmentModel[] fragmentDescriptors = ((PluginRegistryModel)registry).getFragments();
+			assertTrue(i + ".0 Only one fragment", fragmentDescriptors.length == 1);
+			PluginFragmentModel fragment = (PluginFragmentModel)fragmentDescriptors[0];
+			id = fragment.getId();
+			assertTrue(i + ".1 Got the right fragment", id.equals(badAttrs[i]));
+			IPluginDescriptor[] pluginDescriptors = registry.getPluginDescriptors();
+			assertTrue(i + ".2 Only one plugin", pluginDescriptors.length == 1);
+			PluginDescriptorModel plugin = (PluginDescriptorModel)pluginDescriptors[0];
+			id = plugin.getId();
+			assertTrue(i + ".3 Got the right plugin", id.equals("badFragmentsPluginTest"));
+			if (errorMessages[i].equals("")) {
+				System.out.println("id = " + id);
+				System.out.println(problems.toString());
+			} else {
+				assertTrue(i + ".4 Got the right errors", problems.toString().indexOf(errorMessages[i]) != -1);
+			}
+		}
+	} catch (Exception e) {
+		fail("0.5 Unexpected exception - " + e.getMessage());
+	}
 }
 
 }

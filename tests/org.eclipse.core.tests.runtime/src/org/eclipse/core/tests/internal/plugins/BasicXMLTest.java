@@ -867,28 +867,38 @@ public void readOnlyConfigurationElement(ConfigurationElement subElement) {
 	// Now check all methods that can write to a ConfigurationElement
 	try {
 		subElement.setName("name");
-		assertTrue("7.2 ConfigurationElement - setName", true);
+		assertTrue("7.2 ConfigurationElement - setName", false);
 	} catch (RuntimeException runExcept) {
+		// catch intentionally left blank.  We do get here
+		// but want to continue execution
 	}
 	try {
 		subElement.setParent(new PluginDescriptor());
-		assertTrue("7.3 ConfigurationElement - setParent", true);
+		assertTrue("7.3 ConfigurationElement - setParent", false);
 	} catch (RuntimeException runExcept) {
+		// catch intentionally left blank.  We do get here
+		// but want to continue execution
 	}
 	try {
 		subElement.setProperties(new ConfigurationPropertyModel[1]);
-		assertTrue("7.4 ConfigurationElement - setProperties", true);
+		assertTrue("7.4 ConfigurationElement - setProperties", false);
 	} catch (RuntimeException runExcept) {
+		// catch intentionally left blank.  We do get here
+		// but want to continue execution
 	}
 	try {
 		subElement.setSubElements(new ConfigurationElementModel[1]);
-		assertTrue("7.5 ConfigurationElement - setSubElements", true);
+		assertTrue("7.5 ConfigurationElement - setSubElements", false);
 	} catch (RuntimeException runExcept) {
+		// catch intentionally left blank.  We do get here
+		// but want to continue execution
 	}
 	try {
 		subElement.setValue("value");
-		assertTrue("7.6 ConfigurationElement - setValue", true);
+		assertTrue("7.6 ConfigurationElement - setValue", false);
 	} catch (RuntimeException runExcept) {
+		// catch intentionally left blank.  We do get here
+		// but want to continue execution
 	}
 }
 /*  readOnlyConfigurationProperty
@@ -903,13 +913,17 @@ public void readOnlyConfigurationProperty(ConfigurationProperty property) {
 	// Now check all methods that can write to a ConfigurationProperty
 	try {
 		property.setName("name");
-		assertTrue("8.4 ConfigurationProperty - setName", true);
+		assertTrue("8.4 ConfigurationProperty - setName", false);
 	} catch (RuntimeException runExcept) {
+		// catch intentionally left blank.  We do get here
+		// but want to continue execution
 	}
 	try {
 		property.setValue("value");
-		assertTrue("8.3 ConfigurationProperty - setValue", true);
+		assertTrue("8.3 ConfigurationProperty - setValue", false);
 	} catch (RuntimeException runExcept) {
+		// catch intentionally left blank.  We do get here
+		// but want to continue execution
 	}
 }
 /*  readOnlyExtension
@@ -923,28 +937,38 @@ public void readOnlyExtension(Extension extension) {
 	// Now check all methods that can write to an Extension
 	try {
 		extension.setName("name");
-		assertTrue("6.2 Plugin - setName", true);
+		assertTrue("6.2 Plugin - setName", false);
 	} catch (RuntimeException runExcept) {
+		// catch intentionally left blank.  We do get here
+		// but want to continue execution
 	}
 	try {
 		extension.setExtensionPoint("extensionPoint");
-		assertTrue("6.3 Extension - setExtensionPoint", true);
+		assertTrue("6.3 Extension - setExtensionPoint", false);
 	} catch (RuntimeException runExcept) {
+		// catch intentionally left blank.  We do get here
+		// but want to continue execution
 	}
 	try {
 		extension.setId("id");
-		assertTrue("6.4 Extension - setId", true);
+		assertTrue("6.4 Extension - setId", false);
 	} catch (RuntimeException runExcept) {
+		// catch intentionally left blank.  We do get here
+		// but want to continue execution
 	}
 	try {
 		extension.setParentPluginDescriptor(new PluginDescriptor());
-		assertTrue("6.5 Extension - setParentPluginDescriptor", true);
+		assertTrue("6.5 Extension - setParentPluginDescriptor", false);
 	} catch (RuntimeException runExcept) {
+		// catch intentionally left blank.  We do get here
+		// but want to continue execution
 	}
 	try {
 		extension.setSubElements(new ConfigurationElementModel[1]);
-		assertTrue("6.6 Extension - setSubElements", true);
+		assertTrue("6.6 Extension - setSubElements", false);
 	} catch (RuntimeException runExcept) {
+		// catch intentionally left blank.  We do get here
+		// but want to continue execution
 	}
 }
 /*  readOnlyExtensionPoints
@@ -958,28 +982,38 @@ public void readOnlyExtensionPoint(ExtensionPoint extensionPoint) {
 	// Now check all methods that can write to an ExtensionPoint
 	try {
 		extensionPoint.setName("name");
-		assertTrue("5.2 Plugin - setName", true);
+		assertTrue("5.2 Plugin - setName", false);
 	} catch (RuntimeException runExcept) {
+		// catch intentionally left blank.  We do get here
+		// but want to continue execution
 	}
 	try {
 		extensionPoint.setDeclaredExtensions(new ExtensionModel[1]);
-		assertTrue("5.3 Extension Point - setDeclaredExtensions", true);
+		assertTrue("5.3 Extension Point - setDeclaredExtensions", false);
 	} catch (RuntimeException runExcept) {
+		// catch intentionally left blank.  We do get here
+		// but want to continue execution
 	}
 	try {
 		extensionPoint.setId("id");
-		assertTrue("5.4 Extension Point - setId", true);
+		assertTrue("5.4 Extension Point - setId", false);
 	} catch (RuntimeException runExcept) {
+		// catch intentionally left blank.  We do get here
+		// but want to continue execution
 	}
 	try {
 		extensionPoint.setParentPluginDescriptor(new PluginDescriptor());
-		assertTrue("5.5 Extension Point - setParentPluginDescriptor", true);
+		assertTrue("5.5 Extension Point - setParentPluginDescriptor", false);
 	} catch (RuntimeException runExcept) {
+		// catch intentionally left blank.  We do get here
+		// but want to continue execution
 	}
 	try {
 		extensionPoint.setSchema("schema");
-		assertTrue("5.6 Extension Point - setSchema", true);
+		assertTrue("5.6 Extension Point - setSchema", false);
 	} catch (RuntimeException runExcept) {
+		// catch intentionally left blank.  We do get here
+		// but want to continue execution
 	}
 }
 /*  readOnlyLibrary
@@ -993,13 +1027,17 @@ public void readOnlyLibrary(Library library) {
 	assertTrue("4.1 Library marked", library.isReadOnly());
 	try {
 		library.setName("name");
-		assertTrue("4.2 Plugin - setName", true);
+		assertTrue("4.2 Plugin - setName", false);
 	} catch (RuntimeException runExcept) {
+		// catch intentionally left blank.  We do get here
+		// but want to continue execution
 	}
 	try {
 		library.setExports(new String[1]);
-		assertTrue("4.3 Library - setExports", true);
+		assertTrue("4.3 Library - setExports", false);
 	} catch (RuntimeException runExcept) {
+		// catch intentionally left blank.  We do get here
+		// but want to continue execution
 	}
 
 }
@@ -1014,58 +1052,80 @@ public void readOnlyPlugin(PluginDescriptor plugin) {
 	// Now check all methods that can write to a PluginDescriptor
 	try {
 		plugin.setName("name");
-		assertTrue("3.2 Plugin - setName", true);
+		assertTrue("3.2 Plugin - setName", false);
 	} catch (RuntimeException runExcept) {
+		// catch intentionally left blank.  We do get here
+		// but want to continue execution
 	}
 	try {
 		plugin.setDeclaredExtensionPoints(new ExtensionPointModel[1]);
-		assertTrue("3.3 Plugin - setDeclaredExtensionPoints", true);
+		assertTrue("3.3 Plugin - setDeclaredExtensionPoints", false);
 	} catch (RuntimeException runExcept) {
+		// catch intentionally left blank.  We do get here
+		// but want to continue execution
 	}
 	try {
 		plugin.setDeclaredExtensions(new ExtensionModel[1]);
-		assertTrue("3.4 Plugin - setDeclaredExtensions", true);
+		assertTrue("3.4 Plugin - setDeclaredExtensions", false);
 	} catch (RuntimeException runExcept) {
+		// catch intentionally left blank.  We do get here
+		// but want to continue execution
 	}
 	try {
 		plugin.setId("id");
-		assertTrue("3.5 Plugin - setId", true);
+		assertTrue("3.5 Plugin - setId", false);
 	} catch (RuntimeException runExcept) {
+		// catch intentionally left blank.  We do get here
+		// but want to continue execution
 	}
 	try {
 		plugin.setLocation("location");
-		assertTrue("3.6 Plugin - setLocation", true);
+		assertTrue("3.6 Plugin - setLocation", false);
 	} catch (RuntimeException runExcept) {
+		// catch intentionally left blank.  We do get here
+		// but want to continue execution
 	}
 	try {
 		plugin.setPluginClass("pluginClass");
-		assertTrue("3.7 Plugin - setPluginClass", true);
+		assertTrue("3.7 Plugin - setPluginClass", false);
 	} catch (RuntimeException runExcept) {
+		// catch intentionally left blank.  We do get here
+		// but want to continue execution
 	}
 	try {
 		plugin.setRegistry(new PluginRegistry());
-		assertTrue("3.8 Plugin - setRegistry", true);
+		assertTrue("3.8 Plugin - setRegistry", false);
 	} catch (RuntimeException runExcept) {
+		// catch intentionally left blank.  We do get here
+		// but want to continue execution
 	}
 	try {
 		plugin.setRequires(new PluginPrerequisiteModel[1]);
-		assertTrue("3.9 Plugin - setRequires", true);
+		assertTrue("3.9 Plugin - setRequires", false);
 	} catch (RuntimeException runExcept) {
+		// catch intentionally left blank.  We do get here
+		// but want to continue execution
 	}
 	try {
 		plugin.setRuntime(new LibraryModel[1]);
-		assertTrue("3.10 Plugin - setRuntime", true);
+		assertTrue("3.10 Plugin - setRuntime", false);
 	} catch (RuntimeException runExcept) {
+		// catch intentionally left blank.  We do get here
+		// but want to continue execution
 	}
 	try {
 		plugin.setProviderName("providerName");
-		assertTrue("3.11 Plugin - setVendorName", true);
+		assertTrue("3.11 Plugin - setVendorName", false);
 	} catch (RuntimeException runExcept) {
+		// catch intentionally left blank.  We do get here
+		// but want to continue execution
 	}
 	try {
 		plugin.setVersion("version");
-		assertTrue("3.12 Plugin - setVersion", true);
+		assertTrue("3.12 Plugin - setVersion", false);
 	} catch (RuntimeException runExcept) {
+		// catch intentionally left blank.  We do get here
+		// but want to continue execution
 	}
 }
 /*  readOnlyRegistry
@@ -1079,18 +1139,24 @@ public void readOnlyRegistry(PluginRegistry registry) {
 	// Now check all methods that can write to a PluginRegistry
 	try {
 		registry.addPlugin(pluginList[0]);
-		assertTrue("2.2 PluginRegistry - addPlugin", true);
+		assertTrue("2.2 PluginRegistry - addPlugin", false);
 	} catch (RuntimeException runExcept) {
+		// catch intentionally left blank.  We do get here
+		// but want to continue execution
 	}
 	try {
 		registry.removePlugin(pluginList[0].getId(), pluginList[0].getVersion());
-		assertTrue("2.3 PluginRegistry - removePlugin", true);
+		assertTrue("2.3 PluginRegistry - removePlugin", false);
 	} catch (RuntimeException runExcept) {
+		// catch intentionally left blank.  We do get here
+		// but want to continue execution
 	}
 	try {
 		registry.removePlugins(pluginList[0].getId());
-		assertTrue("2.4 PluginRegistry - removePlugins", true);
+		assertTrue("2.4 PluginRegistry - removePlugins", false);
 	} catch (RuntimeException runExcept) {
+		// catch intentionally left blank.  We do get here
+		// but want to continue execution
 	}
 }
 public String[] readOnlySetup() {

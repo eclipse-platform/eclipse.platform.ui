@@ -29,6 +29,7 @@ public void test1() {
 		pluginPath = tempPlugin.getLocation().concat("Plugin_Testing/fragment.resolve.1/fragment1.xml");
 		pluginURLs[1] = new URL (pluginPath);
 	} catch (java.net.MalformedURLException e) {
+		fail("1.0.1 Unexpected exception - " + e.getMessage());
 	}
 	IPluginRegistry registry = ParseHelper.doParsing(factory, pluginURLs, true);
 	IPluginDescriptor pd = registry.getPluginDescriptor("tests.a");
@@ -78,6 +79,7 @@ public void test2() {
 		pluginPath = tempPlugin.getLocation().concat("Plugin_Testing/fragment.resolve.1/fragment2.xml");
 		pluginURLs[1] = new URL (pluginPath);
 	} catch (java.net.MalformedURLException e) {
+		fail("2.0.1 Unexpected exception - " + e.getMessage());
 	}
 	IPluginRegistry registry = ParseHelper.doParsing(factory, pluginURLs, true);
 	IPluginDescriptor pd = registry.getPluginDescriptor("tests.a");
@@ -124,6 +126,7 @@ public void test3() {
 		pluginPath = tempPlugin.getLocation().concat("Plugin_Testing/fragment.resolve.1/fragment3.xml");
 		pluginURLs[1] = new URL (pluginPath);
 	} catch (java.net.MalformedURLException e) {
+		fail("3.0.1 Unexpected exception - " + e.getMessage());
 	}
 	IPluginRegistry registry = ParseHelper.doParsing(factory, pluginURLs, true);
 	IPluginDescriptor pd = registry.getPluginDescriptor("tests.a");
@@ -173,6 +176,7 @@ public void test4() {
 		pluginPath = tempPlugin.getLocation().concat("Plugin_Testing/fragment.resolve.1/fragment4.xml");
 		pluginURLs[1] = new URL (pluginPath);
 	} catch (java.net.MalformedURLException e) {
+		fail("4.0.1 Unexpected exception - " + e.getMessage());
 	}
 	IPluginRegistry registry = ParseHelper.doParsing(factory, pluginURLs, true);
 	IPluginDescriptor pd = registry.getPluginDescriptor("tests.a");
@@ -219,6 +223,7 @@ public void test5() {
 		pluginPath = tempPlugin.getLocation().concat("Plugin_Testing/fragment.resolve.1/fragment5.xml");
 		pluginURLs[1] = new URL (pluginPath);
 	} catch (java.net.MalformedURLException e) {
+		fail("5.0.1 Unexpected exception - " + e.getMessage());
 	}
 	IPluginRegistry registry = ParseHelper.doParsing(factory, pluginURLs, true);
 	IPluginDescriptor pd = registry.getPluginDescriptor("tests.a");
@@ -266,6 +271,7 @@ public void test6() {
 		pluginPath = tempPlugin.getLocation().concat("Plugin_Testing/fragment.resolve.1/fragment6.xml");
 		pluginURLs[1] = new URL (pluginPath);
 	} catch (java.net.MalformedURLException e) {
+		fail("6.0.1 Unexpected exception - " + e.getMessage());
 	}
 	IPluginRegistry registry = ParseHelper.doParsing(factory, pluginURLs, true);
 	IPluginDescriptor pd = registry.getPluginDescriptor("tests.a");
@@ -315,6 +321,7 @@ public void test7() {
 		pluginPath = tempPlugin.getLocation().concat("Plugin_Testing/fragment.resolve.1/fragment7.xml");
 		pluginURLs[1] = new URL (pluginPath);
 	} catch (java.net.MalformedURLException e) {
+		fail("7.0.1 Unexpected exception - " + e.getMessage());
 	}
 	IPluginRegistry registry = ParseHelper.doParsing(factory, pluginURLs, true);
 	IPluginDescriptor pd = registry.getPluginDescriptor("tests.a");

@@ -44,6 +44,7 @@ public void test1() {
 			pluginURLs[i] = new URL (pluginPath[i]);
 		}
 	} catch (java.net.MalformedURLException e) {
+		fail("1.0.1 Unexpected exception - " + e.getMessage());
 	}
 	IPluginRegistry registry = doParsing(factory, pluginURLs, true);
 
@@ -113,6 +114,7 @@ public void test2() {
 			pluginURLs[i] = new URL (pluginPath[i]);
 		}
 	} catch (java.net.MalformedURLException e) {
+		fail("2.0.1 Unexpected exception - " + e.getMessage());
 	}
 	IPluginRegistry registry = doParsing(factory, pluginURLs, true);
 
@@ -182,6 +184,7 @@ public void test3() {
 			pluginURLs[i] = new URL (pluginPath[i]);
 		}
 	} catch (java.net.MalformedURLException e) {
+		fail("3.0.1 Unexpected exception - " + e.getMessage());
 	}
 	IPluginRegistry registry = doParsing(factory, pluginURLs, true);
 
@@ -251,6 +254,7 @@ public void test4() {
 			pluginURLs[i] = new URL (pluginPath[i]);
 		}
 	} catch (java.net.MalformedURLException e) {
+		fail("4.0.1 Unexpected exception - " + e.getMessage());
 	}
 	IPluginRegistry registry = doParsing(factory, pluginURLs, true);
 
@@ -316,6 +320,7 @@ public void test5() {
 			pluginURLs[i] = new URL (pluginPath[i]);
 		}
 	} catch (java.net.MalformedURLException e) {
+		fail("5.0.1 Unexpected exception - " + e.getMessage());
 	}
 	IPluginRegistry registry = doParsing(factory, pluginURLs, true);
 
@@ -385,6 +390,7 @@ public void test6() {
 			pluginURLs[i] = new URL (pluginPath[i]);
 		}
 	} catch (java.net.MalformedURLException e) {
+		fail("6.0.1 Unexpected exception - " + e.getMessage());
 	}
 	IPluginRegistry registry = doParsing(factory, pluginURLs, true);
 
@@ -450,6 +456,7 @@ public void test7() {
 			pluginURLs[i] = new URL (pluginPath[i]);
 		}
 	} catch (java.net.MalformedURLException e) {
+		fail("7.0.1 Unexpected exception - " + e.getMessage());
 	}
 	IPluginRegistry registry = doParsing(factory, pluginURLs, true);
 

@@ -47,6 +47,7 @@ public void fullTest() {
 			pluginURLs[i] = new URL (pluginPath[i]);
 		}
 	} catch (java.net.MalformedURLException e) {
+		fail("0.0.0 Unexpected exception - " + e.getMessage());
 	}
 	
 	for (int i = 0; i < fragmentIds.length; i++) {
@@ -54,6 +55,7 @@ public void fullTest() {
 		try {
 			pluginURLs[5] = new URL (pluginPath[5]);
 		} catch (java.net.MalformedURLException e) {
+			fail("0.0.1 Unexpected exception - " + e.getMessage());
 		}
 		IPluginRegistry registry = doParsing(factory, pluginURLs, true);
 	

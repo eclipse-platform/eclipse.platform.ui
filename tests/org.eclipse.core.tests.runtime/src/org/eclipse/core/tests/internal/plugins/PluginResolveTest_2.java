@@ -27,6 +27,7 @@ public void baseTest() {
 		String pluginPath = tempPlugin.getLocation().concat("Plugin_Testing/plugins.resolve.2/");
 		pURL = new URL (pluginPath);
 	} catch (java.net.MalformedURLException e) {
+		fail("0.0.0 Unexpected exception - " + e.getMessage());
 	}
 	pluginURLs[0] = pURL;
 	IPluginRegistry registry = ParseHelper.doParsing (factory, pluginURLs, true);

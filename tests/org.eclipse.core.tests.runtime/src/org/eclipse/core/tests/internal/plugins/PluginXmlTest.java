@@ -23,11 +23,12 @@ public void baseTest() {
 	InternalFactory factory = new InternalFactory(problems);
 	URL pluginURLs[] = new URL[1];
 	URL pURL = null;
+	PluginDescriptor tempPlugin = (PluginDescriptor)Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.core.tests.runtime");
+	String pluginPath = tempPlugin.getLocation().concat("Plugin_Testing/plugins.parser.1/");
 	try {
-		PluginDescriptor tempPlugin = (PluginDescriptor)Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.core.tests.runtime");
-		String pluginPath = tempPlugin.getLocation().concat("Plugin_Testing/plugins.parser.1/");
 		pURL = new URL (pluginPath);
 	} catch (java.net.MalformedURLException e) {
+		assertTrue("Bad URL for " + pluginPath, true);
 	}
 	pluginURLs[0] = pURL;
 	IPluginRegistry registry = ParseHelper.doParsing (factory, pluginURLs, true);
