@@ -164,12 +164,16 @@ function isToc(name) {
 }
 
 function isParentTocSelected(name) {
-	var parentId = name.substring(0, name.lastIndexOf("_", name.length-2));
-	var parentCheckbox = document.getElementById(parentId);
+	var parentCheckbox = getParentCheckbox(parentId);
 	return (parentCheckbox.checked && !getGrayed(parentCheckbox));
 }
 
-function collapseExpand(nodeId) {
+function getParentCheckbox(name) {
+	var parentId = name.substring(0, name.lastIndexOf("_", name.length-2));
+	return document.getElementById(parentId);
+}
+
+function collapseOrExpand(nodeId) {
 	var node = document.getElementById("div"+nodeId);
 	var img = document.getElementById("img"+nodeId);
 	if (!node || !img) return;
@@ -180,6 +184,22 @@ function collapseExpand(nodeId) {
 		node.className = "expanded";
 		img.src = minus.src;
 	}
+}
+
+function collapse(nodeId) {
+	var node = document.getElementById("div"+nodeId);
+	var img = document.getElementById("img"+nodeId);
+	if (!node || !img) return;
+	node.className = "collapsed";
+	img.src = plus.src;
+}
+
+function expand(nodeId) {
+	var node = document.getElementById("div"+nodeId);
+	var img = document.getElementById("img"+nodeId);
+	if (!node || !img) return;
+	node.className = "expanded";
+	img.src = minus.src;
 }
 
 function getParent(child) {
@@ -236,6 +256,42 @@ function getGrayed(node) {
 	return node.className == "grayed";
 }
 
+function isExpanded(nodeId) {
+	var node = document.getElementById("div"+nodeId);
+	if (node == null) return false;
+	return node.className == "expanded";
+}
+
+function isCollapsed(nodeId) {
+	var node = document.getElementById("div"+nodeId);
+	if (node == null) return false;
+	return node.className == "collapsed";
+}
+
+/**
+ * Handler for key down (arrows)
+ */
+function keyDownHandler(folderId, key, target)
+{
+	if (key != 37 && key != 39) 
+		return true;
+
+ 	if (key == 39) { // Right arrow, expand
+		if (isCollapsed(folderId))
+			expand(folderId);
+		target.focus();
+  	} else if (key == 37) { // Left arrow,collapse
+		if (isExpanded(folderId))
+			collapse(folderId);
+		var parentCheckbox = getParentCheckbox(target.name);
+		if (parentCheckbox != null)
+			parentCheckbox.focus();	
+		else
+			target.focus();
+  	} 
+  			
+  	return false;
+}
 
 </script>
 
@@ -262,9 +318,15 @@ for (int i=0; i<data.getTocCount(); i++)
 	String checked = state == WorkingSetData.STATE_CHECKED || state == WorkingSetData.STATE_GRAYED ? "checked" : "";
 	String className = state == WorkingSetData.STATE_GRAYED ? "grayed" : "checkbox";
 %>
-				<div class="book" id='<%="id"+i%>'>
-					<img id='<%="img"+i%>' src="<%=prefs.getImagesDirectory()%>/plus.gif" onclick="collapseExpand('<%=i%>')">
-					<input class='<%=className%>' type="checkbox" id='<%=data.getTocHref(i)%>' name='<%=data.getTocHref(i)%>' alt="<%=label%>" <%=checked%> onclick="setSubtreeChecked(this, '<%="div"+i%>')"><%=label%>
+				<div class="book" id='<%="id"+i%>' >
+					<img id='<%="img"+i%>' src="<%=prefs.getImagesDirectory()%>/plus.gif" onclick="collapseOrExpand('<%=i%>')">
+					<input 	class='<%=className%>' 
+							type="checkbox" 
+							id='<%=data.getTocHref(i)%>' 
+							name='<%=data.getTocHref(i)%>' 
+							alt="<%=label%>" <%=checked%> 
+						  	onkeydown="keyDownHandler(<%=i%>, event.keyCode, this)"
+							onclick="setSubtreeChecked(this, '<%="div"+i%>')"><%=label%>
 					<div id='<%="div"+i%>' class="collapsed">
 <%
 	for (int topic=0; topic<data.getTopicCount(i); topic++)
@@ -275,7 +337,12 @@ for (int i=0; i<data.getTocCount(); i++)
 							  ? "checked" : "";
 %>
 						<div class="topic" id='<%="id"+i+"_"+topic%>'>
-							<input class="checkbox" type="checkbox" name='<%=data.getTocHref(i)+"_"+topic+"_"%>' alt="<%=topicLabel%>" <%=topicChecked%> onclick="updateParentState(this, '<%="div"+i%>')"><%=topicLabel%>
+							<input 	class="checkbox" 
+									type="checkbox" 
+									name='<%=data.getTocHref(i)+"_"+topic+"_"%>' 
+									alt="<%=topicLabel%>" <%=topicChecked%> 
+									onkeydown="keyDownHandler(<%=i%>, event.keyCode, this)"
+									onclick="updateParentState(this, '<%="div"+i%>')"><%=topicLabel%>
 						</div>
 <%
 	}
@@ -306,3 +373,4 @@ for (int i=0; i<data.getTocCount(); i++)
 
 </body>
 </html>
+
