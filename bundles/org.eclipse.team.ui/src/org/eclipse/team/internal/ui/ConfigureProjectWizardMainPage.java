@@ -8,6 +8,8 @@ package org.eclipse.team.internal.ui;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -99,6 +101,11 @@ public class ConfigureProjectWizardMainPage extends WizardPage {
 				}
 				selectedElement = (ConfigurationWizardElement)ss.getFirstElement();
 				setPageComplete(true);
+			}
+		});
+		viewer.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				getWizard().getContainer().showPage(getNextPage());
 			}
 		});
 		viewer.setInput(wizards);
