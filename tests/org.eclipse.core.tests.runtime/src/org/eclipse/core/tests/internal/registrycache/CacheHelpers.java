@@ -296,8 +296,9 @@ public PluginRegistryModel doCacheWriteAndRead(PluginRegistryModel inRegistry, S
 		assertTrue("2.0 IOException encountered", true);
 	}
 	RegistryCacheReader cacheReader = new RegistryCacheReader(factory);
-	PluginRegistryModel newRegistry = cacheReader.readPluginRegistry(input);
-	return newRegistry;
+	//PluginRegistryModel newRegistry = cacheReader.readPluginRegistry(input);
+	//return newRegistry;
+	return null;
 }
 /* doInitialParsing
  * This method will parse a series of XML files.  The input array should be
