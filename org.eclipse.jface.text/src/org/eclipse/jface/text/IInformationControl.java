@@ -49,7 +49,7 @@ public interface IInformationControl {
 	/**
 	 * Computes and returns a proposal for the size of this information control depending
 	 * on the information to present. The method tries to honor known size constraints but might 
-	 * returns a size that exceeds them. 
+	 * return a size that exceeds them. 
 	 * 
 	 * @return the computed size hint
 	 */
