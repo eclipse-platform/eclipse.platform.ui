@@ -12,6 +12,12 @@ package org.eclipse.ui.tests.api;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -34,12 +40,46 @@ public class MockEditorPart extends MockWorkbenchPart implements IEditorPart,
 
     private boolean dirty = false;
 
-    private boolean saveNeeded = false;
+    private boolean saveNeeded = true;
+
+    private boolean saveAsAllowed = false;
 
     public MockEditorPart() {
         super();
     }
 
+    public void createPartControl(Composite parent) {
+        parent.setLayout(new GridLayout());
+        
+        super.createPartControl(parent);
+
+        final Button dirtyToggle = new Button(parent, SWT.CHECK);
+        dirtyToggle.setText("Dirty");
+        dirtyToggle.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                setDirty(dirtyToggle.getSelection());
+            }
+        });
+        dirtyToggle.setSelection(isDirty());
+
+        final Button saveNeededToggle = new Button(parent, SWT.CHECK);
+        saveNeededToggle.setText("Save on close");
+        saveNeededToggle.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                setSaveNeeded(saveNeededToggle.getSelection());
+            }
+        });
+        saveNeededToggle.setSelection(saveNeeded);
+        
+        final Button saveAsToggle = new Button(parent, SWT.CHECK);
+        saveAsToggle.setText("Save as allowed");
+        saveAsToggle.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                setSaveAsAllowed(saveAsToggle.getSelection());
+            }
+        });
+        saveAsToggle.setSelection(saveAsAllowed);
+    }
     /**
      * @see IEditorPart#doSave(IProgressMonitor)
      */
@@ -104,7 +144,7 @@ public class MockEditorPart extends MockWorkbenchPart implements IEditorPart,
      */
     public boolean isSaveAsAllowed() {
         callTrace.add("isSaveAsAllowed");
-        return false;
+        return saveAsAllowed;
     }
 
     /**
@@ -115,6 +155,10 @@ public class MockEditorPart extends MockWorkbenchPart implements IEditorPart,
         return saveNeeded;
     }
 
+    public void setSaveAsAllowed(boolean isSaveAsAllowed) {
+        this.saveAsAllowed = isSaveAsAllowed;
+    }
+    
     public void setSaveNeeded(boolean value) {
         saveNeeded = value;
     }

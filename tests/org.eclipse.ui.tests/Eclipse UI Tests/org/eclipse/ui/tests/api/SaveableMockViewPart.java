@@ -11,6 +11,12 @@
 package org.eclipse.ui.tests.api;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.ISaveablePart;
 
 /**
@@ -28,8 +34,41 @@ public class SaveableMockViewPart extends MockViewPart implements
 
     private boolean saveAsAllowed = false;
 
-    private boolean saveNeeded = false;
+    private boolean saveNeeded = true;
 
+    public void createPartControl(Composite parent) {
+        parent.setLayout(new GridLayout());
+        
+        super.createPartControl(parent);
+
+        final Button dirtyToggle = new Button(parent, SWT.CHECK);
+        dirtyToggle.setText("Dirty");
+        dirtyToggle.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                setDirty(dirtyToggle.getSelection());
+            }
+        });
+        dirtyToggle.setSelection(isDirty());
+
+        final Button saveNeededToggle = new Button(parent, SWT.CHECK);
+        saveNeededToggle.setText("Save on close");
+        saveNeededToggle.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                setSaveNeeded(saveNeededToggle.getSelection());
+            }
+        });
+        saveNeededToggle.setSelection(saveNeeded);
+        
+        final Button saveAsToggle = new Button(parent, SWT.CHECK);
+        saveAsToggle.setText("Save as allowed");
+        saveAsToggle.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                setSaveAsAllowed(saveAsToggle.getSelection());
+            }
+        });
+        saveAsToggle.setSelection(saveAsAllowed);
+    }
+    
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISaveablePart#doSave(org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -70,6 +109,7 @@ public class SaveableMockViewPart extends MockViewPart implements
 
 	public void setDirty(boolean isDirty) {
 		this.isDirty = isDirty;
+        firePropertyChange(PROP_DIRTY);
 	}
     
     public void setSaveAsAllowed(boolean isSaveAsAllowed) {

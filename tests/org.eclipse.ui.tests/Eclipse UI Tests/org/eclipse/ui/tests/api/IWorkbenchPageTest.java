@@ -41,7 +41,6 @@ import org.eclipse.ui.internal.SaveableHelper;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
-import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.PerspectiveState;
 import org.eclipse.ui.tests.util.CallHistory;
@@ -705,14 +704,10 @@ public class IWorkbenchPageTest extends UITestCase {
     }
 
 	public void testHideSaveableView() throws Throwable {
-		boolean fix72114 = PrefUtil.getInternalPreferenceStore().getBoolean("fix72114");
-
 		SaveableMockViewPart view = (SaveableMockViewPart) fActivePage.showView(SaveableMockViewPart.ID);
 		fActivePage.hideView(view);
 		CallHistory callTrace = view.getCallHistory();
-		if (fix72114) {
-			assertTrue(callTrace.contains("isDirty"));
-		}
+		assertTrue(callTrace.contains("isDirty"));
 		assertTrue(callTrace.contains("dispose"));
 		assertEquals(fActivePage.findView(SaveableMockViewPart.ID), null);
 
@@ -722,14 +717,8 @@ public class IWorkbenchPageTest extends UITestCase {
 			view.setDirty(true);
 			fActivePage.hideView(view);
 			callTrace = view.getCallHistory();
-			if (fix72114) {
-				assertTrue(callTrace.contains("isDirty"));		
-				assertTrue(callTrace.contains("doSave"));
-			}
-			else {
-				// OK if somebody checks isDirty, but doSave should not be called
-				assertFalse(callTrace.contains("doSave"));
-			}
+			assertTrue(callTrace.contains("isDirty"));		
+			assertTrue(callTrace.contains("doSave"));
 			assertTrue(callTrace.contains("dispose"));
 			assertEquals(fActivePage.findView(SaveableMockViewPart.ID), null);
 
@@ -738,14 +727,8 @@ public class IWorkbenchPageTest extends UITestCase {
 			view.setDirty(true);
 			fActivePage.hideView(view);
 			callTrace = view.getCallHistory();
-			if (fix72114) {
-				assertTrue(callTrace.contains("isDirty"));		
-				assertFalse(callTrace.contains("doSave"));		
-			}
-			else {
-				// OK if somebody checks isDirty, but doSave should not be called
-				assertFalse(callTrace.contains("doSave"));
-			}
+			assertTrue(callTrace.contains("isDirty"));		
+			assertFalse(callTrace.contains("doSave"));		
 			assertTrue(callTrace.contains("dispose"));
 			assertEquals(fActivePage.findView(SaveableMockViewPart.ID), null);
 
@@ -754,19 +737,10 @@ public class IWorkbenchPageTest extends UITestCase {
 			view.setDirty(true);
 			fActivePage.hideView(view);
 			callTrace = view.getCallHistory();
-			if (fix72114) {
-				assertTrue(callTrace.contains("isDirty"));		
-				assertFalse(callTrace.contains("doSave"));		
-				assertFalse(callTrace.contains("dispose"));
-				assertEquals(fActivePage.findView(SaveableMockViewPart.ID), view);
-			}
-			else {
-				// OK if somebody checks isDirty, but doSave should not be called,
-				// and view should be disposed
-				assertFalse(callTrace.contains("doSave"));		
-				assertTrue(callTrace.contains("dispose"));
-				assertEquals(fActivePage.findView(SaveableMockViewPart.ID), null);
-			}
+			assertTrue(callTrace.contains("isDirty"));		
+			assertFalse(callTrace.contains("doSave"));		
+			assertFalse(callTrace.contains("dispose"));
+			assertEquals(fActivePage.findView(SaveableMockViewPart.ID), view);
 		}
 		finally {
 			SaveableHelper.testSetAutomatedResponse(-1);  // restore default (prompt)
