@@ -1,6 +1,7 @@
 package org.eclipse.ui.tests.navigator;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.ui.internal.*;
@@ -64,7 +65,7 @@ public class DecoratorTestCase
 	/**
 	 * Test enabling the contributor
 	 */
-	public void testEnableDecorator() {
+	public void testEnableDecorator() throws CoreException{
 		definition.setEnabled(true);
 		getDecoratorManager().reset();
 		
@@ -73,7 +74,7 @@ public class DecoratorTestCase
 	/**
 	 * Test disabling the contributor
 	 */
-	public void testDisableDecorator() {
+	public void testDisableDecorator() throws CoreException{
 		definition.setEnabled(false);
 		getDecoratorManager().reset();
 	}
@@ -81,7 +82,7 @@ public class DecoratorTestCase
 	/**
 	 * Refresh the test decorator.
 	 */
-	public void testRefreshContributor() {
+	public void testRefreshContributor() throws CoreException{
 
 		updated = false;
 		definition.setEnabled(true);

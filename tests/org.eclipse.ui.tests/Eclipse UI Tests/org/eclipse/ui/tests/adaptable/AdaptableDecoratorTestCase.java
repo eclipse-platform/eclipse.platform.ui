@@ -97,7 +97,7 @@ public class AdaptableDecoratorTestCase
 	/**
 	 * Test enabling the contributor
 	 */
-	public void testEnableDecorator() {
+	public void testEnableDecorator() throws CoreException{
 		definition.setEnabled(true);
 		getDecoratorManager().reset();
 
@@ -106,7 +106,7 @@ public class AdaptableDecoratorTestCase
 	/**
 	 * Test disabling the contributor
 	 */
-	public void testDisableDecorator() {
+	public void testDisableDecorator() throws CoreException{
 		definition.setEnabled(false);
 		getDecoratorManager().reset();
 	}
@@ -114,7 +114,7 @@ public class AdaptableDecoratorTestCase
 	/**
 	 * Refresh the test decorator.
 	 */
-	public void testRefreshContributor() {
+	public void testRefreshContributor() throws CoreException{
 
 		updated = false;
 		definition.setEnabled(true);
