@@ -27,8 +27,6 @@ import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 
-import org.eclipse.jface.text.Assert;
-import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationAccessExtension;
 import org.eclipse.jface.text.source.ImageUtilities;
 
@@ -44,8 +42,9 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  * This class may be instantiated or be subclassed.
  *
  * @see org.eclipse.core.resources.IMarker
+ * @deprecated use <code>SimpleMarkerAnnotation</code> in connection with <code>IAnnotationPresentation</code> instead
  */
-public class MarkerAnnotation extends Annotation {
+public class MarkerAnnotation extends SimpleMarkerAnnotation {
 
 	/** 
 	 * The layer in which markers representing problem are located.
@@ -74,8 +73,9 @@ public class MarkerAnnotation extends Annotation {
 	}
 	
 	/**
-	 * Returns an image registry for the given display. If no such registry exists
-	 * the resgitry is created.
+	 * Returns an image registry for the given display. If no such registry
+	 * exists the registry is created.
+	 * 
 	 * @param display the display
 	 * @return the image registry for the given display
 	 */
@@ -101,17 +101,12 @@ public class MarkerAnnotation extends Annotation {
 	}		
 		
 		
-	/** The marker this annotation represents */
-	private IMarker fMarker;
 	/** The image, i.e., visual presentation of this annotation */
 	private Image fImage;
 	/** The image name */
 	private String fImageName;
-	/**
-	 * Tells whether {@link #setLayer(int)} has been called.
-	 * @since 3.0
-	 */
-	private boolean fLayerHasBeenSet= false;
+	/** The presentation layer */
+	private int fPresentationLayer= -1;
 	
 	/**
 	 * Creates a new annotation for the given marker.
@@ -119,20 +114,18 @@ public class MarkerAnnotation extends Annotation {
 	 * @param marker the marker
 	 */
 	public MarkerAnnotation(IMarker marker) {
-		this(EditorsPlugin.getDefault().getAnnotationTypeLookup().getAnnotationType(marker), marker);
+		super(marker);
 	}
 	
 	/**
-	 * Creaets a new annotation of the given type for the given marker.
+	 * Creates a new annotation of the given type for the given marker.
 	 * 
 	 * @param annotationType the annotation type
 	 * @param marker the marker
 	 * @since 3.0
 	 */
 	public MarkerAnnotation(String annotationType, IMarker marker) {
-		super(annotationType, true, null);
-		Assert.isNotNull(marker);
-		fMarker= marker;
+		super(annotationType, marker);
 		initialize();
 	}
 	
@@ -146,49 +139,19 @@ public class MarkerAnnotation extends Annotation {
 	}
 	
 	/**
-	 * The <code>MarkerAnnotation</code> implementation of this
-	 * <code>Object</code> method returns <code>true</code> iff the other
-	 * object is also a <code>MarkerAnnotation</code> and the marker handles are
-	 * equal.
-	 * 
-	 * @see Object#equals(java.lang.Object)
-	 */
-	public boolean equals(Object o) {
-		if (o != null && o.getClass() == getClass())
-			return fMarker.equals(((MarkerAnnotation) o).fMarker);
-		return false;
-	}
-	
-	/*
-	 * @see Object#hashCode()
-	 */
-	public int hashCode() {
-		return fMarker.hashCode();
-	}
-		
-	/**
-	 * Returns this annotation's underlying marker.
-	 *
-	 * @return the marker
-	 */
-	public IMarker getMarker() {
-		return fMarker;
-	}
-	
-	/**
 	 * Initializes the annotation's icon representation and its drawing layer
 	 * based upon the properties of the underlying marker.
 	 */
 	protected void initialize() {
+		IMarker marker= getMarker();
+		String name= getUnknownImageName(marker);
 		
-		String name= getUnknownImageName(fMarker);
-		
-		if (MarkerUtilities.isMarkerType(fMarker, IMarker.TASK)) {
+		if (MarkerUtilities.isMarkerType(marker, IMarker.TASK)) {
 			name= IDE.SharedImages.IMG_OBJS_TASK_TSK;
-		} else if (MarkerUtilities.isMarkerType(fMarker, IMarker.BOOKMARK)) {
+		} else if (MarkerUtilities.isMarkerType(marker, IMarker.BOOKMARK)) {
 			name= IDE.SharedImages.IMG_OBJS_BKMRK_TSK;
-		} else if (MarkerUtilities.isMarkerType(fMarker, IMarker.PROBLEM)) {
-			switch (MarkerUtilities.getSeverity(fMarker)) {
+		} else if (MarkerUtilities.isMarkerType(marker, IMarker.PROBLEM)) {
+			switch (MarkerUtilities.getSeverity(marker)) {
 				case IMarker.SEVERITY_INFO:
 					name= ISharedImages.IMG_OBJS_INFO_TSK;
 					break;
@@ -205,14 +168,20 @@ public class MarkerAnnotation extends Annotation {
 		fImageName= name;
 	}
 	
-	/*
-	 * @see org.eclipse.jface.text.source.Annotation#getLayer()
+	/**
+	 * Returns the annotations drawing layer.
+	 * <p>
+	 * Note: This is only for backward compatibility.
+	 * 
+	 * @return the annotations drawing layer
+	 * @deprecated since 3.0 use
+	 *             <code>IAnnotationAccessExtension.getLayer(Annotation)</code>
 	 * @since 3.0
 	 */
 	public int getLayer() {
-		if (fLayerHasBeenSet)
+		if (fPresentationLayer != -1)
 			// Backward compatibility
-			return super.getLayer();
+			return fPresentationLayer;
 		
 		AnnotationPreference preference= EditorsPlugin.getDefault().getAnnotationPreferenceLookup().getAnnotationPreference(this);
 		if (preference != null)
@@ -221,18 +190,32 @@ public class MarkerAnnotation extends Annotation {
 			return IAnnotationAccessExtension.DEFAULT_LAYER;
 	}
 	
-	/*
+	/**
+	 * Sets the layer of this annotation.
+	 * <p>
 	 * Note: This is only for backward compatibility.
-	 * @see org.eclipse.jface.text.source.Annotation#setLayer(int)
+	 * 
+	 * @param layer the layer of this annotation
+	 * @deprecated since 3.0
 	 * @since 3.0
 	 */
 	protected void setLayer(int layer) {
-		super.setLayer(layer);
-		fLayerHasBeenSet= true;
+		fPresentationLayer= layer;
 	}
 	
-	/*
-	 * @see Annotation#paint(GC, Canvas, Rectangle)
+	/**
+	 * Implement this method to draw a graphical representation of this
+	 * annotation within the given bounds. This default implementation does
+	 * nothing.
+	 * <p>
+	 * Note: This is only for backward compatibility.
+	 * 
+	 * @param gc the drawing GC
+	 * @param canvas the canvas to draw on
+	 * @param bounds the bounds inside the canvas to draw on
+	 * @deprecated since 3.0 use
+	 *             <code>IAnnotationAccessExtension.paint(Annotation, GC, Canvas, Rectangle)</code>
+	 * @since 3.0
 	 */
 	public void paint(GC gc, Canvas canvas, Rectangle r) {
 		Image image= getImage(canvas.getDisplay());
@@ -245,27 +228,16 @@ public class MarkerAnnotation extends Annotation {
 	 * and adapts to those changes.
 	 */
 	public void update() {
+		super.update();
 		initialize();
-		updateType();
 	}
-	
-	/**
-	 * Updates the type to be in sync with its underlying marker.
-	 * 
-	 * @since 3.0
-	 */
-	private void updateType() {
-		String annotationType= EditorsPlugin.getDefault().getAnnotationTypeLookup().getAnnotationType(fMarker); 
-		if (annotationType != null && !annotationType.equals(getType()))
-			setType(annotationType);
-	}
-	
+		
 	/**
 	 * Returns the name of an image used to visually represent markers of 
 	 * unknown type. This implementation returns <code>null</code>.
 	 * Subclasses may replace this method.
 	 *
-	 * @param marker the marker of unkown type
+	 * @param marker the marker of unknown type
 	 * @return the name of an image for markers of unknown type.
 	 */
 	protected String getUnknownImageName(IMarker marker) {
@@ -286,7 +258,6 @@ public class MarkerAnnotation extends Annotation {
 		return null;
 	}
 	
-	
 	/**
 	 * Returns an image for this annotation. It first consults the workbench adapter
 	 * for this annotation's marker. If none is defined, it tries to find an image for 
@@ -298,10 +269,11 @@ public class MarkerAnnotation extends Annotation {
 	protected Image getImage(Display display) {
 		if (fImage == null) {
 			
-			if (fMarker.exists()) {
-				IWorkbenchAdapter adapter= (IWorkbenchAdapter) fMarker.getAdapter(IWorkbenchAdapter.class);
+			IMarker marker= getMarker();
+			if (marker.exists()) {
+				IWorkbenchAdapter adapter= (IWorkbenchAdapter) marker.getAdapter(IWorkbenchAdapter.class);
 				if (adapter != null) {
-					ImageDescriptor descriptor= adapter.getImageDescriptor(fMarker);
+					ImageDescriptor descriptor= adapter.getImageDescriptor(marker);
 					if (descriptor != null)
 						fImage= getImage(display, descriptor);
 				}
@@ -312,12 +284,5 @@ public class MarkerAnnotation extends Annotation {
 				
 		}
 		return fImage;
-	}
-
-	/*
-	 * @see org.eclipse.jface.text.source.Annotation#getText()
-	 */
-	public String getText() {
-		return MarkerUtilities.getMessage(fMarker);
 	}
 }
