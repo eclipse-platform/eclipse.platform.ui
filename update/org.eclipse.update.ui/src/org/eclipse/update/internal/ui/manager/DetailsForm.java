@@ -30,6 +30,7 @@ private URL copyrightLinkURL;
 private Image providerImage;
 private Button doButton;
 private IFeature currentFeature;
+private ModelListener modelListener;
 
 
 class ModelListener implements IUpdateModelChangedListener {
@@ -90,9 +91,14 @@ private void showStatus(String text) {
 public DetailsForm(UpdateFormPage page) {
 	super(page);
 	providerImage = UpdateUIPluginImages.DESC_PROVIDER.createImage();
+	modelListener = new ModelListener();
+	UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+	model.addUpdateModelChangedListener(modelListener);
 }
 
 public void dispose() {
+	UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+	model.removeUpdateModelChangedListener(modelListener);
 	providerImage.dispose();
 	super.dispose();
 }

@@ -16,7 +16,7 @@ import org.eclipse.update.core.IFeature;
 import org.eclipse.jface.action.*;
 
 
-public class EmbeddedBrowser implements IUpdateFormPage {
+public class BrowserPage implements IUpdateFormPage {
 	private int ADDRESS_SIZE = 10;
 	private WebBrowser browser;
 	private Control control;
@@ -30,7 +30,7 @@ public class EmbeddedBrowser implements IUpdateFormPage {
 		this.listener = listener;
 	}
 	
-	public EmbeddedBrowser(MultiPageView view) {
+	public BrowserPage(MultiPageView view) {
 		this.view = view;
 	}
 	

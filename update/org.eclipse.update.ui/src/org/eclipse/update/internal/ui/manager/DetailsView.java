@@ -11,7 +11,6 @@ import org.eclipse.update.ui.internal.model.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.swt.program.Program;
-import org.eclipse.update.internal.transform.*;
 import org.eclipse.ui.texteditor.IUpdate;
 
 /**
@@ -60,7 +59,7 @@ public void createPages() {
 }
 
 private void addWebBrowser() {
-	EmbeddedBrowser browser = new EmbeddedBrowser(this);
+	BrowserPage browser = new BrowserPage(this);
 	browser.setBrowserListener(new IBrowserListener () {
 		public void downloadComplete(String url) {
 			System.out.println("Complete: inHistory="+inHistory+", url="+url);

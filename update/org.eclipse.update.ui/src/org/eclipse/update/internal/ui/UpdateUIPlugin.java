@@ -8,7 +8,6 @@ import org.eclipse.ui.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.ui.internal.model.*;
 import org.eclipse.update.internal.ui.manager.*;
-import org.eclipse.update.internal.transform.*;
 import org.eclipse.update.core.*;
 
 /**
