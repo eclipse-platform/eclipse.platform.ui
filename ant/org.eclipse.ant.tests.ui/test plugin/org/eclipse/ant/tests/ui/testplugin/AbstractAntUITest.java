@@ -112,24 +112,24 @@ public abstract class AbstractAntUITest extends TestCase {
 		return getReaderContentAsString(tempBufferedReader);
 	}
 	
-	protected String getReaderContentAsString(BufferedReader tempBufferedReader) {
-		StringBuffer tempResult = new StringBuffer();
+	protected String getReaderContentAsString(BufferedReader bufferedReader) {
+		StringBuffer result = new StringBuffer();
 		try {
-			String tempLine= tempBufferedReader.readLine();
+			String line= bufferedReader.readLine();
 
-			while(tempLine != null) {
-				if(tempResult.length() != 0) {
-					tempResult.append("\n"); //$NON-NLS-1$
+			while(line != null) {
+				if(result.length() != 0) {
+                    result.append(System.getProperty("line.separator")); //$NON-NLS-1$
 				}
-				tempResult.append(tempLine);
-				tempLine = tempBufferedReader.readLine();
+				result.append(line);
+				line = bufferedReader.readLine();
 			}
 		} catch (IOException e) {
 			AntUIPlugin.log(e);
 			return null;
 		}
 
-		return tempResult.toString();
+		return result.toString();
 	}
 		
 	protected AntModel getAntModel(String fileName) {
@@ -213,20 +213,7 @@ public abstract class AbstractAntUITest extends TestCase {
 	    InputStreamReader reader = new InputStreamReader(stream);
 	    BufferedReader bufferedReader = new BufferedReader(reader);
 	
-	    String result = "";
-	    try {
-	        String line= bufferedReader.readLine();
-	    
-	        while(line != null) {
-	            result += "\n";
-	            result += line;
-	            line = bufferedReader.readLine();
-	        }
-	    } catch (IOException e) {
-	        e.printStackTrace();
-	        return null;
-	    }
-		return result;
+	    return getReaderContentAsString(bufferedReader);
 	}
 	
 	protected SAXParser getSAXParser() {

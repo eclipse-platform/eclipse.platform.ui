@@ -18,9 +18,6 @@ import org.eclipse.ant.internal.ui.editor.formatter.XmlFormatter;
 import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
 import org.eclipse.core.runtime.Preferences;
 
-/**
- *  
- */
 public class XmlFormatterTest extends TestCase {
 
     public final void testFormatUsingPreferenceStore() {
@@ -32,7 +29,7 @@ public class XmlFormatterTest extends TestCase {
         prefs.setValue(AntEditorPreferenceConstants.FORMATTER_TAB_SIZE, 4);
         String xmlDoc = "<project default=\"go\"><target name=\"go\" description=\"Demonstrate the wrapping of long tags.\"><echo>hi</echo></target></project>";
         String formattedDoc = XmlFormatter.format(xmlDoc);
-        String expected = "<project default=\"go\">\n\t<target name=\"go\"\n\t        description=\"Demonstrate the wrapping of long tags.\">\n\t\t<echo>hi</echo>\n\t</target>\n</project>";
+        String expected = "<project default=\"go\">\r\n\t<target name=\"go\"\r\n\t        description=\"Demonstrate the wrapping of long tags.\">\r\n\t\t<echo>hi</echo>\r\n\t</target>\r\n</project>";
         assertEquals(expected, formattedDoc);
     }
 
@@ -46,7 +43,24 @@ public class XmlFormatterTest extends TestCase {
         };
         String xmlDoc = "<project default=\"go\"><target name=\"go\" description=\"Demonstrate the wrapping of long tags.\"><echo>hi</echo></target></project>";
         String formattedDoc = XmlFormatter.format(xmlDoc, prefs);
-        String expected = "<project default=\"go\">\n      <target name=\"go\"\n              description=\"Demonstrate the wrapping of long tags.\">\n            <echo>hi</echo>\n      </target>\n</project>";
+        String expected = "<project default=\"go\">\r\n      <target name=\"go\"\r\n              description=\"Demonstrate the wrapping of long tags.\">\r\n            <echo>hi</echo>\r\n      </target>\r\n</project>";
+        assertEquals(expected, formattedDoc);
+    }
+    
+    /**
+     * Bug 84342
+     */
+    public final void testFormatMaintainingLineSeparators() {
+        FormattingPreferences prefs = new FormattingPreferences() {
+            public boolean wrapLongTags() { return true;}
+            public int getMaximumLineWidth() { return 40;}
+            public boolean alignElementCloseChar() { return false;}
+            public boolean useSpacesInsteadOfTabs() { return true;}
+            public int getTabWidth() { return 6;}
+        };
+        String xmlDoc = "<project default=\"go\"><target name=\"go\" description=\"Demonstrate the wrapping of long tags.\"><echo>hi</echo></target>\r\n\r\n</project>";
+        String formattedDoc = XmlFormatter.format(xmlDoc, prefs);
+        String expected = "<project default=\"go\">\r\n      <target name=\"go\"\r\n              description=\"Demonstrate the wrapping of long tags.\">\r\n            <echo>hi</echo>\r\n      </target>\r\n\r\n</project>";
         assertEquals(expected, formattedDoc);
     }
 

@@ -146,29 +146,16 @@ public class XmlTagFormatter {
             return i;
         }
 
-        /**
-         * @param tagText
-         * @param prefs
-         * @param indent
-         * @return
-         */
-        public String format(Tag tag, FormattingPreferences prefs, String indent) {
+        public String format(Tag tag, FormattingPreferences prefs, String indent, String lineDelimiter) {
             if (prefs.wrapLongTags()
                     && lineRequiresWrap(indent + tag.toString(), prefs
                             .getMaximumLineWidth(), prefs.getTabWidth())) {
-                return wrapTag(tag, prefs, indent);
+                return wrapTag(tag, prefs, indent, lineDelimiter);
             }
             return tag.toString();
         }
 
-        /**
-         * @param line
-         * @param lineWidth
-         * @param tabWidth
-         * @return
-         */
-        protected boolean lineRequiresWrap(String line, int lineWidth,
-                int tabWidth) {
+        protected boolean lineRequiresWrap(String line, int lineWidth, int tabWidth) {
             return tabExpandedLineWidth(line, tabWidth) > lineWidth;
         }
 
@@ -184,8 +171,7 @@ public class XmlTagFormatter {
             return (line.length() - tabCount) + (tabCount * tabWidth);
         }
 
-        protected String wrapTag(Tag tag, FormattingPreferences prefs,
-                String indent) {
+        protected String wrapTag(Tag tag, FormattingPreferences prefs, String indent, String lineDelimiter) {
             StringBuffer sb = new StringBuffer(1024);
             sb.append('<');
             sb.append(tag.getElementName());
@@ -205,7 +191,7 @@ public class XmlTagFormatter {
                 Arrays.fill(extraIndent, ' ');
                 for (int i = 1; i < tag.attributeCount(); i++) {
                     AttributePair pair= tag.getAttributePair(i);
-                    sb.append('\n');
+                    sb.append(lineDelimiter);
                     sb.append(indent);
                     sb.append(extraIndent);
                     sb.append(pair.getAttribute());
@@ -217,7 +203,7 @@ public class XmlTagFormatter {
             }
 
             if (prefs.alignElementCloseChar()) {
-                sb.append("\n"); //$NON-NLS-1$
+                sb.append(lineDelimiter);
                 sb.append(indent);
             } else if (tag.isClosed()) {
                 sb.append(' ');
@@ -424,8 +410,7 @@ public class XmlTagFormatter {
         }
     }
 
-    public static String format(String tagText, FormattingPreferences prefs,
-            String indent) {
+    public static String format(String tagText, FormattingPreferences prefs, String indent, String lineDelimiter) {
 
         Tag tag;
         if (tagText.startsWith("</") || tagText.startsWith("<%") //$NON-NLS-1$ //$NON-NLS-2$
@@ -438,6 +423,6 @@ public class XmlTagFormatter {
             // if we can't parse the tag, give up and leave the text as is.
             return tagText;
         }
-        return new TagFormatter().format(tag, prefs, indent);
+        return new TagFormatter().format(tag, prefs, indent, lineDelimiter);
     }
 }

@@ -245,8 +245,9 @@ public class XmlDocumentFormatter {
                 node = new StringBuffer();
                 for (int i = 0; i < whitespace.length(); i++) {
                     char whitespaceCharacter = whitespace.charAt(i);
-                    if (whitespaceCharacter == '\n')
-                            node.append(whitespaceCharacter);
+                    if (whitespaceCharacter == '\n' || whitespaceCharacter == '\r') {
+                        node.append(whitespaceCharacter);
+                    }
                 }
                 this.isTextNode = false;
 
@@ -344,7 +345,7 @@ public class XmlDocumentFormatter {
         if (!lastNodeWasText) {
 
             if (tag.startsOnNewline() && !hasNewlineAlready(out)) {
-                out.append("\n"); //$NON-NLS-1$
+                out.append(System.getProperty("line.separator")); //$NON-NLS-1$
             }
 
             if (tag.requiresInitialIndent()) {
@@ -397,15 +398,12 @@ public class XmlDocumentFormatter {
 	}
 	
 	/**
-	 * Line delimiter chars are  '\n' and '\r'.
+	 * Line delimiter chars are '\n' and '\r'.
 	 */
 	public static boolean isLineDelimiterChar(char ch) {
 		return ch == '\n' || ch == '\r';
 	}	
 	
-    /**
-     * @return
-     */
     public String format(String documentText, FormattingPreferences prefs) {
 
         Assert.isNotNull(documentText);

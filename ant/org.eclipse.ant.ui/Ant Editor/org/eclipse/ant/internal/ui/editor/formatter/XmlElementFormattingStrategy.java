@@ -75,16 +75,16 @@ public class XmlElementFormattingStrategy extends ContextBasedFormattingStrategy
     private String formatElement(IDocument document, TypedPosition partition)
             throws BadLocationException {
 
-        String partitionText = document.get(partition.getOffset(), partition
-                .getLength());
+        String partitionText = document.get(partition.getOffset(), partition.getLength());
 
-        IRegion line = document.getLineInformationOfOffset(partition
-                .getOffset());
+        IRegion line = document.getLineInformationOfOffset(partition.getOffset());
 
         int indentLength = partition.getOffset() - line.getOffset();
-
-        return XmlTagFormatter.format(partitionText, prefs, document.get(
-                line.getOffset(), indentLength));
+        String lineDelimiter= document.getLineDelimiter(document.getLineOfOffset(line.getOffset()));
+        if (lineDelimiter == null) {
+            lineDelimiter= System.getProperty("line.separator"); //$NON-NLS-1$
+        }
+        return XmlTagFormatter.format(partitionText, prefs, document.get(line.getOffset(), indentLength), lineDelimiter);
 
     }
 
