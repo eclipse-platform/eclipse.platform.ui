@@ -62,7 +62,7 @@
 
 <frameset onload="onloadFrameset()"  rows="48,*"  frameborder="0" framespacing="0" border="0" spacing="0">
 	<frame name="BannerFrame" src='<%="banner.jsp"+query%>'  marginwidth="0" marginheight="0" scrolling="no" frameborder="0" resize=no>
-	<frameset id="helpFrameset" cols="28%,*"  framespacing="0" border="0"  framebroder="0" spacing="0" resize=no scrolling=no>
+	<frameset id="helpFrameset" cols="28%,*"  framespacing="0" border="0"  frameborder="0" spacing="0" resize=no scrolling=no>
 		<frameset name="navFrameset" rows="27,*,26" marginwidth="0" marginheight="0" scrolling="no" frameborder="0">
 		        <frame name="NavToolbarFrame" src='<%="navToolbar.jsp"+query%>' marginwidth="0" marginheight="0" scrolling="no" frameborder="0" resize=yes>
 		        <frame name="NavFrame" src='blank.html' marginwidth="0" marginheight="0" scrolling="yes" frameborder="0" resize=yes>
