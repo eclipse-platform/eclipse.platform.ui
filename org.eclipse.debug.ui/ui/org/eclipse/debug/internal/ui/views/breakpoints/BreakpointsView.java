@@ -12,8 +12,7 @@ package org.eclipse.debug.internal.ui.views.breakpoints;
 
  
 import java.text.MessageFormat;
-import java.util.Arrays;
-import java.util.List;
+import java.util.ArrayList;
 import java.util.ListIterator;
 
 import org.eclipse.core.resources.IMarkerDelta;
@@ -105,16 +104,29 @@ public class BreakpointsView extends AbstractDebugView {
 	private void initializeCheckedState() {
 		IBreakpointManager manager= DebugPlugin.getDefault().getBreakpointManager();
 		final CheckboxTableViewer viewer= getCheckboxViewer();
-		List breakpoints= Arrays.asList(((IStructuredContentProvider) viewer.getContentProvider()).getElements(manager));
+		Object[] elements= ((IStructuredContentProvider) viewer.getContentProvider()).getElements(manager);
+		ArrayList breakpoints= new ArrayList(elements.length);
+		for (int i = 0; i < elements.length; i++) {
+			breakpoints.add(elements[i]);
+		}
 		ListIterator iterator= breakpoints.listIterator();
+		UnsupportedOperationException iteratorException= null;
 		while (iterator.hasNext()) {
 			try {
 				if (!((IBreakpoint) iterator.next()).isEnabled()) {
-					iterator.remove();
+					try {
+						iterator.remove();
+					} catch (UnsupportedOperationException exception) {
+						iteratorException= exception;
+					}
 				}
 			} catch (CoreException e) {
 				DebugUIPlugin.log(e);
 			}
+		}
+		if (iteratorException != null) {
+			DebugUIPlugin.errorDialog(getSite().getShell(), DebugUIViewsMessages.getString("BreakpointsView.12"), DebugUIViewsMessages.getString("BreakpointsView.13"), iteratorException); //$NON-NLS-1$ //$NON-NLS-2$
+			DebugUIPlugin.log(iteratorException);
 		}
 		viewer.setCheckedElements(breakpoints.toArray());
 		manager.addBreakpointListener(fBreakpointListener);
