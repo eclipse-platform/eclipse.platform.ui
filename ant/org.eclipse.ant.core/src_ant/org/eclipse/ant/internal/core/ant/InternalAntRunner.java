@@ -289,7 +289,7 @@ protected void createMonitorBuildListener(Project project) {
 		return;
 	monitor.beginTask("", project.getTargets().size()); //$NON-NLS-1$
 	project.addBuildListener(new ProgressBuildListener(monitor));
-	project.addReference("eclipse.progress.monitor", monitor); //$NON-NLS-1$
+	project.addReference(AntCorePlugin.ECLIPSE_PROGRESS_MONITOR, monitor);
 }
 
 /**

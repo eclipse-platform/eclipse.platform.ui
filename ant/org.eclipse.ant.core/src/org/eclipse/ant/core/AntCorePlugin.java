@@ -16,7 +16,9 @@ import java.util.Map;
 import org.eclipse.ant.internal.core.AntCorePreferences;
 import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.core.runtime.*;
-
+/**
+ * The plug-in runtime class for the Ant Core plug-in.
+ */
 public class AntCorePlugin extends Plugin implements IAntCoreConstants {
 
 	/**
@@ -86,17 +88,42 @@ public class AntCorePlugin extends Plugin implements IAntCoreConstants {
 	 */
 	public static final String LIBRARY = "library"; //$NON-NLS-1$
 
+	/**
+	 * Key to access the <code>IProgressMonitor</code> reference. When a
+	 * progress monitor is passed to the AntRunner.run(IProgressMonitor)
+	 * method, the object is available as a reference for the current
+	 * project.
+	 */
+	public static final String ECLIPSE_PROGRESS_MONITOR = "eclipse.progress.monitor"; //$NON-NLS-1$
+
+/** 
+ * Constructs an instance of this plug-in runtime class.
+ * <p>
+ * An instance of this plug-in runtime class is automatically created 
+ * when the facilities provided by the Ant Core plug-in are required.
+ * <b>Cliens must never explicitly instantiate a plug-in runtime class.</b>
+ * </p>
+ * 
+ * @param pluginDescriptor the plug-in descriptor for the
+ *   Ant Core plug-in
+ */
 public AntCorePlugin(IPluginDescriptor descriptor) {
 	super(descriptor);
 	plugin = this;
 }
 
+/**
+ * @see Plugin#startup
+ */
 public void startup() throws CoreException {
 	taskExtensions = extractExtensions(PT_TASKS, NAME);
 	typeExtensions = extractExtensions(PT_TYPES, NAME);
 	extraClasspathExtensions = extractExtensions(PT_EXTRA_CLASSPATH, LIBRARY);
 }
 
+/**
+ * @see Plugin#shutdown
+ */
 public void shutdown() throws CoreException {
 	if (preferences == null)
 		return;
@@ -104,7 +131,11 @@ public void shutdown() throws CoreException {
 	savePluginPreferences();
 }
 
-protected Map extractExtensions(String point, String key) {
+/**
+ * Given an extension point name, extract its extensions and return them
+ * as a Map. It uses as keys the attribute specified by the key parameter.
+ */
+private Map extractExtensions(String point, String key) {
 	IExtensionPoint extensionPoint = getDescriptor().getExtensionPoint(point);
 	if (extensionPoint == null)
 		return null;
