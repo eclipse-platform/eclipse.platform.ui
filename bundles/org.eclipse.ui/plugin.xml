@@ -1257,7 +1257,7 @@
 
       <component
             scope="org.eclipse.ui.part"
-            interface="org.eclipse.ui.internal.part.components.interfaces.IPersistable"
+            interface="org.eclipse.ui.IPersistable"
             class="org.eclipse.ui.internal.components.framework.SingletonFactory:org.eclipse.ui.internal.part.NullPersistable"/>
          
    </extension>
