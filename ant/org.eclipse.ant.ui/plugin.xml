@@ -451,9 +451,14 @@
    <extension
          point="org.eclipse.ui.editors.templates">
       <contextType
-            name="%xml.contextType.name"
-            class="org.eclipse.ant.internal.ui.editor.templates.XMLContextType"
-            id="org.eclipse.ant.ui.templateContextType.XML">
+            name="%buildFile.contextType.name"
+            class="org.eclipse.ant.internal.ui.editor.templates.BuildFileContextType"
+            id="org.eclipse.ant.ui.templateContextType.buildFile">
+      </contextType>
+       <contextType
+            name="%task.contextType.name"
+            class="org.eclipse.ant.internal.ui.editor.templates.TaskContextType"
+            id="org.eclipse.ant.ui.templateContextType.task">
       </contextType>
       <resolver
             name="%ant.resolvers.src"

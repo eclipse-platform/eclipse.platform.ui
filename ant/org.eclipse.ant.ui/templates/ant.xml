@@ -2,7 +2,7 @@
 <templates>
 
 <template 
-	context="org.eclipse.ant.ui.templateContextType.XML" 
+	context="org.eclipse.ant.ui.templateContextType.task" 
 	description="%ant.tasks.javac.description" 
 	id="org.eclipse.ant.ui.templates.javac1" 
 	name="javac">&lt;javac srcdir=&quot;${src}&quot;
@@ -12,7 +12,7 @@
 	/&gt;${cursor}</template>
 
 <template 
-	context="org.eclipse.ant.ui.templateContextType.XML" 
+	context="org.eclipse.ant.ui.templateContextType.task" 
 	description="%filesetTemplate.description" 
 	id="org.eclipse.ant.ui.templates.fileset1" 
 	name="fileset">&lt;fileset dir=&quot;${dir}&quot;&gt;
@@ -21,14 +21,14 @@
 </template>
 
 <template 
-	context="org.eclipse.ant.ui.templateContextType.XML" 
+	context="org.eclipse.ant.ui.templateContextType.task" 
 	description="%propertyTemplate.description" 
 	id="org.eclipse.ant.ui.templates.property1" 
 	name="property">&lt;property name=&quot;${name}&quot; value=&quot;${value}&quot;/&gt;
 </template>
 
 <template 
-	context="org.eclipse.ant.ui.templateContextType.XML" 
+	context="org.eclipse.ant.ui.templateContextType.buildFile" 
 	description="%buildFileTemplate1.description" 
 	id="org.eclipse.ant.ui.templates.buildFile1" 
 	name="%buildFileTemplate1.name">&lt;project default=&quot;${defaultTargetName}&quot;&gt;

@@ -11,25 +11,18 @@
 package org.eclipse.ant.internal.ui.editor.templates;
 
 import java.io.IOException;
-
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.templates.ContextTypeRegistry;
 import org.eclipse.jface.text.templates.persistence.TemplateStore;
 
-
-/**
- *  
- */
 
 public class AntTemplateAccess {
 	/** Key to store custom templates. */
 	private static final String CUSTOM_TEMPLATES_KEY= "org.eclipse.ant.ui.customtemplates"; //$NON-NLS-1$
 	
 	/** The shared instance. */
-	private static AntTemplateAccess fInstance;
+	private static AntTemplateAccess fgInstance;
 	
 	/** The template store. */
 	private TemplateStore fStore;
@@ -46,9 +39,10 @@ public class AntTemplateAccess {
 	 * @return the shared instance
 	 */
 	public static AntTemplateAccess getDefault() {
-		if (fInstance == null)
-			fInstance= new AntTemplateAccess();
-		return fInstance;
+		if (fgInstance == null) {
+			fgInstance= new AntTemplateAccess();
+		}
+		return fgInstance;
 	}
 
 	/**
@@ -62,7 +56,7 @@ public class AntTemplateAccess {
 			try {
 				fStore.load();
 			} catch (IOException e) {
-				AntUIPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, "org.eclipse.ant.ui", IStatus.OK, "", e)); //$NON-NLS-1$ //$NON-NLS-2$
+				AntUIPlugin.log(e);
 			}
 		}
 		return fStore;
@@ -77,7 +71,8 @@ public class AntTemplateAccess {
 		if (fRegistry == null) {
 			// create and configure the contexts available in the template editor
 			fRegistry= new ContextTypeRegistry();
-			fRegistry.addContextType(XMLContextType.XML_CONTEXT_TYPE);
+			fRegistry.addContextType(BuildFileContextType.BUILDFILE_CONTEXT_TYPE);
+			fRegistry.addContextType(TaskContextType.TASK_CONTEXT_TYPE);
 		}
 		return fRegistry;
 	}
