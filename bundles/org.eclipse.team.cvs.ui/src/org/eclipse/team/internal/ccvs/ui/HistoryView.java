@@ -633,10 +633,12 @@ public class HistoryView extends ViewPart {
 				try {
 					// for a file this will return the base
 					ICVSRemoteFile remoteFile = (ICVSRemoteFile)CVSWorkspaceRoot.getRemoteResourceFor(file);
-					historyTableProvider.setFile(remoteFile);
-					tableViewer.setInput(remoteFile);
-					setTitle(Policy.bind("HistoryView.titleWithArgument", remoteFile.getName())); //$NON-NLS-1$
-					selectRevision(remoteFile.getRevision());
+					if(remoteFile != null) {
+						historyTableProvider.setFile(remoteFile);
+						tableViewer.setInput(remoteFile);
+						setTitle(Policy.bind("HistoryView.titleWithArgument", remoteFile.getName())); //$NON-NLS-1$
+						selectRevision(remoteFile.getRevision());
+					}
 				} catch (TeamException e) {
 					CVSUIPlugin.openError(getViewSite().getShell(), null, null, e);
 				}				

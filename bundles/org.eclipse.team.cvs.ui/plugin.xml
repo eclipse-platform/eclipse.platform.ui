@@ -882,4 +882,15 @@
       	</description>
       </fontDefinition>
 	</extension>
+	
+	<!-- ********** QuickDiff text editor support ************** -->
+	<extension
+         point="org.eclipse.ui.workbench.texteditor.quickDiffReferenceProvider">
+      <referenceprovider
+            label="%CVSRemoteQuickDiffProvider.label"
+            class="org.eclipse.team.internal.ccvs.ui.RemoteRevisionQuickDiffProvider"
+            id="org.eclipse.quickdiff.providers.CVSReferenceProvider">
+      </referenceprovider>
+   </extension>
+	
 </plugin>
