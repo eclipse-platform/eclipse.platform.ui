@@ -42,7 +42,7 @@ public class TarOutputStream extends FilterOutputStream {
 		// Spec says to write 1024 bytes of zeros at the end.
 		byte[] zeros = new byte[1024];
 		cursize = 1024;
-		write(zeros);
+		write(zeros, 0, 1024);
 
 		// Default block size for tar files is 10240, so we have to
 		// pad the end of the file to be a multiple of this size.
@@ -50,8 +50,9 @@ public class TarOutputStream extends FilterOutputStream {
 			int length = 10240 - (byteswritten % 10240);
 			cursize = length;
 			zeros = new byte[length];
-			write(zeros);
+			write(zeros, 0, length);
 		}
+		super.close();
 	}
 
 	/**
@@ -65,7 +66,7 @@ public class TarOutputStream extends FilterOutputStream {
 		int len = 512 - datapos;
 		if(len > 0 && datapos > 0) {
 			cursize = len;
-			write(data,0,len);
+			write(data, 0, len);
 		}
 	}
 
@@ -200,7 +201,7 @@ public class TarOutputStream extends FilterOutputStream {
 		}
 
 		cursize = 512;
-		super.write(header);
+		write(header, 0, 512);
 		
 		cursize = e.getSize();
 	}
