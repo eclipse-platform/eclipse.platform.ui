@@ -49,8 +49,7 @@ BODY {
 	padding:0px;
 	border:0px;
 	height:100%;
-	/*background-color:ThreeDShadow;*/
-	background-color:WindowText;
+	background-color:ThreeDShadow;
 }
 
 A {
