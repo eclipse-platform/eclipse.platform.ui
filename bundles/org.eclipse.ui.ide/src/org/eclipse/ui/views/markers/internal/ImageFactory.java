@@ -18,6 +18,8 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.internal.util.BundleUtility;
 
 /**
  * Manages images and image descriptors.
@@ -27,9 +29,10 @@ public class ImageFactory {
 	private static ImageRegistry imageRegistry = new ImageRegistry();
 	private static Map map = new HashMap();
 
+	
 	/**
-	 * Returns an image for the given path or <code>null</code> if an image could 
-	 * not be created. 
+	 * Returns an image for the given path in the ide plug-in
+	 * or <code>null</code> if an image could not be created. 
 	 * 
 	 * @param path the path of the image relative to "org.eclipse.ui/icons/full"
 	 * @return the image located at the specified path or <code>null</code> if 
@@ -53,9 +56,10 @@ public class ImageFactory {
 
 		return image;
 	}
-
+	
 	/**
-	 * Returns an image descriptor for the given path or <code>null</code> if no
+	 * Returns an image descriptor for the given path in the ide
+	 * plug-in or <code>null</code> if no
 	 * image could be found.
 	 * 
 	 * @param path the path of the image relative to "org.eclipse.ui/icons/full"
@@ -66,10 +70,11 @@ public class ImageFactory {
 		ImageDescriptor imageDescriptor = (ImageDescriptor) map.get(path);
 
 		if (imageDescriptor == null) {
-			imageDescriptor = WorkbenchImages.getWorkbenchImageDescriptor(path);
+			imageDescriptor =ImageDescriptor.createFromURL(BundleUtility.find(IDEWorkbenchPlugin.IDE_WORKBENCH, WorkbenchImages.ICONS_PATH + path));
 			map.put(path, imageDescriptor);
 		}
 
 		return imageDescriptor;
 	}
+	
 }
