@@ -72,6 +72,8 @@ public class UpdateMergableOnly extends Update {
 				// Use the Updated handler type so that the file will be created or
 				// updated.
 				session.receiveFile(mFile, binary, UpdatedHandler.HANDLE_UPDATED, monitor);
+				// Now delete the file since it is not used
+				mFile.delete();
 			} else {
 				super.receiveTargetFile(session, mFile, entryLine, modTime, binary, readOnly, monitor);
 			}
@@ -94,6 +96,8 @@ public class UpdateMergableOnly extends Update {
 		skippedFiles.clear();
 		try {
 			session.registerResponseHandler(newHandler);
+			// Don't create backup files since merges won't be overridden
+			session.setCreateBackups(false);
 			return super.doExecute(
 				session,
 				globalOptions,
@@ -103,6 +107,7 @@ public class UpdateMergableOnly extends Update {
 				monitor);
 		} finally {
 			session.registerResponseHandler(oldHandler);
+			session.setCreateBackups(true);
 		}
 	}
 
