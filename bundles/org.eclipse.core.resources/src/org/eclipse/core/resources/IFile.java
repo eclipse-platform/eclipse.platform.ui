@@ -117,7 +117,7 @@ public void appendContents(InputStream source, boolean force, boolean keepHistor
  * <ul>
  * <li> This resource already exists in the workspace.</li>
  * <li> The parent of this resource does not exist.</li>
- * <li> The parent of this resource is a project that is not open.</li>
+ * <li> The project of this resource is not accessible.</li>
  * <li> The parent contains a resource of a different type 
  *      at the same path as this resource.</li>
  * <li> The name of this resource is not valid (according to 
