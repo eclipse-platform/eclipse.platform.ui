@@ -74,7 +74,16 @@ public class CompareViewerPane extends ViewForm {
 		};	
 				
 		addMouseListener(ml);
-		label.addMouseListener(ml);	
+		label.addMouseListener(ml);
+		
+		addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				if (fToolBarManager != null) {
+					fToolBarManager.removeAll();
+					fToolBarManager= null;
+				}
+			}
+		});
 	}
 	
 	/**

@@ -852,8 +852,6 @@ public abstract class ContentMergeViewer extends ContentViewer
 			fHVSashCursor.dispose();
 			fHVSashCursor= null;
 		}
-
-		CompareViewerPane.clearToolBar(fComposite.getParent());
 		
 		super.handleDispose(event);
   	}
