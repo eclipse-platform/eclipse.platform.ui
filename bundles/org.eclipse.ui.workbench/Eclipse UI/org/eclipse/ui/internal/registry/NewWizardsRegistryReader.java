@@ -47,6 +47,7 @@ public class NewWizardsRegistryReader extends WizardsRegistryReader {
 	private final static String		UNCATEGORIZED_WIZARD_CATEGORY_LABEL = WorkbenchMessages.getString("NewWizardsRegistryReader.otherCategory");//$NON-NLS-1$
 	private final static String		CATEGORY_SEPARATOR = "/";//$NON-NLS-1$
 	private final static String		ATT_CATEGORY = "category";//$NON-NLS-1$
+	// @issue project-specific attribute and behavior
 	private final static String ATT_PROJECT = "project";//$NON-NLS-1$
 	private final static String STR_TRUE = "true";//$NON-NLS-1$
 
