@@ -20,12 +20,14 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DefaultLabelProvider;
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
 import org.eclipse.debug.internal.ui.LazyModelPresentation;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -229,5 +231,24 @@ public class DebugUITools {
 		}
 		return null;
 	}
-}
 
+	/**
+	 * Open the launch configuration dialog with the specified initial selection.
+	 * The selection may be <code>null</code>, or contain any mix of 
+	 * <code>ILaunchConfiguration</code> or <code>ILaunchConfigurationType</code>
+	 * elements.
+	 * 
+	 * @param shell the parent shell for the launch configuration dialog
+	 * @param selection the initial selection for the dialog
+	 * @param mode the mode (run or debug) in which to open the launch configuration dialog.
+	 *  This should be one of the constants defined in <code>ILaunchManager</code>.
+	 * @return the return code from opening the launch configuration dialog
+	 * @since 2.0
+	 */
+	public static int openLaunchConfigurationDialog(Shell shell, IStructuredSelection selection, String mode) {
+		LaunchConfigurationDialog dialog = new LaunchConfigurationDialog(shell, null, mode);
+		dialog.setOpenMode(LaunchConfigurationDialog.LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_SELECTION);
+		dialog.setInitialSelection(selection);
+		return dialog.open();
+	}
+}

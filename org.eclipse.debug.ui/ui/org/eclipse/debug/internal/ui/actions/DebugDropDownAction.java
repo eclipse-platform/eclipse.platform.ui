@@ -53,7 +53,7 @@ public class DebugDropDownAction extends LaunchDropDownAction {
 	 * @see LaunchDropDownAction#getTooltipPrefix()
 	 */
 	protected String getStaticTooltip() {
-		return ActionMessages.getString("DebugDropDownAction.Debug__1"); //$NON-NLS-1$
+		return ActionMessages.getString("DebugDropDownAction.Debug_1"); //$NON-NLS-1$
 	}
 }
 

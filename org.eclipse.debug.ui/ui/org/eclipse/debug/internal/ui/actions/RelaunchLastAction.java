@@ -5,6 +5,8 @@ package org.eclipse.debug.internal.ui.actions;
  * All Rights Reserved.
  */
 
+import java.text.MessageFormat;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
@@ -57,13 +59,15 @@ public abstract class RelaunchLastAction implements IWorkbenchWindowActionDelega
 					});				
 				} else {
 					String configName = historyElement.getLaunchConfiguration().getName();
-					MessageDialog.openError(getShell(), "Cannot relaunch", "Cannot relaunch \'" + configName + "\' because it does not support " + getMode() + " mode");				
+					String title = ActionMessages.getString("RelaunchLastAction.Cannot_relaunch_1"); //$NON-NLS-1$
+					String message = MessageFormat.format(ActionMessages.getString("RelaunchLastAction.Cannot_relaunch_[{0}]_because_it_does_not_support_{2}_mode_2"), new String[] {configName, getMode()}); //$NON-NLS-1$
+					MessageDialog.openError(getShell(), title, message);				
 				}
 			} else {
 				Display.getCurrent().beep();
 			}
 		} catch (CoreException ce) {
-			DebugUIPlugin.errorDialog(getShell(), "Error relaunching", "Error encountered attempting to relaunch", ce);
+			DebugUIPlugin.errorDialog(getShell(), ActionMessages.getString("RelaunchLastAction.Error_relaunching_3"), ActionMessages.getString("RelaunchLastAction.Error_encountered_attempting_to_relaunch_4"), ce); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	

@@ -6,6 +6,7 @@ package org.eclipse.debug.internal.ui.launchConfigurations;
  */
  
 import java.lang.reflect.InvocationTargetException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -108,11 +109,6 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	private IResource fResourceContext;
 	
 	/**
-	 * The launch config to be selected when the dialog is realized.
-	 */
-	private ILaunchConfiguration fFirstConfig;
-	
-	/**
 	 * The mode (run or debug), as specified by the caller
 	 */
 	private String fMode;
@@ -161,7 +157,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	private Composite fTabComposite;
 	
 	/**
-	 * The tab folder
+	 * The tab folder that contains tabs for the selected configuration
 	 */
 	private TabFolder fTabFolder;
 	
@@ -183,6 +179,12 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * saved.  Note that the initial config type is ignored if single-click launching is enabled.
 	 */
 	private ILaunchConfigurationType fInitialConfigType;
+	
+	/**
+	 * When this dialog is opened in <code>LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_SELECTION</code>
+	 * mode, this specifies the selection that is initially shown in the dialog.
+	 */
+	private IStructuredSelection fInitialSelection;
 	
 	/**
 	 * The current tab group being displayed
@@ -393,32 +395,15 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		Control contents = super.createContents(parent);
 		getLaunchManager().addLaunchConfigurationListener(this);
 		initializeBounds();
-		displayFirstConfig();
+		doInitialTreeSelection();
 		return contents;
 	}
 	
 	/**
-	 * Display the first configuration in this dialog.
+	 * Set the initial selection in the tree.
 	 */
-	protected void displayFirstConfig() {
-		IStructuredSelection selection = StructuredSelection.EMPTY;
-		if (fFirstConfig instanceof ILaunchConfigurationWorkingCopy) {
-			try {
-				ILaunchConfigurationType firstConfigType = fFirstConfig.getType();
-				selection = new StructuredSelection(firstConfigType);
-				setIgnoreSelectionChanges(true);
-				getTreeViewer().setSelection(selection);			
-				setIgnoreSelectionChanges(false);
-				setLaunchConfiguration(fFirstConfig, false);
-			} catch (CoreException ce) {
-				DebugUIPlugin.log(ce);
-			}
-		} else if (fFirstConfig instanceof ILaunchConfiguration) {
-			selection = new StructuredSelection(fFirstConfig);			
-			getTreeViewer().setSelection(selection);			
-		} else {
-			getTreeViewer().setSelection(selection);
-		}
+	protected void doInitialTreeSelection() {
+		getTreeViewer().setSelection(getInitialSelection());
 	}
 	
 	/**
@@ -458,18 +443,20 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * just set the initial selection in the dialog to the last launched configuration.
 	 */
 	protected int doLastLaunchedConfig(boolean launch) {
-		fFirstConfig = getLastLaunchedWorkbenchConfiguration();
+		ILaunchConfiguration lastLaunchedConfig = getLastLaunchedWorkbenchConfiguration();
 		if (launch) {
 			try {
-				if (fFirstConfig != null) {
-					if (fFirstConfig.supportsMode(getMode())) {
-						fUnderlyingConfig = fFirstConfig;
-						doLaunch(fFirstConfig);
+				if (lastLaunchedConfig != null) {
+					if (lastLaunchedConfig.supportsMode(getMode())) {
+						fUnderlyingConfig = lastLaunchedConfig;
+						doLaunch(lastLaunchedConfig);
 					} else {
 						// If we're trying to launch, but the last launched config doesn't 
 						// support the current mode of the dialog, show an error dialog
-						String configName = fFirstConfig.getName();
-						MessageDialog.openError(getShell(), "Cannot relaunch", "Cannot relaunch \'" + configName + "\' because it does not support " + getMode() + " mode");										
+						String configName = lastLaunchedConfig.getName();
+						String title = LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Cannot_relaunch_1"); //$NON-NLS-1$
+						String message = MessageFormat.format(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Cannot_relaunch_[{1}]_because_it_does_not_support_{2}_mode_2"), new String[] {configName, getMode()}); //$NON-NLS-1$
+						MessageDialog.openError(getShell(), title, message);										
 					}
 					return ILaunchConfigurationDialog.LAUNCHED_BEFORE_OPENING;
 				}
@@ -477,6 +464,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 				DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Launch_Configuration_Error_6"), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Exception_occurred_processing_launch_configuration._See_log_for_more_information_7"), e); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
+		setInitialSelection(new StructuredSelection(lastLaunchedConfig));
 		return super.open();
 	}
 	
@@ -486,9 +474,11 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 */
 	protected int openDialogOnNewConfigOfSpecifiedType() {
 		ILaunchConfigurationType configType = getInitialConfigType();
+		ILaunchConfiguration config = null;
 		if (configType != null) {
-			fFirstConfig = createConfigOfType(getInitialConfigType());			
+			config = createConfigOfType(getInitialConfigType());			
 		}		
+		setInitialSelection(new StructuredSelection(config));
 		return super.open();
 	}
 	
@@ -497,7 +487,8 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * <code>setInitialSelection()</code>.
 	 */
 	protected int openDialogOnSelection() {
-		
+		// Nothing special is required, the dialog will open and whatever was specified
+		// via setInitialSelection() will be selected in the tree
 		return super.open();
 	}
 	
@@ -2588,7 +2579,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	}
 	
 	/**
-	 *Returns whether this dialog is initializing pages
+	 * Returns whether this dialog is initializing pages
 	 * and should not bother to refresh status (butttons
 	 * and message).
 	 */
@@ -2609,6 +2600,23 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	public void setInitialConfigType(ILaunchConfigurationType configType) {
 		fInitialConfigType = configType;
 	}
+	
+	/**
+	 * Returns the initial selection shown in this dialog when opened in
+	 * <code>LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_SELECTION</code> mode.
+	 */
+	protected IStructuredSelection getInitialSelection() {
+		return fInitialSelection;
+	}
+	
+	/**
+	 * Sets the initial selection for the dialog when opened in 
+	 * <code>LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_SELECTION</code> mode.
+	 */
+	public void setInitialSelection(IStructuredSelection selection) {
+		fInitialSelection = selection;
+	}
+	
 	/**
 	 * Handles key events in tree viewer. Specifically
 	 * when the delete key is pressed.
