@@ -54,9 +54,9 @@ public final class VersionIdentifier {
  */
 public VersionIdentifier(int major, int minor, int service) {
 
-	Assert.isTrue(major>=0);
-	Assert.isTrue(minor>=0);
-	Assert.isTrue(service>=0);
+	if(major<0) major=0;
+	if(minor<0) minor=0;
+	if(service<0) service=0;
 	
 	this.major = major;
 	this.minor = minor;
@@ -81,29 +81,33 @@ public VersionIdentifier(int major, int minor, int service) {
  */
 public VersionIdentifier(String versionId) {
 
-	Assert.isNotNull(versionId);
-	String s = versionId.trim();
-	Assert.isTrue(!s.equals(""));
-	Assert.isTrue(!s.startsWith(SEPARATOR));
-	Assert.isTrue(!s.endsWith(SEPARATOR));
-	Assert.isTrue(s.indexOf(SEPARATOR+SEPARATOR)==-1);
+	try {
+		Assert.isNotNull(versionId);
+		String s = versionId.trim();
+		Assert.isTrue(!s.equals(""));
+		Assert.isTrue(!s.startsWith(SEPARATOR));
+		Assert.isTrue(!s.endsWith(SEPARATOR));
+		Assert.isTrue(s.indexOf(SEPARATOR+SEPARATOR)==-1);
 	
-	StringTokenizer st = new StringTokenizer(s, SEPARATOR);
-	Integer token;
-	Vector elements = new Vector(3);
+		StringTokenizer st = new StringTokenizer(s, SEPARATOR);
+		Integer token;
+		Vector elements = new Vector(3);
 
-	while(st.hasMoreTokens()) {
-		token = new Integer((String)st.nextToken());
-		Assert.isTrue(token.intValue() >= 0);
-		elements.addElement(token);
+		while(st.hasMoreTokens()) {
+			token = new Integer((String)st.nextToken());
+			Assert.isTrue(token.intValue() >= 0);
+			elements.addElement(token);
+		}
+
+		Assert.isTrue(elements.size()>0);
+		Assert.isTrue(elements.size()<=3);
+
+		if (elements.size()>=1) this.major = ((Integer)elements.elementAt(0)).intValue();
+		if (elements.size()>=2) this.minor = ((Integer)elements.elementAt(1)).intValue();
+		if (elements.size()>=3) this.service = ((Integer)elements.elementAt(2)).intValue();
+		
+	} catch (AssertionFailedException e) { // will use default version 0.0.0
 	}
-
-	Assert.isTrue(elements.size()>0);
-	Assert.isTrue(elements.size()<=3);
-
-	if (elements.size()>=1) this.major = ((Integer)elements.elementAt(0)).intValue();
-	if (elements.size()>=2) this.minor = ((Integer)elements.elementAt(1)).intValue();
-	if (elements.size()>=3) this.service = ((Integer)elements.elementAt(2)).intValue();
 
 }
 /**
