@@ -97,8 +97,8 @@ public class LaunchingPreferencePage extends FieldEditorPreferencePage implement
 		addField(new RadioGroupFieldEditor(IDebugUIConstants.PREF_WAIT_FOR_BUILD, 
 						DebugPreferencesMessages.getString("LaunchingPreferencePage.6"), 3,  //$NON-NLS-1$
 						new String[][] {{DebugPreferencesMessages.getString("LaunchingPreferencePage.7"), AlwaysNeverDialog.ALWAYS}, //$NON-NLS-1$
-							{DebugPreferencesMessages.getString("LaunchingPreferencePage.8"), AlwaysNeverDialog.PROMPT}, //$NON-NLS-1$
-							{DebugPreferencesMessages.getString("LaunchingPreferencePage.9"), AlwaysNeverDialog.NEVER}}, //$NON-NLS-1$
+							{DebugPreferencesMessages.getString("LaunchingPreferencePage.8"), AlwaysNeverDialog.NEVER}, //$NON-NLS-1$
+							{DebugPreferencesMessages.getString("LaunchingPreferencePage.9"), AlwaysNeverDialog.PROMPT}}, //$NON-NLS-1$
 						getFieldEditorParent(),
 						true));
 	}
