@@ -55,10 +55,10 @@ public class MessageDialogWithToggle extends MessageDialog {
 	}
 	
 	protected Control createDialogArea(Composite parent) {
-		Composite dialogArea = (Composite) super.createDialogArea(parent);
-		fToggleButton = createCheckButton(dialogArea, fToggleMessage);
+		Composite area = (Composite) super.createDialogArea(parent);
+		fToggleButton = createCheckButton(area, fToggleMessage);
 		getToggleButton().setSelection(fStore.getBoolean(fPreferenceKey));
-		return dialogArea;
+		return area;
 	}
 
 	/**

@@ -39,26 +39,12 @@ public abstract class StatusDialog extends Dialog {
 	private String fTitle;
 	private Image fImage;
 
-	private boolean fStatusLineAboveButtons;
-
 	/**
 	 * Creates an instane of a status dialog.
 	 */
 	public StatusDialog(Shell parent) {
 		super(parent);
-		fStatusLineAboveButtons= false;
 		fLastStatus= new StatusInfo();
-	}
-
-	/**
-	 * Specifies whether status line appears to the left of the buttons (default)
-	 * or above them.
-	 *
-	 * @param aboveButtons if <code>true</code> status line is placed above buttons; if
-	 * 	<code>false</code> to the right
-	 */
-	public void setStatusLineAboveButtons(boolean aboveButtons) {
-		fStatusLineAboveButtons= aboveButtons;
 	}
 
 	/**

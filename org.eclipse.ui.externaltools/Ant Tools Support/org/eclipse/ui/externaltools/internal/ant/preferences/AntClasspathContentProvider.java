@@ -41,12 +41,12 @@ public class AntClasspathContentProvider extends ExternalToolsContentProvider {
 			}
 		}
 		elements.add(o);
-		viewer.add(o);
+		tableViewer.add(o);
 	}
 
 	public void removeAll() {
-		if (viewer != null) {
-			viewer.remove(elements.toArray());
+		if (tableViewer != null) {
+			tableViewer.remove(elements.toArray());
 		}
 		elements = new ArrayList(5);
 	}

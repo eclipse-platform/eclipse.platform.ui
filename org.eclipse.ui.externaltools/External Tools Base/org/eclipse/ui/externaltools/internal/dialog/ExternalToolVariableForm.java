@@ -37,7 +37,7 @@ public class ExternalToolVariableForm {
 	private String variableListLabelText;
 	private ExternalToolVariable[] variables;
 	private IVariableComponent[] components;
-	private IGroupDialogPage page;
+	private IGroupDialogPage dialogPage;
 	
 	private Label variableListLabel;
 	private List variableList;
@@ -61,7 +61,7 @@ public class ExternalToolVariableForm {
 	public Composite createContents(Composite parent, IGroupDialogPage page) {
 		Font font = parent.getFont();
 		
-		this.page = page;
+		dialogPage = page;
 		
 		Composite mainComposite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -117,7 +117,7 @@ public class ExternalToolVariableForm {
 		for (int i = 0; i < variables.length; i++) {
 			ExternalToolVariable var = variables[i];
 			components[i] = var.getComponent();
-			components[i].createContents(variableComposite, var.getTag(), page);
+			components[i].createContents(variableComposite, var.getTag(), dialogPage);
 		}
 	}
 	
@@ -208,7 +208,7 @@ public class ExternalToolVariableForm {
 		if (activeComponentIndex != -1 && setValue) {
 			components[activeComponentIndex].setVariableValue(value);
 		}
-		page.updateValidState();
+		dialogPage.updateValidState();
 	}
 
 	/**

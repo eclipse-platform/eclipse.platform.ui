@@ -27,7 +27,7 @@ import org.eclipse.jface.viewers.ViewerSorter;
  */
 public class ExternalToolsContentProvider implements IStructuredContentProvider {
 	protected List elements = new ArrayList();
-	protected TableViewer viewer;
+	protected TableViewer tableViewer;
 	private ViewerSorter sorter= null;
 
 	public void add(Object o) {
@@ -35,7 +35,7 @@ public class ExternalToolsContentProvider implements IStructuredContentProvider 
 			return;
 		}
 		elements.add(o);
-		viewer.add(o);
+		tableViewer.add(o);
 	}
 
 	public void dispose() {
@@ -46,8 +46,8 @@ public class ExternalToolsContentProvider implements IStructuredContentProvider 
 	}
 
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		this.viewer = (TableViewer) viewer;
-		this.viewer.setSorter(getSorter());
+		tableViewer = (TableViewer) viewer;
+		tableViewer.setSorter(getSorter());
 		elements.clear();
 		if (newInput != null) {
 			List list;
@@ -62,13 +62,13 @@ public class ExternalToolsContentProvider implements IStructuredContentProvider 
 
 	public void remove(Object o) {
 		elements.remove(o);
-		viewer.remove(o);
+		tableViewer.remove(o);
 	}
 	
 	public void remove(IStructuredSelection selection) {
 		Object[] array= selection.toArray();
 		elements.removeAll(Arrays.asList(array));
-		viewer.remove(array);
+		tableViewer.remove(array);
 	}
 	
 	protected ViewerSorter getSorter() {

@@ -26,7 +26,7 @@ import org.eclipse.ui.externaltools.internal.model.ToolUtil;
 public abstract class AbstractVariableComponent implements IVariableComponent {
 	
 	protected Group mainGroup;
-	protected IGroupDialogPage page;
+	protected IGroupDialogPage dialogPage;
 	private boolean isValid = true;
 
 	/**
@@ -40,14 +40,14 @@ public abstract class AbstractVariableComponent implements IVariableComponent {
 	 * Returns the dialog page this component is part of
 	 */
 	protected IGroupDialogPage getPage() {
-		return page;
+		return dialogPage;
 	}
 
 	/**
 	 * @see IVariableComponent#createContents(Composite, String, IGroupDialogPage)
 	 */
 	public void createContents(Composite parent, String varTag, IGroupDialogPage page) {
-		this.page= page;
+		dialogPage= page;
 		
 		// main composite
 		mainGroup = new Group(parent, SWT.NONE);
@@ -84,7 +84,7 @@ public abstract class AbstractVariableComponent implements IVariableComponent {
 	protected void setIsValid(boolean isValid) {
 		if (isValid() != isValid) {
 			this.isValid= isValid;
-			this.page.updateValidState();
+			this.dialogPage.updateValidState();
 		}
 	}
 
