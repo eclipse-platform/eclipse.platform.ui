@@ -17,6 +17,7 @@ import org.eclipse.compare.structuremergeviewer.Differencer;
 	long fOldDate, fNewDate;	// if 0: no file
 	List fHunks= new ArrayList();
 	boolean fIsEnabled= true;
+	String fRejected;
 	
  	/* package */ Diff(IPath oldPath, long oldDate, IPath newPath, long newDate) {
 		fOldPath= oldPath;

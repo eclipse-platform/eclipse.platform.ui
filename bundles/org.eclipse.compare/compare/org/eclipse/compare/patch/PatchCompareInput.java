@@ -10,11 +10,12 @@ import java.text.MessageFormat;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Composite;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.resources.*;
 
-import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.*;
 
 import org.eclipse.compare.*;
 import org.eclipse.compare.structuremergeviewer.*;
@@ -26,6 +27,28 @@ import org.eclipse.compare.internal.*;
  * patch selected workspace resources.
  */
 /* package */ class PatchCompareInput extends CompareEditorInput {
+	
+	static class Rejected extends DiffNode implements IStreamContentAccessor {
+		Diff fDiff;
+		String fName;
+		Rejected(IDiffContainer parent, String name, Diff diff) {
+			super(parent, Differencer.NO_CHANGE);
+			fName= name;
+			fDiff= diff;
+		}
+		public String getName() {
+			return fName;
+		}
+		public String getType() {
+			return "txt";
+		}
+		public Image getImage() {
+			return CompareUI.getImage("file");
+		}
+		public InputStream getContents() {
+			return new ByteArrayInputStream(fDiff.fRejected.getBytes());
+		}
+	}
 		
 	private DiffNode fRoot;
 	private IResource fTarget;
@@ -61,8 +84,17 @@ import org.eclipse.compare.internal.*;
 				
 			for (int i= 0; i < diffs.length; i++) {
 				Diff diff= diffs[i];
-				if (diff.fIsEnabled)
-					createPath(fRoot, rootFolder, fPatcher.getPath(diff), diff);
+				if (diff.fIsEnabled) {
+					IPath path= fPatcher.getPath(diff);
+					createPath(fRoot, rootFolder, path, diff, false);
+					
+					String rej= diff.fRejected;
+					if (rej != null) {
+						IPath pp= path.removeLastSegments(1);
+						pp= pp.append(path.lastSegment() + ".rej");
+						createPath(fRoot, rootFolder, pp, diff, true);
+					}
+				}
 				pm.worked(1);
 			}
 						
@@ -122,7 +154,7 @@ import org.eclipse.compare.internal.*;
 		}
 	}
 	
-	private void createPath(DiffContainer root, IContainer folder, IPath path, Diff diff) {
+	private void createPath(DiffContainer root, IContainer folder, IPath path, Diff diff, boolean reject) {
 		if (path.segmentCount() > 1) {
 			IFolder f= folder.getFolder(path.uptoSegment(1));
 			IDiffElement child= root.findChild(path.segment(0));
@@ -131,11 +163,15 @@ import org.eclipse.compare.internal.*;
 				child= new DiffNode(root, Differencer.CHANGE, null, rn, rn);
 			}
 			if (child instanceof DiffContainer)
-				createPath((DiffContainer)child, f, path.removeFirstSegments(1), diff);
+				createPath((DiffContainer)child, f, path.removeFirstSegments(1), diff, reject);
 		} else {
 			// a leaf
-			BufferedResourceNode rn= new BufferedResourceNode(folder.getFile(path));						
-			new DiffNode(root, diff.getType(), null, rn, new PatchedResource(rn, diff, path, fPatcher));
+			BufferedResourceNode rn= new BufferedResourceNode(folder.getFile(path));
+			if (reject) {
+				new Rejected(root, path.segment(0), diff);
+			} else {
+				new DiffNode(root, diff.getType(), null, rn, new PatchedResource(rn, diff, path, fPatcher));
+			}					
 		}
 	}
 }

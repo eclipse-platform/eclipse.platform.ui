@@ -5,7 +5,7 @@
 package org.eclipse.compare.patch;
 
 import java.io.*;
-import java.util.ArrayList;
+import java.util.*;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -204,9 +204,9 @@ import org.eclipse.compare.structuremergeviewer.*;
 		l.setToolTipText("Allow context to shift this number of lines from the original place");
 		fFuzzField= new Text(group, SWT.BORDER);
 		fFuzzField.setText("2");
-		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_CENTER);
-		gd.widthHint= 30;
-		fFuzzField.setLayoutData(gd);
+		GridData gd2= new GridData(GridData.HORIZONTAL_ALIGN_CENTER);
+		gd2.widthHint= 30;
+		fFuzzField.setLayoutData(gd2);
 
 		addSpacer(group);
 		
@@ -218,15 +218,16 @@ import org.eclipse.compare.structuremergeviewer.*;
 		// register listeners
 		
 		final Patcher patcher= fPatchWizard.getPatcher();
-				
-		fStripPrefixSegments.addSelectionListener(
-			new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					if (patcher.setStripPrefixSegments(getStripPrefixSegments()))
-						updateTree();
+			
+		if (fStripPrefixSegments != null) 
+			fStripPrefixSegments.addSelectionListener(
+				new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent e) {
+						if (patcher.setStripPrefixSegments(getStripPrefixSegments()))
+							updateTree();
+					}
 				}
-			}
-		);
+			);
 		fIgnoreWhitespaceButton.addSelectionListener(
 			new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
@@ -312,7 +313,7 @@ import org.eclipse.compare.structuremergeviewer.*;
 					}
 				}
 			}
-			if (length != 99)
+			if (fStripPrefixSegments != null && length != 99)
 				for (int i= 1; i < length; i++)
 					fStripPrefixSegments.add(Integer.toString(i));
 		}
@@ -406,6 +407,18 @@ import org.eclipse.compare.structuremergeviewer.*;
 			if (lines == null)
 				lines= new ArrayList();
 			fPatchWizard.getPatcher().patch(diff, lines, failedHunks);
+			
+			if (! failedHunks.isEmpty()) {
+				StringBuffer sb= new StringBuffer();
+				Iterator iter= failedHunks.iterator();
+				while (iter.hasNext()) {
+					Hunk hunk= (Hunk) iter.next();
+					sb.append(hunk.getDescription());
+					sb.append('\n');
+					sb.append(hunk.getContent());
+				}
+				diff.fRejected= sb.toString();
+			}
 			
 			int checkedSubs= 0;	// counts checked hunk items
 			TreeItem[] hunkItems= item.getItems();

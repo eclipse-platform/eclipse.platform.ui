@@ -603,7 +603,7 @@ public class Patcher {
 			} else {
 				if (failedHunks != null)
 					failedHunks.add(hunk);
-				System.out.println("hunk ignored");
+				// System.out.println("hunk ignored");
 			}
 		}
 		return shift;

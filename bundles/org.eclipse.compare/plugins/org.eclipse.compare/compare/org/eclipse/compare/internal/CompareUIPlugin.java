@@ -574,7 +574,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	 */
 	public static Viewer findContentViewer(Viewer oldViewer, Object in, Composite parent, CompareConfiguration cc) {
 		
-		if (! (in instanceof ICompareInput)) {
+		if (in instanceof IStreamContentAccessor) {
 			String type= ITypedElement.TEXT_TYPE;
 			if (in instanceof ITypedElement) {
 				ITypedElement tin= (ITypedElement) in;

@@ -183,11 +183,11 @@ import org.eclipse.compare.internal.Utilities;
 		
 		// 1st row
 		fUsePatchFileButton= new Button(fPatchFileGroup, SWT.RADIO);
-		fUsePatchFileButton.setText("File: ");
+		fUsePatchFileButton.setText("File ");
 		
 		fPatchFileNameField= new Combo(fPatchFileGroup, SWT.BORDER);
 		GridData gd= new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalIndent= 8;
+		//gd.horizontalIndent= 8;
 		gd.widthHint= SIZING_TEXT_FIELD_WIDTH;
 		fPatchFileNameField.setLayoutData(gd);
 		

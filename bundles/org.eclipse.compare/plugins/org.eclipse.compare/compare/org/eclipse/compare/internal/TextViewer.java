@@ -35,13 +35,12 @@ public class TextViewer extends AbstractViewer {
 	}
 	
 	public void setInput(Object input) {
-		if (input instanceof ICompareInput) {
+		if (input instanceof IStreamContentAccessor) {
+			fSourceViewer.setDocument(new Document(getString(input)));
+		} else if (input instanceof ICompareInput) {
 			fInput= (ICompareInput) input;
 			ITypedElement left= ((ICompareInput) fInput).getLeft();
 			fSourceViewer.setDocument(new Document(getString(left)));
-			
-		} else if (input instanceof IStreamContentAccessor) {
-			fSourceViewer.setDocument(new Document(getString(input)));
 		}
 	}
 	
