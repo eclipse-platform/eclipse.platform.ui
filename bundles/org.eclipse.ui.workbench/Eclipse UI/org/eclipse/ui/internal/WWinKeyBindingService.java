@@ -306,6 +306,10 @@ final class WWinKeyBindingService {
 			
 			MenuItem parentItem = parent.getItem(parent.getItemCount() - 1);
 			parent = parentItem.getMenu();
+			
+			if (acceleratorMenu != null)
+				acceleratorMenu.dispose();
+			
 			acceleratorMenu = new AcceleratorMenu(parent);
 		}
 
