@@ -216,7 +216,7 @@ public class ImageSegment extends ParagraphSegment {
 			boolean lastRow = selData.isLastSelectionRow(bounds.y,
 					bounds.height);
 			boolean selectedRow = selData
-					.isSelectedRow(bounds.y, bounds.height);			
+					.isSelectedRow(bounds.y, bounds.height);
 			if (selectedRow) {
 				if ((firstRow && leftOffset > ix) ||
 					(lastRow && rightOffset < ix + iwidth/2)) {

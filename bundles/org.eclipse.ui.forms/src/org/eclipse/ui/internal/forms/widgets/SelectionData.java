@@ -104,6 +104,8 @@ public class SelectionData {
 		return isSelectedRow(locator.y, rowHeight);
 	}
 	public boolean isSelectedRow(int y, int rowHeight) {
+		if (!isEnclosed())
+			return false;
 		return (y + rowHeight >= getTopOffset() &&
 				y <= getBottomOffset());
 	}
