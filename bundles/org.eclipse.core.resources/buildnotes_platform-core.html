@@ -7,6 +7,43 @@
 <hr>
 <h1>Eclipse Platform Build Notes<br>
   Core</h1>
+Eclipse SDK Build 20030923
+<h2>What's new in this drop</h2>
+<h3>API changes</h3>
+<ul>
+  <li>Autobuild in the background!!  When automatic build is enabled, it now runs
+  in a background thread.  This makes all workspace changing API more responsive.
+  See plan item bug report 
+  <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=36957">36957</a> for more details.
+  </li>
+  <li>New constant ResourcesPlugin.FAMILY_AUTO_BUILD for manipulating the
+  background autobuild job.  This allows clients to query or join a background autobuild
+  in progress.
+  </li>
+  <li>New API on IResource to get or set the local file system time stamp.  This
+  uses an in-memory cache to greatly improve the performance of retrieving or
+  changing the local time stamp.  New methods are IResource.getLocalTimeStamp
+  and IResource.setLocalTimeStamp.  See API javadoc for more details.
+  </li>
+  <li>
+  There have been various tweaks to the IJobManager API that caused breaking changes.
+  Job.run has been made protected to prevent clients from calling it directly, and 
+  IJobManager.endRule now requires the scheduling rule to be specified as a parameter.
+</ul>
+<h3>Other highlights</h3>
+<ul>
+  <li>Several deadlock problems were fixed for this build.  Please continue to enter
+  bug reports against platform core if you see new deadlocks.</li>
+</ul>
+<h3>Resolved Bugs</h3>
+<ul>
+  <li> <a href="https://bugs.eclipse.org/bugs/buglist.cgi?short_desc_type=allwordssubstr&short_desc=&product=Platform&component=Core&long_desc_type=allwordssubstr&long_desc=&bug_file_loc_type=allwordssubstr&bug_file_loc=&keywords_type=anywords&keywords=&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&emailassigned_to1=1&emailtype1=substring&email1=&emailreporter2=1&emailtype2=substring&email2=&bugidtype=include&bug_id=&votes=&changedin=&chfield=bug_status&chfieldfrom=2003-08-11&chfieldto=2003-09-22&chfieldvalue=&cmdtype=doit&namedcmd=core-3.0&newqueryname=&order=Reuse+same+sort+as+last+time&field0-0-0=noop&type0-0-0=noop&value0-0-0=">Click 
+    here</a> to see PRs which have been marked as RESOLVED, VERIFIED or CLOSED 
+    since the last integration build.</li>
+</ul>
+<hr>
+<h1>Eclipse Platform Build Notes<br>
+  Core</h1>
 Eclipse SDK Build 20030811
 <h2>What's new in this drop</h2>
 <h3>API changes</h3>
