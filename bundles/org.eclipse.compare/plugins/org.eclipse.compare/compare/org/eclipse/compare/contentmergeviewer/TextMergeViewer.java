@@ -262,7 +262,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	// points for center curves
 	private double[] fBasicCenterCurve;
 	
-//	private MenuManager fCenterMenuManager;
 	private Menu fCenterMenu;
 	private Button fCenterButton;
 	private Diff fButtonDiff;
@@ -884,10 +883,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		fAncestor.setEditable(false);
 		
 		fSummaryLabel= new Label(composite, SWT.NONE);
-		if (fUseResolveUI) {
-			Display d= composite.getDisplay(); //
-			fSummaryLabel.setBackground(d.getSystemColor(SWT.COLOR_RED));
-		}
+		updateResolveStatus();
 				
 		// 2nd row
 		if (fMarginWidth > 0) {
@@ -1206,55 +1202,13 @@ public class TextMergeViewer extends ContentMergeViewer  {
 					paintCenter(this, gc);
 				}
 			};
-			if (!fUseResolveUI) {
+			if (!showResolveUI()) {
 				new Resizer(canvas, HORIZONTAL);
 			} else {
-//				canvas.addMouseListener(
-//					new MouseAdapter() {
-//						public void mouseDown(MouseEvent e) {
-//							Diff diff= getDiffUnderMouse(canvas, e.x, e.y, null);
-//							if (diff != null) {
-//								setCurrentDiff2(diff, false);
-//								if (e.button == 3) {
-//									Point p= canvas.toDisplay(new Point(e.x, e.y));
-//									fCenterMenu= fCenterMenuManager.createContextMenu(canvas);
-//									if (fCenterMenu != null) {
-//										fCenterMenu.setLocation(p.x, p.y);
-//										fCenterMenu.setVisible(true);
-//									}
-//								}
-//							}
-//						}
-//					}
-//				);
 				canvas.addMouseMoveListener(
 					new MouseMoveListener() {
 						public void mouseMove(MouseEvent e) {
-							Rectangle r= new Rectangle(0, 0, 0, 0);
-							Diff diff= getDiffUnderMouse(canvas, e.x, e.y, r);
-							if (diff != null && diff.isResolved()/*!diff.isUnresolvedIncomingOrConflicting()*/ )
-								diff= null;
-							if (diff != fButtonDiff) {
-								if (diff != null) {
-									if (fLeft.isEditable() && diff.isUnresolvedIncoming()) {
-										fButtonDiff= diff;
-										fCenterButton.setText("<");
-										fCenterButton.setToolTipText("Copy to left");
-										fCenterButton.setBounds(r);
-										fCenterButton.setVisible(true);
-									} else if (fRight.isEditable()) {
-										fButtonDiff= diff;
-										fCenterButton.setText(">");
-										fCenterButton.setToolTipText("Copy to right");
-										fCenterButton.setBounds(r);
-										fCenterButton.setVisible(true);										
-									} else
-										fButtonDiff= null;
-								} else {
-									fCenterButton.setVisible(false);
-									fButtonDiff= null;
-								}
-							}
+							handleMouseMoveOverCenter(canvas, e.x, e.y);
 						}
 					}
 				);
@@ -1273,26 +1227,42 @@ public class TextMergeViewer extends ContentMergeViewer  {
 							}
 						}
 					}
-				);
-				
-//				fCenterMenuManager= new MenuManager();
-//				fCenterMenuManager.setRemoveAllWhenShown(true);
-//				fCenterMenuManager.addMenuListener(
-//					new IMenuListener() {
-//						public void menuAboutToShow(IMenuManager manager) {
-//							updateControls();
-//							if (fCopyDiffRightToLeftItem != null)
-//								manager.add(fCopyDiffRightToLeftItem.getAction());
-//							if (fCopyDiffLeftToRightItem != null)
-//								manager.add(fCopyDiffLeftToRightItem.getAction());
-//						}
-//					}
-//				);
+				);				
 			}
 			
 			return canvas;
 		}
 		return super.createCenter(parent);
+	}
+	
+	private void handleMouseMoveOverCenter(Canvas canvas, int x, int y) {
+		Rectangle r= new Rectangle(0, 0, 0, 0);
+		Diff diff= getDiffUnderMouse(canvas, x, y, r);
+		if (diff != null && !diff.isUnresolvedIncomingOrConflicting())
+			diff= null;
+		if (diff != fButtonDiff) {
+			if (diff != null) {
+				if (fLeft.isEditable()) {
+					fButtonDiff= diff;
+					fCenterButton.setText("<");		//$NON-NLS-1$
+					String tt= fCopyDiffRightToLeftItem.getAction().getToolTipText();
+					fCenterButton.setToolTipText(tt);
+					fCenterButton.setBounds(r);
+					fCenterButton.setVisible(true);
+				} else if (fRight.isEditable()) {
+					fButtonDiff= diff;
+					fCenterButton.setText(">");		//$NON-NLS-1$
+					String tt= fCopyDiffLeftToRightItem.getAction().getToolTipText();
+					fCenterButton.setToolTipText(tt);
+					fCenterButton.setBounds(r);
+					fCenterButton.setVisible(true);										
+				} else
+					fButtonDiff= null;
+			} else {
+				fCenterButton.setVisible(false);
+				fButtonDiff= null;
+			}
+		}
 	}
 	
 	/**
@@ -2564,8 +2534,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	
 	private void updateResolveStatus() {
 		Color c= null;
-		CompareConfiguration cc= getCompareConfiguration();
-		if (fUseResolveUI && (cc.isLeftEditable() || cc.isRightEditable())) {
+		if (showResolveUI()) {
 			boolean unresolved= false;
 			if (fChangeDiffs != null) {
 				Iterator e= fChangeDiffs.iterator();
@@ -2993,6 +2962,18 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			fRightCanvas.redraw();
 	}
 	
+	private boolean showResolveUI() {
+		if (!fUseResolveUI || !isThreeWay() || fIgnoreAncestor)
+			return false;
+		CompareConfiguration cc= getCompareConfiguration();
+		if (cc == null)
+			return false;
+		// we only enable the new resolve ui if exactly one side is editable
+		boolean l= cc.isLeftEditable();
+		boolean r= cc.isRightEditable();
+		return (l && !r) || (r && !l);
+	}
+	
 	private void paintCenter(Canvas canvas, GC g) {
 		
 		Display display= canvas.getDisplay();
@@ -3022,8 +3003,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		if (! fHiglightRanges)
 			return;
 
-		CompareConfiguration cc= getCompareConfiguration();
-		boolean showResolveUI= fUseResolveUI && (cc.isLeftEditable() || cc.isRightEditable());
+		boolean showResolveUI= showResolveUI();
 
 		if (fChangeDiffs != null) {
 			int lshift= fLeft.getVerticalScrollOffset();
@@ -3661,8 +3641,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	 */
 	protected void copy(boolean leftToRight) {
 		
-		// not ready for primetime
-		if (fUseResolveUI && isThreeWay() && !fIgnoreAncestor) {
+		if (showResolveUI()) {
 			copyAllUnresolved(leftToRight);
 			invalidateLines();
 			return;
