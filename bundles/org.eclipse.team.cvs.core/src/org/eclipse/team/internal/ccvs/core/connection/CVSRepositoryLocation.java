@@ -105,10 +105,10 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	public static final String AUTH_SCHEME = "";//$NON-NLS-1$ 
 	public static final URL FAKE_URL;
 
-	public static final String USER_VARIABLE = "{user}";
-	public static final String PASSWORD_VARIABLE = "{password}";
-	public static final String HOST_VARIABLE = "{host}";
-	public static final String PORT_VARIABLE = "{port}";
+	public static final String USER_VARIABLE = "{user}"; //$NON-NLS-1$
+	public static final String PASSWORD_VARIABLE = "{password}"; //$NON-NLS-1$
+	public static final String HOST_VARIABLE = "{host}"; //$NON-NLS-1$
+	public static final String PORT_VARIABLE = "{port}"; //$NON-NLS-1$
 	
 	static {
 		URL temp = null;
@@ -472,7 +472,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 							CVSProviderPlugin.log(new Status(IStatus.WARNING, CVSProviderPlugin.ID, 0,
 								Policy.bind("CVSRepositoryLocation.cvsntPrefix", getLocation()), null)); //$NON-NLS-1$
 							throw new CVSAuthenticationException(new Status(IStatus.WARNING, CVSProviderPlugin.ID, 0,
-								Policy.bind("CVSRepositoryLocation.cvsntPrefix", getLocation()), null));
+								Policy.bind("CVSRepositoryLocation.cvsntPrefix", getLocation()), null)); //$NON-NLS-1$
 						}
 					}
 				}
@@ -643,7 +643,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 				start = end + 1;
 			} else {
 				// this could be an alternate format for ext: username:password@host:path
-				methodName = "ext"; // $NON-NLS-1$
+				methodName = "ext"; //$NON-NLS-1$
 				start = 0;
 			}
 			
@@ -854,7 +854,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 		String CVS_RSH_PARAMETERS = CVSProviderPlugin.getPlugin().getCvsRshParameters();
 		String CVS_SERVER = CVSProviderPlugin.getPlugin().getCvsServer();
 		if(CVS_RSH == null || CVS_SERVER == null) {
-			throw new IOException(Policy.bind("EXTServerConnection.varsNotSet"));
+			throw new IOException(Policy.bind("EXTServerConnection.varsNotSet")); //$NON-NLS-1$
 		}
 		
 		// If there is only one token, assume it is the command and use the default parameters and order

@@ -76,7 +76,7 @@ public class SyncAllAction extends SyncAction implements IWorkbenchWindowActionD
 		ProjectSelectionDialog dialog = new ProjectSelectionDialog	(getShell(), 
 			new AdaptableResourceList(resources), 
 			new WorkbenchContentProvider(), new WorkbenchLabelProvider(), 
-			Policy.bind("SyncAllAction.selectProjects"));
+			Policy.bind("SyncAllAction.selectProjects")); //$NON-NLS-1$
 		dialog.setInitialSelections(resources);
 		if (dialog.open() == IDialogConstants.CANCEL_ID) return new IResource[0];
 		Object[] result = dialog.getResult();

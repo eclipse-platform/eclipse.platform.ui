@@ -116,7 +116,7 @@ public class CVSDecorationRunnable implements Runnable {
 					: decorate(resource);
 			} catch (Exception e) {
 				// If there was a problem, log it and set the decoration to null
-				CVSUIPlugin.log(new Status(IStatus.ERROR, CVSUIPlugin.ID, 0, Policy.bind("simpleInternal"), e));
+				CVSUIPlugin.log(new Status(IStatus.ERROR, CVSUIPlugin.ID, 0, Policy.bind("simpleInternal"), e)); //$NON-NLS-1$
 				decoration = null;
 			}
 			

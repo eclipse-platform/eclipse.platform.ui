@@ -164,7 +164,7 @@ public class Util {
 				throw (IOException)exception[0];
 		}
 		if (socket[0] == null) {
-			throw new InterruptedIOException("A timeout occured connecting to " + host);
+			throw new InterruptedIOException(Policy.bind("Util.timeout", host)); //$NON-NLS-1$
 		}
 		return socket[0];
 	}

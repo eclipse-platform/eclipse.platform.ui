@@ -164,7 +164,7 @@ public class SyncFileWriter {
 		if (!cvsSubDir.isTeamPrivateMember()) {
 			try {
 				cvsSubDir.setTeamPrivateMember(true);
-				CVSProviderPlugin.log(new CVSStatus(IStatus.WARNING, Policy.bind("SyncFileWriter.cvsFolderNotHidden", cvsSubDir.getFullPath().toString())));
+				CVSProviderPlugin.log(new CVSStatus(IStatus.WARNING, Policy.bind("SyncFileWriter.cvsFolderNotHidden", cvsSubDir.getFullPath().toString()))); //$NON-NLS-1$
 			} catch (CoreException e) {
 				CVSProviderPlugin.log(e.getStatus());
 			}

@@ -44,7 +44,7 @@ public abstract class WorkspaceAction extends CVSAction {
 					return false;
 				}
 				if (!isEnabled()) {
-					MessageDialog.openInformation(getShell(), Policy.bind("CVSAction.disabledTitle"), Policy.bind("CVSAction.disabledMessage"));
+					MessageDialog.openInformation(getShell(), Policy.bind("CVSAction.disabledTitle"), Policy.bind("CVSAction.disabledMessage")); //$NON-NLS-1$ //$NON-NLS-2$
 					return false;
 				}
 			}

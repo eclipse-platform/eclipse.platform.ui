@@ -181,7 +181,7 @@ public class CommitAction extends WorkspaceAction {
 	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#getErrorTitle()
 	 */
 	protected String getErrorTitle() {
-		return Policy.bind("CommitAction.commitFailed");
+		return Policy.bind("CommitAction.commitFailed"); //$NON-NLS-1$
 	}
 
 }

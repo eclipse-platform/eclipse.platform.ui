@@ -102,7 +102,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 	private static final boolean IS_CRLF_PLATFORM = Arrays.equals(
 		System.getProperty("line.separator").getBytes(), new byte[] { '\r', '\n' }); //$NON-NLS-1$
 	
-	public static final IStatus OK = new Status(IStatus.OK, CVSProviderPlugin.ID, 0, Policy.bind("ok"), null);
+	public static final IStatus OK = new Status(IStatus.OK, CVSProviderPlugin.ID, 0, Policy.bind("ok"), null); //$NON-NLS-1$
 
 	private CVSWorkspaceRoot workspaceRoot;
 	private IProject project;

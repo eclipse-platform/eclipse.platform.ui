@@ -449,11 +449,11 @@ public class Console extends ViewPart {
 		 */
 		private String messageLineForStatus(IStatus status) {
 			if (status.getSeverity() == IStatus.ERROR) {
-				return Policy.bind("Console.error", status.getMessage());
+				return Policy.bind("Console.error", status.getMessage()); //$NON-NLS-1$
 			} else if (status.getSeverity() == IStatus.WARNING) {
-				return Policy.bind("Console.warning", status.getMessage());
+				return Policy.bind("Console.warning", status.getMessage()); //$NON-NLS-1$
 			} else if (status.getSeverity() == IStatus.INFO) {
-				return Policy.bind("Console.info", status.getMessage());
+				return Policy.bind("Console.info", status.getMessage()); //$NON-NLS-1$
 			}
 			return status.getMessage();
 		}

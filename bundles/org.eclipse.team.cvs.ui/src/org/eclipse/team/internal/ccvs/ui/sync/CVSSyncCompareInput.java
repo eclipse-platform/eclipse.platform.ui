@@ -200,7 +200,7 @@ public class CVSSyncCompareInput extends SyncCompareInput {
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
 			if (!resource.getProject().exists()) {
-				throw new CVSException(Policy.bind("CVSSyncCompareInput.projectDeleted", resource.getProject().getName()));
+				throw new CVSException(Policy.bind("CVSSyncCompareInput.projectDeleted", resource.getProject().getName())); //$NON-NLS-1$
 			}
 		}
 		

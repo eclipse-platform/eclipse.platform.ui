@@ -756,7 +756,7 @@ public abstract class Command extends Request {
 		if (newStatus.isOK()) return accumulatedStatus;
 		MultiStatus result = new MultiStatus(CVSProviderPlugin.ID, CVSStatus.INFO,
 				new IStatus[] {accumulatedStatus, newStatus},
-				Policy.bind("Command.warnings", Policy.bind("Command." + getRequestId())), null);
+				Policy.bind("Command.warnings", Policy.bind("Command." + getRequestId())), null); //$NON-NLS-1$ //$NON-NLS-2$
 		return result;
 	}
 }

@@ -195,7 +195,7 @@ public class BranchAction extends WorkspaceAction {
 	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#getErrorTitle()
 	 */
 	protected String getErrorTitle() {
-		return Policy.bind("BranchWizard.errorBranching");
+		return Policy.bind("BranchWizard.errorBranching"); //$NON-NLS-1$
 	}
 
 }

@@ -58,7 +58,7 @@ public class CVSStatus extends Status {
 	public String getMessage() {
 		String message = super.getMessage();
 		if (commandRoot != null) {
-			message = Policy.bind("CVSStatus.messageWithRoot", commandRoot.getName(), message);
+			message = Policy.bind("CVSStatus.messageWithRoot", commandRoot.getName(), message); //$NON-NLS-1$
 		}
 		return message;
 	}
