@@ -193,7 +193,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	            CompareUIPlugin.log(e);
 	        }
 		    IFile[] files= (IFile[]) getAdapter(IFile[].class);
-		    if (files.length > 0)
+		    if (files != null && files.length > 0)
 		        return files[0];	// can only return one: limitation on IDE.saveAllEditors; see #64617
 		    return null;
 		}
