@@ -7,19 +7,24 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.ant.internal.core.AntClassLoader;
+import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
 
 /**
  * The plug-in runtime class for the Ant Core plug-in.
  */
-public class AntCorePlugin extends Plugin {
+public class AntCorePlugin extends Plugin implements Preferences.IPropertyChangeListener {
 
 	/**
 	 * The single instance of this plug-in runtime class.
@@ -42,9 +47,12 @@ public class AntCorePlugin extends Plugin {
 	private Map fTypeExtensions;
 
 	/**
-	 * 
-	 */
+	 * The preferences class for this plugin.	 */
 	private AntCorePreferences fPreferences;
+	
+	/**
+	 * The cached class loader to use when executing Ant scripts	 */
+	private ClassLoader fClassLoader;
 
 	/**
 	 * Unique identifier constant (value <code>"org.eclipse.ant.core"</code>)
@@ -130,23 +138,26 @@ public class AntCorePlugin extends Plugin {
 	}
 
 	/**
-	 * @see Plugin#startup
+	 * @see Plugin#startup()
 	 */
 	public void startup() throws CoreException {
 		fTaskExtensions = extractExtensions(PT_TASKS, NAME);
 		fTypeExtensions = extractExtensions(PT_TYPES, NAME);
 		fExtraClasspathExtensions = extractExtensions(PT_EXTRA_CLASSPATH, LIBRARY);
+		getPluginPreferences().addPropertyChangeListener(this);
 	}
 
 	/**
-	 * @see Plugin#shutdown
+	 * @see Plugin#shutdown()
 	 */
 	public void shutdown() throws CoreException {
+		getPluginPreferences().removePropertyChangeListener(this);
 		if (fPreferences == null) {
 			return;
 		}
 		fPreferences.updatePluginPreferences();
 		savePluginPreferences();
+		
 	}
 
 	/**
@@ -169,6 +180,8 @@ public class AntCorePlugin extends Plugin {
 
 	/**
 	 * Returns an object representing this plug-in's preferences.
+	 * 
+	 * @return the Ant core object representing the preferences for this plug-in.
 	 */
 	public AntCorePreferences getPreferences() {
 		if (fPreferences == null) {
@@ -184,5 +197,27 @@ public class AntCorePlugin extends Plugin {
 	 */
 	public static AntCorePlugin getPlugin() {
 		return fgPlugin;
+	}
+	
+	/**
+	 * Returns the cached class loader to use when executing Ant scripts.
+	 * 	 * @return the cached class loader	 */
+	protected ClassLoader getClassLoader() {
+		if (fClassLoader == null) {
+			AntCorePreferences preferences = AntCorePlugin.getPlugin().getPreferences();
+			URL[] urls = preferences.getURLs();
+			ClassLoader[] pluginLoaders = preferences.getPluginClassLoaders();
+			fClassLoader= new AntClassLoader(urls, pluginLoaders, null);
+		}
+		return fClassLoader;
+	}
+	
+	/**
+	 * @see org.eclipse.core.runtime.Preferences.IPropertyChangeListener#propertyChange(org.eclipse.core.runtime.Preferences.PropertyChangeEvent)
+	 */
+	public void propertyChange(PropertyChangeEvent event) {
+		if (event.getProperty().equals(IAntCoreConstants.PREFERENCE_URLS)) {
+			fClassLoader= null;
+		}
 	}
 }
