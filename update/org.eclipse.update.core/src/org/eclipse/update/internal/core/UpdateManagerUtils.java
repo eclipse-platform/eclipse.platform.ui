@@ -100,7 +100,7 @@ public class UpdateManagerUtils {
 					File rootFile = new File(rootURLFileString);
 					File urlFile = new File(urlFileString);
 
-					File relativePath = urlFile.getParentFile();
+					File relativePath = urlFile;
 					while (relativePath != null
 						&& !rootFile.equals(relativePath.getParentFile())) {
 						relativePath = relativePath.getParentFile();

@@ -301,7 +301,7 @@ public class Site extends SiteModel implements ISite {
 				for (int indexFeatures = 0; indexFeatures < features.length; indexFeatures++) {
 					IFeature featureToCompare = null;
 					try {
-						features[indexFeatures].getFeature();
+						featureToCompare = features[indexFeatures].getFeature();
 					} catch (CoreException e){
 						UpdateManagerPlugin.warn(null,e);
 					}

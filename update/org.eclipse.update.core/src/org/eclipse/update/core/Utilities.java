@@ -179,7 +179,8 @@ public class Utilities {
 				completeString.append(e.toString());
 				completeString.append("]\r\n");
 			}
-			status = new Status(IStatus.ERROR, id, 0, completeString.toString(), e);	
+			status = new Status(IStatus.ERROR, id, 0, completeString.toString(), e);
+UpdateManagerPlugin.log(status);				
 		}	
 		return new CoreException(status); //$NON-NLS-1$
 	}

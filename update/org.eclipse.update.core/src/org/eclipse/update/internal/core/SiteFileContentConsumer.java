@@ -145,6 +145,10 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 		File fileToRename = new File(newPath);
 		if (fileToRename.exists()){
 			File renamedFile = new File(oldPath);
+			if (renamedFile.exists()) {
+				UpdateManagerUtils.removeFromFileSystem(renamedFile);
+				UpdateManagerPlugin.warn("Removing already existing file:"+oldPath);
+			}
 			sucess = fileToRename.renameTo(renamedFile);
 		}	
 		if(!sucess){

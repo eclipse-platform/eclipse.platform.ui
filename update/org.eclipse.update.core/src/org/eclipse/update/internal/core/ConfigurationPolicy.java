@@ -236,24 +236,61 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 	public String[] getPluginPath(ISite site, String[] pluginRead)
 		throws CoreException {
 
-		String[] result;				
+		String [] result;
+		String[] pluginsToWrite;
 		if (getPolicy() == IPlatformConfiguration.ISitePolicy.USER_EXCLUDE) {
 			//	EXCLUDE: return unconfigured plugins MINUS any plugins that
 			//           are configured
 			String[] unconfigured = getPluginString(site, getUnconfiguredFeatures());
 			String[] configured = getPluginString(site, getConfiguredFeatures());
-			result = delta(configured, unconfigured);
+			pluginsToWrite = delta(configured, unconfigured);
 		} else {
 			// INCLUDE: return configured plugins
-			result = getPluginString(site, getConfiguredFeatures());
+			pluginsToWrite = getPluginString(site, getConfiguredFeatures());
 		}
-		return result;
+
+		//TRACE
+		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_RECONCILER){
+			UpdateManagerPlugin.debug("GetPluginPath for: "+((site==null)?"<No site>":site.getURL().toString()));			
+			for (int i = 0; i < pluginsToWrite.length; i++) {
+				UpdateManagerPlugin.debug("To write:"+pluginsToWrite[i]);
+			}
+		}
+
+		// Calculate which plugins we read should still be written out
+		// (pluginNotToWrite-pluginRead = delta that should be written out)
+		// pluginsToWrite+delta = all that should be written out
+		IFeatureReference[] arrayOfFeatureRef = null;		
+		if (getPolicy() == IPlatformConfiguration.ISitePolicy.USER_EXCLUDE) {
+			if (getConfiguredFeatures() != null)
+				arrayOfFeatureRef = getConfiguredFeatures();
+		} else {
+			if (getUnconfiguredFeatures() != null)
+				arrayOfFeatureRef = getUnconfiguredFeatures();
+		}
+		String[] pluginsNotToWrite = getPluginString(site, arrayOfFeatureRef);
+		//TRACE
+		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_RECONCILER){
+			for (int i = 0; i < pluginsNotToWrite.length; i++) {
+				UpdateManagerPlugin.debug("Not to write:"+pluginsNotToWrite[i]);
+			}
+		}		
+		
+		String[] included = delta(pluginsNotToWrite, pluginRead);
+		//TRACE
+		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_RECONCILER){
+			if (included!=null)
+			for (int i = 0; i < included.length; i++) {
+				UpdateManagerPlugin.debug("Delta with read:"+included[i]);
+			}
+		}		
+		result = union(included, pluginsToWrite);
+
+		return result;		
 	}
 
 	/**
 	 * return an array of plugin path for the array of feature reference
-	 * 
-	 * 
 	 */
 	private String[] getPluginString(
 		ISite site,
@@ -269,10 +306,17 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 				IFeatureReference element = arrayOfFeatureRef[i];
 				IFeature feature = null;
 				try {
-					element.getFeature();
-				} catch (CoreException e){};
-				IPluginEntry[] entries =
-					(feature == null) ? new IPluginEntry[0] : feature.getPluginEntries();
+					feature = element.getFeature();
+				} catch (CoreException e){
+					UpdateManagerPlugin.warn(null,e);
+				};
+				IPluginEntry[] entries = null;
+				if (feature == null) {
+					UpdateManagerPlugin.warn("Null Feature",new Exception());					
+					entries = new IPluginEntry[0];
+				} else {
+					entries = feature.getPluginEntries();
+				}
 
 				for (int index = 0; index < entries.length; index++) {
 					IPluginEntry entry = entries[index];

@@ -333,6 +333,7 @@ public class SiteReconciler extends ModelObject implements IWritable {
 		}
 
 		// if a feature has been found in new and old state use old state (configured/unconfigured)
+		// pessimistic or optimistic
 		Iterator featureIter = toCheck.iterator();
 		while (featureIter.hasNext()) {
 			IFeatureReference oldFeatureRef =

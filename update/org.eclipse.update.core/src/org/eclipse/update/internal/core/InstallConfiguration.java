@@ -264,7 +264,7 @@ public class InstallConfiguration
 			BootLoader.getCurrentPlatformConfiguration();
 		ConfiguredSiteModel[] configurationSites = getConfigurationSitesModel();
 
-		// clean configured Entries
+		// clean configured Entries from platform runtime
 		IPlatformConfiguration.IFeatureEntry[] configuredFeatureEntries =
 			runtimeConfiguration.getConfiguredFeatureEntries();
 		for (int i = 0; i < configuredFeatureEntries.length; i++) {
