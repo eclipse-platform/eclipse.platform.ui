@@ -34,8 +34,12 @@ public IndexedStoreWrapper(IPath location) {
 
 private void open() throws CoreException {
 	try {
-		store = new IndexedStore();
-		store.open(location.toOSString());
+		String name = location.toOSString();
+		store = IndexedStore.find(name);
+		if (store == null) {
+			store = new IndexedStore();
+			store.open(name);
+		}
 	} catch (Exception e) {
 		String message = Policy.bind("indexed.couldNotOpen", location.toOSString()); //$NON-NLS-1$
 		ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, location, message, e);

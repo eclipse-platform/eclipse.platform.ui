@@ -16,12 +16,12 @@ public class IndexedStore {
 	
 	private static final int CurrentVersion = 1;
 	private static final int MetadataID = 2;
-/*
- * Provides the storage for the registry of stores. Key is the name the store
- * was opened under.  The value is the store itself.  This is used to facilitate
- * recovery in the event of a thread being killed or dying.
- */
-private static final Map registry = new HashMap();
+	/*
+	 * Provides the storage for the registry of stores. Key is the name the store
+	 * was opened under.  The value is the store itself.  This is used to facilitate
+	 * recovery in the event of a thread being killed or dying.
+	 */
+	private static final Map registry = Collections.synchronizedMap(new HashMap());
 
 	private static final ObjectAddress ContextAddress10 = new ObjectAddress(1, 0);
 	private static final ObjectAddress ContextAddress11 = new ObjectAddress(1, 1);
