@@ -497,7 +497,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	}
 
 	private void updateContextListener() {
-		if (isActive() && fAutoManage) {
+		if (isActive() && isAutoManageViews()) {
 			contextListener.updateForSelection(((IStructuredSelection) getViewer().getSelection()).getFirstElement());
 		}
 	}
@@ -530,7 +530,9 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 * @param launches the terminated launches
 	 */
 	protected void launchesTerminated(ILaunch[] launches) {
-		contextListener.launchesTerminated(launches);
+		if (isAutoManageViews()) {
+			contextListener.launchesTerminated(launches);
+		}
 	}
 
 	/**
