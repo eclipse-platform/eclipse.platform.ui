@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.team.core.Team;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.core.target.TargetManager;
 
 /**
  * <code>TeamPlugin</code> is the plug-in runtime class for the Team 
