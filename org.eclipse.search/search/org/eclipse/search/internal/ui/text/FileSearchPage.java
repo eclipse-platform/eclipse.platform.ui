@@ -77,8 +77,10 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 		fPropertyChangeListener= new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
 				if (SearchPreferencePage.LIMIT_TABLE.equals(event.getProperty()) || SearchPreferencePage.LIMIT_TABLE_TO.equals(event.getProperty()))
-					if (getViewer() instanceof TableViewer)
+					if (getViewer() instanceof TableViewer) {
+						getViewPart().updateLabel();
 						getViewer().refresh();
+					}
 			}
 		};
 		SearchPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(fPropertyChangeListener);
