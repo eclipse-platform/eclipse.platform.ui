@@ -240,7 +240,7 @@ public interface IExternalToolConstants {
 	 */ 
 	public static final String IMG_TAB_ANT_TARGETS = PLUGIN_ID + ".IMG_TAB_ANT_TARGETS"; //$NON-NLS-1$
 		
-	// ------- Launc configuration types --------
+	// ------- Launch configuration types --------
 	/**
 	 * Ant launch configuration type identifier
 	 */
