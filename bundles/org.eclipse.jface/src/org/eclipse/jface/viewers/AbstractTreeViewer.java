@@ -863,7 +863,7 @@ private Widget internalFindItem(Item parent, Object element) {
 /* (non-Javadoc)
  * Method declared on StructuredViewer.
  */
-public void internalRefresh(Object element) {
+protected void internalRefresh(Object element) {
 	// If element is null, do a full refresh.
 	if (element == null) {
 		internalRefresh(getControl(), getRoot(), true);
