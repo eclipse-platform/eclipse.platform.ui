@@ -140,7 +140,7 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 		}
 
 		// remove the feature content
-		ContentReference[] references = feature.getFeatureContentProvider().getFeatureEntryArchiveReferences();
+		ContentReference[] references = feature.getFeatureContentProvider().getFeatureEntryArchiveReferences(monitor);
 		for (int i = 0; i < references.length; i++) {
 			try {
 				UpdateManagerUtils.removeFromFileSystem(references[i].asFile());
@@ -177,7 +177,7 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 		if (pluginEntry==null)
 			return;
 		
-		ContentReference[] references = feature.getFeatureContentProvider().getPluginEntryArchiveReferences(pluginEntry);
+		ContentReference[] references = feature.getFeatureContentProvider().getPluginEntryArchiveReferences(pluginEntry, monitor);
 		for (int i = 0; i < references.length; i++) {
 			try {
 				UpdateManagerUtils.removeFromFileSystem(references[i].asFile());

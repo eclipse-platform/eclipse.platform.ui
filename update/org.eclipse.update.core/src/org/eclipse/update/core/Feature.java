@@ -87,6 +87,9 @@ public class Feature extends FeatureModel implements IFeature {
 		public void worked(int work) {
 			monitor.worked(work);
 		}
+		
+		protected void workedCopy(long size) {
+		}
 	}
 
 	/**
@@ -315,12 +318,15 @@ public class Feature extends FeatureModel implements IFeature {
 	 */
 	public IFeatureReference install(IFeature targetFeature, IProgressMonitor monitor) throws CoreException {
 
+		// get a feature progress monitor
+		monitor = new Feature.ProgressMonitor(monitor);
+		
 		//
 		IFeatureContentConsumer consumer = targetFeature.getContentConsumer();
 
 		try {
 			//finds the contentReferences for this IFeature
-			ContentReference[] references = getFeatureContentProvider().getFeatureEntryContentReferences();
+			ContentReference[] references = getFeatureContentProvider().getFeatureEntryContentReferences(monitor);
 			for (int i = 0; i < references.length; i++) {
 				consumer.store(references[i], monitor);
 			}
@@ -336,7 +342,7 @@ public class Feature extends FeatureModel implements IFeature {
 			//finds the contentReferences for this IPluginEntry
 			for (int i = 0; i < pluginsToInstall.length; i++) {
 				IContentConsumer pluginConsumer = consumer.open(pluginsToInstall[i]);
-				references = getFeatureContentProvider().getPluginEntryContentReferences(pluginsToInstall[i]);
+				references = getFeatureContentProvider().getPluginEntryContentReferences(pluginsToInstall[i], monitor);
 				for (int j = 0; j < references.length; j++) {
 					pluginConsumer.store(references[j], monitor);
 				}
@@ -347,7 +353,7 @@ public class Feature extends FeatureModel implements IFeature {
 			INonPluginEntry[] nonPluginsContentReferencesToInstall = getNonPluginEntries();
 			for (int i = 0; i < nonPluginsContentReferencesToInstall.length; i++) {
 				IContentConsumer nonPluginConsumer = consumer.open(nonPluginsContentReferencesToInstall[i]);
-				references = getFeatureContentProvider().getNonPluginEntryArchiveReferences(nonPluginsContentReferencesToInstall[i]);
+				references = getFeatureContentProvider().getNonPluginEntryArchiveReferences(nonPluginsContentReferencesToInstall[i], monitor);
 				for (int j = 0; j < references.length; j++) {
 					nonPluginConsumer.store(references[j], monitor);
 				}
@@ -355,6 +361,7 @@ public class Feature extends FeatureModel implements IFeature {
 			}
 		} finally {
 			// an error occured, abort
+			// VK: this is wrong .... would end up ALWAYS backing out !!!!!!!!!!
 			consumer.abort();
 		}
 		return consumer.close();

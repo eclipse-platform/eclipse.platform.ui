@@ -11,9 +11,11 @@ import java.io.IOException;
 import java.net.URL;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.update.core.ContentReference;
+import org.eclipse.update.core.Feature;
 import org.eclipse.update.core.FeatureContentProvider;
 import org.eclipse.update.core.IFeatureContentProvider;
 import org.eclipse.update.core.INonPluginEntry;
@@ -22,7 +24,6 @@ import org.eclipse.update.core.JarContentReference;
 import org.eclipse.update.core.FeatureContentProvider.ContentSelector;
 import org.eclipse.update.core.model.DefaultModelWriter;
 import org.eclipse.update.core.model.FeatureModel;
-import org.eclipse.update.core.model.PluginEntryModel;
 
 /**
  * An example feature content provider. It handles features packaged as
@@ -48,7 +49,7 @@ public class BuildZipContentProvider extends FeatureContentProvider implements I
 	/*
 	 * @see IFeatureContentProvider#getFeatureManifest()
 	 */
-	public ContentReference getFeatureManifestReference() throws CoreException {
+	public ContentReference getFeatureManifestReference(IProgressMonitor monitor) throws CoreException {
 		if (generatedFeatureManifest == null) {
 			throw newCoreException("Feature manifest is not available",null);
 		}
@@ -59,7 +60,7 @@ public class BuildZipContentProvider extends FeatureContentProvider implements I
 	/*
 	 * @see IFeatureContentProvider#getArchiveReferences()
 	 */
-	public ContentReference[] getArchiveReferences() {
+	public ContentReference[] getArchiveReferences(IProgressMonitor monitor) {
 		// the feature and all its plugins files are packaged in a single archive
 		return new ContentReference[] { baseReference };
 	}
@@ -67,7 +68,7 @@ public class BuildZipContentProvider extends FeatureContentProvider implements I
 	/*
 	 * @see IFeatureContentProvider#getFeatureEntryArchiveReferences()
 	 */
-	public ContentReference[] getFeatureEntryArchiveReferences() {
+	public ContentReference[] getFeatureEntryArchiveReferences(IProgressMonitor monitor) {
 		// the feature and all its plugins files are packaged in a single archive
 		return new ContentReference[] { baseReference };
 	}
@@ -75,7 +76,7 @@ public class BuildZipContentProvider extends FeatureContentProvider implements I
 	/*
 	 * @see IFeatureContentProvider#getPluginEntryArchiveReferences(IPluginEntry)
 	 */
-	public ContentReference[] getPluginEntryArchiveReferences(IPluginEntry pluginEntry) {
+	public ContentReference[] getPluginEntryArchiveReferences(IPluginEntry pluginEntry, IProgressMonitor monitor) {
 		// the feature and all its plugins files are packaged in a single archive
 		return new ContentReference[] { baseReference };
 	}
@@ -83,10 +84,10 @@ public class BuildZipContentProvider extends FeatureContentProvider implements I
 	/*
 	 * @see IFeatureContentProvider#getNonPluginEntryArchiveReferences(INonPluginEntry)
 	 */
-	public ContentReference[] getNonPluginEntryArchiveReferences(INonPluginEntry nonPluginEntry) 
+	public ContentReference[] getNonPluginEntryArchiveReferences(INonPluginEntry nonPluginEntry, IProgressMonitor monitor) 
 		throws CoreException {
 		try {
-			return peekNonPluginEntryContent(nonPluginEntry);
+			return peekNonPluginEntryContent(nonPluginEntry,monitor);
 		} catch(IOException e) {
 			throw newCoreException("Unable to return content for non plugin entry "+nonPluginEntry.getIdentifier(),e);
 		}
@@ -95,7 +96,7 @@ public class BuildZipContentProvider extends FeatureContentProvider implements I
 	/*
 	 * @see IFeatureContentProvider#getFeatureEntryContentReferences()
 	 */
-	public ContentReference[] getFeatureEntryContentReferences() {
+	public ContentReference[] getFeatureEntryContentReferences(IProgressMonitor monitor) {
 		if (featureEntryContentReferences == null)
 			return new ContentReference[0];
 		else
@@ -105,10 +106,10 @@ public class BuildZipContentProvider extends FeatureContentProvider implements I
 	/*
 	 * @see IFeatureContentProvider#getPluginEntryContentReferences(IPluginEntry)
 	 */
-	public ContentReference[] getPluginEntryContentReferences(IPluginEntry pluginEntry)
+	public ContentReference[] getPluginEntryContentReferences(IPluginEntry pluginEntry, IProgressMonitor monitor)
 		throws CoreException {
 		try {
-			return peekPluginEntryContent(pluginEntry);
+			return peekPluginEntryContent(pluginEntry, monitor);
 		} catch(IOException e) {
 			throw newCoreException("Unable to return content for plugin entry "+pluginEntry.getIdentifier(),e);
 		}
@@ -123,8 +124,8 @@ public class BuildZipContentProvider extends FeatureContentProvider implements I
 		return peek(baseReference,manifestName, null/*ContentSelector*/, null/*ProgressMonitor*/);
 	}
 	
-	void unpackFeatureEntryContent(FeatureModel feature) throws IOException {
-		
+	void unpackFeatureEntryContent(FeatureModel feature, IProgressMonitor monitor) throws IOException {
+			
 		// define selector for feature entry files
 		ContentSelector selector = new ContentSelector() {
 			public boolean include(String entry) {
@@ -146,7 +147,7 @@ public class BuildZipContentProvider extends FeatureContentProvider implements I
 		};
 		
 		// unpack feature entry files
-		ContentReference[] refs = unpack(baseReference, selector, null/*ProgressMonitor*/);
+		ContentReference[] refs = unpack(baseReference, selector, monitor);
 		
 		// write out feature manifest (feature.xml);
 		File manifest = createLocalFile(null/*key*/,"feature.xml");
@@ -168,7 +169,7 @@ public class BuildZipContentProvider extends FeatureContentProvider implements I
 		featureEntryContentReferences = allRefs;
 	}
 		
-	ContentReference[] peekPluginEntryContent(IPluginEntry plugin) throws IOException {
+	ContentReference[] peekPluginEntryContent(IPluginEntry plugin, IProgressMonitor monitor) throws IOException {
 		
 		// define selector for plugin entry files
 		ContentSelector selector = new ContentSelector() {
@@ -194,10 +195,10 @@ public class BuildZipContentProvider extends FeatureContentProvider implements I
 		
 		// unpack plugin entry files
 		currentPluginEntry = plugin;
-		return peek(baseReference, selector, null/*ProgressMonitor*/);
+		return peek(baseReference, selector, monitor);
 	}
 		
-	ContentReference[] peekNonPluginEntryContent(INonPluginEntry data) throws IOException {
+	ContentReference[] peekNonPluginEntryContent(INonPluginEntry data, IProgressMonitor monitor) throws IOException {
 		
 		// define selector for non plugin entry files
 		ContentSelector selector = new ContentSelector() {
@@ -220,7 +221,7 @@ public class BuildZipContentProvider extends FeatureContentProvider implements I
 		
 		// unpack non plugin entry files
 		currentNonPluginEntry = data;
-		return peek(baseReference, selector, null/*ProgressMonitor*/);
+		return peek(baseReference, selector, monitor);
 	}
 	
 	private CoreException newCoreException(String s, Throwable e) throws CoreException {

@@ -30,6 +30,10 @@ public interface IFeatureFactory {
 	 * @since 2.0 
 	 */
 
+	// VK: should we be taking IProgressMonitor on the createFeature call ???
+	//     In general this could be useful, but current UI triggers this
+	//     when opening feature tree and there is no progress monitor
+	//     available
 	IFeature createFeature(URL url,ISite site) throws CoreException;
 	
 	IFeature createFeature(ISite site) throws CoreException;

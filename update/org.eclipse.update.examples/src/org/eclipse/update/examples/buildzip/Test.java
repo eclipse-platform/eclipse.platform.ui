@@ -30,7 +30,7 @@ public class Test {
 			
 			System.out.println("");
 			System.out.println("Feature entry references");
-			ContentReference[] refs = feature.getFeatureContentProvider().getFeatureEntryContentReferences();
+			ContentReference[] refs = feature.getFeatureContentProvider().getFeatureEntryContentReferences(null);
 			for (int i=0; i< refs.length; i++) {
 				System.out.println("   "+refs[i].getIdentifier());
 			}
@@ -38,7 +38,7 @@ public class Test {
 			System.out.println("");
 			System.out.println("Plug-in entry references");
 			IPluginEntry[] entry = feature.getPluginEntries();
-			refs = feature.getFeatureContentProvider().getPluginEntryContentReferences(entry[0]);
+			refs = feature.getFeatureContentProvider().getPluginEntryContentReferences(entry[0], null);
 			for (int i=0; i< refs.length; i++) {
 				System.out.println("   "+refs[i].getIdentifier());
 			}			
@@ -46,7 +46,7 @@ public class Test {
 			System.out.println("");
 			System.out.println("Non-plug-in entry references");
 			INonPluginEntry[] data = feature.getNonPluginEntries();
-			refs = feature.getFeatureContentProvider().getNonPluginEntryArchiveReferences(data[0]);
+			refs = feature.getFeatureContentProvider().getNonPluginEntryArchiveReferences(data[0], null);
 			for (int i=0; i< refs.length; i++) {
 				System.out.println("   "+refs[i].getIdentifier());
 			}			

@@ -24,6 +24,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * Base class for feature content providers.
@@ -90,48 +91,6 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 	public URL getURL() {
 		return base;
 	}
-
-	/*
-	 * @see IFeatureContentProvider#getFeatureManifest()
-	 */
-	public abstract ContentReference getFeatureManifestReference()
-		throws CoreException;
-
-	/*
-	 * @see IFeatureContentProvider#getArchiveReferences()
-	 */
-	public abstract ContentReference[] getArchiveReferences()
-		throws CoreException;
-
-	/*
-	 * @see IFeatureContentProvider#getFeatureEntryArchiveReferences()
-	 */
-	public abstract ContentReference[] getFeatureEntryArchiveReferences()
-		throws CoreException;
-
-	/*
-	 * @see IFeatureContentProvider#getPluginEntryArchiveReferences(IPluginEntry)
-	 */
-	public abstract ContentReference[] getPluginEntryArchiveReferences(IPluginEntry pluginEntry)
-		throws CoreException;
-
-	/*
-	 * @see IFeatureContentProvider#getNonPluginEntryArchiveReferences(INonPluginEntry)
-	 */
-	public abstract ContentReference[] getNonPluginEntryArchiveReferences(INonPluginEntry nonPluginEntry)
-		throws CoreException;
-
-	/*
-	 * @see IFeatureContentProvider#getFeatureEntryContentReferences()
-	 */
-	public abstract ContentReference[] getFeatureEntryContentReferences()
-		throws CoreException;
-
-	/*
-	 * @see IFeatureContentProvider#getPluginEntryContentReferences(IPluginEntry)
-	 */
-	public abstract ContentReference[] getPluginEntryContentReferences(IPluginEntry pluginEntry)
-		throws CoreException;
 		
 	/*
 	 * @see IFeatureContentProvider#setFeature(IFeature)
@@ -147,7 +106,7 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 	 * 
 	 * @since 2.0
 	 */
-	public ContentReference asLocalReference(ContentReference ref, Feature.ProgressMonitor monitor) throws IOException {
+	public ContentReference asLocalReference(ContentReference ref, IProgressMonitor monitor) throws IOException {
 		
 		// check to see if this is already a local reference
 		if (ref.isLocalReference())
@@ -184,7 +143,7 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 	 * 
 	 * @since 2.0
 	 */
-	public File asLocalFile(ContentReference ref, Feature.ProgressMonitor monitor) throws IOException {
+	public File asLocalFile(ContentReference ref, IProgressMonitor monitor) throws IOException {
 		File file = ref.asFile();
 		if (file != null)
 			return file;
@@ -267,17 +226,16 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 	 * 
 	 * @since 2.0
 	 */	
-	protected void copy(InputStream is, OutputStream os, Feature.ProgressMonitor monitor) throws IOException {
-		// TBA: progress monitor support
-		// TBA: indication of download size (xK of yK)
+	protected void copy(InputStream is, OutputStream os, IProgressMonitor monitor) throws IOException {
 		byte[] buf = getBuffer();
 		try {
-			long totalLen = 0; // TBA - to contain total expected length
 			long currentLen = 0;
 			int len = is.read(buf);
 			while(len != -1) {
 				currentLen += len;
 				os.write(buf,0,len);
+				if (monitor != null && monitor instanceof Feature.ProgressMonitor)
+					((Feature.ProgressMonitor)monitor).workedCopy(currentLen);
 				len = is.read(buf);
 			}
 		} finally {
@@ -292,7 +250,7 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 	 * 
 	 * @since 2.0
 	 */
-	protected ContentReference[] unpack(JarContentReference jarReference, ContentSelector selector, Feature.ProgressMonitor monitor) throws IOException {
+	protected ContentReference[] unpack(JarContentReference jarReference, ContentSelector selector, IProgressMonitor monitor) throws IOException {
 		
 		// make sure we have a selector
 		if (selector == null)
@@ -339,7 +297,7 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 	 * 
 	 * @since 2.0
 	 */
-	protected ContentReference unpack(JarContentReference jarReference, String entryName, ContentSelector selector, Feature.ProgressMonitor monitor) throws IOException {
+	protected ContentReference unpack(JarContentReference jarReference, String entryName, ContentSelector selector, IProgressMonitor monitor) throws IOException {
 						
 		// make sure we have a selector
 		if (selector == null)		
@@ -377,7 +335,7 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 	 * 
 	 * @since 2.0
 	 */
-	protected ContentReference[] peek(JarContentReference jarReference, ContentSelector selector, Feature.ProgressMonitor monitor) throws IOException {
+	protected ContentReference[] peek(JarContentReference jarReference, ContentSelector selector, IProgressMonitor monitor) throws IOException {
 						
 		// make sure we have a selector
 		if (selector == null)		
@@ -407,7 +365,7 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 	 * 
 	 * @since 2.0
 	 */
-	protected ContentReference peek(JarContentReference jarReference, String entryName, ContentSelector selector, Feature.ProgressMonitor monitor) throws IOException {
+	protected ContentReference peek(JarContentReference jarReference, String entryName, ContentSelector selector, IProgressMonitor monitor) throws IOException {
 				
 		// make sure we have a selector
 		if (selector == null)
@@ -427,7 +385,7 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 	 * 
 	 * @since 2.0
 	 */
-	protected String[] peek(JarContentReference jarReference, Feature.ProgressMonitor monitor) throws IOException {
+	protected String[] peek(JarContentReference jarReference, IProgressMonitor monitor) throws IOException {
 		
 		// get archive content
 		JarFile jarArchive = jarReference.asJarFile();

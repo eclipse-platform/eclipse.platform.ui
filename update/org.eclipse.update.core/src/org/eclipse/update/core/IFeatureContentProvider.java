@@ -6,7 +6,9 @@ package org.eclipse.update.core;
  */
  
 import java.net.URL;
+
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
  
  /**
   * Provides 
@@ -27,69 +29,76 @@ public interface IFeatureContentProvider {
 	/**
 	 * Returns the feature manifest 
 	 * 
+	 * @param monitor optional progress monitor
 	 * @return the feature manifest
 	 * @since 2.0
 	 */
-	ContentReference getFeatureManifestReference() throws CoreException;
+	ContentReference getFeatureManifestReference(IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Returns an array of content references for the whole DefaultFeature
 	 * 
+	 * @param monitor optional progress monitor
 	 * @return an array of ContentReference or an empty array if no references are found
 	 * @throws CoreException when an error occurs
 	 * @since 2.0 
 	 */
 
-	ContentReference[] getArchiveReferences() throws CoreException;
+	ContentReference[] getArchiveReferences(IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Returns an array of content references for the IPluginEntry
 	 * 
+	 * @param monitor optional progress monitor
 	 * @return an array of ContentReference or an empty array if no references are found
 	 * @throws CoreException when an error occurs 
 	 * @since 2.0 
 	 */
 
-	ContentReference[] getFeatureEntryArchiveReferences() throws CoreException;
+	ContentReference[] getFeatureEntryArchiveReferences(IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Returns an array of content references for the IPluginEntry
 	 * 
+	 * @param monitor optional progress monitor
 	 * @return an array of ContentReference or an empty array if no references are found
 	 * @throws CoreException when an error occurs 
 	 * @since 2.0 
 	 */
 
-	ContentReference[] getPluginEntryArchiveReferences(IPluginEntry pluginEntry) throws CoreException;
+	ContentReference[] getPluginEntryArchiveReferences(IPluginEntry pluginEntry, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Returns an array of content references for the INONPluginEntry
 	 * 
+	 * @param monitor optional progress monitor
 	 * @return an array of ContentReference or an empty array if no references are found
 	 * @throws CoreException when an error occurs		 
 	 * @since 2.0 
 	 */
 
-	ContentReference[] getNonPluginEntryArchiveReferences(INonPluginEntry nonPluginEntry) throws CoreException;
+	ContentReference[] getNonPluginEntryArchiveReferences(INonPluginEntry nonPluginEntry, IProgressMonitor monitor) throws CoreException;
 	/**
 	 * Returns an array of content references composing the IPluginEntry
 	 * 
+	 * @param monitor optional progress monitor
 	 * @return an array of ContentReference or an empty array if no references are found
 	 * @throws CoreException when an error occurs
 	 * @since 2.0 
 	 */
 
-	ContentReference[] getFeatureEntryContentReferences() throws CoreException;
+	ContentReference[] getFeatureEntryContentReferences(IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Returns an array of content references composing the IPluginEntry
 	 * 
+	 * @param monitor optional progress monitor
 	 * @return an array of ContentReference or an empty array if no references are found
 	 * @throws CoreException when an error occurs
 	 * @since 2.0 
 	 */
 
-	ContentReference[] getPluginEntryContentReferences(IPluginEntry pluginEntry) throws CoreException;
+	ContentReference[] getPluginEntryContentReferences(IPluginEntry pluginEntry, IProgressMonitor monitor) throws CoreException;
 	
 	/**
 	 * sets the feature for this content provider

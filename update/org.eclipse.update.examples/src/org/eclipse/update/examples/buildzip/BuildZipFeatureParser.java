@@ -64,7 +64,7 @@ public class BuildZipFeatureParser {
 		parseNonPluginEntries(cp, feature, manifest);
 		
 		// unpack feature entry content
-		cp.unpackFeatureEntryContent(feature);
+		cp.unpackFeatureEntryContent(feature, null/*IProgressMonitor*/);
 		
 		return feature;
 	}

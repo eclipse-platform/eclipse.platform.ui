@@ -22,7 +22,7 @@ public class FeaturePackagedFactory extends BaseFeatureFactory {
 		try {		
 			
 			IFeatureContentProvider contentProvider = new FeaturePackagedContentProvider(url);		
-			ContentReference manifest = contentProvider.getFeatureManifestReference();
+			ContentReference manifest = contentProvider.getFeatureManifestReference(null/*IProgressMonitor*/);
 			featureStream = manifest.getInputStream();
 			feature = (Feature)parseFeature(featureStream);
 			feature.setFeatureContentProvider(contentProvider);

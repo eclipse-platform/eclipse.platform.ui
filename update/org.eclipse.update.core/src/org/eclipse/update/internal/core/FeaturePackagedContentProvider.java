@@ -58,20 +58,20 @@ public class FeaturePackagedContentProvider  extends FeatureContentProvider {
 	/*
 	 * @see IFeatureContentProvider#getFeatureManifestReference()
 	 */
-	public ContentReference getFeatureManifestReference() throws CoreException {
+	public ContentReference getFeatureManifestReference(IProgressMonitor monitor) throws CoreException {
 
 		// check to see if we already have local copy of the manifest
 		if (localManifest != null)
 			return localManifest;
 			
 		ContentReference result = null;
-		ContentReference[] featureArchiveReference = getFeatureEntryArchiveReferences();		
+		ContentReference[] featureArchiveReference = getFeatureEntryArchiveReferences(monitor);		
 		try {
 			// force feature archive to local. This content provider always assumes exactly 1 archive file (index [0])		
 			JarContentReference featureJarReference = (JarContentReference)asLocalReference(featureArchiveReference[0],null);
 			
 			// we need to unpack archive locally for UI browser references to be resolved correctly
-			localFeatureFiles = unpack(featureJarReference, null, null); // unpack and cache references
+			localFeatureFiles = unpack(featureJarReference, null, monitor); // unpack and cache references
 			result = null;
 			for (int i=0; i<localFeatureFiles.length; i++) {
 				// find the manifest in the unpacked feature files
@@ -92,23 +92,23 @@ public class FeaturePackagedContentProvider  extends FeatureContentProvider {
 	/*
 	 * @see IFeatureContentProvider#getArchiveReferences()
 	 */
-	public ContentReference[] getArchiveReferences() throws CoreException {
+	public ContentReference[] getArchiveReferences(IProgressMonitor monitor) throws CoreException {
 		IPluginEntry[] entries = feature.getPluginEntries();
 		INonPluginEntry[] nonEntries = feature.getNonPluginEntries();
 		List listAllContentRef = new ArrayList();
 		ContentReference[] allContentRef = new ContentReference[0];
 		
 		// feature
-		listAllContentRef.addAll(Arrays.asList(getFeatureEntryArchiveReferences()));
+		listAllContentRef.addAll(Arrays.asList(getFeatureEntryArchiveReferences(monitor)));
 		
 		// plugins
 		for (int i = 0; i < entries.length; i++) {
-			listAllContentRef.addAll(Arrays.asList(getPluginEntryArchiveReferences(entries[i])));				
+			listAllContentRef.addAll(Arrays.asList(getPluginEntryArchiveReferences(entries[i], monitor)));				
 		}
 		
 		// non plugins
 		for (int i = 0; i < nonEntries.length; i++) {
-			listAllContentRef.addAll(Arrays.asList(getNonPluginEntryArchiveReferences(nonEntries[i])));				
+			listAllContentRef.addAll(Arrays.asList(getNonPluginEntryArchiveReferences(nonEntries[i], monitor)));				
 		}
 		
 		if (listAllContentRef.size()>0){
@@ -122,7 +122,7 @@ public class FeaturePackagedContentProvider  extends FeatureContentProvider {
 	/*
 	 * @see IFeatureContentProvider#getFeatureEntryArchiveReferences()
 	 */
-	public ContentReference[] getFeatureEntryArchiveReferences() throws CoreException {
+	public ContentReference[] getFeatureEntryArchiveReferences(IProgressMonitor monitor) throws CoreException {
 		//1 jar file <-> 1 feature
 		ContentReference[] references = new ContentReference[1]; 		
 		try {
@@ -130,7 +130,7 @@ public class FeaturePackagedContentProvider  extends FeatureContentProvider {
 				// we may be asked for the manifest before the feature is set
 				String archiveID = (feature!=null)? feature.getVersionIdentifier().toString() : "";				
 				ContentReference currentReference = new JarContentReference(archiveID,getURL());
-				currentReference = asLocalReference(currentReference,null);
+				currentReference = asLocalReference(currentReference, monitor);
 				references[0] = currentReference;
 		} catch (IOException e){
 			throw newCoreException("Error retrieving feature Entry Archive Reference :" + feature.getURL().toExternalForm(), e);
@@ -141,7 +141,7 @@ public class FeaturePackagedContentProvider  extends FeatureContentProvider {
 	/*
 	 * @see IFeatureContentProvider#getPluginEntryArchiveReferences(IPluginEntry)
 	 */
-	public ContentReference[] getPluginEntryArchiveReferences(IPluginEntry pluginEntry) throws CoreException {
+	public ContentReference[] getPluginEntryArchiveReferences(IPluginEntry pluginEntry, IProgressMonitor monitor) throws CoreException {
 		ContentReference[] references = new ContentReference[1];
 		String archiveID = getPluginEntryArchiveID(pluginEntry);
 		URL url = feature.getSite().getSiteContentProvider().getArchiveReference(archiveID);
@@ -152,14 +152,15 @@ public class FeaturePackagedContentProvider  extends FeatureContentProvider {
 	/*
 	 * @see IFeatureContentProvider#getNonPluginEntryArchiveReferences(INonPluginEntry)
 	 */
-	public ContentReference[] getNonPluginEntryArchiveReferences(INonPluginEntry nonPluginEntry) throws CoreException {
+	public ContentReference[] getNonPluginEntryArchiveReferences(INonPluginEntry nonPluginEntry, IProgressMonitor monitor) throws CoreException {
+		// VK: shouldn't htis be returning the non-plugin entries ???
 		return null;
 	}
 
 	/*
 	 * @see IFeatureContentProvider#getFeatureEntryContentReferences()
 	 */
-	public ContentReference[] getFeatureEntryContentReferences() throws CoreException {
+	public ContentReference[] getFeatureEntryContentReferences(IProgressMonitor monitor) throws CoreException {
 		
 		return localFeatureFiles; // return cached feature references
 		// Note: assumes this content provider is always called first to
@@ -170,12 +171,12 @@ public class FeaturePackagedContentProvider  extends FeatureContentProvider {
 	/*
 	 * @see IFeatureContentProvider#getPluginEntryContentReferences(IPluginEntry)
 	 */
-	public ContentReference[] getPluginEntryContentReferences(IPluginEntry pluginEntry) throws CoreException {
-		ContentReference[] references = getPluginEntryArchiveReferences(pluginEntry);
+	public ContentReference[] getPluginEntryContentReferences(IPluginEntry pluginEntry, IProgressMonitor monitor) throws CoreException {
+		ContentReference[] references = getPluginEntryArchiveReferences(pluginEntry, monitor);
 		ContentReference[] pluginReferences = new ContentReference[0];
 		try {
 			JarContentReference localRef =	(JarContentReference)asLocalReference(references[0],null);
-			pluginReferences = peek(localRef,null,null);
+			pluginReferences = peek(localRef,null,monitor);
 		} catch (IOException e){
 			throw newCoreException( "Error retrieving plugin Entry Archive Reference :" + pluginEntry.getIdentifier().toString(), e);			
 		}

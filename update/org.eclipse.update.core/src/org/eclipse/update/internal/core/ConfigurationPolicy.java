@@ -213,7 +213,7 @@ public class ConfigurationPolicy implements IConfigurationPolicy {
 					IPluginEntry entry = entries[index];
 					String id = entry.getIdentifier().toString();
 					// obtain the path of the plugin directories on the site	
-					ContentReference[] featureContentReference = feature.getFeatureContentProvider().getPluginEntryArchiveReferences(entry);
+					ContentReference[] featureContentReference = feature.getFeatureContentProvider().getPluginEntryArchiveReferences(entry, null/*IProgressMonitor*/);
 					for (int j = 0; j < featureContentReference.length; j++) {
 						URL url = site.getSiteContentProvider().getArchiveReference(featureContentReference[j].getIdentifier());
 						if (url != null) {
