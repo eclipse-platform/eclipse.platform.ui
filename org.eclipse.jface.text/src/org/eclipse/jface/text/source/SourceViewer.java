@@ -29,6 +29,8 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IPositionUpdater;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.IRewriteTarget;
+import org.eclipse.jface.text.ISlaveDocumentManager;
+import org.eclipse.jface.text.ISlaveDocumentManagerExtension;
 import org.eclipse.jface.text.ITextViewerExtension2;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
@@ -41,6 +43,7 @@ import org.eclipse.jface.text.formatter.IContentFormatterExtension2;
 import org.eclipse.jface.text.formatter.IFormattingContext;
 import org.eclipse.jface.text.information.IInformationPresenter;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
+import org.eclipse.jface.text.projection.ChildDocument;
 import org.eclipse.jface.text.reconciler.IReconciler;
 
 /**
@@ -673,7 +676,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 			case INFORMATION:
 				fInformationPresenter.showInformation();
 				return;
-			case FORMAT :
+			case FORMAT:
 				{
 					final Point selection= rememberSelection();
 
@@ -698,17 +701,18 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 						try {
 							
 							if (fContentFormatter instanceof IContentFormatterExtension2) {
-								
-								final IContentFormatterExtension2 extension= (IContentFormatterExtension2)fContentFormatter;
+								final IContentFormatterExtension2 extension= (IContentFormatterExtension2) fContentFormatter;
 								extension.format(document, context);
-								
-							} else
+							} else {
 								fContentFormatter.format(document, region);
+							}
+							
+							updateSlaveDocuments(document);
 							
 						} catch (RuntimeException x) {
 							// fire wall for https://bugs.eclipse.org/bugs/show_bug.cgi?id=47472
 							// if something went wrong we undo the changes we just did
-							// TODO to be removed
+							// TODO to be removed after 3.0 M8
 							document.set(rememberedContents);
 							throw x;
 						}
@@ -724,8 +728,39 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 					}
 					return;
 				}
-			default :
+			default:
 				super.doOperation(operation);
+		}
+	}
+
+	/**
+	 * Updates all slave documents of the given document. This default implementation calls <code>updateSlaveDocument</code>
+	 * for their current visible range. Subclasses may reimplement.
+	 * 
+	 * @param masterDocument the master document
+	 * @since 3.0
+	 */
+	protected void updateSlaveDocuments(IDocument masterDocument) {
+		ISlaveDocumentManager manager= getSlaveDocumentManager();
+		if (manager instanceof ISlaveDocumentManagerExtension) {
+			ISlaveDocumentManagerExtension extension= (ISlaveDocumentManagerExtension) manager;
+			IDocument[] slaves= extension.getSlaveDocuments(masterDocument);
+			if (slaves != null) {
+				for (int i= 0; i < slaves.length; i++) {
+					if (slaves[i] instanceof ChildDocument) {
+						ChildDocument child= (ChildDocument) slaves[i];
+						Position p= child.getParentDocumentRange();
+						try {
+							
+							if (!updateSlaveDocument(child, p.getOffset(), p.getLength()))
+								child.repairLineInformation();
+							
+						} catch (BadLocationException e) {
+							// ignore
+						}
+					}
+				}
+			}
 		}
 	}
 

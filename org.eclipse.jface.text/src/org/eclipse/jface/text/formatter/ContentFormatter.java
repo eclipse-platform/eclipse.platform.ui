@@ -31,7 +31,6 @@ import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.TypedPosition;
-import org.eclipse.jface.text.projection.ChildDocumentManager;
 
 
 /**
@@ -744,8 +743,7 @@ public class ContentFormatter implements IContentFormatter, IContentFormatterExt
 
 	/**
 	 * The given position is about to be added to the given position category of the given document. <p>
-	 * This default implementation enacts the same rule as the TextViewer, i.e. if the position is used for 
-	 * managing slave documents it is ensured that the slave document starts at a line offset.
+	 * This default implementation return <code>true</code>.
 	 * 
 	 * @param document the document
 	 * @param category the position category
@@ -753,20 +751,6 @@ public class ContentFormatter implements IContentFormatter, IContentFormatterExt
 	 * @return <code>true</code> if the position can be added, <code>false</code> if it should be ignored
 	 */
 	protected boolean positionAboutToBeAdded(IDocument document, String category, Position position) {
-		if (ChildDocumentManager.CHILDDOCUMENTS.equals(category)) {
-			/* 
-			 * We assume child document offsets to be at the beginning
-			 * of a line. Because the formatter might have moved the
-			 * position to be somewhere in the middle of a line we patch it here. 
-			 */
-			try {
-				int lineOffset= document.getLineInformationOfOffset(position.offset).getOffset();
-				position.setLength(position.length + position.offset - lineOffset);
-				position.setOffset(lineOffset);
-			} catch (BadLocationException x) {
-				return false;
-			}
-		}
 		return true;
 	}
 	
