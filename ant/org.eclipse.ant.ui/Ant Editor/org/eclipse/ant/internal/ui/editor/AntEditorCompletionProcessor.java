@@ -542,7 +542,7 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
     private IntrospectionHelper getIntrospectionHelper(Class taskClass) {
     	IntrospectionHelper helper= null;
     	try {
-    		IntrospectionHelper.getHelper(antModel.getProjectNode().getProject(), taskClass);
+    		helper= IntrospectionHelper.getHelper(antModel.getProjectNode().getProject(), taskClass);
     	} catch (NoClassDefFoundError e) {
 			AntUIPlugin.log(MessageFormat.format(AntEditorMessages.getString("AntEditorCompletionProcessor.0"), new String[]{taskClass.getName()}), e); //$NON-NLS-1$
 		}
