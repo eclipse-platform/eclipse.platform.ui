@@ -27,38 +27,40 @@
    </requires>
 
 
-<!-- Workbench extension point definitions -->
+<!-- Workbench extension points -->
    <extension-point id="acceleratorSets" name="%ExtPoint.acceleratorSets"/>
    <extension-point id="acceleratorConfigurations" name="%ExtPoint.acceleratorConfigurations"/>
    <extension-point id="acceleratorScopes" name="%ExtPoint.acceleratorScopes"/>
    <extension-point id="actionDefinitions" name="%ExtPoint.actionDefinitions"/>
-   <extension-point id="perspectives" name="%ExtPoint.perspectives"/>
-   <extension-point id="perspectiveExtensions" name="%ExtPoint.perspectiveExtensions"/>
-   <extension-point id="actionSetPartAssociations" name="%ExtPoint.actionSetPartAssociations"/>
-   <extension-point id="preferencePages" name="%ExtPoint.preferencePages"/>
-   <extension-point id="propertyPages" name="%ExtPoint.propertyPages"/>
-   <extension-point id="editors" name="%ExtPoint.editors"/>
-   <extension-point id="views" name="%ExtPoint.views"/>
-   <extension-point id="actionSets" name="%ExtPoint.actionSets"/>
-   <extension-point id="viewActions" name="%ExtPoint.viewMenus"/>
-   <extension-point id="editorActions" name="%ExtPoint.editorMenus "/>
-   <extension-point id="popupMenus" name="%ExtPoint.popupMenus "/>
-   <extension-point id="importWizards" name="%ExtPoint.importWizards"/>
-   <extension-point id="exportWizards" name="%ExtPoint.exportWizards"/>
-   <extension-point id="newWizards" name="%ExtPoint.newWizards"/>
-   <extension-point id="elementFactories" name="%ExtPoint.elementFactories"/>
-   <extension-point id="dropActions" name="%ExtPoint.dropActions"/>
-   <extension-point id="resourceFilters" name="%ExtPoint.resourceFilters"/>
+   <extension-point id="actionSetPartAssociations" name="%ExtPoint.actionSetPartAssociations" schema="schema/actionSetPartAssociations"/>
+   <extension-point id="actionSets" name="%ExtPoint.actionSets" schema="schema/actionSets"/>
+   <extension-point id="capabilities" name="%ExtPoint.capabilities" schema="schema/capabilities.mxsd"/>
+   <extension-point id="decorators" name="%ExtPoint.decorators" schema="schema/decorators.mxsd"/>
+   <extension-point id="dropActions" name="%ExtPoint.dropActions" schema="schema/dropActions.mxsd"/>
+   <extension-point id="editorActions" name="%ExtPoint.editorActions" schema="schema/editorActions.mxsd"/>
+   <extension-point id="editors" name="%ExtPoint.editors" schema="schema/editors.mxsd"/>
+   <extension-point id="elementFactories" name="%ExtPoint.elementFactories" schema="schema/elementFactories.mxsd"/>
+   <extension-point id="exportWizards" name="%ExtPoint.exportWizards" schema="schema/exportWizards.mxsd"/>
+   <extension-point id="importWizards" name="%ExtPoint.importWizards" schema="schema/importWizards.mxsd"/>
+   <extension-point id="markerHelp" name="%ExtPoint.markerHelp" schema="schema/markerHelp.mxsd"/>
    <extension-point id="markerImageProviders" name="%ExtPoint.markerImageProviders"/>
-   <extension-point id="decorators" name="%ExtPoint.decorators"/>
-   <extension-point id="markerHelp" name="%ExtPoint.markerHelp"/>
-   <extension-point id="markerResolution" name="%ExtPoint.markerResolution"/>
-   <extension-point id="capabilities" name="%ExtPoint.capabilities"/>
-   <extension-point id="projectNatureImages" name="%ExtPoint.projectNatureImages"/>
-   <extension-point id="markerUpdaters" name="%ExtPoint.markerUpdaters"/>
-   <extension-point id="documentProviders" name="%ExtPoint.documentProviders"/>
-   <extension-point id="workingSets" name="%ExtPoint.workingSets"/>
+   <extension-point id="markerResolution" name="%ExtPoint.markerResolution" schema="schema/markerResolution.mxsd"/>
+   <extension-point id="newWizards" name="%ExtPoint.newWizards" schema="schema/newWizards.mxsd"/>
+   <extension-point id="perspectiveExtensions" name="%ExtPoint.perspectiveExtensions" schema="schema/perspectiveExtensions.mxsd"/>
+   <extension-point id="perspectives" name="%ExtPoint.perspectives" schema="schema/perspectives.mxsd"/>
+   <extension-point id="popupMenus" name="%ExtPoint.popupMenus " schema="schema/popupMenus.mxsd"/>
+   <extension-point id="preferencePages" name="%ExtPoint.preferencePages" schema="schema/preferencePages.mxsd"/>
+   <extension-point id="projectNatureImages" name="%ExtPoint.projectNatureImages" schema="schema/projectNatureImages.mxsd"/>
+   <extension-point id="propertyPages" name="%ExtPoint.propertyPages" schema="schema/propertyPages.mxsd"/>
+   <extension-point id="resourceFilters" name="%ExtPoint.resourceFilters" schema="schema/resourceFilters.mxsd"/>
    <extension-point id="startup" name="%ExtPoint.startup"/>
+   <extension-point id="viewActions" name="%ExtPoint.viewActions" schema="schema/viewActions.mxsd"/>
+   <extension-point id="views" name="%ExtPoint.views" schema="schema/views.mxsd"/>
+   <extension-point id="workingSets" name="%ExtPoint.workingSets"/>
+
+<!-- Text extension points -->
+   <extension-point id="documentProviders" name="%ExtPoint.documentProviders"/>
+   <extension-point id="markerUpdaters" name="%ExtPoint.markerUpdaters"/>
 
    <extension
          id="workbench"
