@@ -76,7 +76,7 @@ public class InfiniteSubProgressMonitor extends SubProgressMonitor {
 	 * @see IProgressMonitor#subTask(String)
 	 */
 	public void subTask(String name) {
-		if(name != null && ! name.equals("")) {
+		if(name != null && ! name.equals("")) { //$NON-NLS-1$
 			super.subTask(name);
 		}
 	}

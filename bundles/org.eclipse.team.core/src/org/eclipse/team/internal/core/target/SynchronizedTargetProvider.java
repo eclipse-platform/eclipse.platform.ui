@@ -57,7 +57,7 @@ public abstract class SynchronizedTargetProvider extends TargetProvider {
 		try {
 			targetURL = UrlUtil.concat(root, intrasitePath);
 		} catch (MalformedURLException e) {
-			throw new TeamException(Policy.bind("SynchronizedTargetProvider.invalid_url_combination", root, intrasitePath.toString()), e);
+			throw new TeamException(Policy.bind(Policy.bind("SynchronizedTargetProvider.invalidURLCombination"), root, intrasitePath.toString()), e); //$NON-NLS-1$
 		}
 	}
 	
@@ -115,8 +115,14 @@ public abstract class SynchronizedTargetProvider extends TargetProvider {
 	public void get(final IResource[] resources, IProgressMonitor progress) throws TeamException {
 		run(new ITargetRunnable() {
 			public void run(IProgressMonitor monitor) throws TeamException {
-				for (int i = 0; i < resources.length; i++) {
-					getState(resources[i]).get(IResource.DEPTH_INFINITE, monitor);
+				monitor = Policy.monitorFor(monitor);
+				try {
+					monitor.beginTask(null, resources.length * 100);
+					for (int i = 0; i < resources.length; i++) {
+						getState(resources[i]).get(IResource.DEPTH_INFINITE, Policy.subMonitorFor(monitor, 100));
+					}
+				} finally {
+					monitor.done();
 				}
 			}
 		}, Policy.monitorFor(progress));
@@ -145,8 +151,14 @@ public abstract class SynchronizedTargetProvider extends TargetProvider {
 	public void put(final IResource[] resources, IProgressMonitor progress) throws TeamException {
 		run(new ITargetRunnable() {
 			public void run(IProgressMonitor monitor) throws TeamException {
-				for (int i = 0; i < resources.length; i++) {
-					getState(resources[i]).put(monitor);
+				monitor = Policy.monitorFor(monitor);
+				try {
+					monitor.beginTask(null, resources.length * 100);
+					for (int i = 0; i < resources.length; i++) {
+						getState(resources[i]).put(Policy.subMonitorFor(monitor, 100));
+					}
+				} finally {
+					monitor.done();
 				}
 			}
 		}, Policy.monitorFor(progress));
