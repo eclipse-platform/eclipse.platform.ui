@@ -132,6 +132,10 @@
             type="text"
             extension="mxsd">
       </fileTypes>
+      <fileTypes
+            type="text"
+            extension="MF">
+      </fileTypes>
    </extension>
    <extension
          id="FileValidator"
