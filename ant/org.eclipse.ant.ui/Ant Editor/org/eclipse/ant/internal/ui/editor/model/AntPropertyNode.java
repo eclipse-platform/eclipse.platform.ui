@@ -43,26 +43,14 @@ public class AntPropertyNode extends AntTaskNode {
          	fValue= attributes.getValue(IAntEditorConstants.ATTR_VALUE);
          }
          setLabel(label);
+         //set the property in the project
+         task.maybeConfigure();
+         task.execute();
 	}
 	
 	public String getValue() {
 		return fValue;
 	}
-//	public Task getTask() {
-//		Task task= super.getTask();
-//		if (task instanceof UnknownElement) {
-//			try {
-//				((UnknownElement)task).maybeConfigure();
-//			} catch (BuildException be) {
-//				setIsErrorNode(true);
-//				return null;
-//			}
-//			setTask(((UnknownElement)task).getTask());
-//			return super.getTask();
-//		} else {
-//			return task;
-//		}
-//	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.editor.model.AntElementNode#getBaseImageDescriptor()

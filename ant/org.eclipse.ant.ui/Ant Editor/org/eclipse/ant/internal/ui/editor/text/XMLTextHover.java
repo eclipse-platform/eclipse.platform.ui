@@ -13,7 +13,9 @@ package org.eclipse.ant.internal.ui.editor.text;
 
 import java.util.Iterator;
 
+import org.eclipse.ant.internal.ui.editor.AntEditor;
 import org.eclipse.ant.internal.ui.editor.derived.HTMLPrinter;
+import org.eclipse.ant.internal.ui.editor.outline.AntModel;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -28,12 +30,12 @@ import org.eclipse.jface.text.source.ISourceViewer;
 
 public class XMLTextHover implements ITextHover {
 
-	//private AntEditor fEditor;
+	private AntEditor fEditor;
 	
-//	public XMLTextHover(AntEditor editor) {
-//		super();
-//		fEditor = editor;
-//	}
+	public XMLTextHover(AntEditor editor) {
+		super();
+		fEditor = editor;
+	}
 	
 	/*
 	 * Formats a message as HTML text.
@@ -70,19 +72,19 @@ public class XMLTextHover implements ITextHover {
 				}
 			}
 		}
-//		try {
-//			IDocument document= textViewer.getDocument();
-//			int offset= hoverRegion.getOffset();
-//			int length= hoverRegion.getLength();
-//			String propertyName= document.get(offset, length);
-			//AntModel model fEditor.getModel();
-			//String value= model.getPropertyValue(propertyName);
-			//if (value != null) {
-			//	return value;
-			//}
-//		} catch (BadLocationException e) {
-//			
-//		}
+		try {
+			IDocument document= textViewer.getDocument();
+			int offset= hoverRegion.getOffset();
+			int length= hoverRegion.getLength();
+			String propertyName= document.get(offset, length);
+			AntModel antModel= fEditor.getAntModel();
+			String value= antModel.getPropertyValue(propertyName);
+			if (value != null) {
+				return value;
+			}
+		} catch (BadLocationException e) {
+			
+		}
 		return null;
 	}
 	
@@ -101,7 +103,7 @@ public class XMLTextHover implements ITextHover {
 			
 			while (pos >= 0) {
 				c= document.getChar(pos);
-				if (!Character.isJavaIdentifierPart(c))
+				if (c != '.' && !Character.isJavaIdentifierPart(c))
 					break;
 				--pos;
 			}
@@ -113,7 +115,7 @@ public class XMLTextHover implements ITextHover {
 			
 			while (pos < length) {
 				c= document.getChar(pos);
-				if (!Character.isJavaIdentifierPart(c))
+				if (c != '.' && !Character.isJavaIdentifierPart(c))
 					break;
 				++pos;
 			}

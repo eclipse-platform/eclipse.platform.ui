@@ -581,4 +581,14 @@ public class AntModel {
 	public Iterator getStillOpenElement() {
 		return fStillOpenElements.iterator();
 	}
+
+	/**
+	 * @param propertyName
+	 * @return
+	 */
+	public String getPropertyValue(String propertyName) {
+		AntElementNode[] nodes= getRootElements();
+		AntProjectNode projectNode= (AntProjectNode)nodes[0];
+		return projectNode.getProject().getProperty(propertyName);
+	}
 }
