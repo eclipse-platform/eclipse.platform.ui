@@ -46,7 +46,7 @@ public FussyProgressMonitor() {
  * @param reason java.lang.String
  * @param condition boolean
  */
-private void assert(String reason, boolean condition) {
+private void assertTrue(String reason, boolean condition) {
 	// silently ignore follow-up failures
 	if (hasFailed)
 		return;
@@ -65,10 +65,10 @@ public void beginTask(String name, int totalWork) {
 		// the previous task is done.
 		//prepare();
 	//}
-	assert("beginTask may only be called once (old name=" + taskName + ")", beginTaskCalled == false);
+	assertTrue("beginTask may only be called once (old name=" + taskName + ")", beginTaskCalled == false);
 	beginTaskCalled = true;
 	taskName = name;
-	assert("total work must be positive or UNKNOWN", totalWork > 0 || totalWork == UNKNOWN);
+	assertTrue("total work must be positive or UNKNOWN", totalWork > 0 || totalWork == UNKNOWN);
 	this.totalWork = totalWork;
 	beginTime = System.currentTimeMillis();
 }
@@ -76,19 +76,19 @@ public void beginTask(String name, int totalWork) {
  * @see IProgressMonitor#done
  */
 public void done() {
-	assert("done must be called after beginTask", beginTaskCalled);
-	assert("done can only be called once", doneCalls==0);
+	assertTrue("done must be called after beginTask", beginTaskCalled);
+	assertTrue("done can only be called once", doneCalls==0);
 	//assert("done is called before all work is done", totalWork==UNKNOWN || totalWork==workedSoFar);
 	workedSoFar = totalWork;
 	doneCalls++;
 }
 public void internalWorked(double work) {
-	assert("can accept calls to worked/internalWorked only after beginTask", beginTaskCalled);
-	assert("can accept calls to worked/internalWorked only before done is called", doneCalls == 0);
-	assert("amount worked should be positive, not " + work, work >= 0);
+	assertTrue("can accept calls to worked/internalWorked only after beginTask", beginTaskCalled);
+	assertTrue("can accept calls to worked/internalWorked only before done is called", doneCalls == 0);
+	assertTrue("amount worked should be positive, not " + work, work >= 0);
 	if(work==0) EclipseWorkspaceTest.log("INFO: amount worked should be positive, not " + work);
 	workedSoFar += work;
-	assert("worked " + (workedSoFar - totalWork) + " more than totalWork", totalWork == UNKNOWN || workedSoFar <= totalWork + (totalWork * EPS_FACTOR));
+	assertTrue("worked " + (workedSoFar - totalWork) + " more than totalWork", totalWork == UNKNOWN || workedSoFar <= totalWork + (totalWork * EPS_FACTOR));
 }
 /**
  * @see IProgressMonitor#isCanceled
@@ -120,9 +120,9 @@ public void sanityCheck() {
 //	EclipseWorkspaceTest.log("sanity checking: " + taskName + " : " + (System.currentTimeMillis() - beginTime) + " ms, " + workedSoFar);
 	long duration = System.currentTimeMillis() - beginTime;
 	if (duration > NOTICEABLE_DELAY && beginTaskCalled) {
-		assert("this operation took: " + duration + "ms, it should report progress", workedSoFar > 0);
+		assertTrue("this operation took: " + duration + "ms, it should report progress", workedSoFar > 0);
 	}
-	assert("done has not been called on ProgressMonitor", hasFailed || !beginTaskCalled || doneCalls > 0);
+	assertTrue("done has not been called on ProgressMonitor", hasFailed || !beginTaskCalled || doneCalls > 0);
 }
 /**
  * @see IProgressMonitor#setCanceled
