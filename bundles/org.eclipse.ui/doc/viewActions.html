@@ -1,0 +1,220 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HEAD><meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</HEAD>
+<HTML>
+<BODY>
+<H1><CENTER>View Menus,Toolbars and Actions</CENTER></H1>
+<b><i>Identifier: </i></b>org.eclipse.ui.viewActions<p>
+<b><i>Description: </i></b>This extension point is used to add actions to the menu 
+and toolbar for views registered by other plug-ins. 
+Each view has a local pulldown menu normally activated 
+by clicking on the top right area. Other plug-ins can 
+contribute submenus and actions to this menu. 
+Plug-ins may also contribute actions to a view toolbar. 
+View owners are first given a chance to populate these 
+areas. Optional additions by other plug-ins are appended.<p><b><i>Configuration Markup:</i></b><p>
+<p><samp>&nbsp;&nbsp; &lt;!ELEMENT extension (viewContribution*)&gt;</samp>
+<br><br><samp>&nbsp;&nbsp; &lt;!ATTLIST extension</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;point&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name&nbsp;&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp; &gt;</samp>
+<ul>
+<li><b>point</b> - a fully qualified identifier of the target extension point</li><li><b>id</b> - an optional identifier of the extension instance</li><li><b>name</b> - an optional name of the extension instance</li></ul>
+<p><samp>&nbsp;&nbsp; &lt;!ELEMENT viewContribution (menu | action)*&gt;</samp>
+<br><br><samp>&nbsp;&nbsp; &lt;!ATTLIST viewContribution</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;targetID&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp; &gt;</samp>
+<ul>
+<li><b>id</b> - a unique identifier that can be used to reference this contribution</li><li><b>targetID</b> - the unique identifier of the view (as specified in the registry) into which the contribution is made.</li></ul>
+<p><samp>&nbsp;&nbsp; &lt;!ELEMENT menu (separator+)&gt;</samp>
+<br><br><samp>&nbsp;&nbsp; &lt;!ATTLIST menu</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;label&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;path&nbsp;&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp; &gt;</samp>
+<ul>
+<li><b>id</b> - a unique identifier that can be used to reference this menu</li><li><b>label</b> - the text label of the new menu. The label should include mnemonic information.</li><li><b>path</b> - the location of the menu starting from the pulldown, with the last token representing the named group. If omitted, the
+menu will be added at the end of the pulldown.</li></ul>
+<p><samp>&nbsp;&nbsp; &lt;!ELEMENT action (selection* , enablement?)&gt;</samp>
+<br><br><samp>&nbsp;&nbsp; &lt;!ATTLIST action</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;label&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;menubarPath&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;toolbarPath&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;icon&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tooltip&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;state&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(true | false) "false"#IMPLIED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enablesFor&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;disabledIcon&nbsp;&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;hoverIcon&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;helpContextId&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp; &gt;</samp>
+<ul>
+<li><b>id</b> - a unique identifier that can be used as a reference for this action.</li><li><b>label</b> - a translatable name that is used in various ways, depending on
+the context. In menus, it is used as the menu text. In toolbars,
+it is used as the button label. The label can contain JFace-encoded
+mnemonic and accelerator information (see example).</li><li><b>menubarPath</b> - a slash-delimited path ('/') that is used to specify the location
+of the action in the pulldown menu. Each token in the path,
+except the last one, represents an existing menu in the hierarchy.
+The last token represents the named separator group into
+which the action will be added. If the path is omitted, the action
+will not appear in the pulldown.</li><li><b>toolbarPath</b> - a named group within the local toolbar of the target view. If
+the group does not exist, it will be created. If omitted,
+the action will not appear in the local toolbar.</li><li><b>icon</b> - a relative path for an icon that will be used to visually
+represent the action in its context. If omitted and the 
+action should appear in the local toolbar, 
+the workbench will use a place holder icon. 
+The path is relative to the location of the 
+plugin.xml file of the contributing plug-in.</li><li><b>tooltip</b> - used if the action is to appear in the local toolbar. 
+Otherwise, it is ignored.</li><li><b>state</b> - an optional attribute indicating that the action 
+should be of a toggle type. When added to a menu, 
+it will manifest itself as a check box item. When added 
+to a toolbar, it will become a toggle button. If defined, 
+the attribute value will be used as the initial state 
+(either <samp>true</samp> or <samp>false</samp>).</li><li><b>class</b> - name of the fully qualified class that implements 
+<samp>org.eclipse.ui.IViewActionDelegate</samp>.</li><li><b>enablesFor</b> - a value indicating the selection count which must be met to 
+enable the action.  If this attribute is specified and 
+the condition is met the action is enabled.  
+If the condition is not met the action is disabled.  
+If no attribute is specified the action is enabled for 
+any number of items selected.  The following attribute 
+formats are supported: 
+<ul>
+<li>  
+! - 0 items selected 
+</li>
+<li>
+? - 0 or 1 items selected 
+</li>
+<li>
++ - 1 or more items selected 
+</li>
+<li>
+multiple, 2+ - 2 or more items selected 
+</li>
+<li>
+n - a precise number of items selected.  Example: 4. 
+</li>
+<li>
+* - any number of items selected
+</li>
+</ul></li><li><b>disabledIcon</b> - a relative path of an icon that will be used to visually represent the action in its context when the action is disabled.
+If it is omitted, the normal icon will simply appear greyed out.
+The path is relative to the location of the plugin.xml file of the contributing plug-in.</li><li><b>hoverIcon</b> - a relative path of an icon that will be used to visually represent the action in its context when the mouse is over the action.
+If it is omitted, the normal icon will be used.
+The path is relative to the location of the plugin.xml file of the contributing plug-in.</li><li><b>helpContextId</b> - a unique identifier indicating the help context id for this action.
+If the action appears as a menu item, then pressing F1 while the menu item is highlighted will display help for the given context id.</li></ul>
+<p><samp>&nbsp;&nbsp; &lt;!ELEMENT separator EMPTY&gt;</samp>
+<br><br><samp>&nbsp;&nbsp; &lt;!ATTLIST separator</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp; &gt;</samp>
+<ul>
+<li><b>name</b> - name of the separator that can later be referenced as the last
+token in the action path. Therefore, separators serve as
+named groups into which actions can be added.</li></ul>
+<p><samp>&nbsp;&nbsp; &lt;!ELEMENT selection EMPTY&gt;</samp>
+<br><br><samp>&nbsp;&nbsp; &lt;!ATTLIST selection</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;class&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name&nbsp;&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp; &gt;</samp>
+<ul>
+<li><b>class</b> - a fully qualified name of the class or interface that each object in the selection must 
+subclass or implement in order to enable the action.</li><li><b>name</b> - a wild card filter that can optionally be applied to objects in the selection. If this filter 
+is specified and the match fails, the action will be disabled.</li></ul>
+<p><samp>&nbsp;&nbsp; &lt;!ELEMENT enablement (and | or | not | objectClass | objectState | systemProperty | pluginState)&gt;</samp>
+<p><samp>&nbsp;&nbsp; &lt;!ELEMENT and (or | not | objectClass | objectState | systemProperty | pluginState)*&gt;</samp>
+<p><samp>&nbsp;&nbsp; &lt;!ELEMENT or (and | not | objectClass | objectState | systemProperty | pluginState)*&gt;</samp>
+<p><samp>&nbsp;&nbsp; &lt;!ELEMENT not (and | or | objectClass | objectState | systemProperty | pluginState)&gt;</samp>
+<p><samp>&nbsp;&nbsp; &lt;!ELEMENT objectClass EMPTY&gt;</samp>
+<br><br><samp>&nbsp;&nbsp; &lt;!ATTLIST objectClass</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp; &gt;</samp>
+<ul>
+<li><b>name</b> - a fully qualified name of a class.  The expression is evaluated as true only if the selection implements this class.</li></ul>
+<p><samp>&nbsp;&nbsp; &lt;!ELEMENT objectState EMPTY&gt;</samp>
+<br><br><samp>&nbsp;&nbsp; &lt;!ATTLIST objectState</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name&nbsp;&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;value&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp; &gt;</samp>
+<ul>
+<li><b>name</b> - the name of an object attribute.  Acceptable values for this string reflect the object type,
+and should be publicly declared by the plugin where the object type is declared.</li><li><b>value</b> - the required value of the object attribute.  The acceptable values for the object attribute should be publicly declared.</li></ul>
+<p><samp>&nbsp;&nbsp; &lt;!ELEMENT systemProperty EMPTY&gt;</samp>
+<br><br><samp>&nbsp;&nbsp; &lt;!ATTLIST systemProperty</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name&nbsp;&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;value&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp; &gt;</samp>
+<ul>
+<li><b>name</b> - the name of the system property.</li><li><b>value</b> - the required value of the system property.</li></ul>
+<p><samp>&nbsp;&nbsp; &lt;!ELEMENT pluginState EMPTY&gt;</samp>
+<br><br><samp>&nbsp;&nbsp; &lt;!ATTLIST pluginState</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;value&nbsp;(installed|activated) #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp; &gt;</samp>
+<ul>
+<li><b>id</b> - an id of a plug-in which may or may not be registered in the plug-in registry.</li><li><b>value</b> - the required state of the plug-in.  Currently two states are supported: installed and activated.</li></ul>
+<b><i>Examples: </i></b>The following is an example of a view actions extension point (note the subelements and the way attributes are used): 
+<p>
+<pre>
+   &lt;extension point="org.eclipse.ui.viewActions"&gt; 
+      &lt;viewContribution 
+         id="com.xyz.xyzViewC1" 
+         targetID="org.eclipse.ui.views.navigator.ResourceNavigator"&gt; 
+         &lt;menu id="com.xyz.xyzMenu" 
+            label="XYZ Menu" 
+            path="additions"&gt; 
+            &lt;separator name="group1"/&gt; 
+         &lt;/menu&gt; 
+         &lt;action id="com.xyz.runXYZ" 
+              label="&amp;amp;Run XYZ Tool" 
+              menubarPath="com.xyz.xyzMenu/group1" 
+              toolbarPath="Normal/XYZ" 
+              icon="icons/runXYZ.gif" 
+              tooltip="Run XYZ Tool" 
+              helpContextId="com.xyz.run_action_context" 
+              class="com.xyz.actions.RunXYZ" 
+              enablesFor="1"/&gt; 
+              &lt;selection class="org.eclipse.core.resources.IFile" name="*.java"&gt; 
+         &lt;/action&gt; 
+     &lt;/viewContribution&gt; 
+   &lt;/extension&gt; 
+</pre>
+</p>
+In the example above, the specified action will only 
+enable for a single selection (enablesFor attribute). 
+In addition, each object in this selection must 
+implement the specified interface (IFile) and must 
+be a Java file. Multiple selection elements can be 
+specified, meaning 'one of'.<p>
+<b><i>API Information: </i></b>The value of the <samp>class</samp> attribute must be a fully 
+qualified name of a Java class that implements 
+<samp>org.eclipse.ui.IViewActionDelegate</samp>. 
+This interface is loaded as late as possible to 
+avoid loading the entire plug-in before it 
+is really needed. It extends 
+<samp>org.eclipse.ui.IActionDelegate</samp> 
+and adds an additional method that allows the 
+delegate to initialize with the view 
+instance it is contributing into.
+<p>
+The enablement criteria for an action extension are initially defined by <samp>enablesFor</samp>, <samp>selection</samp> and <samp>enablement</samp>.  However, once the action delegate has been instantiated, it may control the action enable state directly within its <samp>selectionChanged</samp> method. 
+<p>
+Action and menu labels may contain special characters that encode mnemonics which are specified using the ampersand ('&amp;') character in front of a mnemonic character in the translatable text. Since ampersand is not allowed in XML strings, use <samp>&amp;amp;</samp> character entity. 
+<p>
+If two or more actions are contributed to a menu or toolbar by a single extension the actions will appear in the reverse order of how they are listed in the plugin.xml file. This behavior is admittedly unintuitive.  However, it was discovered after the  Eclipse Platform API was frozen.  Changing the behavior now would break every plug-in which relies upon the existing behavior.<p>
+<b><i>Supplied Implementation: </i></b>Each view normally comes with a number of standard 
+items on the pulldown menu and local toolbar. 
+Additions from other plug-ins will be appended to 
+the standard complement.  It is helpful to 
+publish the action identifiers for a view within a 
+public interface.  For example, the actions and 
+major groups for the workbench window are defined 
+in <samp>org.eclipse.ui.IWorkbenchActionConstants</samp>.<p>
+<p>
+Copyright (c) 2002 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials are made available under the terms of the Common Public License v1.0 which accompanies this distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html<p>
+</BODY>
+</HTML>

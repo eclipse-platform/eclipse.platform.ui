@@ -1,0 +1,39 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HEAD><meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</HEAD>
+<HTML>
+<BODY>
+<H1><CENTER>Resource Filters</CENTER></H1>
+<b><i>Identifier: </i></b>org.eclipse.ui.resourceFilters<p>
+<b><i>Description: </i></b>This extension point is used to add predefined filters to views which show resources, such as the Navigator view.
+These filters can be selected to hide resources whose names match the filter's pattern.<p><b><i>Configuration Markup:</i></b><p>
+<p><samp>&nbsp;&nbsp; &lt;!ELEMENT extension (filter*)&gt;</samp>
+<br><br><samp>&nbsp;&nbsp; &lt;!ATTLIST extension</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;point&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name&nbsp;&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp; &gt;</samp>
+<ul>
+<li><b>point</b> - a fully qualified identifier of the target extension point</li><li><b>id</b> - an optional identifier of the extension instance</li><li><b>name</b> - an optional name of the extension instance</li></ul>
+<p><samp>&nbsp;&nbsp; &lt;!ELEMENT filter (description?)&gt;</samp>
+<br><br><samp>&nbsp;&nbsp; &lt;!ATTLIST filter</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pattern&nbsp;&nbsp;CDATA #REQUIRED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;selected&nbsp;(true | false) "false""false"</samp>
+<br><samp>&nbsp;&nbsp; &gt;</samp>
+<ul>
+<li><b>pattern</b> - the pattern to match.  May contain * and ? wildcards.</li><li><b>selected</b> - "true" if the pattern should be selected by default, "false" or undefined if not.</li></ul>
+<p><samp>&nbsp;&nbsp; &lt;!ELEMENT description (#CDATA)&gt;</samp>
+<p>&nbsp;&nbsp; the description of the purpose of this filter.</p>
+<b><i>Examples: </i></b>The following is an example of a resource filter extension, which filters out class files, and is selected by default:
+
+<p>
+<pre>
+ &lt;extension point="org.eclipse.ui.resourceFilters"&gt;
+  &lt;filter pattern="*.class" selected="true"/&gt;
+ &lt;/extension&gt;
+</pre>
+</p><p>
+Copyright (c) 2002, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials are made available under the terms of the Common Public License v1.0 which accompanies this distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html<p>
+</BODY>
+</HTML>
