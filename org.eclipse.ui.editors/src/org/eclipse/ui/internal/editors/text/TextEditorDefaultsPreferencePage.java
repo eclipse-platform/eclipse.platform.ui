@@ -16,16 +16,17 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Preferences;
+import java.util.StringTokenizer;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -37,6 +38,10 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Text;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Preferences;
+
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.dialogs.IMessageProvider;
@@ -45,15 +50,14 @@ import org.eclipse.jface.preference.PreferencePage;
 
 import org.eclipse.jface.text.Assert;
 
+import org.eclipse.ui.editors.text.ITextEditorHelpContextIds;
+
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.editors.text.ITextEditorHelpContextIds;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.editors.text.TextEditorDefaultsPreferencePage.EnumeratedDomain.EnumValue;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
-
-import org.eclipse.ui.internal.editors.text.TextEditorDefaultsPreferencePage.EnumeratedDomain.EnumValue;
-
 
 
 /**
@@ -64,6 +68,7 @@ import org.eclipse.ui.internal.editors.text.TextEditorDefaultsPreferencePage.Enu
  * @since 3.1
  */
 public class TextEditorDefaultsPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
+	
 	private abstract class Initializer {
 
 		protected final Preference fPreference;
@@ -378,6 +383,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 	}
 	
 
+	private static final String MODIFIER_DELIMITER= TextEditorMessages.getString("HyperlinkKeyModifier.delimiter"); //$NON-NLS-1$
 	
 	private final String[][] fAppearanceColorListModel= new String[][] {
 		{TextEditorMessages.getString("TextEditorPreferencePage.lineNumberForegroundColor"), AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR, null}, //$NON-NLS-1$
@@ -387,6 +393,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		{TextEditorMessages.getString("TextEditorPreferencePage.selectionBackgroundColor"), AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_COLOR, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_DEFAULT_COLOR}, //$NON-NLS-1$
 		{"Background color", AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT},
 		{"Foreground color", AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND, AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND_SYSTEM_DEFAULT},
+		{TextEditorMessages.getString("HyperlinkColor.label"), AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_COLOR, null}, //$NON-NLS-1$
 	};
 	
 	private OverlayPreferenceStore fOverlayStore;
@@ -394,10 +401,13 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 	private List fAppearanceColorList;
 	private ColorEditor fAppearanceColorEditor;
 	private Button fAppearanceColorDefault;
+
+	private Text fHyperlinkKeyModifierText;
+	private Button fHyperlinksEnabledCheckBox;
+	private StatusInfo fHyperlinkKeyModifierStatus;
 	
 	/**
 	 * Tells whether the fields are initialized.
-	 * @since 3.0
 	 */
 	private boolean fFieldsInitialized= false;
 	
@@ -406,7 +416,6 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 	private java.util.List fInitializers= new ArrayList();
 	
 	private InitializerFactory fInitializerFactory= new InitializerFactory();
-
 
 	
 	public TextEditorDefaultsPreferencePage() {
@@ -441,6 +450,11 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND_SYSTEM_DEFAULT));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT));
+
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINKS_ENABLED));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_COLOR));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_KEY_MODIFIER));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_KEY_MODIFIER_MASK));
 		
 		OverlayPreferenceStore.OverlayKey[] keys= new OverlayPreferenceStore.OverlayKey[overlayKeys.size()];
 		overlayKeys.toArray(keys);
@@ -513,6 +527,68 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		Preference showLineNumbers= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER, label, null);
 		addCheckBox(appearanceComposite, showLineNumbers, new BooleanDomain(), 0);
 
+		label= TextEditorMessages.getString("HyperlinksEnabled.label"); //$NON-NLS-1$
+		Preference hyperlinksEnabled= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINKS_ENABLED, label, null);
+		fHyperlinksEnabledCheckBox= addCheckBox(appearanceComposite, hyperlinksEnabled, new BooleanDomain(), 0);
+		fHyperlinksEnabledCheckBox.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
+				boolean state= fHyperlinksEnabledCheckBox.getSelection();
+				fHyperlinkKeyModifierText.setEnabled(state);
+				handleBrowserLikeLinksKeyModifierModified();
+			}
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+		
+		// Text field for modifier string
+		label= TextEditorMessages.getString("HyperlinkKeyModifier.label"); //$NON-NLS-1$
+		Preference hyperlinkModifier= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_KEY_MODIFIER, label, null);
+		fHyperlinkKeyModifierText= (Text)addTextField(appearanceComposite, hyperlinkModifier, null, 20, 20)[1];
+		
+		fHyperlinkKeyModifierText.addKeyListener(new KeyListener() {
+			private boolean isModifierCandidate;
+			public void keyPressed(KeyEvent e) {
+				isModifierCandidate= e.keyCode > 0 && e.character == 0 && e.stateMask == 0;
+			}
+		
+			public void keyReleased(KeyEvent e) {
+				if (isModifierCandidate && e.stateMask > 0 && e.stateMask == e.stateMask && e.character == 0) {// && e.time -time < 1000) {
+					String modifierString= fHyperlinkKeyModifierText.getText();
+					Point selection= fHyperlinkKeyModifierText.getSelection();
+					int i= selection.x - 1;
+					while (i > -1 && Character.isWhitespace(modifierString.charAt(i))) {
+						i--;
+					}
+					boolean needsPrefixDelimiter= i > -1 && !String.valueOf(modifierString.charAt(i)).equals(MODIFIER_DELIMITER);
+
+					i= selection.y;
+					while (i < modifierString.length() && Character.isWhitespace(modifierString.charAt(i))) {
+						i++;
+					}
+					boolean needsPostfixDelimiter= i < modifierString.length() && !String.valueOf(modifierString.charAt(i)).equals(MODIFIER_DELIMITER);
+
+					String insertString;
+
+					if (needsPrefixDelimiter && needsPostfixDelimiter)
+						insertString= TextEditorMessages.getFormattedString("HyperlinkKeyModifier.insertDelimiterAndModifierAndDelimiter", new String[] {Action.findModifierString(e.stateMask)}); //$NON-NLS-1$
+					else if (needsPrefixDelimiter)
+						insertString= TextEditorMessages.getFormattedString("HyperlinkKeyModifier.insertDelimiterAndModifier", new String[] {Action.findModifierString(e.stateMask)}); //$NON-NLS-1$
+					else if (needsPostfixDelimiter)
+						insertString= TextEditorMessages.getFormattedString("HyperlinkKeyModifier.insertModifierAndDelimiter", new String[] {Action.findModifierString(e.stateMask)}); //$NON-NLS-1$
+					else
+						insertString= Action.findModifierString(e.stateMask);
+
+					fHyperlinkKeyModifierText.insert(insertString);
+				}
+			}
+		});
+
+		fHyperlinkKeyModifierText.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				handleBrowserLikeLinksKeyModifierModified();
+			}
+		});
+		
 		Label l= new Label(appearanceComposite, SWT.LEFT );
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan= 2;
@@ -644,6 +720,15 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 			initializer.initialize();
 		}
 		
+		if (computeStateMask(fOverlayStore.getString(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_KEY_MODIFIER)) == -1) {
+			// Fix possible illegal modifier string
+			int stateMask= fOverlayStore.getInt(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_KEY_MODIFIER_MASK);
+			if (stateMask == -1)
+				fHyperlinkKeyModifierText.setText(""); //$NON-NLS-1$
+			else
+				fHyperlinkKeyModifierText.setText(getModifierString(stateMask));
+		}
+		
 		fFieldsInitialized= true;
 		updateStatus(new StatusInfo()); //$NON-NLS-1$
 		
@@ -653,6 +738,8 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
             SelectionListener listener= (SelectionListener)iter.next();
             listener.widgetSelected(null);
         }
+        
+		fHyperlinkKeyModifierText.setEnabled(fHyperlinksEnabledCheckBox.getSelection());
 	}
 	
 	private void initializeDefaultColors() {	
@@ -682,6 +769,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 	 * @see PreferencePage#performOk()
 	 */
 	public boolean performOk() {
+		fOverlayStore.setValue(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_KEY_MODIFIER_MASK, computeStateMask(fHyperlinkKeyModifierText.getText()));
 		fOverlayStore.propagate();
 		EditorsPlugin.getDefault().savePluginPreferences();
 		return true;
@@ -784,15 +872,17 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		textControl.setTextLimit(textLimit);
 		textControl.setToolTipText(preference.getDescription());
 		
-		textControl.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				String value= textControl.getText();
-				IStatus status= domain.validate(value);
-				if (!status.matches(IStatus.ERROR))
-					fOverlayStore.setValue(preference.getKey(), value);
-				updateStatus(status);
-			}
-		});
+		if (domain != null) {
+			textControl.addModifyListener(new ModifyListener() {
+				public void modifyText(ModifyEvent e) {
+					String value= textControl.getText();
+					IStatus status= domain.validate(value);
+					if (!status.matches(IStatus.ERROR))
+						fOverlayStore.setValue(preference.getKey(), value);
+					updateStatus(status);
+				}
+			});
+		}
 		
 		fInitializers.add(fInitializerFactory.create(preference, textControl));
 		
@@ -830,7 +920,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 	void updateStatus(IStatus status) {
 		if (!fFieldsInitialized)
 			return;
-		
+		status= StatusUtil.getMoreSevere(getBrowserLikeLinksKeyModifierStatus(), status);
 		setValid(!status.matches(IStatus.ERROR));
 		applyToStatusLine(this, status);
 	}
@@ -864,5 +954,115 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 				page.setErrorMessage(message);
 				break;		
 		}
+	}
+	
+	private void handleBrowserLikeLinksKeyModifierModified() {
+		String modifiers= fHyperlinkKeyModifierText.getText();
+		fOverlayStore.setValue(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_KEY_MODIFIER, modifiers);
+		
+		int stateMask= computeStateMask(modifiers);
+
+		if (fHyperlinksEnabledCheckBox.getSelection() && (stateMask == -1 || (stateMask & SWT.SHIFT) != 0)) {
+			if (stateMask == -1)
+				fHyperlinkKeyModifierStatus= new StatusInfo(IStatus.ERROR, TextEditorMessages.getFormattedString("HyperlinkKeyModifier.error.modifierIsNotValid", modifiers)); //$NON-NLS-1$
+			else
+				fHyperlinkKeyModifierStatus= new StatusInfo(IStatus.ERROR, TextEditorMessages.getString("HyperlinkKeyModifier.error.shiftIsDisabled")); //$NON-NLS-1$
+			setValid(false);
+			StatusUtil.applyToStatusLine(this, fHyperlinkKeyModifierStatus);
+		} else {
+			fHyperlinkKeyModifierStatus= new StatusInfo();
+			updateStatus(fHyperlinkKeyModifierStatus);
+		}
+	}
+	
+	private IStatus getBrowserLikeLinksKeyModifierStatus() {
+		if (fHyperlinkKeyModifierStatus == null)
+		fHyperlinkKeyModifierStatus= new StatusInfo();
+		return fHyperlinkKeyModifierStatus;
+	}
+
+	/**
+	 * Computes the state mask for the given modifier string.
+	 * 
+	 * @param modifiers	the string with the modifiers, separated by '+', '-', ';', ',' or '.'
+	 * @return the state mask or -1 if the input is invalid
+	 */
+	private static final int computeStateMask(String modifiers) {
+		if (modifiers == null)
+			return -1;
+		
+		if (modifiers.length() == 0)
+			return SWT.NONE;
+
+		int stateMask= 0;
+		StringTokenizer modifierTokenizer= new StringTokenizer(modifiers, ",;.:+-* "); //$NON-NLS-1$
+		while (modifierTokenizer.hasMoreTokens()) {
+			int modifier= findLocalizedModifier(modifierTokenizer.nextToken());
+			if (modifier == 0 || (stateMask & modifier) == modifier)
+				return -1;
+			stateMask= stateMask | modifier;
+		}
+		return stateMask;
+	}
+	
+	/**
+	 * Maps the localized modifier name to a code in the same
+	 * manner as #findModifier.
+	 * 
+	 * @param modifierName the modifier name
+	 * @return the SWT modifier bit, or <code>0</code> if no match was found
+	 */
+	private static final int findLocalizedModifier(String modifierName) {
+		if (modifierName == null)
+			return 0;
+		
+		if (modifierName.equalsIgnoreCase(Action.findModifierString(SWT.CTRL)))
+			return SWT.CTRL;
+		if (modifierName.equalsIgnoreCase(Action.findModifierString(SWT.SHIFT)))
+			return SWT.SHIFT;
+		if (modifierName.equalsIgnoreCase(Action.findModifierString(SWT.ALT)))
+			return SWT.ALT;
+		if (modifierName.equalsIgnoreCase(Action.findModifierString(SWT.COMMAND)))
+			return SWT.COMMAND;
+
+		return 0;
+	}
+
+	/**
+	 * Returns the modifier string for the given SWT modifier
+	 * modifier bits.
+	 * 
+	 * @param stateMask	the SWT modifier bits
+	 * @return the modifier string
+	 */
+	private static final String getModifierString(int stateMask) {
+		String modifierString= ""; //$NON-NLS-1$
+		if ((stateMask & SWT.CTRL) == SWT.CTRL)
+			modifierString= appendModifierString(modifierString, SWT.CTRL);
+		if ((stateMask & SWT.ALT) == SWT.ALT)
+			modifierString= appendModifierString(modifierString, SWT.ALT);
+		if ((stateMask & SWT.SHIFT) == SWT.SHIFT)
+			modifierString= appendModifierString(modifierString, SWT.SHIFT);
+		if ((stateMask & SWT.COMMAND) == SWT.COMMAND)
+			modifierString= appendModifierString(modifierString,  SWT.COMMAND);
+		
+		return modifierString;
+	}
+	
+	/**
+	 * Appends to modifier string of the given SWT modifier bit
+	 * to the given modifierString.
+	 * 
+	 * @param modifierString	the modifier string
+	 * @param modifier			an int with SWT modifier bit
+	 * @return the concatenated modifier string
+	 */
+	private static final String appendModifierString(String modifierString, int modifier) {
+		if (modifierString == null)
+			modifierString= ""; //$NON-NLS-1$
+		String newModifierString= Action.findModifierString(modifier);
+		if (modifierString.length() == 0)
+			return newModifierString;
+		return TextEditorMessages.getFormattedString("HyperlinkKeyModifier.concatModifierStrings", new String[] {modifierString, newModifierString}); //$NON-NLS-1$
 	}
 }
