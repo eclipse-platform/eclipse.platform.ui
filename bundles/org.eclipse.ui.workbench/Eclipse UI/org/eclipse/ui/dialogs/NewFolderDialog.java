@@ -361,6 +361,8 @@ private void validateLinkedResource() {
 		if (status.isOK() == false)
 			updateStatus(status);
 	}
+	else
+		getOkButton().setEnabled(false);
 }
 /**
  * Checks if the folder name is valid.
@@ -381,8 +383,8 @@ private boolean validateFolderName() {
 		updateStatus(nameStatus);
 		return false;
 	}
-	IFolder newFolder = container.getFolder(new Path(name));
-	if (newFolder.exists()) {
+	IPath path = new Path(name);
+	if (container.getFolder(path).exists() || container.getFile(path).exists()) {
 		updateStatus(IStatus.ERROR, WorkbenchMessages.format("NewFolderDialog.alreadyExists", new Object[] { name }));	//$NON-NLS-1$
 		return false;
 	}
