@@ -43,7 +43,6 @@ public class BuildSetMenu extends ContributionItem {
 		this.window = window;
 		this.actionBars = actionBars;
 		selectBuildWorkingSetAction = new SelectBuildWorkingSetAction(window, actionBars);
-//		WorkbenchHelp.setHelp(showDlgAction, IHelpContextIds.SHOW_VIEW_OTHER_ACTION);
 	}
 	/**
 	 * Adds a mnemonic accelerator to actions in the MRU list of
@@ -60,7 +59,9 @@ public class BuildSetMenu extends ContributionItem {
 		label.append(action.getWorkingSet().getName());
 		action.setText(label.toString());
 	}
-		
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.IContributionItem#fill(org.eclipse.swt.widgets.Menu, int)
+	 */
 	public void fill(Menu menu, int index) {
 		if(getParent() instanceof MenuManager)
 			((MenuManager)getParent()).addMenuListener(menuListener);
@@ -84,6 +85,7 @@ public class BuildSetMenu extends ContributionItem {
 		if (last != null) {
 			last.setChecked(true);
 			last.setEnabled(!isAutoBuilding);
+			last.setActionDefinitionId("org.eclipse.ui.project.buildLast"); //$NON-NLS-1$
 			addMnemonic(last, accel++);
 			new ActionContributionItem(last).fill(menu, -1);
 			lastSet = last.getWorkingSet();

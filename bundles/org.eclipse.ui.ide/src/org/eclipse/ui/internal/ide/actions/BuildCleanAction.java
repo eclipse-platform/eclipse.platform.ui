@@ -12,7 +12,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.dialogs.CleanDialog;
@@ -26,20 +26,33 @@ import org.eclipse.ui.internal.ide.dialogs.CleanDialog;
  */
 public class BuildCleanAction extends Action implements ActionFactory.IWorkbenchAction {
 	private IWorkbenchWindow window;
-	public void dispose() {
-	}
 	public BuildCleanAction(IWorkbenchWindow window) {
 		super(IDEWorkbenchMessages.getString("Workbench.buildClean")); //$NON-NLS-1$
+		setActionDefinitionId("org.eclipse.ui.project.cleanAction"); //$NON-NLS-1$
 		this.window = window;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.actions.ActionFactory.IWorkbenchAction#dispose()
+	 */
+	public void dispose() {
+		//nothing to dispose
 	}
 	public void run() {
 		ISelection selection = window.getSelectionService().getSelection();
-		IProject[] selected;
+		IProject[] selected = null;
 		if (selection != null && !selection.isEmpty() && selection instanceof IStructuredSelection) {
 			selected = BuildSetAction.extractProjects(((IStructuredSelection)selection).toArray());
 		} else {
-			selected = new IProject[0];
+			//see if we can extract a selected project from the active editor
+			IWorkbenchPart part = window.getPartService().getActivePart();
+			if (part instanceof IEditorPart) {
+				IEditorInput input = ((IEditorPart)part).getEditorInput();
+				if (input instanceof IFileEditorInput)
+					selected = new IProject[] {((IFileEditorInput)input).getFile().getProject()};
+			}
 		}
-		new CleanDialog(window.getShell(), selected).open();
+		if (selected == null)
+			selected = new IProject[0];
+		new CleanDialog(window, selected).open();
 	}
 }

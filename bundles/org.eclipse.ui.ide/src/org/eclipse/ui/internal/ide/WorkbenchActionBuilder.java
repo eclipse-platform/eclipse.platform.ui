@@ -30,7 +30,6 @@ import org.eclipse.ui.IPerspectiveListener;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.ContributionItemFactory;
 import org.eclipse.ui.actions.NewWizardMenu;
@@ -47,10 +46,6 @@ import org.eclipse.ui.internal.util.StatusLineContributionItem;
  * Adds actions to a workbench window.
  */
 public final class WorkbenchActionBuilder {
-
-	//temporary flag to add back rebuild actions
-	public static boolean INCLUDE_REBUILD_ACTIONS = false;
-
 	private IWorkbenchWindow window;
 
 	/** 
@@ -120,9 +115,9 @@ public final class WorkbenchActionBuilder {
 	private IWorkbenchAction importResourcesAction;
 	private IWorkbenchAction exportResourcesAction;
 
-	private IWorkbenchAction rebuildAllAction; // Full build
-	IWorkbenchAction buildAllAction; // Incremental build
+	IWorkbenchAction buildAllAction; // Incremental workspace build
 	private IWorkbenchAction cleanAction;
+	private IWorkbenchAction toggleAutoBuildAction;
 	MenuManager buildWorkingSetMenu;
 	private IWorkbenchAction quickStartAction;
 	private IWorkbenchAction tipsAndTricksAction;
@@ -131,7 +126,6 @@ public final class WorkbenchActionBuilder {
 	private IWorkbenchAction addBookmarkAction;
 	private IWorkbenchAction addTaskAction;
 	IWorkbenchAction buildProjectAction;
-	private IWorkbenchAction rebuildProjectAction;
 	private IWorkbenchAction openProjectAction;
 	private IWorkbenchAction closeProjectAction;
 
@@ -461,10 +455,7 @@ public final class WorkbenchActionBuilder {
 		menu.add(buildProjectAction);
 		addWorkingSetBuildActions(menu);
 		menu.add(cleanAction);
-		if (INCLUDE_REBUILD_ACTIONS) {
-			menu.add(rebuildProjectAction);
-			menu.add(rebuildAllAction);
-		}
+		menu.add(toggleAutoBuildAction);
 		menu.add(new GroupMarker(IWorkbenchActionConstants.BUILD_EXT));
 		menu.add(new Separator());
 
@@ -557,38 +548,6 @@ public final class WorkbenchActionBuilder {
 		subMenu.add(nextPerspectiveAction);
 		subMenu.add(prevPerspectiveAction);
 	}
-	/**
-	 * Temporary backwards compatibility support for re-enabling the rebuild actions.
-	 * To be removed before 3.0
-	 */
-	public static void setIncludeRebuildActions(boolean include) {
-		//TODO remove before 3.0
-		INCLUDE_REBUILD_ACTIONS = include;
-		IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
-		for (int i = 0; i < windows.length; i++) {
-		    WorkbenchActionBuilder builder = IDEWorkbenchAdvisor.getActionBuilder(windows[i]);
-			builder.doSetIncludeRebuildActions(include);
-		}
-	}
-	void doSetIncludeRebuildActions(boolean include) {
-		IMenuManager menubar = actionBarConfigurer.getMenuManager();
-		IMenuManager manager = menubar.findMenuUsingPath(IWorkbenchActionConstants.M_PROJECT);
-		if (manager == null)
-			return;
-		try {
-			if (include) {
-				manager.insertAfter(IDEActionFactory.BUILD_PROJECT.getId(), rebuildProjectAction);
-				manager.insertAfter(IDEActionFactory.BUILD.getId(), rebuildAllAction);
-			} else {
-				manager.remove(IDEActionFactory.REBUILD_ALL.getId());
-				manager.remove(IDEActionFactory.REBUILD_PROJECT.getId());
-			}
-		} catch (IllegalArgumentException e) {
-		    // ignore
-		}
-		manager.update(false);
-	}
-
 	/**
 	 * Creates and returns the Help menu.
 	 */
@@ -918,8 +877,8 @@ public final class WorkbenchActionBuilder {
 		newWizardDropDownAction.dispose();
 		importResourcesAction.dispose();
 		exportResourcesAction.dispose();
-		rebuildAllAction.dispose();
 		cleanAction.dispose();
+		toggleAutoBuildAction.dispose();
 		buildAllAction.dispose();
 		if (quickStartAction != null) {
 			quickStartAction.dispose();
@@ -930,7 +889,6 @@ public final class WorkbenchActionBuilder {
 		addBookmarkAction.dispose();
 		addTaskAction.dispose();
 		buildProjectAction.dispose();
-		rebuildProjectAction.dispose();
 		openProjectAction.dispose();
 		closeProjectAction.dispose();
 	}
@@ -992,14 +950,14 @@ public final class WorkbenchActionBuilder {
 		exportResourcesAction = ActionFactory.EXPORT.create(getWindow());
 		registerGlobalAction(exportResourcesAction);
 		
-		rebuildAllAction = IDEActionFactory.REBUILD_ALL.create(getWindow());
-		registerGlobalAction(rebuildAllAction);
-
 		buildAllAction = IDEActionFactory.BUILD.create(getWindow());
 		registerGlobalAction(buildAllAction);
 
 		cleanAction = IDEActionFactory.BUILD_CLEAN.create(getWindow());
 		registerGlobalAction(cleanAction);
+
+		toggleAutoBuildAction = IDEActionFactory.BUILD_AUTOMATICALLY.create(getWindow());
+		registerGlobalAction(toggleAutoBuildAction);
 
 		saveAction = ActionFactory.SAVE.create(getWindow());
 		registerGlobalAction(saveAction);
@@ -1189,9 +1147,6 @@ public final class WorkbenchActionBuilder {
 		buildProjectAction = IDEActionFactory.BUILD_PROJECT.create(getWindow());
 		registerGlobalAction(buildProjectAction);
 		
-		rebuildProjectAction = IDEActionFactory.REBUILD_PROJECT.create(getWindow());
-		registerGlobalAction(rebuildProjectAction);
-
 		openProjectAction = IDEActionFactory.OPEN_PROJECT.create(getWindow());
 		registerGlobalAction(openProjectAction);
 
@@ -1224,6 +1179,7 @@ public final class WorkbenchActionBuilder {
 		//update menu bar actions in project menu
 		buildAllAction.setEnabled(!autoBuilding);
 		buildProjectAction.setEnabled(!autoBuilding);
+		toggleAutoBuildAction.setChecked(autoBuilding);
 
 		//update the cool bar build button
 		ICoolBarManager coolBarManager = actionBarConfigurer.getCoolBarManager();

@@ -12,8 +12,6 @@ package org.eclipse.ui.internal.ide.misc;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -22,7 +20,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.ide.WorkbenchActionBuilder;
 /**
  * Temporary "Work in Progress" PreferencePage for Job control
  * 
@@ -31,9 +28,6 @@ import org.eclipse.ui.internal.ide.WorkbenchActionBuilder;
 public class WorkInProgressPreferencePage extends PreferencePage
 		implements
 			IWorkbenchPreferencePage {
-	private static final int SLOW = Platform.MIN_PERFORMANCE;
-	private static final int FAST = Platform.MAX_PERFORMANCE;
-	Button buildPreference;
 	Button newProgressPreference;
 	/*
 	 * (non-Javadoc)
@@ -42,25 +36,12 @@ public class WorkInProgressPreferencePage extends PreferencePage
 	 */
 	protected Control createContents(Composite parent) {
 		Composite spacer = new Composite(parent, SWT.NONE);
-		createBuildControls(spacer);
 		createNewProgressControls(spacer);
 		GridData spacerData = new GridData(GridData.FILL_BOTH
 				| GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL);
 		spacer.setLayoutData(spacerData);
 		spacer.setLayout(new GridLayout());
 		return spacer;
-	}
-	private void createBuildControls(Composite parent) {
-		buildPreference = new Button(parent, SWT.CHECK | SWT.TOP);
-		buildPreference.setText("Restore 2.1 rebuild actions for this session"); //$NON-NLS-1$
-		buildPreference
-				.setSelection(WorkbenchActionBuilder.INCLUDE_REBUILD_ACTIONS);
-		buildPreference.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				WorkbenchActionBuilder.setIncludeRebuildActions(buildPreference
-						.getSelection());
-			}
-		});
 	}
 	private void createNewProgressControls(Composite parent) {
 		newProgressPreference = new Button(parent, SWT.CHECK | SWT.TOP);

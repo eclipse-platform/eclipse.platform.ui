@@ -510,7 +510,7 @@
             name="%command.buildClean.name"
             description="%command.buildClean.description"
             categoryId="org.eclipse.ui.category.project"
-            id="org.eclipse.ui.internal.newbuild.buildClean">
+            id="org.eclipse.ui.project.cleanAction">
       </command>
       <command
             name="%command.projectProperties.name"
