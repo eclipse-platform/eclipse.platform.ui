@@ -1413,6 +1413,11 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	public IResource findExistingResourceVariant(IPath target) {
 		if (!workspace.tree.includesIgnoreCase(target))
 			return null;
+		//ignore phantoms
+		ResourceInfo info = (ResourceInfo) workspace.tree.getElementDataIgnoreCase(target);
+		if (info != null && info.isSet(M_PHANTOM))
+			return null;
+		//resort to slow lookup to find exact case variant
 		IPath result = Path.ROOT;
 		int segmentCount = target.segmentCount();
 		for (int i = 0; i < segmentCount; i++) {

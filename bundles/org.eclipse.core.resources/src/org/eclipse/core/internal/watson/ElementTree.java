@@ -65,13 +65,6 @@ import org.eclipse.osgi.util.NLS;
  * also be re-oriented in terms of the current element tree using the
  * <code>reroot()</code> operation.
  *
- * Users of ElementTrees can also compute deltas between any pair
- * of arbitrary ElementTrees (they need not have any ancestors in common).
- * These deltas are obtained with the <code>computeDeltaWith()</code>
- * method, which returns an instance of <code>ElementTreeDelta</code>.
- * @see #computeDeltaWith(ElementTree, IElementComparator)
- * @see ElementTreeDelta
- *
  * Classes are also available for tree serialization and navigation.
  * @see ElementTreeReader
  * @see ElementTreeWriter
@@ -97,6 +90,8 @@ public class ElementTree {
 	private volatile ChildIDsCache childIDsCache = null;
 
 	private volatile DataTreeLookup lookupCache = null;
+
+	private volatile DataTreeLookup lookupCacheIgnoreCase = null;
 
 	private static int treeCounter = 0;
 	private int treeStamp;
@@ -189,6 +184,7 @@ public class ElementTree {
 		}
 		// Set the lookup to be this newly created object.
 		lookupCache = DataTreeLookup.newLookup(key, true, data, true);
+		lookupCacheIgnoreCase = null;
 	}
 
 	/**
@@ -211,7 +207,7 @@ public class ElementTree {
 		childIDsCache = null;
 		// Clear the lookup cache, in case the element being created is the same
 		// as for the last lookup.
-		lookupCache = null;
+		lookupCache = lookupCacheIgnoreCase = null;
 		try {
 			/* don't copy the implicit root node of the subtree */
 			IPath[] children = subtree.getChildren(subtree.getRoot());
@@ -244,7 +240,7 @@ public class ElementTree {
 		childIDsCache = null;
 		// Clear the lookup cache, in case the element being deleted is the same
 		// as for the last lookup.
-		lookupCache = null;
+		lookupCache = lookupCacheIgnoreCase = null;
 		try {
 			tree.deleteChild(key.removeLastSegments(1), key.lastSegment());
 		} catch (ObjectNotFoundException e) {
@@ -366,11 +362,26 @@ public class ElementTree {
 		/* don't allow modification of the implicit root */
 		if (key.isRoot())
 			return null;
-
 		DataTreeLookup lookup = lookupCache; // Grab it in case it's replaced concurrently.
-		if (lookup == null || lookup.key != key) {
+		if (lookup == null || lookup.key != key)
 			lookupCache = lookup = tree.lookup(key);
-		}
+		if (lookup.isPresent)
+			return lookup.data;
+		elementNotFound(key);
+		return null; // can't get here
+	}
+
+	/**
+	 * Returns the element data for the given element identifier.
+	 * The given element must be present in this tree.
+	 */
+	public synchronized Object getElementDataIgnoreCase(IPath key) {
+		/* don't allow modification of the implicit root */
+		if (key.isRoot())
+			return null;
+		DataTreeLookup lookup = lookupCacheIgnoreCase; // Grab it in case it's replaced concurrently.
+		if (lookup == null || lookup.key != key)
+			lookupCacheIgnoreCase = lookup = tree.lookupIgnoreCase(key);
 		if (lookup.isPresent)
 			return lookup.data;
 		elementNotFound(key);
@@ -501,7 +512,7 @@ public class ElementTree {
 			tree.immutable();
 			/* need to clear the lookup cache since it reports whether results were found
 			 in the topmost delta, and the order of deltas is changing */
-			lookupCache = null;
+			lookupCache = lookupCacheIgnoreCase = null;
 			/* reroot the delta chain at this tree */
 			tree.reroot();
 		}
@@ -524,8 +535,11 @@ public class ElementTree {
 	 * key, ignoring the case of the key, and false otherwise.
 	 */
 	public boolean includesIgnoreCase(IPath key) {
-		//don't use cache because it's a different kind of lookup
-		return tree.lookupIgnoreCase(key).isPresent;
+		DataTreeLookup lookup = lookupCacheIgnoreCase; // Grab it in case it's replaced concurrently.
+		if (lookup == null || lookup.key != key) {
+			lookupCacheIgnoreCase = lookup = tree.lookupIgnoreCase(key);
+		}
+		return lookup.isPresent;
 	}
 
 	protected void initialize(DataTreeNode rootNode) {
@@ -610,7 +624,8 @@ public class ElementTree {
 	 * tree will not affect this one.
 	 */
 	public synchronized ElementTree newEmptyDelta() {
-		lookupCache = null; // Don't want old trees hanging onto cached infos.
+		// Don't want old trees hanging onto cached infos.
+		lookupCache = lookupCacheIgnoreCase = null;
 		return new ElementTree(this);
 	}
 
@@ -643,7 +658,7 @@ public class ElementTree {
 				try {
 					Object newData = oldData.clone();
 					tree.setData(key, newData);
-					lookupCache = null;
+					lookupCache = lookupCacheIgnoreCase = null;
 					return newData;
 				} catch (ObjectNotFoundException e) {
 					elementNotFound(key);
@@ -669,7 +684,7 @@ public class ElementTree {
 		Assert.isNotNull(key);
 		// Clear the lookup cache, in case the element being modified is the same
 		// as for the last lookup.
-		lookupCache = null;
+		lookupCache = lookupCacheIgnoreCase = null;
 		try {
 			tree.setData(key, data);
 		} catch (ObjectNotFoundException e) {
