@@ -53,8 +53,16 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
 
    <element name="activeKeyConfiguration">
       <annotation>
+         <appInfo>
+            <meta.element deprecated="true"/>
+         </appInfo>
          <documentation>
-            This element is used to define the initial active key configuration for Eclipse. If more than one of these elements exist, only the last declared element (in order of reading the plugin registry) is considered valid.
+            &lt;p&gt;
+This element is used to define the initial active key configuration for Eclipse. If more than one of these elements exist, only the last declared element (in order of reading the plugin registry) is considered valid.
+&lt;/p&gt;
+&lt;p&gt;
+This element has been replaced with a preference.  If your application needs to change the default key configuration, then specify the following in your &lt;code&gt;plugin_customization.ini&lt;/code&gt; file: &lt;code&gt;org.eclipse.ui/KEY_CONFIGURATION_ID=your.default.key.configuration.id&lt;/code&gt;.
+&lt;/p&gt;
          </documentation>
       </annotation>
       <complexType>
@@ -172,8 +180,11 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
 
    <element name="keyBinding">
       <annotation>
+         <appInfo>
+            <meta.element deprecated="true"/>
+         </appInfo>
          <documentation>
-            This element allows one to assign key sequences to commands.
+            This element allows one to assign key sequences to commands.  Please use the &quot;org.eclipse.ui.bindings&quot; extension point instead.
          </documentation>
       </annotation>
       <complexType>
@@ -270,8 +281,11 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
 
    <element name="keyConfiguration">
       <annotation>
+         <appInfo>
+            <meta.element deprecated="true"/>
+         </appInfo>
          <documentation>
-            This element is used to define key configurations. If more than one of these elements exist with the same &lt;code&gt;id&lt;/code&gt; attribute, only the last declared element (in order of reading the plugin registry) is considered valid.
+            This element is used to define key configurations. If more than one of these elements exist with the same &lt;code&gt;id&lt;/code&gt; attribute, only the last declared element (in order of reading the plugin registry) is considered valid.  Please use the &quot;org.eclipse.ui.bindings&quot; extension point instead.
          </documentation>
       </annotation>
       <complexType>
