@@ -80,14 +80,19 @@ public class RemoveAllTerminatedAction extends AbstractRemoveAllActionDelegate i
 		getAction().setEnabled(false);
 	}
 
+	protected void doAction() {
+		Object[] elements = getElements();
+		removeTerminatedLaunches(elements);
+	}
+	
 	/**
 	 * Returns the top level elements in the active debug
 	 * view, or <code>null</code> if none.
 	 * 
 	 * @return array of object
 	 */
-	protected Object[] getElements() {
-		IDebugView view = (IDebugView)getView().getAdapter(IDebugView.class);
+	public Object[] getElements() {
+		IDebugView view = getDebugView();
 		if (view != null) {
 			Viewer viewer = view.getViewer();
 			if (viewer instanceof StructuredViewer) {
@@ -99,9 +104,7 @@ public class RemoveAllTerminatedAction extends AbstractRemoveAllActionDelegate i
 		return null;
 	}
 
-	protected void doAction() {
-		Object[] elements = getElements();
-		ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
+	public static void removeTerminatedLaunches(Object[] elements) {
 		List removed = new ArrayList();
 		for (int i = 0; i < elements.length; i++) {
 			if (elements[i] instanceof ILaunch) {
@@ -112,8 +115,13 @@ public class RemoveAllTerminatedAction extends AbstractRemoveAllActionDelegate i
 			}
 		}
 		if (!removed.isEmpty()) {
+			ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
 			manager.removeLaunches((ILaunch[])removed.toArray(new ILaunch[removed.size()]));
-		}		
+		}				
+	}
+	
+	protected IDebugView getDebugView() {
+		return (IDebugView)getView().getAdapter(IDebugView.class);
 	}
 
 	/**

@@ -8,6 +8,7 @@ http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
@@ -50,6 +51,7 @@ class ProcessDropDownAction extends Action implements IMenuCreator {
 		
 		fMenu= new Menu(parent);
 		int mode = fView.getMode();
+		boolean terminatedLaunches = false;
 		IProcess[] processes = DebugPlugin.getDefault().getLaunchManager().getProcesses();
 		IProcess current = fView.getProcess();
 		for (int i = 0; i < processes.length; i++) {
@@ -57,9 +59,19 @@ class ProcessDropDownAction extends Action implements IMenuCreator {
 			Action action = new ShowProcessAction(fView, process);  
 			action.setChecked(mode == ConsoleView.MODE_SPECIFIC_PROCESS && process.equals(current));
 			addActionToMenu(fMenu, action);
+			ILaunch launch = process.getLaunch();
+			if (launch.isTerminated()) {
+				terminatedLaunches = true;
+			}
 		}
 		if (processes.length > 0) {
-			new MenuItem(fMenu, SWT.SEPARATOR);
+			addMenuSeparator();
+		}
+		
+		if (terminatedLaunches) {
+			Action action = new ConsoleRemoveAllTerminatedAction();
+			addActionToMenu(fMenu, action);
+			addMenuSeparator();
 		}
 		
 		Action action = new ShowCurrentProcessAction(fView);
@@ -68,13 +80,17 @@ class ProcessDropDownAction extends Action implements IMenuCreator {
 			
 		return fMenu;
 	}
-
+	
 	protected void addActionToMenu(Menu parent, Action action) {
 		ActionContributionItem item= new ActionContributionItem(action);
 		item.fill(parent, -1);
 	}
 
+	protected void addMenuSeparator() {
+		new MenuItem(fMenu, SWT.SEPARATOR);		
+	}
+
 	public void run() {
-		// do nothing - this is menu
+		// do nothing - this is a menu
 	}
 }
