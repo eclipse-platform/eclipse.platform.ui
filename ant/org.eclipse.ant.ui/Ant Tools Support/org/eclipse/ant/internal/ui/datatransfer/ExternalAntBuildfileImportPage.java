@@ -517,7 +517,7 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 				getJavacNodes(javacNodes, node);
 			} else if (node instanceof AntTaskNode) {
 				AntTaskNode task= (AntTaskNode)node;
-				if (task.getName() == "javac") { //$NON-NLS-1$
+				if (task.getName().equals("javac")) { //$NON-NLS-1$
 					javacNodes.add(task);
 				}
 			}
