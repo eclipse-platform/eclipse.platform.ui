@@ -256,11 +256,8 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	 * @throws BadLocationException if the position is not a valid document position
 	 */
 	protected void addPosition(IDocument document, Position position) throws BadLocationException {
-		if (document != null) {
-			synchronized (document) {
-				document.addPosition(position);
-			}
-		}
+		if (document != null)
+			document.addPosition(position);
 	}
 	
 	/**
@@ -273,11 +270,8 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	 * @since 3.0
 	 */
 	protected void removePosition(IDocument document, Position position) {
-		if (document != null) {
-			synchronized (document) {
-				document.removePosition(position);
-			}
-		}
+		if (document != null)
+			document.removePosition(position);
 	}
 
 	/*
