@@ -5,32 +5,7 @@ var isIE = navigator.userAgent.toLowerCase().indexOf('msie') != -1;
 
 
 // parse the arguments passed to the page
-var args = parseQueryString ();
-
-/**
- * Parses the parameters passed to the url
- */
-function parseQueryString (str) 
-{
-    str = str ? str : unescape(window.location.href);
-    var longquery = str.split("?");
-    if (longquery.length <= 1) return "";
-    var query = longquery[1];
-    var args = new Object();
-    if (query) 
-    {
-        var fields = query.split('&');
-        for (var f = 0; f < fields.length; f++) 
-        {
-            var field = fields[f].split('=');
-            args[unescape(field[0].replace(/\+/g, ' '))] = unescape(field[1].replace(/\+/g, ' '));
-        }
-    }
-    return args;
-}
-
-
-
+var args = parent.parent.parseQueryString ();
 
 /**
  * Returns the node with specified tag
