@@ -17,6 +17,7 @@ import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.model.ConfigurationActivityModel;
 import org.eclipse.update.internal.model.InstallChangeParser;
 
+
 /**
  * This class manages the reconciliation.
  */
@@ -28,6 +29,9 @@ public class SiteReconciler extends ModelObject implements IWritable {
 	private Date date;
 	private static final String DEFAULT_INSTALL_CHANGE_NAME = "delta.xml";
 	//$NON-NLS-1$	
+
+	// from SiteLocal
+	private static final String UPDATE_STATE_SUFFIX = ".metadata";
 
 	/**
 	 * 
@@ -65,6 +69,11 @@ public class SiteReconciler extends ModelObject implements IWritable {
 		IConfiguredSite[] oldConfiguredSites = new IConfiguredSite[0];
 		newFoundFeatures = new ArrayList();
 
+		// TRACE
+		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER) {
+			UpdateCore.debug("Old install configuration" + ((oldInstallConfiguration == null) ? "NULL" : oldInstallConfiguration.getLabel()));
+		}
+
 		// sites from the current configuration
 		if (oldInstallConfiguration != null) {
 			oldConfiguredSites = oldInstallConfiguration.getConfiguredSites();
@@ -79,8 +88,13 @@ public class SiteReconciler extends ModelObject implements IWritable {
 
 		// 16215
 		// 22913, if already optimistic, do not check
-		if (!isOptimistic)
+		if (!isOptimistic) {
 			isOptimistic = platformBaseChanged(oldConfiguredSites);
+			// TRACE
+			if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER) {
+				UpdateCore.debug("Platform has changed? :" + isOptimistic);
+			}
+		}
 
 		// check if sites from the platform are new sites or modified sites
 		// if they are new add them, if they are modified, compare them with the old
@@ -99,15 +113,18 @@ public class SiteReconciler extends ModelObject implements IWritable {
 
 			// check if SiteEntry has been possibly modified
 			// if it was part of the previously known configuredSite; reconcile
-			for (int index = 0; index < oldConfiguredSites.length && !found; index++) {
-				currentConfigurationSite = oldConfiguredSites[index];
-				URL currentConfigURL = currentConfigurationSite.getSite().getURL();
+			// bug 33493, do not attempt to preserve old state if optimistic.Site is considered new
+			if (!isOptimistic) {
+				for (int index = 0; index < oldConfiguredSites.length && !found; index++) {
+					currentConfigurationSite = oldConfiguredSites[index];
+					URL currentConfigURL = currentConfigurationSite.getSite().getURL();
 
-				if (UpdateManagerUtils.sameURL(resolvedURL, currentConfigURL)) {
-					found = true;
-					ConfiguredSite reconciledConfiguredSite = reconcile(currentConfigurationSite, isOptimistic);
-					reconciledConfiguredSite.setPreviousPluginPath(currentSiteEntry.getSitePolicy().getList());
-					newInstallConfiguration.addConfiguredSite(reconciledConfiguredSite);
+					if (UpdateManagerUtils.sameURL(resolvedURL, currentConfigURL)) {
+						found = true;
+						ConfiguredSite reconciledConfiguredSite = reconcile(currentConfigurationSite, isOptimistic);
+						reconciledConfiguredSite.setPreviousPluginPath(currentSiteEntry.getSitePolicy().getList());
+						newInstallConfiguration.addConfiguredSite(reconciledConfiguredSite);
+					}
 				}
 			}
 
@@ -175,9 +192,27 @@ public class SiteReconciler extends ModelObject implements IWritable {
 		return saveNewFeatures(newInstallConfiguration);
 	}
 
-	/**
-	 * 
+	/*
+	 * Get update state location relative to platform configuration
 	 */
+	private static URL getUpdateStateLocation(IPlatformConfiguration config) throws IOException {
+		// retrieves directory location for update state files. This
+		// directory name is constructed by adding a well-known suffix
+		// to the name of the corresponding platform  configuration. This
+		// way, we can have multiple platform configuration files in
+		// the same directory without ending up with update state conflicts.
+		// For example: platform configuration file:C:/platform.cfg results
+		// in update state location file:C:/platform.cfg.update/
+		URL configLocation = Platform.resolve(config.getConfigurationLocation());
+		String temp = configLocation.toExternalForm();
+		temp += UPDATE_STATE_SUFFIX + "/";
+		URL updateLocation = new URL(temp);
+		return updateLocation;
+	}
+
+	/**
+	* 
+	*/
 	/*package */
 	URL resolveSiteEntry(IPlatformConfiguration.ISiteEntry newSiteEntry) throws CoreException {
 		URL resolvedURL = null;
@@ -201,9 +236,9 @@ public class SiteReconciler extends ModelObject implements IWritable {
 	 * We have to remove D and Configure B
 	 * 
 	 * We copy the oldConfig without the Features
-	 * Then we loop through the features we found on teh real site
+	 * Then we loop through the features we found on the real site
 	 * If they didn't exist before we add them as configured
-	 * Otherwise we use the old policy and add them to teh new configuration site
+	 * Otherwise we use the old policy and add them to the new configuration site
 	 */
 	private ConfiguredSite reconcile(IConfiguredSite oldConfiguredSite, boolean isOptimistic) throws CoreException {
 
@@ -1181,18 +1216,7 @@ public class SiteReconciler extends ModelObject implements IWritable {
 				// 25202 do not return right now, the peer children may be ok
 			}
 			if (child != null){
-				// regression bug
-				// only expand if this feature is not a patch
-				boolean isPatch = false;
-				IImport[] imports = child.getImports();
-				for (int i = 0; i < imports.length; i++) {
-					if (imports[i].isPatch()){
-						 isPatch=true;
-						 break;
-					}
-				}
-				
-				if (!isPatch)
+				if (!UpdateCore.isPatch(child))
 					expandEfixFeature(child, features, configuredSite);
 			}
 		}

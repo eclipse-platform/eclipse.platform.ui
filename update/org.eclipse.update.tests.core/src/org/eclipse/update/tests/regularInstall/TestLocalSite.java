@@ -202,7 +202,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		// there are 2 configuration
 		String time = ""+site.getCurrentConfiguration().getCreationDate().getTime();
 		URL location = ((SiteLocal)site).getLocationURL();		
-		File file = new File(new URL(location,"Config"+time+".xml").getFile());
+		File file = new File(new URL(location,SiteLocal.DEFAULT_CONFIG_PREFIX+time+".xml").getFile());
 		assertTrue("new configuration does not exist", file.exists());
 		
 		// teh current one points to a real fature
@@ -283,7 +283,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		// there are 2 configuration
 		String time = ""+site.getCurrentConfiguration().getCreationDate().getTime();
 		URL location = ((SiteLocal)site).getLocationURL();		
-		File file = new File(new URL(location,"Config"+time+".xml").getFile());
+		File file = new File(new URL(location,SiteLocal.DEFAULT_CONFIG_PREFIX+time+".xml").getFile());
 		assertTrue("new configuration does not exist", file.exists());
 		
 		// teh current one points to a real fature
@@ -372,7 +372,7 @@ public void testRetriveConfigHTTPInstallNotEnable() throws Exception {
 	// there are 2 configuration
 	String time = ""+site.getCurrentConfiguration().getCreationDate().getTime();
 	URL location = ((SiteLocal)site).getLocationURL();		
-	File file = new File(new URL(location,"Config"+time+".xml").getFile());
+	File file = new File(new URL(location,SiteLocal.DEFAULT_CONFIG_PREFIX+time+".xml").getFile());
 	assertTrue("new configuration does not exist", file.exists());
 		
 	// teh current one points to a real fature

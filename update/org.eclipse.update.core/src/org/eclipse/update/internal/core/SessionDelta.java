@@ -52,10 +52,11 @@ public class SessionDelta extends ModelObject implements ISessionDelta {
 	 * @see ISessionDelta#process(IProgressMonitor)
 	 */
 	public void process(IProgressMonitor pm) throws CoreException {
-		if (featureReferences.isEmpty()) return;
+		if (featureReferences.isEmpty())
+			return;
 		IFeatureReference[] selected = new IFeatureReference[featureReferences.size()];
 		featureReferences.toArray(selected);
-		process(selected,pm);
+		process(selected, pm);
 	}
 
 	/*
@@ -128,10 +129,13 @@ public class SessionDelta extends ModelObject implements ISessionDelta {
 		localSite.save();
 	}
 
-	/**
-	 * return true if this feature should be configured 
-	 * A feature should be configure if it has the highest version across 
-	 * all configured features with the same identifier
+	/*
+	 * return true if this feature should be configured A feature should be
+	 * configure if it has the highest version across all configured features
+	 * with the same identifier 
+	 * 
+	 * Disable all other lower versions of the same feature in all the
+	 * configured sites
 	 */
 	private boolean enable(IFeature newlyConfiguredFeatures) throws CoreException {
 
@@ -151,9 +155,13 @@ public class SessionDelta extends ModelObject implements ISessionDelta {
 						if (result == 1) {
 							ConfiguredSite cSite = (ConfiguredSite) configuredSites[i];
 							cSite.unconfigure(feature);
-							return true;
+							if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_CONFIGURATION)
+								UpdateCore.debug("Found an old version of the feature to disable:" + feature);
 						}
 						if (result == 2) {
+							//	we found at least one higher version, do not enable this feature
+							if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_CONFIGURATION)
+								UpdateCore.debug("Found an old version of the feature with a higher version:" + feature);
 							return false;
 						}
 					}
@@ -162,7 +170,7 @@ public class SessionDelta extends ModelObject implements ISessionDelta {
 				}
 			}
 		}
-		// feature not found, configure it then
+		// feature not found, or no better version found, configure it then
 		return true;
 	}
 
@@ -213,15 +221,16 @@ public class SessionDelta extends ModelObject implements ISessionDelta {
 	 * @see org.eclipse.update.configuration.ISessionDelta#process(org.eclipse.update.core.IFeatureReference, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void process(IFeatureReference[] selected, IProgressMonitor pm) throws CoreException {
-		
+
 		createInstallConfiguration();
-		if (pm==null) pm = new NullProgressMonitor();
+		if (pm == null)
+			pm = new NullProgressMonitor();
 
 		// process all feature references to configure
 		// find the configured site each feature belongs to
 		if (process == ENABLE) {
 			if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_CONFIGURATION)
-			UpdateCore.warn("ENABLE SESSION DELTA");
+				UpdateCore.warn("ENABLE SESSION DELTA");
 			if (featureReferences != null && featureReferences.size() > 0) {
 				// manage ProgressMonitor
 				int nbFeatures = featureReferences.size();
@@ -249,6 +258,8 @@ public class SessionDelta extends ModelObject implements ISessionDelta {
 							// is configured across sites [16502]
 							if (enable(featureToConfigure)) {
 								configSite.configure(featureToConfigure);
+								if (UpdateCore.isPatch(featureToConfigure))
+									disablePatchedFeature(featureToConfigure, configSite);
 							} else {
 								configSite.unconfigure(featureToConfigure);
 							}
@@ -258,7 +269,7 @@ public class SessionDelta extends ModelObject implements ISessionDelta {
 							UpdateCore.warn("Unable to configure feature:" + featureToConfigure, e);
 						}
 					} else {
-						UpdateCore.warn("Unable to configure null feature:" + ref,null);
+						UpdateCore.warn("Unable to configure null feature:" + ref, null);
 					}
 				}
 			}
@@ -266,5 +277,41 @@ public class SessionDelta extends ModelObject implements ISessionDelta {
 
 		delete();
 		saveLocalSite();
+	}
+
+	/*
+	 * Disable any patched features 
+	 * 
+	 * This occurs in the same configuredSite as patch is always installed in the same site as the feature
+	 * it patches
+	 */
+	private void disablePatchedFeature(IFeature patchToEnable, IConfiguredSite configSite) {
+		try {
+			IIncludedFeatureReference[] children = patchToEnable.getIncludedFeatureReferences();
+			IFeature child = null;
+			for (int i = 0; i < children.length; i++) {
+				try {
+					child = children[i].getFeature(true, configSite, null);
+				} catch (CoreException e) {
+					//nothing
+				}
+				if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_CONFIGURATION)
+					UpdateCore.debug("Checking if children :" + child + " of efix " + patchToEnable + " should be enabled");
+				if (child != null) {
+					if (UpdateCore.isPatch(child))
+						disablePatchedFeature(child, configSite);
+					else
+						try {
+							enable(child);
+						} catch (CoreException e) {
+							if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_WARNINGS)
+								UpdateCore.warn("Unable to enable child " + child, e);
+						}
+				}
+			}
+		} catch (CoreException e) {
+			if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_WARNINGS)
+				UpdateCore.warn("Unable to retrieve children of patch " + patchToEnable, e);
+		}
 	}
 }

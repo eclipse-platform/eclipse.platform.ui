@@ -11,11 +11,16 @@ import java.util.ArrayList;
 
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.boot.IPlatformConfiguration;
-
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Plugin;
 import org.eclipse.update.configuration.IInstallConfiguration;
-import org.eclipse.update.core.*;
+import org.eclipse.update.core.IFeature;
+import org.eclipse.update.core.IImport;
 import org.eclipse.update.core.JarContentReference;
+import org.eclipse.update.core.SiteManager;
 import org.eclipse.update.core.Utilities;
 
 
@@ -282,4 +287,19 @@ public class UpdateCore extends Plugin {
 		}*/
 		return response;
 	}
+	
+	/*
+	 * Returns true if the feature is a patch
+	 */
+	public static boolean isPatch(IFeature candidate) {
+		IImport[] imports = candidate.getImports();
+
+		for (int i = 0; i < imports.length; i++) {
+			IImport iimport = imports[i];
+			if (iimport.isPatch())
+				return true;
+		}
+		return false;
+	}
+	
 }
