@@ -88,7 +88,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 	private final class CommandRecord {
 
 		String commandId;
-		KeySequence keySequence;
+		Sequence keySequence;
 		String scopeId;
 		String keyConfigurationId;
 		Set customSet;
@@ -260,7 +260,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 	private List preferenceKeyBindings;
 	private List preferenceKeyConfigurations;
 
-	private ActiveKeyConfiguration activeKeyConfiguration;	
+	private ActiveConfiguration activeKeyConfiguration;	
 	private List activeKeyConfigurations;
 	private List keyConfigurations;
 	private SortedMap keyConfigurationsById;
@@ -420,8 +420,8 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		int index = comboActiveKeyConfiguration.getSelectionIndex();
 				
 		if (index >= 0) {
-			KeyConfiguration keyConfiguration = (KeyConfiguration) keyConfigurationsByName.get(comboActiveKeyConfiguration.getItem(index));
-			activeKeyConfiguration = ActiveKeyConfiguration.create(null, keyConfiguration.getId());
+			Configuration keyConfiguration = (Configuration) keyConfigurationsByName.get(comboActiveKeyConfiguration.getItem(index));
+			activeKeyConfiguration = ActiveConfiguration.create(null, keyConfiguration.getId());
 			preferenceActiveKeyConfigurations.add(activeKeyConfiguration);
 		}
 
@@ -437,7 +437,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 
 		if (!Util.equals(activeKeyConfigurations, this.activeKeyConfigurations)) {
 			this.activeKeyConfigurations = Collections.unmodifiableList(activeKeyConfigurations);
-			activeKeyConfiguration = (ActiveKeyConfiguration) this.activeKeyConfigurations.get(this.activeKeyConfigurations.size() - 1);				
+			activeKeyConfiguration = (ActiveConfiguration) this.activeKeyConfigurations.get(this.activeKeyConfigurations.size() - 1);				
 		}
 		
 		List keyConfigurations = new ArrayList();
@@ -447,8 +447,8 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 
 		if (!Util.equals(keyConfigurations, this.keyConfigurations)) {
 			this.keyConfigurations = Collections.unmodifiableList(keyConfigurations);
-			keyConfigurationsById = Collections.unmodifiableSortedMap(KeyConfiguration.sortedMapById(this.keyConfigurations));
-			keyConfigurationsByName = Collections.unmodifiableSortedMap(KeyConfiguration.sortedMapByName(this.keyConfigurations));
+			keyConfigurationsById = Collections.unmodifiableSortedMap(Configuration.sortedMapById(this.keyConfigurations));
+			keyConfigurationsByName = Collections.unmodifiableSortedMap(Configuration.sortedMapByName(this.keyConfigurations));
 			Set keyConfigurationNameSet = keyConfigurationsByName.keySet();
 			comboActiveKeyConfiguration.setItems((String[]) keyConfigurationNameSet.toArray(new String[keyConfigurationNameSet.size()]));
 			comboKeyConfiguration.setItems((String[]) keyConfigurationNameSet.toArray(new String[keyConfigurationNameSet.size()]));
@@ -457,7 +457,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		int index = -1;
 			
 		if (activeKeyConfiguration != null) {
-			KeyConfiguration keyConfiguration = (KeyConfiguration) keyConfigurationsById.get(activeKeyConfiguration.getValue());
+			Configuration keyConfiguration = (Configuration) keyConfigurationsById.get(activeKeyConfiguration.getValue());
 
 			if (keyConfiguration != null)
 				index = comboActiveKeyConfiguration.indexOf(keyConfiguration.getName());
@@ -478,7 +478,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		Iterator iterator = keyBindingSet.iterator();
 		
 		while (iterator.hasNext()) {
-			KeyBinding keyBinding = (KeyBinding) iterator.next();				
+			Binding keyBinding = (Binding) iterator.next();				
 			set(tree, keyBinding, false);			
 		}
 
@@ -488,9 +488,9 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
 			
-			if (object instanceof KeySequence) {
-				KeySequence keySequence = (KeySequence) object;
-				String name = keySequence.toString();
+			if (object instanceof Sequence) {
+				Sequence keySequence = (Sequence) object;
+				String name = keySequence.formatKeySequence();
 				keySequencesByName.put(name, keySequence);
 			}
 		}		
@@ -886,7 +886,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		}
 
 		buildTableCommand();
-		KeySequence keySequence = getKeySequence();
+		Sequence keySequence = getKeySequence();
 		String scopeId = getScopeId();
 		String keyConfigurationId = getKeyConfigurationId();
 		selectTableCommand(scopeId, keyConfigurationId, keySequence);				
@@ -913,7 +913,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 	}
 
 	private void selectedComboKeySequence() {
-		KeySequence keySequence = getKeySequence();
+		Sequence keySequence = getKeySequence();
 		String scopeId = getScopeId();
 		String keyConfigurationId = getKeyConfigurationId();
 		selectTableCommand(scopeId, keyConfigurationId, keySequence);						
@@ -925,7 +925,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 	}
 
 	private void selectedComboScope() {
-		KeySequence keySequence = getKeySequence();
+		Sequence keySequence = getKeySequence();
 		String scopeId = getScopeId();
 		String keyConfigurationId = getKeyConfigurationId();
 		selectTableCommand(scopeId, keyConfigurationId, keySequence);
@@ -934,7 +934,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 	}
 
 	private void selectedComboKeyConfiguration() {
-		KeySequence keySequence = getKeySequence();
+		Sequence keySequence = getKeySequence();
 		String scopeId = getScopeId();
 		String keyConfigurationId = getKeyConfigurationId();
 		selectTableCommand(scopeId, keyConfigurationId, keySequence);
@@ -943,8 +943,8 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 	}
 
 	private void selectedButtonChange() {
-		KeySequence keySequence = getKeySequence();
-		boolean validKeySequence = keySequence != null && !keySequence.getKeyStrokes().isEmpty();
+		Sequence keySequence = getKeySequence();
+		boolean validKeySequence = keySequence != null && !keySequence.getStrokes().isEmpty();
 		String scopeId = getScopeId();
 		boolean validScopeId = scopeId != null && scopesById.get(scopeId) != null;	
 		String keyConfigurationId = getKeyConfigurationId();
@@ -965,13 +965,13 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		
 			if (commandRecord == null)
 				// TODO constant RANK_PREFERENCE instead of 0
-				set(tree, KeyBinding.create(commandId, keyConfigurationId, keySequence, "", "", null, 0, scopeId), true);			 
+				set(tree, Binding.create(keyConfigurationId, commandId, "", "", null, 0, scopeId, keySequence), true);			 
 			else {
 				if (!commandRecord.customSet.isEmpty())
 					clear(tree, keySequence, scopeId, keyConfigurationId);
 				else
 					// TODO constant RANK_PREFERENCE instead of 0
-					set(tree, KeyBinding.create(null, keyConfigurationId, keySequence, "", "", null, 0, scopeId), true);			 
+					set(tree, Binding.create(keyConfigurationId, null, "", "", null, 0, scopeId, keySequence), true);			 
 			}
 
 			commandRecords.clear();
@@ -1005,8 +1005,8 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 
 		boolean commandSelected = command != null;
 
-		KeySequence keySequence = getKeySequence();
-		boolean validKeySequence = keySequence != null && !keySequence.getKeyStrokes().isEmpty();
+		Sequence keySequence = getKeySequence();
+		boolean validKeySequence = keySequence != null && !keySequence.getStrokes().isEmpty();
 		String scopeId = getScopeId();
 		boolean validScopeId = scopeId != null && scopesById.get(scopeId) != null;	
 		String keyConfigurationId = getKeyConfigurationId();
@@ -1042,7 +1042,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		}
 
 		if (validKeySequence) {
-			String text = MessageFormat.format(Util.getString(resourceBundle, "labelCommandsForKeySequence.selection"), new Object[] { '\''+ keySequence.toString() + '\''}); //$NON-NLS-1$
+			String text = MessageFormat.format(Util.getString(resourceBundle, "labelCommandsForKeySequence.selection"), new Object[] { '\''+ keySequence.formatKeySequence() + '\''}); //$NON-NLS-1$
 			labelCommandsForKeySequence.setText(text);
 		} else 
 			labelCommandsForKeySequence.setText(Util.getString(resourceBundle, "labelCommandsForKeySequence.noSelection")); //$NON-NLS-1$
@@ -1057,7 +1057,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 					
 				while (iterator.hasNext()) {
 					Map.Entry entry = (Map.Entry) iterator.next();
-					KeySequence keySequence = (KeySequence) entry.getKey();					
+					Sequence keySequence = (Sequence) entry.getKey();					
 					Map scopeMap = (Map) entry.getValue();						
 		
 					if (scopeMap != null) {
@@ -1096,7 +1096,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		}
 	}
 	
-	private void buildKeySequenceRecords(SortedMap tree, KeySequence keySequence, List keySequenceRecords) {
+	private void buildKeySequenceRecords(SortedMap tree, Sequence keySequence, List keySequenceRecords) {
 		if (keySequenceRecords != null) {
 			keySequenceRecords.clear();
 			
@@ -1216,13 +1216,13 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 
 			Scope scope = (Scope) scopesById.get(commandRecord.scopeId);
 			tableItem.setText(1, scope != null ? scope.getName() : bracket(commandRecord.scopeId));
-			KeyConfiguration keyConfiguration = (KeyConfiguration) keyConfigurationsById.get(commandRecord.keyConfigurationId);			
+			Configuration keyConfiguration = (Configuration) keyConfigurationsById.get(commandRecord.keyConfigurationId);			
 			tableItem.setText(2, keyConfiguration != null ? keyConfiguration.getName() : bracket(commandRecord.keyConfigurationId));
 			boolean conflict = commandConflict || alternateCommandConflict;
 			StringBuffer stringBuffer = new StringBuffer();
 
 			if (commandRecord.keySequence != null)
-				stringBuffer.append(commandRecord.keySequence.toString());
+				stringBuffer.append(commandRecord.keySequence.formatKeySequence());
 
 			if (commandConflict)
 				stringBuffer.append(SPACE + COMMAND_CONFLICT);
@@ -1310,7 +1310,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 
 			Scope scope = (Scope) scopesById.get(keySequenceRecord.scopeId);
 			tableItem.setText(1, scope != null ? scope.getName() : bracket(keySequenceRecord.scopeId));
-			KeyConfiguration keyConfiguration = (KeyConfiguration) keyConfigurationsById.get(keySequenceRecord.keyConfigurationId);			
+			Configuration keyConfiguration = (Configuration) keyConfigurationsById.get(keySequenceRecord.keyConfigurationId);			
 			tableItem.setText(2, keyConfiguration != null ? keyConfiguration.getName() : bracket(keySequenceRecord.keyConfigurationId));
 			boolean conflict = commandConflict || alternateCommandConflict;
 			StringBuffer stringBuffer = new StringBuffer();
@@ -1365,7 +1365,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		}
 	}
 
-	private void selectTableCommand(String scopeId, String keyConfigurationId, KeySequence keySequence) {	
+	private void selectTableCommand(String scopeId, String keyConfigurationId, Sequence keySequence) {	
 		int selection = -1;
 		
 		for (int i = 0; i < commandRecords.size(); i++) {
@@ -1411,7 +1411,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		}
 	}
 
-	private void clear(SortedMap tree, KeySequence keySequence, String scope, String keyConfiguration) {			
+	private void clear(SortedMap tree, Sequence keySequence, String scope, String keyConfiguration) {			
 		Map scopeMap = (Map) tree.get(keySequence);
 		
 		if (scopeMap != null) {
@@ -1439,12 +1439,12 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		}
 	}
 
-	private void set(SortedMap tree, KeyBinding binding, boolean consolidate) {			
-		Map scopeMap = (Map) tree.get(binding.getKeySequence());
+	private void set(SortedMap tree, Binding binding, boolean consolidate) {			
+		Map scopeMap = (Map) tree.get(binding.getSequence());
 		
 		if (scopeMap == null) {
 			scopeMap = new TreeMap();	
-			tree.put(binding.getKeySequence(), scopeMap);
+			tree.put(binding.getSequence(), scopeMap);
 		}
 
 		Map keyConfigurationMap = (Map) scopeMap.get(binding.getScope());
@@ -1454,11 +1454,11 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 			scopeMap.put(binding.getScope(), keyConfigurationMap);
 		}
 		
-		Map pluginMap = (Map) keyConfigurationMap.get(binding.getKeyConfiguration());
+		Map pluginMap = (Map) keyConfigurationMap.get(binding.getConfiguration());
 		
 		if (pluginMap == null) {
 			pluginMap = new HashMap();	
-			keyConfigurationMap.put(binding.getKeyConfiguration(), pluginMap);
+			keyConfigurationMap.put(binding.getConfiguration(), pluginMap);
 		}
 
 		Map commandMap = consolidate ? null : (Map) pluginMap.get(binding.getPlugin());
@@ -1528,19 +1528,19 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 			return null;
 	}
 
-	private KeySequence getKeySequence() {
-		KeySequence keySequence = null;
+	private Sequence getKeySequence() {
+		Sequence keySequence = null;
 		String name = comboKeySequence.getText();		
-		keySequence = (KeySequence) keySequencesByName.get(name);
+		keySequence = (Sequence) keySequencesByName.get(name);
 			
 		if (keySequence == null)
-			keySequence = KeySequence.parseKeySequence(name);
+			keySequence = Sequence.parseKeySequence(name);
 
 		return keySequence;
 	}
 
-	private void setKeySequence(KeySequence keySequence) {
-		comboKeySequence.setText(keySequence != null ? keySequence.toString() : ZERO_LENGTH_STRING);
+	private void setKeySequence(Sequence keySequence) {
+		comboKeySequence.setText(keySequence != null ? keySequence.formatKeySequence() : ZERO_LENGTH_STRING);
 	}
 
 	private String getScopeId() {
@@ -1578,7 +1578,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		List keyConfigurations = new ArrayList(keyConfigurationsByName.values());
 		
 		if (selection >= 0 && selection < keyConfigurations.size()) {
-			KeyConfiguration keyConfiguration = (KeyConfiguration) keyConfigurations.get(selection);
+			Configuration keyConfiguration = (Configuration) keyConfigurations.get(selection);
 			return keyConfiguration.getId();				
 		}
 		
@@ -1593,7 +1593,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 			List keyConfigurations = new ArrayList(keyConfigurationsByName.values());
 				
 			for (int i = 0; i < keyConfigurations.size(); i++) {
-				KeyConfiguration keyConfiguration = (KeyConfiguration) keyConfigurations.get(i);		
+				Configuration keyConfiguration = (Configuration) keyConfigurations.get(i);		
 				
 				if (keyConfiguration.getId().equals(keyConfigurationId)) {
 					comboKeyConfiguration.select(i);

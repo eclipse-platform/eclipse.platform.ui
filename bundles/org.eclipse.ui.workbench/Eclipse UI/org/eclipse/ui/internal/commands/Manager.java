@@ -40,33 +40,15 @@ public class Manager {
 		return instance;	
 	}
 
-	private static SortedMap buildPathMapForGestureConfigurationMap(SortedMap gestureConfigurationMap) {
+	private static SortedMap buildPathMapForConfigurationMap(SortedMap configurationMap) {
 		SortedMap pathMap = new TreeMap();
-		Iterator iterator = gestureConfigurationMap.keySet().iterator();
+		Iterator iterator = configurationMap.keySet().iterator();
 
 		while (iterator.hasNext()) {
 			String id = (String) iterator.next();
 			
 			if (id != null) {			
-				Path path = pathForGestureConfiguration(id, gestureConfigurationMap);
-			
-				if (path != null)
-					pathMap.put(id, path);
-			}			
-		}
-
-		return pathMap;		
-	}
-
-	private static SortedMap buildPathMapForKeyConfigurationMap(SortedMap keyConfigurationMap) {
-		SortedMap pathMap = new TreeMap();
-		Iterator iterator = keyConfigurationMap.keySet().iterator();
-
-		while (iterator.hasNext()) {
-			String id = (String) iterator.next();
-			
-			if (id != null) {			
-				Path path = pathForKeyConfiguration(id, keyConfigurationMap);
+				Path path = pathForConfiguration(id, configurationMap);
 			
 				if (path != null)
 					pathMap.put(id, path);
@@ -94,7 +76,7 @@ public class Manager {
 		return pathMap;		
 	}
 
-	private static Path pathForGestureConfiguration(String id, Map gestureConfigurationMap) {
+	private static Path pathForConfiguration(String id, Map configurationMap) {
 		Path path = null;
 
 		if (id != null) {
@@ -104,13 +86,13 @@ public class Manager {
 				if (pathItems.contains(id))
 					return null;
 							
-				GestureConfiguration gestureConfiguration = (GestureConfiguration) gestureConfigurationMap.get(id);
+				Configuration configuration = (Configuration) configurationMap.get(id);
 				
-				if (gestureConfiguration == null)
+				if (configuration == null)
 					return null;
 							
 				pathItems.add(0, id);
-				id = gestureConfiguration.getParent();
+				id = configuration.getParent();
 			}
 		
 			path = Path.create(pathItems);
@@ -129,7 +111,7 @@ public class Manager {
 				if (pathItems.contains(id))
 					return null;
 							
-				KeyConfiguration keyConfiguration = (KeyConfiguration) keyConfigurationMap.get(id);
+				Configuration keyConfiguration = (Configuration) keyConfigurationMap.get(id);
 				
 				if (keyConfiguration == null)
 					return null;
@@ -374,7 +356,7 @@ public class Manager {
 		SortedSet keySequenceSet = (SortedSet) commandMap.get(command);
 		
 		if (keySequenceSet != null && !keySequenceSet.isEmpty())
-			text = ((KeySequence) keySequenceSet.first()).formatKeySequence();
+			text = ((Sequence) keySequenceSet.first()).formatKeySequence();
 		
 		return text != null ? text : ""; //$NON-NLS-1$
 	}
@@ -408,7 +390,7 @@ public class Manager {
 		if (registryActiveKeyConfigurations.size() == 0)
 			keyConfigurationId = ""; //$NON-NLS-1$
 		else {
-			ActiveKeyConfiguration activeKeyConfiguration = (ActiveKeyConfiguration) registryActiveKeyConfigurations.get(registryActiveKeyConfigurations.size() - 1);
+			ActiveConfiguration activeKeyConfiguration = (ActiveConfiguration) registryActiveKeyConfigurations.get(registryActiveKeyConfigurations.size() - 1);
 			keyConfigurationId = activeKeyConfiguration.getValue();
 		}
 
@@ -440,8 +422,8 @@ public class Manager {
 		registryKeyConfigurations.addAll(coreRegistry.getKeyConfigurations());
 		registryKeyConfigurations.addAll(localRegistry.getKeyConfigurations());
 		registryKeyConfigurations.addAll(preferenceRegistry.getKeyConfigurations());
-		SortedMap registryKeyConfigurationMap = KeyConfiguration.sortedMapById(registryKeyConfigurations);
-		SortedMap keyConfigurationMap = buildPathMapForKeyConfigurationMap(registryKeyConfigurationMap);
+		SortedMap registryKeyConfigurationMap = Configuration.sortedMapById(registryKeyConfigurations);
+		SortedMap keyConfigurationMap = buildPathMapForConfigurationMap(registryKeyConfigurationMap);
 		
 		List registryScopes = new ArrayList();
 		registryScopes.addAll(coreRegistry.getScopes());

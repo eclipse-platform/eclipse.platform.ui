@@ -80,8 +80,8 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.commands.KeySequence;
-import org.eclipse.ui.internal.commands.KeyStroke;
+import org.eclipse.ui.internal.commands.Sequence;
+import org.eclipse.ui.internal.commands.Stroke;
 import org.eclipse.ui.internal.commands.Manager;
 import org.eclipse.ui.internal.dialogs.MessageDialogWithToggle;
 import org.eclipse.ui.internal.misc.Assert;
@@ -656,7 +656,7 @@ protected MenuManager createMenuManager() {
 				int accelerator = actionContributionItem.getAction().getAccelerator();
 				
 				if (accelerator != 0) {		
-					KeySequence keySequence = KeySequence.create(KeyStroke.create(accelerator));						
+					Sequence keySequence = Sequence.create(Stroke.create(accelerator));						
 					Map keySequenceMapForMode = Manager.getInstance().getKeyMachine().getKeySequenceMapForMode();
 
 					if (keySequenceMapForMode.get(keySequence) == null)
@@ -667,11 +667,11 @@ protected MenuManager createMenuManager() {
 				SortedSet keySequenceSet = (SortedSet) commandMap.get(commandId);
 		
 				if (keySequenceSet != null && !keySequenceSet.isEmpty()) {
-					KeySequence keySequence = (KeySequence) keySequenceSet.first();
-					List keyStrokes = keySequence.getKeyStrokes();
+					Sequence keySequence = (Sequence) keySequenceSet.first();
+					List keyStrokes = keySequence.getStrokes();
 							
 					if (keyStrokes.size() == 1) {
-						KeyStroke keyStroke = (KeyStroke) keyStrokes.get(0);
+						Stroke keyStroke = (Stroke) keyStrokes.get(0);
 						return new Integer(keyStroke.getValue());
 					}
 				}
@@ -691,7 +691,7 @@ protected MenuManager createMenuManager() {
 				int accelerator = actionContributionItem.getAction().getAccelerator();
 				
 				if (accelerator != 0) {				
-					KeySequence keySequence = KeySequence.create(KeyStroke.create(accelerator));						
+					Sequence keySequence = Sequence.create(Stroke.create(accelerator));						
 					Map keySequenceMapForMode = Manager.getInstance().getKeyMachine().getKeySequenceMapForMode();
 
 					if (keySequenceMapForMode.get(keySequence) == null)
@@ -702,15 +702,15 @@ protected MenuManager createMenuManager() {
 				SortedSet keySequenceSet = (SortedSet) commandMap.get(commandId);
 		
 				if (keySequenceSet != null && !keySequenceSet.isEmpty()) {
-					KeySequence keySequence = (KeySequence) keySequenceSet.first();
-					List keyStrokes = keySequence.getKeyStrokes();
+					Sequence keySequence = (Sequence) keySequenceSet.first();
+					List keyStrokes = keySequence.getStrokes();
 					StringBuffer stringBuffer = new StringBuffer();
 						
 					for (int i = 0; i < keyStrokes.size(); i++) {
 						if (i >= 1)
 							stringBuffer.append(' ');
 						
-						KeyStroke keyStroke = (KeyStroke) keyStrokes.get(i);
+						Stroke keyStroke = (Stroke) keyStrokes.get(i);
 						int value = keyStroke.getValue();
 						
 						if ((value & SWT.SHIFT) != 0)

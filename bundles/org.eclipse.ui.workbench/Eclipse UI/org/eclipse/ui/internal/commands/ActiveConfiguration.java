@@ -11,20 +11,20 @@ Contributors:
 
 package org.eclipse.ui.internal.commands;
 
-public final class ActiveKeyConfiguration implements Comparable {
+public final class ActiveConfiguration implements Comparable {
 
-	private final static int HASH_INITIAL = 21;
-	private final static int HASH_FACTOR = 31;
+	private final static int HASH_FACTOR = 17;
+	private final static int HASH_INITIAL = 27;
 
-	public static ActiveKeyConfiguration create(String plugin, String value)
+	public static ActiveConfiguration create(String plugin, String value)
 		throws IllegalArgumentException {
-		return new ActiveKeyConfiguration(plugin, value);
+		return new ActiveConfiguration(plugin, value);
 	}
 
 	private String plugin;
 	private String value;
 	
-	private ActiveKeyConfiguration(String plugin, String value)
+	private ActiveConfiguration(String plugin, String value)
 		throws IllegalArgumentException {
 		super();
 		
@@ -36,7 +36,7 @@ public final class ActiveKeyConfiguration implements Comparable {
 	}
 	
 	public int compareTo(Object object) {
-		ActiveKeyConfiguration activeKeyConfiguration = (ActiveKeyConfiguration) object;
+		ActiveConfiguration activeKeyConfiguration = (ActiveConfiguration) object;
 		int compareTo = Util.compare(plugin, activeKeyConfiguration.plugin);
 		
 		if (compareTo == 0)		
@@ -46,10 +46,10 @@ public final class ActiveKeyConfiguration implements Comparable {
 	}
 	
 	public boolean equals(Object object) {
-		if (!(object instanceof ActiveKeyConfiguration))
+		if (!(object instanceof ActiveConfiguration))
 			return false;
 
-		ActiveKeyConfiguration activeKeyConfiguration = (ActiveKeyConfiguration) object;	
+		ActiveConfiguration activeKeyConfiguration = (ActiveConfiguration) object;	
 		return Util.equals(plugin, activeKeyConfiguration.plugin) && value.equals(activeKeyConfiguration.value);
 	}
 

@@ -20,8 +20,8 @@ import java.util.TreeMap;
 
 public final class Command implements Comparable {
 
-	private final static int HASH_INITIAL = 41;
-	private final static int HASH_FACTOR = 51;
+	private final static int HASH_FACTOR = 57;	
+	private final static int HASH_INITIAL = 67;
 
 	private static Comparator nameComparator;
 	

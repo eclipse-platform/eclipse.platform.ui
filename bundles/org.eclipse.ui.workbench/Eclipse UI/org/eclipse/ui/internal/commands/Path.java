@@ -21,8 +21,8 @@ public final class Path implements Comparable {
 
 	final static int MAXIMUM_PATH_ITEMS = 16;
 
+	private final static int HASH_FACTOR = 77;
 	private final static int HASH_INITIAL = 87;
-	private final static int HASH_FACTOR = 97;
 	
 	static Path create() {
 		return new Path(Collections.EMPTY_LIST);

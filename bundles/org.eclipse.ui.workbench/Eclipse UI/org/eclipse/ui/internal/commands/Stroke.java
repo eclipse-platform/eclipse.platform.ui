@@ -13,26 +13,31 @@ package org.eclipse.ui.internal.commands;
 
 import org.eclipse.jface.action.Action;
 
-public final class KeyStroke implements Comparable {
+public final class Stroke implements Comparable {
 
-	public static KeyStroke create(int value) {
-		return new KeyStroke(value);
+	public final static Stroke EAST = new Stroke(6);  
+	public final static Stroke NORTH = new Stroke(8);
+	public final static Stroke SOUTH = new Stroke(2);
+	public final static Stroke WEST = new Stroke(4);
+
+	public static Stroke create(int value) {
+		return new Stroke(value);
 	}
 
-	public static KeyStroke[] create(int[] values)
+	public static Stroke[] create(int[] values)
 		throws IllegalArgumentException {
 		if (values == null)
 			throw new IllegalArgumentException();
 					
-		KeyStroke[] keyStrokes = new KeyStroke[values.length];
+		Stroke[] strokes = new Stroke[values.length];
 			
 		for (int i = 0; i < values.length; i++)
-			keyStrokes[i] = create(values[i]);
+			strokes[i] = create(values[i]);
 		
-		return keyStrokes;			
+		return strokes;			
 	}
 
-	public static KeyStroke parseKeyStroke(String string)
+	public static Stroke parseKeyStroke(String string)
 		throws IllegalArgumentException {
 		if (string == null)
 			throw new IllegalArgumentException();
@@ -48,17 +53,17 @@ public final class KeyStroke implements Comparable {
 
 	private int value;
 
-	private KeyStroke(int value) {
+	private Stroke(int value) {
 		super();
 		this.value = value;
 	}
 
 	public int compareTo(Object object) {
-		return value - ((KeyStroke) object).value;
+		return value - ((Stroke) object).value;
 	}
 	
 	public boolean equals(Object object) {
-		return object instanceof KeyStroke && value == ((KeyStroke) object).value;	
+		return object instanceof Stroke && value == ((Stroke) object).value;	
 	}
 
 	public String formatKeyStroke() {

@@ -46,8 +46,8 @@ import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.internal.commands.KeySequence;
-import org.eclipse.ui.internal.commands.KeyStroke;
+import org.eclipse.ui.internal.commands.Sequence;
+import org.eclipse.ui.internal.commands.Stroke;
 import org.eclipse.ui.internal.commands.Machine;
 import org.eclipse.ui.internal.commands.Manager;
 import org.eclipse.ui.internal.commands.Util;
@@ -82,18 +82,18 @@ public class WWinKeyBindingService {
 		}
 	};
 
-	private void setStatusLineMessage(KeySequence keySequence) {
+	private void setStatusLineMessage(Sequence keySequence) {
 		StringBuffer stringBuffer = new StringBuffer();
 		
 		if (keySequence != null) {
-			Iterator iterator = keySequence.getKeyStrokes().iterator();
+			Iterator iterator = keySequence.getStrokes().iterator();
 			int i = 0;
 			
 			while (iterator.hasNext()) {					
 				if (i != 0)
 					stringBuffer.append(' ');
 	
-				KeyStroke keyStroke = (KeyStroke) iterator.next();
+				Stroke keyStroke = (Stroke) iterator.next();
 				int accelerator = keyStroke.getValue();
 				stringBuffer.append(
 					org.eclipse.jface.action.Action.convertAccelerator(
@@ -109,21 +109,21 @@ public class WWinKeyBindingService {
 		Manager keyManager = Manager.getInstance();
 		Machine keyMachine = keyManager.getKeyMachine();
 		
-		/*if (*/keyMachine.setMode(KeySequence.create());//) {
+		/*if (*/keyMachine.setMode(Sequence.create());//) {
 			setStatusLineMessage(null);	
 			updateAccelerators();
 		//}
 	}
 	
-	public void pressed(KeyStroke keyStroke, Event event) { 
+	public void pressed(Stroke keyStroke, Event event) { 
 		Manager keyManager = Manager.getInstance();
 		Machine keyMachine = keyManager.getKeyMachine();		
 		
-		KeySequence mode = keyMachine.getMode();			
+		Sequence mode = keyMachine.getMode();			
 		
-		List keyStrokes = new ArrayList(keyMachine.getMode().getKeyStrokes());
+		List keyStrokes = new ArrayList(keyMachine.getMode().getStrokes());
 		keyStrokes.add(keyStroke);
-		KeySequence childMode = KeySequence.create(keyStrokes);
+		Sequence childMode = Sequence.create(keyStrokes);
 		
 		Map keySequenceMapForMode = keyMachine.getKeySequenceMapForMode();		
 		
@@ -308,10 +308,10 @@ public class WWinKeyBindingService {
  
 		Manager keyManager = Manager.getInstance();
 		Machine keyMachine = keyManager.getKeyMachine();        
-		KeySequence mode = keyMachine.getMode();
-		List keyStrokes = new ArrayList(mode.getKeyStrokes());
-		keyStrokes.add(KeyStroke.create(accelerator));
-		KeySequence childMode = KeySequence.create(keyStrokes);    		
+		Sequence mode = keyMachine.getMode();
+		List keyStrokes = new ArrayList(mode.getStrokes());
+		keyStrokes.add(Stroke.create(accelerator));
+		Sequence childMode = Sequence.create(keyStrokes);    		
 		Map keySequenceMapForMode = keyMachine.getKeySequenceMapForMode();
 		return (String) keySequenceMapForMode.get(childMode);
     }
@@ -322,8 +322,8 @@ public class WWinKeyBindingService {
 	public void updateAccelerators() {
 		Manager keyManager = Manager.getInstance();
 		Machine keyMachine = keyManager.getKeyMachine();      		
-		KeySequence mode = keyMachine.getMode();
-		List keyStrokes = mode.getKeyStrokes();
+		Sequence mode = keyMachine.getMode();
+		List keyStrokes = mode.getStrokes();
 		int size = keyStrokes.size();
 		
 		Map keySequenceMapForMode = keyMachine.getKeySequenceMapForMode();
@@ -331,10 +331,10 @@ public class WWinKeyBindingService {
 		Iterator iterator = keySequenceMapForMode.keySet().iterator();
 
 		while (iterator.hasNext()) {
-			KeySequence keySequence = (KeySequence) iterator.next();
+			Sequence keySequence = (Sequence) iterator.next();
 			
 			if (keySequence.isChildOf(mode, false))
-				keyStrokeSetForMode.add(keySequence.getKeyStrokes().get(size));	
+				keyStrokeSetForMode.add(keySequence.getStrokes().get(size));	
 		}
 
 	   	iterator = keyStrokeSetForMode.iterator();
@@ -342,7 +342,7 @@ public class WWinKeyBindingService {
 		int i = 0;
 			   	
 	   	while (iterator.hasNext()) {
-	   		KeyStroke keyStroke = (KeyStroke) iterator.next();
+	   		Stroke keyStroke = (Stroke) iterator.next();
 	   		accelerators[i++] = keyStroke.getValue();	   		
 	   	}
 
@@ -376,11 +376,11 @@ public class WWinKeyBindingService {
 				event.display = selectionEvent.display;
 				event.time = selectionEvent.time;
 				event.widget = selectionEvent.widget;
-				pressed(KeyStroke.create(selectionEvent.detail), event);
+				pressed(Stroke.create(selectionEvent.detail), event);
 			}
 		});
 
-		if (mode.getKeyStrokes().size() == 0)
+		if (mode.getStrokes().size() == 0)
 			accMenu.removeVerifyListener(verifyListener);
 		else
 			accMenu.addVerifyListener(verifyListener);

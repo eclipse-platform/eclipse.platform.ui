@@ -18,66 +18,66 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-public final class GestureConfiguration implements Comparable {
+public final class Configuration implements Comparable {
 
-	private final static int HASH_INITIAL = 11;
-	private final static int HASH_FACTOR = 21;
+	private final static int HASH_FACTOR = 67;
+	private final static int HASH_INITIAL = 77;
 
 	private static Comparator nameComparator;
 	
-	public static GestureConfiguration create(String description, String id, String name, String parent, String plugin)
+	public static Configuration create(String description, String id, String name, String parent, String plugin)
 		throws IllegalArgumentException {
-		return new GestureConfiguration(description, id, name, parent, plugin);
+		return new Configuration(description, id, name, parent, plugin);
 	}
 
 	public static Comparator nameComparator() {
 		if (nameComparator == null)
 			nameComparator = new Comparator() {
 				public int compare(Object left, Object right) {
-					return Collator.getInstance().compare(((GestureConfiguration) left).name, ((GestureConfiguration) right).name);
+					return Collator.getInstance().compare(((Configuration) left).name, ((Configuration) right).name);
 				}	
 			};		
 		
 		return nameComparator;
 	}
 
-	public static SortedMap sortedMapById(List gestureConfigurations)
+	public static SortedMap sortedMapById(List configurations)
 		throws IllegalArgumentException {
-		if (gestureConfigurations == null)
+		if (configurations == null)
 			throw new IllegalArgumentException();
 
 		SortedMap sortedMap = new TreeMap();			
-		Iterator iterator = gestureConfigurations.iterator();
+		Iterator iterator = configurations.iterator();
 		
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
 			
-			if (!(object instanceof GestureConfiguration))
+			if (!(object instanceof Configuration))
 				throw new IllegalArgumentException();
 				
-			GestureConfiguration gestureConfiguration = (GestureConfiguration) object;
-			sortedMap.put(gestureConfiguration.id, gestureConfiguration);									
+			Configuration configuration = (Configuration) object;
+			sortedMap.put(configuration.id, configuration);									
 		}			
 		
 		return sortedMap;
 	}
 
-	public static SortedMap sortedMapByName(List gestureConfigurations)
+	public static SortedMap sortedMapByName(List configurations)
 		throws IllegalArgumentException {
-		if (gestureConfigurations == null)
+		if (configurations == null)
 			throw new IllegalArgumentException();
 
 		SortedMap sortedMap = new TreeMap();			
-		Iterator iterator = gestureConfigurations.iterator();
+		Iterator iterator = configurations.iterator();
 		
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
 			
-			if (!(object instanceof GestureConfiguration))
+			if (!(object instanceof Configuration))
 				throw new IllegalArgumentException();
 				
-			GestureConfiguration gestureConfiguration = (GestureConfiguration) object;
-			sortedMap.put(gestureConfiguration.name, gestureConfiguration);									
+			Configuration configuration = (Configuration) object;
+			sortedMap.put(configuration.name, configuration);									
 		}			
 		
 		return sortedMap;
@@ -89,7 +89,7 @@ public final class GestureConfiguration implements Comparable {
 	private String parent;
 	private String plugin;
 	
-	private GestureConfiguration(String description, String id, String name, String parent, String plugin)
+	private Configuration(String description, String id, String name, String parent, String plugin)
 		throws IllegalArgumentException {
 		super();
 		
@@ -104,20 +104,20 @@ public final class GestureConfiguration implements Comparable {
 	}
 	
 	public int compareTo(Object object) {
-		GestureConfiguration item = (GestureConfiguration) object;
-		int compareTo = id.compareTo(item.id);
+		Configuration configuration = (Configuration) object;
+		int compareTo = id.compareTo(configuration.id);
 		
 		if (compareTo == 0) {		
-			compareTo = name.compareTo(item.name);			
+			compareTo = name.compareTo(configuration.name);			
 		
 			if (compareTo == 0) {
-				Util.compare(description, item.description);
+				Util.compare(description, configuration.description);
 				
 				if (compareTo == 0) {
-					compareTo = Util.compare(parent, item.parent);
+					compareTo = Util.compare(parent, configuration.parent);
 
 					if (compareTo == 0)
-						compareTo = Util.compare(plugin, item.plugin);								
+						compareTo = Util.compare(plugin, configuration.plugin);								
 				}							
 			}
 		}
@@ -126,12 +126,12 @@ public final class GestureConfiguration implements Comparable {
 	}
 	
 	public boolean equals(Object object) {
-		if (!(object instanceof GestureConfiguration))
+		if (!(object instanceof Configuration))
 			return false;
 
-		GestureConfiguration gestureConfiguration = (GestureConfiguration) object;	
-		return Util.equals(description, gestureConfiguration.description) && id.equals(gestureConfiguration.id) && name.equals(gestureConfiguration.name) && 
-			Util.equals(parent, gestureConfiguration.parent) && Util.equals(plugin, gestureConfiguration.plugin);
+		Configuration configuration = (Configuration) object;	
+		return Util.equals(description, configuration.description) && id.equals(configuration.id) && name.equals(configuration.name) && Util.equals(parent, configuration.parent) && 
+			Util.equals(plugin, configuration.plugin);
 	}
 
 	public String getDescription() {

@@ -192,7 +192,7 @@ public final class CoreRegistry extends AbstractRegistry {
 		}
 
 		private boolean readActiveGestureConfiguration(IConfigurationElement element) {
-			ActiveGestureConfiguration activeGestureConfiguration = Persistence.readActiveGestureConfiguration(ConfigurationElementMemento.create(element), getPlugin(element));
+			ActiveConfiguration activeGestureConfiguration = Persistence.readActiveConfiguration(ConfigurationElementMemento.create(element), getPlugin(element));
 		
 			if (activeGestureConfiguration != null)
 				activeGestureConfigurations.add(activeGestureConfiguration);	
@@ -201,7 +201,7 @@ public final class CoreRegistry extends AbstractRegistry {
 		}
 
 		private boolean readActiveKeyConfiguration(IConfigurationElement element) {
-			ActiveKeyConfiguration activeKeyConfiguration = Persistence.readActiveKeyConfiguration(ConfigurationElementMemento.create(element), getPlugin(element));
+			ActiveConfiguration activeKeyConfiguration = Persistence.readActiveConfiguration(ConfigurationElementMemento.create(element), getPlugin(element));
 		
 			if (activeKeyConfiguration != null)
 				activeKeyConfigurations.add(activeKeyConfiguration);	
@@ -240,9 +240,9 @@ public final class CoreRegistry extends AbstractRegistry {
 			
 				while (orTokenizer.hasMoreTokens()) {					
 					try {			
-						KeySequence keySequence = KeySequence.parseKeySequence(orTokenizer.nextToken());
+						Sequence keySequence = Sequence.parseKeySequence(orTokenizer.nextToken());
 
-						if (keySequence.getKeyStrokes().size() >= 1)
+						if (keySequence.getStrokes().size() >= 1)
 							keySequences.add(keySequence);		
 					} catch (IllegalArgumentException eIllegalArgument) {					
 					}
@@ -263,8 +263,8 @@ public final class CoreRegistry extends AbstractRegistry {
 					Iterator iterator = keySequences.iterator();
 				
 					while (iterator.hasNext()) {
-						KeySequence keySequence = (KeySequence) iterator.next();			
-						keyBindings.add(KeyBinding.create(id, keyConfiguration, keySequence, locale, platform, plugin, RANK_CORE, scope));	
+						Sequence keySequence = (Sequence) iterator.next();			
+						keyBindings.add(Binding.create(keyConfiguration, id, locale, platform, plugin, RANK_CORE, scope, keySequence));	
 					}
 				}
 			}
@@ -285,7 +285,7 @@ public final class CoreRegistry extends AbstractRegistry {
 		}	
 
 		private boolean readGestureBinding(IConfigurationElement element) {
-			GestureBinding gestureBinding = Persistence.readGestureBinding(ConfigurationElementMemento.create(element), getPlugin(element), RANK_CORE);
+			Binding gestureBinding = Persistence.readBinding(ConfigurationElementMemento.create(element), getPlugin(element), RANK_CORE);
 
 			if (gestureBinding != null)
 				gestureBindings.add(gestureBinding);
@@ -294,7 +294,7 @@ public final class CoreRegistry extends AbstractRegistry {
 		}
 
 		private boolean readGestureConfiguration(IConfigurationElement element) {
-			GestureConfiguration gestureConfiguration = Persistence.readGestureConfiguration(ConfigurationElementMemento.create(element), getPlugin(element));
+			Configuration gestureConfiguration = Persistence.readConfiguration(ConfigurationElementMemento.create(element), getPlugin(element));
 		
 			if (gestureConfiguration != null)
 				gestureConfigurations.add(gestureConfiguration);	
@@ -303,7 +303,7 @@ public final class CoreRegistry extends AbstractRegistry {
 		}
 
 		private boolean readKeyBinding(IConfigurationElement element) {
-			KeyBinding keyBinding = Persistence.readKeyBinding(ConfigurationElementMemento.create(element), getPlugin(element), RANK_CORE);
+			Binding keyBinding = Persistence.readBinding(ConfigurationElementMemento.create(element), getPlugin(element), RANK_CORE);
 
 			if (keyBinding != null)
 				keyBindings.add(keyBinding);
@@ -312,7 +312,7 @@ public final class CoreRegistry extends AbstractRegistry {
 		}
 	
 		private boolean readKeyConfiguration(IConfigurationElement element) {
-			KeyConfiguration keyConfiguration = Persistence.readKeyConfiguration(ConfigurationElementMemento.create(element), getPlugin(element));
+			Configuration keyConfiguration = Persistence.readConfiguration(ConfigurationElementMemento.create(element), getPlugin(element));
 		
 			if (keyConfiguration != null)
 				keyConfigurations.add(keyConfiguration);	

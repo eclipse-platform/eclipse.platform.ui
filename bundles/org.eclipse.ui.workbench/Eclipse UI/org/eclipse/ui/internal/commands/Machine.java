@@ -35,7 +35,7 @@ public final class Machine {
 	private SortedMap keyConfigurationMap;	
 	private SortedMap keySequenceMap;
 	private SortedMap keySequenceMapForMode;
-	private KeySequence mode;	
+	private Sequence mode;	
 	private SortedMap scopeMap;
 	private String[] scopes;
 	private boolean solved;
@@ -48,13 +48,13 @@ public final class Machine {
 		keyBindingSet = new TreeSet();
 		keyConfiguration = ""; //$NON-NLS-1$
 		scopes = new String[] { "" }; //$NON-NLS-1$
-		mode = KeySequence.create();	
+		mode = Sequence.create();	
 	}
 
 	public Map getCommandMap() {
 		if (commandMap == null) {
 			solve();
-			commandMap = Collections.unmodifiableMap(KeyNode.toCommandMap(getKeySequenceMap()));				
+			commandMap = Collections.unmodifiableMap(Node.toCommandMap(getKeySequenceMap()));				
 		}
 		
 		return commandMap;
@@ -63,12 +63,12 @@ public final class Machine {
 	public Map getCommandMapForMode() {
 		if (commandMapForMode == null) {
 			solve();
-			SortedMap tree = KeyNode.find(this.tree, mode);
+			SortedMap tree = Node.find(this.tree, mode);
 	
 			if (tree == null)
 				tree = new TreeMap();
 
-			commandMapForMode = Collections.unmodifiableMap(KeyNode.toCommandMap(getKeySequenceMapForMode()));				
+			commandMapForMode = Collections.unmodifiableMap(Node.toCommandMap(getKeySequenceMapForMode()));				
 		}
 		
 		return commandMapForMode;
@@ -89,7 +89,7 @@ public final class Machine {
 	public SortedMap getKeySequenceMap() {
 		if (keySequenceMap == null) {
 			solve();
-			keySequenceMap = Collections.unmodifiableSortedMap(KeyNode.toKeySequenceMap(tree, KeySequence.create()));				
+			keySequenceMap = Collections.unmodifiableSortedMap(Node.toKeySequenceMap(tree, Sequence.create()));				
 		}
 		
 		return keySequenceMap;
@@ -98,18 +98,18 @@ public final class Machine {
 	public SortedMap getKeySequenceMapForMode() {
 		if (keySequenceMapForMode == null) {
 			solve();
-			SortedMap tree = KeyNode.find(this.tree, mode);
+			SortedMap tree = Node.find(this.tree, mode);
 	
 			if (tree == null)
 				tree = new TreeMap();
 							
-			keySequenceMapForMode = Collections.unmodifiableSortedMap(KeyNode.toKeySequenceMap(tree, mode));				
+			keySequenceMapForMode = Collections.unmodifiableSortedMap(Node.toKeySequenceMap(tree, mode));				
 		}
 		
 		return keySequenceMapForMode;
 	}
 
-	public KeySequence getMode() {
+	public Sequence getMode() {
 		return mode;	
 	}	
 
@@ -130,7 +130,7 @@ public final class Machine {
 		Iterator iterator = keyBindingSet.iterator();
 		
 		while (iterator.hasNext())
-			if (!(iterator.next() instanceof KeyBinding))
+			if (!(iterator.next() instanceof Binding))
 				throw new IllegalArgumentException();
 
 		if (this.keyBindingSet.equals(keyBindingSet))
@@ -176,7 +176,7 @@ public final class Machine {
 		return true;
 	}
 
-	public boolean setMode(KeySequence mode)
+	public boolean setMode(Sequence mode)
 		throws IllegalArgumentException {
 		if (mode == null)
 			throw new IllegalArgumentException();
@@ -237,13 +237,13 @@ public final class Machine {
 			Iterator iterator = keyBindingSet.iterator();
 		
 			while (iterator.hasNext()) {
-				KeyBinding keyBinding = (KeyBinding) iterator.next();
+				Binding keyBinding = (Binding) iterator.next();
 				Path scope = (Path) scopeMap.get(keyBinding.getScope());
 		
 				if (scope == null)
 					continue;
 
-				Path keyConfiguration = (Path) keyConfigurationMap.get(keyBinding.getKeyConfiguration());
+				Path keyConfiguration = (Path) keyConfigurationMap.get(keyBinding.getConfiguration());
 					
 				if (keyConfiguration == null)
 					continue;
@@ -256,7 +256,7 @@ public final class Machine {
 				paths.add(Manager.pathForPlatform(keyBinding.getPlatform()));
 				paths.add(Manager.pathForLocale(keyBinding.getLocale()));
 				State platformLocale = State.create(paths);		
-				KeyNode.add(tree, keyBinding, scopeKeyConfiguration, platformLocale);
+				Node.add(tree, keyBinding, scopeKeyConfiguration, platformLocale);
 			}
 		}
 	}
@@ -303,7 +303,7 @@ public final class Machine {
 			paths.add(Manager.systemPlatform());
 			paths.add(Manager.systemLocale());
 			State platformLocale = State.create(paths);			
-			KeyNode.solve(tree, scopeKeyConfigurations, new State[] { platformLocale } );
+			Node.solve(tree, scopeKeyConfigurations, new State[] { platformLocale } );
 			solved = true;
 		}
 	}

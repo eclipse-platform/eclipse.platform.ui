@@ -55,14 +55,14 @@ public final class LocalRegistry extends AbstractMutableRegistry {
 
 		try {
 			IMemento memento = XMLMemento.createReadRoot(reader);
-			activeGestureConfigurations = Collections.unmodifiableList(Persistence.readActiveGestureConfigurations(memento, Persistence.TAG_ACTIVE_GESTURE_CONFIGURATION, null));
-			activeKeyConfigurations = Collections.unmodifiableList(Persistence.readActiveKeyConfigurations(memento, Persistence.TAG_ACTIVE_KEY_CONFIGURATION, null));
+			activeGestureConfigurations = Collections.unmodifiableList(Persistence.readActiveConfigurations(memento, Persistence.TAG_ACTIVE_GESTURE_CONFIGURATION, null));
+			activeKeyConfigurations = Collections.unmodifiableList(Persistence.readActiveConfigurations(memento, Persistence.TAG_ACTIVE_KEY_CONFIGURATION, null));
 			categories = Collections.unmodifiableList(Persistence.readCategories(memento, Persistence.TAG_CATEGORY, null));
 			commands = Collections.unmodifiableList(Persistence.readCommands(memento, Persistence.TAG_COMMAND, null));
-			gestureBindings = Collections.unmodifiableList(Persistence.readGestureBindings(memento, Persistence.TAG_GESTURE_BINDING, null, RANK_LOCAL));
-			gestureConfigurations = Collections.unmodifiableList(Persistence.readGestureConfigurations(memento, Persistence.TAG_GESTURE_CONFIGURATION, null));
-			keyBindings = Collections.unmodifiableList(Persistence.readKeyBindings(memento, Persistence.TAG_KEY_BINDING, null, RANK_LOCAL));
-			keyConfigurations = Collections.unmodifiableList(Persistence.readKeyConfigurations(memento, Persistence.TAG_KEY_CONFIGURATION, null));
+			gestureBindings = Collections.unmodifiableList(Persistence.readBindings(memento, Persistence.TAG_GESTURE_BINDING, null, RANK_LOCAL));
+			gestureConfigurations = Collections.unmodifiableList(Persistence.readConfigurations(memento, Persistence.TAG_GESTURE_CONFIGURATION, null));
+			keyBindings = Collections.unmodifiableList(Persistence.readBindings(memento, Persistence.TAG_KEY_BINDING, null, RANK_LOCAL));
+			keyConfigurations = Collections.unmodifiableList(Persistence.readConfigurations(memento, Persistence.TAG_KEY_CONFIGURATION, null));
 			scopes = Collections.unmodifiableList(Persistence.readScopes(memento, Persistence.TAG_SCOPE, null));
 		} catch (WorkbenchException eWorkbench) {
 			throw new IOException();
@@ -74,14 +74,14 @@ public final class LocalRegistry extends AbstractMutableRegistry {
 	public void save()
 		throws IOException {
 		XMLMemento xmlMemento = XMLMemento.createWriteRoot(TAG_ROOT);		
-		Persistence.writeActiveGestureConfigurations(xmlMemento, Persistence.TAG_ACTIVE_GESTURE_CONFIGURATION, activeGestureConfigurations);		
-		Persistence.writeActiveKeyConfigurations(xmlMemento, Persistence.TAG_ACTIVE_KEY_CONFIGURATION, activeKeyConfigurations);		
+		Persistence.writeActiveConfigurations(xmlMemento, Persistence.TAG_ACTIVE_GESTURE_CONFIGURATION, activeGestureConfigurations);		
+		Persistence.writeActiveConfigurations(xmlMemento, Persistence.TAG_ACTIVE_KEY_CONFIGURATION, activeKeyConfigurations);		
 		Persistence.writeCategories(xmlMemento, Persistence.TAG_CATEGORY, categories);		
 		Persistence.writeCommands(xmlMemento, Persistence.TAG_COMMAND, commands);
-		Persistence.writeGestureBindings(xmlMemento, Persistence.TAG_GESTURE_BINDING, gestureBindings);
-		Persistence.writeGestureConfigurations(xmlMemento, Persistence.TAG_GESTURE_CONFIGURATION, gestureConfigurations);
-		Persistence.writeKeyBindings(xmlMemento, Persistence.TAG_KEY_BINDING, keyBindings);
-		Persistence.writeKeyConfigurations(xmlMemento, Persistence.TAG_KEY_CONFIGURATION, keyConfigurations);
+		Persistence.writeBindings(xmlMemento, Persistence.TAG_GESTURE_BINDING, gestureBindings);
+		Persistence.writeConfigurations(xmlMemento, Persistence.TAG_GESTURE_CONFIGURATION, gestureConfigurations);
+		Persistence.writeBindings(xmlMemento, Persistence.TAG_KEY_BINDING, keyBindings);
+		Persistence.writeConfigurations(xmlMemento, Persistence.TAG_KEY_CONFIGURATION, keyConfigurations);
 		Persistence.writeScopes(xmlMemento, Persistence.TAG_SCOPE, scopes);
 		IPath path = WorkbenchPlugin.getDefault().getStateLocation();
 		path = path.append(PATH);

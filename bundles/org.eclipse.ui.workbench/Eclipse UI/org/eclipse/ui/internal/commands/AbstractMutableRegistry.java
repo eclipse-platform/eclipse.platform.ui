@@ -25,12 +25,12 @@ abstract class AbstractMutableRegistry extends AbstractRegistry {
 
 	public void setActiveGestureConfigurations(List activeGestureConfigurations)
 		throws IllegalArgumentException {
-		this.activeGestureConfigurations = Util.safeCopy(activeGestureConfigurations, ActiveGestureConfiguration.class);
+		this.activeGestureConfigurations = Util.safeCopy(activeGestureConfigurations, ActiveConfiguration.class);
 	}
 	
 	public void setActiveKeyConfigurations(List activeKeyConfigurations)
 		throws IllegalArgumentException {
-		this.activeKeyConfigurations = Util.safeCopy(activeKeyConfigurations, ActiveKeyConfiguration.class);
+		this.activeKeyConfigurations = Util.safeCopy(activeKeyConfigurations, ActiveConfiguration.class);
 	}
 	
 	public void setCategories(List categories)
@@ -45,22 +45,22 @@ abstract class AbstractMutableRegistry extends AbstractRegistry {
 	
 	public void setGestureBindings(List gestureBindings)
 		throws IllegalArgumentException {
-		this.gestureBindings = Util.safeCopy(gestureBindings, GestureBinding.class);	
+		this.gestureBindings = Util.safeCopy(gestureBindings, Binding.class);	
 	}
 	
 	public void setGestureConfigurations(List gestureConfigurations)
 		throws IllegalArgumentException {
-		this.gestureConfigurations = Util.safeCopy(gestureConfigurations, GestureConfiguration.class);	
+		this.gestureConfigurations = Util.safeCopy(gestureConfigurations, Configuration.class);	
 	}
 	
 	public void setKeyBindings(List keyBindings)
 		throws IllegalArgumentException {
-		this.keyBindings = Util.safeCopy(keyBindings, KeyBinding.class);	
+		this.keyBindings = Util.safeCopy(keyBindings, Binding.class);	
 	}
 	
 	public void setKeyConfigurations(List keyConfigurations)
 		throws IllegalArgumentException {
-		this.keyConfigurations = Util.safeCopy(keyConfigurations, KeyConfiguration.class);		
+		this.keyConfigurations = Util.safeCopy(keyConfigurations, Configuration.class);		
 	}
 	
 	public void setScopes(List scopes)

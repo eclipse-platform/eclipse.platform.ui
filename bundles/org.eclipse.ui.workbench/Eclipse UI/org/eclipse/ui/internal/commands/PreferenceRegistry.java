@@ -65,7 +65,7 @@ public final class PreferenceRegistry extends AbstractMutableRegistry {
 		List deprecatedActiveKeyConfigurations = Collections.EMPTY_LIST;
 	
 		if (deprecatedActiveKeyConfigurationsString != null && deprecatedActiveKeyConfigurationsString.length() != 0)		
-			deprecatedActiveKeyConfigurations = Collections.singletonList(ActiveKeyConfiguration.create(null, deprecatedActiveKeyConfigurationsString));
+			deprecatedActiveKeyConfigurations = Collections.singletonList(ActiveConfiguration.create(null, deprecatedActiveKeyConfigurationsString));
 
 		String deprecatedKeyBindingsString = preferenceStore.getString(DEPRECATED_KEY_KEY_BINDINGS);
 		List deprecatedKeyBindings = Collections.EMPTY_LIST;
@@ -96,14 +96,14 @@ public final class PreferenceRegistry extends AbstractMutableRegistry {
 			
 			try {
 				IMemento memento = XMLMemento.createReadRoot(reader);
-				activeGestureConfigurations = Collections.unmodifiableList(Persistence.readActiveGestureConfigurations(memento, Persistence.TAG_ACTIVE_GESTURE_CONFIGURATION, null));
-				activeKeyConfigurations = Collections.unmodifiableList(Persistence.readActiveKeyConfigurations(memento, Persistence.TAG_ACTIVE_KEY_CONFIGURATION, null));
+				activeGestureConfigurations = Collections.unmodifiableList(Persistence.readActiveConfigurations(memento, Persistence.TAG_ACTIVE_GESTURE_CONFIGURATION, null));
+				activeKeyConfigurations = Collections.unmodifiableList(Persistence.readActiveConfigurations(memento, Persistence.TAG_ACTIVE_KEY_CONFIGURATION, null));
 				categories = Collections.unmodifiableList(Persistence.readCategories(memento, Persistence.TAG_CATEGORY, null));
 				commands = Collections.unmodifiableList(Persistence.readCommands(memento, Persistence.TAG_COMMAND, null));
-				gestureBindings = Collections.unmodifiableList(Persistence.readGestureBindings(memento, Persistence.TAG_GESTURE_BINDING, null, RANK_PREFERENCE));
-				gestureConfigurations = Collections.unmodifiableList(Persistence.readGestureConfigurations(memento, Persistence.TAG_GESTURE_CONFIGURATION, null));
-				keyBindings = Collections.unmodifiableList(Persistence.readKeyBindings(memento, Persistence.TAG_KEY_BINDING, null, RANK_PREFERENCE));
-				keyConfigurations = Collections.unmodifiableList(Persistence.readKeyConfigurations(memento, Persistence.TAG_KEY_CONFIGURATION, null));
+				gestureBindings = Collections.unmodifiableList(Persistence.readBindings(memento, Persistence.TAG_GESTURE_BINDING, null, RANK_PREFERENCE));
+				gestureConfigurations = Collections.unmodifiableList(Persistence.readConfigurations(memento, Persistence.TAG_GESTURE_CONFIGURATION, null));
+				keyBindings = Collections.unmodifiableList(Persistence.readBindings(memento, Persistence.TAG_KEY_BINDING, null, RANK_PREFERENCE));
+				keyConfigurations = Collections.unmodifiableList(Persistence.readConfigurations(memento, Persistence.TAG_KEY_CONFIGURATION, null));
 				scopes = Collections.unmodifiableList(Persistence.readScopes(memento, Persistence.TAG_SCOPE, null));
 			} catch (WorkbenchException eWorkbench) {
 				throw new IOException();
@@ -126,14 +126,14 @@ public final class PreferenceRegistry extends AbstractMutableRegistry {
 	public void save()
 		throws IOException {
 		XMLMemento xmlMemento = XMLMemento.createWriteRoot(TAG_ROOT);		
-		Persistence.writeActiveGestureConfigurations(xmlMemento, Persistence.TAG_ACTIVE_GESTURE_CONFIGURATION, activeGestureConfigurations);		
-		Persistence.writeActiveKeyConfigurations(xmlMemento, Persistence.TAG_ACTIVE_KEY_CONFIGURATION, activeKeyConfigurations);		
+		Persistence.writeActiveConfigurations(xmlMemento, Persistence.TAG_ACTIVE_GESTURE_CONFIGURATION, activeGestureConfigurations);		
+		Persistence.writeActiveConfigurations(xmlMemento, Persistence.TAG_ACTIVE_KEY_CONFIGURATION, activeKeyConfigurations);		
 		Persistence.writeCategories(xmlMemento, Persistence.TAG_CATEGORY, categories);		
 		Persistence.writeCommands(xmlMemento, Persistence.TAG_COMMAND, commands);
-		Persistence.writeGestureBindings(xmlMemento, Persistence.TAG_GESTURE_BINDING, gestureBindings);
-		Persistence.writeGestureConfigurations(xmlMemento, Persistence.TAG_GESTURE_CONFIGURATION, gestureConfigurations);
-		Persistence.writeKeyBindings(xmlMemento, Persistence.TAG_KEY_BINDING, keyBindings);
-		Persistence.writeKeyConfigurations(xmlMemento, Persistence.TAG_KEY_CONFIGURATION, keyConfigurations);
+		Persistence.writeBindings(xmlMemento, Persistence.TAG_GESTURE_BINDING, gestureBindings);
+		Persistence.writeConfigurations(xmlMemento, Persistence.TAG_GESTURE_CONFIGURATION, gestureConfigurations);
+		Persistence.writeBindings(xmlMemento, Persistence.TAG_KEY_BINDING, keyBindings);
+		Persistence.writeConfigurations(xmlMemento, Persistence.TAG_KEY_CONFIGURATION, keyConfigurations);
 		Persistence.writeScopes(xmlMemento, Persistence.TAG_SCOPE, scopes);
 		Writer writer = new StringWriter();
 
@@ -146,7 +146,7 @@ public final class PreferenceRegistry extends AbstractMutableRegistry {
 		}
 	}
 
-	private static KeyBinding readDeprecatedKeyBinding(IMemento memento)
+	private static Binding readDeprecatedKeyBinding(IMemento memento)
 		throws IllegalArgumentException {
 		if (memento == null)
 			throw new IllegalArgumentException();
@@ -157,14 +157,14 @@ public final class PreferenceRegistry extends AbstractMutableRegistry {
 		if (keyConfiguration == null)
 			keyConfiguration = Persistence.ZERO_LENGTH_STRING;
 
-		KeySequence keySequence = null;
+		Sequence keySequence = null;
 		IMemento mementoKeySequence = memento.getChild(DEPRECATED_TAG_KEY_SEQUENCE);
 		
 		if (mementoKeySequence != null) 
 			keySequence = readDeprecatedKeySequence(mementoKeySequence);	
 
 		if (keySequence == null)
-			keySequence = Persistence.ZERO_LENGTH_KEY_SEQUENCE;
+			keySequence = Persistence.ZERO_LENGTH_SEQUENCE;
 		
 		String plugin = memento.getString(DEPRECATED_TAG_PLUGIN);	
 		String scope = memento.getString(DEPRECATED_TAG_SCOPE);
@@ -172,7 +172,7 @@ public final class PreferenceRegistry extends AbstractMutableRegistry {
 		if (scope == null)
 			scope = Persistence.ZERO_LENGTH_STRING;
 
-		return KeyBinding.create(command, keyConfiguration, keySequence, Persistence.ZERO_LENGTH_STRING, Persistence.ZERO_LENGTH_STRING, plugin, RANK_PREFERENCE, scope);
+		return Binding.create(keyConfiguration, command, Persistence.ZERO_LENGTH_STRING, Persistence.ZERO_LENGTH_STRING, plugin, RANK_PREFERENCE, scope, keySequence);
 	}
 
 	private static List readDeprecatedKeyBindings(IMemento memento, String name)
@@ -193,7 +193,7 @@ public final class PreferenceRegistry extends AbstractMutableRegistry {
 		return list;				
 	}
 	
-	private static KeySequence readDeprecatedKeySequence(IMemento memento)
+	private static Sequence readDeprecatedKeySequence(IMemento memento)
 		throws IllegalArgumentException {
 		if (memento == null)
 			throw new IllegalArgumentException();
@@ -208,10 +208,10 @@ public final class PreferenceRegistry extends AbstractMutableRegistry {
 		for (int i = 0; i < mementos.length; i++)
 			keyStrokes.add(readDeprecatedKeyStroke(mementos[i]));
 		
-		return KeySequence.create(keyStrokes);
+		return Sequence.create(keyStrokes);
 	}
 
-	private static KeyStroke readDeprecatedKeyStroke(IMemento memento)
+	private static Stroke readDeprecatedKeyStroke(IMemento memento)
 		throws IllegalArgumentException {
 		if (memento == null)
 			throw new IllegalArgumentException();
@@ -221,6 +221,6 @@ public final class PreferenceRegistry extends AbstractMutableRegistry {
 		if (value == null)
 			value = Persistence.ZERO;
 		
-		return KeyStroke.create(value.intValue());
+		return Stroke.create(value.intValue());
 	}
 }

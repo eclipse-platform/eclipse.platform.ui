@@ -23,19 +23,19 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-final class KeyNode {
+final class Node {
 
-	static void add(SortedMap tree, KeyBinding keyBinding, State scopeKeyConfiguration, State platformLocale) {
-		List keyStrokes = keyBinding.getKeySequence().getKeyStrokes();		
+	static void add(SortedMap tree, Binding keyBinding, State scopeKeyConfiguration, State platformLocale) {
+		List keyStrokes = keyBinding.getSequence().getStrokes();		
 		SortedMap root = tree;
-		KeyNode keyNode = null;
+		Node keyNode = null;
 	
 		for (int i = 0; i < keyStrokes.size(); i++) {
-			KeyStroke keyStroke = (KeyStroke) keyStrokes.get(i);
-			keyNode = (KeyNode) root.get(keyStroke);
+			Stroke keyStroke = (Stroke) keyStrokes.get(i);
+			keyNode = (Node) root.get(keyStroke);
 			
 			if (keyNode == null) {
-				keyNode = new KeyNode();	
+				keyNode = new Node();	
 				root.put(keyStroke, keyNode);
 			}
 			
@@ -46,11 +46,11 @@ final class KeyNode {
 			keyNode.add(scopeKeyConfiguration, new Integer(keyBinding.getRank()), platformLocale, keyBinding.getCommand());
 	}
 
-	static SortedMap find(SortedMap tree, KeySequence prefix) {	
-		Iterator iterator = prefix.getKeyStrokes().iterator();
+	static SortedMap find(SortedMap tree, Sequence prefix) {	
+		Iterator iterator = prefix.getStrokes().iterator();
 	
 		while (iterator.hasNext()) {
-			KeyNode node = (KeyNode) tree.get(iterator.next());
+			Node node = (Node) tree.get(iterator.next());
 			
 			if (node == null)
 				return new TreeMap();
@@ -61,14 +61,14 @@ final class KeyNode {
 		return tree;			
 	}
 
-	static void remove(SortedMap tree, KeyBinding keyBinding, State scopeKeyConfiguration, State platformLocale) {
-		List keyStrokes = keyBinding.getKeySequence().getKeyStrokes();		
+	static void remove(SortedMap tree, Binding keyBinding, State scopeKeyConfiguration, State platformLocale) {
+		List keyStrokes = keyBinding.getSequence().getStrokes();		
 		SortedMap root = tree;
-		KeyNode keyNode = null;
+		Node keyNode = null;
 	
 		for (int i = 0; i < keyStrokes.size(); i++) {
-			KeyStroke keyStroke = (KeyStroke) keyStrokes.get(i);
-			keyNode = (KeyNode) root.get(keyStroke);
+			Stroke keyStroke = (Stroke) keyStrokes.get(i);
+			keyNode = (Node) root.get(keyStroke);
 			
 			if (keyNode == null)
 				break;
@@ -84,7 +84,7 @@ final class KeyNode {
 		Iterator iterator = tree.values().iterator();	
 		
 		while (iterator.hasNext()) {
-			KeyNode keyNode = (KeyNode) iterator.next();			
+			Node keyNode = (Node) iterator.next();			
 			keyNode.command = solveScopeKeyConfigurationMap(keyNode.scopeKeyConfigurationMap, scopeKeyConfigurations, platformLocales);
 			solve(keyNode.childMap, scopeKeyConfigurations, platformLocales);								
 		}		
@@ -203,7 +203,7 @@ final class KeyNode {
 		
 		while (iterator.hasNext()) {
 			Map.Entry entry = (Map.Entry) iterator.next();
-			KeySequence keySequence = (KeySequence) entry.getKey();			
+			Sequence keySequence = (Sequence) entry.getKey();			
 			String command = (String) entry.getValue();
 			SortedSet keySequenceSet = (SortedSet) commandMap.get(command);
 			
@@ -218,17 +218,17 @@ final class KeyNode {
 		return commandMap;		
 	}
 
-	static SortedMap toKeySequenceMap(SortedMap tree, KeySequence prefix) {
+	static SortedMap toKeySequenceMap(SortedMap tree, Sequence prefix) {
 		SortedMap keySequenceMap = new TreeMap();
 		Iterator iterator = tree.entrySet().iterator();
 		
 		while (iterator.hasNext()) {
 			Map.Entry entry = (Map.Entry) iterator.next();
-			KeyStroke keyStroke = (KeyStroke) entry.getKey();			
-			KeyNode keyNode = (KeyNode) entry.getValue();					
-			List list = new ArrayList(prefix.getKeyStrokes());
+			Stroke keyStroke = (Stroke) entry.getKey();			
+			Node keyNode = (Node) entry.getValue();					
+			List list = new ArrayList(prefix.getStrokes());
 			list.add(keyStroke);
-			KeySequence keySequence = KeySequence.create(list);
+			Sequence keySequence = Sequence.create(list);
 			SortedMap childKeySequenceMap = toKeySequenceMap(keyNode.childMap, keySequence);
 
 			if (childKeySequenceMap.size() >= 1)
@@ -244,7 +244,7 @@ final class KeyNode {
 	String command = null;
 	SortedMap scopeKeyConfigurationMap = new TreeMap();
 	
-	private KeyNode() {
+	private Node() {
 		super();
 	}
 
