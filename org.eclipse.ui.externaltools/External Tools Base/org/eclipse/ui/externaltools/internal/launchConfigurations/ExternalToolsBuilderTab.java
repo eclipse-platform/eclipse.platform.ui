@@ -53,7 +53,7 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 	private IWorkingSet workingSet; 
 	
 	private SelectionListener selectionListener= new SelectionAdapter() {
-		/**
+		/* (non-Javadoc)
 		 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 		 */
 		public void widgetSelected(SelectionEvent e) {
@@ -123,7 +123,7 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 		});
 	}
 	
-	/**
+	/*
 	 * Creates a check button in the given composite with the given text
 	 */
 	private Button createButton(Composite parent, SelectionListener listener, String text, String tooltipText, int columns) {
@@ -138,7 +138,7 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 		return button;
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
@@ -150,10 +150,8 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 		configuration.setAttribute(IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, false);
 	}
 
-	/**
-	 * Sets the state of the widgets from the given configuration
-	 * 
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(ILaunchConfiguration)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		
@@ -216,10 +214,8 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 		return launchInBackground;
 	}
 
-	/**
-	 * Stores the settings from the dialog into the launch configuration
-	 * 
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(ILaunchConfigurationWorkingCopy)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		StringBuffer buffer= new StringBuffer();
@@ -243,14 +239,14 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 		setAttribute(IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, configuration, fLaunchInBackgroundButton.getSelection(), true);
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
 		return ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.Build_Options_9"); //$NON-NLS-1$
 	}
 	
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
 	 */
 	public Image getImage() {
