@@ -23,7 +23,7 @@ public class DataTreeNode extends AbstractDataTreeNode {
  * @param data data for node
  */
 public DataTreeNode(String name, Object data) {
-	super (name, AbstractDataTreeNode.emptyChildArray);
+	super (name, AbstractDataTreeNode.NO_CHILDREN);
 	this.data = data;
 }
 /**
@@ -116,9 +116,13 @@ AbstractDataTreeNode compareWithParent (IPath key, DeltaDataTree parent, ICompar
  * Creates and returns a new copy of the receiver.
  */
 AbstractDataTreeNode copy () {
-	AbstractDataTreeNode[] childrenCopy = new AbstractDataTreeNode[children.length];
-	System.arraycopy(children, 0, childrenCopy, 0, children.length);
-	return new DataTreeNode(name, data, childrenCopy);
+	if (children.length > 0) {
+		AbstractDataTreeNode[] childrenCopy = new AbstractDataTreeNode[children.length];
+		System.arraycopy(children, 0, childrenCopy, 0, children.length);
+		return new DataTreeNode(name, data, childrenCopy);
+	} else {
+		return new DataTreeNode(name, data, children);
+	}
 }
 /**
  * Returns a new node containing a child with the given local name in 
@@ -185,7 +189,7 @@ DataTreeNode copyWithoutChild (String localName) {
  */
 protected static AbstractDataTreeNode[] forwardDeltaWith(AbstractDataTreeNode[] oldNodes, AbstractDataTreeNode[] newNodes, IComparator comparer) {
 	if (oldNodes.length == 0 && newNodes.length == 0) {
-		return emptyChildArray;
+		return NO_CHILDREN;
 	}
 
 	AbstractDataTreeNode[] childDeltas = null;
@@ -251,7 +255,7 @@ protected static AbstractDataTreeNode[] forwardDeltaWith(AbstractDataTreeNode[] 
 	
 	// trim size of result
 	if (numChildDeltas == 0) {
-		return emptyChildArray;
+		return NO_CHILDREN;
 	}
 	if (numChildDeltas < childDeltaMax) {
 		System.arraycopy(childDeltas, 0, childDeltas = new AbstractDataTreeNode[numChildDeltas], 0, numChildDeltas);
@@ -265,7 +269,7 @@ protected static AbstractDataTreeNode[] forwardDeltaWith(AbstractDataTreeNode[] 
 protected AbstractDataTreeNode forwardDeltaWith(DataTreeNode other, IComparator comparer) {
 	AbstractDataTreeNode deltaNode = forwardDeltaWithOrNullIfEqual(this, other, comparer);
 	if (deltaNode == null) {
-		return new NoDataDeltaNode(name, emptyChildArray);
+		return new NoDataDeltaNode(name, NO_CHILDREN);
 	} else {
 		return deltaNode;
 	}

@@ -527,6 +527,8 @@ public IPath[] getChildren(IPath parentKey) {
 
 	AbstractDataTreeNode[] childNodes = getChildNodes(parentKey);
 	int len = childNodes.length;
+	if (len == 0)
+		return NO_CHILDREN;
 	IPath[] answer = new IPath[len];
 	for (int i = 0; i < len; ++i) {
 		answer[i] = parentKey.append(childNodes[i].name);
@@ -711,11 +713,16 @@ public void makeComplete() {
 protected AbstractDataTreeNode naiveCopyCompleteSubtree (IPath key) {
 
 	String[] childNames = getNamesOfChildren (key);
-	AbstractDataTreeNode[] childNodes = new AbstractDataTreeNode[childNames.length];
-
-	/* do for each child */
-	for (int i = childNames.length; --i >= 0;) {
-		childNodes[i] = copyCompleteSubtree(key.append(childNames[i]));
+	int numChildren = childNames.length;
+	AbstractDataTreeNode[] childNodes;
+	if (numChildren == 0) {
+		childNodes = AbstractDataTreeNode.NO_CHILDREN;
+	} else {
+		childNodes = new AbstractDataTreeNode[childNames.length];
+		/* do for each child */
+		for (int i = childNames.length; --i >= 0;) {
+			childNodes[i] = copyCompleteSubtree(key.append(childNames[i]));
+		}
 	}
 	
 	return new DataTreeNode(key.lastSegment(), getData(key), childNodes);

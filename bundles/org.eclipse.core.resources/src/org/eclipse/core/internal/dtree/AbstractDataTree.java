@@ -35,6 +35,11 @@ public abstract class AbstractDataTree {
 	 * Whether modifications to the given source tree are allowed 
 	 */
 	private boolean immutable = false;
+	
+	/**
+	 * Singleton indicating no children
+	 */
+	protected static final IPath[] NO_CHILDREN = new IPath[0];
 
 /**
  * Creates a new empty tree
@@ -158,11 +163,13 @@ public IPath getChild (IPath parentKey, int index) {
  *	parentKey does not exist in the receiver"
  */
 public IPath[] getChildren(IPath parentKey) {
-	
 	String names[] = getNamesOfChildren(parentKey);
-	IPath answer[] = new IPath[names.length];
+	int len = names.length;
+	if (len == 0)
+		return NO_CHILDREN;
+	IPath answer[] = new IPath[len];
 	
-	for (int i = 0; i < names.length; i++) {
+	for (int i = 0; i < len; i++) {
 		answer[i] = parentKey.append(names[i]);
 	}
 	return answer;

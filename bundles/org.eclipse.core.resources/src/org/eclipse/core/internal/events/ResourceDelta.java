@@ -128,11 +128,31 @@ public IResourceDelta[] getAffectedChildren() {
  * @see IResourceDelta#getAffectedChildren(int)
  */
 public IResourceDelta[] getAffectedChildren(int mask) {
-	ArrayList result = new ArrayList(children.length);
-	for (int i = 0; i < children.length; i++)
+	int numChildren = children.length;
+	//if there are no children, they all match
+	if (numChildren == 0)
+		return children;
+
+	//first count the number of matches so we can allocate the exact array size
+	int matching = 0;
+	for (int i = 0; i < numChildren; i++)
 		if ((children[i].getKind() & mask) != 0)
-			result.add(children[i]);
-	return (IResourceDelta[]) result.toArray(new IResourceDelta[result.size()]);
+			matching++;
+			
+	//use arraycopy if all match
+	if (matching == numChildren) {
+		IResourceDelta[] result = new IResourceDelta[children.length];
+		System.arraycopy(children, 0, result, 0, children.length);
+		return result;
+	}
+		
+	//create the appropriate sized array and fill it
+	IResourceDelta[] result = new IResourceDelta[matching];
+	matching = 0;
+	for (int i = 0; i < numChildren; i++)
+		if ((children[i].getKind() & mask) != 0)
+			result[matching++] = children[i];
+	return result;
 }
 /**
  * @see IResourceDelta#getFlags

@@ -19,7 +19,7 @@ public class DeletedNode extends AbstractDataTreeNode {
  * Creates a new tree with the given name
  */
 DeletedNode(String localName) {
-	super(localName, emptyChildArray);
+	super(localName, NO_CHILDREN);
 }
 /**
  * @see AbstractDataTreeNode#asBackwardDelta

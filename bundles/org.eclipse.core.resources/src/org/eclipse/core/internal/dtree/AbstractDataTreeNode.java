@@ -14,7 +14,10 @@ import org.eclipse.core.runtime.IPath;
  * @see AbstractDataTree
  */
 public abstract class AbstractDataTreeNode {
-	
+	/**
+	 * Singleton indicating no children.
+	 */
+	static final AbstractDataTreeNode[] NO_CHILDREN = new AbstractDataTreeNode[0];
 	protected AbstractDataTreeNode children[];
 	protected String name;
 	
@@ -26,7 +29,6 @@ public abstract class AbstractDataTreeNode {
 	public static final int NoDataDeltaNodeType = 3;
 	public static final int MissingNodeType = 4;
 
-	static final AbstractDataTreeNode emptyChildArray[] = new AbstractDataTreeNode[0];
 
 /**
  * Creates a new data tree node
@@ -39,7 +41,7 @@ public abstract class AbstractDataTreeNode {
 AbstractDataTreeNode (String name, AbstractDataTreeNode[] children) {
 	this.name = name;
 	if (children == null || children.length == 0)
-		this.children = AbstractDataTreeNode.emptyChildArray;
+		this.children = AbstractDataTreeNode.NO_CHILDREN;
 	else
 		this.children = children;
 }
@@ -263,7 +265,7 @@ protected static AbstractDataTreeNode[] compareWith(AbstractDataTreeNode[] oldNo
 	}
 	
 	if (count == 0) {
-		return emptyChildArray;
+		return NO_CHILDREN;
 	}
 	if (count < comparedNodes.length) {
 		System.arraycopy(comparedNodes, 0, comparedNodes = new AbstractDataTreeNode[count], 0, count);
@@ -287,7 +289,7 @@ protected static AbstractDataTreeNode[] compareWithParent(AbstractDataTreeNode[]
 		}
 	}
 	if (count == 0) {
-		return emptyChildArray;
+		return NO_CHILDREN;
 	}
 	if (count < comparedNodes.length) {
 		System.arraycopy(comparedNodes, 0, comparedNodes = new AbstractDataTreeNode[count], 0, count);
@@ -300,7 +302,7 @@ static AbstractDataTreeNode convertToAddedComparisonNode(AbstractDataTreeNode ne
 	int n = children.length;
 	AbstractDataTreeNode[] convertedChildren;
 	if (n == 0) {
-		convertedChildren = emptyChildArray;
+		convertedChildren = NO_CHILDREN;
 	} else {
 		convertedChildren = new AbstractDataTreeNode[n];
 		for (int i = 0; i < n; ++i) {
@@ -314,7 +316,7 @@ static AbstractDataTreeNode convertToRemovedComparisonNode(AbstractDataTreeNode 
 	int n = children.length;
 	AbstractDataTreeNode[] convertedChildren;
 	if (n == 0) {
-		convertedChildren = emptyChildArray;
+		convertedChildren = NO_CHILDREN;
 	} else {
 		convertedChildren = new AbstractDataTreeNode[n];
 		for (int i = 0; i < n; ++i) {
@@ -538,7 +540,7 @@ protected static AbstractDataTreeNode[] simplifyWithParent(AbstractDataTreeNode[
 		}
 	}
 	if (simplifiedCount == 0) {
-		return emptyChildArray;
+		return NO_CHILDREN;
 	}
 	if (simplifiedCount < simplifiedNodes.length) {
 		System.arraycopy(simplifiedNodes, 0, simplifiedNodes = new AbstractDataTreeNode[simplifiedCount], 0, simplifiedCount);

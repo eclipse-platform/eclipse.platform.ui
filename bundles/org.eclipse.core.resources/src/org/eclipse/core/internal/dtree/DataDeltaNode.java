@@ -37,10 +37,14 @@ DataDeltaNode(String name, Object data, AbstractDataTreeNode[] children) {
  * @see AbstractDataTreeNode#asBackwardDelta
  */
 AbstractDataTreeNode asBackwardDelta (DeltaDataTree myTree, DeltaDataTree parentTree, IPath key) {
-
-	AbstractDataTreeNode[] newChildren = new AbstractDataTreeNode[children.length];
-	for (int i = children.length; --i >= 0;) {
-		newChildren[i] = children[i].asBackwardDelta(myTree, parentTree, key.append(children[i].getName()));
+	AbstractDataTreeNode[] newChildren;
+	if (children.length == 0) {
+		newChildren = NO_CHILDREN;
+	} else {
+		newChildren = new AbstractDataTreeNode[children.length];
+		for (int i = children.length; --i >= 0;) {
+			newChildren[i] = children[i].asBackwardDelta(myTree, parentTree, key.append(children[i].getName()));
+		}
 	}
 	return new DataDeltaNode(name, parentTree.getData(key), newChildren);
 }
@@ -66,8 +70,13 @@ AbstractDataTreeNode compareWithParent (IPath key, DeltaDataTree parent, ICompar
  * children, but a shallow copy of name and data.
  */
 AbstractDataTreeNode copy () {
-	AbstractDataTreeNode[] childrenCopy = new AbstractDataTreeNode[children.length];
-	System.arraycopy(children, 0, childrenCopy, 0, children.length);
+	AbstractDataTreeNode[] childrenCopy;
+	if (children.length == 0) {
+		childrenCopy = NO_CHILDREN;
+	} else {
+		childrenCopy = new AbstractDataTreeNode[children.length];
+		System.arraycopy(children, 0, childrenCopy, 0, children.length);
+	}
 	return new DataDeltaNode(name, data, childrenCopy);
 }
 /**

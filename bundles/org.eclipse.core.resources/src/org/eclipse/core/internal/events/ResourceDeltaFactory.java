@@ -21,6 +21,10 @@ import java.util.*;
  * and build purposes.
  */
 public class ResourceDeltaFactory {
+	/**
+	 * Singleton indicating no delta children
+	 */
+	protected static final IResourceDelta[] NO_CHILDREN = new IResourceDelta[0];
 /**
  * Returns the resource delta representing the changes made between the given old and new trees,
  * starting from the given root element.
@@ -129,17 +133,22 @@ protected static ResourceDelta createDelta(Workspace workspace, DeltaDataTree de
 	}
 	// recurse over the children
 	IPath[] childKeys = delta.getChildren(pathInDelta);
-	IResourceDelta[] children = new IResourceDelta[childKeys.length];
-	for (int i = 0; i < childKeys.length; i++) {
-		//reuse the delta path if tree-relative and delta-relative are the same
-		IPath newTreePath = pathInTree == pathInDelta ? childKeys[i] : pathInTree.append(childKeys[i].lastSegment());
-		children[i] = createDelta(workspace, delta, deltaInfo, newTreePath, childKeys[i]);
+	int numChildren = childKeys.length;
+	if (numChildren == 0) {
+		result.setChildren(NO_CHILDREN);
+	} else {
+		IResourceDelta[] children = new IResourceDelta[numChildren];
+		for (int i = 0; i < numChildren; i++) {
+			//reuse the delta path if tree-relative and delta-relative are the same
+			IPath newTreePath = pathInTree == pathInDelta ? childKeys[i] : pathInTree.append(childKeys[i].lastSegment());
+			children[i] = createDelta(workspace, delta, deltaInfo, newTreePath, childKeys[i]);
+		}
+		result.setChildren(children);
 	}
-	result.setChildren(children);
 
 	// if this delta has children but no other changes, mark it as changed
 	int status = result.status;
-	if ((status & IResourceDelta.ALL_WITH_PHANTOMS) == 0 && children.length != 0)
+	if ((status & IResourceDelta.ALL_WITH_PHANTOMS) == 0 && numChildren != 0)
 		result.setStatus(status |= IResourceDelta.CHANGED);
 
 	// return the delta

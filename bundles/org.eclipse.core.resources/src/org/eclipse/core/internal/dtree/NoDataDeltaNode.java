@@ -20,7 +20,7 @@ public class NoDataDeltaNode extends AbstractDataTreeNode {
  * Creates a new empty delta.
  */
 public NoDataDeltaNode(String name) {
-	this(name, emptyChildArray);
+	this(name, NO_CHILDREN);
 }
 /**
  * Creates a new data tree node
@@ -44,8 +44,11 @@ NoDataDeltaNode(String localName, AbstractDataTreeNode childNode) {
  * @see AbstractDataTreeNode#asBackwardDelta
  */
 AbstractDataTreeNode asBackwardDelta (DeltaDataTree myTree, DeltaDataTree parentTree, IPath key) {
-	AbstractDataTreeNode[] newChildren = new AbstractDataTreeNode[children.length];
-	for (int i = children.length; --i >= 0;) {
+	int numChildren = children.length;
+	if (numChildren == 0)
+		return new NoDataDeltaNode(name, NO_CHILDREN);
+	AbstractDataTreeNode[] newChildren = new AbstractDataTreeNode[numChildren];
+	for (int i = numChildren; --i >= 0;) {
 		newChildren[i] = children[i].asBackwardDelta(myTree, parentTree, key.append(children[i].getName()));
 	}
 	return new NoDataDeltaNode(name, newChildren);
@@ -63,8 +66,13 @@ AbstractDataTreeNode compareWithParent (IPath key, DeltaDataTree parent, ICompar
  * children, but a shallow copy of name and data.
  */
 AbstractDataTreeNode copy () {
-	AbstractDataTreeNode[] childrenCopy = new AbstractDataTreeNode[children.length];
-	System.arraycopy(children, 0, childrenCopy, 0, children.length);
+	AbstractDataTreeNode[] childrenCopy;
+	if (children.length == 0) {
+		childrenCopy = NO_CHILDREN;
+	} else {
+		childrenCopy = new AbstractDataTreeNode[children.length];
+		System.arraycopy(children, 0, childrenCopy, 0, children.length);
+	}
 	return new NoDataDeltaNode(name, childrenCopy);
 }
 /**
