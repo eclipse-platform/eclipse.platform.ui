@@ -41,6 +41,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	protected ListenerList nodeListeners;
 	protected ListenerList preferenceListeners;
 	protected boolean isLoading = false;
+	private String cachedPath;
 
 	public EclipsePreferences() {
 		this(null, null);
@@ -659,7 +660,9 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	 * @see org.osgi.service.prefs.Preferences#absolutePath()
 	 */
 	public String absolutePath() {
-		return parent == null ? Path.ROOT.toString() : new Path(parent.absolutePath()).append(name()).toString();
+		if (cachedPath == null)
+			cachedPath = parent == null ? Path.ROOT.toString() : new Path(parent.absolutePath()).append(name()).toString();
+		return cachedPath;
 	}
 
 	/*
