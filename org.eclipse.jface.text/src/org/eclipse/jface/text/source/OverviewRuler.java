@@ -784,6 +784,9 @@ public class OverviewRuler implements IOverviewRuler {
 	 */
 	public void setAnnotationTypeLayer(Object annotationType, int layer) {
 		Integer layerObj= new Integer(layer);
+		if (fAnnotationsSortedByLayer.remove(annotationType))
+			fLayersSortedByLayer.remove(layerObj);
+
 		if (layer >= 0) {
 			int i= 0;
 			int size= fLayersSortedByLayer.size();
@@ -791,9 +794,6 @@ public class OverviewRuler implements IOverviewRuler {
 				i++;
 			fLayersSortedByLayer.add(i, layerObj);
 			fAnnotationsSortedByLayer.add(i, annotationType);
-		} else {
-			fLayersSortedByLayer.remove(layerObj);
-			fAnnotationsSortedByLayer.remove(annotationType);
 		}
 	}
 	
@@ -980,7 +980,7 @@ public class OverviewRuler implements IOverviewRuler {
 			
 			Object annotationType= fAnnotationsSortedByLayer.get(i);
 			
-			if (!fHeaderAnnotationTypes.contains(annotationType))
+			if (!fHeaderAnnotationTypes.contains(annotationType) || !fAnnotationTypes.contains(annotationType))
 				continue;
 			
 			for (Iterator e= new FilterIterator(annotationType); e.hasNext();) {
