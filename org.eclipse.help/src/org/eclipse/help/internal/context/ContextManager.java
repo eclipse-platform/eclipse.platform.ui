@@ -13,12 +13,12 @@ import org.eclipse.help.IContext;
 public class ContextManager {
 	public static final String CONTEXTS_EXTENSION = "org.eclipse.help.contexts";
 	/**
-	 * Map of Contexts, indexed by each locale+plugin 
+	 * Contexts, indexed by each plugin 
 	 */
 	Map pluginsContexts = new HashMap(/*of Map of Context indexed by plugin*/
 	);
 	/**
-	 * Map of of List ContextsFile index by locale+plugin
+	 * Context contributors
 	 */
 	Map contextsFiles = new HashMap(/* of List ContextsFile index by plugin */
 	);
@@ -27,12 +27,12 @@ public class ContextManager {
 	 */
 	public ContextManager() {
 		super();
-		createContextsFiles(Locale.getDefault().toString());
+		createContextsFiles();
 	}
 	/**
 	 * Finds the context, given context ID.
 	 */
-	public IContext getContext(String contextId, String locale) {
+	public IContext getContext(String contextId) {
 		if (contextId == null)
 			return null;
 		String plugin = contextId;
@@ -44,9 +44,9 @@ public class ContextManager {
 		}
 		plugin = contextId.substring(0, dot);
 		id = contextId.substring(dot + 1);
-		Map contexts = (Map) pluginsContexts.get(locale+plugin);
+		Map contexts = (Map) pluginsContexts.get(plugin);
 		if (contexts == null) {
-			contexts = loadPluginContexts(plugin, locale);
+			contexts = loadPluginContexts(plugin);
 		}
 		return (IContext) contexts.get(id);
 	}
@@ -54,25 +54,25 @@ public class ContextManager {
 	 * Loads context.xml with context for a specified plugin,
 	 * creates context nodes and adds to pluginContext map.
 	 */
-	private synchronized Map loadPluginContexts(String plugin, String locale) {
-		Map contexts = (Map) pluginsContexts.get(locale+plugin);
+	private synchronized Map loadPluginContexts(String plugin) {
+		Map contexts = (Map) pluginsContexts.get(plugin);
 		if (contexts == null) {
 			// read the context info from the XML contributions
-			List pluginContextsFiles = (List) contextsFiles.get(locale+plugin);
+			List pluginContextsFiles = (List) contextsFiles.get(plugin);
 			if (pluginContextsFiles == null) {
 				pluginContextsFiles = new ArrayList();
 			}
 			ContextsBuilder builder = new ContextsBuilder();
 			builder.build(pluginContextsFiles);
 			contexts = builder.getBuiltContexts();
-			pluginsContexts.put(locale+plugin, contexts);
+			pluginsContexts.put(plugin, contexts);
 		}
 		return contexts;
 	}
 	/**
 	 * Creates a list of context files. 
 	 */
-	private void createContextsFiles(String locale) {
+	private void createContextsFiles() {
 		// read extension point and retrieve all context contributions
 		IExtensionPoint xpt =
 			Platform.getPluginRegistry().getExtensionPoint(CONTEXTS_EXTENSION);
@@ -93,12 +93,12 @@ public class ContextManager {
 					// in v1 file attribute was called name
 					if (fileName == null)
 						fileName = contextContributions[j].getAttribute("name");
-					List pluginContextsFiles = (List) contextsFiles.get(locale+plugin);
+					List pluginContextsFiles = (List) contextsFiles.get(plugin);
 					if (pluginContextsFiles == null) {
 						pluginContextsFiles = new ArrayList();
-						contextsFiles.put(locale+plugin, pluginContextsFiles);
+						contextsFiles.put(plugin, pluginContextsFiles);
 					}
-					pluginContextsFiles.add(new ContextsFile(definingPlugin, fileName, plugin, locale));
+					pluginContextsFiles.add(new ContextsFile(definingPlugin, fileName, plugin));
 				}
 			}
 		}
@@ -107,10 +107,10 @@ public class ContextManager {
 	 * Registers context in the manager.
 	 * @return context ID
 	 */
-	public void addContext(String contextId, IContext context, String locale) {
+	public void addContext(String contextId, IContext context) {
 		if (contextId == null)
 			return;
-		if (getContext(contextId, locale) != null)
+		if (getContext(contextId) != null)
 			return;
 		String plugin = contextId;
 		String id = contextId;
@@ -119,10 +119,10 @@ public class ContextManager {
 			plugin = contextId.substring(0, dot);
 			id = contextId.substring(dot + 1);
 		}
-		Map contexts = (Map) pluginsContexts.get(locale+plugin);
+		Map contexts = (Map) pluginsContexts.get(plugin);
 		if (contexts == null) {
 			contexts = new HashMap();
-			pluginsContexts.put(locale+plugin, contexts);
+			pluginsContexts.put(plugin, contexts);
 		}
 		contexts.put(id, context);
 	}

@@ -13,15 +13,13 @@ import org.eclipse.help.internal.HelpSystem;
 public class ContextProxy implements IContext {
 	private String contextID;
 	private IContext context = null;
-	private String locale;
 	private boolean used = false;
 	/**
 	 * ContextImpl constructor.
 	 */
-	public ContextProxy(String contextId, String locale) {
+	public ContextProxy(String contextId) {
 		super();
 		this.contextID = contextId;
-		this.locale = locale;
 	}
 	/**
 	 * Returns a list of related topics for this help context.
@@ -30,7 +28,7 @@ public class ContextProxy implements IContext {
 	 */
 	public IHelpResource[] getRelatedTopics() {
 		if (!used) {
-			context = HelpSystem.getContextManager().getContext(contextID, locale);
+			context = HelpSystem.getContextManager().getContext(contextID);
 			used = true;
 		}
 		if (context == null)
@@ -44,7 +42,7 @@ public class ContextProxy implements IContext {
 	 */
 	public String getText() {
 		if (!used) {
-			context = HelpSystem.getContextManager().getContext(contextID, locale);
+			context = HelpSystem.getContextManager().getContext(contextID);
 			used = true;
 		}
 		if (context == null)
