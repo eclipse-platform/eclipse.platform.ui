@@ -1307,9 +1307,10 @@ protected void updatePlus(Item item, Object element) {
 
 /**
  * Get the expanded elements that are visible
- * to the user as an expanded element is only
- * isible if the parent is expanded.
+ * to the user. An expanded element is only
+ * visible if the parent is expanded.
  * @return Collection of Object
+ * @since 2.0
  */
 public Object[] getVisibleExpandedElements() {
 	ArrayList v= new ArrayList();
