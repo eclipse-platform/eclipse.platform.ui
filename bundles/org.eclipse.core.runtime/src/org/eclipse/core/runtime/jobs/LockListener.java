@@ -21,7 +21,7 @@ import org.eclipse.core.internal.runtime.InternalPlatform;
  * Clients outside of the base platform should not reference or subclass this class.
  * </p>
  * 
- * @see IJobManager.setLockListener
+ * @see IJobManager#setLockListener(LockListener)
  * @since 3.0
  */
 public class LockListener {

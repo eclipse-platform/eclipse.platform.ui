@@ -12,27 +12,25 @@ package org.eclipse.core.runtime.jobs;
 
 import org.eclipse.core.internal.jobs.InternalJob;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 
 /**
  * Jobs are units of runnable work that can be scheduled to be run with the job
  * manager.  Once a job has completed, it can be scheduled to run again (jobs are
  * reusable).
- * 
+ * <p>
  * Jobs have a state that indicates what they are currently doing.  When constructed,
  * jobs start with a state value of <code>NONE</code>.  When a job is scheduled
  * to be run, it moves into the <code>WAITING</code> state.  When a job starts
  * running, it moves into the <code>RUNNING</code> state.  When execution finishes
  * (either normally or through cancelation), the state changes back to 
  * <code>NONE</code>.  
- * 
+ * </p><p>
  * A job can also be in the <code>SLEEPING</code> state.  This happens if a user
  * calls Job.sleep() on a waiting job, or if a job is scheduled to run after a specified
  * delay.  Only jobs in the <code>WAITING</code> state can be put to sleep.  
  * Sleeping jobs can be woken at any time using Job.wakeUp(), which will put the
  * job back into the <code>WAITING</code> state.
- * 
+ * </p><p>
  * Jobs can be assigned a priority that is used as a hint about how the job should
  * be scheduled.  There is no guarantee that jobs of one priority will be run before
  * all jobs of lower priority.  The javadoc for the various priority constants provide
@@ -135,6 +133,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * Creates a new job with the specified name.  The job name is a human-readable
 	 * value that is displayed to users.  The name does not need to be unique, but it
 	 * must not be <code>null</code>.
+	 * 
 	 * @param name the name of the job.
 	 */
 	public Job(String name)  {
@@ -154,8 +153,8 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * represented as objects that are not interpreted or specified in any way
 	 * by the job manager.  Thus, a job can choose to belong to any number of
 	 * families.
-	 * 
-	 * <p>Clients may override this method.  This default implementation always returns
+	 * <p>
+	 * Clients may override this method.  This default implementation always returns
 	 * <code>false</code>.  Overriding implementations must return <code>false</code>
 	 * for families they do not recognize.
 	 * </p>
@@ -193,7 +192,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * 
 	 * @param result a status object indicating the result of the job's execution.
 	 * @see #ASYNC_FINISH
-	 * @see #run
+	 * @see #run(IProgressMonitor)
 	 */
 	public final void done(IStatus result) {
 		super.done(result);
@@ -201,6 +200,8 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	/**
 	 * Returns the human readable name of this job.  The name is never 
 	 * <code>null</code>.
+	 * 
+	 * @return the name of this job
 	 */
 	public final String getName() {
 		return super.getName();
@@ -222,7 +223,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * @param key the name of the property
 	 * @return the value of the property, 
 	 *     or <code>null</code> if this job has no such property
-	 * @see #setProperty
+	 * @see #setProperty(QualifiedName, Object)
 	 */
 	public final Object getProperty(QualifiedName key) {
 		return super.getProperty(key);
@@ -242,7 +243,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * 
 	 * @return the scheduling rule for this job, or <code>null</code>.
 	 * @see ISchedulingRule
-	 * @see #setRule
+	 * @see #setRule(ISchedulingRule)
 	 */
 	public final ISchedulingRule getRule() {
 		return super.getRule();
@@ -250,10 +251,10 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	/**
 	 * Returns the state of the job. Result will be one of:
 	 * <ul>
-	 * <li>Job.RUNNING - if the job is currently running.</li>
-	 * <li>Job.WAITING - if the job is waiting to be run.</li>
-	 * <li>Job.SLEEPING - if the job is sleeping.</li>
-	 * <li>Job.NONE - in all other cases.</li>
+	 * <li><code>Job.RUNNING</code> - if the job is currently running.</li>
+	 * <li><code>Job.WAITING</code> - if the job is waiting to be run.</li>
+	 * <li><code>Job.SLEEPING</code> - if the job is sleeping.</li>
+	 * <li><code>Job.NONE</code> - in all other cases.</li>
 	 * </ul>
 	 * <p>
 	 * Note that job state is inherently volatile, and in most cases clients 
@@ -270,6 +271,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	}
 	/**
 	 * Returns the thread that this job is currently running in.
+	 * 
 	 * @return the thread this job is running in, or <code>null</code>
 	 * if this job is not running or the thread is unknown.
 	 */
@@ -280,6 +282,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * Returns whether this job is blocking another non-system job from 
 	 * starting due to a conflicting scheduling rule.  Returns <code>false</code> 
 	 * if this job is not running, or is not blocking any other job.
+	 * 
 	 * @return <code>true</code> if this job is blocking a waiting non-system
 	 * job, and <code>false</code> otherwise.
 	 * @see #getRule()
@@ -292,7 +295,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * Returns whether this job is a system job.  System jobs are typically not 
 	 * revealed to users in any UI presentation of jobs.  Other than their UI presentation,
 	 * system jobs act exactly like other jobs.  If this value is not explicitly set, jobs
-	 * are treated as non-system jobs.
+	 * are treated as non-system jobs.  The default value is <code>false</code>.
 	 * 
 	 * @return <code>true</code> if this job is a system job, and
 	 * <code>false</code> otherwise.
@@ -303,11 +306,12 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	}
 	/**
 	 * Returns whether this job has been directly initiated by a UI end user. 
-	 * These jobs may be presented differently in the UI.
+	 * These jobs may be presented differently in the UI.  The default value
+	 * is <code>false</code>.
 	 * 
 	 * @return <code>true</code> if this job is a user-initiated job, and
 	 * <code>false</code> otherwise.
-	 * @see setUser
+	 * @see #setUser(boolean)
 	 */
 	public final boolean isUser()  {
 		return super.isUser();
@@ -321,8 +325,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * <tt>run</tt> method, the join will return at the end of the first execution.
 	 * In other words, join will return the first time this job exits the
 	 * <tt>RUNNING</tt> state, or as soon as this job enters the <tt>NONE</tt> state.
-	 * </p>
-	 * <p>
+	 * </p><p>
 	 * Note that there is a deadlock risk when using join.  If the calling thread owns
 	 * a lock or object monitor that the joined thread is waiting for, deadlock 
 	 * will occur.
@@ -338,7 +341,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * Removes a job listener from this job.
 	 * Has no effect if an identical listener is not already registered.
 	 * 
-	 * @param listener the listener to be removed.
+	 * @param listener the listener to be removed
 	 */
 	public final void removeJobChangeListener(IJobChangeListener listener) {
 		super.removeJobChangeListener(listener);
@@ -361,8 +364,9 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * 
 	 * @param monitor the monitor to be used for reporting progress and
 	 * responding to cancelation. The monitor is never <code>null</code>
+	 * @return resulting status of the run
 	 * @see #ASYNC_FINISH
-	 * @see #done
+	 * @see #done(IStatus)
 	 */
 	protected abstract IStatus run(IProgressMonitor monitor);
 	/**
@@ -397,6 +401,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * Changes the name of this job.  The job name is a human-readable
 	 * value that is displayed to users.  The name does not need to be unique, but it
 	 * must not be <code>null</code>.
+	 * 
 	 * @param name the name of the job.
 	 */
 	public final void setName(String name) {
@@ -410,8 +415,8 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * @param priority the new job priority.  One of
 	 * INTERACTIVE, SHORT, LONG, BUILD, or DECORATE.
 	 */
-	public final void setPriority(int i) {
-		super.setPriority(i);
+	public final void setPriority(int priority) {
+		super.setPriority(priority);
 	}
 	/**
 	 * Associates this job with a progress group.  Progress feedback 
@@ -428,8 +433,8 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * <tt>run</tt> method, after which any association of this job to the 
 	 * group will be lost.
 	 * 
-	 * @see IJobManager#createProgressGroup
-	 * @param monitor The progress group to use for this job
+	 * @see IJobManager#createProgressGroup()
+	 * @param group The progress group to use for this job
 	 * @param ticks the number of work ticks allocated from the
 	 *    parent monitor, or IProgressMonitor.UNKNOWN
 	 */
@@ -445,8 +450,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * by ISV plug-ins. They allow key-object associations to be stored with
 	 * a job instance.  These key-value associations are maintained in 
 	 * memory (at all times), and the information is never discarded automatically.
-	 * </p>
-	 * <p>
+	 * </p><p>
 	 * The qualifier part of the property name must be the unique identifier
 	 * of the declaring plug-in (e.g. <code>"com.example.plugin"</code>).
 	 * </p>
@@ -454,7 +458,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * @param key the qualified name of the property
 	 * @param value the value of the property, 
 	 *     or <code>null</code> if the property is to be removed
-	 * @see #getProperty
+	 * @see #getProperty(QualifiedName)
 	 */
 	public void setProperty(QualifiedName key, Object value) {
 		super.setProperty(key, value);
@@ -465,7 +469,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * 
 	 * @param rule the new scheduling rule, or <code>null</code> if the job
 	 * should have no scheduling rule
-	 * @see #getRule
+	 * @see #getRule()
 	 */
 	public final void setRule(ISchedulingRule rule) {
 		super.setRule(rule);
@@ -478,7 +482,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * 
 	 * @param value <code>true</code> if this job should be a system job, and
 	 * <code>false</code> otherwise.
-	 * @see isSystem
+	 * @see #isSystem()
 	 */
 	public final void setSystem(boolean value)  {
 		super.setSystem(value);
@@ -489,7 +493,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * 
 	 * @param value <code>true</code> if this job is a user-initiated job, and
 	 * <code>false</code> otherwise.
-	 * @see isUser
+	 * @see #isUser()
 	 */
 	public final void setUser(boolean value)  {
 		super.setUser(value);
@@ -499,12 +503,12 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * if this job is not running or the thread is unknown.
 	 * <p>
 	 * Jobs that use the <code>Job.ASYNC_FINISH</code> return code should tell 
-	 * the job what thread it is running in.  This is used to prevent deadlocks
+	 * the job what thread it is running in.  This is used to prevent deadlocks.
 	 * 
 	 * @param thread the thread that this job is running in.
 	 * 
 	 * @see #ASYNC_FINISH
-	 * @see #run
+	 * @see #run(IProgressMonitor)
 	 */
 	public final void setThread(Thread thread) {
 		super.setThread(thread);
@@ -514,16 +518,19 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * Returns whether this job should be run.
 	 * If <code>false</code> is returned, this job will be discarded by the job manager
 	 * without running.
-	 * 
-	 * <p>This method is called immediately prior to calling the job's
+	 * <p>
+	 * This method is called immediately prior to calling the job's
 	 * run method, so it can be used for last minute pre-condition checking before
 	 * a job is run.  This method can also be used for setting a job's progress
 	 * group.  This method must not attempt to schedule or change the
-	 * state of any other job.</p>
-	 * 
-	 * <p>Clients may override this method.  This default implementation always returns
+	 * state of any other job.
+	 * </p><p>
+	 * Clients may override this method.  This default implementation always returns
 	 * <code>true</code>.
 	 * </p>
+	 * 
+	 * @return <code>true</code> if this job should be run 
+	 *   and <code>false</code> otherwise
 	 */
 	public boolean shouldRun() {
 		return true;
@@ -532,14 +539,17 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * Returns whether this job should be scheduled.
 	 * If <code>false</code> is returned, this job will be discarded by the job manager
 	 * without being added to the queue.
-	 * 
-	 * <p>This method is called immediately prior to adding the job to the waiting job
+	 * <p>
+	 * This method is called immediately prior to adding the job to the waiting job
 	 * queue.,so it can be used for last minute pre-condition checking before
-	 * a job is scheduled.</p>
-	 * 
-	 * <p>Clients may override this method.  This default implementation always returns
+	 * a job is scheduled.
+	 * </p><p>
+	 * Clients may override this method.  This default implementation always returns
 	 * <code>true</code>.
 	 * </p>
+	 * 
+	 * @return <code>true</code> if the job manager should schedule this job
+	 *   and <code>false</code> otherwise
 	 */
 	public boolean shouldSchedule() {
 		return true;
@@ -552,9 +562,9 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * <p>
 	 * Sleeping jobs can be resumed using <code>wakeUp</code>.
 	 * 
-	 * @see #wakeUp
-	 * @return false if the job is currently running (and thus cannot
-	 * be put to sleep), and true in all other cases.
+	 * @return <code>false</code> if the job is currently running (and thus cannot
+	 * be put to sleep), and <code>true</code> in all other cases
+	 * @see #wakeUp()
 	 */
 	public final boolean sleep() {
 		return super.sleep();
@@ -567,7 +577,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * This is a convenience method, fully equivalent to 
 	 * <code>wakeUp(0L)</code>.
 	 * </p>
-	 * @see #sleep
+	 * @see #sleep()
 	 */
 	public final void wakeUp() {
 		super.wakeUp(0L);
@@ -577,7 +587,9 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * the specified delay. This is equivalent to canceling the sleeping job and
 	 * rescheduling with the given delay.  If this job is not currently sleeping, 
 	 * the request  is ignored.
-	 * @see #sleep
+	 * 
+	 * @param delay the number of milliseconds to delay
+	 * @see #sleep()
 	 */
 	public final void wakeUp(long delay) {
 		super.wakeUp(delay);

@@ -42,7 +42,9 @@ public interface IJobManager {
 	 * Registers a job listener with the job manager.  
 	 * Has no effect if an identical listener is already registered.
 	 * 
-	 * @param listener the listener to be added.
+	 * @param listener the listener to be added
+	 * @see #removeJobChangeListener(IJobChangeListener)
+	 * @see IJobChangeListener
 	 */
 	public void addJobChangeListener(IJobChangeListener listener);
 	/**
@@ -80,9 +82,9 @@ public interface IJobManager {
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting and cancellation are not desired
 	 * @throws IllegalArgumentException if the rule is not strictly nested within
-	 * all other rules currently active for this thread.
+	 * 	all other rules currently active for this thread
 	 * @throws OperationCanceledException if the supplied monitor reports cancelation
-	 * 	before the rule becomes available.
+	 * 	before the rule becomes available
 	 * @see ISchedulingRule#contains(ISchedulingRule)
 	 */
 	public void beginRule(ISchedulingRule rule, IProgressMonitor monitor);
@@ -92,7 +94,7 @@ public interface IJobManager {
 	 * a chance to wake up.  Currently executing jobs will be asked to cancel but there 
 	 * is no guarantee that they will do so.
 	 * 
-	 * @param family the job family to cancel, or <code>null</code> to cancel all jobs.
+	 * @param family the job family to cancel, or <code>null</code> to cancel all jobs
 	 * @see Job#belongsTo(Object)
 	 */
 	public void cancel(Object family);
@@ -124,13 +126,15 @@ public interface IJobManager {
 	 * 
 	 * @see Job#setProgressGroup(IProgressMonitor, int)
 	 * @see IProgressMonitor
-	 * @return A progress monitor
+	 * @return a progress monitor
 	 */
 	public IProgressMonitor createProgressGroup();
 		
 	/**
 	 * Returns the job that is currently running in this thread, or null if there
 	 * is no currently running job.
+	 * 
+	 * @return the job or <code>null</code>
 	 */
 	public Job currentJob();
 	/**
@@ -153,7 +157,8 @@ public interface IJobManager {
 	 * Returns all waiting, executing and sleeping jobs belonging
 	 * to the given family. If no jobs are found, an empty array is returned.
 	 * 
-	 * @param family the job family to find, or <code>null</code> to find all jobs.
+	 * @param family the job family to find, or <code>null</code> to find all jobs
+	 * @return the job array
 	 * @see Job#belongsTo(Object)
 	 */
 	public Job[] find(Object family);
@@ -164,7 +169,6 @@ public interface IJobManager {
 	 * the family that are currently waiting, running, or sleeping, this method returns 
 	 * immediately.  Feedback on how the join is progressing is provided to a  progress 
 	 * monitor.
-	 * 
 	 * <p>
 	 * Note that there is a deadlock risk when using join.  If the calling thread owns
 	 * a lock or object monitor that the joined thread is waiting for, deadlock 
@@ -193,7 +197,9 @@ public interface IJobManager {
 	 * Removes a job listener from the job manager.  
 	 * Has no effect if an identical listener is not already registered.
 	 * 
-	 * @param listener the listener to be removed.
+	 * @param listener the listener to be removed
+	 * @see #addJobChangeListener(IJobChangeListener)
+	 * @see IJobChangeListener
 	 */
 	public void removeJobChangeListener(IJobChangeListener listener);
 	/**
@@ -215,7 +221,7 @@ public interface IJobManager {
 	 * </p>
 	 * 
 	 * @param provider the new provider, or <code>null</code> if no progress
-	 * is needed.
+	 * is needed
 	 */
 	public void setProgressProvider(ProgressProvider provider);
 	/**
@@ -224,7 +230,7 @@ public interface IJobManager {
 	 * <code>SLEEPING</code> state.  Jobs that have been put to sleep
 	 * will remain in that state until either resumed or canceled.  This method has
 	 * no effect on jobs that are not currently waiting to be run.
-	 * 
+	 * <p>
 	 * Sleeping jobs can be resumed using <code>wakeUp</code>.
 	 * 
 	 * @param family the job family to sleep, or <code>null</code> to sleep all jobs.
@@ -235,7 +241,7 @@ public interface IJobManager {
 	 * Resumes scheduling of all sleeping jobs in the given family.  This method
 	 * has no effect on jobs in the family that are not currently sleeping.
 	 * 
-	 * @param family the job family to wake up, or <code>null</code> to wake up all jobs.
+	 * @param family the job family to wake up, or <code>null</code> to wake up all jobs
 	 * @see Job#belongsTo(Object)
 	 */
 	public void wakeUp(Object family);

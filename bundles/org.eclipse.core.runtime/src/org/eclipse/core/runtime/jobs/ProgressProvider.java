@@ -11,8 +11,6 @@
 package org.eclipse.core.runtime.jobs;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 
 /**
  * The progress provider supplies the job manager with progress monitors for
@@ -22,7 +20,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
  * Clients outside of the base platform should not reference or subclass this class.
  * </p>
  * 
- * @see IJobManager#setProgressProvider
+ * @see IJobManager#setProgressProvider(ProgressProvider)
  * @since 3.0
  */
 public abstract class ProgressProvider {
@@ -30,10 +28,10 @@ public abstract class ProgressProvider {
 	 * Provides a new progress monitor instance to be used by the given job.
 	 * This method is called prior to running any job that does not belong to a
 	 * progress group. The returned monitor will be supplied to the job's
-	 * <code>run</code> metohd.
+	 * <code>run</code> method.
 	 * 
-	 * @see #createProgressGroup
-	 * @see Job#setProgressGroup
+	 * @see #createProgressGroup()
+	 * @see Job#setProgressGroup(IProgressMonitor, int)
 	 * @param job the job to create a progress monitor for
 	 * @return a progress monitor, or <code>null</code> if no progress monitoring 
 	 * is needed.
@@ -48,8 +46,8 @@ public abstract class ProgressProvider {
 	 * This default implementation returns a new
 	 * <code>NullProgressMonitor</code>  Subclasses may override.
 	 * 
-	 * @see IJobManager#createProgressGroup
-	 * @return A progress monitor
+	 * @see IJobManager#createProgressGroup()
+	 * @return a progress monitor
 	 */
 	public IProgressMonitor createProgressGroup() {
 		return new NullProgressMonitor();
@@ -70,11 +68,11 @@ public abstract class ProgressProvider {
 	 * This default implementation returns a new
 	 * <code>SubProgressMonitor</code>.  Subclasses may override.
 	 * 
-	 * @see IJobManager#createProgressGroup
-	 * @see Job#setProgressGroup
+	 * @see IJobManager#createProgressGroup()
+	 * @see Job#setProgressGroup(IProgressMonitor, int)
 	 * @param job the job to create a progress monitor for
 	 * @param group the progress monitor group that this job belongs to
-	 * @param ticks
+	 * @param ticks the number of ticks of work for the progress monitor
 	 * @return a progress monitor, or <code>null</code> if no progress monitoring 
 	 * is needed.
 	 */

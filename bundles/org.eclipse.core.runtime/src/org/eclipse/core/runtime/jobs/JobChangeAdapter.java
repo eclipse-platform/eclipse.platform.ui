@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2003 IBM Corporation and others. All rights reserved.   This
+ * Copyright (c) 2003, 2004 IBM Corporation and others. All rights reserved.   This
  * program and the accompanying materials are made available under the terms of
  * the Common Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/cpl-v10.html
@@ -23,42 +23,42 @@ package org.eclipse.core.runtime.jobs;
  */
 public class JobChangeAdapter implements IJobChangeListener {
 	/* (non-Javadoc)
-	 * Method declared on IJobChangeListener.
+	 * @see IJobChangeListener#aboutToRun(IJobChangeEvent)
 	 * This default implementation does nothing
 	 */
 	public void aboutToRun(IJobChangeEvent event) {
 		// do nothing
 	}
 	/* (non-Javadoc)
-	 * Method declared on IJobChangeListener.
+	 * @see IJobChangeListener#awake(IJobChangeEvent)
 	 * This default implementation does nothing
 	 */
 	public void awake(IJobChangeEvent event) {
 		// do nothing
 	}
 	/* (non-Javadoc)
-	 * Method declared on IJobChangeListener.
+	 * @see IJobChangeListener#done(IJobChangeEvent)
 	 * This default implementation does nothing
 	 */
 	public void done(IJobChangeEvent event) {
 		// do nothing
 	}
 	/* (non-Javadoc)
-	 * Method declared on IJobChangeListener.
+	 * @see IJobChangeListener#running(IJobChangeEvent)
 	 * This default implementation does nothing
 	 */
 	public void running(IJobChangeEvent event) {
 		// do nothing
 	}
 	/* (non-Javadoc)
-	 * Method declared on IJobChangeListener.
+	 * @see IJobChangeListener#scheduled(IJobChangeEvent)
 	 * This default implementation does nothing
 	 */
 	public void scheduled(IJobChangeEvent event) {
 		// do nothing
 	}
 	/* (non-Javadoc)
-	 * Method declared on IJobChangeListener.
+	 * @see IJobChangeListener#sleeping(IJobChangeEvent)
 	 * This default implementation does nothing
 	 */
 	public void sleeping(IJobChangeEvent event) {

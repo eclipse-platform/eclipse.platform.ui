@@ -15,20 +15,17 @@ package org.eclipse.core.runtime.jobs;
  * Locks are reentrant.  That is, they can be acquired multiple times by the same thread
  * without releasing.  Locks are only released when the number of successful acquires 
  * equals the number of successful releases.
- * </p>
- * <p>
+ * </p><p>
  * Locks avoid circular waiting deadlocks by employing a release and wait strategy.
  * If a group of threads are involved in a deadlock, one thread will lose control
  * of the locks it owns, thus breaking the deadlock and allowing other threads to 
  * proceed.  Once that thread's locks are all available, it will be given exclusive access
  * to all its locks and allowed to proceed.  A thread can only lose locks while it is
  * waiting on an acquire() call.
- * </p>
- * <p>
+ * </p><p>
  * Successive acquire attempts by different threads are queued and serviced on
  * a first come, first served basis.
- * </p>
- * <p>
+ * </p><p>
  * It is very important that acquired locks eventually get released.  Calls to release
  * should be done in a finally block to ensure they execute.  For example:
  * <pre>
@@ -42,10 +39,10 @@ package org.eclipse.core.runtime.jobs;
  * Note: although <tt>lock.acquire</tt> should never fail, it is good practice to place 
  * it inside the try block anyway.  Releasing without acquiring is far less catastrophic 
  * than acqiring without releasing.
- * <p>
+ * </p><p>
  * This interface is not intended to be implemented by clients.
  * </p>
- * @see IJobManager#newLock
+ * @see IJobManager#newLock()
  * @since 3.0
  */
 public interface ILock {
@@ -64,8 +61,10 @@ public interface ILock {
 	 * will once again have exclusive access to any other locks it owned upon entering 
 	 * the acquire method.
 	 * 
+	 * @param delay the number of milliseconds to delay
 	 * @return <code>true</code> if the lock was successfully acquired, and 
 	 * <code>false</code> otherwise.
+	 * @exception InterruptedException if the thread was interrupted
 	 */
 	public boolean acquire(long delay) throws InterruptedException;
 	/**
@@ -85,7 +84,8 @@ public interface ILock {
 	 * Returns the number of nested acquires on this lock that have not been released.
 	 * This is the number of times that release() must be called before the lock is
 	 * freed.
-	 * @return the number of nested acquires that have not been released.
+	 * 
+	 * @return the number of nested acquires that have not been released
 	 */
 	public int getDepth();
 	/**

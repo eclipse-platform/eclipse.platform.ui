@@ -17,14 +17,12 @@ package org.eclipse.core.runtime.jobs;
  * of all scheduled jobs, or to any set of individual jobs.  A single listener instance should
  * not be added to both the job manager, and to individual jobs (such a listener may
  * receive duplicate notifications).
- * </p>
- * <p>
+ * </p><p>
  * Clients should not rely on the result of the <code>Job#getState()</code> 
  * method on jobs for which notification is occurring. Listeners are notified of 
  * all job state changes, but whether the state change occurs before, during, or 
  * after listeners are notified is unspecified.
- * </p>
- * <p>
+ * </p><p>
  * Clients may implement this interface.
  * </p>
  * @see JobChangeAdapter

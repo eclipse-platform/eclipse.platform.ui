@@ -20,10 +20,10 @@ package org.eclipse.core.runtime.jobs;
  * <p>
  * Clients may implement this interface.
  * 
- * @see Job#getRule
- * @see Job#setRule
- * @see IJobManager#beginRule
- * @see IJobManager#endRule
+ * @see Job#getRule()
+ * @see Job#setRule(ISchedulingRule)
+ * @see IJobManager#beginRule(ISchedulingRule, org.eclipse.core.runtime.IProgressMonitor)
+ * @see IJobManager#endRule(ISchedulingRule)
  * @since 3.0
  */
 public interface ISchedulingRule {
