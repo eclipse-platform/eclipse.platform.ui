@@ -259,8 +259,9 @@ public class NavigationHistory {
 			captureLocation(entry);
 			if (part != null && !entry.refersToSameEditorInput(part.getEditorInput()))
 				commit(new HistoryEntry((IEditorPart) part));
+		} else {
+			commit(new HistoryEntry((IEditorPart)part));
 		}
-		
 		updateActions();
 	}
 	
