@@ -190,7 +190,17 @@ public class CVSProvider implements ICVSProvider {
 							RemoteFolder resource = (RemoteFolder)resources[i];
 							if (projects != null) 
 								project = projects[i];
-							checkout(resource.getRepository(), project, resource.getRepositoryRelativePath(), resource.getTag(), Policy.subMonitorFor(pm, 1000));
+							
+							// delete the project in the workbench first, this will allow us to retreive a clean
+							// copy of the project.
+							if(project != null && project.exists()) {
+								if(!project.isOpen()) {
+									project.open(Policy.subMonitorFor(pm, 10));
+								}
+								project.delete(true, true, Policy.subMonitorFor(pm, 90));
+							}
+							
+							checkout(resource.getRepository(), project, resource.getRepositoryRelativePath(), resource.getTag(), Policy.subMonitorFor(pm, 900));
 						}
 					}
 					catch (TeamException e) {
