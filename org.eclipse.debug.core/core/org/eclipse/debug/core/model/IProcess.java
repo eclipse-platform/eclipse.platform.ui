@@ -16,9 +16,7 @@ import org.eclipse.debug.core.ILaunch;
  * important to them. For example, classpath annotations, or command
  * line arguments used to launch the process may be important to a client.
  * <p>
- * Clients may implement this interface, however, the debug plug-in
- * provides an implementation of this interface for a
- * <code>java.lang.Process</code>. 
+ * Clients may implement this interface. 
  * </p>
  * @see org.eclipse.debug.core.DebugPlugin#newProcess(ILaunch, Process, String)
  */
