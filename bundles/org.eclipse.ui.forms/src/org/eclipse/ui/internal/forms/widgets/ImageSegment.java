@@ -82,14 +82,14 @@ public class ImageSegment extends ParagraphSegment {
 			if (computeHeightOnly)
 				loc.collectHeights();
 			loc.x = loc.indent;
-			loc.x += iwidth;
+			loc.x += iwidth + (isSelectable()?1:0);
 			loc.y += loc.rowHeight;
 			loc.width = iwidth;			
 			loc.rowHeight = iheight;
 			loc.leading = 0;
 			newLine = true;
 		} else {
-			loc.x += iwidth;
+			loc.x += iwidth + (isSelectable()?1:0);
 			loc.width += iwidth;
 			loc.rowHeight = Math.max(loc.rowHeight, iheight);
 		}
@@ -129,7 +129,7 @@ public class ImageSegment extends ParagraphSegment {
 			int rightOffset = selData.getRightOffset(loc);
 			if (selData.isSelectedRow(loc)) {
 				if ((selData.isFirstSelectionRow(loc) && leftOffset > ix) ||
-					(selData.isLastSelectionRow(loc) && rightOffset < ix + iwidth)) {
+					(selData.isLastSelectionRow(loc) && rightOffset < ix + iwidth/2)) {
 					gc.drawImage(image, ix, iy);
 				}
 				else {
@@ -146,9 +146,10 @@ public class ImageSegment extends ParagraphSegment {
 				gc.drawImage(image, ix, iy);
 		} else
 			gc.drawImage(image, ix, iy);
-		loc.x += iwidth;
+		loc.x += iwidth + (isSelectable()?1:0);
 		loc.rowHeight = Math.max(loc.rowHeight, iheight);
-		bounds = new Rectangle(ix-1, iy-1, iwidth, iheight);
+		bounds = new Rectangle(ix-(isSelectable()?1:0), 
+				iy-(isSelectable()?1:0), iwidth+1, iheight+1);
 		if (selected) {
 			gc.drawFocus(bounds.x, bounds.y, bounds.width, bounds.height);
 		}

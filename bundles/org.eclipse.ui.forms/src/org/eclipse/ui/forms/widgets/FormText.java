@@ -897,16 +897,28 @@ public final class FormText extends Canvas {
 			}
 		} else {
 			if (e.button == 1) {
+				endSelection(e);				
 				IHyperlinkSegment segmentUnder = model.findHyperlinkAt(e.x, e.y);
-				if (segmentUnder != null) {
+				if (segmentUnder != null && selData==null) {
 					activateLink(segmentUnder, e.stateMask);
 				}
-				endSelection(e);
 			}
 		}
 	}
 
 	private void handleMouseHover(MouseEvent e) {
+	}
+	
+	private void updateTooltipText(ParagraphSegment segment) {
+		String tooltipText = null;
+		if (segment!=null) {
+			tooltipText = segment.getTooltipText();
+		}
+		String currentTooltipText = getToolTipText();
+
+		if ((currentTooltipText!=null && tooltipText==null) || 
+				(currentTooltipText==null && tooltipText!=null))
+			setToolTipText(tooltipText);		
 	}
 
 	private void handleMouseMove(MouseEvent e) {
@@ -915,6 +927,7 @@ public final class FormText extends Canvas {
 			return;
 		}
 		ParagraphSegment segmentUnder = model.findSegmentAt(e.x, e.y);
+		updateTooltipText(segmentUnder);		
 		if (segmentUnder == null) {
 			if (entered != null) {
 				exitLink(entered, e.stateMask);
@@ -1003,7 +1016,7 @@ public final class FormText extends Canvas {
 		gc.setBackground(getBackground());
 		gc.setFont(getFont());
 		boolean selected = (link == model.getSelectedLink());
-		link.repaint(gc, hover);
+		link.repaint(gc, hover, selData);
 		if (selected) {
 			link.paintFocus(gc, getBackground(), getForeground(), false);
 			link.paintFocus(gc, getBackground(), getForeground(), true);

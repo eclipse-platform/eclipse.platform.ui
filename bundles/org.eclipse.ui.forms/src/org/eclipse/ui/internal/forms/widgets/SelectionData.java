@@ -69,11 +69,20 @@ public class SelectionData {
 	public int getLeftOffset(Locator locator) {
 		return isInverted(locator)? stop.x:start.x;
 	}
+	public int getLeftOffset(int rowHeight) {
+		return isInverted(rowHeight) ? stop.x:start.x;
+	}
 	public int getRightOffset(Locator locator) {
 		return isInverted(locator)? start.x: stop.x;
 	}
+	public int getRightOffset(int rowHeight) {
+		return isInverted(rowHeight) ? start.x:stop.x;
+	}
 	private boolean isInverted(Locator locator) {
 		int rowHeight = ((int [])locator.heights.get(locator.rowCounter))[0];
+		return isInverted(rowHeight);
+	}
+	private boolean isInverted(int rowHeight) {
 		int deltaY = start.y - stop.y;
 		if (Math.abs(deltaY) > rowHeight) {
 			// inter-row selection
@@ -105,11 +114,23 @@ public class SelectionData {
 		return (locator.y + rowHeight >= getTopOffset() &&
 				locator.y <= getTopOffset());
 	}
+	public boolean isFirstSelectionRow(int y, int rowHeight) {
+		if (!isEnclosed())
+			return false;
+		return (y + rowHeight >= getTopOffset() &&
+				y <= getTopOffset());
+	}
 	public boolean isLastSelectionRow(Locator locator) {
 		if (!isEnclosed())
 			return false;
 		int rowHeight = ((int [])locator.heights.get(locator.rowCounter))[0];
 		return (locator.y + rowHeight >=getBottomOffset() && 
 				locator.y <= getBottomOffset());
+	}
+	public boolean isLastSelectionRow(int y, int rowHeight) {
+		if (!isEnclosed())
+			return false;
+		return (y + rowHeight >=getBottomOffset() && 
+				y <= getBottomOffset());
 	}
 }

@@ -22,4 +22,7 @@ public abstract class ParagraphSegment {
 	public abstract boolean advanceLocator(GC gc, int wHint, Locator loc, Hashtable objectTable, boolean computeHeightOnly);
 	public abstract void paint(GC gc, int width, Locator loc, Hashtable resourceTable, boolean selected, SelectionData selData);
 	public abstract boolean contains(int x, int y);
+	public String getTooltipText() {
+		return null;
+	}
 }

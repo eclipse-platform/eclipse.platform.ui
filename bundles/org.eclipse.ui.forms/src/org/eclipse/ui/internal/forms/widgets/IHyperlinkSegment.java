@@ -19,7 +19,7 @@ public interface IHyperlinkSegment {
 	String getHref();
 	String getText();
 	boolean isWordWrapAllowed();
-	void repaint(GC gc, boolean hover);
+	void repaint(GC gc, boolean hover, SelectionData selData);
 	void paintFocus(GC gc, Color bg, Color fg, boolean selected);
 	Rectangle getBounds();
 	boolean contains(int x, int y);

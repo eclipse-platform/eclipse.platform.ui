@@ -300,18 +300,13 @@ public class TextSegment extends ParagraphSegment {
 					int ly = locator.getBaseline(lineHeight - fm.getLeading());
 					Rectangle br = new Rectangle(locator.x - 1, ly,
 							prevExtent.x + 2, lineHeight - descent + 3);
-
-					drawString(gc, prevLine, prevExtent.x, locator, ly,
+					int lineY = ly + lineHeight - descent + 1;	
+					drawString(gc, prevLine, prevExtent.x, locator, ly, lineY, 
 							selRange, selData);
 					int prevWidth = prevExtent.x;
 					if (isSelectable())
 						prevWidth += 2;
 
-					if (underline) {
-						int lineY = ly + lineHeight - descent + 1;
-						gc.drawLine(locator.x, lineY, locator.x + prevWidth,
-								lineY);
-					}
 					if (selected) {
 						if (colorId != null)
 							gc.setForeground(oldColor);
@@ -348,12 +343,9 @@ public class TextSegment extends ParagraphSegment {
 			selRange.reset();
 			computeSelectionRange(gc, locator, lastLine, lastWidth, selData,
 					selRange);
-			drawString(gc, lastLine, lastWidth, locator, ly, selRange, selData);
+			int lineY = ly + lineHeight - descent + 1;			
+			drawString(gc, lastLine, lastWidth, locator, ly, lineY, selRange, selData);
 			areaRectangles.add(new AreaRectangle(br, lineStart, lastLoc));
-			if (underline) {
-				int lineY = ly + lineHeight - descent + 1;
-				gc.drawLine(locator.x, lineY, locator.x + lastExtent.x, lineY);
-			}
 			if (selected) {
 				if (colorId != null)
 					gc.setForeground(oldColor);
@@ -400,11 +392,8 @@ public class TextSegment extends ParagraphSegment {
 		int ly = locator.getBaseline(fm.getHeight() - fm.getLeading());
 		SelectionRange selRange = new SelectionRange();
 		computeSelectionRange(gc, locator, text, ewidth, selData, selRange);
-		drawString(gc, text, ewidth, locator, ly, selRange, selData);
-		if (underline) {
-			int lineY = ly + lineHeight - descent + 1;
-			gc.drawLine(locator.x, lineY, locator.x + extent.x, lineY);
-		}
+		int lineY = ly + lineHeight - descent + 1;		
+		drawString(gc, text, ewidth, locator, ly, lineY, selRange, selData);
 		Rectangle br = new Rectangle(locator.x - 1, ly, extent.x + 2,
 				lineHeight - descent + 3);
 		areaRectangles.add(new AreaRectangle(br, 0, -1));
@@ -419,7 +408,7 @@ public class TextSegment extends ParagraphSegment {
 		locator.rowHeight = Math.max(locator.rowHeight, extent.y);
 	}
 
-	private int convertOffsetToStringIndex(GC gc, String s, int x, int swidth,
+	protected int convertOffsetToStringIndex(GC gc, String s, int x, int swidth,
 			int selOffset) {
 		int index = s.length();
 		while (index > 0 && x + swidth > selOffset) {
@@ -453,7 +442,7 @@ public class TextSegment extends ParagraphSegment {
 	}
 
 	private void drawString(GC gc, String s, int slength, Locator locator,
-			int ly, SelectionRange selRange, SelectionData selData) {
+			int ly, int lineY, SelectionRange selRange, SelectionData selData) {
 		Color savedBg = gc.getBackground();
 		Color savedFg = gc.getForeground();
 		int x = locator.x;
@@ -465,7 +454,7 @@ public class TextSegment extends ParagraphSegment {
 
 			if ((firstRow && x + slength < selData.getLeftOffset(locator))
 					|| lastRow && x > selData.getRightOffset(locator)) {
-				gc.drawString(s, x, ly, true);
+				drawStringSegment(gc, s, gc.textExtent(s).x, x, ly, lineY);
 				return;
 			}
 
@@ -475,8 +464,9 @@ public class TextSegment extends ParagraphSegment {
 				selRange.start = -1;
 			if (firstRow && selRange.start != -1) {
 				String left = s.substring(0, selRange.start);
-				gc.drawString(left, x, ly, true);
-				x += gc.textExtent(left).x;
+				int swidth = gc.textExtent(left).x;
+				drawStringSegment(gc, left, swidth, x, ly, lineY);
+				x += swidth;
 			}
 			if (selData.isSelectedRow(locator)) {
 				int lindex = selRange.start != -1 ? selRange.start : 0;
@@ -486,20 +476,27 @@ public class TextSegment extends ParagraphSegment {
 				gc.setForeground(selData.fg);
 				gc.setBackground(selData.bg);
 				gc.fillRectangle(x, ly, extent.x, extent.y);
-				gc.drawString(mid, x, ly, true);
+				drawStringSegment(gc, mid, extent.x, x, ly, lineY);
 				x += extent.x;
 				gc.setForeground(savedFg);
 				gc.setBackground(savedBg);
 				selData.addSegment(mid);
 			} else {
-				gc.drawString(s, x, ly, true);
+				drawStringSegment(gc, s, gc.textExtent(s).x, x, ly, lineY);
 			}
 			if (selData.isLastSelectionRow(locator) && selRange.stop != -1) {
 				String right = s.substring(selRange.stop);
-				gc.drawString(right, x, ly, true);
+				drawStringSegment(gc, right, gc.textExtent(right).x, x, ly, lineY);
 			}
 		} else {
-			gc.drawString(s, locator.x, ly, true);
+			drawStringSegment(gc, s, gc.textExtent(s).x, locator.x, ly, lineY);
+		}
+	}
+
+	private void drawStringSegment(GC gc, String s, int swidth, int x, int y, int lineY) {
+		gc.drawString(s, x, y, true);
+		if (underline) {
+			gc.drawLine(x, lineY, x + swidth, lineY);
 		}
 	}
 

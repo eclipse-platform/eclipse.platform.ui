@@ -358,10 +358,14 @@ public class FormTextModel {
 		}
 		Object status = checkChildren(link);
 		if (status instanceof Node) {
+			Node child = (Node)status;
 			ImageHyperlinkSegment segment = new ImageHyperlinkSegment(settings);
 			segment.setHref(href);
 			segment.setWordWrapAllowed(wrapAllowed);
-			processImageSegment(segment, (Node) status);
+			Node alt = child.getAttributes().getNamedItem("alt");
+			if (alt!=null)
+				segment.setTooltipText(alt.getNodeValue());
+			processImageSegment(segment, child);
 			return segment;
 		}  else if (status instanceof String) {
 			String text = (String) status;
@@ -389,6 +393,9 @@ public class FormTextModel {
 						ImageHyperlinkSegment is = new ImageHyperlinkSegment(
 								settings);
 						processImageSegment(is, child);
+						Node alt = child.getAttributes().getNamedItem("alt");
+						if (alt!=null)
+							is.setTooltipText(alt.getNodeValue());
 						parent.add(is);
 					}
 				}

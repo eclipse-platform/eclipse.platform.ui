@@ -114,7 +114,8 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 				buff.append(hit.getHref());
 				buff.append("\"><img href=\"");
 				buff.append(ExamplesPlugin.IMG_NW);
-				buff.append("\"/>");
+				buff.append("\" alt=\"Open link in a Help window\"");
+				buff.append("/>");
 				buff.append("</a>");
 				buff.append("</li>");
 			}

@@ -90,10 +90,10 @@ public class AggregateHyperlinkSegment extends ParagraphSegment implements IHype
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.forms.widgets.IHyperlinkSegment#repaint(org.eclipse.swt.graphics.GC, boolean)
 	 */
-	public void repaint(GC gc, boolean hover) {
+	public void repaint(GC gc, boolean hover, SelectionData selData) {
 		for (int i=0; i<segments.size(); i++) {
 			IHyperlinkSegment segment = (IHyperlinkSegment)segments.get(i);
-			segment.repaint(gc, hover);
+			segment.repaint(gc, hover, selData);
 		}
 	}
 	public String getText() {

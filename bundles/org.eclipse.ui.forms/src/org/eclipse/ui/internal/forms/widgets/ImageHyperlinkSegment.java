@@ -19,6 +19,7 @@ public class ImageHyperlinkSegment extends ImageSegment implements
 		IHyperlinkSegment {
 	private String href;
 	private HyperlinkSettings settings;
+	private String tooltipText;
 	
 	public ImageHyperlinkSegment(HyperlinkSettings settings) {
 		this.settings = settings;
@@ -40,7 +41,7 @@ public class ImageHyperlinkSegment extends ImageSegment implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.forms.widgets.IHyperlinkSegment#repaint(org.eclipse.swt.graphics.GC, boolean)
 	 */
-	public void repaint(GC gc, boolean hover) {
+	public void repaint(GC gc, boolean hover, SelectionData selData) {
 		/*
 		FontMetrics fm = gc.getFontMetrics();
 		int lineHeight = fm.getHeight();
@@ -98,5 +99,17 @@ public class ImageHyperlinkSegment extends ImageSegment implements
 	 */
 	public String getText() {
 		return "";
+	}
+	/**
+	 * @return Returns the tooltipText.
+	 */
+	public String getTooltipText() {
+		return tooltipText;
+	}
+	/**
+	 * @param tooltipText The tooltipText to set.
+	 */
+	public void setTooltipText(String tooltipText) {
+		this.tooltipText = tooltipText;
 	}
 }
