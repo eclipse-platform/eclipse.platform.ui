@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,18 +9,10 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IProgressMonitorWithBlocking;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.ProgressMonitorWrapper;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.*;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ExceptionHandler;
-import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.progress.BlockedJobsDialog;
-import org.eclipse.ui.internal.progress.ProgressManagerUtil;
-import org.eclipse.ui.progress.WorkbenchJob;
 /**
  * Used to run an event loop whenever progress monitor methods
  * are invoked.  <p>
@@ -40,10 +32,13 @@ public class EventLoopProgressMonitor extends ProgressMonitorWrapper
 	 * Maximum amount of time to spend processing events, in ms.
 	 */
 	private static int T_MAX = 50;
+	
 	/**
-	 * The dialog that is shown when the operation is blocked
+	 * The dialog that is shown when the operation is blocked, or null when no
+	 * operation in the UI thread is blocked. 
 	 */
-	private BlockedJobsDialog dialog;
+	protected BlockedJobsDialog dialog;
+	
 	/**
 	 * Last time the event loop was spun.
 	 */
@@ -65,12 +60,9 @@ public class EventLoopProgressMonitor extends ProgressMonitorWrapper
 	 * @see org.eclipse.core.runtime.IProgressMonitorWithBlocking#clearBlocked()
 	 */
 	public void clearBlocked() {
-		//the UI operation is no longer blocked so get rid of the progress dialog
-		if (dialog == null || dialog.getShell() == null || dialog.getShell().isDisposed()){
-			dialog = null;
-			return;
-		}
-		dialog.close();
+		//dismiss the dialog that was reporting the blockage
+		if (dialog != null)
+			dialog.close(this);
 		dialog = null;
 	}
 	/**
@@ -91,6 +83,16 @@ public class EventLoopProgressMonitor extends ProgressMonitorWrapper
 	 * @see IProgressMonitor#isCanceled
 	 */
 	public boolean isCanceled() {
+		if (dialog != null) {
+			IProgressMonitor blockedMonitor = dialog.getProgressMonitor();
+			// If the blocked dialog already exists, and is associated with a different
+			// progress monitor, then this is a recursive blockage. Respond to the cancelation
+			// in the progress monitor that is associated with the dialog rather than this one.
+			// This will allow cancelation in the dialog to cancel all event loop monitors in
+			// the stack.
+			if (blockedMonitor != null && blockedMonitor != this)
+				return blockedMonitor.isCanceled();
+		}
 		runEventLoop();
 		return super.isCanceled();
 	}
@@ -135,33 +137,7 @@ public class EventLoopProgressMonitor extends ProgressMonitorWrapper
 	 * @see org.eclipse.core.runtime.IProgressMonitorWithBlocking#setBlocked(org.eclipse.core.runtime.IStatus)
 	 */
 	public void setBlocked(IStatus reason) {
-		
-		//The UI operation has been blocked.  Open a progress dialog
-		//to report the situation and give the user an opportunity to cancel.
-		
-		dialog = new BlockedJobsDialog(null, EventLoopProgressMonitor.this,reason);
-		dialog.setBlockOnOpen(false);
-		
-		WorkbenchJob dialogJob = new WorkbenchJob(WorkbenchMessages.getString("EventLoopProgressMonitor.OpenDialogJobName")){ //$NON-NLS-1$
-			/* (non-Javadoc)
-			 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-			 */
-			public IStatus runInUIThread(IProgressMonitor monitor) {
-				
-				if(dialog == null)
-					return Status.CANCEL_STATUS;
-				if(ProgressManagerUtil.rescheduleIfModalShellOpen(this))
-					return Status.CANCEL_STATUS;
-				dialog.open();
-				return Status.OK_STATUS;
-			}
-		};
-		
-		//Wait for long operation time to prevent a proliferation
-		//of dialogs
-		dialogJob.setSystem(true);
-		dialogJob.schedule(PlatformUI.getWorkbench().getProgressService().getLongOperationTime());
-		
+		dialog = BlockedJobsDialog.createBlockedDialog(null, this, reason);
 	}
 	/**
 	 * @see IProgressMonitor#setCanceled

@@ -21,6 +21,7 @@ import org.eclipse.ui.internal.progress.ProgressManagerUtil;
  */
 public class WorkbenchDialogBlockedHandler implements IDialogBlockedHandler {
 	BlockedJobsDialog blockedDialog;
+	IProgressMonitor currentMonitor;
 	/**
 	 * Create a new instance of the receiver.
 	 */
@@ -35,8 +36,9 @@ public class WorkbenchDialogBlockedHandler implements IDialogBlockedHandler {
 	public void clearBlocked() {
 		if (blockedDialog == null)
 			return;
-		blockedDialog.close();
+		blockedDialog.close(currentMonitor);
 		blockedDialog = null;
+		currentMonitor = null;
 	}
 	/*
 	 * (non-Javadoc)
@@ -48,11 +50,13 @@ public class WorkbenchDialogBlockedHandler implements IDialogBlockedHandler {
 	public void showBlocked(Shell parentShell,
 			IProgressMonitor blockingMonitor, IStatus blockingStatus,
 			String blockedName) {
+		
+		currentMonitor = blockingMonitor;
 		//Try to get a name as best as possible
 		if (blockedName == null)
 			blockedName = parentShell.getText();
-		blockedDialog = new BlockedJobsDialog(parentShell, blockingMonitor,
-				blockingStatus);
+		blockedDialog = BlockedJobsDialog.createBlockedDialog(parentShell,
+				blockingMonitor, blockingStatus);
 		blockedDialog.setBlockedTaskName(blockedName);
 		blockedDialog.open();
 	}

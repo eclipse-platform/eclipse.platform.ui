@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal.progress;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IconAndMessageDialog;
 import org.eclipse.jface.resource.JFaceResources;
@@ -26,17 +27,24 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.progress.WorkbenchJob;
 /**
  * The BlockedJobsDialog class displays a dialog that provides information on
  * the running jobs.
  */
 public class BlockedJobsDialog extends IconAndMessageDialog {
 	/**
+	 * The singleton dialog instance. A singleton avoids the possibility of
+	 * recursive dialogs being created. The singleton is created when a dialog
+	 * is requested, and cleared when the dialog is disposed.
+	 */
+	protected static BlockedJobsDialog singleton;
+	/**
 	 * The running jobs progress tree.
 	 * 
-	 * @see /org.eclipse.ui.workbench/Eclipse
-	 *      UI/org/eclipse/ui/internal/progress/ProgressTreeViewer.java
-	 *      (org.eclipse.ui.internal.progress)
+	 * @see org.eclipse.ui.internal.progress.ProgressTreeViewer
 	 */
 	private ProgressTreeViewer viewer;
 	/**
@@ -141,6 +149,51 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	}
 	/**
 	 * Creates a progress monitor dialog under the given shell. It also sets the
+	 * dialog's message. The dialog is opened automatically after a reasonable
+	 * delay. When no longer needed, the dialog must be closed by calling
+	 * <code>close(IProgressMonitor)</code>, where the supplied monitor is
+	 * the same monitor passed to this factory method.
+	 * 
+	 * @param parentShell
+	 *            The parent shell, or <code>null</code> to create a top-level
+	 *            shell.
+	 * @param monitor
+	 *            The monitor that is currently blocked
+	 * @param reason
+	 *            A status describing why the monitor is blocked
+	 */
+	public static BlockedJobsDialog createBlockedDialog(Shell parentShell,
+			IProgressMonitor monitor, IStatus reason) {
+		//use an existing dialog if available
+		if (singleton != null)
+			return singleton;
+		singleton = new BlockedJobsDialog(parentShell, monitor, reason);
+		//create the job that will open the dialog after a delay.
+		WorkbenchJob dialogJob = new WorkbenchJob(WorkbenchMessages
+				.getString("EventLoopProgressMonitor.OpenDialogJobName")) { //$NON-NLS-1$
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+			 */
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				if (singleton == null)
+					return Status.CANCEL_STATUS;
+				if (ProgressManagerUtil.rescheduleIfModalShellOpen(this))
+						return Status.CANCEL_STATUS;
+					singleton.open();
+				return Status.OK_STATUS;
+			}
+		};
+		//Wait for long operation time to prevent a proliferation
+		//of dialogs
+		dialogJob.setSystem(true);
+		dialogJob.schedule(PlatformUI.getWorkbench().getProgressService()
+				.getLongOperationTime());
+		return singleton;
+	}
+	/**
+	 * Creates a progress monitor dialog under the given shell. It also sets the
 	 * dialog's\ message. <code>open</code> is non-blocking.
 	 * 
 	 * @param parentShell
@@ -148,8 +201,10 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	 *            shell.
 	 * @param blocking
 	 *            The monitor that is blocking the job
+	 * @param blockingStatus
+	 *            A status describing why the monitor is blocked
 	 */
-	public BlockedJobsDialog(Shell parentShell, IProgressMonitor blocking,
+	private BlockedJobsDialog(Shell parentShell, IProgressMonitor blocking,
 			IStatus blockingStatus) {
 		super(parentShell == null
 				? ProgressManagerUtil.getDefaultParent()
@@ -242,7 +297,6 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 			}
 		};
 	}
-	
 	/**
 	 * Clear the cursors in the dialog.
 	 */
@@ -300,12 +354,32 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	protected Image getImage() {
 		return JFaceResources.getImageRegistry().get(Dialog.DLG_IMG_INFO);
 	}
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Returns the progress monitor being used for this dialog. This allows
+	 * recursive blockages to also respond to cancelation.
 	 * 
+	 * @return
+	 */
+	public IProgressMonitor getProgressMonitor() {
+		return blockingMonitor;
+	}
+	/**
+	 * Requests that the blocked jobs dialog be closed. The supplied monitor
+	 * must be the same one that was passed to the createBlockedDialog method.
+	 */
+	public boolean close(IProgressMonitor monitor) {
+		//ignore requests to close the dialog from all but the first monitor
+		if (blockingMonitor != monitor)
+			return false;		
+		return close();
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#close()
 	 */
 	public boolean close() {
+		//Clear the singleton first
+		singleton = null;
 		clearCursors();
 		return super.close();
 	}
@@ -318,8 +392,9 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	public void setBlockedTaskName(String taskName) {
 		blockedTaskName = taskName;
 	}
-	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.dialogs.IconAndMessageDialog#createButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createButtonBar(Composite parent) {
