@@ -40,6 +40,7 @@ import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
@@ -73,6 +74,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPartService;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
@@ -81,6 +83,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.part.IShowInTargetList;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 import org.eclipse.ui.texteditor.ContentAssistAction;
@@ -421,6 +424,13 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
             }
         }
 
+        if (key == IShowInTargetList.class) {
+			return new IShowInTargetList() {
+				public String[] getShowInTargetIds() {
+					return new String[] { JavaUI.ID_PACKAGES, IPageLayout.ID_RES_NAV };
+				}
+			};
+		}
         return super.getAdapter(key);
     }
 
