@@ -262,7 +262,7 @@ public final class BindingManager implements IContextManagerListener,
 	 *            <code>String</code>). This value must not be
 	 *            <code>null</code> and must be empty.
 	 */
-private final void computeBindings(final Map activeContextTree,
+	private final void computeBindings(final Map activeContextTree,
 			final Map commandIdsByTrigger) {
 		/*
 		 * FIRST PASS: Remove all of the bindings that are marking deletions.
@@ -369,7 +369,7 @@ private final void computeBindings(final Map activeContextTree,
 					if (winner == null) {
 						if (DEBUG) {
 							System.out
-								.println("A conflict occurred for " + trigger); //$NON-NLS-1$
+									.println("A conflict occurred for " + trigger); //$NON-NLS-1$
 						}
 					} else {
 						commandIdsByTrigger.put(trigger, winner.getCommandId());
@@ -611,18 +611,21 @@ private final void computeBindings(final Map activeContextTree,
 	}
 
 	/**
-	 * Returns the active bindings for a particular command identifier.  This
+	 * Returns the active bindings for a particular command identifier. This
 	 * method operates in O(n) time over the number of bindings.
 	 * 
+	 * @param commandId
+	 *            The identifier for the command whose bindings you wish to
+	 *            find. This argument may be <code>null</code>.
 	 * @return The collection of active triggers (<code>TriggerSequence</code>)
-	 * for a particular command identifier.  This value is guaranteed to never
-	 * be <code>null</code>, but it may be empty.
+	 *         for a particular command identifier. This value is guaranteed to
+	 *         never be <code>null</code>, but it may be empty.
 	 */
 	public final Collection getActiveBindingsFor(final String commandId) {
 		if (activeBindings == null) {
 			return Collections.EMPTY_LIST;
 		}
-		
+
 		final Iterator entryItr = activeBindings.entrySet().iterator();
 		final Collection bindings = new ArrayList();
 		while (entryItr.hasNext()) {
@@ -632,7 +635,7 @@ private final void computeBindings(final Map activeContextTree,
 				bindings.add(entry.getKey());
 			}
 		}
-		
+
 		return bindings;
 	}
 
