@@ -58,7 +58,7 @@ public class ConfigurationElement extends RegistryObject {
 		this.parentType = parentType;
 	}
 
-	Object createExecutableExtension(String attributeName) throws CoreException {
+	Object createExecutableExtension(String attributeName, boolean instantiate) throws CoreException {
 		String prop = null;
 		String executable;
 		String pluginName = null;
@@ -135,10 +135,10 @@ public class ConfigurationElement extends RegistryObject {
 			throw new CoreException(status);
 		}
 
-		return createExecutableExtension(pluginName, className, initData, this, attributeName);
+		return createExecutableExtension(pluginName, className, initData, this, attributeName, instantiate);
 	}
 
-	private Object createExecutableExtension(String pluginName, String className, Object initData, ConfigurationElement cfig, String propertyName) throws CoreException {
+	private Object createExecutableExtension(String pluginName, String className, Object initData, ConfigurationElement cfig, String propertyName, boolean instantiate) throws CoreException {
 		if(contributingBundle==null) {
 			throwException(NLS.bind(Messages.plugin_loadClassError, "UNKNOWN BUNDLE", className), new InvalidRegistryObjectException());  //$NON-NLS-1$ 
 		}
@@ -146,12 +146,12 @@ public class ConfigurationElement extends RegistryObject {
 		if (pluginName != null && !pluginName.equals("") && !pluginName.equals(id)) { //$NON-NLS-1$
 			Bundle otherBundle = null;
 			otherBundle = InternalPlatform.getDefault().getBundle(pluginName);
-			return createExecutableExtension(otherBundle, className, initData, cfig, propertyName);
+			return createExecutableExtension(otherBundle, className, initData, cfig, propertyName, instantiate);
 		}
-		return createExecutableExtension(contributingBundle, className, initData, cfig, propertyName);
+		return createExecutableExtension(contributingBundle, className, initData, cfig, propertyName, instantiate);
 	}
 
-	private Object createExecutableExtension(Bundle bundle, String className, Object initData, ConfigurationElement cfig, String propertyName) throws CoreException {
+	private Object createExecutableExtension(Bundle bundle, String className, Object initData, ConfigurationElement cfig, String propertyName, boolean instantiate) throws CoreException {
 		if(contributingBundle==null) {
 			throwException(NLS.bind(Messages.plugin_loadClassError, "UNKNOWN BUNDLE", className), new InvalidRegistryObjectException());  //$NON-NLS-1$ 
 		}
@@ -165,6 +165,9 @@ public class ConfigurationElement extends RegistryObject {
 			throwException(NLS.bind(Messages.plugin_loadClassError, bundle.getSymbolicName(), className), e); 
 		}
 
+        if (instantiate == false)
+            return classInstance;
+        
 		// create a new instance
 		Object result = null;
 		try {
@@ -191,6 +194,10 @@ public class ConfigurationElement extends RegistryObject {
 		return result;
 	}
 
+    Class loadExtensionClass(String propertyName) throws CoreException {
+        return (Class) createExecutableExtension(propertyName, false);
+    }
+    
 	private void throwException(String message, Throwable exception) throws CoreException {
 		IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, PLUGIN_ERROR, message, exception);
 		InternalPlatform.getDefault().getLog(InternalPlatform.getDefault().getBundleContext().getBundle()).log(status);

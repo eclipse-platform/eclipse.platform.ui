@@ -69,6 +69,23 @@ public interface IConfigurationElement {
 	 */
 	public Object createExecutableExtension(String propertyName) throws CoreException;
 
+    /**
+     * Returns the class object identified by the named attribute of this configuration element.
+     * The named attribute value must contain a fully qualified name of a Java class.
+     * <p>
+     * Unlike other methods on this object, invoking this method may activate 
+     * the plug-in.
+     * </p>
+     *
+     * @param propertyName the name of the property
+     * @return the class object identified by the value of the property
+     * @exception CoreException if an instance of the executable extension
+     *   could not be created for any reason
+     *   THIS API IS EXPERIMENTAL
+     *  @since 3.1
+     */
+    public Class loadExtensionClass(String propertyName) throws CoreException;
+    
 	/**
 	 * Returns the named attribute of this configuration element, or
 	 * <code>null</code> if none. 
