@@ -1,4 +1,4 @@
-/**********************************************************************
+/*******************************************************************************
  * Copyright (c) 2002 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
@@ -7,7 +7,7 @@
  * 
  * Contributors:
  * IBM - Initial API and implementation
- **********************************************************************/
+ ******************************************************************************/
 package org.eclipse.core.resources.team;
 
 import org.eclipse.core.resources.*;
@@ -15,12 +15,17 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IPath;
 
 /**
- * Primary interface for hooking the implementation of <code>IResource.move</code>
- * and <code>IResource.delete</code>.
+ * Primary interface for hooking the implementation of
+ * <code>IResource.move</code> and <code>IResource.delete</code>.
  * <p>
- * This interface is intended to be implemented by the team component in conjunction
- * with the <code>org.eclipse.core.resources.moveDeleteHook</code> standard extension
- * point. It is not intended to be implemented by other clients.
+ * This interface is intended to be implemented by the team component in
+ * conjunction with the <code>org.eclipse.core.resources.moveDeleteHook</code>
+ * standard extension point. It is not intended to be implemented by other
+ * clients. The methods defined on this interface are called from within the 
+ * implementations of <code>IResource.move</code> and 
+ * <code>IResource.delete</code>. They are not intended to be called from
+ * anywhere else (including from classes that implement 
+ * <code>IMoveDeleteHook</code>).
  * </p>
  * 
  * @since 2.0
@@ -28,47 +33,59 @@ import org.eclipse.core.runtime.IPath;
 public interface IMoveDeleteHook {
 
 	/**
-	 * Implements <code>IResource.delete(int,IProgressMonitor)</code> where the receiver
-	 * is a file. Returns <code>true</code> to accept responsibility for implementing
-	 * this operation as per the API contract.
+	 * Implements <code>IResource.delete(int,IProgressMonitor)</code> where the
+	 * receiver is a file. Returns <code>true</code> to accept responsibility
+	 * for implementing this operation as per the API contract.
 	 * <p>
-	 * In broad terms, a full re-implementation should delete the file in the local file
-	 * system and then call <code>tree.deletedFile</code> to complete the updating of the
-	 * workspace resource tree to reflect this fact. If unsuccessful in deleting the file
-	 * from the the local file system, it should instead call <code>tree.failed</code> to
-	 * report the reason for the failure. In either case, it should return
-	 * <code>true</code> to indicate that the operation was attempted.
-	 * The <code>FORCE</code> update flag needs to be honored: unless <code>FORCE</code>
-	 * is specified, the implementation must use <code>tree.isSynchronized</code> to 
-	 * determine whether the file is in sync before attempting to delete it.
-	 * The <code>KEEP_HISTORY</code> update flag needs to be honored as well; use
-	 * <code>tree.addToLocalHistory</code> to capture the contents of the file
-	 * (naturally, this must be before deleting the file from the local file system).
+	 * In broad terms, a full re-implementation should delete the file in the
+	 * local file system and then call <code>tree.deletedFile</code> to complete
+	 * the updating of the workspace resource tree to reflect this fact. If
+	 * unsuccessful in deleting the file from the the local file system, it
+	 * should instead call <code>tree.failed</code> to report the reason for
+	 * the failure. In either case, it should return <code>true</code> to
+	 * indicate that the operation was attempted. The <code>FORCE</code> update
+	 * flag needs to be honored: unless <code>FORCE</code> is specified, the
+	 * implementation must use <code>tree.isSynchronized</code> to determine
+	 * whether the file is in sync before attempting to delete it. 
+	 * The <code>KEEP_HISTORY</code> update flag needs to be honored as well;
+	 * use <code>tree.addToLocalHistory</code> to capture the contents of the
+	 * file before deleting it from the local file system.
 	 * </p>
 	 * <p>
-	 * An extending implementation should perform whatever pre-processing it needs
-	 * to do and then call <code>tree.standardDeleteFile</code> to explicitly
-	 * invoke the standard file deletion behavior, which deletes both the file from the
-	 * local file system and updates the workspace resource tree. It should return
-	 * <code>true</code> to indicate that the operation was attempted.
+	 * An extending implementation should perform whatever pre-processing it 
+	 * needs to do and then call <code>tree.standardDeleteFile</code> to 
+	 * explicitly invoke the standard file deletion behavior, which deletes
+	 * both the file from the local file system and updates the workspace
+	 * resource tree. It should return <code>true</code> to indicate that the
+	 * operation was attempted.
 	 * </p>
 	 * <p>
-	 * Returning <code>false</code> is the easy way for the implementation to say "pass".
-	 * It is equivalent to calling <code>tree.standardDeleteFile</code> and returning
-	 * <code>true</code>.
+	 * Returning <code>false</code> is the easy way for the implementation to
+	 * say "pass". It is equivalent to calling
+	 * <code>tree.standardDeleteFile</code> and returning <code>true</code>.
+	 * </p>
+	 * <p>
+	 * The implementation of this method runs "below" the resources API and is
+	 * therefore very restricted in what resource API method it can call. The
+	 * list of useable methods includes most resource operations that read but
+	 * do not update the resource tree; resource operations that modify 
+	 * resources and trigger deltas must not be called from within the dynamic
+	 * scope of the invocation of this method.
 	 * </p>
 	 * 
-	 * @param tree the workspace resource tree
+	 * @param tree the workspace resource tree; this object is only valid 
+	 *    for the duration of the invocation of this method, and must not be 
+	 *    used after this method has completed
 	 * @param file the handle of the file to delete; the receiver of
 	 *    <code>IResource.delete(int,IProgressMonitor)</code>
 	 * @param updateFlags bit-wise or of update flag constants as per 
 	 *    <code>IResource.delete(int,IProgressMonitor)</code>
 	 * @param monitor the progress monitor, or <code>null</code> as per 
 	 *    <code>IResource.delete(int,IProgressMonitor)</code>
-	 * @return <code>false</code> if this method declined to assume responsibility for
-	 *   this operation, and <code>true</code> if this method attempted to carry out the
-	 *   operation
-	 * @see org.eclipse.core.resources.IResource#delete(int,IProgressMonitor)
+	 * @return <code>false</code> if this method declined to assume 
+	 *   responsibility for this operation, and <code>true</code> if this method
+	 *   attempted to carry out the operation
+	 * @see IResource#delete(int,IProgressMonitor)
 	 */
 	public boolean deleteFile(
 		IResourceTree tree,
@@ -77,49 +94,60 @@ public interface IMoveDeleteHook {
 		IProgressMonitor monitor);
 
 	/**
-	 * Implements <code>IResource.delete(int,IProgressMonitor)</code> where the receiver
-	 * is a folder. Returns <code>true</code> to accept responsibility for implementing
-	 * this operation as per the API contract.
+	 * Implements <code>IResource.delete(int,IProgressMonitor)</code> where the
+	 * receiver is a folder. Returns <code>true</code> to accept responsibility
+	 * for implementing this operation as per the API contract.
 	 * <p>
-	 * In broad terms, a full re-implementation should delete the directory tree in the
-	 * local file system and then call <code>tree.deletedFolder</code> to complete the
-	 * updating of the workspace resource tree to reflect this fact. If unsuccessful 
-	 * in deleting the directory or any of its descendents from the the local file system,
-	 * it should instead call <code>tree.failed</code> to report each reason for failure.
-	 * In either case it should return <code>true</code> to indicate that the operation
-	 * was attempted.
-	 * The <code>FORCE</code> update flag needs to be honored: unless <code>FORCE</code>
-	 * is specified, the implementation must use <code>tree.isSynchronized</code> to 
-	 * determine whether the folder subtree is in sync before attempting to delete it.
-	 * The <code>KEEP_HISTORY</code> update flag needs to be honored as well; use
-	 * <code>tree.addToLocalHistory</code> to capture the contents of any files being
-	 * deleted.
+	 * In broad terms, a full re-implementation should delete the directory tree
+	 * in the local file system and then call <code>tree.deletedFolder</code> to
+	 * complete the updating of the workspace resource tree to reflect this fact.
+	 * If unsuccessful in deleting the directory or any of its descendents from 
+	 * the local file system, it should instead call <code>tree.failed</code> to
+	 * report each reason for failure. In either case it should return 
+	 * <code>true</code> to indicate that the operation was attempted.
+	 * The <code>FORCE</code> update flag needs to be honored: unless 
+	 * <code>FORCE</code> is specified, the implementation must use 
+	 * <code>tree.isSynchronized</code> to  determine whether the folder 
+	 * subtree is in sync before attempting to delete it.
+	 * The <code>KEEP_HISTORY</code> update flag needs to be honored as well; 
+	 * use <code>tree.addToLocalHistory</code> to capture the contents of any
+	 * files being deleted.
 	 * </p>
 	 * <p>
-	 * A partial re-implementation should perform whatever pre-processing it needs
-	 * to do and then call <code>tree.standardDeleteFolder</code> to explicitly
-	 * invoke the standard folder deletion behavior, which deletes both the folder
-	 * and its descendents from the local file system and updates the workspace resource
-	 * tree. It should return <code>true</code> to indicate that the operation was
-	 * attempted.
+	 * A partial re-implementation should perform whatever pre-processing it
+	 * needs to do and then call <code>tree.standardDeleteFolder</code> to
+	 * explicitly invoke the standard folder deletion behavior, which deletes
+	 * both the folder and its descendents from the local file system and 
+	 * updates the workspace resource tree. It should return <code>true</code>
+	 * to indicate that the operation was attempted.
 	 * </p>
 	 * <p>
-	 * Returning <code>false</code> is the easy way for the implementation to say "pass".
-	 * It is equivalent to calling <code>tree.standardDeleteFolder</code> and returning
-	 * <code>true</code>.
+	 * Returning <code>false</code> is the easy way for the implementation to
+	 * say "pass". It is equivalent to calling
+	 * <code>tree.standardDeleteFolder</code> and returning <code>true</code>.
+	 * </p>
+	 * <p>
+	 * The implementation of this method runs "below" the resources API and is
+	 * therefore very restricted in what resource API method it can call. The
+	 * list of useable methods includes most resource operations that read but
+	 * do not update the resource tree; resource operations that modify 
+	 * resources and trigger deltas must not be called from within the dynamic
+	 * scope of the invocation of this method.
 	 * </p>
 	 * 
-	 * @param tree the workspace resource tree
+	 * @param tree the workspace resource tree; this object is only valid 
+	 *    for the duration of the invocation of this method, and must not be 
+	 *    used after this method has completed
 	 * @param folder the handle of the folder to delete; the receiver of
 	 *    <code>IResource.delete(int,IProgressMonitor)</code>
 	 * @param updateFlags bit-wise or of update flag constants as per 
 	 *    <code>IResource.delete(int,IProgressMonitor)</code>
 	 * @param monitor the progress monitor, or <code>null</code> as per 
 	 *    <code>IResource.delete(int,IProgressMonitor)</code>
-	 * @return <code>false</code> if this method declined to assume responsibility for
-	 *   this operation, and <code>true</code> if this method attempted to carry out the
-	 *   operation
-	 * @see org.eclipse.core.resources.IResource#delete(int,IProgressMonitor)
+	 * @return <code>false</code> if this method declined to assume 
+	 *   responsibility for this operation, and <code>true</code> if this
+	 *   method attempted to carry out the operation
+	 * @see IResource#delete(int,IProgressMonitor)
 	 */
 	public boolean deleteFolder(
 		IResourceTree tree,
@@ -128,14 +156,14 @@ public interface IMoveDeleteHook {
 		IProgressMonitor monitor);
 
 	/**
-	 * Implements <code>IResource.delete(int,IProgressMonitor)</code> where the receiver
-	 * is a project. Returns <code>true</code> to accept responsibility for implementing
-	 * this operation as per the API contract.
+	 * Implements <code>IResource.delete(int,IProgressMonitor)</code> where the
+	 * receiver is a project. Returns <code>true</code> to accept responsibility
+	 * for implementing this operation as per the API contract.
 	 * <p>
 	 * In broad terms, a full re-implementation should delete the project content area in
 	 * the local file system if required (the files of a closed project should be deleted
-	 * only if the <code>IResource.ALWAYS_DELETE_PROJECT_CONTENTS</code> update flag is
-	 * specified; the files of an open project should be deleted unless the
+	 * only if the <code>IResource.ALWAYS_DELETE_PROJECT_CONTENTS</code> update 
+	 * flag is specified; the files of an open project should be deleted unless the
 	 * the <code>IResource.NEVER_DELETE_PROJECT_CONTENTS</code> update flag is
 	 * specified). It should then call <code>tree.deletedProject</code> to complete 
 	 * the updating of the workspace resource tree to reflect this fact. If unsuccessful
@@ -156,22 +184,32 @@ public interface IMoveDeleteHook {
 	 * to indicate that the operation was attempted.
 	 * </p>
 	 * <p>
-	 * Returning <code>false</code> is the easy way for the implementation to say "pass".
-	 * It is equivalent to calling <code>tree.standardDeleteProject</code> and returning
-	 * <code>true</code>.
+	 * Returning <code>false</code> is the easy way for the implementation to
+	 * say "pass". It is equivalent to calling
+	 * <code>tree.standardDeleteProject</code> and returning <code>true</code>.
+	 * </p>
+	 * <p>
+	 * The implementation of this method runs "below" the resources API and is
+	 * therefore very restricted in what resource API method it can call. The
+	 * list of useable methods includes most resource operations that read but
+	 * do not update the resource tree; resource operations that modify 
+	 * resources and trigger deltas must not be called from within the dynamic
+	 * scope of the invocation of this method.
 	 * </p>
 	 * 
-	 * @param tree the workspace resource tree
+	 * @param tree the workspace resource tree; this object is only valid 
+	 *    for the duration of the invocation of this method, and must not be 
+	 *    used after this method has completed
 	 * @param project the handle of the project to delete; the receiver of
 	 *    <code>IResource.delete(int,IProgressMonitor)</code>
 	 * @param updateFlags bit-wise or of update flag constants as per 
 	 *    <code>IResource.delete(int,IProgressMonitor)</code>
 	 * @param monitor the progress monitor, or <code>null</code> as per 
 	 *    <code>IResource.delete(int,IProgressMonitor)</code>
-	 * @return <code>false</code> if this method declined to assume responsibility for
-	 *   this operation, and <code>true</code> if this method attempted to carry out the
-	 *   operation
-	 * @see org.eclipse.core.resources.IResource#delete(int,IProgressMonitor)
+	 * @return <code>false</code> if this method declined to assume 
+	 *   responsibility for this operation, and <code>true</code> if this 
+	 *   method attempted to carry out the operation
+	 * @see IResource#delete(int,IProgressMonitor)
 	 */
 	public boolean deleteProject(
 		IResourceTree tree,
@@ -180,9 +218,9 @@ public interface IMoveDeleteHook {
 		IProgressMonitor monitor);
 
 	/**
-	 * Implements <code>IResource.move(IPath,int,IProgressMonitor)</code> where the receiver
-	 * is a file. Returns <code>true</code> to accept responsibility for implementing
-	 * this operation as per the API contract.
+	 * Implements <code>IResource.move(IPath,int,IProgressMonitor)</code> where
+	 * the receiver is a file. Returns <code>true</code> to accept
+	 * responsibility for implementing this operation as per the API contract.
 	 * <p>
 	 * In broad terms, a full re-implementation should move the file in the local file
 	 * system and then call <code>tree.moveFile</code> to complete the updating of the
@@ -190,9 +228,10 @@ public interface IMoveDeleteHook {
 	 * in the the local file system, it should instead call <code>tree.failed</code> to
 	 * report the reason for the failure. In either case, it should return
 	 * <code>true</code> to indicate that the operation was attempted.
-	 * The <code>FORCE</code> update flag needs to be honored: unless <code>FORCE</code>
-	 * is specified, the implementation must use <code>tree.isSynchronized</code> to 
-	 * determine whether the file is in sync before attempting to moving it.
+	 * The <code>FORCE</code> update flag needs to be honored: unless 
+	 * <code>FORCE</code> is specified, the implementation must use 
+	 * <code>tree.isSynchronized</code> to determine whether the file is in sync before
+	 * attempting to move it.
 	 * The <code>KEEP_HISTORY</code> update flag needs to be honored as well; use
 	 * <code>tree.addToLocalHistory</code> to capture the contents of the file
 	 * (naturally, this must be before moving the file from the local file system).
@@ -205,12 +244,22 @@ public interface IMoveDeleteHook {
 	 * <code>true</code> to indicate that the operation was attempted.
 	 * </p>
 	 * <p>
-	 * Returning <code>false</code> is the easy way for the implementation to say "pass".
-	 * It is equivalent to calling <code>tree.standardMoveFile</code> and returning
-	 * <code>true</code>.
+	 * Returning <code>false</code> is the easy way for the implementation to
+	 * say "pass". It is equivalent to calling
+	 * <code>tree.standardMoveFile</code> and returning <code>true</code>.
+	 * </p>
+	 * <p>
+	 * The implementation of this method runs "below" the resources API and is
+	 * therefore very restricted in what resource API method it can call. The
+	 * list of useable methods includes most resource operations that read but
+	 * do not update the resource tree; resource operations that modify 
+	 * resources and trigger deltas must not be called from within the dynamic
+	 * scope of the invocation of this method.
 	 * </p>
 	 * 
-	 * @param tree the workspace resource tree
+	 * @param tree the workspace resource tree; this object is only valid 
+	 *    for the duration of the invocation of this method, and must not be 
+	 *    used after this method has completed
 	 * @param source the handle of the file to move; the receiver of
 	 *    <code>IResource.move(IPath,int,IProgressMonitor)</code>
 	 * @param destination the handle of where the file will move to; the handle 
@@ -220,10 +269,10 @@ public interface IMoveDeleteHook {
 	 *    <code>IResource.move(IPath,int,IProgressMonitor)</code>
 	 * @param monitor the progress monitor, or <code>null</code> as per 
 	 *    <code>IResource.move(IPath,int,IProgressMonitor)</code>
-	 * @return <code>false</code> if this method declined to assume responsibility for
-	 *   this operation, and <code>true</code> if this method attempted to carry out the
-	 *   operation
-	 * @see org.eclipse.core.resources.IResource#move(IPath,int,IProgressMonitor)
+	 * @return <code>false</code> if this method declined to assume 
+	 *   responsibility for this operation, and <code>true</code> if this
+	 *   method attempted to carry out the operation
+	 * @see IResource#move(IPath,int,IProgressMonitor)
 	 */
 	public boolean moveFile(
 		IResourceTree tree,
@@ -233,59 +282,70 @@ public interface IMoveDeleteHook {
 		IProgressMonitor monitor);
 
 	/**
-	 * Implements <code>IResource.move(IPath,int,IProgressMonitor)</code> where the receiver
-	 * is a project. Returns <code>true</code> to accept responsibility for implementing
-	 * this operation as per the API contract.
+	 * Implements <code>IResource.move(IPath,int,IProgressMonitor)</code> where
+	 * the receiver is a project. Returns <code>true</code> to accept
+	 * responsibility for implementing this operation as per the API contract.
 	 * <p>
 	 * In broad terms, a full re-implementation should move the directory tree in the
 	 * local file system and then call <code>tree.movedFolder</code> to complete the
 	 * updating of the workspace resource tree to reflect this fact. If unsuccessful 
 	 * in moving the directory or any of its descendents in the the local file system,
-	 * it should instead call <code>tree.failed</code> to report each reason for failure.
-	 * In either case it should return <code>true</code> to indicate that the operation
+	 * call <code>tree.failed</code> to report each reason for failure.
+	 * In either case, return <code>true</code> to indicate that the operation
 	 * was attempted.
-	 * The <code>FORCE</code> update flag needs to be honored: unless <code>FORCE</code>
-	 * is specified, the implementation must use <code>tree.isSynchronized</code> to 
-	 * determine whether the folder subtree is in sync before attempting to move it.
+	 * The <code>FORCE</code> update flag needs to be honored: unless 
+	 * <code>FORCE</code> is specified, the implementation must use 
+	 * <code>tree.isSynchronized</code> to determine whether the folder subtree is in sync 
+	 * before attempting to move it.
 	 * The <code>KEEP_HISTORY</code> update flag needs to be honored as well; use
 	 * <code>tree.addToLocalHistory</code> to capture the contents of any files being
 	 * moved.
 	 * </p>
 	 * <p>
 	 * A re-implementation that needs to undbundle a folder move into recursive moves
-	 * of the descendent files should call <code>tree.beginMovingFolder</code> to
-	 * start things off by creating a new folder at the destination. After is has
-	 * successfully moved all descendents, it should call <code>tree.endMoving</code>
-	 * to complete the updating of the workspace resource tree to reflect the move.
+	 * of the descendent files should call <code>tree.beginMovingFolder</code> 
+	 * instead of <code>tree.movedFolder</code>. This starts things off by creating a
+	 * new folder at the destination. After having successfully moved all descendents,
+	 * call <code>tree.endMoving</code> to complete the updating of the workspace
+	 * resource tree to reflect the move.
 	 * </p>
 	 * <p>
 	 * A partial re-implementation should perform whatever pre-processing it needs
 	 * to do and then call <code>tree.standardMoveFolder</code> to explicitly
 	 * invoke the standard folder move behavior, which move both the folder
 	 * and its descendents in the local file system and updates the workspace resource
-	 * tree. It should return <code>true</code> to indicate that the operation was
-	 * attempted.
+	 * tree. Return <code>true</code> to indicate that the operation was attempted.
 	 * </p>
 	 * <p>
-	 * Returning <code>false</code> is the easy way for the implementation to say "pass".
-	 * It is equivalent to calling <code>tree.standardDeleteFolder</code> and returning
-	 * <code>true</code>.
+	 * Returning <code>false</code> is the easy way for the implementation to
+	 * say "pass". It is equivalent to calling 
+	 * <code>tree.standardDeleteFolder</code> and returning <code>true</code>.
+	 * </p>
+	 * <p>
+	 * The implementation of this method runs "below" the resources API and is
+	 * therefore very restricted in what resource API method it can call. The
+	 * list of useable methods includes most resource operations that read but
+	 * do not update the resource tree; resource operations that modify 
+	 * resources and trigger deltas must not be called from within the dynamic
+	 * scope of the invocation of this method.
 	 * </p>
 	 * 
-	 * @param tree the workspace resource tree
+	 * @param tree the workspace resource tree; this object is only valid 
+	 *    for the duration of the invocation of this method, and must not be 
+	 *    used after this method has completed
 	 * @param source the handle of the folder to move; the receiver of
 	 *    <code>IResource.move(IPath,int,IProgressMonitor)</code>
-	 * @param destination the handle of where the folder will move to; the handle 
-	 *    equivalent of the first parameter to
+	 * @param destination the handle of where the folder will move to; the 
+	 *    handle equivalent of the first parameter to
 	 *    <code>IResource.move(IPath,int,IProgressMonitor)</code>
 	 * @param updateFlags bit-wise or of update flag constants as per 
 	 *    <code>IResource.move(IPath,int,IProgressMonitor)</code>
 	 * @param monitor the progress monitor, or <code>null</code> as per 
 	 *    <code>IResource.move(IPath,int,IProgressMonitor)</code>
-	 * @return <code>false</code> if this method declined to assume responsibility for
-	 *   this operation, and <code>true</code> if this method attempted to carry out the
-	 *   operation
-	 * @see org.eclipse.core.resources.IResource#move(IPath,int,IProgressMonitor)
+	 * @return <code>false</code> if this method declined to assume 
+	 *   responsibility for this operation, and <code>true</code> if this 
+	 *   method attempted to carry out the operation
+	 * @see IResource#move(IPath,int,IProgressMonitor)
 	 */
 	public boolean moveFolder(
 		IResourceTree tree,
@@ -295,37 +355,61 @@ public interface IMoveDeleteHook {
 		IProgressMonitor monitor);
 
 	/**
-	 * Implements <code>IResource.move(IPath,int,IProgressMonitor)</code> where the receiver
-	 * is a project. Returns <code>true</code> to accept responsibility for implementing
-	 * this operation as per the API contract.
+	 * Implements <code>IResource.move(IPath,int,IProgressMonitor)</code> and
+	 * <code>IResource.move(IProjectDescription,int,IProgressMonitor)</code> 
+	 * where the receiver is a project. Returns <code>true</code> to accept
+	 * responsibility for implementing this operation as per the API contracts.
 	 * <p>
-	 * [FIXME - There are a number of cases that must be handled...]
+	 * There are a number of cases that must be considered when reimplementing
+	 * this method:
+	 * <ul>
+	 * <li>The project may be being renamed, and its local content area moved.</li>
+	 * <li>The project may be being renamed but its local content area left alone.</li>
+	 * <li>The project may be retaining its name, but its local content area being moved
+	 *       anyway.</li>
+	 * <li>The project may be being renamed and its local content area left alone.</li>
+	 * <li>The project may be open or closed.</li>
+	 * </ul>
+	 * Other than these complications, the ways to move a project are analogous to
+	 * those for moving a folder. 
 	 * </p>
 	 * <p>
-	 * A partial re-implementation should perform whatever pre-processing it needs
-	 * to do and then call <code>tree.standardMoveProject</code> to explicitly
-	 * invoke the standard project move behavior. It should return <code>true</code>
-	 * to indicate that the operation was attempted.
+	 * Returning <code>false</code> is the easy way for the implementation to
+	 * say "pass". It is equivalent to calling 
+	 * <code>tree.standardMoveProject</code> and returning <code>true</code>.
 	 * </p>
 	 * <p>
-	 * Returning <code>false</code> is the easy way for the implementation to say "pass".
-	 * It is equivalent to calling <code>tree.standardMoveProject</code> and returning
-	 * <code>true</code>.
+	 * The implementation of this method runs "below" the resources API and is
+	 * therefore very restricted in what resource API method it can call. The
+	 * list of useable methods includes most resource operations that read but
+	 * do not update the resource tree; resource operations that modify 
+	 * resources and trigger deltas must not be called from within the dynamic
+	 * scope of the invocation of this method.
 	 * </p>
 	 * 
-	 * @param tree the workspace resource tree
+	 * @param tree the workspace resource tree; this object is only valid 
+	 *    for the duration of the invocation of this method, and must not be 
+	 *    used after this method has completed
 	 * @param source the handle of the project to move; the receiver of
 	 *    <code>IResource.move(IProjectDescription,int,IProgressMonitor)</code>
-	 * @param description the new description of the project; the first parameter to
-	 *    <code>IResource.move(IProjectDescription,int,IProgressMonitor)</code>
+	 *    or <code>IResource.move(IPath,int,IProgressMonitor)</code>
+	 * @param description the new description of the project; the first
+	 *    parameter to
+	 *    <code>IResource.move(IProjectDescription,int,IProgressMonitor)</code>, or
+	 *    a copy of the project's description with the location changed to the
+	 *    path given in the first parameter to 
+	 *    <code>IResource.move(IPath,int,IProgressMonitor)</code>
 	 * @param updateFlags bit-wise or of update flag constants as per 
 	 *    <code>IResource.move(IProjectDescription,int,IProgressMonitor)</code>
+	 *    or <code>IResource.move(IPath,int,IProgressMonitor)</code>
 	 * @param monitor the progress monitor, or <code>null</code> as per 
 	 *    <code>IResource.move(IProjectDescription,int,IProgressMonitor)</code>
-	 * @return <code>false</code> if this method declined to assume responsibility for
-	 *   this operation, and <code>true</code> if this method attempted to carry out the
-	 *   operation
-	 * @see org.eclipse.core.resources.IResource#move(IProjectDescription,int,IProgressMonitor)
+	 *    or <code>IResource.move(IPath,int,IProgressMonitor)</code>
+	 * @return <code>false</code> if this method declined to assume 
+	 *   responsibility for this operation, and <code>true</code> if this method
+	 *   attempted to carry out the operation
+	 * @see IResource#move(IPath,int,IProgressMonitor)
+	 * @see IResource#move(IProjectDescription,int,IProgressMonitor)
 	 */
 	public boolean moveProject(
 		IResourceTree tree,
