@@ -719,7 +719,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				
 		StyledText styledText= fSourceViewer.getTextWidget();
 		initializeWidgetFont(styledText);
-		initializeWidgetColors(styledText);
+//		initializeWidgetColors(styledText);
 		
 		if (getHelpContextId() != null)
 			WorkbenchHelp.setHelp(styledText, new Object[] { getHelpContextId() });
