@@ -28,6 +28,8 @@ public class HelpBasePlugin extends Plugin {
 
 	protected static HelpBasePlugin plugin;
 	
+	private boolean running = false;
+	
 	private File configurationDirectory;
 
 	private IHelpActivitySupport helpActivitySupport =
@@ -114,6 +116,7 @@ public class HelpBasePlugin extends Plugin {
 	 *                if this method fails to shut down this plug-in
 	 */
 	public void shutdown() throws CoreException {
+		running = false;
 		BaseHelpSystem.shutdown();
 	}
 	/**
@@ -168,6 +171,7 @@ public class HelpBasePlugin extends Plugin {
 		}
 		//
 		BaseHelpSystem.startup();
+		running = true;
 	}
 
 	/**
@@ -211,6 +215,9 @@ public class HelpBasePlugin extends Plugin {
 	 */
 	public static void setActivitySupport(IHelpActivitySupport activitySupport) {
 		getDefault().helpActivitySupport = activitySupport;
+	}
+	public static boolean isRunning(){
+		return getDefault().running;
 	}
 
 }

@@ -150,7 +150,7 @@ public class SearchProgressMonitor implements IProgressMonitor {
 					progressMonitors.remove(locale);
 				} catch (Exception e) {
 					progressMonitors.remove(locale);
-					if (BootLoader.isRunning()) {
+					if (HelpBasePlugin.isRunning()) {
 						HelpBasePlugin.logError(
 							HelpBaseResources.getString("search_index_update_error"),
 							e);
