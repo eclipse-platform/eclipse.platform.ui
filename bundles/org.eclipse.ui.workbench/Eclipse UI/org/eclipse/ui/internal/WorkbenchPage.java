@@ -1,9 +1,15 @@
-package org.eclipse.ui.internal;
+/************************************************************************
+Copyright (c) 2000, 2002 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
 
-/*
- * (c) Copyright IBM Corp. 2000, 2002.
- * All Rights Reserved.
- */
+Contributors:
+	IBM - Initial implementation
+************************************************************************/
+
+package org.eclipse.ui.internal;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
@@ -672,12 +678,12 @@ public boolean closeAllEditors(boolean save) {
 	getEditorManager().closeAll();
 	for (int i = 0; i < editors.length; i ++) {
 		IEditorPart editor = (IEditorPart)editors[i].getPart(false);
+		activationList.remove(editors[i]);
 		if(editor != null) {
 			firePartClosed(editor);
 			disposePart(editor);
 		}
 	}
-	activationList.removeEditors();
 	if (deactivate)
 		activate(activationList.getActive());
 		
@@ -2750,16 +2756,6 @@ private class ActivationList {
 		if(pane != null) 
 			pane.removePropertyChangeListener(propertyChangeListener);
 		return parts.remove(ref);
-	}
-	/*
-	 * Remove the editors from the activation list.
-	 */
-	private void removeEditors() {
-		for (Iterator i = parts.iterator(); i.hasNext();) {
-			IWorkbenchPartReference part = (IWorkbenchPartReference)i.next();
-			if (part instanceof IEditorReference)
-				i.remove();
-		}
 	}
 	/*
 	 * Returns the editors in activation order (oldest first).

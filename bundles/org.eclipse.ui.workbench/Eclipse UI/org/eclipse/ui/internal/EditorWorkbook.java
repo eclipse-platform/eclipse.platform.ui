@@ -1,25 +1,29 @@
-package org.eclipse.ui.internal;
-
-/**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp. and others.
-All rights reserved.   This program and the accompanying materials
-are made available under the terms of the Common Public License v0.5
+/************************************************************************
+Copyright (c) 2000, 2002 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v05.html
+http://www.eclipse.org/legal/cpl-v10.html
 
 Contributors:
-  Cagatay Kavukcuoglu <cagatayk@acm.org> 
-    - Fix for bug 10025 - Resizing views should not use height ratios
-**********************************************************************/
+	IBM - Initial implementation
+  	Cagatay Kavukcuoglu <cagatayk@acm.org> - Fix for bug 10025 - Resizing views should not use height ratios
+		
+************************************************************************/
 
-import org.eclipse.swt.*;
+package org.eclipse.ui.internal;
+
+import java.util.*;
+import java.util.List;
+
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.custom.*;
-import java.util.*;
-import java.util.List;
-import org.eclipse.ui.internal.*;
 import org.eclipse.ui.*;
 
 
@@ -45,12 +49,21 @@ public class EditorWorkbook extends LayoutPart
 	private boolean isZoomed = false;
 	private Composite parent;
 	private CTabFolder tabFolder;
+	private IPropertyChangeListener tabFolderListener;
 	private EditorArea editorArea;
 	private EditorPane visibleEditor;
 	private Map mapPartToDragMonitor = new HashMap();
 
 	private Map mapTabToEditor = new HashMap();
 	private List editors = new ArrayList();
+	
+	private ToolBar pullDownBar;
+	private ToolItem pullDownButton;
+	private EditorList editorList;
+	private ViewForm listComposite;
+	private ToolItem closeBoxButton;
+
+	
 /**
  * EditorWorkbook constructor comment.
  */
@@ -107,20 +120,34 @@ public void createControl(Composite parent) {
 	this.parent = parent;
 	tabFolder = new CTabFolder(parent, SWT.BORDER | tabLocation);
 
+	// listen for property change events on the folder
+	tabFolderListener =
+		new IPropertyChangeListener(){
+			public void propertyChange(PropertyChangeEvent event){
+				if(event.getProperty().equals(IPreferenceConstants.EDITOR_TAB_WIDTH_SCALAR)){
+					//TODO: Need API from SWT, this is a workaround
+					tabFolder.MIN_TAB_WIDTH = getPreferenceStore().getInt(IPreferenceConstants.EDITOR_TAB_WIDTH_SCALAR);
+					tabFolder.setTopRight(pullDownBar);
+				}
+//				if(event.getProperty().equals(IPreferenceConstants.NUMBER_EDITOR_TABS)){
+//					//TODO: editor tabs
+//					int numberOfTabs = WorkbenchPlugin.getDefault().getPreferenceStore().getInt(IPreferenceConstants.NUMBER_EDITOR_TABS);
+//				}
+//				if(event.getProperty().equals(IPreferenceConstants.EDITOR_TABS_SPAN_MULTIPLE_LINES)){
+//					boolean spanMultiple = WorkbenchPlugin.getDefault().getPreferenceStore().getBoolean(IPreferenceConstants.EDITOR_TABS_SPAN_MULTIPLE_LINES);
+//					//TODO: editor tabs
+//				}
+			}
+		};	
+
+	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+	store.addPropertyChangeListener(tabFolderListener);
+
 	// prevent close button and scroll buttons from taking focus
 	tabFolder.setTabList(new Control[0]);
 	
 	// redirect drop request to the workbook
 	tabFolder.setData((IPartDropTarget) this);
-
-	// listener to close the editor
-	tabFolder.addCTabFolderListener(new CTabFolderAdapter() {
-		public void itemClosed(CTabFolderEvent e) {
-			e.doit = false; // otherwise tab is auto disposed on return
-			EditorPane pane = (EditorPane) mapTabToEditor.get(e.item);
-			pane.doHide();
-		}
-	});
 
 	// listener to switch between visible tabItems
 	tabFolder.addSelectionListener(new SelectionAdapter() {
@@ -158,14 +185,22 @@ public void createControl(Composite parent) {
 
 		public void mouseDown(MouseEvent e) {
 			if (visibleEditor != null) {
-				visibleEditor.setFocus();
 				CTabItem item = getTab(visibleEditor);
-				Rectangle bounds = item.getBounds();
-				if(bounds.contains(e.x,e.y)) {
-					if (e.button == 3)
-						visibleEditor.showPaneMenu(tabFolder,new Point(e.x, e.y));
-					else if((e.button == 1) && overImage(item,e.x))
-						visibleEditor.showPaneMenu();
+				// ctrl-click close the editor
+				if ((e.stateMask & SWT.CTRL) != 0) {
+					EditorPane pane = (EditorPane) mapTabToEditor.get(item);
+					pane.doHide();
+					item.dispose();					
+				} else {
+					// switch to the editor
+					visibleEditor.setFocus();
+					Rectangle bounds = item.getBounds();
+					if(bounds.contains(e.x,e.y)) {
+						if (e.button == 3)
+							visibleEditor.showPaneMenu(tabFolder,new Point(e.x, e.y));
+						else if((e.button == 1) && overImage(item,e.x))
+							visibleEditor.showPaneMenu();
+					}
 				}
 			}
 		}
@@ -194,8 +229,122 @@ public void createControl(Composite parent) {
 	else
 		if (getItemCount() > 0)
 			setVisibleEditor((EditorPane) editors.get(0));
+			
+	// Create the pulldown menu on the CTabFolder
+	editorList = new EditorList(getEditorArea().getWorkbenchWindow(), this);
+	pullDownBar = new ToolBar(tabFolder, SWT.FLAT);
+	pullDownButton = new ToolItem(pullDownBar, SWT.PUSH);
+	Image pullDownButtonImage = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU);
+	pullDownButton.setDisabledImage(pullDownButtonImage);
+	pullDownButton.setImage(pullDownButtonImage);
+	pullDownButton.setToolTipText(WorkbenchMessages.getString("Menu")); //$NON-NLS-1$
+	
+	pullDownButton.addSelectionListener(new SelectionListener() {
+		public void widgetSelected(SelectionEvent e) {
+			openEditorList(); 
+
+		}
+		public void widgetDefaultSelected(SelectionEvent e) {
+		}
+	});
+	
+	// Create the closebox on the CTabFolder
+	closeBoxButton = new ToolItem(pullDownBar, SWT.PUSH);
+	Image closeBoxImage = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_CLOSE_VIEW);
+	closeBoxButton.setDisabledImage(closeBoxImage);
+	closeBoxButton.setImage(closeBoxImage);
+	closeBoxButton.setToolTipText(WorkbenchMessages.getString("Close")); //$NON-NLS-1$
+	
+	closeBoxButton.addSelectionListener(new SelectionListener() {
+		public void widgetSelected(SelectionEvent e) {
+			if (visibleEditor != null) {
+				visibleEditor.getPage().closeEditor(visibleEditor.getEditorReference(),true);
+			}
+		}
+		public void widgetDefaultSelected(SelectionEvent e) {
+		}
+	});	
+
+	
+	tabFolder.setTopRight(pullDownBar);
+	tabFolder.MIN_TAB_WIDTH =  getPreferenceStore().getInt(
+		IPreferenceConstants.EDITOR_TAB_WIDTH_SCALAR);			
 }
 
+private void closeEditorList() {
+	editorList.destroyControl();
+}
+
+public void openEditorList() {
+	// don't think this check is necessary, need to verify
+	if (listComposite != null) {
+		return;
+	}
+	Shell parent = getEditorArea().getWorkbenchWindow().getShell();
+	Point point = pullDownBar.getParent().toDisplay (pullDownBar.getLocation());
+	
+	listComposite = new ViewForm(parent, SWT.BORDER);
+	listComposite.setVisible(false);
+	listComposite.addDisposeListener(new DisposeListener() {
+		public void widgetDisposed(DisposeEvent e) {
+			listComposite = null;
+		}
+	});
+	parent.addControlListener(new ControlAdapter() {
+		public void controlResized(ControlEvent e) {
+			if (listComposite != null) {
+				closeEditorList();
+			}
+		}
+	});
+
+	Control editorListControl = editorList.createControl(listComposite);
+	editorListControl.setVisible(false);
+	Table editorsTable = ((Table)editorListControl);
+	TableItem[] items = editorsTable.getItems();
+	if (items.length == 0) {
+		listComposite.dispose();
+		return;
+	}
+
+	listComposite.setContent(editorListControl);
+	listComposite.pack();
+
+	setEditorListBounds(parent, point);
+
+	listComposite.setVisible(true);
+	listComposite.moveAbove(null);
+	editorListControl.setVisible(true);
+	editorListControl.setFocus();
+
+	editorListControl.addFocusListener(new FocusAdapter() {
+		public void focusLost(FocusEvent e) {
+			if (listComposite != null) {
+				closeEditorList();
+			}
+		}
+	});
+}
+
+private void setEditorListBounds(Shell parent, Point point) {
+	final int MAX_ITEMS = 11;
+	
+	Point pullDownSize = pullDownBar.getSize();
+	Rectangle r = listComposite.getBounds();
+	point = parent.toControl(point);
+	int width = r.width;
+	int height = Math.min(r.height, MAX_ITEMS * ((Table)editorList.getControl()).getItemHeight());
+	int x = point.x - width  + pullDownSize.x;
+	int y = point.y + pullDownSize.y + 1;
+	listComposite.setBounds(listComposite.computeTrim(x, y, width, height));
+}
+
+public void resizeEditorList() {
+	Shell parent = getEditorArea().getWorkbenchWindow().getShell();
+	Point point = pullDownBar.getParent().toDisplay (pullDownBar.getLocation());
+	listComposite.pack();
+	setEditorListBounds(parent, point);
+}
 /**
  * Show a title label menu for this pane.
  */
@@ -288,6 +437,8 @@ public void dispose() {
 	mouseDownListenerAdded = false;
 
 	mapTabToEditor.clear();
+	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+	store.removePropertyChangeListener(tabFolderListener);
 }
 /**
  * Zooms in on the active page in this workbook.
@@ -542,6 +693,8 @@ public void remove(LayoutPart child) {
 		removeTab(getTab(child));
 		child.setContainer(null);
 	}
+	// disable the pulldown menu of editors if necessary
+	pullDownBar.setVisible(getItemCount() != 0);	
 }
 /**
  * See IVisualContainer#remove
@@ -573,6 +726,9 @@ public void removeAll() {
 	mapTabToEditor.clear();
 	editors.clear();
 	handleTabSelection = true;
+	
+	// disable the pulldown menu of editors
+	pullDownBar.setVisible(false);
 }
 private void removeListeners(EditorPane editor) {
 	if (editor == null)

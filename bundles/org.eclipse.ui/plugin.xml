@@ -1500,6 +1500,13 @@
             class="org.eclipse.ui.views.tasklist.TaskList"
             id="org.eclipse.ui.views.TaskList">
       </view>
+      <view
+            name="%Views.EditorView"
+            icon="icons/full/cview16/editor_view.gif"
+            category="org.eclipse.ui"
+            class="org.eclipse.ui.internal.EditorView"
+            id="org.eclipse.ui.internal.EditorView">
+      </view>      
    </extension>
    <extension
          point="org.eclipse.ui.markerImageProviders">

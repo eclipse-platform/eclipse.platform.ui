@@ -1,9 +1,15 @@
-package org.eclipse.ui.internal;
+/************************************************************************
+Copyright (c) 2000, 2002 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+Contributors:
+	IBM - Initial implementation
+************************************************************************/
+
+package org.eclipse.ui.internal;
 
 /**
  * The IPreferenceConstants are the internal constants used by the Workbench.
@@ -95,4 +101,18 @@ public interface IPreferenceConstants {
 	//Workspace save interval in minutes
 	public final static String SAVE_INTERVAL = "saveInterval";
 	public static final int MAX_SAVE_INTERVAL = 9999;
+	
+	//Tab width = tab height * scalar value
+	public final static String EDITOR_TAB_WIDTH_SCALAR = "EDITOR_TAB_WIDTH_SCALAR";
+	
+	// Boolean: true= allow tabs to span multiple lines
+	public static final String EDITOR_TABS_SPAN_MULTIPLE_LINES = "EDITOR_TABS_SPAN_MULTIPLE_LINES";
+	
+	//Limits number of tabs, usefull when multiple lines of tabs active
+	public final static String NUMBER_EDITOR_TABS = "NUMBER_EDITOR_TABS";
+	public final static int NUMBER_EDITOR_TABS_MAXIMUM = 999;
+	
+	// EditorList preferences
+	public static final String EDITOR_LIST_SELECTION_SCOPE = "EDITOR_LIST_SELECTION_SCOPE";
+	public static final String EDITOR_LIST_SORT_CRITERIA = "EDITOR_LIST_SORT_CRITERIA";	
 }

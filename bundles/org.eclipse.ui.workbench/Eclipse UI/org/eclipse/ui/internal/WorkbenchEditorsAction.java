@@ -1,18 +1,20 @@
+/************************************************************************
+Copyright (c) 2000, 2002 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+	IBM - Initial implementation
+************************************************************************/
+
+
 package org.eclipse.ui.internal;
 
-/**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp. 
-All rights reserved.   This program and the accompanying materials
-are made available under the terms of the Common Public License v0.5
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v05.html
- 
-Contributors:
-**********************************************************************/
 import org.eclipse.jface.action.Action;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.dialogs.WorkbenchEditorsDialog;
 
 /**
  * Implements a action to open a dialog showing all open editors
@@ -33,6 +35,9 @@ public class WorkbenchEditorsAction extends Action {
 		WorkbenchHelp.setHelp(this, IHelpContextIds.WORKBENCH_EDITORS_ACTION);
 	}
 	public void run() {
-		new WorkbenchEditorsDialog(window).open();
+		WorkbenchPage page = (WorkbenchPage)window.getActivePage();
+		if(page != null) {
+			page.getEditorPresentation().openEditorList();
+		}		
 	}
 }

@@ -1,8 +1,16 @@
+/************************************************************************
+Copyright (c) 2000, 2002 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+	IBM - Initial implementation
+************************************************************************/
+
 package org.eclipse.ui.internal.dialogs;
-/*
- * (c) Copyright IBM Corp. 2000, 2002.
- * All Rights Reserved.
- */
+
 import java.io.UnsupportedEncodingException;
 import java.util.*;
 
@@ -31,7 +39,6 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 	private Button otherEncodingButton;
 	private Combo encodingCombo;
 
-
 	private Composite editorReuseGroup;
 	private Button reuseEditors;
 	private Button closeEditorsOnExit;
@@ -41,6 +48,24 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 	private Group dirtyEditorReuseGroup;		
 	private Button openNewEditor;
 	private Button promptToReuseEditor;
+
+	// TODO: editor tabs 
+	private IntegerFieldEditor numberEditorTabs;
+	private Button editorTabSpanMultipleLines;
+	
+	// editor tab appearance
+	private Group editorTabCompressionGroup;
+	private Button editorTabCompressionNone;
+	private Button editorTabCompressionLow;
+	private Button editorTabCompressionMedium;
+	private Button editorTabCompressionHigh;
+	private int editorTabCompression = EDITOR_TAB_COMPRESSION_HIGH;
+	
+	// multiply height of tab by these to calculate width   //3,9,15,21
+	private static final int EDITOR_TAB_COMPRESSION_NONE = 30;
+	private static final int EDITOR_TAB_COMPRESSION_LOW = 9;
+	private static final int EDITOR_TAB_COMPRESSION_MEDIUM = 6;
+	private static final int EDITOR_TAB_COMPRESSION_HIGH = 3;
 	
 	private static final int REUSE_INDENT = 10;
 
@@ -63,15 +88,28 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		createEditorHistoryGroup(composite);
 		
 		WorkbenchPreferencePage.createSpace(composite);
-		createEditorReuseGroup(composite);
-				
+
 		closeEditorsOnExit = new Button(composite, SWT.CHECK);
 		closeEditorsOnExit.setText(WorkbenchMessages.getString("WorkbenchPreference.closeEditorsButton")); //$NON-NLS-1$
 		closeEditorsOnExit.setFont(composite.getFont());
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		closeEditorsOnExit.setSelection(store.getBoolean(IPreferenceConstants.CLOSE_EDITORS_ON_EXIT));
 		setButtonLayoutData(closeEditorsOnExit);
-
+		
+		createEditorReuseGroup(composite);
+		
+		WorkbenchPreferencePage.createSpace(composite);		
+		createEditorTabCompressionGroup(composite);
+		
+		// TODO: editor tabs
+//		editorTabSpanMultipleLines = new Button(composite, SWT.CHECK);
+//		editorTabSpanMultipleLines.setText(WorkbenchMessages.getString("WorkbenchPreference.editorTabSpanMultipleLine")); //$NON-NLS-1$
+//		editorTabSpanMultipleLines.setFont(composite.getFont());
+//		editorTabSpanMultipleLines.setSelection(store.getBoolean(IPreferenceConstants.EDITOR_TABS_SPAN_MULTIPLE_LINES));
+//		editorTabSpanMultipleLines.setEnabled(false);
+//		setButtonLayoutData(editorTabSpanMultipleLines);
+//		
+//		createNumberOfEditorTabGroup(composite);		
 		WorkbenchPreferencePage.createSpace(composite);
 		createEncodingGroup(composite);
 
@@ -100,6 +138,10 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		reuseEditorsThreshold.getLabelControl(editorReuseThresholdGroup).setEnabled(reuseEditors.getSelection());
 		reuseEditorsThreshold.getTextControl(editorReuseThresholdGroup).setEnabled(reuseEditors.getSelection());
 		recentFilesEditor.loadDefault();
+		//TODO: editor tabs
+//		numberEditorTabs.loadDefault();
+//		editorTabSpanMultipleLines.setSelection(store.getDefaultBoolean(IPreferenceConstants.EDITOR_TABS_SPAN_MULTIPLE_LINES));
+		updateEditorTabCompressionState(store.getDefaultInt(IPreferenceConstants.EDITOR_TAB_WIDTH_SCALAR));
 	}
 	
 	public boolean performOk() {
@@ -124,7 +166,13 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 
 		// store the recent files setting
 		recentFilesEditor.store();
-						
+
+		// TODO: editor tabs
+		// store the editor tab settings
+//		numberEditorTabs.store();
+//		store.setValue(IPreferenceConstants.EDITOR_TABS_SPAN_MULTIPLE_LINES, editorTabSpanMultipleLines.getSelection());
+		store.setValue(IPreferenceConstants.EDITOR_TAB_WIDTH_SCALAR, editorTabCompression);		
+		
 		return super.performOk();
 	}
 	/**
@@ -359,6 +407,106 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 			}
 		});
 		
+	}
+	
+	/**
+	 * Create a composite that contains entry fields specifying number of editor
+	 * tabs preferences.
+	 */
+	private void createNumberOfEditorTabGroup(Composite composite) {
+		Composite groupComposite = new Composite(composite, SWT.LEFT);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		groupComposite.setLayout(layout);
+		GridData gd = new GridData();
+		gd.horizontalAlignment = GridData.FILL;
+		gd.grabExcessHorizontalSpace = true;
+		groupComposite.setLayoutData(gd);
+		groupComposite.setFont(composite.getFont());
+		
+		numberEditorTabs = new IntegerFieldEditor(IPreferenceConstants.NUMBER_EDITOR_TABS, WorkbenchMessages.getString("WorkbenchPreference.numberEditorTabs"), groupComposite); //$NON-NLS-1$
+	
+		int numberEditorTabsMax = IPreferenceConstants.NUMBER_EDITOR_TABS_MAXIMUM;
+		numberEditorTabs.setPreferenceStore(WorkbenchPlugin.getDefault().getPreferenceStore());
+		numberEditorTabs.setPreferencePage(this);
+		numberEditorTabs.setTextLimit(Integer.toString(numberEditorTabsMax).length());
+		numberEditorTabs.setErrorMessage(WorkbenchMessages.format("WorkbenchPreference.numberEditorTabsError", new Object[] { new Integer(numberEditorTabsMax)})); //$NON-NLS-1$
+		numberEditorTabs.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
+		numberEditorTabs.setValidRange(0, numberEditorTabsMax);
+		numberEditorTabs.load();
+		numberEditorTabs.setPropertyChangeListener(new IPropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent event) {
+				if (event.getProperty().equals(FieldEditor.IS_VALID))
+					setValid(numberEditorTabs.isValid());
+			}
+		});
+	
+	}
+
+	private void updateEditorTabCompressionState(int scalar) {
+		editorTabCompressionNone.setSelection(scalar==EDITOR_TAB_COMPRESSION_NONE);
+		editorTabCompressionLow.setSelection(scalar==EDITOR_TAB_COMPRESSION_LOW);
+		editorTabCompressionMedium.setSelection(scalar==EDITOR_TAB_COMPRESSION_MEDIUM);
+		editorTabCompressionHigh.setSelection(scalar==EDITOR_TAB_COMPRESSION_HIGH);
+	}
+		
+	private void createEditorTabCompressionGroup(Composite composite) {
+		/* Create the group */
+		editorTabCompressionGroup = new Group(composite, SWT.NONE);
+		GridLayout gridLayout = new GridLayout();
+		gridLayout.numColumns = 4;
+		editorTabCompressionGroup.setLayout(gridLayout);
+		editorTabCompressionGroup.setLayoutData(new GridData (GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_FILL));
+		editorTabCompressionGroup.setText(WorkbenchMessages.getString("WorkbenchPreference.editorTabCompression"));
+	
+		/* Create the buttons */
+		editorTabCompressionNone = new Button (editorTabCompressionGroup, SWT.RADIO);
+		editorTabCompressionNone.setText(WorkbenchMessages.getString("WorkbenchPreference.editorTabCompressionNone"));
+		editorTabCompressionLow = new Button (editorTabCompressionGroup, SWT.RADIO);
+		editorTabCompressionLow.setText(WorkbenchMessages.getString("WorkbenchPreference.editorTabCompressionLow"));
+		editorTabCompressionMedium = new Button(editorTabCompressionGroup, SWT.RADIO);
+		editorTabCompressionMedium.setText(WorkbenchMessages.getString("WorkbenchPreference.editorTabCompressionMedium"));
+		editorTabCompressionHigh = new Button (editorTabCompressionGroup, SWT.RADIO);
+		editorTabCompressionHigh.setText(WorkbenchMessages.getString("WorkbenchPreference.editorTabCompressionHigh"));
+	
+		/* Add the listeners */
+		SelectionAdapter selectionListener = new SelectionAdapter () {
+			public void widgetSelected (SelectionEvent event) {
+				if (!((Button) event.widget).getSelection ()) {
+					return;
+				}
+				if (editorTabCompressionNone == null) {
+					editorTabCompression = EDITOR_TAB_COMPRESSION_HIGH;
+					return;
+				}
+				if (editorTabCompressionNone.getSelection()) {
+					editorTabCompression = EDITOR_TAB_COMPRESSION_NONE;
+					return;
+				}
+				if (editorTabCompressionLow.getSelection()) {
+					editorTabCompression = EDITOR_TAB_COMPRESSION_LOW;
+					return;
+				}
+				if (editorTabCompressionMedium.getSelection()) {
+					editorTabCompression = EDITOR_TAB_COMPRESSION_MEDIUM;
+					return;
+				}
+				if (editorTabCompressionHigh.getSelection()) {
+					editorTabCompression = EDITOR_TAB_COMPRESSION_HIGH;
+					return;
+				}
+			};
+		};
+	
+		editorTabCompressionNone.addSelectionListener(selectionListener);
+		editorTabCompressionLow.addSelectionListener(selectionListener);
+		editorTabCompressionMedium.addSelectionListener(selectionListener);
+		editorTabCompressionHigh.addSelectionListener(selectionListener);
+	
+		/* Set the default state */
+		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+		editorTabCompression = store.getInt(IPreferenceConstants.EDITOR_TAB_WIDTH_SCALAR);
+		updateEditorTabCompressionState(editorTabCompression);
 	}
 }
 

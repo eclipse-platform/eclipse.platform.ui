@@ -1,9 +1,16 @@
+/************************************************************************
+Copyright (c) 2000, 2002 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+	IBM - Initial implementation
+************************************************************************/
+
 package org.eclipse.ui.internal;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 import java.util.*;
 
 import org.eclipse.core.runtime.IStatus;
@@ -441,5 +448,11 @@ private void stackEditor(EditorPane newPart, EditorWorkbook refPart) {
  */
 public ArrayList getWorkbooks() {
 	return editorArea.getEditorWorkbooks();
+}
+/**
+ * Open the list of editors
+ */
+public void openEditorList() {
+		editorArea.getActiveWorkbook().openEditorList();
 }
 }

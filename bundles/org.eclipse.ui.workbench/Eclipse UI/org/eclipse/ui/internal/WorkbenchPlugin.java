@@ -1,9 +1,16 @@
+/************************************************************************
+Copyright (c) 2000, 2002 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+	IBM - Initial implementation
+************************************************************************/
+
 package org.eclipse.ui.internal;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 import java.io.*;
 import java.util.Iterator;
 import java.util.List;
@@ -377,6 +384,9 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		store.setDefault(IPreferenceConstants.RECENT_FILES, 4);
 		store.setDefault(IPreferenceConstants.VIEW_TAB_POSITION, SWT.BOTTOM);
 		store.setDefault(IPreferenceConstants.EDITOR_TAB_POSITION, SWT.TOP);
+		store.setDefault(IPreferenceConstants.EDITOR_TABS_SPAN_MULTIPLE_LINES, false);
+		store.setDefault(IPreferenceConstants.EDITOR_TAB_WIDTH_SCALAR, 3); // high
+		store.setDefault(IPreferenceConstants.NUMBER_EDITOR_TABS, IPreferenceConstants.NUMBER_EDITOR_TABS_MAXIMUM);
 		store.setDefault(IPreferenceConstants.OPEN_VIEW_MODE, IPreferenceConstants.OVM_EMBED);
 		store.setDefault(IPreferenceConstants.OPEN_PERSP_MODE, IPreferenceConstants.OPM_ACTIVE_PAGE);
 		store.setDefault(IPreferenceConstants.ENABLED_DECORATORS, ""); //$NON-NLS-1$
