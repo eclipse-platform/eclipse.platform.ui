@@ -11,18 +11,24 @@ Contributors:
 
 package org.eclipse.ui.internal.actions;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.OpenResourceDialog;
 
 /**
@@ -87,8 +93,8 @@ public void run(IAction action) {
 	} catch (CoreException x) {
 		String title = WorkbenchMessages.getString("OpenWorkspaceFileAction.errorTitle"); //$NON-NLS-1$
 		String message = WorkbenchMessages.getString("OpenWorkspaceFileAction.errorMessage"); //$NON-NLS-1$
-
-		MessageDialog.openError(workbenchWindow.getShell(), title, message);
+		WorkbenchPlugin.log(title, x.getStatus());
+		ErrorDialog.openError(workbenchWindow.getShell(), title, message, x.getStatus());
 	}
 }
 
