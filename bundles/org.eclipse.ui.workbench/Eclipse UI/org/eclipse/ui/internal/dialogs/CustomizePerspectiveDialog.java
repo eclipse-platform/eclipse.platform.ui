@@ -61,6 +61,8 @@ public class CustomizePerspectiveDialog extends Dialog {
 	private CustomizeActionBars customizeWorkbenchActionBars;
 
 	private static int lastSelectedTab = -1;
+	private static String lastSelectedMenuId = null;
+	private static String lastSelectedActionSetId = null;
 	private static int cursorSize = 15;
 	
 	private final static int TABLES_WIDTH = 600;
@@ -638,6 +640,13 @@ private void checkInitialMenuCategorySelections(ShortcutMenu menu) {
 	}
 }
 public boolean close() {
+	lastSelectedTab = tabFolder.getSelectionIndex();
+	StructuredSelection selection = (StructuredSelection)menusViewer.getSelection();
+	if (selection.isEmpty()) lastSelectedMenuId = null;
+	else lastSelectedMenuId = ((ShortcutMenu)selection.getFirstElement()).id;;
+	selection = (StructuredSelection)actionSetsViewer.getSelection();
+	if (selection.isEmpty()) lastSelectedActionSetId = null;
+	else lastSelectedActionSetId = ((ActionSetDescriptor)selection.getFirstElement()).getId();
 	((CoolBarManager)customizeWorkbenchActionBars.getToolBarManager()).dispose();
 	customizeWorkbenchActionBars.getMenuManager().dispose();
 	return super.close();
@@ -1153,7 +1162,6 @@ protected void okPressed() {
 	actionSetArray = (IActionSetDescriptor [])actionSets.toArray(actionSetArray);
 	perspective.setActionSets(actionSetArray);
 	
-	lastSelectedTab = tabFolder.getSelectionIndex();
 	super.okPressed();
 }
 private void popUp(String description) {
@@ -1217,13 +1225,45 @@ private String removeShortcut(String label) {
 	return label;
 }
 private void setInitialSelections() {
-	Object element = actionSetsViewer.getElementAt(0);
-	StructuredSelection sel = new StructuredSelection(element);
-	actionSetsViewer.setSelection(sel, true);	
-	actionSetsViewer.getControl().setFocus();
-	sel = new StructuredSelection(menusViewer.getElementAt(0));
+	Object item = null;
+	if (lastSelectedActionSetId == null) {
+		item = actionSetsViewer.getElementAt(0);
+	} else {
+		for (int i=0; i<actionSets.size(); i++) {
+			ActionSetDescriptor actionSet = (ActionSetDescriptor)actionSets.get(i);
+			if (actionSet.getId().equals(lastSelectedActionSetId)) {
+				item = actionSet;
+				break;
+			}
+		}
+	}		
+	StructuredSelection sel = new StructuredSelection(item);
+	actionSetsViewer.setSelection(sel, true);
+	
+	item = null;
+	if (lastSelectedMenuId == null) {
+		item = menusViewer.getElementAt(0);
+	} else {
+		ArrayList children = rootMenu.getChildren();
+		for (int i=0; i<children.size(); i++) {
+			ShortcutMenu menu = (ShortcutMenu)children.get(i);
+			if (menu.id.equals(lastSelectedMenuId)) {
+				item = menu;
+				break;
+			}
+		}
+	}
+	sel = new StructuredSelection(item);
 	menusViewer.setSelection(sel, true);
-	if (lastSelectedTab != -1) tabFolder.setSelection(lastSelectedTab);
+
+	if (lastSelectedTab != -1) {
+		tabFolder.setSelection(lastSelectedTab);
+	}
+	if (tabFolder.getSelectionIndex() == 0) {
+		menusViewer.getControl().setFocus();
+	} else {
+		actionSetsViewer.getControl().setFocus();
+	}
 }
 private void updateMenuCategoryCheckedState(ShortcutMenu menu) {
 	if (menu == rootMenu) return;
