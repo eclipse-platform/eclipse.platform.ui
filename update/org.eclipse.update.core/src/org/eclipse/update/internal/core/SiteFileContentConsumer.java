@@ -92,7 +92,7 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 		featurePath += contentKey;
 
 		// error recovery
-		if (featurePath.endsWith(Feature.FEATURE_XML)) {
+		if (featurePath.endsWith("\\"+Feature.FEATURE_XML) || featurePath.endsWith("/"+Feature.FEATURE_XML)) {
 			oldPath = featurePath.replace(File.separatorChar, '/');
 			File localFile = new File(oldPath);
 			if (localFile.exists()) {

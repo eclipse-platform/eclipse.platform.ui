@@ -52,13 +52,13 @@ public class SiteFilePluginContentConsumer extends ContentConsumer {
 
 		try {
 			URL newURL = new URL(site.getURL(), Site.DEFAULT_PLUGIN_PATH + pluginEntry.getVersionedIdentifier().toString());
-			pluginPath = newURL.getFile();
+			pluginPath = newURL.getFile(); 
 			String contentKey = contentReference.getIdentifier();
 			inStream = contentReference.getInputStream();
 			pluginPath += pluginPath.endsWith(File.separator) ? contentKey : File.separator + contentKey;
 
 			// error recovery
-			if (pluginPath.endsWith("plugin.xml")) {
+			if (pluginPath.endsWith("\\plugin.xml") || pluginPath.endsWith("/plugin.xml")) {
 				oldPath = pluginPath.replace(File.separatorChar, '/');
 				File localFile = new File(oldPath);
 				if (localFile.exists()) {
@@ -68,7 +68,7 @@ public class SiteFilePluginContentConsumer extends ContentConsumer {
 				newPath = pluginPath;
 				ErrorRecoveryLog.getLog().appendPath(ErrorRecoveryLog.PLUGIN_ENTRY, pluginPath);
 			}
-			if (pluginPath.endsWith("fragment.xml")) {
+			if (pluginPath.endsWith("\\fragment.xml") || pluginPath.endsWith("/fragment.xml")) {
 				oldPath = pluginPath.replace(File.separatorChar, '/');
 				File localFile = new File(oldPath);
 				if (localFile.exists()) {
