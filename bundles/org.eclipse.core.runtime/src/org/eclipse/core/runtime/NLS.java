@@ -19,7 +19,10 @@ import org.eclipse.core.internal.runtime.InternalPlatform;
  * @since 3.1
  */
 public abstract class NLS {
-	public NLS() {
+	/**
+	 * Creates a new NLS instance.
+	 */
+	protected NLS() {
 		super();
 	}
 
