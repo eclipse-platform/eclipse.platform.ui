@@ -755,6 +755,9 @@ public class PathTest extends RuntimeTest {
 		assertEquals("5.1", new Path("c:/"), anyPath.uptoSegment(0));
 		anyPath = new Path("c:first/second/third/");
 		assertEquals("5.2", new Path("c:"), anyPath.uptoSegment(0));
-		
+		anyPath = new Path("//one/two/three");
+		assertEquals("5.3", new Path("//"), anyPath.uptoSegment(0));
+		anyPath = new Path("//one/two/three/");
+		assertEquals("5.4", new Path("//"), anyPath.uptoSegment(0));
 	}
 }

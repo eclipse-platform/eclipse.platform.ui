@@ -884,7 +884,7 @@ public class Path implements IPath, Cloneable {
 	 */
 	public IPath uptoSegment(int count) {
 		if (count == 0)
-			return new Path(device, EMPTY_STRING_ARRAY, separators & HAS_LEADING);
+			return new Path(device, EMPTY_STRING_ARRAY, separators & (HAS_LEADING | IS_UNC));
 		if (count >= segments.length)
 			return this;
 		Assert.isTrue(count > 0, "Invalid parameter to Path.uptoSegment"); //$NON-NLS-1$
