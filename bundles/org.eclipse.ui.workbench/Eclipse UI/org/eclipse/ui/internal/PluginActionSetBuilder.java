@@ -275,7 +275,6 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
 		protected void contributeCoolbarAction(ActionDescriptor ad, ActionSetActionBars bars) {
 			String toolBarId = ad.getToolbarId();
 			String toolGroupId = ad.getToolbarGroupId();
-			String beforeGroupId = ad.getBeforeToolbarGroupId();;
 			if (toolBarId == null && toolGroupId == null)return;
 
 			String contributingId = bars.getActionSetId();
