@@ -12,13 +12,15 @@
 
 <h2>Package Specification</h2>
 
-<p>This package defines classes and interfaces known as the &quot;debug model&quot; which support
-an extensible set of debug architectures and languages. The debug model is a set of interfaces
-representing common artifacts in debuggable programs. The debug plug-in itself does not provide
-any implementations of a debug model. It is intended that third parties providing an integrated
-set of development tools for a specific language will also implement a debug model for that language,
-using an underlying debug architecture of their choice. For example, Java Tooling provides an
-implementation of a debug model based on the standard Java Platform Debug Architecture (JPDA).</p>
+<p>This package defines classes and interfaces known as the &quot;debug model&quot; 
+  which support an extensible set of debug architectures and languages. The debug 
+  model is a set of interfaces representing common artifacts in debuggable programs. 
+  The debug plug-in itself does not provide any implementations of a debug model. 
+  It is intended that third parties providing an integrated set of development 
+  tools for a specific language will also implement a debug model for that language, 
+  using an underlying debug architecture of their choice. For example, Java development 
+  tooling provides an implementation of a debug model based on the standard Java 
+  Platform Debug Architecture (JPDA).</p>
 
 <h4>The Debug Model</h4>
 
@@ -60,28 +62,26 @@ architecture, and the information required to create those breakpoints
 is dictated by each debug architecture. The debug platform supports an extensible
 set of breakpoint via the breakpoints extension point.</p>
 
-<p>The debug platform provides a breakpoint manager that maintains the collection of all
-registered breakpoints. Clients add and remove breakpoints via this manager. Breakpoints are
-implemented by instances of IBreakpoint. Each breakpoint object has an associated marker,
-which provides persistence and presentation in editors. The debug platform defines a generic
-breakpoint and line breakpoint, as well as their corresponding marker definitions. Breakpoint
-creation is a client responsibility - that is, defining the attributes of a breakpoint and
-the resource to associate a breakpoint marker with.</p>
-
-<p>Also, the location in which a breakpoint may
-be placed, and the attributes that a debug target requires to install a breakpoint are
-specific to each debug architecture, and thus a client responsibility.</p>
+<p>The debug platform provides a breakpoint manager that maintains the collection 
+  of all registered breakpoints. Clients add and remove breakpoints via this manager. 
+  Breakpoints are implemented by instances of <font face="Courier New, Courier, mono">IBreakpoint</font>. 
+  Each breakpoint object has an associated marker, which provides persistence 
+  and presentation in editors. The debug platform defines a generic breakpoint 
+  and line breakpoint, as well as their corresponding marker definitions. Breakpoint 
+  creation is a client responsibility - that is, defining the attributes of a 
+  breakpoint and the resource to associate a breakpoint marker with.</p>
 
 <h5>Persistence</h5>
 
-<p>Breakpoints are persisted via their underlying marker. Breakpoint markers defined
-with the <b>persisted</b> attribute as <b>false</b> will not be persisted. Breakpoints
-are restored at workspace startup time by the breakpoint manager - that is, breakpoint objects
-are created for all persisted markers which are a subtype of the root breakpoint marker
-and are added to the breakpoint manager. To allow for selective persistence
-of breakpoints (of the same kind), the IBreakpoint interface and root breakpoint
-implementation define a &quot;persisted&quot; attribute. If this value is set to false,
-the breakpoint will not be persisted across workspace invocations.</p>
+<p>Breakpoints are persisted via their underlying marker. Breakpoint markers defined 
+  with the <b>persisted</b> attribute as <b>false</b> will not be persisted. Breakpoints 
+  are restored at workspace startup time by the breakpoint manager - that is, 
+  breakpoint objects are created for all persisted markers which are a subtype 
+  of the root breakpoint marker and are added to the breakpoint manager. To allow 
+  for selective persistence of breakpoints (of the same kind), the <font face="Courier New, Courier, mono">IBreakpoint</font> 
+  interface and root breakpoint implementation defines a &quot;persisted&quot; 
+  attribute. If this value is set to false, the breakpoint will not be persisted 
+  across workspace invocations.</p>
 
 <h5>Change Notification</h5>
 

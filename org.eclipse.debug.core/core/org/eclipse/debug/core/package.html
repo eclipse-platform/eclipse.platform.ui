@@ -13,17 +13,17 @@ and debug events.</p>
 
 <h2>Package Specification</h2>
 
-<p>This package provides classes and interfaces to support facilities common
-among many debug architectures: launching programs, breakpoint management,
-expression management, and debug events. An extensible
-set of debug architectures and languages are supported by the definition of a &quot;debug
-model&quot; - a set of interfaces representing common artifacts in debuggable programs, which
-are defined in <b>org.eclipse.debug.core.model</b>.
-The debug plug-in itself does not provide any implementations of a debug model. It is
-intended that third parties providing an integrated set of development tools for a
-specific language will also implement a debug model for that language, using an underlying
-debug architecture of their choice. For example, Java Tooling provides an implementation
-of a debug model based on the standard Java Platform Debug Architecture (JPDA).</p>
+<p>This package provides classes and interfaces to support facilities common among 
+  many debug architectures: launching programs, breakpoint management, expression 
+  management, and debug events. An extensible set of debug architectures and languages 
+  are supported by the definition of a &quot;debug model&quot; - a set of interfaces 
+  representing common artifacts in debuggable programs, which are defined in <b>org.eclipse.debug.core.model</b>. 
+  The debug plug-in itself does not provide any implementations of a debug model. 
+  It is intended that third parties providing an integrated set of development 
+  tools for a specific language will also implement a debug model for that language, 
+  using an underlying debug architecture of their choice. For example, Java development 
+  tooling provides an implementation of a debug model based on the standard Java 
+  Platform Debug Architecture (JPDA).</p>
 
 <h4>The Managers</h4>
 
@@ -43,7 +43,7 @@ of a debug model based on the standard Java Platform Debug Architecture (JPDA).<
     Expressions are not automatically persisted, but a client could persist its own expressions
     if required.</li>
 </ul>
-</p>
+<p></p>
 
 <h4>Launch Configurations</h4>
 
