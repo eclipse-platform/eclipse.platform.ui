@@ -216,8 +216,8 @@ public class CommitWizard extends ResizableWizard {
 
     public void addPages() {
         
-        final Collection names= new ArrayList();
-        final Collection extensions= new ArrayList();
+        final Collection names= new HashSet();
+        final Collection extensions= new HashSet();
         getUnknownNamesAndExtension(fUnaddedInfos, names, extensions);
         
         if (names.size() + extensions.size() > 0) {
