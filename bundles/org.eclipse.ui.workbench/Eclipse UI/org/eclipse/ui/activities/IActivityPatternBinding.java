@@ -15,13 +15,17 @@ import java.util.regex.Pattern;
 
 /**
  * An instance of this interface represents a binding between an activity and a
- * pattern.
+ * regular expression pattern.  It's typically unnecessary to use this interface 
+ * directly.  Rather, clients wishing to test strings against activity patterns
+ * should use instances of <code>IIdentifier</code>.
  * <p>
  * This interface is not intended to be extended or implemented by clients.
  * </p>
  * 
  * @since 3.0
  * @see IActivity
+ * @see IIdentifier
+ * @see IActivityManager#getIdentifier(String)
  */
 public interface IActivityPatternBinding extends Comparable {
 
@@ -34,7 +38,9 @@ public interface IActivityPatternBinding extends Comparable {
 	String getActivityId();
 
 	/**
-	 * Returns the pattern represented in this binding.
+	 * Returns the pattern represented in this binding.  This pattern should 
+	 * conform to the regular expression syntax described by the 
+	 * <code>java.util.regex.Pattern</code> class.
 	 * 
 	 * @return the pattern. Guaranteed not to be <code>null</code>.
 	 */

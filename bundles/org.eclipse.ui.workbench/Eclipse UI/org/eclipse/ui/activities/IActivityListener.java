@@ -19,8 +19,8 @@ package org.eclipse.ui.activities;
  * </p>
  * 
  * @since 3.0
- * @see IActivity#addActivityListener
- * @see IActivity#removeActivityListener
+ * @see IActivity#addActivityListener(IActivityListener)
+ * @see IActivity#removeActivityListener(IActivityListener)
  */
 public interface IActivityListener {
 

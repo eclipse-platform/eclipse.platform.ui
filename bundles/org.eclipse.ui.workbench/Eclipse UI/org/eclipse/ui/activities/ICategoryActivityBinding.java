@@ -14,6 +14,7 @@ package org.eclipse.ui.activities;
 /**
  * An instance of this interface represents a binding between a category and an
  * activity.
+ * 
  * <p>
  * This interface is not intended to be extended or implemented by clients.
  * </p>

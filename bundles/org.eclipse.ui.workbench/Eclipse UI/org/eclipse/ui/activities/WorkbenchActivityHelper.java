@@ -19,10 +19,11 @@ import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.activities.ws.EnablementDialog;
 
 /**
  * A utility class that contains helpful methods for interacting with the
- * activities API.  The methods in this class are experimental and may change.
+ * activities API.
  * 
  * @since 3.0
  */
@@ -33,7 +34,7 @@ public final class WorkbenchActivityHelper {
 	 * activity enablement.  If it is currently disabled, then a dialog is 
 	 * opened and the user is prompted to activate the requried activities.  If 
 	 * the user declines their activation then false is returned.  In all other 
-	 * cases true is returned.
+	 * cases <code>true</code> is returned.
 	 * 
 	 * @param object the contribution to test.
 	 * @return whether the contribution is allowed to be used based on activity 
@@ -93,11 +94,12 @@ public final class WorkbenchActivityHelper {
     
     /**
 	 * Utility method to create a <code>String</code> containing the plugin
-	 * and local ids of a contribution.
+	 * and extension ids of a contribution.  This will have the form 
+	 * <pre>pluginId/extensionId</pre>.  If the IPluginContribution does not 
+	 * define a plugin id then the extension id alone is returned.
 	 * 
-	 * @param contribution
-	 *            the contribution to use.
-	 * @return the unified id.
+	 * @param contribution the contribution to use
+	 * @return the unified id
 	 */
 	public static final String createUnifiedId(IPluginContribution contribution) {
 		if (contribution.getPluginId() != null)
@@ -131,14 +133,13 @@ public final class WorkbenchActivityHelper {
 		
 	/**
 	 * Answers whether the provided object should be filtered from the UI based
-	 * on activity state. Returns false except when the object is an instance
+	 * on activity state. Returns <code>false</code> except when the object is an instance
 	 * of <code>IPluginContribution</code> whos unified id matches an <code>IIdentifier</code>
 	 * that is currently disabled.
 	 * 
-	 * @param object
-	 *            the object to test.
-	 * @return whether the object should be filtered.
-	 * @see createUnifiedId(IPluginContribution)
+	 * @param object the object to test
+	 * @return whether the object should be filtered
+	 * @see #createUnifiedId(IPluginContribution)
 	 */
 	public static final boolean filterItem(Object object) {
 		if (object instanceof IPluginContribution) {
@@ -157,8 +158,10 @@ public final class WorkbenchActivityHelper {
 	}
 
 	/**
-	 * @return whether the UI is set up to filter contributions (has defined
-	 *         activity categories).
+	 * Returns whether the UI is set up to filter contributions.  This is the 
+	 * case if there are defined activities.
+	 * 
+	 * @return whether the UI is set up to filter contributions
 	 */
 	public static final boolean isFiltering() {
 		return !PlatformUI.getWorkbench().getActivitySupport().getActivityManager().getDefinedActivityIds().isEmpty();

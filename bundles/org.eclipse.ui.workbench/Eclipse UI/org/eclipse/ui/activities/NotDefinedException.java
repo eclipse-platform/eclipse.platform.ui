@@ -14,10 +14,13 @@ package org.eclipse.ui.activities;
 /**
  * Signals that an attempt was made to access the properties of an undefined
  * object.
+ * 
  * <p>
  * This class is not intended to be extended by clients.
  * </p>
  * 
+ * @see IActivity
+ * @see ICategory
  * @since 3.0
  */
 public final class NotDefinedException extends Exception {
@@ -26,6 +29,7 @@ public final class NotDefinedException extends Exception {
 	 * Creates a new instance of this class with no specified detail message.
 	 */
 	public NotDefinedException() {
+	    //no-op
 	}
 
 	/**

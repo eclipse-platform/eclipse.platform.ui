@@ -12,13 +12,17 @@
 package org.eclipse.ui.activities;
 
 /**
- * An instance of this class describes changes to an instance of <code>IActivityManager</code>.
+ * An instance of this class describes changes to an instance of 
+ * <code>IActivityManager</code>.  This class does not give details as to the 
+ * specifics of a change, only that the given property on the source object has 
+ * changed.
+ * 
  * <p>
  * This class is not intended to be extended by clients.
  * </p>
  * 
  * @since 3.0
- * @see IActivityManagerListener#activityManagerChanged
+ * @see IActivityManagerListener#activityManagerChanged(ActivityManagerEvent)
  */
 public final class ActivityManagerEvent {
 	private IActivityManager activityManager;
@@ -32,11 +36,11 @@ public final class ActivityManagerEvent {
 	 * @param activityManager
 	 *            the instance of the interface that changed.
 	 * @param definedActivityIdsChanged
-	 *            true, iff the definedActivityIds property changed.
+	 *            <code>true</code>, iff the definedActivityIds property changed.
 	 * @param definedCategoryIdsChanged
-	 *            true, iff the definedCategoryIds property changed.
+	 *            <code>true</code>, iff the definedCategoryIds property changed.
 	 * @param enabledActivityIdsChanged
-	 *            true, iff the enabledActivityIds property changed.
+	 *            <code>true</code>, iff the enabledActivityIds property changed.
 	 */
 	public ActivityManagerEvent(
 		IActivityManager activityManager,
@@ -65,7 +69,7 @@ public final class ActivityManagerEvent {
 	/**
 	 * Returns whether or not the definedActivityIds property changed.
 	 * 
-	 * @return true, iff the definedActivityIds property changed.
+	 * @return <code>true</code>, iff the definedActivityIds property changed.
 	 */
 	public boolean haveDefinedActivityIdsChanged() {
 		return definedActivityIdsChanged;
@@ -74,7 +78,7 @@ public final class ActivityManagerEvent {
 	/**
 	 * Returns whether or not the definedCategoryIds property changed.
 	 * 
-	 * @return true, iff the definedCategoryIds property changed.
+	 * @return <code>true</code>, iff the definedCategoryIds property changed.
 	 */
 	public boolean haveDefinedCategoryIdsChanged() {
 		return definedCategoryIdsChanged;
@@ -83,7 +87,7 @@ public final class ActivityManagerEvent {
 	/**
 	 * Returns whether or not the enabledActivityIds property changed.
 	 * 
-	 * @return true, iff the enabledActivityIds property changed.
+	 * @return <code>true</code>, iff the enabledActivityIds property changed.
 	 */
 	public boolean haveEnabledActivityIdsChanged() {
 		return enabledActivityIdsChanged;

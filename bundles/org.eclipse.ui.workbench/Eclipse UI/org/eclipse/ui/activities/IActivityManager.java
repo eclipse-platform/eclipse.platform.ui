@@ -13,8 +13,6 @@ package org.eclipse.ui.activities;
 
 import java.util.Set;
 
-import org.eclipse.ui.internal.activities.ActivityManagerFactory;
-
 /**
  * An instance of this interface allows clients to manage activities, as
  * defined by the extension point <code>org.eclipse.ui.activities</code>.
@@ -23,7 +21,6 @@ import org.eclipse.ui.internal.activities.ActivityManagerFactory;
  * </p>
  * 
  * @since 3.0
- * @see ActivityManagerFactory
  */
 public interface IActivityManager {
 
@@ -109,12 +106,12 @@ public interface IActivityManager {
 	IIdentifier getIdentifier(String identifierId);
 
 	/**
-	 * Unregisters an instance of <code>IActivityManagerListener</code>
+	 * Removes an instance of <code>IActivityManagerListener</code>
 	 * listening for changes to properties of this instance.
 	 * 
 	 * @param activityManagerListener
-	 *            the instance to unregister. Must not be <code>null</code>.
-	 *            If an attempt is made to unregister an instance which is not
+	 *            the instance to remove. Must not be <code>null</code>.
+	 *            If an attempt is made to remove an instance which is not
 	 *            already registered with this instance, no operation is
 	 *            performed.
 	 */

@@ -14,7 +14,8 @@ import java.util.Set;
 
 /**
  * An instance of this interface provides support for managing 
- * <code>IWorkbench</code> activities. 
+ * <code>IWorkbench</code> activities.  An instance of this interface may be
+ * obtained via {@link org.eclipse.ui.IWorkbench#getActivitySupport()}. 
  * <p>
  * This interface is not intended to be extended or implemented by clients.
  * </p>

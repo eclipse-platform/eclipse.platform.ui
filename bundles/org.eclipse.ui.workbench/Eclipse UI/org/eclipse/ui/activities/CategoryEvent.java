@@ -12,13 +12,17 @@
 package org.eclipse.ui.activities;
 
 /**
- * An instance of this class describes changes to an instance of <code>ICategory</code>.
+ * An instance of this class describes changes to an instance of 
+ * <code>ICategory</code>.  This class does not give details as to the 
+ * specifics of a change, only that the given property on the source object has 
+ * changed.
+ * 
  * <p>
  * This class is not intended to be extended by clients.
  * </p>
  * 
  * @since 3.0
- * @see ICategoryListener#categoryChanged
+ * @see ICategoryListener#categoryChanged(CategoryEvent)
  */
 public final class CategoryEvent {
 	private ICategory category;
@@ -31,13 +35,15 @@ public final class CategoryEvent {
 	 * Creates a new instance of this class.
 	 * 
 	 * @param category
- *            the instance of the interface that changed.
+     *        the instance of the interface that changed.
 	 * @param categoryActivityBindingsChanged
- *            true, iff the categoryActivityBindings property changed.
+     *        <code>true</code>, iff the categoryActivityBindings property changed.
 	 * @param definedChanged
- *            true, iff the defined property changed.
+     *        <code>true</code>, iff the defined property changed.
+	 * @param descriptionChanged
+     *        <code>true</code>, iff the description property changed. 
 	 * @param nameChanged
- *            true, iff the name property changed.
+     *        <code>true</code>, iff the name property changed.
 	 */
 	public CategoryEvent(
 		ICategory category,
@@ -52,7 +58,7 @@ public final class CategoryEvent {
 		this.categoryActivityBindingsChanged = categoryActivityBindingsChanged;
 		this.definedChanged = definedChanged;
 		this.nameChanged = nameChanged;
-		this.descriptionChanged = definedChanged;
+		this.descriptionChanged = descriptionChanged;
 	}
 
 	/**
@@ -68,7 +74,7 @@ public final class CategoryEvent {
 	/**
 	 * Returns whether or not the defined property changed.
 	 * 
-	 * @return true, iff the defined property changed.
+	 * @return <code>true</code>, iff the defined property changed.
 	 */
 	public boolean hasDefinedChanged() {
 		return definedChanged;
@@ -77,7 +83,7 @@ public final class CategoryEvent {
 	/**
 	 * Returns whether or not the name property changed.
 	 * 
-	 * @return true, iff the name property changed.
+	 * @return <code>true</code>, iff the name property changed.
 	 */
 	public boolean hasNameChanged() {
 		return nameChanged;
@@ -86,16 +92,16 @@ public final class CategoryEvent {
 	/**
 	 * Returns whether or not the description property changed.
 	 * 
-	 * @return true, iff the description property changed.
+	 * @return <code>true</code>, iff the description property changed.
 	 */
 	public boolean hasDescriptionChanged() {
-		return nameChanged;
+		return descriptionChanged;
 	}	
 
 	/**
 	 * Returns whether or not the categoryActivityBindings property changed.
 	 * 
-	 * @return true, iff the categoryActivityBindings property changed.
+	 * @return <code>true</code>, iff the categoryActivityBindings property changed.
 	 */
 	public boolean haveCategoryActivityBindingsChanged() {
 		return categoryActivityBindingsChanged;

@@ -12,13 +12,17 @@
 package org.eclipse.ui.activities;
 
 /**
- * An instance of this class describes changes to an instance of <code>IIdentifier</code>.
+ * An instance of this class describes changes to an instance of 
+ * <code>IIdentifier</code>.  This class does not give details as to the 
+ * specifics of a change, only that the given property on the source object has 
+ * changed.
+ * 
  * <p>
  * This class is not intended to be extended by clients.
  * </p>
  * 
  * @since 3.0
- * @see IIdentifierListener#identifierChanged
+ * @see IIdentifierListener#identifierChanged(IdentifierEvent)
  */
 public final class IdentifierEvent {
 	private boolean activityIdsChanged;
@@ -31,9 +35,9 @@ public final class IdentifierEvent {
 	 * @param identifier
 	 *            the instance of the interface that changed.
 	 * @param activityIdsChanged
-	 *            true, iff the activityIds property changed.
+	 *            <code>true</code>, iff the activityIds property changed.
 	 * @param enabledChanged
-	 *            true, iff the enabled property changed.
+	 *            <code>true</code>, iff the enabled property changed.
 	 */
 	public IdentifierEvent(
 		IIdentifier identifier,
@@ -60,7 +64,7 @@ public final class IdentifierEvent {
 	/**
 	 * Returns whether or not the activityIds property changed.
 	 * 
-	 * @return true, iff the activityIds property changed.
+	 * @return <code>true</code>, iff the activityIds property changed.
 	 */
 	public boolean hasActivityIdsChanged() {
 		return activityIdsChanged;
@@ -69,7 +73,7 @@ public final class IdentifierEvent {
 	/**
 	 * Returns whether or not the enabled property changed.
 	 * 
-	 * @return true, iff the enabled property changed.
+	 * @return <code>true</code>, iff the enabled property changed.
 	 */
 	public boolean hasEnabledChanged() {
 		return enabledChanged;

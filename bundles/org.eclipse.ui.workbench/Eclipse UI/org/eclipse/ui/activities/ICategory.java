@@ -17,9 +17,9 @@ import java.util.Set;
  * An instance of this interface is a category as defined by the extension
  * point <code>org.eclipse.ui.activities</code>.
  * <p>
- * An instance of this interface can be obtained from an instance of <code>IActivityManager</code>
- * for any identifier, whether or not a category with that identifier is
- * defined in the extension registry.
+ * An instance of this interface can be obtained from an instance of 
+ * <code>IActivityManager</code> for any identifier, whether or not a category 
+ * with that identifier is defined in the extension registry.
  * </p>
  * <p>
  * The handle-based nature of this API allows it to work well with runtime
@@ -61,6 +61,7 @@ public interface ICategory extends Comparable {
 	 * @return the set of category activity bindings. This set may be empty,
 	 *         but is guaranteed not to be <code>null</code>. If this set is
 	 *         not empty, it is guaranteed to only contain instances of <code>ICategoryActivityBinding</code>.
+	 * @see ICategoryActivityBinding
 	 */
 	Set getCategoryActivityBindings();
 
@@ -104,17 +105,17 @@ public interface ICategory extends Comparable {
 	 * changes.
 	 * </p>
 	 * 
-	 * @return true, iff this instance is defined.
+	 * @return <code>true</code>, iff this instance is defined.
 	 */
 	boolean isDefined();
 
 	/**
-	 * Unregisters an instance of <code>ICategoryListener</code> listening
+	 * Removes an instance of <code>ICategoryListener</code> listening
 	 * for changes to properties of this instance.
 	 * 
 	 * @param categoryListener
-	 *            the instance to unregister. Must not be <code>null</code>.
-	 *            If an attempt is made to unregister an instance which is not
+	 *            the instance to remove. Must not be <code>null</code>.
+	 *            If an attempt is made to remove an instance which is not
 	 *            already registered with this instance, no operation is
 	 *            performed.
 	 */

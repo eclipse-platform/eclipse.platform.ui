@@ -12,13 +12,16 @@
 package org.eclipse.ui.activities;
 
 /**
- * An instance of this class describes changes to an instance of <code>IActivity</code>.
+ * An instance of this class describes changes to an instance of 
+ * <code>IActivity</code>.  This class does not give details as to the 
+ * specifics of a change, only that the given property on the source object has 
+ * changed.
  * <p>
  * This class is not intended to be extended by clients.
  * </p>
  * 
  * @since 3.0
- * @see IActivityListener#activityChanged
+ * @see IActivityListener#activityChanged(ActivityEvent)
  */
 public final class ActivityEvent {
 	private IActivity activity;
@@ -33,17 +36,19 @@ public final class ActivityEvent {
 	 * Creates a new instance of this class.
 	 * 
 	 * @param activity
- *            the instance of the interface that changed.
+     *        the instance of the interface that changed.
 	 * @param activityActivityBindingsChanged
- *            true, iff the activityActivityBindings property changed.
+     *        <code>true</code>, iff the activityActivityBindings property changed.
 	 * @param activityPatternBindingsChanged
- *            true, iff the activityPatternBindings property changed.
+     *        <code>true</code>, iff the activityPatternBindings property changed.
 	 * @param definedChanged
- *            true, iff the defined property changed.
+     *        <code>true</code>, iff the defined property changed.
+     * @param descriptionChanged
+     * 		  <code>true</code>, iff the description property changed.
 	 * @param enabledChanged
- *            true, iff the enabled property changed.
+     *      <code>true</code>, iff the enabled property changed.
 	 * @param nameChanged
- *            true, iff the name property changed.
+     *        <code>true</code>, iff the name property changed.
 	 */
 	public ActivityEvent(
 		IActivity activity,
@@ -78,7 +83,7 @@ public final class ActivityEvent {
 	/**
 	 * Returns whether or not the defined property changed.
 	 * 
-	 * @return true, iff the defined property changed.
+	 * @return <code>true</code>, iff the defined property changed.
 	 */
 	public boolean hasDefinedChanged() {
 		return definedChanged;
@@ -87,7 +92,7 @@ public final class ActivityEvent {
 	/**
 	 * Returns whether or not the enabled property changed.
 	 * 
-	 * @return true, iff the enabled property changed.
+	 * @return <code>true</code>, iff the enabled property changed.
 	 */
 	public boolean hasEnabledChanged() {
 		return enabledChanged;
@@ -96,7 +101,7 @@ public final class ActivityEvent {
 	/**
 	 * Returns whether or not the name property changed.
 	 * 
-	 * @return true, iff the name property changed.
+	 * @return <code>true</code>, iff the name property changed.
 	 */
 	public boolean hasNameChanged() {
 		return nameChanged;
@@ -105,7 +110,7 @@ public final class ActivityEvent {
 	/**
 	 * Returns whether or not the description property changed.
 	 * 
-	 * @return true, iff the description property changed.
+	 * @return <code>true</code>, iff the description property changed.
 	 */
 	public boolean hasDescriptionChanged() {
 		return descriptionChanged;
@@ -114,7 +119,7 @@ public final class ActivityEvent {
 	/**
 	 * Returns whether or not the activityActivityBindings property changed.
 	 * 
-	 * @return true, iff the activityActivityBindings property changed.
+	 * @return <code>true</code>, iff the activityActivityBindings property changed.
 	 */
 	public boolean haveActivityActivityBindingsChanged() {
 		return activityActivityBindingsChanged;
@@ -123,7 +128,7 @@ public final class ActivityEvent {
 	/**
 	 * Returns whether or not the activityPatternBindings property changed.
 	 * 
-	 * @return true, iff the activityPatternBindings property changed.
+	 * @return <code>true</code>, iff the activityPatternBindings property changed.
 	 */
 	public boolean haveActivityPatternBindingsChanged() {
 		return activityPatternBindingsChanged;

@@ -19,8 +19,8 @@ package org.eclipse.ui.activities;
  * </p>
  * 
  * @since 3.0
- * @see IIdentifier#addIdentifierListener
- * @see IIdentifier#removeIdentifierListener
+ * @see IIdentifier#addIdentifierListener(IIdentifierListener)
+ * @see IIdentifier#removeIdentifierListener(IIdentifierListener)
  */
 public interface IIdentifierListener {
 

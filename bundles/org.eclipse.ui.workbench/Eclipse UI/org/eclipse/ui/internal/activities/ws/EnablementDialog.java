@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.activities;
+package org.eclipse.ui.internal.activities.ws;
 
 import java.text.MessageFormat;
 import java.util.Collection;
@@ -29,8 +29,9 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.activities.ws.ActivityContentProvider;
-import org.eclipse.ui.internal.activities.ws.ActivityLabelProvider;
+import org.eclipse.ui.activities.IActivity;
+import org.eclipse.ui.activities.IActivityManager;
+import org.eclipse.ui.activities.NotDefinedException;
 
 /**
  * Dialog that will prompt the user and confirm that they wish to activate a set
@@ -38,7 +39,7 @@ import org.eclipse.ui.internal.activities.ws.ActivityLabelProvider;
  * 
  * @since 3.0
  */
-class EnablementDialog extends Dialog {
+public class EnablementDialog extends Dialog {
 
 	/**
 	 * The translation bundle in which to look up internationalized text.
@@ -60,7 +61,7 @@ class EnablementDialog extends Dialog {
      * @param parentShell the parent shell
      * @param activityIds the candidate activities
      */
-    protected EnablementDialog(Shell parentShell, Collection activityIds) {
+    public EnablementDialog(Shell parentShell, Collection activityIds) {
         super(parentShell);
         this.activityIds = activityIds;
     }
