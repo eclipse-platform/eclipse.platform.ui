@@ -55,7 +55,7 @@ public class TextSearchOperation extends WorkspaceModifyOperation {
 	}	
 
 	String getSingularLabel() {
-		return SearchMessages.getFormattedString("TextSearchOperation.singularLabelPostfix", new String[] {fPattern, fScope.getDescription()}); //$NON-NLS-2$ //$NON-NLS-1$
+		return SearchMessages.getFormattedString("TextSearchOperation.singularLabelPostfix", new String[] {fPattern, fScope.getDescription()}); //$NON-NLS-1$
 	}
 
 	String getPluralLabelPattern() {

@@ -224,7 +224,7 @@ class WorkingSetDialog extends InputDialog {
 		
 		String errorMessage= getValidator().isValid(getText().getText());
 		if (errorMessage == null)
-			errorMessage= "";
+			errorMessage= ""; //$NON-NLS-1$
 		getErrorMessageLabel().setText(errorMessage);
 		getOkButton().setEnabled(errorMessage.length() == 0);
 	}

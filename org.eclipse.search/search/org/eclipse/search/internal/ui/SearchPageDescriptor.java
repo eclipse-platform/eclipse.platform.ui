@@ -104,7 +104,7 @@ class SearchPageDescriptor implements Comparable {
 		try {
 			url= new URL(fElement.getDeclaringExtension().getDeclaringPluginDescriptor().getInstallURL(), imageName);
 		} catch (java.net.MalformedURLException ex) {
-			ExceptionHandler.log(ex, SearchMessages.getString("Search.Error.createSearchPage.message")); //$NON-NLS-2$ //$NON-NLS-1$
+			ExceptionHandler.log(ex, SearchMessages.getString("Search.Error.createSearchPage.message")); //$NON-NLS-1$
 			return null;
 		}
 		return ImageDescriptor.createFromURL(url);
@@ -145,7 +145,7 @@ class SearchPageDescriptor implements Comparable {
 			try {
 				position= Integer.parseInt(str);
 		} catch (NumberFormatException ex) {
-			ExceptionHandler.log(ex, SearchMessages.getString("Search.Error.createSearchPage.message")); //$NON-NLS-2$ //$NON-NLS-1$
+			ExceptionHandler.log(ex, SearchMessages.getString("Search.Error.createSearchPage.message")); //$NON-NLS-1$
 			// position is Integer.MAX_VALUE;
 		}
 		return position;

@@ -72,7 +72,7 @@ class SorterDescriptor {
 		try {
 			url= new URL(fElement.getDeclaringExtension().getDeclaringPluginDescriptor().getInstallURL(), imageName);
 		} catch (java.net.MalformedURLException ex) {
-			ExceptionHandler.log(ex, SearchMessages.getString("Search.Error.createSorter.message")); //$NON-NLS-2$ //$NON-NLS-1$
+			ExceptionHandler.log(ex, SearchMessages.getString("Search.Error.createSorter.message")); //$NON-NLS-1$
 			return null;
 		}
 		return ImageDescriptor.createFromURL(url);
