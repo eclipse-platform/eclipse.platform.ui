@@ -64,6 +64,11 @@ public abstract class AntPage {
 	protected abstract void addButtonsToButtonGroup(Composite parent);
 	
 	/**
+	 * Give this page a chance to initialize itself
+	 */
+	protected abstract void initialize();
+	
+	/**
 	 * Adds an object to the contents
 	 */
 	protected void addContent(Object o) {

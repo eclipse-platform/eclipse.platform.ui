@@ -78,9 +78,8 @@ public class AntPreferencePage extends PreferencePage implements IWorkbenchPrefe
 		propertiesPage= new AntPropertiesPage(this);
 		propertiesPage.createTabItem(folder);
 	
-		AntCorePreferences prefs = AntCorePlugin.getPlugin().getPreferences();
-		tasksPage.setInput(Arrays.asList(prefs.getCustomTasks()));
-		typesPage.setInput(Arrays.asList(prefs.getCustomTypes()));
+		tasksPage.initialize();
+		typesPage.initialize();
 		classpathPage.initialize();
 		propertiesPage.initialize();
 

@@ -10,9 +10,12 @@ Contributors:
 **********************************************************************/
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.ant.core.AntCorePlugin;
+import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.core.Task;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -189,5 +192,13 @@ public class AntTasksPage extends AntPage {
 				taskImage = PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_TASK_TSK);
 			return taskImage;
 		}
+	}
+	/**
+	 * @see org.eclipse.ui.externaltools.internal.ant.preferences.AntPage#initialize()
+	 */
+	protected void initialize() {
+		AntCorePreferences prefs = AntCorePlugin.getPlugin().getPreferences();
+		//setInput(prefs.getTasks());
+		setInput(Arrays.asList(prefs.getCustomTasks()));
 	}
 }
