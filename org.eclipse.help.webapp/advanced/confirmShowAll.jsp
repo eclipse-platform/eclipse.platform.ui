@@ -79,8 +79,6 @@ function sizeButtons() {
 
 
 var confirmShowAllDialog;
-var w = 350;
-var h = 200;
 
 function closeConfirmShowAllDialog()
 {
