@@ -13,59 +13,18 @@ package org.eclipse.ui.commands;
 
 import org.eclipse.swt.widgets.Event;
 
-/**
- * <p>
- * JAVADOC
- * </p>
- * <p>
- * This interface is not intended to be implemented or extended by clients.
- * </p>
- * <p>
- * <em>EXPERIMENTAL</em>
- * </p>
- * 
- * @since 3.0
- */
-public interface IAction {
+public interface IHandler {
 
-	/**
-	 * JAVADOC
-	 */
 	void execute();
 
-	/**
-	 * JAVADOC
-	 * 
-	 * @param event
-	 */
 	// TODO temporary method
 	void execute(Event event);
 
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */
 	// TODO String getDescription();
 
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */
 	// TODO String getName();
 
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */
 	// TODO String getHelpId();
 
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */
 	boolean isEnabled();
 }

@@ -10,18 +10,18 @@ import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 
 public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
 	private ICompoundCommandHandlerService compoundCommandHandlerService;
-	private /* TODO IMutableCommandManager */ ICommandManager mutableCommandManager;
+	private /* TODO IMutableCommandManager */
+	ICommandManager mutableCommandManager;
 	private WorkbenchCommandHandlerService workbenchCommandHandlerService;
 
 	public WorkbenchCommandSupport(IWorkbench workbench) {
 		if (workbench == null)
 			throw new NullPointerException();
 
-		mutableCommandManager =
-			CommandManagerFactory.getCommandManager(); /* TODO getMutableCommandManager */
+		mutableCommandManager = CommandManagerFactory.getCommandManager();
+		/* TODO getMutableCommandManager */
 		compoundCommandHandlerService =
-			CommandHandlerServiceFactory
-				.getCompoundCommandHandlerService();
+			CommandHandlerServiceFactory.getCompoundCommandHandlerService();
 		workbenchCommandHandlerService =
 			new WorkbenchCommandHandlerService(workbench);
 	}

@@ -25,10 +25,8 @@ import org.eclipse.ui.internal.contexts.AbstractContextActivationService;
 
 final class WorkbenchWindowContextActivationService
 	extends AbstractContextActivationService {
-
 	private ICompoundContextActivationService compoundContextActivationService =
 		ContextActivationServiceFactory.getCompoundContextActivationService();
-
 	private IPageListener pageListener = new IPageListener() {
 		public void pageActivated(IWorkbenchPage workbenchPage) {
 			update();
@@ -42,7 +40,6 @@ final class WorkbenchWindowContextActivationService
 			update();
 		}
 	};
-
 	private IPartListener partListener = new IPartListener() {
 		public void partActivated(IWorkbenchPart workbenchPart) {
 			update();
@@ -64,7 +61,6 @@ final class WorkbenchWindowContextActivationService
 			update();
 		}
 	};
-
 	private IPerspectiveListener perspectiveListener =
 		new IPerspectiveListener() {
 		public void perspectiveActivated(
@@ -112,8 +108,7 @@ final class WorkbenchWindowContextActivationService
 		});
 
 		IWorkbenchContextSupport workbenchContextSupport =
-			(IWorkbenchContextSupport) workbench.getAdapter(
-				IWorkbenchContextSupport.class);
+			workbench.getContextSupport();
 
 		if (workbenchContextSupport != null)
 			compoundContextActivationService.addContextActivationService(
@@ -140,8 +135,7 @@ final class WorkbenchWindowContextActivationService
 
 		if (workbenchPage != null) {
 			IWorkbenchPageContextSupport workbenchPageContextSupport =
-				(IWorkbenchPageContextSupport) workbenchPage.getAdapter(
-					IWorkbenchPageContextSupport.class);
+				workbenchPage.getContextSupport();
 
 			if (workbenchPageContextSupport != null)
 				workbenchPageCompoundContextActivationService =

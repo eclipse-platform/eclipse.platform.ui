@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.ui.IWindowListener;
@@ -11,15 +12,16 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.commands.CommandHandlerServiceEvent;
 import org.eclipse.ui.commands.CommandHandlerServiceFactory;
-import org.eclipse.ui.commands.ICompoundCommandHandlerService;
 import org.eclipse.ui.commands.ICommandHandlerService;
 import org.eclipse.ui.commands.ICommandHandlerServiceListener;
+import org.eclipse.ui.commands.ICompoundCommandHandlerService;
 import org.eclipse.ui.commands.IWorkbenchWindowCommandSupport;
 import org.eclipse.ui.internal.commands.AbstractCommandHandlerService;
 
 final class WorkbenchCommandHandlerService
 	extends AbstractCommandHandlerService {
-
+	private ICompoundCommandHandlerService compoundCommandHandlerService =
+		CommandHandlerServiceFactory.getCompoundCommandHandlerService();
 	private IWindowListener windowListener = new IWindowListener() {
 		public void windowActivated(IWorkbenchWindow workbenchWindow) {
 			update();
@@ -37,9 +39,6 @@ final class WorkbenchCommandHandlerService
 			update();
 		}
 	};
-
-	private ICompoundCommandHandlerService compoundCommandHandlerService =
-		CommandHandlerServiceFactory.getCompoundCommandHandlerService();
 	private IWorkbench workbench;
 	private Set workbenchWindows = Collections.EMPTY_SET;
 
@@ -57,7 +56,7 @@ final class WorkbenchCommandHandlerService
 					new CommandHandlerServiceEvent(
 						compoundCommandHandlerService,
 						commandHandlerServiceEvent
-							.haveActiveCommandIdsChanged());
+							.haveHandlersByCommandIdChanged());
 				fireCommandHandlerServiceChanged(commandHandlerServiceEvent);
 			}
 		});
@@ -66,8 +65,8 @@ final class WorkbenchCommandHandlerService
 		update();
 	}
 
-	public Set getActiveCommandIds() {
-		return compoundCommandHandlerService.getActiveCommandIds();
+	public Map getHandlersByCommandId() {
+		return compoundCommandHandlerService.getHandlersByCommandId();
 	}
 
 	private void update() {
@@ -82,14 +81,12 @@ final class WorkbenchCommandHandlerService
 			IWorkbenchWindow workbenchWindow =
 				(IWorkbenchWindow) iterator.next();
 			IWorkbenchWindowCommandSupport workbenchWindowCommandSupport =
-				(IWorkbenchWindowCommandSupport) workbenchWindow.getAdapter(
-					IWorkbenchWindowCommandSupport.class);
+				workbenchWindow.getCommandSupport();
 
 			if (workbenchWindowCommandSupport != null) {
 				ICommandHandlerService commandHandlerService =
 					workbenchWindowCommandSupport.getCommandHandlerService();
-				compoundCommandHandlerService
-					.removeCommandHandlerService(
+				compoundCommandHandlerService.removeCommandHandlerService(
 					commandHandlerService);
 			}
 		}
@@ -98,8 +95,7 @@ final class WorkbenchCommandHandlerService
 			IWorkbenchWindow workbenchWindow =
 				(IWorkbenchWindow) iterator.next();
 			IWorkbenchWindowCommandSupport workbenchWindowCommandSupport =
-				(IWorkbenchWindowCommandSupport) workbenchWindow.getAdapter(
-					IWorkbenchWindowCommandSupport.class);
+				workbenchWindow.getCommandSupport();
 
 			if (workbenchWindowCommandSupport != null) {
 				ICommandHandlerService commandHandlerService =

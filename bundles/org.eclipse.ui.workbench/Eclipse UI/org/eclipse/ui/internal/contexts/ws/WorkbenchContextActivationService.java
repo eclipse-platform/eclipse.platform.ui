@@ -19,10 +19,8 @@ import org.eclipse.ui.internal.contexts.AbstractContextActivationService;
 
 final class WorkbenchContextActivationService
 	extends AbstractContextActivationService {
-
 	private ICompoundContextActivationService compoundContextActivationService =
 		ContextActivationServiceFactory.getCompoundContextActivationService();
-
 	private IWindowListener windowListener = new IWindowListener() {
 		public void windowActivated(IWorkbenchWindow workbenchWindow) {
 			update();
@@ -82,8 +80,7 @@ final class WorkbenchContextActivationService
 			IWorkbenchWindow workbenchWindow =
 				(IWorkbenchWindow) iterator.next();
 			IWorkbenchWindowContextSupport workbenchWindowContextSupport =
-				(IWorkbenchWindowContextSupport) workbenchWindow.getAdapter(
-					IWorkbenchWindowContextSupport.class);
+				workbenchWindow.getContextSupport();
 
 			if (workbenchWindowContextSupport != null) {
 				IContextActivationService contextActivationService =
@@ -98,8 +95,7 @@ final class WorkbenchContextActivationService
 			IWorkbenchWindow workbenchWindow =
 				(IWorkbenchWindow) iterator.next();
 			IWorkbenchWindowContextSupport workbenchWindowContextSupport =
-				(IWorkbenchWindowContextSupport) workbenchWindow.getAdapter(
-					IWorkbenchWindowContextSupport.class);
+				workbenchWindow.getContextSupport();
 
 			if (workbenchWindowContextSupport != null) {
 				IContextActivationService contextActivationService =

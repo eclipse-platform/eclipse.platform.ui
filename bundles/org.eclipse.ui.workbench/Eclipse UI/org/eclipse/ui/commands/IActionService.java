@@ -34,7 +34,7 @@ public interface IActionService {
 	 * @param commandId
 	 * @param action
 	 */
-	void addAction(String commandId, IAction action);
+	void addAction(String commandId, IHandler action);
 
 	/**
 	 * Registers an IActionServiceListener instance with this action service.

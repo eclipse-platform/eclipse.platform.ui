@@ -32,7 +32,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.ui.commands.CategoryEvent;
 import org.eclipse.ui.commands.CommandEvent;
 import org.eclipse.ui.commands.CommandManagerEvent;
-import org.eclipse.ui.commands.IAction;
+import org.eclipse.ui.commands.IHandler;
 import org.eclipse.ui.commands.ICategory;
 import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.ICommandManager;
@@ -734,7 +734,7 @@ public final class CommandManager implements ICommandManager {
 	}
 
 	public void setActionsById(Map actionsById) {
-		actionsById = Util.safeCopy(actionsById, String.class, IAction.class);
+		actionsById = Util.safeCopy(actionsById, String.class, IHandler.class);
 
 		if (!Util.equals(actionsById, this.actionsById)) {
 			this.actionsById = actionsById;
@@ -745,7 +745,7 @@ public final class CommandManager implements ICommandManager {
 				) {
 				Map.Entry entry = (Map.Entry) iterator.next();
 				String commandId = (String) entry.getKey();
-				IAction action = (IAction) entry.getValue();
+				IHandler action = (IHandler) entry.getValue();
 
 				if (commandId != null && action instanceof ActionHandler) {
 					ActionHandler actionHandler = (ActionHandler) action;

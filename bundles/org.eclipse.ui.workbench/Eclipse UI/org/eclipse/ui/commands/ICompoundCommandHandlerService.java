@@ -12,10 +12,10 @@
 package org.eclipse.ui.commands;
 
 /**
- * An instance of this interface allows clients to manage command handler.
+ * An instance of this interface allows clients to manage command handlers.
  * <p>
- * The list of active commands in this instance is the union of the lists of
- * active commands in all instances of <code>ICommandHandlerService</code>
+ * The map of handlers by command identifier in this instance is the union of
+ * the maps of handlers by command identifier in all instances of <code>ICommandHandlerService</code>
  * added via the method <code>addCommandHandlerService</code>.
  * </p>
  * <p>
@@ -41,8 +41,8 @@ public interface ICompoundCommandHandlerService
 	void addCommandHandlerService(ICommandHandlerService commandHandlerService);
 
 	/**
-	 * Removes an instance of <code>ICommandHandlerService</code> from
-	 * this instance.
+	 * Removes an instance of <code>ICommandHandlerService</code> from this
+	 * instance.
 	 * 
 	 * @param commandHandlerService
 	 *            the instance to remove from this instance.

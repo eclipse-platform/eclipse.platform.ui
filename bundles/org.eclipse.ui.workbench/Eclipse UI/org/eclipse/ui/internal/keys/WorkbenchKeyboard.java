@@ -352,8 +352,8 @@ public class WorkbenchKeyboard {
 
 		// Dispatch to the handler.
 		Map actionsById = ((CommandManager) workbench.getCommandManager()).getActionsById();
-		org.eclipse.ui.commands.IAction action =
-			(org.eclipse.ui.commands.IAction) actionsById.get(commandId);
+		org.eclipse.ui.commands.IHandler action =
+			(org.eclipse.ui.commands.IHandler) actionsById.get(commandId);
 
 		if (action != null && action.isEnabled()) {
 			try {

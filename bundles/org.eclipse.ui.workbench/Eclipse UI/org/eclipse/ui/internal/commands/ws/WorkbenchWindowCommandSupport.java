@@ -6,16 +6,17 @@ import org.eclipse.ui.commands.IWorkbenchWindowCommandSupport;
 
 public class WorkbenchWindowCommandSupport
 	implements IWorkbenchWindowCommandSupport {
-	private WorkbenchWindowCommandHandlerService workbenchWindowCommandHandlerService;	
-	
+	private WorkbenchWindowCommandHandlerService workbenchWindowCommandHandlerService;
+
 	public WorkbenchWindowCommandSupport(IWorkbenchWindow workbenchWindow) {
 		if (workbenchWindow == null)
 			throw new NullPointerException();
-			
-		workbenchWindowCommandHandlerService = new WorkbenchWindowCommandHandlerService(workbenchWindow);
+
+		workbenchWindowCommandHandlerService =
+			new WorkbenchWindowCommandHandlerService(workbenchWindow);
 	}
 
 	public ICommandHandlerService getCommandHandlerService() {
-		return workbenchWindowCommandHandlerService;		
+		return workbenchWindowCommandHandlerService;
 	}
 }

@@ -12,33 +12,34 @@
 package org.eclipse.ui.internal.commands;
 
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.ui.commands.CommandHandlerServiceEvent;
+import org.eclipse.ui.commands.IHandler;
 import org.eclipse.ui.commands.IMutableCommandHandlerService;
 import org.eclipse.ui.internal.util.Util;
 
 public final class MutableCommandHandlerService
 	extends AbstractCommandHandlerService
 	implements IMutableCommandHandlerService {
-	private Set activeCommandIds = new HashSet();
+	private Map handlersByCommandId = new HashMap();
 
 	public MutableCommandHandlerService() {
 	}
 
-	public Set getActiveCommandIds() {
-		return Collections.unmodifiableSet(activeCommandIds);
+	public Map getHandlersByCommandId() {
+		return Collections.unmodifiableMap(handlersByCommandId);
 	}
 
-	public void setActiveCommandIds(Set activeCommandIds) {
-		activeCommandIds = Util.safeCopy(activeCommandIds, String.class);
+	public void setHandlersByCommandId(Map handlersByCommandId) {
+		handlersByCommandId =
+			Util.safeCopy(handlersByCommandId, String.class, IHandler.class);
 		boolean commandHandlerServiceChanged = false;
 		Map commandEventsByCommandId = null;
 
-		if (!this.activeCommandIds.equals(activeCommandIds)) {
-			this.activeCommandIds = activeCommandIds;
+		if (!this.handlersByCommandId.equals(handlersByCommandId)) {
+			this.handlersByCommandId = handlersByCommandId;
 			fireCommandHandlerServiceChanged(
 				new CommandHandlerServiceEvent(this, true));
 		}

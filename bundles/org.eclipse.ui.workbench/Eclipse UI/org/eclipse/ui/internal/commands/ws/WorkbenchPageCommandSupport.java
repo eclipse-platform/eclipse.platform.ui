@@ -10,23 +10,22 @@ public class WorkbenchPageCommandSupport
 	implements IWorkbenchPageCommandSupport {
 	private ICompoundCommandHandlerService compoundCommandHandlerService;
 	private WorkbenchPage workbenchPage;
-	
+
 	public WorkbenchPageCommandSupport(WorkbenchPage workbenchPage) {
 		if (workbenchPage == null)
 			throw new NullPointerException();
-		
+
 		this.workbenchPage = workbenchPage;
 		compoundCommandHandlerService =
-		CommandHandlerServiceFactory
-		.getCompoundCommandHandlerService();
+			CommandHandlerServiceFactory.getCompoundCommandHandlerService();
 	}
 
 	public ICompoundCommandHandlerService getCompoundCommandHandlerService() {
 		Perspective perspective = workbenchPage.getActivePerspective();
-		
+
 		if (perspective != null)
 			return perspective.getCompoundCommandHandlerService();
-		else 
+		else
 			return compoundCommandHandlerService;
-	}	
+	}
 }

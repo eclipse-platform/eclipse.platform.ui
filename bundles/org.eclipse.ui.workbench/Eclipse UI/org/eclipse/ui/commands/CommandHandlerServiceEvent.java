@@ -24,7 +24,7 @@ package org.eclipse.ui.commands;
  * @see ICommandHandlerServiceListener#commandHandlerServiceChanged
  */
 public final class CommandHandlerServiceEvent {
-	private boolean activeCommandIdsChanged;
+	private boolean handlersByCommandIdChanged;
 	private ICommandHandlerService commandHandlerService;
 
 	/**
@@ -32,17 +32,17 @@ public final class CommandHandlerServiceEvent {
 	 * 
 	 * @param commandHandlerService
 	 *            the instance of the interface that changed.
-	 * @param activeCommandIdsChanged
-	 *            true, iff the activeCommandIds property changed.
+	 * @param handlersByCommandIdChanged
+	 *            true, iff the handlersByCommandId property changed.
 	 */
 	public CommandHandlerServiceEvent(
 		ICommandHandlerService commandHandlerService,
-		boolean activeCommandIdsChanged) {
+		boolean handlersByCommandIdChanged) {
 		if (commandHandlerService == null)
 			throw new NullPointerException();
 
-		this.activeCommandIdsChanged = activeCommandIdsChanged;
 		this.commandHandlerService = commandHandlerService;
+		this.handlersByCommandIdChanged = handlersByCommandIdChanged;
 	}
 
 	/**
@@ -56,11 +56,11 @@ public final class CommandHandlerServiceEvent {
 	}
 
 	/**
-	 * Returns whether or not the activeCommandIdsChanged property changed.
+	 * Returns whether or not the handlersByCommandIdChanged property changed.
 	 * 
-	 * @return true, iff the activeCommandIdsChanged property changed.
+	 * @return true, iff the handlersByCommandIdChanged property changed.
 	 */
-	public boolean haveActiveCommandIdsChanged() {
-		return activeCommandIdsChanged;
+	public boolean haveHandlersByCommandIdChanged() {
+		return handlersByCommandIdChanged;
 	}
 }

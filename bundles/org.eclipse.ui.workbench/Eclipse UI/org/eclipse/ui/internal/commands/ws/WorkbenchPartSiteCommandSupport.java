@@ -10,8 +10,7 @@ public class WorkbenchPartSiteCommandSupport
 
 	public WorkbenchPartSiteCommandSupport() {
 		mutableCommandHandlerService =
-			CommandHandlerServiceFactory
-				.getMutableCommandHandlerService();
+			CommandHandlerServiceFactory.getMutableCommandHandlerService();
 	}
 
 	public IMutableCommandHandlerService getMutableCommandHandlerService() {

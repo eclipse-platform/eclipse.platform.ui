@@ -2,6 +2,7 @@ package org.eclipse.ui.internal.commands.ws;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.ui.IPageListener;
@@ -15,9 +16,9 @@ import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.commands.CommandHandlerServiceEvent;
 import org.eclipse.ui.commands.CommandHandlerServiceFactory;
-import org.eclipse.ui.commands.ICompoundCommandHandlerService;
 import org.eclipse.ui.commands.ICommandHandlerService;
 import org.eclipse.ui.commands.ICommandHandlerServiceListener;
+import org.eclipse.ui.commands.ICompoundCommandHandlerService;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.commands.IWorkbenchPageCommandSupport;
 import org.eclipse.ui.commands.IWorkbenchPartSiteCommandSupport;
@@ -25,7 +26,8 @@ import org.eclipse.ui.internal.commands.AbstractCommandHandlerService;
 
 final class WorkbenchWindowCommandHandlerService
 	extends AbstractCommandHandlerService {
-
+	private ICompoundCommandHandlerService compoundCommandHandlerService =
+		CommandHandlerServiceFactory.getCompoundCommandHandlerService();
 	private IPageListener pageListener = new IPageListener() {
 		public void pageActivated(IWorkbenchPage workbenchPage) {
 			update();
@@ -39,7 +41,6 @@ final class WorkbenchWindowCommandHandlerService
 			update();
 		}
 	};
-
 	private IPartListener partListener = new IPartListener() {
 		public void partActivated(IWorkbenchPart workbenchPart) {
 			update();
@@ -61,7 +62,6 @@ final class WorkbenchWindowCommandHandlerService
 			update();
 		}
 	};
-
 	private IPerspectiveListener perspectiveListener =
 		new IPerspectiveListener() {
 		public void perspectiveActivated(
@@ -77,9 +77,6 @@ final class WorkbenchWindowCommandHandlerService
 			update();
 		}
 	};
-
-	private ICompoundCommandHandlerService compoundCommandHandlerService =
-		CommandHandlerServiceFactory.getCompoundCommandHandlerService();
 	private IWorkbench workbench;
 	private ICommandHandlerService workbenchPageCompoundCommandHandlerService;
 	private ICommandHandlerService workbenchPartSiteMutableCommandHandlerService;
@@ -103,17 +100,16 @@ final class WorkbenchWindowCommandHandlerService
 			public void commandHandlerServiceChanged(CommandHandlerServiceEvent commandHandlerServiceEvent) {
 				CommandHandlerServiceEvent proxyCommandHandlerServiceEvent =
 					new CommandHandlerServiceEvent(
-							WorkbenchWindowCommandHandlerService.this,
+						WorkbenchWindowCommandHandlerService.this,
 						commandHandlerServiceEvent
-							.haveActiveCommandIdsChanged());
+							.haveHandlersByCommandIdChanged());
 				fireCommandHandlerServiceChanged(
 					(proxyCommandHandlerServiceEvent));
 			}
 		});
 
 		IWorkbenchCommandSupport workbenchCommandSupport =
-			(IWorkbenchCommandSupport) workbench.getAdapter(
-				IWorkbenchCommandSupport.class);
+			workbench.getCommandSupport();
 
 		if (workbenchCommandSupport != null)
 			compoundCommandHandlerService.addCommandHandlerService(
@@ -125,8 +121,8 @@ final class WorkbenchWindowCommandHandlerService
 		update();
 	}
 
-	public Set getActiveCommandIds() {
-		return compoundCommandHandlerService.getActiveCommandIds();
+	public Map getHandlersByCommandId() {
+		return compoundCommandHandlerService.getHandlersByCommandId();
 	}
 
 	private void update() {
@@ -140,8 +136,7 @@ final class WorkbenchWindowCommandHandlerService
 
 		if (workbenchPage != null) {
 			IWorkbenchPageCommandSupport workbenchPageCommandSupport =
-				(IWorkbenchPageCommandSupport) workbenchPage.getAdapter(
-					IWorkbenchPageCommandSupport.class);
+				workbenchPage.getCommandSupport();
 
 			if (workbenchPageCommandSupport != null)
 				workbenchPageCompoundCommandHandlerService =
@@ -172,8 +167,7 @@ final class WorkbenchWindowCommandHandlerService
 		if (this.workbenchPageCompoundCommandHandlerService
 			!= workbenchPageCompoundCommandHandlerService) {
 			if (this.workbenchPageCompoundCommandHandlerService != null)
-				removals.add(
-					this.workbenchPageCompoundCommandHandlerService);
+				removals.add(this.workbenchPageCompoundCommandHandlerService);
 
 			this.workbenchPageCompoundCommandHandlerService =
 				workbenchPageCompoundCommandHandlerService;
@@ -202,8 +196,7 @@ final class WorkbenchWindowCommandHandlerService
 			additions.add(this.workbenchPageCompoundCommandHandlerService);
 
 		if (this.workbenchPartSiteMutableCommandHandlerService != null)
-			additions.add(
-				this.workbenchPartSiteMutableCommandHandlerService);
+			additions.add(this.workbenchPartSiteMutableCommandHandlerService);
 
 		for (Iterator iterator = additions.iterator(); iterator.hasNext();) {
 			ICommandHandlerService commandHandlerService =

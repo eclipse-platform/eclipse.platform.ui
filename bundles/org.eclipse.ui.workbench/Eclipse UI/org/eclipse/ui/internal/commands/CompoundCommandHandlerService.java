@@ -12,29 +12,29 @@
 package org.eclipse.ui.internal.commands;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.ui.commands.CommandHandlerServiceEvent;
-import org.eclipse.ui.commands.ICompoundCommandHandlerService;
+import org.eclipse.ui.commands.IHandler;
 import org.eclipse.ui.commands.ICommandHandlerService;
 import org.eclipse.ui.commands.ICommandHandlerServiceListener;
+import org.eclipse.ui.commands.ICompoundCommandHandlerService;
 import org.eclipse.ui.internal.util.Util;
 
 public final class CompoundCommandHandlerService
 	extends AbstractCommandHandlerService
 	implements ICompoundCommandHandlerService {
-	private Set activeCommandIds = new HashSet();
-
 	private final ICommandHandlerServiceListener commandHandlerServiceListener =
 		new ICommandHandlerServiceListener() {
 		public void commandHandlerServiceChanged(CommandHandlerServiceEvent commandHandlerServiceEvent) {
-			refreshActiveCommandIds();
+			refreshHandlersByCommandId();
 		}
 	};
 	private final HashSet commandHandlerServices = new HashSet();
+	private Map handlersByCommandId = new HashMap();
 
 	public CompoundCommandHandlerService() {
 	}
@@ -46,26 +46,28 @@ public final class CompoundCommandHandlerService
 		commandHandlerService.addCommandHandlerServiceListener(
 			commandHandlerServiceListener);
 		commandHandlerServices.add(commandHandlerService);
-		refreshActiveCommandIds();
+		refreshHandlersByCommandId();
 	}
 
-	public Set getActiveCommandIds() {
-		return Collections.unmodifiableSet(activeCommandIds);
+	public Map getHandlersByCommandId() {
+		return Collections.unmodifiableMap(handlersByCommandId);
 	}
 
-	private void refreshActiveCommandIds() {
-		Set activeCommandIds = new HashSet();
+	private void refreshHandlersByCommandId() {
+		Map handlersByCommandId = new HashMap();
 
 		for (Iterator iterator = commandHandlerServices.iterator();
 			iterator.hasNext();
 			) {
 			ICommandHandlerService commandHandlerService =
 				(ICommandHandlerService) iterator.next();
-			activeCommandIds.addAll(
-				commandHandlerService.getActiveCommandIds());
+
+			// TODO: should do the intersection here!
+			handlersByCommandId.putAll(
+				commandHandlerService.getHandlersByCommandId());
 		}
 
-		setActiveCommandIds(activeCommandIds);
+		setHandlersByCommandId(handlersByCommandId);
 	}
 
 	public void removeCommandHandlerService(ICommandHandlerService commandHandlerService) {
@@ -75,16 +77,17 @@ public final class CompoundCommandHandlerService
 		commandHandlerServices.remove(commandHandlerService);
 		commandHandlerService.removeCommandHandlerServiceListener(
 			commandHandlerServiceListener);
-		refreshActiveCommandIds();
+		refreshHandlersByCommandId();
 	}
 
-	private void setActiveCommandIds(Set activeCommandIds) {
-		activeCommandIds = Util.safeCopy(activeCommandIds, String.class);
+	public void setHandlersByCommandId(Map handlersByCommandId) {
+		handlersByCommandId =
+			Util.safeCopy(handlersByCommandId, String.class, IHandler.class);
 		boolean commandHandlerServiceChanged = false;
 		Map commandEventsByCommandId = null;
 
-		if (!this.activeCommandIds.equals(activeCommandIds)) {
-			this.activeCommandIds = activeCommandIds;
+		if (!this.handlersByCommandId.equals(handlersByCommandId)) {
+			this.handlersByCommandId = handlersByCommandId;
 			fireCommandHandlerServiceChanged(
 				new CommandHandlerServiceEvent(this, true));
 		}

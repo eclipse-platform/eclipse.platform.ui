@@ -13,7 +13,7 @@ package org.eclipse.ui.internal.commands;
 
 import org.eclipse.swt.widgets.Event;
 
-public class ActionHandler implements org.eclipse.ui.commands.IAction {
+public class ActionHandler implements org.eclipse.ui.commands.IHandler {
 
 	private org.eclipse.jface.action.IAction action;
 

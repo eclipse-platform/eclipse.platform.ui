@@ -11,10 +11,10 @@
 
 package org.eclipse.ui.commands;
 
-import java.util.Set;
+import java.util.Map;
 
 /**
- * An instance of this interface allows clients to manage command handler.
+ * An instance of this interface allows clients to manage command handlers.
  * <p>
  * This interface is not intended to be extended or implemented by clients.
  * </p>
@@ -25,16 +25,20 @@ import java.util.Set;
  * @since 3.0
  * @see CommandHandlerServiceFactory
  */
-public interface IMutableCommandHandlerService
-	extends ICommandHandlerService {
+public interface IMutableCommandHandlerService extends ICommandHandlerService {
 
 	/**
-	 * Sets the set of identifiers to active commands.
+	 * Returns the map of handlers by command identifier.
+	 * <p>
+	 * Notification is sent to all registered listeners if this property
+	 * changes.
+	 * </p>
 	 * 
-	 * @param activeCommandIds
-	 *            the set of identifiers to active commands. This set may be
-	 *            empty, but it must not be <code>null</code>. If this set
-	 *            is not empty, it must only contain instances of <code>String</code>.
+	 * @return the map of handlers by command identifier. This map may be
+	 *         empty, but its keys and values must not be <code>null</code>.
+	 *         If this map is not empty, its key set must only contain
+	 *         instances of <code>String</code> and its value set must only
+	 *         contain instances of <code>IHandler</code>
 	 */
-	void setActiveCommandIds(Set activeCommandIds);
+	void setHandlersByCommandId(Map handlersByCommandId);
 }
