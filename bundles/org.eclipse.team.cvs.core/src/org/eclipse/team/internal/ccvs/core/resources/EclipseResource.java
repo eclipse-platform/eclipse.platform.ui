@@ -119,7 +119,7 @@ abstract class EclipseResource implements ICVSResource {
 		FileNameMatcher matcher = new FileNameMatcher(SyncFileWriter.BASIC_IGNORE_PATTERNS);
 		String[] cvsIgnorePatterns;;
 		try {
-			cvsIgnorePatterns = EclipseSynchronizer.getInstance().getIgnored(resource);
+			cvsIgnorePatterns = EclipseSynchronizer.getInstance().getIgnored(resource.getParent());
 		} catch(CVSException e) {
 			cvsIgnorePatterns = null;
 		}
@@ -154,14 +154,14 @@ abstract class EclipseResource implements ICVSResource {
 	 * @see ICVSResource#setIgnored()
 	 */
 	public void setIgnored() throws CVSException {
-		EclipseSynchronizer.getInstance().setIgnored(resource, null);
+		EclipseSynchronizer.getInstance().setIgnored(resource.getParent(), resource.getName());
 	}
 	
 	/*
 	 * @see ICVSResource#setIgnoredAs(String)
 	 */
 	public void setIgnoredAs(String pattern) throws CVSException {
-		EclipseSynchronizer.getInstance().setIgnored(resource, pattern);		
+		EclipseSynchronizer.getInstance().setIgnored(resource.getParent(), pattern);	
 	}
 
 	/*

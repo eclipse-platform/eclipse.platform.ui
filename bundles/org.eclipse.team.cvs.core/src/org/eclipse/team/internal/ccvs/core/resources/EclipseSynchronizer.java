@@ -99,7 +99,7 @@ public class EclipseSynchronizer {
 		if (info == null && folder.exists()) {
 			// read folder sync info and remember it
 			// -- if none found then remember that fact for later
-			info = SyncFileWriter.readFolderConfig(CVSWorkspaceRoot.getCVSFolderFor(folder));
+			info = SyncFileWriter.readFolderSync(CVSWorkspaceRoot.getCVSFolderFor(folder));
 			if (info == null) info = EMPTY_FOLDER_SYNC_INFO;
 			setCachedFolderSync(folder, info);
 		}
@@ -150,23 +150,31 @@ public class EclipseSynchronizer {
 		}
 	}
 
-	public String[] getIgnored(IResource resource) throws CVSException {
-		IContainer parent = resource.getParent();
-		if(parent==null || parent.getType()==IResource.ROOT) return null;
-		String[] ignores = getCachedFolderIgnores(parent);
+	public String[] getIgnored(IContainer resource) throws CVSException {
+		if(resource.getType()==IResource.ROOT) return null;
+		String[] ignores = getCachedFolderIgnores(resource);
 		if(ignores==null) {
-			ICVSFile ignoreFile = CVSWorkspaceRoot.getCVSFileFor(parent.getFile(new Path(SyncFileWriter.IGNORE_FILE)));
-			if(ignoreFile.exists()) {
-				ignores = SyncFileWriter.readLines(ignoreFile);
-				setCachedFolderIgnores(parent, ignores);
-			}
+			ignores = SyncFileWriter.readCVSIgnoreEntries(CVSWorkspaceRoot.getCVSFolderFor(resource));
+			setCachedFolderIgnores(resource, ignores);
 		}
 		return ignores;
 	}
 	
-	public void setIgnored(IResource resource, String pattern) throws CVSException {
-		SyncFileWriter.addCvsIgnoreEntry(CVSWorkspaceRoot.getCVSResourceFor(resource), pattern);
-		TeamPlugin.getManager().broadcastResourceStateChanges(new IResource[] {resource});
+	public void setIgnored(IContainer resource, String pattern) throws CVSException {
+		try {
+			SyncFileWriter.addCVSIgnoreEntry(CVSWorkspaceRoot.getCVSFolderFor(resource), pattern);
+			// broadcast 
+			IResource[] children = resource.members();
+			List possibleIgnores = new ArrayList();
+			for (int i = 0; i < children.length; i++) {
+				if(getCachedResourceSync(children[i])==null) {
+					possibleIgnores.add(children[i]);
+				}
+			}
+			TeamPlugin.getManager().broadcastResourceStateChanges(children);
+		} catch(CoreException e) {
+			throw CVSException.wrapException(resource, "Error setting an ignore pattern", e);
+		}
 	}
 		
 	public IResource[] members(IContainer folder) throws CVSException {
@@ -201,7 +209,8 @@ public class EclipseSynchronizer {
 		getSynchronizer().add(FOLDER_SYNC_KEY);
 		getSynchronizer().add(IGNORE_SYNC_KEY);
 		try {
-			flushAll(ResourcesPlugin.getWorkspace().getRoot(), false /*don't purge from disk*/);
+			// flush potentially stale sync info
+			flushSync(ResourcesPlugin.getWorkspace().getRoot(), true);
 		} catch(CVSException e) {
 			//	// severe problem, it would mean that we are working with stale sync info
 			CVSProviderPlugin.log(e.getStatus());
@@ -220,9 +229,6 @@ public class EclipseSynchronizer {
 		nestingCount += 1;
 		if (nestingCount == 1) {
 			// any work here?
-			
-			// uncomment this line to bypass cache for testing
-			//flushAll(ResourcesPlugin.getWorkspace().getRoot(), false /*don't purge from disk*/);			
 		}		
 	}
 	
@@ -230,66 +236,57 @@ public class EclipseSynchronizer {
 		if (nestingCount == 1) {	
 			if (! changedFolders.isEmpty() || ! changedResources.isEmpty()) {
 				try {
+					/*** prepare operation ***/
+					// find parents of changed resources
+					Set dirtyParents = new HashSet();
+					for(Iterator it = changedResources.iterator(); it.hasNext();) {
+						IResource resource = (IResource) it.next();
+						IContainer folder = resource.getParent();
+						dirtyParents.add(folder);
+					}
+					
 					monitor = Policy.monitorFor(monitor);
-					int numResources = changedFolders.size() + changedResources.size();
+					int numDirty = dirtyParents.size();
+					int numResources = changedFolders.size() + numDirty;
 					monitor.beginTask(null, numResources);
 					monitor.subTask("Updating CVS synchronization information...");
-					/* write sync info to disk */
-					List deletedFolderSync = new ArrayList();
-
+					
+					/*** write sync info to disk ***/
 					// folder sync info changes
 					for(Iterator it = changedFolders.iterator(); it.hasNext();) {
 						IContainer folder = (IContainer) it.next();
 						FolderSyncInfo info = getCachedFolderSync(folder);
-						ICVSFolder cvsFolder = CVSWorkspaceRoot.getCVSFolderFor(folder);
 						if (info == EMPTY_FOLDER_SYNC_INFO) {
-							// deleted folder sync info since we loaded it, postpone change until later
-							deletedFolderSync.add(folder);
+							// deleted folder sync info since we loaded it
+							deleteSync(folder, dirtyParents, true);
 						} else if (info == null) {
 							// attempted to delete folder sync info for a previously unmanaged folder
 							// no-op
 						} else {
 							// modified or created new folder sync info since we loaded it
-							SyncFileWriter.writeFolderConfig(cvsFolder, info);
+							ICVSFolder cvsFolder = CVSWorkspaceRoot.getCVSFolderFor(folder);
+							SyncFileWriter.writeFolderSync(cvsFolder, info);
 						}
 						monitor.worked(1);
 					}
 
+					// update progress for parents we will skip because they were deleted
+					monitor.worked(dirtyParents.size() - numDirty);
+
 					// resource sync info changes
-					Set parentsWithDirtyEntries = new HashSet();
-					for(Iterator it = changedResources.iterator(); it.hasNext();) {
-						IResource resource = (IResource) it.next();
-						ResourceSyncInfo info = getCachedResourceSync(resource);
-						ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
-						Assert.isTrue(isChildResourceSyncLoaded(resource.getParent()));
-						// if the parent doesn't exists there is no point writing out the sync info
-						// to disk.
-						if(cvsResource.getParent().exists()) {
-							parentsWithDirtyEntries.add(cvsResource.getParent());
-							if (info == null) {
-								// deleted resource sync info since we loaded it
-								SyncFileWriter.deleteSync(cvsResource);
-							} else {
-								// modified or created new resource sync info since we loaded it
-								SyncFileWriter.writeResourceSync(cvsResource, info);
-							}
-							monitor.worked(1);
-						}
-					}
-					
-					// folder sync info deletes
-					for(Iterator it = deletedFolderSync.iterator(); it.hasNext();) {
+					for (Iterator it = dirtyParents.iterator(); it.hasNext();) {
 						IContainer folder = (IContainer) it.next();
-						// flush everything that was cached from the CVS subdirectory
-						flushAll(folder, true /*purge from disk*/);
+						if (folder.exists()) {
+							// write sync info for all children in one go
+							Assert.isTrue(isChildResourceSyncLoaded(folder));
+							ResourceSyncInfo[] infos = getCachedResourceSyncForChildren(folder);
+							ICVSFolder cvsFolder = CVSWorkspaceRoot.getCVSFolderFor(folder);
+							SyncFileWriter.writeAllResourceSync(cvsFolder, infos);
+						}
+						monitor.worked(1);
 					}
 					
-					// merge entry file to ensure that the Entries.log file doesn't 
-					for(Iterator it = parentsWithDirtyEntries.iterator(); it.hasNext();) {
-						SyncFileWriter.mergeEntriesLogFiles((ICVSFolder)it.next());
-					}
-					
-					// broadcast events
+					/*** broadcast events ***/
 					changedResources.addAll(changedFolders);				
 					IResource[] resources = (IResource[]) changedResources.toArray(
 						new IResource[changedResources.size()]);
@@ -317,6 +314,23 @@ public class EclipseSynchronizer {
 			byte[] bytes = getSynchronizer().getSyncInfo(RESOURCE_SYNC_KEY, resource);
 			if(bytes == null) return null;
 			return new ResourceSyncInfo(new String(bytes), null, null);
+		} catch(CoreException e) {
+			throw CVSException.wrapException(e);
+		}
+	}
+	
+	/*
+	 * Returns the cached resource sync info for all children.
+	 */
+	private ResourceSyncInfo[] getCachedResourceSyncForChildren(IContainer container) throws CVSException {
+		try {
+			IResource[] children = container.members(true);
+			List infos = new ArrayList(children.length);
+			for (int i = 0; i < children.length; i++) {
+				ResourceSyncInfo info = getCachedResourceSync(children[i]);
+				if (info != null) infos.add(info);
+			}
+			return (ResourceSyncInfo[]) infos.toArray(new ResourceSyncInfo[infos.size()]);
 		} catch(CoreException e) {
 			throw CVSException.wrapException(e);
 		}
@@ -442,7 +456,7 @@ public class EclipseSynchronizer {
 	private void ensureChildResourceSyncLoaded(IContainer folder) throws CVSException {
 		// don't try to load if the information is already cached
 		if (isChildResourceSyncLoaded(folder)) return;
-		ResourceSyncInfo[] infos = SyncFileWriter.readEntriesFile(CVSWorkspaceRoot.getCVSFolderFor(folder));
+		ResourceSyncInfo[] infos = SyncFileWriter.readAllResourceSync(CVSWorkspaceRoot.getCVSFolderFor(folder));
 		if (infos != null) {
 			for (int i = 0; i < infos.length; i++) {
 				ResourceSyncInfo syncInfo = infos[i];
@@ -491,32 +505,79 @@ public class EclipseSynchronizer {
 		}
 	}
 	
-	static public void flushAll(final IContainer root, final boolean purgeFromDisk) throws CVSException {
-		if (! (root.exists() || root.isPhantom())) return;
+	/**
+	 * Recursively deletes sync info from disk and cache.
+	 * Also removes containers from set.
+	 * 
+	 * @param root the container to start at
+	 * @param set the set from which to remove
+	 * @param flushResourceSync must be 'true'
+	 */
+	private static void deleteSync(IContainer root, Set set, boolean flushResourceSync) throws CVSException {
 		try {
-			// purge sync information from children
-			root.accept(new IResourceVisitor() {
-				public boolean visit(IResource resource) throws CoreException {					
-					if(! root.equals(resource)) {
-						// don't clear resource sync on root since it might still be managed
-						// by its parent
-						getSynchronizer().setSyncInfo(RESOURCE_SYNC_KEY, resource, null);
+			// delete sync info from set, disk and cache
+			set.remove(root);
+			if (root.exists()) {
+				SyncFileWriter.getCVSSubdirectory(CVSWorkspaceRoot.getCVSFolderFor(root)).delete();
+			}
+			flushContainerSync(root, flushResourceSync);
+			
+			// recurse
+			if (root.isPhantom()) { // root doesn't exist, so it only has children if it's a phantom
+				IResource[] children = root.members(true /*include phantoms*/);
+				for (int i = 0; i < children.length; i++) {
+					IResource resource = children[i];
+					if (resource.getType() == IResource.FILE) {
+						flushResourceSync(resource);
+					} else {
+						deleteSync((IContainer) resource, set, false);
 					}
-					if(resource.getType()!=IResource.FILE) {
-						IContainer folder = (IContainer) resource;
-						getSynchronizer().setSyncInfo(RESOURCE_SYNC_LOADED_KEY, folder, null);
-						getSynchronizer().setSyncInfo(FOLDER_SYNC_KEY, folder, null);
-						getSynchronizer().setSyncInfo(IGNORE_SYNC_KEY, folder, null);					
-						if(purgeFromDisk && root.exists()) {
-							SyncFileWriter.deleteCVSSubDirectory(folder);
-						}
-					}
-					return true;					
 				}
-
-			}, IResource.DEPTH_INFINITE, true /*include phantoms*/);
+			}
 		} catch(CoreException e) {
-			throw CVSException.wrapException(root, "Problems occured flushing synchronizer cache", e);
+			throw CVSException.wrapException(root, "Problems occured deleting sync info", e);
 		}
+	}
+	
+	/**
+	 * Recursively flushes sync info from cache.
+	 * NOTE: made public to support test cases until refreshLocal added
+	 * 
+	 * @param root the container to start at
+	 * @param flushResourceSync must be 'true'
+	 */
+	public static void flushSync(IContainer root, boolean flushResourceSync)
+		throws CVSException {
+		try {
+			// delete sync info from cache
+			flushContainerSync(root, flushResourceSync);
+			
+			// recurse
+			if (root.exists() || root.isPhantom()) {
+				IResource[] children = root.members(true /*include phantoms*/);
+				for (int i = 0; i < children.length; i++) {
+					IResource resource = children[i];
+					if (resource.getType() == IResource.FILE) {
+						flushResourceSync(resource);
+					} else {
+						flushSync((IContainer) resource, false);
+					}
+				}
+			}
+		} catch(CoreException e) {
+			throw CVSException.wrapException(root, "Problems occured flushing sync info", e);
+		}
+	}
+	
+	private static void flushContainerSync(IContainer container, boolean flushResourceSync)
+		throws CoreException {
+		if (flushResourceSync) flushResourceSync(container);
+		getSynchronizer().setSyncInfo(RESOURCE_SYNC_LOADED_KEY, container, null);
+		getSynchronizer().setSyncInfo(FOLDER_SYNC_KEY, container, null);
+		getSynchronizer().setSyncInfo(IGNORE_SYNC_KEY, container, null);
+	}
+	
+	private static void flushResourceSync(IResource resource) throws CoreException {
+		getSynchronizer().setSyncInfo(RESOURCE_SYNC_KEY, resource, null);
 	}
 }

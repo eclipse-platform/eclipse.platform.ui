@@ -5,14 +5,12 @@ package org.eclipse.team.internal.ccvs.core.util;
  * All Rights Reserved.
  */
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -39,16 +37,16 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 public class SyncFileWriter {
 
 	// CVS meta files located in the CVS subdirectory
-	public static final String REPOSITORY = "Repository"; //$NON-NLS-1$
-	public static final String ROOT = "Root"; //$NON-NLS-1$
-	public static final String STATIC = "Entries.Static";	 //$NON-NLS-1$
-	public static final String TAG = "Tag";	 //$NON-NLS-1$
-	public static final String ENTRIES = "Entries"; //$NON-NLS-1$
-	public static final String PERMISSIONS = "Permissions"; //$NON-NLS-1$
-	public static final String ENTRIES_LOG="Entries.Log"; //$NON-NLS-1$
+	private static final String REPOSITORY = "Repository"; //$NON-NLS-1$
+	private static final String ROOT = "Root"; //$NON-NLS-1$
+	private static final String STATIC = "Entries.Static";	 //$NON-NLS-1$
+	private static final String TAG = "Tag";	 //$NON-NLS-1$
+	private static final String ENTRIES = "Entries"; //$NON-NLS-1$
+	//private static final String PERMISSIONS = "Permissions"; //$NON-NLS-1$
+	private static final String ENTRIES_LOG="Entries.Log"; //$NON-NLS-1$
 	
 	// the local workspace file that contains pattern for ignored resources
-	public static final String IGNORE_FILE = ".cvsignore"; //$NON-NLS-1$
+	private static final String IGNORE_FILE = ".cvsignore"; //$NON-NLS-1$
 
 	// Some older CVS clients may of added a line to the entries file consisting
 	// of only a 'D'. It is safe to ingnore these entries.	
@@ -68,30 +66,19 @@ public class SyncFileWriter {
 	// file and folder patterns that are ignored by default by the CVS server on import.
 	public static final String[] BASIC_IGNORE_PATTERNS = {"CVS", ".#*"}; //$NON-NLS-1$ //$NON-NLS-2$
 
-	/*
-	 * Reads the CVS/Entry and CVS/Permissions files for the given folder. If the folder does not have a 
-	 * CVS subdirectory then <code>null</code> is returned.
+	/**
+	 * Reads the CVS/Entries, CVS/Entries.log and CVS/Permissions files from the
+	 * specified folder and returns ResourceSyncInfo instances for the data stored therein.
+	 * If the folder does not have a CVS subdirectory then <code>null</code> is returned.
 	 */
-	public static ResourceSyncInfo[] readEntriesFile(ICVSFolder parent) throws CVSException {
-		
+	public static ResourceSyncInfo[] readAllResourceSync(ICVSFolder parent) throws CVSException {
 		ICVSFolder cvsSubDir = getCVSSubdirectory(parent);
-		
-		if(!cvsSubDir.exists()) {
-			return null;
-		}
-		
-		// The Eclipse CVS client does not write to the Entries.log file. Thus
-		// merging is required for external command line client compatibility.
-		mergeEntriesLogFiles(parent);
-				
+		if (! cvsSubDir.exists()) return null;
+
+		// process Entries file contents
+		String[] entries = readLines(cvsSubDir.getFile(ENTRIES));
+		if (entries == null) return null;
 		Map infos = new TreeMap();
-		String[] entries = getContents(cvsSubDir.getFile(ENTRIES));
-		String[] permissions = getContents(cvsSubDir.getFile(PERMISSIONS));
-		
-		if (entries == null) {
-			return null;
-		}
-		
 		for (int i = 0; i < entries.length; i++) {
 			String line = entries[i];
 			if(!FOLDER_TAG.equals(line) && !"".equals(line)) { //$NON-NLS-1$
@@ -99,92 +86,97 @@ public class SyncFileWriter {
 				infos.put(info.getName(), info);			
 			}
 		}
-
-		if (permissions != null) {
-			for (int i = 0; i < permissions.length; i++) {
-				if ("".equals(permissions[i])) { //$NON-NLS-1$
-					continue;
-				}
-				String line = permissions[i];
-				EmptyTokenizer tokenizer = new EmptyTokenizer(line,"/"); //$NON-NLS-1$
-				String name = tokenizer.nextToken();
-				String perms = tokenizer.nextToken();
-				ResourceSyncInfo info = (ResourceSyncInfo) infos.get(name);
-				// Running the command line tool will update the Entries file and thus cause 
-				// the Permissions to be out-of-sync. 
-				if (info != null) {
-					infos.put(name, new ResourceSyncInfo(info.getEntryLine(true), perms, null));
+		
+		// process Entries.log file contents
+		String[] entriesLog = readLines(cvsSubDir.getFile(ENTRIES_LOG));
+		if (entriesLog != null) {
+			for (int i = 0; i < entriesLog.length; i++) {
+				String line = entriesLog[i];
+				if (line.startsWith(ADD_TAG)) {
+					line = line.substring(ADD_TAG.length());
+					ResourceSyncInfo info = new ResourceSyncInfo(line, null, null);
+					infos.put(info.getName(), info);
+				} else if (line.startsWith(REMOVE_TAG)) {
+					line = line.substring(REMOVE_TAG.length());
+					ResourceSyncInfo info = new ResourceSyncInfo(line, null, null);
+					infos.remove(info.getName());
 				}
 			}
-		}		
+		}
+		
+		// XXX no longer processes CVS/Permissions (was never written) -- should we?
+		
 		return (ResourceSyncInfo[])infos.values().toArray(new ResourceSyncInfo[infos.size()]);
 	}
 	
-	public static void writeResourceSync(ICVSResource file, ResourceSyncInfo info) throws CVSException {
-		writeEntriesLog(file, info, ADD_TAG);
-	}
-		
-	/*
-	 * Delete this file from Entries/Permissions file
+	/**
+	 * Writes the CVS/Entries, CVS/Entries.log and CVS/Permissions files to the
+	 * specified folder using the data contained in the specified ResourceSyncInfo instance.
+	 * If the folder does not have a CVS subdirectory then <code>null</code> is returned.
 	 */
-	public static void deleteSync(ICVSResource file) throws CVSException {
-		ICVSFolder parent = file.getParent();
-		if(parent!=null && parent.exists()) {
-			if(file.isFolder()) {
-				writeEntriesLog(file, new ResourceSyncInfo(file.getName()), REMOVE_TAG);		
-			} else {
-				writeEntriesLog(file, new ResourceSyncInfo(file.getName(), "0", "", "", null, ""), REMOVE_TAG);		 //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-			}
+	public static void writeAllResourceSync(ICVSFolder parent, ResourceSyncInfo[] infos) throws CVSException {
+		ICVSFolder cvsSubDir = getCVSSubdirectory(parent);
+		if (!cvsSubDir.exists()) cvsSubDir.mkdir();
+		
+		// format file contents
+		String[] entries = new String[infos.length];
+		for (int i = 0; i < infos.length; i++) {
+			ResourceSyncInfo info = infos[i];
+			entries[i] = info.getEntryLine(true);
 		}
-	}
-	
-	public static void deleteCVSSubDirectory(IContainer folder) throws CoreException {
-		IContainer cvsSubDir = folder.getFolder(new Path("CVS"));
-		cvsSubDir.delete(false /*force*/, null);
+
+		// write Entries
+		writeLines(cvsSubDir.getFile(ENTRIES), entries);
+		
+		// delete Entries.log
+		cvsSubDir.getFile(ENTRIES_LOG).delete();
+
+		// XXX does not write CVS/Permissions -- should we?
 	}
 		
 	/**
-	 * Read folder sync info, returns <code>null</code> if the folder does not have
-	 * a CVS subdirectory.
+	 * Reads the CVS/Root, CVS/Repository, CVS/Tag, and CVS/Entries.static files from
+	 * the specified folder and returns a FolderSyncInfo instance for the data stored therein.
+	 * If the folder does not have a CVS subdirectory then <code>null</code> is returned.
 	 */
-	public static FolderSyncInfo readFolderConfig(ICVSFolder folder) throws CVSException {
-		
+	public static FolderSyncInfo readFolderSync(ICVSFolder folder) throws CVSException {
 		ICVSFolder cvsSubDir = getCVSSubdirectory(folder);
+		if (! cvsSubDir.exists()) return null;
 		
-		if(!cvsSubDir.exists()) {
-			return null;
-		}
+		// read CVS/Root
+		String root = readFirstLine(cvsSubDir.getFile(ROOT));
+		if (root == null) return null;
 		
-		String staticDir = readLine(cvsSubDir.getFile(STATIC));
-		String repo = readLine(cvsSubDir.getFile(REPOSITORY));
-		String root = readLine(cvsSubDir.getFile(ROOT));
-		String tag = readLine(cvsSubDir.getFile(TAG));
-							
-		boolean isStatic = false;
-		if (staticDir != null)
-			isStatic = true;
+		// read CVS/Repository
+		String repository = readFirstLine(cvsSubDir.getFile(REPOSITORY));
+		if (repository == null) return null;
 		
-		if(root == null || repo == null) {
-			return null;
-		}
+		// read CVS/Tag
+		String tag = readFirstLine(cvsSubDir.getFile(TAG));
+		CVSTag cvsTag = (tag != null) ? new CVSEntryLineTag(tag) : null;
+
+		// read Entries.Static
+		String staticDir = readFirstLine(cvsSubDir.getFile(STATIC));
+		boolean isStatic = (staticDir != null);
 		
-		CVSTag cvsTag = null;
-		if(tag != null) {
-			cvsTag = new CVSEntryLineTag(tag);
-		}
-			
-		return new FolderSyncInfo(repo, root, cvsTag, isStatic);		
+		// return folder sync
+		return new FolderSyncInfo(repository, root, cvsTag, isStatic);		
 	}
 	
-	public static void writeFolderConfig(ICVSFolder folder, FolderSyncInfo info) throws CVSException {
-		
-		ICVSFolder cvsSubDir = getCVSSubdirectory(folder);
-		
-		if(!cvsSubDir.exists()) {
-			cvsSubDir.mkdir();
-		}
+	/**
+	 * Writes the CVS/Root, CVS/Repository, CVS/Tag, and CVS/Entries.static files to the
+	 * specified folder using the data contained in the specified FolderSyncInfo instance.
+	 */
+	public static void writeFolderSync(ICVSFolder folder, FolderSyncInfo info) throws CVSException {
+		ICVSFolder cvsSubDir = createCVSSubdirectory(folder);
 
+		// write CVS/Root
 		writeLines(cvsSubDir.getFile(ROOT), new String[] {info.getRoot()});
+		
+		// write CVS/Repository
+		writeLines(cvsSubDir.getFile(REPOSITORY), new String[] {info.getRepository()});
+		
+		// write CVS/Tag
 		ICVSFile tagFile = cvsSubDir.getFile(TAG);
 		if (info.getTag() != null) {
 			writeLines(tagFile, new String[] {info.getTag().toEntryLineFormat(false)});
@@ -193,6 +185,8 @@ public class SyncFileWriter {
 				tagFile.delete();
 			}
 		}
+		
+		// write CVS/Entries.Static
 		ICVSFile staticFile = cvsSubDir.getFile(STATIC);
 		if(info.getIsStatic()) {
 			// the existance of the file is all that matters
@@ -202,155 +196,120 @@ public class SyncFileWriter {
 				staticFile.delete();
 			}
 		}
-		writeLines(cvsSubDir.getFile(REPOSITORY), new String[] {info.getRepository()});
 	}
-			
-	protected static String readLine(ICVSFile file) throws CVSException {
-		String[] contents = getContents(file);
-		if (contents == null) {
-			return null;
-		} else if (contents.length == 0) {
-			return ""; //$NON-NLS-1$
-		} else {
-			return contents[0];
+
+	/**
+	 * Returns all .cvsignore entries for the specified folder.
+	 */
+	public static String[] readCVSIgnoreEntries(ICVSFolder folder) throws CVSException {
+		ICVSFile ignoreFile = folder.getFile(IGNORE_FILE);
+		if (ignoreFile != null) {
+			return readLines(ignoreFile);
 		}
+		return null;
 	}
 	
-	protected static String[] getContents(ICVSFile file) throws CVSException {		
-		// If the property does not exsist we return null
-		// this is specified
-		if (file.exists()) {
-			return readLines(file);
-		} else {
-			return null;
-		} 
+	/**
+	 * Adds a .cvsignore entry to the folder for the specified file.
+	 */
+	public static void addCVSIgnoreEntry(ICVSFolder folder, String pattern) throws CVSException {
+		ICVSFile ignoreFile = folder.getFile(IGNORE_FILE);
+		if (ignoreFile != null) {
+			appendLines(ignoreFile, new String[] { pattern });
+		}
 	}	
-	
+
+	/**
+	 * Returns the CVS subdirectory for this folder.
+	 */
 	public static ICVSFolder getCVSSubdirectory(ICVSFolder folder) throws CVSException {
-		return folder.getFolder("CVS"); //$NON-NLS-1$
+		return folder.getFolder("CVS");
 	}
 	
-	public static void mergeEntriesLogFiles(ICVSFolder root) throws CVSException {
-		
-		ICVSFile logEntriesFile = getCVSSubdirectory(root).getFile(ENTRIES_LOG);
-		ICVSFile entriesFile = getCVSSubdirectory(root).getFile(ENTRIES);
-
-		if (!logEntriesFile.exists()) {
-			// If we do not have an Entries.Log file we are done because there is nothing
-			// to merge (this includes the case where we do not have CVSDirectory)
-			return;
-		}
-		
-		// The map contains the name of the resource as the key and the entryLine as the 
-		// value
-		// "new ResourceSyncInfo(entryLine,null)).getName()" ist used to parse the name 
-		// out of the entryLine and shoud maybe be replaced sometime
-		
-		Map mergedEntries = new HashMap();
-
-		if(entriesFile.exists()) {
-			String[] entries = readLines(entriesFile);
-			for (int i = 0; i < entries.length; i++) {
-				if (!FOLDER_TAG.equals(entries[i])) {
-					mergedEntries.put((new ResourceSyncInfo(entries[i],null, null)).getName(),entries[i]);
-				}
-			}
-		}
-		
-		String[] logEntries = readLines(logEntriesFile);
-		for (int i = 0; i < logEntries.length; i++) {
-			
-			if (logEntries[i].startsWith(ADD_TAG)) {
-				String newEntry = logEntries[i].substring(ADD_TAG.length());
-				mergedEntries.put((new ResourceSyncInfo(newEntry,null, null)).getName(),newEntry);		
-			} else if (logEntries[i].startsWith(REMOVE_TAG)) {
-				String newEntry = logEntries[i].substring(REMOVE_TAG.length());
-				mergedEntries.remove((new ResourceSyncInfo(newEntry,null, null)).getName());
-			}
-		}
-		
-		writeLines(entriesFile,(String[]) mergedEntries.values().toArray(new String[mergedEntries.size()]));
-		logEntriesFile.delete();	
-	}
-	
-	public static String[] readLines(ICVSFile file) throws CVSException {
-		BufferedReader fileReader;
-		List fileContentStore = new ArrayList();
-		String line;
-		
-		try {
-			fileReader = new BufferedReader(new InputStreamReader(file.getInputStream()));
-			while ((line = fileReader.readLine()) != null) {
-				fileContentStore.add(line);
-			}
-			fileReader.close();
-		} catch (IOException e) {
-			throw CVSException.wrapException(e);
-		}
-			
-		return (String[]) fileContentStore.toArray(new String[fileContentStore.size()]);
-	}
-	
-	/*
-	 * To be compatible with other CVS clients meta files must be written with lines
-	 * terminating with a carriage return only.
+	/**
+	 * Creates and returns a CVS subdirectory in this folder.
 	 */
-	private static void writeLines(ICVSFile file, String[] content) throws CVSException {
-		
-		BufferedWriter fileWriter;
+	public static ICVSFolder createCVSSubdirectory(ICVSFolder folder) throws CVSException {
+		ICVSFolder cvsSubDir = getCVSSubdirectory(folder);
+		if (! cvsSubDir.exists()) {
+			cvsSubDir.mkdir();
+		}
+		return cvsSubDir;
+	}
 
+	/*
+	 * Reads the first line of the specified file.
+	 * Returns null if the file does not exist, or the empty string if it is blank.
+	 */
+	private static String readFirstLine(ICVSFile file) throws CVSException {
+		if (! file.exists()) return null;
 		try {
-			fileWriter = new BufferedWriter(new OutputStreamWriter(file.getOutputStream()));
-			for (int i = 0; i<content.length; i++) {
-				fileWriter.write(content[i] + "\n");				 //$NON-NLS-1$
+			BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()));
+			try {
+				String line = reader.readLine();
+				if (line == null) return ""; //$NON-NLS-1$
+				return line;
+			} finally {
+				reader.close();
 			}
-			fileWriter.close();
 		} catch (IOException e) {
 			throw CVSException.wrapException(e);
 		}
 	}
 	
-	public static void addCvsIgnoreEntry(ICVSResource resource, String pattern) throws CVSException {
-		OutputStream out = null;
+	/*
+	 * Reads all lines of the specified file.
+	 * Returns null if the file does not exist.
+	 */
+	private static String[] readLines(ICVSFile file) throws CVSException {
+		if (! file.exists()) return null;
 		try {
-			ICVSFile cvsignore = resource.getParent().getFile(IGNORE_FILE);
-			String line = pattern == null ? resource.getName() : pattern;
-			line += "\n"; //$NON-NLS-1$
-			out = cvsignore.getAppendingOutputStream();
-			out.write(line.getBytes());
-		} catch(IOException e) {
-			throw new CVSException(IStatus.ERROR, 0, Policy.bind("SyncFileUtil_Error_writing_to_.cvsignore_61"), e); //$NON-NLS-1$
-		} finally {
+			BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()));
+			List fileContentStore = new ArrayList();
 			try {
-				if(out!=null) {
-					out.close();
+				String line;
+				while ((line = reader.readLine()) != null) {
+					fileContentStore.add(line);
 				}
-			} catch(IOException e) {
-				throw new CVSException(IStatus.ERROR, 0, Policy.bind("SyncFileUtil_Cannot_close_.cvsignore_62"), e); //$NON-NLS-1$
+				return (String[]) fileContentStore.toArray(new String[fileContentStore.size()]);
+			} finally {
+				reader.close();
 			}
+		} catch (IOException e) {
+			throw CVSException.wrapException(e);
 		}
 	}
 	
 	/*
-	 * Append to Entries.log file
+	 * Writes all lines to the specified file, using linefeed terminators for
+	 * compatibility with other CVS clients.
 	 */
-	private static void writeEntriesLog(ICVSResource file, ResourceSyncInfo info, String prefix) throws CVSException {
-		OutputStream out = null;
+	private static void writeLines(ICVSFile file, String[] contents) throws CVSException {
+		OutputStream os = new BufferedOutputStream(file.getOutputStream());
+		writeLinesToStreamAndClose(os, contents);
+	}
+	
+	private static void writeLinesToStreamAndClose(OutputStream os, String[] contents)
+		throws CVSException {
 		try {
-			ICVSFile entriesLogFile = getCVSSubdirectory(file.getParent()).getFile(ENTRIES_LOG);
-			String line = prefix + info.getEntryLine(true) +"\n"; //$NON-NLS-1$
-			out = entriesLogFile.getAppendingOutputStream();
-			out.write(line.getBytes());
-		} catch(IOException e) {
-			throw new CVSException(IStatus.ERROR, 0, Policy.bind("SyncFileUtil_Error_writing_to_Entries.log_48"), e); //$NON-NLS-1$
-		} finally {
 			try {
-				if(out!=null) {
-					out.close();
+				for (int i = 0; i < contents.length; i++) {
+					os.write(contents[i].getBytes()); // XXX should we specify a character encoding?
+					os.write(0x0A); // newline byte
 				}
-			} catch(IOException e) {
-				throw new CVSException(IStatus.ERROR, 0, Policy.bind("SyncFileUtil_Cannot_close_Entries.log_49"), e); //$NON-NLS-1$
+			} finally {
+				os.close();
 			}
+		} catch (IOException e) {
+			throw CVSException.wrapException(e);
 		}
+	}
+
+	/*
+	 * Appends lines to the specified file, using linefeed terminators.
+	 */
+	private static void appendLines(ICVSFile file, String[] contents) throws CVSException {
+		OutputStream os = new BufferedOutputStream(file.getAppendingOutputStream());
+		writeLinesToStreamAndClose(os, contents);
 	}
 }
