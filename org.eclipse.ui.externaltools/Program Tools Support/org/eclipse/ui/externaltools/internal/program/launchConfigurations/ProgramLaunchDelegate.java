@@ -43,13 +43,6 @@ public class ProgramLaunchDelegate implements ILaunchConfigurationDelegate {
 			return;
 		}
 		
-		// save dirty editors
-		ExternalToolsUtil.saveDirtyEditors(configuration);
-		
-		if (monitor.isCanceled()) {
-			return;
-		}
-		
 		// get variable context
 		ExpandVariableContext resourceContext = ExternalToolsUtil.getVariableContext();
 

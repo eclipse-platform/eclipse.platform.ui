@@ -282,21 +282,7 @@ public interface IExternalToolConstants {
 	 * background. Default value is <code>false</code>.
 	 */
 	public static final String ATTR_RUN_IN_BACKGROUND = PLUGIN_ID + ".ATTR_RUN_IN_BACKGROUND"; //$NON-NLS-1$
-	
-	/**
-	 * Boolean attribute indicating whether an external tool should be placed
-	 * in the external tools menu. . Default value is <code>false</code>.
-	 */
-	public static final String ATTR_SHOW_IN_EXTERNAL_TOOLS_MENU = PLUGIN_ID + ".ATTR_SHOW_IN_EXTERNAL_TOOLS_MENU"; //$NON-NLS-1$
-	
-	/**
-	 * Boolean attribute indicating whether ditry editors should be saved
-	 * before running an external tool. Default value is <code>false</code>.
-	 * When <code>null</code>, the user is prompted to save editors before a
-	 * tool is run.
-	 */
-	public static final String ATTR_SAVE_DIRTY_EDITORS = PLUGIN_ID + ".ATTR_SAVE_DIRTY_EDITORS"; //$NON-NLS-1$
-	
+			
 	/**
 	 * String attribute containing the arguments that should be passed to the
 	 * tool. Default value is <code>null</code>, and encoding is tool specific.

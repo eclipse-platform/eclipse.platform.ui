@@ -55,14 +55,6 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 			monitor.beginTask(MessageFormat.format("Running {0}", new String[] {configuration.getName()}), 100);
 		}
 		
-		// save dirty editors
-		ExternalToolsUtil.saveDirtyEditors(configuration);
-		monitor.worked(1);
-		
-		if (monitor.isCanceled()) {
-			return;
-		}
-		
 		// get variable context
 		ExpandVariableContext resourceContext = ExternalToolsUtil.getVariableContext();
 		monitor.worked(1);

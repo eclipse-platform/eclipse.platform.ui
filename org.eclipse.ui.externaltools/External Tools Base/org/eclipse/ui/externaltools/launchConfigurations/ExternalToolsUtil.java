@@ -22,15 +22,18 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.externaltools.internal.ant.model.AntUtil;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
-import org.eclipse.ui.externaltools.internal.model.VariableContextManager;
 import org.eclipse.ui.externaltools.internal.model.ToolMessages;
+import org.eclipse.ui.externaltools.internal.model.VariableContextManager;
 import org.eclipse.ui.externaltools.internal.registry.RefreshScopeVariable;
-import org.eclipse.ui.externaltools.internal.registry.RefreshScopeVariableRegistry;
+import org
+	.eclipse
+	.ui
+	.externaltools
+	.internal
+	.registry
+	.RefreshScopeVariableRegistry;
 import org.eclipse.ui.externaltools.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.model.ToolUtil;
 import org.eclipse.ui.externaltools.variable.ExpandVariableContext;
@@ -59,27 +62,7 @@ public class ExternalToolsUtil {
 	 */
 	protected static void abort(String message, Throwable exception, int code) throws CoreException {
 		throw new CoreException(new Status(IStatus.ERROR, IExternalToolConstants.PLUGIN_ID, code, message, exception));
-	}
-		
-	/**
-	 * Saves any dirty editors, as specified by the given launch configuration.
-	 * 
-	 * @param configuration launch configuration
-	 * @exception CoreException if unable to retrieve the associated launch
-	 * configuration attribute
-	 */
-	public static void saveDirtyEditors(ILaunchConfiguration configuration) throws CoreException {
-		boolean save = configuration.getAttribute(IExternalToolConstants.ATTR_SAVE_DIRTY_EDITORS, false);
-		if (save) {
-			IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
-			for (int i = 0; i < windows.length; i++) {
-				IWorkbenchPage[] pages = windows[i].getPages();
-				for (int j = 0; j < pages.length; j++) {
-					pages[j].saveAllEditors(false);
-				}
-			}
-		}
-	}		
+	}	
 	
 	/**
 	 * Returns active variable context. The active variable context is used to

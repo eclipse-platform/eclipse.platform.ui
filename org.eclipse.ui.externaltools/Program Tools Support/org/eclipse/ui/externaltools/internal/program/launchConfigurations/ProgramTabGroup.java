@@ -8,6 +8,7 @@ http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup;
+import org.eclipse.debug.ui.CommonTab;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.ui.externaltools.launchConfigurations.ExternalToolsMainTab;
@@ -23,7 +24,8 @@ public class ProgramTabGroup extends AbstractLaunchConfigurationTabGroup {
 		ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[] {
 			new ExternalToolsMainTab(),
 			new ExternalToolsOptionTab(),
-			new ExternalToolsRefreshTab()
+			new ExternalToolsRefreshTab(),
+			new CommonTab()
 		};
 		setTabs(tabs);
 	}
