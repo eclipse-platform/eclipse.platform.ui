@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.internal.ui.SearchPreferencePage;
@@ -111,6 +112,14 @@ public class InternalSearchUI {
 		fSearchJobs= new HashMap();
 		fSearchResultsManager= new QueryManager();
 		fPositionTracker= new PositionTracker();
+		try {
+			URL install= SearchPlugin.getDefault().getDescriptor().getInstallURL();
+			URL iconURL= new URL(install, "icons/full/eview16/searchres.gif");
+			ImageDescriptor image= ImageDescriptor.createFromURL(iconURL);
+			PlatformUI.getWorkbench().getProgressService().registerIconForFamily(image, FAMILY_SEARCH);
+		} catch (MalformedURLException e) {
+			// don't set any image
+		}
 	}
 
 	/**
@@ -157,21 +166,9 @@ public class InternalSearchUI {
 		if (jobRecord.fJob == null) {
 			jobRecord.fJob= new InternalSearchJob(jobRecord);
 			jobRecord.fJob.setPriority(Job.BUILD);	
-			configureJob(jobRecord.fJob);
 		}
+		jobRecord.fJob.setUser(true);
 		getProgressService().schedule(jobRecord.fJob, 0, true);
-	}
-
-	private void configureJob(Job job) {
-		job.setUser(true);
-		try {
-			URL install= SearchPlugin.getDefault().getDescriptor().getInstallURL();
-			URL icon;
-			icon= new URL(install, "icons/full/eview16/searchres.gif"); //$NON-NLS-1$
-			job.setProperty(new QualifiedName("org.eclipse.ui.workbench.progress", "icon"), icon);  //$NON-NLS-1$ //$NON-NLS-2$
-		} catch (MalformedURLException e) {
-			// don't set any icon
-		}
 	}
 
 	public IWorkbenchSiteProgressService getProgressService() {
@@ -204,7 +201,7 @@ public class InternalSearchUI {
 			context.run(true, true, new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) {
 					searchJobStarted(rec);
-					try {
+					try { 
 						temp[0]= rec.fQuery.run(monitor);
 					} finally {
 						searchJobFinished(rec);
