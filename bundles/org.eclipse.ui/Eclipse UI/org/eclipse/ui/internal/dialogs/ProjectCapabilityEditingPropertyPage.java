@@ -88,7 +88,10 @@ public class ProjectCapabilityEditingPropertyPage extends ProjectCapabilityPrope
 		reg = WorkbenchPlugin.getDefault().getCapabilityRegistry();
 		
 		Composite topComposite = new Composite(parent, SWT.NONE);
-		topComposite.setLayout(new GridLayout());
+		GridLayout layout = new GridLayout();
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		topComposite.setLayout(layout);
 		topComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		String instructions;
@@ -103,7 +106,7 @@ public class ProjectCapabilityEditingPropertyPage extends ProjectCapabilityPrope
 		disabledCaps.addAll(Arrays.asList(caps));
 
 		Composite mainComposite = new Composite(topComposite, SWT.NONE);
-		GridLayout layout = new GridLayout();
+		layout = new GridLayout();
 		layout.numColumns = 2;
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
@@ -111,7 +114,10 @@ public class ProjectCapabilityEditingPropertyPage extends ProjectCapabilityPrope
 		mainComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		Composite capComposite = new Composite(mainComposite, SWT.NONE);
-		capComposite.setLayout(new GridLayout());
+		layout = new GridLayout();
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		capComposite.setLayout(layout);
 		capComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		label = new Label(capComposite, SWT.LEFT);
@@ -124,7 +130,10 @@ public class ProjectCapabilityEditingPropertyPage extends ProjectCapabilityPrope
 		table.setInput(getProject());
 		
 		Composite buttonComposite = new Composite(mainComposite, SWT.NONE);
-		buttonComposite.setLayout(new GridLayout());
+		layout = new GridLayout();
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		buttonComposite.setLayout(layout);
 		buttonComposite.setLayoutData(new GridData(GridData.FILL_VERTICAL));
 
 		label = new Label(buttonComposite, SWT.LEFT);
