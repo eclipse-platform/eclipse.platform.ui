@@ -178,7 +178,7 @@ public abstract class Plugin implements BundleActivator {
 	 */
 	public Plugin(IPluginDescriptor descriptor) {
 		Assert.isNotNull(descriptor);
-		Assert.isTrue(!(descriptor.isPluginActivated() && CompatibilityHelper.activationPending(descriptor) == false), Policy.bind("plugin.deactivatedLoad", this.getClass().getName(), descriptor.getUniqueIdentifier() + " is not activated")); //$NON-NLS-1$ //$NON-NLS-2$
+		Assert.isTrue(!CompatibilityHelper.hasPluginObject(descriptor), Policy.bind("plugin.deactivatedLoad", this.getClass().getName(), descriptor.getUniqueIdentifier() + " is not activated")); //$NON-NLS-1$ //$NON-NLS-2$
 		this.descriptor = descriptor;
 		String key = descriptor.getUniqueIdentifier() + "/debug"; //$NON-NLS-1$
 		String value = InternalPlatform.getDefault().getOption(key);

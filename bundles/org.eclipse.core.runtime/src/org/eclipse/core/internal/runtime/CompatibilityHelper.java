@@ -71,14 +71,14 @@ public class CompatibilityHelper {
 		}
 	}
 	
-	public static boolean activationPending(IPluginDescriptor descriptor) {
+	public static boolean hasPluginObject(IPluginDescriptor descriptor) {
 		Bundle compatibility = getCompatibility();
 		if (compatibility == null)
 			throw new IllegalStateException();
 
 		Boolean result = new Boolean(false);
 		try{
-			Method setPlugin = descriptor.getClass().getMethod("isActivating", null); //$NON-NLS-1$
+			Method setPlugin = descriptor.getClass().getMethod("hasPluginObject", null); //$NON-NLS-1$
 			result = (Boolean) setPlugin.invoke(descriptor, null);
 		} catch(Exception e) {
 			//Ignore the exceptions			

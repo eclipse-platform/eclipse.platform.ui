@@ -434,7 +434,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 		this.active = true;
 	}
 	
-	public boolean isActivating() {
-		return activePending;
+	public boolean hasPluginObject() {
+		return pluginObject!=null;
 	}
 }
