@@ -64,13 +64,8 @@ public class AntTabGroup extends AbstractLaunchConfigurationTabGroup {
 				String name = buffer.toString().trim();
 				name= DebugPlugin.getDefault().getLaunchManager().generateUniqueLaunchConfigurationNameFrom(name);
 				configuration.rename(name);
-				
-				StringBuffer buf = new StringBuffer();
-				LaunchVariableUtil.buildVariableTag(ILaunchVariableManager.VAR_WORKSPACE_LOC, file.getFullPath().toString(), buf);
-				String text= buf.toString();
-				if (text != null) {
-					configuration.setAttribute(IExternalToolConstants.ATTR_LOCATION, text);
-				}
+				configuration.setAttribute(IExternalToolConstants.ATTR_LOCATION,
+					LaunchVariableUtil.newVariableExpression(ILaunchVariableManager.VAR_WORKSPACE_LOC, file.getFullPath().toString()));
 			}		
 		}
 	}	

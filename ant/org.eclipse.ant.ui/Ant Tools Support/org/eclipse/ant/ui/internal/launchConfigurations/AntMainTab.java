@@ -115,12 +115,7 @@ public class AntMainTab extends ExternalToolsMainTab {
 		if (file == null) {
 			return;
 		}
-		StringBuffer buf = new StringBuffer();
-		LaunchVariableUtil.buildVariableTag(ILaunchVariableManager.VAR_WORKSPACE_LOC, file.getFullPath().toString(), buf);
-		String text= buf.toString();
-		if (text != null) {
-			locationField.setText(text);
-		}
+		locationField.setText(LaunchVariableUtil.newVariableExpression(ILaunchVariableManager.VAR_WORKSPACE_LOC, file.getFullPath().toString()));
 	}
 
 	/**

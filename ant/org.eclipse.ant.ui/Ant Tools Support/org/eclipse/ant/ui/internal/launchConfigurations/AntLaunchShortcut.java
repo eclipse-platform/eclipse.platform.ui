@@ -216,9 +216,8 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 		name= manager.generateUniqueLaunchConfigurationNameFrom(name);
 		try {
 			ILaunchConfigurationWorkingCopy workingCopy = type.newInstance(null, name);
-			StringBuffer buf = new StringBuffer();
-			LaunchVariableUtil.buildVariableTag(ILaunchVariableManager.VAR_WORKSPACE_LOC, file.getFullPath().toString(), buf);
-			workingCopy.setAttribute(IExternalToolConstants.ATTR_LOCATION, buf.toString());
+			workingCopy.setAttribute(IExternalToolConstants.ATTR_LOCATION,
+				LaunchVariableUtil.newVariableExpression(ILaunchVariableManager.VAR_WORKSPACE_LOC, file.getFullPath().toString()));
 			
 			// set default for common settings
 			CommonTab tab = new CommonTab();
