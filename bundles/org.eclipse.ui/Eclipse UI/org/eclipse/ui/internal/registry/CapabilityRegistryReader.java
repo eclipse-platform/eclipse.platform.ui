@@ -23,14 +23,6 @@ public class CapabilityRegistryReader extends RegistryReader{
 	private static final String TAG_CATEGORY = "category";
 	private static final String TAG_HANDLE_UI = "handleUI";
 	
-	private static final String CAP_ATT_ID = "id";
-	private static final String CAP_ATT_NAME = "name";
-	private static final String CAP_ATT_ICON = "icon";
-	private static final String CAP_ATT_NATURE_ID = "natureId";
-	private static final String CAP_ATT_CATEGORY = "category";
-	private static final String CAP_ATT_INSTALL_WIZARD = "installWizard";
-	private static final String CAP_ATT_DESCRIPTION = "description";
-	
 	private static final String HANDLE_UI_ATT_ID = "id";
 	
 	private CapabilityRegistry capabilityRegistry;
@@ -59,43 +51,17 @@ public class CapabilityRegistryReader extends RegistryReader{
 	 * them to the capability.
 	 */
 	private boolean readCapability(IConfigurationElement element) {
-		String id = element.getAttribute(CAP_ATT_ID);
-		String name = element.getAttribute(CAP_ATT_NAME);
-		String icon = element.getAttribute(CAP_ATT_ICON);
-		String natureId = element.getAttribute(CAP_ATT_NATURE_ID);
-		String category = element.getAttribute(CAP_ATT_CATEGORY);
-		String installWizard = element.getAttribute(CAP_ATT_INSTALL_WIZARD);
-		String description = element.getAttribute(CAP_ATT_DESCRIPTION);
-			
-		if (id==null) {
-			logMissingAttribute(element, CAP_ATT_ID);
+		try {
+			Capability capability = new Capability(element, this);
+			capabilityRegistry.addCapability(capability);
+			currentCapability = capability;
+			readElementChildren(element);
+			currentCapability = null;
+			return true;
+		} catch(WorkbenchException e) {
+			currentCapability = null;
+			return false;
 		}
-		if (name==null) {
-			logMissingAttribute(element, CAP_ATT_NAME);
-		}
-		if (icon==null) {
-			logMissingAttribute(element, CAP_ATT_ICON);
-		}
-		if (natureId==null) {
-			logMissingAttribute(element, CAP_ATT_NATURE_ID);
-		}
-		if (category==null) {
-			logMissingAttribute(element, CAP_ATT_CATEGORY);
-		}
-		if (installWizard==null) {
-			logMissingAttribute(element, CAP_ATT_INSTALL_WIZARD);
-		}
-		if (description==null) {
-			logMissingAttribute(element, CAP_ATT_DESCRIPTION);
-		}
-	
-		Capability capability = new Capability(id, name, icon, natureId, 
-				category, installWizard, description);
-		capabilityRegistry.addCapability(capability);
-		currentCapability = capability;
-		readElementChildren(element);
-		currentCapability = null;
-		return true;
 	}
 
 	/**
@@ -121,11 +87,11 @@ public class CapabilityRegistryReader extends RegistryReader{
 	private boolean readHandleUI(IConfigurationElement element) {
 		String capabilityId = element.getAttribute(HANDLE_UI_ATT_ID);
 		
-		if (capabilityId==null) {
+		if (capabilityId == null) {
 			logMissingAttribute(element, HANDLE_UI_ATT_ID);
 		}
 		
-		if(currentCapability!=null)
+		if (currentCapability != null)
 			currentCapability.addHandleUI(capabilityId);		
 		return true;	
 	}
@@ -137,6 +103,5 @@ public class CapabilityRegistryReader extends RegistryReader{
 	public void read(IPluginRegistry registry, CapabilityRegistry out) {
 		capabilityRegistry = out;
 		readRegistry(registry, IWorkbenchConstants.PLUGIN_ID, IWorkbenchConstants.PL_CAPABILITIES);
-		out.mapCapabilitiesToCategories();
 	}
 }

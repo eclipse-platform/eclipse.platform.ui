@@ -5,9 +5,12 @@ package org.eclipse.ui.internal.registry;
  */
  
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.resources.IProjectNatureDescriptor;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Platform;
 
 /**
@@ -15,13 +18,35 @@ import org.eclipse.core.runtime.Platform;
  * capabilities.
  */
 public class CapabilityRegistry {
+	private static final String[] EMPTY_LIST = new String[0];
+	
+	private HashMap natureToCapability;
 	private ArrayList capabilities;
 	private ArrayList categories;
 	private Category miscCategory;
 	
+	/**
+	 * Creates a new instance of <code>CapabilityRegistry</code>
+	 */
 	public CapabilityRegistry() {
 		capabilities = new ArrayList(30);
 		categories = new ArrayList(15);		
+	}
+	
+	/**
+	 * Adds the given capability to the registry. Called by
+	 * the CapabilityRegistryReader.
+	 */
+	/* package */ boolean addCapability(Capability capability) {
+		return capabilities.add(capability);	
+	}
+	
+	/**
+	 * Adds the given capability category to the registry. Called
+	 * by the CapabilityRegistryReader.
+	 */
+	/* package */ boolean addCategory(ICategory category) {
+		return categories.add(category);
 	}
 	
 	/**
@@ -40,6 +65,29 @@ public class CapabilityRegistry {
 	}
 
 	/**
+	 * Finds the capability for each specified identifier.
+	 * Any <code>null</code> entries in the resulting array
+	 * are for identifiers to which no capability exist.
+	 */
+	public Capability[] findCapabilities(String[] ids) {
+		int count = capabilities.size();
+		Capability[] results = new Capability[ids.length];
+		
+		for (int i = 0; i < ids.length; i++) {
+			String id = ids[i];
+			for (int j = 0; j < count; j++) {
+				Capability cap = (Capability) capabilities.get(j);
+				if (cap.getId().equals(id)) {
+					results[i] = cap;
+					break;
+				}
+			}
+		}
+		
+		return results;
+	}
+	
+	/**
 	 * Returns the list of capabilities in the registry
 	 */
 	public List getCapabilities() {
@@ -47,27 +95,50 @@ public class CapabilityRegistry {
 	}
 	
 	/**
-	 * Adds the given capability to the registry.
+	 * Returns the capability ids that are prerequisites
+	 * of the specified capability.
 	 */
-	public boolean addCapability(Capability capability) {
-		return capabilities.add(capability);	
+	public String[] getPrerequisiteIds(Capability capability) {
+		IProjectNatureDescriptor desc;
+		desc = ResourcesPlugin.getWorkspace().getNatureDescriptor(capability.getNatureId());
+		if (desc == null)
+			return EMPTY_LIST;
+			
+		String[] natureIds = desc.getRequiredNatureIds();
+		if (natureIds.length == 0)
+			return EMPTY_LIST;
+			
+		ArrayList results = new ArrayList(natureIds.length);
+		for (int i = 0; i < natureIds.length; i++) {
+			Capability cap = (Capability)natureToCapability.get(natureIds[i]);
+			if (cap != null)
+				results.add(cap);
+		}
+		
+		if (results.size() == 0) {
+			return EMPTY_LIST;
+		} else {
+			String[] ids = new String[results.size()];
+			results.toArray(ids);
+			return ids;
+		}
 	}
-	
+
 	/**
-	 * Adds the given capability category to the registry.
+	 * Returns whether the specified capability has any prerequisites.
 	 */
-	public boolean addCategory(ICategory category) {
-		return categories.add(category);
+	public boolean hasPrerequisites(Capability capability) {
+		return getPrerequisiteIds(capability).length > 0;
 	}
-	
+
 	/**
 	 * Loads capabilities and capability categories from the platform's plugin
 	 * registry.
 	 */
 	public void load() {
-		CapabilityRegistryReader reader = 
-			new CapabilityRegistryReader();
+		CapabilityRegistryReader reader = new CapabilityRegistryReader();
 		reader.read(Platform.getPluginRegistry(), this);
+		mapCapabilitiesToCategories();
 	}
 	
 	/**
@@ -75,7 +146,7 @@ public class CapabilityRegistry {
 	 * The category is defined in xml. If the capability's category is
 	 * not found, then the capability is added to the "misc" category.
 	 */
-	public void mapCapabilitiesToCategories() {
+	/* package */ void mapCapabilitiesToCategories() {
 		Iterator enum = capabilities.iterator();
 		while (enum.hasNext()) {
 			Capability cap = (Capability) enum.next();

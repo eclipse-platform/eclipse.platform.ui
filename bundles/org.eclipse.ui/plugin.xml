@@ -51,6 +51,7 @@
 <extension-point name="%ExtPoint.decorators" id="decorators"/>
 <extension-point name="%ExtPoint.markerHelp" id="markerHelp"/>
 <extension-point name="%ExtPoint.markerResolution" id="markerResolution"/>
+<extension-point name="%ExtPoint.capabilities" id="capabilities"/>
 
 <!-- Extensions -->
 
