@@ -1516,7 +1516,7 @@ public IStatus validateEdit(final IFile[] files, final Object context) {
 		MultiStatus result = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IStatus.OK, message, null);
 		for (int i=0; i<files.length; i++) {
 			if (files[i].isReadOnly()) {
-				message = Policy.bind("resources.readOnly"); //$NON-NLS-1
+				message = Policy.bind("resources.readOnly"); //$NON-NLS-1$
 				result.add(new ResourceStatus(IStatus.ERROR, files[i].getFullPath(), message));
 			}
 		}
