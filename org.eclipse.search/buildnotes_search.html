@@ -21,7 +21,7 @@ To see which bugs have been addressed in one of the builds simply open the <a hr
 <br>
 ========== Eclipse Build Input March 29rd 2004 ==========<br>
 <H3>Breaking API Changes</H3>
-The methods related to mapping matches to files and editors have been moved to two
+The methods in <code>AbstractTextSearchResult</code> related to mapping matches to files and editors have been moved to two
 new Interfaces: <code>IFileMatchAdapter</code> and <code>IEditorMatchAdapter</code>. 
 <code>AbstractTextSearchResult</code> now has two new methods <code>getFileMatchAdapter</code>
 and <code>getEditorMatchAdapter</code> to get adapter objects. The default implementation
