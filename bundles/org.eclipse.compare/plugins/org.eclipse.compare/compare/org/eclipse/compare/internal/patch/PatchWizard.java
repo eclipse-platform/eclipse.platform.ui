@@ -99,7 +99,7 @@ import org.eclipse.compare.internal.*;
 
 		try {
 			WorkspaceModifyOperation op= new WorkspaceModifyOperation(fTarget.getProject()) {
-				protected void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+				protected void execute(IProgressMonitor monitor) throws InvocationTargetException {
 					try {
 						fPatcher.applyAll(getTarget(), monitor, getShell(), PatchMessages.getString("PatchWizard.title")); //$NON-NLS-1$
 					} catch (CoreException e) {

@@ -367,7 +367,7 @@ import org.eclipse.compare.structuremergeviewer.*;
 		try {
 			TimeoutContext.run(true, GUESS_TIMEOUT, getControl().getShell(),
 				new IRunnableWithProgress() {
-					public void run(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
+					public void run(IProgressMonitor monitor) {
 						result[0]= guess(patcher, monitor, strip);
 					}
 				}
