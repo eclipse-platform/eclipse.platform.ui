@@ -216,8 +216,13 @@ public abstract class NewConfigurationInfo {
 	 * Report an ini failure
 	 */
 	protected void reportINIFailure(Exception e, String message) {
+		if (!WorkbenchPlugin.DEBUG) {
+			// only report ini problems if the -debug command line argument is used
+			return;
+		}
+		
 		IStatus iniStatus = new Status(IStatus.ERROR, WorkbenchPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
 										0, message, e);
-		WorkbenchPlugin.log("Problem reading configuration info.", iniStatus);//$NON-NLS-1$
+		WorkbenchPlugin.log("Problem reading configuration info for: " + getFeatureId(), iniStatus);//$NON-NLS-1$
 	}
 }

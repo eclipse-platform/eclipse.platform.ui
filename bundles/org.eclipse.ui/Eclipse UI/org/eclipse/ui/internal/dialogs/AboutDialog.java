@@ -4,19 +4,33 @@ package org.eclipse.ui.internal.dialogs;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.io.IOException;
 import java.util.ArrayList;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyleRange;
+import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseMoveListener;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -25,6 +39,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.AboutInfo;
+import org.eclipse.ui.internal.AboutItem;
+import org.eclipse.ui.internal.AboutParser;
 import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.internal.PlatformInfo;
 import org.eclipse.ui.internal.ProductInfo;
@@ -42,7 +58,16 @@ public class AboutDialog extends Dialog {
 	private  	AboutInfo     	aboutInfo;
 	private	PlatformInfo 	platformInfo;	//the platform info
 	private	ProductInfo 	productInfo;	//the product info
-	private ArrayList images = new ArrayList();
+	private 	ArrayList images = new ArrayList();
+	private 	AboutParser parser;
+	private 	AboutItem item;
+	private	int MAX_IMAGE_WIDTH_FOR_TEXT = 250;
+	private    int ABOUT_TEXT_WIDTH = 70; // chars
+	private    int ABOUT_TEXT_HEIGHT = 15; // chars
+	private 	Cursor handCursor;
+	private 	Cursor busyCursor;
+	private 	boolean webBrowserOpened;
+	
 /**
  * Create an instance of the AboutDialog
  */
@@ -52,6 +77,39 @@ public AboutDialog(Shell parentShell) {
 	aboutInfo = workbench.getAboutInfo();
 	platformInfo = workbench.getPlatformInfo();
 	productInfo = workbench.getProductInfo();
+}
+/**
+ * Adds listeners to the given styled text
+ */
+private void addListeners(StyledText styledText) {
+	styledText.addMouseListener(new MouseAdapter() {
+		public void mouseUp(MouseEvent e) {
+			StyledText text = (StyledText)e.widget;
+			int offset = text.getCaretOffset();
+			if (item != null && item.isLinkAt(offset)) {	
+				text.setCursor(busyCursor);
+				openLink(item.getLinkAt(offset));
+				text.setCursor(null);
+			}
+		}
+	});
+	styledText.addMouseMoveListener(new MouseMoveListener() {
+		public void mouseMove(MouseEvent e) {
+			StyledText text = (StyledText)e.widget;
+			int offset = -1;
+			try {
+				offset = text.getOffsetAtLocation(new Point(e.x, e.y));
+			} catch (IllegalArgumentException ex) {
+				// leave value as -1
+			}
+			if (offset == -1)
+				text.setCursor(null);
+			else if (item != null && item.isLinkAt(offset)) 
+				text.setCursor(handCursor);
+			else 
+				text.setCursor(null);
+		}
+	});
 }
 
 public boolean close() {
@@ -97,7 +155,15 @@ protected void createButtonsForButtonBar(Composite parent) {
  * @return the dialog area control
  */
 protected Control createDialogArea(Composite parent) {
-
+	handCursor = new Cursor(parent.getDisplay(), SWT.CURSOR_HAND);
+	busyCursor = new Cursor(parent.getDisplay(), SWT.CURSOR_WAIT);
+	getShell().addDisposeListener(new DisposeListener() {
+		public void widgetDisposed(DisposeEvent e) {
+			handCursor.dispose();
+			busyCursor.dispose();
+		}
+	});
+	
 	ImageDescriptor imageDescriptor =  aboutInfo.getAboutImage();	// may be null
 	if (imageDescriptor != null) 
 		image = imageDescriptor.createImage();
@@ -105,7 +171,20 @@ protected Control createDialogArea(Composite parent) {
 		// backward compatibility
 		image =  productInfo.getAboutImage();	// may be null
 	}
-		
+	if (image == null || image.getBounds().width <= MAX_IMAGE_WIDTH_FOR_TEXT) {
+		// show text
+		String aboutText = aboutInfo.getAboutText();
+		if (aboutText != null) {
+			StringBuffer buf = new StringBuffer("<?xml version=\"1.0\" encoding=\"UTF-8\" ?><about>");  //$NON-NLS-1$
+			buf.append(aboutText);
+			buf.append("</about>");	//$NON-NLS-1$
+			// get an about item
+			parser = new AboutParser();
+			parser.parse(buf.toString());
+			item = parser.getAboutItem();
+		}
+	}
+						
 	// page group
 	Composite outer = (Composite)super.createDialogArea(parent);
 	outer.setSize(outer.computeSize(SWT.DEFAULT, SWT.DEFAULT));
@@ -116,7 +195,7 @@ protected Control createDialogArea(Composite parent) {
 	// the image & text	
 	Composite topContainer = new Composite(outer, SWT.NONE);
 	layout = new GridLayout();
-	layout.numColumns = (image == null ? 1: 2);
+	layout.numColumns = (image == null || item == null ? 1 : 2);
 	layout.marginWidth = 0;
 	topContainer.setLayout(layout);
 	GridData data = new GridData();
@@ -130,19 +209,29 @@ protected Control createDialogArea(Composite parent) {
 		data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
 		data.verticalAlignment = GridData.BEGINNING;
-		data.grabExcessHorizontalSpace = true;
+		data.grabExcessHorizontalSpace = false;
 		imageLabel.setLayoutData(data);
 		imageLabel.setImage(image);
 	}
 	
-	// text on the right
-	Label label = new Label(topContainer, SWT.LEFT | SWT.WRAP );
-	data = new GridData();
-	data.horizontalAlignment = GridData.FILL;
-	data.verticalAlignment = GridData.BEGINNING;
-	label.setText(productText());
-	label.setLayoutData(data);
-	label.setFont(parent.getFont());
+	if (item != null) {
+		// text on the right
+		StyledText styledText = new StyledText(topContainer, SWT.MULTI | SWT.READ_ONLY);
+		styledText.setFont(parent.getFont());
+		data = new GridData();
+		data.horizontalAlignment = GridData.FILL;
+		data.verticalAlignment = GridData.BEGINNING;
+		data.grabExcessHorizontalSpace = true;
+		data.widthHint = convertWidthInCharsToPixels(ABOUT_TEXT_WIDTH);
+		data.heightHint = convertHeightInCharsToPixels(ABOUT_TEXT_HEIGHT);
+		styledText.setText(item.getText());
+		styledText.setLayoutData(data);
+		styledText.setCursor(null);
+		styledText.setBackground(topContainer.getBackground());
+		setBoldRanges(styledText, item.getBoldRanges());
+		setLinkRanges(styledText, item.getLinkRanges());
+		addListeners(styledText);
+	}
 
 	// horizontal bar
 	Label bar =  new Label(outer, SWT.HORIZONTAL | SWT.SEPARATOR);
@@ -162,7 +251,7 @@ protected Control createDialogArea(Composite parent) {
 	Workbench workbench = (Workbench)PlatformUI.getWorkbench();
 	final AboutInfo[] infoArray = workbench.getFeaturesInfo();
 	for (int i = 0; i < infoArray.length; i++) {
-		ImageDescriptor desc = infoArray[i].getFeatureImage();
+		ImageDescriptor desc = infoArray[i].getFeatureIcon();
 		Image image = null;
 		if (desc != null) {
 			Button button = new Button(featureContainer, SWT.FLAT | SWT.PUSH);
@@ -236,9 +325,45 @@ protected Control createDialogArea(Composite parent) {
 	return outer;
 }
 /**
+ * Open a link
+ */
+private void openLink(final String href) {
+	if (SWT.getPlatform().equals("win32")) { //$NON-NLS-1$
+		Program.launch(href);
+	} else {
+			Thread launcher = new Thread("About Link Launcher") {//$NON-NLS-1$
+	public void run() {
+				try {
+					if (webBrowserOpened) {
+						Runtime.getRuntime().exec("netscape -remote openURL(" + href + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+					} else {
+						Process p = Runtime.getRuntime().exec("netscape " + href); //$NON-NLS-1$
+						webBrowserOpened = true;
+						try {
+							if (p != null)
+								p.waitFor();
+						} catch (InterruptedException e) {
+							MessageDialog.openError(AboutDialog.this.getShell(), WorkbenchMessages.getString("AboutDialog.errorTitle"), //$NON-NLS-1$
+							e.getMessage());
+						} finally {
+							webBrowserOpened = false;
+						}
+					}
+				} catch (IOException e) {
+					MessageDialog.openError(AboutDialog.this.getShell(), WorkbenchMessages.getString("AboutDialog.errorTitle"), //$NON-NLS-1$
+					e.getMessage());
+
+				}
+			}
+		};
+		launcher.start();
+	}
+}
+
+/**
  * Answer the product text to show on the right side of the dialog.
  */ 
-protected String productText() {
+private String getAboutText() {
 	String text = aboutInfo.getAboutText();
 	if (text != null)
 		return text;
@@ -249,16 +374,26 @@ protected String productText() {
 		return WorkbenchMessages.format("AboutText.withBuildNumber", new Object[] {productInfo.getDetailedName(),productInfo.getVersion(),productInfo.getBuildID(),productInfo.getCopyright()}); //$NON-NLS-1$
 	}
 }
-	
+
 /**
- * Answer the platform text to show on the right side of the dialog.
- */ 
-protected String platformText() {
-	if (platformInfo.getBuildID().length() == 0) {
-		return WorkbenchMessages.format("AboutText.withoutBuildNumber", new Object[] {platformInfo.getDetailedName(),platformInfo.getVersion(),platformInfo.getCopyright()}); //$NON-NLS-1$
-	} else {
-		return WorkbenchMessages.format("AboutText.withBuildNumber", new Object[] {platformInfo.getDetailedName(),platformInfo.getVersion(),platformInfo.getBuildID(),platformInfo.getCopyright()}); //$NON-NLS-1$
+ * Sets the styled text's bold ranges
+ */
+private void setBoldRanges(StyledText styledText, int[][] boldRanges) {
+	for (int i = 0; i < boldRanges.length; i++) {
+		StyleRange r = new StyleRange(boldRanges[i][0], boldRanges[i][1], null, null, SWT.BOLD);
+		styledText.setStyleRange(r);
 	}
 }
+/**
+ * Sets the styled text's link (blue) ranges
+ */
+private void setLinkRanges(StyledText styledText, int[][] linkRanges) {
+	Color fg = JFaceColors.getHyperlinkText(styledText.getShell().getDisplay());
+	for (int i = 0; i < linkRanges.length; i++) {
+		StyleRange r = new StyleRange(linkRanges[i][0], linkRanges[i][1], fg, null);
+		styledText.setStyleRange(r);
+	}
+}
+
 
 }

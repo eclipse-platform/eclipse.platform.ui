@@ -231,24 +231,11 @@ public class AboutPluginsDialog extends Dialog {
 				return false;
 			int i = vendorInfo.getSelectionIndex();
 			IPluginDescriptor desc = info[i];
-			URL infoURL = null;
-			try {
-				infoURL = desc.getPlugin().find(new Path(PLUGININFO));
-				if (infoURL != null)
-					infoURL = Platform.resolve(infoURL);
-			} catch (CoreException e) {
-				WorkbenchPlugin.log("Problem reading plugin info for: " + desc.getLabel(), e.getStatus()); //$NON-NLS-1$
-				return false;
-			} catch (IOException e) {
-				IStatus iniStatus = new Status(
-					IStatus.ERROR, 
-					WorkbenchPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
-					0,
-					"Problem reading plugin info",  //$NON-NLS-1$
-					e);
-				WorkbenchPlugin.log("Problem reading plugin info for: " + desc.getLabel(), iniStatus); //$NON-NLS-1$
-				return false;
-			}
+			URL infoURL = desc.find(new Path(PLUGININFO));
+			if (infoURL == null && WorkbenchPlugin.DEBUG) {
+				// only report ini problems if the -debug command line argument is used
+				WorkbenchPlugin.log("Problem reading plugin info for: " + desc.getLabel()); //$NON-NLS-1$
+			} 
 			return infoURL != null;
 	}
 
@@ -282,16 +269,7 @@ public class AboutPluginsDialog extends Dialog {
 	 * 
 	 */
 	private void openMoreInfo(IPluginDescriptor desc) {
-		URL infoURL = null;
-		try {
-			infoURL = desc.getPlugin().find(new Path(PLUGININFO));
-			if (infoURL != null)
-				infoURL = Platform.resolve(infoURL);
-		} catch (CoreException e) {
-			// null check below
-		} catch (IOException e) {
-			// null check below
-		}
+		URL infoURL = desc.find(new Path(PLUGININFO));
 		if (infoURL == null) {
 			MessageDialog.openError(
 				getShell(), 

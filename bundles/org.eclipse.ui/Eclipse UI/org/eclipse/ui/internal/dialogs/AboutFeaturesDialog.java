@@ -6,7 +6,6 @@ package org.eclipse.ui.internal.dialogs;
  */
 
 import java.io.IOException;
-import java.net.URL;
 import java.text.Collator;
 import java.util.Arrays;
 import java.util.Collection;
@@ -17,27 +16,32 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPluginDescriptor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -45,11 +49,12 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.AboutInfo;
+import org.eclipse.ui.internal.AboutItem;
+import org.eclipse.ui.internal.AboutParser;
 import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.internal.ProductInfo;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * Displays information about the product plugins.
@@ -71,7 +76,7 @@ public class AboutFeaturesDialog extends Dialog {
 
 	private Table table;
 	private Label imageLabel;	
-	private Label text;
+	private StyledText text;
 	private Composite infoArea;
 	
 	private Map cachedImages = new HashMap();
@@ -89,6 +94,14 @@ public class AboutFeaturesDialog extends Dialog {
 	private int lastColumnChosen = 0;	// initially sort by provider
 	private boolean reverseSort = false;	// initially sort ascending
 	private AboutInfo lastSelection = null;
+
+	private 	AboutParser parser;
+	private 	AboutItem item;
+
+	private    int ABOUT_TEXT_WIDTH = 70; // chars
+	private    int ABOUT_TEXT_HEIGHT = 15; // chars
+	private 	Cursor handCursor;
+	private 	Cursor busyCursor;
 	
 	/**
 	 * Constructor for AboutFeaturesDialog
@@ -139,6 +152,14 @@ public class AboutFeaturesDialog extends Dialog {
 	 * @return the dialog area control
 	 */
 	protected Control createDialogArea(Composite parent) {
+		handCursor = new Cursor(parent.getDisplay(), SWT.CURSOR_HAND);
+		busyCursor = new Cursor(parent.getDisplay(), SWT.CURSOR_WAIT);
+		getShell().addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				handCursor.dispose();
+				busyCursor.dispose();
+			}
+		});
 
 		Composite outer = (Composite) super.createDialogArea(parent);
 
@@ -173,19 +194,27 @@ public class AboutFeaturesDialog extends Dialog {
 		data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
 		data.verticalAlignment = GridData.BEGINNING;
-		data.grabExcessHorizontalSpace = true;
+		data.heightHint = 32;
+		data.widthHint = 32;
 		imageLabel.setLayoutData(data);
 		
 		// text on the right
-		text = new Label(infoArea, SWT.LEFT | SWT.WRAP );
+		text = new StyledText(infoArea, SWT.MULTI | SWT.READ_ONLY);
+		text.setFont(parent.getFont());
 		data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
 		data.verticalAlignment = GridData.BEGINNING;
+		data.grabExcessHorizontalSpace = true;
+		data.widthHint = convertWidthInCharsToPixels(ABOUT_TEXT_WIDTH);
+		data.heightHint = convertHeightInCharsToPixels(ABOUT_TEXT_HEIGHT);
 		text.setLayoutData(data);
-		text.setFont(parent.getFont());
+		text.setCursor(null);
+		text.setBackground(infoArea.getBackground());
+		addListeners(text);
 		
-		if (lastSelection != null)
-			updateInfoArea(lastSelection);
+		TableItem[] items = table.getSelection();
+		if (items.length > 0) 
+			updateInfoArea((AboutInfo)items[0].getData());
 	}		
 	
 	/**
@@ -229,7 +258,7 @@ public class AboutFeaturesDialog extends Dialog {
 			text.setText(""); //$NON-NLS-1$
 			return;
 		}
-		ImageDescriptor desc = info.getFeatureImage();
+		ImageDescriptor desc = info.getFeatureIcon();
 		Image image =  (Image)cachedImages.get(desc);
 		if (image == null && desc != null) {
 			image = desc.createImage();
@@ -237,11 +266,24 @@ public class AboutFeaturesDialog extends Dialog {
 		}
 		imageLabel.setImage(image);
 		String aboutText = info.getAboutText();
-		if (aboutText == null)
-			aboutText = "";
-		text.setText(aboutText);
-		
-		infoArea.layout(true);
+		item = null;
+		if (aboutText != null) {
+			StringBuffer buf = new StringBuffer("<?xml version=\"1.0\" encoding=\"UTF-8\" ?><about>");  //$NON-NLS-1$
+			buf.append(aboutText);
+			buf.append("</about>");	//$NON-NLS-1$
+			// get an about item
+			parser = new AboutParser();
+			parser.parse(buf.toString());
+			item = parser.getAboutItem();
+		}
+		if (item == null)
+			text.setText(WorkbenchMessages.getString("AboutFeaturesDialog.noInformation"));
+		else {
+			text.setText(item.getText());	
+			text.setCursor(null);
+			setBoldRanges(text, item.getBoldRanges());
+			setLinkRanges(text, item.getLinkRanges());
+		}
 	}
 	/** 
 	 * Select the initial selection
@@ -282,7 +324,7 @@ public class AboutFeaturesDialog extends Dialog {
 			if (featuresInfo[i] == lastSelection)
 				initialSelectionIndex = i;
 			String provider = featuresInfo[i].getProviderName();
-			String featureName = featuresInfo[i].getProductName();
+			String featureName = featuresInfo[i].getFeatureLabel();
 			String version = featuresInfo[i].getVersion();
 			if (provider == null)
 				provider = "";
@@ -497,6 +539,98 @@ public class AboutFeaturesDialog extends Dialog {
 						return coll.compare(version1, version2);
 				}
 			});
+		}
+	}
+	
+/**
+ * Adds listeners to the given styled text
+ */
+private void addListeners(StyledText styledText) {
+	styledText.addMouseListener(new MouseAdapter() {
+		public void mouseUp(MouseEvent e) {
+			StyledText text = (StyledText)e.widget;
+			int offset = text.getCaretOffset();
+			if (item != null && item.isLinkAt(offset)) {	
+				text.setCursor(busyCursor);
+				openLink(item.getLinkAt(offset));
+				text.setCursor(null);
+			}
+		}
+	});
+	styledText.addMouseMoveListener(new MouseMoveListener() {
+		public void mouseMove(MouseEvent e) {
+			StyledText text = (StyledText)e.widget;
+			int offset = -1;
+			try {
+				offset = text.getOffsetAtLocation(new Point(e.x, e.y));
+			} catch (IllegalArgumentException ex) {
+				// leave value as -1
+			}
+			if (offset == -1)
+				text.setCursor(null);
+			else if (item != null && item.isLinkAt(offset)) 
+				text.setCursor(handCursor);
+			else 
+				text.setCursor(null);
+		}
+	});
+}
+	/**
+	 * Open a link
+	 */
+	private void openLink(final String href) {
+		if (SWT.getPlatform().equals("win32")) { //$NON-NLS-1$
+			Program.launch(href);
+		} else {
+				Thread launcher = new Thread("About Link Launcher") {//$NON-NLS-1$
+	public void run() {
+					try {
+						if (webBrowserOpened) {
+							Runtime.getRuntime().exec("netscape -remote openURL(" + href + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+						} else {
+							Process p = Runtime.getRuntime().exec("netscape " + href); //$NON-NLS-1$
+							webBrowserOpened = true;
+							try {
+								if (p != null)
+									p.waitFor();
+							} catch (InterruptedException e) {
+								MessageDialog.openError(AboutFeaturesDialog.this.getShell(), WorkbenchMessages.getString("AboutDialog.errorTitle"), //$NON-NLS-1$
+								e.getMessage());
+							} finally {
+								webBrowserOpened = false;
+							}
+						}
+					} catch (IOException e) {
+						MessageDialog.openError(AboutFeaturesDialog.this.getShell(), WorkbenchMessages.getString("AboutDialog.errorTitle"), //$NON-NLS-1$
+						e.getMessage());
+
+					}
+				}
+			};
+			launcher.start();
+		}
+	}
+
+	/**
+	 * Sets the styled text's bold ranges
+	 */
+	private void setBoldRanges(StyledText styledText, int[][] boldRanges) {
+		for (int i = 0; i < boldRanges.length; i++) {
+			StyleRange r =
+				new StyleRange(boldRanges[i][0], boldRanges[i][1], null, null, SWT.BOLD);
+			styledText.setStyleRange(r);
+		}
+	}
+	/**
+	 * Sets the styled text's link (blue) ranges
+	 */
+	private void setLinkRanges(StyledText styledText, int[][] linkRanges) {
+		Color fg =
+			JFaceColors.getHyperlinkText(styledText.getShell().getDisplay());
+		for (int i = 0; i < linkRanges.length; i++) {
+			StyleRange r =
+				new StyleRange(linkRanges[i][0], linkRanges[i][1], fg, null);
+			styledText.setStyleRange(r);
 		}
 	}
 

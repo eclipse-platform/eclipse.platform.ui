@@ -28,7 +28,7 @@ public class AboutInfo extends NewConfigurationInfo {
 	private String productName;
 	private ImageDescriptor windowIcon;
 	private ImageDescriptor aboutImage;
-	private ImageDescriptor featureImage;
+	private ImageDescriptor featureIcon;
 	private String aboutText;
 	private URL welcomePageURL;
 
@@ -55,10 +55,19 @@ public class AboutInfo extends NewConfigurationInfo {
 	 * dialog.
 	 * Products designed to run "headless" typically would not have such an image.
 	 * 
-	 * @return the descriptor for a feature image, or <code>null</code> if none
+	 * @return the descriptor for a feature icon, or <code>null</code> if none
 	 */
-	public ImageDescriptor getFeatureImage() {
-		return featureImage;
+	public ImageDescriptor getFeatureIcon() {
+		return featureIcon;
+	}
+	
+	/**
+	 * Returns a label for the feature, we use the descriptor label
+	 */
+	public String getFeatureLabel() {
+		if (getDescriptor() == null)
+			return null;
+		return getDescriptor().getLabel();
 	}
 
 	/**
@@ -221,14 +230,20 @@ public class AboutInfo extends NewConfigurationInfo {
 		productName = (String) ini.get("productName"); //$NON-NLS-1$
 		productName = getResourceString(productName, bundle, mappingsArray);
 
-		windowIcon = getImage(ini, "windowImage"); //$NON-NLS-1$
+		windowIcon = getImage(ini, "windowIcon"); //$NON-NLS-1$
+		if (windowIcon == null)
+			// backward compatibility
+			windowIcon = getImage(ini, "windowImage"); //$NON-NLS-1$
 
 		aboutText = (String) ini.get("aboutText"); //$NON-NLS-1$
 		aboutText = getResourceString(aboutText, bundle, mappingsArray);
 
 		aboutImage = getImage(ini, "largeImage"); //$NON-NLS-1$
 
-		featureImage = getImage(ini, "featureImage"); //$NON-NLS-1$
+		featureIcon = getImage(ini, "featureIcon"); //$NON-NLS-1$
+		if (featureIcon == null)
+			// backward compatibility
+			featureIcon = getImage(ini, "featureImage"); //$NON-NLS-1$
 
 		welcomePageURL = getURL(ini, "welcomePage");
 
@@ -246,17 +261,7 @@ public class AboutInfo extends NewConfigurationInfo {
 		URL url = null;
 		String fileName = (String) ini.get(key);
 		if (fileName != null) {
-			try {
-				// FIXME: use IPluginDescriptor.find and remove resolve call
-				url = getDescriptor().getPlugin().find(new Path("$nl$").append(fileName));
-				if (url != null) {
-					url = Platform.resolve(url);
-				}
-			} catch (CoreException e) {
-				reportINIFailure(null, "Cannot access url " + fileName); //$NON-NLS-1$
-			} catch (IOException e) {
-				reportINIFailure(null, "Cannot access url " + fileName); //$NON-NLS-1$
-			}
+			url = getDescriptor().find(new Path("$nl$").append(fileName));
 		}
 		return url;
 	}

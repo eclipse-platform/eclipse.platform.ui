@@ -81,31 +81,13 @@ public abstract class ConfigurationInfo {
 		this.baseURL = desc.getInstallURL();
 
 		// load the platform.ini and platform.properties file	
-		URL iniURL = null;
-		try {
-			iniURL = desc.getPlugin().find(new Path(iniFilename));
-			if (iniURL != null)
-				iniURL = Platform.resolve(iniURL);
-		} catch (CoreException e) {
-			// null check below
-		} catch (IOException e) {
-			// null check below
-		}
+		URL iniURL = desc.find(new Path(iniFilename));
 		if (iniURL == null) {
 			reportINIFailure(null, "Unable to load plugin file: " + iniFilename); //$NON-NLS-1$
 			return;
 		}
 		
-		URL propertiesURL = null;
-		try {
-			propertiesURL = desc.getPlugin().find(new Path(propertiesFilename));
-			if (propertiesURL != null)
-				propertiesURL = Platform.resolve(propertiesURL);
-		} catch (CoreException e) {
-			reportINIFailure(null, "Unable to load plugin file: " + propertiesFilename); //$NON-NLS-1$
-		} catch (IOException e) {
-			reportINIFailure(null, "Unable to load plugin file: " + propertiesFilename); //$NON-NLS-1$
-		}
+		URL propertiesURL = desc.find(new Path(propertiesFilename));
 		// OK to pass null properties file
 		readINIFile(iniURL, propertiesURL);
 	}
@@ -193,6 +175,11 @@ public abstract class ConfigurationInfo {
 	 * Report an ini failure
 	 */
 	protected void reportINIFailure(Exception e, String message) {
+		if (!WorkbenchPlugin.DEBUG) {
+			// only report ini problems if the -debug command line argument is used
+			return;
+		}
+		
 		IStatus iniStatus = new Status(IStatus.ERROR, WorkbenchPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
 										0, message, e);
 		WorkbenchPlugin.log("Problem reading configuration info.", iniStatus);//$NON-NLS-1$

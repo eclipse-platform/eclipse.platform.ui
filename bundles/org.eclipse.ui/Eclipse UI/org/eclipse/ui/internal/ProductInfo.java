@@ -350,16 +350,7 @@ protected void readINIFile(URL iniURL, URL propertiesURL) throws CoreException {
 
 	String welcomePageFileName = (String) ini.get("welcomePage"); //$NON-NLS-1$
 	if (welcomePageFileName != null) {
-		welcomePageURL = null;
-		try {
-			welcomePageURL = getDescriptor().getPlugin().find(new Path(welcomePageFileName));
-			if (welcomePageURL != null)
-				welcomePageURL = Platform.resolve(welcomePageURL);
-		} catch (CoreException e) {
-			// null check below
-		} catch (IOException e) {
-			// null check below
-		}
+		welcomePageURL = getDescriptor().find(new Path(welcomePageFileName));
 		if (welcomePageURL == null) {
 			reportINIFailure(null, "Cannot access welcome page " + welcomePageFileName); //$NON-NLS-1$
 		}
@@ -368,45 +359,27 @@ protected void readINIFile(URL iniURL, URL propertiesURL) throws CoreException {
 	URL url = null;
 	String fileName = (String) ini.get("image");//$NON-NLS-1$
 	if (fileName != null) {
-		try {
-			url = getDescriptor().getPlugin().find(new Path(fileName));
-			if (url != null)
-				url = Platform.resolve(url);
-		} catch (CoreException e) {
+			url = getDescriptor().find(new Path(fileName));
+		if (url == null)
 			reportINIFailure(null, "Cannot access image " + fileName); //$NON-NLS-1$
-		} catch (IOException e) {
-			reportINIFailure(null, "Cannot access image " + fileName); //$NON-NLS-1$
-		}
-		if (url != null)
+		else
 			productImage = ImageDescriptor.createFromURL(url);
 	}
 
 	fileName = (String) ini.get("aboutImage");//$NON-NLS-1$
 	if (fileName != null) {
-		try {
-			url = getDescriptor().getPlugin().find(new Path(fileName));
-			if (url != null)
-				url = Platform.resolve(url);
-		} catch (CoreException e) {
+		url = getDescriptor().find(new Path(fileName));
+		if (url == null)
 			reportINIFailure(null, "Cannot access about image " + fileName); //$NON-NLS-1$
-		} catch (IOException e) {
-			reportINIFailure(null, "Cannot access about image " + fileName); //$NON-NLS-1$
-		}
-		if (url != null)
+		else
 			aboutImage = ImageDescriptor.createFromURL(url);
 	}
 
 	if ((fileName = (String) ini.get("splashImage") ) != null) {//$NON-NLS-1$
-		try {
-			url = getDescriptor().getPlugin().find(new Path(fileName));
-			if (url != null)
-				url = Platform.resolve(url);
-		} catch (CoreException e) {
+		url = getDescriptor().find(new Path(fileName));
+		if (url == null)
 			reportINIFailure(null, "Cannot access splash image " + fileName); //$NON-NLS-1$
-		} catch (IOException e) {
-			reportINIFailure(null, "Cannot access splash image " + fileName); //$NON-NLS-1$
-		}
-		if (url != null)
+		else
 			splashImage = ImageDescriptor.createFromURL(url);
 	}
 
