@@ -87,6 +87,16 @@ static public XMLMemento createWriteRoot(String type) {
 	return new XMLMemento(document, element);
 }
 /**
+ * Copy a child from one document to another.
+ */
+public IMemento copyChild(IMemento child) {
+	Element childElement = ((XMLMemento)child).element;
+	Element newElement = (Element)factory.importNode(childElement, true);
+	element.appendChild(newElement);	
+	return new XMLMemento(factory, newElement);
+}
+
+/**
  * @see IMemento.
  */
 public IMemento getChild(String type) {
