@@ -1,10 +1,15 @@
+/**********************************************************************
+Copyright (c) 2000, 2003 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+	IBM Corporation - Initial implementation
+**********************************************************************/
+
 package org.eclipse.jface.text;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
-
 
 
 /**
@@ -45,7 +50,13 @@ public class DocumentEvent {
 		fLength= length;
 		fText= text;
 	}
-
+	
+	/**
+	 * Creates a new uninitialized document event.
+	 */
+	public DocumentEvent() {
+	}
+	
 	/**
 	 * Returns the changed document.
 	 *
