@@ -268,6 +268,27 @@ public class TemplateStore {
 	}
 	
 	/**
+	 * Returns the first enabled template that matches the given template id.
+	 *  
+	 * @param id the id of the template searched for
+	 * @return the first enabled template that matches id, or <code>null</code> if none is found
+	 * @since 3.1
+	 */
+	public Template findTemplateById(String id) {
+		Assert.isNotNull(id);
+		
+		for (Iterator it= fTemplates.iterator(); it.hasNext();) {
+			TemplatePersistenceData data= (TemplatePersistenceData) it.next();
+			if (data.isEnabled() && !data.isDeleted() 
+					&& id.equals(data.getId()))
+				return data.getTemplate();
+		}
+		
+		return null;
+		
+	}
+	
+	/**
 	 * Returns all template datas.
 	 * 
 	 * @param includeDeleted whether to include deleted datas

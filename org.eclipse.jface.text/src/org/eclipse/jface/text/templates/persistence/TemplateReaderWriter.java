@@ -81,6 +81,25 @@ public class TemplateReaderWriter {
 	}
 	
 	/**
+	 * Reads the template with identifier <code>id</code> from a reader and
+	 * returns it. The reader must present a serialized form as produced by the
+	 * <code>save</code> method.
+	 * 
+	 * @param reader the reader to read templates from
+	 * @param id the id of the template to return
+	 * @return the read template, encapsulated in an instances of
+	 *         <code>TemplatePersistenceData</code>
+	 * @throws IOException if reading from the stream fails
+	 * @since 3.1
+	 */	
+	public TemplatePersistenceData readSingle(Reader reader, String id) throws IOException {
+		TemplatePersistenceData[] datas= read(new InputSource(reader), null, id);
+		if (datas.length > 0)
+			return datas[0];
+		return null;
+	}
+	
+	/**
 	 * Reads templates from a stream and adds them to the templates.
 	 * 
 	 * @param reader the reader to read templates from
@@ -89,7 +108,7 @@ public class TemplateReaderWriter {
 	 * @throws IOException if reading from the stream fails 
 	 */	
 	public TemplatePersistenceData[] read(Reader reader, ResourceBundle bundle) throws IOException {
-		return read(new InputSource(reader), bundle);
+		return read(new InputSource(reader), bundle, null);
 	}
 	
 	/**
@@ -101,7 +120,7 @@ public class TemplateReaderWriter {
 	 * @throws IOException if reading from the stream fails 
 	 */	
 	public TemplatePersistenceData[] read(InputStream stream, ResourceBundle bundle) throws IOException {
-		return read(new InputSource(stream), bundle);
+		return read(new InputSource(stream), bundle, null);
 	}
 	
 	/**
@@ -109,10 +128,11 @@ public class TemplateReaderWriter {
 	 * 
 	 * @param source the input source
 	 * @param bundle a resource bundle to use for translating the read templates, or <code>null</code> if no translation should occur
+	 * @param singleId the template id to extract, or <code>null</code> to read in all templates
 	 * @return the read templates, encapsulated in instances of <code>TemplatePersistenceData</code>
 	 * @throws IOException if reading from the stream fails 
 	 */	
-	private TemplatePersistenceData[] read(InputSource source, ResourceBundle bundle) throws IOException {
+	private TemplatePersistenceData[] read(InputSource source, ResourceBundle bundle, String singleId) throws IOException {
 		try {
 			Collection templates= new ArrayList();
 			Set ids= new HashSet();
@@ -134,6 +154,9 @@ public class TemplateReaderWriter {
 				String id= getStringValue(attributes, ID_ATTRIBUTE, null);
 				if (id != null && ids.contains(id))
 					throw new IOException(TemplatePersistenceMessages.getString("TemplateReaderWriter.duplicate.id")); //$NON-NLS-1$
+				
+				if (singleId != null && !singleId.equals(id))
+					continue;
 				
 				boolean deleted = getBooleanValue(attributes, DELETED_ATTRIBUTE, false);
 				
@@ -165,6 +188,9 @@ public class TemplateReaderWriter {
 				data.setDeleted(deleted);
 				
 				templates.add(data);
+				
+				if (singleId != null && singleId.equals(id))
+					break;
 			}
 			
 			return (TemplatePersistenceData[]) templates.toArray(new TemplatePersistenceData[templates.size()]);
