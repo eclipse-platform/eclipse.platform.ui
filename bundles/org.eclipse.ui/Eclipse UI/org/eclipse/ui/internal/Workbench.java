@@ -658,9 +658,14 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 			descriptor = ImageDescriptor.createFromURL(path);
 		}
 		WorkbenchImages.getImageRegistry().put(IWorkbenchGraphicConstants.IMG_OBJS_DEFAULT_PROD, descriptor);
-		Image image = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_OBJS_DEFAULT_PROD);
-		if (image != null) {
-			Window.setDefaultImage(image);
+		// Test to see if we can create a real image
+		Image test = descriptor.createImage(false);
+		if (test != null) {
+			test.dispose();
+			Image image = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_OBJS_DEFAULT_PROD);
+			if (image != null) {
+				Window.setDefaultImage(image);
+			}
 		}
 	}
 	/**
