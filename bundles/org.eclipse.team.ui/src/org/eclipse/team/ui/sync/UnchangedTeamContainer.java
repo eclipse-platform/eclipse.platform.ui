@@ -39,6 +39,13 @@ public class UnchangedTeamContainer extends DiffNode implements ITeamNode {
 		return ITeamNode.NO_CHANGE;
 	}
 	
+	/*
+	 * @see ITeamNode#getChangeType()
+	 */
+	public int getChangeType() {
+		return ITeamNode.NO_CHANGE;
+	}
+	
 	public Image getImage() {
 		return CompareUI.getImage(getType());
 	}
@@ -56,5 +63,5 @@ public class UnchangedTeamContainer extends DiffNode implements ITeamNode {
 
 	public String getType() {
 		return ITypedElement.FOLDER_TYPE;
-	}
+	}	
 }

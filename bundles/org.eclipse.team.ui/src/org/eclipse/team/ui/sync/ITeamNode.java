@@ -26,6 +26,12 @@ public interface ITeamNode extends IDiffElement {
 	public int getChangeDirection();
 	
 	/**
+	 * Returns the type of change for this resource.  One of:
+	 * CHANGE, DELETION, ADDITION
+	 */
+	public int getChangeType();
+	
+	/**
 	 * Returns the core resource represented by this node.
 	 */
 	public IResource getResource();

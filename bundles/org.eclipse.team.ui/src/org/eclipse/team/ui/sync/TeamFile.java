@@ -17,11 +17,13 @@ import org.eclipse.compare.structuremergeviewer.IDiffContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
@@ -56,7 +58,10 @@ public class TeamFile extends DiffElement implements ICompareInput, ITeamNode {
 				return mergeResource.getLatestRevision();
 			}
 		};
-		localByteContents = new TypedBufferedContent(this, true) {
+		// don't allow editing of outgoing deletion content. To revert from the deletion the
+		// user should use the appropriate sync view action.
+		boolean outgoingDeletion = getChangeDirection() == IRemoteSyncElement.OUTGOING && getChangeType() ==  IRemoteSyncElement.DELETION;
+		localByteContents = new TypedBufferedContent(this, !outgoingDeletion) {
 			protected InputStream createStream() throws CoreException {
 				return mergeResource.getLocalStream();
 			}
@@ -71,7 +76,6 @@ public class TeamFile extends DiffElement implements ICompareInput, ITeamNode {
 			}
 		};
 	}
-
 	public void addCompareInputChangeListener(ICompareInputChangeListener l) {
 		if (listeners == null) {
 			listeners = new ListenerList();
@@ -93,7 +97,6 @@ public class TeamFile extends DiffElement implements ICompareInput, ITeamNode {
 		}
 		return super.equals(other);
 	}
-
 	private void fireThreeWayInputChange() {
 		if (listeners != null) {
 			Object[] listenerArray = listeners.getListeners();
@@ -123,6 +126,12 @@ public class TeamFile extends DiffElement implements ICompareInput, ITeamNode {
 	}
 	
 	/*
+	 * @see ITeamNode#getChangeType()
+	 */
+	public int getChangeType() {
+		return getKind() & Differencer.CHANGE_TYPE_MASK;
+	}
+	/*
 	 * @see ITypedInput#getType
 	 */
 	public Image getImage() {
@@ -150,7 +159,6 @@ public class TeamFile extends DiffElement implements ICompareInput, ITeamNode {
 	public String getName() {
 		return mergeResource.getName();
 	}
-
 	/**
 	 * Returns the core resource managed by this object.
 	 * Guaranteed to be non-null.
@@ -189,8 +197,26 @@ public class TeamFile extends DiffElement implements ICompareInput, ITeamNode {
 	private void merged() {
 		mergeResource.confirmMerge();
 		try {
+			// persist changes to disk (e.g. there is no buffering in the sync view).
 			saveChanges();
-			setKind(OUTGOING | (getKind() & Differencer.CHANGE_TYPE_MASK));
+			
+			// calculate the new sync state based on the type of change that was merged. This
+			// logic cannot be in the IRemoteSyncElement because there is no way to update the
+			// base before calling getSyncKind() again.
+			if(getChangeDirection()==INCOMING) {
+				switch(getChangeType()) {
+					case Differencer.ADDITION:
+					case Differencer.CHANGE:
+						setKind(OUTGOING | Differencer.CHANGE);	
+						break;
+					case Differencer.DELETION:
+						setKind(CONFLICTING | Differencer.CHANGE);
+				}						
+			} else {
+				setKind(OUTGOING | (getKind() & Differencer.CHANGE_TYPE_MASK));
+			}
+			
+			// update the UI with the sync state change.
 			fireThreeWayInputChange();
 		} catch (CoreException e) {
 			ErrorDialog.openError(WorkbenchPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell(), Policy.bind("TeamFile.saveChanges", getName()), null, e.getStatus());
@@ -219,7 +245,6 @@ public class TeamFile extends DiffElement implements ICompareInput, ITeamNode {
 			file.delete(false, true, null);
 		}
 	}
-
 	/**
 	 * For debugging purposes only.
 	 */
