@@ -340,13 +340,27 @@ public class PluginDescriptor implements IPluginDescriptor {
 	 * @see IPluginDescriptor
 	 */
 	public final URL find(IPath path) {
-		return FindSupport.find(bundleOsgi, path);
+		URL result = FindSupport.find(bundleOsgi, path);
+		if (result != null)
+			try {
+				result = Platform.resolve(result);
+			} catch (IOException e) {
+				// if the URL cannot be resolved for some reason, return the original result.
+			}
+		return result;
 	}
 	/**
 	 * @see IPluginDescriptor
 	 */
 	public final URL find(IPath path, Map override) {
-		return FindSupport.find(bundleOsgi, path, override);
+		URL result = FindSupport.find(bundleOsgi, path, override);
+		if (result != null)
+			try {
+				result = Platform.resolve(result);
+			} catch (IOException e) {
+				// if the URL cannot be resolved for some reason, return the original result.
+			}
+		return result;
 	}
 
 	/**

@@ -19,7 +19,6 @@ import java.util.zip.CheckedInputStream;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.runtime.*;
-import org.eclipse.osgi.service.environment.EnvironmentInfo;
 
 /**
  * Failure reporting strategy:

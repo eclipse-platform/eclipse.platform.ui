@@ -528,8 +528,10 @@ public final class Platform {
 	 * 
 	 * @param bundle the bundle in which to search
 	 * @param file path relative to plug-in installation location 
-	 * @return a URL for the given path or <code>null</code>  It is not
-	 * necessary to perform a 'resolve' on this URL.
+	 * @return a URL for the given path or <code>null</code>.  The actual form
+	 * of the returned URL is not specified.
+	 * @see #resolve(URL)
+	 * @see #asLocalURL(URL)
 	 * @since 3.0
 	 */
 	public static URL find(Bundle bundle, IPath path) {
@@ -585,8 +587,10 @@ public final class Platform {
 	 * values must be of type java.lang.String. If the map is <code>null</code>,
 	 * or does not contain the required substitution argument, the default
 	 * is used.
-	 * @return a URL for the given path or <code>null</code>.  It is not
-	 * necessary to perform a 'resolve' on this URL.
+	 * @return a URL for the given path or <code>null</code>.  The actual form
+	 * of the returned URL is not specified.
+	 * @see #resolve(URL)
+	 * @see #asLocalURL(URL)
 	 * @since 3.0
 	 */
 	public static URL find(Bundle b, IPath path, Map override) {

@@ -17,7 +17,6 @@ import java.util.zip.CRC32;
 import java.util.zip.CheckedOutputStream;
 import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.osgi.service.environment.EnvironmentInfo;
 
 public class RegistryCacheWriter {
 	// See RegistryCacheReader for constants commonly used here too.
