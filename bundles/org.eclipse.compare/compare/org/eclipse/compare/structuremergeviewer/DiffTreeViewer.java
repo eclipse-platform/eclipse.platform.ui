@@ -320,19 +320,27 @@ public class DiffTreeViewer extends TreeViewer {
 	 * Clients may extend to track their own property changes.
 	 */
 	protected void propertyChange(PropertyChangeEvent event) {
-			
-		//if (event.getProperty().equals(CompareConfiguration.SHOW_PSEUDO_CONFLICTS))
-		//	syncShowPseudoConflictFilter();	 		 
 	}
 	
 	protected void inputChanged(Object in, Object oldInput) {
 		super.inputChanged(in, oldInput);
-		//expandToLevel(2);
 		
 		if (in != oldInput) {
-			navigate(true);
+			initialSelection();
 			updateActions();
 		}
+	}
+	
+	/**
+	 * This hook method is called from within <code>inputChanged</code>
+	 * after a new input has been set but before any controls are updated.
+	 * This default implementation calls <code>navigate(true)<code>
+	 * to select and expand the first leaf node.
+	 * Clients can override this method and are free to decide whether
+	 * they want to call the inherited method.
+	 */
+	protected void initialSelection() {
+		navigate(true);
 	}
 
 	/**
@@ -342,10 +350,15 @@ public class DiffTreeViewer extends TreeViewer {
 	protected void internalExpandToLevel(Widget node, int level) {
 				
 		Object data= node.getData();
-		if (data instanceof DiffNode && ((DiffNode)data).dontExpand())
+		
+		if (dontExpand(data))
 			return;
 		
 		super.internalExpandToLevel(node, level);
+	}
+	
+	protected boolean dontExpand(Object o) {
+		return o instanceof DiffNode && ((DiffNode)o).dontExpand();
 	}
 	
 	//---- merge action support
