@@ -146,14 +146,14 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	public void run(IAction action){
 	    if (action.isEnabled()) {
 			IStructuredSelection selection = getSelection();
-			// clear selection for next operation
-			setSelection(null);
+			// disable the action so it cannot be run again until an event or selection change
+			// updates the enablement
+			action.setEnabled(false);
 			if (isRunInBackground()) {
 				runInBackground(action, selection);
 			} else {
 				runInForeground(selection);
 			}
-			setSelection(null);
 	    }
 	}
 	
@@ -161,8 +161,6 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	 * Runs this action in a background job.
 	 */
 	private void runInBackground(IAction action, IStructuredSelection selection) {
-	    // disable the action
-	    action.setEnabled(false);
 	    if (fBackgroundJob == null) {
 			fBackgroundJob = new DebugRequestJob(action.getText());
 	    }
@@ -333,16 +331,6 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	 * @return structured selection
 	 */	
 	protected IStructuredSelection getSelection() {
-		if (getView() != null) {
-			//cannot used the cached selection in a view
-			//as the selection can be out of date for context menu
-			//actions. See bug 14556
-			ISelection s= getView().getViewSite().getSelectionProvider().getSelection();
-			if (s instanceof IStructuredSelection) {
-				return (IStructuredSelection)s;
-			} 
-			return StructuredSelection.EMPTY;
-		}
 		return fSelection;
 	}
 	
