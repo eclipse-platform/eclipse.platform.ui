@@ -360,9 +360,10 @@ public void setErrorMessage(String newErrorMessage) {
 
 	} else {
 		
-		//Add in a space for layout purposes
-		errorMessage = " " + errorMessage;
-		updateMessage(errorMessage);
+		//Add in a space for layout purposes but do not
+		//change the instance variable
+		String displayedErrorMessage = " " + errorMessage;
+		updateMessage(displayedErrorMessage);
 		messageLabel.setToolTipText(errorMessage);
 		if (!showingError) {
 			// we were not previously showing an error
@@ -516,16 +517,16 @@ private void showMessage(String newMessage, Image newImage) {
 	if (message == null)
 		message = "";//$NON-NLS-1$
 
-	//If there is an image then add in a space to the message
-	//for layout purposes
-	if(newImage != null)
-		message = " " + message; //$NON-NLS-1$
+	// Message string to be shown - if there is an image then add in 
+	// a space to the message for layout purposes
+	String shownMessage = (newImage == null) ? 
+		message : " " + message; //$NON-NLS-1$  
 		
 	messageImage = newImage;
 
 	if (!showingError) {
 		// we are not showing an error
-		updateMessage(message);
+		updateMessage(shownMessage);
 		messageImageLabel.setImage(messageImage);
 		setImageLabelVisible(messageImage != null);
 		messageLabel.setToolTipText(message);
