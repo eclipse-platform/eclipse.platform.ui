@@ -10,24 +10,27 @@ Contributors:
 ************************************************************************/
 
 package org.eclipse.ui;
+
 /**
  * Interface for listening to part lifecycle events.
  * <p>
- * This is an replacement of IPartListener.
+ * This is a replacement for <code>IPartListener</code>.
  * <p> 
  * This interface may be implemented by clients.
  * </p>
  *
- * @see IPartService#addPartListener
+ * @see IPartService#addPartListener2
  */
 public interface IPartListener2 {
+	
 /**
  * Notifies this listener that the given part has been activated.
  *
  * @param part the part that was activated
  * @see IWorkbenchPage#activate
  */
-public void partActivated(IWorkbenchPartReference ref);
+public void partActivated(IWorkbenchPartReference ref)
+;
 /**
  * Notifies this listener that the given part has been brought to the top.
  * <p>
@@ -42,6 +45,7 @@ public void partActivated(IWorkbenchPartReference ref);
  * @see IWorkbenchPage#bringToTop
  */
 public void partBroughtToTop(IWorkbenchPartReference ref);
+
 /**
  * Notifies this listener that the given part has been closed.
  *
@@ -49,6 +53,7 @@ public void partBroughtToTop(IWorkbenchPartReference ref);
  * @see IWorkbenchPage#hideView
  */
 public void partClosed(IWorkbenchPartReference ref);
+
 /**
  * Notifies this listener that the given part has been deactivated.
  *
@@ -56,6 +61,7 @@ public void partClosed(IWorkbenchPartReference ref);
  * @see IWorkbenchPage#activate
  */
 public void partDeactivated(IWorkbenchPartReference ref);
+
 /**
  * Notifies this listener that the given part has been opened.
  *
@@ -63,12 +69,14 @@ public void partDeactivated(IWorkbenchPartReference ref);
  * @see IWorkbenchPage#showView
  */ 
 public void partOpened(IWorkbenchPartReference ref);
+
 /**
  * Notifies this listener that the given part is hidden.
  *
  * @param part the part that is hidden
  */	
 public void partHidden(IWorkbenchPartReference ref);
+
 /**
  * Notifies this listener that the given part is visible.
  *

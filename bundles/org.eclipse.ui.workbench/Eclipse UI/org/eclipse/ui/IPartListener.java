@@ -14,6 +14,7 @@ package org.eclipse.ui;
  * @see IPartService#addPartListener
  */
 public interface IPartListener {
+
 /**
  * Notifies this listener that the given part has been activated.
  *
@@ -21,6 +22,7 @@ public interface IPartListener {
  * @see IWorkbenchPage#activate
  */
 public void partActivated(IWorkbenchPart part);
+
 /**
  * Notifies this listener that the given part has been brought to the top.
  * <p>
@@ -35,6 +37,7 @@ public void partActivated(IWorkbenchPart part);
  * @see IWorkbenchPage#bringToTop
  */
 public void partBroughtToTop(IWorkbenchPart part);
+
 /**
  * Notifies this listener that the given part has been closed.
  *
@@ -42,6 +45,7 @@ public void partBroughtToTop(IWorkbenchPart part);
  * @see IWorkbenchPage#hideView
  */
 public void partClosed(IWorkbenchPart part);
+
 /**
  * Notifies this listener that the given part has been deactivated.
  *
@@ -49,6 +53,7 @@ public void partClosed(IWorkbenchPart part);
  * @see IWorkbenchPage#activate
  */
 public void partDeactivated(IWorkbenchPart part);
+
 /**
  * Notifies this listener that the given part has been opened.
  *
