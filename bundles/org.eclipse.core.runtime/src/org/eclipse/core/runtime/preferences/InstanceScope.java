@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.IPath;
  * correct preference node to set values in the store.
  * <p>
  * Instance preferences are stored on a per instance basis in the
- * platform's instance area as specified by <code>IPlatform#getInstanceLocation</code>.
+ * platform's instance area as specified by {@link org.eclipse.core.runtime.Platform#getInstanceLocation}.
  * </p><p>
  * The path for preferences defined in the instance scope hierarchy
  * is as follows: <code>/instance/&lt;qualifier&gt;</code>

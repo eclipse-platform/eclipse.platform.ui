@@ -23,7 +23,7 @@ import org.eclipse.osgi.service.datalocation.Location;
  * correct preference node to set values in the store.
  * <p>
  * Configuration preferences are stored on a per configuration basis in the
- * platform's configuration area as specified by <code>IPlatform#getConfigurationLocation</code>.
+ * platform's configuration area as specified by {@link Platform#getConfigurationLocation}.
  * </p>
  * <p>
  * The path for preferences defined in the configuration scope hierarchy

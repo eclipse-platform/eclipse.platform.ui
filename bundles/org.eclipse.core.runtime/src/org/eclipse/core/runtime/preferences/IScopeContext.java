@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.IPath;
 /**
  * Clients implement this interface to provide context to a 
  * particular scope. Instances of implementions of this interface are 
- * passed to the <code>IPreferencesService</code> for use in 
+ * passed to the {@link IPreferencesService} for use in 
  * preference searching.
  * <p>
  * Clients may implement this interface.
