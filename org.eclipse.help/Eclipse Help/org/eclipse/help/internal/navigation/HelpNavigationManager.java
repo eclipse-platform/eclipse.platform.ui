@@ -23,13 +23,13 @@ import org.eclipse.help.internal.util.*;
  * There is a model (notifier) for each <views> node.
  */
 public class HelpNavigationManager {
+	public static final String NAV_XML_FILENAME = "_nav.xml";
+
 	private NavigationModel currentModel;
 	private Map navigationModels = new HashMap(/* of NavigationModel */);
 	
 	// Map that keeps track of all the infosets available
 	private InfosetsMap infosetsMap = null;
-
-	public final static String INFOSETS_FILE = "infosets";
 
 	private String currentInfosetId = null;
 
@@ -71,7 +71,7 @@ public class HelpNavigationManager {
 	private void createNavigationModels() {
 		try {
 			// Keep track of all the infosets available
-			infosetsMap = new InfosetsMap(INFOSETS_FILE);
+			infosetsMap = new InfosetsMap();
 			InfosetBuilder builder = new InfosetBuilder(HelpSystem.getContributionManager());
 			// merges all topics into views 
 			Map infosets = builder.buildInformationSets();
@@ -81,7 +81,16 @@ public class HelpNavigationManager {
 				navigationModels.put(infoset.getID(), m);
 
 				// generate navigation file for each infoset
-				generateNavForInfoSet(infoset);
+				File navOutDir = 					HelpSystem
+						.getPlugin()
+						.getStateLocation()
+						.addTrailingSeparator()
+						.append(infoset.getID()).toFile();
+				if (!navOutDir.exists()) {
+					navOutDir.mkdirs();
+				}
+				File navOutFile = new File(navOutDir, NAV_XML_FILENAME);
+				new XMLNavGenerator(infoset, navOutFile).generate();
 
 				infosetsMap.put(infoset.getID(), infoset.getRawLabel());
 			}
@@ -90,32 +99,6 @@ public class HelpNavigationManager {
 		} catch (Exception e) {
 			Logger.logError("", e);
 		}
-	}
-	/**
-	 * @param viewSet com.ibm.itp.ua.view.ViewSet
-	 * @param outputDir java.io.File
-	 */
-	private void generateInfoSetNav(InfoSet infoSet, File outputDir) {
-		XMLNavGenerator navGen = new XMLNavGenerator(infoSet, outputDir);
-		navGen.generate();
-	}
-	/**
-	 * @param viewSet com.ibm.itp.ua.view.ViewSet
-	 */
-	private void generateNavForInfoSet(InfoSet infoSet) {
-		IPath path =
-			HelpSystem
-				.getPlugin()
-				.getStateLocation()
-				.addTrailingSeparator()
-				.append(infoSet.getID());
-
-		File outDir = path.toFile();
-		if (!outDir.exists()) {
-			outDir.mkdirs();
-		}
-
-		generateInfoSetNav(infoSet, outDir);
 	}
 	/**
 	 * Returns the current navigation model
@@ -192,7 +175,7 @@ public class HelpNavigationManager {
 	public Collection getInfoSetIds() {
 		if(infosetsMap == null)
 		{
-			infosetsMap = new InfosetsMap(INFOSETS_FILE);
+			infosetsMap = new InfosetsMap();
 			infosetsMap.restore();
 		}
 
@@ -209,7 +192,7 @@ public class HelpNavigationManager {
 			}
 		}
 		// add the remaining infosets
-		for (Enumeration infosets=infosetsMap.keys(); infosets.hasMoreElements(); )
+		for (Enumeration infosets=infosetsMap.keys();infosets.hasMoreElements(); )
 		{
 			String infoset = (String)infosets.nextElement();
 			if (!orderedInfosets.contains(infoset))

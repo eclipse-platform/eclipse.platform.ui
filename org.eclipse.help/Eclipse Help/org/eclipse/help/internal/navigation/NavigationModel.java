@@ -4,7 +4,6 @@ package org.eclipse.help.internal.navigation;
  * All Rights Reserved.
  */
 
-
 import org.xml.sax.*;
 import java.util.*;
 import java.io.*;
@@ -51,35 +50,8 @@ public class NavigationModel {
 		this.infoset = infoset;
 		registerURLs();
 	}
-	/**
-	 * Generate the XML navigation file for this model (infoset)
-	 */
-	private void generateNavigation() {
-		if (infoset == null)
-			return;
-
-		IPath path =
-			HelpSystem
-				.getPlugin()
-				.getStateLocation()
-				.addTrailingSeparator()
-				.append(infoset.getID());
-
-		File outDir = path.toFile();
-		if (!outDir.exists()) {
-			outDir.mkdirs();
-		}
-
-		XMLNavGenerator navGen = new XMLNavGenerator((InfoSet) infoset, outDir);
-		navGen.generate();
-	}
 	public Set getAllURLs() {
 		return urlToTopicMap.keySet();
-	}
-	/**
-	 */
-	public String getID() {
-		return infosetID;
 	}
 	public Contribution getRootElement() {
 		return infoset;
@@ -99,9 +71,8 @@ public class NavigationModel {
 		URL helpServerURL = HelpSystem.getLocalHelpServerURL();
 		if (helpServerURL != null && url.startsWith(helpServerURL.getProtocol())) {
 			url = url.substring(helpServerURL.toExternalForm().length());
-		} else
-			if (url.indexOf('/') != 0)
-				url = "/" + url;
+		} else if (url.indexOf('/') != 0)
+			url = "/" + url;
 
 		// get topics for corrected URL from the map
 		return (Topic[]) urlToTopicMap.get(url);
@@ -115,22 +86,22 @@ public class NavigationModel {
 				.getPlugin()
 				.getStateLocation()
 				.append(infosetID)
-				.append(XMLNavGenerator.NAV_XML_FILENAME)
+				.append(HelpNavigationManager.NAV_XML_FILENAME)
 				.toOSString();
-				
+
 		ContributionParser parser = null;
-		
+
 		try {
-			 parser = new ContributionParser();
+			parser = new ContributionParser();
 			if (Logger.DEBUG)
 				Logger.logDebugMessage("NavigationModel", "Loading _nav= " + xmlFile);
 			InputStream input = new FileInputStream(xmlFile);
-			
+
 			InputSource source = new InputSource(input);
 			// set id info for parser exceptions.
 			// use toString method to capture protocol...etc
 			source.setSystemId(xmlFile);
-			
+
 			parser.parse(source);
 			infoset = parser.getContribution();
 
@@ -141,8 +112,6 @@ public class NavigationModel {
 			// Log the error. No need to populate RuntimeHelpStatus
 			// because the parsing already did this.
 			Logger.logError("", se);
-
-			
 
 			// now pass it to the RuntimeHelpStatus object explicitly because we
 			// still need to display errors even if Logging is turned off.
@@ -174,7 +143,7 @@ public class NavigationModel {
 						+ "/"
 						+ infosetID
 						+ "/"
-						+ XMLNavGenerator.NAV_XML_FILENAME);
+						+ HelpNavigationManager.NAV_XML_FILENAME);
 
 			in = new BufferedInputStream(remoteNavFile.openStream());
 
@@ -191,7 +160,7 @@ public class NavigationModel {
 		} catch (SAXException se) {
 			// Log the error.
 			Logger.logError("", se);
-			
+
 		} catch (Exception e) {
 			// Could not copy the model data from server
 			String msg = Resources.getString("E012");
@@ -251,8 +220,5 @@ public class NavigationModel {
 				}
 			}
 		}
-	}
-	private void save() {
-		generateNavigation();
 	}
 }

@@ -4,24 +4,54 @@ package org.eclipse.help.internal.navigation;
  * All Rights Reserved.
  */
 
-
 import java.io.*;
 import java.net.URL;
 import java.util.*;
 import org.eclipse.help.internal.HelpSystem;
 import org.eclipse.help.internal.util.*;
 import org.eclipse.help.internal.server.TempURL;
-
-/**
+import org.eclipse.help.internal.contributions.*;
+import org.eclipse.help.internal.contributions.xml.*;
+import org.eclipse.help.internal.contributors.xml.*;
+import org.apache.xerces.parsers.SAXParser;
+import org.xml.sax.*;
+/*
  * Persistent Hashtable with keys and values of type String.
  */
-public class InfosetsMap extends HelpProperties {
+public class InfosetsMap extends Hashtable {
+	public static final String INFOSETS_FILENAME = "infosets.xml";
+	File infosetsFile = null;
 	/**
 	 * Creates empty table for storing valid Info Sets.
 	 * @param name name of the table;
 	 */
-	public InfosetsMap(String name) {
-		super(name);
+	public InfosetsMap() {
+		super();
+		infosetsFile =
+			HelpSystem
+				.getPlugin()
+				.getStateLocation()
+				.addTrailingSeparator()
+				.append(INFOSETS_FILENAME)
+				.toFile();
+
+	}
+	public void save() {
+		XMLGenerator gen = new XMLGenerator(infosetsFile);
+		gen.println("<infosets>");
+		gen.pad++;
+		for (Enumeration en = keys(); en.hasMoreElements();) {
+			Object infosetID = en.nextElement();
+			gen.printPad();
+			gen.print("<infoset id=\"");
+			gen.print(infosetID);
+			gen.print("\" label=\"");
+			gen.print(get(infosetID));
+			gen.println("\"/>");
+		}
+		gen.pad--;
+		gen.println("</infosets>");
+		gen.close();
 	}
 	/**
 	 * Restores contents of the table from a file or from the server,
@@ -31,15 +61,11 @@ public class InfosetsMap extends HelpProperties {
 	public boolean restore() {
 		if (!this.isEmpty())
 			clear();
-			
-		if (!HelpSystem.isClient())
-			return super.restore();
-			
-		else {
-			// get them from the server
-			InputStream in = null;
 
-			try {
+		InputStream input = null;
+		try {
+			InputSource source = null;
+			if (HelpSystem.isClient()) {
 				URL remoteInfosetFile =
 					new URL(
 						HelpSystem.getRemoteHelpServerURL(),
@@ -47,33 +73,52 @@ public class InfosetsMap extends HelpProperties {
 							+ "/"
 							+ TempURL.getPrefix()
 							+ "/infosets.properties");
-
 				if (Logger.DEBUG)
 					Logger.logDebugMessage(
 						"InfosetsMap",
 						"Loading infosets= " + remoteInfosetFile.toExternalForm());
 
-				try {
-					in = remoteInfosetFile.openStream();
-					super.load(in);
-				} catch (Exception ioe) {
-					Logger.logError("E013", ioe);
-					return false;
+				input = remoteInfosetFile.openStream();
+				source.setSystemId(remoteInfosetFile.toExternalForm());
+			} else {
+				String xmlFile =
+					HelpSystem
+						.getPlugin()
+						.getStateLocation()
+						.append(INFOSETS_FILENAME)
+						.toOSString();
+				input = new FileInputStream(xmlFile);
+				source = new InputSource(input);
+				// set id info for parser exceptions.
+				// use toString method to capture protocol...etc
+				source.setSystemId(xmlFile);
+			}
+			ContributionParser parser =
+				new ContributionParser(new InfosetsContributionFactory().instance());
+			parser.parse(source);
+
+			Iterator infosetsIt = parser.getContribution().getChildren();
+			while (infosetsIt.hasNext()) {
+				Object o = infosetsIt.next();
+				if (o instanceof InfoSet) {
+					InfoSet iset = (InfoSet) o;
+					if (iset.getID() != null && iset.getID() != "" && iset.getLabel() != null)
+						put(iset.getID(), iset.getRawLabel());
 				}
-				try {
-					in.close();
-				} catch (Exception ioe) {
-				}
-			} catch (Exception ioe) {
-				Logger.logError("E013", ioe);
-				try {
-					if (in != null)
-						in.close();
-				} catch (IOException e) {
-				}
-				return false;
 			}
 
+		} catch (SAXException se) {
+			Logger.logError("E016", se);
+				return false;
+		} catch (Exception e) {
+			Logger.logError("E013", e);
+				return false;
+		} finally {
+			try {
+				if (input != null)
+					input.close();
+			} catch (IOException e) {
+			}
 		}
 		return true;
 	}
