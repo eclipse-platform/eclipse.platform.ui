@@ -12,8 +12,7 @@ package org.eclipse.ant.internal.core.ant;
 import java.text.MessageFormat;
 import java.util.*;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.*;
 
 public class Policy {
 	private static final String bundleName = "org.eclipse.ant.internal.core.ant.messages"; //$NON-NLS-1$
@@ -63,5 +62,13 @@ public static String bind(String id, String[] bindings) {
 	if (bindings == null)
 		return message;
 	return MessageFormat.format(message, bindings);
+}
+
+public static IProgressMonitor subMonitorFor(IProgressMonitor monitor, int ticks) {
+	if (monitor == null)
+		return new NullProgressMonitor();
+	if (monitor instanceof NullProgressMonitor)
+		return monitor;
+	return new SubProgressMonitor(monitor, ticks);
 }
 }

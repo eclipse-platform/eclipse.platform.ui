@@ -251,7 +251,6 @@ public void run() {
         System.setOut(new PrintStream(new DemuxOutputStream(project, false)));
         System.setErr(new PrintStream(new DemuxOutputStream(project, true)));
 		project.log(Policy.bind("label.buildFile", getBuildFileLocation())); //$NON-NLS-1$
-        fireBuildStarted(project);
 		project.init();
 		addBuildListeners(project);
 		setProperties(project);
@@ -263,7 +262,8 @@ public void run() {
 			return;
 		}
 		createMonitorBuildListener(project);
-		if (extraArguments != null)
+        fireBuildStarted(project);
+		if (extraArguments != null && !extraArguments.trim().equals(""))
 			project.log(Policy.bind("label.arguments", extraArguments)); //$NON-NLS-1$
 		if (targets != null && !targets.isEmpty())
 			project.executeTargets(targets);
@@ -287,9 +287,12 @@ public void run() {
 protected void createMonitorBuildListener(Project project) {
 	if (monitor == null)
 		return;
-	monitor.beginTask("", project.getTargets().size()); //$NON-NLS-1$
-	project.addBuildListener(new ProgressBuildListener(monitor));
-	project.addReference(AntCorePlugin.ECLIPSE_PROGRESS_MONITOR, monitor);
+	Vector chosenTargets = targets;
+	if (chosenTargets == null || chosenTargets.isEmpty()) {
+		chosenTargets = new Vector();
+		chosenTargets.add(project.getDefaultTarget());
+	}
+	project.addBuildListener(new ProgressBuildListener(project, chosenTargets, monitor));
 }
 
 /**
@@ -455,7 +458,7 @@ protected BuildLogger createLogger() {
  */
 private void fireBuildStarted(Project project) {
     BuildEvent event = new BuildEvent(project);
-    for (Iterator iterator = buildListeners.iterator(); iterator.hasNext();) {
+    for (Iterator iterator = project.getBuildListeners().iterator(); iterator.hasNext();) {
         BuildListener listener = (BuildListener) iterator.next();
         listener.buildStarted(event);
 	}
@@ -468,7 +471,7 @@ private void fireBuildStarted(Project project) {
 private void fireBuildFinished(Project project, Throwable error) {
     BuildEvent event = new BuildEvent(project);
     event.setException(error);
-    for (Iterator iterator = buildListeners.iterator(); iterator.hasNext();) {
+    for (Iterator iterator = project.getBuildListeners().iterator(); iterator.hasNext();) {
         BuildListener listener = (BuildListener) iterator.next();
         listener.buildFinished(event);
 	}
