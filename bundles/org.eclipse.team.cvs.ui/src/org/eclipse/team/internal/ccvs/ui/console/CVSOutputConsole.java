@@ -6,7 +6,6 @@ import java.util.Date;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -17,24 +16,48 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.client.listeners.IConsoleListener;
-import org.eclipse.team.internal.ccvs.ui.*;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
+import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.ui.console.IConsoleView;
 import org.eclipse.ui.console.MessageConsole;
 import org.eclipse.ui.console.MessageConsoleStream;
 
+/**
+ * Console that shows the output of CVS commands. It is shown as a page in the generic 
+ * console view. It supports coloring for message, command, and error lines in addition
+ * the font can be configured.
+ * @since 3.0 
+ */
 public class CVSOutputConsole extends MessageConsole implements IConsoleListener, IPropertyChangeListener {
 
+	// handle to the console view showing this console
+	private IConsoleView consoleView;
+	
+	// created colors for each line type - must be disposed at shutdown
 	private Color commandColor;
 	private Color messageColor;
 	private Color errorColor;
 	
+	// used to time the commands
 	private long commandStarted = 0;
 	
-	MessageConsoleStream commandStream;
-	MessageConsoleStream messageStream;
-	MessageConsoleStream errorStream;
+	// streams for each command type - each stream has its own color
+	private MessageConsoleStream commandStream;
+	private MessageConsoleStream messageStream;
+	private MessageConsoleStream errorStream;
 	
+	// preferences for showing the cvs console when cvs output is provided 
+	private boolean showOnError;
+	private boolean showOnMessage;
+	
+	// format for timings printed to console
 	private static final DateFormat TIME_FORMAT = new SimpleDateFormat(Policy.bind("Console.resultTimeFormat")); //$NON-NLS-1$
 	
+	/**
+	 * Create fonts and streams for each message type. Colors have to be disposed
+	 * on shutdown.
+	 */
 	public CVSOutputConsole() {
 		super("CVS", CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_CVS_CONSOLE)); //$NON-NLS-1$
 		commandStream = newMessageStream();
@@ -52,32 +75,52 @@ public class CVSOutputConsole extends MessageConsole implements IConsoleListener
 		errorStream.setColor(errorColor);
 		
 		// install font
-		setFont(JFaceResources.getFont(getPreferenceStore().getString(ICVSUIConstants.PREF_CONSOLE_FONT)));
+		setFont(JFaceResources.getFontRegistry().get(ICVSUIConstants.PREF_CONSOLE_FONT));
+		
+		// setup console showing preferences
+		showOnMessage = CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.PREF_CONSOLE_SHOW_ON_MESSAGE);
+		showOnError = CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.PREF_CONSOLE_SHOW_ON_ERROR);
 		
 		CVSProviderPlugin.getPlugin().setConsoleListener(this);
+		JFaceResources.getFontRegistry().addListener(this);
 		CVSUIPlugin.getPlugin().getPreferenceStore().addPropertyChangeListener(this);
 	}
-		
+	
+	/**
+	 * Clean-up created fonts.
+	 */
 	public void shutdown() {
 		commandColor.dispose();
 		messageColor.dispose();
 		errorColor.dispose();
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.core.client.listeners.IConsoleListener#commandInvoked(java.lang.String)
+	 */
 	public void commandInvoked(String line) {
 		commandStarted = System.currentTimeMillis();
 		commandStream.println(Policy.bind("Console.preExecutionDelimiter")); //$NON-NLS-1$
 		commandStream.println(line);
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.core.client.listeners.IConsoleListener#messageLineReceived(java.lang.String)
+	 */
 	public void messageLineReceived(String line) {
 		messageStream.println("  " + line); //$NON-NLS-1$
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.core.client.listeners.IConsoleListener#errorLineReceived(java.lang.String)
+	 */
 	public void errorLineReceived(String line) {
 		errorStream.println("  " + line); //$NON-NLS-1$
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.core.client.listeners.IConsoleListener#commandCompleted(org.eclipse.core.runtime.IStatus, java.lang.Exception)
+	 */
 	public void commandCompleted(IStatus status, Exception exception) {
 		long commandRuntime = System.currentTimeMillis() - commandStarted;
 		String time;
@@ -118,34 +161,7 @@ public class CVSOutputConsole extends MessageConsole implements IConsoleListener
 		commandStream.println(Policy.bind("Console.postExecutionDelimiter")); //$NON-NLS-1$
 		commandStream.println(""); //$NON-NLS-1$
 	}
-		
-	/**
-	 * Method messageLineForStatus.
-	 * @param status
-	 */
-	private String messageLineForStatus(IStatus status) {
-		if (status.getSeverity() == IStatus.ERROR) {
-			return Policy.bind("Console.error", status.getMessage()); //$NON-NLS-1$
-		} else if (status.getSeverity() == IStatus.WARNING) {
-			return Policy.bind("Console.warning", status.getMessage()); //$NON-NLS-1$
-		} else if (status.getSeverity() == IStatus.INFO) {
-			return Policy.bind("Console.info", status.getMessage()); //$NON-NLS-1$
-		}
-		return status.getMessage();
-	}
 	
-	/**
-	 * Returns a color instance based on data from a preference field.
-	 */
-	private Color createColor(Display display, String preference) {
-		RGB rgb = PreferenceConverter.getColor(getPreferenceStore(), preference);
-		return new Color(display, rgb);
-	}
-	
-	private IPreferenceStore getPreferenceStore() {
-		return CVSUIPlugin.getPlugin().getPreferenceStore();
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
@@ -169,7 +185,32 @@ public class CVSOutputConsole extends MessageConsole implements IConsoleListener
 			errorColor = newColor;
 		// font
 		} else if(property.equals(ICVSUIConstants.PREF_CONSOLE_FONT)) {
-			setFont(JFaceResources.getFont(getPreferenceStore().getString(ICVSUIConstants.PREF_CONSOLE_FONT)));
+			setFont(JFaceResources.getFontRegistry().get(ICVSUIConstants.PREF_CONSOLE_FONT));
 		}
+	}
+	
+	/**
+	 * Returns the NLSd message based on the status returned from the CVS
+	 * command.
+	 * @param status an NLSd message based on the status returned from the
+	 * CVS command.
+	 */
+	private String messageLineForStatus(IStatus status) {
+		if (status.getSeverity() == IStatus.ERROR) {
+			return Policy.bind("Console.error", status.getMessage()); //$NON-NLS-1$
+		} else if (status.getSeverity() == IStatus.WARNING) {
+			return Policy.bind("Console.warning", status.getMessage()); //$NON-NLS-1$
+		} else if (status.getSeverity() == IStatus.INFO) {
+			return Policy.bind("Console.info", status.getMessage()); //$NON-NLS-1$
+		}
+		return status.getMessage();
+	}
+	
+	/**
+	 * Returns a color instance based on data from a preference field.
+	 */
+	private Color createColor(Display display, String preference) {
+		RGB rgb = PreferenceConverter.getColor(CVSUIPlugin.getPlugin().getPreferenceStore(), preference);
+		return new Color(display, rgb);
 	}
 }

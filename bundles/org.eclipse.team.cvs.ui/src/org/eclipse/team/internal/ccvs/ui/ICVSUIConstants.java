@@ -83,6 +83,9 @@ public interface ICVSUIConstants {
 	public final String PREF_CONSOLE_MESSAGE_COLOR = "pref_console_message_color"; //$NON-NLS-1$
 	public final String PREF_CONSOLE_ERROR_COLOR = "pref_console_error_color"; //$NON-NLS-1$
 	public final String PREF_CONSOLE_FONT = "pref_console_font"; //$NON-NLS-1$
+	public final String PREF_CONSOLE_SHOW_ON_MESSAGE = "pref_console_show_on_error"; //$NON-NLS-1$
+	public final String PREF_CONSOLE_SHOW_ON_ERROR = "pref_console_show_on_message"; //$NON-NLS-1$
+	
 		
 	// decorator preferences
 	public final String PREF_FILETEXT_DECORATION = "pref_filetext_decoration"; //$NON-NLS-1$

@@ -11,6 +11,7 @@
 package org.eclipse.team.internal.ccvs.ui;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.ColorFieldEditor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
@@ -29,7 +30,9 @@ public class ConsolePreferencesPage extends PreferencePage implements IWorkbench
 	private ColorFieldEditor commandColorEditor;
 	private ColorFieldEditor messageColorEditor;
 	private ColorFieldEditor errorColorEditor;
-
+	private BooleanFieldEditor showOnError;
+	private BooleanFieldEditor showOnMessage;
+	
 	/**
 	 * Creates composite control and sets the default layout data.
 	 *
@@ -62,6 +65,9 @@ public class ConsolePreferencesPage extends PreferencePage implements IWorkbench
 		Composite composite = createComposite(parent, 2);
 		createLabel(composite, Policy.bind("ConsolePreferencePage.consoleColorSettings")); //$NON-NLS-1$
 
+		//showOnError = new BooleanFieldEditor(ICVSUIConstants.PREF_CONSOLE_SHOW_ON_ERROR, "Show when CVS client receives errors", composite);
+		//showOnMessage = new BooleanFieldEditor(ICVSUIConstants.PREF_CONSOLE_SHOW_ON_MESSAGE, "Show when CVS client receives messages", composite);
+				
 		commandColorEditor = createColorFieldEditor(ICVSUIConstants.PREF_CONSOLE_COMMAND_COLOR,
 			Policy.bind("ConsolePreferencePage.commandColor"), composite); //$NON-NLS-1$
 		messageColorEditor = createColorFieldEditor(ICVSUIConstants.PREF_CONSOLE_MESSAGE_COLOR,

@@ -44,7 +44,6 @@ import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
-import org.eclipse.team.internal.ccvs.ui.Console;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.actions.AddToWorkspaceAction;
 import org.eclipse.team.internal.ccvs.ui.actions.CommitAction;
@@ -66,11 +65,7 @@ import org.eclipse.team.internal.ui.sync.SyncView;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.IObjectActionDelegate;
-import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 
@@ -123,7 +118,7 @@ public class CVSUITestCase extends LoggingTestCase {
 		// default case is to not show the console but don't disable it, this is
 		// the typical user experience.
 		if(SHOW_CONSOLE) {
-			showConsole();
+			//showConsole();
 		} else if(!USE_CONSOLE) {
 			CVSProviderPlugin.getPlugin().setConsoleListener(null);			
 		}
@@ -137,22 +132,6 @@ public class CVSUITestCase extends LoggingTestCase {
 		Utils.processEventsUntil(100);
 		closeAllTestWindows();
 		super.tearDown();
-	}
-
-	protected void showConsole() {
-		try {
-			IWorkbenchPage page = CVSUIPlugin.getActivePage();
-			IViewPart consolePart = page.findView(Console.CONSOLE_ID);
-			if (consolePart == null) {
-				IWorkbenchPart activePart = page.getActivePart();
-				consolePart = page.showView(Console.CONSOLE_ID);
-				//restore focus stolen by the creation of the console
-				if (activePart != null) page.activate(activePart);
-			} else {
-				page.bringToTop(consolePart);
-			}
-		} catch (PartInitException pe) {
-		}
 	}
 	
  	/** 

@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -60,6 +61,8 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.console.ConsolePlugin;
+import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -621,7 +624,9 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		PreferenceConverter.setDefault(store, ICVSUIConstants.PREF_CONSOLE_COMMAND_COLOR, new RGB(0, 0, 0));
 		PreferenceConverter.setDefault(store, ICVSUIConstants.PREF_CONSOLE_MESSAGE_COLOR, new RGB(0, 0, 255));
 		PreferenceConverter.setDefault(store, ICVSUIConstants.PREF_CONSOLE_ERROR_COLOR, new RGB(255, 0, 0));
-		
+		store.setDefault(ICVSUIConstants.PREF_CONSOLE_SHOW_ON_ERROR, false);
+		store.setDefault(ICVSUIConstants.PREF_CONSOLE_SHOW_ON_MESSAGE, false);
+			
 		store.setDefault(ICVSUIConstants.PREF_FILETEXT_DECORATION, CVSDecoratorConfiguration.DEFAULT_FILETEXTFORMAT);
 		store.setDefault(ICVSUIConstants.PREF_FOLDERTEXT_DECORATION, CVSDecoratorConfiguration.DEFAULT_FOLDERTEXTFORMAT);
 		store.setDefault(ICVSUIConstants.PREF_PROJECTTEXT_DECORATION, CVSDecoratorConfiguration.DEFAULT_PROJECTTEXTFORMAT);
@@ -676,7 +681,8 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		initializeImages();
 		initializePreferences();
 		
-		Console.startup();
+		console = new CVSOutputConsole();
+		ConsolePlugin.getDefault().getConsoleManager().addConsoles(new IConsole[] {console});
 	}
 	
 	public static IWorkingSet getWorkingSet(IResource[] resources, String name) {
@@ -702,7 +708,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 			throw new CoreException(e.getStatus());
 		}
 		
-		Console.shutdown();
+		console.shutdown();
 	}
 	
 	/**
