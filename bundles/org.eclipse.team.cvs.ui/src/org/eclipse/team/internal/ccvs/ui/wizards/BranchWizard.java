@@ -46,8 +46,13 @@ public class BranchWizard extends Wizard {
 			getContainer().run(false, false, new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) {
 					try {
-						String tagString = mainPage.getTag();
+						String tagString = mainPage.getBranchTag();
 						boolean update = mainPage.getUpdate();
+						String versionString = mainPage.getVersionTag();
+						CVSTag versionTag = null;
+						if (versionString != null) {
+							versionTag = new CVSTag(versionString, CVSTag.VERSION);
+						}
 						
 						// To do: use the wizard's progress monitor
 						Hashtable table = getProviderMapping(resources);
@@ -62,6 +67,9 @@ public class BranchWizard extends Wizard {
 							IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);
 							CVSTag tag = new CVSTag(tagString, CVSTag.BRANCH);
 							try {
+								if (versionString != null) {
+									provider.tag(providerResources, IResource.DEPTH_INFINITE, versionTag, subMonitor);
+								}
 								provider.tag(providerResources, IResource.DEPTH_INFINITE, tag, subMonitor);
 								if (update) {
 									provider.update(providerResources, IResource.DEPTH_INFINITE, tag, true, subMonitor);

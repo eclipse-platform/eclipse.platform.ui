@@ -21,7 +21,12 @@ import org.eclipse.team.internal.ccvs.ui.Policy;
 
 public class BranchWizardPage extends CVSWizardPage {
 	boolean update;
-	String tag;
+	String branchTag;
+	String versionTag;
+	boolean doVersion;
+	
+	Text versionText;
+	Text branchText;
 	
 	public BranchWizardPage(String pageName, String title, ImageDescriptor titleImage) {
 		super(pageName, title, titleImage);
@@ -43,20 +48,11 @@ public class BranchWizardPage extends CVSWizardPage {
 		createLabel(composite, "");
 		
 		createLabel(composite, Policy.bind("BranchWizardPage.branchName"));
-		final Text branchText = createTextField(composite);
+		branchText = createTextField(composite);
 		branchText.addListener(SWT.Modify, new Listener() {
 			public void handleEvent(Event event) {
-				String text = branchText.getText();
-				IStatus status = CVSTag.validateTagName(branchText.getText());
-				if (status.isOK()) {
-					setErrorMessage(null);
-					tag = text;
-					setPageComplete(true);
-				} else {
-					setErrorMessage(status.getMessage());
-					tag = null;
-					setPageComplete(false);
-				}
+				branchTag = branchText.getText();
+				updateEnablement();
 			}
 		});
 
@@ -76,12 +72,67 @@ public class BranchWizardPage extends CVSWizardPage {
 		check.setSelection(true);		
 		update = true;
 		
+		createLabel(composite, "");
+		createLabel(composite, "");
+
+		final Button specifyVersion = new Button(composite, SWT.CHECK);
+		data = new GridData();
+		data.horizontalSpan = 2;
+		specifyVersion.setLayoutData(data);
+		specifyVersion.setText(Policy.bind("BranchWizardPage.specifyVersion"));
+		specifyVersion.setSelection(true);
+		doVersion = true;
+		
+		createLabel(composite, Policy.bind("BranchWizardPage.versionName"));
+		versionText = createTextField(composite);
+		versionText.addListener(SWT.Modify, new Listener() {
+			public void handleEvent(Event event) {
+				versionTag = versionText.getText();
+				updateEnablement();
+			}
+		});
+		specifyVersion.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				doVersion = specifyVersion.getSelection();
+				versionText.setEnabled(doVersion);
+			}
+		});
+		
 		setControl(composite);
 	}
-	public String getTag() {
-		return tag;
+	public String getBranchTag() {
+		return branchTag;
 	}
 	public boolean getUpdate() {
 		return update;
+	}
+	public String getVersionTag() {
+		if (doVersion) {
+			return versionTag;
+		} else {
+			return null;
+		}
+	}
+	private void updateEnablement() {
+		IStatus status = CVSTag.validateTagName(branchText.getText());
+		if (status.isOK()) {
+			setErrorMessage(null);
+		} else {
+			setErrorMessage(status.getMessage());
+			setPageComplete(false);
+			return;
+		}
+		
+		if (doVersion) {
+			status = CVSTag.validateTagName(versionText.getText());
+			if (status.isOK()) {
+				setErrorMessage(null);
+			} else {
+				setErrorMessage(status.getMessage());
+				setPageComplete(false);
+				return;
+			}
+		}
+		setPageComplete(true);
 	}
 }
