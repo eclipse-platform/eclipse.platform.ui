@@ -6,4 +6,4 @@ set LOCATION=ui_sniff_folder
 
 del /q /s %LOCATION%
 
-.\jre\bin\java -cp %CLASSPATH% org.eclipse.ui.test.harness.launcher.TestUIMain -dev bin -data %LOCATION% -clean -uiTest ui.TestSuite
+.\jre\bin\java -cp %CLASSPATH% org.eclipse.ui.test.harness.launcher.TestUIMain -dev bin -data %LOCATION% -uiTest ui.TestSuite
