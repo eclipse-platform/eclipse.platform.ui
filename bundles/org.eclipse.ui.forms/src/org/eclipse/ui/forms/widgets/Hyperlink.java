@@ -129,7 +129,7 @@ public class Hyperlink extends AbstractHyperlink {
 		if (text != null)
 			this.text = text;
 		else
-			text = "";
+			this.text = "";
 		redraw();
 	}
 	/**
