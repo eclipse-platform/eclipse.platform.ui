@@ -169,11 +169,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 	}
 	
 	private Set getExtensions() {
-		Set extensions= fFileTypeEditor.getFileTypes();
-		String editorExtension= getExtensionFromEditor();
-		if (editorExtension != null && editorExtension.equals("")) //$NON-NLS-1$
-			extensions.add(null);
-		return extensions;
+		return fFileTypeEditor.getFileTypes();
 	}
 
 	private boolean ignoreCase() {
@@ -283,12 +279,20 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 				IResource resource= (IResource)item;
 				text= resource.getName();
 				extension= resource.getFileExtension();
+				if (extension == null)
+					extension= resource.getName();
+				else
+					extension= "*." + extension;
 			}
 			else if (item instanceof ISearchResultViewEntry) {
 				IMarker marker= (IMarker)((ISearchResultViewEntry)item).getSelectedMarker();
+				extension= marker.getResource().getFileExtension();
+				if (extension == null)
+					extension= marker.getResource().getName();
+				else
+					extension= "*." + extension; //$NON-NLS-1$
 				try {
 					text= (String)marker.getAttribute(SearchUI.LINE);
-					extension= marker.getResource().getFileExtension();
 				} catch (CoreException ex) {
 					ExceptionHandler.handle(ex, SearchMessages.getString("Search.Error.markerAttributeAccess.title"), SearchMessages.getString("Search.Error.markerAttributeAccess.message")); //$NON-NLS-2$ //$NON-NLS-1$
 					text= ""; //$NON-NLS-1$
@@ -303,10 +307,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 		if (extension == null)
 			extension= getExtensionFromEditor();
 		if (extension != null)
-			fExtensions.setText("*." + extension); //$NON-NLS-1$
-		else
-			// use all registered extensions
-			fExtensions.setText("*"); //$NON-NLS-1$
+			fExtensions.setText(extension);
 	}
 	
 	private String insertEscapeChars(String text) {
@@ -339,8 +340,9 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 			if (elem instanceof IFileEditorInput) {
 				String extension= ((IFileEditorInput)elem).getFile().getFileExtension();
 				if (extension == null)
-					extension= ""; //$NON-NLS-1$
-				return extension;
+					return ((IFileEditorInput)elem).getFile().getName();
+				else
+					return "*." + extension; //$NON-NLS-1$
 			}
 		}
 		return null;

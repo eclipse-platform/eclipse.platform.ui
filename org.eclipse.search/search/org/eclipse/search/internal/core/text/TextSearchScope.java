@@ -12,6 +12,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 
 import org.eclipse.search.internal.core.SearchScope;
+import org.eclipse.search.internal.ui.util.StringMatcher;
 
 /**
  * A special text search scope that take file extensions into account.
@@ -40,22 +41,23 @@ public class TextSearchScope extends SearchScope {
 	 * Adds an extension to the scope.
 	 */
 	public void addExtension(String extension) {
-		fExtensions.add(extension);
+		fExtensions.add(new StringMatcher(extension, false, false));
 	}
-	
 	/**
-	 * Adds all extensions contained in <code>extensions</code> to this
-	 * scope.
+	 * Adds all string patterns contained in <code>extensions</code> to this
+	 * scope. The allowed pattern characters are <code>*</code> for any character
+	 * and <code>?</code> for one character.
 	 */
 	public void addExtensions(Set extensions) {
 		if (extensions == null)
 			return;
 		Iterator iter= extensions.iterator();
 		while (iter.hasNext()) {
-			fExtensions.add(iter.next());
+			Object obj= iter.next();
+			if (obj instanceof String)
+				addExtension((String)obj);
 		}
 	}  
-
 	/*
 	 * Implements method from ISearchScope
 	 */
@@ -64,7 +66,6 @@ public class TextSearchScope extends SearchScope {
 			return false;
 		return super.encloses(element);	
 	}
-
 	/**
 	 * Returns a new Workbench scope.
 	 */
@@ -73,8 +74,13 @@ public class TextSearchScope extends SearchScope {
 	}
 		
 	boolean skipFile(IFile file) {
-		String extension= file.getFileExtension();
-		return !fExtensions.contains(extension);			
+		if (file != null) {
+			Iterator iter= fExtensions.iterator();
+			while (iter.hasNext()) {
+				if (((StringMatcher)iter.next()).match(file.getName()))
+					return false;
+			}
+		}
+		return true;
 	}
-	
 }
