@@ -148,8 +148,12 @@ public class AboutDialog extends ProductInfoDialog {
     protected void createButtonsForButtonBar(Composite parent) {
         parent.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-        createButton(parent, FEATURES_ID, WorkbenchMessages
-                .getString("AboutDialog.featureInfo"), false); //$NON-NLS-1$
+        // bug 64232: the feature details button should only be created if there
+        // are features to show
+        if (bundleGroupInfos != null && bundleGroupInfos.length > 0)
+                createButton(parent, FEATURES_ID, WorkbenchMessages
+                        .getString("AboutDialog.featureInfo"), false); //$NON-NLS-1$
+
         createButton(parent, PLUGINS_ID, WorkbenchMessages
                 .getString("AboutDialog.pluginInfo"), false); //$NON-NLS-1$
         createButton(parent, INFO_ID, WorkbenchMessages
