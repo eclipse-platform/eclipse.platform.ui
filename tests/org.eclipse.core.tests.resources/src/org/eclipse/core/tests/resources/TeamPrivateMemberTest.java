@@ -79,6 +79,14 @@ public void testMembers() {
 		fail("5.2", e);
 	}
 	assertEquals("5.3", 0, members.length);
+	
+	// FIXME: add the tests for #members(int)
+}
+public void testAccept() {
+}
+public void testDeltaAccept() {
+}
+public void testExists() {
 }public void testSetGet() {
 	IProject project = getWorkspace().getRoot().getProject("MyProject");
 	IFolder folder = project.getFolder("folder");
