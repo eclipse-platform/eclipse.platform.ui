@@ -13,6 +13,7 @@ package org.eclipse.ui.tests.api;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IProgressMonitor;
 
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
@@ -77,6 +78,7 @@ public class MockEditorPart extends MockWorkbenchPart implements IEditorPart, IG
 		this.input = input;
 		setSite(site);
 		callTrace.add( "init" );
+		setSiteInitialized();
 	}
 
 	/**
@@ -113,5 +115,11 @@ public class MockEditorPart extends MockWorkbenchPart implements IEditorPart, IG
 		saveNeeded = value;
 	}
 
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.tests.api.MockWorkbenchPart#getActionBars()
+     */
+    protected IActionBars getActionBars() {
+        return getEditorSite().getActionBars();
+    }
 }
 

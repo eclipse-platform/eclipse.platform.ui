@@ -245,6 +245,13 @@ import org.eclipse.ui.internal.registry.ViewDescriptor;
 
 				// Create site
 				ViewSite site = new ViewSite(ref, view, page, desc);
+				PartPane pane = ((ViewReference) ref).getPane();				
+				if (pane == null) {
+					pane = new ViewPane(ref, page);
+					((ViewReference) ref).setPane(pane);
+				}
+				site.setPane(pane);
+				site.setActionBars(new ViewActionBars(page.getActionBars(), (ViewPane) pane));
 				try {
 					try {
 						UIStats.start(UIStats.INIT_PART, label);
@@ -265,13 +272,6 @@ import org.eclipse.ui.internal.registry.ViewDescriptor;
 					return;
 				}
 
-				PartPane pane = ((ViewReference) ref).getPane();
-				if (pane == null) {
-					pane = new ViewPane(ref, page);
-					((ViewReference) ref).setPane(pane);
-				}
-				site.setPane(pane);
-				site.setActionBars(new ViewActionBars(page.getActionBars(), (ViewPane) pane));
 				resetPart[0] = false;
 				site.getPane().createChildControl();
 				result[0] = new Status(IStatus.OK, PlatformUI.PLUGIN_ID, 0, "", null); //$NON-NLS-1$

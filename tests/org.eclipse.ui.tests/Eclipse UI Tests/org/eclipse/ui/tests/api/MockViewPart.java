@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.api;
 
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewSite;
@@ -40,7 +41,8 @@ public class MockViewPart extends MockWorkbenchPart implements IViewPart {
 	 */
 	public void init(IViewSite site) throws PartInitException {
 		setSite(site);
-		callTrace.add("init" );		
+		callTrace.add("init" );
+		setSiteInitialized();
 	}
 
 	/**
@@ -49,6 +51,7 @@ public class MockViewPart extends MockWorkbenchPart implements IViewPart {
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		setSite(site);
 		callTrace.add("init" );
+		setSiteInitialized();
 	}
 
 	/**
@@ -56,5 +59,12 @@ public class MockViewPart extends MockWorkbenchPart implements IViewPart {
 	 */
 	public void saveState(IMemento memento) {
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.tests.api.MockWorkbenchPart#getActionBars()
+     */
+    protected IActionBars getActionBars() {
+        return getViewSite().getActionBars();
+    }	
 }
 

@@ -17,6 +17,7 @@ import org.eclipse.jface.util.ListenerList;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
+import org.eclipse.ui.IWorkbenchPartSite;
 
 /**
  * 
@@ -34,7 +35,9 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
 	private ListenerList propChangeListeners = new ListenerList(2);		
 	
 	public WorkbenchPartReference() {
+	    //no-op
 	}
+	
 	public void init(String id,String title,String tooltip,ImageDescriptor desc) {
 		this.id = id;
 		this.title = title;
@@ -79,8 +82,11 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
 			propChangeListeners.remove(listener);
 	}
 	public String getId() {
-		if(part != null)
-			return part.getSite().getId();
+		if(part != null) {			
+		    IWorkbenchPartSite site = part.getSite();
+		    if (site != null)
+		        return site.getId();
+		}
 		return id;
 	}
 
@@ -134,15 +140,20 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
 			return;
 		if(part != null) {
 			PartSite site = (PartSite)part.getSite();
-			site.setPane(pane);
-		} else {
-			this.pane = pane;
+			if (site != null) {
+			    site.setPane(pane);
+			    return;
+			}
 		}
+		this.pane = pane;
 	}
-	public PartPane getPane() {
+	public PartPane getPane() {	    
 		PartPane result = null;
-		if(part != null)
-			result = ((PartSite)part.getSite()).getPane();
+		if(part != null) {			
+		    PartSite partSite = (PartSite)part.getSite();
+		    if (partSite != null)
+		        result = partSite.getPane();
+		}
 		if(result == null)
 			result = pane;
 		return result;

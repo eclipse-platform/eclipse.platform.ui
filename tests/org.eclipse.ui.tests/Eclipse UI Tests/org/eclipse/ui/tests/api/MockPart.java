@@ -151,4 +151,23 @@ public class MockPart implements IExecutableExtension {
     		l.propertyChanged(this, propertyId);
     	}
     }
+
+    /**
+     * boolean to declare whether the site was properly initialized in the init method. 
+     */
+    private boolean siteState = false;
+
+    /**
+     * Sets whether the site was properly initialized in the init method.
+     */
+    protected void setSiteInitialized(boolean initialized) {
+        siteState = initialized;
+    }
+
+    /**
+     * Gets whether the site was properly initialized in the init method.
+     */
+    public boolean isSiteInitialized() {
+        return siteState;
+    }
 }

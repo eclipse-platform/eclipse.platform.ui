@@ -563,6 +563,11 @@ public class EditorManager {
 	 */
 	private void createSite(final IEditorReference ref, final IEditorPart part, final EditorDescriptor desc, final IEditorInput input) throws PartInitException {
 		EditorSite site = new EditorSite(ref, part, page, desc);
+		if (desc != null)
+			site.setActionBars(createEditorActionBars(desc));
+		else
+			site.setActionBars(createEmptyEditorActionBars());
+		
 		final String label = part.getTitle();
 		try {
 			UIStats.start(UIStats.INIT_PART,label);
@@ -574,11 +579,6 @@ public class EditorManager {
 		
 		if (part.getSite() != site)
 			throw new PartInitException(WorkbenchMessages.format("EditorManager.siteIncorrect", new Object[] { desc.getId()})); //$NON-NLS-1$
-
-		if (desc != null)
-			site.setActionBars(createEditorActionBars(desc));
-		else
-			site.setActionBars(createEmptyEditorActionBars());
 	}
 	/*
 	 * See IWorkbenchPage.

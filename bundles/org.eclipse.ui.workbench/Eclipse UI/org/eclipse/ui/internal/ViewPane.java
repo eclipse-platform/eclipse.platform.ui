@@ -15,7 +15,6 @@ package org.eclipse.ui.internal;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.resource.JFaceColors;
@@ -67,7 +66,9 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	private boolean locked = true;
 
 	ToolBar isvToolBar;
-	private ToolBarManager isvToolBarMgr;
+	// create initially toolbarless bar manager so that actions may be added in the 
+	// init method of the view.
+	private ToolBarManager isvToolBarMgr = new PaneToolBarManager(SWT.FLAT | SWT.WRAP);
 	private MenuManager isvMenuMgr;
 	boolean hasFocus;
 	
@@ -80,8 +81,8 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	 * Toolbar manager for the ISV toolbar.
 	 */
 	class PaneToolBarManager extends ToolBarManager {
-		public PaneToolBarManager(ToolBar paneToolBar) {
-			super(paneToolBar);
+		public PaneToolBarManager(int style) {
+			super(style);
 		}
 
 		protected void relayout(ToolBar toolBar, int oldCount, int newCount) {
@@ -242,13 +243,9 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	 */
 	private void createToolBars() {
 		Composite parentControl = control;
-		int barStyle = SWT.FLAT | SWT.WRAP;
-		
 		// ISV toolbar.
 		//			// 1GD0ISU: ITPUI:ALL - Dbl click on view tool cause zoom
-		isvToolBar = new ToolBar(parentControl.getParent(), barStyle);
-		
-		
+		isvToolBar = isvToolBarMgr.createControl(parentControl.getParent());
 		
 		if (locked) {
 			//((ViewForm2)control).setTopCenter(isvToolBar);	
@@ -260,17 +257,6 @@ public class ViewPane extends PartPane implements IPropertyListener {
 			});
 		} else {
 			//isvToolBar.setLayoutData(new GridData(GridData.FILL_BOTH));
-		}
-		IContributionItem[] isvItems = null;
-		if (isvToolBarMgr != null) {
-			isvItems = isvToolBarMgr.getItems();
-			isvToolBarMgr.dispose();
-		}
-		isvToolBarMgr = new PaneToolBarManager(isvToolBar);
-		if (isvItems != null) {
-			for (int i = 0; i < isvItems.length; i++) {
-				isvToolBarMgr.add(isvItems[i]);
-			}
 		}
  	}
 	
