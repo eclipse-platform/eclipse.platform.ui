@@ -1201,6 +1201,13 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 			CoolBarManager coolBarMgr = getCoolBarManager();
 			IMemento coolBarMem = memento.getChild(IWorkbenchConstants.TAG_COOLBAR_LAYOUT);
 			if (coolBarMem != null) {
+				// Check if the layout is locked
+				Integer lockedInt = coolBarMem.getInteger(IWorkbenchConstants.TAG_LOCKED);
+				if ((lockedInt != null) && (lockedInt.intValue() == 1)) {
+					coolBarMgr.setLockLayout(true);
+				}else {
+					coolBarMgr.setLockLayout(false);
+				}
 				// The new layout of the cool bar manager
 				ArrayList layout = new ArrayList();
 				// Traverse through all the cool item in the memento
@@ -1232,16 +1239,16 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 						} else {
 							newItem =
 								new ToolBarContributionItem(
-									new ToolBarManager(coolBarMgr.getStyle()),
-									id);
+										new ToolBarManager(coolBarMgr.getStyle()),
+										id);
 							// make it invisible by default
 							newItem.setVisible(false);
 							// Need to add the item to the cool bar manager so that its canonical order can be preserved
 							IContributionItem refItem =
 								findAlphabeticalOrder(
-									IWorkbenchActionConstants.MB_ADDITIONS,
-									id,
-									coolBarMgr);
+										IWorkbenchActionConstants.MB_ADDITIONS,
+										id,
+										coolBarMgr);
 							coolBarMgr.insertAfter(refItem.getId(), newItem);
 						}
 						// Set the current height and width
@@ -1454,10 +1461,15 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		memento.putInteger(IWorkbenchConstants.TAG_WIDTH, normalBounds.width);
 		memento.putInteger(IWorkbenchConstants.TAG_HEIGHT, normalBounds.height);
 
-		// Save the order of the cool bar contribution items
+		/// Save the order of the cool bar contribution items
 		if (getCoolBarManager() != null) {
 			getCoolBarManager().refresh();
 			IMemento coolBarMem = memento.createChild(IWorkbenchConstants.TAG_COOLBAR_LAYOUT);
+			if (getCoolBarManager().getLockLayout() == true) {
+				coolBarMem.putInteger(IWorkbenchConstants.TAG_LOCKED,1);
+			}else {
+				coolBarMem.putInteger(IWorkbenchConstants.TAG_LOCKED,0);
+			}
 			IContributionItem[] items = getCoolBarManager().getItems();
 			for (int i = 0; i < items.length; i++) {
 				IMemento coolItemMem = coolBarMem.createChild(IWorkbenchConstants.TAG_COOLITEM);
@@ -1469,28 +1481,29 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 				// Write out type and size if applicable
 				if (item.isSeparator()) {
 					coolItemMem.putString(
-						IWorkbenchConstants.TAG_ITEM_TYPE,
-						IWorkbenchConstants.TAG_TYPE_SEPARATOR);
+							IWorkbenchConstants.TAG_ITEM_TYPE,
+							IWorkbenchConstants.TAG_TYPE_SEPARATOR);
 				} else if (item.isGroupMarker() && !item.isSeparator()) {
 					coolItemMem.putString(
-						IWorkbenchConstants.TAG_ITEM_TYPE,
-						IWorkbenchConstants.TAG_TYPE_GROUPMARKER);
+							IWorkbenchConstants.TAG_ITEM_TYPE,
+							IWorkbenchConstants.TAG_TYPE_GROUPMARKER);
 				} else {
 					// Assume that it is a ToolBarContributionItem
 					coolItemMem.putString(
-						IWorkbenchConstants.TAG_ITEM_TYPE,
-						IWorkbenchConstants.TAG_TYPE_TOOLBARCONTRIBUTION);
+							IWorkbenchConstants.TAG_ITEM_TYPE,
+							IWorkbenchConstants.TAG_TYPE_TOOLBARCONTRIBUTION);
 					ToolBarContributionItem tbItem = (ToolBarContributionItem) item;
 					tbItem.saveWidgetState();
 					coolItemMem.putInteger(
-						IWorkbenchConstants.TAG_ITEM_X,
-						tbItem.getCurrentWidth());
+							IWorkbenchConstants.TAG_ITEM_X,
+							tbItem.getCurrentWidth());
 					coolItemMem.putInteger(
-						IWorkbenchConstants.TAG_ITEM_Y,
-						tbItem.getCurrentHeight());
+							IWorkbenchConstants.TAG_ITEM_Y,
+							tbItem.getCurrentHeight());
 				}
 			}
 		}
+		
 
 		// Save each page.
 		Iterator enum = pageList.iterator();
