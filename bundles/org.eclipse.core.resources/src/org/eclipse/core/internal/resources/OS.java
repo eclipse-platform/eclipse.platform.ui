@@ -12,6 +12,7 @@ package org.eclipse.core.internal.resources;
 
 import java.util.Arrays;
 import org.eclipse.core.boot.BootLoader;
+import org.eclipse.osgi.service.environment.Constants;
 
 /**
  * Captures platform specific attributes relevant to the core resources plugin.  This
@@ -51,7 +52,7 @@ static {
  * and false otherwise.
  */
 public static boolean isNameValid(String name) {
-	if (INSTALLED_PLATFORM.equals(BootLoader.OS_WIN32)) {
+	if (INSTALLED_PLATFORM.equals(Constants.OS_WIN32)) {
 		//on windows, filename suffixes are not relevant to name validity
 		int dot = name.indexOf('.');
 		name = dot == -1 ? name : name.substring(0, dot);

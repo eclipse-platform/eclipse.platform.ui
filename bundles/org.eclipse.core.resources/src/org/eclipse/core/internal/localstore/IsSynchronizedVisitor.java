@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  */
 public class IsSynchronizedVisitor extends CollectSyncStatusVisitor {
 	static class ResourceChangedException extends RuntimeException {
+		// empty
 	}
 	protected static ResourceChangedException exception = new ResourceChangedException();
 

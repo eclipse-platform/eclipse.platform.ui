@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.IPath;
 //
 public class ModelObjectWriter implements IModelObjectConstants {
 	public ModelObjectWriter() {
+		super();
 	}
 	protected String[] getReferencedProjects(ProjectDescription description) {
 		IProject[] projects = description.getReferencedProjects();

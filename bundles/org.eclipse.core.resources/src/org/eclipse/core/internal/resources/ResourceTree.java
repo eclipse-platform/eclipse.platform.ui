@@ -34,7 +34,7 @@ class ResourceTree implements IResourceTree {
 	 * The lock to acquire when the workspace needs to be manipulated
 	 */
 	private ILock lock;
-	private MultiStatus status;
+	private MultiStatus multistatus;
 	private int updateFlags;
 	private boolean isValid = true;
 
@@ -44,7 +44,7 @@ class ResourceTree implements IResourceTree {
 public ResourceTree(ILock lock, MultiStatus status, int updateFlags) {
 	super();
 	this.lock = lock;
-	this.status = status;
+	this.multistatus = status;
 	this.updateFlags = updateFlags;
 }
 
@@ -319,7 +319,7 @@ public boolean movedProjectSubtree(IProject project, IProjectDescription destDes
  * Returns the status object held onto by this resource tree.
  */
 protected IStatus getStatus() {
-	return status;
+	return multistatus;
 }
 /**
  * @see IResourceTree#getTimestamp
@@ -431,7 +431,7 @@ public void deletedProject(IProject target) {
  */
 public void failed(IStatus reason) {
 	Assert.isLegal(isValid);
-	status.add(reason);
+	multistatus.add(reason);
 }
 /**
  * Return <code>true</code> if there is a change in the name of the project.
