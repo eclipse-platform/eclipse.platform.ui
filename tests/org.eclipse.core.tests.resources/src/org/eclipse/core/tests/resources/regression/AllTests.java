@@ -30,7 +30,7 @@ public AllTests(String name) {
 	public static Test suite() {
 		TestSuite suite = new TestSuite();
 		suite.addTest(Bug_6708.suite());
-		suite.addTest(Bug_25686.suite());
+		suite.addTest(IFileTest.suite());
 		suite.addTest(IProjectTest.suite());
 		suite.addTest(IResourceTest.suite());
 		suite.addTest(IWorkspaceTest.suite());

@@ -104,7 +104,7 @@ protected OutputStream createStream(File target, boolean append) throws CoreExce
 			message = Policy.bind("localstore.notAFile", path); //$NON-NLS-1$
 		else
 			message = Policy.bind("localstore.couldNotWrite", path); //$NON-NLS-1$
-		throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, new Path(path), message, e);
+		throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, new Path(path), message, e);
 	}
 }
 public void delete(File target) throws CoreException {

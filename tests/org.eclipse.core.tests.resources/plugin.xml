@@ -116,8 +116,8 @@
     <test id="regression.Bug_6708">
       <run class="org.eclipse.core.tests.resources.regression.Bug_6708"/>
     </test>
-    <test id="regression.Bug_25686">
-      <run class="org.eclipse.core.tests.resources.regression.Bug_25686"/>
+    <test id="regression.IFileTest">
+      <run class="org.eclipse.core.tests.resources.regression.IFileTest"/>
     </test>
     <test id="regression.PR_1GEAB3C_Test">
       <run class="org.eclipse.core.tests.resources.regression.PR_1GEAB3C_Test"/>

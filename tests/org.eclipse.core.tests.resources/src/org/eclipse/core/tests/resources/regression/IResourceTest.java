@@ -484,4 +484,23 @@ public void testRefreshLocal_1G60AFG() {
 		fail("3.0", e);
 	}
 }
+/**
+ * Bug states that JDT cannot copy the .project file from the project root to
+ * the build output folder.
+ */
+public void testBug25686() {
+	IProject project = getWorkspace().getRoot().getProject("MyProject");
+	IFolder outputFolder = project.getFolder("bin");
+	IFile description = project.getFile(".project");
+	IFile destination = outputFolder.getFile(".project");
+	ensureExistsInWorkspace(new IResource[] {project, outputFolder}, true);
+	
+	assertTrue("0.0", description.exists());
+	try {
+		description.copy(destination.getFullPath(), IResource.NONE, getMonitor());
+	} catch (CoreException e) {
+		fail("0.99", e);
+	}
+	assertTrue("0.1", destination.exists());
+}
 }
