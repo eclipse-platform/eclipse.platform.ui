@@ -210,7 +210,8 @@ private FontData[] defaultFontData() {
 	if (result == null) {
 		Shell shell = new Shell();
 		Font font = shell.getFont();
-		stringToFontData.put(JFaceResources.DEFAULT_FONT, font.getFontData());
+		result = font.getFontData();
+		stringToFontData.put(JFaceResources.DEFAULT_FONT, result);
 		shell.dispose();
 	}
 	return (FontData[])result;
