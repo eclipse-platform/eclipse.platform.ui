@@ -132,6 +132,7 @@ protected Control createContents(Composite parent) {
 	Composite colorIconsComposite = new Composite(composite, SWT.NONE);
 	colorIconsComposite.setFont(font);
 	colorIconsEditor = new BooleanFieldEditor(IPreferenceConstants.COLOR_ICONS, COLOUR_ICONS_TITLE, colorIconsComposite);
+	colorIconsEditor.setPreferencePage(this);
 	colorIconsEditor.setPreferenceStore(doGetPreferenceStore());
 	colorIconsEditor.load();
 
