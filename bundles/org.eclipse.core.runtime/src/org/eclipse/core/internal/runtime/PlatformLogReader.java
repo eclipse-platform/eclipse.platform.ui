@@ -2,9 +2,13 @@ package org.eclipse.core.internal.runtime;
 
 import java.io.*;
 import java.util.ArrayList;
-
 import java.util.StringTokenizer;
-import javax.xml.parsers.*;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import org.eclipse.core.internal.boot.DelegatingURLClassLoader;
+import org.eclipse.core.internal.boot.PlatformClassLoader;
 import org.eclipse.core.runtime.*;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
@@ -15,6 +19,7 @@ import org.xml.sax.SAXException;
  * status is returned mentioned that there were problems.
  */
 public class PlatformLogReader {
+	private static final String NULL_STRING = "" + null;
 	/**
 	 * Temporary main class for testing...
 	 */
@@ -32,16 +37,21 @@ public class PlatformLogReader {
 	 */
 public IStatus[] readLogFile(String path) {
 	Exception err = null;
+	//XXX workaround.  See Bug 5801.
+	DelegatingURLClassLoader xmlClassLoader = (DelegatingURLClassLoader)Platform.getPluginRegistry().getPluginDescriptor("org.apache.xerces").getPluginClassLoader();
+	PlatformClassLoader.getDefault().setImports(new DelegatingURLClassLoader[] { xmlClassLoader });
 	try {
 		DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 		Document document = parser.parse(new File(path));
 		return (IStatus[])read(document.getFirstChild());
-	} catch (IOException e) {
+	} catch (ParserConfigurationException e) {
 		err = e;
 	} catch (SAXException e) {
 		err = e;
-	} catch (ParserConfigurationException e) {
+	} catch (IOException e) {
 		err = e;
+	} finally {
+		PlatformClassLoader.getDefault().setImports(null);
 	}
 	return new IStatus[] {new Status(IStatus.WARNING, Platform.PI_RUNTIME, 1, "Unable to parse error log", err)};
 }
@@ -101,7 +111,7 @@ protected String getString(Node target, String attributeName) {
 protected IStatus[] readLog(Node node) {
 	NodeList children = node.getChildNodes();
 	int childCount = children.getLength();
-	boolean parseProblems = false;
+	Throwable parseProblem = null;
 	ArrayList statii = new ArrayList(childCount);
 	for (int i = 0; i < childCount; i++) {
 		try {
@@ -109,11 +119,11 @@ protected IStatus[] readLog(Node node) {
 			if (status != null)
 				statii.add(status);
 		} catch (RuntimeException e) {
-			parseProblems = true;
+			parseProblem = e;
 		}
 	}
-	if (parseProblems) {
-		statii.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, 1, "Some log file entries could not be read", null));
+	if (parseProblem != null) {
+		statii.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, 1, "Some log file entries could not be read", parseProblem));
 	}
 	return (IStatus[]) statii.toArray(new IStatus[statii.size()]);
 }
@@ -181,32 +191,35 @@ protected IStatus readStatus(Node node) {
 
 protected Throwable readException(Node node) {
 	String message = getString(node, PlatformLogWriter.ATTRIBUTE_MESSAGE);
+	if (NULL_STRING.equals(message)) {
+		message = null;
+	}
 	String stack = getString(node, PlatformLogWriter.ATTRIBUTE_TRACE);
 	return new FakeException(message, formatStack(stack));
 }
 	
-	/**
-	 * A reconsituted exception that only contains a stack trace and a message.
-	 */
-	class FakeException extends Throwable {
-		private String message;
-		private String stackTrace;
-		FakeException(String msg, String stack) {
-			this.message = msg;
-			this.stackTrace = stack;
-		}
-		public String getMessage() {
-			return message;
-		}
-		public void printStackTrace() {
-			printStackTrace(System.out);
-		}
-		public void printStackTrace(PrintWriter writer) {
-			writer.println(stackTrace);
-		}
-		public void printStackTrace(PrintStream stream) {
-			stream.println(stackTrace);
-		}		
+/**
+ * A reconsituted exception that only contains a stack trace and a message.
+ */
+class FakeException extends Throwable {
+	private String message;
+	private String stackTrace;
+	FakeException(String msg, String stack) {
+		this.message = msg;
+		this.stackTrace = stack;
 	}
+	public String getMessage() {
+		return message;
+	}
+	public void printStackTrace() {
+		printStackTrace(System.out);
+	}
+	public void printStackTrace(PrintWriter writer) {
+		writer.println(stackTrace);
+	}
+	public void printStackTrace(PrintStream stream) {
+		stream.println(stackTrace);
+	}		
+}
 }
 

@@ -131,9 +131,8 @@ public synchronized void logging(IStatus status, String plugin) {
 }
 protected void openLogFile() {
 	try {
-		File file = InternalPlatform.getMetaArea().getLogLocation().toFile();
-		boolean newLog = !file.exists();
-		log = new PrintWriter(new BufferedWriter(new FileWriter(file.getAbsolutePath(), true)));
+		boolean newLog = !logFile.exists();
+		log = new PrintWriter(new BufferedWriter(new FileWriter(logFile.getAbsolutePath(), true)));
 		if (newLog) {
 			log.println(XML_VERSION);
 			startTag(ELEMENT_LOG, null);
