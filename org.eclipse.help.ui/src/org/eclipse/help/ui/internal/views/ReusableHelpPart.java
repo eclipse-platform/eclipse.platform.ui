@@ -11,32 +11,73 @@
 package org.eclipse.help.ui.internal.views;
 
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.net.URLDecoder;
 import java.text.Collator;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.help.*;
-import org.eclipse.help.internal.appserver.WebappManager;
-import org.eclipse.help.internal.base.*;
+import org.eclipse.help.IContext;
+import org.eclipse.help.IContextProvider;
+import org.eclipse.help.IHelpResource;
+import org.eclipse.help.IToc;
+import org.eclipse.help.ITopic;
+import org.eclipse.help.internal.base.BaseHelpSystem;
+import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.search.federated.IndexerJob;
-import org.eclipse.help.ui.internal.*;
-import org.eclipse.jface.action.*;
+import org.eclipse.help.ui.internal.HelpUIPlugin;
+import org.eclipse.help.ui.internal.HelpUIResources;
+import org.eclipse.help.ui.internal.IHelpUIConstants;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IContributionManager;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.SubStatusLineManager;
+import org.eclipse.jface.action.SubToolBarManager;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.*;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTError;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.SubActionBars;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.activities.*;
-import org.eclipse.ui.forms.*;
+import org.eclipse.ui.activities.ActivityManagerEvent;
+import org.eclipse.ui.activities.IActivityManagerListener;
+import org.eclipse.ui.forms.IFormPart;
+import org.eclipse.ui.forms.ManagedForm;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
-import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.ui.forms.widgets.FormText;
+import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.ILayoutExtension;
+import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 public class ReusableHelpPart implements IHelpUIConstants, IActivityManagerListener {
 	public static final int ALL_TOPICS = 1 << 1;
@@ -816,8 +857,13 @@ public class ReusableHelpPart implements IHelpUIConstants, IActivityManagerListe
 
 	void browserChanged(String url) {
 		if (!history.isBlocked()) {
+			try {
 			history.addEntry(new HistoryEntry(HistoryEntry.URL, url,
-					toRelativeURL(url)));
+					BaseHelpSystem.unresolve(new URL(url))));
+			}
+			catch (MalformedURLException e) {
+				// TODO handle this
+			}
 		}
 		updateNavigation();
 	}
@@ -966,7 +1012,7 @@ public class ReusableHelpPart implements IHelpUIConstants, IActivityManagerListe
 			showPage(IHelpUIConstants.HV_BROWSER_PAGE);
 			BrowserPart bpart = (BrowserPart) findPart(IHelpUIConstants.HV_BROWSER);
 			if (bpart != null) {
-				bpart.showURL(toAbsoluteURL(url));
+				bpart.showURL(BaseHelpSystem.resolve(url, true).toString());
 				return;
 			}
 		}
@@ -987,7 +1033,7 @@ public class ReusableHelpPart implements IHelpUIConstants, IActivityManagerListe
 			PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(url);
 		else {
 			try {
-				String aurl = toAbsoluteURL(url);
+				String aurl = BaseHelpSystem.resolve(url, true).toString();
 				if (aurl.endsWith("&noframes=true") || aurl.endsWith("?noframes=true")) //$NON-NLS-1$ //$NON-NLS-2$
 					aurl = aurl.substring(0, aurl.length() - 14);
 				BaseHelpSystem.getHelpBrowser(true).displayURL(aurl);
@@ -1013,32 +1059,6 @@ public class ReusableHelpPart implements IHelpUIConstants, IActivityManagerListe
 		if (url == null || url.indexOf("://") == -1) //$NON-NLS-1$
 			return true;
 		return false;
-	}
-
-	String toAbsoluteURL(String url) {
-		if (url == null || url.indexOf("://") != -1) //$NON-NLS-1$
-			return url;
-		BaseHelpSystem.ensureWebappRunning();
-		String base = getBase();
-		if (url.startsWith("/"))
-			return base + url;
-		else
-			return base + "/" + url;
-		// char sep = url.lastIndexOf('?')!= -1 ? '&':'?';
-		// return base + url+sep+"noframes=true"; //$NON-NLS-1$
-	}
-
-	String toRelativeURL(String url) {
-		String base = getBase();
-		if (url.startsWith(base))
-			return url.substring(base.length());
-		return url;
-	}
-
-	private String getBase() {
-		return "http://" //$NON-NLS-1$
-				+ WebappManager.getHost() + ":" //$NON-NLS-1$
-				+ WebappManager.getPort() + "/help/nftopic"; //$NON-NLS-1$
 	}
 
 	private void contextMenuAboutToShow(IMenuManager manager) {

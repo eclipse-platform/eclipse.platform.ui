@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.help.internal.base;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
@@ -238,6 +240,44 @@ public final class BaseHelpSystem {
 
 		}
 		return getInstance().webappRunning;
+	}
+	
+	public static URL resolve(String href, boolean documentOnly) {
+		String url = null;
+		if (href == null || href.indexOf("://") != -1) //$NON-NLS-1$
+			url = href;
+		else {
+			BaseHelpSystem.ensureWebappRunning();
+			String base = getBase(documentOnly);
+			if (href.startsWith("/"))
+				url = base + href;
+			else
+				url = base + "/" + href;
+		}
+		try {
+			return new URL(url);
+		}
+		catch (MalformedURLException e) {
+			return null;
+		}
+	}
+
+	public static String unresolve(URL url) {
+		String base = getBase(false);
+		String dbase = getBase(true);
+		String href = url.toString();
+		if (href.startsWith(base))
+			return href.substring(base.length());
+		if (href.startsWith(dbase))
+			return href.substring(dbase.length());
+		return href;
+	}
+
+	private static String getBase(boolean documentOnly) {
+		String servlet = documentOnly ? "/help/topic" : "/help/hftopic";//$NON-NLS-1$
+		return "http://" //$NON-NLS-1$
+				+ WebappManager.getHost() + ":" //$NON-NLS-1$
+				+ WebappManager.getPort() + servlet;
 	}
 
 	/**

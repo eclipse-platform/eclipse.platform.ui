@@ -10,18 +10,27 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal;
 
-import org.eclipse.help.*;
-import org.eclipse.help.internal.base.*;
-import org.eclipse.help.ui.internal.views.*;
+import java.net.URL;
+
+import org.eclipse.help.IContext;
+import org.eclipse.help.internal.base.BaseHelpSystem;
+import org.eclipse.help.ui.internal.views.ContextHelpWindow;
 import org.eclipse.help.ui.internal.views.HelpView;
 import org.eclipse.jface.window.Window;
-import org.eclipse.swt.*;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.help.*;
+import org.eclipse.ui.help.AbstractHelpUI;
 import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.intro.IIntroPart;
 
@@ -180,6 +189,23 @@ public class DefaultHelpUI extends AbstractHelpUI {
 		displayContextAsInfopop(context, x, y);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.help.AbstractHelpUI#resolve(java.lang.String, boolean)
+	 */
+	public URL resolve(String href, boolean documentOnly) {
+		return BaseHelpSystem.resolve(href, documentOnly);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.help.AbstractHelpUI#unresolve(java.net.URL)
+	 */
+	public String unresolve(URL url) {
+		return BaseHelpSystem.unresolve(url);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.help.AbstractHelpUI#resolve(java.lang.String, boolean)
+	 */
 	private Shell getActiveShell() {
 		Display display = PlatformUI.getWorkbench().getDisplay();
 		return display.getActiveShell();

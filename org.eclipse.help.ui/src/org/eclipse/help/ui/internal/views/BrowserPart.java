@@ -10,14 +10,32 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.views;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.help.internal.base.BaseHelpSystem;
-import org.eclipse.help.ui.internal.*;
-import org.eclipse.jface.action.*;
+import org.eclipse.help.ui.internal.HelpUIResources;
+import org.eclipse.help.ui.internal.IHelpUIConstants;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.browser.*;
+import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.browser.LocationEvent;
+import org.eclipse.swt.browser.LocationListener;
+import org.eclipse.swt.browser.OpenWindowListener;
+import org.eclipse.swt.browser.ProgressEvent;
+import org.eclipse.swt.browser.ProgressListener;
+import org.eclipse.swt.browser.StatusTextEvent;
+import org.eclipse.swt.browser.StatusTextListener;
+import org.eclipse.swt.browser.WindowEvent;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.AbstractFormPart;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -113,9 +131,14 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 		browser.addOpenWindowListener(new OpenWindowListener() {
 			public void open(WindowEvent event) {
 				if (statusURL!=null) {
-					String relativeURL = BrowserPart.this.parent.toRelativeURL(statusURL);
+					try {
+					String relativeURL = BaseHelpSystem.unresolve(new URL(statusURL));
 					if (BrowserPart.this.parent.isHelpResource(relativeURL))
 						BrowserPart.this.parent.showExternalURL(relativeURL);
+					}
+					catch (MalformedURLException e) {
+						// TODO report this
+					}
 				}
 			}
 		});
@@ -127,7 +150,12 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 			public void run() {
 				BusyIndicator.showWhile(browser.getDisplay(), new Runnable() {
 					public void run() {
-						parent.showExternalURL(parent.toRelativeURL(url));
+						try {
+							parent.showExternalURL(BaseHelpSystem.unresolve(new URL(url)));
+						}
+						catch (MalformedURLException e) {
+							// TODO report this
+						}
 					}
 				});
 			}
