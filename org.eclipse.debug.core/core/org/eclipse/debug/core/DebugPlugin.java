@@ -30,6 +30,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.RuntimeProcess;
@@ -329,11 +330,23 @@ public class DebugPlugin extends Plugin {
 			// initialize runnables and async job
 			fRunnables= new Vector(10);
 			fAsynchJob = new AsynchJob();
+			if (!isDispatching()) {
+				fAsynchJob.schedule();
+			} 
+			fRunnables.add(r);
+		} else {
+			synchronized (fRunnables) {
+				if (fRunnables == null) {
+					// initialize runnables and async job
+					fRunnables= new Vector(10);
+					fAsynchJob = new AsynchJob();
+					if (!isDispatching()) {
+						fAsynchJob.schedule();
+					} 
+				}
+				fRunnables.add(r);
+			}
 		}
-		fRunnables.add(r);
-		if (!isDispatching()) {
-			fAsynchJob.schedule();
-		} 
 	}
 	
 	/**
@@ -810,7 +823,7 @@ public class DebugPlugin extends Plugin {
 	 * 
 	 * @since 3.0
 	 */
-	class AsynchJob extends Job {
+	class AsynchJob extends Job implements ISchedulingRule {
 		
 		public AsynchJob() {
 			super(DebugCoreMessages.getString("DebugPlugin.Debug_async_queue_1")); //$NON-NLS-1$
@@ -833,7 +846,8 @@ public class DebugPlugin extends Plugin {
 			Vector v = null;
 			synchronized (fRunnables) {
 				v = fRunnables;
-				fRunnables = new Vector(5);
+				fRunnables = null;
+				fAsynchJob= null;
 			}
 			monitor.beginTask(DebugCoreMessages.getString("DebugPlugin.Debug_async_queue_1"), v.size()); //$NON-NLS-1$
 			Iterator iter = v.iterator();
@@ -850,6 +864,20 @@ public class DebugPlugin extends Plugin {
 				monitor.worked(1);
 			}
 			return Status.OK_STATUS;
+		}
+
+		/*
+		 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#contains(org.eclipse.core.runtime.jobs.ISchedulingRule)
+		 */
+		public boolean contains(ISchedulingRule rule) {
+			return isConflicting(rule);
+		}
+
+		/*
+		 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#isConflicting(org.eclipse.core.runtime.jobs.ISchedulingRule)
+		 */
+		public boolean isConflicting(ISchedulingRule rule) {
+			return rule instanceof AsynchJob;
 		}
 
 	}
