@@ -124,7 +124,7 @@ private boolean toolBarExist() {
  */
 public void update(boolean force) {
 
-	long startTime= 0;
+//	long startTime= 0;
 //	if (DEBUG) {
 //		dumpStatistics();
 //		startTime= (new Date()).getTime();
@@ -140,7 +140,7 @@ public void update(boolean force) {
 			IContributionItem[] items= getItems();
 			ArrayList clean= new ArrayList(items.length);
 			IContributionItem separator= null;
-			long cleanStartTime= 0;
+//			long cleanStartTime= 0;
 //			if (DEBUG) {
 //				cleanStartTime= (new Date()).getTime(); 
 //			}
@@ -226,11 +226,11 @@ public void update(boolean force) {
 																								
 				int start= toolBar.getItemCount();
 				src.fill(toolBar, destIx);
-				int newItems= toolBar.getItemCount()-start;
-				Item[] tis= toolBar.getItems();
-				for (int i= 0; i < newItems; i++)
-					tis[destIx+i].setData(src);
-				destIx+= newItems;
+				int newItems = toolBar.getItemCount()-start;
+				for (int i = 0; i < newItems; i++) {
+					ToolItem item = toolBar.getItem(destIx++);
+					item.setData(src);
+				}
 			}
 
 			setDirty(false);
