@@ -1,11 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.ant.tests.core;
 
-/**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
-This file is made available under the terms of the Common Public License v1.0
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v10.html
-**********************************************************************/
 
 import java.net.URL;
 import java.util.List;
@@ -126,7 +130,8 @@ public abstract class AbstractAntTest extends TestCase {
 	
 	/**
 	 * Returns the name of the project containing the given target in the given build file or
-	 * <code>null</code> if no project name can be found.	 */
+	 * <code>null</code> if no project name can be found.
+	 */
 	protected String getProjectName(String buildFileName, String targetName) throws CoreException {
 		TargetInfo info= getTarget(buildFileName, targetName);
 		if (info != null) {
@@ -149,7 +154,8 @@ public abstract class AbstractAntTest extends TestCase {
 	
 	/**
 	 * Returns the target with the given name in the given build file or <code>null</code>
-	 * if no such target can be found.	 */
+	 * if no such target can be found.
+	 */
 	protected TargetInfo getTarget(String buildFileName, String targetName) throws CoreException {
 		TargetInfo[] infos= getTargets(buildFileName);
 		for (int i= 0, numTargets= infos.length; i < numTargets; i++) {

@@ -1,14 +1,22 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.update.tests.uivalues;
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+
 import java.io.File;
 import java.net.URL;
 
 import org.eclipse.update.core.*;
 import org.eclipse.update.tests.UpdateManagerTestCase;
-
+
+
 public class TestUILabel extends UpdateManagerTestCase {
 
 	/**
@@ -75,4 +83,5 @@ public class TestUILabel extends UpdateManagerTestCase {
 			System.out.println(info.getAnnotation());
 	}
 } 
-
+
+
