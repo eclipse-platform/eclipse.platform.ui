@@ -34,9 +34,14 @@ public class ExpandAllAction extends Action implements ISelectionChangedListener
 		ISelection selection = tree.getSelection();
 		if(! selection.isEmpty()) {
 			Iterator elements = ((IStructuredSelection)selection).iterator();
-			while (elements.hasNext()) {
-				Object next = elements.next();
-				tree.expandToLevel(next, AbstractTreeViewer.ALL_LEVELS);
+			try {
+				tree.getControl().setRedraw(false);
+				while (elements.hasNext()) {
+					Object next = elements.next();
+					tree.expandToLevel(next, AbstractTreeViewer.ALL_LEVELS);
+				}
+			} finally {
+				tree.getControl().setRedraw(true);
 			}
 		}
 	}
