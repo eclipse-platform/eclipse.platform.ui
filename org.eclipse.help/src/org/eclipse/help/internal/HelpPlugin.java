@@ -153,7 +153,7 @@ public class HelpPlugin extends Plugin implements IRegistryChangeListener, Bundl
 
 	public void bundleChanged(BundleEvent event) {
 		int type = event.getType();
-		if (type != BundleEvent.STARTED && type != BundleEvent.STOPPED) {
+		if (type == BundleEvent.RESOLVED || type == BundleEvent.UNRESOLVED) {
 			ResourceLocator.clearZipCache();
 		}
 	}
