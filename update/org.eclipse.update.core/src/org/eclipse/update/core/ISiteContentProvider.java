@@ -41,7 +41,7 @@ public interface ISiteContentProvider {
 			
 	
 	/**
-	 * Returns a URL for the identified archive. 
+	 * Returns a URL for the identified archive 
 	 * 
 	 * @param id archive identifier
 	 * @return archive URL, or <code>null</code>.
@@ -51,7 +51,7 @@ public interface ISiteContentProvider {
 	public URL getArchiveReference(String id)  throws CoreException;
 
 	/**
-	 * Returns the site for this provider.
+	 * Returns the site for this provider
 	 * 
 	 * @return provider site
 	 * @since 2.0

@@ -25,7 +25,7 @@ public abstract class SiteContentProvider implements ISiteContentProvider {
 	private ISite site;
 
 	/**
-	 * Constructor for SiteContentProvider.
+	 * Constructor for SiteContentProvider
 	 */
 	public SiteContentProvider(URL url) {
 		super();
@@ -43,7 +43,7 @@ public abstract class SiteContentProvider implements ISiteContentProvider {
 	}
 
 	/**
-	 * Returns a URL for the identified archive. 
+	 * Returns a URL for the identified archive
 	 * 
 	 * @see ISiteContentProvider#getArchivesReferences(String)
 	 * @since 2.0
@@ -63,7 +63,7 @@ public abstract class SiteContentProvider implements ISiteContentProvider {
 	}
 
 	/**
-	 * Returns the site for this provider.
+	 * Returns the site for this provider
 	 * 
 	 * @see ISiteContentProvider#getSite()
 	 * @since 2.0
@@ -73,7 +73,7 @@ public abstract class SiteContentProvider implements ISiteContentProvider {
 	}
 
 	/**
-	 * Sets the site for this provider.
+	 * Sets the site for this provider
 	 * 
 	 * @param site site for this provider
 	 * @since 2.0

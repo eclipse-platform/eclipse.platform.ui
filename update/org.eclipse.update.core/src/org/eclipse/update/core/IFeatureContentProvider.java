@@ -75,7 +75,7 @@ public interface IFeatureContentProvider {
 	 * archives that make up this feature. 
 	 * <p>
 	 * The number of returned references is dependent on each feature 
-	 * content provider (ie. is dependent on the packaging mechanism used
+	 * content provider (i.e is dependent on the packaging mechanism used
 	 * by the particular feature type).
 	 * </p>
 	 * 
@@ -102,7 +102,7 @@ public interface IFeatureContentProvider {
 	 * </p>
 	 * <p>
 	 * The number of returned references is dependent on each feature
-	 * content provider (ie. is dependent on the packaging mechanism used
+	 * content provider (i.e is dependent on the packaging mechanism used
 	 * by the particular feature type).
 	 * </p>
 	 * 
@@ -121,7 +121,7 @@ public interface IFeatureContentProvider {
 	 * archives that contain the files for the specified plug-in entry.
 	 * <p>
 	 * The number of returned references is dependent on each feature
-	 * content provider (ie. is dependent on the packaging mechanism used
+	 * content provider (i.e is dependent on the packaging mechanism used
 	 * by the particular feature type).
 	 * </p>
 	 * 
@@ -143,7 +143,7 @@ public interface IFeatureContentProvider {
 	 * archives that contain the files for the specified non-plug-in entry.
 	 * <p>
 	 * The number of returned references is dependent on each feature
-	 * content provider (ie. is dependent on the packaging mechanism used
+	 * content provider (i.e is dependent on the packaging mechanism used
 	 * by the particular feature type).
 	 * </p>
 	 * <p>
@@ -170,7 +170,7 @@ public interface IFeatureContentProvider {
 
 	/**
 	 * Returns an array of content references to the feature definition files
-	 * (ie. the "logical" view of the files defining the feature). These
+	 * (i.e the "logical" view of the files defining the feature). These
 	 * are the files required to present information about the feature to the
 	 * client, and in general, should not contain references to plug-in and 
 	 * non-plug-in files.
@@ -186,7 +186,7 @@ public interface IFeatureContentProvider {
 
 	/**
 	 * Returns an array of content references to the files implementing
-	 * the specified plug-in. (ie. the "logical" view of the plug-in).
+	 * the specified plug-in. (i.e the "logical" view of the plug-in).
 	 * 
 	 * @see IFeatureContentProvider#getPluginEntryArchiveReferences(IPluginEntry, InstallMonitor)
 	 * @param monitor progress monitor, can be <code>null</code>
