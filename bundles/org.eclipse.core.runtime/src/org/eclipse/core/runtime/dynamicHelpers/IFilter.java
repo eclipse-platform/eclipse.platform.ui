@@ -16,7 +16,9 @@ import org.eclipse.core.runtime.IExtensionPoint;
  * A filter compares the given object to some pattern and returns true
  * if the two match and false otherwise..
  *
- * This API is EXPERIMENTAL and provided as early access.
+ * The API can be implemented by clients, however factory methods are 
+ * available on IExtensionTracker.
+ * 
  * @since 3.1
  */
 public interface IFilter {

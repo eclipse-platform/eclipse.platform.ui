@@ -16,9 +16,8 @@ import org.eclipse.core.internal.runtime.ListenerList;
 import org.eclipse.core.runtime.*;
 
 /**
- * Implementation of the IExtensionTracker. This API is EXPERIMENTAL and
- * provided as early access.
- * 
+ * Implementation of the IExtensionTracker. 
+ * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker 
  * @since 3.1
  */
 public class ExtensionTracker implements IExtensionTracker, IRegistryChangeListener {

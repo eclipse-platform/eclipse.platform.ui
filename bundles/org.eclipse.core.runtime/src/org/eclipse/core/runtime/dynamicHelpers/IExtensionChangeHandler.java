@@ -16,7 +16,6 @@ import org.eclipse.core.runtime.IExtension;
  * Extension change handlers are notified of changes for a given extension 
  * point in the context of an extension tracker.
  * 
- * This API is EXPERIMENTAL and provided as early access.
  * @since 3.1
  */
 public interface IExtensionChangeHandler {
@@ -26,7 +25,7 @@ public interface IExtensionChangeHandler {
 	 * is being added to the registry.
 	 * This method does not automatically register objects to the tracker.     
 	 * @param tracker a tracker to which the handler has been registered.
-	 * @param extension the extension being added. 
+	 * @param extension the extension being added.
 	 */
 	public void addExtension(IExtensionTracker tracker, IExtension extension);
 

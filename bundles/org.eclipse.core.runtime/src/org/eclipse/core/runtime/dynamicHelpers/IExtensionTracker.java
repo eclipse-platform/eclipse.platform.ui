@@ -17,10 +17,10 @@ import org.eclipse.core.runtime.IExtensionPoint;
  * An extension tracker keeps associations between extensions and their derived objects on an extension basis.
  * All extensions being added in a tracker will automatically be removed when the extension is uninstalled from the registry.
  * Users interested in extension removal can register a handler that will let them know when an object is being removed.
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
  * 
- * The extension tracker can be filled automatically registering a IExtensionAdditionHandler.
- *
- * This API is EXPERIMENTAL and provided as early access.
  * @since 3.1
  */
 public interface IExtensionTracker {
@@ -96,8 +96,11 @@ public interface IExtensionTracker {
 	 * Close the tracker. All registered objects are fred and all handlers are being automatically removed.
 	 */
     public void close();
-    
-    public IFilter createExtensionPointFilter(final IExtensionPoint[] points);
-    
-    public IFilter createExtensionPointFilter(final IExtensionPoint points);
+
+    /**
+     * Return an instance of filter matching all changes for the given extension point.
+     * @param xpt the extension point 
+     * @return a filter
+     */
+    public IFilter createExtensionPointFilter(final IExtensionPoint xpt);
 }
