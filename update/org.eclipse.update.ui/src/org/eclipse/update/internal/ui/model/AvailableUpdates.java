@@ -282,7 +282,7 @@ public class AvailableUpdates
 					updates.add(searchSite);
 					asyncFireObjectAdded(this, searchSite);
 				}
-				searchSite.addCandidate(new SimpleFeatureAdapter(feature));
+				searchSite.addCandidate(new SimpleFeatureAdapter(candidate));
 				asyncFireObjectAdded(searchSite, candidate);
 			}
 		}
