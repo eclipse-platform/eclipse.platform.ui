@@ -1,13 +1,13 @@
+/*
+ * (c) Copyright IBM Corp. 2000, 2002.
+ * All Rights Reserved.
+ */
 package org.eclipse.help.ui.internal.browser;
-import java.util.ArrayList;
-import java.util.Collection;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.Platform;
+import java.util.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.HelpSystem;
 import org.eclipse.help.internal.ui.util.WorkbenchResources;
-import org.eclipse.help.ui.browser.IBrowser;
-import org.eclipse.help.ui.browser.IBrowserFactory;
+import org.eclipse.help.ui.browser.*;
 /**
  * Creates browser by delegating
  * to appropriate browser adapter
@@ -17,6 +17,7 @@ public class BrowserManager {
 	private static BrowserManager instance;
 	private BrowserDescriptor defaultBrowserDesc;
 	private BrowserDescriptor[] browsersDescriptors;
+	private Collection browsers = new ArrayList();
 	/**
 	 * Private Constructor
 	 */
@@ -58,8 +59,13 @@ public class BrowserManager {
 				}
 				public IBrowser createBrowser() {
 					return new IBrowser() {
+						public void close() {
+						}
 						public void displayURL(String url) {
 							System.out.println(WorkbenchResources.getString("no_browsers", url));
+						}
+						public boolean isCloseSupported() {
+							return false;
 						}
 						public boolean isSetLocationSupported() {
 							return false;
@@ -153,6 +159,17 @@ public class BrowserManager {
 	 * Creates web browser
 	 */
 	public IBrowser createBrowser() {
-		return defaultBrowserDesc.getFactory().createBrowser();
+		IBrowser browser = defaultBrowserDesc.getFactory().createBrowser();
+		browsers.add(browser);
+		return browser;
+	}
+	/**
+	 * Closes all browsers created
+	 */
+	public void closeAll() {
+		for (Iterator it = browsers.iterator(); it.hasNext();) {
+			IBrowser browser = (IBrowser) it.next();
+			browser.close();
+		}
 	}
 }
