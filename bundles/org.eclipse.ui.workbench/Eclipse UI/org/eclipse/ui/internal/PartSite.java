@@ -33,6 +33,8 @@ import org.eclipse.ui.commands.IWorkbenchPartSiteCommandSupport;
 import org.eclipse.ui.contexts.IWorkbenchPartSiteContextSupport;
 import org.eclipse.ui.internal.commands.ws.WorkbenchPartSiteCommandSupport;
 import org.eclipse.ui.internal.contexts.ws.WorkbenchPartSiteContextSupport;
+import org.eclipse.ui.internal.progress.WorkbenchSiteProgressService;
+import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 
 /**
  * <code>PartSite</code> is the general implementation for an
@@ -311,12 +313,26 @@ public class PartSite implements IWorkbenchPartSite {
 		return workbenchPartSiteContextSupport;
 	}
 
+	/**
+	 * Get an adapter for this type.
+	 * @param adapter
+	 * @return
+	 */
 	public Object getAdapter(Class adapter) {
 		if (IWorkbenchPartSiteCommandSupport.class.equals(adapter))
 			return getWorkbenchPartSiteCommandSupport();
 		else if (IWorkbenchPartSiteContextSupport.class.equals(adapter))
 			return getWorkbenchPartSiteContextSupport();
-		else
-			return null;
+		else if(IWorkbenchSiteProgressService.class.equals(adapter))
+			return getSiteProgressService();
+		return null;
+	}
+	
+	/**
+	 * Get a progress service for the receiver.
+	 * @return
+	 */
+	private IWorkbenchSiteProgressService getSiteProgressService(){
+		return new WorkbenchSiteProgressService(this);
 	}
 }

@@ -12,8 +12,10 @@ package org.eclipse.ui.internal;
 
 
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.util.SafeRunnable;

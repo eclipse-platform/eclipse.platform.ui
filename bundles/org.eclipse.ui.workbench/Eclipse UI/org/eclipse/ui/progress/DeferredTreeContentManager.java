@@ -19,22 +19,19 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
-
-import org.eclipse.swt.widgets.Control;
-
 import org.eclipse.jface.progress.IElementCollector;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-
-import org.eclipse.ui.model.IWorkbenchAdapter;
-
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.progress.PendingUpdateAdapter;
 import org.eclipse.ui.internal.progress.ProgressMessages;
+import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
- * The DeferredContentManager is a class that helps an ITreeContentProvider
- * get its deferred input.
+ * The DeferredContentManager is a class that helps an ITreeContentProvider get
+ * its deferred input.
  * 
  * @see IDeferredWorkbenchAdapter
  * @since 3.0
@@ -43,27 +40,53 @@ public class DeferredTreeContentManager {
 
 	ITreeContentProvider contentProvider;
 	AbstractTreeViewer treeViewer;
+	IWorkbenchSiteProgressService progressService;
+
+	/**
+	 * Create a new instance of the receiver using the supplied content
+	 * provider and viewer. Run any jobs using the site
+	 * 
+	 * @param provider
+	 * @param viewer
+	 * @param partSite
+	 */
+
+	public DeferredTreeContentManager(
+		ITreeContentProvider provider,
+		AbstractTreeViewer viewer,
+		IWorkbenchPartSite site) {
+		this(provider, viewer);
+		Object siteService = site.getAdapter(IWorkbenchSiteProgressService.class);
+		if(siteService != null)
+			progressService = (IWorkbenchSiteProgressService) siteService;
+	}
 
 	/**
 	 * Create a new instance of the receiver using the supplied content
 	 * provider and viewer.
+	 * 
 	 * @param provider
 	 * @param viewer
 	 */
 
-	public DeferredTreeContentManager(ITreeContentProvider provider, AbstractTreeViewer viewer) {
+	public DeferredTreeContentManager(
+		ITreeContentProvider provider,
+		AbstractTreeViewer viewer) {
 		contentProvider = provider;
 		treeViewer = viewer;
+
 	}
 
 	/**
-	 * Provides an optimized lookup for determining if an element has children. This is
-	 * required because elements that are populated lazilly can't answer <code>getChildren</code>
-	 * just to determine the potential for children.
-	 * Throw an AssertionFailedException if element is not an instance of
-	 * IDeferredWorkbenchAdapter.
-	 * @param element Object
-	 * @return boolean 
+	 * Provides an optimized lookup for determining if an element has children.
+	 * This is required because elements that are populated lazilly can't
+	 * answer <code>getChildren</code> just to determine the potential for
+	 * children. Throw an AssertionFailedException if element is not an
+	 * instance of IDeferredWorkbenchAdapter.
+	 * 
+	 * @param element
+	 *            Object
+	 * @return boolean
 	 */
 	public boolean mayHaveChildren(Object element) {
 		IDeferredWorkbenchAdapter adapter = getAdapter(element);
@@ -74,11 +97,14 @@ public class DeferredTreeContentManager {
 	}
 
 	/**
-	 * Returns the child elements of the given element, or in the case of a deferred element, returns
-	 * a placeholder. If a deferred element used a job is created to fetch the children in the background.
-	 * @param parent The parent object.
-	 * @return Object[] or <code>null</code> if parent is not an instance
-	 * of IDeferredWorkbenchAdapter.
+	 * Returns the child elements of the given element, or in the case of a
+	 * deferred element, returns a placeholder. If a deferred element used a
+	 * job is created to fetch the children in the background.
+	 * 
+	 * @param parent
+	 *            The parent object.
+	 * @return Object[] or <code>null</code> if parent is not an instance of
+	 *         IDeferredWorkbenchAdapter.
 	 */
 	public Object[] getChildren(final Object parent) {
 		IDeferredWorkbenchAdapter element = getAdapter(parent);
@@ -91,9 +117,10 @@ public class DeferredTreeContentManager {
 	}
 
 	/**
-	 * Return the IDeferredWorkbenchAdapter for element or the element
-	 * if it is an instance of IDeferredWorkbenchAdapter. If it
-	 * does not exist return null.
+	 * Return the IDeferredWorkbenchAdapter for element or the element if it is
+	 * an instance of IDeferredWorkbenchAdapter. If it does not exist return
+	 * null.
+	 * 
 	 * @param element
 	 * @return IDeferredWorkbenchAdapter or <code>null</code>
 	 */
@@ -105,21 +132,27 @@ public class DeferredTreeContentManager {
 		if (!(element instanceof IAdaptable))
 			return null;
 
-		Object adapter = ((IAdaptable) element).getAdapter(IDeferredWorkbenchAdapter.class);
+		Object adapter =
+			((IAdaptable) element).getAdapter(IDeferredWorkbenchAdapter.class);
 		if (adapter == null)
 			return null;
 		else
 			return (IDeferredWorkbenchAdapter) adapter;
 
 	}
-	
+
 	/**
-	 * Starts a job and creates a collector for fetching the children of this deferred adapter. If children
-	 * are waiting to be retrieve for this parent already, that job is cancelled and another is started.
-	 * @param parent. The parent object being filled in,
-	 * @param adapter The adapter being used to fetch the children.
-	 * @param placeholder The adapter that will be used to indicate that results
-	 * are pending.
+	 * Starts a job and creates a collector for fetching the children of this
+	 * deferred adapter. If children are waiting to be retrieve for this parent
+	 * already, that job is cancelled and another is started.
+	 * 
+	 * @param parent.
+	 *            The parent object being filled in,
+	 * @param adapter
+	 *            The adapter being used to fetch the children.
+	 * @param placeholder
+	 *            The adapter that will be used to indicate that results are
+	 *            pending.
 	 */
 	private void startFetchingDeferredChildren(
 		final Object parent,
@@ -134,7 +167,9 @@ public class DeferredTreeContentManager {
 				addChildren(parent, elements, monitor);
 			}
 
-			/* (non-Javadoc)
+			/*
+			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.jface.progress.IElementCollector#done()
 			 */
 			public void done() {
@@ -143,64 +178,75 @@ public class DeferredTreeContentManager {
 			}
 		};
 
-		// Cancel any jobs currently fetching children for the same parent instance.
+		// Cancel any jobs currently fetching children for the same parent
+		// instance.
 		Platform.getJobManager().cancel(parent);
 			String jobName = ProgressMessages.format("DeferredTreeContentManager.FetchingName", //$NON-NLS-1$
-					new Object[] { adapter.getLabel(parent)});
-			Job job = new Job(jobName) {
-				public IStatus run(IProgressMonitor monitor) {
-					adapter.fetchDeferredChildren(parent, collector, monitor);
-					return Status.OK_STATUS;
-				}
+	new Object[] { adapter.getLabel(parent)});
+		Job job = new Job(jobName) {
+			public IStatus run(IProgressMonitor monitor) {
+				adapter.fetchDeferredChildren(parent, collector, monitor);
+				return Status.OK_STATUS;
+			}
 
-				/**
-				 * Check if the object is equal to parent or one 
-				 * of parents children so that the job can be cancelled
-				 * if the parent is refreshed.
-				 * @param family the potential ancestor of the current parent
-				 * @return boolean
-				 */
-				public boolean belongsTo(Object family) {
-					return isParent(family, parent);
-				}
+			/**
+			 * Check if the object is equal to parent or one of parents
+			 * children so that the job can be cancelled if the parent is
+			 * refreshed.
+			 * 
+			 * @param family
+			 *            the potential ancestor of the current parent
+			 * @return boolean
+			 */
+			public boolean belongsTo(Object family) {
+				return isParent(family, parent);
+			}
 
-				/**
-				 * Check if the parent of element is equal to the 
-				 * parent used in this job.
-				 * @param family. The potential ancestor of the current parent
-				 * @param child. The object to check against.
-				 * @return boolean
-				 */
-				private boolean isParent(Object family, Object child) {
-					if (family.equals(child))
-						return true;
-					IWorkbenchAdapter workbenchAdapter = getWorkbenchAdapter(child);
-					if (workbenchAdapter == null)
-						return false;
-					Object elementParent = workbenchAdapter.getParent(child);
-					if (elementParent == null)
-						return false;
-					return isParent(family, elementParent);
-				}
-			
-				/**
-				 * Get the workbench adapter for the element. 
-				 * @param element. The object we are adapting to.
-				 */
-				private IWorkbenchAdapter getWorkbenchAdapter(Object element) {
-					if (element instanceof IWorkbenchAdapter)
-						return (IWorkbenchAdapter) element;
-					if (!(element instanceof IAdaptable))
-						return null;
-					Object workbenchAdapter = ((IAdaptable) element).getAdapter(IWorkbenchAdapter.class);
-					if (workbenchAdapter == null)
-						return null;
-					else
-						return (IWorkbenchAdapter) workbenchAdapter;
-				}
+			/**
+			 * Check if the parent of element is equal to the parent used in
+			 * this job.
+			 * 
+			 * @param family.
+			 *            The potential ancestor of the current parent
+			 * @param child.
+			 *            The object to check against.
+			 * @return boolean
+			 */
+			private boolean isParent(Object family, Object child) {
+				if (family.equals(child))
+					return true;
+				IWorkbenchAdapter workbenchAdapter = getWorkbenchAdapter(child);
+				if (workbenchAdapter == null)
+					return false;
+				Object elementParent = workbenchAdapter.getParent(child);
+				if (elementParent == null)
+					return false;
+				return isParent(family, elementParent);
+			}
+
+			/**
+			 * Get the workbench adapter for the element.
+			 * 
+			 * @param element.
+			 *            The object we are adapting to.
+			 */
+			private IWorkbenchAdapter getWorkbenchAdapter(Object element) {
+				if (element instanceof IWorkbenchAdapter)
+					return (IWorkbenchAdapter) element;
+				if (!(element instanceof IAdaptable))
+					return null;
+				Object workbenchAdapter =
+					((IAdaptable) element).getAdapter(IWorkbenchAdapter.class);
+				if (workbenchAdapter == null)
+					return null;
+				else
+					return (IWorkbenchAdapter) workbenchAdapter;
+			}
 		};
 		job.addJobChangeListener(new JobChangeAdapter() {
-			/* (non-Javadoc)
+			/*
+			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
 			 */
 			public void done(IJobChangeEvent event) {
@@ -209,31 +255,41 @@ public class DeferredTreeContentManager {
 
 		});
 		job.setRule(adapter.getRule(parent));
-		job.schedule();
+		if(progressService == null)
+			job.schedule();
+		else
+			progressService.schedule(job);
+			
 	}
 
 	/**
 	 * Create a UIJob to add the children to the parent in the tree viewer.
+	 * 
 	 * @param parent
 	 * @param children
 	 * @param monitor
 	 */
-	void addChildren(final Object parent, final Object[] children,  IProgressMonitor monitor) {
+	void addChildren(
+		final Object parent,
+		final Object[] children,
+		IProgressMonitor monitor) {
 
-		WorkbenchJob updateJob = new WorkbenchJob(ProgressMessages.getString("DeferredTreeContentManager.AddingChildren")) {//$NON-NLS-1$
-			/* (non-Javadoc)
-			 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-			 */
+			WorkbenchJob updateJob = new WorkbenchJob(ProgressMessages.getString("DeferredTreeContentManager.AddingChildren")) {//$NON-NLS-1$
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+	 */
 			public IStatus runInUIThread(IProgressMonitor updateMonitor) {
-				//Cancel the job if the tree viewer got closed
-				if (treeViewer.getControl().isDisposed())
+					//Cancel the job if the tree viewer got closed
+	if (treeViewer.getControl().isDisposed())
 					return Status.CANCEL_STATUS;
 
 				//Prevent extra redraws on deletion and addition
 				treeViewer.getControl().setRedraw(false);
 				treeViewer.add(parent, children);
 				treeViewer.getControl().setRedraw(true);
-				
+
 				return Status.OK_STATUS;
 			}
 		};
@@ -242,11 +298,12 @@ public class DeferredTreeContentManager {
 	}
 
 	/**
-	 * Return whether or not the element is or adapts to
-	 * an IDeferredWorkbenchAdapter.
+	 * Return whether or not the element is or adapts to an
+	 * IDeferredWorkbenchAdapter.
+	 * 
 	 * @param element
 	 * @return boolean <code>true</code> if the element is an
-	 * 	IDeferredWorkbenchAdapter
+	 *         IDeferredWorkbenchAdapter
 	 */
 	public boolean isDeferredAdapter(Object element) {
 		return getAdapter(element) != null;
@@ -254,23 +311,26 @@ public class DeferredTreeContentManager {
 
 	/**
 	 * Run a job to clear the placeholder.
+	 * 
 	 * @param placeholder
 	 */
 	void runClearPlaceholderJob(final PendingUpdateAdapter placeholder) {
 		if (placeholder.isRemoved())
 			return;
-			//Clear the placeholder if it is still there
-		WorkbenchJob clearJob = new WorkbenchJob(ProgressMessages.getString("DeferredTreeContentManager.ClearJob")) {//$NON-NLS-1$
-				/* (non-Javadoc)
-				 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-				 */
+		//Clear the placeholder if it is still there
+			WorkbenchJob clearJob = new WorkbenchJob(ProgressMessages.getString("DeferredTreeContentManager.ClearJob")) {//$NON-NLS-1$
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+	 */
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				if (!placeholder.isRemoved()) {
 					Control control = treeViewer.getControl();
-					
-					if(control.isDisposed())
+
+					if (control.isDisposed())
 						return Status.CANCEL_STATUS;
-					
+
 					treeViewer.remove(placeholder);
 					placeholder.setRemoved(true);
 				}
@@ -280,10 +340,11 @@ public class DeferredTreeContentManager {
 		clearJob.setSystem(true);
 		clearJob.schedule();
 	}
-	
-	/** 
-	 * Cancel all jobs that are fetching content for the given parent or
-	 * any of its children.
+
+	/**
+	 * Cancel all jobs that are fetching content for the given parent or any of
+	 * its children.
+	 * 
 	 * @param parent
 	 */
 	public void cancel(Object parent) {
