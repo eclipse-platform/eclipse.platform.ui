@@ -10,13 +10,16 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.memory;
 
-import org.eclipse.debug.core.DebugException;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.ui.memory.IMemoryRendering;
+import org.eclipse.debug.ui.memory.IMemoryRenderingContainer;
+import org.eclipse.debug.ui.memory.IMemoryRenderingType;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
@@ -32,12 +35,15 @@ public class AddMemoryRenderingAction extends AddMemoryBlockAction {
 	public static final String ADD_RENDERING_FAILED = PREFIX + "add_rendering_failed"; //$NON-NLS-1$
 	public static final String FAILED_TO_ADD_THE_SELECTED_RENDERING = PREFIX + "failed_to_add_the_selected_rendering"; //$NON-NLS-1$
 	
-	public AddMemoryRenderingAction(IMemoryViewPane viewPane)
+	private IMemoryRenderingContainer fContainer;
+	
+	public AddMemoryRenderingAction(IMemoryRenderingContainer container)
 	{
 		super(DebugUIMessages.getString("AddMemoryRenderingAction.Add_renderings"), AS_PUSH_BUTTON); //$NON-NLS-1$
 		setToolTipText(DebugUIMessages.getString("AddMemoryRenderingAction.Add_renderings")); //$NON-NLS-1$
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, DebugUIPlugin.getUniqueIdentifier() + ".AddRenderingContextAction_context"); //$NON-NLS-1$
-		fViewPane = viewPane;
+		fContainer = container;
+		fSite = container.getMemoryRenderingSite();
 	}
 	
 	/* (non-Javadoc)
@@ -52,7 +58,7 @@ public class AddMemoryRenderingAction extends AddMemoryBlockAction {
 		
 		if (elem != null)
 		{	
-			AddMemoryRenderingDialog dialog = new AddMemoryRenderingDialog(shell, fViewPane);
+			AddMemoryRenderingDialog dialog = new AddMemoryRenderingDialog(shell, fSite);
 			dialog.open();
 			
 			// get a list of renderings to create
@@ -80,13 +86,15 @@ public class AddMemoryRenderingAction extends AddMemoryBlockAction {
 			{	
 				if (renderings[i] instanceof IMemoryRenderingType)
 				{
-					String id = ((IMemoryRenderingType)renderings[i]).getRenderingId();
 					try {
-						IMemoryRendering rendering = MemoryRenderingManager.getMemoryRenderingManager().createRendering(blk, id);
-						if (rendering != null && fViewPane instanceof IRenderingViewPane)
-							((IRenderingViewPane)fViewPane).addMemoryRendering(rendering);
-					} catch (DebugException e) {
-						MemoryViewUtil.openError(DebugUIMessages.getString("AddMemoryRenderingAction.Add_rendering_failed"), DebugUIMessages.getString("AddMemoryRenderingAction.Unable_to_add_selected_renderings"), null); //$NON-NLS-1$ //$NON-NLS-2$
+						IMemoryRendering rendering = ((IMemoryRenderingType)renderings[i]).createRendering();
+						if (rendering != null)
+						{
+							rendering.init(fContainer, blk);
+							fContainer.addMemoryRendering(rendering);
+						}
+					} catch (CoreException e) {
+						MemoryViewUtil.openError(ADD_RENDERING_FAILED, FAILED_TO_ADD_THE_SELECTED_RENDERING, e);  //$NON-NLS-1$ //$NON-NLS-2$
 					}
 				}					
 			}

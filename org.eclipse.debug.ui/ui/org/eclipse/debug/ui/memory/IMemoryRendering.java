@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -71,10 +71,10 @@ public interface IMemoryRendering {
      * the given memory block. This method is called before this rendering's control
      * has been created.
      * 
-     * @param site container hosting this rendering
+     * @param container container hosting this rendering
      * @param block the memory block to render
      */
-    public void init(IMemoryRenderingSite site, IMemoryBlock block);
+    public void init(IMemoryRenderingContainer container, IMemoryBlock block);
     
     /**
      * Creates the top level control for this rendering under the given parent composite.
@@ -127,11 +127,6 @@ public interface IMemoryRendering {
     public void becomesHidden();
     
     /**
-     * @return if the rendering is enabled
-     */
-    public boolean isEnabled();
-    
-    /**
      * @return the memory block displayed by this rendering.
      */
     public IMemoryBlock getMemoryBlock();
@@ -171,4 +166,8 @@ public interface IMemoryRendering {
      */
     public String getLabel();
     
+    /**
+     * Refresh the content of this rendering.
+     */
+    public void refresh();
 }

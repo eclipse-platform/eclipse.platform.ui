@@ -67,9 +67,6 @@ import org.eclipse.debug.internal.ui.views.breakpoints.OtherBreakpointCategory;
 import org.eclipse.debug.internal.ui.views.console.ProcessConsoleManager;
 import org.eclipse.debug.internal.ui.views.launch.DebugElementAdapterFactory;
 import org.eclipse.debug.internal.ui.views.launch.DebugElementHelper;
-import org.eclipse.debug.internal.ui.views.memory.IMemoryBlockViewSynchronizer;
-import org.eclipse.debug.internal.ui.views.memory.MemoryBlockViewSynchronizer;
-import org.eclipse.debug.internal.ui.views.memory.MemoryRenderingManager;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -163,9 +160,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	 * Step filter manager
 	 */
 	private StepFilterManager fStepFilterManager = null;
-	
-	
-	private MemoryBlockViewSynchronizer fMemBlkViewSynchronizer = null;
     
     /**
      * Image descriptor registry used for images with common overlays.
@@ -282,16 +276,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		} 
 		return fLaunchConfigurationManager;
 	}
-
-
-	public IMemoryBlockViewSynchronizer getMemoryBlockViewSynchronizer(){
-	
-		if (fMemBlkViewSynchronizer == null) {
-			fMemBlkViewSynchronizer = new MemoryBlockViewSynchronizer();
-		}
-		
-		return fMemBlkViewSynchronizer;
-	}
 	
 	/**
 	 * Returns the currently active workbench window or <code>null</code>
@@ -389,18 +373,12 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 			if (fgPresentation != null) {
 				fgPresentation.dispose();
 			}
-			
-			if (fMemBlkViewSynchronizer != null){
-				fMemBlkViewSynchronizer.shutdown();
-			}
             
             if (fImageDescriptorRegistry != null) {
                 fImageDescriptorRegistry.dispose();
             }
             
             SourceLookupFacility.shutdown();
-			
-			MemoryRenderingManager.pluginShutdown();
 			
 			DebugElementHelper.dispose();
 			

@@ -13,6 +13,7 @@ package org.eclipse.debug.internal.ui.views.memory;
 
 import java.math.BigInteger;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
@@ -30,18 +31,19 @@ import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
-import org.eclipse.debug.ui.IDebugModelPresentation;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.memory.IMemoryRendering;
+import org.eclipse.debug.ui.memory.IMemoryRenderingContainer;
+import org.eclipse.debug.ui.memory.IMemoryRenderingSite;
+import org.eclipse.debug.ui.memory.IMemoryRenderingType;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ISelectionListener;
-import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.PartInitException;
 
 
 /**
@@ -61,29 +63,29 @@ public class AddMemoryBlockAction extends Action implements ISelectionListener, 
 	protected ISelection fCurrentSelection = null;
 	protected IMemoryBlock fLastMemoryBlock;
 	private boolean fAddDefaultRenderings = true;
-	protected IMemoryViewPane fViewPane;
+	protected IMemoryRenderingSite fSite;
 
 	
-	public AddMemoryBlockAction(IMemoryViewPane viewPane)
+	public AddMemoryBlockAction(IMemoryRenderingSite site)
 	{
-		initialize(viewPane);
+		initialize(site);
 	}
 	
 	/**
 	 * @param addDefaultRenderings - specify if the action should add
 	 * default renderings for the new memory block when it is run
 	 */
-	AddMemoryBlockAction(IMemoryViewPane viewPane, boolean addDefaultRenderings)
+	AddMemoryBlockAction(IMemoryRenderingSite site, boolean addDefaultRenderings)
 	{
-		initialize(viewPane);
+		initialize(site);
 		fAddDefaultRenderings = addDefaultRenderings;
 	}
 	
 	/**
 	 * 
 	 */
-	private void initialize(IMemoryViewPane viewPane) {
-		fViewPane = viewPane;
+	private void initialize(IMemoryRenderingSite site) {
+		fSite = site;
 		setText(DebugUIMessages.getString(TITLE));
 		
 		setToolTipText(DebugUIMessages.getString(TOOLTIP));
@@ -183,8 +185,6 @@ public class AddMemoryBlockAction extends Action implements ISelectionListener, 
 					MemoryViewUtil.getMemoryBlockManager().addMemoryBlocks(new IMemoryBlock[]{memBlock});
 					if (fAddDefaultRenderings)
 						addDefaultRenderings(memBlock);
-					// move the tab with that memory block to the top
-					switchMemoryBlockToTop(fLastMemoryBlock);
 				}
 				else
 				{
@@ -236,9 +236,6 @@ public class AddMemoryBlockAction extends Action implements ISelectionListener, 
 					MemoryViewUtil.getMemoryBlockManager().addMemoryBlocks(new IMemoryBlock[]{memBlock});
 					if (fAddDefaultRenderings)
 						addDefaultRenderings(memBlock);
-					
-					// move the tab with that memory block to the top
-					switchMemoryBlockToTop(fLastMemoryBlock);
 				}
 				else
 				{
@@ -313,59 +310,6 @@ public class AddMemoryBlockAction extends Action implements ISelectionListener, 
 		return fLastMemoryBlock;
 	}
 	
-	private void switchMemoryBlockToTop(IMemoryBlock memoryBlock)
-	{
-		//	open a new view if necessary
-		IWorkbenchPage p= DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		if (p == null) {
-			return;
-		}
-		IViewPart view = null;
-		view= p.findView(IInternalDebugUIConstants.ID_MEMORY_VIEW);
-		
-		if (view == null) {
-			try {
-				IWorkbenchPart activePart= p.getActivePart();
-				view= (MemoryView) p.showView(IInternalDebugUIConstants.ID_MEMORY_VIEW);
-				p.activate(activePart);
-			} catch (PartInitException e) {
-				return;
-			}		
-			
-		}
-		
-		if (view instanceof IMultipaneMemoryView)
-		{
-			IMemoryViewPane viewPane = ((IMultipaneMemoryView)view).getViewPane(fViewPane.getPaneId());
-			
-			if (viewPane != null && viewPane instanceof IMemoryView)
-			{
-				IMemoryView memoryView = (IMemoryView)viewPane;
-				IMemoryViewTab topTap = memoryView.getTopMemoryTab();
-				
-				if (topTap != null && topTap.getMemoryBlock() != memoryBlock)
-				{
-					IMemoryViewTab[] allTabs = memoryView.getAllViewTabs();
-					IMemoryViewTab moveToTop = null;
-				
-					for (int i=0; i<allTabs.length; i++)
-					{
-						if (allTabs[i].getMemoryBlock() == memoryBlock)
-						{
-							moveToTop = allTabs[i];
-							break;
-						}
-					}
-					
-					if (moveToTop != null)
-					{
-						memoryView.moveToTop(moveToTop);
-					}
-				}
-			}
-		}
-	}
-	
 	protected void dispose() {
 		
 		// remove listeners
@@ -375,74 +319,51 @@ public class AddMemoryBlockAction extends Action implements ISelectionListener, 
 	
 	private void addDefaultRenderings(IMemoryBlock memoryBlock)
 	{
-		// get default renderings
-		IMemoryRenderingType renderingTypes[] = MemoryRenderingManager.getMemoryRenderingManager().getDefaultRenderingTypes(memoryBlock);
+		IMemoryRenderingType primaryType = DebugUITools.getMemoryRenderingManager().getPrimaryRenderingType(memoryBlock);
+		IMemoryRenderingType renderingTypes[] = DebugUITools.getMemoryRenderingManager().getDefaultRenderingTypes(memoryBlock);
 		
-		// add renderings
-		for (int i=0; i<renderingTypes.length; i++)
+		
+		// create primary rendering
+		try {
+			if (primaryType != null)
+			{
+				createRenderingInContainer(memoryBlock, primaryType, IInternalDebugUIConstants.ID_RENDERING_VIEW_PANE_1);
+			}
+			else if (renderingTypes.length > 0)
+			{
+				primaryType = renderingTypes[0];
+				createRenderingInContainer(memoryBlock, renderingTypes[0], IInternalDebugUIConstants.ID_RENDERING_VIEW_PANE_1);
+			}
+		} catch (CoreException e1) {
+			DebugUIPlugin.log(e1);	
+		}
+		
+		for (int i = 0; i<renderingTypes.length; i++)
 		{
 			try {
-				// make sure the defaut supports the rendering view
-				String[] viewIds = renderingTypes[i].getSupportedViewIds();
-				boolean viewSupported = false;
-				for (int j=0; j<viewIds.length; j++)
+				boolean create = true;
+				if (primaryType != null)
 				{
-					if (viewIds[j].indexOf(IInternalDebugUIConstants.ID_RENDERING_VIEW_PANE) != -1)
-					{
-						viewSupported = true;
-						break;
-					}
+					if (primaryType.getId().equals(renderingTypes[i].getId()))
+						create = false;
 				}
-				
-				if (viewSupported)
-				{
-					String paneId = IInternalDebugUIConstants.ID_RENDERING_VIEW_PANE_1;
-					IDebugModelPresentation modelPresentation = DebugUIPlugin.getModelPresentation();
-					if (modelPresentation instanceof IMemoryBlockModelPresentation)
-					{
-						paneId= ((IMemoryBlockModelPresentation)modelPresentation).getViewPaneIdForDefault(memoryBlock, renderingTypes[i]);
-					}
-					
-					if (paneId == null)
-						paneId = IInternalDebugUIConstants.ID_RENDERING_VIEW_PANE_1;
-					
-					IMemoryRendering rendering = MemoryRenderingManager.getMemoryRenderingManager().createRendering(memoryBlock, renderingTypes[i].getRenderingId());
-					
-					if (rendering != null)
-					{
-						IMemoryViewPane viewPane = getDefualtViewPane(paneId);
-						
-						if (viewPane != null && viewPane instanceof IRenderingViewPane)
-							((IRenderingViewPane)viewPane).addMemoryRendering(rendering);
-					}
-				}
-				
-			} catch (DebugException e) {
-				// catch error silently
-				// log error
-				DebugUIPlugin.logErrorMessage("Cannot create default rendering: " + renderingTypes[i].getRenderingId()); //$NON-NLS-1$
+				if (create)
+					createRenderingInContainer(memoryBlock, renderingTypes[i], IInternalDebugUIConstants.ID_RENDERING_VIEW_PANE_2);
+			} catch (CoreException e) {
+				DebugUIPlugin.log(e);
 			}
 		}
 	}
-	
-	private IMemoryViewPane getDefualtViewPane(String paneId)
-	{
-		//	open a new view if necessary
-		IWorkbenchPage p= DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		if (p == null) {
-			return null;
-		}
-		
-		IViewPart view = null;
-		view= p.findView(IInternalDebugUIConstants.ID_MEMORY_VIEW);
-		
-		if (view != null && view instanceof IMultipaneMemoryView)
-		{
-			IMultipaneMemoryView memoryView = ((IMultipaneMemoryView)view);
-			IMemoryViewPane viewPane = memoryView.getViewPane(paneId);
-			return viewPane;
-		}
-		
-		return null;
+
+	/**
+	 * @param memoryBlock
+	 * @param primaryType
+	 * @throws CoreException
+	 */
+	private void createRenderingInContainer(IMemoryBlock memoryBlock, IMemoryRenderingType primaryType, String paneId) throws CoreException {
+		IMemoryRendering rendering = primaryType.createRendering();
+		IMemoryRenderingContainer container = fSite.getContainer(paneId);
+		rendering.init(container, memoryBlock);
+		container.addMemoryRendering(rendering);
 	}
 }

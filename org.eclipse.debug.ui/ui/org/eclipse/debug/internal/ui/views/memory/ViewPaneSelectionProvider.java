@@ -16,10 +16,14 @@ import java.util.ArrayList;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 
 
+/**
+ * Handles selection changes in a rendering view pane.
+ * @since 3.1
+ *
+ */
 public class ViewPaneSelectionProvider implements ISelectionProvider
 {
 	ArrayList fListeners = new ArrayList();
@@ -57,23 +61,9 @@ public class ViewPaneSelectionProvider implements ISelectionProvider
 	 * @see org.eclipse.jface.viewers.ISelectionProvider#setSelection(org.eclipse.jface.viewers.ISelection)
 	 */
 	public void setSelection(ISelection selection)
-	{				
-		if (fSelection instanceof IStructuredSelection && selection instanceof IStructuredSelection)
-		{
-			Object currentSel = ((IStructuredSelection)fSelection).getFirstElement();
-			Object newSel = ((IStructuredSelection)selection).getFirstElement();
-			
-			if (currentSel != newSel)
-			{
-				fSelection = selection;
-				fireChanged();
-			}
-		}
-		else if (fSelection != selection)
-		{
-			fSelection = selection;
-			fireChanged();
-		}
+	{		
+		fSelection = selection;
+		fireChanged();
 	}
 	
 	public void fireChanged()

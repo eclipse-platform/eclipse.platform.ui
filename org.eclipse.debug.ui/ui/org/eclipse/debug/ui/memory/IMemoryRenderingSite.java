@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c)  2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,4 +47,27 @@ public interface IMemoryRenderingSite {
      *  <code>null</code>
      */
     public void setSynchronizationProvider(IMemoryRendering rendering);
+    
+    /**
+     * Returns the rendering currengly providing synchronization information for
+     * this rendering site, or <code>null</code if none.
+     * @return rendering providing synchronization information or <code>null</null>
+     */
+    public IMemoryRendering getSynchronizationProvider();
+    
+    /**
+     * @return all the memory rendering containers within this rendering site.
+     */
+    public IMemoryRenderingContainer[] getMemoryRenderingContainers();
+    
+    /**
+     * Returns the rendering container with teh given id.
+     *
+     * @param id
+     * @return the rendering container with the given id.  Returns null
+     * if the container cannot be found.
+     */
+    public IMemoryRenderingContainer getContainer(String id);
+    
+    
 }

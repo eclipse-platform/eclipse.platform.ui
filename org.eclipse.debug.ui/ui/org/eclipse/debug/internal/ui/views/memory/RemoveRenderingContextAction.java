@@ -10,22 +10,28 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.memory;
 
+import org.eclipse.debug.ui.memory.IMemoryRenderingContainer;
+import org.eclipse.debug.ui.memory.IMemoryRenderingSite;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 
+/**
+ * @since 3.0
+ *
+ */
 public class RemoveRenderingContextAction implements IViewActionDelegate {
 
-	private IMultipaneMemoryView fMemoryView;
+	private IMemoryRenderingSite fMemoryView;
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
 	 */
 	public void init(IViewPart view) {
-		if (view instanceof IMultipaneMemoryView)
+		if (view instanceof IMemoryRenderingSite)
 		{
-			fMemoryView = (IMultipaneMemoryView)view;
+			fMemoryView = (IMemoryRenderingSite)view;
 		}
 	}
 
@@ -36,13 +42,13 @@ public class RemoveRenderingContextAction implements IViewActionDelegate {
 		if (fMemoryView == null)
 			return;
 		
-		IMemoryViewPane[] viewPanes = fMemoryView.getViewPanes();
+		IMemoryRenderingContainer[] viewPanes = fMemoryView.getMemoryRenderingContainers();
 		String actionId = action.getId();
-		IMemoryViewPane selectedPane = null;
+		IMemoryRenderingContainer selectedPane = null;
 		
 		for (int i=0; i<viewPanes.length; i++)
 		{
-			if (actionId.indexOf(viewPanes[i].getPaneId()) != -1)
+			if (actionId.indexOf(viewPanes[i].getId()) != -1)
 			{
 				selectedPane = viewPanes[i];
 				break;

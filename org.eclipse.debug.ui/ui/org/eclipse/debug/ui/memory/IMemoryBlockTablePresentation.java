@@ -19,9 +19,15 @@ import org.eclipse.debug.ui.IDebugModelPresentation;
 
 /**
  * Allows debug models to customize the rendering of addresses for its memory blocks
- * in text based renderings provided by the debug platform.
+ * in table and text based renderings provided by the debug platform.
  * 
- * TODO: extension point definition and example
+ * To contribute a memory block table presentation, implement your debug model
+ * presentaion as documented in <code>org.eclipse.debug.ui.IDebugModelPresentation.</code>
+ * In addition, implement this interface in your debug model presentation.  Your model
+ * presentation will be called when <code>org.eclipse.debug.ui.memory.AbstractTableRendering</code>
+ * contructs its column and row labels. 
+ * 
+ * Clients may implement this interface.
  * 
  * @since 3.1
  */
@@ -29,13 +35,13 @@ public interface IMemoryBlockTablePresentation extends IDebugModelPresentation
 {
 	
 	/**
-     * Returns a collection of labels to head columns in a <code>TODO: add class name</code>
+     * Returns a collection of labels to head columns in a <code>AbstractTableRendering</code>
      * rendering, or <code>null</code> if default labels should be used.
      *  
 	 * @param blk memory block
 	 * @param bytesPerLine the number if bytes to be displayed
 	 * @param numColumns the number of columns the bytes are divided into 
-	 * @return a collection of labels to head columns in a <code>TODO: add class name</code>
+	 * @return a collection of labels to head columns in a <code>AbstractTableRendering</code>
      * rendering, or <code>null</code> if default labels should be used
 	 */
 	public String[] getColumnLabels(IMemoryBlock blk, int bytesPerLine, int numColumns);

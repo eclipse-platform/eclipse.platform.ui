@@ -40,7 +40,6 @@
    <extension-point id="sourceContainerPresentations" name="%SourceContainerPresentationsName" schema="schema/sourceContainerPresentations.exsd"/>
    <extension-point id="debugModelContextBindings" name="%DebugModelContextBindingsName" schema="schema/debugModelContextBindings.exsd"/>
    <extension-point id="contextViewBindings" name="%ContextViewBindingsName" schema="schema/contextViewBindings.exsd"/>
-   <extension-point id="memoryRenderingTypes" name="%renderingExtensionPointName" schema="schema/memoryRenderingTypes.exsd"/>
    <extension-point id="memoryRenderings" name="%memoryRenderingsExtensionPointName" schema="schema/memoryRenderings.exsd"/>
    <extension-point id="breakpointOrganizers" name="%BreakpointOrganizersName" schema="schema/breakpointOrganizers.exsd"/>
    <extension-point id="variableValueEditors" name="%VariableValueEditorsName" schema="schema/variableValueEditors.exsd"/>
@@ -856,6 +855,22 @@
                class="org.eclipse.debug.internal.ui.views.memory.ToggleSplitPaneAction"
                style="toggle"
                id="org.eclipse.debug.ui.togglesplitpane"/>
+         <action
+               helpContextId="DefaultColumnSizePrefAction_context"
+               label="%SetDefaultColumnSizeActionName"
+               class="org.eclipse.debug.internal.ui.views.memory.renderings.SetDefaultColumnSizePrefAction"
+               tooltip="%SetDefaultColumnSizeActionName"
+               style="push"
+               menubarPath="additions"
+               id="org.eclipse.debug.ui.setDefaultColumnSize"/>
+         <action
+               helpContextId="SetPaddedStrAction_context"
+               label="%SetPaddedStrActionName"
+               class="org.eclipse.debug.internal.ui.views.memory.renderings.SetPaddedStringAction"
+               tooltip="%SetPaddedStrActionName"
+               style="push"
+               menubarPath="additions"
+               id="org.eclipse.debug.ui.setPaddedStrAction"/>
       </viewContribution>
    </extension>
    <extension
@@ -1310,7 +1325,7 @@
    <extension
          point="org.eclipse.ui.popupMenus">
       <objectContribution
-            objectClass="org.eclipse.debug.internal.ui.views.memory.IntegerRendering"
+            objectClass="org.eclipse.debug.internal.ui.views.memory.renderings.AbstractIntegerRendering"
             id="org.eclipse.debug.ui.memory">
          <menu
                label="%Endianess"
@@ -1324,7 +1339,7 @@
                helpContextId="BigEndianAction_context"
                enablesFor="1"
                label="%BigEndianActionName"
-               class="org.eclipse.debug.internal.ui.views.memory.BigEndianAction"
+               class="org.eclipse.debug.internal.ui.views.memory.renderings.BigEndianAction"
                menubarPath="org.eclipse.debug.ui.memory.rendering.setendianess/setEndianessGroup"
                id="org.eclipse.debug.ui.memory.rendering.BigEndianAction"> 
          </action>
@@ -1332,7 +1347,7 @@
                 helpContextId="LittleEndianAction_context"
                 enablesFor="1"
                 label="%LittleEndianActionName"
-                class="org.eclipse.debug.internal.ui.views.memory.LittleEndianAction"
+                class="org.eclipse.debug.internal.ui.views.memory.renderings.LittleEndianAction"
                 menubarPath="org.eclipse.debug.ui.memory.rendering.setendianess/setEndianessGroup"
                 id="org.eclipse.debug.ui.memory.rendering.LittleEndianAction"> 
          </action>
@@ -2250,73 +2265,6 @@ M4 = Platform-specific fourth key
           </description>
 		</fontDefinition>
    </extension>
-<!-- Renderings Definitions -->   
-   <extension
-     id="org.eclipse.debug.ui.renderings"
-     name="%Renderings"
-     point="org.eclipse.debug.ui.memoryRenderingTypes">
-<!-- raw hex rendering for Memory View -->     
-	  <rendering
-	        name="%RawHex"
-	        renderingId="org.eclipse.debug.ui.rendering.raw_memory"
-	        renderingFactory="org.eclipse.debug.internal.ui.views.memory.HexRenderingFactory">
-	        <renderingProperty
-	            name="viewTabFactory"
-	            value="org.eclipse.debug.internal.ui.views.memory.MemoryRenderingViewTabFactory">
-	        </renderingProperty>
-	        <renderingProperty
-	            name="renderer"
-	            value="org.eclipse.debug.internal.ui.views.memory.HexRenderer">
-	        </renderingProperty>
-	        <viewBinding viewIds="org.eclipse.debug.ui.MemoryView.RenderingViewPane"/>
-	  </rendering>
-	 
-<!-- ASCII Rendering - renderingFactory will create an org.eclipse.debug.internal.ui.views.memory.ASCIIRendering -->
-      <rendering 
-            name="%ASCIIName"
-            renderingId="org.eclipse.debug.ui.rendering.ascii"
-            renderingFactory="org.eclipse.debug.internal.ui.views.memory.DefaultRenderingsFactory">
-         <renderingProperty
-               name="viewTabFactory"
-               value="org.eclipse.debug.internal.ui.views.memory.MemoryRenderingViewTabFactory">
-         </renderingProperty>
-         <renderingProperty
-               name="renderer"
-               value="org.eclipse.debug.internal.ui.views.memory.ASCIIRenderer">
-         </renderingProperty>
-         <viewBinding viewIds="org.eclipse.debug.ui.MemoryView.RenderingViewPane"/>
-      </rendering>
-<!-- Signed Integer Rendering - renderingFactory will create an org.eclipse.debug.internal.ui.views.memory.SignedIntegerRendering -->  
-      <rendering
-            name="%SignedIntegerName"
-            renderingId="org.eclipse.debug.ui.rendering.signedint"
-            renderingFactory="org.eclipse.debug.internal.ui.views.memory.DefaultRenderingsFactory">
-         <renderingProperty
-               name="viewTabFactory"
-               value="org.eclipse.debug.internal.ui.views.memory.MemoryRenderingViewTabFactory">
-         </renderingProperty>
-         <renderingProperty
-               name="renderer"
-               value="org.eclipse.debug.internal.ui.views.memory.SignedIntegerRenderer">
-         </renderingProperty>
-         <viewBinding viewIds="org.eclipse.debug.ui.MemoryView.RenderingViewPane"/>
-      </rendering>
-<!-- Unsigned Integer Rendering - renderingFactory will create an org.eclipse.debug.internal.ui.views.memory.UnsignedIntegerRendering -->
-      <rendering
-            name="%UnsignedIntegerName"
-            renderingId="org.eclipse.debug.ui.rendering.unsignedint"
-            renderingFactory="org.eclipse.debug.internal.ui.views.memory.DefaultRenderingsFactory">
-         <renderingProperty
-               name="viewTabFactory"
-               value="org.eclipse.debug.internal.ui.views.memory.MemoryRenderingViewTabFactory">
-         </renderingProperty>
-         <renderingProperty
-               name="renderer"
-               value="org.eclipse.debug.internal.ui.views.memory.UnsignedIntegerRenderer">
-         </renderingProperty>
-         <viewBinding viewIds="org.eclipse.debug.ui.MemoryView.RenderingViewPane"/>
-      </rendering>
-   </extension>   
    <extension
          point="org.eclipse.ui.console.consolePageParticipants">
       <consolePageParticipant
@@ -2426,4 +2374,32 @@ M4 = Platform-specific fourth key
     
     <!-- Console action contributions -->
     
+   <extension
+          point="org.eclipse.debug.ui.memoryRenderings">
+       <renderingType
+             class="org.eclipse.debug.internal.ui.views.memory.renderings.HexRenderingTypeDelegate"
+             name="%RawHex"
+             id="org.eclipse.debug.ui.rendering.raw_memory"/>
+       <renderingType
+             class="org.eclipse.debug.internal.ui.views.memory.renderings.ASCIIRenderingTypeDelegate"
+             name="%ASCIIName"
+             id="org.eclipse.debug.ui.rendering.ascii"/>
+       <renderingType
+             class="org.eclipse.debug.internal.ui.views.memory.renderings.SignedIntegerRenderingTypeDelegate"
+             name="%SignedIntegerName"
+             id="org.eclipse.debug.ui.rendering.signedint"/>
+       <renderingType
+             class="org.eclipse.debug.internal.ui.views.memory.renderings.UnsignedIntegerRenderingTypeDelegate"
+             name="%UnsignedIntegerName"
+             id="org.eclipse.debug.ui.rendering.unsignedint"/>
+    </extension>
+    <extension
+          point="org.eclipse.ui.workingSets">
+       <workingSet
+             icon="icons/full/obj16/brkp_grp.gif"
+             name="%BreakpointWorkingSet.name"
+             pageClass="org.eclipse.debug.internal.ui.views.breakpoints.BreakpointWorkingSetPage"
+             id="org.eclipse.debug.ui.breakpointWorkingSet"/>
+    </extension>
+
 </plugin>

@@ -14,6 +14,9 @@ package org.eclipse.debug.internal.ui.views.memory;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.ui.memory.IMemoryRendering;
+import org.eclipse.debug.ui.memory.IMemoryRenderingContainer;
+import org.eclipse.jface.action.Action;
 
 
 /**
@@ -24,11 +27,12 @@ import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
  * 
  * When user clicks on the this tool bar action, it simply removes
  * the top view tab from Memory Rendering Pane.
+ * @since 3.0
  */
-public class RemoveMemoryRenderingAction extends AbstractMemoryAction
+public class RemoveMemoryRenderingAction extends Action
 {
-	private IMemoryViewPane fViewPane;
-	public RemoveMemoryRenderingAction(IMemoryViewPane viewPane)
+	private IMemoryRenderingContainer fViewPane;
+	public RemoveMemoryRenderingAction(IMemoryRenderingContainer viewPane)
 	{
 		// create action as drop down
 		super(DebugUIMessages.getString("RemoveMemoryRenderingAction.Remove_rendering"), AS_PUSH_BUTTON); //$NON-NLS-1$
@@ -55,9 +59,7 @@ public class RemoveMemoryRenderingAction extends AbstractMemoryAction
 			
 			if (rendering != null)
 			{
-				// remove from Memory Rendering Manager
-				if (fViewPane instanceof IRenderingViewPane)
-					((IRenderingViewPane)fViewPane).removeMemoryRendering(rendering);
+				fViewPane.removeMemoryRendering(rendering);
 			}
 		}
 	}

@@ -28,12 +28,11 @@ import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IValue;
-import org.eclipse.debug.internal.ui.views.memory.IMemoryBlockModelPresentation;
-import org.eclipse.debug.internal.ui.views.memory.IMemoryRenderingType;
 import org.eclipse.debug.ui.IDebugEditorPresentation;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IValueDetailListener;
+import org.eclipse.debug.ui.memory.IMemoryBlockTablePresentation;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -51,7 +50,7 @@ import org.eclipse.ui.IEditorPart;
  * asked to render an object from a debug model, this presentation delegates
  * to the extension registered for that debug model. 
  */
-public class DelegatingModelPresentation implements IDebugModelPresentation, IDebugEditorPresentation, IColorProvider, IFontProvider, IMemoryBlockModelPresentation {
+public class DelegatingModelPresentation implements IDebugModelPresentation, IDebugEditorPresentation, IColorProvider, IFontProvider, IMemoryBlockTablePresentation {
 	
 	/**
 	 * A mapping of attribute ids to their values
@@ -359,50 +358,20 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
         return null;
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.memory.IMemoryBlockModelPresentation#getTabLabel(org.eclipse.debug.core.model.IMemoryBlock, java.lang.String)
-	 */
-	public String getTabLabel(IMemoryBlock blk, String renderingId) {
+	public String[] getColumnLabels(IMemoryBlock blk, int bytesPerLine, int numColumns) {
 		IDebugModelPresentation modelPresentation = getConfiguredPresentation(blk);
-		if (modelPresentation instanceof IMemoryBlockModelPresentation)
+		if (modelPresentation instanceof IMemoryBlockTablePresentation)
 		{
-			return ((IMemoryBlockModelPresentation)modelPresentation).getTabLabel(blk, renderingId);
-		}
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.memory.IMemoryBlockModelPresentation#getColumnLabels(org.eclipse.debug.core.model.IMemoryBlock, int, int)
-	 */
-	public String[] getColumnLabels(IMemoryBlock blk, int bytesPerLine, int columnSize) {
-		IDebugModelPresentation modelPresentation = getConfiguredPresentation(blk);
-		if (modelPresentation instanceof IMemoryBlockModelPresentation)
-		{
-			return ((IMemoryBlockModelPresentation)modelPresentation).getColumnLabels(blk, bytesPerLine, columnSize);
+			return ((IMemoryBlockTablePresentation)modelPresentation).getColumnLabels(blk, bytesPerLine, numColumns);
 		}
 		return new String[0];
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.memory.IMemoryBlockModelPresentation#getAddressPresentation(org.eclipse.debug.core.model.IMemoryBlock, java.math.BigInteger)
-	 */
-	public String getAddressPresentation(IMemoryBlock blk, BigInteger address) {
+	public String getRowLabel(IMemoryBlock blk, BigInteger address) {
 		IDebugModelPresentation modelPresentation = getConfiguredPresentation(blk);
-		if (modelPresentation instanceof IMemoryBlockModelPresentation)
+		if (modelPresentation instanceof IMemoryBlockTablePresentation)
 		{
-			return ((IMemoryBlockModelPresentation)modelPresentation).getAddressPresentation(blk, address);
-		}
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.memory.IMemoryBlockModelPresentation#getViewPaneIdForDefault(org.eclipse.debug.internal.ui.views.memory.IMemoryRenderingType)
-	 */
-	public String getViewPaneIdForDefault(IMemoryBlock blk, IMemoryRenderingType renderingType) {
-		IDebugModelPresentation modelPresentation = getConfiguredPresentation(blk);
-		if (modelPresentation instanceof IMemoryBlockModelPresentation)
-		{
-			return ((IMemoryBlockModelPresentation)modelPresentation).getViewPaneIdForDefault(blk, renderingType);
+			return ((IMemoryBlockTablePresentation)modelPresentation).getRowLabel(blk, address);
 		}
 		return null;
 	}

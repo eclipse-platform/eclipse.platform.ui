@@ -31,11 +31,4 @@ public interface IMemoryBlockExtensionRetrieval extends IMemoryBlockRetrieval {
 	 */
 	
 	public IMemoryBlockExtension getExtendedMemoryBlock(String expression, IDebugElement selected) throws DebugException;
-
-	/**
-	 * @return the string to be used in place of this memory content when bytes
-	 * are not available.
-	 * Return null if the byte is available.
-	 */
-	public String getPaddedString();
 }

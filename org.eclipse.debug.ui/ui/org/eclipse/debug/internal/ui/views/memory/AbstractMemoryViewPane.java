@@ -13,8 +13,7 @@ package org.eclipse.debug.internal.ui.views.memory;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
+
 import org.eclipse.debug.core.IMemoryBlockListener;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
@@ -23,10 +22,6 @@ import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuListener;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -44,15 +39,10 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 
 public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, ISelectionListener, SelectionListener, IMemoryView, ISelectionChangedListener, IMemoryViewPane{
-
-
-	private static final String VIEW_TAB_FACTORY = "viewTabFactory"; //$NON-NLS-1$
-	private static final String RENDERER = "renderer"; //$NON-NLS-1$
 	
 	public static final String BEGINNING_POPUP = "popUpBegin"; //$NON-NLS-1$
 	
@@ -61,7 +51,6 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 	protected ViewTabEnablementManager fViewTabEnablementManager;
 	protected TabFolder fEmptyTabFolder;
 	protected Hashtable fTabFolderForDebugView = new Hashtable(); 
-	protected Hashtable fMenuMgr = new Hashtable();
 	protected boolean fVisible;
 	protected Hashtable fRenderingInfoTable;
 	protected IMemoryBlockRetrieval fKey;  // store the key for current tab folder
@@ -69,6 +58,7 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 	protected IViewPart fParent;
 	protected String fPaneId;
 	private Composite fCanvas;
+	protected String fLabel;
 	
 	public AbstractMemoryViewPane(IViewPart parent)
 	{
@@ -82,10 +72,11 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 	 * @param parent
 	 * @return the control of the view pane
 	 */
-	public Control createViewPane(Composite parent, String paneId)
+	public Control createViewPane(Composite parent, String paneId, String label)
 	{	
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IDebugUIConstants.PLUGIN_ID + ".MemoryView_context"); //$NON-NLS-1$
 		fPaneId = paneId;
+		fLabel = label;
 		fCanvas = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.makeColumnsEqualWidth = false;
@@ -251,123 +242,10 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 		return null;
 	}
 	
-	protected MenuManager createContextMenuManager() {
-		MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
-		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(new IMenuListener() {
-			public void menuAboutToShow(IMenuManager manager) {
-				manager.add(new Separator(BEGINNING_POPUP));
-				IMemoryViewTab top = getTopMemoryTab();
-				
-				if (top != null)
-				{
-					top.fillContextMenu(manager);
-				}
-				manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-			}
-		});
-
-		// register a context menu manager, use its pane id as the menu id
-		fParent.getSite().registerContextMenu(getPaneId(), menuMgr, fSelectionProvider);
-		return menuMgr;
-	}
-
-	
-	protected IMemoryViewTabFactory getViewTabFactory(String renderingId)
-	{	
-		if (fRenderingInfoTable == null)
-			fRenderingInfoTable = new Hashtable();
-		
-		IMemoryRenderingType info;
-		
-		info = (IMemoryRenderingType)fRenderingInfoTable.get(renderingId);
-		
-		// ask manager for new info
-		if (info == null)
-		{
-			info = MemoryRenderingManager.getMemoryRenderingManager().getRenderingTypeById(renderingId);
-			fRenderingInfoTable.put(renderingId, info);
-		}
-		
-		if (info == null)
-			return null;
-		
-		IConfigurationElement element = info.getPropertyConfigElement(VIEW_TAB_FACTORY);
-		
-		if (element == null)
-			return null;
-		
-		try {
-			if (element != null)
-			{	
-				// create the view tab factory
-				Object obj = element.createExecutableExtension("value"); //$NON-NLS-1$
-				
-				if (obj instanceof IMemoryViewTabFactory)
-					return (IMemoryViewTabFactory)obj;
-                return null;
-			}
-            return null;
-		} catch (CoreException e1) {
-			return null;
-		}
-	}
-
-	/**
-	 * @param renderingId
-	 * @return the renderer for the rendering
-	 */
-	protected AbstractMemoryRenderer getRenderer(String renderingId){
-		
-		if (fRenderingInfoTable == null)
-			fRenderingInfoTable = new Hashtable();
-		
-		IMemoryRenderingType info;
-		info = (IMemoryRenderingType)fRenderingInfoTable.get(renderingId);
-		
-		// ask manager for new info
-		if (info == null)
-		{
-			info = MemoryRenderingManager.getMemoryRenderingManager().getRenderingTypeById(renderingId);
-			fRenderingInfoTable.put(renderingId, info);
-		}
-		
-		if (info == null)
-			return null;
-		
-		IConfigurationElement element = info.getPropertyConfigElement(RENDERER);
-		
-		if (element == null)
-			return null;
-		
-		try {
-			if (element != null)
-			{	
-				// create the view tab factory
-				Object obj = element.createExecutableExtension("value"); //$NON-NLS-1$
-				
-				if (obj instanceof AbstractMemoryRenderer)
-					return (AbstractMemoryRenderer)obj;
-                return null;
-			}
-            return null;
-		} catch (CoreException e1) {
-			return null;
-		}
-	}	
-	
 	protected void disposeViewTab(IMemoryViewTab viewTab, TabItem tabItem)
 	{
 		if (viewTab == null)
 			return;
-		
-		// get menu manager and clean up
-		IMenuManager menuMgr = (IMenuManager)fMenuMgr.get(viewTab);
-		
-		if (menuMgr != null)
-		{
-			menuMgr.dispose();
-		}
 		
 		viewTab.dispose();
 
@@ -490,6 +368,11 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 	public boolean isVisible()
 	{
 		return fVisible;
+	}
+	
+	public String getLabel()
+	{
+		return fLabel;
 	}
 	
 	/* (non-Javadoc)

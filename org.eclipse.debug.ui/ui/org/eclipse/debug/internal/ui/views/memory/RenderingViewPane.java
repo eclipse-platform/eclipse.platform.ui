@@ -13,21 +13,19 @@ package org.eclipse.debug.internal.ui.views.memory;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.core.DebugException;
+
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
-import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.internal.ui.views.memory.renderings.CreateRendering;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.memory.IMemoryRendering;
+import org.eclipse.debug.ui.memory.IMemoryRenderingContainer;
+import org.eclipse.debug.ui.memory.IMemoryRenderingSite;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -37,21 +35,23 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
-public class RenderingViewPane extends AbstractMemoryViewPane implements IRenderingViewPane{
+
+
+/**
+ * Represents a rendering view pane in the Memory View.
+ * This hosts the memory view tabs in the view.
+ * @since 3.1
+ *
+ */
+public class RenderingViewPane extends AbstractMemoryViewPane implements IMemoryRenderingContainer{
 
 	public static final String RENDERING_VIEW_PANE_ID = DebugUIPlugin.getUniqueIdentifier() + ".MemoryView.RenderingViewPane"; //$NON-NLS-1$
-	
-	private static final String VIEW_TAB_FACTORY = "viewTabFactory"; //$NON-NLS-1$
-	private static final String RENDERER = "renderer"; //$NON-NLS-1$
-	private static final String VALUE = "value"; //$NON-NLS-1$
 	
 	private Hashtable fTabFolderForMemoryBlock = new Hashtable();
 	private Hashtable fMemoryBlockFromTabFolder = new Hashtable();
@@ -60,6 +60,8 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IRender
 
 	private IAction fRemoveMemoryRenderingAction;
 	private ViewPaneRenderingMgr fRenderingMgr;
+	
+	private IMemoryRenderingSite fRenderingSite;
 	
 	/**
 	 * @param parent is the view hosting this view pane
@@ -81,6 +83,13 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IRender
 	 */
 	public RenderingViewPane(IViewPart parent) {
 		super(parent);
+		
+		if (parent instanceof IMemoryRenderingSite)
+			fRenderingSite = (IMemoryRenderingSite)parent;
+		else
+		{
+			DebugUIPlugin.logErrorMessage("Parent for the rendering view pane is invalid."); //$NON-NLS-1$
+		}	
 	}
 	
 	/* (non-Javadoc)
@@ -101,9 +110,12 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IRender
 			} 
 			else {	//otherwise, add a new one
 				TabFolder folder =  new TabFolder(fViewPaneCanvas, SWT.NULL);
+				
 				TabItem newItem = new TabItem(folder, SWT.NULL);
 				
-				CreateRenderingTab createTab = new CreateRenderingTab(memory, newItem, getInstance());
+				CreateRendering rendering = new CreateRendering(this);
+				rendering.init(this, memory);
+				MemoryViewTab createTab = new MemoryViewTab(newItem, rendering, this);
 				
 				folder.setSelection(0);
 				
@@ -112,13 +124,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IRender
 				fTabFolderForDebugView.put(getMemoryBlockRetrieval(memory), folder);
 				
 				setTabFolder((TabFolder)fTabFolderForMemoryBlock.get(memory));
-				setRenderingSelection(createTab);
-				
-				MenuManager menuMgr = createContextMenuManager();
-				Menu menu = menuMgr.createContextMenu(folder);
-				folder.setMenu(menu);
-				
-				fMenuMgr.put(folder, menuMgr);
+				setRenderingSelection(createTab.getRendering());
 				
 				fViewPaneCanvas.layout();
 			}	
@@ -145,7 +151,6 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IRender
 	public void memoryBlocksRemoved(final IMemoryBlock[] memoryBlocks) {
 		Display.getDefault().syncExec(new Runnable() {
 			public void run() {
-				
 				for (int j=0; j<memoryBlocks.length; j++)
 				{
 					IMemoryBlock memory = memoryBlocks[j];
@@ -194,10 +199,6 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IRender
 							if (items[i].getData() instanceof IMemoryViewTab)
 								disposeViewTab((IMemoryViewTab)items[i].getData(), items[i]);
 						}
-						
-						MenuManager menuMgr = (MenuManager)fMenuMgr.get(tabFolder);
-						if (menuMgr != null)
-							menuMgr.dispose();
 						
 						// dispose the tab folder
 						tabFolder.dispose();						
@@ -367,7 +368,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IRender
 		
 		if (getTopMemoryTab() != null)
 		{	
-			if (getTopMemoryTab().getMemoryBlock() == memBlock)
+			if (getTopMemoryTab().getRendering().getMemoryBlock() == memBlock)
 			{	
 				return;
 			}
@@ -381,6 +382,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IRender
 			}
 		} else {	//otherwise, add a new one
 			TabFolder folder = new TabFolder(fViewPaneCanvas, SWT.NULL);
+			
 			fTabFolderForMemoryBlock.put(memBlock, folder);
 			fMemoryBlockFromTabFolder.put(folder, memBlock);
 			setTabFolder((TabFolder)fTabFolderForMemoryBlock.get(memBlock));
@@ -424,14 +426,17 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IRender
 		 }			
 		 
 		 IMemoryViewTab viewTab = getTopMemoryTab();
-		 
-		 setRenderingSelection(viewTab);
+		 if (viewTab != null)
+		 	setRenderingSelection(viewTab.getRendering());
 		 
 		 if (viewTab == null)
 		 {
 			TabItem newItem = new TabItem(toDisplay, SWT.NULL);
-			CreateRenderingTab createTab = new CreateRenderingTab(memBlock, newItem, getInstance());
-			setRenderingSelection(createTab);	
+			CreateRendering rendering = new CreateRendering(getInstance());
+			rendering.init(getInstance(), memBlock);
+			MemoryViewTab createTab = new MemoryViewTab(newItem, rendering, getInstance());
+
+			setRenderingSelection(createTab.getRendering());	
 		 }
 		
 		//set toolbar actions enabled/disabled
@@ -439,117 +444,73 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IRender
 					}});
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.memory.IMemoryRenderingListener#MemoryBlockRenderingAdded(org.eclipse.debug.internal.core.memory.IMemoryRendering)
-	 */
 	public void memoryBlockRenderingAdded(IMemoryRendering rendering) {
-		String renderingId = rendering.getRenderingId();
-		IMemoryBlock  memoryblk = rendering.getBlock();
-		
-		IMemoryViewTabFactory viewTabFactory = getViewTabFactory(renderingId);
-		
-		if (viewTabFactory != null)
-		{	
-			// disable current view tab
-			if (getTopMemoryTab() != null)
-			{	
-				getTopMemoryTab().setEnabled(false);
-			}
-			
-			if (fTabFolderForMemoryBlock.containsKey(memoryblk)) {
-				if (fStackLayout.topControl != (TabFolder)fTabFolderForMemoryBlock.get(memoryblk)) {
-					setTabFolder((TabFolder)fTabFolderForMemoryBlock.get(memoryblk));
-					fViewPaneCanvas.layout();
-				}
-			} else {	//otherwise, add a new one
-				TabFolder folder =  new TabFolder(fViewPaneCanvas, SWT.NULL);
-				fTabFolderForMemoryBlock.put(memoryblk, folder);
-				fMemoryBlockFromTabFolder.put(folder, memoryblk);
-				setTabFolder((TabFolder)fTabFolderForMemoryBlock.get(memoryblk));
-				
-				fViewPaneCanvas.layout();
-			}	
-			
-			TabFolder tabFolder = (TabFolder) fStackLayout.topControl;
-			fTabFolderForDebugView.put(getMemoryBlockRetrieval(memoryblk), tabFolder);
-			
-			if (tabFolder != null && tabFolder.getItemCount() >= 1)
-			{
-				// remove "Create rendering tab"
-				TabItem item = tabFolder.getItem(0);
-				if (item != null && item.getData() instanceof CreateRenderingTab)
-				{
-					((CreateRenderingTab)item.getData()).dispose();
-					item.dispose();
-				}
-			}
-			
-			TabItem tab = new TabItem(tabFolder, SWT.NULL);
-			
-			// each view tab has its own menu manager
-			// the menu manager gets disposed when the view tab is disposed
-			MenuManager menuMgr = createContextMenuManager();
-			
-			AbstractMemoryRenderer renderer = getRenderer(renderingId);
-			IMemoryViewTab viewTab = viewTabFactory.createViewTab(memoryblk, tab, menuMgr, rendering, renderer);
-			
-			if (viewTab != null)
-			{	
-				// bring new tab to the front
-				tabFolder.setSelection(tabFolder.indexOf(tab));
-				
-				fMenuMgr.put(viewTab, menuMgr);
-				
-				setRenderingSelection(viewTab);
-			}
-			else
-			{	
-				// create an empty text view tab in case of error
-				// error message is displayed in the view tab
-				viewTab = new EmptyViewTab(memoryblk, tab, menuMgr, rendering);
-				
-				tabFolder.setSelection(tabFolder.indexOf(tab));
-				
-				fMenuMgr.put(viewTab, menuMgr);
-				
-				setRenderingSelection(viewTab);
-			}
-		}
-		else
-		{
 
-			// log the error
-			Status stat = new Status(
-					IStatus.ERROR,DebugUIPlugin.getUniqueIdentifier(),
-					DebugException.INTERNAL_ERROR, DebugUIMessages.getString("RenderingViewPane.NoViewTabFactory") + renderingId, null  //$NON-NLS-1$
-			);
-			
-			IWorkbenchWindow window= DebugUIPlugin.getActiveWorkbenchWindow();
-			if (window != null) {
-				DebugUIPlugin.errorDialog(window.getShell(), DebugUIMessages.getString("RenderingViewPane.Failed_To_Create_Rendering"), DebugUIMessages.getString("RenderingViewPane.Failed_To_Create_Selected_Rendering"), stat); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-			
-			DebugUIPlugin.log(stat);
-			
-			// remove the rendering if view tab factory is not defined
-			// otherwise, we will keep getting the error
-			fRenderingMgr.removeMemoryBlockRendering(rendering.getBlock(), rendering.getRenderingId());
+		IMemoryBlock  memoryblk = rendering.getMemoryBlock();
+		
+		
+		// disable current view tab
+		if (getTopMemoryTab() != null)
+		{	
+			deactivateRendering(getTopMemoryTab());
+			getTopMemoryTab().setEnabled(false);
 		}
+		
+		if (fTabFolderForMemoryBlock.containsKey(memoryblk)) {
+			if (fStackLayout.topControl != (TabFolder)fTabFolderForMemoryBlock.get(memoryblk)) {
+				setTabFolder((TabFolder)fTabFolderForMemoryBlock.get(memoryblk));
+				fViewPaneCanvas.layout();
+			}
+		} else {	//otherwise, add a new one
+			TabFolder folder =  new TabFolder(fViewPaneCanvas, SWT.NULL);
+			
+			fTabFolderForMemoryBlock.put(memoryblk, folder);
+			fMemoryBlockFromTabFolder.put(folder, memoryblk);
+			setTabFolder((TabFolder)fTabFolderForMemoryBlock.get(memoryblk));
+			
+			fViewPaneCanvas.layout();
+		}	
+		
+		TabFolder tabFolder = (TabFolder) fStackLayout.topControl;
+		fTabFolderForDebugView.put(getMemoryBlockRetrieval(memoryblk), tabFolder);
+		
+		if (tabFolder != null && tabFolder.getItemCount() >= 1)
+		{
+			// remove "Create rendering tab"
+			TabItem item = tabFolder.getItem(0);
+			if (item != null && item.getData() instanceof MemoryViewTab)
+			{
+				MemoryViewTab viewTab = (MemoryViewTab)item.getData();
+				if (viewTab.getRendering() instanceof CreateRendering)
+				{
+					disposeViewTab(viewTab, item);
+				}
+			}
+		}
+		
+		TabItem tab = new TabItem(tabFolder, SWT.NULL);
+		
+		MemoryViewTab viewTab = new MemoryViewTab(tab, rendering, this);
+		tabFolder.setSelection(tabFolder.indexOf(tab));
+		setRenderingSelection(viewTab.getRendering());
 		
 		// disable top view tab if the view pane is not visible
 		IMemoryViewTab top = getTopMemoryTab();
-		if (top != null && !fVisible)
+		if (top != null)
 			top.setEnabled(fVisible);
 		
-		updateToolBarActionsEnablement();
+		// activate after the rendering is created if the view pane is visible
+		if (fVisible)
+			activateRendering(top);
 		
+		updateToolBarActionsEnablement();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.memory.IMemoryRenderingListener#MemoryBlockRenderingRemoved(org.eclipse.debug.internal.core.memory.IMemoryRendering)
 	 */
 	public void memoryBlockRenderingRemoved(final IMemoryRendering rendering) {
-		final IMemoryBlock memory = rendering.getBlock();
+		final IMemoryBlock memory = rendering.getMemoryBlock();
 		
 		// need to run the following code on the UI Thread to avoid invalid thread access exception
 		Display.getDefault().syncExec(new Runnable()
@@ -570,7 +531,8 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IRender
 					if (tabs[i].isDisposed())
 						continue;
 					
-					if (viewTab.getMemoryBlock() == memory)
+
+					if (viewTab.getRendering().getMemoryBlock() == memory)
 					{
 						if (viewTab.getRendering() == rendering)
 						{
@@ -596,7 +558,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IRender
 						for (int i = 0; i < tabs.length; i++)
 						{
 							viewTab = (IMemoryViewTab) tabs[i].getData();
-							if (viewTab.getMemoryBlock() == memory)
+							if (viewTab.getRendering().getMemoryBlock() == memory)
 							{
 								if (viewTab.getRendering() == rendering)
 								{
@@ -612,15 +574,18 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IRender
 				
 				// update selection
 				if (top != null)
-					setRenderingSelection(top);
+					setRenderingSelection(top.getRendering());
 				else
 				{
 					if (tabFolder != fEmptyTabFolder)
 					{
 						TabItem newItem = new TabItem(tabFolder, SWT.NULL);
-						CreateRenderingTab createTab = new CreateRenderingTab(memory, newItem, getInstance());
+						CreateRendering createRendering = new CreateRendering(getInstance());
+						createRendering.init(getInstance(), memory);
+						
+						MemoryViewTab viewTab = new MemoryViewTab(newItem, createRendering, getInstance());
 						tabFolder.setSelection(0);
-						setRenderingSelection(createTab);
+						setRenderingSelection(viewTab.getRendering());
 					}
 				}
 					
@@ -630,98 +595,15 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IRender
 		
 	}
 	
-	public IMemoryViewTabFactory getViewTabFactory(String renderingId)
-	{	
-		if (fRenderingInfoTable == null)
-			fRenderingInfoTable = new Hashtable();
-		
-		IMemoryRenderingType info;
-		
-		info = (IMemoryRenderingType)fRenderingInfoTable.get(renderingId);
-		
-		// ask manager for new info
-		if (info == null)
-		{
-			info = MemoryRenderingManager.getMemoryRenderingManager().getRenderingTypeById(renderingId);
-			fRenderingInfoTable.put(renderingId, info);
-		}
-		
-		if (info == null)
-			return null;
-		
-		IConfigurationElement element = info.getPropertyConfigElement(VIEW_TAB_FACTORY);
-		
-		if (element == null)
-			return null;
-		
-		try {
-			if (element != null)
-			{	
-				// create the view tab factory
-				Object obj = element.createExecutableExtension(VALUE);
-				
-				if (obj instanceof IMemoryViewTabFactory)
-					return (IMemoryViewTabFactory)obj;
-                return null;
-			}
-            return null;
-		} catch (CoreException e1) {
-			return null;
-		}
-	}
-
-	public AbstractMemoryRenderer getRenderer(String renderingId){
-		
-		if (fRenderingInfoTable == null)
-			fRenderingInfoTable = new Hashtable();
-		
-		IMemoryRenderingType info;
-		info = (IMemoryRenderingType)fRenderingInfoTable.get(renderingId);
-		
-		// ask manager for new info
-		if (info == null)
-		{
-			info = MemoryRenderingManager.getMemoryRenderingManager().getRenderingTypeById(renderingId);
-			fRenderingInfoTable.put(renderingId, info);
-		}
-		
-		if (info == null)
-			return null;
-		
-		IConfigurationElement element = info.getPropertyConfigElement(RENDERER);
-		
-		if (element == null)
-			return null;
-		
-		try {
-			if (element != null)
-			{	
-				// create the view tab factory
-				Object obj = element.createExecutableExtension(VALUE);
-				
-				if (obj instanceof AbstractMemoryRenderer)
-					return (AbstractMemoryRenderer)obj;
-                return null;
-			}
-            return null;
-		} catch (CoreException e1) {
-			return null;
-		}
-	}
-	
 	/**
 	 * @param viewTab
 	 */
-	private void setRenderingSelection(IMemoryViewTab viewTab) {
-		if(viewTab != null)
-		 {
-		 	IMemoryRendering rendering = viewTab.getRendering();
-		 	
-		 	if (rendering != null)
-		 	{	
-		 		fSelectionProvider.setSelection(new StructuredSelection(rendering));
-		 	}
-		 }
+	protected void setRenderingSelection(IMemoryRendering rendering) {
+
+	 	if (rendering != null)
+	 	{	
+	 		fSelectionProvider.setSelection(new StructuredSelection(rendering));
+	 	}
 	}
 	
 	private void restoreViewTabs(IMemoryRendering[] renderings)
@@ -828,7 +710,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IRender
 				}					
 			}
 			
-			setRenderingSelection(newViewTab);
+			setRenderingSelection(newViewTab.getRendering());
 		}			
 		
 		//set toolbar actions enabled/disabled
@@ -915,7 +797,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IRender
 				lastViewTab.setEnabled(false);
 				folder.setSelection(i);
 				
-				setRenderingSelection(tab);
+				setRenderingSelection(tab.getRendering());
 				
 				getTopMemoryTab().setEnabled(isEnabled && fVisible);
 				break;
@@ -952,6 +834,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IRender
 				// create tab folder if a tab folder does not already exist
 				// for the memory block
 				TabFolder folder = new TabFolder(fViewPaneCanvas, SWT.NULL);
+				
 				fTabFolderForMemoryBlock.put(memoryBlock, folder);
 				fMemoryBlockFromTabFolder.put(folder, memoryBlock);
 				setTabFolder((TabFolder)fTabFolderForMemoryBlock.get(memoryBlock));
@@ -972,7 +855,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IRender
 					// restore view tabs
 					IMemoryRendering[] renderings = fRenderingMgr.getRenderingsFromMemoryBlock(memoryBlock);
 					
-					if (toDisplay.getItemCount() == 0 || (getTopMemoryTab() instanceof CreateRenderingTab))
+					if (toDisplay.getItemCount() == 0 || (getTopMemoryTab().getRendering() instanceof CreateRendering))
 					{
 						restoreViewTabs(renderings);
 					}
@@ -991,7 +874,9 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IRender
 			{
 				TabFolder folder = (TabFolder)fStackLayout.topControl;
 				TabItem newItem = new TabItem(folder, SWT.NULL);
-				new CreateRenderingTab(memoryBlock, newItem, getInstance());
+				CreateRendering rendering = new CreateRendering(this);
+				rendering.init(getInstance(), memoryBlock);
+				new MemoryViewTab(newItem, rendering, this);
 				folder.setSelection(0);						
 			}
 		}
@@ -1012,8 +897,8 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IRender
 		fRenderingMgr = null;
 	}	
 	
-	public Control createViewPane(Composite parent, String paneId) {
-		Control control =  super.createViewPane(parent, paneId);
+	public Control createViewPane(Composite parent, String paneId, String label) {
+		Control control =  super.createViewPane(parent, paneId, label);
 		fRenderingMgr = new ViewPaneRenderingMgr(this);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IDebugUIConstants.PLUGIN_ID + ".MemoryRenderingView_context"); //$NON-NLS-1$
 		return control;
@@ -1088,7 +973,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IRender
 		
 		if (rendering == null)
 			return;
-		
+
 		memoryBlockRenderingAdded(rendering);
 		fRenderingMgr.addMemoryBlockRendering(rendering);
 		
@@ -1130,8 +1015,62 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IRender
 		if (elem instanceof IMemoryBlock)
 			return (IMemoryBlock)elem;
 		else if (elem instanceof IMemoryRendering)
-			return ((IMemoryRendering)elem).getBlock();
+			return ((IMemoryRendering)elem).getMemoryBlock();
 		else
 			return null;
+	}
+	
+	private void activateRendering(IMemoryViewTab viewTab)
+	{
+		if (viewTab == null)
+			return;
+		
+		if (!viewTab.isDisposed())
+		{
+			viewTab.getRendering().activated();
+			setRenderingSelection(viewTab.getRendering());
+			
+			// force to fire a selection change event
+			fSelectionProvider.fireChanged();
+		}
+	}
+	
+	private void deactivateRendering(IMemoryViewTab viewTab)
+	{
+		if (viewTab == null)
+			return;
+
+		if (!viewTab.isDisposed())
+		{		
+			viewTab.getRendering().deactivated();
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.views.memory.IRenderingViewPane#getMemoryRenderingSite()
+	 */
+	public IMemoryRenderingSite getMemoryRenderingSite() {
+		return fRenderingSite;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.memory.IMemoryRenderingContainer#getId()
+	 */
+	public String getId() {
+		return getPaneId();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.memory.IMemoryRenderingContainer#getRenderings()
+	 */
+	public IMemoryRendering[] getRenderings() {
+		return fRenderingMgr.getRenderings();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.memory.IMemoryRenderingContainer#getActiveRendering()
+	 */
+	public IMemoryRendering getActiveRendering() {
+		return getTopMemoryTab().getRendering();
 	}
 }

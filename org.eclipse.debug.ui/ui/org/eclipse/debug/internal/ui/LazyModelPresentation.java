@@ -28,12 +28,11 @@ import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.core.ListenerList;
-import org.eclipse.debug.internal.ui.views.memory.IMemoryBlockModelPresentation;
-import org.eclipse.debug.internal.ui.views.memory.IMemoryRenderingType;
 import org.eclipse.debug.internal.ui.views.variables.IndexedVariablePartition;
 import org.eclipse.debug.ui.IDebugEditorPresentation;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IValueDetailListener;
+import org.eclipse.debug.ui.memory.IMemoryBlockTablePresentation;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IFontProvider;
@@ -49,7 +48,7 @@ import org.eclipse.ui.IEditorPart;
  * when it is needed.
  */
 
-public class LazyModelPresentation implements IDebugModelPresentation, IDebugEditorPresentation, IColorProvider, IFontProvider, IMemoryBlockModelPresentation {
+public class LazyModelPresentation implements IDebugModelPresentation, IDebugEditorPresentation, IColorProvider, IFontProvider, IMemoryBlockTablePresentation {
 	
 	/**
 	 * A temporary mapping of attribute ids to their values
@@ -378,55 +377,22 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
         return null;
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.memory.IMemoryBlockModelPresentation#getTabLabel(org.eclipse.debug.core.model.IMemoryBlock, java.lang.String)
-	 */
-	public String getTabLabel(IMemoryBlock blk, String renderingId) {
-
+	public String[] getColumnLabels(IMemoryBlock blk, int bytesPerLine, int numColumns) {
 		IDebugModelPresentation presentation = getPresentation();
-		if (presentation instanceof IMemoryBlockModelPresentation)
+		if (presentation instanceof IMemoryBlockTablePresentation)
 		{
-			IMemoryBlockModelPresentation mbp = (IMemoryBlockModelPresentation)presentation;
-			return mbp.getTabLabel(blk, renderingId);
-		}
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.memory.IMemoryBlockModelPresentation#getColumnLabels(org.eclipse.debug.core.model.IMemoryBlock, int, int)
-	 */
-	public String[] getColumnLabels(IMemoryBlock blk, int bytesPerLine, int columnSize) {
-		IDebugModelPresentation presentation = getPresentation();
-		if (presentation instanceof IMemoryBlockModelPresentation)
-		{
-			IMemoryBlockModelPresentation mbp = (IMemoryBlockModelPresentation)presentation;
-			return mbp.getColumnLabels(blk, bytesPerLine, columnSize);
+			IMemoryBlockTablePresentation mbp = (IMemoryBlockTablePresentation)presentation;
+			return mbp.getColumnLabels(blk, bytesPerLine, numColumns);
 		}
 		return new String[0];
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.memory.IMemoryBlockModelPresentation#getAddressPresentation(org.eclipse.debug.core.model.IMemoryBlock, java.math.BigInteger)
-	 */
-	public String getAddressPresentation(IMemoryBlock blk, BigInteger address) {
+	public String getRowLabel(IMemoryBlock blk, BigInteger address) {
 		IDebugModelPresentation presentation = getPresentation();
-		if (presentation instanceof IMemoryBlockModelPresentation)
+		if (presentation instanceof IMemoryBlockTablePresentation)
 		{
-			IMemoryBlockModelPresentation mbp = (IMemoryBlockModelPresentation)presentation;
-			return mbp.getAddressPresentation(blk, address);
-		}
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.memory.IMemoryBlockModelPresentation#getViewPaneIdForDefault(org.eclipse.debug.core.model.IMemoryBlock, org.eclipse.debug.internal.ui.views.memory.IMemoryRenderingType)
-	 */
-	public String getViewPaneIdForDefault(IMemoryBlock blk, IMemoryRenderingType renderingType) {
-		IDebugModelPresentation presentation = getPresentation();
-		if (presentation instanceof IMemoryBlockModelPresentation)
-		{
-			IMemoryBlockModelPresentation mbp = (IMemoryBlockModelPresentation)presentation;
-			return mbp.getViewPaneIdForDefault(blk, renderingType);
+			IMemoryBlockTablePresentation mbp = (IMemoryBlockTablePresentation)presentation;
+			return mbp.getRowLabel(blk, address);
 		}
 		return null;
 	}    

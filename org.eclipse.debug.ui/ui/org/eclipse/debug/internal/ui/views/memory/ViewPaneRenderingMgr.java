@@ -19,13 +19,16 @@ import javax.xml.transform.TransformerException;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.debug.core.DebugEvent;
-import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.internal.core.LaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.memory.IMemoryRendering;
+import org.eclipse.debug.ui.memory.IMemoryRenderingContainer;
+import org.eclipse.debug.ui.memory.IMemoryRenderingType;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -44,46 +47,17 @@ import org.w3c.dom.NodeList;
 public class ViewPaneRenderingMgr implements IDebugEventSetListener{
 
 	private ArrayList fRenderings = new ArrayList();
-	private IRenderingViewPane fViewPane;
+	private IMemoryRenderingContainer fViewPane;
 	
 	private static final String RENDERINGS_TAG = "persistedMemoryRenderings"; //$NON-NLS-1$
 	private static final String MEMORY_RENDERING_TAG = "memoryRendering"; //$NON-NLS-1$
 	private static final String MEMORY_BLOCK = "memoryBlock"; //$NON-NLS-1$
 	private static final String RENDERING_ID = "renderingId"; //$NON-NLS-1$
 	
-	public ViewPaneRenderingMgr(IRenderingViewPane viewPane)
+	public ViewPaneRenderingMgr(IMemoryRenderingContainer viewPane)
 	{
 		fViewPane = viewPane;
 		loadPersistedRenderings();
-	}
-
-	
-	public IMemoryRendering addMemoryBlockRendering(IMemoryBlock mem, String renderingId) throws DebugException
-	{
-		if (fRenderings == null)
-			return null;
-		
-		IMemoryRendering newRendering = MemoryRenderingManager.getMemoryRenderingManager().createRendering(mem, renderingId);
-		
-		// if an error has occurred, or if user has canceled
-		if (newRendering == null)
-			return newRendering;
-		
-		if (fRenderings.contains(newRendering))
-			return newRendering;
-		
-		fRenderings.add(newRendering);
-		
-		// add listener for the first memory block added
-		if (fRenderings.size() == 1)
-		{
-			DebugPlugin.getDefault().addDebugEventListener(this);
-		}
-		
-		storeRenderings();
-		
-		return newRendering;
-		
 	}
 
 	public void removeMemoryBlockRendering(IMemoryBlock mem, String renderingId)
@@ -157,7 +131,7 @@ public class ViewPaneRenderingMgr implements IDebugEventSetListener{
 			if (fRenderings.get(i) instanceof IMemoryRendering)
 			{
 				IMemoryRendering rendering = (IMemoryRendering)fRenderings.get(i);
-				if (rendering.getBlock() == mem && renderingId.equals(rendering.getRenderingId()))
+				if (rendering.getMemoryBlock() == mem && renderingId.equals(rendering.getRenderingId()))
 				{
 					ret.add(rendering);
 				}
@@ -167,6 +141,10 @@ public class ViewPaneRenderingMgr implements IDebugEventSetListener{
 		return (IMemoryRendering[])ret.toArray(new IMemoryRendering[ret.size()]);
 	}
 	
+	public IMemoryRendering[] getRenderings()
+	{
+		return (IMemoryRendering[])fRenderings.toArray(new IMemoryRendering[fRenderings.size()]);
+	}
 
 	public IMemoryRendering[] getRenderingsFromDebugTarget(IDebugTarget target)
 	{
@@ -176,7 +154,7 @@ public class ViewPaneRenderingMgr implements IDebugEventSetListener{
 			if (fRenderings.get(i) instanceof IMemoryRendering)
 			{
 				IMemoryRendering rendering = (IMemoryRendering)fRenderings.get(i);
-				if (rendering.getBlock().getDebugTarget() == target)
+				if (rendering.getMemoryBlock().getDebugTarget() == target)
 				{
 					ret.add(rendering);
 				}
@@ -195,7 +173,7 @@ public class ViewPaneRenderingMgr implements IDebugEventSetListener{
 			if (fRenderings.get(i) instanceof IMemoryRendering)
 			{
 				IMemoryRendering rendering = (IMemoryRendering)fRenderings.get(i);
-				if (rendering.getBlock() == block)
+				if (rendering.getMemoryBlock() == block)
 				{
 					ret.add(rendering);
 				}
@@ -231,7 +209,7 @@ public class ViewPaneRenderingMgr implements IDebugEventSetListener{
 				
 				for (int i=0; i<deletedrendering.length; i++)
 				{
-					removeMemoryBlockRendering(deletedrendering[i].getBlock(), deletedrendering[i].getRenderingId());
+					removeMemoryBlockRendering(deletedrendering[i].getMemoryBlock(), deletedrendering[i].getRenderingId());
 					fViewPane.removeMemoryRendering(deletedrendering[i]);
 				}
 			}
@@ -263,7 +241,7 @@ public class ViewPaneRenderingMgr implements IDebugEventSetListener{
 		} catch (TransformerException e) {
 			DebugUIPlugin.log(e);
 		}
-		prefs.setValue(fViewPane.getPaneId(), renderingsStr);
+		prefs.setValue(fViewPane.getId(), renderingsStr);
 		DebugUIPlugin.getDefault().savePluginPreferences();
 	}
 	
@@ -282,7 +260,7 @@ public class ViewPaneRenderingMgr implements IDebugEventSetListener{
 		for (int i = 0; i < renderings.length; i++) {
 			IMemoryRendering rendering= renderings[i];
 			Element element= document.createElement(MEMORY_RENDERING_TAG); 
-			element.setAttribute(MEMORY_BLOCK, Integer.toString(rendering.getBlock().hashCode()));
+			element.setAttribute(MEMORY_BLOCK, Integer.toString(rendering.getMemoryBlock().hashCode()));
 			element.setAttribute(RENDERING_ID, rendering.getRenderingId());
 			rootElement.appendChild(element);
 		}
@@ -293,7 +271,7 @@ public class ViewPaneRenderingMgr implements IDebugEventSetListener{
 	 * Load renderings currently stored.
 	 */
 	private void loadPersistedRenderings() {
-		String renderingsStr= DebugUIPlugin.getDefault().getPluginPreferences().getString(fViewPane.getPaneId());
+		String renderingsStr= DebugUIPlugin.getDefault().getPluginPreferences().getString(fViewPane.getId());
 		if (renderingsStr.length() == 0) {
 			return;
 		}
@@ -329,21 +307,35 @@ public class ViewPaneRenderingMgr implements IDebugEventSetListener{
 						memoryBlock = memoryBlocks[j];
 				}
 				
-				// if memory block is not found, the rendering is no longer valid
-				// simply ignore the rendering
 				if (memoryBlock != null)
 				{
-					try {
-						IMemoryRendering rendering = MemoryRenderingManager.getMemoryRenderingManager().createRendering(memoryBlock, renderingId);
-						if (rendering != null)
-						{
-							if (!fRenderings.contains(rendering))
+					IMemoryRenderingType[] types  = DebugUITools.getMemoryRenderingManager().getRenderingTypes(memoryBlock);
+					IMemoryRenderingType type = null;
+					for (int k=0; k<types.length; k++)
+					{
+						if (types[k].getId().equals(renderingId))
+							type = types[k];
+					}
+				
+					// if memory block is not found, the rendering is no longer valid
+					// simply ignore the rendering
+					if (type != null)
+					{
+						try {
+		
+							IMemoryRendering rendering = type.createRendering();
+							rendering.init(fViewPane, memoryBlock);
+							if (rendering != null)
 							{
-								fRenderings.add(rendering);
-								renderingsAdded= true;
+								if (!fRenderings.contains(rendering))
+								{
+									fRenderings.add(rendering);
+									renderingsAdded= true;
+								}
 							}
+						} catch (CoreException e1) {
+							DebugUIPlugin.log(e1);
 						}
-					} catch (DebugException e1) {
 					}
 				}
 			}

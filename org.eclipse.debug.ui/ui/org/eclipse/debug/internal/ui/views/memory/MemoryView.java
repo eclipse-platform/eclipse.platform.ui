@@ -14,11 +14,16 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
+
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.memory.IMemoryRendering;
+import org.eclipse.debug.ui.memory.IMemoryRenderingContainer;
+import org.eclipse.debug.ui.memory.IMemoryRenderingSite;
+import org.eclipse.debug.ui.memory.IMemoryRenderingSynchronizationService;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.viewers.ISelection;
@@ -34,10 +39,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IPartListener2;
+import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
@@ -45,7 +51,7 @@ import org.eclipse.ui.part.ViewPart;
  * 
  * @since 3.0
  */
-public class MemoryView extends ViewPart implements IMultipaneMemoryView {
+public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 
 	protected MemoryViewSelectionProvider fSelectionProvider;
 	private MemoryViewPartListener fPartListener;
@@ -64,11 +70,14 @@ public class MemoryView extends ViewPart implements IMultipaneMemoryView {
 		
 	private MemoryBlocksTreeViewPane fMemBlkViewer;
 	
+	private MemoryViewSynchronizationService fSyncService;
+	private IMemoryRendering fSyncServiceProvider;
+	
 	class MemoryViewSelectionProvider implements ISelectionProvider, ISelectionChangedListener
 	{
 		ArrayList fListeners = new ArrayList();
 		
-		ISelection fSelections = new StructuredSelection();
+		IStructuredSelection fSelections = new StructuredSelection();
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ISelectionProvider#addSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
@@ -103,8 +112,19 @@ public class MemoryView extends ViewPart implements IMultipaneMemoryView {
 		 */
 		public void setSelection(ISelection selection)
 		{
-			fSelections = selection; 
-			fireChanged();
+			if (selection instanceof IStructuredSelection)
+			{		
+				boolean fireChanged = false;
+				
+				// only fire change event if the selection has really changed
+				if (fSelections.getFirstElement() != ((IStructuredSelection)selection).getFirstElement())
+					fireChanged = true;
+				
+				fSelections = (IStructuredSelection)selection;
+				
+				if (fireChanged)
+					fireChanged();
+			}
 		}
 		
 		public void fireChanged()
@@ -134,9 +154,9 @@ public class MemoryView extends ViewPart implements IMultipaneMemoryView {
 	
 	class MemoryViewPartListener implements IPartListener2
 	{
-		IMultipaneMemoryView fView = null;
+		IMemoryRenderingSite fView = null;
 		
-		public MemoryViewPartListener(IMultipaneMemoryView view)
+		public MemoryViewPartListener(IMemoryRenderingSite view)
 		{
 			fView = view;
 		}
@@ -203,6 +223,11 @@ public class MemoryView extends ViewPart implements IMultipaneMemoryView {
 		}
 	}
 	
+	public void init(IViewSite site) throws PartInitException {
+		super.init(site);
+		fSyncService = new MemoryViewSynchronizationService();
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
@@ -233,7 +258,7 @@ public class MemoryView extends ViewPart implements IMultipaneMemoryView {
 		// set up selection provider and listeners
 		
 		getSite().setSelectionProvider(fSelectionProvider);
-		contributeToActionBars();
+
 		
 		fPartListener = new MemoryViewPartListener(this);
 		getSite().getPage().addPartListener(fPartListener);
@@ -255,7 +280,7 @@ public class MemoryView extends ViewPart implements IMultipaneMemoryView {
 		
 		fMemBlkViewer.addSelectionListener(fSelectionProvider);
 		
-		Control viewerControl = fMemBlkViewer.createViewPane(viewerViewForm, MemoryBlocksTreeViewPane.PANE_ID);
+		Control viewerControl = fMemBlkViewer.createViewPane(viewerViewForm, MemoryBlocksTreeViewPane.PANE_ID, DebugUIMessages.getString("MemoryView.Memory_monitors")); //$NON-NLS-1$
 		viewerViewForm.setContent(viewerControl);
 		
 		ISelection selection = fMemBlkViewer.getSelectionProvider().getSelection();
@@ -286,7 +311,7 @@ public class MemoryView extends ViewPart implements IMultipaneMemoryView {
 		fViewPaneControls.put(paneId, renderingViewForm);
 		fWeights.add(new Integer(40));
 		
-		Control renderingControl = renderingPane.createViewPane(renderingViewForm, paneId);
+		Control renderingControl = renderingPane.createViewPane(renderingViewForm, paneId, DebugUIMessages.getString("MemoryView.Memory_renderings")); //$NON-NLS-1$
 		renderingViewForm.setContent(renderingControl);
 		renderingPane.addSelectionListener(fSelectionProvider);
 		
@@ -300,17 +325,9 @@ public class MemoryView extends ViewPart implements IMultipaneMemoryView {
 		renderingViewForm.setTopRight(renderingToolbar);
 		
 		Label renderingLabel = new Label(renderingViewForm, SWT.NONE);
-		renderingLabel.setText(DebugUIMessages.getString("MemoryView.Memory_renderings")); //$NON-NLS-1$
+		renderingLabel.setText(renderingPane.getLabel());
 		renderingViewForm.setTopLeft(renderingLabel);
-		
-
 	}
-
-	private void contributeToActionBars() {
-		IActionBars bars = getViewSite().getActionBars();
-		bars.getMenuManager().add(new SetDefaultColumnSizePrefAction());
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
 	 */
@@ -348,7 +365,7 @@ public class MemoryView extends ViewPart implements IMultipaneMemoryView {
 				viewPanes[i].setVisible(visible && viewPanes[i].isVisible());
 			else
 			{
-				if (isViewPaneVisible(viewPanes[i].getPaneId()))
+				if (isViewPaneVisible(viewPanes[i].getId()))
 					viewPanes[i].setVisible(visible);
 			}	
 		}
@@ -486,5 +503,60 @@ public class MemoryView extends ViewPart implements IMultipaneMemoryView {
 		}
 		
 		fSashForm.layout();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.memory.IMemoryRenderingSite#getSynchronizationService()
+	 */
+	public IMemoryRenderingSynchronizationService getSynchronizationService() {
+		return fSyncService;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.memory.IMemoryRenderingSite#setSynchronizationProvider(org.eclipse.debug.ui.memory.IMemoryRendering)
+	 */
+	public void setSynchronizationProvider(IMemoryRendering rendering) {
+		
+		if (fSyncServiceProvider != null)
+			fSyncServiceProvider.removePropertyChangeListener(fSyncService);
+		
+		if (rendering != null)
+			rendering.addPropertyChangeListener(fSyncService);
+		
+		fSyncServiceProvider = rendering;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.memory.IMemoryRenderingSite#getSynchronizationProvider()
+	 */
+	public IMemoryRendering getSynchronizationProvider() {
+		return fSyncServiceProvider;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.memory.IMemoryRenderingSite#getMemoryRenderingContainers()
+	 */
+	public IMemoryRenderingContainer[] getMemoryRenderingContainers() {
+		Enumeration enumeration = fViewPanes.elements();
+		ArrayList containers = new ArrayList();
+		while (enumeration.hasMoreElements()){
+			Object obj = enumeration.nextElement();
+			if (obj instanceof IMemoryRenderingContainer)
+				containers.add(obj);
+		}
+		
+		return (IMemoryRenderingContainer[])containers.toArray(new IMemoryRenderingContainer[containers.size()]);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.memory.IMemoryRenderingSite#getContainer(java.lang.String)
+	 */
+	public IMemoryRenderingContainer getContainer(String id) {
+		Object viewPane =  fViewPanes.get(id);
+		
+		if (viewPane instanceof IMemoryRenderingContainer)
+			return (IMemoryRenderingContainer)viewPane;
+		
+		return null;
 	}
 }

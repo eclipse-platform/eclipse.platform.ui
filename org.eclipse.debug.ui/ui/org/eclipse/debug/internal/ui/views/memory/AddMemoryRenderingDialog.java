@@ -17,7 +17,11 @@ import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.memory.IMemoryRendering;
+import org.eclipse.debug.ui.memory.IMemoryRenderingSite;
+import org.eclipse.debug.ui.memory.IMemoryRenderingType;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -62,7 +66,7 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 	ISelectionChangedListener fSelectionChangedListener;
 	MouseListener fMouseListener;
 	SelectionListener fSelectionListener;
-	private IMemoryViewPane fViewPane;
+	private IMemoryRenderingSite fSite;
 
 	class MemoryRenderingLabelProvider implements ILabelProvider
 	{
@@ -80,7 +84,7 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 		public String getText(Object element) {
 			if (element instanceof IMemoryRenderingType)
 			{	
-				String label = ((IMemoryRenderingType)element).getName();
+				String label = ((IMemoryRenderingType)element).getLabel();
 				return label;
 			}
             return element.toString();
@@ -120,7 +124,7 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
 		public Object[] getElements(Object inputElement) {
-			IMemoryRenderingType[] renderings = MemoryRenderingManager.getMemoryRenderingManager().getRenderingTypes(inputElement, IInternalDebugUIConstants.ID_RENDERING_VIEW_PANE);
+			IMemoryRenderingType[] renderings = DebugUITools.getMemoryRenderingManager().getRenderingTypes((IMemoryBlock)inputElement);
 			return renderings;
 		}
 
@@ -244,7 +248,7 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 		
 		fMouseListener =new MouseAdapter() {
 			public void mouseUp(MouseEvent e) {
-				AddMemoryBlockAction action = new AddMemoryBlockAction(fViewPane, false);
+				AddMemoryBlockAction action = new AddMemoryBlockAction(fSite, false);
 				action.run();
 				populateDialog(memoryBlock, fViewer, action.getLastMemoryBlock());
 				action.dispose();
@@ -317,12 +321,12 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 		return composite;
 	}
 
-	public AddMemoryRenderingDialog(Shell parent, IMemoryViewPane viewPane) {
+	public AddMemoryRenderingDialog(Shell parent, IMemoryRenderingSite site) {
 		super(parent);
 		super.setTitle(DebugUIMessages.getString("AddMemoryRenderingDialog.Add_memory_rendering")); //$NON-NLS-1$
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, DebugUIPlugin.getUniqueIdentifier() + ".AddMemoryRenderingDialog_context"); //$NON-NLS-1$
 		setShellStyle(getShellStyle() | SWT.RESIZE);
-		fViewPane = viewPane;
+		fSite = site;
 	}
 	
 	private void populateDialog(Combo combo, ListViewer viewer, IMemoryBlock lastAdded)
@@ -435,7 +439,7 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 		if (elem instanceof IMemoryBlock)
 			return (IMemoryBlock)elem;
 		else if (elem instanceof IMemoryRendering)
-			return ((IMemoryRendering)elem).getBlock();
+			return ((IMemoryRendering)elem).getMemoryBlock();
 		else
 			return null;
 	}

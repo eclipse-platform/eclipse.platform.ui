@@ -89,11 +89,14 @@ public class ViewTabEnablementManager implements SelectionListener {
 					// if the item has been selected and this tab is not enabled
 					// enable it.
 					viewTab.setEnabled(true);
+					viewTab.getRendering().activated();
+					
 				}
 				else if (viewTab != selectedViewTab && viewTab.isEnabled())
 				{
 					// if the tab is not selected, disable it
 					viewTab.setEnabled(false);
+					viewTab.getRendering().deactivated();
 				}	
 			}
 		}

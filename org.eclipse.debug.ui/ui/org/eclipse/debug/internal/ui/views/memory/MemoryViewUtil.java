@@ -20,6 +20,7 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 
@@ -29,6 +30,46 @@ import org.eclipse.swt.widgets.Table;
  * @since 3.0
  */
 public class MemoryViewUtil {
+	
+	public static final int[] ignoreKeyEvents =
+	{
+		SWT.ARROW_UP,
+		SWT.ARROW_DOWN,
+		SWT.ARROW_LEFT,
+		SWT.ARROW_RIGHT,
+		SWT.PAGE_UP,
+		SWT.PAGE_DOWN,
+		SWT.HOME,
+		SWT.END,
+		SWT.INSERT,
+		SWT.F1,
+		SWT.F2,
+		SWT.F3,
+		SWT.F4,
+		SWT.F5,
+		SWT.F6,
+		SWT.F7,
+		SWT.F8,
+		SWT.F9,
+		SWT.F10,
+		SWT.F11,
+		SWT.F12,
+		SWT.F13,
+		SWT.F14,
+		SWT.F15,
+		SWT.HELP,
+		SWT.CAPS_LOCK,
+		SWT.NUM_LOCK,
+		SWT.SCROLL_LOCK,
+		SWT.PAUSE,
+		SWT.BREAK,
+		SWT.PRINT_SCREEN,
+		SWT.ESC,
+		SWT.CTRL,
+		SWT.ALT
+	};	
+	
+	
 	/**
 	 * @param selection
 	 * @return true if the given selection is valid for creating a memory block
@@ -101,7 +142,7 @@ public class MemoryViewUtil {
 	}
 
 
-	static void linuxWorkAround(Table table)
+	static public void linuxWorkAround(Table table)
 	{
 		if (table == null)
 			return;
@@ -113,10 +154,24 @@ public class MemoryViewUtil {
 			while(table.getDisplay().readAndDispatch()){}
 	}
 	
-	static boolean isLinuxGTK()
+	static public boolean isLinuxGTK()
 	{
 		String ws = Platform.getWS();
 		return ws.equals(Platform.WS_GTK);
+	}
+	
+	/**
+	 * Checks to see if the event is valid for activating
+	 * cell editing in a view tab
+	 * @param event
+	 * @return true if the edit event is valid  for activating the cell editor
+	 */
+	public static boolean isValidEditEvent(int event) {
+		for (int i = 0; i < MemoryViewUtil.ignoreKeyEvents.length; i++) {
+			if (event == MemoryViewUtil.ignoreKeyEvents[i])
+				return false;
+		}
+		return true;
 	}
 	
 }

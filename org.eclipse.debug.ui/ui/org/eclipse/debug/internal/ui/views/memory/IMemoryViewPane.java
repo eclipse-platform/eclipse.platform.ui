@@ -19,6 +19,8 @@ import org.eclipse.swt.widgets.Control;
 
 /**
  * Represent a view pane in the memory view.
+ * 
+ * This is an internal interface for mananging the view panes within the Memory View
  * @since 3.1
  */
 public interface IMemoryViewPane {
@@ -28,9 +30,10 @@ public interface IMemoryViewPane {
 	 * id. 
 	 * @param parent
 	 * @param paneId
+	 * @param label
 	 * @return the control of the view pane
 	 */
-	public Control createViewPane(Composite parent, String paneId);
+	public Control createViewPane(Composite parent, String paneId, String label);
 	
 	/**
 	 * Restore view pane based on current selection from the debug view.
@@ -47,7 +50,7 @@ public interface IMemoryViewPane {
 	/**
 	 * @return unique identifier of the view pane
 	 */
-	public String getPaneId();
+	public String getId();
 	
 	/**
 	 * @return array of actions to be contributed to the view pane's 

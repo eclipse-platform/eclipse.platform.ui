@@ -149,6 +149,19 @@ public interface IDebugPreferenceConstants {
 	 * @since 3.1
 	 */
 	public static final String LAST_BREAKPOINT_GROUP = ".lastBreakpointGroup"; //$NON-NLS-1$
+	
+	/**
+	 * Padded string preference for renderings
+	 * @since 3.1
+	 */
+	public static final String PREF_PADDED_STR = "org.eclipse.debug.ui.memory.abstractTableRendering.paddedStr"; //$NON-NLS-1$
+	
+	/**
+	 * Default padded string for renderings
+	 * 
+	 * @since 3.1
+	 */
+	public static final String PREF_PADDED_STR_DEFAULT = "??"; //$NON-NLS-1$
 }
 
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.debug.ui.memory;
 
-import org.eclipse.core.runtime.CoreException;
 
 
 /**
@@ -22,16 +21,7 @@ import org.eclipse.core.runtime.CoreException;
  * @since 3.1
  */
 public interface IMemoryRenderingManager extends IMemoryRenderingBindingsProvider {
-    		
-    /**
-     * Creates and returns a rendering specified by the given identifier,
-     * or <code>null</code> if none.
-     * 
-     * @param id identifier of the rendering type to create
-     * @return specified rendering or <code>null</code> if none
-     * @exception CoreException if unable to create the specified rendering
-     */
-    public IMemoryRendering createRendering(String id) throws CoreException;
+ 
     
     /**
      * Returns all contributed memory rendering types.
@@ -42,7 +32,11 @@ public interface IMemoryRenderingManager extends IMemoryRenderingBindingsProvide
     
     /**
      * Returns the memory rendering type with the given identifier, or
-     * <code>null</code> if none.
+     * <code>null</code> if none.  The memory rendering manager will
+     * search through rendering types that are contributed via explicit
+     * rendering bindings.  (i.e. rendering types contributed via the
+     * memoryRenderings extension point). This method will not return 
+     * rendering types that are contributed by a memory binding provider.
      * 
      * @param id memory rendering type identifier
      * @return the memory rendering type with the given identifier, or

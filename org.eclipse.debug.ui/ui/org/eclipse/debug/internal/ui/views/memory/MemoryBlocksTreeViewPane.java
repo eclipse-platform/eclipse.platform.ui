@@ -25,7 +25,9 @@ import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.internal.ui.views.memory.renderings.BasicDebugViewContentProvider;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.memory.IMemoryRenderingSite;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -391,7 +393,7 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, IMemoryView
 		fSelectionProvider = new ViewPaneSelectionProvider();
 	}
 	
-	public Control createViewPane(Composite parent, String paneId)
+	public Control createViewPane(Composite parent, String paneId, String label)
 	{
 		fPaneId = paneId;
 		fTreeViewer = new TreeViewer(parent);
@@ -487,7 +489,7 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, IMemoryView
 		});
 
 		// register a context menu manager, use its pane id as the menu id
-		fParent.getSite().registerContextMenu(getPaneId(), menuMgr, fSelectionProvider);
+		fParent.getSite().registerContextMenu(getId(), menuMgr, fSelectionProvider);
 		return menuMgr;
 	}
 	
@@ -531,7 +533,7 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, IMemoryView
 		}
 	}
 	
-	public String getPaneId()
+	public String getId()
 	{
 		return fPaneId;
 	}
@@ -542,7 +544,7 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, IMemoryView
 	public IAction[] getActions() {
 		
 		if (fAddMemoryBlockAction == null)
-				fAddMemoryBlockAction = new AddMemoryBlockAction(this);
+				fAddMemoryBlockAction = new AddMemoryBlockAction((IMemoryRenderingSite)fParent);
 		
 		if (fRemoveMemoryBlockAction == null)
 		{
