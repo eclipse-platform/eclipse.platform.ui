@@ -242,8 +242,7 @@ public class Synchronizer implements ISynchronizer {
 			if (!target.exists(flags, false)) {
 				if (info == null)
 					return;
-				else
-					workspace.createResource(resource, true);
+				workspace.createResource(resource, true);
 			}
 			resourceInfo = target.getResourceInfo(true, true);
 			resourceInfo.setSyncInfo(partner, info);
