@@ -164,7 +164,7 @@ public void doBuild() {
 
 	IRunnableWithProgress op = new IRunnableWithProgress() {
 		public void run(IProgressMonitor monitor) {
-			monitor.beginTask("", 1); //$NON-NLS-1$
+			monitor.beginTask("Global build", 1); //$NON-NLS-1$
 			// Fix for bug 31768 - Don't provide a task name in beginTask
 			// as it will be appended to each subTask message. Need to
 			// call setTaskName as its the only was to assure the task name is

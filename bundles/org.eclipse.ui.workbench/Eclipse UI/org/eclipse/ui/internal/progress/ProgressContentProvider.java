@@ -66,8 +66,6 @@ public class ProgressContentProvider
 	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		System.out.println("input changed");
-
 	}
 
 	/* (non-Javadoc)
@@ -82,8 +80,6 @@ public class ProgressContentProvider
 	 * @see org.eclipse.core.runtime.jobs.IJobListener#aboutToSchedule(org.eclipse.core.runtime.jobs.Job)
 	 */
 	public void aboutToSchedule(Job job) {
-		jobs.put(job, new JobInfo(job.toString()));
-		refreshViewer();
 
 	}
 
@@ -91,7 +87,10 @@ public class ProgressContentProvider
 	 * @see org.eclipse.core.runtime.jobs.IJobListener#finished(org.eclipse.core.runtime.jobs.Job, int)
 	 */
 	public void finished(Job job, IStatus result) {
-		// XXX Auto-generated method stub
+		if (job instanceof AnimatedCanvas.AnimateJob)
+			return;
+		jobs.remove(job);
+		refreshViewer();
 
 	}
 
@@ -115,7 +114,9 @@ public class ProgressContentProvider
 	 * @see org.eclipse.core.runtime.jobs.IProgressListener#beginTask(org.eclipse.core.runtime.jobs.Job, java.lang.String, int)
 	 */
 	public void beginTask(Job job, String name, int totalWork) {
-		getInfo(job).addToLeafChild(new JobInfoWithProgress(name, totalWork));
+		if (job instanceof AnimatedCanvas.AnimateJob)
+			return;
+		jobs.put(job, new JobInfoWithProgress(name, totalWork));
 		refreshViewer();
 	}
 
@@ -123,7 +124,7 @@ public class ProgressContentProvider
 	 * @see org.eclipse.core.runtime.jobs.IProgressListener#done(org.eclipse.core.runtime.jobs.Job)
 	 */
 	public void done(Job job) {
-		jobs.remove(job);
+		
 
 	}
 
@@ -139,6 +140,10 @@ public class ProgressContentProvider
 	 * @see org.eclipse.core.runtime.jobs.IProgressListener#subTask(org.eclipse.core.runtime.jobs.Job, java.lang.String)
 	 */
 	public void subTask(Job job, String name) {
+		if (job instanceof AnimatedCanvas.AnimateJob)
+			return;
+		if (name.length() == 0)
+			return;
 		getInfo(job).addToLeafChild(new JobInfo(name));
 		refreshViewer();
 
@@ -150,7 +155,9 @@ public class ProgressContentProvider
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.IProgressListener#worked(org.eclipse.core.runtime.jobs.Job, int)
 	 */
-	public void worked(Job job, int work) {
+	public void worked(Job job, double work) {
+		if (job instanceof AnimatedCanvas.AnimateJob)
+			return;
 		getInfo(job).addWork(work);
 		refreshViewer();
 	}

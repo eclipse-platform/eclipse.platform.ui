@@ -1,9 +1,3 @@
-/*
- * Created on Apr 11, 2003
- *
- * To change the template for this generated file go to
- * Window>Preferences>Java>Code Generation>Code and Comments
- */
 package org.eclipse.ui.internal.progress;
 
 import org.eclipse.core.internal.jobs.JobManager;
@@ -28,7 +22,7 @@ public class ProgressContributionItem extends ContributionItem {
 			 * @see org.eclipse.core.runtime.jobs.IJobListener#aboutToRun(org.eclipse.core.runtime.jobs.Job)
 			 */
 			public void aboutToRun(Job job) {
-				incrementJobCount();
+				incrementJobCount(job);
 			}
 			/* (non-Javadoc)
 			 * @see org.eclipse.core.runtime.jobs.IJobListener#aboutToSchedule(org.eclipse.core.runtime.jobs.Job)
@@ -40,16 +34,16 @@ public class ProgressContributionItem extends ContributionItem {
 			 * @see org.eclipse.core.runtime.jobs.IJobListener#finished(org.eclipse.core.runtime.jobs.Job, int)
 			 */
 			public void finished(Job job, IStatus result) {
-				decrementJobCount();
+				decrementJobCount(job);
 			}
 			/* (non-Javadoc)
 			 * @see org.eclipse.core.runtime.jobs.IJobListener#paused(org.eclipse.core.runtime.jobs.Job)
 			 */
 			public void paused(Job job) {
-				decrementJobCount();
+				decrementJobCount(job);
 
-			}		
-			
+			}
+
 			/* (non-Javadoc)
 			 * @see org.eclipse.core.runtime.jobs.IJobListener#resumed(org.eclipse.core.runtime.jobs.Job)
 			 */
@@ -66,13 +60,20 @@ public class ProgressContributionItem extends ContributionItem {
 
 			}
 
-			private void incrementJobCount() {
+			private void incrementJobCount(Job job) {
+				//Don't count the animate job itself
+				if (job instanceof AnimatedCanvas.AnimateJob)
+					return;
+
 				if (jobCount == 0)
 					setEnabledImage();
 				jobCount++;
 			}
 
-			private void decrementJobCount() {
+			private void decrementJobCount(Job job) {
+				//Don't count the animate job itself
+				if (job instanceof AnimatedCanvas.AnimateJob)
+					return;
 				if (jobCount == 1)
 					setDisabledImage();
 				jobCount--;

@@ -69,7 +69,7 @@ class JobInfo {
 	 * Add the amount of work to the job info.
 	 * @param workIncrement
 	 */
-	void addWork(int workIncrement) {
+	void addWork(double workIncrement) {
 		//No work on a simple label- pass it down
 		if(currentChild != null)
 			currentChild.addWork(workIncrement);

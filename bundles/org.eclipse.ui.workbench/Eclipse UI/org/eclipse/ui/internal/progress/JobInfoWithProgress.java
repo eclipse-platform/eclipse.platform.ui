@@ -1,23 +1,22 @@
 package org.eclipse.ui.internal.progress;
 
-import java.util.ArrayList;
 
 public class JobInfoWithProgress extends JobInfo {
 	int totalWork;
-	int workComplete = 0;
+	double workComplete = 0;
 
 	JobInfoWithProgress(String taskName, int total) {
 		super(taskName);
 		totalWork = total;
 	}
 
-	void addWork(int workIncrement) {
+	void addWork(double workIncrement) {
 		workComplete += workIncrement;
 		if (workComplete > totalWork)
 			workComplete = totalWork;
 	}
 
-	long percentDone() {
+	double percentDone() {
 		return (100 * workComplete) / totalWork;
 	}
 
