@@ -1,7 +1,11 @@
 package org.eclipse.ui.externaltools.internal.ant.editor;
 
-//
-// PlantyEditor.java
+/**********************************************************************
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
+
 //
 // Copyright:
 // GEBIT Gesellschaft fuer EDV-Beratung
@@ -73,22 +77,18 @@ public class PlantyEditor extends TextEditor {
      */
     public PlantyEditor() {
         super();
-    
         setDocumentProvider(new PlantyDocumentProvider());
-        // (T) that is the font problem (though it seems that we don't need it!
-        //        IPreferenceStore store = PlantyPlugin.getDefault().getPreferenceStore();
-        //        setPreferenceStore(store);
     }
 
 
-    /** The <code>JavaEditor</code> implementation of this 
+    /** The <code>PlantyEditor</code> implementation of this 
      * <code>AbstractTextEditor</code> method extend the 
      * actions to add those specific to the receiver
      */
     protected void createActions() {
         super.createActions();
 
-        ContentAssistAction action = new ContentAssistAction(ResourceBundle.getBundle("org.eclipse.ui.externaltools.internal.ant.editor.PlantyMessages"), "ContentAssistProposal.", this); //$NON-NLS-1$ //$NON-NLS-2$
+        ContentAssistAction action = new ContentAssistAction(ResourceBundle.getBundle("org.eclipse.ui.externaltools.internal.ant.editor.AntEditorMessages"), "ContentAssistProposal.", this); //$NON-NLS-1$ //$NON-NLS-2$
 
         // This action definition is associated with the accelerator Ctrl+Space
         action.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
