@@ -92,6 +92,12 @@
             id="org.eclipse.ui.edit.text.openExternalFile">
       </command>
       <command
+            name="%newTextEditor.name"
+            category="org.eclipse.ui.category.file"
+            description="%newTextEditor.description"
+            id="org.eclipse.ui.edit.text.newTextEditor">
+      </command>
+      <command
             name="%ActionDefinition.quickDiff.name"
             category="org.eclipse.ui.category.edit"
             description="%ActionDefinition.quickDiff.description"
@@ -236,13 +242,15 @@
             inputTypes="org.eclipse.ui.IStorageEditorInput"
             id="org.eclipse.ui.editors.text.StorageDocumentProvider">
       </provider>
-   </extension>
-   <extension
-         point="org.eclipse.ui.editors.documentProviders">
       <provider
             class="org.eclipse.ui.editors.text.TextFileDocumentProvider"
             inputTypes="org.eclipse.ui.internal.editors.text.JavaFileEditorInput"
             id="org.eclipse.ui.editors.text.ExternalFileDocumentProvider">
+      </provider>
+      <provider
+            class="org.eclipse.ui.editors.text.TextFileDocumentProvider"
+            inputTypes="org.eclipse.ui.internal.editors.text.NonExistingFileEditorInput"
+            id="org.eclipse.ui.editors.text.NonExistingFileDocumentProvider">
       </provider>
    </extension>
    <extension
@@ -366,6 +374,20 @@
                tooltip="%openExternalFile.description"
                menubarPath="file/open.ext"
                id="org.eclipse.ui.edit.text.openExternalFile">
+         </action>
+      </actionSet>
+      <actionSet
+            label="%newTextEditorActionSet.label"
+            visible="true"
+            id="org.eclipse.ui.edit.text.actionSet.newTextEditor">
+         <action
+               definitionId="org.eclipse.ui.edit.text.newTextEditor"
+               label="%newTextEditor.label"
+               helpContextId="new_text_editor_action_context"
+               class="org.eclipse.ui.internal.editors.text.NewTextEditorAction"
+               tooltip="%newTextEditor.description"
+               menubarPath="file/open.ext"
+               id="org.eclipse.ui.edit.text.newTextEditor">
          </action>
       </actionSet>
       <actionSet

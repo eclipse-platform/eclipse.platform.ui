@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 
 import org.eclipse.core.filebuffers.FileBuffers;
 
@@ -71,14 +70,11 @@ public abstract class JavaFileBuffer extends AbstractFileBuffer  {
 	}
 	
 	public void create(IPath location, IProgressMonitor monitor) throws CoreException {
-		File file= getFileAtLocation(location);
-		if (file == null)
-			throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.getString("FileBuffer.error.fileDoesNotExist"), null)); //$NON-NLS-1$
-		
 		fLocation= location;
-		fFile= file;
+		fFile= getFileAtLocation(location);
 		initializeFileBufferContent(monitor);
-		fSynchronizationStamp= fFile.lastModified();
+		if (fFile != null)
+			fSynchronizationStamp= fFile.lastModified();
 		
 		addFileBufferContentListeners();
 	}
@@ -190,14 +186,14 @@ public abstract class JavaFileBuffer extends AbstractFileBuffer  {
 	 * @see org.eclipse.core.filebuffers.IFileBuffer#isSynchronized()
 	 */
 	public boolean isSynchronized() {
-		return fSynchronizationStamp == fFile.lastModified();
+		return fSynchronizationStamp == getModificationStamp();
 	}
 	
 	/*
 	 * @see org.eclipse.core.filebuffers.IFileBuffer#getModificationStamp()
 	 */
 	public long getModificationStamp() {
-		return fFile.lastModified();
+		return fFile != null ? fFile.lastModified() : IResource.NULL_STAMP;
 	}
 	
 	/**

@@ -406,7 +406,7 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 	 */
 	public long getModificationStamp() {
 		File file= FileBuffers.getSystemFileAtLocation(getLocation());
-		if (file != null)
+		if (file != null && file.exists())
 			return file.lastModified();
 		return IResource.NULL_STAMP;
 	}

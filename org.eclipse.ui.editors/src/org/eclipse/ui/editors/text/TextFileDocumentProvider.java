@@ -1159,7 +1159,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 	 */
 	protected boolean isSystemFileReadOnly(FileInfo info)  {
 		File file= getSystemFile(info);
-		return file == null ? true : !file.canWrite();
+		return file != null && file.exists() ? !file.canWrite() : false;
 	}
 	
 	/**

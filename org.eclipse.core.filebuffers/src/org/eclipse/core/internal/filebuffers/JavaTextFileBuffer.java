@@ -91,13 +91,9 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 	protected String fEncoding;
 	/** Internal document listener */
 	protected IDocumentListener fDocumentListener= new DocumentListener();
-	/**
-	 * The encoding which has explicitly been set on the file.
-	 */
+	/** The encoding which has explicitly been set on the file. */
 	private String fExplicitEncoding;
-	/**
-	 * Tells whether the file on disk has a BOM.
-	 */
+	/** Tells whether the file on disk has a BOM. */
 	private boolean fHasBOM;
 
 	
@@ -147,7 +143,8 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 	
 	private InputStream getFileContents(IProgressMonitor monitor) {
 		try {
-			return new FileInputStream(fFile);
+			if (fFile != null)
+				return new FileInputStream(fFile);
 		} catch (FileNotFoundException e) {
 		}
 		return null;
@@ -200,7 +197,9 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 		
 		try {
 			original= fManager.createEmptyDocument(getLocation());
-			setDocumentContent(original, getFileContents(monitor), fEncoding);
+			InputStream stream= getFileContents(monitor);
+			if (stream != null)
+				setDocumentContent(original, stream, fEncoding);
 		} catch (CoreException x) {
 			status= x.getStatus();
 		}
@@ -255,24 +254,26 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 			fHasBOM= false;
 			
 			InputStream stream= getFileContents(monitor);
-			try {
-				QualifiedName[] options= new QualifiedName[] { IContentDescription.CHARSET, IContentDescription.BYTE_ORDER_MARK };
-				IContentDescription description= Platform.getContentTypeManager().getDescriptionFor(stream, fFile.getName(), options);
-				if (description != null) {
-					fEncoding= description.getCharset();
-					fHasBOM= description.getProperty(IContentDescription.BYTE_ORDER_MARK) != null;
-				}
-			} catch (IOException e) {
-				// do nothing
-			} finally {
+			if (stream != null) {
 				try {
-					stream.close();
-				} catch (IOException ex) {
-					FileBuffersPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.getString("JavaTextFileBuffer.error.closeStream"), ex)); //$NON-NLS-1$
+					QualifiedName[] options= new QualifiedName[] { IContentDescription.CHARSET, IContentDescription.BYTE_ORDER_MARK };
+					IContentDescription description= Platform.getContentTypeManager().getDescriptionFor(stream, fFile.getName(), options);
+					if (description != null) {
+						fEncoding= description.getCharset();
+						fHasBOM= description.getProperty(IContentDescription.BYTE_ORDER_MARK) != null;
+					}
+				} catch (IOException e) {
+					// do nothing
+				} finally {
+					try {
+						stream.close();
+					} catch (IOException ex) {
+						FileBuffersPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.getString("JavaTextFileBuffer.error.closeStream"), ex)); //$NON-NLS-1$
+					}
 				}
+				
+				setDocumentContent(fDocument, getFileContents(monitor), fEncoding);
 			}
-			
-			setDocumentContent(fDocument, getFileContents(monitor), fEncoding);
 		} catch (CoreException x) {
 			fDocument= fManager.createEmptyDocument(getLocation());
 			fStatus= x.getStatus();
