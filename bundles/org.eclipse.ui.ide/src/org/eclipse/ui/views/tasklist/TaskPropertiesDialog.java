@@ -11,24 +11,39 @@
 
 package org.eclipse.ui.views.tasklist;
 
-import java.util.*;
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
-
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.dialogs.Dialog;  // disambiguate
-
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.internal.ide.StatusUtil;
 
 /**
  * Shows the properties of a new or existing task, or a problem.
@@ -507,50 +522,95 @@ public class TaskPropertiesDialog extends Dialog {
 	 * Does nothing for problems, since they cannot be modified.
 	 */
 	private void saveChanges() {
-		if (!isEditable() || !isDirty()) {
+		if (!isEditable() || !isDirty()) 
+			return;
+		
+		final CoreException[] coreExceptions = new CoreException[1];
+		final Map attrs = getMarkerAttributesFromDialog();
+		try {
+			PlatformUI.getWorkbench().getProgressService().
+				busyCursorWhile(new IRunnableWithProgress(){
+					/* (non-Javadoc)
+					 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
+					 */
+					public void run(IProgressMonitor monitor)
+							throws InvocationTargetException,
+							InterruptedException {
+						try{
+							IWorkspaceRunnable runnable = new IWorkspaceRunnable(){
+								/* (non-Javadoc)
+								 * @see org.eclipse.core.resources.IWorkspaceRunnable#run(org.eclipse.core.runtime.IProgressMonitor)
+								 */
+								public void run(IProgressMonitor monitor)
+										throws CoreException {
+									createOrUpdateMarker(monitor,attrs);
+								}
+							};
+							ResourcesPlugin.getWorkspace().run(runnable,monitor);
+						}catch (CoreException e) {
+							coreExceptions[0] = e;
+					}
+				}});
+		}
+		catch (InvocationTargetException e) {
+			IDEWorkbenchPlugin.log(e.getMessage(),StatusUtil.newStatus(IStatus.ERROR,e.getMessage(),e));
 			return;
 		}
-		try {
-			ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
-				public void run(IProgressMonitor monitor) throws CoreException {
-					createOrUpdateMarker();
-				}
-			}, null);
-		} catch (CoreException e) {
+		
+		catch (InterruptedException e) {
+			IDEWorkbenchPlugin.log(e.getMessage(),StatusUtil.newStatus(IStatus.ERROR,e.getMessage(),e));
+			return;
+		}
+		
+		if(coreExceptions [0] != null)
 			ErrorDialog.openError(
 				getShell(),
 				TaskListMessages.getString("TaskProp.errorMessage"), //$NON-NLS-1$
 				null,
-				e.getStatus());
-			return;
-		}
+				coreExceptions[0].getStatus());
 	}
 	
 	/**
 	 * Creates or updates the marker.  Must be called within a workspace runnable.
+	 * @param monitor The monitor to report to.
+	 * @param attrs The atrributes entered from the dialog.
+	 * @throws CoreException
 	 */
-	private void createOrUpdateMarker() throws CoreException {
+	private void createOrUpdateMarker(IProgressMonitor monitor, Map attrs) throws CoreException {
+		
+		monitor.beginTask(TaskListMessages.getString("TaskPropertiesDialog.WorkingOnMarker"), 100); //$NON-NLS-1$
 		if (marker == null) {
+			monitor.subTask(TaskListMessages.getString("TaskPropertiesDialog.CreatingMarker")); //$NON-NLS-1$
 			IResource resource = getResource();
 			if (resource == null) {
 				resource = ResourcesPlugin.getWorkspace().getRoot();
 			}
+			monitor.worked(25);
+			
 			marker = resource.createMarker(IMarker.TASK);
 			Map initialAttrs = getInitialAttributes();
 			if (initialAttrs != null) {
 				marker.setAttributes(initialAttrs);
 			}
+			monitor.worked(25);
 		}
+		else
+			monitor.worked(50);
 		
 		// Set the marker attributes from the current dialog field values.
 		// Do not use setAttributes(Map) as that overwrites any attributes
 		// not covered by the dialog.
-		Map attrs = getMarkerAttributesFromDialog();
+
+		monitor.subTask(TaskListMessages.getString("TaskPropertiesDialog.UpdatingAttributes")); //$NON-NLS-1$
+		int increment = 50 / attrs.keySet().size();
 		for (Iterator i = attrs.keySet().iterator(); i.hasNext();) {
 			String key = (String) i.next();
 			Object val = attrs.get(key);
 			marker.setAttribute(key, val);
+			monitor.worked(increment);
 		}
+		
+		monitor.done();
 	}
 	
 	/**
