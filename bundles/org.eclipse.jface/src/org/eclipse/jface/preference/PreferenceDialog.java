@@ -615,7 +615,7 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 	 * @param nodeId the id to search for.
 	 * @return <code>IPreferenceNode</code> or <code>null</code> if not found.
 	 */
-	private IPreferenceNode findNodeMatching(String nodeId) {
+	protected IPreferenceNode findNodeMatching(String nodeId) {
 		List nodes = preferenceManager.getElements(PreferenceManager.POST_ORDER);
 		for (Iterator i = nodes.iterator(); i.hasNext();) {
 			IPreferenceNode node = (IPreferenceNode) i.next();

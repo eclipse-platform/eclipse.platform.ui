@@ -38,7 +38,9 @@ public class PreferenceContentProvider implements ITreeContentProvider {
 	 * @return the parent node of the child node.
 	 */
 	private IPreferenceNode findParent(IPreferenceNode parent, IPreferenceNode target) {
-
+		if (parent.getId().equals(target.getId()))
+			return null;
+		
 		IPreferenceNode found = parent.findSubNode(target.getId());
 		if (found != null)
 			return parent;

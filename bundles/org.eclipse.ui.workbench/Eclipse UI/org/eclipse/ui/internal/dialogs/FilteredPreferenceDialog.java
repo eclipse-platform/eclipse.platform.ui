@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
+import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.preference.PreferenceLabelProvider;
 import org.eclipse.jface.preference.PreferenceManager;
@@ -38,9 +39,9 @@ import org.eclipse.ui.internal.activities.ws.ActivityMessages;
 public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 
 	protected TreeViewer filteredViewer, unfilteredViewer;
-	
+
 	protected TabFolder tabFolder;
-	
+
 	/**
 	 * Creates a new preference dialog under the control of the given preference 
 	 * manager.
@@ -49,21 +50,21 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 	 * @param manager the preference manager
 	 */
 	public FilteredPreferenceDialog(Shell parentShell, PreferenceManager manager) {
-		super(parentShell, manager); 
+		super(parentShell, manager);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferenceDialog#createTreeArea(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createTreeAreaContents(Composite composite) {
-		
-		if (WorkbenchActivityHelper.isFiltering()) {			
+
+		if (WorkbenchActivityHelper.isFiltering()) {
 			tabFolder = new TabFolder(composite, SWT.NONE);
 			tabFolder.setFont(composite.getFont());
-						
+
 			filteredViewer = createTreeViewer(tabFolder, true);
 			unfilteredViewer = createTreeViewer(tabFolder, false);
-			
+
 			// flipping tabs updates the selected node
 			tabFolder.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
@@ -73,22 +74,21 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 						showPage(getSingleSelection(unfilteredViewer.getSelection()));
 					}
 				}
-			});			
-			
+			});
+
 			layoutTreeAreaControl(tabFolder);
 			return tabFolder;
-		}
-		else {
+		} else {
 			unfilteredViewer = createTreeViewer(composite);
 			unfilteredViewer.setLabelProvider(new PreferenceLabelProvider());
 			unfilteredViewer.setContentProvider(new FilteredPreferenceContentProvider(false));
 			unfilteredViewer.setInput(getPreferenceManager());
-			
-			layoutTreeAreaControl(unfilteredViewer.getControl());	
+
+			layoutTreeAreaControl(unfilteredViewer.getControl());
 			return unfilteredViewer.getControl();
 		}
 	}
-		
+
 	/**
 	 * Create a new viewer in the parent.
 	 * 
@@ -102,27 +102,42 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 		tree.setLabelProvider(new PreferenceLabelProvider());
 		tree.setContentProvider(new FilteredPreferenceContentProvider(filtering));
 		tree.setInput(getPreferenceManager());
-		
+
 		TabItem tabItem = new TabItem(parent, SWT.NONE);
 		tabItem.setControl(tree.getControl());
 		tabItem.setText(filtering ? ActivityMessages.getString("ActivityFiltering.filtered") //$NON-NLS-1$
-								  : ActivityMessages.getString("ActivityFiltering.unfiltered")); //$NON-NLS-1$
-		
+		: ActivityMessages.getString("ActivityFiltering.unfiltered")); //$NON-NLS-1$
+
 		return tree;
 	}
-		
+
+	/**
+	 * Differs from super implementation in that if the node is found but should
+	 * be filtered based on a call to 
+	 * <code>WorkbenchActivityHelper.filterItem()</code> then <code>null</code> 
+	 * is returned.
+	 * 
+	 * @see org.eclipse.jface.preference.PreferenceDialog#findNodeMatching(java.lang.String)
+	 */
+	protected IPreferenceNode findNodeMatching(String nodeId) {
+		IPreferenceNode node = super.findNodeMatching(nodeId);
+		if (WorkbenchActivityHelper.filterItem(node))
+			return null;
+		return node;
+	}
+
 	/**
 	 * Get the tree viewer for the currently active tab.
 	 */
 	protected TreeViewer getTreeViewer() {
 		if (tabFolder == null)
 			return unfilteredViewer;
-		
-		if (tabFolder.getSelectionIndex() == 0) 
+
+		if (tabFolder.getSelectionIndex() == 0)
 			return filteredViewer;
 		else
 			return unfilteredViewer;
-	}	
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferenceDialog#updateTreeFont(org.eclipse.swt.graphics.Font)
@@ -131,5 +146,5 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 		unfilteredViewer.getControl().setFont(dialogFont);
 		if (filteredViewer != null)
 			filteredViewer.getControl().setFont(dialogFont);
-	}	
+	}
 }
