@@ -303,7 +303,7 @@ within its &lt;samp&gt;selectionChanged&lt;/samp&gt; method.
             <meta.element labelAttribute="name"/>
          </appInfo>
          <documentation>
-            This element is used to evaluate the attribute state of each object in the current selection. A match only if each object in the selection has the specified attribute state. Each object in the selection must implement, or adapt to,
+            This element is used to evaluate the attribute state of each object in the current selection. A match only if each object in the selection has the specified attribute state. Each object in the selection must implement, or adapt to, &lt;samp&gt;org.eclipse.ui.IActionFilter&lt;/samp&gt;.
          </documentation>
       </annotation>
       <complexType>

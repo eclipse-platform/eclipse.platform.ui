@@ -2,19 +2,19 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.ui">
 <annotation>
-   <appInfo>
-      <meta.schema plugin="org.eclipse.ui" id="propertyPages" name="Property Pages"/>
-   </appInfo>
-   <documentation>
-      This extension point is used to add additional property page for objects of a given type.  Once defined, these property pages will appear in the Properties Dialog for objects of that type. 
+      <appInfo>
+         <meta.schema plugin="org.eclipse.ui" id="propertyPages" name="Property Pages"/>
+      </appInfo>
+      <documentation>
+         This extension point is used to add additional property page for objects of a given type.  Once defined, these property pages will appear in the Properties Dialog for objects of that type. 
 &lt;p&gt;
 A property page is a user friendly way to interact with the properties of an object.  Unlike the Properties view, which restricts the space available for editing an object property, a property page may benefit from the freedom to define larger, more complex controls with labels, icons, etc.  Properties which logically go together may also be clustered in a page, rather than scattered in the property sheet. However, in most applications it will be appropriate to expose some properties of an object via the property sheet and some via the property pages. 
 &lt;p&gt;
-Property pages are shown in a dialog box that is normally visible when the "Properties" menu item is selected on a pop-up menu for an object. In addition to the object class, the name filter can optionally be supplied to register property pages only for specific object types. 
+Property pages are shown in a dialog box that is normally visible when the &quot;Properties&quot; menu item is selected on a pop-up menu for an object. In addition to the object class, the name filter can optionally be supplied to register property pages only for specific object types. 
 &lt;p&gt;
 If these filtering mechanisms are inadequate a property page may use the filter mechanism.  In this case the attributes of the target object are described in a series of key value pairs.  The attributes which apply to the selection are type specific and beyond the domain of the workbench itself, so the workbench will delegate filtering at this level to the actual selection.
-   </documentation>
-</annotation>
+      </documentation>
+   </annotation>
 
    <element name="extension">
       <complexType>
@@ -119,6 +119,11 @@ This flag is used if objectClass adapts to IResource.  Default value is false.
    </element>
 
    <element name="filter">
+      <annotation>
+         <documentation>
+            This element is used to evaluate the attribute state of each object in the current selection. A match only if each object in the selection has the specified attribute state. Each object in the selection must implement, or adapt to, &lt;samp&gt;org.eclipse.ui.IActionFilter&lt;/samp&gt;.
+         </documentation>
+      </annotation>
       <complexType>
          <attribute name="name" type="string" use="required">
             <annotation>
@@ -147,14 +152,14 @@ define the target object for a property page.
          The following is an example of the property page definition: 
 &lt;p&gt;
 &lt;pre&gt;
-   &lt;extension point="org.eclipse.ui.propertyPages"&gt; 
+   &lt;extension point=&quot;org.eclipse.ui.propertyPages&quot;&gt; 
         &lt;page 
-            id="com.xyz.projectPage" 
-            name="XYZ Java Properties" 
-            objectClass="org.eclipse.core.resources.IFile" 
-            class="com.xyz.ppages.JavaPropertyPage" 
-            nameFilter="*.java"&gt; 
-            &lt;filter name="readOnly" value="true"/&gt; 
+            id=&quot;com.xyz.projectPage&quot; 
+            name=&quot;XYZ Java Properties&quot; 
+            objectClass=&quot;org.eclipse.core.resources.IFile&quot; 
+            class=&quot;com.xyz.ppages.JavaPropertyPage&quot; 
+            nameFilter=&quot;*.java&quot;&gt; 
+            &lt;filter name=&quot;readOnly&quot; value=&quot;true&quot;/&gt; 
         &lt;/page&gt; 
     &lt;/extension&gt; 
 &lt;/pre&gt;
