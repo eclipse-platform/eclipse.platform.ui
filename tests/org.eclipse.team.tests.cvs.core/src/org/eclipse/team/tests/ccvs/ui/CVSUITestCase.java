@@ -99,10 +99,6 @@ public class CVSUITestCase extends LoggingTestCase {
 		
 		// disable CVS markers and prompts
 		IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
-		store.setValue(ICVSUIConstants.PREF_PROMPT_ON_FILE_DELETE, false);
-		CVSProviderPlugin.getPlugin().setPromptOnFileDelete(false);
-		store.setValue(ICVSUIConstants.PREF_PROMPT_ON_FOLDER_DELETE, false);
-		CVSProviderPlugin.getPlugin().setPromptOnFolderDelete(false);
 		store.setValue(ICVSUIConstants.PREF_SHOW_MARKERS, false);
 		CVSProviderPlugin.getPlugin().setShowTasksOnAddAndDelete(false);
 
