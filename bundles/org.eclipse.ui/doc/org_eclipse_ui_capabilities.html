@@ -31,6 +31,16 @@ extension point). For example, a "Web" capability needs the "Java" capability
 to compile servlets, but may want to present a much more simpler page to
 configure the "Java" capability or maybe not even present any pages about
 the "Java" capability and just add it with appropriate defaults.
+<p>The install wizard for a capability is responsible for collecting the
+necessary information from the user in order to add its nature and the
+natures of any capabilities it handles the UI for. The install wizard must
+handle the situation where some or all of the required capabilites are
+already installed and configured.
+<p>The uninstall wizard for a capability is responsible for collecting
+the necessary information from the user in order to remove its nature.
+Also must remove any other natures from capabilities that the user wants
+removed and the capability handles the UI for. These other capabilities
+that the user wants removed will be provided in the init method.
 <p>Capabilities can specify which perspectives a user can switch to when
 added to the project. This allows the user to discover new perspectives
 that can take advantage of the new capabilities. Capabilities that handle
@@ -75,6 +85,10 @@ CDATA #OPTIONAL</tt>
 CDATA #REQUIRED</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; installDetails&nbsp;&nbsp;&nbsp;&nbsp;
 CDATA #OPTIONAL</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; uninstallWizard&nbsp;&nbsp;&nbsp;
+CDATA #IMPLIED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; uninstallDetails&nbsp;&nbsp; CDATA
+#IMPLIED</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; description&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 CDATA #OPTIONAL</tt>
 <br><tt>&nbsp;&nbsp; ></tt>
@@ -88,30 +102,54 @@ capability (see org.eclipse.core.resources.natures extension point).</li>
 
 <li>
 <b>category</b> - an optional attribute which references a previously defined
-category ID. If omitted, the capability will be added to the "Other" category.</li>
+category ID. If omitted, this capability will be added to the "Other" category.</li>
 
 <li>
 <b>icon</b> - an optional attribute which defines a relative path of the
-icon that may be used to represent the capability.</li>
+icon that may be used to represent this capability. If omitted, no icon
+will be displayed.</li>
 
 <li>
 <b>installWizard</b> - a fully qualified name of the Java class implementing
-<tt>org.eclipse.ui.ICapabilityWizard</tt>
-interface.</li>
+<tt>org.eclipse.ui.ICapabilityInstallWizard</tt>
+interface. The wizard is responsible for collecting any necessary information
+from the user and adding this capability's nature along with all other
+natures from capabilities this capability handles the UI for.</li>
 
 <li>
 <b>installDetails</b> - an optional but highly recommended attribute which
 decribes to the users what will be required of them by the install wizard
-for the capability.</li>
+for this capability.</li>
+
+<li>
+<b>uninstallWizard</b> - a fully qualified name of the Java class implementing
+<tt>org.eclipse.ui.ICapabilityUninstallWizard</tt>
+interface. The wizard is responsible for collecting any necessary information
+from the user and removing this capability's nature along with any other
+natures from capabilities that the user wants removed and this capability
+handles the UI for. If omitted, the workbench will provide a wizard that
+will remove this capability's nature from the project along with any other
+natures from capabilities that the user wants removed and this capability
+handles the UI for.</li>
+
+<li>
+<b>uninstallDetails</b> - an optional but highly recommended attribute
+which decribes to the users what will be required of them by the uninstall
+wizard for this capability.</li>
 
 <li>
 <b>description</b> - an optional but highly recommended attribute which
-consists of a short description of what functionality or ability the capability
+consists of a short description of what functionality/ability this capability
 adds to a project.</li>
 
 <li>
 <b>handleUI</b> - an optional sub-element that contains a unique identifier
-of another capability whose UI will be controlled by the UI of this capability.</li>
+of another capability whose UI will be controlled by the this capability.</li>
+
+<li>
+<b>perspectiveChoice</b> - an optional sub-element that contains a unique
+identifier of a perspective that will be presented to the user to choose
+from.</li>
 </ul>
 <tt>&nbsp;&nbsp; &lt;!ELEMENT handleUI EMPTY></tt>
 <br><tt>&nbsp;&nbsp; &lt;!ATTLIST handleUI</tt>
@@ -182,9 +220,14 @@ id="com.xyz.drinkPerspective"</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/capability></tt>
 <br><tt>&nbsp;&nbsp; &lt;/extension></tt>
 <p><b><i>API Information</i>: </b>The value of the <tt>installWizard</tt>
-attribute must represent a class that implements <tt>org.eclipse.ui.ICapabilityWizard</tt>
+attribute must represent a class that implements <tt>org.eclipse.ui.ICapabilityInstallWizard</tt>
 interface. The IProject passed in the init method will exist and can be
 queried for the existance of other natures. The capability install wizard
+must not close nor delete the project passed in the init method.
+<p>The value of the un<tt>installWizard</tt> attribute must represent a
+class that implements <tt>org.eclipse.ui.ICapabilityUninstallWizard</tt>
+interface. The IProject passed in the init method will exist and can be
+queried for the existance of other natures. The capability uninstall wizard
 must not close nor delete the project passed in the init method.
 <p><b><i>Supplied Implementation: </i></b>The workbench does not provide
 any capabilities.

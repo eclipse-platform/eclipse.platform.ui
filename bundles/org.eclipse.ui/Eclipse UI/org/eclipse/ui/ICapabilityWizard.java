@@ -22,20 +22,10 @@ import org.eclipse.jface.wizard.IWizard;
  * </p>
  *
  * @see org.eclipse.jface.wizard.IWizard
+ * @see org.eclipse.ui.ICapabilityInstallWizard
  * @since 2.0
+ * @deprecated use ICapabilityInstallWizard instead. This interface
+ * 		will be deleted for M6 milestone build.
  */
-public interface ICapabilityWizard extends IWizard {
-	/**
-	 * Initializes this capability wizard using the passed workbench,
-	 * object selection, and project.
-	 * <p>
-	 * This method is called after the no argument constructor and
-	 * before other methods are called.
-	 * </p>
-	 *
-	 * @param workbench the current workbench
-	 * @param selection the current object selection
-	 * @param project the project to configure with a capability
-	 */
-	void init(IWorkbench workbench, IStructuredSelection selection, IProject project);
+public interface ICapabilityWizard extends ICapabilityInstallWizard {
 }

@@ -10,6 +10,7 @@ http://www.eclipse.org/legal/cpl-v05.html
 Contributors:
 **********************************************************************/
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -19,31 +20,43 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.ui.ICapabilityUninstallWizard;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
- * Internal workbench wizard to remove capabilities
- * from a project. This wizard is intended to be used
- * by the RemoveCapabilitiesStep class only.
+ * Internal workbench wizard to remove a capability
+ * from a project. Also removes prerequisite natures
+ * as specified in the <code>init</code> method.
+ * <p>
+ * This wizard is intended to be used by the
+ * <code>RemoveCapabilityStep</code> class only.
+ * </p>
  */
-public class RemoveCapabilitiesWizard extends Wizard {
+public class RemoveCapabilityWizard extends Wizard implements ICapabilityUninstallWizard {
+	private IWorkbench workbench;
 	private IProject project;
 	private String[] natureIds;
 
 	/**
-	 * Creates an empty wizard for removing capabilities
+	 * Creates an empty wizard for removing a capability
 	 * from a project.
-	 * 
-	 * @param project the project to remove the capabilities from
-	 * @param natureIds the list of nature ids to keep on the project
 	 */
-	/* package */ RemoveCapabilitiesWizard(IProject project, String[] natureIds) {
+	/* package */ RemoveCapabilityWizard() {
 		super();
-		this.natureIds = natureIds;
+	}
+
+	/* (non-Javadoc)
+	 * Method declared on ICapabilityUninstallWizard.
+	 */
+	public void init(IWorkbench workbench, IStructuredSelection selection, IProject project, String[] natureIds) {
+		this.workbench = workbench;
 		this.project = project;
+		this.natureIds = natureIds;
 	}
 
 	/* (non-Javadoc)
@@ -62,7 +75,22 @@ public class RemoveCapabilitiesWizard extends Wizard {
 			protected void execute(IProgressMonitor monitor) throws CoreException {
 				try {
 					IProjectDescription description = project.getDescription();
-					description.setNatureIds(natureIds);
+					String[] oldIds = description.getNatureIds();
+					ArrayList newIds = new ArrayList(oldIds.length);
+					for (int i = 0; i < oldIds.length; i++) {
+						boolean keepNature = true;
+						for (int j = 0; j < natureIds.length; j++) {
+							if (natureIds[j].equals(oldIds[i])) {
+								keepNature = false;
+								break;
+							}
+						}
+						if (keepNature)
+							newIds.add(oldIds[i]);
+					}
+					String[] results = new String[newIds.size()];
+					newIds.toArray(results);
+					description.setNatureIds(results);
 					project.setDescription(description, monitor);
 				} finally {
 					monitor.done();
@@ -82,7 +110,7 @@ public class RemoveCapabilitiesWizard extends Wizard {
 			if (t instanceof CoreException) {
 				ErrorDialog.openError(
 					getShell(), 
-					WorkbenchMessages.getString("RemoveCapabilitiesWizard.errorMessage"),  //$NON-NLS-1$
+					WorkbenchMessages.getString("RemoveCapabilityWizard.errorMessage"),  //$NON-NLS-1$
 					null, // no special message
 			 		((CoreException) t).getStatus());
 			} else {
@@ -96,8 +124,8 @@ public class RemoveCapabilitiesWizard extends Wizard {
 						t));
 				MessageDialog.openError(
 					getShell(),
-					WorkbenchMessages.getString("RemoveCapabilitiesWizard.errorMessage"),  //$NON-NLS-1$
-					WorkbenchMessages.format("RemoveCapabilitiesWizard.internalError", new Object[] {t.getMessage()})); //$NON-NLS-1$
+					WorkbenchMessages.getString("RemoveCapabilityWizard.errorMessage"),  //$NON-NLS-1$
+					WorkbenchMessages.format("RemoveCapabilityWizard.internalError", new Object[] {t.getMessage()})); //$NON-NLS-1$
 			}
 			return false;
 		}

@@ -12,8 +12,9 @@ Contributors:
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.IWizard;
-import org.eclipse.ui.ICapabilityWizard;
+import org.eclipse.ui.ICapabilityInstallWizard;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.registry.Capability;
 
 /**
@@ -22,7 +23,7 @@ import org.eclipse.ui.internal.registry.Capability;
  */
 public class InstallCapabilityStep extends WizardStep {
 	private Capability capability;
-	private ICapabilityWizard wizard;
+	private ICapabilityInstallWizard wizard;
 	private IWorkbench workbench;
 	private IProjectProvider projectProvider;
 	
@@ -43,7 +44,7 @@ public class InstallCapabilityStep extends WizardStep {
 	 * Method declared on WizardStep.
 	 */
 	public String getLabel() {
-		return capability.getName();
+		return WorkbenchMessages.format("InstallCapabilityStep.label", new Object[] {capability.getName()}); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

@@ -120,6 +120,7 @@ public class ProjectCapabilityPropertyPage extends PropertyPage {
 		String[] natureIds;
 		try {
 			natureIds = getProject().getDescription().getNatureIds();
+			natureIds = getProject().getWorkspace().sortNatureSet(natureIds);
 		} catch (CoreException e) {
 			ErrorDialog.openError(
 				getShell(),
@@ -162,18 +163,15 @@ public class ProjectCapabilityPropertyPage extends PropertyPage {
 		}
 
 		// Launch the step wizard if needed		
-		if (newCaps.size() > 0 || keepIds.size() != natureIds.length) {
+		if (newCaps.size() > 0 || removeCaps.size() > 0) {
 			Capability[] newCapabilities = new Capability[newCaps.size()];
 			newCaps.toArray(newCapabilities);
 			
 			Capability[] removeCapabilities = new Capability[removeCaps.size()];
 			removeCaps.toArray(removeCapabilities);
 			
-			String[] keepNatureIds = new String[keepIds.size()];
-			keepIds.toArray(keepNatureIds);
-			
 			UpdateProjectCapabilityWizard wizard =
-				new UpdateProjectCapabilityWizard(getProject(), newCapabilities, removeCapabilities, keepNatureIds);
+				new UpdateProjectCapabilityWizard(getProject(), newCapabilities, removeCapabilities);
 			
 			MultiStepWizardDialog dialog = new MultiStepWizardDialog(getShell(), wizard);
 			dialog.create();

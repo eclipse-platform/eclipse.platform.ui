@@ -51,11 +51,7 @@ public abstract class MultiStepCapabilityWizard extends MultiStepWizard implemen
 			
 			IProject project = getProject();
 			if (project != null) {
-//				window.getShell().getDisplay().asyncExec(new Runnable() {
-//					public void run() {
-						BasicNewResourceWizard.selectAndReveal(project, window);
-//					}
-//				});
+				BasicNewResourceWizard.selectAndReveal(project, window);
 			}
 		}
 			

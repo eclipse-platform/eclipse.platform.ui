@@ -19,7 +19,8 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.IWizard;
-import org.eclipse.ui.ICapabilityWizard;
+import org.eclipse.ui.ICapabilityInstallWizard;
+import org.eclipse.ui.ICapabilityUninstallWizard;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
@@ -46,6 +47,8 @@ public class Capability extends WorkbenchAdapter implements IAdaptable {
 	private static final String ATT_DESCRIPTION = "description";
 	private static final String ATT_INSTALL_WIZARD = "installWizard";
 	private static final String ATT_INSTALL_DETAILS = "installDetails";
+	private static final String ATT_UNINSTALL_WIZARD = "uninstallWizard";
+	private static final String ATT_UNINSTALL_DETAILS = "uninstallDetails";
 	
 	private String id;
 	private String natureId;
@@ -173,22 +176,52 @@ public class Capability extends WorkbenchAdapter implements IAdaptable {
 	 * Returns a new instance of the capability install
 	 * wizard. Caller is responsible for calling the init
 	 * method. If the wizard cannot be created, <code>null</code>
-	 * is returned
+	 * is returned.
 	 * 
-	 * @return the none initialized capability wizard or
+	 * @return the non-initialized capability wizard or
 	 * 		<code>null</code> if the wizard cannot be created.
 	 */
-	public ICapabilityWizard getInstallWizard() {
+	public ICapabilityInstallWizard getInstallWizard() {
 		try {
-			return (ICapabilityWizard)element.createExecutableExtension(ATT_INSTALL_WIZARD);
+			return (ICapabilityInstallWizard)element.createExecutableExtension(ATT_INSTALL_WIZARD);
 		} catch (CoreException e) {
-			WorkbenchPlugin.log("Could not create capability wizard.", e.getStatus()); //$NON-NLS-1$
+			WorkbenchPlugin.log("Could not create capability install wizard.", e.getStatus()); //$NON-NLS-1$
 			return null;
 		}
 	}
 	
+	/**
+	 * Returns the description for the install wizard
+	 * or <code>null</code> if none supplied.
+	 */
 	public String getInstallDetails() {
 		return element.getAttribute(ATT_INSTALL_DETAILS);
+	}
+	
+	/**
+	 * Returns a new instance of the capability uninstall
+	 * wizard. Caller is responsible for calling the init
+	 * method. If the wizard cannot be created, <code>null</code>
+	 * is returned.
+	 * 
+	 * @return the non-initialized capability wizard or
+	 * 		<code>null</code> if the wizard cannot be created.
+	 */
+	public ICapabilityUninstallWizard getUninstallWizard() {
+		try {
+			return (ICapabilityUninstallWizard)element.createExecutableExtension(ATT_UNINSTALL_WIZARD);
+		} catch (CoreException e) {
+			WorkbenchPlugin.log("Could not create capability uninstall wizard.", e.getStatus()); //$NON-NLS-1$
+			return null;
+		}
+	}
+	
+	/**
+	 * Returns the description for the uninstall wizard
+	 * or <code>null</code> if none supplied.
+	 */
+	public String getUninstallDetails() {
+		return element.getAttribute(ATT_UNINSTALL_DETAILS);
 	}
 	
 	public String getDescription() {

@@ -34,7 +34,6 @@ public class UpdateProjectCapabilityWizard extends MultiStepCapabilityWizard {
 	private IProject project;
 	private Capability[] addCapabilities;
 	private Capability[] removeCapabilities;
-	private String[] natureIds;
 	
 	/**
 	 * Creates a wizard.
@@ -42,40 +41,71 @@ public class UpdateProjectCapabilityWizard extends MultiStepCapabilityWizard {
 	 * @param project the project to configure new capabilities
 	 * @param addCapabilities the new capabilities to configure on the project
 	 * @param removeCapabilities the old capabilities to remove from the project
-	 * @param natureIds the list of nature ids to keep on the project
+	 * 		in reverse order (first item last to be removed)
 	 */
-	public UpdateProjectCapabilityWizard(IProject project, Capability[] addCapabilities, Capability[] removeCapabilities, String[] natureIds) {
+	public UpdateProjectCapabilityWizard(IProject project, Capability[] addCapabilities, Capability[] removeCapabilities) {
 		super();
 		this.project = project;
 		this.addCapabilities = addCapabilities;
 		this.removeCapabilities = removeCapabilities;
-		this.natureIds = natureIds;
 		initializeDefaultPageImageDescriptor();
 		setWindowTitle(WorkbenchMessages.getString("UpdateProjectCapabilityWizard.windowTitle")); //$NON-NLS-1$
 	}
 
 	/**
-	 * Builds the collection of steps install
-	 * the chosen capabilities
+	 * Builds the collection of steps
 	 */
 	private void buildSteps() {
 		int stepNumber = 1;
-		RemoveCapabilitiesStep removeStep = null;
+		ArrayList steps = new ArrayList(removeCapabilities.length + addCapabilities.length);
+		
+		// collect the minimum remove capability steps
 		if (removeCapabilities.length > 0) {
-			removeStep = new RemoveCapabilitiesStep(stepNumber,natureIds,removeCapabilities, project);
-			stepNumber++;
+			// Reserve the order so prereq aren't removed before dependents
+			for (int i = removeCapabilities.length - 1; i >= 0; i--) {
+				if (removeCapabilities[i] != null) {
+					// Collect all the nature ids this capability should
+					// remove. Includes itself and any ones that it
+					// handles the ui for.
+					ArrayList natureIds = new ArrayList();
+					natureIds.add(removeCapabilities[i].getNatureId());
+					ArrayList uiIds = removeCapabilities[i].getHandleUIs();
+					if (uiIds != null) {
+						Iterator enum = uiIds.iterator();
+						while (enum.hasNext()) {
+							String id = (String)enum.next();
+							for (int j = 0; j < removeCapabilities.length; j++) {
+								if (removeCapabilities[j] != null) {
+									if (removeCapabilities[j].getId().equals(id)) {
+										natureIds.add(removeCapabilities[j].getNatureId());
+										removeCapabilities[j] = null;
+									}
+								}
+							}
+						}
+					}
+					// Create a step to remove this capability and prereq natures
+					String[] ids = new String[natureIds.size()];
+					natureIds.toArray(ids);
+					steps.add(new RemoveCapabilityStep(stepNumber, removeCapabilities[i], ids, project));
+					stepNumber++;
+				}
+			}
 		}
 		
-		IWorkbench workbench = PlatformUI.getWorkbench();
-		CapabilityRegistry reg = WorkbenchPlugin.getDefault().getCapabilityRegistry();
-		Capability[] results = reg.pruneCapabilities(addCapabilities);
-		WizardStep[] steps = new WizardStep[results.length + (stepNumber - 1)];
-		
-		if (removeStep != null)
-			steps[0] = removeStep;
-		for (int i = 0; i < results.length; i++, stepNumber++)
-			steps[stepNumber - 1] = new InstallCapabilityStep(stepNumber, results[i], workbench, this);
-		setSteps(steps);
+		// Collect the minimum add capability steps
+		if (addCapabilities.length > 0) {
+			IWorkbench workbench = PlatformUI.getWorkbench();
+			CapabilityRegistry reg = WorkbenchPlugin.getDefault().getCapabilityRegistry();
+			Capability[] results = reg.pruneCapabilities(addCapabilities);
+			for (int i = 0; i < results.length; i++, stepNumber++)
+				steps.add(new InstallCapabilityStep(stepNumber, results[i], workbench, this));
+		}
+			
+		// Set the list of steps to do
+		WizardStep[] results = new WizardStep[steps.size()];
+		steps.toArray(results);
+		setSteps(results);
 	}
 	
 	/* (non-Javadoc)
@@ -91,7 +121,7 @@ public class UpdateProjectCapabilityWizard extends MultiStepCapabilityWizard {
 		WizardStep[] steps = getSteps();
 		// yes if the only step is to remove capabilities
 		return steps.length == 1
-			&& steps[0] instanceof RemoveCapabilitiesStep;
+			&& steps[0] instanceof RemoveCapabilityStep;
 	}
 	
 	/* (non-Javadoc)
