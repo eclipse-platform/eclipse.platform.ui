@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.jobs.Job;
  */
 public class ProgressViewerContentProvider extends ProgressContentProvider
          {
-    ProgressViewer progressViewer;
+    AbstractProgressViewer progressViewer;
 
     /**
      * Create a new instance of the receiver.

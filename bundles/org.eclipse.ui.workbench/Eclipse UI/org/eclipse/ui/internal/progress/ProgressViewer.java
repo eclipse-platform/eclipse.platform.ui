@@ -16,7 +16,6 @@ import java.util.List;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.PaintEvent;
@@ -36,7 +35,7 @@ import org.eclipse.ui.internal.misc.Assert;
  * The ProgressViewer is the viewer used by progress windows. It displays text
  * on the canvas.
  */
-public class ProgressViewer extends StructuredViewer {
+public class ProgressViewer extends AbstractProgressViewer {
     Canvas canvas;
 
     Object[] displayedItems = new Object[0];
