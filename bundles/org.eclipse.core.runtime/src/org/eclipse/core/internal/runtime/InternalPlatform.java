@@ -135,6 +135,8 @@ public final class InternalPlatform implements IPlatform {
 	private static final String KEY_PREFIX = "%"; //$NON-NLS-1$
 	private static final String KEY_DOUBLE_PREFIX = "%%"; //$NON-NLS-1$
 
+	public static final String INSTALL_LOCATION = "osgi.installLocation";
+	
 	private static final String METADATA_VERSION_KEY = "org.eclipse.core.runtime"; //$NON-NLS-1$
 	private static final int METADATA_VERSION_VALUE = 1;
 
@@ -1088,9 +1090,9 @@ public final class InternalPlatform implements IPlatform {
 	public URL getInstallURL() {
 		if (installLocation == null)
 			try {
-				installLocation = new URL((String) System.getProperty("eclipse.installURL")); //$NON-NLS-1$
+				installLocation = new URL((String) System.getProperty(INSTALL_LOCATION)); //$NON-NLS-1$
 			} catch (MalformedURLException e) {
-				//This can't fail because eclipse.installURL has been set with a valid URL in BootLoader
+				//This can't fail because the location was set coming in
 			}
 		return installLocation;
 	}
