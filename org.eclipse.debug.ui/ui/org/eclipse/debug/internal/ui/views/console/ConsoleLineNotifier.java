@@ -96,7 +96,6 @@ public class ConsoleLineNotifier implements IPatternMatchListener, IPropertyChan
 	            }
 	        }
 	    } catch (BadLocationException e) {
-	        e.printStackTrace();
 	    }
 	    
 	    Object[] listeners= fListeners.getListeners();
