@@ -56,7 +56,7 @@ public class MonoReconciler extends AbstractReconciler {
 	}
 		
 	/*
-	 * @see IReconciler#getReconcilingStrategy
+	 * @see IReconciler#getReconcilingStrategy(String)
 	 */
 	public IReconcilingStrategy getReconcilingStrategy(String contentType) {
 		Assert.isNotNull(contentType);

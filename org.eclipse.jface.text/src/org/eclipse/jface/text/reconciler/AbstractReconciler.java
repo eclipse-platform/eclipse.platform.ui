@@ -208,13 +208,13 @@ abstract public class AbstractReconciler implements IReconciler {
 	class Listener implements IDocumentListener, ITextInputListener {
 		
 		/*
-		 * @see IDocumentListener#documentAboutToBeChanged
+		 * @see IDocumentListener#documentAboutToBeChanged(DocumentEvent)
 		 */
 		public void documentAboutToBeChanged(DocumentEvent e) {
 		}
 		
 		/*
-		 * @see IDocumentListener#documentChanged
+		 * @see IDocumentListener#documentChanged(DocumentEvent)
 		 */
 		public void documentChanged(DocumentEvent e) {
 			
@@ -228,7 +228,7 @@ abstract public class AbstractReconciler implements IReconciler {
 		}
 				
 		/*
-		 * @see ITextInputListener#inputDocumentAboutToBeChanged
+		 * @see ITextInputListener#inputDocumentAboutToBeChanged(IDocument, IDocument)
 		 */
 		public void inputDocumentAboutToBeChanged(IDocument oldInput, IDocument newInput) {
 			
@@ -251,7 +251,7 @@ abstract public class AbstractReconciler implements IReconciler {
 		}
 		
 		/*
-		 * @see ITextInputListener#inputDocumentChanged
+		 * @see ITextInputListener#inputDocumentChanged(IDocument, IDocument)
 		 */
 		public void inputDocumentChanged(IDocument oldInput, IDocument newInput) {
 			
@@ -395,7 +395,7 @@ abstract public class AbstractReconciler implements IReconciler {
 	}
 	
 	/*
-	 * @see IReconciler#install
+	 * @see IReconciler#install(ITextViewer)
 	 */
 	public void install(ITextViewer textViewer) {
 		
@@ -411,7 +411,7 @@ abstract public class AbstractReconciler implements IReconciler {
 	}
 	
 	/*
-	 * @see IReconciler#uninstall
+	 * @see IReconciler#uninstall()
 	 */
 	public void uninstall() {
 		if (fListener != null) {

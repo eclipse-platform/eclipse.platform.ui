@@ -64,7 +64,7 @@ public class PresentationReconciler implements IPresentationReconciler {
 		private boolean fDocumentChanging= false;
 		
 		/*
-		 * @see ITextInputListener#inputDocumentAboutToBeChanged
+		 * @see ITextInputListener#inputDocumentAboutToBeChanged(IDocument, IDocument)
 		 */
 		public void inputDocumentAboutToBeChanged(IDocument oldDocument, IDocument newDocument) {
 			if (oldDocument != null) {
@@ -84,7 +84,7 @@ public class PresentationReconciler implements IPresentationReconciler {
 		}
 		
 		/*
-		 * @see ITextInputListener#inputDocumenChanged
+		 * @see ITextInputListener#inputDocumenChanged(IDocument, IDocument)
 		 */
 		public void inputDocumentChanged(IDocument oldDocument, IDocument newDocument) {
 			
@@ -106,7 +106,7 @@ public class PresentationReconciler implements IPresentationReconciler {
 		}
 		
 		/*
-		 * @see IDocumentPartitioningListener#documentPartitioningChanged
+		 * @see IDocumentPartitioningListener#documentPartitioningChanged(IDocument)
 		 */
 		public void documentPartitioningChanged(IDocument document) {
 			if (!fDocumentChanging)
@@ -116,7 +116,7 @@ public class PresentationReconciler implements IPresentationReconciler {
 		}
 		
 		/*
-		 * @see IDocumentPartitioningListenerExtension#documentPartitioningChanged
+		 * @see IDocumentPartitioningListenerExtension#documentPartitioningChanged(IDocument, IRegion)
 		 * @since 2.0
 		 */
 		public void documentPartitioningChanged(IDocument document, IRegion changedRegion) {
@@ -129,7 +129,7 @@ public class PresentationReconciler implements IPresentationReconciler {
 		}
 				
 		/*
-		 * @see IDocumentListener#documentAboutToBeChanged
+		 * @see IDocumentListener#documentAboutToBeChanged(DocumentEvent)
 		 */
 		public void documentAboutToBeChanged(DocumentEvent e) {
 			
@@ -147,7 +147,7 @@ public class PresentationReconciler implements IPresentationReconciler {
 		}
 		
 		/*
-		 * @see IDocumentListener#documentChanged
+		 * @see IDocumentListener#documentChanged(DocumentEvent)
 		 */
 		public void documentChanged(DocumentEvent e) {
 			try {
@@ -160,7 +160,7 @@ public class PresentationReconciler implements IPresentationReconciler {
 		}
 		
 		/*
-		 * @see ITextListener#textChanged
+		 * @see ITextListener#textChanged(TextEvent)
 		 */
 		public void textChanged(TextEvent e) {
 			
@@ -191,6 +191,13 @@ public class PresentationReconciler implements IPresentationReconciler {
 			fChangedDocumentPartitions= null;
 		}
 		
+		/**
+		 * Translates the given text event into the corresponding range of the viewer's document.
+		 * 
+		 * @param e the text event
+		 * @return the widget region corresponding the region of the given event
+		 * @since 2.1
+		 */
 		protected IRegion widgetRegion2ModelRegion(TextEvent e) {
 			if (fViewer instanceof ITextViewerExtension3) {
 				ITextViewerExtension3 extension= (ITextViewerExtension3) fViewer;
@@ -276,7 +283,7 @@ public class PresentationReconciler implements IPresentationReconciler {
 	}
 		
 	/*
-	 * @see IPresentationReconciler#install
+	 * @see IPresentationReconciler#install(ITextViewer)
 	 */
 	public void install(ITextViewer viewer) {
 		Assert.isNotNull(viewer);
@@ -286,14 +293,14 @@ public class PresentationReconciler implements IPresentationReconciler {
 	}
 	
 	/*
-	 * @see IPresentationReconciler#uninstall
+	 * @see IPresentationReconciler#uninstall()
 	 */
 	public void uninstall() {
 		fViewer.removeTextInputListener(fInternalListener);
 	}
 	 
 	/*
-	 * @see IPresentationReconciler#getDamager
+	 * @see IPresentationReconciler#getDamager(String)
 	 */
 	public IPresentationDamager getDamager(String contentType) {
 		
@@ -304,7 +311,7 @@ public class PresentationReconciler implements IPresentationReconciler {
 	}
 	
 	/*
-	 * @see IPresentationReconciler#getRepairer
+	 * @see IPresentationReconciler#getRepairer(String)
 	 */
 	public IPresentationRepairer getRepairer(String contentType) {
 		

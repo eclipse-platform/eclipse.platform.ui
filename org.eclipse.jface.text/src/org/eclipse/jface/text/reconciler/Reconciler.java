@@ -77,7 +77,7 @@ public class Reconciler extends AbstractReconciler {
 	}
 	
 	/*
-	 * @see IReconciler#getReconcilingStrategy
+	 * @see IReconciler#getReconcilingStrategy(String)
 	 */
 	public IReconcilingStrategy getReconcilingStrategy(String contentType) {
 		
