@@ -123,12 +123,15 @@ public interface IEclipsePreferences extends Preferences {
 
 		/**
 		 * Constructor for a new preference change event. The node and the
-		 * key must not be <code>null</code>.
+		 * key must not be <code>null</code>. The old and new preference
+		 * values must be either a <code>String</code> or <code>null</code>.
 		 * 
 		 * @param node the node on which the change occurred
 		 * @param key the preference key
-		 * @param oldValue the old preference value
-		 * @param newValue the new preference value
+		 * @param oldValue the old preference value, as a <code>String</code> 
+		 * 	or <code>null</code>
+		 * @param newValue the new preference value, as a <code>String</code>
+		 * 	or <code>null</code>
 		 */
 		public PreferenceChangeEvent(Object node, String key, Object oldValue, Object newValue) {
 			super(node);
@@ -141,6 +144,7 @@ public interface IEclipsePreferences extends Preferences {
 
 		/**
 		 * Return the preference node on which the change occurred.
+		 * Must not be <code>null</code>.
 		 * 
 		 * @return the node
 		 */
@@ -150,6 +154,7 @@ public interface IEclipsePreferences extends Preferences {
 
 		/**
 		 * Return the key of the preference which was changed.
+		 * Must not be <code>null</code>.
 		 * 
 		 * @return the preference key
 		 */
@@ -158,8 +163,9 @@ public interface IEclipsePreferences extends Preferences {
 		}
 
 		/**
-		 * Return the new value for the preference or <code>null</code> if 
-		 * the preference was removed.
+		 * Return the new value for the preference encoded as a 
+		 * <code>String</code>, or <code>null</code> if the 
+		 * preference was removed.
 		 * 
 		 * @return the new value or <code>null</code>
 		 */
@@ -168,8 +174,9 @@ public interface IEclipsePreferences extends Preferences {
 		}
 
 		/**
-		 * Return the old value for the preference or <code>null</code> if 
-		 * the preference was removed or if it cannot be determined.
+		 * Return the old value for the preference encoded as a 
+		 * <code>String</code>, or <code>null</code> if the 
+		 * preference was removed or if it cannot be determined.
 		 * 
 		 * @return the old value or <code>null</code>
 		 */
