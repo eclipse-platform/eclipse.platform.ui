@@ -15,6 +15,8 @@ import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.window.IShellProvider;
+import org.eclipse.jface.window.SameShellProvider;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.SelectionProviderAction;
@@ -45,11 +47,11 @@ import org.eclipse.ui.internal.dialogs.PropertyPageContributorManager;
  * </p>
  */
 public class PropertyDialogAction extends SelectionProviderAction {
-	/**
-	 * The shell in which to open the property dialog.
-	 */
-	private Shell shell;
-
+    /**
+     * Provides the shell in which to open the property dialog.
+     */
+    private IShellProvider shellProvider;
+    
 	/**
 	 * The id of the page to open up on.
 	 */
@@ -59,21 +61,36 @@ public class PropertyDialogAction extends SelectionProviderAction {
 	/**
 	 * Creates a new action for opening a property dialog on the elements from
 	 * the given selection provider.
-	 * 
+     * 
 	 * @param shell
 	 *            the shell in which the dialog will open
 	 * @param provider
 	 *            the selection provider whose elements the property dialog will
 	 *            describe
+     * @deprecated use PropertyDialogAction(IShellProvider, ISelectionProvider)
 	 */
 	public PropertyDialogAction(Shell shell, ISelectionProvider provider) {
-		super(provider, WorkbenchMessages.PropertyDialog_text); 
-		Assert.isNotNull(shell);
-		this.shell = shell;
-		setToolTipText(WorkbenchMessages.PropertyDialog_toolTip); 
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
-				IWorkbenchHelpContextIds.PROPERTY_DIALOG_ACTION);
+        this(new SameShellProvider(shell), provider);
 	}
+    
+    /**
+     * Creates a new action for opening a property dialog on the elements from
+     * the given selection provider.
+     * 
+     * @param shell
+     *            provides the shell in which the dialog will open
+     * @param provider
+     *            the selection provider whose elements the property dialog will
+     *            describe
+     */
+    public PropertyDialogAction(IShellProvider shell, ISelectionProvider provider) {
+        super(provider, WorkbenchMessages.PropertyDialog_text); 
+        Assert.isNotNull(shell);
+        this.shellProvider = shell;
+        setToolTipText(WorkbenchMessages.PropertyDialog_toolTip); 
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
+                IWorkbenchHelpContextIds.PROPERTY_DIALOG_ACTION);
+    }
 
 	/**
 	 * Returns whether the provided object has pages registered in the property
@@ -153,7 +170,7 @@ public class PropertyDialogAction extends SelectionProviderAction {
 		if (element == null)
 			return null;
 		return PropertyDialog
-				.createDialogOn(shell, initialPageId, element);
+				.createDialogOn(shellProvider.getShell(), initialPageId, element);
 	}
 
 	/**

@@ -16,7 +16,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -104,8 +103,7 @@ public class NewProjectAction extends Action {
         wizard.setForcePreviousAndNextButtons(true);
 
         // Create wizard dialog.
-        Shell parent = window.getShell();
-        WizardDialog dialog = new WizardDialog(parent, wizard);
+        WizardDialog dialog = new WizardDialog(null, wizard);
         dialog.create();
         dialog.getShell().setSize(
                 Math.max(SIZING_WIZARD_WIDTH, dialog.getShell().getSize().x),

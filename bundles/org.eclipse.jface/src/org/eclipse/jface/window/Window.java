@@ -162,23 +162,7 @@ public abstract class Window implements IShellProvider {
                 return null;
             }
 
-            // Note: Just returning d.getActiveShell() may produce nicer results
-            Shell currentShell = d.getActiveShell();
-
-            int modal = SWT.APPLICATION_MODAL | SWT.SYSTEM_MODAL | SWT.PRIMARY_MODAL;
-
-            while (currentShell != null) {
-                Shell parent = (Shell)currentShell.getParent();
-                
-                int style = currentShell.getStyle();
-                if ((style & modal) != 0 || parent == null || !parent.isVisible()) {
-                    return currentShell;
-                }
-                
-                currentShell = parent;
-            }
-            
-            return currentShell;            
+            return d.getActiveShell();
         }
     };
     
@@ -575,6 +559,36 @@ public abstract class Window implements IShellProvider {
 		return shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 	}
 
+    /**
+     * Returns the most specific modal child from the given list of Shells. 
+     * 
+     * @param toSearch shells to search for modal children
+     * @return the most specific modal child, or null if none
+     * 
+     * @since 3.1
+     */
+    private static Shell getModalChild(Shell[] toSearch) {
+        int modal = SWT.APPLICATION_MODAL | SWT.SYSTEM_MODAL | SWT.PRIMARY_MODAL;
+        
+        for (int i = toSearch.length - 1; i >= 0; i--) {
+            Shell shell = toSearch[i];
+            
+            // Check if this shell has a modal child
+            Shell[] children = shell.getShells();
+            Shell modalChild = getModalChild(children);
+            if (modalChild != null) {
+                return modalChild;
+            }
+            
+            // If not, check if this shell is modal itself
+            if (shell.isVisible() && (shell.getStyle() & modal) != 0) {
+                return shell;
+            }
+        }
+        
+        return null;
+    }
+    
 	/**
 	 * Returns parent shell, under which this window's shell is created.
 	 * 
@@ -586,9 +600,23 @@ public abstract class Window implements IShellProvider {
         
         int modal = SWT.APPLICATION_MODAL | SWT.SYSTEM_MODAL | SWT.PRIMARY_MODAL;
         
-        // If this is a modal shell with no parent, pick a shell using defaultModalParent.
-        if (parent == null && (getShellStyle() & modal) != 0 ) {
-            parent = defaultModalParent.getShell();
+        if ((getShellStyle() & modal) != 0) {
+            // If this is a modal shell with no parent, pick a shell using defaultModalParent.
+            if (parent == null) {
+                parent = defaultModalParent.getShell();
+            }
+            
+            // Make sure we don't pick a parent that has a modal child (this can lock the app)
+            if (parent == null) {
+                // If this is a top-level window, then there must not be any open modal windows.
+                parent = getModalChild(Display.getCurrent().getShells());
+            } else {
+                // If we picked a parent with a modal child, use the modal child instead
+                Shell modalChild = getModalChild(parent.getShells());
+                if (modalChild != null) {
+                    parent = modalChild;
+                }
+            }
         }
         
         return parent;
