@@ -26,7 +26,6 @@ import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.action.IContributionManagerOverrides;
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.action.SubMenuManager;
@@ -112,8 +111,7 @@ public class WorkbenchWindow extends ApplicationWindow
 	private Menu perspectiveBarMenu;
 	private Menu fastViewBarMenu;
 	private MenuItem restoreItem;
-	// temporary, work in progress for CoolBars
-	private CoolBarManager coolBarManager;
+	private CoolBarManager coolBarManager = new CoolBarManager();
 	
 	final private String TAG_INPUT = "input";//$NON-NLS-1$
 	final private String TAG_LAYOUT = "layout";//$NON-NLS-1$
@@ -128,19 +126,6 @@ public class WorkbenchWindow extends ApplicationWindow
 	static final int CLIENT_INSET = 3;
 	static final int BAR_SIZE = 23;
 
-	/**
-	 * The window toolbar must relayout whenever an update occurs, as items are
-	 * added and removed dynamically.
-	 */
-	class WindowToolBarManager extends ToolBarManager {
-		public WindowToolBarManager(int style) {
-			super(style);
-		}
-		protected void relayout(ToolBar toolBar, int oldCount, int newCount) {
-			Composite parent= toolBar.getParent();
-			parent.layout();
-		} 
-	}      
 	/**
 	 * This vertical layout supports a fixed size Toolbar area, a separator line,
 	 * the variable size content area,
@@ -257,13 +242,8 @@ public WorkbenchWindow(Workbench workbench, int number) {
 	this.number = number;
 	
 	// Setup window.
-	addMenuBar();
-	
-	//IPreferenceStore store = workbench.getPreferenceStore();
-//	if(store.getBoolean("ENABLE_COOL_BARS")) //$NON-NLS-1$
-		addCoolBar(SWT.FLAT);
-//	else
-//		addToolBar(SWT.FLAT | SWT.WRAP);
+	addMenuBar();	
+	addToolBar(SWT.FLAT);
 		
 	addStatusLine();
 	addShortcutBar(SWT.FLAT | SWT.WRAP | SWT.VERTICAL);
@@ -298,16 +278,6 @@ public WorkbenchWindow(Workbench workbench, int number) {
 		};
 	};
 }
-/**
- * Configures this window to have a cool bar.
- * Does nothing if it already has one.
- * This method must be called before this window's shell is created.
- */
-protected void addCoolBar(int style) {
-	if ((getShell() == null) && (coolBarManager == null)) {
-		coolBarManager = createCoolBarManager(style);
-	}
-}
 /*
  * Adds an listener to the part service.
  */
@@ -338,6 +308,15 @@ public void addPerspectiveListener(org.eclipse.ui.IPerspectiveListener l) {
 protected void addShortcutBar(int style) {
 	if ((getShell() == null) && (shortcutBar == null)) {
 		shortcutBar = new ToolBarManager(style);
+	}
+}
+/**
+ * Configures this window to have a cool bar.
+ * This method must be called before this window's shell is created.
+ */
+protected void addToolBar(int style) {
+	if (getShell() == null)  {
+		coolBarManager = new CoolBarManager(style);
 	}
 }
 /**
@@ -411,15 +390,10 @@ private boolean isClosing() {
 	return closing || workbench.isClosing();
 }
 /**
- * Return whether or not the toolbar layout is locked.
+ * Return whether or not the coolbar layout is locked.
  */
 protected boolean isToolBarLocked() {
-	IToolBarManager toolsMgr = getToolsManager();
-	if (toolsMgr instanceof CoolBarManager) {
-		CoolBarManager coolBarMgr = (CoolBarManager)toolsMgr;
-		return coolBarMgr.isLayoutLocked();
-	}
-	return false;
+	return getCoolBarManager().isLayoutLocked();
 }
 
 /**
@@ -556,6 +530,23 @@ private void createShortcutBar(Shell shell) {
 		}
 	});
 }
+/**
+ * Creates the control for the cool bar control.  
+ * </p>
+ * @return a Control
+ */
+protected Control createToolBarControl(Shell shell) {
+	CoolBarManager manager = getCoolBarManager();
+	return manager.createControl(shell);
+}
+/**
+ *  Do not create a toolbarmanager.  WorkbenchWindow uses CoolBarManager.  
+ * </p>
+ * @return a Control
+ */
+protected ToolBarManager createToolBarManager(int style) {
+	return null;
+}
 /* (non-Javadoc)
  * Method declared on ApplicationWindow.
  */
@@ -654,35 +645,6 @@ protected MenuManager createMenuManager() {
 		}
 	});
 	return result;
-}
-/* (non-Javadoc)
- * Method declared on ApplicationWindow.
- */
-protected ToolBarManager createToolBarManager(int style) {
-	return new WindowToolBarManager(style);
-}
-/**
- * Creates the cool bar manager.
- * </p>
- * @return a CoolBarManager
- */
-protected CoolBarManager createCoolBarManager(int style) {
-	return new CoolBarManager(style);
-}
-/**
- * Creates the control for the tool bar manager.  Overridden
- * to support CoolBars.
- * </p>
- * @return a Control
- */
-protected Control createToolBarControl(Shell shell) {
-	IToolBarManager manager = getToolsManager();
-	if (manager instanceof ToolBarManager) {
-		return ((ToolBarManager)manager).createControl(shell);
-	} else if (manager instanceof CoolBarManager) {
-		return ((CoolBarManager)manager).createControl(shell);
-	}
-	return null;
 }
 /**
  * Enables fast view icons to be dragged and dropped using the given IPartDropListener.
@@ -786,6 +748,25 @@ public IWorkbenchPage getActivePage() {
  */
 /* package */ WorkbenchPage getActiveWorkbenchPage() {
 	return pageList.getActive();
+}
+/**
+ * Returns cool bar control for the window. Overridden
+ * to support CoolBars.
+ * </p>
+ * @return a Control
+ */
+protected CoolBar getCoolBarControl() {
+	return getCoolBarManager().getControl();
+}
+/**
+ * Returns the CoolBarManager for this window.
+ * 
+ * @return theCoolBarManager, or <code>null</code> if
+ *   this window does not have a CoolBar.
+ * @see  #addCoolBar
+ */
+public CoolBarManager getCoolBarManager() {
+	return coolBarManager;
 }
 /**
  * Get the workbench client area.
@@ -898,26 +879,15 @@ protected StatusLineManager getStatusLineManager() {
  * @return a Control
  */
 protected Control getToolBarControl() {
-	IToolBarManager manager = getToolsManager();
-	if (manager instanceof ToolBarManager) {
-		return ((ToolBarManager)manager).getControl();
-	}
-	if (manager instanceof CoolBarManager) {
-		return ((CoolBarManager)manager).getControl();
-	}
-	return null;
+	return getCoolBarControl();
 }
 /**
- * Returns the tool bar manager for this window (if it has one).
- * Introduced to support different types of IToolBarManagers.
- * 
- * @return the IToolBarManager, or <code>null</code> if
- *   this window does not have a ToolBar or CoolBar.
- * @see #addToolBar, #addCoolBar
+ * WorkbenchWindow uses CoolBarManager, so return null here.
+ * </p>
+ * @return a Control
  */
-public IToolBarManager getToolsManager() {
-	if (coolBarManager != null) return coolBarManager;
-	return getToolBarManager();
+public ToolBarManager getToolBarManager() {
+	return null;
 }
 /**
  * @see IWorkbenchWindow
@@ -953,11 +923,7 @@ public boolean isApplicationMenu(String menuID) {
  * @param lock whether the CoolBar should be locked or unlocked
  */
 /* package */ void lockToolBar(boolean lock) {
-	IToolBarManager toolsMgr = getToolsManager();
-	if (toolsMgr instanceof CoolBarManager) {
-		CoolBarManager coolBarMgr = (CoolBarManager)toolsMgr;
-		coolBarMgr.lockLayout(lock);
-	}
+	getCoolBarManager().lockLayout(lock);
 }
 /**
  * Called when this window is about to be closed.
@@ -1417,20 +1383,14 @@ private void showShortcutBarPopup(MouseEvent e) {
 	}
 }
 /**
- * Answer whether or not children exist for the Application WIndow's
- * toolbar control.  Overridden to support CoolBars.
+ * Returns whether or not children exist for the Window's toolbar control.
+ * Overridden for coolbar support.
  * <p>
  * @return boolean true if children exist, false otherwise
  */
 protected boolean toolBarChildrenExist() {
-	Control toolControl = getToolBarControl();
-	if (toolControl instanceof ToolBar) {
-		return ((ToolBar)toolControl).getItemCount() > 0;
-	}
-	if (toolControl instanceof CoolBar) {
-		return ((CoolBar)toolControl).getItemCount() > 0;
-	}
-	return false;
+	CoolBar coolBarControl = getCoolBarControl();
+	return coolBarControl.getItemCount() > 0;
 }
 /**
  * Hooks a listener to track the activation and
@@ -1483,7 +1443,7 @@ public void updateActionBars() {
 		return;
 	// updateAll required in order to enable accelerators on pull-down menus
 	getMenuBarManager().updateAll(false);
-	getToolsManager().update(false);
+	getCoolBarManager().update(false);
 	getStatusLineManager().update(false);
 }
 /**

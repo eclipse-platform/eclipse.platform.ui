@@ -2091,11 +2091,7 @@ public void savePerspectiveAs(IPerspectiveDescriptor newDesc) {
 protected void saveToolBarLayout() {
 	Perspective persp = getActivePerspective(); 
 	if (persp == null) return;
-	IToolBarManager toolsMgr = window.getToolsManager();
-	if (toolsMgr instanceof CoolBarManager) {
-		CoolBarManager coolBarMgr = (CoolBarManager)toolsMgr;
-		coolBarMgr.saveLayoutFor(persp);
-	}
+	window.getCoolBarManager().saveLayoutFor(persp);
 }
 /**
  * Save the state of the page.
@@ -2337,11 +2333,9 @@ public void setPerspective(final IPerspectiveDescriptor desc) {
 	// and its adjacent views appear jumpy as perspectives are
 	// switched.  Turn off redraw to help with this.
 	boolean useRedraw = false;
-	IToolBarManager mgr = window.getToolsManager();
-	if (mgr instanceof CoolBarManager) {
-		useRedraw = true;
-		((CoolBarManager)mgr).getControl().setRedraw(false);
-	}
+	CoolBarManager mgr = window.getCoolBarManager();
+	useRedraw = true;
+	mgr.getControl().setRedraw(false);
 	// Run op in busy cursor.
 	BusyIndicator.showWhile(null, new Runnable() {
 		public void run() {
@@ -2349,7 +2343,7 @@ public void setPerspective(final IPerspectiveDescriptor desc) {
 		}
 	});
 	if (useRedraw) {
-		((CoolBarManager)mgr).getControl().setRedraw(true);
+		mgr.getControl().setRedraw(true);
 	}
 }
 /**
@@ -2358,11 +2352,7 @@ public void setPerspective(final IPerspectiveDescriptor desc) {
 protected void setToolBarLayout() {
 	Perspective persp = getActivePerspective(); 
 	if (persp == null) return;
-	IToolBarManager mgr = window.getToolsManager();
-	if (mgr instanceof CoolBarManager) {
-		CoolBarManager coolBarMgr = (CoolBarManager)mgr;
-		coolBarMgr.setLayoutFor(persp);
-	}
+	window.getCoolBarManager().setLayoutFor(persp);
 }
 /**
  * Sets the active working set for the workbench page.
