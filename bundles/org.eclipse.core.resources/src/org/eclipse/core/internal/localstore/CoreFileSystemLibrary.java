@@ -39,7 +39,7 @@ public abstract class CoreFileSystemLibrary {
 	private static final long STAT_LASTMODIFIED = ~(STAT_RESERVED | STAT_VALID | STAT_FOLDER | STAT_READ_ONLY);
 
 	/** instance of this library */
-	private static final String LIBRARY_NAME = "core104";
+	private static final String LIBRARY_NAME = "core128";
 	private static boolean hasNatives = false;
 	
 	static {
@@ -63,7 +63,7 @@ public static long getLastModified(String fileName) {
 }
 public static long getStat(String fileName) {
 	if (hasNatives)
-		return internalGetStat(fileName);
+		return internalGetStat(fileName.getBytes());
 
 	// inlined (no native) implementation
 	File target = new File(fileName);
@@ -88,8 +88,8 @@ private static void logMissingNativeLibrary(UnsatisfiedLinkError e) {
  * retrieve the stat information we consider necessary and store everything in one long
  * to save some JNI calls.
  */
-private static final native long internalGetStat(String fileName);
-private static final native boolean internalSetReadOnly(String fileName, boolean readOnly);
+private static final native long internalGetStat(byte[] fileName);
+private static final native boolean internalSetReadOnly(byte[] fileName, boolean readOnly);
 public static boolean isFile(long stat) {
 	return isSet(stat, STAT_VALID) && !isSet(stat, STAT_FOLDER);
 }
@@ -111,7 +111,7 @@ private static boolean isSet(long stat, long mask) {
 }
 public static boolean setReadOnly(String fileName, boolean readOnly) {
 	if (hasNatives)
-		return internalSetReadOnly(fileName, readOnly);
+		return internalSetReadOnly(fileName.getBytes(), readOnly);
 
 	// inlined (no native) implementation
 	if (!readOnly)

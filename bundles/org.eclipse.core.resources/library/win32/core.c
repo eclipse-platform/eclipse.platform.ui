@@ -26,23 +26,33 @@ jlong fileTimeToMillis(FILETIME ft) {
 /*
  * Class:     org_eclipse_core_internal_localstore_CoreFileSystemLibrary
  * Method:    internalGetStat
- * Signature: (Ljava/lang/String;)J
+ * Signature: ([B)J
  */
 JNIEXPORT jlong JNICALL Java_org_eclipse_core_internal_localstore_CoreFileSystemLibrary_internalGetStat
-   (JNIEnv *env, jclass clazz, jstring target) {
+   (JNIEnv *env, jclass clazz, jbyteArray target) {
 
 	HANDLE handle;
 	WIN32_FIND_DATA info;
 	jlong result;
+	jbyte *fileName, *name;
+	jsize n;
 
-	const char *fileName = (*env)->GetStringUTFChars(env, target, NULL);
-	handle = FindFirstFile(fileName, &info);
+	fileName = (*env)->GetByteArrayElements(env, target, 0);
+
+	n = (*env)->GetArrayLength(env, target);
+	name = malloc((n+1) * sizeof(jbyte));
+	memcpy(name, fileName, n);
+	name[n] = '\0';
+
+	handle = FindFirstFile(name, &info);
 	if (handle == INVALID_HANDLE_VALUE) {
 		FindClose(handle);
 		return 0;
 	}
-	(*env)->ReleaseStringUTFChars(env, target, fileName);
+	(*env)->ReleaseByteArrayElements(env, target, fileName, 0);
 
+	free(name);
+	
 	// select interesting information
 	// lastModified
 	result = fileTimeToMillis(info.ftLastWriteTime); // lower bits
@@ -62,19 +72,29 @@ JNIEXPORT jlong JNICALL Java_org_eclipse_core_internal_localstore_CoreFileSystem
 /*
  * Class:     org_eclipse_core_internal_localstore_CoreFileSystemLibrary
  * Method:    internalSetReadOnly
- * Signature: (Ljava/lang/String;Z)V
+ * Signature: ([BZ)Z
  */
 JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_localstore_CoreFileSystemLibrary_internalSetReadOnly
-   (JNIEnv *env, jclass clazz, jstring target, jboolean readOnly) {
+   (JNIEnv *env, jclass clazz, jbyteArray target, jboolean readOnly) {
 
-	int mode;
-	int code; 
-	const char *fileName = (*env)->GetStringUTFChars(env, target, 0);
+	int code, mode;
+	jbyte *fileName, *name;
+	jsize n;
+	
+	fileName = (*env)->GetByteArrayElements(env, target, 0);
+
+	n = (*env)->GetArrayLength(env, target);
+	name = malloc((n+1) * sizeof(jbyte));
+	memcpy(name, fileName, n);
+	name[n] = '\0';
+
 	if (readOnly)
 		mode = S_IREAD;
 	else
 		mode = S_IWRITE;
-	code = chmod(fileName, mode);
-	(*env)->ReleaseStringUTFChars(env, target, fileName);
+	code = chmod(name, mode);
+	(*env)->ReleaseByteArrayElements(env, target, fileName, 0);
+	free(name);
+			
 	return code != -1;
 }
