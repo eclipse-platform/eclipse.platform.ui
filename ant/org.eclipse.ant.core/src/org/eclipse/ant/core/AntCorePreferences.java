@@ -345,7 +345,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	}
 	
 	/**
-	 * Returns the array of classpath entires that is the default set of entires defining
+	 * Returns the array of classpath entries that is the default set of entries defining
 	 * the Ant classpath.
 	 *
 	 * @return the default set of classpath entries defining the Ant classpath
