@@ -113,6 +113,11 @@ public class InfosetBuilder {
 		while (infosets.hasNext()) {
 			InfoSet infoset = (InfoSet) infosets.next();
 			infoSetMap.put(infoset.getID(), infoset);
+			// Create the InfoView objects
+			for (Iterator views = infoset.getChildren(); views.hasNext();) {
+				InfoView view = (InfoView) views.next();
+				viewNodeMap.put(view.getID(), view);
+			}
 			// build the views for this info set
 			buildViews(infoset);
 		}
