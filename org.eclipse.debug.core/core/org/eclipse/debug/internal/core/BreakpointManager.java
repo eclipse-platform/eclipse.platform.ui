@@ -10,10 +10,12 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IMarkerDelta;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
@@ -109,19 +111,36 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	}
 	
 	/**
-	 * Loads all the breakpoints on the given resource.
+	 * Loads all the breakpoints on the given resource. Any
+	 * breakpoints marked as not to be persisted are deleted.
 	 * 
 	 * @param resource the resource which contains the breakpoints
 	 */
 	private void loadBreakpoints(IResource resource) throws CoreException {
 		IMarker[] markers= resource.findMarkers(IBreakpoint.BREAKPOINT_MARKER, true, IResource.DEPTH_INFINITE);
+		final List delete = new ArrayList();
 		for (int i = 0; i < markers.length; i++) {
 			IMarker marker= markers[i];
 			try {
-				createBreakpoint(marker);
+				if (marker.getAttribute(IBreakpoint.PERSISTED, true)) {
+					createBreakpoint(marker);
+				} else {
+					// the breakpoint is marked as not to be persisted,
+					// schedule for deletion
+					delete.add(marker);
+				}
 			} catch (DebugException e) {
 				logError(e);
 			}
+		}
+		// delete any markers that are not to be restored
+		if (!delete.isEmpty()) {
+			IWorkspaceRunnable wr = new IWorkspaceRunnable() {
+				public void run(IProgressMonitor pm) throws CoreException {
+					ResourcesPlugin.getWorkspace().deleteMarkers((IMarker[])delete.toArray(new IMarker[delete.size()]));
+				}
+			};
+			fork(wr);
 		}	
 	}
 	
@@ -234,6 +253,18 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 			fireUpdate(breakpoint, null, REMOVED);
 			if (delete) {
 				breakpoint.delete();
+			} else {
+				// if the breakpoint is being removed from the manager
+				// because the project is closing, the breakpoint should
+				// remain as registered, otherwise, the breakpoint should
+				// be marked as deregistered
+				IMarker marker = breakpoint.getMarker();
+				if (marker.exists()) {
+					IProject project = breakpoint.getMarker().getResource().getProject();
+					if (project == null || project.isOpen()) {
+						breakpoint.setRegistered(false);
+					}
+				}
 			}
 		}
 	}
@@ -265,7 +296,9 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 			}
 			breakpoint = (IBreakpoint)config.createExecutableExtension(CLASS);
 			breakpoint.setMarker(marker);
-			addBreakpoint(breakpoint);
+			if (breakpoint.isRegistered()) {
+				addBreakpoint(breakpoint);
+			}
 			return breakpoint;		
 		} catch (CoreException e) {
 			throw new DebugException(e.getStatus());
@@ -275,9 +308,12 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	/**
 	 * @see IBreakpointManager#addBreakpoint(IBreakpoint)
 	 */
-	public void addBreakpoint(IBreakpoint breakpoint) throws DebugException {
+	public void addBreakpoint(IBreakpoint breakpoint) throws CoreException {
 		if (!getBreakpoints0().contains(breakpoint)) {
 			verifyBreakpoint(breakpoint);
+			// set the registered property before adding to the collection
+			// such that a change notification is not fired
+			breakpoint.setRegistered(true);
 			getBreakpoints0().add(breakpoint);
 			fMarkersToBreakpoints.put(breakpoint.getMarker(), breakpoint);
 			fireUpdate(breakpoint, null, ADDED);
@@ -411,19 +447,6 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 				// do nothing - we do not add until explicitly added
 			}
 		}
-
-		protected void fork(final IWorkspaceRunnable wRunnable) {
-			Runnable runnable= new Runnable() {
-				public void run() {
-					try {
-						getWorkspace().run(wRunnable, null);
-					} catch (CoreException ce) {
-						logError(ce);
-					}
-				}
-			};
-			new Thread(runnable).start();
-		}
 		
 		/**
 		 * Wrapper for handling removes
@@ -488,5 +511,18 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	protected void setBreakpoints(Vector breakpoints) {
 		fBreakpoints = breakpoints;
 	}
+	
+	protected void fork(final IWorkspaceRunnable wRunnable) {
+		Runnable runnable= new Runnable() {
+			public void run() {
+				try {
+					getWorkspace().run(wRunnable, null);
+				} catch (CoreException ce) {
+					logError(ce);
+				}
+			}
+		};
+		new Thread(runnable).start();
+	}	
 }
 

@@ -61,6 +61,22 @@ public abstract class Breakpoint implements IBreakpoint {
 	public boolean isEnabled() throws CoreException {
 		return getMarker().getAttribute(ENABLED, false);
 	}
+	
+	/**
+	 * @see IBreakpoint#isRegistered()
+	 */
+	public boolean isRegistered() throws CoreException {
+		return getMarker().getAttribute(REGISTERED, true);
+	}	
+	
+	/**
+	 * @see IBreakpoint#setRegistered(boolean)
+	 */
+	public void setRegistered(boolean registered) throws CoreException {
+		if (isRegistered() != registered) {
+			getMarker().setAttribute(REGISTERED, registered);
+		}
+	}	
 
 	/**
 	 * @see IBreakpoint#delete()
@@ -81,6 +97,22 @@ public abstract class Breakpoint implements IBreakpoint {
 	 */
 	public Object getAdapter(Class adapter) {		
 		return Platform.getAdapterManager().getAdapter(this, adapter);
+	}
+
+	/**
+	 * @see IBreakpoint#isPersisted()
+	 */
+	public boolean isPersisted() throws CoreException {
+		return getMarker().getAttribute(PERSISTED, true);
+	}
+
+	/**
+	 * @see IBreakpoint#setPersisted(boolean)
+	 */
+	public void setPersisted(boolean persisted) throws CoreException {
+		if (isPersisted() != persisted) {
+			getMarker().setAttribute(PERSISTED, persisted);
+		}
 	}
 
 }

@@ -25,33 +25,16 @@
 <extension-point id="launchConfigurationTypes" name="%launchConfigurationTypeName"/>
 
 <!-- Extensions -->
-<extension
-      id="breakpointMarker"
-      point="org.eclipse.core.resources.markers">
-   <super
-         type="org.eclipse.core.resources.marker">
-   </super>
-   <persistent
-         value="true">
-   </persistent>
-   <attribute
-         name="modelIdentifier">
-   </attribute>
-   <attribute
-         name="enabled">
-   </attribute>
+<extension id="breakpointMarker" point="org.eclipse.core.resources.markers">
+   <super type="org.eclipse.core.resources.marker"/>
+   <persistent value="true"/>
+   <attribute name="modelIdentifier"/>
+   <attribute name="enabled"/>
+   <attribute name="registered"/>
 </extension>
-<extension
-      id="lineBreakpointMarker"
-      point="org.eclipse.core.resources.markers">
-   <super
-         type="org.eclipse.debug.core.breakpointMarker">
-   </super>
-   <super
-         type="org.eclipse.core.resources.textmarker">
-   </super>
-   <persistent
-         value="true">
-   </persistent>
+<extension id="lineBreakpointMarker" point="org.eclipse.core.resources.markers">
+   <super type="org.eclipse.debug.core.breakpointMarker"/>
+   <super type="org.eclipse.core.resources.textmarker"/>
+   <persistent value="true"/>
 </extension>
 </plugin>

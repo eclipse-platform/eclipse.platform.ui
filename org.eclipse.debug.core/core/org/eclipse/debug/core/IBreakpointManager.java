@@ -47,7 +47,7 @@ public interface IBreakpointManager {
 	 *	attribute.</li>
 	 * </ul>
 	 */
-	public void addBreakpoint(IBreakpoint breakpoint) throws DebugException;
+	public void addBreakpoint(IBreakpoint breakpoint) throws CoreException;
 	
 	/**
 	 * Returns the breakpoint associated with the given marker or

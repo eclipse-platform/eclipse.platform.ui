@@ -49,6 +49,16 @@ import org.eclipse.debug.core.DebugPlugin;
  * instantiating the class defined by the <code>class</code> attribute
  * on the associated breakpoint extension. The method <code>setMarker</code>
  * is then called to associate a marker with the breakpoint.
+ * </p>
+ * <p>
+ * Breakpoints may or may not be registered with the breakpoint manager, and
+ * are persisted and restored as such. Since marker definitions only allow
+ * all or none of a specific marker type to be persisted, breakpoints define
+ * a <code>PERSISTED</code> attribute for selective persistence of breakpoints
+ * of the same type.
+ * </p>
+ * 
+ * @since 2.0
  */
 
 public interface IBreakpoint extends IAdaptable {
@@ -81,6 +91,25 @@ public interface IBreakpoint extends IAdaptable {
 	 * associated with.
 	 */
 	public static final String ID= "id"; //$NON-NLS-1$
+	
+	/**
+	 * Registered breakpoint marker attribute (value <code>"registered"</code>).
+	 * The attribute is a <code>boolean</code> corresponding to
+	 * whether a breakpoint has been added to the breakpoint manager.
+	 *
+	 * @see org.eclipse.core.resources.IMarker#getAttribute(String, boolean)
+	 */
+	public static final String REGISTERED= "registered"; //$NON-NLS-1$	
+	
+	/**
+	 * Persisted breakpoint marker attribute (value <code>"persisted"</code>).
+	 * The attribute is a <code>boolean</code> corresponding to
+	 * whether a breakpoint is to be persisted accross workspace
+	 * invocations.
+	 *
+	 * @see org.eclipse.core.resources.IMarker#getAttribute(String, boolean)
+	 */
+	public static final String PERSISTED= "persisted"; //$NON-NLS-1$		
 	
 	/**
 	 * Attribute name for the <code>"markerType"</code> attribute of
@@ -139,7 +168,58 @@ public interface IBreakpoint extends IAdaptable {
 	 * 	when setting the attribute on the underlying marker.
 	 */
 	public void setEnabled(boolean enabled) throws CoreException;
-
+	
+	/**
+	 * Returns whether this breakpoint is currently registered with
+	 * the breakpoint manager.
+	 * 
+	 * @return whether this breakpoint is currently registered with
+	 *  the breakpoint manager
+	 * @exception CoreException if a <code>CoreException</code> is thrown
+	 * 	when accessing the attribute on the underlying marker
+	 */
+	public boolean isRegistered() throws CoreException;
+	
+	/**
+	 * Sets whether this breakpoint is currently registered with the
+	 * breakpoint manager. This method is only used by the breakpoint
+	 * manager, such that when breakpoints are restored on workspace
+	 * startup, the breakpoint manager knows which breakpoints should
+	 * be added to the breakpoint manager. 
+	 * 
+	 * @param registered whether this breakpoint is registered with the
+	 *   breakpoint manager
+	 * @exception CoreException if a <code>CoreException</code> is thrown
+	 * 	when setting the attribute on the underlying marker.
+	 */
+	public void setRegistered(boolean registered) throws CoreException;
+	
+	/**
+	 * Returns whether this breakpoint is to be persisted accross
+	 * workspace invocations, or when a project is closed and re-opened.
+	 * Since marker definitions only allow all/none of a specific type
+	 * of marker to be persisted (rathern than selective markers of a
+	 * specific type), breakpoints define this functionality.
+	 * 
+	 * @return whether this breakpoint is to be persisted
+	 * @exception CoreException if a <code>CoreException</code> is thrown
+	 * 	when accessing the attribute on the underlying marker
+	 */
+	public boolean isPersisted() throws CoreException;
+	
+	/**
+	 * Sets whether this breakpoint is to be persisted accorss
+	 * workspace invocations, or when a project is closed and re-opened.
+	 * Since marker definitions only allow all/none of a specific type of
+	 * marker to be persisted (rather than selective markers of a specific
+	 * type), breakpoints define this functionality. Has no effect if this
+	 * breakpoint's marker definition is defined as not persisted.
+	 * 
+	 * @param persist whether this breakpoint is to be persisted
+	 * @exception CoreException if a <code>CoreException</code> is thrown
+	 * 	when setting the attribute on the underlying marker.
+	 */
+	public void setPersisted(boolean registered) throws CoreException;	
 }
 
 
