@@ -150,6 +150,44 @@ protected void configureShell(Shell shell) {
 	if (titleImage != null)
 		shell.setImage(titleImage);
 }
+
+/*
+ * @see Dialog.createContents(Composite)
+ */
+protected Control createContents(Composite parent) {
+	
+	// initialize the dialog units
+	initializeDialogUnits(parent);
+	
+	GridLayout layout = new GridLayout();
+	layout.numColumns = 2;
+	layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
+	layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
+	layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
+	layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
+	layout.makeColumnsEqualWidth = false;
+	parent.setLayout(layout);
+	parent.setLayoutData(new GridData(GridData.FILL_BOTH));
+	
+	// create the dialog area and button bar
+	dialogArea = createDialogArea(parent);
+	buttonBar = createButtonBar(parent);
+	
+	
+	return parent;
+}
+
+/*
+ * @see Dialog.createButtonBar()
+ */
+protected Control createButtonBar(Composite parent) {
+	
+	Control bar = super.createButtonBar(parent);
+	GridData data = (GridData) bar.getLayoutData();
+	data.horizontalSpan = 2;
+	return bar;
+}
+
 /* (non-Javadoc)
  * Method declared on Dialog.
  */
@@ -185,17 +223,22 @@ protected Control createCustomArea(Composite parent) {
  * to add contents below the message.
  */
 protected Control createDialogArea(Composite parent) {
+	
+	// create message area
+	createMessageArea(parent);
+	
 	// create the top level composite for the dialog area
 	Composite composite = new Composite(parent, SWT.NONE);
 	GridLayout layout = new GridLayout();
 	layout.marginHeight = 0;
 	layout.marginWidth = 0;
 	composite.setLayout(layout);
-	composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-	composite.setFont(parent.getFont());
 	
-	// create message area
-	createMessageArea(composite);
+	GridData data = new GridData(GridData.FILL_BOTH);
+	data.horizontalSpan = 2;
+	
+	composite.setLayoutData(data);
+	composite.setFont(parent.getFont());
 
 	// allow subclasses to add custom controls
 	createCustomArea(composite);
@@ -214,16 +257,7 @@ protected Control createDialogArea(Composite parent) {
  * @param the parent composite to contain the message area
  * @return the message area control
  */
-private Control createMessageArea(Composite parent) {
-	// create composite
-	Composite composite = new Composite(parent, 0);
-	GridLayout layout = new GridLayout();
-	layout.numColumns = 2;
-	layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
-	layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
-	layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
-	composite.setLayout(layout);
-	composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+private Control createMessageArea(Composite composite) {
 
 	// create image
 	if (image != null) {
@@ -246,7 +280,7 @@ private Control createMessageArea(Composite parent) {
 			GridData.VERTICAL_ALIGN_CENTER);
 		data.widthHint = getMinimumMessageWidth();
 		label.setLayoutData(data);
-		label.setFont(parent.getFont());
+		label.setFont(composite.getFont());
 	}
 	return composite;
 }
