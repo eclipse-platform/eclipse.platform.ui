@@ -77,6 +77,10 @@ import org.eclipse.ui.dialogs.SelectionDialog;
 	 * @return the selected marker
 	 */
 	private IMarker getMarker() {
-		return (IMarker)((IStructuredSelection)getTaskList().getSelection()).getFirstElement();
+		IStructuredSelection selection = (IStructuredSelection)getTaskList().getSelection();
+		// only enable for single selection
+		if (selection.size() != 1)
+			return null;
+		return (IMarker)selection.getFirstElement();
 	}
 }
