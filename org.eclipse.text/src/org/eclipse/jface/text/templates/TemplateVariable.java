@@ -168,7 +168,7 @@ public class TemplateVariable {
 	 * @param value the new default value
 	 */
 	public final void setValue(String value) {
-		fValues= new String[] { value };
+		setValues(new String[] { value });
 	}
 	
 	/**
