@@ -2,10 +2,12 @@ package org.eclipse.ui.tests.api;
 
 import junit.framework.TestCase;
 import org.eclipse.ui.*;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 
-public class IWorkbenchPageTest extends TestCase {
+public class IWorkbenchPageTest extends AbstractTestCase {
 	
-	private IWorkbenchPage fPage;
+	private IWorkbenchPage fActivePage;
 	private IWorkbenchWindow fWin;
 	
 	public IWorkbenchPageTest( String testName )
@@ -15,18 +17,15 @@ public class IWorkbenchPageTest extends TestCase {
 	
 	public void setUp()
 	{		
-		fWin = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		fPage = fWin.getActivePage();
-	}
-	
-	public void testSetPerspective()
-	{
-		IPerspectiveDescriptor per = ( IPerspectiveDescriptor )Tool.pick(
-			PlatformUI.getWorkbench().getPerspectiveRegistry().getPerspectives()
-		);
-		fPage.setPerspective( per );
+		try{
+			fWin = openTestWindow();
+		}
+		catch( WorkbenchException e )
+		{
+			fail();
+		}
 		
-		assertEquals( per, fPage.getPerspective() );
+		fActivePage = fWin.getActivePage();
 	}
 	
 /* 
@@ -35,34 +34,55 @@ public class IWorkbenchPageTest extends TestCase {
 */
 	public void testSetEditorAreaVisible() throws Throwable
 	{
-		fPage.setEditorAreaVisible( true );		
-		assert( fPage.isEditorAreaVisible() == true );
+		fActivePage.setEditorAreaVisible( true );		
+		assert( fActivePage.isEditorAreaVisible() == true );
 		
-		fPage.setEditorAreaVisible( false );		
-		assert( fPage.isEditorAreaVisible() == false );
+		fActivePage.setEditorAreaVisible( false );		
+		assert( fActivePage.isEditorAreaVisible() == false );
 	}
-
-//	public 
 
 	public void testGetPerspective() throws Throwable
 	{
-		assertNotNull( fPage.getPerspective() );
+		assertNotNull( fActivePage.getPerspective() );
+		
+		IWorkbenchPage page = fWin.openPage( EmptyPerspective.PERSP_ID, ResourcesPlugin.getWorkspace() );		
+		assertEquals( EmptyPerspective.PERSP_ID, page.getPerspective() );		
+		
+		page.close();
+		assertNull( page.getPerspective() );
 	}
 	
-	public void testGetLabel() throws Throwable
+	public void testSetPerspective() throws Throwable
 	{
-		assertNotNull( fPage.getLabel() );
+		IPerspectiveDescriptor per = PlatformUI.getWorkbench().getPerspectiveRegistry().findPerspectiveWithId( EmptyPerspective.PERSP_ID);		
+		fActivePage.setPerspective( per );
+		assertEquals( per, fActivePage.getPerspective() );
+	}
+	
+	public void testGetLabel()
+	{
+		assertNotNull( fActivePage.getLabel() );
 	}
 
-	public void testGetViews()
+	public void testGetInput() throws Throwable
 	{
-/*		IViewPart[] parts = fPage.getViews();		
-		f
+		IWorkbenchPage page = fWin.openPage( null );		
+		assertNull( page.getInput() );
+		page.close();
 		
-		for( int i = 0; i < parts.length; i ++ ){
-			
+		IAdaptable input = ResourcesPlugin.getWorkspace();
+		page = fWin.openPage( input );
+		assertEquals( input, page.getInput() );
+	}
+	
+	public void testActivate()
+	{
+		MockViewPart part = new MockViewPart();
+		//part.addPropertyListener( this );
+		fActivePage.activate( part );
 		
-		assertNotNull( fPage.getLabel() );*/
+		assertEquals( part.setFocusCalled, true );
+//		assert( part. );
 	}
 }
 
