@@ -14,6 +14,8 @@ package org.eclipse.ui.views.markers.internal;
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -118,7 +120,18 @@ public class ActionCopyMarker extends SelectionProviderAction {
 	 * @param markers
 	 * @return the marker report
 	 */
-	String createMarkerReport(IMarker[] markers) {
+	String createMarkerReport(IMarker[] rawMarkers) {
+		ConcreteMarker[] markers;
+		try {
+			markers = MarkerList.createMarkers(rawMarkers);
+		} catch (CoreException e) {
+			ErrorDialog.openError(
+					part.getSite().getShell(),
+					Messages.getString("Error"), //$NON-NLS-1$
+					null,
+					e.getStatus());
+			return "";
+		}
 		String report = ""; //$NON-NLS-1$
 		final String NEWLINE = System.getProperty("line.separator"); //$NON-NLS-1$
 		final char DELIMITER = '\t';
@@ -138,7 +151,7 @@ public class ActionCopyMarker extends SelectionProviderAction {
 		}
 		
 		for (int i = 0; i < markers.length; i++) {
-			IMarker marker = markers[i];
+			ConcreteMarker marker = markers[i];
 			for (int j = 0; j < properties.length; j++) {
 				report += properties[j].getValue(marker);
 				if (j == properties.length - 1)
