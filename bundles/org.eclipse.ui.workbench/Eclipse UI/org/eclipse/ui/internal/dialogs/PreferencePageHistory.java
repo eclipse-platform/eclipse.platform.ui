@@ -66,9 +66,15 @@ class PreferencePageHistory {
 	private final WorkbenchPreferenceDialog dialog;
 
 	/**
+	 * The handler submission for these controls.
+	 */
+	private HandlerSubmission submission;
+
+	/**
 	 * Creates a new history for the given dialog.
 	 * 
-	 * @param dialog the preference dialog to create a history for
+	 * @param dialog
+	 *            the preference dialog to create a history for
 	 */
 	public PreferencePageHistory(WorkbenchPreferenceDialog dialog) {
 		this.dialog = dialog;
@@ -78,7 +84,8 @@ class PreferencePageHistory {
 	 * Returns the preference page path (for now: its id) for the history at
 	 * <code>index</code>.
 	 * 
-	 * @param index the index into the history
+	 * @param index
+	 *            the index into the history
 	 * @return the preference page path at <code>index</code> or
 	 *         <code>null</code> if <code>index</code> is not a valid
 	 *         history index
@@ -92,7 +99,8 @@ class PreferencePageHistory {
 	/**
 	 * Adds the preference page path and its label to the page history.
 	 * 
-	 * @param entry the preference page history entry
+	 * @param entry
+	 *            the preference page history entry
 	 */
 	public void addHistoryEntry(PreferenceHistoryEntry entry) {
 		if (historyIndex == -1 || !history.get(historyIndex).equals(entry)) {
@@ -104,10 +112,11 @@ class PreferencePageHistory {
 	}
 
 	/**
-	 * Sets the current page to be the one corresponding to the given index
-	 * in the page history.
+	 * Sets the current page to be the one corresponding to the given index in
+	 * the page history.
 	 * 
-	 * @param index the index into the page history
+	 * @param index
+	 *            the index into the page history
 	 */
 	private void jumpToHistory(int index) {
 		if (index >= 0 && index < history.size()) {
@@ -133,17 +142,19 @@ class PreferencePageHistory {
 	/**
 	 * Creates the history toolbar and initializes <code>historyToolbar</code>.
 	 * 
-	 * @param historyBar 
+	 * @param historyBar
 	 * @param manager
 	 * @return the control of the history toolbar
 	 */
-	public ToolBar createHistoryControls(ToolBar historyBar, ToolBarManager manager) {
+	public ToolBar createHistoryControls(ToolBar historyBar,
+			ToolBarManager manager) {
 
 		historyToolbar = manager;
 		/**
 		 * Superclass of the two for-/backward actions for the history.
 		 */
-		abstract class HistoryNavigationAction extends Action implements IMenuCreator {
+		abstract class HistoryNavigationAction extends Action implements
+				IMenuCreator {
 			private Menu lastMenu;
 
 			protected final static int MAX_ENTRIES = 5;
@@ -220,15 +231,19 @@ class PreferencePageHistory {
 			protected void createEntries(Menu menu) {
 				int limit = Math.max(0, historyIndex - MAX_ENTRIES);
 				for (int i = historyIndex - 1; i >= limit; i--) {
-					IAction action = new HistoryItemAction(i, getHistoryEntry(i).getLabel());
+					IAction action = new HistoryItemAction(i,
+							getHistoryEntry(i).getLabel());
 					addActionToMenu(menu, action);
 				}
 			}
 		};
-		backward.setText(WorkbenchMessages.getString("NavigationHistoryAction.backward.text")); //$NON-NLS-1$
-		backward.setActionDefinitionId("org.eclipse.ui.navigate.backwardHistory"); //$NON-NLS-1$
-		backward.setImageDescriptor(WorkbenchPlugin.getDefault().getSharedImages()
-				.getImageDescriptor(ISharedImages.IMG_TOOL_BACK));
+		backward.setText(WorkbenchMessages
+				.getString("NavigationHistoryAction.backward.text")); //$NON-NLS-1$
+		backward
+				.setActionDefinitionId("org.eclipse.ui.navigate.backwardHistory"); //$NON-NLS-1$
+		backward.setImageDescriptor(WorkbenchPlugin.getDefault()
+				.getSharedImages().getImageDescriptor(
+						ISharedImages.IMG_TOOL_BACK));
 		registerKeybindings(backward);
 		historyToolbar.add(backward);
 
@@ -247,17 +262,21 @@ class PreferencePageHistory {
 			}
 
 			protected void createEntries(Menu menu) {
-				int limit = Math.min(history.size(), historyIndex + MAX_ENTRIES + 1);
+				int limit = Math.min(history.size(), historyIndex + MAX_ENTRIES
+						+ 1);
 				for (int i = historyIndex + 1; i < limit; i++) {
-					IAction action = new HistoryItemAction(i, getHistoryEntry(i).getLabel());
+					IAction action = new HistoryItemAction(i,
+							getHistoryEntry(i).getLabel());
 					addActionToMenu(menu, action);
 				}
 			}
 		};
-		forward.setText(WorkbenchMessages.getString("NavigationHistoryAction.forward.text")); //$NON-NLS-1$
+		forward.setText(WorkbenchMessages
+				.getString("NavigationHistoryAction.forward.text")); //$NON-NLS-1$
 		forward.setActionDefinitionId("org.eclipse.ui.navigate.forwardHistory"); //$NON-NLS-1$
-		forward.setImageDescriptor(WorkbenchPlugin.getDefault().getSharedImages()
-				.getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD));
+		forward.setImageDescriptor(WorkbenchPlugin.getDefault()
+				.getSharedImages().getImageDescriptor(
+						ISharedImages.IMG_TOOL_FORWARD));
 		registerKeybindings(forward);
 		historyToolbar.add(forward);
 
@@ -267,17 +286,28 @@ class PreferencePageHistory {
 	/**
 	 * Registers the given action with the workbench command support.
 	 * 
-	 * @param action the action to register.
+	 * @param action
+	 *            the action to register.
 	 */
 	private void registerKeybindings(IAction action) {
 		IHandler handler = new ActionHandler(action);
-		HandlerSubmission sub = new HandlerSubmission(null, dialog.getShell(), null, action
-				.getActionDefinitionId(), handler, Priority.MEDIUM);
-		PlatformUI.getWorkbench().getCommandSupport().addHandlerSubmission(sub);
+		submission = new HandlerSubmission(null, dialog.getShell(), null,
+				action.getActionDefinitionId(), handler, Priority.MEDIUM);
+		PlatformUI.getWorkbench().getCommandSupport().addHandlerSubmission(submission);
+	}
+
+	/**
+	 * Dispose the receiver and clear out the references.
+	 *
+	 */
+	public void dispose() {
+		PlatformUI.getWorkbench().getCommandSupport().removeHandlerSubmission(
+				submission);
 	}
 
 	/**
 	 * Create the history control in the parent
+	 * 
 	 * @param parent
 	 * @return Control
 	 */

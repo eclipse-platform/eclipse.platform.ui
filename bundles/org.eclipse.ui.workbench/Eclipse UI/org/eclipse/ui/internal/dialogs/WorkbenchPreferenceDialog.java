@@ -267,6 +267,7 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
      */
     public final boolean close() {
         instance = null;
+        history.dispose();
         return super.close();
     }
 
