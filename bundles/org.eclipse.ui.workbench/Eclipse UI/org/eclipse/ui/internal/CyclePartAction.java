@@ -1,8 +1,16 @@
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+	IBM - Initial implementation
+************************************************************************/
+
 package org.eclipse.ui.internal;
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
@@ -142,6 +150,8 @@ public void activate(IWorkbenchPage page,Object selection) {
  * Open a dialog showing all views in the activation order
  */
 private void openDialog(WorkbenchPage page) {
+	final int MAX_ITEMS = 22;
+	
 	selection = null;
 	final Shell dialog = new Shell(getWorkbenchWindow().getShell(),SWT.MODELESS);
 	Display display = dialog.getDisplay();
@@ -169,9 +179,12 @@ private void openDialog(WorkbenchPage page) {
 	}
 	tc.pack();
 	table.pack();
-	dialog.pack();
+	Rectangle tableBounds = table.getBounds();
+	tableBounds.height = Math.min(tableBounds.height, table.getItemHeight()*MAX_ITEMS);
+	dialog.setBounds(tableBounds);
 
  	tc.setWidth(table.getClientArea().width);
+	table.showSelection();
 	table.setFocus();
 	table.addFocusListener(new FocusListener() {
 		public void focusGained(FocusEvent e){}
