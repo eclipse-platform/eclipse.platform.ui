@@ -119,7 +119,12 @@ public class KnownHosts {
 	 * Fail if the file can not be created (issue a warning in the log).	 */
 	void createHostFile() {
 		try {
-			new File(defaultFilename()).createNewFile();
+			File file = new File(defaultFilename());
+			// Ensure the parent directory exists
+			File parentDir = file.getParentFile();
+			parentDir.mkdirs();
+			// Create the file
+			file.createNewFile();
 		} catch (IOException ee) {
 			SSHPlugin.log(IStatus.ERROR, Policy.bind("KnownHosts.10"), ee); //$NON-NLS-1$
 		}
