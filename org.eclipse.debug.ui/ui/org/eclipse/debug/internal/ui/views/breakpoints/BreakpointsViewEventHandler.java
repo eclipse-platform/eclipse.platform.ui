@@ -11,6 +11,7 @@
 package org.eclipse.debug.internal.ui.views.breakpoints;
 
 
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointsListener;
@@ -94,7 +95,8 @@ public class BreakpointsViewEventHandler implements IBreakpointsListener {
 						viewer.getControl().setRedraw(false);
 						for (int i = 0; i < breakpoints.length; i++) {
 							IBreakpoint breakpoint = breakpoints[i];
-							if (breakpoint.getMarker() != null) {
+							IMarker marker= breakpoint.getMarker();
+							if (marker != null && marker.exists()) {
 								// only refresh if still exists
 								viewer.refresh(breakpoint);
 							}
