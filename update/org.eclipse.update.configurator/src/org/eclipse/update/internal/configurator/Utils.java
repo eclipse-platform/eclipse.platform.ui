@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.*;
 
 public class Utils {
 	private static final String PLUGIN_PATH = ".plugin-path"; //$NON-NLS-1$
+	private static ILog log;
 
 	/*
 	 * This method is retained for R1.0 compatibility because it is defined as API.
@@ -139,4 +140,16 @@ public class Utils {
 		return new Status(IStatus.ERROR, "org.eclipse.update.configurator", IStatus.OK, message, e);
 	}
 	
+	public static void setLog(ILog log) {
+		Utils.log = log;
+	}
+	
+	public static void log(String message) {
+		log(newStatus(message, null));
+	}
+	
+	public static void log(IStatus status) {
+		if (log != null)
+			log.log(status);
+	}
 }
