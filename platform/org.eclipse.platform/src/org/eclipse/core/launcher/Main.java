@@ -720,6 +720,7 @@ private String[] processConfiguration(String[] passThruArgs) throws MalformedURL
 private URL getRootURL() throws MalformedURLException {
 	URL	url = getClass().getProtectionDomain().getCodeSource().getLocation();
 	String path = decode(url.getFile());
+	path = new File(path).getAbsolutePath().replace(File.separatorChar,'/');
 	if (path.endsWith(".jar"))
 		path = path.substring(0, path.lastIndexOf("/")+1);
 	url = new URL(url.getProtocol(), url.getHost(), url.getPort(), path);
@@ -1028,21 +1029,30 @@ private String getFeatureIdentifier() {
  */
 private String[] getFeatureRoot() {
 	String ix = featureIndex(getFeatureIdentifier());
-	String urlString = props.getProperty(CFG_FEATURE_ENTRY + "." + ix + "." + CFG_FEATURE_ENTRY_ROOT);
+	String urlString = props.getProperty(CFG_FEATURE_ENTRY + "." + ix + "." + CFG_FEATURE_ENTRY_ROOT + ".0");
 	if (urlString == null)
 		return null;
 	
+	ArrayList result = new ArrayList();
 	URL url = null;
-	try {	
-		urlString = resolve(urlString); // resolve platform relative URLs
-		url = new URL(urlString);
-		if (url.getProtocol().equals("file")) 
-			return new String[] { url.getFile().replace('/', File.separatorChar)};
-		else
-			return null; // in the future may cache
-	} catch(MalformedURLException e) {
-		return null;
+	for (int i=1; urlString != null; i++) {
+		try {	
+			urlString = resolve(urlString); // resolve platform relative URLs
+			url = new URL(urlString);
+			if (url.getProtocol().equals("file")) {
+				result.add(url.getFile().replace('/', File.separatorChar));
+			} else
+				continue; // in the future may cache
+		} catch(MalformedURLException e) {
+			// skip bad entries
+		}
+		urlString = props.getProperty(CFG_FEATURE_ENTRY + "." + ix + "." + CFG_FEATURE_ENTRY_ROOT + "." + i);
 	}
+	
+	if (result.size()>0)
+		return (String[])result.toArray(new String[0]);
+	else 
+		return null;
 }
 
 /*
