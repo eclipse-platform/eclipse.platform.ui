@@ -151,8 +151,8 @@ function highlightTopic(topic)
   			a.className = "active";
   			// set toolbar title
   			a.onclick();
-  			if (isIE)
-  				a.hideFocus = "true";
+  			//if (isIE)
+  			//	a.hideFocus = "true";
    		}
   }
 }

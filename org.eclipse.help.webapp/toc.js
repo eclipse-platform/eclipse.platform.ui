@@ -291,8 +291,8 @@ function highlightTopic(topic)
   		oldActive = a;
   		a.className = "active";
   
-  		if (isIE)
-  			a.hideFocus = "true";
+  		//if (isIE)
+  		//	a.hideFocus = "true";
   	}
 }
 

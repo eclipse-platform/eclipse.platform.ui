@@ -39,7 +39,7 @@ BODY {
 A {
 	text-decoration:none; 
 	color:WindowText; 
-	padding:0px;
+	padding-left:2px;
 	white-space: nowrap;
 }
 
