@@ -89,11 +89,6 @@ public class FontPreferencePage
 		String title,
 		Composite editorParent) {
 
-		//Initialize the preference store first
-		FontData[] data = currentSetting.getFontData();
-		if (data != null && data.length > 0)
-			PreferenceConverter.setDefault(getPreferenceStore(), preferenceName, data[0]);
-
 		addField(new FontFieldEditor(preferenceName, title, editorParent));
 	}
 
