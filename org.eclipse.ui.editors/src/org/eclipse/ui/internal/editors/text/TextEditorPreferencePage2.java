@@ -32,8 +32,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 
 import org.eclipse.jface.dialogs.Dialog;
@@ -319,17 +317,11 @@ public class TextEditorPreferencePage2 extends PreferencePage implements IWorkbe
 		fOverlayStore.load();
 		fOverlayStore.start();
 		
-		TabFolder folder= new TabFolder(parent, SWT.NONE);
-		folder.setLayout(new TabFolderLayout());	
-		folder.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
-		TabItem item= new TabItem(folder, SWT.NONE);
-		item.setText(TextEditorMessages.getString("TextEditorPreferencePage.general")); //$NON-NLS-1$
-		item.setControl(createAppearancePage(folder));
+		Control control= createAppearancePage(parent);
 
 		initialize();
-		Dialog.applyDialogFont(folder);
-		return folder;
+		Dialog.applyDialogFont(control);
+		return control;
 	}
 	
 	private void initialize() {
