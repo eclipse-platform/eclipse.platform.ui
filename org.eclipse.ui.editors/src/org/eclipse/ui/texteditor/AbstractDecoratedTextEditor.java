@@ -1262,4 +1262,25 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			store.setValue(AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_ALWAYS_ON, newSetting);
 		}
 	}
+	
+	
+	protected void editorContextMenuAboutToShow(IMenuManager menu) {
+		super.editorContextMenuAboutToShow(menu);
+
+		IAction preferencesAction= new Action("Preferences...") {
+			public void run() {
+				String[] preferencePages= {
+					"org.eclipse.ui.preferencePages.GeneralTextEditor",
+					"org.eclipse.ui.editors.preferencePages.QuickDiff",
+					"org.eclipse.ui.preferencePages.TextEditor",
+					"org.eclipse.jdt.ui.preferences.JavaEditorPreferencePage", // TODO move down and create extension mechanism for ruler providers to specify their preferences url.
+				};
+				// TODO use the filtering capability as soon as released
+//				WorkbenchPreferenceDialog.createDialogOn(preferencePages[0], preferencePages).open();
+				WorkbenchPreferenceDialog.createDialogOn(preferencePages[0]).open();
+			}
+		};
+		menu.appendToGroup("additions", new GroupMarker("settings"));
+		menu.appendToGroup("settings", preferencesAction);
+	}
 }
