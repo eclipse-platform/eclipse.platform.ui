@@ -23,11 +23,15 @@ import org.eclipse.ant.ui.internal.views.elements.AntNode;
 import org.eclipse.ant.ui.internal.views.elements.ProjectNode;
 import org.eclipse.ant.ui.internal.views.elements.TargetNode;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.texteditor.IUpdate;
 
 /**
@@ -55,18 +59,24 @@ public class RunTargetAction extends Action implements IUpdate {
 	 * Executes the selected target or project in the Ant view.
 	 */
 	public void run() {
-		TargetNode target= getSelectedTarget();
-		if (target == null) {
-			return;
-		}
-		run(target);
+		UIJob job= new UIJob("Launching Ant build file") {
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				TargetNode target= getSelectedTarget();
+				if (target == null) {
+					return new Status(IStatus.ERROR, AntUIPlugin.getUniqueIdentifier(), IStatus.ERROR, "No target found", null);
+				}
+				runTarget(target);
+				return Status.OK_STATUS;
+			}
+		};
+		job.schedule();
 	}
 	
 	/**
 	 * Executes the given target
 	 * @param target the target to execute
 	 */
-	public void run(TargetNode target) {
+	public void runTarget(TargetNode target) {
 		IFile file= AntUtil.getFile(target.getProject().getBuildFileName());
 		if (file == null) {
 			AntUIPlugin.getStandardDisplay().beep();
