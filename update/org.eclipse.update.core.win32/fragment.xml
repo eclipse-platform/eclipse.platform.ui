@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <fragment
    id="org.eclipse.update.core.win32"
-   name="Install/Update Manager for Windows fragment"
+   name="%fragmentName"
    version="1.9.0"
    provider-name="International Business Machine Corp."
    plugin-id="org.eclipse.update.core"
