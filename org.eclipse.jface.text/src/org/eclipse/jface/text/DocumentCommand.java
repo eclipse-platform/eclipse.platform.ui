@@ -14,7 +14,7 @@ import org.eclipse.swt.events.VerifyEvent;
  * as a <code>VerifyEvent</code> and translated into a document replace command relative
  * to a given offset. A document command can also be used to initialize a given <code>VerifyEvent</code>.
  */
-public final class DocumentCommand {
+public class DocumentCommand {
 	
 	/** Must the command be updated */
 	public boolean doit= false;
@@ -29,7 +29,7 @@ public final class DocumentCommand {
 	/**
 	 * Creates a new document command.
 	 */
-	DocumentCommand() {
+	protected DocumentCommand() {
 	}
 	
 	/**
