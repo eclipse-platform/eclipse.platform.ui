@@ -410,6 +410,7 @@ public class LaunchConfigurationManager implements ILaunchListener {
 			LaunchShortcutExtension ext = new LaunchShortcutExtension(infos[i]);
 			fLaunchShortcuts.add(ext);
 		}
+		Collections.sort(fLaunchShortcuts, new ShortcutComparator());
 	}
 	
 	/**
@@ -449,10 +450,7 @@ public class LaunchConfigurationManager implements ILaunchListener {
 	 * @return all launch shortcuts
 	 */
 	public List getLaunchShortcuts(String category) {
-		if (fLaunchShortcuts == null) {
-			loadLaunchShortcuts();
-		}
-		return filterShortcuts(fLaunchShortcuts, category);
+		return filterShortcuts(getLaunchShortcuts(), category);
 	}	
 	
 	/**
@@ -502,13 +500,6 @@ public class LaunchConfigurationManager implements ILaunchListener {
 					}
 					list.add(ext);
 				}
-			}	
-			// sort the lists
-			Iterator perspectives = fLaunchShortcutsByPerspective.keySet().iterator();		
-			while (perspectives.hasNext()) {
-				String id = (String)perspectives.next();
-				List list = (List)fLaunchShortcutsByPerspective.get(id);
-				Collections.sort(list, new ShortcutComparator());
 			}
 		}
 		List list = (List)fLaunchShortcutsByPerspective.get(perpsective); 

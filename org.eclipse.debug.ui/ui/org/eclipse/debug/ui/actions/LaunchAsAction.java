@@ -153,8 +153,7 @@ public class LaunchAsAction extends Action implements IMenuCreator, IWorkbenchWi
 		 if (shortcuts == null || shortcuts.isEmpty()) {
 			 shortcuts = getLaunchConfigurationManager().getLaunchShortcuts(getCategory());
 		 }
-	
-		 // Sort the applicable config types alphabetically and add them to the menu
+
 		 int menuCount = 1;
 		 Iterator iter = shortcuts.iterator();
 		 while (iter.hasNext()) {
