@@ -11,7 +11,7 @@
 package org.eclipse.core.runtime.model;
 
 /**
- * An object which represents the a named URL in a component or configuration
+ * An object which represents a named URL in a component or configuration
  * manifest.
  * <p>
  * This class may be instantiated and further subclassed.
