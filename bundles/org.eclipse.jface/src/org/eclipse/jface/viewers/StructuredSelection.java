@@ -63,7 +63,7 @@ public StructuredSelection(List elements) {
 	this.elements = elements.toArray();
 }
 /**
- * Returns whether this structured selection is equal to given object.
+ * Returns whether this structured selection is equal to the given object.
  * Two structured selections are equal iff they contain the same elements
  * in the same order.
  *

@@ -1,16 +1,27 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 International Business Machines Corp. and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v0.5 
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ ******************************************************************************/
+
 package org.eclipse.jface.viewers;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Widget;
+
+import org.eclipse.jface.util.Assert;
+
 /**
  * A concrete viewer based on an SWT <code>List</code> control.
  * <p>
@@ -115,7 +126,7 @@ public void add(Object element) {
  * Since SWT.List doesn't use items we always return the List itself.
  */
 protected Widget doFindInputItem(Object element) {
-	if (element != null && element.equals(getRoot()))
+	if (element != null && equals(element, getRoot()))
 		return getList();
 	return null;
 }
@@ -248,7 +259,7 @@ protected void inputChanged(Object input, Object oldInput) {
  */
 protected void internalRefresh(Object element) {
 
-	if (element == null || element.equals(getRoot())) {
+	if (element == null || equals(element, getRoot())) {
 		// the parent
 		if (listMap != null)
 			listMap.clear();
@@ -278,7 +289,7 @@ protected void internalRefresh(Object element) {
 private void internalRemove(final Object[] elements) {
 	Object input = getInput();
 	for (int i = 0; i < elements.length; ++i) {
-	    if (elements[i].equals(input)) {
+	    if (equals(elements[i], input)) {
 		    setInput(null);
 		    return;
 	    }

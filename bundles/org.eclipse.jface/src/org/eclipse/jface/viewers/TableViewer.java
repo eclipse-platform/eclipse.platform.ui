@@ -1,20 +1,34 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 International Business Machines Corp. and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v0.5 
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ ******************************************************************************/
+
 package org.eclipse.jface.viewers;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Widget;
+
+import org.eclipse.jface.util.Assert;
+
 /**
  * A concrete viewer based on a SWT <code>Table</code> control.
  * <p>
@@ -129,7 +143,7 @@ public void cancelEditing() {
  * Method declared on StructuredViewer.
  */
 protected Widget doFindInputItem(Object element) {
-	if (element.equals(getRoot()))
+	if (equals(element, getRoot()))
 		return getTable();
 	return null;
 }
@@ -141,7 +155,7 @@ protected Widget doFindItem(Object element) {
 	for (int i = 0; i < children.length; i++) {
 		TableItem item = children[i];
 		Object data = item.getData();
-		if (data != null && data.equals(element))
+		if (data != null && equals(data, element))
 			return item;
 	}
 
@@ -415,7 +429,7 @@ protected void internalRefresh(Object element) {
  */
 protected void internalRefresh(Object element, boolean updateLabels) {
 	tableViewerImpl.applyEditorValue();
-	if (element == null || element.equals(getRoot())) {
+	if (element == null || equals(element, getRoot())) {
 		// the parent
 
 		// in the code below, it is important to do all disassociates
@@ -428,7 +442,7 @@ protected void internalRefresh(Object element, boolean updateLabels) {
 		int min = Math.min(children.length, items.length);
 		for (int i = 0; i < min; ++i) {
 			// if the element is unchanged, update its label if appropriate
-			if (children[i].equals(items[i].getData())) {
+			if (equals(children[i], items[i].getData())) {
 				if (updateLabels) {
 					updateItem(items[i], children[i]);
 				}
@@ -483,7 +497,7 @@ protected void internalRefresh(Object element, boolean updateLabels) {
 private void internalRemove(final Object[] elements) {
 	Object input = getInput();
 	for (int i = 0; i < elements.length; ++i) {
-		if (elements[i].equals(input)) {
+		if (equals(elements[i], input)) {
 			setInput(null);
 			return;
 		}

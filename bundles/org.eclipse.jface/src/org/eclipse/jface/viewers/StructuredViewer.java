@@ -1,18 +1,37 @@
-package org.eclipse.jface.viewers;
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 International Business Machines Corp. and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v0.5 
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ ******************************************************************************/package org.eclipse.jface.viewers;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
-import java.util.*;
-import java.util.List; // Otherwise ambiguous
-
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.util.*;
-import org.eclipse.swt.dnd.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.widgets.*;
+
+import org.eclipse.swt.dnd.DragSource;
+import org.eclipse.swt.dnd.DragSourceListener;
+import org.eclipse.swt.dnd.DropTarget;
+import org.eclipse.swt.dnd.DropTargetListener;
+import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.Widget;
+
+import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.util.IOpenEventListener;
+import org.eclipse.jface.util.ListenerList;
+import org.eclipse.jface.util.OpenStrategy;
+import org.eclipse.jface.util.SafeRunnable;
 
 /**
  * Abstract base implementation for structure-oriented viewers (trees, lists, tables).
@@ -32,8 +51,15 @@ public abstract class StructuredViewer extends ContentViewer {
 	 * (key type: <code>Object</code>, value type: <code>Widget</code>).
 	 * <code>null</code> means that the element map is disabled.
 	 */
-	private Map elementMap;
+	private CustomHashtable elementMap;
 
+	/**
+	 * The comparer to use for comparing elements,
+	 * or <code>null</code> to use the default <code>equals</code>
+	 * and <code>hashCode</code> methods on the element itself.
+	 */
+	private IElementComparer comparer;
+		
 	/**
 	 * This viewer's sorter.
 	 * <code>null</code> means there is no sorter.
@@ -264,6 +290,23 @@ protected abstract void doUpdateItem(
 	Widget item,
 	Object element,
 	boolean fullMap);
+
+/**
+ * Compares two elements for equality.
+ * Uses the element comparer if one has been set, otherwise
+ * uses the default <code>equals</code> method on the elements themselves.
+ * 
+ * @param elementA the first element
+ * @param elementB the second element
+ * @return whether elementA is equal to elementB
+ */	
+protected boolean equals(Object elementA, Object elementB) {
+	if (comparer == null)
+		return elementA.equals(elementB);
+	else
+		return comparer.equals(elementA, elementB);
+}
+
 /**
  * Returns the result of running the given elements through the filters.
  *
@@ -387,6 +430,18 @@ protected void firePostSelectionChanged(final SelectionChangedEvent event) {
 		});		
 	}
 }
+
+/**
+ * Returns the comparator to use for comparing elements,
+ * or <code>null</code> if none has been set.
+ * 
+ * @param comparator the comparator to use for comparing elements
+ *   or <code>null</code> 
+ */
+public IElementComparer getComparer() {
+	return comparer;
+}
+
 /**
  * Returns the filtered array of children of the given element.
  * The resulting array must not be modified,
@@ -1016,11 +1071,27 @@ public void setSorter(ViewerSorter sorter) {
 public void setUseHashlookup(boolean enable) {
 	Assert.isTrue(getInput() == null, "Can only enable the hash look up before input has been set");//$NON-NLS-1$
 	if (enable) {
-		elementMap= new HashMap();
+		elementMap= new CustomHashtable(comparer);
 	} else {
 		elementMap= null;
 	}	
 }
+
+/**
+ * Sets the comparator to use for comparing elements,
+ * or <code>null</code> to use the default <code>equals</code> and
+ * <code>hashCode</code> methods on the elements themselves.
+ * 
+ * @param comparator the comparator to use for comparing elements
+ *   or <code>null</code> 
+ */
+public void setComparer(IElementComparer comparer) {
+	this.comparer = comparer;
+	if (elementMap != null) {
+		elementMap = new CustomHashtable(elementMap, comparer);
+	}
+}
+
 /**
  * Hook for testing.
  */
@@ -1036,7 +1107,7 @@ public Widget testFindItem(Object element) {
  */
 protected void unmapAllElements() {
 	if (elementMap != null) {
-		elementMap = new HashMap();
+		elementMap = new CustomHashtable(comparer);
 	}
 }
 /**

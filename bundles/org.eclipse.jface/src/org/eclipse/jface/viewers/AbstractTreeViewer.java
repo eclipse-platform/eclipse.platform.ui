@@ -1,14 +1,21 @@
-package org.eclipse.jface.viewers;
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 International Business Machines Corp. and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v0.5 
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ ******************************************************************************/package org.eclipse.jface.viewers;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+
+import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionListener;
@@ -18,7 +25,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Widget;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.SafeRunnable;
@@ -325,7 +331,7 @@ protected Widget doFindInputItem(Object element) {
 	if (root == null)
 		return null;
 		
-	if (root.equals(element))
+	if (equals(root, element))
 		return getControl();
 	return null;
 }
@@ -366,7 +372,7 @@ protected void doUpdateItem(Widget widget, Object element, boolean fullMap) {
 		if (fullMap) {
 
 			Object data = widget.getData();
-			if (data != null && data != element && data.equals(element)) {
+			if (data != null && data != element && equals(data, element)) {
 				// workaround for PR 1FV62BT
 				// assumption: elements are equal but not identical
 				// -> remove from map but don't touch children
@@ -624,7 +630,7 @@ protected Item getPreviousItem(Item item) {
  */
 protected Object[] getRawChildren(Object parent) {
 	if (parent != null) {
-		if (parent.equals(getRoot()))
+		if (equals(parent, getRoot()))
 			return super.getRawChildren(parent);
 		Object[] result = ((ITreeContentProvider) getContentProvider()).getChildren(parent);
 		if (result != null)
@@ -772,7 +778,7 @@ protected Widget internalExpand(Object element, boolean expand) {
 
 	Widget w= findItem(element);
 	if (w == null) {	
-		if (element.equals(getRoot()))	// stop at root
+		if (equals(element, getRoot()))	// stop at root
 			return null;
 		// my parent has to create me
 		Object parent= ((ITreeContentProvider) getContentProvider()).getParent(element);
@@ -831,7 +837,7 @@ private Widget internalFindChild(Item parent, Object element) {
 	for (int i = 0; i < items.length; i++) {
 		Item item = items[i];
 		Object data = item.getData();
-		if (data != null && data.equals(element))
+		if (data != null && equals(data, element))
 			return item;
 	}
 	return null;
@@ -847,7 +853,7 @@ private Widget internalFindItem(Item parent, Object element) {
 	// compare with node
 	Object data= parent.getData();
 	if (data != null) {
-		if (data.equals(element))
+		if (equals(data, element))
 			return parent;
 	}
 	// recurse over children
@@ -916,7 +922,7 @@ private void internalRemove(Object[] elements) {
 	Object input = getInput();
 	HashSet parentItems = new HashSet(5);
 	for (int i = 0; i < elements.length; ++i) {
-		if (elements[i].equals(input)) {
+		if (equals(elements[i], input)) {
 			setInput(null);
 			return;
 		}
@@ -1260,16 +1266,16 @@ protected void updateChildren(Widget widget, Object parent, Object[] elementChil
 
 	Item[] items = getChildren(widget);
 	
-	// save the expanded elements - see bug 3840
-//	HashSet expanded = new HashSet(); // assume num expanded is small
-//	for (int i = 0; i < items.length; ++i) {
-//		if (getExpanded(items[i])) {
-//			Object element = items[i].getData();
-//			if (element != null) {
-//				expanded.add(element);
-//			}
-//		}
-//	}
+	// save the expanded elements
+	HashSet expanded = new HashSet(); // assume num expanded is small
+	for (int i = 0; i < items.length; ++i) {
+		if (getExpanded(items[i])) {
+			Object element = items[i].getData();
+			if (element != null) {
+				expanded.add(element);
+			}
+		}
+	}
 	
 	int min = Math.min(elementChildren.length, items.length);
 
@@ -1297,7 +1303,7 @@ protected void updateChildren(Widget widget, Object parent, Object[] elementChil
 		if (oldElement != null) {
 			Object newElement = elementChildren[i];
 			if (newElement != oldElement) {
-				if (newElement.equals(oldElement)) {
+				if (equals(newElement, oldElement)) {
 					// update the data to be the new element, since although the elements 
 					// may be equal, they may still have different labels or children
 					item.setData(newElement);
@@ -1318,7 +1324,7 @@ protected void updateChildren(Widget widget, Object parent, Object[] elementChil
 			// Restore expanded state for items that changed position.
 			// Make sure setExpanded is called after updatePlus, since
 			// setExpanded(false) fails if item has no children.
-//			setExpanded(item, expanded.contains(newElement));
+			setExpanded(item, expanded.contains(newElement));
 		}
 	}
 	
@@ -1349,7 +1355,7 @@ protected void updatePlus(Item item, Object element) {
 	boolean removeAll = false;
 	boolean addDummy = false;
 	Object data = item.getData();
-	if (data != null && element.equals(data)) {
+	if (data != null && equals(element, data)) {
 		// item shows same element
 		if (hasPlus != needsPlus) {
 			if (needsPlus)
