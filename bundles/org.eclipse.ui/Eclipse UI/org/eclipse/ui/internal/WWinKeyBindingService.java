@@ -71,7 +71,7 @@ public class WWinKeyBindingService {
 		});
 		propertyListener = new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
-				if (event.getProperty() == IWorkbenchConstants.ACCELERATOR_CONFIGURATION_ID) {
+				if (event.getProperty().equals(IWorkbenchConstants.ACCELERATOR_CONFIGURATION_ID)) {
 					IWorkbenchPage page = window.getActivePage();
 					if(page != null) {
 						IWorkbenchPart part = page.getActivePart();
