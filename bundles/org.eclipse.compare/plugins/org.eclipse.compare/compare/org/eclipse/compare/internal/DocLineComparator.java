@@ -105,19 +105,20 @@ public class DocLineComparator implements ITokenComparator {
 	 * Returns <code>true</code> if a line given by the first index
 	 * matches a line specified by the other <code>IRangeComparator</code> and index.
 	 *
-	 * @param thisIndex	the number of the line within this range comparator
-	 * @param other the range comparator to compare this with
+	 * @param thisIndex the number of the line within this range comparator
+	 * @param otherComparator the range comparator to compare this with
 	 * @param otherIndex the number of the line within the other comparator
 	 * @return <code>true</code> if the lines are equal
 	 */
-	public boolean rangesEqual(int thisIndex, IRangeComparator other0, int otherIndex) {
+	public boolean rangesEqual(int thisIndex, IRangeComparator otherComparator, int otherIndex) {
 
-		if (other0 != null && other0.getClass() == getClass()) {
-			DocLineComparator other= (DocLineComparator) other0;
+		if (otherComparator != null && otherComparator.getClass() == getClass()) {
+			DocLineComparator other= (DocLineComparator) otherComparator;
 
 			if (fIgnoreWhiteSpace) {
 				String s1= extract(thisIndex);
 				String s2= other.extract(otherIndex);
+				//return s1.trim().equals(s2.trim());
 				return compare(s1, s2);
 			}
 
@@ -134,10 +135,15 @@ public class DocLineComparator implements ITokenComparator {
 
 	/**
 	 * Aborts the comparison if the number of tokens is too large.
-	 *
-	 * @return <code>true</code> to abort a token comparison
+	 * 
+	 * @param length a number on which to base the decision whether to return
+	 * 	<code>true</code> or <code>false</code>
+	 * @param maxLength another number on which to base the decision whether to return
+	 *	<code>true</code> or <code>false</code>
+	 * @param other the other <code>IRangeComparator</code> to compare with
+	 * @return <code>true</code> to avoid a too lengthy range comparison
 	 */
-	public boolean skipRangeComparison(int length, int max, IRangeComparator other) {
+	public boolean skipRangeComparison(int length, int maxLength, IRangeComparator other) {
 		return false;
 	}
 		
@@ -192,6 +198,5 @@ public class DocLineComparator implements ITokenComparator {
 		}
 		return true;
 	}
-
 }
 
