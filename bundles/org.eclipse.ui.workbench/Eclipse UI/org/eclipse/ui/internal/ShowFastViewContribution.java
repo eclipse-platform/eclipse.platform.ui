@@ -12,12 +12,17 @@ package org.eclipse.ui.internal;
 
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IViewReference;
+import org.eclipse.ui.IWorkbenchPartConstants;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.internal.util.Util;
 
 /**
  * A dynamic contribution item which supports to switch to other Contexts.
@@ -32,6 +37,17 @@ public class ShowFastViewContribution extends ContributionItem {
 		super("showFastViewContr"); //$NON-NLS-1$
 		this.window = window;
 	}
+	
+	private void updateItem(ToolItem item, IViewReference ref) {
+		if (item.getImage() != ref.getTitleImage()) {
+			item.setImage(ref.getTitleImage());			
+		}
+
+		if (!Util.equals(item.getToolTipText(), ref.getTitle())) {
+			item.setToolTipText(ref.getTitle());		
+		}
+	}
+	
 	/**
 	 * The default implementation of this <code>IContributionItem</code>
 	 * method does nothing. Subclasses may override.
@@ -50,9 +66,31 @@ public class ShowFastViewContribution extends ContributionItem {
 		for (int nX = 0; nX < size; nX++) {
 			final IViewReference ref = refs[nX];
 			final ToolItem item = new ToolItem(parent, SWT.CHECK, index);
-			item.setImage(ref.getTitleImage());
-			item.setToolTipText(ref.getTitle());
+			updateItem(item, ref);
 			item.setData(FAST_VIEW, ref);
+			
+			final IPropertyListener propertyListener = new IPropertyListener() {
+
+				public void propertyChanged(Object source, int propId) {
+					if (propId == IWorkbenchPartConstants.PROP_TITLE) {
+						if (!item.isDisposed()) {
+							updateItem(item, ref);
+						}
+					}
+				}
+				
+			};
+			
+			ref.addPropertyListener(propertyListener);
+			
+			item.addDisposeListener(new DisposeListener() {
+		        /* (non-Javadoc)
+				 * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
+				 */
+				public void widgetDisposed(DisposeEvent e) {
+					ref.removePropertyListener(propertyListener);
+				}				
+			});
 			
 			// Select the active fast view's icon.
 			if (ref == page.getActiveFastView()) {
