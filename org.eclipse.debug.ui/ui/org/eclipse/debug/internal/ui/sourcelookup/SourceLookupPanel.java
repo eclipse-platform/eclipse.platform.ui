@@ -21,8 +21,10 @@ import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.sourcelookup.AbstractSourceLookupDirector;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
+import org.eclipse.debug.core.sourcelookup.containers.DefaultSourceContainer;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
+import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.debug.ui.sourcelookup.WorkingSetSourceContainer;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -356,8 +358,13 @@ public class SourceLookupPanel extends AbstractLaunchConfigurationTab implements
 						
 			//writing to the file will cause a change event and the listeners will be updated
 			try{			
-				workingCopy.setAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_MEMENTO, fLocator.getMemento());
-				workingCopy.setAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, fLocator.getId());
+				if (isDefault(workingCopy)) {
+					workingCopy.setAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_MEMENTO, (String)null);
+					workingCopy.setAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, (String)null);
+				} else {
+					workingCopy.setAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_MEMENTO, fLocator.getMemento());
+					workingCopy.setAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, fLocator.getId());
+				}
 				if(configuration == null) 
 					workingCopy.doSave(); 
 				setDirty(false);
@@ -367,6 +374,11 @@ public class SourceLookupPanel extends AbstractLaunchConfigurationTab implements
 			}
 			
 		}			
+	}
+	
+	protected boolean isDefault(ILaunchConfiguration configuration) {
+		ISourceContainer[] current = getEntries();
+		return current.length == 1 && current[0] instanceof DefaultSourceContainer;
 	}
 	
 	/**
