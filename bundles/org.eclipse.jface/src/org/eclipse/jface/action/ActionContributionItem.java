@@ -653,7 +653,7 @@ public class ActionContributionItem extends ContributionItem {
 	 */
 	public void update(String propertyName) {
 		if (widget != null) {
-			// determine what to do
+			// determine what to do			
 			boolean textChanged = propertyName == null || propertyName.equals(IAction.TEXT);
 			boolean imageChanged = propertyName == null || propertyName.equals(IAction.IMAGE);
 			boolean tooltipTextChanged =
@@ -672,7 +672,7 @@ public class ActionContributionItem extends ContributionItem {
 				String text = action.getText();
 				// the set text is shown only if there is no image or if forced by MODE_FORCE_TEXT
 				boolean showText = text != null && ((getMode() & MODE_FORCE_TEXT) != 0 || !hasImages(action));
-
+				
 				// only do the trimming if the text will be used
 				if (showText && text != null) {
 					text = Action.removeAcceleratorText(text);
@@ -680,21 +680,18 @@ public class ActionContributionItem extends ContributionItem {
 				}
 
 				if (textChanged) {
-					if (showText) {
-						ti.setText(text);
-					}
-					else {
-						//TODO: this causes very large tool items with XP 
-						//using a manifest
+					String textToSet = showText ? text : ""; //$NON-NLS-1$
+					boolean rightStyle = (ti.getParent().getStyle() & SWT.RIGHT) != 0;
+					if (rightStyle || !ti.getText().equals(textToSet)) {
 						// In addition to being required to update the text if it
 						// gets nulled out in the action, this is also a workaround 
 						// for bug 50151: Using SWT.RIGHT on a ToolBar leaves blank space
-						//ti.setText(""); //$NON-NLS-1$
-				}
+						ti.setText(textToSet);
+					}
 				}
 
 				if (imageChanged) {
-				// only substitute a missing image if it has no text
+					// only substitute a missing image if it has no text
 					updateImages(!showText);
 				}
 
@@ -707,15 +704,8 @@ public class ActionContributionItem extends ContributionItem {
 					else {
 						ti.setToolTipText(null);
 					}
-
-					if (textChanged) {
-						if ((getMode() & MODE_FORCE_TEXT) != 0)
-							ti.setText(shortenText(action.getText(),ti));
-						else 
-							ti.setText(""); //$NON-NLS-1$
-					}
 				}
-						
+
 				if (enableStateChanged) {
 					boolean shouldBeEnabled = action.isEnabled() && isEnabledAllowed();
 
@@ -941,16 +931,21 @@ public class ActionContributionItem extends ContributionItem {
 
 		int maxWidth = item.getImage().getBounds().width * 4;
 		
-		if(gc.textExtent(textValue).x < maxWidth)
+		if(gc.textExtent(textValue).x < maxWidth) {
+			gc.dispose();
 			return textValue ;
+		}
 		
 		for (int i = textValue.length(); i > 0; i--) {
 			String test = textValue .substring(0, i);
 			test = test + ellipsis;
-			if(gc.textExtent(test).x < maxWidth)
+			if(gc.textExtent(test).x < maxWidth) {
+				gc.dispose();
 				return test ;
-		}
-		
+			}
+				
+		}	
+		gc.dispose();
 		//If for some reason we fall through abort
 		return textValue ;
 	}

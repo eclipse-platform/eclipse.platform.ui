@@ -15,6 +15,8 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
@@ -33,12 +35,15 @@ public class AssociatedWindow extends Window {
 	static final int TRACK_OUTER_TOP_RHS = 0;
 	static final int TRACK_INNER_TOP_RHS = 1;
 	static final int TRACK_INNER_BOTTOM_RHS = 2;
-	
+
 	private Control owner;
 	private ControlListener controlListener;
 	private int trackStyle;
+	// if the receiver has had to assume a different trackStyle the current may be different
+	// then the requested style.
+	int currentTrackStyle;
 	private int marginWidth;
-	
+
 	/**
 	 * Create a new instance of the receiver parented from parent and
 	 * associated with the owning Composite.
@@ -65,14 +70,18 @@ public class AssociatedWindow extends Window {
 	 * @param trackStyle
 	 *            The behaviour to use while tracking the associatedControl
 	 */
-	public AssociatedWindow(Shell parent, Control associatedControl, int trackStyle, int marginWidth) {
+	public AssociatedWindow(
+		Shell parent,
+		Control associatedControl,
+		int trackStyle,
+		int marginWidth) {
 		super(parent);
 		setShellStyle(SWT.NO_TRIM);
 		owner = associatedControl;
 		this.trackStyle = trackStyle;
 		this.marginWidth = marginWidth;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -93,18 +102,18 @@ public class AssociatedWindow extends Window {
 		return 70;
 	}
 
-	
 	/**
 	 * Move the shell based on the position of the owner.
 	 * 
 	 * @param shellToMove
 	 */
-	protected void moveShell(Shell shellToMove) {	
-		if(shellToMove.isDisposed())
+	protected void moveShell(Shell shellToMove) {
+
+		if (shellToMove == null || shellToMove.isDisposed())
 			return;
 		if (trackStyle == TRACK_OUTER_TOP_RHS) {
 			Point loc = getLocationOuterTopRHS(shellToMove);
-			
+
 			Rectangle displayRect = owner.getDisplay().getBounds();
 			Point shellSize = shellToMove.getSize();
 
@@ -114,24 +123,36 @@ public class AssociatedWindow extends Window {
 				// since top rhs is being used as a backup, we do not waste the 
 				// margin space in that case
 				loc.x += marginWidth;
-			}
-			
+				currentTrackStyle = TRACK_INNER_TOP_RHS;
+			} else
+				currentTrackStyle = TRACK_OUTER_TOP_RHS;
+			setShellRegion(currentTrackStyle);
 			shellToMove.setLocation(loc);
 			return;
 		}
-		
+
 		Point shellPosition = getParentShell().getLocation();
 		Point itemLocation = owner.getLocation();
 		itemLocation.x += shellPosition.x;
-		itemLocation.y += shellPosition.y;		
-		
-		Point size  =  shellToMove.getSize();
-		
-		Point windowLocation = new Point(itemLocation.x - size.x, itemLocation.y );
-		
+		itemLocation.y += shellPosition.y;
+
+		Point size = shellToMove.getSize();
+
+		Point windowLocation = new Point(itemLocation.x - size.x, itemLocation.y);
+
 		shellToMove.setLocation(windowLocation);
 	}
-	
+
+	/**
+	 * Allow subclasses to update the region based on the location that the shell will be 
+	 * drawn
+	 * 
+	 * @param currentTrackStyle2
+	 */
+	protected void setShellRegion(int trackStyle) {
+		// do nothing in base class
+
+	}
 
 	/**
 	 * Answer the location to position the receiver relative to the inner
@@ -145,7 +166,7 @@ public class AssociatedWindow extends Window {
 		Point size = shellToMove.getSize();
 		return new Point(loc.x + ownerSize.x - size.x - marginWidth, loc.y);
 	}
-	
+
 	/**
 	 * Answer the location to position the receiver relative to the outer
 	 * top right hand side of the owner
@@ -165,20 +186,38 @@ public class AssociatedWindow extends Window {
 	 * 
 	 * @param shell floatingShell
 	 */
-	private void associate(final Shell floatingShell) {
+	private void associate(Shell floatingShell) {
 
 		controlListener = new ControlListener() {
 			public void controlMoved(ControlEvent e) {
-				moveShell(floatingShell);
+				moveShell(getShell());
 			}
 
 			public void controlResized(ControlEvent e) {
-				moveShell(floatingShell);
+				moveShell(getShell());
 			}
 		};
 
 		owner.addControlListener(controlListener);
 		getParentShell().addControlListener(controlListener);
+
+		DisposeListener dl = new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+
+				Shell shell = getShell();
+				if (shell == null || shell.isDisposed())
+					return;
+
+				shell.removeDisposeListener(this);
+				shell.removeControlListener(controlListener);
+
+				if (e.widget.isDisposed()) {
+					owner = null;
+					shell.dispose();
+				}
+			}
+		};
+		owner.addDisposeListener(dl);
 
 		//set initial location
 		moveShell(floatingShell);
@@ -191,7 +230,7 @@ public class AssociatedWindow extends Window {
 		getParentShell().setTabList(newTab);
 
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#handleShellCloseEvent()
 	 */
@@ -199,10 +238,20 @@ public class AssociatedWindow extends Window {
 		super.handleShellCloseEvent();
 		owner.removeControlListener(controlListener);
 	}
-	
-	protected Control createContents(Composite parent) {
-		// TODO Auto-generated method stub
-		return super.createContents(parent);
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.window.Window#open()
+	 */
+	public int open() {
+		if (getShell() == null) {
+			// create the window
+			create();
+		}
+		// limit the shell size to the display size
+		constrainShellSize();
+		// open the window
+		getShell().setVisible(true);
+		return getReturnCode();
 	}
 
 }

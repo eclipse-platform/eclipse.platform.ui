@@ -1,7 +1,7 @@
 package org.eclipse.ui.internal;
 
 /******************************************************************************* 
- * Copyright (c) 2000, 2003 IBM Corporation and others. 
+ * Copyright (c) 2000, 2004 IBM Corporation and others. 
  * All rights reserved. This program and the accompanying materials! 
  * are made available under the terms of the Common Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder2;
+import org.eclipse.swt.custom.ViewForm2;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -25,6 +26,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
@@ -36,6 +38,7 @@ import org.eclipse.swt.widgets.ToolItem;
 
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.resource.JFaceColors;
@@ -66,16 +69,21 @@ import org.eclipse.ui.internal.dnd.DragUtil;
 public class ViewPane extends PartPane implements IPropertyListener {
 
 	private boolean fast = false;
+	// toolbars can be locked (i.e. part of the view form and 
+	// positioned inside it, or not locked (embedded in a floating
+	// toolbar that is not part of the view form
+	private boolean locked = false;
+
 	private ToolBar viewToolBar;
 	private ToolBarManager viewToolBarMgr;
 	ToolBar isvToolBar;
-	//ToolBar isvToolBar2;
 	private ToolBarManager isvToolBarMgr;
-	//private ToolBarManager isvToolBarMgr2;
-	//Shell isvToolBarShell;
 	private MenuManager isvMenuMgr;
 	private ToolItem pullDownButton;
-
+	private ToolItem lockToolBarButton;
+	
+	private ToolbarFloatingWindow floatingWindow;
+	
 	/**
 	 * Indicates whether a toolbar button is shown for the view local menu.
 	 */
@@ -128,6 +136,29 @@ public class ViewPane extends PartPane implements IPropertyListener {
 
 		public void fill(ToolBar toolbar, int index) {
 			showMenuButton = (isvMenuMgr != null && !isvMenuMgr.isEmpty());
+			
+			// if we have a toolbar then we want to support floating it
+			if (isvToolBarMgr != null) {
+				// create the button to allow for a floating toolbar
+				lockToolBarButton = new ToolItem(toolbar, SWT.CHECK, index++);
+				lockToolBarButton.setSelection(locked);
+				Image hoverImage =
+					WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_PIN_VIEW_HOVER);
+				lockToolBarButton.setDisabledImage(hoverImage);
+				// PR#1GE56QT - Avoid creation of unnecessary image.
+				lockToolBarButton.setImage(hoverImage);
+				//				pullDownButton.setHotImage(hoverImage);
+				lockToolBarButton.setToolTipText("Lock in View"); 
+				lockToolBarButton.addSelectionListener(new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent e) {
+						if (lockToolBarButton.getSelection() == locked)
+							return;
+						locked = lockToolBarButton.getSelection();
+						recreateToolbars();
+					}
+				});
+			}
+			
 			if (showMenuButton) {
 				pullDownButton = new ToolItem(toolbar, SWT.PUSH, index++);
 				//				Image img = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU);
@@ -204,15 +235,8 @@ public class ViewPane extends PartPane implements IPropertyListener {
 
 		super.createControl(parent);
 
-		// Only include the ISV toolbar and the content in the tab list.
-		// All actions on the System toolbar should be accessible on the pane menu.
-		if (control.getContent() == null) {
-			// content can be null if view creation failed
-			control.setTabList(new Control[] { isvToolBar , viewToolBar });
-		} else {
-			control.setTabList(new Control[] { viewToolBar, control.getContent()});
-		}
-
+		setTabList();
+		
 		DragUtil.addDragSource(control, new AbstractDragSource() {
 			
 			public Object getDraggedItem(Point position) {
@@ -230,6 +254,24 @@ public class ViewPane extends PartPane implements IPropertyListener {
 		});
 	}
 
+	/**
+	 * 
+	 */
+	private void setTabList() {
+		// Only include the ISV toolbar and the content in the tab list.
+		// All actions on the System toolbar should be accessible on the pane menu.
+		if (control.getContent() == null) {
+			// content can be null if view creation failed
+			if (locked)
+				control.setTabList(new Control[] { isvToolBar , viewToolBar });
+		} else {
+			if (locked)
+				control.setTabList(new Control[] { viewToolBar, control.getContent()});
+			else
+				control.setTabList(new Control[] {control.getContent()});
+		}
+	}
+	
 	protected void createChildControl() {
 		final IWorkbenchPart part[] = new IWorkbenchPart[] { partReference.getPart(false)};
 		if (part[0] == null)
@@ -270,10 +312,23 @@ public class ViewPane extends PartPane implements IPropertyListener {
 				//Just have it logged.
 			}
 		});
-
-		// adjust the size for the toolbar shell
-		//setToolBarShellPosition(true);
 	}
+
+	private void recreateToolbars() {
+		// remember the colors and set them later
+		Color color = isvToolBar.getBackground();
+		// create new toolbars based on the locked vs !locked state
+		createToolBars();
+		// set colors for toolbars after re-creating them
+		setToolBarColors(color);
+		// create new toolbars
+		updateActionBars();
+		
+		// the lock button in the receivers toolbar was selected so we know
+		// we are active
+		showFloatingWindow(true, true);
+	}	
+	
 	protected WorkbenchPart createErrorPart(WorkbenchPart oldPart) {
 		class ErrorViewPart extends ViewPart {
 			private Text text;
@@ -313,6 +368,19 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	}
 
 	/**
+	 * Create a floating shell used to contain the toolbar when it is 
+	 * not "locked" in the view.
+	 * 
+	 * @return a <code>ToolBarFloatingWindow</code> to contain the toolbar 
+	 */
+	private ToolbarFloatingWindow getFloatingWindow() {
+		if (floatingWindow != null) 
+			return floatingWindow;
+		
+		floatingWindow = new ToolbarFloatingWindow(getWorkbenchWindow().getShell(), this.getControl(), AssociatedWindow.TRACK_OUTER_TOP_RHS);
+		return floatingWindow;
+	}
+	/**
 	 * Create a title bar for the pane.
 	 * 	- the view icon and title to the far left
 	 *	- the view toolbar appears in the middle.
@@ -328,161 +396,78 @@ public class ViewPane extends PartPane implements IPropertyListener {
 		// Listen to title changes.
 		getPartReference().addPropertyListener(this);
 
-		// View toolbar
-		viewToolBar = new ToolBar(control, SWT.FLAT | SWT.WRAP);
-		control.setTopRight(viewToolBar);
-		viewToolBar.setBackground(JFaceColors.getTabFolderSelectionBackground(control.getDisplay()));
-		control.setBackground(JFaceColors.getTabFolderSelectionBackground(control.getDisplay()));
+		createToolBars();
+	
+	}
+	
+	/**
+	 * 
+	 */
+	private void createToolBars() {
+		Composite parentControl = control;
+		int barStyle = SWT.FLAT | SWT.WRAP;
+		if (!locked) {
+			parentControl = getFloatingWindow().getControl();
+			barStyle = barStyle | SWT.VERTICAL;
+		}
 		
-		viewToolBar.addMouseListener(new MouseAdapter() {
-			public void mouseDoubleClick(MouseEvent event) {
+		// View toolbar
+		viewToolBar = new ToolBar(parentControl, barStyle);
+		if (locked) {
+			((ViewForm2)parentControl).setTopRight(viewToolBar);
+			viewToolBar.addMouseListener(new MouseAdapter() {
+				public void mouseDoubleClick(MouseEvent event) {
+					if (viewToolBar.getItem(new Point(event.x, event.y)) == null)
+						doZoom();
+				}
+			});
+		} else {
+			viewToolBar.setLayoutData(new GridData(GridData.FILL_BOTH));	
+		}
+		
+		IContributionItem[] viewItems = null;
+		if (viewToolBarMgr != null) {
+			viewItems = viewToolBarMgr.getItems();
+			viewToolBarMgr.dispose();
+		}
+		
 				// 1GD0ISU: ITPUI:ALL - Dbl click on view tool cause zoom
-				if (viewToolBar.getItem(new Point(event.x, event.y)) == null)
-					doZoom();
-			}
-		});
 		viewToolBarMgr = new PaneToolBarManager(viewToolBar);
-		viewToolBarMgr.add(systemContribution);
+		if (viewItems != null && viewItems.length != 0) {
+			for (int i = 0; i < viewItems.length; i++) {
+				viewToolBarMgr.add(viewItems[i]);
+			}
+		} else
+			viewToolBarMgr.add(systemContribution);
 		
 		// ISV toolbar.
-		//isvToolBarShell = new Shell(control.getShell(), SWT.ON_TOP | SWT.NO_TRIM | SWT.NO_FOCUS);
-		//isvToolBarShell.setBackground(new Color(isvToolBarShell.getDisplay(), 255, 255, 255));
-		//isvToolBarShell.setTransparent(75);
-
-//		GridLayout layout = new GridLayout();
-//		layout.marginHeight = 1;
-//		layout.marginWidth = 1;
-//		isvToolBarShell.setLayout(layout);
-//		Composite composite = new Composite(isvToolBarShell, SWT.NONE);
-//		GridLayout layout2 = new GridLayout();
-//		layout2.marginHeight = 1;
-//		layout2.marginWidth = 1;
-//
-//		composite.setLayout(layout2);
-//		isvToolBar2 = new ToolBar(composite, SWT.VERTICAL | SWT.FLAT | SWT.WRAP);
-		//	isvToolBar2 = new ToolBar(control, SWT.FLAT | SWT.WRAP);
-
-		//	control.setTopCenter(isvToolBar2);
-
-		//	isvToolBar2.addMouseListener(new MouseAdapter(){
-		//		public void mouseDoubleClick(MouseEvent event) {
 		//			// 1GD0ISU: ITPUI:ALL - Dbl click on view tool cause zoom
-		//			if (isvToolBar2.getItem(new Point(event.x, event.y)) == null)
-		//				doZoom();
-		//		}
-		//	});
-		//	
-//		control.getShell().addControlListener(new ControlListener() {
-//
-//			public void controlMoved(ControlEvent e) {
-//				setToolBarShellPosition(false);
-//			}
-//
-//			public void controlResized(ControlEvent e) {
-//				// TODO Auto-generated method stub
-//			}
-//		});
-
-//		control.addControlListener(new ControlListener() {
-//
-//			public void controlMoved(ControlEvent e) {
-//				setToolBarShellPosition(false);
-//			}
-//
-//			public void controlResized(ControlEvent e) {
-//				setToolBarShellPosition(true);
-//			}
-//		});
-//
-//		control.getShell().addShellListener(new ShellListener() {
-//
-//			public void shellActivated(ShellEvent e) {
-//				//showToolBarShell();
-//			}
-//
-//			public void shellClosed(ShellEvent e) {
-//				//isvToolBarShell.dispose();
-//			}
-//
-//			public void shellDeactivated(ShellEvent e) {
-//				//hideToolBarShell();
-//			}
-//
-//			public void shellDeiconified(ShellEvent e) {
-//				//showToolBarShell();
-//			}
-//
-//			public void shellIconified(ShellEvent e) {
-//				//hideToolBarShell();
-//			}
-//		});
-
-	// ISV toolbar.
-	isvToolBar = new ToolBar(control, SWT.FLAT | SWT.WRAP);
-	control.setTopCenter(isvToolBar);
-	isvToolBar.setBackground(JFaceColors.getTabFolderSelectionBackground(control.getDisplay()));
-	isvToolBar.addMouseListener(new MouseAdapter(){
-		public void mouseDoubleClick(MouseEvent event) {
-			if (isvToolBar.getItem(new Point(event.x, event.y)) == null)
-				doZoom();
+		isvToolBar = new ToolBar(parentControl, barStyle);
+		if (locked) {
+			((ViewForm2)control).setTopCenter(isvToolBar);	
+			isvToolBar.addMouseListener(new MouseAdapter(){
+				public void mouseDoubleClick(MouseEvent event) {
+					if (isvToolBar.getItem(new Point(event.x, event.y)) == null)
+						doZoom();
+				}
+			});
+		} else {
+			isvToolBar.setLayoutData(new GridData(GridData.FILL_BOTH));
 		}
-	});
-	isvToolBarMgr = new PaneToolBarManager(isvToolBar);
-//		isvToolBarMgr2 = new PaneToolBarManager(isvToolBar2);
+		IContributionItem[] isvItems = null;
+		if (isvToolBarMgr != null) {
+			isvItems = isvToolBarMgr.getItems();
+			isvToolBarMgr.dispose();
+		}
+		isvToolBarMgr = new PaneToolBarManager(isvToolBar);
+		if (isvItems != null) {
+			for (int i = 0; i < isvItems.length; i++) {
+				isvToolBarMgr.add(isvItems[i]);
+			}
+		}
+		setTabList();
 	}
-
-//	/**
-//	 * Locate the floating shell according to the Panes size and location 
-//	 */
-//	void setToolBarShellPosition() {
-//		setToolBarShellPosition(true);
-//	}
-
-//	/**
-//	 * Locate the floating shell according to the Panes size and location 
-//	 */
-//	void setToolBarShellPosition(boolean resize) {
-//		// this should not be necessary if toolbars are static
-//		if (resize) {
-//			isvToolBarShell.setSize(isvToolBarShell.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-//		}
-//
-//		Control c = getControl();
-//		if (c == null)
-//			return;
-//		Point size = c.getSize();
-//		;
-//		if (size.x == 0 && size.y == 0)
-//			return;
-//
-//		Rectangle displayRect = c.getMonitor().getClientArea();
-//		Point p = c.toDisplay(0, 0);
-//		p.x += size.x;
-//		Point shellSize = isvToolBarShell.getSize();
-//		if (p.y + shellSize.y > displayRect.y + displayRect.height)
-//			p.y -= shellSize.y;
-//		isvToolBarShell.setLocation(p);
-//	}
-//
-//	/**
-//	 * Hide the toolbar shell.
-//	 */
-//	private void hideToolBarShell() {
-//		isvToolBarShell.setVisible(false);
-//	}
-//
-//	/**
-//	 * Show the toolbar shell if it has items in it.
-//	 */
-//	protected void showToolBarShell() {
-//		if (isvToolBar2.getItemCount() > 0) {
-//			Shell active = control.getDisplay().getActiveShell();
-//			if (active != null && active.equals(control.getShell()) && active.isVisible()) {
-//				isvToolBarShell.setVisible(true);
-//			}
-//		}
-//	}
-
+	
 	public void dispose() {
 		super.dispose();
 
@@ -496,12 +481,11 @@ public class ViewPane extends PartPane implements IPropertyListener {
 			isvMenuMgr.dispose();
 		if (isvToolBarMgr != null)
 			isvToolBarMgr.dispose();
-//		if (isvToolBarMgr2 != null)
-//			isvToolBarMgr2.dispose();
 		if (viewToolBarMgr != null)
 			viewToolBarMgr.dispose();
-//		if (isvToolBarShell != null)
-//			isvToolBarShell.dispose();
+		if (floatingWindow != null) {
+			floatingWindow.close();
+		}
 	}
 	/**
 	 * @see PartPane#doHide
@@ -569,7 +553,6 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	 */
 	public ToolBarManager getToolBarManager() {
 		return isvToolBarMgr;
-		//return isvToolBarMgr2;
 	}
 	/**
 	 * Answer the view part child.
@@ -629,18 +612,54 @@ public class ViewPane extends PartPane implements IPropertyListener {
 			((PartTabFolder) getContainer()).setActive(active);
 		}
 		if (active) {
-			Color color = WorkbenchColors.getSystemColor(SWT.COLOR_INFO_BACKGROUND);
-			getControl().setBackground(color);
-			viewToolBar.setBackground(color);
-			isvToolBar.setBackground(color);
+			setToolBarColors(WorkbenchColors.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 		} else {
-			Color color = JFaceColors.getTabFolderSelectionBackground(isvToolBar.getDisplay());
-			getControl().setBackground(color);
-			viewToolBar.setBackground(color);
-			isvToolBar.setBackground(color);
+			setToolBarColors(JFaceColors.getTabFolderSelectionBackground(isvToolBar.getDisplay()));
 		}
+		showFloatingWindow(active, false);
 	}
 
+	/**
+	 * @param color
+	 */
+	private void setToolBarColors(Color color) {
+		if (viewToolBar != null)
+			viewToolBar.setBackground(color);
+		isvToolBar.setBackground(color);
+		isvToolBar.getParent().setBackground(color);
+	}
+	/**
+	 * Ensure the visible/invisible state of the floating window matches the 
+	 * current locked/unlocked setting.
+	 * 
+	 * @param active <code>boolean</code> the view is currently the active view
+	 * @param lockChanged <code>boolean</code> has the state of locked/unlocked just 
+	 * 			been changed
+	 */
+	private void showFloatingWindow(boolean active, boolean lockChanged) {
+		// if we have a locked toolbar and the toolbar has not just 
+		// been locked then we have no floating window to worry about
+		if (locked & !lockChanged)
+			return;
+		// first time opening the floating shell, set bounds
+		if (lockChanged & !locked) {
+			getFloatingWindow().initializeBounds();
+			ViewForm2 vf = (ViewForm2)getControl();
+			vf.setTopCenter(null);
+			vf.setTopRight(null);
+			vf.layout();			
+		} else if (lockChanged && locked) {
+			((ViewForm2)getControl()).layout();
+		}
+		// active, then open the window, else close
+		if (active & !locked) {
+			getFloatingWindow().initializeBounds();
+			getFloatingWindow().open();
+		} else if (floatingWindow != null) {
+			getFloatingWindow().getShell().setVisible(false);
+		}		
+	}
+	
 	/**
 	 * Indicate focus in part.
 	 */
@@ -797,8 +816,7 @@ public class ViewPane extends PartPane implements IPropertyListener {
 			viewToolBarMgr.update(false);
 		if (isvToolBarMgr != null)
 			isvToolBarMgr.update(false);
-//		if (isvToolBarMgr2 != null)
-//			isvToolBarMgr2.update(false);
+
 	}
 	/**
 	 * Update the title attributes.
