@@ -156,6 +156,9 @@ protected boolean updateSelection(IStructuredSelection selection) {
 			else if (!targetResource.equals(resource.getParent()))
 				return false;
 		}
+	} else {
+		// no selection
+		return false;
 	}
 	if (targetResource != null && 
 		targetResource.getType() == IResource.FOLDER && 
