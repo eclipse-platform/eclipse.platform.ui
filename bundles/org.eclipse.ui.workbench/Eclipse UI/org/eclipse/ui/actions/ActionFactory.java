@@ -1202,6 +1202,8 @@ public abstract class ActionFactory {
     /**
      * Workbench action (id "helpSearch"): Open the help search. This action
      * is always enabled.
+     *  
+     * @since 3.1  
      */
     public static final ActionFactory HELP_SEARCH = new ActionFactory(
             "helpSearch") {//$NON-NLS-1$
@@ -1219,6 +1221,8 @@ public abstract class ActionFactory {
     /**
      * Workbench action (id "dynamicHelp"): Open the dynamic help. This action
      * is always enabled.
+     *
+     * @since 3.1
      */
     public static final ActionFactory DYNAMIC_HELP = new ActionFactory(
             "dynamicHelp") {//$NON-NLS-1$
