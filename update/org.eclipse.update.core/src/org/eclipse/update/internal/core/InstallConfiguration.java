@@ -7,7 +7,7 @@ import java.io.*;
 import java.net.URL;
 import java.util.*;
 
-import org.eclipse.core.boot.BootLoader2;
+import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
