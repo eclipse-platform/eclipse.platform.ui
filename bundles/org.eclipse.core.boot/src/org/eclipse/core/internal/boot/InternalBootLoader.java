@@ -258,27 +258,31 @@ public static String decode(String urlString) {
 		if (result != null)
 			return (String)result;
 	} catch (Exception e) {
-		//JDK 1.4 method not found or failed -- fall through to manual decode
+		//JDK 1.4 method not found -- fall through and decode by hand
 	}
 	//decode URL by hand
-	int len = urlString.length();
-	ByteArrayOutputStream os = new ByteArrayOutputStream(len);
-	for (int i = 0; i < len;) {
-		char c = urlString.charAt(i++);
-		if (c == '%') {
-			if (len >= i + 2) {
-				os.write(Integer.parseInt(urlString.substring(i, i + 2), 16));
-			}
-			i += 2;
-		} else {
-			os.write(c);
+	boolean replaced = false;
+	byte[] encodedBytes = urlString.getBytes();
+	int encodedLength = encodedBytes.length;
+	byte[] decodedBytes = new byte[encodedLength];
+	int decodedLength = 0;
+	for (int i = 0; i < encodedLength; i++) {
+		byte b = encodedBytes[i];
+		if (b == '%') {
+			byte enc1 = encodedBytes[++i];
+			byte enc2 = encodedBytes[++i];
+			b = (byte) ((hexToByte(enc1) << 4) + hexToByte(enc2));
+			replaced = true;
 		}
+		decodedBytes[decodedLength++] = b;
 	}
+	if (!replaced)
+		return urlString;
 	try {
-		return new String(os.toByteArray(), "UTF-8");//$NON-NLS-1$
+		return new String(decodedBytes, 0, decodedLength, "UTF-8");//$NON-NLS-1$
 	} catch (UnsupportedEncodingException e) {
 		//use default encoding
-		return new String(os.toByteArray());
+		return new String(decodedBytes, 0, decodedLength);
 	}
 }
 private static String[] getListOption(String option) {
@@ -462,6 +466,38 @@ public static IPlatformRunnable getRunnable(String pluginId, String className, O
  */
 public static String getWS() {
 	return ws;
+}
+/**
+ * Converts an ASCII character representing a hexadecimal
+ * value into its integer equivalent.
+ */
+private static int hexToByte(byte b) {
+	switch (b) {
+		case '0':return 0;
+		case '1':return 1;
+		case '2':return 2;
+		case '3':return 3;
+		case '4':return 4;
+		case '5':return 5;
+		case '6':return 6;
+		case '7':return 7;
+		case '8':return 8;
+		case '9':return 9;
+		case 'A':
+		case 'a':return 10;
+		case 'B':
+		case 'b':return 11;
+		case 'C':
+		case 'c':return 12;
+		case 'D':
+		case 'd':return 13;
+		case 'E':
+		case 'e':return 14;
+		case 'F':
+		case 'f':return 15;
+		default:
+			throw new IllegalArgumentException("Switch error decoding URL");
+	}
 }
 /**
  * @see BootLoader
