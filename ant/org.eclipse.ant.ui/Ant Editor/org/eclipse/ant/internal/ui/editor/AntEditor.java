@@ -25,8 +25,10 @@ import org.eclipse.ant.internal.ui.editor.text.AnnotationAccess;
 import org.eclipse.ant.internal.ui.editor.text.AntEditorDocumentProvider;
 import org.eclipse.ant.internal.ui.editor.text.IAntEditorColorConstants;
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
+import org.eclipse.ant.internal.ui.model.AntUtil;
 import org.eclipse.ant.internal.ui.model.IAntUIHelpContextIds;
 import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.ui.actions.IJavaEditorActionDefinitionIds;
 import org.eclipse.jface.action.IAction;
@@ -54,9 +56,12 @@ import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IPartService;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.editors.text.TextEditor;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.texteditor.ContentAssistAction;
 import org.eclipse.ui.texteditor.ExtendedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.IDocumentProvider;
@@ -313,15 +318,10 @@ public class AntEditor extends TextEditor {
     private void setSelection(AntElementNode reference, boolean moveCursor) {
         if (reference != null) {
         	if (reference.isExternal()) {
-        		while (!reference.isRootExternal() || (reference.getParentNode() != null && reference.getParentNode().isExternal())) {
-					//no possible selection for this external element
-					//find the root external entity actually in the document
-        			reference= reference.getParentNode();
-        		}
+        		return;
         	}
             
             StyledText  textWidget= null;
-            
             ISourceViewer sourceViewer= getSourceViewer();
             if (sourceViewer != null) {
                 textWidget= sourceViewer.getTextWidget();
@@ -493,6 +493,7 @@ public class AntEditor extends TextEditor {
 
 	public void openReferenceElement() {
 		ISelection selection= getSelectionProvider().getSelection();
+		String errorMessage= null;
 		if (selection instanceof ITextSelection) {
 			ITextSelection textSelection= (ITextSelection)selection;
 			String text= textSelection.getText();
@@ -500,10 +501,35 @@ public class AntEditor extends TextEditor {
 			if (node != null) {
 				setSelection(node, true);
 				return;
-			} 
+			} else {
+				String path= getAntModel().getEntityPath(text);
+				if (path != null) {
+					IFile file= AntUtil.getFileForLocation(path, null);
+					if (file.exists()) {
+						try {
+							openInEditor(file, isActivePart());
+							return;
+						} catch (PartInitException e) {
+							errorMessage= e.getLocalizedMessage();
+						}
+					}
+				}
+			}
 		}
-		setStatusLineErrorMessage(AntEditorMessages.getString("AntEditor.3")); //$NON-NLS-1$
+		if (errorMessage == null) {
+			errorMessage= AntEditorMessages.getString("AntEditor.3"); //$NON-NLS-1$
+		}
+		setStatusLineErrorMessage(errorMessage);
 		getSite().getShell().getDisplay().beep();
+	}
+	
+	private void openInEditor(IFile file, boolean activate) throws PartInitException {
+		if (file != null) {
+			IWorkbenchPage p= getEditorSite().getPage();
+			if (p != null) {
+				IDE.openEditor(p, file, activate);
+			}
+		}
 	}
 	
 	/* (non-Javadoc)

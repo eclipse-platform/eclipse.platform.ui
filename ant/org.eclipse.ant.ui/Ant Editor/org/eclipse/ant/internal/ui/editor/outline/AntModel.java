@@ -70,6 +70,8 @@ public class AntModel {
 	private Stack fStillOpenElements = new Stack();
 	
 	private Map fTaskToNode= new HashMap();
+	
+	private Map fEntityNameToPath;
 
 	private final Object fDirtyLock= new Object();
 	private boolean fIsDirty= true;
@@ -327,6 +329,10 @@ public class AntModel {
 				fProjectNode.addChildNode(taskNode);
 			} else {
 				fCurrentTargetNode.addChildNode(taskNode);
+				if (taskNode.isExternal()) {
+					fCurrentTargetNode.setExternal(true);
+					fCurrentTargetNode.setFilePath(taskNode.getFilePath());
+				}
 			}
 		} else {
 			((AntTaskNode)fTaskToNode.get(parentTask)).addChildNode(taskNode);
@@ -335,36 +341,44 @@ public class AntModel {
 		computeOffset(taskNode, line, column);
 	}
 	
+	public void addEntity(String entityName, String entityPath) {
+		if (fEntityNameToPath == null) {
+			fEntityNameToPath= new HashMap();
+		}
+		fEntityNameToPath.put(entityName, entityPath);
+	}
+
 	private AntTaskNode newTaskNode(Task newTask, Attributes attributes) {
+		AntTaskNode newNode= null;
 		String id= attributes.getValue("id"); //$NON-NLS-1$
 		String taskName= newTask.getTaskName();
 		if (taskName.equalsIgnoreCase("property")) { //$NON-NLS-1$
-			return new AntPropertyNode(newTask, attributes);
+			newNode= new AntPropertyNode(newTask, attributes);
 		} else if (taskName.equalsIgnoreCase("macrodef")  //$NON-NLS-1$
         		|| taskName.equalsIgnoreCase("presetdef")) { //$NON-NLS-1$
                     String name = attributes.getValue(IAntEditorConstants.ATTR_NAME);
-                    return new AntTaskNode(newTask, name);
+                    newNode= new AntTaskNode(newTask, name);
 		} else if(taskName.equalsIgnoreCase("antcall")) { //$NON-NLS-1$
-            return new AntTaskNode(newTask, generateLabel(taskName, attributes, IAntEditorConstants.ATTR_TARGET));
+            newNode= new AntTaskNode(newTask, generateLabel(taskName, attributes, IAntEditorConstants.ATTR_TARGET));
         } else if(taskName.equalsIgnoreCase("mkdir")) { //$NON-NLS-1$
-            return new AntTaskNode(newTask, generateLabel(taskName, attributes, IAntEditorConstants.ATTR_DIR));
+            newNode= new AntTaskNode(newTask, generateLabel(taskName, attributes, IAntEditorConstants.ATTR_DIR));
         } else if(taskName.equalsIgnoreCase("copy")) { //$NON-NLS-1$
-        	 return new AntTaskNode(newTask, generateLabel(taskName, attributes, IAntEditorConstants.ATTR_DESTFILE));
+        	 newNode= new AntTaskNode(newTask, generateLabel(taskName, attributes, IAntEditorConstants.ATTR_DESTFILE));
         } else if(taskName.equalsIgnoreCase("tar")  //$NON-NLS-1$
         	|| taskName.equalsIgnoreCase("jar") //$NON-NLS-1$
         	|| taskName.equalsIgnoreCase("war") //$NON-NLS-1$
         	|| taskName.equalsIgnoreCase("zip")) { //$NON-NLS-1$
-            return new AntTaskNode(newTask, generateLabel(newTask.getTaskName(), attributes, IAntEditorConstants.ATTR_DESTFILE));
+        	newNode= new AntTaskNode(newTask, generateLabel(newTask.getTaskName(), attributes, IAntEditorConstants.ATTR_DESTFILE));
         } else if(taskName.equalsIgnoreCase("untar")  //$NON-NLS-1$
         	|| taskName.equalsIgnoreCase("unjar") //$NON-NLS-1$
         	|| taskName.equalsIgnoreCase("unwar") //$NON-NLS-1$
         	|| taskName.equalsIgnoreCase("gunzip") //$NON-NLS-1$
         	|| taskName.equalsIgnoreCase("bunzip2") //$NON-NLS-1$
         	|| taskName.equalsIgnoreCase("unzip")) { //$NON-NLS-1$
-            return new AntTaskNode(newTask, generateLabel(newTask.getTaskName(), attributes, IAntEditorConstants.ATTR_SRC));
+        	newNode= new AntTaskNode(newTask, generateLabel(newTask.getTaskName(), attributes, IAntEditorConstants.ATTR_SRC));
         } else if(taskName.equalsIgnoreCase("gzip")  //$NON-NLS-1$
         		|| taskName.equalsIgnoreCase("bzip2")) { //$NON-NLS-1$
-        		return new AntTaskNode(newTask, generateLabel(newTask.getTaskName(), attributes, IAntEditorConstants.ATTR_ZIPFILE));
+        	newNode= new AntTaskNode(newTask, generateLabel(newTask.getTaskName(), attributes, IAntEditorConstants.ATTR_ZIPFILE));
         } else if(taskName.equalsIgnoreCase("exec")) { //$NON-NLS-1$
         	String label = "exec "; //$NON-NLS-1$
             String command = attributes.getValue(IAntEditorConstants.ATTR_COMMAND);
@@ -375,9 +389,8 @@ public class AntModel {
             if(command != null) {
             	label += command;
             }
-            return new AntTaskNode(newTask, label);        
+            newNode= new AntTaskNode(newTask, label);        
 		} else if(taskName.equalsIgnoreCase("delete")) { //$NON-NLS-1$
-			
         	String label = "delete "; //$NON-NLS-1$
             String file = attributes.getValue(IAntEditorConstants.ATTR_FILE);
             if(file != null) {
@@ -388,15 +401,23 @@ public class AntModel {
             		label+= file;
             	}
             }
-            return new AntTaskNode(newTask, label);
+            newNode= new AntTaskNode(newTask, label);
         	
         } else if(taskName.equalsIgnoreCase("import")) { //$NON-NLS-1$
-            return new AntTaskNode(newTask, generateLabel(taskName, attributes, IAntEditorConstants.ATTR_FILE)); //$NON-NLS-1$
+        	newNode= new AntTaskNode(newTask, generateLabel(taskName, attributes, IAntEditorConstants.ATTR_FILE)); //$NON-NLS-1$
+        } else {   
+        	newNode= new AntTaskNode(newTask);
+        	if (id != null) {
+        		newNode.setId(id);
+        	}
         }
-            
-		AntTaskNode newNode= new AntTaskNode(newTask);
-		if (id != null) {
-			newNode.setId(id);
+		
+		String taskFileName= newTask.getLocation().getFileName();
+		String fileName= fLocationProvider.getLocation().toOSString();
+		boolean external= !fileName.equals(taskFileName);
+		newNode.setExternal(external);
+		if (external) {
+			newNode.setFilePath(taskFileName);
 		}
 		return newNode;
 	}
@@ -412,47 +433,39 @@ public class AntModel {
 	}
 
 	private void computeLength(AntElementNode element, int line, int column) {
-		//if (element.isExternal() && !isTopLevelRootExternal) {
-		//	return;
-	//	}
+		if (element.isExternal()) {
+			return;
+		}
 		
 		try {
 			int length;
-		//	if (isTopLevelRootExternal) {
-		//		length= element.getName().length() + 2;
-		//	} else {
-				
-				int offset;
-				if (column <= 0) {
-					int lineOffset= getOffset(line, 1);
-					StringBuffer searchString= new StringBuffer("</"); //$NON-NLS-1$
-					searchString.append(element.getName());
-					searchString.append('>'); 
-					IRegion result= fFindReplaceAdapter.search(lineOffset, searchString.toString(), true, true, false, false); //$NON-NLS-1$
+			int offset;
+			if (column <= 0) {
+				int lineOffset= getOffset(line, 1);
+				StringBuffer searchString= new StringBuffer("</"); //$NON-NLS-1$
+				searchString.append(element.getName());
+				searchString.append('>'); 
+				IRegion result= fFindReplaceAdapter.search(lineOffset, searchString.toString(), true, true, false, false); //$NON-NLS-1$
+				if (result == null) {
+					result= fFindReplaceAdapter.search(lineOffset, "/>", true, true, false, false); //$NON-NLS-1$
 					if (result == null) {
-						result= fFindReplaceAdapter.search(lineOffset, "/>", true, true, false, false); //$NON-NLS-1$
-						if (result == null) {
-							offset= -1;
-						} else {
-							offset= result.getOffset() + 2;
-						}
+						offset= -1;
 					} else {
-						offset= result.getOffset() + searchString.length() - 1;
-					}
-					if (offset < 0 || getLine(offset) != line) {
-						offset= lineOffset;
-					} else {
-						offset++;
+						offset= result.getOffset() + 2;
 					}
 				} else {
-					offset= getOffset(line, column);
+					offset= result.getOffset() + searchString.length() - 1;
 				}
+				if (offset < 0 || getLine(offset) != line) {
+					offset= lineOffset;
+				} else {
+					offset++;
+				}
+			} else {
+				offset= getOffset(line, column);
+			}
 				
-				length= offset - element.getOffset();
-				
-				//lastExternalEntityOffset= offset - 1;
-			//}
- 			
+			length= offset - element.getOffset();
 			element.setLength(length);
 		} catch (BadLocationException e) {
 			//ignore as the parser may be out of sync with the document during reconciliation
@@ -466,36 +479,24 @@ public class AntModel {
 		
 		try {
 			int offset;
-//			if (isTopLevelRootExternal) {
-//				StringBuffer source= new StringBuffer();
-//				source.append('&');
-//				source.append(element.getName());
-//				source.append(';');
-//				IRegion result= findReplaceAdapter.search(lastExternalEntityOffset + 1, source.toString(), true, true, false, false);
-//				offset= result.getOffset();
-//				lastExternalEntityOffset= offset;
-//			} else {
-				String prefix= "<"; //$NON-NLS-1$
-				if (column <= 0) {
-					offset= getOffset(line, 0);
-					int lastCharColumn= getLastCharColumn(line);
-					String lineText= fDocument.get(fDocument.getLineOffset(line - 1), lastCharColumn);
-					int lastIndex= lineText.indexOf(prefix + element.getName());
-					if (lastIndex > -1) {
-						offset+= lastIndex + 1;
-					} else {
-						offset= getOffset(line, lastCharColumn);
-						IRegion result= fFindReplaceAdapter.search(offset - 1, prefix, false, false, false, false);
-						offset= result.getOffset();
-					}
-					//lastExternalEntityOffset= offset;
+			String prefix= "<"; //$NON-NLS-1$
+			if (column <= 0) {
+				offset= getOffset(line, 0);
+				int lastCharColumn= getLastCharColumn(line);
+				String lineText= fDocument.get(fDocument.getLineOffset(line - 1), lastCharColumn);
+				int lastIndex= lineText.indexOf(prefix + element.getName());
+				if (lastIndex > -1) {
+					offset+= lastIndex + 1;
 				} else {
-					offset= getOffset(line, column);
-					//lastExternalEntityOffset= offset - 1; 
+					offset= getOffset(line, lastCharColumn);
 					IRegion result= fFindReplaceAdapter.search(offset - 1, prefix, false, false, false, false);
 					offset= result.getOffset();
 				}
-		//	}
+			} else {
+				offset= getOffset(line, column);
+				IRegion result= fFindReplaceAdapter.search(offset - 1, prefix, false, false, false, false);
+				offset= result.getOffset();
+			}
  			
 			element.setOffset(offset + 1);
 			element.setSelectionLength(element.getName().length());
@@ -780,6 +781,30 @@ public class AntModel {
 		return (AntElementNode)fStillOpenElements.peek();
 	}
 
+	
+	public String getEntityPath(String entityName) {
+		if (fEntityNameToPath != null) {
+			return (String)fEntityNameToPath.get(entityName);
+		} 
+		return null;
+	}
+	
+	public String getEntityName(String path) {
+		if (fEntityNameToPath != null) {
+			Iterator itr= fEntityNameToPath.keySet().iterator();
+			String entityPath;
+			String name;
+			while (itr.hasNext()) {
+				name= (String) itr.next();
+				entityPath= (String) fEntityNameToPath.get(name);
+				if (entityPath.equals(path)) {
+					return name;
+				}
+			}
+		} 
+		return null;
+	}
+	
 	public String getPropertyValue(String propertyName) {
 		AntProjectNode projectNode= getProjectNode();
 		if (projectNode == null) {

@@ -197,13 +197,9 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ILabelProvider#getText(Object)
 		 */
-		public String getText(Object aNode) {
-			AntElementNode element= (AntElementNode) aNode;
-			StringBuffer displayName= new StringBuffer(element.getLabel());
-			if (element.isExternal() && (!element.isRootExternal() || (element.getParentNode() != null && element.getParentNode().isExternal()))) {
-				displayName.append(AntOutlineMessages.getString("AntEditorContentOutlinePage._[external]_1")); //$NON-NLS-1$
-			}
-			return displayName.toString();
+		public String getText(Object node) {
+			AntElementNode element= (AntElementNode) node;
+			return element.getLabel();
 		}
 
 		public Color getForeground(Object node) {
@@ -485,7 +481,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 	private void addOpenWithMenu(IMenuManager menuManager) {
 		IStructuredSelection selection= (IStructuredSelection)getSelection();
 		AntElementNode element= (AntElementNode)selection.getFirstElement();
-		String path = getElementPath(element);
+		String path = element.getFilePath();
 		if (path != null) {
 			IFile file= AntUtil.getFileForLocation(path, null);
 			if (file != null) {
@@ -516,18 +512,6 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		}
 		return false;
 	}
-
-	private String getElementPath(AntElementNode element) {
-		String path= element.getFilePath();
-		if (element.isRootExternal()){
-			List children= element.getChildNodes();
-			if (!children.isEmpty()) {
-				AntElementNode child= (AntElementNode)children.get(0);
-				path= child.getFilePath();
-			}
-		}
-		return path;
-	}
 	
 	private boolean shouldAddOpenWithMenu() {
 		ISelection iselection= getSelection();
@@ -538,18 +522,9 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 				if (selected instanceof AntElementNode) {
 					AntElementNode element= (AntElementNode)selected;
 					if (element.isExternal()) {
-						String path = getElementPath(element);
-						if (path.length() == 0) {
-							return false;
-						}
-						
-						AntElementNode parent= element.getParentNode();
-						while (parent != null) {
-							String parentPath= getElementPath(parent);
-							if (path != null && !path.equals(parentPath)) {
-								return true;
-							}
-							parent= parent.getParentNode();
+						String path = element.getFilePath();
+						if (path != null && path.length() > 0) {
+							return true;
 						}
 					}	
 				}

@@ -35,10 +35,15 @@ public class AntTargetNode extends AntElementNode {
 			setIsErrorNode(true);
 		}
 		
+		StringBuffer displayName= new StringBuffer(targetName);
 		if (isDefaultTarget()) {
-			targetName= targetName + AntModelMessages.getString("AntTargetNode.2"); //$NON-NLS-1$
+			displayName.append(AntModelMessages.getString("AntTargetNode.2")); //$NON-NLS-1$
 		}
-		return targetName;
+		if (isExternal()) {
+			appendEntityName(displayName);
+		}
+		
+		return displayName.toString();
 	}
 	
 	public Target getTarget() {

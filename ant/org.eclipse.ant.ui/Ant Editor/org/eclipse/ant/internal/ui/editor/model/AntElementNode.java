@@ -90,11 +90,6 @@ public class AntElementNode {
 	private boolean isExternal = false;
 	
 	/**
-	 * Whether this element is the root external element generated from an external entity definition
-	 */
-	private boolean isRootExternal = false;
-
-	/**
 	 * The unique (in the corresponding element tree) path of this element.
 	 */
 	private String fElementPath;
@@ -284,20 +279,6 @@ public class AntElementNode {
 		this.isExternal = isExternal;
 	}
 	
-	/**
-	 * Sets whether this xml element is the root external entity.
-	 */
-	public void setRootExternal(boolean isExternal) {
-		this.isRootExternal = isExternal;
-	}
-	
-	/**
-	 * Returns whether this xml element is the root external entity.
-	 */
-	public boolean isRootExternal() {
-		return isRootExternal;
-	}
-
 	private String getElementPath() {
 		if (fElementPath == null) {
 			StringBuffer buffer= new StringBuffer(getParentNode() != null ? getParentNode().getElementPath() : ""); //$NON-NLS-1$
@@ -451,5 +432,11 @@ public class AntElementNode {
 	 */
 	public void associatedProblem(IProblem problem) {
 		fProblem= problem;
+	}
+
+	protected void appendEntityName(StringBuffer displayName) {
+		String path= getFilePath();
+		String entityName= getAntModel().getEntityName(path);
+		displayName.append(MessageFormat.format(AntModelMessages.getString("AntElementNode.9"), new String[]{entityName})); //$NON-NLS-1$
 	}
 }

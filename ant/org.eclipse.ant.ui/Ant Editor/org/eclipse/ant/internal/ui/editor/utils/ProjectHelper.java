@@ -91,6 +91,7 @@ import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
+import org.xml.sax.ext.LexicalHandler;
 
 /**
  * Derived from the original Ant ProjectHelper2 class
@@ -110,8 +111,10 @@ public class ProjectHelper extends ProjectHelper2 {
 	 */
 	private File buildFile= null;
 	
+	private static String currentEntityName= null;
+	
 	/**
-	 * Helper for generating <code>IProblem</code>s
+	 * The Ant Model
 	 */
 	private static AntModel fAntModel;
 
@@ -119,6 +122,7 @@ public class ProjectHelper extends ProjectHelper2 {
 	private static AntHandler projectHandler = new ProjectHandler();
 	private static AntHandler targetHandler = new TargetHandler();
 	private static AntHandler mainHandler= new MainHandler();
+	private static LexicalHandler lexicalHandler= new LexHandler();
 	
 	public static class ElementHandler extends ProjectHelper2.ElementHandler {
 		
@@ -403,6 +407,16 @@ public class ProjectHelper extends ProjectHelper2 {
 		public void warning(SAXParseException e) {
 			fAntModel.warning(e);
 		}
+		/* (non-Javadoc)
+		 * @see org.xml.sax.EntityResolver#resolveEntity(java.lang.String, java.lang.String)
+		 */
+		public InputSource resolveEntity(String publicId, String systemId) {
+			InputSource source= super.resolveEntity(publicId, systemId);
+			
+			 String path = fu.fromURI(source.getSystemId());
+			 fAntModel.addEntity(currentEntityName, path);
+			return source;
+		}
 	 }
 	 
 	 private static class ErrorHelper {
@@ -419,6 +433,51 @@ public class ProjectHelper extends ProjectHelper2 {
 			} else {
 				fAntModel.errorFromElementText(e, start, count);
 			}
+		}
+	 }
+	 
+	 private static class LexHandler implements LexicalHandler {
+	 	/* (non-Javadoc)
+		 * @see org.xml.sax.ext.LexicalHandler#endCDATA()
+		 */
+		public void endCDATA() throws SAXException {
+		}
+
+		/* (non-Javadoc)
+		 * @see org.xml.sax.ext.LexicalHandler#endDTD()
+		 */
+		public void endDTD() throws SAXException {
+		}
+
+		/* (non-Javadoc)
+		 * @see org.xml.sax.ext.LexicalHandler#startCDATA()
+		 */
+		public void startCDATA() throws SAXException {
+		}
+
+		/* (non-Javadoc)
+		 * @see org.xml.sax.ext.LexicalHandler#comment(char[], int, int)
+		 */
+		public void comment(char[] ch, int start, int length) throws SAXException {
+		}
+
+		/* (non-Javadoc)
+		 * @see org.xml.sax.ext.LexicalHandler#endEntity(java.lang.String)
+		 */
+		public void endEntity(String name) throws SAXException {
+		}
+
+		/* (non-Javadoc)
+		 * @see org.xml.sax.ext.LexicalHandler#startEntity(java.lang.String)
+		 */
+		public void startEntity(String name) throws SAXException {
+			currentEntityName= name;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.xml.sax.ext.LexicalHandler#startDTD(java.lang.String, java.lang.String, java.lang.String)
+		 */
+		public void startDTD(String name, String publicId, String systemId) throws SAXException {	
 		}
 	 }
 	
@@ -471,6 +530,7 @@ public class ProjectHelper extends ProjectHelper2 {
             parser.setEntityResolver(handler);
             parser.setErrorHandler(handler);
             parser.setDTDHandler(handler);
+            parser.setProperty("http://xml.org/sax/properties/lexical-handler", lexicalHandler); //$NON-NLS-1$
             parser.parse(inputSource);
         } catch (SAXParseException exc) {
         	//ignore as we will be parsing incomplete source

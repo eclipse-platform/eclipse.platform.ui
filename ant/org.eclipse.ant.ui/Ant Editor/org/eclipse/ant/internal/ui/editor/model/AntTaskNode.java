@@ -37,14 +37,18 @@ public class AntTaskNode extends AntElementNode {
 	}	
 	
 	public String getLabel() {
+		StringBuffer label= new StringBuffer();
 		if (fLabel != null) {
-			return fLabel;
+			label.append(fLabel);
+		} else if (fId != null) {
+			label.append(fId);
+		} else {
+			label.append(fTask.getTaskName());
 		}
-		if (fId != null) {
-			return fId;
+		if (isExternal()) {
+			appendEntityName(label);
 		}
-		return fTask.getTaskName();
-		
+		return label.toString();
 	}
 	
 	public void setLabel(String label) {
