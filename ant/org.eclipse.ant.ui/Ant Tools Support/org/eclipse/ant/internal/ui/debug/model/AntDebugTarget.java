@@ -152,21 +152,21 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget {
 	 * @see org.eclipse.debug.core.model.ITerminate#canTerminate()
 	 */
 	public boolean canTerminate() {
-		return getProcess().canTerminate();
+		return !fTerminated;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ITerminate#isTerminated()
 	 */
 	public boolean isTerminated() {
-		return getProcess().isTerminated();
+		return fTerminated;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ITerminate#terminate()
 	 */
 	public void terminate() throws DebugException {
-		sendRequest(DebugMessageIds.TERMINATE);
+	    terminated();
 	}
 	
 	/* (non-Javadoc)
@@ -342,11 +342,12 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget {
 		fTerminated = true;
 		fSuspended = false;
 		DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(this);
-		try {
-            getProcess().terminate();
-        } catch (DebugException e) {
-          
-        }
+		if (!getProcess().isTerminated()) {
+		    try {
+		        getProcess().terminate();
+		    } catch (DebugException e) {       
+		    }
+		}
 		fireTerminateEvent();
 	}
 	

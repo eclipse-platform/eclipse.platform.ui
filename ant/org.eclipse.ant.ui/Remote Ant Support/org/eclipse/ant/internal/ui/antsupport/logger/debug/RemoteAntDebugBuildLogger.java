@@ -21,9 +21,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
+
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.Location;
-import org.apache.tools.ant.Target;
 import org.apache.tools.ant.Task;
 import org.eclipse.ant.internal.ui.antsupport.logger.RemoteAntBuildLogger;
 
@@ -49,7 +49,6 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 	protected boolean fShouldSuspend= false;
 	
 	private Stack fTasks= new Stack();
-	private Target fCurrentTarget;
 	private Task fCurrentTask;
 	private Task fStepOverTask;
 	private Task fLastTaskFinished;
@@ -202,46 +201,12 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.apache.tools.ant.BuildListener#targetStarted(org.apache.tools.ant.BuildEvent)
-	 */
-	public void targetStarted(BuildEvent event) {
-		super.targetStarted(event);
-		fCurrentTarget= event.getTarget();
-		if (fDebugMode) {
-			marshalMessage(-1, DebugMessageIds.TARGET_STARTED + fCurrentTarget.getName());
-		} else {
-			marshalMessage(-1, DebugMessageIds.TARGET_STARTED);
-		}
-		//waitIfSuspended();
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.apache.tools.ant.BuildListener#targetFinished(org.apache.tools.ant.BuildEvent)
-	 */
-	public void targetFinished(BuildEvent event) {
-		super.targetFinished(event);
-		fCurrentTarget= null;
-		if (fDebugMode) {
-			marshalMessage(-1, DebugMessageIds.TARGET_FINISHED + event.getTarget().getName());
-		} else {
-			marshalMessage(-1, DebugMessageIds.TARGET_FINISHED);
-		}
-		//waitIfSuspended();
-	}
-	
-	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.BuildListener#taskStarted(org.apache.tools.ant.BuildEvent)
 	 */
 	public void taskStarted(BuildEvent event) {
 		super.taskStarted(event);
 		fCurrentTask= event.getTask();
 		fTasks.push(fCurrentTask);
-		if (fDebugMode) {
-			marshalMessage(-1, DebugMessageIds.TASK_STARTED + fCurrentTask.getTaskName());
-		} else {
-			marshalMessage(-1, DebugMessageIds.TASK_STARTED);
-		}
-		
 		waitIfSuspended();
 	}
 	
@@ -252,11 +217,6 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 		super.taskFinished(event);
 		fLastTaskFinished= (Task)fTasks.pop();
 		fCurrentTask= null;
-		if (fDebugMode) {
-			marshalMessage(-1, DebugMessageIds.TASK_FINISHED + event.getTask().getTaskName());
-		} else {
-			marshalMessage(-1, DebugMessageIds.TASK_FINISHED);
-		}
 		waitIfSuspended();
 	}
 	
@@ -352,8 +312,8 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 	    propertiesRepresentation.append(DebugMessageIds.PROPERTIES);
 	    propertiesRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
 	    Map currentProperties= null;
-	    if (fCurrentTarget != null) {
-	        currentProperties= fCurrentTarget.getProject().getProperties();
+	    if (!fTasks.isEmpty()) {
+	        currentProperties= ((Task)fTasks.peek()).getProject().getProperties();
 	        
 	        if (fProperties != null && currentProperties.size() == fProperties.size()) {
 	            //no new properties

@@ -65,7 +65,7 @@ public class RemoteAntDebugBuildListener extends RemoteAntBuildListener {
 	
 	public RemoteAntDebugBuildListener(ILaunch launch) {
 		super(launch);
-		fDebug= true;
+		//fDebug= true;
 	}
 	
 	protected void receiveMessage(String message) {
@@ -73,47 +73,13 @@ public class RemoteAntDebugBuildListener extends RemoteAntBuildListener {
 			System.out.println(message);
 		}
 		if (message.startsWith(DebugMessageIds.BUILD_STARTED)) {
-			IProcess process= getProcess();
-			while(process == null) {
-				try {
-					synchronized (this) {
-						wait(400);
-					}
-					process= getProcess();
-				} catch (InterruptedException ie) {
-				}
-			}
-			fTarget= new AntDebugTarget(fLaunch, process, this);
-			fLaunch.addDebugTarget(fTarget);
-			
-			connectRequest();
-			
-			fTarget.buildStarted();
+			buildStarted();
 		} else if (message.startsWith(DebugMessageIds.BUILD_FINISHED)) {
 			fTarget.terminated();
-		} else if (message.startsWith(DebugMessageIds.TARGET_STARTED)){
-
-		} else if (message.startsWith(DebugMessageIds.TARGET_FINISHED)) {
-			
-		} else if (message.startsWith(DebugMessageIds.TASK_STARTED)){
-			
-		} else if (message.startsWith(DebugMessageIds.TASK_FINISHED)){
-			
 		} else if (message.startsWith(DebugMessageIds.SUSPENDED)){
-			if (message.endsWith(DebugMessageIds.CLIENT_REQUEST)) {
-				fTarget.suspended(DebugEvent.CLIENT_REQUEST);
-			} else if (message.endsWith(DebugMessageIds.STEP)) {
-				fTarget.suspended(DebugEvent.STEP_END);
-			} else if (message.indexOf(DebugMessageIds.BREAKPOINT) >= 0) {
-				fTarget.breakpointHit(message);
-			}
+			handleSuspendMessage(message);
 		} else if (message.startsWith(DebugMessageIds.RESUMED)){
-			if (message.endsWith(DebugMessageIds.STEP)) {
-				((AntThread)fTarget.getThreads()[0]).setStepping(true);
-				fTarget.resumed(DebugEvent.STEP_OVER);
-			} else if (message.endsWith(DebugMessageIds.CLIENT_REQUEST)) {
-				fTarget.resumed(DebugEvent.CLIENT_REQUEST);
-			}
+			handleResumeMessage(message);
 		} else if (message.startsWith(DebugMessageIds.TERMINATED)){
 			fTarget.terminated();
 		} else if (message.startsWith(DebugMessageIds.STACK)){
@@ -131,7 +97,45 @@ public class RemoteAntDebugBuildListener extends RemoteAntBuildListener {
 		}
 	}
 	
-	private void connectRequest() {
+	private void handleResumeMessage(String message) {
+        if (message.endsWith(DebugMessageIds.STEP)) {
+        	((AntThread)fTarget.getThreads()[0]).setStepping(true);
+        	fTarget.resumed(DebugEvent.STEP_OVER);
+        } else if (message.endsWith(DebugMessageIds.CLIENT_REQUEST)) {
+        	fTarget.resumed(DebugEvent.CLIENT_REQUEST);
+        }
+    }
+
+    private void handleSuspendMessage(String message) {
+        if (message.endsWith(DebugMessageIds.CLIENT_REQUEST)) {
+        	fTarget.suspended(DebugEvent.CLIENT_REQUEST);
+        } else if (message.endsWith(DebugMessageIds.STEP)) {
+        	fTarget.suspended(DebugEvent.STEP_END);
+        } else if (message.indexOf(DebugMessageIds.BREAKPOINT) >= 0) {
+        	fTarget.breakpointHit(message);
+        }
+    }
+
+    private void buildStarted() {
+        IProcess process= getProcess();
+        while(process == null) {
+        	try {
+        		synchronized (this) {
+        			wait(400);
+        		}
+        		process= getProcess();
+        	} catch (InterruptedException ie) {
+        	}
+        }
+        fTarget= new AntDebugTarget(fLaunch, process, this);
+        fLaunch.addDebugTarget(fTarget);
+        
+        connectRequest();
+        
+        fTarget.buildStarted();
+    }
+
+    private void connectRequest() {
 		try {
 			fRequestSocket = new Socket("localhost", fRequestPort); //$NON-NLS-1$
 			fRequestWriter = new PrintWriter(fRequestSocket.getOutputStream(), true);
