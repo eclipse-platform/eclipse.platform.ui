@@ -53,7 +53,6 @@ import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.internal.dnd.AbstractDragSource;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.skins.IPresentablePart;
-import org.eclipse.ui.internal.skins.newlook.PresentableViewPart;
 import org.eclipse.ui.internal.themes.IThemeDescriptor;
 import org.eclipse.ui.internal.themes.WorkbenchThemeManager;
 import org.eclipse.ui.internal.util.Util;
@@ -195,38 +194,38 @@ public class ViewPane extends PartPane implements IPropertyListener {
 			}
 
 			// check the current internal fast view state
-			if (fast) {
-				ToolItem dockButton = new ToolItem(toolbar, SWT.CHECK, index++);
-				dockButton.setSelection(true);
-				//				Image img = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_PIN_VIEW);
-				Image hoverImage =
-					WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_PIN_VIEW_HOVER);
-				dockButton.setDisabledImage(hoverImage);
-				// PR#1GE56QT - Avoid creation of unnecessary image.
-				dockButton.setImage(hoverImage);
-				//				dockButton.setHotImage(hoverImage);
-				dockButton.setToolTipText(WorkbenchMessages.getString("ViewPane.pin")); //$NON-NLS-1$
-				dockButton.addSelectionListener(new SelectionAdapter() {
-					public void widgetSelected(SelectionEvent e) {
-						doDock();
-					}
-				});
-
-				ToolItem minimizeButton = new ToolItem(toolbar, SWT.PUSH, index++);
-				//				img = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_MIN_VIEW);
-				hoverImage =
-					WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_MIN_VIEW_HOVER);
-				minimizeButton.setDisabledImage(hoverImage);
-				// PR#1GE56QT - Avoid creation of unnecessary image.
-				minimizeButton.setImage(hoverImage);
-				//				minimizeButton.setHotImage(img);
-				minimizeButton.setToolTipText(WorkbenchMessages.getString("ViewPane.minimize")); //$NON-NLS-1$
-				minimizeButton.addSelectionListener(new SelectionAdapter() {
-					public void widgetSelected(SelectionEvent e) {
-						doMinimize();
-					}
-				});
-			}
+//			if (fast) {
+//				ToolItem dockButton = new ToolItem(toolbar, SWT.CHECK, index++);
+//				dockButton.setSelection(true);
+//				//				Image img = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_PIN_VIEW);
+//				Image hoverImage =
+//					WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_PIN_VIEW_HOVER);
+//				dockButton.setDisabledImage(hoverImage);
+//				// PR#1GE56QT - Avoid creation of unnecessary image.
+//				dockButton.setImage(hoverImage);
+//				//				dockButton.setHotImage(hoverImage);
+//				dockButton.setToolTipText(WorkbenchMessages.getString("ViewPane.pin")); //$NON-NLS-1$
+//				dockButton.addSelectionListener(new SelectionAdapter() {
+//					public void widgetSelected(SelectionEvent e) {
+//						doDock();
+//					}
+//				});
+//
+//				ToolItem minimizeButton = new ToolItem(toolbar, SWT.PUSH, index++);
+//				//				img = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_MIN_VIEW);
+//				hoverImage =
+//					WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_MIN_VIEW_HOVER);
+//				minimizeButton.setDisabledImage(hoverImage);
+//				// PR#1GE56QT - Avoid creation of unnecessary image.
+//				minimizeButton.setImage(hoverImage);
+//				//				minimizeButton.setHotImage(img);
+//				minimizeButton.setToolTipText(WorkbenchMessages.getString("ViewPane.minimize")); //$NON-NLS-1$
+//				minimizeButton.addSelectionListener(new SelectionAdapter() {
+//					public void widgetSelected(SelectionEvent e) {
+//						doMinimize();
+//					}
+//				});
+//			}
 
 //			TODO: RCP will need a close button when views have a titlebar and no tabs etc..
 //			need to figure out how to query this combination			
@@ -616,12 +615,12 @@ public class ViewPane extends PartPane implements IPropertyListener {
 		
 		getPage().addFastView(getViewReference());
 	}
-	/**
-	 * Hide the fast view
-	 */
-	protected void doMinimize() {
-		getPage().toggleFastView(getViewReference());
-	}
+//	/**
+//	 * Hide the fast view
+//	 */
+//	protected void doMinimize() {
+//		getPage().toggleFastView(getViewReference());
+//	}
 	/**
 	 * Pin the view.
 	 */
@@ -863,16 +862,16 @@ public class ViewPane extends PartPane implements IPropertyListener {
 		});
 		item.setSelection(isFastView);
 
-		if (isFastView) {
-			item = new MenuItem(parent, SWT.NONE);
-			item.setText(WorkbenchMessages.getString("ViewPane.minimizeView")); //$NON-NLS-1$
-			item.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					doMinimize();
-				}
-			});
-			item.setEnabled(true);
-		}
+//		if (isFastView) {
+//			item = new MenuItem(parent, SWT.NONE);
+//			item.setText(WorkbenchMessages.getString("ViewPane.minimizeView")); //$NON-NLS-1$
+//			item.addSelectionListener(new SelectionAdapter() {
+//				public void widgetSelected(SelectionEvent e) {
+//					doMinimize();
+//				}
+//			});
+//			item.setEnabled(true);
+//		}
 	}
 	}
 	/**
@@ -1155,14 +1154,19 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	 * Answer the SWT widget style.
 	 */
 	int getStyle() {
-		if (theme == null) {
-			return super.getStyle();
-		}
+
+		int style = super.getStyle();
+		
 		// @issue even if there is a style, it may still be a function of whether the
 		//   container allows a border
-		return WorkbenchThemeManager.getInstance().getViewBorderStyle(
-			theme,
-			IThemeDescriptor.VIEW_BORDER_STYLE);
+		if (hasBorder() && (theme != null)) {
+			
+			style |= WorkbenchThemeManager.getInstance().getViewBorderStyle(
+					theme,
+					IThemeDescriptor.VIEW_BORDER_STYLE);
+		};
+		
+		return style;
 	}
 
 	/**
