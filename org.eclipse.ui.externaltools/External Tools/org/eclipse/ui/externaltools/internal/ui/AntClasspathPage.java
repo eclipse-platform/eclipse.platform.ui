@@ -1,35 +1,40 @@
 package org.eclipse.ui.externaltools.internal.ui;
 
 /**********************************************************************
-Copyright (c) 2002 IBM Corp. and others.
-All rights reserved.   This program and the accompanying materials
-are made available under the terms of the Common Public License v0.5
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v05.html
- 
-Contributors:
+http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
-import java.net.*;
+
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.externaltools.internal.core.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.ui.externaltools.internal.core.ExternalToolsPlugin;
+import org.eclipse.ui.externaltools.internal.core.ToolMessages;
 
 /**
- * A widget group for the jars tab of the ant classpath preference page.
+ * A widget group for the classpath tab of the ant preference page.
  */
-public class ClasspathPage extends AntPage {
+public class AntClasspathPage extends AntPage {
 	//button constants
 	private static final int ADD_JAR_BUTTON = IDialogConstants.CLIENT_ID + 1;
-	private static final int ADD_FOLDER_BUTTON =
-		IDialogConstants.CLIENT_ID + 2;
+	private static final int ADD_FOLDER_BUTTON =IDialogConstants.CLIENT_ID + 2;
 	private static final int REMOVE_BUTTON = IDialogConstants.CLIENT_ID + 3;
-
-	public ClasspathPage() {
+	
+	public AntClasspathPage() {
 	}
+	
 	/**
 	 * @see CustomizeAntPage#addButtonsToButtonGroup(Composite)
 	 */
@@ -39,6 +44,7 @@ public class ClasspathPage extends AntPage {
 		createSeparator(parent);
 		createButton(parent, "ClasspathPage.removeButtonTitle", REMOVE_BUTTON); //$NON-NLS-1$;
 	}
+	
 	private void addFolderButtonPressed() {
 		DirectoryDialog dialog =
 			new DirectoryDialog(tableViewer.getControl().getShell());
@@ -51,6 +57,7 @@ public class ClasspathPage extends AntPage {
 			}
 		}
 	}
+	
 	private void addJarButtonPressed() {
 		FileDialog dialog = new FileDialog(tableViewer.getControl().getShell());
 		dialog.setFilterExtensions(new String[] { "*.jar" }); //$NON-NLS-1$;
@@ -63,6 +70,7 @@ public class ClasspathPage extends AntPage {
 			}
 		}
 	}
+	
 	/**
 	 * @see CustomizeAntPage#buttonPressed(int)
 	 */
@@ -79,6 +87,7 @@ public class ClasspathPage extends AntPage {
 				break;
 		}
 	}
+	
 	/**
 	 * Creates and returns a tab item that contains this widget group.
 	 */
@@ -102,5 +111,4 @@ public class ClasspathPage extends AntPage {
 
 		return item;
 	}
-
 }

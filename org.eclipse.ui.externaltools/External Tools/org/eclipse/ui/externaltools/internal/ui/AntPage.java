@@ -1,30 +1,37 @@
 package org.eclipse.ui.externaltools.internal.ui;
 
 /**********************************************************************
-Copyright (c) 2002 IBM Corp. and others.
-All rights reserved.   This program and the accompanying materials
-are made available under the terms of the Common Public License v0.5
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v05.html
- 
-Contributors:
+http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
-import java.util.*;
 
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.externaltools.internal.core.ToolMessages;
-
-import org.eclipse.jface.dialogs.Dialog;
+import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.FontMetrics;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.ui.externaltools.internal.core.ToolMessages;
+
 /**
- * Abstract superclass for all tabs that contribute to the ant classpath
+ * Abstract superclass for all tabs that contribute to the ant
  * preference page.
  */
 public abstract class AntPage extends Object {
@@ -53,10 +60,7 @@ public abstract class AntPage extends Object {
 	 * @param labelKey The button text key, used to fetch the appropriate
 	 * message from the externalized catalog.
 	 */
-	protected Button createButton(
-		Composite parent,
-		String labelKey,
-		int buttonId) {
+	protected Button createButton(Composite parent, String labelKey, int buttonId) {
 		Button button = new Button(parent, SWT.PUSH);
 		button.setText(ToolMessages.getString(labelKey));
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
@@ -77,6 +81,7 @@ public abstract class AntPage extends Object {
 		button.addSelectionListener(selectionAdapter);
 		return button;
 	}
+	
 	protected void createButtonGroup(Composite top) {
 		Composite buttonGroup = new Composite(top, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -98,6 +103,7 @@ public abstract class AntPage extends Object {
 		separator.setLayoutData(gd);
 		return separator;
 	}
+	
 	protected void createTable(Composite parent) {
 		Table table =
 			new Table(parent, SWT.MULTI | SWT.FULL_SELECTION | SWT.BORDER);
@@ -116,34 +122,37 @@ public abstract class AntPage extends Object {
 	}
 
 	/**
-	 * Returns the currently listed objects in the table.  Returns null
+	 * Returns the currently listed objects in the table.  Returns <code>null</code>
 	 * if this widget has not yet been created or has been disposed.
 	 */
 	public List getContents() {
-		if (tableViewer == null || tableViewer.getControl().isDisposed())
+		if (tableViewer == null || tableViewer.getControl().isDisposed()) {
 			return null;
+		}
 		Object[] elements = contentProvider.getElements(tableViewer.getInput());
 		return Arrays.asList(elements);
 	}
+	
 	protected void removeButtonPressed() {
-		IStructuredSelection selection =
-			(IStructuredSelection) tableViewer.getSelection();
+		IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
 		Object[] selected = selection.toArray();
 		for (int i = 0; i < selected.length; i++) {
 			contentProvider.remove(selected[i]);
 		}
 	}
+	
 	/**
 	 * Sets the contents of the table on this page.  Has no effect
 	 * if this widget has not yet been created or has been disposed.
 	 */
 	public void setInput(List inputs) {
-		if (tableViewer == null || tableViewer.getControl().isDisposed())
+		if (tableViewer == null || tableViewer.getControl().isDisposed()) {
 			return;
+		}
 		tableViewer.setInput(inputs);
-		tableSelectionChanged(
-			(IStructuredSelection) tableViewer.getSelection());
+		tableSelectionChanged((IStructuredSelection) tableViewer.getSelection());
 	}
+	
 	/**
 	 * Subclasses may override to add behaviour when table selection changes.
 	 */
@@ -171,5 +180,4 @@ public abstract class AntPage extends Object {
 		createButtonGroup(top);
 		return top;
 	}
-
 }
