@@ -34,8 +34,12 @@ import org.eclipse.debug.ui.IDebugEditorPresentation;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IValueDetailListener;
+import org.eclipse.jface.viewers.IColorProvider;
+import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -47,7 +51,7 @@ import org.eclipse.ui.IEditorPart;
  * asked to render an object from a debug model, this presentation delegates
  * to the extension registered for that debug model. 
  */
-public class DelegatingModelPresentation implements IDebugModelPresentation, IDebugEditorPresentation {
+public class DelegatingModelPresentation implements IDebugModelPresentation, IDebugEditorPresentation, IColorProvider, IFontProvider {
 	
 	/**
 	 * A mapping of attribute ids to their values
@@ -343,4 +347,40 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 	protected void setLabelProviders(HashMap labelProviders) {
 		fLabelProviders = labelProviders;
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
+     */
+    public Color getForeground(Object element) {
+        IDebugModelPresentation presentation = getConfiguredPresentation(element);
+        if (presentation instanceof IColorProvider) {
+            IColorProvider colorProvider = (IColorProvider) presentation;
+            return colorProvider.getForeground(element);
+        }
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.Object)
+     */
+    public Color getBackground(Object element) {
+        IDebugModelPresentation presentation = getConfiguredPresentation(element);
+        if (presentation instanceof IColorProvider) {
+            IColorProvider colorProvider = (IColorProvider) presentation;
+            return colorProvider.getBackground(element);
+        }
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.viewers.IFontProvider#getFont(java.lang.Object)
+     */
+    public Font getFont(Object element) {
+        IDebugModelPresentation presentation = getConfiguredPresentation(element);
+        if (presentation instanceof IFontProvider) {
+            IFontProvider fontProvider = (IFontProvider) presentation;
+            return fontProvider.getFont(element);
+        }
+        return null;
+    }
 }

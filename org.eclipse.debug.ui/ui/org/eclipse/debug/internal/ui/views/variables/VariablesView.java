@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugTarget;
@@ -74,7 +75,6 @@ import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
-import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
@@ -128,7 +128,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	 * A decorating label provider which adds coloring to variables to
 	 * reflect their changed state
 	 */
-	protected class VariablesViewDecoratingLabelProvider extends DebugViewDecoratingLabelProvider implements IColorProvider {
+	protected class VariablesViewDecoratingLabelProvider extends DebugViewDecoratingLabelProvider {
 		
 		public VariablesViewDecoratingLabelProvider(StructuredViewer viewer, ILabelProvider provider, DebugViewLabelDecorator decorator) {
 			super(viewer, provider, decorator);
@@ -145,11 +145,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 					DebugUIPlugin.log(e);
 				}
 			}
-			return null;
-		}
-
-		public Color getBackground(Object element) {
-			return null;
+			return super.getForeground(element);
 		}
 	
 	}

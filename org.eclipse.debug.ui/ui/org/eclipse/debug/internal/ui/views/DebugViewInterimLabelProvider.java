@@ -11,8 +11,12 @@
 package org.eclipse.debug.internal.ui.views;
 
 import org.eclipse.debug.ui.IDebugModelPresentation;
+import org.eclipse.jface.viewers.IColorProvider;
+import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 
 /**
@@ -21,7 +25,7 @@ import org.eclipse.swt.graphics.Image;
  * queries a debug model presentation. This label provider is intended to be passed to
  * a <code>DebugViewDecoratingLabelProvider</code>.
  */
-public class DebugViewInterimLabelProvider implements ILabelProvider {
+public class DebugViewInterimLabelProvider implements ILabelProvider, IColorProvider, IFontProvider {
 
 	/**
 	 * The text label returned by this label provider (value: "...").
@@ -87,4 +91,37 @@ public class DebugViewInterimLabelProvider implements ILabelProvider {
 	public void removeListener(ILabelProviderListener listener) {
 		presentation.removeListener(listener);
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
+     */
+    public Color getForeground(Object element) {
+        if (presentation instanceof IColorProvider) {
+            IColorProvider colorProvider = (IColorProvider) presentation;
+            return colorProvider.getForeground(element);
+        }
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.Object)
+     */
+    public Color getBackground(Object element) {
+        if (presentation instanceof IColorProvider) {
+            IColorProvider colorProvider = (IColorProvider) presentation;
+            return colorProvider.getBackground(element);
+        }
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.viewers.IFontProvider#getFont(java.lang.Object)
+     */
+    public Font getFont(Object element) {
+        if (presentation instanceof IFontProvider) {
+            IFontProvider fontProvider = (IFontProvider) presentation;
+            return fontProvider.getFont(element);
+        }
+        return null;
+    }
 }
