@@ -1476,6 +1476,13 @@
       </perspective>
    </extension>
    <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+	  <perspectiveExtension 
+		 targetID="org.eclipse.ui.resourcePerspective">
+		 <showInPart id="org.eclipse.ui.views.ResourceNavigator"/>
+	  </perspectiveExtension>
+   </extension>
+   <extension
          point="org.eclipse.ui.importWizards">
       <wizard
             name="%ImportWizards.FileSystem"

@@ -1042,7 +1042,7 @@ private ArrayList getShowInIdsFromRegistry() {
 	PerspectiveExtensionReader reader = new PerspectiveExtensionReader();
 	reader.setIncludeOnlyTags(new String[] { PerspectiveExtensionReader.TAG_SHOW_IN_PART });
 	PageLayout layout = new PageLayout();
-	reader.extendLayout(descriptor.getId(), layout);
+	reader.extendLayout(descriptor.getOriginalId(), layout);
 	return layout.getShowInPartIds();
 }
 

@@ -13,6 +13,9 @@ Contributors:
 
 package org.eclipse.ui.internal.registry;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 
@@ -30,13 +33,15 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 public class PerspectiveExtensionReader extends RegistryReader {
 	private String targetID;
 	private PageLayout pageLayout;
-	private static final String TAG_EXTENSION="perspectiveExtension";//$NON-NLS-1$
-	private static final String TAG_ACTION_SET="actionSet";//$NON-NLS-1$
-	private static final String TAG_WIZARD_SHORTCUT="newWizardShortcut";//$NON-NLS-1$
-	private static final String TAG_VIEW_SHORTCUT="viewShortcut";//$NON-NLS-1$
-	private static final String TAG_PERSP_SHORTCUT="perspectiveShortcut";//$NON-NLS-1$
-	private static final String TAG_VIEW="view";//$NON-NLS-1$
-	private static final String TAG_SHOW_IN_PART="showInPart";//$NON-NLS-1$
+	private Set includeOnlyTags = null;  
+	
+	public static final String TAG_EXTENSION="perspectiveExtension";//$NON-NLS-1$
+	public static final String TAG_ACTION_SET="actionSet";//$NON-NLS-1$
+	public static final String TAG_WIZARD_SHORTCUT="newWizardShortcut";//$NON-NLS-1$
+	public static final String TAG_VIEW_SHORTCUT="viewShortcut";//$NON-NLS-1$
+	public static final String TAG_PERSP_SHORTCUT="perspectiveShortcut";//$NON-NLS-1$
+	public static final String TAG_VIEW="view";//$NON-NLS-1$
+	public static final String TAG_SHOW_IN_PART="showInPart";//$NON-NLS-1$
 	private static final String ATT_ID="id";//$NON-NLS-1$
 	private static final String ATT_TARGET_ID="targetID";//$NON-NLS-1$
 	private static final String ATT_RELATIVE="relative";//$NON-NLS-1$
@@ -69,6 +74,14 @@ public void extendLayout(String id, PageLayout out)
 		PlatformUI.PLUGIN_ID, 
 		IWorkbenchConstants.PL_PERSPECTIVE_EXTENSIONS);
 }
+
+/**
+ * Returns whether the given tag should be included.
+ */
+private boolean includeTag(String tag) {
+	return includeOnlyTags == null || includeOnlyTags.contains(tag);
+}
+
 /**
  * Process an action set.
  */
@@ -87,24 +100,26 @@ private boolean processExtension(IConfigurationElement element) {
 	for (int nX = 0; nX < children.length; nX ++) {
 		IConfigurationElement child = children[nX];
 		String type = child.getName();
-		boolean result = false;
-		if (type.equals(TAG_ACTION_SET))
-			result = processActionSet(child);
-		else if (type.equals(TAG_VIEW))
-			result = processView(child);
-		else if (type.equals(TAG_VIEW_SHORTCUT))
-			result = processViewShortcut(child);
-		else if (type.equals(TAG_WIZARD_SHORTCUT))
-			result = processWizardShortcut(child);
-		else if (type.equals(TAG_PERSP_SHORTCUT))
-			result = processPerspectiveShortcut(child);
-		else if (type.equals(TAG_SHOW_IN_PART))
-			result = processShowInPart(child);
-		if (!result) {
-			WorkbenchPlugin.log("Unable to process element: " +//$NON-NLS-1$
-				type +
-				" in perspective extension: " +//$NON-NLS-1$
-				element.getDeclaringExtension().getUniqueIdentifier());
+		if (includeTag(type)) { 
+			boolean result = false;
+			if (type.equals(TAG_ACTION_SET)) 
+				result = processActionSet(child);
+			else if (type.equals(TAG_VIEW))
+				result = processView(child);
+			else if (type.equals(TAG_VIEW_SHORTCUT))
+				result = processViewShortcut(child);
+			else if (type.equals(TAG_WIZARD_SHORTCUT))
+				result = processWizardShortcut(child);
+			else if (type.equals(TAG_PERSP_SHORTCUT))
+				result = processPerspectiveShortcut(child);
+			else if (type.equals(TAG_SHOW_IN_PART))
+				result = processShowInPart(child);
+			if (!result) {
+				WorkbenchPlugin.log("Unable to process element: " +//$NON-NLS-1$
+					type +
+					" in perspective extension: " +//$NON-NLS-1$
+					element.getDeclaringExtension().getUniqueIdentifier());
+			}
 		}
 	}
 	return true;
@@ -228,9 +243,7 @@ private boolean processWizardShortcut(IConfigurationElement element) {
 		pageLayout.addNewWizardShortcut(id);
 	return true;
 }
-/**
- * readElement method comment.
- */
+
 protected boolean readElement(IConfigurationElement element) {
 	String type = element.getName();
 	if (type.equals(TAG_EXTENSION)) {
@@ -240,5 +253,15 @@ protected boolean readElement(IConfigurationElement element) {
 		return true;
 	}
 	return false;
+}
+
+/**
+ * Sets the tags to include.  All others are ignored.
+ */
+public void setIncludeOnlyTags(String[] tags) {
+	includeOnlyTags = new HashSet();
+	for (int i = 0; i < tags.length; i++) {
+		includeOnlyTags.add(tags[i]);
+	}
 }
 }
