@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ActionExpression;
+import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.registry.RegistryReader;
 
 /**
@@ -26,13 +27,12 @@ import org.eclipse.ui.internal.registry.RegistryReader;
  * decorator descriptions from the registry
  */
 
-class DecoratorRegistryReader extends RegistryReader {
+public class DecoratorRegistryReader extends RegistryReader {
 
 	//The registry values are the ones read from the registry
-	static Collection values;
-	static Collection ids;
+	private Collection values = new ArrayList();;
+	private Collection ids = new HashSet();
 
-	private static final String EXTENSION_ID = "decorators"; //$NON-NLS-1$
 	/* package */ static final String ATT_CLASS = "class";//$NON-NLS-1$
 	private static final String ATT_LABEL = "label"; //$NON-NLS-1$
 	private static final String ATT_ADAPTABLE = "adaptable"; //$NON-NLS-1$
@@ -63,14 +63,14 @@ class DecoratorRegistryReader extends RegistryReader {
 	/**
 	 * Constructor for DecoratorRegistryReader.
 	 */
-	protected DecoratorRegistryReader() {
+	public DecoratorRegistryReader() {
 		super();
 	}
 
 	/*
 	 * @see RegistryReader#readElement(IConfigurationElement)
 	 */
-	protected boolean readElement(IConfigurationElement element) {
+	public boolean readElement(IConfigurationElement element) {
 
 		String name = element.getAttribute(ATT_LABEL);
 
@@ -155,9 +155,13 @@ class DecoratorRegistryReader extends RegistryReader {
 	 * up the registry values.
 	 */
 	Collection readRegistry(IPluginRegistry in) {
-		values = new ArrayList();
-		ids = new HashSet();
-		readRegistry(in, PlatformUI.PLUGIN_ID, EXTENSION_ID);
+		values.clear();
+		ids.clear();
+		readRegistry(in, PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_DECORATORS);
+		return values;
+	}
+	
+	public Collection getValues() {
 		return values;
 	}
 

@@ -82,6 +82,31 @@ public class DecoratorManager
 
 		scheduler = new DecorationScheduler(this);
 	}
+	
+	/**
+	 * For dynamic UI
+	 * 
+	 * @param definition the definition to add
+	 * @since 3.0
+	 */
+	public void addDecorator(DecoratorDefinition definition) {
+		if (definition.isFull()) {
+			if (getFullDecoratorDefinition(definition.getId()) == null) {
+				FullDecoratorDefinition [] oldDefs = fullDefinitions;
+				fullDefinitions = new FullDecoratorDefinition[fullDefinitions.length + 1];
+				System.arraycopy(oldDefs, 0, fullDefinitions, 0, oldDefs.length);
+				fullDefinitions[oldDefs.length] = (FullDecoratorDefinition) definition;
+				clearCaches();
+				updateForEnablementChange();
+			}
+		}
+		else {
+			if (getLightweightManager().addDecorator((LightweightDecoratorDefinition) definition)) {
+				clearCaches();
+				updateForEnablementChange();
+			}
+		}
+	}
 
 	/**
 	 * See if the supplied decorator cache has a value for the
@@ -371,7 +396,7 @@ public class DecoratorManager
 	 * enablement.
 	 */
 	public void clearCaches() {
-		cachedFullDecorators = new HashMap();
+		cachedFullDecorators.clear();
 		lightweightManager.reset();
 	}
 		

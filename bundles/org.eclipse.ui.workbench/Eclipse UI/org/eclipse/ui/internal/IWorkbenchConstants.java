@@ -41,6 +41,7 @@ public interface IWorkbenchConstants {
 	public static final String PL_THEMES ="themes"; //$NON-NLS-1$
 	public static final String PL_FONT_DEFINITIONS = "fontDefinitions"; //$NON-NLS-1$
 	public static final String PL_COLOR_DEFINITIONS = "colorDefinitions"; //$NON-NLS-1$
+	public static final String PL_DECORATORS = "decorators"; //$NON-NLS-1$
 		
 	/**
 	 * @deprecated
