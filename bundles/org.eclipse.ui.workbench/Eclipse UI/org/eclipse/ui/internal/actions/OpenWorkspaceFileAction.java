@@ -11,8 +11,6 @@ Contributors:
 
 package org.eclipse.ui.internal.actions;
 
-import java.util.ArrayList;
-
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.Action;
@@ -44,24 +42,6 @@ public OpenWorkspaceFileAction() {
 	WorkbenchHelp.setHelp(this, IHelpContextIds.OPEN_WORKSPACE_FILE_ACTION);
 }
 /**
- * Collect all resources in the workbench and add them to the <code>resources</code>
- * list.
- */
-private void collectFileResources(IContainer container, ArrayList resources) {
-	try {
-		IResource members[] = container.members();
-		for (int i = 0; i < members.length; i++){
-			IResource resource = members[i];
-			if (resource instanceof IFile)
-				resources.add(resource);
-			else 
-			if(resource instanceof IContainer)
-				collectFileResources((IContainer) resource, resources);
-		}
-	} catch (CoreException e) {
-	}
-}
-/**
  * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
  */
 public void dispose() {
@@ -80,14 +60,8 @@ public void init(IWorkbenchWindow window) {
 IFile queryFileResource() {
 	Shell parent = workbenchWindow.getShell();
 	IContainer input = ResourcesPlugin.getWorkspace().getRoot();
-	ArrayList files = new ArrayList();
-	
-	collectFileResources(input, files);
-	
-	IFile filesArray[] = new IFile[files.size()];
-	files.toArray(filesArray);
 		
-	OpenResourceDialog dialog = new OpenResourceDialog(parent, filesArray);	
+	OpenResourceDialog dialog = new OpenResourceDialog(parent, input, IResource.FILE);	
 	int resultCode = dialog.open();
 	if (resultCode != IDialogConstants.OK_ID)
 		return null;
