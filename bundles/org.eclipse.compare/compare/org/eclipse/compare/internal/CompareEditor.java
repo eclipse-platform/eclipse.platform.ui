@@ -150,7 +150,7 @@ public class CompareEditor extends EditorPart implements IPropertyChangeListener
 			}
 		};
 
-		Shell shell= getSite().getWorkbenchWindow().getShell();
+		Shell shell= getSite().getShell();
 		
 		try {
 			
@@ -161,11 +161,9 @@ public class CompareEditor extends EditorPart implements IPropertyChangeListener
 		} catch (InterruptedException x) {
 		} catch (OperationCanceledException x) {
 		} catch (InvocationTargetException x) {
-			//String title= getResourceString("Error.save.title");
-			//String msg= getResourceString("Error.save.message");
 			String title= Utilities.getString("CompareEditor.saveError.title"); //$NON-NLS-1$
-			String msg= Utilities.getString("CompareEditor.cantSaveError"); //$NON-NLS-1$
-			MessageDialog.openError(shell, title, msg + x.getTargetException().getMessage());
+			String reason= x.getTargetException().getMessage();
+			MessageDialog.openError(shell, title, Utilities.getFormattedString("CompareEditor.cantSaveError", reason));	//$NON-NLS-1$
 		}
 	}	
 		

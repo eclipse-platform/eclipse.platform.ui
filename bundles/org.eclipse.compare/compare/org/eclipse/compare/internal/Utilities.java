@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.MissingResourceException;
+import java.text.MessageFormat;
 
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.swt.widgets.Display;
@@ -251,12 +252,31 @@ public class Utilities {
 		return dfltValue;
 	}
 	
+	public static String getFormattedString(ResourceBundle bundle, String key, String arg) {
+		
+		if (bundle != null) {
+			try {
+				return MessageFormat.format(bundle.getString(key), new String[] { arg });
+			} catch (MissingResourceException x) {
+			}
+		}
+		return "!" + key + "!";//$NON-NLS-2$ //$NON-NLS-1$
+	}
+	
 	public static String getString(String key) {
 		try {
 			return CompareUIPlugin.getResourceBundle().getString(key);
 		} catch (MissingResourceException e) {
 			return "!" + key + "!";//$NON-NLS-2$ //$NON-NLS-1$
 		}
+	}
+	
+	public static String getFormattedString(String key, String arg) {
+		try{
+			return MessageFormat.format(CompareUIPlugin.getResourceBundle().getString(key), new String[] { arg });
+		} catch (MissingResourceException e) {
+			return "!" + key + "!";//$NON-NLS-2$ //$NON-NLS-1$
+		}	
 	}
 
 	public static String getString(ResourceBundle bundle, String key) {

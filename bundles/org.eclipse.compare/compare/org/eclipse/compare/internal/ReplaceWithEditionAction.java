@@ -6,17 +6,24 @@ package org.eclipse.compare.internal;
 
 import java.io.InputStream;
 import java.util.ResourceBundle;
+import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.IActionDelegate;
+
+
 import org.eclipse.compare.*;
 
 
@@ -51,18 +58,18 @@ public class ReplaceWithEditionAction implements IActionDelegate {
 		fSelection= s;
 	}
 
-	void replaceFromHistory(IFile file) {
+	void replaceFromHistory(final IFile file) {
 				
 		ResourceBundle bundle= ResourceBundle.getBundle(BUNDLE_NAME);
 		String title= Utilities.getString(bundle, "title"); //$NON-NLS-1$
 		
-		Shell parent= CompareUIPlugin.getShell();
+		Shell parentShell= CompareUIPlugin.getShell();
 		
 		IFileState states[]= null;
 		try {
 			states= file.getHistory(null);
 		} catch (CoreException ex) {		
-			MessageDialog.openError(parent, title, ex.getMessage());
+			MessageDialog.openError(parentShell, title, ex.getMessage());
 			return;
 		}
 		
@@ -74,21 +81,40 @@ public class ReplaceWithEditionAction implements IActionDelegate {
 			for (int i= 0; i < states.length; i++)
 				editions[i]= new HistoryItem(base, states[i]);
 
-			EditionSelectionDialog d= new EditionSelectionDialog(parent, bundle);
+			EditionSelectionDialog d= new EditionSelectionDialog(parentShell, bundle);
 
-			ITypedElement ti= d.selectEdition(base, editions, null);			
+			final ITypedElement ti= d.selectEdition(base, editions, null);			
 			if (ti instanceof IStreamContentAccessor) {
+								
+				WorkspaceModifyOperation operation= new WorkspaceModifyOperation() {
+					public void execute(IProgressMonitor pm) throws InvocationTargetException {
+						try {
+							pm.beginTask("Replacing", IProgressMonitor.UNKNOWN);
+							InputStream is= ((IStreamContentAccessor)ti).getContents();
+							file.setContents(is, false, true, pm);
+						} catch (CoreException e) {
+							throw new InvocationTargetException(e);
+						} finally {
+							pm.done();
+						}
+					}
+				};
+				
 				try {
-					InputStream is= ((IStreamContentAccessor)ti).getContents();
-					file.setContents(is, false, true, null);
-				} catch (CoreException ex) {
-					MessageDialog.openError(parent, title, ex.getMessage());
+					ProgressMonitorDialog pmdialog= new ProgressMonitorDialog(parentShell);				
+					pmdialog.run(false, true, operation);
+												
+				} catch (InterruptedException x) {
+					// Do nothing. Operation has been canceled by user.
+					
+				} catch (InvocationTargetException x) {
+					String reason= x.getTargetException().getMessage();
+					MessageDialog.openError(parentShell, title, Utilities.getFormattedString(bundle, "replaceError", reason));	//$NON-NLS-1$
 				}
 			}
 		} else {
 			String msg= Utilities.getString(bundle, "noLocalHistoryError"); //$NON-NLS-1$
-			MessageDialog.openInformation(parent, title, msg);
+			MessageDialog.openInformation(parentShell, title, msg);
 		}
 	}
 }
-

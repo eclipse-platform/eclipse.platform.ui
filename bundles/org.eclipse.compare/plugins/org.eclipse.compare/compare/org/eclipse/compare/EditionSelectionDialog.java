@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.HashSet;
+import java.util.Calendar;
 import java.io.InputStream;
 import java.text.*;
 
@@ -145,7 +146,6 @@ public class EditionSelectionDialog extends Dialog {
 		}
 	}
 	
-	private static final int ONE_DAY_MS= 86400 * 1000; // one day in milli seconds
 	private static final boolean HIDE_IDENTICAL= true;
 	
 	private Button fCommitButton;
@@ -241,7 +241,7 @@ public class EditionSelectionDialog extends Dialog {
 		
 		Assert.isNotNull(target);
 		fTargetPair= new Pair(target);
-
+		
 		// sort input editions
 		final int count= inputEditions.length;
 		final IModificationDate[] editions= new IModificationDate[count];
@@ -654,6 +654,19 @@ public class EditionSelectionDialog extends Dialog {
 	}
 	
 	/**
+	 * Returns the number of s since Jan 1st, 1970.
+	 * The given date is converted to GMT and daylight saving is taken into account too.
+	 */
+	private long dayNumber(long date) {
+		int ONE_DAY_MS= 24*60*60 * 1000; // one day in milli seconds
+		
+		Calendar calendar= Calendar.getInstance();
+		long localTimeOffset= calendar.get(Calendar.ZONE_OFFSET) + calendar.get(Calendar.DST_OFFSET);
+		
+		return (date + localTimeOffset) / ONE_DAY_MS;
+	}
+	
+	/**
 	 * Adds the given Pair to the edition tree.
 	 * It takes care of creating tree nodes for different dates.
 	 */
@@ -672,14 +685,14 @@ public class EditionSelectionDialog extends Dialog {
 		ITypedElement edition= pair.getEdition();
 		ITypedElement item= pair.getItem();
 		
-		long ldate= ((IModificationDate)edition).getModificationDate();
-		long day= ldate / ONE_DAY_MS;
+		long ldate= ((IModificationDate)edition).getModificationDate();		
+		long day= dayNumber(ldate);
 		Date date= new Date(ldate);
-		if (lastDay == null || day != ((Date)lastDay.getData()).getTime() / ONE_DAY_MS) {
+		if (lastDay == null || day != dayNumber(((Date)lastDay.getData()).getTime())) {
 			lastDay= new TreeItem(fEditionTree, SWT.NONE);
 			lastDay.setImage(fDateImage);
 			String df= DateFormat.getDateInstance().format(date);
-			long today= System.currentTimeMillis() / ONE_DAY_MS;
+			long today= dayNumber(System.currentTimeMillis());
 			
 			String formatKey;
 			if (day == today)

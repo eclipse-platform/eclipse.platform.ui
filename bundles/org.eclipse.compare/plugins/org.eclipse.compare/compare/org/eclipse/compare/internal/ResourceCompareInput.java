@@ -5,6 +5,7 @@
 package org.eclipse.compare.internal;
 
 import java.text.MessageFormat;
+import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.jface.viewers.ISelection;
 
@@ -129,11 +130,18 @@ class ResourceCompareInput extends CompareEditorInput {
 	/**
 	 * Performs a two-way or three-way diff on the current selection.
 	 */
-	public Object prepareInput(IProgressMonitor pm) {
+	public Object prepareInput(IProgressMonitor pm) throws InvocationTargetException {
 				
 		CompareConfiguration cc= (CompareConfiguration) getCompareConfiguration();
 	
-		try {									
+		try {
+			// fix for PR 1GFMLFB: ITPUI:WIN2000 - files that are out of sync with the file system appear as empty							
+			fLeftResource.refreshLocal(IResource.DEPTH_INFINITE, pm);
+			fRightResource.refreshLocal(IResource.DEPTH_INFINITE, pm);
+			if (fThreeWay && fAncestorResource != null)
+				fAncestorResource.refreshLocal(IResource.DEPTH_INFINITE, pm);
+			// end fix						
+				
 			pm.beginTask(Utilities.getString("ResourceCompare.taskName"), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
 
 			String leftLabel= fLeftResource.getName();
@@ -166,6 +174,8 @@ class ResourceCompareInput extends CompareEditorInput {
 			fRoot= d.findDifferences(fThreeWay, pm, null, fAncestor, fLeft, fRight);
 			return fRoot;
 			
+		} catch (CoreException ex) {
+			throw new InvocationTargetException(ex);
 		} finally {
 			pm.done();
 		}
