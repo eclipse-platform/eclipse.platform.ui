@@ -84,7 +84,7 @@ public class MultiInstallWizard2 extends Wizard {
 			public void run(IProgressMonitor monitor)
 				throws InvocationTargetException {
 				try {
-					MultiInstallWizard2.makeConfigurationCurrent(config, null);
+					UpdateManager.makeConfigurationCurrent(config, null);
 					execute(selectedJobs, monitor);
 				} catch (InstallAbortedException e) {
 					throw new InvocationTargetException(e);
@@ -234,35 +234,6 @@ public class MultiInstallWizard2 extends Wizard {
 			UpdateUI.logException(e);
 			return null;
 		}
-	}
-
-	public static void makeConfigurationCurrent(
-		IInstallConfiguration config,
-		PendingOperation job)
-		throws CoreException {
-		ILocalSite localSite = SiteManager.getLocalSite();
-		if (job != null && job.getJobType() == PendingOperation.INSTALL) {
-			if (job.getFeature().isPatch()) {
-				// Installing a patch - preserve the current configuration
-				IInstallConfiguration cconfig =
-					localSite.getCurrentConfiguration();
-				IInstallConfiguration savedConfig =
-					localSite.addToPreservedConfigurations(cconfig);
-				VersionedIdentifier vid =
-					job.getFeature().getVersionedIdentifier();
-				String key = "@" + vid.getIdentifier() + "_" + vid.getVersion();
-				String newLabel =
-					UpdateUI.getFormattedMessage(KEY_SAVED_CONFIG, key);
-				savedConfig.setLabel(newLabel);
-				UpdateManager.getOperationsManager().fireObjectChanged(savedConfig, null);
-			}
-		}
-		localSite.addConfiguration(config);
-	}
-
-	public static void saveLocalSite() throws CoreException {
-		ILocalSite localSite = SiteManager.getLocalSite();
-		localSite.save();
 	}
 
 	public boolean canFinish() {
