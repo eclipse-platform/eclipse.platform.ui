@@ -322,7 +322,6 @@ public final class BuilderPropertyPage extends PropertyPage {
 	private ICommand toBuildCommand(ILaunchConfiguration config, ICommand command) throws CoreException {
 		Map args= null;
 		if (isUnmigratedConfig(config)) {
-			ILaunchConfigurationWorkingCopy workingCopy= ((ILaunchConfigurationWorkingCopy) config);
 			// This config represents an old external tool builder that hasn't
 			// been edited. Try to find the old ICommand and reuse the arguments.
 			// The goal here is to not change the storage format of old, unedited builders.
@@ -1045,7 +1044,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 	 * @return whether the given config represents an unmigrated builder
 	 */
 	private boolean isUnmigratedConfig(ILaunchConfiguration config) {
-		return config instanceof ILaunchConfigurationWorkingCopy && ((ILaunchConfigurationWorkingCopy) config).getOriginal() == null;
+		return config.isWorkingCopy() && ((ILaunchConfigurationWorkingCopy) config).getOriginal() == null;
 	}
 
 	private void deleteConfigurations() {
