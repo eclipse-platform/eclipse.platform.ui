@@ -1618,7 +1618,8 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		memento.putInteger(IWorkbenchConstants.TAG_WIDTH, normalBounds.width);
 		memento.putInteger(IWorkbenchConstants.TAG_HEIGHT, normalBounds.height);
 
-		if (getActivePage().findView(IIntroConstants.INTRO_VIEW_ID) != null) {
+		IWorkbenchPage activePage = getActivePage();
+		if (activePage != null && activePage.findView(IIntroConstants.INTRO_VIEW_ID) != null) {
 			IMemento introMem = memento.createChild(IWorkbenchConstants.TAG_INTRO);
 			introMem.putString(
 			        IWorkbenchConstants.TAG_STANDBY, 

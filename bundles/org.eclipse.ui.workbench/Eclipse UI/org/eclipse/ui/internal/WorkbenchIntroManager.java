@@ -85,19 +85,6 @@ public class WorkbenchIntroManager implements IIntroManager {
 				}
 				
 				page.showView(IIntroConstants.INTRO_VIEW_ID);
-//				IPerspectiveDescriptor [] perspDescriptors = page.getOpenedPerspectives();
-//				for (int i = 0; i < perspDescriptors.length; i++) {
-//					IPerspectiveDescriptor descriptor = perspDescriptors[i];
-//					if (page.findPerspective(descriptor).containsView(viewPart)) {
-//						if (!page.getPerspective().equals(descriptor)) {
-//							page.setPerspective(descriptor);
-//						}
-//						break;
-//					}
-//				}
-//				
-//				page.getWorkbenchWindow().getShell().setActive();
-//				page.showView(IIntroConstants.INTRO_VIEW_ID);
 			} catch (PartInitException e) {
 				WorkbenchPlugin.log("Could not open intro", new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, IStatus.ERROR, "Could not open intro", e));	//$NON-NLS-1$ //$NON-NLS-2$
 			}
@@ -136,6 +123,8 @@ public class WorkbenchIntroManager implements IIntroManager {
 			return;
 		
 		WorkbenchPage workbenchPage = preferredWindow.getActiveWorkbenchPage();
+		if (workbenchPage == null)
+		    return;
 		try {
 			workbenchPage.showView(IIntroConstants.INTRO_VIEW_ID);			
 		} catch (PartInitException e) {

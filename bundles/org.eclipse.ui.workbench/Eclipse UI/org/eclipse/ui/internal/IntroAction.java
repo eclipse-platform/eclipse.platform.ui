@@ -18,7 +18,7 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.internal.intro.IntroMessages;
 
 /**
- * <em>EXPERIMENTAL</em>
+ * Action that will launch the intro in the given window.
  * 
  * @since 3.0
  */
@@ -45,6 +45,13 @@ public class IntroAction extends Action implements ActionFactory.IWorkbenchActio
 		workbenchWindow = null;
 	}
 
+	/* (non-Javadoc)
+     * @see org.eclipse.jface.action.IAction#isEnabled()
+     */
+    public boolean isEnabled() {
+        return workbenchWindow.getPages().length > 0;
+    }
+    
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
