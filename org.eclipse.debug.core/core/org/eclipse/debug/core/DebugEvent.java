@@ -16,8 +16,8 @@ import java.util.EventObject;
  * The following list defines the events generated for each debug
  * model element.
  * The <code>getSource()</code> method of a debug event
- * returns the debug model element associated with the
- * event. Creation events are guaranteed to occur in a top
+ * returns element associated with the event.
+ * Creation events are guaranteed to occur in a top
  * down order - that is, parents are created before children.
  * Termination events are guaranteed to occur in a bottom up order -
  * that is, children before parents. However, termination events are not guaranteed
@@ -167,7 +167,7 @@ public final class DebugEvent extends EventObject {
 	 * <code>UNSPECIFIED</code>.
 	 *
 	 * @param eventSource the object associated with the event
-	 * @param kind the kind of debug envent (one of the
+	 * @param kind the kind of debug event (one of the
 	 *	kind constants defined by this class)
 	 */
 	public DebugEvent(Object eventSource, int kind) {
@@ -178,7 +178,7 @@ public final class DebugEvent extends EventObject {
 	 * Constructs a new debug event of the given kind with the given detail.
 	 *
 	 * @param eventSource the object associated with the event
-	 * @param kind the kind of debug envent (one of the
+	 * @param kind the kind of debug event (one of the
 	 *	kind constants defined by this class)
 	 * @param detail extra information about the event (one of the
 	 *	detail constants defined by this class)
@@ -212,6 +212,5 @@ public final class DebugEvent extends EventObject {
 	public int getKind() {
 		return fKind;
 	}
-
 }
 
