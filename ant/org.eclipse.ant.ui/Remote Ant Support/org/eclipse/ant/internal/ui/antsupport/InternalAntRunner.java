@@ -132,7 +132,16 @@ public class InternalAntRunner {
     private boolean allowInput = true;
     
     public static void main(String[] args) {
-		new InternalAntRunner().run(getArrayList(args));
+    	try {
+    		new InternalAntRunner().run(getArrayList(args));
+    	} catch (Throwable t) {
+    		 String message = t.getMessage();
+	        if (message != null) {
+	            System.err.println(message);
+	        }
+    		System.exit(1);
+    	}
+		System.exit(0);
 	}
 
 	private void addBuildListeners(Project project) {
