@@ -39,10 +39,7 @@ public final class KeySequenceText {
                 
 	/** An empty string instance for use in clearing text values. */
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
-
-	/** The text of the key sequence -- containing only the complete key 
-	 * strokes.
-	 */
+	/** The text of the key sequence -- containing only the complete key strokes. */
 	private KeySequence keySequence = null;
 	/** The incomplete key stroke, if any. */
 	private KeyStroke temporaryStroke = null;
@@ -184,7 +181,7 @@ public final class KeySequenceText {
             dummySequence = KeySequence.getInstance(keyStrokes);
         }
 		
-		// TODO doug, why doesn't the following work? 
+		// TODO doug, why doesn't the following work on the mac? ask me about this one.. (chris) 
 		// text.setText("carbon".equals(SWT.getPlatform()) ? KeySupport.formatCarbon(dummySequence) : dummySequence.format());
 		text.setText(dummySequence.format());
         

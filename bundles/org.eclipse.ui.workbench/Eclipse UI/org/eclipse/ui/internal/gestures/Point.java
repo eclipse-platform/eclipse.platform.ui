@@ -23,7 +23,7 @@ public final class Point implements Comparable {
 	private transient boolean hashCodeComputed;
 	private transient String string;
 
-	Point(int x, int y) {
+	public Point(int x, int y) {
 		this.x = x;
 		this.y = y;
 	}

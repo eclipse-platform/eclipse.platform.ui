@@ -11,7 +11,7 @@
 
 package org.eclipse.ui.internal.gestures;
 
-public interface CaptureListener {
+public interface ICaptureListener {
 
 	void capture(CaptureEvent captureEvent);
 }

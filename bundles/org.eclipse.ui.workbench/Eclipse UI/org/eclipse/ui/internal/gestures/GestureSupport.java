@@ -34,14 +34,14 @@ public final class GestureSupport {
 			int dy = (y1 - y0) / sensitivity;
 
 			if (dx != 0 || dy != 0) {
-				if (dx > 0 && stroke != 'R')
-					sequence.append(stroke = 'R');
-				else if (dx < 0 && stroke != 'L')
-					sequence.append(stroke = 'L');
-				else if (dy > 0 && stroke != 'D')
-					sequence.append(stroke = 'D');
-				else if (dy < 0 && stroke != 'U')
-					sequence.append(stroke = 'U');
+				if (dx > 0 && stroke != 'E')
+					sequence.append(stroke = 'E');
+				else if (dx < 0 && stroke != 'W')
+					sequence.append(stroke = 'W');
+				else if (dy > 0 && stroke != 'S')
+					sequence.append(stroke = 'S');
+				else if (dy < 0 && stroke != 'N')
+					sequence.append(stroke = 'N');
 
 				x0 = x1;
 				y0 = y1;

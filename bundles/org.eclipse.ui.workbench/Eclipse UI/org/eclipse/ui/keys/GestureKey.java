@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.keys;
 
+
 /**
  * <p>
  * JAVADOC
@@ -21,12 +22,12 @@ package org.eclipse.ui.keys;
  * 
  * @since 3.0
  */
-public final class GestureKey extends NaturalKey {
+/*public*/ final class GestureKey extends NaturalKey {
 
-	public final static GestureKey EAST = new GestureKey("EAST"); 
-	public final static GestureKey NORTH = new GestureKey("NORTH"); 
-	public final static GestureKey SOUTH = new GestureKey("SOUTH"); 
-	public final static GestureKey WEST = new GestureKey("WEST"); 
+	/*public*/ final static GestureKey EAST = new GestureKey("EAST"); 
+	/*public*/ final static GestureKey NORTH = new GestureKey("NORTH"); 
+	/*public*/ final static GestureKey SOUTH = new GestureKey("SOUTH"); 
+	/*public*/ final static GestureKey WEST = new GestureKey("WEST"); 
 
 	private GestureKey(String name) {
 		super(name);
