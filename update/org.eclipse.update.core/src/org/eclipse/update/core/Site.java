@@ -3,60 +3,68 @@ package org.eclipse.update.core;
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
-import java.io.IOException;
+
 import java.net.URL;
 import java.util.*;
+
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.model.*;
-import org.eclipse.update.internal.core.*;
-
+import org.eclipse.update.internal.core.Policy;
+import org.eclipse.update.internal.core.UpdateManagerPlugin;
 
 /**
- * 
+ * Convenience implementation of a site.
+ * <p>
+ * This class may be instantiated or subclassed by clients.
+ * </p> 
+ * @see org.eclipse.update.core.ISite
+ * @see org.eclipse.update.core.model.SiteModel
+ * @since 2.0
  */
-public class Site extends SiteModel implements ISite{
+public class Site extends SiteModel implements ISite {
 
-
-	/** 
+	/**
+	 * Default installation path for features
 	 * 
+	 * @since 2.0
 	 */
-	private static final String PACKAGED_FEATURE_TYPE = "packaged"; //$NON-NLS-1$
-	private static final String INSTALLED_FEATURE_TYPE = "installed";	 //$NON-NLS-1$	
-
-	
-	/**
-	 * default path under the site where features will be installed
-	 */
-	public static final String DEFAULT_INSTALLED_FEATURE_PATH = "install/features/"; //$NON-NLS-1$
+	public static final String DEFAULT_INSTALLED_FEATURE_PATH = "install/features/";
+	//$NON-NLS-1$
 
 	/**
-	 * default path under the site where plugins will be installed
+	 * Default installation path for plug-ins and plug-in fragments
+	 * 
+	 * @since 2.0
 	 */
 	public static final String DEFAULT_PLUGIN_PATH = "plugins/"; //$NON-NLS-1$
 
-
 	/**
-	 * default path, under site, where featuresConfigured will be installed
+	 * Default path on a site where packaged features are located
+	 * 
+	 * @since 2.0
 	 */
 	public static final String DEFAULT_FEATURE_PATH = "features/"; //$NON-NLS-1$
 
 	/**
+	 * Default site manifest file name
 	 * 
+	 * @since 2.0
 	 */
 	public static final String SITE_FILE = "site"; //$NON-NLS-1$
-	
+
 	/**
+	 * Default site manifest extension
 	 * 
+	 * @since 2.0
 	 */
 	public static final String SITE_XML = SITE_FILE + ".xml"; //$NON-NLS-1$
 
 	
-	/**
-	 * The content provider of the Site
-	 */
+	private static final String PACKAGED_FEATURE_TYPE = "packaged"; //$NON-NLS-1$
+	private static final String INSTALLED_FEATURE_TYPE = "installed";
+	//$NON-NLS-1$	
 	private ISiteContentProvider siteContentProvider;
 
-	
 	/**
 	 * Constructor for Site
 	 */
@@ -65,7 +73,12 @@ public class Site extends SiteModel implements ISite{
 	}
 
 	/**
-	 * @see Object
+	 * Compares two sites for equality
+	 * 
+	 * @param object site object to compare with
+	 * @return <code>true</code> if the two sites are equal, 
+	 * <code>false</code> otherwise
+	 * @since 2.0
 	 */
 	public boolean equals(Object obj) {
 		if (!(obj instanceof ISite))
@@ -77,22 +90,11 @@ public class Site extends SiteModel implements ISite{
 		return getURL().equals(otherSite.getURL());
 	}
 	
-	/*
-	 * @see ISite#install(IFeature,IVerifier, IProgressMonitor)
-	 */
-	public IFeatureReference install(IFeature sourceFeature,IVerificationListener verificationListener, IProgressMonitor progress) throws CoreException {
-		throw new UnsupportedOperationException();
-	}
-
-	/*
-	 * @see ISite#remove(IFeature, IProgressMonitor)
-	 */
-	public void remove(IFeature feature, IProgressMonitor progress) throws CoreException {
-		throw new UnsupportedOperationException();
-	}
-
-	/*
+	/**
+	 * Returns the site URL
+	 * 
 	 * @see ISite#getURL()
+	 * @since 2.0
 	 */
 	public URL getURL() {
 		URL url = null;
@@ -104,38 +106,21 @@ public class Site extends SiteModel implements ISite{
 		return url;
 	}
 
-	/*
-	 * @see ISite#getFeatureReferences()
-	 */
-	public IFeatureReference[] getFeatureReferences() {
-		FeatureReferenceModel[] result = getFeatureReferenceModels();
-		if (result.length == 0)
-			return new IFeatureReference[0];
-		else
-			return (IFeatureReference[]) result;
-	}
-
-	/*
-	 * @see ISite#getArchives()
-	 */
-	public IArchiveReference[] getArchives() {
-		ArchiveReferenceModel[] result = getArchiveReferenceModels();
-		if (result.length == 0)
-			return new IArchiveReference[0];
-		else
-			return (IArchiveReference[]) result;
-	}
-	
-	
 	/**
-	 * @see ISite#getDefaultInstallableFeatureType()
+	 * Returns the site description.
+	 * 
+	 * @see ISite#getDescription()
+	 * @since 2.0
 	 */
-	public String getDefaultPackagedFeatureType() {
-		return DEFAULT_PACKAGED_FEATURE_TYPE;
+	public IURLEntry getDescription() {
+		return (IURLEntry) getDescriptionModel();
 	}
 
-	/*
+	/**
+	 * Returns an array of categories defined by the site.
+	 * 
 	 * @see ISite#getCategories()
+	 * @since 2.0
 	 */
 	public ICategory[] getCategories() {
 		CategoryModel[] result = getCategoryModels();
@@ -145,8 +130,11 @@ public class Site extends SiteModel implements ISite{
 			return (ICategory[]) result;
 	}
 
-	/*
+	/**
+	 * Returns the named site category.
+	 * 
 	 * @see ISite#getCategory(String)
+	 * @since 2.0
 	 */
 	public ICategory getCategory(String key) {
 		ICategory result = null;
@@ -162,89 +150,39 @@ public class Site extends SiteModel implements ISite{
 		}
 
 		//DEBUG:
-		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS && !found) {
-			UpdateManagerPlugin.getPlugin().debug(Policy.bind("Site.CannotFindCategory", key, this.getURL().toExternalForm())); //$NON-NLS-1$ //$NON-NLS-2$
+		if (UpdateManagerPlugin.DEBUG
+			&& UpdateManagerPlugin.DEBUG_SHOW_WARNINGS
+			&& !found) {
+			UpdateManagerPlugin.getPlugin().debug(
+				Policy.bind("Site.CannotFindCategory", key, this.getURL().toExternalForm()));
+			//$NON-NLS-1$ //$NON-NLS-2$
 			if (getCategoryModels().length <= 0)
-				UpdateManagerPlugin.getPlugin().debug(Policy.bind("Site.NoCategories")); //$NON-NLS-1$
+				UpdateManagerPlugin.getPlugin().debug(Policy.bind("Site.NoCategories"));
+			//$NON-NLS-1$
 		}
 
 		return result;
 	}
 
-	/*
-	 * @see IPluginContainer#getPluginEntries()
-	 */
-
-
-	/*
-	 * @see ISite#setSiteContentProvider(ISiteContentProvider)
-	 */
-	public void setSiteContentProvider(ISiteContentProvider siteContentProvider) {
-		this.siteContentProvider = siteContentProvider;
-	}
-
-	/*
-	 * @see ISite#getSiteContentProvider()
-	 */
-	public ISiteContentProvider getSiteContentProvider() throws CoreException {
-		if (siteContentProvider == null) {
-			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, Policy.bind("Site.NoContentProvider"), null); //$NON-NLS-1$
-			throw new CoreException(status);
-		}
-		return siteContentProvider;
-	}
-
-	/*
-	 * @see IPluginContainer#getPluginEntries()
-	 */
-	public IPluginEntry[] getPluginEntries() {
-		throw new UnsupportedOperationException();
-	}
-
-	/*
-	 * @see IPluginContainer#getPluginEntryCount()
-	 */
-	public int getPluginEntryCount() {
-		throw new UnsupportedOperationException();
-	}	
-	
-	
 	/**
-	 * Adds a plugin entry 
-	 * Either from parsing the file system or 
-	 * installing a feature
+	 * Returns an array of references to features on this site.
 	 * 
-	 * We cannot figure out the list of plugins by reading the Site.xml as
-	 * the archives tag are optionals
+	 * @see ISite#getFeatureReferences()
+	 * @since 2.0
 	 */
-	public void addPluginEntry(IPluginEntry pluginEntry) {
-		throw new UnsupportedOperationException();
-	}
-		
-	/* 
-	 * @see ISite#getDownloadSizeFor(IFeature)
-	 */
-	public long getDownloadSizeFor(IFeature feature) {
-		throw new UnsupportedOperationException();
+	public IFeatureReference[] getFeatureReferences() {
+		FeatureReferenceModel[] result = getFeatureReferenceModels();
+		if (result.length == 0)
+			return new IFeatureReference[0];
+		else
+			return (IFeatureReference[]) result;
 	}
 
-	/*
-	 * @see ISite#getInstallSizeFor(IFeature)
-	 */
-	public long getInstallSizeFor(IFeature feature) {
-		throw new UnsupportedOperationException();
-	}
-
-	/*
-	 * @see IAdaptable#getAdapter(Class)
-	 */
-	public Object getAdapter(Class adapter) {
-		return null;
-	}
-
-	/*
+	/**
+	 * Returns a reference to the specified feature on this site.
+	 * 
 	 * @see ISite#getFeatureReference(IFeature)
+	 * @since 2.0
 	 */
 	public IFeatureReference getFeatureReference(IFeature feature) {
 		IFeatureReference result = null;
@@ -259,21 +197,89 @@ public class Site extends SiteModel implements ISite{
 		return result;
 	}
 
-	/*
-	 * @see ISite#getDescription()
+	/**
+	 * Returns an array of plug-in and non-plug-in archives located
+	 * on this site
+	 * 
+	 * @see ISite#getArchives()
+	 * @since 2.0
 	 */
-	public IURLEntry getDescription() {
-		return (IURLEntry) getDescriptionModel();
+	public IArchiveReference[] getArchives() {
+		ArchiveReferenceModel[] result = getArchiveReferenceModels();
+		if (result.length == 0)
+			return new IArchiveReference[0];
+		else
+			return (IArchiveReference[]) result;
 	}
 
+	/**
+	 * Returns the content provider for this site.
+	 * 
+	 * @see ISite#getSiteContentProvider()
+	 * @since 2.0
+	 */
+	public ISiteContentProvider getSiteContentProvider() throws CoreException {
+		if (siteContentProvider == null) {
+			String id =
+				UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+			IStatus status =
+				new Status(
+					IStatus.ERROR,
+					id,
+					IStatus.OK,
+					Policy.bind("Site.NoContentProvider"),
+					null);
+			//$NON-NLS-1$
+			throw new CoreException(status);
+		}
+		return siteContentProvider;
+	}
 
 	/**
-	 * returns a list of PluginEntries that are not used by any other configured feature
+	 * Returns the default type for a packaged feature supported by this site
+	 * 
+	 * @see ISite#getDefaultInstallableFeatureType()
+	 * @since 2.0
 	 */
-	public IPluginEntry[] getPluginEntriesOnlyReferencedBy(IFeature feature) throws CoreException {
+	public String getDefaultPackagedFeatureType() {
+		return DEFAULT_PACKAGED_FEATURE_TYPE;
+	}
+
+	/**
+	 * Returns an array of entries corresponding to plug-ins installed
+	 * on this site.
+	 * 
+	 * @see IPluginContainer#getPluginEntries()
+	 * @since 2.0
+	 */
+	public IPluginEntry[] getPluginEntries() {
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * Returns the number of plug-ins installed on this site
+	 * 
+	 * @see IPluginContainer#getPluginEntryCount()
+	 * @since 2.0
+	 */
+	public int getPluginEntryCount() {
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * Returns an array of entries corresponding to plug-ins that are
+	 * installed on this site and are referenced only by the specified
+	 * feature. 
+	 * 
+	 * @see ISite#getPluginEntriesOnlyReferencedBy(IFeature)	 * 
+	 * @since 2.0
+	 */
+	public IPluginEntry[] getPluginEntriesOnlyReferencedBy(IFeature feature)
+		throws CoreException {
 
 		IPluginEntry[] pluginsToRemove = new IPluginEntry[0];
-		if (feature==null) return pluginsToRemove;
+		if (feature == null)
+			return pluginsToRemove;
 
 		// get the plugins from the feature
 		IPluginEntry[] entries = feature.getPluginEntries();
@@ -285,9 +291,12 @@ public class Site extends SiteModel implements ISite{
 				for (int indexFeatures = 0; indexFeatures < features.length; indexFeatures++) {
 					IFeature featureToCompare = features[indexFeatures].getFeature();
 					if (!feature.equals(featureToCompare)) {
-						IPluginEntry[] pluginEntries = features[indexFeatures].getFeature().getPluginEntries();
+						IPluginEntry[] pluginEntries =
+							features[indexFeatures].getFeature().getPluginEntries();
 						if (pluginEntries != null) {
-							for (int indexEntries = 0; indexEntries < pluginEntries.length; indexEntries++) {
+							for (int indexEntries = 0;
+								indexEntries < pluginEntries.length;
+								indexEntries++) {
 								allPluginID.add(pluginEntries[indexEntries].getVersionedIdentifier());
 							}
 						}
@@ -314,4 +323,83 @@ public class Site extends SiteModel implements ISite{
 		return pluginsToRemove;
 	}
 
+	/**
+	 * Adds a new plug-in entry to this site.
+	 * This implementation always throws UnsupportedOperationException
+	 * because this implementation does not support the install action.
+	 * 
+	 * @see ISite#addPluginEntry(IPluginEntry)
+	 * @exception java.jang.UnsupportedOperationException
+	 * @since 2.0
+	 */
+	public void addPluginEntry(IPluginEntry pluginEntry) {
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * Get download size for the specified feature on this site.
+	 * This implementation always throws UnsupportedOperationException
+	 * because this implementation does not support the install action.
+	 * 
+	 * @see ISite#getDownloadSizeFor(IFeature)
+	 * @exception java.jang.UnsupportedOperationException
+	 * @since 2.0
+	 */
+	public long getDownloadSizeFor(IFeature feature) {
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * Get install size for the specified feature on this site.
+	 * This implementation always throws UnsupportedOperationException
+	 * because this implementation does not support the install action.
+	 * 
+	 * @see ISite#getInstallSizeFor(IFeature)
+	 * @exception java.jang.UnsupportedOperationException
+	 * @since 2.0
+	 */
+	public long getInstallSizeFor(IFeature feature) {
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * Install the specified feature on this site.
+	 * This implementation always throws UnsupportedOperationException
+	 * because this implementation does not support the install action.
+	 * 
+	 * @see ISite#install(IFeature, IVerificationListener, IProgressMonitor)
+	 * @exception java.jang.UnsupportedOperationException
+	 * @since 2.0
+	 */
+	public IFeatureReference install(
+		IFeature sourceFeature,
+		IVerificationListener verificationListener,
+		IProgressMonitor progress)
+		throws CoreException {
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * Remove (uninstall) the specified feature from this site.
+	 * This implementation always throws UnsupportedOperationException
+	 * because this implementation does not support the remove action.
+	 * 
+	 * @see ISite#remove(IFeature, IProgressMonitor)
+	 * @exception java.jang.UnsupportedOperationException
+	 * @since 2.0
+	 */
+	public void remove(IFeature feature, IProgressMonitor progress)
+		throws CoreException {
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * Sets the site content provider.
+	 * 
+	 * @see ISite#setSiteContentProvider(ISiteContentProvider)
+	 * @since 2.0
+	 */
+	public void setSiteContentProvider(ISiteContentProvider siteContentProvider) {
+		this.siteContentProvider = siteContentProvider;
+	}
 }

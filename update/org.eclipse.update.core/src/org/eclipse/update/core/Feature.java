@@ -451,16 +451,6 @@ public class Feature extends FeatureModel implements IFeature {
 	}
 
 	/**
-	 * Returns object adapter.
-	 * 
-	 * @see IAdaptable#getAdapter(java.lang.Class)
-	 * @since 2.0
-	 */
-	public Object getAdapter(Class adapter) {
-		return null;
-	}
-
-	/**
 	 * Returns the content provider for this feature.
 	 * 
 	 * @see IFeature#getFeatureContentProvider()

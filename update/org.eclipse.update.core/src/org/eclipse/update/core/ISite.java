@@ -145,6 +145,7 @@ public interface ISite {
 	 * on this site.
 	 * 
 	 * @return array of plug-in entries,or an empty array.
+	 * @since 2.0
 	 */
 	public IPluginEntry[] getPluginEntries();
 
@@ -152,8 +153,17 @@ public interface ISite {
 	 * Returns the number of plug-ins installed on this site
 	 * 
 	 * @return number of installed plug-ins
+	 * @since 2.0
 	 */
 	public int getPluginEntryCount();
+	
+	/**
+	 * Adds a new plug-in entry to this site.
+	 * 
+	 * @param pluginEntry plug-in entry
+	 * @since 2.0
+	 */
+	public void addPluginEntry(IPluginEntry pluginEntry);
 
 	/**
 	 * Returns an array of entries corresponding to plug-ins that are
