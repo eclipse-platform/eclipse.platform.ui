@@ -36,7 +36,6 @@ import org.eclipse.debug.ui.ILaunchConfigurationTabGroup;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ControlEnableState;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -52,7 +51,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.ProgressMonitorPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
@@ -268,7 +266,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * This dialog has 'Launch' and 'Cancel'
 	 * buttons.
 	 * 
-	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(Composite)
+	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
 		createButton(parent, ID_LAUNCH_BUTTON, getLaunchButtonText(), true);
@@ -279,7 +277,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * Handle the 'save and launch' & 'launch' buttons here, all others are handled
 	 * in <code>Dialog</code>
 	 * 
-	 * @see Dialog#buttonPressed(int)
+	 * @see org.eclipse.jface.dialogs.Dialog#buttonPressed(int)
 	 */
 	protected void buttonPressed(int buttonId) {
 		if (buttonId == ID_LAUNCH_BUTTON) {
@@ -302,8 +300,8 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		}
 	}
 
-	/**
-	 * @see Dialog#createContents(Composite)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.window.Window#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createContents(Composite parent) {
 		Control contents = super.createContents(parent);
@@ -432,8 +430,8 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		return DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLastLaunch(getLaunchGroup().getIdentifier());
 	}
 	
-	/**
-	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(Composite)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createDialogArea(Composite parent) {
 		Composite dialogComp = (Composite)super.createDialogArea(parent);
@@ -616,8 +614,8 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		return (Composite)getTabViewer().getControl();
 	}	
 	
-	/**
-	 * @see Dialog#createButtonBar(Composite)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#createButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createButtonBar(Composite parent) {
 		Font font = parent.getFont();
@@ -654,7 +652,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	/**
 	 * Sets the title for the dialog, and establishes the help context.
 	 * 
-	 * @see org.eclipse.jface.window.Window#configureShell(Shell);
+	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell);
 	 */
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
@@ -676,8 +674,8 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		return title;
 	}
 	
-	/**
-	 * @see Window#getInitialLocation(Point)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.window.Window#getInitialLocation(org.eclipse.swt.graphics.Point)
 	 */
 	protected Point getInitialLocation(Point initialSize) {
 		IDialogSettings settings = getDialogSettings();
@@ -691,8 +689,8 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		return super.getInitialLocation(initialSize);
 	}
 
-	/**
-	 * @see Window#getInitialSize()
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.window.Window#getInitialSize()
 	 */
 	protected Point getInitialSize() {		
 		IDialogSettings settings = getDialogSettings();
@@ -1584,7 +1582,8 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	protected LaunchConfigurationTabGroupViewer getTabViewer() {
 		return fTabViewer;
 	}
-	/**
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#initializeBounds()
 	 */
 	protected void initializeBounds() {

@@ -20,8 +20,6 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.jface.viewers.IContentProvider;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Shell;
@@ -66,7 +64,7 @@ public class LaunchConfigurationTreeContentProvider implements ITreeContentProvi
 	 * category.
 	 * </p>
 	 * 
-	 * @see ITreeContentProvider#getChildren(Object)
+	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 	 */
 	public Object[] getChildren(Object parentElement) {
 		if (parentElement instanceof ILaunchConfiguration) {
@@ -84,8 +82,8 @@ public class LaunchConfigurationTreeContentProvider implements ITreeContentProvi
 		return EMPTY_ARRAY;
 	}
 
-	/**
-	 * @see ITreeContentProvider#getParent(Object)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 	 */
 	public Object getParent(Object element) {
 		if (element instanceof ILaunchConfiguration) {
@@ -103,8 +101,8 @@ public class LaunchConfigurationTreeContentProvider implements ITreeContentProvi
 		return null;
 	}
 
-	/**
-	 * @see ITreeContentProvider#hasChildren(Object)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 	 */
 	public boolean hasChildren(Object element) {
 		if (element instanceof ILaunchConfiguration) {
@@ -118,7 +116,7 @@ public class LaunchConfigurationTreeContentProvider implements ITreeContentProvi
 	 * Return only the launch configuration types that support the current mode AND
 	 * are marked as 'public'.
 	 * 
-	 * @see IStructuredContentProvider#getElements(Object)
+	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 	 */
 	public Object[] getElements(Object inputElement) {
 		ILaunchConfigurationType[] allTypes = getLaunchManager().getLaunchConfigurationTypes();
@@ -147,14 +145,14 @@ public class LaunchConfigurationTreeContentProvider implements ITreeContentProvi
 		return filteredTypes;
 	}
 
-	/**
-	 * @see IContentProvider#dispose()
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 	 */
 	public void dispose() {
 	}
 
-	/**
-	 * @see IContentProvider#inputChanged(Viewer, Object, Object)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 	}

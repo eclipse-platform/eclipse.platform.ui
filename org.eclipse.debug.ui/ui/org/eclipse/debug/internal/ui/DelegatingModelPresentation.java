@@ -33,7 +33,6 @@ import org.eclipse.debug.ui.IDebugEditorPresentation;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IValueDetailListener;
-import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
@@ -111,7 +110,7 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 	/**
 	 * Delegate to all extensions.
 	 *
-	 * @see IBaseLabelProvider#addListener(ILabelProviderListener)
+	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse.jface.viewers.ILabelProviderListener)
 	 */
 	public void addListener(ILabelProviderListener listener) {
 		Iterator i= getLabelProviders().values().iterator();
@@ -184,8 +183,8 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 		return getDefaultText(item);
 	}
 	
-	/**
-	 * @see IDebugModelPresentation#getEditorInput(Object)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ISourcePresentation#getEditorInput(java.lang.Object)
 	 */
 	public IEditorInput getEditorInput(Object item) {
 		IDebugModelPresentation lp= getConfiguredPresentation(item);
@@ -195,8 +194,8 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 		return null;
 	}
 	
-	/**
-	 * @see IDebugModelPresentation#getEditorId(IEditorInput, Object)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ISourcePresentation#getEditorId(org.eclipse.ui.IEditorInput, java.lang.Object)
 	 */
 	public String getEditorId(IEditorInput input, Object objectInput) {
 		IDebugModelPresentation lp= getConfiguredPresentation(objectInput);
@@ -221,8 +220,8 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 		return DebugUIPlugin.getDefaultLabelProvider().getImage(element);
 	}
 	
-	/*
-	 * @see IDebugModelPresentation#computeDetail(IValue, IValueDetailListener)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.IDebugModelPresentation#computeDetail(org.eclipse.debug.core.model.IValue, org.eclipse.debug.ui.IValueDetailListener)
 	 */
 	public void computeDetail(IValue value, IValueDetailListener listener) {
 		IDebugModelPresentation lp= getConfiguredPresentation(value);
@@ -236,7 +235,7 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 	/**
 	 * Delegate to all extensions.
 	 *
-	 * @see IBaseLabelProvider#removeListener(ILabelProviderListener)
+	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse.jface.viewers.ILabelProviderListener)
 	 */
 	public void removeListener(ILabelProviderListener listener) {
 		Iterator i= getLabelProviders().values().iterator();
@@ -248,7 +247,7 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 	/**
 	 * Delegate to the appropriate label provider.
 	 *
-	 * @see IBaseLabelProvider#isLabelProperty(Object, String)
+	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object, java.lang.String)
 	 */
 	public boolean isLabelProperty(Object element, String property) {
 		if (element instanceof IDebugElement) {
@@ -294,8 +293,8 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 		return (IDebugModelPresentation) getLabelProviders().get(id);
 	}
 	
-	/**
-	 * @see IDebugModelPresentation#setAttribute(String, Object)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.IDebugModelPresentation#setAttribute(java.lang.String, java.lang.Object)
 	 */
 	public void setAttribute(String id, Object value) {
 		if (value == null) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,13 +10,10 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions;
 
-
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorInput;
@@ -46,8 +43,8 @@ public class OpenBreakpointMarkerAction extends SelectionProviderAction {
 		setEnabled(false);
 	}
 
-	/**
-	 * @see IAction#run()
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	public void run() {
 		IWorkbenchWindow dwindow= DebugUIPlugin.getActiveWorkbenchWindow();
@@ -80,8 +77,8 @@ public class OpenBreakpointMarkerAction extends SelectionProviderAction {
 		}
 	}
 	
-	/**
-	 * @see SelectionProviderAction#selectionChanged(ISelection)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.actions.SelectionProviderAction#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
 	public void selectionChanged(IStructuredSelection sel) {
 		if (sel.size() == 1) {
