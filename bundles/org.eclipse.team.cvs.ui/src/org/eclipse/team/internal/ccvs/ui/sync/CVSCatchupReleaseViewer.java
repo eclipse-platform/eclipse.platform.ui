@@ -411,7 +411,7 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 							if (set.hasNonAddedChanges()) return true;
 						} catch (CVSException e) {
 							// Log the error and enable the menu item
-							CVSUIPlugin.log(e.getStatus());
+							CVSUIPlugin.log(e);
 							return true;
 						}
 					} else {
@@ -459,7 +459,7 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 						}
 					}
 				} catch (TeamException e) {
-					CVSUIPlugin.log(e.getStatus());
+					CVSUIPlugin.log(e);
 				}
 			}
 		};

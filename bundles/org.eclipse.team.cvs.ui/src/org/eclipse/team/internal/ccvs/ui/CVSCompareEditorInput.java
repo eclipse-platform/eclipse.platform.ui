@@ -188,7 +188,7 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 		}
 		setMessage(error.getMessage());
 		if (!(t instanceof TeamException)) {
-			CVSUIPlugin.log(error);
+			CVSUIPlugin.log(error.getSeverity(), error.getMessage(), t);
 		}
 	}
 	

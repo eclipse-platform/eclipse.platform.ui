@@ -173,7 +173,7 @@ public class CVSUIPlugin extends AbstractUIPlugin implements IPropertyChangeList
 							}
 						} catch (CoreException coreEx) {
 							// Throw the original exception to the caller
-							log(coreEx.getStatus());
+							log(coreEx);
 							throw e;
 						}
 						firstTime = false;
@@ -324,7 +324,7 @@ public class CVSUIPlugin extends AbstractUIPlugin implements IPropertyChangeList
 			try {
 				repositoryManager.startup();
 			} catch (TeamException e) {
-				CVSUIPlugin.log(e.getStatus());
+				CVSUIPlugin.log(e);
 			}
 		}
 		return repositoryManager;
@@ -382,8 +382,15 @@ public class CVSUIPlugin extends AbstractUIPlugin implements IPropertyChangeList
 		getPlugin().getLog().log(status);
 	}
 
-	public static void log(TeamException e) {
-		getPlugin().getLog().log(new Status(e.getStatus().getSeverity(), CVSUIPlugin.ID, 0, Policy.bind("simpleInternal"), e));; //$NON-NLS-1$
+	public static void log(CoreException e) {
+		log(e.getStatus().getSeverity(), Policy.bind("simpleInternal"), e); //$NON-NLS-1$
+	}
+	
+	/**
+	 * Log the given exception along with the provided message and severity indicator
+	 */
+	public static void log(int severity, String message, Throwable e) {
+		log(new Status(severity, ID, 0, message, e));
 	}
 
 	// flags to tailor error reporting
@@ -456,7 +463,7 @@ public class CVSUIPlugin extends AbstractUIPlugin implements IPropertyChangeList
 		if (status.isOK()) return status;
 		
 		// Log if the user requested it
-		if (log) CVSUIPlugin.log(status);
+		if (log) CVSUIPlugin.log(status.getSeverity(), status.getMessage(), exception);
 		
 		// Create a runnable that will display the error status
 		final String displayTitle = title;
@@ -659,7 +666,7 @@ public class CVSUIPlugin extends AbstractUIPlugin implements IPropertyChangeList
 				}
 			}
 		} catch (CoreException e) {
-			log(e.getStatus());
+			log(e);
 		}
 	}
 }

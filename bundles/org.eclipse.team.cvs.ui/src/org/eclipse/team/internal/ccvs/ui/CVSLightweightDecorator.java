@@ -99,7 +99,7 @@ public class CVSLightweightDecorator
 			return !cvsResource.isIgnored() && cvsResource.isModified(null);
 		} catch (CVSException e) {
 			//if we get an error report it to the log but assume dirty
-			CVSUIPlugin.log(e.getStatus());
+			CVSUIPlugin.log(e);
 			return true;
 		}
 	}
@@ -265,7 +265,7 @@ public class CVSLightweightDecorator
 		CVSDecoratorConfiguration.decorate(decoration, format, bindings);
 			
 		} catch (CVSException e) {
-			CVSUIPlugin.log(e.getStatus());
+			CVSUIPlugin.log(e);
 			return;
 		}
 	}
@@ -343,7 +343,7 @@ public class CVSLightweightDecorator
 					}
 				}
 			} catch (CVSException e) {
-				CVSUIPlugin.log(e.getStatus());
+				CVSUIPlugin.log(e);
 				return null;
 			}
 		}
@@ -372,7 +372,7 @@ public class CVSLightweightDecorator
 					}
 				}
 			} catch (CVSException e) {
-				CVSUIPlugin.log(e.getStatus());
+				CVSUIPlugin.log(e);
 				return null;
 			}
 		}

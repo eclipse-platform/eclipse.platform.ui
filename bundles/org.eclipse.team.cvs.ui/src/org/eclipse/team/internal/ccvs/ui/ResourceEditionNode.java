@@ -80,7 +80,7 @@ public class ResourceEditionNode implements IStructureComparator, ITypedElement,
 				} catch (InvocationTargetException e) {
 					Throwable t = e.getTargetException();
 					if (t instanceof TeamException) {
-						CVSUIPlugin.log(((TeamException) t).getStatus());
+						CVSUIPlugin.log(((TeamException) t));
 					}
 				}
 			}

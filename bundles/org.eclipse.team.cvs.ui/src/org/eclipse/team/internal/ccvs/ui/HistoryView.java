@@ -643,7 +643,7 @@ public class HistoryView extends ViewPart {
 					}
 				}
 			} catch(CVSException e) {
-				CVSUIPlugin.log(e.getStatus());
+				CVSUIPlugin.log(e);
 			}
 		}
 		return true;

@@ -222,7 +222,7 @@ public class CheckoutAsProjectSelectionPage extends CVSWizardPage {
 				tree.setInput(new AdaptableResourceList(getProjects(getRepository(), false)));
 			}
 		} catch (CVSException e) {
-			CVSUIPlugin.log(e.getStatus());
+			CVSUIPlugin.log(e);
 		}
 	}
 			

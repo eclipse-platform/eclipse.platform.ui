@@ -140,7 +140,7 @@ public class RepositoryManager {
 
 			return (CVSTag[])result.toArray(new CVSTag[result.size()]);
 		} catch(CVSException e) {
-			CVSUIPlugin.log(e.getStatus());
+			CVSUIPlugin.log(e);
 			return new CVSTag[0];
 		}
 	}
@@ -343,9 +343,9 @@ public class RepositoryManager {
 					is.close();
 				}
 			} catch (IOException e) {
-				CVSUIPlugin.log(new Status(Status.ERROR, CVSUIPlugin.ID, TeamException.UNABLE, Policy.bind("RepositoryManager.ioException"), e)); //$NON-NLS-1$
+				CVSUIPlugin.log(Status.ERROR, Policy.bind("RepositoryManager.ioException"), e); //$NON-NLS-1$
 			} catch (TeamException e) {
-				CVSUIPlugin.log(e.getStatus());
+				CVSUIPlugin.log(e);
 			}
 		} else {
 			IPath oldPluginStateLocation = CVSUIPlugin.getPlugin().getStateLocation().append(STATE_FILE);
@@ -361,9 +361,9 @@ public class RepositoryManager {
 					saveState();
 					file.delete();
 				} catch (IOException e) {
-					CVSUIPlugin.log(new Status(Status.ERROR, CVSUIPlugin.ID, TeamException.UNABLE, Policy.bind("RepositoryManager.ioException"), e)); //$NON-NLS-1$
+					CVSUIPlugin.log(Status.ERROR, Policy.bind("RepositoryManager.ioException"), e); //$NON-NLS-1$
 				} catch (TeamException e) {
-					CVSUIPlugin.log(e.getStatus());
+					CVSUIPlugin.log(e);
 				}
 			} 
 		}
@@ -380,9 +380,9 @@ public class RepositoryManager {
 				is.close();
 			}
 		} catch (IOException e) {
-			CVSUIPlugin.log(new Status(Status.ERROR, CVSUIPlugin.ID, TeamException.UNABLE, Policy.bind("RepositoryManager.ioException"), e)); //$NON-NLS-1$
+			CVSUIPlugin.log(Status.ERROR, Policy.bind("RepositoryManager.ioException"), e); //$NON-NLS-1$
 		} catch (TeamException e) {
-			CVSUIPlugin.log(e.getStatus());
+			CVSUIPlugin.log(e);
 		}
 	}
 	
@@ -721,7 +721,7 @@ public class RepositoryManager {
 		try {
 			return internalGetRepositoryLocationFor(resource);
 		} catch (CVSException e) {
-			CVSUIPlugin.log(e.getStatus());
+			CVSUIPlugin.log(e);
 			return null;
 		}
 	}

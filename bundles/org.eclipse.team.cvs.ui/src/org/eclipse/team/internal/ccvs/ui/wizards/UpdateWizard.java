@@ -17,7 +17,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.Wizard;
@@ -51,7 +50,7 @@ public class UpdateWizard extends Wizard {
 				}
 			});
 		} catch (InvocationTargetException e) {
-			CVSUIPlugin.log(new Status(IStatus.ERROR, CVSUIPlugin.ID, 0, Policy.bind("internal"), e.getTargetException())); //$NON-NLS-1$
+			CVSUIPlugin.log(IStatus.ERROR, Policy.bind("internal"), e.getTargetException()); //$NON-NLS-1$
 		} catch (InterruptedException e) {
 			// Ignore
 		}

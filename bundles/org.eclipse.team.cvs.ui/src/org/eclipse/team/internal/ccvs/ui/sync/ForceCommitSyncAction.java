@@ -88,7 +88,7 @@ public class ForceCommitSyncAction extends MergeAction {
 					}
 				}
 			} catch (CVSException e) {
-				CVSUIPlugin.log(e.getStatus());
+				CVSUIPlugin.log(e);
 			}
 		}
 		

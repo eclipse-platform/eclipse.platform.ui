@@ -161,7 +161,7 @@ public class CVSProviderPlugin extends Plugin {
 	}
 	
 	/**
-	 * Log the given exception alloing with the provided message and severity indicator
+	 * Log the given exception along with the provided message and severity indicator
 	 */
 	public static void log(int severity, String message, Throwable e) {
 		log(new Status(severity, ID, 0, message, e));

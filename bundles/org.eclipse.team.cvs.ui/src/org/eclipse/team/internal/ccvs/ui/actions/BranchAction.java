@@ -156,7 +156,7 @@ public class BranchAction extends WorkspaceAction {
 				}
 			}
 		} catch(CVSException e) {
-			CVSUIPlugin.log(e.getStatus());
+			CVSUIPlugin.log(e);
 			return false;
 		}
 		return false;
@@ -176,7 +176,7 @@ public class BranchAction extends WorkspaceAction {
 				}
 			}
 		} catch(CVSException e) {
-			CVSUIPlugin.log(e.getStatus());
+			CVSUIPlugin.log(e);
 			versionName = ""; //$NON-NLS-1$
 		}
 		return versionName;

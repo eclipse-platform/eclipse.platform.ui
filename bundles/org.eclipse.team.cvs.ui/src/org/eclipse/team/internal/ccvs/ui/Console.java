@@ -462,7 +462,7 @@ public class Console extends ViewPart {
 			try {
 				time = TIME_FORMAT.format(new Date(commandRuntime));
 			} catch (RuntimeException e) {
-				CVSUIPlugin.log(new Status(IStatus.ERROR, CVSUIPlugin.ID, 0, Policy.bind("Console.couldNotFormatTime"), e)); //$NON-NLS-1$
+				CVSUIPlugin.log(IStatus.ERROR, Policy.bind("Console.couldNotFormatTime"), e); //$NON-NLS-1$
 				time = ""; //$NON-NLS-1$
 			}
 			String statusText;
