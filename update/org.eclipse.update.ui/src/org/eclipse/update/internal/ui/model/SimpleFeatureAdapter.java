@@ -21,7 +21,19 @@ public class SimpleFeatureAdapter extends FeatureAdapter {
 		return feature;
 	}
 	
-	public IFeatureAdapter [] getIncludedFeatures() {
-		return new IFeatureAdapter[0];
+	public IFeatureAdapter[] getIncludedFeatures() {
+		try {
+			IFeatureReference[] included = getFeature().getIncludedFeatureReferences();
+			SimpleFeatureAdapter[] result =
+				new SimpleFeatureAdapter[included.length];
+			for (int i = 0; i < included.length; i++) {
+				result[i] =
+					new SimpleFeatureAdapter(included[i].getFeature());
+				result[i].setIncluded(true);
+			}
+			return result;
+		} catch (CoreException e) {
+			return new IFeatureAdapter[0];
+		}
 	}
 }

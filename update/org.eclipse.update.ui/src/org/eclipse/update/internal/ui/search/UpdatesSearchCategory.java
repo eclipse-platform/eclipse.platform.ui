@@ -68,8 +68,7 @@ public class UpdatesSearchCategory extends SearchCategory {
 			IInstallConfiguration config = localSite.getCurrentConfiguration();
 			IConfiguredSite[] isites = config.getConfiguredSites();
 			for (int i = 0; i < isites.length; i++) {
-				ISite isite = isites[i].getSite();
-				IFeatureReference[] refs = isite.getFeatureReferences();
+				IFeatureReference[] refs = isites[i].getConfiguredFeatures();
 				for (int j = 0; j < refs.length; j++) {
 					IFeatureReference ref = refs[j];
 					candidates.add(ref.getFeature());
