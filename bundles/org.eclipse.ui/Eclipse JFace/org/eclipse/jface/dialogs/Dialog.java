@@ -300,15 +300,6 @@ protected Control createContents(Composite parent) {
 	dialogArea = createDialogArea(composite);
 	buttonBar = createButtonBar(composite);
 	
-	// ensure that one of our controls has focus
-	boolean found = false;
-	Control testControl = composite.getDisplay().getFocusControl();;
-	while (!found && testControl != null) {
-		found = (composite == testControl);
-		testControl = testControl.getParent();
-	}
-	if (!found)
-		composite.setFocus();
 	
 	return composite;
 }
