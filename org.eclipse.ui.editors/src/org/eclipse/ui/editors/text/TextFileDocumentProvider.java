@@ -785,9 +785,12 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		try {
 			monitor.beginTask(TextEditorMessages.getString("TextFileDocumentProvider.beginTask.saving"), 2000); //$NON-NLS-1$
 			InputStream stream= new ByteArrayInputStream(document.get().getBytes(encoding));
-			ContainerCreator creator = new ContainerCreator(file.getWorkspace(), file.getParent().getFullPath());
-			creator.createContainer(new SubProgressMonitor(monitor, 1000));
-			file.create(stream, false, new SubProgressMonitor(monitor, 1000));
+			if (!file.exists()) {
+				ContainerCreator creator= new ContainerCreator(file.getWorkspace(), file.getParent().getFullPath());
+				creator.createContainer(new SubProgressMonitor(monitor, 1000));
+				file.create(stream, false, new SubProgressMonitor(monitor, 1000));
+			} else
+				file.setContents(stream, false, false, new SubProgressMonitor(monitor, 1000));
 		} catch (UnsupportedEncodingException x) {
 			String message= TextEditorMessages.getFormattedString("Editor.error.unsupported_encoding.message_arg", encoding); //$NON-NLS-1$
 			IStatus s= new Status(IStatus.ERROR, EditorsUI.PLUGIN_ID, IStatus.OK, message, x);
