@@ -103,7 +103,7 @@ public class Launch extends PlatformObject implements ILaunch {
 	 * Constructs a launch with the specified attributes. A launch must
 	 * have at least one of a process or debug target.
 	 *
-	 * @param launcher the launcher that created this launch
+	 * @param launchConfiguration the configuration that was launched
 	 * @param mode the mode of this launch - run or debug (constants
 	 *  defined by <code>ILaunchManager</code>)
 	 * @param launchedElement the element that was launched
@@ -114,9 +114,9 @@ public class Launch extends PlatformObject implements ILaunch {
 	 * @param target the debug target created by this launch, or <code>null</code>
 	 *	if none 
 	 */
-	public Launch(ILaunchConfiguration launcher, String mode, ISourceLocator locator, IProcess[] processes, IDebugTarget target) {
+	public Launch(ILaunchConfiguration launchConfiguration, String mode, ISourceLocator locator, IProcess[] processes, IDebugTarget target) {
 		setLauncher(null);			
-		setElement(launcher);
+		setElement(launchConfiguration);
 		setSourceLocator(locator);
 		setProcesses(processes);
 		setDebugTarget(target);
