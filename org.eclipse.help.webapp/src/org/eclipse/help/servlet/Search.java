@@ -4,8 +4,10 @@
  */
 package org.eclipse.help.servlet;
 import java.io.*;
+import java.text.NumberFormat;
 
 import javax.servlet.ServletContext;
+
 import org.apache.xerces.parsers.DOMParser;
 import org.w3c.dom.*;
 import org.xml.sax.InputSource;
@@ -24,7 +26,7 @@ public class Search {
 		this.context = context;
 		this.connector = new EclipseConnector(context);
 	}
-	
+
 	/**
 	 * Generates the html for the search results based on input xml data
 	 */
@@ -36,7 +38,7 @@ public class Search {
 			String urlString = "search:/";
 			if (searchQuery != null && searchQuery.length() >= 0)
 				urlString += "?" + searchQuery;
-				
+
 			//System.out.println("search:"+query);
 			InputSource xmlSource = new InputSource(connector.openStream(urlString));
 			DOMParser parser = new DOMParser();
@@ -49,12 +51,10 @@ public class Search {
 		} catch (Exception e) {
 		}
 	}
-	
-	private void genToc(Element toc, Writer out) throws IOException 
-	{
+
+	private void genToc(Element toc, Writer out) throws IOException {
 		NodeList topics = toc.getChildNodes();
-		if (topics.getLength() == 0)
-		{
+		if (topics.getLength() == 0) {
 			// TO DO: get the correct locale
 			out.write(WebappResources.getString("Nothing_found", null));
 			return;
@@ -81,7 +81,21 @@ public class Search {
 		out.write("'" + href + "'>");
 		// do this for IE5.0 only. Mozilla and IE5.5 work fine with nowrap css
 		out.write("<nobr>");
-		out.write(topic.getAttribute("label") + "</nobr></a>");
+		String label = topic.getAttribute("label");
+
+		// obtain document score
+		String scoreString = topic.getAttribute("score");
+		try {
+			float score = Float.parseFloat(scoreString);
+			NumberFormat percentFormat =
+				NumberFormat.getPercentInstance(/* TODO pass client loacle */
+			);
+			scoreString = percentFormat.format(score);
+		} catch (NumberFormatException nfe) {
+			// will display original score string
+		}
+
+		out.write(scoreString + " " + label + "</nobr></a>");
 		if (topic.hasChildNodes()) {
 			out.write("<ul class='collapsed'>");
 			NodeList topics = topic.getChildNodes();
@@ -95,39 +109,46 @@ public class Search {
 		out.write("</li>");
 	}
 
-
-	private void displayProgressMonitor(Writer out, String indexed) throws IOException {
+	private void displayProgressMonitor(Writer out, String indexed)
+		throws IOException {
 		//out.write("<script>window.open('progress.jsp?indexed="+indexed+"', null, 'height=200,width=400,status=no,toolbar=no,menubar=no,location=no'); </script>");
 		//out.flush();
 		int percentage = 0;
-		try
-		{
+		try {
 			percentage = Integer.parseInt(indexed);
+		} catch (Exception e) {
 		}
-		catch(Exception e)
-		{}
-		
+
 		StringBuffer sb = new StringBuffer();
 		sb
-		.append("<CENTER>")
-		.append("<TABLE BORDER='0'>")
-		.append("    <TR><TD>"+WebappResources.getString("Indexing", null)+"</TD></TR>")
-        .append("    <TR>")
-        .append("    	<TD ALIGN='LEFT'>")
-  		.append("			<DIV STYLE='width:100px;height:16px;border-width:1px;border-style:solid;border-color:black'>")
-  		.append("				<DIV ID='divProgress' STYLE='width:"+percentage+"px;height:15px;background-color:Highlight'>")
-  		.append("				</DIV>")
-  		.append("			</DIV>")
-  		.append("		</TD>")
-  		.append("	</TR>")
-  		.append("	<TR>")
-  		.append("		<TD>"+indexed+"% "+WebappResources.getString("complete",null)+"</TD>")
-  		.append("	</TR>")
-  		.append("</TABLE>")
-  		.append("</CENTER>")
-  		.append("<script language='JavaScript'>")
-  		.append("setTimeout('refresh()', 2000);")
-  		.append("</script>");
+			.append("<CENTER>")
+			.append("<TABLE BORDER='0'>")
+			.append(
+				"    <TR><TD>" + WebappResources.getString("Indexing", null) + "</TD></TR>")
+			.append("    <TR>")
+			.append("    	<TD ALIGN='LEFT'>")
+			.append("			<DIV STYLE='width:100px;height:16px;border-width:1px;border-style:solid;border-color:black'>")
+			.append(
+				"				<DIV ID='divProgress' STYLE='width:"
+					+ percentage
+					+ "px;height:15px;background-color:Highlight'>")
+			.append("				</DIV>")
+			.append("			</DIV>")
+			.append("		</TD>")
+			.append("	</TR>")
+			.append("	<TR>")
+			.append(
+				"		<TD>"
+					+ indexed
+					+ "% "
+					+ WebappResources.getString("complete", null)
+					+ "</TD>")
+			.append("	</TR>")
+			.append("</TABLE>")
+			.append("</CENTER>")
+			.append("<script language='JavaScript'>")
+			.append("setTimeout('refresh()', 2000);")
+			.append("</script>");
 
 		out.write(sb.toString());
 		out.flush();
