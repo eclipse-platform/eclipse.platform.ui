@@ -461,5 +461,12 @@ public class NativeStackPresentation extends StackPresentation {
 		if (part.getControl() != null) list.add(part.getControl());
 		return (Control[]) list.toArray(new Control[list.size()]);
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.presentations.StackPresentation#getCurrentPart()
+	 */
+	public IPresentablePart getCurrentPart() {
+		return current;
+	}
 	
 }
