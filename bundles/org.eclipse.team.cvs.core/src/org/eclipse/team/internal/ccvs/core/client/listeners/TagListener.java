@@ -47,7 +47,7 @@ public class TagListener implements ICommandOutputListener {
 			return OK;
 		}
 		String rtagMessage = ((CVSRepositoryLocation)location).getServerMessageWithoutPrefix(line, RTAG_PREFIX);
-		if( rtagMessage.startsWith("Tagging") ) { //$NON-NLS-1$
+		if(rtagMessage != null && rtagMessage.startsWith("Tagging") ) { //$NON-NLS-1$
 			return OK;
 		}
 			
