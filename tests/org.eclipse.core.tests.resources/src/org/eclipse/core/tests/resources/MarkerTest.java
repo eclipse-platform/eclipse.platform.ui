@@ -14,6 +14,7 @@ import junit.framework.TestSuite;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 import sun.security.action.GetPropertyAction;
 
@@ -1069,8 +1070,145 @@ public void testMarkerDeltasMerge() {
 /**
  * Tests the appearance of marker changes in the resource delta.
  */
-public void testMarkerDeltasMove() {
-	log("testMarkerDeltasMove");
+public void testMarkerDeltasMoveFolder() {
+	log("testMarkerDeltasMoveFolder");
+
+	IWorkspaceRoot root = getWorkspace().getRoot();
+	final IProject project = root.getProject("MyProject");
+	IFolder folder = project.getFolder("folder");
+	IFile file = project.getFile("file.txt");
+	IFile subFile = folder.getFile("subFile.txt");
+	ensureExistsInWorkspace(new IResource[] {project, folder, file, subFile}, true);
+	IFolder destFolder = project.getFolder("myOtherFolder");
+	IFile destSubFile = destFolder.getFile(subFile.getName());
+	IMarker folderMarker = null;
+	IMarker subFileMarker = null;
+	IMarker[] markers = null;
+
+	// Create and register a listener.
+	final MarkersChangeListener listener = new MarkersChangeListener();
+	getWorkspace().addResourceChangeListener(listener);
+
+	try {
+		// create markers on the resources
+		try {
+			folderMarker = folder.createMarker(IMarker.BOOKMARK);
+		} catch(CoreException e) {
+			fail("1.0", e);
+		}
+		try {
+			subFileMarker = subFile.createMarker(IMarker.BOOKMARK);
+		} catch(CoreException e) {
+			fail("1.1", e);
+		}
+		listener.reset();
+
+		// move the files
+		try {
+		folder.move(destFolder.getFullPath(), IResource.FORCE, getMonitor());
+		} catch (CoreException e) {
+			fail("2.0", e);
+		}
+
+		// verify marker deltas
+		assertTrue("3.1", listener.checkChanges(folder, null, new IMarker[] {folderMarker}, null));
+		try {
+			markers = destFolder.findMarkers(null, true, IResource.DEPTH_ZERO);
+		} catch(CoreException e) {
+			fail("3.2", e);
+		}
+		assertEquals("3.3", 1, markers.length);
+		assertEquals("3.4", folderMarker.getId(), markers[0].getId());
+		assertTrue("3.5", listener.checkChanges(destFolder, new IMarker[] {markers[0]}, null, null));
+
+		assertTrue("3.7", listener.checkChanges(subFile, null, new IMarker[] {subFileMarker}, null));
+		try {
+			markers = destSubFile.findMarkers(null, true, IResource.DEPTH_ZERO);
+		} catch(CoreException e) {
+			fail("3.8", e);
+		}
+		assertEquals("3.9", 1, markers.length);
+		assertEquals("3.10", subFileMarker.getId(), markers[0].getId());
+		assertTrue("3.11", listener.checkChanges(destSubFile, new IMarker[] {markers[0]}, null, null));
+
+	} finally {
+		getWorkspace().removeResourceChangeListener(listener);
+	}
+}
+/**
+ * Tests the appearance of marker changes in the resource delta.
+ */
+public void testMarkerDeltasMoveFile() {
+	log("testMarkerDeltasMoveFile");
+	IWorkspaceRoot root = getWorkspace().getRoot();
+	final IProject project = root.getProject("MyProject");
+	IFolder folder = project.getFolder("folder");
+	IFile file = project.getFile("file.txt");
+	IFile subFile = folder.getFile("subFile.txt");
+	ensureExistsInWorkspace(new IResource[] {project, folder, file, subFile} , true);
+	IFile destFile = folder.getFile(file.getName());
+	IFile destSubFile = project.getFile(subFile.getName());
+	IMarker fileMarker = null;
+	IMarker subFileMarker = null;
+	IMarker[] markers = null;
+
+	// Create and register a listener.
+	final MarkersChangeListener listener = new MarkersChangeListener();
+	getWorkspace().addResourceChangeListener(listener);
+
+	try {
+		// create markers on the resources
+		try {
+			fileMarker = file.createMarker(IMarker.BOOKMARK);
+		} catch(CoreException e) {
+			fail("1.0", e);
+		}
+		try {
+			subFileMarker = subFile.createMarker(IMarker.BOOKMARK);
+		} catch(CoreException e) {
+			fail("1.1", e);
+		}
+		listener.reset();
+
+		// move the files
+		try {
+		file.move(destFile.getFullPath(), IResource.FORCE, getMonitor());
+		subFile.move(destSubFile.getFullPath(), IResource.FORCE, getMonitor());
+		} catch (CoreException e) {
+			fail("2.0", e);
+		}
+
+		// verify marker deltas
+		assertTrue("3.1", listener.checkChanges(file, null, new IMarker[] {fileMarker}, null));
+		try {
+			markers = destFile.findMarkers(null, true, IResource.DEPTH_ZERO);
+		} catch(CoreException e) {
+			fail("3.2", e);
+		}
+		assertEquals("3.3", 1, markers.length);
+		assertEquals("3.4", fileMarker.getId(), markers[0].getId());
+		assertTrue("3.5", listener.checkChanges(destFile, new IMarker[] {markers[0]}, null, null));
+
+		assertTrue("3.7", listener.checkChanges(subFile, null, new IMarker[] {subFileMarker}, null));
+		try {
+			markers = destSubFile.findMarkers(null, true, IResource.DEPTH_ZERO);
+		} catch(CoreException e) {
+			fail("3.8", e);
+		}
+		assertEquals("3.9", 1, markers.length);
+		assertEquals("3.10", subFileMarker.getId(), markers[0].getId());
+		assertTrue("3.11", listener.checkChanges(destSubFile, new IMarker[] {markers[0]}, null, null));
+
+	} finally {
+		getWorkspace().removeResourceChangeListener(listener);
+	}
+}
+
+/**
+ * Tests the appearance of marker changes in the resource delta.
+ */
+public void testMarkerDeltasMoveProject() {
+	log("testMarkerDeltasMoveProject");
 
 	// Create and register a listener.
 	final MarkersChangeListener listener = new MarkersChangeListener();
