@@ -16,9 +16,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.team.internal.ccvs.core.*;
-import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
-import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
-import org.eclipse.team.internal.ccvs.core.util.Util;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.TagSelectionDialog;
 import org.eclipse.team.internal.ccvs.ui.subscriber.CompareParticipant;
@@ -47,7 +44,7 @@ public class CompareWithTagAction extends WorkspaceAction {
 			CompareParticipant participant = CompareParticipant.getMatchingParticipant(resources, tag);
 			if (participant == null) {
 				CVSCompareSubscriber s = compareSubscriber;
-				participant = new CompareParticipant(s, getLocalResourcesTag(resources));
+				participant = new CompareParticipant(s);
 				TeamUI.getSynchronizeManager().addSynchronizeParticipants(new ISynchronizeParticipant[]{participant});
 			}
 			participant.refresh(resources, Policy.bind("Participant.comparing"), participant.getName(), null); //$NON-NLS-1$
@@ -61,33 +58,6 @@ public class CompareWithTagAction extends WorkspaceAction {
 		}
 		CVSTag tag = TagSelectionDialog.getTagToCompareWith(getShell(), projects);
 		return tag;
-	}
-	
-	private CVSTag getLocalResourcesTag(IResource[] resources) {
-		try {
-			for (int i = 0; i < resources.length; i++) {
-				ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resources[i]);
-				CVSTag tag = null;
-				if(cvsResource.isFolder()) {
-					FolderSyncInfo info = ((ICVSFolder)cvsResource).getFolderSyncInfo();
-					if(info != null) {
-						tag = info.getTag();									
-					}
-					if (tag != null && tag.getType() == CVSTag.BRANCH) {
-						tag = Util.getAccurateFolderTag(resources[i], tag);
-					}
-				} else {
-					tag = Util.getAccurateFileTag(cvsResource);
-				}
-				if(tag == null) {
-					tag = new CVSTag();
-				}
-				return tag;
-			}
-			return new CVSTag();
-		} catch (CVSException e) {
-			return new CVSTag();
-		}
 	}
 
 	/* (non-Javadoc)

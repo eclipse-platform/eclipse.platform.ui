@@ -254,4 +254,15 @@ public class CVSCompareSubscriber extends CVSSyncTreeSubscriber implements ISubs
 			});
 		}
 	}
+
+    /**
+     * Return the tag associated with the given root resource
+     * or <code>null</code> if there is only a single tag
+     * for the subscriber.
+     * @param root the root resource
+     * @return the tag associated with the given root resource
+     */
+    public CVSTag getTag(IResource root) {
+        return tree.getTag(root);
+    }
 }

@@ -28,49 +28,68 @@ import org.eclipse.ui.IWorkbenchPart;
 public class RemoteLogOperation extends RepositoryLocationOperation {
 	
 	private RLog rlog = new RLog();
-	private Map entries = new HashMap();
-	private Map allEntries = new HashMap();
 	private CVSTag tag1;
 	private CVSTag tag2;
+	private LogEntryCache entryCache;
 	
-	public RemoteLogOperation(IWorkbenchPart part, ICVSRemoteResource[] remoteResources) {
-		this(part, remoteResources, null, null);
+	/** 
+	 * A log entry cache that can be shared by multiple instances of the
+	 * remote log operation.
+	 */
+	public static class LogEntryCache {
+		private Map entries = new HashMap();
+		private Map allEntries = new HashMap();
+		/**
+		 * Return the log entry that was fetch for the given resource
+		 * or <code>null</code> if no entry was fetched.
+		 * @param resource the resource
+		 * @return the fetched log entry or <code>null</code>
+		 */
+		public ILogEntry getLogEntry(ICVSRemoteResource resource) {
+			return (ILogEntry)entries.get(resource);
+		}
+		/**
+		 * Return the log entries that were fetched for the given resource
+		 * or an empty list if no entry was fetched.
+		 * @param resource the resource
+		 * @return the fetched log entries or an empty list is none were found
+		 */
+		public ILogEntry[] getLogEntries(ICVSRemoteResource resource) {
+			return (ILogEntry[])allEntries.get(resource);
+		}
+		
+		public void clearEntriesFor(ICVSRemoteResource resource) {
+			entries.remove(resource);
+			allEntries.remove(resource);
+		}
+		
+		public void clearEntries() {
+			entries.clear();
+			allEntries.clear();
+		}
+
+	    public void cacheEntries(ICVSRemoteResource[] remotes, LogListener listener) {
+	        // Record the log entries for the files we want
+	        for (int i = 0; i < remotes.length; i++) {
+	        	ICVSRemoteResource resource = remotes[i];
+	        	if (!resource.isContainer()) {
+	        		ICVSRemoteFile file = (ICVSRemoteFile) resource;
+	        		ILogEntry entry = listener.getEntryFor(file);
+	        		if (entry != null) {
+	        			entries.put(file, entry);
+	        		}
+	        		ILogEntry allLogs[] = listener.getEntriesFor(file);
+	        		allEntries.put(file, allLogs);
+	        	}
+	        }
+	    }
 	}
 	
-	public RemoteLogOperation(IWorkbenchPart part, ICVSRemoteResource[] remoteResources, CVSTag tag1, CVSTag tag2) {
+	public RemoteLogOperation(IWorkbenchPart part, ICVSRemoteResource[] remoteResources, CVSTag tag1, CVSTag tag2, LogEntryCache cache) {
 		super(part, remoteResources);
 		this.tag1 = tag1;
 		this.tag2 = tag2;
-	}
-	
-	/**
-	 * Return the log entry that was fetch for the given resource
-	 * or <code>null</code> if no entry was fetched.
-	 * @param resource the resource
-	 * @return the fetched log entry or <code>null</code>
-	 */
-	public ILogEntry getLogEntry(ICVSRemoteResource resource) {
-		return (ILogEntry)entries.get(resource);
-	}
-	
-	/**
-	 * Return the log entries that were fetched for the given resource
-	 * or an empty list if no entry was fetched.
-	 * @param resource the resource
-	 * @return the fetched log entries or an empty list is none were found
-	 */
-	public ILogEntry[] getLogEntries(ICVSRemoteResource resource) {
-		return (ILogEntry[])allEntries.get(resource);
-	}
-	
-	public void clearEntriesFor(ICVSRemoteResource resource) {
-		entries.remove(resource);
-		allEntries.remove(resource);
-	}
-	
-	public void clearEntries() {
-		entries.clear();
-		allEntries.clear();
+		this.entryCache = cache;
 	}
 
 	/* (non-Javadoc)
@@ -92,7 +111,7 @@ public class RemoteLogOperation extends RepositoryLocationOperation {
 			ArrayList unCachedRemotes = new ArrayList();
 			for (int i = 0; i < remoteResources.length; i++) {
 				ICVSRemoteResource r = remoteResources[i];
-				if(entries.get(r) == null) {
+				if(entryCache.getLogEntry(r) == null) {
 					unCachedRemotes.add(r);
 				}
 			}
@@ -107,23 +126,11 @@ public class RemoteLogOperation extends RepositoryLocationOperation {
 				s.close();
 			}
 
-			// Record the log entries for the files we want
-			for (int i = 0; i < remotes.length; i++) {
-				ICVSRemoteResource resource = remotes[i];
-				if (!resource.isContainer()) {
-					ICVSRemoteFile file = (ICVSRemoteFile) resource;
-					ILogEntry entry = listener.getEntryFor(file);
-					if (entry != null) {
-						entries.put(file, entry);
-					}
-					ILogEntry allLogs[] = listener.getEntriesFor(file);
-					allEntries.put(file, allLogs);
-				}
-			}
+			entryCache.cacheEntries(remotes, listener);
 		}
 	}
 
-	/* (non-Javadoc)
+    /* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.CVSOperation#getTaskName()
 	 */
 	protected String getTaskName() {

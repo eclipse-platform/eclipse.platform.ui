@@ -33,7 +33,6 @@ public class CompareParticipant extends CVSParticipant implements IPropertyChang
 	
 	public static final String CONTEXT_MENU_CONTRIBUTION_GROUP = "context_group_1"; //$NON-NLS-1$
 	public static final String NON_MODAL_CONTEXT_MENU_CONTRIBUTION_GROUP = "context_group_2"; //$NON-NLS-1$
-	private CVSTag localTag;
 
 	/**
 	 * Actions for the compare particpant's toolbar
@@ -69,12 +68,7 @@ public class CompareParticipant extends CVSParticipant implements IPropertyChang
 	};
 	
 	public CompareParticipant(CVSCompareSubscriber subscriber) {
-		this(subscriber, null);
-	}
-	
-	public CompareParticipant(CVSCompareSubscriber subscriber, CVSTag localTag) {
-		setSubscriber(subscriber);
-		this.localTag = localTag;
+	    setSubscriber(subscriber);
 	}
 		
 	/* (non-Javadoc)
@@ -88,7 +82,7 @@ public class CompareParticipant extends CVSParticipant implements IPropertyChang
 		try {
 			ISynchronizeParticipantDescriptor descriptor = TeamUI.getSynchronizeManager().getParticipantDescriptor(CVSCompareSubscriber.ID);
 			setInitializationData(descriptor);
-			CVSCompareSubscriber s = (CVSCompareSubscriber)getSubscriber();
+			CVSCompareSubscriber s = getCVSCompareSubscriber();
 			setSecondaryId(s.getId().getLocalName());
 		} catch (CoreException e) {
 			CVSUIPlugin.log(e);
@@ -104,13 +98,6 @@ public class CompareParticipant extends CVSParticipant implements IPropertyChang
 	}
 	
 	/*
-	 * Returns the tag this participant is comparing against.
-	 */
-	protected CVSTag getTag() {
-		return ((CVSCompareSubscriber)getSubscriber()).getTag();
-	}
-	
-	/*
 	 * Returns a merge participant that exist and is configured with the given set of resources, start, and end tags.
 	 */
 	public static CompareParticipant getMatchingParticipant(IResource[] resources, CVSTag tag) {
@@ -118,28 +105,50 @@ public class CompareParticipant extends CVSParticipant implements IPropertyChang
 		for (int i = 0; i < refs.length; i++) {
 			ISynchronizeParticipantReference reference = refs[i];
 			if (reference.getId().equals(CVSCompareSubscriber.ID)) {
-				CompareParticipant p;
 				try {
-					p = (CompareParticipant) reference.getParticipant();
+				    CompareParticipant p = (CompareParticipant) reference.getParticipant();
+					if (p.matches(resources, tag)) {
+					    return p;
+					}
 				} catch (TeamException e) {
 					continue;
-				}
-				CVSTag existingTag = p.getTag();
-				// The tag can be null if the compare participant has a different tag for each root
-				if (existingTag != null) {
-					IResource[] roots = p.getResources();
-					Arrays.sort(resources, Utils.resourceComparator);
-					Arrays.sort(roots, Utils.resourceComparator);
-					if (Arrays.equals(resources, roots) && existingTag.equals(tag)) {
-						return p;
-					}
 				}
 			}
 		}
 		return null;
 	}
+	
+	/**
+	 * Return whether this compare subscriber matches persisly the 
+	 * provided list of resources and the single tag.
+	 * @param resources the resources
+	 * @param tag the tag
+	 * @return whether this compare subscriber matches persisly the 
+	 * provided list of resources and the single tag
+	 */
+	protected boolean matches(IResource[] resources, CVSTag tag) {
+		CVSTag existingTag = getCVSCompareSubscriber().getTag();
+		// The tag can be null if the compare participant has a different tag for each root
+		if (existingTag != null) {
+			IResource[] roots = getResources();
+			Arrays.sort(resources, Utils.resourceComparator);
+			Arrays.sort(roots, Utils.resourceComparator);
+			if (Arrays.equals(resources, roots) && existingTag.equals(tag)) {
+				return true;
+			}
+		}
+		return false;
+	}
 
-	/* (non-Javadoc)
+	/**
+	 * Return the subscriber as an instance of CVSCompareSubscriber.
+     * @return the subscriber as an instance of CVSCompareSubscriber
+     */
+    public CVSCompareSubscriber getCVSCompareSubscriber() {
+        return (CVSCompareSubscriber)getSubscriber();
+    }
+
+    /* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.subscribers.SubscriberParticipant#initializeConfiguration(org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration)
 	 */
 	protected void initializeConfiguration(ISynchronizePageConfiguration configuration) {
@@ -151,10 +160,7 @@ public class CompareParticipant extends CVSParticipant implements IPropertyChang
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 				NON_MODAL_CONTEXT_MENU_CONTRIBUTION_GROUP);
 		configuration.addActionContribution(new CompareParticipantActionContribution());
-		if(localTag != null) {
-			// The manager adds itself to the configuration in it's constructor
-			new ChangeLogModelManager(configuration, localTag, getTag());
-		}
+		new ChangeLogModelManager(configuration);
 	}
 	
 	/* (non-Javadoc)

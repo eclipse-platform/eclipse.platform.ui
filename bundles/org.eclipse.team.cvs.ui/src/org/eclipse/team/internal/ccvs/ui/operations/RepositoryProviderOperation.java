@@ -31,9 +31,6 @@ public abstract class RepositoryProviderOperation extends CVSOperation {
 
 	private IResource[] resources;
 
-	/**
-	 * @param shell
-	 */
 	public RepositoryProviderOperation(IWorkbenchPart part, IResource[] resources) {
 		super(part);
 		this.resources = resources;

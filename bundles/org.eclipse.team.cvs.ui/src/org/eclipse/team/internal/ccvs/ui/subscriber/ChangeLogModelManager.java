@@ -14,13 +14,9 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.ui.*;
-import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
-import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ui.synchronize.*;
-import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
-import org.eclipse.team.ui.synchronize.SynchronizePageActionGroup;
+import org.eclipse.team.ui.synchronize.*;
 
 /**
  * Manager for hierarchical models
@@ -30,10 +26,6 @@ public class ChangeLogModelManager extends HierarchicalModelManager implements I
     private static final String P_COMMIT_SET_ENABLED = CVSUIPlugin.ID + ".P_COMMIT_SET_ENABLED"; //$NON-NLS-1$
     
     public static final String COMMIT_SET_GROUP = "CommitSet"; //$NON-NLS-1$
-    
-	/** support for showing change logs for ranges of tags **/
-	private CVSTag tag1;
-	private CVSTag tag2;
 	
 	boolean enabled = false;
 	
@@ -65,13 +57,7 @@ public class ChangeLogModelManager extends HierarchicalModelManager implements I
 	}
 	
 	public ChangeLogModelManager(ISynchronizePageConfiguration configuration) {
-		this(configuration, null, null);
-	}
-	
-	public ChangeLogModelManager(ISynchronizePageConfiguration configuration, CVSTag tag1, CVSTag tag2) {
-		super(configuration);
-		this.tag1 = tag1;
-		this.tag2 = tag2;
+	    super(configuration);
 		configuration.addPropertyChangeListener(this);
 		configuration.setProperty(SynchronizePageConfiguration.P_MODEL_MANAGER, this);
 		configuration.addMenuGroup(ISynchronizePageConfiguration.P_TOOLBAR_MENU, COMMIT_SET_GROUP);
@@ -91,7 +77,7 @@ public class ChangeLogModelManager extends HierarchicalModelManager implements I
 	 */
 	protected ISynchronizeModelProvider createModelProvider(String id) {
 	    if (enabled) {
-	        return new ChangeLogModelProvider(getConfiguration(), getSyncInfoSet(), tag1, tag2, id);
+	        return new ChangeLogModelProvider(getConfiguration(), getSyncInfoSet(), id);
 	    } else {
 	        return super.createModelProvider(id);
 	    }

@@ -36,10 +36,13 @@ import org.eclipse.team.core.synchronize.FastSyncInfoFilter.SyncInfoDirectionFil
 import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.*;
+import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.core.util.Util;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.RemoteLogOperation;
+import org.eclipse.team.internal.ccvs.ui.operations.RemoteLogOperation.LogEntryCache;
 import org.eclipse.team.internal.core.Assert;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
@@ -63,16 +66,11 @@ import org.eclipse.ui.progress.UIJob;
 public class ChangeLogModelProvider extends CompositeModelProvider implements ICommitSetChangeListener {
 	// Log operation that is used to fetch revision histories from the server. It also
 	// provides caching so we keep it around.
-	private RemoteLogOperation logOperation;
+    private LogEntryCache logs;
 	
 	// Job that builds the layout in the background.
 	private boolean shutdown = false;
 	private FetchLogEntriesJob fetchLogEntriesJob;
-	
-	// Tag ranges for fetching revision histories. If no tags are specified then
-	// the history for the remote revision in the sync info is used.
-	private CVSTag tag1;
-	private CVSTag tag2;
 	
 	// The id of the sub-provider
 	private final String id;
@@ -424,10 +422,8 @@ public class ChangeLogModelProvider extends CompositeModelProvider implements IC
 	};
 	private static final ChangeLogModelProviderDescriptor descriptor = new ChangeLogModelProviderDescriptor();
 	
-	public ChangeLogModelProvider(ISynchronizePageConfiguration configuration, SyncInfoSet set, CVSTag tag1, CVSTag tag2, String id) {
+	public ChangeLogModelProvider(ISynchronizePageConfiguration configuration, SyncInfoSet set, String id) {
 		super(configuration, set);
-		this.tag1 = tag1;
-		this.tag2 = tag2;
 		Assert.isNotNull(id);
         this.id = id;
 		configuration.addMenuGroup(ISynchronizePageConfiguration.P_CONTEXT_MENU, COMMIT_SET_GROUP);
@@ -547,7 +543,7 @@ public class ChangeLogModelProvider extends CompositeModelProvider implements IC
 	 * to add each resource to an appropriate commit set.
      */
     private void handleRemoteChanges(final SyncInfo[] infos, final IProgressMonitor monitor) throws CVSException, InterruptedException {
-        final RemoteLogOperation logs = getSyncInfoComment(infos, Policy.subMonitorFor(monitor, 80));
+        final LogEntryCache logs = getSyncInfoComment(infos, Policy.subMonitorFor(monitor, 80));
         runViewUpdate(new Runnable() {
             public void run() {
                 addLogEntries(infos, logs, Policy.subMonitorFor(monitor, 10));
@@ -578,7 +574,7 @@ public class ChangeLogModelProvider extends CompositeModelProvider implements IC
 	 * Add the following sync info elements to the viewer. It is assumed that these elements have associated
 	 * log entries cached in the log operation.
 	 */
-	private void addLogEntries(SyncInfo[] commentInfos, RemoteLogOperation logs, IProgressMonitor monitor) {
+	private void addLogEntries(SyncInfo[] commentInfos, LogEntryCache logs, IProgressMonitor monitor) {
 		try {
 			monitor.beginTask(null, commentInfos.length * 10);
 			if (logs != null) {
@@ -602,23 +598,27 @@ public class ChangeLogModelProvider extends CompositeModelProvider implements IC
 	 * @param info the info for which to create a node in the model
 	 * @param log the cvs log for this node
 	 */
-	private void addSyncInfoToCommentNode(SyncInfo info, RemoteLogOperation logs) {
+	private void addSyncInfoToCommentNode(SyncInfo info, LogEntryCache logs) {
 		ICVSRemoteResource remoteResource = getRemoteResource((CVSSyncInfo)info);
-		if(tag1 != null && tag2 != null) {
+		if(isTagComparison()) {
 			addMultipleRevisions(info, logs, remoteResource);
 		} else {
 			addSingleRevision(info, logs, remoteResource);
 		}
 	}
 	
-	/**
+    private boolean isTagComparison() {
+        return getCompareSubscriber() != null;
+    }
+
+    /**
 	 * Add multiple log entries to the model.
 	 * 
 	 * @param info
 	 * @param logs
 	 * @param remoteResource
 	 */
-	private void addMultipleRevisions(SyncInfo info, RemoteLogOperation logs, ICVSRemoteResource remoteResource) {
+	private void addMultipleRevisions(SyncInfo info, LogEntryCache logs, ICVSRemoteResource remoteResource) {
 		ILogEntry[] logEntries = logs.getLogEntries(remoteResource);
 		if(logEntries == null || logEntries.length == 0) {
 			// If for some reason we don't have a log entry, try the latest
@@ -639,7 +639,7 @@ public class ChangeLogModelProvider extends CompositeModelProvider implements IC
 	 * @param logs
 	 * @param remoteResource
 	 */
-	private void addSingleRevision(SyncInfo info, RemoteLogOperation logs, ICVSRemoteResource remoteResource) {
+	private void addSingleRevision(SyncInfo info, LogEntryCache logs, ICVSRemoteResource remoteResource) {
 		ILogEntry logEntry = logs.getLogEntry(remoteResource);
 		// For incoming deletions grab the comment for the latest on the same branch
 		// which is now in the attic.
@@ -717,7 +717,6 @@ public class ChangeLogModelProvider extends CompositeModelProvider implements IC
     private void addToCommitSetProvider(SyncInfo info, ISynchronizeModelElement parent) {
         ISynchronizeModelProvider provider = getProviderRootedAt(parent);
         if (provider == null) {
-            // TODO: Will not get event batching for new providers
             provider = createProviderRootedAt(parent);
         }
         provider.getSyncInfoSet().add(info);
@@ -834,7 +833,45 @@ public class ChangeLogModelProvider extends CompositeModelProvider implements IC
 	 * How do we tell which revision has the interesting log message? Use the later
 	 * revision, since it probably has the most up-to-date comment.
 	 */
-	private RemoteLogOperation getSyncInfoComment(SyncInfo[] infos, IProgressMonitor monitor) throws CVSException, InterruptedException {
+	private LogEntryCache getSyncInfoComment(SyncInfo[] infos, IProgressMonitor monitor) throws CVSException, InterruptedException {
+		if (logs == null) {
+		    logs = new LogEntryCache();
+		}
+	    if (isTagComparison()) {
+	        CVSTag tag = getCompareSubscriber().getTag();
+            if (tag != null) {
+	            // This is a comparison against a single tag
+                // TODO: The local tags could be different per root or even mixed!!!
+                fetchLogs(infos, logs, getLocalResourcesTag(infos), tag, monitor);
+	        } else {
+	            // Perform a fetch for each root in the subscriber
+	            Map rootToInfosMap = getRootToInfosMap(infos);
+	            monitor.beginTask(null, 100 * rootToInfosMap.size());
+	            for (Iterator iter = rootToInfosMap.keySet().iterator(); iter.hasNext();) {
+                    IResource root = (IResource) iter.next();
+                    List infoList = ((List)rootToInfosMap.get(root));
+                    SyncInfo[] infoArray = (SyncInfo[])infoList.toArray(new SyncInfo[infoList.size()]);
+                    fetchLogs(infoArray, logs, getLocalResourcesTag(infoArray), getCompareSubscriber().getTag(root), Policy.subMonitorFor(monitor, 100));
+                }
+	            monitor.done();
+	        }
+	        
+	    } else {
+	        // Run the log command once with no tags
+			fetchLogs(infos, logs, null, null, monitor);
+	    }
+		return logs;
+	}
+	
+	private void fetchLogs(SyncInfo[] infos, LogEntryCache cache, CVSTag localTag, CVSTag remoteTag, IProgressMonitor monitor) throws CVSException, InterruptedException {
+	    ICVSRemoteResource[] remoteResources = getRemotes(infos);
+	    if (remoteResources.length > 0) {
+			RemoteLogOperation logOperation = new RemoteLogOperation(getConfiguration().getSite().getPart(), remoteResources, localTag, remoteTag, cache);
+			logOperation.execute(monitor);
+	    }
+	    
+	}
+	private ICVSRemoteResource[] getRemotes(SyncInfo[] infos) {
 		List remotes = new ArrayList();
 		for (int i = 0; i < infos.length; i++) {
 			CVSSyncInfo info = (CVSSyncInfo)infos[i];
@@ -846,18 +883,74 @@ public class ChangeLogModelProvider extends CompositeModelProvider implements IC
 				remotes.add(remote);
 			}
 		}
-		ICVSRemoteResource[] remoteResources = (ICVSRemoteResource[]) remotes.toArray(new ICVSRemoteResource[remotes.size()]);
-		if(logOperation == null) {
-			logOperation = new RemoteLogOperation(null, remoteResources, tag1, tag2);
-		}
-		if(! remotes.isEmpty()) {
-			logOperation.setRemoteResources(remoteResources);
-			logOperation.execute(monitor);
-		}
-		return logOperation;
+		return (ICVSRemoteResource[]) remotes.toArray(new ICVSRemoteResource[remotes.size()]);
 	}
 	
-	private ICVSRemoteResource getRemoteResource(CVSSyncInfo info) {
+	/*
+     * Return a map of IResource -> List of SyncInfo where the resource
+     * is a root of the compare subscriber and the SyncInfo are children
+     * of that root
+     */
+    private Map getRootToInfosMap(SyncInfo[] infos) {
+        Map rootToInfosMap = new HashMap();
+        IResource[] roots = getCompareSubscriber().roots();
+        for (int i = 0; i < infos.length; i++) {
+            SyncInfo info = infos[i];
+            IPath localPath = info.getLocal().getFullPath();
+            for (int j = 0; j < roots.length; j++) {
+                IResource resource = roots[j];
+                if (resource.getFullPath().isPrefixOf(localPath)) {
+                    List infoList = (List)rootToInfosMap.get(resource);
+                    if (infoList == null) {
+                        infoList = new ArrayList();
+                        rootToInfosMap.put(resource, infoList);
+                    }
+                    infoList.add(info);
+                    break; // out of inner loop
+                }
+            }
+            
+        }
+        return rootToInfosMap;
+    }
+
+    private CVSTag getLocalResourcesTag(SyncInfo[] infos) {
+		try {
+			for (int i = 0; i < infos.length; i++) {
+				IResource local = infos[i].getLocal();
+                ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(local);
+				CVSTag tag = null;
+				if(cvsResource.isFolder()) {
+					FolderSyncInfo info = ((ICVSFolder)cvsResource).getFolderSyncInfo();
+					if(info != null) {
+						tag = info.getTag();									
+					}
+					if (tag != null && tag.getType() == CVSTag.BRANCH) {
+						tag = Util.getAccurateFolderTag(local, tag);
+					}
+				} else {
+					tag = Util.getAccurateFileTag(cvsResource);
+				}
+				if(tag == null) {
+					tag = new CVSTag();
+				}
+				return tag;
+			}
+			return new CVSTag();
+		} catch (CVSException e) {
+			return new CVSTag();
+		}
+	}
+	
+    private CVSCompareSubscriber getCompareSubscriber() {
+        ISynchronizeParticipant participant = getConfiguration().getParticipant();
+        if (participant instanceof CompareParticipant) {
+            return ((CompareParticipant)participant).getCVSCompareSubscriber();
+        }
+        return null;
+    }
+
+    private ICVSRemoteResource getRemoteResource(CVSSyncInfo info) {
 		try {
 			ICVSRemoteResource remote = (ICVSRemoteResource) info.getRemote();
 			ICVSRemoteResource local = (ICVSRemoteFile) CVSWorkspaceRoot.getRemoteResourceFor(info.getLocal());
@@ -935,7 +1028,7 @@ public class ChangeLogModelProvider extends CompositeModelProvider implements IC
 			CVSSyncInfo info = (CVSSyncInfo) ((SyncInfoModelElement) node).getSyncInfo();
 			if (info != null) {
 				ICVSRemoteResource remote = getRemoteResource(info);
-				logOperation.clearEntriesFor(remote);
+				logs.clearEntriesFor(remote);
 			}
 		}
 		if (provider.getSyncInfoSet().isEmpty() && provider.getModelRoot() != getModelRoot()) {
