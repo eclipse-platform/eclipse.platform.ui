@@ -165,7 +165,9 @@ public class AntPropertiesBlock {
 		propertyTableViewer= createTableViewer(top);
 		propertyTableViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
-				edit();
+				if (!event.getSelection().isEmpty()) {
+					edit();
+				}
 			}
 		});
 		
@@ -311,9 +313,6 @@ public class AntPropertiesBlock {
 	private void edit() {
 		IStructuredSelection selection= (IStructuredSelection) propertyTableViewer.getSelection();
 		Property prop = (Property) selection.getFirstElement();
-		if (prop == null) {
-			return;
-		}
 		
 		String originalName= prop.getName();
 		String title = AntPreferencesMessages.getString("AntPropertiesBlock.Edit_User_Property_5"); //$NON-NLS-1$
