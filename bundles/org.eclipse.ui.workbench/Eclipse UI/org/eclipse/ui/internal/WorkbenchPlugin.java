@@ -18,6 +18,8 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.boot.BootLoader;
+import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -38,6 +40,7 @@ import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.resource.FontRegistry;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.OpenStrategy;
@@ -115,6 +118,12 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	private PerspectiveRegistry perspRegistry;
 	private ActionSetRegistry actionSetRegistry;
 	private SharedImages sharedImages;
+	
+	/**
+	 * About info for the primary feature; lazily initialized.
+	 * @since 3.0
+	 */
+	private AboutInfo aboutInfo = null;
 	
 	/**
 	 * Create an instance of the WorkbenchPlugin.
@@ -560,5 +569,86 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 			} catch (IOException e) {}
 		}
 	}
+	
+	/**
+	 * Initializes product-specific information that comes from the
+	 * about.ini file of the primary feature.
+	 * <p>
+	 * Note that there be dragons here in these parts. In order to
+	 * find out whcih feature is the primary feature we need to consult
+	 * BootLoader.
+	 * 
+	 * @since 3.0
+	 */
+	private void initializeProductInfo() {
+		// extract app name and window image from primary feature
+		IPlatformConfiguration conf = BootLoader.getCurrentPlatformConfiguration();
+		String featureId = conf.getPrimaryFeatureIdentifier();
+		IPlatformConfiguration.IFeatureEntry feature = null;
+		if (featureId != null) {
+			feature = conf.findConfiguredFeatureEntry(featureId);
+		}
+		String versionId = null;
+		String pluginId = null;
+		if (feature != null) {
+			versionId = feature.getFeatureVersion();
+			pluginId = feature.getFeaturePluginIdentifier();
+		}
+		AboutInfo newAboutInfo = null;
+		if (versionId != null && pluginId != null) {
+			newAboutInfo = AboutInfo.readFeatureInfo(featureId, versionId, pluginId);
+		}
+		if (newAboutInfo == null) {
+			// create a minimal object that answers null when probed
+			newAboutInfo = new AboutInfo(featureId);
+		}
+		this.aboutInfo = newAboutInfo;
+		
+	}
 
+	/**
+	 * Returns the application name.
+	 * <p>
+	 * Note this is never shown to the user.
+	 * It is used to initialize the SWT Display.
+	 * On Motif, for example, this can be used
+	 * to set the name used for resource lookup.
+	 * </p>
+	 *
+	 * @return the application name, or <code>null</code>
+	 * @see org.eclipse.swt.widgets.Display#setAppName
+	 * @since 3.0
+	 */
+	public String getAppName() {
+		if (aboutInfo == null) {
+			initializeProductInfo();
+		}
+		return aboutInfo.getAppName();
+	}
+	
+	/**
+	 * Returns the name of the product.
+	 * 
+	 * @return the product name, or <code>null</code> if none
+	 * @since 3.0
+	 */
+	public String getProductName() {
+		if (aboutInfo == null) {
+			initializeProductInfo();
+		}
+		return aboutInfo.getProductName();
+	}
+
+	/**
+	 * Returns the image descriptor for the window image to use for this product.
+	 * 
+	 * @return the image descriptor for the window image, or <code>null</code> if none
+	 * @since 3.0
+	 */
+	public ImageDescriptor getWindowImage() {
+		if (aboutInfo == null) {
+			initializeProductInfo();
+		}
+		return aboutInfo.getWindowImage();
+	}
 }

@@ -393,7 +393,7 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 		Map map = getFeaturesMap();
 		if (map == null) 
 			return null;
-		String key = info.getFeatureId() + "_" + info.getVersion(); //$NON-NLS-1$
+		String key = info.getFeatureId() + "_" + info.getVersionId(); //$NON-NLS-1$
 		return (IFeature)map.get(key);
 	}
 
@@ -517,17 +517,17 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 				initialSelectionIndex = i;
 			String provider = featureInfos[i].getProviderName();
 			String featureName = featureInfos[i].getFeatureLabel();
-			String version = featureInfos[i].getVersion();
+			String versionId = featureInfos[i].getVersionId();
 			String featureId = featureInfos[i].getFeatureId();
 			if (provider == null)
 				provider = ""; //$NON-NLS-1$
 			if (featureName == null)
 				featureName = ""; //$NON-NLS-1$
-			if (version == null)
-				version = ""; //$NON-NLS-1$
+			if (versionId == null)
+				versionId = ""; //$NON-NLS-1$
 			if (featureId == null)
 				featureId = ""; //$NON-NLS-1$				
-			String[] row = { provider, featureName, version, featureId };
+			String[] row = { provider, featureName, versionId, featureId };
 			TableItem item = new TableItem(table, SWT.NULL);
 			item.setText(row);
 			item.setData(featureInfos[i]);
@@ -593,17 +593,17 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 		for(int i = 0; i < items.length; i++) {
 			String provider = featureInfos[i].getProviderName();
 			String featureName = featureInfos[i].getFeatureLabel();
-			String version = featureInfos[i].getVersion();
+			String versionId = featureInfos[i].getVersionId();
 			String featureId = featureInfos[i].getFeatureId();			
 			if (provider == null)
 				provider = ""; //$NON-NLS-1$
 			if (featureName == null)
 				featureName = ""; //$NON-NLS-1$
-			if (version == null)
-				version = ""; //$NON-NLS-1$
+			if (versionId == null)
+				versionId = ""; //$NON-NLS-1$
 			if (featureId == null)
 				featureId = ""; //$NON-NLS-1$
-			String[] row = { provider, featureName, version, featureId };
+			String[] row = { provider, featureName, versionId, featureId };
 			items[i].setText(row);
 			items[i].setData(featureInfos[i]);
 		}
@@ -721,14 +721,14 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 					AboutInfo i1, i2;
 					String version1, version2, name1, name2;
 					i1 = (AboutInfo)a;
-					version1 = i1.getVersion();
+					version1 = i1.getVersionId();
 					name1 = i1.getFeatureLabel();
 					if (version1 == null)
 						version1 = ""; //$NON-NLS-1$
 					if (name1 == null)
 						name1 = ""; //$NON-NLS-1$
 					i2 = (AboutInfo)b;
-					version2 = i2.getVersion();
+					version2 = i2.getVersionId();
 					name2 = i2.getFeatureLabel();
 					if (version2 == null)
 						version2 = ""; //$NON-NLS-1$

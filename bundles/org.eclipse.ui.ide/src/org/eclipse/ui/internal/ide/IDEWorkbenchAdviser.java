@@ -35,7 +35,6 @@ import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
@@ -80,7 +79,6 @@ import org.eclipse.ui.application.WorkbenchAdviser;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.AboutInfo;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
-import org.eclipse.ui.internal.ide.dialogs.MessageDialogWithToggle;
 import org.eclipse.ui.internal.ide.dialogs.WelcomeEditorInput;
 import org.eclipse.ui.internal.ide.model.WorkbenchAdapterBuilder;
 import org.eclipse.ui.part.EditorInputTransfer;
@@ -237,7 +235,8 @@ public class IDEWorkbenchAdviser extends WorkbenchAdviser {
 		for (Iterator it = s.iterator(); it.hasNext(); ) {
 			String versionedId = (String) it.next();
 			String featureId = versionedId.substring(0, versionedId.indexOf(':'));
-			AboutInfo info = AboutInfo.readFeatureInfo(featureId);
+			String featureVersionId = versionedId.substring(versionedId.indexOf(':')+1);
+			AboutInfo info = AboutInfo.readFeatureInfo(featureId, featureVersionId, featureId);
 			if (info != null && info.getWelcomePerspectiveId() != null && info.getWelcomePageURL() != null) {
 				welcomePerspectiveInfos.add(info);
 			}
@@ -692,7 +691,7 @@ public class IDEWorkbenchAdviser extends WorkbenchAdviser {
 	 * for any newly installed features.
 	 */
 	private void openWelcomeEditors() throws WorkbenchException {
-		AboutInfo primaryInfo = IDEApplication.getPrimaryInfo();
+		AboutInfo primaryInfo = IDEWorkbenchPlugin.getDefault().getPrimaryInfo();
 		IWorkbenchWindow window = configurer.getWorkbench().getActiveWorkbenchWindow();
 		if (window == null) {
 			if (configurer.getWorkbench().getWorkbenchWindowCount() > 0) {
@@ -716,18 +715,19 @@ public class IDEWorkbenchAdviser extends WorkbenchAdviser {
 			for (Iterator it = getNewlyAddedFeatures().iterator(); it.hasNext(); ) {
 				String versionedId = (String) it.next();
 				String featureId = versionedId.substring(0, versionedId.indexOf(':'));
-				AboutInfo info = AboutInfo.readFeatureInfo(featureId);
+				String featureVersionId = versionedId.substring(versionedId.indexOf(':')+1);
+				AboutInfo info = AboutInfo.readFeatureInfo(featureId, featureVersionId, featureId);
 				if (info != null && info.getWelcomePerspectiveId() != null && info.getWelcomePageURL() != null) {
-					IPluginDescriptor desc = info.getPluginDescriptor();
-					// activate the feature plugin so it can run some install code.
-					if (desc != null) {
-						try {
-							desc.getPlugin();
-						} catch (CoreException e) {
-							// do nothing
+					welcomeFeatures.add(info);
+					// activate the feature plug-in so it can run some install code
+					IPlatformConfiguration platformConfiguration = BootLoader.getCurrentPlatformConfiguration();
+					IPlatformConfiguration.IFeatureEntry feature = platformConfiguration.findConfiguredFeatureEntry(featureId);
+					if (feature != null) {
+						String pi = feature.getFeaturePluginIdentifier();
+						if (pi != null) {
+							Platform.getPlugin(pi);
 						}
 					}
-					welcomeFeatures.add(info);
 				}
 			}
 	
@@ -924,7 +924,7 @@ public class IDEWorkbenchAdviser extends WorkbenchAdviser {
 		IWorkbenchWindowConfigurer windowConfigurer = configurer.getWindowConfigurer(window);
 		
 		String title = null;
-		AboutInfo about = IDEApplication.getPrimaryInfo();
+		AboutInfo about = IDEWorkbenchPlugin.getDefault().getPrimaryInfo();
 		// @issue performance - reading about info
 		if (about != null) {
 			title = about.getProductName();

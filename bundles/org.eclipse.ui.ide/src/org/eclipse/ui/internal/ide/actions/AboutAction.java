@@ -19,6 +19,7 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEApplication;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IHelpContextIds;
 import org.eclipse.ui.internal.ide.dialogs.AboutDialog;
 
@@ -45,7 +46,7 @@ public AboutAction(IWorkbenchWindow window) {
 	this.workbenchWindow = window;
 	
 	// use message with no fill-in
-	AboutInfo primaryInfo = IDEApplication.getPrimaryInfo();
+	AboutInfo primaryInfo = IDEWorkbenchPlugin.getDefault().getPrimaryInfo();
 	String productName = null;
 	if (primaryInfo != null) {
 		productName = primaryInfo.getProductName();
@@ -68,8 +69,8 @@ public void run() {
 		// action has been disposed
 		return;
 	}
-	AboutInfo primaryInfo = IDEApplication.getPrimaryInfo();
-	AboutInfo[] featureInfos = IDEApplication.getFeatureInfos();
+	AboutInfo primaryInfo = IDEWorkbenchPlugin.getDefault().getPrimaryInfo();
+	AboutInfo[] featureInfos = IDEWorkbenchPlugin.getDefault().getFeatureInfos();
 //	if (primaryInfo == null) {
 //		// @issue illegal to pass null status to openError
 //		ErrorDialog.openError(

@@ -106,7 +106,7 @@ public class QuickStartAction
 	 */
 	private AboutInfo promptForFeature() throws WorkbenchException {
 		// Ask the user to select a feature
-		AboutInfo[] features = IDEApplication.getFeatureInfos();
+		AboutInfo[] features = IDEWorkbenchPlugin.getDefault().getFeatureInfos();
 		ArrayList welcomeFeatures = new ArrayList();
 		for (int i = 0; i < features.length; i++) {
 			if (features[i].getWelcomePageURL() != null)
@@ -125,7 +125,7 @@ public class QuickStartAction
 
 		features = new AboutInfo[welcomeFeatures.size()];
 		welcomeFeatures.toArray(features);
-		AboutInfo primaryFeature = IDEApplication.getPrimaryInfo();
+		AboutInfo primaryFeature = IDEWorkbenchPlugin.getDefault().getPrimaryInfo();
 
 		FeatureSelectionDialog d = new FeatureSelectionDialog(
 			shell,
@@ -161,7 +161,7 @@ public class QuickStartAction
 	 *   if there is no such feature.
 	 */
 	private AboutInfo findFeature(String featureId) throws WorkbenchException {
-		AboutInfo[] features = IDEApplication.getFeatureInfos();
+		AboutInfo[] features = IDEWorkbenchPlugin.getDefault().getFeatureInfos();
 		for (int i = 0; i < features.length; i++) {
 			AboutInfo info = features[i];
 			if (info.getFeatureId().equals(featureId)) {

@@ -11,6 +11,11 @@
 
 package org.eclipse.ui.internal.ide;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.core.boot.BootLoader;
+import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -22,29 +27,22 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.internal.AboutInfo;
 import org.eclipse.ui.internal.ide.registry.CapabilityRegistry;
 import org.eclipse.ui.internal.ide.registry.MarkerImageProviderRegistry;
 import org.eclipse.ui.internal.ide.registry.ProjectImageRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
- * This class represents the TOP of the workbench UI world
- * A plugin class is effectively an application wrapper
- * for a plugin & its classes. This class should be thought
- * of as the workbench UI's application class.
+ * This internal class represents the top of the IDE workbench.
  *
  * This class is responsible for tracking various registries
  * font, preference, graphics, dialog store.
  *
  * This class is explicitly referenced by the 
- * workbench plugin's  "plugin.xml" and places it
- * into the UI start extension point of the main
- * overall application harness
- *
- * When is this class started?
- *      When the Application
- *      calls createExecutableExtension to create an executable
- *      instance of our workbench class.
+ * IDE workbench plug-in's  "plugin.xml"
+ * 
+ * @since 3.0
  */
 public class IDEWorkbenchPlugin extends AbstractUIPlugin {
 	// Default instance of the receiver
@@ -87,6 +85,11 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
 	 */	
 	private CapabilityRegistry capabilityRegistry;
 
+	/**
+	 * List of about info for all know features; lazily initialized.
+	 */
+	private AboutInfo[] cachedAboutInfos = null;
+	
 	/**
 	 * Create an instance of the IDEWorkbenchPlugin.
 	 * The workbench plugin is effectively the "application" for the workbench UI.
@@ -281,4 +284,68 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
 		}
 		return capabilityRegistry;
 	}
+	
+	/**
+	 * Returns the about information of all known features, omitting any
+	 * features which are missing this infomration.
+	 * 
+	 * @return a possibly empty list of about infos
+	 */
+	private AboutInfo[] readFeatureInfos() {
+		IPlatformConfiguration conf = BootLoader.getCurrentPlatformConfiguration();
+		IPlatformConfiguration.IFeatureEntry[] entries = conf.getConfiguredFeatureEntries();
+		List infos = new ArrayList(entries.length);
+		for (int i = 0; i < entries.length; i++) {
+			String featureId = entries[i].getFeatureIdentifier();
+			String versionId = entries[i].getFeatureVersion();
+			String pluginId = entries[i].getFeaturePluginIdentifier();
+			AboutInfo info = null;
+			if (versionId != null && pluginId != null) {
+				info = AboutInfo.readFeatureInfo(featureId, versionId, pluginId);
+			}
+			if (info != null) {
+				infos.add(info);
+			}
+		}
+		AboutInfo[] result = new AboutInfo[infos.size()];
+		infos.toArray(result);
+		return result;
+	}
+
+	/**
+	 * Returns the about information of all known features,
+	 * omitting any features which are missing this information.
+	 * 
+	 * @return a possibly empty list of about infos
+	 */
+	public AboutInfo[] getFeatureInfos() {
+		if (cachedAboutInfos == null) {
+			cachedAboutInfos = readFeatureInfos();
+		}
+		return cachedAboutInfos;
+	}
+
+	/**
+	 * Returns the about information of the primary feature.
+	 * 
+	 * @return info about the primary feature, or <code>null</code> if there 
+	 * is no primary feature or if this information is unavailable
+	 */
+	public AboutInfo getPrimaryInfo() {
+		IPlatformConfiguration conf = BootLoader.getCurrentPlatformConfiguration();
+		String featureId = conf.getPrimaryFeatureIdentifier();
+		if (featureId == null) {
+			return null;
+		}
+		if (cachedAboutInfos == null) {
+			cachedAboutInfos = readFeatureInfos();
+		}
+		for (int i = 0; i < cachedAboutInfos.length; i++) {
+			if (featureId.equals(cachedAboutInfos[i].getFeatureId())) {
+				return cachedAboutInfos[i];
+			}
+		}
+		return null;
+	}
+	
 }

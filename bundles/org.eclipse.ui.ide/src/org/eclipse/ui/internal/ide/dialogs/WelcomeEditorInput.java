@@ -50,7 +50,7 @@ public WelcomeEditorInput(AboutInfo info) {
 					return FACTORY_ID;
 				}
 				public void saveState(IMemento memento) {
-					memento.putString(FEATURE_ID, aboutInfo.getFeatureId());
+					memento.putString(FEATURE_ID, aboutInfo.getFeatureId()+':'+aboutInfo.getVersionId());
 				}
 			};
 		}

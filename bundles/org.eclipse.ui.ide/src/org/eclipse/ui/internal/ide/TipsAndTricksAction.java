@@ -14,7 +14,6 @@ import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.help.IHelp;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -63,7 +62,7 @@ public class TipsAndTricksAction
 			return;
 		}
 		// Ask the user to select a feature
-		AboutInfo[] featureInfos = IDEApplication.getFeatureInfos();
+		AboutInfo[] featureInfos = IDEWorkbenchPlugin.getDefault().getFeatureInfos();
 		ArrayList tipsAndTricksFeatures = new ArrayList(featureInfos.length);
 		for (int i = 0; i < featureInfos.length; i++) {
 			if (featureInfos[i].getTipsAndTricksHref() != null)
@@ -83,7 +82,7 @@ public class TipsAndTricksAction
 		AboutInfo[] features = new AboutInfo[tipsAndTricksFeatures.size()];
 		tipsAndTricksFeatures.toArray(features);
 
-		AboutInfo primaryInfo = IDEApplication.getPrimaryInfo();
+		AboutInfo primaryInfo = IDEWorkbenchPlugin.getDefault().getPrimaryInfo();
 		if (primaryInfo == null) {
 			// @issue illegal to pass null status
 			ErrorDialog.openError(
@@ -115,10 +114,7 @@ public class TipsAndTricksAction
 			if (href != null) {
 				BusyIndicator.showWhile(shell.getDisplay(), new Runnable() {
 					public void run() {
-						final IHelp helpSupport = WorkbenchHelp.getHelpSupport();
-						if (helpSupport != null) {
-							helpSupport.displayHelpResource(href);
-						}
+						WorkbenchHelp.displayHelpResource(href);
 					}
 				});
 			} else {

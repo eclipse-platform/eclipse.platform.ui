@@ -638,7 +638,7 @@ public final class WorkbenchActionBuilder {
 		registerGlobalAction(closeAllSavedAction);
 
 		aboutAction = IDEActionFactory.ABOUT.create(getWindow());
-		AboutInfo aboutInfo = IDEApplication.getPrimaryInfo();
+		AboutInfo aboutInfo = IDEWorkbenchPlugin.getDefault().getPrimaryInfo();
 		// @issue performance - reading about info
 		String productName = null;
 		if (aboutInfo != null) {
@@ -669,7 +669,7 @@ public final class WorkbenchActionBuilder {
 		// events.
 		// registerGlobalAction(deleteAction);
 
-		AboutInfo[] infos = IDEApplication.getFeatureInfos();
+		AboutInfo[] infos = IDEWorkbenchPlugin.getDefault().getFeatureInfos();
 		// See if a welcome page is specified
 		for (int i = 0; i < infos.length; i++) {
 			if (infos[i].getWelcomePageURL() != null) {

@@ -21,14 +21,11 @@ import java.util.MissingResourceException;
 import java.util.Properties;
 import java.util.PropertyResourceBundle;
 
-import org.eclipse.core.boot.BootLoader;
-import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.PlatformUI;
@@ -46,31 +43,34 @@ public class IniFileReader {
 	private static final String KEY_DOUBLE_PREFIX = "%%"; //$NON-NLS-1$
 	private static final String NLS_TAG = "$nl$"; //$NON-NLS-1$
 
-	private IPluginDescriptor pluginDescriptor;
 	private String featureId;
+	private String pluginId;
 	private String iniFilename;
 	private String propertiesFilename;
 	private String mappingsFilename;
 	private Properties ini = null;
 	private PropertyResourceBundle properties = null;
 	private String[] mappings = null;
+	private IPluginDescriptor pluginDescriptor = null;
 
 	/**
 	 * Creates an INI file reader that can parse the contents into key,value pairs.
 	 * 
 	 * @param featureId the unique identifier of the feature, must not be <code>null</code>
+	 * @param pluginId the unique identifier of the feature plug-in, must not be <code>null</code>
 	 * @param iniFilename the INI file name, must not be <code>null</code>
 	 * @param propertiesFilename the properties filename, can be <code>null</code> if not required
 	 * @param mappingsFilename the mappings filename, can be <code>null</code> if not required
 	 */
-	public IniFileReader(String featureId, String iniFilename, String propertiesFilename, String mappingsFilename) {
+	public IniFileReader(String featureId, String pluginId, String iniFilename, String propertiesFilename, String mappingsFilename) {
 		super();
 		
-		if (featureId == null || iniFilename == null) {
+		if (featureId == null || pluginId == null || iniFilename == null) {
 			throw new IllegalArgumentException();
 		}
 			
 		this.featureId = featureId;
+		this.pluginId = pluginId;
 		this.iniFilename = iniFilename;
 		this.propertiesFilename = propertiesFilename;
 		this.mappingsFilename = mappingsFilename;
@@ -89,11 +89,8 @@ public class IniFileReader {
 			
 		// attempt to locate the corresponding plugin
 		IPluginRegistry reg = Platform.getPluginRegistry();
-		if (reg == null) {
-			String message = WorkbenchMessages.getString("IniFileReader.MissingReg"); //$NON-NLS-1$
-			return new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, message, null);
-		}
-		if (getPluginDescriptor(reg) == null) {
+		pluginDescriptor = reg.getPluginDescriptor(pluginId);
+		if (pluginDescriptor  == null) {
 			String message = WorkbenchMessages.format("IniFileReader.MissingDesc", new Object[] {featureId}); //$NON-NLS-1$
 			return new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, message, null);
 		}
@@ -143,41 +140,6 @@ public class IniFileReader {
 		return load(iniURL, propertiesURL, mappingsURL);
 	}
 		
-	/*
-	 * Gets the plugin descriptor for the feature id
-	 * @return the <code>IPluginDescriptor</code> or <code>null</code>
-	 */
-	private IPluginDescriptor getPluginDescriptor(IPluginRegistry reg) {
-		if (pluginDescriptor == null) {
-			IPlatformConfiguration platformConfiguration = BootLoader.getCurrentPlatformConfiguration();
-			IPlatformConfiguration.IFeatureEntry feature = platformConfiguration.findConfiguredFeatureEntry(featureId);
-			if (feature == null)
-				return null;
-			String pluginId = feature.getFeaturePluginIdentifier();
-			String pluginVersion = feature.getFeaturePluginVersion();
-			if (pluginVersion == null) {
-				pluginDescriptor = reg.getPluginDescriptor(pluginId);
-			} else {
-				PluginVersionIdentifier vid = new PluginVersionIdentifier(pluginVersion);	
-				pluginDescriptor = reg.getPluginDescriptor(pluginId, vid);
-				if (pluginDescriptor == null) {
-					// try ignoring the version
-					pluginDescriptor = reg.getPluginDescriptor(pluginId);
-				}
-			}
-		}		
-		return pluginDescriptor;
-	}
-	
-	/**
-	 * Returns the descriptor for the corresponding plug-in of this feature.
-	 * 
-	 * @return the plug-in descriptor or <code>null</code> if none found
-	 */
-	public IPluginDescriptor getPluginDescriptor() {
-		return pluginDescriptor;
-	}
-	
 	/**
 	 * Returns the string value for the given key, or <code>null</code>.
 	 * The string value is NLS if requested.

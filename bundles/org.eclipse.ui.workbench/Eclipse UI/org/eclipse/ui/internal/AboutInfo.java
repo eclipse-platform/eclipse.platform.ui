@@ -17,14 +17,10 @@ import java.net.URL;
 import java.util.Hashtable;
 import java.util.zip.CRC32;
 
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.Assert;
-import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.IniFileReader;
-import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
  * The information within this object is obtained from the about INI file.
@@ -42,8 +38,7 @@ public final class AboutInfo {
 	private final static int BYTE_ARRAY_SIZE = 2048;
 
 	private String featureId;
-	private PluginVersionIdentifier versionId;
-	private IPluginDescriptor pluginDescriptor;
+	private String versionId = ""; //$NON-NLS-1$
 	private String featurePluginLabel;
 	private String providerName;
 	private String appName;
@@ -59,88 +54,45 @@ public final class AboutInfo {
 	private boolean calculatedImageCRC = false;
 
 	/*
-	 * Constructs a new instance of the about info.
+	 * Create a new about info for a feature with the given id.
 	 */
-	private AboutInfo(String featureId, PluginVersionIdentifier versionId) {
+	/* package */ AboutInfo(String featureId) {
 		super();
 		this.featureId = featureId;
-		this.versionId = versionId;
 	}
 
 	/**
 	 * Returns the configuration information for the feature with the 
 	 * given id.
 	 * 
-	 * @param featureId 
-	 * @return the configuration information for all features
+	 * @param featureId the feature id
+	 * @param versionId the version id (of the feature)
+	 * @return the configuration information for the feature
 	 */
-	public static AboutInfo readFeatureInfo(String featureId) {
+	public static AboutInfo readFeatureInfo(String featureId, String versionId, String pluginId) {
 		Assert.isNotNull(featureId);
-		AboutInfo info = new AboutInfo(featureId, null);
-		if (featureId != null) {
-			IniFileReader reader = new IniFileReader(featureId, INI_FILENAME, PROPERTIES_FILENAME, MAPPINGS_FILENAME);
-			IStatus status = reader.load();
-			if (!status.isOK()) {
-				return null;
-			}
-			Hashtable runtimeMappings  = new Hashtable();
-			String featureVersion = info.getVersion();
-			if (featureVersion == null)
-				featureVersion = WorkbenchMessages.getString("AboutInfo.NoVersion"); //$NON-NLS-1$
-			runtimeMappings.put("{featureVersion}", featureVersion); //$NON-NLS-1$
-
-			info.pluginDescriptor = reader.getPluginDescriptor();
-			info.featurePluginLabel = reader.getFeaturePluginLabel();
-			info.providerName = reader.getProviderName();
-			info.appName = reader.getString("appName", true, runtimeMappings); //$NON-NLS-1$
-			info.aboutText = reader.getString("aboutText", true, runtimeMappings); //$NON-NLS-1$
-			info.windowImage = reader.getImage("windowImage"); //$NON-NLS-1$
-			info.aboutImage = reader.getImage("aboutImage"); //$NON-NLS-1$
-			info.featureImage = reader.getImage("featureImage"); //$NON-NLS-1$
-			info.featureImageURL = reader.getURL("featureImage"); //$NON-NLS-1$
-			info.welcomePageURL = reader.getURL("welcomePage"); //$NON-NLS-1$
-			info.welcomePerspective = reader.getString("welcomePerspective", false, runtimeMappings); //$NON-NLS-1$
-			info.tipsAndTricksHref = reader.getString("tipsAndTricksHref", false, runtimeMappings); //$NON-NLS-1$
+		Assert.isNotNull(versionId);
+		IniFileReader reader = new IniFileReader(featureId, pluginId, INI_FILENAME, PROPERTIES_FILENAME, MAPPINGS_FILENAME);
+		IStatus status = reader.load();
+		if (!status.isOK()) {
+			return null;
 		}
-		return info;
-	}
-
-	/**
-	 * Creates and loads the about information for the specified feature.
-	 * 
-	 * @param featureId the feature id to read the about information from, or <code>null</code>
-	 * @param versionId the version id of the feature, or <code>null</code>
-	 * @return the initialized about information for the specified feature
-	 * @deprecated
-	 * @issue consider making this method internal so that regular plug-ins cannot call
-	 */
-	public final static AboutInfo create(String featureId, PluginVersionIdentifier versionId) throws WorkbenchException {
-		AboutInfo info = new AboutInfo(featureId, versionId);
-		if (featureId != null) {
-			IniFileReader reader = new IniFileReader(featureId, INI_FILENAME, PROPERTIES_FILENAME, MAPPINGS_FILENAME);
-			IStatus status = reader.load();
-			if (!status.isOK()) {
-				throw new WorkbenchException(status);
-			}
-			Hashtable runtimeMappings  = new Hashtable();
-			String featureVersion = info.getVersion();
-			if (featureVersion == null)
-				featureVersion = WorkbenchMessages.getString("AboutInfo.NoVersion"); //$NON-NLS-1$
-			runtimeMappings.put("{featureVersion}", featureVersion); //$NON-NLS-1$
-
-			info.pluginDescriptor = reader.getPluginDescriptor();
-			info.featurePluginLabel = reader.getFeaturePluginLabel();
-			info.providerName = reader.getProviderName();
-			info.appName = reader.getString("appName", true, runtimeMappings); //$NON-NLS-1$
-			info.aboutText = reader.getString("aboutText", true, runtimeMappings); //$NON-NLS-1$
-			info.windowImage = reader.getImage("windowImage"); //$NON-NLS-1$
-			info.aboutImage = reader.getImage("aboutImage"); //$NON-NLS-1$
-			info.featureImage = reader.getImage("featureImage"); //$NON-NLS-1$
-			info.featureImageURL = reader.getURL("featureImage"); //$NON-NLS-1$
-			info.welcomePageURL = reader.getURL("welcomePage"); //$NON-NLS-1$
-			info.welcomePerspective = reader.getString("welcomePerspective", false, runtimeMappings); //$NON-NLS-1$
-			info.tipsAndTricksHref = reader.getString("tipsAndTricksHref", false, runtimeMappings); //$NON-NLS-1$
-		}
+		
+		AboutInfo info = new AboutInfo(featureId);
+		Hashtable runtimeMappings  = new Hashtable();
+		runtimeMappings.put("{featureVersion}", versionId); //$NON-NLS-1$
+		info.versionId = versionId;
+		info.featurePluginLabel = reader.getFeaturePluginLabel();
+		info.providerName = reader.getProviderName();
+		info.appName = reader.getString("appName", true, runtimeMappings); //$NON-NLS-1$
+		info.aboutText = reader.getString("aboutText", true, runtimeMappings); //$NON-NLS-1$
+		info.windowImage = reader.getImage("windowImage"); //$NON-NLS-1$
+		info.aboutImage = reader.getImage("aboutImage"); //$NON-NLS-1$
+		info.featureImage = reader.getImage("featureImage"); //$NON-NLS-1$
+		info.featureImageURL = reader.getURL("featureImage"); //$NON-NLS-1$
+		info.welcomePageURL = reader.getURL("welcomePage"); //$NON-NLS-1$
+		info.welcomePerspective = reader.getString("welcomePerspective", false, runtimeMappings); //$NON-NLS-1$
+		info.tipsAndTricksHref = reader.getString("tipsAndTricksHref", false, runtimeMappings); //$NON-NLS-1$
 		return info;
 	}
 	
@@ -239,9 +191,9 @@ public final class AboutInfo {
 	}
 
 	/**
-	 * Returns the ID for this feature, or <code>null</code>
+	 * Returns the id for this feature.
 	 * 
-	 * @return the feature ID, or <code>null</code>
+	 * @return the feature id
 	 */
 	public String getFeatureId() {
 		return featureId;
@@ -275,16 +227,6 @@ public final class AboutInfo {
 	}
 
 	/**
-	 * Returns the descriptor for the corresponding plug-in of this feature.
-	 * 
-	 * @return the plug-in descriptor or <code>null</code> if none found
-	 * @issue this method is unnecessary; clients can get plug-in descriptor from the plug-in registry using plug-in id
-	 */
-	public IPluginDescriptor getPluginDescriptor() {
-		return pluginDescriptor;
-	}
-	
-	/**
 	 * Returns the product name or <code>null</code>.
 	 * This is shown in the window title and the About action.
 	 *
@@ -304,23 +246,11 @@ public final class AboutInfo {
 	}
 
 	/**
-	 * Returns the version as text or <code>null</code>.
+	 * Returns the feature version id.
 	 *
-	 * @return the version as text, or <code>null</code>
+	 * @return the version id of the feature
 	 */
-	public String getVersion() {
-		if (versionId == null)
-			return null;
-		return versionId.toString();
-	}
-
-	/**
-	 * Returns the plug-in version identifier or <code>null</code>.
-	 *
-	 * @return the plug-in version identifier, or <code>null</code>
-	 * @issue this method is probably unnecessary; clients can get plug-in version ids from the plug-in registry using plug-in id
-	 */
-	public PluginVersionIdentifier getVersionId() {
+	public String getVersionId() {
 		return versionId;
 	}
 

@@ -24,8 +24,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.core.boot.BootLoader;
-import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -147,6 +145,13 @@ public final class Workbench implements IWorkbench {
 	 */
 	private static WorkbenchTestable testableObject;
 
+	/**
+	 * The display used for all UI interactions with this workbench.
+	 * 
+	 * @since 3.0
+	 */
+	private Display display;
+
 	private WindowManager windowManager;
 	private WorkbenchWindow activatedWindow;
 	private EditorHistory editorHistory;
@@ -160,12 +165,6 @@ public final class Workbench implements IWorkbench {
 	private int returnCode;
 	
 	private ListenerList windowListeners = new ListenerList();
-	
-	/**
-	 * Product name, or null if none.
-	 * @since 3.0
-	 */
-	private String productName = null;
 	
 	/**
 	 * Adviser providing application-specific configuration and customization
@@ -184,20 +183,21 @@ public final class Workbench implements IWorkbench {
 	/**
 	 * Creates a new workbench.
 	 * 
+	 * @param display the display to be used for all UI interactions with the workbench
 	 * @param adviser the application-specific adviser that configures and
 	 * specializes this workbench instance
 	 * @since 3.0
 	 */
-	private Workbench(WorkbenchAdviser adviser) {
+	private Workbench(Display display, WorkbenchAdviser adviser) {
 		super();
 
 		if (instance != null) {
 			throw new IllegalStateException(WorkbenchMessages.getString("Workbench.CreatingWorkbenchTwice")); //$NON-NLS-1$
 		}		
-		if (adviser == null) {
-			throw new IllegalArgumentException(WorkbenchMessages.getString("Workbench.InvalidAdviser")); //$NON-NLS-1$
-		}
+		Assert.isNotNull(display);
+		Assert.isNotNull(adviser);
 		this.adviser = adviser;
+		this.display = display;
 		Workbench.instance = this;
 	}
 	
@@ -212,14 +212,18 @@ public final class Workbench implements IWorkbench {
 	}
 	
 	/**
-	 * Creates the workbench and associates it with the given workbench adviser,
-	 * and runs the workbench UI. This entails processing and dispatching
-	 * events until the workbench is closed or restarted.
+	 * Creates the workbench and associates it with the the given display and
+	 * workbench adviser, and runs the workbench UI. This entails processing
+	 * and dispatching events until the workbench is closed or restarted.
 	 * <p>
 	 * This method is intended to be called by <code>PlatformUI</code>.
 	 * Fails if the workbench UI has already been created.
 	 * </p>
+	 * <p>
+	 * The display passed in must be the default display.
+	 * </p>
 	 * 
+	 * @param display the display to be used for all UI interactions with the workbench
 	 * @param adviser the application-specific adviser that configures and
 	 * specializes the workbench
 	 * @return return code {@link PlatformUI#RETURN_OK RETURN_OK} for normal
@@ -228,11 +232,45 @@ public final class Workbench implements IWorkbench {
 	 * {@link IWorkbench#restart IWorkbench.restart}; other values reserved
 	 * for future use
 	 */
-	public static final int createAndRunWorkbench(WorkbenchAdviser adviser) {
+	public static final int createAndRunWorkbench(Display display, WorkbenchAdviser adviser) {
 		// create the workbench instance
-		Workbench workbench = new Workbench(adviser);
+		Workbench workbench = new Workbench(display, adviser);
 		// run the workbench event loop
-		return workbench.runUI();
+		int returnCode = workbench.runUI();
+		return returnCode;
+	}
+	
+	/**
+	 * Creates the <code>Display</code> to be used by the workbench.
+	 * 
+	 * @return the display
+	 */
+	public static Display createDisplay() {
+		// setup the application name used by SWT to lookup resources on some platforms
+		String applicationName = WorkbenchPlugin.getDefault().getAppName();
+		if (applicationName != null) {
+			Display.setAppName(applicationName);
+		}
+		
+		// create the display
+		Display newDisplay = null;
+		if (Policy.DEBUG_SWT_GRAPHICS) {
+			DeviceData data = new DeviceData();
+			data.tracking = true;
+			newDisplay = new Display(data);
+		} else {
+			newDisplay = new Display();
+		}
+		
+		// workaround for 1GEZ9UR and 1GF07HN
+		newDisplay.setWarnings(false);
+
+		//Set the priority higher than normal so as to be higher 
+		//than the JobManager.
+		Thread.currentThread().setPriority(
+				Math.min(Thread.MAX_PRIORITY, Thread.NORM_PRIORITY + 1));
+
+		return newDisplay;
 	}
 	
 	/**
@@ -1286,46 +1324,6 @@ public final class Workbench implements IWorkbench {
 	}
 
 	/**
-	 * Creates the <code>Display</code> to be used by the workbench.
-	 * 
-	 * @param applicationName the application name, or <code>null</code> if none
-	 * @return the display
-	 */
-	private Display createDisplay(String applicationName) {
-		// setup the application name used by SWT to lookup resources on some platforms
-		if (applicationName != null) {
-			Display.setAppName(applicationName);
-		}
-		
-		// create the display
-		Display display = null;
-		if (Policy.DEBUG_SWT_GRAPHICS) {
-			DeviceData data = new DeviceData();
-			data.tracking = true;
-			display = new Display(data);
-		} else {
-			display = new Display();
-		}
-		
-		// workaround for 1GEZ9UR and 1GF07HN
-		display.setWarnings(false);
-
-		//Set the priority higher than normal so as to be higher 
-		//than the JobManager.
-		Thread.currentThread().setPriority(
-			Math.min(Thread.MAX_PRIORITY, Thread.NORM_PRIORITY + 1));
-
-		// react to display close event by closing the workhench nicely
-		display.addListener(SWT.Close, new Listener() {
-			public void handleEvent(Event event) {
-				event.doit = close();
-			}
-		});
-		
-		return display;
-	}
-	
-	/**
 	 * Internal method for running the workbench UI. This entails processing
 	 * and dispatching events until the workbench is closed or restarted.
 	 * 
@@ -1339,34 +1337,21 @@ public final class Workbench implements IWorkbench {
 	private int runUI() {
 		UIStats.start(UIStats.START_WORKBENCH,"Workbench"); //$NON-NLS-1$
 
-		String appName = null;
-		ImageDescriptor windowImage = null;
-		{
-			// extract app name and window image from primary feature
-			IPlatformConfiguration conf = BootLoader.getCurrentPlatformConfiguration();
-			String id = conf.getPrimaryFeatureIdentifier();
-			AboutInfo aboutInfo = null;
-			if (id != null) {
-				aboutInfo = AboutInfo.readFeatureInfo(id);
-			}
-			if (aboutInfo != null) {
-				appName = aboutInfo.getAppName();
-				windowImage = aboutInfo.getWindowImage();
-				setProductName(aboutInfo.getProductName()); 
-			}
-		}
-
-		// create and startup the display for the workbench
-		Display display = createDisplay(appName);
-				
 		try {
+			// react to display close event by closing workbench nicely
+			display.addListener(SWT.Close, new Listener() {
+				public void handleEvent(Event event) {
+					event.doit = close();
+				}
+			});
+			
 			// install backstop to catch exceptions thrown out of event loop
 			Window.IExceptionHandler handler = new ExceptionHandler();
 			Window.setExceptionHandler(handler);
 			
 			// initialize workbench and restore or open one window
 			
-			boolean initOK = init(windowImage, display);
+			boolean initOK = init(WorkbenchPlugin.getDefault().getWindowImage(), display);
 			
 			// drop the splash screen now that a workbench window is up
 			Platform.endSplash();
@@ -1733,6 +1718,13 @@ public final class Workbench implements IWorkbench {
 		return adviser;
 	}
 	
+	/* (non-Javadoc)
+	 * Method declared on IWorkbench.
+	 */
+	public Display getDisplay() {
+		return display;
+	}
+	
 	/**
 	 * Returns the default perspective id.
 	 * 
@@ -1778,23 +1770,4 @@ public final class Workbench implements IWorkbench {
 		return ProgressManager.getInstance();
 	}
 
-	/**
-	 * Returns the name of the product.
-	 * 
-	 * @return the product name, or <code>null</code> if none
-	 * @since 3.0
-	 */
-	public String getProductName() {
-		return productName;
-	}
-	
-	/**
-	 * Sets the name of the product.
-	 * 
-	 * @param name the product name, or <code>null</code> if none
-	 * @since 3.0
-	 */
-	public void setProductName(String name) {
-		productName = name;
-	}
 }

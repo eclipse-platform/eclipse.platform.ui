@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui;
 
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.application.WorkbenchAdviser;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
@@ -92,12 +93,27 @@ public final class PlatformUI {
 	}
 	
 	/**
-	 * Creates the workbench and associates it with the given workbench adviser,
-	 * and runs the workbench UI. This entails processing and dispatching
+	 * Returns whether {@link #createAndRunWorkbench createAndRunWorkbench} has been
+	 * called to create the workbench.
+	 * 
+	 * @return <code>true</code> if the workbench has been created, and <code>false</code>
+	 * otherwise
+	 * @since 3.0
+	 */
+	public static boolean isWorkbenchRunning() {
+		return Workbench.getInstance() != null;
+	}
+	
+	/**
+	 * Creates the workbench and associates it with the given display and workbench
+	 * adviser, and runs the workbench UI. This entails processing and dispatching
 	 * events until the workbench is closed or restarted.
 	 * <p>
 	 * This method is intended to be called by the main class (the "application").
 	 * Fails if the workbench UI has already been created.
+	 * </p>
+	 * <p>
+	 * Use {@link #createDisplay createDisplay} to create the display to pass in.
 	 * </p>
 	 * <p>
 	 * Note that this method is intended to be called by the application
@@ -106,6 +122,7 @@ public final class PlatformUI {
 	 * <code>getWorkbench()</code> for the workbench.
 	 * </p>
 	 * 
+	 * @param display the display to be used for all UI interactions with the workbench
 	 * @param adviser the application-specific adviser that configures and
 	 * specializes the workbench
 	 * @return return code {@link #RETURN_OK RETURN_OK} for normal exit; 
@@ -117,10 +134,20 @@ public final class PlatformUI {
 	 * because of an emergency; other values reserved for future use
 	 * @since 3.0
 	 */
-	public static int createAndRunWorkbench(WorkbenchAdviser adviser) {
-		return Workbench.createAndRunWorkbench(adviser);
+	public static int createAndRunWorkbench(Display display, WorkbenchAdviser adviser) {
+		return Workbench.createAndRunWorkbench(display, adviser);
 	}
 	
+	/**
+	 * Creates the <code>Display</code> to be used by the workbench.
+	 * 
+	 * @return the display
+	 * @since 3.0
+	 */
+	public static Display createDisplay() {
+		return Workbench.createDisplay();
+	}
+
 	/**
 	 * Returns the testable object facade, for use by the test harness.
 	 * <p>

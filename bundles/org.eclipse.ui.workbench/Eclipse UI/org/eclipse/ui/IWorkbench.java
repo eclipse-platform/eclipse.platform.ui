@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceManager;
 
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.activities.IActivationService;
 import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.activities.IObjectActivityManager;
@@ -55,6 +56,30 @@ import org.eclipse.ui.roles.IRoleManager;
  * @see org.eclipse.ui.PlatformUI#getWorkbench
  */
 public interface IWorkbench {
+/**
+ * Returns the display for this workbench.
+ * <p>
+ * Code should always ask the workbench for the display rather than rely on
+ * {@link Display#getDefault Display.getDefault()}.
+ * </p>
+ * 
+ * @return the display to be used for all UI interactions with this workbench
+ * @since 3.0
+ */
+public Display getDisplay();
+	
+/**
+ * Returns the progress service for the workbench.
+ * <p>
+ * <b>NOTE:</b> This is experimental API and subject to change at any
+ * time.
+ * </p>
+ * 
+ * @return the progress service
+ * @since 3.0
+ */
+public IProgressService getProgressService();
+
 /**
  * Adds a window listener.
  * 
@@ -345,15 +370,6 @@ public IElementFactory getElementFactory(String factoryId);
  */
 	
 public IObjectActivityManager getObjectActivityManager(String id, boolean create);
-
-/**
- * Return the progress service for the workbench.
- * @return IProgressService
- * @since 3.0
- * <b>NOTE: This is experimental API and subject to change at any
- * time</b>.
- */
-public IProgressService getProgressService();
 
 /**
  * Returns the activity manager for the workbench. 

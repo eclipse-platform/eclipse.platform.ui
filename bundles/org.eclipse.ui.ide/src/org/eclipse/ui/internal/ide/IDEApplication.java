@@ -11,17 +11,15 @@
 
 package org.eclipse.ui.internal.ide;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.eclipse.core.boot.BootLoader;
-import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.boot.IPlatformRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
+import org.eclipse.swt.widgets.Display;
+
 //@issue org.eclipse.ui.internal.AboutInfo - illegal reference to generic workbench internals
 import org.eclipse.ui.internal.AboutInfo;
+
 import org.eclipse.ui.PlatformUI;
 
 /**
@@ -30,7 +28,7 @@ import org.eclipse.ui.PlatformUI;
  * @since 3.0
  */
 public final class IDEApplication implements IPlatformRunnable, IExecutableExtension {
-	
+
 	/**
 	 * Creates a new IDE application.
 	 */
@@ -43,11 +41,14 @@ public final class IDEApplication implements IPlatformRunnable, IExecutableExten
 	 */
 	public Object run(Object args) throws Exception {
 		
+		// create and startup the display for the workbench
+		Display display = PlatformUI.createDisplay();
+		
 		// create the workbench with this adviser and run it until it exits
 		// N.B. createWorkbench remembers the adviser, and also registers the
 		// workbench globally so that all UI plug-ins can find it using
 		// PlatformUI.getWorkbench() or AbstractUIPlugin.getWorkbench()
-		int returnCode = PlatformUI.createAndRunWorkbench(new IDEWorkbenchAdviser());
+		int returnCode = PlatformUI.createAndRunWorkbench(display, new IDEWorkbenchAdviser());
 		
 		// exit the application with an appropriate return code
 		if (returnCode == PlatformUI.RETURN_RESTART) {
@@ -62,41 +63,5 @@ public final class IDEApplication implements IPlatformRunnable, IExecutableExten
 	 */
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException {
 		// There is nothing to do for IDEApplication
-	}
-	
-	/**
-	 * Returns the about information of the primary feature.
-	 * 
-	 * @return info about the primary feature, or <code>null</code> if there 
-	 * is no primary feature or if this information is unavailable
-	 */
-	public static AboutInfo getPrimaryInfo() {
-		IPlatformConfiguration conf = BootLoader.getCurrentPlatformConfiguration();
-		String id = conf.getPrimaryFeatureIdentifier();
-		if (id == null) {
-			return null;
-		}
-		return AboutInfo.readFeatureInfo(id);
-	}
-	
-	/**
-	 * Returns the about information of all known features, omitting any
-	 * features which are missing this infomration.
-	 * 
-	 * @return a possibly empty list of about infos
-	 */
-	public static AboutInfo[] getFeatureInfos() {
-		IPlatformConfiguration conf = BootLoader.getCurrentPlatformConfiguration();
-		IPlatformConfiguration.IFeatureEntry[] entries = conf.getConfiguredFeatureEntries();
-		List infos = new ArrayList(entries.length);
-		for (int i = 0; i < entries.length; i++) {
-			AboutInfo info = AboutInfo.readFeatureInfo(entries[i].getFeatureIdentifier());
-			if (info != null) {
-				infos.add(info);
-			}
-		}
-		AboutInfo[] result = new AboutInfo[infos.size()];
-		infos.toArray(result);
-		return result;
 	}
 }

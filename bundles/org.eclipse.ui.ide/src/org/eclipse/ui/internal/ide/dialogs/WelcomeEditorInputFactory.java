@@ -43,11 +43,19 @@ public WelcomeEditorInputFactory() {
  */
 public IAdaptable createElement(IMemento memento) {
 	// Get the feature id.
-	String featureId = memento.getString(WelcomeEditorInput.FEATURE_ID);
-	if (featureId == null) {
+	String versionedFeatureId = memento.getString(WelcomeEditorInput.FEATURE_ID);
+	if (versionedFeatureId == null) {
 		return null;
-	}	
-	AboutInfo info = AboutInfo.readFeatureInfo(featureId);
+	}
+	int colonPos = versionedFeatureId.indexOf(':');
+	if (colonPos == -1) {
+		// assume the memento is stale or mangled
+		return null;
+	}
+	String featureId = versionedFeatureId.substring(0, colonPos);
+	String versionId = versionedFeatureId.substring(colonPos+1);
+	// @issue using feature id for plug-in id
+	AboutInfo info = AboutInfo.readFeatureInfo(featureId, versionId, featureId);
 	if (info == null) {
 		return null;
 	}
