@@ -142,7 +142,8 @@ public class CloseResourceAction extends WorkspaceAction {
 	}
 	/** 
 	 * The implementation of this <code>WorkspaceAction</code> method
-	 * method closes the resource's dirty editors before closing it.
+	 * method saves and closes the resource's dirty editors before closing 
+	 * it.
 	 */
 	public void run() {
 		if (!saveDirtyEditors())
