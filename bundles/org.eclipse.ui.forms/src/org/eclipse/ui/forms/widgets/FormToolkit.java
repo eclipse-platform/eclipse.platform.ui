@@ -427,8 +427,10 @@ public class FormToolkit {
 			ec.toggle.addFocusListener(visibilityHandler);
 			ec.toggle.addKeyListener(keyboardHandler);
 		}
-		ec.textLabel.addFocusListener(visibilityHandler);
-		ec.textLabel.addKeyListener(keyboardHandler);
+		if (ec.textLabel!=null) {
+			ec.textLabel.addFocusListener(visibilityHandler);
+			ec.textLabel.addKeyListener(keyboardHandler);
+		}
 		ec.setFont(JFaceResources.getFontRegistry().get(
 				JFaceResources.BANNER_FONT));
 		return ec;
