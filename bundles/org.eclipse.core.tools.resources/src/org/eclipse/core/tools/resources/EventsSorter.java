@@ -100,12 +100,20 @@ public class EventsSorter extends ViewerSorter implements ISorter {
 				boolean notification = s1.getProject() == null;
 				switch (columnNumber) {
 					case EventsView.STAT_ID_COLUMN : {
-						return c.compare(s1.getName(), s2.getName());
+						String name1 = s1.getName() == null ? "" : s1.getName(); //$NON-NLS-1$
+						String name2 = s2.getName() == null ? "" : s1.getName(); //$NON-NLS-1$
+						return c.compare(name1, name2);
 					}
 					case EventsView.PROJECT_COLUMN : {
 						if (notification)
 							return 0;
-						return c.compare(s1.getProject().getName(), s2.getProject().getName());
+						String name1 = s1.getProject().getName();
+						if (name1 == null)
+							name1 = ""; //$NON-NLS-1$
+						String name2 = s2.getProject().getName();
+						if (name2 == null)
+							name2 = ""; //$NON-NLS-1$
+						return c.compare(name1, name2);
 					}
 					case EventsView.COUNT_COLUMN : {
 						if (notification)
