@@ -200,17 +200,13 @@ public class CheckedTreeSelectionDialog extends SelectionStatusDialog {
 	 */
 	public int open() {
 		fIsEmpty = evaluateIfTreeEmpty(fInput);
-		BusyIndicator.showWhile(null, new Runnable() {
-			public void run() {
-				access$superOpen();
-			}
-		});
+		super.open();
 
 		return getReturnCode();
 	}
 
-	private void access$superOpen() {
-		super.open();
+	private void access$superCreate() {
+		super.create();
 	}
 
 	/**
@@ -232,15 +228,22 @@ public class CheckedTreeSelectionDialog extends SelectionStatusDialog {
 	 * @see Window#create()
 	 */
 	public void create() {
-		super.create();
 
-		fViewer.setCheckedElements(getInitialElementSelections().toArray());
+		BusyIndicator.showWhile(null, new Runnable() {
+			public void run() {
+				access$superCreate();
 
-		if (fExpandedElements != null) {
-			fViewer.setExpandedElements(fExpandedElements);
-		}
+				fViewer.setCheckedElements(
+					getInitialElementSelections().toArray());
 
-		updateOKStatus();
+				if (fExpandedElements != null) {
+					fViewer.setExpandedElements(fExpandedElements);
+				}
+
+				updateOKStatus();
+			}
+		});
+
 	}
 
 	/*

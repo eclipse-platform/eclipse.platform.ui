@@ -8,31 +8,16 @@ package org.eclipse.ui.dialogs;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Tree;
-
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.jface.viewers.ViewerSorter;
-
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchMessages;
 
@@ -176,17 +161,12 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
 	 */	 
 	public int open() {
 		fIsEmpty= evaluateIfTreeEmpty(fInput);
-		BusyIndicator.showWhile(null, new Runnable() {
-			public void run() {
-				access$superOpen();
-			}
-		});
-		
+		super.open();		
 		return getReturnCode();
 	}
 
-	private void access$superOpen() {
-		super.open();
+	private void access$superCreate() {
+		super.create();
 	}	
 	 		
 	/**
@@ -208,11 +188,13 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
 	 * @see Window#create()
 	 */	 
 	public void create() {
-		super.create();
-
-		fViewer.setSelection(new StructuredSelection(getInitialElementSelections()), true);
-
-		updateOKStatus();
+		BusyIndicator.showWhile(null, new Runnable() {
+			public void run() {
+				access$superCreate();
+				fViewer.setSelection(new StructuredSelection(getInitialElementSelections()), true);
+				updateOKStatus();
+			}
+		});
 	}		
 	
 	/*

@@ -423,33 +423,35 @@ public abstract class AbstractElementListSelectionDialog
 	 * @see Window#open()
 	 */
 	public int open() {
-		BusyIndicator.showWhile(null, new Runnable() {
-			public void run() {
-				access$superOpen();
-			}
-		});
+		super.open();
 		return getReturnCode();
 	}
 
-	private void access$superOpen() {
-		super.open();
+	private void access$superCreate() {
+		super.create();
 	}
 
 	/*
 	 * @see Window#create(Shell)
 	 */
 	public void create() {
-		super.create();
 
-		Assert.isNotNull(fFilteredList);
+		BusyIndicator.showWhile(null, new Runnable() {
+			public void run() {
+				access$superCreate();
 
-		if (fFilteredList.isEmpty()) {
-			handleEmptyList();
-		} else {
-			validateCurrentSelection();
-			fFilterText.selectAll();
-			fFilterText.setFocus();
-		}
+				Assert.isNotNull(fFilteredList);
+
+				if (fFilteredList.isEmpty()) {
+					handleEmptyList();
+				} else {
+					validateCurrentSelection();
+					fFilterText.selectAll();
+					fFilterText.setFocus();
+				}
+			}
+		});
+
 	}
 
 	/**
