@@ -44,4 +44,8 @@ public class ConfiguredSiteAdapter
 		}
 		return false;
 	}
+	
+	public String toString() {
+		return getConfiguredSite().getSite().getURL().toString();
+	}
 }
