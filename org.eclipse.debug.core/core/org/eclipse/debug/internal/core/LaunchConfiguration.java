@@ -41,6 +41,7 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
+import org.eclipse.debug.core.model.ILaunchConfigurationDelegate2;
 import org.eclipse.debug.core.model.IPersistableSourceLocator;
 import org.eclipse.debug.internal.core.sourcelookup.IPersistableSourceLocator2;
 import org.w3c.dom.Document;
@@ -146,8 +147,21 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	public ILaunch launch(String mode, IProgressMonitor monitor) throws CoreException {
 		// bug 28245 - force the delegate to load in case it is interested in launch notifications
 		ILaunchConfigurationDelegate delegate= getDelegate(mode);
-		
-		ILaunch launch = new Launch(this, mode, null);
+		// allow the delegate to provide a launch implementation
+		ILaunch launch = null;
+		if (delegate instanceof ILaunchConfigurationDelegate2) {
+			launch = ((ILaunchConfigurationDelegate2)delegate).getLaunch(this, mode);
+		}
+		if (launch == null) {
+			launch = new Launch(this, mode, null);
+		} else {
+			// ensure the launch mode is valid
+			if (!mode.equals(launch.getLaunchMode())) {
+				IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, 
+						MessageFormat.format(DebugCoreMessages.getString("LaunchConfiguration.13"), new String[]{mode, launch.getLaunchMode()}), null); //$NON-NLS-1$
+				throw new CoreException(status);
+			}
+		}
 		getLaunchManager().addLaunch(launch);
 		if (monitor == null) {
 			monitor= new NullProgressMonitor();

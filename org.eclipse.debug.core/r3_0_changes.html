@@ -120,6 +120,12 @@
   and debug targets. When all of the contained targets and processes terminate, 
   a terminate notification is now sent to those listeners that implement <code>ILaunchListener2</code> 
   or <code>ILaunchesListener2</code>.</p>
+<h3>Launch Delegate Enhancements</h3>
+<p>Lanuch delegates can optionally implement the new interface <code>ILaunchConfigurationDelegate2</code>. 
+  This allows launch delegates to provide a launch object to be used for a launch. 
+  For example, when debugging on a server a delegate could create a new launch 
+  object or may reuse an existing launch object if the server is already running 
+  in debug mode.</p>
 <h2>API Changes</h2>
 <h3>Extensible Launch Modes</h3>
 <p>With the introduction of extensible launch modes, more than one launch delegate 
