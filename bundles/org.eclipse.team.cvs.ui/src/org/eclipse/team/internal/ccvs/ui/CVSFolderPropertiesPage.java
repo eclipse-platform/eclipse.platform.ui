@@ -29,10 +29,10 @@ import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
-import org.eclipse.ui.dialogs.PropertyPage;
+import org.eclipse.team.internal.ccvs.core.util.Util;
 import org.eclipse.ui.help.WorkbenchHelp;
 
-public class CVSFolderPropertiesPage extends PropertyPage {
+public class CVSFolderPropertiesPage extends CVSPropertiesPage {
 
 	IFolder folder;
 	private Label root;
@@ -72,15 +72,12 @@ public class CVSFolderPropertiesPage extends PropertyPage {
 				// Tag
 				createLabel(composite, Policy.bind("CVSFilePropertiesPage.tag")); //$NON-NLS-1$
 				CVSTag tag = syncInfo.getTag();
-				if (tag == null) {
-					createLabel(composite, Policy.bind("CVSFilePropertiesPage.none")); //$NON-NLS-1$
-				} else {
-					if (tag.getType() == CVSTag.DATE) {
-						createLabel(composite, Policy.bind("CVSFilePropertiesPage.date", tag.getName())); //$NON-NLS-1$
-					} else {
-						createLabel(composite, tag.getName());
-					}
+
+				if (tag != null && tag.getType() == CVSTag.BRANCH) {
+					tag = Util.getAccurateFolderTag(folder, tag);				
 				}
+			
+				createLabel(composite, getTagLabel(tag));
 				
 				// Static-ness
 				if (syncInfo.getIsStatic()) {

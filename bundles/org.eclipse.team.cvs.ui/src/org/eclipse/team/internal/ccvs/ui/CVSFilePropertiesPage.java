@@ -27,10 +27,10 @@ import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
-import org.eclipse.ui.dialogs.PropertyPage;
+import org.eclipse.team.internal.ccvs.core.util.Util;
 import org.eclipse.ui.help.WorkbenchHelp;
 
-public class CVSFilePropertiesPage extends PropertyPage {
+public class CVSFilePropertiesPage extends CVSPropertiesPage {
 	IFile file;
 
 	/*
@@ -83,14 +83,8 @@ public class CVSFilePropertiesPage extends PropertyPage {
 			
 			// Tag
 			createLabel(composite, Policy.bind("CVSFilePropertiesPage.tag")); //$NON-NLS-1$
-			CVSTag tag = syncInfo.getTag();
-			if (tag == null) {
-				createLabel(composite, Policy.bind("CVSFilePropertiesPage.none")); //$NON-NLS-1$
-			} else {
-				// In an entry file we can't differentiate branch and version tags. They both appear
-				// as T<tagName>. Instead just display the tag name to the user.
-				createLabel(composite, tag.getName());
-			}
+			CVSTag tag = Util.getAccurateFileTag(cvsResource);
+			createLabel(composite, getTagLabel(tag));
 			
 			// Permissions
 			createLabel(composite, Policy.bind("CVSFilePropertiesPage.permissions")); //$NON-NLS-1$

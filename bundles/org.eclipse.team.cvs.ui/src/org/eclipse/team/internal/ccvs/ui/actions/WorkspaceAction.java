@@ -45,6 +45,7 @@ import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.core.util.Util;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ui.IPromptCondition;
 import org.eclipse.team.internal.ui.PromptingDialog;
@@ -453,31 +454,11 @@ public abstract class WorkspaceAction extends CVSAction {
 					if(info != null) {
 						tag = info.getTag();									
 					}
+					if (tag != null && tag.getType() == CVSTag.BRANCH) {
+						tag = Util.getAccurateFolderTag(resources[i], tag);
+					}
 				} else {
-					ResourceSyncInfo info = cvsResource.getSyncInfo();
-					if(info != null) {
-						tag = info.getTag();
-					}
-					// This magic is required because of a bug in CVS which doesn't store the
-					// type of tag for files correctly in the Entries file. They will always appear
-					// as branch tags "Tv1". By comparing the revision number to the tag name
-					// you can determine if the tag is a branch or version.
-					FolderSyncInfo parentInfo = cvsResource.getParent().getFolderSyncInfo();
-					CVSTag parentTag = null;
-					if(parentInfo != null) {
-						parentTag = parentInfo.getTag();
-					}
-					if(tag != null) {
-						if(tag.getName().equals(info.getRevision())) {
-							tag = new CVSTag(tag.getName(), CVSTag.VERSION);
-						} else if(parentTag != null){
-							tag = new CVSTag(tag.getName(), parentTag.getType());
-						}
-					} else {
-						// if a file doesn't have tag info, very possible for example
-						// when the file is in HEAD, use the parents.
-						tag = parentTag;
-					}
+					tag = Util.getAccurateFileTag(cvsResource);
 				}
 				if(tag == null) {
 					tag = new CVSTag();

@@ -51,12 +51,11 @@ import org.eclipse.team.internal.ccvs.core.ICVSResourceVisitor;
 import org.eclipse.team.internal.ccvs.core.IUserInfo;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
-import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
-public class CVSProjectPropertiesPage extends PropertyPage {
+public class CVSProjectPropertiesPage extends CVSPropertiesPage {
 	IProject project;
 	ICVSRepositoryLocation oldLocation;
 	ICVSRepositoryLocation newLocation = null;
@@ -346,13 +345,9 @@ public class CVSProjectPropertiesPage extends PropertyPage {
 		try {
 			ICVSFolder local = CVSWorkspaceRoot.getCVSFolderFor(project);
 			CVSTag tag = local.getFolderSyncInfo().getTag();
-			String tagName;
-			if (tag == null) {
-				tagName = Policy.bind("CVSFilePropertiesPage.none");
-			} else {
-				tagName = tag.getName();
-			}
-			tagLabel.setText(tagName);
+			
+			tagLabel.setText(getTagLabel(tag));
+
 		} catch (TeamException e) {
 			handle(e);
 		}

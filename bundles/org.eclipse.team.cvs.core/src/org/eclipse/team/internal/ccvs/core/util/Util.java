@@ -18,15 +18,23 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.Session;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
+import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 
 /**
  * Unsorted static helper-methods 
@@ -327,5 +335,109 @@ public class Util {
 			if (oldBytes[i] != syncBytes[i]) return false;
 		}
 		return true;
+	}
+	
+	/**
+	 * Workaround a CVS bug where a CVS Folder with no immediately contained files has an incorrect
+	 * Tag type stored in the TAG file.  In this case, the tag type is always BRANCH (Tv1)
+	 * 
+	 * The fix is for folders with no files, use the tag type for the containing project.  Since projects almost
+	 * always have files the TAG file is usually correct.
+	 * 
+	 * For the case where the folder tag name does not match the project tag name we can not do much so we just
+	 * return the folder tag which will currently always be a branch.
+	 * 
+	 * @param resource The IResource being tested.  Can not be null.
+	 * @param tag The CVSTag as reported by CVS for the IResource.  May be null.
+	 * @return CVSTag The corrected tag for the resource.  May be null.
+	 */
+	
+	public static CVSTag getAccurateFolderTag(IResource resource, CVSTag tag) {
+
+		// Determine if the folder contains files as immediate children.
+		if (resource.getType() != IResource.FOLDER) {
+			return tag;
+		}
+
+		IResource[] members = null;
+		try {
+			members = ((IFolder) resource).members();
+		} catch (CoreException e1) {
+			return tag;
+		}
+		
+		for (int i = 0; i < members.length; i++) {
+			if (members[i].getType() == IResource.FILE) {
+				return tag;
+			}
+		}
+	
+		// Folder contains no files so this may not really be a branch.
+		// Make the type the same as the project tag type if both are the same tag name.
+		IProject project = resource.getProject();
+		if (project == null) {
+			return tag;
+		}
+		
+		ICVSFolder projectFolder = CVSWorkspaceRoot.getCVSFolderFor(project);
+		FolderSyncInfo projectSyncInfo;
+		try {
+			projectSyncInfo = projectFolder.getFolderSyncInfo();
+		} catch (CVSException e) {
+			return tag;
+		}
+		
+		if (projectSyncInfo == null) {
+			return tag;
+		}
+		
+		CVSTag projectTag = projectSyncInfo.getTag();
+								
+		if (projectTag != null && projectTag.getName().equals(tag.getName())) {
+			return projectTag;
+		} else {
+			return tag;
+		}
+	}	
+	
+	/**
+	 * Workaround for CVS "bug" where CVS ENTRIES file does not contain correct
+	 * Branch vs. Version info.  Entries files always record a Tv1 so all entries would
+	 * appear as branches.
+	 * 	
+	 * By comparing the revision number to the tag name
+	 * you can determine if the tag is a branch or version.
+	 * 
+	 * @param cvsResource the resource to test.  Must nut be null.
+	 * @return the correct cVSTag.  May be null.
+	 */
+	
+	public static CVSTag getAccurateFileTag(ICVSResource cvsResource) throws CVSException {
+
+		CVSTag tag = null;
+		ResourceSyncInfo info = cvsResource.getSyncInfo();
+		if(info != null) {
+			tag = info.getTag();
+		}
+
+		FolderSyncInfo parentInfo = cvsResource.getParent().getFolderSyncInfo();
+		CVSTag parentTag = null;
+		if(parentInfo != null) {
+			parentTag = parentInfo.getTag();
+		}
+
+		if(tag != null) {
+			if(tag.getName().equals(info.getRevision())) {
+				tag = new CVSTag(tag.getName(), CVSTag.VERSION);
+			} else if(parentTag != null){
+				tag = new CVSTag(tag.getName(), parentTag.getType());
+			}
+		} else {
+			// if a file doesn't have tag info, very possible for example
+			// when the file is in HEAD, use the parents.
+			tag = parentTag;
+		}
+		
+		return tag;						
 	}
 }
