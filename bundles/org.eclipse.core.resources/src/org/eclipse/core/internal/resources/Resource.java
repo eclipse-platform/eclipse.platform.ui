@@ -17,6 +17,7 @@ import java.io.*;
 import java.util.*;
 import java.net.URL;
 import java.net.MalformedURLException;
+import org.eclipse.core.resources.team.*;
 
 public abstract class Resource extends PlatformObject implements IResource, ICoreConstants, Cloneable {
 	/* package */ IPath path;
@@ -278,16 +279,9 @@ public void convertToPhantom() throws CoreException {
  * @see IResource#copy
  */
 public void copy(IProjectDescription destDesc, int updateFlags, IProgressMonitor monitor) throws CoreException {
-	// FIXME
-	copy(destDesc, (updateFlags & IResource.FORCE) != 0, monitor);
-}
-
-/*
- * @see IResource#copy
- */
-public void copy(IProjectDescription destDesc, boolean force, IProgressMonitor monitor) throws CoreException {
 	// FIXME - funnel through a central method
 	// FIXME - ensure source is a project
+	Assert.isNotNull(destDesc);
 	monitor = Policy.monitorFor(monitor);
 	try {
 		String message = Policy.bind("resources.copying", getFullPath().toString());
@@ -297,7 +291,7 @@ public void copy(IProjectDescription destDesc, boolean force, IProgressMonitor m
 			// The following assert method throws CoreExceptions as stated in the IResource.copy API
 			// and assert for programming errors. See checkCopyRequirements for more information.
 			IPath destPath = new Path(destDesc.getName()).makeAbsolute();
-			assertCopyRequirements(destPath, IResource.PROJECT);
+			assertCopyRequirements(destPath, getType());
 			Project destProject = (Project) workspace.getRoot().getProject(destPath.lastSegment());
 			workspace.beginOperation(true);
 
@@ -310,7 +304,7 @@ public void copy(IProjectDescription destDesc, boolean force, IProgressMonitor m
 			IResource[] children = ((IContainer) this).members();
 			for (int i = 0; i < children.length; i++) {
 				Resource child = (Resource) children[i];
-				child.copy(destPath.append(child.getName()), force, Policy.subMonitorFor(monitor, Policy.opWork * 60 / 100 / children.length));
+				child.copy(destPath.append(child.getName()), updateFlags, Policy.subMonitorFor(monitor, Policy.opWork * 60 / 100 / children.length));
 			}
 
 			// copy over the properties
@@ -328,25 +322,18 @@ public void copy(IProjectDescription destDesc, boolean force, IProgressMonitor m
 	}
 }
 
-/**
+/*
  * @see IResource#copy
  */
-public void copy(IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException {
-	// FIXME
-	// FIXME - ensure source and dest are the right types
-	copy(destination, (updateFlags & IResource.FORCE) != 0, monitor);
+public void copy(IProjectDescription destDesc, boolean force, IProgressMonitor monitor) throws CoreException {
+	int updateFlags = force ? IResource.FORCE : IResource.NONE;
+	copy(destDesc, updateFlags, monitor);
 }
 
 /**
  * @see IResource#copy
  */
-public void copy(IPath destination, boolean force, IProgressMonitor monitor) throws CoreException {
-	// FIXME - funnel through a central method
-	// FIXME - ensure source and dest are the right types
-	if (destination.isAbsolute() && destination.segmentCount() == 1) {
-		copy(workspace.newProjectDescription(destination.lastSegment()), force, monitor);
-		return;
-	}
+public void copy(IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException {
 	try {
 		monitor = Policy.monitorFor(monitor);
 		String message = Policy.bind("resources.copying", getFullPath().toString());
@@ -359,6 +346,7 @@ public void copy(IPath destination, boolean force, IProgressMonitor monitor) thr
 
 			workspace.beginOperation(true);
 			Resource destResource = workspace.newResource(makePathAbsolute(destination), getType());
+			boolean force = (updateFlags & IResource.FORCE) != 0;
 			getLocalManager().copy(this, destResource, force, Policy.subMonitorFor(monitor, Policy.opWork));
 		} catch (OperationCanceledException e) {
 			workspace.getWorkManager().operationCanceled();
@@ -369,6 +357,14 @@ public void copy(IPath destination, boolean force, IProgressMonitor monitor) thr
 	} finally {
 		monitor.done();
 	}
+}
+
+/**
+ * @see IResource#copy
+ */
+public void copy(IPath destination, boolean force, IProgressMonitor monitor) throws CoreException {
+	int updateFlags = force ? IResource.FORCE : IResource.NONE;
+	copy(destination, updateFlags, monitor);
 }
 
 /**
@@ -403,45 +399,74 @@ public IMarker createMarker(String type) throws CoreException {
  * @see IResource
  */
 public void delete(boolean force, IProgressMonitor monitor) throws CoreException {
-	delete(force, false, monitor);
+	delete(force ? IResource.FORCE : IResource.NONE , monitor);
 }
 
 /**
  * @see IResource
  */
 public void delete(int updateFlags, IProgressMonitor monitor) throws CoreException {
-	// FIXME
-	final boolean force = (updateFlags & IResource.FORCE) != 0;
-	final boolean keepHistory = (updateFlags & IResource.KEEP_HISTORY) != 0;
-	delete(force, keepHistory, monitor);
-}
-
-/**
- * @see IProject and IWorkspaceRoot -- N.B. This is not an IResource method!
- */
-public void delete(boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
 		String message = Policy.bind("resources.deleting", getFullPath().toString());
-		monitor.beginTask(message, Policy.totalWork);
+		monitor.beginTask(message, Policy.totalWork*1000);
 		try {
 			workspace.prepareOperation();
 			/* if there is no such resource (including type check) then there is nothing
 			   to delete so just return. */
 			if (!exists())
 				return;
-
 			workspace.beginOperation(true);
-			getLocalManager().delete(this, force, true, keepHistory, Policy.subMonitorFor(monitor, Policy.opWork));
+			message = Policy.bind("resources.deleteProblem");
+			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, null);
+			ResourceTree tree = new ResourceTree(status);
+			IMoveDeleteHook hook = workspace.getMoveDeleteHook();
+			switch (getType()) {
+				case IResource.FILE:
+					if (!hook.deleteFile(tree, (IFile) this, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork*1000/2)))
+						tree.standardDeleteFile((IFile) this, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork*1000/2));
+					break;
+				case IResource.FOLDER:
+					if (!hook.deleteFolder(tree, (IFolder) this, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork*1000/2)))
+						tree.standardDeleteFolder((IFolder) this, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork*1000/2));
+					break;
+				case IResource.PROJECT:
+					if (!hook.deleteProject(tree, (IProject) this, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork*1000/2)))
+						tree.standardDeleteProject((IProject) this, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork*1000/2));
+					break;
+				case IResource.ROOT:
+					IProject[] projects = ((IWorkspaceRoot) this).getProjects();
+					for (int i = 0; i < projects.length; i++)
+						if (!hook.deleteProject(tree, projects[i], updateFlags, Policy.subMonitorFor(monitor, Policy.opWork*1000/projects.length/2)))
+							tree.standardDeleteProject(projects[i], updateFlags, Policy.subMonitorFor(monitor, Policy.opWork*1000/projects.length/2));
+					// need to clear out the root info
+					workspace.getMarkerManager().removeMarkers(this, IResource.DEPTH_ZERO);
+					getPropertyManager().deleteProperties(this, IResource.DEPTH_ZERO);
+					getResourceInfo(false, false).clearSessionProperties();
+					break;
+			}
+			// Invalidate the tree for further use by clients.
+			tree.makeInvalid();
+			if (!tree.getStatus().isOK())
+				throw new ResourceException(tree.getStatus());
 		} catch (OperationCanceledException e) {
 			workspace.getWorkManager().operationCanceled();
 			throw e;
 		} finally {
-			workspace.endOperation(true, Policy.subMonitorFor(monitor, Policy.buildWork));
+			workspace.endOperation(true, Policy.subMonitorFor(monitor, Policy.buildWork*1000));
 		}
 	} finally {
 		monitor.done();
 	}
+}
+
+/**
+ * @see IProject and IWorkspaceRoot -- N.B. This is not an IResource method!
+ */
+public void delete(boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException {
+	int updateFlags = force ? IResource.FORCE : IResource.NONE;
+	updateFlags |= keepHistory ? IResource.KEEP_HISTORY : IResource.NONE;
+	delete(updateFlags, monitor);
 }
 /**
  * @see IResource
@@ -467,7 +492,7 @@ public void deleteResource(boolean convertToPhantom, MultiStatus status) throws 
 	/* delete properties */
 	CoreException err = null;
 	try {
-		getPropertyManager().deleteProperties(this);
+		getPropertyManager().deleteProperties(this, IResource.DEPTH_INFINITE);
 	} catch (CoreException e) {
 		if (status != null)
 			status.add(e.getStatus());
@@ -476,7 +501,7 @@ public void deleteResource(boolean convertToPhantom, MultiStatus status) throws 
 	}
 	/* remove markers on this resource and its descendents. */
 	if (exists())
-		getMarkerManager().removeMarkers(this);
+		getMarkerManager().removeMarkers(this, IResource.DEPTH_INFINITE);
 	/* if we are synchronizing, do not delete the resource. Convert it
 	   into a phantom. Actual deletion will happen when we refresh or push. */
 	if (convertToPhantom && getType() != PROJECT && synchronizing(getResourceInfo(true, false)))
@@ -760,90 +785,18 @@ protected IPath makePathAbsolute(IPath target) {
 /*
  * @see IResource#move
  */
-public void move(IProjectDescription destDesc, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException {
-	// FIXME - ensure source is a project
-	monitor = Policy.monitorFor(monitor);
-	try {
-		String message = Policy.bind("resources.moving", getFullPath().toString());
-		monitor.beginTask(message, Policy.totalWork);
-		try {
-			workspace.prepareOperation();
-			// The following assert method throws CoreExceptions as stated in the IResource.move API
-			// and assert for programming errors. See checkCopyRequirements for more information.
-			IPath destPath = Path.ROOT.append(destDesc.getName());
-			assertMoveRequirements(destPath, IResource.PROJECT);
-			// copy the original properties to the new location and then move the resources
-			// on disk.  If the move fails then delete the newly copied properties.  Otherwise, 
-			// move the resources in the tree and delete the original (already copied) properties.
-			Project destProject = (Project) workspace.getRoot().getProject(destDesc.getName());
-
-			workspace.beginOperation(true);
-
-			// create and open the new project and reset the node id so it looks like a move rather
-			// than a create.
-			destProject.create(destDesc, Policy.subMonitorFor(monitor, Policy.opWork * 5 / 100));
-			destProject.open(Policy.subMonitorFor(monitor, Policy.opWork * 5 / 100));
-			destProject.getResourceInfo(false, true).setNodeId(getResourceInfo(false, false).getNodeId());
-
-			// move the children
-			// FIXME: fix the progress monitor here...create a sub monitor and do a worked(1) after each child instead
-			IResource[] children = ((IContainer) this).members();
-			for (int i = 0; i < children.length; i++) {
-				Resource child = (Resource) children[i];
-				child.move(destPath.append(child.getName()), force, keepHistory, Policy.subMonitorFor(monitor, Policy.opWork * 40 / 100 / children.length));
-			}
-
-			// copy over the properties
-			getPropertyManager().copy(this, destProject, DEPTH_ZERO);
-			monitor.worked(Policy.opWork * 10 / 100);
-
-			// generate the appropriate marker deltas
-			getMarkerManager().moved(this, destProject, IResource.DEPTH_INFINITE);
-			monitor.worked(Policy.opWork * 10 / 100);
-
-			// delete the source
-			delete(force, keepHistory, Policy.subMonitorFor(monitor, Policy.opWork * 30 / 100));
-
-		} catch (OperationCanceledException e) {
-			workspace.getWorkManager().operationCanceled();
-			throw e;
-		} finally {
-			workspace.endOperation(true, Policy.subMonitorFor(monitor, Policy.buildWork));
-		}
-	} finally {
-		monitor.done();
-	}
+public void move(IProjectDescription description, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException {
+	int updateFlags = force ? IResource.FORCE : IResource.NONE;
+	updateFlags |= keepHistory ? IResource.KEEP_HISTORY : IResource.NONE;
+	move(description, updateFlags, monitor);
 }
 
 /*
  * Used when a folder is to be moved to a project.
  * @see IResource#move
  */
-public void move(IProjectDescription destDesc, int updateFlags, IProgressMonitor monitor) throws CoreException {
-	// FIXME
-	// FIXME - ensure source is a project
-	final boolean force = (updateFlags & IResource.FORCE) != 0;
-	final boolean keepHistory = (updateFlags & IResource.KEEP_HISTORY) != 0;
-	move(destDesc, force, keepHistory, monitor);
-}
-
-/**
- * @see IResource#move
- */
-public void move(IPath destination, boolean force, IProgressMonitor monitor) throws CoreException {
-	// FIXME - ensure source and dest are the right types
-	move(destination, force, false, monitor);
-}
-
-/**
- * @see IResource#move
- */
-public void move(IPath destination, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException {
-	// FIXME - ensure source and dest are the right types
-	if (destination.isAbsolute() && destination.segmentCount() == 1) {
-		move(workspace.newProjectDescription(destination.lastSegment()), force, keepHistory, monitor);
-		return;
-	}
+public void move(IProjectDescription description, int updateFlags, IProgressMonitor monitor) throws CoreException {
+	Assert.isNotNull(description);
 	monitor = Policy.monitorFor(monitor);
 	try {
 		String message = Policy.bind("resources.moving", getFullPath().toString());
@@ -852,36 +805,21 @@ public void move(IPath destination, boolean force, boolean keepHistory, IProgres
 			workspace.prepareOperation();
 			// The following assert method throws CoreExceptions as stated in the IResource.move API
 			// and assert for programming errors. See checkCopyRequirements for more information.
-			assertMoveRequirements(destination, getType());
-			destination = makePathAbsolute(destination);
-			// copy the original properties to the new location and then move the resources
-			// on disk.  If the move fails then delete the newly copied properties.  Otherwise, 
-			// move the resources in the tree and delete the original (already copied) properties.
-			Resource dest = (Resource) workspace.newResource(destination, getType());
-
-			workspace.beginOperation(true);
-			boolean success = false;
-			try {
-				getPropertyManager().copy(this, dest, DEPTH_INFINITE);
-				monitor.worked(Policy.opWork * 20 / 100);
-				moveInFileSystem(destination, force, keepHistory, Policy.subMonitorFor(monitor, Policy.opWork * 20 / 100));
-				success = true;
-			} finally {
-				if (!success) {
-					// if we got here some exception was thrown
-					try {
-						getPropertyManager().deleteProperties(dest);
-					} catch (CoreException ex) {
-						// we don't want to throw this CoreException
-					}
-					// and the first exception is thrown from here
-				}
+			if (!getName().equals(description.getName())) {
+				IPath path = Path.ROOT.append(description.getName());
+				assertMoveRequirements(path, IResource.PROJECT);
 			}
-			getPropertyManager().deleteProperties(this);
-			monitor.worked(Policy.opWork * 20 / 100);
-			workspace.move(this, destination);
-			getMarkerManager().moved(this, dest, IResource.DEPTH_INFINITE);
-			monitor.worked(Policy.opWork * 20 / 100);
+			workspace.beginOperation(true);
+			message = Policy.bind("resources.moveProblem");
+			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, null);
+			ResourceTree tree = new ResourceTree(status);
+			IMoveDeleteHook hook = workspace.getMoveDeleteHook();
+			if (!hook.moveProject(tree, (IProject) this, description, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork/2)))
+				tree.standardMoveProject((IProject) this, description, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork/2));
+			// Invalidate the tree for further use by clients.
+			tree.makeInvalid();
+			if (!tree.getStatus().isOK())
+				throw new ResourceException(tree.getStatus());
 		} catch (OperationCanceledException e) {
 			workspace.getWorkManager().operationCanceled();
 			throw e;
@@ -896,11 +834,71 @@ public void move(IPath destination, boolean force, boolean keepHistory, IProgres
 /**
  * @see IResource#move
  */
-public void move(IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException {
-	// FIXME
-	final boolean force = (updateFlags & IResource.FORCE) != 0;
-	final boolean keepHistory = (updateFlags & IResource.KEEP_HISTORY) != 0;
-	move(destination, force, keepHistory, monitor);
+public void move(IPath destination, boolean force, IProgressMonitor monitor) throws CoreException {
+	move(destination, force ? IResource.FORCE : IResource.NONE, monitor);
+}
+
+/**
+ * @see IResource#move
+ */
+public void move(IPath destination, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException {
+	int updateFlags = force ? IResource.FORCE : IResource.NONE;
+	updateFlags |= keepHistory ? IResource.KEEP_HISTORY : IResource.NONE;
+	move(destination, updateFlags, monitor);
+}
+
+/**
+ * @see IResource#move
+ */
+public void move(IPath path, int updateFlags, IProgressMonitor monitor) throws CoreException {
+	monitor = Policy.monitorFor(monitor);
+	try {
+		String message = Policy.bind("resources.moving", getFullPath().toString());
+		monitor.beginTask(message, Policy.totalWork);
+		try {
+			workspace.prepareOperation();
+			// The following assert method throws CoreExceptions as stated in the IResource.move API
+			// and assert for programming errors. See checkCopyRequirements for more information.
+			assertMoveRequirements(path, getType());
+			path = makePathAbsolute(path);
+			workspace.beginOperation(true);
+			message = Policy.bind("resources.moveProblem");
+			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, null);
+			ResourceTree tree = new ResourceTree(status);
+			IMoveDeleteHook hook = workspace.getMoveDeleteHook();
+			switch (getType()) {
+				case IResource.FILE:
+					IResource destination = workspace.getRoot().getFile(path);
+					if (!hook.moveFile(tree, (IFile) this, (IFile) destination, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork/2)))
+						tree.standardMoveFile((IFile) this, (IFile) destination, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork/2));
+					break;
+				case IResource.FOLDER:
+					destination = workspace.getRoot().getFolder(path);
+					if (!hook.moveFolder(tree, (IFolder) this, (IFolder) destination, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork/2)))
+						tree.standardMoveFolder((IFolder) this, (IFolder) destination, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork/2));
+					break;
+				case IResource.PROJECT:
+					IProjectDescription description = workspace.newProjectDescription(path.lastSegment());
+					if (!hook.moveProject(tree, (IProject) this, description, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork/2)))
+						tree.standardMoveProject((IProject) this, description, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork/2));
+					break;
+				case IResource.ROOT:
+					message = Policy.bind("resources.moveRoot");
+					throw new ResourceException(new ResourceStatus(IResourceStatus.INVALID_VALUE, getFullPath(), message));
+			}
+			// Invalidate the tree for further use by clients.
+			tree.makeInvalid();
+			if (!tree.getStatus().isOK())
+				throw new ResourceException(tree.getStatus());
+		} catch (OperationCanceledException e) {
+			workspace.getWorkManager().operationCanceled();
+			throw e;
+		} finally {
+			workspace.endOperation(true, Policy.subMonitorFor(monitor, Policy.buildWork));
+		}
+	} finally {
+		monitor.done();
+	}
 }
 
 protected void moveInFileSystem(IPath destination, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException {
@@ -1101,9 +1099,7 @@ public boolean isDerived() {
  */
 public boolean isDerived(int flags) {
 	return flags != NULL_FLAG && ResourceInfo.isSet(flags, ICoreConstants.M_DERIVED);
-}
-
-/*
+}/*
  * @see IResource
  */
 public void setDerived(boolean isDerived) throws CoreException {
@@ -1140,9 +1136,7 @@ public boolean isTeamPrivateMember() {
  */
 public boolean isTeamPrivateMember(int flags) {
 	return flags != NULL_FLAG && ResourceInfo.isSet(flags, ICoreConstants.M_TEAM_PRIVATE_MEMBER);
-}
-
-/*
+}/*
  * @see IResource
  */
 public void setTeamPrivateMember(boolean isTeamPrivate) throws CoreException {

@@ -19,6 +19,7 @@ public class Project extends Container implements IProject {
 protected Project(IPath path, Workspace container) {
 	super(path, container);
 }
+
 /*
  * If the creation boolean is true then this method is being called on project creation.
  * Otherwise it is being called via #setDescription. The difference is that we don't allow
@@ -154,7 +155,7 @@ public void close(boolean save, IProgressMonitor monitor) throws CoreException {
 				IProgressMonitor sub = Policy.subMonitorFor(monitor, Policy.opWork / 2, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL);
 				workspace.getSaveManager().save(ISaveContext.PROJECT_SAVE, this, sub);
 			}
-			getMarkerManager().removeMarkers(this);
+			getMarkerManager().removeMarkers(this, IResource.DEPTH_INFINITE);
 			// If the project has never been saved at this point, delete the 
 			// project but leave its contents.
 			if (!hasBeenSaved()) {
@@ -211,20 +212,14 @@ public void copy(IPath destination, boolean force, IProgressMonitor monitor) thr
 		desc.setLocation(null);
 		internalCopy(desc, force, monitor);
 	} else {
-		// copy project to folder
-		Assert.isLegal(workspace.validatePath(destination.toString(), IResource.FOLDER).isOK());
-		internalCopyToFolder(destination, force, monitor);
+		int updateFlags = force ? IResource.FORCE : IResource.NONE;
+		copy(destination, updateFlags, monitor);
 	}
 }
 protected void copyMetaArea(IProject source, IProject destination, IProgressMonitor monitor) throws CoreException {
 	java.io.File oldMetaArea = workspace.getMetaArea().locationFor(source).toFile();
 	java.io.File newMetaArea = workspace.getMetaArea().locationFor(destination).toFile();
 	getLocalManager().getStore().copy(oldMetaArea, newMetaArea, IResource.DEPTH_INFINITE, monitor);
-}
-protected void renameMetaArea(IProject source, IProject destination, IProgressMonitor monitor) throws CoreException {
-	java.io.File oldMetaArea = workspace.getMetaArea().locationFor(source).toFile();
-	java.io.File newMetaArea = workspace.getMetaArea().locationFor(destination).toFile();
-	getLocalManager().getStore().move(oldMetaArea, newMetaArea, false, monitor);
 }
 /**
  * @see IProject#create
@@ -291,92 +286,19 @@ public void create(IProgressMonitor monitor) throws CoreException {
  * @see IResource#delete(boolean, IProgressMonitor)
  */
 public void delete(boolean force, IProgressMonitor monitor) throws CoreException {
-	// FIXME - should funnel through IResource.delete(int,IProgressMonitor) i.e.,
-	//    delete((force ? FORCE : IResource.NONE), monitor);
-	delete(isOpen(), force, monitor);
+	int updateFlags = force ? IResource.FORCE : IResource.NONE;
+	delete(updateFlags, monitor);
 }
+
 /**
  * @see IProject#delete(boolean, boolean, IProgressMonitor)
  */
 public void delete(boolean deleteContent, boolean force, IProgressMonitor monitor) throws CoreException {
-	// FIXME - the logic here for deleting projects needs to be moved to Resource.delete
-	//   so that IResource.delete(int,IProgressMonitor) works properly for
-	//   projects and honours the ALWAYS/NEVER_DELETE_PROJECT_CONTENTS update flags
-	monitor = Policy.monitorFor(monitor);
-	try {
-		String message = Policy.bind("resources.deleting", getFullPath().toString());
-		monitor.beginTask(message, Policy.totalWork);
-		try {
-			workspace.prepareOperation();
-			/* if there is no such resource (including type check) then there is nothing
-			   to delete and just return. */
-			ResourceInfo info = getResourceInfo(false, false);
-			if (!exists(getFlags(info), true))
-				return;
-			message = Policy.bind("resources.deleteProblem");
-			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_DELETE_LOCAL, message, null);
-			/* Signal that this resource is about to be deleted. 
-			   Do this before the begin to prevent lifecycle participants to change the tree. */
-			workspace.deleting(this);
-
-			workspace.beginOperation(true);
-			// flush the build order early in case there is a problem
-			workspace.flushBuildOrder();
-			if (deleteContent) {
-				if (isOpen(getFlags(info)))
-					info = null;
-				else {
-					//open may fail if .project is mangled, but we still want to go ahead with delete.
-					try {
-						pseudoOpen();
-					} catch (CoreException e) {
-						status.merge(e.getStatus());
-					}
-				}
-				try {
-					if (force)
-						getLocalManager().getStore().delete(getLocation().toFile(), status);
-					else
-						getLocalManager().delete(this, force, false, false, Policy.monitorFor(null));
-					// delete the project directory on disk if it is in the default content area.
-					ProjectInfo projectInfo = (ProjectInfo) getResourceInfo(false, false);
-					if (projectInfo != null) {
-						IProjectDescription description = projectInfo.getDescription();
-						if (description != null) {
-							IPath contentLocation = description.getLocation();
-							if (contentLocation == null)
-								// project still exists in the workspace at this point so #getLocation will not return null
-								getLocation().toFile().delete();
-						}
-					}
-				} catch (CoreException e) {
-					//the description may have been deleted, so re-add if needed
-					if (!getLocalManager().hasSavedProject(this))
-						getLocalManager().write(this, IResource.FORCE);
-					if (info != null) {
-						//the project was closed, so undo the pseudoOpen
-						getPropertyManager().closePropertyStore(this);
-						workspace.deleteResource(this);
-						workspace.getElementTree().createElement(getFullPath(), info);
-					}
-					throw e; // rethrow
-				}
-			}
-			deleteResource(false, status);
-			workspace.getMetaArea().delete(this);
-			clearHistory(null);
-			if (!status.isOK())
-				throw new ResourceException(status);
-		} catch (OperationCanceledException e) {
-			workspace.getWorkManager().operationCanceled();
-			throw e;
-		} finally {
-			workspace.endOperation(true, Policy.subMonitorFor(monitor, Policy.buildWork));
-		}
-	} finally {
-		monitor.done();
-	}
+	int updateFlags = force ? IResource.FORCE : IResource.NONE;
+	updateFlags |= deleteContent ? IResource.ALWAYS_DELETE_PROJECT_CONTENT : IResource.NEVER_DELETE_PROJECT_CONTENT;
+	delete(updateFlags, monitor);
 }
+
 /**
  * @see IProject
  */
@@ -554,48 +476,10 @@ protected void internalCopyProjectOnly(IResource destination, IProgressMonitor m
 	// close the property store so bogus values aren't copied to the destination
 	getPropertyManager().closePropertyStore(this);
 	// copy the tree and properties
-	workspace.copyTree(this, destination.getFullPath(), IResource.DEPTH_ZERO, false);
+	workspace.copyTree(this, destination.getFullPath(), IResource.DEPTH_ZERO, false, false);
 	getPropertyManager().copy(this, destination, IResource.DEPTH_ZERO);
 }
-protected void internalCopyToFolder(IPath destPath, boolean force, IProgressMonitor monitor) throws CoreException {
-	monitor = Policy.monitorFor(monitor);
-	try {
-		String message = Policy.bind("resources.renaming", getFullPath().toString());
-		monitor.beginTask(message, Policy.totalWork);
-		try {
-			workspace.prepareOperation();
-			// The following assert method throws CoreExceptions as stated in the IProject.move API
-			// and assert for programming errors. See checkCopyRequirements for more information.
-			assertCopyRequirements(destPath, IResource.FOLDER);
-			IFolder destFolder = workspace.getRoot().getFolder(destPath);
-			workspace.changing(this);
 
-			workspace.beginOperation(true);
-			// flush the build order early in case there is a problem
-			workspace.flushBuildOrder();
-			getLocalManager().refresh(this, DEPTH_INFINITE, Policy.subMonitorFor(monitor, Policy.opWork * 20 / 100));
-
-			// copy just the project and not its children
-			internalCopyProjectOnly(destFolder, Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
-
-			// call super.copy for each child
-			IResource[] children = members();
-			for (int i = 0; i < children.length; i++)
-				children[i].copy(destFolder.getFullPath().append(children[i].getName()), force, Policy.subMonitorFor(monitor, Policy.opWork * 50 / 100 / children.length));
-
-			// refresh local
-			monitor.subTask(Policy.bind("resources.updating"));
-			getLocalManager().refresh(destFolder, DEPTH_INFINITE, Policy.subMonitorFor(monitor, Policy.opWork * 20 / 100));
-		} catch (OperationCanceledException e) {
-			workspace.getWorkManager().operationCanceled();
-			throw e;
-		} finally {
-			workspace.endOperation(true, Policy.subMonitorFor(monitor, Policy.buildWork));
-		}
-	} finally {
-		monitor.done();
-	}
-}
 /**
  * This is an internal helper method. This implementation is different from the API
  * method getDescription(). This one does not check the project accessibility. It exists
@@ -608,178 +492,7 @@ public ProjectDescription internalGetDescription() {
 		return null;
 	return info.getDescription();
 }
-protected void internalMove(IProjectDescription destDesc, boolean force, IProgressMonitor monitor) throws CoreException {
-	monitor = Policy.monitorFor(monitor);
-	try {
-		String message = Policy.bind("resources.renaming", getFullPath().toString());
-		monitor.beginTask(message, Policy.totalWork);
-		try {
-			workspace.prepareOperation();
-			String destName = destDesc.getName();
-			IPath destPath = new Path(destName).makeAbsolute();
-			// The following assert method throws CoreExceptions as stated in the IProject.move API
-			// and assert for programming errors. See checkMoveRequirements for more information.
-			assertMoveRequirements(destPath, IResource.PROJECT);
-			Project destProject = (Project) workspace.getRoot().getProject(destName);
-			checkDescription(destProject, destDesc, true);
-			IProjectDescription sourceDesc = internalGetDescription();
-			workspace.changing(this);
 
-			workspace.beginOperation(true);
-			// flush the build order early in case there is a problem
-			workspace.flushBuildOrder();
-			getLocalManager().refresh(this, DEPTH_INFINITE, Policy.subMonitorFor(monitor, Policy.opWork * 20 / 100));
-
-			// let people know that we are deleting the project
-			workspace.deleting(this);
-
-			// close the property store
-			getPropertyManager().closePropertyStore(this);
-
-			// rename the meta area
-			copyMetaArea(this, destProject, Policy.subMonitorFor(monitor, Policy.opWork * 5 / 100));
-
-			// copy just the project and not its children (copies project tree node, properties)
-			internalCopyProjectOnly(destProject, Policy.subMonitorFor(monitor, Policy.opWork * 5 / 100));
-
-			// set the description
-			destProject.internalSetDescription(destDesc, false);
-
-			// call super.move for each child
-			IResource[] children = members();
-			for (int i = 0; i < children.length; i++)
-				children[i].move(destProject.getFullPath().append(children[i].getName()), force, Policy.subMonitorFor(monitor, Policy.opWork * 50 / 100 / children.length));
-
-			// write out the new project description to the meta area. This will ovewrite 
-			//the .project file that was copied during the recursive copy in the previous step
-			try {
-				getLocalManager().write(destProject, IResource.FORCE);
-			} catch (CoreException e) {
-				try {
-					destProject.delete(force, null);
-				} catch (CoreException e2) {
-					// ignore and rethrow the exception that got us here
-				}
-				throw e;
-			}
-
-			//clear instantiated builders and natures because they reference the project handle
-			ProjectInfo info = (ProjectInfo) destProject.getResourceInfo(false, true);
-			info.setBuilders(null);
-			info.clearNatures();
-
-			// delete the source. only delete content if we actually moved content
-			if (sourceDesc.getLocation() != null && locationsEqual(sourceDesc, destDesc))
-				delete(false, force, Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
-			else
-				delete(true, force, Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
-
-			// tell the marker manager that we moved so the marker deltas are ok
-			getMarkerManager().moved(this, destProject, IResource.DEPTH_ZERO);
-			monitor.worked(Policy.opWork * 5 / 100);
-
-			// we need to refresh local in case we moved to an existing location
-			// that already had content
-			monitor.subTask(Policy.bind("resources.updating"));
-			destProject.refreshLocal(IResource.DEPTH_INFINITE, Policy.subMonitorFor(monitor, Policy.opWork * 5 / 100));
-		} catch (OperationCanceledException e) {
-			workspace.getWorkManager().operationCanceled();
-			throw e;
-		} finally {
-			workspace.endOperation(true, Policy.subMonitorFor(monitor, Policy.buildWork));
-		}
-	} finally {
-		monitor.done();
-	}
-}
-protected void internalMoveContent(IProjectDescription destDesc, boolean force, IProgressMonitor monitor) throws CoreException {
-	monitor = Policy.monitorFor(monitor);
-	try {
-		monitor.beginTask(Policy.bind("resources.movingContent"), Policy.totalWork);
-		try {
-			workspace.prepareOperation();
-			IPath source = getLocation();
-			ResourceInfo info = getResourceInfo(false, false);
-			checkAccessible(getFlags(info));
-			checkDescription(this, destDesc, false);
-			IProjectDescription sourceDesc = internalGetDescription();
-			workspace.beginOperation(true);
-			int rollbackLevel = 0;
-			try {
-				// set the location in the description so we can calculate the location for the resources
-				sourceDesc.setLocation(destDesc.getLocation());
-				monitor.worked(Policy.opWork * 10 / 100);
-				IPath destination = getLocation();
-				rollbackLevel++;
-				// actually move the resources
-				getLocalManager().getStore().move(source.toFile(), destination.toFile(), force, Policy.subMonitorFor(monitor, Policy.opWork * 70 / 100));
-				rollbackLevel = 0;
-				// we need to refresh local in case we moved to an existing location
-				// that already had content
-				refreshLocal(IResource.DEPTH_INFINITE, Policy.subMonitorFor(monitor, Policy.opWork * 20 / 100));
-			} finally {
-				switch (rollbackLevel) {
-					case 1 : 
-						// we set the location in the description but we had a problem moving the resources.
-						sourceDesc.setLocation(source);
-						break;
-				}
-			}
-			//make sure the new location is written to disk
-			workspace.getMetaArea().writeLocation(this);
-		} finally {
-			workspace.endOperation(true, Policy.subMonitorFor(monitor, Policy.buildWork));
-		}
-	} finally {
-		monitor.done();
-	}
-}
-protected void internalMoveToFolder(IPath destPath, boolean force, IProgressMonitor monitor) throws CoreException {
-	monitor = Policy.monitorFor(monitor);
-	try {
-		String message = Policy.bind("resources.renaming", getFullPath().toString());
-		monitor.beginTask(message, Policy.totalWork);
-		try {
-			workspace.prepareOperation();
-			// The following assert method throws CoreExceptions as stated in the IProject.move API
-			// and assert for programming errors. See checkMoveRequirements for more information.
-			assertMoveRequirements(destPath, IResource.FOLDER);
-			IFolder destFolder = workspace.getRoot().getFolder(destPath);
-			workspace.changing(this);
-
-			workspace.beginOperation(true);
-			// flush the build order early in case there is a problem
-			workspace.flushBuildOrder();
-			getLocalManager().refresh(this, DEPTH_INFINITE, Policy.subMonitorFor(monitor, Policy.opWork * 20 / 100));
-
-			// copy just the project and not its children
-			internalCopyProjectOnly(destFolder, Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
-
-			// call super.move for each child
-			IResource[] children = members();
-			for (int i = 0; i < children.length; i++)
-				children[i].move(destFolder.getFullPath().append(children[i].getName()), force, Policy.subMonitorFor(monitor, Policy.opWork * 30 / 100 / children.length));
-
-			// delete the source
-			delete(true, force, Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
-
-			// tell the marker manager that we moved so the marker deltas are ok
-			getMarkerManager().moved(this, destFolder, IResource.DEPTH_ZERO);
-			monitor.worked(Policy.opWork * 10 / 100);
-
-			// refresh local
-			monitor.subTask(Policy.bind("resources.updating"));
-			getLocalManager().refresh(destFolder, DEPTH_INFINITE, Policy.subMonitorFor(monitor, Policy.opWork * 20 / 100));
-		} catch (OperationCanceledException e) {
-			workspace.getWorkManager().operationCanceled();
-			throw e;
-		} finally {
-			workspace.endOperation(true, Policy.subMonitorFor(monitor, Policy.buildWork));
-		}
-	} finally {
-		monitor.done();
-	}
-}
 /**
  * Sets this project's description to the given value.  This is the body of the
  * corresponding API method but is needed separately since it is used
@@ -861,21 +574,8 @@ public boolean isOpen(int flags) {
  * @see IProject#move
  */
 public void move(IProjectDescription destination, boolean force, IProgressMonitor monitor) throws CoreException {
-	// FIXME - the logic here for moving projects needs to be moved to Resource.copy
-	//   so that IResource.move(IProjectDescription,int,IProgressMonitor) works properly for
-	//   projects and honours all update flags
 	Assert.isNotNull(destination);
-	// if we have the same name but a different location, then move
-	// the project content
-	IProjectDescription source = getDescription();
-	if (source.getName().equals(destination.getName()) && !locationsEqual(source, destination))
-		internalMoveContent(destination, force, monitor);
-	else {
-		if (!CoreFileSystemLibrary.isCaseSensitive() && getName().equalsIgnoreCase(destination.getName()))
-			internalChangeCase(destination, force, monitor);
-		else
-			internalMove(destination, force, monitor);
-	}
+	move(destination, force ? IResource.FORCE : IResource.NONE, monitor);
 }
 protected boolean locationsEqual(IProjectDescription desc1, IProjectDescription desc2) {
 	IPath loc1 = desc1.getLocation();
@@ -890,23 +590,7 @@ protected boolean locationsEqual(IProjectDescription desc1, IProjectDescription 
  * @see IResource#move
  */
 public void move(IPath destination, boolean force, IProgressMonitor monitor) throws CoreException {
-	// FIXME - the logic here for moving projects needs to be moved to Resource.copy
-	//   so that IResource.move(IPath,int,IProgressMonitor) works properly for
-	//   projects and honours all update flags
-	if (destination.segmentCount() == 1) {
-		// move project to project
-		String projectName = destination.segment(0);
-		IProjectDescription desc = getDescription();
-		desc.setName(projectName);
-		desc.setLocation(null);
-		if (!CoreFileSystemLibrary.isCaseSensitive() && getName().equalsIgnoreCase(projectName))
-			internalChangeCase(desc, force, monitor);
-		else
-			internalMove(desc, force, monitor);
-	} else {
-		// move project to folder
-		internalMoveToFolder(destination, force, monitor);
-	}
+	move(destination, force ? IResource.FORCE : IResource.NONE, monitor);
 }
 /**
  * @see IProject
@@ -966,12 +650,14 @@ public void open(IProgressMonitor monitor) throws CoreException {
 // resources that are in sync with the filesystem.
 // So, we have to have the tree loaded.
 
-private void pseudoOpen() throws CoreException {
+public void pseudoOpen() throws CoreException {
 	getResourceInfo(false, true).set(M_OPEN);
 	workspace.getSaveManager().restore(this, null);
 }
 
-
+/*
+ * @see IProject
+ */
 /**
  * @see IProject
  */
@@ -1016,6 +702,7 @@ public void setDescription(IProjectDescription description, int updateFlags, IPr
 		monitor.done();
 	}
 }
+
 /**
  * @see IProject
  */
@@ -1074,73 +761,10 @@ protected void updateDescription() throws CoreException {
 	//set the description in memory
 	internalSetDescription(description, true);
 }
-protected void internalChangeCase(IProjectDescription destDesc, boolean force, IProgressMonitor monitor) throws CoreException {
-	monitor = Policy.monitorFor(monitor);
-	try {
-		String message = Policy.bind("resources.renaming", getFullPath().toString());
-		monitor.beginTask(message, Policy.totalWork);
-		try {
-			workspace.prepareOperation();
-			String destName = destDesc.getName();
-			IPath destPath = new Path(destName).makeAbsolute();
-			// The following assert method throws CoreExceptions as stated in the IProject.move API
-			// and assert for programming errors. See checkMoveRequirements for more information.
-			assertMoveRequirements(destPath, IResource.PROJECT);
-			Project destProject = (Project) workspace.getRoot().getProject(destName);
-			checkDescription(destProject, destDesc, true);
-			IProjectDescription sourceDesc = internalGetDescription();
-			workspace.changing(this);
-
-			workspace.beginOperation(true);
-			// flush the build order early in case there is a problem
-			workspace.flushBuildOrder();
-
-			// let people know that we are deleting the project
-			workspace.deleting(this);
-
-			// Close the property store. It must be done before copying the tree.
-			getPropertyManager().closePropertyStore(this);
-
-			// set the description
-			workspace.copyTree(this, destPath, IResource.DEPTH_INFINITE, false);
-			destProject.internalSetDescription(destDesc, false);
-
-			// Fix for 1FVU2FV: ITPCORE:WINNT - WALKBACK - Renaming project does not update project natures
-			// Remove session property for active project natures, causing them to be reactivated.
-			// Leave persistent property (list of nature IDs) alone.
-			ProjectInfo info = (ProjectInfo) workspace.getResourceInfo(destProject.getFullPath(), false, true);
-			// FIXME: should we be deconfiguring natures here? why do we clear it at all
-			info.clearNatures();
-
-			// write out the project info to the meta area
-			getLocalManager().write(destProject, force ? IResource.FORCE : IResource.NONE);
-			monitor.worked(Policy.opWork * 10 / 100);
-
-			// rename meta-area
-			renameMetaArea(this, destProject, null);
-			
-			// rename default location
-			if (sourceDesc.getLocation() == null && destDesc.getLocation() == null)
-				getLocation().toFile().renameTo(destProject.getLocation().toFile());
-
-			// clear the builders for the destination project
-			info.setBuilders(null);
-
-			// delete source handle
-			workspace.deleteResource(this);
-
-			// tell the marker manager that we moved so the marker deltas are ok
-			getMarkerManager().moved(this, destProject, IResource.DEPTH_ZERO);
-			monitor.worked(Policy.opWork * 10 / 100);
-		} catch (OperationCanceledException e) {
-			workspace.getWorkManager().operationCanceled();
-			throw e;
-		} finally {
-			workspace.endOperation(true, Policy.subMonitorFor(monitor, Policy.buildWork));
-		}
-	} finally {
-		monitor.done();
-	}
+protected void renameMetaArea(IProject source, IProject destination, IProgressMonitor monitor) throws CoreException {
+	java.io.File oldMetaArea = workspace.getMetaArea().locationFor(source).toFile();
+	java.io.File newMetaArea = workspace.getMetaArea().locationFor(destination).toFile();
+	getLocalManager().getStore().move(oldMetaArea, newMetaArea, false, monitor);
 }
 /**
  * Closes the project.  This is called during restore when there is a failure
@@ -1149,7 +773,7 @@ protected void internalChangeCase(IProjectDescription destDesc, boolean force, I
  */
 protected void internalClose() throws CoreException {
 	workspace.flushBuildOrder();
-	getMarkerManager().removeMarkers(this);
+	getMarkerManager().removeMarkers(this, IResource.DEPTH_INFINITE);
 	// remove each member from the resource tree. 
 	// DO NOT use resource.delete() as this will delete it from disk as well.
 	IResource[] members = members(IContainer.INCLUDE_PHANTOMS | IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
@@ -1163,6 +787,4 @@ protected void internalClose() throws CoreException {
 	info.clearSessionProperties();
 	info.setSyncInfo(null);
 }
-
-
 }

@@ -14,7 +14,14 @@ import org.eclipse.core.internal.properties.PropertyManager;
 import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.internal.watson.*;
 import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.resources.team.IMoveDeleteHook;
+
 
 public class Workspace extends PlatformObject implements IWorkspace, ICoreConstants {
 	protected WorkspaceDescription description;
@@ -48,6 +55,11 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 * The currently installed file modification validator.
 	 */
 	protected static IFileModificationValidator validator = null;
+	
+	/**
+	 * The currently installed Move/Delete hook.
+	 */
+	protected static IMoveDeleteHook moveDeleteHook = null;
 
 	// whether the resources plugin is in debug mode.
 	public static boolean DEBUG = false;
@@ -74,6 +86,8 @@ public Workspace() {
 	tree.immutable();
 	treeLocked = true;
 	tree.setTreeData(newElement(IResource.ROOT));
+	
+	initializeMoveDeleteHook();
 }
 /**
  * @see IWorkspace
@@ -352,14 +366,6 @@ public IProject[][] computePrerequisiteOrder(IProject[] targets) {
  * @see IWorkspace#copy
  */
 public IStatus copy(IResource[] resources, IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException {
-	// FIXME
-	return copy(resources, destination, (updateFlags & IResource.FORCE) != 0, monitor);
-}
-
-/**
- * @see IWorkspace#copy
- */
-public IStatus copy(IResource[] resources, IPath destination, boolean force, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
 		int opWork = Math.max(resources.length, 1);
@@ -393,7 +399,7 @@ public IStatus copy(IResource[] resources, IPath destination, boolean force, IPr
 						IStatus requirements = ((Resource) resource).checkCopyRequirements(destination.append(resource.getName()), resource.getType());
 						if (requirements.isOK()) {
 							try {
-								resource.copy(destination.append(resource.getName()), force, Policy.subMonitorFor(monitor, 1));
+								resource.copy(destination.append(resource.getName()), updateFlags, Policy.subMonitorFor(monitor, 1));
 							} catch (CoreException e) {
 								status.merge(e.getStatus());
 							}
@@ -424,7 +430,16 @@ public IStatus copy(IResource[] resources, IPath destination, boolean force, IPr
 		monitor.done();
 	}
 }
-protected void copyTree(IResource source, IPath destination, int depth, boolean phantom) throws CoreException {
+
+/**
+ * @see IWorkspace#copy
+ */
+public IStatus copy(IResource[] resources, IPath destination, boolean force, IProgressMonitor monitor) throws CoreException {
+	int updateFlags = force ? IResource.FORCE : IResource.NONE;
+	return copy(resources, destination, updateFlags , monitor);
+}
+
+protected void copyTree(IResource source, IPath destination, int depth, boolean phantom, boolean overwrite) throws CoreException {
 
 	// retrieve the resource at the destination if there is one (phantoms included).
 	// if there isn't one, then create a new handle based on the type that we are
@@ -448,7 +463,7 @@ protected void copyTree(IResource source, IPath destination, int depth, boolean 
 		sourceInfo = (ResourceInfo) sourceInfo.clone();
 		sourceInfo.setType(destinationResource.getType());
 	}
-	ResourceInfo newInfo = createResource(destinationResource, sourceInfo, phantom);
+	ResourceInfo newInfo = createResource(destinationResource, sourceInfo, phantom, overwrite);
 	// get/set the node id from the source's resource info so we can later put it in the
 	// info for the destination resource. This will help us generate the proper deltas,
 	// indicating a move rather than a add/delete
@@ -469,7 +484,7 @@ protected void copyTree(IResource source, IPath destination, int depth, boolean 
 	for (int i = 0; i < children.length; i++) {
 		IResource child = children[i];
 		IPath childPath = destination.append(child.getName());
-		copyTree(child, childPath, depth, phantom);
+		copyTree(child, childPath, depth, phantom, overwrite);
 	}
 }
 /**
@@ -509,20 +524,22 @@ public int countResources(IPath root, int depth, final boolean phantom) {
  * information is preserved) If the specified resource info is null, then create
  * a new one.
  */
-public ResourceInfo createResource(IResource resource, ResourceInfo info, boolean phantom) throws CoreException {
+public ResourceInfo createResource(IResource resource, ResourceInfo info, boolean phantom, boolean overwrite) throws CoreException {
 	info = info == null ? newElement(resource.getType()) : (ResourceInfo) info.clone();
 	ResourceInfo original = getResourceInfo(resource.getFullPath(), true, false);
 	if (phantom) {
 		info.set(M_PHANTOM);
 		info.setModificationStamp(IResource.NULL_STAMP);
 	}
+	// if nothing existed at the destination then just create the resource in the tree
 	if (original == null) {
 		// we got here from a copy/move. we don't want to copy over any sync info
 		// from the source so clear it.
 		info.setSyncInfo(null);
 		tree.createElement(resource.getFullPath(), info);
-	} else
-		if (!phantom && original.isSet(M_PHANTOM)) {
+	} else {
+		// if overwrite==true then slam the new info into the tree even if one existed before
+		if (overwrite || (!phantom && original.isSet(M_PHANTOM))) {
 			// copy over the sync info and flags from the old resource info
 			// since we are replacing a phantom with a real resource
 			// DO NOT set the sync info dirty flag because we want to
@@ -538,6 +555,7 @@ public ResourceInfo createResource(IResource resource, ResourceInfo info, boolea
 			String message = Policy.bind("resources.mustNotExist", resource.getFullPath().toString());
 			throw new ResourceException(IResourceStatus.RESOURCE_EXISTS, resource.getFullPath(), message, null);
 		}
+	}
 	return info;
 }
 /*
@@ -550,7 +568,10 @@ public ResourceInfo createResource(IResource resource, ResourceInfo info, boolea
  * information is preserved)
  */
 public ResourceInfo createResource(IResource resource, boolean phantom) throws CoreException {
-	return createResource(resource, null, phantom);
+	return createResource(resource, null, phantom, false);
+}
+public ResourceInfo createResource(IResource resource, boolean phantom, boolean overwrite) throws CoreException {
+	return createResource(resource, null, phantom, overwrite);
 }
 public static WorkspaceDescription defaultWorkspaceDescription() {
 	return new WorkspaceDescription("Workspace");
@@ -560,14 +581,6 @@ public static WorkspaceDescription defaultWorkspaceDescription() {
  * @see IWorkspace#delete
  */
 public IStatus delete(IResource[] resources, int updateFlags, IProgressMonitor monitor) throws CoreException {
-	// FIXME
-	return delete(resources, (updateFlags & IResource.FORCE) != 0, monitor);
-}
-
-/*
- * @see IWorkspace#delete
- */
-public IStatus delete(IResource[] resources, boolean force, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
 		int opWork = Math.max(resources.length, 1);
@@ -590,13 +603,7 @@ public IStatus delete(IResource[] resources, boolean force, IProgressMonitor mon
 					continue;
 				}
 				try {
-					// We cannot call delete(boolean, boolean, monitor) to all
-					// kind of resources because this method has a different
-					// semantics for project and root.
-					if (resource.getType() == IResource.PROJECT || resource.getType() == IResource.ROOT)
-						resource.delete(force, Policy.subMonitorFor(monitor, 1));
-					else
-						resource.delete(force, true, Policy.subMonitorFor(monitor, 1));
+					resource.delete(updateFlags, Policy.subMonitorFor(monitor, 1));
 				} catch (CoreException e) {
 					// Don't really care about the exception unless the resource is still around.
 					ResourceInfo info = resource.getResourceInfo(false, false);
@@ -620,6 +627,16 @@ public IStatus delete(IResource[] resources, boolean force, IProgressMonitor mon
 		monitor.done();
 	}
 }
+
+/*
+ * @see IWorkspace#delete
+ */
+public IStatus delete(IResource[] resources, boolean force, IProgressMonitor monitor) throws CoreException {
+	int updateFlags = force ? IResource.FORCE : IResource.NONE;
+	updateFlags |= IResource.KEEP_HISTORY;
+	return delete(resources, updateFlags, monitor);
+}
+
 /**
  * @see IWorkspace
  */
@@ -790,6 +807,44 @@ protected static void initializeValidator() {
 		IStatus status = new ResourceStatus(IResourceStatus.ERROR, 1, null, Policy.bind("resources.initValidator"), e);
 		ResourcesPlugin.getPlugin().getLog().log(status);
 	}
+}
+/**
+ * A move/delete hook hasn't been initialized. Check the extension point and 
+ * try to create a new hook if a user has one defined as an extension. Otherwise
+ * use the Core's implementation as the default.
+ */
+protected static void initializeMoveDeleteHook() {
+	try {
+		IConfigurationElement[] configs = Platform.getPluginRegistry().getConfigurationElementsFor(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_MOVE_DELETE_HOOK);
+		// no-one is plugged into the extension point so disable validation
+		if (configs == null || configs.length == 0) {
+			return;
+		}
+		// can only have one defined at a time. log a warning
+		if (configs.length > 1) {
+			//XXX: shoud provide a meaningful status code
+			IStatus status = new ResourceStatus(IResourceStatus.ERROR, 1, null, Policy.bind("resources.oneHook"), null);
+			ResourcesPlugin.getPlugin().getLog().log(status);
+			return;
+		}
+		// otherwise we have exactly one hook extension. Try to create a new instance 
+		// from the user-specified class.
+		try {
+			IConfigurationElement config = configs[0];
+			moveDeleteHook = (IMoveDeleteHook) config.createExecutableExtension("class");
+		} catch (CoreException e) {
+			//XXX: shoud provide a meaningful status code
+			IStatus status = new ResourceStatus(IResourceStatus.ERROR, 1, null, Policy.bind("resources.initHook"), e);
+			ResourcesPlugin.getPlugin().getLog().log(status);
+		}
+	} finally {
+		// for now just use Core's implementation
+		if (moveDeleteHook == null)
+			moveDeleteHook = new MoveDeleteHook();
+	}
+}
+protected IMoveDeleteHook getMoveDeleteHook() {
+	return moveDeleteHook;
 }
 /**
  * Flush the build order cache for the workspace.  Only needed if the
@@ -997,14 +1052,6 @@ protected void linkTrees(IPath path, ElementTree[] newTrees) throws CoreExceptio
  * @see IWorkspace#move
  */
 public IStatus move(IResource[] resources, IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException {
-	// FIXME
-	return move(resources, destination, (updateFlags & IResource.FORCE) != 0, monitor);
-}
-
-/**
- * @see IWorkspace#move
- */
-public IStatus move(IResource[] resources, IPath destination, boolean force, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
 		int opWork = Math.max(resources.length, 1);
@@ -1037,13 +1084,7 @@ public IStatus move(IResource[] resources, IPath destination, boolean force, IPr
 						IStatus requirements = resource.checkMoveRequirements(destination.append(resource.getName()), resource.getType());
 						if (requirements.isOK()) {
 							try {
-								// We cannot call move(IPath, boolean, boolean, monitor) to all
-								// kind of resources because this method has a different
-								// semantics for project and root.
-								if (resource.getType() == IResource.PROJECT || resource.getType() == IResource.ROOT)
-									resource.move(destination.append(resource.getName()), force, Policy.subMonitorFor(monitor, 1));
-								else
-									resource.move(destination.append(resource.getName()), force, true, Policy.subMonitorFor(monitor, 1));
+								resource.move(destination.append(resource.getName()), updateFlags, Policy.subMonitorFor(monitor, 1));
 							} catch (CoreException e) {
 								status.merge(e.getStatus());
 							}
@@ -1074,15 +1115,25 @@ public IStatus move(IResource[] resources, IPath destination, boolean force, IPr
 		monitor.done();
 	}
 }
+
+/**
+ * @see IWorkspace#move
+ */
+public IStatus move(IResource[] resources, IPath destination, boolean force, IProgressMonitor monitor) throws CoreException {
+	int updateFlags = force ? IResource.FORCE : IResource.NONE;
+	updateFlags |= IResource.KEEP_HISTORY;
+	return move(resources, destination, updateFlags, monitor);
+}
+
 /**
  * Moves this resource's subtree to the destination. This operation should only be
  * used by move methods. Destination must be a valid destination for this resource.
  */
 
-/* package */ void move(Resource source, IPath destination) throws CoreException {
+/* package */ void move(Resource source, IPath destination, int depth, boolean overwrite) throws CoreException {
 	// overlay the tree at the destination path, preserving any important info
 	// in any already existing resource infos
-	copyTree(source, destination, IResource.DEPTH_INFINITE, false);
+	copyTree(source, destination, depth, false, overwrite);
 	source.fixupAfterMoveSource();
 }
 /**
@@ -1654,4 +1705,5 @@ protected void validateSave(final IFile file) throws CoreException {
 	if (!status[0].isOK())
 		throw new ResourceException(status[0]);
 }
+
 }

@@ -401,8 +401,8 @@ public void removeMarker(IResource resource, long id) {
 /**
  * Remove all markers for the given resource to the specified depth.
  */
-public void removeMarkers(IResource resource) throws CoreException {
-	recursiveRemoveMarkers(resource.getFullPath(), null, false, IResource.DEPTH_INFINITE);
+public void removeMarkers(IResource resource, int depth) throws CoreException {
+	recursiveRemoveMarkers(resource.getFullPath(), null, false, depth);
 }
 /**
  * Remove all markers with the given type from the node at the given path.

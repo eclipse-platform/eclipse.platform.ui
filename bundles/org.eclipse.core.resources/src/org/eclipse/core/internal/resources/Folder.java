@@ -27,7 +27,7 @@ protected Folder(IPath path, Workspace container) {
  * @see FileSystemResourceManager#reportChanges
  */
 public IFile changeToFile() throws CoreException {
-	getPropertyManager().deleteProperties(this);
+	getPropertyManager().deleteProperties(this, IResource.DEPTH_INFINITE);
 	workspace.deleteResource(this);
 	IFile result = workspace.getRoot().getFile(path);
 	workspace.createResource(result, false);

@@ -54,6 +54,14 @@ public final class ResourcesPlugin extends Plugin {
 	public static final String PT_FILE_MODIFICATION_VALIDATOR = "fileModificationValidator";
 
 	/**
+	 * Simple identifier constant (value <code>"moveDeleteHook"</code>)
+	 * for the move/delete hook extension point.
+	 * 
+	 * @since 2.0
+	 */
+	public static final String PT_MOVE_DELETE_HOOK = "moveDeleteHook";
+
+	/**
 	 * The single instance of this plug-in runtime class.
 	 */
 	private static ResourcesPlugin plugin;

@@ -67,11 +67,14 @@ protected void copyProperties(IResource source, IResource destination, int depth
 	}
 }
 public void deleteProperties(IResource target) throws CoreException {
+	deleteProperties(target, IResource.DEPTH_INFINITE);
+}
+public void deleteProperties(IResource target, int depth) throws CoreException {
 	switch (target.getType()) {
 		case IResource.FILE :
 		case IResource.FOLDER :
 			PropertyStore store = getPropertyStore(target);
-			store.removeAll(getPropertyKey(target), IResource.DEPTH_INFINITE);
+			store.removeAll(getPropertyKey(target), depth);
 			store.commit();
 			break;
 		case IResource.PROJECT :

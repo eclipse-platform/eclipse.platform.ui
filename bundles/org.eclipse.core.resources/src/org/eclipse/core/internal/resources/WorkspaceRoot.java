@@ -34,47 +34,16 @@ public void clearHistory(IProgressMonitor monitor) throws CoreException {
  * @see IResource#delete
  */
 public void delete(boolean force, IProgressMonitor monitor) throws CoreException {
-	// FIXME - should funnel through IResource.delete(int,IProgressMonitor) i.e.,
-	//    delete((force ? FORCE : IResource.NONE), monitor);
-	delete(true, force, monitor);
+	int updateFlags = force ? IResource.FORCE : IResource.NONE;
+	delete(updateFlags, monitor);
 }
 /**
  * @see IWorkspaceRoot#delete
  */
 public void delete(boolean deleteContent, boolean force, IProgressMonitor monitor) throws CoreException {
-	// FIXME - the logic here for deleting roots needs to be moved to Resource.delete
-	//   so that IResource.delete(int,IProgressMonitor) works properly for
-	//   roots and honours the ALWAYS/NEVER_DELETE_PROJECT_HISTORY update flags
-	monitor = Policy.monitorFor(monitor);
-	try {
-		String title = Policy.bind("resources.deleting", getFullPath().toString());
-		monitor.beginTask(title, Policy.totalWork);
-		try {
-			workspace.prepareOperation();
-
-			workspace.beginOperation(true);
-			IProject[] projects = getProjects();
-			IProgressMonitor sub = Policy.subMonitorFor(monitor, Policy.opWork);
-			try {
-				sub.beginTask(title, projects.length);
-				for (int i = 0; i < projects.length; i++)
-					projects[i].delete(deleteContent, force, Policy.subMonitorFor(sub, 1));
-			} finally {
-				sub.done();
-			}
-			// need to clear out the root info
-			workspace.getMarkerManager().removeMarkers(this);
-			getPropertyManager().deleteProperties(this);
-			getResourceInfo(false, false).clearSessionProperties();
-		} catch (OperationCanceledException e) {
-			workspace.getWorkManager().operationCanceled();
-			throw e;
-		} finally {
-			workspace.endOperation(true, Policy.subMonitorFor(monitor, Policy.buildWork));
-		}
-	} finally {
-		monitor.done();
-	}
+	int updateFlags = force ? IResource.FORCE : IResource.NONE;
+	updateFlags |= deleteContent ? IResource.ALWAYS_DELETE_PROJECT_CONTENT : IResource.NEVER_DELETE_PROJECT_CONTENT;
+	delete(updateFlags, monitor);
 }
 public boolean exists(int flags, boolean checkType) {
 	return true;

@@ -62,7 +62,8 @@ public void appendContents(InputStream content, int updateFlags, IProgressMonito
  */
 public void appendContents(InputStream content, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException {
 	// funnel all operations to central method
-	final int updateFlags = (keepHistory ? IResource.KEEP_HISTORY : IResource.NONE) | (force ? IResource.FORCE : IResource.NONE);
+	int updateFlags = force ? IResource.FORCE : IResource.NONE;
+	updateFlags |= keepHistory ? IResource.KEEP_HISTORY : IResource.NONE;
 	appendContents(content, updateFlags, monitor);
 }
 
@@ -78,7 +79,7 @@ public void appendContents(InputStream content, boolean force, boolean keepHisto
  * @see FileSystemResourceManager#reportChanges
  */
 public IFolder changeToFolder() throws CoreException {
-	getPropertyManager().deleteProperties(this);
+	getPropertyManager().deleteProperties(this, IResource.DEPTH_ZERO);
 	workspace.deleteResource(this);
 	IFolder result = workspace.getRoot().getFolder(path);
 	workspace.createResource(result, false);
@@ -263,7 +264,8 @@ public void setContents(InputStream content, int updateFlags, IProgressMonitor m
  */
 public void setContents(InputStream content, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException {
 	// funnel all operations to central method
-	final int updateFlags = (keepHistory ? IResource.KEEP_HISTORY : IResource.NONE) | (force ? IResource.FORCE : IResource.NONE);
+	int updateFlags = force ? IResource.FORCE : IResource.NONE;
+	updateFlags |= keepHistory ? IResource.KEEP_HISTORY : IResource.NONE;
 	setContents(content, updateFlags, monitor);
 }
 
@@ -272,7 +274,8 @@ public void setContents(InputStream content, boolean force, boolean keepHistory,
  */
 public void setContents(IFileState source, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException {
 	// funnel all operations to central method
-	final int updateFlags = (keepHistory ? IResource.KEEP_HISTORY : IResource.NONE) | (force ? IResource.FORCE : IResource.NONE);
+	int updateFlags = force ? IResource.FORCE : IResource.NONE;
+	updateFlags |= keepHistory ? IResource.KEEP_HISTORY : IResource.NONE;
 	setContents(source.getContents(), updateFlags, monitor);
 }
 
