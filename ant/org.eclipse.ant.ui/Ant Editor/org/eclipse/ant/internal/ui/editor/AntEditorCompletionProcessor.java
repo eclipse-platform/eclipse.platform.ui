@@ -53,6 +53,7 @@ import org.eclipse.ant.internal.ui.editor.model.AntProjectNode;
 import org.eclipse.ant.internal.ui.editor.model.AntTargetNode;
 import org.eclipse.ant.internal.ui.editor.model.AntTaskNode;
 import org.eclipse.ant.internal.ui.editor.outline.AntModel;
+import org.eclipse.ant.internal.ui.editor.templates.AntContext;
 import org.eclipse.ant.internal.ui.editor.templates.AntTemplateAccess;
 import org.eclipse.ant.internal.ui.editor.templates.AntTemplateProposal;
 import org.eclipse.ant.internal.ui.editor.templates.BuildFileContextType;
@@ -1530,14 +1531,14 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.templates.TemplateCompletionProcessor#createContext(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
 	 */
-//	protected TemplateContext createContext(ITextViewer contextViewer, IRegion region) {
-//		ContextType contextType= getContextType(contextViewer, region);
-//		if (contextType != null) {
-//			IDocument document= contextViewer.getDocument();
-//			return new AntContext(contextType, document, antModel, region.getOffset(), region.getLength());
-//		}
-//		return null;
-//	}
+	protected TemplateContext createContext(ITextViewer contextViewer, IRegion region) {
+		TemplateContextType contextType= getContextType(contextViewer, region);
+		if (contextType != null) {
+			IDocument document= contextViewer.getDocument();
+			return new AntContext(contextType, document, antModel, region.getOffset(), region.getLength());
+		}
+		return null;
+	}
     
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.templates.TemplateCompletionProcessor#createProposal(org.eclipse.jface.text.templates.Template, org.eclipse.jface.text.templates.TemplateContext, org.eclipse.jface.text.Region, int)

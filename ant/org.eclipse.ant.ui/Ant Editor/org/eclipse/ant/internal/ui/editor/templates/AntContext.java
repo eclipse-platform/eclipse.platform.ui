@@ -11,17 +11,13 @@
 
 package org.eclipse.ant.internal.ui.editor.templates;
 
-import org.eclipse.ant.internal.ui.editor.formatter.FormattingPreferences;
-import org.eclipse.ant.internal.ui.editor.formatter.XmlDocumentFormatter;
 import org.eclipse.ant.internal.ui.editor.outline.AntModel;
-import org.eclipse.ant.internal.ui.model.AntUIPlugin;
-import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.templates.TemplateContextType;
 import org.eclipse.jface.text.templates.DocumentTemplateContext;
 import org.eclipse.jface.text.templates.Template;
 import org.eclipse.jface.text.templates.TemplateBuffer;
+import org.eclipse.jface.text.templates.TemplateContextType;
 import org.eclipse.jface.text.templates.TemplateException;
 
 public class AntContext extends DocumentTemplateContext {
@@ -43,12 +39,12 @@ public class AntContext extends DocumentTemplateContext {
 		if (templateBuffer == null) {
 			return null;
 		}
-	
-		if (AntUIPlugin.getDefault().getPreferenceStore().getBoolean(AntEditorPreferenceConstants.TEMPLATES_USE_CODEFORMATTER)) {
-			FormattingPreferences prefs = new FormattingPreferences();
-			XmlDocumentFormatter formatter= new XmlDocumentFormatter();
-			formatter.format(templateBuffer, this, prefs);
-		}
+		//TODO bug 55356 
+//		if (AntUIPlugin.getDefault().getPreferenceStore().getBoolean(AntEditorPreferenceConstants.TEMPLATES_USE_CODEFORMATTER)) {
+//			FormattingPreferences prefs = new FormattingPreferences();
+//			XmlDocumentFormatter formatter= new XmlDocumentFormatter();
+//			formatter.format(templateBuffer, this, prefs);
+//		}
 		return templateBuffer;
 	}
 	
@@ -57,5 +53,28 @@ public class AntContext extends DocumentTemplateContext {
 	 */
 	public AntModel getAntModel() {
 		return fAntModel;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.templates.DocumentTemplateContext#getEnd()
+	 */
+	public int getEnd() {
+		int replacementOffset = getCompletionOffset();
+		int replacementLength = getCompletionLength();
+		if (replacementOffset > 0 && getDocument().get().charAt(replacementOffset - 1) == '<') {
+			replacementLength++;
+		}
+		return replacementLength;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.templates.DocumentTemplateContext#getStart()
+	 */
+	public int getStart() {
+		int replacementOffset= getCompletionOffset();
+		if (replacementOffset > 0 && getDocument().get().charAt(replacementOffset - 1) == '<') {
+			replacementOffset--;
+		}
+		return replacementOffset;
 	}
 }
