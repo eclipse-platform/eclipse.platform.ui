@@ -191,7 +191,7 @@ function highlightTopic(topic)
   	else if (a.className == "node")
   		a.className = "activeNode";
   		
-  	a.blur();
+  	//a.blur();
   }
 }
 
