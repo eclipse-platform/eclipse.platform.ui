@@ -139,7 +139,7 @@
       <page
             objectClass="org.eclipse.update.internal.ui.search.SearchObject"
             name="%properties.search.label"
-            class="org.eclipse.update.internal.ui.properties.NamedObjectPropertyPage"
+            class="org.eclipse.update.internal.ui.properties.SearchObjectPropertyPage"
             id="org.eclipse.update.ui.searchPropertyPage">
       </page>
    </extension>

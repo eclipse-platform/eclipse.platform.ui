@@ -20,7 +20,7 @@ public class NamedObjectPropertyPage
 	implements IWorkbenchPropertyPage {
 	private static final String KEY_NAME = "NamedObjectPropertyPage.name";
 	private static final String KEY_EXISTS = "NamedObjectPropertyPage.exists";
-	private Text objectName;
+	protected Text objectName;
 	private boolean changed;
 
 	/**
