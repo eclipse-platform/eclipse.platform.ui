@@ -36,12 +36,9 @@ public class InstallConfigurationModel extends ModelObject {
 	private String locationURLString;
 	private Date date;
 	private String label;
-	private List /* of ConfiguretionActivityModel */
-	activities;
-	private List /* of configurationSiteModel */
-	configurationSites;
+	private List /* of ConfiguretionActivityModel */ activities;
+	private List /* of configurationSiteModel */ configurationSites;
 
-	private long timeline;
 	protected boolean initialized = false;
 
 	/**
@@ -139,7 +136,9 @@ public class InstallConfigurationModel extends ModelObject {
 	 * 
 	 */
 	public Date getCreationDate() {
-		if (!initialized) initialize();
+//		if (!initialized) initialize();
+		if (date == null)
+			initialize();
 		return date;
 	}
 	/**
@@ -164,7 +163,9 @@ public class InstallConfigurationModel extends ModelObject {
 	 * @since 2.0
 	 */
 	public String getLabel() {
-		if (!initialized) initialize();
+//		if (!initialized) initialize();
+		if (label == null)
+			initialize();
 		return label;
 	}
 
@@ -219,17 +220,11 @@ public class InstallConfigurationModel extends ModelObject {
 	 * @return long
 	 */
 	public long getTimeline() {
-		if (!initialized) initialize();
-		return timeline;
+		return 0;
+//		if (!initialized) initialize();
+//		return timeline;
 	}
 
-	/**
-	 * Sets the timeline.
-	 * @param timeline The timeline to set
-	 */
-	public void setTimeline(long timeline) {
-		this.timeline = timeline;
-	}
 
 	/*
 	 * initialize the configurations from the persistent model.
@@ -280,7 +275,9 @@ public class InstallConfigurationModel extends ModelObject {
 		// resolve local elements
 		try {
 			locationURL = resolveURL(base, bundleURL, locationURLString);			
-		} catch (MalformedURLException e){}
+		} catch (MalformedURLException e){
+			locationURL = base;
+		}
 		
 	}
 	

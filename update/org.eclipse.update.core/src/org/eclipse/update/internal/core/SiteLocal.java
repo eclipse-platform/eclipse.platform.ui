@@ -60,8 +60,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite{
 			localSite.resolve(configXML, null);
 	
 			// Attempt to read previous state
-			// if reconcile or recover happens (erro reading state), it returns false
-			boolean hasRecoveredState = parseLocalSiteFile(currentPlatformConfiguration, localSite);
+			parseLocalSiteFile(currentPlatformConfiguration, localSite);
 
 		} catch (MalformedURLException exception) {
 			throw Utilities.newCoreException(Policy.bind("SiteLocal.UnableToCreateURLFor", localSite.getLocationURLString() + " & " + CONFIG_FILE), exception); //$NON-NLS-1$ //$NON-NLS-2$
@@ -246,39 +245,41 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite{
 
 	/**
 	 * @since 2.0
+	 * @deprecated
 	 */
 	public IInstallConfiguration addToPreservedConfigurations(IInstallConfiguration configuration) throws CoreException {
-		InstallConfiguration newConfiguration = null;
-		if (configuration != null) {
-
-			// create new configuration based on the one to preserve
-			String newFileName = UpdateManagerUtils.getLocalRandomIdentifier(CONFIG_FILE, new Date());
-			try {
-				URL newFile = UpdateManagerUtils.getURL(getLocationURL(), newFileName, null);
-				// pass the date onto teh name
-				Date currentDate = configuration.getCreationDate();
-				String name = configuration.getLabel();
-				newConfiguration = new InstallConfiguration(configuration, newFile, name);
-				// set the same date in the installConfig
-				newConfiguration.setCreationDate(currentDate);
-				newConfiguration.setTimeline(configuration.getTimeline());
-			} catch (MalformedURLException e) {
-				throw Utilities.newCoreException(Policy.bind("SiteLocal.UnableToCreateURLFor") + newFileName, e);
-				//$NON-NLS-1$
-			}
-
-			// activity
-			ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_ADD_PRESERVED);
-			activity.setLabel(configuration.getLabel());
-			activity.setDate(new Date());
-			activity.setStatus(IActivity.STATUS_OK);
-			((InstallConfiguration) newConfiguration).addActivity(activity);
-//			((InstallConfiguration) newConfiguration).saveConfigurationFile(isTransient());
-
-			// add to the list			
-			addPreservedInstallConfigurationModel(newConfiguration);
-		}
-		return newConfiguration;
+		return null;
+//		InstallConfiguration newConfiguration = null;
+//		if (configuration != null) {
+//
+//			// create new configuration based on the one to preserve
+//			String newFileName = UpdateManagerUtils.getLocalRandomIdentifier(CONFIG_FILE, new Date());
+//			try {
+//				URL newFile = UpdateManagerUtils.getURL(getLocationURL(), newFileName, null);
+//				// pass the date onto teh name
+//				Date currentDate = configuration.getCreationDate();
+//				String name = configuration.getLabel();
+//				newConfiguration = new InstallConfiguration(configuration, newFile, name);
+//				// set the same date in the installConfig
+//				newConfiguration.setCreationDate(currentDate);
+//				newConfiguration.setTimeline(configuration.getTimeline());
+//			} catch (MalformedURLException e) {
+//				throw Utilities.newCoreException(Policy.bind("SiteLocal.UnableToCreateURLFor") + newFileName, e);
+//				//$NON-NLS-1$
+//			}
+//
+//			// activity
+//			ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_ADD_PRESERVED);
+//			activity.setLabel(configuration.getLabel());
+//			activity.setDate(new Date());
+//			activity.setStatus(IActivity.STATUS_OK);
+//			((InstallConfiguration) newConfiguration).addActivity(activity);
+////			((InstallConfiguration) newConfiguration).saveConfigurationFile(isTransient());
+//
+//			// add to the list			
+//			addPreservedInstallConfigurationModel(newConfiguration);
+//		}
+//		return newConfiguration;
 	}
 
 	/*

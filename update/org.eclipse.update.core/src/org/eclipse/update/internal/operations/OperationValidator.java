@@ -323,10 +323,10 @@ public class OperationValidator implements IOperationValidator {
 		IInstallConfiguration config,
 		ArrayList status) {
 		try {
-			// check the timeline and don't bother
-			// to check anything else if negative
-			if (!checkTimeline(config, status))
-				return;
+//			// check the timeline and don't bother
+//			// to check anything else if negative
+//			if (!checkTimeline(config, status))
+//				return;
 			ArrayList features = computeFeaturesAfterRevert(config);
 			checkConstraints(features, status);
 			checkRevertConstraints(features, status);
@@ -1196,26 +1196,26 @@ public class OperationValidator implements IOperationValidator {
 		return false;
 	}
 
-	private static boolean checkTimeline(
-		IInstallConfiguration config,
-		ArrayList status) {
-		try {
-			ILocalSite lsite = SiteManager.getLocalSite();
-			IInstallConfiguration cconfig = lsite.getCurrentConfiguration();
-			if (cconfig.getTimeline() != config.getTimeline()) {
-				// Not the same timeline - cannot revert
-				String msg =
-					UpdateUtils.getFormattedMessage(
-						KEY_WRONG_TIMELINE,
-						config.getLabel());
-				status.add(createStatus(null, FeatureStatus.CODE_OTHER, msg));
-				return false;
-			}
-		} catch (CoreException e) {
-			status.add(e.getStatus());
-		}
-		return true;
-	}
+//	private static boolean checkTimeline(
+//		IInstallConfiguration config,
+//		ArrayList status) {
+//		try {
+//			ILocalSite lsite = SiteManager.getLocalSite();
+//			IInstallConfiguration cconfig = lsite.getCurrentConfiguration();
+//			if (cconfig.getTimeline() != config.getTimeline()) {
+//				// Not the same timeline - cannot revert
+//				String msg =
+//					UpdateUtils.getFormattedMessage(
+//						KEY_WRONG_TIMELINE,
+//						config.getLabel());
+//				status.add(createStatus(null, FeatureStatus.CODE_OTHER, msg));
+//				return false;
+//			}
+//		} catch (CoreException e) {
+//			status.add(e.getStatus());
+//		}
+//		return true;
+//	}
 
 	private static IStatus createMultiStatus(
 		String rootKey,

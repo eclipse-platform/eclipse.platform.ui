@@ -162,6 +162,7 @@ public class SiteLocalParser {
 					InstallConfigurationModel config = factory.createInstallConfigurationModel();
 					config.setLocationURLString(backedConfigs[i].getAbsolutePath().replace('\\', '/'));
 					config.setLabel(date.toString());
+					config.setCreationDate(date);
 					config.resolve(backedConfigs[i].toURL(), getResourceBundleURL());
 
 					// add the config

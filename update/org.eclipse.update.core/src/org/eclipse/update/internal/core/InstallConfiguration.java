@@ -55,7 +55,6 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		// date on the URL string has to be the same
 		Date now = new Date();
 		setCreationDate(now);
-		setTimeline(now.getTime());
 		setCurrent(false);
 		
 		if (newLocation == null) {
