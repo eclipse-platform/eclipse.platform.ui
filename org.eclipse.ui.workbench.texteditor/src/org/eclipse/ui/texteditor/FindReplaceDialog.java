@@ -875,19 +875,7 @@ class FindReplaceDialog extends Dialog {
 	}
 
 	// ------- history ---------------------------------------
-	
-	/**
-	 * Initialize the find history.
-	 * @param history the history to be initialized
-	 * @param init the initialization data
-	 */
-	private void initHistory(List history, List init) {
-		history.clear();
-		for (int i= 0; i < init.size() && i < HISTORY_SIZE - 1; i++) {
-			history.add(init.get(i));
-		}
-	}
-	
+		
 	/**
 	 * Retrieves and returns the option case sensitivity from the appropriate check box.
 	 * @return <code>true</code> if case sensitive

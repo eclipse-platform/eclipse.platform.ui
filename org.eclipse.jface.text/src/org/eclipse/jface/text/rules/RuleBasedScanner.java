@@ -132,17 +132,6 @@ public class RuleBasedScanner implements ICharacterScanner, ITokenScanner {
 		return fDelimiters;
 	}
 	
-	/**
-	 * Returns the scanner's default return token
-	 * @see #setDefaultReturnToken(IToken)
-	 * 
-	 * @return the scanner's default return token
-	 * @since 2.0
-	 */
-	private IToken getDefaultReturnToken() {
-		return fDefaultReturnToken;
-	}
-	
 	/*
 	 * @see ITokenScanner#nextToken()
 	 */

@@ -13,7 +13,6 @@ package org.eclipse.ui.texteditor;
 
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -61,8 +60,6 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel {
 
 	/** List of annotations whose text range became invalid because of document changes */
 	private List fDeletedAnnotations= new ArrayList(2);
-	/** Reference counters to track how often an annotation model is connected to its document */
-	private HashMap fRefcountTable= new HashMap();
 	/** List of registered and instantiated marker updaters */
 	private List fInstantiatedMarkerUpdaters= null;
 	/** List of registered but not yet instantiated marker updaters */

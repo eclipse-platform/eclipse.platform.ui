@@ -2607,31 +2607,31 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		}
 	}
 
-	/**
-	 * Marks this editor and its editor input as dirty.
-	 * @since 2.0
-	 */
-	private void markEditorAsDirty() {
-		
-		if (isDirty())
-			return;
-			
-		IDocumentProvider provider= getDocumentProvider();
-		if (provider instanceof IDocumentProviderExtension) {
-			
-			provider.removeElementStateListener(fElementStateListener);
-			try {
-				
-				IDocumentProviderExtension extension= (IDocumentProviderExtension) provider;
-				extension.setCanSaveDocument(getEditorInput());
-				firePropertyChange(PROP_DIRTY);
-				
-			} finally {
-				provider.addElementStateListener(fElementStateListener);
-			}
-			
-		}
-	}
+//	/**
+//	 * Marks this editor and its editor input as dirty.
+//	 * @since 2.0
+//	 */
+//	private void markEditorAsDirty() {
+//		
+//		if (isDirty())
+//			return;
+//			
+//		IDocumentProvider provider= getDocumentProvider();
+//		if (provider instanceof IDocumentProviderExtension) {
+//			
+//			provider.removeElementStateListener(fElementStateListener);
+//			try {
+//				
+//				IDocumentProviderExtension extension= (IDocumentProviderExtension) provider;
+//				extension.setCanSaveDocument(getEditorInput());
+//				firePropertyChange(PROP_DIRTY);
+//				
+//			} finally {
+//				provider.addElementStateListener(fElementStateListener);
+//			}
+//			
+//		}
+//	}
 			
 	/**
 	 * The <code>AbstractTextEditor</code> implementation of this 

@@ -689,11 +689,7 @@ public class OverviewRuler implements IOverviewRuler {
 			}
 		}				
 	}
-	
-	private void handleMouseDoubleClick(MouseEvent event) {
-		fLastMouseButtonActivityLine= toDocumentLineNumber(event.y);
-	}
-	
+		
 	/*
 	 * @see org.eclipse.jface.text.source.IOverviewRuler#addAnnotationType(java.lang.Object)
 	 */

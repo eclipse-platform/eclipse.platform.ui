@@ -503,8 +503,6 @@ public class TextViewer extends Viewer implements
 
 		/** The highlight color of this range. */
 		private Color fHighlightColor;
-		/** The region describing this range's extend. */
-		private IRegion fRange;
 		/** The position used to lively update this range's extent. */
 		private Position fPosition;
 		

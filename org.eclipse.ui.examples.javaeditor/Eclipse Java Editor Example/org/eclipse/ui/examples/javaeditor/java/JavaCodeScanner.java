@@ -23,12 +23,6 @@ public class JavaCodeScanner extends RuleBasedScanner {
 
 	private static String[] fgConstants= { "false", "null", "true" }; //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
 
-	private TextAttribute fComment;
-	private TextAttribute fKeyword;
-	private TextAttribute fType;
-	private TextAttribute fString;
-	private JavaColorProvider fColorProvider;
-
 	/**
 	 * Creates a Java code scanner
 	 */

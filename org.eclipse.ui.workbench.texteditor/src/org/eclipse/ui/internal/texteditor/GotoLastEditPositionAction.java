@@ -35,7 +35,6 @@ import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 public class GotoLastEditPositionAction extends Action implements IWorkbenchWindowActionDelegate {
 
 	private IWorkbenchWindow fWindow;
-	private String fPageId;
 	private IAction fAction;
 
 	public GotoLastEditPositionAction() {

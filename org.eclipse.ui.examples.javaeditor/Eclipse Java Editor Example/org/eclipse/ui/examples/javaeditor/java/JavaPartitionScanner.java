@@ -15,7 +15,6 @@ import org.eclipse.jface.text.rules.*;
  */
 public class JavaPartitionScanner extends RuleBasedPartitionScanner {
 
-	private final static String SKIP= "__skip"; //$NON-NLS-1$
 	public final static String JAVA_MULTILINE_COMMENT= "__java_multiline_comment"; //$NON-NLS-1$
 	public final static String JAVA_DOC= "__java_javadoc"; //$NON-NLS-1$
 

@@ -205,27 +205,27 @@ public class ConvertLineDelimitersAction extends TextEditorAction {
 		}
 	}
 
-	/**
-	 * Returns whether the given document uses only the given line delimiter.
-	 * @param document the document to check
-	 * @param lineDelimiter the line delimiter to check for
-	 */
-	private static boolean usesLineDelimiterExclusively(IDocument document, String lineDelimiter) {
-
-		try {
-			final int lineCount= document.getNumberOfLines();
-			for (int i= 0; i < lineCount; i++) {
-				final String delimiter= document.getLineDelimiter(i);
-				if (delimiter != null && delimiter.length() > 0 && !delimiter.equals(lineDelimiter))
-					return false;
-			}
-
-		} catch (BadLocationException e) {
-			return false;
-		}
-		
-		return true;
-	}
+//	/**
+//	 * Returns whether the given document uses only the given line delimiter.
+//	 * @param document the document to check
+//	 * @param lineDelimiter the line delimiter to check for
+//	 */
+//	private static boolean usesLineDelimiterExclusively(IDocument document, String lineDelimiter) {
+//
+//		try {
+//			final int lineCount= document.getNumberOfLines();
+//			for (int i= 0; i < lineCount; i++) {
+//				final String delimiter= document.getLineDelimiter(i);
+//				if (delimiter != null && delimiter.length() > 0 && !delimiter.equals(lineDelimiter))
+//					return false;
+//			}
+//
+//		} catch (BadLocationException e) {
+//			return false;
+//		}
+//		
+//		return true;
+//	}
 	
 	/**
 	 * Computes and returns the key to be used to lookup the action's label in

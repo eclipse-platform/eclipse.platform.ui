@@ -130,7 +130,6 @@ public final class PaintManager implements KeyListener, MouseListener, ISelectio
 	private List fPainters= new ArrayList(2);
 	private PositionManager fManager;
 	private ITextViewer fTextViewer;
-	private boolean fTextChanged= false;
 	
 	
 	public PaintManager(ITextViewer textViewer) {

@@ -66,7 +66,6 @@ class ContextInformationPopup implements IContentAssistListener {
 
 	private ITextViewer fViewer;
 	private ContentAssistant fContentAssistant;
-	private int fListenerCount= 0;
 
 	private PopupCloser fPopupCloser= new PopupCloser();
 	private Shell fContextSelectorShell;
