@@ -268,7 +268,7 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 	}	
 
 	/**
-	 * Expresion have their left halves rendered here, and their
+	 * Expressions have their left halves rendered here, and their
 	 * right halves rendered by the registered model presentation.
 	 */
 	protected String getExpressionText(IExpression expression) {
