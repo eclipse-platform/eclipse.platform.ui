@@ -8,13 +8,12 @@ http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
 import java.io.File;
+import java.text.MessageFormat;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
@@ -45,10 +44,11 @@ import org.eclipse.ui.externaltools.group.IGroupDialogPage;
 import org.eclipse.ui.externaltools.internal.dialog.ExternalToolVariableForm;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
+import org.eclipse.ui.externaltools.internal.registry.ArgumentVariableRegistry;
 import org.eclipse.ui.externaltools.internal.registry.ExternalToolVariable;
 import org.eclipse.ui.externaltools.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.model.ToolUtil;
-import org.eclipse.ui.externaltools.variable.ExpandVariableContext;
+import org.eclipse.ui.externaltools.model.ToolUtil.VariableDefinition;
 
 public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 
@@ -225,11 +225,7 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 		argumentField.setLayoutData(data);
 		argumentField.setFont(font);
-		argumentField.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				updateLaunchConfigurationDialog();
-			}
-		});
+		argumentField.addModifyListener(modifyListener);
 
 		variableButton= createPushButton(parent, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Varia&bles..._2"), null); //$NON-NLS-1$
 		variableButton.addSelectionListener(new SelectionAdapter() {
@@ -365,7 +361,7 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 	public boolean isValid(ILaunchConfiguration launchConfig) {
 		setErrorMessage(null);
 		setMessage(null);
-		return validateLocation() && validateWorkDirectory();
+		return validateLocation() && validateWorkDirectory() && validateArguments();
 	}
 	
 	/**
@@ -373,6 +369,23 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
   	 */		
 	public boolean canSave() {
  		return isValid(null);
+	}
+	
+	/**
+	 * Validates the content of the arguments field
+	 */
+	protected boolean validateArguments() {
+		String value= argumentField.getText().trim();
+		// Check if variables exist
+		if (!containsVariable(value)) {
+			return true;
+		}
+		String variableError= validateVariables(value);
+		if (variableError != null) {
+			setErrorMessage(variableError);
+			return false;
+		}
+		return true;
 	}
 	
 	/**
@@ -386,17 +399,14 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 			return false;
 		}
 
-		// Translate field contents to the actual file location so we
-		// can check to ensure the file actually exists.
-		MultiStatus multiStatus = new MultiStatus(IExternalToolConstants.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
-		value = ToolUtil.expandFileLocation(value, ExpandVariableContext.EMPTY_CONTEXT, multiStatus);
-		if (!multiStatus.isOK()) {
-			IStatus[] children = multiStatus.getChildren();
-			if (children.length > 0) {
-				setErrorMessage(children[0].getMessage());
-				setMessage(null);
+		// Check if variables exist
+		if (containsVariable(value)) {
+			String variableError= validateVariables(value);
+			if (variableError != null) {
+				setErrorMessage(variableError);
+				return false;
 			}
-			return false;
+			return true;
 		}
 		
 		File file = new File(value);
@@ -410,6 +420,35 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 		}
 		return true;
 	}
+	
+	/**
+	 * Returns an error string to be displayed to the user if any variable
+	 * errors are found in the given string or <code>null</code> if no errors
+	 * are found.
+	 */
+	private String validateVariables(String value) {
+		int start= 0;
+		VariableDefinition variable = ToolUtil.extractVariableTag(value, start);
+		while (variable.start != -1) {
+			if (variable.end == -1) {
+				return "Invalid variable format. Expected closing }";
+			}
+			if (variable.name == null || variable.name.length() == 0) {
+				return "Invalid variable format. No variable specified";
+			}
+			ArgumentVariableRegistry registry = ExternalToolsPlugin.getDefault().getArgumentVariableRegistry();
+			if (registry.getArgumentVariable(variable.name) == null) {
+				return MessageFormat.format("Unknown variable: {0}", new String[] {variable.name});
+			}
+			start= variable.end;
+			variable = ToolUtil.extractVariableTag(value, start);
+		}
+		return null;
+	}
+	
+	private boolean containsVariable(String value) {
+		return ToolUtil.extractVariableTag(value, 0).start != -1;
+	}
 
 	/**
 	 * Validates the content of the working directory field.
@@ -417,24 +456,27 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 	protected boolean validateWorkDirectory() {
 		
 		String value = workDirectoryField.getText().trim();
-		if (value.length() > 0) {
-			// Translate field contents to the actual directory location so we
-			// can check to ensure the directory actually exists.
-			MultiStatus multiStatus = new MultiStatus(IExternalToolConstants.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
-			value = ToolUtil.expandDirectoryLocation(value, ExpandVariableContext.EMPTY_CONTEXT, multiStatus);
-			if (!multiStatus.isOK()) {
-				IStatus[] children = multiStatus.getChildren();
-				if (children.length > 0) {
-					setErrorMessage(children[0].getMessage());
-				}
+		if (value.length() <= 0) {
+			return true;
+		}
+		// Check if variables exist
+		if (containsVariable(value)) {
+			String variableError= validateVariables(value);
+			if (variableError != null) {
+				setErrorMessage(variableError);
 				return false;
 			}
-				
-			File file = new File(value);
-			if (!file.exists()) { // The directory does not exist.
-				setErrorMessage(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.External_tool_working_directory_does_not_exist_or_is_invalid_21")); //$NON-NLS-1$
-				return false;
-			}
+			return true;
+		}
+			
+		File file = new File(value);
+		if (!file.exists()) { // The directory does not exist.
+			setErrorMessage(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.External_tool_working_directory_does_not_exist_or_is_invalid_21")); //$NON-NLS-1$
+			return false;
+		}
+		if (!file.isDirectory()) {
+			setErrorMessage("The specified location is not a directory");
+			return false;
 		}
 		return true;
 	}
