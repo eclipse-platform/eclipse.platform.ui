@@ -36,13 +36,13 @@ public class CoreTest extends TestCase {
 		super(name);
 	}
 
-	public static void runPerformanceTest(TestCase testCase, Runnable operation, int iterations, final int repetitions) {
+	public static void runPerformanceTest(TestCase testCase, Runnable operation, int inner, final int outer) {
 		Performance perf = Performance.getDefault();
 		PerformanceMeter meter = perf.createPerformanceMeter(perf.getDefaultScenarioId(testCase));
 		try {
-			for (int i = 0; i < iterations; i++) {
+			for (int i = 0; i < outer; i++) {
 				meter.start();
-				for (int j = 0; j < repetitions; j++)
+				for (int j = 0; j < inner; j++)
 					operation.run();
 				meter.stop();
 			}
