@@ -120,7 +120,7 @@ public Object doFileTest() {
 
 	/* Write the element tree. */
 	try {
-		File dir = new File(tempFile.getParent());
+		File dir = tempFile.getParentFile();
 		dir.mkdirs();
 		fos = new FileOutputStream(tempFile);
 		dos = new DataOutputStream(fos);
