@@ -22,6 +22,7 @@ import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
@@ -126,8 +127,7 @@ public class UIPreferencesAuto extends TestCase {
         if (!pages.hasNext()) {
             return null;
         } else {
-            title = WorkbenchMessages.format("PropertyDialog.propertyMessage",
-                    new Object[] { name });
+            title = NLS.bind(WorkbenchMessages.PropertyDialog_propertyMessage, (new Object[] { name }));
             dialog = new PropertyDialogWrapper(getShell(), manager,
                     new StructuredSelection(element));
             dialog.create();

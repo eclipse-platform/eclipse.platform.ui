@@ -25,7 +25,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.WizardNewProjectReferencePage;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
-import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.ExportWizard;
 import org.eclipse.ui.internal.dialogs.ImportWizard;
@@ -150,8 +149,7 @@ public class UIWizards extends TestCase {
         wizard.setNeedsProgressMonitor(true);
         WizardDialog dialog = new WizardDialog(getShell(), wizard);
         dialog.create();
-        dialog.getShell().setText(
-                WorkbenchMessages.getString("CreateFileAction.title")); //$NON-NLS-1$
+        dialog.getShell().setText("CreateFileAction_title"); 
         WorkbenchHelp.setHelp(dialog.getShell(),
                 IIDEHelpContextIds.NEW_FILE_WIZARD);
         DialogCheck.assertDialog(dialog, this);
@@ -163,8 +161,7 @@ public class UIWizards extends TestCase {
         wizard.setNeedsProgressMonitor(true);
         WizardDialog dialog = new WizardDialog(getShell(), wizard);
         dialog.create();
-        dialog.getShell().setText(
-                WorkbenchMessages.getString("CreateFolderAction.title")); //$NON-NLS-1$
+        dialog.getShell().setText("CreateFolderAction_title"); 
         WorkbenchHelp.setHelp(dialog.getShell(),
         		IIDEHelpContextIds.NEW_FOLDER_WIZARD);
         DialogCheck.assertDialog(dialog, this);
@@ -180,8 +177,7 @@ public class UIWizards extends TestCase {
         dialog.getShell().setSize(
                 Math.max(SIZING_WIZARD_WIDTH_2, dialog.getShell().getSize().x),
                 SIZING_WIZARD_HEIGHT_2);
-        dialog.getShell().setText(
-                WorkbenchMessages.getString("CreateFileAction.title")); //$NON-NLS-1$
+        dialog.getShell().setText("CreateFileAction_title"); 
         WorkbenchHelp.setHelp(dialog.getShell(),
         		IIDEHelpContextIds.NEW_PROJECT_WIZARD);
         DialogCheck.assertDialog(dialog, this);
@@ -205,8 +201,7 @@ public class UIWizards extends TestCase {
         dialog.getShell().setSize(
                 Math.max(SIZING_WIZARD_WIDTH_2, dialog.getShell().getSize().x),
                 SIZING_WIZARD_HEIGHT_2);
-        dialog.getShell().setText(
-                WorkbenchMessages.getString("CreateFileAction.title")); //$NON-NLS-1$			
+        dialog.getShell().setText("CreateFileAction_title"); 		
         dialog.showPage(page);
         WorkbenchHelp.setHelp(dialog.getShell(),
         		IIDEHelpContextIds.NEW_PROJECT_WIZARD);

@@ -26,7 +26,6 @@ import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.dialogs.ProjectLocationSelectionDialog;
 import org.eclipse.ui.dialogs.SaveAsDialog;
 import org.eclipse.ui.dialogs.TypeFilteringDialog;
-import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.AboutDialog;
 import org.eclipse.ui.internal.dialogs.EditorSelectionDialog;
@@ -39,8 +38,7 @@ import org.eclipse.ui.internal.registry.PerspectiveRegistry;
 import org.eclipse.ui.tests.util.DialogCheck;
 
 public class UIDialogsAuto extends TestCase {
-    private static final String PROJECT_SELECTION_MESSAGE = WorkbenchMessages
-            .getString("BuildOrderPreference.selectOtherProjects");
+    private static final String PROJECT_SELECTION_MESSAGE ="Select Other Projects";
 
     private static final String FILTER_SELECTION_MESSAGE = ResourceNavigatorMessagesCopy
             .getString("FilterSelection.message");
@@ -80,8 +78,7 @@ public class UIDialogsAuto extends TestCase {
 
     public void testCopyMoveResource() {
         Dialog dialog = new ContainerSelectionDialog(getShell(), null, true,
-                WorkbenchMessages
-                        .getString("CopyResourceAction.selectDestination"));
+                "Copy Resources");
         DialogCheck.assertDialogTexts(dialog, this);
     }
 

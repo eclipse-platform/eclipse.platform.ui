@@ -14,6 +14,7 @@ import java.util.ResourceBundle;
 
 import junit.framework.TestCase;
 
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.dialogs.Dialog;
@@ -132,20 +133,13 @@ public class UIMessageDialogsAuto extends TestCase {
     }
 
     public void testCopyOverwrite() {
-        Dialog dialog = getQuestionDialog(WorkbenchMessages
-                .getString("CopyResourceAction.resourceExists"),
-                WorkbenchMessages.format(
-                        "CopyResourceAction.overwriteQuestion",
-                        new Object[] { DUMMY_RELATIVE_PATH }));
-        DialogCheck.assertDialogTexts(dialog, this);
+        Dialog dialog = getQuestionDialog("Exists","");
+         DialogCheck.assertDialogTexts(dialog, this);
     }
 
     public void testDeleteProject() {
-        String title = WorkbenchMessages
-                .getString("DeleteResourceAction.titleProject");
-        String msg = WorkbenchMessages.format(
-                "DeleteResourceAction.confirmProject1", new Object[] {
-                        DUMMY_PROJECT, DUMMY_ABSOLUTE_PATH });
+        String title = "Project";
+        String msg ="";
         Dialog dialog = new MessageDialog(getShell(), title, null, // accept the default window icon
                 msg, MessageDialog.QUESTION, new String[] {
                         IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL,
@@ -154,11 +148,8 @@ public class UIMessageDialogsAuto extends TestCase {
     }
 
     public void testDeleteReadOnlyCheck() {
-        Dialog dialog = new MessageDialog(getShell(), WorkbenchMessages
-                .getString("DeleteResourceAction.checkDelete"), null,
-                WorkbenchMessages.format(
-                        "DeleteResourceAction.readOnlyQuestion",
-                        new Object[] { DUMMY_RESOURCE }),
+        Dialog dialog = new MessageDialog(getShell(), "Delete", null,
+              "Exists",
                 MessageDialog.QUESTION, new String[] {
                         IDialogConstants.YES_LABEL,
                         IDialogConstants.YES_TO_ALL_LABEL,
@@ -168,18 +159,12 @@ public class UIMessageDialogsAuto extends TestCase {
     }
 
     public void testDeleteResource() {
-        Dialog dialog = getQuestionDialog(WorkbenchMessages
-                .getString("DeleteResourceAction.title"), WorkbenchMessages
-                .format("DeleteResourceAction.confirm1",
-                        new Object[] { DUMMY_RESOURCE }));
+        Dialog dialog = getQuestionDialog("Delete","");
         DialogCheck.assertDialogTexts(dialog, this);
     }
 
     public void testDeleteResources() {
-        Dialog dialog = getQuestionDialog(WorkbenchMessages
-                .getString("DeleteResourceAction.title"), WorkbenchMessages
-                .format("DeleteResourceAction.confirmN",
-                        new Object[] { DUMMY_RESOURCE }));
+		  Dialog dialog = getQuestionDialog("Delete","");
         DialogCheck.assertDialogTexts(dialog, this);
     }
 
@@ -199,8 +184,8 @@ public class UIMessageDialogsAuto extends TestCase {
     }
 
     public void testErrorClosing() {
-        Dialog dialog = getQuestionDialog(WorkbenchMessages.getString("Error"),
-                WorkbenchMessages.getString("ErrorClosingNoArg"));
+        Dialog dialog = getQuestionDialog(WorkbenchMessages.Error,
+                WorkbenchMessages.ErrorClosingNoArg);
         DialogCheck.assertDialogTexts(dialog, this);
     }
 
@@ -219,49 +204,36 @@ public class UIMessageDialogsAuto extends TestCase {
 
     public void testFileExtensionEmpty() {
         Dialog dialog = getInformationDialog(
-                WorkbenchMessages
-                        .getString("FileEditorPreference.extensionEmptyTitle"),
-                WorkbenchMessages
-                        .getString("FileEditorPreference.extensionEmptyMessage"));
+                "Empty",
+                "ExtensionEmptyMessage");
         DialogCheck.assertDialogTexts(dialog, this);
     }
 
     public void testFileNameWrong() {
         Dialog dialog = getInformationDialog(
-                WorkbenchMessages
-                        .getString("FileEditorPreference.fileNameInvalidTitle"),
-                WorkbenchMessages
-                        .getString("FileEditorPreference.fileNameInvalidMessage"));
+                "InvalidTitle",
+               "InvalidMessage");
         DialogCheck.assertDialogTexts(dialog, this);
     }
 
     public void testFileTypeExists() {
-        Dialog dialog = getInformationDialog(WorkbenchMessages
-                .getString("FileEditorPreference.existsTitle"),
-                WorkbenchMessages
-                        .getString("FileEditorPreference.existsMessage"));
+        Dialog dialog = getInformationDialog(WorkbenchMessages.FileEditorPreference_existsTitle,
+                WorkbenchMessages.FileEditorPreference_existsMessage);
         DialogCheck.assertDialogTexts(dialog, this);
     }
 
     public void testInvalidType_1() {
-        Dialog dialog = getWarningDialog(WorkbenchMessages
-                .getString("FileExtension.invalidTitle"), WorkbenchMessages
-                .getString("FileExtension.invalidMessage"));
+        Dialog dialog = getWarningDialog("invalidTitle","invalidMessage");
         DialogCheck.assertDialogTexts(dialog, this);
     }
 
     public void testInvalidType_2() {
-        Dialog dialog = getWarningDialog(WorkbenchMessages
-                .getString("FileExtension.invalidType"), WorkbenchMessages
-                .getString("FileExtension.invalidTypeMessage"));
+        Dialog dialog = getWarningDialog("invalidType", "invalidTypeMessage");
         DialogCheck.assertDialogTexts(dialog, this);
     }
 
     public void testMoveReadOnlyCheck() {
-        Dialog dialog = new MessageDialog(getShell(), WorkbenchMessages
-                .getString("MoveResourceAction.title"), null, WorkbenchMessages
-                .format("MoveResourceAction.checkMoveMessage",
-                        new Object[] { DUMMY_RESOURCE }),
+        Dialog dialog = new MessageDialog(getShell(), "Move_title", null, ".MoveResourceAction",
                 MessageDialog.QUESTION, new String[] {
                         IDialogConstants.YES_LABEL,
                         IDialogConstants.YES_TO_ALL_LABEL,
@@ -271,40 +243,29 @@ public class UIMessageDialogsAuto extends TestCase {
     }
 
     public void testNoBuilders() {
-        Dialog dialog = getWarningDialog(WorkbenchMessages
-                .getString("BuildAction.warning"), WorkbenchMessages
-                .getString("BuildAction.noBuilders"));
+        Dialog dialog = getWarningDialog("BuildAction_warning", "noBuilders");
         DialogCheck.assertDialogTexts(dialog, this);
     }
 
     public void testNoGlobalBuildersDialog() {
-        Dialog dialog = getWarningDialog(WorkbenchMessages
-                .getString("GlobalBuildAction.warning"), WorkbenchMessages
-                .getString("GlobalBuildAction.noBuilders"));
+        Dialog dialog = getWarningDialog("GlobalBuildAction_warning","GlobalBuildAction_noBuilders");
         DialogCheck.assertDialogTexts(dialog, this);
     }
 
     public void testNoPropertyPage() {
-        Dialog dialog = getInformationDialog(WorkbenchMessages
-                .getString("PropertyDialog.messageTitle"), WorkbenchMessages
-                .format("PropertyDialog.noPropertyMessage",
-                        new Object[] { "DummyPropertyPage" }));
+        Dialog dialog = getInformationDialog(WorkbenchMessages.PropertyDialog_messageTitle, NLS.bind(WorkbenchMessages.PropertyDialog_noPropertyMessage, (new Object[] { "DummyPropertyPage" })));
         DialogCheck.assertDialogTexts(dialog, this);
     }
 
 
     public void testOperationNotAvailable() {
-        Dialog dialog = getInformationDialog(WorkbenchMessages
-                .getString("Information"), WorkbenchMessages
-                .getString("PluginActino.operationNotAvailableMessage"));
+        Dialog dialog = getInformationDialog(WorkbenchMessages.Information, "operationNotAvailableMessage");
         DialogCheck.assertDialogTexts(dialog, this);
     }
 
     public void testOverwritePerspective() {
-        Dialog dialog = new MessageDialog(getShell(), WorkbenchMessages
-                .getString("SavePerspective.overwriteTitle"), null,
-                WorkbenchMessages.format("SavePerspective.overwriteQuestion",
-                        new Object[] { "Dummy Perspective" }),
+        Dialog dialog = new MessageDialog(getShell(), WorkbenchMessages.SavePerspective_overwriteTitle, null,
+                NLS.bind(WorkbenchMessages.SavePerspective_overwriteQuestion, (new Object[] { "Dummy Perspective" })),
                 MessageDialog.QUESTION, new String[] {
                         IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL,
                         IDialogConstants.CANCEL_LABEL }, 0);
@@ -312,12 +273,8 @@ public class UIMessageDialogsAuto extends TestCase {
     }
 
     public void testRefreshDeleteProject() {
-        Dialog dialog = new MessageDialog(getShell(), WorkbenchMessages
-                .getString("RefreshAction.dialogTitle"), null,
-                WorkbenchMessages.format(
-                        "RefreshAction.locationDeletedMessage", new Object[] {
-                                DUMMY_PROJECT,
-                                "c:\\dummypath\\" + DUMMY_PROJECT }),
+        Dialog dialog = new MessageDialog(getShell(), "RefreshAction_dialogTitle", null,
+               "c:\\dummypath\\" + DUMMY_PROJECT,
                 MessageDialog.QUESTION,
                 new String[] { IDialogConstants.YES_LABEL,
                         IDialogConstants.NO_LABEL }, 0);
@@ -325,19 +282,12 @@ public class UIMessageDialogsAuto extends TestCase {
     }
 
     public void testRenameOverwrite() {
-        Dialog dialog = getQuestionDialog(WorkbenchMessages
-                .getString("RenameResourceAction.resourceExists"),
-                WorkbenchMessages.format(
-                        "RenameResourceAction.overwriteQuestion",
-                        new Object[] { DUMMY_RELATIVE_PATH }));
+        Dialog dialog = getQuestionDialog(".RenameResourceAction_resourceExist",DUMMY_RELATIVE_PATH);
         DialogCheck.assertDialogTexts(dialog, this);
     }
 
     public void testResetPerspective() {
-        Dialog dialog = new MessageDialog(getShell(), WorkbenchMessages
-                .getString("ResetPerspective.title"), null, WorkbenchMessages
-                .format("ResetPerspective.message",
-                        new Object[] { "Dummy Perspective" }),
+        Dialog dialog = new MessageDialog(getShell(), WorkbenchMessages.ResetPerspective_title, null, NLS.bind(WorkbenchMessages.ResetPerspective_message, (new Object[] { "Dummy Perspective" })),
                 MessageDialog.QUESTION, new String[] {
                         IDialogConstants.OK_LABEL,
                         IDialogConstants.CANCEL_LABEL }, 0);
@@ -345,10 +295,7 @@ public class UIMessageDialogsAuto extends TestCase {
     }
 
     public void testSaveAsOverwrite() {
-        Dialog dialog = new MessageDialog(getShell(), WorkbenchMessages
-                .getString("Question"), null, WorkbenchMessages.format(
-                "SaveAsDialog.overwriteQuestion",
-                new Object[] { DUMMY_RELATIVE_PATH }), MessageDialog.QUESTION,
+        Dialog dialog = new MessageDialog(getShell(), "WorkbenchMessages.Question", null,DUMMY_RELATIVE_PATH, MessageDialog.QUESTION,
                 new String[] { IDialogConstants.YES_LABEL,
                         IDialogConstants.NO_LABEL,
                         IDialogConstants.CANCEL_LABEL }, 0);
@@ -356,10 +303,7 @@ public class UIMessageDialogsAuto extends TestCase {
     }
 
     public void testSaveChanges() {
-        Dialog dialog = new MessageDialog(getShell(), WorkbenchMessages
-                .getString("Save_Resource"), null, WorkbenchMessages.format(
-                "EditorManager.saveChangesQuestion",
-                new Object[] { DUMMY_RESOURCE }), MessageDialog.QUESTION,
+        Dialog dialog = new MessageDialog(getShell(), WorkbenchMessages.Save_Resource, null, NLS.bind(WorkbenchMessages.EditorManager_saveChangesQuestion, (new Object[] { DUMMY_RESOURCE })), MessageDialog.QUESTION,
                 new String[] { IDialogConstants.YES_LABEL,
                         IDialogConstants.NO_LABEL,
                         IDialogConstants.CANCEL_LABEL }, 0);
@@ -411,10 +355,7 @@ public class UIMessageDialogsAuto extends TestCase {
     }
 
     public void testWizardOverwrite() {
-        Dialog dialog = new MessageDialog(getShell(), WorkbenchMessages
-                .getString("Question"), null, WorkbenchMessages.format(
-                "WizardDataTransfer.existsQuestion",
-                new Object[] { DUMMY_ABSOLUTE_PATH }), MessageDialog.QUESTION,
+        Dialog dialog = new MessageDialog(getShell(), "WorkbenchMessages.Question", null, "WizardDataTransfer_existsQuestion", MessageDialog.QUESTION,
                 new String[] { IDialogConstants.YES_LABEL,
                         IDialogConstants.YES_TO_ALL_LABEL,
                         IDialogConstants.NO_LABEL,

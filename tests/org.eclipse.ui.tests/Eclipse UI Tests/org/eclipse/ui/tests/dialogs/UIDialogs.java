@@ -28,7 +28,6 @@ import org.eclipse.ui.dialogs.ProjectLocationSelectionDialog;
 import org.eclipse.ui.dialogs.SaveAsDialog;
 import org.eclipse.ui.dialogs.TypeFilteringDialog;
 import org.eclipse.ui.internal.Perspective;
-import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkbenchWindow;
@@ -44,8 +43,7 @@ import org.eclipse.ui.internal.registry.PerspectiveRegistry;
 import org.eclipse.ui.tests.util.DialogCheck;
 
 public class UIDialogs extends TestCase {
-    private static final String PROJECT_SELECTION_MESSAGE = WorkbenchMessages
-            .getString("BuildOrderPreference.selectOtherProjects");
+    private static final String PROJECT_SELECTION_MESSAGE = "Select Project";
 
     private static final String FILTER_SELECTION_MESSAGE = ResourceNavigatorMessagesCopy
             .getString("FilterSelection.message");
@@ -85,8 +83,7 @@ public class UIDialogs extends TestCase {
 
     public void testCopyMoveResource() {
         Dialog dialog = new ContainerSelectionDialog(getShell(), null, true,
-                WorkbenchMessages
-                        .getString("CopyResourceAction.selectDestination"));
+                "Select Destination");
         DialogCheck.assertDialog(dialog, this);
     }
 

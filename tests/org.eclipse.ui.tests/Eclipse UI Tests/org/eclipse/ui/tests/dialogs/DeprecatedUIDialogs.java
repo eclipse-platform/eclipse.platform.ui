@@ -21,8 +21,7 @@ import org.eclipse.ui.model.WorkbenchPartLabelProvider;
 import org.eclipse.ui.tests.util.DialogCheck;
 
 public class DeprecatedUIDialogs extends TestCase {
-    private static final String PROJECT_SELECTION_MESSAGE = WorkbenchMessages
-            .getString("BuildOrderPreference.selectOtherProjects");
+    private static final String PROJECT_SELECTION_MESSAGE = "BuildOrderPreference_selectOtherProjects";
 
     private static final String FILTER_SELECTION_MESSAGE = ResourceNavigatorMessagesCopy
             .getString("FilterSelection.message");
@@ -39,10 +38,8 @@ public class DeprecatedUIDialogs extends TestCase {
         YesNoCancelListSelectionDialog dialog = new YesNoCancelListSelectionDialog(
                 getShell(), new AdaptableList(),
                 new WorkbenchContentProvider(),
-                new WorkbenchPartLabelProvider(), WorkbenchMessages
-                        .getString("EditorManager.saveResourcesMessage"));
-        dialog.setTitle(WorkbenchMessages
-                .getString("EditorManager.saveResourcesTitle"));
+                new WorkbenchPartLabelProvider(), WorkbenchMessages.EditorManager_saveResourcesMessage);
+        dialog.setTitle(WorkbenchMessages.EditorManager_saveResourcesTitle);
         DialogCheck.assertDialog(dialog, this);
     }
 
