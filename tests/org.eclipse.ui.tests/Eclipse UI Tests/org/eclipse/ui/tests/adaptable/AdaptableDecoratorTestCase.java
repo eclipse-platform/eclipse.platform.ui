@@ -18,8 +18,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.decorators.DecoratorDefinition;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
-import org.eclipse.ui.tests.navigator.TestDecoratorContributor;
-import org.eclipse.ui.tests.navigator.TestLightweightDecoratorContributor;
 import org.eclipse.ui.tests.util.UITestCase;
 
 /**
