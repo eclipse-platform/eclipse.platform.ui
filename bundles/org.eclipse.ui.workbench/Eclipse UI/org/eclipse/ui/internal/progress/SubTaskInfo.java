@@ -61,6 +61,13 @@ class SubTaskInfo extends JobTreeElement {
 		this.taskName = name;
 	}
 
+	/**
+	 * Returns the taskName of the receiver.
+	 */
+	String getTaskName() {
+		return taskName;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.progress.JobTreeElement#getParent()
 	 */
