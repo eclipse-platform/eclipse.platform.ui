@@ -58,6 +58,7 @@ public class ConcurrencyTests extends EclipseTest {
 		IProject project = createProject("testBackgroundMemberFetch", new String[] { "file1.txt", "folder1/", "folder1/a.txt", "folder2/", "folder2/a.txt", "folder2/folder3/", "folder2/folder3/b.txt", "folder2/folder3/c.txt"});
 		ICVSRemoteFolder folder = (ICVSRemoteFolder)CVSWorkspaceRoot.getRemoteResourceFor(project);
 		final List result = new ArrayList(); 
+		final boolean[] done = new boolean[] { false };
 		IElementCollector collector = new IElementCollector() {
 			public void add(Object element, IProgressMonitor monitor) {
 				result.add(element);
@@ -65,8 +66,11 @@ public class ConcurrencyTests extends EclipseTest {
 			public void add(Object[] elements, IProgressMonitor monitor) {
 				result.addAll(Arrays.asList(elements));
 			}
+			public void done() {
+				done[0] = true;
+			}
 		};
-		final boolean[] done = new boolean[] { false };
+		
 		IJobChangeListener listener = new IJobChangeListener() {
 			public void aboutToRun(IJobChangeEvent event) {}
 			public void awake(IJobChangeEvent event) {}
