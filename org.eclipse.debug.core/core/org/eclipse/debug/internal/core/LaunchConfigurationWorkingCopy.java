@@ -348,7 +348,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	private void setDirty() {
 		fDirty = true;
 		if (!suppressChangeNotification()) {
-			getLaunchManager().notifyChanged(this);
+			getLaunchManager().getConfigurationNotifier().notify(this, LaunchManager.CHANGED);
 		}	
 	}
 	

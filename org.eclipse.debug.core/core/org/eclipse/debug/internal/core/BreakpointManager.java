@@ -671,22 +671,10 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 			deltaArray = (IMarkerDelta[])deltas.toArray(deltaArray);
 		}
 		// single listeners
-		Object[] copiedListeners= fBreakpointListeners.getListeners();
-		for (int i= 0; i < copiedListeners.length; i++) {
-			IBreakpointListener listener = (IBreakpointListener)copiedListeners[i];
-			for (int j = 0; j < bpArray.length; j++) {
-				IBreakpoint breakpoint = bpArray[j];
-				IMarkerDelta delta = deltaArray[j];
-				getBreakpointNotifier().notify(listener, breakpoint, delta, update);				
-			}
-		}
+		getBreakpointNotifier().notify(bpArray, deltaArray, update);
 		
 		// multi listeners
-		copiedListeners = fBreakpointsListeners.getListeners();
-		for (int i= 0; i < copiedListeners.length; i++) {
-			IBreakpointsListener listener = (IBreakpointsListener)copiedListeners[i];
-			getBreakpointsNotifier().notify(listener, bpArray, deltaArray, update);
-		}		
+		getBreakpointsNotifier().notify(bpArray, deltaArray, update);
 	}	
 
 	protected void setBreakpoints(Vector breakpoints) {
@@ -770,19 +758,23 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		}
 
 		/**
-		 * Notifies the given listener of the add/change/remove
+		 * Notifies the listeners of the add/change/remove
 		 * 
-		 * @param listener the listener to notify
-		 * @param breakpoint the breakpoint that has changed
-		 * @param delta the delta associated with the change
+		 * @param breakpoints the breakpoints that changed
+		 * @param deltas the deltas associated with the change
 		 * @param update the type of change
 		 */
-		public void notify(IBreakpointListener listener, IBreakpoint breakpoint, IMarkerDelta delta, int update) {
-			fListener = listener;
-			fBreakpoint = breakpoint;
-			fDelta = delta;
+		public void notify(IBreakpoint[] breakpoints, IMarkerDelta[] deltas, int update) {
 			fType = update;
-			Platform.run(this);
+			Object[] copiedListeners= fBreakpointListeners.getListeners();
+			for (int i= 0; i < copiedListeners.length; i++) {
+				fListener = (IBreakpointListener)copiedListeners[i];
+				for (int j = 0; j < breakpoints.length; j++) {
+					fBreakpoint = breakpoints[j];
+					fDelta = deltas[j];
+					Platform.run(this);				
+				}
+			}			
 		}
 	}
 	
@@ -830,19 +822,21 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		}
 
 		/**
-		 * Notifies the given listener of the adds/changes/removes
+		 * Notifies the listeners of the adds/changes/removes
 		 * 
-		 * @param listener the listener to notify
 		 * @param breakpoints the breakpoints that changed
 		 * @param deltas the deltas associated with the changed breakpoints
 		 * @param update the type of change
 		 */
-		public void notify(IBreakpointsListener listener, IBreakpoint[] breakpoints, IMarkerDelta[] deltas, int update) {
-			fListener = listener;
+		public void notify(IBreakpoint[] breakpoints, IMarkerDelta[] deltas, int update) {
+			fType = update;
 			fBreakpoints = breakpoints;
 			fDeltas = deltas;
-			fType = update;
-			Platform.run(this);
+			Object[] copiedListeners = fBreakpointsListeners.getListeners();
+			for (int i= 0; i < copiedListeners.length; i++) {
+				fListener = (IBreakpointsListener)copiedListeners[i];
+				Platform.run(this);
+			}
 		}
 	}	
 }

@@ -1,9 +1,11 @@
 package org.eclipse.debug.internal.core;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -48,7 +50,9 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -122,10 +126,14 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 */
 	private ListenerList fListeners= new ListenerList(5);
 	
+	private LaunchNotifier fLaunchNotifier = null;
+	
 	/**
 	 * Collection of "plural" listeners.
 	 * @since 2.1	 */
 	private ListenerList fLaunchesListeners = new ListenerList(5);
+	
+	private LaunchesNotifier fLaunchesNotifier = null;
 	
 	/**
 	 * Visitor used to process resource deltas,
@@ -137,6 +145,8 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * Launch configuration listeners
 	 */
 	private ListenerList fLaunchConfigurationListeners = new ListenerList(5);
+	
+	private ConfigurationNotifier fConfigurationNotifier = null;
 	
 	/**
 	 * Table of source locator extensions. Keys
@@ -276,51 +286,21 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		}
 		return fLaunches.remove(launch);
 	}
-
-	/**
-	 * Fires notification to the listeners that a launch has been (de)registered.
-	 */
-	public void fireUpdate(ILaunch launch, int update) {
-		Object[] copiedListeners= fListeners.getListeners();
-		for (int i= 0; i < copiedListeners.length; i++) {
-			ILaunchListener listener = (ILaunchListener)copiedListeners[i];
-			switch (update) {
-				case ADDED:
-					listener.launchAdded(launch);
-					break;
-				case REMOVED:
-					listener.launchRemoved(launch);
-					break;
-				case CHANGED:
-					if (isRegistered(launch)) {
-						listener.launchChanged(launch);
-					}
-					break;
-			}
-		}
-	}
 	
 	/**
-	 * Fires notification to the listeners that a launch has been (de)registered.
+	 * Fires notification to (single) listeners that a launch has been
+	 * added/changed/removed..
+	 */
+	public void fireUpdate(ILaunch launch, int update) {
+		getLaunchNotifier().notify(launch, update);
+	}	
+	
+	/**
+	 * Fires notification to (multi) listeners that a launch has been
+	 * added/changed/removed.
 	 */
 	public void fireUpdate(ILaunch[] launches, int update) {
-		Object[] copiedListeners= fLaunchesListeners.getListeners();
-		for (int i= 0; i < copiedListeners.length; i++) {
-			ILaunchesListener listener = (ILaunchesListener)copiedListeners[i];
-			switch (update) {
-				case ADDED:
-					listener.launchesAdded(launches);
-					break;
-				case REMOVED:
-					listener.launchesRemoved(launches);
-					break;
-				case CHANGED:
-					//if (isRegistered(launch)) {
-						listener.launchesChanged(launches);
-					//}
-					break;
-			}
-		}
+		getLaunchesNotifier().notify(launches, update);
 	}	
 	
 	/**
@@ -641,13 +621,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	protected void launchConfigurationDeleted(ILaunchConfiguration config) throws CoreException {
 		removeInfo(config);
 		getAllLaunchConfigurations().remove(config);
-		if (fLaunchConfigurationListeners.size() > 0) {
-			Object[] listeners = fLaunchConfigurationListeners.getListeners();
-			for (int i = 0; i < listeners.length; i++) {
-				ILaunchConfigurationListener listener = (ILaunchConfigurationListener)listeners[i];
-				listener.launchConfigurationRemoved(config);
-			}
-		}
+		getConfigurationNotifier().notify(config, REMOVED);
 		clearConfigNameCache();			
 	}
 	
@@ -664,13 +638,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 			if (!allConfigs.contains(config)) {
 				allConfigs.add(config);
 			}
-			if (fLaunchConfigurationListeners.size() > 0) {
-				Object[] listeners = fLaunchConfigurationListeners.getListeners();
-				for (int i = 0; i < listeners.length; i++) {
-					ILaunchConfigurationListener listener = (ILaunchConfigurationListener)listeners[i];
-					listener.launchConfigurationAdded(config);
-				}
-			}
+			getConfigurationNotifier().notify(config, ADDED);
 			clearConfigNameCache();			
 		} else {
 			launchConfigurationDeleted(config);
@@ -690,7 +658,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		removeInfo(config);
 		clearConfigNameCache();
 		if (isValid(config)) {
-			notifyChanged(config);
+			getConfigurationNotifier().notify(config, CHANGED);
 		} else {
 			try {
 				launchConfigurationDeleted(config);
@@ -698,22 +666,6 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 				DebugPlugin.log(e);
 			}
 		}								
-	}
-	
-	/**
-	 * Notifies listeners that the given launch configuration
-	 * has changed.
-	 * 
-	 * @param configuration the changed launch configuration
-	 */
-	protected void notifyChanged(ILaunchConfiguration configuration) {
-		if (fLaunchConfigurationListeners.size() > 0) {
-			Object[] listeners = fLaunchConfigurationListeners.getListeners();
-			for (int i = 0; i < listeners.length; i++) {
-				ILaunchConfigurationListener listener = (ILaunchConfigurationListener)listeners[i];
-				listener.launchConfigurationChanged(configuration);
-			}
-		}		
 	}
 	
 	/**
@@ -1242,4 +1194,203 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		}
 	}
 
+	private LaunchNotifier getLaunchNotifier() {
+		if (fLaunchNotifier == null) {
+			fLaunchNotifier = new LaunchNotifier();
+		}
+		return fLaunchNotifier;
+	}
+	
+	/**
+	 * Notifies a launch listener (single launch) in a safe runnable to handle
+	 * exceptions.
+	 */
+	class LaunchNotifier implements ISafeRunnable {
+		
+		private ILaunchListener fListener;
+		private int fType;
+		private ILaunch fLaunch;
+		
+		/**
+		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
+		 */
+		public void handleException(Throwable exception) {
+			IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, DebugCoreMessages.getString("LaunchManager.An_exception_occurred_during_launch_change_notification._1"), exception); //$NON-NLS-1$
+			DebugPlugin.log(status);
+		}
+
+		/**
+		 * @see org.eclipse.core.runtime.ISafeRunnable#run()
+		 */
+		public void run() throws Exception {
+			switch (fType) {
+				case ADDED:
+					fListener.launchAdded(fLaunch);
+					break;
+				case REMOVED:
+					fListener.launchRemoved(fLaunch);
+					break;
+				case CHANGED:
+					if (isRegistered(fLaunch)) {
+						fListener.launchChanged(fLaunch);
+					}
+					break;
+			}			
+		}
+
+		/**
+		 * Notifies the given listener of the add/change/remove
+		 * 
+		 * @param listener the listener to notify
+		 * @param launch the launch that has changed
+		 * @param update the type of change
+		 */
+		public void notify(ILaunch launch, int update) {
+			fLaunch = launch;
+			fType = update;
+			Object[] copiedListeners= fListeners.getListeners();
+			for (int i= 0; i < copiedListeners.length; i++) {
+				fListener = (ILaunchListener)copiedListeners[i];
+				Platform.run(this);
+			}			
+		}
+	}
+	
+	private LaunchesNotifier getLaunchesNotifier() {
+		if (fLaunchesNotifier == null) {
+			fLaunchesNotifier = new LaunchesNotifier();
+		}
+		return fLaunchesNotifier;
+	}
+	
+	/**
+	 * Notifies a launch listener (multiple launches) in a safe runnable to
+	 * handle exceptions.
+	 */
+	class LaunchesNotifier implements ISafeRunnable {
+		
+		private ILaunchesListener fListener;
+		private int fType;
+		private ILaunch[] fLaunches;
+		
+		/**
+		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
+		 */
+		public void handleException(Throwable exception) {
+			IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, DebugCoreMessages.getString("LaunchManager.An_exception_occurred_during_launch_change_notification._2"), exception); //$NON-NLS-1$
+			DebugPlugin.log(status);
+		}
+
+		/**
+		 * @see org.eclipse.core.runtime.ISafeRunnable#run()
+		 */
+		public void run() throws Exception {
+			switch (fType) {
+				case ADDED:
+					fListener.launchesAdded(fLaunches);
+					break;
+				case REMOVED:
+					fListener.launchesRemoved(fLaunches);
+					break;
+				case CHANGED:
+					List registered = null;
+					for (int j = 0; j < fLaunches.length; j++) {
+						if (isRegistered(fLaunches[j])) {
+							if (registered != null) {
+								registered.add(fLaunches[j]);
+							} 
+						} else {
+							if (registered == null) {
+								registered = new ArrayList(fLaunches.length);
+								for (int k = 0; k < j; k++) {
+									registered.add(fLaunches[k]);
+								}
+							}
+						}
+					}
+					if (registered != null) {
+						fLaunches = (ILaunch[])registered.toArray(new ILaunch[registered.size()]);
+					}
+					fListener.launchesChanged(fLaunches);
+					break;
+			}
+		}
+
+		/**
+		 * Notifies the given listener of the adds/changes/removes
+		 * 
+		 * @param launches the launches that changed
+		 * @param update the type of change
+		 */
+		public void notify(ILaunch[] launches, int update) {
+			fLaunches = launches;
+			fType = update;
+			Object[] copiedListeners= fLaunchesListeners.getListeners();
+			for (int i= 0; i < copiedListeners.length; i++) {
+				fListener = (ILaunchesListener)copiedListeners[i];
+				Platform.run(this);
+			}						
+		}
+	}
+	
+	protected ConfigurationNotifier getConfigurationNotifier() {
+		if (fConfigurationNotifier == null) {
+			fConfigurationNotifier = new ConfigurationNotifier();
+		}
+		return fConfigurationNotifier;
+	}
+	
+	/**
+	 * Notifies a launch config listener in a safe runnable to handle
+	 * exceptions.
+	 */
+	class ConfigurationNotifier implements ISafeRunnable {
+		
+		private ILaunchConfigurationListener fListener;
+		private int fType;
+		private ILaunchConfiguration fConfiguration;
+		
+		/**
+		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
+		 */
+		public void handleException(Throwable exception) {
+			IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, DebugCoreMessages.getString("LaunchManager.An_exception_occurred_during_launch_configuration_change_notification._3"), exception); //$NON-NLS-1$
+			DebugPlugin.log(status);
+		}
+
+		/**
+		 * @see org.eclipse.core.runtime.ISafeRunnable#run()
+		 */
+		public void run() throws Exception {
+			switch (fType) {
+				case ADDED:
+					fListener.launchConfigurationAdded(fConfiguration);
+					break;
+				case REMOVED:
+					fListener.launchConfigurationRemoved(fConfiguration);
+					break;
+				case CHANGED:
+					fListener.launchConfigurationChanged(fConfiguration);
+					break;
+			}			
+		}
+
+		/**
+		 * Notifies the given listener of the add/change/remove
+		 * 
+		 * @param configuration the configuration that has changed
+		 * @param update the type of change
+		 */
+		public void notify(ILaunchConfiguration configuration, int update) {
+			fConfiguration = configuration;
+			fType = update;
+			if (fLaunchConfigurationListeners.size() > 0) {
+				Object[] listeners = fLaunchConfigurationListeners.getListeners();
+				for (int i = 0; i < listeners.length; i++) {
+					fListener = (ILaunchConfigurationListener)listeners[i];
+					Platform.run(this);
+				}
+			}			
+		}
+	}			
 }

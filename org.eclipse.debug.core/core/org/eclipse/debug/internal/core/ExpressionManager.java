@@ -206,25 +206,10 @@ public class ExpressionManager implements IExpressionManager, IDebugEventSetList
 	 */
 	private void fireUpdate(IExpression[] expressions, int update) {
 		// single listeners
-		if (fListeners != null) {
-			Object[] copiedListeners= fListeners.getListeners();
-			for (int i= 0; i < copiedListeners.length; i++) {
-				IExpressionListener listener = (IExpressionListener)copiedListeners[i];
-				for (int j = 0; j < expressions.length; j++) {
-					IExpression expression = expressions[j];
-					getExpressionNotifier().notify(listener, expression, update);
-				}
-			}
-		}
+		getExpressionNotifier().notify(expressions, update);
 		
 		// multi listeners
-		if (fExpressionsListeners != null) {
-			Object[] copiedListeners = fExpressionsListeners.getListeners();
-			for (int i= 0; i < copiedListeners.length; i++) {
-				IExpressionsListener listener = (IExpressionsListener)copiedListeners[i];
-				getExpressionsNotifier().notify(listener, expressions, update);
-			}		
-		}
+		getExpressionsNotifier().notify(expressions, update);
 	}	
 
 	/**
@@ -297,17 +282,23 @@ public class ExpressionManager implements IExpressionManager, IDebugEventSetList
 		}
 
 		/**
-		 * Notifies the given listener of the add/change/remove
+		 * Notifies listeners of the add/change/remove
 		 * 
-		 * @param listener the listener to notify
 		 * @param expression the expression that has changed
 		 * @param update the type of change
 		 */
-		public void notify(IExpressionListener listener, IExpression expression, int update) {
-			fListener = listener;
-			fExpression = expression;
-			fType = update;
-			Platform.run(this);
+		public void notify(IExpression[] expressions, int update) {
+			if (fListeners != null) {
+				fType = update;
+				Object[] copiedListeners= fListeners.getListeners();
+				for (int i= 0; i < copiedListeners.length; i++) {
+					fListener = (IExpressionListener)copiedListeners[i];
+					for (int j = 0; j < expressions.length; j++) {
+						fExpression = expressions[j];
+						Platform.run(this);
+					}
+				}			
+			}
 		}
 	}
 	
@@ -354,17 +345,21 @@ public class ExpressionManager implements IExpressionManager, IDebugEventSetList
 		}
 
 		/**
-		 * Notifies the given listener of the adds/changes/removes
+		 * Notifies listeners of the adds/changes/removes
 		 * 
-		 * @param listener the listener to notify
 		 * @param expressions the expressions that changed
 		 * @param update the type of change
 		 */
-		public void notify(IExpressionsListener listener, IExpression[] expressions, int update) {
-			fListener = listener;
-			fExpressions = expressions;
-			fType = update;
-			Platform.run(this);
+		public void notify(IExpression[] expressions, int update) {
+			if (fExpressionsListeners != null) { 
+				fExpressions = expressions;
+				fType = update;
+				Object[] copiedListeners = fExpressionsListeners.getListeners();
+				for (int i= 0; i < copiedListeners.length; i++) {
+					fListener = (IExpressionsListener)copiedListeners[i];
+					Platform.run(this);
+				}
+			}					
 		}
 	}		
 
