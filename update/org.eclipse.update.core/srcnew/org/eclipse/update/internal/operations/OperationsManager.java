@@ -70,10 +70,6 @@ public class OperationsManager implements IAdaptable {
 		return null;
 	}
 
-	public boolean isPending(IFeature feature) {
-		return findPendingChange(feature) != null;
-	}
-
 	public void addPendingChange(PendingOperation change) {
 		pendingChanges.add(change);
 		change.enable(true);
@@ -123,52 +119,6 @@ public class OperationsManager implements IAdaptable {
 			IUpdateModelChangedListener listener =
 				(IUpdateModelChangedListener) iter.next();
 			listener.objectChanged(object, property);
-		}
-	}
-
-	public static PendingOperation[] orderJobs(PendingOperation[] jobs) {
-		ArrayList result = new ArrayList();
-		PendingOperation[] input = new PendingOperation[jobs.length];
-		System.arraycopy(jobs, 0, input, 0, jobs.length);
-		//Add jobs to unconfigure.
-		addJobs(input, result, PendingOperation.UNCONFIGURE, false);
-		//Add jobs to configure.
-		addJobs(input, result, PendingOperation.CONFIGURE, false);
-		//Add regular feature installs
-		addJobs(input, result, PendingOperation.INSTALL, false);
-		//Add patch installs
-		addJobs(input, result, PendingOperation.INSTALL, true);
-		//Add the remainder (only uninstalls)
-		addJobs(input, result, -1, false);
-		return (PendingOperation[]) result.toArray(
-			new PendingOperation[result.size()]);
-	}
-
-	private static void addJobs(
-		PendingOperation[] input,
-		ArrayList result,
-		int type,
-		boolean patch) {
-		for (int i = 0; i < input.length; i++) {
-			PendingOperation job = input[i];
-			if (job == null)
-				continue;
-			boolean match = false;
-			if (type == -1)
-				match = true;
-			else {
-				if (type == job.getJobType()) {
-					if (type == PendingOperation.INSTALL) {
-						if (job.getFeature().isPatch() == patch)
-							match = true;
-					} else
-						match = true;
-				}
-			}
-			if (match) {
-				result.add(job);
-				input[i] = null;
-			}
 		}
 	}
 

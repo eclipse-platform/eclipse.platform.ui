@@ -19,18 +19,14 @@ import org.eclipse.update.core.*;
  * UnconfigOperation
  */
 public class UnconfigOperation extends PendingOperation {
-	private IInstallConfiguration config;
-	private IConfiguredSite site;
 	
 	public UnconfigOperation(IInstallConfiguration config, IConfiguredSite site, IFeature feature) {
-		super(feature, UNCONFIGURE);
-		this.config = config;
-		this.site = site;
+		super(config, site, feature, UNCONFIGURE);
 	}
 	
 	public boolean execute(IProgressMonitor pm) throws CoreException {
-		PatchCleaner2 cleaner = new PatchCleaner2(site, feature);
-		boolean result = site.unconfigure(feature);
+		PatchCleaner2 cleaner = new PatchCleaner2(targetSite, feature);
+		boolean result = targetSite.unconfigure(feature);
 		cleaner.dispose();
 		
 		return result;
@@ -38,6 +34,6 @@ public class UnconfigOperation extends PendingOperation {
 	}
 	
 	public void undo() throws CoreException{
-		site.configure(feature);
+		targetSite.configure(feature);
 	}
 }

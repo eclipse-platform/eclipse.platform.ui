@@ -11,7 +11,6 @@
 package org.eclipse.update.internal.operations;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 
 /**
@@ -21,8 +20,6 @@ import org.eclipse.update.core.*;
 public class InstallOperation extends PendingOperation {
 	private static final String KEY_OLD = "OperationsManager.error.old";
 
-	private IInstallConfiguration config;
-	private IConfiguredSite targetSite;
 	private IFeatureReference[] optionalFeatures;
 	private IVerificationListener verifier;
 
@@ -32,14 +29,6 @@ public class InstallOperation extends PendingOperation {
 		IFeature[] installed = UpdateManager.getInstalledFeatures(feature);
 		if (installed.length > 0)
 			this.oldFeature = installed[0];
-	}
-
-	public void setInstallConfiguration(IInstallConfiguration config) {
-		this.config = config;
-	}
-
-	public void setTargetSite(IConfiguredSite targetSite) {
-		this.targetSite = targetSite;
 	}
 
 	public void setOptionalFeatures(IFeatureReference[] optionalFeatures) {

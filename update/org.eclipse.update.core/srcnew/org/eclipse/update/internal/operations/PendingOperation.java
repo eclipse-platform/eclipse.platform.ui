@@ -23,31 +23,23 @@ public abstract class PendingOperation {
 	
 	protected IFeature feature;
 	protected IFeature oldFeature;
+	protected IInstallConfiguration config;
+	protected IConfiguredSite targetSite;
 	
 	private int jobType;
 	private boolean optionalDelta;
-	private IConfiguredSite defaultTargetSite;
 	private boolean processed;
 	
 	protected PendingOperation(IFeature feature, int jobType) {
-		this.feature = feature;
-		this.jobType = jobType;
+		this(null, null, feature, jobType);
 	}
 	
-//	public PendingOperation(IFeature feature, IConfiguredSite targetSite) {
-//		this(feature, INSTALL);
-//		this.defaultTargetSite = targetSite;
-//	}
-	
-//	public PendingOperation(IFeature oldFeature, IFeature newFeature) {
-//		this(newFeature, INSTALL);
-//		this.oldFeature = oldFeature;
-//	}
-	
-//	public PendingOperation(IFeature oldFeature, IFeature newFeature, boolean optionalDelta) {
-//		this(oldFeature, newFeature);
-//		this.optionalDelta = optionalDelta;
-//	}
+	public PendingOperation(IInstallConfiguration config, IConfiguredSite targetSite, IFeature feature, int jobType) {
+		this.feature = feature;
+		this.jobType = jobType;
+		this.config = config;
+		this.targetSite = targetSite;
+	}
 
 	public int getJobType() {
 		return jobType;
@@ -64,8 +56,19 @@ public abstract class PendingOperation {
 		return optionalDelta;
 	}
 	
-	public IConfiguredSite getDefaultTargetSite() {
-		return defaultTargetSite;
+	public IConfiguredSite getTargetSite() {
+		return targetSite;
+	}
+	
+	public IInstallConfiguration getInstallConfiguration() {
+		return config;
+	}
+	public void setInstallConfiguration(IInstallConfiguration config) {
+		this.config = config;
+	}
+
+	public void setTargetSite(IConfiguredSite targetSite) {
+		this.targetSite = targetSite;
 	}
 	
 	public boolean isProcessed() {

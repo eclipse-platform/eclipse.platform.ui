@@ -20,22 +20,18 @@ import org.eclipse.update.core.*;
  * ConfigOperation
  */
 public class ConfigOperation extends PendingOperation {
-	private IInstallConfiguration config;
-	private IConfiguredSite site;
 	
 	public ConfigOperation(IInstallConfiguration config, IConfiguredSite site, IFeature feature) {
-		super(feature, CONFIGURE);
-		this.config = config;
-		this.site = site;
+		super(config, site, feature, CONFIGURE);
 	}
 	
 	public boolean execute(IProgressMonitor pm) throws CoreException {
-		site.configure(feature);
-		UpdateManager.getOperationsManager().ensureUnique(config, feature, site);
+		targetSite.configure(feature);
+		UpdateManager.getOperationsManager().ensureUnique(config, feature, targetSite);
 		return true;
 	}
 	
 	public void undo() throws CoreException{
-		site.unconfigure(feature);
+		targetSite.unconfigure(feature);
 	}
 }

@@ -296,7 +296,7 @@ public class UnifiedTargetPage extends UnifiedBannerPage implements IUnifiedDyna
 			jobSite.affinitySite =
 				UpdateManager.getAffinitySite(config, jobs[i].getFeature());
 			if (jobSite.affinitySite == null)
-				jobSite.affinitySite = jobs[i].getDefaultTargetSite();
+				jobSite.affinitySite = jobs[i].getTargetSite();
 			jobSite.targetSite = computeTargetSite(jobSite);
 			targetSites.put(jobs[i], jobSite);
 		}
