@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="buildnewlookjar.xml" default="ide-new.jar">
+	<target name="ide-new.jar">
+	    <jar jarfile="ide-new.jar">
+			<fileset
+		    	dir="bin"
+		    />
+	    </jar>
+    </target>
+</project>
