@@ -162,7 +162,7 @@ public class DebugPluginImages {
 		// Overlays
 		declareRegistryImage(IDebugUIConstants.IMG_OVR_ERROR, OVR + "error.gif"); //$NON-NLS-1$
 		declareRegistryImage(IInternalDebugUIConstants.IMG_OVR_TRANSPARENT, OVR + "transparent.gif"); //$NON-NLS-1$		
-		
+				
 		//source location
 		declareRegistryImage(IDebugUIConstants.IMG_SRC_LOOKUP_MENU, LOCALTOOL + "edtsrclkup_menu.gif"); //$NON-NLS-1$
 		declareRegistryImage(IDebugUIConstants.IMG_SRC_LOOKUP_MENU_DLCL, DLCL + "edtsrclkup_menu.gif"); //$NON-NLS-1$
@@ -249,7 +249,7 @@ public class DebugPluginImages {
 	 *		This may mean the same package directory as the package holding this class.
 	 *		The images are declared using this.getClass() to ensure they are looked up via
 	 *		this plugin class.
-	 *	@see JFace's ImageRegistry
+	 * @see org.eclipse.jface.resource.ImageRegistry
 	 */
 	public static ImageRegistry initializeImageRegistry() {
 		imageRegistry= new ImageRegistry(DebugUIPlugin.getStandardDisplay());
@@ -259,7 +259,7 @@ public class DebugPluginImages {
 	}
 
 	/**
-	 * Returns the <code>Image<code> identified by the given key,
+	 * Returns the <code>Image</code> identified by the given key,
 	 * or <code>null</code> if it does not exist.
 	 */
 	public static Image getImage(String key) {
@@ -267,7 +267,7 @@ public class DebugPluginImages {
 	}
 	
 	/**
-	 * Returns the <code>ImageDescriptor<code> identified by the given key,
+	 * Returns the <code>ImageDescriptor</code> identified by the given key,
 	 * or <code>null</code> if it does not exist.
 	 */
 	public static ImageDescriptor getImageDescriptor(String key) {

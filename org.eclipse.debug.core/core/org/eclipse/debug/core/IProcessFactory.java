@@ -55,7 +55,7 @@ public interface IProcessFactory {
 	 * @param launch the launch the process is contained in
 	 * @param process the system process to wrap
 	 * @param label the label assigned to the process
-	 * @param initial values for the attribute map
+	 * @param attributes initial values for the attribute map
 	 * @return the process
 	 * @see IProcess
 	 */
