@@ -281,9 +281,10 @@ public class SearchData extends RequestData {
 		String[] scopes = request.getParameterValues("scope");
 		Collection scopeCol = null;
 		if (scopes != null) {
-			if (scopes.length
-				!= HelpSystem.getTocManager().getTocs(getLocale()).length) {
-				// scope only if not all books selected
+			if (request.getParameterValues("scopedSearch") == null
+				|| scopes.length
+					!= HelpSystem.getTocManager().getTocs(getLocale()).length) {
+				// filter only if using working sets or scope with not all books are selected
 				scopeCol = new ArrayList(scopes.length);
 				for (int i = 0; i < scopes.length; i++) {
 					scopeCol.add(scopes[i]);
