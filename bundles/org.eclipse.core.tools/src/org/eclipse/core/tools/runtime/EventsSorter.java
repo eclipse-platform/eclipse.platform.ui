@@ -24,17 +24,15 @@ public class EventsSorter extends ViewerSorter implements ISorter {
 
 	protected int[][] SORT_ORDERS_BY_COLUMN = {
 			// Event
-			{EventsView.COLUMN_FAILURES, EventsView.COLUMN_EVENT, EventsView.COLUMN_BLAME, EventsView.COLUMN_CONTEXT},
+			{EventsView.COLUMN_EVENT, EventsView.COLUMN_BLAME, EventsView.COLUMN_CONTEXT},
 			// Blame
-			{EventsView.COLUMN_FAILURES, EventsView.COLUMN_BLAME, EventsView.COLUMN_EVENT, EventsView.COLUMN_CONTEXT},
+			{EventsView.COLUMN_BLAME, EventsView.COLUMN_EVENT, EventsView.COLUMN_CONTEXT},
 			// Context
-			{EventsView.COLUMN_FAILURES, EventsView.COLUMN_CONTEXT, EventsView.COLUMN_EVENT, EventsView.COLUMN_BLAME},
-			// Failures
-			{EventsView.COLUMN_FAILURES, EventsView.COLUMN_EVENT, EventsView.COLUMN_BLAME, EventsView.COLUMN_CONTEXT},
+			{EventsView.COLUMN_CONTEXT, EventsView.COLUMN_EVENT, EventsView.COLUMN_BLAME},
 			// Count
-			{EventsView.COLUMN_FAILURES, EventsView.COLUMN_COUNT, EventsView.COLUMN_EVENT, EventsView.COLUMN_BLAME, EventsView.COLUMN_CONTEXT},
+			{EventsView.COLUMN_COUNT, EventsView.COLUMN_EVENT, EventsView.COLUMN_BLAME, EventsView.COLUMN_CONTEXT},
 			// Time
-			{EventsView.COLUMN_FAILURES, EventsView.COLUMN_TIME, EventsView.COLUMN_EVENT, EventsView.COLUMN_BLAME, EventsView.COLUMN_CONTEXT}};
+			{EventsView.COLUMN_TIME, EventsView.COLUMN_EVENT, EventsView.COLUMN_BLAME, EventsView.COLUMN_CONTEXT}};
 
 	public EventsSorter(int columnNumber) {
 		this.columnNumber = columnNumber;
@@ -75,6 +73,11 @@ public class EventsSorter extends ViewerSorter implements ISorter {
 			public int compare(Object o1, Object o2) {
 				PerformanceStats s1 = (PerformanceStats) o1;
 				PerformanceStats s2 = (PerformanceStats) o2;
+				//always sort failures above non-failures
+				if (s1.isFailure() && !s2.isFailure())
+					return -1;
+				if (s2.isFailure() && !s1.isFailure())
+					return 1;
 				int[] columnSortOrder = SORT_ORDERS_BY_COLUMN[columnNumber];
 				int result = 0;
 				for (int i = 0; i < columnSortOrder.length; ++i) {
@@ -100,8 +103,6 @@ public class EventsSorter extends ViewerSorter implements ISorter {
 						String name1 = s1.getContext() == null ? "" : s1.getContext(); //$NON-NLS-1$
 						String name2 = s2.getContext() == null ? "" : s2.getContext(); //$NON-NLS-1$
 						return c.compare(name1, name2);
-					case EventsView.COLUMN_FAILURES:
-						return s2.getFailureCount() - s1.getFailureCount();
 					case EventsView.COLUMN_COUNT:
 						return s2.getRunCount() - s1.getRunCount();
 					case EventsView.COLUMN_TIME:

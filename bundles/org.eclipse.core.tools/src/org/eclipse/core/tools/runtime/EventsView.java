@@ -109,8 +109,6 @@ public class EventsView extends TableWithTotalView {
 					return stats.getBlameString();
 				case COLUMN_CONTEXT :
 					return stats.getContext(); //$NON-NLS-1$
-				case COLUMN_FAILURES :
-					return Integer.toString(stats.getFailureCount());
 				case COLUMN_COUNT :
 					return Integer.toString(stats.getRunCount());
 				case COLUMN_TIME :
@@ -124,7 +122,7 @@ public class EventsView extends TableWithTotalView {
 				return null;
 			}
 			PerformanceStats stats = (PerformanceStats) element;
-			if (stats.getFailureCount() > 0)
+			if (stats.isFailure())
 				return Display.getDefault().getSystemColor(SWT.COLOR_RED);
 			return null;
 		}
@@ -170,15 +168,13 @@ public class EventsView extends TableWithTotalView {
 	public final static int COLUMN_EVENT = 0;
 	public final static int COLUMN_BLAME = 1;
 	public final static int COLUMN_CONTEXT = 2;
-	public final static int COLUMN_FAILURES = 3;
-	public final static int COLUMN_COUNT = 4;
-	public final static int COLUMN_TIME = 5;
+	public final static int COLUMN_COUNT = 3;
+	public final static int COLUMN_TIME = 4;
 
 	private String columnHeaders[] = {
 			Policy.bind("stats.eventHeader"), //$NON-NLS-1$
 			Policy.bind("stats.blameHeader"), //$NON-NLS-1$
 			Policy.bind("stats.contextHeader"), //$NON-NLS-1$
-			Policy.bind("stats.failureHeader"), //$NON-NLS-1$
 			Policy.bind("stats.countHeader"), //$NON-NLS-1$
 			Policy.bind("stats.timeHeader"), //$NON-NLS-1$
 	};
@@ -186,7 +182,6 @@ public class EventsView extends TableWithTotalView {
 			new ColumnWeightData(80), // event
 			new ColumnWeightData(180), // blame
 			new ColumnWeightData(40), // context
-			new ColumnPixelData(65), // failures 
 			new ColumnPixelData(65), // count 
 			new ColumnPixelData(65)}; // total time
 	private CopyStructuredSelectionAction copyAction;

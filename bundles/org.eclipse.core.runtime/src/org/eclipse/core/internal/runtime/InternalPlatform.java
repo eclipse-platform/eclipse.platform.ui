@@ -271,7 +271,9 @@ public final class InternalPlatform {
 
 	public boolean getBooleanOption(String option, boolean defaultValue) {
 		String value = getOption(option);
-		return (value != null && value.equalsIgnoreCase("true")) || defaultValue; //$NON-NLS-1$
+		if (value == null)
+			return defaultValue;
+		return value.equalsIgnoreCase("true"); //$NON-NLS-1$
 	}
 
 	public Bundle getBundle(String symbolicName) {

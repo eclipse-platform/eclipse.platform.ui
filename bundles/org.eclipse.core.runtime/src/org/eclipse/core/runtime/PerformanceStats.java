@@ -129,9 +129,9 @@ public class PerformanceStats {
 	private String event;
 
 	/**
-	 * The total number of times this event has exceeded its maximum duration.
+	 * Whether this is a performance failure event
 	 */
-	private int failureCount = 0;
+	private boolean failure;
 
 	/**
 	 * The total number of times this event has occurred.
@@ -198,6 +198,8 @@ public class PerformanceStats {
 		Assert.isNotNull(eventName);
 		Assert.isNotNull(blameObject);
 		PerformanceStats newStats = new PerformanceStats(eventName, blameObject);
+		if (!TRACE_SUCCESS)
+			return newStats;
 		//use existing stats object if available
 		PerformanceStats oldStats = (PerformanceStats) statMap.get(newStats);
 		if (oldStats != null)
@@ -308,7 +310,7 @@ public class PerformanceStats {
 			statMap.put(failure, failure);
 		else 
 			failure = old;
-		failure.failureCount++;
+		failure.failure = true;
 		failure.runCount++;
 		failure.runningTime += elapsed;
 		return failure;
@@ -371,17 +373,6 @@ public class PerformanceStats {
 	}
 
 	/**
-	 * Returns the number of times this event has exceeded its
-	 * maximum duration.
-	 * 
-	 * @return The number of times this event has exceeded its
-	 * maximum duration.
-	 */
-	public int getFailureCount() {
-		return failureCount;
-	}
-
-	/**
 	 * Returns the total number of times this event has occurred.
 	 * 
 	 * @return The number of occurrences of this event.
@@ -427,6 +418,15 @@ public class PerformanceStats {
 		if (context != null)
 			hash = hash * 37 + context.hashCode();
 		return hash;
+	}
+	
+	/**
+	 * Returns whether this performance event represents a performance failure.
+	 * @return <code>true</code> if this is a performance failure, and 
+	 * <code>false</code> otherwise.
+	 */
+	public boolean isFailure() {
+		return failure;
 	}
 
 	/**
