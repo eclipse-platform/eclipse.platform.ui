@@ -22,7 +22,7 @@ import org.eclipse.help.internal.context.*;
 /**
  * ContextHelpDialog
  */
-public class ContextHelpDialog implements Runnable {
+public class ContextHelpDialog{
 	private final static String IMAGE_MORE = "moreImage";
 	private Color backgroundColour = null;
 	private IContextManager cmgr = HelpSystem.getContextManager();
@@ -30,7 +30,6 @@ public class ContextHelpDialog implements Runnable {
 	private Cursor defaultCursor = null;
 	private IHelpTopic farRelatedTopics[] = new IHelpTopic[0];
 	private Color foregroundColour = null;
-	private Thread getMoreRelatedTopicsThread = null;
 	private static ImageRegistry imgRegistry = null;
 	private Color linkColour = null;
 	private static HyperlinkHandler linkManager = new HyperlinkHandler();
@@ -76,17 +75,6 @@ public class ContextHelpDialog implements Runnable {
 					defaultCursor.dispose();
 			}
 		});
-		// This is commented out for now because it does not work on Linux
-		// Using addListener for now.
-		/*shell.addShellListener(new ShellAdapter() {
-			public void shellDeactivated(ShellEvent e) {
-				e.widget.getDisplay().asyncExec(new Runnable() {
-					public void run() {
-						close();
-					}
-				});
-			}
-		});*/
 		shell.addListener(SWT.Deactivate, new Listener() {
 			public void handleEvent(Event e) {
 				if (Logger.DEBUG)
@@ -142,13 +130,6 @@ public class ContextHelpDialog implements Runnable {
 				if (!shell.isDisposed())
 					shell.dispose();
 				shell = null;
-			}
-			if (getMoreRelatedTopicsThread != null
-				&& getMoreRelatedTopicsThread.isAlive()) {
-				try {
-					getMoreRelatedTopicsThread.join();
-				} catch (InterruptedException ie) {
-				}
 			}
 		} catch (Throwable ex) {
 		}
@@ -245,14 +226,15 @@ public class ContextHelpDialog implements Runnable {
 		return composite;
 	}
 	private void createMoreButton(Composite parent) {
+		getMoreRelatedTopics();
+		if(farRelatedTopics.length==0)
+			return;
 		// Create Show More button
 		CLabel showMoreButton = new CLabel(parent, SWT.NONE);
 		showMoreButton.setBackground(backgroundColour);
 		showMoreButton.setImage(imgRegistry.get(IMAGE_MORE));
 		Listener l = new ShowMoreListener();
 		showMoreButton.addListener(SWT.MouseDown, l);
-		// Before returning start thread obtaining more related links in the bacground
-		getMoreRelatedTopicsInBackground();
 	}
 	/**
 	 * Check if two context topic are the same.
@@ -276,14 +258,6 @@ public class ContextHelpDialog implements Runnable {
 			System.arraycopy(farRelatedTopics, 0, allTopics, len1, len2);
 		return allTopics;
 	}
-	private void getMoreRelatedTopicsInBackground() {
-		getMoreRelatedTopicsThread = new Thread(this);
-		getMoreRelatedTopicsThread.setDaemon(true);
-		getMoreRelatedTopicsThread.setName("MoreRelatedTopics");
-		getMoreRelatedTopicsThread.setPriority(
-			Thread.currentThread().getPriority() - 1);
-		getMoreRelatedTopicsThread.start();
-	}
 	/**
 	 * Checks if topic labels and href are not null and not empty strings
 	 */
@@ -299,20 +273,6 @@ public class ContextHelpDialog implements Runnable {
 	 * Opens view with list of all related topics
 	 */
 	private void launchFullViewHelp(IHelpTopic selectedTopic) {
-		// wait for more related links
-		if (getMoreRelatedTopicsThread != null
-			&& getMoreRelatedTopicsThread.isAlive()) {
-			Display d = Display.getCurrent();
-			if (waitCursor == null)
-				waitCursor = new Cursor(d, SWT.CURSOR_WAIT);
-			shell.setCursor(waitCursor);
-			try {
-				getMoreRelatedTopicsThread.join();
-			} catch (InterruptedException ie) {
-				return;
-			}
-		}
-		// now close the infopop
 		close();
 		if (Logger.DEBUG)
 			Logger.logDebugMessage("ContextHelpDialog", "launchFullViewHelp: closes shell");
@@ -360,7 +320,7 @@ public class ContextHelpDialog implements Runnable {
 	/**
 	 * Obtains more related Links
 	 */
-	public void run() {
+	public IHelpTopic[] getMoreRelatedTopics() {
 		farRelatedTopics = cmgr.getMoreRelatedTopics(contexts);
 		// Fitler duplicates. We need to take into account all the related links
 		IHelpTopic[] temp = getAllRelatedTopics();
@@ -369,24 +329,19 @@ public class ContextHelpDialog implements Runnable {
 		int len1 = relatedTopics == null ? 0 : relatedTopics.length;
 		farRelatedTopics = new IHelpTopic[temp.length - len1];
 		System.arraycopy(temp, len1, farRelatedTopics, 0, temp.length - len1);
+		return farRelatedTopics;
 	}
 	private void showMoreLinks() {
 		Menu menu = new Menu(shell);
-		if (farRelatedTopics == null || farRelatedTopics.length < 1) {
-			// show "no more links" menu item only
+		// create and show menu items with related links
+		menuItems = new HashMap();
+		SelectionListener l = new MenuItemsListener();
+		for (int i = 0; i < farRelatedTopics.length; i++) {
 			MenuItem item = new MenuItem(menu, SWT.CASCADE);
-			item.setText(WorkbenchResources.getString("No_more_links_exist"));
-		} else {
-			// create and show menu items with related links
-			menuItems = new HashMap();
-			SelectionListener l = new MenuItemsListener();
-			for (int i = 0; i < farRelatedTopics.length; i++) {
-				MenuItem item = new MenuItem(menu, SWT.CASCADE);
-				item.setText(farRelatedTopics[i].getLabel());
-				item.setImage(ElementLabelProvider.getDefault().getImage(farRelatedTopics[i]));
-				menuItems.put(item, farRelatedTopics[i]);
-				item.addSelectionListener(l);
-			}
+			item.setText(farRelatedTopics[i].getLabel());
+			item.setImage(ElementLabelProvider.getDefault().getImage(farRelatedTopics[i]));
+			menuItems.put(item, farRelatedTopics[i]);
+			item.addSelectionListener(l);
 		}
 		menu.setVisible(true);
 	}
@@ -412,23 +367,6 @@ public class ContextHelpDialog implements Runnable {
 	class ShowMoreListener implements Listener {
 		public void handleEvent(Event e) {
 			if (e.type == SWT.MouseDown) {
-				if (getMoreRelatedTopicsThread != null
-					&& getMoreRelatedTopicsThread.isAlive()) {
-					Display d = shell.getDisplay();
-					if (waitCursor == null)
-						waitCursor = new Cursor(d, SWT.CURSOR_WAIT);
-					if (e.widget instanceof Control)
-						 ((Control) e.widget).setCursor(waitCursor);
-					try {
-						getMoreRelatedTopicsThread.join();
-					} catch (InterruptedException ie) {
-						return;
-					}
-					if (defaultCursor == null)
-						defaultCursor = new Cursor(d, SWT.CURSOR_ARROW);
-					if (e.widget instanceof Control)
-						 ((Control) e.widget).setCursor(defaultCursor);
-				}
 				showMoreLinks();
 			}
 		}
