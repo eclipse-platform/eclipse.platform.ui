@@ -116,7 +116,7 @@ public class ModelLoaderUtil {
             return null;
 
         // we should only have one, so use first one.
-        Element element = (Element) elements[0];
+        Element element = elements[0];
         String msg = StringUtil.concat("Loaded ", element.getNodeName(), //$NON-NLS-1$
                 " from ", getLogString(element, logAttribute)).toString(); //$NON-NLS-1$
         Log.info(msg);
