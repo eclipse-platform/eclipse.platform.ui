@@ -251,9 +251,14 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 
 	private void invalidateTextPresentation() {
 		if (fSourceViewer instanceof ITextViewerExtension2) {
-			IRegion r= getWidgetRange(fHighlightAnnotationRange);
-			if (r != null)
-				((ITextViewerExtension2)fSourceViewer).invalidateTextPresentation(r.getOffset(), r.getLength());
+			IRegion r;
+			if (fHighlightAnnotationRange != null && fHighlightAnnotationRange.getOffset() != Integer.MAX_VALUE)
+				r= new Region(fHighlightAnnotationRange.getOffset(), fHighlightAnnotationRange.getLength());
+			else
+				r= fSourceViewer.getVisibleRegion();
+			
+			((ITextViewerExtension2)fSourceViewer).invalidateTextPresentation(r.getOffset(), r.getLength());
+
 		} else {
 			fSourceViewer.invalidateTextPresentation();
 		}
