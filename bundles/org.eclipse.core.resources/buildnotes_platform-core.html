@@ -31,7 +31,10 @@ See the BootLoader class for more details.
 <h3>Other highlights</h3>
 <ul>
 <li>
-None.</li>
+The non-API class org.eclipse.core.launcher.UIMain has been removed.
+Code previously calling this class can reference org.eclipse.core.launcher.Main since UIMain was a wrapper to call Main with
+the workbench application, and now the application will be picked up from the primary feature.
+</li>
 </ul>
 
 <h3>Resolved Bugs</h3>
