@@ -101,14 +101,9 @@ public class Configuration implements IConfigurationConstants {
 			Element configElement = doc.createElement(CFG);
 
 			configElement.setAttribute(CFG_VERSION, VERSION);
-			// If config is transient, we don't save the timestamp,
-			// forcing the config to be read as is, without attempting a reconcile
-			if (!isTransient()) {
-				configElement.setAttribute(CFG_DATE, date.toString());
-				configElement.setAttribute(CFG_TRANSIENT, "false");
-			} else {
-				configElement.setAttribute(CFG_TRANSIENT, "true"); //$NON-NLS-1$
-			}
+			configElement.setAttribute(CFG_DATE, date.toString());
+			String transitory = isTransient() ? "true" : "false";
+			configElement.setAttribute(CFG_TRANSIENT, transitory);
 						
 			if (linkedConfig != null) {
 				configElement.setAttribute(CFG_SHARED_URL, linkedConfig.getURL().toExternalForm());
