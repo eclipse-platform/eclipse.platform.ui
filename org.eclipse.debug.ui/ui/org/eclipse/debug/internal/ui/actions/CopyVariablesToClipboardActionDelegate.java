@@ -23,7 +23,7 @@ public class CopyVariablesToClipboardActionDelegate extends CopyToClipboardActio
 	}
 	
 	/**
-	 * @see ControlActionDelegate#isEnabledFor(Object)
+	 * @see AbstractDebugActionDelegate#isEnabledFor(Object)
 	 */
 	protected boolean isEnabledFor(Object element) {
 		return element instanceof IDebugElement;
