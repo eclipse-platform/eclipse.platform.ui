@@ -915,7 +915,7 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
  			StructuredSelection prevSelection;
  			Object selectedTreeObject = getSelectedTreeObject();
 			if (selectedTreeObject == null) {
-				prevSelection = new StructuredSelection();
+				prevSelection = StructuredSelection.EMPTY;
 			} else {
 				prevSelection = new StructuredSelection(selectedTreeObject);
 			}

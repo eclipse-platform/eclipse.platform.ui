@@ -59,7 +59,7 @@ public abstract class AbstractDebugSelectionProvider implements ISelectionProvid
 		if (sp != null) {
 			return sp.getSelection();
 		}
-		return new StructuredSelection();
+		return StructuredSelection.EMPTY;
 	}
 
 	/**
