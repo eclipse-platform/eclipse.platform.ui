@@ -18,7 +18,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.IResourceActionFilter;
@@ -80,17 +79,14 @@ public class PropertyParser extends DefaultHandler implements LexicalHandler {
 			try {
 				parserFactory.setFeature("http://xml.org/sax/features/string-interning", true); //$NON-NLS-1$
 				parserFactory.setValidating(false);
-				parserFactory.setFeature("http://xml.org/sax/features/validating", false); //$NON-NLS-1$
 			} catch (SAXException e) {
-				IStatus status = new Status(IStatus.ERROR,IDEWorkbenchPlugin.IDE_WORKBENCH, IStatus.ERROR, "Problem initializing parser", e); //$NON-NLS-1$
-				Platform.getPlugin(IDEWorkbenchPlugin.IDE_WORKBENCH).getLog().log(status); 
+				IDEWorkbenchPlugin.log("Problem initializing parser", new Status(IStatus.ERROR,IDEWorkbenchPlugin.IDE_WORKBENCH, IStatus.ERROR, "Problem initializing parser", e)); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			parser = parserFactory.newSAXParser();
 			XMLReader reader = parser.getXMLReader();
 			reader.setProperty("http://xml.org/sax/properties/lexical-handler", this); //$NON-NLS-1$
 		} catch (Exception e) {
-			IStatus status = new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH, IStatus.ERROR, "Problem initializing parser", e); //$NON-NLS-1$ 
-			Platform.getPlugin(IDEWorkbenchPlugin.IDE_WORKBENCH).getLog().log(status); 
+			IDEWorkbenchPlugin.log("Problem initializing parser", new Status(IStatus.ERROR,IDEWorkbenchPlugin.IDE_WORKBENCH, IStatus.ERROR, "Problem initializing parser", e)); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return 1;
 	}
@@ -119,8 +115,7 @@ public class PropertyParser extends DefaultHandler implements LexicalHandler {
 			if (!s.getMessage().equals("PropertyParser stop")) { //$NON-NLS-1$
 				// We got a real error, so log it but
 				// continue processing.
-				IStatus status = new Status(IStatus.ERROR, "org.eclipse.ui", IStatus.ERROR, "Problem initializing parser", s); //$NON-NLS-1$ //$NON-NLS-2$
-				Platform.getPlugin("org.eclipse.ui").getLog().log(status); //$NON-NLS-1$
+				IDEWorkbenchPlugin.log("Problem parsing file", new Status(IStatus.ERROR,IDEWorkbenchPlugin.IDE_WORKBENCH, IStatus.ERROR, "Problem parsing file", s)); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 	}
@@ -147,23 +142,21 @@ public class PropertyParser extends DefaultHandler implements LexicalHandler {
 		 * used.
 		 */
 		long modTime = parseResource.getModificationStamp();
-		QualifiedName modKey = new QualifiedName(parseResource.getLocation().toString(), IResourceActionFilter.XML_LAST_MOD);
+		QualifiedName modKey = new QualifiedName(IDEWorkbenchPlugin.IDE_WORKBENCH, WorkbenchResource.XML_LAST_MOD);
 		try {
 			parseResource.setPersistentProperty(modKey, new Long(modTime).toString());
 		} catch (CoreException c) {
-			IStatus status = new Status(IStatus.ERROR, "org.eclipse.ui", IStatus.ERROR, "Problem parsing element", c); //$NON-NLS-1$ //$NON-NLS-2$
-			Platform.getPlugin("org.eclipse.ui").getLog().log(status); //$NON-NLS-1$
+			IDEWorkbenchPlugin.log("Problem parsing element", c.getStatus()); //$NON-NLS-1$
 		}
 		// We are only interested in the first element.
 		QualifiedName key;
 		String propertyName = IResourceActionFilter.XML_FIRST_TAG;
-			key = new QualifiedName(parseResource.getLocation().toString(), propertyName);
-			try {
-				parseResource.setPersistentProperty(key, elementName);
-			} catch (CoreException c) {
-				IStatus status = new Status(IStatus.ERROR, "org.eclipse.ui", IStatus.ERROR, "Problem parsing element", c); //$NON-NLS-1$ //$NON-NLS-2$
-				Platform.getPlugin("org.eclipse.ui").getLog().log(status); //$NON-NLS-1$
-			}
+		key = new QualifiedName(IDEWorkbenchPlugin.IDE_WORKBENCH, propertyName);
+		try {
+			parseResource.setPersistentProperty(key, elementName);
+		} catch (CoreException c) {
+			IDEWorkbenchPlugin.log("Problem parsing element", c.getStatus()); //$NON-NLS-1$
+		}
 		// And now we wish to abort the parsing.  The only other thing
 		// we looked for was the dtd name.  By definition, the dtd
 		// declaration must occur before the first element.
@@ -224,12 +217,11 @@ public class PropertyParser extends DefaultHandler implements LexicalHandler {
 		if (systemId == null)
 			return;
 		
-		QualifiedName qname = new QualifiedName(parseResource.getLocation().toString(), IResourceActionFilter.XML_DTD_NAME);
+		QualifiedName qname = new QualifiedName(IDEWorkbenchPlugin.IDE_WORKBENCH, IResourceActionFilter.XML_DTD_NAME);
 		try {
 			parseResource.setPersistentProperty(qname, systemId);
 		} catch (CoreException c) {
-			IStatus status = new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH, IStatus.ERROR, "Problem parsing dtd element", c); //$NON-NLS-1$ 
-			Platform.getPlugin(IDEWorkbenchPlugin.IDE_WORKBENCH).getLog().log(status);
+			IDEWorkbenchPlugin.log("Problem parsing dtd element", c.getStatus()); //$NON-NLS-1$
 		}
 	}
 	
