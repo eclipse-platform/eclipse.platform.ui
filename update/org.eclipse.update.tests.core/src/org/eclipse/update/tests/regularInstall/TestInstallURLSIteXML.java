@@ -148,6 +148,7 @@ public class TestInstallURLSiteXML extends UpdateManagerTestCase {
 		// cleanup local files...
 		File localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocationURL(),SiteLocal.SITE_LOCAL_FILE).getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);		
+		InternalSiteManager.localSite = null;
 		
 
 		URL INSTALL_SITE = null;

@@ -55,21 +55,13 @@ public class Site extends SiteMapModel implements ISite{
 	 */
 	public static final String SITE_XML = SITE_FILE + ".xml"; //$NON-NLS-1$
 
-	/**
-	 * The content consumer of the Site
-	 */
-	private ISiteContentConsumer contentConsumer;
-
+	
 	/**
 	 * The content provider of the Site
 	 */
 	private ISiteContentProvider siteContentProvider;
 
-	/**
-	 * plugin entries 
-	 */
-	private List pluginEntries = new ArrayList(0);
-
+	
 	/**
 	 * Constructor for Site
 	 */
@@ -91,88 +83,17 @@ public class Site extends SiteMapModel implements ISite{
 	}
 	
 	/*
-	 * @see ISite#addSiteChangedListener(IConfiguredSiteChangedListener)
-	 */
-
-	/*
-	 * @see ISite#removeSiteChangedListener(IConfiguredSiteChangedListener)
-	 */
-
-	/*
 	 * @see ISite#install(IFeature, IProgressMonitor)
 	 */
 	public IFeatureReference install(IFeature sourceFeature, IProgressMonitor progress) throws CoreException {
-
-		if (sourceFeature==null) return null;
-
-		// make sure we have an InstallMonitor		
-		InstallMonitor monitor;
-		if (progress == null)
-			monitor = null;
-		else if (progress instanceof InstallMonitor)
-			monitor = (InstallMonitor) progress;
-		else
-			monitor = new InstallMonitor(progress);
-
-		// create new executable feature and install source content into it
-		IFeature localFeature = createExecutableFeature(sourceFeature);
-		IFeatureReference localFeatureReference = sourceFeature.install(localFeature, monitor);
-		if (localFeature instanceof FeatureModel)
-			 ((FeatureModel) localFeature).markReadOnly();
-		this.addFeatureReference(localFeatureReference);
-
-	
-		return localFeatureReference;
+		throw new UnsupportedOperationException();
 	}
 
 	/*
 	 * @see ISite#remove(IFeature, IProgressMonitor)
 	 */
 	public void remove(IFeature feature, IProgressMonitor progress) throws CoreException {
-
-		// make sure we have an InstallMonitor		
-		InstallMonitor monitor;
-		if (progress == null)
-			monitor = null;
-		else if (progress instanceof InstallMonitor)
-			monitor = (InstallMonitor) progress;
-		else
-			monitor = new InstallMonitor(progress);
-
-		// remove the feature and the plugins if they are not used and not activated
-		// get the plugins from the feature
-		IPluginEntry[] pluginsToRemove = getPluginEntriesOnlyReferencedBy(feature);
-
-		//finds the contentReferences for this IPluginEntry
-		for (int i = 0; i < pluginsToRemove.length; i++) {
-			remove(feature, pluginsToRemove[i], monitor);
-		}
-
-		// remove the feature content
-		ContentReference[] references = feature.getFeatureContentProvider().getFeatureEntryArchiveReferences(monitor);
-		for (int i = 0; i < references.length; i++) {
-			try {
-				UpdateManagerUtils.removeFromFileSystem(references[i].asFile());
-			} catch (IOException e) {
-				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, Policy.bind("Site.CannotRemoveFeature", feature.getVersionedIdentifier().getIdentifier(), getURL().toExternalForm()), e); //$NON-NLS-1$
-				throw new CoreException(status);
-			}
-		}
-
-		// remove feature reference from the site
-		IFeatureReference[] featureReferences = getFeatureReferences();
-		if (featureReferences != null) {
-			for (int indexRef = 0; indexRef < featureReferences.length; indexRef++) {
-				IFeatureReference element = featureReferences[indexRef];
-				if (element.equals(feature)) {
-					removeFeatureReferenceModel((FeatureReferenceModel) element);
-					break;
-				}
-			}
-		}
-
-
+		throw new UnsupportedOperationException();
 	}
 
 	/*
@@ -290,23 +211,18 @@ public class Site extends SiteMapModel implements ISite{
 		return siteContentProvider;
 	}
 
-	/**
+	/*
 	 * @see IPluginContainer#getPluginEntries()
 	 */
 	public IPluginEntry[] getPluginEntries() {
-		IPluginEntry[] result = new IPluginEntry[0];
-		if (!(pluginEntries == null || pluginEntries.isEmpty())) {
-			result = new IPluginEntry[pluginEntries.size()];
-			pluginEntries.toArray(result);
-		}
-		return result;
+		throw new UnsupportedOperationException();
 	}
 
-	/**
+	/*
 	 * @see IPluginContainer#getPluginEntryCount()
 	 */
 	public int getPluginEntryCount() {
-		return getPluginEntries().length;
+		throw new UnsupportedOperationException();
 	}	
 	
 	
@@ -319,64 +235,21 @@ public class Site extends SiteMapModel implements ISite{
 	 * the archives tag are optionals
 	 */
 	public void addPluginEntry(IPluginEntry pluginEntry) {
-		pluginEntries.add(pluginEntry);
+		throw new UnsupportedOperationException();
 	}
 		
-	/**
-	 * returns the download size
-	 * of the feature to be installed on the site.
-	 * If the site is <code>null</code> returns the maximum size
-	 * 
-	 * If one plug-in entry has an unknown size.
-	 * then the download size is unknown.
-	 * 
-	 * @see ISite#getDownloadSize(IFeature)
-	 * 
+	/* 
+	 * @see ISite#getDownloadSizeFor(IFeature)
 	 */
 	public long getDownloadSizeFor(IFeature feature) {
-		long result = 0;
-		IPluginEntry[] entriesToInstall = feature.getPluginEntries();
-		IPluginEntry[] siteEntries = this.getPluginEntries();
-		entriesToInstall = UpdateManagerUtils.intersection(entriesToInstall, siteEntries);
-
-		// FIXME Intersection for NonPluginEntry (using Install Handler)
-		try {
-			result = feature.getFeatureContentProvider().getDownloadSizeFor(entriesToInstall, /* non plugin entry []*/
-			null);
-		} catch (CoreException e) {
-			UpdateManagerPlugin.getPlugin().getLog().log(e.getStatus());
-			result = ContentEntryModel.UNKNOWN_SIZE;
-		}
-		return result;
+		throw new UnsupportedOperationException();
 	}
 
-	/**
-	 * returns the download size
-	 * of the feature to be installed on the site.
-	 * If the site is <code>null</code> returns the maximum size
-	 * 
-	 * If one plug-in entry has an unknown size.
-	 * then the download size is unknown.
-	 * 
-	 * @see ISite#getDownloadSizeFor(IFeature)
-	 * 
+	/*
+	 * @see ISite#getInstallSizeFor(IFeature)
 	 */
 	public long getInstallSizeFor(IFeature feature) {
-		long result = 0;
-		IPluginEntry[] entriesToInstall = feature.getPluginEntries();
-		IPluginEntry[] siteEntries = this.getPluginEntries();
-		entriesToInstall = UpdateManagerUtils.intersection(entriesToInstall, siteEntries);
-
-		// FIXME Intersection for NonPluginEntry (using Install Handler)
-		try {
-			result = feature.getFeatureContentProvider().getInstallSizeFor(entriesToInstall, /* non plugin entry []*/
-			null);
-		} catch (CoreException e) {
-			UpdateManagerPlugin.getPlugin().getLog().log(e.getStatus());
-			result = ContentEntryModel.UNKNOWN_SIZE;
-		}
-
-		return result;
+		throw new UnsupportedOperationException();
 	}
 
 	/*
@@ -409,47 +282,6 @@ public class Site extends SiteMapModel implements ISite{
 		return (IURLEntry) getDescriptionModel();
 	}
 
-	/**
-	 * adds a feature reference
-	 * @param feature The feature reference to add
-	 */
-	private void addFeatureReference(IFeatureReference feature) {
-		addFeatureReferenceModel((FeatureReferenceModel) feature);
-	}
-
-	/**
-	 * 
-	 */
-	private void remove(IFeature feature, IPluginEntry pluginEntry, InstallMonitor monitor) throws CoreException {
-
-		if (pluginEntry == null)
-			return;
-
-		ContentReference[] references = feature.getFeatureContentProvider().getPluginEntryArchiveReferences(pluginEntry, monitor);
-		for (int i = 0; i < references.length; i++) {
-			try {
-				UpdateManagerUtils.removeFromFileSystem(references[i].asFile());
-			} catch (IOException e) {
-				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, Policy.bind("Site.CannotRemovePlugin", pluginEntry.getVersionedIdentifier().toString(), getURL().toExternalForm()), e); //$NON-NLS-1$
-				throw new CoreException(status);
-			}
-		}
-	}
-
-	/**
-	 * 
-	 */
-	private IFeature createExecutableFeature(IFeature sourceFeature) throws CoreException {
-		IFeature result = null;
-		IFeatureFactory factory = FeatureTypeFactory.getInstance().getFactory(DEFAULT_INSTALLED_FEATURE_TYPE);
-		result = factory.createFeature(/*URL*/null, this);
-
-		// at least set the version identifier to be the same
-		((FeatureModel) result).setFeatureIdentifier(sourceFeature.getVersionedIdentifier().getIdentifier());
-		((FeatureModel) result).setFeatureVersion(sourceFeature.getVersionedIdentifier().getVersion().toString());
-		return result;
-	}
 
 	/**
 	 * returns a list of PluginEntries that are not used by any other configured feature

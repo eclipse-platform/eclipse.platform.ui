@@ -8,6 +8,7 @@ import java.net.URL;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.core.*;
+import org.eclipse.update.internal.core.Policy;
 /**
  * Abstract Class that implements most of the behavior of a feature
  * A feature ALWAYS belongs to an ISite
@@ -208,7 +209,7 @@ public class Feature extends FeatureModel implements IFeature {
 			// The one the site contains and the one the feature contains
 			IPluginEntry[] sourceFeaturePluginEntries = getPluginEntries();
 			ISite targetSite = targetFeature.getSite();
-			IPluginEntry[] targetSitePluginEntries = (targetSite != null) ? site.getPluginEntries() : new IPluginEntry[0];
+			IPluginEntry[] targetSitePluginEntries = (targetSite != null) ? targetSite.getPluginEntries() : new IPluginEntry[0];
 			IPluginEntry[] pluginsToInstall = UpdateManagerUtils.intersection(sourceFeaturePluginEntries, targetSitePluginEntries);
 
 			// determine number of monitor tasks
@@ -362,8 +363,8 @@ public class Feature extends FeatureModel implements IFeature {
 	 * @see Object#toString()
 	 */
 	public String toString() {
-		String URLString = (getURL() == null) ? "<NO URL>" : getURL().toExternalForm();
-		return "Feature: " + URLString + " version:" + getVersionedIdentifier().toString();
+		String URLString = (getURL() == null) ? Policy.bind("Feature.NoURL") : getURL().toExternalForm(); //$NON-NLS-1$
+		return Policy.bind("Feature.FeatureVersionToString",URLString, getVersionedIdentifier().toString()); //$NON-NLS-1$ 
 	}
 
 
