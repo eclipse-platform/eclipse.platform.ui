@@ -25,7 +25,7 @@ import org.eclipse.ui.part.IPage;
  * abstract base class <code>ContentOutlinePage</code>.
  * </p>
  * <p> 
- * Note that this interface extents <code>ISelectionProvider</code>.
+ * Note that this interface extends <code>ISelectionProvider</code>.
  * This is no longer required in the case of implementors who also 
  * implement <code>IPageBookViewPage</code> (or extend <code>Page</code>)
  * as they are now passed an <code>IPageSite</code> during their initialization 
