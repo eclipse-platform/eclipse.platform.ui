@@ -26,7 +26,6 @@ import org.eclipse.team.internal.ccvs.core.EditorsInfo;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.EditorsDialog;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
-import org.eclipse.team.internal.ccvs.ui.WatchEditPreferencePage;
 import org.eclipse.team.internal.ccvs.ui.actions.WorkspaceAction.IProviderAction;
 
 
@@ -65,7 +64,7 @@ public class EditorsAction implements IProviderAction, IRunnableWithProgress {
 	
 	public boolean promptToEdit(Shell shell) {
 	
-		if (!WatchEditPreferencePage.PROMPT.equals(CVSUIPlugin.getPlugin().getPreferenceStore().getString(ICVSUIConstants.PREF_PROMPT_ON_EDIT))) {
+		if (!CVSUIPlugin.PROMPT.equals(CVSUIPlugin.getPlugin().getPreferenceStore().getString(ICVSUIConstants.PREF_PROMPT_ON_EDIT))) {
 			return true;
 		}
 		

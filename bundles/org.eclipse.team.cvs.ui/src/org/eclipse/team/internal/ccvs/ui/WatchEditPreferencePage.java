@@ -20,22 +20,6 @@ import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
  * This page contains preferences related to the cvs watch/edit commands
  */
 public class WatchEditPreferencePage extends CVSFieldEditorPreferencePage {
-
-	public static final String ALWAYS_EDIT = "always_edit"; //$NON-NLS-1$
-	public static final String PROMPT = "prompt"; //$NON-NLS-1$
-	
-	public static void setDefaults() {
-		// Get the preference store from CVS core
-		Preferences corePrefs = CVSProviderPlugin.getPlugin().getPluginPreferences();
-		// Set the UI defaults
-		IPreferenceStore store = getCVSPreferenceStore();
-		store.setDefault(ICVSUIConstants.PREF_CHECKOUT_READ_ONLY, 
-			corePrefs.getDefaultBoolean(CVSProviderPlugin.READ_ONLY));
-		store.setDefault(ICVSUIConstants.PREF_PROMPT_ON_EDIT, PROMPT);
-		// Ensure that the preference values in UI match Core
-		store.setValue(ICVSUIConstants.PREF_CHECKOUT_READ_ONLY, 
-			corePrefs.getBoolean(CVSProviderPlugin.READ_ONLY));
-	}
 	
 	/**
 	 * @see org.eclipse.team.internal.ccvs.ui.CVSPreferencePage#getPageHelpContextId()
@@ -63,7 +47,7 @@ public class WatchEditPreferencePage extends CVSFieldEditorPreferencePage {
 			ICVSUIConstants.PREF_PROMPT_ON_EDIT,
 			Policy.bind("WatchEditPreferencePage.validateEditSaveAction"), //$NON-NLS-1$
 			1,
-			new String[][] {{Policy.bind("WatchEditPreferencePage.always"), ALWAYS_EDIT}, {Policy.bind("WatchEditPreferencePage.prompt"), PROMPT}}, //$NON-NLS-1$ //$NON-NLS-2$
+			new String[][] {{Policy.bind("WatchEditPreferencePage.always"), CVSUIPlugin.ALWAYS_EDIT}, {Policy.bind("WatchEditPreferencePage.prompt"), CVSUIPlugin.PROMPT}}, //$NON-NLS-1$ //$NON-NLS-2$
 			getFieldEditorParent(), true));
 	}
 

@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -79,6 +80,10 @@ public class CVSUIPlugin extends AbstractUIPlugin implements IPropertyChangeList
 	 * The repository manager
 	 */
 	private RepositoryManager repositoryManager;
+	
+	// constants used by watch/edit as values for string preference
+	public static final String ALWAYS_EDIT = "always_edit"; //$NON-NLS-1$
+	public static final String PROMPT = "prompt"; //$NON-NLS-1$
 	
 	// Property change listener
 	IPropertyChangeListener listener = new IPropertyChangeListener() {
@@ -245,7 +250,15 @@ public class CVSUIPlugin extends AbstractUIPlugin implements IPropertyChangeList
 	 * 
 	 * @return the repository manager
 	 */
-	public RepositoryManager getRepositoryManager() {
+	public synchronized RepositoryManager getRepositoryManager() {
+		if (repositoryManager == null) {
+			repositoryManager = new RepositoryManager();
+			try {
+				repositoryManager.startup();
+			} catch (TeamException e) {
+				CVSUIPlugin.log(e.getStatus());
+			}
+		}
 		return repositoryManager;
 	}
 	
@@ -457,6 +470,9 @@ public class CVSUIPlugin extends AbstractUIPlugin implements IPropertyChangeList
 	 */
 	protected void initializePreferences() {
 		IPreferenceStore store = getPreferenceStore();
+		// Get the plugin preferences for CVS Core
+		Preferences corePrefs = CVSProviderPlugin.getPlugin().getPluginPreferences();
+		
 		store.setDefault(ICVSUIConstants.PREF_REPOSITORIES_ARE_BINARY, false);
 		store.setDefault(ICVSUIConstants.PREF_SHOW_COMMENTS, true);
 		store.setDefault(ICVSUIConstants.PREF_SHOW_TAGS, true);
@@ -498,7 +514,11 @@ public class CVSUIPlugin extends AbstractUIPlugin implements IPropertyChangeList
 		store.setDefault(ICVSUIConstants.PREF_PROMPT_ON_SAVING_IN_SYNC, true);
 		store.setDefault(ICVSUIConstants.PREF_SAVE_DIRTY_EDITORS, ICVSUIConstants.OPTION_PROMPT);
 		
-		WatchEditPreferencePage.setDefaults();
+		// Set the watch/edit preferences defaults and values
+		store.setDefault(ICVSUIConstants.PREF_CHECKOUT_READ_ONLY, corePrefs.getDefaultBoolean(CVSProviderPlugin.READ_ONLY));
+		store.setDefault(ICVSUIConstants.PREF_PROMPT_ON_EDIT, PROMPT);
+		// Ensure that the preference values in UI match Core
+		store.setValue(ICVSUIConstants.PREF_CHECKOUT_READ_ONLY, corePrefs.getBoolean(CVSProviderPlugin.READ_ONLY));
 		
 		// Forward the values to the CVS plugin
 		CVSProviderPlugin.getPlugin().setPruneEmptyDirectories(store.getBoolean(ICVSUIConstants.PREF_PRUNE_EMPTY_DIRECTORIES));
@@ -530,16 +550,9 @@ public class CVSUIPlugin extends AbstractUIPlugin implements IPropertyChangeList
 		
 		initializeImages();
 		initializePreferences();
-		repositoryManager = new RepositoryManager();
 		
 		// if the global ignores list is changed then update decorators.
 		TeamUI.addPropertyChangeListener(listener);
-		
-		try {
-			repositoryManager.startup();
-		} catch (TeamException e) {
-			throw new CoreException(e.getStatus());
-		}
 		
 		Console.startup();
 	}
