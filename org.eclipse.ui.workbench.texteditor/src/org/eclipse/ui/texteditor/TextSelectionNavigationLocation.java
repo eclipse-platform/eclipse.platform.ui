@@ -46,31 +46,28 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 	private Position fSavedPosition;
 	
 	
-	public TextSelectionNavigationLocation(ITextEditor part,boolean initialize) {
+	public TextSelectionNavigationLocation(ITextEditor part, boolean initialize) {
 		super(part);
-		if(!initialize)
-			return;
 		
-		ISelection s= part.getSelectionProvider().getSelection();
-		//TBD: AbstractTextEditor doGetSelection may return null but the API getSelection()
-		//does not specify that it can return null. Shouldn't it return an empty selection
-		//instead?
-		
-		IDocument document= getDocument(part);
-		if(s == null)
-			return;
-		
-		ITextSelection selection= (ITextSelection) s;
-		if(selection.getOffset() == 0 && selection.getLength() == 0)
-			return;
-		
-		Position position= new Position(selection.getOffset(), selection.getLength());
-		if (installOnDocument(document, position)) {
-			fDocument= document;
-			fPosition= position;
+		if (initialize) {
+				
+			ISelection s= part.getSelectionProvider().getSelection();		
+			if(s == null)
+				return;
 			
-			if (!part.isDirty())
-				fSavedPosition= new Position(fPosition.offset, fPosition.length);
+			ITextSelection selection= (ITextSelection) s;
+			if(selection.getOffset() == 0 && selection.getLength() == 0)
+				return;
+			
+			IDocument document= getDocument(part);
+			Position position= new Position(selection.getOffset(), selection.getLength());
+			if (installOnDocument(document, position)) {
+				fDocument= document;
+				fPosition= position;
+				
+				if (!part.isDirty())
+					fSavedPosition= new Position(fPosition.offset, fPosition.length);
+			}
 		}
 	}
 	
@@ -124,7 +121,7 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 		return "Selection<" + fPosition + ">";
 	}
 	
-	private boolean equalsLocationOf(IEditorPart part) {
+	private boolean equalsLocationOf(ITextEditor part) {
 		
 		if (fPosition == null)
 			return true;
@@ -175,11 +172,10 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 		if (getClass() != location.getClass())
 			return false;
 			
-		TextSelectionNavigationLocation s= (TextSelectionNavigationLocation) location;
-		
 		if (fPosition == null || fPosition.isDeleted)
 			return true;
 		
+		TextSelectionNavigationLocation s= (TextSelectionNavigationLocation) location;
 		if (s.fPosition == null || s.fPosition.isDeleted) {
 			uninstallFromDocument(fDocument, fPosition);
 			s.fDocument= fDocument;
@@ -195,7 +191,8 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 		if (fPosition == null || fPosition.isDeleted)
 			return;
 			
-		if (getEditorPart() instanceof ITextEditor) {
+		IEditorPart part= getEditorPart();
+		if (part instanceof ITextEditor) {
 			ITextEditor editor= (ITextEditor) getEditorPart();
 			editor.selectAndReveal(fPosition.offset, fPosition.length);
 		}
@@ -226,8 +223,6 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 	}
 	
 	public void saveState(IMemento memento) {
-		
-		// save
 		if (fSavedPosition != null) {
 			memento.putInteger(IWorkbenchConstants.TAG_X, fSavedPosition.offset);
 			memento.putInteger(IWorkbenchConstants.TAG_Y, fSavedPosition.length);
@@ -236,38 +231,33 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 	}
 	
 	public void partSaved(IEditorPart part) {
-		
 		if (fPosition == null)
 			return;
-		
-		if (fSavedPosition == null)
-			fSavedPosition= new Position(0, 0);
-			
-		fSavedPosition.offset= fPosition.offset;
-		fSavedPosition.length= fPosition.length;
-		fSavedPosition.isDeleted= fPosition.isDeleted;
+		fSavedPosition= new Position(fPosition.offset, fPosition.length);
 	}
+	
 	public void update() {
-		ITextEditor part = (ITextEditor)getEditorPart();
-		if(equalsLocationOf(part))
-			return;
+		IEditorPart part= getEditorPart();
+		if (part instanceof ITextEditor) {
+			ITextEditor textEditor= (ITextEditor) getEditorPart();
 			
-		uninstallFromDocument(fDocument,fPosition);
-		ISelection s= part.getSelectionProvider().getSelection();
-		if(s == null)
-			return;
-		
-		ITextSelection selection= (ITextSelection) s;
-		if(selection.getOffset() == 0 && selection.getLength() == 0)
-			return;
-		
-		Position position= new Position(selection.getOffset(), selection.getLength());
-		if (installOnDocument(fDocument, position)) {
-			fPosition= position;
+			if(equalsLocationOf(textEditor))
+				return;
+				
+			ISelection s= textEditor.getSelectionProvider().getSelection();
+			if(s == null)
+				return;
 			
+			ITextSelection selection= (ITextSelection) s;
+			if(selection.getOffset() == 0 && selection.getLength() == 0)
+				return;
+	
+			fPosition.offset= selection.getOffset();
+			fPosition.length= selection.getLength();
+			fPosition.isDeleted= false;
+								
 			if (!part.isDirty())
 				fSavedPosition= new Position(fPosition.offset, fPosition.length);
-		}					
-		
+		}
 	}
 }
