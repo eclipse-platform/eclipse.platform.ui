@@ -592,11 +592,12 @@ public void restoreState(IMemento memento) {
 
 		// Create and open the view.
 		ViewPane pane = restoreView(childMem,viewID);
-		page.addPart(pane.getPart());
-		if(pane != null) 
+		if(pane != null) {		
+			page.addPart(pane.getPart());
 			pres.replacePlaceholderWithPart(pane);
-		else
+		} else {
 			errors++;
+		}
 	}
 
 	// Load the fast views
