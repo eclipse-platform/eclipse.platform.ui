@@ -860,23 +860,11 @@ public abstract class Dialog extends Window {
 		return JFaceResources.getDialogFont().equals(
 			JFaceResources.getDefaultFont());
 	}
-
-	/**
-	 * Return whether or not the dialog font should be applied
-	 * to the dialog area by default.
-	 * @return boolean
-	 */
-	protected boolean applyDialogFont() {
-		return true;
-	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#create()
 	 */
 	public void create() {
 		super.create();
-		if (applyDialogFont()) {
-			applyDialogFont(dialogArea);
-			applyDialogFont(buttonBar);
-		}
+		applyDialogFont(buttonBar);
 	}
 }

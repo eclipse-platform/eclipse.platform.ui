@@ -281,7 +281,7 @@ public abstract class PreferencePage
 			if (buttonBar.getChildren().length < 1)
 				buttonBar.dispose();
 		}
-		applyDialogFont(content);
+		applyDialogFont(buttonBar);
 	}
 	
 	/**
