@@ -9,28 +9,32 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.forms.events;
-
 import org.eclipse.swt.events.TypedEvent;
-
 /**
- * Notifies listeners about a hyperlink change.
+ * Notifies listeners when expandable controls change expansion state.
+ * 
+ * @since 3.0
  */
 public class ExpansionEvent extends TypedEvent {
-	
-/**
- * Creates a new hyperlink
- * @param obj event source
- * @param href the hyperlink reference that will be followed upon when
- * the hyperlink is activated.
- * @param label the name of the hyperlink (the text that is rendered
- * as a link in the source widget).
- */
+	/**
+	 * Creates a new expansion ecent.
+	 * 
+	 * @param obj
+	 *            event source
+	 * @param state
+	 *            the new expansion state
+	 */
 	public ExpansionEvent(Object obj, boolean state) {
 		super(obj);
-		data = state?Boolean.TRUE:Boolean.FALSE;
+		data = state ? Boolean.TRUE : Boolean.FALSE;
 	}
-	
+	/**
+	 * Returns the new expansion state of the widget.
+	 * 
+	 * @return <code>true</code> if the widget is now expaned, <code>false</code>
+	 *         otherwise.
+	 */
 	public boolean getState() {
-		return data.equals(Boolean.TRUE)?true:false;
+		return data.equals(Boolean.TRUE) ? true : false;
 	}
 }

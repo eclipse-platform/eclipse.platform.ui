@@ -9,41 +9,39 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.forms.events;
-
 /**
- * This adapter class provides default implementations for the
- * methods described by the <code>HyperlinkListener</code> interface.
+ * This adapter class provides default implementations for the methods
+ * described by the <code>HyperlinkListener</code> interface.
  * <p>
- * Classes that wish to deal with <code>HyperlinkEvent</code>s can
- * extend this class and override only the methods which they are
- * interested in.
+ * Classes that wish to deal with <code>HyperlinkEvent</code> s can extend
+ * this class and override only the methods which they are interested in.
  * </p>
- *
+ * 
  * @see HyperlinkListener
  * @see HyperlinkEvent
  */
 public class HyperlinkAdapter implements HyperlinkListener {
-
 	/**
-	 * Sent when the link is entered. The default behaviour
-	 * is to do nothing.
-	 * @param e the event
+	 * Sent when the link is entered. The default behaviour is to do nothing.
+	 * 
+	 * @param e
+	 *            the event
 	 */
 	public void linkEntered(HyperlinkEvent e) {
 	}
-
 	/**
-	 * Sent when the link is exited. The default behaviour
-	 * is to do nothing.
-	 * @param e the event
+	 * Sent when the link is exited. The default behaviour is to do nothing.
+	 * 
+	 * @param e
+	 *            the event
 	 */
 	public void linkExited(HyperlinkEvent e) {
 	}
-
 	/**
-	 * Sent when the link is activated. The default behaviour
-	 * is to do nothing.
-	 * @param e the event
+	 * Sent when the link is activated. The default behaviour is to do nothing.
+	 * 
+	 * @param e
+	 *            the event
 	 */
 	public void linkActivated(HyperlinkEvent e) {
 	}

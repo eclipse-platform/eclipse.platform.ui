@@ -23,7 +23,7 @@ public class FormView extends ViewPart {
 	 */
 	public void createPartControl(Composite parent) {
 		toolkit = new FormToolkit(parent.getDisplay());
-		form = toolkit.createForm(parent);
+		form = toolkit.createScrolledForm(parent);
 		form.setText("Hello, Eclipse Forms");
 		TableWrapLayout layout = new TableWrapLayout();
 		form.getBody().setLayout(layout);

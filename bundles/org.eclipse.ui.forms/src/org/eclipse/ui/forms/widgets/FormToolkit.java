@@ -353,7 +353,7 @@ public class FormToolkit {
 		if (section.toggle != null) {
 			section.toggle.addFocusListener(visibilityHandler);
 			section.toggle.addKeyListener(keyboardHandler);
-			section.toggle.setActiveDecorationColor(getHyperlinkGroup()
+			section.toggle.setHoverDecorationColor(getHyperlinkGroup()
 					.getActiveForeground());
 			section.toggle.setDecorationColor(colors
 					.getColor(FormColors.SEPARATOR));
@@ -464,13 +464,17 @@ public class FormToolkit {
 		return tree;
 	}
 	/**
-	 * Creates a form widget in the provided parent.
+	 * Creates a scrolled form widget in the provided parent.
+	 * If you do not require scrolling because there is
+	 * already a scrolled composite up the parent chain,
+	 * use 'createForm' instead.
 	 * 
 	 * @param parent
-	 *            the form parent
-	 * @return the form widget
+	 *            the scrolled form parent
+	 * @return the form that can scroll itself
+	 * @see #createForm
 	 */
-	public ScrolledForm createForm(Composite parent) {
+	public ScrolledForm createScrolledForm(Composite parent) {
 		ScrolledForm form = new ScrolledForm(parent);
 		form.setExpandHorizontal(true);
 		form.setExpandVertical(true);
@@ -479,7 +483,17 @@ public class FormToolkit {
 		form.setFont(JFaceResources.getHeaderFont());
 		return form;
 	}
-	public Form createFormContent(Composite parent) {
+	/**
+	 * Creates a form widget in the provided parent. Note
+	 * that this widget does not scroll its content, so make
+	 * sure there is a scrolled composite up the parent chain.
+	 * If you require scrolling, use 'createScrolledForm' instead.
+	 * 
+	 * @param the form parent
+	 * @return the form that does not scroll
+	 * @see #createScrolledForm
+	 */
+	public Form createForm(Composite parent) {
 		Form formContent = new Form(parent, SWT.NULL);
 		formContent.setBackground(colors.getBackground());
 		formContent.setForeground(colors.getColor(FormColors.TITLE));

@@ -34,7 +34,7 @@ public class ManagedForm implements IManagedForm {
 	public ManagedForm(Composite parent) {
 		toolkit = new FormToolkit(parent.getDisplay());
 		ownsToolkit = true;
-		form = toolkit.createForm(parent);
+		form = toolkit.createScrolledForm(parent);
 	}
 	/**
 	 * Creates a managed form that will use the provided toolkit and

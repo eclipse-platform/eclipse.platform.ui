@@ -153,7 +153,6 @@ public class Hyperlink extends AbstractHyperlink {
 	protected void paintText(GC gc, Rectangle bounds) {
 		gc.setFont(getFont());
 		gc.setForeground(getForeground());
-
 		if ((getStyle() & SWT.WRAP) != 0) {
 			FormUtil.paintWrapText(gc, text, bounds, underlined);
 		} else {

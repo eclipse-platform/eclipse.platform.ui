@@ -69,12 +69,6 @@ public class ColumnLayout extends Layout implements ILayoutExtension {
 	 */
 	public ColumnLayout() {
 	}
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.swt.widgets.Layout#computeSize(org.eclipse.swt.widgets.Composite,
-	 *      int, int, boolean)
-	 */
 	protected Point computeSize(Composite composite, int wHint, int hHint,
 			boolean flushCache) {
 		if (wHint == 0)
@@ -177,6 +171,8 @@ public class ColumnLayout extends Layout implements ILayoutExtension {
 		int childrenPerColumn = children.length / ncolumns;
 		if (children.length % ncolumns != 0)
 			childrenPerColumn++;
+		int colWidth = 0;
+		int colHeight = 0;
 		int ncol = 0;
 		int x = leftMargin, y = topMargin;
 		int ccolCount = 0;
@@ -184,10 +180,14 @@ public class ColumnLayout extends Layout implements ILayoutExtension {
 			Control child = children[i];
 			Point csize = sizes[i];
 			ccolCount++;
-			ColumnLayoutData cd = (ColumnLayoutData)child.getLayoutData();
-			int align = cd!=null?cd.horizontalAlignment:ColumnLayoutData.FILL;
+			ColumnLayoutData cd = (ColumnLayoutData) child.getLayoutData();
+			int align = cd != null
+					? cd.horizontalAlignment
+					: ColumnLayoutData.FILL;
 			int fillWidth = Math.max(cwidth, realWidth);
-			int childWidth = align==ColumnLayoutData.FILL?fillWidth:csize.x;
+			int childWidth = align == ColumnLayoutData.FILL
+					? fillWidth
+					: csize.x;
 			if (y + csize.y + bottomMargin > carea.height
 					|| ccolCount > childrenPerColumn) {
 				// wrap
@@ -196,20 +196,22 @@ public class ColumnLayout extends Layout implements ILayoutExtension {
 				ncol++;
 				ccolCount = 1;
 			}
-			if (ncol == ncolumns - 1 && align==ColumnLayoutData.FILL) {
+			if (ncol == ncolumns - 1 && align == ColumnLayoutData.FILL) {
 				childWidth = carea.width - x - rightMargin;
 			}
 			switch (align) {
-				case ColumnLayoutData.LEFT:
-				case ColumnLayoutData.FILL:
+				case ColumnLayoutData.LEFT :
+				case ColumnLayoutData.FILL :
 					child.setBounds(x, y, childWidth, csize.y);
-				break;
-				case ColumnLayoutData.RIGHT:
-					child.setBounds(x+fillWidth-childWidth, y, childWidth, csize.y);
-				break;
-				case ColumnLayoutData.CENTER:
-					child.setBounds(x+fillWidth/2-childWidth/2, y, childWidth, csize.y);
-				break;
+					break;
+				case ColumnLayoutData.RIGHT :
+					child.setBounds(x + fillWidth - childWidth, y, childWidth,
+							csize.y);
+					break;
+				case ColumnLayoutData.CENTER :
+					child.setBounds(x + fillWidth / 2 - childWidth / 2, y,
+							childWidth, csize.y);
+					break;
 			}
 			y += csize.y + verticalSpacing;
 		}

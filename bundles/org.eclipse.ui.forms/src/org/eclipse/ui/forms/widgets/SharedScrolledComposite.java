@@ -13,18 +13,18 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
-
 /**
- * 
+ * This class is used to provide common scrolling services to a number
+ * of control in the toolkit.
  * @since 3.0
  */
-
 public abstract class SharedScrolledComposite extends ScrolledComposite {
 	private static final int H_SCROLL_INCREMENT = 5;
 	private static final int V_SCROLL_INCREMENT = 64;
-	
 	/**
-	 * 
+	 *  Creates the new instance.
+	 * @param parent the parent composite
+	 * @param style the style to use
 	 */
 	public SharedScrolledComposite(Composite parent, int style) {
 		super(parent, style);
@@ -35,15 +35,21 @@ public abstract class SharedScrolledComposite extends ScrolledComposite {
 		});
 		initializeScrollBars();
 	}
-
+	/**
+	 * Sets the foreground of the control and its content.
+	 * 
+	 * @param fg
+	 *            the new foreground color
+	 */
 	public void setForeground(Color fg) {
 		super.setForeground(fg);
 		getContent().setForeground(fg);
 	}
-
 	/**
-	 * Sets the background color of the form. This color will also be used for
-	 * the body.
+	 * Sets the background of the control and its content.
+	 * 
+	 * @param bg
+	 *            the new background color
 	 */
 	public void setBackground(Color bg) {
 		super.setBackground(bg);
@@ -57,20 +63,21 @@ public abstract class SharedScrolledComposite extends ScrolledComposite {
 		super.setFont(font);
 		getContent().setFont(font);
 	}
-	
+	/**
+	 * If content is set, transfers focus to the content.
+	 */
 	public boolean setFocus() {
-		if (getContent()!=null)
+		if (getContent() != null)
 			return getContent().setFocus();
 		else
 			return super.setFocus();
 	}
-
 	/**
-	 * Recomputes the body layout and form scroll bars. The method should be
+	 * Recomputes the body layout and the scroll bars. The method should be
 	 * used when changes somewhere in the form body invalidate the current
 	 * layout and/or scroll bars.
 	 * 
-	 * @param flushCache
+	 * @param flushCache if <code>true</code>, drop the cached data
 	 */
 	public void reflow(boolean flushCache) {
 		Composite c = (Composite) getContent();
@@ -78,11 +85,9 @@ public abstract class SharedScrolledComposite extends ScrolledComposite {
 		if (c == null)
 			return;
 		c.layout(flushCache);
-		Point newSize =
-			c.computeSize(
-				FormUtil.getWidthHint(clientArea.width, c),
-				FormUtil.getHeightHint(clientArea.height, c),
-				flushCache);
+		Point newSize = c.computeSize(FormUtil
+				.getWidthHint(clientArea.width, c), FormUtil.getHeightHint(
+				clientArea.height, c), flushCache);
 		c.setSize(newSize);
 		setMinSize(newSize);
 		FormUtil.updatePageIncrement(this);

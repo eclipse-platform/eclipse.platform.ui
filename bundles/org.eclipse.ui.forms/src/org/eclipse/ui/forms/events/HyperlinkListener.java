@@ -9,27 +9,39 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.forms.events;
-
+/**
+ * Classes that implement this interface will be notified when hyperlinks are
+ * entered, exited and activated.
+ * 
+ * @since 3.0
+ * @see Hyperlink
+ * @see ImageHyperlink
+ * @see FormText
+ */
 public interface HyperlinkListener {
-/**
- * Sent when hyperlink is entered either by mouse
- * entering the link client area, or keyboard focus
- * switching to the hyperlink.
- * @param e an event containing information about the hyperlink
- */
+	/**
+	 * Sent when hyperlink is entered either by mouse entering the link client
+	 * area, or keyboard focus switching to the hyperlink.
+	 * 
+	 * @param e
+	 *            an event containing information about the hyperlink
+	 */
 	void linkEntered(HyperlinkEvent e);
-/**
- * Sent when hyperlink is exited either by mouse
- * exiting the link client area, or keyboard focus
- * switching from the hyperlink.
- * @param e an event containing information about the hyperlink
- */
+	/**
+	 * Sent when hyperlink is exited either by mouse exiting the link client
+	 * area, or keyboard focus switching from the hyperlink.
+	 * 
+	 * @param e
+	 *            an event containing information about the hyperlink
+	 */
 	void linkExited(HyperlinkEvent e);
-/**
- * Sent when hyperlink is avtivated either by mouse
- * click inside the link client area, or by pressing 'Enter'
- * key while hyperlink has keyboard focus.
- * @param e an event containing information about the hyperlink
- */
+	/**
+	 * Sent when hyperlink is activated either by mouse click inside the link
+	 * client area, or by pressing 'Enter' key while hyperlink has keyboard
+	 * focus.
+	 * 
+	 * @param e
+	 *            an event containing information about the hyperlink
+	 */
 	void linkActivated(HyperlinkEvent e);
 }

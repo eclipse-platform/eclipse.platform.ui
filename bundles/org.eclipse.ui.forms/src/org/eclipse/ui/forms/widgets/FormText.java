@@ -26,6 +26,78 @@ import org.eclipse.ui.forms.HyperlinkSettings;
 import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.internal.widgets.*;
 
+/**
+ * This class is a read-only text control that is capable of rendering
+ * wrapped text. Text can be rendered as-is or by parsing the formatting
+ * XML tags. Independently, words that start with http:// can
+ * be converted into hyperlinks on the fly.
+ * <p>
+ * When configured to use formatting XML, the control requires the
+ * root element <code>form</code> to be used. The following tags
+ * can be children of the <code>form</code> element:
+ * </p> 
+ * <ul>
+ * <li><b>p</b> - for defining paragraphs. The following attributes are allowed:
+ * 		<ul>
+ * 		  <li><b>vspace</b> - if set to 'false', no vertical space will be added
+ *        (default is 'true')</li>
+ *      </ul>
+ * </li>
+ * <li><b>li</b> - for defining list items. The following attributes are allowed:
+ *    	<ul>
+ * 		   <li><b>vspace</b> - the same as with the <b>p</b> tag</li>
+ * 		   <li><b>style</b> - could be 'bullet' (default), 'text' and 'image'</li>
+ *     	   <li><b>value</b> - not used for 'bullet'. For text, it is the value of
+ * the text to rendered as a bullet. For image, it is the href of the
+ * image to be rendered as a bullet.</li>
+ * 		   <li><b>indent</b> - the number of pixels to indent the text in the list item</li>
+ * 		   <li><b>bindent</b> - the number of pixels to indent the bullet itself</li>
+ *      </ul>
+ * </li>
+ * </ul>
+ * <p>Text in paragraphs and list items will be wrapped according to the
+ * width of the control. The following tags can appear as children of
+ * either <b>p</b> or <b>li</b> elements:
+ * <ul>
+ * <li><b>img</b> - to render an image. Element accepts attribute 'href'
+ * that is a key to the Image set using 'setImage' method.
+ * </li>
+ * <li><b>a</b> - to render a hyperlink. Element accepts attribute 'href'
+ * that will be provided to the hyperlink listeners via HyperlinkEvent
+ * object. The element also accepts 'nowrap' attribute (default is false).
+ * When set to 'true', the hyperlink will not be wrapped.
+ * </li>
+ * <li><b>b</b> - the enclosed text will use bold font.
+ * </li>
+ * <li><b>span</b> - the enclosed text will have the color and font
+ * specified in the element attributes. Color is provided using 'color'
+ * attribute and is a key to the Color object set by 'setColor' method.
+ * Font is provided using 'font' attribute and is a key to the Font
+ * object set by 'setFont' method.
+ * </li>
+ * </ul>
+ * <p>None of the elements can nest. For example, you cannot have <b>b</b> 
+ * inside a <b>span</b>. This was done to keep everything simple and
+ * transparent.</p>
+ * <p>Care should be taken when using this control. Form text is
+ * not an HTML browser and should not be treated as such. If you
+ * need complex formatting capabilities, use Browser widget. If you
+ * need editing capabilities and font/color styles of text segments
+ * is all you need, use StyleText widget. Finally, if all you need
+ * is to wrap text, use SWT Label widget and create it with SWT.WRAP
+ * style.
+ * <p>
+ * <p>You should be careful not to
+ * ask the control to render large quantities of text. It does not
+ * have advanced support for dirty regions and will repaint fully
+ * each time. Instead, combine the control in a composite with 
+ * other controls and let SWT take care of the dirty regions.
+ * </p>
+ * @since 3.0
+ * @see FormToolkit
+ * @see TableWrapLayout
+ */
+
 
 public class FormText extends Canvas {
 	/**
@@ -148,11 +220,11 @@ public class FormText extends Canvas {
 		}
 	}
 	/**
-	 * Contructs a new rich text widget in the provided parent and using the
+	 * Contructs a new form text widget in the provided parent and using the
 	 * styles.
 	 * 
 	 * @param parent
-	 *            rich text parent control
+	 *            form text parent control
 	 * @param style
 	 *            the widget style
 	 */
@@ -284,7 +356,8 @@ public class FormText extends Canvas {
 	/**
 	 * Sets the text that will be shown in the control while the real content
 	 * is loading. This is significant when content to render is loaded from
-	 * the input stream that created from a remote URL.
+	 * the input stream that was created from a remote URL, and the time
+	 * to load the entire content is nontrivial.
 	 * 
 	 * @param loadingText
 	 *            loading text message
@@ -325,7 +398,7 @@ public class FormText extends Canvas {
 	 * <p>
 	 * For <samp>img</samp> tags, an object of a type <samp>Image</samp>
 	 * must be registered using the key equivalent to the value of the <samp>
-	 * href</samp> attribute.
+	 * href</samp> attribute used in the tag.
 	 * @param key
 	 *            unique key that matches the value of the <samp>href</samp>
 	 *            attribute.
@@ -366,9 +439,9 @@ public class FormText extends Canvas {
 		resourceTable.put("f."+key, font);
 	}
 	/**
-	 * Renders the provided text. Text can be rendered as-is, or by parsing the
-	 * formatting tags. Optionally, untagged text can be converted to
-	 * hyperlinks.
+	 * Sets the provided text. Text can be rendered as-is, or by parsing the
+	 * formatting tags. Optionally, sections of text starting with http://
+	 * will be converted to hyperlinks.
 	 * 
 	 * @param text
 	 *            the text to render
@@ -387,8 +460,9 @@ public class FormText extends Canvas {
 			loading = false;
 	}
 	/**
-	 * Renders the contents of the stream. Optionally, URLs in untagged text
-	 * can be converted into hyperlinks.
+	 * Sets the contents of the stream. Optionally, URLs in untagged text
+	 * can be converted into hyperlinks. The caller is responsible
+	 * for closing the stream.
 	 * 
 	 * @param is
 	 *            stream to render
@@ -438,7 +512,7 @@ public class FormText extends Canvas {
 	
 	/**
 	 * Adds a listener that will handle hyperlink events.
-	 * @param listener
+	 * @param listener the listener to add
 	 */
 	public void addHyperlinkListener(HyperlinkListener listener) {
 		if (listeners == null)
@@ -448,7 +522,7 @@ public class FormText extends Canvas {
 	}
 	/**
 	 * Removes the hyperlink listener.
-	 * @param listener
+	 * @param listener the listener to remove
 	 */
 	public void removeHyperlinkListener(HyperlinkListener listener) {
 		if (listeners == null)
@@ -797,6 +871,11 @@ public class FormText extends Canvas {
 
 	private void handleDrag(MouseEvent e) {
 	}
+	/**
+	 * Overrides the method by fully trusting the layout manager
+	 * (computed width or height may be larger than the 
+	 * provider width or height hints).
+	 */
 	public Point computeSize (int wHint, int hHint, boolean changed) {
 		checkWidget ();
 		Point size;

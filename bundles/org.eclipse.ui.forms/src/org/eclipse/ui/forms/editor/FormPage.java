@@ -87,7 +87,7 @@ public class FormPage extends EditorPart implements IFormPage {
 	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createPartControl(Composite parent) {
-		ScrolledForm form = editor.getToolkit().createForm(parent);
+		ScrolledForm form = editor.getToolkit().createScrolledForm(parent);
 		mform = new ManagedForm(editor.getToolkit(), form);
 		BusyIndicator.showWhile(parent.getDisplay(), new Runnable() {
 			public void run() {

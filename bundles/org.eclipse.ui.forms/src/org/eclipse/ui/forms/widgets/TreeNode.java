@@ -13,20 +13,20 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Composite;
-
 /**
  * A custom selectable control that can be used to control areas that can be
  * expanded or collapsed. The control control can be toggled between selected
  * and deselected state with a mouse or by pressing 'Enter' while the control
  * has focus.
  * <p>
- * The control is rendered as box with a '+' or '-' sign, depending
- * on the expansion state. Focus indication is rendered around
- * the box when the control has keyboard focus.
+ * The control is rendered as box with a '+' or '-' sign, depending on the
+ * expansion state. Focus indication is rendered around the box when the
+ * control has keyboard focus.
+ * 
+ * @see Twistie
+ * @since 3.0
  */
-
 public class TreeNode extends ToggleHyperlink {
-
 	/**
 	 * Creates a control in a provided composite.
 	 * 
@@ -35,22 +35,19 @@ public class TreeNode extends ToggleHyperlink {
 	 * @param style
 	 *            the style
 	 */
-
 	public TreeNode(Composite parent, int style) {
 		super(parent, style);
 		innerWidth = 10;
 		innerHeight = 10;
 	}
-	
 	protected void paint(PaintEvent e) {
 		paintHyperlink(e);
 	}
-
 	protected void paintHyperlink(PaintEvent e) {
 		GC gc = e.gc;
 		Rectangle box = getBoxBounds(gc);
-		gc.setForeground(
-			getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
+		gc.setForeground(getDisplay().getSystemColor(
+				SWT.COLOR_WIDGET_NORMAL_SHADOW));
 		gc.drawRectangle(box);
 		gc.setForeground(getForeground());
 		gc.drawLine(box.x + 2, box.y + 4, box.x + 6, box.y + 4);
@@ -59,13 +56,12 @@ public class TreeNode extends ToggleHyperlink {
 		}
 		if (getSelection()) {
 			gc.setForeground(getForeground());
-			gc.drawFocus(box.x-1, box.y-1, box.width+3, box.height+3);
+			gc.drawFocus(box.x - 1, box.y - 1, box.width + 3, box.height + 3);
 		}
 	}
 	private Rectangle getBoxBounds(GC gc) {
 		int x = 1;
 		int y = 0;
-
 		gc.setFont(getFont());
 		int height = gc.getFontMetrics().getHeight();
 		y = height / 2 - 4;

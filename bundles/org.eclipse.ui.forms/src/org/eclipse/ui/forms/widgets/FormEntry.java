@@ -17,7 +17,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.events.IFormEntryListener;
 
 /**
- *TODO Need to return to this class - not clear how to rework it.
+ *TODO This class is under construction and should not be used yet.
  */
 
 public class FormEntry {

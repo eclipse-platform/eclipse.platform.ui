@@ -56,7 +56,7 @@ public class WidgetTest {
 	}
 
 	private static ScrolledForm createForm1(Composite parent, FormToolkit toolkit) {
-		ScrolledForm form = toolkit.createForm(parent);
+		ScrolledForm form = toolkit.createScrolledForm(parent);
 		form.setText("Wrapped Form");
 		URL bdURL = WidgetTest.class.getResource("form_banner.gif");
 		ImageDescriptor bd = ImageDescriptor.createFromURL(bdURL);
@@ -137,7 +137,7 @@ public class WidgetTest {
 	}
 	
 	private static ScrolledForm createForm2(Composite parent, FormToolkit toolkit) {
-		ScrolledForm form = toolkit.createForm(parent);
+		ScrolledForm form = toolkit.createScrolledForm(parent);
 		form.setText("Jelly Form");
 		URL bdURL = WidgetTest.class.getResource("form_banner.gif");
 		ImageDescriptor bd = ImageDescriptor.createFromURL(bdURL);

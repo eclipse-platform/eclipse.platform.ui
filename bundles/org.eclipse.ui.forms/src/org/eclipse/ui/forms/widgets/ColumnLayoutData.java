@@ -11,8 +11,10 @@
 package org.eclipse.ui.forms.widgets;
 import org.eclipse.swt.SWT;
 /**
- * This class is used to store layout data for the 
- * <code>ColumnLayout</code> class.
+ * This class is used to store layout data for the <code>ColumnLayout</code>
+ * class. You can control width and height hints, as well as horizontal
+ * alignment using instances of this class. As with other layouts, they are not
+ * required to get the default behaviour.
  * 
  * @see ColumnLayout
  * @since 3.0
@@ -20,33 +22,61 @@ import org.eclipse.swt.SWT;
 public class ColumnLayoutData {
 	/**
 	 * Width hint that will be used instead of the computed control width when
-	 * used in conjunction with <code>ColumnLayout</code> class (default is SWT.DEFAULT).
+	 * used in conjunction with <code>ColumnLayout</code> class (default is
+	 * SWT.DEFAULT).
 	 */
 	public int widthHint = SWT.DEFAULT;
 	/**
 	 * Height hint that will be used instead of the computed control height
-	 * when used in conjunction with <code>ColumnLayout</code> class (default is
-	 * SWT.DEFAULT).
+	 * when used in conjunction with <code>ColumnLayout</code> class (default
+	 * is SWT.DEFAULT).
 	 */
 	public int heightHint = SWT.DEFAULT;
-	public static final int LEFT = 1;
-	public static final int CENTER = 2;
-	public static final int RIGHT = 3;
-	public static final int FILL = 4;
-	
-	public int horizontalAlignment = FILL;
-	
 	/**
-	 * Creates the new instance of the class.
+	 * Horizontal alignment constant - control will be aligned to the left.
+	 */
+	public static final int LEFT = 1;
+	/**
+	 * Horizontal alignment constant - control will be aligned to the right.
+	 */
+	public static final int CENTER = 2;
+	/**
+	 * Horizontal alignment constant - control will be centered.
+	 */
+	public static final int RIGHT = 3;
+	/**
+	 * Horizontal alignment constant - control will fill the column.
+	 */
+	public static final int FILL = 4;
+	/**
+	 * Horizontal alignment variable (default is FILL).
+	 */
+	public int horizontalAlignment = FILL;
+	/**
+	 * Convinience constructor for the class.
 	 * 
 	 * @param wHint
-	 *            width hint value
+	 *            width hint for the control
 	 * @param hHint
-	 *            height hint value
+	 *            height hint for the control
 	 */
 	public ColumnLayoutData(int wHint, int hHint) {
 		this.widthHint = wHint;
 		this.heightHint = hHint;
 	}
-	public ColumnLayoutData() {}
+	/**
+	 * Convinience constructor for the class.
+	 * 
+	 * @param wHint
+	 *            width hint for the control
+	 */
+	public ColumnLayoutData(int wHint) {
+		this.widthHint = wHint;
+	}
+	/**
+	 * The default constructor.
+	 *  
+	 */
+	public ColumnLayoutData() {
+	}
 }

@@ -9,14 +9,10 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.forms;
-
 import java.util.*;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
-
 /**
  * Manages colors that will be applied to forms and form widgets. The colors
  * are chosen to make the widgets look correct in the editor area. If a
@@ -26,18 +22,24 @@ import org.eclipse.swt.widgets.Display;
  * @since 3.0
  */
 public class FormColors {
+	/**
+	 * Key for the form title foreground color.
+	 */
 	public static final String TITLE = "org.eclipse.ui.forms.TITLE";
+	/**
+	 * Key for the tree/table border color.
+	 */
 	public static final String BORDER = "org.eclipse.ui.forms.BORDER";
+	/**
+	 * Key for the section separator color.
+	 */
 	public static final String SEPARATOR = "org.eclipse.ui.forms.SEPARATOR";
-
 	protected Map colorRegistry = new HashMap(10);
-
 	protected Color background;
 	protected Color foreground;
 	private boolean shared;
 	protected Display display;
 	protected Color border;
-
 	/**
 	 * Creates form colors using the provided display.
 	 * 
@@ -48,7 +50,6 @@ public class FormColors {
 		this.display = display;
 		initialize();
 	}
-
 	/**
 	 * Returns the display used to create colors.
 	 * 
@@ -70,7 +71,6 @@ public class FormColors {
 		initializeColorTable();
 		updateBorderColor();
 	}
-
 	/**
 	 * Allocates colors for the following keys: BORDER, COMPOSITE_SEPARATOR and
 	 * DEFAULT_HEADER. Subclasses can override to allocate this colors
@@ -81,7 +81,6 @@ public class FormColors {
 		createColor(SEPARATOR, 152, 170, 203);
 		createColor(TITLE, 102, 120, 153);
 	}
-
 	/**
 	 * Creates the color for the specified key using the provided RGB object.
 	 * The color object will be returned and also put into the registry. When
@@ -96,7 +95,6 @@ public class FormColors {
 	public Color createColor(String key, RGB rgb) {
 		return createColor(key, rgb.red, rgb.green, rgb.blue);
 	}
-	
 	/**
 	 * Creates the color for the specified key using the provided RGB values.
 	 * The color object will be returned and also put into the registry. When
@@ -117,7 +115,6 @@ public class FormColors {
 		colorRegistry.put(key, c);
 		return c;
 	}
-
 	/**
 	 * Computes the border color relative to the background. Allocated border
 	 * color is designed to work well with white. Otherwise, stanard widget
@@ -150,7 +147,6 @@ public class FormColors {
 	public void setForeground(Color fg) {
 		this.foreground = fg;
 	}
-
 	/**
 	 * Returns the current background color.
 	 * 
@@ -180,38 +176,33 @@ public class FormColors {
 	 * Tests if the background is white. White background has RGB value
 	 * 255,255,255.
 	 * 
-	 * @return <samp>true</samp> if background is white, <samp>false</samp>
+	 * @return <samp>true </samp> if background is white, <samp>false </samp>
 	 *         otherwise.
 	 */
 	public boolean isWhiteBackground() {
-		return background.getRed() == 255
-			&& background.getGreen() == 255
-			&& background.getBlue() == 255;
+		return background.getRed() == 255 && background.getGreen() == 255
+				&& background.getBlue() == 255;
 	}
-
 	/**
-	 * Returns the color object for the provided key or <samp>null</samp> if
+	 * Returns the color object for the provided key or <samp>null </samp> if
 	 * not in the registry.
 	 * 
 	 * @param key
 	 *            the color key
-	 * @return color object if found, or <samp>null</samp> if not.
+	 * @return color object if found, or <samp>null </samp> if not.
 	 */
 	public Color getColor(String key) {
 		return (Color) colorRegistry.get(key);
 	}
-
 	/**
 	 * Disposes all the colors in the registry.
 	 */
-
 	public void dispose() {
 		Iterator e = colorRegistry.values().iterator();
 		while (e.hasNext())
-			 ((Color) e.next()).dispose();
+			((Color) e.next()).dispose();
 		colorRegistry = null;
 	}
-
 	/**
 	 * Marks the colors shared. This prevents toolkits that share this object
 	 * from disposing it.

@@ -12,7 +12,6 @@ package org.eclipse.ui.forms.widgets;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Composite;
-
 /**
  * A custom selectable control that can be used to control areas that can be
  * expanded or collapsed. The control control can be toggled between selected
@@ -21,12 +20,12 @@ import org.eclipse.swt.widgets.Composite;
  * <p>
  * The control is rendered as a triangle that points to the right in the
  * collapsed and down in the expanded state. Triangle color can be changed.
+ * @see TreeNode
+ * @since 3.0
  */
-
 public class Twistie extends ToggleHyperlink {
-	private static final int[] onPoints = { 0, 2, 8, 2, 4, 6 };
-	private static final int[] offPoints = { 2, -1, 2, 8, 6, 4 };
-
+	private static final int[] onPoints = {0, 2, 8, 2, 4, 6};
+	private static final int[] offPoints = {2, -1, 2, 8, 6, 4};
 	/**
 	 * Creates a control in a provided composite.
 	 * 
@@ -35,20 +34,18 @@ public class Twistie extends ToggleHyperlink {
 	 * @param style
 	 *            the style
 	 */
-
 	public Twistie(Composite parent, int style) {
 		super(parent, style);
 		innerWidth = 9;
 		innerHeight = 9;
 	}
-
 	/*
 	 * @see SelectableControl#paint(GC)
 	 */
 	protected void paintHyperlink(PaintEvent e) {
 		GC gc = e.gc;
-		if (hover && getActiveDecorationColor() != null)
-			gc.setBackground(getActiveDecorationColor());
+		if (hover && geHoverDecorationColor() != null)
+			gc.setBackground(geHoverDecorationColor());
 		else if (getDecorationColor() != null)
 			gc.setBackground(getDecorationColor());
 		else
@@ -59,13 +56,11 @@ public class Twistie extends ToggleHyperlink {
 		int y = (size.y - 9) / 2;
 		if (isExpanded())
 			data = translate(onPoints, x, y);
-
 		else
 			data = translate(offPoints, x, y);
 		gc.fillPolygon(data);
 		gc.setBackground(getBackground());
 	}
-
 	private int[] translate(int[] data, int x, int y) {
 		int[] target = new int[data.length];
 		for (int i = 0; i < data.length; i += 2) {

@@ -18,7 +18,7 @@ import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.internal.widgets.FormsResources;
 /**
  * This composite is capable of expanding or collapsing a single client that is
- * its direct child. The composite renders an expansion toggle afforance
+ * its direct child. The composite renders an expansion toggle affordance
  * (according to the chosen style), and a title that also acts as a hyperlink
  * (can be selected and is traversable). The client is layed out below the
  * title when expanded, or hidden when collapsed.
@@ -59,7 +59,15 @@ public class ExpandableComposite extends Composite {
 	 * if TWISTIE or TREE_NODE style is used.
 	 */
 	public static final int EXPANDED = 1 << 6;
+	/**
+	 * Width of the margin that will be added around the control (default is
+	 * 0).
+	 */
 	public int marginWidth = 0;
+	/**
+	 * Height of the margin that will be added around the control (default is
+	 * 0).
+	 */
 	public int marginHeight = 0;
 	private int GAP = 4;
 	private int VSPACE = 3;
@@ -352,7 +360,7 @@ public class ExpandableComposite extends Composite {
 			toggle.setForeground(fg);
 	}
 	/**
-	 * Sets the color of the toggle affordance.
+	 * Sets the color of the toggle control.
 	 * 
 	 * @param c
 	 *            the color object
@@ -362,15 +370,15 @@ public class ExpandableComposite extends Composite {
 			toggle.setDecorationColor(c);
 	}
 	/**
-	 * Sets the active color of the toggle affordance (when the mouse enters
-	 * the toggle area).
+	 * Sets the active color of the toggle control (when the mouse enters the
+	 * toggle area).
 	 * 
 	 * @param c
 	 *            the active color object
 	 */
 	public void setActiveToggleColor(Color c) {
 		if (toggle != null)
-			toggle.setActiveDecorationColor(c);
+			toggle.setHoverDecorationColor(c);
 	}
 	/**
 	 * Sets the fonts of all the custom controls in the expandable.

@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui.forms.events;
 
+/**
+ *TODO This class is under construction and should not be used yet.
+ */
+
 import org.eclipse.ui.forms.widgets.FormEntry;
 
 public interface IFormEntryListener {

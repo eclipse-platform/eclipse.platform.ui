@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,31 +18,24 @@ import org.eclipse.swt.widgets.Composite;
  * image relative to the text. If no text has been set, only image will be
  * shown. Images for hover and active states can be set in addition to the
  * normal state image.
+ * <p>
+ * When image is taller than the text, additional style can be provided to
+ * control vertical alignment (supported values are SWT.TOP, SWT.BOTTOM and
+ * SWT.CENTER).
+ * 
+ * @since 3.0
  */
 public class ImageHyperlink extends Hyperlink {
 	/**
-	 * Aligns text with the top of the image (value is SWT.TOP)
+	 * Amount of pixels between the image and the text (default is 5).
 	 */
-	public static final int TOP = SWT.TOP;
-	/**
-	 * Aligns text with the bottom of the image (value is SWT.BOTTOM)
-	 */
-	public static final int BOTTOM = SWT.BOTTOM;
-	/**
-	 * Centers text vertically in respect to the image (value is SWT.BOTTOM
-	 * &lt;&lt; 1)
-	 */
-	public static final int MIDDLE = SWT.CENTER;
+	public int textSpacing = 5;
 	private Image image;
 	private Image hoverImage;
 	private Image activeImage;
 	private int state;
 	private static final int HOVER = 1 << 1;
 	private static final int ACTIVE = 1 << 2;
-	/**
-	 * Amount of pixels between the image and the text (default is 5).
-	 */
-	public int textSpacing = 5;
 	/**
 	 * Creates the image hyperlink instance.
 	 * 
@@ -85,9 +78,9 @@ public class ImageHyperlink extends Hyperlink {
 			int slotHeight = clientArea.height - marginHeight - marginHeight;
 			int textY;
 			int textHeight = textSize.y;
-			if ((getStyle() & BOTTOM) != 0) {
+			if ((getStyle() & SWT.BOTTOM) != 0) {
 				textY = marginHeight + slotHeight - textHeight;
-			} else if ((getStyle() & MIDDLE) != 0) {
+			} else if ((getStyle() & SWT.CENTER) != 0) {
 				textY = marginHeight + slotHeight / 2 - textHeight / 2;
 			} else {
 				textY = marginHeight;
@@ -145,40 +138,50 @@ public class ImageHyperlink extends Hyperlink {
 		redraw();
 	}
 	/**
-	 * @return Returns the activeImage.
+	 * Returns active image.
+	 * 
+	 * @return active image or <code>null</code> if not set.
 	 */
 	public Image getActiveImage() {
 		return activeImage;
 	}
 	/**
+	 * Sets the image to show when link is activated.
+	 * 
 	 * @param activeImage
-	 *            The activeImage to set.
+	 *  
 	 */
 	public void setActiveImage(Image activeImage) {
 		this.activeImage = activeImage;
 	}
 	/**
-	 * @return Returns the hoverImage.
+	 * Returns the hover image.
+	 * 
+	 * @return hover image or <code>null</code> if not set.
 	 */
 	public Image getHoverImage() {
 		return hoverImage;
 	}
 	/**
+	 * Sets the image to show when link is hover state (on mouse over).
+	 * 
 	 * @param hoverImage
-	 *            The hoverImage to set.
 	 */
 	public void setHoverImage(Image hoverImage) {
 		this.hoverImage = hoverImage;
 	}
 	/**
-	 * @return Returns the image.
+	 * Returns the image to show in the normal state.
+	 * 
+	 * @return normal image or <code>null</code> if not set.
 	 */
 	public Image getImage() {
 		return image;
 	}
 	/**
+	 * Sets the image to show when link is in the normal state.
+	 * 
 	 * @param image
-	 *            The image to set.
 	 */
 	public void setImage(Image image) {
 		this.image = image;

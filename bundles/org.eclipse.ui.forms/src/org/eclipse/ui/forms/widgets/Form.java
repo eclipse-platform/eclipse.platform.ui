@@ -16,20 +16,32 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.internal.widgets.FormsResources;
 /**
- * FormContent is a custom control that renders a title and
+ * Form is a custom control that renders a title and
  * an optional background image above the body composite.
  * It can be used alone when part of parents that are scrolled.
- * If scrolling is required, use <code>Form</code> instead
- * because it has an instance of FormContent and adds scrolling
+ * If scrolling is required, use <code>ScrolledForm</code> instead
+ * because it has an instance of <code>Form</code> and adds scrolling
  * capability.
  * <p>
+ * Form can have a title if set. If not set, title area will
+ * not be left empty - form body will be resized to fill the entire
+ * form.
+ * <p>
+ * Form can have a background image behind the title text. The image
+ * can be painted as-is, or tiled as many times as needed to fill
+ * the title area.
+ * <p>Form has a custom layout manager that is wrap-enabled. If a form
+ * is placed in a composite whose layout manager implements ILayoutExtension,
+ * the body of the worm will participate in wrapping as long as its
+ * layout manager implements ILayoutExtension as well.
+ * <p>
  * Children of the form should typically be created using FormToolkit to match
- * the appearance and behaviour. When creating children, use a form body as a
+ * the appearance and behaviour. When creating children, use the form body as a
  * parent by calling 'getBody()' on the form instance. Example:
  * 
  * <pre>
  *  FormToolkit toolkit = new FormToolkit(parent.getDisplay());
- *  FormContent formContent = toolkit.createFormContent(parent);
+ *  Form form = toolkit.createForm(parent);
  *  formContent.setText(&quot;Sample form&quot;);
  *  formContent.getBody().setLayout(new GridLayout());
  *  toolkit.createButton(formContent.getBody(), &quot;Checkbox&quot;, SWT.CHECK);

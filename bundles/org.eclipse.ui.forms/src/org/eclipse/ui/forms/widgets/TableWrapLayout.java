@@ -10,18 +10,16 @@
  *******************************************************************************/
 package org.eclipse.ui.forms.widgets;
 import java.util.*;
-import java.util.Vector;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
-
 /**
  * This implementation of the layout algorithm attempts to position controls in
  * the composite using a two-pass autolayout HTML table altorithm recommeded by
- * HTML 4.01 W3C specification. The main differences with GridLayout is that it
- * has two passes and that width and height are not calculated in the same
- * pass.
+ * HTML 4.01 W3C specification (see
+ * http://www.w3.org/TR/html4/appendix/notes.html#h-B.5.2.2). The main
+ * differences with GridLayout is that it has two passes and that width and
+ * height are not calculated in the same pass.
  * <p>
  * The advantage of the algorithm over GridLayout is that it is capable of
  * flowing text controls capable of line wrap. These controls do not have
@@ -37,19 +35,45 @@ import org.eclipse.swt.widgets.*;
  * end-result will be similar to the one provided by GridLayout. The difference
  * will show up for layouts that contain controls whose minimum and maximum
  * widths are not the same.
+ * 
  * @since 3.0
+ * @see TableWrapData
  */
-
 public class TableWrapLayout extends Layout implements ILayoutExtension {
+	/**
+	 * Number of columns to use when positioning children (default is 1).
+	 */
 	public int numColumns = 1;
+	/**
+	 * Left margin variable (default is 5).
+	 */
 	public int leftMargin = 5;
+	/**
+	 * Right margin variable (default is 5).
+	 */
 	public int rightMargin = 5;
+	/**
+	 * Top margin variable (default is 5).
+	 */
 	public int topMargin = 5;
+	/**
+	 * Botom margin variable (default is 5).
+	 */
 	public int bottomMargin = 5;
+	/**
+	 * Horizontal spacing (default is 5).
+	 */
 	public int horizontalSpacing = 5;
+	/**
+	 * Vertical spacing (default is 5).
+	 */
 	public int verticalSpacing = 5;
+	/**
+	 * If set to <code>true</code>, all the columns will have the same
+	 * width. Otherwise, column widths will be computed based on controls in
+	 * them and their layout data (default is <code>false</code>).
+	 */
 	public boolean makeColumnsEqualWidth = false;
-
 	private boolean initialLayout = true;
 	private Vector grid = null;
 	private Hashtable rowspans;
@@ -57,22 +81,20 @@ public class TableWrapLayout extends Layout implements ILayoutExtension {
 	private int widestColumnWidth;
 	private int[] growingColumns;
 	private int[] growingRows;
-	
-	class RowSpan {
+	private class RowSpan {
 		Control child;
 		int row;
 		int column;
 		int height;
 		int totalHeight;
-		
 		public RowSpan(Control child, int column, int row) {
 			this.child = child;
 			this.column = column;
 			this.row = row;
 		}
 		public void update(int currentRow, int rowHeight) {
-			TableWrapData td = (TableWrapData)child.getLayoutData();
-			if (currentRow - row <= td.rowspan -1) {
+			TableWrapData td = (TableWrapData) child.getLayoutData();
+			if (currentRow - row <= td.rowspan - 1) {
 				totalHeight += rowHeight;
 				if (currentRow > row)
 					totalHeight += verticalSpacing;
@@ -85,9 +107,10 @@ public class TableWrapLayout extends Layout implements ILayoutExtension {
 				return 0;
 		}
 	}
-
 	/**
-	 * Implements ILayoutExtension.
+	 * Implements ILayoutExtension. Should not be called directly.
+	 * 
+	 * @see ILayoutExtension
 	 */
 	public int computeMinimumWidth(Composite parent, boolean changed) {
 		changed = true;
@@ -109,7 +132,9 @@ public class TableWrapLayout extends Layout implements ILayoutExtension {
 		return internalGetMinimumWidth(parent, changed);
 	}
 	/**
-	 * Implements ILayoutExtension.
+	 * Implements ILayoutExtension. Should not be called directly.
+	 * 
+	 * @see ILayoutExtension
 	 */
 	public int computeMaximumWidth(Composite parent, boolean changed) {
 		changed = true;
@@ -130,7 +155,6 @@ public class TableWrapLayout extends Layout implements ILayoutExtension {
 		}
 		return internalGetMaximumWidth(parent, changed);
 	}
-
 	/**
 	 * @see Layout#layout(Composite, boolean)
 	 */
@@ -154,11 +178,8 @@ public class TableWrapLayout extends Layout implements ILayoutExtension {
 		resetColumnWidths();
 		int minWidth = internalGetMinimumWidth(parent, changed);
 		int maxWidth = internalGetMaximumWidth(parent, changed);
-
 		int tableWidth = parentWidth;
-
 		int[] columnWidths;
-
 		if (parentWidth <= minWidth) {
 			tableWidth = minWidth;
 			if (makeColumnsEqualWidth) {
@@ -180,7 +201,6 @@ public class TableWrapLayout extends Layout implements ILayoutExtension {
 				int colExtra = extra / growingColumns.length;
 				for (int i = 0; i < numColumns; i++) {
 					columnWidths[i] = maxColumnWidths[i];
-
 					if (isGrowingColumn(i)) {
 						columnWidths[i] += colExtra;
 					}
@@ -196,20 +216,17 @@ public class TableWrapLayout extends Layout implements ILayoutExtension {
 					columnWidths[i] = col;
 				}
 			} else {
-				columnWidths =
-					assignExtraSpace(tableWidth, maxWidth, minWidth);
+				columnWidths = assignExtraSpace(tableWidth, maxWidth, minWidth);
 			}
 		}
 		int y = topMargin;
-		int [] rowHeights = computeRowHeights(children, columnWidths, changed);
-
-		for (int i=0; i<grid.size(); i++) {
+		int[] rowHeights = computeRowHeights(children, columnWidths, changed);
+		for (int i = 0; i < grid.size(); i++) {
 			int rowHeight = rowHeights[i];
 			int x = leftMargin;
 			TableWrapData[] row = (TableWrapData[]) grid.elementAt(i);
 			for (int j = 0; j < numColumns; j++) {
 				TableWrapData td = row[j];
-
 				if (td.isItemData) {
 					Control child = children[td.childIndex];
 					placeControl(child, td, x, y, rowHeights, i);
@@ -221,14 +238,12 @@ public class TableWrapLayout extends Layout implements ILayoutExtension {
 			y += rowHeight + verticalSpacing;
 		}
 	}
-	
-	int [] computeRowHeights(Control [] children, int [] columnWidths, boolean changed) {
-		int [] rowHeights = new int[grid.size()];
-
+	int[] computeRowHeights(Control[] children, int[] columnWidths,
+			boolean changed) {
+		int[] rowHeights = new int[grid.size()];
 		for (int i = 0; i < grid.size(); i++) {
 			TableWrapData[] row = (TableWrapData[]) grid.elementAt(i);
 			rowHeights[i] = 0;
-
 			for (int j = 0; j < numColumns; j++) {
 				TableWrapData td = row[j];
 				if (td.isItemData == false) {
@@ -244,48 +259,46 @@ public class TableWrapLayout extends Layout implements ILayoutExtension {
 				}
 				Point size = computeSize(child, cwidth, changed);
 				td.compWidth = cwidth;
-				
 				if (td.heightHint != SWT.DEFAULT) {
 					size = new Point(size.x, td.heightHint);
 				}
 				td.compSize = size;
-				RowSpan rowspan = (RowSpan)rowspans.get(child);
-				if (rowspan==null) {
+				RowSpan rowspan = (RowSpan) rowspans.get(child);
+				if (rowspan == null) {
 					rowHeights[i] = Math.max(rowHeights[i], size.y);
-				}
-				else
+				} else
 					rowspan.height = size.y;
 			}
 			updateRowSpans(i, rowHeights[i]);
 		}
-		for (Enumeration enum=rowspans.elements(); enum.hasMoreElements();) {
-			RowSpan rowspan = (RowSpan)enum.nextElement();
+		for (Enumeration enum = rowspans.elements(); enum.hasMoreElements();) {
+			RowSpan rowspan = (RowSpan) enum.nextElement();
 			int increase = rowspan.getRequiredHeightIncrease();
-			if (increase==0) continue;
-			TableWrapData td = (TableWrapData)rowspan.child.getLayoutData();
+			if (increase == 0)
+				continue;
+			TableWrapData td = (TableWrapData) rowspan.child.getLayoutData();
 			int ngrowing = 0;
-			int [] affectedRows = new int [grid.size()];
-
-			for (int i=0; i<growingRows.length; i++) {
+			int[] affectedRows = new int[grid.size()];
+			for (int i = 0; i < growingRows.length; i++) {
 				int growingRow = growingRows[i];
-				if (growingRow>=rowspan.row && growingRow <rowspan.row+td.rowspan) {
+				if (growingRow >= rowspan.row
+						&& growingRow < rowspan.row + td.rowspan) {
 					affectedRows[ngrowing++] = growingRow;
 				}
 			}
-			if (ngrowing==0) {
+			if (ngrowing == 0) {
 				ngrowing = 1;
-				affectedRows[0] = rowspan.row+td.rowspan-1;
+				affectedRows[0] = rowspan.row + td.rowspan - 1;
 			}
 			increase += increase % ngrowing;
 			int perRowIncrease = increase / ngrowing;
-			for (int i=0; i<ngrowing; i++) {
+			for (int i = 0; i < ngrowing; i++) {
 				int growingRow = affectedRows[i];
 				rowHeights[growingRow] += perRowIncrease;
 			}
 		}
 		return rowHeights;
 	}
-
 	boolean isGrowingColumn(int col) {
 		if (growingColumns == null)
 			return false;
@@ -295,16 +308,12 @@ public class TableWrapLayout extends Layout implements ILayoutExtension {
 		}
 		return false;
 	}
-
 	int[] assignExtraSpace(int tableWidth, int maxWidth, int minWidth) {
-		int fixedPart =
-			leftMargin + rightMargin + (numColumns - 1) * horizontalSpacing;
+		int fixedPart = leftMargin + rightMargin + (numColumns - 1)
+				* horizontalSpacing;
 		int D = maxWidth - minWidth;
-
 		int W = tableWidth - fixedPart - minWidth;
-
 		int widths[] = new int[numColumns];
-
 		int rem = 0;
 		for (int i = 0; i < numColumns; i++) {
 			int cmin = minColumnWidths[i];
@@ -320,7 +329,6 @@ public class TableWrapLayout extends Layout implements ILayoutExtension {
 		}
 		return widths;
 	}
-
 	Point computeSize(Control child, int width, boolean changed) {
 		int widthArg = width;
 		if (!isWrap(child))
@@ -328,31 +336,23 @@ public class TableWrapLayout extends Layout implements ILayoutExtension {
 		Point size = child.computeSize(widthArg, SWT.DEFAULT, changed);
 		return size;
 	}
-
-	void placeControl(
-		Control control,
-		TableWrapData td,
-		int x,
-		int y,
-		int [] rowHeights,
-		int row) {
+	void placeControl(Control control, TableWrapData td, int x, int y,
+			int[] rowHeights, int row) {
 		int xloc = x + td.indent;
 		int yloc = y;
 		int height = td.compSize.y;
 		int colWidth = td.compWidth;
 		int width = Math.min(td.compSize.x, colWidth);
-		
 		int slotHeight = rowHeights[row];
-		RowSpan rowspan = (RowSpan)rowspans.get(control);
-		if (rowspan!=null) {
+		RowSpan rowspan = (RowSpan) rowspans.get(control);
+		if (rowspan != null) {
 			slotHeight = 0;
-			for (int i=row; i<row+td.rowspan; i++) {
-				if (i>row)
+			for (int i = row; i < row + td.rowspan; i++) {
+				if (i > row)
 					slotHeight += verticalSpacing;
 				slotHeight += rowHeights[i];
 			}
 		}
-
 		// align horizontally
 		if (td.align == TableWrapData.CENTER) {
 			xloc = x + colWidth / 2 - width / 2;
@@ -371,7 +371,6 @@ public class TableWrapLayout extends Layout implements ILayoutExtension {
 		}
 		control.setBounds(xloc, yloc, width, height);
 	}
-
 	void createGrid(Composite composite) {
 		int row, column, rowFill, columnFill;
 		Control[] children;
@@ -383,12 +382,10 @@ public class TableWrapLayout extends Layout implements ILayoutExtension {
 		children = composite.getChildren();
 		if (children.length == 0)
 			return;
-
 		// 
 		grid.addElement(createEmptyRow());
 		row = 0;
 		column = 0;
-
 		// Loop through the children and place their associated layout specs in
 		// the
 		// grid. Placement occurs left to right, top to bottom (i.e., by row).
@@ -414,10 +411,9 @@ public class TableWrapLayout extends Layout implements ILayoutExtension {
 				row = row + 1;
 				column = 0;
 			}
-
 			// The vertical span for the item will be at least 1. If it is > 1,
 			// add other rows to the grid.
-			if (spec.rowspan>1) {
+			if (spec.rowspan > 1) {
 				rowspans.put(child, new RowSpan(child, column, row));
 			}
 			for (int j = 2; j <= spec.rowspan; j++) {
@@ -425,21 +421,18 @@ public class TableWrapLayout extends Layout implements ILayoutExtension {
 					grid.addElement(createEmptyRow());
 				}
 			}
-
 			// Store the layout spec. Also cache the childIndex. NOTE: That we
 			// assume the children of a
 			// composite are maintained in the order in which they are created
 			// and added to the composite.
-			 ((TableWrapData[]) grid.elementAt(row))[column] = spec;
+			((TableWrapData[]) grid.elementAt(row))[column] = spec;
 			spec.childIndex = i;
-
 			if (spec.grabHorizontal) {
 				updateGrowingColumns(growingCols, spec, column);
 			}
 			if (spec.grabVertical) {
 				updateGrowingRows(growingRows, spec, row);
 			}
-
 			// Put spacers in the grid to account for the item's vertical and
 			// horizontal
 			// span.
@@ -449,21 +442,18 @@ public class TableWrapLayout extends Layout implements ILayoutExtension {
 				for (int c = 0; c < spec.colspan; c++) {
 					spacerSpec = new TableWrapData();
 					spacerSpec.isItemData = false;
-					((TableWrapData[]) grid.elementAt(row + r))[column + c] =
-						spacerSpec;
+					((TableWrapData[]) grid.elementAt(row + r))[column + c] = spacerSpec;
 				}
 			}
 			for (int c = 1; c <= columnFill; c++) {
 				for (int r = 0; r < spec.rowspan; r++) {
 					spacerSpec = new TableWrapData();
 					spacerSpec.isItemData = false;
-					((TableWrapData[]) grid.elementAt(row + r))[column + c] =
-						spacerSpec;
+					((TableWrapData[]) grid.elementAt(row + r))[column + c] = spacerSpec;
 				}
 			}
 			column = column + spec.colspan - 1;
 		}
-
 		// Fill out empty grid cells with spacers.
 		for (int k = column + 1; k < numColumns; k++) {
 			spacerSpec = new TableWrapData();
@@ -484,11 +474,8 @@ public class TableWrapLayout extends Layout implements ILayoutExtension {
 			this.growingRows[i] = ((Integer) growingRows.get(i)).intValue();
 		}
 	}
-
-	private void updateGrowingColumns(
-		Vector growingColumns,
-		TableWrapData spec,
-		int column) {
+	private void updateGrowingColumns(Vector growingColumns,
+			TableWrapData spec, int column) {
 		int affectedColumn = column + spec.colspan - 1;
 		for (int i = 0; i < growingColumns.size(); i++) {
 			Integer col = (Integer) growingColumns.get(i);
@@ -497,35 +484,27 @@ public class TableWrapLayout extends Layout implements ILayoutExtension {
 		}
 		growingColumns.add(new Integer(affectedColumn));
 	}
-	
-	private void updateGrowingRows(
-			Vector growingRows,
-			TableWrapData spec,
+	private void updateGrowingRows(Vector growingRows, TableWrapData spec,
 			int row) {
-			int affectedRow = row + spec.rowspan - 1;
-			for (int i = 0; i < growingRows.size(); i++) {
-				Integer irow = (Integer) growingRows.get(i);
-				if (irow.intValue() == affectedRow)
-					return;
-			}
-			growingRows.add(new Integer(affectedRow));
+		int affectedRow = row + spec.rowspan - 1;
+		for (int i = 0; i < growingRows.size(); i++) {
+			Integer irow = (Integer) growingRows.get(i);
+			if (irow.intValue() == affectedRow)
+				return;
 		}
-
+		growingRows.add(new Integer(affectedRow));
+	}
 	private TableWrapData[] createEmptyRow() {
 		TableWrapData[] row = new TableWrapData[numColumns];
 		for (int i = 0; i < numColumns; i++)
 			row[i] = null;
 		return row;
 	}
-
 	/**
 	 * @see Layout#computeSize(Composite, int, int, boolean)
 	 */
-	protected Point computeSize(
-		Composite parent,
-		int wHint,
-		int hHint,
-		boolean changed) {
+	protected Point computeSize(Composite parent, int wHint, int hHint,
+			boolean changed) {
 		Control[] children = parent.getChildren();
 		if (children.length == 0) {
 			return new Point(0, 0);
@@ -545,11 +524,8 @@ public class TableWrapLayout extends Layout implements ILayoutExtension {
 		resetColumnWidths();
 		int minWidth = internalGetMinimumWidth(parent, changed);
 		int maxWidth = internalGetMaximumWidth(parent, changed);
-
 		int tableWidth = parentWidth;
-
 		int[] columnWidths;
-
 		if (parentWidth <= minWidth) {
 			tableWidth = minWidth;
 			if (makeColumnsEqualWidth) {
@@ -582,8 +558,7 @@ public class TableWrapLayout extends Layout implements ILayoutExtension {
 					columnWidths[i] = col;
 				}
 			} else {
-				columnWidths =
-					assignExtraSpace(tableWidth, maxWidth, minWidth);
+				columnWidths = assignExtraSpace(tableWidth, maxWidth, minWidth);
 			}
 		}
 		int totalHeight = 0;
@@ -611,18 +586,18 @@ public class TableWrapLayout extends Layout implements ILayoutExtension {
 					Point size = computeSize(child, cwidth, changed);
 					cy = size.y;
 				}
-				RowSpan rowspan = (RowSpan)rowspans.get(child);
-				if (rowspan!=null) {
+				RowSpan rowspan = (RowSpan) rowspans.get(child);
+				if (rowspan != null) {
 					// don't take the height of this child into acount
 					// because it spans multiple rows
 					rowspan.height = cy;
-				}
-				else {
+				} else {
 					rowHeight = Math.max(rowHeight, cy);
 				}
 			}
 			updateRowSpans(i, rowHeight);
-			if (i>0) innerHeight += verticalSpacing;
+			if (i > 0)
+				innerHeight += verticalSpacing;
 			innerHeight += rowHeight;
 		}
 		if (!rowspans.isEmpty())
@@ -630,33 +605,30 @@ public class TableWrapLayout extends Layout implements ILayoutExtension {
 		totalHeight = topMargin + innerHeight + bottomMargin;
 		return new Point(tableWidth, totalHeight);
 	}
-	
 	private void updateRowSpans(int row, int rowHeight) {
-		if (rowspans==null || rowspans.size()==0) return;
-		for (Enumeration enum=rowspans.elements(); enum.hasMoreElements();) {
-			RowSpan rowspan = (RowSpan)enum.nextElement();
+		if (rowspans == null || rowspans.size() == 0)
+			return;
+		for (Enumeration enum = rowspans.elements(); enum.hasMoreElements();) {
+			RowSpan rowspan = (RowSpan) enum.nextElement();
 			rowspan.update(row, rowHeight);
 		}
 	}
 	private int compensateForRowSpans(int totalHeight) {
-		for (Enumeration enum=rowspans.elements(); enum.hasMoreElements();) {
-			RowSpan rowspan = (RowSpan)enum.nextElement();
+		for (Enumeration enum = rowspans.elements(); enum.hasMoreElements();) {
+			RowSpan rowspan = (RowSpan) enum.nextElement();
 			totalHeight += rowspan.getRequiredHeightIncrease();
 		}
 		return totalHeight;
 	}
-
 	int internalGetMinimumWidth(Composite parent, boolean changed) {
 		if (changed)
 			calculateMinimumColumnWidths(parent, true);
 		int minimumWidth = 0;
-
 		widestColumnWidth = 0;
-
 		if (makeColumnsEqualWidth) {
 			for (int i = 0; i < numColumns; i++) {
-				widestColumnWidth =
-					Math.max(widestColumnWidth, minColumnWidths[i]);
+				widestColumnWidth = Math.max(widestColumnWidth,
+						minColumnWidths[i]);
 			}
 		}
 		for (int i = 0; i < numColumns; i++) {
@@ -671,7 +643,6 @@ public class TableWrapLayout extends Layout implements ILayoutExtension {
 		minimumWidth += leftMargin + rightMargin;
 		return minimumWidth;
 	}
-
 	int internalGetMaximumWidth(Composite parent, boolean changed) {
 		if (changed)
 			calculateMaximumColumnWidths(parent, true);
@@ -685,7 +656,6 @@ public class TableWrapLayout extends Layout implements ILayoutExtension {
 		maximumWidth += leftMargin + rightMargin;
 		return maximumWidth;
 	}
-
 	void resetColumnWidths() {
 		if (minColumnWidths == null)
 			minColumnWidths = new int[numColumns];
@@ -698,10 +668,8 @@ public class TableWrapLayout extends Layout implements ILayoutExtension {
 			maxColumnWidths[i] = 0;
 		}
 	}
-
 	void calculateMinimumColumnWidths(Composite parent, boolean changed) {
 		Control[] children = parent.getChildren();
-
 		for (int i = 0; i < grid.size(); i++) {
 			TableWrapData[] row = (TableWrapData[]) grid.elementAt(i);
 			for (int j = 0; j < numColumns; j++) {
@@ -714,55 +682,68 @@ public class TableWrapLayout extends Layout implements ILayoutExtension {
 					Composite cc = (Composite) child;
 					Layout l = cc.getLayout();
 					if (l instanceof ILayoutExtension) {
-						minWidth =
-							((ILayoutExtension) l).computeMinimumWidth(
-								cc,
-								changed);
+						minWidth = ((ILayoutExtension) l).computeMinimumWidth(
+								cc, changed);
 					}
 				}
 				if (minWidth == -1) {
-					int minWHint = isWrap(child)?0:SWT.DEFAULT;
-					Point size =
-						child.computeSize(
-							minWHint,
-							SWT.DEFAULT,
+					int minWHint = isWrap(child) ? 0 : SWT.DEFAULT;
+					Point size = child.computeSize(minWHint, SWT.DEFAULT,
 							changed);
 					minWidth = size.x;
 				}
 				minWidth += td.indent;
-				if (td.colspan==1)
+				if (td.colspan == 1)
 					minColumnWidths[j] = Math.max(minColumnWidths[j], minWidth);
 				else {
 					// check if the current minimum width is enough to
 					// support the control; if not, add the delta to
 					// the last column
 					int current = 0;
-					for (int k=j; k<j+td.colspan; k++) {
-						if (k>j) current+= horizontalSpacing;
+					for (int k = j; k < j + td.colspan; k++) {
+						if (k > j)
+							current += horizontalSpacing;
 						current += minColumnWidths[k];
 					}
 					if (minWidth <= current) {
 						// we are ok - nothing to do here
-					}
-					else {
-						// add the delta to the last column
-						minColumnWidths[j+td.colspan-1] += minWidth-current;
+					} else {
+						int ndiv = 0;
+						if (growingColumns != null) {
+							for (int k = j; k < j + td.colspan; k++) {
+								if (isGrowingColumn(k)) {
+									ndiv++;
+								}
+							}
+						}
+						if (ndiv == 0) {
+							// add the delta to the last column
+							minColumnWidths[j + td.colspan - 1] += minWidth
+									- current;
+						} else {
+							// distribute the delta to the growing
+							// columns
+							int percolumn = (current - td.colspan) / ndiv;
+							if ((current - td.colspan) % ndiv > 0)
+								percolumn++;
+							for (int k = j; k < j + td.colspan; k++) {
+								if (isGrowingColumn(k))
+									minColumnWidths[k] += percolumn;
+							}
+						}
 					}
 				}
 			}
 		}
 	}
-
 	boolean isWrap(Control control) {
 		if (control instanceof Composite
-			&& ((Composite) control).getLayout() instanceof ILayoutExtension)
+				&& ((Composite) control).getLayout() instanceof ILayoutExtension)
 			return true;
 		return (control.getStyle() & SWT.WRAP) != 0;
 	}
-
 	void calculateMaximumColumnWidths(Composite parent, boolean changed) {
 		Control[] children = parent.getChildren();
-
 		for (int i = 0; i < numColumns; i++) {
 			maxColumnWidths[i] = 0;
 		}
@@ -778,37 +759,63 @@ public class TableWrapLayout extends Layout implements ILayoutExtension {
 					Composite cc = (Composite) child;
 					Layout l = cc.getLayout();
 					if (l instanceof ILayoutExtension) {
-						maxWidth =
-							((ILayoutExtension) l).computeMaximumWidth(
-								cc,
-								changed);
+						maxWidth = ((ILayoutExtension) l).computeMaximumWidth(
+								cc, changed);
 					}
-				}
-				else if (td.maxWidth!=SWT.DEFAULT)
+				} else if (td.maxWidth != SWT.DEFAULT)
 					maxWidth = td.maxWidth;
 				if (maxWidth == SWT.DEFAULT) {
-					Point size =
-						child.computeSize(SWT.DEFAULT, SWT.DEFAULT, changed);
+					Point size = child.computeSize(SWT.DEFAULT, SWT.DEFAULT,
+							changed);
 					maxWidth = size.x;
 				}
 				maxWidth += td.indent;
 				if (td.colspan == 1)
 					maxColumnWidths[j] = Math.max(maxColumnWidths[j], maxWidth);
 				else {
-					// grow the last column
-					int last = j + td.colspan - 1;
-					int rem = 0;
-					for (int k = j; k < j + td.colspan - 1; k++) {
-						rem += maxColumnWidths[k];
+					// check if the current maximum width is enough to
+					// support the control; if not, add the delta to
+					// the last column
+					int current = 0;
+					for (int k = j; k < j + td.colspan; k++) {
+						if (k > j)
+							current += horizontalSpacing;
+						current += maxColumnWidths[k];
 					}
-					int reduced = maxWidth - rem;
-					maxColumnWidths[last] =
-						Math.max(maxColumnWidths[last], reduced);
+					if (maxWidth <= current) {
+						// we are ok - nothing to do here
+					} else {
+						int ndiv = 0;
+						if (growingColumns != null) {
+							for (int k = j; k < j + td.colspan; k++) {
+								if (isGrowingColumn(k)) {
+									ndiv++;
+								}
+							}
+						}
+						if (ndiv == 0) {
+							// add the delta to the last column
+							maxColumnWidths[j + td.colspan - 1] += maxWidth
+									- current;
+						} else {
+							// distribute the delta to the growing
+							// columns
+							int percolumn = (current - td.colspan) / ndiv;
+							if ((current - td.colspan) % ndiv > 0)
+								percolumn++;
+							// divide the distribution per row
+							// if the control will span multiple rows
+							percolumn /= td.rowspan;
+							for (int k = j; k < j + td.colspan; k++) {
+								if (isGrowingColumn(k))
+									maxColumnWidths[k] += percolumn;
+							}
+						}
+					}
 				}
 			}
 		}
 	}
-
 	private void initializeIfNeeded(Composite parent, boolean changed) {
 		if (changed)
 			initialLayout = true;
@@ -817,7 +824,6 @@ public class TableWrapLayout extends Layout implements ILayoutExtension {
 			initialLayout = false;
 		}
 	}
-
 	void initializeLayoutData(Composite composite) {
 		Control[] children = composite.getChildren();
 		for (int i = 0; i < children.length; i++) {

@@ -32,7 +32,7 @@ public abstract class FormWizardPage extends WizardPage {
  * are expected to implement <code>createFormContents(Composite)</code> instead.
  */
 	public final void createControl(Composite parent) {
-		ScrolledForm form = toolkit.createForm(parent);
+		ScrolledForm form = toolkit.createScrolledForm(parent);
 		form.setExpandHorizontal(true);
 		form.setExpandVertical(true);
 		managedForm = new ManagedForm(toolkit, form);

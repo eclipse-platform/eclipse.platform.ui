@@ -14,18 +14,17 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 /**
- * Form is a control that is capable of scrolling an instance of
- * the FormContent class. It should be created in a parent that 
- * will allow it to use all the available area (for example, a shell, 
- * a view or an editor).
+ * ScrolledForm is a control that is capable of scrolling an instance of the
+ * Form class. It should be created in a parent that will allow it to use all
+ * the available area (for example, a shell, a view or an editor).
  * <p>
  * Children of the form should typically be created using FormToolkit to match
  * the appearance and behaviour. When creating children, use a form body as a
  * parent by calling 'getBody()' on the form instance. Example:
  * 
  * <pre>
- *  Form form = new Form(parent);
  *  FormToolkit toolkit = new FormToolkit(parent.getDisplay());
+ *  ScrolledForm form = toolkit.createScrolledForm(parent);
  *  form.setText(&quot;Sample form&quot;);
  *  form.getBody().setLayout(new GridLayout());
  *  toolkit.createButton(form.getBody(), &quot;Checkbox&quot;, SWT.CHECK);
@@ -39,7 +38,6 @@ import org.eclipse.swt.widgets.*;
  */
 public class ScrolledForm extends SharedScrolledComposite {
 	private Form content;
-
 	public ScrolledForm(Composite parent) {
 		this(parent, SWT.V_SCROLL | SWT.H_SCROLL);
 	}
@@ -154,5 +152,13 @@ public class ScrolledForm extends SharedScrolledComposite {
 	 */
 	public Composite getBody() {
 		return content.getBody();
+	}
+	/**
+	 * Returns the instance of the form owned by the scrolled form.
+	 * 
+	 * @return the form instance
+	 */
+	public Form getForm() {
+		return content;
 	}
 }

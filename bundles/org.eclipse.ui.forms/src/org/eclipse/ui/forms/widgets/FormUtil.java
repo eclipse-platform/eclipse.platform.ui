@@ -19,7 +19,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 
 /**
- * 
+ * TODO This class is under construction and will probably move to internal
+ * (do not use).
  */
 public class FormUtil {
 	static final int H_SCROLL_INCREMENT = 5;

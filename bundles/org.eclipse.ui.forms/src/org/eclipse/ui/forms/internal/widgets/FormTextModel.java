@@ -15,7 +15,6 @@ import java.util.Vector;
 
 import javax.xml.parsers.*;
 
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.forms.HyperlinkSettings;
 import org.w3c.dom.*;
@@ -128,6 +127,9 @@ public class FormTextModel {
 		NamedNodeMap atts = paragraph.getAttributes();
 		Node addSpaceAtt = atts.getNamedItem("addVerticalSpace");
 		boolean addSpace = true;
+		
+		if (addSpaceAtt==null)
+			addSpaceAtt = atts.getNamedItem("vspace");
 
 		if (addSpaceAtt != null) {
 			String value = addSpaceAtt.getNodeValue();
