@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize;
 
-import javax.swing.event.HyperlinkEvent;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -22,14 +20,21 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.team.core.ITeamStatus;
-import org.eclipse.team.core.synchronize.*;
-import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.core.synchronize.ISyncInfoSetChangeEvent;
+import org.eclipse.team.core.synchronize.ISyncInfoSetChangeListener;
+import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.core.synchronize.SyncInfoSet;
+import org.eclipse.team.core.synchronize.SyncInfoTree;
+import org.eclipse.team.internal.ui.Policy;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipant;
 import org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipantPage;
 import org.eclipse.team.ui.synchronize.viewers.ISynchronizeModelChangeListener;
 import org.eclipse.team.ui.synchronize.viewers.SynchronizeModelElement;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.eclipse.ui.part.PageBook;
 
