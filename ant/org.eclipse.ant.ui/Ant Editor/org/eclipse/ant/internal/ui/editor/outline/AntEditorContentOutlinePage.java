@@ -10,7 +10,7 @@
  * Contributors:
  *     GEBIT Gesellschaft fuer EDV-Beratung und Informatik-Technologien mbH - initial API and implementation
  * 	   IBM Corporation - bug fixes
- *     John-Mason P. Shackelford (john-mason.shackelford@pearson.com) - bug 49380
+ *     John-Mason P. Shackelford (john-mason.shackelford@pearson.com) - bug 49380, bug 34548
  *******************************************************************************/
 
 package org.eclipse.ant.internal.ui.editor.outline;
@@ -57,6 +57,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.IShowInSource;
@@ -72,6 +73,8 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 
 	private Menu menu;
 	private AntOpenWithMenu openWithMenu;
+	private AntRunTargetAction runTargetImmediately; 
+	private AntRunTargetAction runAnt;
 	
 	private IDocumentModelListener fListener;
 	private AntModel fModel;
@@ -450,6 +453,13 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 				firePostSelectionChanged(event.getSelection());
 			}
 		});
+		
+		IEditorPart activeEditor= getSite().getPage().getActiveEditor();
+		runTargetImmediately = new AntRunTargetAction(activeEditor, AntRunTargetAction.MODE_IMMEDIATE_EXECUTE);
+		runAnt = new AntRunTargetAction(activeEditor,AntRunTargetAction.MODE_DISPLAY_DIALOG);
+		
+		addPostSelectionChangedListener(runTargetImmediately);
+		addPostSelectionChangedListener(runAnt);
 	}
 	
 	private void setViewerInput(Object newInput) {
@@ -533,6 +543,9 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		if (shouldAddOpenWithMenu()) {
 			addOpenWithMenu(menuManager);
 		}
+		if (shouldAddRunTargetMenu()) {
+			addRunTargetMenu(menuManager);
+		}
 		menuManager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
 	
@@ -550,6 +563,28 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 				menuManager.appendToGroup("group.open", submenu); //$NON-NLS-1$
 			}
 		}
+	}
+	
+	private void addRunTargetMenu(IMenuManager menuManager) {
+		//menuManager.add(this.runTargetImmediately);
+		//menuManager.add(this.runAnt);                   
+	}
+	
+	private boolean shouldAddRunTargetMenu() {
+		ISelection iselection= getSelection();
+		if (iselection instanceof IStructuredSelection) {
+			IStructuredSelection selection= (IStructuredSelection)iselection;
+			if (selection.size() == 1) {
+				Object selected= selection.getFirstElement();
+				if (selected instanceof XmlElement) {
+					XmlElement element= (XmlElement)selected;
+					if ("target".equalsIgnoreCase( element.getName())) { //$NON-NLS-1$
+						return true;                        
+					}	
+				}
+			}
+		}
+		return false;
 	}
 
 	private String getElementPath(XmlElement element) {
