@@ -79,6 +79,16 @@ public class AntDefiningTaskNode extends AntTaskNode {
 		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
 		URL[] antClasspath= prefs.getURLs();
 		
+		setJavaClassPath(antClasspath);
+	}
+	
+	/*
+	 * Sets the Java class path in org.apache.tools.ant.types.Path
+	 * so that the classloaders defined by these "definer" tasks will have the 
+	 * correct classpath.
+	 */
+	public static void setJavaClassPath(URL[] antClasspath) {
+		
 		StringBuffer buff= new StringBuffer();
 		File file= null;
 		for (int i = 0; i < antClasspath.length; i++) {
