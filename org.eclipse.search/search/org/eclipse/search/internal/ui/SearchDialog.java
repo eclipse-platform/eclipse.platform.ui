@@ -15,26 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.operation.IRunnableContext;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
-import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.ICheckStateListener;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.window.Window;
-import org.eclipse.search.internal.ui.util.ExtendedDialogWindow;
-import org.eclipse.search.internal.ui.util.ListContentProvider;
-import org.eclipse.search.internal.ui.util.SWTUtil;
-import org.eclipse.search.ui.IReplacePage;
-import org.eclipse.search.ui.ISearchPage;
-import org.eclipse.search.ui.ISearchPageContainer;
-import org.eclipse.search.ui.ISearchPageScoreComputer;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.DisposeEvent;
@@ -57,11 +38,35 @@ import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
+
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.operation.IRunnableContext;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
+import org.eclipse.jface.viewers.CheckboxTableViewer;
+import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.window.Window;
+
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
+
+import org.eclipse.search.ui.IReplacePage;
+import org.eclipse.search.ui.ISearchPage;
+import org.eclipse.search.ui.ISearchPageContainer;
+import org.eclipse.search.ui.ISearchPageScoreComputer;
+
+import org.eclipse.search.internal.ui.util.ExtendedDialogWindow;
+import org.eclipse.search.internal.ui.util.ListContentProvider;
+import org.eclipse.search.internal.ui.util.SWTUtil;
 
 class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer {
 
@@ -341,7 +346,6 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 		Control result= super.createButtonBar(composite);
 		getButton(SEARCH_ID).setEnabled(fDescriptors.size() > 0);
 		applyDialogFont(composite);
-
 		return result;
 	}
 
@@ -411,7 +415,6 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 			
 			Control newControl= getControl(page, (Composite)event.widget, item.getParent().getSelectionIndex());
 			item.setControl(newControl);
-			
 		}
 		if (item.getData() instanceof ISearchPage) {
 			fCurrentPage= (ISearchPage)item.getData();
@@ -525,38 +528,37 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 		Control control= page.getControl();
 		if (control != null)
 			return control;
-		// Page wrapper
-		Composite pageWrapper= new Composite(parent, SWT.NONE);
-		GridLayout layout= new GridLayout();
-		layout.marginWidth= 0;
-		layout.marginHeight= 0;
-		pageWrapper.setLayout(layout);
-		
+			// Page wrapper
+			Composite pageWrapper= new Composite(parent, SWT.NONE);
+			GridLayout layout= new GridLayout();
+			layout.marginWidth= 0;
+			layout.marginHeight= 0;
+			pageWrapper.setLayout(layout);
+			
 		Dialog.applyDialogFont(pageWrapper);
-		// The page itself
-		page.createControl(pageWrapper);
-		
-		
-		// Search scope
-		SearchPageDescriptor descriptor= getDescriptorAt(index);
-		boolean showScope= descriptor.showScopeSection();
-		if (showScope) {
-			Composite c= new Composite(pageWrapper, SWT.NONE);
-			layout= new GridLayout();
-			c.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			c.setLayout(layout);
-			fScopeParts[index]= new ScopePart(this, descriptor.canSearchInProjects());
-			Control part= fScopeParts[index].createPart(c);
-			applyDialogFont(part);
-			fScopeParts[index].setVisible(true);
-		}
+			// The page itself
+			page.createControl(pageWrapper);
+
+			// Search scope
+			SearchPageDescriptor descriptor= getDescriptorAt(index);
+			boolean showScope= descriptor.showScopeSection();
+			if (showScope) {
+				Composite c= new Composite(pageWrapper, SWT.NONE);
+				layout= new GridLayout();
+				c.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+				c.setLayout(layout);
+				fScopeParts[index]= new ScopePart(this, descriptor.canSearchInProjects());
+				Control part= fScopeParts[index].createPart(c);
+				applyDialogFont(part);
+				fScopeParts[index].setVisible(true);
+			}
 		return pageWrapper;
-	}
+		}
 	
 	private void resizeDialogIfNeeded(Point oldSize, Point newSize) {
 		if (oldSize == null || newSize == null)
 			return;
-		Shell shell= getShell();
+			Shell shell= getShell();
 		Point shellSize= shell.getSize();
 		if (mustResize(oldSize, newSize)) {
 			if (newSize.x > oldSize.x)
@@ -565,8 +567,8 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 				shellSize.y+= (newSize.y-oldSize.y);
 			shell.setSize(shellSize);
 					shell.layout(true);
-					}
-				}
+		}
+	}
 	
 	private boolean mustResize(Point currentSize, Point newSize) {
 		return currentSize.x < newSize.x || currentSize.y < newSize.y;

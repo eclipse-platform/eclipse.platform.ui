@@ -28,31 +28,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.DialogPage;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IRunnableContext;
-import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.search.internal.core.text.TextSearchScope;
-import org.eclipse.search.internal.ui.ISearchHelpContextIds;
-import org.eclipse.search.internal.ui.ScopePart;
-import org.eclipse.search.internal.ui.SearchMessages;
-import org.eclipse.search.internal.ui.SearchPlugin;
-import org.eclipse.search.internal.ui.SearchResultView;
-import org.eclipse.search.internal.ui.util.ExceptionHandler;
-import org.eclipse.search.internal.ui.util.FileTypeEditor;
-import org.eclipse.search.internal.ui.util.RowLayouter;
-import org.eclipse.search.internal.ui.util.SWTUtil;
-import org.eclipse.search.ui.IReplacePage;
-import org.eclipse.search.ui.ISearchPage;
-import org.eclipse.search.ui.ISearchPageContainer;
-import org.eclipse.search.ui.ISearchResultViewEntry;
-import org.eclipse.search.ui.SearchUI;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -67,6 +43,19 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.DialogPage;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableContext;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+
+import org.eclipse.jface.text.ITextSelection;
+
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
@@ -74,6 +63,29 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.IWorkbenchAdapter;
+
+import org.eclipse.search.ui.IReplacePage;
+import org.eclipse.search.ui.ISearchPage;
+import org.eclipse.search.ui.ISearchPageContainer;
+import org.eclipse.search.ui.ISearchResultViewEntry;
+import org.eclipse.search.ui.SearchUI;
+
+import org.eclipse.search.internal.core.text.TextSearchJob;
+import org.eclipse.search.internal.core.text.TextSearchScope;
+import org.eclipse.search.internal.ui.ISearchHelpContextIds;
+import org.eclipse.search.internal.ui.ScopePart;
+import org.eclipse.search.internal.ui.SearchMessages;
+import org.eclipse.search.internal.ui.SearchPlugin;
+import org.eclipse.search.internal.ui.SearchResultView;
+import org.eclipse.search.internal.ui.WorkInProgressPreferencePage;
+import org.eclipse.search.internal.ui.util.ExceptionHandler;
+import org.eclipse.search.internal.ui.util.FileTypeEditor;
+import org.eclipse.search.internal.ui.util.RowLayouter;
+import org.eclipse.search.internal.ui.util.SWTUtil;
+
+import org.eclipse.search.ui.ISearchJob;
+import org.eclipse.search.ui.text.ITextSearchResult;
+import org.eclipse.search.ui.text.TextSearchResultFactory;
 
 public class TextSearchPage extends DialogPage implements ISearchPage, IReplacePage {
 
@@ -121,6 +133,13 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 	//---- Action Handling ------------------------------------------------
 	
 	public boolean performAction() {
+		if (WorkInProgressPreferencePage.useNewSearch())
+			return performNewSearch();
+		else
+			return performOldSearch();
+	}
+	
+	private boolean performOldSearch() {
 				
 		TextSearchOperation op = createTextSearchOperation();
 			
@@ -156,6 +175,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		return true;
 	}
 
+	
 	private TextSearchOperation createTextSearchOperation() {
 		
 		SearchPatternData patternData= getPatternData();
@@ -212,7 +232,45 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		});
 		return true;
 	}
+
+	private boolean performNewSearch() {
+		org.eclipse.search.ui.NewSearchUI.activateSearchResultView();
+		
+		SearchPatternData patternData= getPatternData();
+		if (patternData.fileNamePatterns == null || fExtensions.getText().length() <= 0) {
+			patternData.fileNamePatterns= new HashSet(1);
+			patternData.fileNamePatterns.add("*"); //$NON-NLS-1$
+		}
 	
+		// Setup search scope
+		TextSearchScope scope= null;
+		switch (getContainer().getSelectedScope()) {
+			case ISearchPageContainer.WORKSPACE_SCOPE:
+				scope= TextSearchScope.newWorkspaceScope();
+				break;
+			case ISearchPageContainer.SELECTION_SCOPE:
+				scope= getSelectedResourcesScope(false);
+				break;
+			case ISearchPageContainer.SELECTED_PROJECTS_SCOPE:
+				scope= getSelectedResourcesScope(true);
+				break;
+			case ISearchPageContainer.WORKING_SET_SCOPE:
+				IWorkingSet[] workingSets= getContainer().getSelectedWorkingSets();
+				String desc= SearchMessages.getFormattedString("WorkingSetScope", ScopePart.toString(workingSets)); //$NON-NLS-1$
+				scope= new TextSearchScope(desc, workingSets);
+		}		
+		scope.addExtensions(patternData.fileNamePatterns);
+	
+			
+		ITextSearchResult search= TextSearchResultFactory.createTextSearchResult(new ResourceStructureProvider(), new FilePresentationFactory()	, new FileSearchDesription(patternData.textPattern, scope.getDescription()));
+		org.eclipse.search.ui.NewSearchUI.getSearchManager().addSearchResult(search);
+		
+		ISearchJob wsJob= new TextSearchJob(search, scope, getSearchOptions(), patternData.textPattern, "Searching for "+patternData.textPattern);
+		org.eclipse.search.ui.NewSearchUI.runSearchInBackground(search, wsJob);
+	
+		return true;
+	}
+
 	private void showRegExSyntaxError(PatternSyntaxException ex) {
 		String title= SearchMessages.getString("SearchPage.regularExpressionSyntaxProblem.title"); //$NON-NLS-1$
 		MessageDialog.openInformation(getShell(), title, ex.getLocalizedMessage());
@@ -664,7 +722,6 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 	}
 	//--------------- Configuration handling --------------
 	
-
 	/**
 	 * Returns the page settings for this Java search page.
 	 * 

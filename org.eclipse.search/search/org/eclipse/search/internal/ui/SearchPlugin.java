@@ -52,6 +52,8 @@ import org.eclipse.search.ui.SearchUI;
 
 import org.eclipse.search.internal.ui.util.ExceptionHandler;
 
+import org.eclipse.search2.internal.ui.InternalSearchUI;
+
 /**
  * The plug-in runtime class for Search plug-in
  */
@@ -234,6 +236,7 @@ public class SearchPlugin extends AbstractUIPlugin {
 	 * Shuts down this plug-in.
 	 */
 	public void shutdown() throws CoreException {
+		InternalSearchUI.getInstance().shutdown();
 		unregisterAdapters();
 		getWorkspace().removeResourceChangeListener(SearchManager.getDefault());
 		super.shutdown();

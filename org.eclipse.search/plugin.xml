@@ -35,6 +35,7 @@
 	
 	<extension-point name="%searchPages" id="searchPages" schema="schema/searchPages.exsd"/>
 	<extension-point name="%searchResultSorters" id="searchResultSorters" schema="schema/searchResultSorters.exsd"/>
+  	<extension-point id="searchResultViewPages" name="Search Result View Pages" schema="schema/searchResultViewPages.exsd"/>
 	
 	
 	<!-- Extensions -->
@@ -138,6 +139,24 @@
 		   class="org.eclipse.search.internal.ui.SearchResultView"
 		   icon="icons/full/cview16/searchres.gif">
 		</view>
+      	<view
+            name="%newSearchResultViewName"
+            icon="icons/full/cview16/searchres.gif"
+            category="org.eclipse.ui"
+            class="org.eclipse.search2.internal.ui.SearchView"
+            id="org.eclipse.search.ui.views.SearchView">
+      	</view>
+	</extension>
+   
+<!-- Default search results view -->
+   	<extension
+    	id="DefaultSearchResultsViewPage"
+        name="Default Search Results View page"
+        point="org.eclipse.search.searchResultViewPages">
+		<viewPage
+			targetClass="org.eclipse.search.ui.text.ITextSearchResult"
+			class="org.eclipse.search2.internal.ui.basic.views.DefaultSearchViewPage">
+		</viewPage>
 	</extension>
 	
 	<extension point="org.eclipse.search.searchPages">
@@ -179,6 +198,11 @@
 			id="org.eclipse.search.preferences.SearchPreferencePage"
 			class="org.eclipse.search.internal.ui.SearchPreferencePage"
 			category="org.eclipse.ui.preferencePages.Workbench">
+		</page>
+		<page name="%WorkInProgressPreferencePage.label"
+			id="org.eclipse.search.preferences.WorkInProgressPreferencePage"
+			class="org.eclipse.search.internal.ui.WorkInProgressPreferencePage"
+			category="org.eclipse.search.preferences.SearchPreferencePage">
 		</page>
 	</extension>
 	
