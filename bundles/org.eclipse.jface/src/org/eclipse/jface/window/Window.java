@@ -224,6 +224,7 @@ public boolean close() {
 	// Instead, we need to "dispose" the shell to remove it from the display.
 	shell.dispose();
 	shell = null;
+	contents = null;
 
 	if (windowManager != null) {
 		windowManager.remove(this);

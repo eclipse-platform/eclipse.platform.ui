@@ -667,4 +667,17 @@ protected void setButtonLayoutData(Button button) {
 	int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
 	data.widthHint = Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 	button.setLayoutData(data);
+}
+
+/**
+ * @see org.eclipse.jface.window.Window#close()
+ */
+public boolean close() {
+	boolean returnValue = super.close();
+	if(returnValue){
+		buttons = new HashMap();
+		buttonBar = null;
+		dialogArea = null;
+	}
+	return returnValue;
 }}
