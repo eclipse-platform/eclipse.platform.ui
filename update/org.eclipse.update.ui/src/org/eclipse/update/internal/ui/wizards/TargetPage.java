@@ -260,7 +260,8 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 				IInstallFeatureOperation job = (IInstallFeatureOperation) selection.getFirstElement();
 				if (job != null) {
 					siteViewer.setInput(job);
-					IConfiguredSite affinitySite = UpdateUtils.getAffinitySite(config, job.getFeature());
+					//IConfiguredSite affinitySite = UpdateUtils.getAffinitySite(config, job.getFeature());
+					IConfiguredSite affinitySite = UpdateUtils.getDefaultTargetSite(config, job, true);
 					addButton.setEnabled(affinitySite == null);
 					if (job.getTargetSite() != null) {
 						siteViewer.setSelection(new StructuredSelection(job.getTargetSite()));
@@ -439,15 +440,16 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 					setPageComplete(false);
 					return;
 				}
-				// Check insalled features
+				// Check installed features
 				IFeature patchedFeature = UpdateUtils.getPatchedFeature(feature);
 				if (patchedFeature != null  
 					&& !jobs[i].getTargetSite().equals(patchedFeature.getSite().getCurrentConfiguredSite())) {
 					String msg = UpdateUI.getFormattedMessage(
-							"InstallWizard.TargetPage.patchError", //$NON-NLS-1$
+							"InstallWizard.TargetPage.patchError2", //$NON-NLS-1$
 							new String[] {
 								feature.getLabel(),
-								patchedFeature.getLabel()});
+								patchedFeature.getLabel(),
+								patchedFeature.getSite().getCurrentConfiguredSite().getSite().getURL().getFile()});
 					setErrorMessage(msg);
 					setPageComplete(false);
 					return;
@@ -480,6 +482,12 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 			// configured sites themselves may come from 
 			// different configurations
 			return site.getSite().equals(affinitySite.getSite());
+		}
+		
+		// Co-locate updates with the old feature
+		if (job.getOldFeature() != null) {
+			IConfiguredSite oldSite = UpdateUtils.getSiteWithFeature(config, job.getOldFeature().getVersionedIdentifier().getIdentifier());
+			return (site == oldSite);
 		}
 
 		// Allow installing into any site that is updateable and there is no affinity specified
