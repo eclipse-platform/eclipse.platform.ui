@@ -388,11 +388,11 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 				String editorId= null;
 				if (presentation != null) {
 					editorInput= presentation.getEditorInput(sourceElement);
-					editorId= presentation.getEditorId(editorInput, sourceElement);
 				}
 				
 				if (editorInput != null) {
 					int lineNumber= 0;
+					editorId= presentation.getEditorId(editorInput, sourceElement);
 					try {
 						lineNumber= stackFrame.getLineNumber();
 					} catch (DebugException de) {
