@@ -17,6 +17,7 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Control;
@@ -343,10 +344,11 @@ public abstract class DialogPage implements IDialogPage, IMessageProvider {
      */
     protected GridData setButtonLayoutData(Button button) {
         GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-        data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
+        int heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
         int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-        data.widthHint = Math.max(widthHint, button.computeSize(SWT.DEFAULT,
-                SWT.DEFAULT, true).x);
+        Point minSize = button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+        data.widthHint = Math.max(widthHint, minSize.x);
+        data.heightHint = Math.max(heightHint, minSize.y);
         button.setLayoutData(data);
         return data;
     }

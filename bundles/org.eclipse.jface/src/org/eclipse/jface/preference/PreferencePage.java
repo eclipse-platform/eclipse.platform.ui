@@ -247,37 +247,39 @@ public abstract class PreferencePage extends DialogPage implements
 
         if (createDefaultAndApplyButton) {
             layout.numColumns = layout.numColumns + 2;
-            String[] labels = JFaceResources.getStrings(new String[] {
-                    "defaults", "apply" }); //$NON-NLS-2$//$NON-NLS-1$
-            int heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
-            int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-            defaultsButton = new Button(buttonBar, SWT.PUSH);
-            defaultsButton.setText(labels[0]);
-            Dialog.applyDialogFont(defaultsButton);
-            GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-            data.heightHint = heightHint;
-            data.widthHint = Math.max(widthHint, defaultsButton.computeSize(
-                    SWT.DEFAULT, SWT.DEFAULT, true).x);
-            defaultsButton.setLayoutData(data);
-            defaultsButton.addSelectionListener(new SelectionAdapter() {
-                public void widgetSelected(SelectionEvent e) {
-                    performDefaults();
-                }
-            });
+			String[] labels = JFaceResources.getStrings(new String[] {
+					"defaults", "apply" }); //$NON-NLS-2$//$NON-NLS-1$
+			int heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
+			int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+			defaultsButton = new Button(buttonBar, SWT.PUSH);
+			defaultsButton.setText(labels[0]);
+			Dialog.applyDialogFont(defaultsButton);
+			GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+			Point minButtonSize = defaultsButton.computeSize(SWT.DEFAULT,
+					SWT.DEFAULT, true);
+			data.heightHint = Math.max(heightHint, minButtonSize.y);
+			data.widthHint = Math.max(widthHint, minButtonSize.x);
+			defaultsButton.setLayoutData(data);
+			defaultsButton.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					performDefaults();
+				}
+			});
 
             applyButton = new Button(buttonBar, SWT.PUSH);
-            applyButton.setText(labels[1]);
-            Dialog.applyDialogFont(applyButton);
-            data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-            data.heightHint = heightHint;
-            data.widthHint = Math.max(widthHint, applyButton.computeSize(
-                    SWT.DEFAULT, SWT.DEFAULT, true).x);
-            applyButton.setLayoutData(data);
-            applyButton.addSelectionListener(new SelectionAdapter() {
-                public void widgetSelected(SelectionEvent e) {
-                    performApply();
-                }
-            });
+			applyButton.setText(labels[1]);
+			Dialog.applyDialogFont(applyButton);
+			data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+			minButtonSize = applyButton.computeSize(SWT.DEFAULT, SWT.DEFAULT,
+					true);
+			data.heightHint = Math.max(heightHint, minButtonSize.y);
+			data.widthHint = Math.max(widthHint, minButtonSize.x);
+			applyButton.setLayoutData(data);
+			applyButton.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					performApply();
+				}
+			});
             applyButton.setEnabled(isValid());
             applyDialogFont(buttonBar);
         } else {
