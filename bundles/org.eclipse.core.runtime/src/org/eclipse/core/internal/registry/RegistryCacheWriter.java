@@ -207,10 +207,10 @@ public class RegistryCacheWriter {
 			// add this object to the object table first
 			addToObjectTable(object);
 			out.writeByte(RegistryCacheReader.OBJECT);
-			String[] ids = object.basicGetNamespaces();
+			String[] ids = object.getElementIdentifiers();
 			out.writeInt(ids.length);
 			for (int i = 0; i < ids.length; i++)
-				writeBundleModel(object.basicGetNamespace(ids[i]), out);
+				writeBundleModel(object.getElement(ids[i]), out);
 		} catch (IOException ioe) {
 			problems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind("meta.regCacheIOExceptionWriting", "ExtensionRegisry"), ioe)); //$NON-NLS-1$ //$NON-NLS-2$
 		}
@@ -239,7 +239,6 @@ public class RegistryCacheWriter {
 	}
 
 	public void saveCache(ExtensionRegistry registry, long registryStamp) {
-		registry.enterRead();
 		try {
 			DataOutputStream out = openCacheFile();
 			try {
@@ -252,8 +251,6 @@ public class RegistryCacheWriter {
 			//TODO: log this exception?
 			if (InternalPlatform.DEBUG_REGISTRY)
 				e.printStackTrace();
-		} finally {
-			registry.exitRead();
 		}
 	}
 

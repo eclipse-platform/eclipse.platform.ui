@@ -59,7 +59,7 @@ public abstract class RegistryModelObject {
 	/*
 	 * Return null for the default case.
 	 */
-	ExtensionRegistry getRegistry() {
+	public RegistryModelObject getRegistry() {
 		return null;
 	}
 

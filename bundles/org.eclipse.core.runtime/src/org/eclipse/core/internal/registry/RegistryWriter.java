@@ -152,9 +152,9 @@ public class RegistryWriter {
 		for (int i = 0; i < indent; i++)
 			gap1 += " "; //$NON-NLS-1$
 		w.println(gap1 + "<" + REGISTRY + ">"); //$NON-NLS-1$ //$NON-NLS-2$
-		String[] list = registry.getNamespaces();
+		String[] list = registry.getElementIdentifiers();
 		for (int i = 0; i < list.length; i++)
-			writeBundleModel(registry.getNamespace(list[i]), w, indent + INDENT);
+			writeBundleModel(registry.getElement(list[i]), w, indent + INDENT);
 
 		w.println(gap1 + "</" + REGISTRY + ">"); //$NON-NLS-1$ //$NON-NLS-2$
 		w.flush();

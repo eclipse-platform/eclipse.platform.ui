@@ -41,7 +41,7 @@ public abstract class NestedRegistryModelObject extends RegistryModelObject {
 		parent = value;
 	}
 
-	ExtensionRegistry getRegistry() {
-		return parent == null ? null : parent.getRegistry();
+	public RegistryModelObject getRegistry() {
+		return parent == null ? this : parent.getRegistry();
 	}
 }

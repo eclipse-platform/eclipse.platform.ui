@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.registry;
 
-import org.eclipse.core.internal.runtime.CompatibilityHelper;
-import org.eclipse.core.internal.runtime.InternalPlatform;
+import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.runtime.*;
 
 /**
@@ -88,7 +87,7 @@ public class Extension extends NestedRegistryModelObject implements IExtension {
 			// maybe it was lazily loaded
 			if (!fullyLoaded) {
 				fullyLoaded = true;
-				RegistryCacheReader reader = getRegistry().getCacheReader();
+				RegistryCacheReader reader = ((ExtensionRegistry) getRegistry()).getCacheReader();
 				if (reader != null)
 					elements = reader.loadConfigurationElements(this, subElementsCacheOffset);
 			}
