@@ -20,6 +20,8 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.MouseMoveListener;
+import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
@@ -89,6 +91,180 @@ public final class LineNumberRulerColumn implements IVerticalRulerColumn {
 					}	
 				}
 			}
+		}
+	};
+	
+	/**
+	 * Handles all the mouse interaction in this line number ruler column.	 */
+	class MouseHandler implements MouseListener, MouseMoveListener, MouseTrackListener {
+		
+		private IRegion fStartLine;
+		private int fStartLineNumber;
+		private int fAutoScrollDirection;
+	
+		/*
+		 * @see org.eclipse.swt.events.MouseListener#mouseUp(org.eclipse.swt.events.MouseEvent)
+		 */
+		public void mouseUp(MouseEvent event) {
+			stopSelecting();
+			stopAutoScroll();
+		}
+		
+		/*
+		 * @see org.eclipse.swt.events.MouseListener#mouseDown(org.eclipse.swt.events.MouseEvent)
+		 */
+		public void mouseDown(MouseEvent event) {
+			fParentRuler.setLocationOfLastMouseButtonActivity(event.x, event.y);
+			startSelecting();
+		}
+		
+		/*
+		 * @see org.eclipse.swt.events.MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
+		 */
+		public void mouseDoubleClick(MouseEvent event) {
+			fParentRuler.setLocationOfLastMouseButtonActivity(event.x, event.y);
+		}
+		
+		/*
+		 * @see org.eclipse.swt.events.MouseMoveListener#mouseMove(org.eclipse.swt.events.MouseEvent)
+		 */
+		public void mouseMove(MouseEvent event) {
+			autoScroll(event);
+			int newLine= fParentRuler.toDocumentLineNumber(event.y);
+			expandSelection(newLine);
+		}
+		
+		/*
+		 * @see org.eclipse.swt.events.MouseTrackListener#mouseEnter(org.eclipse.swt.events.MouseEvent)
+		 */
+		public void mouseEnter(MouseEvent event) {
+		}
+
+		/*
+		 * @see org.eclipse.swt.events.MouseTrackListener#mouseExit(org.eclipse.swt.events.MouseEvent)
+		 */
+		public void mouseExit(MouseEvent event) {
+		}
+
+		/*
+		 * @see org.eclipse.swt.events.MouseTrackListener#mouseHover(org.eclipse.swt.events.MouseEvent)
+		 */
+		public void mouseHover(MouseEvent event) {
+		}
+		
+		private void startSelecting() {
+			try {
+				
+				// select line
+				IDocument document= fCachedTextViewer.getDocument();
+				fStartLineNumber= fParentRuler.getLineOfLastMouseButtonActivity();
+				fStartLine= document.getLineInformation(fStartLineNumber);
+				fCachedTextViewer.setSelectedRange(fStartLine.getOffset(), fStartLine.getLength());
+				
+				// prepare for drag selection
+				fCanvas.addMouseMoveListener(this);
+				fCanvas.addMouseTrackListener(this);
+
+			} catch (BadLocationException x) {
+			}
+		}
+		
+		private void stopSelecting() {
+			// drag selection stopped
+			fCanvas.removeMouseMoveListener(this);
+			fCanvas.removeMouseTrackListener(this);
+		}
+		
+		private void expandSelection(int lineNumber) {
+			try {
+				
+				IDocument document= fCachedTextViewer.getDocument();
+				IRegion lineInfo= document.getLineInformation(lineNumber);
+				
+				int start= Math.min(fStartLine.getOffset(), lineInfo.getOffset());
+				int end= Math.max(fStartLine.getOffset() + fStartLine.getLength(), lineInfo.getOffset() + lineInfo.getLength());
+				
+				if (lineNumber < fStartLineNumber)
+					fCachedTextViewer.setSelectedRange(end, start - end);
+				else
+					fCachedTextViewer.setSelectedRange(start, end - start);
+				
+			} catch (BadLocationException x) {
+			}
+		}
+		
+		/*
+		 * Follows the scheme of StyledText. 
+		 */
+		private void stopAutoScroll() {
+			fAutoScrollDirection= SWT.NULL;
+		}		
+		
+		/*
+		 * Follows the scheme of StyledText. 
+		 */
+		private void autoScroll(MouseEvent event) {
+			Rectangle area= fCanvas.getClientArea();
+			if (event.y > area.height)
+				autoScroll(SWT.DOWN);
+			else if (event.y < 0) 
+				autoScroll(SWT.UP);
+			else
+				stopAutoScroll();
+		}
+		
+		/*
+		 * Follows the scheme of StyledText. 
+		 */
+		private void autoScroll(int direction) {
+						
+			if (fAutoScrollDirection == direction)
+				return;
+				
+			final int TIMER_INTERVAL= 5;
+			final Display display = fCanvas.getDisplay();
+			Runnable timer= null;
+			switch (direction) {
+				case SWT.UP:
+					timer= new Runnable() {
+						public void run() {
+							if (fAutoScrollDirection == SWT.UP) {
+								int top= getInclusiveTopIndex();
+								if (top > 0) {
+									fCachedTextViewer.setTopIndex(top -1);
+									display.timerExec(TIMER_INTERVAL, this);
+								}
+							}
+						}
+					};
+					break;
+				case  SWT.DOWN:
+					timer = new Runnable() {
+						public void run() {
+							if (fAutoScrollDirection == SWT.DOWN) {
+								int top= getInclusiveTopIndex();
+								fCachedTextViewer.setTopIndex(top +1);
+								display.timerExec(TIMER_INTERVAL, this);
+							}
+						}
+					};
+					break;
+			}
+			
+			if (timer != null) {
+				fAutoScrollDirection= direction;
+				display.timerExec(TIMER_INTERVAL, timer);
+			}
+		}
+		
+		private int getInclusiveTopIndex() {
+			if (fCachedTextWidget != null && !fCachedTextWidget.isDisposed()) {	
+				int top= fCachedTextViewer.getTopIndex();
+				if ((fCachedTextWidget.getTopPixel() % fCachedTextWidget.getLineHeight()) != 0)
+					-- top;
+				return top;
+			}
+			return -1;
 		}
 	};
 	
@@ -269,19 +445,7 @@ public final class LineNumberRulerColumn implements IVerticalRulerColumn {
 			}
 		});
 		
-		fCanvas.addMouseListener(new MouseListener() {
-			public void mouseUp(MouseEvent event) {
-			}
-			
-			public void mouseDown(MouseEvent event) {
-				fParentRuler.setLocationOfLastMouseButtonActivity(event.x, event.y);
-				selectLine(fParentRuler.getLineOfLastMouseButtonActivity());
-			}
-			
-			public void mouseDoubleClick(MouseEvent event) {
-				fParentRuler.setLocationOfLastMouseButtonActivity(event.x, event.y);
-			}
-		});
+		fCanvas.addMouseListener(new MouseHandler());
 		
 		if (fCachedTextViewer != null) {
 			
@@ -300,20 +464,6 @@ public final class LineNumberRulerColumn implements IVerticalRulerColumn {
 		computeNumberOfDigits();
 		computeIndentations();
 		return fCanvas;
-	}
-
-	/**
-	 * Selects the given line in the text viewer.
-	 * 
-	 * @param line the number of the line to be selected
-	 */
-	private void selectLine(int line) {
-		try {
-			IDocument document= fCachedTextViewer.getDocument();
-			int offset= document.getLineOffset(fParentRuler.getLineOfLastMouseButtonActivity());
-			fCachedTextViewer.setSelectedRange(offset, 0);
-		} catch (BadLocationException x) {
-		}
 	}
 	
 	/**

@@ -1414,22 +1414,29 @@ public class TextViewer extends Viewer implements
 	/*
 	 * @see ITextViewer#setSelectedRange
 	 */
-	public void setSelectedRange(int offset, int length) {
+	public void setSelectedRange(int selectionOffset, int selectionLength) {
 		
 		if (!redraws()) {
-			fDocumentSelection.x= offset;
-			fDocumentSelection.y= length;
+			fDocumentSelection.x= selectionOffset;
+			fDocumentSelection.y= selectionLength;
 			return;
 		}
 		
 		if (fTextWidget == null)
 			return;
 			
-		int end= offset + length;
-		
 		IDocument document= getVisibleDocument();
 		if (document == null)
 			return;
+			
+		int offset= selectionOffset;
+		int length= selectionLength;
+		if (selectionLength < 0) {
+			offset= selectionOffset + selectionLength;
+			length= -selectionLength;
+		}
+		
+		int end= offset + length;
 			
 		if (document instanceof ChildDocument) {
 			Position p= ((ChildDocument) document).getParentDocumentRange();
@@ -1453,7 +1460,12 @@ public class TextViewer extends Viewer implements
 		int[] selectionRange= new int[] { offset, length };
 		validateSelectionRange(selectionRange);
 		if (selectionRange[0] >= 0 && selectionRange[1] >= 0) {
-			fTextWidget.setSelectionRange(selectionRange[0], selectionRange[1]);
+			
+			if (selectionLength < 0)
+				fTextWidget.setSelectionRange(selectionRange[0] + selectionRange[1], -selectionRange[1]);
+			else
+				fTextWidget.setSelectionRange(selectionRange[0], selectionRange[1]);
+			
 			selectionChanged(selectionRange[0], selectionRange[1]);
 		}
 	}
