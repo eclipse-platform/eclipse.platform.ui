@@ -49,7 +49,6 @@ public abstract class CVSOperation implements IRunnableWithProgress {
 	
 	// shell to be used if the runnabl context is a blocking context
 	private Shell shell;
-	private boolean modifiesWorkspace = true;
 	
 	// instance variable used to indicate behavior while prompting for overwrite
 	private boolean confirmOverwrite = true;
@@ -72,7 +71,6 @@ public abstract class CVSOperation implements IRunnableWithProgress {
 	 * @throws InterruptedException
 	 */
 	public synchronized void run() throws CVSException, InterruptedException {
-		ICVSRunnableContext context = getCVSRunnableContext();
 		try {
 			getCVSRunnableContext().run(getTaskName(), getSchedulingRule(), getPostponeBuild(), this);
 		} catch (InvocationTargetException e) {
@@ -181,14 +179,6 @@ public abstract class CVSOperation implements IRunnableWithProgress {
 	
 	public Shell getShell() {
 		return getCVSRunnableContext().getShell();
-	}
-
-	public boolean isModifiesWorkspace() {
-		return modifiesWorkspace;
-	}
-
-	public void setModifiesWorkspace(boolean b) {
-		modifiesWorkspace = b;
 	}
 
 	protected void addError(IStatus status) {

@@ -22,6 +22,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.progress.IProgressManager;
 
 /**
  * This CVS runnable context blocks the UI and can therfore have a shell assigned to
@@ -48,7 +49,13 @@ public class CVSBlockingRunnableContext implements ICVSRunnableContext {
 
 	protected IRunnableContext getRunnableContext() {
 		if (runnableContext == null) {
-			return PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+			return new IRunnableContext() {
+				public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable)
+						throws InvocationTargetException, InterruptedException {
+					IProgressManager manager = PlatformUI.getWorkbench().getProgressManager();
+					manager.busyCursorWhile(runnable);
+				}
+			};
 		}
 		return runnableContext;
 	}
@@ -76,7 +83,7 @@ public class CVSBlockingRunnableContext implements ICVSRunnableContext {
 									exception[0] = e;
 								}
 							}
-						}, schedulingRule, Policy.subMonitorFor(monitor, 100));
+						}, schedulingRule, 0 /* allow updates */, Policy.subMonitorFor(monitor, 100));
 						if (exception[0] != null) {
 							if (exception[0] instanceof InvocationTargetException) {
 								throw (InvocationTargetException)exception[0];

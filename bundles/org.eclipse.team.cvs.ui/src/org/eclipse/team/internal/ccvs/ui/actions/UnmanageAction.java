@@ -11,39 +11,21 @@
 package org.eclipse.team.internal.ccvs.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.team.core.RepositoryProvider;
-import org.eclipse.team.core.TeamException;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.internal.core.InfiniteSubProgressMonitor;
-import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.team.internal.ccvs.ui.operations.DisconnectOperation;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
@@ -54,10 +36,9 @@ public class UnmanageAction extends WorkspaceAction {
 	
 	static class DeleteProjectDialog extends MessageDialog {
 
-		private IProject[] projects;
-		private boolean deleteContent = false;
-		private Button radio1;
-		private Button radio2;
+		boolean deleteContent = false;
+		Button radio1;
+		Button radio2;
 		
 		DeleteProjectDialog(Shell parentShell, IProject[] projects) {
 			super(
@@ -68,7 +49,6 @@ public class UnmanageAction extends WorkspaceAction {
 				MessageDialog.QUESTION, 
 				new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL},
 				0); 	// yes is the default
-			this.projects = projects;
 		}
 		
 		static String getTitle(IProject[] projects) {
@@ -131,45 +111,13 @@ public class UnmanageAction extends WorkspaceAction {
 	 */
 	public void execute(IAction action) throws InterruptedException, InvocationTargetException {
 		if(confirmDeleteProjects()) {
-			run(getOperation(), true /* cancelable */, PROGRESS_DIALOG);	
+			try {
+				new DisconnectOperation(getShell(), getSelectedProjects(), deleteContent)
+					.run();
+			} catch (CVSException e) {
+				throw new InvocationTargetException(e);
+			}	
 		}
-	}
-
-	private IRunnableWithProgress getOperation() {
-		return new WorkspaceModifyOperation() {
-			public void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				try {
-					Hashtable table = getProviderMapping();
-					Set keySet = table.keySet();
-					monitor.beginTask("", keySet.size() * 1000); //$NON-NLS-1$
-					monitor.setTaskName(Policy.bind("Unmanage.unmanaging")); //$NON-NLS-1$
-					Iterator iterator = keySet.iterator();
-					while (iterator.hasNext()) {
-						IProgressMonitor subMonitor = new InfiniteSubProgressMonitor(monitor, 1000);
-						subMonitor.beginTask(null, 100);
-						CVSTeamProvider provider = (CVSTeamProvider)iterator.next();
-						List list = (List)table.get(provider);
-						IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);
-						for (int i = 0; i < providerResources.length; i++) {
-							IResource resource = providerResources[i];
-							ICVSFolder folder = CVSWorkspaceRoot.getCVSFolderFor((IContainer) resource);
-							try {
-								if(deleteContent) {
-									folder.unmanage(Policy.subMonitorFor(subMonitor, 10));
-								}
-							} finally {
-								// We want to remove the nature even if the unmanage operation fails
-								RepositoryProvider.unmap((IProject)resource);							
-							}
-						}											
-					}										
-				} catch (TeamException e) {
-					throw new InvocationTargetException(e);
-				} finally {
-					monitor.done();
-				}
-			}
-		};
 	}
 
 	boolean confirmDeleteProjects() {

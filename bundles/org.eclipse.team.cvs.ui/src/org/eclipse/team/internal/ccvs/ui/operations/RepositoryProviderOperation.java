@@ -10,25 +10,14 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.operations;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.RepositoryProvider;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
-import org.eclipse.team.internal.ccvs.core.ICVSResource;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 
@@ -60,10 +49,27 @@ public abstract class RepositoryProviderOperation extends CVSOperation {
 			CVSTeamProvider provider = (CVSTeamProvider)iterator.next();
 			List list = (List)table.get(provider);
 			IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);
-			execute(provider, providerResources, subMonitor);
+			ISchedulingRule rule = getSchedulingRule(provider);
+			try {
+				Platform.getJobManager().beginRule(rule, monitor);
+				execute(provider, providerResources, subMonitor);
+			} finally {
+				Platform.getJobManager().endRule(rule);
+			}
 		}
 	}
 	
+	/**
+	 * Retgurn the scheduling rule to be obtained before work
+	 * begins on the given provider. By default, it is the provider's project.
+	 * This can be changed by subclasses.
+	 * @param provider
+	 * @return
+	 */
+	protected ISchedulingRule getSchedulingRule(CVSTeamProvider provider) {
+		return provider.getProject();
+	}
+
 	/*
 	 * Helper method. Return a Map mapping provider to a list of resources
 	 * shared with that provider.
