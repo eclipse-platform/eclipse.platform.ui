@@ -13,10 +13,13 @@ package org.eclipse.ui.internal.texteditor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
 
 import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.TextSelection;
 
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
@@ -86,56 +89,31 @@ public class GotoLastEditPositionAction extends Action implements IWorkbenchWind
 		try {
 			editor= page.openEditor(editPosition.getEditorInput(), editPosition.getEditorId());
 		} catch (PartInitException ex) {
-			editor= null;
+			return;
 		}
 
 		// Optimization - could also use else branch
 		if (editor instanceof ITextEditor) {
 			ITextEditor textEditor= (ITextEditor)editor;
 			textEditor.selectAndReveal(pos.offset, pos.length);
+			return;
+		} 
+		
+		/*
+		 * Workaround: send out a text selection
+		 * XXX: Needs to be improved, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=32214
+		 */
+		if (editor != null) {
+			IEditorSite site= editor.getEditorSite();
+			if (site == null)
+				return;
+			
+			ISelectionProvider provider= editor.getEditorSite().getSelectionProvider();
+			if (provider == null)
+				return;
+			
+			provider.setSelection(new TextSelection(pos.offset, pos.length));
 		}
-//		} else
-//		 if (editor != null) {
-//			final IEditorInput input= editor.getEditorInput();
-//			final IEditorPart finalEditor= editor;
-//			if (input instanceof IFileEditorInput) {
-//
-//				WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
-//					protected void execute(IProgressMonitor monitor) throws CoreException {
-//						IMarker marker= null;
-//						try {
-//							marker= ((IFileEditorInput)input).getFile().createMarker(IMarker.TEXT);
-//							marker.setAttribute(IMarker.CHAR_START, pos.offset); 
-//							marker.setAttribute(IMarker.CHAR_END, pos.offset + pos.length);
-//
-//							finalEditor.gotoMarker(marker);
-//							
-//						} finally {
-//							if (marker != null)
-//								marker.delete();
-//						}
-//					}
-//				};
-//
-//				try {
-//					op.run(null);
-//				} catch (InvocationTargetException ex) {
-//					String message= EditorMessages.getString("Editor.error.gotoLastEditPosition.message"); //$NON-NLS-1$
-//					if (fWindow != null) {
-//						Shell shell= fWindow.getShell();
-//						String title= EditorMessages.getString("Editor.error.gotoLastEditPosition.title"); //$NON-NLS-1$
-//						MessageDialog.openError(shell, title, message);
-//					} else {
-//						Throwable t= ex.getTargetException();
-//						IStatus status= new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, message, t);
-//						TextEditorPlugin.getDefault().getLog().log(status);
-//					}
-//				} catch (InterruptedException e) {
-//					Assert.isTrue(false, "this operation can not be cancelled"); //$NON-NLS-1$
-//				}
-//			}
-//			editor.setFocus();
-//		}
 	}
 
 	/*
