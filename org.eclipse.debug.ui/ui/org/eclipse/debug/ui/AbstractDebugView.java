@@ -31,6 +31,7 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewSite;
@@ -43,6 +44,7 @@ import org.eclipse.ui.part.MessagePage;
 import org.eclipse.ui.part.Page;
 import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.part.PageBookView;
+import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.IUpdate;
 
 /**
@@ -122,7 +124,17 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	 * 
 	 * @see #setAction(String, IAction)
 	 */
-	public static final String SELECT_ALL_ACTION = "Select_All_ActionId"; //$NON-NLS-1$
+	public static final String SELECT_ALL_ACTION = ITextEditorActionConstants.SELECT_ALL;
+	
+	/**
+	 * Action id for a view's copy action. Any view
+	 * with a copy action that should be invoked when
+	 * ctrl+c is pressed should store their
+	 * copy action with this key.
+	 * 
+	 * @see #setAction(String, IAction)
+	 */
+	public static final String COPY = ITextEditorActionConstants.COPY;
 	
 	/**
 	 * Action id for a view's double-click action. Any view
@@ -436,16 +448,27 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	
 	/**
 	 * Installs the given action under the given action id.
-	 *
+	 * If the action has an id that maps to one of the global
+	 * action ids, this action is registered as a global action handler.
 	 * @param actionId the action id
 	 * @param action the action, or <code>null</code> to clear it
 	 * @see #getAction
 	 */
 	public void setAction(String actionID, IAction action) {
-		if (action == null)
+		if (action == null) {
 			fActionMap.remove(actionID);
-		else
+		} else {
 			fActionMap.put(actionID, action);
+		}
+		if (actionID.equals(SELECT_ALL_ACTION)) {
+			IActionBars actionBars = getViewSite().getActionBars();	
+			actionBars.setGlobalActionHandler(actionID, action);
+		}
+		if (actionID.equals(COPY)) {
+			IActionBars actionBars = getViewSite().getActionBars();	
+			actionBars.setGlobalActionHandler(actionID, action);
+		}
+		
 	}	
 	
 	/**
@@ -478,17 +501,10 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	 * <ol> 
 	 * <li><code>REMOVE_ACTION</code> when the delete
 	 * key is pressed</li>
-	 * <li><code>SELECT_ALL_ACTION</code> when ctrl+a
-	 * key is pressed</li>
 	 */
 	protected void handleKeyPressed(KeyEvent event) {
 		if (event.character == SWT.DEL && event.stateMask == 0) {
 			IAction action = getAction(REMOVE_ACTION);
-			if (action != null && action.isEnabled()) {
-				action.run();
-			}
-		} else if (event.character == 'a' && event.stateMask == SWT.ALT) {
-			IAction action = getAction(SELECT_ALL_ACTION);
 			if (action != null && action.isEnabled()) {
 				action.run();
 			}
