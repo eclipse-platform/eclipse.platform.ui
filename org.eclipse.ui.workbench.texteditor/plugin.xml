@@ -48,7 +48,7 @@
             id="org.eclipse.ui.edit.text.smartEnter">
       </command>
       <keyBinding
-            string="Ctrl+ENTER"
+            string="Shift+ENTER"
             scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.smartEnter"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
