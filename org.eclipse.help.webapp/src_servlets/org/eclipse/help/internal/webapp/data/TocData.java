@@ -234,9 +234,16 @@ public class TocData extends ActivitiesData {
 			return -1;
 
 		tocs = getTocs();
+		// try to find in enabled tocs first
 		for (int i = 0; i < tocs.length; i++)
-			if (tocs[i].getTopic(topic) != null)
-				return i;
+			if(isEnabled(i))
+				if (tocs[i].getTopic(topic) != null)
+					return i;
+		// try disabled tocs second
+		for (int i = 0; i < tocs.length; i++)
+			if(!isEnabled(i))
+				if (tocs[i].getTopic(topic) != null)
+					return i;
 
 		// nothing found
 		return -1;
