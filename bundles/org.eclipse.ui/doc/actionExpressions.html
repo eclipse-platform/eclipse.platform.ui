@@ -22,9 +22,10 @@ expression will follow the same form.&nbsp; The root element for enablement
 and visibility must contain one sub element.&nbsp; In the simplest case,
 this will consist of an <i>objectClass</i>, <i>objectState</i>, <i>systemProperty</i>,
 or <i>pluginState</i> element.&nbsp; In the more complex case, <i>and</i>,
-<i>or</i>, not elements can be combined to form a boolean expression.&nbsp;
-An <i>and</i> or <i>or</i> element may contain 1 or more sub elements.&nbsp;
-A <i>not</i> element must contain only 1 sub element.
+<i>or</i>,
+not elements can be combined to form a boolean expression.&nbsp; An <i>and</i>
+or <i>or</i> element may contain 1 or more sub elements.&nbsp; A <i>not</i>
+element must contain only 1 sub element.
 <p>An <i>objectClass</i> element is used to evaluate the class of each
 object in the selection.&nbsp; The name attribute of the objectClass contains
 a fully qualified class name.&nbsp; If each object in the selection implements
@@ -37,22 +38,22 @@ the selection state.&nbsp; For instance, you may contribute an action for
 all objects of type <tt>IFile</tt> which are read only. This read only
 criteria can only be declared by specifying an <i>objectState</i> element.&nbsp;
 It may have the following form ..
-<br>&nbsp;
 <blockquote><tt>&lt;objectState name="readOnly" value="true"/></tt></blockquote>
 In the workbench, the evaluation of this expression is very difficult to
 accomplish, because the attributes of an object are type specific, and
 beyond the domain of the workbench itself.&nbsp; So the workbench will
 collaborate with the objects in the selection to evaluate the expression.&nbsp;
 This is done using an <tt>IActionFilter</tt>, an evaluation strategy for
-<i>objectState</i> elements.&nbsp; When an objectState element is evaluated,
-the workbench ask each object in the selection for an <tt>IActionFilter</tt>.&nbsp;
-It does this by testing to see if it implements <tt>IActionFilter</tt>.&nbsp;
+<i>objectState</i>
+elements.&nbsp; When an objectState element is evaluated, the workbench
+ask each object in the selection for an <tt>IActionFilter</tt>.&nbsp; It
+does this by testing to see if it implements <tt>IActionFilter</tt>.&nbsp;
 If that fails, the workbench will ask for a filter through through the
-<tt>IAdaptable</tt> mechanism.&nbsp; If a filter is found, the workbench
-will pass the <i>objectState</i> attributes to the filter to determine
-if they match the state of the selected object.&nbsp; If so, the term is
-evaluated as true.&nbsp; If there is no action filter, or there is no match,
-the term is evaluated as false.
+<tt>IAdaptable</tt>
+mechanism.&nbsp; If a filter is found, the workbench will pass the <i>objectState</i>
+attributes to the filter to determine if they match the state of the selected
+object.&nbsp; If so, the term is evaluated as true.&nbsp; If there is no
+action filter, or there is no match, the term is evaluated as false.
 <p>View and editors are encouraged to define an <tt>IActionFilter</tt>
 for each object in their selection.&nbsp; This makes it easier for other
 plugin developers to extend those views or editors with new, well qualified
@@ -65,16 +66,16 @@ The state of the plugin may be installed or activated.
 <p><b><i>Configuration Markup:</i></b>
 <p><tt>&nbsp;&nbsp; &lt;!ELEMENT visibility (and | or | not | objectClass
 | objectState | systemProperty</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | pluginState)></tt><tt></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | pluginState)></tt>
 <p><tt>&nbsp;&nbsp; &lt;!ELEMENT enablement (and | or | not | objectClass
 | objectState | systemProperty</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | pluginState)></tt><tt></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | pluginState)></tt>
 <p><tt>&nbsp;&nbsp; &lt;!ELEMENT and (and | or | not | objectClass | objectState
-| systemProperty | pluginState)*></tt><tt></tt>
+| systemProperty | pluginState)*></tt>
 <p><tt>&nbsp;&nbsp; &lt;!ELEMENT or (and | or | not | objectClass | objectState
-| systemProperty | pluginState)*></tt><tt></tt>
+| systemProperty | pluginState)*></tt>
 <p><tt>&nbsp;&nbsp; &lt;!ELEMENT not (and | or | not | objectClass | objectState
-| systemProperty | pluginState)></tt><tt></tt>
+| systemProperty | pluginState)></tt>
 <p><tt>&nbsp;&nbsp; &lt;!ELEMENT objectClass EMPTY></tt>
 <br><tt>&nbsp;&nbsp; &lt;!ATTLIST objectClass</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -136,9 +137,10 @@ are supported: installed and activated.</li>
 <p>The following is an example of an action set which uses the enablement
 element.&nbsp; The action set declares a menu with the label List Element,
 and then populates it with actions which are enabled by a selection of
-<tt>ListElements</tt> with various state.&nbsp; A <tt>ListElement</tt>
-has two attributes: <i>name</i> (a string) and <i>flag</i> (a boolean).&nbsp;
-In this example, the All action (<img SRC="../../org.eclipse.ui.articles.guidelines/doc/images/tag_a.jpg" height=13 width=24 align=ABSCENTER>)
+<tt>ListElements</tt>
+with various state.&nbsp; A <tt>ListElement</tt> has two attributes: <i>name</i>
+(a string) and <i>flag</i> (a boolean).&nbsp; In this example, the All
+action (<img SRC="../../org.eclipse.ui.articles.guidelines/doc/images/tag_a.jpg" height=13 width=24 align=ABSCENTER>)
 is enabled whenever a ListElement is selected.&nbsp; The Red action (<img SRC="../../org.eclipse.ui.articles.guidelines/doc/images/tag_b.jpg" height=13 width=24 align=ABSCENTER>)
 is enabled when a ListElement with name = red is selected.&nbsp; And the
 Not Red action (<img SRC="../../org.eclipse.ui.articles.guidelines/doc/images/tag_c.jpg" height=13 width=24 align=ABSCENTER>)
@@ -304,7 +306,8 @@ class="org.eclipse.ui.tests.api.MockActionDelegate"></tt>
 Here is one final example, which demonstrates the declaration of visibility
 for a popup menu action extension.&nbsp; The Red and True action is visible
 whenever a <tt>ListElement</tt> is selected with <i>name = red</i> and
-<i>flag = true</i>.
+<i>flag
+= true</i>.
 <blockquote><tt>&lt;extension point="org.eclipse.ui.popupMenus"></tt>
 <br><tt>&nbsp;&nbsp;&nbsp; &lt;objectContribution id="oc6"</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; objectClass="org.eclipse.ui.tests.api.ListElement"></tt>

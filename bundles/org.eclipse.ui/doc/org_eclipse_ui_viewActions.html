@@ -66,7 +66,7 @@ CDATA #REQUIRED</tt>
 last token in the action path. Therefore, separators serve as named groups
 into which actions can be added.</li>
 </blockquote>
-<tt>&nbsp;&nbsp; &lt;!ELEMENT action (selection)*></tt>
+<tt>&nbsp;&nbsp; &lt;!ELEMENT action (selection)* (enablement)?></tt>
 <br><tt>&nbsp;&nbsp; &lt;!ATTLIST action</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 NMTOKEN #REQUIRED</tt>
@@ -103,10 +103,11 @@ is used as the button label. The label can contain JFace-encoded mnemonic
 and accelerator information (see example).</li>
 
 <li>
-<b>accelerator</b> - an integer that is used to specify the keycode of the
-accelerator for the action.  This is the integer value resulting from
-a bitwise OR of zero or more SWT key modifier masks (i.e. SWT.CTRL or SWT.ALT) 
-and a character code.  For example, for Ctrl+Z use <code>SWT.CTRL | 'Z' = (1<<18)|'Z' = 262234</code>.</li>
+<b>accelerator</b> - an integer that is used to specify the keycode of
+the accelerator for the action. This is the integer value resulting from
+a bitwise OR of zero or more SWT key modifier masks (i.e. SWT.CTRL or SWT.ALT)
+and a character code. For example, for Ctrl+Z use <tt>SWT.CTRL | 'Z' =
+(1&lt;&lt;18)|'Z' = 262234</tt>.</li>
 
 <li>
 <b>menubarPath</b> - a slash-delimited path ('/') that is used to specify
@@ -182,12 +183,19 @@ action.</li>
 in the selection. If this filter is specified and the match fails, the
 action will be disabled.</li>
 </ul>
+<tt>&nbsp;&nbsp; &lt;!ELEMENT enablement (and | or | not | objectClass
+| objectState | systemProperty</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | pluginState)></tt>
+<br><tt>&nbsp;&nbsp; &lt;!ATTLIST enablement EMPTY></tt>
+<blockquote>In version 2.0 of Eclipse, an <tt>enablement</tt> element may
+be used to define the enablement for the action.&nbsp; For more information
+on the use of <tt>enablement</tt> element, refer to <a href="actionExpressions.html">actionExpressions.html</a>.</blockquote>
 The enablement criteria for an action extension are initially defined by
-<tt>enablesFor</tt>
-and <tt>selection</tt>.&nbsp; However, once the action delegate has been
-instantiated it may control the action enable state directly within its
-<tt>selectionChanged</tt>
-method.
+<tt>enablesFor,
+selection</tt> and <tt>enablement</tt>.&nbsp; However, once the action
+delegate has been instantiated, it may control the action enable state
+directly within its
+<tt>selectionChanged</tt> method.
 <p>Action and menu labels may contain special characters that encode mnemonics
 and accelerators using the following rules:
 <ol>
