@@ -552,6 +552,13 @@ public final class BuilderPropertyPage extends PropertyPage {
 			String name= DebugPlugin.getDefault().getLaunchManager().generateUniqueLaunchConfigurationNameFrom("New_Builder");
 			workingCopy = type.newInstance(getBuilderFolder(), name);		
 			workingCopy.setAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE, IDebugUIConstants.PERSPECTIVE_NONE);
+			
+			StringBuffer buffer= new StringBuffer(IExternalToolConstants.BUILD_TYPE_FULL);
+			buffer.append(',');
+			buffer.append(IExternalToolConstants.BUILD_TYPE_INCREMENTAL);
+			buffer.append(',');
+			workingCopy.setAttribute(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, buffer.toString());
+			
 			ILaunchConfiguration config = null;
 			setAutobuild(false);
 			config = workingCopy.doSave();
