@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
@@ -82,10 +81,6 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 	 */
 	private Map extraData = new HashMap(1);
 
-	/**
-	 * Holds onto the cool item ids added by the application.
-	 */
-	private ArrayList coolItemIds = new ArrayList(4);
 
 	/**
 	 * Holds the list drag and drop <code>Transfer</code> for the
@@ -103,8 +98,83 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 	 * Object for configuring this workbench window's action bars. 
 	 * Lazily initialized to an instance unique to this window.
 	 */
-	private IActionBarConfigurer actionBarConfigurer = null;
+	private WindowActionBarConfigurer actionBarConfigurer = null;
 
+	/**
+	 * Action bar configurer that changes this workbench window.
+	 * This implementation keeps track of of cool bar items
+	 */
+	class WindowActionBarConfigurer extends AbstractActionBarConfigurer {
+
+		/**
+		 * Holds onto the cool item ids added by the application.
+		 */
+		private ArrayList coolItemIds = new ArrayList(4);
+	
+		/**
+		 * Returns whether the given id is for a cool item.
+		 * 
+		 * @param the item id
+		 * @return <code>true</code> if it is a cool item,
+		 * and <code>false</code> otherwise
+		 */
+		/* package */ boolean containsCoolItem(String id) {
+			return coolItemIds.contains(id);
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.application.IActionBarConfigurer
+		 */
+		public IStatusLineManager getStatusLineManager() {
+			return window.getStatusLineManager();
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.application.IActionBarConfigurer
+		 */
+		public IMenuManager getMenuManager() {
+			return window.getMenuManager();
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.internal.AbstractActionBarConfigurer
+		 */
+		public CoolBarManager getCoolBarManager() {
+			return window.getCoolBarManager();
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.application.IActionBarConfigurer
+		 */
+		public void addEditorToolBarGroup() {
+			// @issue missing implementation
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.application.IActionBarConfigurer
+		 */
+		public void registerGlobalAction(IAction action) {
+			window.registerGlobalAction(action);
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.application.IActionBarConfigurer
+		 */
+		public IToolBarManager addToolBar(String id) {
+			IToolBarManager manager = super.addToolBar(id);
+			coolItemIds.add(id);
+			return manager;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.application.IActionBarConfigurer
+		 */
+		public void removeToolBar(String id) {
+			super.removeToolBar(id);
+			coolItemIds.remove(id);
+		}
+	}
+	
 	/**
 	 * Creates a new workbench configurer.
 	 * <p>
@@ -277,113 +347,6 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 		}
 	}
 
-	/**
-	 * Adds a tool bar item with the given id to the tool bar of this workbench
-	 * window. The new tool bar item is added after any existing ones.
-	 * 
-	 * @param id the id assigned to this tool bar
-	 * @return the tool bar manager for the new tool bar item
-	 */
-	/* package */ IToolBarManager addToolBar(String id) {
-		if (id == null || id.length() < 1) {
-			throw new IllegalArgumentException();
-		}
-		coolItemIds.add(id);
-		CoolBarManager cBarMgr = window.getCoolBarManager();
-		CoolBarContributionItem cBarItem = new CoolBarContributionItem(cBarMgr, id);
-		cBarMgr.add(cBarItem);
-		cBarItem.setVisible(true);
-		return cBarItem.getToolBarManager();
-	}
-
-	/**
-	 * Removes the tool bar item with the given id from the tool bar of this
-	 * workbench window. Ignored if there is no tool bar item with the given id. 
-	 * 
-	 * @param id the tool bar id
-	 */
-	/* package */ void removeToolBar(String id) {
-		if (id == null || id.length() < 1) {
-			throw new IllegalArgumentException();
-		}
-		coolItemIds.remove(id);
-		CoolBarManager cBarMgr = window.getCoolBarManager();
-		cBarMgr.remove(id);
-	}
-
-	/**
-	 * Returns the tool bar manager for the tool bar item with the given id
-	 * to the tool bar of this workbench window. The new tool bar item is added
-	 * after any existing ones.
-	 * 
-	 * @param id the id of the tool bar item
-	 * @return the tool bar manager for the tool bar item with the given id
-	 */
-	/* package */ IToolBarManager getToolBar(String id) {
-		if (id == null || id.length() < 1) {
-			throw new IllegalArgumentException();
-		}
-		CoolBarManager cBarMgr = window.getCoolBarManager();
-		CoolBarContributionItem cBarItem = (CoolBarContributionItem) cBarMgr.find(id);
-		if (cBarItem != null) {
-			return cBarItem.getToolBarManager();
-		} else {
-			return null;
-		}
-	}
-
-	/**
-	 * Adds the special editor tool bar group to the tool bar of this workbench
-	 * window. The new tool bar item is added after any existing ones. The id
-	 * of editor tool bar item is always 
-	 * {@link EDITOR_TOOLBAR_ID EDITOR_TOOLBAR_ID}, and consists of a canned
-	 * arrangement of buttons pre-bound to editor-specific commands.
-	 * 
-	 * @return the tool bar manager for the new tool bar item
-	 * @issue where is EDITOR_TOOLBAR_ID defined?
-	 */
-	/* package */ void addEditorToolbarGroup() {
-		// @issue need to provide implementation for this
-	}
-
-	/**
-	 * Adds a group to the tool bar of this workbench window. The new group is 
-	 * added after any existing contributions to the tool bar.
-	 *
-	 * @param toolBarMgr the tool bar manager to add the group to 
-	 * @param id the unique group identifier
-	 * @param asSeparator whether the group should have a seperator
-	 */
-	/* package */ void addToolBarGroup(IToolBarManager toolBarMgr, String id, boolean asSeparator) {
-		if (id == null || id.length() < 1) {
-			throw new IllegalArgumentException();
-		}
-		if (!(toolBarMgr instanceof CoolItemToolBarManager)) {
-			throw new IllegalArgumentException();
-		}
-		((CoolItemToolBarManager) toolBarMgr).addBaseGroup(id, asSeparator);
-	}
-
-	/**
-	 * Adds a menu item to the tool bar of this workbench menu.
-	 * 
-	 * @param menuItem the action contribution item to add to the menu
-	 */
-	/* package */ void addToToolBarMenu(ActionContributionItem menuItem) {
-		if (menuItem == null) {
-			throw new IllegalArgumentException();
-		}
-		CoolBarManager cBarMgr = window.getCoolBarManager();
-		cBarMgr.addToMenu(menuItem);
-	}
-	
-	/**
-	 * Returns the list of cool item ids added by the application.
-	 */
-	/* package */ ArrayList getCoolItemIds() {
-		return coolItemIds;
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#addEditorAreaTransfer
 	 */
@@ -430,7 +393,7 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 	}
 
 	/**
-	 * Return the drop listener provided by the application.
+	 * Returns the drop listener provided by the application.
 	 */	
 	/* package */ DropTargetListener getDropTargetListener() {
 		return dropTargetListener;
@@ -442,45 +405,21 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 	public IActionBarConfigurer getActionBarConfigurer() {
 		if (actionBarConfigurer == null) {
 			// lazily initialize
-			actionBarConfigurer = new IActionBarConfigurer() {
-
-				public IMenuManager getMenuManager() {
-					return window.getMenuManager();
-				}
-
-				public IToolBarManager addToolBar(String id) {
-					return WorkbenchWindowConfigurer.this.addToolBar(id);
-				}
-
-				public void removeToolBar(String id) {
-					WorkbenchWindowConfigurer.this.removeToolBar(id);
-				}
-
-				public IToolBarManager getToolBar(String id) {
-					return WorkbenchWindowConfigurer.this.getToolBar(id);
-				}
-
-				public void addToolBarGroup(IToolBarManager toolBarMgr, String id, boolean asSeparator) {
-					WorkbenchWindowConfigurer.this.addToolBarGroup(toolBarMgr, id, asSeparator);
-				}
-
-				public void registerGlobalAction(IAction action) {
-					window.registerGlobalAction(action);
-				}
-
-				public void addToToolBarMenu(ActionContributionItem menuItem) {
-					WorkbenchWindowConfigurer.this.addToToolBarMenu(menuItem);
-				}
-
-				public void addEditorToolBarGroup() {
-					WorkbenchWindowConfigurer.this.addEditorToolbarGroup();
-				}
-
-				public IStatusLineManager getStatusLineManager() {
-					return window.getStatusLineManager();
-				}
-			};
+			actionBarConfigurer = new WindowActionBarConfigurer();
 		}
 		return actionBarConfigurer;
+	}
+	
+	/**
+	 * Returns whether the given id is for a cool item.
+	 * 
+	 * @param the item id
+	 * @return <code>true</code> if it is a cool item,
+	 * and <code>false</code> otherwise
+	 */
+	/* package */ boolean containsCoolItem(String id) {
+		// trigger lazy initialization
+		getActionBarConfigurer();
+		return actionBarConfigurer.containsCoolItem(id);
 	}
 }

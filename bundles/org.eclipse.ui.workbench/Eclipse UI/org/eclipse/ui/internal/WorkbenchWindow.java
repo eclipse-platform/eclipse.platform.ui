@@ -80,6 +80,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.WorkbenchAdviser;
 import org.eclipse.ui.commands.IKeyBinding;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -416,6 +417,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		
 		// let the application do further configuration
 		getAdviser().preWindowOpen(getWindowConfigurer());
+		// Fill the action bars	
 		getAdviser().fillActionBars(this, getWindowConfigurer().getActionBarConfigurer(), FILL_ALL_ACTION_BARS);
 	}
 
@@ -1261,7 +1263,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	 * the application creates.
 	 */
 	/* package */ boolean isWorkbenchCoolItemId(String id) {
-		return windowConfigurer.getCoolItemIds().contains(id);
+		return windowConfigurer.containsCoolItem(id);
 	}
 	/**
 	 * Locks/unlocks the CoolBar for the workbench.
@@ -2049,5 +2051,14 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	 */
 	private Workbench getWorkbenchImpl() {
 		return Workbench.getInstance();
+	}
+	
+	/**
+	 * Creates a clone copy of the current action bars
+	 * @param configurer location of managers
+	 * @param flags indicate which actions to load and whether its a proxy fill
+	 */
+	public void fillActionBars(IActionBarConfigurer configurer, int flags) {
+		getAdviser().fillActionBars(this,configurer,flags);
 	}
 }

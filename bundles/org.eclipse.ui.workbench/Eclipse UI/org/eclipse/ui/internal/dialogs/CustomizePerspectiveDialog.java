@@ -29,6 +29,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.application.WorkbenchAdviser;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.dialogs.IndentedTableViewer.IIndentedTableLabelProvider;
@@ -123,6 +124,7 @@ public class CustomizePerspectiveDialog extends Dialog {
 			}
 			return null;
 		}
+			
 		public void fillMenusFor(String actionSetId, IContributionItem item) {
 			if (item instanceof ContributionManager) {
 				ContributionManager mgr = (ContributionManager)item;
@@ -221,7 +223,8 @@ public class CustomizePerspectiveDialog extends Dialog {
 			return parent.parent == null;
 		}
 	}
-	public class CustomizeActionBars extends WWinActionBars {
+	
+	public class CustomizeActionBars extends AbstractActionBarConfigurer implements IActionBars {
 		/**
 		 * Fake action bars to use to build the menus and toolbar contributions for the
 		 * workbench.  We cannot use the actual workbench action bars, since doing so would
@@ -231,13 +234,13 @@ public class CustomizePerspectiveDialog extends Dialog {
 		CoolBarManager coolBarManager;
 		
 		public CustomizeActionBars() {
-			super(null);
 		}
+		
 		public CustomizeActionBars(MenuManager menuManager, CoolBarManager coolBarManager) {
-			super(null);
 			this.menuManager = menuManager;
 			this.coolBarManager = coolBarManager;
 		}
+		
 		public void clearGlobalActionHandlers() {
 		}
 		public CoolBarManager getCoolBarManager() {
@@ -259,7 +262,13 @@ public class CustomizePerspectiveDialog extends Dialog {
 		}
 		public void updateActionBars() {
 		}
+
+		public void addEditorToolBarGroup() {
+			// do nothing
+		}
+		
 	}
+	
 	class ShortcutMenuItemContentProvider implements IStructuredContentProvider {
 	
 		ShortcutMenuItemContentProvider() {
@@ -343,6 +352,7 @@ public class CustomizePerspectiveDialog extends Dialog {
 			return text; 
 		}
 	}
+	
 	class ShortcutMenu extends Object  {
 		/**
 		 * Tree representation for the shortcut items.  
@@ -563,13 +573,19 @@ public class CustomizePerspectiveDialog extends Dialog {
 public CustomizePerspectiveDialog(Shell parentShell, Perspective persp) {
 	super(parentShell);
 	perspective = persp;
-	window = (WorkbenchWindow)((Workbench)WorkbenchPlugin.getDefault().getWorkbench()).getActiveWorkbenchWindow();
+	window = (WorkbenchWindow)PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+	
 	// build a structure for the menuitems and toolitems that the workbench contributes
 	customizeWorkbenchActionBars = new CustomizeActionBars(new MenuManager(), new CoolBarManager());
-	window.fillActionBars(customizeWorkbenchActionBars);
+	
+	// Fill current actionBars in the "fake" workbench actionbars
+	window.fillActionBars(customizeWorkbenchActionBars, 
+		WorkbenchAdviser.FILL_PROXY | WorkbenchAdviser.FILL_MENU_BAR | WorkbenchAdviser.FILL_TOOL_BAR );
+	
 	initializeActionSetInput();
 	initializeShortcutMenuInput();
 }
+
 private void addListeners() {
 	tabFolder.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent event) {
@@ -937,9 +953,11 @@ void handleActionSetSelected(SelectionChangedEvent event) {
 	ActionSetDescriptor element = (ActionSetDescriptor)sel.getFirstElement();
 	if (element == selectedActionSet) return;
 	String actionSetId = element.getId();
+	// Hash table is used to cache previous selections
 	ArrayList structures = (ArrayList)actionSetStructures.get(actionSetId);
 	ActionSetDisplayItem menubarStructure = null;
 	ActionSetDisplayItem toolbarStructure = null;
+	// If the actionset has never been selected then we need to populate the structures
 	if (structures == null) {
 		structures = new ArrayList(2);
 		menubarStructure = new ActionSetDisplayItem("Menubar"); //$NON-NLS-1$
@@ -957,13 +975,18 @@ void handleActionSetSelected(SelectionChangedEvent event) {
 			buildMenusAndToolbarsFor(element);
 			menubarStructure.fillMenusFor(actionSetId, customizeWorkbenchActionBars.menuManager);
 			toolbarStructure.fillToolsFor(actionSetId, customizeWorkbenchActionBars.coolBarManager);
+			
 		}
+		// Add menubarStructure and toolbarStructure to arrayList
 		structures.add(menubarStructure);
-		structures.add(toolbarStructure);			
+		structures.add(toolbarStructure);
+		// Add the structure to the hash table with key actionSetId
 		actionSetStructures.put(actionSetId, structures);
 	}
+	// retrieve the actionsets from the arraylist
 	if (menubarStructure == null) menubarStructure = (ActionSetDisplayItem)structures.get(0);
 	if (toolbarStructure == null) toolbarStructure = (ActionSetDisplayItem)structures.get(1);
+	
 	// fill the menu structure table
 	if (element != actionSetMenuViewer.getInput()) {
 		try {
@@ -1149,7 +1172,8 @@ private void initializeShortCutMenu(ShortcutMenu menu, WizardCollectionElement e
 		category.addItem(wizard);
 		if (activeIds.contains(wizard.getID())) category.addCheckedItem(wizard);
 	}
-	Object[] children = element.getChildren();
+	// @issue should not pass in null
+	Object[] children = element.getChildren(null);
 	for (int i = 0; i < children.length; i++) {
 		initializeShortCutMenu(category, (WizardCollectionElement)children[i], activeIds);
 	}
@@ -1159,7 +1183,9 @@ private void initializeShortcutMenuInput() {
 	ShortcutMenu wizardMenu = new ShortcutMenu(rootMenu, ShortcutMenu.ID_WIZARD, WorkbenchMessages.getString("ActionSetDialogInput.wizardCategory")); //$NON-NLS-1$
 	NewWizardsRegistryReader rdr = new NewWizardsRegistryReader();
 	WizardCollectionElement wizardCollection = rdr.getWizardElements();
-	Object [] wizardCategories = wizardCollection.getChildren();
+	
+	// @issue should not pass in null
+	Object [] wizardCategories = wizardCollection.getChildren(null);
 	ArrayList activeIds = perspective.getNewWizardActionIds();
 	for (int i = 0; i < wizardCategories.length; i ++) {
 		WizardCollectionElement element = (WizardCollectionElement)wizardCategories[i];
