@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -37,6 +38,7 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -93,11 +95,26 @@ public class TagConfigurationDialog extends Dialog {
 	// enable selecting auto-refresh files
 	private boolean allowSettingAutoRefreshFiles = true;
 	
+	// sizing default hints
+	private final int ALLOWREFRESH_WIDTH = 500;
+	private final int ALLOWREFRESH_HEIGHT = 625;
+	private final int NOREFRESH_WIDTH = 500;
+	private final int NOREFRESH_HEIGHT = 550;
+	
+	// preference keys
+	private final String ALLOWREFRESH_WIDTH_KEY = "AllowRefreshWidth";
+	private final String ALLOWREFRESH_HEIGHT_KEY = "AllowRefreshHeight";
+	private final String NOREFRESH_WIDTH_KEY = "NoRefreshWidth";
+	private final String NOREFRESH_HEIGHT_KEY = "NoRefreshHeight";
+
 	// buttons
 	private Button addSelectedTagsButton;
 	private Button addSelectedFilesButton;
 	private Button removeFileButton;
 	private Button removeTagButton;
+	
+	// dialogs settings that are persistent between workbench sessions
+	private IDialogSettings settings;
 	
 	public TagConfigurationDialog(Shell shell, ICVSFolder[] roots) {
 		super(shell);
@@ -106,6 +123,12 @@ public class TagConfigurationDialog extends Dialog {
 		this.root = roots[0];
 		if(roots.length>1) {
 			allowSettingAutoRefreshFiles = false;
+		}
+		
+		IDialogSettings workbenchSettings = CVSUIPlugin.getPlugin().getDialogSettings();
+		this.settings = workbenchSettings.getSection("TagConfigurationDialog");//$NON-NLS-1$
+		if (settings == null) {
+			this.settings = workbenchSettings.addNewSection("TagConfigurationDialog");//$NON-NLS-1$
 		}
 	}
 
@@ -226,8 +249,8 @@ public class TagConfigurationDialog extends Dialog {
 		cvsDefinedTagsTree = new TreeViewer (tree);
 		cvsDefinedTagsTree.setContentProvider(new WorkbenchContentProvider());
 		cvsDefinedTagsTree.setLabelProvider(new WorkbenchLabelProvider());
-		data = new GridData ();
-		data.heightHint = 150;
+		data = new GridData (GridData.FILL_BOTH);
+		data.heightHint = 100;
 		data.horizontalAlignment = GridData.FILL;
 		data.grabExcessHorizontalSpace = true;
 		cvsDefinedTagsTree.getTree().setLayoutData(data);
@@ -255,6 +278,8 @@ public class TagConfigurationDialog extends Dialog {
 		data.verticalAlignment = GridData.BEGINNING;		
 		buttonComposite.setLayoutData(data);
 		gridLayout = new GridLayout();
+		gridLayout.marginHeight = 0;
+		gridLayout.marginWidth = 0;
 		buttonComposite.setLayout (gridLayout);
 		
 		addSelectedTagsButton = new Button (buttonComposite, SWT.PUSH);
@@ -319,6 +344,8 @@ public class TagConfigurationDialog extends Dialog {
 			data.verticalAlignment = GridData.BEGINNING;		
 			buttonComposite2.setLayoutData(data);
 			gridLayout = new GridLayout();
+			gridLayout.marginHeight = 0;
+			gridLayout.marginWidth = 0;
 			buttonComposite2.setLayout (gridLayout);
 	
 			addSelectedFilesButton = new Button (buttonComposite2, SWT.PUSH);
@@ -644,11 +671,25 @@ public class TagConfigurationDialog extends Dialog {
 	 * @see Window#getInitialSize()
 	 */
 	protected Point getInitialSize() {
+		int width, height;
 		if(allowSettingAutoRefreshFiles) {
-			return new Point(500, 675);
+			try {
+				height = settings.getInt(ALLOWREFRESH_HEIGHT_KEY);
+				width = settings.getInt(ALLOWREFRESH_WIDTH_KEY);
+			} catch(NumberFormatException e) {
+				height = ALLOWREFRESH_HEIGHT;
+				width = ALLOWREFRESH_WIDTH;
+			}
 		} else {
-			return new Point(500, 600);
+			try {
+				height = settings.getInt(NOREFRESH_HEIGHT_KEY);
+				width = settings.getInt(NOREFRESH_WIDTH_KEY);
+			} catch(NumberFormatException e) {
+				height = NOREFRESH_HEIGHT;
+				width = NOREFRESH_WIDTH;
+			}
 		}
+		return new Point(width, height);
 	}
 	
 	/**
@@ -664,5 +705,20 @@ public class TagConfigurationDialog extends Dialog {
 		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
 		data.widthHint = Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 		return data;
+	}
+
+	/**
+	 * @see Window#close()
+	 */
+	public boolean close() {
+		Rectangle bounds = getShell().getBounds();
+		if(allowSettingAutoRefreshFiles) {
+			settings.put(ALLOWREFRESH_HEIGHT_KEY, bounds.height);
+			settings.put(ALLOWREFRESH_WIDTH_KEY, bounds.width);
+		} else {
+			settings.put(NOREFRESH_HEIGHT_KEY, bounds.height);
+			settings.put(NOREFRESH_WIDTH_KEY, bounds.width);
+		}
+		return super.close();
 	}
 }
