@@ -17,6 +17,7 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -44,7 +45,7 @@ public class ContainerSelectionGroup extends Composite {
 	
 	// handle on parts
 	private Text containerNameField;
-	private TreeViewer treeViewer;
+	TreeViewer treeViewer;
 
 	// the message to display at the top of this dialog
 	private static final String DEFAULT_MSG_NEW_ALLOWED = WorkbenchMessages.getString("ContainerGroup.message"); //$NON-NLS-1$
@@ -109,7 +110,6 @@ public ContainerSelectionGroup (Composite parent, Listener listener, boolean all
 	this.listener = listener;
 	this.allowNewContainerName = allowNewContainerName;
 	this.showClosedProjects = showClosedProjects;
-	this.setFont(parent.getFont());
 	if (message != null)
 		createContents(message, heightHint);
 	else if (allowNewContainerName)
@@ -173,6 +173,7 @@ public void createContents(String message, int heightHint) {
 	}
 
 	createTreeViewer(heightHint);
+	Dialog.applyDialogFont(this);
 }
 /**
  * Returns a new drill down viewer for this dialog.
@@ -189,7 +190,6 @@ protected void createTreeViewer(int heightHint) {
 	spec.widthHint = SIZING_SELECTION_PANE_WIDTH;
 	spec.heightHint = heightHint;
 	drillDown.setLayoutData(spec);
-	drillDown.setFont(this.getFont());
 
 	// Create tree viewer inside drill down.
 	treeViewer = new TreeViewer(drillDown, SWT.NONE);
@@ -222,7 +222,6 @@ protected void createTreeViewer(int heightHint) {
 
 	// This has to be done after the viewer has been laid out
 	treeViewer.setInput(ResourcesPlugin.getWorkspace());
-	treeViewer.getTree().setFont(this.getFont());
 }
 /**
  * Returns the currently entered container name.
