@@ -729,6 +729,11 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 				return;
 			}
 
+			if (ExtendedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH.equals(property)) {
+				sourceViewer.getTextWidget().setTabs(getPreferenceStore().getInt(ExtendedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH));
+				return;
+			}
+
 			if (fLineNumberRulerColumn != null
 				&&	(LINE_NUMBER_COLOR.equals(property) 
 				||	PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT.equals(property)

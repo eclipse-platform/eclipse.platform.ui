@@ -52,6 +52,17 @@ public class ExtendedTextEditorPreferenceConstants {
 	public final static String EDITOR_CURRENT_LINE_COLOR= "currentLineColor"; //$NON-NLS-1$
 
 	/**
+	 * A named preference that holds the number of spaces used per tab in the text editor.
+	 * <p>
+	 * Value is of type <code>int</code>: positive int value specifying the number of
+	 * spaces per tab.
+	 * </p>
+	 * 
+	 * @since 3.0
+	 */
+	public final static String EDITOR_TAB_WIDTH= "tabWidth"; //$NON-NLS-1$
+
+	/**
 	 * A named preference that controls whether the print margin is turned on or off
  	 * (value <code>"printMargin"</code>).
 	 * <p>
@@ -183,6 +194,8 @@ public class ExtendedTextEditorPreferenceConstants {
 
 		store.setDefault(ExtendedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE, true);
 		PreferenceConverter.setDefault(store, ExtendedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR, new RGB(225, 235, 224));
+
+		store.setDefault(ExtendedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH, 4);
 
 		store.setDefault(ExtendedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN, false);
 		store.setDefault(ExtendedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN, 80);
