@@ -19,6 +19,18 @@ import org.eclipse.swt.graphics.Point;
  */
 public class TitleAreaDialog extends Dialog {
 	/**
+	 * Image registry key for info message image (value <code>"dialog_title_info_image"</code>).
+	 * @since 2.0
+	 */
+	public static final String DLG_IMG_TITLE_INFO = "dialog_title_info_image";//$NON-NLS-1$
+
+	/**
+	 * Image registry key for warning message image (value <code>"dialog_title_warning_image"</code>).
+	 * @since 2.0
+	 */
+	public static final String DLG_IMG_TITLE_WARNING = "dialog_title_warning_image";//$NON-NLS-1$
+
+	/**
 	 * Image registry key for error message image (value <code>"dialog_title_error_image"</code>).
 	 */
 	public static final String DLG_IMG_TITLE_ERROR = "dialog_title_error_image";//$NON-NLS-1$
@@ -27,6 +39,18 @@ public class TitleAreaDialog extends Dialog {
 	 * Image registry key for banner image (value <code>"dialog_title_banner_image"</code>).
 	 */
 	public static final String DLG_IMG_TITLE_BANNER = "dialog_title_banner_image";//$NON-NLS-1$
+
+	/**
+	 * Message type constant used to display an info icon with the message.
+	 * @since 2.0
+	 */
+	public final static String INFO_MESSAGE = "INFO_MESSAGE";
+	
+	/**
+	 * Message type constant used to display a warning icon with the message.
+	 * @since 2.0
+	 */
+	public final static String WARNING_MESSAGE = "WARNING_MESSAGE";
 
 	// Space between the top of the title area and the title
 	private static final int H_INDENT_TITLE = 7;
@@ -48,8 +72,11 @@ public class TitleAreaDialog extends Dialog {
 	private static final int MIN_DIALOG_WIDTH = 350;
 	//Minimun dialog height (in dialog units)
 	private static final int MIN_DIALOG_HEIGHT = 150;
+	
 	static {
 		ImageRegistry reg = JFaceResources.getImageRegistry();
+		reg.put(DLG_IMG_TITLE_INFO, ImageDescriptor.createFromFile(TitleAreaDialog.class, "images/title_info.gif"));//$NON-NLS-1$
+		reg.put(DLG_IMG_TITLE_WARNING, ImageDescriptor.createFromFile(TitleAreaDialog.class, "images/title_warning.gif"));//$NON-NLS-1$
 		reg.put(DLG_IMG_TITLE_ERROR, ImageDescriptor.createFromFile(TitleAreaDialog.class, "images/title_error.gif"));//$NON-NLS-1$
 		reg.put(DLG_IMG_TITLE_BANNER, ImageDescriptor.createFromFile(TitleAreaDialog.class, "images/title_banner.gif"));//$NON-NLS-1$
 	}
@@ -60,14 +87,17 @@ public class TitleAreaDialog extends Dialog {
 	private Color titleAreaColor;
 	private RGB titleAreaRGB;
 
-	private String message;
+	private String message = "";
+	private String errorMessage;
 	private Composite messageArea;
 	private Label messageLabel;
-	private Label messageImage;
+	private Label messageImageLabel;
+	private Image messageImage;
 	private Color normalMsgAreaBackground;
 	private Color errorMsgAreaBackground;
 	private Color errorMsgAreaBorderColor;
 	private Image errorMsgImage;
+	private boolean showingError = false;
 
 	/**
 	 * Layout the contents of the title area.
@@ -80,8 +110,8 @@ public class TitleAreaDialog extends Dialog {
 
 			// get the message image size
 			Point messageImageSize = new Point(0,0);
-			if (messageImage.getVisible()) 
-				messageImageSize = messageImage.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+			if (messageImageLabel.getVisible()) 
+				messageImageSize = messageImageLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 
 			// get the message size
 			String temp = messageLabel.getText();
@@ -135,9 +165,9 @@ public class TitleAreaDialog extends Dialog {
 
 			// layout the message image
 			int currentXBegin = H_INDENT_MSG;
-			if (messageImage.getVisible()) {
-				Point imageSize = messageImage.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
-				messageImage.setBounds(currentXBegin, V_INDENT_MSG, imageSize.x, imageSize.y);
+			if (messageImageLabel.getVisible()) {
+				Point imageSize = messageImageLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+				messageImageLabel.setBounds(currentXBegin, V_INDENT_MSG, imageSize.x, imageSize.y);
 				currentXBegin += imageSize.x + H_GAP_IMAGE;
 			}
 
@@ -243,7 +273,7 @@ private Composite createTitleArea(Composite parent) {
 	// Draw a border for the top and right side of the msg area
 	messageArea.addPaintListener(new PaintListener() {
 		public void paintControl(PaintEvent event) {
-			if (messageImage.getVisible()) {
+			if (showingError) {
 				Rectangle area = messageArea.getClientArea();
 				GC gc = event.gc;
 				if (errorMsgAreaBorderColor == null)
@@ -257,9 +287,9 @@ private Composite createTitleArea(Composite parent) {
 	});
 	
 	// Message image @ bottom, left
-	messageImage = new Label(messageArea, SWT.LEFT);
-	messageImage.setBackground(bg);
-	messageImage.setVisible(false);
+	messageImageLabel = new Label(messageArea, SWT.LEFT);
+	messageImageLabel.setBackground(bg);
+	messageImageLabel.setVisible(false);
 	
 	// Message label @ bottom, center
 	messageLabel = new Label(messageArea, SWT.WRAP);
@@ -307,22 +337,49 @@ protected Label getTitleImageLabel() {
 	return titleImage;
 }
 /**
+ * Parses the message to see if it includes an image prefix.
+ * 
+ * @param unparsedMessage the message or <code>null</code>
+ * @return a two element array, the first element is the message without any 
+ * prefix or <code>null</code> and the second element in an <code>Image</code>
+ * or <code>null</code>
+ */
+private Object[] parseMessage(String unparsedMessage) {
+	Image newImage = null;
+	String newMessage = unparsedMessage;	
+
+	if (unparsedMessage != null) {
+		if (unparsedMessage.startsWith(INFO_MESSAGE)) {
+			newImage = JFaceResources.getImage(DLG_IMG_TITLE_INFO);
+			newMessage = unparsedMessage.substring(INFO_MESSAGE.length());
+		} else if (unparsedMessage.startsWith(WARNING_MESSAGE)) {
+			newImage = JFaceResources.getImage(DLG_IMG_TITLE_WARNING);
+			newMessage = unparsedMessage.substring(WARNING_MESSAGE.length());
+		}
+	}
+	
+	return new Object[] {newMessage, newImage};
+}
+/**
  * Display the given error message. The currently displayed message
  * is saved and will be redisplayed when the error message is set
  * to <code>null</code>.
  *
- * @param errorMessage the errorMessage to display or <code>null</code>
+ * @param newErrorMessage the newErrorMessage to display or <code>null</code>
  */
-public void setErrorMessage(String errorMessage) {
+public void setErrorMessage(String newErrorMessage) {
+	// Any change?
+	if (errorMessage == null ? newErrorMessage == null : errorMessage.equals(newErrorMessage))
+		return;
+	
+	errorMessage = newErrorMessage;
 	if (errorMessage == null) {
-		if (messageImage.getVisible()) {
+		if (showingError) {
 			// we were previously showing an error
+			showingError = false;
 			messageLabel.setBackground(normalMsgAreaBackground);
-			messageImage.setBackground(normalMsgAreaBackground);
+			messageImageLabel.setBackground(normalMsgAreaBackground);
 			messageArea.setBackground(normalMsgAreaBackground);
-			messageImage.setVisible(false);
-			messageImage.setImage(null);
-			titleArea.layout(true);
 		}
 
 		// show the message
@@ -331,13 +388,16 @@ public void setErrorMessage(String errorMessage) {
 		if (message == null)	//this should probably never happen since setMessage does this conversion....
 			message = "";		//$NON-NLS-1$
 		messageLabel.setText(message);
+		messageImageLabel.setImage(messageImage);
+		messageImageLabel.setVisible(messageImage != null);
 		messageLabel.setToolTipText(message);
 
 	} else {
 		messageLabel.setText(errorMessage);
 		messageLabel.setToolTipText(errorMessage);
-		if (!messageImage.getVisible()) {
+		if (!showingError) {
 			// we were not previously showing an error
+			showingError = true;
 
 			// lazy initialize the error background color and image
 			if (errorMsgAreaBackground == null) {
@@ -348,29 +408,81 @@ public void setErrorMessage(String errorMessage) {
 			// show the error	
 			normalMsgAreaBackground = messageLabel.getBackground();
 			messageLabel.setBackground(errorMsgAreaBackground);
-			messageImage.setBackground(errorMsgAreaBackground);
+			messageImageLabel.setBackground(errorMsgAreaBackground);
 			messageArea.setBackground(errorMsgAreaBackground);
-			messageImage.setImage(errorMsgImage);
-			messageImage.setVisible(true);
-			titleArea.layout(true);
+			messageImageLabel.setImage(errorMsgImage);
+			messageImageLabel.setVisible(true);
 		}
 	}
+	titleArea.layout(true);
 }
 /**
  * Set the message text. If the message line currently displays an error,
  * the message is saved and will be redisplayed when the error message is set
  * to <code>null</code>.
+ * <p>
+ * The message may be prefixed with either <code>INFO_MESSAGE</code> or
+ * <code>WARNING_MESSAGE</code> to display an icon along with the message
+ * </p> 
+ * 
+ * @param newMessage the message, or <code>null</code> to clear
+ *   the message
  */
 public void setMessage(String newMessage) {
+	Object[] array = parseMessage(newMessage);
+	showMessage((String)array[0], (Image)array[1]);
+}
+/**
+ * Set the message text. If the message line currently displays an error,
+ * the message is saved and will be redisplayed when the error message is set
+ * to <code>null</code>.
+ * <p>
+ * A message type of  either <code>INFO_MESSAGE</code> or
+ * <code>WARNING_MESSAGE</code> may be specified to display an icon along with 
+ * the message.
+ * </p> 
+ * 
+ * @param newMessage the message, or <code>null</code> to clear
+ *   the message
+ * @param messageType the type of message, one of INFO_MESSAGE or 
+ * 	WARNING_MESSAGE or <code>null</code>. 
+ * @since 2.0
+ * 
+ */
+public void setMessage(String newMessage, String messageType) {
+	Image newImage = null;
+	if (messageType != null) {
+		if (messageType.equals(INFO_MESSAGE)) 
+			newImage = JFaceResources.getImage(DLG_IMG_TITLE_INFO);
+		else if (messageType.equals(WARNING_MESSAGE)) 
+			newImage = JFaceResources.getImage(DLG_IMG_TITLE_WARNING);
+	}
+
+	showMessage(newMessage, newImage);
+}
+/**
+ * Show the new message
+ */
+private void showMessage(String newMessage, Image newImage) {
+	// Any change?
+	if (message.equals(newMessage) && messageImage == newImage)
+		return;
+
 	message = newMessage;
 	if (message == null)
 		message = "";//$NON-NLS-1$
-	if (!messageImage.getVisible()) {
+	messageImage = newImage;
+
+	if (!showingError) {
 		// we are not showing an error
 		messageLabel.setText(message);
+		messageImageLabel.setImage(messageImage);
+		messageImageLabel.setVisible(messageImage != null);
 		messageLabel.setToolTipText(message);
+		titleArea.layout(true);
 	}
 }
+
 /**
  * Sets the title to be shown in the title area of this dialog.
  *

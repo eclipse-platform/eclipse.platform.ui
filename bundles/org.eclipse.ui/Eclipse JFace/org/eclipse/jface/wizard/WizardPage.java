@@ -5,6 +5,8 @@ package org.eclipse.jface.wizard;
  * All Rights Reserved.
  */
 import org.eclipse.jface.dialogs.*; 
+import org.eclipse.jface.dialogs.DialogPage;
+import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.resource.*;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.events.*;
@@ -71,6 +73,19 @@ public abstract class WizardPage extends DialogPage implements IWizardPage {
 	 * <code>null</code> if none.
 	 */
 	private IWizardPage previousPage = null;
+	
+	/**
+	 * Message type constant used to display an info icon with the message.
+	 * @since 2.0
+	 */
+	public static final String INFO_MESSAGE = TitleAreaDialog.INFO_MESSAGE;
+
+	/**
+	 * Message type constant used to display a warning icon with the message.
+	 * @since 2.0
+	 */
+	public static final String WARNING_MESSAGE = TitleAreaDialog.WARNING_MESSAGE;
+
 /**
  * Creates a new wizard page with the given name, and
  * with no title or image.
@@ -239,10 +254,25 @@ public void setImageDescriptor(ImageDescriptor image) {
  *   the message
  */
 public void setMessage(String newMessage) {
-	super.setMessage(newMessage);
-	if (isCurrentPage()) {
+	setMessage(newMessage, null);
+}
+/**
+ * Sets or clears the message for this page.
+ *
+ * @param newMessage the message, or <code>null</code> to clear
+ *   the message
+ * @param messageType the type of message, one of INFO_MESSAGE or 
+ * 	WARNING_MESSAGE or <code>null</code>. 
+ * @since 2.0
+ */
+public void setMessage(String newMessage, String messageType) {
+	if (newMessage == null || messageType == null) 
+		super.setMessage(newMessage);
+	else
+		super.setMessage(messageType + newMessage);
+
+	if (isCurrentPage()) 
 		getContainer().updateMessage();
-	}
 }
 /**
  * Sets whether this page is complete. 

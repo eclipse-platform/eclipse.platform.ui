@@ -947,9 +947,6 @@ protected void update(){
 	// Update the title bar
 	updateTitleBar();
 
-	// Update the message line
-	updateMessage();
-
 	// Update the buttons
 	updateButtons();
 }
