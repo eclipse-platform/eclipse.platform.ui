@@ -108,7 +108,12 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn {
 	 * The list of annotation types to be shown in this ruler.
 	 * @since 3.0
 	 */
-	private Set fAnnotationTypes= new HashSet();
+	private Set fConfiguredAnnotationTypes= new HashSet();
+	/**
+	 * The list of allowed annotation types to be shown in this ruler.
+	 * @since 3.0
+	 */
+	private Set fAllowedAnnotationTypes= new HashSet();
 	/**
 	 * The annotation access.
 	 * @since 3.0
@@ -252,7 +257,8 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn {
 			fBuffer= null;
 		}
 		
-		fAnnotationTypes.clear();
+		fConfiguredAnnotationTypes.clear();
+		fAllowedAnnotationTypes.clear();
 		fAnnotationAccess= null;
 	}
 	
@@ -376,7 +382,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn {
 			while (iter.hasNext()) {
 				Annotation annotation= (Annotation) iter.next();
 				
-				if (skip(fAnnotationAccess.getType(annotation)))
+				if (skip(annotation))
 					continue;
 				
 				int lay= IAnnotationAccessExtension.DEFAULT_LAYER;
@@ -464,7 +470,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn {
 
 				Annotation annotation= (Annotation) iter.next();
 				
-				if (fAnnotationAccess != null && skip(fAnnotationAccess.getType(annotation)))
+				if (fAnnotationAccess != null && skip(annotation))
 					continue;
 				
 				int lay= IAnnotationAccessExtension.DEFAULT_LAYER;
@@ -583,7 +589,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn {
 	 * @since 3.0
 	 */
 	public void addAnnotationType(Object annotationType) {
-		fAnnotationTypes.add(annotationType);
+		fConfiguredAnnotationTypes.add(annotationType);
 	}
 	
 	/**
@@ -595,20 +601,49 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn {
 	 * @since 3.0
 	 */
 	public void removeAnnotationType(Object annotationType) {
-		fAnnotationTypes.remove(annotationType);
+		fConfiguredAnnotationTypes.remove(annotationType);
 	}
 	
 	/**
-	 * Returns whether annotation of the given annotation type should be skipped
-	 * by the drawing routine.
+	 * Returns whether the given annotation should be skipped by the drawing
+	 * routine.
 	 * 
 	 * @param annotationType the annotation type
-	 * @return <code>true</code> if annotation of the given type should be skipped
+	 * @return <code>true</code> if annotation of the given type should be
+	 *         skipped, <code>false</code> otherwise
+	 * @since 3.0
+	 */
+	private boolean skip(Annotation annotation) {
+		Object annotationType= fAnnotationAccess.getType(annotation);
+		if (fAllowedAnnotationTypes.contains(annotationType))
+			return false;
+		
+		boolean skip= skip(annotationType);
+		if (!skip)
+			fAllowedAnnotationTypes.add(annotationType);
+		return skip;
+	}
+	
+	/**
+	 * Computes whether the annotation of the given type should be skiped or
+	 * not.
+	 * 
+	 * @param annotation the annotation
+	 * @param annotationType the annotation type
+	 * @return <code>true</code> if annotation should be skipped, <code>false</code>
+	 *         otherwise
 	 * @since 3.0
 	 */
 	private boolean skip(Object annotationType) {
-		if (annotationType == null)
-			return false;
-		return !fAnnotationTypes.contains(annotationType);
+		if (fAnnotationAccess instanceof IAnnotationAccessExtension) {
+			IAnnotationAccessExtension extension= (IAnnotationAccessExtension) fAnnotationAccess;
+			Iterator e= fConfiguredAnnotationTypes.iterator();
+			while (e.hasNext()) {
+				if (extension.isSubtype(annotationType, e.next()))
+					return false;
+			}
+			return true;
+		}
+		return !fConfiguredAnnotationTypes.contains(annotationType);
 	}
 }

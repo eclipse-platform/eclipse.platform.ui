@@ -28,7 +28,6 @@ public interface IAnnotationAccessExtension {
 	 * The default annotation layer.
 	 */
 	static final int DEFAULT_LAYER= 0;
-	
 
 	/**
 	 * Returns the label for the given annotation's type.
@@ -58,4 +57,22 @@ public interface IAnnotationAccessExtension {
 	 * @param bounds the bounds inside the canvas to draw on
 	 */
 	void paint(Annotation annotation, GC gc, Canvas canvas, Rectangle bounds);
+	
+	
+	/**
+	 * Returns <code>true</code> if the given annotation is of the given type
+	 * or <code>false</code> otherwise.
+	 * 
+	 * @param annotationType the annotation type
+	 * @param potentialSupertype the potential super annotation type
+	 * @return <code>true</code> if annotation type is a subtype of the potential annotation super type
+	 */
+	boolean isSubtype(Object annotationType, Object potentialSupertype);
+	
+	/**
+	 * Returns the list of super types for the given annotation type. This does not include the type 
+	 * itself.
+	 * @return the super types for the given annotation type
+	 */
+	Object[] getSupertypes(Object annotationType);
 }

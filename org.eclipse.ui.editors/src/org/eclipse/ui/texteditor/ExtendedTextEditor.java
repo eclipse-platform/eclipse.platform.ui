@@ -255,7 +255,7 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 	 * @return the created annotation access
 	 */
 	protected IAnnotationAccess createAnnotationAccess() {
-		return new DefaultMarkerAnnotationAccess(fAnnotationPreferences);
+		return new DefaultMarkerAnnotationAccess();
 	}
 
 	/**
@@ -549,13 +549,13 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 			while (iter.hasNext()) {
 				AnnotationPreference pref= (AnnotationPreference) iter.next();
 				
-				if ("org.eclipse.quickdiff.changeindication".equals(pref.getMarkerType())) { //$NON-NLS-1$
+				if ("org.eclipse.ui.workbench.texteditor.quickdiffChange".equals(pref.getAnnotationType())) { //$NON-NLS-1$
 					RGB rgb= getColorPreference(store, pref);
 					changeColumn.setChangedColor(sharedColors.getColor(rgb));
-				} else if ("org.eclipse.quickdiff.additionindication".equals(pref.getMarkerType())) { //$NON-NLS-1$
+				} else if ("org.eclipse.ui.workbench.texteditor.quickdiffAddition".equals(pref.getAnnotationType())) { //$NON-NLS-1$
 					RGB rgb= getColorPreference(store, pref);
 					changeColumn.setAddedColor(sharedColors.getColor(rgb));
-				} else if ("org.eclipse.quickdiff.deletionindication".equals(pref.getMarkerType())) { //$NON-NLS-1$
+				} else if ("org.eclipse.ui.workbench.texteditor.quickdiffDeletion".equals(pref.getAnnotationType())) { //$NON-NLS-1$
 					RGB rgb= getColorPreference(store, pref);
 					changeColumn.setDeletedColor(sharedColors.getColor(rgb));
 				}
@@ -754,10 +754,11 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 			if (pref != null) {
 				IChangeRulerColumn column= getChangeColumn();
 				if (column != null) {
-					if ("org.eclipse.quickdiff.changeindication".equals(pref.getMarkerType()) //$NON-NLS-1$
-							|| "org.eclipse.quickdiff.additionindication".equals(pref.getMarkerType()) //$NON-NLS-1$
-							|| "org.eclipse.quickdiff.deletionindication".equals(pref.getMarkerType())) { //$NON-NLS-1$
-						initializeChangeRulerColumn(column);
+					Object type= pref.getAnnotationType();
+					if (type instanceof String) {
+						String annotationType= (String) type;
+						if (annotationType.startsWith("org.eclipse.ui.workbench.texteditor.quickdiff"))
+							initializeChangeRulerColumn(column);
 					}
 				}
 			}
@@ -844,6 +845,15 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 		if (fAnnotationAccess == null)
 			fAnnotationAccess= createAnnotationAccess();
 		return fAnnotationAccess;
+	}
+	
+	/**
+	 * Returns the annotation preference lookup.
+	 * 
+	 * @return the annotation preference lookup
+	 */
+	protected AnnotationPreferenceLookup getAnnotationPreferenceLookup() {
+		return EditorsPlugin.getDefault().getAnnotationPreferenceLookup();
 	}
 
 	/**

@@ -92,13 +92,23 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	private List fHighlightedDecorations= new ArrayList();
 	/** The internal color table */
 	private Map fColorTable= new HashMap();
-	/** The list of types of annotations that are painted by this painter */
-	private Set fAnnotationTypes= new HashSet();
+	/** The list of configured annotation types for being painted by this painter */
+	private Set fConfiguredAnnotationTypes= new HashSet();
 	/**
-	 * The list of types of annotations that are highlighted by this painter.
+	 * The list of allowed annotation types for being painted by this painter.
 	 * @since 3.0
 	 */
-	private Set fHighlightAnnotationTypes= new HashSet();
+	private Set fAllowedAnnotationTypes= new HashSet();
+	/**
+	 * The list of configured annotation typed to be highlighted by this painter.
+	 * @since 3.0
+	 */
+	private Set fConfiguredHighlightAnnotationTypes= new HashSet();
+	/**
+	 * The list of allowed annotation types to be highlighted by this painter.
+	 * @since 3.0
+	 */
+	private Set fAllowedHighlightAnnotationTypes= new HashSet();
 	/**
 	 * The range in which all highlight annotations can be found.
 	 * @since 3.0
@@ -195,7 +205,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 * the painter's annotation model.
 	 */
 	private synchronized void catchupWithModel() {	
-		if (fDecorations != null && fHighlightAnnotationTypes != null) {
+		if (fDecorations != null) {
 			fDecorations.clear();
 			fHighlightedDecorations.clear();
 			
@@ -208,15 +218,15 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 				while (e.hasNext()) {
 					
 					Annotation annotation= (Annotation) e.next();
-					Object annotationType= fAnnotationAccess.getType(annotation);
-					if (annotationType == null)
+					if (annotation.isMarkedDeleted())
 						continue;
-						
+					
 					Color color= null;
-					boolean isHighlighting= fHighlightAnnotationTypes.contains(annotationType);
-					boolean isDrawingSquiggles= fAnnotationTypes.contains(annotationType); 
+					Object annotationType= fAnnotationAccess.getType(annotation);
+					boolean isHighlighting=  shouldBeHighlighted(annotationType);
+					boolean isDrawingSquiggles= shouldBeDrawn(annotationType); 
 					if (isDrawingSquiggles || isHighlighting)
-						color= (Color) fColorTable.get(annotationType);
+						color= findColor(annotationType);
 					
 					if (color != null) {
 						Position position= fModel.getPosition(annotation);
@@ -252,6 +262,101 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 				}
 			}
 		}
+	}
+	
+	/**
+	 * Returns whether the given annotation type should be drawn.
+	 * 
+	 * @param annotationType the annotation type
+	 * @return <code>true</code> if annotation type should be drawn, <code>false</code>
+	 *         otherwise
+	 * @since 3.0
+	 */
+	private boolean shouldBeDrawn(Object annotationType) {
+		return contains(annotationType, fAllowedAnnotationTypes, fConfiguredAnnotationTypes);
+	}
+	
+	/**
+	 * Returns whether the given annotation type should be highlighted.
+	 * 
+	 * @param annotationType the annotation type
+	 * @return <code>true</code> if annotation type should be highlighted, <code>false</code>
+	 *         otherwise
+	 * @since 3.0
+	 */
+	private boolean shouldBeHighlighted(Object annotationType) {
+		return contains(annotationType, fAllowedHighlightAnnotationTypes, fConfiguredHighlightAnnotationTypes);
+	}
+	
+	/**
+	 * Returns whether the given annotation type is contained in the given <code>allowed</code>
+	 * set. This is the case if the type is either in the set
+	 * or covered by the <code>configured</code> set.
+	 * 
+	 * @param annotationType the annotation type
+	 * @return <code>true</code> if annotation is contained, <code>false</code>
+	 *         otherwise
+	 * @since 3.0
+	 */
+	private boolean contains(Object annotationType, Set allowed, Set configured) {
+		if (allowed.contains(annotationType))
+			return true;
+		
+		boolean covered= isCovered(annotationType, configured);
+		if (covered)
+			allowed.add(annotationType);
+		
+		return covered;
+	}
+
+	/**
+	 * Computes whether the annotations of the given type are covered by the given <code>configured</code>
+	 * set. This is the case if either the type of the annotation or any of its
+	 * super types is contained in the <code>configured</code> set.
+	 * 
+	 * @param annotation the annotation
+	 * @param annotationType the annotation type
+	 * @return <code>true</code> if annotation is covered, <code>false</code>
+	 *         otherwise
+	 * @since 3.0
+	 */
+	private boolean isCovered(Object annotationType, Set configured) {
+		if (fAnnotationAccess instanceof IAnnotationAccessExtension) {
+			IAnnotationAccessExtension extension= (IAnnotationAccessExtension) fAnnotationAccess;
+			Iterator e= configured.iterator();
+			while (e.hasNext()) {
+				if (extension.isSubtype(annotationType,e.next()))
+					return true;
+			}
+			return false;
+		}
+		return configured.contains(annotationType);
+	}
+	
+	/**
+	 * Returns the color for the given annotation type
+	 * 
+	 * @param annotationType the annotation type
+	 * @return the color
+	 */
+	private Color findColor(Object annotationType) {
+		Color color= (Color) fColorTable.get(annotationType);
+		if (color != null)
+			return color;
+		
+		if (fAnnotationAccess instanceof IAnnotationAccessExtension) {
+			IAnnotationAccessExtension extension= (IAnnotationAccessExtension) fAnnotationAccess;
+			Object[] superTypes= extension.getSupertypes(annotationType);
+			if (superTypes != null) {
+				for (int i= superTypes.length -1; i > -1; i--) {
+					color= (Color) fColorTable.get(superTypes[i]);
+					if (color != null)
+						return color;
+				}
+			}
+		}
+		
+		return null;
 	}
 	
 	/**
@@ -352,7 +457,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 * @param annotationType the annotation type
 	 */
 	public void addAnnotationType(Object annotationType) {
-		fAnnotationTypes.add(annotationType);
+		fConfiguredAnnotationTypes.add(annotationType);
 	}
 	
 	/**
@@ -364,7 +469,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 * @since 3.0
 	 */
 	public void addHighlightAnnotationType(Object annotationType) {
-		fHighlightAnnotationTypes.add(annotationType);
+		fConfiguredHighlightAnnotationTypes.add(annotationType);
 		if (fTextInputListener == null) {
 			fTextInputListener= new ITextInputListener() {
 				/*
@@ -392,7 +497,8 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 * @param annotationType the annotation type
 	 */
 	public void removeAnnotationType(Object annotationType) {
-		fAnnotationTypes.remove(annotationType);
+		fConfiguredAnnotationTypes.remove(annotationType);
+		fAllowedAnnotationTypes.clear();
 	}
 	
 	/**
@@ -404,8 +510,9 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 * @since 3.0
 	 */
 	public void removeHighlightAnnotationType(Object annotationType) {
-		fHighlightAnnotationTypes.remove(annotationType);
-		if (fHighlightAnnotationTypes.isEmpty() && fTextInputListener != null) {
+		fConfiguredHighlightAnnotationTypes.remove(annotationType);
+		fAllowedHighlightAnnotationTypes.clear();
+		if (fConfiguredHighlightAnnotationTypes.isEmpty() && fTextInputListener != null) {
 			fSourceViewer.removeTextInputListener(fTextInputListener);
 			fTextInputListener= null;
 			fInputDocumentAboutToBeChanged= false;
@@ -417,8 +524,10 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 * painted by this painter.
 	 */
 	public void removeAllAnnotationTypes() {
-		fAnnotationTypes.clear();
-		fHighlightAnnotationTypes.clear();
+		fConfiguredAnnotationTypes.clear();
+		fAllowedAnnotationTypes.clear();
+		fConfiguredHighlightAnnotationTypes.clear();
+		fAllowedHighlightAnnotationTypes.clear();
 		if (fTextInputListener != null) {
 			fSourceViewer.removeTextInputListener(fTextInputListener);
 			fTextInputListener= null;
@@ -432,7 +541,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 * @return <code>true</code> if there is an annotation type whose annotations are painted
 	 */
 	public boolean isPaintingAnnotations() {
-		return !fAnnotationTypes.isEmpty() || !fHighlightAnnotationTypes.isEmpty();
+		return !fConfiguredAnnotationTypes.isEmpty() || !fConfiguredHighlightAnnotationTypes.isEmpty();
 	}
 	
 	/*
@@ -444,13 +553,21 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 			fColorTable.clear();
 		fColorTable= null;
 		
-		if (fAnnotationTypes != null)
-			fAnnotationTypes.clear();
-		fAnnotationTypes= null;
+		if (fConfiguredAnnotationTypes != null)
+			fConfiguredAnnotationTypes.clear();
+		fConfiguredAnnotationTypes= null;
+		
+		if (fAllowedAnnotationTypes != null)
+			fAllowedAnnotationTypes.clear();
+		fAllowedAnnotationTypes= null;
 
-		if (fHighlightAnnotationTypes != null)
-			fHighlightAnnotationTypes.clear();
-		fHighlightAnnotationTypes= null;
+		if (fConfiguredHighlightAnnotationTypes != null)
+			fConfiguredHighlightAnnotationTypes.clear();
+		fConfiguredHighlightAnnotationTypes= null;
+
+		if (fAllowedHighlightAnnotationTypes != null)
+			fAllowedHighlightAnnotationTypes.clear();
+		fAllowedHighlightAnnotationTypes= null;
 		
 		fTextWidget= null;
 		fSourceViewer= null;

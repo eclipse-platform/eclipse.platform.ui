@@ -24,6 +24,7 @@ public interface IAnnotationAccess {
 	 * 
 	 * @param annotation the annotation
 	 * @return the type of the given annotation or <code>null</code> if it has none.
+	 * @deprecated use <code>Annotation.getType()</code>
 	 */
 	Object getType(Annotation annotation);
 
@@ -44,6 +45,7 @@ public interface IAnnotationAccess {
 	 * @param annotation the annotation
 	 * @return <code>true</code> if the annotation is temporary,
 	 * 	<code>false</code> otherwise
+	 * @deprecated use <code>Annotation.isPersistent()</code>
 	 */
 	boolean isTemporary(Annotation annotation);
 }

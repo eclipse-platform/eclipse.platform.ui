@@ -62,8 +62,8 @@ public class RevertLineAction extends QuickDiffRestoreAction {
 		if (differ == null)
 			return;
 		ILineDiffInfo info= differ.getLineInfo(fLine);
-		if (info != null && info.getType() != ILineDiffInfo.UNCHANGED) {
-			if (info.getType() == ILineDiffInfo.ADDED)
+		if (info != null && info.getChangeType() != ILineDiffInfo.UNCHANGED) {
+			if (info.getChangeType() == ILineDiffInfo.ADDED)
 				setText(QuickDiffMessages.getString(DELETE_KEY));
 			else
 				setText(QuickDiffMessages.getString(REVERT_KEY));

@@ -49,7 +49,7 @@ public interface ILineDiffInfo {
 	 * 
 	 * @return the type of this line.
 	 */
-	int getType();
+	int getChangeType();
 	
 	/**
 	 * Returns whether this line has any changes (to itself, or any deletions before or after it).

@@ -58,7 +58,7 @@ public class RevertBlockAction extends QuickDiffRestoreAction {
 		if (differ == null)
 			return;
 		ILineDiffInfo info= differ.getLineInfo(fLine);
-		if (info != null && info.getType() != ILineDiffInfo.UNCHANGED) {
+		if (info != null && info.getChangeType() != ILineDiffInfo.UNCHANGED) {
 			boolean hasBlock= false;
 			if (fLine > 0) {
 				info= differ.getLineInfo(fLine - 1);

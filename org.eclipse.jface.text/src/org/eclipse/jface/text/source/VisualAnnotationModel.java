@@ -16,7 +16,6 @@ package org.eclipse.jface.text.source;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
 
@@ -115,13 +114,13 @@ class VisualAnnotationModel extends AnnotationModel implements IAnnotationModelL
 		Position p= (Position) fAnnotations.get(annotation);
 		if (p != null)
 			return p;
-			
+		
 		if (fModel != null)
 			return fModel.getPosition(annotation);
-			
+		
 		return null;
 	}
-		
+	
 	/*
 	 * @see IAnnotationModelListener#modelChanged(IAnnotationModel)
 	 */
@@ -131,48 +130,6 @@ class VisualAnnotationModel extends AnnotationModel implements IAnnotationModelL
 			while (iter.hasNext()) {
 				IAnnotationModelListener l= (IAnnotationModelListener)iter.next();
 				l.modelChanged(this);
-			}
-		}
-	}
-	
-	/**
-	 * Modifies associated position of the given annotation to the given position.
-	 * If the annotation is not yet managed by this annotation model, the annotation
-	 * is added. All annotation model change listeners will be informed about the change.
-	 *
-	 * @param annotation the annotation whose associated position should be modified
-	 * @param position the position to whose values the associated position should be changed
-	 */
-	public void modifyAnnotation(Annotation annotation, Position position) {
-		modifyAnnotation(annotation, position, true);
-	}
-	
-	/**
-	 * Modifies the associated position of the given annotation to the given position.
-	 * If the annotation is not yet managed by this annotation model, the annotation
-	 * is added. If requested, all annotation model change listeners will be informed 
-	 * about the change.
-	 *
-	 * @param annotation the annotation whose associated position should be modified
-	 * @param position the position to whose values the associated position should be changed
-	 * @param fireModelChanged indicates whether to notify all model listeners	 
-	 */
-	private void modifyAnnotation(Annotation annotation, Position position, boolean fireModelChanged) {
-		if (position == null) {
-			removeAnnotation(annotation, fireModelChanged);
-		} else {
-			Position p= (Position) fAnnotations.get(annotation);
-			if (p != null) {
-				p.setOffset(position.getOffset());
-				p.setLength(position.getLength());
-				if (fireModelChanged)
-					fireModelChanged();
-			} else {
-				try {
-					addAnnotation(annotation, position, fireModelChanged);
-				} catch (BadLocationException e) {
-					// ignore invalid position
-				}
 			}
 		}
 	}

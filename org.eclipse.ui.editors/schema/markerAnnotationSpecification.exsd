@@ -41,21 +41,21 @@
 
    <element name="specification">
       <complexType>
-         <attribute name="markerType" type="string" use="required">
+         <attribute name="annotationType" type="string" use="required">
             <annotation>
                <documentation>
                   
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="colorPreferenceKey" type="string" use="required">
+         <attribute name="colorPreferenceKey" type="string">
             <annotation>
                <documentation>
                   
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="overviewRulerPreferenceKey" type="string" use="required">
+         <attribute name="overviewRulerPreferenceKey" type="string">
             <annotation>
                <documentation>
                   
@@ -70,14 +70,14 @@ since: 3.0
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="textPreferenceKey" type="string" use="required">
+         <attribute name="textPreferenceKey" type="string">
             <annotation>
                <documentation>
                   
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="label" type="string" use="required">
+         <attribute name="label" type="string">
             <annotation>
                <documentation>
                   
@@ -89,6 +89,20 @@ since: 3.0
                <documentation>
                   The preference key for highlighting in text.
 since: 3.0
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="markerType" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="colorPreferenceValue" type="string">
+            <annotation>
+               <documentation>
+                  
                </documentation>
             </annotation>
          </attribute>
@@ -108,13 +122,6 @@ since: 3.0
                   </enumeration>
                </restriction>
             </simpleType>
-         </attribute>
-         <attribute name="colorPreferenceValue" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
          </attribute>
          <attribute name="presentationLayer" type="string">
             <annotation>
@@ -150,13 +157,6 @@ since: 3.0
                <documentation>
                   The default value for highlighting in text.
 since: 3.0
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="annotationType" type="string" use="required">
-            <annotation>
-               <documentation>
-                  
                </documentation>
             </annotation>
          </attribute>
@@ -213,6 +213,44 @@ since: 3.0
                   The default value for go to previous navigation enablement.
 since: 3.0
                </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="icon" type="string">
+            <annotation>
+               <documentation>
+                  The path to the icon to be drawn for annotations of this annotation type.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="symbolicIcon">
+            <annotation>
+               <documentation>
+                  The symbolic name of the image that should be drawn to represent annotation of this annotation type. The image is only used when there is no vertical ruler icon specified for this annotation type. Possible values are: &quot;error&quot;, &quot;warning&quot;, &quot;info&quot;, &quot;task&quot;, &quot;bookmark&quot;.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="error">
+                  </enumeration>
+                  <enumeration value="warning">
+                  </enumeration>
+                  <enumeration value="info">
+                  </enumeration>
+                  <enumeration value="task">
+                  </enumeration>
+                  <enumeration value="bookmark">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+         <attribute name="annotationImageProvider" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>

@@ -13,6 +13,8 @@ package org.eclipse.ui.texteditor;
 
  
 import org.eclipse.jface.text.source.Annotation;
+import org.eclipse.jface.text.source.IAnnotationPresentation;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -36,7 +38,7 @@ import org.eclipse.swt.widgets.Display;
  * This class is instantiated automatically by <code>AbstractTextEditor</code>.
  * </p>
  */
-public class DefaultRangeIndicator extends Annotation {
+public class DefaultRangeIndicator extends Annotation implements IAnnotationPresentation {
 
 	 /** The color palette data of this range indicator */
 	private static PaletteData fgPaletteData;

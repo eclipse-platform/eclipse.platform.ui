@@ -32,7 +32,7 @@ import org.eclipse.jface.text.Position;
  * 
  * @since 2.1
  */
-public class ProjectionAnnotation extends Annotation {
+public class ProjectionAnnotation extends Annotation implements IAnnotationPresentation {
 	
 	private static final int OUTER_MARGIN= 1;
 	private static final int INNER_MARGIN= 1;

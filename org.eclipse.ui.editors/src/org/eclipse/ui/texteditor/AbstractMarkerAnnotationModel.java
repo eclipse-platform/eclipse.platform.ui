@@ -149,6 +149,30 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel {
 	protected MarkerAnnotation createMarkerAnnotation(IMarker marker) {
 		return new MarkerAnnotation(marker);
 	}
+	
+	/**
+	 * Determines the annotation type for the given marker.
+	 * 
+	 * @param marker the marker for which to determine the annotation type
+	 * @return the annotation type for an annotation for the given marker
+	 * @since 3.0
+	 */
+	protected String computeAnnotationType(IMarker marker) {
+		AnnotationTypeLookup lookup= getAnnotationTypeLookup();
+		if (lookup != null)
+			return lookup.getAnnotationType(marker);
+		return null;
+	}
+	
+	/**
+	 * Returns the annotation type lookup used by this annotation model.
+	 * 
+	 * @return the annotation type lookup
+	 * @since 3.0
+	 */
+	protected AnnotationTypeLookup getAnnotationTypeLookup() {
+		return EditorsPlugin.getDefault().getAnnotationTypeLookup();
+	}
 
 	/**
 	 * Handles an unanticipated <code>CoreException</code> in 
@@ -218,7 +242,15 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel {
 			Position p= createPositionFromMarker(marker);
 			if (p != null)
 				try {
-					addAnnotation(createMarkerAnnotation(marker), p, false);
+					MarkerAnnotation annotation= createMarkerAnnotation(marker);
+					if (annotation != null) {
+						
+						String annotationType= computeAnnotationType(marker);
+						if (annotationType != null)
+							annotation.setType(annotationType);
+						
+						addAnnotation(annotation, p, false);
+					}
 				} catch (BadLocationException e) {
 					// ignore invalid position
 				}
@@ -310,16 +342,12 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel {
 	protected void modifyMarkerAnnotation(IMarker marker) {
 		MarkerAnnotation a= getMarkerAnnotation(marker);
 		if (a != null) {
-			
-			// update annotation presentation
-			a.update();
-			
-			// update annotation position
-			Position p1= createPositionFromMarker(marker);
-			if (p1 != null) {
-				Position p0= (Position) fAnnotations.get(a);
-				p0.setOffset(p1.getOffset());
-				p0.setLength(p1.getLength());
+			Position p= createPositionFromMarker(marker);
+			if (p != null) {
+				String annotationType= computeAnnotationType(marker);
+				if (annotationType != null && !annotationType.equals(a.getType()))
+					a.setType(annotationType);
+				modifyAnnotation(a, p);
 			}
 		}
 	}

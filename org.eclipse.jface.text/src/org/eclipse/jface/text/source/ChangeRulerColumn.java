@@ -504,7 +504,7 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 	 * @return <code>true</code> if <code>info</code> describes either a changed or an added line.
 	 */
 	private boolean hasSpecialColor(ILineDiffInfo info) {
-		return info.getType() == ILineDiffInfo.ADDED || info.getType() == ILineDiffInfo.CHANGED;
+		return info.getChangeType() == ILineDiffInfo.ADDED || info.getChangeType() == ILineDiffInfo.CHANGED;
 	}
 
 	/**
@@ -544,9 +544,9 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 	 * @return the correct background color for the line type being described by <code>info</code>
 	 */
 	private Color getColor(ILineDiffInfo info, Display display) {
-		Assert.isTrue(info != null && info.getType() != ILineDiffInfo.UNCHANGED);
+		Assert.isTrue(info != null && info.getChangeType() != ILineDiffInfo.UNCHANGED);
 		Color ret= null;
-		switch (info.getType()) {
+		switch (info.getChangeType()) {
 			case ILineDiffInfo.CHANGED :
 				ret= fChangedColor;
 				break;

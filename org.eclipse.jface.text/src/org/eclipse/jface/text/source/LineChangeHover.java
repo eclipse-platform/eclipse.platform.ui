@@ -154,7 +154,7 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 		for (Iterator it= diffInfos.iterator(); it.hasNext();) {
 			ILineDiffInfo info= (ILineDiffInfo)it.next();
 			String[] original= info.getOriginalText();
-			int type= info.getType();
+			int type= info.getChangeType();
 			int i= 0;
 			if (type == ILineDiffInfo.ADDED)
 				added++; //$NON-NLS-1$
@@ -239,7 +239,7 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 		// here comes the hack: since we only get deleted lines *after* a line, we decrease one further if conditions met
 		int l= lineRange.x - 1;
 		ILineDiffInfo info= differ.getLineInfo(l);
-		if (l >= first - 1 && info != null && info.getType() == ILineDiffInfo.UNCHANGED && info.getRemovedLinesBelow() > 0)
+		if (l >= first - 1 && info != null && info.getChangeType() == ILineDiffInfo.UNCHANGED && info.getRemovedLinesBelow() > 0)
 			return new Point(l, lineRange.y);
 		else
 			return lineRange;
@@ -278,12 +278,12 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 		int l= line;
 		ILineDiffInfo info= differ.getLineInfo(l);
 		// if this is a special case, we'll start the search one above line
-		if (l >= min && info != null && info.getType() == ILineDiffInfo.UNCHANGED && info.getRemovedLinesAbove() > 0) {
+		if (l >= min && info != null && info.getChangeType() == ILineDiffInfo.UNCHANGED && info.getRemovedLinesAbove() > 0) {
 			info= differ.getLineInfo(--l);
 		}
 
 		// search backwards until a line has no changes to itself
-		while (l >= min && info != null && (info.getType() == ILineDiffInfo.CHANGED || info.getType() == ILineDiffInfo.ADDED)) {
+		while (l >= min && info != null && (info.getChangeType() == ILineDiffInfo.CHANGED || info.getChangeType() == ILineDiffInfo.ADDED)) {
 			info= differ.getLineInfo(--l);
 		}
 		
@@ -296,11 +296,11 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 		l= line;
 		info= differ.getLineInfo(l);
 		// if this is a special case, we'll start the search one below line
-		if (l <= max && info != null && info.getType() == ILineDiffInfo.UNCHANGED && info.getRemovedLinesBelow() > 0) {
+		if (l <= max && info != null && info.getChangeType() == ILineDiffInfo.UNCHANGED && info.getRemovedLinesBelow() > 0) {
 			info= differ.getLineInfo(++l);
 		}
 		// search forward until a line has no changes to itself
-		while (l <= max && info != null && (info.getType() == ILineDiffInfo.CHANGED || info.getType() == ILineDiffInfo.ADDED)) {
+		while (l <= max && info != null && (info.getChangeType() == ILineDiffInfo.CHANGED || info.getChangeType() == ILineDiffInfo.ADDED)) {
 			info= differ.getLineInfo(++l);
 		}
 		

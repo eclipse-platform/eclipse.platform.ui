@@ -23,9 +23,11 @@
       <import plugin="org.eclipse.core.resources"/>
    </requires>
 
+
    <extension-point id="documentProviders" name="%ExtPoint.documentProviders" schema="schema/documentProviders.exsd"/>
    <extension-point id="markerUpdaters" name="%ExtPoint.markerUpdaters" schema="schema/markerUpdaters.exsd"/>
    <extension-point id="markerAnnotationSpecification" name="%ExtPoint.markerAnnotationSpecification" schema="schema/markerAnnotationSpecification.exsd"/>
+   <extension-point id="annotationTypes" schema="schema/annotationTypes.exsd"/>
 
    <extension
          point="org.eclipse.ui.commands">
@@ -79,14 +81,14 @@
       </command>
       <command
             name="%openExternalFile.label"
-            description="%openExternalFile.description"
             category="org.eclipse.ui.category.file"
+            description="%openExternalFile.description"
             id="org.eclipse.ui.edit.text.openExternalFile">
       </command>
       <command
             name="%ActionDefinition.quickDiff.name"
-            description="%ActionDefinition.quickDiff.description"
             category="org.eclipse.ui.category.edit"
+            description="%ActionDefinition.quickDiff.description"
             id="org.eclipse.quickdiff.toggle">
       </command>
       <keyBinding
@@ -96,19 +98,17 @@
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
    </extension>
-
    <extension
          point="org.eclipse.ui.editors">
       <editor
             name="%Editors.DefaultTextEditor"
-            icon="icons/full/obj16/file_obj.gif"
             extensions="txt"
-            contributorClass="org.eclipse.ui.editors.text.TextEditorActionContributor"
+            icon="icons/full/obj16/file_obj.gif"
             class="org.eclipse.ui.editors.text.TextEditor"
+            contributorClass="org.eclipse.ui.editors.text.TextEditorActionContributor"
             id="org.eclipse.ui.DefaultTextEditor">
       </editor>
    </extension>
-   
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
@@ -118,7 +118,6 @@
             id="org.eclipse.ui.preferencePages.TextEditor">
       </page>
    </extension>
-   
    <extension
          point="org.eclipse.ui.editors.documentProviders">
       <provider
@@ -127,7 +126,6 @@
             id="org.eclipse.ui.editors.text.StorageDocumentProvider">
       </provider>
    </extension>
-   
    <extension
          point="org.eclipse.ui.editors.documentProviders">
       <provider
@@ -136,7 +134,6 @@
             id="org.eclipse.ui.editors.text.ExternalFileDocumentProvider">
       </provider>
    </extension>
-   
    <extension
          point="org.eclipse.ui.editors.markerUpdaters">
       <updater
@@ -144,17 +141,15 @@
             id="org.eclipse.ui.texteditor.BasicMarkerUpdater">
       </updater>
    </extension>
-   
    <extension
          point="org.eclipse.ui.workbench.texteditor.quickDiffReferenceProvider">
       <referenceprovider
-            label="%lastSaveReferenceProvider.label"
             default="true"
+            label="%lastSaveReferenceProvider.label"
             class="org.eclipse.ui.internal.editors.quickdiff.LastSaveReferenceProvider"
             id="org.eclipse.ui.internal.editors.quickdiff.LastSaveReferenceProvider">
       </referenceprovider>
    </extension>
-   
    <extension
          point="org.eclipse.ui.popupMenus">
       <viewerContribution
@@ -163,16 +158,16 @@
          <action
                label="%AddTask.label"
                helpContextId="org.eclipse.ui.AddTask_action_context"
-               tooltip="%AddTask.tooltip"
                class="org.eclipse.ui.texteditor.TaskRulerAction"
+               tooltip="%AddTask.tooltip"
                menubarPath="additions"
                id="org.eclipse.ui.texteditor.TaskRulerAction">
          </action>
          <action
                label="%AddBookmark.label"
                helpContextId="org.eclipse.ui.bookmark_action_context"
-               tooltip="%AddBookmark.tooltip"
                class="org.eclipse.ui.texteditor.BookmarkRulerAction"
+               tooltip="%AddBookmark.tooltip"
                menubarPath="additions"
                id="org.eclipse.ui.texteditor.BookmarkRulerAction">
          </action>
@@ -191,16 +186,16 @@
          <action
                label="%AddTask.label"
                helpContextId="org.eclipse.ui.AddTask_action_context"
-               tooltip="%AddTask.tooltip"
                class="org.eclipse.ui.texteditor.TaskRulerAction"
+               tooltip="%AddTask.tooltip"
                menubarPath="additions"
                id="org.eclipse.ui.texteditor.TaskRulerAction">
          </action>
          <action
                label="%AddBookmark.label"
                helpContextId="org.eclipse.ui.bookmark_action_context"
-               tooltip="%AddBookmark.tooltip"
                class="org.eclipse.ui.texteditor.BookmarkRulerAction"
+               tooltip="%AddBookmark.tooltip"
                menubarPath="additions"
                id="org.eclipse.ui.texteditor.BookmarkRulerAction">
          </action>
@@ -214,7 +209,6 @@
          </action>
       </viewerContribution>
    </extension>
-   
    <extension
          point="org.eclipse.ui.editorActions">
       <editorContribution
@@ -245,7 +239,6 @@
          </action>
       </editorContribution>
    </extension>
-   
    <extension
          point="org.eclipse.ui.actionSets">
       <actionSet
@@ -256,8 +249,8 @@
                definitionId="org.eclipse.ui.edit.text.openExternalFile"
                label="%openExternalFile.label"
                helpContextId="open_text_editor_action_context"
-               tooltip="%openExternalFile.description"
                class="org.eclipse.ui.internal.editors.text.OpenExternalFileAction"
+               tooltip="%openExternalFile.description"
                menubarPath="file/new.ext"
                id="org.eclipse.ui.edit.text.openExternalFile">
          </action>
@@ -269,8 +262,8 @@
          <action
                allowLabelUpdate="true"
                style="pulldown"
-               toolbarPath="org.eclipse.ui.workbench.navigate/history.group"
                id="org.eclipse.ui.edit.text.gotoPreviousAnnotation"
+               toolbarPath="org.eclipse.ui.workbench.navigate/history.group"
                hoverIcon="icons/full/ctool16/prev_nav.gif"
                class="org.eclipse.ui.internal.editors.text.PreviousPulldownActionDelegate"
                definitionId="org.eclipse.ui.navigate.previous"
@@ -283,8 +276,8 @@
          <action
                allowLabelUpdate="true"
                style="pulldown"
-               toolbarPath="org.eclipse.ui.workbench.navigate/history.group"
                id="org.eclipse.ui.edit.text.gotoNextAnnotation"
+               toolbarPath="org.eclipse.ui.workbench.navigate/history.group"
                hoverIcon="icons/full/ctool16/next_nav.gif"
                class="org.eclipse.ui.internal.editors.text.NextPulldownActionDelegate"
                definitionId="org.eclipse.ui.navigate.next"
@@ -296,27 +289,25 @@
          </action>
       </actionSet>
    </extension>
-
    <extension
          point="org.eclipse.ui.editors.markerAnnotationSpecification">
       <specification
+            annotationType="org.eclipse.ui.workbench.texteditor.error"
             textPreferenceKey="errorIndication"
             presentationLayer="6"
+            highlightPreferenceValue="false"
             showInNextPrevDropdownToolbarAction="true"
             textPreferenceValue="true"
             isGoToPreviousNavigationTargetKey="isErrorGoToPreviousNavigationTarget"
             label="%errors.label"
-            markerType="org.eclipse.core.resources.problemmarker"
             colorPreferenceKey="errorIndicationColor"
-            markerSeverity="2"
             showInNextPrevDropdownToolbarActionKey="showErrorInNextPrevDropdownToolbarAction"
-            annotationType="org.eclipse.ui.workbench.texteditor.error"
+            symbolicIcon="error"
             isGoToNextNavigationTargetKey="isErrorGoToNextNavigationTarget"
             isGoToNextNavigationTarget="true"
             overviewRulerPreferenceKey="errorIndicationInOverviewRuler"
             verticalRulerPreferenceValue="true"
             highlightPreferenceKey="errorIndicationHighlighting"
-            highlightPreferenceValue="false"
             isGoToPreviousNavigationTarget="true"
             verticalRulerPreferenceKey="errorIndicationInVerticalRuler"
             contributesToHeader="true"
@@ -324,23 +315,22 @@
             overviewRulerPreferenceValue="true">
       </specification>
       <specification
+            annotationType="org.eclipse.ui.workbench.texteditor.warning"
             textPreferenceKey="warningIndication"
             presentationLayer="5"
+            highlightPreferenceValue="false"
             showInNextPrevDropdownToolbarAction="true"
             textPreferenceValue="true"
             isGoToPreviousNavigationTargetKey="isWarningGoToPreviousNavigationTarget"
             label="%warnings.label"
-            markerType="org.eclipse.core.resources.problemmarker"
             colorPreferenceKey="warningIndicationColor"
-            markerSeverity="1"
             showInNextPrevDropdownToolbarActionKey="showWarningInNextPrevDropdownToolbarAction"
-            annotationType="org.eclipse.ui.workbench.texteditor.warning"
+            symbolicIcon="warning"
             isGoToNextNavigationTargetKey="isWarningGoToNextNavigationTarget"
             isGoToNextNavigationTarget="true"
             overviewRulerPreferenceKey="warningIndicationInOverviewRuler"
             verticalRulerPreferenceValue="true"
             highlightPreferenceKey="warningIndicationHighlighting"
-            highlightPreferenceValue="false"
             isGoToPreviousNavigationTarget="true"
             verticalRulerPreferenceKey="warningIndicationInVerticalRuler"
             contributesToHeader="true"
@@ -348,22 +338,22 @@
             overviewRulerPreferenceValue="true">
       </specification>
       <specification
+            annotationType="org.eclipse.ui.workbench.texteditor.info"
             textPreferenceKey="infoIndication"
             presentationLayer="4"
+            highlightPreferenceValue="false"
             showInNextPrevDropdownToolbarAction="true"
             textPreferenceValue="false"
             isGoToPreviousNavigationTargetKey="isInfoGoToPreviousNavigationTarget"
             label="%infos.label"
-            markerType="org.eclipse.core.resources.problemmarker"
             colorPreferenceKey="infoIndicationColor"
             showInNextPrevDropdownToolbarActionKey="showInfoInNextPrevDropdownToolbarAction"
-            annotationType="org.eclipse.ui.workbench.texteditor.info"
+            symbolicIcon="info"
             isGoToNextNavigationTargetKey="isInfoGoToNextNavigationTarget"
             isGoToNextNavigationTarget="false"
             overviewRulerPreferenceKey="infoIndicationInOverviewRuler"
             verticalRulerPreferenceValue="true"
             highlightPreferenceKey="infoIndicationHighlighting"
-            highlightPreferenceValue="false"
             isGoToPreviousNavigationTarget="false"
             verticalRulerPreferenceKey="infoIndicationInVerticalRuler"
             contributesToHeader="false"
@@ -371,22 +361,22 @@
             overviewRulerPreferenceValue="true">
       </specification>
       <specification
+            annotationType="org.eclipse.ui.workbench.texteditor.task"
             textPreferenceKey="taskIndication"
             presentationLayer="2"
+            highlightPreferenceValue="false"
             showInNextPrevDropdownToolbarAction="true"
             textPreferenceValue="false"
             isGoToPreviousNavigationTargetKey="isTaskGoToPreviousNavigationTarget"
             label="%tasks.label"
-            markerType="org.eclipse.core.resources.taskmarker"
             colorPreferenceKey="taskIndicationColor"
             showInNextPrevDropdownToolbarActionKey="showTaskInNextPrevDropdownToolbarAction"
-            annotationType="org.eclipse.ui.workbench.texteditor.task"
+            symbolicIcon="task"
             isGoToNextNavigationTargetKey="isTaskGoToNextNavigationTarget"
             isGoToNextNavigationTarget="false"
             overviewRulerPreferenceKey="taskIndicationInOverviewRuler"
             verticalRulerPreferenceValue="true"
             highlightPreferenceKey="taskIndicationHighlighting"
-            highlightPreferenceValue="false"
             isGoToPreviousNavigationTarget="false"
             verticalRulerPreferenceKey="taskIndicationInVerticalRuler"
             contributesToHeader="false"
@@ -394,22 +384,22 @@
             overviewRulerPreferenceValue="true">
       </specification>
       <specification
+            annotationType="org.eclipse.ui.workbench.texteditor.bookmark"
             textPreferenceKey="bookmarkIndication"
             presentationLayer="1"
+            highlightPreferenceValue="false"
             showInNextPrevDropdownToolbarAction="true"
             textPreferenceValue="false"
             isGoToPreviousNavigationTargetKey="isBookmarkGoToPreviousNavigationTarget"
             label="%bookmarks.label"
-            markerType="org.eclipse.core.resources.bookmark"
             colorPreferenceKey="bookmarkIndicationColor"
             showInNextPrevDropdownToolbarActionKey="showBookmarkInNextPrevDropdownToolbarAction"
-            annotationType="org.eclipse.ui.workbench.texteditor.bookmark"
+            symbolicIcon="bookmark"
             isGoToNextNavigationTargetKey="isBookmarkGoToNextNavigationTarget"
             isGoToNextNavigationTarget="false"
             overviewRulerPreferenceKey="bookmarkIndicationInOverviewRuler"
             verticalRulerPreferenceValue="true"
             highlightPreferenceKey="bookmarkIndicationHighlighting"
-            highlightPreferenceValue="false"
             isGoToPreviousNavigationTarget="false"
             verticalRulerPreferenceKey="bookmarkIndicationInVerticalRuler"
             contributesToHeader="false"
@@ -417,61 +407,85 @@
             overviewRulerPreferenceValue="true">
       </specification>
       <specification
+            annotationType="org.eclipse.ui.workbench.texteditor.quickdiffChange"
             colorPreferenceValue="204,163,205"
             isGoToPreviousNavigationTarget="false"
             isGoToPreviousNavigationTargetKey="isChangeGoToPreviousNavigationTarget"
             showInNextPrevDropdownToolbarAction="true"
-            annotationType="org.eclipse.ui.workbench.texteditor.quickdiffChange"
             isGoToNextNavigationTarget="false"
-            showInNextPrevDropdownToolbarActionKey="showChangeInNextPrevDropdownToolbarAction"
-            colorPreferenceKey="changeIndicationColor"
             isGoToNextNavigationTargetKey="isChangeGoToNextNavigationTarget"
+            colorPreferenceKey="changeIndicationColor"
+            showInNextPrevDropdownToolbarActionKey="showChangeInNextPrevDropdownToolbarAction"
             contributesToHeader="false"
             overviewRulerPreferenceValue="false"
-            markerType="org.eclipse.quickdiff.changeindication"
             presentationLayer="2"
-            textPreferenceValue="false"
             label="%changes.label"
+            textPreferenceValue="false"
             textPreferenceKey="changeIndication"
             overviewRulerPreferenceKey="changeIndicationInOverviewRuler">
       </specification>
       <specification
+            annotationType="org.eclipse.ui.workbench.texteditor.quickdiffAddition"
             colorPreferenceValue="188,188,222"
             isGoToPreviousNavigationTarget="false"
             isGoToPreviousNavigationTargetKey="isAdditionGoToPreviousNavigationTarget"
             showInNextPrevDropdownToolbarAction="false"
-            annotationType="org.eclipse.ui.workbench.texteditor.quickdiffAddition"
             isGoToNextNavigationTarget="false"
-            showInNextPrevDropdownToolbarActionKey="showAdditionInNextPrevDropdownToolbarAction"
-            colorPreferenceKey="additionIndicationColor"
             isGoToNextNavigationTargetKey="isAdditionGoToNextNavigationTarget"
+            colorPreferenceKey="additionIndicationColor"
+            showInNextPrevDropdownToolbarActionKey="showAdditionInNextPrevDropdownToolbarAction"
             contributesToHeader="false"
             overviewRulerPreferenceValue="false"
-            markerType="org.eclipse.quickdiff.additionindication"
             presentationLayer="2"
-            textPreferenceValue="false"
             label="%additions.label"
+            textPreferenceValue="false"
             textPreferenceKey="additionIndication"
             overviewRulerPreferenceKey="additionIndicationInOverviewRuler">
       </specification>
       <specification
+            annotationType="org.eclipse.ui.workbench.texteditor.quickdiffDeletion"
             colorPreferenceValue="0,0,0"
             isGoToPreviousNavigationTarget="false"
             isGoToPreviousNavigationTargetKey="isDeletionGoToPreviousNavigationTarget"
             showInNextPrevDropdownToolbarAction="false"
-            annotationType="org.eclipse.ui.workbench.texteditor.quickdiffDeletion"
             isGoToNextNavigationTarget="false"
-            showInNextPrevDropdownToolbarActionKey="showDeletionInNextPrevDropdownToolbarAction"
-            colorPreferenceKey="deletionIndicationColor"
             isGoToNextNavigationTargetKey="isDeletionGoToNextNavigationTarget"
+            colorPreferenceKey="deletionIndicationColor"
+            showInNextPrevDropdownToolbarActionKey="showDeletionInNextPrevDropdownToolbarAction"
             contributesToHeader="false"
             overviewRulerPreferenceValue="false"
-            markerType="org.eclipse.quickdiff.deletionindication"
             presentationLayer="2"
-            textPreferenceValue="false"
             label="%deletions.label"
+            textPreferenceValue="false"
             textPreferenceKey="deletionIndication"
             overviewRulerPreferenceKey="deletionIndicationInOverviewRuler">
       </specification>
    </extension>
+   
+   <extension point="org.eclipse.ui.editors.annotationTypes">
+      <type
+         name="org.eclipse.ui.workbench.texteditor.error"
+         markerType="org.eclipse.core.resources.problemmarker"
+         markerSeverity="2">
+      </type>
+      <type
+         name="org.eclipse.ui.workbench.texteditor.warning"
+         markerType="org.eclipse.core.resources.problemmarker"
+         markerSeverity="1">
+      </type>
+      <type
+         name="org.eclipse.ui.workbench.texteditor.info"
+         markerType="org.eclipse.core.resources.problemmarker"
+         markerSeverity="0">
+      </type>
+      <type
+         name="org.eclipse.ui.workbench.texteditor.task"
+         markerType="org.eclipse.core.resources.taskmarker">
+      </type>
+      <type
+         name="org.eclipse.ui.workbench.texteditor.bookmark"
+         markerType="org.eclipse.core.resources.bookmark">
+      </type>
+   </extension>
+
 </plugin>

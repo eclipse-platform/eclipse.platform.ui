@@ -25,6 +25,9 @@ import org.eclipse.jface.text.source.ISharedTextColors;
 
 import org.eclipse.ui.editors.text.TextEditorPreferenceConstants;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.texteditor.AnnotationPreferenceLookup;
+import org.eclipse.ui.texteditor.AnnotationTypeHierarchy;
+import org.eclipse.ui.texteditor.AnnotationTypeLookup;
 import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
 
 /**
@@ -71,6 +74,9 @@ public class EditorsPlugin extends AbstractUIPlugin {
 	
 	private FileEditorInputAdapterFactory fFileEditorInputAdapterFactory;
 	private ISharedTextColors fSharedTextColors;
+	private AnnotationTypeLookup fAnnotationTypeLookup;
+	private AnnotationPreferenceLookup fAnnotationPreferenceLookup;
+	private AnnotationTypeHierarchy fAnnotationTypeHierarchy;
 	
 	
 	public EditorsPlugin(IPluginDescriptor descriptor) {
@@ -109,18 +115,58 @@ public class EditorsPlugin extends AbstractUIPlugin {
 			fSharedTextColors= null;
 		}
 		
+		fAnnotationTypeLookup= null;
+		fAnnotationPreferenceLookup= null;
+		fAnnotationTypeHierarchy= null;
+		
 		super.shutdown();
 	}
 	
 	/**
 	 * Returns the shared text colors of this plug-in.
 	 *
-	 * @since 3.0 
 	 * @return the shared text colors
+	 * @since 3.0 
 	 */
 	public ISharedTextColors getSharedTextColors() {
 		if (fSharedTextColors == null)
 			fSharedTextColors= new SharedTextColors();
 		return fSharedTextColors;
+	}
+	
+	/**
+	 * Returns the annotation type lookup of this plug-in.
+	 * 
+	 * @return the annotation type lookup
+	 * @since 3.0
+	 */
+	public AnnotationTypeLookup getAnnotationTypeLookup() {
+		if (fAnnotationTypeLookup == null)
+			fAnnotationTypeLookup= new AnnotationTypeLookup();
+		return fAnnotationTypeLookup;
+	}
+	
+	/**
+	 * Returns the annotation preference lookup of this plug-in.
+	 * 
+	 * @return the annotation preference lookup
+	 * @since 3.0
+	 */
+	public AnnotationPreferenceLookup getAnnotationPreferenceLookup() {
+		if (fAnnotationPreferenceLookup == null)
+			fAnnotationPreferenceLookup= new AnnotationPreferenceLookup();
+		return fAnnotationPreferenceLookup;
+	}
+	
+	/**
+	 * Returns the annotation type hierarchy for this plug-in.
+	 * 
+	 * @return the annotation type hierarchy
+	 * @since 3.0
+	 */
+	public AnnotationTypeHierarchy getAnnotationTypeHierarchy() {
+		if (fAnnotationTypeHierarchy == null)
+			fAnnotationTypeHierarchy= new AnnotationTypeHierarchy();
+		return fAnnotationTypeHierarchy;
 	}
 }

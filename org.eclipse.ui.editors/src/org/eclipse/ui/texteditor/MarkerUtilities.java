@@ -12,13 +12,20 @@
 package org.eclipse.ui.texteditor;
 
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 
@@ -36,6 +43,87 @@ import org.eclipse.ui.PlatformUI;
  * </p>
  */
 public final class MarkerUtilities {
+	
+	/**
+	 * Internal marker super type hierarchy cache.
+	 * TODO this cache is currently unbound, i.e. only limited by the number of marker types
+	 */
+	private static class MarkerTypeHierarchy {
+		
+		private Map fTypeMap;
+		private Map fSuperTypesCache= new HashMap();
+		
+		public String[] getSuperTypes(String typeName) {
+			String[] cachedTypes= (String[]) fSuperTypesCache.get(typeName);
+			if (cachedTypes == null) {
+				cachedTypes= computeSuperTypes(typeName);
+				fSuperTypesCache.put(typeName, cachedTypes);
+			}
+			return cachedTypes;
+		}
+		
+		private String[] computeSuperTypes(String typeName) {
+			ArrayList types= new ArrayList();
+			appendAll(types, getDirectSuperTypes(typeName));
+			int index= 0;
+			while (index < types.size()) {
+				String type= (String) types.get(index++);
+				appendAll(types, getDirectSuperTypes(type));
+			}
+			
+			String[] superTypes= new String[types.size()];
+			types.toArray(superTypes);
+			return superTypes;
+		}
+		
+		private String[] getDirectSuperTypes(String typeName) {
+			return (String[]) getTypeMap().get(typeName);
+		}
+		
+		private void appendAll(List list, Object[] objects) {
+			for (int i= 0; i < objects.length; i++) {
+				Object o= objects[i];
+				if (!list.contains(o))
+					list.add(o);
+			}
+		}
+		
+		private Map getTypeMap() {
+			if (fTypeMap == null)
+				fTypeMap= readTypes();
+			return fTypeMap;
+		}
+		
+		private Map readTypes() {
+			HashMap allTypes= new HashMap();
+			IExtensionPoint point= Platform.getPluginRegistry().getExtensionPoint(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_MARKERS);
+			if (point != null) {
+				IExtension[] extensions = point.getExtensions();
+				for (int i= 0; i < extensions.length; i++) {
+					IExtension extension= extensions[i];
+					ArrayList types= new ArrayList();
+					IConfigurationElement[] configElements= extension.getConfigurationElements();
+					for (int j= 0; j < configElements.length; ++j) {
+						IConfigurationElement element= configElements[j];
+						if (element.getName().equalsIgnoreCase("super")) { //$NON-NLS-1$
+							String type = element.getAttribute("type"); //$NON-NLS-1$
+							if (type != null) {
+								types.add(type);
+							}
+						}
+					}
+					String[] superTypes= new String[types.size()];
+					types.toArray(superTypes);
+					allTypes.put(extension.getUniqueIdentifier(), superTypes);
+				}
+			}
+			return allTypes;
+		}
+	}
+	
+	private static MarkerTypeHierarchy fgMarkerTypeHierarchy;
+	
+	
 	
 	/**
 	 * Don't allow instantiation.
@@ -101,6 +189,19 @@ public final class MarkerUtilities {
 	public static int getPriority(IMarker marker) {
 		return getIntAttribute(marker, IMarker.PRIORITY, IMarker.PRIORITY_NORMAL);
 	}
+
+	/**
+	 * Returns the severity of the given marker.
+	 *
+	 * @param marker the marker
+	 * @return the priority, or <code>IMarker.SEVERITY_INFO</code> if not set
+	 * @see IMarker#SEVERITY
+	 * @see IMarker#SEVERITY_INFO
+	 * @see IMarker#getAttribute(java.lang.String,int)
+	 */
+	public static int getSeverity(IMarker marker) {
+		return getIntAttribute(marker, IMarker.SEVERITY, IMarker.SEVERITY_INFO);
+	}
 	
 	/**
 	 * Handles a core exception which occurs when accessing marker attributes.
@@ -120,11 +221,39 @@ public final class MarkerUtilities {
 		if (marker != null) {
 			try {
 				return marker.exists() && marker.isSubtypeOf(type);
-			} catch (CoreException e) {
-				handleCoreException(e);
+			} catch (CoreException x) {
+				handleCoreException(x);
 			}
 		}
 		return false;
+	}
+	
+	/**
+	 * Returns the marker type of the given marker or <code>null</code> if
+	 * the type could not be determined.
+	 * 
+	 * @param marker the marker
+	 * @return the marker type
+	 * @since 3.0
+	 */
+	public static String getMarkerType(IMarker marker) {
+		try {
+			return marker.getType();
+		} catch (CoreException x) {
+			handleCoreException(x);
+		}
+		return null;
+	}
+	
+	/**
+	 * Returns the message associated with the given marker.
+	 * 
+	 * @param marker the marker
+	 * @return the message associated with the marker or <code>null</code>
+	 * @since 3.0
+	 */
+	public static String getMessage(IMarker marker) {
+		return marker.getAttribute(IMarker.MESSAGE, null);
 	}
 	
 	/**
@@ -244,14 +373,27 @@ public final class MarkerUtilities {
 	 * @see IResource#createMarker
 	 */
 	public static void createMarker(final IResource resource, final Map attributes, final String markerType) throws CoreException {
-	
+		
 		IWorkspaceRunnable r= new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				IMarker marker= resource.createMarker(markerType);
 				marker.setAttributes(attributes);
 			}
 		};
-			
+		
 		resource.getWorkspace().run(r, null,IWorkspace.AVOID_UPDATE, null);
+	}
+	
+	/**
+	 * Returns the list of super types for the given marker.
+	 * The list is a depth first list and maintains the sequence in which
+	 * the super types are listed in the marker specification.
+	 * 
+	 * @return a depth-first list of all super types of the given marker type
+	 */
+	public static String[] getSuperTypes(String markerType) {
+		if (fgMarkerTypeHierarchy == null)
+			fgMarkerTypeHierarchy= new MarkerTypeHierarchy();
+		return fgMarkerTypeHierarchy.getSuperTypes(markerType);
 	}
 }

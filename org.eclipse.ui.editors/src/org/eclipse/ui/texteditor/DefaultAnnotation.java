@@ -32,12 +32,15 @@ import org.eclipse.jface.resource.ImageDescriptor;
 
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.source.Annotation;
+import org.eclipse.jface.text.source.IAnnotationPresentation;
 
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.model.IWorkbenchAdapter;
+
+import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 
 /**
  * Default annotation.
@@ -46,8 +49,9 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  * XXX: This is work in progress and can change anytime until API for 3.0 is frozen.
  * </p>
  * @since 3.0
+ * @deprecated use Annotation and ImageUtilities, stay with layer definitions until new home found for them
  */
-public class DefaultAnnotation extends Annotation implements IAnnotationExtension {
+public class DefaultAnnotation extends Annotation implements IAnnotationPresentation {
 
 	/** 
 	 * The layer in which task annotations are located.
@@ -85,8 +89,6 @@ public class DefaultAnnotation extends Annotation implements IAnnotationExtensio
 	protected String fImageName;
 	
 	private int fSeverity;
-	private boolean fIsTemporary;
-	private String fMessage;
 	private String fMarkerType;
 
 	private boolean fIsInitialized= false;
@@ -151,7 +153,7 @@ public class DefaultAnnotation extends Annotation implements IAnnotationExtensio
 	}
 	
 	/**
-	 * Creates a new editor annotation.
+	 * Creates a new annotation.
 	 * 
 	 * @param markerType the marker type of this annotation
 	 * @param severity the severity of this annotation
@@ -159,11 +161,24 @@ public class DefaultAnnotation extends Annotation implements IAnnotationExtensio
 	 * @param message the message of this annotation
 	 */
 	public DefaultAnnotation(String markerType, int severity, boolean isTemporary, String message) {
+		super(!isTemporary);
 		Assert.isTrue(severity == IMarker.SEVERITY_INFO || severity == IMarker.SEVERITY_WARNING || severity == IMarker.SEVERITY_ERROR);
 		fSeverity= severity;
-		fIsTemporary= isTemporary;
-		fMessage= message;
 		fMarkerType= markerType;
+		setText(message);
+		setType(computeAnnotationType(markerType, severity));
+	}
+	
+	/**
+	 * Computes the annotation type based on marker type and marker severity.
+	 * 
+	 * @param markerType the marker type
+	 * @param severity the marker severity
+	 * @return the corresponding annotation type
+	 */
+	private String computeAnnotationType(String markerType, int severity) {
+		AnnotationTypeLookup lookup= EditorsPlugin.getDefault().getAnnotationTypeLookup();
+		return lookup.getAnnotationType(markerType, severity);
 	}
 	
 	/**
@@ -305,30 +320,5 @@ public class DefaultAnnotation extends Annotation implements IAnnotationExtensio
 			fImage= getImage(fImageName);
 
 		return fImage;
-	}
-	
-	/*
-	 * @see IAnnotationExtension#getMessage()
-	 */
-	public String getMessage() {
-		return fMessage;
-	}
-
-	public String getMarkerType() {
-		return fMarkerType;
-	}
-	
-	/*
-	 * @see org.eclipse.ui.texteditor.IAnnotationExtension#getSeverity()
-	 */
-	public int getSeverity() {
-		return fSeverity;
-	}
-	
-	/*
-	 * @see IAnnotationExtension#isTemporary()
-	 */
-	public boolean isTemporary() {
-		return fIsTemporary;
 	}
 }

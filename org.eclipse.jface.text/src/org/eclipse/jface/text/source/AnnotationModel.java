@@ -8,9 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.text.source;
-
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,7 +28,7 @@ import org.eclipse.jface.text.Position;
 
 /**
  * Standard implementation of <code>IAnnotationModel</code>. This class can directly
- * be used by clients. Subclasses may adapt this annotation model to other exsisting 
+ * be used by clients. Subclasses may adapt this annotation model to other existing 
  * annotation mechanisms.
  */
 public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtension {
@@ -39,7 +37,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	protected Map fAnnotations;
 	/** The list of annotation model listeners */
 	protected ArrayList fAnnotationModelListeners;
-	/** The document conntected with this model */
+	/** The document connected with this model */
 	protected IDocument fDocument;
 	/** The number of open connections to the same document */
 	private int fOpenConnections= 0;
@@ -53,7 +51,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	 */
 	private Map fAttachments= new HashMap();
 	/**
-	 * The annotation model listener on attached submodels.
+	 * The annotation model listener on attached sub-models.
 	 * @since 3.0
 	 */
 	private IAnnotationModelListener fModelListener= new IAnnotationModelListener() {
@@ -61,7 +59,15 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 			AnnotationModel.this.fireModelChanged();
 		}
 	};
-
+	/**
+	 * The current annotation model event.
+	 * @since 3.0
+	 */
+	private AnnotationModelEvent fModelEvent= new AnnotationModelEvent(this);
+	
+	
+	
+	
 	/**
 	 * Creates a new annotation model. The annotation is empty, i.e. does not
 	 * manage any annotations and is not connected to any document.
@@ -97,45 +103,42 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	 * @since 3.0
 	 */
 	public void replaceAnnotations(Annotation[] annotationsToRemove, Map annotationsToAdd) {
-		
-		boolean modelChanged= true;
+		try {
+			replaceAnnotations(annotationsToRemove, annotationsToAdd, false);
+		} catch (BadLocationException x) {
+		}
+	}
+	
+	/**
+	 * Replaces the given annotations in this model and if advised fires a
+	 * model change event.
+	 * 
+	 * @param annotationsToRemove the annotations to be removed
+	 * @param annotationsToAdd the annotations to be added
+	 * @param fireModelChanged <code>true</code> if a model change event
+	 *            should be fired, <code>false</code> otherwise
+	 * @throws BadLocationException in case an annotation should be added at an
+	 *             invalid position
+	 * @since 3.0
+	 */
+	protected void replaceAnnotations(Annotation[] annotationsToRemove, Map annotationsToAdd, boolean fireModelChanged) throws BadLocationException {
 		
 		if (annotationsToRemove != null) {
-			for (int i= 0, length= annotationsToRemove.length; i < length; i++) {
-				Annotation annotation= annotationsToRemove[i];
-				if (fAnnotations.containsKey(annotation)) {
-				
-					if (fDocument != null) {
-						Position p= (Position) fAnnotations.get(annotation);
-						fDocument.removePosition(p);
-					}
-					
-					fAnnotations.remove(annotation);
-					
-					modelChanged= true;
-				}
-			}
+			for (int i= 0, length= annotationsToRemove.length; i < length; i++)
+				removeAnnotation(annotationsToRemove[i]);
 		}
 		
 		if (annotationsToAdd != null) {
 			Iterator iter= annotationsToAdd.entrySet().iterator();
 			while (iter.hasNext()) {
-				try {
-					Map.Entry mapEntry= (Map.Entry)iter.next();
-					Annotation annotation= (Annotation)mapEntry.getKey();
-					if (!fAnnotations.containsKey(annotation)) {
-						Position position= (Position)mapEntry.getValue();
-						addPosition(fDocument, position);
-						fAnnotations.put(annotation, position);
-						modelChanged= true;
-					}
-				} catch (BadLocationException e) {
-					// ignore invalid position
-				}
+				Map.Entry mapEntry= (Map.Entry) iter.next();
+				Annotation annotation= (Annotation) mapEntry.getKey();
+				Position position= (Position) mapEntry.getValue();
+				addAnnotation(annotation, position, false);
 			}
 		}
 		
-		if (modelChanged)
+		if (fireModelChanged)
 			fireModelChanged();
 	}
 	
@@ -155,6 +158,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 			
 			addPosition(fDocument, position);
 			fAnnotations.put(annotation, position);
+			fModelEvent.annotationAdded(annotation);
 
 			if (fireModelChanged)
 				fireModelChanged();
@@ -221,7 +225,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	}
 	
 	/**
-	 * Hook method. Is called as soon as this model becomes diconnected from its document.
+	 * Hook method. Is called as soon as this model becomes disconnected from its document.
 	 * Subclasses may re-implement.
 	 */
 	protected void disconnected() {
@@ -260,7 +264,19 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	 * Informs all annotation model listeners that this model has been changed.
 	 */
 	protected void fireModelChanged() {
-		fireModelChanged(new AnnotationModelEvent(this));
+		AnnotationModelEvent event= fModelEvent;
+		fModelEvent= createAnnotationModelEvent();
+		fireModelChanged(event);
+	}
+	
+	/**
+	 * Creates and returns a new annotation model event. Subclasses may override.
+	 * 
+	 * @return a new and empty annotation model event
+	 * @since 3.0
+	 */
+	protected AnnotationModelEvent createAnnotationModelEvent() {
+		return new AnnotationModelEvent(this);
 	}
 	
 	/**
@@ -273,6 +289,10 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	 * @since 2.0
 	 */
 	protected void fireModelChanged(AnnotationModelEvent event) {
+		
+		if (event.isEmpty())
+			return;
+				
 		ArrayList v= new ArrayList(fAnnotationModelListeners);
 		Iterator e= v.iterator();
 		while (e.hasNext()) {
@@ -339,10 +359,10 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	 * Returns all annotations managed by this model. <code>cleanup</code>
 	 * indicates whether all annotations whose associated positions are 
 	 * deleted should previously be removed from the model. <code>recurse</code> indicates
-	 * whether annotations of attached submodels should also be returned.
+	 * whether annotations of attached sub-models should also be returned.
 	 * 
 	 * @param cleanup indicates whether annotations with deleted associated positions are removed
-	 * @param recurse whether to return annotations managed by submodels.
+	 * @param recurse whether to return annotations managed by sub-models.
 	 * @return all annotations managed by this model
 	 * @since 3.0
 	 */
@@ -411,10 +431,12 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	 */
 	public Position getPosition(Annotation annotation) {
 		Position position= (Position) fAnnotations.get(annotation);
+		if (position != null)
+			return position;
+		
 		Iterator it= fAttachments.values().iterator();
 		while (position == null && it.hasNext())
-			position= ((IAnnotationModel)it.next()).getPosition(annotation);
-			
+			position= ((IAnnotationModel)it.next()).getPosition(annotation);	
 		return position;
 	}
 	
@@ -435,10 +457,12 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	protected void removeAllAnnotations(boolean fireModelChanged) {
 		
 		if (fDocument != null) {
-			Iterator e= fAnnotations.values().iterator();
+			Iterator e= fAnnotations.keySet().iterator();
 			while (e.hasNext()) {
-				Position p= (Position) e.next();
+				Annotation a= (Annotation) e.next();
+				Position p= (Position) fAnnotations.get(a);
 				fDocument.removePosition(p);
+				fModelEvent.annotationRemoved(a);
 			}
 		}
 		
@@ -471,9 +495,64 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 			}
 				
 			fAnnotations.remove(annotation);
+			fModelEvent.annotationRemoved(annotation);
 			
 			if (fireModelChanged)
 				fireModelChanged();
+		}
+	}
+	
+	/**
+	 * Modifies the position associated with the given annotation to the given
+	 * position. If the annotation is not yet managed by this annotation model,
+	 * the annotation is added. All annotation model change listeners will be
+	 * informed about the change.
+	 * 
+	 * @param annotation the annotation whose associated position should be
+	 *            modified
+	 * @param position the position to whose values the associated position
+	 *            should be changed
+	 * @since 3.0
+	 */
+	public void modifyAnnotation(Annotation annotation, Position position) {
+		modifyAnnotation(annotation, position, true);
+	}
+	
+	/**
+	 * Modifies the associated position of the given annotation to the given
+	 * position. If the annotation is not yet managed by this annotation model,
+	 * the annotation is added. If requested, all annotation model change
+	 * listeners will be informed about the change.
+	 * 
+	 * @param annotation the annotation whose associated position should be
+	 *            modified
+	 * @param position the position to whose values the associated position
+	 *            should be changed
+	 * @param fireModelChanged indicates whether to notify all model listeners
+	 * @since 3.0
+	 */
+	protected void modifyAnnotation(Annotation annotation, Position position, boolean fireModelChanged) {
+		if (position == null) {
+			removeAnnotation(annotation, fireModelChanged);
+		} else {
+			Position p= (Position) fAnnotations.get(annotation);
+			if (p != null) {
+				
+				if (position.getOffset() != p.getOffset() && position.getLength() != p.getLength()) {
+					p.setOffset(position.getOffset());
+					p.setLength(position.getLength());
+				}
+				fModelEvent.annotationChanged(annotation);
+				if (fireModelChanged)
+					fireModelChanged();
+				
+			} else {
+				try {
+					addAnnotation(annotation, position, fireModelChanged);
+				} catch (BadLocationException x) {
+					// ignore invalid position
+				}
+			}
 		}
 	}
 	

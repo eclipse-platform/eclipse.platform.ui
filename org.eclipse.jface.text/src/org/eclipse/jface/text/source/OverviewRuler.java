@@ -125,12 +125,12 @@ public class OverviewRuler implements IOverviewRuler {
 		private void skip() {
 			while (fIterator.hasNext()) {
 				Annotation next= (Annotation) fIterator.next();
-				Object annotationType= fAnnotationAccess.getType(next);
-				if (annotationType == null)
+				if (next.isMarkedDeleted())
 					continue;
 					
 				fNext= next;
-				if (fType == null || fType.equals(annotationType)) {
+				Object annotationType= fAnnotationAccess.getType(next);
+				if (fType == null || isSubtype(annotationType)) {
 					if (fTemporary == IGNORE) return;
 					boolean temporary= fAnnotationAccess.isTemporary(fNext);
 					if (fTemporary == TEMPORARY && temporary) return;
@@ -138,6 +138,14 @@ public class OverviewRuler implements IOverviewRuler {
 				}
 			}
 			fNext= null;
+		}
+		
+		private boolean isSubtype(Object annotationType) {
+			if (fAnnotationAccess instanceof  IAnnotationAccessExtension) {
+				IAnnotationAccessExtension extension= (IAnnotationAccessExtension) fAnnotationAccess;
+				return extension.isSubtype(annotationType, fType);
+			}
+			return fType.equals(annotationType);
 		}
 		
 		/*
@@ -243,9 +251,9 @@ public class OverviewRuler implements IOverviewRuler {
 	/** The header painter */
 	private HeaderPainter fHeaderPainter;
 	/** The list of annotation types to be shown in this ruler */
-	private Set fAnnotationTypes= new HashSet();
+	private Set fConfiguredAnnotationTypes= new HashSet();
 	/** The list of annotation types to be shown in the header of this ruler */
-	private Set fHeaderAnnotationTypes= new HashSet();
+	private Set fConfiguredHeaderAnnotationTypes= new HashSet();
 	/** The mapping between annotation types and colors */
 	private Map fAnnotationTypes2Colors= new HashMap();
 	/** The color manager */
@@ -263,6 +271,16 @@ public class OverviewRuler implements IOverviewRuler {
 	 * @since 3.0
 	 */
 	private List fLayersSortedByLayer= new ArrayList();
+	/**
+	 * Set of allowed annotation types.
+	 * @since 3.0 
+	 */
+	private Set fAllowedAnnotationTypes= new HashSet();
+	/**
+	 * Set of allowed header annotation types.
+	 * @since 3.0
+	 */
+	private Set fAllowedHeaderAnnotationTypes= new HashSet();
 	
 	
 	/**
@@ -379,8 +397,10 @@ public class OverviewRuler implements IOverviewRuler {
 			fHitDetectionCursor= null;
 		}
 		
-		fAnnotationTypes.clear();
-		fHeaderAnnotationTypes.clear();
+		fConfiguredAnnotationTypes.clear();
+		fAllowedAnnotationTypes.clear();
+		fConfiguredHeaderAnnotationTypes.clear();
+		fAllowedHeaderAnnotationTypes.clear();
 		fAnnotationTypes2Colors.clear();
 		fAnnotationsSortedByLayer.clear();
 		fLayersSortedByLayer.clear();
@@ -709,6 +729,8 @@ public class OverviewRuler implements IOverviewRuler {
 				Iterator e= new FilterIterator(annotationType);
 				while (e.hasNext() && found == null) {
 					Annotation a= (Annotation) e.next();
+					if (a.isMarkedDeleted())
+						continue;
 					
 					if (skip(fAnnotationAccess.getType(a)))
 						continue;
@@ -797,14 +819,15 @@ public class OverviewRuler implements IOverviewRuler {
 	 * @see org.eclipse.jface.text.source.IOverviewRuler#addAnnotationType(java.lang.Object)
 	 */
 	public void addAnnotationType(Object annotationType) {
-		fAnnotationTypes.add(annotationType);
+		fConfiguredAnnotationTypes.add(annotationType);
 	}
 	
 	/*
 	 * @see org.eclipse.jface.text.source.IOverviewRuler#removeAnnotationType(java.lang.Object)
 	 */
 	public void removeAnnotationType(Object annotationType) {
-		fAnnotationTypes.remove(annotationType);
+		fConfiguredAnnotationTypes.remove(annotationType);
+		fAllowedAnnotationTypes.clear();
 	}
 		
 	/*
@@ -836,13 +859,68 @@ public class OverviewRuler implements IOverviewRuler {
 	}
 	
 	/**
-	 * Returns whether annotation of the given annotation type should be skipped by the drawing routine.
+	 * Returns whether the given annotation type should be skipped by the drawing routine.
 	 * 
 	 * @param annotationType the annotation type
 	 * @return <code>true</code> if annotation of the given type should be skipped
 	 */
 	private boolean skip(Object annotationType) {
-		return !fAnnotationTypes.contains(annotationType);
+		return !contains(annotationType, fAllowedAnnotationTypes, fConfiguredAnnotationTypes);
+	}
+	
+	/**
+	 * Returns whether the given annotation type should be skipped by the drawing routine of the header.
+	 * 
+	 * @param annotationType the annotation type
+	 * @return <code>true</code> if annotation of the given type should be skipped
+	 */
+	private boolean skipInHeader(Object annotationType) {
+		return !contains(annotationType, fAllowedHeaderAnnotationTypes, fConfiguredHeaderAnnotationTypes);
+	}
+	
+	/**
+	 * Returns whether the given annotation type is contained in the given <code>allowed</code>
+	 * set. This is the case if the type is either in the set
+	 * or covered by the <code>configured</code> set.
+	 * 
+	 * @param annotationType the annotation type
+	 * @return <code>true</code> if annotation is contained, <code>false</code>
+	 *         otherwise
+	 * @since 3.0
+	 */
+	private boolean contains(Object annotationType, Set allowed, Set configured) {
+		if (allowed.contains(annotationType))
+			return true;
+		
+		boolean covered= isCovered(annotationType, configured);
+		if (covered)
+			allowed.add(annotationType);
+		
+		return covered;
+	}
+
+	/**
+	 * Computes whether the annotations of the given type are covered by the given <code>configured</code>
+	 * set. This is the case if either the type of the annotation or any of its
+	 * super types is contained in the <code>configured</code> set.
+	 * 
+	 * @param annotation the annotation
+	 * @param annotationType the annotation type
+	 * @return <code>true</code> if annotation is covered, <code>false</code>
+	 *         otherwise
+	 * @since 3.0
+	 */
+	private boolean isCovered(Object annotationType, Set configured) {
+		if (fAnnotationAccess instanceof IAnnotationAccessExtension) {
+			IAnnotationAccessExtension extension= (IAnnotationAccessExtension) fAnnotationAccess;
+			Iterator e= configured.iterator();
+			while (e.hasNext()) {
+				if (extension.isSubtype(annotationType,e.next()))
+					return true;
+			}
+			return false;
+		}
+		return configured.contains(annotationType);
 	}
 	
 	/**
@@ -892,7 +970,7 @@ public class OverviewRuler implements IOverviewRuler {
 	 * @return the computed color
 	 */
 	private Color getColor(Object annotationType, double scale) {
-		Color base= (Color) fAnnotationTypes2Colors.get(annotationType);
+		Color base= findColor(annotationType);
 		if (base == null)
 			return null;
 			
@@ -907,6 +985,32 @@ public class OverviewRuler implements IOverviewRuler {
 			background= new RGB(0, 0, 0);
 		
 		return fSharedTextColors.getColor(interpolate(baseRGB, background, scale));
+	}
+	
+	/**
+	 * Returns the color for the given annotation type
+	 * 
+	 * @param annotationType the annotation type
+	 * @return the color
+	 */
+	private Color findColor(Object annotationType) {
+		Color color= (Color) fAnnotationTypes2Colors.get(annotationType);
+		if (color != null)
+			return color;
+		
+		if (fAnnotationAccess instanceof IAnnotationAccessExtension) {
+			IAnnotationAccessExtension extension= (IAnnotationAccessExtension) fAnnotationAccess;
+			Object[] superTypes= extension.getSupertypes(annotationType);
+			if (superTypes != null) {
+				for (int i= superTypes.length -1; i > -1; i--) {
+					color= (Color) fAnnotationTypes2Colors.get(superTypes[i]);
+					if (color != null)
+						return color;
+				}
+			}
+		}
+		
+		return null;
 	}
 	
 	/**
@@ -985,14 +1089,15 @@ public class OverviewRuler implements IOverviewRuler {
 	 * @see org.eclipse.jface.text.source.IOverviewRuler#addHeaderAnnotationType(java.lang.Object)
 	 */
 	public void addHeaderAnnotationType(Object annotationType) {
-		fHeaderAnnotationTypes.add(annotationType);
+		fConfiguredHeaderAnnotationTypes.add(annotationType);
 	}
 
 	/*
 	 * @see org.eclipse.jface.text.source.IOverviewRuler#removeHeaderAnnotationType(java.lang.Object)
 	 */
 	public void removeHeaderAnnotationType(Object annotationType) {
-		fHeaderAnnotationTypes.remove(annotationType);
+		fConfiguredHeaderAnnotationTypes.remove(annotationType);
+		fAllowedHeaderAnnotationTypes.clear();
 	}
 	
 	/**
@@ -1008,7 +1113,7 @@ public class OverviewRuler implements IOverviewRuler {
 			
 			Object annotationType= fAnnotationsSortedByLayer.get(i);
 			
-			if (!fHeaderAnnotationTypes.contains(annotationType) || !fAnnotationTypes.contains(annotationType))
+			if (skipInHeader(annotationType) || skip(annotationType))
 				continue;
 			
 			for (Iterator e= new FilterIterator(annotationType); e.hasNext();) {
@@ -1021,7 +1126,7 @@ public class OverviewRuler implements IOverviewRuler {
 		
 		Color color= null;
 		if (colorType != null) 
-			color= (Color) fAnnotationTypes2Colors.get(colorType);
+			color= findColor(colorType);
 			
 		if (color == null) {
 			if (fHeaderPainter != null)
@@ -1059,7 +1164,7 @@ public class OverviewRuler implements IOverviewRuler {
 			
 			Object annotationType= fAnnotationsSortedByLayer.get(i);
 			
-			if (!fHeaderAnnotationTypes.contains(annotationType) || !fAnnotationTypes.contains(annotationType))
+			if (skipInHeader(annotationType) || skip(annotationType))
 				continue;
 	
 			int count= 0;

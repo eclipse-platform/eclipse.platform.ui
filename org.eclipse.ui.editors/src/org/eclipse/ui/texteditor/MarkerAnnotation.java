@@ -17,7 +17,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
@@ -43,7 +42,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  *
  * @see org.eclipse.core.resources.IMarker
  */
-public class MarkerAnnotation extends Annotation implements IAnnotationExtension {
+public class MarkerAnnotation extends Annotation {
 
 	/** 
 	 * The layer in which markers representing problem are located.
@@ -112,6 +111,18 @@ public class MarkerAnnotation extends Annotation implements IAnnotationExtension
 	 * @param marker the marker
 	 */
 	public MarkerAnnotation(IMarker marker) {
+		this(null, marker);
+	}
+	
+	/**
+	 * Creaets a new annotation of the given type for the given marker.
+	 * 
+	 * @param annotationType the annotation type
+	 * @param marker the marker
+	 * @since 3.0
+	 */
+	public MarkerAnnotation(String annotationType, IMarker marker) {
+		super(annotationType, true, null);
 		Assert.isNotNull(marker);
 		fMarker= marker;
 		initialize();
@@ -170,7 +181,7 @@ public class MarkerAnnotation extends Annotation implements IAnnotationExtension
 			name= IDE.SharedImages.IMG_OBJS_BKMRK_TSK;
 			layer= DefaultAnnotation.BOOKMARK_LAYER;
 		} else if (MarkerUtilities.isMarkerType(fMarker, IMarker.PROBLEM)) {
-			switch (fMarker.getAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO)) {
+			switch (MarkerUtilities.getSeverity(fMarker)) {
 				case IMarker.SEVERITY_INFO:
 					name= ISharedImages.IMG_OBJS_INFO_TSK;
 					layer= 3;
@@ -263,38 +274,9 @@ public class MarkerAnnotation extends Annotation implements IAnnotationExtension
 	}
 
 	/*
-	 * @see org.eclipse.ui.texteditor.IAnnotationExtension#getMarkerType()
-	 * @since 3.0
+	 * @see org.eclipse.jface.text.source.Annotation#getText()
 	 */
-	public String getMarkerType() {
-		try {
-			return fMarker.getType();
-		} catch (CoreException e) {
-			return null;
-		}
-	}
-
-	/*
-	 * @see org.eclipse.ui.texteditor.IAnnotationExtension#getSeverity()
-	 * @since 3.0
-	 */
-	public int getSeverity() {
-		return fMarker.getAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
-	}
-
-	/*
-	 * @see org.eclipse.ui.texteditor.IAnnotationExtension#isTemporary()
-	 * @since 3.0
-	 */
-	public boolean isTemporary() {
-		return false;
-	}
-
-	/*
-	 * @see org.eclipse.ui.texteditor.IAnnotationExtension#getMessage()
-	 * @since 3.0
-	 */
-	public String getMessage() {
-		return fMarker.getAttribute(IMarker.MESSAGE, null);
+	public String getText() {
+		return MarkerUtilities.getMessage(fMarker);
 	}
 }

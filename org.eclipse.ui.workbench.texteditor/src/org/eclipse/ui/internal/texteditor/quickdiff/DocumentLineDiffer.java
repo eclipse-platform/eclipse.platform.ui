@@ -23,10 +23,6 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Canvas;
-
 import org.eclipse.jface.util.Assert;
 
 import org.eclipse.jface.text.BadLocationException;
@@ -45,7 +41,6 @@ import org.eclipse.jface.text.source.IAnnotationModelListenerExtension;
 import org.eclipse.jface.text.source.ILineDiffInfo;
 import org.eclipse.jface.text.source.ILineDiffer;
 
-import org.eclipse.ui.texteditor.IAnnotationExtension;
 import org.eclipse.ui.texteditor.quickdiff.IQuickDiffReferenceProvider;
 
 import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
@@ -76,12 +71,13 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	 * The local implementation of <code>ILineDiffInfo</code>. As instances are also <code>Annotation</code>s,
 	 * they can be used in <code>DocumentLineDiffer</code>s <code>IAnnotationModel</code> protocol.
 	 */
-	private final class DiffRegion extends Annotation implements ILineDiffInfo, IAnnotationExtension {
+	private final class DiffRegion extends Annotation implements ILineDiffInfo {
 
 		private RangeDifference fDifference;
 		private int fOffset;
 
 		DiffRegion(RangeDifference difference, int offset) {
+			super("org.eclipse.quickdiff.changeindication", false, null);
 			fOffset= offset;
 			fDifference= difference;
 		}
@@ -91,7 +87,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		 */
 		public int getRemovedLinesBelow() {
 			if (fOffset == fDifference.rightLength() - 1) {
-				if (getType() != UNCHANGED) {
+				if (getChangeType() != UNCHANGED) {
 					return Math.max(fDifference.leftLength() - fDifference.rightLength(), 0);
 				} else {
 					for (ListIterator it= fDifferences.listIterator(); it.hasNext();) {
@@ -111,9 +107,9 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		}
 
 		/*
-		 * @see org.eclipse.jface.text.source.ILineDiffInfo#getType()
+		 * @see org.eclipse.jface.text.source.ILineDiffInfo#getChangeType()
 		 */
-		public int getType() {
+		public int getChangeType() {
 			if (fDifference.kind() == RangeDifference.NOCHANGE)
 				return UNCHANGED;
 			else {
@@ -128,7 +124,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		 * @see org.eclipse.jface.text.source.ILineDiffInfo#getRemovedLinesAbove()
 		 */
 		public int getRemovedLinesAbove() {
-			if (getType() != UNCHANGED || fOffset != 0)
+			if (getChangeType() != UNCHANGED || fOffset != 0)
 				return 0;
 			else {
 				for (ListIterator it= fDifferences.listIterator(fDifferences.size()); it.hasPrevious();) {
@@ -143,19 +139,12 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 				return 0;
 			}
 		}
-
-		/*
-		 * @see org.eclipse.jface.text.source.Annotation#paint(org.eclipse.swt.graphics.GC, org.eclipse.swt.widgets.Canvas, org.eclipse.swt.graphics.Rectangle)
-		 */
-		public void paint(GC gc, Canvas canvas, Rectangle bounds) {
-			// oh nothing painting is done by the line number bar...
-		}
-
+		
 		/*
 		 * @see org.eclipse.jface.text.source.ILineDiffInfo#hasChanges()
 		 */
 		public boolean hasChanges() {
-			return getType() != UNCHANGED || getRemovedLinesAbove() > 0 || getRemovedLinesBelow() > 0;
+			return getChangeType() != UNCHANGED || getRemovedLinesAbove() > 0 || getRemovedLinesBelow() > 0;
 		}
 
 		/*
@@ -171,7 +160,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 				
 				int endLine= startLine + getRemovedLinesBelow();
 				
-				if (getType() == UNCHANGED)
+				if (getChangeType() == UNCHANGED)
 					startLine++;
 				
 				String[] ret= new String[endLine - startLine + 1];
@@ -192,35 +181,9 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		}
 
 		/*
-		 * @see org.eclipse.ui.texteditor.IAnnotationExtension#getMarkerType()
+		 * @see org.eclipse.jface.text.source.Annotation#getText()
 		 */
-		public String getMarkerType() {
-			switch (getType()) {
-				case ILineDiffInfo.UNCHANGED:
-					return null; // we're no marker...
-				default:
-					return "org.eclipse.quickdiff.changeindication"; //$NON-NLS-1$
-			}
-		}
-
-		/*
-		 * @see org.eclipse.ui.texteditor.IAnnotationExtension#getSeverity()
-		 */
-		public int getSeverity() {
-			return 0; // same as IMarker.SEVERITY_INFO;
-		}
-
-		/*
-		 * @see org.eclipse.ui.texteditor.IAnnotationExtension#isTemporary()
-		 */
-		public boolean isTemporary() {
-			return true;
-		}
-
-		/*
-		 * @see org.eclipse.ui.texteditor.IAnnotationExtension#getMessage()
-		 */
-		public String getMessage() {
+		public String getText() {
 			int r= fDifference.rightLength();
 			int l= fDifference.leftLength();
 			int c= Math.min(r, l);

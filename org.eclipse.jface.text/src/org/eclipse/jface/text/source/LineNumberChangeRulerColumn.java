@@ -190,7 +190,7 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 	 * @return <code>true</code> if <code>info</code> describes either a changed or an added line.
 	 */
 	private boolean hasSpecialColor(ILineDiffInfo info) {
-		return info.getType() == ILineDiffInfo.ADDED || info.getType() == ILineDiffInfo.CHANGED;
+		return info.getChangeType() == ILineDiffInfo.ADDED || info.getChangeType() == ILineDiffInfo.CHANGED;
 	}
 
 	/**
@@ -231,9 +231,9 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 	 * @return the correct background color for the line type being described by <code>info</code>
 	 */
 	private Color getColor(ILineDiffInfo info, Display display) {
-		Assert.isTrue(info != null && info.getType() != ILineDiffInfo.UNCHANGED);
+		Assert.isTrue(info != null && info.getChangeType() != ILineDiffInfo.UNCHANGED);
 		Color ret= null;
-		switch (info.getType()) {
+		switch (info.getChangeType()) {
 			case ILineDiffInfo.CHANGED :
 				ret= getShadedColor(fChangedColor, display);
 				break;
@@ -253,7 +253,7 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 	private String getDisplayCharacter(ILineDiffInfo info) {
 		if (info == null)
 			return ""; //$NON-NLS-1$
-		switch (info.getType()) {
+		switch (info.getChangeType()) {
 			case ILineDiffInfo.CHANGED :
 				return "~"; //$NON-NLS-1$
 			case ILineDiffInfo.ADDED :

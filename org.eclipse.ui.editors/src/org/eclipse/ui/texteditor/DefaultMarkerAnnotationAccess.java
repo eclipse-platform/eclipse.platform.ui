@@ -10,18 +10,26 @@
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 
-import java.util.Iterator;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.CoreException;
-
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
+
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ImageRegistry;
 
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationAccess;
 import org.eclipse.jface.text.source.IAnnotationAccessExtension;
+import org.eclipse.jface.text.source.IAnnotationPresentation;
+
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IDE;
 
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 
@@ -31,59 +39,88 @@ import org.eclipse.ui.internal.editors.text.EditorsPlugin;
  */
 public class DefaultMarkerAnnotationAccess implements IAnnotationAccess, IAnnotationAccessExtension {
 	
-	/** Constant for the unknown marker type */
-	public final static String UNKNOWN= EditorsPlugin.getPluginId() + ".unknown";  //$NON-NLS-1$
+	/** 
+	 * Constant for the unknown marker type
+	 * @deprecated use Annotation.TYPE_UNKNOWN instead 
+	 */
+	public final static String UNKNOWN= Annotation.TYPE_UNKNOWN;
 	
-	/** The marker annotation preferences */
+	/**
+	 * Constant for the error system image.
+	 * Value: <code>error</code>
+	 * 
+	 * @since 3.0
+	 */
+	public final static String ERROR_SYSTEM_IMAGE= "error";
+	/**
+	 * Constant for the warning system image.
+	 * Value: <code>warning</code>
+	 * 
+	 * @since 3.0
+	 */
+	public final static String WARNING_SYSTEM_IMAGE= "warning";
+	/**
+	 * Constant for the info system image.
+	 * Value: <code>info</code>
+	 * 
+	 * @since 3.0
+	 */
+	public final static String INFO_SYSTEM_IMAGE= "info";
+	/**
+	 * Constant for the task system image.
+	 * Value: <code>task</code>
+	 * 
+	 * @since 3.0
+	 */
+	public final static String TASK_SYSTEM_IMAGE= "task";
+	/**
+	 * Constant for the bookmark system image.
+	 * Value: <code>bookmark</code>
+	 * 
+	 * @since 3.0
+	 */
+	public final static String BOOKMARK_SYSTEM_IMAGE= "bookmark";
+	
+	/**
+	 * The mapping between external and internal symbolic system image names.
+	 * @since 3.0
+	 */
+	private final static Map MAPPING;
+	
+	static {
+		MAPPING= new HashMap();
+		MAPPING.put(ERROR_SYSTEM_IMAGE, ISharedImages.IMG_OBJS_ERROR_TSK);
+		MAPPING.put(WARNING_SYSTEM_IMAGE, ISharedImages.IMG_OBJS_WARN_TSK);
+		MAPPING.put(INFO_SYSTEM_IMAGE, ISharedImages.IMG_OBJS_INFO_TSK);
+		MAPPING.put(TASK_SYSTEM_IMAGE, IDE.SharedImages.IMG_OBJS_TASK_TSK);
+		MAPPING.put(BOOKMARK_SYSTEM_IMAGE, IDE.SharedImages.IMG_OBJS_BKMRK_TSK);
+	}
+	
+	
+	/** 
+	 * The marker annotation preferences 
+	 * @deprecated since 3.0
+	 */
 	protected MarkerAnnotationPreferences fMarkerAnnotationPreferences;
 	
 	/**
 	 * Returns a new default marker annotation access with the given preferences.
 	 * 
 	 * @param markerAnnotationPreferences
+	 * @deprecated use <code>DefaultMarkerAnnotationAccess()</code> instead
 	 */
 	public DefaultMarkerAnnotationAccess(MarkerAnnotationPreferences markerAnnotationPreferences) {
 		fMarkerAnnotationPreferences= markerAnnotationPreferences;
 	}
-
+	
 	/**
-	 * Returns the annotation preference for the given marker.
+	 * Creates a new default marker annotation access using the standard
+	 * preference lookup strategy which is the one provided by the enclosing
+	 * plug-in.
 	 * 
-	 * @param marker
-	 * @return the annotation preference or <code>null</code> if none
-	 */	
-	private AnnotationPreference getAnnotationPreference(IMarker marker) {
-		Iterator e= fMarkerAnnotationPreferences.getAnnotationPreferences().iterator();
-		while (e.hasNext()) {
-			Integer severity;
-			boolean isSubtype;
-			AnnotationPreference info= (AnnotationPreference) e.next();
-			try {
-				severity= (Integer)marker.getAttribute(IMarker.SEVERITY);
-				isSubtype= marker.isSubtypeOf(info.getMarkerType());
-			} catch (CoreException x) {
-				return null;
-			}
-			if (isSubtype && (severity == null || severity.intValue() == info.getSeverity()))
-				return info;
-			}
-		return null;
-	}
-
-	/**
-	 * Returns the annotation preference for the given marker.
-	 * 
-	 * @param marker
-	 * @return the annotation preference or <code>null</code> if none
-	 */	
-	private AnnotationPreference getAnnotationPreference(String markerType, int severity) {
-		Iterator e= fMarkerAnnotationPreferences.getAnnotationPreferences().iterator();
-		while (e.hasNext()) {
-			AnnotationPreference info= (AnnotationPreference) e.next();
-			if (info.getMarkerType().equals(markerType) && severity == info.getSeverity())
-				return info;
-			}
-		return null;
+	 * @since 3.0
+	 */
+	public DefaultMarkerAnnotationAccess() {
 	}
 	
 	/**
@@ -93,24 +130,27 @@ public class DefaultMarkerAnnotationAccess implements IAnnotationAccess, IAnnota
 	 * @return the annotation preference for the given annotation or <code>null</code>
 	 */
 	private AnnotationPreference getAnnotationPreference(Annotation annotation) {
-		if (annotation instanceof MarkerAnnotation) {
-			MarkerAnnotation markerAnnotation= (MarkerAnnotation) annotation;
-			IMarker marker= markerAnnotation.getMarker();
-			if (marker != null && marker.exists())
-				return getAnnotationPreference(marker);
-		} else if (annotation instanceof IAnnotationExtension) {
-			IAnnotationExtension annotationExtension= (IAnnotationExtension)annotation;
-			return getAnnotationPreference(annotationExtension.getMarkerType(), annotationExtension.getSeverity());
-		}
+		AnnotationPreferenceLookup lookup= getAnnotationPreferenceLookup();
+		if (lookup != null)
+			return lookup.getAnnotationPreference(annotation);
 		return null;
+	}
+	
+	/**
+	 * Returns the annotation preference lookup used by this annotation access.
+	 * 
+	 * @return the annotation preference lookup
+	 * @since 3.0
+	 */
+	protected AnnotationPreferenceLookup getAnnotationPreferenceLookup() {
+		return EditorsPlugin.getDefault().getAnnotationPreferenceLookup();
 	}
 	
 	/*
 	 * @see org.eclipse.jface.text.source.IAnnotationAccess#getType(org.eclipse.jface.text.source.Annotation)
 	 */
 	public Object getType(Annotation annotation) {
-		AnnotationPreference preference= getAnnotationPreference(annotation);
-		return preference != null ? preference.getAnnotationType() : UNKNOWN;
+		return annotation.getType();
 	}
 	
 	/*
@@ -124,13 +164,12 @@ public class DefaultMarkerAnnotationAccess implements IAnnotationAccess, IAnnota
 	 * @see org.eclipse.jface.text.source.IAnnotationAccess#isTemporary(org.eclipse.jface.text.source.Annotation)
 	 */
 	public boolean isTemporary(Annotation annotation) {
-		if (annotation instanceof IAnnotationExtension)
-			return ((IAnnotationExtension)annotation).isTemporary();
-		return false;
+		return !annotation.isPersistent();
 	}
 	
 	/*
 	 * @see org.eclipse.jface.text.source.IAnnotationAccessExtension#getLabel(org.eclipse.jface.text.source.Annotation)
+	 * @since 3.0
 	 */
 	public String getTypeLabel(Annotation annotation) {
 		AnnotationPreference preference= getAnnotationPreference(annotation);
@@ -139,16 +178,129 @@ public class DefaultMarkerAnnotationAccess implements IAnnotationAccess, IAnnota
 	
 	/*
 	 * @see org.eclipse.jface.text.source.IAnnotationAccessExtension#getLayer(org.eclipse.jface.text.source.Annotation)
+	 * @since 3.0
 	 */
 	public int getLayer(Annotation annotation) {
+		if (annotation instanceof IAnnotationPresentation) {
+			IAnnotationPresentation presentation= (IAnnotationPresentation) annotation;
+			return presentation.getLayer();
+		}
 		AnnotationPreference preference= getAnnotationPreference(annotation);
 		return preference != null ? preference.getPresentationLayer() : IAnnotationAccessExtension.DEFAULT_LAYER;
 	}
 	
 	/*
 	 * @see org.eclipse.jface.text.source.IAnnotationAccessExtension#paint(org.eclipse.jface.text.source.Annotation, org.eclipse.swt.graphics.GC, org.eclipse.swt.widgets.Canvas, org.eclipse.swt.graphics.Rectangle)
+	 * @since 3.0
 	 */
 	public void paint(Annotation annotation, GC gc, Canvas canvas, Rectangle bounds) {
-		 annotation.paint(gc, canvas, bounds);
+		if (annotation instanceof IAnnotationPresentation) {
+			
+			IAnnotationPresentation presentation= (IAnnotationPresentation) annotation;
+			presentation.paint(gc, canvas, bounds);
+		
+		} else {
+			
+			AnnotationPreference preference= getAnnotationPreference(annotation);
+			if (preference == null)
+				return;
+			
+			Object type= getType(annotation);
+			String annotationType= (type == null ? null : type.toString());
+			Image image= getImage(annotation, preference, annotationType);
+			if (image != null)
+				ImageUtilities.drawImage(image, gc, canvas, bounds, SWT.CENTER, SWT.TOP);
+		}
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.source.IAnnotationAccessExtension#isSubtype(java.lang.Object, java.lang.Object)
+	 */
+	public boolean isSubtype(Object annotationType, Object potentialSupertype) {
+		AnnotationTypeHierarchy hierarchy= getAnnotationTypeHierarchy();
+		return hierarchy.isSubtype(potentialSupertype.toString(), annotationType.toString());
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.source.IAnnotationAccessExtension#getSupertypes(java.lang.Object)
+	 */
+	public Object[] getSupertypes(Object annotationType) {
+		AnnotationTypeHierarchy hierarchy= getAnnotationTypeHierarchy();
+		AnnotationType type= hierarchy.getAnnotationType(annotationType.toString());
+		return type.getSuperTypes();
+	}
+	
+	/**
+	 * Returns the annotation type hierarchy used by this annotation access.
+	 * 
+	 * @return the annotation type hierarchy
+	 * @since 3.0
+	 */
+	protected AnnotationTypeHierarchy getAnnotationTypeHierarchy() {
+		return EditorsPlugin.getDefault().getAnnotationTypeHierarchy();
+	}
+
+	/**
+	 * Translates the given symbolic image name into the according symbolic image name
+	 * the <code>ISharedImages</code> understands.
+	 * 
+	 * @param symbolicImageName the symbolic system image name to be translated
+	 * @since 3.0
+	 */
+	private String translateSymbolicImageName(String symbolicImageName) {
+		return (String) MAPPING.get(symbolicImageName);
+	}
+	
+	/**
+	 * Retuns the image for the given annotation and the given annotation preferences or
+	 * <code>null</code> if there is no such image.
+	 * 
+	 * @param annotation the annotation
+	 * @param preference the annotation preference
+	 * @param annotationType the annotation type
+	 * @return the image or <code>null</code>
+	 * @since 3.0
+	 */
+	private Image getImage(Annotation annotation, AnnotationPreference preference, String annotationType) {
+		
+		ImageRegistry registry= EditorsPlugin.getDefault().getImageRegistry();
+
+		IAnnotationImageProvider annotationImageProvider = preference.getAnnotationImageProvider();
+		if (annotationImageProvider != null) {
+			
+			Image image= annotationImageProvider.getManagedImage(annotation);
+			if (image != null)
+				return image;
+			
+			String id= annotationImageProvider.getImageDescriptorId(annotation);
+			if (id != null) {
+				image= registry.get(id);
+				if (image == null) {
+					ImageDescriptor descriptor= annotationImageProvider.getImageDescriptor(id);
+					registry.put(id, descriptor);
+					image= registry.get(id);
+				}
+				return image;
+			}
+		}
+		
+		if (annotationType == null)
+			return null;
+			
+		Image image= registry.get(annotationType);
+		if (image == null) {
+			ImageDescriptor descriptor= preference.getImageDescriptor();
+			if (descriptor != null) {
+				registry.put(annotationType, descriptor);
+				image= registry.get(annotationType);
+			} else {
+				String key= translateSymbolicImageName(preference.getSymbolicImageName());
+				if (key != null) {
+					ISharedImages sharedImages= PlatformUI.getWorkbench().getSharedImages();
+					image= sharedImages.getImage(key);
+				}
+			}
+		}
+		return image;
 	}
 }
