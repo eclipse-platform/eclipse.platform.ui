@@ -15,7 +15,7 @@ package org.eclipse.update.internal.ui.model;
  * @version 	1.0
  * @author
  */
-public interface IConfiguredFeatureAdapter extends IConfiguredSiteContext {
+public interface IConfiguredFeatureAdapter extends IFeatureAdapter, IConfiguredSiteContext {
 	public boolean isConfigured();
 	public boolean isUpdated();
 }

@@ -862,11 +862,12 @@ public class NewConfigurationView
 				IFeature feature = adapter.getFeature(null);
 				boolean enable =
 					(adapter.isOptional() || !adapter.isIncluded());
+				boolean missing = feature instanceof MissingFeature;
 
-				swapVersionAction.setEnabled(enable);
+				swapVersionAction.setEnabled(enable && !missing);
 				featureStateAction.setFeature(adapter);
-				featureStateAction.setEnabled(enable);
-				if (feature instanceof MissingFeature) {
+				featureStateAction.setEnabled(enable && !missing);
+				if (missing) {
 					MissingFeature mf = (MissingFeature) feature;
 					installOptFeatureAction.setEnabled(
 						mf.isOptional() && mf.getOriginatingSiteURL() != null);
