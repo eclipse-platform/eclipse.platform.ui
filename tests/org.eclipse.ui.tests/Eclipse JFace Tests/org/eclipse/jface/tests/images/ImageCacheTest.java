@@ -101,57 +101,56 @@ public class ImageCacheTest extends TestCase {
     }
 
     /**
-     * Test that the image cache properly disposes all of its images.
-     *  
-     */
-    public void testDispose() {
-        Image image1 = imageCache.getImage(getImageDescriptor(anythingImage));
-        Image image2 = imageCache.getImage(getImageDescriptor(viewImage));
-        Image grayImage1 = imageCache
-                .getGrayImage(getImageDescriptor(anythingImage));
-        Image grayImage2 = imageCache
-                .getGrayImage(getImageDescriptor(viewImage));
-        Image disabledImage1 = imageCache
-                .getDisabledImage(getImageDescriptor(anythingImage));
-        Image disabledImage2 = imageCache
-                .getDisabledImage(getImageDescriptor(viewImage));
-        Image missingImage = imageCache.getMissingImage();
+	 * Test that the image cache properly disposes all of its images.
+	 *  
+	 */
+	public void testDispose() {
+		// Store descriptors to avoid gc interference
+		ImageDescriptor anythingImageDescriptor = getImageDescriptor(anythingImage);
+		ImageDescriptor viewImageDescriptor = getImageDescriptor(viewImage);
 
-        imageCache.dispose();
+		Image image1 = imageCache.getImage(anythingImageDescriptor);
+		Image image2 = imageCache.getImage(viewImageDescriptor);
+		Image grayImage1 = imageCache.getGrayImage(anythingImageDescriptor);
+		Image grayImage2 = imageCache.getGrayImage(viewImageDescriptor);
+		Image disabledImage1 = imageCache
+				.getDisabledImage(anythingImageDescriptor);
+		Image disabledImage2 = imageCache.getDisabledImage(viewImageDescriptor);
+		Image missingImage = imageCache.getMissingImage();
 
-        assertTrue(image1.isDisposed());
-        assertTrue(image2.isDisposed());
-        assertTrue(grayImage1.isDisposed());
-        assertTrue(grayImage2.isDisposed());
-        assertTrue(disabledImage1.isDisposed());
-        assertTrue(disabledImage2.isDisposed());
-        assertTrue(missingImage.isDisposed());
+		imageCache.dispose();
 
-        // dispose an empty cache
-        imageCache.dispose();
+		assertTrue(image1.isDisposed());
+		assertTrue(image2.isDisposed());
+		assertTrue(grayImage1.isDisposed());
+		assertTrue(grayImage2.isDisposed());
+		assertTrue(disabledImage1.isDisposed());
+		assertTrue(disabledImage2.isDisposed());
+		assertTrue(missingImage.isDisposed());
 
-        image1 = imageCache.getImage(getImageDescriptor(anythingImage));
-        image2 = imageCache.getImage(getImageDescriptor(viewImage));
-        grayImage1 = imageCache.getGrayImage(getImageDescriptor(anythingImage));
-        grayImage2 = imageCache.getGrayImage(getImageDescriptor(viewImage));
-        disabledImage1 = imageCache
-                .getDisabledImage(getImageDescriptor(anythingImage));
-        disabledImage2 = imageCache
-                .getDisabledImage(getImageDescriptor(viewImage));
-        missingImage = imageCache.getMissingImage();
+		// dispose an empty cache
+		imageCache.dispose();
 
-        // Manually dispose the images
-        image1.dispose();
-        image2.dispose();
-        grayImage1.dispose();
-        grayImage2.dispose();
-        disabledImage1.dispose();
-        disabledImage2.dispose();
-        missingImage.dispose();
+		image1 = imageCache.getImage(anythingImageDescriptor);
+		image2 = imageCache.getImage(viewImageDescriptor);
+		grayImage1 = imageCache.getGrayImage(anythingImageDescriptor);
+		grayImage2 = imageCache.getGrayImage(viewImageDescriptor);
+		disabledImage1 = imageCache.getDisabledImage(anythingImageDescriptor);
+		disabledImage2 = imageCache.getDisabledImage(viewImageDescriptor);
+		missingImage = imageCache.getMissingImage();
 
-        // dispose a cache where the images have already been disposed
-        imageCache.dispose();
-    }
+		// Manually dispose the images
+		image1.dispose();
+		image2.dispose();
+		grayImage1.dispose();
+		grayImage2.dispose();
+		disabledImage1.dispose();
+		disabledImage2.dispose();
+		missingImage.dispose();
+
+		// dispose a cache where the images have already been disposed
+		imageCache.dispose();
+	}
 
     /**
      * Test that the cache returns the missing image for a bad image descriptor.
