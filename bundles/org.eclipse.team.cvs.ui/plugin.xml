@@ -555,4 +555,8 @@
       </perspectiveExtension>
    </extension>
 
+	<!-- ************** Project Sets **************** -->
+	<extension point="org.eclipse.team.core.projectSets">
+		<projectSet id="org.eclipse.team.cvs.core.cvsnature" class="org.eclipse.team.internal.ccvs.ui.CVSProjectSetSerializer"/>
+	</extension>
 </plugin>

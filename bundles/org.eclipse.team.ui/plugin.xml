@@ -11,6 +11,7 @@
    <import plugin="org.eclipse.team.core"/>
    <import plugin="org.eclipse.ui"/>
    <import plugin="org.eclipse.compare"/>
+   <import plugin="org.apache.xerces"/>
 </requires>
 
 <runtime>
@@ -87,4 +88,36 @@
 		class="org.eclipse.team.ui.sync.SyncView">
 	</view>
 </extension>	
+
+
+
+<!-- ****************** Import Wizards ********************* -->
+   <extension
+       point="org.eclipse.ui.importWizards">
+      <wizard
+         id="org.eclipse.team.ui.ProjectSetImportWizard"
+         name="%ProjectSetImportWizard.name"
+         class="org.eclipse.team.internal.ui.ProjectSetImportWizard"
+         icon="icons/full/clcl16/projectset.gif">
+         <description>
+            %ProjectSetImportWizard.description
+         </description>
+         <selection class="org.eclipse.core.resources.IProject"/>
+      </wizard>
+   </extension> 
+
+<!-- ****************** Export Wizards ********************* -->
+   <extension
+       point="org.eclipse.ui.exportWizards">
+      <wizard
+         id="org.eclipse.team.ui.ProjectSetExportWizard"
+         name="%ProjectSetExportWizard.name"
+         class="org.eclipse.team.internal.ui.ProjectSetExportWizard"
+         icon="icons/full/clcl16/projectset.gif">
+         <description>
+            %ProjectSetExportWizard.description
+         </description>
+         <selection class="org.eclipse.core.resources.IProject"/>
+      </wizard>
+   </extension> 
 </plugin>

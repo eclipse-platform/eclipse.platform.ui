@@ -8,5 +8,6 @@
     <classpathentry kind="src" path="/org.eclipse.core.runtime"/>
     <classpathentry kind="src" path="/org.eclipse.swt"/>
     <classpathentry kind="src" path="/org.eclipse.compare"/>
+    <classpathentry kind="src" path="/org.apache.xerces"/>
     <classpathentry kind="output" path="bin"/>
 </classpath>

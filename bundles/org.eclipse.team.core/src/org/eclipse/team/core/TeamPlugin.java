@@ -40,7 +40,8 @@ final public class TeamPlugin extends Plugin {
 	
 	// The id of the global ignore extension point
 	public static final String IGNORE_EXTENSION = "ignore"; //$NON-NLS-1$
-	
+	// The id of the project set extension point
+	public static final String PROJECT_SET_EXTENSION = "projectSets";	
 	// The one and only plug-in instance
 	private static TeamPlugin plugin;	
 

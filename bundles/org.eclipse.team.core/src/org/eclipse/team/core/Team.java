@@ -500,7 +500,30 @@ public final class Team {
 			TeamPlugin.log(IStatus.WARNING, Policy.bind("TeamPlugin_setting_global_ignore_7"), ex); //$NON-NLS-1$
 		}
 	}
-	
+	public static IProjectSetSerializer getProjectSetSerializer(String id) {
+		TeamPlugin plugin = TeamPlugin.getPlugin();
+		if (plugin != null) {
+			IExtensionPoint extension = plugin.getDescriptor().getExtensionPoint(TeamPlugin.PROJECT_SET_EXTENSION);
+			if (extension != null) {
+				IExtension[] extensions =  extension.getExtensions();
+				for (int i = 0; i < extensions.length; i++) {
+					IConfigurationElement [] configElements = extensions[i].getConfigurationElements();
+					for (int j = 0; j < configElements.length; j++) {
+						String extensionId = configElements[j].getAttribute("id"); //$NON-NLS-1$
+						if (extensionId != null && extensionId.equals(id)) {
+							try {
+								return (IProjectSetSerializer)configElements[j].createExecutableExtension("class"); //$NON-NLS-1$
+							} catch (CoreException e) {
+								TeamPlugin.log(e.getStatus());
+								return null;
+							}
+						}
+					}
+				}
+			}		
+		}
+		return null;
+	}	
 	private static TeamException wrapException(String message, CoreException e) {
 		MultiStatus status = new MultiStatus(TeamPlugin.ID, 0, message, e);
 		status.merge(e.getStatus());

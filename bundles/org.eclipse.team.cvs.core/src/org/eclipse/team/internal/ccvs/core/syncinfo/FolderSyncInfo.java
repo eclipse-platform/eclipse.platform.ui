@@ -137,7 +137,15 @@ public class FolderSyncInfo {
 		String result;
 		
 		try {
-			result = getRoot().substring(getRoot().indexOf("@")+1); //$NON-NLS-1$
+			String root = getRoot();
+			int index = root.indexOf('@');
+			if (index == -1) {
+				// If the username is mising, we have to find the third ':' instead.
+				index = root.indexOf(':');
+				index = root.indexOf(':', index + 1);
+				index = root.indexOf(':', index + 1);
+			} 
+			result = getRoot().substring(index+1);
 			result = result.substring(result.indexOf(":")+1); //$NON-NLS-1$
 			result = result + "/" + getRepository(); //$NON-NLS-1$
 		} catch (IndexOutOfBoundsException e) {
