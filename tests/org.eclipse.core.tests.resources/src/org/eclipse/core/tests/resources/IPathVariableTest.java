@@ -136,40 +136,56 @@ public class IPathVariableTest extends EclipseWorkspaceTest {
 	/**
 	 * Test IPathVariableManager#getPathVariableNames
 	 */
-	public void testGetPathVariableNames() throws CoreException {
+	public void testGetPathVariableNames() {
 		String[] names = null;
 
 		// should be empty to start
 		assertTrue("0.0", manager.getPathVariableNames().length == 0);
 
 		// add one
-		manager.setValue("one", getRandomLocation());
+		try {
+			manager.setValue("one", getRandomLocation());
+		} catch (CoreException e) {
+			fail("1.0", e);
+		}
 		names = manager.getPathVariableNames();
-		assertTrue("1.0", names.length == 1);
-		assertTrue("1.1", names[0].equals("one"));
+		assertTrue("1.1", names.length == 1);
+		assertTrue("1.2", names[0].equals("one"));
 
 		// add another
-		manager.setValue("two", Path.ROOT);
+		try {
+			manager.setValue("two", Path.ROOT);
+		} catch (CoreException e) {
+			fail("2.0", e);
+		}
 		names = manager.getPathVariableNames();
-		assertTrue("2.0", names.length == 2);
-		assertTrue("2.1", contains(names, "one"));
-		assertTrue("2.2", contains(names, "two"));
+		assertTrue("2.1", names.length == 2);
+		assertTrue("2.2", contains(names, "one"));
+		assertTrue("2.3", contains(names, "two"));
 
 		// remove one
-		manager.setValue("one", null);
+		try {
+			manager.setValue("one", null);
+		} catch (CoreException e) {
+			fail("3.0", e);
+		}
 		names = manager.getPathVariableNames();
-		assertTrue("3.0", names.length == 1);
-		assertTrue("3.1", names[0].equals("two"));
+		assertTrue("3.1", names.length == 1);
+		assertTrue("3.2", names[0].equals("two"));
 
 		// remove the last one	
-		manager.setValue("two", null);
+		try {
+			manager.setValue("two", null);
+		} catch (CoreException e) {
+			fail("4.0", e);
+		}
 		names = manager.getPathVariableNames();
-		assertTrue("3.0", names.length == 0);
+		assertTrue("4.1", names.length == 0);
 	}
 	/**
 	 * Test IPathVariableManager#getValue and IPathVariableManager#setValue
 	 */
-	public void testGetSetValue() throws CoreException {
+	public void testGetSetValue() {
 		IPath pathOne = new Path("c:\\temp");
 		IPath pathTwo = new Path("/tmp/backup");
 		IPath pathOneEdit = new Path("d:/foobar");
@@ -178,26 +194,42 @@ public class IPathVariableTest extends EclipseWorkspaceTest {
 		assertNull("0.0", manager.getValue("one"));
 
 		// add a value to the table
-		manager.setValue("one", pathOne);
+		try {
+			manager.setValue("one", pathOne);
+		} catch (CoreException e) {
+			fail("1.0", e);
+		}
 		IPath value = manager.getValue("one");
-		assertNotNull("1.0", value);
-		assertTrue("1.1", pathOne.equals(value));
+		assertNotNull("1.1", value);
+		assertTrue("1.2", pathOne.equals(value));
 
 		// add another value
-		manager.setValue("two", pathTwo);
+		try {
+			manager.setValue("two", pathTwo);
+		} catch (CoreException e) {
+			fail("2.0", e);
+		}
 		value = manager.getValue("two");
-		assertNotNull("2.0", value);
-		assertTrue("2.1", pathTwo.equals(value));
+		assertNotNull("2.1", value);
+		assertTrue("2.2", pathTwo.equals(value));
 
 		// edit the first value
-		manager.setValue("one", pathOneEdit);
+		try {
+			manager.setValue("one", pathOneEdit);
+		} catch (CoreException e) {
+			fail("3.0", e);
+		}
 		value = manager.getValue("one");
-		assertNotNull("3.0", value);
-		assertTrue("3.1", pathOneEdit.equals(value));
+		assertNotNull("3.1", value);
+		assertTrue("3.2", pathOneEdit.equals(value));
 
 		// setting with value == null will remove
-		manager.setValue("one", null);
-		assertNull("4.0", manager.getValue("one"));
+		try {
+			manager.setValue("one", null);
+		} catch (CoreException e) {
+			fail("4.0", e);
+		}
+		assertNull("4.1", manager.getValue("one"));
 
 		// set values with bogus names 
 		try {
@@ -219,22 +251,38 @@ public class IPathVariableTest extends EclipseWorkspaceTest {
 	/**
 	 * Test IPathVariableManager#isDefined
 	 */
-	public void testIsDefined() throws CoreException {
+	public void testIsDefined() {
 		assertTrue("0.0", !manager.isDefined("one"));
-		manager.setValue("one", Path.ROOT);
-		assertTrue("0.1", manager.isDefined("one"));
-		manager.setValue("one", null);
-		assertTrue("0.2", !manager.isDefined("one"));
+		try {
+			manager.setValue("one", Path.ROOT);
+		} catch (CoreException e) {
+			fail("1.0", e);
+		}
+		assertTrue("1.1", manager.isDefined("one"));
+		try {
+			manager.setValue("one", null);
+		} catch (CoreException e) {
+			fail("2.0", e);
+		}
+		assertTrue("2.1", !manager.isDefined("one"));
 	}
 	/**
 	 * Test IPathVariableManager#resolvePath
 	 */
-	public void testResolvePath() throws CoreException {
+	public void testResolvePath() {
 		IPath pathOne = new Path("c:/temp/foo");
 		IPath pathTwo = new Path("/tmp/backup");
 
-		manager.setValue("one", pathOne);
-		manager.setValue("two", pathTwo);
+		try {
+			manager.setValue("one", pathOne);
+		} catch (CoreException e) {
+			fail("0.1", e);
+		}
+		try {
+			manager.setValue("two", pathTwo);
+		} catch (CoreException e) {
+			fail("0.2", e);
+		}
 
 		// one substitution
 		IPath path = new Path("one/bar");
@@ -299,7 +347,7 @@ public class IPathVariableTest extends EclipseWorkspaceTest {
 	/**
 	 * Test IPathVariableManager#addChangeListener and IPathVariableManager#removeChangeListener
 	 */
-	public void testListeners() throws CoreException {
+	public void testListeners() {
 		PathVariableChangeVerifier listener = new PathVariableChangeVerifier();
 		manager.addChangeListener(listener);
 		IPath pathOne = new Path("/tmp/foobar");
@@ -308,32 +356,44 @@ public class IPathVariableTest extends EclipseWorkspaceTest {
 		try {
 
 			// add a variable
-			manager.setValue("one", pathOne);
+			try {
+				manager.setValue("one", pathOne);
+			} catch (CoreException e) {
+				fail("1.0", e);
+			}
 			listener.addExpectedEvent(IPathVariableChangeEvent.VARIABLE_CREATED, "one", pathOne);
 			try {
 				listener.verify();
 			} catch (PathVariableChangeVerifier.VerificationFailedException e) {
-				fail("0.0", e);
+				fail("1.1", e);
 			}
 
 			// change a variable
 			listener.reset();
-			manager.setValue("one", pathOneEdit);
+			try {
+				manager.setValue("one", pathOneEdit);
+			} catch (CoreException e) {
+				fail("2.0", e);
+			}
 			listener.addExpectedEvent(IPathVariableChangeEvent.VARIABLE_CHANGED, "one", pathOneEdit);
 			try {
 				listener.verify();
 			} catch (PathVariableChangeVerifier.VerificationFailedException e) {
-				fail("2.0", e);
+				fail("2.1", e);
 			}
 
 			// remove a variable
 			listener.reset();
-			manager.setValue("one", null);
+			try {
+				manager.setValue("one", null);
+			} catch (CoreException e) {
+				fail("3.0", e);
+			}
 			listener.addExpectedEvent(IPathVariableChangeEvent.VARIABLE_DELETED, "one", null);
 			try {
 				listener.verify();
 			} catch (PathVariableChangeVerifier.VerificationFailedException e) {
-				fail("3.0", e);
+				fail("3.1", e);
 			}
 
 		} finally {

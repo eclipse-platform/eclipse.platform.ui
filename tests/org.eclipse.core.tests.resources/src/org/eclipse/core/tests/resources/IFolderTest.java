@@ -271,7 +271,6 @@ public void testReadOnlyFolderCopy() throws Exception {
 	source.copy(dest.getFullPath(), true, getMonitor());
 	assertExistsInWorkspace("1.0", dest);
 	assertExistsInWorkspace("1.1", source);
-	//XXX commented out pending fix for bug 6058.
 	assertTrue("1.2", dest.isReadOnly());
 
 	// cleanup - ensure that the files can be deleted.
