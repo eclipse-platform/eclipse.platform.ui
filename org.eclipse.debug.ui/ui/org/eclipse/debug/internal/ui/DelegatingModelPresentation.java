@@ -187,7 +187,14 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 		if (showVariableTypeNames()) {
 			try {
 				if (item instanceof IExpression) {
-					return new StringBuffer(((IExpression)item).getValue().getReferenceTypeName()).append(' ').append(getDefaultText(item)).toString(); //$NON-NLS-1$
+					StringBuffer buf = new StringBuffer();
+					IValue value = ((IExpression)item).getValue();
+					if (value != null) {
+						buf.append(value.getReferenceTypeName());
+						buf.append(' '); //$NON-NLS-1$
+					}
+					buf.append(getDefaultText(item));
+					return buf.toString(); 
 				} else if (item instanceof IVariable) {
 					return new StringBuffer(((IVariable)item).getValue().getReferenceTypeName()).append(' ').append(getDefaultText(item)).toString(); //$NON-NLS-1$
 				}
