@@ -23,7 +23,6 @@
    <extension  
          point="org.eclipse.ui.intro">
       <intro
-            name="%introPart.title"
             class="org.eclipse.ui.intro.config.CustomizableIntroPart"
             id="org.eclipse.platform.intro">
       </intro>
