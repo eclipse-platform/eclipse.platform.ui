@@ -213,8 +213,14 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 	
 	
 	public TextFileDocumentProvider()  {
+		this(null);
+	}
+	
+	public TextFileDocumentProvider(IDocumentProvider parentProvider) {
 		IFileBufferManager manager= FileBuffers.getTextFileBufferManager();
 		manager.addFileBufferListener(fBufferedFileListener);
+		if (parentProvider != null)
+			setParentDocumentProvider(parentProvider);
 	}
 	
 	final public void setParentDocumentProvider(IDocumentProvider parentProvider)  {
