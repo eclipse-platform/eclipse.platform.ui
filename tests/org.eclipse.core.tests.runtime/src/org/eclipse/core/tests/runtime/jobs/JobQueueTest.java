@@ -43,9 +43,10 @@ public class JobQueueTest extends TestCase {
 		for (int i = 0; i < entries.length; i++) {
 			entries[i] = new Entry(Job.LONG);
 			queue.enqueue(entries[i]);
+			assertEquals("1.0." + i, entries[0], queue.peek());
 		}
 		for (int i = 0; i < entries.length; i++) {
-			assertTrue("1.0." + i, entries[i] == queue.dequeue());
+			assertEquals("2.0." + i, entries[i], queue.dequeue());
 		}
 	}
 	public void testBasic() {
@@ -70,10 +71,12 @@ public class JobQueueTest extends TestCase {
 		}
 		int count = entries.length;
 		while (!queue.isEmpty()) {
-			queue.dequeue();
+			InternalJob peek = queue.peek();
+			InternalJob removed = queue.dequeue();
+			assertEquals("3.0." + count, peek, removed);
 			count--;
 		}
-		assertEquals("3.0", 0, count);
+		assertEquals("3.1", 0, count);
 	}
 
 	private Entry[] createEntries() {
