@@ -512,6 +512,7 @@ class AnimationManager {
 			}
 		};
 		clearJob.setSystem(true);
+		clearJob.setPriority(Job.DECORATE);
 	}
 
 	/**
