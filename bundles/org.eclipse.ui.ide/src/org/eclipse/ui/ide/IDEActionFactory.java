@@ -20,6 +20,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.NewWizardDropDownAction;
 import org.eclipse.ui.internal.ide.TipsAndTricksAction;
 import org.eclipse.ui.internal.ide.actions.BuildCleanAction;
+import org.eclipse.ui.internal.ide.actions.OpenWorkspaceAction;
 import org.eclipse.ui.internal.ide.actions.ProjectPropertyDialogAction;
 import org.eclipse.ui.internal.ide.actions.ToggleAutoBuildAction;
 
@@ -199,6 +200,22 @@ public final class IDEActionFactory {
 			action.setToolTipText(IDEWorkbenchMessages.getString("Workbench.openProjectToolTip")); //$NON-NLS-1$
 			window.getPartService().addPartListener(action);
 			action.setActionDefinitionId("org.eclipse.ui.project.openProject"); //$NON-NLS-1$
+			return action;
+		}
+	};
+
+	/**
+	 * IDE-specific workbench action: Open workspace.
+	 * This action maintains its enablement state.
+	 */
+	public static final ActionFactory OPEN_WORKSPACE = new ActionFactory("openWorkspace") { //$NON-NLS-1$
+		/* (non-javadoc) method declared on ActionFactory */
+		public IWorkbenchAction create(IWorkbenchWindow window) {
+			if (window == null) {
+				throw new IllegalArgumentException();
+			}
+			IWorkbenchAction action = new OpenWorkspaceAction(window);
+			action.setId(getId());
 			return action;
 		}
 	};

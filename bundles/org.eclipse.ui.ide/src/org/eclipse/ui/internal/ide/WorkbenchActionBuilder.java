@@ -110,6 +110,7 @@ public final class WorkbenchActionBuilder {
 	private IWorkbenchAction previousAction;
 
 	// IDE-specific actions
+	private IWorkbenchAction openWorkspaceAction;
 	private IWorkbenchAction projectPropertyDialogAction;
 	private IWorkbenchAction newWizardAction;
 	private IWorkbenchAction newWizardDropDownAction;
@@ -330,6 +331,7 @@ public final class WorkbenchActionBuilder {
 		menu.add(new GroupMarker(IWorkbenchActionConstants.NEW_EXT));
 		menu.add(new Separator());
 
+		menu.add(openWorkspaceAction);
 		menu.add(closeAction);
 		menu.add(closeAllAction);
 		//		menu.add(closeAllSavedAction);
@@ -875,6 +877,7 @@ public final class WorkbenchActionBuilder {
 
 		// editorsDropDownAction is not currently an IWorkbenchAction		
 		// editorsDropDownAction.dispose();
+		openWorkspaceAction.dispose();
 		projectPropertyDialogAction.dispose();
 		newWizardAction.dispose();
 		newWizardDropDownAction.dispose();
@@ -1148,7 +1151,10 @@ public final class WorkbenchActionBuilder {
 
 		closeProjectAction = IDEActionFactory.CLOSE_PROJECT.create(getWindow());
 		registerGlobalAction(closeProjectAction);
-		
+
+		openWorkspaceAction = IDEActionFactory.OPEN_WORKSPACE.create(getWindow());
+		registerGlobalAction(openWorkspaceAction);
+
 		projectPropertyDialogAction = IDEActionFactory.OPEN_PROJECT_PROPERTIES.create(getWindow());
 		registerGlobalAction(projectPropertyDialogAction);	
 		

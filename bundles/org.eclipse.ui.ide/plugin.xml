@@ -412,6 +412,12 @@
             id="org.eclipse.ui.category.project">
       </category>
       <command
+            name="%command.openWorkspace.name"
+            description="%command.openWorkspace.description"
+            categoryId="org.eclipse.ui.category.file"
+            id="org.eclipse.ui.file.openWorkspace">
+      </command>
+      <command
             name="%command.goToResource.name"
             description="%command.goToResource.description"
             categoryId="org.eclipse.ui.category.navigate"

@@ -33,14 +33,19 @@ import org.eclipse.swt.widgets.Shell;
 public class ChooseWorkspaceDialog extends TitleAreaDialog {
 	private ChooseWorkspaceData launchData;
 	private Combo text;
+	private boolean suppressAskAgain = false;
 
 	/**
-	 * Create a modal dialog on the arugment shell, using and updating the argument
-	 * data object.
-	 */
-	public ChooseWorkspaceDialog(Shell parentShell, ChooseWorkspaceData launchData) {
+     * Create a modal dialog on the arugment shell, using and updating the
+     * argument data object.
+     * 
+     * @param suppressAskAgain
+     *            true means the dialog will not have a "don't ask again" button
+     */
+	public ChooseWorkspaceDialog(Shell parentShell, ChooseWorkspaceData launchData, boolean suppressAskAgain) {
 		super(parentShell);
 		this.launchData = launchData;
+		this.suppressAskAgain = suppressAskAgain;
 	}
 
 	/**
@@ -89,11 +94,11 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 		}
 
 		Composite composite = (Composite) super.createDialogArea(parent);
-		setTitle(IDEWorkbenchMessages
-				.getString("ChooseWorkspaceDialog.dialogTitle")); //$NON-NLS-1$
-		setMessage(IDEWorkbenchMessages
-				.format("ChooseWorkspaceDialog.dialogMessage", //$NON-NLS-1$
-						new Object[]{ productName } ));
+        setTitle(IDEWorkbenchMessages
+                .getString("ChooseWorkspaceDialog.dialogTitle")); //$NON-NLS-1$
+        setMessage(IDEWorkbenchMessages.format(
+                "ChooseWorkspaceDialog.dialogMessage", //$NON-NLS-1$
+                new Object[] { productName }));
 
 		// bug 59934: load title image for sizing, but set it non-visible so the
 		//            white background is displayed
@@ -101,7 +106,8 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 		    getTitleImageLabel().setVisible(false);
 
 		createWorkspaceBrowseRow(composite);
-		createShowDialogButton(composite);
+		if (!suppressAskAgain)
+			createShowDialogButton(composite);
 		return composite;
 	}
 
