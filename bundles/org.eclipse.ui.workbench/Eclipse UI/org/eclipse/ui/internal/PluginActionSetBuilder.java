@@ -351,7 +351,7 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
             }
             IContributionItem refItem = findAlphabeticalOrder(toolGroupId,
                     contributingId, toolBarManager);
-            if (refItem != null) {
+            if (refItem != null && refItem.getId() != null) {
                 toolBarManager.insertAfter(refItem.getId(), actionContribution);
             } else {
                 toolBarManager.add(actionContribution);
@@ -458,7 +458,7 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
             // look for starting point
             while (insertIndex < items.length) {
                 IContributionItem item = items[insertIndex];
-                if (item.getId().equals(startId))
+                if (startId != null && startId.equals(item.getId()))
                     break;
                 ++insertIndex;
             }
@@ -469,15 +469,16 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
                 if (item.isGroupMarker())
                     break;
 
-                String testId;
+                String testId = null;
                 if (item instanceof PluginActionCoolBarContributionItem) {
                     testId = ((PluginActionCoolBarContributionItem) item)
                             .getActionSetId();
-                } else {
-                    testId = item.getId();
+                }
+                if (testId == null) {
+                    break;
                 }
 
-                if (itemId != null) {
+                if (itemId != null && testId != null) {
                     if (itemId.compareTo(testId) < 1)
                         break;
                 }
