@@ -72,8 +72,8 @@ public abstract class AbstractItemExtensionElement {
 
 	/**
 	 * Called by the cheat sheet framework when creating the visual
-	 * representation of a step. This method should add small controls (buttons,
-	 * images) to the given composite to decorate the step.
+	 * representation of a step. This method should add a small button
+	 * (suggested size 16x16 pixels) to the given composite to decorate the step.
 	 * <p>
 	 * Important note: In some presentations of the cheatsheet, the color of the
 	 * background is varied to emphasize the current step. Because of this, it is

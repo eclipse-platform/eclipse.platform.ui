@@ -6,14 +6,14 @@
          <meta.schema plugin="org.eclipse.ui.cheatsheets" id="cheatSheetItemExtension" name="cheatSheetItemExtension"/>
       </appInfo>
       <documentation>
-         This extension point should be used when extra buttons or graphics need to be added to a step in the cheat sheet beside the help button.
+         This extension point should be used when an extra button needs to be added to a step in the cheat sheet.
 You can put a new attribute into the &quot;item&quot; tag in the cheat sheet content file, and when that value is read by the cheat sheet framework,
 it will check to see if there is a class registered through this extension point that will handle this attribute.  The attribute name found in the
 cheat sheet content file is matched against all of the values found in the &quot;itemAttribute&quot; attribute of all of the registered cheatsheetItemExtension point implementations.  If there is a match, the class specified to handle this item attribute is loaded by the cheat sheet framework and is called to handle the attribute specified in the cheat sheet content file.
 
 After having parsed the value of the item attribute, the class remains available to the cheat sheets framework.  When the item is rendered for the cheat sheets view, the class is once again called to handle the addition of components to a Composite.  The items that are added to this composite are displayed in the cheat sheet step (currently, beside the help icon).  It is displayed only for the step that is described by the &quot;item&quot; tag that the attribute appeared in the cheat sheet content file.
 
-Suggested uses of this extension point including adding a button with a graphic that opens a dialog box when pressed.
+The suggested use of this extension point is adding a small (16x16) button with a graphic that opens a dialog box when pressed.
       </documentation>
    </annotation>
 
