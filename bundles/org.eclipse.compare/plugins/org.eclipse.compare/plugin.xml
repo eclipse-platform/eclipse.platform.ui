@@ -198,9 +198,9 @@
    <extension
          point="org.eclipse.ui.popupMenus">
       <objectContribution
-            objectClass="org.eclipse.core.resources.IResource"
+            objectClass="org.eclipse.core.resources.mapping.ResourceMapping"
             adaptable="true"
-            id="org.eclipse.compare.CompareAction">
+            id="org.eclipse.compare.MenuGroups">
          <menu
                label="%ReplaceWithMenu.label"
                path="additions"
@@ -225,6 +225,11 @@
                   name="group1">
             </separator>
          </menu>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IResource"
+            adaptable="true"
+            id="org.eclipse.compare.CompareAction">
          <action
                label="%CompareWithEachOtherAction.label"
                tooltip="%CompareWithEachOtherAction.tooltip"
