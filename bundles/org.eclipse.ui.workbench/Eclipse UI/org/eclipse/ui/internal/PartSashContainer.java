@@ -177,6 +177,9 @@ private PartPane[] getVisibleParts(LayoutPart pane) {
  * Find the sashs around the specified part.
  */
 public void findSashes(LayoutPart pane,PartPane.Sashes sashes) {
+	if(root == null) {
+		return;
+	}
 	LayoutTree part = root.find(pane);
 	if(part == null)
 		return;
@@ -365,8 +368,10 @@ void addChildForPlaceholder(LayoutPart child, LayoutPart placeholder) {
 		}
 	}
 	
-	addChild(newRelationshipInfo);	
-	root.updateSashes(parent);
+	addChild(newRelationshipInfo);
+	if(root != null) {
+		root.updateSashes(parent);
+	}
 	resizeSashes(parent.getClientArea());
 }
 /**
@@ -427,7 +432,9 @@ public void createControl(Composite parentWidget) {
 		child.createControl(parent);
 	}
 
-	root.updateSashes(parent);
+	if(root != null) {
+		root.updateSashes(parent);
+	}
 	active = true;
 	resizeSashes(parent.getClientArea());
 }
@@ -479,7 +486,9 @@ protected abstract void disposeParent();
  * Dispose all sashs used in this perspective.
  */
 public void disposeSashes() {
-	root.disposeSashes();
+	if(root != null) {
+		root.disposeSashes();
+	}
 }
 /**
  * Return the most bottom right part or null if none.
@@ -577,9 +586,12 @@ public void remove(LayoutPart child) {
 		return;
 
 	children.remove(child); 
-	root = root.remove(child);
-	if(root != null)
-		root.updateSashes(parent);
+	if(root != null) {
+		root = root.remove(child);
+		if(root != null) {
+			root.updateSashes(parent);
+		}
+	}
 	childRemoved(child);
 	
 	if (active){
@@ -595,15 +607,28 @@ public void replace(LayoutPart oldChild, LayoutPart newChild) {
 	if (isZoomed())
 		zoomOut();
 
-	if (!isChild(oldChild))return;
-			
+	if (!isChild(oldChild)) {
+		return;
+	}
+
+	LayoutTree leaf = null;
+	if (root != null) {
+		leaf = root.find(oldChild);
+	}
+	
+	if (leaf == null) {
+		return;
+	}
+	
 	children.remove(oldChild);
 	children.add(newChild);
-
+	
 	childAdded(newChild);
-	LayoutTree leaf = root.find(oldChild);
+
 	leaf.setPart(newChild);
-	root.updateSashes(parent);
+	if (root != null) {
+		root.updateSashes(parent);
+	}
 
 	childRemoved(oldChild);
 	if (active){
@@ -617,7 +642,9 @@ public void replace(LayoutPart oldChild, LayoutPart newChild) {
 }
 private void resizeSashes(Rectangle parentSize) {
 	if (!active) return;
-	root.setBounds(parentSize);
+	if (root != null) {
+		root.setBounds(parentSize);
+	}
 }
 /**
  * @see LayoutPart#setBounds
@@ -696,7 +723,10 @@ public IDropTarget drag(Control currentControl, Object draggedObject,
 	ILayoutContainer sourceContainer = isStackType(sourcePart) ? (ILayoutContainer)sourcePart : sourcePart.getContainer();
 	
 	if (containerBounds.contains(position)) {
-		targetPart = root.findPart(parent.toControl(position));
+		
+		if (root != null) {
+			targetPart = root.findPart(parent.toControl(position));
+		}
 		
 		if (targetPart != null) {
 			final Control targetControl = targetPart.getControl();
@@ -887,6 +917,10 @@ protected float getDockingRatio(LayoutPart dragged, LayoutPart target) {
  * @param buf
  */
 public void describeLayout(StringBuffer buf) {
+	if (root == null) {
+		return;
+	}
+	
 	if (isZoomed()) {
 		buf.append("zoomed "); //$NON-NLS-1$
 		root.describeLayout(buf);

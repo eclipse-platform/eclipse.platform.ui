@@ -51,6 +51,8 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.program.Program;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorActionBarContributor;
@@ -941,7 +943,18 @@ public class EditorManager {
 					editorPresentation.setActiveEditorWorkbookFromID(workbookID);
 					if (desc.isInternal()) {
 					    openInternalEditor(ref, desc, editorInput, false);
-						ref.getPane().createChildControl();
+
+						// TODO: workaround, it should be possible for the following 
+						// code to be as follows:
+						// ref.getPane().createControl((Composite)page.getEditorPresentation().getLayoutPart().getControl());
+						// OR something simpler like:
+						// ref.getPane().createControl();
+						//
+						Control ctrl = ref.getPane().getControl();
+						 if (ctrl == null)
+						 	ref.getPane().createControl((Composite)page.getEditorPresentation().getLayoutPart().getControl());
+						 else
+						 	ref.getPane().createChildControl();
 					}
 					else if (desc.getId().equals(IEditorRegistry.SYSTEM_INPLACE_EDITOR_ID)) {
 						if (openSystemInPlaceEditor(ref, desc, editorInput) != null) {

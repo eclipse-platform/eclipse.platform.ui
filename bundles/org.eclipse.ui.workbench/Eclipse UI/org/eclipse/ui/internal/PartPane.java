@@ -117,7 +117,13 @@ protected void createChildControl() {
 	if(part[0] == null)
 		return;
 
+	// must call createControl(..) first.
+	// TODO: should only really call this method from createControl()
 	if(control == null)
+		return;
+	
+	// Make sure the child control has not been created yet
+	if(control.getChildren().length != 0)
 		return;
 	
 	final Composite content = new Composite(control, SWT.NONE);

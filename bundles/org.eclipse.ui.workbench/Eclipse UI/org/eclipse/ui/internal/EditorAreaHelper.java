@@ -44,6 +44,8 @@ public class EditorAreaHelper {
 		this.page = page;
 		this.editorArea = new EditorSashContainer(IPageLayout.ID_EDITOR_AREA, page);
 		
+		this.editorArea.createControl(page.getClientComposite());
+		
         final Shell shell = page.getWorkbenchWindow().getShell();
         IHandler openEditorDropDownHandler = new AbstractHandler() {
 
