@@ -37,6 +37,7 @@ import org.eclipse.core.runtime.Status;
 
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
@@ -60,8 +61,7 @@ public class TextSearchVisitor extends TypedResourceVisitor {
 	private String fPattern;
 	private ISearchScope fScope;
 	private ITextSearchResultCollector fCollector;
-	private String fOptions;
-	private IEditorPart[] fDirtyEditors;
+	private IEditorPart[] fEditors;
 		
 	private IProgressMonitor fProgressMonitor;
 	private StringMatcher fMatcher;
@@ -81,10 +81,6 @@ public class TextSearchVisitor extends TypedResourceVisitor {
 		fScope= scope;
 		fCollector= collector;
 		fPushback= false;
-		if (options != null)
-			fOptions= options;
-		else
-			fOptions= "";	 //$NON-NLS-1$
 
 		fProgressMonitor= collector.getProgressMonitor();
 		fMatcher= new StringMatcher(pattern, options.indexOf('i') != -1, false);
@@ -109,9 +105,9 @@ public class TextSearchVisitor extends TypedResourceVisitor {
 	 * Returns an array of all editors that have an unsaved content. If the identical content is 
 	 * presented in more than one editor, only one of those editor parts is part of the result.
 	 * 
-	 * @return an array of all dirty editor parts.
+	 * @return an array of all editor parts.
 	 */
-	public static IEditorPart[] getDirtyEditors() {
+	public static IEditorPart[] getEditors() {
 		Set inputs= new HashSet();
 		List result= new ArrayList(0);
 		IWorkbench workbench= SearchPlugin.getDefault().getWorkbench();
@@ -119,13 +115,15 @@ public class TextSearchVisitor extends TypedResourceVisitor {
 		for (int i= 0; i < windows.length; i++) {
 			IWorkbenchPage[] pages= windows[i].getPages();
 			for (int x= 0; x < pages.length; x++) {
-				IEditorPart[] editors= pages[x].getDirtyEditors();
-				for (int z= 0; z < editors.length; z++) {
-					IEditorPart ep= editors[z];
-					IEditorInput input= ep.getEditorInput();
-					if (!inputs.contains(input)) {
-						inputs.add(input);
-						result.add(ep);
+				IEditorReference[] editorRefs= pages[x].getEditorReferences();
+				for (int z= 0; z < editorRefs.length; z++) {
+					IEditorPart ep= editorRefs[z].getEditor(false);
+					if (ep != null) {
+						IEditorInput input= ep.getEditorInput();
+						if (!inputs.contains(input)) {
+							inputs.add(input);
+							result.add(ep);
+						}
 					}
 				}
 			}
@@ -150,7 +148,7 @@ public class TextSearchVisitor extends TypedResourceVisitor {
 		IFile file= (IFile)proxy.requestResource();
 		try {
 			BufferedReader reader= null;
-			ITextEditor editor= findDirtyEditorFor(file);
+			ITextEditor editor= findEditorFor(file);
 			if (editor != null) {
 				String s= editor.getDocumentProvider().getDocument(editor.getEditorInput()).get();
 				reader= new BufferedReader(new StringReader(s));
@@ -213,14 +211,14 @@ public class TextSearchVisitor extends TypedResourceVisitor {
 			throw new OperationCanceledException(SearchMessages.getString("TextSearchVisitor.canceled")); //$NON-NLS-1$
 	}
 
-	private ITextEditor findDirtyEditorFor(IFile file) {
+	private ITextEditor findEditorFor(IFile file) {
 		int i= 0;
-		while (i < fDirtyEditors.length) {
-			IEditorPart dirtyEditor= fDirtyEditors[i];
-			IEditorInput input= dirtyEditor.getEditorInput();
-			if (input instanceof IFileEditorInput && dirtyEditor instanceof ITextEditor)
+		while (i < fEditors.length) {
+			IEditorPart editor= fEditors[i];
+			IEditorInput input= editor.getEditorInput();
+			if (input instanceof IFileEditorInput && editor instanceof ITextEditor)
 				if (((IFileEditorInput)input).getFile().equals(file))
-					return (ITextEditor)dirtyEditor;
+					return (ITextEditor)editor;
 			i++;
 		}
 		return null;
@@ -257,7 +255,7 @@ public class TextSearchVisitor extends TypedResourceVisitor {
 	 * @see IResourceProxyVisitor#visit(IResourceProxy)
 	 */
 	public boolean visit(IResourceProxy proxy) {
-		fDirtyEditors= getDirtyEditors();
+		fEditors= getEditors();
 		return super.visit(proxy);
 	}
 }
