@@ -29,7 +29,6 @@ import org.eclipse.update.core.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.SimpleFeatureAdapter;
 import org.eclipse.update.internal.ui.parts.*;
-import org.eclipse.update.internal.ui.views.FeatureSorter;
 import org.eclipse.update.operations.*;
 import org.eclipse.update.search.IUpdateSearchResultCollector;
 
@@ -49,6 +48,9 @@ public class ReviewPage
 	private Button filterCheck;
 	private ContainmentFilter filter = new ContainmentFilter();
 	private SearchRunner searchRunner;
+	private int LABEL_ORDER = 1;
+	private int VERSION_ORDER = 1;
+	private int PROVIDER_ORDER = 1;
 	class JobsContentProvider
 		extends DefaultContentProvider
 		implements IStructuredContentProvider {
@@ -354,12 +356,45 @@ public class ReviewPage
 
 		TableColumn column = new TableColumn(table, SWT.NULL);
 		column.setText(UpdateUI.getString("InstallWizard.ReviewPage.feature")); //$NON-NLS-1$
+		column.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				LABEL_ORDER *= -1;
+				tableViewer.setSorter(
+					new FeatureSorter(
+						FeatureSorter.FEATURE_LABEL,
+						LABEL_ORDER,
+						VERSION_ORDER,
+						PROVIDER_ORDER));
+			}
+		});
 
 		column = new TableColumn(table, SWT.NULL);
 		column.setText(UpdateUI.getString("InstallWizard.ReviewPage.version")); //$NON-NLS-1$
+		column.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				VERSION_ORDER *= -1;
+				tableViewer.setSorter(
+					new FeatureSorter(
+						FeatureSorter.FEATURE_VERSION,
+						LABEL_ORDER,
+						VERSION_ORDER,
+						PROVIDER_ORDER));
+			}
+		});
 
 		column = new TableColumn(table, SWT.NULL);
 		column.setText(UpdateUI.getString("InstallWizard.ReviewPage.provider")); //$NON-NLS-1$
+		column.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				PROVIDER_ORDER *= -1;
+				tableViewer.setSorter(
+					new FeatureSorter(
+						FeatureSorter.FEATURE_PROVIDER,
+						LABEL_ORDER,
+						VERSION_ORDER,
+						PROVIDER_ORDER));
+			}
+		});
 
 		TableLayout layout = new TableLayout();
 		layout.addColumnData(new ColumnWeightData(80, 225, true));
@@ -395,14 +430,7 @@ public class ReviewPage
 				handleProperties();
 			}
 		});
-		tableViewer.setSorter(new FeatureSorter() {
-			public int category(Object obj) {
-				IInstallFeatureOperation job = (IInstallFeatureOperation) obj;
-				if (UpdateUI.isPatch(job.getFeature()))
-					return 1;
-				return 0;
-			}
-		});
+		tableViewer.setSorter(new FeatureSorter());
 		MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {

@@ -156,26 +156,19 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 	public Control createContents(Composite parent) {
 		Composite client = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
+		layout.numColumns = 3;
 		layout.marginWidth = layout.marginHeight = 0;
 		client.setLayout(layout);
 
 		Label label = new Label(client, SWT.NULL);
 		label.setText(UpdateUI.getString("InstallWizard.TargetPage.jobsLabel")); //$NON-NLS-1$
-		GridData gd = new GridData();
-		gd.horizontalSpan = 2;
-		label.setLayoutData(gd);
-
-		createJobViewer(client);
-
-		new Label(client, SWT.NULL);
 
 		label = new Label(client, SWT.NULL);
 		label.setText(UpdateUI.getString("InstallWizard.TargetPage.siteLabel")); //$NON-NLS-1$
-		gd = new GridData();
-		gd.horizontalSpan = 2;
-		label.setLayoutData(gd);
 
+		new Label(client, SWT.NULL);
+
+		createJobViewer(client);
 		createSiteViewer(client);
 
 		Composite buttonContainer = new Composite(client, SWT.NULL);
@@ -213,7 +206,7 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 		
 				
 		Composite status = new Composite(client, SWT.NULL);
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan = 3;
 		status.setLayoutData(gd);
 		layout = new GridLayout();
@@ -237,7 +230,9 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 
 	private void createJobViewer(Composite parent) {
 		jobViewer = new TableViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
-		jobViewer.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd.widthHint = 150;
+		jobViewer.getTable().setLayoutData(gd);
 		jobViewer.setContentProvider(new JobsContentProvider());
 		jobViewer.setLabelProvider(new TableLabelProvider());
 
@@ -261,7 +256,9 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 
 	private void createSiteViewer(Composite parent) {
 		siteViewer = new TableViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
-		siteViewer.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd.widthHint = 200;
+		siteViewer.getTable().setLayoutData(gd);
 		siteViewer.setContentProvider(new TableContentProvider());
 		siteViewer.setLabelProvider(new TableLabelProvider());
 		siteViewer.addFilter(new ViewerFilter() {
