@@ -668,6 +668,21 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	public IWorkingSetManager getWorkingSetManager() {
 		return WorkbenchPlugin.getDefault().getWorkingSetManager();
 	}
+		
+	public void updateKeys() {	
+		IWorkbenchWindow workbenchWindow = getActiveWorkbenchWindow();
+	
+		if (workbenchWindow != null && workbenchWindow instanceof WorkbenchWindow) {
+			WWinKeyBindingService wWinKeyBindingService = ((WorkbenchWindow) workbenchWindow).getKeyBindingService();
+	
+			if (wWinKeyBindingService != null)
+				wWinKeyBindingService.clear();
+	
+			MenuManager menuManager = ((WorkbenchWindow) workbenchWindow).getMenuManager();
+			menuManager.update(IAction.TEXT);
+		}
+	}
+		
 	/**
 	 * Initializes the workbench.
 	 *
@@ -691,19 +706,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		boolean useColorIcons = getPreferenceStore().getBoolean(IPreferenceConstants.COLOR_ICONS);
 		ActionContributionItem.setUseColorIconsInToolbars(useColorIcons);
 		initializeFonts();	
-
-		IWorkbenchWindow workbenchWindow = getActiveWorkbenchWindow();
-
-		if (workbenchWindow != null && workbenchWindow instanceof WorkbenchWindow) {
-			WWinKeyBindingService wWinKeyBindingService = ((WorkbenchWindow) workbenchWindow).getKeyBindingService();
-
-			if (wWinKeyBindingService != null)
-				wWinKeyBindingService.clear();
-
-			MenuManager menuManager = ((WorkbenchWindow) workbenchWindow).getMenuManager();
-			menuManager.update(IAction.TEXT);
-		}
-		
+		updateKeys();
 		initializeSingleClickOption();
 		boolean avoidDeadlock = true;
 		

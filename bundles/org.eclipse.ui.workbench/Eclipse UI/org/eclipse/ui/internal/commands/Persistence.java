@@ -347,7 +347,7 @@ final class Persistence {
 			
 			if (keyString != null)			
 				try {			
-					keySequence = KeySequence.parse(keyString);
+					keySequence = KeySequence.parseKeySequence(keyString);
 				} catch (IllegalArgumentException eIllegalArgument) {					
 				}
 		}

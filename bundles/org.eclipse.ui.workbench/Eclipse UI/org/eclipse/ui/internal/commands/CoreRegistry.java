@@ -240,7 +240,7 @@ public final class CoreRegistry extends AbstractRegistry {
 			
 				while (orTokenizer.hasMoreTokens()) {					
 					try {			
-						KeySequence keySequence = KeySequence.parse(orTokenizer.nextToken());
+						KeySequence keySequence = KeySequence.parseKeySequence(orTokenizer.nextToken());
 
 						if (keySequence.getKeyStrokes().size() >= 1)
 							keySequences.add(keySequence);		

@@ -32,7 +32,7 @@ public final class KeyStroke implements Comparable {
 		return keyStrokes;			
 	}
 
-	public static KeyStroke parse(String string)
+	public static KeyStroke parseKeyStroke(String string)
 		throws IllegalArgumentException {
 		if (string == null)
 			throw new IllegalArgumentException();
@@ -61,15 +61,15 @@ public final class KeyStroke implements Comparable {
 		return object instanceof KeyStroke && value == ((KeyStroke) object).value;	
 	}
 
+	public String formatKeyStroke() {
+		return Action.convertAccelerator(value);
+	}
+
 	public int getValue() {
 		return value;
 	}
 	
 	public int hashCode() {
 		return value;	
-	}
-
-	public String toString() {
-		return Action.convertAccelerator(value);
 	}
 }

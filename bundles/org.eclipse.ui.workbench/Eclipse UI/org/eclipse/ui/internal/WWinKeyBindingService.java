@@ -284,7 +284,7 @@ public class WWinKeyBindingService {
 			Manager keyManager = Manager.getInstance();
 			Machine keyMachine = keyManager.getKeyMachine();
 	    	
-	    	// TBD: remove this later
+	    	// TODO remove this later
 	    	if (newScopeIds == null || newScopeIds.length == 0)
 	    		newScopeIds = new String[] { "org.eclipse.ui.globalScope" }; //$NON-NLS-1$
 	    	

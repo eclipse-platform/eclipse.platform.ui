@@ -374,7 +374,7 @@ public class Manager {
 		SortedSet keySequenceSet = (SortedSet) commandMap.get(command);
 		
 		if (keySequenceSet != null && !keySequenceSet.isEmpty())
-			text = ((KeySequence) keySequenceSet.first()).toString();
+			text = ((KeySequence) keySequenceSet.first()).formatKeySequence();
 		
 		return text != null ? text : ""; //$NON-NLS-1$
 	}

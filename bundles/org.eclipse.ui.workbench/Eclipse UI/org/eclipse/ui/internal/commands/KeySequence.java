@@ -43,7 +43,7 @@ public final class KeySequence implements Comparable {
 		return new KeySequence(keyStrokes);
 	}
 
-	public static KeySequence parse(String string)
+	public static KeySequence parseKeySequence(String string)
 		throws IllegalArgumentException {
 		if (string == null)
 			throw new IllegalArgumentException();
@@ -52,7 +52,7 @@ public final class KeySequence implements Comparable {
 		StringTokenizer stringTokenizer = new StringTokenizer(string);
 				
 		while (stringTokenizer.hasMoreTokens())
-			keyStrokes.add(KeyStroke.parse(stringTokenizer.nextToken()));
+			keyStrokes.add(KeyStroke.parseKeyStroke(stringTokenizer.nextToken()));
 			
 		return create(keyStrokes);
 	}
@@ -71,6 +71,22 @@ public final class KeySequence implements Comparable {
 	
 	public boolean equals(Object object) {
 		return object instanceof KeySequence && keyStrokes.equals(((KeySequence) object).keyStrokes);
+	}
+
+	public String formatKeySequence() {
+		StringBuffer stringBuffer = new StringBuffer();
+		Iterator iterator = keyStrokes.iterator();
+		int i = 0;
+		
+		while (iterator.hasNext()) {
+			if (i != 0)
+				stringBuffer.append(KEY_STROKE_SEPARATOR);
+
+			stringBuffer.append(iterator.next());
+			i++;
+		}
+
+		return stringBuffer.toString();
 	}
 	
 	public List getKeyStrokes() {
@@ -92,21 +108,5 @@ public final class KeySequence implements Comparable {
 			return false;
 		
 		return Util.isChildOf(keyStrokes, keySequence.keyStrokes, equals);
-	}
-
-	public String toString() {
-		StringBuffer stringBuffer = new StringBuffer();
-		Iterator iterator = keyStrokes.iterator();
-		int i = 0;
-		
-		while (iterator.hasNext()) {
-			if (i != 0)
-				stringBuffer.append(KEY_STROKE_SEPARATOR);
-
-			stringBuffer.append(iterator.next());
-			i++;
-		}
-
-		return stringBuffer.toString();
 	}
 }

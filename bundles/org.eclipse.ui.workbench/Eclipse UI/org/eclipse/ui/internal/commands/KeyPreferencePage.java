@@ -1534,7 +1534,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		keySequence = (KeySequence) keySequencesByName.get(name);
 			
 		if (keySequence == null)
-			keySequence = KeySequence.parse(name);
+			keySequence = KeySequence.parseKeySequence(name);
 
 		return keySequence;
 	}
