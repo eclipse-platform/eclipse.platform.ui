@@ -19,10 +19,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IFileEditorMapping;
 import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.activities.IObjectActivityManager;
-import org.eclipse.ui.activities.IObjectContributionRecord;
-import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 
 /* (non-Javadoc)
@@ -68,43 +64,8 @@ public class FileEditorMapping extends Object implements IFileEditorMapping, Clo
 	public void addEditor(EditorDescriptor editor) {
 		editors.add(editor);
 		deletedEditors.remove(editor);
-        addToObjectActivityManager(editor);
-	}
+	}      
     
-    /**
-     * Adds the given editor to the ObjectActivityManager registered for 
-     * editors with the given name+extension.
-     * 
-     * @param editor
-     * @since 3.0
-     */
-	private void addToObjectActivityManager(EditorDescriptor editor) {
-	   IObjectActivityManager objectManager = getObjectActivityManager();
-	   if(objectManager == null)
-	   		return;
-        String pluginId = editor.getPluginID();
-        if (pluginId == null) {
-           if(editor.isInternal())
-           		return;
-           //If it is external enable it for everything
-           pluginId = IObjectActivityManager.ENABLED_ALL_PATTERN;
-        }
-        IObjectContributionRecord contributionRecord = objectManager.addObject(pluginId, editor.getId(), editor);
-        objectManager.applyPatternBindings(contributionRecord);
-    }
-    
-    /**
-     * Gets the ObjectActivityManager registered for editors with the given 
-     * name+extension.
-     * 
-     * @return the manager
-     * @since 3.0
-     */
-    private IObjectActivityManager getObjectActivityManager() {
-        return 
-        	PlatformUI.getWorkbench().
-				getObjectActivityManager(IWorkbenchConstants.PL_EDITOR + getName() + getExtension(), true);
-    }
     /**
 	 * Clone the receiver.
 	 */
@@ -158,22 +119,17 @@ public class FileEditorMapping extends Object implements IFileEditorMapping, Clo
 	 * Method declared on IFileEditorMapping.
 	 */
 	public IEditorDescriptor getDefaultEditor() {
-		
-		List filtered = filteredEditors();
-		if (filtered.size() == 0)
+	
+		if (editors.size() == 0)
 			return null;
 		else
-			return (IEditorDescriptor) filtered.get(0);
+			return (IEditorDescriptor) editors.get(0);
 	}
 	/* (non-Javadoc)
 	 * Method declared on IFileEditorMapping.
 	 */
-	public IEditorDescriptor[] getEditors() {
-		
-		List filtered = filteredEditors();
-		IEditorDescriptor[] array = new IEditorDescriptor[filtered.size()];
-		filtered.toArray(array);
-		return array;
+	public IEditorDescriptor[] getEditors() {		
+		return (IEditorDescriptor[]) editors.toArray(new IEditorDescriptor[editors.size()]);
 	}
 	/* (non-Javadoc)
 	 * Method declared on IFileEditorMapping.
@@ -237,11 +193,8 @@ public class FileEditorMapping extends Object implements IFileEditorMapping, Clo
 	 */
 	public void setEditorsList(List newEditors) {
 		editors = newEditors;  
-        for (Iterator u = newEditors.iterator(); u.hasNext();) {
-            EditorDescriptor descriptor = (EditorDescriptor) u.next();
-            addToObjectActivityManager(descriptor);
-        }    
 	}
+    
 	/**
 	 * Set the collection of all editors (EditorDescriptor)
 	 * formally registered for the file type described by this mapping 
@@ -264,18 +217,4 @@ public class FileEditorMapping extends Object implements IFileEditorMapping, Clo
 	public void setName(String name) {
 		this.name = name;
 	}
-
-	/**
-	 * Return the filtered version of the editors.
-	 * @return List
-	 */
-	private List filteredEditors() {
-        IObjectActivityManager objectManager = getObjectActivityManager();
-        if(objectManager == null)
-        	return editors;
-        ArrayList filtered = new ArrayList(editors);
-        filtered.retainAll(objectManager.getEnabledObjects());
-        return filtered;
-	}
-
 }

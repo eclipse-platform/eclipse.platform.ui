@@ -15,14 +15,11 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.ResourceBundle;
 import java.util.Set;
-import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.StringTokenizer;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.eclipse.swt.SWT;
-
 import org.eclipse.ui.internal.util.Util;
 
 /**
@@ -53,88 +50,6 @@ import org.eclipse.ui.internal.util.Util;
  * @since 3.0
  */
 public final class KeyStroke implements Comparable {
-
-	/**
-	 * An internal map used to lookup instances of <code>CharacterKey</code>
-	 * given the formal string representation of a character key.
-	 */
-	private static SortedMap characterKeyLookup = new TreeMap();
-
-	/**
-	 * An internal map used to lookup instances of <code>ModifierKey</code>
-	 * given the formal string representation of a modifier key.
-	 */
-	private static SortedMap modifierKeyLookup = new TreeMap();
-
-	/**
-	 * An internal map used to lookup instances of <code>SpecialKey</code>
-	 * given the formal string representation of a special key.
-	 */
-	private static SortedMap specialKeyLookup = new TreeMap();
-
-	static {
-		characterKeyLookup.put(CharacterKey.BS.toString(), CharacterKey.BS);
-		characterKeyLookup.put(CharacterKey.CR.toString(), CharacterKey.CR);
-		characterKeyLookup.put(CharacterKey.DEL.toString(), CharacterKey.DEL);
-		characterKeyLookup.put(CharacterKey.ESC.toString(), CharacterKey.ESC);
-		characterKeyLookup.put(CharacterKey.FF.toString(), CharacterKey.FF);
-		characterKeyLookup.put(CharacterKey.LF.toString(), CharacterKey.LF);
-		characterKeyLookup.put(CharacterKey.NUL.toString(), CharacterKey.NUL);
-		characterKeyLookup.put(CharacterKey.SPACE.toString(), CharacterKey.SPACE);
-		characterKeyLookup.put(CharacterKey.TAB.toString(), CharacterKey.TAB);
-		characterKeyLookup.put(CharacterKey.VT.toString(), CharacterKey.VT);
-		modifierKeyLookup.put(ModifierKey.ALT.toString(), ModifierKey.ALT);
-		modifierKeyLookup.put(ModifierKey.COMMAND.toString(), ModifierKey.COMMAND);
-		modifierKeyLookup.put(ModifierKey.CTRL.toString(), ModifierKey.CTRL);
-		modifierKeyLookup.put(ModifierKey.SHIFT.toString(), ModifierKey.SHIFT);
-		specialKeyLookup.put(SpecialKey.ARROW_DOWN.toString(), SpecialKey.ARROW_DOWN);
-		specialKeyLookup.put(SpecialKey.ARROW_LEFT.toString(), SpecialKey.ARROW_LEFT);
-		specialKeyLookup.put(SpecialKey.ARROW_RIGHT.toString(), SpecialKey.ARROW_RIGHT);
-		specialKeyLookup.put(SpecialKey.ARROW_UP.toString(), SpecialKey.ARROW_UP);
-		specialKeyLookup.put(SpecialKey.BREAK.toString(), SpecialKey.BREAK);
-		specialKeyLookup.put(SpecialKey.CAPS_LOCK.toString(), SpecialKey.CAPS_LOCK);
-		specialKeyLookup.put(SpecialKey.END.toString(), SpecialKey.END);
-		specialKeyLookup.put(SpecialKey.F1.toString(), SpecialKey.F1);
-		specialKeyLookup.put(SpecialKey.F10.toString(), SpecialKey.F10);
-		specialKeyLookup.put(SpecialKey.F11.toString(), SpecialKey.F11);
-		specialKeyLookup.put(SpecialKey.F12.toString(), SpecialKey.F12);
-		specialKeyLookup.put(SpecialKey.F13.toString(), SpecialKey.F13);
-		specialKeyLookup.put(SpecialKey.F14.toString(), SpecialKey.F14);
-		specialKeyLookup.put(SpecialKey.F15.toString(), SpecialKey.F15);
-		specialKeyLookup.put(SpecialKey.F2.toString(), SpecialKey.F2);
-		specialKeyLookup.put(SpecialKey.F3.toString(), SpecialKey.F3);
-		specialKeyLookup.put(SpecialKey.F4.toString(), SpecialKey.F4);
-		specialKeyLookup.put(SpecialKey.F5.toString(), SpecialKey.F5);
-		specialKeyLookup.put(SpecialKey.F6.toString(), SpecialKey.F6);
-		specialKeyLookup.put(SpecialKey.F7.toString(), SpecialKey.F7);
-		specialKeyLookup.put(SpecialKey.F8.toString(), SpecialKey.F8);
-		specialKeyLookup.put(SpecialKey.F9.toString(), SpecialKey.F9);
-		specialKeyLookup.put(SpecialKey.NUM_LOCK.toString(), SpecialKey.NUM_LOCK);
-		specialKeyLookup.put(SpecialKey.NUMPAD_0.toString(), SpecialKey.NUMPAD_0);
-		specialKeyLookup.put(SpecialKey.NUMPAD_1.toString(), SpecialKey.NUMPAD_1);
-		specialKeyLookup.put(SpecialKey.NUMPAD_2.toString(), SpecialKey.NUMPAD_2);
-		specialKeyLookup.put(SpecialKey.NUMPAD_3.toString(), SpecialKey.NUMPAD_3);
-		specialKeyLookup.put(SpecialKey.NUMPAD_4.toString(), SpecialKey.NUMPAD_4);
-		specialKeyLookup.put(SpecialKey.NUMPAD_5.toString(), SpecialKey.NUMPAD_5);
-		specialKeyLookup.put(SpecialKey.NUMPAD_6.toString(), SpecialKey.NUMPAD_6);
-		specialKeyLookup.put(SpecialKey.NUMPAD_7.toString(), SpecialKey.NUMPAD_7);
-		specialKeyLookup.put(SpecialKey.NUMPAD_8.toString(), SpecialKey.NUMPAD_8);
-		specialKeyLookup.put(SpecialKey.NUMPAD_9.toString(), SpecialKey.NUMPAD_9);
-		specialKeyLookup.put(SpecialKey.NUMPAD_ADD.toString(), SpecialKey.NUMPAD_ADD);
-		specialKeyLookup.put(SpecialKey.NUMPAD_DECIMAL.toString(), SpecialKey.NUMPAD_DECIMAL);
-		specialKeyLookup.put(SpecialKey.NUMPAD_DIVIDE.toString(), SpecialKey.NUMPAD_DIVIDE);
-		specialKeyLookup.put(SpecialKey.NUMPAD_ENTER.toString(), SpecialKey.NUMPAD_ENTER);
-		specialKeyLookup.put(SpecialKey.NUMPAD_EQUAL.toString(), SpecialKey.NUMPAD_EQUAL);
-		specialKeyLookup.put(SpecialKey.NUMPAD_MULTIPLY.toString(), SpecialKey.NUMPAD_MULTIPLY);
-		specialKeyLookup.put(SpecialKey.NUMPAD_SUBTRACT.toString(), SpecialKey.NUMPAD_SUBTRACT);
-		specialKeyLookup.put(SpecialKey.HOME.toString(), SpecialKey.HOME);
-		specialKeyLookup.put(SpecialKey.INSERT.toString(), SpecialKey.INSERT);
-		specialKeyLookup.put(SpecialKey.PAGE_DOWN.toString(), SpecialKey.PAGE_DOWN);
-		specialKeyLookup.put(SpecialKey.PAGE_UP.toString(), SpecialKey.PAGE_UP);
-		specialKeyLookup.put(SpecialKey.PAUSE.toString(), SpecialKey.PAUSE);
-		specialKeyLookup.put(SpecialKey.PRINT_SCREEN.toString(), SpecialKey.PRINT_SCREEN);
-		specialKeyLookup.put(SpecialKey.SCROLL_LOCK.toString(), SpecialKey.SCROLL_LOCK);
-	}
 
 	/**
 	 * An internal constant used only in this object's hash code algorithm.
@@ -343,7 +258,7 @@ public final class KeyStroke implements Comparable {
 			if (i % 2 == 0) {
 				if (stringTokenizer.hasMoreTokens()) {
 					token = token.toUpperCase();
-					ModifierKey modifierKey = (ModifierKey) modifierKeyLookup.get(token);
+					ModifierKey modifierKey = (ModifierKey) ModifierKey.modifierKeysByName.get(token);
 
 					if (modifierKey == null || !modifierKeys.add(modifierKey))
 						throw new ParseException();
@@ -352,10 +267,10 @@ public final class KeyStroke implements Comparable {
 					break;
 				} else {
 					token = token.toUpperCase();
-					naturalKey = (NaturalKey) characterKeyLookup.get(token);
+					naturalKey = (NaturalKey) CharacterKey.characterKeysByName.get(token);
 
 					if (naturalKey == null)
-						naturalKey = (NaturalKey) specialKeyLookup.get(token);
+						naturalKey = (NaturalKey) SpecialKey.specialKeysByName.get(token);
 
 					if (naturalKey == null)
 						throw new ParseException();

@@ -51,6 +51,11 @@ import org.eclipse.ui.internal.util.Util;
  * @since 3.0
  */
 public final class KeySequence implements Comparable {
+	
+	/**
+	 * An empty key sequence instance for use by everyone.
+	 */
+	private final static KeySequence EMPTY_KEY_SEQUENCE = new KeySequence(Collections.EMPTY_LIST);
 
 	/**
 	 * An internal constant used only in this object's hash code algorithm.
@@ -95,7 +100,7 @@ public final class KeySequence implements Comparable {
 	 *         Guaranteed not to be <code>null</code>.
 	 */
 	public static KeySequence getInstance() {
-		return new KeySequence(Collections.EMPTY_LIST);
+		return EMPTY_KEY_SEQUENCE;
 	}
 
 	/**

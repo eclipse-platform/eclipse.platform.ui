@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
-import java.util.Collection;
-
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
 
@@ -20,9 +18,10 @@ import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.viewers.ISelection;
 
-import org.eclipse.ui.activities.IObjectActivityManager;
-import org.eclipse.ui.internal.IWorkbenchConstants;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.activities.IIdentifier;
+import org.eclipse.ui.internal.WorkbenchActivityHelper;
+import org.eclipse.ui.internal.registry.IPluginContribution;
 
 /**
  * This dialog is created and shown when 'Properties' action is performed while
@@ -81,17 +80,15 @@ public class PropertyDialog extends PreferenceDialog {
 	 *      org.eclipse.jface.preference.IPreferenceNode)
 	 */
 	protected void createTreeItemFor(Widget parent, IPreferenceNode node) {
-		IObjectActivityManager propManager =
-			WorkbenchPlugin.getDefault().getWorkbench().getObjectActivityManager(
-				IWorkbenchConstants.PL_PROPERTY_PAGES,
-				false);
-		if (propManager != null) {
-			Collection activeContributions = propManager.getEnabledObjects();
-			if (node instanceof PropertyPageNode
-				&& !activeContributions.contains(((PropertyPageNode) node).getContributor())) {
-				return;
-			}
-		}
-		super.createTreeItemFor(parent, node);
+        if (node instanceof IPluginContribution) {
+            IPluginContribution contribution = (IPluginContribution) node;
+            if (contribution.fromPlugin()) {
+                IIdentifier identifier = PlatformUI.getWorkbench().getActivityManager().getIdentifier(WorkbenchActivityHelper.createUnifiedId(contribution));
+                if (!identifier.isEnabled())
+                    return;
+            }
+        }
+        
+        super.createTreeItemFor(parent, node);
 	}
 }

@@ -10,16 +10,23 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.decorators;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.*;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.internal.WorkbenchMessages;
-
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
+import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
  * The DecorationScheduler is the class that handles the
@@ -316,11 +323,11 @@ public class DecorationScheduler {
 	}
 
 	/**
-	 * Get the update UIJob.
-	 * @return UIJob
+	 * Get the update WorkbenchJob.
+	 * @return WorkbenchJob
 	 */
-	private UIJob getUpdateJob() {
-		UIJob job = new UIJob(WorkbenchMessages.getString("DecorationScheduler.UpdateJobName")) {//$NON-NLS-1$
+	private WorkbenchJob getUpdateJob() {
+		WorkbenchJob job = new WorkbenchJob(WorkbenchMessages.getString("DecorationScheduler.UpdateJobName")) {//$NON-NLS-1$
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				//Check again in case someone has already cleared it out.
 				synchronized (resultLock) {
@@ -348,18 +355,16 @@ public class DecorationScheduler {
 				}
 				return Status.OK_STATUS;
 			}
-		};
-
-		job.addJobChangeListener(new JobChangeAdapter() {
+			
 			/* (non-Javadoc)
-			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
+			 * @see org.eclipse.ui.progress.WorkbenchJob#performDone(org.eclipse.core.runtime.jobs.IJobChangeEvent)
 			 */
-			public void done(IJobChangeEvent event) {
-				//Reschedule if another update came in while we were working
-				if(!pendingUpdate.isEmpty() && PlatformUI.isWorkbenchRunning())
+			public void performDone(IJobChangeEvent event) {
+				if(!pendingUpdate.isEmpty())
 					decorated();
 			}
-		});
+		};
+
 		return job;
 	}
 }

@@ -51,6 +51,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.progress.UIJob;
+import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
  * JobProgressManager provides the progress monitor to the job manager and
@@ -319,7 +320,7 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 					JobInfo info = getJobInfo(event.getJob());
 					if (event.getResult().getSeverity() == IStatus.ERROR) {
 						info.setError(event.getResult());
-							UIJob job = new UIJob(ProgressMessages.getString("JobProgressManager.OpenProgressJob")) {//$NON-NLS-1$
+							WorkbenchJob job = new WorkbenchJob(ProgressMessages.getString("JobProgressManager.OpenProgressJob")) {//$NON-NLS-1$
 							/*
 							 * (non-Javadoc)
 							 * 
@@ -812,7 +813,7 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 		
 		final boolean [] defer = new boolean[1];
 		defer[0] = false;
-		final UIJob updateJob = new UIJob(ProgressMessages.getString("ProgressManager.openJobName")) {//$NON-NLS-1$
+		final WorkbenchJob updateJob = new WorkbenchJob(ProgressMessages.getString("ProgressManager.openJobName")) {//$NON-NLS-1$
 			/*
 			 * (non-Javadoc)
 			 * 
@@ -845,24 +846,18 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 				else
 					return Status.OK_STATUS;
 			}
-		};
-		
-		updateJob.addJobChangeListener(new JobChangeAdapter(){
+			
 			/* (non-Javadoc)
-			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
+			 * @see org.eclipse.ui.progress.WorkbenchJob#performDone(org.eclipse.core.runtime.jobs.IJobChangeEvent)
 			 */
-			public void done(IJobChangeEvent event) {
-				
-				//If the platform is not runnin exit
-				if(!PlatformUI.isWorkbenchRunning())
-					return;
+			public void performDone(IJobChangeEvent event) {
 				//If we are deferring try again.
 				if(defer[0]){
 					defer[0] = false;
-					updateJob.schedule(LONG_OPERATION_MILLISECONDS);
+					schedule(LONG_OPERATION_MILLISECONDS);
 				}
 			}
-		});
+		};
 
 		updateJob.schedule(LONG_OPERATION_MILLISECONDS);
 	}

@@ -39,8 +39,9 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * new perspective.</li>
  * </ol>
  */
-public class PerspectiveDescriptor implements IPerspectiveDescriptor {
+public class PerspectiveDescriptor implements IPerspectiveDescriptor, IPluginContribution {    
 	private String id;
+    private String pluginId;
 	private String originalId;
 	private String label;
 	private String className;
@@ -77,6 +78,7 @@ public PerspectiveDescriptor(IConfigurationElement configElement, String desc)
 	super();
 	this.configElement = configElement;
 	id = configElement.getAttribute(ATT_ID);
+    pluginId = configElement.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier();
 	label = configElement.getAttribute(ATT_NAME);
 	className = configElement.getAttribute(ATT_CLASS);
 	singleton = (configElement.getAttributeAsIs(ATT_SINGLETON) != null);
@@ -235,4 +237,25 @@ public IStatus saveState(IMemento memento) {
     public IConfigurationElement getConfigElement() {
         return configElement;
     }
+    
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.registry.IPluginContribution#fromPlugin()
+	 */
+	public boolean fromPlugin() {
+		return pluginId != null;
+	}
+    
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.registry.IPluginContribution#getLocalId()
+	 */
+	public String getLocalId() {
+		return id;
+	}
+    
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.registry.IPluginContribution#getPluginId()
+	 */
+	public String getPluginId() {
+		return pluginId;
+	}
 }

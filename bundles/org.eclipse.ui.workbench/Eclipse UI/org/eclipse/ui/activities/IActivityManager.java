@@ -114,41 +114,27 @@ public interface IActivityManager {
 	Set getEnabledActivityIds();
 
 	/**
-	 * <p>
-	 * Returns the set of identifiers to enabled categories. This set is not
-	 * necessarily a subset of the set of identifiers to defined categories.
-	 * </p>
-	 * <p>
-	 * Notification is sent to all registered listeners if this attribute
-	 * changes.
-	 * </p>
+	 * Returns a handle to an identifier.
 	 * 
-	 * @return the set of identifiers to enabled categories. This set may be
-	 *         empty, but is guaranteed not to be <code>null</code>. If this
-	 *         set is not empty, it is guaranteed to only contain instances of
-	 *         <code>String</code>.
+	 * @param identifierId
+	 *            an identifier. Must not be <code>null</code>
+	 * @return a handle to an identifier.
 	 */
-	Set getEnabledCategoryIds();
-
+	IIdentifier getIdentifier(String identifierId);	
+	
 	/**
-	 * TODO javadoc
+	 * This method is only included to fix compile errors in I20031125
+	 * @param string
+	 * @param activityIds
+	 * @return
+	 * @deprecated
 	 */
-	Set getMatchingActivityIds(String string, Set activityIds);
-
-	/**
-	 * TODO javadoc
-	 */
-	Set getRequiredActivityIds(Set activityIds);	
+	boolean isMatch(String string, Set activityIds);
 	
 	/**
 	 * TODO javadoc
-	 */
-	boolean isMatch(String string, Set activityIds);
-
-	/**
-	 * TODO javadoc
 	 * 
-	 * @deprecated use isMatch(String, Set);
+	 * @deprecated
 	 */
 	boolean match(String string, Set activityIds);
 

@@ -66,9 +66,9 @@ import org.eclipse.ui.commands.ICategory;
 import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.IKeyConfiguration;
 import org.eclipse.ui.internal.Workbench;
-import org.eclipse.ui.internal.keys.KeySequenceText;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
+import org.eclipse.ui.keys.KeySequenceText;
 import org.eclipse.ui.keys.KeyStroke;
 
 public class KeysPreferencePage
@@ -574,7 +574,7 @@ public class KeysPreferencePage
 
 		// The manager for the key sequence text widget.
 		textKeySequenceManager = new KeySequenceText(textKeySequence);
-		textKeySequenceManager.setMaxStrokes(4);
+		textKeySequenceManager.setKeyStrokeLimit(4);
 
 		// Button for adding trapped key strokes
 		buttonAddKey = new Button(groupKeySequence, SWT.LEFT | SWT.ARROW);
@@ -799,7 +799,7 @@ public class KeysPreferencePage
 	}
 
 	private String getKeyConfigurationId() {
-		return comboKeyConfiguration.getSelectionIndex() > 0
+		return comboKeyConfiguration.getSelectionIndex() >= 0
 			? (String) keyConfigurationIdsByUniqueName.get(
 				comboKeyConfiguration.getText())
 			: null;
@@ -1242,13 +1242,12 @@ public class KeysPreferencePage
 		if (keyConfigurationUniqueName != null) {
 			String items[] = comboKeyConfiguration.getItems();
 
-			for (int i = 1; i < items.length; i++)
+			for (int i = 0; i < items.length; i++)
 				if (keyConfigurationUniqueName.equals(items[i])) {
 					comboKeyConfiguration.select(i);
 					break;
 				}
-		} else
-			comboKeyConfiguration.select(0);
+		} 
 	}
 
 	private void setKeySequence(KeySequence keySequence) {
@@ -1711,8 +1710,7 @@ public class KeysPreferencePage
 
 			List keyConfigurationNames =
 				new ArrayList(keyConfigurationIdsByUniqueName.keySet());
-			Collections.sort(keyConfigurationNames, Collator.getInstance());
-			keyConfigurationNames.add(0, Util.translateString(RESOURCE_BUNDLE, "standard")); //$NON-NLS-1$
+			Collections.sort(keyConfigurationNames, Collator.getInstance());					
 			comboKeyConfiguration.setItems(
 				(String[]) keyConfigurationNames.toArray(
 					new String[keyConfigurationNames.size()]));
@@ -1821,12 +1819,10 @@ public class KeysPreferencePage
 					(String) keyConfigurationUniqueNamesById.get(
 						keyConfiguration.getParentId());
 
-				if (name != null)
+				if (name != null) {
 					labelKeyConfigurationExtends.setText(MessageFormat.format(Util.translateString(RESOURCE_BUNDLE, "extends"), new Object[] { name })); //$NON-NLS-1$
-				else
-					labelKeyConfigurationExtends.setText(Util.translateString(RESOURCE_BUNDLE, "extendsStandard")); //$NON-NLS-1$			
-
-				return;
+					return;
+				}
 			} catch (org.eclipse.ui.commands.NotDefinedException eNotDefined) {
 				// Do nothing
 			}

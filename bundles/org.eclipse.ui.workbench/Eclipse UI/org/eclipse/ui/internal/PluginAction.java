@@ -39,6 +39,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.SelectionEnabler;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.misc.StatusUtil;
+import org.eclipse.ui.internal.registry.IPluginContribution;
 
 /**
  * A PluginAction is a proxy for an action extension.
@@ -56,7 +57,7 @@ import org.eclipse.ui.internal.misc.StatusUtil;
  */
 
 public abstract class PluginAction extends Action 
-	implements ISelectionListener, ISelectionChangedListener, INullSelectionListener 
+	implements ISelectionListener, ISelectionChangedListener, INullSelectionListener, IPluginContribution 
 {
 	private IActionDelegate delegate;
 	private SelectionEnabler enabler;
@@ -355,5 +356,26 @@ public abstract class PluginAction extends Action
 	 */
 	protected IConfigurationElement getConfigElement() {
 		return configElement;
+	}
+    
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.registry.IPluginContribution#fromPlugin()
+	 */
+	public boolean fromPlugin() {
+		return true;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.registry.IPluginContribution#getLocalId()
+	 */
+	public String getLocalId() {		
+		return getId();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.registry.IPluginContribution#getPluginId()
+	 */
+	public String getPluginId() {		
+		return configElement.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier();
 	}
 }

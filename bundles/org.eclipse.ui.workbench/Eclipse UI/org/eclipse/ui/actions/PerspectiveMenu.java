@@ -35,15 +35,16 @@ import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.activities.IObjectActivityManager;
+import org.eclipse.ui.activities.IIdentifier;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IHelpContextIds;
-import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
+import org.eclipse.ui.internal.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.dialogs.SelectPerspectiveDialog;
+import org.eclipse.ui.internal.registry.IPluginContribution;
 
 /**
  * A menu for perspective selection.  
@@ -213,19 +214,21 @@ public abstract class PerspectiveMenu extends ContributionItem {
 		ArrayList ids = ((WorkbenchPage) page).getPerspectiveActionIds();
 		if (ids == null)
 			return list;
-		ids = new ArrayList(ids);
-
-        IObjectActivityManager activityManager = window.getWorkbench().getObjectActivityManager(IWorkbenchConstants.PL_PERSPECTIVES, false);
-        if (activityManager != null) {
-            // prune all non-active contributions.
-            ids.retainAll(activityManager.getEnabledObjects());
-        }
 
 		for (int i = 0; i < ids.size(); i++) {
 			String perspID = (String) ids.get(i);
 			IPerspectiveDescriptor desc = reg.findPerspectiveWithId(perspID);
-			if (desc != null && !list.contains(desc))
+			if (desc != null && !list.contains(desc)) {
+                if (desc instanceof IPluginContribution) {
+                	IPluginContribution contribution = (IPluginContribution) desc;
+                    if (contribution.fromPlugin()) {
+                    	IIdentifier identifier = PlatformUI.getWorkbench().getActivityManager().getIdentifier(WorkbenchActivityHelper.createUnifiedId(contribution));
+                        if (!identifier.isEnabled()) 
+                            continue;
+                    }
+                }
 				list.add(desc);
+            }
 		}
 
 		return list;

@@ -51,6 +51,8 @@ public class ActivityEnabler {
 	private Set checkedInSession = new HashSet(7),
 		uncheckedInSession = new HashSet(7);
 
+	private String lastCategory = null;
+
 	/**
 	 * Create a new instance.
 	 * 
@@ -93,7 +95,8 @@ public class ActivityEnabler {
 		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		{
-			categoryViewer = new CheckboxTableViewer(mainComposite);
+			categoryViewer =
+				CheckboxTableViewer.newCheckList(mainComposite, SWT.BORDER);
 			categoryViewer.getControl().setLayoutData(
 				new GridData(GridData.FILL_BOTH));
 			categoryViewer.setContentProvider(new CategoryContentProvider());
@@ -113,6 +116,8 @@ public class ActivityEnabler {
 				new ActivityLabelProvider(activityManager));
 			activitiesViewer.setSorter(new ViewerSorter());
 			activitiesViewer.setInput(Collections.EMPTY_SET);
+			activitiesViewer.getControl().setEnabled(false);
+			// read only control
 		}
 
 		categoryViewer
@@ -122,7 +127,12 @@ public class ActivityEnabler {
 					(IStructuredSelection) event.getSelection();
 				if (!selection.isEmpty()) {
 					String categoryId = (String) selection.getFirstElement();
-					activitiesViewer.setInput(getCategoryActivities(categoryId));
+					// don't reset the input unless we're a differnet category
+					if (!categoryId.equals(lastCategory)) {
+						lastCategory = categoryId;
+						activitiesViewer.setInput(
+							getCategoryActivities(categoryId));
+					}
 				}
 			}
 		});
@@ -141,6 +151,14 @@ public class ActivityEnabler {
 				}
 			}
 		});
+		// default select the first category so the right pane will not be
+		// empty
+		Object firstElement = categoryViewer.getElementAt(0);
+		if (firstElement != null) {
+			categoryViewer.setSelection(
+				new StructuredSelection(firstElement),
+				true);
+		}
 
 		return mainComposite;
 	}

@@ -43,14 +43,4 @@ public interface IMutableActivityManager extends IActivityManager {
 	 *            is not empty, it must only contain instances of <code>String</code>.
 	 */
 	void setEnabledActivityIds(Set enabledActivityIds);
-
-	/**
-	 * Sets the set of identifiers to enabled categories.
-	 * 
-	 * @param enabledCategoryIds
-	 *            the set of identifiers to enabled categories. This set may be
-	 *            empty, but it must not be <code>null</code>. If this set
-	 *            is not empty, it must only contain instances of <code>String</code>.
-	 */
-	void setEnabledCategoryIds(Set enabledCategoryIds);
 }

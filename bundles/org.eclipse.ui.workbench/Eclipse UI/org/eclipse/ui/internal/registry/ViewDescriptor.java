@@ -26,8 +26,9 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 /**
  * Capture the attributes of a view extension.
  */
-public class ViewDescriptor implements IViewDescriptor {
+public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
 	private String id;
+    private String pluginId;
 	private ImageDescriptor imageDescriptor;
 	private static final String ATT_ID="id";//$NON-NLS-1$
 	private static final String ATT_NAME="name";//$NON-NLS-1$
@@ -114,6 +115,7 @@ public float getFastViewWidthRatio() {
  */
 private void loadFromExtension() throws CoreException {
 	id = configElement.getAttribute(ATT_ID);
+    pluginId = configElement.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier();
 	label = configElement.getAttribute(ATT_NAME);
 	accelerator = configElement.getAttribute(ATT_ACCELERATOR);
 	className = configElement.getAttribute(ATT_CLASS);
@@ -159,5 +161,23 @@ private void loadFromExtension() throws CoreException {
  */
 public String toString() {
 	return "View(" + getID() + ")";//$NON-NLS-2$//$NON-NLS-1$
+}
+/* (non-Javadoc)
+ * @see org.eclipse.ui.internal.registry.IPluginContribution#getPluginId()
+ */
+public String getPluginId() {
+	return pluginId == null ? "" : pluginId; //$NON-NLS-1$    
+}
+/* (non-Javadoc)
+ * @see org.eclipse.ui.internal.registry.IPluginContribution#getLocalId()
+ */
+public String getLocalId() {
+    return id == null ? "" : id; //$NON-NLS-1$	
+}
+/* (non-Javadoc)
+ * @see org.eclipse.ui.internal.registry.IPluginContribution#fromPlugin()
+ */
+public boolean fromPlugin() {
+	return true;
 }
 }

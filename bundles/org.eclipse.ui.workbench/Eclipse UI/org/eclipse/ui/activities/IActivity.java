@@ -151,7 +151,7 @@ public interface IActivity extends Comparable {
 	 *             if the activity represented by this handle is not defined.
 	 */
 	String getParentId() throws NotDefinedException;
-	
+
 	/**
 	 * <p>
 	 * Returns whether or not the activity represented by this handle is
@@ -181,19 +181,22 @@ public interface IActivity extends Comparable {
 	 * @return <code>true</code>, iff this activity is enabled.
 	 */
 	boolean isEnabled();
-
+	
 	/**
-	 * TODO javadoc
+	 * This method is only included to prevent compile errors in I20031125.
+	 * @param string
+	 * @return
+	 * @deprecated
 	 */
 	boolean isMatch(String string);
 
 	/**
 	 * TODO javadoc
 	 * 
-	 * @deprecated use isMatch(String)
+	 * @deprecated
 	 */
-	boolean match(String string);	
-	
+	boolean match(String string);
+
 	/**
 	 * Unregisters an instance of <code>IActivityListener</code> listening
 	 * for changes to attributes of this instance.

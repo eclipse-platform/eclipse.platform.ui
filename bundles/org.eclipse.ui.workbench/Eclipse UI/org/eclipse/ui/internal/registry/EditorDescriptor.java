@@ -25,7 +25,7 @@ import org.eclipse.ui.internal.misc.ProgramImageDescriptor;
 /**
  * @see IEditorDescriptor
  */
-public final class EditorDescriptor implements IEditorDescriptor, Serializable {
+public final class EditorDescriptor implements IEditorDescriptor, Serializable, IPluginContribution {
 	private static final String ATT_EDITOR_CONTRIBUTOR = "contributorClass"; //$NON-NLS-1$
 	/* package */ static final int OPEN_INTERNAL = 0x01;
 	/* package */ static final int OPEN_INPLACE = 0x02;
@@ -387,5 +387,26 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable {
 	 */
 	public String toString() {
 		return "EditorDescriptor(" + editorName + ")"; //$NON-NLS-2$//$NON-NLS-1$
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.registry.IPluginContribution#fromPlugin()
+	 */
+	public boolean fromPlugin() {
+		return configurationElement != null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.registry.IPluginContribution#getLocalId()
+	 */
+	public String getLocalId() {
+		return getId();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.registry.IPluginContribution#getPluginId()
+	 */
+	public String getPluginId() {		
+		return pluginIdentifier;
 	}
 }

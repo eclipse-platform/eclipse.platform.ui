@@ -193,11 +193,14 @@ class AnimationManager {
 
 		if (items.size() == 0)
 			return;
+		
+		if(!PlatformUI.isWorkbenchRunning())
+			return;
 
 		AnimationItem[] animationItems = getAnimationItems();
 
 		boolean startErrorState = showingError;
-		Display display = animationItems[0].getControl().getDisplay();
+		Display display = PlatformUI.getWorkbench().getDisplay();
 
 		ImageData[] imageDataArray = getImageData();
 		ImageData imageData = imageDataArray[0];
@@ -317,6 +320,7 @@ class AnimationManager {
 					try {
 						Thread.sleep(visibleDelay(imageData.delayTime * 10));
 					} catch (InterruptedException e) {
+						//If it is interrupted end quietly
 					}
 
 				}
@@ -470,6 +474,13 @@ class AnimationManager {
 						return ProgressManagerUtil.exceptionStatus(exception);
 					}
 				}
+				
+				/* (non-Javadoc)
+				 * @see org.eclipse.core.runtime.jobs.Job#shouldSchedule()
+				 */
+				public boolean shouldSchedule() {
+					return PlatformUI.isWorkbenchRunning();
+				}
 			};
 			animateJob.setSystem(true);
 			animateJob.setPriority(Job.DECORATE);
@@ -478,9 +489,6 @@ class AnimationManager {
 				 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
 				 */
 				public void done(IJobChangeEvent event) {
-					
-					if(!PlatformUI.isWorkbenchRunning())
-						return;
 					
 					//Only schedule the job if we are showing anything
 					if (isAnimated() && items.size() > 0)

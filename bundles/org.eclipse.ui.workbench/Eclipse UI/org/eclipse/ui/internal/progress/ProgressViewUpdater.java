@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.progress.UIJob;
+import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
  * The ProgressViewUpdater is the singleton that updates viewers.
@@ -47,6 +47,7 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 		boolean updateAll = false;
 
 		private UpdatesInfo() {
+			//Create a new instance of the info
 		}
 
 		/**
@@ -196,14 +197,14 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 	 * Create the update job that handles the updatesInfo.
 	 */
 	private void createUpdateJob() {
-			updateJob = new UIJob(ProgressMessages.getString("ProgressContentProvider.UpdateProgressJob")) {//$NON-NLS-1$
+			updateJob = new WorkbenchJob(ProgressMessages.getString("ProgressContentProvider.UpdateProgressJob")) {//$NON-NLS-1$
 	/*
 	 * (non-Javadoc) @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 
 					//Abort the job if there isn't anything
-	if (contentProviders.length == 0)
+				if (contentProviders.length == 0)
 					return Status.CANCEL_STATUS;
 
 				if (currentInfo.updateAll) {

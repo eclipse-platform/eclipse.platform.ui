@@ -10,23 +10,59 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.text.Collator;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Platform;
+
+import org.eclipse.swt.program.Program;
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.SafeRunnable;
-import org.eclipse.swt.program.Program;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.*;
-import org.eclipse.ui.internal.*;
+
+import org.eclipse.ui.IEditorDescriptor;
+import org.eclipse.ui.IEditorRegistry;
+import org.eclipse.ui.IFileEditorMapping;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IPropertyListener;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.XMLMemento;
+import org.eclipse.ui.activities.IIdentifier;
+import org.eclipse.ui.internal.IPreferenceConstants;
+import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.internal.WorkbenchActivityHelper;
+import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.editorsupport.ComponentSupport;
-import org.eclipse.ui.internal.misc.*;
+import org.eclipse.ui.internal.misc.ExternalProgramImageDescriptor;
+import org.eclipse.ui.internal.misc.ProgramImageDescriptor;
 
 /**
  * Provides access to the collection of defined editors for
@@ -208,6 +244,22 @@ public class EditorRegistry implements IEditorRegistry {
 			desc = mapping[0].getDefaultEditor();
 		if (desc == null && mapping[1] != null)
 			desc = mapping[1].getDefaultEditor();
+        
+        if (desc instanceof IPluginContribution) {
+            IPluginContribution contribution = (IPluginContribution) desc;
+            if (contribution.fromPlugin()) {
+                IIdentifier identifier =
+                PlatformUI
+                .getWorkbench()
+                .getActivityManager()
+                .getIdentifier(
+                        WorkbenchActivityHelper.createUnifiedId(contribution));
+                if (!identifier.isEnabled())
+                    return null;
+            }
+            
+        }        
+        
 		return desc;
 	}
 	/**
@@ -235,12 +287,35 @@ public class EditorRegistry implements IEditorRegistry {
 			editors = mapping[1].getEditors();
 			if (editors != null)
 				extensionEditors = editors;
-		}
-
+        } 
+        
 		editors = new IEditorDescriptor[filenameEditors.length + extensionEditors.length];
 		System.arraycopy(filenameEditors, 0, editors, 0, filenameEditors.length);
 		System.arraycopy(extensionEditors, 0, editors, filenameEditors.length, extensionEditors.length);
-		return editors;
+        
+        ArrayList list = new ArrayList(Arrays.asList(editors));
+        ArrayList filtered = new ArrayList();
+        for (Iterator i = list.iterator(); i.hasNext();) {
+            Object next = i.next();
+            if (next instanceof IPluginContribution) {
+                IPluginContribution contribution = (IPluginContribution) next;
+                if (contribution.fromPlugin()) {
+                    IIdentifier identifier =
+                    PlatformUI
+                    .getWorkbench()
+                    .getActivityManager()
+                    .getIdentifier(
+                            WorkbenchActivityHelper.createUnifiedId(contribution));
+                    if (!identifier.isEnabled())
+                        continue;
+                }
+                
+            }
+            filtered.add(next);
+        }        
+        editors = (IEditorDescriptor[]) filtered.toArray(new IEditorDescriptor[filtered.size()]);
+
+        return editors;
 	}
 	/* (non-Javadoc)
 	 * Method declared on IEditorRegistry.
