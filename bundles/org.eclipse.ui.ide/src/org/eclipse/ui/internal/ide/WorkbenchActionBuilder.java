@@ -24,7 +24,6 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.ToolBarContributionItem;
 import org.eclipse.jface.action.ToolBarManager;
-
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener;
@@ -40,13 +39,9 @@ import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
-import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.ide.IIDEActionConstants;
-
 import org.eclipse.ui.internal.AboutInfo;
-import org.eclipse.ui.internal.EditorWorkbook;
-import org.eclipse.ui.internal.EditorsDropDownAction;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.ide.actions.BuildSetMenu;
 import org.eclipse.ui.internal.util.StatusLineContributionItem;
@@ -122,9 +117,6 @@ public final class WorkbenchActionBuilder {
 	private IWorkbenchAction previousAction;
     private IWorkbenchAction categoryAction;
 
-	// @issue editorsDropDownAction should be provided by ActionFactory
-	private EditorsDropDownAction editorsDropDownAction;
-	
 	// IDE-specific actions
 	private IWorkbenchAction projectPropertyDialogAction;
 	private IWorkbenchAction newWizardAction;
@@ -157,7 +149,7 @@ public final class WorkbenchActionBuilder {
 	private Preferences.IPropertyChangeListener prefListener;
 
 	private IWorkbenchAction introAction;
-	
+
 	/**
 	 * Constructs a new action builder which contributes actions
 	 * to the given window.
@@ -565,9 +557,6 @@ public final class WorkbenchActionBuilder {
 		subMenu.add(maximizePartAction);
 		subMenu.add(new Separator());
 		subMenu.add(activateEditorAction);
-		if (editorsDropDownAction != null) {
-			subMenu.add(editorsDropDownAction);
-		}
 		subMenu.add(nextEditorAction);
 		subMenu.add(prevEditorAction);
 		subMenu.add(new Separator());
@@ -586,8 +575,7 @@ public final class WorkbenchActionBuilder {
 		INCLUDE_REBUILD_ACTIONS = include;
 		IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
 		for (int i = 0; i < windows.length; i++) {
-			IWorkbenchWindowConfigurer configurer = IDEWorkbenchAdvisor.getAdvisor().getWorkbenchConfigurer().getWindowConfigurer(windows[i]);
-			WorkbenchActionBuilder builder = (WorkbenchActionBuilder)configurer.getData("ActionBuilder"); //$NON-NLS-1$
+		    WorkbenchActionBuilder builder = IDEWorkbenchAdvisor.getActionBuilder(windows[i]);
 			builder.doSetIncludeRebuildActions(include);
 		}
 	}
@@ -605,6 +593,7 @@ public final class WorkbenchActionBuilder {
 				manager.remove(IDEActionFactory.REBUILD_PROJECT.getId());
 			}
 		} catch (IllegalArgumentException e) {
+		    // ignore
 		}
 		manager.update(false);
 	}
@@ -1235,11 +1224,6 @@ public final class WorkbenchActionBuilder {
 			categoryAction = ActionFactory.CONFIGURE_ACTIVITIES.create(getWindow());
         	registerGlobalAction(categoryAction);
 		}		
-
-		if (EditorWorkbook.usingNewDropDown()) {
-			editorsDropDownAction = new EditorsDropDownAction(window);
-			registerGlobalAction(editorsDropDownAction);
-		}
 		
 		if (WorkbenchPlugin.getDefault().getIntroRegistry().getIntroCount() > 0) {
 			introAction = ActionFactory.INTRO.create(window);

@@ -1121,13 +1121,4 @@ public class EditorWorkbook extends LayoutPart implements ILayoutContainer {
     public void showVisibleEditor() {
     }
 
-    /**
-     * Retained for compatibility with ide.
-     * 
-     * @deprecated Do not call this.
-     * @return
-     */
-    public static boolean usingNewDropDown() {
-        return false;
-    }
 }

@@ -83,6 +83,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
+import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.commands.CommandManagerEvent;
 import org.eclipse.ui.commands.ICommand;
@@ -134,9 +135,6 @@ import org.eclipse.ui.internal.themes.WorkbenchThemeManager;
 public final class Workbench implements IWorkbench {
 	private static final String VERSION_STRING[] = { "0.046", "2.0" }; //$NON-NLS-1$ //$NON-NLS-2$
 	private static final String DEFAULT_WORKBENCH_STATE_FILENAME = "workbench.xml"; //$NON-NLS-1$
-	private static final int RESTORE_CODE_OK = 0;
-	private static final int RESTORE_CODE_RESET = 1;
-	private static final int RESTORE_CODE_EXIT = 2;
 
 	/**
 	 * Holds onto the only instance of Workbench.
@@ -788,7 +786,7 @@ public final class Workbench implements IWorkbench {
 
 		// now that the workbench is sufficiently initialized, let the advisor
 		// have a turn.
-		advisor.initialize(getWorkbenchConfigurer());
+		advisor.basicInitialize(getWorkbenchConfigurer());
 
 		// configure use of color icons in toolbars
 		boolean useColorIcons = getPreferenceStore().getBoolean(IPreferenceConstants.COLOR_ICONS);
@@ -822,17 +820,9 @@ public final class Workbench implements IWorkbench {
 
 			advisor.preStartup();
 
-			int restoreCode = openPreviousWorkbenchState();
-			if (restoreCode == RESTORE_CODE_EXIT) {
-				return false;
+			if (!advisor.openWindows()) {
+			    return false;
 			}
-			if (restoreCode == RESTORE_CODE_RESET) {
-			    openFirstTimeWindow();
-			}
-
-//			if (!advisor.openWindows()) {
-//			    return false;
-//			}
 			
 		} finally {
 			UIStats.end(UIStats.RESTORE_WORKBENCH, "Workbench"); //$NON-NLS-1$
@@ -1072,9 +1062,9 @@ public final class Workbench implements IWorkbench {
 	}
 
 	/*
-	 * Create the initial workbench window.
+	 * opens the initial workbench window.
 	 */
-	private void openFirstTimeWindow() {
+	/* package */ void openFirstTimeWindow() {
 
 		// create the workbench window
 		WorkbenchWindow newWindow = newWorkbenchWindow();
@@ -1095,28 +1085,38 @@ public final class Workbench implements IWorkbench {
 	}
 
 	/*
-	 * Create the workbench UI from a persistence file.
+	 * Restores the workbench UI from the workbench state file (workbench.xml).
 	 * 
-	 * @return RESTORE_CODE_OK if a window was opened, RESTORE_CODE_RESET if no
-	 * window was opened but one should be, and RESTORE_CODE_EXIT if the
-	 * workbench should close immediately
+	 * @return a status object indicating OK if a window was opened, RESTORE_CODE_RESET if no
+	 *   window was opened but one should be, and RESTORE_CODE_EXIT if the
+	 *   workbench should close immediately
 	 */
-	private int openPreviousWorkbenchState() {
+	/* package */ IStatus restoreState() {
 
 		if (!getWorkbenchConfigurer().getSaveAndRestore()) {
-			return RESTORE_CODE_RESET;
+			String msg = WorkbenchMessages
+                    .getString("Workbench.restoreDisabled"); //$NON-NLS-1$
+            return new Status(IStatus.WARNING, WorkbenchPlugin.PI_WORKBENCH,
+                    IWorkbenchConfigurer.RESTORE_CODE_RESET, msg, null);
 		}
 		// Read the workbench state file.
 		final File stateFile = getWorkbenchStateFile();
 		// If there is no state file cause one to open.
-		if (!stateFile.exists())
-			return RESTORE_CODE_RESET;
+		if (!stateFile.exists()) {
+		    String msg = WorkbenchMessages
+                    .getString("Workbench.noStateToRestore"); //$NON-NLS-1$
+            return new Status(IStatus.WARNING, WorkbenchPlugin.PI_WORKBENCH,
+                    IWorkbenchConfigurer.RESTORE_CODE_RESET, msg, null); //$NON-NLS-1$
+		}
 
-		final int result[] = { RESTORE_CODE_OK };
-		Platform.run(new SafeRunnable(WorkbenchMessages.getString("ErrorReadingState")) { //$NON-NLS-1$
+		final IStatus result[] = { new Status(IStatus.WARNING,
+                WorkbenchPlugin.PI_WORKBENCH, IStatus.OK, "", null)}; //$NON-NLS-1$
+		Platform.run(new SafeRunnable(WorkbenchMessages
+                .getString("ErrorReadingState")) { //$NON-NLS-1$
 			public void run() throws Exception {
 				FileInputStream input = new FileInputStream(stateFile);
-				BufferedReader reader = new BufferedReader(new InputStreamReader(input, "utf-8")); //$NON-NLS-1$
+				BufferedReader reader = new BufferedReader(
+                                new InputStreamReader(input, "utf-8")); //$NON-NLS-1$
 				IMemento memento = XMLMemento.createReadRoot(reader);
 
 				// Validate known version format
@@ -1130,10 +1130,16 @@ public final class Workbench implements IWorkbench {
 				}
 				if (!valid) {
 					reader.close();
-					MessageDialog.openError((Shell) null, WorkbenchMessages.getString("Restoring_Problems"), //$NON-NLS-1$
-					WorkbenchMessages.getString("Invalid_workbench_state_ve")); //$NON-NLS-1$
+					String msg = WorkbenchMessages.getString("Invalid_workbench_state_ve");  //$NON-NLS-1$
+					MessageDialog.openError((Shell) null,
+                                    WorkbenchMessages
+                                            .getString("Restoring_Problems"), //$NON-NLS-1$
+                                    msg); //$NON-NLS-1$
 					stateFile.delete();
-					result[0] = RESTORE_CODE_RESET;
+					result[0] = new Status(IStatus.ERROR,
+                                    WorkbenchPlugin.PI_WORKBENCH,
+                                    IWorkbenchConfigurer.RESTORE_CODE_RESET,
+                                    msg, null);
 					return;
 				}
 
@@ -1141,17 +1147,32 @@ public final class Workbench implements IWorkbench {
 				// We no longer support the release 1.0 format
 				if (VERSION_STRING[0].equals(version)) {
 					reader.close();
-						boolean ignoreSavedState = new MessageDialog(null, WorkbenchMessages.getString("Workbench.incompatibleUIState"), //$NON-NLS-1$
-		null, WorkbenchMessages.getString("Workbench.incompatibleSavedStateVersion"), //$NON-NLS-1$
-	MessageDialog.WARNING,
-		new String[] { IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL },
-		0).open() == 0;
+					String msg = WorkbenchMessages
+                                    .getString("Workbench.incompatibleSavedStateVersion"); //$NON-NLS-1$
+                    boolean ignoreSavedState = new MessageDialog(
+                                    null,
+                                    WorkbenchMessages
+                                            .getString("Workbench.incompatibleUIState"),//$NON-NLS-1$
+                                    null,
+                                    msg,
+                                    MessageDialog.WARNING, new String[] {
+                                            IDialogConstants.OK_LABEL,
+                                            IDialogConstants.CANCEL_LABEL}, 0)
+                                    .open() == 0;
 					// OK is the default
 					if (ignoreSavedState) {
 						stateFile.delete();
-						result[0] = RESTORE_CODE_RESET;
+						result[0] = new Status(
+                                        IStatus.WARNING,
+                                        WorkbenchPlugin.PI_WORKBENCH,
+                                        IWorkbenchConfigurer.RESTORE_CODE_RESET,
+                                        msg, null);
 					} else {
-						result[0] = RESTORE_CODE_EXIT;
+						result[0] = new Status(
+                                IStatus.WARNING,
+                                WorkbenchPlugin.PI_WORKBENCH,
+                                IWorkbenchConfigurer.RESTORE_CODE_EXIT,
+                                msg, null);
 					}
 					return;
 				}
@@ -1167,14 +1188,25 @@ public final class Workbench implements IWorkbench {
 			}
 			public void handleException(Throwable e) {
 				super.handleException(e);
-				result[0] = RESTORE_CODE_RESET;
+				String msg = e.getMessage() == null ? "" : e.getMessage(); //$NON-NLS-1$
+				result[0] = new Status(
+                        IStatus.ERROR,
+                        WorkbenchPlugin.PI_WORKBENCH,
+                        IWorkbenchConfigurer.RESTORE_CODE_RESET,
+                        msg, e);
 				stateFile.delete();
 			}
 
 		});
 		// ensure at least one window was opened
-		if (result[0] == RESTORE_CODE_OK && windowManager.getWindows().length == 0)
-			result[0] = RESTORE_CODE_RESET;
+		if (result[0].isOK() && windowManager.getWindows().length == 0) {
+		    String msg = WorkbenchMessages.getString("Workbench.noWindowsRestored"); //$NON-NLS-1$
+			result[0] = new Status(
+                    IStatus.ERROR,
+                    WorkbenchPlugin.PI_WORKBENCH,
+                    IWorkbenchConfigurer.RESTORE_CODE_RESET,
+                    msg, null);
+		}
 		return result[0];
 	}
 

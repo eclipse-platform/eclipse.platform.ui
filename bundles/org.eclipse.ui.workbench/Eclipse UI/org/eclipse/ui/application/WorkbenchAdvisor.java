@@ -128,10 +128,10 @@ public abstract class WorkbenchAdvisor {
 	 */
 	public static final int FILL_STATUS_LINE = 0x08;
 
-//	/**
-//	 * The workbench configurer.
-//	 */
-//	private IWorkbenchConfigurer workbenchConfigurer;
+	/**
+	 * The workbench configurer.
+	 */
+	private IWorkbenchConfigurer workbenchConfigurer;
 	
 	/**
 	 * Creates and initializes a new workbench advisor instance.
@@ -140,16 +140,21 @@ public abstract class WorkbenchAdvisor {
 		// do nothing
 	}
 
-//	/**
-//	 * Returns the workbench configurer for the advisor. Can
-//	 * be <code>null</code> if the advisor is not initialized yet.
-//	 * 
-//	 * @return the workbench configurer, or <code>null</code>
-//	 *   if the advisor is not initialized yet
-//	 */
-//	protected IWorkbenchConfigurer getWorkbenchConfigurer() {
-//	    return workbenchConfigurer;
-//	}
+	/**
+	 * Remembers the configurer and calls <code>initialize</code>.
+	 * <p>
+	 * For internal use by the workbench only.
+	 * </p>
+	 * 
+	 * @param configurer an object for configuring the workbench
+	 */
+	public final void basicInitialize(IWorkbenchConfigurer configurer) {
+	    if (workbenchConfigurer != null) {
+	        throw new IllegalStateException();
+	    }
+		this.workbenchConfigurer = configurer;
+		initialize(configurer);
+	}
 	
 	/**
 	 * Performs arbitrary initialization before the workbench starts running.
@@ -157,16 +162,27 @@ public abstract class WorkbenchAdvisor {
 	 * This method is called during workbench initialization prior to any
 	 * windows being opened. 
 	 * Clients must not call this method directly (although super calls are okay).
-	 * The default implementation remembers the configurer and makes it available
-	 * via <code>getWorkbenchConfigurer</code>. Subclasses may extend. 
+	 * The default implementation does nothing. Subclasses may override. 
 	 * Typical clients will use the configurer passed in to tweak the
-	 * workbench.
+	 * workbench.  If further tweaking is required in the future,
+	 * the configurer may be obtained using <code>getWorkbenchConfigurer</code>.
 	 * </p>
 	 * 
 	 * @param configurer an object for configuring the workbench
 	 */
 	public void initialize(IWorkbenchConfigurer configurer) {
-//		this.workbenchConfigurer = configurer;
+		// do nothing
+	}
+
+	/**
+	 * Returns the workbench configurer for the advisor. Can
+	 * be <code>null</code> if the advisor is not initialized yet.
+	 * 
+	 * @return the workbench configurer, or <code>null</code>
+	 *   if the advisor is not initialized yet
+	 */
+	protected IWorkbenchConfigurer getWorkbenchConfigurer() {
+	    return workbenchConfigurer;
 	}
 
 	/**
@@ -582,25 +598,28 @@ public abstract class WorkbenchAdvisor {
 	    ((WorkbenchWindowConfigurer) configurer).createDefaultContents(shell);
 	}
 
-//    /**
-//     * Opens the workbench windows on startup.
-//     * The default implementation tries to restore the previously saved
-//     * workbench state using <code>IWorkbenchConfigurer.openPreviousWorkbenchState()</code>.
-//     * If there was no previously saved state, or if the restore failed, 
-//     * then a first-time window is opened using 
-//     * <code>IWorkbenchConfigurer.openFirstTimeWindow</code>.
-//     * 
-//     * @return <code>true</code> to proceed with workbench startup,
-//     *   or <code>false</code> to exit
-//     */
-//    public boolean openWindows() {
-//		int restoreCode = getWorkbenchConfigurer().openPreviousWorkbenchState();
-//		if (restoreCode == RESTORE_CODE_EXIT) {
-//			return false;
-//		}
-//		if (restoreCode == RESTORE_CODE_RESET) {
-//		    getWorkbenchConfigurer().openFirstTimeWindow();
-//		}
-//    }
+    /**
+     * Opens the workbench windows on startup.
+     * The default implementation tries to restore the previously saved
+     * workbench state using <code>IWorkbenchConfigurer.restoreWorkbenchState()</code>.
+     * If there was no previously saved state, or if the restore failed, 
+     * then a first-time window is opened using 
+     * <code>IWorkbenchConfigurer.openFirstTimeWindow</code>.
+     * 
+     * @return <code>true</code> to proceed with workbench startup,
+     *   or <code>false</code> to exit
+     */
+    public boolean openWindows() {
+        IStatus status = getWorkbenchConfigurer().restoreState();
+        if (!status.isOK()) {
+            if (status.getCode() == IWorkbenchConfigurer.RESTORE_CODE_EXIT) {
+    			return false;
+            }
+    		if (status.getCode() == IWorkbenchConfigurer.RESTORE_CODE_RESET) {
+    		    getWorkbenchConfigurer().openFirstTimeWindow();
+    		}
+        }
+        return true;
+    }
 }
 

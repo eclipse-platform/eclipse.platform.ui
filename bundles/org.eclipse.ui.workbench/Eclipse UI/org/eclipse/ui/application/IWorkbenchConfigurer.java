@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.application;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.window.WindowManager;
 import org.eclipse.ui.IWorkbench;
@@ -30,6 +31,23 @@ import org.eclipse.ui.IWorkbenchWindow;
  */
 public interface IWorkbenchConfigurer {
 	
+    /**
+     * Restore status code indicating that the saved state
+     * could not be restored, but that startup should continue
+     * with a reset state.
+     * 
+     * @see #restoreState
+     */
+	public static final int RESTORE_CODE_RESET = 1;
+	
+	/**
+	 * Restore status code indicating that the saved state
+	 * could not be restored, and that the application
+	 * must exit immediately without modifying any previously
+	 * saved workbench state.
+	 */
+	public static final int RESTORE_CODE_EXIT = 2;
+    
 	/**
 	 * Returns the underlying workbench.
 	 * 
@@ -145,4 +163,34 @@ public interface IWorkbenchConfigurer {
 	 * @param data the data, or <code>null</code> to delete existing data
 	 */
 	public void setData(String key, Object data);
+
+    /**
+     * Restores the workbench state saved from the previous session, if any.
+     * This includes any open windows and their open perspectives, open views
+     * and editors, layout information, and any customizations to the open 
+     * perspectives. 
+     * <p>
+     * This is typically called from the advisor's <code>openWindows()</code>
+     * method.
+     * </p>
+     * 
+     * @return a status object indicating whether the restore was successful
+     * @see #RESTORE_CODE_RESET
+     * @see #RESTORE_CODE_EXIT
+     * @see WorkbenchAdvisor#openWindows
+     */
+    public IStatus restoreState();
+
+    /**
+     * Opens the first time window, using the default perspective and
+     * default page input.
+     * <p>
+     * This is typically called from the advisor's <code>openWindows()</code>
+     * method.
+     * </p>
+     * 
+     * @see WorkbenchAdvisor#openWindows
+     * @issue clarify error handling
+     */
+    public void openFirstTimeWindow();
 }

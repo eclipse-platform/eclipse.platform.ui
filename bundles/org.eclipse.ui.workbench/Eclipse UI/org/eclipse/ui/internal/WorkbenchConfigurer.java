@@ -13,6 +13,7 @@ package org.eclipse.ui.internal;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.window.WindowManager;
 import org.eclipse.ui.IWorkbench;
@@ -167,4 +168,18 @@ public final class WorkbenchConfigurer implements IWorkbenchConfigurer {
 	public boolean emergencyClosing() {
 		return isEmergencyClosing;
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.application.IWorkbenchConfigurer#restoreState()
+     */
+    public IStatus restoreState() {
+        return ((Workbench) getWorkbench()).restoreState();
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.application.IWorkbenchConfigurer#openFirstTimeWindow()
+     */
+    public void openFirstTimeWindow() {
+        ((Workbench) getWorkbench()).openFirstTimeWindow();
+    }
 }

@@ -111,11 +111,6 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	private static IDEWorkbenchAdvisor workbenchAdvisor = null;
 
 	/**
-	 * Special object for configuring the workbench.
-	 */
-	private IWorkbenchConfigurer configurer;	
-
-	/**
 	 * Event loop exception handler for the advisor.
 	 */
 	private IDEExceptionHandler exceptionHandler = null;
@@ -159,31 +154,13 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		workbenchAdvisor = this;
 	}
 
-	/**
-	 * Returns the single instance for this advisor. Can
-	 * be <code>null</code> if not created yet.
-	 */
-	/* package */ static final IDEWorkbenchAdvisor getAdvisor() {
-		return workbenchAdvisor;
-	}
-	
-	/**
-	 * Returns the workbench configurer for the advisor. Can
-	 * be <code>null</code> if advisor not initialized yet.
-	 */
-	/* package */ IWorkbenchConfigurer getWorkbenchConfigurer() {
-		return configurer;
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.application.WorkbenchAdvisor#initialize
 	 */
-	public void initialize(IWorkbenchConfigurer worbenchConfigurer) {
-		// remember for future reference
-		this.configurer = worbenchConfigurer;	
-		
-		// make sure we always save and restore workspace state
-		configurer.setSaveAndRestore(true);
+	public void initialize(IWorkbenchConfigurer configurer) {
+
+	    // make sure we always save and restore workspace state
+	    configurer.setSaveAndRestore(true);
 
 		// setup the event loop exception handler
 		exceptionHandler = new IDEExceptionHandler(configurer);
@@ -269,8 +246,8 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		if (exceptionHandler != null) {
 			exceptionHandler.handleException(exception);
 		} else {
-			if (configurer != null) {
-				configurer.emergencyClose();
+			if (getWorkbenchConfigurer() != null) {
+			    getWorkbenchConfigurer().emergencyClose();
 			}
 		}
 	}
@@ -279,7 +256,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	 * @see org.eclipse.ui.application.WorkbenchAdvisor#preWindowShellClose
 	 */
 	public boolean preWindowShellClose(IWorkbenchWindowConfigurer windowConfigurer) {
-		if (configurer.getWorkbench().getWorkbenchWindowCount() > 1) {
+		if (getWorkbenchConfigurer().getWorkbench().getWorkbenchWindowCount() > 1) {
 			return true;
 		}
 		// the user has asked to close the last window, while will cause the
@@ -668,7 +645,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 				}
 			}
 	
-			int wCount = configurer.getWorkbench().getWorkbenchWindowCount();
+			int wCount = getWorkbenchConfigurer().getWorkbench().getWorkbenchWindowCount();
 			for (int i = 0; i < welcomeFeatures.size(); i++) {
 				AboutInfo newInfo = (AboutInfo) welcomeFeatures.get(i);
 				String id = newInfo.getWelcomePerspectiveId();
@@ -754,7 +731,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	 * Open a welcome editor for the given input
 	 */
 	private void openWelcomeEditor(IWorkbenchWindow window, WelcomeEditorInput input, String perspectiveId) {
-		if (configurer.getWorkbench().getWorkbenchWindowCount() == 0) {
+		if (getWorkbenchConfigurer().getWorkbench().getWorkbenchWindowCount() == 0) {
 			// Something is wrong, there should be at least
 			// one workbench window open by now.
 			return;
@@ -763,7 +740,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		IWorkbenchWindow win = window;
 		if (perspectiveId != null) {
 			try {
-				win = configurer.getWorkbench().openWorkbenchWindow(perspectiveId, getDefaultPageInput());
+				win = getWorkbenchConfigurer().getWorkbench().openWorkbenchWindow(perspectiveId, getDefaultPageInput());
 				if (win == null) {
 					win = window;
 				}
@@ -774,13 +751,13 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		}
 	
 		if (win == null) {
-			win = configurer.getWorkbench().getWorkbenchWindows()[0];
+			win = getWorkbenchConfigurer().getWorkbench().getWorkbenchWindows()[0];
 		}
 			
 		IWorkbenchPage page = win.getActivePage();
 		String id = perspectiveId;
 		if (id == null) {
-			id = configurer.getWorkbench().getPerspectiveRegistry().getDefaultPerspective();
+			id = getWorkbenchConfigurer().getWorkbench().getPerspectiveRegistry().getDefaultPerspective();
 		}
 	
 		if (page == null) {
@@ -799,7 +776,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	
 		if (page.getPerspective() == null) {
 			try {
-				page = configurer.getWorkbench().showPerspective(id, win);
+				page = getWorkbenchConfigurer().getWorkbench().showPerspective(id, win);
 			} catch (WorkbenchException e) {
 				ErrorDialog.openError(
 					win.getShell(),
@@ -836,7 +813,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	 * [pageInput -] [currentPerspective -] [editorInput -] [workspaceLocation -] productName
 	 */
 	private void updateTitle(IWorkbenchWindow window) {
-		IWorkbenchWindowConfigurer windowConfigurer = configurer.getWindowConfigurer(window);
+		IWorkbenchWindowConfigurer windowConfigurer = getWorkbenchConfigurer().getWindowConfigurer(window);
 		
 		String title = null;
 		AboutInfo about = IDEWorkbenchPlugin.getDefault().getPrimaryInfo();
@@ -998,7 +975,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		    // do nothing
 		}
 		ImageDescriptor desc = ImageDescriptor.createFromURL(url);
-		configurer.declareImage(symbolicName, desc, shared);
+		getWorkbenchConfigurer().declareImage(symbolicName, desc, shared);
 	}
 	
 	
@@ -1008,7 +985,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	 */
 	private boolean openIntro(IWorkbenchWindow window) {
 		if (IDEWorkbenchPlugin.getDefault().getPreferenceStore().getBoolean(IDEInternalPreferences.INTRO)) { 
-			if (configurer.getWorkbench().showIntro(window, false) != null) {
+			if (getWorkbenchConfigurer().getWorkbench().showIntro(window, false) != null) {
 				IDEWorkbenchPlugin.getDefault().getPreferenceStore().setValue(IDEInternalPreferences.INTRO, false);
 				return true;
 			}	
@@ -1020,7 +997,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		
 		// setup the action builder to populate the toolbar and menubar in the configurer
 		WorkbenchActionBuilder actionBuilder = null;
-		IWorkbenchWindowConfigurer windowConfigurer = configurer.getWindowConfigurer(window);
+		IWorkbenchWindowConfigurer windowConfigurer = getWorkbenchConfigurer().getWindowConfigurer(window);
 		
 		// For proxy calls to this method it is important that we use the same object
 		// associated with the windowConfigurer
@@ -1041,7 +1018,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 			// make, fill, and hook listeners to action builder
 			// reference to IWorkbenchConfigurer is need for the ABOUT action
 			windowConfigurer.setData(ACTION_BUILDER,actionBuilder);
-			actionBuilder.makeAndPopulateActions(configurer, actionConfigurer);
+			actionBuilder.makeAndPopulateActions(getWorkbenchConfigurer(), actionConfigurer);
 		}
 		
 	}
@@ -1071,5 +1048,13 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 				IDEWorkbenchPlugin.log("Fail to open remaining welcome editors.", e.getStatus()); //$NON-NLS-1$
 			}
 		}
+    }
+
+    /**
+     * Returns the workbench action builder for the given window 
+     */
+    static WorkbenchActionBuilder getActionBuilder(IWorkbenchWindow window) {
+        IWorkbenchWindowConfigurer configurer = workbenchAdvisor.getWorkbenchConfigurer().getWindowConfigurer(window);
+		return (WorkbenchActionBuilder) configurer.getData("ActionBuilder"); //$NON-NLS-1$
     }
 }
