@@ -64,6 +64,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.dialogs.PropertyPage;
+import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsMainTab;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsUtil;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.IgnoreWhiteSpaceComparator;
 import org.eclipse.ui.externaltools.internal.model.BuilderUtils;
@@ -500,7 +501,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 			buffer.append(IExternalToolConstants.BUILD_TYPE_INCREMENTAL);
 			buffer.append(',');
 			workingCopy.setAttribute(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, buffer.toString());
-			
+			workingCopy.setAttribute(ExternalToolsMainTab.FIRST_EDIT, true);
 			ILaunchConfiguration config = null;
 			setAutobuild(false);
 			config = workingCopy.doSave();
