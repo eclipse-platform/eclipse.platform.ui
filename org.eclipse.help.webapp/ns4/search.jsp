@@ -98,11 +98,8 @@ function openAdvanced()
 
 function closeAdvanced()
 {
-	try {
-		if (advancedDialog)
-			advancedDialog.close();
-	}
-	catch(e) {}
+	if (advancedDialog)
+		advancedDialog.close();
 }
 
 function doSearch()
