@@ -1111,14 +1111,11 @@ public class AntModel {
 	}
 	
 	private ClassLoader getClassLoader() {
-		AntCorePreferences corePreferences = AntCorePlugin.getPlugin().getPreferences();
-		URL[] urls = corePreferences.getURLs();
-		//ClassLoader[] pluginLoaders = corePreferences.getPluginClassLoaders();
-		//return new AntClassLoader(urls, pluginLoaders);
-		org.apache.tools.ant.AntClassLoader loader= new org.apache.tools.ant.AntClassLoader(this.getClass().getClassLoader(), false);
+		AntCorePreferences corePreferences= AntCorePlugin.getPlugin().getPreferences();
+		URL[] urls= corePreferences.getURLs();
+		org.apache.tools.ant.AntClassLoader loader= new org.apache.tools.ant.AntClassLoader(this.getClass().getClassLoader(), true);
 		for (int i = 0; i < urls.length; i++) {
-			URL url = urls[i];
-			loader.addPathElement(url.getFile());
+			loader.addPathElement(urls[i].getFile());
 		}
 		return loader;
 	}

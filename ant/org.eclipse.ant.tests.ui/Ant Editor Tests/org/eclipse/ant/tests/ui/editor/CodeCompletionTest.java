@@ -524,7 +524,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
     }
     
     /**
-     * Tests the code completion for refids (Bug 49830)
+     * Tests the code completion for custom task that has boolean attribute
      */
     public void testCustomBooleanProposals() throws BadLocationException {
 		TestTextCompletionProcessor processor = new TestTextCompletionProcessor(getAntModel("customBoolean.xml"));
@@ -540,5 +540,23 @@ public class CodeCompletionTest extends AbstractAntUITest {
     	assertTrue(proposals.length == 6);
     	assertContains("true", proposals);
     	assertContains("no", proposals);
+    }
+    
+     /**
+     * Tests the code completion for custom task that an enumerated attribute
+     */
+    public void testCustomEnumeratedProposals() throws BadLocationException {
+		TestTextCompletionProcessor processor = new TestTextCompletionProcessor(getAntModel("extensionPointTaskSepVM.xml"));
+		int lineNumber= 2;
+    	int columnNumber= 23;
+    	int lineOffset= getCurrentDocument().getLineOffset(lineNumber);
+    	processor.setLineNumber(lineNumber);
+    	processor.setColumnNumber(columnNumber);
+    	processor.setCursorPosition(lineOffset + columnNumber);
+    	ICompletionProposal[] proposals = processor.getProposalsFromDocument(getCurrentDocument(), "");
+    	assertTrue(proposals.length == 3);
+    	assertContains("cool", proposals);
+    	assertContains("awesome", proposals);
+    	assertContains("hot", proposals);
     }
 }
