@@ -232,12 +232,13 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 			menu.add((IAction)fGlobalActions.get(ITextEditorActionConstants.COPY));
 			menu.add((IAction)fGlobalActions.get(ITextEditorActionConstants.SELECT_ALL));
 		} else {
+			updateAction(ITextEditorActionConstants.PASTE);
 			menu.add((IAction)fGlobalActions.get(ITextEditorActionConstants.CUT));
 			menu.add((IAction)fGlobalActions.get(ITextEditorActionConstants.COPY));
 			menu.add((IAction)fGlobalActions.get(ITextEditorActionConstants.PASTE));
 			menu.add((IAction)fGlobalActions.get(ITextEditorActionConstants.SELECT_ALL));
 		}
-
+
 		menu.add(new Separator("FIND")); //$NON-NLS-1$
 		menu.add((IAction)fGlobalActions.get(ITextEditorActionConstants.FIND));
 		menu.add((IAction)fGlobalActions.get(ITextEditorActionConstants.GOTO_LINE));
