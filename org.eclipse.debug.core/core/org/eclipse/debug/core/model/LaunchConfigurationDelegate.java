@@ -289,9 +289,9 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 		Integer severity = (Integer)problemMarker.getAttribute(IMarker.SEVERITY);
 		if (severity != null) {
 			return severity.intValue() >= IMarker.SEVERITY_ERROR;
-		} else {
-			return false;
-		}
+		} 
+		
+		return false;
 	}
 	
 	/**

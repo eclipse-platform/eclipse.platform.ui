@@ -170,9 +170,8 @@ public class ExternalArchiveSourceContainer extends AbstractSourceContainer {
 						int rootLength = entryName.length() - name.length();
 						if (rootLength > 0) {
 							return entryName.substring(0, rootLength);
-						} else {
-							return ""; //$NON-NLS-1$
-						}
+						} 
+						return ""; //$NON-NLS-1$
 					}
 				}
 			} catch (IllegalStateException e) {
