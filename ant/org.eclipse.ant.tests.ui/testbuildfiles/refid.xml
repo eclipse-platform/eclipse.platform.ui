@@ -22,4 +22,28 @@
 	
 	<target name= "depends" depends=" compile  , 1 ">
 	</target>
+	
+	<property name="name with spaces" value="value with spaces"/>
+
+	
+	<fileset dir="dir" id="filesetTest">
+	    <include name="include"/>
+	    <exclude name="exclude"/>
+	</fileset>
+	
+	<patternset id="patternSetTest">
+			<include name="*.xml"/>
+			<exclude name="**/*Test*"/>
+	</patternset>
+	
+	<patternset id="patternSetTestBad">
+		<includesfile name="nothere"/>
+	</patternset>
+
+	<echo>${name with spaces}</echo>
+	
+	<fileset refid="filesetTest">
+		<patternset refid="patternSetTest"></patternset>
+		<patternset refid="patternSetTestBad"></patternset>
+	</fileset>
 </project>

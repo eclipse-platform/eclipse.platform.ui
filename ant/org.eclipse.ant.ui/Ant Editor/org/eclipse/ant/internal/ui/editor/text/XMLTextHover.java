@@ -151,7 +151,7 @@ public class XMLTextHover implements ITextHover, ITextHoverExtension {
 			}
 		} catch (BadLocationException e) {
 		} catch (BuildException be) {
-			antModel.handleBuildException(be, null);
+			return be.getMessage();
 		}
 		
 		return null;

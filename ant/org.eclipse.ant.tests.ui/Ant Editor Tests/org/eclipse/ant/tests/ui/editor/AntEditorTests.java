@@ -27,21 +27,100 @@ public class AntEditorTests extends AbstractAntUITest {
         super(name);
     }
     
-    public void testHover() throws PartInitException, BadLocationException {
+    public void testHoverForPath() throws PartInitException, BadLocationException {
         try {
-		    IFile file= getIFile("refid.xml");
-		    AntEditor editor= (AntEditor)EditorTestHelper.openInEditor(file, "org.eclipse.ant.ui.internal.editor.AntEditor", true);
-		    XMLTextHover hover= new XMLTextHover(editor);
-		    int offset= getOffsetWithinLine(editor, 9, 20);
-		    IRegion region= hover.getHoverRegion(editor.getViewer(), offset);
-		    String hoverText= hover.getHoverInfo(editor.getViewer(), region);
-		    String correctResult= "<html><body text=\"#000000\" bgcolor=\"#FFFF88\"><font size=-1><h5>Path Elements:</h5><ul><li>";
-		    assertTrue("Expected the following hover text to start with: " + correctResult, hoverText.startsWith(correctResult));
-		    
+            IFile file= getIFile("refid.xml");
+            AntEditor editor= (AntEditor)EditorTestHelper.openInEditor(file, "org.eclipse.ant.ui.internal.editor.AntEditor", true);
+            XMLTextHover hover= new XMLTextHover(editor);
+            int offset= getOffsetWithinLine(editor, 9, 20);
+            IRegion region= hover.getHoverRegion(editor.getViewer(), offset);
+            String hoverText= hover.getHoverInfo(editor.getViewer(), region);
+            String correctResult= "<html><body text=\"#000000\" bgcolor=\"#FFFF88\"><font size=-1><h5>Path Elements:</h5><ul><li>";
+            assertTrue("Expected the following hover text to start with: " + correctResult, hoverText.startsWith(correctResult));
+            
         } finally {
             EditorTestHelper.closeAllEditors();    
         }
     }
+    
+    public void testHoverForProperty() throws PartInitException, BadLocationException {
+        try {
+            IFile file= getIFile("refid.xml");
+            AntEditor editor= (AntEditor)EditorTestHelper.openInEditor(file, "org.eclipse.ant.ui.internal.editor.AntEditor", true);
+            XMLTextHover hover= new XMLTextHover(editor);
+            int offset= getOffsetWithinLine(editor, 42, 13);
+            IRegion region= hover.getHoverRegion(editor.getViewer(), offset);
+            String hoverText= hover.getHoverInfo(editor.getViewer(), region);
+            String correctResult= "<html><body text=\"#000000\" bgcolor=\"#FFFF88\"><font size=-1><p>value with spaces</font></body></html>";
+            assertTrue("Expected the following hover text to start with: " + correctResult, correctResult.equals(hoverText));
+        } finally {
+            EditorTestHelper.closeAllEditors();    
+        }
+    }
+    
+    public void testPropertyOpenDeclaration() throws PartInitException, BadLocationException {
+        try {
+            IFile file= getIFile("refid.xml");
+            AntEditor editor= (AntEditor)EditorTestHelper.openInEditor(file, "org.eclipse.ant.ui.internal.editor.AntEditor", true);
+            int offset = getOffsetWithinLine(editor, 42, 12);
+            editor.selectAndReveal(offset, 2);
+            
+            editor.openReferenceElement();
+            ITextSelection selection= (ITextSelection) editor.getSelectionProvider().getSelection();
+            assertTrue("Selection is not correct: " + selection.getText(), "property".equals(selection.getText()));
+        } finally {
+            EditorTestHelper.closeAllEditors();    
+        }
+    }
+    
+    public void testPatternSetHover() throws PartInitException, BadLocationException {
+        try {
+            IFile file= getIFile("refid.xml");
+            AntEditor editor= (AntEditor)EditorTestHelper.openInEditor(file, "org.eclipse.ant.ui.internal.editor.AntEditor", true);
+            XMLTextHover hover= new XMLTextHover(editor);
+            int offset= getOffsetWithinLine(editor, 45, 25);
+            IRegion region= hover.getHoverRegion(editor.getViewer(), offset);
+            String hoverText= hover.getHoverInfo(editor.getViewer(), region);
+            String correctResult= "<html><body text=\"#000000\" bgcolor=\"#FFFF88\"><font size=-1><h5>Includes: </h5><li>*.xml</li><p><p><h5>Excludes: </h5><li>**/*Test*</li></font></body></html>";
+            assertTrue("Expected the following hover text to start with: " + correctResult, hoverText.startsWith(correctResult));
+            
+        } finally {
+            EditorTestHelper.closeAllEditors();    
+        }
+    }
+    
+    public void testBadPatternSetHover() throws PartInitException, BadLocationException {
+        try {
+            IFile file= getIFile("refid.xml");
+            AntEditor editor= (AntEditor)EditorTestHelper.openInEditor(file, "org.eclipse.ant.ui.internal.editor.AntEditor", true);
+            XMLTextHover hover= new XMLTextHover(editor);
+            int offset= getOffsetWithinLine(editor, 46, 25);
+            IRegion region= hover.getHoverRegion(editor.getViewer(), offset);
+            String hoverText= hover.getHoverInfo(editor.getViewer(), region);
+            String correctResult= "\\Ant UI Tests\\buildfiles\\nothere not found.";
+            assertTrue("Expected the following hover text to ends with: " + correctResult, hoverText.endsWith(correctResult));
+            
+        } finally {
+            EditorTestHelper.closeAllEditors();    
+        }
+    }
+    
+    public void testFileSetHover() throws PartInitException, BadLocationException {
+        try {
+            IFile file= getIFile("refid.xml");
+            AntEditor editor= (AntEditor)EditorTestHelper.openInEditor(file, "org.eclipse.ant.ui.internal.editor.AntEditor", true);
+            XMLTextHover hover= new XMLTextHover(editor);
+            int offset= getOffsetWithinLine(editor, 44, 20);
+            IRegion region= hover.getHoverRegion(editor.getViewer(), offset);
+            String hoverText= hover.getHoverInfo(editor.getViewer(), region);
+            String correctResult= "<html><body text=\"#000000\" bgcolor=\"#FFFF88\"><font size=-1><h5>Includes: </h5><li>include</li><p><p><h5>Excludes: </h5><li>exclude</li><li>**\\*~</li><li>**\\#*#</li><li>**\\.#*</li><li>**\\%*%</li><li>**\\._*</li><li>**\\CVS</li><li>**\\CVS\\**</li><li>**\\.cvsignore</li><li>**\\SCCS</li><li>**\\SCCS\\**</li><li>**\\vssver.scc</li><li>**\\.svn</li><li>**\\.svn\\**</li><li>**\\.DS_Store</li></font></body></html>";
+            assertTrue("Expected the following hover text to start with: " + correctResult, correctResult.equals(hoverText));
+            
+        } finally {
+            EditorTestHelper.closeAllEditors();    
+        }
+    }
+    
     
     public void testTaskdefOpenDeclaration() throws PartInitException, BadLocationException {
         try {
