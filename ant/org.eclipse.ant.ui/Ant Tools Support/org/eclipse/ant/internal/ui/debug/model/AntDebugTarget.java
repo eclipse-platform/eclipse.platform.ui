@@ -151,14 +151,14 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
 	 * @see org.eclipse.debug.core.model.ITerminate#canTerminate()
 	 */
 	public boolean canTerminate() {
-		return !fTerminated && fProcess.canTerminate();
+		return !fTerminated;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ITerminate#isTerminated()
 	 */
 	public boolean isTerminated() {
-		return fTerminated || fProcess.isTerminated();
+		return fTerminated;
 	}
 	
 	/* (non-Javadoc)

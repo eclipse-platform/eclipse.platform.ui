@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="Ant Editor Tests"/>
+	<classpathentry kind="src" path="Ant Debug Tests"/>
 	<classpathentry kind="src" path="test plugin"/>
 	<classpathentry kind="src" path="Ant Tests"/>
 	<classpathentry kind="src" path="External Tools"/>

@@ -179,12 +179,12 @@ public abstract class AbstractAntUITest extends TestCase {
 	}
 	
 	/**
-	* Launches the Ant build in debug mode with the buildfile name (no extension).
+	* Launches the Ant build in debug output mode with the buildfile name (no extension).
 	* 
 	* @param mainTypeName the program to launch
 	* @return thread in which the first suspend event occurred
 	*/
-	protected void launchInDebug(String buildFileName) throws CoreException {
+	protected void launchWithDebug(String buildFileName) throws CoreException {
 		ILaunchConfiguration config = getLaunchConfiguration(buildFileName);
 		assertNotNull("Could not locate launch configuration for " + buildFileName, config);
 		ILaunchConfigurationWorkingCopy copy= config.getWorkingCopy();
