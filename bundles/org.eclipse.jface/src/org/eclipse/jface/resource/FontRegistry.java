@@ -154,11 +154,11 @@ public class FontRegistry extends ResourceRegistry {
         void addAllocatedFontsToStale(Font defaultFont) {
             //Return all of the fonts allocated by the receiver.
             //if any of them are the defaultFont then don't bother.
-            if (defaultFont != baseFont)
+            if (defaultFont != baseFont && baseFont != null)
                 staleFonts.add(baseFont);
-            if (defaultFont != boldFont)
+            if (defaultFont != boldFont && boldFont != null)
                 staleFonts.add(boldFont);
-            if (defaultFont != italicFont)
+            if (defaultFont != italicFont && italicFont != null)
                 staleFonts.add(italicFont);
         }
     }
