@@ -180,24 +180,25 @@ public class IsModifiedTests extends EclipseTest {
 						+ (resourceModified ? " should not be modified but is" : " should be modified but isn't"),
 					(listedResourcesShouldBeModified && (resourceModified == resourceListed)) ||
 					(!listedResourcesShouldBeModified && (!resourceModified == resourceListed)));
-
-				IResource iResource = resource.getIResource();
-				if (resource.isModified()) {
-					modifiedResources.add(iResource);
-					if (!wasPreviouslyModified(iResource)) {
-						// the state has changed, make sure we got a notification
-						Boolean b = (Boolean)changedResources.get(iResource);
-						assertTrue("No notification received for state change of " + iResource.getFullPath().toString(),
-							b == Boolean.TRUE);
-					}	
-				} else {
-					if (wasPreviouslyModified(iResource)) {
-						// the state has changed, make sure we got a notification
-						Boolean b = (Boolean)changedResources.get(iResource);
-						assertTrue("No notification received for state change of " + iResource.getFullPath().toString(),
-							b == Boolean.FALSE);
-					}
-				}
+					
+//				Commented because the CVS core doesn't rely on resourceModify to be called.
+//				IResource iResource = resource.getIResource();
+//				if (resource.isModified()) {
+//					modifiedResources.add(iResource);
+//					if (!wasPreviouslyModified(iResource)) {
+//						// the state has changed, make sure we got a notification
+//						Boolean b = (Boolean)changedResources.get(iResource);
+//						assertTrue("No notification received for state change of " + iResource.getFullPath().toString(),
+//							b == Boolean.TRUE);
+//					}	
+//				} else {
+//					if (wasPreviouslyModified(iResource)) {
+//						// the state has changed, make sure we got a notification
+//						Boolean b = (Boolean)changedResources.get(iResource);
+//						assertTrue("No notification received for state change of " + iResource.getFullPath().toString(),
+//							b == Boolean.FALSE);
+//					}
+//				}
 			}
 			public boolean wasPreviouslyModified(IResource iResource) {
 				return previouslyModified.contains(iResource);
