@@ -128,7 +128,7 @@ public interface IFeature {
 	IURLEntry getLicense();
 
 	/**
-	 * Optional operating system specification.
+	 * Returns optional operating system specification.
 	 * A comma-separated list of os designators defined by the platform.
 	 * Indicates this feature should only be installed on one of the specified
 	 * os systems. If this attribute is not specified, the feature can be
@@ -144,7 +144,7 @@ public interface IFeature {
 	String getOS();
 
 	/**
-	 * Optional windowing system specification. 
+	 * Returns optional windowing system specification. 
 	 * A comma-separated list of ws designators defined by the platform.
 	 * Indicates this feature should only be installed on one of the specified
 	 * ws systems. If this attribute is not specified, the feature can be
@@ -160,7 +160,7 @@ public interface IFeature {
 	String getWS();
 
 	/**
-	 * Optional system architecture specification. 
+	 * Returns optional system architecture specification. 
 	 * A comma-separated list of arch designators defined by the platform.
 	 * Indicates this feature should only be installed on one of the specified
 	 * systems. If this attribute is not specified, the feature can be
@@ -176,7 +176,7 @@ public interface IFeature {
 	String getArch();
 
 	/**
-	 * Optional locale specification. 
+	 * Returns optional locale specification. 
 	 * A comma-separated list of locale designators defined by Java.
 	 * Indicates this feature should only be installed on a system running
 	 * with a compatible locale (using Java locale-matching rules).

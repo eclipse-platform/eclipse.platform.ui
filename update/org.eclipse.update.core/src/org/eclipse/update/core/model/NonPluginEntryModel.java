@@ -1,20 +1,19 @@
 package org.eclipse.update.core.model;
-
 /*
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */ 
 
 /**
- * An object which represents a non-plug-in entry in the
- * packaging manifest. Non-plug-in entries are arbitrary
- * files handled by custom implementations
+ * Non-plug-in entry model object.
  * <p>
- * This class may be instantiated, or further subclassed.
+ * This class may be instantiated or subclassed by clients. However, in most 
+ * cases clients should instead instantiate or subclass the provided 
+ * concrete implementation of this model.
  * </p>
+ * @see org.eclipse.update.core.NonPluginEntry
  * @since 2.0
  */
-
 public class NonPluginEntryModel extends ContentEntryModel {
 	
 	private String id = null;
@@ -29,9 +28,9 @@ public class NonPluginEntryModel extends ContentEntryModel {
 	}
 	
 	/**
-	 * Returns the entry identifier. This is an uninterpreted string.
+	 * Returns the entry identifier.
 	 *
-	 * @return the entry identifier or <code>null</code>
+	 * @return entry identifier, or <code>null</code>
 	 * @since 2.0
 	 */
 	public String getIdentifier() {
@@ -40,9 +39,9 @@ public class NonPluginEntryModel extends ContentEntryModel {
 	
 	/**
 	 * Sets the entry identifier.
-	 * This object must not be read-only.
+	 * Throws a runtime exception if this object is marked read-only.
 	 *
-	 * @param id the entry identifier. May be <code>null</code>.
+	 * @param id entry identifier.
 	 * @since 2.0
 	 */	
 	public void setIdentifier(String id) {

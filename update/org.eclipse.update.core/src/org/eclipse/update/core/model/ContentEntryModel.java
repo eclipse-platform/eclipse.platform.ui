@@ -1,22 +1,26 @@
 package org.eclipse.update.core.model;
-
 /*
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */ 
 
 /**
- * An object which represents the common attributes
- * of a plug-in or a non-plug-in entry in the
- * packaging manifest.
+ * Content entry model object.
+ * This is the base class for plug-in and non-plug-in entry models.
  * <p>
- * This class cannot be instantiated and must be subclassed.
+ * This class must be subclassed by clients. 
  * </p>
+ * @see org.eclipse.update.core.model.PluginEntryModel
+ * @see org.eclipse.update.core.model.NonPluginEntryModel
  * @since 2.0
  */
-
 public abstract class ContentEntryModel extends ModelObject {
 	
+	/**
+	 * An indication the size could not be determined
+	 * 
+	 * @since 2.0
+	 */
 	public static final long UNKNOWN_SIZE = -1;
 	
 	private long downloadSize = UNKNOWN_SIZE;
@@ -27,7 +31,7 @@ public abstract class ContentEntryModel extends ModelObject {
 	private String arch;
 	
 	/**
-	 * Creates a uninitialized entry model object.
+	 * Creates a uninitialized content entry model object.
 	 * 
 	 * @since 2.0
 	 */
@@ -36,15 +40,11 @@ public abstract class ContentEntryModel extends ModelObject {
 	}
 	
 	/**
-	 * Returns the total download size for the entry.
-	 *
-	 * optional hint supplied by the feature
-	 *  packager, indicating the download size
-	 *  in KBytes of the referenced data archive.
-	 *  If not specified, the download size is not known 
+	 * Returns the download size of the entry, if it can be determined.
+	 * 
+	 * @return download size of the entry in KiloBytes, or an indication 
+	 * the size could not be determined
 	 * @since 2.0 
-	 * @return the entry download size in KBytes
-	 * 		or <code>-1</code> if not known
 	 */
 
 	public long getDownloadSize() {
@@ -52,49 +52,30 @@ public abstract class ContentEntryModel extends ModelObject {
 	}
 	
 	/**
-	 * Returns the total install size for the entry.
-	 *
-	 * @return the entry install size in KBytes
-	 * 		or <code>-1</code> if not known
+	 * Returns the install size of the entry, if it can be determined.
+	 * 
+	 * @return install size of the entry in KiloBytes, or an indication 
+	 * the size could not be determined
 	 * @since 2.0
-	 */
-	
-	
+	 */	
 	public long getInstallSize() {
 		return installSize;
 	}
 	
 	/**
-	 * Optional operating system specification.
-	 * A comma-separated list of os designators defined by Eclipse 
-	 * (in org.eclipse.core.boot.BootLoader).
-	 * Indicates this entry should only be installed on one of the specified
-	 * os systems. If this attribute is not specified, the entry can be
-	 * installed on all systems (portable implementation).
-	 * 
-	 * This information is used as a hint by the installation and update
-	 * support (user can force installation of feature regardless of this setting).
+	 * Returns optional operating system specification.
 	 *
 	 * @see org.eclipse.core.boot.BootLoader 
 	 * @return the operating system specification or <code>null</code>.
 	 * @since 2.0 
 	 */
-
 	public String getOS() {
 		return os;
 	}
 	
 	/**
-	 * Optional windowing system specification. 
-	 * A comma-separated list of ws designators defined by Eclipse
-	 * (in org.eclipse.core.boot.BootLoader).
-	 * Indicates this feature should only be installed on one of the specified
-	 * ws systems. If this attribute is not specified, the feature can be
-	 * installed on all systems (portable implementation).
-	 * 
-	 * This information is used as a hint by the installation and update
-	 * support (user can force installation of feature regardless of this setting).
-	 * 
+	 * Returns optional windowing system specification.
+	 *
 	 * @see org.eclipse.core.boot.BootLoader 
 	 * @return the windowing system specification or <code>null</code>.
 	 * @since 2.0 
@@ -105,30 +86,32 @@ public abstract class ContentEntryModel extends ModelObject {
 	}
 	
 	/**
-	 * Optional locale specification. 
-	 * A comma-separated list of locale designators defined by Java.
-	 * Indicates this feature should only be installed on a system running
-	 * with a compatible locale (using Java locale-matching rules).
-	 * If this attribute is not specified, the feature can be installed 
-	 * on all systems (language-neutral implementation). 
-	 * 
-	 * This information is used as a hint by the installation and update
-	 *  support (user can force installation of feature regardless of this setting).
-	 * 
-	 * @return the locale specification or <code>null</code>.
+	 * Returns optional system architecture specification. 
+	 *
+	 * @see org.eclipse.core.boot.BootLoader 
+	 * @return the system architecture specification or <code>null</code>.
 	 * @since 2.0 
 	 */
-
+	public String getArch() {
+		return arch;
+	}
+	
+	/**
+	 * Returns optional locale specification.
+	 *
+	 * @return the locale specification, or <code>null</code>.
+	 * @since 2.0 
+	 */
 	public String getNL() {
 		return nl;
 	}
 	
 	/**
-	 * Sets the entry download size.
-	 * This object must not be read-only.
-	 *
-	 * @param downloadSize the entry download size in KBytes.
-	 * @since 2.0
+	 * Sets the download size of the entry.
+	 * Throws a runtime exception if this object is marked read-only.
+	 * 
+	 * @param downloadSize download size of the entry in KiloBytes
+	 * @since 2.0 
 	 */	
 	public void setDownloadSize(long downloadSize) {
 		assertIsWriteable();
@@ -139,10 +122,10 @@ public abstract class ContentEntryModel extends ModelObject {
 	}
 	
 	/**
-	 * Sets the entry install size.
-	 * This object must not be read-only.
-	 *
-	 * @param installSize the entry install size in KBytes.
+	 * Sets the install size of the entry.
+	 * Throws a runtime exception if this object is marked read-only.
+	 * 
+	 * @param installSize install size of the entry in KiloBytes
 	 * @since 2.0
 	 */	
 	public void setInstallSize(long installSize) {
@@ -155,8 +138,8 @@ public abstract class ContentEntryModel extends ModelObject {
 	
 	/**
 	 * Sets the operating system specification.
-	 * This object must not be read-only.
-	 *
+	 * Throws a runtime exception if this object is marked read-only.
+	 * 
 	 * @see org.eclipse.core.boot.BootLoader 
 	 * @param os comma-separated list of OS identifiers as defined by Eclipse.
 	 * @since 2.0
@@ -168,7 +151,7 @@ public abstract class ContentEntryModel extends ModelObject {
 	
 	/**
 	 * Sets the windowing system specification.
-	 * This object must not be read-only.
+	 * Throws a runtime exception if this object is marked read-only.
 	 *
 	 * @see org.eclipse.core.boot.BootLoader 
 	 * @param ws comma-separated list of WS identifiers as defined by Eclipse.
@@ -178,33 +161,29 @@ public abstract class ContentEntryModel extends ModelObject {
 		assertIsWriteable();
 		this.ws = ws;
 	}
+
+	/**
+	 * Sets the system architecture specification.
+	 * Throws a runtime exception if this object is marked read-only.
+	 *
+	 * @see org.eclipse.core.boot.BootLoader 
+	 * @param arch comma-separated list of arch identifiers as defined by Eclipse.
+	 * @since 2.0
+	 */
+	public void setArch(String arch) {
+		assertIsWriteable();		
+		this.arch = arch;
+	}
 	
 	/**
 	 * Sets the locale specification.
-	 * This object must not be read-only.
+	 * Throws a runtime exception if this object is marked read-only.
 	 *
-	 * @param nl comma-separated list of locale identifiers as defined by Java.
+	 * @param nl comma-separated list of locale identifiers.
 	 * @since 2.0
 	 */	
 	public void setNL(String nl) {
 		assertIsWriteable();
 		this.nl = nl;
 	}
-	/**
-	 * Gets the arch.
-	 * @return Returns a String
-	 */
-	public String getArch() {
-		return arch;
-	}
-
-	/**
-	 * Sets the arch.
-	 * @param arch The arch to set
-	 */
-	public void setArch(String arch) {
-		assertIsWriteable();		
-		this.arch = arch;
-	}
-
 }
