@@ -19,26 +19,17 @@ import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.ui.texteditor.ExtendedTextEditorPreferenceConstants;
 
 /**
- * SourceViewer configuration for the text editor.
+ * Source viewer configuration for the text editor.
  * 
  * @since 3.0
  */
 public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 	
-	/**
-	 * New preference store used to initialize this configuration.
-	 * <p>
-	 * XXX: Note that this is work in progress and still subject to change.
-	 *      The reason why this is is called "new" is because at other places
-	 * 		we have a legacy preference store.
-	 * </p>
-	 * 
-	 * @since 3.0
-	 */
-	private IPreferenceStore fNewPreferenceStore;
+	/** The preference store used to initialize this configuration. */
+	private IPreferenceStore fPreferenceStore;
 
 	/**
-	 * A noop implementation of <code>IAnnotationHover</code> that will trigger the text editor
+	 * A no-op implementation of <code>IAnnotationHover</code> that will trigger the text editor
 	 * to set up annotation hover support.
 	 */
 	private static class NullHover implements IAnnotationHover {
@@ -54,8 +45,6 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 	
 	/**
 	 * Creates a text source viewer configuration.
-	 * 
-	 * @since 3.0
 	 */
 	public TextSourceViewerConfiguration() {
 	}
@@ -65,11 +54,9 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 	 * initializes it with the given preference store.
 	 * 
 	 * @param preferenceStore	the preference store used to initialize this configuration
-	 * 
-	 * @since 3.0
 	 */
 	public TextSourceViewerConfiguration(IPreferenceStore preferenceStore) {
-		fNewPreferenceStore= preferenceStore;
+		fPreferenceStore= preferenceStore;
 	}
 	
 	/*
@@ -79,13 +66,12 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 		return new NullHover();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 * @since 3.0
+	/*
+	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getTabWidth(org.eclipse.jface.text.source.ISourceViewer)
 	 */
 	public int getTabWidth(ISourceViewer sourceViewer) {
-		if (fNewPreferenceStore == null)
+		if (fPreferenceStore == null)
 			return super.getTabWidth(sourceViewer);
-		return fNewPreferenceStore.getInt(ExtendedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH);
+		return fPreferenceStore.getInt(ExtendedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH);
 	}
 }
