@@ -3,6 +3,7 @@ package org.eclipse.update.internal.ui.forms;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.update.internal.ui.pages.*;
 import org.eclipse.update.internal.ui.parts.*;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -159,7 +160,14 @@ private static final String KEY_DIALOG_MESSAGE="InstallConfigurationPage.RevertS
 	public static void informRestartNeeded(){
 		String title = UpdateUIPlugin.getResourceString(KEY_DIALOG_TITLE);
 		String message= UpdateUIPlugin.getResourceString(KEY_DIALOG_MESSAGE);
-		MessageDialog.openInformation(UpdateUIPlugin.getActiveWorkbenchShell(), title, message);
+		// defect 15439
+		boolean restart =
+			MessageDialog.openConfirm(
+				UpdateUIPlugin.getActiveWorkbenchShell(),
+				title,
+				message);
+		if (restart)
+			PlatformUI.getWorkbench().restart();
 	}	
 	
 }

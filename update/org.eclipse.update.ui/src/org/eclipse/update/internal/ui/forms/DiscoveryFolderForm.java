@@ -46,9 +46,10 @@ protected void createContents(Composite parent) {
 	parent.setLayout(layout);
 	layout.leftMargin = layout.rightMargin = 10;
 	layout.topMargin = 10;
-	layout.horizontalSpacing = 0;
 	layout.verticalSpacing = 20;
-	layout.numColumns = 1;
+	// defect 13686
+	//layout.horizontalSpacing = 0;
+	layout.numColumns = 3;
 	
 	FormWidgetFactory factory = getFactory();
 	

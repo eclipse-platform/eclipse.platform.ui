@@ -211,7 +211,8 @@ public class DetailsView extends MultiPageView {
 				//fallback - show empty page
 				showPageWithInput(UNKNOWN_PAGE, el);
 			} else
-				showPageWithInput(UNKNOWN_PAGE, null);
+				// defect 14692
+				showPageWithInput((homeAction != null) ? HOME_PAGE : UNKNOWN_PAGE, null);
 		}
 	}
 

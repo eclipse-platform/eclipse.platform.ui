@@ -654,7 +654,8 @@ public class ConfigurationView
 			manager.add(propertiesAction);
 		manager.add(new Separator());
 		drillDownAdapter.addNavigationActions(manager);
-		super.fillContextMenu(manager);
+		//defect 14684
+		//super.fillContextMenu(manager);
 	}
 
 	private void registerListeners() {
