@@ -54,6 +54,32 @@ public class ImageHyperlink extends AbstractHyperlink {
 		gc.drawImage(image, x, y);
 	}
 	
+	public Point computeSize(int wHint, int hHint, boolean changed) {
+		checkWidget();
+		Point isize = computeImageSize();
+		int textWidth = isize.x + 2 * marginWidth;
+		int textHeight = isize.y + 2 * marginHeight;
+		return new Point(textWidth, textHeight);
+	}	
+	
+	private Point computeImageSize() {
+		int x = 0;
+		int y = 0;
+		if (image!=null) {
+			x = Math.max(image.getBounds().width, x);
+			y = Math.max(image.getBounds().height, y);
+		}
+		if (hoverImage!=null) {
+			x = Math.max(hoverImage.getBounds().width, x);
+			y = Math.max(hoverImage.getBounds().height, y);
+		}
+		if (activeImage!=null) {
+			x = Math.max(activeImage.getBounds().width, x);
+			y = Math.max(activeImage.getBounds().height, y);
+		}
+		return new Point(x, y);
+	}
+	
 	protected void handleEnter() {
 		state = HOVER;
 		super.handleEnter();

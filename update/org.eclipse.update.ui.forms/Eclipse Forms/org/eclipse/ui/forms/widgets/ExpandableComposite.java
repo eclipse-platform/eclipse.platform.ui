@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,10 +18,10 @@ import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.internal.widgets.FormsResources;
 /**
  * This composite is capable of expanding or collapsing a single client that is
- * its direct child. The composite renders a twistie in the upper-left corner,
- * followed by a title that also acts as a hyperlink (can be selected and is
- * traversable). The client is layed out below the title when expanded, or
- * hidden when collapsed.
+ * its direct child. The composite renders an expansion toggle afforance
+ * (according to the chosen style), and a title that also acts as a hyperlink
+ * (can be selected and is traversable). The client is layed out below the
+ * title when expanded, or hidden when collapsed.
  * 
  * @since 3.0
  */
@@ -253,6 +253,14 @@ public class ExpandableComposite extends Composite {
 			return width + marginWidth + marginWidth;
 		}
 	}
+	/**
+	 * Creates an expandable composite using a TWISTIE toggle.
+	 * 
+	 * @param parent
+	 *            the parent composite
+	 * @param style
+	 *            SWT style bits
+	 */
 	public ExpandableComposite(Composite parent, int style) {
 		this(parent, style, TWISTIE);
 	}
@@ -264,7 +272,8 @@ public class ExpandableComposite extends Composite {
 	 * @param style
 	 *            the control style
 	 * @param expansionStyle
-	 *            the style of the expansion widget (TREE or TWISTIE)
+	 *            the style of the expansion widget (TREE_NODE, TWISTIE,
+	 *            CLIENT_INDENT, COMPACT, FOCUS_TITLE)
 	 */
 	public ExpandableComposite(Composite parent, int style, int expansionStyle) {
 		super(parent, style);
@@ -318,29 +327,54 @@ public class ExpandableComposite extends Composite {
 			textLabel = label;
 		}
 	}
+	/**
+	 * Prevents assignment of the layout manager - expandable composite uses
+	 * its own layout.
+	 */
 	public final void setLayout(Layout layout) {
-		// Section has its own layout - users cannot change it
 	}
+	/**
+	 * Sets the background of all the custom controls in the expandable.
+	 */
 	public void setBackground(Color bg) {
 		super.setBackground(bg);
 		textLabel.setBackground(bg);
 		if (toggle != null)
 			toggle.setBackground(bg);
 	}
+	/**
+	 * Sets the foreground of all the custom controls in the expandable.
+	 */
 	public void setForeground(Color fg) {
 		super.setForeground(fg);
 		textLabel.setForeground(fg);
 		if (toggle != null)
 			toggle.setForeground(fg);
 	}
+	/**
+	 * Sets the color of the toggle affordance.
+	 * 
+	 * @param c
+	 *            the color object
+	 */
 	public void setToggleColor(Color c) {
 		if (toggle != null)
 			toggle.setDecorationColor(c);
 	}
+	/**
+	 * Sets the active color of the toggle affordance (when the mouse enters
+	 * the toggle area).
+	 * 
+	 * @param c
+	 *            the active color object
+	 */
 	public void setActiveToggleColor(Color c) {
 		if (toggle != null)
 			toggle.setActiveDecorationColor(c);
 	}
+	/**
+	 * Sets the fonts of all the custom controls in the expandable.
+	 */
 	public void setFont(Font font) {
 		super.setFont(font);
 		textLabel.setFont(font);
@@ -349,7 +383,7 @@ public class ExpandableComposite extends Composite {
 	}
 	/**
 	 * Sets the client of this expandable composite. The client must not be
-	 * <samp>null</samp> and must be a direct child of this container.
+	 * <samp>null </samp> and must be a direct child of this container.
 	 * 
 	 * @param client
 	 *            the client that will be expanded or collapsed
@@ -396,13 +430,15 @@ public class ExpandableComposite extends Composite {
 	/**
 	 * Tests the expanded state of the composite.
 	 * 
-	 * @return <samp>true</samp> if expanded, <samp>false</samp> if
+	 * @return <samp>true </samp> if expanded, <samp>false </samp> if
 	 *         collapsed.
 	 */
 	public boolean isExpanded() {
 		return expanded;
 	}
 	/**
+	 * Returns the bitwise-ORed style bits for the expansion control.
+	 * 
 	 * @return
 	 */
 	public int getExpansionStyle() {
@@ -419,6 +455,12 @@ public class ExpandableComposite extends Composite {
 		if (toggle != null)
 			toggle.setExpanded(expanded);
 	}
+	/**
+	 * Performs the expansion state change for the expandable control.
+	 * 
+	 * @param expanded
+	 *            the expansion state
+	 */
 	protected void internalSetExpanded(boolean expanded) {
 		if (this.expanded != expanded) {
 			this.expanded = expanded;
@@ -429,12 +471,26 @@ public class ExpandableComposite extends Composite {
 			layout();
 		}
 	}
+	/**
+	 * Adds the listener that will be notified when the expansion state
+	 * changes.
+	 * 
+	 * @param listener
+	 *            the listener to add
+	 */
 	public void addExpansionListener(ExpansionListener listener) {
 		if (!listeners.contains(listener))
 			listeners.add(listener);
 	}
+	/**
+	 * Removes the expansion listener.
+	 * 
+	 * @param listener
+	 *            the listner to remove
+	 */
 	public void removeExpansionListener(ExpansionListener listener) {
-		listeners.remove(listener);
+		if (listeners.contains(listener))
+			listeners.remove(listener);
 	}
 	private void toggleState() {
 		boolean newState = !isExpanded();
@@ -455,12 +511,29 @@ public class ExpandableComposite extends Composite {
 				listener.expansionStateChanged(e);
 		}
 	}
+	/**
+	 * Returns description control that will be placed under the title if
+	 * present.
+	 * 
+	 * @return the description control or <samp>null </samp> if not used.
+	 */
 	protected Control getDescriptionControl() {
 		return null;
 	}
+	/**
+	 * Returns the separator control that will be placed between the title and
+	 * the description if present.
+	 * 
+	 * @return the separator control or <samp>null </samp> if not used.
+	 */
 	protected Control getSeparatorControl() {
 		return null;
 	}
+	/**
+	 * Computes the size of the expandable composite.
+	 * 
+	 * @see org.eclipse.swt.widgets.Composite#computeSize
+	 */
 	public Point computeSize(int wHint, int hHint, boolean changed) {
 		checkWidget();
 		Point size;
@@ -473,8 +546,18 @@ public class ExpandableComposite extends Composite {
 		Rectangle trim = computeTrim(0, 0, size.x, size.y);
 		return new Point(trim.width, trim.height);
 	}
+	/**
+	 * Returns <samp>true </samp> if the composite is fixed i.e. cannot be
+	 * expanded or collapsed. Fixed control will still contain the title,
+	 * separator and description (if present) as well as the client, but will
+	 * be in the permanent expanded state and the toggle affordance will not be
+	 * shown.
+	 * 
+	 * @return <samp>true </samp> if the control is fixed in the expanded
+	 *         state, <samp>false </samp> if it can be collapsed.
+	 */
 	protected boolean isFixedStyle() {
 		return (expansionStyle & TWISTIE) == 0
-		&& (expansionStyle & TREE_NODE) == 0;
+				&& (expansionStyle & TREE_NODE) == 0;
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,12 +28,18 @@ import org.eclipse.ui.forms.*;
  * for painting flat borders for select controls, managing hyperlink groups and
  * control colors.
  * <p>
+ * The toolkit creates some of the most common controls used to
+ * populate Eclipse forms. Controls that must be created using
+ * their constructors, <samp>adapt</samp> method is available
+ * to change its properties in the same way as with the
+ * supported toolkit controls.
+ * <p>
  * Typically, one toolkit object is created per workbench part (for example, an
  * editor or a form wizard). The toolkit is disposed when the part is disposed.
  * To conserve resources, it is possible to create one color object for the
- * entire plug-in and shared it between several toolkits. The plug-in is
- * responsible for disposing the colors (disposing the toolkit that shares
- * color will not dispose the colors).
+ * entire plug-in and share it between several toolkits. The plug-in is
+ * responsible for disposing the colors (disposing the toolkit that uses
+ * shared color object will not dispose the colors).
  * 
  * @since 3.0
  */
@@ -41,6 +47,7 @@ import org.eclipse.ui.forms.*;
 public class FormToolkit {
 	public static final String KEY_DRAW_BORDER = "FormWidgetFactory.drawBorder";
 	public static final String TREE_BORDER = "treeBorder";
+	public static final String TEXT_BORDER = "textBorder";
 
 	private int borderStyle = SWT.NULL;
 	private FormColors colors;
@@ -59,6 +66,7 @@ public class FormToolkit {
 			for (int i = 0; i < children.length; i++) {
 				Control c = children[i];
 				boolean inactiveBorder = false;
+				boolean textBorder = false;
 				if (c.getEnabled() == false && !(c instanceof CCombo))
 					continue;
 				if (c instanceof Hyperlink)
@@ -69,12 +77,16 @@ public class FormToolkit {
 						continue;
 					if (flag.equals(TREE_BORDER))
 						inactiveBorder = true;
+					else
+						if (flag.equals(TEXT_BORDER))
+						textBorder = true;
 				}
 
 				if (!inactiveBorder
 					&& (c instanceof Text
 						|| c instanceof Canvas
-						|| c instanceof CCombo)) {
+						|| c instanceof CCombo
+						|| textBorder)) {
 					Rectangle b = c.getBounds();
 					GC gc = event.gc;
 					gc.setForeground(c.getBackground());
@@ -567,8 +579,24 @@ public class FormToolkit {
 	 * provided parent. Borders will not be painted if the global border style
 	 * is SWT.BORDER (i.e. if native borders are used). Call this method during
 	 * creation of a form composite to get the borders of its children painted.
+	 * Care should be taken when selection layout margins. At least
+	 * one pixel pargin width and height must be chosen to allow the
+	 * toolkit to paint the border on the parent around the widgets. 
+	 * <p>
+	 * Borders are painted for some controls that are selected
+	 * by the toolkit by default. If a control needs a border
+	 * but is not on its list, it is possible to force border
+	 * in the following way:
+	 * <pre>
+	 * widget.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TREE_BORDER);
 	 * 
-	 * @param parent
+	 * or
+	 * 
+	 * widget.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
+	 * </pre>
+	 * 
+	 * @param parent the parent that owns the children for which
+	 * the border needs to be painted.
 	 */
 	public void paintBordersFor(Composite parent) {
 		if (borderStyle == SWT.BORDER)
