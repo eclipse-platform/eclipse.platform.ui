@@ -65,8 +65,9 @@ public interface IBreakpointManager {
 	 * Configures the given breakpoint's <code>MODEL_IDENTIFIER</code>
 	 * and <code>ENABLED</code> attributes to the given values.
 	 * This is a convenience method for
-	 * <code>IMarker.setAttribute(String, String)</code> and
+	 * <code>IMarker.setAttribute(String, Object)</code> and
 	 * <code>IMarker.setAttribute(String, boolean)</code>.
+	 * <code>IMarker.setAttribute(String, int)</code>.
 	 *
 	 * @param breakpoint the breakpoint marker to configure
 	 * @param modelIdentifier the identifier of the debug model plug-in
@@ -75,8 +76,9 @@ public interface IBreakpointManager {
 	 *	breakpoint marker
 	 * 
 	 * @exception CoreException if setting an attribute fails
-	 * @see IMarker#setAttribute(String, String)
+	 * @see IMarker#setAttribute(String, Object)
 	 * @see IMarker#setAttribute(String, boolean)
+	 * @see IMarker#setAttribute(String, int)
 	 */
 	void configureBreakpoint(IMarker breakpoint, String modelIdentifier, boolean enabled) throws CoreException;
 	
@@ -85,7 +87,7 @@ public interface IBreakpointManager {
 	 * <code>ENABLED</code>, <code>LINE_NUMBER</code>, <code>CHAR_START</code>,
 	 * and <code>CHAR_END</code> attributes to the given values.
 	 * This is a convenience method for
-	 * <code>IMarker.setAttribute(String, String)</code>, 
+	 * <code>IMarker.setAttribute(String, Object)</code>, 
 	 * <code>IMarker.setAttribute(String, boolean)</code>, and
 	 * <code>IMarker.setAttribute(String, int)</code>.
 	 * 
@@ -102,7 +104,7 @@ public interface IBreakpointManager {
 	 *    character associated with the breakoint, or -1 if unknown
 	 *
 	 * @exception CoreException if setting an attribute fails
-	 * @see IMarker#setAttribute(String, String)
+	 * @see IMarker#setAttribute(String, Object)
 	 * @see IMarker#setAttribute(String, boolean)
 	 * @see IMarker#setAttribute(String, int)
 	 */

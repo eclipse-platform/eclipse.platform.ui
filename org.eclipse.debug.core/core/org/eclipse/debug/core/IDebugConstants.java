@@ -50,7 +50,7 @@ public interface IDebugConstants {
 	 * This attribute is a <code>String<code> corresponding to the identifier
 	 * of a debug model plugin a breakpoint is associated with.
 	 *
-	 * @see org.eclipse.core.resources.IMarker.getAttribute(String, String)
+	 * @see org.eclipse.core.resources.IMarker#getAttribute(String, String)
 	 */
 	public static final String MODEL_IDENTIFIER = "modelIdentifier";
 		
@@ -59,7 +59,7 @@ public interface IDebugConstants {
 	 * The attribute is a <code>boolean</code> corresponding to the
 	 * enabled state of a breakpoint.
 	 *
-	 * @see org.eclipse.core.resources.IMarker.getAttribute(String, boolean)
+	 * @see org.eclipse.core.resources.IMarker#getAttribute(String, boolean)
 	 */
 	public final static String ENABLED= "enabled";
 	
