@@ -117,7 +117,7 @@ public class CVSSSH2ServerConnection implements IServerConnection {
 				} catch (JSchException ee) {
 				  retry--;
 				  if(retry<0){
-				    throw new CVSAuthenticationException(Policy.bind("CVSSSH2ServerConnection.3"), CVSAuthenticationException.NO_RETRY); //$NON-NLS-1$
+				    throw ee;
 				  }
 				  if(session.isConnected()){
 				    session.disconnect();
@@ -143,8 +143,8 @@ public class CVSSSH2ServerConnection implements IServerConnection {
 			if (e.toString().indexOf("invalid server's version string") == -1) { //$NON-NLS-1$
 			    String message = e.getMessage();
 			    if (message.equals("Auth fail")) { //$NON-NLS-1$
-			        message = Policy.bind("CVSSSH2ServerConnection.0"); //$NON-NLS-1$
-			        // Could possibly retry below but wont just in case
+                    // Do not retry as the Jsh library has it's own retry logic
+                    throw new CVSAuthenticationException(Policy.bind("CVSSSH2ServerConnection.0"), CVSAuthenticationException.NO_RETRY); //$NON-NLS-1$
 			    } else if (message.startsWith("Session.connect: ")) { //$NON-NLS-1$
 			        // Jsh has messages formatted like "Session.connect: java.net.NoRouteToHostException: ..."
 			        // Strip of the exception and try to convert it to a more meaningfull string
@@ -164,11 +164,11 @@ public class CVSSSH2ServerConnection implements IServerConnection {
 				        }
 			        }
 			    }
-				throw new CVSAuthenticationException(message, CVSAuthenticationException.NO_RETRY);
+				throw new IOException(message);
 			}
 			ssh1 = new SSHServerConnection(location, password);
 			if (ssh1 == null) {
-				throw new CVSAuthenticationException(e.toString(), CVSAuthenticationException.NO_RETRY);
+				throw new IOException(e.toString());
 			}
 			ssh1.open(monitor);
 		}
