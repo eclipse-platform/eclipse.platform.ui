@@ -5,6 +5,7 @@ package org.eclipse.team.internal.ccvs.ui.sync;
  * All Rights Reserved.
  */
  
+import org.eclipse.compare.structuremergeviewer.DiffContainer;
 import org.eclipse.compare.structuremergeviewer.IDiffContainer;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IContainer;
@@ -19,8 +20,10 @@ import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.ui.IgnoreResourcesDialog;
 import org.eclipse.team.internal.ui.sync.ChangedTeamContainer;
 import org.eclipse.team.internal.ui.sync.ITeamNode;
+import org.eclipse.team.internal.ui.sync.MergeResource;
 import org.eclipse.team.internal.ui.sync.SyncSet;
 import org.eclipse.team.internal.ui.sync.TeamFile;
 import org.eclipse.team.internal.ui.sync.UnchangedTeamContainer;
@@ -42,16 +45,20 @@ public class IgnoreAction extends Action {
 		// Do the update
 		Object first = selection.getFirstElement();
 		ICVSResource cvsResource = null;
+		IResource resource = null;
 		if (first instanceof TeamFile) {
-			IResource resource = ((TeamFile)first).getMergeResource().getResource();
+			resource = ((TeamFile)first).getMergeResource().getResource();
 			cvsResource = CVSWorkspaceRoot.getCVSFileFor((IFile) resource);
 		} else if (first instanceof ChangedTeamContainer) {
-			IResource resource = ((ChangedTeamContainer)first).getMergeResource().getResource();
+			resource = ((ChangedTeamContainer)first).getMergeResource().getResource();
 			cvsResource = CVSWorkspaceRoot.getCVSFolderFor((IContainer) resource);
 		}
-		if (cvsResource != null) {
+		if (resource != null) {
 			try {
-				cvsResource.setIgnored();
+				IgnoreResourcesDialog dialog = new IgnoreResourcesDialog(shell, new IResource[] {resource});
+				if (dialog.open() != IgnoreResourcesDialog.OK) return;
+				String pattern = dialog.getIgnorePatternFor(resource);
+				cvsResource.setIgnoredAs(pattern);
 			} catch (CVSException e) {
 				ErrorDialog.openError(shell, null, null, e.getStatus());
 				return;

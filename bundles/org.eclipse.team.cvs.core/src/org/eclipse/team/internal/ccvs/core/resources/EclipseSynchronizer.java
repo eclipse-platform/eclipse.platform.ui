@@ -254,6 +254,11 @@ public class EclipseSynchronizer {
 			beginOperation(null);
 			String[] ignores = cacheFolderIgnores(folder);
 			if (ignores != null) {
+				// verify that the pattern has not already been added
+				for (int i = 0; i < ignores.length; i++) {
+					if (ignores[i].equals(pattern)) return;
+				}
+				// add the pattern
 				String[] oldIgnores = ignores;
 				ignores = new String[oldIgnores.length + 1];
 				System.arraycopy(oldIgnores, 0, ignores, 0, oldIgnores.length);
@@ -262,7 +267,7 @@ public class EclipseSynchronizer {
 				ignores = new String[] { pattern };
 			}
 			setCachedFolderIgnores(folder, ignores);
-			SyncFileWriter.addCVSIgnoreEntries(folder, ignores);
+			SyncFileWriter.writeCVSIgnoreEntries(folder, ignores);
 			// broadcast changes to unmanaged children - they are the only candidates for being ignored
 			List possibleIgnores = new ArrayList();
 			accumulateNonManagedChildren(folder, possibleIgnores);

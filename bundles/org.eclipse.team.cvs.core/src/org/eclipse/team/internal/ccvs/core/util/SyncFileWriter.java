@@ -232,9 +232,10 @@ public class SyncFileWriter {
 	}
 	
 	/**
-	 * Adds a .cvsignore entry to the folder for the specified file.
+	 * Writes all entries to the specified folder's .cvsignore file, overwriting any
+	 * previous edition of the file.
 	 */
-	public static void addCVSIgnoreEntries(IContainer folder, String[] patterns) throws CVSException {
+	public static void writeCVSIgnoreEntries(IContainer folder, String[] patterns) throws CVSException {
 		IFile ignoreFile = folder.getFile(new Path(IGNORE_FILE));
 		writeLines(ignoreFile, patterns);
 	}	
