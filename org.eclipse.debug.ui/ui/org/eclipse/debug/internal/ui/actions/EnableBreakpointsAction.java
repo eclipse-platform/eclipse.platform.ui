@@ -124,8 +124,8 @@ public class EnableBreakpointsAction implements IViewActionDelegate, IPartListen
 		return (IStructuredSelection)getView().getViewSite().getSelectionProvider().getSelection();
 	}
 
-	/**
-	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
 		setAction(action);
@@ -133,16 +133,16 @@ public class EnableBreakpointsAction implements IViewActionDelegate, IPartListen
 			return;
 		}
 		IStructuredSelection sel= (IStructuredSelection)selection;
-		Object o= sel.getFirstElement();
-		if (!(o instanceof IBreakpoint)) {
-			return;
-		}
 		
 		Iterator itr= sel.iterator();
 		boolean allEnabled= true;
 		boolean allDisabled= true;
 		while (itr.hasNext()) {
-			IBreakpoint bp= (IBreakpoint)itr.next();
+			Object selected= itr.next();
+			if (!(selected instanceof IBreakpoint)) {
+				return;
+			}
+			IBreakpoint bp= (IBreakpoint)selected;
 			try {
 				if (bp.isEnabled()) {
 					allDisabled= false;
