@@ -57,7 +57,10 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.resource.JFaceColors;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.window.ApplicationWindow;
+import org.eclipse.jface.window.ColorSchemeService;
 
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
@@ -104,19 +107,19 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	private WWinPartService partService = new WWinPartService(this);
 	private ActionPresentation actionPresentation;
 	private WWinActionBars actionBars;
-	
+
 	private boolean updateDisabled = true;
 	private boolean closing = false;
 	private boolean shellActivated = false;
-	
+
 	private ToolBarManager fastViewBar;
 	private ShortcutBarPart fastViewPart;
 	private ShortcutBarPartDragDrop fastViewDND;
 	private Menu fastViewBarMenu;
-	
+
 	private ToolBarManager perspectiveBar;
 	private Menu perspectiveBarMenu;
-		
+
 	private MenuItem restoreItem;
 	AnimationItem animationItem;
 
@@ -124,6 +127,8 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	private Label noOpenPerspective;
 	private Rectangle normalBounds;
 	private boolean asMaximizedState = false;
+
+	private Composite topBar;
 
 	/**
 	 * Bit flags indication which submenus (New, Show Views, ...) this
@@ -271,7 +276,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	protected int fastViewBarStyle() {
 		return SWT.FLAT | SWT.WRAP | SWT.VERTICAL;
 	}
-	
+
 	/**
 	 * Return the style bits for the shortcut bar.
 	 * @return int
@@ -352,6 +357,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		SetPagePerspectiveAction action = new SetPagePerspectiveAction(perspective, page);
 		perspectiveBar.add(action);
 		perspectiveBar.update(false);
+		topBar.layout(true);
 	}
 	/**
 	 * Configures this window to have a fast view bar.
@@ -364,7 +370,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 			fastViewBar.add(new ShowFastViewContribution(this));
 		}
 	}
-	
+
 	/**
 	 * Configures this window to have a shortcut bar.
 	 * Does nothing if it already has one.
@@ -375,7 +381,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 			perspectiveBar = new ToolBarManager(style);
 		}
 	}
-	
+
 	/**
 	 * Configures this window to have a cool bar.
 	 * This method must be called before this window's shell is created.
@@ -576,8 +582,6 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		super.configureShell(shell);
 		shell.setLayout(getLayout());
 
-		createTrimWidgets(shell);
-
 		WorkbenchHelp.setHelp(shell, IHelpContextIds.WORKBENCH_WINDOW);
 
 		trackShellActivation(shell);
@@ -611,1034 +615,1054 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		fastViewBar.getControl().addListener(SWT.MouseDown, listener);
 		perspectiveBar.getControl().addListener(SWT.MouseDown, listener);
 	}
-	
-	protected void createTrimWidgets(Shell shell) {
-		createFastViewBar(shell);
-		createPerspectiveBar(shell);
-		createProgressIndicator(shell);
-	}
-	
-	/**
-	 * Create the fastView toolbar control
-	 */
-	private void createFastViewBar(Shell shell) {
-		
-		Listener listener = new Listener() {
-			public void handleEvent(Event event) {
-				if (event.type == SWT.MenuDetect) {
-					showFastViewBarPopup(new Point(event.x,event.y));
-				}
-			}
-		};
-		
-		ShortcutBarPart newPart = createShortcutBar(shell,fastViewBar,listener);
-		
-		// Create control.
-		if (newPart == null)
-			return;
-		
-		fastViewPart = newPart;
-		
-		// Enable drag and drop.
-		enableDragFastViewBarPart();
-
-	}
-	
-	/**
-	 * Create the perspective toolbar control
-	 */
-	private void createPerspectiveBar(Shell shell) {
-		
-		Listener listener = new Listener() {
-			public void handleEvent(Event event) {
-				if (event.type == SWT.MenuDetect) {
-					showPerspectiveBarPopup(new Point(event.x,event.y));
-				}
-			}
-		};
-		
-		createShortcutBar(shell,perspectiveBar,listener);
-	
-	}
-
-	/**
-	 * Create the shortcut toolbar control
-	 */
-	private ShortcutBarPart createShortcutBar(Shell shell, ToolBarManager manager, Listener menuListener) {
-		// Create control.
-		if (manager == null)
-			return null;
-		manager.createControl(shell);
-
-		// Define shortcut part.  This is for drag and drop.
-		ShortcutBarPart shortcutBarPart = new ShortcutBarPart(manager);
-
-		// Add right mouse button support.
-		manager.getControl().addListener(SWT.MenuDetect,menuListener);
-		
-		return shortcutBarPart;
-	}
-	/**
-	 * Creates the control for the cool bar control.  
-	 * </p>
-	 * @return a Control
-	 */
-	protected Control createToolBarControl(Shell shell) {
-		CoolBarManager manager = getCoolBarManager();
-		return manager.createControl(shell);
-	}
-	/**
-	 *  Do not create a toolbarmanager.  WorkbenchWindow uses CoolBarManager.  
-	 * </p>
-	 * @return a Control
-	 */
-	protected ToolBarManager createToolBarManager(int style) {
-		return null;
-	}
 
 	/* (non-Javadoc)
-	 * Method declared on ApplicationWindow.
+	 * @see org.eclipse.jface.window.ApplicationWindow#createTrimWidgets(org.eclipse.swt.widgets.Shell)
 	 */
-	protected MenuManager createMenuManager() {
-		final MenuManager result = super.createMenuManager();
-		return result;
+	protected void createTrimWidgets(Shell shell) {
+		
+		topBar = new Composite(shell,SWT.NONE);
+		topBar.setBackground(JFaceColors.getSchemeBackground(getWorkbench().getDisplay()));
+		
+		topBar.setLayout(new FormLayout());
+		
+		createToolBarControl(topBar);
+		createPerspectiveBar(topBar);
+		
+		FormData perspectiveData = new FormData();
+
+		perspectiveData.top = new FormAttachment(0);
+		perspectiveData.right = new FormAttachment(100, -5);
+
+		perspectiveBar.getControl().setLayoutData(perspectiveData);
+
+		FormData toolBarData = new FormData();
+		toolBarData.top = new FormAttachment(0);
+		toolBarData.right = new FormAttachment(perspectiveBar.getControl(), -5);
+		toolBarData.left = new FormAttachment(0);
+
+		getToolBarControl().setLayoutData(toolBarData);
+		
+		createStatusLine(shell);		
+		createFastViewBar(shell);		
+		createProgressIndicator(shell);
 	}
-	/**
-	 * Enables fast view icons to be dragged and dropped using the given IPartDropListener.
-	 */
-	/*package*/
-	void enableDragFastViewBarPart() {
-		Control control = fastViewBar.getControl();
-		if (control != null && fastViewDND == null) {
-			// Only one ShortcutBarPartDragDrop per WorkbenchWindow.
-			fastViewDND = new ShortcutBarPartDragDrop(fastViewPart, control);
-			// Add the listener only once.
-			fastViewDND.addDropListener(partDropListener);
-		}
-	}
-	/**
-	 * Returns the shortcut for a page.
-	 */
-	/* protected */
-	IContributionItem findPerspectiveShortcut(
-		IPerspectiveDescriptor perspective,
-		WorkbenchPage page) {
-		IContributionItem[] array = perspectiveBar.getItems();
-		int length = array.length;
-		for (int i = 0; i < length; i++) {
-			IContributionItem item = array[i];
-			if (item instanceof ActionContributionItem) {
-				IAction action = ((ActionContributionItem) item).getAction();
-				if (action instanceof SetPagePerspectiveAction) {
-					SetPagePerspectiveAction sp = (SetPagePerspectiveAction) action;
-					if (sp.handles(perspective, page))
-						return item;
-				}
+
+/**
+ * Create the fastView toolbar control
+ */
+private void createFastViewBar(Shell shell) {
+
+	Listener listener = new Listener() {
+		public void handleEvent(Event event) {
+			if (event.type == SWT.MenuDetect) {
+				showFastViewBarPopup(new Point(event.x, event.y));
 			}
 		}
+	};
+
+	ShortcutBarPart newPart = createShortcutBar(shell, fastViewBar, listener);
+
+	// Create control.
+	if (newPart == null)
+		return;
+
+	fastViewPart = newPart;
+
+	// Enable drag and drop.
+	enableDragFastViewBarPart();
+
+}
+
+/**
+ * Create the perspective toolbar control
+ */
+private void createPerspectiveBar(Composite parent) {
+
+	Listener listener = new Listener() {
+		public void handleEvent(Event event) {
+			if (event.type == SWT.MenuDetect) {
+				showPerspectiveBarPopup(new Point(event.x, event.y));
+			}
+		}
+	};
+
+	createShortcutBar(parent, perspectiveBar, listener);
+
+}
+
+/**
+ * Create the shortcut toolbar control
+ */
+private ShortcutBarPart createShortcutBar(
+	Composite parent,
+	ToolBarManager manager,
+	Listener menuListener) {
+	// Create control.
+	if (manager == null)
 		return null;
-	}
-	/**
-	 * Fires page activated
-	 */
-	private void firePageActivated(IWorkbenchPage page) {
-		pageListeners.firePageActivated(page);
-		partService.pageActivated(page);
-	}
-	/**
-	 * Fires page closed
-	 */
-	private void firePageClosed(IWorkbenchPage page) {
-		pageListeners.firePageClosed(page);
-		partService.pageClosed(page);
-	}
-	/**
-	 * Fires page opened
-	 */
-	private void firePageOpened(IWorkbenchPage page) {
-		pageListeners.firePageOpened(page);
-		partService.pageOpened(page);
-	}
-	/**
-	 * Fires perspective activated
-	 */
-	void firePerspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
-		perspectiveListeners.firePerspectiveActivated(page, perspective);
-		perspectiveService.firePerspectiveActivated(page, perspective);
-	}
-	/**
-	 * Fires perspective changed
-	 */
-	void firePerspectiveChanged(
-		IWorkbenchPage page,
-		IPerspectiveDescriptor perspective,
-		String changeId) {
-		perspectiveListeners.firePerspectiveChanged(page, perspective, changeId);
-		perspectiveService.firePerspectiveChanged(page, perspective, changeId);
-	}
-	/**
-	 * Fires perspective closed
-	 */
-	void firePerspectiveClosed(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
-		perspectiveService.firePerspectiveClosed(page, perspective);
-	}
-	/**
-	 * Fires perspective opened
-	 */
-	void firePerspectiveOpened(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
-		perspectiveService.firePerspectiveOpened(page, perspective);
-	}
-	/**
-	 * Returns the action bars for this window.
-	 */
-	public IActionBars getActionBars() {
-		if (actionBars == null) {
-			actionBars = new WWinActionBars(this);
-		}
-		return actionBars;
-	}
+	manager.createControl(parent);
 
-	/**
-	 * Returns the active page.
-	 *
-	 * @return the active page
-	 */
-	public IWorkbenchPage getActivePage() {
-		return pageList.getActive();
-	}
-	/**
-	 * Returns the active workbench page.
-	 *
-	 * @return the active workbench page
-	 */
-	/* package */
-	WorkbenchPage getActiveWorkbenchPage() {
-		return pageList.getActive();
-	}
-	/**
-	 * Returns cool bar control for the window. Overridden
-	 * to support CoolBars.
-	 * </p>
-	 * @return a Control
-	 */
-	protected CoolBar getCoolBarControl() {
-		return getCoolBarManager().getControl();
-	}
-	/**
-	 * Returns the CoolBarManager for this window.
-	 * 
-	 * @return theCoolBarManager, or <code>null</code> if
-	 *   this window does not have a CoolBar.
-	 * @see  #addCoolBar
-	 */
-	public CoolBarManager getCoolBarManager() {
-		return coolBarManager;
-	}
-	/**
-	 * Get the workbench client area.
-	 */
-	protected Composite getClientComposite() {
-		return (Composite) getContents();
-	}
-	/**
-	 * Answer the menu manager for this window.
-	 */
-	public MenuManager getMenuManager() {
-		return getMenuBarManager();
-	}
-	/**
-	 * Returns the number.  This corresponds to a page number in a window or a
-	 * window number in the workbench.
-	 */
-	public int getNumber() {
-		return number;
-	}
-	/**
-	 * Returns an array of the pages in the workbench window.
-	 *
-	 * @return an array of pages
-	 */
-	public IWorkbenchPage[] getPages() {
-		return pageList.getPages();
-	}
-	/**
-	 * @see IWorkbenchWindow
-	 */
-	public IPartService getPartService() {
-		return partService;
-	}
-	/**
-	 * Returns the key binding service in use.
-	 * 
-	 * @return the key binding service in use.
-	 * @since 2.0
-	 */
-	public KeyBindingService getKeyBindingService() {
-		if (keyBindingService == null) {
-			keyBindingService =
-				new KeyBindingService(
-					getWorkbenchImpl().workbenchActivitiesCommandsAndRoles.getActionService(),
-					getWorkbenchImpl()
-						.workbenchActivitiesCommandsAndRoles
-						.getContextActivationService());
-			updateActiveActions();
-		}
+	// Define shortcut part.  This is for drag and drop.
+	ShortcutBarPart shortcutBarPart = new ShortcutBarPart(manager);
 
-		return keyBindingService;
-	}
+	// Add right mouse button support.
+	manager.getControl().addListener(SWT.MenuDetect, menuListener);
 
-	/**
-	 * Re-register the action sets actions in the keybinding service.
-	 */
-	private void updateActiveActions() {
-		if (keyBindingService == null)
-			getKeyBindingService();
-		else {
-			IActionSet actionSets[] = actionPresentation.getActionSets();
-			registerActionSets(actionSets);
+	return shortcutBarPart;
+}
+/**
+ * Creates the control for the cool bar control.  
+ * </p>
+ * @return a Control
+ */
+protected Control createToolBarControl(Composite parent) {
+	CoolBarManager manager = getCoolBarManager();
+	return manager.createControl(parent);
+}
+/**
+ *  Do not create a toolbarmanager.  WorkbenchWindow uses CoolBarManager.  
+ * </p>
+ * @return a Control
+ */
+protected ToolBarManager createToolBarManager(int style) {
+	return null;
+}
+
+/* (non-Javadoc)
+ * Method declared on ApplicationWindow.
+ */
+protected MenuManager createMenuManager() {
+	final MenuManager result = super.createMenuManager();
+	return result;
+}
+/**
+ * Enables fast view icons to be dragged and dropped using the given IPartDropListener.
+ */
+/*package*/
+void enableDragFastViewBarPart() {
+	Control control = fastViewBar.getControl();
+	if (control != null && fastViewDND == null) {
+		// Only one ShortcutBarPartDragDrop per WorkbenchWindow.
+		fastViewDND = new ShortcutBarPartDragDrop(fastViewPart, control);
+		// Add the listener only once.
+		fastViewDND.addDropListener(partDropListener);
+	}
+}
+/**
+ * Returns the shortcut for a page.
+ */
+/* protected */
+IContributionItem findPerspectiveShortcut(IPerspectiveDescriptor perspective, WorkbenchPage page) {
+	IContributionItem[] array = perspectiveBar.getItems();
+	int length = array.length;
+	for (int i = 0; i < length; i++) {
+		IContributionItem item = array[i];
+		if (item instanceof ActionContributionItem) {
+			IAction action = ((ActionContributionItem) item).getAction();
+			if (action instanceof SetPagePerspectiveAction) {
+				SetPagePerspectiveAction sp = (SetPagePerspectiveAction) action;
+				if (sp.handles(perspective, page))
+					return item;
+			}
 		}
 	}
+	return null;
+}
+/**
+ * Fires page activated
+ */
+private void firePageActivated(IWorkbenchPage page) {
+	pageListeners.firePageActivated(page);
+	partService.pageActivated(page);
+}
+/**
+ * Fires page closed
+ */
+private void firePageClosed(IWorkbenchPage page) {
+	pageListeners.firePageClosed(page);
+	partService.pageClosed(page);
+}
+/**
+ * Fires page opened
+ */
+private void firePageOpened(IWorkbenchPage page) {
+	pageListeners.firePageOpened(page);
+	partService.pageOpened(page);
+}
+/**
+ * Fires perspective activated
+ */
+void firePerspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
+	perspectiveListeners.firePerspectiveActivated(page, perspective);
+	perspectiveService.firePerspectiveActivated(page, perspective);
+}
+/**
+ * Fires perspective changed
+ */
+void firePerspectiveChanged(
+	IWorkbenchPage page,
+	IPerspectiveDescriptor perspective,
+	String changeId) {
+	perspectiveListeners.firePerspectiveChanged(page, perspective, changeId);
+	perspectiveService.firePerspectiveChanged(page, perspective, changeId);
+}
+/**
+ * Fires perspective closed
+ */
+void firePerspectiveClosed(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
+	perspectiveService.firePerspectiveClosed(page, perspective);
+}
+/**
+ * Fires perspective opened
+ */
+void firePerspectiveOpened(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
+	perspectiveService.firePerspectiveOpened(page, perspective);
+}
+/**
+ * Returns the action bars for this window.
+ */
+public IActionBars getActionBars() {
+	if (actionBars == null) {
+		actionBars = new WWinActionBars(this);
+	}
+	return actionBars;
+}
 
-	/**
-	 * Returns the layout for the shell.
-	 * 
-	 * @return the layout for the shell
-	 */
-	protected  Layout getLayout(){
-		return new FormLayout();
+/**
+ * Returns the active page.
+ *
+ * @return the active page
+ */
+public IWorkbenchPage getActivePage() {
+	return pageList.getActive();
+}
+/**
+ * Returns the active workbench page.
+ *
+ * @return the active workbench page
+ */
+/* package */
+WorkbenchPage getActiveWorkbenchPage() {
+	return pageList.getActive();
+}
+/**
+ * Returns cool bar control for the window. Overridden
+ * to support CoolBars.
+ * </p>
+ * @return a Control
+ */
+protected CoolBar getCoolBarControl() {
+	return getCoolBarManager().getControl();
+}
+/**
+ * Returns the CoolBarManager for this window.
+ * 
+ * @return theCoolBarManager, or <code>null</code> if
+ *   this window does not have a CoolBar.
+ * @see  #addCoolBar
+ */
+public CoolBarManager getCoolBarManager() {
+	return coolBarManager;
+}
+/**
+ * Get the workbench client area.
+ */
+protected Composite getClientComposite() {
+	return (Composite) getContents();
+}
+/**
+ * Answer the menu manager for this window.
+ */
+public MenuManager getMenuManager() {
+	return getMenuBarManager();
+}
+/**
+ * Returns the number.  This corresponds to a page number in a window or a
+ * window number in the workbench.
+ */
+public int getNumber() {
+	return number;
+}
+/**
+ * Returns an array of the pages in the workbench window.
+ *
+ * @return an array of pages
+ */
+public IWorkbenchPage[] getPages() {
+	return pageList.getPages();
+}
+/**
+ * @see IWorkbenchWindow
+ */
+public IPartService getPartService() {
+	return partService;
+}
+/**
+ * Returns the key binding service in use.
+ * 
+ * @return the key binding service in use.
+ * @since 2.0
+ */
+public KeyBindingService getKeyBindingService() {
+	if (keyBindingService == null) {
+		keyBindingService =
+			new KeyBindingService(
+				getWorkbenchImpl().workbenchActivitiesCommandsAndRoles.getActionService(),
+				getWorkbenchImpl()
+					.workbenchActivitiesCommandsAndRoles
+					.getContextActivationService());
+		updateActiveActions();
 	}
 
-	/**
-	 * @see IWorkbenchWindow
-	 */
-	public IPerspectiveService getPerspectiveService() {
-		return perspectiveService;
-	}
+	return keyBindingService;
+}
 
-	/**
-	 * Returns the separator2 control.
-	 */
-	Label getPrimarySeperator() {
-		return getSeperator1();
+/**
+ * Re-register the action sets actions in the keybinding service.
+ */
+private void updateActiveActions() {
+	if (keyBindingService == null)
+		getKeyBindingService();
+	else {
+		IActionSet actionSets[] = actionPresentation.getActionSets();
+		registerActionSets(actionSets);
 	}
+}
 
-	/**
-	 * @see IWorkbenchWindow
-	 */
-	public ISelectionService getSelectionService() {
-		return partService.getSelectionService();
-	}
-	/**
-	 * Returns <code>true</code> when the window's shell
-	 * is activated, <code>false</code> when it's shell is
-	 * deactivated
-	 * 
-	 * @return boolean <code>true</code> when shell activated,
-	 * 		<code>false</code> when shell deactivated
-	 */
-	public boolean getShellActivated() {
-		return shellActivated;
-	}
+/**
+ * Returns the layout for the shell.
+ * 
+ * @return the layout for the shell
+ */
+protected Layout getLayout() {
+	return new FormLayout();
+}
 
+/**
+ * @see IWorkbenchWindow
+ */
+public IPerspectiveService getPerspectiveService() {
+	return perspectiveService;
+}
 
-	/**
-	 * Returns the status line manager for this window (if it has one).
-	 *
-	 * @return the status line manager, or <code>null</code> if
-	 *   this window does not have a status line
-	 * @see #addStatusLine
-	 */
-	public StatusLineManager getStatusLineManager() {
-		return super.getStatusLineManager();
-	}
+/**
+ * Returns the separator2 control.
+ */
+Label getPrimarySeperator() {
+	return getSeperator1();
+}
 
-	/**
-	 * Returns tool bar control for the window. Overridden
-	 * to support CoolBars.
-	 * </p>
-	 * @return a Control
-	 */
-	protected Control getToolBarControl() {
-		return getCoolBarControl();
-	}
+/**
+ * @see IWorkbenchWindow
+ */
+public ISelectionService getSelectionService() {
+	return partService.getSelectionService();
+}
+/**
+ * Returns <code>true</code> when the window's shell
+ * is activated, <code>false</code> when it's shell is
+ * deactivated
+ * 
+ * @return boolean <code>true</code> when shell activated,
+ * 		<code>false</code> when shell deactivated
+ */
+public boolean getShellActivated() {
+	return shellActivated;
+}
 
-	/**
-	 * WorkbenchWindow uses CoolBarManager, so return null here.
-	 * </p>
-	 * @return a Control
-	 */
-	public ToolBarManager getToolBarManager() {
-		return null;
-	}
+/**
+ * Returns the status line manager for this window (if it has one).
+ *
+ * @return the status line manager, or <code>null</code> if
+ *   this window does not have a status line
+ * @see #addStatusLine
+ */
+public StatusLineManager getStatusLineManager() {
+	return super.getStatusLineManager();
+}
 
-	/**
-	 * @see IWorkbenchWindow
-	 */
-	public IWorkbench getWorkbench() {
-		return PlatformUI.getWorkbench();
+/**
+ * Returns tool bar control for the window. Overridden
+ * to support CoolBars.
+ * </p>
+ * @return a Control
+ */
+protected Control getToolBarControl() {
+	return getCoolBarControl();
+}
+
+/**
+ * WorkbenchWindow uses CoolBarManager, so return null here.
+ * </p>
+ * @return a Control
+ */
+public ToolBarManager getToolBarManager() {
+	return null;
+}
+
+/**
+ * @see IWorkbenchWindow
+ */
+public IWorkbench getWorkbench() {
+	return PlatformUI.getWorkbench();
+}
+public String getToolbarLabel(String actionSetId) {
+	ActionSetRegistry registry = WorkbenchPlugin.getDefault().getActionSetRegistry();
+	IActionSetDescriptor actionSet = registry.findActionSet(actionSetId);
+	if (actionSet != null) {
+		return actionSet.getLabel();
+	} else {
+		if (IWorkbenchActionConstants.TOOLBAR_FILE.equalsIgnoreCase(actionSetId))
+			return WorkbenchMessages.getString("WorkbenchWindow.FileToolbar"); //$NON-NLS-1$
+		if (IWorkbenchActionConstants.TOOLBAR_NAVIGATE.equalsIgnoreCase(actionSetId))
+			return WorkbenchMessages.getString("WorkbenchWindow.NavigateToolbar"); //$NON-NLS-1$
 	}
-	public String getToolbarLabel(String actionSetId) {
-		ActionSetRegistry registry = WorkbenchPlugin.getDefault().getActionSetRegistry();
-		IActionSetDescriptor actionSet = registry.findActionSet(actionSetId);
-		if (actionSet != null) {
-			return actionSet.getLabel();
-		} else {
-			if (IWorkbenchActionConstants.TOOLBAR_FILE.equalsIgnoreCase(actionSetId))
-				return WorkbenchMessages.getString("WorkbenchWindow.FileToolbar"); //$NON-NLS-1$
-			if (IWorkbenchActionConstants.TOOLBAR_NAVIGATE.equalsIgnoreCase(actionSetId))
-				return WorkbenchMessages.getString("WorkbenchWindow.NavigateToolbar"); //$NON-NLS-1$
+	return null;
+}
+/**
+ * Unconditionally close this window. Assumes the proper
+ * flags have been set correctly (e.i. closing and updateDisabled)
+ */
+private boolean hardClose() {
+	boolean result;
+	try {
+		// Clear the action sets, fix for bug 27416.
+		actionPresentation.clearActionSets();
+		closeAllPages();
+		// let the application do further deconfiguration
+		getAdvisor().postWindowClose(getWindowConfigurer());
+		getWorkbenchImpl().fireWindowClosed(this);
+	} finally {
+		result = super.close();
+	}
+	return result;
+}
+/**
+ * @see IWorkbenchWindow
+ */
+public boolean isApplicationMenu(String menuID) {
+	// delegate this question to the workbench advisor
+	return getAdvisor().isApplicationMenu(getWindowConfigurer(), menuID);
+}
+
+/**
+ * Return whether or not given id matches the id of the coolitems that
+ * the application creates.
+ */
+/* package */
+boolean isWorkbenchCoolItemId(String id) {
+	return windowConfigurer.containsCoolItem(id);
+}
+/**
+ * Locks/unlocks the CoolBar for the workbench.
+ * 
+ * @param lock whether the CoolBar should be locked or unlocked
+ */
+/* package */
+void lockToolBar(boolean lock) {
+	getCoolBarManager().lockLayout(lock);
+}
+/**
+ * Called when this window is about to be closed.
+ *
+ * Subclasses may overide to add code that returns <code>false</code> 
+ * to prevent closing under certain conditions.
+ */
+public boolean okToClose() {
+	// Save all of the editors.
+	if (!getWorkbenchImpl().isClosing())
+		if (!saveAllPages(true))
+			return false;
+	return true;
+}
+/**
+ * Opens a new page.
+ * <p>
+ * <b>Note:</b> Since release 2.0, a window is limited to contain at most
+ * one page. If a page exist in the window when this method is used, then
+ * another window is created for the new page.  Callers are strongly
+ * recommended to use the <code>IWorkbench.openPerspective</code> APIs to
+ * programmatically show a perspective.
+ * </p>
+ */
+public IWorkbenchPage openPage(final String perspId, final IAdaptable input)
+	throws WorkbenchException {
+	Assert.isNotNull(perspId);
+
+	// Run op in busy cursor.
+	final Object[] result = new Object[1];
+	BusyIndicator.showWhile(null, new Runnable() {
+		public void run() {
+			try {
+				result[0] = busyOpenPage(perspId, input);
+			} catch (WorkbenchException e) {
+				result[0] = e;
+			}
 		}
-		return null;
+	});
+
+	if (result[0] instanceof IWorkbenchPage)
+		return (IWorkbenchPage) result[0];
+	else if (result[0] instanceof WorkbenchException)
+		throw (WorkbenchException) result[0];
+	else
+		throw new WorkbenchException(WorkbenchMessages.getString("WorkbenchWindow.exceptionMessage")); //$NON-NLS-1$
+}
+/**
+ * Opens a new page. 
+ * <p>
+ * <b>Note:</b> Since release 2.0, a window is limited to contain at most
+ * one page. If a page exist in the window when this method is used, then
+ * another window is created for the new page.  Callers are strongly
+ * recommended to use the <code>IWorkbench.openPerspective</code> APIs to
+ * programmatically show a perspective.
+ * </p>
+ */
+public IWorkbenchPage openPage(IAdaptable input) throws WorkbenchException {
+	String perspId = getWorkbenchImpl().getPerspectiveRegistry().getDefaultPerspective();
+	return openPage(perspId, input);
+}
+
+/*
+ * Removes an listener from the part service.
+ */
+public void removePageListener(IPageListener l) {
+	pageListeners.removePageListener(l);
+}
+/*
+ * Removes an listener from the perspective service.
+ *
+ * NOTE: Internally, please use getPerspectiveService instead.
+ */
+public void removePerspectiveListener(org.eclipse.ui.IPerspectiveListener l) {
+	perspectiveListeners.removePerspectiveListener(l);
+}
+/**
+ * Remove the shortcut for a page.
+ */
+/* package */
+void removePerspectiveShortcut(IPerspectiveDescriptor perspective, WorkbenchPage page) {
+	IContributionItem item = findPerspectiveShortcut(perspective, page);
+	if (item != null) {
+		perspectiveBar.remove(item);
+		perspectiveBar.update(false);
 	}
-	/**
-	 * Unconditionally close this window. Assumes the proper
-	 * flags have been set correctly (e.i. closing and updateDisabled)
-	 */
-	private boolean hardClose() {
-		boolean result;
+}
+private IStatus unableToRestorePage(IMemento pageMem) {
+	String pageName = pageMem.getString(IWorkbenchConstants.TAG_LABEL);
+	if (pageName == null)
+		pageName = ""; //$NON-NLS-1$
+	return new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, WorkbenchMessages.format("WorkbenchWindow.unableToRestorePerspective", new String[] { pageName }), //$NON-NLS-1$
+	null);
+}
+/**
+ * @see IPersistable.
+ */
+public IStatus restoreState(IMemento memento, IPerspectiveDescriptor activeDescriptor) {
+	Assert.isNotNull(getShell());
+
+	MultiStatus result = new MultiStatus(PlatformUI.PLUGIN_ID, IStatus.OK, WorkbenchMessages.getString("WorkbenchWindow.problemsRestoringWindow"), null); //$NON-NLS-1$
+
+	// Read window's bounds and state.
+	Rectangle displayBounds = getShell().getDisplay().getBounds();
+	Rectangle shellBounds = new Rectangle(0, 0, 0, 0);
+	Integer bigInt;
+	bigInt = memento.getInteger(IWorkbenchConstants.TAG_X);
+	shellBounds.x = bigInt == null ? 0 : bigInt.intValue();
+	bigInt = memento.getInteger(IWorkbenchConstants.TAG_Y);
+	shellBounds.y = bigInt == null ? 0 : bigInt.intValue();
+	bigInt = memento.getInteger(IWorkbenchConstants.TAG_WIDTH);
+	shellBounds.width = bigInt == null ? 0 : bigInt.intValue();
+	bigInt = memento.getInteger(IWorkbenchConstants.TAG_HEIGHT);
+	shellBounds.height = bigInt == null ? 0 : bigInt.intValue();
+	if (!shellBounds.isEmpty()) {
+		if (!shellBounds.intersects(displayBounds)) {
+			Rectangle clientArea = getShell().getDisplay().getClientArea();
+			shellBounds.x = clientArea.x;
+			shellBounds.y = clientArea.y;
+		}
+		getShell().setBounds(shellBounds);
+	}
+	if ("true".equals(memento.getString(IWorkbenchConstants.TAG_MAXIMIZED))) { //$NON-NLS-1$
+		getShell().setMaximized(true);
+	}
+	if ("true".equals(memento.getString(IWorkbenchConstants.TAG_MINIMIZED))) { //$NON-NLS-1$
+		//		getShell().setMinimized(true);
+	}
+
+	// Recreate each page in the window. 
+	IWorkbenchPage newActivePage = null;
+	IMemento[] pageArray = memento.getChildren(IWorkbenchConstants.TAG_PAGE);
+	for (int i = 0; i < pageArray.length; i++) {
+		IMemento pageMem = pageArray[i];
+		String strFocus = pageMem.getString(IWorkbenchConstants.TAG_FOCUS);
+		if (strFocus == null || strFocus.length() == 0)
+			continue;
+
+		// Get the input factory.
+		IMemento inputMem = pageMem.getChild(IWorkbenchConstants.TAG_INPUT);
+		String factoryID = inputMem.getString(IWorkbenchConstants.TAG_FACTORY_ID);
+		if (factoryID == null) {
+			WorkbenchPlugin.log("Unable to restore page - no input factory ID."); //$NON-NLS-1$
+			result.add(unableToRestorePage(pageMem));
+			continue;
+		}
+		IAdaptable input;
 		try {
-			// Clear the action sets, fix for bug 27416.
-			actionPresentation.clearActionSets();
-			closeAllPages();
-			// let the application do further deconfiguration
-			getAdvisor().postWindowClose(getWindowConfigurer());
-			getWorkbenchImpl().fireWindowClosed(this);
-		} finally {
-			result = super.close();
-		}
-		return result;
-	}
-	/**
-	 * @see IWorkbenchWindow
-	 */
-	public boolean isApplicationMenu(String menuID) {
-		// delegate this question to the workbench advisor
-		return getAdvisor().isApplicationMenu(getWindowConfigurer(), menuID);
-	}
-
-	/**
-	 * Return whether or not given id matches the id of the coolitems that
-	 * the application creates.
-	 */
-	/* package */
-	boolean isWorkbenchCoolItemId(String id) {
-		return windowConfigurer.containsCoolItem(id);
-	}
-	/**
-	 * Locks/unlocks the CoolBar for the workbench.
-	 * 
-	 * @param lock whether the CoolBar should be locked or unlocked
-	 */
-	/* package */
-	void lockToolBar(boolean lock) {
-		getCoolBarManager().lockLayout(lock);
-	}
-	/**
-	 * Called when this window is about to be closed.
-	 *
-	 * Subclasses may overide to add code that returns <code>false</code> 
-	 * to prevent closing under certain conditions.
-	 */
-	public boolean okToClose() {
-		// Save all of the editors.
-		if (!getWorkbenchImpl().isClosing())
-			if (!saveAllPages(true))
-				return false;
-		return true;
-	}
-	/**
-	 * Opens a new page.
-	 * <p>
-	 * <b>Note:</b> Since release 2.0, a window is limited to contain at most
-	 * one page. If a page exist in the window when this method is used, then
-	 * another window is created for the new page.  Callers are strongly
-	 * recommended to use the <code>IWorkbench.openPerspective</code> APIs to
-	 * programmatically show a perspective.
-	 * </p>
-	 */
-	public IWorkbenchPage openPage(final String perspId, final IAdaptable input)
-		throws WorkbenchException {
-		Assert.isNotNull(perspId);
-
-		// Run op in busy cursor.
-		final Object[] result = new Object[1];
-		BusyIndicator.showWhile(null, new Runnable() {
-			public void run() {
-				try {
-					result[0] = busyOpenPage(perspId, input);
-				} catch (WorkbenchException e) {
-					result[0] = e;
-				}
-			}
-		});
-
-		if (result[0] instanceof IWorkbenchPage)
-			return (IWorkbenchPage) result[0];
-		else if (result[0] instanceof WorkbenchException)
-			throw (WorkbenchException) result[0];
-		else
-			throw new WorkbenchException(WorkbenchMessages.getString("WorkbenchWindow.exceptionMessage")); //$NON-NLS-1$
-	}
-	/**
-	 * Opens a new page. 
-	 * <p>
-	 * <b>Note:</b> Since release 2.0, a window is limited to contain at most
-	 * one page. If a page exist in the window when this method is used, then
-	 * another window is created for the new page.  Callers are strongly
-	 * recommended to use the <code>IWorkbench.openPerspective</code> APIs to
-	 * programmatically show a perspective.
-	 * </p>
-	 */
-	public IWorkbenchPage openPage(IAdaptable input) throws WorkbenchException {
-		String perspId = getWorkbenchImpl().getPerspectiveRegistry().getDefaultPerspective();
-		return openPage(perspId, input);
-	}
-
-	/*
-	 * Removes an listener from the part service.
-	 */
-	public void removePageListener(IPageListener l) {
-		pageListeners.removePageListener(l);
-	}
-	/*
-	 * Removes an listener from the perspective service.
-	 *
-	 * NOTE: Internally, please use getPerspectiveService instead.
-	 */
-	public void removePerspectiveListener(org.eclipse.ui.IPerspectiveListener l) {
-		perspectiveListeners.removePerspectiveListener(l);
-	}
-	/**
-	 * Remove the shortcut for a page.
-	 */
-	/* package */
-	void removePerspectiveShortcut(IPerspectiveDescriptor perspective, WorkbenchPage page) {
-		IContributionItem item = findPerspectiveShortcut(perspective, page);
-		if (item != null) {
-			perspectiveBar.remove(item);
-			perspectiveBar.update(false);
-		}
-	}
-	private IStatus unableToRestorePage(IMemento pageMem) {
-		String pageName = pageMem.getString(IWorkbenchConstants.TAG_LABEL);
-		if (pageName == null)
-			pageName = ""; //$NON-NLS-1$
-		return new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, WorkbenchMessages.format("WorkbenchWindow.unableToRestorePerspective", new String[] { pageName }), //$NON-NLS-1$
-		null);
-	}
-	/**
-	 * @see IPersistable.
-	 */
-	public IStatus restoreState(IMemento memento, IPerspectiveDescriptor activeDescriptor) {
-		Assert.isNotNull(getShell());
-
-		MultiStatus result = new MultiStatus(PlatformUI.PLUGIN_ID, IStatus.OK, WorkbenchMessages.getString("WorkbenchWindow.problemsRestoringWindow"), null); //$NON-NLS-1$
-
-		// Read window's bounds and state.
-		Rectangle displayBounds = getShell().getDisplay().getBounds();
-		Rectangle shellBounds = new Rectangle(0, 0, 0, 0);
-		Integer bigInt;
-		bigInt = memento.getInteger(IWorkbenchConstants.TAG_X);
-		shellBounds.x = bigInt == null ? 0 : bigInt.intValue();
-		bigInt = memento.getInteger(IWorkbenchConstants.TAG_Y);
-		shellBounds.y = bigInt == null ? 0 : bigInt.intValue();
-		bigInt = memento.getInteger(IWorkbenchConstants.TAG_WIDTH);
-		shellBounds.width = bigInt == null ? 0 : bigInt.intValue();
-		bigInt = memento.getInteger(IWorkbenchConstants.TAG_HEIGHT);
-		shellBounds.height = bigInt == null ? 0 : bigInt.intValue();
-		if (!shellBounds.isEmpty()) {
-			if (!shellBounds.intersects(displayBounds)) {
-				Rectangle clientArea = getShell().getDisplay().getClientArea();
-				shellBounds.x = clientArea.x;
-				shellBounds.y = clientArea.y;
-			}
-			getShell().setBounds(shellBounds);
-		}
-		if ("true".equals(memento.getString(IWorkbenchConstants.TAG_MAXIMIZED))) { //$NON-NLS-1$
-			getShell().setMaximized(true);
-		}
-		if ("true".equals(memento.getString(IWorkbenchConstants.TAG_MINIMIZED))) { //$NON-NLS-1$
-			//		getShell().setMinimized(true);
-		}
-
-		// Recreate each page in the window. 
-		IWorkbenchPage newActivePage = null;
-		IMemento[] pageArray = memento.getChildren(IWorkbenchConstants.TAG_PAGE);
-		for (int i = 0; i < pageArray.length; i++) {
-			IMemento pageMem = pageArray[i];
-			String strFocus = pageMem.getString(IWorkbenchConstants.TAG_FOCUS);
-			if (strFocus == null || strFocus.length() == 0)
-				continue;
-
-			// Get the input factory.
-			IMemento inputMem = pageMem.getChild(IWorkbenchConstants.TAG_INPUT);
-			String factoryID = inputMem.getString(IWorkbenchConstants.TAG_FACTORY_ID);
-			if (factoryID == null) {
-				WorkbenchPlugin.log("Unable to restore page - no input factory ID."); //$NON-NLS-1$
+			UIStats.start(UIStats.RESTORE_WORKBENCH, "WorkbenchPageFactory"); //$NON-NLS-1$
+			IElementFactory factory = PlatformUI.getWorkbench().getElementFactory(factoryID);
+			if (factory == null) {
+				WorkbenchPlugin.log("Unable to restore page - cannot instantiate input factory: " + factoryID); //$NON-NLS-1$
 				result.add(unableToRestorePage(pageMem));
 				continue;
 			}
-			IAdaptable input;
-			try {
-				UIStats.start(UIStats.RESTORE_WORKBENCH, "WorkbenchPageFactory"); //$NON-NLS-1$
-				IElementFactory factory = PlatformUI.getWorkbench().getElementFactory(factoryID);
-				if (factory == null) {
-					WorkbenchPlugin.log("Unable to restore page - cannot instantiate input factory: " + factoryID); //$NON-NLS-1$
-					result.add(unableToRestorePage(pageMem));
-					continue;
-				}
 
-				// Get the input element.
-				input = factory.createElement(inputMem);
-				if (input == null) {
-					WorkbenchPlugin.log("Unable to restore page - cannot instantiate input element: " + factoryID); //$NON-NLS-1$
-					result.add(unableToRestorePage(pageMem));
-					continue;
-				}
-			} finally {
-				UIStats.end(UIStats.RESTORE_WORKBENCH, "WorkbenchPageFactory"); //$NON-NLS-1$
-			}
-			// Open the perspective.
-			WorkbenchPage newPage = null;
-			try {
-				newPage = new WorkbenchPage(this, input);
-				result.add(newPage.restoreState(pageMem, activeDescriptor));
-				pageList.add(newPage);
-				firePageOpened(newPage);
-			} catch (WorkbenchException e) {
-				WorkbenchPlugin.log("Unable to restore perspective - constructor failed."); //$NON-NLS-1$
-				result.add(e.getStatus());
-				continue;
-			}
-
-			if (strFocus != null && strFocus.length() > 0)
-				newActivePage = newPage;
-		}
-
-		// If there are no pages create a default.
-		if (pageList.isEmpty()) {
-			try {
-				String defPerspID =
-					getWorkbenchImpl().getPerspectiveRegistry().getDefaultPerspective();
-				WorkbenchPage newPage =
-					new WorkbenchPage(this, defPerspID, getAdvisor().getDefaultWindowInput());
-				pageList.add(newPage);
-				firePageOpened(newPage);
-			} catch (WorkbenchException e) {
-				WorkbenchPlugin.log("Unable to create default perspective - constructor failed."); //$NON-NLS-1$
-				result.add(e.getStatus());
-				String productName = WorkbenchPlugin.getDefault().getProductName();
-				if (productName == null) {
-					productName = ""; //$NON-NLS-1$
-				}
-				getShell().setText(productName);
-			}
-		}
-
-		// Set active page.
-		if (newActivePage == null)
-			newActivePage = (IWorkbenchPage) pageList.getNextActive();
-
-		setActivePage(newActivePage);
-
-		// Restore the coolbar manager state. 
-		IMemento coolBarMem = memento.getChild(IWorkbenchConstants.TAG_TOOLBAR_LAYOUT);
-		if (coolBarMem != null)
-			getCoolBarManager().restoreState(coolBarMem);
-
-		return result;
-	}
-	/* (non-Javadoc)
-	 * Method declared on IRunnableContext.
-	 */
-	public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable)
-		throws InvocationTargetException, InterruptedException {
-		final boolean keyFilterEnabled = getWorkbenchImpl().isKeyFilterEnabled();
-
-		ToolBarManager shortcutBar = fastViewBar;
-		Control shortcutBarControl = null;
-		if (shortcutBar != null)
-			shortcutBarControl = shortcutBar.getControl();
-		boolean shortcutbarWasEnabled = false;
-		if (shortcutBarControl != null)
-			shortcutbarWasEnabled = shortcutBarControl.getEnabled();
-
-		try {
-			if (shortcutBarControl != null && !shortcutBarControl.isDisposed())
-				shortcutBarControl.setEnabled(false);
-
-			if (keyFilterEnabled)
-				getWorkbenchImpl().disableKeyFilter();
-
-			super.run(fork, cancelable, runnable);
-		} finally {
-			if (shortcutBarControl != null && !shortcutBarControl.isDisposed())
-				shortcutBarControl.setEnabled(shortcutbarWasEnabled);
-
-			if (keyFilterEnabled)
-				getWorkbenchImpl().enableKeyFilter();
-		}
-	}
-	/**
-	 * Save all of the pages.  Returns true if the operation succeeded.
-	 */
-	private boolean saveAllPages(boolean bConfirm) {
-		boolean bRet = true;
-		Iterator enum = pageList.iterator();
-		while (bRet && enum.hasNext()) {
-			WorkbenchPage page = (WorkbenchPage) enum.next();
-			bRet = page.saveAllEditors(bConfirm);
-		}
-		return bRet;
-	}
-	/**
-	 * @see IPersistable
-	 */
-	public IStatus saveState(IMemento memento) {
-
-		MultiStatus result = new MultiStatus(PlatformUI.PLUGIN_ID, IStatus.OK, WorkbenchMessages.getString("WorkbenchWindow.problemsSavingWindow"), null); //$NON-NLS-1$
-
-		// Save the window's state and bounds.
-		if (getShell().getMaximized() || asMaximizedState) {
-			memento.putString(IWorkbenchConstants.TAG_MAXIMIZED, "true"); //$NON-NLS-1$
-		}
-		if (getShell().getMinimized()) {
-			memento.putString(IWorkbenchConstants.TAG_MINIMIZED, "true"); //$NON-NLS-1$
-		}
-		if (normalBounds == null) {
-			normalBounds = getShell().getBounds();
-		}
-		memento.putInteger(IWorkbenchConstants.TAG_X, normalBounds.x);
-		memento.putInteger(IWorkbenchConstants.TAG_Y, normalBounds.y);
-		memento.putInteger(IWorkbenchConstants.TAG_WIDTH, normalBounds.width);
-		memento.putInteger(IWorkbenchConstants.TAG_HEIGHT, normalBounds.height);
-
-		// Save the coolbar manager state. 
-		IMemento coolBarMem = memento.createChild(IWorkbenchConstants.TAG_TOOLBAR_LAYOUT);
-		getCoolBarManager().saveState(coolBarMem);
-
-		// Save each page.
-		Iterator enum = pageList.iterator();
-		while (enum.hasNext()) {
-			WorkbenchPage page = (WorkbenchPage) enum.next();
-
-			// Get the input.
-			IAdaptable input = page.getInput();
+			// Get the input element.
+			input = factory.createElement(inputMem);
 			if (input == null) {
-				WorkbenchPlugin.log("Unable to save page input: " + page); //$NON-NLS-1$
+				WorkbenchPlugin.log("Unable to restore page - cannot instantiate input element: " + factoryID); //$NON-NLS-1$
+				result.add(unableToRestorePage(pageMem));
 				continue;
 			}
-			IPersistableElement persistable =
-				(IPersistableElement) input.getAdapter(IPersistableElement.class);
-			if (persistable == null) {
-				WorkbenchPlugin.log("Unable to save page input: " + input); //$NON-NLS-1$
-				continue;
-			}
-
-			// Save perspective.
-			IMemento pageMem = memento.createChild(IWorkbenchConstants.TAG_PAGE);
-			pageMem.putString(IWorkbenchConstants.TAG_LABEL, page.getLabel());
-			result.add(page.saveState(pageMem));
-
-			if (page == getActiveWorkbenchPage()) {
-				pageMem.putString(IWorkbenchConstants.TAG_FOCUS, "true"); //$NON-NLS-1$
-			}
-
-			// Save input.
-			IMemento inputMem = pageMem.createChild(IWorkbenchConstants.TAG_INPUT);
-			inputMem.putString(IWorkbenchConstants.TAG_FACTORY_ID, persistable.getFactoryId());
-			persistable.saveState(inputMem);
+		} finally {
+			UIStats.end(UIStats.RESTORE_WORKBENCH, "WorkbenchPageFactory"); //$NON-NLS-1$
 		}
-		return result;
+		// Open the perspective.
+		WorkbenchPage newPage = null;
+		try {
+			newPage = new WorkbenchPage(this, input);
+			result.add(newPage.restoreState(pageMem, activeDescriptor));
+			pageList.add(newPage);
+			firePageOpened(newPage);
+		} catch (WorkbenchException e) {
+			WorkbenchPlugin.log("Unable to restore perspective - constructor failed."); //$NON-NLS-1$
+			result.add(e.getStatus());
+			continue;
+		}
+
+		if (strFocus != null && strFocus.length() > 0)
+			newActivePage = newPage;
 	}
-	/**
-	 * Select the shortcut for a perspective.
-	 */
-	/* package */
-	void selectPerspectiveShortcut(
-		IPerspectiveDescriptor perspective,
-		WorkbenchPage page,
-		boolean selected) {
-		IContributionItem item = findPerspectiveShortcut(perspective, page);
-		if (item != null) {
-			IAction action = ((ActionContributionItem) item).getAction();
-			action.setChecked(selected);
+
+	// If there are no pages create a default.
+	if (pageList.isEmpty()) {
+		try {
+			String defPerspID = getWorkbenchImpl().getPerspectiveRegistry().getDefaultPerspective();
+			WorkbenchPage newPage =
+				new WorkbenchPage(this, defPerspID, getAdvisor().getDefaultWindowInput());
+			pageList.add(newPage);
+			firePageOpened(newPage);
+		} catch (WorkbenchException e) {
+			WorkbenchPlugin.log("Unable to create default perspective - constructor failed."); //$NON-NLS-1$
+			result.add(e.getStatus());
+			String productName = WorkbenchPlugin.getDefault().getProductName();
+			if (productName == null) {
+				productName = ""; //$NON-NLS-1$
+			}
+			getShell().setText(productName);
 		}
 	}
-	/**
-	 * Sets the active page within the window.
-	 *
-	 * @param page identifies the new active page.
-	 */
-	public void setActivePage(final IWorkbenchPage in) {
-		if (getActiveWorkbenchPage() == in)
-			return;
 
-		// 1FVGTNR: ITPUI:WINNT - busy cursor for switching perspectives
-		BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
-			public void run() {
-				// Deactivate old persp.
-				WorkbenchPage currentPage = getActiveWorkbenchPage();
-				if (currentPage != null) {
-					currentPage.onDeactivate();
-				}
+	// Set active page.
+	if (newActivePage == null)
+		newActivePage = (IWorkbenchPage) pageList.getNextActive();
 
-				// Activate new persp.
-				if (in == null || pageList.contains(in))
-					pageList.setActive(in);
-				WorkbenchPage newPage = pageList.getActive();
-				if (newPage != null) {
-					newPage.onActivate();
-					firePageActivated(newPage);
-					if (newPage.getPerspective() != null)
-						firePerspectiveActivated(newPage, newPage.getPerspective());
-				}
+	setActivePage(newActivePage);
 
-				if (isClosing())
-					return;
+	// Restore the coolbar manager state. 
+	IMemento coolBarMem = memento.getChild(IWorkbenchConstants.TAG_TOOLBAR_LAYOUT);
+	if (coolBarMem != null)
+		getCoolBarManager().restoreState(coolBarMem);
 
-				updateDisabled = false;
+	return result;
+}
+/* (non-Javadoc)
+ * Method declared on IRunnableContext.
+ */
+public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable)
+	throws InvocationTargetException, InterruptedException {
+	final boolean keyFilterEnabled = getWorkbenchImpl().isKeyFilterEnabled();
 
-				// Update action bars ( implicitly calls updateActionBars() )
-				updateActionSets();
-				perspectiveBar.update(false);
-				getMenuManager().update(IAction.TEXT);
+	ToolBarManager shortcutBar = fastViewBar;
+	Control shortcutBarControl = null;
+	if (shortcutBar != null)
+		shortcutBarControl = shortcutBar.getControl();
+	boolean shortcutbarWasEnabled = false;
+	if (shortcutBarControl != null)
+		shortcutbarWasEnabled = shortcutBarControl.getEnabled();
 
-				if (noOpenPerspective != null && in != null) {
-					noOpenPerspective.dispose();
-					noOpenPerspective = null;
-				}
-			}
-		});
+	try {
+		if (shortcutBarControl != null && !shortcutBarControl.isDisposed())
+			shortcutBarControl.setEnabled(false);
+
+		if (keyFilterEnabled)
+			getWorkbenchImpl().disableKeyFilter();
+
+		super.run(fork, cancelable, runnable);
+	} finally {
+		if (shortcutBarControl != null && !shortcutBarControl.isDisposed())
+			shortcutBarControl.setEnabled(shortcutbarWasEnabled);
+
+		if (keyFilterEnabled)
+			getWorkbenchImpl().enableKeyFilter();
 	}
-	
-	/**
-	 * Show the popup menu for perspectives.
-	 *
-	 */
-	private void showPerspectiveBarPopup(Point pt){
+}
+/**
+ * Save all of the pages.  Returns true if the operation succeeded.
+ */
+private boolean saveAllPages(boolean bConfirm) {
+	boolean bRet = true;
+	Iterator enum = pageList.iterator();
+	while (bRet && enum.hasNext()) {
+		WorkbenchPage page = (WorkbenchPage) enum.next();
+		bRet = page.saveAllEditors(bConfirm);
+	}
+	return bRet;
+}
+/**
+ * @see IPersistable
+ */
+public IStatus saveState(IMemento memento) {
 
-		// Get the tool item under the mouse.
-		ToolBar toolBar = perspectiveBar.getControl();
-		ToolItem toolItem = toolBar.getItem(toolBar.toControl(pt));
-		if (toolItem == null)
-			return;
+	MultiStatus result = new MultiStatus(PlatformUI.PLUGIN_ID, IStatus.OK, WorkbenchMessages.getString("WorkbenchWindow.problemsSavingWindow"), null); //$NON-NLS-1$
 
-		// Get the action for the tool item.
-		Object data = toolItem.getData();
+	// Save the window's state and bounds.
+	if (getShell().getMaximized() || asMaximizedState) {
+		memento.putString(IWorkbenchConstants.TAG_MAXIMIZED, "true"); //$NON-NLS-1$
+	}
+	if (getShell().getMinimized()) {
+		memento.putString(IWorkbenchConstants.TAG_MINIMIZED, "true"); //$NON-NLS-1$
+	}
+	if (normalBounds == null) {
+		normalBounds = getShell().getBounds();
+	}
+	memento.putInteger(IWorkbenchConstants.TAG_X, normalBounds.x);
+	memento.putInteger(IWorkbenchConstants.TAG_Y, normalBounds.y);
+	memento.putInteger(IWorkbenchConstants.TAG_WIDTH, normalBounds.width);
+	memento.putInteger(IWorkbenchConstants.TAG_HEIGHT, normalBounds.height);
 
-		if (!(data instanceof ActionContributionItem))
-			return;
-		IAction action = ((ActionContributionItem) data).getAction();
+	// Save the coolbar manager state. 
+	IMemento coolBarMem = memento.createChild(IWorkbenchConstants.TAG_TOOLBAR_LAYOUT);
+	getCoolBarManager().saveState(coolBarMem);
 
-		// The tool item is an icon for a perspective.
-		if (action instanceof SetPagePerspectiveAction) {
-			// The perspective bar menu is created lazily here.
-			// Its data is set (each time) to the tool item, which refers to the SetPagePerspectiveAction
-			// which in turn refers to the page and perspective.
-			// It is important not to refer to the action, the page or the perspective directly
-			// since otherwise the menu hangs on to them after they are closed.
-			// By hanging onto the tool item instead, these references are cleared when the
-			// corresponding page or perspective is closed.
-			// See bug 11282 for more details on why it is done this way.
-			if (perspectiveBarMenu == null) {
-				Menu menu = new Menu(toolBar);
-				MenuItem menuItem = new MenuItem(menu, SWT.NONE);
-				menuItem.setText(WorkbenchMessages.getString("WorkbenchWindow.close")); //$NON-NLS-1$
-				menuItem.addSelectionListener(new SelectionAdapter() {
-					public void widgetSelected(SelectionEvent e) {
-						ToolItem toolItem = (ToolItem) perspectiveBarMenu.getData();
-						if (toolItem != null && !toolItem.isDisposed()) {
-							ActionContributionItem item =
-							(ActionContributionItem) toolItem.getData();
-							SetPagePerspectiveAction action =
+	// Save each page.
+	Iterator enum = pageList.iterator();
+	while (enum.hasNext()) {
+		WorkbenchPage page = (WorkbenchPage) enum.next();
+
+		// Get the input.
+		IAdaptable input = page.getInput();
+		if (input == null) {
+			WorkbenchPlugin.log("Unable to save page input: " + page); //$NON-NLS-1$
+			continue;
+		}
+		IPersistableElement persistable =
+			(IPersistableElement) input.getAdapter(IPersistableElement.class);
+		if (persistable == null) {
+			WorkbenchPlugin.log("Unable to save page input: " + input); //$NON-NLS-1$
+			continue;
+		}
+
+		// Save perspective.
+		IMemento pageMem = memento.createChild(IWorkbenchConstants.TAG_PAGE);
+		pageMem.putString(IWorkbenchConstants.TAG_LABEL, page.getLabel());
+		result.add(page.saveState(pageMem));
+
+		if (page == getActiveWorkbenchPage()) {
+			pageMem.putString(IWorkbenchConstants.TAG_FOCUS, "true"); //$NON-NLS-1$
+		}
+
+		// Save input.
+		IMemento inputMem = pageMem.createChild(IWorkbenchConstants.TAG_INPUT);
+		inputMem.putString(IWorkbenchConstants.TAG_FACTORY_ID, persistable.getFactoryId());
+		persistable.saveState(inputMem);
+	}
+	return result;
+}
+/**
+ * Select the shortcut for a perspective.
+ */
+/* package */
+void selectPerspectiveShortcut(
+	IPerspectiveDescriptor perspective,
+	WorkbenchPage page,
+	boolean selected) {
+	IContributionItem item = findPerspectiveShortcut(perspective, page);
+	if (item != null) {
+		IAction action = ((ActionContributionItem) item).getAction();
+		action.setChecked(selected);
+	}
+}
+/**
+ * Sets the active page within the window.
+ *
+ * @param page identifies the new active page.
+ */
+public void setActivePage(final IWorkbenchPage in) {
+	if (getActiveWorkbenchPage() == in)
+		return;
+
+	// 1FVGTNR: ITPUI:WINNT - busy cursor for switching perspectives
+	BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
+		public void run() {
+			// Deactivate old persp.
+			WorkbenchPage currentPage = getActiveWorkbenchPage();
+			if (currentPage != null) {
+				currentPage.onDeactivate();
+			}
+
+			// Activate new persp.
+			if (in == null || pageList.contains(in))
+				pageList.setActive(in);
+			WorkbenchPage newPage = pageList.getActive();
+			if (newPage != null) {
+				newPage.onActivate();
+				firePageActivated(newPage);
+				if (newPage.getPerspective() != null)
+					firePerspectiveActivated(newPage, newPage.getPerspective());
+			}
+
+			if (isClosing())
+				return;
+
+			updateDisabled = false;
+
+			// Update action bars ( implicitly calls updateActionBars() )
+			updateActionSets();
+			perspectiveBar.update(false);
+			getMenuManager().update(IAction.TEXT);
+
+			if (noOpenPerspective != null && in != null) {
+				noOpenPerspective.dispose();
+				noOpenPerspective = null;
+			}
+		}
+	});
+}
+
+/**
+ * Show the popup menu for perspectives.
+ *
+ */
+private void showPerspectiveBarPopup(Point pt) {
+
+	// Get the tool item under the mouse.
+	ToolBar toolBar = perspectiveBar.getControl();
+	ToolItem toolItem = toolBar.getItem(toolBar.toControl(pt));
+	if (toolItem == null)
+		return;
+
+	// Get the action for the tool item.
+	Object data = toolItem.getData();
+
+	if (!(data instanceof ActionContributionItem))
+		return;
+	IAction action = ((ActionContributionItem) data).getAction();
+
+	// The tool item is an icon for a perspective.
+	if (action instanceof SetPagePerspectiveAction) {
+		// The perspective bar menu is created lazily here.
+		// Its data is set (each time) to the tool item, which refers to the SetPagePerspectiveAction
+		// which in turn refers to the page and perspective.
+		// It is important not to refer to the action, the page or the perspective directly
+		// since otherwise the menu hangs on to them after they are closed.
+		// By hanging onto the tool item instead, these references are cleared when the
+		// corresponding page or perspective is closed.
+		// See bug 11282 for more details on why it is done this way.
+		if (perspectiveBarMenu == null) {
+			Menu menu = new Menu(toolBar);
+			MenuItem menuItem = new MenuItem(menu, SWT.NONE);
+			menuItem.setText(WorkbenchMessages.getString("WorkbenchWindow.close")); //$NON-NLS-1$
+			menuItem.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					ToolItem toolItem = (ToolItem) perspectiveBarMenu.getData();
+					if (toolItem != null && !toolItem.isDisposed()) {
+						ActionContributionItem item = (ActionContributionItem) toolItem.getData();
+						SetPagePerspectiveAction action =
 							(SetPagePerspectiveAction) item.getAction();
-							action.getPage().closePerspective(action.getPerspective(), true);
-						}
+						action.getPage().closePerspective(action.getPerspective(), true);
 					}
-				});
-				menuItem = new MenuItem(menu, SWT.NONE);
-				menuItem.setText(WorkbenchMessages.getString("WorkbenchWindow.closeAll")); //$NON-NLS-1$
-				menuItem.addSelectionListener(new SelectionAdapter() {
-					public void widgetSelected(SelectionEvent e) {
-						ToolItem toolItem = (ToolItem) perspectiveBarMenu.getData();
-						if (toolItem != null && !toolItem.isDisposed()) {
-							ActionContributionItem item =
-							(ActionContributionItem) toolItem.getData();
-							SetPagePerspectiveAction action =
+				}
+			});
+			menuItem = new MenuItem(menu, SWT.NONE);
+			menuItem.setText(WorkbenchMessages.getString("WorkbenchWindow.closeAll")); //$NON-NLS-1$
+			menuItem.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					ToolItem toolItem = (ToolItem) perspectiveBarMenu.getData();
+					if (toolItem != null && !toolItem.isDisposed()) {
+						ActionContributionItem item = (ActionContributionItem) toolItem.getData();
+						SetPagePerspectiveAction action =
 							(SetPagePerspectiveAction) item.getAction();
-							action.getPage().closeAllPerspectives();
-						}
+						action.getPage().closeAllPerspectives();
 					}
-				});
-				perspectiveBarMenu = menu;
-			}
-			perspectiveBarMenu.setData(toolItem);
-
-			// Show popup menu.
-			if (perspectiveBarMenu != null) {
-				perspectiveBarMenu.setLocation(pt.x, pt.y);
-				perspectiveBarMenu.setVisible(true);
-			}
+				}
+			});
+			perspectiveBarMenu = menu;
 		}
-		
-		
-	}
+		perspectiveBarMenu.setData(toolItem);
 
-	/**
-	 * Shows the popup menu for an item in the fast view bar.
-	 */
-	private void showFastViewBarPopup(Point pt) {
-		// Get the tool item under the mouse.
-		ToolBar toolBar = fastViewBar.getControl();
-		ToolItem toolItem = toolBar.getItem(toolBar.toControl(pt));
-		if (toolItem == null)
-			return;
-
-		// Get the action for the tool item.
-		Object data = toolItem.getData();
-
-		// If the tool item is an icon for a fast view
-		if (data instanceof ShowFastViewContribution) {
-			// The fast view bar menu is created lazily here.
-			if (fastViewBarMenu == null) {
-				Menu menu = new Menu(toolBar);
-				MenuItem closeItem = new MenuItem(menu, SWT.NONE);
-				closeItem.setText(WorkbenchMessages.getString("WorkbenchWindow.close")); //$NON-NLS-1$
-				closeItem.addSelectionListener(new SelectionAdapter() {
-					public void widgetSelected(SelectionEvent e) {
-						ToolItem toolItem = (ToolItem) fastViewBarMenu.getData();
-						if (toolItem != null && !toolItem.isDisposed()) {
-							IViewReference ref =
-								(IViewReference) toolItem.getData(
-									ShowFastViewContribution.FAST_VIEW);
-							getActiveWorkbenchPage().hideView(ref);
-						}
-					}
-				});
-				restoreItem = new MenuItem(menu, SWT.CHECK);
-				restoreItem.setText(WorkbenchMessages.getString("WorkbenchWindow.restore")); //$NON-NLS-1$
-				restoreItem.addSelectionListener(new SelectionAdapter() {
-					public void widgetSelected(SelectionEvent e) {
-						ToolItem toolItem = (ToolItem) fastViewBarMenu.getData();
-						if (toolItem != null && !toolItem.isDisposed()) {
-							IViewReference ref =
-								(IViewReference) toolItem.getData(
-									ShowFastViewContribution.FAST_VIEW);
-							getActiveWorkbenchPage().removeFastView(ref);
-						}
-					}
-				});
-				fastViewBarMenu = menu;
-			}
-			restoreItem.setSelection(true);
-			fastViewBarMenu.setData(toolItem);
-
-			// Show popup menu.
-			if (fastViewBarMenu != null) {
-				fastViewBarMenu.setLocation(pt.x, pt.y);
-				fastViewBarMenu.setVisible(true);
-			}
+		// Show popup menu.
+		if (perspectiveBarMenu != null) {
+			perspectiveBarMenu.setLocation(pt.x, pt.y);
+			perspectiveBarMenu.setVisible(true);
 		}
 	}
-	/**
-	 * Returns whether or not children exist for the Window's toolbar control.
-	 * Overridden for coolbar support.
-	 * <p>
-	 * @return boolean true if children exist, false otherwise
-	 */
-	protected boolean toolBarChildrenExist() {
-		CoolBar coolBarControl = getCoolBarControl();
-		return coolBarControl.getItemCount() > 0;
-	}
-	/**
-	 * Hooks a listener to track the activation and
-	 * deactivation of the window's shell. Notifies
-	 * the active part and editor of the change
-	 */
-	private void trackShellActivation(Shell shell) {
-		shell.addShellListener(new ShellAdapter() {
-			public void shellActivated(ShellEvent event) {
-				shellActivated = true;
-				getWorkbenchImpl().setActivatedWindow(WorkbenchWindow.this);
-				WorkbenchPage currentPage = getActiveWorkbenchPage();
-				if (currentPage != null) {
-					IWorkbenchPart part = currentPage.getActivePart();
-					if (part != null) {
-						PartSite site = (PartSite) part.getSite();
-						site.getPane().shellActivated();
-					}
-					IEditorPart editor = currentPage.getActiveEditor();
-					if (editor != null) {
-						PartSite site = (PartSite) editor.getSite();
-						site.getPane().shellActivated();
-					}
-					getWorkbenchImpl().fireWindowActivated(WorkbenchWindow.this);
-				}
-			}
-			public void shellDeactivated(ShellEvent event) {
-				shellActivated = false;
-				WorkbenchPage currentPage = getActiveWorkbenchPage();
-				if (currentPage != null) {
-					IWorkbenchPart part = currentPage.getActivePart();
-					if (part != null) {
-						PartSite site = (PartSite) part.getSite();
-						site.getPane().shellDeactivated();
-					}
-					IEditorPart editor = currentPage.getActiveEditor();
-					if (editor != null) {
-						PartSite site = (PartSite) editor.getSite();
-						site.getPane().shellDeactivated();
-					}
-					getWorkbenchImpl().fireWindowDeactivated(WorkbenchWindow.this);
-				}
-			}
-		});
-	}
-	/**
-	 * Hooks a listener to track the resize of the window's
-	 * shell. Stores the new bounds if in normal state - that
-	 * is, not in minimized or maximized state)
-	 */
-	private void trackShellResize(Shell newShell) {
-		newShell.addControlListener(new ControlAdapter() {
-			public void controlMoved(ControlEvent e) {
-				saveBounds();
-			}
 
-			public void controlResized(ControlEvent e) {
-				saveBounds();
-			}
+}
 
-			private void saveBounds() {
-				Shell shell = getShell();
-				if (shell == null)
-					return;
-				if (shell.isDisposed())
-					return;
-				if (shell.getMinimized())
-					return;
-				if (shell.getMaximized()) {
-					asMaximizedState = true;
-					return;
+/**
+ * Shows the popup menu for an item in the fast view bar.
+ */
+private void showFastViewBarPopup(Point pt) {
+	// Get the tool item under the mouse.
+	ToolBar toolBar = fastViewBar.getControl();
+	ToolItem toolItem = toolBar.getItem(toolBar.toControl(pt));
+	if (toolItem == null)
+		return;
+
+	// Get the action for the tool item.
+	Object data = toolItem.getData();
+
+	// If the tool item is an icon for a fast view
+	if (data instanceof ShowFastViewContribution) {
+		// The fast view bar menu is created lazily here.
+		if (fastViewBarMenu == null) {
+			Menu menu = new Menu(toolBar);
+			MenuItem closeItem = new MenuItem(menu, SWT.NONE);
+			closeItem.setText(WorkbenchMessages.getString("WorkbenchWindow.close")); //$NON-NLS-1$
+			closeItem.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					ToolItem toolItem = (ToolItem) fastViewBarMenu.getData();
+					if (toolItem != null && !toolItem.isDisposed()) {
+						IViewReference ref =
+							(IViewReference) toolItem.getData(ShowFastViewContribution.FAST_VIEW);
+						getActiveWorkbenchPage().hideView(ref);
+					}
 				}
-				asMaximizedState = false;
-				normalBounds = shell.getBounds();
-			}
-		});
-	}
+			});
+			restoreItem = new MenuItem(menu, SWT.CHECK);
+			restoreItem.setText(WorkbenchMessages.getString("WorkbenchWindow.restore")); //$NON-NLS-1$
+			restoreItem.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					ToolItem toolItem = (ToolItem) fastViewBarMenu.getData();
+					if (toolItem != null && !toolItem.isDisposed()) {
+						IViewReference ref =
+							(IViewReference) toolItem.getData(ShowFastViewContribution.FAST_VIEW);
+						getActiveWorkbenchPage().removeFastView(ref);
+					}
+				}
+			});
+			fastViewBarMenu = menu;
+		}
+		restoreItem.setSelection(true);
+		fastViewBarMenu.setData(toolItem);
 
-	/**
-	 * update the action bars.
-	 */
-	public void updateActionBars() {
-		if (updateDisabled)
-			return;
-		// updateAll required in order to enable accelerators on pull-down menus
-		getMenuBarManager().updateAll(false);
-		getCoolBarManager().update(false);
-		getStatusLineManager().update(false);
+		// Show popup menu.
+		if (fastViewBarMenu != null) {
+			fastViewBarMenu.setLocation(pt.x, pt.y);
+			fastViewBarMenu.setVisible(true);
+		}
 	}
+}
+/**
+ * Returns whether or not children exist for the Window's toolbar control.
+ * Overridden for coolbar support.
+ * <p>
+ * @return boolean true if children exist, false otherwise
+ */
+protected boolean toolBarChildrenExist() {
+	CoolBar coolBarControl = getCoolBarControl();
+	return coolBarControl.getItemCount() > 0;
+}
+/**
+ * Hooks a listener to track the activation and
+ * deactivation of the window's shell. Notifies
+ * the active part and editor of the change
+ */
+private void trackShellActivation(Shell shell) {
+	shell.addShellListener(new ShellAdapter() {
+		public void shellActivated(ShellEvent event) {
+			shellActivated = true;
+			getWorkbenchImpl().setActivatedWindow(WorkbenchWindow.this);
+			WorkbenchPage currentPage = getActiveWorkbenchPage();
+			if (currentPage != null) {
+				IWorkbenchPart part = currentPage.getActivePart();
+				if (part != null) {
+					PartSite site = (PartSite) part.getSite();
+					site.getPane().shellActivated();
+				}
+				IEditorPart editor = currentPage.getActiveEditor();
+				if (editor != null) {
+					PartSite site = (PartSite) editor.getSite();
+					site.getPane().shellActivated();
+				}
+				getWorkbenchImpl().fireWindowActivated(WorkbenchWindow.this);
+			}
+		}
+		public void shellDeactivated(ShellEvent event) {
+			shellActivated = false;
+			WorkbenchPage currentPage = getActiveWorkbenchPage();
+			if (currentPage != null) {
+				IWorkbenchPart part = currentPage.getActivePart();
+				if (part != null) {
+					PartSite site = (PartSite) part.getSite();
+					site.getPane().shellDeactivated();
+				}
+				IEditorPart editor = currentPage.getActiveEditor();
+				if (editor != null) {
+					PartSite site = (PartSite) editor.getSite();
+					site.getPane().shellDeactivated();
+				}
+				getWorkbenchImpl().fireWindowDeactivated(WorkbenchWindow.this);
+			}
+		}
+	});
+}
+/**
+ * Hooks a listener to track the resize of the window's
+ * shell. Stores the new bounds if in normal state - that
+ * is, not in minimized or maximized state)
+ */
+private void trackShellResize(Shell newShell) {
+	newShell.addControlListener(new ControlAdapter() {
+		public void controlMoved(ControlEvent e) {
+			saveBounds();
+		}
+
+		public void controlResized(ControlEvent e) {
+			saveBounds();
+		}
+
+		private void saveBounds() {
+			Shell shell = getShell();
+			if (shell == null)
+				return;
+			if (shell.isDisposed())
+				return;
+			if (shell.getMinimized())
+				return;
+			if (shell.getMaximized()) {
+				asMaximizedState = true;
+				return;
+			}
+			asMaximizedState = false;
+			normalBounds = shell.getBounds();
+		}
+	});
+}
+
+/**
+ * update the action bars.
+ */
+public void updateActionBars() {
+	if (updateDisabled)
+		return;
+	// updateAll required in order to enable accelerators on pull-down menus
+	getMenuBarManager().updateAll(false);
+	getCoolBarManager().update(false);
+	getStatusLineManager().update(false);
+}
 	/**
 	 * Update the visible action sets. This method is typically called
 	 * from a page when the user changes the visible action sets
@@ -1668,249 +1692,248 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		item.setVisible(manager.getItems().length >= 2);
 		// there is a separator for the additions group thus >= 2
 	}
-	/**
-	 * Updates the shorcut item
-	 */
-	/* package */
-	void updatePerspectiveShortcut(
-		IPerspectiveDescriptor oldDesc,
-		IPerspectiveDescriptor newDesc,
-		WorkbenchPage page) {
-		if (updateDisabled)
+/**
+ * Updates the shorcut item
+ */
+/* package */
+void updatePerspectiveShortcut(
+	IPerspectiveDescriptor oldDesc,
+	IPerspectiveDescriptor newDesc,
+	WorkbenchPage page) {
+	if (updateDisabled)
+		return;
+
+	IContributionItem item = findPerspectiveShortcut(oldDesc, page);
+	if (item != null) {
+		SetPagePerspectiveAction action =
+			(SetPagePerspectiveAction) ((ActionContributionItem) item).getAction();
+		action.update(newDesc);
+	}
+}
+
+/**
+ * Return whether or not to show the progress indicator.
+ * @return boolan
+ */
+boolean showProgressIndicator() {
+	return PlatformUI.getWorkbench().getPreferenceStore().getBoolean(
+		IWorkbenchConstants.SHOW_PROGRESS_INDICATOR);
+}
+/**
+ * Create the progress indicator for the receiver.
+ * @param shell	the parent shell
+ */
+private void createProgressIndicator(Shell shell) {
+	if (showProgressIndicator()) {
+		animationItem = new AnimationItem(this);
+		animationItem.createControl(shell);
+	}
+
+}
+class PageList {
+	//List of pages in the order they were created;
+	private List pageList;
+	//List of pages where the top is the last activated.
+	private List pageStack;
+	// The page explicitly activated
+	private Object active;
+
+	public PageList() {
+		pageList = new ArrayList(4);
+		pageStack = new ArrayList(4);
+	}
+	public boolean add(Object object) {
+		pageList.add(object);
+		pageStack.add(0, object);
+		//It will be moved to top only when activated.
+		return true;
+	}
+	public Iterator iterator() {
+		return pageList.iterator();
+	}
+	public boolean contains(Object object) {
+		return pageList.contains(object);
+	}
+	public boolean remove(Object object) {
+		if (active == object)
+			active = null;
+		pageStack.remove(object);
+		return pageList.remove(object);
+	}
+	public boolean isEmpty() {
+		return pageList.isEmpty();
+	}
+	public IWorkbenchPage[] getPages() {
+		int nSize = pageList.size();
+		IWorkbenchPage[] retArray = new IWorkbenchPage[nSize];
+		pageList.toArray(retArray);
+		return retArray;
+	}
+	public void setActive(Object page) {
+		if (active == page)
 			return;
 
-		IContributionItem item = findPerspectiveShortcut(oldDesc, page);
-		if (item != null) {
-			SetPagePerspectiveAction action =
-				(SetPagePerspectiveAction) ((ActionContributionItem) item).getAction();
-			action.update(newDesc);
+		active = page;
+
+		if (page != null) {
+			pageStack.remove(page);
+			pageStack.add(page);
 		}
 	}
-
-	/**
-	 * Return whether or not to show the progress indicator.
-	 * @return boolan
-	 */
-	boolean showProgressIndicator() {
-		return PlatformUI.getWorkbench().getPreferenceStore().getBoolean(
-			IWorkbenchConstants.SHOW_PROGRESS_INDICATOR);
+	public WorkbenchPage getActive() {
+		return (WorkbenchPage) active;
 	}
-	/**
-	 * Create the progress indicator for the receiver.
-	 * @param shell	the parent shell
-	 */
-	private void createProgressIndicator(Shell shell) {
-		if (showProgressIndicator()) {
-			animationItem = new AnimationItem(this);
-			animationItem.createControl(shell);
-		}
-
-	}
-	class PageList {
-		//List of pages in the order they were created;
-		private List pageList;
-		//List of pages where the top is the last activated.
-		private List pageStack;
-		// The page explicitly activated
-		private Object active;
-
-		public PageList() {
-			pageList = new ArrayList(4);
-			pageStack = new ArrayList(4);
-		}
-		public boolean add(Object object) {
-			pageList.add(object);
-			pageStack.add(0, object);
-			//It will be moved to top only when activated.
-			return true;
-		}
-		public Iterator iterator() {
-			return pageList.iterator();
-		}
-		public boolean contains(Object object) {
-			return pageList.contains(object);
-		}
-		public boolean remove(Object object) {
-			if (active == object)
-				active = null;
-			pageStack.remove(object);
-			return pageList.remove(object);
-		}
-		public boolean isEmpty() {
-			return pageList.isEmpty();
-		}
-		public IWorkbenchPage[] getPages() {
-			int nSize = pageList.size();
-			IWorkbenchPage[] retArray = new IWorkbenchPage[nSize];
-			pageList.toArray(retArray);
-			return retArray;
-		}
-		public void setActive(Object page) {
-			if (active == page)
-				return;
-
-			active = page;
-
-			if (page != null) {
-				pageStack.remove(page);
-				pageStack.add(page);
-			}
-		}
-		public WorkbenchPage getActive() {
-			return (WorkbenchPage) active;
-		}
-		public WorkbenchPage getNextActive() {
-			if (active == null) {
-				if (pageStack.isEmpty())
-					return null;
-				else
-					return (WorkbenchPage) pageStack.get(pageStack.size() - 1);
-			} else {
-				if (pageStack.size() < 2)
-					return null;
-				else
-					return (WorkbenchPage) pageStack.get(pageStack.size() - 2);
-			}
+	public WorkbenchPage getNextActive() {
+		if (active == null) {
+			if (pageStack.isEmpty())
+				return null;
+			else
+				return (WorkbenchPage) pageStack.get(pageStack.size() - 1);
+		} else {
+			if (pageStack.size() < 2)
+				return null;
+			else
+				return (WorkbenchPage) pageStack.get(pageStack.size() - 2);
 		}
 	}
+}
 
-	/**
-	 * Returns the unique object that applications use to configure this window.
-	 * <p>
-	 * IMPORTANT This method is declared package-private to prevent regular
-	 * plug-ins from downcasting IWorkbenchWindow to WorkbenchWindow and getting
-	 * hold of the workbench window configurer that would allow them to tamper
-	 * with the workbench window. The workbench window configurer is available
-	 * only to the application.
-	 * </p>
-	 */
-	/* package - DO NOT CHANGE */
-	WorkbenchWindowConfigurer getWindowConfigurer() {
-		if (windowConfigurer == null) {
-			// lazy initialize
-			windowConfigurer = new WorkbenchWindowConfigurer(this);
-			windowConfigurer.init();
-		}
-		return windowConfigurer;
+/**
+ * Returns the unique object that applications use to configure this window.
+ * <p>
+ * IMPORTANT This method is declared package-private to prevent regular
+ * plug-ins from downcasting IWorkbenchWindow to WorkbenchWindow and getting
+ * hold of the workbench window configurer that would allow them to tamper
+ * with the workbench window. The workbench window configurer is available
+ * only to the application.
+ * </p>
+ */
+/* package - DO NOT CHANGE */
+WorkbenchWindowConfigurer getWindowConfigurer() {
+	if (windowConfigurer == null) {
+		// lazy initialize
+		windowConfigurer = new WorkbenchWindowConfigurer(this);
+		windowConfigurer.init();
 	}
+	return windowConfigurer;
+}
 
-	/**
-	 * Returns the workbench advisor. Assumes the workbench
-	 * has been created already.
-	 * <p>
-	 * IMPORTANT This method is declared private to prevent regular
-	 * plug-ins from downcasting IWorkbenchWindow to WorkbenchWindow and getting
-	 * hold of the workbench advisor that would allow them to tamper with the
-	 * workbench. The workbench advisor is internal to the application.
-	 * </p>
-	 */
-	private /* private - DO NOT CHANGE */
-	WorkbenchAdvisor getAdvisor() {
-		return getWorkbenchImpl().getAdvisor();
-	}
+/**
+ * Returns the workbench advisor. Assumes the workbench
+ * has been created already.
+ * <p>
+ * IMPORTANT This method is declared private to prevent regular
+ * plug-ins from downcasting IWorkbenchWindow to WorkbenchWindow and getting
+ * hold of the workbench advisor that would allow them to tamper with the
+ * workbench. The workbench advisor is internal to the application.
+ * </p>
+ */
+private /* private - DO NOT CHANGE */
+WorkbenchAdvisor getAdvisor() {
+	return getWorkbenchImpl().getAdvisor();
+}
 
-	/*
-	 * Returns the IWorkbench implementation.
-	 */
-	private Workbench getWorkbenchImpl() {
-		return Workbench.getInstance();
-	}
+/*
+ * Returns the IWorkbench implementation.
+ */
+private Workbench getWorkbenchImpl() {
+	return Workbench.getInstance();
+}
 
-	/**
-	 * Creates a clone copy of the current action bars
-	 * @param configurer location of managers
-	 * @param flags indicate which actions to load and whether its a proxy fill
-	 */
-	public void fillActionBars(IActionBarConfigurer configurer, int flags) {
-		getAdvisor().fillActionBars(this, configurer, flags);
-	}
+/**
+ * Creates a clone copy of the current action bars
+ * @param configurer location of managers
+ * @param flags indicate which actions to load and whether its a proxy fill
+ */
+public void fillActionBars(IActionBarConfigurer configurer, int flags) {
+	getAdvisor().fillActionBars(this, configurer, flags);
+}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.window.Window#initializeBounds()
-	 */
-	protected void initializeBounds() {
-		super.initializeBounds();
-		setLayoutDataForContents();
-	}
+/*
+ * (non-Javadoc)
+ * 
+ * @see org.eclipse.jface.window.Window#initializeBounds()
+ */
+protected void initializeBounds() {
+	super.initializeBounds();
+	setLayoutDataForContents();
+}
 
-	/**
-	 * Set the layout data for the contents of the window.
-	 *  
-	 */
-	private void setLayoutDataForContents() {
+/**
+ * Set the layout data for the contents of the window.
+ *  
+ */
+private void setLayoutDataForContents() {
 
-		FormData perspectiveData = new FormData();
+	FormData topData = new FormData();
 
-		perspectiveData.top = new FormAttachment(0);
-		perspectiveData.right = new FormAttachment(100,-5);
+	topData.top = new FormAttachment(0);
+	topData.right = new FormAttachment(100);
+	topData.left = new FormAttachment(0);
 
-		perspectiveBar.getControl().setLayoutData(perspectiveData);
+	topBar.setLayoutData(topData);
 
-		FormData toolBarData = new FormData();
-		toolBarData.top = new FormAttachment(0);
-		toolBarData.right = new FormAttachment(perspectiveBar.getControl(), -5);
-		toolBarData.left = new FormAttachment(0);
+	FormData fastViewData = new FormData();
 
-		getToolBarControl().setLayoutData(toolBarData);
+	fastViewData.top = new FormAttachment(topBar, 0);
 
-		FormData fastViewData = new FormData();
+	fastViewData.left = new FormAttachment(0);
+	fastViewData.bottom = new FormAttachment(100);
 
-		fastViewData.top = new FormAttachment(perspectiveBar.getControl(), 0);
+	fastViewBar.getControl().setLayoutData(fastViewData);
 
-		fastViewData.left = new FormAttachment(0);
-		fastViewData.bottom = new FormAttachment(100);
+	FormData progressData = new FormData();
+	progressData.left = new FormAttachment(0);
+	progressData.right = new FormAttachment(fastViewBar.getControl(), 0, SWT.RIGHT);
+	progressData.bottom = new FormAttachment(100);
+	progressData.top = new FormAttachment(getStatusLineManager().getControl(), 0, SWT.TOP);
 
-		fastViewBar.getControl().setLayoutData(fastViewData);
+	animationItem.getControl().setLayoutData(progressData);
 
-		FormData progressData = new FormData();
-		progressData.left = new FormAttachment(0);
-		progressData.right = new FormAttachment(fastViewBar.getControl(),0,SWT.RIGHT);
-		progressData.bottom = new FormAttachment(100);
-		progressData.top = new FormAttachment(getStatusLineManager().getControl(), 0, SWT.TOP);
+	FormData statusLineData = new FormData();
 
-		animationItem.getControl().setLayoutData(progressData);
+	statusLineData.left = new FormAttachment(animationItem.getControl());
+	statusLineData.right = new FormAttachment(100);
+	statusLineData.bottom = new FormAttachment(100);
 
-		FormData statusLineData = new FormData();
+	getStatusLineManager().getControl().setLayoutData(statusLineData);
+	FormData clientAreaData = new FormData();
 
-		statusLineData.left = new FormAttachment(animationItem.getControl());
-		statusLineData.right = new FormAttachment(100);
-		statusLineData.bottom = new FormAttachment(100);
+	clientAreaData.top = new FormAttachment(topBar, 0);
+	clientAreaData.left = new FormAttachment(getFastViewBar().getControl(), 0);
+	clientAreaData.bottom = new FormAttachment(getStatusLineManager().getControl(), 0);
+	clientAreaData.right = new FormAttachment(100);
 
-		getStatusLineManager().getControl().setLayoutData(statusLineData);
-		FormData clientAreaData = new FormData();
+	getClientComposite().setLayoutData(clientAreaData);
 
-		clientAreaData.top = new FormAttachment(perspectiveBar.getControl(), 0);
+}
 
-		clientAreaData.left = new FormAttachment(getFastViewBar().getControl(),0);
+/**
+ * Returns the fast view bar.
+ */
+public ToolBarManager getFastViewBar() {
+	return fastViewBar;
+}
 
-		clientAreaData.bottom = new FormAttachment(getStatusLineManager().getControl(), 0);
+/**
+ * Returns the perspective bar.
+ */
+public ToolBarManager getPerspectiveBar() {
+	return perspectiveBar;
+}
 
-		clientAreaData.right = new FormAttachment(100);
+/**
+ * Returns the PartDragDrop for the shortcut bar part.
+ */
+/*package*/
+ShortcutBarPartDragDrop getFastViewDND() {
+	return fastViewDND;
+}
 
-		getClientComposite().setLayoutData(clientAreaData);
-
-	}
-	
-	/**
-	 * Returns the fast view bar.
-	 */
-	public ToolBarManager getFastViewBar() {
-		return fastViewBar;
-	}
-	
-	/**
-	 * Returns the perspective bar.
-	 */
-	public ToolBarManager getPerspectiveBar() {
-		return perspectiveBar;
-	}
-
-	/**
-	 * Returns the PartDragDrop for the shortcut bar part.
-	 */
-	/*package*/	ShortcutBarPartDragDrop getFastViewDND() {
-		return fastViewDND;
-	}
+/* (non-Javadoc)
+ * @see org.eclipse.jface.window.ApplicationWindow#showTopSeperator()
+ */
+protected boolean showTopSeperator() {
+	return false;
+}
 }
