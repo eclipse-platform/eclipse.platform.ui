@@ -73,6 +73,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.MarkerTransfer;
+import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.progress.WorkbenchJob;
 import org.eclipse.ui.views.navigator.ShowInNavigatorAction;
 import org.eclipse.ui.views.tasklist.ITaskListResourceAdapter;
@@ -291,10 +292,13 @@ public abstract class MarkerView extends TableView {
      */
     public void init(IViewSite site, IMemento memento) throws PartInitException {
         super.init(site, memento);
-        getProgressService().showBusyForFamily(
-                ResourcesPlugin.FAMILY_MANUAL_BUILD);
-        getProgressService().showBusyForFamily(
-                ResourcesPlugin.FAMILY_AUTO_BUILD);
+        IWorkbenchSiteProgressService progressService = getProgressService();
+        if (progressService != null) {
+	        getProgressService().showBusyForFamily(
+	                ResourcesPlugin.FAMILY_MANUAL_BUILD);
+	        getProgressService().showBusyForFamily(
+	                ResourcesPlugin.FAMILY_AUTO_BUILD);
+        }
     }
 
     /* (non-Javadoc)
