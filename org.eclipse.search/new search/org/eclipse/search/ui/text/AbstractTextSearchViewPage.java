@@ -118,6 +118,11 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		}
 		
 		public IStatus runInUIThread(IProgressMonitor monitor) {
+			Control control= getControl();
+			if (control == null || control.isDisposed()) {
+				// disposed the control while the UI was posted.
+				return Status.OK_STATUS;
+			}
 			fViewPart.updateLabel();
 			runBatchedUpdates();
 			if (hasMoreUpdates() || isQueryRunning()) {
@@ -135,7 +140,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		public boolean belongsTo(Object family) {
 			return family == AbstractTextSearchViewPage.this;
 		}
-
+	
 	}
 	
 	private class SelectionProviderAdapter implements ISelectionProvider, ISelectionChangedListener {
@@ -1048,14 +1053,19 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		clear();
 	}
 
-	private void asyncExec(Runnable runnable) {
-		Control control = getControl();
+	private void asyncExec(final Runnable runnable) {
+		final Control control = getControl();
 		if (control != null && !control.isDisposed()) {
 			Display currentDisplay = Display.getCurrent();
 			if (currentDisplay == null || !currentDisplay.equals(control.getDisplay()))
 				// meaning we're not executing on the display thread of the
 				// control
-				control.getDisplay().asyncExec(runnable);
+				control.getDisplay().asyncExec(new Runnable() {
+					public void run() {
+						if (control != null && !control.isDisposed())
+							runnable.run();
+					}
+				});
 			else
 				runnable.run();
 		}
