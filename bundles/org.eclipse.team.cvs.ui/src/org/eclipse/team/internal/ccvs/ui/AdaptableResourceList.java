@@ -12,13 +12,13 @@ package org.eclipse.team.internal.ccvs.ui;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.ui.internal.model.WorkbenchAdapter;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
  * This class acts as a resource list that can be used in table widgets.
  */
-public class AdaptableResourceList extends WorkbenchAdapter implements IAdaptable {
+public class AdaptableResourceList implements IAdaptable, IWorkbenchAdapter {
 
 	IResource[] resources;
 	
@@ -39,6 +39,24 @@ public class AdaptableResourceList extends WorkbenchAdapter implements IAdaptabl
 	 */
 	public Object[] getChildren(Object o) {
 		return resources;
+	}
+	/**
+	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getImageDescriptor(java.lang.Object)
+	 */
+	public ImageDescriptor getImageDescriptor(Object object) {
+		return null;
+	}
+	/**
+	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getLabel(java.lang.Object)
+	 */
+	public String getLabel(Object o) {
+		return o == null ? "" : o.toString();//$NON-NLS-1$
+	}
+	/**
+	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getParent(java.lang.Object)
+	 */
+	public Object getParent(Object o) {
+		return null;
 	}
 	
 }
