@@ -269,7 +269,7 @@ public class DocumentCommand {
 		this.offset += offset;
 		
 		owner= null;
-		caretOffset= this.offset + (text == null ? 0 : text.length());
+		caretOffset= -1;
 		fCommands.clear();
 	}
 	

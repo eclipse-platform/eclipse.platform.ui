@@ -2647,7 +2647,11 @@ public class TextViewer extends Viewer implements
 				fVerifyListener.forward(false);
 				fDocumentCommand.execute(getDocument());
 				if (fTextWidget != null) {
-					int caretOffset= fDocumentCommand.caretOffset - getVisibleRegionOffset();					
+					int caretOffset= fDocumentCommand.caretOffset;
+					// old behaviour of document command
+					if (caretOffset == -1)
+						caretOffset= fDocumentCommand.offset + (fDocumentCommand.text == null ? 0 : fDocumentCommand.text.length());
+					caretOffset -= getVisibleRegionOffset();
 					fTextWidget.setCaretOffset(caretOffset);
 				}
 			} catch (BadLocationException x) {
