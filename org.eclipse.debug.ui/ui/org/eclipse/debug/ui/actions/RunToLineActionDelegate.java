@@ -8,16 +8,16 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.actions;
+package org.eclipse.debug.ui.actions;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.model.ISuspendResume;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.actions.*;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -30,21 +30,20 @@ import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * A run to line action that can be contributed to a an editor. The action
- * will perform the 'run to line' operation for editors that provide
- * an appropriate 'run to line' adapter (<code>IRunToLineTarget</code>).
+ * will perform the "run to line" operation for editors that provide
+ * an appropriate <code>IRunToLineTarget</code> adapter.
  * <p>
  * EXPERIMENTAL
  * </p>
  * <p>
- * Clients may instantiate this class, or contribute it as an editor
- * action delegate in plug-in XML. This class is not intended to
- * be subclassed.
+ * Clients may reference/contribute this class as an editor action delegate
+ * in plug-in XML. This class is not intended to be subclassed.
  * </p>
  * @since 3.0
  */
 public class RunToLineActionDelegate implements IEditorActionDelegate, IActionDelegate2 {
 	
-	private IWorkbenchPart activePart = null;
+	private IEditorPart activePart = null;
 	private IRunToLineTarget partTarget = null;
 	private IAction action = null;
 	private ISelectionListener selectionListener = new DebugSelectionListener();
@@ -108,7 +107,8 @@ public class RunToLineActionDelegate implements IEditorActionDelegate, IActionDe
 			return;
 		}
 		if (partTarget != null && targetElement != null) {
-			action.setEnabled(targetElement.isSuspended());
+			action.setEnabled(targetElement.isSuspended() &&
+				partTarget.canRunToLine(activePart, activePart.getSite().getSelectionProvider().getSelection(), targetElement));
 		} else {
 			action.setEnabled(false);
 		}

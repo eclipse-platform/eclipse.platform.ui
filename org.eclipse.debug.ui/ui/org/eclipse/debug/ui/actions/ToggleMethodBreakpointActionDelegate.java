@@ -8,19 +8,28 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.actions;
+package org.eclipse.debug.ui.actions;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.ui.actions.*;
+import org.eclipse.debug.internal.ui.actions.ToggleBreakpointObjectActionDelegate;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
- * Action to toggle method breakpoints.
- * 
+ * A toggle method breakpoint action that can be contributed an object
+ * contribution. The action will toggle method breakpoints on objects
+ * that provide an <code>IToggleBreakpointsTarget</code> adapter.
+ * <p>
+ * EXPERIMENTAL
+ * </p>
+ * <p>
+ * Clients may reference/contribute this class as an object contribution
+ * action delegate in plug-in XML. This class is not intended to be
+ * subclassed.
+ * </p>
  * @since 3.0
  */
-public class ToggleMethodBreakpointObjectActionDelegate	extends	ToggleBreakpointObjectActionDelegate {
+public class ToggleMethodBreakpointActionDelegate extends ToggleBreakpointObjectActionDelegate {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.actions.ToggleBreakpointObjectActionDelegate#performAction(org.eclipse.debug.internal.ui.actions.IToggleBreakpointsTarget, org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
