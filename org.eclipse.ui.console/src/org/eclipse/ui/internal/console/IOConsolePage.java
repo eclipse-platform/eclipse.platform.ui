@@ -68,7 +68,6 @@ public class IOConsolePage implements IPageBookViewPage, IPropertyChangeListener
     private IOConsole console;
     private IPageSite site;
     private IConsoleView consoleView;
-    private boolean autoScroll = true;
     private Map globalActions = new HashMap();
     private ArrayList selectionActions = new ArrayList();
     private ClearOutputAction clearOutputAction;
@@ -197,7 +196,6 @@ public class IOConsolePage implements IPageBookViewPage, IPropertyChangeListener
 	}
 	
 	public void setAutoScroll(boolean scroll) {
-	    autoScroll = scroll;
 	    if (viewer != null) {
 	        viewer.setAutoScroll(scroll);
 	    }
@@ -258,8 +256,7 @@ public class IOConsolePage implements IPageBookViewPage, IPropertyChangeListener
 		clearOutputAction = new ClearOutputAction(console);
 		
 		scrollLockAction = new ScrollLockAction(console);
-		scrollLockAction.setChecked(!autoScroll);
-		viewer.setAutoScroll(autoScroll);
+		setAutoScroll(!scrollLockAction.isChecked());
 		
 		ResourceBundle bundle= ResourceBundle.getBundle("org.eclipse.ui.internal.console.ConsoleMessages"); //$NON-NLS-1$
 		setGlobalAction(actionBars, ActionFactory.FIND.getId(), new FindReplaceAction(bundle, "find_replace_action.", consoleView)); //$NON-NLS-1$
