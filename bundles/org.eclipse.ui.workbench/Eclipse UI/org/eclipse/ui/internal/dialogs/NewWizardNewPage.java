@@ -284,7 +284,7 @@ class NewWizardNewPage
 	 */
 	private void createDescription(Composite parent) {	    	   
 	    Composite descParent = new Composite(parent, SWT.NONE);	    
-		GridData data = new GridData(GridData.FILL_BOTH);
+		GridData data = new GridData(GridData.FILL_BOTH | GridData.VERTICAL_ALIGN_BEGINNING);
 		data.widthHint = SIZING_DESC_WIDTH;
 		descParent.setLayoutData(data);
 		
@@ -297,7 +297,7 @@ class NewWizardNewPage
 	    descLabel.setFont(parent.getFont());
 	    descLabel.setText(WorkbenchMessages.getString("NewWizardNewPage.descriptionLabel")); //$NON-NLS-1$
 	    	    
-	    data = new GridData(GridData.FILL_HORIZONTAL);
+	    data = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING );
 	    descLabel.setLayoutData(data);
 	    
 	    Image buttonImage = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_LINKTO_HELP);
@@ -432,7 +432,7 @@ class NewWizardNewPage
 	    
 	    Composite treeParent = new Composite(parent, SWT.NONE);
 	    treeParent.setFont(parent.getFont());
-		GridData data = new GridData(GridData.FILL_BOTH);
+		GridData data = new GridData(GridData.FILL_BOTH | GridData.VERTICAL_ALIGN_BEGINNING);
 		data.widthHint = SIZING_VIEWER_WIDTH;		
 
 		boolean needsHint = DialogUtil.inRegularFontMode(treeParent.getParent());
@@ -453,7 +453,7 @@ class NewWizardNewPage
 	    wizardLabel.setFont(parent.getFont());
 	    wizardLabel.setText(WorkbenchMessages.getString("NewWizardNewPage.wizardsLabel")); //$NON-NLS-1$
 	    
-	    data = new GridData(GridData.FILL_HORIZONTAL);
+	    data = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
 	    wizardLabel.setLayoutData(data);
 	    
 		Tree tree =
