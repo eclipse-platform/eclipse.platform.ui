@@ -44,18 +44,22 @@ public class SearchForBuildFilesAction extends Action {
 			final boolean includeErrorNodes= dialog.getIncludeErrorResults();
 			final ProgressMonitorDialog progressDialog= new ProgressMonitorDialog(Display.getCurrent().getActiveShell());
 			try {
-				progressDialog.run(false, true, new IRunnableWithProgress() {
+				progressDialog.run(true, true, new IRunnableWithProgress() {
 					public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 						monitor.beginTask("Processing search results", files.length);
 						for (int i = 0; i < files.length && !monitor.isCanceled(); i++) {
 							String fileName= files[i].getLocation().toString();
 							monitor.subTask(MessageFormat.format("Adding {0}", new String[] {fileName}));
-							ProjectNode project= new ProjectNode(fileName);
+							final ProjectNode project= new ProjectNode(fileName);
 							// Force the project to be parsed so the error state is set.
 							project.getName();
 							monitor.worked(1);
 							if (includeErrorNodes || !(project.isErrorNode())) {
-								view.addProject(project);
+								Display.getDefault().asyncExec(new Runnable() {
+									public void run() {
+										view.addProject(project);
+									}
+								});
 							}
 						}
 					}
