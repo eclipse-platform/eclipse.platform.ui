@@ -29,7 +29,7 @@ public class SystemMenuStateChange extends Action implements ISelfUpdatingAction
         this.state = state;
         this.name = name;
         
-        setText(WorkbenchMessages.getString(name));
+        setText(name);
         update();
     }
 
