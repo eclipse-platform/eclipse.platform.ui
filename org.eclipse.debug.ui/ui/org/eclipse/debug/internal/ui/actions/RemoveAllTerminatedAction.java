@@ -32,12 +32,12 @@ public class RemoveAllTerminatedAction extends AbstractRemoveAllActionDelegate i
 			Object source= event.getSource();
 			if (source instanceof IDebugTarget) {
 				ILaunch launch= ((IDebugTarget)source).getLaunch();
-				if (launch != null && launch.isTerminated()) {
+				if (launch.isTerminated()) {
 					getAction().setEnabled(true);
 				}
 			} else if (source instanceof IProcess) {
 				ILaunch launch= ((IProcess)source).getLaunch();
-				if (launch != null && launch.isTerminated()) {
+				if (launch.isTerminated()) {
 					getAction().setEnabled(true);
 				}
 			}

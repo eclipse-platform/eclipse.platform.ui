@@ -35,7 +35,7 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 	private static final int TIME_TO_WAIT_FOR_THREAD_DEATH = 500; // ms
 	
 	/**
-	 * The launch this process is conatined in
+	 * The launch this process is contained in
 	 */
 	private ILaunch fLaunch;
 	
@@ -130,7 +130,7 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 	}
 	
 	/**
-	 * Sets the launch this process is conatined in
+	 * Sets the launch this process is contained in
 	 * 
 	 * @param launch the launch this process is contained in
 	 */
@@ -219,7 +219,7 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 	private void fireEvent(DebugEvent event) {
 		DebugPlugin manager= DebugPlugin.getDefault();
 		if (manager != null) {
-			manager.fireDebugEvent(event);
+			manager.fireDebugEventSet(new DebugEvent[]{event});
 		}
 	}
 
@@ -259,12 +259,10 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 		}
 		if (adapter.equals(IDebugTarget.class)) {
 			ILaunch launch = getLaunch();
-			if (launch != null) {
-				IDebugTarget[] targets = launch.getDebugTargets();
-				for (int i = 0; i < targets.length; i++) {
-					if (this.equals(targets[i].getProcess())) {
-						return targets[i];
-					}
+			IDebugTarget[] targets = launch.getDebugTargets();
+			for (int i = 0; i < targets.length; i++) {
+				if (this.equals(targets[i].getProcess())) {
+					return targets[i];
 				}
 			}
 			return null;
@@ -272,4 +270,3 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 		return super.getAdapter(adapter);
 	}
 }
-

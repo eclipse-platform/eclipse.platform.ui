@@ -5,8 +5,8 @@ package org.eclipse.debug.core.model;
  * All Rights Reserved.
  */
 
-import org.eclipse.debug.core.ILaunch;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.debug.core.ILaunch;
 
 /**
  * A process represents a program running in normal (non-debug) mode.
@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.IAdaptable;
  * provides an implementation of this interface for a
  * <code>java.lang.Process</code>. 
  * </p>
- * @see org.eclipse.debug.core.DebugPlugin#newProcess(Process, String)
+ * @see org.eclipse.debug.core.DebugPlugin#newProcess(ILaunch, Process, String)
  */
 public interface IProcess extends IAdaptable, ITerminate {
 
@@ -30,12 +30,7 @@ public interface IProcess extends IAdaptable, ITerminate {
 	 */
 	public String getLabel();
 	/**
-	 * Returns the launch this element originated from, or
-	 * <code>null</code> if this element is not registered with
-	 * an launch. This is a convenience method for
-	 * <code>ILaunchManager.findLaunch(IProcess)</code>.
-	 * 
-	 * [Issue: this API will be changed to never return null.]
+	 * Returns the launch this element originated from.
 	 *
 	 * @return the launch this process is contained in
 	 */
@@ -60,10 +55,9 @@ public interface IProcess extends IAdaptable, ITerminate {
 	 * Returns the value of a client defined attribute.
 	 *
 	 * @param key the attribute key
-	 * @return value the attribute value, or <code>null</code> if undefined
+	 * @return value the String attribute value, or <code>null</code> if undefined
 	 */
 	public String getAttribute(String key);
-
 }
 
 

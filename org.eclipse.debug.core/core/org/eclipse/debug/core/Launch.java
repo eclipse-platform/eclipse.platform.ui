@@ -125,6 +125,7 @@ public class Launch extends PlatformObject implements ILaunch {
 	 *    or <code>null</code> if none
 	 * @param target the debug target created by this launch, or <code>null</code>
 	 *	if none 
+	 * @deprecated to be removed
 	 */
 	public Launch(ILaunchConfiguration launchConfiguration, String mode, ISourceLocator locator, IProcess[] processes, IDebugTarget target) {
 		setLauncher(null);			
@@ -132,6 +133,23 @@ public class Launch extends PlatformObject implements ILaunch {
 		setSourceLocator(locator);
 		addProcesses(processes);
 		addDebugTarget(target);
+		setLaunchMode(mode);
+		fSuppressChange = false;
+	}	
+	
+	/**
+	 * Constructs a launch with the specified attributes.
+	 *
+	 * @param launchConfiguration the configuration that was launched
+	 * @param mode the mode of this launch - run or debug (constants
+	 *  defined by <code>ILaunchManager</code>)
+	 * @param locator the source locator to use for this debug session, or
+	 * 	<code>null</code> if not supported
+	 */
+	public Launch(ILaunchConfiguration launchConfiguration, String mode, ISourceLocator locator) {
+		setLauncher(null);			
+		setElement(launchConfiguration);
+		setSourceLocator(locator);
 		setLaunchMode(mode);
 		fSuppressChange = false;
 	}	
@@ -207,7 +225,7 @@ public class Launch extends PlatformObject implements ILaunch {
 	 * Returns the processes associated with this
 	 * launch, in its internal form - a list.
 	 * 
-	 * @return list or processes
+	 * @return list of processes
 	 */
 	protected List getProcesses0() {
 		return fProcesses;
@@ -421,7 +439,7 @@ public class Launch extends PlatformObject implements ILaunch {
 	}	
 	
 	/**
-	 * Adds the given processes to this lanuch.
+	 * Adds the given processes to this launch.
 	 * 
 	 * @param processes processes to add
 	 */

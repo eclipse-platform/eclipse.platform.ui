@@ -135,7 +135,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 * @see ILaunchConfiguration#launch(String, IProgressMonitor)
 	 */
 	public ILaunch launch(String mode, IProgressMonitor monitor) throws CoreException {
-		ILaunch launch = new Launch(this, mode, null, null, null);
+		ILaunch launch = new Launch(this, mode, null);
 		getLaunchManager().addLaunch(launch);
 		getDelegate().launch(this, mode, launch, monitor);
 		if (monitor != null && monitor.isCanceled()) {

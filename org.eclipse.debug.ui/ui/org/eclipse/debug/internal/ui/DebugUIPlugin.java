@@ -502,11 +502,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 					processInput= ((IDebugElement) input).getDebugTarget().getProcess();
 				}
 
-		if ((processInput == null) || (processInput.getLaunch() == null)) {
-			return null;
-		} else {
-			return processInput;
-		}
+		return processInput;
 	}
 
 	/**
@@ -601,17 +597,18 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 	public void launchRemoved(final ILaunch launch) {
 		getStandardDisplay().syncExec(new Runnable () {
 			public void run() {
+				IProcess currentProcess= getCurrentProcess();
 				IProcess[] processes= launch.getProcesses();
 				for (int i= 0; i < processes.length; i++) {
-					ConsoleDocument doc= (ConsoleDocument)getConsoleDocument(processes[i]);
+					IProcess iProcess = processes[i];
+					ConsoleDocument doc= (ConsoleDocument)getConsoleDocument(iProcess);
 					if (doc != null) {
 						doc.close();
 						setConsoleDocument(processes[i], null);
 					}
-				}
-				IProcess currentProcess= getCurrentProcess();
-				if (currentProcess != null && currentProcess.getLaunch() == null) {
-					fCurrentProcess= null;
+					if (iProcess.equals(currentProcess)) {
+						fCurrentProcess= null;
+					}
 				}
 			}
 		});
@@ -624,13 +621,11 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 		getStandardDisplay().syncExec(new Runnable () {
 			public void run() {
 				IProcess[] processes= launch.getProcesses();
-				if (processes != null) {
-					for (int i= 0; i < processes.length; i++) {
-						if (getConsoleDocument(processes[i]) == null) {
-							ConsoleDocument doc= new ConsoleDocument(processes[i]);
-							doc.startReading();
-							setConsoleDocument(processes[i], doc);
-						}
+				for (int i= 0; i < processes.length; i++) {
+					if (getConsoleDocument(processes[i]) == null) {
+						ConsoleDocument doc= new ConsoleDocument(processes[i]);
+						doc.startReading();
+						setConsoleDocument(processes[i], doc);
 					}
 				}
 			}
@@ -648,12 +643,10 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 		getStandardDisplay().syncExec(new Runnable () {
 			public void run() {
 				IProcess[] processes= launch.getProcesses();
-				if (processes != null) {
-					for (int i= 0; i < processes.length; i++) {
-						ConsoleDocument doc= new ConsoleDocument(processes[i]);
-						doc.startReading();
-						setConsoleDocument(processes[i], doc);
-					}
+				for (int i= 0; i < processes.length; i++) {
+					ConsoleDocument doc= new ConsoleDocument(processes[i]);
+					doc.startReading();
+					setConsoleDocument(processes[i], doc);
 				}
 			}
 		});
@@ -664,7 +657,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 			newProcess= target.getProcess();
 		} else {
 			IProcess[] processes= launch.getProcesses();
-			if ((processes != null) && (processes.length > 0)) {
+			if (processes.length > 0) {
 				newProcess= processes[processes.length - 1];
 			}
 		}
