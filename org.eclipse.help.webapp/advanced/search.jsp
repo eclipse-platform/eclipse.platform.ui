@@ -91,12 +91,6 @@ INPUT {
 	padding-left:1px;
 }
 <%
-	} else if (data.isMozilla()) {
-%>
-body {
-	border-right:1px solid WindowText;
-}
-<%
 	}
 %>
 </style>
