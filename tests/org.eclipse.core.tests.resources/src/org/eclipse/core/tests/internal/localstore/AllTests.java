@@ -32,6 +32,7 @@ public class AllTests extends TestCase {
 		suite.addTest(FileSystemStoreTest.suite());
 		suite.addTest(HistoryStoreTest.suite());
 		suite.addTest(BucketIndexTest.suite());
+		suite.addTest(HistoryStoreConversionTest.suite());		
 		suite.addTest(LocalSyncTest.suite());
 		suite.addTest(MoveTest.suite());
 		suite.addTest(RefreshLocalTest.suite());

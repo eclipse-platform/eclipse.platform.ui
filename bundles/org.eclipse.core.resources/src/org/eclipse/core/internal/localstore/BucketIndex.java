@@ -14,8 +14,7 @@ import java.io.*;
 import java.util.*;
 import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.internal.resources.ResourceStatus;
-import org.eclipse.core.internal.utils.Policy;
-import org.eclipse.core.internal.utils.UniversalUniqueIdentifier;
+import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.*;
 
@@ -26,11 +25,13 @@ public class BucketIndex {
 	 * of states, which by their turn contain a (UUID, timestamp) pair.  
 	 */
 	public static final class Entry {
+		private final static byte[][] EMPTY_DATA = new byte[0][];
 		// the length of a long in bytes
 		private final static int LONG_LENGTH = 8;
 		// the length of a UUID in bytes
 		private final static int UUID_LENGTH = UniversalUniqueIdentifier.BYTES_SIZE;
-		public final static int DATA_LENGTH = UUID_LENGTH + LONG_LENGTH;
+		// the length of each component of the data array
+		public final static int DATA_LENGTH = UUID_LENGTH + LONG_LENGTH;		
 		byte[][] data;
 		IPath path;
 
@@ -58,7 +59,24 @@ public class BucketIndex {
 			return new UniversalUniqueIdentifier(item);
 		}
 
+		public static void sortStates(byte[][] data) {
+			Arrays.sort(data, new Comparator() {
+				// sort in inverse order
+				public int compare(Object o1, Object o2) {
+					byte[] state1 = (byte[]) o1;
+					byte[] state2 = (byte[]) o2;
+					long timestamp1 = getTimestamp(state1);
+					long timestamp2 = getTimestamp(state2);
+					if (timestamp1 == timestamp2)
+						return -UniversalUniqueIdentifier.compareTime(state1, state2);
+					return timestamp1 < timestamp2 ? +1 : -1;
+				}
+			});
+		}
+
 		public Entry(IPath path, byte[][] data) {
+			Assert.isNotNull(path);
+			Assert.isNotNull(data);
 			this.path = path;
 			this.data = data;
 		}
@@ -67,8 +85,6 @@ public class BucketIndex {
 		 * Compacts the given array removing any null slots.
 		 */
 		void compact() {
-			if (data == null)
-				return;
 			int occurrences = 0;
 			for (int i = 0; i < data.length; i++)
 				if (data[i] != null)
@@ -78,7 +94,7 @@ public class BucketIndex {
 				return;
 			if (occurrences == 0) {
 				// no items remaining
-				data = null;
+				data = EMPTY_DATA;
 				return;
 			}
 			byte[][] result = new byte[occurrences][];
@@ -95,8 +111,8 @@ public class BucketIndex {
 		}
 
 		public byte[][] getData(boolean clone) {
-			if (!clone)
-				return data == null ? new byte[0][] : data;
+			if (!clone || isEmpty())
+				return data;
 			// don't need to clone the contained arrays because they immutable
 			byte[][] newData = new byte[data.length][];
 			System.arraycopy(data, 0, newData, 0, data.length);
@@ -104,7 +120,7 @@ public class BucketIndex {
 		}
 
 		public int getOccurrences() {
-			return data == null ? 0 : data.length;
+			return data.length;
 		}
 
 		public IPath getPath() {
@@ -120,26 +136,11 @@ public class BucketIndex {
 		}
 
 		public boolean isEmpty() {
-			return data == null || data.length == 0;
-		}
-		
-		public void sortStates() {
-			sortStates(this.data);
+			return data.length == 0;
 		}
 
-		public static void sortStates(byte[][] data) {
-			Arrays.sort(data, new Comparator() {
-				// sort in inverse order
-				public int compare(Object o1, Object o2) {
-					byte[] state1 = (byte[]) o1;
-					byte[] state2 = (byte[]) o2;
-					long timestamp1 = getTimestamp(state1);
-					long timestamp2 = getTimestamp(state2);
-					if (timestamp1 == timestamp2)
-						return -UniversalUniqueIdentifier.compareTime(state1, state2);
-					return timestamp1 < timestamp2 ? +1 : -1;
-				}
-			});
+		public void sortStates() {
+			sortStates(this.data);
 		}
 	}
 
@@ -306,8 +307,12 @@ public class BucketIndex {
 		String pathAsString = path.toString();
 		byte[][] existing = (byte[][]) entries.get(pathAsString);
 		if (existing == null)
-			return new Entry(path, null);
+			return null;
 		return new Entry(path, existing);
+	}
+
+	public int getEntryCount() {
+		return entries.size();
 	}
 
 	File getLocation() {
@@ -388,9 +393,5 @@ public class BucketIndex {
 			ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_METADATA, null, message, ioe);
 			throw new ResourceException(status);
 		}
-	}
-
-	public int getEntryCount() {
-		return entries.size();
 	}
 }

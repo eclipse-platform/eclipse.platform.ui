@@ -201,6 +201,8 @@ public class HistoryStore2 implements IHistoryStore {
 			if (baseSourceLocation.equals(baseDestinationLocation)) {
 				currentBucket.load(baseSourceLocation.toFile());
 				Entry sourceEntry = currentBucket.getEntry(source);
+				if(sourceEntry == null)
+					return;
 				Entry destinationEntry = new Entry(destination, sourceEntry.getData(true));
 				currentBucket.addBlobs(destinationEntry);
 				currentBucket.save();
