@@ -39,6 +39,7 @@ public class AntTabGroup extends AbstractLaunchConfigurationTabGroup {
 			new AntClasspathTab(),
 			new AntPropertiesTab(),
 			new AntJRETab(),
+			new AntEnvironmentTab(),
 			new CommonTab()
 		};
 		setTabs(tabs);
