@@ -4,6 +4,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.preference.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
@@ -45,6 +47,17 @@ public class MainPreferencePage
 		"MainPreferencePage.updateVersions.compatible";
 	public static final String EQUIVALENT_VALUE = "equivalent";
 	public static final String COMPATIBLE_VALUE = "compatible";
+	
+	
+	private Text httpProxyHostText;
+	private Text httpProxyPortText;
+	private Label httpProxyHostLabel;
+	private Label httpProxyPortLabel;
+	private Button enableHttpProxy;
+	private static final String KEY_ENABLE_HTTP_PROXY = "MainPreferencePage.enableHttpProxy";
+	private static final String KEY_HTTP_PROXY_SERVER = "MainPreferencePage.httpProxyHost";
+	private static final String KEY_HTTP_PROXY_PORT = "MainPreferencePage.httpProxyPort";
+		
 	/**
 	 * The constructor.
 	 */
@@ -69,7 +82,7 @@ public class MainPreferencePage
 				getFieldEditorParent());
 		maxLevel.setValidRange(1, Integer.MAX_VALUE);
 		addField(maxLevel);
-		if (SWT.getPlatform().equals("win32")) {
+		if ("win32".equals(SWT.getPlatform())) {
 			RadioGroupFieldEditor browser =
 				new RadioGroupFieldEditor(
 					P_BROWSER,
@@ -113,7 +126,10 @@ public class MainPreferencePage
 				UpdateUIPlugin.getResourceString(KEY_TOPIC_COLOR),
 				getFieldEditorParent());
 		addField(topicColor);
-
+		
+		createSpacer(getFieldEditorParent(), 2);
+		createHttpProxy(getFieldEditorParent(),2);
+		
 	}
 	protected void createSpacer(Composite composite, int columnSpan) {
 		Label label = new Label(composite, SWT.NONE);
@@ -121,11 +137,62 @@ public class MainPreferencePage
 		gd.horizontalSpan = columnSpan;
 		label.setLayoutData(gd);
 	}
+	protected void createHttpProxy(Composite composite, int columnSpan) {
+		
+		enableHttpProxy = new Button(composite,SWT.CHECK);
+		enableHttpProxy.setText(UpdateUIPlugin.getResourceString(KEY_ENABLE_HTTP_PROXY));
+		GridData gd = new GridData();
+		gd.horizontalSpan = columnSpan;
+		enableHttpProxy.setLayoutData(gd);
+		
+		httpProxyHostLabel = new Label(composite, SWT.NONE);
+		gd = new GridData();
+		gd.horizontalSpan = 1;
+		httpProxyHostLabel.setLayoutData(gd);
+		httpProxyHostLabel.setText(UpdateUIPlugin.getResourceString(KEY_HTTP_PROXY_SERVER));
+		
+		httpProxyHostText = new Text(composite, SWT.SINGLE | SWT.BORDER);
+		httpProxyHostText.setFont(composite.getFont());
+		gd = new GridData();
+		gd.horizontalSpan = columnSpan-1;
+		gd.horizontalAlignment = GridData.FILL;
+		gd.grabExcessHorizontalSpace=true;
+		httpProxyHostText.setLayoutData(gd);
+		
+		httpProxyPortLabel = new Label(composite, SWT.NONE);
+		gd = new GridData();
+		gd.horizontalSpan = 1;
+		httpProxyPortLabel.setLayoutData(gd);
+		httpProxyPortLabel.setText(UpdateUIPlugin.getResourceString(KEY_HTTP_PROXY_PORT));
+
+		httpProxyPortText = new Text(composite, SWT.SINGLE | SWT.BORDER);
+		httpProxyPortText.setFont(composite.getFont());
+		gd = new GridData();
+		gd.horizontalSpan = columnSpan-1;
+		gd.horizontalAlignment = GridData.FILL;
+		gd.grabExcessHorizontalSpace=true;
+		httpProxyPortText.setLayoutData(gd);
+
+		performDefaults();
+		
+		enableHttpProxy.addSelectionListener(new SelectionListener(){
+			public void widgetSelected(SelectionEvent e) {
+				boolean enable = enableHttpProxy.getSelection();
+				httpProxyPortLabel.setEnabled(enable);
+				httpProxyPortText.setEnabled(enable);
+				httpProxyHostLabel.setEnabled(enable);
+				httpProxyHostText.setEnabled(enable);
+			}
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}});
+		
+	}
 	private int getHistorySize() {
 		IPreferenceStore store =
 			UpdateUIPlugin.getDefault().getPreferenceStore();
 		return store.getInt(P_HISTORY_SIZE);
 	}
+	
 	public static boolean getUseEmbeddedBrowser() {
 		IPreferenceStore store =
 			UpdateUIPlugin.getDefault().getPreferenceStore();
@@ -144,8 +211,8 @@ public class MainPreferencePage
 			BusyIndicator.showWhile(getControl().getDisplay(), new Runnable() {
 				public void run() {
 					try {
-						SiteManager.getLocalSite().setMaximumHistoryCount(
-							getHistorySize());
+						SiteManager.getLocalSite().setMaximumHistoryCount(getHistorySize());
+						SiteManager.setHttpProxyInfo(enableHttpProxy.getSelection(),httpProxyHostText.getText(),httpProxyPortText.getText());
 					} catch (CoreException e) {
 						UpdateUIPlugin.logException(e);
 					}
@@ -155,4 +222,27 @@ public class MainPreferencePage
 		UpdateUIPlugin.getDefault().savePluginPreferences();
 		return result;
 	}
+	public void performApply() {
+		super.performApply();
+		BusyIndicator.showWhile(getControl().getDisplay(), new Runnable() {
+			public void run() {
+				SiteManager.setHttpProxyInfo(enableHttpProxy.getSelection(),httpProxyHostText.getText(),httpProxyPortText.getText());
+			}
+		});
+	}
+	public void performDefaults() {
+		super.performDefaults();
+		
+		enableHttpProxy.setSelection(SiteManager.isHttpProxyEnable());
+		String serverValue = SiteManager.getHttpProxyServer();
+		if (serverValue!=null)	httpProxyHostText.setText(serverValue);
+		String portValue = SiteManager.getHttpProxyPort();
+		if (portValue!=null) httpProxyPortText.setText(portValue);
+
+		httpProxyPortLabel.setEnabled(enableHttpProxy.getSelection());
+		httpProxyPortText.setEnabled(enableHttpProxy.getSelection());
+		httpProxyHostLabel.setEnabled(enableHttpProxy.getSelection());
+		httpProxyHostText.setEnabled(enableHttpProxy.getSelection());
+	}
+
 }

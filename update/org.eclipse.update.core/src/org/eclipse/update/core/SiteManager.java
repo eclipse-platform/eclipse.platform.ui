@@ -10,6 +10,7 @@ import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.update.configuration.ILocalSite;
 import org.eclipse.update.internal.core.InternalSiteManager;
+import org.eclipse.update.internal.core.UpdateCore;
 
 /**
  * Site Manager.
@@ -23,12 +24,16 @@ import org.eclipse.update.internal.core.InternalSiteManager;
  * @since 2.0
  */
 public class SiteManager {
-	
+
 	private static String os;
 	private static String ws;
 	private static String arch;
-	private static String nl;	
+	private static String nl;
+	private static boolean isHttpProxyEnable;
 	
+	private static final String P_HTTP_HOST = "http.proxyHost";
+	private static final String P_HTTP_PORT = "http.proxyPort";	
+
 	private SiteManager() {
 	}
 
@@ -44,7 +49,7 @@ public class SiteManager {
 	 * @since 2.0 
 	 */
 	public static ISite getSite(URL siteURL) throws CoreException {
-		return InternalSiteManager.getSite(siteURL,true);
+		return InternalSiteManager.getSite(siteURL, true);
 	}
 
 	/** 
@@ -76,7 +81,7 @@ public class SiteManager {
 	public static ILocalSite getLocalSite() throws CoreException {
 		return InternalSiteManager.getLocalSite();
 	}
-	
+
 	/**
 	 * Trigger handling of newly discovered features. This method
 	 * can be called by the executing application whenever it
@@ -85,7 +90,7 @@ public class SiteManager {
 	 * @throws CoreException if an error occurs.
 	 * @since 2.0
 	 */
-	public static void handleNewChanges() throws CoreException{
+	public static void handleNewChanges() throws CoreException {
 		InternalSiteManager.handleNewChanges();
 	}
 	/**
@@ -95,17 +100,17 @@ public class SiteManager {
 	 * This information is used as a hint by the installation and update
 	 * support.
 	 * 
-     * @see BootLoader#ARCH_LIST
+	 * @see BootLoader#ARCH_LIST
 	 * @return system architecture specification
 	 * @since 2.1
 	 */
-	public static String getOSArch(){
-		if (arch==null) 
+	public static String getOSArch() {
+		if (arch == null)
 			arch = BootLoader.getOSArch();
 		return arch;
 	}
 
-    /**
+	/**
 	 * Returns operating system specification. A comma-separated list of os
 	 * designators defined by the platform.
 	 * 
@@ -116,8 +121,8 @@ public class SiteManager {
 	 * @return the operating system specification.
 	 * @since 2.1
 	 */
-	public static String getOS(){
-		if (os==null)
+	public static String getOS() {
+		if (os == null)
 			os = BootLoader.getOS();
 		return os;
 	}
@@ -134,11 +139,11 @@ public class SiteManager {
 	 * @since 2.1
 	 */
 	public static String getWS() {
-		if (ws==null)
+		if (ws == null)
 			ws = BootLoader.getWS();
 		return ws;
 	}
-	
+
 	/**
 	 * Sets the arch.
 	 * @param arch The arch to set
@@ -162,25 +167,26 @@ public class SiteManager {
 	public static void setWS(String ws) {
 		SiteManager.ws = ws;
 	}
-	
+
 	/**
 	 * Sets the nl.
 	 * @param nl The nl to set
 	 */
 	public static void setNL(String nl) {
 		SiteManager.nl = nl;
-	}	
+	}
 	/**
 	 * Returns an estimate of bytes per milliseconds transfer rate for this URL
 	 * @param URL the URL of the site
 	 * @return long a bytes per millisecond estimate rate
 	 * @since 2.1
- 	 */
+		 */
 	public static long estimate(URL site) {
-		if (site==null) return 0;
+		if (site == null)
+			return 0;
 		return InternalSiteManager.estimate(site.getHost());
 	}
-	
+
 	/**
 	 * Returns current locale
 	 * 
@@ -189,8 +195,68 @@ public class SiteManager {
 	 * @since 2.1
 	 */
 	public static String getNL() {
-		if (nl==null)
+		if (nl == null)
 			nl = BootLoader.getNL();
-		return nl;		
+		return nl;
+	}
+
+	/**
+	 * Returns the HTTP Proxy Server or <code>null</code> if none
+	 * @return the HTTP proxy Server 
+	 */
+	public static String getHttpProxyServer() {
+		return System.getProperty(P_HTTP_HOST);
+	}
+	/**
+	 * Returns the HTTP Proxy Port or <code>null</code> if none
+	 * @return the HTTP proxy Port 
+	 */
+	public static String getHttpProxyPort() {
+		return System.getProperty(P_HTTP_PORT);
+	}
+	/**
+	 * Returns <code>true</code> if the connection should use the 
+	 * http proxy server, <code>false</code> otherwise
+	 * @return is the http proxy server enable
+	 */
+	public static boolean isHttpProxyEnable() {
+		return isHttpProxyEnable;
+	}
+	/**
+	 * Sets the HTTP Proxy information
+	 * Sets the HTTP proxy server for the HTTP proxy server 
+	 * Sets the HTTP proxy port for the HTTP proxy server 
+	 * If the proxy name is <code>null</code> or the proxy port is
+	 * <code>null</code> the connection will not use HTTP proxy server.
+	 * 
+	 * @param enable <code>true</code> if the connection should use an http
+	 * proxy server, <code>false </code> otherwise.
+	 * @param httpProxyServer the HTTP proxy server name or IP adress
+	 * @param httpProxyPort the HTTP proxy port
+	 */
+	public static void setHttpProxyInfo(boolean enable, String httpProxyServer, String httpProxyPort) {
+		isHttpProxyEnable = enable;
+
+		// if enable is false, or values are null,
+		// we should remove the properties and save the fact that proxy is disable 
+		if (!enable || httpProxyServer == null || httpProxyPort == null) {
+			System.getProperties().remove(P_HTTP_HOST);
+			System.getProperties().remove(P_HTTP_PORT);
+			//if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_WARNINGS)
+			UpdateCore.warn("Remove proxy server info");
+			UpdateCore.getPlugin().getPluginPreferences().setValue(UpdateCore.HTTP_PROXY_ENABLE, isHttpProxyEnable());
+			UpdateCore.getPlugin().savePluginPreferences();
+			return;
+		}
+		
+		System.getProperties().setProperty(P_HTTP_HOST, httpProxyServer);
+		System.getProperties().setProperty(P_HTTP_PORT, httpProxyPort);
+		//if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_WARNINGS)
+		UpdateCore.warn("Added proxy server info:" + httpProxyServer + ":" + httpProxyPort);
+		UpdateCore.getPlugin().getPluginPreferences().setValue(UpdateCore.HTTP_PROXY_HOST, getHttpProxyServer());
+		UpdateCore.getPlugin().getPluginPreferences().setValue(UpdateCore.HTTP_PROXY_PORT, getHttpProxyPort());
+		UpdateCore.getPlugin().getPluginPreferences().setValue(UpdateCore.HTTP_PROXY_ENABLE, isHttpProxyEnable());
+		UpdateCore.getPlugin().savePluginPreferences();
+
 	}
 }

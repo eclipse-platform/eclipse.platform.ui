@@ -6,7 +6,6 @@ package org.eclipse.update.internal.core;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.Authenticator;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -15,6 +14,7 @@ import org.eclipse.core.boot.IPlatformConfiguration;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.IInstallConfiguration;
+import org.eclipse.update.core.*;
 import org.eclipse.update.core.JarContentReference;
 import org.eclipse.update.core.Utilities;
 
@@ -46,7 +46,9 @@ public class UpdateCore extends Plugin {
 	private static String appServerHost =null;
 	private static int appServerPort = 0;
 	
-	private HttpClient client;
+	public static String HTTP_PROXY_HOST = "org.eclipse.update.core.proxy.host";
+	public static String HTTP_PROXY_PORT = "org.eclipse.update.core.proxy.port";
+	public static String HTTP_PROXY_ENABLE = "org.eclipse.update.core.proxy.enable";
 
 	/**
 	 * The constructor.
@@ -106,9 +108,12 @@ public class UpdateCore extends Plugin {
 			warn("",e);
 		}
 		
-		client = new HttpClient();
+		SiteManager.setHttpProxyInfo(
+			getPluginPreferences().getBoolean(HTTP_PROXY_ENABLE),
+			getPluginPreferences().getString(HTTP_PROXY_HOST),
+			getPluginPreferences().getString(HTTP_PROXY_PORT));
 	}
-
+ 
 	/**
 	 * @see Plugin#shutdown()
 	 */
@@ -119,8 +124,7 @@ public class UpdateCore extends Plugin {
 		Utilities.shutdown(); // cleanup temp area
 		if (log!=null)
 			log.shutdown();
-			
-		if (client!=null) client.close();
+					
 	}
 
 	private boolean getBooleanDebugOption(String flag, boolean dflt) {
@@ -282,14 +286,4 @@ public class UpdateCore extends Plugin {
 		}*/
 		return response;
 	}
-
-	/**
-	 * Method setDefaultAuthenticator.
-	 * @param authenticator
-	 */
-	public void setDefaultAuthenticator(Authenticator authenticator) {
-		if (client!=null)
-			client.setAuthenticator(authenticator);
-	}
-
 }

@@ -765,7 +765,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 			String affinity = attributes.getValue("colocation-affinity"); //$NON-NLS-1$
 			feature.setAffinityFeature(affinity);
 
-			// praimery plugin
+			// primary plugin
 			String plugin = attributes.getValue("plugin");
 			feature.setPrimaryPluginID(plugin);
 

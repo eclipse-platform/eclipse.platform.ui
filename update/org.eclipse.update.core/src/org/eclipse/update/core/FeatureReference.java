@@ -83,7 +83,8 @@ public class FeatureReference extends FeatureReferenceModel implements IFeatureR
 	protected IFeature getFeature(IFeatureReference ref) throws CoreException {
 
 		IFeature feature = null;
-		feature = createFeature(ref.getURL());
+		URL refURL = ref.getURL();
+		feature = createFeature(refURL);
 		return feature;
 	}
 
@@ -197,7 +198,7 @@ public class FeatureReference extends FeatureReferenceModel implements IFeatureR
 	 * @since 2.1
 	 */
 	public String getOS() {
-		if (super.getOS() == null)
+		if (super.getOS() == null && getURL()!=null)
 			try {
 				return getFeature().getOS();
 			} catch (CoreException e) {
@@ -214,7 +215,7 @@ public class FeatureReference extends FeatureReferenceModel implements IFeatureR
 	 * @since 2.1
 	 */
 	public String getWS() {
-		if (super.getWS() == null)
+		if (super.getWS() == null && getURL()!=null)
 			try {
 				return getFeature().getWS();
 			} catch (CoreException e) {
@@ -231,7 +232,7 @@ public class FeatureReference extends FeatureReferenceModel implements IFeatureR
 	 * @since 2.1
 	 */
 	public String getOSArch() {
-		if (super.getOSArch() == null)
+		if (super.getOSArch() == null && getURL()!=null)
 			try {
 				return getFeature().getOSArch();
 			} catch (CoreException e) {
@@ -247,7 +248,7 @@ public class FeatureReference extends FeatureReferenceModel implements IFeatureR
 	 * @since 2.1
 	 */
 	public String getNL() {
-		if (super.getNL() == null)
+		if (super.getNL() == null && getURL()!=null)
 			try {
 				return getFeature().getNL();
 			} catch (CoreException e) {
