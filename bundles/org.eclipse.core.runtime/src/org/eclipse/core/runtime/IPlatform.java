@@ -260,8 +260,9 @@ public interface IPlatform {
 	 * was started.
 	 *
 	 * @return the location of the platform
+	 * @deprecated @see #getInstanceLocation()
 	 */
-	public IPath getLocation();
+	public IPath getLocation() throws IllegalStateException;
 
 	/**
 	 * Returns the location of the platform log file.  This file may contain information
@@ -536,4 +537,52 @@ public interface IPlatform {
 	public String[] getApplicationArgs();
 	
 	public PlatformAdmin getPlatformAdmin();
+	
+	/**
+	 * Returns the location of the platform working directory (also known as instance data).  
+	 * This corresponds to the <i>-data</i> command line argument if
+	 * present or, to the value set using @see #setInstanceLocation(IPath), or if 
+	 * none of these has been specified, the current working directory when the platform
+	 * was started.
+	 * The method throws an IllegalStateException if no instance data has been specified.  
+	 *
+	 * @return the location of the platform
+	 * @since 3.0
+	 */
+	public IPath getInstanceLocation() throws IllegalStateException;
+	
+	/**
+	 * Set the location of the platform working directory.
+	 * The method throws an IllegalStateException if an instance data as already been set.  
+	 * @since 3.0
+	 */
+	public void setInstanceLocation(IPath location) throws IllegalStateException;
+	
+	/**
+	 * Indicate if an instance data has been set.
+	 * 
+	 * @return true if an instance data location has been specified. Return false otherwise. 
+	 * @since 3.0
+	 */
+	public boolean hasInstanceData();
+	
+	/**
+	 * Lock the instance data. 
+	 * The method throws a CoreException if the lock can not be acquired or 
+	 * an IllegalStateException if no instance data has been specified.
+	 * @since 3.0
+	 */
+	public void lockInstanceData() throws CoreException, IllegalStateException;
+	/**
+	 * Unlock the instance data. 
+	 * @since 3.0
+	 */
+	public void unlockInstanceData() throws IllegalStateException;
+	/**
+	 * Set the location of the keyring file. 
+	 * Throws an IllegalStateException if the file as already been set explicitly or the authorization mechanism used before.
+	 * @param keyringFile, the location of the keyring file
+	 * @since 3.0
+	 */
+	public void setKeyringLocation(String keyringFile) throws IllegalStateException;
 }

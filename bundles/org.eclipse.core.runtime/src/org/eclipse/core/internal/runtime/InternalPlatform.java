@@ -116,6 +116,8 @@ public final class InternalPlatform implements IPlatform {
 	// command line options
 	private static final String ARG_APPLICATION = "-application"; //$NON-NLS-1$	
 	private static final String ARG_DATA = "-data"; //$NON-NLS-1$	
+	private static final String ARG_NO_DATA = "-noData"; //$NON-NLS-1$
+	private static final String ARG_NO_DEFAULT_DATA = "-noDefaultData"; //$NON-NLS-1$
 	private static final String ARG_INSTALL = "-install"; //$NON-NLS-1$	
 	private static final String LOG = "-consolelog"; //$NON-NLS-1$
 	private static final String KEYRING = "-keyring"; //$NON-NLS-1$
@@ -309,19 +311,7 @@ public final class InternalPlatform implements IPlatform {
 	 * @see Platform#getLocation
 	 */
 	public IPath getLocation() throws IllegalStateException {
-		assertInitialized();
-		if (! metaArea.isInstanceDataLocationInitiliazed()) {
-			if (noData) 
-				throw new IllegalStateException(Policy.bind("meta.noDataModeSpecified"));
-			if (noDefaultData)
-				throw new IllegalStateException(Policy.bind("meta.instanceDataUnspecified"));
-			try {
-				metaArea.initializeLocation();
-			} catch (CoreException e) {
-				throw new IllegalStateException(e.getLocalizedMessage());
-			} 
-		}
-		return metaArea.getInstanceDataLocation();
+		return getInstanceLocation();
 	}
 
 
@@ -676,7 +666,19 @@ public final class InternalPlatform implements IPlatform {
 				// PluginClassLoader.usePackagePrefixes = false;
 				found = true;
 			}
-
+			
+			// look for the flag to run without workspace 
+			if (args[i].equalsIgnoreCase(ARG_NO_DATA)) {
+				System.setProperty(NO_DATA, "true");
+				found = true;
+			}
+			
+			// look for the flag to run with a workspace specified programmatically
+			if (args[i].equalsIgnoreCase(ARG_NO_DEFAULT_DATA)) {
+				System.setProperty(NO_DEFAULT_DATA, "true");
+				found = true;
+			}
+			
 			// look for the flag to turn off the workspace metadata version check
 			if (args[i].equalsIgnoreCase(NO_VERSION_CHECK)) {
 				doVersionCheck = false;
@@ -1234,11 +1236,33 @@ public final class InternalPlatform implements IPlatform {
 	public void setKeyringLocation(String keyringFile) {
 		getMetaArea().setKeyringFile(keyringFile);
 	}
-	
+	public IPath getInstanceLocation() throws IllegalStateException {
+		assertInitialized();
+		if (! metaArea.isInstanceDataLocationInitiliazed()) {
+			if (noData) 
+				throw new IllegalStateException(Policy.bind("meta.noDataModeSpecified"));
+			if (noDefaultData)
+				throw new IllegalStateException(Policy.bind("meta.instanceDataUnspecified"));
+			try {
+				metaArea.initializeLocation();
+			} catch (CoreException e) {
+				throw new IllegalStateException(e.getLocalizedMessage());
+			} 
+		}
+		return metaArea.getInstanceDataLocation();
+	}
+	public void setInstanceLocation(IPath location) throws IllegalStateException {
+		getMetaArea().setInstanceDataLocation(location);	
+	}
 	public IBundleGroupProvider[] getBundleGroupProviders() {
 		return (IBundleGroupProvider[])groupProviders.toArray(new IBundleGroupProvider[groupProviders.size()]);
+	}	
+	public void unregisterBundleGroupProvider(IBundleGroupProvider provider) {
+		groupProviders.remove(provider);		
+	}	
+	public void registerBundleGroupProvider(IBundleGroupProvider provider) {
+		groupProviders.add(provider);		
 	}
-
 	public IProduct getProduct() {
 		if (product != null)
 			return product;
@@ -1251,13 +1275,5 @@ public final class InternalPlatform implements IPlatform {
 		// There should only be one product with the given id so just take the first element
 		product = new Product(entries[0]);
 		return product;
-		}
-
-	public void registerBundleGroupProvider(IBundleGroupProvider provider) {
-		groupProviders.add(provider);		
-	}
-	public void unregisterBundleGroupProvider(IBundleGroupProvider provider) {
-		groupProviders.remove(provider);		
-	}
-	
+	}	
 }
