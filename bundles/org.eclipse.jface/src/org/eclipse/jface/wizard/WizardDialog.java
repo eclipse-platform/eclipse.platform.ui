@@ -1067,8 +1067,6 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer {
 	 * Method declared on IWizardContainer.
 	 */
 	public void updateMessage() {
-		if (getTitleArea() == null)
-			return;
 
 		pageMessage = currentPage.getMessage();
 		if (pageMessage != null && currentPage instanceof IMessageProvider)
@@ -1154,8 +1152,6 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer {
 	 * Method declared on IWizardContainer.
 	 */
 	public void updateTitleBar() {
-		if (getTitleArea() == null)
-			return;
 
 		String s = currentPage.getTitle();
 		if (s == null)
