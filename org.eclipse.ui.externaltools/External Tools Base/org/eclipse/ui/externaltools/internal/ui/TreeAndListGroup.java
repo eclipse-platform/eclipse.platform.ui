@@ -1,4 +1,4 @@
-package org.eclipse.ui.externaltools.internal.ant.preferences;
+package org.eclipse.ui.externaltools.internal.ui;
 
 /**********************************************************************
 Copyright (c) 2002 IBM Corp. and others. All rights reserved.
@@ -29,7 +29,11 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 
-public class AddCustomTreeAndListGroup implements ISelectionChangedListener {
+/**
+ * This class was derived from org.eclipse.ui.internal.misc.CheckboxTreeAndListGroup
+ *
+ */
+public class TreeAndListGroup implements ISelectionChangedListener {
 	private Object root;
 	private Object currentTreeSelection;
 	private Collection expandedTreeNodes = new HashSet();
@@ -43,6 +47,7 @@ public class AddCustomTreeAndListGroup implements ISelectionChangedListener {
 	// widgets
 	private TreeViewer treeViewer;
 	private TableViewer listViewer;
+	private boolean allowMultiselection= false;
 
 	/**
 	 *	Create an instance of this class.  Use this constructor if you wish to specify
@@ -58,7 +63,7 @@ public class AddCustomTreeAndListGroup implements ISelectionChangedListener {
 	 *	@param width int
 	 *	@param height int
 	 */
-	public AddCustomTreeAndListGroup(Composite parent, Object rootObject, ITreeContentProvider treeContentProvider, ILabelProvider treeLabelProvider, IStructuredContentProvider listContentProvider, ILabelProvider listLabelProvider, int style, int width, int height) {
+	public TreeAndListGroup(Composite parent, Object rootObject, ITreeContentProvider treeContentProvider, ILabelProvider treeLabelProvider, IStructuredContentProvider listContentProvider, ILabelProvider listLabelProvider, int style, int width, int height) {
 
 		root = rootObject;
 		this.treeContentProvider = treeContentProvider;
@@ -130,7 +135,13 @@ public class AddCustomTreeAndListGroup implements ISelectionChangedListener {
 	 *	Create this group's list viewer.
 	 */
 	protected void createListViewer(Composite parent, int width, int height) {
-		listViewer = new TableViewer(parent, SWT.BORDER | SWT.SINGLE);
+		int style;
+		if (allowMultiselection) {
+			style= SWT.MULTI;
+		} else {
+			style= SWT.SINGLE;
+		}
+		listViewer = new TableViewer(parent, SWT.BORDER | style);
 		GridData data = new GridData(GridData.FILL_BOTH);
 		data.widthHint = width;
 		data.heightHint = height;
@@ -161,7 +172,7 @@ public class AddCustomTreeAndListGroup implements ISelectionChangedListener {
 		treeViewer.addSelectionChangedListener(this);
 	}
 	
-	protected IStructuredSelection getListTableSelection() {
+	public IStructuredSelection getListTableSelection() {
 		ISelection selection=  this.listViewer.getSelection();
 		if (selection instanceof IStructuredSelection) {
 			return (IStructuredSelection)selection;
@@ -172,13 +183,19 @@ public class AddCustomTreeAndListGroup implements ISelectionChangedListener {
 	
 	protected void initialListItem(Object element) {
 		Object parent = treeContentProvider.getParent(element);
-		selectAndReveal(parent);
+		selectAndRevealFolder(parent);
 	}
 	
-	private void selectAndReveal(Object treeElement) {
+	public void selectAndRevealFolder(Object treeElement) {
 		treeViewer.reveal(treeElement);
 		IStructuredSelection selection = new StructuredSelection(treeElement);
 		treeViewer.setSelection(selection);
+	}
+	
+	public void selectAndRevealFile(Object treeElement) {
+		listViewer.reveal(treeElement);
+		IStructuredSelection selection = new StructuredSelection(treeElement);
+		listViewer.setSelection(selection);
 	}
 
 	/**
@@ -261,5 +278,10 @@ public class AddCustomTreeAndListGroup implements ISelectionChangedListener {
 	public void setFocus() {
 
 		this.treeViewer.getTree().setFocus();
+	}
+	
+	public void setAllowMultiselection(boolean allowMultiselection) {
+		this.allowMultiselection= allowMultiselection;
+		
 	}
 }
