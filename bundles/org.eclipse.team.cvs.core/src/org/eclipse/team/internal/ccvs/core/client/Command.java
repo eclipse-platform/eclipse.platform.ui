@@ -490,7 +490,7 @@ public abstract class Command {
 				} else {
 					throw new CVSException(new org.eclipse.core.runtime.Status(IStatus.ERROR,
 						CVSProviderPlugin.ID, CVSException.IO_FAILED,
-						Policy.bind("Command.unsupportedResponse", response), null)); //$NON-NLS-1$
+						Policy.bind("Command.unsupportedResponse", response, argument), null)); //$NON-NLS-1$
 				}
 			}
 		}
