@@ -10,15 +10,15 @@
  **********************************************************************/
 package org.eclipse.core.internal.localstore;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.internal.properties.IndexedStoreWrapper;
-import org.eclipse.core.internal.resources.*;
-import org.eclipse.core.internal.utils.*;
-import org.eclipse.core.internal.indexing.*;
 import java.io.File;
 import java.io.InputStream;
 import java.util.*;
+import org.eclipse.core.internal.indexing.*;
+import org.eclipse.core.internal.properties.IndexedStoreWrapper;
+import org.eclipse.core.internal.resources.*;
+import org.eclipse.core.internal.utils.*;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 
 public class HistoryStore {
 	protected Workspace workspace;
@@ -45,17 +45,31 @@ protected void accept(byte[] key, IHistoryStoreVisitor visitor, boolean visitOnP
 		cursor.find(key);
 		// Check for a prefix match.
 		while (cursor.keyMatches(key)) {
-			if (!visitOnPartialMatch) {
-				// Ensure key prefix is of correct length.
-				byte[] storedKey = cursor.getKey();
-				if (storedKey.length - ILocalStoreConstants.SIZE_KEY_SUFFIX != key.length) {
-					cursor.next();
-					continue;
-				}
+			byte[] storedKey = cursor.getKey();
+			
+			// visit if we have an exact match
+			if (storedKey.length - ILocalStoreConstants.SIZE_KEY_SUFFIX == key.length) {
+				HistoryStoreEntry storedEntry = HistoryStoreEntry.create(store, cursor);
+				if (!visitor.visit(storedEntry))
+					break;
 			}
-			HistoryStoreEntry storedEntry = HistoryStoreEntry.create(store, cursor);
-			if (!visitor.visit(storedEntry))
-				break;
+			
+			// return if we aren't checking partial matches
+			if (!visitOnPartialMatch) {
+				cursor.next();
+				continue;
+			}
+
+			// if the last character of the key is a path
+			// separator or if the next character in the match
+			// is a path separater then visit since it is a child
+			// based on path segment matching.
+			byte b = storedKey[key.length];
+			if (key[key.length-1] == 47 || b == 47) {
+				HistoryStoreEntry storedEntry = HistoryStoreEntry.create(store, cursor);
+				if (!visitor.visit(storedEntry))
+					break;
+			}
 			cursor.next();
 		}
 		cursor.close();
@@ -212,11 +226,6 @@ public void copyHistory(final IPath source, final IPath destination) {
 		ResourcesPlugin.getPlugin().getLog().log(status);
 		return;
 	}
-	//FIXME: due to bug 28330 we collect a set of entries to copy
-	// and then copy the entries outside the visitor. Once this referenced
-	// bug is fixed we can change this code to add the states within
-	// the visit() method.
-	final List matches = new LinkedList();
 	IHistoryStoreVisitor visitor = new IHistoryStoreVisitor () {
 		public boolean visit(HistoryStoreEntry entry) throws IndexedStoreException {
 			IPath path = entry.getPath();
@@ -229,24 +238,16 @@ public void copyHistory(final IPath source, final IPath destination) {
 				ResourcesPlugin.getPlugin().getLog().log(status);
 				return false;
 			}
-			// add this entry to the set of matches
-			matches.add(entry);
+			path = destination.append(path.removeFirstSegments(prefixSegments));
+			addState(path, entry.getUUID(), entry.getLastModified());
 			return true;
 		}
 	};
+
 	// Visit all the entries. Visit partial matches too since this is a depth infinity operation
 	// and we want to copy history for children.
 	accept(source, visitor, true);
 
-	// for each match add a new state at the destination path
-	for (Iterator i=matches.iterator(); i.hasNext();) {
-		HistoryStoreEntry entry = (HistoryStoreEntry) i.next();
-		IPath path = entry.getPath();
-		int prefixSegments = source.matchingFirstSegments(path);
-		path = destination.append(path.removeFirstSegments(prefixSegments));
-		addState(path, entry.getUUID(), entry.getLastModified());
-	}
-	
 	// We need to do a commit here.  The addState method we are
 	// using won't commit store.  The public ones will.
 	try {
