@@ -184,6 +184,11 @@ public class ModuleSelectionPage extends CVSWizardPage {
 		TreeViewer result = new TreeViewer(tree);
 		result.setContentProvider(new RemoteContentProvider());
 		result.setLabelProvider(new WorkbenchLabelProvider());
+		result.addFilter(new ViewerFilter() {
+			public boolean select(Viewer viewer, Object parentElement, Object element) {
+				return !(element instanceof ICVSRemoteFile);
+			}
+		});
 		result.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				updateEnablements();
