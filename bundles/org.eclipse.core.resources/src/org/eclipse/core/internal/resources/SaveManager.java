@@ -450,14 +450,13 @@ protected void restore(IProgressMonitor monitor) throws CoreException {
 			restoreTree(workspace, Policy.subMonitorFor(monitor, 10));
 			restoreSnapshots(Policy.subMonitorFor(monitor, 10));
 			
-			restoreMarkers(workspace.getRoot(), false, Policy.subMonitorFor(monitor, 10));
 			// tolerate failure for non-critical information
 			// if startup fails, the entire workspace is shot
-//			try {
-//				restoreMarkers(workspace.getRoot(), false, Policy.subMonitorFor(monitor, 10));
-//			} catch (CoreException e) {
-//				problems.merge(e.getStatus());
-//			}
+			try {
+				restoreMarkers(workspace.getRoot(), false, Policy.subMonitorFor(monitor, 10));
+			} catch (CoreException e) {
+				problems.merge(e.getStatus());
+			}
 			try {
 				restoreSyncInfo(workspace.getRoot(), Policy.subMonitorFor(monitor, 10));
 			} catch (CoreException e) {
