@@ -11,7 +11,6 @@
 package org.eclipse.search2.internal.ui;
 
 import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -20,20 +19,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.Assert;
-
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
-
 import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.internal.ui.SearchPreferencePage;
 import org.eclipse.search.internal.ui.util.ExceptionHandler;
@@ -42,6 +32,12 @@ import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.ISearchResultViewPart;
 import org.eclipse.search.ui.SearchUI;
 import org.eclipse.search2.internal.ui.text.PositionTracker;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 
 public class InternalSearchUI {
 	private static final int HISTORY_COUNT= 10;
@@ -114,14 +110,9 @@ public class InternalSearchUI {
 		fSearchJobs= new HashMap();
 		fSearchResultsManager= new QueryManager();
 		fPositionTracker= new PositionTracker();
-		try {
-			URL install= SearchPlugin.getDefault().getDescriptor().getInstallURL();
-			URL iconURL= new URL(install, "icons/full/eview16/searchres.gif");
-			ImageDescriptor image= ImageDescriptor.createFromURL(iconURL);
-			PlatformUI.getWorkbench().getProgressService().registerIconForFamily(image, FAMILY_SEARCH);
-		} catch (MalformedURLException e) {
-			// don't set any image
-		}
+		URL iconURL= SearchPlugin.getDefault().getBundle().getEntry("icons/full/eview16/searchres.gif"); //$NON-NLS-1$
+		ImageDescriptor image= ImageDescriptor.createFromURL(iconURL);
+		PlatformUI.getWorkbench().getProgressService().registerIconForFamily(image, FAMILY_SEARCH);
 	}
 
 	/**
