@@ -460,7 +460,9 @@ public class ResourceNavigator
 			ops,
 			transfers,
 			new NavigatorDragAdapter((ISelectionProvider) viewer));
-		viewer.addDropSupport(ops, transfers, new NavigatorDropAdapter(viewer));
+		NavigatorDropAdapter adapter = 	new NavigatorDropAdapter(viewer);
+		adapter.setFeedbackEnabled(false);
+		viewer.addDropSupport(ops, transfers, adapter);
 	}
 	/**
 	 * Initializes a drill down adapter on the viewer.
