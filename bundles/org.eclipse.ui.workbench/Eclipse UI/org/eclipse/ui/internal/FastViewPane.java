@@ -518,6 +518,7 @@ public class FastViewPane {
             return;
         }
 
+        fastViewAction.setPane(null);
         //unzoom before hiding
         currentPane.setZoomed(false);
 

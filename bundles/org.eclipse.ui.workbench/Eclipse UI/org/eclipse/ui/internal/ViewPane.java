@@ -189,10 +189,14 @@ public class ViewPane extends PartPane implements IPropertyListener {
          * containing the titleLabel will also disappear (disposing of the 
          * titleLabel).  As a result, the reference to titleLabel should be dropped. 
          */
-        if (isvMenuMgr != null)
+        if (isvMenuMgr != null) {
             isvMenuMgr.dispose();
-        if (isvToolBarMgr != null)
+            isvMenuMgr.removeAll();
+        }
+        if (isvToolBarMgr != null) {
             isvToolBarMgr.dispose();
+            isvToolBarMgr.removeAll();
+        }
         if (toolbarWrapper != null) {
             toolbarWrapper.dispose();
             toolbarWrapper = null;
