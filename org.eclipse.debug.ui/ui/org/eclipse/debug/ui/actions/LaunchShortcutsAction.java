@@ -33,6 +33,7 @@ import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MenuAdapter;
@@ -43,6 +44,7 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
@@ -145,9 +147,15 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 			        list = new ArrayList();
 			        list.add(((IEditorPart)activePart).getEditorInput());
 			    } else if (activePart != null) {
-			        ISelection selection = activePart.getSite().getSelectionProvider().getSelection();
-			        if (selection instanceof IStructuredSelection) {
-			            list = ((IStructuredSelection)selection).toList();
+			        IWorkbenchPartSite site = activePart.getSite();
+			        if (site != null) {
+	                    ISelectionProvider selectionProvider = site.getSelectionProvider();
+	                    if (selectionProvider != null) {
+	                        ISelection selection = selectionProvider.getSelection();
+					        if (selection instanceof IStructuredSelection) {
+					            list = ((IStructuredSelection)selection).toList();
+					        }
+	                    }
 			        }
 			    }
 			}
