@@ -513,6 +513,14 @@ public class ExpandableComposite extends Composite {
 					toggleState();
 				}
 			});
+			toggle.addKeyListener(new KeyAdapter() {
+				public void keyPressed(KeyEvent e) {
+					if (e.keyCode==SWT.ARROW_UP)
+						verticalMove(false);
+					else if (e.keyCode==SWT.ARROW_DOWN)
+						verticalMove(true);
+				}
+			});
 		}
 		if ((expansionStyle & FOCUS_TITLE) != 0) {
 			Hyperlink link = new Hyperlink(this, SWT.WRAP);
@@ -860,5 +868,29 @@ public class ExpandableComposite extends Composite {
 	protected boolean hasTitleBar() {
 		return (getExpansionStyle() & TITLE_BAR) != 0
 				|| (getExpansionStyle() & SHORT_TITLE_BAR) != 0;
+	}
+	private void verticalMove(boolean down) {
+		Composite parent = getParent();
+		Control [] children = parent.getChildren();
+		for (int i=0; i<children.length; i++) {
+			Control child = children[i];
+			if (child==this) {
+				ExpandableComposite sibling = getSibling(children, i, down);
+				if (sibling!=null && sibling.toggle!=null) {
+					sibling.setFocus();
+				}
+				break;
+			}
+		}
+	}
+	private ExpandableComposite getSibling(Control[] children, int index, boolean down) {
+		int loc = down?index+1:index-1;
+		while (loc>=0 && loc <children.length) {
+			Control c = children [loc];
+			if (c instanceof ExpandableComposite) 
+				return (ExpandableComposite)c;
+			loc = down?loc+1:loc-1;
+		}
+		return null;
 	}
 }
