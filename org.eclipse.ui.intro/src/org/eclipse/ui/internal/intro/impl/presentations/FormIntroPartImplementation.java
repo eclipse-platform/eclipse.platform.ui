@@ -53,7 +53,7 @@ public class FormIntroPartImplementation extends AbstractIntroPartImplementation
 
         {
             setToolTipText(IntroPlugin
-                    .getResourceString("Browser.homeButton_tooltip")); //$NON-NLS-1$
+                    .getString("Browser.homeButton_tooltip")); //$NON-NLS-1$
             setImageDescriptor(ImageUtil.createImageDescriptor("home_nav.gif")); //$NON-NLS-1$
         }
 

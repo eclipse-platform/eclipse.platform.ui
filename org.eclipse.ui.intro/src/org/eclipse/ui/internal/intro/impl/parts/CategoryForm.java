@@ -47,7 +47,7 @@ public class CategoryForm implements IIntroConstants {
                 return;
             }
             DialogUtil.displayInfoMessage(imageLink.getShell(), IntroPlugin
-                    .getResourceString("HyperlinkAdapter.urlIs") //$NON-NLS-1$
+                    .getString("HyperlinkAdapter.urlIs") //$NON-NLS-1$
                     + " " + introLink.getUrl()); //$NON-NLS-1$
         }
 

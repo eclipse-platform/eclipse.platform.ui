@@ -159,9 +159,9 @@ public class StandbyPart {
     private void updateReturnLinkLabel() {
         AbstractIntroPage page = model.getCurrentPage();
         String linkText = IntroPlugin
-                .getResourceString("StandbyPart.returnToIntro"); //$NON-NLS-1$
+                .getString("StandbyPart.returnToIntro"); //$NON-NLS-1$
         if (page instanceof IntroPage) {
-            linkText = IntroPlugin.getResourceString("StandbyPart.returnTo") //$NON-NLS-1$
+            linkText = IntroPlugin.getString("StandbyPart.returnTo") //$NON-NLS-1$
                     + " " + page.getTitle(); //$NON-NLS-1$
         }
         returnLink.setText(linkText);

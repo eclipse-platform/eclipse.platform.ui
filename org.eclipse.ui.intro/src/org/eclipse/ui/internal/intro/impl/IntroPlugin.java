@@ -53,7 +53,7 @@ public class IntroPlugin extends AbstractUIPlugin {
      * Returns the string from the plugin's resource bundle, or 'key' if not
      * found.
      */
-    public static String getResourceString(String key) {
+    public static String getString(String key) {
         try {
             ResourceBundle bundle = IntroPlugin.getDefault()
                     .getResourceBundle();
@@ -69,7 +69,7 @@ public class IntroPlugin extends AbstractUIPlugin {
      * Utility method to get a resource from the given key, then format it with
      * the given substitutions. <br>
      */
-    public static String getFormattedResourceString(String key, Object[] args) {
+    public static String getFormattedString(String key, Object[] args) {
         return MessageFormat.format(key, args);
     }
 

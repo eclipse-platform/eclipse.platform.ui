@@ -36,7 +36,7 @@ public class BrowserIntroPartImplementation extends
 
         {
             setToolTipText(IntroPlugin
-                    .getResourceString("Browser.backwardButton_tooltip")); //$NON-NLS-1$
+                    .getString("Browser.backwardButton_tooltip")); //$NON-NLS-1$
             setImageDescriptor(ImageUtil
                     .createImageDescriptor("backward_nav.gif")); //$NON-NLS-1$
         }
@@ -67,7 +67,7 @@ public class BrowserIntroPartImplementation extends
 
         {
             setToolTipText(IntroPlugin
-                    .getResourceString("Browser.forwardButton_tooltip")); //$NON-NLS-1$
+                    .getString("Browser.forwardButton_tooltip")); //$NON-NLS-1$
             setImageDescriptor(ImageUtil
                     .createImageDescriptor("forward_nav.gif")); //$NON-NLS-1$
         }
@@ -99,7 +99,7 @@ public class BrowserIntroPartImplementation extends
 
         {
             setToolTipText(IntroPlugin
-                    .getResourceString("Browser.homeButton_tooltip")); //$NON-NLS-1$
+                    .getString("Browser.homeButton_tooltip")); //$NON-NLS-1$
             setImageDescriptor(ImageUtil.createImageDescriptor("home_nav.gif")); //$NON-NLS-1$
         }
 
@@ -130,7 +130,7 @@ public class BrowserIntroPartImplementation extends
 
         if (!getModelRoot().hasValidConfig()) {
             browser.setText(IntroPlugin
-                    .getResourceString("Browser.invalidConfig")); //$NON-NLS-1$
+                    .getString("Browser.invalidConfig")); //$NON-NLS-1$
             return;
         }
 

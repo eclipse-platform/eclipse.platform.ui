@@ -60,7 +60,7 @@ public class PageForm implements IIntroConstants, IPropertyListener {
                 return;
             }
             DialogUtil.displayInfoMessage(imageLink.getShell(), IntroPlugin
-                    .getResourceString("HyperlinkAdapter.urlIs") //$NON-NLS-1$
+                    .getString("HyperlinkAdapter.urlIs") //$NON-NLS-1$
                     + introLink.getUrl());
         }
 

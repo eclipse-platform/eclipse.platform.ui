@@ -39,12 +39,12 @@ public class Util {
         String msg = null;
         if (variables != null) {
             // if variables is not null, errorId will never be null.
-            msg = IntroPlugin.getFormattedResourceString(errorId, variables);
+            msg = IntroPlugin.getFormattedString(errorId, variables);
         } else {
             if (errorId == null)
                 msg = e.getMessage();
             else
-                msg = IntroPlugin.getResourceString(errorId);
+                msg = IntroPlugin.getString(errorId);
         }
         Log.error(msg, e);
     }

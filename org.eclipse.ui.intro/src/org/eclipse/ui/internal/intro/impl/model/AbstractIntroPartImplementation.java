@@ -48,7 +48,7 @@ public abstract class AbstractIntroPartImplementation {
 
         {
             setToolTipText(IntroPlugin
-                    .getResourceString("IntroPart.showContentButton_tooltip")); //$NON-NLS-1$
+                    .getString("IntroPart.showContentButton_tooltip")); //$NON-NLS-1$
             setImageDescriptor(ImageUtil
                     .createImageDescriptor("contents_view.gif")); //$NON-NLS-1$
         }

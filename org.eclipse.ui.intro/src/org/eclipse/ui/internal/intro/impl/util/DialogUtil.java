@@ -33,9 +33,9 @@ public class DialogUtil {
     public static void displayCoreErrorDialog(final Shell parent,
             String errorId, CoreException coreEx) {
 
-        String title = IntroPlugin.getResourceString("ErrorDialog.errorTitle"); //$NON-NLS-1$
+        String title = IntroPlugin.getString("ErrorDialog.errorTitle"); //$NON-NLS-1$
         IStatus status = coreEx.getStatus();
-        String msg = IntroPlugin.getResourceString(errorId);
+        String msg = IntroPlugin.getString(errorId);
         ErrorDialog.openError(parent, title, msg, status);
         Log.error(msg, coreEx);
     }
@@ -47,7 +47,7 @@ public class DialogUtil {
             final String msg, final Throwable ex) {
 
         String title = IntroPlugin
-                .getResourceString("MessageDialog.errorTitle"); //$NON-NLS-1$
+                .getString("MessageDialog.errorTitle"); //$NON-NLS-1$
         MessageDialog.openError(parent, title, msg);
         Log.error(msg, ex);
     }
@@ -62,9 +62,9 @@ public class DialogUtil {
 
         String msg = null;
         if (variables != null)
-            msg = IntroPlugin.getFormattedResourceString(errorId, variables);
+            msg = IntroPlugin.getFormattedString(errorId, variables);
         else
-            msg = IntroPlugin.getResourceString(errorId);
+            msg = IntroPlugin.getString(errorId);
         displayErrorMessage(parent, msg, ex);
     }
 
@@ -77,7 +77,7 @@ public class DialogUtil {
             final String msg) {
 
         String title = IntroPlugin
-                .getResourceString("MessageDialog.warningTitle"); //$NON-NLS-1$
+                .getString("MessageDialog.warningTitle"); //$NON-NLS-1$
         MessageDialog.openWarning(parent, title, msg);
         Log.warning(msg);
     }
@@ -91,9 +91,9 @@ public class DialogUtil {
 
         String msg = null;
         if (variables != null)
-            msg = IntroPlugin.getFormattedResourceString(warningId, variables);
+            msg = IntroPlugin.getFormattedString(warningId, variables);
         else
-            msg = IntroPlugin.getResourceString(warningId);
+            msg = IntroPlugin.getString(warningId);
         displayWarningMessage(parent, msg);
 
     }
@@ -104,7 +104,7 @@ public class DialogUtil {
      */
     public static void displayInfoMessage(final Shell parent, final String msg) {
 
-        String title = IntroPlugin.getResourceString("MessageDialog.infoTitle"); //$NON-NLS-1$
+        String title = IntroPlugin.getString("MessageDialog.infoTitle"); //$NON-NLS-1$
         MessageDialog.openInformation(parent, title, msg);
         Log.info(msg);
 
@@ -119,9 +119,9 @@ public class DialogUtil {
 
         String msg = null;
         if (variables != null)
-            msg = IntroPlugin.getFormattedResourceString(infoId, variables);
+            msg = IntroPlugin.getFormattedString(infoId, variables);
         else
-            msg = IntroPlugin.getResourceString(infoId);
+            msg = IntroPlugin.getString(infoId);
         displayInfoMessage(parent, msg);
     }
 

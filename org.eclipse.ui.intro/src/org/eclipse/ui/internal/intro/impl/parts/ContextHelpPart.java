@@ -122,14 +122,12 @@ public class ContextHelpPart implements IStandbyContentPart {
      */
     public void init(IIntroPart introPart) {
         partListener = new PartListener();
-        defaultText = IntroPlugin
-                .getResourceString("ContextHelpPart.defaultText"); //$NON-NLS-1$
+        defaultText = IntroPlugin.getString("ContextHelpPart.defaultText"); //$NON-NLS-1$
         ImageUtil.registerImage(ImageUtil.HELP_TOPIC, "help_topic.gif"); //$NON-NLS-1$
     }
 
     public void createPartControl(Composite parent, FormToolkit toolkit) {
         form = toolkit.createScrolledForm(parent);
-        //form.setText("Context help");
         TableWrapLayout layout = new TableWrapLayout();
         form.getBody().setLayout(layout);
         Util.highlight(form.getBody(), SWT.COLOR_YELLOW);
@@ -142,12 +140,13 @@ public class ContextHelpPart implements IStandbyContentPart {
         helpContainer.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
         toolkit.paintBordersFor(helpContainer);
 
-        Label label = toolkit.createLabel(helpContainer, "Search:");
+        Label label = toolkit.createLabel(helpContainer, IntroPlugin
+                .getString("ContextHelpPart.search"));
         label.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
         phraseText = toolkit.createText(helpContainer, "");
         phraseText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        final Button button = toolkit.createButton(helpContainer, "Go",
-                SWT.PUSH);
+        final Button button = toolkit.createButton(helpContainer, IntroPlugin
+                .getString("ContextHelpPart.button.go"), SWT.PUSH);
         button.addSelectionListener(new SelectionAdapter() {
 
             public void widgetSelected(SelectionEvent e) {
@@ -172,7 +171,8 @@ public class ContextHelpPart implements IStandbyContentPart {
             }
         });
         title = toolkit.createLabel(form.getBody(), null, SWT.WRAP);
-        title.setText("Context Help");
+        title.setText(IntroPlugin
+                .getString("ContextHelpPart.contextHelpArea.Title"));
         title.setFont(JFaceResources.getHeaderFont());
         title.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
         text = toolkit.createFormText(form.getBody(), true);
@@ -222,13 +222,15 @@ public class ContextHelpPart implements IStandbyContentPart {
         if (partId.equals("org.eclipse.ui.internal.introview"))
             return;
         if (activated) {
-            title.setText("What is \"" + part.getSite().getRegisteredName()
-                    + "\"?");
+            title.setText(IntroPlugin
+                    .getString("ContextHelpPart.whatIsArea.Title")
+                    + "\"" + part.getSite().getRegisteredName() + " \"?");
             String helpText = createContextHelp(ref);
             text.setText(helpText != null ? helpText : "", helpText != null,
                     false);
         } else {
-            title.setText("Context Help");
+            title.setText(IntroPlugin
+                    .getString("ContextHelpPart.contextHelpArea.Title"));
             text.setText(defaultText, false, false);
         }
         form.getBody().layout();
