@@ -30,7 +30,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.actions.Util;
-import org.eclipse.ui.internal.actions.keybindings.Binding;
 import org.eclipse.ui.internal.actions.keybindings.KeyMachine;
 import org.eclipse.ui.internal.actions.keybindings.KeyManager;
 import org.eclipse.ui.internal.actions.keybindings.KeySequence;

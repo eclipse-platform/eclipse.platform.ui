@@ -23,7 +23,6 @@ import org.eclipse.ui.part.*;
 import org.eclipse.ui.part.MultiEditor;
 
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.*;

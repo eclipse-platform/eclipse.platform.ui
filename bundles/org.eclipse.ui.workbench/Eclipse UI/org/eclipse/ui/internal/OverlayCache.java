@@ -4,7 +4,6 @@ import java.util.*;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.ui.internal.misc.OverlayIcon;
 
 /**
  * The OverlayCache is a helper class used by the DecoratorManger

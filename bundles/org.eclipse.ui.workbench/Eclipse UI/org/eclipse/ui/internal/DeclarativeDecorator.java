@@ -7,7 +7,6 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ILightweightLabelDecorator;
-import org.eclipse.swt.graphics.Image;
 
 /**
  * The DeclarativeDecorator is a decorator that is made entirely

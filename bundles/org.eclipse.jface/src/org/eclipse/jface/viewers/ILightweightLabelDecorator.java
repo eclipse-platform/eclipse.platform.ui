@@ -1,7 +1,6 @@
 package org.eclipse.jface.viewers;
 
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.graphics.Image;
 
 /**
  * The ILightweightLabelDecorator is a decorator that decorates

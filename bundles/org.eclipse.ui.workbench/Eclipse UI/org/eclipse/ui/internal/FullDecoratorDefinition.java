@@ -12,11 +12,9 @@ package org.eclipse.ui.internal;
  ******************************************************************************/
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.viewers.ILabelDecorator;
-import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.internal.registry.WizardsRegistryReader;
 

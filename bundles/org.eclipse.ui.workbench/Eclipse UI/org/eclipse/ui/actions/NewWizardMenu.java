@@ -6,7 +6,6 @@ package org.eclipse.ui.actions;
  */
  
 import org.eclipse.jface.action.*;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.*;

@@ -12,7 +12,6 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.registry.RegistryReader;
-import org.eclipse.ui.internal.registry.WizardsRegistryReader;
 
 /**
  * The DecoratorRegistryReader is the class that reads the
