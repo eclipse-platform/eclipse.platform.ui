@@ -210,7 +210,10 @@ public class RemoteModule extends RemoteFolder {
 				boolean expandable = true;
 				for (int i = 0; i < children.length; i++) {
 					RemoteModule child = (RemoteModule)modules.get(children[i].substring(1));
-					if (child.isAlias()) {
+					if (child == null) {
+						// invalid module definition
+						expandable = false;
+					} else if (child.isAlias()) {
 						// Include alias children in-line
 						expandable = false;
 //						referencedFolders.addAll(Arrays.asList(child.getChildren()));
