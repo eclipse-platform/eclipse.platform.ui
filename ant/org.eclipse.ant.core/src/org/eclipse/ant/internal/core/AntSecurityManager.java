@@ -33,9 +33,16 @@ public class AntSecurityManager extends SecurityManager {
 	//start checking permissions: bug 85908
 	private static final PropertyPermission fgPropertyPermission= new PropertyPermission("*", "write"); //$NON-NLS-1$ //$NON-NLS-2$
 	
-	public AntSecurityManager(SecurityManager securityManager, Thread restrictedThread) {
+	private boolean fAllowSettingSystemProperties= true;
+	
+	public AntSecurityManager(SecurityManager securityManager, Thread restrictedThread, boolean allowSettingProperties) {
 		fSecurityManager= securityManager;
 		fRestrictedThread= restrictedThread;
+		fAllowSettingSystemProperties= allowSettingProperties;
+	}
+	
+	public AntSecurityManager(SecurityManager securityManager, Thread restrictedThread) {
+		this(securityManager, restrictedThread, true);
 	}
 	
 	/* (non-Javadoc)
@@ -214,7 +221,7 @@ public class AntSecurityManager extends SecurityManager {
 	 * @see java.lang.SecurityManager#checkPermission(java.security.Permission)
 	 */
 	public void checkPermission(Permission perm) {
-		if (fgPropertyPermission.implies(perm) && fRestrictedThread == Thread.currentThread()) {
+		if (!fAllowSettingSystemProperties && fgPropertyPermission.implies(perm) && fRestrictedThread == Thread.currentThread()) {
 			//attempting to write a system property
 			throw new AntSecurityException();
 		}

@@ -296,7 +296,7 @@ public class AntModel implements IAntModel {
     			processAntHome(true);
     			try {
 					//set a security manager to disallow system exit and system property setting
-					System.setSecurityManager(new AntSecurityManager(origSM, Thread.currentThread()));
+					System.setSecurityManager(new AntSecurityManager(origSM, Thread.currentThread(), false));
 					resolveBuildfile();
 					endReporting();
 				} catch (AntSecurityException e) {
