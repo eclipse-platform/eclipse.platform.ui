@@ -31,6 +31,8 @@ public class IntroText extends AbstractBaseIntroElement {
     IntroText(Element element, Bundle bundle) {
         super(element, bundle);
         Node textNode = element.getFirstChild();
+        if (textNode == null)
+                return;
         if (textNode.getNodeType() == Node.TEXT_NODE) {
             text = textNode.getNodeValue();
             if (text.equals(" "))
