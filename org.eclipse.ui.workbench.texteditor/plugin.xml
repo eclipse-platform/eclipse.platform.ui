@@ -177,7 +177,46 @@
 		configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
 	</keyBinding>
    </extension>
-   
+  <extension
+         point="org.eclipse.ui.commands">
+      <keyBinding
+            string="Ctrl+Arrow_Right"
+            scope="org.eclipse.ui.textEditorScope"
+            command="org.eclipse.ui.edit.text.goto.wordNext"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
+            string="Ctrl+Arrow_Left"
+            scope="org.eclipse.ui.textEditorScope"
+            command="org.eclipse.ui.edit.text.goto.wordPrevious"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
+            string="Ctrl+Delete"
+            scope="org.eclipse.ui.textEditorScope"
+            command="org.eclipse.ui.edit.text.deleteNextWord"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
+            string="Ctrl+Backspace"
+            scope="org.eclipse.ui.textEditorScope"
+            command="org.eclipse.ui.edit.text.deletePreviousWord"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
+            command="org.eclipse.ui.edit.text.select.wordNext"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
+            scope="org.eclipse.ui.textEditorScope"
+            string="Ctrl+Shift+Arrow_Right">
+      </keyBinding>
+      <keyBinding
+            command="org.eclipse.ui.edit.text.select.wordPrevious"
+            scope="org.eclipse.ui.textEditorScope"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
+            string="Ctrl+Shift+Arrow_Left">
+      </keyBinding>
+   </extension>
+
 <!-- action sets -->
    <extension
          point="org.eclipse.ui.actionSets">

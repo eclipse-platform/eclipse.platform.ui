@@ -135,13 +135,12 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.part.EditorActionBarContributor;
-import org.eclipse.ui.part.EditorPart;
-
 import org.eclipse.ui.internal.ActionDescriptor;
 import org.eclipse.ui.internal.EditorPluginAction;
 import org.eclipse.ui.internal.texteditor.EditPosition;
 import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
+import org.eclipse.ui.part.EditorActionBarContributor;
+import org.eclipse.ui.part.EditorPart;
 
 
 
@@ -1001,10 +1000,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * - if the caret is at the beginning of the line the caret is moved directly before the line's first non-whitespace character
 	 * @since 2.1
 	 */
-	class LineStartAction extends TextNavigationAction {
+	protected class LineStartAction extends TextNavigationAction {
 		
 		/** boolean flag which tells if the text up to the beginning of the line should be selected. */
-		private boolean fDoSelect;
+		private final boolean fDoSelect;
 		
 		/**
 		 * Creates a new line start action.
@@ -1012,11 +1011,27 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		 * @param textWidget the styled text widget
 		 * @param doSelect a boolean flag which tells if the text up to the beginning of the line should be selected
 		 */
-		public LineStartAction(StyledText textWidget, boolean doSelect) {
+		public LineStartAction(final StyledText textWidget, final boolean doSelect) {
 			super(textWidget, ST.LINE_START);
 			fDoSelect= doSelect;
 		}
-		
+
+		/**
+		 * Computes the offset of the line start position.
+		 * 
+		 * @param document The document where to compute the line start position
+		 * @param line The line to determine the start position of
+		 * @param length The length of the line
+		 * @param offset The caret position in the document
+		 * @return The offset of the line start
+		 */
+		protected int getLineStartPosition(final IDocument document, final String line, final int length, final int offset) {
+			int index= 0;
+			while (index < length && Character.isWhitespace(line.charAt(index)))
+				index++;
+			return index;
+		}
+
 		/*
 		 * @see org.eclipse.jface.action.IAction#run()
 		 */
@@ -1033,11 +1048,14 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			int caretOffset= st.getCaretOffset();
 			int lineNumber= st.getLineAtOffset(caretOffset);
 			int lineOffset= st.getOffsetAtLine(lineNumber);
-			
+		
 			int lineLength;
+			int caretOffsetInDocument;
+			final IDocument document= getSourceViewer().getDocument();
+
 			try {
-				int caretOffsetInDocument= widgetOffset2ModelOffset(getSourceViewer(), caretOffset);
-				lineLength= getSourceViewer().getDocument().getLineInformationOfOffset(caretOffsetInDocument).getLength();
+				caretOffsetInDocument= widgetOffset2ModelOffset(getSourceViewer(), caretOffset);
+				lineLength= document.getLineInformationOfOffset(caretOffsetInDocument).getLength();
 			} catch (BadLocationException ex) {
 				return;
 			}
@@ -1048,10 +1066,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				end= Math.min(end, st.getCharCount() -1);
 				line= st.getText(lineOffset, end);
 			}
-			int i= 0;
-			while (i < lineLength && Character.isWhitespace(line.charAt(i)))
-				i++;
-
+			
+			// Compute the line start offset
+			int index= getLineStartPosition(document, line, lineLength, caretOffsetInDocument);
 
 			// Remember current selection
 			Point oldSelection= st.getSelection();
@@ -1060,12 +1077,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			int newCaretOffset= -1;
 			if (isSmartHomeEndEnabled) {
 				
-				if (caretOffset - lineOffset == i)
+				if (caretOffset - lineOffset == index)
 					// to beginning of line
 					newCaretOffset= lineOffset;
 				else
 					// to beginning of text
-					newCaretOffset= lineOffset + i;
+					newCaretOffset= lineOffset + index;
 									
 			} else {
 				
@@ -4700,6 +4717,23 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			return extension.widgetOffset2ModelOffset(widgetOffset);
 		}
 		return widgetOffset + viewer.getVisibleRegion().getOffset();
+	}
+	
+	/**
+	 * Returns the offset of the given source viewer's text widget that corresponds
+	 * to the given model offset or <code>-1</code> if there is no such offset.
+	 * 
+	 * @param viewer the source viewer
+	 * @param modelOffset the model offset
+	 * @return the corresponding offset in the source viewer's text widget or <code>-1</code>
+	 * @since 3.0
+	 */
+	protected final static int modelOffset2WidgetOffset(ISourceViewer viewer, int modelOffset) {
+		if (viewer instanceof ITextViewerExtension3) {
+			ITextViewerExtension3 extension= (ITextViewerExtension3) viewer;
+			return extension.modelOffset2WidgetOffset(modelOffset);
+		}
+		return modelOffset - viewer.getVisibleRegion().getOffset();
 	}
 	
 	/**
