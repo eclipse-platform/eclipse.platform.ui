@@ -44,6 +44,12 @@ public ProjectDescription() {
 public void clean() {
 	dirty = false;
 }
+public Object clone() {
+	ProjectDescription clone = (ProjectDescription) super.clone();
+	//don't want the clone to have access to our internal link locations table
+	clone.linkDescriptions = null;
+	return clone;
+}
 /**
  * @see IProjectDescription
  */

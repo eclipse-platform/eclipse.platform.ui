@@ -520,10 +520,10 @@ public void delete(int updateFlags, IProgressMonitor monitor) throws CoreExcepti
 				return;
 
 			workspace.beginOperation(true);
-			message = Policy.bind("resources.deleteProblem"); //$NON-NLS-1$
 			IPath originalLocation = getLocation();
+			message = Policy.bind("resources.deleteProblem"); //$NON-NLS-1$
 			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, null);
-			ResourceTree tree = new ResourceTree(status);
+			ResourceTree tree = new ResourceTree(status, updateFlags);
 			IMoveDeleteHook hook = workspace.getMoveDeleteHook();
 			switch (getType()) {
 				case IResource.FILE:
@@ -557,7 +557,7 @@ public void delete(int updateFlags, IProgressMonitor monitor) throws CoreExcepti
 			if (!tree.getStatus().isOK())
 				throw new ResourceException(tree.getStatus());
 			//update any aliases of this resource
-			workspace.getAliasManager().updateAliases(this, originalLocation, monitor);
+			workspace.getAliasManager().updateAliases(this, originalLocation, IResource.DEPTH_INFINITE, monitor);
 		} catch (OperationCanceledException e) {
 			workspace.getWorkManager().operationCanceled();
 			throw e;
@@ -977,13 +977,15 @@ public void move(IPath path, int updateFlags, IProgressMonitor monitor) throws C
 			assertMoveRequirements(path, getType(), updateFlags);
 			path = makePathAbsolute(path);
 			workspace.beginOperation(true);
+			IPath originalLocation = getLocation();
 			message = Policy.bind("resources.moveProblem"); //$NON-NLS-1$
 			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, null);
-			ResourceTree tree = new ResourceTree(status);
+			ResourceTree tree = new ResourceTree(status, updateFlags);
 			IMoveDeleteHook hook = workspace.getMoveDeleteHook();
+			IResource destination = null;
 			switch (getType()) {
 				case IResource.FILE:
-					IResource destination = workspace.getRoot().getFile(path);
+					destination = workspace.getRoot().getFile(path);
 					if (!hook.moveFile(tree, (IFile) this, (IFile) destination, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork/2)))
 						tree.standardMoveFile((IFile) this, (IFile) destination, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork/2));
 					break;
@@ -1014,6 +1016,9 @@ public void move(IPath path, int updateFlags, IProgressMonitor monitor) throws C
 			tree.makeInvalid();
 			if (!tree.getStatus().isOK())
 				throw new ResourceException(tree.getStatus());
+			//update any aliases of this resource and the destination
+			workspace.getAliasManager().updateAliases(this, originalLocation, IResource.DEPTH_INFINITE, monitor);
+			workspace.getAliasManager().updateAliases(destination, destination.getLocation(), IResource.DEPTH_INFINITE, monitor);
 		} catch (OperationCanceledException e) {
 			workspace.getWorkManager().operationCanceled();
 			throw e;
@@ -1041,7 +1046,7 @@ public void refreshLocal(int depth, IProgressMonitor monitor) throws CoreExcepti
 			if (getType() != ROOT && !getProject().isAccessible())
 				return;
 			workspace.beginOperation(true);
-			build = getLocalManager().refresh(this, depth, Policy.subMonitorFor(monitor, Policy.opWork));
+			build = getLocalManager().refresh(this, depth, true, Policy.subMonitorFor(monitor, Policy.opWork));
 		} catch (OperationCanceledException e) {
 			workspace.getWorkManager().operationCanceled();
 			throw e;

@@ -23,15 +23,17 @@ import org.eclipse.core.runtime.*;
  */
 class ResourceTree implements IResourceTree {
 	
-	MultiStatus status;
-	boolean isValid = true;
+	private MultiStatus status;
+	private int updateFlags;
+	private boolean isValid = true;
 
 /**
  * Constructor for this class.
  */
-public ResourceTree(MultiStatus status) {
+public ResourceTree(MultiStatus status, int updateFlags) {
 	super();
 	this.status = status;
+	this.updateFlags = updateFlags;
 }
 
 /**
@@ -97,7 +99,7 @@ public void movedFile(IFile source, IFile destination) {
 	// Move the node in the workspace tree.
 	Workspace workspace = (Workspace) source.getWorkspace();
 	try {
-		workspace.move((Resource) source, destination.getFullPath(), IResource.DEPTH_ZERO, false);
+		workspace.move((Resource) source, destination.getFullPath(), IResource.DEPTH_ZERO, updateFlags, false);
 	} catch (CoreException e) {
 		String message = Policy.bind("resources.errorMoving", source.getFullPath().toString(), destination.getFullPath().toString()); //$NON-NLS-1$
 		IStatus status = new ResourceStatus(IStatus.ERROR, source.getFullPath(), message, e);
@@ -150,7 +152,7 @@ public void movedFolderSubtree(IFolder source, IFolder destination) {
 	// Create the destination node in the tree.
 	Workspace workspace = (Workspace) source.getWorkspace();
 	try {
-		workspace.move((Resource) source, destination.getFullPath(), depth, false);
+		workspace.move((Resource) source, destination.getFullPath(), depth, updateFlags, false);
 	} catch (CoreException e) {
 		String message = Policy.bind("resources.errorMoving", source.getFullPath().toString(), destination.getFullPath().toString()); //$NON-NLS-1$
 		IStatus status = new ResourceStatus(IStatus.ERROR, source.getFullPath(), message, e);
@@ -196,9 +198,7 @@ public boolean movedProjectSubtree(IProject project, IProjectDescription destDes
 			return false;
 		}
 
-		// Rename the project metadata area. Close the property store so bogus values 
-		// aren't copied to the destination.
-		// FIXME: do we need to do this?
+		// Rename the project metadata area. Close the property store to flush everything to disk
 		try {
 			source.getPropertyManager().closePropertyStore(source);
 		} catch (CoreException e) {
@@ -220,7 +220,7 @@ public boolean movedProjectSubtree(IProject project, IProjectDescription destDes
 	
 		// Move the workspace tree.
 		try {
-			workspace.move(source, destination.getFullPath(), depth, false, true);
+			workspace.move(source, destination.getFullPath(), depth, updateFlags, true);
 		} catch (CoreException e) {
 			String message = Policy.bind("resources.errorMoving", source.getFullPath().toString(), destination.getFullPath().toString()); //$NON-NLS-1$
 			IStatus status = new ResourceStatus(IStatus.ERROR, source.getFullPath(), message, e);
@@ -232,7 +232,7 @@ public boolean movedProjectSubtree(IProject project, IProjectDescription destDes
 		ProjectInfo info = (ProjectInfo) destination.getResourceInfo(false, true);
 		info.clearNatures();
 		info.setBuilders(null);
-
+		
 		// Generate marker deltas.
 		try {
 			workspace.getMarkerManager().moved(source, destination, depth);
@@ -246,8 +246,10 @@ public boolean movedProjectSubtree(IProject project, IProjectDescription destDes
 		copyLocalHistory(source, destination);
 	}
 	
-	// Set the new project description on the destination project.
+	// Write the new project description on the destination project.
 	try {
+		//moving linked resources may have modified the description in memory
+		((ProjectDescription)destDescription).setLinkDescriptions(destination.internalGetDescription().getLinks());
 		destination.internalSetDescription(destDescription, true);
 		destination.writeDescription(IResource.FORCE);
 	} catch (CoreException e) {

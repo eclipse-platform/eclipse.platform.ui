@@ -171,7 +171,7 @@ public void close(IProgressMonitor monitor) throws CoreException {
 	}
 }
 /**
- * @see IProject#copy
+ * @see IResource#copy
  */
 public void copy(IProjectDescription destination, int updateFlags, IProgressMonitor monitor) throws CoreException {
 	// FIXME - the logic here for copying projects needs to be moved to Resource.copy
@@ -430,7 +430,7 @@ protected void internalCopy(IProjectDescription destDesc, int updateFlags, IProg
 			workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_COPY, this, destProject, updateFlags));
 
 			workspace.beginOperation(true);
-			getLocalManager().refresh(this, DEPTH_INFINITE, Policy.subMonitorFor(monitor, Policy.opWork * 20 / 100));
+			getLocalManager().refresh(this, DEPTH_INFINITE, true, Policy.subMonitorFor(monitor, Policy.opWork * 20 / 100));
 
 			// close the property store so incorrect info is not copied to the destination
 			getPropertyManager().closePropertyStore(this);
@@ -469,7 +469,7 @@ protected void internalCopy(IProjectDescription destDesc, int updateFlags, IProg
 
 			// refresh local
 			monitor.subTask(Policy.bind("resources.updating")); //$NON-NLS-1$
-			getLocalManager().refresh(destProject, DEPTH_INFINITE, Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
+			getLocalManager().refresh(destProject, DEPTH_INFINITE, true, Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
 		} catch (OperationCanceledException e) {
 			workspace.getWorkManager().operationCanceled();
 			throw e;
@@ -487,7 +487,7 @@ protected void internalCopyProjectOnly(IResource destination, IProgressMonitor m
 	// close the property store so bogus values aren't copied to the destination
 	getPropertyManager().closePropertyStore(this);
 	// copy the tree and properties
-	workspace.copyTree(this, destination.getFullPath(), IResource.DEPTH_ZERO, false, false);
+	workspace.copyTree(this, destination.getFullPath(), IResource.DEPTH_ZERO, IResource.NONE, false);
 	getPropertyManager().copy(this, destination, IResource.DEPTH_ZERO);
 	
 	//clear instantiated builders and natures because they reference the project handle
@@ -629,7 +629,7 @@ public void move(IProjectDescription description, int updateFlags, IProgressMoni
 			workspace.beginOperation(true);
 			message = Policy.bind("resources.moveProblem"); //$NON-NLS-1$
 			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, null);
-			ResourceTree tree = new ResourceTree(status);
+			ResourceTree tree = new ResourceTree(status, updateFlags);
 			IMoveDeleteHook hook = workspace.getMoveDeleteHook();
 			workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_MOVE, this, destination, updateFlags));
 			if (!hook.moveProject(tree, this, description, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork/2)))

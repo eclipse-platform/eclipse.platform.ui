@@ -544,12 +544,7 @@ public IStatus copy(IResource[] resources, IPath destination, boolean force, IPr
 	return copy(resources, destination, updateFlags , monitor);
 }
 
-protected void copyTree(IResource source, IPath destination, int depth, boolean phantom, boolean overwrite) throws CoreException {
-	copyTree(source, destination, depth, phantom, overwrite, false);
-}
-protected void copyTree(IResource source, IPath destination, int depth, boolean phantom, boolean overwrite, boolean keepSyncInfo) throws CoreException {
-	// FIXME: change this method signature to use the int updateFlags rather than the booleans.
-
+protected void copyTree(IResource source, IPath destination, int depth, int updateFlags, boolean keepSyncInfo) throws CoreException {
 	// retrieve the resource at the destination if there is one (phantoms included).
 	// if there isn't one, then create a new handle based on the type that we are
 	// trying to copy
@@ -572,7 +567,7 @@ protected void copyTree(IResource source, IPath destination, int depth, boolean 
 		sourceInfo = (ResourceInfo) sourceInfo.clone();
 		sourceInfo.setType(destinationResource.getType());
 	}
-	ResourceInfo newInfo = createResource(destinationResource, sourceInfo, phantom, overwrite, keepSyncInfo);
+	ResourceInfo newInfo = createResource(destinationResource, sourceInfo, false, false, keepSyncInfo);
 	// get/set the node id from the source's resource info so we can later put it in the
 	// info for the destination resource. This will help us generate the proper deltas,
 	// indicating a move rather than a add/delete
@@ -584,7 +579,7 @@ protected void copyTree(IResource source, IPath destination, int depth, boolean 
 	newInfo.setFlags(newInfo.getFlags() | (oldInfo.getFlags() & M_LOCAL_EXISTS));
 	
 	// update link locations in project descriptions
-	if (source.isLinked()) {
+	if (source.isLinked() && ((updateFlags & IResource.SHALLOW) != 0)) {
 		newInfo.set(ICoreConstants.M_LINK);
 		//create new link location
 		Project project = (Project)destinationResource.getProject();
@@ -599,13 +594,11 @@ protected void copyTree(IResource source, IPath destination, int depth, boolean 
 		return;
 	if (depth == IResource.DEPTH_ONE)
 		depth = IResource.DEPTH_ZERO;
-	int flags = phantom ? IContainer.INCLUDE_PHANTOMS : IResource.NONE;
-	flags |= IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS;
-	IResource[] children = ((IContainer) source).members(flags);
+	IResource[] children = ((IContainer) source).members(IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
 	for (int i = 0; i < children.length; i++) {
 		IResource child = children[i];
 		IPath childPath = destination.append(child.getName());
-		copyTree(child, childPath, depth, phantom, overwrite, keepSyncInfo);
+		copyTree(child, childPath, depth, updateFlags, keepSyncInfo);
 	}
 }
 /**
@@ -1363,9 +1356,6 @@ public IStatus move(IResource[] resources, IPath destination, boolean force, IPr
 	return move(resources, destination, updateFlags, monitor);
 }
 
-/* package */ void move(Resource source, IPath destination, int depth, boolean overwrite) throws CoreException {
-	move(source, destination, depth, overwrite, false);
-}
 /**
  * Moves this resource's subtree to the destination. This operation should only be
  * used by move methods. Destination must be a valid destination for this resource.
@@ -1373,10 +1363,10 @@ public IStatus move(IResource[] resources, IPath destination, boolean force, IPr
  * be moved from the source to the destination.
  */
 
-/* package */ void move(Resource source, IPath destination, int depth, boolean overwrite, boolean keepSyncInfo) throws CoreException {
+/* package */ void move(Resource source, IPath destination, int depth, int updateFlags, boolean keepSyncInfo) throws CoreException {
 	// overlay the tree at the destination path, preserving any important info
 	// in any already existing resource infos
-	copyTree(source, destination, depth, false, overwrite, keepSyncInfo);
+	copyTree(source, destination, depth, updateFlags, keepSyncInfo);
 	source.fixupAfterMoveSource();
 }
 /**

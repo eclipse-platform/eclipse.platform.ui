@@ -64,7 +64,7 @@ protected void fileToFolder(UnifiedTreeNode node, Resource target) throws CoreEx
 protected void folderToFile(UnifiedTreeNode node, Resource target) throws CoreException {
 	changed(target);
 }
-protected void resourceChanged(Resource target, long lastModified) throws CoreException {
+protected void resourceChanged(UnifiedTreeNode node, Resource target) throws CoreException {
 	changed(target);
 }
 }

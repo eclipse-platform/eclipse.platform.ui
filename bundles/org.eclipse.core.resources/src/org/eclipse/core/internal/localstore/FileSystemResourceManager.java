@@ -475,27 +475,29 @@ public ProjectDescription read(IProject target, boolean creation) throws CoreExc
 		throw error;
 	return description;
 }
-public boolean refresh(IResource target, int depth, IProgressMonitor monitor) throws CoreException {
+public boolean refresh(IResource target, int depth, boolean updateAliases, IProgressMonitor monitor) throws CoreException {
 	switch (target.getType()) {
 		case IResource.ROOT :
-			return refreshRoot((IWorkspaceRoot) target, depth, monitor);
+			return refreshRoot((IWorkspaceRoot) target, depth, updateAliases, monitor);
 		case IResource.PROJECT :
 			if (!target.isAccessible())
 				return false;
 			//fall through
 		case IResource.FOLDER :
 		case IResource.FILE :
-			return refreshResource(target, depth, monitor);
+			return refreshResource(target, depth, updateAliases, monitor);
 	}
 	return false;
 }
-protected boolean refreshResource(IResource target, int depth, IProgressMonitor monitor) throws CoreException {
+protected boolean refreshResource(IResource target, int depth, boolean updateAliases, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	int totalWork = RefreshLocalVisitor.TOTAL_WORK;
 	String title = Policy.bind("localstore.refreshing", target.getFullPath().toString()); //$NON-NLS-1$
 	try {
 		monitor.beginTask(title, totalWork);
-		RefreshLocalVisitor visitor = new RefreshLocalVisitor(monitor);
+		RefreshLocalVisitor visitor = updateAliases ? 
+			new RefreshLocalAliasVisitor(monitor) : 
+			new RefreshLocalVisitor(monitor);
 		UnifiedTree tree = new UnifiedTree(target);
 		tree.accept(visitor, depth);
 		IStatus result = visitor.getErrorStatus();
@@ -512,7 +514,7 @@ protected boolean refreshResource(IResource target, int depth, IProgressMonitor 
  * projects currently in the workspace.  A better implementation may
  * be possible.
  */
-protected boolean refreshRoot(IWorkspaceRoot target, int depth, IProgressMonitor monitor) throws CoreException {
+protected boolean refreshRoot(IWorkspaceRoot target, int depth, boolean updateAliases, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	IProject[] projects = target.getProjects();
 	int totalWork = projects.length;
@@ -527,7 +529,7 @@ protected boolean refreshRoot(IWorkspaceRoot target, int depth, IProgressMonitor
 		// drop the depth by one level since processing the root counts as one level.
 		depth = depth == IResource.DEPTH_ONE ? IResource.DEPTH_ZERO : depth;
 		for (int i = 0; i < projects.length; i++)
-			changed |= refresh(projects[i], depth, Policy.subMonitorFor(monitor, 1));
+			changed |= refresh(projects[i], depth, updateAliases, Policy.subMonitorFor(monitor, 1));
 		return changed;
 	} finally {
 		monitor.done();

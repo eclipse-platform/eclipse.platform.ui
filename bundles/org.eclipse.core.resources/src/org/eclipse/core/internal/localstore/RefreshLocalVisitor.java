@@ -57,8 +57,8 @@ public RefreshLocalVisitor(IProgressMonitor monitor) {
  * This method has the same implementation as resourceChanged but as they are different
  * cases, we prefer to use different methods.
  */
-protected void contentAdded(Resource target, long lastModified) throws CoreException {
-	resourceChanged(target, lastModified);
+protected void contentAdded(UnifiedTreeNode node, Resource target) throws CoreException {
+	resourceChanged(node, target);
 }
 protected void createResource(UnifiedTreeNode node, Resource target) throws CoreException {
 	ResourceInfo info = target.getResourceInfo(false, false);
@@ -123,11 +123,17 @@ protected void folderToFile(UnifiedTreeNode node, Resource target) throws CoreEx
 public IStatus getErrorStatus() {
 	return errors;
 }
-protected void resourceChanged(Resource target, long lastModified) throws CoreException {
+/**
+ * Refreshes the parent of a resource currently being synchronized.
+ */
+protected void refresh(Container parent) throws CoreException {
+	parent.getLocalManager().refresh(parent, IResource.DEPTH_ZERO, false, null);
+}
+protected void resourceChanged(UnifiedTreeNode node, Resource target) throws CoreException {
 	ResourceInfo info = target.getResourceInfo(false, true);
 	if (info == null)
 		return;
-	target.getLocalManager().updateLocalSync(info, lastModified);
+	target.getLocalManager().updateLocalSync(info, node.getLastModified());
 	info.incrementContentId();
 	workspace.updateModificationStamp(info);
 }
@@ -160,7 +166,7 @@ protected int synchronizeExistence(UnifiedTreeNode node, Resource target, int le
 			if (!CoreFileSystemLibrary.isCaseSensitive()) {
 				Container parent = (Container) target.getParent();
 				if (!parent.exists()) {
-					parent.getLocalManager().refresh(parent, IResource.DEPTH_ZERO, null);
+					refresh(parent);
 					if (!parent.exists())
 						return RL_NOT_IN_SYNC;
 				}
@@ -174,6 +180,7 @@ protected int synchronizeExistence(UnifiedTreeNode node, Resource target, int le
 	}
 	return RL_UNKNOWN;
 }
+
 /**
  * gender change -- Returns true if gender was in sync.
  */
@@ -198,9 +205,9 @@ protected boolean synchronizeGender(UnifiedTreeNode node, Resource target) throw
  */
 protected void synchronizeLastModified(UnifiedTreeNode node, Resource target) throws CoreException {
 	if (target.isLocal(IResource.DEPTH_ZERO))
-		resourceChanged(target, node.getLastModified());
+		resourceChanged(node, target);
 	else
-		contentAdded(target, node.getLastModified());
+		contentAdded(node, target);
 	resourceChanged = true;
 }
 public boolean visit(UnifiedTreeNode node) throws CoreException {
