@@ -12,6 +12,7 @@
 		<project>org.eclipse.team.cvs.core</project>
 		<project>org.eclipse.team.ui</project>
 		<project>org.eclipse.ui</project>
+		<project>org.eclipse.ui.console</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

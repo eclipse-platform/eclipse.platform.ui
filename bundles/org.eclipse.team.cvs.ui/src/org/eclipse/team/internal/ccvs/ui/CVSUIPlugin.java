@@ -43,6 +43,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
+import org.eclipse.team.internal.ccvs.ui.console.CVSOutputConsole;
 import org.eclipse.team.internal.ccvs.ui.model.CVSAdapterFactory;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryRoot;
@@ -53,6 +54,8 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.console.ConsolePlugin;
+import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 /**
  * UI Plugin for CVS provider-specific workbench functionality.
@@ -365,6 +368,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		createImageDescriptor(ICVSUIConstants.IMG_MERGED, baseURL);
 		createImageDescriptor(ICVSUIConstants.IMG_EDITED, baseURL);
 		createImageDescriptor(ICVSUIConstants.IMG_NO_REMOTEDIR, baseURL);
+		createImageDescriptor(ICVSUIConstants.IMG_CVS_CONSOLE, baseURL);
 		
 		// special
 		createImageDescriptor("glyphs/glyph1.gif", baseURL);  //$NON-NLS-1$
@@ -645,6 +649,8 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		TeamUI.addPropertyChangeListener(listener);
 		
 		Console.startup();
+		// Commented out until we have fully ported the CVS console to the new API
+		//ConsolePlugin.getDefault().getConsoleManager().addConsoles(new IConsole[] {new CVSOutputConsole()});
 	}
 	
 	public static IWorkingSet getWorkingSet(IResource[] resources, String name) {

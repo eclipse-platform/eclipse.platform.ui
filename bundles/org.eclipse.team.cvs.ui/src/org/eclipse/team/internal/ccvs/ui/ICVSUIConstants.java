@@ -18,6 +18,7 @@ public interface ICVSUIConstants {
 	public final String ICON_PATH = "icons/full/"; //$NON-NLS-1$
 	
 	// images
+	public final String IMG_CVS_CONSOLE = "cview16/console_view.gif"; //$NON-NLS-1$
 	
 	// overlays
 	public final String IMG_MERGEABLE_CONFLICT = "ovr16/confauto_ov.gif"; //$NON-NLS-1$
