@@ -284,12 +284,13 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
          */
         if ((newShell != null) && (!newShell.isDisposed())
                 && (newShell.getParent() != null)
-                && (registeredWindows.get(newShell) != null)) {
+                && (registeredWindows.get(newShell) == null)) {
             final List newSubmissions = new ArrayList();
             newSubmissions.add(new EnabledSubmission(null, newShell, null,
                     CONTEXT_ID_DIALOG_AND_WINDOW));
             newSubmissions.add(new EnabledSubmission(null, newShell, null,
                     CONTEXT_ID_DIALOG));
+            addEnabledSubmissions(newSubmissions);
             registeredWindows.put(null, newSubmissions);
             submissionsProcessed = true;
 
