@@ -6,7 +6,7 @@ package org.eclipse.debug.internal.ui;
  * (c) Copyright IBM Corp 2000
  */
 
-import java.util.*;import org.eclipse.core.resources.*;import org.eclipse.core.runtime.*;import org.eclipse.debug.core.*;import org.eclipse.debug.core.model.*;import org.eclipse.debug.ui.IDebugUIConstants;import org.eclipse.debug.ui.IDebugUIEventFilter;import org.eclipse.jface.preference.IPreferenceStore;import org.eclipse.jface.preference.PreferenceConverter;import org.eclipse.jface.resource.ImageRegistry;import org.eclipse.jface.text.*;import org.eclipse.jface.util.ListenerList;import org.eclipse.jface.viewers.*;import org.eclipse.swt.custom.BusyIndicator;import org.eclipse.swt.graphics.RGB;import org.eclipse.swt.widgets.Display;import org.eclipse.swt.widgets.Shell;import org.eclipse.ui.*;import org.eclipse.ui.model.IWorkbenchAdapter;import org.eclipse.ui.plugin.AbstractUIPlugin;
+import java.util.*;import org.eclipse.core.resources.*;import org.eclipse.core.runtime.*;import org.eclipse.debug.core.*;import org.eclipse.debug.core.model.*;import org.eclipse.debug.ui.IDebugUIConstants;import org.eclipse.debug.ui.IDebugUIEventFilter;import org.eclipse.jface.preference.IPreferenceStore;import org.eclipse.jface.preference.PreferenceConverter;import org.eclipse.jface.resource.ImageRegistry;import org.eclipse.jface.text.*;import org.eclipse.jface.util.ListenerList;import org.eclipse.jface.viewers.*;import org.eclipse.swt.custom.BusyIndicator;import org.eclipse.swt.graphics.RGB;import org.eclipse.swt.widgets.Display;import org.eclipse.swt.widgets.Shell;import org.eclipse.ui.*;import org.eclipse.ui.internal.IWorkbenchPreferenceConstants;import org.eclipse.ui.model.IWorkbenchAdapter;import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * The Debug UI Plugin.
@@ -363,17 +363,38 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionChanged
 	 * @return the page that was activated (and possibly created)
 	 */
 	protected IWorkbenchPage activateDebugLayoutPage(IWorkbenchPage page, IWorkbenchWindow window, String layoutId) {
-		window.getShell().moveAbove(null);
 		if (page == null) {
 			try {
 				IContainer root= ResourcesPlugin.getWorkspace().getRoot();
-				page= window.openPage(layoutId, root);
+				// adhere to the workbench preference when openning the debugger
+				AbstractUIPlugin plugin = (AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
+				String perspectiveSetting = plugin.getPreferenceStore().getString(IWorkbenchPreferenceConstants.OPEN_NEW_PERSPECTIVE);
+				
+				IWorkbench wb = window.getWorkbench();
+				if (perspectiveSetting.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_WINDOW)) {
+					// in new window
+					window= wb.openWorkbenchWindow(layoutId, root);
+					page= window.getActivePage();
+				} else if (perspectiveSetting.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_PAGE)) {
+					// in new page
+					page= window.openPage(layoutId, root);
+				} else if (perspectiveSetting.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE)) {
+					// replace current
+					page= window.getActivePage();
+					if (page == null) {
+						// no pages - open a new one
+						page = window.openPage(layoutId, root);
+					} else {
+						page.setPerspective(wb.getPerspectiveRegistry().findPerspectiveWithId(layoutId));
+					}
+				}
 			} catch (WorkbenchException e) {
 				IStatus status= new Status(IStatus.ERROR, getDescriptor().getUniqueIdentifier(), IDebugStatusConstants.INTERNAL_ERROR, e.getMessage(), e);
 				DebugUIUtils.errorDialog(window.getShell(), "debug_ui_plugin.switch_perspective.error.", status);
 				return null;
 			}
 		} else {
+			window.getShell().moveAbove(null);
 			window.setActivePage(page);
 		}
 		return page;
