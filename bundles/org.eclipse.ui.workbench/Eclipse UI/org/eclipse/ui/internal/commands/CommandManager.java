@@ -804,21 +804,24 @@ public final class CommandManager implements ICommandManager {
 
 		return acceleratorText;
 	}
-	 
-	// TODO move to workbench?
-	public String getCommandId(int accelerator) {
-		return getCommandId(KeySequence.getInstance(KeySupport.convertAcceleratorToKeyStroke(accelerator)));
-	}
 	
-	public String getCommandId(KeySequence keySequence) {
+	// TODO move to workbench?
+	public boolean isAcceleratorInUse(int accelerator) {
+		KeySequence keySequence = KeySequence.getInstance(KeySupport.convertAcceleratorToKeyStroke(accelerator));
+		return getCommandId(keySequence) != null || isPartialMatch(keySequence);
+	}	
+
+	
+	
+	
+	String getCommandId(KeySequence keySequence) {
 		Match match = (Match) getMatchesByKeySequence().get(keySequence);
 		return match != null ? match.getCommandId() : null;
 	}
 
-	boolean isPartialMatch() {
-		return true;
+	boolean isPartialMatch(KeySequence keySequence) {
+		return !keySequenceBindingMachine.getMatchesByKeySequenceForMode(keySequence).isEmpty();
 	}
-	
 	
 	
 	

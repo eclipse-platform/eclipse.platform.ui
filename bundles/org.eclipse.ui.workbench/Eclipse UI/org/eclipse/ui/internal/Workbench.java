@@ -21,8 +21,6 @@ import java.io.OutputStreamWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 import org.eclipse.core.boot.IPlatformRunnable;
 import org.eclipse.core.resources.IContainer;
@@ -114,17 +112,14 @@ import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.internal.activities.ObjectActivityManager;
 import org.eclipse.ui.internal.commands.CommandManager;
-import org.eclipse.ui.internal.commands.Match;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.internal.dialogs.WelcomeEditorInput;
 import org.eclipse.ui.internal.fonts.FontDefinition;
-import org.eclipse.ui.internal.keys.KeySupport;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.model.WorkbenchAdapterBuilder;
 import org.eclipse.ui.internal.progress.ProgressManager;
-import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.progress.IProgressManager;
 import org.eclipse.ui.roles.IRoleManager;
 import org.eclipse.ui.roles.RoleManagerFactory;
@@ -917,6 +912,10 @@ public class Workbench
 	
 			public String getAcceleratorText(String commandId) {
 				return ((CommandManager) commandManager).getAcceleratorText(commandId);		
+			}
+			
+			public boolean isAcceleratorInUse(int accelerator) {
+				return ((CommandManager) commandManager).isAcceleratorInUse(accelerator);						
 			}
 			
 			public final boolean isActive(final String commandId) {

@@ -30,12 +30,10 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.action.IContributionManagerOverrides;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.StatusLineManager;
-import org.eclipse.jface.action.SubMenuManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -80,11 +78,10 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.commands.IKeySequenceBinding;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.commands.ActionHandler;
 import org.eclipse.ui.internal.commands.CommandManager;
-import org.eclipse.ui.internal.commands.Match;
-import org.eclipse.ui.commands.IKeySequenceBinding;
 import org.eclipse.ui.internal.dialogs.MessageDialogWithToggle;
 import org.eclipse.ui.internal.keys.KeySupport;
 import org.eclipse.ui.internal.misc.Assert;
@@ -902,43 +899,7 @@ public class WorkbenchWindow
 			}
 
 			public String getText(IContributionItem contributionItem) {
-				if (!(contributionItem instanceof MenuManager))
-					return null;
-
-				MenuManager menuManager = (MenuManager) contributionItem;
-				IContributionManager parent = menuManager.getParent();
-
-				if (parent != result) {
-					if (parent instanceof SubMenuManager) {
-						parent = ((SubMenuManager) parent).getParent();
-
-						if (parent != result)
-							return null;
-					} else
-						return null;
-				}
-
-				String text = menuManager.getMenuText();
-				int index = text.indexOf('&');
-
-				if (index < 0 || index == (text.length() - 1))
-					return text;
-
-				char altChar = Character.toUpperCase(text.charAt(index + 1));
-				KeySequence mode = commandManager.getMode();
-				List keyStrokes = new ArrayList(mode.getKeyStrokes());
-				keyStrokes.add(KeySupport.convertAcceleratorToKeyStroke(SWT.ALT | altChar));
-				KeySequence childMode = KeySequence.getInstance(keyStrokes);
-				Map matchesByKeySequence = commandManager.getMatchesByKeySequence();
-				Match match = (Match) matchesByKeySequence.get(childMode);
-
-				if (match == null || match.getCommandId() == null)
-					return text;
-
-				if (index == 0)
-					return text.substring(1);
-
-				return text.substring(0, index) + text.substring(index + 1);
+				return null;
 			}
 
 			public Boolean getEnabled(IContributionItem item) {

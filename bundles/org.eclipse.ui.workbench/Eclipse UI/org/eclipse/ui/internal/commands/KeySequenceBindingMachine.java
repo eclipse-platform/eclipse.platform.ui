@@ -85,6 +85,16 @@ final class KeySequenceBindingMachine {
 		
 		return keySequenceBindingsByCommandIdForMode;
 	}
+	
+	Map getKeySequenceBindingsByCommandIdForMode(KeySequence mode) {
+		solve();
+		Map tree = KeySequenceBindingNode.find(this.tree, mode);
+			
+		if (tree == null)
+			tree = new TreeMap();
+
+		return Collections.unmodifiableMap(KeySequenceBindingNode.getKeySequenceBindingsByCommandId(getMatchesByKeySequenceForMode(mode)));
+	}	
 
 	List getKeySequenceBindings0() {
 		return keySequenceBindings[0];	
@@ -117,6 +127,16 @@ final class KeySequenceBindingMachine {
 		return matchesByKeySequenceForMode;
 	}
 
+	Map getMatchesByKeySequenceForMode(KeySequence mode) {
+		solve();
+		Map tree = KeySequenceBindingNode.find(this.tree, mode);
+			
+		if (tree == null)
+			tree = new TreeMap();
+			
+		return Collections.unmodifiableMap(KeySequenceBindingNode.getMatchesByKeySequence(tree, mode));
+	}
+	
 	KeySequence getMode() {
 		return mode;	
 	}

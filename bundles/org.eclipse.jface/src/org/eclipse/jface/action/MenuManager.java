@@ -456,19 +456,39 @@ public void update() {
 public void update(boolean force) {
 	update(force, false);
 }
+
 public void update(String property) {
 	IContributionItem items[] = getItems();
-	for (int i = 0; i < items.length; i++) {
+	
+	for (int i = 0; i < items.length; i++)
 		items[i].update(property);		
-	}
-	if(menu != null && (IAction.TEXT.equals(property))) {
+	
+	if (menu != null && !menu.isDisposed() && menu.getParentItem() != null && IAction.TEXT.equals(property)) {
 		String text = getOverrides().getText(this);
-		if(text == null)
+
+		if (text == null)
 			text = menuText;
-		if(menu == null || menu.isDisposed())
-			return;
-		if((text != null) && (menu.getParentItem() != null))
+		
+		if (text != null) {					
+			CommandResolver.ICallback callback = CommandResolver.getInstance().getCommandResolver();
+			
+			if (callback != null) {
+				int index = text.indexOf('&');
+
+				if (index >= 0 && index < text.length() - 1) {
+					char character = Character.toUpperCase(text.charAt(index + 1));					
+					
+					if (callback.isAcceleratorInUse(SWT.ALT | character)) {						
+						if (index == 0)
+							text = text.substring(1);
+						else
+							text = text.substring(0, index) + text.substring(index + 1);		
+					}
+				}
+			}
+
 			menu.getParentItem().setText(text);
+		}
 	}
 }
 /**
