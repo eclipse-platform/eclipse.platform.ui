@@ -1,11 +1,13 @@
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 package org.eclipse.help.servlet;
 import java.io.*;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.xerces.parsers.DOMParser;
 import org.w3c.dom.*;
 import org.xml.sax.InputSource;
@@ -24,11 +26,14 @@ public class Links {
 		this.context = context;
 		this.connector = new EclipseConnector(context);
 	}
-	
+
 	/**
 	 * Generates the html for the links based on input xml data
 	 */
-	public void generateResults(String query, Writer out) {
+	public void generateResults(
+		String query,
+		Writer out,
+		HttpServletRequest request) {
 		try {
 			if (query == null || query.trim().length() == 0)
 				return;
@@ -36,9 +41,10 @@ public class Links {
 			String urlString = "links:/";
 			if (query != null && query.length() >= 0)
 				urlString += "?" + query;
-				
+
 			//System.out.println("links:"+query);
-			InputSource xmlSource = new InputSource(connector.openStream(urlString));
+			InputSource xmlSource =
+				new InputSource(connector.openStream(urlString, request));
 			DOMParser parser = new DOMParser();
 			parser.parse(xmlSource);
 			Element elem = parser.getDocument().getDocumentElement();
@@ -46,12 +52,10 @@ public class Links {
 		} catch (Exception e) {
 		}
 	}
-	
-	private void genToc(Element toc, Writer out) throws IOException 
-	{
+
+	private void genToc(Element toc, Writer out) throws IOException {
 		NodeList topics = toc.getChildNodes();
-		if (topics.getLength() == 0)
-		{
+		if (topics.getLength() == 0) {
 			// TO DO: get the correct locale
 			out.write(WebappResources.getString("Nothing_found", null));
 			return;
@@ -77,7 +81,7 @@ public class Links {
 		} else
 			href = "javascript:void 0";
 		out.write("'" + href + "'>");
-				
+
 		out.write(topic.getAttribute("label"));
 
 		out.write("</a></td></tr>");

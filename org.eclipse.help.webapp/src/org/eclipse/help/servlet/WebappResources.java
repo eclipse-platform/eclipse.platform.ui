@@ -4,11 +4,11 @@ package org.eclipse.help.servlet;
  * All Rights Reserved.
  */
 
-
 import java.io.InputStream;
 import java.util.*;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Uses a resource bundle to load images and strings from
@@ -28,46 +28,45 @@ public class WebappResources {
 		if (this.connector == null)
 			this.connector = new EclipseConnector(context);
 	}
-	
+
 	/**
 	 * Returns a string from a property file.
 	 * It uses 'name' as a the key to retrieve from the webapp.properties file.
 	 */
-	public static String getString(String name, String locale) {
-			
-		if (locale == null || locale.length() == 0)
-			locale = Locale.getDefault().toString();
-				
+	public static String getString(String name, HttpServletRequest request) {
+
+		String locale = request.getLocale().toString();
+
 		// check cache
 		Properties properties = (Properties) propertiesTable.get(locale);
-	
+
 		// load context.properties
-		if (properties == null) 
-			properties=loadProperties(locale);
-		
-		if(properties==null)
+		if (properties == null)
+			properties = loadProperties(request);
+
+		if (properties == null)
 			return name;
-		
+
 		String value = properties.getProperty(name);
 		if (value != null)
 			return value;
 		else
 			return name;
 	}
-	
+
 	/**
 	 * Loads properties file for a locale and adds to cache
 	 * @param locale the input locale
 	 * @return property file or null if not exists
 	 */
-	private static Properties loadProperties(String locale){
+	private static Properties loadProperties(HttpServletRequest request) {
 		try {
-			String propURL = "help:/org.eclipse.help.webapp/webapp.properties?lang="+locale;
-			InputStream propertiesStream = connector.openStream(propURL);
+			String propURL = "help:/org.eclipse.help.webapp/webapp.properties";
+			InputStream propertiesStream = connector.openStream(propURL, request);
 			Properties localProp = new Properties();
 			localProp.load(propertiesStream);
-			
-			propertiesTable.put(locale, localProp);
+
+			propertiesTable.put(request.getLocale().toString(), localProp);
 			return localProp;
 		} catch (Throwable ex) {
 		}
