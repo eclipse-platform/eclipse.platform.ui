@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
@@ -161,8 +162,17 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 		return info.getRevision();
 	}
 	
+	/*
+	 * Get a different revision of the remote file.
+	 * 
+	 * We must also create a new parent since the child is accessed through the parent from within CVS commands.
+	 * Therefore, we need a new parent so that we can fecth the contents of the remote file revision
+	 */
 	public RemoteFile toRevision(String revision) {
-		return new RemoteFile(parent, getName(), revision, CVSTag.DEFAULT);
+		RemoteFolder newParent = new RemoteFolder(null, parent.getRepository(), new Path(parent.getRemotePath()), parent.getTag());
+		RemoteFile file = new RemoteFile(newParent, getName(), revision, CVSTag.DEFAULT);
+		newParent.setChildren(new ICVSRemoteResource[] {file});
+		return file;
 	}
 	
 		/**
@@ -225,9 +235,16 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 	
 	/**
 	 * @see IManagedFile#setFileInfo(FileProperties)
+	 * 
+	 * This method will either be invoked from the updated handler 
+	 * after the contents have been set or from the checked-in handler
+	 * which indicates that the remote file is empty.
 	 */
 	public void setSyncInfo(ResourceSyncInfo fileInfo) {
 		info = fileInfo;
+		// If the contents is null, the remote file is empty
+		if (contents == null)
+			contents = new byte[0];
 	}
 
 	public void setRevision(String revision) {
