@@ -1103,9 +1103,19 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	private int getInclusiveTopIndexStartOffset() {
 		
 		if (fTextWidget != null && !fTextWidget.isDisposed()) {	
-			int top= fSourceViewer.getTopIndex();
-			if ((fTextWidget.getTopPixel() % fTextWidget.getLineHeight()) != 0)
-				top--;
+			int top= -1;
+			if (fSourceViewer instanceof ITextViewerExtension5) {
+				top= fTextWidget.getTopIndex();
+				if ((fTextWidget.getTopPixel() % fTextWidget.getLineHeight()) != 0)
+					top--;
+				ITextViewerExtension5 extension= (ITextViewerExtension5) fSourceViewer;
+				top= extension.widgetLine2ModelLine(top);
+			} else {
+				top= fSourceViewer.getTopIndex();
+				if ((fTextWidget.getTopPixel() % fTextWidget.getLineHeight()) != 0)
+					top--;
+			}
+			
 			try {
 				IDocument document= fSourceViewer.getDocument();
 				return document.getLineOffset(top);

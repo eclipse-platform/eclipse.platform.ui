@@ -508,9 +508,19 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 	protected int getInclusiveTopIndexStartOffset() {
 		
 		if (fCachedTextWidget != null && !fCachedTextWidget.isDisposed()) {	
-			int top= fCachedTextViewer.getTopIndex();
-			if ((fCachedTextWidget.getTopPixel() % fCachedTextWidget.getLineHeight()) != 0)
-				top--;
+			int top= -1;
+			if (fCachedTextViewer instanceof ITextViewerExtension5) {
+				top= fCachedTextWidget.getTopIndex();
+				if ((fCachedTextWidget.getTopPixel() % fCachedTextWidget.getLineHeight()) != 0)
+					top--;
+				ITextViewerExtension5 extension= (ITextViewerExtension5) fCachedTextViewer;
+				top= extension.widgetLine2ModelLine(top);
+			} else {
+				top= fCachedTextViewer.getTopIndex();
+				if ((fCachedTextWidget.getTopPixel() % fCachedTextWidget.getLineHeight()) != 0)
+					top--;
+			}
+			
 			try {
 				IDocument document= fCachedTextViewer.getDocument();
 				return document.getLineOffset(top);

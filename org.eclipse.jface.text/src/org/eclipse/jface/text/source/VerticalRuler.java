@@ -251,18 +251,30 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 		
 		StyledText textWidget= fTextViewer.getTextWidget();
 		if (textWidget != null && !textWidget.isDisposed()) {	
-			int top= fTextViewer.getTopIndex();
-			if ((textWidget.getTopPixel() % textWidget.getLineHeight()) != 0)
-				top--;
+			int top= -1;
+			if (fTextViewer instanceof ITextViewerExtension5) {
+				top= textWidget.getTopIndex();
+				if ((textWidget.getTopPixel() % textWidget.getLineHeight()) != 0)
+					top--;
+				ITextViewerExtension5 extension= (ITextViewerExtension5) fTextViewer;
+				top= extension.widgetLine2ModelLine(top);
+			} else {
+				top= fTextViewer.getTopIndex();
+				if ((textWidget.getTopPixel() % textWidget.getLineHeight()) != 0)
+					top--;
+			}
+			
 			try {
 				IDocument document= fTextViewer.getDocument();
 				return document.getLineOffset(top);
-			} catch (BadLocationException ex) {
+			} catch (BadLocationException x) {
 			}
 		}
 		
 		return -1;
 	}
+	
+	
 	
 	/**
 	 * Draws the vertical ruler w/o drawing the Canvas background.
