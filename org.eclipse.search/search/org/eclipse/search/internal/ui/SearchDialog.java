@@ -59,7 +59,7 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 import org.eclipse.search.ui.IReplacePage;
 import org.eclipse.search.ui.ISearchPage;
@@ -139,7 +139,7 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		shell.setText(SearchMessages.getString("SearchDialog.title")); //$NON-NLS-1$
-		WorkbenchHelp.setHelp(shell, ISearchHelpContextIds.SEARCH_DIALOG);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell, ISearchHelpContextIds.SEARCH_DIALOG);
 	}
 
 	

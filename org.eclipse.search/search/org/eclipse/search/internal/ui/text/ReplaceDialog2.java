@@ -78,7 +78,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.GlobalBuildAction;
 import org.eclipse.ui.contentassist.ContentAssistHandler;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -221,7 +220,7 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 	}
 
 	protected Control createPageArea(Composite parent) {
-		WorkbenchHelp.setHelp(parent, ISearchHelpContextIds.REPLACE_DIALOG);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, ISearchHelpContextIds.REPLACE_DIALOG);
 		Composite result= new Composite(parent, SWT.NULL);
 		GridLayout layout= new GridLayout();
 		result.setLayout(layout);

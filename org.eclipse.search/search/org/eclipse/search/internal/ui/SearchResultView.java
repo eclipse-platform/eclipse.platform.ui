@@ -40,7 +40,7 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.CellEditorActionHandler;
 import org.eclipse.ui.part.ViewPart;
 
@@ -112,7 +112,7 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 		
 		SearchPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(fPropertyChangeListener);
 		
-		WorkbenchHelp.setHelp(fViewer.getControl(), SearchPlugin.getDefault().getSearchViewHelpContextId());
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(fViewer.getControl(), SearchPlugin.getDefault().getSearchViewHelpContextId());
 	}
 	
 	/**

@@ -62,7 +62,7 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.ActionGroup;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 
 /**
@@ -267,7 +267,7 @@ public class SearchResultViewer extends TableViewer {
 		if (getItemCount() > 0)
 			selectResult(0);
 
-		WorkbenchHelp.setHelp(getControl(), SearchPlugin.getDefault().getSearchViewHelpContextId());
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), SearchPlugin.getDefault().getSearchViewHelpContextId());
 	}
 
 	protected int getSelectedEntriesCount() {

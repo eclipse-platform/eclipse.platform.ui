@@ -12,7 +12,7 @@ package org.eclipse.search.internal.ui;
 
 import org.eclipse.jface.action.Action;
 
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
  
 /**
  * This action selects all entries currently showing in view.
@@ -28,7 +28,7 @@ class SelectAllAction extends Action {
 		super("selectAll"); //$NON-NLS-1$
 		setText(SearchMessages.getString("SelectAllAction.label")); //$NON-NLS-1$
 		setToolTipText(SearchMessages.getString("SelectAllAction.tooltip")); //$NON-NLS-1$
-		WorkbenchHelp.setHelp(this, ISearchHelpContextIds.SELECT_ALL_ACTION);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, ISearchHelpContextIds.SELECT_ALL_ACTION);
 		fViewer= viewer;
 	}
 

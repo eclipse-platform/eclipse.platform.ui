@@ -62,7 +62,6 @@ import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.contentassist.ContentAssistHandler;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 import org.eclipse.search.ui.IReplacePage;
@@ -397,7 +396,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 
 		setControl(result);
 		Dialog.applyDialogFont(result);
-		WorkbenchHelp.setHelp(result, ISearchHelpContextIds.TEXT_SEARCH_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(result, ISearchHelpContextIds.TEXT_SEARCH_PAGE);
 }
 	
 	private boolean validateRegex() {
