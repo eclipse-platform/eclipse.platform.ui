@@ -14,9 +14,10 @@ import java.io.File;
 
 import junit.framework.TestCase;
 
+import org.eclipse.core.runtime.IPath;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IPath;
 
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.IFileBuffer;
@@ -1056,5 +1057,59 @@ public abstract class FileBufferFunctions extends TestCase {
 		} finally {
 			fManager.disconnect(fPath, null);
 		}
+	}
+	
+	/*
+	 * Test notification in case of failing listener. 
+	 */
+	public void test19() throws Exception {
+		
+		class NotifiedListener extends FileBufferListener {
+			
+			int notifyCount= 0;
+			
+			public void bufferCreated(IFileBuffer buffer) {
+				notifyCount++;
+			}
+			public void bufferDisposed(IFileBuffer buffer) {
+				notifyCount++;
+			}
+		}
+		
+		NotifiedListener notifyCounter1= new NotifiedListener();
+		NotifiedListener notifyCounter2= new NotifiedListener();
+		FileBufferListener failingListener= new FileBufferListener() {
+			public void bufferCreated(IFileBuffer buffer) {
+				int i= 1/0; // force error
+			}
+			public void bufferDisposed(IFileBuffer buffer) {
+				int i= 1/0; // force error
+			}
+		};
+		
+		fManager.addFileBufferListener(notifyCounter1);
+		fManager.addFileBufferListener(failingListener);
+		fManager.addFileBufferListener(notifyCounter2);
+		
+		fManager.connect(fPath, null);
+		try {
+			ITextFileBuffer buffer= fManager.getTextFileBuffer(fPath);
+			assertNotNull(buffer);
+			
+			Class clazz= getAnnotationModelClass();
+			if (clazz != null) {
+				IAnnotationModel model= buffer.getAnnotationModel();
+				assertTrue(clazz.isInstance(model));
+			}
+			
+		} finally {
+			fManager.disconnect(fPath, null);
+			fManager.removeFileBufferListener(notifyCounter1);
+			fManager.removeFileBufferListener(failingListener);
+			fManager.removeFileBufferListener(notifyCounter2);
+		}
+		
+		assertEquals(2, notifyCounter1.notifyCount);
+		assertEquals(2, notifyCounter2.notifyCount);
 	}
 }

@@ -61,6 +61,13 @@ import org.eclipse.jface.text.source.IAnnotationModel;
  */
 public class TextFileBufferManager implements ITextFileBufferManager {	
 	
+	private static abstract class SafeNotifier implements ISafeRunnable {
+		public void handleException(Throwable ex) {
+			IStatus status= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, "TextFileBufferManager failed to notify an ITextFileBufferListener", ex);  //$NON-NLS-1$
+			FileBuffersPlugin.getDefault().getLog().log(status);
+		}
+	}
+
 	private Map fFilesBuffers= new HashMap();
 	private List fFileBufferListeners= new ArrayList();
 	private ExtensionsRegistry fRegistry;
@@ -338,83 +345,123 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		return null;
 	}
 	
-	protected void fireDirtyStateChanged(IFileBuffer buffer, boolean isDirty) {
+	protected void fireDirtyStateChanged(final IFileBuffer buffer, final boolean isDirty) {
 		Iterator e= new ArrayList(fFileBufferListeners).iterator();
 		while (e.hasNext()) {
-			IFileBufferListener l= (IFileBufferListener) e.next();
-			l.dirtyStateChanged(buffer, isDirty);
+			final IFileBufferListener l= (IFileBufferListener) e.next();
+			Platform.run(new SafeNotifier() { 
+				public void run() {
+					l.dirtyStateChanged(buffer, isDirty);
+				}
+			});
 		}
 	}
 	
-	protected void fireBufferContentAboutToBeReplaced(IFileBuffer buffer) {
+	protected void fireBufferContentAboutToBeReplaced(final IFileBuffer buffer) {
 		Iterator e= new ArrayList(fFileBufferListeners).iterator();
 		while (e.hasNext()) {
-			IFileBufferListener l= (IFileBufferListener) e.next();
-			l.bufferContentAboutToBeReplaced(buffer);
+			final IFileBufferListener l= (IFileBufferListener) e.next();
+			Platform.run(new SafeNotifier() { 
+				public void run() {
+					l.bufferContentAboutToBeReplaced(buffer);
+				}
+			});
 		}
 	}
 
-	protected void fireBufferContentReplaced(IFileBuffer buffer) {
+	protected void fireBufferContentReplaced(final IFileBuffer buffer) {
 		Iterator e= new ArrayList(fFileBufferListeners).iterator();
 		while (e.hasNext()) {
-			IFileBufferListener l= (IFileBufferListener) e.next();
-			l.bufferContentReplaced(buffer);
+			final IFileBufferListener l= (IFileBufferListener) e.next();
+			Platform.run(new SafeNotifier() { 
+				public void run() {
+					l.bufferContentReplaced(buffer);
+				}
+			});
 		}
 	}
 
-	protected void fireUnderlyingFileMoved(IFileBuffer buffer, IPath target) {
+	protected void fireUnderlyingFileMoved(final IFileBuffer buffer, final IPath target) {
 		Iterator e= new ArrayList(fFileBufferListeners).iterator();
 		while (e.hasNext()) {
-			IFileBufferListener l= (IFileBufferListener) e.next();
-			l.underlyingFileMoved(buffer, target);
+			final IFileBufferListener l= (IFileBufferListener) e.next();
+			Platform.run(new SafeNotifier() { 
+				public void run() {
+					l.underlyingFileMoved(buffer, target);
+				}
+			});
 		}
 	}
 
-	protected void fireUnderlyingFileDeleted(IFileBuffer buffer) {
+	protected void fireUnderlyingFileDeleted(final IFileBuffer buffer) {
 		Iterator e= new ArrayList(fFileBufferListeners).iterator();
 		while (e.hasNext()) {
-			IFileBufferListener l= (IFileBufferListener) e.next();
-			l.underlyingFileDeleted(buffer);
+			final IFileBufferListener l= (IFileBufferListener) e.next();
+			Platform.run(new SafeNotifier() { 
+				public void run() {
+					l.underlyingFileDeleted(buffer);
+				}
+			});
 		}
 	}
 
-	protected void fireStateValidationChanged(IFileBuffer buffer, boolean isStateValidated) {
+	protected void fireStateValidationChanged(final IFileBuffer buffer, final boolean isStateValidated) {
 		Iterator e= new ArrayList(fFileBufferListeners).iterator();
 		while (e.hasNext()) {
-			IFileBufferListener l= (IFileBufferListener) e.next();
-			l.stateValidationChanged(buffer, isStateValidated);
+			final IFileBufferListener l= (IFileBufferListener) e.next();
+			Platform.run(new SafeNotifier() { 
+				public void run() {
+					l.stateValidationChanged(buffer, isStateValidated);
+				}
+			});
 		}
 	}
 
-	protected void fireStateChanging(IFileBuffer buffer) {
+	protected void fireStateChanging(final IFileBuffer buffer) {
 		Iterator e= new ArrayList(fFileBufferListeners).iterator();
 		while (e.hasNext()) {
-			IFileBufferListener l= (IFileBufferListener) e.next();
-			l.stateChanging(buffer);
+			final IFileBufferListener l= (IFileBufferListener) e.next();
+			Platform.run(new SafeNotifier() { 
+				public void run() {
+					l.stateChanging(buffer);
+				}
+			});
 		}
 	}
 
-	protected void fireStateChangeFailed(IFileBuffer buffer) {
+	protected void fireStateChangeFailed(final IFileBuffer buffer) {
 		Iterator e= new ArrayList(fFileBufferListeners).iterator();
 		while (e.hasNext()) {
-			IFileBufferListener l= (IFileBufferListener) e.next();
-			l.stateChangeFailed(buffer);
+			final IFileBufferListener l= (IFileBufferListener) e.next();
+			Platform.run(new SafeNotifier() { 
+				public void run() {
+					l.stateChangeFailed(buffer);
+				}
+			});
 		}
 	}
 	
-	protected void fireBufferCreated(IFileBuffer buffer) {
+	protected void fireBufferCreated(final IFileBuffer buffer) {
 		Iterator e= new ArrayList(fFileBufferListeners).iterator();
 		while (e.hasNext()) {
-			IFileBufferListener l= (IFileBufferListener) e.next();
-			l.bufferCreated(buffer);
+			final IFileBufferListener l= (IFileBufferListener) e.next();
+			Platform.run(new SafeNotifier() { 
+				public void run() {
+					l.bufferCreated(buffer);
+				}
+			});
 		}
 	}
 	
-	protected void fireBufferDisposed(IFileBuffer buffer) {
+	protected void fireBufferDisposed(final IFileBuffer buffer) {
 		Iterator e= new ArrayList(fFileBufferListeners).iterator();
 		while (e.hasNext()) {
-			IFileBufferListener l= (IFileBufferListener) e.next();
-			l.bufferDisposed(buffer);
+			final IFileBufferListener l= (IFileBufferListener) e.next();
+			Platform.run(new SafeNotifier() { 
+				public void run() {
+					l.bufferDisposed(buffer);
+				}
+			});
 		}
 	}
 	
