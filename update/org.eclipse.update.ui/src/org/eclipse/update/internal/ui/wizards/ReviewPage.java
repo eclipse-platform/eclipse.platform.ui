@@ -57,7 +57,9 @@ public class ReviewPage
 	private Button moreInfoButton;
 	private Button propertiesButton;
 	private Button filterCheck;
+	private Button filterOlderVersionCheck;
 	private ContainmentFilter filter = new ContainmentFilter();
+	private LatestVersionFilter olderVersionFilter = new LatestVersionFilter();
 	private SearchRunner searchRunner;
 	private int LABEL_ORDER = 1;
 	private int VERSION_ORDER = 1;
@@ -161,6 +163,28 @@ public class ReviewPage
 		}
 	}
 
+	class LatestVersionFilter extends ViewerFilter {
+		public boolean select(Viewer v, Object parent, Object child) {
+			return isLatestVersion((IInstallFeatureOperation) child);
+		}
+		private boolean isLatestVersion(IInstallFeatureOperation job) {
+			IFeature feature = job.getFeature();
+			for (int i = 0; i < jobs.size(); i++) {
+				IInstallFeatureOperation candidateJob = (IInstallFeatureOperation) jobs.get(i);
+				if (candidateJob.equals(job))
+					continue;
+				IFeature candidate = candidateJob.getFeature();
+				if (feature.getSite() != job.getFeature().getSite())
+					continue;
+				if (!feature.getVersionedIdentifier().getIdentifier().equals(candidate.getVersionedIdentifier().getIdentifier()))
+					continue;
+				if (!feature.getVersionedIdentifier().getVersion().isGreaterThan(candidate.getVersionedIdentifier().getVersion()))
+					return false;
+			}
+			return true;
+		}
+	}
+	
 	class FeaturePropertyDialogAction extends PropertyDialogAction {
 		private IStructuredSelection selection;
 
@@ -378,6 +402,24 @@ public class ReviewPage
 		gd.horizontalSpan = 2;
 		counterLabel.setLayoutData(gd);
 
+		filterOlderVersionCheck = new Button(client, SWT.CHECK);
+		filterOlderVersionCheck.setText(UpdateUI.getString("InstallWizard.ReviewPage.filterOlderFeatures")); //$NON-NLS-1$
+		filterOlderVersionCheck.setSelection(true);
+		tableViewer.addFilter(olderVersionFilter);
+		filterOlderVersionCheck.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if (filterOlderVersionCheck.getSelection())
+					tableViewer.addFilter(olderVersionFilter);
+				else 
+					tableViewer.removeFilter(olderVersionFilter);
+				
+				pageChanged();
+			}
+		});
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.horizontalSpan = 2;
+		filterOlderVersionCheck.setLayoutData(gd);
+		
 		filterCheck = new Button(client, SWT.CHECK);
 		filterCheck.setText(UpdateUI.getString("InstallWizard.ReviewPage.filterFeatures")); //$NON-NLS-1$
 		filterCheck.setSelection(false);
@@ -400,6 +442,7 @@ public class ReviewPage
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan = 2;
 		filterCheck.setLayoutData(gd);
+		
 		pageChanged();
 
 		WorkbenchHelp.setHelp(client, "org.eclipse.update.ui.MultiReviewPage2"); //$NON-NLS-1$
