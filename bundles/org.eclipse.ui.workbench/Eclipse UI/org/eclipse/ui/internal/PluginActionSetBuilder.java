@@ -28,15 +28,12 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 
 /**
  * This builder reads the actions for an action set from the registry.
  */
 public class PluginActionSetBuilder extends PluginActionBuilder {
-    public static final String TAG_ACTION_SET = "actionSet"; //$NON-NLS-1$
-
-    // As of 2.1, the "pulldown" attribute is deprecated, use "style" attribute instead.
-    public static final String ATT_PULLDOWN = "pulldown"; //$NON-NLS-1$
 
     private PluginActionSet actionSet;
 
@@ -52,6 +49,9 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
 
     /**
      * Read the actions within a config element. Called by customize perspective
+     * 
+     * @param set the action set
+     * @param window the window to contribute to
      */
     public void buildMenuAndToolBarStructure(PluginActionSet set,
             IWorkbenchWindow window) {
@@ -60,7 +60,7 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
         cache = null;
         currentContribution = null;
         targetID = null;
-        targetContributionTag = TAG_ACTION_SET;
+        targetContributionTag = IWorkbenchRegistryConstants.TAG_ACTION_SET;
 
         readElements(new IConfigurationElement[] { set.getConfigElement() });
 
@@ -95,11 +95,11 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
         // As of 2.1, the "pulldown" attribute was deprecated and replaced by
         // the attribute "style". See doc for more details.
         boolean pullDownStyle = false;
-        String style = element.getAttribute(ActionDescriptor.ATT_STYLE);
+        String style = element.getAttribute(IWorkbenchRegistryConstants.ATT_STYLE);
         if (style != null) {
             pullDownStyle = style.equals(ActionDescriptor.STYLE_PULLDOWN);
         } else {
-            String pulldown = element.getAttribute(ATT_PULLDOWN);
+            String pulldown = element.getAttribute(ActionDescriptor.STYLE_PULLDOWN);
             pullDownStyle = pulldown != null && pulldown.equals("true"); //$NON-NLS-1$
         }
 
@@ -228,7 +228,7 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
         cache = null;
         currentContribution = null;
         targetID = null;
-        targetContributionTag = TAG_ACTION_SET;
+        targetContributionTag = IWorkbenchRegistryConstants.TAG_ACTION_SET;
 
         readElements(new IConfigurationElement[] { set.getConfigElement() });
 
@@ -263,6 +263,12 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
 
         protected ArrayList adjunctActions = new ArrayList(0);
 
+        /**
+         * Create a new instance of <code>ActionSetContribution</code>.
+         * 
+         * @param id the id
+         * @param window the window to contribute to
+         */
         public ActionSetContribution(String id, IWorkbenchWindow window) {
             super();
             actionSetId = id;
@@ -288,6 +294,10 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
         /**
          * Contributes submenus and/or actions into the provided menu and tool bar
          * managers.
+         * 
+         * @param bars the action bars to contribute to
+         * @param menuAppendIfMissing append to the menubar if missing
+         * @param toolAppendIfMissing append to the toolbar if missing
          */
         public void contribute(IActionBars bars, boolean menuAppendIfMissing,
                 boolean toolAppendIfMissing) {
@@ -490,6 +500,11 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
             return items[insertIndex];
         }
 
+        /**
+         * Returns whether the contributor is an adjunct contributor.
+         * 
+         * @return whether the contributor is an adjunct contributor
+         */
         public boolean isAdjunctContributor() {
             return adjunctActions.size() > 0;
         }
@@ -662,11 +677,12 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
         cache = null;
         currentContribution = null;
         targetID = null;
-        targetContributionTag = TAG_ACTION_SET;
+        targetContributionTag = IWorkbenchRegistryConstants.TAG_ACTION_SET;
         String id = set.getDesc().getId();
 
-        cache = (ArrayList) WorkbenchPlugin.getDefault().getActionSetRegistry()
-                .removeCache(id);
+//        cache = (ArrayList) WorkbenchPlugin.getDefault().getActionSetRegistry()
+//                .removeCache(id);
+        
         //readElements(new IConfigurationElement[] {set.getConfigElement()});
 
         if (cache != null) {

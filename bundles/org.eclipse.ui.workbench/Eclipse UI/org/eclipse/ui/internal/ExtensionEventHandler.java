@@ -17,7 +17,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionDelta;
@@ -26,27 +25,18 @@ import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IEditorReference;
-import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
-import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.XMLMemento;
-import org.eclipse.ui.internal.registry.ActionSetPartAssociationsReader;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.IActionSet;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
@@ -62,19 +52,7 @@ import org.eclipse.ui.themes.ITheme;
 import org.eclipse.ui.themes.IThemeManager;
 
 class ExtensionEventHandler implements IRegistryChangeListener {
-
-    private static final String TAG_CATEGORY = "category";//$NON-NLS-1$
-
-    private static final String ATT_TARGET_ID = "targetID";//$NON-NLS-1$
-
-    private static final String TAG_PART = "part";//$NON-NLS-1$
-
-    private static final String ATT_ID = "id";//$NON-NLS-1$
-
-    private static final String TAG_PROVIDER = "imageprovider";//$NON-NLS-1$
-
-    private static final String TAG_ACTION_SET_PART_ASSOCIATION = "actionSetPartAssociation"; //$NON-NLS-1$	
-
+    
     private Workbench workbench;
 
     private List changeList = new ArrayList(10);
@@ -163,24 +141,9 @@ class ExtensionEventHandler implements IRegistryChangeListener {
         };
         display.syncExec(run);
     }
-
-    private void asyncRevoke(Display display, final IExtensionPoint extpt,
-            final IExtension ext) {
-        Runnable run = new Runnable() {
-            public void run() {
-                revoke(extpt, ext);
-            }
-        };
-        display.syncExec(run);
-    }
-
+    
     private void appear(IExtensionPoint extPt, IExtension ext) {
         String name = extPt.getSimpleIdentifier();
-        if (name
-                .equalsIgnoreCase(IWorkbenchConstants.PL_ACTION_SET_PART_ASSOCIATIONS)) {
-            loadActionSetPartAssociation(ext);
-            return;
-        }
         if (name.equalsIgnoreCase(IWorkbenchConstants.PL_WORKINGSETS)) {
             loadWorkingSets(ext);
             return;
@@ -245,26 +208,12 @@ class ExtensionEventHandler implements IRegistryChangeListener {
 
     private void revoke(IExtensionPoint extPt, IExtension ext) {
         String name = extPt.getSimpleIdentifier();
-        if (name.equalsIgnoreCase(IWorkbenchConstants.PL_VIEWS)) {
-            unloadView(ext);
-            return;
-        }
         
         if (name.equalsIgnoreCase(IWorkbenchConstants.PL_PERSPECTIVES)) {
             unloadPerspective(ext);
             return;
         }
 
-        if (name.equalsIgnoreCase(IWorkbenchConstants.PL_ACTION_SETS)) {
-            unloadActionSets(ext);
-            return;
-        }
-
-        if (name
-                .equalsIgnoreCase(IWorkbenchConstants.PL_ACTION_SET_PART_ASSOCIATIONS)) {
-            unloadActionSetPartAssociation(ext);
-            return;
-        }
         if (name.equalsIgnoreCase(IWorkbenchConstants.PL_WORKINGSETS)) {
             unloadWorkingSets(ext);
             return;
@@ -306,217 +255,6 @@ class ExtensionEventHandler implements IRegistryChangeListener {
                 viewFactory.createView(id);
                 page.showView(id);
             } catch (PartInitException e) {
-            }
-        }
-    }
-
-    private void unloadView(IExtension ext) {
-//        final MultiStatus result = new MultiStatus(PlatformUI.PLUGIN_ID,
-//                IStatus.OK, WorkbenchMessages
-//                        .getString("ViewFactory.problemsSavingViews"), null); //$NON-NLS-1$
-//        IViewRegistry vReg = WorkbenchPlugin.getDefault().getViewRegistry();
-//        IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
-//        XMLMemento memento = null;
-//        for (int i = 0; i < windows.length; i++) {
-//            WorkbenchWindow window = (WorkbenchWindow) windows[i];
-//            IWorkbenchPage[] pages = window.getPages();
-//            for (int j = 0; j < pages.length; j++) {
-//                ArrayList viewsRemoved = new ArrayList();
-//                IConfigurationElement[] elements = ext
-//                        .getConfigurationElements();
-//                for (int k = 0; k < elements.length; k++) {
-//                    if (!elements[k].getName().equals(
-//                            IWorkbenchConstants.TAG_VIEW))
-//                        continue;
-//                    String id = elements[k]
-//                            .getAttribute(IWorkbenchConstants.TAG_ID);
-//                    if (id != null) {
-//                        ViewFactory viewFactory = ((WorkbenchPage) pages[j])
-//                                .getViewFactory();
-//                        IViewReference viewRef = viewFactory.getView(id);
-//                        if (viewRef != null) {
-//                            // don't save view state
-//                            //							if (isViewOpen(viewRef, viewFactory)){
-//                            //								memento = XMLMemento.createWriteRoot(IWorkbenchConstants.TAG_VIEWS);
-//                            //								saveViewState(pages[j], id, viewFactory.saveViewState(memento, viewRef, result));
-//                            //								//((WorkbenchPage)pages[j]).getStateMap().put(id, memento);
-//                            //							}
-//                            ((WorkbenchPage) pages[j]).hideView(viewRef);
-//                            ((WorkbenchPage) pages[j]).getViewFactory()
-//                                    .releaseView(viewRef);
-//                        }
-//                        viewsRemoved.add(id);
-//                        ((ViewRegistry) vReg).remove(id);
-//                    }
-//                }
-//                Object[] showViewIdsRemoved = findShowViewIdsRemoved(
-//                        ((WorkbenchPage) pages[j]).getShowViewActionIds(),
-//                        viewsRemoved);
-//                if (showViewIdsRemoved.length > 0)
-//                    removeViewIdsFromShowViewMenu(window, showViewIdsRemoved);
-//            }
-//        }
-//        if (result.getSeverity() != IStatus.OK) {
-//            ErrorDialog.openError((Shell) null, WorkbenchMessages
-//                    .getString("Workbench.problemsSaving"), //$NON-NLS-1$
-//                    WorkbenchMessages.getString("Workbench.problemsSavingMsg"), //$NON-NLS-1$
-//                    result);
-//        }
-    }
-
-    private void saveViewState(IWorkbenchPage page, String id, IMemento memento) {
-        Perspective persp = ((WorkbenchPage) page).getActivePerspective();
-        if (persp.findView(id) != null)
-            memento.putString(IWorkbenchConstants.TAG_PERSPECTIVE, persp
-                    .getDesc().getId());
-    }
-
-    private Object[] findShowViewIdsRemoved(ArrayList showViewIds,
-            ArrayList viewsRemoved) {
-        ArrayList list = new ArrayList();
-        Object[] showViewIdList = showViewIds.toArray();
-        Object[] viewsRemovedList = viewsRemoved.toArray();
-        for (int i = 0; i < showViewIdList.length; i++)
-            for (int j = 0; j < viewsRemovedList.length; j++)
-                if (((String) viewsRemovedList[j])
-                        .equals((String) showViewIdList[i]))
-                    list.add(viewsRemovedList[j]);
-        return list.toArray();
-    }
-
-    private void removeViewIdsFromShowViewMenu(IWorkbenchWindow window,
-            Object[] viewsRemoved) {
-        MenuManager menuManager = ((WorkbenchWindow) window).getMenuManager();
-        IContributionItem[] items = menuManager.getItems();
-        menuManager = null;
-        for (int i = 0; i < items.length; i++)
-            if (items[i] instanceof MenuManager
-                    && ((MenuManager) items[i]).getMenuText().equals("&Window")) { //$NON-NLS-1$
-                menuManager = (MenuManager) items[i];
-                break;
-            }
-        if (menuManager == null)
-            return;
-        items = menuManager.getItems();
-        menuManager = null;
-        for (int i = 0; i < items.length; i++)
-            if (items[i] instanceof MenuManager
-                    && ((MenuManager) items[i]).getMenuText().equals(
-                            "Show &View")) { //$NON-NLS-1$
-                menuManager = (MenuManager) items[i];
-                break;
-            }
-        if (menuManager == null)
-            return;
-        items = menuManager.getItems();
-        if (items.length < 1 || !(items[0] instanceof ShowViewMenu))
-            return;
-
-        for (int i = 0; i < viewsRemoved.length; i++)
-            ((ShowViewMenu) items[0]).removeAction((String) viewsRemoved[i]);
-    }
-
-    private void restoreEditorState(IConfigurationElement element,
-            MultiStatus result) {
-        String id = element.getAttribute(IWorkbenchConstants.TAG_ID);
-        IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
-        IMemento memento;
-        for (int i = 0; i < windows.length; i++) {
-            WorkbenchWindow window = (WorkbenchWindow) windows[i];
-            IWorkbenchPage[] pages = window.getPages();
-            for (int j = 0; j < pages.length; j++) {
-                IEditorReference existingVisible = ((WorkbenchPage) pages[j])
-                        .getEditorPresentation().getVisibleEditor();
-                EditorManager editorManager = ((WorkbenchPage) pages[j])
-                        .getEditorManager();
-                ArrayList visibleEditors = new ArrayList(5);
-                IEditorPart activeEditor[] = new IEditorPart[1];
-                ArrayList errorWorkbooks = new ArrayList(1);
-                memento = (IMemento) ((WorkbenchPage) pages[j]).getStateMap()
-                        .remove(id);
-                if (memento == null)
-                    continue;
-                IMemento[] editorMems = memento
-                        .getChildren(IWorkbenchConstants.TAG_EDITOR);
-                for (int k = 0; k < editorMems.length; k++) {
-                    if (!checkOpenable(editorMems[k], pages[j]))
-                        continue;
-                    editorManager.restoreEditorState(editorMems[k],
-                            visibleEditors, activeEditor, errorWorkbooks,
-                            result);
-                }
-                if (existingVisible == null)
-                    for (int k = 0; k < visibleEditors.size(); k++)
-                        editorManager
-                                .setVisibleEditor(
-                                        (IEditorReference) visibleEditors
-                                                .get(k), false);
-                else
-                    editorManager.setVisibleEditor(existingVisible, true);
-
-                if (visibleEditors.size() == 1)
-                    for (Iterator iter = errorWorkbooks.iterator(); iter
-                            .hasNext();) {
-                        iter.next();
-                        ((WorkbenchPage) pages[j]).getEditorPresentation()
-                                .fixVisibleEditor();
-                    }
-            }
-        }
-    }
-
-    private boolean checkOpenable(IMemento memento, IWorkbenchPage page) {
-        IMemento inputMem = memento.getChild(IWorkbenchConstants.TAG_INPUT);
-        String factoryID = null;
-        if (inputMem != null)
-            factoryID = inputMem.getString(IWorkbenchConstants.TAG_FACTORY_ID);
-        if (factoryID == null)
-            return false;
-        IElementFactory factory = WorkbenchPlugin.getDefault()
-                .getElementFactory(factoryID);
-        if (factory == null)
-            return false;
-        IAdaptable input = factory.createElement(inputMem);
-        if (input == null || !(input instanceof IEditorInput))
-            return false;
-        IEditorInput editorInput = (IEditorInput) input;
-        IEditorReference edRefs[] = page.getEditorReferences();
-
-        for (int i = 0; i < edRefs.length; i++) {
-            IEditorPart editor = edRefs[i].getEditor(false);
-            if (editor == null)
-                continue;
-            IEditorInput edInput = editor.getEditorInput();
-            if (edInput.equals(editorInput))
-                return false;
-        }
-        return true;
-    }
-
-
-    private void closeEditors(IWorkbenchPage page, String id, MultiStatus result) {
-        XMLMemento memento = XMLMemento
-                .createWriteRoot(IWorkbenchConstants.TAG_EDITORS);
-        IEditorReference[] editorRefs = page.getEditorReferences();
-        boolean changed = false;
-        for (int i = 0; i < editorRefs.length; i++) {
-            if (editorRefs[i].getId().equals(id)) {
-                IEditorReference e = editorRefs[i];
-                IEditorPart editor = e.getEditor(true);
-                EditorManager editorManager = ((WorkbenchPage) page)
-                        .getEditorManager();
-                if (editor == null) {
-                    IMemento mem = editorManager.getMemento(editorRefs[i]);
-                    if (mem != null) {
-                        IMemento editorMem = memento
-                                .createChild(IWorkbenchConstants.TAG_EDITOR);
-                        editorMem.putMemento(mem);
-                    }
-                } else
-                    editorManager.saveEditorState(memento, e, result);
-                //((WorkbenchPage)page).getStateMap().put(id, memento);
-                page.closeEditor(editor, true);
-                changed = true;
             }
         }
     }
@@ -623,29 +361,6 @@ class ExtensionEventHandler implements IRegistryChangeListener {
 
     }
 
-    private void unloadActionSets(IExtension ext) {
-        ActionSetRegistry aReg = WorkbenchPlugin.getDefault()
-                .getActionSetRegistry();
-        IConfigurationElement[] elements = ext.getConfigurationElements();
-        IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
-        for (int i = 0; i < windows.length; i++) {
-            WorkbenchWindow window = (WorkbenchWindow) windows[i];
-            IWorkbenchPage[] pages = window.getPages();
-            for (int j = 0; j < pages.length; j++) {
-                for (int k = 0; k < elements.length; k++) {
-                    if (!elements[k].getName().equals(
-                            IWorkbenchConstants.TAG_ACTION_SET))
-                        continue;
-                    String id = elements[k]
-                            .getAttribute(IWorkbenchConstants.TAG_ID);
-                    if (id != null) {
-                        aReg.remove(id);
-                        removeActionSet((WorkbenchPage) pages[j], id);
-                    }
-                }
-            }
-        }
-    }
 
     private void removeActionSet(WorkbenchPage page, String id) {
         Perspective persp = page.getActivePerspective();
@@ -666,38 +381,6 @@ class ExtensionEventHandler implements IRegistryChangeListener {
             persp.removeActionSet(id);
     }
 
-    private void loadActionSetPartAssociation(IExtension ext) {
-        ActionSetRegistry aReg = WorkbenchPlugin.getDefault()
-                .getActionSetRegistry();
-        ActionSetPartAssociationsReader reader = new ActionSetPartAssociationsReader(
-                aReg);
-        IConfigurationElement[] elements = ext.getConfigurationElements();
-        for (int i = 0; i < elements.length; i++)
-            reader.readElement(elements[i]);
-    }
-
-    private void unloadActionSetPartAssociation(IExtension ext) {
-        ActionSetRegistry aReg = WorkbenchPlugin.getDefault()
-                .getActionSetRegistry();
-        IConfigurationElement[] elements = ext.getConfigurationElements();
-        for (int i = 0; i < elements.length; i++) {
-            String type = elements[i].getName();
-            if (!type.equals(TAG_ACTION_SET_PART_ASSOCIATION))
-                continue;
-            String actionSetId = elements[i].getAttribute(ATT_TARGET_ID);
-            IConfigurationElement[] children = elements[i].getChildren();
-            for (int j = 0; j < children.length; j++) {
-                IConfigurationElement child = children[j];
-                type = child.getName();
-                if (type.equals(TAG_PART)) {
-                    String partId = child.getAttribute(ATT_ID);
-                    if (partId != null)
-                        aReg.removeAssociation(actionSetId, partId);
-                }
-            }
-        }
-    }
-
     private void loadWorkingSets(IExtension ext) {
         WorkingSetRegistry wReg = (WorkingSetRegistry) WorkbenchPlugin
                 .getDefault().getWorkingSetRegistry();
@@ -714,87 +397,6 @@ class ExtensionEventHandler implements IRegistryChangeListener {
         for (int i = 0; i < elements.length; i++)
             wReg.removeWorkingSetDescriptor(elements[i]
                     .getAttribute(IWorkbenchConstants.TAG_ID));
-    }
-
-    private void stopView(IExtension ext) {
-        IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
-        for (int i = 0; i < windows.length; i++) {
-            WorkbenchWindow window = (WorkbenchWindow) windows[i];
-            IWorkbenchPage[] pages = window.getPages();
-            for (int j = 0; j < pages.length; j++) {
-                IConfigurationElement[] elements = ext
-                        .getConfigurationElements();
-                for (int k = 0; k < elements.length; k++) {
-                    if (!elements[k].getName().equals(
-                            IWorkbenchConstants.TAG_VIEW))
-                        continue;
-                    String id = elements[k]
-                            .getAttribute(IWorkbenchConstants.TAG_ID);
-                    if (id != null) {
-                        ViewFactory viewFactory = ((WorkbenchPage) pages[j])
-                                .getViewFactory();
-                        IViewReference viewRef = viewFactory.getView(id);
-                        if (viewRef != null) {
-                            ((WorkbenchPage) pages[j]).hideView(viewRef);
-                            ((WorkbenchPage) pages[j]).getViewFactory()
-                                    .releaseView(viewRef);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private void stopEditor(IExtension ext) {
-        IConfigurationElement[] elements = ext.getConfigurationElements();
-        IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
-        for (int i = 0; i < elements.length; i++) {
-            String id = elements[i].getAttribute(IWorkbenchConstants.TAG_ID);
-            for (int j = 0; j < windows.length; j++) {
-                WorkbenchWindow window = (WorkbenchWindow) windows[j];
-                IWorkbenchPage[] pages = window.getPages();
-                for (int k = 0; k < pages.length; k++) {
-                    IEditorReference[] editorRefs = pages[k]
-                            .getEditorReferences();
-                    for (int l = 0; l < editorRefs.length; l++)
-                        if (editorRefs[l].getId().equals(id)) {
-                            IEditorPart editor = editorRefs[l].getEditor(true);
-                            if (editor != null)
-                                pages[k].closeEditor(editor, true);
-                        }
-                }
-            }
-        }
-    }
-
-    private void stopPerspective(IExtension ext) {
-        IPerspectiveRegistry pReg = WorkbenchPlugin.getDefault()
-                .getPerspectiveRegistry();
-        IConfigurationElement[] elements = ext.getConfigurationElements();
-        for (int i = 0; i < elements.length; i++) {
-            if (!elements[i].getName().equals(
-                    IWorkbenchConstants.TAG_PERSPECTIVE))
-                continue;
-            String id = elements[i].getAttribute(IWorkbenchConstants.TAG_ID);
-            if (id == null)
-                continue;
-            IPerspectiveDescriptor desc = pReg.findPerspectiveWithId(id);
-            if (desc == null)
-                continue;
-            ((PerspectiveRegistry) pReg).deletePerspective(desc);
-            IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
-            for (int j = 0; j < windows.length; j++) {
-                WorkbenchWindow window = (WorkbenchWindow) windows[j];
-                IWorkbenchPage[] pages = window.getPages();
-                for (int k = 0; k < pages.length; k++) {
-                    Perspective persp = ((WorkbenchPage) pages[k])
-                            .findPerspective(desc);
-                    if (persp == null)
-                        return;
-                    pages[k].closePerspective(desc, true, true);
-                }
-            }
-        }
     }
 
     private void stopActionSets(IExtension ext) {

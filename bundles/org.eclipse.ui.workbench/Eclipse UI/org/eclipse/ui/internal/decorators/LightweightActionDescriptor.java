@@ -14,8 +14,8 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.internal.ActionDescriptor;
 import org.eclipse.ui.internal.dialogs.DialogUtil;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
@@ -39,15 +39,20 @@ public class LightweightActionDescriptor implements IAdaptable,
 
     private ImageDescriptor image;
 
+    /**
+     * Create a new instance of <code>LightweightActionDescriptor</code>.
+     * 
+     * @param actionElement the configuration element
+     */
     public LightweightActionDescriptor(IConfigurationElement actionElement) {
         super();
 
-        this.id = actionElement.getAttribute(ActionDescriptor.ATT_ID);
-        this.label = actionElement.getAttribute(ActionDescriptor.ATT_LABEL);
+        this.id = actionElement.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
+        this.label = actionElement.getAttribute(IWorkbenchRegistryConstants.ATT_LABEL);
         this.description = actionElement
-                .getAttribute(ActionDescriptor.ATT_DESCRIPTION);
+                .getAttribute(IWorkbenchRegistryConstants.TAG_DESCRIPTION);
 
-        String iconName = actionElement.getAttribute(ActionDescriptor.ATT_ICON);
+        String iconName = actionElement.getAttribute(IWorkbenchRegistryConstants.ATT_ICON);
         if (iconName != null) {
             IExtension extension = actionElement.getDeclaringExtension();
             this.image = AbstractUIPlugin.imageDescriptorFromPlugin(extension
@@ -68,6 +73,8 @@ public class LightweightActionDescriptor implements IAdaptable,
 
     /**
      * Returns the action's description.
+     * 
+     * @return the description
      */
     public String getDescription() {
         return description;
@@ -75,6 +82,8 @@ public class LightweightActionDescriptor implements IAdaptable,
 
     /**
      * Returns the action's id.
+     * 
+     * @return the id
      */
     public String getId() {
         return id;
@@ -82,13 +91,15 @@ public class LightweightActionDescriptor implements IAdaptable,
 
     /**
      * Returns the action's image descriptor.
+     * 
+     * @return the image descriptor
      */
     public ImageDescriptor getImageDescriptor() {
         return image;
     }
 
-    /**
-     * @see IWorkbenchAdapter#getImageDescriptor
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.model.IWorkbenchAdapter#getImageDescriptor(java.lang.Object)
      */
     public ImageDescriptor getImageDescriptor(Object o) {
         if (o == this)
@@ -98,13 +109,15 @@ public class LightweightActionDescriptor implements IAdaptable,
 
     /**
      * Returns the action's label.
+     * 
+     * @return the label
      */
     public String getLabel() {
         return label;
     }
 
-    /**
-     * @see IWorkbenchAdapter#getLabel
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.model.IWorkbenchAdapter#getLabel(java.lang.Object)
      */
     public String getLabel(Object o) {
         if (o == this) {

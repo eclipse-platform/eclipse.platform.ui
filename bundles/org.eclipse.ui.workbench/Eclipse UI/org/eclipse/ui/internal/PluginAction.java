@@ -63,7 +63,7 @@ public abstract class PluginAction extends Action implements
 
     private String pluginId;
 
-    private String runAttribute = ActionDescriptor.ATT_CLASS;
+    private String runAttribute = IWorkbenchRegistryConstants.ATT_CLASS;
 
     private static int actionCount = 0;
 
@@ -89,7 +89,7 @@ public abstract class PluginAction extends Action implements
         }
 
         String defId = actionElement
-                .getAttribute(ActionDescriptor.ATT_DEFINITION_ID);
+                .getAttribute(IWorkbenchRegistryConstants.ATT_DEFINITION_ID);
         setActionDefinitionId(defId);
 
         pluginId = configElement.getDeclaringExtension().getNamespace();
@@ -131,7 +131,7 @@ public abstract class PluginAction extends Action implements
                                     IStatus.ERROR,
                                     "Internal plug-in action delegate error on creation.", e); //$NON-NLS-1$
                 }
-                String id = configElement.getAttribute(ActionDescriptor.ATT_ID);
+                String id = configElement.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
                 WorkbenchPlugin
                         .log(
                                 "Could not create action delegate for id: " + id, status); //$NON-NLS-1$

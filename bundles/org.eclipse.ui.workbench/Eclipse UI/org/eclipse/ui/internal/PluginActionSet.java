@@ -34,6 +34,8 @@ public class PluginActionSet implements IActionSet {
 
     /**
      * PluginActionSet constructor comment.
+     * 
+     * @param desc the descriptor
      */
     public PluginActionSet(ActionSetDescriptor desc) {
         super();
@@ -42,6 +44,8 @@ public class PluginActionSet implements IActionSet {
 
     /**
      * Adds one plugin action ref to the list.
+     * 
+     * @param action the action
      */
     public void addPluginAction(WWinPluginAction action) {
         pluginActions.add(action);
@@ -49,6 +53,8 @@ public class PluginActionSet implements IActionSet {
 
     /**
      * Returns the list of plugin actions for the set.
+     * 
+     * @return the actions for the set
      */
     public IAction[] getPluginActions() {
         IAction result[] = new IAction[pluginActions.size()];
@@ -76,14 +82,18 @@ public class PluginActionSet implements IActionSet {
     }
 
     /**
-     * Returns the config element.
+     * Returns the configuration element.
+     * 
+     * @return the configuration element
      */
     public IConfigurationElement getConfigElement() {
-        return desc.getConfigElement();
+        return desc.getConfigurationElement();
     }
 
     /**
      * Returns the underlying descriptor.
+     * 
+     * @return the descriptor
      */
     public ActionSetDescriptor getDesc() {
         return desc;

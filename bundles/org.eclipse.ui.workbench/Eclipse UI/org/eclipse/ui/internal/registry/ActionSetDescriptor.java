@@ -38,8 +38,6 @@ public class ActionSetDescriptor implements IActionSetDescriptor, IAdaptable,
 
     private String label;
 
-    private String category;
-
     private boolean visible;
 
     private String description;
@@ -55,7 +53,10 @@ public class ActionSetDescriptor implements IActionSetDescriptor, IAdaptable,
     private static final String ATT_DESC = "description";//$NON-NLS-1$
 
     /**
-     * Create a descriptor from a config element.
+     * Create a descriptor from a configuration element.
+     * 
+     * @param configElement the configuration element
+     * @throws CoreException thrown if there is an issue creating the descriptor
      */
     public ActionSetDescriptor(IConfigurationElement configElement)
             throws CoreException {
@@ -99,15 +100,6 @@ public class ActionSetDescriptor implements IActionSetDescriptor, IAdaptable,
     }
 
     /**
-     * Returns the category of this action set.
-     *
-     * @return a non-empty category name or <cod>null</code> if none specified
-     */
-    public String getCategory() {
-        return category;
-    }
-
-    /**
      * @see IWorkbenchAdapter#getChildren
      */
     public Object[] getChildren(Object o) {
@@ -117,10 +109,11 @@ public class ActionSetDescriptor implements IActionSetDescriptor, IAdaptable,
         return NO_CHILDREN;
     }
 
-    /**
-     * Returns the config element
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.registry.IActionSetDescriptor#getConfigurationElement()
      */
-    public IConfigurationElement getConfigElement() {
+    public IConfigurationElement getConfigurationElement() {
         return configElement;
     }
 
@@ -189,15 +182,6 @@ public class ActionSetDescriptor implements IActionSetDescriptor, IAdaptable,
         Preferences prefs = WorkbenchPlugin.getDefault().getPluginPreferences();
         String prefId = INITIALLY_HIDDEN_PREF_ID_PREFIX + getId();
         prefs.setValue(prefId, !newValue);
-    }
-
-    /**
-     * Sets the category of this action set.
-     *
-     * @param cat a non-empty category id
-     */
-    public void setCategory(String id) {
-        category = id;
     }
 
     /* (non-Javadoc)

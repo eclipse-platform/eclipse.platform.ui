@@ -45,6 +45,11 @@ public interface IWorkbenchRegistryConstants {
 	 * Class attribute.  Value <code>class</code>.
 	 */
 	public static final String ATT_CLASS = "class"; //$NON-NLS-1$
+    
+    /**
+     * Accelerator attribute.  Value <code>accelerator</code>.
+     */
+    public static final String ATT_ACCELERATOR = "accelerator"; //$NON-NLS-1$
 	
     /**
      * Perspective default attribute.  Value <code>default</code>.
@@ -130,11 +135,6 @@ public interface IWorkbenchRegistryConstants {
      * Sticky view moveable attribute.  Value <code>moveable</code>.
      */
     public static final String ATT_MOVEABLE = "moveable"; //$NON-NLS-1$
-
-    /**
-     * View accelerator attribute.  Value <code>accelerator</code>.
-     */
-    public static final String ATT_ACCELERATOR = "accelerator"; //$NON-NLS-1$
 
     /**
      * View ratio attribute.  Value <code>fastViewWidthRatio</code>.
@@ -540,4 +540,61 @@ public interface IWorkbenchRegistryConstants {
      * Theme tag.  Value <code>theme</code>.
      */
     public static final String TAG_THEME = "theme";//$NON-NLS-1$
+    
+/* ***** org.eclipse.ui.actionSets constants ***** */   
+
+    /**
+     * Action definition id attribute.  Value <code>definitionId</code>.
+     */
+    public static final String ATT_DEFINITION_ID = "definitionId";//$NON-NLS-1$
+
+    /**
+     * Help context id attribute.  Value <code>helpContextId</code>.
+     */
+    public static final String ATT_HELP_CONTEXT_ID = "helpContextId";//$NON-NLS-1$
+
+    /**
+     * Action style attribute.  Value <code>style</code>.
+     */
+    public static final String ATT_STYLE = "style";//$NON-NLS-1$
+
+    /**
+     * Action state attribute.  Value <code>state</code>.
+     */
+    public static final String ATT_STATE = "state";//$NON-NLS-1$
+
+    /**
+     * Tooltip attribute.  Value <code>tooltip</code>.
+     */
+    public static final String ATT_TOOLTIP = "tooltip";//$NON-NLS-1$
+
+    /**
+     * Menubar path attribute.  Value <code>menubarPath</code>.
+     */
+    public static final String ATT_MENUBAR_PATH = "menubarPath";//$NON-NLS-1$
+
+    /**
+     * Toolbar path attribute.  Value <code>toolbarPath</code>.
+     */
+    public static final String ATT_TOOLBAR_PATH = "toolbarPath";//$NON-NLS-1$
+
+    /**
+     * Hover icon attribute.  Value <code>hoverIcon</code>.
+     */
+    public static final String ATT_HOVERICON = "hoverIcon";//$NON-NLS-1$
+
+    /**
+     * Disabled icon attribute.  Value <code>disabledIcon</code>.
+     */
+    public static final String ATT_DISABLEDICON = "disabledIcon";//$NON-NLS-1$
+
+    /**
+     * Retarget attribute.  Value <code>retarget</code>.
+     */
+    public static final String ATT_RETARGET = "retarget";//$NON-NLS-1$
+
+    /**
+     * Allow label update attribute.  Value <code>allowLabelUpdate</code>.
+     */
+    public static final String ATT_ALLOW_LABEL_UPDATE = "allowLabelUpdate";//$NON-NLS-1$
 }

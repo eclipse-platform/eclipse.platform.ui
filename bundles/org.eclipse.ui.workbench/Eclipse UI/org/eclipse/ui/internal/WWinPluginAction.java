@@ -28,13 +28,13 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.actions.LabelRetargetAction;
 import org.eclipse.ui.actions.RetargetAction;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 
 /**
- * This class extends regular plugin action with the
- * additional requirement that the delegate has
- * to implement interface IWorkbenchWindowActionDeelgate.
- * This interface has one additional method (init)
- * whose purpose is to initialize the delegate with
+ * This class extends regular plugin action with the additional requirement that
+ * the delegate has to implement interface
+ * {@link org.eclipse.ui.IWorkbenchWindowActionDelegate}. This interface has
+ * one additional method (init) whose purpose is to initialize the delegate with
  * the window in which the action is intended to run.
  */
 public class WWinPluginAction extends PluginAction implements
@@ -50,12 +50,15 @@ public class WWinPluginAction extends PluginAction implements
 
     private RetargetAction retargetAction;
 
-    private static String TRUE_VALUE = "true"; //$NON-NLS-1$
-
     private static ArrayList staticActionList = new ArrayList(50);
 
     /**
-     * Constructs a new WWinPluginAction object..
+     * Constructs a new <code>WWinPluginAction</code> object.
+     * 
+     * @param actionElement the configuration element
+     * @param window the window to contribute to
+     * @param id the identifier
+     * @param style the style
      */
     public WWinPluginAction(IConfigurationElement actionElement,
             IWorkbenchWindow window, String id, int style) {
@@ -64,15 +67,15 @@ public class WWinPluginAction extends PluginAction implements
 
         // If config specifies a retarget action, create it now
         String retarget = actionElement
-                .getAttribute(ActionDescriptor.ATT_RETARGET);
-        if (retarget != null && retarget.equals(TRUE_VALUE)) {
+                .getAttribute(IWorkbenchRegistryConstants.ATT_RETARGET);
+        if (retarget != null && Boolean.valueOf(retarget).booleanValue()) {
             // create a retarget action
             String allowLabelUpdate = actionElement
-                    .getAttribute(ActionDescriptor.ATT_ALLOW_LABEL_UPDATE);
+                    .getAttribute(IWorkbenchRegistryConstants.ATT_ALLOW_LABEL_UPDATE);
             String label = actionElement
-                    .getAttribute(ActionDescriptor.ATT_LABEL);
+                    .getAttribute(IWorkbenchRegistryConstants.ATT_LABEL);
 
-            if (allowLabelUpdate != null && allowLabelUpdate.equals(TRUE_VALUE))
+            if (allowLabelUpdate != null && Boolean.valueOf(allowLabelUpdate).booleanValue())
                 retargetAction = new LabelRetargetAction(id, label, style);
             else
                 retargetAction = new RetargetAction(id, label, style);
@@ -167,9 +170,9 @@ public class WWinPluginAction extends PluginAction implements
             throws WorkbenchException {
         if (obj instanceof IWorkbenchWindowActionDelegate)
             return (IWorkbenchWindowActionDelegate) obj;
-        else
-            throw new WorkbenchException(
-                    "Action must implement IWorkbenchWindowActionDelegate"); //$NON-NLS-1$
+        
+        throw new WorkbenchException(
+                "Action must implement IWorkbenchWindowActionDelegate"); //$NON-NLS-1$
     }
 
     /* (non-Javadoc)

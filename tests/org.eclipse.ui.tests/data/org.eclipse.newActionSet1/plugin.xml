@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <plugin
-   id="org.eclipse.newActionSet1"
+   id="newActionSet1"
    name="newActionSet1 Plug-in"
    version="1.0.0">
 
@@ -12,7 +12,6 @@
    </runtime>
    <requires>
       <import plugin="org.eclipse.ui"/>
-      <import plugin="org.eclipse.core.runtime.compatibility"/>
    </requires>
    <extension
          point="org.eclipse.ui.actionSets" id="testDynamicActionSetAddition">
@@ -29,6 +28,12 @@
                id="newAction1">
          </action>
       </actionSet>
+   </extension>
+   <extension
+         point="org.eclipse.ui.actionSetPartAssociations">
+      <actionSetPartAssociation targetID="org.eclipse.newActionSet1.newActionSet1">
+         <part id="org.eclipse.ui.tests.part1"/>
+      </actionSetPartAssociation>
    </extension>
  
 

@@ -19,6 +19,7 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -44,60 +45,56 @@ public class ActionDescriptor implements IPluginContribution {
 
     private String toolbarGroupId;
 
+    /**
+     * Popup constant.  Value <code>0x1</code>.
+     */
     public static final int T_POPUP = 0x1;
 
+    /**
+     * View constant.  Value <code>0x2</code>.
+     */
     public static final int T_VIEW = 0x2;
 
+    /**
+     * Workbench constant.  Value <code>0x3</code>.
+     */
     public static final int T_WORKBENCH = 0x3;
 
+    /**
+     * Editor constant.  Value <code>0x4</code>.
+     */
     public static final int T_EDITOR = 0x4;
 
+    /**
+     * Workbench pulldown constant.  Value <code>0x5</code>.
+     */
     public static final int T_WORKBENCH_PULLDOWN = 0x5;
 
-    public static final String ATT_ID = "id";//$NON-NLS-1$
-
-    public static final String ATT_DEFINITION_ID = "definitionId";//$NON-NLS-1$
-
-    public static final String ATT_HELP_CONTEXT_ID = "helpContextId";//$NON-NLS-1$
-
-    public static final String ATT_LABEL = "label";//$NON-NLS-1$
-
-    public static final String ATT_STYLE = "style";//$NON-NLS-1$
-
-    public static final String ATT_STATE = "state";//$NON-NLS-1$
-
-    public static final String ATT_DESCRIPTION = "description";//$NON-NLS-1$
-
-    public static final String ATT_TOOLTIP = "tooltip";//$NON-NLS-1$
-
-    public static final String ATT_MENUBAR_PATH = "menubarPath";//$NON-NLS-1$
-
-    public static final String ATT_TOOLBAR_PATH = "toolbarPath";//$NON-NLS-1$
-
-    public static final String ATT_ICON = "icon";//$NON-NLS-1$
-
-    public static final String ATT_HOVERICON = "hoverIcon";//$NON-NLS-1$
-
-    public static final String ATT_DISABLEDICON = "disabledIcon";//$NON-NLS-1$
-
-    public static final String ATT_CLASS = "class";//$NON-NLS-1$
-
-    public static final String ATT_RETARGET = "retarget";//$NON-NLS-1$
-
-    public static final String ATT_ALLOW_LABEL_UPDATE = "allowLabelUpdate";//$NON-NLS-1$
-
-    public static final String ATT_ACCELERATOR = "accelerator";//$NON-NLS-1$
-
+    /**
+     * Push style constant.  Value <code>push</code>.
+     */
     public static final String STYLE_PUSH = "push"; //$NON-NLS-1$
 
+    /**
+     * Radio style constant.  Value <code>radio</code>.
+     */
     public static final String STYLE_RADIO = "radio"; //$NON-NLS-1$
 
+    /***
+     * Toggle style constant.  Value <code>toggle</code>.
+     */
     public static final String STYLE_TOGGLE = "toggle"; //$NON-NLS-1$
 
+    /**
+     * Pulldown style constant.  Value <code>pulldown</code>.
+     */
     public static final String STYLE_PULLDOWN = "pulldown"; //$NON-NLS-1$
 
     /**
      * Creates a new descriptor with the specified target.
+     * 
+     * @param actionElement the configuration element
+     * @param targetType the type of action
      */
     public ActionDescriptor(IConfigurationElement actionElement, int targetType) {
         this(actionElement, targetType, null);
@@ -106,23 +103,27 @@ public class ActionDescriptor implements IPluginContribution {
     /**
      * Creates a new descriptor with the target and destination workbench part
      * it will go into.
+     * 
+     * @param actionElement the configuration element
+     * @param targetType the type of action
+     * @param target the target object
      */
     public ActionDescriptor(IConfigurationElement actionElement,
             int targetType, Object target) {
         // Load attributes.
-        id = actionElement.getAttribute(ATT_ID);
+        id = actionElement.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
         pluginId = actionElement.getDeclaringExtension().getNamespace();
-        String label = actionElement.getAttribute(ATT_LABEL);
-        String tooltip = actionElement.getAttribute(ATT_TOOLTIP);
-        String helpContextId = actionElement.getAttribute(ATT_HELP_CONTEXT_ID);
-        String mpath = actionElement.getAttribute(ATT_MENUBAR_PATH);
-        String tpath = actionElement.getAttribute(ATT_TOOLBAR_PATH);
-        String style = actionElement.getAttribute(ATT_STYLE);
-        String icon = actionElement.getAttribute(ATT_ICON);
-        String hoverIcon = actionElement.getAttribute(ATT_HOVERICON);
-        String disabledIcon = actionElement.getAttribute(ATT_DISABLEDICON);
-        String description = actionElement.getAttribute(ATT_DESCRIPTION);
-        String accelerator = actionElement.getAttribute(ATT_ACCELERATOR);
+        String label = actionElement.getAttribute(IWorkbenchRegistryConstants.ATT_LABEL);
+        String tooltip = actionElement.getAttribute(IWorkbenchRegistryConstants.ATT_TOOLTIP);
+        String helpContextId = actionElement.getAttribute(IWorkbenchRegistryConstants.ATT_HELP_CONTEXT_ID);
+        String mpath = actionElement.getAttribute(IWorkbenchRegistryConstants.ATT_MENUBAR_PATH);
+        String tpath = actionElement.getAttribute(IWorkbenchRegistryConstants.ATT_TOOLBAR_PATH);
+        String style = actionElement.getAttribute(IWorkbenchRegistryConstants.ATT_STYLE);
+        String icon = actionElement.getAttribute(IWorkbenchRegistryConstants.ATT_ICON);
+        String hoverIcon = actionElement.getAttribute(IWorkbenchRegistryConstants.ATT_HOVERICON);
+        String disabledIcon = actionElement.getAttribute(IWorkbenchRegistryConstants.ATT_DISABLEDICON);
+        String description = actionElement.getAttribute(IWorkbenchRegistryConstants.TAG_DESCRIPTION);
+        String accelerator = actionElement.getAttribute(IWorkbenchRegistryConstants.ATT_ACCELERATOR);
 
         // Verify input.
         if (label == null) {
@@ -184,7 +185,7 @@ public class ActionDescriptor implements IPluginContribution {
         if (style != null) {
             // Since 2.1, the "state" and "pulldown" attributes means something different
             // when the new "style" attribute has been set. See doc for more info.
-            String state = actionElement.getAttribute(ATT_STATE);
+            String state = actionElement.getAttribute(IWorkbenchRegistryConstants.ATT_STATE);
             if (state != null) {
                 if (style.equals(STYLE_RADIO) || style.equals(STYLE_TOGGLE))
                     action.setChecked(state.equals("true"));//$NON-NLS-1$
@@ -192,7 +193,7 @@ public class ActionDescriptor implements IPluginContribution {
         } else {
             // Keep for backward compatibility for actions not using the
             // new style attribute.
-            String state = actionElement.getAttribute(ATT_STATE);
+            String state = actionElement.getAttribute(IWorkbenchRegistryConstants.ATT_STATE);
             if (state != null) {
                 action.setChecked(state.equals("true"));//$NON-NLS-1$
             }
@@ -263,6 +264,8 @@ public class ActionDescriptor implements IPluginContribution {
 
     /**
      * Returns the action object held in this descriptor.
+     * 
+     * @return the action
      */
     public PluginAction getAction() {
         return action;
@@ -270,6 +273,8 @@ public class ActionDescriptor implements IPluginContribution {
 
     /**
      * Returns action's id as defined in the registry.
+     * 
+     * @return the id
      */
     public String getId() {
         return id;
@@ -278,6 +283,8 @@ public class ActionDescriptor implements IPluginContribution {
     /**
      * Returns named slot (group) in the menu where this action
      * should be added.
+     * 
+     * @return the menu group
      */
     public String getMenuGroup() {
         return menuGroup;
@@ -286,8 +293,9 @@ public class ActionDescriptor implements IPluginContribution {
     /**
      * Returns menu path where this action should be added. If null,
      * the action will not be added into the menu.
+     * 
+     * @return the menubar path
      */
-
     public String getMenuPath() {
         return menuPath;
     }
@@ -295,8 +303,9 @@ public class ActionDescriptor implements IPluginContribution {
     /**
      * Returns the named slot (group) in the tool bar where this
      * action should be added.
+     * 
+     * @return the toolbar group id
      */
-
     public String getToolbarGroupId() {
         return toolbarGroupId;
     }
@@ -304,6 +313,8 @@ public class ActionDescriptor implements IPluginContribution {
     /**
      * Returns id of the tool bar where this action should be added.
      * If null, action will not be added to the tool bar.
+     * 
+     * @return the toolbar id
      */
     public String getToolbarId() {
         return toolbarId;

@@ -53,7 +53,7 @@ public class PluginActionSetReader extends RegistryReader {
      */
     public LightweightActionDescriptor[] readActionDescriptors(
             ActionSetDescriptor actionSet) {
-        readElements(new IConfigurationElement[] { actionSet.getConfigElement() });
+        readElements(new IConfigurationElement[] { actionSet.getConfigurationElement() });
         LightweightActionDescriptor[] actions = new LightweightActionDescriptor[cache
                 .size()];
         cache.toArray(actions);
@@ -65,7 +65,7 @@ public class PluginActionSetReader extends RegistryReader {
      */
     protected boolean readElement(IConfigurationElement element) {
         String tag = element.getName();
-        if (tag.equals(PluginActionSetBuilder.TAG_ACTION_SET)) {
+        if (tag.equals(IWorkbenchRegistryConstants.TAG_ACTION_SET)) {
             readElementChildren(element);
             return true;
         }

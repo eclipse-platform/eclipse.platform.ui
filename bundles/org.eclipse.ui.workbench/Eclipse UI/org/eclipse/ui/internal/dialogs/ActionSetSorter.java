@@ -12,8 +12,6 @@ package org.eclipse.ui.internal.dialogs;
 
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
-import org.eclipse.ui.internal.registry.ActionSetCategory;
-import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 
 /**
@@ -38,16 +36,6 @@ public class ActionSetSorter extends ViewerSorter {
                     .getLabel());
             String str2 = DialogUtil.removeAccel(((IActionSetDescriptor) e2)
                     .getLabel());
-            return collator.compare(str1, str2);
-        } else if (e1 instanceof ActionSetCategory) {
-            ActionSetCategory cat1 = (ActionSetCategory) e1;
-            ActionSetCategory cat2 = (ActionSetCategory) e2;
-            if (cat1.getId().equals(ActionSetRegistry.OTHER_CATEGORY))
-                return 1;
-            if (cat2.getId().equals(ActionSetRegistry.OTHER_CATEGORY))
-                return -1;
-            String str1 = cat1.getLabel();
-            String str2 = cat2.getLabel();
             return collator.compare(str1, str2);
         }
         return 0;

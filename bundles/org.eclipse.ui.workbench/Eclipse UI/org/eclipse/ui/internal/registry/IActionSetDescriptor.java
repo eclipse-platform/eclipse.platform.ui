@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal.registry;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
 
 /**
  * A named set of actions which is defined as an extension to the workbench
@@ -24,9 +25,10 @@ import org.eclipse.core.runtime.CoreException;
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
- * @see IActionSetRegistry
+ * @see ActionSetRegistry
  */
 public interface IActionSetDescriptor {
+    
     /**
      * Creates a new action set from this descriptor.
      * <p>
@@ -37,13 +39,6 @@ public interface IActionSetDescriptor {
      * @exception CoreException if the action set cannot be created
      */
     public IActionSet createActionSet() throws CoreException;
-
-    /**
-     * Returns the category id of this action set.
-     *
-     * @return a non-empty category id or <cod>null</code> if none specified
-     */
-    public String getCategory();
 
     /**
      * Returns the description of this action set.
@@ -71,21 +66,24 @@ public interface IActionSetDescriptor {
 
     /**
      * Returns whether this action set is initially visible.
+     * 
+     * @return whether this action set is initially visible
      */
     public boolean isInitiallyVisible();
 
     /**
-     * Sets the category of this action set.
-     *
-     * @param cat a non-empty category id
-     */
-    public void setCategory(String id);
-
-    /**
      * Sets whether this action set is initially visible.
      * 
+     * @param visible whether the action set should be visible initially.
      * @since 3.0
      */
     public void setInitiallyVisible(boolean visible);
-
+    
+    /**
+     * Returns the conconfigurationfig element.
+     * 
+     * @return the configuration element
+     * @since 3.1
+     */
+    public IConfigurationElement getConfigurationElement();
 }

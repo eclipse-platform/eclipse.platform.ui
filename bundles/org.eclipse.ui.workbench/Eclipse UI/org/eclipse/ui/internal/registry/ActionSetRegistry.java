@@ -18,103 +18,104 @@ import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IExtensionDelta;
-import org.eclipse.core.runtime.IRegistryChangeListener;
+import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.osgi.util.NLS;
-import org.eclipse.ui.internal.ExtensionEventHandlerMessages;
+import org.eclipse.core.runtime.dynamichelpers.ExtensionTracker;
+import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
+import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchConstants;
-import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * The registry of action set extensions.
  */
-public class ActionSetRegistry extends RegistryManager implements
-        IRegistryChangeListener {
-    public static final String OTHER_CATEGORY = "org.eclipse.ui.actionSetCategory";//$NON-NLS-1$
-
+public class ActionSetRegistry implements IExtensionChangeHandler {
+    
+    /** 
+     * @since 3.1
+     */
+    private class ActionSetPartAssociation {
+        /**
+         * @param partId 
+         * @param actionSetId 
+         */
+        public ActionSetPartAssociation(String partId, String actionSetId) {
+            this.partId = partId;
+            this.actionSetId = actionSetId;
+        }
+        
+        
+        String partId;
+        String actionSetId;
+    }
+    
     private ArrayList children = new ArrayList();
 
-    private ArrayList categories = new ArrayList(1);
-
+    private Map mapPartToActionSetIds = new HashMap();
+    
     private Map mapPartToActionSets = new HashMap();
-
-    // for dynamic UI - store cache for removal
-    private Map mapCacheToActionSets = new HashMap();
-
+    
     /**
      * Creates the action set registry.
      */
     public ActionSetRegistry() {
-        super(WorkbenchPlugin.PI_WORKBENCH, IWorkbenchConstants.PL_ACTION_SETS);
-        Platform.getExtensionRegistry().addRegistryChangeListener(this);
+        PlatformUI.getWorkbench().getExtensionTracker().registerHandler(
+                this,
+                ExtensionTracker
+                        .createExtensionPointFilter(new IExtensionPoint[] {
+                                getActionSetExtensionPoint(),
+                                getActionSetPartAssociationExtensionPoint() }));
         readFromRegistry();
+    }
+
+    /**
+     * Return the action set part association extension point.
+     * 
+     * @return the action set part association extension point
+     * @since 3.1
+     */
+    private IExtensionPoint getActionSetPartAssociationExtensionPoint() {
+        return Platform
+        .getExtensionRegistry().getExtensionPoint(
+                PlatformUI.PLUGIN_ID,
+                IWorkbenchConstants.PL_ACTION_SET_PART_ASSOCIATIONS);
+    }
+
+    /**
+     * Return the action set extension point.
+     * 
+     * @return the action set extension point
+     * @since 3.1
+     */
+    private IExtensionPoint getActionSetExtensionPoint() {
+        return Platform
+                .getExtensionRegistry().getExtensionPoint(
+                        PlatformUI.PLUGIN_ID,
+                        IWorkbenchConstants.PL_ACTION_SETS);
     }
 
     /**
      * Adds an action set.
      */
-    public void addActionSet(ActionSetDescriptor desc) {
+    private void addActionSet(ActionSetDescriptor desc) {
         children.add(desc);
     }
 
     /**
      * Adds an association between an action set an a part.
      */
-    public void addAssociation(String actionSetId, String partId) {
+    private Object addAssociation(String actionSetId, String partId) {
         // get the action set ids for this part
-        ArrayList actionSets = (ArrayList) mapPartToActionSets.get(partId);
+        ArrayList actionSets = (ArrayList) mapPartToActionSetIds.get(partId);
         if (actionSets == null) {
             actionSets = new ArrayList();
-            mapPartToActionSets.put(partId, actionSets);
+            mapPartToActionSetIds.put(partId, actionSets);
         }
-        // get the action set
-        IActionSetDescriptor desc = findActionSet(actionSetId);
-        if (desc == null) {
-            WorkbenchPlugin.log("Unable to associate action set with part: " + //$NON-NLS-1$
-                    partId + ". Action set " + actionSetId + " not found."); //$NON-NLS-2$ //$NON-NLS-1$
-            return;
-        }
-        // add the action set if it is not already present
-        if (!actionSets.contains(desc))
-            actionSets.add(desc);
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.registry.RegistryManager#buildNewCacheObject(org.eclipse.core.runtime.IExtensionDelta)
-     */
-    public Object[] buildNewCacheObject(IExtensionDelta delta) {
-        IExtension extension = delta.getExtension();
-        if (extension == null)
-            return null;
-        IConfigurationElement[] elements = extension.getConfigurationElements();
-        if (elements == null || elements.length == 0)
-            return null;
-        Object[] retArray = new Object[elements.length];
-
-        for (int i = 0; i < elements.length; i++) {
-            IConfigurationElement element = elements[i];
-            if (element == null)
-                break;
-            try {
-                ActionSetDescriptor desc = new ActionSetDescriptor(element);
-                addActionSet(desc);
-                retArray[i] = desc;
-            } catch (CoreException e) {
-                // log an error since its not safe to open a dialog here
-                WorkbenchPlugin
-                        .log(
-                                "Unable to create action set descriptor.", e.getStatus());//$NON-NLS-1$
-            }
-        }
-        if (retArray != null && retArray.length != 0) {
-            addResetMessage(NLS.bind(
-                            ExtensionEventHandlerMessages.ExtensionEventHandler_change_format,
-                                    extension.getNamespace(),
-                                    ExtensionEventHandlerMessages.ExtensionEventHandler_new_action_set));
-        }
-        return retArray;
+        actionSets.add(actionSetId);
+        
+        ActionSetPartAssociation association = new ActionSetPartAssociation(partId, actionSetId);
+        return association;
     }
 
     /**
@@ -135,122 +136,207 @@ public class ActionSetRegistry extends RegistryManager implements
     }
 
     /**
-     * Find a category with a given id.
-     */
-    public ActionSetCategory findCategory(String id) {
-        Iterator i = categories.iterator();
-        while (i.hasNext()) {
-            ActionSetCategory cat = (ActionSetCategory) i.next();
-            if (id.equals(cat.getId()))
-                return cat;
-        }
-        return null;
-    }
-
-    /**
      * Returns a list of the action sets known to the workbench.
      *
      * @return a list of action sets
      */
     public IActionSetDescriptor[] getActionSets() {
-        int count = children.size();
-        IActionSetDescriptor[] array = new IActionSetDescriptor[count];
-        for (int nX = 0; nX < count; nX++) {
-            array[nX] = (IActionSetDescriptor) children.get(nX);
-        }
-        return array;
+        return (IActionSetDescriptor []) children.toArray(new IActionSetDescriptor [children.size()]);
     }
 
     /**
      * Returns a list of the action sets associated with the given part id.
-     *
+     * 
+     * @param partId the part id
      * @return a list of action sets
      */
     public IActionSetDescriptor[] getActionSetsFor(String partId) {
-        // get the action set ids for this part
+        // check the resolved map first
         ArrayList actionSets = (ArrayList) mapPartToActionSets.get(partId);
-        if (actionSets == null)
+        if (actionSets != null) {
+            return (IActionSetDescriptor[]) actionSets
+                    .toArray(new IActionSetDescriptor[actionSets.size()]);
+        }
+        
+        // get the action set ids for this part
+        ArrayList actionSetIds = (ArrayList) mapPartToActionSetIds.get(partId);
+        if (actionSetIds == null)
             return new IActionSetDescriptor[0];
+        
+        // resolve to action sets
+        actionSets = new ArrayList(actionSetIds.size());
+        for (Iterator i = actionSetIds.iterator(); i.hasNext();) {
+            String actionSetId = (String) i.next();
+            IActionSetDescriptor actionSet = findActionSet(actionSetId);
+            if (actionSet != null)
+                actionSets.add(actionSet);
+            else {
+               WorkbenchPlugin.log("Unable to associate action set with part: " + //$NON-NLS-1$
+                        partId + ". Action set " + actionSetId + " not found."); //$NON-NLS-2$ //$NON-NLS-1$
+            }
+        }
+        
+        mapPartToActionSets.put(partId, actionSets);
+        
         return (IActionSetDescriptor[]) actionSets
                 .toArray(new IActionSetDescriptor[actionSets.size()]);
     }
 
     /**
-     * Returns a list of action set categories.
-     *
-     * @return a list of action sets categories
-     */
-    public ActionSetCategory[] getCategories() {
-        int count = categories.size();
-        ActionSetCategory[] array = new ActionSetCategory[count];
-        for (int i = 0; i < count; i++) {
-            array[i] = (ActionSetCategory) categories.get(i);
-        }
-        return array;
-    }
-
-    /**
-     * Adds each action set in the registry to a particular category.
-     * For now, everything goes into the OTHER_CATEGORY.
-     */
-    public void mapActionSetsToCategories() {
-        // Create "other" category.
-        ActionSetCategory cat = new ActionSetCategory(OTHER_CATEGORY,
-                WorkbenchMessages.ActionSetRegistry_otherCategory); 
-        categories.add(cat);
-
-        // Add everything to it.
-        Iterator i = children.iterator();
-        while (i.hasNext()) {
-            IActionSetDescriptor desc = (IActionSetDescriptor) i.next();
-            cat.addActionSet(desc);
-        }
-    }
-
-    /**
      * Reads the registry.
      */
-    public void readFromRegistry() {
-        ActionSetRegistryReader reader = new ActionSetRegistryReader();
-        reader.readRegistry(Platform.getExtensionRegistry(), this);
+    private void readFromRegistry() {      
+        IExtension[] extensions = getActionSetExtensionPoint().getExtensions();
+        for (int i = 0; i < extensions.length; i++) {
+            addActionSets(PlatformUI.getWorkbench().getExtensionTracker(),
+                    extensions[i]);
+        }
 
-        ActionSetPartAssociationsReader assocReader = new ActionSetPartAssociationsReader();
-        assocReader.readRegistry(Platform.getExtensionRegistry(), this);
-    }
-
-    //for dynamic UI
-    // Commented out because the cache is broken -- it does not understand multiple windows.
-    // See bug 66374.
-    //public void addCache(String actionSetId, Object cache) {
-    //	mapCacheToActionSets.put(actionSetId, cache);
-    //}
-
-    //for dynamic UI
-    public Object removeCache(String actionSetId) {
-        return mapCacheToActionSets.remove(actionSetId);
-    }
-
-    //for dynamic UI
-    public void remove(String id) {
-        IActionSetDescriptor desc = findActionSet(id);
-        if (id != null) {
-            children.remove(desc);
-            categories.remove(desc);
+        extensions = getActionSetPartAssociationExtensionPoint()
+                .getExtensions();
+        for (int i = 0; i < extensions.length; i++) {
+            addActionSetPartAssociations(PlatformUI.getWorkbench()
+                    .getExtensionTracker(), extensions[i]);
         }
     }
 
-    //for dynamic UI
-    public void removeAssociation(String actionSetId, String partId) {
-        IActionSetDescriptor desc = findActionSet(actionSetId);
-        if (desc == null)
-            return;
-        ArrayList actionSets = (ArrayList) mapPartToActionSets.get(partId);
-        if (actionSets == null)
-            return;
-        if (actionSets.contains(desc))
-            actionSets.remove(desc);
-        if (actionSets.size() == 0)
-            mapPartToActionSets.remove(partId);
+    /* (non-Javadoc)
+     * @see org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler#addExtension(org.eclipse.core.runtime.dynamichelpers.IExtensionTracker, org.eclipse.core.runtime.IExtension)
+     */
+    public void addExtension(IExtensionTracker tracker, IExtension extension) {
+        String extensionPointUniqueIdentifier = extension.getExtensionPointUniqueIdentifier();
+        if (extensionPointUniqueIdentifier.equals(getActionSetExtensionPoint().getUniqueIdentifier())) {
+            addActionSets(tracker, extension);
+        }
+        else if (extensionPointUniqueIdentifier.equals(getActionSetPartAssociationExtensionPoint().getUniqueIdentifier())){
+            addActionSetPartAssociations(tracker, extension);
+        }
+    }
 
+    /**
+     * @param tracker
+     * @param extension
+     */
+    private void addActionSetPartAssociations(IExtensionTracker tracker, IExtension extension) {
+        IConfigurationElement [] elements = extension.getConfigurationElements();
+        for (int i = 0; i < elements.length; i++) {
+            IConfigurationElement element = elements[i];
+            if (element.getName().equals(IWorkbenchRegistryConstants.TAG_ACTION_SET_ASSOCIATION)) {
+                String actionSetId = element.getAttribute(IWorkbenchRegistryConstants.ATT_TARGET_ID);
+                IConfigurationElement[] children = element.getChildren();
+                for (int j = 0; j < children.length; j++) {
+                    IConfigurationElement child = children[j];
+                    if (child.getName().equals(IWorkbenchRegistryConstants.TAG_PART)) {
+                        String partId = child.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
+                        if (partId != null) {
+                            Object trackingObject = addAssociation(actionSetId, partId);
+                            if (trackingObject != null) {
+                                tracker.registerObject(extension,
+                                        trackingObject,
+                                        IExtensionTracker.REF_STRONG);
+
+                            }
+                            
+                        }
+                    } else {
+                        WorkbenchPlugin.log("Unable to process element: " + //$NON-NLS-1$
+                                child.getName() + " in action set part associations extension: " + //$NON-NLS-1$
+                                extension.getUniqueIdentifier());
+                    }
+                }
+            }
+        }
+
+        // TODO: optimize
+        mapPartToActionSets.clear();
+    }
+
+    /**
+     * @param tracker
+     * @param extension
+     */
+    private void addActionSets(IExtensionTracker tracker, IExtension extension) {
+        IConfigurationElement [] elements = extension.getConfigurationElements();
+        for (int i = 0; i < elements.length; i++) {
+            IConfigurationElement element = elements[i];
+            if (element.getName().equals(IWorkbenchRegistryConstants.TAG_ACTION_SET)) {
+                try {
+                    ActionSetDescriptor desc = new ActionSetDescriptor(element);
+                    addActionSet(desc);
+                    tracker.registerObject(extension, desc, IExtensionTracker.REF_WEAK);
+
+                } catch (CoreException e) {
+                    // log an error since its not safe to open a dialog here
+                    WorkbenchPlugin
+                            .log(
+                                    "Unable to create action set descriptor.", e.getStatus());//$NON-NLS-1$
+                }
+            } 
+        }   
+
+        // TODO: optimize
+        mapPartToActionSets.clear();
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler#removeExtension(org.eclipse.core.runtime.IExtension, java.lang.Object[])
+     */
+    public void removeExtension(IExtension extension, Object[] objects) {
+        String extensionPointUniqueIdentifier = extension.getExtensionPointUniqueIdentifier();
+        if (extensionPointUniqueIdentifier.equals(getActionSetExtensionPoint().getUniqueIdentifier())) {
+            removeActionSets(objects);
+        }
+        else if (extensionPointUniqueIdentifier.equals(getActionSetPartAssociationExtensionPoint().getUniqueIdentifier())){
+            removeActionSetPartAssociations(objects);
+        }
+    }
+
+    /**
+     * @param objects 
+     */
+    private void removeActionSetPartAssociations(Object[] objects) {
+        for (int i = 0; i < objects.length; i++) {
+            Object object = objects[i];
+            if (object instanceof ActionSetPartAssociation) {
+                ActionSetPartAssociation association = (ActionSetPartAssociation) object;
+                String actionSetId = association.actionSetId;
+                ArrayList actionSets = (ArrayList) mapPartToActionSetIds.get(association.partId);
+                if (actionSets == null)
+                    return;
+                actionSets.remove(actionSetId);
+                if (actionSets.isEmpty())
+                    mapPartToActionSetIds.remove(association.partId);  
+            }
+        }
+        // TODO: optimize
+        mapPartToActionSets.clear();
+        
+    }
+
+    /**
+     * @param objects
+     */
+    private void removeActionSets(Object[] objects) {
+        for (int i = 0; i < objects.length; i++) {
+            Object object = objects[i];
+            if (object instanceof IActionSetDescriptor) {
+                IActionSetDescriptor desc = (IActionSetDescriptor) object;
+                children.remove(desc);
+
+                // now clean up the part associations
+                // TODO: this is expensive. We should consider another map from
+                // actionsets
+                // to parts.
+                for (Iterator j = mapPartToActionSetIds.values().iterator(); j
+                        .hasNext();) {
+                    ArrayList list = (ArrayList) j.next();
+                    list.remove(desc.getId());
+                    if (list.isEmpty())
+                        j.remove();
+                }
+            }
+        }
+        // TODO: optimize
+        mapPartToActionSets.clear();
     }
 }
