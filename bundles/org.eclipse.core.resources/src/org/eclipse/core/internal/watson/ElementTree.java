@@ -1,9 +1,9 @@
 /**********************************************************************
- * Copyright (c) 2000,2002 IBM Corporation and others.
+ * Copyright (c) 2000,2003 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+ * are made available under the terms of the Common Public License v1.0 which
+ * accompanies this distribution, and is available at 
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors: 
  * IBM - Initial API and implementation
@@ -927,13 +927,13 @@ public void setTreeData(IElementTreeData data) {
  */
 public String toDebugString() {
 	final StringBuffer buffer = new StringBuffer("\n"); //$NON-NLS-1$
-	ElementTreeIterator iterator = new ElementTreeIterator();
 	IElementPathContentVisitor visitor = new IElementPathContentVisitor() {
-		public void visitElement(ElementTree tree, IPath elementID, Object elementContents) {
+		public boolean visitElement(ElementTree tree, IPath elementID, Object elementContents) {
 			buffer.append(elementID + " " + elementContents + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
+			return true;
 		}
 	};
-	iterator.iterateWithPath(this, visitor, Path.ROOT);
+	new ElementTreeIterator().iterateWithPath(this, visitor, Path.ROOT);
 	return buffer.toString();
 }
 public String toString() {

@@ -1,9 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2002 IBM Corporation and others.
- * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+ * Copyright (c) 2000, 2003 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Common Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
  * IBM - Initial API and implementation
@@ -354,12 +353,11 @@ private void recursiveFindMarkers(IPath path, ArrayList list, String type, boole
  * Adds the markers for a subtree of resources to the list.
  */
 private void visitorFindMarkers(IPath path, final ArrayList list, final String type, final boolean includeSubtypes, int depth) {
-	ElementTreeIterator iterator = new ElementTreeIterator();
 	IElementContentVisitor visitor = new IElementContentVisitor() {
-		public void visitElement(ElementTree tree, IPathRequestor requestor, Object elementContents) {
+		public boolean visitElement(ElementTree tree, IPathRequestor requestor, Object elementContents) {
 			ResourceInfo info = (ResourceInfo)elementContents;
 			if (info == null)
-				return;
+				return false;
 			MarkerSet markers = info.getMarkers();
 
 			//add the matching markers for this resource
@@ -371,9 +369,10 @@ private void visitorFindMarkers(IPath path, final ArrayList list, final String t
 					matching = basicFindMatching(markers, type, includeSubtypes);
 				buildMarkers(matching, requestor.requestPath(), info.getType(), list);
 			}
+			return true;
 		}
 	};
-	iterator.iterate(workspace.getElementTree(), visitor, path);
+	new ElementTreeIterator().iterate(workspace.getElementTree(), visitor, path);
 }
 /**
  * Adds the markers for a subtree of resources to the list.

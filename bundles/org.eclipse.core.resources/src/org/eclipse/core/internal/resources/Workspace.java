@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -173,6 +173,9 @@ public void build(int trigger, IProgressMonitor monitor) throws CoreException {
 			beginOperation(true);
 			getBuildManager().build(trigger, Policy.subMonitorFor(monitor, Policy.opWork));
 		} finally {
+			//building may close the tree, but we are still inside an operation so open it
+			if (tree.isImmutable())
+				newWorkingTree();
 			getWorkManager().avoidAutoBuild();
 			endOperation(false, Policy.subMonitorFor(monitor, Policy.buildWork));
 		}
@@ -637,9 +640,10 @@ public int countResources(IPath root, int depth, final boolean phantom) {
 		case IResource.DEPTH_INFINITE:
 			final int[] count = new int[1];
 			IElementContentVisitor visitor = new IElementContentVisitor() {
-				public void visitElement(ElementTree tree, IPathRequestor requestor, Object elementContents) {
+				public boolean visitElement(ElementTree tree, IPathRequestor requestor, Object elementContents) {
 					if (phantom || !((ResourceInfo)elementContents).isSet(M_PHANTOM))
 						count[0]++;
+					return true;
 				}
 			};
 			new ElementTreeIterator().iterate(tree, visitor, root);
@@ -1643,6 +1647,7 @@ public void setWorkspaceLock(WorkspaceLock lock) {
 }
 
 private boolean shouldBuild() throws CoreException {
+	//check if workspace description changes necessitate a build
 	if (forceBuild) {
 		forceBuild = false;
 		return true;
@@ -1727,8 +1732,9 @@ public String toDebugString() {
 	buffer.append("  parent: " + tree.getParent()); //$NON-NLS-1$
 	ElementTreeIterator iterator = new ElementTreeIterator();
 	IElementPathContentVisitor visitor = new IElementPathContentVisitor() {
-		public void visitElement(ElementTree tree, IPath path, Object elementContents) {
+		public boolean visitElement(ElementTree tree, IPath path, Object elementContents) {
 			buffer.append("\n  " + path + ": " + elementContents); //$NON-NLS-1$ //$NON-NLS-2$
+			return true;
 		}
 	};
 	iterator.iterateWithPath(tree, visitor, Path.ROOT);

@@ -1,9 +1,8 @@
 /**********************************************************************
- * Copyright (c) 2002 IBM Corporation and others.
- * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2002, 2003 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Common Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors: 
  * IBM - Initial API and implementation
@@ -24,7 +23,9 @@ public interface IElementPathContentVisitor {
  * @param tree the element tree being visited
  * @param elementContents the object at the node being visited on this call
  * @param path the path of the object being visited
+ * @return true if this element's children should be visited, and false
+ * otherwise.
  */
-public void visitElement(ElementTree tree, IPath path, Object elementContents);
+public boolean visitElement(ElementTree tree, IPath path, Object elementContents);
 }
 

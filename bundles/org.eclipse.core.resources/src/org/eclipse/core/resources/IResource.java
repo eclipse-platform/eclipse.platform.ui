@@ -233,6 +233,52 @@ public interface IResource extends IAdaptable {
 	
 	
 /**
+ * Accepts the given visitor for an optimized traversal. 
+ * The visitor's <code>visit</code> method is called, and is provided with a
+ * proxy to this resource.  The proxy is a transient object that can be queried
+ * very quickly for information about the resource. If the actual resource
+ * handle is needed, it can be obtained from the proxy. Requesting the resource
+ * handle, or the full path of the resource, will degrade performance of the
+ * visit.
+ * <p>
+ * The entire subtree under the given resource is traversed to infinite depth,
+ * unless the visitor ignores a subtree by returning <code>false</code> from its
+ * visit method.
+ * </p>
+ * <p>
+ * If the <code>INCLUDE_PHANTOMS</code> flag is not specified in the member 
+ * flags (recommended), only member resources that exists will be visited.
+ * If the <code>INCLUDE_PHANTOMS</code> flag is specified, the visit will
+ * also include any phantom member resource that the workspace is keeping track of.
+ * </p>
+ * <p>
+ * If the <code>INCLUDE_TEAM_PRIVATE_MEMBERS</code> flag is not specified
+ * (recommended), team private members will not be visited. If the 
+ * <code>INCLUDE_TEAM_PRIVATE_MEMBERS</code> flag is specified in the member
+ * flags, team private member resources are visited as well.
+ * </p>
+ *
+ * @param fastVisitor the visitor
+ * @param memberFlags bit-wise or of member flag constants
+ *   (<code>IContainer.INCLUDE_PHANTOMS</code> and <code>INCLUDE_TEAM_PRIVATE_MEMBERS</code>)
+ *   indicating which members are of interest
+ * @exception CoreException if this request fails. Reasons include:
+ * <ul>
+ * <li> the <code>INCLUDE_PHANTOMS</code> flag is not specified and
+ *     this resource does not exist.</li>
+ * <li> the <code>INCLUDE_PHANTOMS</code> flag is not specified and
+ *     this resource is a project that is not open.</li>
+ * <li> The visitor failed with this exception.</li>
+ * </ul>
+ * @see IContainer#INCLUDE_PHANTOMS
+ * @see IContainer#INCLUDE_TEAM_PRIVATE_MEMBERS
+ * @see IResource#isPhantom
+ * @see IResource#isTeamPrivateMember
+ * @see IFastResourceVisitor#visit
+ * @since 2.1
+ */
+public void accept(final IFastResourceVisitor fastVisitor, int memberFlags) throws CoreException;
+/**
  * Accepts the given visitor.
  * The visitor's <code>visit</code> method is called with this
  * resource. If the visitor returns <code>true</code>, this method

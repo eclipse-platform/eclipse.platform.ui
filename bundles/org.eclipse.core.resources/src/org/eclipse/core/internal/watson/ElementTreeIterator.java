@@ -1,9 +1,9 @@
 /**********************************************************************
- * Copyright (c) 2000,2002 IBM Corporation and others.
+ * Copyright (c) 2000,2003 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+ * are made available under the terms of the Common Public License v1.0 which
+ * accompanies this distribution, and is available at http://www.eclipse.
+ * org/legal/cpl-v10.html
  * 
  * Contributors: 
  * IBM - Initial API and implementation
@@ -107,12 +107,12 @@ private void doIteration(DataTreeNode node, IElementContentVisitor visitor) {
 	segments[nextFreeSegment++] = node.getName();
 
 	//do the visit
-	visitor.visitElement(tree, this, node.getData());
-	
-	//recurse
-	AbstractDataTreeNode[] children = node.getChildren();
-	for (int i = children.length; --i >= 0;) {
-		doIteration((DataTreeNode)children[i], visitor);
+	if (visitor.visitElement(tree, this, node.getData())) {
+		//recurse
+		AbstractDataTreeNode[] children = node.getChildren();
+		for (int i = children.length; --i >= 0;) {
+			doIteration((DataTreeNode)children[i], visitor);
+		}
 	}
 	
 	//pop the segment from the requestor stack
@@ -125,10 +125,11 @@ private void doIteration(DataTreeNode node, IElementContentVisitor visitor) {
  * passing in the element's ID and element object.
  */
 private void doIterationWithPath(DataTreeNode node, IElementPathContentVisitor visitor, IPath path) {
-	visitor.visitElement(tree, path, node.getData());
-	AbstractDataTreeNode[] children = node.getChildren();
-	for (int i = children.length; --i >= 0;) {
-		doIterationWithPath((DataTreeNode)children[i], visitor, path.append(children[i].getName()));
+	if (visitor.visitElement(tree, path, node.getData())) {
+		AbstractDataTreeNode[] children = node.getChildren();
+		for (int i = children.length; --i >= 0;) {
+			doIterationWithPath((DataTreeNode)children[i], visitor, path.append(children[i].getName()));
+		}
 	}
 }
 /**
@@ -141,18 +142,19 @@ public void iterate(ElementTree tree, IElementContentVisitor visitor) {
 /**
  * Iterates through the given element tree and visits each element in the
  * subtree rooted at the given path.  The visitor is passed each element's 
- * path and data.
+ * data and a request callback for obtaining the path.
  */
 public void iterate(ElementTree tree, IElementContentVisitor visitor, IPath path) {
 	this.tree = tree;
 	try {
 		if (path.isRoot()) {
 			//special visit for root element to use special treeData
-			visitor.visitElement(tree, this, tree.getTreeData());
-			DataTreeNode node = (DataTreeNode)tree.getDataTree().copyCompleteSubtree(path);
-			AbstractDataTreeNode[] children = node.getChildren();
-			for (int i = children.length; --i >= 0;) {
-				doIteration((DataTreeNode)children[i], visitor);
+			if (visitor.visitElement(tree, this, tree.getTreeData())) {
+				DataTreeNode node = (DataTreeNode)tree.getDataTree().copyCompleteSubtree(path);
+				AbstractDataTreeNode[] children = node.getChildren();
+				for (int i = children.length; --i >= 0;) {
+					doIteration((DataTreeNode)children[i], visitor);
+				}
 			}
 		} else {
 			push(path, path.segmentCount()-1);
@@ -172,15 +174,22 @@ public void iterateWithPath(ElementTree tree, IElementPathContentVisitor visitor
 	this.tree = tree;
 	if (path.isRoot()) {
 		//special visit for root element to use special treeData
-		visitor.visitElement(tree, path, tree.getTreeData());
-		DataTreeNode node = (DataTreeNode)tree.getDataTree().copyCompleteSubtree(path);
-		AbstractDataTreeNode[] children = node.getChildren();
-		for (int i = children.length; --i >= 0;) {
-			doIterationWithPath((DataTreeNode)children[i], visitor, path.append(children[i].getName()));
+		if (visitor.visitElement(tree, path, tree.getTreeData())) {
+			DataTreeNode node = (DataTreeNode)tree.getDataTree().copyCompleteSubtree(path);
+			AbstractDataTreeNode[] children = node.getChildren();
+			for (int i = children.length; --i >= 0;) {
+				doIterationWithPath((DataTreeNode)children[i], visitor, path.append(children[i].getName()));
+			}
 		}
 	} else {
 		DataTreeNode node = (DataTreeNode)tree.getDataTree().copyCompleteSubtree(path);
 		doIterationWithPath(node, visitor, path);
 	}
 }
+	public String requestName() {
+		if (nextFreeSegment == 0)
+			return "";//$NON-NLS-1$
+		return segments[nextFreeSegment-1];
+	}
+
 }

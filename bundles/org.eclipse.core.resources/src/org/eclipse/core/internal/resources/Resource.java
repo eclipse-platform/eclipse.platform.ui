@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,10 +14,12 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.eclipse.core.internal.events.LifecycleEvent;
-import org.eclipse.core.internal.localstore.*;
+import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
+import org.eclipse.core.internal.localstore.FileSystemResourceManager;
 import org.eclipse.core.internal.properties.PropertyManager;
 import org.eclipse.core.internal.utils.Assert;
 import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.internal.watson.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.team.IMoveDeleteHook;
 import org.eclipse.core.runtime.*;
@@ -28,6 +30,45 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 protected Resource(IPath path, Workspace workspace) {
 	this.path = path.removeTrailingSeparator();
 	this.workspace = workspace;
+}
+/**
+ * @see IResource#accept(IFastResourceVisitor, int)
+ */
+public void accept(final IFastResourceVisitor fastVisitor, int memberFlags) throws CoreException {
+	final ResourceProxy proxy = new ResourceProxy();
+	final CoreException[] signal = new CoreException[1];
+	final boolean includePhantoms = (memberFlags & IContainer.INCLUDE_PHANTOMS) != 0;
+	final boolean includeTeamPrivate = (memberFlags & IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS) != 0;
+	IElementContentVisitor elementVisitor = new IElementContentVisitor() {
+		public boolean visitElement(ElementTree tree, IPathRequestor requestor, Object contents) {
+			ResourceInfo info = (ResourceInfo)contents;
+			if (!includePhantoms && info.isSet(M_PHANTOM))
+				return false;
+			if (!includeTeamPrivate && info.isSet(M_TEAM_PRIVATE_MEMBER))
+				return false;
+			proxy.requestor = requestor;
+			proxy.info = info;
+			try {
+				fastVisitor.visit(proxy);
+			} catch (CoreException e) {
+				signal[0] = e;
+				//throw an exception to bail out of the traversal
+				throw new RuntimeException();
+			} finally {
+				proxy.reset();
+			}
+			return true;
+		}
+	};
+	try {
+		new ElementTreeIterator().iterate(workspace.getElementTree(), elementVisitor, getFullPath());
+	} catch (RuntimeException e) {
+		if (signal[0] != null)
+			throw signal[0];
+	} finally {
+		proxy.requestor = null;
+		proxy.info = null;
+	}
 }
 
 /**
@@ -923,7 +964,6 @@ protected IPath makePathAbsolute(IPath target) {
 	return getParent().getFullPath().append(target);
 }
 
-
 /*
  * @see IResource#move
  */
@@ -1201,7 +1241,8 @@ public boolean isDerived(int flags) {
 public boolean isLinked() {
 	ResourceInfo info = getResourceInfo(false, false);
 	return info != null && info.isSet(M_LINK);
-}/*
+}
+/*
  * @see IResource
  */
 public void setDerived(boolean isDerived) throws CoreException {
@@ -1238,7 +1279,8 @@ public boolean isTeamPrivateMember() {
  */
 public boolean isTeamPrivateMember(int flags) {
 	return flags != NULL_FLAG && ResourceInfo.isSet(flags, ICoreConstants.M_TEAM_PRIVATE_MEMBER);
-}/*
+}
+/*
  * @see IResource
  */
 public void setTeamPrivateMember(boolean isTeamPrivate) throws CoreException {
