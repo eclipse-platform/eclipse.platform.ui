@@ -94,7 +94,7 @@ public class ConsoleView extends AbstractDebugView implements IConsoleView, ICon
 		if (isPinned()) {
 			// if closing the pinned console, un-pin
 			IConsole console = (IConsole)fPartToConsole.get(part);
-			if (console.equals(getConsole())) {
+			if (console != null && console.equals(getConsole())) {
 				pin(null);
 			}
 		}
