@@ -130,13 +130,16 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 		while (iter.hasNext()) {
 			IMarker m= (IMarker) iter.next();
 			Annotation a= model.getMarkerAnnotation(m);
-			int l= a.getLayer();
-			if (l == maxLayer) {
-				if (marker == null)
+			// http://dev.eclipse.org/bugs/show_bug.cgi?id=18960
+			if (a != null) {
+				int l= a.getLayer();
+				if (l == maxLayer) {
+					if (marker == null)
+						marker= m;
+				} else if (l > maxLayer) {
+					maxLayer= l;
 					marker= m;
-			} else if (l > maxLayer) {
-				maxLayer= l;
-				marker= m;
+				}
 			}
 		}
 		
