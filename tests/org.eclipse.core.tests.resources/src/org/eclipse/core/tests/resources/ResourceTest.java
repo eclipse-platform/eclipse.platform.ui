@@ -11,9 +11,11 @@
 package org.eclipse.core.tests.resources;
 
 import java.io.*;
+import org.eclipse.core.internal.utils.UniversalUniqueIdentifier;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.tests.harness.*;
+import org.eclipse.core.tests.harness.CoreTest;
+import org.eclipse.core.tests.harness.EclipseTestHarnessApplication;
 
 /**
  * Tests that use the Eclipse Platform workspace.
@@ -616,6 +618,10 @@ public class ResourceTest extends CoreTest {
 				{NATURE_CYCLE1, NATURE_SIMPLE, NATURE_CYCLE2, NATURE_CYCLE3}, //cycle
 		};
 	}
+	
+	public String getUniqueString() {
+		return new UniversalUniqueIdentifier().toString();
+	}	
 
 	/**
 	 * Returns valid sets of natures

@@ -28,6 +28,7 @@ import org.osgi.framework.Bundle;
 
 public class CharsetDeltaJob extends Job implements IContentTypeManager.IContentTypeChangeListener {
 
+	// this is copied in the runtime tests - if changed here, has to be changed there too 
 	public final static String FAMILY_CHARSET_DELTA = ResourcesPlugin.PI_RESOURCES + "charsetJobFamily"; //$NON-NLS-1$
 
 	interface ICharsetListenerFilter {
