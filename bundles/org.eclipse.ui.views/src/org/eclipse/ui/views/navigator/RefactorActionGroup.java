@@ -7,6 +7,7 @@ http://www.eclipse.org/legal/cpl-v10.html
 
 Contributors:
     IBM - Initial implementation
+    Sebastian Davids <sdavids@gmx.de> - Images for menu items
 ************************************************************************/
 package org.eclipse.ui.views.navigator;
 
@@ -87,6 +88,7 @@ public class RefactorActionGroup extends ResourceNavigatorActionGroup {
 		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.MOVE, moveAction);
 		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.RENAME, renameAction);
 	}
+
 	/**
  	 * Handles a key pressed event by invoking the appropriate action.
  	 */
@@ -97,15 +99,29 @@ public class RefactorActionGroup extends ResourceNavigatorActionGroup {
 			}
 		}
 	}
+
 	protected void makeActions() {
 		TreeViewer treeViewer = (TreeViewer) navigator.getViewer();
 		Shell shell = navigator.getSite().getShell();
 		clipboard = new Clipboard(shell.getDisplay());
+		
 		pasteAction = new PasteAction(shell, clipboard);
+		pasteAction.setDisabledImageDescriptor(getImageDescriptor("dtool16/paste_edit.gif"));//$NON-NLS-1$
+		pasteAction.setImageDescriptor(getImageDescriptor("etool16/paste_edit.gif"));//$NON-NLS-1$
+		pasteAction.setHoverImageDescriptor(getImageDescriptor("ctool16/paste_edit.gif"));//$NON-NLS-1$
+				
 		copyAction = new CopyAction(shell, clipboard, pasteAction);
+		copyAction.setDisabledImageDescriptor(getImageDescriptor("dtool16/copy_edit.gif"));//$NON-NLS-1$
+		copyAction.setImageDescriptor(getImageDescriptor("etool16/copy_edit.gif"));//$NON-NLS-1$		
+		copyAction.setHoverImageDescriptor(getImageDescriptor("ctool16/copy_edit.gif"));//$NON-NLS-1$
+		
 		moveAction = new ResourceNavigatorMoveAction(shell, treeViewer);
 		renameAction = new ResourceNavigatorRenameAction(shell, treeViewer);
+		
 		deleteAction = new DeleteResourceAction(shell);
+		deleteAction.setDisabledImageDescriptor(getImageDescriptor("dlcl16/remtsk_tsk.gif"));//$NON-NLS-1$
+		deleteAction.setImageDescriptor(getImageDescriptor("elcl16/remtsk_tsk.gif"));//$NON-NLS-1$		
+		deleteAction.setHoverImageDescriptor(getImageDescriptor("clcl16/remtsk_tsk.gif"));//$NON-NLS-1$
 	}
 
 	public void updateActionBars() {
