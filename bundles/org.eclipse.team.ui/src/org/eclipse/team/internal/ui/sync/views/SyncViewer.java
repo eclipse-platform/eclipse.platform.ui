@@ -826,7 +826,7 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 	public void refreshWithRemote(TeamSubscriber subscriber, IResource[] resources) {
 		QualifiedName id = subscriber.getId();
 		if(subscriberInputs.containsKey(id)) {
-			if(! input.getSubscriber().getId().equals(id)) {
+			if(input != null && ! input.getSubscriber().getId().equals(id)) {
 				initializeSubscriberInput((SubscriberInput)subscriberInputs.get(id));
 			}
 			RefreshAction.run(this, resources, subscriber);
