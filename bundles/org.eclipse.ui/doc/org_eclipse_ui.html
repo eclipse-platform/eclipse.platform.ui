@@ -1,89 +1,221 @@
 <!doctype html public "-//w3c//dtd html 4.0 transitional//en">
-<html>
+<html xmlns:v="urn:schemas-microsoft-com:vml"
+xmlns:o="urn:schemas-microsoft-com:office:office"
+xmlns:w="urn:schemas-microsoft-com:office:word"
+xmlns="http://www.w3.org/TR/REC-html40">
+
 <head>
-   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-   <meta name="GENERATOR" content="Mozilla/4.5 [en] (WinNT; I) [Netscape]">
-   <title>Eclipse Workbench Extension Points</title>
+<meta http-equiv=Content-Type content="text/html; charset=iso-8859-1">
+<meta name=ProgId content=Word.Document>
+<meta name=Generator content="Microsoft Word 9">
+<meta name=Originator content="Microsoft Word 9">
+<link rel=File-List href="./org_eclipse_ui_files/filelist.xml">
+<link rel=Edit-Time-Data href="./org_eclipse_ui_files/editdata.mso">
+<!--[if !mso]>
+<style>
+v\:* {behavior:url(#default#VML);}
+o\:* {behavior:url(#default#VML);}
+w\:* {behavior:url(#default#VML);}
+.shape {behavior:url(#default#VML);}
+</style>
+<![endif]-->
+<title>Eclipse Workbench Extension Points</title>
+<!--[if gte mso 9]><xml>
+ <o:DocumentProperties>
+  <o:Author>OTI Employee</o:Author>
+  <o:LastAuthor>OTI Employee</o:LastAuthor>
+  <o:Revision>3</o:Revision>
+  <o:TotalTime>10</o:TotalTime>
+  <o:Created>2002-03-18T15:19:00Z</o:Created>
+  <o:LastSaved>2002-03-18T15:29:00Z</o:LastSaved>
+  <o:Pages>1</o:Pages>
+  <o:Words>374</o:Words>
+  <o:Characters>2137</o:Characters>
+  <o:Company>Object Technology International</o:Company>
+  <o:Lines>17</o:Lines>
+  <o:Paragraphs>4</o:Paragraphs>
+  <o:CharactersWithSpaces>2624</o:CharactersWithSpaces>
+  <o:Version>9.3821</o:Version>
+ </o:DocumentProperties>
+</xml><![endif]-->
+<style>
+<!--
+ /* Font Definitions */
+@font-face
+	{font-family:Wingdings;
+	panose-1:5 0 0 0 0 0 0 0 0 0;
+	mso-font-charset:2;
+	mso-generic-font-family:auto;
+	mso-font-pitch:variable;
+	mso-font-signature:0 268435456 0 0 -2147483648 0;}
+ /* Style Definitions */
+p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{mso-style-parent:"";
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+a:link, span.MsoHyperlink
+	{color:blue;
+	text-decoration:underline;
+	text-underline:single;}
+a:visited, span.MsoHyperlinkFollowed
+	{color:purple;
+	text-decoration:underline;
+	text-underline:single;}
+p
+	{font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+tt
+	{mso-ascii-font-family:"Courier New";
+	mso-fareast-font-family:"Courier New";
+	mso-hansi-font-family:"Courier New";
+	mso-bidi-font-family:"Courier New";}
+@page Section1
+	{size:8.5in 11.0in;
+	margin:1.0in 1.25in 1.0in 1.25in;
+	mso-header-margin:.5in;
+	mso-footer-margin:.5in;
+	mso-paper-source:0;}
+div.Section1
+	{page:Section1;}
+ /* List Definitions */
+@list l0
+	{mso-list-id:1143816363;
+	mso-list-type:hybrid;
+	mso-list-template-ids:1487444836 -203001984 -486225448 -684431166 933107332 1290557610 23074406 -1642935636 -1421860850 210548820;}
+@list l0:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	mso-ansi-font-size:10.0pt;
+	font-family:Symbol;}
+ol
+	{margin-bottom:0in;}
+ul
+	{margin-bottom:0in;}
+-->
+</style>
 </head>
-<body link="#0000FF" vlink="#800080">
 
-<center>
-<h1>
-Eclipse Platform User Interface</h1></center>
-This document lists all of the extension points that the Eclipse Platform
-User Interface makes available to tool developers. Developers may extend
-various aspects of the workbench, both visually and functionally.
-<p>In general, each of the extension points defined in the UI follow a
-simple pattern.&nbsp; The extension point is defined within <tt>plugin.xml</tt>
-for <tt>org.eclipse.ui</tt>.&nbsp; Then extensions are defined for the
-extension point.&nbsp; These may exist in the same or other <tt>plugin.xml</tt>
-files.&nbsp; The top level XML element for any extension may contain one
-or more extension declarations.&nbsp; For example, an <tt>org.eclipse.ui.propertyPages</tt>
-extension may contain several instances of <tt>page</tt> elements. Although
-making one extension per subelement is not technically incorrect, we recommend
-grouping for consistent style. It can also improve workbench startup time
-because there will be fewer extensions to process.
-<br>
-<hr WIDTH="100%">
-<h1>
-General Extension Points</h1>
-The following extension points can be used to extend various aspects of
-the UI, both visually and functionally:
-<ul>
-<li>
-<a href="org_eclipse_ui_newWizards.html">org.eclipse.ui.newWizards</a></li>
+<body lang=EN-US link=blue vlink=purple style='tab-interval:.5in'>
 
-<li>
-<a href="org_eclipse_ui_importWizards.html">org.eclipse.ui.importWizards</a></li>
+<div class=Section1>
 
-<li>
-<a href="org_eclipse_ui_exportWizards.html">org.eclipse.ui.exportWizards</a></li>
+<h1 align=center style='text-align:center'>Eclipse Platform User Interface</h1>
 
-<li>
-<a href="org_eclipse_ui_actionSets.html">org.eclipse.ui.actionSets</a></li>
+<p class=MsoNormal>This document lists all of the extension points that the
+Eclipse Platform User Interface makes available to tool developers. Developers
+may extend various aspects of the workbench, both visually and functionally. </p>
 
-<li>
-<a href="org_eclipse_ui_perspectives.html">org.eclipse.ui.perspectives</a></li>
+<p>In general, each of the extension points defined in the UI follow a simple
+pattern.&nbsp; The extension point is defined within <tt><span
+style='font-size:10.0pt;font-family:"Courier New"'>plugin.xml</span></tt> for <tt><span
+style='font-size:10.0pt;font-family:"Courier New"'>org.eclipse.ui</span></tt>.&nbsp;
+Then extensions are defined for the extension point.&nbsp; These may exist in
+the same or other <tt><span style='font-size:10.0pt;font-family:"Courier New"'>plugin.xml</span></tt>
+files.&nbsp; The top level XML element for any extension may contain one or
+more extension declarations.&nbsp; For example, an <tt><span style='font-size:
+10.0pt;font-family:"Courier New"'>org.eclipse.ui.propertyPages</span></tt>
+extension may contain several instances of <tt><span style='font-size:10.0pt;
+font-family:"Courier New"'>page</span></tt> elements. Although making one
+extension per subelement is not technically incorrect, we recommend grouping
+for consistent style. It can also improve workbench startup time because there
+will be fewer extensions to process. </p>
 
-<li>
-<a href="org_eclipse_ui_perspectiveExtensions.html">org.eclipse.ui.perspectiveExtensions</a></li>
 
-<li>
-<a href="org_eclipse_ui_views.html">org.eclipse.ui.views</a></li>
+<div class=MsoNormal align=center style='text-align:center'>
 
-<li>
-<a href="org_eclipse_ui_viewActions.html">org.eclipse.ui.viewActions</a></li>
+<hr size=2 width="100%" align=center>
 
-<li>
-<a href="org_eclipse_ui_editors.html">org.eclipse.ui.editors</a></li>
+</div>
 
-<li>
-<a href="org_eclipse_ui_editorActions.html">org.eclipse.ui.editorActions</a></li>
 
-<li>
-<a href="org_eclipse_ui_popupMenus.html">org.eclipse.ui.popupMenus</a></li>
+<h1>General Extension Points</h1>
 
-<li>
-<a href="org_eclipse_ui_preferencePages.html">org.eclipse.ui.preferencePages</a></li>
+<p class=MsoNormal>The following extension points can be used to extend various
+aspects of the UI, both visually and functionally: </p>
 
-<li>
-<a href="org_eclipse_ui_propertyPages.html">org.eclipse.ui.propertyPages</a></li>
-
-<li>
-<a href="org_eclipse_ui_elementFactories.html">org.eclipse.ui.elementFactories</a></li>
-
-<li>
-<a href="org_eclipse_ui_dropActions.html">org.eclipse.ui.dropActions</a></li>
-
-<li>
-<a href="org_eclipse_ui_projectNatureImages.html">org.eclipse.ui.projectNatureImages</a></li>
-
-<li>
-<a href="org_eclipse_ui_decorators.html">org.eclipse.ui.decorators</a></li>
-
-<li>
-<a href="org_eclipse_ui_resourceFilters.html">org.eclipse.ui.resourceFilters</a></li>
+<ul type=disc>
+ <li class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l0 level1 lfo1;tab-stops:list .5in'><a
+     href="org_eclipse_ui_newWizards.html">org.eclipse.ui.newWizards</a></li>
+ <li class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l0 level1 lfo1;tab-stops:list .5in'><a
+     href="org_eclipse_ui_importWizards.html">org.eclipse.ui.importWizards</a></li>
+ <li class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l0 level1 lfo1;tab-stops:list .5in'><a
+     href="org_eclipse_ui_exportWizards.html">org.eclipse.ui.exportWizards</a></li>
+ <li class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l0 level1 lfo1;tab-stops:list .5in'><a
+     href="org_eclipse_ui_actionSets.html">org.eclipse.ui.actionSets</a></li>
+ <li class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l0 level1 lfo1;tab-stops:list .5in'><a
+     href="org_eclipse_ui_actionSetPartAssociations.html">org.eclipse.ui.actionSetPartAssociations</a></li>
+ <li class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l0 level1 lfo1;tab-stops:list .5in'><a
+     href="org_eclipse_ui_perspectives.html">org.eclipse.ui.perspectives</a></li>
+ <li class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l0 level1 lfo1;tab-stops:list .5in'><a
+     href="org_eclipse_ui_perspectiveExtensions.html">org.eclipse.ui.perspectiveExtensions</a></li>
+ <li class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l0 level1 lfo1;tab-stops:list .5in'><a
+     href="org_eclipse_ui_views.html">org.eclipse.ui.views</a></li>
+ <li class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l0 level1 lfo1;tab-stops:list .5in'><a
+     href="org_eclipse_ui_viewActions.html">org.eclipse.ui.viewActions</a></li>
+ <li class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l0 level1 lfo1;tab-stops:list .5in'><a
+     href="org_eclipse_ui_editors.html">org.eclipse.ui.editors</a></li>
+ <li class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l0 level1 lfo1;tab-stops:list .5in'><a
+     href="org_eclipse_ui_editorActions.html">org.eclipse.ui.editorActions</a></li>
+ <li class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l0 level1 lfo1;tab-stops:list .5in'><a
+     href="org_eclipse_ui_popupMenus.html">org.eclipse.ui.popupMenus</a></li>
+ <li class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l0 level1 lfo1;tab-stops:list .5in'><a
+     href="org_eclipse_ui_preferencePages.html">org.eclipse.ui.preferencePages</a></li>
+ <li class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l0 level1 lfo1;tab-stops:list .5in'><a
+     href="org_eclipse_ui_propertyPages.html">org.eclipse.ui.propertyPages</a></li>
+ <li class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l0 level1 lfo1;tab-stops:list .5in'><a
+     href="org_eclipse_ui_elementFactories.html">org.eclipse.ui.elementFactories</a></li>
+ <li class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l0 level1 lfo1;tab-stops:list .5in'><a
+     href="org_eclipse_ui_dropActions.html">org.eclipse.ui.dropActions</a></li>
+ <li class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l0 level1 lfo1;tab-stops:list .5in'><a
+     href="org_eclipse_ui_projectNatureImages.html">org.eclipse.ui.projectNatureImages</a></li>
+ <li class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l0 level1 lfo1;tab-stops:list .5in'><a
+     href="org_eclipse_ui_decorators.html">org.eclipse.ui.decorators</a></li>
+ <li class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l0 level1 lfo1;tab-stops:list .5in'><a
+     href="org_eclipse_ui_resourceFilters.html">org.eclipse.ui.resourceFilters</a></li>
+ <li class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l0 level1 lfo1;tab-stops:list .5in'><a
+     href="org_eclipse_ui_markerHelp.html">org.eclipse.ui.markerHelp</a></li>
+ <li class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l0 level1 lfo1;tab-stops:list .5in'><a
+     href="org_eclipse_ui_markerResolutions.html">org.eclipse.ui.markerResolutions</a></li>
 </ul>
-<a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2001.  All Rights Reserved." BORDER=0 height=12 width=195></a>
+
+<p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+margin-left:.25in'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal><a href="hglegal.htm"><span style='text-decoration:none;
+text-underline:none'><img border=0 width=195 height=12 id="_x0000_i1026"
+src=ngibmcpy.gif alt="Copyright IBM Corp. 2000, 2001.  All Rights Reserved."></span></a></p>
+
+</div>
+
 </body>
+
 </html>
