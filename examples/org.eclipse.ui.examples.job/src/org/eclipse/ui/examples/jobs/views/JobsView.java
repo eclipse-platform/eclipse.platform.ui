@@ -224,9 +224,9 @@ public class JobsView extends ViewPart {
 		
 		//progress monitor dialog with fork=false
 		Button exception = new Button(body, SWT.PUSH);
-		noFork.setText("Runtime Exception");
-		noFork.setToolTipText("NullPointerException when running");
-		noFork.addSelectionListener(new SelectionAdapter() {
+		exception.setText("Runtime Exception");
+		exception.setToolTipText("NullPointerException when running");
+		exception.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				jobWithRuntimeException();
 			}
