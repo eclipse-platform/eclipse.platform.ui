@@ -24,7 +24,6 @@ public class HelpApplication
 	private static final int STATUS_RESTARTING = 2;
 	private static final int STATUS_RUNNING = 1;
 	private static int status = STATUS_RUNNING;
-	private boolean infocenter = false;
 	/**
 	 * Causes help service to stop and exit
 	 */

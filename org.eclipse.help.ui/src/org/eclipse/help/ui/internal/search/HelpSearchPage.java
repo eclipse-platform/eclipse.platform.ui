@@ -24,8 +24,6 @@ import org.eclipse.ui.help.*;
  * HelpSearchPage
  */
 public class HelpSearchPage extends DialogPage implements ISearchPage {
-	private static final int ENTRY_FIELD_LENGTH = 256;
-	private static final int ENTRY_FIELD_ROW_COUNT = 1;
 	private Combo searchWordCombo = null;
 	private static java.util.List previousSearchQueryData =
 		new java.util.ArrayList(20);
@@ -87,7 +85,7 @@ public class HelpSearchPage extends DialogPage implements ISearchPage {
 			}
 		});
 		// Space
-		Label space = new Label(control, SWT.NONE);
+		new Label(control, SWT.NONE);
 		// Syntax description
 		Label label = new Label(control, SWT.LEFT);
 		gd = new GridData(GridData.FILL_HORIZONTAL);

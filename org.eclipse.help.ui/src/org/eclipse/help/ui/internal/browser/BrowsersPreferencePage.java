@@ -25,7 +25,6 @@ import org.eclipse.ui.help.*;
 public class BrowsersPreferencePage
 	extends PreferencePage
 	implements IWorkbenchPreferencePage {
-	private String defaultBrowserID;
 	private Table browsersTable;
 	private Label customBrowserPathLabel;
 	private Text customBrowserPath;

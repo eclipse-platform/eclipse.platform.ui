@@ -443,8 +443,6 @@ public class SearchIndex {
 				String filePath = zEntry.getName();
 				int lastSeparator = filePath.lastIndexOf("/");
 				String fileDir = "";
-				String fileName =
-					filePath.substring(lastSeparator + 1, filePath.length());
 				if (lastSeparator >= 0) {
 					fileDir = filePath.substring(0, lastSeparator);
 				}

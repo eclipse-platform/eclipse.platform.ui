@@ -16,7 +16,6 @@ public class NetscapeBrowserAdapter implements IBrowser {
 	private static final int DELAY = 5000;
 	private static long browserFullyOpenedAt = 0;
 	private static boolean opened = false;
-	private static NetscapeBrowserAdapter instance;
 	private static Thread uiThread;
 	/**
 	 * Constructor

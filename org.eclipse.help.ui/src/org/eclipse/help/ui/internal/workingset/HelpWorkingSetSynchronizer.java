@@ -194,37 +194,6 @@ public class HelpWorkingSetSynchronizer
 		}
 	}
 
-	private IWorkingSet createEclipseWorkingSet(WorkingSet ws) {
-		IWorkingSet w =
-			getEclipseWorkingSetManager().createWorkingSet(
-				ws.getName(),
-				ws.getElements());
-		// the id of the workingSet extension point in plugin.xml
-		w.setId(WorkbenchHelpPlugin.PLUGIN_ID + ".HelpWorkingSetPage");
-		return w;
-	}
-
-	private WorkingSet createHelpWorkingSet(IWorkingSet ws) {
-		if (!isHelpWorkingSet(ws))
-			return null;
-
-		return getHelpWorkingSetManager().createWorkingSet(
-			ws.getName(),
-			getElements(ws));
-	}
-
-	private AdaptableHelpResource[] getElements(IWorkingSet ws) {
-		IAdaptable[] elements = ws.getElements();
-		AdaptableHelpResource[] helpResources =
-			new AdaptableHelpResource[elements.length];
-		for (int i = 0; i < elements.length; i++)
-			if (elements[i] instanceof AdaptableHelpResource)
-				helpResources[i] = (AdaptableHelpResource) elements[i];
-			else
-				return new AdaptableHelpResource[0];
-
-		return helpResources;
-	}
 	private boolean isHelpWorkingSet(IWorkingSet ws) {
 		IAdaptable[] elements = ws.getElements();
 		return (

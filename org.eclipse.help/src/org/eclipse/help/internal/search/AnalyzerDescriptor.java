@@ -4,12 +4,10 @@
  */
 package org.eclipse.help.internal.search;
 
-import java.util.*;
-
-import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.internal.HelpPlugin;
-import org.eclipse.help.internal.util.Resources;
+import org.eclipse.help.internal.*;
+import org.eclipse.help.internal.util.*;
 
 /**
  * Text Analyzer Descriptor.  Encapsulates Lucene Analyzer
@@ -83,7 +81,6 @@ public class AnalyzerDescriptor {
 	 * for given locale.
 	 */
 	private Analyzer createAnalyzer(String locale) {
-		Collection contributions = new ArrayList();
 		// find extension point
 		IConfigurationElement configElements[] =
 			Platform.getPluginRegistry().getConfigurationElementsFor(

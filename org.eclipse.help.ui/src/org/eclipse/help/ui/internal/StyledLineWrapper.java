@@ -219,7 +219,6 @@ public class StyledLineWrapper implements StyledTextContent {
 		// first, remove the line breaks
 		text = TString.change(text, "\r", "");
 		text = TString.change(text, "\n", "");
-		String unstyledText = getUnstyledText(text);
 		int offset = 0;
 		do {
 			// create a style

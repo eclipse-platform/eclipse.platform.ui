@@ -169,7 +169,7 @@ public final class HelpSystem {
 				}
 
 			});
-			Preferences prefs = HelpPlugin.getDefault().getPluginPreferences();
+			HelpPlugin.getDefault().getPluginPreferences();
 		} catch (Exception e) {
 			HelpPlugin.getDefault().getLog().log(
 				new Status(

@@ -14,7 +14,6 @@ public class ToolbarButton{
 	private String name;
 	private String tooltip;
 	private String image;
-	private String on_image;
 	private String action;
 	private boolean isSeparator;
 	
