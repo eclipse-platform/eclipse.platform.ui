@@ -797,7 +797,7 @@ public class ConfigurationView
 		IConfiguredSite site = getSelectedSite(obj);
 		if (site != null) {
 			IInstallConfiguration cfg = site.getInstallConfiguration();
-			if (cfg.isCurrent()) {
+			if (cfg!=null && cfg.isCurrent()) {
 				try {
 					if (site.isExtensionSite() && !site.isNativelyLinked()) {
 						manager.add(unlinkAction);
