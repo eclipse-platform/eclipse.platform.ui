@@ -52,6 +52,7 @@ import org.eclipse.team.internal.ccvs.ui.CVSDecoratorConfiguration;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.HistoryView;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
+import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ccvs.ui.OverlayIcon;
 import org.eclipse.team.internal.ccvs.ui.OverlayIconCache;
 import org.eclipse.team.internal.ccvs.ui.Policy;
@@ -65,6 +66,7 @@ import org.eclipse.team.internal.ui.sync.SyncView;
 import org.eclipse.team.internal.ui.sync.TeamFile;
 import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.team.ui.TeamImages;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 	// Actions
@@ -163,6 +165,8 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 		super(parent, model);
 		initializeActions(model);
 		initializeLabelProvider();
+		// set F1 help
+		WorkbenchHelp.setHelp(this.getControl(), IHelpContextIds.CATCHUP_RELEASE_VIEWER);
 	}
 	
 	private void initializeLabelProvider() {

@@ -6,9 +6,9 @@ package org.eclipse.team.internal.ccvs.ui;
  */
  
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.text.DateFormat;
 import java.util.Date;
+import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -71,20 +71,18 @@ import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.internal.ccvs.core.ILogEntry;
-import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
-import org.eclipse.team.internal.ccvs.ui.CVSCompareRevisionsInput.HistoryLabelProvider;
+import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.ui.actions.CVSAction;
 import org.eclipse.team.internal.ccvs.ui.actions.OpenLogEntryAction;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.part.ResourceTransfer;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * The history view allows browsing of an array of resource revisions
@@ -371,7 +369,7 @@ public class HistoryView extends ViewPart {
 		contributeActions();
 		setViewerVisibility();
 		// set F1 help
-		//WorkbenchHelp.setHelp(viewer.getControl(), new ViewContextComputer (this, IVCMHelpContextIds.RESOURCE_HISTORY_VIEW));
+		WorkbenchHelp.setHelp(tableViewer.getControl(), IHelpContextIds.RESOURCE_HISTORY_VIEW);
 		initDragAndDrop();
 	}
 	private void initializeImages() {

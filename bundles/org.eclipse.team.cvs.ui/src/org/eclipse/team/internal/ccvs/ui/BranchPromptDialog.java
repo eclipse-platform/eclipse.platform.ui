@@ -28,8 +28,9 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.ui.merge.ProjectElement;
 import org.eclipse.team.internal.ccvs.ui.wizards.CVSWizardPage;
+import org.eclipse.team.internal.ccvs.ui.merge.ProjectElement;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
@@ -124,6 +125,9 @@ public class BranchPromptDialog extends DetailsDialog {
 			versionText.setText(versionName);
 		}
 
+		// F1 Help
+		WorkbenchHelp.setHelp(composite, IHelpContextIds.BRANCH_DIALOG);
+		
 		branchText.setFocus();
 	}
 

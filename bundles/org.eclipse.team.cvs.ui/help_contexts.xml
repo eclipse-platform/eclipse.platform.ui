@@ -47,6 +47,14 @@
       <topic label="%context_ref_vcm_repositories_reference" href="reference/ref-47.htm" />
     -->
     </context>
+    <context id="tag_local_as_version_dialog_context">
+      <description>Enter the name of the version tag to be applied to the revisions that exist locally.
+      </description>
+    </context>
+    <context id="branch_dialog_context">
+      <description>Enter the name of the branch tag to be applied to the revisions that exist locally.
+      </description>
+    </context>
     
  	<!-- ********************************** -->
  	<!-- Preference Pages 					-->
@@ -90,5 +98,26 @@
 	<context  id="replace_deletion_of_unmanaged_pref" >
       <description>Allows resources not under CVS control to be deleted when replacing with resources from the repository.
       </description>
-   	</context>   	
+   	</context>
+   	
+   	<!-- ********************************** -->
+ 	<!-- Views					            -->
+ 	<!-- ********************************** -->
+ 	
+ 	<context  id="console_view_context" >
+      <description>This view shows the output of CVS operations.
+      </description>
+   	</context>
+   	<context  id="repositories_view_context" >
+      <description>This view allows the browsing of a remote CVS repository.
+      </description>
+   	</context>
+   	<context  id="resource_history_view_context" >
+      <description>This view shows the revision history of a resource under CVS control.
+      </description>
+   	</context>
+   	<context  id="catchup_release_viewer_context" >
+      <description>This view shows the incoming, outgoing and conflicting changes.
+      </description>
+   	</context>
 </contexts>
