@@ -30,8 +30,6 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
@@ -44,6 +42,7 @@ import org.apache.tools.ant.taskdefs.Property;
 import org.apache.tools.ant.taskdefs.Sequential;
 import org.apache.tools.ant.taskdefs.UpToDate;
 import org.apache.tools.ant.taskdefs.condition.Condition;
+import org.apache.xerces.parsers.SAXParser;
 import org.eclipse.ant.ui.internal.dtd.IAttribute;
 import org.eclipse.ant.ui.internal.dtd.IDfm;
 import org.eclipse.ant.ui.internal.dtd.IElement;
@@ -908,23 +907,16 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
     /**
      * Parses the actually edited file as far as possible.
      * <P>
-     * The returned handler can be asked about what happend while parsing
+     * The returned handler can be asked about what happened while parsing
      * the document.
      * 
      * @return the handler that has been used for parsing or <code>null</code>
      * if parsing couldn't be done because of some error.
      */
     private AntEditorSaxDefaultHandler parseEditedFileSearchingForParent(String aWholeDocumentString, int aLineNumber, int aColumnNumber) {
-        // Get a new SAX Parser
-        SAXParser parser = null;
-        try {
-            parser = SAXParserFactory.newInstance().newSAXParser();
-        } catch (ParserConfigurationException e) {
-            AntUIPlugin.log(e);
-            return null;
-        } catch (SAXException e) {
-			AntUIPlugin.log(e);
-            return null;
+        SAXParser parser = getSAXParser();
+        if(parser == null){
+        	return null;
         }
         
         // Set the handler
@@ -940,25 +932,43 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 			AntUIPlugin.log(e);
         }
         
-        // Parse!
-        InputSource tempInputSource = new InputSource(new StringReader(aWholeDocumentString));
-		if (editedFile != null) {
-			//needed for resolving relative external entities
-			tempInputSource.setSystemId(editedFile.getAbsolutePath());
-		}
-        try {
-            parser.parse(tempInputSource, handler);
-        } catch(SAXParseException e) {
-            // Ignore since that happens always if the edited file is not valid. We try to handle that.
-        } catch (SAXException e) {
-            AntUIPlugin.log(e);
-        } catch (IOException e) {
-            //ignore since can happen when user has incorrect paths / protocols for external entities
-        }
-        
+       	parse(aWholeDocumentString, parser, handler, editedFile);
         lastDefaultHandler = handler; // bf
         return handler;
     }
+
+	private void parse(String aWholeDocumentString, SAXParser parser, AntEditorSaxDefaultHandler handler, File editedFile) {
+		InputSource inputSource = new InputSource(new StringReader(aWholeDocumentString));
+		if (editedFile != null) {
+			//needed for resolving relative external entities
+			inputSource.setSystemId(editedFile.getAbsolutePath());
+		}
+		
+		parser.setContentHandler(handler);
+		parser.setDTDHandler(handler);
+		parser.setEntityResolver(handler);
+		parser.setErrorHandler(handler);
+	    try {
+	        parser.parse(inputSource);
+	    } catch(SAXParseException e) {
+	        // Ignore since that happens always if the edited file is not valid. We try to handle that.
+	    } catch (SAXException e) {
+	        AntUIPlugin.log(e);
+	    } catch (IOException e) {
+	        //ignore since can happen when user has incorrect paths / protocols for external entities
+	    }
+	}
+
+	private SAXParser getSAXParser() {
+		SAXParser parser = null;
+		try {
+			parser = new SAXParser();
+			parser.setFeature("http://xml.org/sax/features/namespaces", false); //$NON-NLS-1$
+		} catch (SAXException e) {
+			AntUIPlugin.log(e);
+		}
+		return parser;
+	}
 
 
     /**
@@ -1130,47 +1140,27 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
  	private Element findEnclosingTargetElement(String aWholeDocumentString, int aLineNumber, int aColumnNumber) {
 
         // Get a new SAX Parser
-        SAXParser tempParser = null;
-        try {
-            tempParser = SAXParserFactory.newInstance().newSAXParser();
-        } catch (ParserConfigurationException e) {
-            AntUIPlugin.log(e);
-            return null;
-        } catch (SAXException e) {
-            AntUIPlugin.log(e);
-            return null;
+        SAXParser parser = getSAXParser();
+        if (parser == null) {
+        	return null;
         }
         
         // Set the handler
-        EnclosingTargetSearchingHandler tempHandler = null;
+        EnclosingTargetSearchingHandler handler = null;
 		File editedFile= getEditedFile();
         try {
 		   File parent = null;
 		   if(editedFile != null) {
 			   parent = editedFile.getParentFile();
 		   }
-            tempHandler = new EnclosingTargetSearchingHandler(parent, aLineNumber, aColumnNumber);
+            handler = new EnclosingTargetSearchingHandler(parent, aLineNumber, aColumnNumber);
         } catch (ParserConfigurationException e) {
             AntUIPlugin.log(e);
         }
         
-        // Parse!
-        InputSource tempInputSource = new InputSource(new StringReader(aWholeDocumentString));
-		if (editedFile != null) {
-			//needed for resolving relative external entities
-			tempInputSource.setSystemId(editedFile.getAbsolutePath());
-		}
-        try {
-            tempParser.parse(tempInputSource, tempHandler);
-        } catch(SAXParseException e) {
-            // Ignore since that happens always if the edited file is not valid. We try to handle that.
-        } catch (SAXException e) {
-            AntUIPlugin.log(e);
-        } catch (IOException e) {
-            AntUIPlugin.log(e);
-        }
+		parse(aWholeDocumentString, parser, handler, editedFile);
 
-		return tempHandler.getParentElement(true);
+		return handler.getParentElement(true);
  	}
 	
 	/**
