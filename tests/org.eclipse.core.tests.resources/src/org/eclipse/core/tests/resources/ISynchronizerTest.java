@@ -178,6 +178,7 @@ public void testDeleteResources() {
 		try {
 			projects[i].delete(false, getMonitor());
 		} catch (CoreException e) {
+			ResourcesPlugin.getPlugin().getLog().log(e.getStatus());
 			fail("4.0", e);
 		}
 	}
