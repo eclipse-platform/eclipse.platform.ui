@@ -150,14 +150,6 @@ public class PerspectiveBarManager extends ToolBarManager {
 					insert(1, newItem);
 					update(false);
 					newItem.select();
-					
-/*					ToolItem[] items = toolBar.getItems();
-					String text = items[index].getText();
-					Image image = items[index].getImage();
-					items[index].dispose();
-					ToolItem ti = new ToolItem(toolBar, SWT.NONE, 1);					
-					ti.setText(text);
-					ti.setImage(image);*/
 				}
 			});
 		}
@@ -181,40 +173,16 @@ public class PerspectiveBarManager extends ToolBarManager {
 		}
 	}
 
-    /* (non-Javadoc)
-	 * @see org.eclipse.jface.action.ToolBarManager#update(boolean)
-	 */
-	public void update(boolean force) {
-		// TODO Auto-generated method stub
-		super.update(force);
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.ToolBarManager#relayout(org.eclipse.swt.widgets.ToolBar, int, int)
 	 */
 	protected void relayout(ToolBar toolBar, int oldCount, int newCount) {
 		super.relayout(toolBar, oldCount, newCount);
 		
-		updateCoolBar();
-		
-    	if (coolBar != null) {
-    		LayoutUtil.resize(coolBar);
-    	}
+		if (getControl() != null)
+    		LayoutUtil.resize(getControl());
 	}
 	
-	private void updateCoolBar() {
-/*		if (coolBar != null && !coolBar.isDisposed()) {
-	    	// this is not ideal to be reaching in and setting the coolitem size
-	    	// based on it's only child.
-	    	if (coolBar.getItemCount() > 0) {
-	    		CoolItem item = coolBar.getItem(0);
-	    		Point s = item.getControl().computeSize(SWT.DEFAULT, SWT.DEFAULT);
-	    		item.setSize(item.computeSize (s.x, s.y));
-	    	}
-		}
-*/
-    }
-
     void setParent(CoolBar cool) {
         this.coolBar = cool;
     }
