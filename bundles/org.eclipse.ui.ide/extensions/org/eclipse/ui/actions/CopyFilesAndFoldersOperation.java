@@ -674,10 +674,7 @@ public class CopyFilesAndFoldersOperation {
         if (resource instanceof IFile) {
             return (IFile) resource;
         }
-        if (resource instanceof IAdaptable) {
-            return (IFile) ((IAdaptable) resource).getAdapter(IFile.class);
-        }
-        return null;
+        return (IFile) ((IAdaptable) resource).getAdapter(IFile.class);
     }
 
     /**
@@ -706,10 +703,7 @@ public class CopyFilesAndFoldersOperation {
         if (resource instanceof IFolder) {
             return (IFolder) resource;
         }
-        if (resource instanceof IAdaptable) {
-            return (IFolder) ((IAdaptable) resource).getAdapter(IFolder.class);
-        }
-        return null;
+        return (IFolder) ((IAdaptable) resource).getAdapter(IFolder.class);
     }
 
     /**
