@@ -1470,9 +1470,12 @@ public class TextViewer extends Viewer implements
 	 */
 	public Point getSelectedRange() {
 		
-		if (!redraws())
+		if (!redraws()) {
+			if (fDocumentSelection.y < 0)
+				return new Point(fDocumentSelection.x + fDocumentSelection.y, -fDocumentSelection.y);
 			return new Point(fDocumentSelection.x, fDocumentSelection.y);
-			
+		}
+		
 		if (fTextWidget != null) {
 			Point p= fTextWidget.getSelectionRange();
 			int offset= getVisibleRegionOffset();			
