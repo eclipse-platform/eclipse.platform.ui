@@ -38,7 +38,11 @@ public class StatusLineContributionGroup extends ActionGroup implements ISyncSet
 	private StatusLineCLabelContribution outgoing;
 	private StatusLineCLabelContribution conflicting;
 	private StatusLineCLabelContribution workingSet;
-
+	
+	private Image incomingImage = TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_DLG_SYNC_INCOMING).createImage();
+	private Image outgoingImage = TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_DLG_SYNC_OUTGOING).createImage();
+	private Image conflictingImage = TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_DLG_SYNC_CONFLICTING).createImage();
+	
 	private SubscriberInput input;
 	private TeamSubscriberParticipant participant;
 
@@ -46,9 +50,9 @@ public class StatusLineContributionGroup extends ActionGroup implements ISyncSet
 		super();
 		this.participant = participant;
 		this.input = participant.getInput();
-		this.incoming = createStatusLineContribution(INCOMING_ID, TeamSubscriberParticipant.INCOMING_MODE, "0", TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_DLG_SYNC_INCOMING).createImage()); //$NON-NLS-1$
-		this.outgoing = createStatusLineContribution(OUTGOING_ID, TeamSubscriberParticipant.OUTGOING_MODE, "0", TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_DLG_SYNC_OUTGOING).createImage()); //$NON-NLS-1$
-		this.conflicting = createStatusLineContribution(CONFLICTING_ID, TeamSubscriberParticipant.CONFLICTING_MODE, "0", TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_DLG_SYNC_CONFLICTING).createImage()); //$NON-NLS-1$		
+		this.incoming = createStatusLineContribution(INCOMING_ID, TeamSubscriberParticipant.INCOMING_MODE, "0", incomingImage); //$NON-NLS-1$
+		this.outgoing = createStatusLineContribution(OUTGOING_ID, TeamSubscriberParticipant.OUTGOING_MODE, "0", outgoingImage); //$NON-NLS-1$
+		this.conflicting = createStatusLineContribution(CONFLICTING_ID, TeamSubscriberParticipant.CONFLICTING_MODE, "0", conflictingImage); //$NON-NLS-1$		
 		this.workingSet = new StatusLineCLabelContribution(WORKINGSET_ID, 25);
 		this.workingSet.setTooltip(Policy.bind("StatisticsPanel.workingSetTooltip")); //$NON-NLS-1$
 		updateWorkingSetText();
@@ -99,6 +103,9 @@ public class StatusLineContributionGroup extends ActionGroup implements ISyncSet
 
 	public void dispose() {
 		input.deregisterListeners(this);
+		incomingImage.dispose();
+		outgoingImage.dispose();
+		conflictingImage.dispose();
 	}
 
 	/*
