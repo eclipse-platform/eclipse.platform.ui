@@ -16,7 +16,6 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -129,21 +128,6 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	 */
 	public WorkbenchPlugin() {
 		super();
-		inst = this;
-	}
-
-	/**
-	 * Create an instance of the WorkbenchPlugin. The workbench plugin is
-	 * effectively the "application" for the workbench UI. The entire UI
-	 * operates as a good plugin citizen.
-	 * <p>
-	 * <b>Note:</b> This constructor requires compatibility mode
-	 * (<code>org.eclipse.core.runtime.compatibility</code>). It should <b>NOT
-	 * </b> be used by 3.0 plugins that intend to run without the compatibility
-	 * layer.
-	 */
-	public WorkbenchPlugin(IPluginDescriptor descriptor) {
-		super(descriptor);
 		inst = this;
 	}
 
@@ -502,9 +486,8 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	 * because the default values are not stored in the preference store.
 	 */
 	protected void initializeDefaultPreferences(IPreferenceStore store) {
-	    // This should not be called.
+	    // Do nothing.  This should not be called.
 	    // Prefs are initialized in WorkbenchPreferenceInitializer.
-	    throw new UnsupportedOperationException();
 	}
 
 	/**

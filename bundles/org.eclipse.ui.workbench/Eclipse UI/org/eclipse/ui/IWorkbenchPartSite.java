@@ -36,7 +36,6 @@ public String getId();
  * site's part.
  *
  * @return the unique identifier of the declaring plug-in
- * @see org.eclipse.core.runtime.IPluginDescriptor#getUniqueIdentifier()
  */
 public String getPluginId();
 /**
