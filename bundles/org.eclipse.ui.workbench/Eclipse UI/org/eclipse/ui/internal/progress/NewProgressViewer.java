@@ -217,7 +217,8 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 		abstract boolean refresh();
 		
 		public boolean remove() {
-			refresh();			
+			jobTerminated= true;
+			refresh();
 			if (dialogContext || !keepItem) {
 				dispose();
 				return true;
@@ -336,6 +337,7 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 				gotoAction.removePropertyChangeListener(this);
 			gotoAction= action;
 			if (gotoAction != null) {
+				gotoAction.setEnabled(false);
 				gotoAction.addPropertyChangeListener(this);
 				String tooltip= gotoAction.getToolTipText();
 				if (tooltip != null)
@@ -354,12 +356,13 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 			}
 		}
 		public void propertyChange(PropertyChangeEvent event) {
-		    if (DEBUG) System.err.println("action changed: " + gotoAction); //$NON-NLS-1$
 		    if (gotoAction != null) {	    	
 		    	getDisplay().asyncExec(new Runnable() {
 		    		public void run() {
-		    			if (!isDisposed())
+		    			if (!isDisposed()) {
+		    				checkKeep();
 		    				setLinkEnable(gotoAction.isEnabled());
+		    			}
 		    		}
 		    	});
 		    }
@@ -433,7 +436,7 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 		}
 		public boolean refresh() {
 			
-			if (jobTreeElement == null)
+			if (jobTreeElement == null)	// shouldn't happen
 				return false;
 			
 			Job job= getJob();
@@ -455,14 +458,15 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 		    	// poll for result status
 		    	IStatus status= job.getResult();
 		    	if (status != null && status != result) {
-					if (DEBUG) System.err.println("Hyperlink.refresh: update status: " + status); //$NON-NLS-1$
 					result= status;
 					if (result.getSeverity() == IStatus.ERROR) {
 	    				setKeep();
     					isError= true;
     					setAction(new Action() {
     						public void run() {
-    							ErrorDialog.openError(getShell(), "Title", "Error", result);
+    							String title= ProgressMessages.getString("NewProgressView.errorDialogTitle"); //$NON-NLS-1$
+								String msg= ProgressMessages.getString("NewProgressView.errorDialogMessage"); //$NON-NLS-1$
+    							ErrorDialog.openError(getShell(), title, msg, result);
     						}
     					});
 					}
@@ -470,9 +474,10 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 			}
 			checkKeep();
 
+			// now build the string for displaying
 			String name= null;
 			
-			if (jobTreeElement instanceof SubTaskInfo) {
+			if (jobTreeElement instanceof SubTaskInfo) {	// simple job case
 				
 				SubTaskInfo sti= (SubTaskInfo) jobTreeElement;
 				String taskName= null;
@@ -482,37 +487,71 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 						taskName= ti.getTaskName();
 				}
 
-				if (/*jobTerminated && */result != null) {
+				if (jobTerminated && result != null) {
 					name= result.getMessage();
-					if (taskName != null)
-						name= taskName + ": " + name;
+					if (taskName != null && taskName.trim().length() > 0)
+						name= ProgressMessages.format("JobInfo.TaskFormat", new Object[]{ taskName, name}); //$NON-NLS-1$
 				} else {
 					name= jobTreeElement.getDisplayString();
 					if (taskName != null && taskName.trim().length() > 0)
-						name= taskName + " / " + name;
+						name= ProgressMessages.format("JobInfo.TaskFormat2", new Object[]{ taskName, name}); //$NON-NLS-1$
 				}
 				
-			} else if (jobTreeElement instanceof JobInfo) {
+				if (name.length() == 0) {
+					dispose();
+					return true;
+				}
 				
+			} else if (jobTreeElement instanceof JobInfo) {	// group case
 				JobInfo ji= (JobInfo) jobTreeElement;
-				name= getJobHeader(ji, job, jobTerminated, false);
-								
-				if (/*jobTerminated && */result != null) {
+				
+				if (/*jobTerminated && */ result != null) {
 					name= result.getMessage();
-				} else {
+					if ("OK".equals(name) && jobTerminated) {
+						dispose();
+						return true;
+					}
+					if (name == null || name.trim().length() == 0)
+						name= getJobNameAndStatus(ji, job, jobTerminated, false);	
+				} else {	
+					// get the Job name
+					name= getJobNameAndStatus(ji, job, jobTerminated, false);
+					
+					// get percentage and task name
+					String taskName= null;
+					TaskInfo info = ji.getTaskInfo();
+					if (info != null) {
+						taskName= info.getTaskName();
+						int percent = info.getPercentDone();
+						if (percent >= 0 && percent <= 100) {
+							taskName= ProgressMessages.format("JobInfo.Percent", //$NON-NLS-1$
+										new Object[]{ Integer.toString(percent), taskName});
+						}
+					}
+					
+					// get sub task name
+					String subTaskName= null;
 					Object[] subtasks= ji.getChildren();
 					if (subtasks != null && subtasks.length > 0) {
 						JobTreeElement sub= (JobTreeElement) subtasks[0];
-						if (sub != null) {
-							String s= sub.getDisplayString();
-							if (s != null && s.trim().length() > 0)
-								name= name + " / " + s;
-						}
+						if (sub != null)
+							subTaskName= sub.getDisplayString();
+					}
+
+					boolean hasTask= taskName != null && taskName.trim().length() > 0;
+					boolean hasSubTask= subTaskName != null && subTaskName.trim().length() > 0;
+					
+					if (hasTask && hasSubTask) {
+						name= ProgressMessages.format("JobInfo.Format", new Object[]{ name, taskName, subTaskName}); //$NON-NLS-1$
+					} else if (hasTask) {
+						name= ProgressMessages.format("JobInfo.TaskFormat", new Object[]{ name, taskName}); //$NON-NLS-1$
+					} else if (hasSubTask) {
+						name= ProgressMessages.format("JobInfo.TaskFormat", new Object[]{ name, subTaskName}); //$NON-NLS-1$
 					}
 				}
-				if (highlightJob == job) {
+				
+				if (highlightJob == job)
 					highlightItem= jobitem;
-				}
 			}
 			
 			if (name == null)
@@ -658,12 +697,20 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 		public boolean remove() {
 			
 			jobTerminated= true;
-				
+			
+			// propagate status down
+			Control[] children= getChildren();
+			for (int i= 0; i < children.length; i++) {
+				if (children[i] instanceof JobTreeItem)
+					//((JobTreeItem)children[i]).remove();
+					((JobTreeItem)children[i]).jobTerminated= true;
+			}
+							
 			if (! dialogContext) {	// we never keep jobs in dialogs
 				if (!keepItem)
 					checkKeep();
 				
-				dump("JobItem.remove"); //$NON-NLS-1$
+				//dump("JobItem.remove"); //$NON-NLS-1$
 	
 				if (keepItem)
 					return aboutToKeep();
@@ -869,13 +916,13 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 		    if (isGroup) {
 	    		name= getGroupHeader((GroupInfo) jobTreeElement);		    	
 		    } else if (jobTreeElement instanceof JobInfo)
-		    	name= getJobHeader((JobInfo) jobTreeElement, job, jobTerminated, true);		    	
+		    	name= getJobNameAndStatus((JobInfo) jobTreeElement, job, jobTerminated, true);		    	
 		    if (name == null)
 		    	name= stripPercent(jobTreeElement.getDisplayString());
 		    
-			if (highlightJob != null && (highlightJob == job || highlightItem == this)) {
-				name= name + " (Blocks User Operation)";
-			}
+			if (highlightJob != null && (highlightJob == job || highlightItem == this))
+				name= ProgressMessages.format("JobInfo.BlocksUserOperationFormat", new Object[]{name}); //$NON-NLS-1$
+
 		    nameItem.setToolTipText(name);
 		    nameItem.setText(shortenText(nameItem, name));
 
@@ -947,14 +994,14 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 		}
 
 		private String getGroupHeader(GroupInfo gi) {
-    		String name= stripPercent(jobTreeElement.getDisplayString());		    	
-			if (jobTerminated) 
-				return ProgressMessages.format("JobInfo.FinishedAt", new Object[]{ name, getTimeString(gi) }); //$NON-NLS-1$
+    		String name= stripPercent(jobTreeElement.getDisplayString());
+ 			if (jobTerminated)
+ 				return getFinishedString(gi, name, true);
 			return name;
 		}
 	}
 
-	private String getJobHeader(JobInfo ji, Job job, boolean terminated, boolean withTime) {
+	private String getJobNameAndStatus(JobInfo ji, Job job, boolean terminated, boolean withTime) {
 		String name= job.getName();
 		
 		if (job.isSystem())
@@ -963,11 +1010,8 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 		if (ji.isCanceled())
 			return ProgressMessages.format("JobInfo.Cancelled", new Object[]{name});  //$NON-NLS-1$
 
-		if (terminated) {
-			if (withTime)
-				return ProgressMessages.format("JobInfo.FinishedAt", new Object[]{ name, getTimeString(ji) }); //$NON-NLS-1$
-			return ProgressMessages.format("JobInfo.Finished", new Object[]{ name }); //$NON-NLS-1$
-		}
+		if (terminated)
+			return getFinishedString(ji, name, withTime);
 					
 		if (ji.isBlocked()) {
 			IStatus blockedStatus= ji.getBlockedStatus();
@@ -984,12 +1028,20 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 			return ProgressMessages.format("JobInfo.Waiting", new Object[]{name}); //$NON-NLS-1$
 		}
 	}
+	private String getFinishedString(JobTreeElement jte, String name, boolean withTime) {
+	   	String time= null;
+	   	if (withTime)
+	   		time= getTimeString(jte);
+	   	if (time != null)
+	   		return ProgressMessages.format("JobInfo.FinishedAt", new Object[]{ name, time}); //$NON-NLS-1$
+	   	return ProgressMessages.format("JobInfo.Finished", new Object[]{name}); //$NON-NLS-1$
+	}
 
 	private String getTimeString(JobTreeElement jte) {
     	Date date= finishedJobs.getFinishDate(jte);
     	if (date != null)
     		return DateFormat.getTimeInstance(DateFormat.SHORT).format(date);
-    	return "???";
+    	return null;
 	}
 	
 	private String stripPercent(String s) {
@@ -1514,19 +1566,6 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 	}
 
 	Object[] contentProviderGetRoots(Object parent) {
-//		ArrayList tmp= new ArrayList();
-//		if (highlightJob != null) {
-//			JobInfo ji= ProgressManager.getInstance().getJobInfo(highlightJob);
-//			if (ji != null)
-//				tmp.add(ji);
-//		}
-//		IContentProvider provider = getContentProvider();
-//		if (provider instanceof ITreeContentProvider) {
-//			Object[] a= ((ITreeContentProvider)provider).getElements(parent);
-//			for (int i= 0; i < a.length; i++)
-//				tmp.add(a[i]);
-//		}
-//		return tmp.toArray();
 		IContentProvider provider = getContentProvider();
 		if (provider instanceof ITreeContentProvider)
 			return ((ITreeContentProvider)provider).getElements(parent);
