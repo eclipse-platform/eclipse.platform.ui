@@ -19,14 +19,9 @@ import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunchConfigurationType;
-import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.core.ILaunchMode;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchShortcutExtension;
-import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
@@ -60,7 +55,10 @@ import org.eclipse.ui.help.WorkbenchHelp;
  * shortcut extension item is appropriate for the selected resource.
  * </p>
  */
-public class ContextualLaunchObjectActionDelegate implements IObjectActionDelegate, IMenuCreator {
+public class ContextualLaunchObjectActionDelegate
+		implements
+			IObjectActionDelegate,
+			IMenuCreator {
 
 	private IStructuredSelection fSelection;
 	private IAction fDelegateAction;
@@ -134,11 +132,20 @@ public class ContextualLaunchObjectActionDelegate implements IObjectActionDelega
 		}
 		action.setEnabled(false);
 	}
-	
+	/*
+	 * Fake action to put in the Run context menu when no actions apply
+     * This action is always disabled
+	 */
+	private class FakeAction extends Action {
+		public FakeAction(String name) {
+			super(name);
+			setEnabled(false);
+		}
+	}
 	/**
 	 * Fill pull down menu with the pages of the JTabbedPane
 	 */
-	protected void fillMenu(final Menu menu) {
+	protected void fillMenu(Menu menu) {
 		// lookup appropriate launch config types and build launch actions for them.
 		// Retrieve the current perspective and the registered shortcuts
 		String activePerspID = getActivePerspectiveID();
@@ -166,41 +173,22 @@ public class ContextualLaunchObjectActionDelegate implements IObjectActionDelega
 		}
 		iter = filteredShortCuts.iterator();
 		int accelerator = 1;
-		while (iter.hasNext()) {
-			LaunchShortcutExtension ext = (LaunchShortcutExtension) iter.next();
-			Set modes = ext.getModes(); // supported launch modes
-			Iterator modeIter = modes.iterator();
-			while (modeIter.hasNext()) {
-				String mode = (String) modeIter.next();
-				populateMenuItem(mode, ext, menu, accelerator++);
-			}
-		}
-		ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
-		ILaunchConfigurationType[] types= launchManager.getLaunchConfigurationTypes();
-		ILaunchMode[] modes= launchManager.getLaunchModes();
-		for (int i = 0; i < modes.length; i++) {
-			// Add a "Mode..." action to open the launch config dialog in each mode
-			final ILaunchMode mode= modes[i];
-			boolean supported= false;
-			for (int j = 0; j < types.length; j++) {
-				if (types[j].supportsMode(mode.getIdentifier())) {
-					supported= true;
-					break;
+		if (iter.hasNext()) {
+			while (iter.hasNext()) {
+				LaunchShortcutExtension ext = (LaunchShortcutExtension) iter.next();
+				Set modes = ext.getModes(); // supported launch modes
+				Iterator modeIter = modes.iterator();
+				while (modeIter.hasNext()) {
+					String mode = (String) modeIter.next();
+					populateMenuItem(mode, ext, menu, accelerator++);
 				}
 			}
-			if (!supported) {
-				// Don't provide action if there are no types in a mode
-				continue;
-			}
-			String label= new StringBuffer(modes[i].getLabel()).append("...").toString(); //$NON-NLS-1$
-			IAction action= new Action(label) {
-				public void run() {
-					DebugUITools.openLaunchConfigurationDialog(menu.getShell(), null, mode.getIdentifier());
-				}
-			};
+		} else {
+			// put in a fake action to show there are none
+			IAction action = new FakeAction(ActionMessages.getString("ContextualLaunchObjectActionDelegate.0")); //$NON-NLS-1$
 			ActionContributionItem item= new ActionContributionItem(action);
 			item.fill(menu, -1);
-		}		
+		}
 	}
 
 	/**
