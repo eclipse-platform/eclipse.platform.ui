@@ -1966,16 +1966,28 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			return;
 		}
 		
-		// The 'New' action should only be enabled if a single config type is selected
+		// The 'New' action should only be enabled if a single config type or config is selected
 		Object selectedElement = getTreeViewerFirstSelectedElement();
-		if (!(selectedElement instanceof ILaunchConfigurationType)) {
+		if (!(selectedElement instanceof ILaunchConfigurationType || selectedElement instanceof ILaunchConfiguration)) {
 			return;
 		}
 		
+		ILaunchConfigurationType configType= null;
 		// Construct a new config of the selected type and select the result in the tree
-		ILaunchConfigurationType configType = (ILaunchConfigurationType) selectedElement;
-		constructNewConfig(configType);
-		getTreeViewer().setSelection(new StructuredSelection(fUnderlyingConfig));		
+		if (selectedElement instanceof ILaunchConfiguration) {
+			ILaunchConfiguration config= (ILaunchConfiguration) selectedElement;
+			try {
+				configType= config.getType();
+			} catch (CoreException ce) {
+				DebugUIPlugin.log(ce);
+			}
+		} else {
+			configType = (ILaunchConfigurationType) selectedElement;
+		}
+		if (configType != null) {
+			constructNewConfig(configType);
+			getTreeViewer().setSelection(new StructuredSelection(fUnderlyingConfig));		
+		}
 	}	
 	
 	/**
@@ -2609,7 +2621,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		boolean firstItemLaunchConfigType = sel.getFirstElement() instanceof ILaunchConfigurationType;
 		
 		// New action
- 		getButtonActionNew().setEnabled(singleSelection && firstItemLaunchConfigType);
+ 		getButtonActionNew().setEnabled(singleSelection && (firstItemLaunchConfigType || firstItemLaunchConfig));
 		
 		// Duplicate action
 		getButtonActionDuplicate().setEnabled(singleSelection && firstItemLaunchConfig);
