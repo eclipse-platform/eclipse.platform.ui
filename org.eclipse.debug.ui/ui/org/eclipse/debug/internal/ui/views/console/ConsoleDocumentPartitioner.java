@@ -559,14 +559,16 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 					} else {
 						buffer.append(text);
 					}
+					prev = entry;
+					processed++;
+					amount+= entry.getText().length();
 				} else {
-					// only do one append per poll
-					break;
+					// change streams - write the contents of the current stream
+					// and start processing the next stream
+					appendToDocument(buffer.toString(), prev.getStreamIdentifier());
+					buffer.setLength(0);
+					prev = null;
 				}
-				
-				prev = entry;
-				processed++;
-				amount+= entry.getText().length();
 			}
 			if (buffer != null) {
 				appendToDocument(buffer.toString(), prev.getStreamIdentifier());
