@@ -14,6 +14,8 @@ import java.util.Set;
 import org.eclipse.jface.preference.*;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.StringConverter;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Font;
@@ -435,9 +437,7 @@ public class FontPreferencePage
 				settingValue = DEFAULT_TOKEN;
 			else
 				settingValue =
-					JFaceResources
-						.getFont(definition.getId())
-						.getFontData();
+					JFaceResources.getFont(definition.getId()).getFontData();
 			fontDataSettings.put(definition.getId(), settingValue);
 		}
 
@@ -481,15 +481,9 @@ public class FontPreferencePage
 			Object setValue = fontDataSettings.get(preferenceId);
 
 			if (DEFAULT_TOKEN.equals(setValue)) {
-				FontData[] newData =
-					PreferenceConverter.getDefaultFontDataArray(
-						store,
-						registryKey);
-				JFaceResources.getFontRegistry().put(registryKey, newData);
 				store.setToDefault(registryKey);
 			} else {
 				FontData[] newData = (FontData[]) setValue;
-				JFaceResources.getFontRegistry().put(registryKey, newData);
 				//Don't update the preference store if there has been no change
 				if (!newData
 					.equals(
@@ -526,7 +520,7 @@ public class FontPreferencePage
 	}
 
 	/**
-	 * Return whether the definition has a non defualt setting.
+	 * Return whether the definition has a non default setting.
 	 * @param definition
 	 * @return boolean
 	 */

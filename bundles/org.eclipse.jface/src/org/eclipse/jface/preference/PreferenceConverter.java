@@ -115,6 +115,17 @@ public class PreferenceConverter {
 		}
 		return fontData;
 	}
+	
+	/**
+	 * Read the supplied String and return its corresponding
+	 * FontData. If it cannot be read then the default FontData
+	 * will be returned.
+	 * @param fontDataValue
+	 * @return FontData[]
+	 */
+	public static FontData[] readFontData(String fontDataValue){
+		return basicGetFontData(fontDataValue);
+	}
 	/**
 	 * Helper method to construct a point from the given string.
 	 */
