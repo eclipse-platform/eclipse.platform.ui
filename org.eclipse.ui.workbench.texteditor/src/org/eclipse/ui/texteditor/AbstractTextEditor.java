@@ -2030,7 +2030,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 *
 	 * @param parent the parent control
 	 * @param ruler the vertical ruler
-	 * @param styles style bits
+	 * @param styles style bits, <code>SWT.WRAP</code> is currently not supported
 	 * @return the source viewer
 	 */
 	protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
