@@ -626,13 +626,12 @@ public class AntClasspathBlock {
 		contentProvider.setRefreshEnabled(false);
 		contentProvider.removeAllGlobalAntClasspathEntries();
 		String[] names = rootDir.list();
+		Arrays.sort(names);
 		for (int i = 0; i < names.length; i++) {
 			File file = new File(rootDir, names[i]);
 			if (file.isFile() && file.getPath().endsWith(".jar")) { //$NON-NLS-1$
 				try {
-					String name= file.getAbsolutePath();
-					IPath jarPath = new Path(name);
-					URL url = new URL("file:" + jarPath.toOSString()); //$NON-NLS-1$
+					URL url = new URL("file:" +  file.getAbsolutePath()); //$NON-NLS-1$
 					contentProvider.add(ClasspathModel.ANT_HOME, url);
 				} catch (MalformedURLException e) {
 				}
