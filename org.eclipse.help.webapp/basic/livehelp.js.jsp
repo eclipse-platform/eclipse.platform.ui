@@ -20,7 +20,12 @@ function liveActionInternal(topHelpWindow, pluginId, className, argument)
 %>
 	// construct the proper url for communicating with the server
 	var url= window.location.href;
-	var i = url.indexOf("/topic/");
+
+	var i = url.indexOf("?");
+	if(i>0)
+		url=url.substring(0, i);
+	
+	i = url.indexOf("/topic/");
 	if(i < 0)
 		i = url.lastIndexOf("/");
 
