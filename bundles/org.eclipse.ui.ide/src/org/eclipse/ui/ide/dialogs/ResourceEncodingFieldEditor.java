@@ -18,9 +18,14 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.jobs.Job;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
 
 import org.eclipse.ui.WorkbenchEncoding;
 import org.eclipse.ui.ide.IDEEncoding;
@@ -149,24 +154,23 @@ public class ResourceEncodingFieldEditor extends AbstractEncodingFieldEditor {
 		if (resource instanceof IWorkspaceRoot)
 			return super.findDefaultEncoding();
 
-		try {
-			String defaultCharset = null;
-			if (resource instanceof IFile) {
-				defaultCharset = IDEEncoding.getByteOrderMarkLabel(((IFile) resource)
-						.getContentDescription());
-			}
-			if (defaultCharset != null && defaultCharset.length() > 0)
-				return defaultCharset;
+		String defaultCharset = null;
+		IContentDescription description = getContentDescription();
+		if (description != null)
+			defaultCharset = description.getCharset();
 
+		if (defaultCharset != null && defaultCharset.length() > 0)
+			return defaultCharset;
+		try {
 			//Query up the whole hierarchy
 			defaultCharset = resource.getParent().getDefaultCharset(true);
-
-			if (defaultCharset != null && defaultCharset.length() > 0)
-				return defaultCharset;
-
 		} catch (CoreException exception) {
-			//If there is a core exception use the workbench default
+			//If there is an exception try again
 		}
+		
+		if (defaultCharset != null && defaultCharset.length() > 0)
+			return defaultCharset;
+
 		return super.findDefaultEncoding();
 	}
 
@@ -185,7 +189,7 @@ public class ResourceEncodingFieldEditor extends AbstractEncodingFieldEditor {
 				if (((IFile) resource).getContentDescription() == null)
 					return IDEWorkbenchMessages.format("ResourceInfo.fileContainerEncodingFormat", //$NON-NLS-1$
 							new String[] { getDefaultEnc() });
-				
+
 				return IDEWorkbenchMessages.format("ResourceInfo.fileContentEncodingFormat", //$NON-NLS-1$
 						new String[] { getDefaultEnc() });
 
@@ -197,5 +201,40 @@ public class ResourceEncodingFieldEditor extends AbstractEncodingFieldEditor {
 		return IDEWorkbenchMessages.format("ResourceInfo.containerEncodingFormat", //$NON-NLS-1$
 				new String[] { getDefaultEnc() });
 
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ide.dialogs.AbstractEncodingFieldEditor#createEncodingGroup(org.eclipse.swt.widgets.Composite, int)
+	 */
+	protected Group createEncodingGroup(Composite parent, int numColumns) {
+		Group group = super.createEncodingGroup(parent, numColumns);
+		String byteOrderLabel = IDEEncoding.getByteOrderMarkLabel(getContentDescription());
+		if (byteOrderLabel != null) {
+			Label label = new Label(group, SWT.NONE);
+			label.setText(IDEWorkbenchMessages.format(
+					"WorkbenchPreference.encoding.encodingMessage", //$NON-NLS-1$
+					new String[] { byteOrderLabel }));
+			GridData layoutData = new GridData();
+			layoutData.horizontalSpan = numColumns + 1;
+			label.setLayoutData(layoutData);
+
+		}
+		return group;
+	}
+
+	/**
+	 * Get the content description of the resource if it is 
+	 * a file and it has a content description.
+	 * @return IContentDescription or <code>null</code> if resource is
+	 * not an IFile or it does not have a descrption.
+	 */
+	private IContentDescription getContentDescription() {
+		try {
+			if (resource instanceof IFile)
+				return (((IFile) resource).getContentDescription());
+		} catch (CoreException exception) {
+			//If we cannot find it return null
+		}
+		return null;
 	}
 }

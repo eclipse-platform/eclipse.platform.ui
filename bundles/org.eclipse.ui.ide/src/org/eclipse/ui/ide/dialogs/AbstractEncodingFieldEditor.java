@@ -153,7 +153,13 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 		return container;
 	}
 
-	private Group createEncodingGroup(Composite parent, int numColumns) {
+	/**
+	 * Create the Groupd will all of the controls.
+	 * @param parent the parent widget
+	 * @param numColumns the number of columns in the parent
+	 * @return Group
+	 */
+	protected Group createEncodingGroup(Composite parent, int numColumns) {
 
 		Font font = parent.getFont();
 		Group group = new Group(parent, SWT.NONE);
