@@ -488,7 +488,7 @@ public static void shutdown() throws Exception {
  * <ul>
  * <li>If the <code>location</code> argument is specified, that value is used.  
  * <li>If <code>location</code> is <code>null</code> but <code>args</code> 
- *		contains a <code>-platform &ltlocation&gt</code> pair, then the given value is used.  
+ *		contains a <code>-data&ltlocation&gt</code> pair, then the given value is used.  
  * <li> If neither is specified, <code>System.getProperty("user.dir")</code> is used.
  * </ul>
  * The plug-in path of the started Platform is defined as follows:
@@ -523,7 +523,7 @@ public static String[] startup(URL pluginPathLocation, String location, String[]
  * <ul>
  * <li>If the <code>location</code> argument is specified, that value is used.  
  * <li>If <code>location</code> is <code>null</code> but <code>args</code> 
- *		contains a <code>-platform &ltlocation&gt</code> pair, then the given value is used.  
+ *		contains a <code>-data &ltlocation&gt</code> pair, then the given value is used.  
  * <li> If neither is specified, <code>System.getProperty("user.dir")</code> is used.
  * </ul>
  * The plug-in path of the started Platform is defined as follows:
