@@ -1,10 +1,12 @@
 package org.eclipse.help.internal.protocols;
 /*
- * (c) Copyright IBM Corp. 2000, 2002.
+ * (c) Copyright IBM Corp. 2000, 2003.
  * All Rights Reserved.
  */
-import java.io.InputStream;
+import java.io.*;
+
 import org.eclipse.core.runtime.*;
+import org.eclipse.help.internal.appserver.*;
 import org.eclipse.help.internal.util.*;
 /**
  * URL for documentation coming from a plugin. This is part of the help:/ protocol (help:/pluginid/path/to/file).
@@ -69,18 +71,32 @@ public class PluginURL extends HelpURL {
 	 * @return java.io.InputStream
 	 */
 	public InputStream openStream() {
-		if (getPlugin() == null)
+		IPluginDescriptor plugin = getPlugin();
+		if (plugin == null) {
 			return null;
-		if (getFile() == null || "".equals(getFile()))
+		}
+		if (plugin
+			.equals(
+				AppserverPlugin.getDefault().getContributingServerPlugin())) {
 			return null;
+		}
+		if (getFile() == null || "".equals(getFile())) {
+			return null;
+		}
 		// When the platform supports find() with a locale specified, use this
 		//Locale locale = getLocale();
 		InputStream inputStream = null;
 		// first try finding the file inside nl tree in doc.zip,
 		// and then, in the file system
-		inputStream = ResourceLocator.openFromZip(getPlugin(), "doc.zip", getFile(), getLocale());
+		inputStream =
+			ResourceLocator.openFromZip(
+				plugin,
+				"doc.zip",
+				getFile(),
+				getLocale());
 		if (inputStream == null)
-			inputStream = ResourceLocator.openFromPlugin(getPlugin(), getFile(), getLocale());
+			inputStream =
+				ResourceLocator.openFromPlugin(plugin, getFile(), getLocale());
 		return inputStream;
 	}
 }
