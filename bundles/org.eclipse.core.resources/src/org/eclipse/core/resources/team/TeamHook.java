@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2002 IBM Corporation and others.
+ * Copyright (c) 2002, 2003 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,12 +26,18 @@ import org.eclipse.core.runtime.IStatus;
  * standard extension point. Individual team providers may also subclass this
  * class. It is not intended to be subclassed by other clients. The methods
  * defined on this class are called from within the implementations of
- * workspace API methods. They are not intended to be called from anywhere else.
+ * workspace API methods.
  * </p>
+ * <b>Clients must never explicitly instantiate or invoke methods on this class.</b>
+ * 
  * @since 2.1
  */
 public class TeamHook {
-	
+/**
+ * Default constructor for use by subclasses and the resources plugin only.
+ */
+public TeamHook() {
+}	
 /**
  * Validates whether a particular attempt at link creation is allowed.  This gives
  * team providers an opportunity to hook into the beginning of the implementation
@@ -44,12 +50,19 @@ public class TeamHook {
  * resources and trigger deltas must not be called from within the dynamic
  * scope of the invocation of this method.
  * </p>
- *  * @param file the file to be linked * @param updateFlags bit-wise or of update flag constants
+ * <p>
+ * This method should be overridden by subclasses that want to control what
+ * links are created.  The default implementation of this method allows all links
+ * to be created.
+ * </p>
+ * 
+ * @param file the file to be linked * @param updateFlags bit-wise or of update flag constants
  *   (only ALLOW_MISSING_LOCAL is relevant here)
- * @param localLocation a file system path where the file should be linked
- * @return IStatus a status object with code <code>IStatus.OK</code> 
+ * @param location a file system path where the file should be linked
+ * @return a status object with code <code>IStatus.OK</code> 
  * 	if linking is allowed, otherwise a status object with severity 
- * 	<code>IStatus.ERROR</code> indicating why the creation is not allowed. */
+ * 	<code>IStatus.ERROR</code> indicating why the creation is not allowed. * @see org.eclipse.core.resources.IResource#ALLOW_MISSING_LOCAL
+ */
 public IStatus validateCreateLink(IFile file, int updateFlags, IPath location) {
 	return ResourceStatus.OK_STATUS;
 }
@@ -65,14 +78,20 @@ public IStatus validateCreateLink(IFile file, int updateFlags, IPath location) {
  * resources and trigger deltas must not be called from within the dynamic
  * scope of the invocation of this method.
  * </p>
+ * <p>
+ * This method should be overridden by subclasses that want to control what
+ * links are created.  The default implementation of this method allows all links
+ * to be created.
+ * </p>
  * 
  * @param folder the file to be linked
  * @param updateFlags bit-wise or of update flag constants
  *   (only ALLOW_MISSING_LOCAL is relevant here)
- * @param localLocation a file system path where the folder should be linked
- * @return IStatus a status object with code <code>IStatus.OK</code> 
+ * @param location a file system path where the folder should be linked
+ * @return a status object with code <code>IStatus.OK</code> 
  * 	if linking is allowed, otherwise a status object with severity 
  * 	<code>IStatus.ERROR</code> indicating why the creation is not allowed.
+ * @see org.eclipse.core.resources.IResource#ALLOW_MISSING_LOCAL
  */
 public IStatus validateCreateLink(IFolder folder, int updateFlags, IPath location) {
 	return ResourceStatus.OK_STATUS;
