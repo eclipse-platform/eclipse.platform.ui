@@ -47,7 +47,6 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
 import org.eclipse.ui.IEditorInput;
@@ -480,8 +479,7 @@ public class TextEditor extends StatusTextEditor {
 		fSourceViewerDecorationSupport.setCursorLinePainterPreferenceKeys(CURRENT_LINE, CURRENT_LINE_COLOR);
 		fSourceViewerDecorationSupport.setMarginPainterPreferenceKeys(PRINT_MARGIN, PRINT_MARGIN_COLOR, PRINT_MARGIN_COLUMN);
 		
-		String symbolicFontName= getConfigurationElement().getAttribute("symbolicFontName"); //$NON-NLS-1$
-		fSourceViewerDecorationSupport.setSymbolicFontName(symbolicFontName == null ? JFaceResources.TEXT_FONT : symbolicFontName);
+		fSourceViewerDecorationSupport.setSymbolicFontName(getFontPropertyPreferenceKey());
 	}
 
 	private void showOverviewRuler() {

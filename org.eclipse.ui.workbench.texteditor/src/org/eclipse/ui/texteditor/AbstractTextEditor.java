@@ -2490,7 +2490,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @return a String with the key
 	 * @since 2.1
 	 */
-	private String getFontPropertyPreferenceKey() {
+	protected final String getFontPropertyPreferenceKey() {
 		String symbolicFontName= getSymbolicFontName();
 
 		if (symbolicFontName != null)
