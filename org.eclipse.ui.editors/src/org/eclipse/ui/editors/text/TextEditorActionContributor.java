@@ -11,7 +11,6 @@
 package org.eclipse.ui.editors.text;
 
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.MenuManager;
 
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
@@ -27,18 +26,12 @@ import org.eclipse.ui.texteditor.RetargetTextEditorAction;
  * Manages the installation and de-installation of global actions for the default text editor.
  * <p>
  * If instantiated and used as-is, this contributor connects global actions and adds actions
- * for line delimiter conversion and encoding support.</p>
+ * for encoding support.</p>
  * 
  * @since 2.0
  */
 public class TextEditorActionContributor extends BasicTextEditorActionContributor {
 
-	/** Convert to Windows action. */
-	private RetargetTextEditorAction fConvertToWindows;
-	/** Convert to UNIX action. */
-	private RetargetTextEditorAction fConvertToUNIX;
-	/** Convert to MAC action. */
-	private RetargetTextEditorAction fConvertToMac;
 	/** Change encoding action. */
 	private RetargetTextEditorAction fChangeEncodingAction;
 	
@@ -47,12 +40,6 @@ public class TextEditorActionContributor extends BasicTextEditorActionContributo
 	 */
 	public TextEditorActionContributor() {
 		super();
-		
-		// line delimiter conversion
-		fConvertToWindows= new RetargetTextEditorAction(TextEditorMessages.getResourceBundle(), "Editor.ConvertToWindows."); //$NON-NLS-1$ 
-		fConvertToUNIX= new RetargetTextEditorAction(TextEditorMessages.getResourceBundle(), "Editor.ConvertToUNIX."); //$NON-NLS-1$ 
-		fConvertToMac= new RetargetTextEditorAction(TextEditorMessages.getResourceBundle(), "Editor.ConvertToMac."); //$NON-NLS-1$
-		
 		fChangeEncodingAction= new RetargetTextEditorAction(TextEditorMessages.getResourceBundle(), "Editor.ChangeEncodingAction."); //$NON-NLS-1$
 	}	
 	
@@ -74,11 +61,6 @@ public class TextEditorActionContributor extends BasicTextEditorActionContributo
 			actionBars.setGlobalActionHandler(IDEActionFactory.BOOKMARK.getId(), getAction(textEditor, IDEActionFactory.BOOKMARK.getId()));
 		}
 			
-		// line delimiter conversion
-		fConvertToWindows.setAction(getAction(textEditor, ITextEditorActionConstants.CONVERT_LINE_DELIMITERS_TO_WINDOWS));
-		fConvertToUNIX.setAction(getAction(textEditor, ITextEditorActionConstants.CONVERT_LINE_DELIMITERS_TO_UNIX));
-		fConvertToMac.setAction(getAction(textEditor, ITextEditorActionConstants.CONVERT_LINE_DELIMITERS_TO_MAC));
-		
 		fChangeEncodingAction.setAction(getAction(textEditor, ITextEditorActionConstants.CHANGE_ENCODING));
 	}
 	
@@ -105,15 +87,7 @@ public class TextEditorActionContributor extends BasicTextEditorActionContributo
 		super.init(bars);
 		
 		IMenuManager menuManager= bars.getMenuManager();
-		IMenuManager editMenu= menuManager.findMenuUsingPath(IWorkbenchActionConstants.M_EDIT);
-		if (editMenu != null) {
-			MenuManager subMenu= new MenuManager(TextEditorMessages.getString("Editor.ConvertLineDelimiters.label")); //$NON-NLS-1$
-			subMenu.add(fConvertToWindows);
-			subMenu.add(fConvertToUNIX);
-			subMenu.add(fConvertToMac);
-	
-			editMenu.add(subMenu);
-			editMenu.add(fChangeEncodingAction);
-		}
-	}
-}
+		IMenuManager conversionMenu= menuManager.findMenuUsingPath(IWorkbenchActionConstants.M_FILE + "/conversion");  //$NON-NLS-1$
+		if (conversionMenu != null)
+			conversionMenu.insertAfter("encoding", fChangeEncodingAction); //$NON-NLS-1$
+	}}

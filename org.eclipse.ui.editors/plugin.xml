@@ -32,6 +32,24 @@
    <extension
          point="org.eclipse.ui.commands">
       <command
+            name="%convertDelimiters.Windows.name"
+            description="%convertDelimiters.Windows.description"
+            categoryId="org.eclipse.ui.category.file"
+            id="org.eclipse.ui.edit.text.delimiter.windows">
+      </command>
+      <command
+            name="%convertDelimiters.Unix.name"
+            description="%convertDelimiters.Unix.description"
+            categoryId="org.eclipse.ui.category.file"
+            id="org.eclipse.ui.edit.text.delimiter.unix">
+      </command>
+      <command
+            name="%convertDelimiters.MacOS9.name"
+            description="%convertDelimiters.MacOS9.description"
+            categoryId="org.eclipse.ui.category.file"
+            id="org.eclipse.ui.edit.text.delimiter.macOS9">
+      </command>
+      <command
             name="%openExternalFile.name"
             category="org.eclipse.ui.category.file"
             description="%openExternalFile.description"
@@ -43,6 +61,7 @@
             description="%newTextEditor.description"
             id="org.eclipse.ui.edit.text.newTextEditor">
       </command>
+      
       <command
             name="%ActionDefinition.quickDiff.name"
             category="org.eclipse.ui.category.edit"
@@ -55,8 +74,6 @@
             command="org.eclipse.quickdiff.toggle"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
-      
-      <!-- folding -->
       <command
             name="%command.folding.toggle.name"
             description="%command.folding.toggle.description"
@@ -318,7 +335,7 @@
                helpContextId="open_text_editor_action_context"
                class="org.eclipse.ui.internal.editors.text.OpenExternalFileAction"
                tooltip="%openExternalFile.description"
-               menubarPath="file/open.ext"
+               menubarPath="file/new.ext"
                id="org.eclipse.ui.edit.text.openExternalFile">
          </action>
       </actionSet>
@@ -332,7 +349,7 @@
                helpContextId="new_text_editor_action_context"
                class="org.eclipse.ui.internal.editors.text.NewTextEditorAction"
                tooltip="%newTextEditor.description"
-               menubarPath="file/open.ext"
+               menubarPath="file/new.ext"
                id="org.eclipse.ui.edit.text.newTextEditor">
          </action>
       </actionSet>
@@ -387,7 +404,44 @@
                tooltip="%goToLastEditPosition.tooltip">
          </action>
       </actionSet>
+	  <actionSet
+	    label="%conversionActionSet.label"
+	    visible="true"
+	    id="org.eclipse.ui.edit.text.actionSet.conversion">
+         <menu
+               label="%conversionSubMenu.label"
+               path="file/save.ext"
+               id="conversion">
+            <separator name="lineDelimiterConversion"/>
+            <separator name="encoding"/>
+         </menu>
+         <action
+	       definitionId="org.eclipse.ui.edit.text.delimiter.macOS9"
+	       label="%convertDelimiters.MacOS9.label"
+	       class="org.eclipse.ui.internal.editors.text.ConvertLineDelimitersToMacOS9"
+	       tooltip="%convertDelimiters.MacOS9.description"
+	       menubarPath="file/conversion/lineDelimiterConversion"
+	       id="org.eclipse.ui.edit.text.delimiter.macOS9">
+	 	 </action>
+         <action
+	       definitionId="org.eclipse.ui.edit.text.delimiter.unix"
+	       label="%convertDelimiters.Unix.label"
+	       class="org.eclipse.ui.internal.editors.text.ConvertLineDelimitersToUnix"
+	       tooltip="%convertDelimiters.Unix.description"
+	       menubarPath="file/conversion/lineDelimiterConversion"
+	       id="org.eclipse.ui.edit.text.delimiter.unix">
+	 	 </action>
+         <action
+	       definitionId="org.eclipse.ui.edit.text.delimiter.windows"
+	       label="%convertDelimiters.Windows.label"
+	       class="org.eclipse.ui.internal.editors.text.ConvertLineDelimitersToWindows"
+	       tooltip="%convertDelimiters.Unix.description"
+	       menubarPath="file/conversion/lineDelimiterConversion"
+	       id="org.eclipse.ui.edit.text.delimiter.windows">
+	 	 </action>
+	  </actionSet>
    </extension>
+   
    <extension
          point="org.eclipse.ui.editors.markerAnnotationSpecification">
       <specification
@@ -627,4 +681,5 @@
             class="org.eclipse.ui.texteditor.ResourceMarkerAnnotationModelFactory">
       </factory>
    </extension>
+   
 </plugin>
