@@ -75,7 +75,7 @@ public class TestInstall extends UpdateManagerTestCase {
 		ISite localSite = SiteManager.getSite(TARGET_FILE_SITE);
 		localSite.install(remoteFeature, null);
 
-		String site = localSite.getURL().getPath();
+		String site = UpdateManagerUtils.getPath(localSite.getURL());			
 		IPluginEntry[] entries = remoteFeature.getPluginEntries();
 		assertTrue("no plugins entry", (entries != null && entries.length != 0));
 
@@ -118,7 +118,7 @@ public class TestInstall extends UpdateManagerTestCase {
 		ISite localSite = SiteManager.getLocalSite();
 		localSite.install(remoteFeature, null);
 
-		String site = localSite.getURL().getPath();
+		String site = UpdateManagerUtils.getPath(localSite.getURL());			
 		IPluginEntry[] entries = remoteFeature.getPluginEntries();
 		assertTrue("no plugins entry", (entries != null && entries.length != 0));
 

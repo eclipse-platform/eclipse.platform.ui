@@ -6,6 +6,7 @@ package org.eclipse.update.tests.parser;
 import java.net.URL;
 
 import org.eclipse.update.core.*;
+import org.eclipse.update.internal.core.UpdateManagerUtils;
 import org.eclipse.update.tests.UpdateManagerTestCase;
 
 public class TestSiteParse extends UpdateManagerTestCase {
@@ -26,7 +27,9 @@ public class TestSiteParse extends UpdateManagerTestCase {
 			IFeatureReference[] feature = remoteSite.getFeatureReferences();
 			ICategory[] categories = remoteSite.getCategories();
 			
-			assertEquals(remoteUrl.getPath()+"info/siteInfo.html",remoteSite.getInfoURL().getPath());
+			String path = UpdateManagerUtils.getPath(remoteUrl);		
+			String path2 = UpdateManagerUtils.getPath(remoteSite.getInfoURL());	
+			assertEquals(path+"info/siteInfo.html",path2);
 			
 		} catch (Exception e){
 			fail(e.toString());

@@ -13,7 +13,7 @@ public class AllTests extends TestCase {
 public AllTests(String name) {
 	super(name);
 }
-public static Test suite() {
+public static Test suite() throws Exception {
 	TestSuite suite = new TestSuite();
 	suite.setName("All Update Manager Tests");
 	suite.addTest(AllRegularInstallTests.suite());
