@@ -148,7 +148,9 @@ public class JobManager implements IJobManager {
 				case Job.RUNNING :
 					//cannot cancel a job that has already started (as opposed to ABOUT_TO_RUN)
 					if (job.internalGetState() == Job.RUNNING) {
-						job.getProgressMonitor().setCanceled(true);
+						IProgressMonitor monitor = job.getProgressMonitor();
+						if (monitor != null)
+							monitor.setCanceled(true);
 						return false;
 					}
 			}
@@ -386,7 +388,7 @@ public class JobManager implements IJobManager {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.Job#job(org.eclipse.core.runtime.jobs.Job)
 	 */
-	protected void join(InternalJob job) throws InterruptedException {
+	protected void join(InternalJob job) {
 		final IJobChangeListener listener;
 		final Semaphore barrier;
 		synchronized (lock) {
@@ -546,7 +548,8 @@ public class JobManager implements IJobManager {
 			if (findBlockingJob(job) != null)
 				return false;
 			changeState(job, Job.RUNNING);
-			job.run(new NullProgressMonitor());
+			job.setProgressMonitor(new NullProgressMonitor());
+			job.run(job.getProgressMonitor());
 		}
 		return true;
 	}
