@@ -496,6 +496,8 @@ public void remove(LayoutPart child) {
 		child.setBounds(0, 0, 0, 0);
 		child.setContainer(null);
 	}
+	if(current == child)
+		current = null;
 }
 private void removeTab(CTabItem tab) {
 	// disable any d&d based on this tab
@@ -659,6 +661,8 @@ private void replaceChild(LayoutPart oldChild, PartPlaceholder newChild) {
 				if (tabFolder.getItemCount() > 0 && !partIsActive) {
 					setControlSize(current);
 				}
+				if(partIsActive)
+					current = null;
 				break;
 			}
 		}
