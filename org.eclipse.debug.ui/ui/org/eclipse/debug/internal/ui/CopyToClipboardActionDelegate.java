@@ -14,6 +14,7 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.debug.ui.IDebugUIConstants;
 
 public class CopyToClipboardActionDelegate extends ControlActionDelegate {
 	
@@ -163,7 +164,10 @@ public class CopyToClipboardActionDelegate extends ControlActionDelegate {
 	/**
 	 * @see ControlActionDelegate
 	 */
-	protected void setActionImages(IAction action) {		
+	protected void setActionImages(IAction action) { 	
+		action.setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_COPY));
+		action.setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_COPY));
+		action.setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_COPY));
 	}
 	
 	protected boolean shouldAppendChildren(Object e) {

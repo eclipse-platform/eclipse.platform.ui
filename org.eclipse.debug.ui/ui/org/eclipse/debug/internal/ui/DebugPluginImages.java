@@ -88,6 +88,7 @@ public class DebugPluginImages {
 		declareRegistryImage(IDebugUIConstants.IMG_LCL_REMOVE_ALL, LOCALTOOL + "rem_all_co.gif"); //$NON-NLS-1$
 		declareRegistryImage(IDebugUIConstants.IMG_LCL_INSPECT, LOCALTOOL + "inspect_co.gif"); //$NON-NLS-1$
 		declareRegistryImage(IDebugUIConstants.IMG_LCL_RELAUNCH, LOCALTOOL + "relaunch_co.gif"); //$NON-NLS-1$
+		declareRegistryImage(IDebugUIConstants.IMG_LCL_COPY, LOCALTOOL + "copy_edit.gif"); //$NON-NLS-1$
 			
 		// disabled local toolbars
 		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_RESUME, DLCL + "resume_co.gif"); //$NON-NLS-1$
@@ -107,6 +108,7 @@ public class DebugPluginImages {
 		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_REMOVE_ALL, DLCL + "rem_all_co.gif"); //$NON-NLS-1$
 		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_INSPECT, DLCL + "inpsect_co.gif"); //$NON-NLS-1$
 		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_RELAUNCH, DLCL + "relaunch_co.gif"); //$NON-NLS-1$
+		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_COPY, DLCL + "copy_edit.gif"); //$NON-NLS-1$
 
 		// enabled local toolbars
 		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_RESUME, ELCL + "resume_co.gif"); //$NON-NLS-1$
@@ -126,6 +128,7 @@ public class DebugPluginImages {
 		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_REMOVE_ALL, ELCL + "rem_all_co.gif"); //$NON-NLS-1$
 		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_INSPECT, ELCL + "inpsect_co.gif"); //$NON-NLS-1$
 		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_RELAUNCH, ELCL + "relaunch_co.gif"); //$NON-NLS-1$
+		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_COPY, ELCL + "copy_edit.gif"); //$NON-NLS-1$
 
 
 		//Object

@@ -35,6 +35,7 @@ public interface IInternalDebugUIConstants {
 	public static final String IMG_DLCL_REMOVE_ALL= "IMG_DLCL_REMOVE_ALL"; //$NON-NLS-1$
 	public static final String IMG_DLCL_INSPECT= "IMG_DLCL_INSPECT"; //$NON-NLS-1$
 	public static final String IMG_DLCL_RELAUNCH= "IMG_DLCL_RELAUNCH"; //$NON-NLS-1$
+	public static final String IMG_DLCL_COPY= "IMG_DLCL_COPY"; //$NON-NLS-1$
 
 	// enabled local tool images
 	public static final String IMG_ELCL_RESUME= "IMG_ELCL_RESUME"; //$NON-NLS-1$
@@ -54,4 +55,5 @@ public interface IInternalDebugUIConstants {
 	public static final String IMG_ELCL_REMOVE_ALL= "IMG_ELCL_REMOVE_ALL"; //$NON-NLS-1$
 	public static final String IMG_ELCL_INSPECT= "IMG_ELCL_INSPECT"; //$NON-NLS-1$
 	public static final String IMG_ELCL_RELAUNCH= "IMG_ELCL_RELAUNCH"; //$NON-NLS-1$
+	public static final String IMG_ELCL_COPY= "IMG_ELCL_COPY"; //$NON-NLS-1$
 }

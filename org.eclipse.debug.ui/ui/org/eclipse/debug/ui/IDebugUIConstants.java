@@ -236,6 +236,9 @@ public interface IDebugUIConstants {
 	/** Re-launch action image identifier.*/
 	public static final String IMG_LCL_RELAUNCH= "IMG_LCL_RELAUNCH";
 
+	/** Copy-to-clipboard action image identifier.*/
+	public static final String IMG_LCL_COPY= "IMG_LCL_COPY";
+
 	
 	// Debug element images
 	
