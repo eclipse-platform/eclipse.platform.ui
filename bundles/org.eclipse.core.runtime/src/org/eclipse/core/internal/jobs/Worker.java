@@ -16,8 +16,12 @@ import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 
+/**
+ * A worker thread processes jobs supplied to it by the worker pool.  When
+ * the worker pool gives it a null job, the worker dies.
+ */
 public class Worker extends Thread {
-	//worker number used for naming purposes only
+	//worker number used for debugging purposes only
 	private static int nextWorkerNumber = 0;
 	private volatile Job currentJob;
 	private final WorkerPool pool;
@@ -43,9 +47,16 @@ public class Worker extends Thread {
 		String message = Policy.bind("meta.pluginProblems", id); //$NON-NLS-1$
 		return new Status(Status.ERROR, id, Platform.PLUGIN_ERROR, message, t);
 	}
-	/* (non-Javadoc)
-	 * @see java.lang.Runnable#run()
-	 */
+	private void log(IStatus result) {
+		try {
+			InternalPlatform.log(result);
+		} catch (RuntimeException e) {
+			//failed to log, so print to console instead
+			Throwable t = result.getException();
+			if (t != null)
+				t.printStackTrace();
+		}
+	}
 	public void run() {
 		try {
 			currentJob = pool.startFirstJob();
@@ -66,7 +77,7 @@ public class Worker extends Thread {
 					//clear interrupted state for this thread
 					Thread.interrupted();
 					if ((result.getSeverity() & (IStatus.ERROR | IStatus.WARNING)) != 0)
-						InternalPlatform.log(result);
+						log(result);
 					pool.endJob(currentJob, result);
 					currentJob = null;
 				}
