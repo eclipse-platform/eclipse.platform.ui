@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.core.sourcelookup.containers;
 
-import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType;
 import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
 
@@ -28,7 +28,7 @@ public class FolderSourceContainer extends ContainerSourceContainer {
 	 * @param folder the folder to search for source in
 	 * @param subfolders whether to search nested folders
 	 */
-	public FolderSourceContainer(IFolder folder, boolean subfolders) {
+	public FolderSourceContainer(IContainer folder, boolean subfolders) {
 		super(folder, subfolders);
 	}
 	

@@ -20,7 +20,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.internal.core.sourcelookup.ISourceContainer;
 
 /**
@@ -126,21 +125,17 @@ public abstract class ContainerSourceContainer extends AbstractSourceContainer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#getSourceContainers()
 	 */
-	public ISourceContainer[] getSourceContainers() {
+	public ISourceContainer[] getSourceContainers() throws CoreException {
 		if(fSubfolders) {
-			try {
-				IResource[] resources = getContainer().members();
-				List list = new ArrayList(resources.length);
-				for (int i = 0; i < resources.length; i++) {
-					IResource resource = resources[i];
-					if (resource.getType() == IResource.FOLDER) {
-						list.add(new FolderSourceContainer((IFolder)resource, fSubfolders));
-					}
+			IResource[] resources = getContainer().members();
+			List list = new ArrayList(resources.length);
+			for (int i = 0; i < resources.length; i++) {
+				IResource resource = resources[i];
+				if (resource.getType() == IResource.FOLDER) {
+					list.add(new FolderSourceContainer((IFolder)resource, fSubfolders));
 				}
-				return (ISourceContainer[]) list.toArray(new ISourceContainer[list.size()]);
-			} catch (CoreException e) {
-				DebugPlugin.log(e);
 			}
+			return (ISourceContainer[]) list.toArray(new ISourceContainer[list.size()]);
 		}
 		return new ISourceContainer[0];
 	}

@@ -100,8 +100,7 @@ public class SourceContainerLookupTab extends AbstractLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
-		fSourceLookupPanel.fPathViewer.refresh();
-		
+		fSourceLookupPanel.activated(workingCopy);
 	}
 	
 	/* (non-Javadoc)
@@ -114,4 +113,22 @@ public class SourceContainerLookupTab extends AbstractLaunchConfigurationTab {
 		super.dispose();
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getErrorMessage()
+	 */
+	public String getErrorMessage() {
+		if (fSourceLookupPanel != null) {
+			return fSourceLookupPanel.getErrorMessage();
+		}
+		return super.getErrorMessage();
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getMessage()
+	 */
+	public String getMessage() {
+		if (fSourceLookupPanel != null) {
+			return fSourceLookupPanel.getMessage();
+		}
+		return super.getMessage();
+	}
 }

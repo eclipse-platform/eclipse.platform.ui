@@ -42,4 +42,19 @@ public abstract class AbstractSourceContainer implements ISourceContainer {
 	 */
 	public void dispose() {
 	}	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#getSourceContainers()
+	 */
+	public ISourceContainer[] getSourceContainers() throws CoreException {
+		return new ISourceContainer[0];
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#isComposite()
+	 */
+	public boolean isComposite() {
+		return false;
+	}
+	
 }

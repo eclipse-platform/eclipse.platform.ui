@@ -48,6 +48,9 @@ public abstract class CompositeSourceContainer extends AbstractSourceContainer {
 						results.add(objects[j]);
 					}
 				} else {
+					if (objects.length == 1) {
+						return objects;
+					}
 					return new Object[]{objects[0]};
 				}
 			}

@@ -91,7 +91,7 @@ public class DirectorySourceContainer extends AbstractSourceContainer {
 		File directory = getDirectory();
 		File file = new File(directory, name);
 		if (file.exists() && file.isFile()) {
-			sources.add(file);
+			sources.add(new LocalFileStorage(file));
 		}
 		
 		//check subfolders		
@@ -120,7 +120,7 @@ public class DirectorySourceContainer extends AbstractSourceContainer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#getSourceContainers(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
-	public ISourceContainer[] getSourceContainers() {
+	public ISourceContainer[] getSourceContainers() throws CoreException {
 		if (isComposite()) {
 			String[] files = fDirectory.list();
 			if (files != null) {

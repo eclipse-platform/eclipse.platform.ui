@@ -275,7 +275,11 @@ public abstract class AbstractSourceLookupDirector implements IPersistableSource
 		if(fConfig.equals(configuration)) {
 			try{
 				String locatorMemento = configuration.getAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_MEMENTO,(String)null);
-				initializeFromMemento(locatorMemento);			
+				if (locatorMemento == null) {
+					initializeDefaults(configuration);
+				} else {
+					initializeFromMemento(locatorMemento, configuration);
+				}
 			} catch (CoreException e){
 			}
 		}
@@ -320,6 +324,7 @@ public abstract class AbstractSourceLookupDirector implements IPersistableSource
 	 * @see org.eclipse.debug.core.model.IPersistableSourceLocator#initializeFromMemento(java.lang.String)
 	 */
 	public void initializeFromMemento(String memento) throws CoreException {
+		dispose();
 		Element rootElement = SourceLookupUtils.parseDocument(memento);		
 		if (!rootElement.getNodeName().equalsIgnoreCase(DIRECTOR_ROOT_NODE)) { 
 			SourceLookupUtils.abort(SourceLookupMessages.getString("AbstractSourceLookupDirector.14"), null); //$NON-NLS-1$
@@ -413,9 +418,6 @@ public abstract class AbstractSourceLookupDirector implements IPersistableSource
 	 */
 	public void initializeFromMemento(String memento, ILaunchConfiguration configuration) throws CoreException {
 		setLaunchConfiguration(configuration);
-		ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
-		launchManager.addLaunchConfigurationListener(this);
-		launchManager.addLaunchListener(this);
 		initializeFromMemento(memento);
 	}
 
@@ -423,6 +425,7 @@ public abstract class AbstractSourceLookupDirector implements IPersistableSource
 	 * @see org.eclipse.debug.core.model.IPersistableSourceLocator#initializeDefaults(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public void initializeDefaults(ILaunchConfiguration configuration) throws CoreException {
+		dispose();
 		setLaunchConfiguration(configuration);
 		ISourceContainer defaultContainer = SourceLookupUtils.createDefaultContainer(configuration);
 		if(defaultContainer != null) {
@@ -454,6 +457,9 @@ public abstract class AbstractSourceLookupDirector implements IPersistableSource
 	 */
 	protected void setLaunchConfiguration(ILaunchConfiguration configuration) {
 		fConfig = configuration;
+		ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
+		launchManager.addLaunchConfigurationListener(this);
+		launchManager.addLaunchListener(this);		
 	}
 	
 	/* (non-Javadoc)

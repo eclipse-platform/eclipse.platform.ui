@@ -69,8 +69,9 @@ public interface ISourceContainer {
 	 * 
 	 * @return the source containers this container is composed of, possibly
 	 *  an empty collection
+	 * @exception CoreException if unable to retrieve source containers
 	 */
-	public ISourceContainer[] getSourceContainers();
+	public ISourceContainer[] getSourceContainers() throws CoreException;
 
 	/**
 	 * Returns whether this container is a composite container. A composite

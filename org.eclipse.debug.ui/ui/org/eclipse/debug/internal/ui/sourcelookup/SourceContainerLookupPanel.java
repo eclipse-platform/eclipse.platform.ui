@@ -19,7 +19,6 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.internal.core.sourcelookup.AbstractSourceLookupDirector;
-import org.eclipse.debug.internal.core.sourcelookup.IPersistableSourceLocator2;
 import org.eclipse.debug.internal.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.sourcelookup.containers.WorkingSetSourceContainer;
@@ -47,8 +46,7 @@ import org.eclipse.ui.IWorkingSetManager;
  * 
  * @since 3.0
  */
-public class SourceContainerLookupPanel extends AbstractLaunchConfigurationTab 
-implements IPropertyChangeListener {
+public class SourceContainerLookupPanel extends AbstractLaunchConfigurationTab implements IPropertyChangeListener {
 	//the configuration being edited
 	protected ILaunchConfiguration fConfig;
 	//the viewer displaying the containers
@@ -245,59 +243,36 @@ implements IPropertyChangeListener {
 	 * launch configuration.
 	 */
 	public void initializeFrom(ILaunchConfiguration configuration) {
-		//TODO better error handling here and in performApply
-		//majority of errors will be developer (rather than user) errors
-		String memento = null;		
+		if (fLocator != null) {
+			fLocator.dispose();
+			fLocator = null;
+		}
+		setErrorMessage(null);
+		setMessage(null);
+		String memento = null;	
+		String type = null;
 		try{
 			memento = configuration.getAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_MEMENTO, (String)null);
-			//case 1: panel being reused, need reinitialize
-			if(fLocator != null){
-				//check if this is being initialized from a different config or the same one
-				if(fConfig.getName().equals(configuration.getName()))
-				{
-					if(fLocator instanceof IPersistableSourceLocator2)
-						fLocator.initializeFromMemento(memento, configuration);
-					else fLocator.initializeFromMemento(memento); 
-					return;
-				}
-				else
-				{ //if different config, cleanup and start again (case 2)
-					fConfig = configuration;
-					fLocator.dispose();
-					fLocator = null;
-				}
+			type = configuration.getAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, (String)null);
+			if (type == null) {
+				// TODO: should the source locator id be API on ILaunchConfigType?
+				// TODO: spec this attribute in plug-in XML
+				type = configuration.getType().getAttribute("sourceLocatorId"); //$NON-NLS-1$
 			}
-		}catch(CoreException e){ 
-			DebugUIPlugin.log(e);
+		}catch(CoreException e){
+			setErrorMessage(e.getMessage());
 			return;
 		}	
 		
-		//case 2: starting from scratch, so construct a locator, initialize it with
-		//memento from configuration, and the initialize dialog fields
-		String type = null;
-		try{
-			type = configuration.getAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, (String)null);
-		}catch(CoreException e){
-			DebugUIPlugin.log(e);
-		}
-		if(type == null) //use config type attribute
-		{
-			try{
-				type = configuration.getType().getAttribute("sourceLocatorId"); //$NON-NLS-1$
-			}catch(CoreException e){
-				DebugUIPlugin.log(e);
-			}
-		}
-		if(type == null)
-		{
-			DebugUIPlugin.logErrorMessage(SourceLookupUIMessages.getString("sourceLookupPanel.2")); //$NON-NLS-1$
+		if(type == null) {
+			setErrorMessage(SourceLookupUIMessages.getString("sourceLookupPanel.2")); //$NON-NLS-1$
 			return;
 		}
-		try{
+		
+		try {
 			ISourceLocator locator = getLaunchManager().newSourceLocator(type);
-			if(!(locator instanceof AbstractSourceLookupDirector))
-			{
-				DebugUIPlugin.logErrorMessage(SourceLookupUIMessages.getString("sourceLookupPanel.0")); //$NON-NLS-1$
+			if(!(locator instanceof AbstractSourceLookupDirector)) {
+				setErrorMessage(SourceLookupUIMessages.getString("sourceLookupPanel.0")); //$NON-NLS-1$
 				return; 
 			}
 			fLocator = (AbstractSourceLookupDirector)locator;			
@@ -306,7 +281,10 @@ implements IPropertyChangeListener {
 			} else {				
 				fLocator.initializeFromMemento(memento, configuration);				 
 			}			
-		}catch(CoreException e){}	
+		} catch (CoreException e) {
+			setErrorMessage(e.getMessage());
+			return;
+		}	
 		
 		initializeFrom(fLocator);		
 	}
@@ -459,4 +437,16 @@ implements IPropertyChangeListener {
 	}
 	
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
+	 */
+	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
+		if(fLocator == null) {
+			setErrorMessage(SourceLookupUIMessages.getString("sourceLookupPanel.0")); //$NON-NLS-1$
+			return; 
+		}		
+		// the source director listens for changes in the launch config & updates
+		// so we do not need to update the source director here
+		initializeFrom(fLocator);
+	}
 }

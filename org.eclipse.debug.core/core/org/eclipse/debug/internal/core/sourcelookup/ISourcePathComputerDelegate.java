@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.core.sourcelookup;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.ILaunchConfiguration;
 
@@ -47,7 +48,8 @@ public interface ISourcePathComputerDelegate {
 	 * @param monitor a progress monitor to be used in case of long operations
 	 * @return a default collection source containers to be considered for the
 	 *  given launch configuration
+	 * @exception CoreException if unable to compute a default source lookup path
 	 */
-	public ISourceContainer[] computeSourceContainers(ILaunchConfiguration configuration, IProgressMonitor monitor);
+	public ISourceContainer[] computeSourceContainers(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException;
 	
 }

@@ -29,6 +29,7 @@ import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
 public class DefaultSourceContainer extends CompositeSourceContainer {
 
 	private ILaunchConfiguration fConfiguration = null;  
+	private ISourceContainer[] fContainers = null;
 	
 	/**
 	 * Constructs a source container with the default source containers
@@ -74,12 +75,15 @@ public class DefaultSourceContainer extends CompositeSourceContainer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#getSourceContainers(ILaunchConfiguration)
 	 */
-	public ISourceContainer[] getSourceContainers() {
-		ISourcePathComputer sourcePathComputer = getSourcePathComputer();
-		if (sourcePathComputer == null) {
-			return new ISourceContainer[0];
+	public ISourceContainer[] getSourceContainers() throws CoreException {
+		if (fContainers == null) {
+			ISourcePathComputer sourcePathComputer = getSourcePathComputer();
+			if (sourcePathComputer == null) {
+				return new ISourceContainer[0];
+			}
+			fContainers = sourcePathComputer.computeSourceContainers(getLaunchConfiguration(), null);
 		}
-		return sourcePathComputer.computeSourceContainers(getLaunchConfiguration(), null);
+		return fContainers;
 	}
 	
 	/**

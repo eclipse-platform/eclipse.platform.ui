@@ -14,6 +14,7 @@ package org.eclipse.debug.internal.ui.sourcelookup;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.internal.core.sourcelookup.AbstractSourceLookupDirector;
 import org.eclipse.debug.internal.core.sourcelookup.ISourceContainer;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -70,13 +71,18 @@ public class SourceContainerViewer extends TreeViewer {
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 		 */
 		public Object[] getChildren(Object parentElement) {
-			return ((ISourceContainer)parentElement).getSourceContainers();
+			try {
+				return ((ISourceContainer)parentElement).getSourceContainers();
+			} catch (CoreException e) {
+				return new Object[0];
+			}
 		}
 		
 		/**
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 		 */
 		public Object getParent(Object element) {
+			// TODO:
 			return null;
 		}
 		
