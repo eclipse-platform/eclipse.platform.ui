@@ -25,12 +25,7 @@ import org.eclipse.ui.IWorkbenchPart;
  * and still provides selection notification/information even
  * when the debug view is not the active part.
  */
-public class DebugSelectionProvider implements ISelectionProvider, IPartListener, ISelectionChangedListener {
-
-	/**
-	 * List of selection listeners for this selection provider
-	 */
-	private ListenerList fListeners = new ListenerList(2);
+public class DebugPageSelectionProvider extends AbstractDebugSelectionProvider implements IPartListener {
 	
 	/**
 	 * The workbench page this selection provider is providing
@@ -42,16 +37,11 @@ public class DebugSelectionProvider implements ISelectionProvider, IPartListener
 	 * The debug view in this selection provider's page,
 	 * or <code>null</code> if one is not open.
 	 */
-	private IDebugViewAdapter fDebugView;
-	
-	/**
-	 * The id of the view this selection provider works for
-	 */
-	private String fViewId;
-	
-	public DebugSelectionProvider(IWorkbenchPage page, String id) {
-		fPage = page;
-		setViewId(id);
+	private IDebugViewAdapter fDebugView;	
+		
+	public DebugPageSelectionProvider(IWorkbenchPage page, String id) {
+		super(id);
+		setPage(page);
 		page.addPartListener(this);
 		IViewPart part = page.findView(id);
 		if (part != null) {
@@ -60,70 +50,15 @@ public class DebugSelectionProvider implements ISelectionProvider, IPartListener
 	}
 	
 	/**
-	 * @see ISelectionProvider#addSelectionChangedListener(ISelectionChangedListener)
-	 */
-	public void addSelectionChangedListener(ISelectionChangedListener listener) {
-		fListeners.add(listener);
-	}
-
-	/**
-	 * @see ISelectionProvider#getSelection()
-	 */
-	public ISelection getSelection() {
-		IDebugViewAdapter view = getDebugView();
-		if (view != null) {
-			StructuredViewer viewer = view.getViewer();
-			if (viewer != null) {
-				return viewer.getSelection();
-			}
-		}
-		return new StructuredSelection();
-	}
-
-	/**
-	 * @see ISelectionProvider#removeSelectionChangedListener(ISelectionChangedListener)
-	 */
-	public void removeSelectionChangedListener(ISelectionChangedListener listener) {
-		fListeners.remove(listener);
-	}
-
-	/**
-	 * @see ISelectionProvider#setSelection(ISelection)
-	 */
-	public void setSelection(ISelection selection) {
-		IDebugViewAdapter view = getDebugView();
-		if (view != null) {
-			view.getViewer().setSelection(selection);
-		}
-	}
-	
-	/**
 	 * Disposes this selection provider - removes all listeners
 	 * currently registered.
 	 */
 	public void dispose() {
-		synchronized (fListeners) {
-			Object[] listeners = fListeners.getListeners();
-			for (int i = 0; i < listeners.length; i++) {
-				fListeners.remove(listeners[i]);
-			}
-		}
-		if (getDebugView() != null) {
-			partClosed(getDebugView());
-		}
-		fPage = null;
+		setDebugView(null);
+		setPage(null);
+		super.dispose();
 	}
 
-	/**
-	 * Returns the debug view for this selection provider,
-	 * or <code>null</code> if none is open.
-	 * 
-	 * @return debug view, or <code>null</code>
-	 */
-	protected IDebugViewAdapter getDebugView() {
-		return fDebugView;
-	}
-	
 	/*
 	 * @see IPartListener#partActivated(IWorkbenchPart)
 	 */
@@ -164,15 +99,44 @@ public class DebugSelectionProvider implements ISelectionProvider, IPartListener
 	}
 
 	/**
-	 * @see ISelectionChangedListener#selectionChanged(SelectionChangedEvent)
+	 * Sets the page this selection provider works for
+	 * 
+	 * @param page workbench page
 	 */
-	public void selectionChanged(SelectionChangedEvent event) {
-		Object[] listeners = fListeners.getListeners();
-		for (int i = 0; i < listeners.length; i++) {
-			((ISelectionChangedListener)listeners[i]).selectionChanged(event);
-		}
+	private void setPage(IWorkbenchPage page) {
+		fPage = page;
 	}
 	
+	/**
+	 * Returns the page this selection provider works for
+	 * 
+	 * @return workbench page
+	 */
+	protected IWorkbenchPage getPage() {
+		return fPage;
+	}	
+	
+	/**
+	 * Returns the debug view for this selection provider,
+	 * or <code>null</code> if none is open.
+	 * 
+	 * @return debug view, or <code>null</code>
+	 */
+	protected IDebugViewAdapter getDebugView() {
+		return fDebugView;
+	}	
+	
+	/**
+	 * @see AbstractDebugSelectionProvider#getSelectionProvider()
+	 */
+	protected ISelectionProvider getSelectionProvider() {
+		IDebugViewAdapter sp = getDebugView();
+		if (sp != null) {
+			return sp.getViewer();
+		} 
+		return null;
+	}	
+
 	/**
 	 * Sets the debug view for this selection provider
 	 */
@@ -187,25 +151,4 @@ public class DebugSelectionProvider implements ISelectionProvider, IPartListener
 			fDebugView.getViewer().addSelectionChangedListener(this);
 		}
 	}
-	
-	/**
-	 * Sets the id of the view that this selection provider
-	 * works on
-	 * 
-	 * @param id view identifier
-	 */
-	private void setViewId(String id) {
-		fViewId = id;
-	}
-	
-	/**
-	 * Returns the id of the view that this selection provider
-	 * works on
-	 * 
-	 * @return view identifier
-	 */
-	protected String getViewId() {
-		return fViewId;
-	}	
-
 }

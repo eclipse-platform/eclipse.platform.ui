@@ -12,10 +12,11 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
  
 /**
- * Manages debug selection providers for all pages.
+ * Manages debug selection providers for all pages and windows
  */
 public class DebugSelectionManager implements IPageListener {
 	
@@ -24,9 +25,18 @@ public class DebugSelectionManager implements IPageListener {
 	 * Map of {<code>IWorkbenchPage</code> ->
 	 * {<code>Map</code> of
 	 * <code>String</code> (view id) ->
-	 * <code>DebugSelectionProvider</code>}}
+	 * <code>DebugPageSelectionProvider</code>}}
 	 */
 	private Map fProvidersByPage;
+	
+	/**
+	 * Table of selection providers by window
+	 * Map of {<code>IWorkbenchWindow</code> ->
+	 * {<code>Map</code> of
+	 * <code>String</code> (view id) ->
+	 * <code>DebugWindowSelectionProvider</code>}}
+	 */
+	private Map fProvidersByWindow;	
 	
 	/**
 	 * Singleton selection manager
@@ -38,6 +48,7 @@ public class DebugSelectionManager implements IPageListener {
 	 */
 	private DebugSelectionManager() {
 		fProvidersByPage = new HashMap(4);
+		fProvidersByWindow = new HashMap(4);
 		PlatformUI.getWorkbench().getActiveWorkbenchWindow().addPageListener(this);
 	}
 	
@@ -67,11 +78,33 @@ public class DebugSelectionManager implements IPageListener {
 		}
 		ISelectionProvider provider = (ISelectionProvider)map.get(viewId);
 		if (provider == null) {
-			provider = new DebugSelectionProvider(page, viewId);
+			provider = new DebugPageSelectionProvider(page, viewId);
 			map.put(viewId, provider);
 		}
 		return provider;
 	}
+	
+	/**
+	 * Returns a selection provider for the specified
+	 * window and view.
+	 * 
+	 * @param window workbench window
+	 * @param viewId view identifier
+	 * @return selection provider
+	 */
+	public ISelectionProvider getSelectionProvider(IWorkbenchWindow window, String viewId) {
+		Map map = getSelectionProviders(window);
+		if (map == null) {
+			map = new HashMap(2);
+			setSelectionProviders(window, map);
+		}
+		ISelectionProvider provider = (ISelectionProvider)map.get(viewId);
+		if (provider == null) {
+			provider = new DebugWindowSelectionProvider(window, viewId);
+			map.put(viewId, provider);
+		}
+		return provider;
+	}	
 	
 	/**
 	 * Returns the known selection providers for the specified
@@ -101,6 +134,34 @@ public class DebugSelectionManager implements IPageListener {
 		}
 	}	
 	
+	/**
+	 * Returns the known selection providers for the specified
+	 * window, or <code>null</code> if none.
+	 * 
+	 * @param window workbench window
+	 * @return map of selection providers, keyed by view id,
+	 * 	or <code>null</code>
+	 */
+	protected Map getSelectionProviders(IWorkbenchWindow window) {
+		return (Map)fProvidersByWindow.get(window);
+	}
+	
+	/**
+	 * Sets the selection providers for the specified
+	 * window, or <code>null</code> if none.
+	 * 
+	 * @param window workbench window
+	 * @param providers map of selection providers, keyed by view id,
+	 * 	or <code>null</code>
+	 */
+	private void setSelectionProviders(IWorkbenchWindow window, Map providers) {
+		if (providers == null) {
+			fProvidersByWindow.remove(window);
+		} else {
+			fProvidersByWindow.put(window, providers);
+		}
+	}		
+	
 
 	/**
 	 * @see IPageListener#pageActivated(IWorkbenchPage)
@@ -116,7 +177,7 @@ public class DebugSelectionManager implements IPageListener {
 		if (map != null) {
 			Iterator providers = map.values().iterator();
 			while (providers.hasNext()) {
-				((DebugSelectionProvider)providers.next()).dispose();
+				((DebugPageSelectionProvider)providers.next()).dispose();
 			}
 			map.clear();
 			setSelectionProviders(page, null);
