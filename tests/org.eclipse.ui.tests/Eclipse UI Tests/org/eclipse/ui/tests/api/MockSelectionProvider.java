@@ -37,7 +37,7 @@ public class MockSelectionProvider implements ISelectionProvider {
 	 * @see ISelectionProvider#getSelection()
 	 */
 	public ISelection getSelection() {
-		return null;
+		return StructuredSelection.EMPTY;
 	}
 
 	/**
