@@ -48,15 +48,6 @@ public interface IFeature {
 	ISite getSite();
 
 	/**
-	 * Sets the site for this feature.
-	 * 
-	 * @param site the site
-	 * @throws CoreException site for this feature is already set
-	 * @since 2.0 
-	 */
-	void setSite(ISite site) throws CoreException;
-
-	/**
 	 * Returns the displayable label of the feature.
 	 * 
 	 * @return feature label
@@ -334,12 +325,22 @@ public interface IFeature {
 	 * @since 2.0
 	 */
 	IFeatureContentConsumer getFeatureContentConsumer() throws CoreException;
-	
+
+	/**
+	 * Sets the site for this feature. This is typically performed as part
+	 * of the feature creation operation. Once set, the site
+	 * should not be reset.
+	 * 
+	 * @param site the site
+	 * @throws CoreException site for this feature is already set
+	 * @since 2.0 
+	 */
+	void setSite(ISite site) throws CoreException;	
 
 	/**
 	 * Sets the content provider for this feature. This is typically
-	 * performed as part of the feature creation operation. Once set, the provider
-	 * should not be reset.
+	 * performed as part of the feature creation operation. Once set, the 
+	 * provider should not be reset.
 	 * 
 	 * @see IFeatureFactory#createFeature(URL, ISite)
 	 * @param featureContentProvider content provider

@@ -11,7 +11,7 @@ import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.core.*;
 
 /**
- * Convenience implementation of a packaged feature.
+ * Convenience implementation of a feature.
  * <p>
  * This class may be instantiated or subclassed by clients.
  * </p> 
@@ -23,11 +23,13 @@ public class Feature extends FeatureModel implements IFeature {
 
 	/**
 	 * Simple file name of the default feature manifest file
+	 * @since 2.0
 	 */
 	public static final String FEATURE_FILE = "feature"; //$NON-NLS-1$
 
 	/**
 	 * File extension of the default feature manifest file
+	 * @since 2.0
 	 */
 	public static final String FEATURE_XML = FEATURE_FILE + ".xml"; //$NON-NLS-1$
 
@@ -35,15 +37,20 @@ public class Feature extends FeatureModel implements IFeature {
 	private IFeatureContentProvider featureContentProvider; // content provider
 
 	/**
-	 * Constructor
+	 * Feature default constructor
+	 * 
+	 * @since 2.0
 	 */
 	public Feature() {
 	}
 
 	/**
-	* 
-	*/
-
+	 * Compares two features for equality
+	 * 
+	 * @return <code>true</code> if the two features are equel, 
+	 * <code>false</code> otherwise
+	 * @since 2.0
+	 */
 	public boolean equals(Object object) {
 		if (!(object instanceof Feature))
 			return false;
@@ -52,22 +59,31 @@ public class Feature extends FeatureModel implements IFeature {
 
 	}
 
-	/*
+	/**
+	 * Returns the feature identifier.
+	 * 
 	 * @see IFeature#getVersionedIdentifier()
+	 * @since 2.0
 	 */
 	public VersionedIdentifier getVersionedIdentifier() {
 		return new VersionedIdentifier(getFeatureIdentifier(), getFeatureVersion());
 	}
 
-	/*
+	/**
+	 * Returns the site this feature is associated with.
+	 * 
 	 * @see IFeature#getSite()
+	 * @since 2.0
 	 */
 	public ISite getSite() {
 		return site;
 	}
 
-	/*
+	/**
+	 * Returns the feature URL.
+	 * 
 	 * @see IFeature#getURL()
+	 * @since 2.0
 	 */
 	public URL getURL() {
 		IFeatureContentProvider contentProvider = null;
@@ -80,15 +96,23 @@ public class Feature extends FeatureModel implements IFeature {
 		return (contentProvider != null) ? contentProvider.getURL() : null;
 	}
 
-	/*
+	/**
+	 * Returns an information entry referencing the location of the
+	 * feature update site. 
+	 * 
 	 * @see IFeature#getUpdateSiteEntry()
+	 * @since 2.0
 	 */
 	public IURLEntry getUpdateSiteEntry() {
 		return (IURLEntry) getUpdateSiteEntryModel();
 	}
 
-	/*
+	/**
+	 * Return an array of information entries referencing locations of other
+	 * update sites.
+	 * 
 	 * @see IFeature#getDiscoverySiteEntries()
+	 * @since 2.0
 	 */
 	public IURLEntry[] getDiscoverySiteEntries() {
 		URLEntryModel[] result = getDiscoverySiteEntryModels();
@@ -98,109 +122,78 @@ public class Feature extends FeatureModel implements IFeature {
 			return (IURLEntry[]) result;
 	}
 
-	/*
+	/**
+	 * Returns and optional custom install handler entry.
+	 * 
 	 * @see IFeature#getInstallHandlerEntry()
+	 * @since 2.0
 	 */
 	public IInstallHandlerEntry getInstallHandlerEntry() {
 		return (IInstallHandlerEntry) getInstallHandlerModel();
 	}
 
-	/*
+	/**
+	 * Returns the feature description.
+	 * 
 	 * @see IFeature#getDescription()
+	 * @since 2.0
 	 */
 	public IURLEntry getDescription() {
 		return (IURLEntry) getDescriptionModel();
 	}
 
-	/*
+	/**
+	 * Returns the copyright information for the feature.
+	 * 
 	 * @see IFeature#getCopyright()
+	 * @since 2.0
 	 */
 	public IURLEntry getCopyright() {
 		return (IURLEntry) getCopyrightModel();
 	}
 
-	/*
+	/**
+	 * Returns the license information for the feature.
+	 * 
 	 * @see IFeature#getLicense()
+	 * @since 2.0
 	 */
 	public IURLEntry getLicense() {
 		return (IURLEntry) getLicenseModel();
 	}
 
-	/*
+	/**
+	 * Return optional image for the feature.
+	 * 
 	 * @see IFeature#getImage()
+	 * @since 2.0
 	 */
 	public URL getImage() {
 		return getImageURL();
 	}
-	/**
-	 * Sets the site
-	 * @param site The site to set
-	 */
-	public void setSite(ISite site) throws CoreException {
-		if (this.site != null) {
-			String id =
-				UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			String featureURLString =
-				(getURL() != null) ? getURL().toExternalForm() : "";
-			IStatus status =
-				new Status(
-					IStatus.ERROR,
-					id,
-					IStatus.OK,
-					Policy.bind("Feature.SiteAlreadySet", featureURLString),
-					null);
-			//$NON-NLS-1$
-			throw new CoreException(status);
-		}
-		this.site = site;
-	}
 
 	/**
-	* returns the download size
-	* of the feature to be installed on the site.
-	* If the site is <code>null</code> returns the maximum size
-	* 
-	* If one plug-in entry has an unknown size.
-	* then the download size is unknown.
-	* 
-	* @see IFeature#getDownloadSize()
-	* 
-	*/
-	public long getDownloadSize() {
-		try {
-			return getFeatureContentProvider().getDownloadSizeFor(
-				getPluginEntries(),
-				getNonPluginEntries());
-		} catch (CoreException e) {
-			UpdateManagerPlugin.getPlugin().getLog().log(e.getStatus());
-			return ContentEntryModel.UNKNOWN_SIZE;
-		}
-
-	}
-	/**
-	 * returns the install size
-	 * of the feature to be installed on the site.
-	 * If the site is <code>null</code> returns the maximum size
+	 * Return a list of plug-in dependencies for this feature.
 	 * 
-	 * If one plug-in entry has an unknown size.
-	 * then the install size is unknown.
-	 * 
-	 * @see IFeature#getInstallSize()
+	 * @see IFeature#getImports()
+	 * @since 2.0
 	 */
-	public long getInstallSize() {
-		try {
-			return getFeatureContentProvider().getInstallSizeFor(
-				getPluginEntries(),
-				getNonPluginEntries());
-		} catch (CoreException e) {
-			UpdateManagerPlugin.getPlugin().getLog().log(e.getStatus());
-			return ContentEntryModel.UNKNOWN_SIZE;
-		}
-
+	public IImport[] getImports() {
+		ImportModel[] result = getImportModels();
+		if (result.length == 0)
+			return new IImport[0];
+		else
+			return (IImport[]) result;
 	}
-
-	/*
-	 * @see IFeature#install(IFeature,IVerificationListener, IProgressMonitor) throws CoreException
+	
+	/**
+	 * Install the contents of this feature into the specified target feature.
+	 * This method is a reference implementation of the feature installation
+	 * protocol. Other concrete feature implementation that override this
+	 * method need to implement this protocol.
+	 * 
+	 * @see IFeature#install(IFeature, IVerificationListener, IProgressMonitor)
+	 * @since 2.0
 	 */
 	public IFeatureReference install(
 		IFeature targetFeature,
@@ -372,8 +365,11 @@ public class Feature extends FeatureModel implements IFeature {
 		return result;
 	}
 
-	/*
-	 * @see IPluginContainer#getPluginEntries()
+	/**
+	 * Returns an array of plug-in entries referenced by this feature
+	 * 
+	 * @see IFeature#getPluginEntries()
+	 * @since 2.0
 	 */
 	public IPluginEntry[] getPluginEntries() {
 		PluginEntryModel[] result = getPluginEntryModels();
@@ -383,8 +379,21 @@ public class Feature extends FeatureModel implements IFeature {
 			return (IPluginEntry[]) result;
 	}
 
-	/*
-	 * @see IFeature#getDataEntries()
+	/**
+	 * Returns the count of referenced plug-in entries.
+	 * 
+	 * @see IFeature#getPluginEntryCount()
+	 * @since 2.0
+	 */
+	public int getPluginEntryCount() {
+		return getPluginEntryModels().length;
+	}
+
+	/**
+	 * Returns an array of non-plug-in entries referenced by this feature
+	 * 
+	 * @see IFeature#getNonPluginEntries()
+	 * @since 2.0
 	 */
 	public INonPluginEntry[] getNonPluginEntries() {
 		NonPluginEntryModel[] result = getNonPluginEntryModels();
@@ -394,48 +403,67 @@ public class Feature extends FeatureModel implements IFeature {
 			return (INonPluginEntry[]) result;
 	}
 
-	/*
-	 * @see IPluginContainer#getPluginEntryCount()
-	 */
-	public int getPluginEntryCount() {
-		return getPluginEntryModels().length;
-	}
-
-	/*
+	/**
+	 * Returns the count of referenced non-plug-in entries.
+	 * 
 	 * @see IFeature#getNonPluginEntryCount()
+	 * @since 2.0
 	 */
 	public int getNonPluginEntryCount() {
 		return getNonPluginEntryModels().length;
 	}
 
-	/*
-	 * @see IFeature#getImports()
+	/**
+	 * Returns the download size of the feature, if it can be determined.
+	 * 
+	 * @see IFeature#getDownloadSize()
+	 * @since 2.0
 	 */
-	public IImport[] getImports() {
-		ImportModel[] result = getImportModels();
-		if (result.length == 0)
-			return new IImport[0];
-		else
-			return (IImport[]) result;
+	public long getDownloadSize() {
+		try {
+			return getFeatureContentProvider().getDownloadSizeFor(
+				getPluginEntries(),
+				getNonPluginEntries());
+		} catch (CoreException e) {
+			UpdateManagerPlugin.getPlugin().getLog().log(e.getStatus());
+			return ContentEntryModel.UNKNOWN_SIZE;
+		}
+
 	}
 
-	/*
-	* @see IAdaptable#getAdapter(Class)
-	*/
+	/**
+	 * Returns the install size of the feature, if it can be determined.
+	 * 
+	 * @see IFeature#getInstallSize()
+	 * @since 2.0
+	 */
+	public long getInstallSize() {
+		try {
+			return getFeatureContentProvider().getInstallSizeFor(
+				getPluginEntries(),
+				getNonPluginEntries());
+		} catch (CoreException e) {
+			UpdateManagerPlugin.getPlugin().getLog().log(e.getStatus());
+			return ContentEntryModel.UNKNOWN_SIZE;
+		}
+
+	}
+
+	/**
+	 * Returns object adapter.
+	 * 
+	 * @see IAdaptable#getAdapter(java.lang.Class)
+	 * @since 2.0
+	 */
 	public Object getAdapter(Class adapter) {
 		return null;
 	}
 
-	/*
-	 * @see IFeature#setFeatureContentProvider(IFeatureContentProvider)
-	 */
-	public void setFeatureContentProvider(IFeatureContentProvider featureContentProvider) {
-		this.featureContentProvider = featureContentProvider;
-		featureContentProvider.setFeature(this);
-	}
-
-	/*
-	 * @see IFeature#getFeatureContentProvider(IFeatureContentConsumer)
+	/**
+	 * Returns the content provider for this feature.
+	 * 
+	 * @see IFeature#getFeatureContentProvider()
+	 * @since 2.0
 	 */
 	public IFeatureContentProvider getFeatureContentProvider()
 		throws CoreException {
@@ -455,16 +483,58 @@ public class Feature extends FeatureModel implements IFeature {
 		return this.featureContentProvider;
 	}
 
-	/*
-	 * @see IFeature#getContentConsumer()
+	/**
+	 * Returns the content consumer for this feature.
+	 * 
+	 * @see IFeature#getFeatureContentConsumer()
+	 * @since 2.0
 	 */
 	public IFeatureContentConsumer getFeatureContentConsumer()
 		throws CoreException {
 		throw new UnsupportedOperationException();
 	}
+	
+	/**
+	 * Sets the site for this feature.
+	 * 
+	 * @see IFeature#setSite(ISite)
+	 * @since 2.0
+	 */
+	public void setSite(ISite site) throws CoreException {
+		if (this.site != null) {
+			String id =
+				UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+			String featureURLString =
+				(getURL() != null) ? getURL().toExternalForm() : "";
+			IStatus status =
+				new Status(
+					IStatus.ERROR,
+					id,
+					IStatus.OK,
+					Policy.bind("Feature.SiteAlreadySet", featureURLString),
+					null);
+			//$NON-NLS-1$
+			throw new CoreException(status);
+		}
+		this.site = site;
+	}
 
-	/*
-	 * @see Object#toString()
+	/**
+	 * Sets the content provider for this feature.
+	 * 
+	 * @see IFeature#setFeatureContentProvider(IFeatureContentProvider)
+	 * @since 2.0
+	 */
+	public void setFeatureContentProvider(IFeatureContentProvider featureContentProvider) {
+		this.featureContentProvider = featureContentProvider;
+		featureContentProvider.setFeature(this);
+	}
+
+	/**
+	 * Return the string representation of this fetaure
+	 * 
+	 * @return feature as string
+	 * @since 2.0
 	 */
 	public String toString() {
 		String URLString =
@@ -476,10 +546,7 @@ public class Feature extends FeatureModel implements IFeature {
 			getVersionedIdentifier().toString());
 		//$NON-NLS-1$
 	}
-
-	/**
-	 * 
-	 */
+	
 	private void promptForVerification(
 		IVerificationResult verificationResult,
 		IVerificationListener listener)
