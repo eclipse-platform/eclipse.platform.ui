@@ -86,7 +86,7 @@ protected void addChildren(UnifiedTreeNode node) throws CoreException {
 		IResource target = null;
 		boolean next = true;
 		UnifiedTreeNode child = null;
-		IResource[] members = ((IContainer) parent).members();
+		IResource[] members = ((IContainer) parent).members(IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
 		int i = 0;
 		while (true) {
 			if (next) {
