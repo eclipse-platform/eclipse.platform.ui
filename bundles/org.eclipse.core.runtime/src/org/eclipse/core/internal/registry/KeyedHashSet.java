@@ -65,11 +65,9 @@ public class KeyedHashSet {
 				return true;
 			}
 			if (elements[i].compare(element)) {
-				if (replace) {
+				if (replace)
 					elements[i] = element;
-					return true;
-				}
-				return false;
+				return replace;
 			}
 		}
 
@@ -84,11 +82,9 @@ public class KeyedHashSet {
 				return true;
 			}
 			if (elements[i].compare(element)) {
-				if (replace) {
+				if (replace)
 					elements[i] = element;
-					return true;
-				}
-				return false;
+				return replace;
 			}
 		}
 
