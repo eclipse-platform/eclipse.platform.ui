@@ -130,7 +130,7 @@ public class CommitAction extends WorkspaceAction {
 						// no need to go into children because add is deep
 						return false;
 					}
-				}, IResource.DEPTH_INFINITE, true /* include phantoms */);
+				});
 			} catch (CoreException e) {
 				throw CVSException.wrapException(e);
 			}
