@@ -50,7 +50,6 @@
       <property name="plugin-name" value="${plugin-name}"/>
       <property name="classname"
                 value="org.eclipse.ui.tests.UiTestSuite"/>
-       <property name="vmargs" value="-Djava.compiler=none"/>
 
     </ant>
     
