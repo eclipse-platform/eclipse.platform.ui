@@ -104,6 +104,24 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	private static final String PERSPECTIVE_DEFAULT_NAME = "Default";	 //$NON-NLS-1$
 	
 	/**
+	 * Modify listener that simply updates the owning launch configuration dialog.
+	 */
+	private ModifyListener fBasicModifyListener = new ModifyListener() {
+			public void modifyText(ModifyEvent evt) {
+				updateLaunchConfigurationDialog();
+			}
+	};
+	
+	/**
+	 * Selection listener that simply updates the owning launch configuration dialog.
+	 */
+	private SelectionAdapter fBasicSelectionListener = new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent evt) {
+				updateLaunchConfigurationDialog();
+			}
+	};
+	
+	/**
 	 * @see ILaunchConfigurationTab#createControl(Composite)
 	 */
 	public void createControl(Composite parent) {
@@ -153,11 +171,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		setSharedLocationText(new Text(locationComp, SWT.SINGLE | SWT.BORDER));
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		getSharedLocationText().setLayoutData(gd);
-		getSharedLocationText().addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent evt) {
-				updateLaunchConfigurationDialog();
-			}
-		});
+		getSharedLocationText().addModifyListener(fBasicModifyListener);
 		
 		setSharedLocationButton(createPushButton(locationComp, LaunchConfigurationsMessages.getString("CommonTab.&Browse_6"), null));	 //$NON-NLS-1$
 		getSharedLocationButton().addSelectionListener(new SelectionAdapter() {
@@ -192,6 +206,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		gd = new GridData(GridData.GRAB_HORIZONTAL);
 		getRunPerspectiveCombo().setLayoutData(gd);
 		fillWithPerspectives(getRunPerspectiveCombo());
+		getRunPerspectiveCombo().addModifyListener(fBasicModifyListener);
 		
 		setDebugPerspectiveLabel(new Label(perspComp, SWT.NONE));
 		getDebugPerspectiveLabel().setText(LaunchConfigurationsMessages.getString("CommonTab.Debug_mode_9")); //$NON-NLS-1$
@@ -200,6 +215,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		gd = new GridData(GridData.GRAB_HORIZONTAL);
 		getDebugPerspectiveCombo().setLayoutData(gd);		
 		fillWithPerspectives(getDebugPerspectiveCombo());				
+		getDebugPerspectiveCombo().addModifyListener(fBasicModifyListener);
 		
 		createVerticalSpacer(comp, 1);
 		
@@ -215,9 +231,11 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		
 		setRunFavoriteButton(new Button(favComp, SWT.CHECK));
 		getRunFavoriteButton().setText(LaunchConfigurationsMessages.getString("CommonTab.&Run_11")); //$NON-NLS-1$
+		getRunFavoriteButton().addSelectionListener(fBasicSelectionListener);
 						
 		setDebugFavoriteButton(new Button(favComp, SWT.CHECK));
 		getDebugFavoriteButton().setText(LaunchConfigurationsMessages.getString("CommonTab.Debu&g_12")); //$NON-NLS-1$
+		getDebugFavoriteButton().addSelectionListener(fBasicSelectionListener);
 	}
 
 	
