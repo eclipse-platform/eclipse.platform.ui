@@ -25,7 +25,12 @@
       <description>%topicsViewer</description>
    </context>
 
-<!-- Search field, Go button, Advanced button, and all Advanced window options -->
+<!-- All Advanced Search window options -->
+   <context  id="advancedSearch" >
+      <description>%advancedSearch</description>
+   </context>
+
+<!-- Search field, Go button, Advanced button -->
    <context  id="searchPage" >
       <description>%searchPage</description>
    </context>
