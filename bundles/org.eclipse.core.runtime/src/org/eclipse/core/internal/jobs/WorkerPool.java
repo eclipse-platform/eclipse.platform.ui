@@ -126,7 +126,7 @@ class WorkerPool {
 		decrementBusyThreads();
 		//need to end rule in graph before ending job so that 2 threads
 		//do not become the owners of the same rule in the graph
-		if ((job.getRule() != null) && !(job instanceof ImplicitJobs.ThreadJob)) {
+		if ((job.getRule() != null) && !(job instanceof ThreadJob)) {
 			//remove any locks this thread may be owning on that rule
 			manager.getLockManager().removeLockCompletely(Thread.currentThread(), job.getRule());
 		}
@@ -248,7 +248,7 @@ class WorkerPool {
 		if (job != null) {
 			incrementBusyThreads();
 			//if this job has a rule, then we are essentially acquiring a lock
-			if ((job.getRule() != null) && !(job instanceof ImplicitJobs.ThreadJob)) {
+			if ((job.getRule() != null) && !(job instanceof ThreadJob)) {
 				//don't need to reaquire locks because it was not recorded in the graph
 				//that this thread waited to get this rule
 				manager.getLockManager().addLockThread(Thread.currentThread(), job.getRule());

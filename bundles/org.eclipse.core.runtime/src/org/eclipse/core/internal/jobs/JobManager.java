@@ -12,7 +12,6 @@ package org.eclipse.core.internal.jobs;
 
 import java.text.*;
 import java.util.*;
-import org.eclipse.core.internal.jobs.ImplicitJobs.ThreadJob;
 import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
@@ -42,6 +41,11 @@ public class JobManager implements IJobManager {
 	private static final DateFormat DEBUG_FORMAT = new SimpleDateFormat("HH:mm:ss.SSS"); //$NON-NLS-1$
 	static final boolean DEBUG_LOCKS = Boolean.TRUE.toString().equalsIgnoreCase(InternalPlatform.getDefault().getOption(OPTION_LOCKS));
 	static final boolean DEBUG_TIMING = Boolean.TRUE.toString().equalsIgnoreCase(InternalPlatform.getDefault().getOption(OPTION_DEBUG_JOBS_TIMING));
+	/**
+	 * The singleton job manager instance. It must be a singleton because
+	 * all job instances maintain a reference (as an optimization) and have no way 
+	 * of updating it.
+	 */
 	private static JobManager instance;
 	/**
 	 * True if this manager is active, and false otherwise.  A job manager
@@ -716,12 +720,19 @@ public class JobManager implements IJobManager {
 	/*(non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.IJobManager#resume()
 	 */
-	public void resume() {
+	public final void resume() {
 		synchronized (lock) {
 			suspended = false;
 			//poke the job pool
 			pool.jobQueued(null);
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.jobs.IJobManager#resume(org.eclipse.core.runtime.jobs.ISchedulingRule)
+	 */
+	public final void resume(ISchedulingRule rule) {
+		implicitJobs.resume(rule);
 	}
 
 	/**
@@ -969,10 +980,18 @@ public class JobManager implements IJobManager {
 	/* non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.IJobManager#suspend()
 	 */
-	public void suspend() {
+	public final void suspend() {
 		synchronized (lock) {
 			suspended = true;
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.jobs.IJobManager#suspend(org.eclipse.core.runtime.jobs.ISchedulingRule, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public final void suspend(ISchedulingRule rule, IProgressMonitor monitor) {
+		Assert.isNotNull(rule);
+		implicitJobs.suspend(rule, monitorFor(monitor));
 	}
 
 	/* (non-Javadoc)

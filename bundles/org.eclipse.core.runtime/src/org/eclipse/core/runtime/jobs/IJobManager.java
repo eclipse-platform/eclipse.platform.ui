@@ -222,6 +222,20 @@ public interface IJobManager {
 	 * 
 	 * @see #suspend()
 	 */
+	public void resume(ISchedulingRule rule);
+
+	/**
+	 * Resumes execution of jobs after a previous <code>suspend</code>.  All
+	 * jobs that were sleeping or waiting prior to the suspension, or that were
+	 * scheduled while the job manager was suspended, will now be elligible
+	 * for execution.
+	 * <p>
+	 * Calling <code>resume</code> when the job manager is not suspended
+	 * has no effect.
+	 * 
+	 * @see #suspend()
+	 * @deprecated Use #resume(ISchedulingRule) instead.
+	 */
 	public void resume();
 
 	/**
@@ -267,8 +281,45 @@ public interface IJobManager {
 	 * to resume execution soon afterwards.
 	 * 
 	 * @see #resume()
+	 * @deprecated use suspend(ISchedulingRule, IProgressMonitor) instead
 	 */
 	public void suspend();
+
+	/**
+	 * Defers execution of all jobs with scheduling rules that conflict with the
+	 * given rule. The caller will be blocked until all currently executing jobs with
+	 * conflicting rules are completed.  Conflicting jobs that are sleeping or waiting at
+	 * the time this method is called will not be executed until the rule is resumed.
+	 * <p>
+	 * The rule remains suspended until a subsequent call to
+	 * <code>resume(ISchedulingRule)</code> with the identical rule instance.  
+	 * Further calls to <code>suspend</code> with an identical rule prior to calling
+	 * <code>resume</code> are ignored.
+	 * <p>
+	 * All calls to <code>beginRule</code> and <code>endRule</code> on a suspended
+	 * rule will not block the caller. All such calls must be strictly nested between 
+	 * <code>suspend</code> and <code>resume</code>.
+	 * </p>
+	 * <p>
+	 * This method is long-running; progress and cancelation are provided by
+	 * the given progress monitor. In the case of cancelation, the rule will
+	 * not be suspended.
+	 * </p>
+	 * Note: this very powerful function should be used with extreme caution.
+	 * Suspending rules will prevent jobs in the system from executing, which may 
+	 * have adverse effects on components that are relying on execution of jobs. 
+	 * The job manager should never be suspended without intent to resume 
+	 * execution soon afterwards. Deadlock will result if the thread responsible
+	 * for resuming the rule attempts to join a suspended job.
+	 * 
+	 * @param rule The scheduling rule to suspend. Must not be <code>null</code>.
+	 * @param monitor a progress monitor, or <code>null</code> if progress
+	 * reporting is not desired
+	 * @exception OperationCanceledException if the operation is canceled. 
+	 * Cancelation can occur even if no progress monitor is provided.
+	 * @see #resume()
+	 */
+	public void suspend(ISchedulingRule rule, IProgressMonitor monitor);
 
 	/**
 	 * Requests that all jobs in the given job family be suspended.  Jobs currently 
