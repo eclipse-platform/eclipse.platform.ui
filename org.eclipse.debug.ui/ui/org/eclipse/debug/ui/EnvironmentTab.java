@@ -25,7 +25,6 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsMessages;
 import org.eclipse.debug.internal.ui.preferences.MultipleInputDialog;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnWeightData;
@@ -41,6 +40,7 @@ import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -291,7 +291,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	protected void handleEnvAddButtonSelected() {
 		MultipleInputDialog dialog= new MultipleInputDialog(getShell(), LaunchConfigurationsMessages.getString("EnvironmentTab.10"), new String[] {NAME_LABEL, VALUE_LABEL}, null); //$NON-NLS-1$
 		dialog.disallowEmpty(NAME_LABEL);
-		if (dialog.open() != Dialog.OK) {
+		if (dialog.open() != Window.OK) {
 			return;
 		}
 		String name= dialog.getValue(NAME_LABEL).trim();
@@ -338,7 +338,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		String originalName= var.getName();
 		String value= var.getValue();
 		MultipleInputDialog dialog= new MultipleInputDialog(getShell(), LaunchConfigurationsMessages.getString("EnvironmentTab.11"), new String[] {NAME_LABEL, VALUE_LABEL}, new String[] {originalName, value}); //$NON-NLS-1$
-		if (dialog.open() != Dialog.OK) {
+		if (dialog.open() != Window.OK) {
 			return;
 		}
 		String name= dialog.getValue(NAME_LABEL);

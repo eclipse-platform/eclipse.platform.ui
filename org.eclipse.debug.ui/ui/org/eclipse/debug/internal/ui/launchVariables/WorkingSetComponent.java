@@ -18,8 +18,8 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.launchVariables.AbstractVariableComponent;
 import org.eclipse.debug.ui.launchVariables.IVariableComponentContainer;
 import org.eclipse.debug.ui.launchVariables.IVariableConstants;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -81,7 +81,7 @@ public class WorkingSetComponent extends AbstractVariableComponent {
 		WizardDialog dialog = new WizardDialog(DebugUIPlugin.getStandardDisplay().getActiveShell(), wizard);
 		dialog.create();		
 		
-		if (dialog.open() == Dialog.CANCEL) {
+		if (dialog.open() == Window.CANCEL) {
 			return;
 		}
 		currentWorkingSet= wizard.getSelection();

@@ -101,7 +101,6 @@ import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.texteditor.FindReplaceAction;
-import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.IUpdate;
 
@@ -314,8 +313,8 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	protected static final String DETAIL_SELECT_ALL_ACTION = SELECT_ALL_ACTION + ".Detail"; //$NON-NLS-1$
 	protected static final String VARIABLES_SELECT_ALL_ACTION=  SELECT_ALL_ACTION + ".Variables"; //$NON-NLS-1$
 	
-	protected static final String DETAIL_COPY_ACTION = ITextEditorActionConstants.COPY + ".Detail"; //$NON-NLS-1$
-	protected static final String VARIABLES_COPY_ACTION=  ITextEditorActionConstants.COPY + ".Variables"; //$NON-NLS-1$
+	protected static final String DETAIL_COPY_ACTION = IWorkbenchActionConstants.COPY + ".Detail"; //$NON-NLS-1$
+	protected static final String VARIABLES_COPY_ACTION=  IWorkbenchActionConstants.COPY + ".Variables"; //$NON-NLS-1$
 
 	
 	/**
@@ -764,20 +763,20 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		
 		textAction= new TextViewerAction(getDetailViewer(), ITextOperationTarget.CUT);
 		textAction.configureAction(VariablesViewMessages.getString("VariablesView.Cu&t_11"), "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		setAction(ITextEditorActionConstants.CUT, textAction);
+		setAction(IWorkbenchActionConstants.CUT, textAction);
 		
 		textAction= new TextViewerAction(getDetailViewer(), ITextOperationTarget.PASTE);
 		textAction.configureAction(VariablesViewMessages.getString("VariablesView.&Paste_14"), "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		setAction(ITextEditorActionConstants.PASTE, textAction);
+		setAction(IWorkbenchActionConstants.PASTE, textAction);
 		
 		//XXX Still using "old" resource access
 		ResourceBundle bundle= ResourceBundle.getBundle("org.eclipse.debug.internal.ui.views.variables.VariablesViewMessages"); //$NON-NLS-1$
-		setAction(ITextEditorActionConstants.FIND, new FindReplaceAction(bundle, "find_replace_action.", this));	 //$NON-NLS-1$
+		setAction(IWorkbenchActionConstants.FIND, new FindReplaceAction(bundle, "find_replace_action.", this));	 //$NON-NLS-1$
 		
-		fSelectionActions.add(ITextEditorActionConstants.COPY);
-		fSelectionActions.add(ITextEditorActionConstants.CUT);
-		fSelectionActions.add(ITextEditorActionConstants.PASTE);
-		updateAction(ITextEditorActionConstants.FIND);
+		fSelectionActions.add(IWorkbenchActionConstants.COPY);
+		fSelectionActions.add(IWorkbenchActionConstants.CUT);
+		fSelectionActions.add(IWorkbenchActionConstants.PASTE);
+		updateAction(IWorkbenchActionConstants.FIND);
 					
 		// set initial content here, as viewer has to be set
 		setInitialContent();
@@ -842,12 +841,12 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		menu.add(new Separator(IDebugUIConstants.VARIABLE_GROUP));		
 		menu.add(getAction("ContentAssist")); //$NON-NLS-1$
 		menu.add(new Separator());
-		menu.add(getAction(ITextEditorActionConstants.CUT));
-		menu.add(getAction(ITextEditorActionConstants.COPY + ".Detail")); //$NON-NLS-1$
-		menu.add(getAction(ITextEditorActionConstants.PASTE));
+		menu.add(getAction(IWorkbenchActionConstants.CUT));
+		menu.add(getAction(IWorkbenchActionConstants.COPY + ".Detail")); //$NON-NLS-1$
+		menu.add(getAction(IWorkbenchActionConstants.PASTE));
 		menu.add(getAction(DETAIL_SELECT_ALL_ACTION));
 		menu.add(new Separator("FIND")); //$NON-NLS-1$
-		menu.add(getAction(ITextEditorActionConstants.FIND));
+		menu.add(getAction(IWorkbenchActionConstants.FIND));
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
 	
@@ -1011,7 +1010,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 				public void documentAboutToBeChanged(DocumentEvent event) {
 				}
 				public void documentChanged(DocumentEvent event) {
-					updateAction(ITextEditorActionConstants.FIND);
+					updateAction(IWorkbenchActionConstants.FIND);
 				}
 			};
 		}

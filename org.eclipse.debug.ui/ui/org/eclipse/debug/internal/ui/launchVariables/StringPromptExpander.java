@@ -12,6 +12,7 @@
 package org.eclipse.debug.internal.ui.launchVariables;
 
 import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.jface.window.Window;
 
 /**
  * Prompts the user to input a string and expands to the value entered
@@ -29,7 +30,7 @@ public class StringPromptExpander extends PromptExpanderBase {
 	public void prompt() {
 		InputDialog dialog = new InputDialog(null, LaunchVariableMessages.getString("StringPromptExpander.0"), dialogMessage, lastValue == null ? defaultValue : lastValue, null); //$NON-NLS-1$
 		int dialogResult = dialog.open();
-		if (dialogResult == InputDialog.OK) {
+		if (dialogResult == Window.OK) {
 			dialogResultString = dialog.getValue();
 		}
 	}

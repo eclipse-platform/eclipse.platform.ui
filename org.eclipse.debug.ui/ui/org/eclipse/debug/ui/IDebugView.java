@@ -15,7 +15,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.texteditor.ITextEditorActionConstants;
+import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.texteditor.IUpdate;
 
 /**
@@ -43,7 +43,7 @@ public interface IDebugView extends IViewPart {
 	 * 
 	 * @see #setAction(String, IAction)
 	 */
-	public static final String COPY_ACTION = ITextEditorActionConstants.COPY;
+	public static final String COPY_ACTION = IWorkbenchActionConstants.COPY;
 
 	/**
 	 * Action id for a view's cut action. Any view
@@ -53,7 +53,7 @@ public interface IDebugView extends IViewPart {
 	 * 
 	 * @see #setAction(String, IAction)
 	 */
-	public static final String CUT_ACTION = ITextEditorActionConstants.CUT;
+	public static final String CUT_ACTION = IWorkbenchActionConstants.CUT;
 
 	/**
 	 * Action id for a view's double-click action. Any view
@@ -73,7 +73,7 @@ public interface IDebugView extends IViewPart {
 	 * 
 	 * @see #setAction(String, IAction)
 	 */
-	public static final String FIND_ACTION = ITextEditorActionConstants.FIND;
+	public static final String FIND_ACTION = IWorkbenchActionConstants.FIND;
 
 	/**
 	 * Action id for a view's paste action. Any view
@@ -83,7 +83,7 @@ public interface IDebugView extends IViewPart {
 	 * 
 	 * @see #setAction(String, IAction)
 	 */
-	public static final String PASTE_ACTION = ITextEditorActionConstants.PASTE;
+	public static final String PASTE_ACTION = IWorkbenchActionConstants.PASTE;
 
 	/**
 	 * Action id for a view's remove action. Any view
@@ -103,7 +103,7 @@ public interface IDebugView extends IViewPart {
 	 * 
 	 * @see #setAction(String, IAction)
 	 */
-	public static final String SELECT_ALL_ACTION = ITextEditorActionConstants.SELECT_ALL;
+	public static final String SELECT_ALL_ACTION = IWorkbenchActionConstants.SELECT_ALL;
 	
 	/**
 	 * Returns the viewer contained in this debug view.

@@ -20,6 +20,7 @@ import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Shell;
 
@@ -96,7 +97,7 @@ public class TextViewerGotoLineAction extends TextViewerAction {
 			String value= Integer.toString(startLine);
 			Shell activeShell= fTextViewer.getTextWidget().getShell();
 			InputDialog d= new InputDialog(activeShell, title, message, value, new NumberValidator());
-			if (d.open() == InputDialog.OK) {
+			if (d.open() == Window.OK) {
 				try {
 					int line= Integer.parseInt(d.getValue());
 					gotoLine(line - 1);

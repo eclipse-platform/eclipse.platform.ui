@@ -20,7 +20,6 @@ import org.eclipse.debug.core.variables.ILaunchVariableManager;
 import org.eclipse.debug.core.variables.ISimpleLaunchVariable;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.SWTUtil;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.ColumnLayoutData;
@@ -37,6 +36,7 @@ import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
@@ -230,7 +230,7 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 	private void handleAddButtonPressed() {
 		MultipleInputDialog dialog= new MultipleInputDialog(getShell(), DebugPreferencesMessages.getString("SimpleVariablePreferencePage.13"), new String[] {NAME_LABEL, VALUE_LABEL, DESCRIPTION_LABEL}, null); //$NON-NLS-1$
 		dialog.disallowEmpty(NAME_LABEL);
-		if (dialog.open() != Dialog.OK) {
+		if (dialog.open() != Window.OK) {
 			return;
 		}
 		String name= dialog.getValue(NAME_LABEL).trim();
@@ -286,7 +286,7 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 		}
 		String originalName= variable.getName();
 		MultipleInputDialog dialog= new MultipleInputDialog(getShell(), DebugPreferencesMessages.getString("SimpleVariablePreferencePage.14"), new String[] {NAME_LABEL, VALUE_LABEL, DESCRIPTION_LABEL}, new String[] {originalName, value, description}); //$NON-NLS-1$
-		if (dialog.open() == Dialog.OK) {
+		if (dialog.open() == Window.OK) {
 			String name= dialog.getValue(NAME_LABEL);
 			value= dialog.getValue(VALUE_LABEL);
 			description= dialog.getValue(DESCRIPTION_LABEL);
