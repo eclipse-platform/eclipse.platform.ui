@@ -13,6 +13,15 @@
 <% 
 	RequestData data = new RequestData(application, request, response);
 	WebappPreferences prefs = data.getPrefs();
+	String okText="";
+	String cancelText="";
+	if("yesno".equalsIgnoreCase(request.getParameter("buttons"))){
+		okText=ServletResources.getString("yes", request);
+		cancelText=ServletResources.getString("no", request);
+	}else{
+		okText=ServletResources.getString("OK", request);
+		cancelText=ServletResources.getString("Cancel", request);
+	}
 %>
 
 
@@ -103,10 +112,10 @@ function confirmed(){
   			<table cellspacing=10 cellpading=0 border=0 style="background:transparent;">
 				<tr>
 					<td>
-						<button type="submit" id="ok"><%=ServletResources.getString("yes", request)%></button>
+						<button type="submit" id="ok"><%=okText%></button>
 					</td>
 					<td>
-					  	<button type="reset" onclick="window.close()" id="cancel"><%=ServletResources.getString("no", request)%></button>
+					  	<button type="reset" onclick="window.close()" id="cancel"><%=cancelText%></button>
 					</td>
 				</tr>
   			</table>

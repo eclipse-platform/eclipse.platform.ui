@@ -74,6 +74,7 @@ function onloadHandler()
 	// set title on the content toolbar
 	parent.parent.parent.setContentToolbarTitle(tocTitle);
 		
+	var topicSelected=false;
 	// select specified topic, or else the book
 	var topic = '<%=data.getSelectedTopic()%>';
 	if (topic != "about:blank" && topic != tocTopic) {
@@ -91,11 +92,24 @@ function onloadHandler()
 				}
 			}			
 		}
-		selectTopic(topic);
+		topicSelected = selectTopic(topic);
 	} else {
-		selectTopicById(tocId);
+		topicSelected = selectTopicById(tocId);
 	}
-
+	// if topic failed to be selected, but we know it exist in some book,
+	// offer to turn on "show all"
+<%
+	// do not offer to show all just after it was manually turned off
+	if (null==request.getParameter("showAll")) {
+%>
+	if(!topicSelected){
+		if(parent.parent.activityFiltering){
+			askShowAll();
+		}
+	}
+<%
+	}
+%>
 <%
 	} else if ("yes".equals(request.getParameter("synch"))) {
 %>
@@ -105,6 +119,35 @@ function onloadHandler()
 <%
 	}
 %>
+}
+
+var askShowAllDialog;
+var w = 350;
+var h = 200;
+
+function askShowAll(){
+<%
+if (data.isIE()){
+%>
+	var l = top.screenLeft + (top.document.body.clientWidth - w) / 2;
+	var t = top.screenTop + (top.document.body.clientHeight - h) / 2;
+<%
+} else {
+%>
+	var l = top.screenX + (top.innerWidth - w) / 2;
+	var t = top.screenY + (top.innerHeight - h) / 2;
+<%
+}
+%>
+	// move the dialog just a bit higher than the middle
+	if (t-50 > 0) t = t-50;
+	
+	askShowAllDialog = window.open("askShowAll.jsp", "askShowAllDialog", "resizeable=no,height="+h+",width="+w+",left="+l+",top="+t );
+	askShowAllDialog.focus(); 
+}
+
+function yesShowAll(){
+	window.parent.parent.showAll();
 }
 		
 function onunloadHandler() {
