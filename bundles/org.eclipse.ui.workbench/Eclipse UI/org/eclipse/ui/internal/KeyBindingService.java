@@ -22,14 +22,14 @@ import org.eclipse.ui.internal.commands.ActionHandler;
 
 final class KeyBindingService implements IKeyBindingService {
 	
-	private IActionService commandDelegateService;
+	private IActionService actionService;
 	private IContextActivationService contextActivationService;
 	private List scopes = new ArrayList();
 		
-	KeyBindingService(IActionService commandDelegateService, IContextActivationService contextActivationService) {
+	KeyBindingService(IActionService actionService, IContextActivationService contextActivationService) {
 		super();
 		this.contextActivationService = contextActivationService;
-		this.commandDelegateService = commandDelegateService;	
+		this.actionService = actionService;	
 	}
 
 	public String[] getScopes() {
@@ -52,13 +52,13 @@ final class KeyBindingService implements IKeyBindingService {
     	String command = action.getActionDefinitionId();
 
 		if (command != null)
-			commandDelegateService.addAction(command, new ActionHandler(action));		
+			actionService.addAction(command, new ActionHandler(action));		
     }
     
 	public void unregisterAction(IAction action) {   		
     	String command = action.getActionDefinitionId();
 
 		if (command != null)
-			commandDelegateService.removeAction(command);
+			actionService.removeAction(command);
     }	
 }

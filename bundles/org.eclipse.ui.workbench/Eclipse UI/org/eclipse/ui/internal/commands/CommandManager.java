@@ -473,7 +473,13 @@ public final class CommandManager implements ICommandManager {
 	}
 	
 	private void calculateKeyBindings() {
-		String[] activeContextIds = extend((String[]) this.activeContextIds.toArray(new String[this.activeContextIds.size()]));
+		List list = new ArrayList(this.activeContextIds);
+	
+		// TODO high priority. temporary fix for M3 for automatic inheritance of contexts for the specific case of the java editor scope. 
+		if (list.contains("org.eclipse.jdt.ui.javaEditorScope") && !list.contains("org.eclipse.ui.textEditorScope"))
+			list.add("org.eclipse.ui.textEditorScope");
+
+		String[] activeContextIds = extend((String[]) list.toArray(new String[list.size()]));		
 		String[] activeKeyConfigurationIds = extend(getKeyConfigurationIds(activeKeyConfigurationId, keyConfigurationDefinitionsById));
 		String[] activeLocales = extend(getPath(activeLocale, SEPARATOR));
 		String[] activePlatforms = extend(getPath(activePlatform, SEPARATOR));
@@ -486,7 +492,7 @@ public final class CommandManager implements ICommandManager {
 		keyBindingsByCommandId = keyBindingMachine.getKeyBindingsByCommandId();
 		
 		/* TODO remove
-		System.out.println("activeContextIds: " + activeContextIds);
+		System.out.println("activeContextIds: " + Arrays.asList(activeContextIds));
 		System.out.println("activeKeyConfigurationIds: " + Arrays.asList(activeKeyConfigurationIds));
 		System.out.println("activeLocales: " + Arrays.asList(activeLocales));
 		System.out.println("activePlatforms: " + Arrays.asList(activePlatforms));
