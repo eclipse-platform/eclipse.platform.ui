@@ -5,6 +5,8 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
+import java.text.MessageFormat;
+
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILauncher;
 import org.eclipse.debug.core.model.IDebugElement;
@@ -51,7 +53,9 @@ public class RelaunchActionDelegate extends ControlActionDelegate {
 			String launchMode= (mode == null) ? launch.getLaunchMode() : mode;
 			boolean ok= launcher.launch(new Object[]{element}, launchMode);
 			if (!ok) {
-				MessageDialog.openError(DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell(), DebugUIUtils.getResourceString(LAUNCH_ERROR_TITLE), DebugUIUtils.getResourceString(LAUNCH_ERROR_MESSAGE));	
+				String string= DebugUIUtils.getResourceString(LAUNCH_ERROR_MESSAGE);
+				String message= MessageFormat.format(string, new String[] {launcher.getLabel()});
+				MessageDialog.openError(DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell(), DebugUIUtils.getResourceString(LAUNCH_ERROR_TITLE), message);	
 			}				
 		}
 	}
