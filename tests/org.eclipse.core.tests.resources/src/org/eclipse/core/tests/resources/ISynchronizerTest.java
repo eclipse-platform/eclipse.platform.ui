@@ -250,7 +250,7 @@ public void testDeleteResources2() {
 			for (int i = 0; i < projects.length; i++) {
 				IResource[] children = projects[i].members();
 				for (int j = 0; j < children.length; j++) {
-					if (!children[j].getName().equals(".project"))
+					if (!children[j].getName().equals(IProjectDescription.DESCRIPTION_FILE_NAME))
 						children[j].delete(false, getMonitor());
 				}
 			}
@@ -308,7 +308,7 @@ public void testDeleteResources2() {
 			int type = resource.getType();
 			if (type == IResource.ROOT || type == IResource.PROJECT)
 				return true;
-			if (type == IResource.FILE && resource.getParent().getType() == IResource.PROJECT && resource.getName().equals(".project")) 
+			if (type == IResource.FILE && resource.getParent().getType() == IResource.PROJECT && resource.getName().equals(IProjectDescription.DESCRIPTION_FILE_NAME)) 
 				return true;
 			assertNull("5.0." + resource.getFullPath(), synchronizer.getSyncInfo(qname, resource));
 			return true;

@@ -60,7 +60,7 @@ public void test_1GEAB3C() {
 	verifier.reset();
 	final IProject project = getWorkspace().getRoot().getProject("MyAddedAndOpenedProject");
 	verifier.addExpectedChange(project, IResourceDelta.ADDED, IResourceDelta.OPEN);
-	verifier.addExpectedChange(project.getFile(".project"), IResourceDelta.ADDED, 0);
+	verifier.addExpectedChange(project.getFile(IProjectDescription.DESCRIPTION_FILE_NAME), IResourceDelta.ADDED, 0);
 	IWorkspaceRunnable body = new IWorkspaceRunnable() {
 		public void run (IProgressMonitor monitor) throws CoreException {
 			monitor.beginTask("Creating and deleting", 100);

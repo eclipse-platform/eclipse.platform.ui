@@ -106,7 +106,7 @@ public void test1() {
 	//remove the water nature, thus invalidating snow nature
 	SnowBuilder builder= SnowBuilder.getInstance();
 	builder.reset();
-	IFile descFile = project.getFile(".project");
+	IFile descFile = project.getFile(IProjectDescription.DESCRIPTION_FILE_NAME);
 	try {
 		//setting description file will also trigger build
 		descFile.setContents(projectFileWithoutWater(), IResource.FORCE, getMonitor());

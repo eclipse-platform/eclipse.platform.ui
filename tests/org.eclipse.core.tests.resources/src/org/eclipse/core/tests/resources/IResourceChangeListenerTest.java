@@ -136,8 +136,8 @@ protected void setUp() throws Exception {
 	file1 = folder1.getFile("File" + 1);
 	file2 = folder1.getFile("File" + 2);
 	file3 = folder2.getFile("File" + 1);
-	project1MetaData = project1.getFile(".project");
-	project2MetaData = project2.getFile(".project");
+	project1MetaData = project1.getFile(IProjectDescription.DESCRIPTION_FILE_NAME);
+	project2MetaData = project2.getFile(IProjectDescription.DESCRIPTION_FILE_NAME);
 
 	// Create and open a project, folder and file
 	IWorkspaceRunnable body = new IWorkspaceRunnable() {

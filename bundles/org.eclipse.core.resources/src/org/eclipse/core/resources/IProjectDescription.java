@@ -17,6 +17,16 @@ import org.eclipse.core.runtime.IPath;
  * </p>
  */
 public interface IProjectDescription {
+	/**
+	 * Constant name of the project description file (value <code>".project"</code>). 
+	 * The handle of a project's description file is 
+	 * <code>project.getFile(DESCRIPTION_FILE_NAME)</code>.
+	 * The project description file is located in the root of the project's content area.
+	 * 
+	 * @return the filename for the project description
+	 * @since 2.0
+	 */
+	public static final String DESCRIPTION_FILE_NAME = ".project";
 /**
  * Returns the list of build commands to run when building the described project.
  * The commands are listed in the order in which they are to be run.

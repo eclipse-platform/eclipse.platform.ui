@@ -264,7 +264,7 @@ public void setContents(InputStream content, int updateFlags, IProgressMonitor m
  * been modified (added, removed, or changed).
  */
 public void updateProjectDescription() throws CoreException {
-	if (path.segmentCount() == 2 && path.segment(1).equals(FileSystemResourceManager.F_PROJECT))
+	if (path.segmentCount() == 2 && path.segment(1).equals(IProjectDescription.DESCRIPTION_FILE_NAME))
 		((Project)getProject()).updateDescription();
 }
 

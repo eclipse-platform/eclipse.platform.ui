@@ -8,6 +8,7 @@ package org.eclipse.core.tests.resources.usecase;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 /**
@@ -51,7 +52,7 @@ public void testVerifyPreviousSession() {
 
 	try {
 		assertEquals("4.0", 4, project.members().length);
-		assertNotNull("4.1", project.findMember(".project"));
+		assertNotNull("4.1", project.findMember(IProjectDescription.DESCRIPTION_FILE_NAME));
 	} catch (CoreException e) {
 		fail("4.2", e);
 	}

@@ -1294,7 +1294,7 @@ public void testMultiCreation() {
  */
 public void testProjectDescriptionFileModification() throws CoreException {
 	IProject project = getWorkspace().getRoot().getProject("P1");
-	IFile file = project.getFile(".project");
+	IFile file = project.getFile(IProjectDescription.DESCRIPTION_FILE_NAME);
 	project.create(null);
 	project.open(null);
 	long stamp = file.getModificationStamp();

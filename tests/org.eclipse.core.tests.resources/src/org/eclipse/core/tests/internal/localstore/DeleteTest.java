@@ -276,7 +276,7 @@ public void testDeleteClosedProject() throws Throwable {
 	IPath metaAreaLocation = ((Workspace) getWorkspace()).getMetaArea().locationFor(project);
 	assertTrue("3.3", !metaAreaLocation.toFile().exists());
 	assertTrue("3.4", !metaAreaLocation.append(".properties").toFile().exists());
-	assertTrue("3.5", !projectLocation.append(".project").toFile().exists());
+	assertTrue("3.5", !projectLocation.append(IProjectDescription.DESCRIPTION_FILE_NAME).toFile().exists());
 	assertNull("3.6", project.getLocation());
 
 	/* assert resources do not exist anymore */

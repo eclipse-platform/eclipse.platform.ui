@@ -109,7 +109,9 @@ public void testHasNature() {
 		fail("5.99", e);
 	}
 }
-
+public void testDescriptionConstant() {
+	assertEquals("1.0", ".project", IProjectDescription.DESCRIPTION_FILE_NAME);
+}
 /**
  * Tests creation and manipulation of projects names that are reserved on some platforms.
  */

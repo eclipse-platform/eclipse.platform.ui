@@ -15,10 +15,6 @@ import java.util.*;
  * Manages the synchronization between the workspace's view and the file system.  
  */
 public class FileSystemResourceManager implements ICoreConstants, IManager {
-	/**
-	 * The name of the project description file.
-	 */
-	public static final String F_PROJECT = ".project";
 
 	protected Workspace workspace;
 	protected HistoryStore historyStore;
@@ -111,7 +107,7 @@ public IFile fileFor(IPath location) {
  */
 public IPath getDescriptionLocationFor(IProject target) {
 	//can't use IResource#getLocation() because it returns null if it doesn't exist
-	return ((Project)target).getLocalManager().locationFor(target).append(F_PROJECT);
+	return ((Project)target).getLocalManager().locationFor(target).append(IProjectDescription.DESCRIPTION_FILE_NAME);
 }
 public HistoryStore getHistoryStore() {
 	return historyStore;
@@ -154,7 +150,7 @@ public void internalWrite(IProject target, int updateFlags) throws CoreException
 	ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
 
 	//write the contents to the IFile that represents the description
-	IFile descriptionFile = target.getFile(F_PROJECT);
+	IFile descriptionFile = target.getFile(IProjectDescription.DESCRIPTION_FILE_NAME);
 	if (!descriptionFile.exists())
 		workspace.createResource(descriptionFile, false);
 	descriptionFile.setContents(in, updateFlags, null);
@@ -176,7 +172,7 @@ public boolean isDescriptionSynchronized(IProject target) {
 	//sync info is stored on the description file, and on project info.
 	//when the file is changed by someone else, the project info modification
 	//stamp will be out of date
-	IFile descriptionFile = target.getFile(F_PROJECT);
+	IFile descriptionFile = target.getFile(IProjectDescription.DESCRIPTION_FILE_NAME);
 	ResourceInfo projectInfo = ((Resource)target).getResourceInfo(false, false);
 	if (projectInfo == null)
 		return false;
@@ -222,6 +218,7 @@ public void move(IResource target, IPath destination, boolean keepHistory, IProg
 		IPath destinationLocation = locationFor(resource);
 		if (keepHistory) {
 			if (target.getType() == IResource.FOLDER) {
+				// don't keep history for team private members.
 				IResource[] children = ((IFolder) target).members();
 				destinationLocation.toFile().mkdirs();
 				int work = Policy.totalWork / Math.max(children.length, 1);
@@ -287,7 +284,7 @@ public ProjectDescription read(IProject target, boolean creation) throws CoreExc
 	if (isDefaultLocation) {
 		projectLocation = getProjectDefaultLocation(target);
 	}
-	IPath descriptionPath = projectLocation.append(F_PROJECT);
+	IPath descriptionPath = projectLocation.append(IProjectDescription.DESCRIPTION_FILE_NAME);
 	ProjectDescription description = null;
 
 	if (!descriptionPath.toFile().exists()) {
@@ -314,7 +311,7 @@ public ProjectDescription read(IProject target, boolean creation) throws CoreExc
 	if (description != null && !isDefaultLocation)
 		description.setLocation(projectLocation);
 	long lastModified = CoreFileSystemLibrary.getLastModified(descriptionPath.toOSString());
-	IFile descriptionFile = target.getFile(F_PROJECT);
+	IFile descriptionFile = target.getFile(IProjectDescription.DESCRIPTION_FILE_NAME);
 	//don't get a mutable copy because we might be in restore which isn't an operation
 	//it doesn't matter anyway because local sync info is not included in deltas
 	ResourceInfo info = ((Resource)descriptionFile).getResourceInfo(false, false);
@@ -545,7 +542,7 @@ public void writeSilently(IProject target) throws CoreException {
 	getWorkspace().getMetaArea().writeLocation(target);
 	
 	//write the file that represents the project description
-	java.io.File file = location.append(F_PROJECT).toFile();
+	java.io.File file = location.append(IProjectDescription.DESCRIPTION_FILE_NAME).toFile();
 	FileOutputStream fout = null;
 	try {
 		fout = new FileOutputStream(file);

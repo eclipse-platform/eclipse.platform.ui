@@ -890,7 +890,7 @@ private boolean internalDeleteProject(IProject project, int updateFlags, IProgre
 		IResource child = members[i];
 		switch (child.getType()) {
 			case IResource.FILE:
-				if (child.getName().equals(".project")) {
+				if (child.getName().equals(IProjectDescription.DESCRIPTION_FILE_NAME)) {
 					// ignore the .project file for now and delete it last
 				} else {
 					deletedChildren &= internalDeleteFile((IFile) child, updateFlags, Policy.subMonitorFor(monitor, Policy.totalWork/members.length));
@@ -905,7 +905,7 @@ private boolean internalDeleteProject(IProject project, int updateFlags, IProgre
 	// just return as the problem should have been logged by the recursive
 	// call to the child.
 	if (deletedChildren) {
-		IResource file = project.findMember(".project");
+		IResource file = project.findMember(IProjectDescription.DESCRIPTION_FILE_NAME);
 		if (file == null) {
 			// For some reason the .project file doesn't exist, so continue with the project
 			// deletion and pretend we deleted it already.

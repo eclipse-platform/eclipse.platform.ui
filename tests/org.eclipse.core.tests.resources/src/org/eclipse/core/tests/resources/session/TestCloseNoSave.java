@@ -39,7 +39,7 @@ public void test2() throws CoreException {
 	assertTrue("1.2", project.exists());
 	members = project.members();
 	assertEquals("1.3", 1, members.length);
-	assertEquals("1.3a", ".project", members[0].getName());
+	assertEquals("1.3a", IProjectDescription.DESCRIPTION_FILE_NAME, members[0].getName());
 	IFolder folder = project.getFolder(FOLDER);
 	IFile file = folder.getFile(FILE);	
 	assertTrue("1.4", !folder.exists());

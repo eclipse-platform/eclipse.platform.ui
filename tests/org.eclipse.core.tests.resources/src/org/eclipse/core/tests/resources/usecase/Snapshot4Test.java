@@ -130,7 +130,7 @@ public void testVerifyPreviousSession() {
 
 	try {
 		assertEquals("4.0", 4, project.members().length);
-		assertNotNull("4.1", project.findMember(".project"));
+		assertNotNull("4.1", project.findMember(IProjectDescription.DESCRIPTION_FILE_NAME));
 	} catch (CoreException e) {
 		fail("4.2", e);
 	}
