@@ -82,6 +82,8 @@ public class WebBookmarksDialog extends Dialog {
 		
 	}
 	
+	private Button addButton;
+	private Button editButton;
 	private Button removeButton;
 	private ModelListener modelListener;
 	private TableViewer viewer;
@@ -129,10 +131,11 @@ public class WebBookmarksDialog extends Dialog {
 			public void selectionChanged(SelectionChangedEvent e) {
 				IStructuredSelection ssel =
 					(IStructuredSelection) e.getSelection();
-				if (ssel.size() == 0)
-					return;
+				if (ssel.size() == 0) 
+					return;				
 				SiteBookmark bookmark = (SiteBookmark)ssel.getFirstElement();
 				Object parent = bookmark.getParent(bookmark);
+				editButton.setEnabled(parent == null || !parent.equals(discoveryFolder));
 				removeButton.setEnabled(parent == null || !parent.equals(discoveryFolder));
 			}
 		});
@@ -147,10 +150,10 @@ public class WebBookmarksDialog extends Dialog {
 		container.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 		
 
-		Button button = new Button(container, SWT.PUSH);
-		button.setText("Add...");
-		button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		button.addSelectionListener(new SelectionAdapter() {
+		addButton = new Button(container, SWT.PUSH);
+		addButton.setText("Add...");
+		addButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		addButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				NewWebSiteDialog dialog = new NewWebSiteDialog(getShell());
 				dialog.create();
@@ -159,10 +162,10 @@ public class WebBookmarksDialog extends Dialog {
 			}
 		});
 				
-		button = new Button(container, SWT.PUSH);
-		button.setText("Edit...");
-		button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		button.addSelectionListener(new SelectionAdapter() {
+		editButton = new Button(container, SWT.PUSH);
+		editButton.setText("Edit...");
+		editButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		editButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				IStructuredSelection ssel =
 					(IStructuredSelection) viewer.getSelection();
@@ -173,6 +176,7 @@ public class WebBookmarksDialog extends Dialog {
 				dialog.open();
 			}
 		});
+		editButton.setEnabled(false);
 		
 		removeButton = new Button(container, SWT.PUSH);
 		removeButton.setText("Remove");
@@ -185,6 +189,7 @@ public class WebBookmarksDialog extends Dialog {
 				UpdateUI.getDefault().getUpdateModel().removeBookmark(bookmark);
 			}
 		});
+		removeButton.setEnabled(false);
 		
 		
 	}

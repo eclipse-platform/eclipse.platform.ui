@@ -80,7 +80,8 @@ public class UpdateWebSitesAction implements IWorkbenchWindowPulldownDelegate2, 
 	}
 	
 	protected void fillMenu(Menu menu) {
-		addActionToMenu(menu, new WebBookmarksAction());
+		addActionToMenu(menu, new AddBookmarksAction());
+		addActionToMenu(menu, new EditBookmarksAction());
 		DiscoveryFolder folder = new DiscoveryFolder();
 		Object[] children = folder.getChildren(folder);
 		for (int i = 0; i < children.length; i++) {
@@ -96,8 +97,8 @@ public class UpdateWebSitesAction implements IWorkbenchWindowPulldownDelegate2, 
 				addActionToMenu(menu, new GoToWebsiteAction(bookmarks[i]));
 		}
 		
-		if (menu.getItemCount() > 1) 
-			new Separator().fill(menu, 1);
+		if (menu.getItemCount() > 2) 
+			new Separator().fill(menu, 2);
 			
 	}
 	

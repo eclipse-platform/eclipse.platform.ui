@@ -11,11 +11,10 @@ import org.eclipse.jface.action.Action;
 /**
  * @author Wassim Melhem
  */
-public class WebBookmarksAction extends Action {
+public class EditBookmarksAction extends Action {
 
-	public WebBookmarksAction() {
-		super();
-		setText("Bookmarks...");
+	public EditBookmarksAction() {
+		setText("Edit Bookmarks...");
 	}
 	
 	public void run() {
