@@ -64,14 +64,7 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 	ISelectionChangedListener fSelectionChangedListener;
 	MouseListener fMouseListener;
 	SelectionListener fSelectionListener;
-	
-	private static final String PREFIX = "AddMemoryRenderingDialog."; //$NON-NLS-1$
-	private static final String MEMORY_MONITOR = PREFIX + "Memory_monitor"; //$NON-NLS-1$
-	private static final String ADD_NEW = PREFIX + "Add_new"; //$NON-NLS-1$
-	private static final String MEMORY_RENDERING = PREFIX + "Memory_rendering"; //$NON-NLS-1$
-	private static final String ADD_MEMORY_RENDERING = PREFIX + "Add_memory_rendering"; //$NON-NLS-1$
-	private static final String UNKNOWN = PREFIX + "Unknown"; //$NON-NLS-1$
-	
+
 	class MemoryRenderingLabelProvider implements ILabelProvider
 	{
 		
@@ -92,18 +85,13 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 				String label = ((IMemoryRenderingInfo)element).getName();
 				return label;
 			}
-			else
-			{
-				return element.toString();
-			}
+            return element.toString();
 		}
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse.jface.viewers.ILabelProviderListener)
 		 */
 		public void addListener(ILabelProviderListener listener) {
-			// TODO Auto-generated method stub
-
 		}
 
 		/* (non-Javadoc)
@@ -147,16 +135,12 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 		 */
 		public void dispose() {
-			// TODO Auto-generated method stub
-			
 		}
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 		 */
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-			// TODO Auto-generated method stub
-			
 		}
 		
 	}
@@ -194,10 +178,7 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 			Object[] renderings = ((IStructuredSelection)results[0]).toArray();
 			return renderings;
 		}
-		else
-		{
-			return new Object[0];
-		}
+        return new Object[0];
 	}
 
 	/* (non-Javadoc)
@@ -359,7 +340,7 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 	public AddMemoryRenderingDialog(Shell parent) {
 		super(parent);
 		super.setTitle(DebugUIMessages.getString("AddMemoryRenderingDialog.Add_memory_rendering")); //$NON-NLS-1$
-		WorkbenchHelp.setHelp(parent, DebugUIPlugin.getUniqueIdentifier() + ".AddMemoryRenderingDialog_context");
+		WorkbenchHelp.setHelp(parent, DebugUIPlugin.getUniqueIdentifier() + ".AddMemoryRenderingDialog_context"); //$NON-NLS-1$
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
 	
