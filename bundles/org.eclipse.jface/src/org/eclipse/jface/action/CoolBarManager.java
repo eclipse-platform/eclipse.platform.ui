@@ -32,7 +32,6 @@ import org.eclipse.swt.widgets.Menu;
  * This class may be instantiated; it may also be subclassed.
  * </p>
  * 
- * @see #ICoolBarManager
  * @since 3.0
  */
 public class CoolBarManager extends ContributionManager implements
@@ -111,11 +110,14 @@ public class CoolBarManager extends ContributionManager implements
     }
 
     /**
-     * Colapses consecutive separators and removes a separator from the
+     * Collapses consecutive separators and removes a separator from the
      * beginning and end of the list.
      * 
      * @param contributionList
-     *            the list of contributions
+     *            the list of contributions; must not be <code>null</code>.
+     * @return The contribution list provided with extraneous separators
+     *         removed; this value is never <code>null</code>, but may be
+     *         empty.
      */
     private ArrayList adjustContributionList(ArrayList contributionList) {
         IContributionItem item;
@@ -481,6 +483,9 @@ public class CoolBarManager extends ContributionManager implements
      * 
      * @param iterator
      *            the list iterator of contribution items
+     * @param ignoreCurrentItem
+     *            Whether the current item in the iterator should be considered
+     *            (as well as subsequent items).
      */
     private void nextRow(ListIterator iterator, boolean ignoreCurrentItem) {
 
@@ -961,6 +966,9 @@ public class CoolBarManager extends ContributionManager implements
         }
     }
 
+    /**
+     * Updates the indices at which the cool bar should wrap.
+     */
     private void updateWrapIndices() {
         final IContributionItem[] items = getItems();
         final int numRows = getNumRows(items) - 1;
