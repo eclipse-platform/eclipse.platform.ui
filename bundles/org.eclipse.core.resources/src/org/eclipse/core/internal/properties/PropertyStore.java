@@ -84,6 +84,8 @@ protected void basicUpdate(StoreKey key, String value) throws CoreException {
 	try {
 		cursor.find(keyBytes);
 		if (cursor.keyEquals(keyBytes)) {
+			ObjectID oldID = cursor.getValueAsObjectID();
+			store.removeObject(oldID);
 			ObjectID newValueId = store.createObject(value);
 			cursor.updateValue(newValueId);
 		}
