@@ -412,42 +412,101 @@ public final class IDE {
     public static IEditorDescriptor getEditorDescriptor(IFile file)
             throws PartInitException {
 
-        if (file == null) {
-            throw new IllegalArgumentException();
-        }
-        IEditorRegistry editorReg = PlatformUI.getWorkbench()
-                .getEditorRegistry();
+		if (file == null) {
+			throw new IllegalArgumentException();
+		}
 
-        // check for a default editor
-        IEditorDescriptor editorDesc = getDefaultEditor(file);
+		return getEditorDescriptor(file.getName(), PlatformUI.getWorkbench()
+				.getEditorRegistry(), getDefaultEditor(file));
+	}
 
-        // next check the OS for in-place editor (OLE on Win32)
-        if (editorDesc == null
-                && editorReg.isSystemInPlaceEditorAvailable(file.getName())) {
-            editorDesc = editorReg
-                    .findEditor(IEditorRegistry.SYSTEM_INPLACE_EDITOR_ID);
-        }
+	/**
+	 * Returns an editor descriptor appropriate for opening a file resource with
+	 * the given name.
+	 * <p>
+	 * The editor descriptor is determined using a multistep process.
+	 * </p>
+	 * <ol>
+	 * <li>The file is consulted for a persistent property named
+	 * <code>IDE.EDITOR_KEY</code> containing the preferred editor id to be
+	 * used.</li>
+	 * <li>The workbench editor registry is consulted to determine if an editor
+	 * extension has been registered for the file type. If so, an instance of
+	 * the editor extension is opened on the file. See
+	 * <code>IEditorRegistry.getDefaultEditor(String)</code>.</li>
+	 * <li>The operating system is consulted to determine if an in-place
+	 * component editor is available (e.g. OLE editor on Win32 platforms).</li>
+	 * <li>The operating system is consulted to determine if an external editor
+	 * is available.</li>
+	 * </ol>
+	 * </p>
+	 * 
+	 * @param name
+	 *            the file name
+	 * @return an editor descriptor, appropriate for opening the file
+	 * @throws PartInitException
+	 *             if no editor can be found
+	 */
+	public static IEditorDescriptor getEditorDescriptor(String name)
+			throws PartInitException {
 
-        // next check with the OS for an external editor
-        if (editorDesc == null
-                && editorReg.isSystemExternalEditorAvailable(file.getName())) {
-            editorDesc = editorReg
-                    .findEditor(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
-        }
+		if (name == null) {
+			throw new IllegalArgumentException();
+		}
 
-        // next lookup the default text editor
-        if (editorDesc == null) {
-            editorDesc = editorReg
-                    .findEditor(IDEWorkbenchPlugin.DEFAULT_TEXT_EDITOR_ID);
-        }
+		IEditorRegistry editorReg = PlatformUI.getWorkbench()
+				.getEditorRegistry();
 
-        // if no valid editor found, bail out
-        if (editorDesc == null) {
-            throw new PartInitException(IDEWorkbenchMessages
-                    .getString("IDE.noFileEditorFound")); //$NON-NLS-1$
-        }
-        return editorDesc;
-    }
+		return getEditorDescriptor(name, editorReg, editorReg
+				.getDefaultEditor(name));
+	}
+
+	/**
+	 * Get the editor descriptor for a given name using the editorDescriptor
+	 * passed in as a default as a starting point.
+	 * 
+	 * @param name
+	 *            The name of the element to open.
+	 * @param editorReg
+	 *            The editor registry to do the lookups from.
+	 * @param defaultDescriptor
+	 *            IEditorDescriptor or <code>null</code>
+	 * @return IEditorDescriptor
+	 * @throws PartInitException
+	 *             if no valid editor can be found
+	 */
+	private static IEditorDescriptor getEditorDescriptor(String name,
+			IEditorRegistry editorReg, IEditorDescriptor defaultDescriptor)
+			throws PartInitException {
+
+		if (defaultDescriptor != null)
+			return defaultDescriptor;
+
+		IEditorDescriptor editorDesc = defaultDescriptor;
+
+		// next check the OS for in-place editor (OLE on Win32)
+		if (editorReg.isSystemInPlaceEditorAvailable(name))
+			editorDesc = editorReg
+					.findEditor(IEditorRegistry.SYSTEM_INPLACE_EDITOR_ID);
+
+		// next check with the OS for an external editor
+		if (editorDesc == null
+				&& editorReg.isSystemExternalEditorAvailable(name))
+			editorDesc = editorReg
+					.findEditor(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
+
+		// next lookup the default text editor
+		if (editorDesc == null)
+			editorDesc = editorReg
+					.findEditor(IDEWorkbenchPlugin.DEFAULT_TEXT_EDITOR_ID);
+
+		// if no valid editor found, bail out
+		if (editorDesc == null)
+			throw new PartInitException(IDEWorkbenchMessages
+					.getString("IDE.noFileEditorFound")); //$NON-NLS-1$
+
+		return editorDesc;
+	}
 
     /**
      * Opens an editor on the file resource of the given marker.
@@ -694,9 +753,9 @@ public final class IDE {
         }
         if (resources == null) {
             return emptyUnmodifiableList;
-        } else {
-            return resources;
         }
+        return resources;
+        
     }
 
 }
