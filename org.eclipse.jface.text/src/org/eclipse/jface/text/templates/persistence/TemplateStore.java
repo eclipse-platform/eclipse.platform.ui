@@ -203,7 +203,7 @@ public final class TemplateStore {
 	private void loadCustomTemplates() {
 		try {
 			String pref= fPreferenceStore.getString(fKey);
-			if (pref != null) {
+			if (pref != null && pref.trim().length() > 0) {
 				Reader input= new StringReader(pref);
 				TemplateReaderWriter reader= new TemplateReaderWriter();
 				TemplatePersistenceData[] datas= reader.read(input);
