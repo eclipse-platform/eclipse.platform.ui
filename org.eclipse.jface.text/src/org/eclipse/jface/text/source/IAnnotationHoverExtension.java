@@ -58,7 +58,7 @@ public interface IAnnotationHoverExtension {
 	 * the same hover information is valid.
 	 * 
 	 * @param viewer the viewer which the hover is queried for
-	 * @param line the line which a hover is displayed for
+	 * @param lineNumber the line number of the line for which a hover is displayed for
 	 * @return the computed line range
 	 */
 	ILineRange getHoverLineRange(ISourceViewer viewer, int lineNumber);

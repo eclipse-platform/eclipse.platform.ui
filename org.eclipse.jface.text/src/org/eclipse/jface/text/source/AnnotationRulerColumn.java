@@ -282,7 +282,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 	/**
 	 * Double buffer drawing.
 	 * 
-	 * @param dest the gc to draw into
+	 * @param dest the GC to draw into
 	 */
 	private void doubleBufferPaint(GC dest) {
 		
@@ -343,7 +343,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 	/**
 	 * Draws the vertical ruler w/o drawing the Canvas background.
 	 * 
-	 * @param gc the gc to draw into
+	 * @param gc the GC to draw into
 	 */
 	protected void doPaint(GC gc) {
 	
@@ -392,7 +392,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 				
 		// draw Annotations
 		Rectangle r= new Rectangle(0, 0, 0, 0);
-		int maxLayer= 1;	// loop at least once thru layers.
+		int maxLayer= 1;	// loop at least once through layers.
 		
 		for (int layer= 0; layer < maxLayer; layer++) {
 			Iterator iter= fModel.getAnnotationIterator();
@@ -459,7 +459,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 	 * Draws the vertical ruler w/o drawing the Canvas background. Implementation based
 	 * on <code>ITextViewerExtension5</code>. Will replace <code>doPaint(GC)</code>.
 	 * 
-	 * @param gc the gc to draw into
+	 * @param gc the GC to draw into
 	 */
 	protected void doPaint1(GC gc) {
 
@@ -479,7 +479,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 
 		// draw Annotations
 		Rectangle r= new Rectangle(0, 0, 0, 0);
-		int maxLayer= 1;	// loop at least once thru layers.
+		int maxLayer= 1;	// loop at least once through layers.
 
 		for (int layer= 0; layer < maxLayer; layer++) {
 			Iterator iter= fModel.getAnnotationIterator();
@@ -637,7 +637,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 	 * Returns whether the given annotation should be skipped by the drawing
 	 * routine.
 	 * 
-	 * @param annotationType the annotation type
+	 * @param annotation the annotation
 	 * @return <code>true</code> if annotation of the given type should be
 	 *         skipped, <code>false</code> otherwise
 	 * @since 3.0
@@ -657,7 +657,6 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 	 * Computes whether the annotation of the given type should be skipped or
 	 * not.
 	 * 
-	 * @param annotation the annotation
 	 * @param annotationType the annotation type
 	 * @return <code>true</code> if annotation should be skipped, <code>false</code>
 	 *         otherwise

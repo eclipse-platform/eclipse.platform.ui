@@ -216,7 +216,7 @@ public class AnnotationModelEvent {
 	/**
 	 * Marks this event as world change according to the given flag.
 	 * 
-	 * @param worldChange <code>true</code> if this event is a world change, <code>false</code> otherwise
+	 * @param isWorldChange <code>true</code> if this event is a world change, <code>false</code> otherwise
 	 * @since 3.0
 	 */
 	void markWorldChange(boolean isWorldChange) {

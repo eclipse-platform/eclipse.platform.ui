@@ -62,10 +62,10 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	public interface IDrawingStrategy {
 		/**
 		 * Draws a decoration of the given length start at the given offset in the
-		 * given color onto the specified gc.
+		 * given color onto the specified GC.
 		 * 
 		 * @param annotation the annotation to be drawn
-		 * @param gc the grahical context
+		 * @param gc the graphical context
 		 * @param textWidget the text widget to draw on
 		 * @param offset the offset of the line
 		 * @param length the length of the line
@@ -75,13 +75,15 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	}
 	
 	/**
-	 * Squiggly drawing strategy.
+	 * Squiggles drawing strategy.
 	 * 
 	 * @since 3.0
 	 */
 	public static class SquigglesStrategy implements IDrawingStrategy {
-		/**
-		 * {@inheritdoc}
+
+		/*
+		 * @see org.eclipse.jface.text.source.AnnotationPainter.IDrawingStrategy#draw(org.eclipse.jface.text.source.Annotation, org.eclipse.swt.graphics.GC, org.eclipse.swt.custom.StyledText, int, int, org.eclipse.swt.graphics.Color)
+		 * @since 3.0
 		 */
 		public void draw(Annotation annotation, GC gc, StyledText textWidget, int offset, int length, Color color) {
 			if (gc != null) {
@@ -155,8 +157,10 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 * @since 3.0
 	 */
 	public static final class NullStrategy implements IDrawingStrategy {
-		/**
-		 * {@inheritdoc}
+
+		/*
+		 * @see org.eclipse.jface.text.source.AnnotationPainter.IDrawingStrategy#draw(org.eclipse.jface.text.source.Annotation, org.eclipse.swt.graphics.GC, org.eclipse.swt.custom.StyledText, int, int, org.eclipse.swt.graphics.Color)
+		 * @since 3.0
 		 */
 		public void draw(Annotation annotation, GC gc, StyledText textWidget, int offset, int length, Color color) {
 			// do nothing
@@ -300,7 +304,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	}
 	
 	/** 
-	 * Returns whether this painter has to draw any squiggle.
+	 * Returns whether this painter has to draw any squiggles.
 	 * 
 	 * @return <code>true</code> if there are squiggles to be drawn, <code>false</code> otherwise
 	 */
@@ -362,6 +366,8 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	/**
 	 * Updates the set of decorations based on the current state of
 	 * the painter's annotation model.
+	 * 
+	 * @param event the annotation model event
 	 */
 	private synchronized void catchupWithModel(AnnotationModelEvent event) {
 	    
@@ -585,9 +591,9 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	}
 	
 	/**
-	 * Returns the drawing type for the given annotation type.
+	 * Returns the drawing type for the given annotation.
 	 * 
-	 * @param annotationType the annotation type
+	 * @param annotation the annotation
 	 * @return the annotation painter
 	 * @since 3.0
 	 */
@@ -641,6 +647,8 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 * or covered by the <code>configured</code> set.
 	 * 
 	 * @param annotationType the annotation type
+	 * @param allowed set with allowed annotation types
+	 * @param configured set with configured annotation types
 	 * @return <code>true</code> if annotation is contained, <code>false</code>
 	 *         otherwise
 	 * @since 3.0
@@ -661,8 +669,8 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 * set. This is the case if either the type of the annotation or any of its
 	 * super types is contained in the <code>configured</code> set.
 	 * 
-	 * @param annotation the annotation
 	 * @param annotationType the annotation type
+	 * @param configured set with configured annotation types
 	 * @return <code>true</code> if annotation is covered, <code>false</code>
 	 *         otherwise
 	 * @since 3.0
@@ -708,6 +716,8 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	
 	/**
 	 * Recomputes the squiggles to be drawn and redraws them.
+	 * 
+	 * @param event the annotation model event
 	 */
 	private void updatePainting(AnnotationModelEvent event) {
 		disablePainting(true);
@@ -796,7 +806,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	public synchronized void modelChanged(final AnnotationModelEvent event) {
 		if (fTextWidget != null && !fTextWidget.isDisposed()) {
 			if (fIsSettingModel) {
-				// inside the ui thread -> no need for posting
+				// inside the UI thread -> no need for posting
 				updatePainting(event);
 			} else {
 				Display d= fTextWidget.getDisplay();
@@ -918,7 +928,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	/**
 	 * Removes the given annotation type from the list of annotation types whose
 	 * annotations are painted by this painter. If the annotation type is not
-	 * in this list, this method is wihtout effect.
+	 * in this list, this method is without effect.
 	 * 
 	 * @param annotationType the annotation type
 	 */
@@ -930,7 +940,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	/**
 	 * Removes the given annotation type from the list of annotation types whose
 	 * annotations are highlighted by this painter. If the annotation type is not
-	 * in this list, this method is wihtout effect.
+	 * in this list, this method is without effect.
 	 * 
 	 * @param annotationType the annotation type
 	 * @since 3.0
@@ -1034,7 +1044,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	}
 	
 	/**
-	 * Handles the request to draw the annotations using the given gaphical context.
+	 * Handles the request to draw the annotations using the given graphical context.
 	 * 
 	 * @param gc the graphical context
 	 */
@@ -1150,6 +1160,9 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	
 	/**
      * Retrieves the annotation model from the given source viewer.
+     * 
+     * @param sourceViewer the source viewer
+     * @return the source viewer's annotation model or <code>null</code> if none can be found
 	 * @since 3.0
 	 */
 	protected IAnnotationModel findAnnotationModel(ISourceViewer sourceViewer) {

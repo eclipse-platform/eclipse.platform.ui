@@ -129,10 +129,10 @@ public class OverviewRuler implements IOverviewRuler {
 					continue;
 					
 				fNext= next;
-				Object annotationType= fAnnotationAccess.getType(next);
+				Object annotationType= next.getType();
 				if (fType == null || isSubtype(annotationType)) {
 					if (fTemporary == IGNORE) return;
-					boolean temporary= fAnnotationAccess.isTemporary(fNext);
+					boolean temporary= !next.isPersistent();
 					if (fTemporary == TEMPORARY && temporary) return;
 					if (fTemporary == PERSISTENT && !temporary) return;
 				}
@@ -409,7 +409,7 @@ public class OverviewRuler implements IOverviewRuler {
 	/**
 	 * Double buffer drawing.
 	 * 
-	 * @param dest the gc to draw into
+	 * @param dest the GC to draw into
 	 */
 	private void doubleBufferPaint(GC dest) {
 		
@@ -448,7 +448,7 @@ public class OverviewRuler implements IOverviewRuler {
 	/** 
 	 * Draws this overview ruler.
 	 * 
-	 * @param gc the gc to draw into
+	 * @param gc the GC to draw into
 	 */
 	private void doPaint(GC gc) {
 		
@@ -538,7 +538,7 @@ public class OverviewRuler implements IOverviewRuler {
 	 * Draws this overview ruler. Uses <code>ITextViewerExtension5</code> for
 	 * its implementation. Will replace <code>doPaint(GC)</code>.
 	 * 
-	 * @param gc the gc to draw into
+	 * @param gc the GC to draw into
 	 */
 	private void doPaint1(GC gc) {
 
@@ -732,7 +732,7 @@ public class OverviewRuler implements IOverviewRuler {
 					if (a.isMarkedDeleted())
 						continue;
 					
-					if (skip(fAnnotationAccess.getType(a)))
+					if (skip(a.getType()))
 						continue;
 					
 					Position p= fModel.getPosition(a);
@@ -764,6 +764,7 @@ public class OverviewRuler implements IOverviewRuler {
 	 * Returns the line which  corresponds best to one of
 	 * the underlying annotations at the given y-coordinate.
 	 * 
+	 * @param lineNumbers the line numbers
 	 * @return the best matching line or <code>-1</code> if no such line can be found
 	 */
 	private int findBestMatchingLineNumber(int[] lineNumbers) {
@@ -884,6 +885,8 @@ public class OverviewRuler implements IOverviewRuler {
 	 * or covered by the <code>configured</code> set.
 	 * 
 	 * @param annotationType the annotation type
+	 * @param allowed the set with allowed annotation types
+	 * @param configured the set with configured annotation types
 	 * @return <code>true</code> if annotation is contained, <code>false</code>
 	 *         otherwise
 	 * @since 3.0
@@ -904,8 +907,8 @@ public class OverviewRuler implements IOverviewRuler {
 	 * set. This is the case if either the type of the annotation or any of its
 	 * super types is contained in the <code>configured</code> set.
 	 * 
-	 * @param annotation the annotation
 	 * @param annotationType the annotation type
+	 * @param configured the set with configured annotation types
 	 * @return <code>true</code> if annotation is covered, <code>false</code>
 	 *         otherwise
 	 * @since 3.0

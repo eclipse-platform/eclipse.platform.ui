@@ -52,6 +52,8 @@ class JFaceTextMessages {
 	 * Gets a string from the resource bundle and formats it with the argument
 	 * 
 	 * @param key	the string used to get the bundle value, must not be null
+	 * @param args arguments used when formatting the string
+	 * @return the formatted string
 	 * @since 3.0
 	 */
 	public static String getFormattedString(String key, Object[] args) {

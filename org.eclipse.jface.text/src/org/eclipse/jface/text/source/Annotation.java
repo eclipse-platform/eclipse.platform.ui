@@ -36,7 +36,7 @@ public class Annotation {
 	 * Convenience method for drawing an image aligned inside a rectangle.
 	 *
 	 * @param image the image to be drawn
-	 * @param GC the drawing GC
+	 * @param gc the drawing GC
 	 * @param canvas the canvas on which to draw
 	 * @param r the clipping rectangle
 	 * @param halign the horizontal alignment of the image to be drawn
@@ -84,7 +84,7 @@ public class Annotation {
 	 * Convenience method for drawing an image aligned inside a rectangle.
 	 *
 	 * @param image the image to be drawn
-	 * @param GC the drawing GC
+	 * @param gc the drawing GC
 	 * @param canvas the canvas on which to draw
 	 * @param r the clipping rectangle
 	 * @param align the alignment of the image to be drawn
@@ -250,7 +250,7 @@ public class Annotation {
 	 * of this annotation within the given bounds. This default implementation
 	 * does nothing.
 	 *
-	 * @param GC the drawing GC
+	 * @param gc the drawing GC
 	 * @param canvas the canvas to draw on
 	 * @param bounds the bounds inside the canvas to draw on
 	 * @deprecated use <code>IAnnotationAccessExtension.paint(Annotation, GC, Canvas, Rectangle)</code>

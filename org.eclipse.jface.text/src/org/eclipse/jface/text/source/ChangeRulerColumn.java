@@ -261,7 +261,7 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 	/**
 	 * Double buffer drawing.
 	 * 
-	 * @param dest the gc to draw into
+	 * @param dest the GC to draw into
 	 */
 	private void doubleBufferPaint(GC dest) {
 		
@@ -316,7 +316,7 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 	/**
 	 * Draws the ruler column.
 	 * 
-	 * @param gc the gc to draw into
+	 * @param gc the GC to draw into
 	 */
 	private void doPaint(GC gc) {
 		
@@ -372,7 +372,7 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 	 * Draws the ruler column. Uses <code>ITextViewerExtension5</code> for the
 	 * implementation. Will replace <code>doPinat(GC)</code>.
 	 * 
-	 * @param gc the gc to draw into
+	 * @param gc the GC to draw into
 	 */
 	private void doPaint1(GC gc) {
 
@@ -530,6 +530,7 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 	/**
 	 * Returns the color for deleted lines.
 	 * 
+	 * @param display the display
 	 * @return the color to be used for the deletion indicator
 	 */
 	private Color getDeletionColor(Display display) {

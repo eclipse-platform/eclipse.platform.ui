@@ -71,11 +71,12 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 	 * line <code>line</code>. 
 	 * 
 	 * @param viewer the connected viewer
-	 * @param line the line for which to compute the hover info
 	 * @param first the first line in <code>viewer</code>'s document to consider
 	 * @param last the last line in <code>viewer</code>'s document to consider
+	 * @param maxLines the max number of lines
 	 * @return The hover content corresponding to the parameters 
-	 * @see #getHoverInfo()
+	 * @see #getHoverInfo(ISourceViewer, int)
+	 * @see #getHoverInfo(ISourceViewer, ILineRange, int)
 	 */
 	private String computeContent(ISourceViewer viewer, int first, int last, int maxLines) {
 		ILineDiffer differ= getDiffer(viewer);
@@ -175,30 +176,6 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 			return (ILineDiffer)model;
 		else
 			return null;
-	}
-
-	/**
-	 * Computes the content range, which is either equal to the line range or the line range plus
-	 * one line at the start (due to <code>ILineDiffInfo</code> implementation).
-	 * 
-	 * @param viewer the connected viewer
-	 * @param line the anchor line
-	 * @param first the first line in <code>viewer</code>'s document to consider
-	 * @param last the last line in <code>viewer</code>'s document to consider
-	 * @return the computed content range
-	 */
-	private Point computeContentRange(ISourceViewer viewer, int line, int first, int last) {
-		ILineDiffer differ= getDiffer(viewer);
-		if (differ == null)
-			return null;
-
-		// here comes the hack: since we only get deleted lines *after* a line, we decrease one further if conditions met
-		int l= first - 1;
-		ILineDiffInfo info= differ.getLineInfo(l);
-		if (l >= first - 1 && info != null && info.getChangeType() == ILineDiffInfo.UNCHANGED && info.getRemovedLinesBelow() > 0)
-			return new Point(l, last);
-		else
-			return new Point(first, last);
 	}
 
 	/**

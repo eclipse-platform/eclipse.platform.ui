@@ -202,7 +202,7 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 	/**
 	 * Double buffer drawing.
 	 * 
-	 * @param dest the gc to draw into
+	 * @param dest the GC to draw into
 	 */
 	private void doubleBufferPaint(GC dest) {
 		
@@ -266,7 +266,7 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 	/**
 	 * Draws the vertical ruler w/o drawing the Canvas background.
 	 * 
-	 * @param gc  the gc to draw into
+	 * @param gc  the GC to draw into
 	 */
 	protected void doPaint(GC gc) {
 	
@@ -301,7 +301,7 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 				
 		// draw Annotations
 		Rectangle r= new Rectangle(0, 0, 0, 0);
-		int maxLayer= 1;	// loop at least once thru layers.
+		int maxLayer= 1;	// loop at least once though layers.
 		
 		for (int layer= 0; layer < maxLayer; layer++) {
 			Iterator iter= fModel.getAnnotationIterator();
@@ -362,7 +362,7 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 	 * <code>ITextViewerExtension5</code> for its implementation. Will replace
 	 * <code>doPaint(GC)</code>.
 	 * 
-	 * @param gc  the gc to draw into
+	 * @param gc  the GC to draw into
 	 */
 	protected void doPaint1(GC gc) {
 
@@ -383,7 +383,7 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 
 		// draw Annotations
 		Rectangle r= new Rectangle(0, 0, 0, 0);
-		int maxLayer= 1;	// loop at least once thru layers.
+		int maxLayer= 1;	// loop at least once through layers.
 
 		for (int layer= 0; layer < maxLayer; layer++) {
 			Iterator iter= fModel.getAnnotationIterator();
@@ -550,6 +550,9 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 	}
 	
 	/**
+	 * Adds the given mouse listener.
+	 * 
+	 * @param listener the listener to be added
 	 * @deprecated will be removed
 	 * @since 2.0
 	 */
@@ -559,6 +562,9 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 	}
 
 	/**
+	 * Removes the given mouse listener.
+	 * 
+	 * @param listener the listener to be removed
 	 * @deprecated will be removed
 	 * @since 2.0
 	 */

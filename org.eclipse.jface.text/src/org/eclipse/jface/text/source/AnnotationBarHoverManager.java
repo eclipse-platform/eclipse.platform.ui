@@ -414,7 +414,7 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 	 * mouse hover event. If <code>fVerticalRulerInfo</code> is not a composite ruler, the 
 	 * standard hover is returned.
 	 * 
-	 * @param source the source of the mouse hover event
+	 * @param event the source of the mouse hover event
 	 * @return the hover depending on <code>source</code>, or <code>fAnnotationHover</code> if none can be found.
 	 * @since 3.0
 	 */

@@ -215,7 +215,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	 *
 	 * @param annotation the annotation to add
 	 * @param position the associate position
-	 * @param fireModelChange indicates whether to notify all model listeners
+	 * @param fireModelChanged indicates whether to notify all model listeners
 	 * @throws BadLocationException if the position is not a valid document position
 	 */
 	protected void addAnnotation(Annotation annotation, Position position, boolean fireModelChanged) throws BadLocationException {
@@ -271,10 +271,10 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	 * 
 	 * @since 3.0
 	 */
-	protected void removePosition(IDocument document, Position pos) {
+	protected void removePosition(IDocument document, Position position) {
 		if (document != null) {
 			synchronized (document) {
-				document.removePosition(pos);
+				document.removePosition(position);
 			}
 		}
 	}

@@ -345,7 +345,9 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 	 * Sets the background color for changed lines. The color has to be disposed of by the caller when
 	 * the receiver is no longer used.
 	 * 
-	 * @param changedColor the new color to be used for the changed lines background
+	 * @param color the new color to be used for the changed lines background
+	 * @param display the display
+	 * @return the shaded color
 	 */
 	private Color getShadedColor(Color color, Display display) {
 		if (color == null)
