@@ -192,20 +192,20 @@ public class ShowInAction extends Action {
 	 * @return the <code>ShowInContext</code> to show or <code>null</code>
 	 */
 	protected ShowInContext getContext() {
-		IWorkbenchPart source = getSourcePart();
-		if (source == null) {
+		IWorkbenchPart sourcePart = getSourcePart();
+		if (sourcePart == null) {
 			return null;
 		}
-		Object o = source.getAdapter(IShowInSource.class);
-		if (o instanceof IShowInSource) {
-			ShowInContext context = ((IShowInSource) o).getShowInContext();
+		IShowInSource source = getShowInSource(sourcePart);
+		if (source != null) {
+			ShowInContext context = source.getShowInContext();
 			if (context != null) {
 				return context;
 			}
 		}
-		else if (source instanceof IEditorPart) {
-			Object input = ((IEditorPart) source).getEditorInput();
-			ISelectionProvider sp = source.getSite().getSelectionProvider();
+		else if (sourcePart instanceof IEditorPart) {
+			Object input = ((IEditorPart) sourcePart).getEditorInput();
+			ISelectionProvider sp = sourcePart.getSite().getSelectionProvider();
 			ISelection sel = sp == null ? null : sp.getSelection();
 			return new ShowInContext(input, sel);
 		}
@@ -216,7 +216,11 @@ public class ShowInAction extends Action {
 	 * Returns the view descriptors to show in the dialog.
 	 */
 	private IViewDescriptor[] getViewDescriptors() {
-		String srcId = getSourcePart().getSite().getId();
+		IWorkbenchPart sourcePart = getSourcePart();
+		if (sourcePart == null) {
+			return new IViewDescriptor[0];
+		}
+		String srcId = sourcePart.getSite().getId();
 		ArrayList ids = getShowInPartIds();
 		ArrayList descs = new ArrayList();
 		IViewRegistry reg = WorkbenchPlugin.getDefault().getViewRegistry();
