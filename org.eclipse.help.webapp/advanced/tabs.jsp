@@ -81,12 +81,6 @@ if (data.isIE()){
 	border-bottom:1px solid <%=prefs.getViewBackground()%>;
 }
 
-.separator2 {
-	height:3px;
-	background:<%=prefs.getToolbarBackground()%>;
-	border-bottom:1px solid ThreeDShadow;
-}
-
 A {
 	text-decoration:none;
 	writing-mode:tb-rl;
