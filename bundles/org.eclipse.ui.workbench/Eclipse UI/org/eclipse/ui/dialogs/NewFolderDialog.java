@@ -16,8 +16,6 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -136,6 +134,14 @@ private void createFolderNameGroup(Composite parent) {
 		}
 	});
 }
+/**
+ * Creates a folder resource handle for the folder with the given name.
+ * The folder handle is created relative to the container specified during 
+ * object creation. 
+ *
+ * @param folderName the name of the folder resource to create a handle for
+ * @return the new folder resource handle
+ */
 private IFolder createFolderHandle(String folderName) {
 	IWorkspaceRoot workspaceRoot = container.getWorkspace().getRoot();
 	IPath folderPath = container.getFullPath().append(folderName);
