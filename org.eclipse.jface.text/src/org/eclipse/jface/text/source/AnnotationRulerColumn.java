@@ -326,6 +326,10 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn {
 	
 		if (fModel == null || fCachedTextViewer == null)
 			return;
+		
+		IAnnotationAccessExtension annotationAccessExtension= null;
+		if (fAnnotationAccess instanceof IAnnotationAccessExtension)
+			annotationAccessExtension= (IAnnotationAccessExtension) fAnnotationAccess;
 
 		int topLeft= getInclusiveTopIndexStartOffset();
 		int bottomRight;
@@ -372,10 +376,12 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn {
 			while (iter.hasNext()) {
 				Annotation annotation= (Annotation) iter.next();
 				
-				if (fAnnotationAccess != null && skip(fAnnotationAccess.getType(annotation)))
+				if (skip(fAnnotationAccess.getType(annotation)))
 					continue;
 				
-				int lay= annotation.getLayer();
+				int lay= IAnnotationAccessExtension.DEFAULT_LAYER;
+				if (annotationAccessExtension != null)
+					lay= annotationAccessExtension.getLayer(annotation);
 				maxLayer= Math.max(maxLayer, lay+1);	// dynamically update layer maximum
 				if (lay != layer)	// wrong layer: skip annotation
 					continue;
@@ -417,8 +423,8 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn {
 						lines= -lines;
 					r.height= (lines+1) * lineheight;
 					
-					if (r.y < dimension.y)  // annotation within visible area
-						annotation.paint(gc, fCanvas, r);
+					if (r.y < dimension.y && annotationAccessExtension != null)  // annotation within visible area
+						annotationAccessExtension.paint(annotation, gc, fCanvas, r);
 					
 				} catch (BadLocationException e) {
 				}
@@ -436,6 +442,10 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn {
 
 		if (fModel == null || fCachedTextViewer == null)
 			return;
+		
+		IAnnotationAccessExtension annotationAccessExtension= null;
+		if (fAnnotationAccess instanceof IAnnotationAccessExtension)
+			annotationAccessExtension= (IAnnotationAccessExtension) fAnnotationAccess;
 
 		ITextViewerExtension3 extension= (ITextViewerExtension3) fCachedTextViewer;
 
@@ -457,7 +467,9 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn {
 				if (fAnnotationAccess != null && skip(fAnnotationAccess.getType(annotation)))
 					continue;
 				
-				int lay= annotation.getLayer();
+				int lay= IAnnotationAccessExtension.DEFAULT_LAYER;
+				if (annotationAccessExtension != null)
+					lay= annotationAccessExtension.getLayer(annotation);
 				maxLayer= Math.max(maxLayer, lay+1);	// dynamically update layer maximum
 				if (lay != layer)	// wrong layer: skip annotation
 					continue;
@@ -486,8 +498,8 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn {
 					lines= -lines;
 				r.height= (lines+1) * lineheight;
 
-				if (r.y < dimension.y)  // annotation within visible area
-					annotation.paint(gc, fCanvas, r);
+				if (r.y < dimension.y && annotationAccessExtension != null)  // annotation within visible area
+					annotationAccessExtension.paint(annotation, gc, fCanvas, r);
 			}
 		}
 	}

@@ -11,6 +11,10 @@
 
 package org.eclipse.jface.text.source;
 
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Canvas;
+
 /**
  * Extension interface for <code>IAnnotationAccess</code>.
  * Allows to get a label for the annotation's type.
@@ -19,6 +23,12 @@ package org.eclipse.jface.text.source;
  * @since 3.0
  */
 public interface IAnnotationAccessExtension {
+	
+	/**
+	 * The default annotation layer.
+	 */
+	static final int DEFAULT_LAYER= 0;
+	
 
 	/**
 	 * Returns the label for the given annotation's type.
@@ -27,4 +37,25 @@ public interface IAnnotationAccessExtension {
 	 * @return the label the given annotation's type or <code>null</code> if no such label exists
 	 */
 	String getTypeLabel(Annotation annotation);
+	
+	/**
+	 * Returns the layer for given annotation. Annotations are considered
+	 * being located at layers and are considered being painted starting with
+	 * layer 0 upwards. Thus an annotation at layer 5 will be drawn on top of
+	 * all co-located annotations at the layers 4 - 0.
+	 * 
+	 * @param annotation the annotation
+	 * @return the layer of the given annotation
+	 */
+	int getLayer(Annotation annotation);
+	
+	/**
+	 * Draws a graphical representation of the given annotation within the given bounds.
+	 * 
+	 * @param annotation the given annotation
+	 * @param GC the drawing GC
+	 * @param canvas the canvas to draw on
+	 * @param bounds the bounds inside the canvas to draw on
+	 */
+	void paint(Annotation annotation, GC gc, Canvas canvas, Rectangle bounds);
 }

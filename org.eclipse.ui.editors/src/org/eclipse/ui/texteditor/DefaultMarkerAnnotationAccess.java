@@ -15,6 +15,10 @@ import java.util.Iterator;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Canvas;
+
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationAccess;
 import org.eclipse.jface.text.source.IAnnotationAccessExtension;
@@ -140,5 +144,19 @@ public class DefaultMarkerAnnotationAccess implements IAnnotationAccess, IAnnota
 			return preference.getPreferenceLabel();
 		
 		return null;
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.source.IAnnotationAccessExtension#getLayer(org.eclipse.jface.text.source.Annotation)
+	 */
+	public int getLayer(Annotation annotation) {
+		return annotation.getLayer();
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.source.IAnnotationAccessExtension#paint(org.eclipse.jface.text.source.Annotation, org.eclipse.swt.graphics.GC, org.eclipse.swt.widgets.Canvas, org.eclipse.swt.graphics.Rectangle)
+	 */
+	public void paint(Annotation annotation, GC gc, Canvas canvas, Rectangle bounds) {
+		 annotation.paint(gc, canvas, bounds);
 	}
 }

@@ -113,6 +113,7 @@ public abstract class Annotation {
 	 * Returns the annotations drawing layer.
 	 *
 	 * @return the annotations drawing layer
+	 * @deprecated use <code>IAnnotationAccessExtension.getLayer(Annotation)</code>
 	 */
 	public int getLayer() {
 		return fLayer;
@@ -125,6 +126,7 @@ public abstract class Annotation {
 	 * @param GC the drawing GC
 	 * @param canvas the canvas to draw on
 	 * @param bounds the bounds inside the canvas to draw on
+	 * @deprecated use <code>IAnnotationAccessExtension.paint(Annotation, GC, Canvas, Rectangle)</code>
 	 */
 	public abstract void paint(GC gc, Canvas canvas, Rectangle bounds);
 }

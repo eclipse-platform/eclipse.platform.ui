@@ -62,8 +62,6 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		private Position fPosition;
 		/** The color of this decoration */
 		private Color fColor;
-		/** Indicates whether this decoration might span multiple lines */
-		private	boolean fMultiLine;
 		/**
 		 * The annotation's layer
 		 * @since 3.0
@@ -228,8 +226,12 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 						Decoration pp= new Decoration();
 						pp.fPosition= position;
 						pp.fColor= color;
-						pp.fMultiLine= fAnnotationAccess.isMultiLine(annotation);
-						pp.fLayer= annotation.getLayer();
+						if (fAnnotationAccess instanceof IAnnotationAccessExtension) {
+							IAnnotationAccessExtension extension= (IAnnotationAccessExtension) fAnnotationAccess;
+							pp.fLayer= extension.getLayer(annotation);
+						} else {
+							pp.fLayer= IAnnotationAccessExtension.DEFAULT_LAYER;
+						}
 						
 						if (isDrawingSquiggles)
 							fDecorations.add(pp);
@@ -516,36 +518,27 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 				
 				Position p= pp.fPosition;
 				if (p.overlapsWith(vOffset, vLength)) {
-									
-					if (!pp.fMultiLine) {
-						
-						IRegion widgetRange= getWidgetRange(p);
-						if (widgetRange != null)
-							draw(gc, widgetRange.getOffset(), widgetRange.getLength(), pp.fColor);
 					
-					} else {
+					IDocument document= fSourceViewer.getDocument();
+					try {
 						
-						IDocument document= fSourceViewer.getDocument();
-						try {
-													
-							int startLine= document.getLineOfOffset(p.getOffset()); 
-							int lastInclusive= Math.max(p.getOffset(), p.getOffset() + p.getLength() - 1);
-							int endLine= document.getLineOfOffset(lastInclusive);
-							
-							for (int i= startLine; i <= endLine; i++) {
-								IRegion line= document.getLineInformation(i);
-								int paintStart= Math.max(line.getOffset(), p.getOffset());
-								int paintEnd= Math.min(line.getOffset() + line.getLength(), p.getOffset() + p.getLength());
-								if (paintEnd > paintStart) {
-									// otherwise inside a line delimiter
-									IRegion widgetRange= getWidgetRange(new Position(paintStart, paintEnd - paintStart));
-									if (widgetRange != null)
-										draw(gc, widgetRange.getOffset(), widgetRange.getLength(), pp.fColor);
-								}
+						int startLine= document.getLineOfOffset(p.getOffset()); 
+						int lastInclusive= Math.max(p.getOffset(), p.getOffset() + p.getLength() - 1);
+						int endLine= document.getLineOfOffset(lastInclusive);
+						
+						for (int i= startLine; i <= endLine; i++) {
+							IRegion line= document.getLineInformation(i);
+							int paintStart= Math.max(line.getOffset(), p.getOffset());
+							int paintEnd= Math.min(line.getOffset() + line.getLength(), p.getOffset() + p.getLength());
+							if (paintEnd > paintStart) {
+								// otherwise inside a line delimiter
+								IRegion widgetRange= getWidgetRange(new Position(paintStart, paintEnd - paintStart));
+								if (widgetRange != null)
+									draw(gc, widgetRange.getOffset(), widgetRange.getLength(), pp.fColor);
 							}
-						
-						} catch (BadLocationException x) {
 						}
+						
+					} catch (BadLocationException x) {
 					}
 				}
 			}
