@@ -86,7 +86,7 @@ interface.
    &lt;extension point = "org.eclipse.debug.ui.debugModelPresentations"&gt; 
        &lt;debugModelPresentation 
            class = "com.example.JavaModelPresentation"
-           id = "com.example.JavaDebugModel"
+           id = "com.example.JavaDebugModel"&gt;
        &lt;/debugModelPresentation&gt; 
    &lt;/extension&gt; 
 &lt;/pre&gt;

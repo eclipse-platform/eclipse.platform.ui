@@ -1,5 +1,12 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <HEAD><meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<STYLE type="text/css">
+div.dtd-fragment {
+	width: 100%;
+	border: none;
+	background-color: #eee;
+}
+</STYLE>
 </HEAD>
 <HTML>
 <BODY>
@@ -10,7 +17,7 @@ presentation aspects of a debug model.
 A debug model presentation is responsible for 
 providing labels, images, and editors for elements 
 in a specific debug model.<p><b><i>Configuration Markup:</i></b><p>
-<p><samp><font color="#800000">&nbsp;&nbsp; &lt;!ELEMENT extension (debugModelPresentation*)&gt;</font></samp>
+<p><samp><font color="#800000">&nbsp;&nbsp; &lt;!ELEMENT <a name="e.extension">extension</a> (<a href="#e.debugModelPresentation">debugModelPresentation</a>*)&gt;</font></samp>
 <br><br><samp><font color="#800000">&nbsp;&nbsp; &lt;!ATTLIST extension</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;point&nbsp;CDATA #REQUIRED</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</samp>
@@ -21,7 +28,7 @@ in a specific debug model.<p><b><i>Configuration Markup:</i></b><p>
 <li><b>id</b> - an optional identifier of the extension instance</li>
 <li><b>name</b> - an optional name of the extension instance</li>
 </ul>
-<p><samp><font color="#800000">&nbsp;&nbsp; &lt;!ELEMENT debugModelPresentation EMPTY&gt;</font></samp>
+<p><samp><font color="#800000">&nbsp;&nbsp; &lt;!ELEMENT <a name="e.debugModelPresentation">debugModelPresentation</a> EMPTY&gt;</font></samp>
 <br><br><samp><font color="#800000">&nbsp;&nbsp; &lt;!ATTLIST debugModelPresentation</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</samp>
@@ -41,7 +48,7 @@ interface.</li>
    <font color="#000080">&lt;extension point = <font color="#008000">&quot;org.eclipse.debug.ui.debugModelPresentations&quot;</font>&gt;</font> 
        <font color="#000080">&lt;debugModelPresentation 
            class = <font color="#008000">&quot;com.example.JavaModelPresentation&quot;</font>
-           id = <font color="#008000">&quot;com.example.JavaDebugModel&quot;</font>
+           id = <font color="#008000">&quot;com.example.JavaDebugModel&quot;</font>&gt;</font>
        <font color="#000080">&lt;/debugModelPresentation&gt;</font> 
    <font color="#000080">&lt;/extension&gt;</font> 
 </pre>
