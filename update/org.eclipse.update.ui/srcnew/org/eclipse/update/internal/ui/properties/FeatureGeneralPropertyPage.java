@@ -102,7 +102,11 @@ public class FeatureGeneralPropertyPage
 					Text text =
 						new Text(
 							parent,
-							SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
+							SWT.MULTI
+								| SWT.V_SCROLL
+								| SWT.H_SCROLL
+								| SWT.BORDER
+								| SWT.WRAP);
 					gd.heightHint = 300;
 					gd.widthHint = 350;
 					text.setEditable(false);

@@ -37,7 +37,7 @@ public class FeatureLicensePropertyPage extends PropertyPage implements IWorkben
 			String annotation = (license != null) ? license.getAnnotation() : null;
 			
 			if (annotation != null && annotation.length() > 0) {
-				Text text = new Text(composite, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
+				Text text = new Text(composite, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER | SWT.WRAP);
 				GridData gd = new GridData();
 				gd.heightHint = 350;
 				gd.widthHint = 350;
@@ -45,7 +45,8 @@ public class FeatureLicensePropertyPage extends PropertyPage implements IWorkben
 				text.setText(annotation);
 				text.setEditable(false);
 				final URL url = license.getURL();
-				if (url.getFile().endsWith(".htm") || url.getFile().endsWith(".html")) {
+				String filename = (url != null) ? url.getFile() : null;
+				if (filename != null && (filename.endsWith(".htm") || url.getFile().endsWith(".html"))) {
 					Button button = new Button(composite, SWT.PUSH);
 					button.setText("Show in Browser");
 					button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
