@@ -205,9 +205,9 @@ public class OpenStrategy {
 			boolean timerStarted = false;
 			Event mouseUpEvent = null;
 			Event mouseMoveEvent = null;
-			boolean selectionPendent = false;
+			SelectionEvent selectionPendent = null;
 			boolean enterKeyDown = false;
-			boolean defaultSelectionPendent = false;
+			SelectionEvent defaultSelectionPendent = null;
 
 			boolean keyDown = true;
 			final int[] count = new int[1];
@@ -216,16 +216,17 @@ public class OpenStrategy {
 
 			public void handleEvent(final Event e) {
 				if(e.type == SWT.DefaultSelection) {
-					fireDefaultSelectionEvent(new SelectionEvent(e));
+					SelectionEvent event = new SelectionEvent(e);
+					fireDefaultSelectionEvent(event);
 					if(CURRENT_METHOD == DOUBLE_CLICK) {
-						fireOpenEvent(new SelectionEvent(e));
+						fireOpenEvent(event);
 					} else {
 						if(enterKeyDown) {
-							fireOpenEvent(new SelectionEvent(e));
+							fireOpenEvent(event);
 							enterKeyDown = false;
-							defaultSelectionPendent = false;
+							defaultSelectionPendent = null;
 						} else {
-							defaultSelectionPendent = true;
+							defaultSelectionPendent = event;
 						}
 					}
 					return;
@@ -236,7 +237,7 @@ public class OpenStrategy {
 					case SWT.MouseExit:
 						mouseUpEvent = null;
 						mouseMoveEvent = null;
-						selectionPendent = false;
+						selectionPendent = null;
 						break;
 					case SWT.MouseMove:
 						if((CURRENT_METHOD & SELECT_ON_HOVER) == 0)
@@ -272,8 +273,8 @@ public class OpenStrategy {
 						mouseMoveEvent = null;
 						if((e.button != 1) || ((e.stateMask & ~SWT.BUTTON1) != 0))
 							return;
-						if(selectionPendent)
-							mouseSelectItem(e);
+						if(selectionPendent != null)
+							mouseSelectItem(selectionPendent);
 						else
 							mouseUpEvent = e;
 						break;
@@ -282,22 +283,23 @@ public class OpenStrategy {
 						mouseUpEvent = null;
 						keyDown = true;
 						if(e.character == SWT.CR) {
-							if(defaultSelectionPendent) {
+							if(defaultSelectionPendent != null) {
 								fireOpenEvent(new SelectionEvent(e));
 								enterKeyDown = false;
-								defaultSelectionPendent = false;
+								defaultSelectionPendent = null;
 							} else {
 								enterKeyDown = true;
 							}
 						}	
 						break;
 					case SWT.Selection:
-						fireSelectionEvent(new SelectionEvent(e));
+						SelectionEvent event = new SelectionEvent(e);
+						fireSelectionEvent(event);
 						mouseMoveEvent = null;
 						if (mouseUpEvent != null)
-							mouseSelectItem(e);
+							mouseSelectItem(event);
 						else
-							selectionPendent = true;
+							selectionPendent = event;
 						count[0]++;
 						display.asyncExec(new Runnable() {
 							public void run() {
@@ -319,12 +321,12 @@ public class OpenStrategy {
 				}
 			}
 
-			void mouseSelectItem(Event e) {
-				firePostSelectionEvent(new SelectionEvent(e));
+			void mouseSelectItem(SelectionEvent e) {
+				firePostSelectionEvent(e);
 				if((CURRENT_METHOD & SINGLE_CLICK) != 0)
-					fireOpenEvent(new SelectionEvent(e));
+					fireOpenEvent(e);
 				mouseUpEvent = null;
-				selectionPendent = false;
+				selectionPendent = null;
 			}
 			void setSelection(Event e) {
 				if(e == null)
