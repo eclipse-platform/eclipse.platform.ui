@@ -16,6 +16,10 @@ import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsMessages;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
@@ -45,9 +49,63 @@ public class VariableSelectionDialog extends SelectionDialog {
 	protected Control createDialogArea(Composite parent) {
 		// Create the dialog area
 		Composite composite= (Composite)super.createDialogArea(parent);
+		
+		final Button contextVariables= createRadioButton(parent, "Context variables");
+		contextVariables.setSelection(true);
+		contextVariables.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if (contextVariables.getSelection()) {
+					addVariableFormComposite();
+				}
+			}
+		});
+		final Button simpleVariables= createRadioButton(parent, "Simple variables");
+		simpleVariables.addSelectionListener(new SelectionAdapter() {
+		public void widgetSelected(SelectionEvent e) {
+			if (simpleVariables.getSelection()) {
+				addSimpleVariableComposite();
+			}
+		}
+	});
+		createVariableFormComposite(composite);
+		return composite;
+	}
+	
+	protected void addVariableFormComposite() {
+		if (simpleVariableComposite != null) {
+			simpleVariableComposite.dispose();
+		}
+		createVariableFormComposite((Composite) getDialogArea());
+		getDialogArea().redraw();
+	}
+	
+	protected void addSimpleVariableComposite() {
+		if (contextVariableComposite != null) {
+			contextVariableComposite.dispose();
+		} 
+		createSimpleVariableComposite((Composite) getDialogArea());
+		getDialogArea().redraw();
+	}
+	
+	protected Button createRadioButton(Composite parent, String label) {
+		Button button= new Button(parent, SWT.RADIO);
+		button.setText(label);
+		button.setLayoutData(new GridLayout());
+		return button;
+	}
+	
+	private Composite contextVariableComposite= null;
+	private Composite simpleVariableComposite= null;
+	
+	protected void createSimpleVariableComposite(Composite parent) {
+		simpleVariableComposite= new Composite(parent, SWT.NONE);
+	}
+	
+	protected void createVariableFormComposite(Composite parent) {
+		contextVariableComposite= new Composite(parent, SWT.NONE);
 		IContextLaunchVariable[] variables= DebugPlugin.getDefault().getContextVariableRegistry().getVariables();
 		form= new LaunchConfigurationVariableForm(LaunchConfigurationsMessages.getString("VariableSelectionDialog.Choose_a_variable__2"), variables); //$NON-NLS-1$
-		form.createContents(composite, new IVariableComponentContainer() {
+		form.createContents(contextVariableComposite, new IVariableComponentContainer() {
 			
 			public void setErrorMessage(String errorMessage) {
 				VariableSelectionDialog.this.setMessage(errorMessage);
@@ -75,7 +133,6 @@ public class VariableSelectionDialog extends SelectionDialog {
 				okPressed();
 			}
 		});
-		return composite;
 	}
 
 	/**
