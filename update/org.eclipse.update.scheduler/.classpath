@@ -2,7 +2,6 @@
 <classpath>
     <classpathentry kind="src" path="src/"/>
     <classpathentry kind="src" path="/org.eclipse.update.core"/>
-    <classpathentry kind="src" path="/org.eclipse.update.core.win32"/>
     <classpathentry kind="src" path="/org.eclipse.update.ui"/>
     <classpathentry kind="src" path="/org.eclipse.ui"/>
     <classpathentry kind="src" path="/org.eclipse.core.boot"/>
