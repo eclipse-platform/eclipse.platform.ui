@@ -170,7 +170,7 @@ function doSearch(query)
 			return;
 		query ="searchWord="+escape(searchWord)+"&maxHits="+maxHits;
 		if (workingSet != '<%=ServletResources.getString("All", request)%>')
-			query = query +"&scope="+workingSet;//+"&workingSet="+workingSet;
+			query = query +"&scope="+escape(workingSet);
 	}
 	query=query+"&encoding=js";
 		

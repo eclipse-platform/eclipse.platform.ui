@@ -190,7 +190,7 @@ public class SearchData extends RequestData {
 		if (isScopeRequest()) {
 			workingSetName = getDBCSParameter("workingSet");
 		} else if (isSearchRequest()) {
-			workingSetName = request.getParameter("scope");
+			workingSetName = getDBCSParameter("scope");
 			// if we have already set the working set, then use it.
 			if (workingSetName == null)
 				workingSetName = getDBCSParameter("workingSet");
@@ -217,7 +217,7 @@ public class SearchData extends RequestData {
 		if (getMode() == MODE_INFOCENTER)
 			return;
 		// if a working set is defined, set it in the preferences
-		String workingSet = request.getParameter("workingSet");
+		String workingSet = getDBCSParameter("scope");
 		if (workingSet != null
 			&& !workingSet.equals(
 				HelpPlugin.getDefault().getPluginPreferences().getString(
@@ -273,7 +273,7 @@ public class SearchData extends RequestData {
 			getLocale());
 	}
 	private SearchResults createHitCollector() {
-		String[] scopes = request.getParameterValues("scope");
+		String[] scopes = getDBCSParameters("scope");
 		Collection scopeCol = null;
 		if (scopes != null) {
 			if (scopes.length
