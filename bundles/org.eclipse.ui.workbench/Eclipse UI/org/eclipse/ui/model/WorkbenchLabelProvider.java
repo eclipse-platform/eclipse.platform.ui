@@ -133,7 +133,7 @@ public class WorkbenchLabelProvider extends LabelProvider implements IColorProvi
 			return null;
 		}
 		return (IWorkbenchAdapter2) ((IAdaptable) o).getAdapter(
-			IWorkbenchAdapter.class);
+			IWorkbenchAdapter2.class);
 	}
 	
 	/* (non-Javadoc)
