@@ -14,7 +14,12 @@ package org.eclipse.ant.tests.core;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.ant.tests.core.tests.*;
+import org.eclipse.ant.tests.core.tests.FrameworkTests;
+import org.eclipse.ant.tests.core.tests.OptionTests;
+import org.eclipse.ant.tests.core.tests.ProjectTests;
+import org.eclipse.ant.tests.core.tests.TargetTests;
+import org.eclipse.ant.tests.core.tests.TaskTests;
+import org.eclipse.ant.tests.core.tests.TypeTests;
 
 /**
  * Test all areas of Ant.
