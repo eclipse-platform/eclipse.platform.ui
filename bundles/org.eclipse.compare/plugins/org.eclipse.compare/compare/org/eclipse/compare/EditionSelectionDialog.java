@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.compare;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.ResourceBundle;
 import java.util.Date;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.HashSet;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.text.*;
 
 import org.eclipse.swt.SWT;
@@ -265,7 +267,7 @@ public class EditionSelectionDialog extends ResizableDialog {
 		for (int i= 0; i < count; i++)
 			editions[i]= (IModificationDate) inputEditions[i];
 		if (count > 1)
-			internalSort(editions, 0, count-1);
+			internalSort(editions);
 			
 		// find StructureCreator if ppath is not null
 		IStructureCreator structureCreator= null;
@@ -336,7 +338,7 @@ public class EditionSelectionDialog extends ResizableDialog {
 		for (int i= 0; i < count; i++)
 			editions[i]= (IModificationDate) inputEditions[i];
 		if (count > 1)
-			internalSort(editions, 0, count-1);
+			internalSort(editions);
 			
 		// find StructureCreator if ppath is not null
 		IStructureCreator structureCreator= null;
@@ -847,33 +849,19 @@ public class EditionSelectionDialog extends ResizableDialog {
 		}
 	}
 	
-	private static void internalSort(IModificationDate[] keys, int left, int right) { 
-	
-		int original_left= left;
-		int original_right= right;
-		
-		IModificationDate mid= keys[(left + right) / 2]; 
-		do { 
-			while (keys[left].getModificationDate() > mid.getModificationDate())
-				left++; 
-			
-			while (mid.getModificationDate() > keys[right].getModificationDate())
-				right--; 
-		
-			if (left <= right) { 
-				IModificationDate tmp= keys[left]; 
-				keys[left]= keys[right]; 
-				keys[right]= tmp;			
-				left++; 
-				right--; 
-			} 
-		} while (left <= right);
-		
-		if (original_left < right)
-			internalSort(keys, original_left, right); 
-		
-		if (left < original_right)
-			internalSort(keys, left, original_right); 
+	private static void internalSort(IModificationDate[] keys) { 
+		Arrays.sort(keys, new Comparator() {
+			public int compare(Object o1, Object o2) {
+				IModificationDate d1= (IModificationDate) o1;
+				IModificationDate d2= (IModificationDate) o2;
+				long d= d2.getModificationDate() - d1.getModificationDate();
+				if (d < 0)
+					return -1;
+				if (d > 0)
+					return 1;
+				return 0;
+			}
+		});
 	}
 	
 	/*
