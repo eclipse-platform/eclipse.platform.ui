@@ -5,16 +5,9 @@ package org.eclipse.ui.internal.dialogs;
  * All Rights Reserved.
  */
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.FocusListener;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.internal.win32.CREATESTRUCT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
