@@ -37,6 +37,12 @@ import org.eclipse.swt.widgets.*;
  * @see org.eclipse.core.runtime.IStatus
  */
 public class ErrorDialog extends IconAndMessageDialog {
+	
+	/**
+	 * Static to prevent opening of error dialogs for
+	 * automated testing.
+	 */
+	public static boolean AUTOMATED_MODE = false;
 
 	/**
 	 * Reserve room for this many list items.
@@ -77,6 +83,8 @@ public class ErrorDialog extends IconAndMessageDialog {
 	 * The main status object.
 	 */
 	private IStatus status;
+	
+
 
 	/**
 	 * List of the main error object's detailed errors
@@ -287,6 +295,10 @@ public class ErrorDialog extends IconAndMessageDialog {
 	 * least one child status matching the mask.
 	 */
 	public int open() {
+		
+		if(AUTOMATED_MODE)
+			setBlockOnOpen(false);			
+			
 		if (shouldDisplay(status, displayMask)) {
 			return super.open();
 		}
@@ -465,4 +477,6 @@ public class ErrorDialog extends IconAndMessageDialog {
 			new Transfer[] {TextTransfer.getInstance()}
 		);
 	}
+
+
 }
