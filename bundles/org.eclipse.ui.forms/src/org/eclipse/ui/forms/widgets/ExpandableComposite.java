@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.forms.widgets;
+
 import java.util.Vector;
 
 import org.eclipse.jface.util.Assert;
@@ -18,14 +19,16 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.internal.forms.widgets.*;
+
 /**
  * This composite is capable of expanding or collapsing a single client that is
  * its direct child. The composite renders an expansion toggle affordance
  * (according to the chosen style), and a title that also acts as a hyperlink
- * (can be selected and is traversable). The client is layed out below the
- * title when expanded, or hidden when collapsed.
- * <p>The widget can be instantiated as-is, or subclassed to
- * modify some aspects of it.
+ * (can be selected and is traversable). The client is layed out below the title
+ * when expanded, or hidden when collapsed.
+ * <p>
+ * The widget can be instantiated as-is, or subclassed to modify some aspects of
+ * it.
  * 
  * @see Section
  * @since 3.0
@@ -36,97 +39,124 @@ public class ExpandableComposite extends Composite {
 	 * toggle.
 	 */
 	public static final int TWISTIE = 1 << 1;
+
 	/**
 	 * If this style is used, a tree node with either + or - signs will be used
 	 * to render the expansion toggle.
 	 */
 	public static final int TREE_NODE = 1 << 2;
+
 	/**
 	 * If this style is used, the title text will be rendered as a hyperlink
 	 * that can individually accept focus. Otherwise, it will still act like a
 	 * hyperlink, but only the toggle control will accept focus.
 	 */
 	public static final int FOCUS_TITLE = 1 << 3;
+
 	/**
 	 * If this style is used, the client origin will be vertically aligned with
 	 * the title text. Otherwise, it will start at x = 0.
 	 */
 	public static final int CLIENT_INDENT = 1 << 4;
+
 	/**
 	 * If this style is used, computed size of the composite will take the
 	 * client width into consideration only in the expanded state. Otherwise,
 	 * client width will always be taken into acount.
 	 */
 	public static final int COMPACT = 1 << 5;
+
 	/**
-	 * If this style is used, the control will be created in the expanded
-	 * state. This state can later be changed programmatically or by the user
-	 * if TWISTIE or TREE_NODE style is used.
+	 * If this style is used, the control will be created in the expanded state.
+	 * This state can later be changed programmatically or by the user if
+	 * TWISTIE or TREE_NODE style is used.
 	 */
 	public static final int EXPANDED = 1 << 6;
+
 	/**
-	 * If this style is used, title bar decoration will be painted behind
-	 * the text.
+	 * If this style is used, title bar decoration will be painted behind the
+	 * text.
 	 */
 	public static final int TITLE_BAR = 1 << 8;
+
 	/**
 	 * If this style is used, title will not be rendered.
 	 */
-	public static final int NO_TITLE = 1<<12;
+	public static final int NO_TITLE = 1 << 12;
+
 	/**
-	 * Width of the margin that will be added around the control (default is
-	 * 0).
-	 */	
+	 * Width of the margin that will be added around the control (default is 0).
+	 */
 	public int marginWidth = 0;
+
 	/**
 	 * Height of the margin that will be added around the control (default is
 	 * 0).
 	 */
 	public int marginHeight = 0;
+
+	/**
+	 * Vertical spacing between the title area and the composite client control
+	 * (default is 3).
+	 */
+	public int clientVerticalSpacing = 3;
+
 	private int VSPACE = 3;
-	public int clientVerticalSpacing = VSPACE;
+
 	protected int GAP = 4;
 
 	private int SEPARATOR_HEIGHT = 2;
+
 	private int expansionStyle = TWISTIE | FOCUS_TITLE | EXPANDED;
+
 	private boolean expanded;
+
 	private Control textClient;
+
 	private Control client;
+
 	private Vector listeners;
+
 	protected ToggleHyperlink toggle;
+
 	protected Control textLabel;
+
 	private class ExpandableLayout extends Layout implements ILayoutExtension {
 
 		private SizeCache toggleCache = new SizeCache();
+
 		private SizeCache textClientCache = new SizeCache();
+
 		private SizeCache textLabelCache = new SizeCache();
+
 		private SizeCache descriptionCache = new SizeCache();
+
 		private SizeCache clientCache = new SizeCache();
-	    	    
-	    private void initCache(boolean shouldFlush) {
-	        toggleCache.setControl(toggle);
-	        textClientCache.setControl(textClient);
-	        textLabelCache.setControl(textLabel);
-	        descriptionCache.setControl(getDescriptionControl());
-	        clientCache.setControl(client);
-	        
-	        if (shouldFlush) {
-		        toggleCache.flush();
-		        textClientCache.flush();
-		        textLabelCache.flush();
-		        descriptionCache.flush();
-		        clientCache.flush();
-	        }
-	    }
-	    
+
+		private void initCache(boolean shouldFlush) {
+			toggleCache.setControl(toggle);
+			textClientCache.setControl(textClient);
+			textLabelCache.setControl(textLabel);
+			descriptionCache.setControl(getDescriptionControl());
+			clientCache.setControl(client);
+
+			if (shouldFlush) {
+				toggleCache.flush();
+				textClientCache.flush();
+				textLabelCache.flush();
+				descriptionCache.flush();
+				clientCache.flush();
+			}
+		}
+
 		protected void layout(Composite parent, boolean changed) {
-		    initCache(changed);
-		    
+			initCache(changed);
+
 			Rectangle clientArea = parent.getClientArea();
 			int thmargin = 0;
 			int tvmargin = 0;
-			
-			if ((expansionStyle & TITLE_BAR)!=0) {
+
+			if ((expansionStyle & TITLE_BAR) != 0) {
 				thmargin = GAP;
 				tvmargin = GAP;
 			}
@@ -136,18 +166,20 @@ public class ExpandableComposite extends Composite {
 			Point tcsize = null;
 			if (toggle != null)
 				tsize = toggleCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-			int twidth = clientArea.width - marginWidth - marginWidth - thmargin - thmargin;
+			int twidth = clientArea.width - marginWidth - marginWidth
+					- thmargin - thmargin;
 			if (tsize != null)
 				twidth -= tsize.x + GAP;
-			if (textClient !=null)
+			if (textClient != null)
 				tcsize = textClientCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-			if (tcsize!=null)
+			if (tcsize != null)
 				twidth -= tcsize.x + GAP;
 			Point size = null;
-			if (textLabel!=null)
+			if (textLabel != null)
 				size = textLabelCache.computeSize(twidth, SWT.DEFAULT);
 			if (textLabel instanceof Label) {
-				Point defSize = textLabelCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+				Point defSize = textLabelCache.computeSize(SWT.DEFAULT,
+						SWT.DEFAULT);
 				if (defSize.y == size.y) {
 					// One line - pick the smaller of the two widths
 					size.x = Math.min(defSize.x, size.x);
@@ -166,19 +198,19 @@ public class ExpandableComposite extends Composite {
 				toggle.setSize(tsize);
 				x += tsize.x + GAP;
 			}
-			if (textLabel!=null)
+			if (textLabel != null)
 				textLabelCache.setBounds(x, y, size.x, size.y);
-			if (textClient!=null) {
-				int tcx = clientArea.width - tcsize.x-marginWidth-thmargin;
+			if (textClient != null) {
+				int tcx = clientArea.width - tcsize.x - marginWidth - thmargin;
 				textClientCache.setBounds(tcx, y, tcsize.x, tcsize.y);
 			}
 			int tbarHeight = 0;
-			if (size!=null)
+			if (size != null)
 				tbarHeight = size.y;
-			if (tcsize!=null)
+			if (tcsize != null)
 				tbarHeight = Math.max(tbarHeight, tcsize.y);
 			y += tbarHeight;
-			if ((expansionStyle & TITLE_BAR) != 0) 
+			if ((expansionStyle & TITLE_BAR) != 0)
 				y += tvmargin;
 			if (getSeparatorControl() != null) {
 				y += VSPACE;
@@ -190,7 +222,8 @@ public class ExpandableComposite extends Composite {
 					y += VSPACE;
 			}
 			if (expanded) {
-				int areaWidth = clientArea.width - marginWidth - marginWidth - thmargin-thmargin;
+				int areaWidth = clientArea.width - marginWidth - marginWidth
+						- thmargin - thmargin;
 				int cx = marginWidth + thmargin;
 				if ((expansionStyle & CLIENT_INDENT) != 0) {
 					cx = x;
@@ -200,14 +233,12 @@ public class ExpandableComposite extends Composite {
 					Point dsize = null;
 					Control desc = getDescriptionControl();
 					if (desc != null) {
-						dsize = descriptionCache.computeSize(areaWidth, SWT.DEFAULT);
+						dsize = descriptionCache.computeSize(areaWidth,
+								SWT.DEFAULT);
 						descriptionCache.setBounds(cx, y, dsize.x, dsize.y);
 						y += dsize.y + clientVerticalSpacing;
-					}
-					else
+					} else
 						y += clientVerticalSpacing - VSPACE;
-					//int cwidth = clientArea.width - marginWidth - marginWidth
-							//- cx;
 					int cwidth = areaWidth;
 					int cheight = clientArea.height - marginHeight
 							- marginHeight - y;
@@ -215,11 +246,12 @@ public class ExpandableComposite extends Composite {
 				}
 			}
 		}
+
 		protected Point computeSize(Composite parent, int wHint, int hHint,
 				boolean changed) {
-		    
-		    initCache(changed);
-		    
+
+			initCache(changed);
+
 			int width = 0, height = 0;
 			Point tsize = null;
 			int twidth = 0;
@@ -229,59 +261,61 @@ public class ExpandableComposite extends Composite {
 			}
 			int thmargin = 0;
 			int tvmargin = 0;
-			
-			if ((expansionStyle & TITLE_BAR)!=0) {
+
+			if ((expansionStyle & TITLE_BAR) != 0) {
 				thmargin = GAP;
 				tvmargin = GAP;
 			}
 			int innerwHint = wHint;
 			if (innerwHint != SWT.DEFAULT)
 				innerwHint -= twidth;
-			
+
 			int innertHint = innerwHint;
-			
+
 			Point tcsize = null;
-			if (textClient!=null) {
+			if (textClient != null) {
 				tcsize = textClientCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-				if (innertHint!=SWT.DEFAULT)
+				if (innertHint != SWT.DEFAULT)
 					innertHint -= GAP + tcsize.x;
 			}
 			Point size = null;
-			
-			if (textLabel!=null)
+
+			if (textLabel != null)
 				size = textLabelCache.computeSize(innertHint, SWT.DEFAULT);
 			if (textLabel instanceof Label) {
-				Point defSize = textLabelCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+				Point defSize = textLabelCache.computeSize(SWT.DEFAULT,
+						SWT.DEFAULT);
 				if (defSize.y == size.y) {
 					// One line - pick the smaller of the two widths
 					size.x = Math.min(defSize.x, size.x);
 				}
 			}
-			if (size!=null)
+			if (size != null)
 				width = size.x;
-			int sizey = size!=null?size.y:0;
-			height = tcsize!=null?Math.max(tcsize.y, sizey):sizey;
+			int sizey = size != null ? size.y : 0;
+			height = tcsize != null ? Math.max(tcsize.y, sizey) : sizey;
 			if (getSeparatorControl() != null) {
 				height += VSPACE + SEPARATOR_HEIGHT;
 				if (expanded && client != null)
 					height += VSPACE;
 			}
-			if ((expansionStyle & TITLE_BAR) != 0) 
+			if ((expansionStyle & TITLE_BAR) != 0)
 				height += VSPACE;
 			if ((expanded || (expansionStyle & COMPACT) == 0) && client != null) {
 				int cwHint = wHint;
-				
-				if (cwHint!=SWT.DEFAULT)
-					cwHint -= tvmargin + tvmargin;
-				if ((expansionStyle & CLIENT_INDENT) != 0)
-					cwHint = innerwHint;
+
+				if (cwHint != SWT.DEFAULT) {
+					cwHint -= marginWidth + marginWidth + thmargin + thmargin;
+					if ((expansionStyle & CLIENT_INDENT) != 0)
+						cwHint = innerwHint - marginWidth - marginWidth;
+				}
 				Point dsize = null;
-				Point csize = clientCache.computeSize(FormUtil.getWidthHint(cwHint,
-						client), SWT.DEFAULT);
+				Point csize = clientCache.computeSize(FormUtil.getWidthHint(
+						cwHint, client), SWT.DEFAULT);
 				if (getDescriptionControl() != null) {
 					int dwHint = cwHint;
 					if (dwHint == SWT.DEFAULT) {
-						dwHint = csize.x - tvmargin - tvmargin;
+						dwHint = csize.x;
 						if ((expansionStyle & CLIENT_INDENT) != 0)
 							dwHint -= twidth;
 					}
@@ -293,8 +327,7 @@ public class ExpandableComposite extends Composite {
 					width = Math.max(width, dsize.x);
 					if (expanded)
 						height += dsize.y + clientVerticalSpacing;
-				}
-				else
+				} else
 					height += clientVerticalSpacing - VSPACE;
 				if ((expansionStyle & CLIENT_INDENT) != 0)
 					csize.x -= twidth;
@@ -306,31 +339,33 @@ public class ExpandableComposite extends Composite {
 				height = height - sizey + Math.max(sizey, tsize.y);
 				width += twidth;
 			}
-			return new Point(width + marginWidth + marginWidth+thmargin+thmargin, height
-					+ marginHeight + marginHeight+tvmargin+tvmargin);
+			return new Point(width + marginWidth + marginWidth + thmargin
+					+ thmargin, height + marginHeight + marginHeight + tvmargin
+					+ tvmargin);
 		}
+
 		public int computeMinimumWidth(Composite parent, boolean changed) {
-		    
-		    initCache(changed);
-		    
+
+			initCache(changed);
+
 			int width = 0;
 			Point size = null;
-			if (textLabel!=null)
+			if (textLabel != null)
 				size = textLabelCache.computeSize(5, SWT.DEFAULT);
-			Point tcsize=null;
-			if (textClient!=null) {
+			Point tcsize = null;
+			if (textClient != null) {
 				tcsize = textClientCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 			}
 			int thmargin = 0;
-			//int tvmargin = 0;
-			
-			if ((expansionStyle & TITLE_BAR)!=0) {
+			// int tvmargin = 0;
+
+			if ((expansionStyle & TITLE_BAR) != 0) {
 				thmargin = GAP;
-				//tvmargin = GAP;
-			}			
-			if (size!=null)
+				// tvmargin = GAP;
+			}
+			if (size != null)
 				width = size.x;
-			if (tcsize!=null)
+			if (tcsize != null)
 				width += GAP + tcsize.x;
 
 			if ((expanded || (expansionStyle & COMPACT) == 0) && client != null) {
@@ -346,8 +381,9 @@ public class ExpandableComposite extends Composite {
 				Point tsize = toggleCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 				width += tsize.x + GAP;
 			}
-			return width + marginWidth + marginWidth+thmargin+thmargin;
+			return width + marginWidth + marginWidth + thmargin + thmargin;
 		}
+
 		/*
 		 * (non-Javadoc)
 		 * 
@@ -355,32 +391,33 @@ public class ExpandableComposite extends Composite {
 		 *      boolean)
 		 */
 		public int computeMaximumWidth(Composite parent, boolean changed) {
-		    
-		    initCache(changed);
-		    
+
+			initCache(changed);
+
 			int width = 0;
 			Point size = null;
-			if (textLabel!=null)
+			if (textLabel != null)
 				textLabelCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-			Point tcsize=null;
+			Point tcsize = null;
 			int thmargin = 0;
-			//int tvmargin = 0;
-			
-			if ((expansionStyle & TITLE_BAR)!=0) {
+			// int tvmargin = 0;
+
+			if ((expansionStyle & TITLE_BAR) != 0) {
 				thmargin = GAP;
-				//tvmargin = GAP;
-			}			
-			if (textClient!=null) {
+				// tvmargin = GAP;
+			}
+			if (textClient != null) {
 				tcsize = textClientCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 			}
-			if (size!=null)
+			if (size != null)
 				width = size.x;
-			if (tcsize!=null)
+			if (tcsize != null)
 				width += GAP + tcsize.x;
 			if ((expanded || (expansionStyle & COMPACT) == 0) && client != null) {
 				Point dsize = null;
 				if (getDescriptionControl() != null) {
-					dsize = descriptionCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+					dsize = descriptionCache.computeSize(SWT.DEFAULT,
+							SWT.DEFAULT);
 					width = Math.max(width, dsize.x);
 				}
 				int cwidth = FormUtil.computeMaximumWidth(client, changed);
@@ -390,9 +427,10 @@ public class ExpandableComposite extends Composite {
 				Point tsize = toggleCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 				width += tsize.x + GAP;
 			}
-			return width + marginWidth + marginWidth+thmargin+thmargin;
+			return width + marginWidth + marginWidth + thmargin + thmargin;
 		}
 	}
+
 	/**
 	 * Creates an expandable composite using a TWISTIE toggle.
 	 * 
@@ -404,6 +442,7 @@ public class ExpandableComposite extends Composite {
 	public ExpandableComposite(Composite parent, int style) {
 		this(parent, style, TWISTIE);
 	}
+
 	/**
 	 * Creates the expandable composite in the provided parent.
 	 * 
@@ -473,35 +512,39 @@ public class ExpandableComposite extends Composite {
 			}
 			textLabel = label;
 		}
-		if (textLabel!=null)
+		if (textLabel != null)
 			textLabel.setMenu(getMenu());
 	}
+
 	/**
-	 * Prevents assignment of the layout manager - expandable composite uses
-	 * its own layout.
+	 * Prevents assignment of the layout manager - expandable composite uses its
+	 * own layout.
 	 */
 	public final void setLayout(Layout layout) {
 	}
+
 	/**
 	 * Sets the background of all the custom controls in the expandable.
 	 */
 	public void setBackground(Color bg) {
 		super.setBackground(bg);
-		if (textLabel!=null)
+		if (textLabel != null)
 			textLabel.setBackground(bg);
 		if (toggle != null)
 			toggle.setBackground(bg);
 	}
+
 	/**
 	 * Sets the foreground of all the custom controls in the expandable.
 	 */
 	public void setForeground(Color fg) {
 		super.setForeground(fg);
-		if (textLabel!=null)
+		if (textLabel != null)
 			textLabel.setForeground(fg);
 		if (toggle != null)
 			toggle.setForeground(fg);
 	}
+
 	/**
 	 * Sets the color of the toggle control.
 	 * 
@@ -512,6 +555,7 @@ public class ExpandableComposite extends Composite {
 		if (toggle != null)
 			toggle.setDecorationColor(c);
 	}
+
 	/**
 	 * Sets the active color of the toggle control (when the mouse enters the
 	 * toggle area).
@@ -523,16 +567,18 @@ public class ExpandableComposite extends Composite {
 		if (toggle != null)
 			toggle.setHoverDecorationColor(c);
 	}
+
 	/**
 	 * Sets the fonts of all the custom controls in the expandable.
 	 */
 	public void setFont(Font font) {
 		super.setFont(font);
-		if (textLabel!=null)
+		if (textLabel != null)
 			textLabel.setFont(font);
 		if (toggle != null)
 			toggle.setFont(font);
 	}
+
 	/**
 	 * Sets the client of this expandable composite. The client must not be
 	 * <samp>null </samp> and must be a direct child of this container.
@@ -544,6 +590,7 @@ public class ExpandableComposite extends Composite {
 		Assert.isTrue(client != null && client.getParent().equals(this));
 		this.client = client;
 	}
+
 	/**
 	 * Returns the current expandable client.
 	 * 
@@ -552,6 +599,7 @@ public class ExpandableComposite extends Composite {
 	public Control getClient() {
 		return client;
 	}
+
 	/**
 	 * Sets the title of the expandable composite. The title will act as a
 	 * hyperlink and activating it will toggle the client between expanded and
@@ -567,6 +615,7 @@ public class ExpandableComposite extends Composite {
 		else if (textLabel instanceof Hyperlink)
 			((Hyperlink) textLabel).setText(title);
 	}
+
 	/**
 	 * Returns the title string.
 	 * 
@@ -581,15 +630,16 @@ public class ExpandableComposite extends Composite {
 		else
 			return "";
 	}
+
 	/**
 	 * Tests the expanded state of the composite.
 	 * 
-	 * @return <samp>true </samp> if expanded, <samp>false </samp> if
-	 *         collapsed.
+	 * @return <samp>true </samp> if expanded, <samp>false </samp> if collapsed.
 	 */
 	public boolean isExpanded() {
 		return expanded;
 	}
+
 	/**
 	 * Returns the bitwise-ORed style bits for the expansion control.
 	 * 
@@ -598,6 +648,7 @@ public class ExpandableComposite extends Composite {
 	public int getExpansionStyle() {
 		return expansionStyle;
 	}
+
 	/**
 	 * Programmatically changes expanded state.
 	 * 
@@ -609,6 +660,7 @@ public class ExpandableComposite extends Composite {
 		if (toggle != null)
 			toggle.setExpanded(expanded);
 	}
+
 	/**
 	 * Performs the expansion state change for the expandable control.
 	 * 
@@ -625,9 +677,9 @@ public class ExpandableComposite extends Composite {
 			layout();
 		}
 	}
+
 	/**
-	 * Adds the listener that will be notified when the expansion state
-	 * changes.
+	 * Adds the listener that will be notified when the expansion state changes.
 	 * 
 	 * @param listener
 	 *            the listener to add
@@ -636,6 +688,7 @@ public class ExpandableComposite extends Composite {
 		if (!listeners.contains(listener))
 			listeners.add(listener);
 	}
+
 	/**
 	 * Removes the expansion listener.
 	 * 
@@ -646,21 +699,25 @@ public class ExpandableComposite extends Composite {
 		if (listeners.contains(listener))
 			listeners.remove(listener);
 	}
+
 	private void toggleState() {
 		boolean newState = !isExpanded();
 		fireExpanding(newState, true);
 		internalSetExpanded(!isExpanded());
 		fireExpanding(newState, false);
 	}
-/**
- * If TITLE_BAR style is used, title bar decoration will
- * be painted behind the text in this method. The default
- * implementation does nothing - subclasses are responsible
- * for rendering the title area.
- * @param e the paint event
- */
+
+	/**
+	 * If TITLE_BAR style is used, title bar decoration will be painted behind
+	 * the text in this method. The default implementation does nothing -
+	 * subclasses are responsible for rendering the title area.
+	 * 
+	 * @param e
+	 *            the paint event
+	 */
 	protected void onPaint(PaintEvent e) {
 	}
+
 	private void fireExpanding(boolean state, boolean before) {
 		int size = listeners.size();
 		if (size == 0)
@@ -674,6 +731,7 @@ public class ExpandableComposite extends Composite {
 				listener.expansionStateChanged(e);
 		}
 	}
+
 	/**
 	 * Returns description control that will be placed under the title if
 	 * present.
@@ -683,6 +741,7 @@ public class ExpandableComposite extends Composite {
 	protected Control getDescriptionControl() {
 		return null;
 	}
+
 	/**
 	 * Returns the separator control that will be placed between the title and
 	 * the description if present.
@@ -692,6 +751,7 @@ public class ExpandableComposite extends Composite {
 	protected Control getSeparatorControl() {
 		return null;
 	}
+
 	/**
 	 * Computes the size of the expandable composite.
 	 * 
@@ -709,40 +769,45 @@ public class ExpandableComposite extends Composite {
 		Rectangle trim = computeTrim(0, 0, size.x, size.y);
 		return new Point(trim.width, trim.height);
 	}
+
 	/**
 	 * Returns <samp>true </samp> if the composite is fixed i.e. cannot be
 	 * expanded or collapsed. Fixed control will still contain the title,
-	 * separator and description (if present) as well as the client, but will
-	 * be in the permanent expanded state and the toggle affordance will not be
+	 * separator and description (if present) as well as the client, but will be
+	 * in the permanent expanded state and the toggle affordance will not be
 	 * shown.
 	 * 
-	 * @return <samp>true </samp> if the control is fixed in the expanded
-	 *         state, <samp>false </samp> if it can be collapsed.
+	 * @return <samp>true </samp> if the control is fixed in the expanded state,
+	 *         <samp>false </samp> if it can be collapsed.
 	 */
 	protected boolean isFixedStyle() {
 		return (expansionStyle & TWISTIE) == 0
 				&& (expansionStyle & TREE_NODE) == 0;
 	}
+
 	/**
 	 * Returns the text client control.
-	 * @return Returns the text client control if specified, or <code>null</code> if
-	 * not.
+	 * 
+	 * @return Returns the text client control if specified, or
+	 *         <code>null</code> if not.
 	 */
 	public Control getTextClient() {
 		return textClient;
 	}
+
 	/**
-	 * Sets the text client control. Text client is a control that 
-	 * is a child of the expandable composite and is placed to the right
-	 * of the text. It can be used to place small image hyperlinks. If
-	 * more than one control is needed, use Composite to hold them. Care should
-	 * be taken that the height of the control is comparable to the
-	 * height of the text.
-	 * @param textClient the textClient to set or <code>null</code> if not
-	 * needed any more.
+	 * Sets the text client control. Text client is a control that is a child of
+	 * the expandable composite and is placed to the right of the text. It can
+	 * be used to place small image hyperlinks. If more than one control is
+	 * needed, use Composite to hold them. Care should be taken that the height
+	 * of the control is comparable to the height of the text.
+	 * 
+	 * @param textClient
+	 *            the textClient to set or <code>null</code> if not needed any
+	 *            more.
 	 */
 	public void setTextClient(Control textClient) {
-		if (this.textClient!=null)
+		if (this.textClient != null)
 			this.textClient.dispose();
 		this.textClient = textClient;
 	}

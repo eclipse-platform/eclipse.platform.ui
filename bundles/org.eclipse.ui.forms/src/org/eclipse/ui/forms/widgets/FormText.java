@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.forms.widgets;
+
 import java.io.InputStream;
 import java.util.*;
 
@@ -22,11 +23,12 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.HyperlinkSettings;
 import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.internal.forms.widgets.*;
+
 /**
  * This class is a read-only text control that is capable of rendering wrapped
  * text. Text can be rendered as-is or by parsing the formatting XML tags.
- * Independently, words that start with http:// can be converted into
- * hyperlinks on the fly.
+ * Independently, words that start with http:// can be converted into hyperlinks
+ * on the fly.
  * <p>
  * When configured to use formatting XML, the control requires the root element
  * <code>form</code> to be used. The following tags can be children of the
@@ -48,29 +50,28 @@ import org.eclipse.ui.internal.forms.widgets.*;
  * <li><b>value </b>- not used for 'bullet'. For text, it is the value of the
  * text to rendered as a bullet. For image, it is the href of the image to be
  * rendered as a bullet.</li>
- * <li><b>indent </b>- the number of pixels to indent the text in the list
- * item</li>
- * <li><b>bindent </b>- the number of pixels to indent the bullet itself
+ * <li><b>indent </b>- the number of pixels to indent the text in the list item
  * </li>
+ * <li><b>bindent </b>- the number of pixels to indent the bullet itself</li>
  * </ul>
  * </li>
  * </ul>
  * <p>
  * Text in paragraphs and list items will be wrapped according to the width of
- * the control. The following tags can appear as children of either <b>p </b>
- * or <b>li </b> elements:
+ * the control. The following tags can appear as children of either <b>p </b> or
+ * <b>li </b> elements:
  * <ul>
  * <li><b>img </b>- to render an image. Element accepts attribute 'href' that
  * is a key to the Image set using 'setImage' method.</li>
- * <li><b>a </b>- to render a hyperlink. Element accepts attribute 'href'
- * that will be provided to the hyperlink listeners via HyperlinkEvent object.
- * The element also accepts 'nowrap' attribute (default is false). When set to
+ * <li><b>a </b>- to render a hyperlink. Element accepts attribute 'href' that
+ * will be provided to the hyperlink listeners via HyperlinkEvent object. The
+ * element also accepts 'nowrap' attribute (default is false). When set to
  * 'true', the hyperlink will not be wrapped.</li>
  * <li><b>b </b>- the enclosed text will use bold font.</li>
  * <li><b>br </b>- forced line break (no attributes).</li>
  * <li><b>span </b>- the enclosed text will have the color and font specified
- * in the element attributes. Color is provided using 'color' attribute and is
- * a key to the Color object set by 'setColor' method. Font is provided using
+ * in the element attributes. Color is provided using 'color' attribute and is a
+ * key to the Color object set by 'setColor' method. Font is provided using
  * 'font' attribute and is a key to the Font object set by 'setFont' method.
  * </li>
  * </ul>
@@ -92,49 +93,68 @@ import org.eclipse.ui.internal.forms.widgets.*;
  * fully each time. Instead, combine the control in a composite with other
  * controls and let SWT take care of the dirty regions.
  * </p>
- * <p>Although the class is not marked final,
+ * <p>
+ * Although the class is not marked final,
+ * 
  * @see FormToolkit
  * @see TableWrapLayout
  * @since 3.0
  */
 public final class FormText extends Canvas {
 	/**
-	 * The object ID to be used when registering action to handle URL
-	 * hyperlinks (those that should result in opening the web browser). Value
-	 * is "urlHandler".
+	 * The object ID to be used when registering action to handle URL hyperlinks
+	 * (those that should result in opening the web browser). Value is
+	 * "urlHandler".
 	 */
 	public static final String URL_HANDLER_ID = "urlHandler";
+
 	/**
 	 * Value of the horizontal margin (default is 0).
 	 */
 	public int marginWidth = 0;
+
 	/**
 	 * Value of hte horizontal margin (default is 1).
 	 */
 	public int marginHeight = 1;
-	//private fields
+
+	// private fields
 	private boolean hasFocus;
+
 	private boolean paragraphsSeparated = true;
+
 	private FormTextModel model;
+
 	private Vector listeners;
+
 	private Hashtable resourceTable = new Hashtable();
+
 	private HyperlinkSegment entered;
+
 	private boolean mouseDown = false;
-	//private Point dragOrigin;
+
+	// private Point dragOrigin;
 	private Action openAction;
+
 	private Action copyShortcutAction;
+
 	private boolean loading = true;
-	//TODO translate this text
+
+	// TODO translate this text
 	private String loadingText = "Loading...";
+
 	private class FormTextLayout extends Layout implements ILayoutExtension {
 		public FormTextLayout() {
 		}
+
 		public int computeMaximumWidth(Composite parent, boolean changed) {
 			return computeSize(parent, SWT.DEFAULT, SWT.DEFAULT, changed).x;
 		}
+
 		public int computeMinimumWidth(Composite parent, boolean changed) {
 			return computeSize(parent, 5, SWT.DEFAULT, true).x;
 		}
+
 		/*
 		 * @see Layout#computeSize(Composite, int, int, boolean)
 		 */
@@ -152,6 +172,7 @@ public final class FormText extends Canvas {
 			Point result = new Point(textWidth, textHeight);
 			return result;
 		}
+
 		private Point computeLoading() {
 			GC gc = new GC(FormText.this);
 			gc.setFont(getFont());
@@ -162,6 +183,7 @@ public final class FormText extends Canvas {
 			size.y += 2 * marginHeight;
 			return size;
 		}
+
 		private Point computeTextSize(int wHint) {
 			Paragraph[] paragraphs = model.getParagraphs();
 			GC gc = new GC(FormText.this);
@@ -195,9 +217,11 @@ public final class FormText extends Canvas {
 			gc.dispose();
 			return new Point(width, loc.y);
 		}
+
 		protected void layout(Composite composite, boolean flushCache) {
 		}
 	}
+
 	/**
 	 * Contructs a new form text widget in the provided parent and using the
 	 * styles.
@@ -214,8 +238,9 @@ public final class FormText extends Canvas {
 		addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
 				model.dispose();
-				Font boldFont = (Font)resourceTable.get(FormTextModel.BOLD_FONT_ID);
-				if (boldFont!=null) {
+				Font boldFont = (Font) resourceTable
+						.get(FormTextModel.BOLD_FONT_ID);
+				if (boldFont != null) {
 					boldFont.dispose();
 				}
 			}
@@ -236,12 +261,12 @@ public final class FormText extends Canvas {
 		addListener(SWT.Traverse, new Listener() {
 			public void handleEvent(Event e) {
 				switch (e.detail) {
-					case SWT.TRAVERSE_PAGE_NEXT :
-					case SWT.TRAVERSE_PAGE_PREVIOUS :
-					case SWT.TRAVERSE_ARROW_NEXT :
-					case SWT.TRAVERSE_ARROW_PREVIOUS :
-						e.doit = false;
-						return;
+				case SWT.TRAVERSE_PAGE_NEXT:
+				case SWT.TRAVERSE_PAGE_PREVIOUS:
+				case SWT.TRAVERSE_ARROW_NEXT:
+				case SWT.TRAVERSE_ARROW_PREVIOUS:
+					e.doit = false;
+					return;
 				}
 				if (!model.hasFocusSegments()) {
 					e.doit = true;
@@ -262,6 +287,7 @@ public final class FormText extends Canvas {
 					handleFocusChange();
 				}
 			}
+
 			public void focusLost(FocusEvent e) {
 				if (hasFocus) {
 					hasFocus = false;
@@ -272,10 +298,12 @@ public final class FormText extends Canvas {
 		addMouseListener(new MouseListener() {
 			public void mouseDoubleClick(MouseEvent e) {
 			}
+
 			public void mouseDown(MouseEvent e) {
 				// select a link
 				handleMouseClick(e, true);
 			}
+
 			public void mouseUp(MouseEvent e) {
 				// activate a link
 				handleMouseClick(e, false);
@@ -285,6 +313,7 @@ public final class FormText extends Canvas {
 			public void mouseEnter(MouseEvent e) {
 				handleMouseMove(e);
 			}
+
 			public void mouseExit(MouseEvent e) {
 				if (entered != null) {
 					exitLink(entered, e.stateMask);
@@ -293,6 +322,7 @@ public final class FormText extends Canvas {
 					setCursor(null);
 				}
 			}
+
 			public void mouseHover(MouseEvent e) {
 				handleMouseHover(e);
 			}
@@ -306,6 +336,7 @@ public final class FormText extends Canvas {
 		makeActions();
 		ensureBoldFontPresent(getFont());
 	}
+
 	/**
 	 * Test for focus.
 	 * 
@@ -314,6 +345,7 @@ public final class FormText extends Canvas {
 	public boolean getFocus() {
 		return hasFocus;
 	}
+
 	/**
 	 * Test if the widget is currently processing the text it is about to
 	 * render.
@@ -324,20 +356,22 @@ public final class FormText extends Canvas {
 	public boolean isLoading() {
 		return loading;
 	}
+
 	/**
-	 * Returns the text that will be shown in the control while the real
-	 * content is loading.
+	 * Returns the text that will be shown in the control while the real content
+	 * is loading.
 	 * 
 	 * @return loading text message
 	 */
 	public String getLoadingText() {
 		return loadingText;
 	}
+
 	/**
-	 * Sets the text that will be shown in the control while the real content
-	 * is loading. This is significant when content to render is loaded from
-	 * the input stream that was created from a remote URL, and the time to
-	 * load the entire content is nontrivial.
+	 * Sets the text that will be shown in the control while the real content is
+	 * loading. This is significant when content to render is loaded from the
+	 * input stream that was created from a remote URL, and the time to load the
+	 * entire content is nontrivial.
 	 * 
 	 * @param loadingText
 	 *            loading text message
@@ -345,6 +379,7 @@ public final class FormText extends Canvas {
 	public void setLoadingText(String loadingText) {
 		this.loadingText = loadingText;
 	}
+
 	/**
 	 * If paragraphs are separated, spacing will be added between them.
 	 * Otherwise, new paragraphs will simply start on a new line with no
@@ -357,6 +392,7 @@ public final class FormText extends Canvas {
 	public void setParagraphsSeparated(boolean value) {
 		paragraphsSeparated = value;
 	}
+
 	/**
 	 * Tests if there is some inter-paragraph spacing.
 	 * 
@@ -366,6 +402,7 @@ public final class FormText extends Canvas {
 	public boolean getParagraphsSeparated() {
 		return paragraphsSeparated;
 	}
+
 	/**
 	 * Registers the image referenced by the provided key.
 	 * <p>
@@ -382,12 +419,13 @@ public final class FormText extends Canvas {
 	public void setImage(String key, Image image) {
 		resourceTable.put("i." + key, image);
 	}
+
 	/**
 	 * Registers the color referenced by the provided key.
 	 * <p>
-	 * For <samp>span </samp> tags, an object of a type <samp>Color </samp>
-	 * must be registered using the key equivalent to the value of the <samp>
-	 * color </samp> attribute.
+	 * For <samp>span </samp> tags, an object of a type <samp>Color </samp> must
+	 * be registered using the key equivalent to the value of the <samp>color
+	 * </samp> attribute.
 	 * 
 	 * @param key
 	 *            unique key that matches the value of the <samp>color </samp>
@@ -398,6 +436,7 @@ public final class FormText extends Canvas {
 	public void setColor(String key, Color color) {
 		resourceTable.put("c." + key, color);
 	}
+
 	/**
 	 * Registers the font referenced by the provided key.
 	 * <p>
@@ -414,22 +453,25 @@ public final class FormText extends Canvas {
 	public void setFont(String key, Font font) {
 		resourceTable.put("f." + key, font);
 	}
+
 	/**
-	 * Sets the font to use to render the default
-	 * text (text that does not have special font property
-	 * assigned). Bold font will be constructed from
-	 * this font.
-	 * @param font the default font to use
+	 * Sets the font to use to render the default text (text that does not have
+	 * special font property assigned). Bold font will be constructed from this
+	 * font.
+	 * 
+	 * @param font
+	 *            the default font to use
 	 */
 	public void setFont(Font font) {
 		super.setFont(font);
-		Font boldFont = (Font)resourceTable.get(FormTextModel.BOLD_FONT_ID);
-		if (boldFont!=null) {
+		Font boldFont = (Font) resourceTable.get(FormTextModel.BOLD_FONT_ID);
+		if (boldFont != null) {
 			boldFont.dispose();
 			resourceTable.remove(FormTextModel.BOLD_FONT_ID);
 		}
 		ensureBoldFontPresent(getFont());
 	}
+
 	/**
 	 * Sets the provided text. Text can be rendered as-is, or by parsing the
 	 * formatting tags. Optionally, sections of text starting with http:// will
@@ -441,8 +483,8 @@ public final class FormText extends Canvas {
 	 *            if <samp>true </samp>, formatting tags will be parsed.
 	 *            Otherwise, text will be rendered as-is.
 	 * @param expandURLs
-	 *            if <samp>true </samp>, URLs found in the untagged text will
-	 *            be converted into hyperlinks.
+	 *            if <samp>true </samp>, URLs found in the untagged text will be
+	 *            converted into hyperlinks.
 	 */
 	public void setText(String text, boolean parseTags, boolean expandURLs) {
 		if (parseTags)
@@ -453,9 +495,10 @@ public final class FormText extends Canvas {
 		layout();
 		redraw();
 	}
+
 	/**
-	 * Sets the contents of the stream. Optionally, URLs in untagged text can
-	 * be converted into hyperlinks. The caller is responsible for closing the
+	 * Sets the contents of the stream. Optionally, URLs in untagged text can be
+	 * converted into hyperlinks. The caller is responsible for closing the
 	 * stream.
 	 * 
 	 * @param is
@@ -470,33 +513,39 @@ public final class FormText extends Canvas {
 		layout();
 		redraw();
 	}
+
 	/**
-	 * Controls whether whitespace inside paragraph and list
-	 * items is normalized. 
-	 * <p>If normalized:
+	 * Controls whether whitespace inside paragraph and list items is
+	 * normalized.
+	 * <p>
+	 * If normalized:
 	 * <ul>
-	 * <li>all white space characters will
-	 * be condensed into at most one when between words.</li> 
-	 * <li>new line characters will be ignored and replaced
-	 * with one white space character</li>
-	 * <li>white space characters after the opening
-	 * tags and before the closing tags will be trimmed</li>
-	 * @param value <code>true</code> if whitespace is
-	 * normalized, <code>false</code> otherwise.
+	 * <li>all white space characters will be condensed into at most one when
+	 * between words.</li>
+	 * <li>new line characters will be ignored and replaced with one white
+	 * space character</li>
+	 * <li>white space characters after the opening tags and before the closing
+	 * tags will be trimmed</li>
+	 * 
+	 * @param value
+	 *            <code>true</code> if whitespace is normalized,
+	 *            <code>false</code> otherwise.
 	 */
 	public void setWhitespaceNormalized(boolean value) {
 		model.setWhitespaceNormalized(value);
 	}
+
 	/**
-	 * Tests whether whitespace inside paragraph and
-	 * list item is normalized.
+	 * Tests whether whitespace inside paragraph and list item is normalized.
+	 * 
 	 * @see #setWhitespaceNormalized(boolean)
-	 * @return <code>true</code> if whitespace is
-	 * normalized, <code>false</code> otherwise.
+	 * @return <code>true</code> if whitespace is normalized,
+	 *         <code>false</code> otherwise.
 	 */
 	public boolean isWhitespaceNormalized() {
 		return model.isWhitespaceNormalized();
 	}
+
 	/**
 	 * Sets the focus to the first hyperlink, or the widget itself if there are
 	 * no hyperlinks.
@@ -510,6 +559,7 @@ public final class FormText extends Canvas {
 		 */
 		return super.setFocus();
 	}
+
 	/**
 	 * Returns the hyperlink settings that are in effect for this control.
 	 * 
@@ -518,6 +568,7 @@ public final class FormText extends Canvas {
 	public HyperlinkSettings getHyperlinkSettings() {
 		return model.getHyperlinkSettings();
 	}
+
 	/**
 	 * Sets the hyperlink settings to be used for this control. Settings will
 	 * affect things like hyperlink color, rendering style, cursor etc.
@@ -528,6 +579,7 @@ public final class FormText extends Canvas {
 	public void setHyperlinkSettings(HyperlinkSettings settings) {
 		model.setHyperlinkSettings(settings);
 	}
+
 	/**
 	 * Adds a listener that will handle hyperlink events.
 	 * 
@@ -540,6 +592,7 @@ public final class FormText extends Canvas {
 		if (!listeners.contains(listener))
 			listeners.add(listener);
 	}
+
 	/**
 	 * Removes the hyperlink listener.
 	 * 
@@ -551,6 +604,23 @@ public final class FormText extends Canvas {
 			return;
 		listeners.remove(listener);
 	}
+
+	/**
+	 * Returns the reference of the hyperlink that currently has keyboard focus,
+	 * or <code>null</code> if there are no hyperlinks in the receiver or no
+	 * hyperlink has focus at the moment.
+	 * 
+	 * @return href of the selected hyperlink or <code>null</code> if none
+	 *         selected.
+	 * @since 3.1
+	 */
+	public Object getSelectedLinkHref() {
+		HyperlinkSegment link = model.getSelectedLink();
+		if (link != null)
+			return link.getHref();
+		return null;
+	}
+
 	/**
 	 * Context menu is about to show - override to add actions to the menu
 	 * manager. Subclasses are required to call 'super' when overriding.
@@ -563,6 +633,7 @@ public final class FormText extends Canvas {
 		if (link != null)
 			contributeLinkActions(manager, link);
 	}
+
 	private void makeActions() {
 		/*
 		 * openAction = new Action() { public void run() {
@@ -574,15 +645,18 @@ public final class FormText extends Canvas {
 		 * FormsPlugin.getResourceString("FormEgine.linkPopup.copyShortcut"));
 		 */
 	}
+
 	private String getAcessibleText() {
 		return model.getAccessibleText();
 	}
+
 	private void initAccessible() {
 		Accessible accessible = getAccessible();
 		accessible.addAccessibleListener(new AccessibleAdapter() {
 			public void getName(AccessibleEvent e) {
 				e.result = getAcessibleText();
 			}
+
 			public void getHelp(AccessibleEvent e) {
 				e.result = getToolTipText();
 			}
@@ -590,10 +664,10 @@ public final class FormText extends Canvas {
 		accessible.addAccessibleControlListener(new AccessibleControlAdapter() {
 			public void getChildAtPoint(AccessibleControlEvent e) {
 				Point pt = toControl(new Point(e.x, e.y));
-				e.childID = (getBounds().contains(pt))
-						? ACC.CHILDID_SELF
+				e.childID = (getBounds().contains(pt)) ? ACC.CHILDID_SELF
 						: ACC.CHILDID_NONE;
 			}
+
 			public void getLocation(AccessibleControlEvent e) {
 				Rectangle location = getBounds();
 				Point pt = toDisplay(new Point(location.x, location.y));
@@ -602,17 +676,21 @@ public final class FormText extends Canvas {
 				e.width = location.width;
 				e.height = location.height;
 			}
+
 			public void getChildCount(AccessibleControlEvent e) {
 				e.detail = 0;
 			}
+
 			public void getRole(AccessibleControlEvent e) {
 				e.detail = ACC.ROLE_TEXT;
 			}
+
 			public void getState(AccessibleControlEvent e) {
 				e.detail = ACC.STATE_READONLY;
 			}
 		});
 	}
+
 	private void handleMouseClick(MouseEvent e, boolean down) {
 		if (down) {
 			// select a hyperlink
@@ -624,7 +702,7 @@ public final class FormText extends Canvas {
 				paintFocusTransfer(oldLink, segmentUnder);
 			}
 			mouseDown = true;
-			//dragOrigin = new Point(e.x, e.y);
+			// dragOrigin = new Point(e.x, e.y);
 		} else {
 			if (e.button == 1) {
 				HyperlinkSegment segmentUnder = model.findHyperlinkAt(e.x, e.y);
@@ -635,8 +713,10 @@ public final class FormText extends Canvas {
 			mouseDown = false;
 		}
 	}
+
 	private void handleMouseHover(MouseEvent e) {
 	}
+
 	private void handleMouseMove(MouseEvent e) {
 		if (mouseDown) {
 			handleDrag(e);
@@ -669,6 +749,7 @@ public final class FormText extends Canvas {
 			}
 		}
 	}
+
 	private boolean advance(boolean next) {
 		HyperlinkSegment current = model.getSelectedLink();
 		if (current != null)
@@ -682,6 +763,7 @@ public final class FormText extends Canvas {
 			ensureVisible(newLink);
 		return !valid;
 	}
+
 	private void handleFocusChange() {
 		if (hasFocus) {
 			model.traverseLinks(true);
@@ -693,6 +775,7 @@ public final class FormText extends Canvas {
 			model.selectLink(null);
 		}
 	}
+
 	private void enterLink(HyperlinkSegment link, int stateMask) {
 		if (link == null || listeners == null)
 			return;
@@ -704,6 +787,7 @@ public final class FormText extends Canvas {
 			listener.linkEntered(he);
 		}
 	}
+
 	private void exitLink(HyperlinkSegment link, int stateMask) {
 		if (link == null || listeners == null)
 			return;
@@ -715,6 +799,7 @@ public final class FormText extends Canvas {
 			listener.linkExited(he);
 		}
 	}
+
 	private void paintLinkHover(HyperlinkSegment link, boolean hover) {
 		GC gc = new GC(this);
 		HyperlinkSettings settings = getHyperlinkSettings();
@@ -730,11 +815,13 @@ public final class FormText extends Canvas {
 		}
 		gc.dispose();
 	}
+
 	private void activateSelectedLink() {
 		HyperlinkSegment link = model.getSelectedLink();
 		if (link != null)
 			activateLink(link, SWT.NULL);
 	}
+
 	private void activateLink(HyperlinkSegment link, int stateMask) {
 		setCursor(model.getHyperlinkSettings().getBusyCursor());
 		if (listeners != null) {
@@ -750,9 +837,11 @@ public final class FormText extends Canvas {
 		if (!isDisposed())
 			setCursor(model.getHyperlinkSettings().getHyperlinkCursor());
 	}
+
 	private void ensureBoldFontPresent(Font regularFont) {
-		Font boldFont = (Font)resourceTable.get(FormTextModel.BOLD_FONT_ID);
-		if (boldFont!=null) return;
+		Font boldFont = (Font) resourceTable.get(FormTextModel.BOLD_FONT_ID);
+		if (boldFont != null)
+			return;
 		FontData[] fontDatas = regularFont.getFontData();
 		for (int i = 0; i < fontDatas.length; i++) {
 			fontDatas[i].setStyle(fontDatas[i].getStyle() | SWT.BOLD);
@@ -760,6 +849,7 @@ public final class FormText extends Canvas {
 		boldFont = new Font(getDisplay(), fontDatas);
 		resourceTable.put(FormTextModel.BOLD_FONT_ID, boldFont);
 	}
+
 	private void paint(PaintEvent e) {
 		Rectangle carea = getClientArea();
 		GC gc = e.gc;
@@ -767,7 +857,7 @@ public final class FormText extends Canvas {
 		ensureBoldFontPresent(getFont());
 		gc.setForeground(getForeground());
 		gc.setBackground(getBackground());
-		
+
 		Locator loc = new Locator();
 		loc.marginWidth = marginWidth;
 		loc.marginHeight = marginHeight;
@@ -783,7 +873,7 @@ public final class FormText extends Canvas {
 		textGC.setBackground(getBackground());
 		textGC.setFont(getFont());
 		textGC.fillRectangle(0, 0, carea.width, carea.height);
-		
+
 		if (loading) {
 			int textWidth = gc.textExtent(loadingText).x;
 			textGC.drawText(loadingText, carea.width / 2 - textWidth / 2,
@@ -806,9 +896,11 @@ public final class FormText extends Canvas {
 		textGC.dispose();
 		textBuffer.dispose();
 	}
+
 	private int getParagraphSpacing(int lineHeight) {
 		return lineHeight / 2;
 	}
+
 	private void paintFocusTransfer(HyperlinkSegment oldLink,
 			HyperlinkSegment newLink) {
 		GC gc = new GC(this);
@@ -821,27 +913,27 @@ public final class FormText extends Canvas {
 			oldLink.paintFocus(gc, bg, fg, false);
 		}
 		if (newLink != null) {
-			//ensureVisible(newLink);
+			// ensureVisible(newLink);
 			gc.setBackground(bg);
 			gc.setForeground(fg);
 			newLink.paintFocus(gc, bg, fg, true);
 		}
 		gc.dispose();
 	}
+
 	private void contributeLinkActions(IMenuManager manager,
 			HyperlinkSegment link) {
 		manager.add(openAction);
 		manager.add(copyShortcutAction);
 		manager.add(new Separator());
 	}
-/*
-	private void copyShortcut(HyperlinkSegment link) {
-		String text = link.getText();
-		Clipboard clipboard = new Clipboard(getDisplay());
-		clipboard.setContents(new Object[]{text}, new Transfer[]{TextTransfer
-				.getInstance()});
-	}
-*/
+
+	/*
+	 * private void copyShortcut(HyperlinkSegment link) { String text =
+	 * link.getText(); Clipboard clipboard = new Clipboard(getDisplay());
+	 * clipboard.setContents(new Object[]{text}, new Transfer[]{TextTransfer
+	 * .getInstance()}); }
+	 */
 	private void ensureVisible(HyperlinkSegment segment) {
 		if (segment == null)
 			return;
@@ -858,9 +950,10 @@ public final class FormText extends Canvas {
 
 	private void handleDrag(MouseEvent e) {
 	}
+
 	/**
-	 * Overrides the method by fully trusting the layout manager (computed
-	 * width or height may be larger than the provider width or height hints).
+	 * Overrides the method by fully trusting the layout manager (computed width
+	 * or height may be larger than the provider width or height hints).
 	 */
 	public Point computeSize(int wHint, int hHint, boolean changed) {
 		checkWidget();
