@@ -200,9 +200,11 @@ public void setContainerFullPath(IPath path) {
 	validateControls();
 }
 /**
- * Gives focus to the resource name field
+ * Gives focus to the resource name field and selects its contents
  */
 public void setFocus() {
+	//select the whole resource name.
+	resourceNameField.setSelection(0, resourceNameField.getText().length());
 	resourceNameField.setFocus();
 }
 /**
