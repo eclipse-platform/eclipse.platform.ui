@@ -159,6 +159,7 @@ public class ConfigurationManagerWindow
 	 */
 	public ConfigurationManagerWindow(Shell parentShell) {
 		super(parentShell);
+		setShellStyle(getShellStyle() | SWT.APPLICATION_MODAL);
 		bars = new ManagerActionBars();
 		viewBars = new SubActionBars(bars);
 		// Setup window.
