@@ -346,6 +346,27 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 		addSelectionChangedListener(showInHistory);
 		
 		selectAdditions = new Action(Policy.bind("CVSCatchupReleaseViewer.Select_&Outgoing_Additions_1"), null) { //$NON-NLS-1$
+			public boolean isEnabled() {
+				DiffNode node = diffModel.getDiffRoot();
+				IDiffElement[] elements = node.getChildren();
+				for (int i = 0; i < elements.length; i++) {
+					IDiffElement element = elements[i];
+					if (element instanceof ITeamNode) {
+						CVSSyncSet set = new CVSSyncSet(new StructuredSelection(element));
+						try {
+							if (set.hasNonAddedChanges()) return true;
+						} catch (CVSException e) {
+							// Log the error and enable the menu item
+							CVSUIPlugin.log(e.getStatus());
+							return true;
+						}
+					} else {
+						// unanticipated situation, just enable the action
+						return true;
+					}
+				}
+				return false;
+			}
 			public void run() {
 				List additions = new ArrayList();
 				DiffNode root = diffModel.getDiffRoot();
