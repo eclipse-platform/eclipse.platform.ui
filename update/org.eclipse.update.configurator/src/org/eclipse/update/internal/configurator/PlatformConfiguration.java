@@ -321,7 +321,10 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 	 * @see IPlatformConfiguration#getChangeStamp()
 	 */
 	public long getChangeStamp() {
-		return config.getDate().getTime();
+		if (config.getLinkedConfig() == null)
+			return config.getDate().getTime();
+		else
+			return Math.max(config.getDate().getTime(), config.getLinkedConfig().getDate().getTime());
 	}
 
 	/*
