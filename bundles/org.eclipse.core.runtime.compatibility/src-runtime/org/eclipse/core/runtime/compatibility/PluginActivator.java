@@ -11,8 +11,8 @@
 package org.eclipse.core.runtime.compatibility;
 
 import org.eclipse.core.internal.plugins.PluginDescriptor;
-import org.eclipse.core.internal.runtime.InternalPlatform;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Plugin;
 import org.osgi.framework.*;
 
 public class PluginActivator implements BundleActivator {
@@ -33,21 +33,20 @@ public class PluginActivator implements BundleActivator {
 		ensureNormalStartup(context);
 
 		this.context = context;
-
 		PluginDescriptor pd = (PluginDescriptor) Platform.getPluginRegistry().getPluginDescriptor(context.getBundle().getGlobalName());
 		pd.setPluginActivator(this);
 		plugin = pd.getPlugin();
 		plugin.startup();
 	}
 	private void ensureNormalStartup(BundleContext context) throws BundleException {
-		Bundle applicationRunnerBundle = context.getBundle(PI_APPLICATION_RUNNER);
-		if (applicationRunnerBundle != null && (applicationRunnerBundle.getState() & (Bundle.ACTIVE | Bundle.STARTING)) == 0) {
-			IStatus status = new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, 0, org.eclipse.core.internal.plugins.Policy.bind("activator.applicationNotStarted", context.getBundle().getGlobalName()), null); //$NON-NLS-1$
-			InternalPlatform.getDefault().log(status);
-			throw new BundleException(status.getMessage());
-		}
+// TODO change to look for startlevel 
+//		Bundle applicationRunnerBundle = context.getBundle(PI_APPLICATION_RUNNER);
+//		if (applicationRunnerBundle != null && (applicationRunnerBundle.getState() & (Bundle.ACTIVE | Bundle.STARTING)) == 0) {
+//			IStatus status = new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, 0, org.eclipse.core.internal.plugins.Policy.bind("activator.applicationNotStarted", context.getBundle().getGlobalName()), null); //$NON-NLS-1$
+//			InternalPlatform.getDefault().log(status);
+//			throw new BundleException(status.getMessage());
+//		}
 	}
-
 	public void stop(BundleContext context) throws Exception {
 		try {
 			plugin.shutdown();
