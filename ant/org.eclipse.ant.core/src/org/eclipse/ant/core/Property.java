@@ -109,19 +109,18 @@ public class Property {
 		
 		if (valueProvider != null) {
 			return valueProvider.getAntPropertyValue(name);
-		} else {
-			if (substituteVariables) {
-				try {
-					String expanded = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(value);
-					return expanded;
-				} catch (CoreException e) {
-					AntCorePlugin.log(e);
-				}
-			} else {
-				return value;
+		} 
+		if (substituteVariables) {
+			try {
+				String expanded = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(value);
+				return expanded;
+			} catch (CoreException e) {
+				AntCorePlugin.log(e);
 			}
-			return null;
+		} else {
+			return value;
 		}
+		return null;
 	}
 
 	/**

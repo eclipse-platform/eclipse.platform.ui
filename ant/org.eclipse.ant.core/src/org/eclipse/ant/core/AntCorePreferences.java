@@ -464,12 +464,12 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 				addPluginClassLoader(descriptor.getPluginClassLoader());
 				antObject.setLibraryEntry(new AntClasspathEntry(url));
 				return;
-			} else {
-				//type specifies a library that does not exist
-				IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_LIBRARY_NOT_SPECIFIED, MessageFormat.format(errorMessage, new String[]{url.toExternalForm(), descriptor.getLabel()}), null); //$NON-NLS-1$
-				AntCorePlugin.getPlugin().getLog().log(status);
-				return;
-			}
+			} 
+
+			//type specifies a library that does not exist
+			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_LIBRARY_NOT_SPECIFIED, MessageFormat.format(errorMessage, new String[]{url.toExternalForm(), descriptor.getLabel()}), null); //$NON-NLS-1$
+			AntCorePlugin.getPlugin().getLog().log(status);
+			return;
 		} catch (MalformedURLException e) {
 			// if the URL does not have a valid format, just log and ignore the exception
 			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_MALFORMED_URL, InternalCoreAntMessages.getString("AntCorePreferences.Malformed_URL._1"), e); //$NON-NLS-1$

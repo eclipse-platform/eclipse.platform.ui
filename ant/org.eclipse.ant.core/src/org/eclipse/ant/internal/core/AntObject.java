@@ -46,9 +46,8 @@ public abstract class AntObject {
 	public URL getLibrary() {
 		if (fLibrary != null) {
 			return fLibrary;
-		} else {
-			return fLibraryEntry.getEntryURL();	
-		}
+		} 
+		return fLibraryEntry.getEntryURL();	
 	}
 	/**
 	 * Sets the library.
@@ -66,10 +65,9 @@ public abstract class AntObject {
 	public IAntClasspathEntry getLibraryEntry() {
 		if (fLibraryEntry != null) {
 			return fLibraryEntry;
-		} else {
-			fLibraryEntry= new AntClasspathEntry(fLibrary);
-			return fLibraryEntry;
-		}
+		} 
+		fLibraryEntry= new AntClasspathEntry(fLibrary);
+		return fLibraryEntry;
 	}
 	/**
 	 * Sets the library classpath entry.

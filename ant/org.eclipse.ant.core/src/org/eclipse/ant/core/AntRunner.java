@@ -487,13 +487,12 @@ public class AntRunner implements IPlatformRunnable {
 	private ClassLoader getClassLoader() {
 		if (customClasspath == null) {
 			return AntCorePlugin.getPlugin().getNewClassLoader();
-		} else {
-			AntCorePreferences preferences = AntCorePlugin.getPlugin().getPreferences();
-			List fullClasspath= new ArrayList();
-			fullClasspath.addAll(Arrays.asList(customClasspath));
-			fullClasspath.addAll(Arrays.asList(preferences.getExtraClasspathURLs()));
-			return new AntClassLoader((URL[])fullClasspath.toArray(new URL[fullClasspath.size()]), preferences.getPluginClassLoaders());
-		}
+		} 
+		AntCorePreferences preferences = AntCorePlugin.getPlugin().getPreferences();
+		List fullClasspath= new ArrayList();
+		fullClasspath.addAll(Arrays.asList(customClasspath));
+		fullClasspath.addAll(Arrays.asList(preferences.getExtraClasspathURLs()));
+		return new AntClassLoader((URL[])fullClasspath.toArray(new URL[fullClasspath.size()]), preferences.getPluginClassLoaders());
 	}
 	
 	/**
