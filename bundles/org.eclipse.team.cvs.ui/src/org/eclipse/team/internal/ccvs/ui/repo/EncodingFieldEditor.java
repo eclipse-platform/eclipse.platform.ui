@@ -11,9 +11,8 @@
 package org.eclipse.team.internal.ccvs.ui.repo;
 
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.Collections;
-import org.eclipse.core.resources.ResourcesPlugin;
+
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -23,7 +22,9 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.ui.WorkbenchEncoding;
+import org.eclipse.ui.ide.IDEEncoding;
 
 /**
  * A field editor that allows the user to choose an encoding.
@@ -127,7 +128,7 @@ public class EncodingFieldEditor extends FieldEditor {
 	}
 	
 	private void updateDefaultEncoding() {
-		defaultEncodingButton.setText(IDEWorkbenchMessages.format("WorkbenchPreference.defaultEncoding", new String[] { defaultEnc })); //$NON-NLS-1$
+		defaultEncodingButton.setText(Policy.bind("WorkbenchPreference.defaultEncoding", defaultEnc)); //$NON-NLS-1$
 	}
 
 	private Composite getContainer() {
@@ -144,7 +145,7 @@ public class EncodingFieldEditor extends FieldEditor {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		group.setLayout(layout);
-		group.setText(getLabelText()); //$NON-NLS-1$
+		group.setText(getLabelText());
 		group.setFont(font);
 		
 		SelectionAdapter buttonListener = new SelectionAdapter() {
@@ -155,7 +156,7 @@ public class EncodingFieldEditor extends FieldEditor {
 		};
 		
 		if (defaultEnc == null) {
-			defaultEnc = System.getProperty("file.encoding", "UTF-8");  //$NON-NLS-1$  //$NON-NLS-2$
+			defaultEnc = WorkbenchEncoding.getWorkbenchDefaultEncoding();
 		}
 		defaultEncodingButton = new Button(group, SWT.RADIO);
 		updateDefaultEncoding();
@@ -166,7 +167,7 @@ public class EncodingFieldEditor extends FieldEditor {
 		defaultEncodingButton.setFont(font);
 		
 		otherEncodingButton = new Button(group, SWT.RADIO);
-		otherEncodingButton.setText(IDEWorkbenchMessages.getString("WorkbenchPreference.otherEncoding")); //$NON-NLS-1$
+		otherEncodingButton.setText(Policy.bind("WorkbenchPreference.otherEncoding")); //$NON-NLS-1$
 		otherEncodingButton.addSelectionListener(buttonListener);
 		otherEncodingButton.setFont(font);
 		
@@ -186,31 +187,15 @@ public class EncodingFieldEditor extends FieldEditor {
 			}
 		});
 
-		ArrayList encodings = new ArrayList();
-		int n = 0;
-		try {
-			n = Integer.parseInt(IDEWorkbenchMessages.getString("WorkbenchPreference.numDefaultEncodings")); //$NON-NLS-1$
-		}
-		catch (NumberFormatException e) {
-			// Ignore;
-		}
-		for (int i = 0; i < n; ++i) {
-			String enc = IDEWorkbenchMessages.getString("WorkbenchPreference.defaultEncoding" + (i+1), null); //$NON-NLS-1$
-			if (enc != null) {
-				encodings.add(enc);
-			}
-		}
+		java.util.List encodings = IDEEncoding.getIDEEncodings();
 		
 		if (!encodings.contains(defaultEnc)) {
 			encodings.add(defaultEnc);
 		}
 
-		String enc = ResourcesPlugin.getPlugin().getPluginPreferences().getString(ResourcesPlugin.PREF_ENCODING);
+		String enc = IDEEncoding.getResourceEncoding();
 		boolean isDefault = enc == null || enc.length() == 0;
 
-		if (!isDefault && !encodings.contains(enc)) {
-			encodings.add(enc);
-		}
 		Collections.sort(encodings);
 		for (int i = 0; i < encodings.size(); ++i) {
 			encodingCombo.add((String) encodings.get(i));
@@ -245,7 +230,7 @@ public class EncodingFieldEditor extends FieldEditor {
 			if (isValid) {
 				clearErrorMessage();
 			} else {
-				showErrorMessage(IDEWorkbenchMessages.getString("WorkbenchPreference.unsupportedEncoding")); //$NON-NLS-1$
+				showErrorMessage(Policy.bind("WorkbenchPreference.unsupportedEncoding")); //$NON-NLS-1$
 			}
 			fireStateChanged(IS_VALID, !isValid, isValid);
 			
