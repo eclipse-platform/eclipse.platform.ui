@@ -81,6 +81,7 @@ the view.</li>
 as an active fast view. This must be defined as a floating point value and lie between 0.05 and 0.95.
 If no value is supplied, a default ratio will be used.</li>
 </ul>
+
 <b><i>Examples:</i></b>
 <p>The following is an example of the extension point:
 <p><tt>&nbsp;&nbsp; &lt;extension point="org.eclipse.ui.views"></tt>
@@ -96,10 +97,12 @@ If no value is supplied, a default ratio will be used.</li>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; icon="icons/XYZ.gif"></tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/view></tt>
 <br><tt>&nbsp;&nbsp; &lt;/extension></tt>
+
 <p><b><i>API Information:</i></b> The value of the <tt>class</tt> attribute
 must be a fully qualified name of the class that implements <tt>org.eclipse.ui.IViewPart.&nbsp;</tt>
 It is common practice to subclass<tt> org.eclipse.ui.part.ViewPart</tt>
 when developing a new view.
+
 <p><b><i>Supplied Implementation</i></b>: The workbench provides a number
 of standard views including Navigator, Properties, Outline and Tasks. From
 the user point of view, these views are no different from any other view
@@ -107,6 +110,8 @@ provided by the plug-ins. All the views can be shown from the View submenu.
 The position of a view is persistent: it is saved when the view is closed
 and restored when the view is reopened in a single session.&nbsp; The position
 is also persisted between workbench sessions.
-<p><a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2001.  All Rights Reserved." BORDER=0 height=12 width=195></a>
+
+<p><a href="hglegal2002.htm"><img SRC="ngibmcpy2002.gif" ALT="Copyright IBM Corporation and others 2000, 2002." BORDER=0</a>
+
 </body>
 </html>

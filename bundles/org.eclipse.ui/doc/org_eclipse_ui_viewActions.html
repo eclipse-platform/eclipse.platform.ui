@@ -276,18 +276,22 @@ selection (<tt>enablesFor</tt> attribute). In addition, each object in
 this selection must implement the specified interface (<tt>IFile</tt>)
 and must be a Java file. Multiple <tt>selection</tt> elements can be specified,
 meaning 'one of'.
+
 <p><b><i>API Information: </i></b>The value of the <tt>class</tt> attribute
 must be a fully qualified name of a Java class that implements <tt>org.eclipse.ui.IViewActionDelegate</tt>.
 This interface is loaded as late as possible to avoid loading the entire
 plug-in before it is really needed. It extends <tt>org.eclipse.ui.IActionDelegate</tt>
 and adds an additional method that allows the delegate to initialize with
 the view instance it is contributing into.
+
 <p><b><i>Supplied Implementation:</i></b> Each view normally comes with
 a number of standard items on the pulldown menu and local toolbar. Additions
 from other plug-ins will be appended to the standard complement.&nbsp;
 It is helpful to publish the action identifiers for a view within a public
 interface.&nbsp; For example, the actions and major groups for the workbench
 window are defined in org.eclipse.ui.IWorkbenchActionConstants.
-<p><a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2001.  All Rights Reserved." BORDER=0 height=12 width=195></a>
+
+<p><a href="hglegal2002.htm"><img SRC="ngibmcpy2002.gif" ALT="Copyright IBM Corporation and others 2000, 2002." BORDER=0</a>
+
 </body>
 </html>
