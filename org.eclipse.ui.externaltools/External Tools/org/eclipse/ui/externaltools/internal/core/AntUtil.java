@@ -13,16 +13,11 @@ import java.io.*;
 
 import javax.xml.parsers.*;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.*;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.XMLMemento;
 import org.w3c.dom.*;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
+import org.xml.sax.*;
 
 /**
  * General utility class dealing with Ant files
@@ -59,7 +54,8 @@ public final class AntUtil {
 	private static IMemento getMemento(IPath path) throws CoreException {
 		try {
 			Reader reader = new FileReader(path.toFile());
-			return createReadRoot(reader);
+			IPath basePath = path.removeLastSegments(1).addTrailingSeparator();
+			return createReadRoot(reader, basePath.toOSString());
 		} catch (FileNotFoundException e) {
 			processException(e, "AntUtil.antFileNotFound"); //$NON-NLS-1$
 		}
@@ -74,14 +70,21 @@ public final class AntUtil {
 	 * and returns a root memento for reading the document.
 	 * 
 	 * @param reader the reader used to create the memento's document
+	 * @param baseDir the directory to use to resolve relative file names
+	 * 		in XML document. This directory must exist and include a
+	 * 		trailing separator. The directory format, including the separators,
+	 * 		must be valid for the platform.
 	 * @return the root memento for reading the document
-	 * @throws CoreException if IO problems, or invalid format.
+	 * @throws CoreException if IO problems, or invalid XML format.
 	 */
-	private static XMLMemento createReadRoot(Reader reader) throws CoreException {
+	private static XMLMemento createReadRoot(Reader reader, String baseDir) throws CoreException {
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder parser = factory.newDocumentBuilder();
-			Document document = parser.parse(new InputSource(reader));
+			parser.setEntityResolver(new AntEntityResolver(baseDir));
+			InputSource source = new InputSource(reader);
+			source.setSystemId(baseDir);
+			Document document = parser.parse(source);
 			NodeList list = document.getChildNodes();
 			for(int i=0; i < list.getLength(); i++) {
 				Node node = list.item(i);
@@ -146,5 +149,37 @@ public final class AntUtil {
 			problem = ToolMessages.getString(messageKey);
 		IStatus status = new Status(IStatus.ERROR, ExternalToolsPlugin.PLUGIN_ID, 0, problem, e);
 		throw new CoreException(status);
+	}
+	
+	/**
+	 * EntityResolver used when parsing Ant files to find targets.
+	 */
+	private static class AntEntityResolver implements EntityResolver {
+		private String baseDir;
+		
+		public AntEntityResolver(String baseDir) {
+			this.baseDir = baseDir;
+		}
+		
+		public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
+			if (systemId == null)
+				return null;
+			
+			// remove "file:" prefix
+			if (systemId.startsWith("file:")) { //$NON-NLS-1$
+				// 5 is the length of the string "file:"
+				systemId = systemId.substring(5);
+				File file = new File(systemId);
+				// If the file is not absolute, the systemId is relative
+				// to the baseDir.
+				if (!file.isAbsolute())
+					file = new File(baseDir, systemId);
+				Reader reader = new FileReader(file);
+				return new InputSource(reader);
+			}
+			
+			// use default behaviour if systemId does not have "file:" prefix
+			return null;
+		}
 	}
 }
