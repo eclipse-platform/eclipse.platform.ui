@@ -102,7 +102,7 @@ public class ImageRegistry {
 	/**
 	 * Shut downs this resource registry and disposes of all registered images.
 	 */
-	private void handleDisplayDispose() {
+	void handleDisplayDispose() {
 		for (Iterator e = table.values().iterator(); e.hasNext();) {
 			Entry entry = (Entry)e.next();
 			if (entry.image != null) {
