@@ -1,12 +1,8 @@
 package org.eclipse.ui.internal.dialogs;
 
 import org.eclipse.jface.dialogs.Dialog;
-
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.viewers.CellEditor;
-import org.eclipse.jface.viewers.ICellModifier;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.TextCellEditor;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -179,7 +175,7 @@ protected void createColumns(){
 		TableItem item = new TableItem (vendorInfo, SWT.NULL);
 
 		/* fill each cell */
-		for (int j = 0; j < (info.length * columnTitles.length + 1); j++){
+
 			String pluginName = info[i].getUniqueIdentifier().toString();
 			// insert description code in the following line
 			String description = "insert description here";
@@ -190,6 +186,7 @@ protected void createColumns(){
 			String webSite = "insert website here";
 			String [] row = {pluginName, description, version, provider, copyright, webSite};
 
+// TEST NUMBER OF ROWS
 //	String pluginName = "insert description here";
 //	// insert description code in the following line
 //	String description = "insert description here";
@@ -202,7 +199,7 @@ protected void createColumns(){
 //	String [] row = {pluginName, description, version, provider, copyright, webSite, extra};
 
 			item.setText(row);
-		}
+
 	}
 		
 }
