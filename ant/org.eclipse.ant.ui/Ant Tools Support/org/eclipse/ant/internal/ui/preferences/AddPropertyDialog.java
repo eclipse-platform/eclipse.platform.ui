@@ -112,7 +112,7 @@ public class AddPropertyDialog extends Dialog {
 		if (returnCode == IDialogConstants.OK_ID) {
 			String variable = variablesDialog.getVariableExpression();
 			if (variable != null) {
-				fValueText.append(variable.trim());
+				fValueText.insert(variable.trim());
 			}
 		}
 	}

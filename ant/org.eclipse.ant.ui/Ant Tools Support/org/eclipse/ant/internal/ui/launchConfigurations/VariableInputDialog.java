@@ -100,7 +100,7 @@ public class VariableInputDialog extends Dialog {
 		if (returnCode == IDialogConstants.OK_ID) {
 			String variable = variableDialog.getVariableExpression();
 			if (variable != null) {
-				fText.append(variable);
+				fText.insert(variable);
 			}
 		}			
 	}
