@@ -230,4 +230,10 @@ public interface IAbstractTextEditorHelpContextIds {
 	 * Value: <code>"org.eclipse.ui.find_replace_dialog_context"</code>
 	 */
 	public static final String FIND_REPLACE_DIALOG= PREFIX + "find_replace_dialog_context"; //$NON-NLS-1$
+
+	/**
+	 * Help context id for the action.
+	 * Value: <code>"org.eclipse.ui.workbench.texteditor.GotoLastEditPositionAction"</code>
+	 */
+	public static final String GOTO_LAST_EDIT_POSITION_ACTION= PREFIX + "goto_last_edit_position_action_context"; //$NON-NLS-1$
 }

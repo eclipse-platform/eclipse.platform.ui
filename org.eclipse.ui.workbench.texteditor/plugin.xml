@@ -3,7 +3,8 @@
    id="org.eclipse.ui.workbench.texteditor"
    name="%pluginName"
    version="2.1.0"
-   provider-name="%providerName">
+   provider-name="%providerName"
+   class="org.eclipse.ui.internal.texteditor.TextEditorPlugin">
 
    <runtime>
       <library name="texteditor.jar">
@@ -18,5 +19,83 @@
       <import plugin="org.eclipse.ui.workbench"/>
       <import plugin="org.eclipse.core.resources"/>      
    </requires>
+
+<!-- action definitions -->
+
+<extension point="org.eclipse.ui.actionDefinitions">
+	<actionDefinition
+		id="org.eclipse.ui.workbench.texteditor.gotoLastEditPosition"
+		name= "%goToLastEditPosition.label"
+		description="%goToLastEditPosition.description"
+	/>
+</extension>
+
+<extension point="org.eclipse.ui.acceleratorSets">
+	<acceleratorSet	scopeId="org.eclipse.ui.globalScope" configurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+		<accelerator key="Ctrl+Q" id="org.eclipse.ui.workbench.texteditor.gotoLastEditPosition" />
+	</acceleratorSet>
+	
+	<acceleratorSet	scopeId="org.eclipse.ui.globalScope" configurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
+		<accelerator key="Ctrl+Q" id="org.eclipse.ui.workbench.texteditor.gotoLastEditPosition" />
+	</acceleratorSet>
+</extension>
+
+<!-- action sets -->
+
+<extension point="org.eclipse.ui.actionSets">
+	<actionSet
+		id="org.eclipse.ui.workbench.texteditor.actionSet.navigation"
+        label="%textEditorNavigationActionSet.label"
+		visible="true">
+
+		<action id="org.eclipse.ui.texteditor.gotoLastEditPosition"
+			definitionId="org.eclipse.ui.workbench.texteditor.gotoLastEditPosition"
+			toolbarPath="Normal/Navigate"			
+			menubarPath="navigate/"
+			label="%goToLastEditPosition.label"
+			tooltip="%goToLastEditPosition.tooltip"
+			icon="icons/full/etool16/last_edit_pos.gif"
+			class="org.eclipse.ui.internal.texteditor.GotoLastEditPositionAction"/>
+     </actionSet>
+</extension>
+
+<!-- action definitions -->
+
+<extension point="org.eclipse.ui.actionDefinitions">
+	<actionDefinition
+		id="org.eclipse.ui.workbench.texteditor.gotoLastEditPosition"
+		name= "%goToLastEditPosition.label"
+		description="%goToLastEditPosition.description"
+	/>
+</extension>
+
+<extension point="org.eclipse.ui.acceleratorSets">
+	<acceleratorSet	scopeId="org.eclipse.ui.globalScope" configurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+		<accelerator key="Ctrl+Q" id="org.eclipse.ui.workbench.texteditor.gotoLastEditPosition" />
+	</acceleratorSet>
+	
+	<acceleratorSet	scopeId="org.eclipse.ui.globalScope" configurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
+		<accelerator key="Ctrl+Q" id="org.eclipse.ui.workbench.texteditor.gotoLastEditPosition" />
+	</acceleratorSet>
+</extension>
+
+<!-- action sets -->
+
+<extension point="org.eclipse.ui.actionSets">
+	<actionSet
+		id="org.eclipse.ui.workbench.texteditor.actionSet.navigation"
+        label="%textEditorNavigationActionSet.label"
+		visible="true">
+
+		<action id="org.eclipse.ui.texteditor.gotoLastEditPosition"
+			definitionId="org.eclipse.ui.workbench.texteditor.gotoLastEditPosition"
+			toolbarPath="Normal/Navigate"			
+			menubarPath="navigate/"
+			label="%goToLastEditPosition.label"
+			tooltip="%goToLastEditPosition.tooltip"
+			icon="icons/full/etool16/last_edit_pos.gif"
+			class="org.eclipse.ui.internal.texteditor.GotoLastEditPositionAction"/>
+     </actionSet>
+</extension>
 
 </plugin>

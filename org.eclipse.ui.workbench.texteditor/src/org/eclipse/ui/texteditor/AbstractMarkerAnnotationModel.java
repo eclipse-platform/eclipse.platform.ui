@@ -17,14 +17,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.Position;
-import org.eclipse.jface.text.source.Annotation;
-import org.eclipse.jface.text.source.AnnotationModel;
-import org.eclipse.jface.util.Assert;
-
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -32,6 +26,13 @@ import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.source.Annotation;
+import org.eclipse.jface.text.source.AnnotationModel;
+import org.eclipse.jface.util.Assert;
 
 import org.eclipse.ui.PlatformUI;
 
@@ -226,7 +227,8 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel {
 		try {
 			catchupWithMarkers();
 		} catch (CoreException x) {
-			handleCoreException(x, EditorMessages.getString("AbstractMarkerAnnotationModel.connected")); //$NON-NLS-1$
+			if (x.getStatus().getCode() != IResourceStatus.RESOURCE_NOT_FOUND)
+				handleCoreException(x, EditorMessages.getString("AbstractMarkerAnnotationModel.connected")); //$NON-NLS-1$
 		}
 
 		fireModelChanged();

@@ -220,6 +220,7 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 			
 			ElementInfo info= new StorageInfo(document, createAnnotationModel(element));
 			info.fStatus= status;
+			((StorageInfo)info).fEncoding= getPersistedEncoding(element);
 			
 			return info;
 		}
@@ -345,6 +346,8 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 			StorageInfo info= (StorageInfo) getElementInfo(element);
 			if (info != null)
 				return info.fEncoding;
+			else
+				return getPersistedEncoding(element);
 		}
 		return null;
 	}
@@ -356,8 +359,29 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 	public void setEncoding(Object element, String encoding) {
 		if (element instanceof IStorageEditorInput) {
 			StorageInfo info= (StorageInfo) getElementInfo(element);
-			if (info != null)
+			if (info != null) {
 				info.fEncoding= encoding;
+				try {
+					persistEncoding(element, encoding);
+				} catch (CoreException ex) {
+					// XXX: log
+				}
+			}
 		}
+	}
+
+	/**
+	 * Gets the persited encoding.
+	 */
+	protected String getPersistedEncoding(Object element) {
+		// Default is to do use return the default encoding
+		return null;
+	}
+
+	/**
+	 * Persists the current encoding.
+	 */
+	protected void persistEncoding(Object element, String encoding) throws CoreException {
+		// Default is to do nothing
 	}
 }

@@ -15,8 +15,6 @@ package org.eclipse.ui.editors.text;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -26,6 +24,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
+
+import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.dialogs.Dialog;
@@ -106,7 +106,52 @@ public class TextEditor extends StatusTextEditor {
 		}
 		super.dispose();
 	}
+
+	/*
+	 * @see AbstractTextEditor#doSaveAs
+	 * @since 2.1
+	 */
+	public void doSaveAs() {
+		if (askIfNonWorkbenchEncodingIsOk())
+			super.doSaveAs();
+	}
 	
+	/*
+	 * @see AbstractTextEditor#doSave(IProgressMonitor)
+	 * @since 2.1
+	 */
+	public void doSave(IProgressMonitor monitor){
+		if (askIfNonWorkbenchEncodingIsOk())
+			super.doSave(monitor);
+		else
+			monitor.setCanceled(true);
+	}
+
+	/**
+	 * Asks the user if it is ok to store in non-workbench encoding.
+	 * @return <true> if the user wants to continue
+	 */
+	private boolean askIfNonWorkbenchEncodingIsOk() {
+		IDocumentProvider provider= getDocumentProvider();
+		if (provider instanceof IStorageDocumentProvider) {
+			IEditorInput input= getEditorInput();
+			IStorageDocumentProvider storageProvider= (IStorageDocumentProvider)provider;
+			String encoding= storageProvider.getEncoding(input);
+			String defaultEncoding= storageProvider.getDefaultEncoding();
+			if (encoding != null && !encoding.equals(defaultEncoding)) {
+				Shell shell= getSite().getShell();
+				String title= TextEditorMessages.getString("Editor.warning.save.nonWorkbenchEncoding.title"); //$NON-NLS-1$
+				String msg;
+				if (input != null)
+					msg= MessageFormat.format(TextEditorMessages.getString("Editor.warning.save.nonWorkbenchEncoding.message1"), new String[] {input.getName(), encoding});//$NON-NLS-1$
+				else
+					msg= MessageFormat.format(TextEditorMessages.getString("Editor.warning.save.nonWorkbenchEncoding.message2"), new String[] {encoding});//$NON-NLS-1$
+				return MessageDialog.openQuestion(shell, title, msg);
+			}
+		}
+		return true;
+	}
+
 	/**
 	 * The <code>TextEditor</code> implementation of this  <code>AbstractTextEditor</code> 
 	 * method asks the user for the workspace path of a file resource and saves the document there.
@@ -114,7 +159,6 @@ public class TextEditor extends StatusTextEditor {
 	 * @param progressMonitor the progress monitor to be used
 	 */
 	protected void performSaveAs(IProgressMonitor progressMonitor) {
-		
 		Shell shell= getSite().getShell();
 		IEditorInput input = getEditorInput();
 		

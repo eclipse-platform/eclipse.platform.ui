@@ -20,6 +20,10 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Preferences;
 
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.widgets.Display;
+
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.StatusTextEditor;
 
@@ -57,7 +61,7 @@ public class DefaultEncodingSupport implements IEncodingSupport {
 		fPropertyChangeListener= new Preferences.IPropertyChangeListener() {
 			public void propertyChange(Preferences.PropertyChangeEvent e) {
 				if (ResourcesPlugin.PREF_ENCODING.equals(e.getProperty()))
-					setEncoding(null, false);
+					setEncoding(null, false); // null means: use default
 			}
 		};
 		
@@ -97,27 +101,36 @@ public class DefaultEncodingSupport implements IEncodingSupport {
 	 * @param overwrite <code>true</code> if current encoding should be overwritten
 	 */
 	protected void setEncoding(String encoding, boolean overwrite) {
-		
-		// http://dev.eclipse.org/bugs/show_bug.cgi?id=19206
-		if (fTextEditor.isDirty())
-			return;
-			
-		String internal= encoding == null ? "" : encoding; //$NON-NLS-1$
-		
 		IDocumentProvider p= fTextEditor.getDocumentProvider();
 		if (p instanceof IStorageDocumentProvider) {
-			IStorageDocumentProvider provider= (IStorageDocumentProvider) p;
-			String current= provider.getEncoding(fTextEditor.getEditorInput());
-			
-			boolean apply= (current != null && encoding == null) ? overwrite : !internal.equals(current);
-			if (apply) {
-				
-				provider.setEncoding(fTextEditor.getEditorInput(), encoding);
-				fTextEditor.doRevertToSaved();
-				fTextEditor.updatePartControl(fTextEditor.getEditorInput());
-				
-				fEncodingActionGroup.update();
+			IEditorInput input= fTextEditor.getEditorInput();
+			IStorageDocumentProvider provider= (IStorageDocumentProvider)p;
+			String current= provider.getEncoding(input);
+			String defaultEncoding= provider.getDefaultEncoding();
+
+			if (current != null && current.equals(defaultEncoding))
+				provider.setEncoding(input, encoding);
+
+			else if (!fTextEditor.isDirty()) {
+				String internal= encoding == null ? "" : encoding; //$NON-NLS-1$
+				boolean apply= (overwrite || current == null) && !internal.equals(current);
+				if (apply) {
+					provider.setEncoding(fTextEditor.getEditorInput(), encoding);
+					Runnable encodingSetter=
+						new Runnable() {
+							   public void run() {
+								   fTextEditor.doRevertToSaved();
+								   fTextEditor.updatePartControl(fTextEditor.getEditorInput());
+							   }
+						};
+					Display display= fTextEditor.getSite().getShell().getDisplay();
+					if (display != null && !display.isDisposed())
+						BusyIndicator.showWhile(display, encodingSetter);
+					else
+						encodingSetter.run();
+				}
 			}
+			fEncodingActionGroup.update();
 		}
 	}
 	

@@ -195,6 +195,10 @@ public class EncodingActionGroup extends ActionGroup {
 			if (editor == null)
 				return;
 			
+			IEncodingSupport encodingSupport= (IEncodingSupport) editor.getAdapter(IEncodingSupport.class);
+			if (encodingSupport == null)
+				return;
+			
 			String title= TextEditorMessages.getString("Editor.ConvertEncoding.Custom.dialog.title"); //$NON-NLS-1$
 			String message= TextEditorMessages.getString("Editor.ConvertEncoding.Custom.dialog.message");  //$NON-NLS-1$
 			IInputValidator inputValidator = new IInputValidator() {
@@ -202,13 +206,16 @@ public class EncodingActionGroup extends ActionGroup {
 					return (newText == null || newText.length() == 0) ? " " : null; //$NON-NLS-1$
 				}
 			};
+
+			String initialValue= encodingSupport.getEncoding();
+			if (initialValue == null)
+				initialValue= encodingSupport.getDefaultEncoding();
+			if (initialValue == null)
+				initialValue= ""; //$NON-NLS-1$
 			
-			InputDialog d= new InputDialog(editor.getSite().getShell(), title, message, "", inputValidator); //$NON-NLS-1$
-			if (d.open() == Dialog.OK) {
-				IEncodingSupport s= (IEncodingSupport) editor.getAdapter(IEncodingSupport.class);
-				if (s != null)
-					s.setEncoding(d.getValue());
-			}
+			InputDialog d= new InputDialog(editor.getSite().getShell(), title, message, initialValue, inputValidator); //$NON-NLS-1$
+			if (d.open() == Dialog.OK)
+				encodingSupport.setEncoding(d.getValue());
 		}
 	};
 	

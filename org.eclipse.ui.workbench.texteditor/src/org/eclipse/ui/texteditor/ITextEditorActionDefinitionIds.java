@@ -307,4 +307,11 @@ public interface ITextEditorActionDefinitionIds extends IWorkbenchActionDefiniti
 	 * Value: <code>"org.eclipse.ui.edit.text.showRulerContextMenu"</code>
 	 */
 	public static final String SHOW_RULER_CONTEXT_MENU= "org.eclipse.ui.edit.text.showRulerContextMenu"; //$NON-NLS-1$
+
+	/**
+	 * Action definition id of got to last edit position action.
+	 * Value: <code>"org.eclipse.ui.workbench.texteditor.GotoLastEditPositionAction"</code>
+	 * @since 2.1
+	 */
+	public static final String GOTO_LAST_EDIT_POSITION= "org.eclipse.ui.workbench.texteditor.GotoLastEditPositionAction"; //$NON-NLS-1$
 }

@@ -16,8 +16,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.eclipse.swt.widgets.Display;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -32,8 +30,11 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
+
+import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.IAnnotationModel;
@@ -55,7 +56,8 @@ import org.eclipse.ui.texteditor.ValidateStateException;
  * This class may be instantiated or be subclassed.
  */
 public class FileDocumentProvider extends StorageDocumentProvider {
-	
+
+	private static final QualifiedName ENCODING_KEY = new QualifiedName("org.eclipse.ui.editors", "encoding"); //$NON-NLS-1$ //$NON-NLS-2$
 	
 	/**
 	 * Runnable encapsulating an element state change. This runnable ensures 
@@ -421,7 +423,10 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			
 			try {
 			
-			InputStream stream= new ByteArrayInputStream(document.get().getBytes(ResourcesPlugin.getEncoding()));
+			String encoding= getEncoding(input);
+			if (encoding == null)
+				encoding= getDefaultEncoding();
+			InputStream stream= new ByteArrayInputStream(document.get().getBytes(encoding));
 			IFile file= input.getFile();
 									
 				if (file.exists()) {
@@ -509,6 +514,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			FileInfo info= new FileInfo(d, m, f);
 			info.fModificationStamp= computeModificationStamp(input.getFile());
 			info.fStatus= s;
+			info.fEncoding= getPersistedEncoding(input);
 			
 			return info;
 		}
@@ -670,5 +676,30 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			}
 		}
 		super.resetDocument(element);	
+	}
+	
+	// --------------- Encoding support ---------------
+	
+	protected String getPersistedEncoding(Object element) {
+		if (element instanceof IFileEditorInput) {
+			IFileEditorInput editorInput= (IFileEditorInput)element;
+			IFile file= editorInput.getFile();
+			if (file != null)
+				try {
+					return file.getPersistentProperty(ENCODING_KEY);
+				} catch (CoreException ex) {
+					return null;
+				}
+		}
+		return null;
+	}
+
+	protected void persistEncoding(Object element, String encoding) throws CoreException {
+		if (element instanceof IFileEditorInput) {
+			IFileEditorInput editorInput= (IFileEditorInput)element;
+			IFile file= editorInput.getFile();
+			if (file != null)
+				file.setPersistentProperty(ENCODING_KEY, encoding);
+		}
 	}
 }
