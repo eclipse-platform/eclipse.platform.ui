@@ -12,6 +12,8 @@
 package org.eclipse.ui.keys;
 
 import java.util.ResourceBundle;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.internal.util.Util;
@@ -33,6 +35,12 @@ import org.eclipse.ui.internal.util.Util;
  */
 public final class CharacterKey extends NaturalKey {
 
+	/**
+	 * An internal map used to lookup instances of <code>CharacterKey</code>
+	 * given the formal string representation of a character key.
+	 */
+	static SortedMap characterKeysByName = new TreeMap();	
+	
 	/**
 	 * An internal cache of the CharacterKey instances representing the first
 	 * 256 unicode characters (Basic Latin and Latin-1 Supplement). This cache
@@ -291,6 +299,21 @@ public final class CharacterKey extends NaturalKey {
 			return new CharacterKey(character, name);
 	}
 
+	static {
+		characterKeysByName.put(CharacterKey.BS.toString(), CharacterKey.BS);
+		characterKeysByName.put(CharacterKey.CR.toString(), CharacterKey.CR);
+		characterKeysByName.put(CharacterKey.DEL.toString(), CharacterKey.DEL);
+		characterKeysByName.put(CharacterKey.ESC.toString(), CharacterKey.ESC);
+		characterKeysByName.put(CharacterKey.FF.toString(), CharacterKey.FF);
+		characterKeysByName.put(CharacterKey.LF.toString(), CharacterKey.LF);
+		characterKeysByName.put(CharacterKey.NUL.toString(), CharacterKey.NUL);
+		characterKeysByName.put(
+				CharacterKey.SPACE.toString(),
+				CharacterKey.SPACE);
+		characterKeysByName.put(CharacterKey.TAB.toString(), CharacterKey.TAB);
+		characterKeysByName.put(CharacterKey.VT.toString(), CharacterKey.VT);
+	}	
+	
 	/**
 	 * The unicode character represented by this <code>CharacterKey</code>
 	 * instance.

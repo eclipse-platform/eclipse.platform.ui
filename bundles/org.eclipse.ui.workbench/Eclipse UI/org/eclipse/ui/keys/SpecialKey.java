@@ -10,14 +10,15 @@
 package org.eclipse.ui.keys;
 
 import java.util.ResourceBundle;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.eclipse.swt.SWT;
-
 import org.eclipse.ui.internal.util.Util;
 
 /**
  * <p>
- * Instances of <code>SpecialKey</code> represent the twenty-four keys on
+ * Instances of <code>SpecialKey</code> represent the keys on
  * keyboard recognized as neither modifier keys nor character keys.
  * </p>
  * <p>
@@ -32,6 +33,12 @@ import org.eclipse.ui.internal.util.Util;
  */
 public final class SpecialKey extends NaturalKey {
 
+	/**
+	 * An internal map used to lookup instances of <code>SpecialKey</code>
+	 * given the formal string representation of a special key.
+	 */
+	static SortedMap specialKeysByName = new TreeMap();	
+	
 	/**
 	 * The name of the 'Arrow Down' key.
 	 */
@@ -554,7 +561,57 @@ public final class SpecialKey extends NaturalKey {
 	 */
 	private final static ResourceBundle RESOURCE_BUNDLE =
 		ResourceBundle.getBundle(SpecialKey.class.getName());
-
+	
+	static {
+		specialKeysByName.put(SpecialKey.ARROW_DOWN.toString(), SpecialKey.ARROW_DOWN);
+		specialKeysByName.put(SpecialKey.ARROW_LEFT.toString(), SpecialKey.ARROW_LEFT);
+		specialKeysByName.put(SpecialKey.ARROW_RIGHT.toString(), SpecialKey.ARROW_RIGHT);
+		specialKeysByName.put(SpecialKey.ARROW_UP.toString(), SpecialKey.ARROW_UP);
+		specialKeysByName.put(SpecialKey.BREAK.toString(), SpecialKey.BREAK);
+		specialKeysByName.put(SpecialKey.CAPS_LOCK.toString(), SpecialKey.CAPS_LOCK);
+		specialKeysByName.put(SpecialKey.END.toString(), SpecialKey.END);
+		specialKeysByName.put(SpecialKey.F1.toString(), SpecialKey.F1);
+		specialKeysByName.put(SpecialKey.F10.toString(), SpecialKey.F10);
+		specialKeysByName.put(SpecialKey.F11.toString(), SpecialKey.F11);
+		specialKeysByName.put(SpecialKey.F12.toString(), SpecialKey.F12);
+		specialKeysByName.put(SpecialKey.F13.toString(), SpecialKey.F13);
+		specialKeysByName.put(SpecialKey.F14.toString(), SpecialKey.F14);
+		specialKeysByName.put(SpecialKey.F15.toString(), SpecialKey.F15);
+		specialKeysByName.put(SpecialKey.F2.toString(), SpecialKey.F2);
+		specialKeysByName.put(SpecialKey.F3.toString(), SpecialKey.F3);
+		specialKeysByName.put(SpecialKey.F4.toString(), SpecialKey.F4);
+		specialKeysByName.put(SpecialKey.F5.toString(), SpecialKey.F5);
+		specialKeysByName.put(SpecialKey.F6.toString(), SpecialKey.F6);
+		specialKeysByName.put(SpecialKey.F7.toString(), SpecialKey.F7);
+		specialKeysByName.put(SpecialKey.F8.toString(), SpecialKey.F8);
+		specialKeysByName.put(SpecialKey.F9.toString(), SpecialKey.F9);
+		specialKeysByName.put(SpecialKey.NUM_LOCK.toString(), SpecialKey.NUM_LOCK);
+		specialKeysByName.put(SpecialKey.NUMPAD_0.toString(), SpecialKey.NUMPAD_0);
+		specialKeysByName.put(SpecialKey.NUMPAD_1.toString(), SpecialKey.NUMPAD_1);
+		specialKeysByName.put(SpecialKey.NUMPAD_2.toString(), SpecialKey.NUMPAD_2);
+		specialKeysByName.put(SpecialKey.NUMPAD_3.toString(), SpecialKey.NUMPAD_3);
+		specialKeysByName.put(SpecialKey.NUMPAD_4.toString(), SpecialKey.NUMPAD_4);
+		specialKeysByName.put(SpecialKey.NUMPAD_5.toString(), SpecialKey.NUMPAD_5);
+		specialKeysByName.put(SpecialKey.NUMPAD_6.toString(), SpecialKey.NUMPAD_6);
+		specialKeysByName.put(SpecialKey.NUMPAD_7.toString(), SpecialKey.NUMPAD_7);
+		specialKeysByName.put(SpecialKey.NUMPAD_8.toString(), SpecialKey.NUMPAD_8);
+		specialKeysByName.put(SpecialKey.NUMPAD_9.toString(), SpecialKey.NUMPAD_9);
+		specialKeysByName.put(SpecialKey.NUMPAD_ADD.toString(), SpecialKey.NUMPAD_ADD);
+		specialKeysByName.put(SpecialKey.NUMPAD_DECIMAL.toString(), SpecialKey.NUMPAD_DECIMAL);
+		specialKeysByName.put(SpecialKey.NUMPAD_DIVIDE.toString(), SpecialKey.NUMPAD_DIVIDE);
+		specialKeysByName.put(SpecialKey.NUMPAD_ENTER.toString(), SpecialKey.NUMPAD_ENTER);
+		specialKeysByName.put(SpecialKey.NUMPAD_EQUAL.toString(), SpecialKey.NUMPAD_EQUAL);
+		specialKeysByName.put(SpecialKey.NUMPAD_MULTIPLY.toString(), SpecialKey.NUMPAD_MULTIPLY);
+		specialKeysByName.put(SpecialKey.NUMPAD_SUBTRACT.toString(), SpecialKey.NUMPAD_SUBTRACT);
+		specialKeysByName.put(SpecialKey.HOME.toString(), SpecialKey.HOME);
+		specialKeysByName.put(SpecialKey.INSERT.toString(), SpecialKey.INSERT);
+		specialKeysByName.put(SpecialKey.PAGE_DOWN.toString(), SpecialKey.PAGE_DOWN);
+		specialKeysByName.put(SpecialKey.PAGE_UP.toString(), SpecialKey.PAGE_UP);
+		specialKeysByName.put(SpecialKey.PAUSE.toString(), SpecialKey.PAUSE);
+		specialKeysByName.put(SpecialKey.PRINT_SCREEN.toString(), SpecialKey.PRINT_SCREEN);
+		specialKeysByName.put(SpecialKey.SCROLL_LOCK.toString(), SpecialKey.SCROLL_LOCK);
+	}
+	
 	/**
 	 * Constructs an instance of <code>SpecialKey</code> given a name.
 	 * 

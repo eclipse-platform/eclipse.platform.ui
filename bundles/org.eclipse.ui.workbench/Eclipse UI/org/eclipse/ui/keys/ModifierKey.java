@@ -12,6 +12,8 @@
 package org.eclipse.ui.keys;
 
 import java.util.ResourceBundle;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.internal.util.Util;
@@ -34,6 +36,12 @@ import org.eclipse.ui.internal.util.Util;
  */
 public final class ModifierKey extends Key {
 
+	/**
+	 * An internal map used to lookup instances of <code>ModifierKey</code>
+	 * given the formal string representation of a modifier key.
+	 */
+	static SortedMap modifierKeysByName = new TreeMap();
+	
 	/**
 	 * The name of the 'Alt' key.
 	 */
@@ -68,12 +76,32 @@ public final class ModifierKey extends Key {
 	public final static ModifierKey CTRL = new ModifierKey(CTRL_NAME);
 
 	/**
+	 * The name of the 'M1' key.
+	 */
+	private final static String M1_NAME = "M1"; //$NON-NLS-1$	
+
+	/**
+	 * The name of the 'M2' key.
+	 */
+	private final static String M2_NAME = "M2"; //$NON-NLS-1$
+
+	/**
+	 * The name of the 'M3' key.
+	 */
+	private final static String M3_NAME = "M3"; //$NON-NLS-1$
+	
+	/**
+	 * The name of the 'M4' key.
+	 */
+	private final static String M4_NAME = "M4"; //$NON-NLS-1$
+	
+	/**
 	 * The resource bundle used by <code>format()</code> to translate key
 	 * names by locale.
 	 */
 	private final static ResourceBundle RESOURCE_BUNDLE =
 		ResourceBundle.getBundle(ModifierKey.class.getName());
-
+	
 	/**
 	 * The name of the 'Shift' key.
 	 */
@@ -85,6 +113,17 @@ public final class ModifierKey extends Key {
 	 */
 	public final static ModifierKey SHIFT = new ModifierKey(SHIFT_NAME);
 
+	static {
+		modifierKeysByName.put(ModifierKey.ALT.toString(), ModifierKey.ALT);
+		modifierKeysByName.put(ModifierKey.COMMAND.toString(), ModifierKey.COMMAND);
+		modifierKeysByName.put(ModifierKey.CTRL.toString(), ModifierKey.CTRL);
+		modifierKeysByName.put(ModifierKey.SHIFT.toString(), ModifierKey.SHIFT);
+		modifierKeysByName.put(M1_NAME, "carbon".equals(SWT.getPlatform()) ? ModifierKey.COMMAND : ModifierKey.CTRL);
+		modifierKeysByName.put(M2_NAME, ModifierKey.SHIFT);
+		modifierKeysByName.put(M3_NAME, ModifierKey.ALT);
+		modifierKeysByName.put(M4_NAME, "carbon".equals(SWT.getPlatform()) ? ModifierKey.CTRL : ModifierKey.COMMAND);
+	}
+	
 	/**
 	 * Constructs an instance of <code>ModifierKey</code> given a name.
 	 * 
