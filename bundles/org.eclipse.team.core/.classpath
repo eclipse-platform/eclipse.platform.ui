@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
     <classpathentry kind="src" path="src/"/>
-    <classpathentry kind="var"
-        path="ECLIPSE_HOME/plugins/org.eclipse.core.resources/resources.jar" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.core.resources/resourcessrc.zip"/>
-    <classpathentry kind="var"
-        path="ECLIPSE_HOME/plugins/org.apache.xerces/xerces.jar" sourcepath="ECLIPSE_HOME/plugins/org.apache.xerces/xercessrc.zip"/>
-    <classpathentry kind="var"
-        path="ECLIPSE_HOME/plugins/org.eclipse.core.runtime/runtime.jar" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.core.runtime/runtimesrc.zip"/>
     <classpathentry kind="var" path="JRE_LIB" rootpath="JRE_SRCROOT" sourcepath="JRE_SRC"/>
+    <classpathentry kind="src" path="/org.apache.xerces"/>
+    <classpathentry kind="src" path="/org.eclipse.core.resources"/>
+    <classpathentry kind="src" path="/org.eclipse.core.runtime"/>
     <classpathentry kind="output" path="bin"/>
 </classpath>
