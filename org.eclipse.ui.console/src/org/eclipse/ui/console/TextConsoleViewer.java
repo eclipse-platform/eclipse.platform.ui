@@ -10,6 +10,7 @@
 package org.eclipse.ui.console;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.text.BadPositionCategoryException;
@@ -113,21 +114,6 @@ public class TextConsoleViewer extends TextViewer implements LineStyleListener, 
             ArrayList ranges = new ArrayList();
             int offset = event.lineOffset;
             int length = event.lineText.length();
-            try {
-                Display display = ConsolePlugin.getStandardDisplay();
-                Color hyperlinkText = JFaceColors.getHyperlinkText(display);
-                int rangeEnd = offset + length - 1;
-                Position[] positions = getDocument().getPositions(ConsoleHyperlinkPosition.HYPER_LINK_CATEGORY);
-                
-                for (int i = 0; i < positions.length; i++) {
-                    Position position = positions[i];
-                    int positionEnd = position.offset + position.length - 1;
-                    if ((position.offset>=offset && positionEnd<=offset) || (positionEnd>=position.offset && positionEnd <= rangeEnd)) {
-                        ranges.add(new StyleRange(position.offset, position.length, hyperlinkText, null));
-                    }
-                }
-            } catch (BadPositionCategoryException e) {
-            }
             
             StyleRange[] partitionerStyles = ((IConsoleDocumentPartitioner) document.getDocumentPartitioner()).getStyleRanges(event.lineOffset, event.lineText.length());
             if (partitionerStyles != null) {
@@ -135,10 +121,135 @@ public class TextConsoleViewer extends TextViewer implements LineStyleListener, 
                     ranges.add(partitionerStyles[i]);
                 }
             }
+
+            try {
+                Display display = ConsolePlugin.getStandardDisplay();
+                Color hyperlinkText = JFaceColors.getHyperlinkText(display);
+                Position[] positions = getDocument().getPositions(ConsoleHyperlinkPosition.HYPER_LINK_CATEGORY);
+                Position[] overlap = findPosition(offset, length, positions);
+                if (overlap != null) {
+	                for (int i = 0; i < overlap.length; i++) {
+	                    weave(ranges, new StyleRange(overlap[i].offset, overlap[i].length, hyperlinkText, null));
+	                }
+                }
+            } catch (BadPositionCategoryException e) {
+            }
+            
                     
-            event.styles = (StyleRange[]) ranges.toArray(new StyleRange[0]);
+            if (ranges.size() > 0) {
+            		event.styles = (StyleRange[]) ranges.toArray(new StyleRange[0]);
+            }
         }
     }
+    
+    /**
+     * Weaves the given style range into the given list of style ranges. The given 
+     * range may overlap ranges in the list of ranges, and must be split into
+     * non-overlapping ranges and inserted into the list to maintain order.
+     * 
+     * @param ranges
+     * @param styleRange
+     */
+    private void weave(List ranges, StyleRange styleRange) {
+        if (ranges.isEmpty()) {
+            ranges.add(styleRange);
+            return;
+        }
+        int start = styleRange.start;
+        int end = start + styleRange.length;
+        for (int i = 0; i < ranges.size(); i++) {
+            StyleRange r = (StyleRange) ranges.get(i);
+            int rEnd = r.start + r.length;
+            if (start < r.start) {
+                if (end >= r.start) {
+                    ranges.add(i, new StyleRange(start, r.start - start, styleRange.foreground, styleRange.background));
+                    if (end > rEnd) {
+                        start = rEnd + 1;
+                    } else {
+                        return;
+                    }
+                } else {
+                    
+                }
+            } else if (start < rEnd) {
+                if (end > rEnd) {
+                    start = rEnd + 1;
+                } else {
+                    return;
+                }
+            }
+        }
+        if (start < end) {
+            ranges.add(new StyleRange(start, end - start, styleRange.foreground, styleRange.background));
+        }
+    }
+    
+	/**
+	 * Binary search for the positions overlapping the given range
+	 *
+	 * @param offset the offset of the range
+	 * @param length the length of the range
+	 * @param positions the positions to search
+	 * @return the positions overlapping the given range, or <code>null</code>
+	 */
+	private Position[] findPosition(int offset, int length, Position[] positions) {
+		
+		if (positions.length == 0)
+			return null;
+			
+		int rangeEnd = offset + length;
+		int left= 0;
+		int right= positions.length - 1;
+		int mid= 0;
+		Position position= null;
+		
+		while (left < right) {
+			
+			mid= (left + right) / 2;
+				
+			position= positions[mid];
+			if (rangeEnd < position.getOffset()) {
+				if (left == mid)
+					right= left;
+				else
+					right= mid -1;
+			} else if (offset > (position.getOffset() + position.getLength() - 1)) {
+				if (right == mid)
+					left= right;
+				else
+					left= mid  +1;
+			} else {
+				left= right= mid;
+			}
+		}
+		
+		
+		List list = new ArrayList();
+		int index = left - 1;
+		if (index >= 0) {
+			position= positions[index];
+			while (index >= 0 && (position.getOffset() + position.getLength()) > offset) {
+				index--;
+				if (index > 0) {
+					position= positions[index];
+				}
+			}
+		}
+		index++;
+		position= positions[index];
+		while (index < positions.length && (position.getOffset() < rangeEnd)) {
+			list.add(position);
+			index++;
+			if (index < positions.length) {
+				position= positions[index];
+			}
+		}
+		
+		if (list.isEmpty()) {
+			return null;
+		}
+		return (Position[])list.toArray(new Position[list.size()]);
+	}    
 
     /*
      * (non-Javadoc)

@@ -202,28 +202,61 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 	 *  (non-Javadoc)
 	 * @see org.eclipse.jface.text.IDocumentPartitioner#computePartitioning(int, int)
 	 */
-	public ITypedRegion[] computePartitioning(int offset, int length) {
-		int end = length == 0 ? offset : offset + length - 1;
-		List list = new ArrayList();
+	public ITypedRegion[] computePartitioning(int offset, int length) {					
+		int rangeEnd = offset + length;
+		int left= 0;
+		int right= partitions.size() - 1;
+		int mid= 0;
+		IOConsolePartition position= null;
 		
-		for (int i = 0; i < partitions.size(); i++) {
-			ITypedRegion partition = (IOConsolePartition) partitions.get(i);
-			int partitionStart = partition.getOffset();
-			int partitionEnd = partitionStart + partition.getLength() - 1;
+		if (left == right) {
+		    return new IOConsolePartition[]{(IOConsolePartition) partitions.get(0)};
+		}
+		while (left < right) {
 			
-			if(partitionStart >= offset && partitionStart <= end) {
-				list.add(partition);
-			} else if (partitionEnd >= offset && partitionEnd <= end) {
-				list.add(partition);
-			} else if(partitionStart <= offset && partitionEnd>=end) {
-			    list.add(partition);
-			} else if (partitionStart > end) {
-				break; // don't bother testing more.
+			mid= (left + right) / 2;
+				
+			position= (IOConsolePartition) partitions.get(mid);
+			if (rangeEnd < position.getOffset()) {
+				if (left == mid)
+					right= left;
+				else
+					right= mid -1;
+			} else if (offset > (position.getOffset() + position.getLength() - 1)) {
+				if (right == mid)
+					left= right;
+				else
+					left= mid  +1;
+			} else {
+				left= right= mid;
 			}
 		}
 		
-		return (IOConsolePartition[]) list.toArray(new IOConsolePartition[list.size()]);
-	}
+		
+		List list = new ArrayList();
+		int index = left - 1;
+		if (index >= 0) {
+		    position= (IOConsolePartition) partitions.get(index);
+			while (index >= 0 && (position.getOffset() + position.getLength()) > offset) {
+				index--;
+				if (index >= 0) {
+					position= (IOConsolePartition) partitions.get(index);
+				}
+			}		    
+		}
+		index++;
+		position= (IOConsolePartition) partitions.get(index);
+		while (index < partitions.size() && (position.getOffset() < rangeEnd)) {
+			list.add(position);
+			index++;
+			if (index < partitions.size()) {
+				position= (IOConsolePartition) partitions.get(index);
+			}
+		}
+		
+		return (ITypedRegion[]) list.toArray(new IOConsolePartition[list.size()]);
+	}    
+
 	
 	/*
 	 *  (non-Javadoc)
@@ -619,6 +652,9 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
      * @see org.eclipse.ui.console.IConsoleDocumentPartitioner#computeStyleRange(int, int)
      */
     public StyleRange[] getStyleRanges(int offset, int length) {
+    		if (!connected) {
+    			return new StyleRange[0];
+    		}
         IOConsolePartition[] computedPartitions = (IOConsolePartition[])computePartitioning(offset, length);
         StyleRange[] styles = new StyleRange[computedPartitions.length];        
         for (int i = 0; i < computedPartitions.length; i++) {                
