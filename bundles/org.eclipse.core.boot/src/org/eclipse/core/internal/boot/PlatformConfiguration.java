@@ -395,7 +395,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			} else {
 				// compute stamp across local targets		
 				String rootPath = resolvedURL.getFile().replace('/',File.separatorChar);
-				if (rootPath.endsWith(File.separator))
+				if (!rootPath.endsWith(File.separator))
 					rootPath += File.separator;
 				File rootFile = new File(rootPath);
 				if (rootFile.exists()) {
