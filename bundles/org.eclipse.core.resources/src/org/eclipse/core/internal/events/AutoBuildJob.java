@@ -84,6 +84,7 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 	 */
 	synchronized void build(boolean needsBuild) {
 		buildNeeded |= needsBuild;
+		interrupted = false;
 		long delay = Math.max(Policy.MIN_BUILD_DELAY, Policy.MAX_BUILD_DELAY + lastBuild - System.currentTimeMillis());
 		int state = getState();
 		if (Policy.DEBUG_NEEDS_BUILD)
@@ -111,10 +112,6 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 	private synchronized IStatus canceled() {
 		//regardless of the form of cancelation, the build state is not happy
 		buildNeeded = true;
-		//schedule a rebuild immediately if build was implicitly canceled
-		if (interrupted)
-			build(true);
-		interrupted = false;
 		return Status.CANCEL_STATUS;
 	}
 
@@ -151,6 +148,7 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 				broadcastChanges(IResourceChangeEvent.PRE_BUILD);
 				if (shouldBuild()) 
 					workspace.getBuildManager().build(IncrementalProjectBuilder.AUTO_BUILD, Policy.subMonitorFor(monitor, Policy.opWork));
+				broadcastChanges(IResourceChangeEvent.POST_BUILD);
 				buildNeeded = false;
 			} finally {
 				//building may close the tree, but we are still inside an
@@ -180,7 +178,10 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 			interrupted = true;
 		return interrupted;
 	}
-
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.Preferences.IPropertyChangeListener#propertyChange(org.eclipse.core.runtime.Preferences.PropertyChangeEvent)
+	 */
 	public void propertyChange(PropertyChangeEvent event) {
 		if (!event.getProperty().equals(ResourcesPlugin.PREF_AUTO_BUILDING))
 			return;
@@ -189,7 +190,10 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 		if (oldValue instanceof Boolean && newValue instanceof Boolean)
 			autoBuildChanged(((Boolean) oldValue).booleanValue(), ((Boolean) newValue).booleanValue());
 	}
-
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.internal.jobs.InternalJob#run(org.eclipse.core.runtime.IProgressMonitor)
+	 */
 	public IStatus run(IProgressMonitor monitor) {
 		//synchronized in case build starts during checkCancel
 		synchronized (this) {
@@ -199,13 +203,13 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 		try {
 			doBuild(monitor);
 			lastBuild = System.currentTimeMillis();
+			//if the build was successful then it should not be recorded as interrupted
+			interrupted = false;
 			return Status.OK_STATUS;
 		} catch (OperationCanceledException e) {
 			return canceled();
 		} catch (CoreException sig) {
 			return sig.getStatus();
-		} finally {
-			interrupted = false;
 		}
 	}
 

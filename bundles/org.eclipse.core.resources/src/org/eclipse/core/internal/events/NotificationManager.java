@@ -64,11 +64,6 @@ public class NotificationManager implements IManager, ILifecycleListener {
 	 * causing a notification to be requested as a result of another notification.
 	 */
 	protected boolean isNotifying;
-	/**
-	 * Indicates the thread in which a PRE_BUILD last occurred. When that operation
-	 * finished, a POST_BUILD will be required.
-	 */
-	protected boolean wasBuild = false;
 
 	// if there are no changes between the current tree and the last delta state then we
 	// can reuse the lastDelta (if any). If the lastMarkerChangeId is different then the current
@@ -140,11 +135,12 @@ public class NotificationManager implements IManager, ILifecycleListener {
 	}
 
 	/**
-	 * The main broadcast point for notification deltas */
+	 * The main broadcast point for notification deltas 
+	 */
 	public void broadcastChanges(ElementTree lastState, int type, boolean lockTree) throws CoreException {
 		try {
 			// Do the notification if there are listeners for events of the given type.
-			if (!isBroadcastNeeded(type))
+			if (!listeners.hasListenerFor(type))
 				return;
 			isNotifying = true;
 			ResourceDelta delta = getDelta(lastState, type);
@@ -159,26 +155,6 @@ public class NotificationManager implements IManager, ILifecycleListener {
 			isNotifying = false;
 			cleanUp(lastState, type);
 		}
-	}
-
-
-
-	/**
-	 * Returns whether a resource change event of the given type is needed.
-	 */
-	private boolean isBroadcastNeeded(int type) {
-		// ensure PRE_BUILD and POST_BUILD are correctly paired
-		if (type == IResourceChangeEvent.PRE_BUILD) {
-			//if there has already been a PRE_BUILD for this operation, don't do another
-			if (wasBuild)
-				return false;
-			wasBuild = true;
-		} else if (type == IResourceChangeEvent.POST_BUILD) {
-			//clear the fact that there was a PRE_BUILD since we're about to do a POST_BUILD
-			wasBuild = false;
-		}
-		//only broadcast if somebody is listening
-		return listeners.hasListenerFor(type);
 	}
 
 	/**
@@ -217,13 +193,6 @@ public class NotificationManager implements IManager, ILifecycleListener {
 	 */
 	public void endAvoidNotify() {
 		avoidNotify.remove(Thread.currentThread());
-	}
-
-	/**
-	 * Returns whether a build has occurred during this operation.
-	 */
-	public boolean wasBuild() {
-		return wasBuild;
 	}
 
 	/**
@@ -328,16 +297,14 @@ public class NotificationManager implements IManager, ILifecycleListener {
 		listeners.remove(listener);
 		EventStats.listenerRemoved(listener);
 	}
+
 	/**
-	 * Returns true if a notification is needed. There are two conditions
-	 * under which a notification is needed even if we are not at the end
-	 * of a top level operation:
-	 * 1. Sufficient time has elapsed since the last notification
-	 * 2. A build occurred during this operation, in which case a POST_BUILD event is required
+	 * Returns true if a notification is needed. This happens if s
+	 * ufficient time has elapsed since the last notification
 	 * @return true if a notification is needed, and false otherwise
 	 */
 	public boolean shouldNotify() {
-		return !isNotifying && (notificationRequested || wasBuild);
+		return !isNotifying && notificationRequested;
 	}
 
 	public void shutdown(IProgressMonitor monitor) {

@@ -196,6 +196,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				beginOperation(true);
 				aboutToBuild();
 				getBuildManager().build(trigger, Policy.subMonitorFor(monitor, Policy.opWork));
+				broadcastChanges(IResourceChangeEvent.POST_BUILD, false);
 			} finally {
 				//building may close the tree, but we are still inside an operation so open it
 				if (tree.isImmutable())
@@ -891,12 +892,6 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				// build() and snapshot() should not fail if they are called.
 				workManager.rebalanceNestedOperations();
 				
-				//do a POST_BUILD change if needed - note that if a build occurred
-				//during this operation, we know the workspace root rule is owned
-				//by this thread and it is ok to call listeners.
-				if (notificationManager.wasBuild())
-					broadcastChanges(IResourceChangeEvent.POST_BUILD, false);
-
 				//find out if any operation has potentially modified the tree
 				hasTreeChanges = workManager.shouldBuild();
 				//double check if the tree has actually changed

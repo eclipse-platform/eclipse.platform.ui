@@ -77,6 +77,7 @@ public class Project extends Container implements IProject {
 			workspace.beginOperation(true);
 			workspace.aboutToBuild();
 			workspace.getBuildManager().build(this, kind, builderName, args, monitor);
+			workspace.broadcastChanges(IResourceChangeEvent.POST_BUILD, false);
 		} finally {
 			//building may close the tree, but we are still inside an operation so open it
 			if (workspace.getElementTree().isImmutable())
@@ -100,6 +101,7 @@ public class Project extends Container implements IProject {
 			workspace.beginOperation(true);
 			workspace.aboutToBuild();
 			workspace.getBuildManager().build(this, trigger, monitor);
+			workspace.broadcastChanges(IResourceChangeEvent.POST_BUILD, false);
 		} finally {
 			//building may close the tree, but we are still inside an operation so open it
 			if (workspace.getElementTree().isImmutable())
