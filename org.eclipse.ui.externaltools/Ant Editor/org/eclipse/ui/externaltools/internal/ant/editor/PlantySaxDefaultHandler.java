@@ -169,7 +169,7 @@ public class PlantySaxDefaultHandler extends DefaultHandler {
                 int tempLineNr = locator.getLineNumber() -1;
                 int tempColumnNr = locator.getColumnNumber() -1;
                 if(tempLineNr> rowOfCursorPosition ||
-                    (tempLineNr == rowOfCursorPosition && tempColumnNr > columnOfCursorPosition)) {
+                    (tempLineNr == rowOfCursorPosition && tempColumnNr > columnOfCursorPosition) && !stillOpenElements.isEmpty()) {
                         parentElement = (Element)stillOpenElements.peek();
                         if (ExternalToolsPlugin.getDefault() != null && ExternalToolsPlugin.getDefault().isDebugging()) {
 							ExternalToolsPlugin.getDefault().log("PlantySaxDefaultHandler.checkForParentElement(): Parent element found: " +parentElement, null); //$NON-NLS-1$
