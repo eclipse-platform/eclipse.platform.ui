@@ -21,6 +21,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ColumnWeightData;
@@ -110,6 +111,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		fTargetOrderText.setFont(font);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.heightHint = 40;
+		gd.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 		fTargetOrderText.setLayoutData(gd);
 
 		fOrderButton = createPushButton(orderComposite, AntLaunchConfigurationMessages.getString("AntTargetsTab.&Order..._4"), null); //$NON-NLS-1$
