@@ -129,6 +129,7 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 			getWindow().getSelectionService().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
 		}
 		fBackgroundJob = null;
+        fSelection= null;
 	}
 
 	/* (non-Javadoc)
