@@ -186,8 +186,9 @@ public class AntEditor extends TextEditor {
 			String[] types= configuration.getConfiguredContentTypes(this);
 			for (int i= 0; i < types.length; i++) {
 				String[] prefixes= configuration.getIndentPrefixes(this, types[i]);
-				if (prefixes != null && prefixes.length > 0)
+				if (prefixes != null && prefixes.length > 0) {
 					setIndentPrefixes(prefixes, types[i]);
+				}
 			}
 		}
 		/* (non-Javadoc)
@@ -217,7 +218,7 @@ public class AntEditor extends TextEditor {
      */
     protected AntEditorContentOutlinePage page;
     
-    /** The editor's tab converter */
+    /** The editor's tab to spaces converter */
 	private TabConverter fTabConverter;
   
     /**
