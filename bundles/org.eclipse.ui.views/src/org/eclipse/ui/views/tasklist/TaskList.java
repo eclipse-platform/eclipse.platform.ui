@@ -225,14 +225,13 @@ public class TaskList extends ViewPart {
 		private int column;
 		
 		public SortByAction(int column) {
-			if (column < 0 || column > 8)
-				column = 0;
-			else 
-				this.column = column;
+			this.column = column;
 		}
 
 		public void run() {
+			int direction = sorter.getTopPriorityDirection();
 			sorter.setTopPriority(column);
+			sorter.setTopPriorityDirection(direction);
 			updateSortingState();
 			viewer.refresh();
 			IDialogSettings workbenchSettings = getPlugin().getDialogSettings();
@@ -248,14 +247,11 @@ public class TaskList extends ViewPart {
 		private int direction;
 		
 		public SortDirectionAction(int direction) {
-			if (direction == TaskSorter.ASCENDING || direction == TaskSorter.DESCENDING)
-				this.direction = direction;
-			else 
-				this.direction = TaskSorter.ASCENDING;
+			this.direction = direction;
 		}
 
 		public void run() {
-			sorter.setDirection(direction);
+			sorter.setTopPriorityDirection(direction);
 			updateSortingState();
 			viewer.refresh();
 			IDialogSettings workbenchSettings = getPlugin().getDialogSettings();
@@ -375,10 +371,9 @@ public class TaskList extends ViewPart {
 				// column selected - need to sort
 				int column = table.indexOf((TableColumn) e.widget);
 				if (column == sorter.getTopPriority())
-					sorter.reverse();
+					sorter.reverseTopPriority();
 				else {
 					sorter.setTopPriority(column);
-					sorter.setDirection(TaskSorter.ASCENDING);
 				}
 				updateSortingState();
 				viewer.refresh();
@@ -1077,35 +1072,35 @@ public class TaskList extends ViewPart {
 		resolveMarkerAction.setEnabled(false);
 
 		// Sort by ->	
-		sortByCategoryAction = new SortByAction(0);
+		sortByCategoryAction = new SortByAction(TaskSorter.TYPE);
 		sortByCategoryAction.setText(TaskListMessages.getString("SortByCategory.text")); //$NON-NLS-1$
 		sortByCategoryAction.setToolTipText(TaskListMessages.getString("SortByCategory.tooltip")); //$NON-NLS-1$
 
-		sortByCompletedAction = new SortByAction(1);
+		sortByCompletedAction = new SortByAction(TaskSorter.COMPLETION);
 		sortByCompletedAction.setText(TaskListMessages.getString("SortByCompleted.text")); //$NON-NLS-1$
 		sortByCompletedAction.setToolTipText(TaskListMessages.getString("SortByCompleted.tooltip")); //$NON-NLS-1$
 
-		sortByPriorityAction = new SortByAction(2);
+		sortByPriorityAction = new SortByAction(TaskSorter.PRIORITY);
 		sortByPriorityAction.setText(TaskListMessages.getString("SortByPriority.text")); //$NON-NLS-1$
 		sortByPriorityAction.setToolTipText(TaskListMessages.getString("SortByPriority.tooltip")); //$NON-NLS-1$
 
-		sortByDescriptionAction = new SortByAction(3);
+		sortByDescriptionAction = new SortByAction(TaskSorter.DESCRIPTION);
 		sortByDescriptionAction.setText(TaskListMessages.getString("SortByDescription.text")); //$NON-NLS-1$
 		sortByDescriptionAction.setToolTipText(TaskListMessages.getString("SortByDescription.tooltip")); //$NON-NLS-1$
 
-		sortByResourceAction = new SortByAction(4);
+		sortByResourceAction = new SortByAction(TaskSorter.RESOURCE);
 		sortByResourceAction.setText(TaskListMessages.getString("SortByResource.text")); //$NON-NLS-1$
 		sortByResourceAction.setToolTipText(TaskListMessages.getString("SortByResource.tooltip")); //$NON-NLS-1$
 
-		sortByContainerAction = new SortByAction(5);
+		sortByContainerAction = new SortByAction(TaskSorter.FOLDER);
 		sortByContainerAction.setText(TaskListMessages.getString("SortByContainer.text")); //$NON-NLS-1$
 		sortByContainerAction.setToolTipText(TaskListMessages.getString("SortByContainer.tooltip")); //$NON-NLS-1$
 
-		sortByLocationAction = new SortByAction(6);
+		sortByLocationAction = new SortByAction(TaskSorter.LOCATION);
 		sortByLocationAction.setText(TaskListMessages.getString("SortByLocation.text")); //$NON-NLS-1$
 		sortByLocationAction.setToolTipText(TaskListMessages.getString("SortByLocation.tooltip")); //$NON-NLS-1$
 
-		sortByCreationTimeAction = new SortByAction(7);
+		sortByCreationTimeAction = new SortByAction(TaskSorter.CREATION_TIME);
 		sortByCreationTimeAction.setText(TaskListMessages.getString("SortByCreationTime.text")); //$NON-NLS-1$
 		sortByCreationTimeAction.setToolTipText(TaskListMessages.getString("SortByCreationTime.tooltip")); //$NON-NLS-1$
 
@@ -1630,16 +1625,16 @@ public class TaskList extends ViewPart {
 	 */
 	void updateSortingState() {
 		int curColumn = sorter.getTopPriority();
-		sortByCategoryAction.setChecked(curColumn == 0);
-		sortByCompletedAction.setChecked(curColumn == 1);
-		sortByPriorityAction.setChecked(curColumn == 2);
-		sortByDescriptionAction.setChecked(curColumn == 3);
-		sortByResourceAction.setChecked(curColumn == 4);
-		sortByContainerAction.setChecked(curColumn == 5);
-		sortByLocationAction.setChecked(curColumn == 6);
-		sortByCreationTimeAction.setChecked(curColumn == 7);
+		sortByCategoryAction.setChecked(curColumn == TaskSorter.TYPE);
+		sortByCompletedAction.setChecked(curColumn == TaskSorter.COMPLETION);
+		sortByPriorityAction.setChecked(curColumn == TaskSorter.PRIORITY);
+		sortByDescriptionAction.setChecked(curColumn == TaskSorter.DESCRIPTION);
+		sortByResourceAction.setChecked(curColumn == TaskSorter.RESOURCE);
+		sortByContainerAction.setChecked(curColumn == TaskSorter.FOLDER);
+		sortByLocationAction.setChecked(curColumn == TaskSorter.LOCATION);
+		sortByCreationTimeAction.setChecked(curColumn == TaskSorter.CREATION_TIME);
 
-		int curDirection = sorter.getDirection();
+		int curDirection = sorter.getTopPriorityDirection();
 		sortAscendingAction.setChecked(curDirection == TaskSorter.ASCENDING);
 		sortDescendingAction.setChecked(curDirection == TaskSorter.DESCENDING);
 	}

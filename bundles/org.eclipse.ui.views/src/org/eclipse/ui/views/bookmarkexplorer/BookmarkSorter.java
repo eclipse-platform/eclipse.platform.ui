@@ -12,30 +12,47 @@ Contributors:
 package org.eclipse.ui.views.bookmarkexplorer;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 
 class BookmarkSorter extends ViewerSorter {
 	
-	private int direction;
+	private int[] directions;
+	private int[] priorities;
 	
-	private int priorities[] = { 
-		BookmarkConstants.COLUMN_FOLDER,
-		BookmarkConstants.COLUMN_RESOURCE,
-		BookmarkConstants.COLUMN_DESCRIPTION,
-		BookmarkConstants.COLUMN_LOCATION };
+	final static int ASCENDING = 1;
+	final static int DESCENDING = -1;
+	final static int DESCRIPTION = 0;
+	final static int RESOURCE = 1;
+	final static int FOLDER = 2;
+	final static int LOCATION = 3;
+	final static int CREATION_TIME = 4;
+	final static int[] DEFAULT_PRIORITIES = 
+		{ FOLDER,
+		  RESOURCE,
+		  LOCATION,
+		  DESCRIPTION,
+		  CREATION_TIME };
+	final static int[] DEFAULT_DIRECTIONS = 
+		{ ASCENDING,    //description
+		  ASCENDING,	//resource
+		  ASCENDING,	//folder
+		  ASCENDING,	//location
+		  ASCENDING, };	//creation time
 									
 	public BookmarkSorter() {
-		direction = BookmarkConstants.SORT_ASCENDING;
+		directions = new int[DEFAULT_DIRECTIONS.length];
+		priorities = new int[DEFAULT_PRIORITIES.length];
 	}
 	
-	public void reverse() {
-		direction *= -1;
+	public void reverseTopPriority() {
+		directions[priorities[0]] *= -1;
 	}
 	
 	public void setTopPriority(int priority) {
-		if (priority < BookmarkConstants.COLUMN_DESCRIPTION || priority > BookmarkConstants.COLUMN_LOCATION)
+		if (priority < 0 || priority >= priorities.length)
 			return;
 		
 		int index = -1;
@@ -45,8 +62,7 @@ class BookmarkSorter extends ViewerSorter {
 		}
 		
 		if (index == -1) {
-			resetPriorities();
-			direction = BookmarkConstants.SORT_ASCENDING;
+			resetState();
 			return;
 		}
 			
@@ -55,15 +71,16 @@ class BookmarkSorter extends ViewerSorter {
 			priorities[i] = priorities[i - 1];
 		}
 		priorities[0] = priority;
+		directions[priority] = DEFAULT_DIRECTIONS[priority];
 	}
 	
-	public void setDirection(int direction) {
-		if (direction == BookmarkConstants.SORT_ASCENDING || direction == BookmarkConstants.SORT_DESCENDING)
-			this.direction = direction;
+	public void setTopPriorityDirection(int direction) {
+		if (direction == ASCENDING || direction == DESCENDING)
+			directions[priorities[0]] = direction;
 	}
 	
-	public int getDirection() {
-		return direction;
+	public int getTopPriorityDirection() {
+		return directions[priorities[0]];
 	}
 	
 	public int getTopPriority() {
@@ -74,71 +91,81 @@ class BookmarkSorter extends ViewerSorter {
 		return priorities;
 	}
 	
-	public void resetPriorities() {
-		priorities[0] = BookmarkConstants.COLUMN_FOLDER;
-		priorities[1] = BookmarkConstants.COLUMN_RESOURCE;
-		priorities[2] = BookmarkConstants.COLUMN_DESCRIPTION;
-		priorities[3] = BookmarkConstants.COLUMN_LOCATION;
+	public void resetState() {
+		priorities = DEFAULT_PRIORITIES;
+		directions = DEFAULT_DIRECTIONS;
 	}
 	
 	private int compare(IMarker marker1, IMarker marker2, int depth) {
 		if (depth >= priorities.length)
 			return 0;
 		
-		switch (priorities[depth]) {
-			case BookmarkConstants.COLUMN_DESCRIPTION: {
+		int column = priorities[depth];
+		switch (column) {
+			case DESCRIPTION: {
 				String desc1 = marker1.getAttribute(IMarker.MESSAGE, "");//$NON-NLS-1$
 				String desc2 = marker2.getAttribute(IMarker.MESSAGE, "");//$NON-NLS-1$
 				int result = collator.compare(desc1, desc2);
 				if (result == 0)
-					result = compare(marker1, marker2, depth + 1);
-				return result;
+					return compare(marker1, marker2, depth + 1);
+				return result * directions[column];
 			}
-			case BookmarkConstants.COLUMN_RESOURCE: {
+			case RESOURCE: {
 				String res1 = marker1.getResource().getName();
 				String res2 = marker2.getResource().getName();
 				int result = collator.compare(res1, res2);
 				if (result == 0)
-					result = compare(marker1, marker2, depth + 1);
-				return result;
+					return compare(marker1, marker2, depth + 1);
+				return result * directions[column];
 			}
-			case BookmarkConstants.COLUMN_FOLDER: {
+			case FOLDER: {
 				String folder1 = BookmarkLabelProvider.getContainerName(marker1);
 				String folder2 = BookmarkLabelProvider.getContainerName(marker2);
 				int result = collator.compare(folder1, folder2);
 				if (result == 0)
-					result = compare(marker1, marker2, depth + 1);
-				return result;
+					return compare(marker1, marker2, depth + 1);
+				return result * directions[column];
 			}
-			case BookmarkConstants.COLUMN_LOCATION: {
+			case LOCATION: {
 				int line1 = marker1.getAttribute(IMarker.LINE_NUMBER, -1);
 				int line2 = marker2.getAttribute(IMarker.LINE_NUMBER, -1);
-				if (line1 == line2)
+				int result = line1 - line2;
+				if (result == 0)
 					return compare(marker1, marker2, depth + 1);
-				if (line1 < line2)
-					return -1;
-				return 1;
+				return result * directions[column];
+			}
+			case CREATION_TIME: {
+				long result;
+				try {
+					result = marker1.getCreationTime() - marker2.getCreationTime();
+				} 
+				catch (CoreException e) {
+					result = 0;
+				}
+				if (result == 0)
+					return compare(marker1, marker2, depth + 1);
+				return ((int) result) * directions[column];
 			}
 		}
 		
 		return 0;
 	}
-
+	
 	public int compare(Viewer viewer, Object e1, Object e2) {
 		IMarker marker1 = (IMarker) e1;
 		IMarker marker2 = (IMarker) e2;
 		
-		return compare(marker1, marker2, 0) * direction;
+		return compare(marker1, marker2, 0);
 	}
 
 	public void saveState(IDialogSettings settings) {
 		if (settings == null)
 			return;
 			
-		settings.put("columnCount", priorities.length);//$NON-NLS-1$
-		settings.put("reversed", direction);//$NON-NLS-1$
-		for (int i = 0; i < priorities.length; i++) 
+		for (int i = 0; i < priorities.length; i++) { 
 			settings.put("priority" + i, priorities[i]);//$NON-NLS-1$
+			settings.put("direction" + i, directions[i]);//$NON-NLS-1$
+		}
 	}	
 	
 	public void restoreState(IDialogSettings settings) {
@@ -146,15 +173,13 @@ class BookmarkSorter extends ViewerSorter {
 			return;
 		
 		try {
-			int columnCount = settings.getInt("columnCount");//$NON-NLS-1$
-			if (priorities.length != columnCount)
-				priorities = new int[columnCount];
-			direction = settings.getInt("reversed");//$NON-NLS-1$
-			for (int i = 0; i < priorities.length; i++)
+			for (int i = 0; i < priorities.length; i++) {
 				priorities[i] = settings.getInt("priority" + i);//$NON-NLS-1$
+				directions[i] = settings.getInt("direction" + i);//$NON-NLS-1$
+			}
 		}
 		catch (NumberFormatException e) {
-			resetPriorities();
+			resetState();
 		}
 	}
 }

@@ -26,6 +26,12 @@ class BookmarkLabelProvider
 	implements ITableLabelProvider {
 
 	private Image image;
+	
+	final static int COLUMN_ICON = 0;
+	final static int COLUMN_DESCRIPTION = 1;
+	final static int COLUMN_RESOURCE = 2;
+	final static int COLUMN_FOLDER = 3;
+	final static int COLUMN_LOCATION = 4;
 
 	public BookmarkLabelProvider(BookmarkNavigator view) {
 		ImageDescriptor desc = view.getImageDescriptor("obj16/bkmrk_tsk.gif"); //$NON-NLS-1$
@@ -53,13 +59,13 @@ class BookmarkLabelProvider
 		IMarker marker = (IMarker) element;
 
 		switch (columnIndex) {
-			case BookmarkConstants.COLUMN_DESCRIPTION :
+			case COLUMN_DESCRIPTION :
 				return marker.getAttribute(IMarker.MESSAGE, ""); //$NON-NLS-1$
-			case BookmarkConstants.COLUMN_RESOURCE :
+			case COLUMN_RESOURCE :
 				return marker.getResource().getName();
-			case BookmarkConstants.COLUMN_FOLDER :
+			case COLUMN_FOLDER :
 				return getContainerName(marker);
-			case BookmarkConstants.COLUMN_LOCATION :
+			case COLUMN_LOCATION :
 				{
 					int line = marker.getAttribute(IMarker.LINE_NUMBER, -1);
 					if (line == -1)
@@ -71,7 +77,7 @@ class BookmarkLabelProvider
 	}
 
 	public Image getColumnImage(Object element, int index) {
-		if (index == BookmarkConstants.COLUMN_ICON)
+		if (index == COLUMN_ICON)
 			return image;
 		return null;
 	}

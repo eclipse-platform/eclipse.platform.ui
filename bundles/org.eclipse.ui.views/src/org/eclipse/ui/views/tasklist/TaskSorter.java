@@ -23,16 +23,44 @@ import org.eclipse.jface.viewers.ViewerSorter;
  */
 class TaskSorter extends ViewerSorter {
 	private int[] priorities;
-	private int direction;
+	private int[] directions;
 	
 	final static int ASCENDING = 1;
+	final static int DEFAULT_DIRECTION = 0;
 	final static int DESCENDING = -1;
+	final static int TYPE = 0;
+	final static int COMPLETION = 1;
+	final static int PRIORITY = 2;
+	final static int DESCRIPTION = 3;
+	final static int RESOURCE = 4;
+	final static int FOLDER = 5;
+	final static int LOCATION = 6;
+	final static int CREATION_TIME = 7;
+	final static int[] DEFAULT_PRIORITIES = 
+		{ FOLDER,
+		  RESOURCE,
+		  LOCATION,
+		  DESCRIPTION,
+		  PRIORITY,
+		  CREATION_TIME,
+		  COMPLETION,
+		  TYPE };
+	final static int[] DEFAULT_DIRECTIONS = 
+		{ DESCENDING,  //type
+		  DESCENDING,  //completed
+		  DESCENDING,  //priority
+		  ASCENDING,   //description
+		  ASCENDING,   //resource
+		  ASCENDING,   //folder
+		  ASCENDING,   //location
+		  ASCENDING }; //creation time
 	
 	/**
 	 * Creates a new task sorter.
 	 */
 	public TaskSorter() {
-		priorities = new int[9];
+		priorities = new int[DEFAULT_PRIORITIES.length];
+		directions = new int[DEFAULT_DIRECTIONS.length];
 	}
 
 	/* (non-Javadoc)
@@ -45,22 +73,23 @@ class TaskSorter extends ViewerSorter {
 	public int compare(Viewer viewer, Object e1, Object e2) {
 		IMarker m1 = (IMarker) e1;
 		IMarker m2 = (IMarker) e2;
-		return compareColumnValue(m1, m2, 0) * direction;
+		return compareColumnValue(m1, m2, 0);
 	}
 
 	public void setTopPriority(int priority) {
-		if (priority < 0 || priority > 8)
+		if (priority < 0 || priority >= priorities.length)
 			return;
 		
 		int index = -1;
 		for (int i = 0; i < priorities.length; i++) {
-			if (priorities[i] == priority)
+			if (priorities[i] == priority) {
 				index = i;
+				break;
+			}
 		}
 		
 		if (index == -1) {
 			resetState();
-			direction = ASCENDING;
 			return;
 		}
 			
@@ -69,29 +98,35 @@ class TaskSorter extends ViewerSorter {
 			priorities[i] = priorities[i - 1];
 		}
 		priorities[0] = priority;
+		directions[priority] = DEFAULT_DIRECTIONS[priority];
 	}
 	
 	public int getTopPriority() {
 		return priorities[0];
 	}
 	
-	public void setDirection(int direction) {
-		if (direction == ASCENDING || direction == DESCENDING)
-			this .direction = direction;
+	public int[] getPriorities() {
+		return priorities;
 	}
 	
-	public int getDirection() {
-		return direction;
+	public void setTopPriorityDirection(int direction) {
+		if (direction == DEFAULT_DIRECTION)
+			directions[priorities[0]] = DEFAULT_DIRECTIONS[priorities[0]];
+		else if (direction == ASCENDING || direction == DESCENDING)
+			directions[priorities[0]] = direction;
 	}
 	
-	public void reverse() {
-		direction *= -1;
+	public int getTopPriorityDirection() {
+		return directions[priorities[0]];
+	}
+	
+	public void reverseTopPriority() {
+		directions[priorities[0]] *= -1;
 	}
 	
 	public void resetState() {
-		for (int i = 0; i < priorities.length; i++)
-			priorities[i] = i; 
-		direction = ASCENDING;
+		priorities = DEFAULT_PRIORITIES;
+		directions = DEFAULT_DIRECTIONS;
 	}
 	
 	/* (non-Javadoc)
@@ -105,97 +140,73 @@ class TaskSorter extends ViewerSorter {
 			return 0;
 		
 		int columnNumber = priorities[depth];
+		int direction = directions[columnNumber];
 		switch (columnNumber) {
-			case 0: { 
+			case TYPE: { 
 				/* category */
 				int result = getCategoryOrder(m1) - getCategoryOrder(m2);
 				if (result == 0)
 					return compareColumnValue(m1, m2, depth + 1);
-				return result;
+				return result * direction;
 			}
-			case 1: {
+			case COMPLETION: {
 				 /* completed */
 				int result = getCompletedOrder(m1) - getCompletedOrder(m2);
 				if (result == 0)
 					return compareColumnValue(m1, m2, depth + 1);
-				return result;
+				return result * direction;
 			}
-			case 2: { 
+			case PRIORITY: { 
 				/* priority */
 				int result = getPriorityOrder(m1) - getPriorityOrder(m2);
 				if (result == 0)
 					return compareColumnValue(m1, m2, depth + 1);
-				return result;
+				return result * direction;
 			}
-			case 3: { 
+			case DESCRIPTION: { 
 				/* description */
 				int result = collator.compare(MarkerUtil.getMessage(m1), MarkerUtil.getMessage(m2));
 				if (result == 0)
 					return compareColumnValue(m1, m2, depth + 1);
-				return result;
+				return result * direction;
 			}
-			case 4: {
+			case RESOURCE: {
 				/* resource name */
-				// Optimization: if the markers' resources are equal, then their names are the same.
-				// If resources are equal, chances are they're identical; don't take hit for full equality comparison.
 				IResource r1 = m1.getResource();
 				IResource r2 = m2.getResource();
-				if (r1.equals(r2))
-					return compareColumnValue(m1, m2, depth + 1);
 				String n1 = r1.getName();
 				String n2 = r2.getName();
 				int result = collator.compare(n1, n2);
 				if (result == 0)
 					return compareColumnValue(m1, m2, depth + 1);
-				return result;
+				return result * direction;
 			}
-			case 5: {
+			case FOLDER: {
 				/* container name */
-				// Optimization: if the markers' resources are equal, then container names are the same.
-				// If resources are equal, chances are they're identical; don't take hit for full equality comparison.
-				if (m1.getResource().equals(m2.getResource()))
-					return compareColumnValue(m1, m2, depth + 1);
 				String c1 = MarkerUtil.getContainerName(m1);
 				String c2 = MarkerUtil.getContainerName(m2);
 				int result = c1.equals(c2) ? 0 : collator.compare(c1, c2);
 				if (result == 0)
 					return compareColumnValue(m1, m2, depth + 1);
-				return result;
+				return result * direction;
 			}
-			case 6: {
+			case LOCATION: {
 				/* line and location */
 				int result = compareLineAndLocation(m1, m2);
 				if (result == 0)
 					return compareColumnValue(m1, m2, depth + 1);
-				return result;
+				return result * direction;
 			}
-			case 7: {
+			case CREATION_TIME: {
 				/* creation time */
 				int result = compareCreationTime(m1, m2);
 				if (result == 0)
 					return compareColumnValue(m1, m2, depth + 1);
-				return result;
-			}
-			case 8: {
-				/* id */
-				int result = compareId(m1, m2);
-				if (result == 0)
-					return compareColumnValue(m1, m2, depth + 1);
-				return result;
+				return result * direction;
 			}
 			default:
 				return 0;
 		}
-	}
-
-	/**
-	 * Compares the ids of two markers.
-	 */
-	private int compareId(IMarker m1, IMarker m2) {
-		long result = m1.getId() - m2.getId();
-		if (result > 0) return 1;
-		else if (result < 0) return -1;
-		return 0;
 	}
 
 	/**
@@ -256,14 +267,14 @@ class TaskSorter extends ViewerSorter {
 		if (MarkerUtil.isMarkerType(marker, IMarker.PROBLEM)) {
 			switch (MarkerUtil.getSeverity(marker)) {
 				case IMarker.SEVERITY_ERROR:
-					return 1;
+					return 4;
 				case IMarker.SEVERITY_WARNING:
-					return 2;
-				case IMarker.SEVERITY_INFO:
 					return 3;
+				case IMarker.SEVERITY_INFO:
+					return 2;
 			}
 		} else if (MarkerUtil.isMarkerType(marker, IMarker.TASK)) {
-			return 4;
+			return 1;
 		}
 		return 1000;
 	}
@@ -273,25 +284,27 @@ class TaskSorter extends ViewerSorter {
 	 * Lower numbers appear first.
 	 */
 	private int getCompletedOrder(IMarker marker) {
-		return MarkerUtil.isComplete(marker) ? 0 : 1;
+		if (MarkerUtil.isMarkerType(marker, IMarker.TASK))
+			return MarkerUtil.isComplete(marker) ? 2 : 1;
+		return 0;
 	}
 
 	/**
 	 * Returns the sort order for the given marker based on its priority.
-	 * Lower numbers appear first.
 	 */
 	private int getPriorityOrder(IMarker marker) {
-		// want HIGH to appear first
-		return IMarker.PRIORITY_HIGH - MarkerUtil.getPriority(marker);
+		if (MarkerUtil.isMarkerType(marker, IMarker.TASK))
+			return MarkerUtil.getPriority(marker);
+		return getCategoryOrder(marker) + 1;
 	}
 	public void saveState(IDialogSettings settings) {
 		if (settings == null)
 			return;
 			
-		settings.put("columnCount", priorities.length);//$NON-NLS-1$
-		settings.put("direction", direction);//$NON-NLS-1$
-		for (int i = 0; i < priorities.length; i++) 
+		for (int i = 0; i < directions.length; i++) {
+			settings.put("direction" + i, directions[i]);//$NON-NLS-1$
 			settings.put("priority" + i, priorities[i]);//$NON-NLS-1$
+		}
 	}	
 	
 	public void restoreState(IDialogSettings settings) {
@@ -299,12 +312,10 @@ class TaskSorter extends ViewerSorter {
 			return;
 		
 		try {
-			int columnCount = settings.getInt("columnCount");//$NON-NLS-1$
-			if (priorities.length != columnCount)
-				priorities = new int[columnCount];
-			direction = settings.getInt("direction");//$NON-NLS-1$
-			for (int i = 0; i < priorities.length; i++)
+			for (int i = 0; i < priorities.length; i++) {
+				directions[i] = settings.getInt("direction" + i);//$NON-NLS-1$
 				priorities[i] = settings.getInt("priority" + i);//$NON-NLS-1$
+			}
 		}
 		catch (NumberFormatException e) {
 			resetState();

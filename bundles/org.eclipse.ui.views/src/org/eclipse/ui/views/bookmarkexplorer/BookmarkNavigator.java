@@ -60,6 +60,7 @@ public class BookmarkNavigator extends ViewPart {
 	private SortByAction sortByResourceAction;
 	private SortByAction sortByFolderAction;
 	private SortByAction sortByLineAction;
+	private SortByAction sortByCreationTime;
 	private ChangeSortDirectionAction sortAscendingAction;
 	private ChangeSortDirectionAction sortDescendingAction;	 
 	private IMemento memento;
@@ -93,14 +94,13 @@ public class BookmarkNavigator extends ViewPart {
 		private int column;
 		
 		public SortByAction(int column) {
-			if (column < BookmarkConstants.COLUMN_DESCRIPTION || column > BookmarkConstants.COLUMN_LOCATION)
-				column = BookmarkConstants.COLUMN_FOLDER;
-			else 
-				this.column = column;
+			this.column = column;
 		}
 
 		public void run() {
+			int direction = sorter.getTopPriorityDirection();
 			sorter.setTopPriority(column);
+			sorter.setTopPriorityDirection(direction);
 			updateSortState();
 			viewer.refresh();
 			IDialogSettings workbenchSettings = getPlugin().getDialogSettings();
@@ -116,14 +116,11 @@ public class BookmarkNavigator extends ViewPart {
 		private int direction;
 		
 		public ChangeSortDirectionAction(int direction) {
-			if (direction == BookmarkConstants.SORT_ASCENDING || direction == BookmarkConstants.SORT_DESCENDING)
-				this.direction = direction;
-			else 
-				this.direction = BookmarkConstants.SORT_ASCENDING;
+			this.direction = direction;
 		}
 
 		public void run() {
-			sorter.setDirection(direction);
+			sorter.setTopPriorityDirection(direction);
 			updateSortState();
 			viewer.refresh();
 			IDialogSettings workbenchSettings = getPlugin().getDialogSettings();
@@ -498,13 +495,12 @@ public class BookmarkNavigator extends ViewPart {
 			 * toggle sorting order (ascending/descending).
 			 */
 			public void widgetSelected(SelectionEvent e) {
-				// column selected - need to sort
-				int column = table.indexOf((TableColumn) e.widget);
+				// column selected - first column doesn't count
+				int column = table.indexOf((TableColumn) e.widget) - 1;
 				if (column == sorter.getTopPriority())
-					sorter.reverse();
+					sorter.reverseTopPriority();
 				else {
 					sorter.setTopPriority(column);
-					sorter.setDirection(BookmarkConstants.SORT_ASCENDING);
 				}
 				updateSortState();
 				viewer.refresh();
@@ -525,7 +521,8 @@ public class BookmarkNavigator extends ViewPart {
 			TableColumn tc = new TableColumn(table, SWT.NONE,i);
 			tc.setResizable(columnLayouts[i].resizable);
 			tc.setText(columnHeaders[i]);
-			tc.addSelectionListener(headerListener);
+			if (i > 0)
+				tc.addSelectionListener(headerListener);
 		}
 	}
 	
@@ -551,50 +548,46 @@ public class BookmarkNavigator extends ViewPart {
 		submenu.add(sortByResourceAction);
 		submenu.add(sortByFolderAction);
 		submenu.add(sortByLineAction);
+		submenu.add(sortByCreationTime);
 		submenu.add(new Separator());
 		submenu.add(sortAscendingAction);
 		submenu.add(sortDescendingAction);
 	}
 	
 	void createSortActions() {
-		sortByDescriptionAction = new SortByAction(BookmarkConstants.COLUMN_DESCRIPTION);
+		sortByDescriptionAction = new SortByAction(BookmarkSorter.DESCRIPTION);
 		sortByDescriptionAction.setText(BookmarkMessages.getString("ColumnDescription.text")); //$NON-NLS-1$
-		sortByResourceAction = new SortByAction(BookmarkConstants.COLUMN_RESOURCE);
+		
+		sortByResourceAction = new SortByAction(BookmarkSorter.RESOURCE);
 		sortByResourceAction.setText(BookmarkMessages.getString("ColumnResource.text")); //$NON-NLS-1$
-		sortByFolderAction = new SortByAction(BookmarkConstants.COLUMN_FOLDER);
+		
+		sortByFolderAction = new SortByAction(BookmarkSorter.FOLDER);
 		sortByFolderAction.setText(BookmarkMessages.getString("ColumnFolder.text")); //$NON-NLS-1$
-		sortByLineAction = new SortByAction(BookmarkConstants.COLUMN_LOCATION);
+		
+		sortByLineAction = new SortByAction(BookmarkSorter.LOCATION);
 		sortByLineAction.setText(BookmarkMessages.getString("ColumnLocation.text"));//$NON-NLS-1$
-		sortAscendingAction = new ChangeSortDirectionAction(BookmarkConstants.SORT_ASCENDING);
+		
+		sortByCreationTime = new SortByAction(BookmarkSorter.CREATION_TIME);
+		sortByCreationTime.setText(BookmarkMessages.getString("ColumnCreationTime.text"));//$NON-NLS-1$
+		
+		sortAscendingAction = new ChangeSortDirectionAction(BookmarkSorter.ASCENDING);
 		sortAscendingAction.setText(BookmarkMessages.getString("SortDirectionAscending.text"));//$NON-NLS-1$
-		sortDescendingAction = new ChangeSortDirectionAction(BookmarkConstants.SORT_DESCENDING);
+		
+		sortDescendingAction = new ChangeSortDirectionAction(BookmarkSorter.DESCENDING);
 		sortDescendingAction.setText(BookmarkMessages.getString("SortDirectionDescending.text"));//$NON-NLS-1$
 	}
 	
 	void updateSortState() {
 		int column = sorter.getTopPriority();
-		sortByDescriptionAction.setChecked(false);
-		sortByResourceAction.setChecked(false);
-		sortByFolderAction.setChecked(false);
-		sortByLineAction.setChecked(false);
-		if (column == BookmarkConstants.COLUMN_DESCRIPTION)
-			sortByDescriptionAction.setChecked(true);
-		else if (column == BookmarkConstants.COLUMN_RESOURCE)
-			sortByResourceAction.setChecked(true);
-		else if (column == BookmarkConstants.COLUMN_FOLDER)
-			sortByFolderAction.setChecked(true);
-		else
-			sortByLineAction.setChecked(true);
+		sortByDescriptionAction.setChecked(column == BookmarkSorter.DESCRIPTION);
+		sortByResourceAction.setChecked(column == BookmarkSorter.RESOURCE);
+		sortByFolderAction.setChecked(column == BookmarkSorter.FOLDER);
+		sortByLineAction.setChecked(column == BookmarkSorter.LOCATION);
+		sortByCreationTime.setChecked(column == BookmarkSorter.CREATION_TIME);
 		
-		int direction = sorter.getDirection();
-		if (direction == BookmarkConstants.SORT_ASCENDING) {
-			sortAscendingAction.setChecked(true);
-			sortDescendingAction.setChecked(false);
-		}
-		else {
-			sortDescendingAction.setChecked(true);
-			sortAscendingAction.setChecked(false);
-		}
+		int direction = sorter.getTopPriorityDirection();
+		sortAscendingAction.setChecked(direction == BookmarkSorter.ASCENDING);
+		sortDescendingAction.setChecked(direction == BookmarkSorter.DESCENDING);
 	}
 
 	/**
