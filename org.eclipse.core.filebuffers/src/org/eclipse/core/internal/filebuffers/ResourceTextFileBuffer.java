@@ -316,18 +316,6 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 		// User-defined encoding has first priority
 		if (fExplicitEncoding != null)
 			return fExplicitEncoding;
-		try {
-			/*
-			 * FIXME
-			 * Check whether explicit encoding has been set via properties dialog.
-			 * This is needed because no notification is sent when this property
-			 * changes, see: https://bugs.eclipse.org/bugs/show_bug.cgi?id=64077
-			 */ 
-			fExplicitEncoding= fFile.getCharset(false);
-			if (fExplicitEncoding != null)
-				return fExplicitEncoding;
-		} catch (CoreException e) {
-		}
 		
 		// Probe content
 		Reader reader= new BufferedReader(new StringReader(fDocument.get()));
