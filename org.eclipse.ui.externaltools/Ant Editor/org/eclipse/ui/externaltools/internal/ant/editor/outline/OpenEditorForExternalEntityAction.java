@@ -20,11 +20,13 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.externaltools.internal.ant.editor.xml.XmlElement;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 
 public class OpenEditorForExternalEntityAction extends Action {
@@ -52,7 +54,12 @@ public class OpenEditorForExternalEntityAction extends Action {
 			IResource resource= root.getFileForLocation(resourcePath);
 			if (resource != null && resource.getType() == IResource.FILE) {
 				try {
-					page.getSite().getPage().openEditor((IFile)resource);
+					IEditorPart editor= page.getSite().getPage().openEditor((IFile)resource);
+					if (!(editor instanceof ITextEditor)) {
+						return;
+					}
+					ITextEditor textEditor= (ITextEditor)editor;
+					textEditor.selectAndReveal(element.getOffset(), element.getLength());
 				} catch (PartInitException e) {
 					IStatus status= new Status(IStatus.ERROR, IExternalToolConstants.PLUGIN_ID, IStatus.ERROR, "Error within External tools UI: ", e); //$NON-NLS-1$	
 					ErrorDialog.openError(page.getSite().getShell(), AntOutlineMessages.getString("OpenEditorForExternalEntityAction.Error"), AntOutlineMessages.getString("OpenEditorForExternalEntityAction.Error_occurred"), status); //$NON-NLS-1$ //$NON-NLS-2$
