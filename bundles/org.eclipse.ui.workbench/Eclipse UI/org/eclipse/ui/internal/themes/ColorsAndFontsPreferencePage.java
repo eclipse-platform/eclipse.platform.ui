@@ -302,21 +302,29 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
                 ((Image) i.next()).dispose();
             }
             images.clear();
-            
-            for (Iterator i = fonts.values().iterator(); i.hasNext();) {
-                ((Font) i.next()).dispose();
-            }
-            fonts.clear();
                         
             if (emptyImage != null) {
             	emptyImage.dispose();
             	emptyImage = null;
-            }
-            fireLabelProviderChanged(new LabelProviderChangedEvent(PresentationLabelProvider.this));
+            }            
+            
+            //clear the fonts.  Has a side effect of firing a label property change
+            clearFontCache();
         }
-        
-    	
-        /* (non-Javadoc)
+
+		/**
+		 * Clears and disposes all fonts and fires a label changed event.
+		 */
+		public void clearFontCache() {
+			for (Iterator i = fonts.values().iterator(); i.hasNext();) {
+                ((Font) i.next()).dispose();
+            }
+            fonts.clear();
+            
+            fireLabelProviderChanged(new LabelProviderChangedEvent(PresentationLabelProvider.this));
+		}
+
+		/* (non-Javadoc)
          * @see org.eclipse.jface.viewers.IFontProvider#getFont(java.lang.Object)
          */
         public Font getFont(Object element) {
@@ -338,8 +346,8 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
     	        return font;
     	    }
 
-            updateColumn(getText(element), tree.getViewer().getControl().getParent().getFont());
-            return tree.getViewer().getControl().getParent().getFont();
+            updateColumn(getText(element), JFaceResources.getDialogFont());
+            return JFaceResources.getDialogFont();
         }
     	
     	/**
@@ -1620,5 +1628,8 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 		while (iterator.hasNext()) {
 			((Control) iterator.next()).setFont(newFont);
 		}
+		
+		//recalculate the fonts for the tree
+		labelProvider.clearFontCache();
 	}    
 }
