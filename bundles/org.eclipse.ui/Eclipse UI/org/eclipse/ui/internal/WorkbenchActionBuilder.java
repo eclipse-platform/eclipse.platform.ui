@@ -5,6 +5,7 @@ package org.eclipse.ui.internal;
  * All Rights Reserved.
  */
 import org.eclipse.core.resources.*;
+import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.dialogs.*;
 import org.eclipse.ui.internal.misc.*;
 import org.eclipse.ui.internal.dialogs.*;

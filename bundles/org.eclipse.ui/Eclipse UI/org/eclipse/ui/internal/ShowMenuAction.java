@@ -1,4 +1,4 @@
-package org.eclipse.ui.actions;
+package org.eclipse.ui.internal;
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
@@ -6,6 +6,7 @@ package org.eclipse.ui.actions;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.internal.*;
 import org.eclipse.ui.part.WorkbenchPart;
+import org.eclipse.ui.actions.*;
 
 /**
  * Show the menu on top of the icon in the
