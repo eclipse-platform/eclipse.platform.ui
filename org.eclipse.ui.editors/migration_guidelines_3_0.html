@@ -1,0 +1,57 @@
+<!DOCTYPE doctype PUBLIC "-//w3c//dtd html 4.0 transitional//en"><html><head>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="Author" content="IBM"><title>Platform Text Breaking API changes</title></head><body text="#000000" bgcolor="#ffffff">
+&nbsp;
+<table border="0" cellspacing="5" cellpadding="2" width="100%">
+  <tbody>
+    <tr>
+      <td align="left" width="72%"> <font size="+3"><b>Platform Text -
+Breaking API changes from R2.1 to R3.0</b></font> <font size="-2" color="#8080ff"><br>
+</font></td>
+    </tr>
+	<tr>
+      <td>
+      <ul>
+        <li><span style="font-weight: bold; font-style: italic;">org.eclipse.jface.text.source.AnnotationModel.addAnnotation(Annotation, Position, boolean)</span>:
+changed signature to throw <code>org.eclipse.jface.text.BadLocationException</code>
+in order to add support for better handling of invalid document
+positions. Only clients which extend (i.e. call super) this method will be
+broken. To fix the problem either catch the exception from the super
+call or change the signature in the extended method. The latter is
+suggested since clients should decide how to handle invalid document
+positions.<br>
+</li>
+        <li><span style="font-weight: bold; font-style: italic;">org.eclipse.ui.texteditor.TextEditorAction.canModifyEditor()</span>:
+added predicate method that checks whether the action's editor can be modified. The method calls different methods on the underlying editor depending on 
+which interfaces the editor implements. The method will call <code>ITextEditorExtension2.isEditorInputModifiable()</code> if it is available. Modifing actions
+can call the method when updating their enablement state.<br>
+</li>
+        <li><span style="font-weight: bold; font-style: italic;">org.eclipse.ui.texteditor.TextEditorAction.validateEdit()</span>:
+        added predicate method that checks and updates the modifiable state of the action's editor. The method calls different methods on the underlying editor depending on 
+        which interfaces the editor implements. The method will call <code>ITextEditorExtension2.validateEditorInputState()</code> if it is available. Modifing actions
+        can call the method before running modifing the editor's content.<br>
+</li>
+        <li><span style="font-weight: bold; font-style: italic;">org.eclipse.ui.texteditor.AbstractDecoratedTextEditor</span>:
+        A new intermediate class layer has been added between <code>StatusTextEditor</code> and other editors, namely <code>TextEditor</code> and <code>JavaEditor</code>. The additional layer 
+        includes features found commonly in advanced editors (and especially source editors) such as:
+        <ul>
+        	<li>a vertical ruler to display annotations, line numbers, and quick diff information</li>
+        	<li>an overview ruler</li>
+        	<li>current line hightlighting,</li>
+        	<li>and print margin display</li>
+        </ul>
+        Implementors of an editor may choose to extend <code>AbstractDecoratedTextEditor</code> instead of <code>TextEditor</code>.
+        <br>
+</li>
+      </ul>
+      </td>
+    </tr>
+    <tr>
+	<td> 	 <font size="-1"> 	  This document lists the breaking API
+changes that occurred between R2.1 and R3.0 and how to migrate from the
+R2.1 API to 	  the R3.0 API. 	 </font> 	</td>
+    </tr>
+  </tbody>
+</table>
+<p> </p>
+</body></html>
