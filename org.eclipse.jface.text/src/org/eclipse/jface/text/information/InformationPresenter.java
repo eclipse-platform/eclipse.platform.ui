@@ -218,7 +218,7 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 	 * The current information control creator.
 	 * @since 3.0
 	 */
-	private volatile IInformationControlCreator fCurrentInformationControlCreator;	
+	private IInformationControlCreator fCurrentInformationControlCreator;	
 	/**
 	 * Tells whether a custom information control is in use.
 	 * @since 3.0
