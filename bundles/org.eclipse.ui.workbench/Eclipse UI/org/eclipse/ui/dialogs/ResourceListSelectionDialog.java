@@ -370,7 +370,6 @@ protected Control createDialogArea(Composite parent) {
 	data = new GridData(GridData.FILL_BOTH);
 	data.widthHint = 300;
 	data.heightHint = 4 * folderNames.getItemHeight();
-	System.out.println(String.valueOf(folderNames.getItemHeight()));
 	folderNames.setLayoutData(data);
 	
 	if (gatherResourcesDynamically) {
