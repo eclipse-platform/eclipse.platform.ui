@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.net.URL;
 import org.eclipse.core.boot.IPlatformConfiguration;
 
+//TODO: any good reason for the name? other classes in the package have the same purpose (adapting legacy to new APIs) but don't have "Old" in their names
 public class OldPlatformConfiguration implements IPlatformConfiguration {
 	private org.eclipse.update.configurator.IPlatformConfiguration newConfig;
 

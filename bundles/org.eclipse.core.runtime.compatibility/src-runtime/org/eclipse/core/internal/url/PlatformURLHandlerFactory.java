@@ -24,22 +24,19 @@ public class PlatformURLHandlerFactory implements URLStreamHandlerFactory {
 
 	public URLStreamHandler createURLStreamHandler(String protocol) {
 		URLStreamHandler handler = null;
-
 		// check for cached handler
 		Object element = handlers.get(protocol);
 		if (element == null)
 			return null;
 		if (element instanceof URLStreamHandler)
-			handler = (URLStreamHandler) element;
-		else {
-			// convert registered factory to a handler
-			URLStreamHandlerFactory f = (URLStreamHandlerFactory) element;
-			handler = f.createURLStreamHandler(protocol);
-			if (handler != null)
-				handlers.put(protocol, handler);
-			else
-				handlers.remove(protocol); // bad entry
-		}
+			return (URLStreamHandler) element;
+		// convert registered factory to a handler
+		URLStreamHandlerFactory factory = (URLStreamHandlerFactory) element;
+		handler = factory.createURLStreamHandler(protocol);
+		if (handler != null)
+			handlers.put(protocol, handler);
+		else
+			handlers.remove(protocol); // bad entry
 		return handler;
 	}
 	public static void register(String protocol, URLStreamHandlerFactory factory) {
