@@ -192,6 +192,9 @@ The content file is parsed at run time by the intro framework. Based on the sett
 
    <element name="shortcut">
       <annotation>
+         <appInfo>
+            <meta.element labelAttribute="tooltip" icon="icon"/>
+         </appInfo>
          <documentation>
             a button will be created in the intro launch bar for each shortcut element. The URL defined in the shortcut will be executed when the button is pressed.
          </documentation>
