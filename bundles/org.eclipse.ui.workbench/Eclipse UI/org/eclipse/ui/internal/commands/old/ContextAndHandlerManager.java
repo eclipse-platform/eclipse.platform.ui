@@ -191,7 +191,7 @@ public class ContextAndHandlerManager implements IContextResolver {
 	public void update() {
 		SortedSet activeContextIds = contextManager.getActiveContextIds();
 		List contexts = new ArrayList(activeContextIds);
-		// TODO: these should be sorted somehow
+		// TODO: contexts should be sorted somehow to resolve conflicts
 		SequenceMachine keyMachine = Manager.getInstance().getKeyMachine();      		
 			
 		try {
@@ -298,50 +298,18 @@ public class ContextAndHandlerManager implements IContextResolver {
 
 	public boolean inContext(String commandId) {
 		if (commandId != null) {
-			Set set = (Set) contextsByCommand.get(commandId);
+			Set contextIds = (Set) contextsByCommand.get(commandId);
 		
-			if (set != null) {
-				/*
-				if (activeWorkbenchPartContextService != null) {
-					List contexts = Arrays.asList(activeWorkbenchPartContextService.getActiveContextIds());
-
-					if (contexts != null) {
-						// TODO: get rid of this
-						contexts = new ArrayList(contexts);
-						if (contexts.size() == 0)
-							contexts.add(IWorkbenchConstants.DEFAULT_ACCELERATOR_SCOPE_ID);
-			
-						Iterator iterator = contexts.iterator();
+			if (contextIds != null) {
+				SortedSet activeContextIds = contextManager.getActiveContextIds();			
+				Iterator iterator = contextIds.iterator();
 				
-						while (iterator.hasNext()) {
-							String context = (String) iterator.next();
+				while (iterator.hasNext()) {
+					String contextId = (String) iterator.next();
 					
-							if (set.contains(context))
-								return true;
-						}
-					}
+					if (activeContextIds.contains(contextId))
+						return true;
 				}
-
-				if (workbenchWindowContextService != null) {
-					List contexts = Arrays.asList(workbenchWindowContextService.getActiveContextIds());
-		
-					if (contexts != null) {
-						// TODO: get rid of this
-						contexts = new ArrayList(contexts);
-						if (contexts.size() == 0)
-							contexts.add(IWorkbenchConstants.DEFAULT_ACCELERATOR_SCOPE_ID);
-
-						Iterator iterator = contexts.iterator();
-				
-						while (iterator.hasNext()) {
-							String context = (String) iterator.next();
-					
-							if (set.contains(context))
-								return true;
-						}
-					}
-				}
-				*/
 
 				return false;				
 			}
