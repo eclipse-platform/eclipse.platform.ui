@@ -406,8 +406,8 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		}
 	}
 	
-	/**
-	 * @see Window#close()
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.window.Window#close()
 	 */
 	public boolean close() {
 		persistShellGeometry();
@@ -422,13 +422,11 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	}
 	
 	/**
-	 * Determine the initial configuration for this dialog.  If the open mode is
-	 * set to 'LAUNCH_LAST', relaunch the last config and return
-	 * <code>ILaunchConfigurationDialog.LAUNCHED_BEFORE_OPENING</code>.
-	 * Otherwise, open the dialog in the specified mode and return one of
+	 * Determine the initial configuration for this dialog.
+	 * Open the dialog in the mode set using #setOpenMode(int) and return one of
 	 * <code>Window. OK</code> or <code>Window.CANCEL</code>.
 	 * 
-	 * @see Window#open()
+	 * @see org.eclipse.jface.window.Window#open()
 	 */
 	public int open() {		
 		int mode = getOpenMode();
@@ -946,8 +944,8 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		getShell().setSize(Math.min(width, bounds.width), Math.min(height, bounds.height));
 	}
  	 
- 	/** 
- 	 * @see ILaunchConfigurationDialog#getMode()
+ 	/* (non-Javadoc)
+ 	 * @see org.eclipse.debug.ui.ILaunchConfigurationDialog#getMode()
  	 */
  	public String getMode() {
  		return getLaunchGroup().getMode();
@@ -965,8 +963,8 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
  		return null;
  	}
  	
- 	/**
- 	 * @see ILaunchConfigurationDialog#getTabs()
+ 	/* (non-Javadoc)
+ 	 * @see org.eclipse.debug.ui.ILaunchConfigurationDialog#getTabs()
  	 */
  	public ILaunchConfigurationTab[] getTabs() {
  		if (getTabGroup() == null) {
@@ -1197,8 +1195,8 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * 
 	 ***************************************************************************************/
 
-	/**
-	 * @see IRunnableContext#run(boolean, boolean, IRunnableWithProgress)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.operation.IRunnableContext#run(boolean, boolean, org.eclipse.jface.operation.IRunnableWithProgress)
 	 */
 	public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
 		if (isVisible()) {
@@ -1403,8 +1401,8 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		return getTabViewer().canLaunch();
 	}
 
-	/**
-	 * @see ILaunchConfigurationDialog#updateButtons()
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationDialog#updateButtons()
 	 */
 	public void updateButtons() {
 		// New & Delete buttons
@@ -1416,15 +1414,15 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		getButton(ID_LAUNCH_BUTTON).setEnabled(canLaunch());
 	}
 	
-	/**
-	 * @see ILaunchConfigurationDialog#getActiveTab()
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationDialog#getActiveTab()
 	 */
 	public ILaunchConfigurationTab getActiveTab() {
 		return getTabViewer().getActiveTab();
 	}
 
-	/**
-	 * @see ILaunchConfigurationDialog#updateMessage()
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationDialog#updateMessage()
 	 */
 	public void updateMessage() {
 		setErrorMessage(getTabViewer().getErrorMesssage());
@@ -1443,7 +1441,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	/**
 	 * Sets the launch configuration selection area control.
 	 * 
-	 * @param editArea control
+	 * @param selectionArea control
 	 */
 	private void setSelectionArea(Composite selectionArea) {
 		fSelectionArea = selectionArea;
@@ -1467,15 +1465,15 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		fEditArea = editArea;
 	}
 	
-	/**
-	 * @see ILaunchConfigurationDialog#setName(String)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationDialog#setName(java.lang.String)
 	 */
 	public void setName(String name) {
 		getTabViewer().setName(name);
 	}
 	
-	/**
-	 * @see ILaunchConfigurationDialog#generateName(String)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationDialog#generateName(java.lang.String)
 	 */
 	public String generateName(String name) {
 		if (name == null) {
@@ -1725,7 +1723,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		resize();			
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#create()
 	 */
 	public void create() {
@@ -1736,14 +1734,14 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		}			
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationDialog#setActiveTab(org.eclipse.debug.ui.ILaunchConfigurationTab)
 	 */
 	public void setActiveTab(ILaunchConfigurationTab tab) {
 		getTabViewer().setActiveTab(tab);
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationDialog#setActiveTab(int)
 	 */
 	public void setActiveTab(int index) {
@@ -1753,7 +1751,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	/**
 	 * Sets the status to open the dialog on.
 	 * 
-	 * @param status
+	 * @param status the intial status for the dialog
 	 */
 	public void setInitialStatus(IStatus status) {
 		fInitialStatus = status;
@@ -1772,7 +1770,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * Consult a status handler for the given status, if any. The status handler
 	 * is passed this launch config dialog as an argument.
 	 * 
-	 * @param status
+	 * @param status the status to be handled
 	 */
 	public void handleStatus(IStatus status) {		
 		IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(status);
