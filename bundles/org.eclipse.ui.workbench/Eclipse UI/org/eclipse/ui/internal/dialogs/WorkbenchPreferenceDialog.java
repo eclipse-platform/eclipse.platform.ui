@@ -29,8 +29,6 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -54,8 +52,6 @@ import org.eclipse.ui.internal.misc.Assert;
  * preferences.
  */
 public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
-
-	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
 	/**
 	 * The dialog settings key for the last used import/export path.
@@ -209,7 +205,8 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 	 */
 	private PreferencePageHistory history;
 
-	private CTabItem tab;
+    //The title for pageContent area
+	private Label title;
 
 	private ToolBar toolBar;
 
@@ -297,6 +294,7 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 		// create a composite with standard margins and spacing
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
+		layout.verticalSpacing = 0;
 		layout.marginWidth = 0;
 		layout.marginHeight = 0;
 		composite.setLayout(layout);
@@ -313,7 +311,7 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 		toolBarComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL
 				| GridData.GRAB_HORIZONTAL));
 
-			createDialogContents(composite);
+		createDialogContents(composite);
 
 		applyDialogFont(composite);
 
@@ -339,7 +337,6 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 		layout.numColumns = columns;
 		composite.setLayout(layout);
 		GridData compositeData = new GridData(GridData.FILL_BOTH);
-		//compositeData.horizontalIndent = IDialogConstants.HORIZONTAL_MARGIN;
 		composite.setLayoutData(compositeData);
 		applyDialogFont(composite);
 		composite.setBackground(composite.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
@@ -356,9 +353,15 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 		pageAreaLayout.marginHeight = 0;
 		pageAreaLayout.marginWidth = 0;
 		pageAreaLayout.horizontalSpacing = 0;
-
+		pageAreaLayout.numColumns = 2;
 		pageAreaComposite.setLayout(pageAreaLayout);
-
+		
+		Label versep = new Label(pageAreaComposite, SWT.SEPARATOR | SWT.VERTICAL);
+		GridData verGd = new GridData(GridData.FILL_VERTICAL | GridData.GRAB_VERTICAL);
+		verGd.horizontalSpan = columns;
+		versep.setLayoutData(verGd);
+		versep.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, false, true));
+		
 		// Build the Page container
 		setPageContainer(createPageContainer(pageAreaComposite));
 		getPageContainer().setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -375,36 +378,65 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 	 */
 	public Composite createPageContainer(Composite parent) {
 
-		CTabFolder parentFolder = new CTabFolder(parent, SWT.BORDER);
-		parentFolder.setSingle(true);
-
-		tab = new CTabItem(parentFolder, SWT.BORDER);
-
-		parentFolder.setSelectionForeground(parent.getDisplay().getSystemColor(
-				SWT.COLOR_WIDGET_FOREGROUND));
-		parentFolder.setSelectionBackground(parent.getDisplay().getSystemColor(
-				SWT.COLOR_WIDGET_BACKGROUND));
-
-		tab.setFont(JFaceResources.getFontRegistry().get(JFaceResources.BANNER_FONT));
-
-		Control topBar = getContainerToolBar(parentFolder);
-		parentFolder.setTopRight(topBar, SWT.RIGHT);
-		int height = topBar.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
-		parentFolder.setTabHeight(height);
-
-		parentFolder.setLayoutData(new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL
-				| GridData.GRAB_VERTICAL));
-
-		Composite outer = new Composite(parentFolder, SWT.NULL);
+		Composite outer=new Composite(parent, SWT.NULL);
+		GridData compositeData = new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL
+				| GridData.GRAB_VERTICAL);
+		outer.setLayoutData(compositeData);
 		GridLayout layout = new GridLayout();
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		layout.horizontalSpacing = 0;
+		layout.verticalSpacing = 0;
 		outer.setLayout(layout);
-
-		Composite result = new Composite(outer, SWT.NULL);
-		result.setLayout(getPageLayout());
-		result.setLayoutData(new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL
+		
+		Composite top=new Composite(outer, SWT.NULL);
+		GridData topLayoutData = new GridData(SWT.FILL, SWT.FILL, true, false);
+		top.setLayoutData(topLayoutData);
+		GridLayout topLayout = new GridLayout();
+		topLayout.marginHeight =0;
+		topLayout.verticalSpacing = 0;
+				
+		int columns = 2;
+		topLayout.numColumns = columns;
+		top.setLayout(topLayout);
+		
+		Composite titleArea = new Composite(top, SWT.NULL);
+		title=new Label(titleArea, SWT.NONE);
+		GridLayout titleLayout = new GridLayout();
+		titleLayout.marginWidth = 0;
+		titleLayout.verticalSpacing = 0;
+		titleArea.setLayout(titleLayout);
+               GridData titleData =new GridData(SWT.FILL, SWT.FILL, true, false);
+               titleArea.setLayoutData(titleData);
+               title.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		title.setFont(JFaceResources.getFontRegistry().get(JFaceResources.BANNER_FONT));
+		
+		Composite toolbarArea=new Composite(top, SWT.NULL);
+		GridLayout toolbarLayout = new GridLayout();
+		toolbarArea.setLayout(toolbarLayout);
+		toolbarArea.setLayoutData(new GridData(SWT.END, SWT.FILL, false, true));
+		Control topBar = getContainerToolBar(toolbarArea);
+		topBar.setLayoutData(new GridData(SWT.END, SWT.FILL, false, true));
+				
+		Label separator = new Label(outer, SWT.HORIZONTAL | SWT.SEPARATOR);
+		
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
+		gd.horizontalSpan = columns;
+		separator.setLayoutData(gd);
+		
+		Composite bottom = new Composite(outer, SWT.NULL);
+		GridLayout bottomLayout = new GridLayout();
+		bottom.setLayout(bottomLayout);
+		bottom.setLayoutData(new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL
 				| GridData.GRAB_VERTICAL));
-		tab.setControl(outer);
-		parentFolder.setSelection(0);
+		Composite result = new Composite(bottom, SWT.NULL);
+		
+		GridData resultData = new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL
+				| GridData.GRAB_VERTICAL);
+				
+		result.setLayout(getPageLayout());
+		result.setLayoutData(resultData);
+		
 		return result;
 	}
 
@@ -670,8 +702,8 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 	 * @see org.eclipse.jface.preference.PreferenceDialog#updateTitle()
 	 */
 	public void updateTitle() {
-		tab.setText(getCurrentPage().getTitle());
-		tab.setImage(getCurrentPage().getImage());
+		title.setText(getCurrentPage().getTitle());
+		title.setImage(getCurrentPage().getImage());
 	}
 
 }

@@ -180,8 +180,10 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 
 		GridLayout leftLayout = new GridLayout();
 		leftLayout.numColumns = 1;
-		//leftLayout.marginWidth = 0;
 		leftLayout.marginHeight = 0;
+		leftLayout.marginTop = IDialogConstants.VERTICAL_MARGIN;
+		leftLayout.marginWidth = 0;
+		leftLayout.marginLeft = IDialogConstants.HORIZONTAL_MARGIN;
 		leftLayout.horizontalSpacing = 0;
 		leftLayout.verticalSpacing = 0;
 		leftArea.setLayout(leftLayout);
