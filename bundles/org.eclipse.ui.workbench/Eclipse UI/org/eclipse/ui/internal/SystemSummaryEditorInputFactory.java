@@ -9,6 +9,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.internal.*;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * The <code>SystemSummaryEditorInputFactory</code> creates
@@ -18,7 +19,7 @@ public class SystemSummaryEditorInputFactory implements IElementFactory {
 	/*
 	 * The ID of the factory that creates this input.
 	 */
-	static final String FACTORY_ID = WorkbenchPlugin.getDefault().getDescriptor().getUniqueIdentifier() + ".SystemSummaryEditorInputFactory"; //$NON-NLS-1$
+	static final String FACTORY_ID = PlatformUI.PLUGIN_ID + ".SystemSummaryEditorInputFactory"; //$NON-NLS-1$
 
 	/**
 	 * Creates the factory, should not be called

@@ -967,7 +967,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	 * Open the system summary editor
 	 */
 	public void openSystemSummaryEditor() {
-		openEditor(new SystemSummaryEditorInput(), "org.eclipse.ui.SystemSummaryEditor", null); //$NON-NLS-1$
+		openEditor(new SystemSummaryEditorInput(), PlatformUI.PLUGIN_ID + ".SystemSummaryEditor", null); //$NON-NLS-1$
 	}
 
 	/**
