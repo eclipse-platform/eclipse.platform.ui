@@ -300,7 +300,7 @@ public class InternalAntRunner {
 			antProject= new InternalProject();
 		}
 		antProject.init();
-		//setTypes(antProject);
+		setTypes(antProject);
 		antProject.setProperty("ant.file", getBuildFileLocation()); //$NON-NLS-1$
 		parseBuildFile(antProject);
 		defaultTarget = antProject.getDefaultTarget();

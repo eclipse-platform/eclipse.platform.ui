@@ -203,4 +203,12 @@ public class InternalProject extends Project {
 		}
 		return typeNameToClass;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.apache.tools.ant.Project#addDataTypeDefinition(java.lang.String, java.lang.Class)
+	 */
+	public void addDataTypeDefinition(String typeName, Class typeClass) {
+		getDataTypeDefinitions();
+		typeNameToClass.put(typeName, typeClass);
+	}
 }

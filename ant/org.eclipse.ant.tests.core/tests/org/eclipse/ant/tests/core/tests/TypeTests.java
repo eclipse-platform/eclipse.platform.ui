@@ -45,7 +45,7 @@ public class TypeTests extends AbstractAntTest {
 		try {
 			run("CustomType.xml");
 		} catch (CoreException ce) {
-			assertTrue("Exception from undefined type is incorrect", ce.getMessage().endsWith("as this is not an Ant bug."));
+			assertTrue("Exception from undefined type is incorrect", ce.getMessage().endsWith("Unexpected element \"anttestpath\""));
 			return;
 		}
 		assertTrue("Build should have failed as type no longer defined", false);
