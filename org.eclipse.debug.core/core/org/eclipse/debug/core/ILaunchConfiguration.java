@@ -36,6 +36,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * location.
  * </p>
  * A launch configuration is a handle to its underlying storage.
+ * Methods annotated as "handle-only" do not require a configuration
+ * to exist. Methods that require an underlying configuration to exist
+ * throw a <code>CoreException</code> when an underlying configuration
+ * is missing.
  * </p>
  * <p>
  * A launch configuration is modified by obtaining a working copy
@@ -145,7 +149,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	
 	/**
 	 * Returns whether this launch configuration supports the
-	 * specified mode.
+	 * specified mode. This is a handle-only method.
 	 * 
 	 * @param mode a mode in which a configuration can be launched, one of
 	 *  the mode constants defined by <code>ILaunchManager</code> - <code>RUN_MODE</code> or
@@ -160,7 +164,8 @@ public interface ILaunchConfiguration extends IAdaptable {
 	public boolean supportsMode(String mode) throws CoreException;
 	
 	/**
-	 * Returns the name of this launch configuration.
+	 * Returns the name of this launch configuration. This is
+	 * a handle-only method.
 	 * 
 	 * @return the name of this launch configuration
 	 */
@@ -168,7 +173,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 		
 	/**
 	 * Returns the location of this launch configuration as a
-	 * path.
+	 * path. This is a handle-only method.
 	 * 
 	 * @return the location of this launch configuration as a
 	 *  path
@@ -177,7 +182,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	
 	/**
 	 * Returns whether this launch configuration's underlying
-	 * storage exists.
+	 * storage exists. This is a handle-only method.
 	 * 
 	 * @return whether this launch configuration's underlying
 	 *  storage exists
@@ -268,7 +273,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	/**
 	 * Returns the file this launch configuration is stored
 	 * in, or <code>null</code> if this configuration is stored
-	 * locally with the workspace.
+	 * locally with the workspace. This is a handle-only method.
 	 * 
 	 * @return the file this launch configuration is stored
 	 *  in, or <code>null</code> if this configuration is stored
@@ -277,7 +282,8 @@ public interface ILaunchConfiguration extends IAdaptable {
 	public IFile getFile();
 	
 	/**
-	 * Returns the type of this launch configuration.
+	 * Returns the type of this launch configuration. This is a
+	 * handle-only method.
 	 * 
 	 * @return the type of this launch configuration
 	 * @exception CoreException if this method fails. Reasons include:
@@ -290,7 +296,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 		
 	/**
 	 * Returns whether this launch configuration is stored
-	 * locally with the workspace.
+	 * locally with the workspace. This is a handle-only method.
 	 * 
 	 * @return whether this launch configuration is stored
 	 *  locally with the workspace
@@ -338,7 +344,8 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * Returns whether this launch configuration is a working
 	 * copy. Launch configurations which return <code>true</code>
 	 * to this method can be safely cast to 
-	 * <code>org.eclipse.debug.core.ILaunchConfigurationWorkingCopy</code>
+	 * <code>org.eclipse.debug.core.ILaunchConfigurationWorkingCopy</code>.
+	 * This is a handle-only method.
 	 * 
 	 * @return whether this launch configuration is a working
 	 *  copy
@@ -382,7 +389,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	
 	/**
 	 * Returns this launch configuration's type's category, or <code>null</code>
-	 * if unspecified.
+	 * if unspecified. This is a handle-only method.
 	 * 
 	 * @return this launch configuration's type's category, or <code>null</code>
 	 * @exception CoreException if this method fails. Reasons include:

@@ -39,6 +39,12 @@ public interface ILaunchConfigurationListener {
 	
 	/**
 	 * The given launch configuration has been deleted.
+	 * <p>
+	 * The launch configuration no longer exists. Data stored 
+	 * in the configuration can no longer be accessed, however
+	 * handle-only attributes of the launch configuration
+	 * can be retrieved.
+	 * </p>
 	 * 
 	 * @param configuration the deleted launch configuration
 	 */
