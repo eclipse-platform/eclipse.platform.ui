@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ant.ui.internal.preferences;
 
-
-import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
@@ -30,13 +28,5 @@ public class AntPreferencesMessages {
 		} catch (MissingResourceException e) {
 			return '!' + key + '!';
 		}
-	}
-
-	public static String getFormattedString(String key, String arg) {
-		return getFormattedString(key, new String[] { arg });
-	}
-	
-	public static String getFormattedString(String key, String[] args) {
-		return MessageFormat.format(getString(key), args);	
 	}	
 }

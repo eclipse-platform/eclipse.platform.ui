@@ -11,10 +11,12 @@
 package org.eclipse.ant.ui.internal.preferences;
 
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.ant.ui.internal.editor.text.IAntEditorColorConstants;
 import org.eclipse.ant.ui.internal.model.AntUIPlugin;
@@ -96,7 +98,7 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		}
 	};
 
-	private ArrayList fNumberFields= new ArrayList();
+	private Map fNumberFields= new HashMap();
 	private ModifyListener fNumberFieldListener= new ModifyListener() {
 		public void modifyText(ModifyEvent e) {
 			numberFieldChanged((Text) e.widget);
@@ -229,7 +231,8 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		appearanceComposite.setLayout(layout);
 
 		String labelText= AntPreferencesMessages.getString("AntEditorPreferencePage.printMarginColumn"); //$NON-NLS-1$
-		addTextField(appearanceComposite, labelText, TextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN, 3, 0, true);
+		String[] errorMessages= new String[]{AntPreferencesMessages.getString("AntEditorPreferencePage.empty_input_print_margin"), AntPreferencesMessages.getString("AntEditorPreferencePage.invalid_input_print_margin")};  //$NON-NLS-1$//$NON-NLS-2$
+		addTextField(appearanceComposite, labelText, TextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN, 3, 0, errorMessages);
 				
 		labelText= AntPreferencesMessages.getString("AntEditorPreferencePage.showOverviewRuler"); //$NON-NLS-1$
 		addCheckBox(appearanceComposite, labelText, AntEditorPreferenceConstants.EDITOR_OVERVIEW_RULER, 0);
@@ -326,7 +329,7 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 	 *  - second element is of type <code>Text</code>
 	 * Use <code>getLabelControl</code> and <code>getTextControl</code> to get the 2 controls.
 	 */
-	private Control[] addLabelledTextField(Composite composite, String label, String key, int textLimit, int indentation, boolean isNumber) {
+	private Control[] addLabelledTextField(Composite composite, String label, String key, int textLimit, int indentation, String[] errorMessages) {
 		Label labelControl= new Label(composite, SWT.NONE);
 		labelControl.setText(label);
 		labelControl.setFont(composite.getFont());
@@ -341,8 +344,8 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		textControl.setTextLimit(textLimit);
 		textControl.setFont(composite.getFont());
 		fTextFields.put(textControl, key);
-		if (isNumber) {
-			fNumberFields.add(textControl);
+		if (errorMessages != null) {
+			fNumberFields.put(textControl, errorMessages);
 			textControl.addModifyListener(fNumberFieldListener);
 		} else {
 			textControl.addModifyListener(fTextFieldListener);
@@ -362,9 +365,6 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		String text= AntPreferencesMessages.getString("AntEditorPreferencePage.Insert"); //$NON-NLS-1$
 		addCheckBox(contentAssistComposite, text, AntEditorPreferenceConstants.CODEASSIST_AUTOINSERT, 0);		
 
-		//text= "&Fill parameters automatically";
-		//addCheckBox(contentAssistComposite, text, AntEditorPreferenceConstants.CODEASSIST_FILL_ARGUMENT_NAMES, 0);
-
 		text= AntPreferencesMessages.getString("AntEditorPreferencePage.&Enable_auto_activation_2"); //$NON-NLS-1$
 		final Button autoactivation= addCheckBox(contentAssistComposite, text, AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION, 0);
 		autoactivation.addSelectionListener(new SelectionAdapter(){
@@ -375,12 +375,13 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		
 		Control[] labelledTextField;
 		text= AntPreferencesMessages.getString("AntEditorPreferencePage.Auto_activation_&delay__3"); //$NON-NLS-1$
-		labelledTextField= addLabelledTextField(contentAssistComposite, text, AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_DELAY, 4, 0, true);
+		String[] errorMessages= new String[]{AntPreferencesMessages.getString("AntEditorPreferencePage.empty_input_auto_activation"), AntPreferencesMessages.getString("AntEditorPreferencePage.invalid_input_auto_activation")};  //$NON-NLS-1$//$NON-NLS-2$
+		labelledTextField= addLabelledTextField(contentAssistComposite, text, AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_DELAY, 4, 0, errorMessages);
 		fAutoInsertDelayLabel= getLabelControl(labelledTextField);
 		fAutoInsertDelayText= getTextControl(labelledTextField);
 		
 		text= AntPreferencesMessages.getString("AntEditorPreferencePage.Auto_activation_tri&ggers__4"); //$NON-NLS-1$
-		labelledTextField= addLabelledTextField(contentAssistComposite, text, AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_TRIGGERS, 4, 0, false);
+		labelledTextField= addLabelledTextField(contentAssistComposite, text, AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_TRIGGERS, 4, 0, null);
 		fAutoInsertTriggerLabel= getLabelControl(labelledTextField);
 		fAutoInsertTriggerText= getTextControl(labelledTextField);
 		
@@ -476,12 +477,7 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		composite.setFont(font);
 		GridLayout layout= new GridLayout(); layout.numColumns= 2;
 		composite.setLayout(layout);
-				
-//		String text= AntPreferencesMessages.getString("AntEditorPreferencePage.analyseAnnotationsWhileTyping"); //$NON-NLS-1$
-//		addCheckBox(composite, text, AntEditorPreferenceConstants.EDITOR_EVALUTE_TEMPORARY_PROBLEMS, 0);
-//		
-//		addFiller(composite);
-				
+								
 		Label label= new Label(composite, SWT.LEFT);
 		label.setFont(font);
 		label.setText(AntPreferencesMessages.getString("AntEditorPreferencePage.annotationPresentationOptions")); //$NON-NLS-1$
@@ -748,7 +744,7 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		return checkBox;
 	}
 	
-	private Control addTextField(Composite composite, String labelText, String key, int textLimit, int indentation, boolean isNumber) {
+	private Control addTextField(Composite composite, String labelText, String key, int textLimit, int indentation, String[] errorMessages) {
 		Font font= composite.getFont();
 		
 		Label label= new Label(composite, SWT.NONE);
@@ -765,8 +761,8 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		textControl.setLayoutData(gd);
 		textControl.setTextLimit(textLimit);
 		fTextFields.put(textControl, key);
-		if (isNumber) {
-			fNumberFields.add(textControl);
+		if (errorMessages != null) {
+			fNumberFields.put(textControl, errorMessages);
 			textControl.addModifyListener(fNumberFieldListener);
 		} else {
 			textControl.addModifyListener(fTextFieldListener);
@@ -777,24 +773,24 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 	
 	private void numberFieldChanged(Text textControl) {
 		String number= textControl.getText();
-		IStatus status= validatePositiveNumber(number);
+		IStatus status= validatePositiveNumber(number, (String[])fNumberFields.get(textControl));
 		if (!status.matches(IStatus.ERROR)) {
 			fOverlayStore.setValue((String) fTextFields.get(textControl), number);
 		}
 		updateStatus(status);
 	}
 	
-	private IStatus validatePositiveNumber(String number) {
+	private IStatus validatePositiveNumber(String number, String[] errorMessages) {
 		StatusInfo status= new StatusInfo();
 		if (number.length() == 0) {
-			status.setError(AntPreferencesMessages.getString("AntEditorPreferencePage.empty_input")); //$NON-NLS-1$
+			status.setError(errorMessages[0]);
 		} else {
 			try {
 				int value= Integer.parseInt(number);
 				if (value < 0)
-					status.setError(AntPreferencesMessages.getFormattedString("AntEditorPreferencePage.invalid_input", number)); //$NON-NLS-1$
+					status.setError(MessageFormat.format(errorMessages[1], new String[]{number})); //$NON-NLS-1$
 			} catch (NumberFormatException e) {
-				status.setError(AntPreferencesMessages.getFormattedString("AntEditorPreferencePage.invalid_input", number)); //$NON-NLS-1$
+				status.setError(MessageFormat.format(errorMessages[1], new String[]{number})); //$NON-NLS-1$
 			}
 		}
 		return status;
@@ -802,9 +798,10 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 	
 	private void updateStatus(IStatus status) {
 		if (!status.matches(IStatus.ERROR)) {
-			for (int i= 0; i < fNumberFields.size(); i++) {
-				Text text= (Text) fNumberFields.get(i);
-				IStatus s= validatePositiveNumber(text.getText());
+			Set keys= fNumberFields.keySet();
+			for (Iterator iter = keys.iterator(); iter.hasNext();) {
+				Text text = (Text) iter.next();
+				IStatus s= validatePositiveNumber(text.getText(), (String[])fNumberFields.get(text));
 				status= s.getSeverity() > status.getSeverity() ? s : status;
 			}
 		}	
