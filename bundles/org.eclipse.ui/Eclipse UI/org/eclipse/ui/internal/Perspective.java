@@ -602,6 +602,10 @@ public void restoreState(IMemento memento) {
 	// Create persp descriptor.
 	descriptor = new PerspectiveDescriptor(null,null,null);
 	descriptor.restoreState(memento);
+	PerspectiveDescriptor desc = (PerspectiveDescriptor)WorkbenchPlugin
+		.getDefault().getPerspectiveRegistry().findPerspectiveWithId(descriptor.getId());
+	if (desc != null)
+		descriptor = desc;
 	
 	IMemento boundsMem = memento.getChild(IWorkbenchConstants.TAG_WINDOW);
 	if(boundsMem != null) {
