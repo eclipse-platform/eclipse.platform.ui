@@ -91,7 +91,7 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
             public void widgetDisposed(DisposeEvent e) {
         	    FinishedJobs.getInstance().removeListener(ProgressAnimationItem.this);
                 noneImage.dispose();
-    	   			okImage.dispose();
+    	   		okImage.dispose();
      	        errorImage.dispose();
            }
 		});
@@ -106,7 +106,9 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 		bar = new ProgressBar(top, SWT.HORIZONTAL | SWT.INDETERMINATE);
 		bar.setVisible(false);
 		bar.addMouseListener(mouseListener);
-		bar.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER | GridData.FILL_HORIZONTAL));
+		GridData gd= new GridData(GridData.VERTICAL_ALIGN_CENTER | GridData.FILL_HORIZONTAL);
+		gd.heightHint= 12;
+		bar.setLayoutData(gd);
 		
 		toolbar= new ToolBar(top, SWT.FLAT);
 		//toolbar.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_MAGENTA));
