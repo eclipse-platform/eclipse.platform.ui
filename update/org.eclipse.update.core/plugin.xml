@@ -68,6 +68,13 @@
       </install-handler>
    </extension>
    <extension
+         id="DeltaInstallHandler"
+         point="org.eclipse.update.core.installHandlers">
+      <install-handler
+            class="org.eclipse.update.internal.core.DeltaInstallHandler">
+      </install-handler>
+   </extension>
+   <extension
          id="standaloneUpdate"
          point="org.eclipse.core.runtime.applications">
       <application>
