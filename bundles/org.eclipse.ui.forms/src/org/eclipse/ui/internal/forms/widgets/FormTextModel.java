@@ -100,9 +100,9 @@ public class FormTextModel {
 			Document doc = parser.parse(source);
 			processDocument(doc, expandURLs);
 		} catch (ParserConfigurationException e) {
-			SWT.error(SWT.ERROR_CANNOT_SET_TEXT, e);
+			SWT.error(SWT.ERROR_INVALID_ARGUMENT, e);
 		} catch (SAXException e) {
-			SWT.error(SWT.ERROR_CANNOT_SET_TEXT, e);
+			SWT.error(SWT.ERROR_INVALID_ARGUMENT, e);
 		} catch (IOException e) {
 			SWT.error(SWT.ERROR_IO, e);
 		}
