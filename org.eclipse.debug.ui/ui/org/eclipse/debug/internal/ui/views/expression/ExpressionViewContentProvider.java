@@ -29,7 +29,10 @@ public class ExpressionViewContentProvider extends VariablesViewContentProvider 
 				// do not cache parents
 				return ((IExpressionManager)parent).getExpressions();
 			} else if (parent instanceof IExpression) {
-				children = ((IExpression)parent).getValue().getVariables();
+				IValue value= ((IExpression)parent).getValue();
+				if (value != null) {
+					children= value.getVariables();
+				}
 			} else if (parent instanceof IVariable) {
 				children = ((IVariable)parent).getValue().getVariables();
 			}
