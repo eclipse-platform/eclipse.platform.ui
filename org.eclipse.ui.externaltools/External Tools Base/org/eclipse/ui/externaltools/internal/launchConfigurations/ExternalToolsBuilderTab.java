@@ -217,7 +217,11 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab impl
 	
 	private void updateWorkingSetComponent() {
 		workingSetComponent.getControl().setVisible(workingSetButton.getSelection());
-		workingSetComponent.validate();
+		setErrorMessage(null);
+		if (workingSetButton.getSelection()) {
+			workingSetComponent.validate();
+		}
+	
 		updateLaunchConfigurationDialog();			
 	}
 	/* (non-Javadoc)
