@@ -16,7 +16,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.debug.internal.ui.SWTUtil;
-import org.eclipse.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointContainerFactoryManager;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsView;
 import org.eclipse.debug.ui.IBreakpointContainerFactory;
@@ -94,6 +93,7 @@ public class GroupBreakpointsByDialog extends Dialog {
 	protected GroupBreakpointsByDialog(BreakpointsView view) {
 		super(view.getSite().getShell());
 		fView= view;
+		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
 
 	/* (non-Javadoc)
@@ -105,18 +105,22 @@ public class GroupBreakpointsByDialog extends Dialog {
 		Composite parentComposite= (Composite) super.createDialogArea(parent);
 		parentComposite.setFont(parent.getFont());
 		Composite composite= new Composite(parentComposite, SWT.NONE);
-		composite.setLayout(new GridLayout());
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 3;
+        composite.setLayout(layout);
 		GridData data= new GridData(GridData.FILL_BOTH);
-		data.widthHint= 400;
 		data.heightHint= 400;
 		composite.setLayoutData(data);
 		composite.setFont(parent.getFont());
 		
 		Label label= new Label(composite, SWT.WRAP);
-		label.setText(ActionMessages.getString("GroupBreakpointsByDialog.0")); //$NON-NLS-1$
-		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		label.setText(BreakpointGroupMessages.getString("GroupBreakpointsByDialog.0")); //$NON-NLS-1$
+		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
+		gridData.horizontalSpan = 3;
+        label.setLayoutData(gridData);
 		
 		createAvailableViewer(composite, labelProvider);
+		createButtons(composite);
 		createSelectedViewer(composite, labelProvider);
 
 		initializeContent();
@@ -145,19 +149,21 @@ public class GroupBreakpointsByDialog extends Dialog {
 	 * Creates and configured the viewer that shows the available (not currently selected)
 	 * breakpoint container factories.
 	 */
-	private void createAvailableViewer(Composite parent, ILabelProvider labelProvider) {
-		Label label= new Label(parent, SWT.WRAP);
-		label.setText(ActionMessages.getString("GroupBreakpointsByDialog.1")); //$NON-NLS-1$
-		label.setLayoutData(new GridData());
-		
+	private void createAvailableViewer(Composite parent, ILabelProvider labelProvider) {		
 		Composite availableComposite= new Composite(parent, SWT.NONE);
 		availableComposite.setFont(parent.getFont());
 		GridLayout layout = new GridLayout();
 		layout.marginHeight=0;
 		layout.marginWidth=0;
-		layout.numColumns= 2;
 		availableComposite.setLayout(layout);
-		availableComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		GridData gridData= new GridData(GridData.FILL_BOTH);
+		gridData.widthHint= 225;
+		availableComposite.setLayoutData(gridData);
+
+		Label label= new Label(availableComposite, SWT.WRAP);
+		label.setText(BreakpointGroupMessages.getString("GroupBreakpointsByDialog.1")); //$NON-NLS-1$
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
+        label.setLayoutData(gridData);
 		
 		fAvailableViewer= new TableViewer(availableComposite);
 		fAvailableViewer.setContentProvider(fAvailableContainersProvider);
@@ -176,14 +182,6 @@ public class GroupBreakpointsByDialog extends Dialog {
 				updateAddButton();
 			}
 		});
-		
-		Composite buttonComposite= new Composite(availableComposite, SWT.NONE);
-		buttonComposite.setLayout(layout);
-		buttonComposite.setLayoutData(new GridData());
-		buttonComposite.setFont(parent.getFont());
-		
-		fAddButton= SWTUtil.createPushButton(buttonComposite, ActionMessages.getString("GroupBreakpointsByDialog.2"), null); //$NON-NLS-1$
-		fAddButton.addSelectionListener(fSelectionListener);
 	}
 
 	/**
@@ -191,18 +189,22 @@ public class GroupBreakpointsByDialog extends Dialog {
 	 * breakpoint container factories.
 	 */
 	private void createSelectedViewer(Composite parent, ILabelProvider labelProvider) {
-		Label label= new Label(parent, SWT.WRAP);
-		label.setText(ActionMessages.getString("GroupBreakpointsByDialog.3")); //$NON-NLS-1$
-		label.setLayoutData(new GridData());
-
 		Composite selectedComposite= new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.marginHeight=0;
 		layout.marginWidth=0;
 		layout.numColumns= 2;
 		selectedComposite.setLayout(layout);
-		selectedComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		GridData gridData= new GridData(GridData.FILL_BOTH);
+		gridData.widthHint= 225;
+		selectedComposite.setLayoutData(gridData);
 		selectedComposite.setFont(parent.getFont());
+		
+		Label label= new Label(selectedComposite, SWT.WRAP);
+		label.setText(BreakpointGroupMessages.getString("GroupBreakpointsByDialog.3")); //$NON-NLS-1$
+		gridData = new GridData();
+		gridData.horizontalSpan = 2;
+        label.setLayoutData(gridData);
 		
 		fSelectedViewer= new TreeViewer(selectedComposite);
 		fSelectedViewer.setContentProvider(fSelectedContainersProvider);
@@ -221,20 +223,26 @@ public class GroupBreakpointsByDialog extends Dialog {
 				updateSelectedButtons();
 			}
 		});
-		
-		Composite buttonComposite= new Composite(selectedComposite, SWT.NONE);
+	}
+	
+	public void createButtons(Composite parent) {
+		Composite buttonComposite= new Composite(parent, SWT.NONE);
 		buttonComposite.setLayout(new GridLayout());
 		buttonComposite.setLayoutData(new GridData());
 		buttonComposite.setFont(parent.getFont());
 		
-		fRemoveButton= SWTUtil.createPushButton(buttonComposite, ActionMessages.getString("GroupBreakpointsByDialog.4"), null); //$NON-NLS-1$
+		fAddButton= SWTUtil.createPushButton(buttonComposite, BreakpointGroupMessages.getString("GroupBreakpointsByDialog.2"), null); //$NON-NLS-1$
+		fAddButton.addSelectionListener(fSelectionListener);
+		
+		fRemoveButton= SWTUtil.createPushButton(buttonComposite, BreakpointGroupMessages.getString("GroupBreakpointsByDialog.4"), null); //$NON-NLS-1$
 		fRemoveButton.addSelectionListener(fSelectionListener);
 		
-		fMoveUpButton= SWTUtil.createPushButton(buttonComposite, ActionMessages.getString("GroupBreakpointsByDialog.5"), null); //$NON-NLS-1$
+		fMoveUpButton= SWTUtil.createPushButton(buttonComposite, BreakpointGroupMessages.getString("GroupBreakpointsByDialog.5"), null); //$NON-NLS-1$
 		fMoveUpButton.addSelectionListener(fSelectionListener);
 		
-		fMoveDownButton= SWTUtil.createPushButton(buttonComposite, ActionMessages.getString("GroupBreakpointsByDialog.6"), null); //$NON-NLS-1$
+		fMoveDownButton= SWTUtil.createPushButton(buttonComposite, BreakpointGroupMessages.getString("GroupBreakpointsByDialog.6"), null); //$NON-NLS-1$
 		fMoveDownButton.addSelectionListener(fSelectionListener);
+	    
 	}
 
 	/**
@@ -508,6 +516,6 @@ public class GroupBreakpointsByDialog extends Dialog {
      */
     protected void configureShell(Shell shell) {
         super.configureShell(shell);
-        shell.setText(ActionMessages.getString("GroupBreakpointsByDialog.7")); //$NON-NLS-1$
+        shell.setText(BreakpointGroupMessages.getString("GroupBreakpointsByDialog.7")); //$NON-NLS-1$
     }
 }
