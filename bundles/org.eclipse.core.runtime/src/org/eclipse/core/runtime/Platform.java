@@ -319,7 +319,7 @@ public final class Platform {
 	 * @return the command line used to start the platform
 	 */
 	public static String[] getCommandLineArgs() {
-		return InternalPlatform.getDefault().getAppArgs();
+		return InternalPlatform.getDefault().getCommandLineArgs();
 	}
 	/**
 	 * Returns the identified option.  <code>null</code>
@@ -532,7 +532,6 @@ public final class Platform {
 	 * necessary to perform a 'resolve' on this URL.
 	 * @since 3.0
 	 */
-	
 	public static URL find(Bundle bundle, IPath path) {
 		return FindSupport.find(bundle, path, null);
 	}
@@ -592,56 +591,6 @@ public final class Platform {
 	 */
 	public static URL find(Bundle b, IPath path, Map override) {
 		return FindSupport.find(b, path, override);
-	}
-	/**
-	 * Returns an input stream for the specified file in the given bundle. The file path
-	 * must be specified relative this the plug-in's installation location.
-	 * <p>
-	 * <b>Note</b>: This is an early access API to the new OSGI-based Eclipse 3.0
-	 * Platform Runtime. Because the APIs for the new runtime have not yet been fully
-	 * stabilized, they should only be used by clients needing to take particular
-	 * advantage of new OSGI-specific functionality, and only then with the understanding
-	 * that these APIs may well change in incompatible ways until they reach
-	 * their finished, stable form (post-3.0). </p>
-	 *
-	 * @param bundle the bundle in which to search
-	 * @param file path relative to plug-in installation location
-	 * @return an input stream
-	 * @see #openStream(Bundle, IPath, boolean)
-	 * @since 3.0
-	 */
-	public static InputStream openStream(Bundle bundle, IPath file) throws IOException {
-		return FindSupport.openStream(bundle, file, false);
-	}
-	
-	/**
-	 * Returns an input stream for the specified file in the given bundle. The file path
-	 * must be specified relative to this plug-in's installation location.
-	 * Optionally, the platform searches for the correct localized version
-	 * of the specified file using the users current locale, and Java
-	 * naming convention for localized resource files (locale suffix appended 
-	 * to the specified file extension).
-	 * <p>
-	 * The caller must close the returned stream when done.
-	 * </p>
-	 * <p>
-	 * <b>Note</b>: This is an early access API to the new OSGI-based Eclipse 3.0
-	 * Platform Runtime. Because the APIs for the new runtime have not yet been fully
-	 * stabilized, they should only be used by clients needing to take particular
-	 * advantage of new OSGI-specific functionality, and only then with the understanding
-	 * that these APIs may well change in incompatible ways until they reach
-	 * their finished, stable form (post-3.0). </p>
-	 *
-	 * @param bundle the bundle in which to search
-	 * @param file path relative to plug-in installation location
-	 * @param localized <code>true</code> for the localized version
-	 *   of the file, and <code>false</code> for the file exactly
-	 *   as specified
-	 * @return an input stream
-	 * @since 3.0
-	 */	
-	public static InputStream openStream(Bundle bundle, IPath file, boolean localized) throws IOException {
-		return InternalPlatform.getDefault().openStream(bundle, file, localized);		
 	}
 	
 	/**
@@ -843,41 +792,6 @@ public final class Platform {
 	}
 	
 	/**
-	 * Returns all command line arguments specified when the running framework was started.
-	 * <p>
-	 * <b>Note</b>: This is an early access API to the new OSGI-based Eclipse 3.0
-	 * Platform Runtime. Because the APIs for the new runtime have not yet been fully
-	 * stabilized, they should only be used by clients needing to take particular
-	 * advantage of new OSGI-specific functionality, and only then with the understanding
-	 * that these APIs may well change in incompatible ways until they reach
-	 * their finished, stable form (post-3.0). </p>
-	 * 
-	 * @return the array of command line arguments.
-	 * @since 3.0
-	 */
-	public static String[] getAllArgs() {
-		return InternalPlatform.getDefault().getAllArgs();
-	}
-	
-	/**
-	 * Returns the arguments consumed by the framework implementation itself.  Which
-	 * arguments are consumed is implementation specific.
-	 * <p>
-	 * <b>Note</b>: This is an early access API to the new OSGI-based Eclipse 3.0
-	 * Platform Runtime. Because the APIs for the new runtime have not yet been fully
-	 * stabilized, they should only be used by clients needing to take particular
-	 * advantage of new OSGI-specific functionality, and only then with the understanding
-	 * that these APIs may well change in incompatible ways until they reach
-	 * their finished, stable form (post-3.0). </p>
-	 * 
-	 * @return the array of command line arguments consumed by the framework.
-	 * @since 3.0
-	 */
-	public static String[] getFrameworkArgs() {
-		return InternalPlatform.getDefault().getFrameworkArgs();
-	}
-
-	/**
 	 * Returns the arguments not consumed by the framework implementation itself.  Which
 	 * arguments are consumed is implementation specific. These arguments are available 
 	 * for use by the application.
@@ -901,63 +815,18 @@ public final class Platform {
 	}
 	/**
 	 * Returns the location of the platform's working directory (also known as the instance data area).  
-	 * The platform may be running in one of three modes:
-	 * <dl>
-	 *   <dt>data</dt>
-	 *   <dd>The platform may have an instance data area.  The value returned is either the one
-	 * 		explicitly set using <code>Location.setLocation</code> or a value computed by 
-	 * 		the platform.</dd>
-	 *   <dt>noDefault</dt>
-	 *   <dd>The platform may have an instance data area.  The value returned is the one
-	 * 		explicitly set using <code>Location.setLocation</code>.  If no such value has been
-	 * 		set, the platform does <b>not</b> compute a default value and <code>null</code> returned.</dd>
-	 *   <dt>none</dt>
-	 *   <dd>The platform may not have an instance data area.  In all cases <code>null</code> is returned.</dd>
-	 * </dl>
-	 *
-	 * @return the location of the platform's instance data area
+	 * <code>null</code> is returned if the platform is running without an instance location.
+	 * <p>
+	 * This method is equivalent to acquiring the <code>org.eclipse.osgi.service.datalocation.Location</code>
+	 * service with the property "type" = "osgi.instance.area".
+	 *</p>
+	 * @return the location of the platform's instance data area or <code>null</code> if none
 	 * @since 3.0
 	 */
 	public static Location getInstanceLocation() {
 		return InternalPlatform.getDefault().getInstanceLocation();
 	}
-	
-	/**
-	 * Set the location of the platform working directory.
-	 * The method throws an IllegalStateException if an instance data as already been set.  
-	 * @since 3.0
-	 * @deprecated will be removed before 3.0 ships  Use getInstanceLocation().setLocation()
-	 */
-	public static void setInstanceLocation(IPath location) throws IllegalStateException {
-		InternalPlatform.getDefault().setInstanceLocation(location);		
-	}
-	
-	/**
-	 * Lock the instance data. 
-	 * The method throws a CoreException if the lock can not be acquired or 
-	 * an IllegalStateException if no instance data has been specified.
-	 * @since 3.0
-	 */
-	public static void lockInstanceData() throws CoreException, IllegalStateException{
-		InternalPlatform.getDefault().lockInstanceData();
-	}
-	/**
-	 * Unlock the instance data. 
-	 * @since 3.0
-	 */
-	public static void unlockInstanceData() throws IllegalStateException{
-		InternalPlatform.getDefault().unlockInstanceData();
-	}
-	/**
-	 * Set the location of the keyring file. 
-	 * @param keyringFile the location of the keyring file
-	 * @exception IllegalStateException if the file as already been set explicitly or the authorization mechanism used before.
-	 * @since 3.0
-	 */
-	public static void setKeyringLocation(String keyringFile) throws IllegalStateException {
-		InternalPlatform.getDefault().setKeyringLocation(keyringFile);
-	}
-	
+
 	/**
 	 * Returns the currently registered bundle group providers
 	 * @return the currently registered bundle group providers
@@ -996,19 +865,55 @@ public final class Platform {
 	}
 
 	/**
-	 * Returns the location in the filesystem of the configuration information 
+	 * Returns the location of the configuration information 
 	 * used to run this instance of Eclipse.  The configuration area typically
-	 * contains the list of plug-ins available for use, various user setttings
+	 * contains the list of plug-ins available for use, various setttings
 	 * (those shared across different instances of the same configuration)
 	 * and any other such data needed by plug-ins.
-	 * 
-	 * @return the path indicating the directory containing the configuration 
-	 * information for this running Eclipse.
+	 * <code>null</code> is returned if the platform is running without a configuration location.
+	 * <p>
+	 * This method is equivalent to acquiring the <code>org.eclipse.osgi.service.datalocation.Location</code>
+	 * service with the property "type" = "osgi.configuration.area".
+	 *</p>
+	 * @return the location of the platform's configuration data area or <code>null</code> if none
+	 * @since 3.0
 	 */
 	public static Location getConfigurationLocation() {
 		return InternalPlatform.getDefault().getConfigurationLocation();
 	}
 
+	/**
+	 * Returns the location of the platform's user data area.  The user data area is a location on the system
+	 * which is specific to the system's current user.  By default it is located relative to the 
+	 * location given by the System property "user.home".  
+	 * <code>null</code> is returned if the platform is running without an user location.
+	 * <p>
+	 * This method is equivalent to acquiring the <code>org.eclipse.osgi.service.datalocation.Location</code>
+	 * service with the property "type" = "osgi.user.area".
+	 *</p>
+	 * @return the location of the platform's user data area or <code>null</code> if none
+	 * @since 3.0
+	 */
+	public static Location getUserLocation() {
+		return InternalPlatform.getDefault().getConfigurationLocation();
+	}
+
+	/**
+	 * Returns the location of the base installation for the running platform
+	 * <code>null</code> is returned if the platform is running without a configuration location.
+	 * <p>
+	 * This method is equivalent to acquiring the <code>org.eclipse.osgi.service.datalocation.Location</code>
+	 * service with the property "type" = "osgi.install.area".
+	 *</p>
+	 * @return the location of the platform's installation area or <code>null</code> if none
+	 * @since 3.0
+	 */
+	public static Location getInstallLocation() {
+		return InternalPlatform.getDefault().getInstallLocation();
+	}
+	
+	// TODO methods to remove before 3.0 ships
+	
 	/**
 	 * Returns the location in the filesystem of the configuration information 
 	 * used to run this instance of Eclipse.  The configuration area typically
@@ -1024,20 +929,6 @@ public final class Platform {
 		return InternalPlatform.getDefault().getConfigurationMetadataLocation();
 	}
 
-    /**
-     * Returns the resolved bundle with the specified symbolic name that has the
-     * highest version.  If no resolved bundles are installed that have the 
-     * specified symbolic name then null is returned.
-     * 
-     * @param symbolicName the symbolic name of the bundle to be returned.
-     * @return the bundle that has the specified symbolic name with the 
-     * highest version, or <tt>null</tt> if no bundle is found.
-     * @since 3.0
-     */
-	public static Bundle getBundle(String symbolicName) {
-		return InternalPlatform.getDefault().getBundle(symbolicName);
-	}
-
 	/**
 	 * Checks if the specified bundle is a fragment bundle.
 	 * @return true if the specified bundle is a fragment bundle; otherwise false is returned.
@@ -1045,22 +936,7 @@ public final class Platform {
 	 */
 	public static boolean isFragment(Bundle bundle) {
 		return InternalPlatform.getDefault().isFragment(bundle);
-	}
-
-	/**
-	 * Returns an array of host bundles that the specified fragment bundle is 
-	 * attached to or <tt>null</tt> if the specified bundle is not attached to a host.  
-	 * If the bundle is not a fragment bundle then <tt>null</tt> is returned.
-	 * 
-	 * @param bundle the bundle to get the host bundles for.
-	 * @return an array of host bundles or null if the bundle does not have any
-	 * host bundles.
-	 * @since 3.0
-	 */
-	public static Bundle[] getHosts(Bundle bundle) {
-		return InternalPlatform.getDefault().getHosts(bundle);
-	}
-
+	}	
 	/**
 	 * Returns an array of attached fragment bundles for the specified bundle.  If the 
 	 * specified bundle is a fragment then <tt>null</tt> is returned.  If no fragments are 
@@ -1073,6 +949,110 @@ public final class Platform {
 	 */
 	public static Bundle[] getFragments(Bundle bundle) {
 		return InternalPlatform.getDefault().getFragments(bundle);
+	}    
+	/**
+     * Returns the resolved bundle with the specified symbolic name that has the
+     * highest version.  If no resolved bundles are installed that have the 
+     * specified symbolic name then null is returned.
+     * 
+     * @param symbolicName the symbolic name of the bundle to be returned.
+     * @return the bundle that has the specified symbolic name with the 
+     * highest version, or <tt>null</tt> if no bundle is found.
+     * @since 3.0
+     */
+	public static Bundle getBundle(String symbolicName) {
+		return InternalPlatform.getDefault().getBundle(symbolicName);
+	}
+	/**
+	 * Returns an array of host bundles that the specified fragment bundle is 
+	 * attached to or <tt>null</tt> if the specified bundle is not attached to a host.  
+	 * If the bundle is not a fragment bundle then <tt>null</tt> is returned.
+	 * 
+	 * @param bundle the bundle to get the host bundles for.
+	 * @return an array of host bundles or null if the bundle does not have any
+	 * host bundles.
+	 * @since 3.0
+	 */
+	public static Bundle[] getHosts(Bundle bundle) {
+		return InternalPlatform.getDefault().getHosts(bundle);
+	}	
+	
+	/**
+	 * Set the location of the platform working directory.
+	 * The method throws an IllegalStateException if an instance data as already been set.  
+	 * @since 3.0
+	 * @deprecated will be removed before 3.0 ships  Use getInstanceLocation().setURL()
+	 */
+	public static void setInstanceLocation(IPath location) throws IllegalStateException {
+		InternalPlatform.getDefault().setInstanceLocation(location);		
+	}
+	
+	/**
+	 * Lock the instance data. 
+	 * The method throws a CoreException if the lock can not be acquired or 
+	 * an IllegalStateException if no instance data has been specified.
+	 * @since 3.0
+	 * @deprecated will be removed before 3.0 ships  Use getInstanceLocation().lock()
+	 */
+	public static void lockInstanceData() throws CoreException, IllegalStateException{
+		InternalPlatform.getDefault().lockInstanceData();
+	}
+	/**
+	 * Unlock the instance data. 
+	 * @since 3.0
+	 * @deprecated will be removed before 3.0 ships  Use getInstanceLocation().release()
+	 */
+	public static void unlockInstanceData() throws IllegalStateException{
+		InternalPlatform.getDefault().unlockInstanceData();
 	}
 
+	/**
+	 * Set the location of the keyring file. 
+	 * @param keyringFile the location of the keyring file
+	 * @exception IllegalStateException if the file as already been set explicitly or the authorization mechanism used before.
+	 * @since 3.0
+	 * @deprecated will be removed before 3.0 ships
+	 */
+	public static void setKeyringLocation(String keyringFile) throws IllegalStateException {
+		InternalPlatform.getDefault().setKeyringLocation(keyringFile);
+	}
+	
+	/**
+	 * Returns all command line arguments specified when the running framework was started.
+	 * <p>
+	 * <b>Note</b>: This is an early access API to the new OSGI-based Eclipse 3.0
+	 * Platform Runtime. Because the APIs for the new runtime have not yet been fully
+	 * stabilized, they should only be used by clients needing to take particular
+	 * advantage of new OSGI-specific functionality, and only then with the understanding
+	 * that these APIs may well change in incompatible ways until they reach
+	 * their finished, stable form (post-3.0). </p>
+	 * 
+	 * @return the array of command line arguments.
+	 * @since 3.0
+	 * @deprecated this method will be removed before 3.0 ships
+	 */
+	public static String[] getAllArgs() {
+		return InternalPlatform.getDefault().getCommandLineArgs();
+	}
+	
+	/**
+	 * Returns the arguments consumed by the framework implementation itself.  Which
+	 * arguments are consumed is implementation specific.
+	 * <p>
+	 * <b>Note</b>: This is an early access API to the new OSGI-based Eclipse 3.0
+	 * Platform Runtime. Because the APIs for the new runtime have not yet been fully
+	 * stabilized, they should only be used by clients needing to take particular
+	 * advantage of new OSGI-specific functionality, and only then with the understanding
+	 * that these APIs may well change in incompatible ways until they reach
+	 * their finished, stable form (post-3.0). </p>
+	 * 
+	 * @return the array of command line arguments consumed by the framework.
+	 * @since 3.0
+	 * @deprecated this method will be removed before 3.0 ships
+	 */
+	public static String[] getFrameworkArgs() {
+		return InternalPlatform.getDefault().getFrameworkArgs();
+	}
+
+	
 }

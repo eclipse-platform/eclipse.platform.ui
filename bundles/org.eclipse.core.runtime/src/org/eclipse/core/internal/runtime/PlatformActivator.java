@@ -18,6 +18,7 @@ import org.eclipse.core.internal.registry.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.framework.log.FrameworkLog;
 import org.eclipse.osgi.service.environment.EnvironmentInfo;
+import org.eclipse.osgi.service.runnable.ParameterizedRunnable;
 import org.eclipse.osgi.service.urlconversion.URLConverter;
 import org.osgi.framework.*;
 import org.osgi.service.packageadmin.PackageAdmin;
@@ -215,8 +216,8 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 	}
 
 	private void registerApplicationService() {
-		Runnable work = new Runnable() {
-			public void run() {
+		ParameterizedRunnable work = new ParameterizedRunnable() {
+			public Object run(Object arg) {
 				IPlatformRunnable application = null;
 				String applicationId = null;
 				try {
@@ -250,14 +251,18 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 					else
 						status = new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, 13, e.getMessage(), e);
 					InternalPlatform.getDefault().getLog(context.getBundle()).log(status);
-					return;
+					return null;
 				}
 				try {
-					Object result = application.run(InternalPlatform.getDefault().getAppArgs());
+					// if the given arg is null the pass in the left over command line args.
+					if (arg == null)
+						arg = InternalPlatform.getDefault().getApplicationArgs();
+					Object result = application.run(arg);
 					int exitCode = result instanceof Integer ? ((Integer) result).intValue() : 0;
-					System.setProperty(PROP_ECLIPSE_EXITCODE, Integer.toString(exitCode)); //$NON-NLS-1$
+					System.setProperty(PROP_ECLIPSE_EXITCODE, Integer.toString(exitCode)); 
 					if (InternalPlatform.DEBUG)
-						System.out.println(Policy.bind("application.returned", new String[] { applicationId, Integer.toString(exitCode)})); //$NON-NLS-1$
+						System.out.println(Policy.bind("application.returned", new String[] { applicationId, result.toString() })); //$NON-NLS-1$
+					return result;
 				} catch (Exception e) {
 					if (e instanceof RuntimeException)
 						throw (RuntimeException) e;
@@ -269,19 +274,19 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 			}
 		};
 		Hashtable properties = new Hashtable(1);
-		properties.put(PROP_ECLIPSE_APPLICATION, "default"); //$NON-NLS-1$ //$NON-NLS-2$
-		context.registerService("java.lang.Runnable", work, properties);
+		properties.put(PROP_ECLIPSE_APPLICATION, "default"); //$NON-NLS-1$ 
+		context.registerService(ParameterizedRunnable.class.getName(), work, properties);
 	}
 
 	protected void stopLegacyBundles(BundleContext context) {
 		IExtensionPoint shutdownHooksExtPt = registry.getExtensionPoint(IPlatform.PI_RUNTIME, IPlatform.PT_SHUTDOWN_HOOK);
-		IExtension[] shutdownHooksExts = shutdownHooksExtPt.getExtensions();
-		for (int i = 0; i < shutdownHooksExts.length; i++) {
-			if (!shutdownHooksExts[i].getParentIdentifier().equals(IPlatform.PI_RUNTIME_COMPATIBILITY))
+		IExtension[] shutdownHooks = shutdownHooksExtPt.getExtensions();
+		for (int i = 0; i < shutdownHooks.length; i++) {
+			if (!shutdownHooks[i].getNamespace().equals(IPlatform.PI_RUNTIME_COMPATIBILITY))
 				continue;
-			IConfigurationElement[] configEls = shutdownHooksExts[i].getConfigurationElements();
+			IConfigurationElement[] elements = shutdownHooks[i].getConfigurationElements();
 			try {
-				IShutdownHook shutdownHook = (IShutdownHook) configEls[0].createExecutableExtension("run"); //$NON-NLS-1$
+				IShutdownHook shutdownHook = (IShutdownHook)elements[0].createExecutableExtension("run"); //$NON-NLS-1$
 				shutdownHook.run();
 			} catch (CoreException e) {
 				InternalPlatform.getDefault().getLog(context.getBundle()).log(e.getStatus());

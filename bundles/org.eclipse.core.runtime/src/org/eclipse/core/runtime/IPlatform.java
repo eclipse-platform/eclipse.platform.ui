@@ -363,64 +363,119 @@ public interface IPlatform {
 	/**
 	 * Returns URL at which the Platform runtime executables and libraries are installed.
 	 * The returned value is distinct from the location of any given platform's data.
+	 * This is superceded by <code>getInstallLocation().getURL()</code>
 	 *
 	 * @return the URL indicating where the platform runtime is installed.
+	 * @see #getInstallLocation
 	 */	
 	public URL getInstallURL();
 
 	/**
-	 * Returns the location in the filesystem of the configuration information 
-	 * used to run this instance of Eclipse.  The configuration area typically
-	 * contains the list of plug-ins available for use, various user setttings
-	 * (those shared across different instances of the same configuration)
-	 * and any other such data needed by plug-ins.
-	 * 
-	 * @return the path indicating the directory containing the configuration 
-	 * location for this running Eclipse.
+	 * Returns the location of the base installation for the running platform
+	 * <code>null</code> is returned if the platform is running without a configuration location.
+	 * <p>
+	 * This method is equivalent to acquiring the <code>org.eclipse.osgi.service.datalocation.Location</code>
+	 * service with the property "type" = "osgi.install.area".
+	 *</p>
+	 * @return the location of the platform's installation area or <code>null</code> if none
 	 */
-	public Location getConfigurationLocation();
+	public Location getInstallLocation();
 	
 	/**
-	 * Returns the location in the filesystem of the configuration information 
+	 * Returns the location of the configuration information 
 	 * used to run this instance of Eclipse.  The configuration area typically
-	 * contains the list of plug-ins available for use, various user setttings
+	 * contains the list of plug-ins available for use, various setttings
 	 * (those shared across different instances of the same configuration)
 	 * and any other such data needed by plug-ins.
-	 * 
-	 * @return the path indicating the directory containing the configuration 
-	 * information for this running Eclipse.
-	 * @deprecated see getConfigurationLocation This method will be removed by M8
+	 * <code>null</code> is returned if the platform is running without a configuration location.
+	 * <p>
+	 * This method is equivalent to acquiring the <code>org.eclipse.osgi.service.datalocation.Location</code>
+	 * service with the property "type" = "osgi.configuration.area".
+	 *</p>
+	 * @return the location of the platform's configuration data area or <code>null</code> if none
+	 * @since 3.0
 	 */
-	public IPath getConfigurationMetadataLocation();
+	public Location getConfigurationLocation();
 	
 	/**
 	 * Takes down the splash screen if one was put up.
 	 */
 	public void endSplash();
 	
-	public URL find(Bundle b, IPath path);
+	/**
+	 * Returns a URL for the given path in the given bundle.  Returns <code>null</code> if the URL
+	 * could not be computed or created.
+	 * <p>
+	 * <b>Note</b>: This is an early access API to the new OSGI-based Eclipse 3.0
+	 * Platform Runtime. Because the APIs for the new runtime have not yet been fully
+	 * stabilized, they should only be used by clients needing to take particular
+	 * advantage of new OSGI-specific functionality, and only then with the understanding
+	 * that these APIs may well change in incompatible ways until they reach
+	 * their finished, stable form (post-3.0). </p>
+	 * 
+	 * @param bundle the bundle in which to search
+	 * @param file path relative to plug-in installation location 
+	 * @return a URL for the given path or <code>null</code>  It is not
+	 * necessary to perform a 'resolve' on this URL.
+	 * @since 3.0
+	 */
+	public URL find(Bundle bundle, IPath file);
 	
+	/**
+	 * Returns a URL for the given path in the given bundle.  Returns <code>null</code> if the URL
+	 * could not be computed or created.
+	 * 
+	 * find will look for this path under the directory structure for this plugin
+	 * and any of its fragments.  If this path will yield a result outside the
+	 * scope of this plugin, <code>null</code> will be returned.  Note that
+	 * there is no specific order to the fragments.
+	 * 
+	 * The following arguments may also be used
+	 * 
+	 *  $nl$ - for language specific information
+	 *  $os$ - for operating system specific information
+	 *  $ws$ - for windowing system specific information
+	 * 
+	 * A path of $nl$/about.properties in an environment with a default 
+	 * locale of en_CA will return a URL corresponding to the first place
+	 * about.properties is found according to the following order:
+	 *   plugin root/nl/en/CA/about.properties
+	 *   fragment1 root/nl/en/CA/about.properties
+	 *   fragment2 root/nl/en/CA/about.properties
+	 *   ...
+	 *   plugin root/nl/en/about.properties
+	 *   fragment1 root/nl/en/about.properties
+	 *   fragment2 root/nl/en/about.properties
+	 *   ...
+	 *   plugin root/about.properties
+	 *   fragment1 root/about.properties
+	 *   fragment2 root/about.properties
+	 *   ...
+	 * 
+	 * If a locale other than the default locale is desired, use an
+	 * override map.
+	 * <p>
+	 * <b>Note</b>: This is an early access API to the new OSGI-based Eclipse 3.0
+	 * Platform Runtime. Because the APIs for the new runtime have not yet been fully
+	 * stabilized, they should only be used by clients needing to take particular
+	 * advantage of new OSGI-specific functionality, and only then with the understanding
+	 * that these APIs may well change in incompatible ways until they reach
+	 * their finished, stable form (post-3.0). </p>
+	 * 
+	 * @param bundle the bundle in which to search
+	 * @param path file path relative to plug-in installation location
+	 * @param override map of override substitution arguments to be used for
+	 * any $arg$ path elements. The map keys correspond to the substitution
+	 * arguments (eg. "$nl$" or "$os$"). The resulting
+	 * values must be of type java.lang.String. If the map is <code>null</code>,
+	 * or does not contain the required substitution argument, the default
+	 * is used.
+	 * @return a URL for the given path or <code>null</code>.  It is not
+	 * necessary to perform a 'resolve' on this URL.
+	 * @since 3.0
+	 */
 	public URL find(Bundle b, IPath path, Map override);
 	
-	public InputStream openStream(Bundle b, IPath file)  throws IOException;
-	/**
-	 * Returns an input stream for the specified file. The file path
-	 * must be specified relative to this plug-in's installation location.
-	 * Optionally, the platform searches for the correct localized version
-	 * of the specified file using the users current locale, and Java
-	 * naming convention for localized resource files (locale suffix appended 
-	 * to the specified file extension).
-	 * <p>
-	 * The caller must close the returned stream when done.
-	 * </p>
-	 *
-	 * @param file path relative to plug-in installation location
-	 * @param localized <code>true</code> for the localized version
-	 *   of the file, and <code>false</code> for the file exactly
-	 *   as specified
-	 * @return an input stream
-	 */	
-	public InputStream openStream(Bundle b, IPath file, boolean localized) throws IOException;
 	/**
 	 * Returns the location in the local file system of the 
 	 * plug-in state area for the given bundle.
@@ -551,18 +606,6 @@ public interface IPlatform {
 	public String getWS();
 	
 	/**
-	 * Returns all command line arguments specified when the running framework was started.
-	 * @return the array of command line arguments.
-	 */
-	public String[] getAllArgs();
-	
-	/**
-	 * Returns the arguments consumed by the framework implementation itself.  Which
-	 * arguments are consumed is implementation specific.
-	 * @return the array of command line arguments consumed by the framework.
-	 */
-	public String[] getFrameworkArgs();
-	/**
 	 * Returns the arguments not consumed by the framework implementation itself.  Which
 	 * arguments are consumed is implementation specific. These arguments are available 
 	 * for use by the application.
@@ -575,14 +618,12 @@ public interface IPlatform {
 	/**
 	 * Returns the currently registered bundle group providers
 	 * @return the currently registered bundle group providers
-	 * @since 3.0
 	 */
 	public IBundleGroupProvider[] getBundleGroupProviders();
 	/**
 	 * Returns the product which was selected when running this Eclipse instance
 	 * or null if none
 	 * @return the current product or null if none
-	 * @since 3.0
 	 */
 	public IProduct getProduct();
 
@@ -596,49 +637,49 @@ public interface IPlatform {
 	/**
 	 * Deregisters the given bundle group provider with the platform
 	 * @param provider a provider to deregister
-	 * @since 3.0
 	 */
 	public void unregisterBundleGroupProvider(IBundleGroupProvider provider);
 	
 	/**
-	 * Returns the location of the platform's user data area.  
-	 *
-	 * @return the location of the platform's user data area
-	 * @since 3.0
+	 * Returns the location of the platform's user data area.  The user data area is a location on the system
+	 * which is specific to the system's current user.  By default it is located relative to the 
+	 * location given by the System property "user.home".  
+	 * <code>null</code> is returned if the platform is running without an user location.
+	 * <p>
+	 * This method is equivalent to acquiring the <code>org.eclipse.osgi.service.datalocation.Location</code>
+	 * service with the property "type" = "osgi.user.area".
+	 *</p>
+	 * @return the location of the platform's user data area or <code>null</code> if none
 	 */
-	public Location getUserLocation() throws IllegalStateException;
+	public Location getUserLocation();
 
 	/**
 	 * Returns the location of the platform's working directory (also known as the instance data area).  
-	 * The platform may be running in one of three modes:
-	 * <dl>
-	 *   <dt>data</dt>
-	 *   <dd>The platform may have an instance data area.  The value returned is either the one
-	 * 		explicitly set using <code>Location.setLocation</code> or a value computed by 
-	 * 		the platform.</dd>
-	 *   <dt>noDefault</dt>
-	 *   <dd>The platform may have an instance data area.  The value returned is the one
-	 * 		explicitly set using <code>Location.setLocation</code>.  If no such value has been
-	 * 		set, the platform does <b>not</b> compute a default value and <code>null</code> returned.</dd>
-	 *   <dt>none</dt>
-	 *   <dd>The platform may not have an instance data area.  In all cases <code>null</code> is returned.</dd>
-	 * </dl>
-	 *
-	 * @return the location of the platform's instance data area
-	 * @since 3.0
+	 * <code>null</code> is returned if the platform is running without an instance location.
+	 * <p>
+	 * This method is equivalent to acquiring the <code>org.eclipse.osgi.service.datalocation.Location</code>
+	 * service with the property "type" = "osgi.instance.area".
+	 *</p>
+	 * @return the location of the platform's instance data area or <code>null</code> if none
 	 */
 	public Location getInstanceLocation();
 			
+	
+	
+	// TODO remove these methods before 3.0 ships
 	/**
 	 * Lock the instance data. 
 	 * The method throws a CoreException if the lock can not be acquired or 
 	 * an IllegalStateException if no instance data has been specified.
+	 * @deprecated will be removed before 3.0 ships  Use getInstanceLocation().lock()
 	 * @since 3.0
 	 */
 	public void lockInstanceData() throws CoreException, IllegalStateException;
+
 	/**
 	 * Unlock the instance data. 
 	 * @since 3.0
+	 * @deprecated will be removed before 3.0 ships  Use getInstanceLocation().release()
 	 */
 	public void unlockInstanceData() throws IllegalStateException;
 	/**
@@ -646,28 +687,14 @@ public interface IPlatform {
 	 * Throws an IllegalStateException if the file as already been set explicitly or the authorization mechanism used before.
 	 * @param keyringFile, the location of the keyring file
 	 * @since 3.0
+	 * @deprecated will be removed before 3.0 ships.  
 	 */
 	public void setKeyringLocation(String keyringFile) throws IllegalStateException;
-
-    /**
-     * Returns the resolved bundle with the specified symbolic name that has the
-     * highest version.  If no resolved bundles are installed that have the 
-     * specified symbolic name then null is returned.
-     * 
-     * @param symbolicName the symbolic name of the bundle to be returned.
-     * @return the bundle that has the specified symbolic name with the 
-     * highest version, or <tt>null</tt> if no bundle is found.
-     * @since 3.0
-     */
-	public Bundle getBundle(String symbolicName);
-
 	/**
 	 * Checks if the specified bundle is a fragment bundle.
 	 * @return true if the specified bundle is a fragment bundle; otherwise false is returned.
-	 * @since 3.0
 	 */
-	public boolean isFragment(Bundle bundle);
-
+	public boolean isFragment(Bundle bundle);	
 	/**
 	 * Returns an array of host bundles that the specified fragment bundle is 
 	 * attached to or <tt>null</tt> if the specified bundle is not attached to a host.  
@@ -676,10 +703,8 @@ public interface IPlatform {
 	 * @param bundle the bundle to get the host bundles for.
 	 * @return an array of host bundles or null if the bundle does not have any
 	 * host bundles.
-	 * @since 3.0
 	 */
-	public Bundle[] getHosts(Bundle bundle);
-
+	public Bundle[] getHosts(Bundle bundle);	
 	/**
 	 * Returns an array of attached fragment bundles for the specified bundle.  If the 
 	 * specified bundle is a fragment then <tt>null</tt> is returned.  If no fragments are 
@@ -688,8 +713,45 @@ public interface IPlatform {
 	 * @param bundle the bundle to get the attached fragment bundles for.
 	 * @return an array of fragment bundles or <tt>null</tt> if the bundle does not 
 	 * have any attached fragment bundles. 
-	 * @since 3.0
 	 */
-	public Bundle[] getFragments(Bundle bundle);
+	public Bundle[] getFragments(Bundle bundle);    
+	/**
+     * Returns the resolved bundle with the specified symbolic name that has the
+     * highest version.  If no resolved bundles are installed that have the 
+     * specified symbolic name then null is returned.
+     * 
+     * @param symbolicName the symbolic name of the bundle to be returned.
+     * @return the bundle that has the specified symbolic name with the 
+     * highest version, or <tt>null</tt> if no bundle is found.
+     */
+	public Bundle getBundle(String symbolicName);	
+	/**
+	 * Returns the location in the filesystem of the configuration information 
+	 * used to run this instance of Eclipse.  The configuration area typically
+	 * contains the list of plug-ins available for use, various user setttings
+	 * (those shared across different instances of the same configuration)
+	 * and any other such data needed by plug-ins.
+	 * 
+	 * @return the path indicating the directory containing the configuration 
+	 * information for this running Eclipse.
+	 * @deprecated see getConfigurationLocation This method will be removed by M8
+	 */
+	public IPath getConfigurationMetadataLocation();
+	
+	/**
+	 * Returns all command line arguments specified when the running framework was started.
+	 * @return the array of command line arguments.
+	 * @deprecated will be removed before 3.0 ships.  
+	 */
+	public String[] getAllArgs();
+	
+	/**
+	 * Returns the arguments consumed by the framework implementation itself.  Which
+	 * arguments are consumed is implementation specific.
+	 * @return the array of command line arguments consumed by the framework.
+	 * @deprecated will be removed before 3.0 ships.  
+	 */
+	public String[] getFrameworkArgs();
+	
 }
 
