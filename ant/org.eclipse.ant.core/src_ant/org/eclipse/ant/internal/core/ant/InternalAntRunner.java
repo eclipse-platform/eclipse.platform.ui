@@ -691,7 +691,7 @@ public class InternalAntRunner {
 				fBuildLogger.setOutputPrintStream(fOut);
 			} catch (IOException e) {
 				// just log message and ignore exception
-				logMessage(getCurrentProject(), MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Could_not_write_to_the_specified_log_file__{0}._Make_sure_the_path_exists_and_you_have_write_permissions._2"), new String[]{args[0]}), Project.MSG_INFO); //$NON-NLS-1$
+				logMessage(getCurrentProject(), MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Could_not_write_to_the_specified_log_file__{0}._Make_sure_the_path_exists_and_you_have_write_permissions._2"), new String[]{args[0]}), Project.MSG_ERR); //$NON-NLS-1$
 				return false;
 			}
 		}
@@ -870,6 +870,9 @@ public class InternalAntRunner {
 	 * Helper method to ensure an array is converted into an ArrayList.
 	 */
 	private ArrayList getArrayList(String[] args) {
+		if (args == null) {
+			return null;
+		}
 		// We could be using Arrays.asList() here, but it does not specify
 		// what kind of list it will return. We do need a list that
 		// implements the method List.remove(int) and ArrayList does.
