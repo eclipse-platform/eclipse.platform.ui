@@ -125,7 +125,7 @@ abstract public class AbstractReconciler implements IReconciler {
 				
 			} else {
 				
-				synchronized(this) {
+				synchronized (this) {
 					fIsDirty= true;
 				}
 				
@@ -191,7 +191,7 @@ abstract public class AbstractReconciler implements IReconciler {
 				synchronized (fDirtyRegionQueue) {
 					if (0 == fDirtyRegionQueue.getSize()) {
 						synchronized (this) {
-							fIsDirty= false;
+							fIsDirty= fProgressMonitor != null ? fProgressMonitor.isCanceled() : false;
 						}
 						fDirtyRegionQueue.notifyAll();
 					}
