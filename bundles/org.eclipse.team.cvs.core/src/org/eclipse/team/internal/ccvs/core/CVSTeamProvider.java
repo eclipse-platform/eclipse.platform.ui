@@ -666,7 +666,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 			CVSProvider.getInstance().addRepository(newLocation);
 			
 			// Set the project to use the new Locations
-			setRemoteRoot(newLocation, Policy.infiniteSubMonitorFor(monitor, 80));
+			setRemoteRoot(newLocation, Policy.subMonitorFor(monitor, 80));
 			return true;
 		} finally {
 			monitor.done();
@@ -913,30 +913,40 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	/*
 	 * This method expects to be passed an InfiniteSubProgressMonitor
 	 */
-	private void setRemoteRoot(ICVSRepositoryLocation location, final IProgressMonitor monitor) throws TeamException {
+	private void setRemoteRoot(ICVSRepositoryLocation location, IProgressMonitor monitor) throws TeamException {
 
 		// Check if there is a differnece between the new and old roots	
 		final String root = location.getLocation();
 		if (root.equals(workspaceRoot.getRemoteLocation())) 
 			return;
-				
+	
 		try {
-			// 256 ticks gives us a maximum of 1024 which seems reasonable for folders is a project
-			monitor.beginTask(Policy.bind("CVSTeamProvider.folderInfo", project.getName()), 256);  //$NON-NLS-1$
-			
-			// Visit all the children folders in order to set the root in the folder sync info
-			workspaceRoot.getLocalRoot().accept(new ICVSResourceVisitor() {
-				public void visitFile(ICVSFile file) throws CVSException {};
-				public void visitFolder(ICVSFolder folder) throws CVSException {
-					monitor.worked(1);
-					FolderSyncInfo info = folder.getFolderSyncInfo();
-					if (info != null) {
-						monitor.subTask(Policy.bind("CVSTeamProvider.updatingFolder", info.getRepository())); //$NON-NLS-1$
-						folder.setFolderSyncInfo(new FolderSyncInfo(info.getRepository(), root, info.getTag(), info.getIsStatic()));
-						folder.acceptChildren(this);
+			workspaceRoot.getLocalRoot().run(new ICVSRunnable() {
+				public void run(IProgressMonitor progress) throws CVSException {
+					try {
+						// 256 ticks gives us a maximum of 1024 which seems reasonable for folders is a project
+						progress.beginTask(null, 100);
+						final IProgressMonitor monitor = Policy.infiniteSubMonitorFor(progress, 100);
+						monitor.beginTask(Policy.bind("CVSTeamProvider.folderInfo", project.getName()), 256);  //$NON-NLS-1$
+		
+						// Visit all the children folders in order to set the root in the folder sync info
+						workspaceRoot.getLocalRoot().accept(new ICVSResourceVisitor() {
+							public void visitFile(ICVSFile file) throws CVSException {};
+							public void visitFolder(ICVSFolder folder) throws CVSException {
+								monitor.worked(1);
+								FolderSyncInfo info = folder.getFolderSyncInfo();
+								if (info != null) {
+									monitor.subTask(Policy.bind("CVSTeamProvider.updatingFolder", info.getRepository())); //$NON-NLS-1$
+									folder.setFolderSyncInfo(new FolderSyncInfo(info.getRepository(), root, info.getTag(), info.getIsStatic()));
+									folder.acceptChildren(this);
+								}
+							};
+						});
+					} finally {
+						progress.done();
 					}
-				};
-			});
+				}
+			}, monitor);
 		} finally {
 			monitor.done();
 		}
