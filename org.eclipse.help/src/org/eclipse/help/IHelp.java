@@ -61,7 +61,10 @@ public interface IHelp {
 	 * appropriate location.
 	 * </p> 
 	 * 
-	 * @param contextId the help context identifier 
+	 * @param contextId the help context identifier;
+	 *  the parameter needs to have a form pluginID.pluginContextId,
+	 *  where pluginID is ID of plug-in contributing a context,
+	 *  and pluginContextID is ID of context contributed in a plug-in.
 	 * @param x horizontal position
 	 * @param y verifical position
 	 * @see #getContext(String)
