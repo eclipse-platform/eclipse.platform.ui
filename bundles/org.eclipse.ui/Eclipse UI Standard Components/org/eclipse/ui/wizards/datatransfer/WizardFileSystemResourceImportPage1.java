@@ -99,13 +99,11 @@ protected Button createButton(Composite parent, int id, String label, boolean de
 	// increment the number of columns in the button bar
 	((GridLayout)parent.getLayout()).numColumns++;
 
-	Button button = new Button(parent, SWT.PUSH);
+	Button button = new Button(parent, SWT.PUSH );
 
-	GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-	data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
-	data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH + 2);
-	button.setLayoutData(data);
-	
+	GridData buttonData = new GridData(GridData.FILL_HORIZONTAL);
+	button.setLayoutData(buttonData);
+
 	button.setData(new Integer(id));
 	button.setText(label);
 	
@@ -129,11 +127,10 @@ protected final void createButtonsGroup(Composite parent) {
 	Composite buttonComposite = new Composite(parent, SWT.NONE);
 	GridLayout layout = new GridLayout();
 	layout.numColumns = 3;
+	layout.makeColumnsEqualWidth = true;
 	buttonComposite.setLayout(layout);
 	buttonComposite.setLayoutData(
 		new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
-
-	int buttonWidth =  convertWidthInCharsToPixels(getLargestButtonWidth());
 
 	// types edit button
 	selectTypesButton =
@@ -143,10 +140,6 @@ protected final void createButtonsGroup(Composite parent) {
 			SELECT_TYPES_TITLE,
 			false);
 
-	//Use a data to set the size of the buttons.
-	GridData buttonData = new GridData();
-	buttonData.widthHint = buttonWidth;
-	selectTypesButton.setLayoutData(buttonData);
 	
 	SelectionListener listener = new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
@@ -162,11 +155,6 @@ protected final void createButtonsGroup(Composite parent) {
 			SELECT_ALL_TITLE,
 			false);
 
-	//Use a data to set the size of the buttons.
-	buttonData = new GridData();
-	buttonData.widthHint = buttonWidth;
-	selectAllButton.setLayoutData(buttonData);
-
 	listener = new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
 			setAllSelections(true);
@@ -180,12 +168,6 @@ protected final void createButtonsGroup(Composite parent) {
 			IDialogConstants.DESELECT_ALL_ID,
 			DESELECT_ALL_TITLE,
 			false);
-
-	
-	//Use a data to set the size of the buttons.
-	buttonData = new GridData();
-	buttonData.widthHint = buttonWidth;
-	deselectAllButton.setLayoutData(buttonData);
 
 	listener = new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
