@@ -143,9 +143,9 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		ISchedulingRule ruleA = new PathRule("/A");
 		ISchedulingRule ruleB = new PathRule("/A/B");
 		ISchedulingRule ruleC = new PathRule("/A/C");
-		TestJob jobA = new TestJob("Job1", 1000, 1000);
-		TestJob jobB = new TestJob("Job2", 1000, 1000);
-		TestJob jobC = new TestJob("Job3", 1000, 1000);
+		TestJob jobA = new TestJob("Job1", 1000, 100);
+		TestJob jobB = new TestJob("Job2", 1000, 100);
+		TestJob jobC = new TestJob("Job3", 1000, 100);
 		jobA.setRule(ruleA);
 		jobB.setRule(ruleB);
 		jobC.setRule(ruleC);
@@ -160,6 +160,11 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		//cancel and restart A
 		jobA.cancel();
 		jobA.schedule();
+		
+		//cancel all jobs
+		jobA.cancel();
+		jobC.cancel();
+		jobB.cancel();
 	}
 	public void testMutexRule() {
 		final int JOB_COUNT = 10;

@@ -308,10 +308,10 @@ public abstract class Job extends InternalJob implements IAdaptable {
 		super.removeJobChangeListener(listener);
 	}
 	/**
-	 * Executes the current job.  Returns the result of the execution.
+	 * Executes this job.  Returns the result of the execution.
 	 * <p>
 	 * The provided monitor can be used to report progress and respond to 
-	 * cancellation.  If the progress monitor has been cancelled, the job
+	 * cancellation.  If the progress monitor has been canceled, the job
 	 * should finish its execution at the earliest convenience. 
 	 * <p>
 	 * This method must not be called directly by clients.  Clients should call
@@ -319,12 +319,12 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * <p>
 	 * Jobs can optionally finish their execution asynchronously (in another thread) by 
 	 * returning a result status of <code>Job.ASYNC_FINISH</code>.  Jobs that finish
-	 * asynchronously <b>must</b> indicate when they are finished by calling
-	 * the method <code>Job.done</code>.
+	 * asynchronously <b>must</b> specify the execution thread by calling
+	 * <code>setThread</code>, and must indicate when they are finished by calling
+	 * the method <code>done</code>.
 	 * 
-	 * @param monitor the monitor to be used for reporting progress, or <code>
-	 * null</code> if progress monitoring is not required.
-	 * @return the job result.
+	 * @param monitor the monitor to be used for reporting progress and
+	 * responding to cancelation. The monitor is never <code>null</code>
 	 * @see #ASYNC_FINISH
 	 * @see #done
 	 */
@@ -336,8 +336,6 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * This is a convenience method, fully equivalent to 
 	 * <code>schedule(0L)</code>.
 	 * </p>
-	 * 
-	 * @param job the job to add to the queue
 	 */
 	public final void schedule() {
 		super.schedule(0L);
@@ -347,9 +345,14 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * the job is added to a queue of waiting jobs, and will be run when it arrives at the 
 	 * beginning of the queue.	
 	 * <p>
-	 * Scheduling a job that is already waiting, sleeping, or running has no effect
+	 * If this job is currently running, it will be rescheduled with the specified
+	 * delay as soon as it finishes.  If this method is called multiple times
+	 * while the job is running, the job will still only be rescheduled once,
+	 * with the most recent delay value that was provided.
+	 * <p>
+	 * Scheduling a job that is waiting or sleeping has no effect
 	 * 
-	 * @param job the job to add to the queue
+	 * @param delay a time delay in milliseconds before the job should run
 	 */
 	public final void schedule(long delay) {
 		super.schedule(delay);
@@ -472,9 +475,10 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * will be removed from the queue move into the <code>SLEEPING</code> state.
 	 * The job will remain asleep until either resumed or canceled.  If this job is not
 	 * currently waiting to be run, this method has no effect.
-	 * 
+	 * <p>
 	 * Sleeping jobs can be resumed using <code>wakeUp</code>.
 	 * 
+	 * @see #wakeUp
 	 * @return false if the job is currently running (and thus cannot
 	 * be put to sleep), and true in all other cases.
 	 */
@@ -482,9 +486,9 @@ public abstract class Job extends InternalJob implements IAdaptable {
 		return super.sleep();
 	}
 	/**
-	 * Resumes execution of the given job.  If the job is not currently
+	 * Resumes execution of this job.  If the job is not currently
 	 * sleeping, this request is ignored.
-	 * @param job
+	 * @see #sleep
 	 */
 	public final void wakeUp() {
 		super.wakeUp();

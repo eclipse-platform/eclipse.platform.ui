@@ -30,6 +30,17 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	 * this is the same as RUNNING.
 	 */
 	public static final int ABOUT_TO_RUN = 0x10;
+
+	/**
+	 * Start time constant indicating a job should be started at
+	 * a time in the infinite future, causing it to sleep forever.
+	 */
+	protected static final long T_INFINITE = Long.MAX_VALUE;
+	/**
+	 * Start time constant indicating that the job has no start time.
+	 */
+	protected static final long T_NONE = -1;
+	
 	
 	//flag mask bits
 	private static final int M_STATE = 0xFF;
@@ -55,8 +66,10 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	private IStatus result;
 	private ISchedulingRule schedulingRule;
 	/**
-	 * If the job is waiting, this represents the time the job should start by.  If
-	 * this job is sleeping, this represents the time the job should wake up.
+	 * If the job is waiting, this represents the time the job should start by.  
+	 * If this job is sleeping, this represents the time the job should wake up.
+	 * If this job is running, this represents the delay automatic rescheduling,
+	 * or -1 if the job should not be rescheduled.
 	 */
 	private long startTime;
 	/*

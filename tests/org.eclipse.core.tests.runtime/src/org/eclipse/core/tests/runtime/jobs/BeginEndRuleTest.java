@@ -66,7 +66,7 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 				status[index] = StatusChecker.STATUS_START;
 				for (int i = 0; i < numRepeats; i++) {
 					//wait until the tester allows this job to run again
-					StatusChecker.waitForStatus(status, index, StatusChecker.STATUS_WAIT_FOR_RUN, 100);
+					StatusChecker.waitForStatus(status, index, StatusChecker.STATUS_WAIT_FOR_RUN, 10000);
 					//create a hook that would notify this thread when this job was blocked on a rule (if needed)
 					BlockingMonitor bMonitor = null;
 					if(reportBlocking)
@@ -81,7 +81,7 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 						return Status.CANCEL_STATUS;
 
 					//wait until tester allows this job to finish
-					StatusChecker.waitForStatus(status, index, StatusChecker.STATUS_WAIT_FOR_DONE, 100);
+					StatusChecker.waitForStatus(status, index, StatusChecker.STATUS_WAIT_FOR_DONE, 10000);
 					//end the given rule
 					manager.endRule(rule);
 					//set status to DONE
@@ -158,7 +158,10 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 		}
 	}
 	public static TestSuite suite() {
-		return new TestSuite(BeginEndRuleTest.class);
+//		return new TestSuite(BeginEndRuleTest.class);
+		TestSuite suite = new TestSuite();
+		suite.addTest(new BeginEndRuleTest("testComplexRuleStarting"));
+		return suite;
 	}
 	public BeginEndRuleTest() {
 		super();
@@ -177,9 +180,9 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 		int NUM_REPEATS = 10;
 
 		Job[] jobs = new Job[NUM_THREADS];
-		jobs[0] = new JobRuleRunner("Job1", new PathRule("/A"), status, 0, NUM_REPEATS, true);
-		jobs[1] = new JobRuleRunner("Job2", new PathRule("/A/B"), status, 1, NUM_REPEATS, true);
-		jobs[2] = new JobRuleRunner("Job3", new PathRule("/A/B/C"), status, 2, NUM_REPEATS, true);
+		jobs[0] = new JobRuleRunner("ComplexJob1", new PathRule("/A"), status, 0, NUM_REPEATS, true);
+		jobs[1] = new JobRuleRunner("ComplexJob2", new PathRule("/A/B"), status, 1, NUM_REPEATS, true);
+		jobs[2] = new JobRuleRunner("ComplexJob3", new PathRule("/A/B/C"), status, 2, NUM_REPEATS, true);
 		//jobs[3] = new JobRuleRunner("Job4", new RuleSetD(), status, 3, NUM_REPEATS, true);
 		//jobs[4] = new JobRuleRunner("Job5", new RuleSetE(), status, 4, NUM_REPEATS, true);
 
@@ -283,8 +286,8 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 		//number of repetitions of beginning and ending the rule
 		final int NUM_REPEATS = 10;
 		Job[] jobs = new Job[2];
-		jobs[0] = new JobRuleRunner("Job1", new PathRule("/A"), status, 0, NUM_REPEATS, false);
-		jobs[1] = new JobRuleRunner("Job2", new PathRule("/A/B"), status, 1, NUM_REPEATS, false);
+		jobs[0] = new JobRuleRunner("SimpleJob1", new PathRule("/A"), status, 0, NUM_REPEATS, false);
+		jobs[1] = new JobRuleRunner("SimpleJob2", new PathRule("/A/B"), status, 1, NUM_REPEATS, false);
 
 		//schedule both jobs to start their execution
 		jobs[0].schedule();

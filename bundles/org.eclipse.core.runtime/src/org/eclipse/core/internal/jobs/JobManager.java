@@ -47,7 +47,7 @@ public class JobManager implements IJobManager {
 	 * and not restarted.
 	 */
 	private static volatile boolean active = false;
-	protected static final long NEVER = Long.MAX_VALUE;
+	
 	private final ImplicitJobs implicitJobs = new ImplicitJobs(this);
 	private final JobListeners jobListeners = new JobListeners();
 
@@ -142,9 +142,8 @@ public class JobManager implements IJobManager {
 	 */
 	public void cancel(Object family) {
 		//don't synchronize because cancel calls listeners
-		for (Iterator it = select(family).iterator(); it.hasNext();) {
+		for (Iterator it = select(family).iterator(); it.hasNext();) 
 			cancel((Job) it.next());
-		}
 	}
 	/**
 	 * Atomically updates the state of a job, adding or removing from the
@@ -166,6 +165,7 @@ public class JobManager implements IJobManager {
 					} catch (RuntimeException e) {
 						Assert.isLegal(false, "Tried to remove a job that wasn't in the queue"); //$NON-NLS-1$
 					}
+					job.setStartTime(InternalJob.T_NONE);
 					break;
 				case Job.SLEEPING :
 					try {
@@ -173,6 +173,7 @@ public class JobManager implements IJobManager {
 					} catch (RuntimeException e) {
 						Assert.isLegal(false, "Tried to remove a job that wasn't in the queue"); //$NON-NLS-1$
 					}
+					job.setStartTime(InternalJob.T_NONE);
 					break;
 				case Job.RUNNING :
 				case InternalJob.ABOUT_TO_RUN :
@@ -194,6 +195,7 @@ public class JobManager implements IJobManager {
 					break;
 				case Job.RUNNING :
 				case InternalJob.ABOUT_TO_RUN:
+					job.setStartTime(InternalJob.T_NONE);
 					running.add(job);
 					break;
 				default :
@@ -259,6 +261,7 @@ public class JobManager implements IJobManager {
 	protected void endJob(InternalJob job, IStatus result, boolean notify) {
 		InternalJob blocked = null;
 		int blockedJobCount = 0;
+		long rescheduleDelay = InternalJob.T_NONE;
 		synchronized (lock) {
 			//if the job is finishing asynchronously, there is nothing more to do for now
 			if (result == Job.ASYNC_FINISH)
@@ -271,6 +274,8 @@ public class JobManager implements IJobManager {
 			job.setResult(result);
 			job.internalSetProgressMonitor(null);
 			job.setThread(null);
+			rescheduleDelay = job.getStartTime();
+			job.setStartTime(InternalJob.T_NONE);
 			changeState(job, Job.NONE);
 			blocked = job.previous();
 			job.setPrevious(null);
@@ -289,10 +294,12 @@ public class JobManager implements IJobManager {
 		//notify queue outside sync block
 		for (int i = 0; i < blockedJobCount; i++)
 			pool.jobQueued(blocked);
-
 		//notify listeners outside sync block
 		if (notify)
 			jobListeners.done((Job) job, result);
+		//finally reschedule the job if requested
+		if (rescheduleDelay > InternalJob.T_NONE)
+			job.schedule(rescheduleDelay);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.IJobManager#endRule(org.eclipse.core.runtime.jobs.ISchedulingRule)
@@ -527,11 +534,17 @@ public class JobManager implements IJobManager {
 		if (!active)
 			throw new IllegalStateException("Job manager has been shut down."); //$NON-NLS-1$
 		Assert.isNotNull(job, "Job is null"); //$NON-NLS-1$
+		Assert.isLegal(delay >= 0, "Scheduling delay is negative"); //$NON-NLS-1$
 		//call hook method outside sync block to avoid deadlock
 		if (!job.shouldSchedule())
 			return;
 		synchronized (lock) {
-			//can't schedule a job that is already waiting, sleeping, or running
+			//if the job is already running, set it to be rescheduled when done
+			if (job.getState() == Job.RUNNING) {
+				job.setStartTime(delay);
+				return;
+			}
+			//can't schedule a job that is waiting or sleeping
 			if (job.getState() != Job.NONE)
 				return;
 			//if it's a decoration job, don't run it right now if the system is busy
@@ -669,7 +682,7 @@ public class JobManager implements IJobManager {
 					break;
 				case Job.SLEEPING :
 					//update the job wake time
-					job.setStartTime(NEVER);
+					job.setStartTime(InternalJob.T_INFINITE);
 					return true;
 				case Job.NONE :
 					return true;
@@ -677,7 +690,7 @@ public class JobManager implements IJobManager {
 					//put the job to sleep
 					break;
 			}
-			job.setStartTime(NEVER);
+			job.setStartTime(InternalJob.T_INFINITE);
 			changeState(job, Job.SLEEPING);
 		}
 		jobListeners.sleeping((Job) job);
@@ -702,7 +715,9 @@ public class JobManager implements IJobManager {
 			if (!waiting.isEmpty())
 				return 0L;
 			InternalJob next = sleeping.peek();
-			return next == null ? NEVER : next.getStartTime() - System.currentTimeMillis();
+			if (next == null)
+				return InternalJob.T_INFINITE;
+			return next.getStartTime() - System.currentTimeMillis();
 		}
 	}
 	/**
