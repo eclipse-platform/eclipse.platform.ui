@@ -1,108 +1,221 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin
-	name="%pluginName"
-	id="org.eclipse.team.cvs.core"
-	version="2.1.0"
-    provider-name="%providerName"
-	class="org.eclipse.team.internal.ccvs.core.CVSProviderPlugin">
+   id="org.eclipse.team.cvs.core"
+   name="%pluginName"
+   version="3.0.0"
+   provider-name="%providerName"
+   class="org.eclipse.team.internal.ccvs.core.CVSProviderPlugin">
 
-	<requires>
-		<import plugin="org.eclipse.core.resources"/>
-		<import plugin="org.eclipse.team.core"/>
-		<import plugin="org.apache.xerces"/>
-	</requires>
+   <runtime>
+      <library name="cvs.jar">
+         <export name="*"/>
+         <packages prefixes="org.eclipse.team.internal.ccvs.core"/>
+      </library>
+   </runtime>
+   <requires>
+      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.team.core"/>
+      <import plugin="org.apache.xerces"/>
+   </requires>
 
-	<runtime>
-		<library name="cvs.jar">
-			<export name="*"/>
-			<packages prefixes="org.eclipse.team.internal.ccvs.core"/>
-		</library>
-	</runtime>
 
-	<!-- *************** Extension Points **************** -->
-	<extension-point name="Authenticator" id="authenticator"/>
-	<extension-point name="ConnectionMethods" id="connectionmethods"/>
-	<extension-point name="FileModificationValidator" id="filemodificationvalidator"/>
+<!-- *************** Extension Points **************** -->
+   <extension-point id="authenticator" name="Authenticator"/>
+   <extension-point id="connectionmethods" name="ConnectionMethods"/>
+   <extension-point id="filemodificationvalidator" name="FileModificationValidator"/>
 
-	<!-- *************** Connection Methods **************** -->
-	<extension id="pserver" point="org.eclipse.team.cvs.core.connectionmethods">
-		<adapter>
-			<run class="org.eclipse.team.internal.ccvs.core.connection.PServerConnectionMethod">
-				<parameter name="trace" value="false" /> 
-			</run>
-		</adapter>
-	</extension>
-	
-	<extension id="ext" point="org.eclipse.team.cvs.core.connectionmethods">
-		<adapter>
-			<run class="org.eclipse.team.internal.ccvs.core.connection.ExtConnectionMethod">
-				<parameter name="trace" value="false" /> 
-			</run>
-		</adapter>
-	</extension>
-
-	<!-- *************** Repository Provider **************** -->
-	<extension
+<!-- *************** Connection Methods **************** -->
+   <extension
+         id="pserver"
+         point="org.eclipse.team.cvs.core.connectionmethods">
+      <adapter>
+         <run
+               class="org.eclipse.team.internal.ccvs.core.connection.PServerConnectionMethod">
+            <parameter
+                  name="trace"
+                  value="false">
+            </parameter>
+         </run>
+      </adapter>
+   </extension>
+   <extension
+         id="ext"
+         point="org.eclipse.team.cvs.core.connectionmethods">
+      <adapter>
+         <run
+               class="org.eclipse.team.internal.ccvs.core.connection.ExtConnectionMethod">
+            <parameter
+                  name="trace"
+                  value="false">
+            </parameter>
+         </run>
+      </adapter>
+   </extension>
+<!-- *************** Repository Provider **************** -->
+   <extension
          point="org.eclipse.team.core.repository">
       <repository
-            class="org.eclipse.team.internal.ccvs.core.CVSTeamProvider"
             typeClass="org.eclipse.team.internal.ccvs.core.CVSTeamProviderType"
+            class="org.eclipse.team.internal.ccvs.core.CVSTeamProvider"
             id="org.eclipse.team.cvs.core.cvsnature">
       </repository>
-	</extension>
-	<extension
+   </extension>
+   <extension
          point="org.eclipse.team.core.subscriber">
       <subscriber
             class="org.eclipse.team.internal.ccvs.core.CVSSubscriberFactory">
       </subscriber>
-	</extension>
-	
- 
- 	<!-- *************** Resource patterns ignored by CVS **************** -->
- 	<extension point="org.eclipse.team.core.ignore">
-		<ignore pattern = "RCS" enabled = "true"/>
-		<ignore pattern = "RCSLOG" enabled = "true"/>
-		<ignore pattern = "SCCS" enabled = "true"/>
-		<ignore pattern = "CVS.adm" enabled = "true"/>
-		<ignore pattern = "tags" enabled = "true"/>
-		<ignore pattern = "TAGS" enabled = "true"/>
-		<ignore pattern = ".make.state" enabled = "true"/>
-		<ignore pattern = ".nse_depinfo" enabled = "true"/>
-		<ignore pattern = "*~" enabled = "true"/>
-		<ignore pattern = "#*" enabled = "true"/>
-		<ignore pattern = ".#*" enabled = "true"/>
-		<ignore pattern = ",*" enabled = "true"/>
-		<ignore pattern = "_$*" enabled = "true"/>
-		<ignore pattern = "*$" enabled = "true"/>
-		<ignore pattern = "*.old" enabled = "true"/>
-		<ignore pattern = "*.bak" enabled = "true"/>
-		<ignore pattern = "*.BAK" enabled = "true"/>
-		<ignore pattern = "*.orig" enabled = "true"/>
-		<ignore pattern = "*.rej" enabled = "true"/>
-		<ignore pattern = ".del-*" enabled = "true"/>
-		<ignore pattern = "*.a" enabled = "true"/>
-		<ignore pattern = "*.olb" enabled = "true"/>
-		<ignore pattern = "*.obj" enabled = "true"/>
-		<ignore pattern = "*.so" enabled = "true"/>
-		<ignore pattern = "*.exe" enabled = "true"/>
-		<ignore pattern = "*.Z" enabled = "true"/>
-		<ignore pattern = "*.elc" enabled = "true"/>
-		<ignore pattern = "*.ln" enabled = "true"/>
-		<ignore pattern = ".DS_Store" enabled = "true"/>
-		<ignore pattern = "core" enabled = "false"/>
-	</extension>
- 
-  	<!-- *************** Markers **************** -->
-	<extension id="cvsmarker" point="org.eclipse.core.resources.markers"/>
-	<extension id="vcmmeta" point="org.eclipse.core.resources.markers" name="%vcmMetaMarker">
-		<super type="org.eclipse.core.resources.problemmarker"/>
-		<super type="org.eclipse.team.cvs.core.cvsmarker"/>
-		<persistent value="true"/>
-	</extension>
-	
-	<!-- ************ File Types *************** -->
-	<extension point="org.eclipse.team.core.fileTypes">
-		<fileTypes extension="cvsignore" type="text"/>
-	</extension>
+   </extension>
+<!-- *************** Resource patterns ignored by CVS **************** -->
+   <extension
+         point="org.eclipse.team.core.ignore">
+      <ignore
+            enabled="true"
+            pattern="RCS">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="RCSLOG">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="SCCS">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="CVS.adm">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="tags">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="TAGS">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern=".make.state">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern=".nse_depinfo">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="*~">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="#*">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern=".#*">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern=",*">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="_$*">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="*$">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="*.old">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="*.bak">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="*.BAK">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="*.orig">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="*.rej">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern=".del-*">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="*.a">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="*.olb">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="*.obj">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="*.so">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="*.exe">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="*.Z">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="*.elc">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="*.ln">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern=".DS_Store">
+      </ignore>
+      <ignore
+            enabled="false"
+            pattern="core">
+      </ignore>
+   </extension>
+<!-- *************** Markers **************** -->
+   <extension
+         id="cvsmarker"
+         point="org.eclipse.core.resources.markers">
+   </extension>
+   <extension
+         id="vcmmeta"
+         name="%vcmMetaMarker"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.core.resources.problemmarker">
+      </super>
+      <super
+            type="org.eclipse.team.cvs.core.cvsmarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+   </extension>
+<!-- ************ File Types *************** -->
+   <extension
+         point="org.eclipse.team.core.fileTypes">
+      <fileTypes
+            type="text"
+            extension="cvsignore">
+      </fileTypes>
+   </extension>
 
 </plugin>

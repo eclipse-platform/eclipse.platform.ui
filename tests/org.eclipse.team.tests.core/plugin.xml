@@ -2,7 +2,7 @@
 <plugin
    id="org.eclipse.team.tests.core"
    name="Eclipse Team Core Tests"
-   version="2.1.0"
+   version="3.0.0"
    provider-name="Eclipse.org"
    class="">
 
@@ -45,7 +45,7 @@
          </run>
       </test>
    </extension>
-     <extension
+   <extension
          point="org.eclipse.core.tests.harness.tests">
       <test
             id="team.ftp">
@@ -54,25 +54,22 @@
          </run>
       </test>
    </extension>
-   
-	<!-- *************** Repository Providers **************** -->
-	<extension
+<!-- *************** Repository Providers **************** -->
+   <extension
          point="org.eclipse.team.core.repository">
       <repository
-      		id="org.eclipse.team.tests.core.bic-provider"
-            class="org.eclipse.team.tests.core.RepositoryProviderBic">
+            class="org.eclipse.team.tests.core.RepositoryProviderBic"
+            id="org.eclipse.team.tests.core.bic-provider">
       </repository>
-	</extension>
-	
-	<extension
+   </extension>
+   <extension
          point="org.eclipse.team.core.repository">
       <repository
-      		id="org.eclipse.team.tests.core.naish-provider"
-            class="org.eclipse.team.tests.core.RepositoryProviderNaish">
+            class="org.eclipse.team.tests.core.RepositoryProviderNaish"
+            id="org.eclipse.team.tests.core.naish-provider">
       </repository>
-	</extension>
-	
-	<!-- *************** Bad provider that is not registered **************** 
+   </extension>
+<!-- *************** Bad provider that is not registered **************** 
 	<extension
          point="org.eclipse.team.core.repository">
       <repository
@@ -81,16 +78,14 @@
       </repository>
 	</extension>
 	-->
-	
-	<extension
+   <extension
          point="org.eclipse.team.core.repository">
       <repository
-      		id="org.eclipse.team.tests.core.linking"
-            class="org.eclipse.team.tests.core.RepositoryProviderWithLinking">
+            class="org.eclipse.team.tests.core.RepositoryProviderWithLinking"
+            id="org.eclipse.team.tests.core.linking">
       </repository>
-	</extension>
-	
-	<!-- *************** Test application **************** -->
+   </extension>
+<!-- *************** Test application **************** -->
    <extension
          id="testapplication"
          point="org.eclipse.core.runtime.applications">
@@ -100,5 +95,5 @@
          </run>
       </application>
    </extension>
-   
+
 </plugin>

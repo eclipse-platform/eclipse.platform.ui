@@ -1,31 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin
-	name="%pluginName"
-	id="org.eclipse.team.cvs.ssh"
-	version="2.1.0"
-	provider-name="%providerName"
-	class="org.eclipse.team.internal.ccvs.ssh.SSHPlugin">
+   id="org.eclipse.team.cvs.ssh"
+   name="%pluginName"
+   version="3.0.0"
+   provider-name="%providerName"
+   class="org.eclipse.team.internal.ccvs.ssh.SSHPlugin">
 
-  <requires>
-    <import plugin="org.eclipse.core.boot"/>
-    <import plugin="org.eclipse.core.resources"/>
-    <import plugin="org.eclipse.team.cvs.core"/>
-    <import plugin="org.eclipse.team.core"/>
-  </requires>
+   <runtime>
+      <library name="teamcvsssh.jar">
+         <export name="*"/>
+         <packages prefixes="org.eclipse.team.internal.ccvs.ssh"/>
+      </library>
+   </runtime>
+   <requires>
+      <import plugin="org.eclipse.core.boot"/>
+      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.team.cvs.core"/>
+      <import plugin="org.eclipse.team.core"/>
+   </requires>
 
-  <runtime>
-    <library name="teamcvsssh.jar">
-      <export name="*"/>
-      <packages prefixes="org.eclipse.team.internal.ccvs.ssh"/>
-    </library>
-  </runtime>
 
-  <extension id="ssh" point="org.eclipse.team.cvs.core.connectionmethods">
-    <adapter>
-      <run class="org.eclipse.team.internal.ccvs.ssh.SSHMethod">
-        <parameter name="trace" value="false" /> 
-      </run>
-    </adapter>
-  </extension>
+   <extension
+         id="ssh"
+         point="org.eclipse.team.cvs.core.connectionmethods">
+      <adapter>
+         <run
+               class="org.eclipse.team.internal.ccvs.ssh.SSHMethod">
+            <parameter
+                  name="trace"
+                  value="false">
+            </parameter>
+         </run>
+      </adapter>
+   </extension>
 
 </plugin>

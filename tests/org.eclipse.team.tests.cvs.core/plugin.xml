@@ -2,7 +2,7 @@
 <plugin
    id="org.eclipse.team.tests.cvs.core"
    name="Eclipse CVS Tests Core"
-   version="2.1.0"
+   version="3.0.0"
    provider-name="Eclipse.org">
 
    <runtime>
@@ -26,15 +26,21 @@
       <import plugin="org.eclipse.team.tests.core"/>
    </requires>
 
-	<!-- *************** Connection Methods **************** -->
-	<extension id="pserver" point="org.eclipse.team.cvs.core.connectionmethods">
-		<adapter>
-			<run class="org.eclipse.team.tests.ccvs.core.TestConnectionMethod">
-				<parameter name="trace" value="false" /> 
-			</run>
-		</adapter>
-	</extension>
-	
+
+<!-- *************** Connection Methods **************** -->
+   <extension
+         id="pserver"
+         point="org.eclipse.team.cvs.core.connectionmethods">
+      <adapter>
+         <run
+               class="org.eclipse.team.tests.ccvs.core.TestConnectionMethod">
+            <parameter
+                  name="trace"
+                  value="false">
+            </parameter>
+         </run>
+      </adapter>
+   </extension>
 <!-- **************** TESTS ******************* -->
    <extension
          point="org.eclipse.core.tests.harness.tests">

@@ -2,7 +2,7 @@
 <plugin
    id="org.eclipse.team.examples.filesystem"
    name="%pluginName"
-   version="2.1.0"
+   version="3.0.0"
    provider-name="%providerName"
    class="org.eclipse.team.examples.filesystem.FileSystemPlugin">
 
@@ -20,6 +20,7 @@
       <import plugin="org.eclipse.ui"/>
    </requires>
 
+
 <!-- *************** Repository Provider **************** -->
    <extension
          point="org.eclipse.team.core.repository">
@@ -28,7 +29,6 @@
             id="org.eclipse.team.examples.filesystem.FileSystemProvider">
       </repository>
    </extension>
-
 <!-- *************** POPUP MENUS **************** -->
    <extension
          point="org.eclipse.ui.popupMenus">
@@ -62,7 +62,6 @@
                id="org.eclipse.team.examples.filesystem.replace">
          </action>
       </objectContribution>
-      
       <objectContribution
             objectClass="org.eclipse.core.resources.IProject"
             adaptable="true"
@@ -80,7 +79,6 @@
          </action>
       </objectContribution>
    </extension>
-   
 <!-- *************** CONFIGURATION WIZARD **************** -->
    <extension
          point="org.eclipse.team.ui.configurationWizards">
@@ -95,8 +93,6 @@
          </description>
       </wizard>
    </extension>
-
-   
 <!-- *************** PROPERTY PAGES **************** -->
    <extension
          point="org.eclipse.ui.propertyPages">
@@ -112,5 +108,5 @@
          </filter>
       </page>
    </extension>
-   
+
 </plugin>
