@@ -187,7 +187,7 @@
 
 	<category 
 		id="org.eclipse.team.ui.target"
-		name="Deployment">
+		name="Target Management">
 	</category>
 	<view
             name="%SiteExplorerView.name"
