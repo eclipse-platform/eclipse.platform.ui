@@ -185,10 +185,12 @@ public class FileSystemStore implements ILocalStoreConstants {
 		InputStream input = null;
 		try {
 			input = read(target);
-			int first = (input.read() & 0xFF);//converts unsigned byte to int
-			int second = (input.read() & 0xFF);
+			int first = input.read();
+			int second = input.read();
 			if (first == -1 || second == -1)
 				return IFile.ENCODING_UNKNOWN;
+			first &= 0xFF;//converts unsigned byte to int
+			second &= 0xFF;
 			//look for the UTF-16 Byte Order Mark (BOM)
 			if (first == 0xFE && second == 0xFF)
 				return IFile.ENCODING_UTF_16BE;
