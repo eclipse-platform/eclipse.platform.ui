@@ -24,7 +24,6 @@ import java.util.TreeSet;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.KeyStroke;
-import org.eclipse.ui.keys.ParseException;
 
 final class KeySequenceBindingNode {
 
@@ -468,13 +467,6 @@ final class KeySequenceBindingNode {
 			) {
 			KeySequenceBindingNode keySequenceBindingNode =
 				(KeySequenceBindingNode) iterator.next();
-			try {
-			if ((keySequenceBindingNode == keyStrokeNodeByKeyStrokeMap.get(KeyStroke.getInstance("CTRL+SHIFT+/"))) && (contextIds.length == 5)) {
-			    System.out.println("moo");
-			}
-			} catch (ParseException e) {
-			    
-			}
 			keySequenceBindingNode.solveMatch(
 				contextIds,
 				keyConfigurationIds,
