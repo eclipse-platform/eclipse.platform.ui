@@ -17,7 +17,6 @@ import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.IContentDescription;
-import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 public class File extends Resource implements IFile {
@@ -231,6 +230,7 @@ public class File extends Resource implements IFile {
 				;
 		return description.getProperty(IContentDescription.CHARSET) == null ? getParent().getDefaultCharset() : (String) description.getProperty(IContentDescription.CHARSET);
 	}
+
 	/*
 	 *  (non-Javadoc)
 	 * @see org.eclipse.core.resources.IFile#getContentDescription()
