@@ -199,10 +199,38 @@ function selectTopic(topic)
 		{
 			//expandPathTo(links[i]);
 			//highlightTopic(links[i]);
+			scrollIntoView(links[i]);
 			return true;
 		}
 	}
 	return false;
+}
+
+/**
+ * Scrolls the page to show the specified element
+ */
+function scrollIntoView(node)
+{
+	var nodeTop = node.y;
+	var nodeBottom = nodeTop + 20; //node.height;
+	
+	var pageTop = window.pageYOffset;
+	var pageBottom = pageTop + window.innerHeight;
+
+	var scroll = 0;
+	if (nodeTop >= pageTop )
+	{
+		if (nodeBottom <= pageBottom)
+			return; // already in view
+		else
+			scroll = nodeBottom - pageBottom;
+	}
+	else
+	{
+		scroll = nodeTop - pageTop;
+	}
+	
+	window.scrollBy(0, scroll);
 }
 
 function adjustMargins()
