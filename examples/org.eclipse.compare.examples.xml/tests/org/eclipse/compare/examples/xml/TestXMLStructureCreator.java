@@ -17,7 +17,7 @@ import junit.framework.*;
 
 import org.eclipse.jface.text.Document;
 
-import org.eclipse.compare.IStreamContentAccessor;
+import org.eclipse.compare.IStreamContentAccessorExtension2;
 import org.eclipse.compare.examples.xml.XMLChildren;
 import org.eclipse.compare.examples.xml.XMLNode;
 import org.eclipse.compare.examples.xml.XMLStructureCreator;
@@ -28,7 +28,7 @@ public class TestXMLStructureCreator extends TestCase {
 	Document fdoc;
 	XMLStructureCreator fsc;
 	
-	public class TestStream implements IStreamContentAccessor {
+	public class TestStream implements IStreamContentAccessorExtension2 {
 		String fString;
 		
 		public TestStream(String string) {
@@ -36,7 +36,15 @@ public class TestXMLStructureCreator extends TestCase {
 		}
 		
 		public InputStream getContents() throws CoreException {
-			return new ByteArrayInputStream(fString.getBytes());
+			try {
+				return new ByteArrayInputStream(fString.getBytes("UTF-16"));
+			} catch (Exception e) {
+				return new ByteArrayInputStream(fString.getBytes());
+			}
+		}
+		
+		public String getCharset() {
+			return "UTF-16";
 		}
 	}
 	

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-
 <plugin
    id="org.eclipse.compare.examples.xml"
    name="%pluginName"
@@ -8,64 +7,92 @@
    provider-name="%providerName"
    class="org.eclipse.compare.examples.xml.XMLPlugin">
 
-	<requires>
-	   <import plugin="org.eclipse.ui"/>
-	   <import plugin="org.eclipse.core.resources"/>
-	   <import plugin="org.eclipse.compare"/>
-	   <import plugin="org.apache.xerces"/>
-	</requires>
+   <runtime>
+      <library name="xmlcompareexamples.jar">
+         <export name="*"/>
+      </library>
+   </runtime>
+   <requires>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.compare"/>
+      <import plugin="org.eclipse.jface.text"/>
+      <import plugin="org.junit"/>
+   </requires>
 
-	<runtime>
-	   <library name="xmlcompareexamples.jar">
-	      <export name="*"/>
-	   </library>
-	</runtime>
 
-	<extension-point
-		id="idMapping"
-		name="%idMapping"
-		schema="schema/idMapping.exsd"
-	/>
+   <extension-point id="idMapping" name="%idMapping" schema="schema/idMapping.exsd"/>
 
-	<extension
-		point="org.eclipse.compare.examples.xml.idMapping">
-		
-		<idmap id="antMap" name="%antMap">
-			<mapping signature="project" id="name"/>
-	      	<mapping signature="project>target" id="name"/>
-	      	<ordered signature="project>target"/>
-		</idmap>
-		
-		<idmap id="eclipsePluginMap" name="%eclipsePluginMap">
-	      	<mapping signature="plugin" id="id"/>
-	      	<mapping signature="plugin>requires>import" id="plugin"/>
-	      	<mapping signature="plugin>runtime>library" id="name"/>
-	      	<mapping signature="plugin>runtime>library>export" id="name"/>
-	      	<mapping signature="plugin>extension-point" id="id"/>
-	      	<mapping signature="plugin>extension" id="point"/>
-		</idmap>
-		
-		<idmap id="classpathMap" name="%classpathMap" extension="CLASSPATH">
-	      	<mapping signature="classpath>classpathentry" id="path"/>
-		</idmap>
-		
-	</extension>
-
-	<extension
-		point="org.eclipse.compare.structureMergeViewers">
-		<structureMergeViewer
-			extensions="xml,classpath"
-			class="org.eclipse.compare.examples.xml.XMLStructureViewerCreator">
-		</structureMergeViewer>
-	</extension>
-	
-	<extension
-		point="org.eclipse.ui.preferencePages">
-		<page name="%pluginNamePreferencePage"
-			id="org.eclipse.compare.examples.xml.XMLComparePreferencePage"
-			class="org.eclipse.compare.examples.xml.XMLComparePreferencePage"
-			category= "org.eclipse.ui.preferencePages.Workbench">
-		</page>	
-	</extension>
+   <extension
+         point="org.eclipse.compare.examples.xml.idMapping">
+      <idmap
+            name="%antMap"
+            id="antMap">
+         <mapping
+               signature="project"
+               id="name">
+         </mapping>
+         <mapping
+               signature="project&gt;target"
+               id="name">
+         </mapping>
+         <ordered
+               signature="project&gt;target">
+         </ordered>
+      </idmap>
+      <idmap
+            name="%eclipsePluginMap"
+            id="eclipsePluginMap">
+         <mapping
+               signature="plugin"
+               id="id">
+         </mapping>
+         <mapping
+               signature="plugin&gt;requires&gt;import"
+               id="plugin">
+         </mapping>
+         <mapping
+               signature="plugin&gt;runtime&gt;library"
+               id="name">
+         </mapping>
+         <mapping
+               signature="plugin&gt;runtime&gt;library&gt;export"
+               id="name">
+         </mapping>
+         <mapping
+               signature="plugin&gt;extension-point"
+               id="id">
+         </mapping>
+         <mapping
+               signature="plugin&gt;extension"
+               id="point">
+         </mapping>
+      </idmap>
+      <idmap
+            name="%classpathMap"
+            id="classpathMap"
+            extension="CLASSPATH">
+         <mapping
+               signature="classpath&gt;classpathentry"
+               id="path">
+         </mapping>
+      </idmap>
+   </extension>
+   <extension
+         point="org.eclipse.compare.structureMergeViewers">
+      <structureMergeViewer
+            extensions="xml,classpath"
+            class="org.eclipse.compare.examples.xml.XMLStructureViewerCreator">
+      </structureMergeViewer>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            name="%pluginNamePreferencePage"
+            category="org.eclipse.ui.preferencePages.Workbench"
+            class="org.eclipse.compare.examples.xml.XMLComparePreferencePage"
+            id="org.eclipse.compare.examples.xml.XMLComparePreferencePage">
+      </page>
+   </extension>
 
 </plugin>

@@ -27,7 +27,7 @@ import org.eclipse.ui.*;
 /**
  * The XMLComparePreferencePage is the page used to set ID Mappings for XML Compare
  */
-public class XMLComparePreferencePage	extends PreferencePage implements IWorkbenchPreferencePage, Listener {
+public class XMLComparePreferencePage extends PreferencePage implements IWorkbenchPreferencePage, Listener {
 
 	private Table fIdMapsTable;
 	private Button fAddIdMapButton;

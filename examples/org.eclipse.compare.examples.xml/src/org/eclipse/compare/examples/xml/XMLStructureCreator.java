@@ -18,7 +18,9 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.apache.xerces.parsers.SAXParser;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
 import org.eclipse.compare.IEditableContent;
 import org.eclipse.compare.IStreamContentAccessor;
 import org.eclipse.compare.structuremergeviewer.Differencer;
@@ -86,7 +88,8 @@ public class XMLStructureCreator implements IStructureCreator {
 	public static final char ID_SEPARATOR = '<';
 	public static final char ID_TYPE_BODY = '<';
 
-	private static final String parserName = "org.apache.xerces.parsers.SAXParser"; //$NON-NLS-1$
+	//private static final String parserName = "org.apache.xerces.parsers.SAXParser"; //$NON-NLS-1$
+	private static final String parserName = "org.apache.crimson.parser.XMLReaderImpl"; //$NON-NLS-1$
 
 	private static boolean setValidation    = false; //defaults
 	private static boolean setNameSpaces    = true;
@@ -547,18 +550,28 @@ public class XMLStructureCreator implements IStructureCreator {
             XMLHandler handler = new XMLHandler();
 
 			try {
-            	SAXParser parser = (SAXParser)Class.forName(parserName).newInstance();
-            	
-	            parser.setFeature( "http://xml.org/sax/features/validation",setValidation); //$NON-NLS-1$
-    	        parser.setFeature( "http://xml.org/sax/features/namespaces",setNameSpaces ); //$NON-NLS-1$
-    	        parser.setFeature( "http://apache.org/xml/features/nonvalidating/load-external-dtd", false); //$NON-NLS-1$
-        	    parser.setFeature( "http://apache.org/xml/features/validation/schema",setSchemaSupport ); //$NON-NLS-1$
-	            parser.setFeature( "http://apache.org/xml/features/validation/schema-full-checking",setSchemaFullSupport ); //$NON-NLS-1$
-
-	            parser.setContentHandler(handler);
-	            parser.setErrorHandler(handler);
-	            
-	            parser.parse(new InputSource(sca.getContents()));
+//            	/* original xerces code
+//            	SAXParser parser = (SAXParser)Class.forName(parserName).newInstance();
+//            	*/
+//				XMLReader parser = XMLReaderFactory.createXMLReader(parserName);
+//				
+//	            parser.setFeature( "http://xml.org/sax/features/validation", setValidation); //$NON-NLS-1$
+//    	        parser.setFeature( "http://xml.org/sax/features/namespaces", setNameSpaces ); //$NON-NLS-1$
+//    	        /*
+//    	        parser.setFeature( "http://apache.org/xml/features/nonvalidating/load-external-dtd", false); //$NON-NLS-1$
+//        	    parser.setFeature( "http://apache.org/xml/features/validation/schema", setSchemaSupport ); //$NON-NLS-1$
+//	            parser.setFeature( "http://apache.org/xml/features/validation/schema-full-checking", setSchemaFullSupport); //$NON-NLS-1$
+//	           	*/
+//	            parser.setContentHandler(handler);
+//	            parser.setErrorHandler(handler);
+//	            
+//	            parser.parse(new InputSource(sca.getContents()));
+				
+				SAXParserFactory factory = SAXParserFactory.newInstance();
+				factory.setNamespaceAware(true);
+				SAXParser parser = factory.newSAXParser();
+				parser.parse(new InputSource(sca.getContents()), handler);
+				
 				if (XMLStructureCreator.DEBUG_MODE) System.out.println("End of parse"); //$NON-NLS-1$
 			} catch (SAXParseException e) {
         		XMLPlugin.log(e);
