@@ -144,6 +144,14 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 		String tooltip = null;
 		if (lastLaunched == null) {
 			tooltip = getLaunchHistory().getLaunchGroup().getLabel();
+			int index= tooltip.indexOf('&');
+			if (index == 0) {
+				tooltip= tooltip.substring(1);
+			} else if (index > 0 && index < (tooltip.length() - 1)) {
+				StringBuffer temp= new StringBuffer(tooltip.substring(0, index));
+				temp.append(tooltip.substring(index + 1));
+				tooltip= temp.toString();
+			}		
 		} else {
 			String mode = getMode();
 			String launchName = lastLaunched.getName();
