@@ -214,9 +214,9 @@ public class RemoteLogOperation extends RepositoryLocationOperation {
 		ICVSRemoteResource[] remotes = remoteResources;
 		Command.LocalOption[] localOptions;
 		if(tag1 != null && tag2 != null) {
-			localOptions  = new Command.LocalOption[] {RLog.NO_TAGS, RLog.makeTagOption(tag1, tag2)};
+			localOptions  = new Command.LocalOption[] {RLog.NO_TAGS, RLog.ONLY_INCLUDE_CHANGES, RLog.makeTagOption(tag1, tag2)};
 		} else {
-			localOptions  = new Command.LocalOption[] {RLog.NO_TAGS};
+			localOptions  = new Command.LocalOption[] {RLog.NO_TAGS, RLog.ONLY_INCLUDE_CHANGES};
 			// Optimize the cases were we are only fetching the history for a single revision. If it is
 			// already cached, don't fetch it again.
 			ArrayList unCachedRemotes = new ArrayList();

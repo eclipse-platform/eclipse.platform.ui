@@ -20,7 +20,8 @@ import org.eclipse.team.internal.ccvs.core.CVSTag;
 public class RLog extends RemoteCommand {
 	
 	/*** Local options: specific to rlog ***/
-	public static final LocalOption NO_TAGS = new LocalOption("-N", null); //$NON-NLS-1$
+	public static final LocalOption NO_TAGS = new LocalOption("-N"); //$NON-NLS-1$ //$NON-NLS-2$
+	public static final LocalOption ONLY_INCLUDE_CHANGES = new LocalOption("-S"); //$NON-NLS-1$ //$NON-NLS-2$
 	
 	/**
 	 * Makes a -r option for rlog. Here are the currently supported options:
@@ -54,7 +55,7 @@ public class RLog extends RemoteCommand {
 					if(date1.compareTo(date2) > 0) {
 						operator = ">"; //$NON-NLS-1$
 					}
-					return new LocalOption("-d'" + tag1.getName() + "'"+ operator + "'" + tag2.getName() + "'", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+					return new LocalOption("-d", tag1.getName() + operator + tag2.getName()); //$NON-NLS-1$
 				default:
 					// Unknow tag type!!!
 					throw new IllegalArgumentException();
