@@ -39,19 +39,20 @@ public class CleanDialog extends MessageDialog {
 	private Object[] selection;
 	private IWorkbenchWindow window;
 	/**
-	 * Creates the text of the clean dialog, depending on whether the
+	 * Gets the text of the clean dialog, depending on whether the
 	 * workspace is currently in autobuild mode.
+	 * @return String the question the user will be asked.
 	 */
 	private static String getQuestion() {
 		boolean autoBuilding = ResourcesPlugin.getWorkspace().isAutoBuilding();
 		if (autoBuilding)
 			return IDEWorkbenchMessages.getString("CleanDialog.buildCleanAuto"); //$NON-NLS-1$
-		else
-			return IDEWorkbenchMessages.getString("CleanDialog.buildCleanManual"); //$NON-NLS-1$
+		return IDEWorkbenchMessages.getString("CleanDialog.buildCleanManual"); //$NON-NLS-1$
 	}
 	/**
 	 * Creates a new clean dialog.
 	 * 
+	 * @param window the window to create it in
 	 * @param selection the currently selected projects (may be empty)
 	 */
 	public CleanDialog(IWorkbenchWindow window, IProject[] selection) {
@@ -161,7 +162,9 @@ public class CleanDialog extends MessageDialog {
 		selectedButton.setText(IDEWorkbenchMessages.getString("CleanDialog.cleanSelectedButton")); //$NON-NLS-1$
 		selectedButton.addSelectionListener(updateEnablement);
 		projectName = new Text(radioGroup, SWT.READ_ONLY | SWT.BORDER);
-		projectName.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
+		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
+		projectName.setLayoutData(data);
 		setProjectName();
 		Button browse = new Button(radioGroup, SWT.PUSH);
 		browse.setText(IDEWorkbenchMessages.getString("CleanDialog.browse")); //$NON-NLS-1$
@@ -174,7 +177,10 @@ public class CleanDialog extends MessageDialog {
 		return radioGroup;
 	}
 	/**
-	 * Performs the actual clean operation
+	 * Performs the actual clean operation.
+	 * @param cleanAll if <code>true</true> clean all projects
+	 * @throws CoreException thrown if there is a problem from the
+	 * core builder.
 	 */
 	protected void doClean(boolean cleanAll) throws CoreException {
 		if (cleanAll)

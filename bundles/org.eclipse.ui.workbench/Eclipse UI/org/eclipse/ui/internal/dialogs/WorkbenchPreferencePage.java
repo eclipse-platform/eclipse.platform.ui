@@ -75,8 +75,8 @@ public class WorkbenchPreferencePage extends PreferencePage implements
 
         Composite composite = createComposite(parent);
 
-        createStickyCyclePref(composite);
         createShowUserDialogPref(composite);
+        createStickyCyclePref(composite);
 
         createSpace(composite);
         createOpenModeGroup(composite);
@@ -91,8 +91,9 @@ public class WorkbenchPreferencePage extends PreferencePage implements
      */
     protected void createShowUserDialogPref(Composite composite) {
         showUserDialogButton = new Button(composite, SWT.CHECK);
-        showUserDialogButton.setText(WorkbenchMessages.getString("WorkbenchPreferencePage.RunInBackgroundButton")); //$NON-NLS-1$
-        showUserDialogButton.setSelection(WorkbenchPlugin.getDefault()
+        showUserDialogButton.setText(WorkbenchMessages.getString("WorkbenchPreference.RunInBackgroundButton")); //$NON-NLS-1$
+        showUserDialogButton.setToolTipText(WorkbenchMessages.getString("WorkbenchPreference.RunInBackgroundToolTip"));//$NON-NLS-1$
+		showUserDialogButton.setSelection(WorkbenchPlugin.getDefault()
                 .getPreferenceStore().getBoolean(
                         IPreferenceConstants.RUN_IN_BACKGROUND));
     }
@@ -130,6 +131,9 @@ public class WorkbenchPreferencePage extends PreferencePage implements
         activityPromptButton = new Button(composite, SWT.CHECK);
         activityPromptButton.setText(WorkbenchMessages
                 .getString("WorkbenchPreference.activityPromptButton")); //$NON-NLS-1$
+        activityPromptButton.setToolTipText(WorkbenchMessages
+                .getString("WorkbenchPreference.activityPromptToolTip")); //$NON-NLS-1$
+        
         activityPromptButton.setFont(composite.getFont());
         activityPromptButton.setSelection(getPreferenceStore().getBoolean(
                 IPreferenceConstants.SHOULD_PROMPT_FOR_ENABLEMENT));

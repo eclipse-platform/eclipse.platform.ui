@@ -69,12 +69,12 @@ public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage
 
         Composite composite = createComposite(parent);
 
+        createShowUserDialogPref(composite);
         createAutoBuildPref(composite);
+        createAutoRefreshControls(composite);
         createSaveAllBeforeBuildPref(composite);
         createStickyCyclePref(composite);
         createActivityPromptPref(composite);
-        createShowUserDialogPref(composite);
-        createAutoRefreshControls(composite);
 
         createSpace(composite);
         createSaveIntervalGroup(composite);
@@ -89,6 +89,8 @@ public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage
         autoSaveAllButton = new Button(composite, SWT.CHECK);
         autoSaveAllButton.setText(IDEWorkbenchMessages
                 .getString("WorkbenchPreference.savePriorToBuilding")); //$NON-NLS-1$
+        autoSaveAllButton.setToolTipText(IDEWorkbenchMessages
+                .getString("WorkbenchPreference.savePriorToBuildingToolTip")); //$NON-NLS-1$
         autoSaveAllButton.setFont(composite.getFont());
         autoSaveAllButton.setSelection(getIDEPreferenceStore().getBoolean(
                 IDEInternalPreferences.SAVE_ALL_BEFORE_BUILD));
@@ -98,6 +100,8 @@ public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage
         autoBuildButton = new Button(composite, SWT.CHECK);
         autoBuildButton.setText(IDEWorkbenchMessages
                 .getString("WorkbenchPreference.autobuild")); //$NON-NLS-1$
+        autoBuildButton.setToolTipText(IDEWorkbenchMessages
+                .getString("WorkbenchPreference.autobuildToolTip")); //$NON-NLS-1$
         autoBuildButton.setFont(composite.getFont());
         autoBuildButton.setSelection(ResourcesPlugin.getWorkspace()
                 .isAutoBuilding());
@@ -106,6 +110,7 @@ public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage
     /**
      * Create a composite that contains entry fields specifying save interval
      * preference.
+     * @param composite. The Composite the group is created in.
      */
     private void createSaveIntervalGroup(Composite composite) {
         Composite groupComposite = new Composite(composite, SWT.LEFT);
@@ -155,6 +160,7 @@ public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage
 
     /**
      * Returns the IDE preference store.
+     * @return the preference store.
      */
     protected IPreferenceStore getIDEPreferenceStore() {
         return IDEWorkbenchPlugin.getDefault().getPreferenceStore();
@@ -248,8 +254,8 @@ public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage
         
 
         this.autoRefreshButton = new Button(parent, SWT.CHECK);
-        this.autoRefreshButton.setText(IDEWorkbenchMessages.getString("IDEWorkbenchPreferencePage.RefreshButtonText"));  //$NON-NLS-1$
-        this.autoRefreshButton.setToolTipText(IDEWorkbenchMessages.getString("IDEWorkbenchPreferencePage.RefreshButtonTooltip"));  //$NON-NLS-1$
+        this.autoRefreshButton.setText(IDEWorkbenchMessages.getString("WorkbenchPreference.RefreshButtonText"));  //$NON-NLS-1$
+        this.autoRefreshButton.setToolTipText(IDEWorkbenchMessages.getString("WorkbenchPreference.RefreshButtonToolTip"));  //$NON-NLS-1$
 
         boolean autoRefresh = ResourcesPlugin.getPlugin()
                 .getPluginPreferences().getBoolean(
@@ -258,8 +264,10 @@ public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage
     }
     
     /**
-	 * Check the state of the text
-	 */
+     * Check the state of the text
+     * @param text The widget to check
+     * @return <code>true</code> if the text has a valid number entered.
+     */
 	protected boolean checkState(Text text) {
 
 		if (text == null)
