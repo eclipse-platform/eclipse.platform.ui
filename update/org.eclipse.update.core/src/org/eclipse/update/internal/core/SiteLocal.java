@@ -5,6 +5,7 @@ package org.eclipse.update.internal.core;
  */
 import java.io.*;
 import java.net.*;
+import java.text.DateFormat;
 import java.util.*;
 
 import org.eclipse.core.boot.BootLoader;
@@ -382,7 +383,7 @@ public class SiteLocal
 				newFile = UpdateManagerUtils.getURL(getLocationURL(), newFileName, null);
 			// pass the date onto the name
 			if (name == null)
-				name = currentDate.toString();
+				name = Utilities.format(currentDate);
 			result = new InstallConfiguration(installConfig, newFile, name);
 			// set teh same date in the installConfig
 			result.setCreationDate(currentDate);
@@ -1083,7 +1084,7 @@ public class SiteLocal
 			config.resolve(configURL, getResourceBundle(url));
 			try {
 				config.initialize();
-				config.setLabel(config.getCreationDate().toString());
+				config.setLabel(Utilities.format(config.getCreationDate()));
 				site.addConfigurationModel(config);
 			} catch (CoreException e) {
 				UpdateManagerPlugin.getPlugin().getLog().log(e.getStatus());
@@ -1100,7 +1101,7 @@ public class SiteLocal
 			config.resolve(configURL, getResourceBundle(url));
 			try {
 				config.initialize();
-				config.setLabel(config.getCreationDate().toString());
+				config.setLabel(Utilities.format(config.getCreationDate()));
 				site.addPreservedInstallConfigurationModel(config);
 			} catch (CoreException e) {
 				UpdateManagerPlugin.getPlugin().getLog().log(e.getStatus());

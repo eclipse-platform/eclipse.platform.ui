@@ -269,8 +269,10 @@ public class Feature extends FeatureModel implements IFeature {
 					}
 				}
 			}
-			if (monitor != null)
+			if (monitor != null){
 				monitor.worked(1);
+				if (monitor.isCanceled()) abort();
+			}
 
 			// Download and verify plugin archives
 			for (int i= 0; i < pluginsToInstall.length; i++) {
@@ -284,8 +286,10 @@ public class Feature extends FeatureModel implements IFeature {
 						}
 					}
 				}
-				if (monitor != null)
+				if (monitor != null){
 					monitor.worked(1);
+					if (monitor.isCanceled()) abort();
+				}
 			}
 			handler.pluginsDownloaded(pluginsToInstall);
 
@@ -293,8 +297,10 @@ public class Feature extends FeatureModel implements IFeature {
 			for (int i= 0; i < nonPluginsToInstall.length; i++) {
 				references=
 					provider.getNonPluginEntryArchiveReferences(nonPluginsToInstall[i], monitor);
-				if (monitor != null)
+				if (monitor != null){
 					monitor.worked(1);
+					if (monitor.isCanceled()) abort();
+				}
 			}
 			handler.nonPluginDataDownloaded(nonPluginsToInstall, verificationListener);
 
@@ -310,8 +316,10 @@ public class Feature extends FeatureModel implements IFeature {
 					monitor.subTask(references[i].getIdentifier());
 				consumer.store(references[i], monitor);
 			}
-			if (monitor != null)
+			if (monitor != null){
 				monitor.worked(1);
+				if (monitor.isCanceled()) abort();
+			}
 
 			// Install plugin files
 			for (int i= 0; i < pluginsToInstall.length; i++) {
@@ -330,15 +338,18 @@ public class Feature extends FeatureModel implements IFeature {
 					pluginConsumer.store(references[j], monitor);
 				}
 				pluginConsumer.close();
-				if (monitor != null)
+				if (monitor != null){
 					monitor.worked(1);
+					if (monitor.isCanceled()) abort();
+				}
 			}
 
 			// call handler to complete installation (eg. handle non-plugin entries)
 			handler.completeInstall(consumer);
-			if (monitor != null)
+			if (monitor != null){
 				monitor.worked(1);
-
+				if (monitor.isCanceled()) abort();
+			}
 			// indicate install success
 			success= true;
 
@@ -573,4 +584,11 @@ public class Feature extends FeatureModel implements IFeature {
 		return;
 	}
 
+	/*
+	 * Installation has been cancelled, abort and revert
+	 */
+	 private void abort() throws CoreException{
+		// FIXME	 	
+		throw Utilities.newCoreException("Installation has been cacelled",null);
+	 }
 }

@@ -5,6 +5,7 @@ package org.eclipse.update.core;
  */
 
 import java.io.*;
+import java.text.DateFormat;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
@@ -19,6 +20,7 @@ public class Utilities {
 	private static Map entryMap;
 	private static Stack bufferPool;
 	private static final int BUFFER_SIZE = 4096;
+	private static final DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, Locale.getDefault());			
 
 	/**
 	 * Returns a new working directory (in temporary space). Ensures
@@ -204,6 +206,20 @@ public class Utilities {
 		UpdateManagerPlugin.getPlugin().getLog().log(status);
 	}
 
+
+	/**
+	 * Formats a Date based on the default Locale 
+	 * If teh Date is <code>null</code> returns an empty String
+	 * 
+	 * @param date the Date to format
+	 * @return the formatted Date as a String
+	 * @since 2.0
+	 */
+	public static String format(Date date){
+		if (date==null) return "";
+		return dateFormat.format(date);
+	}
+	
 	private static void verifyPath(File path, boolean isFile) {
 		// if we are expecting a file back off 1 path element
 		if (isFile) {

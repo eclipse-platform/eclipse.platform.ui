@@ -278,8 +278,12 @@ public class JarVerifier implements IVerifier {
 		}
 
 
-		if (monitor!=null)
+		if (monitor != null){
 			monitor.worked(1);
+			if (monitor.isCanceled()){
+				result.setVerificationCode(IVerificationResult.VERIFICATION_CANCELLED);
+			}
+		}
 			
 		return result;
 	}

@@ -3,19 +3,20 @@ package org.eclipse.update.internal.ui.wizards;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.jface.wizard.*;
-import org.eclipse.update.internal.ui.model.*;
-import org.eclipse.update.internal.ui.security.JarVerificationService;
-import org.eclipse.update.internal.core.FeaturePackagedContentProvider;
-import org.eclipse.update.internal.ui.*;
-import java.util.*;
-import org.eclipse.update.core.*;
-import org.eclipse.update.configuration.*;
+import java.lang.reflect.InvocationTargetException;
+import java.text.DateFormat;
+
 import org.eclipse.core.runtime.*;
-import org.eclipse.update.internal.ui.*;
-import org.eclipse.jface.operation.*;
-import java.lang.reflect.*;
-import org.eclipse.update.internal.ui.forms.UIProblemHandler;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.wizard.IWizardPage;
+import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.update.configuration.*;
+import org.eclipse.update.core.*;
+import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.internal.ui.UpdateUIPluginImages;
+import org.eclipse.update.internal.ui.model.PendingChange;
+import org.eclipse.update.internal.ui.model.UpdateModel;
+import org.eclipse.update.internal.ui.security.JarVerificationService;
 
 public class InstallWizard extends Wizard {
 	private ReviewPage reviewPage;
@@ -96,7 +97,7 @@ public class InstallWizard extends Wizard {
 		try {
 			ILocalSite localSite = SiteManager.getLocalSite();
 			IInstallConfiguration config = localSite.cloneCurrentConfiguration();
-			config.setLabel(config.getCreationDate().toString());
+			config.setLabel(Utilities.format(config.getCreationDate()));
 			return config;
 		} catch (CoreException e) {
 			UpdateUIPlugin.logException(e);

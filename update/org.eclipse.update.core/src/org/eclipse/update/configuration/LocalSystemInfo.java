@@ -62,6 +62,13 @@ public class LocalSystemInfo {
 	 */
 	public static final int VOLUME_REMOTE = 3;
 	
+	/**
+	 * Indicates a cdrom volume
+	 * @see LocalSystemInfo#getType(File)
+	 * @since 2.0
+	 */
+	public static final int VOLUME_CDROM = 4;	
+	
 	private static ArrayList listeners = new ArrayList();	
 	private static boolean hasNatives = false;	
 	static {
@@ -73,6 +80,7 @@ public class LocalSystemInfo {
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS){
 				UpdateManagerPlugin.getPlugin().debug("Unable to load native library 'update'."); //$NON-NLS-1$
 			}
+				UpdateManagerPlugin.getPlugin().debug("Unable to load native library 'update'."); //$NON-NLS-1$			
 			hasNatives = false;
 		}
 	}
@@ -133,6 +141,7 @@ public class LocalSystemInfo {
 	 * @see LocalSystemInfo#VOLUME_REMOVABLE
 	 * @see LocalSystemInfo#VOLUME_FIXED
 	 * @see LocalSystemInfo#VOLUME_REMOTE
+	 * @see LocalSystemInfo#VOLUME_CDROM
 	 * @since 2.0
 	 */
 	public static int getType(File path) {

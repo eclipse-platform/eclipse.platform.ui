@@ -3,15 +3,19 @@ package org.eclipse.update.internal.ui.forms;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.text.DateFormat;
+
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
-import org.eclipse.swt.layout.*;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.update.configuration.*;
+import org.eclipse.update.configuration.IActivity;
+import org.eclipse.update.configuration.IInstallConfiguration;
+import org.eclipse.update.core.Utilities;
 import org.eclipse.update.internal.ui.UpdateUIPlugin;
-import org.eclipse.update.internal.ui.pages.*;
-import org.eclipse.update.internal.ui.parts.*;
+import org.eclipse.update.internal.ui.pages.UpdateFormPage;
 import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 
 
@@ -92,7 +96,7 @@ public class ActivitySection extends UpdateSection {
 		IActivity [] activities = config.getActivities();
 		for (int i=0; i<activities.length; i++) {
 			IActivity activity = activities[i];
-			factory.createLabel(container, activity.getDate().toString());
+			factory.createLabel(container, Utilities.format(activity.getDate()));
 			createLimitedLabel(container, activity.getLabel(), 300, factory);
 			factory.createLabel(container, getActionLabel(activity));
 			factory.createLabel(container, getStatusLabel(activity));
