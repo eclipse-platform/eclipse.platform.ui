@@ -1,9 +1,11 @@
 package org.eclipse.ui.internal;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.ui.internal.registry.RegistryReader;
 import org.eclipse.ui.internal.registry.WizardsRegistryReader;
 
@@ -15,10 +17,13 @@ import org.eclipse.ui.internal.registry.WizardsRegistryReader;
 class DecoratorRegistryReader extends RegistryReader {
 
 	//The registry values are the ones read from the registry
-	static HashMap registryValues;
+	static Collection values;
 
 	private static String EXTENSION_ID = "decorators";
 	private static String ATT_OBJECT_CLASS = "objectClass";
+	private static String ATT_NAME = "name";
+	private static String ATT_ENABLED = "state";
+	private static String P_TRUE = "true";
 
 	/**
 	 * Constructor for DecoratorRegistryReader.
@@ -38,8 +43,16 @@ class DecoratorRegistryReader extends RegistryReader {
 
 			String className = element.getAttribute(ATT_OBJECT_CLASS);
 
-			//Prime with the exact match
-			registryValues.put(className, contributor);
+			String name = element.getAttribute(ATT_NAME);
+
+			boolean enabled = P_TRUE.equals(element.getAttribute(ATT_NAME));
+
+			values.add(
+				new DecoratorDefinition(
+					name,
+					className,
+					enabled,
+					(ILabelDecorator) contributor));
 		} catch (CoreException exception) {
 			MessageDialog.openError(
 				null,
@@ -47,7 +60,7 @@ class DecoratorRegistryReader extends RegistryReader {
 				exception.getLocalizedMessage());
 			return false;
 		}
-		
+
 		return true;
 
 	}
@@ -56,9 +69,10 @@ class DecoratorRegistryReader extends RegistryReader {
 	 * Read the decorator extensions within a registry and set 
 	 * up the registry values.
 	 */
-	void readRegistry(IPluginRegistry in) {
-		registryValues = new HashMap();
+	Collection readRegistry(IPluginRegistry in) {
+		values = new ArrayList();
 		readRegistry(in, IWorkbenchConstants.PLUGIN_ID, EXTENSION_ID);
+		return values;
 	}
 
 }

@@ -16,6 +16,7 @@ import org.eclipse.jface.preference.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.FontData;
+
 import java.io.*;
 import java.util.*;
 
@@ -45,8 +46,9 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	private EditorRegistry editorRegistry;
 	// Manager that maps project nature ids to images
 	private ProjectImageRegistry projectImageRegistry;
-	// Manager that handles the decorators registered
+	//Manager for the DecoratorManager
 	private DecoratorManager decoratorManager;
+
 	// Global workbench ui plugin flag. Only workbench implementation is allowed to use this flag
 	// All other plugins, examples, or test cases must *not* use this flag.
 	public static boolean DEBUG = false;
@@ -317,8 +319,7 @@ protected void initializeDefaultPreferences(IPreferenceStore store) {
 	store.setDefault(
 		IWorkbenchPreferenceConstants.PROJECT_OPEN_NEW_PERSPECTIVE,
 		IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_PAGE);
-	store.setDefault(IPreferenceConstants.REUSE_PERSPECTIVES, false);
-	store.setDefault(IPreferenceConstants.OPEN_PERSPECTIVE_MRU, false);
+	store.setDefault(IPreferenceConstants.VERSION_2_PERSPECTIVES, false);
 	store.setDefault(IPreferenceConstants.OPEN_VIEW_MODE, 
 		IPreferenceConstants.OVM_EMBED);
 		
@@ -423,14 +424,15 @@ public static void log(String message, IStatus status) {
 public void setWorkbench(IWorkbench aWorkbench) {
 	this.workbench = aWorkbench;
 }
-
+	
 /**
- * Get the decorator manager used for the receiver.
+ * Gets the decoratorManager.
+ * @return Returns a DecoratorManager
  */
-
-public DecoratorManager getDecoratorManager(){
+public DecoratorManager getDecoratorManager() {
 	if(decoratorManager == null)
 		decoratorManager = new DecoratorManager();
 	return decoratorManager;
 }
+
 }

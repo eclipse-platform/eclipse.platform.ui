@@ -21,8 +21,11 @@ public class DecoratorManager {
 	//Hold onto the list of listeners to be told if a change has occured
 	private Collection listeners = new HashSet();
 
-	//The cachedDecorators are a 1-1 mapping of type to decorator.
+	//The cachedDecorators are a 1-many mapping of type to decorator.
 	private HashMap cachedDecorators = new HashMap();
+
+	//The definitions are definitions read from the registry
+	private DecoratorDefinition[] definitions;
 
 	/**
 	 * Create a new instance of the receiver and load the
@@ -31,8 +34,9 @@ public class DecoratorManager {
 
 	public DecoratorManager() {
 		DecoratorRegistryReader reader = new DecoratorRegistryReader();
-		reader.readRegistry(Platform.getPluginRegistry());
-		cachedDecorators = (HashMap) reader.registryValues.clone();
+		Collection values = reader.readRegistry(Platform.getPluginRegistry());
+		definitions = new DecoratorDefinition[values.size()];
+		values.toArray(definitions);
 	}
 
 	/**
@@ -66,11 +70,12 @@ public class DecoratorManager {
 	 */
 	public String decorateText(String text, Object element) {
 
-		ILabelDecorator decorator = getDecoratorFor(element);
-		if (decorator == null)
-			return text;
-		else
-			return decorator.decorateText(text, element);
+		ILabelDecorator[] decorators = getDecoratorsFor(element);
+		String result = text;
+		for (int i = 0; i < decorators.length; i++) {
+			result = decorators[i].decorateText(text, element);
+		}
+		return result;
 	}
 
 	/**
@@ -79,61 +84,65 @@ public class DecoratorManager {
 	 */
 	public Image decorateImage(Image image, Object element) {
 
-		ILabelDecorator decorator = getDecoratorFor(element);
-		if (decorator == null)
-			return image;
-		else
-			return decorator.decorateImage(image, element);
+		ILabelDecorator[] decorators = getDecoratorsFor(element);
+		Image result = image;
+		for (int i = 0; i < decorators.length; i++) {
+			result = decorators[i].decorateImage(image, element);
+		}
+		return result;
 	}
 
 	/**
-	 * Get the decorator registered for elements of this type.
+	 * Get the decorators registered for elements of this type.
 	 * If there is one return it. If not search for one first
 	 * via superclasses and then via interfaces.
 	 * If still nothing is found then add in a decorator that
 	 * does nothing.
 	 */
-	private ILabelDecorator getDecoratorFor(Object element) {
+	private ILabelDecorator[] getDecoratorsFor(Object element) {
 
 		Class elementClass = element.getClass();
 		Object existing = cachedDecorators.get(elementClass.getName());
 		if (existing != null)
-			return (ILabelDecorator) existing;
+			return (ILabelDecorator[]) existing;
 
 		List allClasses = new ArrayList();
-		ILabelDecorator decorator = null;
+		allClasses.add(element.getClass());
+		ArrayList decorators = new ArrayList();
+		DecoratorDefinition[] enabledDefinitions = enabledDefinitions();
 
-		if (decorator == null) {
-			allClasses = computeClassOrder(elementClass);
-			decorator = findDecorator(allClasses);
-		}
+		allClasses = computeClassOrder(elementClass);
+		findDecorators(allClasses, enabledDefinitions, decorators);
 
-		//Nothing cached so look for the interfaces;
-		if (decorator == null) {
-			allClasses.add(elementClass);
-			decorator = findDecorator(computeInterfaceOrder(allClasses));
-		}
+		findDecorators(
+			computeInterfaceOrder(allClasses),
+			enabledDefinitions,
+			decorators);
 
-		if (decorator == null)
-			decorator = NullDecorator.getNullDecorator();
-
-		cachedDecorators.put(element.getClass().getName(), decorator);
-		return decorator;
+		ILabelDecorator[] decoratorArray = new ILabelDecorator[decorators.size()];
+		decorators.toArray(decoratorArray);
+		cachedDecorators.put(element.getClass().getName(), decoratorArray);
+		return decoratorArray;
 	}
 
 	/** 
-	 * Find a defined decorator that has a type that is the same
-	 * as one of the classes. We assume that there is an entry for
-	 * at least the type defined in the plugin.xml.
+	 * Find a defined decorators that have a type that is the same
+	 * as one of the classes. 
 	 */
-	private ILabelDecorator findDecorator(Collection classes) {
-		Iterator iterator = classes.iterator();
-		while (iterator.hasNext()) {
-			String key = ((Class) iterator.next()).getName();
-			if (cachedDecorators.containsKey(key))
-				return (ILabelDecorator) cachedDecorators.get(key);
+	private void findDecorators(
+		Collection classList,
+		DecoratorDefinition[] enabledDefinitions,
+		ArrayList result) {
+
+		Iterator classes = classList.iterator();
+		while (classes.hasNext()) {
+			String className = ((Class) classes.next()).getName();
+			for (int i = 0; i < enabledDefinitions.length; i++) {
+				if (className.equals(enabledDefinitions[i].getClass()))
+					result.add(enabledDefinitions[i].getDecorator());
+			}
 		}
-		return null;
+
 	}
 
 	/**
@@ -141,9 +150,11 @@ public class DecoratorManager {
 	* has a label property called property name.
 	*/
 	public boolean isLabelProperty(Object element, String property) {
-		ILabelDecorator decorator = getDecoratorFor(element);
-		if (decorator != null && decorator.isLabelProperty(element, property))
-			return true;
+		ILabelDecorator[] decorators = getDecoratorsFor(element);
+		for (int i = 0; i < decorators.length; i++) {
+			if (decorators[i].isLabelProperty(element, property))
+				return true;
+		}
 		return false;
 	}
 
@@ -199,5 +210,19 @@ public class DecoratorManager {
 				((Class) newList.next()).getInterfaces(),
 				result,
 				seen);
+	}
+	
+	/**
+	 * Return the enabled decorator definitions
+	 */
+	private DecoratorDefinition[] enabledDefinitions(){
+		ArrayList result = new ArrayList();
+		for(int i = 0; i < definitions.length; i++){
+			if(definitions[i].isEnabled())
+				result.add(definitions[i]);
+		}
+		DecoratorDefinition[] returnArray = new DecoratorDefinition[result.size()];
+		result.toArray(returnArray);
+		return returnArray;
 	}
 }
