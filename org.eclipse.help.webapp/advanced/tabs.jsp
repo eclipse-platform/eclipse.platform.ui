@@ -110,10 +110,16 @@ function showTab(tab)
 
   <table cellspacing="0" cellpadding="0" border="0" width="100%" height="100%">
    <tr>
+
 <%
 	for (int i=0; i<views.length; i++) 
 	{
 		String title = ServletResources.getString(views[i].getName(), request);
+		if (i != 0) {
+%>
+	<td width="1px" class="separator"></td>
+<%
+		}
 %>
 	<td  title="<%=views[i].getName()%>" 
 	     align="center"  
@@ -132,7 +138,6 @@ function showTab(tab)
 	         >
 	     </a>
 	</td>
-    <td width="1px" class="separator"></td>
 <%
 	}
 %>
