@@ -6,7 +6,6 @@ package org.eclipse.debug.internal.ui.actions;
  */
 
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IStep;
 
 public abstract class StepActionDelegate extends AbstractListenerActionDelegate {
@@ -14,12 +13,9 @@ public abstract class StepActionDelegate extends AbstractListenerActionDelegate 
 	/**
 	 * @see AbstractDebugActionDelegate#doAction(Object)
 	 */
-	public void doAction(Object object) throws DebugException {
-		IDebugElement element= (IDebugElement)object;
-		IStep steppable= null;
-		if (element instanceof IStep) {
-			steppable= (IStep) element;
-			stepAction(steppable);
+	protected void doAction(Object object) throws DebugException {
+		if (object instanceof IStep) {
+			stepAction((IStep)object);
 		}
 	}
 
@@ -28,7 +24,7 @@ public abstract class StepActionDelegate extends AbstractListenerActionDelegate 
 	 */
 	protected boolean isEnabledFor(Object element) {
 		if (element instanceof IStep) {
-			return checkCapability((IStep) element);
+			return checkCapability((IStep)element);
 		}
 		return false;
 	}

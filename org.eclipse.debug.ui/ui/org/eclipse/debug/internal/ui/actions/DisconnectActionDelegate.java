@@ -16,8 +16,9 @@ public class DisconnectActionDelegate extends AbstractListenerActionDelegate {
 	 * @see AbstractDebugActionDelegate#doAction(Object)
 	 */
 	protected void doAction(Object element) throws DebugException {
-		if (element instanceof IDisconnect)
+		if (element instanceof IDisconnect) {
 			 ((IDisconnect) element).disconnect();
+		}
 	}
 
 	/**

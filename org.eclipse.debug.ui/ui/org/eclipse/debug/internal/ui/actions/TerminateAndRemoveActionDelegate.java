@@ -20,10 +20,12 @@ public class TerminateAndRemoveActionDelegate extends AbstractDebugActionDelegat
 	 */
 	protected void doAction(Object element) throws DebugException {
 		try {
-			ITerminate terminate= (ITerminate)element;
-			if (!terminate.isTerminated()) {
-				terminate.terminate();
-			}		
+			if (element instanceof ITerminate) {
+				ITerminate terminate= (ITerminate)element;
+				if (!terminate.isTerminated()) {
+					terminate.terminate();
+				}		
+			}
 		} finally {
 			ILaunch launch= null;
 			if (element instanceof ILaunch) {

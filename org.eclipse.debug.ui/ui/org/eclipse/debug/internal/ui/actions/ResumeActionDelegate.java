@@ -16,12 +16,8 @@ public class ResumeActionDelegate extends AbstractListenerActionDelegate {
 	 * @see AbstractDebugActionDelegate#doAction(Object)
 	 */
 	protected void doAction(Object object) throws DebugException {
-		IDebugElement element= (IDebugElement)object;
-		if (element instanceof ISuspendResume) {
-			ISuspendResume suspendResume= (ISuspendResume)element;
-			if (suspendResume.canResume()) {
-				suspendResume.resume();
-			}
+		if (object instanceof ISuspendResume) {
+			((ISuspendResume)object).resume();
 		}
 	}
 

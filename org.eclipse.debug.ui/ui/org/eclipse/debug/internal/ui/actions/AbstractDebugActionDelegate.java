@@ -169,7 +169,7 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	}
 		
 	/**
-	 * Does the specific action of this action to the process.
+	 * Performs the specific action on this element.
 	 */
 	protected abstract void doAction(Object element) throws DebugException;
 

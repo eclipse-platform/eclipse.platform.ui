@@ -20,10 +20,8 @@ import org.eclipse.jface.viewers.ISelection;
  */
 public class TerminateAllAction extends AbstractListenerActionDelegate {
 	
-	public TerminateAllAction() {
-	}
-	
 	protected void doAction(Object element) {
+		//not used
 	}
 	
 	protected void update() {

@@ -63,7 +63,7 @@ public class RelaunchActionDelegate extends AbstractDebugActionDelegate {
 	/**
 	 * @see AbstractDebugActionDelegate#isEnabledFor(Object)
 	 */
-	public boolean isEnabledFor(Object element) {
+	protected boolean isEnabledFor(Object element) {
 		ILaunch launch= null;
 		if (element instanceof ILaunch) {
 			launch= (ILaunch)element;
