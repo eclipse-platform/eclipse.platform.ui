@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.roles;
 
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
 /**
  * An Activity is a definition of a class of operations
  * within the workbench. It is defined with respect to 
@@ -21,6 +25,11 @@ public class Activity {
 	private String name;
 	private String parent;
 	boolean enabled;
+    
+    /**
+     * Set of IActivityListeners
+     */
+    private Set listeners = new HashSet();
 
 	/**
 	 * Create a new activity with the suppled id and name.
@@ -43,6 +52,26 @@ public class Activity {
 		this(newId, newName);
 		parent = newParent;
 	}
+
+    /**
+     * 
+     * @param listener
+     */
+    public void addListener(IActivityListener listener) {
+        synchronized (listeners) {
+            listeners.add(listener);
+        }
+    }
+    
+    /**
+     * 
+     * @param listener
+     */
+    public void removeListener(IActivityListener listener) {
+        synchronized (listeners) {
+            listeners.remove(listener);
+        }        
+    }
 
 	/**
 	 * Return the id of the receiver.
@@ -84,12 +113,43 @@ public class Activity {
 	 * @param enabled
 	 */
 	public void setEnabled(boolean enabled) {
+        boolean fireEvent = false;
+        if (this.enabled != enabled) {
+            fireEvent = true;
+        }
 		this.enabled = enabled;        
-//        if (enabled && parent != null) {
-//            Activity parentActivity = RoleManager.getInstance().getActivity(parent);
-//            if (parentActivity != null) {
-//                parentActivity.setEnabled(enabled);
-//            }
-//        }
+//      if (enabled && parent != null) {
+//          Activity parentActivity = RoleManager.getInstance().getActivity(parent);
+//          if (parentActivity != null) {
+//              parentActivity.setEnabled(enabled);
+//          }
+//      }
+        if (fireEvent) {
+            fireActivityEvent(new ActivityEvent(this));
+        }
+	}
+
+	/**
+     * Fire the given event to all listeners.
+     * 
+	 * @param event
+	 */
+	private void fireActivityEvent(ActivityEvent event) {
+        Set listenersCopy;
+        synchronized (listeners) {
+            listenersCopy = new HashSet(listeners);
+        }
+        
+		for (Iterator i = listenersCopy.iterator(); i.hasNext();) {
+			IActivityListener listener = (IActivityListener) i.next();
+            listener.activityChanged(event);
+		}
+	}
+    
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return getId();
 	}
 }
