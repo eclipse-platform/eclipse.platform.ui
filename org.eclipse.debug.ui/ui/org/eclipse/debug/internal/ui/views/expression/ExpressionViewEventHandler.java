@@ -87,15 +87,7 @@ public class ExpressionViewEventHandler extends VariablesViewEventHandler implem
 		Runnable r = new Runnable() {
 			public void run() {
 				if (isAvailable()) {
-					getTreeViewer().getControl().setRedraw(false);
-					for (int i = 0; i < expressions.length; i++) {
-						IExpression expression = expressions[i];
-						insert(expression);	
-						getTreeViewer().expandToLevel(expression, 1);
-					}
-					getTreeViewer().getControl().setFocus();
-					selectAndReveal(expressions[expressions.length - 1]);
-					getTreeViewer().getControl().setRedraw(true);
+					getTreeViewer().refresh();
 				}
 			}
 		};
