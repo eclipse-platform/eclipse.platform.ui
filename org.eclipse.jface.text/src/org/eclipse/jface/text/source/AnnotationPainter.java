@@ -15,6 +15,7 @@ package org.eclipse.jface.text.source;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -91,18 +92,16 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	private IAnnotationModel fModel;
 	/** The annotation access */
 	private IAnnotationAccess fAnnotationAccess;
-
 	/**
-	 * The map of decorations
-	 * 
+	 * The map with decorations
 	 * @since 3.0
 	 */
-	private Map fDecorationsMap= new HashMap();
+	private Map fDecorationsMap= new IdentityHashMap();
 	/**
-	 * The list of highlighted decorations.
+	 * The map with of highlighted decorations.
 	 * @since 3.0
 	 */
-	private Map fHighlightedDecorationsMap= new HashMap();
+	private Map fHighlightedDecorationsMap= new IdentityHashMap();
 	/** The internal color table */
 	private Map fColorTable= new HashMap();
 	/** The list of configured annotation types for being painted by this painter */
