@@ -63,6 +63,34 @@ public class DefaultHelpUI extends AbstractHelpUI {
 	}
 	
 	/**
+	 * Displays dynamic help.
+	 */
+	public void displayDynamicHelp() {
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		Shell activeShell = getActiveShell();
+		if (window != null && isActiveShell(activeShell, window)) {
+			IIntroManager introMng = PlatformUI.getWorkbench().getIntroManager();
+			IIntroPart intro = introMng.getIntro();
+			if (intro!=null && !introMng.isIntroStandby(intro))
+				introMng.setIntroStandby(intro, true);
+			
+			IWorkbenchPage page = window.getActivePage();
+			if (page != null) {
+				IWorkbenchPart activePart = page.getActivePart();
+				Control c = activeShell.getDisplay().getFocusControl();
+				try {
+					IViewPart part = page.showView(HELP_VIEW_ID);
+					if (part!=null) {
+						HelpView view = (HelpView)part;
+						view.showDynamicHelp(activePart, c);
+					}
+				} catch (PartInitException e) {
+				}
+			}
+		}
+	}
+	
+	/**
 	 * Starts the search.
 	 */
 	

@@ -767,6 +767,14 @@ public class ReusableHelpPart implements IHelpUIConstants, IActivityManagerListe
 		if (part != null && phrase != null)
 			part.startSearch(phrase);
 	}
+	
+	public void showDynamicHelp(IWorkbenchPart wpart, Control c) {
+		showPage(IHelpUIConstants.HV_CONTEXT_HELP_PAGE, true);
+		ContextHelpPart part = (ContextHelpPart)findPart(IHelpUIConstants.HV_CONTEXT_HELP);
+		if (part!=null) {
+			part.handleActivation(c, wpart);
+		}
+	}
 
 	private boolean flipPages(HelpPartPage oldPage, HelpPartPage newPage) {
 		if (newPage.canOpen() == false)
