@@ -543,6 +543,19 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 			}
 		});
 
+		// Arrow buttons aren't normally added to the tab list. Let's fix that.
+		Control[] tabStops = groupKeySequence.getTabList();
+		ArrayList newTabStops = new ArrayList();
+		for (int i = 0; i < tabStops.length; i++) {
+			Control tabStop = tabStops[i];
+			newTabStops.add(tabStop);
+			if (textKeySequence.equals(tabStop)) {
+				newTabStops.add(buttonAddKey);
+			}
+		}
+		Control[] newTabStopArray = (Control[]) newTabStops.toArray(new Control[newTabStops.size()]);
+		groupKeySequence.setTabList(newTabStopArray);
+
 		// Construct the menu to attach to the above button.
 		menuButtonAddKey = new Menu(buttonAddKey);
 		Iterator trappedKeyItr = KeySequenceText.TRAPPED_KEYS.iterator();
@@ -1448,7 +1461,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		labelKeyConfigurationExtends.setText(Util.ZERO_LENGTH_STRING);
 	}
 
-	/*private void selectedButtonChange() {
+/*	private void selectedButtonChange() {
 		KeySequence keySequence = getKeySequence();
 		boolean validKeySequence = keySequence != null && validateSequence(keySequence);
 		String scopeId = getScopeId();
@@ -1489,38 +1502,38 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 			CommandRecord commandRecord = (CommandRecord) commandRecords.get(i);
 			Set customSet = commandRecord.customSet;
 			Set defaultSet = commandRecord.defaultSet;
-			int difference = DIFFERENCE_NONE; //String commandId = null;
+			int difference = DIFFERENCE_NONE; //String commandId = null; //
 											  // boolean
 			commandConflict = false;
 			String alternateCommandId = null;
 			boolean alternateCommandConflict = false;
 			if (customSet.isEmpty()) {
 				if (defaultSet.contains(commandRecord.command)) { //commandId
-																  // =
+																  // // =
 					commandRecord.commandId;
 					commandConflict = commandRecord.defaultConflict;
 				}
 			} else {
 				if (defaultSet.isEmpty()) {
 					if (customSet.contains(commandRecord.command)) {
-						difference = DIFFERENCE_ADD; //commandId =
+						difference = DIFFERENCE_ADD; //commandId = //
 													 // commandRecord.commandId;
-													 // commandConflict =
-						commandRecord.customConflict;
+													 // //
+						commandConflict = commandRecord.customConflict;
 					}
 				} else {
 					if (customSet.contains(commandRecord.command)) {
-						difference = DIFFERENCE_CHANGE; //commandId =
+						difference = DIFFERENCE_CHANGE; //commandId = //
 														// commandRecord.commandId;
 						commandConflict = commandRecord.customConflict;
 						alternateCommandId = commandRecord.defaultCommand;
 						alternateCommandConflict = commandRecord.defaultConflict;
 					} else {
 						if (defaultSet.contains(commandRecord.command)) {
-							difference = DIFFERENCE_MINUS; //commandId =
+							difference = DIFFERENCE_MINUS; //commandId = //
 														   // commandRecord.commandId;
-														   // commandConflict =
-							commandRecord.defaultConflict;
+														   // //
+							commandConflict = commandRecord.defaultConflict;
 							alternateCommandId = commandRecord.customCommand;
 							alternateCommandConflict = commandRecord.customConflict;
 						}
@@ -1665,6 +1678,6 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 			} else if (conflict)
 				tableItem.setForeground(new Color(getShell().getDisplay(), RGB_CONFLICT));
 		}
-	}
-*/
+	}*/
+
 }
