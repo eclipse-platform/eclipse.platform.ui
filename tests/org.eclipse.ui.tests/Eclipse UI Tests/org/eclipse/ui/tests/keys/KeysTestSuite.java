@@ -32,9 +32,10 @@ public class KeysTestSuite extends TestSuite {
 		addTest(new TestSuite(Bug36420Test.class));
 //		TODO This test is broken until JDT fixes Bug 44148
 //		addTest(new TestSuite(Bug36537Test.class));
-//		TODO Intermittent failure.
+//		TODO Intermittent failure.  SWT Bug 44344.  XGrabPointer?
 //		addTest(new TestSuite(Bug40023Test.class));
 		addTest(new TestSuite(Bug42024Test.class));
+		addTest(new TestSuite(Bug42035Test.class));
 		addTest(new TestSuite(Bug42627Test.class));
 		addTest(new TestSuite(Bug43168Test.class));
 		addTest(new TestSuite(Bug43321Test.class));
