@@ -28,6 +28,19 @@
    </editor>
 </extension>
 
+<extension point = "org.eclipse.ui.popupMenus">
+   	<objectContribution
+	  	id="org.eclipse.ui.examples.propertysheet"
+	    objectClass="org.eclipse.ui.examples.propertysheet.UserElement">
+	    <action id="org.eclipse.ui.examples.propertysheet.action1"
+    	   	label="%PopupMenus.action"
+       		menuBarPath="additions"
+       		class="org.eclipse.ui.examples.propertysheet.PopupMenuActionDelegate"	
+       		enablesFor="1">
+	    </action>
+   </objectContribution>
+</extension>
+
 <extension point="org.eclipse.help.contexts"> 
    <contexts name="HelpContexts.xml"/> 
 </extension>

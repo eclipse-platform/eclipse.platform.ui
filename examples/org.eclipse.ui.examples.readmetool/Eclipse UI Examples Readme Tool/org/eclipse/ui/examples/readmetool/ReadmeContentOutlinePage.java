@@ -6,14 +6,19 @@ package org.eclipse.ui.examples.readmetool;
  */
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.resources.*;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.ui.model.*;
+import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.PluginTransfer;
 import org.eclipse.ui.views.contentoutline.*;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Menu;
 
 /**
  * Content outline page for the readme editor.
@@ -49,6 +54,22 @@ public void createControl(Composite parent) {
 private IAdaptable getContentOutline(IAdaptable input) {
 	return ReadmeModelFactory.getInstance().getContentOutline(input);
 }
+/**
+ * Creates and registers the popup menu for this page
+ */
+public void init(IPageSite pageSite) {
+	super.init(pageSite);
+	// Configure the context menu.
+	MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
+	menuMgr.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));	
+	menuMgr.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS+"-end"));	 //$NON-NLS-1$
+
+	TreeViewer viewer = getTreeViewer();
+	Menu menu = menuMgr.createContextMenu(viewer.getTree());
+	viewer.getTree().setMenu(menu);
+	// Be sure to register it so that other plug-ins can add actions.
+	getSite().registerContextMenu("org.eclipse.ui.examples.readmetool.outline", menuMgr, viewer);  //$NON-NLS-1$
+}	
 /**
  * Initializes drag and drop for this content outline page.
  */

@@ -4,11 +4,16 @@ package org.eclipse.ui.views.contentoutline;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.ui.part.Page;
-import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.util.ListenerList;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.part.IPageSite;
+import org.eclipse.ui.part.Page;
 
 /**
  * An abstract base class for content outline pages.
@@ -97,6 +102,15 @@ public ISelection getSelection() {
  */
 protected TreeViewer getTreeViewer() {
 	return treeViewer;
+}
+/**
+ * The <code>ContentOutlinePage</code> implementation of this 
+ * <code>IPage</code> method registers itself as a selection 
+ * provider with the site
+ */
+public void init(IPageSite pageSite) {
+	super.init(pageSite);
+	pageSite.setSelectionProvider(this);
 }
 /* (non-Javadoc)
  * Method declared on ISelectionProvider.

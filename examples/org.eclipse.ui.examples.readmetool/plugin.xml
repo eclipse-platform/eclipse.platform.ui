@@ -152,6 +152,18 @@
 	       enablesFor="1">
 	    </action>
 	 </objectContribution>
+     <objectContribution
+        id="org.eclipse.ui.examples.readmetool2"
+        objectClass="org.eclipse.ui.examples.readmetool.MarkElement">
+	    <action id="org.eclipse.ui.examples.readmetool.action1"
+	       label="%PopupMenus.action"
+	       icon="icons/basic/ctool16/openbrwsr.gif"
+	       menuBarPath="additions"
+	       helpContextId="org.eclipse.ui.examples.readmetool.open_browser_action_context"
+	       class="org.eclipse.ui.examples.readmetool.PopupMenuActionDelegate"	
+	       enablesFor="1">
+	    </action>
+	 </objectContribution>
   </extension>
 
 <extension
