@@ -7,6 +7,9 @@ package org.eclipse.compare.internal;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.custom.SashForm;
 
+/**
+ * @deprecated Use org.eclipse.compare.Splitter instead
+ */
 public class Splitter extends SashForm {
 	
 	private static final String VISIBILITY= "org.eclipse.compare.internal.visibility"; //$NON-NLS-1$
@@ -30,6 +33,11 @@ public class Splitter extends SashForm {
 				sp.setVisible(this, visible);
 				sp.layout();
 			}	
+			else if (parent instanceof org.eclipse.compare.Splitter) {
+				org.eclipse.compare.Splitter sp= (org.eclipse.compare.Splitter) parent;
+				sp.setVisible(this, visible);
+				sp.layout();
+			}
 		} else {
 			layout();
 		}
@@ -62,6 +70,8 @@ public class Splitter extends SashForm {
 		Composite parent= getParent();
 		if (parent instanceof Splitter)
 			((Splitter) parent).setMaximizedControl(this);
+		else if (parent instanceof org.eclipse.compare.Splitter)
+			((org.eclipse.compare.Splitter) parent).setMaximizedControl(this);
 		else
 			layout(true);
 	}
