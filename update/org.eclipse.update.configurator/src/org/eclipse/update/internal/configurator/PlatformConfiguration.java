@@ -590,7 +590,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 				File sourceConfigIni = new File(configIniURL.getFile());
 				copy(sourceConfigIni, configIni);
 			}
-		} catch (IOException e) {
+		} catch (Exception e) {
 			System.out.println(Messages.getString("cfg.unableToCreateConfig.ini"));
 		}
 	}
