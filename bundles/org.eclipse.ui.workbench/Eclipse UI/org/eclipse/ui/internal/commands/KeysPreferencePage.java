@@ -18,6 +18,7 @@ import java.io.Writer;
 import java.text.Collator;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -1127,16 +1128,21 @@ public final class KeysPreferencePage extends PreferencePage implements
 		final String[] commandNames = comboCommand.getItems();
 		int j = 0;
 		for (; j < commandNames.length; j++) {
-			if (commandName.equals(commandNames[j]))
+			if (commandName.equals(commandNames[j])) {
+				if (comboCommand.getSelectionIndex() != j) {
+					comboCommand.select(j);
+				}
 				break;
+			}
 		}
 		if (j >= comboCommand.getItemCount()) {
 			// Couldn't find the command, so just select the first and then stop
-			comboCommand.select(0);
+			if (comboCommand.getSelectionIndex() != 0) {
+				comboCommand.select(0);
+			}
 			update();
 			return;
 		}
-		comboCommand.select(j);
 
 		/*
 		 * Update and validate the state of the modify tab in response to these
@@ -1522,19 +1528,28 @@ public final class KeysPreferencePage extends PreferencePage implements
 	 *            The command to select; may be <code>null</code>.
 	 */
 	private final void setCommandId(final String commandId) {
-		comboCommand.clearSelection();
-		comboCommand.deselectAll();
 		final String commandUniqueName = (String) commandUniqueNamesById
 				.get(commandId);
 
 		if (commandUniqueName != null) {
 			final String items[] = comboCommand.getItems();
-
-			for (int i = 0; i < items.length; i++)
+			int i = 0;
+			for (; i < items.length; i++) {
 				if (commandUniqueName.equals(items[i])) {
-					comboCommand.select(i);
+					if (comboCommand.getSelectionIndex() != i) {
+						comboCommand.select(i);
+					}
 					break;
 				}
+			}
+			if ((i >= comboCommand.getItemCount())
+					&& (comboCommand.getSelectionIndex() != 0)) {
+				comboCommand.select(0);
+			}
+		} else {
+			if (comboCommand.getSelectionIndex() != 0) {
+				comboCommand.select(0);
+			}
 		}
 	}
 
@@ -1939,12 +1954,18 @@ public final class KeysPreferencePage extends PreferencePage implements
 
 		final List commandNames = new ArrayList(commandIdsByName.keySet());
 		Collections.sort(commandNames, Collator.getInstance());
-		comboCommand.setItems((String[]) commandNames
-				.toArray(new String[commandNames.size()]));
+		final String[] currentItems = comboCommand.getItems();
+		final String[] newItems = (String[]) commandNames
+				.toArray(new String[commandNames.size()]);
+		if (!Arrays.equals(currentItems, newItems)) {
+			comboCommand.setItems(newItems);
+		}
 		setCommandId(commandId);
 
-		if (comboCommand.getSelectionIndex() == -1 && !commandNames.isEmpty())
+		if ((comboCommand.getSelectionIndex() == -1)
+				&& (!commandNames.isEmpty())) {
 			comboCommand.select(0);
+		}
 	}
 
 	/**
