@@ -30,7 +30,7 @@ public class RegistryCacheReader {
 
 	public MultiStatus cacheReadProblems = null;
 
-	public static final byte REGISTRY_CACHE_VERSION = 4;
+	public static final byte REGISTRY_CACHE_VERSION = 5;
 
 	public static final byte NONLABEL = 0;
 
@@ -96,11 +96,8 @@ public class RegistryCacheReader {
 	public static final byte VALUE_LABEL = 43;
 	public static final byte VERSION_LABEL = 44;
 	
-	public static final byte REGISTRY_LAST_MOD_START = 56;
-	public static final byte REGISTRY_LAST_MOD_END = 57;
-	
 	// So it's easier to add a new label ...
-	public static final byte LARGEST_LABEL = 57;
+	public static final byte LARGEST_LABEL = 55;
 	
 public RegistryCacheReader(Factory factory) {
 	super();
@@ -225,10 +222,6 @@ public static String decipherLabel(byte labelValue) {
 			return "<fragmentPluginMatch>";
 		case FRAGMENT_PLUGIN_VERSION_LABEL:
 			return "<fragmentPluginVersion>";
-		case REGISTRY_LAST_MOD_END:
-			return "<registryLastModifiedListEnd>";
-		case REGISTRY_LAST_MOD_START:
-			return "<registryLastModifiedListStart>";
 		case REQUIRES_OPTIONAL_LABEL:
 			return "<requiresOptional>";
 		case SOURCE_LABEL:
@@ -1271,16 +1264,6 @@ public PluginRegistryModel readPluginRegistry(DataInputStream in, URL[] pluginPa
 			switch (inByte) {
 				case REGISTRY_LABEL:
 					break;
-				case REGISTRY_LAST_MOD_START :
-					if (!readAndCheckLastModified((PluginRegistry)cachedRegistry, in, pluginPath, debugFlag)) {
-						// something has changed and we should discard
-						// the cache file
-						done = true;
-						cachedRegistry = null;
-					}
-					break;
-				case REGISTRY_LAST_MOD_END :
-					break;
 				case READONLY_LABEL :
 					if (in.readBoolean()) {
 						setReadOnlyFlag = true;
@@ -1372,90 +1355,5 @@ private String[] getPathMembers(URL path) {
 		// XXX: attempt to read URL and see if we got html dir page
 	}
 	return list == null ? new String[0] : list;
-}
-private boolean readAndCheckLastModified (PluginRegistry cachedRegistry, DataInputStream in, URL[] pluginPath, boolean debugFlag){
-	try {
-		int numEntries = in.readInt();
-		for (int i = 0; i < numEntries; i++) {
-			String fileName = in.readUTF();
-			long lastMod = in.readLong();
-			InternalPlatform.addLastModifiedTime(fileName, lastMod);
-		}
-	} catch (IOException ioe) {
-		cacheReadProblems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind ("meta.regCacheIOException", decipherLabel(REGISTRY_LABEL)), ioe));
-		return false;
-	}
-	
-	Map onDiskModTimes = null;
-	if (pluginPath != null) {
-		onDiskModTimes = new HashMap(30);	
-		for (int i = 0; i < pluginPath.length; i++) {
-			String pluginString = pluginPath[i].getFile();
-			if (pluginString.endsWith("/")) {
-				// directory entry - search for plugins
-				String[] members = getPathMembers(pluginPath[i]);
-				for (int j = 0; j < members.length; j++) {
-					onDiskModTimes.put(new String(pluginString + members[j] + "/plugin.xml"), new Long(0L));
-					onDiskModTimes.put(new String(pluginString + members[j] + "/fragment.xml"), new Long(0L));
-				}
-			} else {
-				onDiskModTimes.put(new String(pluginString), new Long(0L));
-			}
-		}
-	}
-	
-	Map regIndex = InternalPlatform.getRegIndex();
-	
-	// Get the simple (i.e. null) cases out of the way quickly
-	if ((regIndex == null) && (onDiskModTimes == null))
-		return true;
-		
-	if (((regIndex == null) && (onDiskModTimes != null)) ||
-		((regIndex != null) && (onDiskModTimes == null)))
-		return false;
-	
-	for (Iterator keys = regIndex.keySet().iterator(); keys.hasNext();) {
-		String cacheKey = (String)keys.next();
-		File diskFile = new File (cacheKey);
-		if (!onDiskModTimes.containsKey(cacheKey)) {
-			// This entry exists in the cache but is no longer in
-			// the plugin path - discard the cache
-			if (debugFlag)
-				debug (cacheKey + " exists in cache but not part of plugin path.");
-			return false;
-		}
-		if (!diskFile.exists()) {
-			// This entry is in the cache but no longer on disk
-			if (debugFlag)
-				debug (cacheKey + " exists in cache but not on disk");
-			return false;
-		}
-		long cacheLastMod = ((Long)regIndex.get(cacheKey)).longValue();
-		long diskLastMod = diskFile.lastModified();
-		if (diskLastMod != cacheLastMod) {
-			// something has changed
-			if (debugFlag)
-				debug (cacheKey + " last modified time different than on disk");
-			return false;
-		}
-		onDiskModTimes.remove(cacheKey);
-	}
-	
-	// We've iterated through all the elements in the cache and
-	// they all exist with the same last modified times as before.
-	// Now check to see if there is anything else on disk that needs
-	// to be added.
-	for (Iterator keys = onDiskModTimes.keySet().iterator(); keys.hasNext();) {
-		String diskKey = (String)keys.next();
-		File diskFile = new File(diskKey);
-		if (diskFile.exists()) {
-			// This one isn't in the cache
-			if (debugFlag)
-				debug (diskKey + " exists on disk but not in the cache");
-			return false;
-		}
-	}
-			
-	return true;
 }
 }

@@ -594,19 +594,6 @@ public void writePluginRegistry(PluginRegistryModel registry, DataOutputStream o
 		// add this object to the object table first
 		addToObjectTable(registry);
 		writeHeaderInformation(out);
-		// Now write out all the last modified times
-		Map regIndex = InternalPlatform.getRegIndex();
-		if (regIndex != null) {
-			writeLabel(RegistryCacheReader.REGISTRY_LAST_MOD_START, out);
-			out.writeInt(regIndex.keySet().size());
-			for (Iterator list = regIndex.keySet().iterator(); list.hasNext();) {
-				String fileName = (String)list.next();
-				long lastMod = ((Long)regIndex.get(fileName)).longValue();
-				out.writeUTF(fileName);
-				out.writeLong(lastMod);
-			}
-			writeLabel(RegistryCacheReader.REGISTRY_LAST_MOD_END, out);
-		}
 	
 		writeLabel(RegistryCacheReader.REGISTRY_LABEL, out);
 
