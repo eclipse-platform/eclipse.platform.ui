@@ -57,6 +57,10 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 	 * The size of the read buffer
 	 */
 	private static final int BUFFER_SIZE= 8192;
+	
+	// notification types
+	private static final int APPEND = 0;
+	private static final int CLOSED = 1;	
 
 	/**
 	 * Whether or not this monitor has been killed.
@@ -103,26 +107,16 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 	 * been appended to the stream.
 	 */
 	private void fireStreamAppended(String text) {
-		getNotifier().notifyAppend(text);
+		getNotifier().notify(text, APPEND);
 	}
 	
 	/**
 	 * Notifies the listeners that the stream
-	 * has been closed.
+	 * has neem closed.
 	 */
 	private void fireStreamClosed() {
-		IStreamListener[] listeners= (IStreamListener[]) fListeners.getListeners();
-		for (int i = 0; i < listeners.length; i++) {
-			final IStreamListener listener= listeners[i];
-			Platform.run(new ISafeRunnable() {
-				public void handleException(Throwable exception) {
-				}
-				public void run() throws Exception {
-					listener.streamClosed(OutputStreamMonitor.this);
-				}
-			});
-		}
-	}
+		getNotifier().notify(null, CLOSED);
+	}	
 
 	/**
 	 * @see IStreamMonitor#getContents()
@@ -157,6 +151,7 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 				}
 			} catch (IOException ioe) {
 				DebugPlugin.log(ioe);
+				fireStreamClosed();
 				return;
 			} catch (NullPointerException e) {
 				// killing the stream monitor while reading can cause an NPE
@@ -164,6 +159,7 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 				if (!fKilled || fThread != null) {
 					DebugPlugin.log(e);
 				}
+				fireStreamClosed();
 				return;
 			}
 		}
@@ -229,6 +225,7 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 		
 		private IStreamListener fListener;
 		private String fText;
+		private int fType = -1;
 		
 		/**
 		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
@@ -240,12 +237,21 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 		 * @see org.eclipse.core.runtime.ISafeRunnable#run()
 		 */
 		public void run() throws Exception {
-			fListener.streamAppended(fText, OutputStreamMonitor.this);
+			switch (fType) {
+				case APPEND:
+					fListener.streamAppended(fText, OutputStreamMonitor.this);
+					break;
+				case CLOSED:
+					fListener.streamClosed(OutputStreamMonitor.this);
+					break;
+			}
+			
 		}
 
-		public void notifyAppend(String text) {
-			if (text == null)
+		public void notify(String text, int type) {
+			if (type == APPEND && text == null)
 				return;
+			fType = type;
 			fText = text;
 			Object[] copiedListeners= fListeners.getListeners();
 			for (int i= 0; i < copiedListeners.length; i++) {
@@ -255,5 +261,6 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 			fListener = null;
 			fText = null;		
 		}
+		
 	}
 }
