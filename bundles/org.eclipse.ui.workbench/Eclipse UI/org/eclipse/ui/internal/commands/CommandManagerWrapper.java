@@ -24,7 +24,6 @@ import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.commands.contexts.ContextManagerEvent;
 import org.eclipse.core.commands.contexts.IContextManagerListener;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.bindings.BindingManagerEvent;
 import org.eclipse.jface.bindings.IBindingManagerListener;
@@ -37,7 +36,6 @@ import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.ICommandManagerListener;
 import org.eclipse.ui.commands.IKeyConfiguration;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
 
@@ -100,8 +98,6 @@ public final class CommandManagerWrapper implements ICommandManager,
 
 	private List commandManagerListeners;
 
-	private ICommandRegistry commandRegistry;
-
 	/**
 	 * The context manager that provides functionality for this workbench
 	 * command manager. This value will never be <code>null</code>.
@@ -111,48 +107,10 @@ public final class CommandManagerWrapper implements ICommandManager,
 	private final ContextManager contextManager;
 
 	/**
-	 * The set of handlers defined in XML. This set is never <code>null</code>.
-	 * It may be empty if there are either no handler submissions defined in XML
-	 * or if the method <code>readRegistry</code> has not yet been called.
-	 */
-	private final Set definedHandlers = new HashSet();
-
-	private IMutableCommandRegistry mutableCommandRegistry;
-
-	/**
-	 * Constructs a new instance of <code>MutableCommandManager</code>. The
-	 * registry readers are constructed automatically at this time.
-	 * 
-	 * @param bindingManager
-	 *            The binding manager providing support for the command manager;
-	 *            must not be <code>null</code>.
-	 * @param commandManager
-	 *            The command manager providing support for this command
-	 *            manager; must not be <code>null</code>.
-	 * @param contextManager
-	 *            The context manager to provide context support to this
-	 *            manager. This value must not be <code>null</code>.
-	 */
-	public CommandManagerWrapper(final BindingManager bindingManager,
-			final CommandManager commandManager,
-			final ContextManager contextManager) {
-		this(new ExtensionCommandRegistry(Platform.getExtensionRegistry()),
-				new PreferenceCommandRegistry(WorkbenchPlugin.getDefault()
-						.getPreferenceStore()), bindingManager, commandManager,
-				contextManager);
-	}
-
-	/**
 	 * Constructs a new instance of <code>MutableCommandManager</code>. The
 	 * binding manager and command manager providing support for this manager
 	 * are constructed at this time.
 	 * 
-	 * @param commandRegistry
-	 *            The plug-in registry from which the commands should be read;
-	 *            must not be <code>null</code>.
-	 * @param mutableCommandRegistry
-	 *            The preference registry from which preferences should be read;
-	 *            must not be <code>null</code>.
 	 * @param bindingManager
 	 *            The binding manager providing support for the command manager;
 	 *            must not be <code>null</code>.
@@ -164,43 +122,16 @@ public final class CommandManagerWrapper implements ICommandManager,
 	 *            manager. This value must not be <code>null</code>.
 	 * 
 	 */
-	public CommandManagerWrapper(final ICommandRegistry commandRegistry,
-			final IMutableCommandRegistry mutableCommandRegistry,
-			final BindingManager bindingManager,
+	public CommandManagerWrapper(final BindingManager bindingManager,
 			final CommandManager commandManager,
 			final ContextManager contextManager) {
 		if (contextManager == null) {
 			throw new NullPointerException(
 					"The context manager cannot be null."); //$NON-NLS-1$
 		}
-
-		if ((commandRegistry == null) || (mutableCommandRegistry == null)) {
-			throw new NullPointerException("The registries must not be null."); //$NON-NLS-1$
-		}
-
-		this.commandRegistry = commandRegistry;
-		this.mutableCommandRegistry = mutableCommandRegistry;
 		this.bindingManager = bindingManager;
 		this.commandManager = commandManager;
 		this.contextManager = contextManager;
-
-		this.commandRegistry
-				.addCommandRegistryListener(new ICommandRegistryListener() {
-					public void commandRegistryChanged(
-							CommandRegistryEvent commandRegistryEvent) {
-						readRegistry();
-					}
-				});
-		this.mutableCommandRegistry
-				.addCommandRegistryListener(new ICommandRegistryListener() {
-					public void commandRegistryChanged(
-							CommandRegistryEvent commandRegistryEvent) {
-						readRegistry();
-					}
-				});
-
-		// Make sure to read in the registry.
-		readRegistry();
 	}
 
 	public final void addCommandManagerListener(
@@ -351,15 +282,6 @@ public final class CommandManagerWrapper implements ICommandManager,
 		return new CommandWrapper(command, bindingManager);
 	}
 
-	/**
-	 * Returns the plug-in registry for this command manager.
-	 * 
-	 * @return The command registry; never <code>null</code>.
-	 */
-	public ICommandRegistry getCommandRegistry() {
-		return commandRegistry;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -371,16 +293,6 @@ public final class CommandManagerWrapper implements ICommandManager,
 
 	public Set getDefinedCommandIds() {
 		return commandManager.getDefinedCommandIds();
-	}
-
-	/**
-	 * An accessor for those handlers that have been defined in XML.
-	 * 
-	 * @return The handlers defined in XML; never <code>null</code>, but may
-	 *         be empty.
-	 */
-	public Set getDefinedHandlers() {
-		return definedHandlers;
 	}
 
 	public Set getDefinedKeyConfigurationIds() {
@@ -451,13 +363,6 @@ public final class CommandManagerWrapper implements ICommandManager,
 		} catch (final ParseException e) {
 			return false;
 		}
-	}
-
-	private void readRegistry() {
-		// Copy in the handler submissions
-		definedHandlers.clear();
-		definedHandlers.addAll(commandRegistry.getHandlers());
-		definedHandlers.addAll(mutableCommandRegistry.getHandlers());
 	}
 
 	public void removeCommandManagerListener(

@@ -109,6 +109,13 @@ public final class LegacyHandlerWrapper implements IHandler {
 			throw new ExecutionException(e.getMessage(), e.getCause());
 		}
 	}
+	
+	/**
+	 * TODO Remove this method
+	 */
+	public final org.eclipse.ui.commands.IHandler getWrappedHandler() {
+		return handler;
+	}
 
 	public final int hashCode() {
 		return this.handler.hashCode();

@@ -14,6 +14,7 @@ import java.util.Collection;
 
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.IHandler;
 import org.eclipse.ui.IService;
 
 /**
@@ -30,6 +31,24 @@ import org.eclipse.ui.IService;
  * @since 3.1
  */
 public interface ICommandService extends IService {
+
+	/**
+	 * Activates the given handler within the context of this service. If this
+	 * service was retrieved from the workbench, then this handler will be
+	 * active globally. If the service was retrieved from a nested component,
+	 * then the handler will only be active within that component.
+	 * 
+	 * @param commandId
+	 *            The identifier for the command which this handler handles;
+	 *            must not be <code>null</code>.
+	 * @param handler
+	 *            The handler to activate; must not be <code>null</code>.
+	 * @return A token which can be used to later cancel the activation. Only
+	 *         someone with access to this token can cancel the activation. The
+	 *         activation will automatically be cancelled if the context from
+	 *         which this service was retrieved is destroyed.
+	 */
+	public IHandlerActivation activateHandler(String commandId, IHandler handler);
 
 	/**
 	 * Retrieves the category with the given identifier. If no such category

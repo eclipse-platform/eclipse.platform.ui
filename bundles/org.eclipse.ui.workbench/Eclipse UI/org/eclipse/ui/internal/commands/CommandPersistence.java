@@ -23,7 +23,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.commands.ws.HandlerProxy;
 import org.eclipse.ui.internal.util.Util;
 
 /**
@@ -51,6 +53,12 @@ public final class CommandPersistence {
 	 * definition.
 	 */
 	private static final String ATTRIBUTE_CATEGORY_ID = "categoryId"; //$NON-NLS-1$
+
+	/**
+	 * The name of the command identifier attribute, which appears on a handler
+	 * submission.
+	 */
+	private static final String ATTRIBUTE_COMMAND_ID = "commandId"; //$NON-NLS-1$
 
 	/**
 	 * The name of the description attribute, which appears on a command
@@ -87,6 +95,11 @@ public final class CommandPersistence {
 	private static final String ELEMENT_COMMAND = "command"; //$NON-NLS-1$
 
 	/**
+	 * The name of the element storing a handler submission.
+	 */
+	private static final String ELEMENT_HANDLER_SUBMISSION = "handlerSubmission"; //$NON-NLS-1$
+
+	/**
 	 * The name of the action definitions extension point.
 	 */
 	private static final String EXTENSION_ACTION_DEFINITIONS = "org.eclipse.ui.actionDefinitions"; //$NON-NLS-1$
@@ -109,6 +122,13 @@ public final class CommandPersistence {
 	 * @see CommandPersistence#read(CommandManager)
 	 */
 	private static final int INDEX_COMMAND_DEFINITIONS = 1;
+
+	/**
+	 * The index of the handler submissions in the indexed array.
+	 * 
+	 * @see CommandPersistence#read(CommandManager)
+	 */
+	private static final int INDEX_HANDLER_SUBMISSIONS = 2;
 
 	/**
 	 * Inserts the given element into the indexed two-dimensional array in the
@@ -153,13 +173,19 @@ public final class CommandPersistence {
 	 * @param commandManager
 	 *            The command manager which should be populated with the values
 	 *            from the registry; must not be <code>null</code>.
+	 * @param commandService
+	 *            The command service for the workbench; must not be
+	 *            <code>null</code>. This is used to set-up handlers parsed
+	 *            from the extension points.
 	 */
-	public static final void read(final CommandManager commandManager) {
+	public static final void read(final CommandManager commandManager,
+			final ICommandService commandService) {
 		// Create the extension registry mementos.
 		final IExtensionRegistry registry = Platform.getExtensionRegistry();
 		int commandDefinitionCount = 0;
 		int categoryDefinitionCount = 0;
-		final IConfigurationElement[][] indexedConfigurationElements = new IConfigurationElement[2][];
+		int handlerSubmissionCount = 0;
+		final IConfigurationElement[][] indexedConfigurationElements = new IConfigurationElement[3][];
 
 		// Sort the commands extension point based on element name.
 		final IConfigurationElement[] commandsExtensionPoint = registry
@@ -177,6 +203,10 @@ public final class CommandPersistence {
 				addElementToIndexedArray(configurationElement,
 						indexedConfigurationElements,
 						INDEX_CATEGORY_DEFINITIONS, categoryDefinitionCount++);
+			} else if (ELEMENT_HANDLER_SUBMISSION.equals(name)) {
+				addElementToIndexedArray(configurationElement,
+						indexedConfigurationElements,
+						INDEX_HANDLER_SUBMISSIONS, handlerSubmissionCount++);
 			}
 		}
 
@@ -199,6 +229,9 @@ public final class CommandPersistence {
 		readCommandsFromCommandsExtensionPoint(
 				indexedConfigurationElements[INDEX_COMMAND_DEFINITIONS],
 				commandDefinitionCount, commandManager);
+		readHandlersFromCommandsExtensionPoint(
+				indexedConfigurationElements[INDEX_HANDLER_SUBMISSIONS],
+				handlerSubmissionCount, commandService);
 	}
 
 	/**
@@ -379,6 +412,63 @@ public final class CommandPersistence {
 		// If there were any warnings, then log them now.
 		if (warningsToLog != null) {
 			final String message = "Warnings while parsing the commands from the 'org.eclipse.ui.commands' and 'org.eclipse.ui.actionDefinitions' extension points."; //$NON-NLS-1$
+			final IStatus status = new MultiStatus(
+					WorkbenchPlugin.PI_WORKBENCH, 0, (IStatus[]) warningsToLog
+							.toArray(new IStatus[warningsToLog.size()]),
+					message, null);
+			WorkbenchPlugin.log(message, status);
+		}
+	}
+
+	/**
+	 * Reads all of the handler submissions from the commands extension point.
+	 * 
+	 * @param configurationElements
+	 *            The configuration elements in the commands extension point;
+	 *            must not be <code>null</code>, but may be empty.
+	 * @param configurationElementCount
+	 *            The number of configuration elements that are really in the
+	 *            array.
+	 * @param commandService
+	 *            The command service to which the handlers should be added;
+	 *            must not be <code>null</code>.
+	 */
+	private static final void readHandlersFromCommandsExtensionPoint(
+			final IConfigurationElement[] configurationElements,
+			final int configurationElementCount,
+			final ICommandService commandService) {
+		/*
+		 * If necessary, this list of status items will be constructed. It will
+		 * only contains instances of <code>IStatus</code>.
+		 */
+		List warningsToLog = null;
+
+		for (int i = 0; i < configurationElementCount; i++) {
+			final IConfigurationElement configurationElement = configurationElements[i];
+
+			// Read out the command identifier.
+			final String commandId = configurationElement
+					.getAttribute(ATTRIBUTE_COMMAND_ID);
+			if ((commandId == null) || (commandId.length() == 0)) {
+				// The id should never be null. This is invalid.
+				final String message = "Handler submission need a command id: '" //$NON-NLS-1$
+						+ configurationElement.getNamespace() + "'."; //$NON-NLS-1$
+				final IStatus status = new Status(IStatus.WARNING,
+						WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
+				if (warningsToLog == null) {
+					warningsToLog = new ArrayList();
+				}
+				warningsToLog.add(status);
+				continue;
+			}
+
+			commandService.activateHandler(commandId, new LegacyHandlerWrapper(
+					new HandlerProxy(configurationElement)));
+		}
+
+		// If there were any warnings, then log them now.
+		if (warningsToLog != null) {
+			final String message = "Warnings while parsing the handler submissions from the 'org.eclipse.ui.commands' extension point."; //$NON-NLS-1$
 			final IStatus status = new MultiStatus(
 					WorkbenchPlugin.PI_WORKBENCH, 0, (IStatus[]) warningsToLog
 							.toArray(new IStatus[warningsToLog.size()]),
