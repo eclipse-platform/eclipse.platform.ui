@@ -52,7 +52,7 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	/**
 	 * Cache of the most recent seletion
 	 */
-	private IStructuredSelection fSelection;
+	private IStructuredSelection fSelection = StructuredSelection.EMPTY;
 	
 	/**
 	 * Whether this delegate has been initialized
