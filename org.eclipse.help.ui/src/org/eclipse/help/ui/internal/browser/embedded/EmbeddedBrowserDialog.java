@@ -40,7 +40,7 @@ public class EmbeddedBrowserDialog {
 	 * Creates hosting shell.
 	 */
 	private void createShell(Shell parent) {
-		shell = new Shell(parent, SWT.DIALOG_TRIM);
+		shell = new Shell(parent, SWT.DIALOG_TRIM | SWT.PRIMARY_MODAL);
 		if (shellImg != null)
 			shell.setImage(shellImg);
 		shell.setText(windowTitle);
