@@ -17,8 +17,10 @@ public class CompareAction implements IActionDelegate {
 	private ResourceCompareInput fInput;
 
 	public void run(IAction action) {
-		if (fInput != null)
+		if (fInput != null) {
 			CompareUI.openCompareEditor(fInput);
+			fInput= null;	// don't reuse this input!
+		}
 	}
 
 	public void selectionChanged(IAction action, ISelection selection) {

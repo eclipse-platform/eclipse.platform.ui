@@ -33,6 +33,8 @@ import org.eclipse.compare.*;
  */
 public class CompareEditor extends EditorPart implements IPropertyChangeListener {
 	
+	public final static String CONFIRM_SAVE_PROPERTY= "org.eclipse.compare.internal.CONFIRM_SAVE_PROPERTY";
+	
 	private IActionBars fActionBars;
 	
 	
@@ -50,7 +52,10 @@ public class CompareEditor extends EditorPart implements IPropertyChangeListener
 		
 		if (!(input instanceof CompareEditorInput))
 			throw new PartInitException("Invalid Input: Must be CompareEditorInput");
-			
+		
+		CompareConfiguration cc= getCompareConfiguration();
+		cc.setProperty(CONFIRM_SAVE_PROPERTY, new Boolean(false));
+		
 		CompareEditorInput cei= (CompareEditorInput) input;
 			
 		setSite(site);

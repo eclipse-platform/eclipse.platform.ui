@@ -368,21 +368,21 @@ public class DiffTreeViewer extends TreeViewer {
 //		Utilities.initAction(fCopyRightToLeftAction, fBundle, "action.TakeRight.");
 //		toolbarManager.appendToGroup("merge", fCopyRightToLeftAction);
 		
-//		fNextAction= new Action() {
-//			public void run() {
-//				navigate(true);
-//			}
-//		};
-//		Utilities.initAction(fNextAction, fBundle, "action.NextDiff.");
-//		toolbarManager.appendToGroup("navigation", fNextAction);
-//
-//		fPreviousAction= new Action() {
-//			public void run() {
-//				navigate(false);
-//			}
-//		};
-//		Utilities.initAction(fPreviousAction, fBundle, "action.PrevDiff.");
-//		toolbarManager.appendToGroup("navigation", fPreviousAction);
+		fNextAction= new Action() {
+			public void run() {
+				navigate(true);
+			}
+		};
+		Utilities.initAction(fNextAction, fBundle, "action.NextDiff.");
+		toolbarManager.appendToGroup("navigation", fNextAction);
+
+		fPreviousAction= new Action() {
+			public void run() {
+				navigate(false);
+			}
+		};
+		Utilities.initAction(fPreviousAction, fBundle, "action.PrevDiff.");
+		toolbarManager.appendToGroup("navigation", fPreviousAction);
 	}
 	
 	/**

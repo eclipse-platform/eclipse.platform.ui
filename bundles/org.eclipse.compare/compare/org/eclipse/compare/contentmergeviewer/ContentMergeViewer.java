@@ -232,10 +232,7 @@ public abstract class ContentMergeViewer extends ContentViewer implements IPrope
 	private IPropertyChangeListener fPropertyChangeListener;
 	private ICompareInputChangeListener fCompareInputChangeListener;
 	private ListenerList fListenerList;
-	boolean fAllowSave= true;
-
-	//private boolean fLeftDirty;		// left side is dirty
-	//private boolean fRightDirty;		// right side is dirty
+	boolean fConfirmSave= true;
 	
 	private double fHSplit= HSPLIT;		// width ratio of left and right panes
 	private double fVSplit= VSPLIT;		// height ratio of ancestor and bottom panes
@@ -277,6 +274,7 @@ public abstract class ContentMergeViewer extends ContentViewer implements IPrope
 		fBundle= bundle;
 		
 		fAncestorEnabled= Utilities.getBoolean(cc, ANCESTOR_ENABLED, fAncestorEnabled);
+		fConfirmSave= Utilities.getBoolean(cc, CompareEditor.CONFIRM_SAVE_PROPERTY, fConfirmSave);
 
 		setContentProvider(new MergeViewerContentProvider(cc));
 		
@@ -503,7 +501,7 @@ public abstract class ContentMergeViewer extends ContentViewer implements IPrope
 		if (fLeftSaveAction.isEnabled() || fRightSaveAction.isEnabled()) {
 			
 			// post alert
-			if (fAllowSave) {
+			if (fConfirmSave) {
 				Shell shell= fComposite.getShell();
 				
 				MessageDialog dialog= new MessageDialog(shell,

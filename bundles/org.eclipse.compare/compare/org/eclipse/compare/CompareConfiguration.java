@@ -50,24 +50,38 @@ public class CompareConfiguration {
 	private static ImageDescriptor[] fgImages= new ImageDescriptor[16];
 	private static Object fgDummy= new Object();
 	private static HashMap fgMap= new HashMap(20);
+	private static boolean fLeftIsLocal= true;
 
 	static {
-		int INCOMING= Differencer.LEFT;
-		int OUTGOING= Differencer.RIGHT;
 		
 		fgImages[Differencer.ADDITION]= CompareUIPlugin.getImageDescriptor("ovr16/add_ov.gif");
-		fgImages[INCOMING + Differencer.ADDITION]= CompareUIPlugin.getImageDescriptor("ovr16/inadd_ov.gif");
-		fgImages[OUTGOING + Differencer.ADDITION]= CompareUIPlugin.getImageDescriptor("ovr16/outadd_ov.gif");
+		if (fLeftIsLocal) {
+			fgImages[Differencer.LEFT + Differencer.ADDITION]= CompareUIPlugin.getImageDescriptor("ovr16/r_inadd_ov.gif");
+			fgImages[Differencer.RIGHT + Differencer.ADDITION]= CompareUIPlugin.getImageDescriptor("ovr16/r_outadd_ov.gif");
+		} else {
+			fgImages[Differencer.LEFT + Differencer.ADDITION]= CompareUIPlugin.getImageDescriptor("ovr16/inadd_ov.gif");
+			fgImages[Differencer.RIGHT + Differencer.ADDITION]= CompareUIPlugin.getImageDescriptor("ovr16/outadd_ov.gif");
+		}
 		fgImages[Differencer.CONFLICTING + Differencer.ADDITION]= CompareUIPlugin.getImageDescriptor("ovr16/confadd_ov.gif");
 
 		fgImages[Differencer.DELETION]= CompareUIPlugin.getImageDescriptor("ovr16/del_ov.gif");
-		fgImages[INCOMING + Differencer.DELETION]= CompareUIPlugin.getImageDescriptor("ovr16/indel_ov.gif");
-		fgImages[OUTGOING + Differencer.DELETION]= CompareUIPlugin.getImageDescriptor("ovr16/outdel_ov.gif");
+		if (fLeftIsLocal) {
+			fgImages[Differencer.LEFT + Differencer.DELETION]= CompareUIPlugin.getImageDescriptor("ovr16/r_indel_ov.gif");
+			fgImages[Differencer.RIGHT + Differencer.DELETION]= CompareUIPlugin.getImageDescriptor("ovr16/r_outdel_ov.gif");
+		} else {
+			fgImages[Differencer.LEFT + Differencer.DELETION]= CompareUIPlugin.getImageDescriptor("ovr16/indel_ov.gif");
+			fgImages[Differencer.RIGHT + Differencer.DELETION]= CompareUIPlugin.getImageDescriptor("ovr16/outdel_ov.gif");
+		}
 		fgImages[Differencer.CONFLICTING + Differencer.DELETION]= CompareUIPlugin.getImageDescriptor("ovr16/confdel_ov.gif");
 
 		//fgImages[Differencer.CHANGE]= CompareUIPlugin.getImageDescriptor("ovr16/chg_ov.gif");
-		fgImages[INCOMING + Differencer.CHANGE]= CompareUIPlugin.getImageDescriptor("ovr16/inchg_ov.gif");
-		fgImages[OUTGOING + Differencer.CHANGE]= CompareUIPlugin.getImageDescriptor("ovr16/outchg_ov.gif");
+		if (fLeftIsLocal) {
+			fgImages[Differencer.LEFT + Differencer.CHANGE]= CompareUIPlugin.getImageDescriptor("ovr16/r_inchg_ov.gif");
+			fgImages[Differencer.RIGHT + Differencer.CHANGE]= CompareUIPlugin.getImageDescriptor("ovr16/r_outchg_ov.gif");
+		} else {
+			fgImages[Differencer.LEFT + Differencer.CHANGE]= CompareUIPlugin.getImageDescriptor("ovr16/inchg_ov.gif");
+			fgImages[Differencer.RIGHT + Differencer.CHANGE]= CompareUIPlugin.getImageDescriptor("ovr16/outchg_ov.gif");
+		}
 		fgImages[Differencer.CONFLICTING + Differencer.CHANGE]= CompareUIPlugin.getImageDescriptor("ovr16/confchg_ov.gif");
 	}
 
@@ -88,7 +102,7 @@ public class CompareConfiguration {
 	 */
 	public CompareConfiguration() {
 		
-		setProperty("LEFT_IS_LOCAL", new Boolean(true));
+		setProperty("LEFT_IS_LOCAL", new Boolean(fLeftIsLocal));
 
 		IPreferenceStore ps= CompareUIPlugin.getDefault().getPreferenceStore();
 		if (ps != null) {
@@ -125,7 +139,7 @@ public class CompareConfiguration {
 		}
 		Image b= a[kind];
 		if (b == null) {
-			b= new DiffImage(base, fgImages[kind], WIDTH).createImage();
+			b= new DiffImage(base, fgImages[kind], WIDTH, fLeftIsLocal).createImage();
 			CompareUI.disposeOnShutdown(b);
 			a[kind]= b;
 		}
