@@ -218,13 +218,15 @@ public class NavigatorDropAdapter
 	 * Returns the actual target of the drop, given the resource
 	 * under the mouse.  If the mouse target is a file, then the drop actually 
 	 * occurs in its parent.  If the drop location is before or after the
-	 * mouse target, the target is also the parent.
+	 * mouse target and feedback is enabled, the target is also the parent.
 	 */
 	private IContainer getActualTarget(IResource mouseTarget) {
 		/* if cursor is before or after mouseTarget, set target to parent */
-		if (getCurrentLocation() == LOCATION_BEFORE
-			|| getCurrentLocation() == LOCATION_AFTER) {
-			return mouseTarget.getParent();
+		if (getFeedbackEnabled()) {
+			if (getCurrentLocation() == LOCATION_BEFORE
+				|| getCurrentLocation() == LOCATION_AFTER) {
+				return mouseTarget.getParent();
+			}
 		}
 		/* if cursor is on a file, return the parent */
 		if (mouseTarget.getType() == IResource.FILE) {
@@ -233,6 +235,7 @@ public class NavigatorDropAdapter
 		/* otherwise the mouseTarget is the real target */
 		return (IContainer) mouseTarget;
 	}
+
 	
 	/**
 	 * Returns the display
