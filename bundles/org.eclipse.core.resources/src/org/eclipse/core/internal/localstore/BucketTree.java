@@ -20,8 +20,11 @@ import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 
+
+/**
+ * @since 3,1
+ */
 public class BucketTree {
-	private static final String INDEXES_DIR_NAME = ".indexes"; //$NON-NLS-1$
 	public static final int DEPTH_INFINITE = Integer.MAX_VALUE;
 	public static final int DEPTH_ONE = 1;
 	public static final int DEPTH_ZERO = 0;
@@ -64,17 +67,6 @@ public class BucketTree {
 			internalAccept(visitor, base, locationFor(base), depth, 0);
 	}
 
-	public void cleanUp(File toDelete) {
-		if (!toDelete.delete())
-			// if deletion didn't go well, don't bother trying to delete the parent dir			
-			return;
-		// don't try to delete beyond the root for bucket indexes
-		if (toDelete.getName().equals(INDEXES_DIR_NAME))
-			return;
-		// recurse to parent directory
-		cleanUp(toDelete.getParentFile());
-	}
-
 	public void close() throws CoreException {
 		current.save();
 		saveVersion();
@@ -114,10 +106,10 @@ public class BucketTree {
 		current.load(Path.ROOT.equals(path) ? null : path.segment(0), locationFor(path));
 	}
 
-	public File locationFor(IPath resourcePath) {
+	private File locationFor(IPath resourcePath) {
 		IPath baseLocation = workspace.getMetaArea().locationFor(resourcePath);
 		int segmentCount = resourcePath.segmentCount();
-		baseLocation = baseLocation.append(INDEXES_DIR_NAME);
+		baseLocation = baseLocation.append(Bucket.INDEXES_DIR_NAME);
 		// the root or a project
 		if (segmentCount <= 1)
 			return baseLocation.toFile();
@@ -159,7 +151,7 @@ public class BucketTree {
 		}
 	}
 
-	protected String translateSegment(String segment) {
+	private String translateSegment(String segment) {
 		// String.hashCode algorithm is API
 		return Long.toHexString(Math.abs(segment.hashCode()) % SEGMENT_QUOTA);
 	}

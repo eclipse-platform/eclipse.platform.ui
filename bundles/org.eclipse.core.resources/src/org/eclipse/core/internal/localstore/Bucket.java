@@ -22,7 +22,9 @@ import org.eclipse.osgi.util.NLS;
 
 /**
  * A bucket is a persistent dictionary having paths as keys. Values are determined
- * by subclasses. 
+ * by subclasses.
+ * 
+ *  @since 3.1
  */
 public abstract class Bucket {
 
@@ -130,6 +132,11 @@ public abstract class Bucket {
 		public abstract int visit(Entry entry);
 	}
 
+	/**
+	 * The segment name for the root directory for index files.
+	 */
+	static final String INDEXES_DIR_NAME = ".indexes"; //$NON-NLS-1$	
+
 	/** 
 	 * The file extension for bucket index files. 
 	 */
@@ -205,9 +212,14 @@ public abstract class Bucket {
 	 * Tries to delete as many empty levels as possible.
 	 */
 	private void cleanUp(File toDelete) {
-		if (toDelete.delete())
-			// if deletion went fine, try deleting the parent dir			
-			cleanUp(toDelete.getParentFile());
+		if (!toDelete.delete())
+			// if deletion didn't go well, don't bother trying to delete the parent dir			
+			return;
+		// don't try to delete beyond the root for bucket indexes
+		if (toDelete.getName().equals(INDEXES_DIR_NAME))
+			return;
+		// recurse to parent directory
+		cleanUp(toDelete.getParentFile());
 	}
 
 	/**
