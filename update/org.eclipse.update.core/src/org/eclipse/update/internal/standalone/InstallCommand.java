@@ -62,7 +62,8 @@ public class InstallCommand extends ScriptedCommand {
 				targetSite = site.getCurrentConfiguredSite();
 				if (targetSite == null) {
 					targetSite = getConfiguration().createConfiguredSite(sitePath);
-					getConfiguration().addConfiguredSite(targetSite);
+					// update the sites array to pick up new site
+					sites = getConfiguration().getConfiguredSites();
 				}
 			}
 			if (targetSite == null) {

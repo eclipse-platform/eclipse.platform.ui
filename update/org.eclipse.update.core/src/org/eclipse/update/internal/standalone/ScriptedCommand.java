@@ -13,6 +13,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.*;
+import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.operations.*;
 
 public abstract class ScriptedCommand implements IOperationListener {
@@ -60,6 +61,10 @@ public abstract class ScriptedCommand implements IOperationListener {
 			try {
 				ILocalSite localSite = SiteManager.getLocalSite();
 				config = localSite.getCurrentConfiguration();
+				if (!isVerifyOnly()) {
+					config = UpdateUtils.createInstallConfiguration();
+					UpdateUtils.makeConfigurationCurrent(config, null);
+				}
 			} catch (CoreException e) {
 				StandaloneUpdateApplication.exceptionLogged();
 				UpdateCore.log(e);
