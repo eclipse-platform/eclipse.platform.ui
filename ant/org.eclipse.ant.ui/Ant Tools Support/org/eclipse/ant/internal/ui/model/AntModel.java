@@ -1254,4 +1254,31 @@ public class AntModel {
 	public List getNonStructuralNodes() {
 		return fNonStructuralNodes;
 	}
+	
+	public AntElementNode getPropertyNode(String text) {
+		AntProjectNode node= getProjectNode();
+		if (node == null || !node.hasChildren()) {
+			return null;
+		}
+		
+		return findPropertyNode(text, node.getChildNodes());
+	}
+
+	private AntElementNode findPropertyNode(String text, List children) {
+		Iterator iter= children.iterator();
+		while (iter.hasNext()) {
+			AntElementNode element = (AntElementNode) iter.next();
+			if (element instanceof AntPropertyNode) {
+				if (((AntPropertyNode)element).getProperty(text) != null){
+					return element;
+				}
+			} else if (element.hasChildren()) {
+				AntElementNode found= findPropertyNode(text, element.getChildNodes());
+				if (found != null) {
+					return found;
+				}
+			}
+		}
+		return null;
+	}
 }

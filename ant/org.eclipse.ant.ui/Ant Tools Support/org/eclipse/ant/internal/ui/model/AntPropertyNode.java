@@ -11,6 +11,9 @@
 
 package org.eclipse.ant.internal.ui.model;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.eclipse.ant.internal.ui.AntUIImages;
@@ -23,11 +26,17 @@ public class AntPropertyNode extends AntTaskNode {
 	
 	private String fValue= null;
 	
+	/*
+	 * The set of properties defined by this node
+	 * name-> value mapping
+	 */
+	private Map fProperties= null;
+	
 	public AntPropertyNode(Task task, Attributes attributes) {
 		super(task);
 		 String label = attributes.getValue(IAntModelConstants.ATTR_NAME);
          if(label == null) {
-         	label = attributes.getValue(IAntModelConstants.ATTR_FILE);
+			label = attributes.getValue(IAntModelConstants.ATTR_FILE);
          	if(label != null) {
          		label=  "file="+label; //$NON-NLS-1$
          	} else {	
@@ -51,6 +60,10 @@ public class AntPropertyNode extends AntTaskNode {
 		return fValue;
 	}
 	
+	public String getProperty(String propertyName) {
+		return (String)fProperties.get(propertyName);
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.editor.model.AntElementNode#getBaseImageDescriptor()
 	 */
@@ -66,12 +79,26 @@ public class AntPropertyNode extends AntTaskNode {
 			return false;
 		}
 		try {
+			getProjectNode().setCurrentConfiguringProperty(this);
 			getTask().maybeConfigure();
 			getTask().execute();
 			configured= true;
 		} catch (BuildException be) {
 			handleBuildException(be, AntEditorPreferenceConstants.PROBLEM_PROPERTIES);
+		} finally {
+			getProjectNode().setCurrentConfiguringProperty(null);
 		}
 		return false;
+	}
+
+	/**
+	 * @param name
+	 * @param value
+	 */
+	public void addProperty(String name, String value) {
+		if (fProperties == null) {
+			fProperties= new HashMap(1);
+		}
+		fProperties.put(name, value);
 	}
 }

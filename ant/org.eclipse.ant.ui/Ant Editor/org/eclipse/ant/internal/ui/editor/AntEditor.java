@@ -607,43 +607,45 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 	public void openReferenceElement() {
 		ISelection selection= getSelectionProvider().getSelection();
 		String errorMessage= null;
+		AntElementNode node= null;
 		if (selection instanceof ITextSelection) {
 			ITextSelection textSelection= (ITextSelection)selection;
 			ISourceViewer viewer= getSourceViewer();
 			IRegion region= XMLTextHover.getRegion(viewer, textSelection.getOffset());
-			IDocument document= viewer.getDocument();
-			String text= null;
-			try {
-				text= document.get(region.getOffset(), region.getLength());
-			} catch (BadLocationException e) {
-			}
-			if (text != null && text.length() > 0) {
-				AntElementNode node= getAntModel().getReferenceNode(text);
-				if (node != null) {
-					errorMessage= openNode(node);
-					if (errorMessage == null) {
-						return;
-					}
-				} else {
-					node= getAntModel().getTargetNode(text);
-					if (node != null) {
-						errorMessage= openNode(node);
-						if (errorMessage == null) {
-							return;
-						}
-					} else {
-						String path= getAntModel().getEntityPath(text);
-						if (path != null) {
-							errorMessage= openInEditor(path);
-							if (errorMessage == null) {
-								return;
+			if (region != null) {
+				IDocument document= viewer.getDocument();
+				String text= null;
+				try {
+					text= document.get(region.getOffset(), region.getLength());
+				} catch (BadLocationException e) {
+				}
+				if (text != null && text.length() > 0) {
+					AntModel model= getAntModel();
+					node= model.getReferenceNode(text);
+					if (node == null) {
+						node= model.getTargetNode(text);
+						if (node == null) {
+							node= model.getPropertyNode(text);
+							if (node == null) {
+								String path= model.getEntityPath(text);
+								if (path != null) {
+									errorMessage= openInEditor(path);
+									if (errorMessage == null) {
+										return;
+									}
+								}
 							}
 						}
 					}
 				}
 			}
 		}
-		
+		if (node != null) {
+			errorMessage= openNode(node);
+			if (errorMessage == null) {
+				return;
+			}
+		}
 		if (errorMessage == null || errorMessage.length() == 0) {
 			errorMessage= AntEditorMessages.getString("AntEditor.3"); //$NON-NLS-1$
 		}

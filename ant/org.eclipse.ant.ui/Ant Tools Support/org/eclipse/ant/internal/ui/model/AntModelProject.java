@@ -31,6 +31,7 @@ public class AntModelProject extends Project {
 	
 	private Hashtable fBaseProperties;
 	private Hashtable fCurrentProperties= new Hashtable();
+	private AntPropertyNode fCurrentConfiguringPropertyNode;
 	
 	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.Project#setNewProperty(java.lang.String, java.lang.String)
@@ -44,6 +45,9 @@ public class AntModelProject extends Project {
 		//there is currently no way to remove properties from the Apache Ant project
 		//the project resets it properties for each parse...see reset()
 		fCurrentProperties.put(name, value);
+		if (fCurrentConfiguringPropertyNode != null) {
+			fCurrentConfiguringPropertyNode.addProperty(name, value);
+		}
 		super.setProperty(name, value);
 	}
 	
@@ -106,5 +110,12 @@ public class AntModelProject extends Project {
 	public void setBaseDir(File baseDir) throws BuildException {
 		super.setBaseDir(baseDir);
 		fCurrentProperties.put("basedir", getBaseDir().getPath()); //$NON-NLS-1$
+	}
+
+	/**
+	 * @param node the property node that is currently being configured
+	 */
+	public void setCurrentConfiguringProperty(AntPropertyNode node) {
+		fCurrentConfiguringPropertyNode= node;
 	}
 }

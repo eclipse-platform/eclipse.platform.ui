@@ -94,4 +94,12 @@ public class AntProjectNode extends AntElementNode {
 		}
 		return null;
 	}
+
+	/**
+	 * @param node the property node that is currently being configured
+	 */
+	public void setCurrentConfiguringProperty(AntPropertyNode node) {
+		AntModelProject project= (AntModelProject) getProject();
+		project.setCurrentConfiguringProperty(node);
+	}
 }
