@@ -10,15 +10,20 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.launchConfigurations;
 
+import org.eclipse.ant.internal.ui.preferences.DialogSettingsHelper;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
 public class SetTargetsDialog extends Dialog {
 	
+    private static String DIALOG_SETTINGS_SECTION = "SetTargetsDialogSettings"; //$NON-NLS-1$
+    
 	private ILaunchConfigurationWorkingCopy fConfiguration;
 	private AntTargetsTab fTargetsTab;
 	
@@ -33,7 +38,7 @@ public class SetTargetsDialog extends Dialog {
 	 */
 	protected Control createDialogArea(Composite parent) {
 		
-		getShell().setText("Set Targets");
+		getShell().setText(AntLaunchConfigurationMessages.getString("SetTargetsDialog.0")); //$NON-NLS-1$
 		Composite composite = (Composite)super.createDialogArea(parent);
 		
 		fTargetsTab= new AntTargetsTab();
@@ -48,6 +53,40 @@ public class SetTargetsDialog extends Dialog {
 	 */
 	protected void okPressed() {
 		fTargetsTab.performApply(fConfiguration);
+        
 		super.okPressed();
 	}
+
+    protected String getTargetsSelected() {
+        try {
+            return fConfiguration.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_TARGETS, ""); //$NON-NLS-1$
+        } catch (CoreException e) {
+            return ""; //$NON-NLS-1$
+        }
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.window.Window#close()
+     */
+    public boolean close() {
+        DialogSettingsHelper.persistShellGeometry(getShell(), DIALOG_SETTINGS_SECTION);
+        return super.close();
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.window.Window#getInitialLocation(org.eclipse.swt.graphics.Point)
+     */
+    protected Point getInitialLocation(Point initialSize) {
+        Point p = DialogSettingsHelper.getInitialLocation(DIALOG_SETTINGS_SECTION);
+        return p != null ? p : super.getInitialLocation(initialSize);
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.window.Window#getInitialSize()
+     */
+    protected Point getInitialSize() {
+        Point p = super.getInitialSize();
+        return DialogSettingsHelper.getInitialSize(DIALOG_SETTINGS_SECTION, p);
+    }
 }
+    

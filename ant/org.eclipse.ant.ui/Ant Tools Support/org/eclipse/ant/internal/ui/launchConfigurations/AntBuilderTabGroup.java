@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,13 +24,13 @@ public class AntBuilderTabGroup extends AbstractLaunchConfigurationTabGroup {
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
 		ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[] {
 			new AntMainTab(),
-			new RefreshTab(),
-			new AntTargetsTab(),
+			new RefreshTab(),	
+            new AntBuilderTargetsTab(),
 			new AntClasspathTab(),
 			new AntPropertiesTab(),
 			new AntJRETab(),
 			new AntEnvironmentTab(),
-			new ExternalToolsBuilderTab(),
+			new ExternalToolsBuilderTab(false)
 		};
 		setTabs(tabs);
 	}

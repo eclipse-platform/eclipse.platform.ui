@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -71,6 +71,8 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.console.IHyperlink;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsUtil;
+import org.eclipse.ui.externaltools.internal.model.ExternalToolBuilder;
+import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.IDocumentProvider;
@@ -116,21 +118,44 @@ public final class AntUtil {
 
 	/**
 	 * Returns an array of targets to be run, or <code>null</code> if none are
-	 * specified (indicating the default target should be run).
+	 * specified (indicating the default target or implicit target should be run).
 	 *
 	 * @param configuration launch configuration
 	 * @return array of target names, or <code>null</code>
 	 * @throws CoreException if unable to access the associated attribute
 	 */
 	public static String[] getTargetNames(ILaunchConfiguration configuration) throws CoreException {
-		String attribute = configuration.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_TARGETS, (String) null);
-		if (attribute == null) {
-			return null;
-		} 
+        String attribute= null;
+        if (IAntLaunchConfigurationConstants.ID_ANT_BUILDER_LAUNCH_CONFIGURATION_TYPE.equals(configuration.getType().getIdentifier())) {
+            attribute= getTargetNamesForAntBuilder(configuration);
+        }
+        if (attribute == null) {
+            attribute = configuration.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_TARGETS, (String) null);
+            if (attribute == null) {
+                return null;
+            } 
+        }
+		
 		return AntUtil.parseRunTargets(attribute);
 	}
 	
-	/**
+	private static String getTargetNamesForAntBuilder(ILaunchConfiguration configuration) throws CoreException {
+        String buildType= ExternalToolBuilder.getBuildType();
+        String targets= null;
+        if (IExternalToolConstants.BUILD_TYPE_AUTO.equals(buildType)) {
+            targets= configuration.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_AUTO_TARGETS, (String)null);
+        } else if (IExternalToolConstants.BUILD_TYPE_CLEAN.equals(buildType)) {
+            targets = configuration.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_CLEAN_TARGETS, (String) null);
+        } else if (IExternalToolConstants.BUILD_TYPE_FULL.equals(buildType)) {
+            targets = configuration.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_AFTER_CLEAN_TARGETS, (String) null);
+        } else if (IExternalToolConstants.BUILD_TYPE_INCREMENTAL.equals(buildType)) {
+            targets = configuration.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_MANUAL_TARGETS, (String) null);
+        }
+       
+        return targets;
+    }
+
+    /**
 	 * Returns a map of properties to be defined for the build, or
 	 * <code>null</code> if none are specified (indicating no additional
 	 * properties specified for the build).
