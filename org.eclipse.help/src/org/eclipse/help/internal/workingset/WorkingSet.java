@@ -6,7 +6,6 @@ package org.eclipse.help.internal.workingset;
 
 import java.util.*;
 
-import org.eclipse.help.internal.HelpSystem;
 import org.w3c.dom.*;
 
 public class WorkingSet {
