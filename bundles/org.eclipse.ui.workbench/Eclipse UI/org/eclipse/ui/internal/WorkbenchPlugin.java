@@ -680,14 +680,19 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
         super.start(context);
         bundleContext = context;
         Policy.setLog(getLog());
+		
+		 Window.setDefaultOrientation(getDefaultOrientation());
 
         // Start the UI plugin so that it can install the callback in PrefUtil,
         // which needs to be done as early as possible, before the workbench
         // accesses any API preferences.
         Bundle uiBundle = Platform.getBundle(PlatformUI.PLUGIN_ID); 
         uiBundle.start();
-		
-		 Window.setDefaultOrientation(getDefaultOrientation());
+		/*
+		 * DO NOT RUN ANY OTHER CODE AFTER THIS LINE.  If you do, then you are
+		 * likely to cause a deadlock in class loader code.  Please see Bug 86450
+		 * for more information.
+		 */
 
     }
 	/**
