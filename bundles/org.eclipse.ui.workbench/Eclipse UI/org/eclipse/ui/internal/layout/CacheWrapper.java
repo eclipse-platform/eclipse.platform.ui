@@ -93,7 +93,7 @@ public class CacheWrapper {
          * @see org.eclipse.ui.internal.layout.ICachingLayout#flush(org.eclipse.swt.widgets.Control)
          */
         public void flush(Control dirtyControl) {
-            flushCache();
+            CacheWrapper.this.flushCache();
         }
     }
 
