@@ -181,12 +181,17 @@ public class DefaultMarkerAnnotationAccess implements IAnnotationAccess, IAnnota
 	 * @since 3.0
 	 */
 	public int getLayer(Annotation annotation) {
+		AnnotationPreference preference= getAnnotationPreference(annotation);
+		if (preference != null)
+			return preference.getPresentationLayer();
+		
+		// only for backward compatibility
 		if (annotation instanceof IAnnotationPresentation) {
 			IAnnotationPresentation presentation= (IAnnotationPresentation) annotation;
 			return presentation.getLayer();
 		}
-		AnnotationPreference preference= getAnnotationPreference(annotation);
-		return preference != null ? preference.getPresentationLayer() : IAnnotationAccessExtension.DEFAULT_LAYER;
+		
+		return IAnnotationAccessExtension.DEFAULT_LAYER;
 	}
 	
 	/*

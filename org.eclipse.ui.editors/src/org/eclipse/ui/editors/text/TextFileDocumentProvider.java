@@ -773,7 +773,7 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 	public boolean isReadOnly(Object element) {
 		FileInfo info= (FileInfo) fFileInfoMap.get(element);
 		if (info != null)
-			return isSystemFileReadOnly(info);
+			return info.fCachedReadOnlyState;
 		return ((IDocumentProviderExtension) getParentProvider()).isReadOnly(element);
 	}
 
