@@ -44,6 +44,7 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 		ITextEditorActionConstants.CUT,
 		ITextEditorActionConstants.COPY,
 		ITextEditorActionConstants.PASTE,
+		ITextEditorActionConstants.PRINT,
 		ITextEditorActionConstants.DELETE,
 		ITextEditorActionConstants.SELECT_ALL,
 		ITextEditorActionConstants.FIND,
