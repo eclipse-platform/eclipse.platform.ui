@@ -48,43 +48,43 @@ public class AntCorePlugin extends Plugin implements IAntCoreConstants {
 	 * Unique identifier constant (value <code>"org.eclipse.ant.core"</code>)
 	 * for the Ant Core plug-in.
 	 */
-	public static final String PI_ANTCORE= "org.eclipse.ant.core";
+	public static final String PI_ANTCORE= "org.eclipse.ant.core"; //$NON-NLS-1$
 
 	/**
 	 * Simple identifier constant (value <code>"antTasks"</code>)
 	 * for the Ant tasks extension point.
 	 */
-	public static final String PT_TASKS = "antTasks";
+	public static final String PT_TASKS = "antTasks"; //$NON-NLS-1$
 
 	/**
 	 * Simple identifier constant (value <code>"extraClasspathEntries"</code>)
 	 * for the extra classpath entries extension point.
 	 */
-	public static final String PT_EXTRA_CLASSPATH = "extraClasspathEntries";
+	public static final String PT_EXTRA_CLASSPATH = "extraClasspathEntries"; //$NON-NLS-1$
 
 	/**
 	 * Simple identifier constant (value <code>"antTypes"</code>)
 	 * for the Ant types extension point.
 	 */
-	public static final String PT_TYPES = "antTypes";
+	public static final String PT_TYPES = "antTypes"; //$NON-NLS-1$
 
 	/**
 	 * Simple identifier constant (value <code>"class"</code>)
 	 * of a tag that appears in Ant extensions.
 	 */
-	public static final String CLASS = "class";
+	public static final String CLASS = "class"; //$NON-NLS-1$
 
 	/**
 	 * Simple identifier constant (value <code>"name"</code>)
 	 * of a tag that appears in Ant extensions.
 	 */
-	public static final String NAME = "name";
+	public static final String NAME = "name"; //$NON-NLS-1$
 
 	/**
 	 * Simple identifier constant (value <code>"library"</code>)
 	 * of a tag that appears in Ant extensions.
 	 */
-	public static final String LIBRARY = "library";
+	public static final String LIBRARY = "library"; //$NON-NLS-1$
 
 public AntCorePlugin(IPluginDescriptor descriptor) {
 	super(descriptor);

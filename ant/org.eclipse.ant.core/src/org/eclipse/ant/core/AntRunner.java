@@ -116,48 +116,48 @@ public void addUserProperties(Map properties) {
 public void run(IProgressMonitor monitor) throws CoreException {
 	try {
 		ClassLoader loader = getClassLoader();
-		Class classInternalAntRunner = loader.loadClass("org.eclipse.ant.internal.core.ant.InternalAntRunner");
+		Class classInternalAntRunner = loader.loadClass("org.eclipse.ant.internal.core.ant.InternalAntRunner"); //$NON-NLS-1$
 		Object runner = classInternalAntRunner.newInstance();
 		// set build file
-		Method setBuildFileLocation = classInternalAntRunner.getMethod("setBuildFileLocation", new Class[] {String.class});
+		Method setBuildFileLocation = classInternalAntRunner.getMethod("setBuildFileLocation", new Class[] {String.class}); //$NON-NLS-1$
 		setBuildFileLocation.invoke(runner, new Object[] {buildFileLocation});
 		// add listeners
-		Method addBuildListeners = classInternalAntRunner.getMethod("addBuildListeners", new Class[] {List.class});
+		Method addBuildListeners = classInternalAntRunner.getMethod("addBuildListeners", new Class[] {List.class}); //$NON-NLS-1$
 		addBuildListeners.invoke(runner, new Object[] {buildListeners});
 		// add build logger
 		if (buildLoggerClassName != null) {
-			Method addBuildLogger = classInternalAntRunner.getMethod("addBuildLogger", new Class[] {String.class});
+			Method addBuildLogger = classInternalAntRunner.getMethod("addBuildLogger", new Class[] {String.class}); //$NON-NLS-1$
 			addBuildLogger.invoke(runner, new Object[] {buildLoggerClassName});
 		}
 		// add progress monitor
 		if (monitor != null) {
-			Method setProgressMonitor = classInternalAntRunner.getMethod("setProgressMonitor", new Class[] {IProgressMonitor.class});
+			Method setProgressMonitor = classInternalAntRunner.getMethod("setProgressMonitor", new Class[] {IProgressMonitor.class}); //$NON-NLS-1$
 			setProgressMonitor.invoke(runner, new Object[] {monitor});
 		}
 		// add properties
-		Method addUserProperties = classInternalAntRunner.getMethod("addUserProperties", new Class[] {Map.class});
+		Method addUserProperties = classInternalAntRunner.getMethod("addUserProperties", new Class[] {Map.class}); //$NON-NLS-1$
 		addUserProperties.invoke(runner, new Object[] {userProperties});
 		// set message output level
-		Method setMessageOutputLevel = classInternalAntRunner.getMethod("setMessageOutputLevel", new Class[] {int.class});
+		Method setMessageOutputLevel = classInternalAntRunner.getMethod("setMessageOutputLevel", new Class[] {int.class}); //$NON-NLS-1$
 		setMessageOutputLevel.invoke(runner, new Object[] {new Integer(messageOutputLevel)});
 		// set execution targets
 		if (targets != null) {
-			Method setExecutionTargets = classInternalAntRunner.getMethod("setExecutionTargets", new Class[] {Vector.class});
+			Method setExecutionTargets = classInternalAntRunner.getMethod("setExecutionTargets", new Class[] {Vector.class}); //$NON-NLS-1$
 			setExecutionTargets.invoke(runner, new Object[] {targets});
 		}
 		// set extra arguments
 		if (arguments != null) {
-			Method setArguments = classInternalAntRunner.getMethod("setArguments", new Class[] {String.class});
+			Method setArguments = classInternalAntRunner.getMethod("setArguments", new Class[] {String.class}); //$NON-NLS-1$
 			setArguments.invoke(runner, new Object[] {arguments});
 		}
 		// run
-		Method run = classInternalAntRunner.getMethod("run", null);
+		Method run = classInternalAntRunner.getMethod("run", null); //$NON-NLS-1$
 		run.invoke(runner, null);
 	} catch (InvocationTargetException e) {
 		Throwable realException = e.getTargetException();
-		throw new CoreException(new Status(IStatus.ERROR, PI_ANTCORE, ERROR_RUNNING_SCRIPT, Policy.bind("error.buildFailed"), realException));
+		throw new CoreException(new Status(IStatus.ERROR, PI_ANTCORE, ERROR_RUNNING_SCRIPT, Policy.bind("error.buildFailed"), realException)); //$NON-NLS-1$
 	} catch (Exception e) {
-		throw new CoreException(new Status(IStatus.ERROR, PI_ANTCORE, ERROR_RUNNING_SCRIPT, Policy.bind("error.buildFailed"), e));
+		throw new CoreException(new Status(IStatus.ERROR, PI_ANTCORE, ERROR_RUNNING_SCRIPT, Policy.bind("error.buildFailed"), e)); //$NON-NLS-1$
 	}
 }
 
@@ -186,13 +186,13 @@ public Object run(Object argArray) throws Exception {
 		String[] newArgs = new String[args.length + 1];
 		for (int i = 0; i < args.length; i++)
 			newArgs[i] = args[i];
-		newArgs[args.length] = "-debug";
+		newArgs[args.length] = "-debug"; //$NON-NLS-1$
 		argArray = newArgs;
 	}
 	ClassLoader loader = getClassLoader();
-	Class classInternalAntRunner = loader.loadClass("org.eclipse.ant.internal.core.ant.InternalAntRunner");
+	Class classInternalAntRunner = loader.loadClass("org.eclipse.ant.internal.core.ant.InternalAntRunner"); //$NON-NLS-1$
 	Object runner = classInternalAntRunner.newInstance();
-	Method run = classInternalAntRunner.getMethod("run", new Class[] {Object.class});
+	Method run = classInternalAntRunner.getMethod("run", new Class[] {Object.class}); //$NON-NLS-1$
 	run.invoke(runner, new Object[] {argArray});
 	return null;
 }

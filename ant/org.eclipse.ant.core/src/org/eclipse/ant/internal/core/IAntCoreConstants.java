@@ -16,8 +16,8 @@ package org.eclipse.ant.internal.core;
 public interface IAntCoreConstants {
 
 	// default values
-	public static final String PI_ANTCORE = "org.eclipse.ant.core";
-	public static final String DEFAULT_BUILD_FILENAME = "build.xml";
+	public static final String PI_ANTCORE = "org.eclipse.ant.core"; //$NON-NLS-1$
+	public static final String DEFAULT_BUILD_FILENAME = "build.xml"; //$NON-NLS-1$
 	
 	// error codes
 	public static final int ERROR_RUNNING_SCRIPT = 1;
@@ -25,10 +25,10 @@ public interface IAntCoreConstants {
 	public static final int ERROR_LIBRARY_NOT_SPECIFIED = 3;
 
 	// preferences
-	public static final String PREFERENCE_TASKS = "tasks";
-	public static final String PREFERENCE_TYPES = "types";
-	public static final String PREFERENCE_URLS = "urls";
-	public static final String PREFIX_TASK = "task.";
-	public static final String PREFIX_TYPE = "type.";
-	public static final String PREFIX_URL = "url.";
+	public static final String PREFERENCE_TASKS = "tasks"; //$NON-NLS-1$
+	public static final String PREFERENCE_TYPES = "types"; //$NON-NLS-1$
+	public static final String PREFERENCE_URLS = "urls"; //$NON-NLS-1$
+	public static final String PREFIX_TASK = "task."; //$NON-NLS-1$
+	public static final String PREFIX_TYPE = "type."; //$NON-NLS-1$
+	public static final String PREFIX_URL = "url."; //$NON-NLS-1$
 }

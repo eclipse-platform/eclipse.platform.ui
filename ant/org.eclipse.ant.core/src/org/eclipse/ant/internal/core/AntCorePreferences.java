@@ -44,19 +44,19 @@ protected void restoreCustomObjects() {
 	Preferences prefs = AntCorePlugin.getPlugin().getPluginPreferences();
 	// tasks
 	String tasks = prefs.getString(PREFERENCE_TASKS);
-	if (tasks.equals(""))
+	if (tasks.equals("")) //$NON-NLS-1$
 		customTasks = new Task[0];
 	else
 		customTasks = extractTasks(prefs, getArrayFromString(tasks));
 	// types
 	String types = prefs.getString(PREFERENCE_TYPES);
-	if (types.equals(""))
+	if (types.equals("")) //$NON-NLS-1$
 		customTypes = new Type[0];
 	else
 		customTypes = extractTypes(prefs, getArrayFromString(types));
 	// urls
 	String urls = prefs.getString(PREFERENCE_URLS);
-	if (urls.equals(""))
+	if (urls.equals("")) //$NON-NLS-1$
 		customURLs = getDefaultCustomURLs();
 	else
 		customURLs = extractURLs(prefs, getArrayFromString(urls));
@@ -75,7 +75,7 @@ protected Task[] extractTasks(Preferences prefs, String[] tasks) {
 			result.add(task);
 		} catch (MalformedURLException e) {
 			// if the URL does not have a valid format, just log and ignore the exception
-			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, ERROR_MALFORMED_URL, Policy.bind("exception.malformedURL"), e);
+			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, ERROR_MALFORMED_URL, Policy.bind("exception.malformedURL"), e); //$NON-NLS-1$
 			AntCorePlugin.getPlugin().getLog().log(status);
 		}
 	}
@@ -95,7 +95,7 @@ protected Type[] extractTypes(Preferences prefs, String[] types) {
 			result.add(type);
 		} catch (MalformedURLException e) {
 			// if the URL does not have a valid format, just log and ignore the exception
-			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, ERROR_MALFORMED_URL, Policy.bind("exception.malformedURL"), e);
+			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, ERROR_MALFORMED_URL, Policy.bind("exception.malformedURL"), e); //$NON-NLS-1$
 			AntCorePlugin.getPlugin().getLog().log(status);
 		}
 	}
@@ -109,7 +109,7 @@ protected URL[] extractURLs(Preferences prefs, String[] urls) {
 			result.add(new URL(urls[i]));
 		} catch (MalformedURLException e) {
 			// if the URL does not have a valid format, just log and ignore the exception
-			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, ERROR_MALFORMED_URL, Policy.bind("exception.malformedURL"), e);
+			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, ERROR_MALFORMED_URL, Policy.bind("exception.malformedURL"), e); //$NON-NLS-1$
 			AntCorePlugin.getPlugin().getLog().log(status);
 		}
 	}
@@ -121,9 +121,9 @@ protected URL[] extractURLs(Preferences prefs, String[] urls) {
 
 public URL[] getDefaultCustomURLs() {
 	List result = new ArrayList(10);
-	IPluginDescriptor descriptor = Platform.getPlugin("org.apache.ant").getDescriptor();
+	IPluginDescriptor descriptor = Platform.getPlugin("org.apache.ant").getDescriptor(); //$NON-NLS-1$
 	addLibraries(descriptor, result);
-	descriptor = Platform.getPlugin("org.apache.xerces").getDescriptor();
+	descriptor = Platform.getPlugin("org.apache.xerces").getDescriptor(); //$NON-NLS-1$
 	addLibraries(descriptor, result);
 	addToolsJar(result);
 	return (URL[]) result.toArray(new URL[result.size()]);
@@ -139,7 +139,7 @@ protected List computeDefaultTasks(Map tasks) {
 		task.setClassName(element.getAttribute(AntCorePlugin.CLASS));
 		String library = element.getAttribute(AntCorePlugin.LIBRARY);
 		if (library == null) {
-			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, ERROR_LIBRARY_NOT_SPECIFIED, Policy.bind("error.libraryNotSpecified", task.getTaskName()), null);
+			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, ERROR_LIBRARY_NOT_SPECIFIED, Policy.bind("error.libraryNotSpecified", task.getTaskName()), null); //$NON-NLS-1$
 			AntCorePlugin.getPlugin().getLog().log(status);
 			continue;
 		}
@@ -150,7 +150,7 @@ protected List computeDefaultTasks(Map tasks) {
 			defaultURLs.add(url);
 		} catch (Exception e) {
 			// if the URL does not have a valid format, just log and ignore the exception
-			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, ERROR_MALFORMED_URL, Policy.bind("exception.malformedURL"), e);
+			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, ERROR_MALFORMED_URL, Policy.bind("exception.malformedURL"), e); //$NON-NLS-1$
 			AntCorePlugin.getPlugin().getLog().log(status);
 			continue;
 		}
@@ -170,7 +170,7 @@ protected List computeDefaultTypes(Map types) {
 		type.setClassName(element.getAttribute(AntCorePlugin.CLASS));
 		String library = element.getAttribute(AntCorePlugin.LIBRARY);
 		if (library == null) {
-			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, ERROR_LIBRARY_NOT_SPECIFIED, Policy.bind("error.libraryNotSpecified", type.getTypeName()), null);
+			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, ERROR_LIBRARY_NOT_SPECIFIED, Policy.bind("error.libraryNotSpecified", type.getTypeName()), null); //$NON-NLS-1$
 			AntCorePlugin.getPlugin().getLog().log(status);
 			continue;
 		}
@@ -181,7 +181,7 @@ protected List computeDefaultTypes(Map types) {
 			defaultURLs.add(url);
 		} catch (Exception e) {
 			// if the URL does not have a valid format, just log and ignore the exception
-			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, ERROR_MALFORMED_URL, Policy.bind("exception.malformedURL"), e);
+			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, ERROR_MALFORMED_URL, Policy.bind("exception.malformedURL"), e); //$NON-NLS-1$
 			AntCorePlugin.getPlugin().getLog().log(status);
 			continue;
 		}
@@ -205,7 +205,7 @@ protected void computeDefaultExtraClasspathEntries(Map entries) {
 			defaultURLs.add(url);
 		} catch (Exception e) {
 			// if the URL does not have a valid format, just log and ignore the exception
-			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, ERROR_MALFORMED_URL, Policy.bind("exception.malformedURL"), e);
+			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, ERROR_MALFORMED_URL, Policy.bind("exception.malformedURL"), e); //$NON-NLS-1$
 			AntCorePlugin.getPlugin().getLog().log(status);
 			continue;
 		}
@@ -218,10 +218,10 @@ protected void computeDefaultExtraClasspathEntries(Map entries) {
  * emulating the same behaviour here.
  */
 protected void addToolsJar(List destination) {
-	IPath path = new Path(System.getProperty("java.home"));
-	if (path.lastSegment().equalsIgnoreCase("jre"))
+	IPath path = new Path(System.getProperty("java.home")); //$NON-NLS-1$
+	if (path.lastSegment().equalsIgnoreCase("jre")) //$NON-NLS-1$
 		path = path.removeLastSegments(1);
-	path = path.append("lib").append("tools.jar");
+	path = path.append("lib").append("tools.jar"); //$NON-NLS-1$ //$NON-NLS-2$
 	File tools = path.toFile();
 	if (!tools.exists())
 		return;
@@ -229,7 +229,7 @@ protected void addToolsJar(List destination) {
 		destination.add(tools.toURL());
 	} catch (MalformedURLException e) {
 		// if the URL does not have a valid format, just log and ignore the exception
-		IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, ERROR_MALFORMED_URL, Policy.bind("exception.malformedURL"), e);
+		IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, ERROR_MALFORMED_URL, Policy.bind("exception.malformedURL"), e); //$NON-NLS-1$
 		AntCorePlugin.getPlugin().getLog().log(status);
 	}
 }
@@ -243,7 +243,7 @@ protected void addLibraries(IPluginDescriptor source, List destination) {
 			destination.add(Platform.asLocalURL(url));
 		} catch (Exception e) {
 			// if the URL does not have a valid format, just log and ignore the exception
-			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, ERROR_MALFORMED_URL, Policy.bind("exception.malformedURL"), e);
+			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, ERROR_MALFORMED_URL, Policy.bind("exception.malformedURL"), e); //$NON-NLS-1$
 			AntCorePlugin.getPlugin().getLog().log(status);
 			continue;
 		}
@@ -331,12 +331,12 @@ public List getTypes() {
  * Convert a list of tokens into an array. The list separator has to be specified.
  */
 public static String[] getArrayFromString(String list, String separator) {
-	if (list == null || list.trim().equals(""))
+	if (list == null || list.trim().equals("")) //$NON-NLS-1$
 		return new String[0];
 	ArrayList result = new ArrayList();
 	for (StringTokenizer tokens = new StringTokenizer(list, separator); tokens.hasMoreTokens();) {
 		String token = tokens.nextToken().trim();
-		if (!token.equals(""))
+		if (!token.equals("")) //$NON-NLS-1$
 			result.add(token);
 	}
 	return (String[]) result.toArray(new String[result.size()]);
@@ -346,7 +346,7 @@ public static String[] getArrayFromString(String list, String separator) {
  * convert a list of comma-separated tokens into an array
  */
 public static String[] getArrayFromString(String list) {
-	return getArrayFromString(list, ",");
+	return getArrayFromString(list, ","); //$NON-NLS-1$
 }
 
 public void updatePluginPreferences() {
@@ -358,28 +358,28 @@ public void updatePluginPreferences() {
 
 protected void updateTasks(Preferences prefs) {
 	if (customTasks.length == 0) {
-		prefs.setValue(PREFERENCE_TASKS, "");
+		prefs.setValue(PREFERENCE_TASKS, ""); //$NON-NLS-1$
 		return;
 	}
 	StringBuffer tasks = new StringBuffer();
 	for (int i = 0; i < customTasks.length; i++) {
 		tasks.append(customTasks[i].getTaskName());
-		tasks.append(",");
-		prefs.setValue(PREFIX_TASK + customTasks[i].getTaskName(), customTasks[i].getClassName() + "," + customTasks[i].getLibrary().toExternalForm());
+		tasks.append(","); //$NON-NLS-1$
+		prefs.setValue(PREFIX_TASK + customTasks[i].getTaskName(), customTasks[i].getClassName() + "," + customTasks[i].getLibrary().toExternalForm()); //$NON-NLS-1$
 	}
 	prefs.setValue(PREFERENCE_TASKS, tasks.toString());
 }
 
 protected void updateTypes(Preferences prefs) {
 	if (customTypes.length == 0) {
-		prefs.setValue(PREFERENCE_TYPES, "");
+		prefs.setValue(PREFERENCE_TYPES, ""); //$NON-NLS-1$
 		return;
 	}
 	StringBuffer types = new StringBuffer();
 	for (int i = 0; i < customTypes.length; i++) {
 		types.append(customTypes[i].getTypeName());
-		types.append(",");
-		prefs.setValue(PREFIX_TYPE + customTypes[i].getTypeName(), customTypes[i].getClassName() + "," + customTypes[i].getLibrary().toExternalForm());
+		types.append(","); //$NON-NLS-1$
+		prefs.setValue(PREFIX_TYPE + customTypes[i].getTypeName(), customTypes[i].getClassName() + "," + customTypes[i].getLibrary().toExternalForm()); //$NON-NLS-1$
 	}
 	prefs.setValue(PREFERENCE_TYPES, types.toString());
 }
@@ -388,7 +388,7 @@ protected void updateURLs(Preferences prefs) {
 	StringBuffer urls = new StringBuffer();
 	for (int i = 0; i < customURLs.length; i++) {
 		urls.append(customURLs[i].toExternalForm());
-		urls.append(",");
+		urls.append(","); //$NON-NLS-1$
 	}
 	prefs.setValue(PREFERENCE_URLS, urls.toString());
 }

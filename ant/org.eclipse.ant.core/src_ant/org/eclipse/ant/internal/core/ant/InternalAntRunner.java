@@ -135,7 +135,7 @@ public class InternalAntRunner {
 	protected String extraArguments = null;
 
 	// properties
-	private static final String PROPERTY_ECLIPSE_RUNNING = "eclipse.running";
+	private static final String PROPERTY_ECLIPSE_RUNNING = "eclipse.running"; //$NON-NLS-1$
 
 public InternalAntRunner() {
 	buildListeners = new ArrayList(5);
@@ -188,9 +188,9 @@ protected void addBuildListeners(Project project) {
 
 
 protected void setProperties(Project project) {
-	project.setUserProperty(PROPERTY_ECLIPSE_RUNNING, "true");
-    project.setUserProperty("ant.file" , getBuildFileLocation());
-	project.setUserProperty("ant.version", getAntVersion());
+	project.setUserProperty(PROPERTY_ECLIPSE_RUNNING, "true"); //$NON-NLS-1$
+    project.setUserProperty("ant.file" , getBuildFileLocation()); //$NON-NLS-1$
+	project.setUserProperty("ant.version", getAntVersion()); //$NON-NLS-1$
     if (userProperties == null)
     	return;
     for (Iterator iterator = userProperties.entrySet().iterator(); iterator.hasNext();) {
@@ -252,7 +252,7 @@ public void run() {
 	try {
         System.setOut(new PrintStream(new DemuxOutputStream(project, false)));
         System.setErr(new PrintStream(new DemuxOutputStream(project, true)));
-		project.log(Policy.bind("label.buildFile", getBuildFileLocation()));
+		project.log(Policy.bind("label.buildFile", getBuildFileLocation())); //$NON-NLS-1$
         fireBuildStarted(project);
 		project.init();
 		addBuildListeners(project);
@@ -287,9 +287,9 @@ public void run() {
 protected void createMonitorBuildListener(Project project) {
 	if (monitor == null)
 		return;
-	monitor.beginTask("", project.getTargets().size());
+	monitor.beginTask("", project.getTargets().size()); //$NON-NLS-1$
 	project.addBuildListener(new ProgressBuildListener(monitor));
-	project.addReference("eclipse.progress.monitor", monitor);
+	project.addReference("eclipse.progress.monitor", monitor); //$NON-NLS-1$
 }
 
 /**
@@ -330,7 +330,7 @@ private void printTargets(Project project) {
     }
 
     String defaultTarget = project.getDefaultTarget();
-    if (defaultTarget != null && !"".equals(defaultTarget)) { // shouldn't need to check but...
+    if (defaultTarget != null && !"".equals(defaultTarget)) { // shouldn't need to check but... //$NON-NLS-1$
         Vector defaultName = new Vector();
         Vector defaultDesc = null;
         defaultName.addElement(defaultTarget);
@@ -340,12 +340,12 @@ private void printTargets(Project project) {
             defaultDesc = new Vector();
             defaultDesc.addElement(topDescriptions.elementAt(indexOfDefDesc));
         }
-        printTargets(project, defaultName, defaultDesc, Policy.bind("label.defaultTarget"), maxLength);
+        printTargets(project, defaultName, defaultDesc, Policy.bind("label.defaultTarget"), maxLength); //$NON-NLS-1$
 
     }
 
-    printTargets(project, topNames, topDescriptions, Policy.bind("label.mainTargets"), maxLength);
-    printTargets(project, subNames, null, Policy.bind("label.subTargets"), 0);
+    printTargets(project, topNames, topDescriptions, Policy.bind("label.mainTargets"), maxLength); //$NON-NLS-1$
+    printTargets(project, subNames, null, Policy.bind("label.subTargets"), 0); //$NON-NLS-1$
 }
 
 /**
@@ -374,16 +374,16 @@ private int findTargetPosition(Vector names, String name) {
  */
 private void printTargets(Project project, Vector names, Vector descriptions, String heading, int maxlen) {
 	// now, start printing the targets and their descriptions
-	String lSep = System.getProperty("line.separator");
+	String lSep = System.getProperty("line.separator"); //$NON-NLS-1$
 	// got a bit annoyed that I couldn't find a pad function
-	String spaces = "    ";
+	String spaces = "    "; //$NON-NLS-1$
 	while (spaces.length() < maxlen) {
 		spaces += spaces;
 	}
 	StringBuffer msg = new StringBuffer();
 	msg.append(heading + lSep + lSep);
 	for (int i= 0; i < names.size(); i++) {
-		msg.append(" ");
+		msg.append(" "); //$NON-NLS-1$
 		msg.append(names.elementAt(i));
 		if (descriptions != null) {
 			msg.append(spaces.substring(0, maxlen - ((String) names.elementAt(i)).length() + 2));
@@ -435,7 +435,7 @@ protected BuildLogger createLogger() {
 		try {
 			logger = (BuildLogger) (Class.forName(loggerClassname).newInstance());
 		} catch (Exception e) {
-			String message = Policy.bind("exception.cannotCreateLogger", loggerClassname);
+			String message = Policy.bind("exception.cannotCreateLogger", loggerClassname); //$NON-NLS-1$
 			logMessage(null, message, Project.MSG_ERR);
 			throw new BuildException(e);
 		}
@@ -496,7 +496,7 @@ public void setBuildFileLocation(String buildFileLocation) {
 
 protected String getBuildFileLocation() {
 	if (buildFileLocation == null)
-		buildFileLocation = new File("build.xml").getAbsolutePath();
+		buildFileLocation = new File("build.xml").getAbsolutePath(); //$NON-NLS-1$
 	return buildFileLocation;
 }
 
@@ -527,20 +527,20 @@ public void setExecutionTargets(Vector executiongTargets) {
 protected static String getAntVersion() throws BuildException {
     try {
         Properties props = new Properties();
-        InputStream in = Main.class.getResourceAsStream("/org/apache/tools/ant/version.txt");
+        InputStream in = Main.class.getResourceAsStream("/org/apache/tools/ant/version.txt"); //$NON-NLS-1$
         props.load(in);
         in.close();
         
         StringBuffer msg = new StringBuffer();
-        msg.append(Policy.bind("usage.antVersion"));
-        msg.append(props.getProperty("VERSION") + " ");
-        msg.append(Policy.bind("usage.compiledOn"));
-        msg.append(props.getProperty("DATE"));
+        msg.append(Policy.bind("usage.antVersion")); //$NON-NLS-1$
+        msg.append(props.getProperty("VERSION") + " "); //$NON-NLS-1$ //$NON-NLS-2$
+        msg.append(Policy.bind("usage.compiledOn")); //$NON-NLS-1$
+        msg.append(props.getProperty("DATE")); //$NON-NLS-1$
         return msg.toString();
     } catch (IOException ioe) {
-        throw new BuildException(Policy.bind("exception.cannotLoadVersionInfo", ioe.getMessage()));
+        throw new BuildException(Policy.bind("exception.cannotLoadVersionInfo", ioe.getMessage())); //$NON-NLS-1$
     } catch (NullPointerException npe) {
-        throw new BuildException(Policy.bind("exception.cannotLoadVersionInfo", ""));
+        throw new BuildException(Policy.bind("exception.cannotLoadVersionInfo", "")); //$NON-NLS-1$ //$NON-NLS-2$
     }
 }
 
@@ -550,34 +550,34 @@ protected static String getAntVersion() throws BuildException {
  */
 protected boolean processCommandLine(List commands) {
 	// looks for flag-like commands
-	if (commands.remove("-help")) {
+	if (commands.remove("-help")) { //$NON-NLS-1$
 		printUsage();
 		return false;
 	} 
-	if (commands.remove("-version")) {
+	if (commands.remove("-version")) { //$NON-NLS-1$
 		printVersion();
 		return false;
 	} 
-	if (commands.remove("-quiet") || commands.remove("-q")) {
+	if (commands.remove("-quiet") || commands.remove("-q")) { //$NON-NLS-1$ //$NON-NLS-2$
 		messageOutputLevel = Project.MSG_WARN;
 	} 
-	if (commands.remove("-verbose") || commands.remove("-v")) {
+	if (commands.remove("-verbose") || commands.remove("-v")) { //$NON-NLS-1$ //$NON-NLS-2$
 		messageOutputLevel = Project.MSG_VERBOSE;
 	} 
-	if (commands.remove("-debug")) {
+	if (commands.remove("-debug")) { //$NON-NLS-1$
 		messageOutputLevel = Project.MSG_DEBUG;
 	}
-	if (commands.remove("-emacs")) {
+	if (commands.remove("-emacs")) { //$NON-NLS-1$
 		emacsMode = true;
 	}
-	if (commands.remove("-projecthelp")) {
+	if (commands.remove("-projecthelp")) { //$NON-NLS-1$
 		projectHelp = true;
 	} 
 	
 	// look for argumments
-	String[] args = getArguments(commands, "-logfile");
+	String[] args = getArguments(commands, "-logfile"); //$NON-NLS-1$
 	if (args == null) {
-		args = getArguments(commands, "-l");
+		args = getArguments(commands, "-l"); //$NON-NLS-1$
 	}
 	if (args != null) {
 		try {
@@ -586,16 +586,16 @@ protected boolean processCommandLine(List commands) {
 			err = out;
 		} catch (IOException e) {
 			// just log message and ignore exception
-			logMessage(null, Policy.bind("exception.cannotWriteToLog"), Project.MSG_INFO);
+			logMessage(null, Policy.bind("exception.cannotWriteToLog"), Project.MSG_INFO); //$NON-NLS-1$
 			return false;
 		}
 	}
 
-	args = getArguments(commands, "-buildfile");
+	args = getArguments(commands, "-buildfile"); //$NON-NLS-1$
 	if (args == null) {
-		args = getArguments(commands, "-file");
+		args = getArguments(commands, "-file"); //$NON-NLS-1$
 		if (args == null)
-			args = getArguments(commands, "-f");
+			args = getArguments(commands, "-f"); //$NON-NLS-1$
 	}
 	if (args != null) {
 		buildFileLocation = args[0];
@@ -604,11 +604,11 @@ protected boolean processCommandLine(List commands) {
 			targets.add(args[i]);
 	}
 
-	args = getArguments(commands, "-listener");
+	args = getArguments(commands, "-listener"); //$NON-NLS-1$
 	if (args != null)
 		buildListeners.add(args[0]);
 
-	args = getArguments(commands, "-logger");
+	args = getArguments(commands, "-logger"); //$NON-NLS-1$
 	if (args != null)
 		loggerClassname = args[0];
 
@@ -622,7 +622,7 @@ protected void processProperties(List commands) {
 	String[] args = (String[]) commands.toArray(new String[commands.size()]);
 	for (int i = 0; i < args.length; i++) {
 		String arg = args[i];
-		if (arg.startsWith("-D")) {
+		if (arg.startsWith("-D")) { //$NON-NLS-1$
 
 			/* Interestingly enough, we get to here when a user
 			 * uses -Dname=value. However, in some cases, the JDK
@@ -637,7 +637,7 @@ protected void processProperties(List commands) {
 
 			String name = arg.substring(2, arg.length());
 			String value = null;
-			int posEq = name.indexOf("=");
+			int posEq = name.indexOf("="); //$NON-NLS-1$
 			if (posEq > 0) {
 				value = name.substring(posEq + 1);
 				name = name.substring(0, posEq);
@@ -671,25 +671,25 @@ protected void printVersion() {
  * Logs a message with the client outlining the usage of <b>Ant</b>.
  */
 protected void printUsage() {
-	String lSep = System.getProperty("line.separator");
+	String lSep = System.getProperty("line.separator"); //$NON-NLS-1$
 	StringBuffer msg = new StringBuffer();
-	msg.append("ant [" + Policy.bind("usage.options") + "] [" 
-				+ Policy.bind("usage.target") + " ["
-				+ Policy.bind("usage.target") + "2 ["
-				+ Policy.bind("usage.target") + "3] ...]]" + lSep);
-	msg.append(Policy.bind("usage.Options") + ": " + lSep);
-	msg.append("  -help                  " + Policy.bind("usage.printMessage") + lSep);
-	msg.append("  -projecthelp           " + Policy.bind("usage.projectHelp") + lSep);
-	msg.append("  -version               " + Policy.bind("usage.versionInfo") + lSep);
-	msg.append("  -quiet                 " + Policy.bind("usage.beQuiet") + lSep);
-	msg.append("  -verbose               " + Policy.bind("usage.beVerbose") + lSep);
-	msg.append("  -debug                 " + Policy.bind("usage.printDebugInfo") + lSep);
-	msg.append("  -emacs                 " + Policy.bind("usage.emacsLog") + lSep);
-	msg.append("  -logfile <file>        " + Policy.bind("usage.useFile") + lSep);
-	msg.append("  -logger <classname>    " + Policy.bind("usage.logClass") + lSep);
-	msg.append("  -listener <classname>  " + Policy.bind("usage.listenerClass") + lSep);
-	msg.append("  -buildfile <file>      " + Policy.bind("usage.fileToBuild") + lSep);
-	msg.append("  -D<property>=<value>   " + Policy.bind("usage.propertiesValues") + lSep);
+	msg.append("ant [" + Policy.bind("usage.options") + "] ["  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				+ Policy.bind("usage.target") + " [" //$NON-NLS-1$ //$NON-NLS-2$
+				+ Policy.bind("usage.target") + "2 [" //$NON-NLS-1$ //$NON-NLS-2$
+				+ Policy.bind("usage.target") + "3] ...]]" + lSep); //$NON-NLS-1$ //$NON-NLS-2$
+	msg.append(Policy.bind("usage.Options") + ": " + lSep); //$NON-NLS-1$ //$NON-NLS-2$
+	msg.append("  -help                  " + Policy.bind("usage.printMessage") + lSep); //$NON-NLS-1$ //$NON-NLS-2$
+	msg.append("  -projecthelp           " + Policy.bind("usage.projectHelp") + lSep); //$NON-NLS-1$ //$NON-NLS-2$
+	msg.append("  -version               " + Policy.bind("usage.versionInfo") + lSep); //$NON-NLS-1$ //$NON-NLS-2$
+	msg.append("  -quiet                 " + Policy.bind("usage.beQuiet") + lSep); //$NON-NLS-1$ //$NON-NLS-2$
+	msg.append("  -verbose               " + Policy.bind("usage.beVerbose") + lSep); //$NON-NLS-1$ //$NON-NLS-2$
+	msg.append("  -debug                 " + Policy.bind("usage.printDebugInfo") + lSep); //$NON-NLS-1$ //$NON-NLS-2$
+	msg.append("  -emacs                 " + Policy.bind("usage.emacsLog") + lSep); //$NON-NLS-1$ //$NON-NLS-2$
+	msg.append("  -logfile <file>        " + Policy.bind("usage.useFile") + lSep); //$NON-NLS-1$ //$NON-NLS-2$
+	msg.append("  -logger <classname>    " + Policy.bind("usage.logClass") + lSep); //$NON-NLS-1$ //$NON-NLS-2$
+	msg.append("  -listener <classname>  " + Policy.bind("usage.listenerClass") + lSep); //$NON-NLS-1$ //$NON-NLS-2$
+	msg.append("  -buildfile <file>      " + Policy.bind("usage.fileToBuild") + lSep); //$NON-NLS-1$ //$NON-NLS-2$
+	msg.append("  -D<property>=<value>   " + Policy.bind("usage.propertiesValues") + lSep); //$NON-NLS-1$ //$NON-NLS-2$
 //	msg.append("  -find <file>           " + Policy.bind("usage.findFileToBuild") + lSep);
 	
 	logMessage(null, msg.toString(), Project.MSG_INFO);
@@ -710,7 +710,7 @@ protected String[] getArguments(List commands, String param) {
 	List args = new ArrayList(commands.size());
 	while (index < commands.size()) { // while not the last command
 		String command = (String) commands.get(index);
-		if (command.startsWith("-")) // is it a new parameter?
+		if (command.startsWith("-")) // is it a new parameter? //$NON-NLS-1$
 			break;
 		args.add(command);
 		commands.remove(index);
@@ -738,9 +738,9 @@ private ArrayList getArrayList(String[] args) {
  */
 private ArrayList getArrayList(String args) {
 	ArrayList result = new ArrayList();
-	for (StringTokenizer tokens = new StringTokenizer(args, ", "); tokens.hasMoreTokens();) {
+	for (StringTokenizer tokens = new StringTokenizer(args, ", "); tokens.hasMoreTokens();) { //$NON-NLS-1$
 		String token = tokens.nextToken().trim();
-		if (!token.equals(""))
+		if (!token.equals("")) //$NON-NLS-1$
 			result.add(token);
 	}
 	return result;

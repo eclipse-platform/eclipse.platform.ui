@@ -53,6 +53,6 @@ public void messageLogged(BuildEvent event) {
 
 protected void checkCanceled() {
 	if (monitor.isCanceled())
-		throw new BuildException(Policy.bind("exception.canceled"));
+		throw new BuildException(Policy.bind("exception.canceled")); //$NON-NLS-1$
 }
 }
