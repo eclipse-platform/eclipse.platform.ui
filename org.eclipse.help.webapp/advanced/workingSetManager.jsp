@@ -58,6 +58,28 @@ TD, TR {
 <script language="JavaScript" src="list.js"></script>
 <script language="JavaScript">
 
+function highlightHandler()
+{
+	document.getElementById('selectws').checked = true;
+	enableButtons();
+}
+
+// register handler
+_highlightHandler = highlightHandler;
+
+function enableButtons() {
+	if (document.getElementById('selectws').checked){
+		if (active != null) {
+			document.getElementById("edit").disabled = false;
+			document.getElementById("remove").disabled = false;
+		}
+	} else {
+		document.getElementById("edit").disabled = true;
+		document.getElementById("remove").disabled = true;
+	}
+}
+
+
 function getWorkingSet()
 {
 	if (active != null && document.getElementById("selectws").checked)
@@ -65,6 +87,7 @@ function getWorkingSet()
 	else
 		return "";
 }
+
 
 function selectWorkingSet() {
 	var workingSet = getWorkingSet();
@@ -121,16 +144,16 @@ function closeWorkingSetDialog()
 
 </head>
 
-<body onunload="closeWorkingSetDialog()">
+<body onload="enableButtons()" onunload="closeWorkingSetDialog()">
 
 <div style="overflow:auto;height:250px;width:100%;">
  
   	<table id="filterTable" cellspacing=0 cellpading=0 border=0 align=center  style="background:<%=prefs.getToolbarBackground()%>;margin-top:5px;width:100%;">
 		<tr><td>
-			<input id="alldocs" type="radio" name="workingSet" value="none"><%=WebappResources.getString("All", request)%>
+			<input id="alldocs" type="radio" name="workingSet" value="none" onclick="enableButtons()"><%=WebappResources.getString("All", request)%>
 		</td></tr>
 		<tr><td>
-			<input id="selectws" type="radio" name="workingSet" value="workingSet"><%=WebappResources.getString("selectWorkingSet", request)%>:		
+			<input id="selectws" type="radio" name="workingSet" value="workingSet" onclick="enableButtons()"><%=WebappResources.getString("selectWorkingSet", request)%>:		
 		</td></tr>
 		<tr><td>
 			<div id="workingSetContainer" style="overflow:auto; height:150px;">
@@ -148,7 +171,7 @@ for (int i=0; i<wsets.length; i++)
 	<td align='left' class='label' nowrap style="width:100%; padding-left:5px;">
 		<a id='a<%=i%>' 
 		   href='#' 
-		   onclick="document.getElementById('selectws').checked = true;"
+		   xonclick="document.getElementById('selectws').checked = true;"
    		   ondblclick="selectWorkingSet()"
 		   title="<%=wsets[i]%>">
 		   <%=wsets[i]%>
@@ -171,10 +194,10 @@ for (int i=0; i<wsets.length; i++)
 						<input class='button'  type="button" onclick="newWorkingSet()" value='<%=WebappResources.getString("NewWorkingSetButton", request)%>...'  id="new" alt='<%=WebappResources.getString("NewWorkingSetButton", request)%>'>
 					</td>
 					<td style="border:1px solid WindowText; padding:0px; margin:0px;">
-					  	<input class='button' type="button" onclick="editWorkingSet()"  type="button"  value='<%=WebappResources.getString("EditWorkingSetButton", request)%>...'  id="edit" alt='<%=WebappResources.getString("EditWorkingSetButton", request)%>'>
+					  	<input class='button' type="button" onclick="editWorkingSet()"  type="button"  value='<%=WebappResources.getString("EditWorkingSetButton", request)%>...'  id="edit" disabled='<%=data.getWorkingSet() == null ?"true":"false"%>' alt='<%=WebappResources.getString("EditWorkingSetButton", request)%>'>
 					</td>
 					<td style="border:1px solid WindowText; padding:0px; margin:0px;">
-					  	<input class='button' type="button" onclick="removeWorkingSet()"  type="button"  value='<%=WebappResources.getString("RemoveWorkingSetButton", request)%>'  id="remove" alt='<%=WebappResources.getString("RemoveWorkingSetButton", request)%>'>
+					  	<input class='button' type="button" onclick="removeWorkingSet()"  type="button"  value='<%=WebappResources.getString("RemoveWorkingSetButton", request)%>'  id="remove" disabled='<%=data.getWorkingSet() == null ?"true":"false"%>' alt='<%=WebappResources.getString("RemoveWorkingSetButton", request)%>'>
 					</td>
 				</tr>
   			</table>
