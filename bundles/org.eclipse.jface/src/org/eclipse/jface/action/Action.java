@@ -45,7 +45,7 @@ public abstract class Action implements IAction {
 	private static String LOCALIZED_CTRL;
 	private static String LOCALIZED_SHIFT;
 	private static String LOCALIZED_ALT;
-	
+	private static String LOCALIZED_COMMAND;
 	
 	/**
 	 * Table of string representations of keys
@@ -184,7 +184,7 @@ private static int convertLocalizedAccelerator(String acceleratorText) {
 		String token = stok.nextToken();
 		hasMoreTokens = stok.hasMoreTokens();
 		// Every token except the last must be one of the modifiers
-		// Ctrl, Shift, or Alt.
+		// Ctrl, Shift, Alt, or Command
 		if (hasMoreTokens) {
 			int modifier = findLocalizedModifier(token);
 			if (modifier != 0) {
@@ -219,7 +219,7 @@ public static int convertAccelerator(String acceleratorText) {
 		String token = stok.nextToken();
 		hasMoreTokens = stok.hasMoreTokens();
 		// Every token except the last must be one of the modifiers
-		// Ctrl, Shift, or Alt.
+		// Ctrl, Shift, Alt, or Command
 		if (hasMoreTokens) {
 			int modifier = findModifier(token);
 			if (modifier != 0) {
@@ -253,14 +253,16 @@ public static String convertAccelerator(int keyCode) {
 	return fullKey;
 }
 /*
- * Returns the string representation of the modifiers (Ctrl, Alt, Shift)
+ * Returns the string representation of the modifiers (Ctrl, Alt, Shift, Command)
  * of the key event.
  */
 private static String getModifierString(int keyCode) {
 	String modString = ""; //$NON-NLS-1$
+	
 	if((keyCode & SWT.CTRL) != 0) {
 		modString = findModifierString(keyCode & SWT.CTRL);
 	}
+	
 	if((keyCode & SWT.ALT) != 0) {
 		if(modString.equals("")) { //$NON-NLS-1$
 			modString = findModifierString(keyCode & SWT.ALT);					
@@ -268,6 +270,7 @@ private static String getModifierString(int keyCode) {
 			modString = modString+"+"+findModifierString(keyCode & SWT.ALT); //$NON-NLS-1$
 		}
 	}
+	
 	if((keyCode & SWT.SHIFT) != 0) {
 		if(modString.equals("")) { //$NON-NLS-1$
 			modString = findModifierString(keyCode & SWT.SHIFT);					
@@ -275,7 +278,16 @@ private static String getModifierString(int keyCode) {
 			modString = modString+"+"+findModifierString(keyCode & SWT.SHIFT); //$NON-NLS-1$
 		}
 	}
-	return modString;	
+	
+	if((keyCode & SWT.COMMAND) != 0) {
+		if(modString.equals("")) { //$NON-NLS-1$
+			modString = findModifierString(keyCode & SWT.COMMAND);					
+		} else {
+			modString = modString+"+"+findModifierString(keyCode & SWT.COMMAND); //$NON-NLS-1$
+		}				
+	}
+
+	return modString;
 }
 /**
  * Extracts the accelerator text from the given text.
@@ -360,7 +372,7 @@ private static int findLocalizedKeyCode(String token) {
 }
 /**
  * Maps an SWT key code to a standard keyboard key name. The key code is
- * stripped of modifiers (SWT.CTRL, SWT.ALT, and SWT.SHIFT). If the key code is
+ * stripped of modifiers (SWT.CTRL, SWT.ALT, SWT.SHIFT, and SWT.COMMAND). If the key code is
  * not an SWT code (for example if it a key code for the key 'S'), a string
  * containing a character representation of the key code is returned.
  * 
@@ -372,7 +384,7 @@ private static int findLocalizedKeyCode(String token) {
 public static String findKeyString(int keyCode) {
 	if (keyStrings == null)
 		initKeyStrings();
-	int i = keyCode & ~(SWT.CTRL|SWT.ALT|SWT.SHIFT);
+	int i = keyCode & ~(SWT.CTRL|SWT.ALT|SWT.SHIFT|SWT.COMMAND);
 	Integer integer = new Integer(i);
 	String result = (String)keyStrings.get(integer);
 	if(result != null)
@@ -383,8 +395,8 @@ public static String findKeyString(int keyCode) {
 /**
  * Maps standard keyboard modifier key names to the corresponding 
  * SWT modifier bit. The following modifier key names are recognized 
- * (case is ignored): <code>"CTRL"</code>, <code>"SHIFT"</code>, and
- * <code>"ALT"</code>.
+ * (case is ignored): <code>"CTRL"</code>, <code>"SHIFT"</code>, 
+ * <code>"ALT"</code>, and <code>"COMMAND"</code>.
  * The given modifier key name is converted to upper case before comparison.
  *
  * @param token the modifier key name
@@ -399,6 +411,8 @@ public static int findModifier(String token) {
 		return SWT.SHIFT;
 	if (token.equals("ALT"))//$NON-NLS-1$
 		return SWT.ALT;
+	if (token.equals("COMMAND"))//$NON-NLS-1$
+		return SWT.COMMAND;
 	return 0;
 }
 
@@ -424,6 +438,8 @@ private static int findLocalizedModifier(String token) {
 		return SWT.SHIFT;
 	if (token.equals(LOCALIZED_ALT))//$NON-NLS-1$
 		return SWT.ALT;
+	if (token.equals(LOCALIZED_COMMAND))//$NON-NLS-1$
+		return SWT.COMMAND;
 	return 0;
 }
 
@@ -434,11 +450,12 @@ private static void initLocalizedModifiers(){
 	LOCALIZED_CTRL = JFaceResources.getString("Ctrl").toUpperCase();//$NON-NLS-1$
 	LOCALIZED_SHIFT = JFaceResources.getString("Shift").toUpperCase();//$NON-NLS-1$
 	LOCALIZED_ALT = JFaceResources.getString("Alt").toUpperCase();//$NON-NLS-1$
+	LOCALIZED_COMMAND = JFaceResources.getString("Command").toUpperCase();//$NON-NLS-1$	
 }
 
 /**
  * Returns a string representation of an SWT modifier bit (SWT.CTRL,
- * SWT.ALT, and SWT.SHIFT). Returns <code>null</code> if the key code 
+ * SWT.ALT, SWT.SHIFT, and SWT.COMMAND). Returns <code>null</code> if the key code 
  * is not an SWT modifier bit.
  * 
  * @param keyCode the SWT modifier bit to be translated
@@ -453,6 +470,8 @@ public static String findModifierString(int keyCode) {
 		return JFaceResources.getString("Alt"); //$NON-NLS-1$
 	if(keyCode == SWT.SHIFT)
 		return JFaceResources.getString("Shift"); //$NON-NLS-1$
+	if(keyCode == SWT.COMMAND)
+		return JFaceResources.getString("Command"); //$NON-NLS-1$		
 	return null;	
 }
 /**
