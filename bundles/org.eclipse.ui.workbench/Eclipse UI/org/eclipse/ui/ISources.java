@@ -52,8 +52,6 @@ package org.eclipse.ui;
  * </p>
  * 
  * @see org.eclipse.ui.ISourceProvider
- * @see org.eclipse.ui.commands.HandlerSubmission
- * @see org.eclipse.ui.commands.Priority
  * @since 3.1
  */
 public interface ISources {
