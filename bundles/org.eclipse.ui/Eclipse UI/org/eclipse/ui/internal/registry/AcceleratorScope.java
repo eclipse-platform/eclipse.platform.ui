@@ -67,6 +67,8 @@ public class AcceleratorScope {
 	 * defined in XML.
 	 */
 	public void registerAction(int accelerator,IAction action) {
+		if(accelerator == 0)
+			return;
 		defaultAcceleratorToAction.put(new Integer(accelerator),new DefaultAction(action));
 	}
 	/**
