@@ -22,7 +22,7 @@ import org.eclipse.ant.internal.ui.dtd.util.SortedMap;
  * Deterministic finite state machine.
  * Once constructed DFM is immutable and can be used by multiple threads.
  * A Dfm node is essentially an accepting flag and a hashtable mapping atoms to
- * Dfm nodes. (Almost of com. objfac. dtd. util is aimed at reducing the storage
+ * Dfm nodes. (Almost of org.eclipse.ant.internal.ui.dtd.util is aimed at reducing the storage
  * overhead of hundreds of little hashtables.)
  * @author Bob Foster
  */
@@ -116,36 +116,36 @@ public class Dfm extends MapHolder implements IDfm, FactoryObject {
 		return getIndirectStringMap(this);
 	}
 	
-	/**
-	 * @see com.objfac.util.FactoryObject#next()
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.dtd.util.FactoryObject#next()
 	 */
 	public FactoryObject next() {
 		return fNext;
 	}
 
-	/**
-	 * @see com.objfac.util.FactoryObject#next(FactoryObject)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.dtd.util.FactoryObject#next(org.eclipse.ant.internal.ui.dtd.util.FactoryObject)
 	 */
 	public void next(FactoryObject obj) {
 		fNext = (Dfm) obj;
 	}
 
-	/**
-	 * @see com.objfac.xml.schema.IDfm#isAny()
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.dtd.IDfm#isAny()
 	 */
 	public boolean isAny() {
 		return any;
 	}
 
-	/**
-	 * @see com.objfac.xml.schema.IDfm#isEmpty()
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.dtd.IDfm#isEmpty()
 	 */
 	public boolean isEmpty() {
 		return empty;
 	}
 
-	/**
-	 * @see com.objfac.xml.schema.IDfm#getAtom(String)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.dtd.IDfm#getAtom(java.lang.String)
 	 */
 	public IAtom getAtom(String name) {
 		Object[] allKeys = getKeys();
@@ -160,12 +160,11 @@ public class Dfm extends MapHolder implements IDfm, FactoryObject {
 		return (IAtom) allKeys[index];
 	}
 
-	/**
-	 * @see com.objfac.xml.schema.IDfm#advance(java.lang.String, java.lang.String)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.dtd.IDfm#advance(java.lang.String, java.lang.String)
 	 */
 	public IDfm advance(String namespace, String localname) {
 		// no namespace support here
 		return advance(localname);
 	}
-
 }
