@@ -7,7 +7,7 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
-import java.io.InputStream;
+import java.util.List;
 
 import org.eclipse.ant.tests.core.AbstractAntTest;
 import org.eclipse.ant.tests.core.testplugin.AntTestChecker;
@@ -188,6 +188,30 @@ public class OptionTests extends AbstractAntTest {
 	public void testSpecifyTargetAsArg() throws CoreException {
 		run("echoing.xml", new String[]{"echo3"}, false);
 		assertTrue("3 messages should have been logged; was " + AntTestChecker.getDefault().getMessagesLoggedCount(), AntTestChecker.getDefault().getMessagesLoggedCount() == 3);
+		assertSuccessful();
+	}
+	
+	/**
+	 * Tests specifying a target at the command line
+	 */
+	public void testSpecifyTargetAsArgWithOtherOptions() throws CoreException {
+		run("echoing.xml", new String[]{"-logfile", "TestLogFile.txt", "echo3"}, false);
+		assertTrue("4 messages should have been logged; was " + AntTestChecker.getDefault().getMessagesLoggedCount(), AntTestChecker.getDefault().getMessagesLoggedCount() == 4);
+		List messages= AntTestChecker.getDefault().getMessages();
+		//ensure that echo3 target executed and only that target
+		assertTrue("echo3 target not executed", messages.get(2).equals("echo3"));
+		assertSuccessful();
+	}
+	
+	/**
+	 * Tests specifying targets at the command line
+	 */
+	public void testSpecifyTargetsAsArgWithOtherOptions() throws CoreException {
+		run("echoing.xml", new String[]{"-logfile", "TestLogFile.txt", "echo2", "echo3"}, false);
+		assertTrue("5 messages should have been logged; was " + AntTestChecker.getDefault().getMessagesLoggedCount(), AntTestChecker.getDefault().getMessagesLoggedCount() == 5);
+		List messages= AntTestChecker.getDefault().getMessages();
+		//ensure that echo2 target executed
+		assertTrue("echo2 target not executed", messages.get(2).equals("echo2"));
 		assertSuccessful();
 	}
 	
