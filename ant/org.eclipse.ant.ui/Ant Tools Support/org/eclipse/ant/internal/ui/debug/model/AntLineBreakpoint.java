@@ -49,7 +49,7 @@ public class AntLineBreakpoint extends LineBreakpoint {
 	 * @throws CoreException if unable to create the breakpoint
 	 */
 	public AntLineBreakpoint(IResource resource, int lineNumber) throws CoreException {
-	    this(resource, lineNumber, new HashMap());
+	    this(resource, lineNumber, new HashMap(), true);
 	}
 	
 	/**
@@ -60,9 +60,10 @@ public class AntLineBreakpoint extends LineBreakpoint {
 	 * @param resource file on which to set the breakpoint
 	 * @param lineNumber 1-based line number of the breakpoint
 	 * @param attributes the marker attributes to set
+	 * @param register whether to add this breakpoint to the breakpoint manager
 	 * @throws CoreException if unable to create the breakpoint
 	 */
-	public AntLineBreakpoint(final IResource resource, final int lineNumber, final Map attributes) throws CoreException {
+	public AntLineBreakpoint(final IResource resource, final int lineNumber, final Map attributes, final boolean register) throws CoreException {
 	    IWorkspaceRunnable wr= new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
 			    IMarker marker = resource.createMarker(IAntDebugConstants.ID_ANT_LINE_BREAKPOINT_MARKER);
@@ -73,7 +74,7 @@ public class AntLineBreakpoint extends LineBreakpoint {
                 attributes.put(IMarker.MESSAGE, MessageFormat.format(DebugModelMessages.getString("AntLineBreakpoint.0"), new String[] {Integer.toString(lineNumber)})); //$NON-NLS-1$
 			    ensureMarker().setAttributes(attributes);
                 
-                register(true);
+                register(register);
 			}
 	    };
 	    run(getMarkerRule(resource), wr);
