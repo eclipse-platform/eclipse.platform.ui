@@ -90,7 +90,7 @@ import org.eclipse.debug.internal.core.DebugCoreMessages;
  * 			(i.e. an explicit call to <code>suspend()</code>)</li>
  * 		<li><code>EVALUATION</code> - an expression evaluation has ended that may
  * 			have had side effects in the debug target.</li>
- * 		<li><code>EVALUATION_READ_ONLY</code> - an expression evaluation has ended that
+ * 		<li><code>EVALUATION_IMPLICIT</code> - an expression evaluation has ended that
  * 			had no side effects in the debug target.</li>
  * 		<li><code>UNSPECIFIED</code> - the reason for the suspend is not specified</li>
  *		</ul>
@@ -104,7 +104,7 @@ import org.eclipse.debug.internal.core.DebugCoreMessages;
  * 			(i.e. an explicit call to <code>resume()</code>)</li>
  * 		<li><code>EVALUATION</code> - an expression evaluation has started that may
  * 			have side effects in the debug target.</li>
- * 		<li><code>EVALUATION_READ_ONLY</code> - an expression evaluation has started that
+ * 		<li><code>EVALUATION_IMPLICIT</code> - an expression evaluation has started that
  * 			will have no side effects in the debug target.</li>
  * 		<li><code>UNSPECIFIED</code> - The reason for the resume is not specified</li>
  *		</ul>
@@ -315,7 +315,7 @@ public final class DebugEvent extends EventObject {
 	/**
 	 * Returns whether this event's detail indicates an
 	 * evaluation. This event's detail is one
-	 * of <code>EVALUATION</code>, or <code>EVALUATION_READ_ONLY</code>.
+	 * of <code>EVALUATION</code>, or <code>EVALUATION_IMPLICIT</code>.
 	 * 
 	 * @return whether this event's detail indicates an evaluation.
 	 * @since 2.0
