@@ -20,7 +20,11 @@ import org.eclipse.ui.forms.FormsResources;
 import org.eclipse.ui.forms.events.*;
 
 /**
- *
+ * This is the base class for custom hyperlink widget.
+ * It is responsible for processing mouse and keyboard
+ * events, and converting them into unified hyperlink
+ * events. Subclasses are responsible for rendering
+ * the hyperlink in the client area.
  * @since 3.0
  */
 
