@@ -193,9 +193,9 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
 			int partitionStart = partition.getOffset();
 			int partitionEnd = partitionStart + partition.getLength() - 1;
 			
-			if (offset >= partitionStart && offset <= partitionEnd) {
+			if(partitionStart >= offset && partitionStart <= end) {
 				list.add(partition);
-			} else if (end >= partitionStart && end <= partitionEnd) {
+			} else if (partitionEnd >= offset && partitionEnd <= end) {
 				list.add(partition);
 			} else if (partitionStart > end) {
 				break; // don't bother testing more.
