@@ -732,4 +732,13 @@
 	</editor>
 </extension>
 
+<extension point = "org.eclipse.debug.core.statusHandlers">
+	<statusHandler
+		id="org.eclipse.debug.ui.statusHandler.workingDirectory"
+		class="org.eclipse.debug.internal.ui.WorkingDirectoryStatusHandler"
+		plugin ="org.eclipse.debug.core"
+		code="115">
+	</statusHandler>
+</extension>
+
 </plugin>

@@ -7,6 +7,8 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
+import java.io.File;
+import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -91,6 +93,18 @@ public class DebugPlugin extends Plugin {
 	 */
 	public static final int INTERNAL_ERROR = 120;		
 
+	/**
+	 * Status code indicating that the Eclipse runtime does not support
+	 * launching a program with a working directory. This feature is only
+	 * available if Eclipse is run on a 1.3 runtime or higher.
+	 * <p>
+	 * A status handler may be registered for this error condition,
+	 * and should return a Boolean indicating whether the program
+	 * should be relaunched with the default working directory.
+	 * </p>
+	 */
+	public static final int ERR_WORKING_DIRECTORY_NOT_SUPPORTED = 115;
+	
 	/**
 	 * The singleton debug plug-in instance.
 	 */
@@ -443,6 +457,52 @@ public class DebugPlugin extends Plugin {
 	 */
 	public static IProcess newProcess(ILaunch launch, Process process, String label, Map attributes) {
 		return new RuntimeProcess(launch, process, label, attributes);
+	}	
+	
+	/**
+	 * Convenience method that performs a runtime exec on the given command line
+	 * in the context of the specified working directory, and returns the
+	 * resulting process. If the current runtime does not support the
+	 * specification of a working directory, the status handler for error code
+	 * <code>ERR_WORKING_DIRECTORY_NOT_SUPPORTED</code> is queried to see if the
+	 * exec should be re-executed without specifying a working directory.
+	 * 
+	 * @param cmdLine the command line
+	 * @param workingDirectory the working directory, or <code>null</code>
+	 * @return the resulting process or <code>null</code> if the exec is
+	 *  cancelled
+	 * @see Runtime
+	 * 
+	 * @since 2.1
+	 */
+	public static Process exec(String[] cmdLine, File workingDirectory) throws CoreException {
+		Process p= null;
+		try {
+
+			if (workingDirectory == null) {
+				p= Runtime.getRuntime().exec(cmdLine, null);
+			} else {
+				p= Runtime.getRuntime().exec(cmdLine, null, workingDirectory);
+			}
+		} catch (IOException e) {
+				if (p != null) {
+					p.destroy();
+				}
+				Status status = new Status(IStatus.ERROR, getUniqueIdentifier(), INTERNAL_ERROR, DebugCoreMessages.getString("DebugPlugin.Exception_occurred_executing_command_line._1"), e); //$NON-NLS-1$
+				throw new CoreException(status);
+		} catch (NoSuchMethodError e) {
+			//attempting launches on 1.2.* - no ability to set working directory			
+			IStatus status = new Status(IStatus.ERROR, getUniqueIdentifier(), ERR_WORKING_DIRECTORY_NOT_SUPPORTED, DebugCoreMessages.getString("DebugPlugin.Eclipse_runtime_does_not_support_working_directory_2"), e); //$NON-NLS-1$
+			IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(status);
+			
+			if (handler != null) {
+				Object result = handler.handleStatus(status, null);
+				if (result instanceof Boolean && ((Boolean)result).booleanValue()) {
+					p= exec(cmdLine, null);
+				}
+			}
+		}
+		return p;
 	}	
 	
 	/**
