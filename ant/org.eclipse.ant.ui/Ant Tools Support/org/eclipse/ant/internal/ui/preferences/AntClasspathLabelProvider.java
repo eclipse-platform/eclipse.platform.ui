@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.preferences;
 
+import org.eclipse.ant.core.AntCorePlugin;
+import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.core.IAntClasspathEntry;
 import org.eclipse.ant.internal.ui.model.AntUIImages;
 import org.eclipse.ant.internal.ui.model.IAntUIConstants;
@@ -71,8 +73,15 @@ public class AntClasspathLabelProvider implements ILabelProvider, IColorProvider
 		if (element instanceof IAntClasspathEntry) {
 			StringBuffer label= new StringBuffer(((IAntClasspathEntry)element).getLabel());
 			if (element instanceof GlobalClasspathEntries && ((GlobalClasspathEntries)element).getType() == ClasspathModel.ANT_HOME) {
+				AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
+				String defaultAntHome= prefs.getDefaultAntHome();
+				String currentAntHome= fBlock.getAntHome();
 				label.append(" ("); //$NON-NLS-1$
-				label.append(fBlock.getAntHome());
+				if (defaultAntHome.equals(currentAntHome)) {
+					label.append(AntPreferencesMessages.getString("AntClasspathLabelProvider.0")); //$NON-NLS-1$
+				} else {
+					label.append(fBlock.getAntHome());	
+				}
 				label.append(')');
 			}
 			return label.toString();
