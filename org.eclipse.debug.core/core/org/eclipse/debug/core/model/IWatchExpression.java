@@ -18,16 +18,24 @@ package org.eclipse.debug.core.model;
  * for an evaluation by selecting a debug target or thread. An expression
  * updates its value when it is provided with a context in which it
  * can perform an evaluation. 
- * 
+ * <p>
+ * Clients are not intended to implement this interface. An implementation
+ * is provided by the debug platform. Clients that support watch expressions
+ * should contribute and implement a watch exrepssion delegate. Watch
+ * expressions can be created via the <code>IExpressionManager</code>.
+ * </p>
+ * @see org.eclipse.debug.core.model.IWatchExpressionDelegate
+ * @see org.eclipse.debug.core.IExpressionManager
  * @since 3.0
  */
 public interface IWatchExpression extends IErrorReportingExpression {
 	
 	/**
-	 * Causes this expression to update its value based on the last context
-	 * set for this watch expression. When the value update is complete,
-	 * a debug change event is fired. A watch expression can be asked to
-	 * evaluate even when it is disabled. 
+	 * Updates this watch expression's value based on the current evaluation
+	 * context. This watch expression fires a debug change event when the
+	 * evaluation is complete. A watch expression can be asked to
+	 * evaluate even when it is disabled. Note that implementations should
+	 * generally be asynchronous to avoid blocking the calling thread. 
 	 */
 	public void evaluate();
 	/**
@@ -39,7 +47,6 @@ public interface IWatchExpression extends IErrorReportingExpression {
 	 * <p>
 	 * The context is usually one of (but not limited to):
 	 * <ul>
-	 * <li>a launch (<code>ILaunch</code>)</li>
 	 * <li>a debug target (<code>IDebugTarget</code>)</li>
 	 * <li>a thread (<code>IThread</code>)</li>
 	 * <li>a stack frame (<code>IStackFrame</code>)</li>

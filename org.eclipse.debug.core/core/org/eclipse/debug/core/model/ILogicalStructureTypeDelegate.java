@@ -16,7 +16,10 @@ import org.eclipse.core.runtime.CoreException;
  * A delegate that provides a value represengting the logical structure of a raw
  * implementation value from a debug model. Associated with a logical structure
  * type extension.
- * 
+ * <p>
+ * Clients contributing logical structure types should implement this
+ * interface.
+ * </p>
  * @since 3.0
  * @see org.eclipse.debug.core.ILogicalStructureType
  */

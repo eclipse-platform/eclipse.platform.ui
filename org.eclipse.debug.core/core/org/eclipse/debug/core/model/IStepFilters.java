@@ -34,9 +34,6 @@ package org.eclipse.debug.core.model;
  * Clients may implement this interface. Debug targets that support
  * step filters should implement this interface.
  * </p>
- * <b>
- * This interface is yet experimental.
- * </b>
  * @see org.eclipse.debug.core.model.IStep
  * @since 3.0
  */

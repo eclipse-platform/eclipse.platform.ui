@@ -21,6 +21,9 @@ import org.eclipse.debug.core.DebugException;
  * to implement this interface for values representing indexed collections,
  * however, doing so will provide enhanced display options in the debug UI.
  * </p>
+ * <p>
+ * Clients may implement this interface.
+ * </p>
  * @since 3.0
  */
 public interface IIndexedValue extends IValue {

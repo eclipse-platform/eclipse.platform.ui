@@ -71,9 +71,9 @@ public interface ILaunchConfigurationDelegate2 extends ILaunchConfigurationDeleg
 	 * For example, a delegate could cancel a launch if it discovered compilation
 	 * errors that would prevent the launch from succeeding.
 	 * 
-	 * @param configuration
-	 * @param mode
-	 * @param monitor
+	 * @param configuration the configuration being launched
+	 * @param mode launch mode
+	 * @param monitor progress monitor
 	 * @return whether the launch should proceed
 	 * @throws CoreException if an exception occurs during final checks
 	 */

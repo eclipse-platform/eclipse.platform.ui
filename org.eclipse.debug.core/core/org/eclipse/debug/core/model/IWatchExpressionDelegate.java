@@ -43,7 +43,7 @@ public interface IWatchExpressionDelegate {
 	 * notifies the given listener when the evaluation finishes.
 	 * 
 	 * @param expression the expression to evaluate 
-	 * @param context the context of the evaluation
+	 * @param context the context for the evaluation
 	 * @param listener the listener to notify when the evaluation completes
 	 */
 	public void evaluateExpression(String expression, IDebugElement context, IWatchExpressionListener listener);

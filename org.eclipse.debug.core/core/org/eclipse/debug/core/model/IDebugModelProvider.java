@@ -21,9 +21,6 @@ package org.eclipse.debug.core.model;
  * <p>
  * Clients are intended to implement this interface.
  * </p>
- * <p>
- * This interface is yet experimetnal.
- * </p>
  * @since 3.0
  */
 public interface IDebugModelProvider {

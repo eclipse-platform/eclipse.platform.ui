@@ -58,6 +58,7 @@ public interface IExpressionManager {
 	 * this manager.
 	 * 
 	 * @param expressionText the text for the new expression
+	 * @since 3.0
 	 */
 	public IWatchExpression newWatchExpression(String expressionText);
 		

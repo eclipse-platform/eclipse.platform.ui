@@ -50,7 +50,6 @@ public interface IWatchExpressionResult {
 	 * occurred while compiling the snippet.
 	 *
 	 * @return evaluation error messages, or an empty array if no errors occurred
-	 * @since 2.1
 	 */
 	public String[] getErrorMessages();
 		

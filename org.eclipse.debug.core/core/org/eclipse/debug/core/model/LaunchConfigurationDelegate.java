@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,10 +15,12 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -32,7 +34,11 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.IStatusHandler;
 
 /**
- * Default implementation of a launch configuration delegate.
+ * Default implementation of a launch configuration delegate. Provides
+ * convenience methods for computing the build order of projects,
+ * building projects, and searching for errors in the workspace. The
+ * default pre-launch check prompts the user to launch in debug mode
+ * if breakpoints are present in the workspace. 
  * <p>
  * Clients implementing launch configration delegates should subclass
  * this class.
@@ -105,17 +111,21 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 	}
 
 	/**
-	 * Convenience method that returns an array of referenced projects in their suggested build order.
-	 * Subclasses may override this method to provide a different implementation. 
-	 * @param project The project containing the resource being launched
-	 * @return referenced projects ordered by their suggested build order
-	 * @throws CoreException if an error occurs while getting referenced projects from the current project
+	 * Returns an array of projects in their suggested build order
+	 * containing all of the projects specified by <code>baseProjects</code>
+	 * and all of their referenced projects.
+	 *  
+	 * @param baseProjects a collection of projetcs
+	 * @return an array of projects in their suggested build order
+	 * containing all of the projects specified by <code>baseProjects</code>
+	 * @throws CoreException if an error occurs while computing referenced
+	 *  projects
 	 */
-	protected IProject[] getBuildOrder(IProject[] projects) throws CoreException {
+	protected IProject[] getBuildOrder(IProject[] baseProjects) throws CoreException {
 		HashSet unorderedProjects = new HashSet();
-		for(int i = 0; i< projects.length; i++) {
-			unorderedProjects.add(projects[i]);
-			fillReferencedProjectSet(projects[i], unorderedProjects);
+		for(int i = 0; i< baseProjects.length; i++) {
+			unorderedProjects.add(baseProjects[i]);
+			addReferencedProjects(baseProjects[i], unorderedProjects);
 		}
 		
 		IProject[] projectSet = (IProject[]) unorderedProjects.toArray(new IProject[unorderedProjects.size()]);
@@ -124,33 +134,38 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 
 
 	/**
-	 * Recursively creates a set of projects referenced by the current project
-	 * @param project The current project
-	 * @param referencedProjSet A set of referenced projects
-	 * @throws CoreException if an error occurs while getting referenced projects from the current project
+	 * Adds all projects referenced by <code>project</code> to the given
+	 * set.
+	 * 
+	 * @param project project
+	 * @param references set to which referenced projects are added
+	 * @throws CoreException if an error occurs while computing referenced
+	 *  projects
 	 */
-	protected void fillReferencedProjectSet(IProject project, HashSet referencedProjSet) throws CoreException{
+	protected void addReferencedProjects(IProject project, Set references) throws CoreException{
 		IProject[] projects = project.getReferencedProjects();
 		for (int i = 0; i < projects.length; i++) {
 			IProject refProject= projects[i];
-			if (refProject.exists() && !referencedProjSet.contains(refProject)) {
-				referencedProjSet.add(refProject);
-				fillReferencedProjectSet(refProject, referencedProjSet);
+			if (refProject.exists() && !references.contains(refProject)) {
+				references.add(refProject);
+				addReferencedProjects(refProject, references);
 			}
 		}		
 	}
 	
 	/**  
-	 * creates a list of project ordered by their build order from an unordered list of projects.
-	 * @param resourceCollection The list of projects to sort.
-	 * @return A new list of projects, ordered by build order.
+	 * Returns a list of projects in their suggested build order from the
+	 * given unordered list of projects.
+	 * 
+	 * @param projects the list of projects to sort into build order
+	 * @return a list of projects in build order.
 	 */
-	protected IProject[] orderProjectSet(IProject[] projectSet) { 
+	protected IProject[] orderProjectSet(IProject[] projects) { 
 		String[] orderedNames = ResourcesPlugin.getWorkspace().getDescription().getBuildOrder();
 		if (orderedNames != null) {
-			List orderedProjects = new ArrayList(projectSet.length);
+			List orderedProjects = new ArrayList(projects.length);
 			//Projects may not be in the build order but should be built if selected
-			List unorderedProjects = Arrays.asList(projectSet);
+			List unorderedProjects = Arrays.asList(projects);
 		
 			for (int i = 0; i < orderedNames.length; i++) {
 				String projectName = orderedNames[i];
@@ -169,16 +184,20 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 		}
 
 		// Computing build order returned null, try the project prerequisite order
-		IWorkspace.ProjectOrder po = ResourcesPlugin.getWorkspace().computeProjectOrder(projectSet);
+		IWorkspace.ProjectOrder po = ResourcesPlugin.getWorkspace().computeProjectOrder(projects);
 		return po.projects;
 	}	
 	
 	/**
-	 * Searches the project for problem markers of the specified severity
-	 * @param proj The project to search
-	 * @param severity The severity of the error to search for
-	 * @return true if markers of the specified severity or higher severity exist.
-	 * @throws CoreException if an error occurs while searching for problem markers
+	 * Returns whether the given project contains any problem markers of the
+	 * specified severity.
+	 * 
+	 * @param proj the project to search
+	 * @param severity the severity of error(s) to search for
+	 * @return whether the given project contains any problem markers of the
+	 * specified severity
+	 * @throws CoreException if an error occurs while searching for
+	 *  problem markers
 	 */
 	protected boolean existsProblems(IProject proj, int severity) throws CoreException {
 		IMarker[] markers = proj.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
@@ -191,5 +210,18 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 			}
 		}
 		return false;
+	}
+	
+	/**
+	 * Performs an incremental build on each of the given projects.
+	 * 
+	 * @param projects projects to build
+	 * @param monitor progress monitor
+	 * @throws CoreException if an exception occurrs while building
+	 */
+	protected void buildProjects(IProject[] projects, IProgressMonitor monitor) throws CoreException {
+		for (int i = 0; i < projects.length; i++ ) {
+			projects[i].build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);
+		}
 	}
 }
