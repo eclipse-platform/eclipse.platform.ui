@@ -1,6 +1,6 @@
 Bundle-Name: %pluginName
 Bundle-Version: 3.0.0
-Bundle-GlobalName: org.eclipse.core.runtime.compatibility
+Bundle-SymbolicName: org.eclipse.core.runtime.compatibility
 Bundle-Vendor: %providerName
 Bundle-ClassPath: compatibility.jar
 Bundle-Activator: org.eclipse.core.internal.plugins.CompatibilityActivator

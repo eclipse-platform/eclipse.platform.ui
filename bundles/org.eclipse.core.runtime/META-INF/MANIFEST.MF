@@ -1,6 +1,6 @@
 Bundle-Name: %pluginName
 Bundle-Version: 3.0.0
-Bundle-GlobalName: org.eclipse.core.runtime
+Bundle-SymbolicName: org.eclipse.core.runtime
 Bundle-Vendor: %providerName
 Bundle-ClassPath: runtime.jar
 Bundle-Activator: org.eclipse.core.internal.runtime.PlatformActivator
