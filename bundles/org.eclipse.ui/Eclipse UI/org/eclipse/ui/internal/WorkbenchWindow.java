@@ -659,6 +659,8 @@ public boolean hardClose() {
 	updateDisabled = true;
 	closeAllPages();
 	builder.dispose();
+	if(keyBindingService != null)
+		keyBindingService.dispose();
 	return super.close();
 }
 /**

@@ -403,9 +403,9 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		String configName = accelConfigCombo.getText();
 		AcceleratorConfiguration config = (AcceleratorConfiguration)namesToConfiguration.get(configName);
 		if(config != null) {
-			store.setValue(IWorkbenchConstants.ACCELERATOR_CONFIGURATION_ID, config.getId());
 			Workbench workbench = (Workbench)PlatformUI.getWorkbench();
 			workbench.setActiveAcceleratorConfiguration(config);
+			store.setValue(IWorkbenchConstants.ACCELERATOR_CONFIGURATION_ID, config.getId());
 		}
 		return true;
 	}

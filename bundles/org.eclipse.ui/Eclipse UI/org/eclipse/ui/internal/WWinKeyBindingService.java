@@ -9,8 +9,13 @@ import java.util.*;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.IPropertyListener;
+import org.eclipse.ui.internal.registry.AcceleratorConfiguration;
 import org.eclipse.ui.internal.registry.AcceleratorRegistry;
 import org.eclipse.ui.internal.registry.IActionSet;
 
@@ -25,10 +30,11 @@ public class WWinKeyBindingService {
 	private long updateNumber = 0;
 	private HashMap globalActionDefIdToAction = new HashMap();
 	private HashMap actionSetDefIdToAction = new HashMap();
+	private IPropertyChangeListener propertyListener;
 	
 	private long fakeDefinitionId = 0;
 		
-	public WWinKeyBindingService(WorkbenchWindow window) {
+	public WWinKeyBindingService(final WorkbenchWindow window) {
 		IWorkbenchPage[] pages = window.getPages();
 		final PartListener partListener = new PartListener();
 		for(int i=0; i<pages.length;i++) {
@@ -41,8 +47,29 @@ public class WWinKeyBindingService {
 				page.addPartListener(partListener);
 				partListener.partActivated(page.getActivePart());
 			}
-		});		
+		});
+		propertyListener = new IPropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent event) {
+				IWorkbenchPage page = window.getActivePage();
+				if(page != null) {
+					IWorkbenchPart part = page.getActivePart();
+					if(part != null) {
+						update(part);
+						return;
+					}
+				}
+				MenuManager menuManager = window.getMenuManager();
+				menuManager.updateAccelerators(true);
+			}
+		};
+		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+		store.addPropertyChangeListener(propertyListener);
 	}
+	public void dispose() {
+		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+		store.removePropertyChangeListener(propertyListener);
+	}
+		
 	public void registerGlobalAction(IAction action) {
 		updateNumber++;
 		globalActionDefIdToAction.put(action.getActionDefinitionId(),action);
@@ -87,17 +114,28 @@ public class WWinKeyBindingService {
 		result.putAll(actionSetDefIdToAction);
 		return result;
 	}
+	
+   	public static void update(IWorkbenchPart part) {
+   		if(part==null)
+   			return;
+    	IWorkbenchPartSite site = part.getSite();
+    	WorkbenchWindow w = (WorkbenchWindow)site.getPage().getWorkbenchWindow();
+    	MenuManager menuManager = w.getMenuManager();
+    	if(part instanceof IViewPart) {
+			menuManager.updateAccelerators(true);
+    	} else if(part instanceof IEditorPart) {
+    		KeyBindingService service = (KeyBindingService)((IEditorSite)site).getKeyBindingService();
+    		AcceleratorConfiguration config = ((Workbench)w.getWorkbench()).getActiveAcceleratorConfiguration();
+    		if((config != null) && (!config.getId().equals(IWorkbenchConstants.DEFAULT_ACCELERATOR_CONFIGURATION_ID)))
+				menuManager.updateAccelerators(!service.isParticipating());
+			else
+				menuManager.updateAccelerators(true);
+    	}
+    }
+	    	
     private static class PartListener implements IPartListener {
 	    public void partActivated(IWorkbenchPart part) {
-	    	IWorkbenchPartSite site = part.getSite();
-	    	WorkbenchWindow w = (WorkbenchWindow)site.getPage().getWorkbenchWindow();
-	    	MenuManager menuManager = w.getMenuManager();
-	    	if(part instanceof IViewPart) {
-				menuManager.updateAccelerators(true);
-	    	} else if(part instanceof IEditorPart) {
-	    		KeyBindingService service = (KeyBindingService)((IEditorSite)site).getKeyBindingService();
-    			menuManager.updateAccelerators(!service.isParticipating());
-	    	}
+	    	update(part);
 	    }
 	    public void partBroughtToTop(IWorkbenchPart part) {}
 	    public void partClosed(IWorkbenchPart part) {}
