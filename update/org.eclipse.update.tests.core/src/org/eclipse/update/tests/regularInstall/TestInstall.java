@@ -71,7 +71,7 @@ public class TestInstall extends UpdateManagerTestCase {
 		String site = localSite.getURL().getFile();
 		IPluginEntry[] entries = remoteFeature.getPluginEntries();
 		assertTrue("no plugins entry", (entries != null && entries.length != 0));
-		String pluginName = entries[0].getIdentifier().toString();
+		String pluginName = entries[0].getVersionIdentifier().toString();
 		File pluginFile = new File(site, Site.DEFAULT_PLUGIN_PATH + pluginName);
 		assertTrue("plugin files not installed locally", pluginFile.exists());
 		File pluginXMLFile = new File(site, Site.DEFAULT_PLUGIN_PATH + pluginName+File.separator + "plugin.xml");
@@ -129,7 +129,7 @@ public class TestInstall extends UpdateManagerTestCase {
 		IPluginEntry[] entries = remoteFeature.getPluginEntries();
 		assertTrue("no plugins entry", (entries != null && entries.length != 0));
 
-		String pluginName = entries[0].getIdentifier().toString();
+		String pluginName = entries[0].getVersionIdentifier().toString();
 		File pluginFile = new File(site, Site.DEFAULT_PLUGIN_PATH + pluginName);
 		assertTrue("plugin info not installed locally", pluginFile.exists());
 
@@ -185,7 +185,7 @@ public class TestInstall extends UpdateManagerTestCase {
 		assertTrue("no plugins entry", (entries != null && entries.length != 0));
 
 		String sitePath = UpdateManagerUtils.getPath(site.getSite().getURL());			
-		String pluginName = entries[0].getIdentifier().toString();
+		String pluginName = entries[0].getVersionIdentifier().toString();
 		File pluginFile = new File(sitePath, Site.DEFAULT_PLUGIN_PATH + pluginName);
 		assertTrue("plugin info not installed locally", pluginFile.exists());
 

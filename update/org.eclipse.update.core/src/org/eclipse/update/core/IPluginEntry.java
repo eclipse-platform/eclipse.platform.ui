@@ -35,7 +35,7 @@ public interface IPluginEntry {
 	 * @since 2.0 
 	 */
 
-	VersionedIdentifier getIdentifier();
+	VersionedIdentifier getVersionIdentifier();
 	
 	/**
 	 * Optional operating system specification.

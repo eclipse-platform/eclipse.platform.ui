@@ -191,11 +191,6 @@ public class SiteFTP implements ISite {
 	public void store(IFeature feature, String name, InputStream inStream, IProgressMonitor monitor) throws CoreException {
 	}
 
-	/*
-	 * @see IPluginContainer#store(IPluginEntry, String, InputStream, IProgressMonitor)
-	 */
-	public void store(IPluginEntry entry, String name, InputStream inStream, IProgressMonitor monitor) throws CoreException {
-	}
 
 	/*
 	 * @see IPluginContainer#remove(IPluginEntry, IProgressMonitor)

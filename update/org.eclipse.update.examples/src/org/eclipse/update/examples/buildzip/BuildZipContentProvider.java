@@ -110,7 +110,7 @@ public class BuildZipContentProvider extends FeatureContentProvider implements I
 		try {
 			return peekPluginEntryContent(pluginEntry, monitor);
 		} catch(IOException e) {
-			throw newCoreException("Unable to return content for plugin entry "+pluginEntry.getIdentifier(),e);
+			throw newCoreException("Unable to return content for plugin entry "+pluginEntry.getVersionIdentifier(),e);
 		}
 	}
 
@@ -173,7 +173,7 @@ public class BuildZipContentProvider extends FeatureContentProvider implements I
 		// define selector for plugin entry files
 		ContentSelector selector = new ContentSelector() {
 			public boolean include(String entry) {
-				String id = currentPluginEntry.getIdentifier().getIdentifier();
+				String id = currentPluginEntry.getVersionIdentifier().getIdentifier();
 				if (id==null)
 					return false;
 				else if (entry.startsWith("eclipse/plugins/"+id+"/"))
@@ -185,7 +185,7 @@ public class BuildZipContentProvider extends FeatureContentProvider implements I
 				int ix = entry.indexOf("/",16);
 				if (ix != -1) {
 					String rest = entry.substring(ix);
-					return "plugins/"+currentPluginEntry.getIdentifier().toString()+rest;
+					return "plugins/"+currentPluginEntry.getVersionIdentifier().toString()+rest;
 				} else {
 					return entry;
 				}

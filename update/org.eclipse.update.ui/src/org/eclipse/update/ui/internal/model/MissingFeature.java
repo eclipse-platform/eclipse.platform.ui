@@ -285,12 +285,6 @@ public class MissingFeature implements IFeature {
 	}
 
 	/*
-	 * @see IPluginContainer#store(IPluginEntry, String, InputStream, IProgressMonitor)
-	 */
-	public void store(IPluginEntry entry, String name, InputStream inStream, IProgressMonitor monitor) throws CoreException {
-	}
-
-	/*
 	 * @see IPluginContainer#remove(IPluginEntry, IProgressMonitor)
 	 */
 	public void remove(IPluginEntry entry, IProgressMonitor monitor) throws CoreException {

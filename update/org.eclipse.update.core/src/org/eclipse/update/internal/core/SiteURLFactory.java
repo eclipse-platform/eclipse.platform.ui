@@ -17,9 +17,9 @@ public class SiteURLFactory extends BaseSiteFactory {
 
 
 	/*
-	 * @see ISiteFactory#createSite(URL)
+	 * @see ISiteFactory#createSite(URL, boolean)
 	 */
-	public ISite createSite(URL url) throws CoreException, InvalidSiteTypeException {
+	public ISite createSite(URL url, boolean forceCreation) throws CoreException, InvalidSiteTypeException {
 
 		Site site = null;
 		URL siteXML = null;

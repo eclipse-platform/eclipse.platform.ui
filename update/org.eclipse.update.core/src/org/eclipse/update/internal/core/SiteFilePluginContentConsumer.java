@@ -34,9 +34,9 @@ public class SiteFilePluginContentConsumer extends ContentConsumer {
 		// FIXME: fragment code
 		String pluginPath = null;
 		if (pluginEntry.isFragment()) {
-			pluginPath = path + Site.DEFAULT_FRAGMENT_PATH + pluginEntry.getIdentifier().toString();
+			pluginPath = path + Site.DEFAULT_FRAGMENT_PATH + pluginEntry.getVersionIdentifier().toString();
 		} else {
-			pluginPath = path + Site.DEFAULT_PLUGIN_PATH + pluginEntry.getIdentifier().toString();
+			pluginPath = path + Site.DEFAULT_PLUGIN_PATH + pluginEntry.getVersionIdentifier().toString();
 		}
 		String contentKey = contentReference.getIdentifier();
 		pluginPath += pluginPath.endsWith(File.separator) ? contentKey : File.separator + contentKey;

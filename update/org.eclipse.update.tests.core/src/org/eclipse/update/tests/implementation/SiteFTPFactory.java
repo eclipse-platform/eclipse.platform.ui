@@ -16,9 +16,9 @@ public class SiteFTPFactory implements ISiteFactory {
 	public static final String FILE = "a/b/c/";
 
 	/*
-	 * @see ISiteFactory#createSite(URL)
+	 * @see ISiteFactory#createSite(URL, boolean)
 	 */
-	public ISite createSite(URL url) throws CoreException, InvalidSiteTypeException {
+	public ISite createSite(URL url, boolean forceCreation) throws CoreException, InvalidSiteTypeException {
 		ISite site;
 		try {
 			site = new SiteFTP(new URL("http://eclipse.org/"+FILE));

@@ -114,6 +114,7 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 		IFeature localFeature = createExecutableFeature(sourceFeature);
 		IFeatureReference localFeatureReference = sourceFeature.install(localFeature, monitor);
 		this.addFeatureReference(localFeatureReference);
+		
 
 		// notify listeners
 		Object[] siteListeners = listeners.getListeners();
@@ -198,7 +199,7 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 				UpdateManagerUtils.removeFromFileSystem(references[i].asFile());
 			} catch (IOException e) {
 				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Cannot remove plugin:" + pluginEntry.getIdentifier(), e);
+				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Cannot remove plugin:" + pluginEntry.getVersionIdentifier(), e);
 				throw new CoreException(status);
 			}
 		}
@@ -303,8 +304,9 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 		return result;
 	}
 
-	/*
+	/**
 	 * @see IPluginContainer#getPluginEntries()
+	 * @deprecated should use getArchiveEntries ?
 	 */
 	public IPluginEntry[] getPluginEntries() {
 		IPluginEntry[] result = new IPluginEntry[0];
@@ -434,12 +436,6 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 	 */
 	public void addPluginEntry(IPluginEntry pluginEntry) {
 		pluginEntries.add(pluginEntry);
-	}
-
-	/*
-	 * @see IPluginContainer#store(IPluginEntry, String, InputStream, IProgressMonitor)
-	 */
-	public void store(IPluginEntry entry, String name, InputStream inStream, IProgressMonitor monitor) throws CoreException {
 	}
 
 	/*

@@ -293,13 +293,14 @@ public class Feature extends FeatureModel implements IFeature {
 
 			// download and install plugin plugin files
 			for (int i = 0; i < pluginsToInstall.length; i++) {
-				if (monitor!=null) monitor.setTaskName("Installing plug-in [" + pluginsToInstall[i].getIdentifier().getIdentifier() + "]: ");
+				if (monitor!=null) monitor.setTaskName("Installing plug-in [" + pluginsToInstall[i].getVersionIdentifier().getIdentifier() + "]: ");
 				IContentConsumer pluginConsumer = consumer.open(pluginsToInstall[i]);
 				references = getFeatureContentProvider().getPluginEntryContentReferences(pluginsToInstall[i], monitor);
 				for (int j = 0; j < references.length; j++) {
 					if (monitor!=null) monitor.subTask(references[j].getIdentifier());
 					pluginConsumer.store(references[j], monitor);
 				}
+				targetFeature.getSite().addPluginEntry(pluginsToInstall[i]);
 				pluginConsumer.close();
 				if (monitor!=null) monitor.worked(1);
 			}
@@ -450,29 +451,36 @@ public class Feature extends FeatureModel implements IFeature {
 	}
 
 	/**
-	 * Returns the intersection between two array of PluginEntries.
+	 * Returns the plugin entries that are in source array and
+	 * missing from target array
 	 */
-	private IPluginEntry[] intersection(IPluginEntry[] array1, IPluginEntry[] array2) {
-		if (array1 == null || array1.length == 0) {
-			return array2;
+	private IPluginEntry[] intersection(IPluginEntry[] sourceArray, IPluginEntry[] targetArray) {
+		
+		// No pluginEntry to Install, return Nothing to instal
+		if (sourceArray == null || sourceArray.length == 0) {
+			return new IPluginEntry[0];
 		}
-		if (array2 == null || array2.length == 0) {
-			return array1;
+		
+		// No pluginEntry installed, Install them all
+		if (targetArray == null || targetArray.length == 0) {
+			return sourceArray;
 		}
-		List list1 = Arrays.asList(array1);
+		
+		// if a IPluginEntry from sourceArray is NOT in
+		// targetArray, add it to the list
+		List list1 = Arrays.asList(targetArray);
 		List result = new ArrayList(0);
-		for (int i = 0; i < array2.length; i++) {
-			if (!list1.contains(array2[i]))
-				result.add(array2[i]);
+		for (int i = 0; i < sourceArray.length; i++) {
+			if (!list1.contains(sourceArray[i]))
+				result.add(sourceArray[i]);
 		}
-		return (IPluginEntry[]) result.toArray();
+		
+		IPluginEntry[] resultEntry = new IPluginEntry[result.size()];
+		if (result.size()>0) result.toArray(resultEntry);
+		
+		return resultEntry;
 	}
 
-	/*
-	 * @see IPluginContainer#store(IPluginEntry, String, InputStream, IProgressMonitor)
-	 */
-	public void store(IPluginEntry entry, String name, InputStream inStream, IProgressMonitor monitor) throws CoreException {
-		getSite().store(entry, name, inStream, monitor);
-	}
+
 
 }

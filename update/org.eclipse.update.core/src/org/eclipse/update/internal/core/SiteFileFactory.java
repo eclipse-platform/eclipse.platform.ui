@@ -21,11 +21,11 @@ public class SiteFileFactory extends BaseSiteFactory {
 	// private when parsing file system
 	private Site site;
 	private URL url;
-
+	
 	/*
-	 * @see ISiteFactory#createSite(URL)
+	 * @see ISiteFactory#createSite(URL,boolean)
 	 */
-	public ISite createSite(URL url) throws CoreException, InvalidSiteTypeException {
+	public ISite createSite(URL url,boolean forceCreation) throws CoreException, InvalidSiteTypeException {
 
 		Site site = null;
 		URL siteXML = null;		
@@ -40,7 +40,7 @@ public class SiteFileFactory extends BaseSiteFactory {
 				SiteModelFactory factory = (SiteModelFactory) this;
 				site = (Site)factory.parseSite(siteStream);	
 			} catch (IOException e) {
-				site = parseSite(url);
+				if (forceCreation) site = parseSite(url); else throw new InvalidSiteTypeException(null);
 			}
 			
 			site.setSiteContentProvider(contentProvider);
@@ -72,8 +72,7 @@ public class SiteFileFactory extends BaseSiteFactory {
 			}
 		}
 		return site;
-	}
-	
+	}	
 	/**
 	 * Method parseSite.
 	 */
@@ -235,10 +234,16 @@ public class SiteFileFactory extends BaseSiteFactory {
 			if (plugins.length > 0) {
 				URLEntry info;
 				for (int index = 0; index < plugins.length; index++) {
+					PluginEntry entry = new PluginEntry();		
+					entry.setContainer(site);
+					entry.setPluginIdentifier(plugins[index].getId());
+					entry.setPluginVersion(plugins[index].getVersion().toString());
+					((Site)site).addPluginEntry(entry);					
+										
 					SiteFileFactory archiveFactory = new SiteFileFactory();							
 					// the id is plugins\<pluginid>_<ver>.jar as per the specs
-					String pluginID = Site.DEFAULT_PLUGIN_PATH+new VersionedIdentifier(plugins[index].getId(), plugins[index].getVersion()).toString() + FeaturePackagedContentProvider.JAR_EXTENSION;
-					ArchiveReferenceModel archive = archiveFactory.createArchiveReferenceModel();		
+					ArchiveReferenceModel archive = archiveFactory.createArchiveReferenceModel();							
+					String pluginID = Site.DEFAULT_PLUGIN_PATH+new VersionedIdentifier(plugins[index].getId(), plugins[index].getVersion()).toString() + FeaturePackagedContentProvider.JAR_EXTENSION;					
 					archive.setPath(pluginID);
 					location = plugins[index].getLocation();
 					URL url = new URL(location);
@@ -284,20 +289,26 @@ public class SiteFileFactory extends BaseSiteFactory {
 					pluginURL=UpdateManagerUtils.copyToLocal(zipFile.getInputStream(entry),tempDir+entry.getName(),null);
 					registryModel = Platform.parsePlugins(new URL[] { pluginURL }, factory);					
 					if (registryModel!=null) {
-						PluginModel[] models = null;
+						PluginModel[] plugins = null;
 						if (entry.getName().equals("plugin.xml")){
-							models = registryModel.getPlugins();
+							plugins = registryModel.getPlugins();
 						} else {
-							models = registryModel.getFragments();
+							plugins = registryModel.getFragments();
 						}
-						for (int index = 0; index < models.length; index++) {
+						for (int index = 0; index < plugins.length; index++) {
 							SiteFileFactory archiveFactory = new SiteFileFactory();							
 							// the id is plugins\<pluginid>_<ver>.jar as per the specs
-							String pluginID = Site.DEFAULT_PLUGIN_PATH+new VersionedIdentifier(models[index].getId(), models[index].getVersion()).toString() + FeaturePackagedContentProvider.JAR_EXTENSION;
+							String pluginID = Site.DEFAULT_PLUGIN_PATH+new VersionedIdentifier(plugins[index].getId(), plugins[index].getVersion()).toString() + FeaturePackagedContentProvider.JAR_EXTENSION;
 							ArchiveReferenceModel archive = archiveFactory.createArchiveReferenceModel();		
 							archive.setPath(pluginID);
 							archive.setURLString(file.toURL().toExternalForm());
 							((Site)site).addArchiveReferenceModel(archive);
+							
+							PluginEntry newPluginEntry = new PluginEntry();		
+							newPluginEntry.setContainer(site);
+							newPluginEntry.setPluginIdentifier(plugins[index].getId());
+							newPluginEntry.setPluginVersion(plugins[index].getVersion().toString());
+							((Site)site).addPluginEntry(newPluginEntry);											
 						}
 					}
 				}

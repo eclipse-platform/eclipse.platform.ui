@@ -23,9 +23,9 @@ import org.eclipse.update.internal.core.UpdateManagerPlugin;
 public abstract class BaseSiteFactory extends SiteModelFactory implements ISiteFactory {
 
 	/*
-	 * @see ISiteFactory#createSite(URL)
+	 * @see ISiteFactory#createSite(URL, boolean)
 	 */
-	public abstract ISite createSite(URL url) throws CoreException, InvalidSiteTypeException;
+	public abstract ISite createSite(URL url, boolean forceCreation) throws CoreException, InvalidSiteTypeException;
 
 
 	/**

@@ -353,7 +353,7 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 						siteEntries = site.getPluginEntries();
 						for (int index = 0; index < siteEntries.length; index++) {
 							IPluginEntry entry = siteEntries[index];
-							siteIdentifiers.add(entry.getIdentifier());
+							siteIdentifiers.add(entry.getVersionIdentifier());
 						}
 					}
 
@@ -361,14 +361,14 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 						IPluginEntry[] entries = feature.getPluginEntries();
 						for (int index = 0; index < entries.length; index++) {
 							IPluginEntry entry = entries[index];
-							if (!siteIdentifiers.contains(entry.getIdentifier())) {
+							if (!siteIdentifiers.contains(entry.getVersionIdentifier())) {
 								// FIXME: the plugin defined by the feature
 								// doesn't seem to exist on the site
 								String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-								IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Error verifying existence of plugin:" + entry.getIdentifier().toString(), null);
+								IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Error verifying existence of plugin:" + entry.getVersionIdentifier().toString(), null);
 								UpdateManagerPlugin.getPlugin().getLog().log(status);
 								String siteString = (site != null) ? site.getURL().toExternalForm() : "NO SITE";
-								if (!handler.reportProblem("Cannot find entry " + entry.getIdentifier().toString() + " on site " + siteString)) {
+								if (!handler.reportProblem("Cannot find entry " + entry.getVersionIdentifier().toString() + " on site " + siteString)) {
 									throw new InterruptedException();
 								}
 							} // end if not found in site

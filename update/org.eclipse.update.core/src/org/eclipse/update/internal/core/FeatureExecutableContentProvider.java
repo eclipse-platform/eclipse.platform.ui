@@ -109,7 +109,7 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 	private String getArchiveID(IPluginEntry entry) {
 		//FIXME: fragments
 		String type = (entry.isFragment()) ? Site.DEFAULT_FRAGMENT_PATH : Site.DEFAULT_PLUGIN_PATH;
-		return type + entry.getIdentifier().toString();
+		return type + entry.getVersionIdentifier().toString();
 	}
 
 	/**
@@ -152,23 +152,10 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 	public ContentReference[] getPluginEntryArchiveReferences(IPluginEntry pluginEntry, InstallMonitor monitor) throws CoreException {
 		ContentReference[] result = new ContentReference[1];
 		try {
-			// get the URL of the Archive file that contains the plugin entry
-			ISiteContentProvider provider = feature.getSite().getSiteContentProvider();
-			String archiveID = getArchiveID(pluginEntry);
-			URL fileURL = provider.getArchiveReference(archiveID);
-			String fileString = UpdateManagerUtils.getPath(fileURL);
-
-			// return the list of all subdirectories
-			if (!fileString.endsWith(File.separator))
-				fileString += File.separator;
-			File pluginDir = new File(fileString);
-			if (!pluginDir.exists())
-				throw new IOException("The File:" + fileString + "does not exist.");
-
-			result[0] = new ContentReference(archiveID,pluginDir.toURL());
+			result[0] = new ContentReference(getArchiveID(pluginEntry),new File(getPath(pluginEntry)));
 		} catch (Exception e) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Error retrieving archive names for:" + pluginEntry.getIdentifier().toString(), e);
+			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Error retrieving archive names for:" + pluginEntry.getVersionIdentifier().toString(), e);
 			throw new CoreException(status);
 		}
 		return result;
@@ -246,7 +233,7 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 			}
 		} catch (Exception e) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Error retrieving archive content references for:" + pluginEntry.getIdentifier().toString(), e);
+			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Error retrieving archive content references for:" + pluginEntry.getVersionIdentifier().toString(), e);
 			throw new CoreException(status);
 		}
 		return result;

@@ -510,7 +510,7 @@ public class SiteLocal implements ILocalSite, IWritable {
 								IPluginEntry[] pluginEntries = features[indexFeatures].getFeature().getPluginEntries();
 								if (pluginEntries != null) {
 									for (int indexEntries = 0; indexEntries < pluginEntries.length; indexEntries++) {
-										allPluginID.add(entries[indexEntries].getIdentifier());
+										allPluginID.add(entries[indexEntries].getVersionIdentifier());
 									}
 								}
 							}
@@ -522,7 +522,7 @@ public class SiteLocal implements ILocalSite, IWritable {
 			// create the delta with the plugins that may be still used by other configured or unconfigured feature
 			List plugins = new ArrayList();
 			for (int indexPlugins = 0; indexPlugins < entries.length; indexPlugins++) {
-				if (!allPluginID.contains(entries[indexPlugins].getIdentifier())) {
+				if (!allPluginID.contains(entries[indexPlugins].getVersionIdentifier())) {
 					plugins.add(entries[indexPlugins]);
 				}
 			}

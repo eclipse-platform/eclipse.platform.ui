@@ -26,11 +26,13 @@ public interface ISiteFactory {
 	
 	/**
 	 * Returns a site based on the URL
+	 * @param url the URL passed to teh Factory to create a Site
+	 * @param forceCreation true if the factory should attempt to create a site if it doesn't already exist
 	 * @return a feature
 	 * @since 2.0 
 	 */
 
-	ISite createSite(URL url) throws CoreException, InvalidSiteTypeException;
+	ISite createSite(URL url, boolean forceCreation) throws CoreException, InvalidSiteTypeException;
 		
 }
 

@@ -36,7 +36,7 @@ public class TestExecutableInstall extends UpdateManagerTestCase {
 		String site = localSite.getURL().getFile();
 		IPluginEntry[] entries = remoteFeature.getPluginEntries();
 		assertTrue("no plugins entry",(entries!=null && entries.length!=0));
-		String pluginName= entries[0].getIdentifier().toString();
+		String pluginName= entries[0].getVersionIdentifier().toString();
 		File pluginFile = new File(site,Site.DEFAULT_PLUGIN_PATH+pluginName);
 		assertTrue("plugin files not installed locally",pluginFile.exists());
 

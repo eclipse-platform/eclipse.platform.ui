@@ -56,10 +56,19 @@ public class InternalSiteManager {
 
 	/** 
 	 * Returns an ISite based on teh protocol of the URL
-	 * If the Site has a different Type/Site Handler not known up to no,
+	 * If the Site has a different Type/Site Handler not known up to now,
 	 * it will be discovered when parsing the site.xml file.
 	 */
 	public static ISite getSite(URL siteURL) throws CoreException {
+		return getSite(siteURL,true);
+	}
+
+	/** 
+	 * Returns an ISite based on teh protocol of the URL
+	 * If the Site has a different Type/Site Handler not known up to now,
+	 * it will be discovered when parsing the site.xml file.
+	 */
+	public static ISite getSite(URL siteURL, boolean forceCreation) throws CoreException {
 		ISite site = null;
 		if (singleton == null)
 			init();
@@ -76,7 +85,7 @@ public class InternalSiteManager {
 
 		try {
 			if (type != null) {
-				site = attemptCreateSite(type, siteURL);
+				site = attemptCreateSite(type, siteURL, forceCreation);
 			} else {
 				//DEBUG:
 				if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
@@ -88,7 +97,7 @@ public class InternalSiteManager {
 				// if the site.xml hasn't a specific type in it, then cancel...
 				// otherwise use the type in site.xml to create the *real* site
 				type = (String) singleton.getSitesTypes().get("http");
-				site = attemptCreateSite(type, siteURL);
+				site = attemptCreateSite(type, siteURL, forceCreation);
 
 				// same type as we forced ? do not continue
 				if (site!=null && site.getType().equals(type)) {
@@ -162,12 +171,12 @@ public class InternalSiteManager {
 	 * if the site guessed is not teh type found,
 	 * attempt to create a type with the type found
 	 */
-	private static ISite attemptCreateSite(String guessedTypeSite, URL siteURL) throws CoreException {
+	private static ISite attemptCreateSite(String guessedTypeSite, URL siteURL, boolean forceCreation) throws CoreException {
 		ISite site = null;
 		Exception caughtException;
 
 		try {
-			site = createSite(guessedTypeSite, siteURL);
+			site = createSite(guessedTypeSite, siteURL, forceCreation);
 		} catch (InvalidSiteTypeException e) {
 
 			//DEBUG:
@@ -178,7 +187,9 @@ public class InternalSiteManager {
 			// the type in the site.xml is not the one expected				
 			try {
 				InvalidSiteTypeException exception = (InvalidSiteTypeException) e;
-				site = createSite(exception.getNewType(), siteURL);
+				// site not found and forceCreation=false
+				if (exception.getNewType()==null) throw e;
+				site = createSite(exception.getNewType(), siteURL, forceCreation);
 			} catch (InvalidSiteTypeException e1) {
 				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "An error occured when trying to create a Site with the new type", e1);
@@ -192,10 +203,10 @@ public class InternalSiteManager {
 	/**
 	 * create an instance of a class that implements ISite
 	 */
-	private static ISite createSite(String siteType, URL url) throws CoreException, InvalidSiteTypeException {
+	private static ISite createSite(String siteType, URL url, boolean forceCreation) throws CoreException, InvalidSiteTypeException {
 		ISite site = null;
 		ISiteFactory factory = SiteTypeFactory.getInstance().getFactory(siteType);
-		site = factory.createSite(url);
+		site = factory.createSite(url, forceCreation);
 		return site;
 	}
 
