@@ -13,9 +13,7 @@ package org.eclipse.team.internal.ui.synchronize;
 import java.util.*;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.synchronize.*;
-import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
@@ -109,52 +107,6 @@ public abstract class CompositeModelProvider extends AbstractSynchronizeModelPro
             result.add(getProvider(element));
         }
         return (ISynchronizeModelProvider[]) result.toArray(new ISynchronizeModelProvider[result.size()]);
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.team.internal.ui.synchronize.AbstractSynchronizeModelProvider#handleChanges(org.eclipse.team.core.synchronize.ISyncInfoTreeChangeEvent)
-     */
-    protected void handleChanges(ISyncInfoTreeChangeEvent event, IProgressMonitor monitor) {
-        ISynchronizeModelProvider[] providers = null;
-        try {
-            monitor.beginTask(null, 100);
-            providers = beginInput();
-            super.handleChanges(event, Policy.subMonitorFor(monitor, 50));
-        } finally {
-            endInput(providers, Policy.subMonitorFor(monitor, 50));
-            monitor.done();
-        }
-    }
-
-    /**
-     * Begin inputing changes to the syncsets of the sub-providers
-     */
-    protected ISynchronizeModelProvider[] beginInput() {
-        ISynchronizeModelProvider[] providers = getProviders();
-//        for (int i = 0; i < providers.length; i++) {
-//            ISynchronizeModelProvider provider = providers[i];
-//            provider.getSyncInfoSet().beginInput();
-//        }
-        return providers;
-    }
-    
-    /**
-     * End inputing to sub-provider sync sets
-     */
-    protected void endInput(ISynchronizeModelProvider[] providers, IProgressMonitor monitor) {
-        RuntimeException exception = null;
-//        for (int i = 0; i < providers.length; i++) {
-//            ISynchronizeModelProvider provider = providers[i];
-//            try {
-//                provider.getSyncInfoSet().endInput(monitor);
-//            } catch (RuntimeException e) {
-//                // Remember the exception but continue so all locks are freed
-//                exception = e;
-//            }
-//        } 
-        if (exception != null) {
-            throw exception;
-        }
     }
 
     /* (non-Javadoc)

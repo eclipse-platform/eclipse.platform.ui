@@ -542,7 +542,7 @@ public class ChangeLogModelProvider extends CompositeModelProvider implements IC
             public void run() {
                 addLogEntries(infos, logs, Policy.subMonitorFor(monitor, 10));
             }
-        }, monitor);
+        });
     }
 
     /**
@@ -560,23 +560,6 @@ public class ChangeLogModelProvider extends CompositeModelProvider implements IC
     		        }
     		        //refreshViewer(); // TODO: Why do we do a refresh viewer here?
     	        }
-            }
-        }, monitor);
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.team.internal.ui.synchronize.AbstractSynchronizeModelProvider#runViewUpdate(java.lang.Runnable)
-     */
-    protected void runViewUpdate(final Runnable runnable, final IProgressMonitor monitor) {
-        super.runViewUpdate(new Runnable() {
-            public void run() {
-                ISynchronizeModelProvider[] providers = null;
-                try {
-                    providers = beginInput();
-        	        runnable.run();
-                } finally {
-                    endInput(providers, monitor);
-                }
             }
         });
     }
