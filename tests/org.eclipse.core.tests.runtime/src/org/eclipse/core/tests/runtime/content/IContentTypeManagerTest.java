@@ -15,13 +15,17 @@ import junit.framework.*;
 import org.eclipse.core.internal.content.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.*;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.tests.harness.BundleTestingHelper;
+import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 import org.eclipse.core.tests.runtime.RuntimeTestsPlugin;
 import org.eclipse.core.tests.runtime.TestRegistryChangeListener;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
+import org.osgi.service.prefs.BackingStoreException;
+import org.osgi.service.prefs.Preferences;
 
-public class IContentTypeManagerTest extends TestCase {
+public class IContentTypeManagerTest extends EclipseWorkspaceTest {
 	private final static String MINIMAL_XML = "<?xml version=\"1.0\"?><org.eclipse.core.runtime.tests.root/>";
 	private final static String SAMPLE_BIN1_OFFSET = "12345";
 	private final static byte[] SAMPLE_BIN1_SIGNATURE = {0x10, (byte) 0xAB, (byte) 0xCD, (byte) 0xFF};
@@ -584,5 +588,66 @@ public class IContentTypeManagerTest extends TestCase {
 		IContentType selected = manager.findContentTypeFor(getInputStream(comment + XML_ROOT_ELEMENT_NO_DECL, "US-ASCII"), "fake.xml");
 		assertNotNull("1.0", selected);
 		assertEquals("1.1", rootElement, selected);
+	}
+
+	/**
+	 * Bug 68894  
+	 */
+	public void testPreferences() throws CoreException, BackingStoreException {
+		ContentTypeManager manager = ContentTypeManager.getInstance();
+		IContentType text = manager.getContentType(IContentTypeManager.CT_TEXT);
+		Preferences textPrefs = new InstanceScope().getNode(ContentTypeManager.CONTENT_TYPE_PREF_NODE).node(text.getId());
+		assertNotNull("0.1", text);
+		
+		// ensure the "default charset" preference is being properly used
+		assertNull("1.0", text.getDefaultCharset());		
+		assertNull("1.1", textPrefs.get(ContentType.PREF_DEFAULT_CHARSET, null));
+		text.setDefaultCharset("UTF-8");		
+		assertEquals("1.2", "UTF-8", textPrefs.get(ContentType.PREF_DEFAULT_CHARSET, null));
+		text.setDefaultCharset(null);		
+		assertNull("1.3", textPrefs.get(ContentType.PREF_DEFAULT_CHARSET, null));
+
+		// ensure the file spec preferences are being properly used
+		// some sanity checking
+		assertFalse("2.01", text.isAssociatedWith("xyz.foo"));
+		assertFalse("2.01", text.isAssociatedWith("xyz.bar"));
+		assertFalse("2.03", text.isAssociatedWith("foo.ext"));
+		assertFalse("2.04", text.isAssociatedWith("bar.ext"));		
+		// play with file name associations first...
+		assertNull("2.0a", textPrefs.get(ContentType.PREF_FILE_NAMES, null));
+		assertNull("2.0b", textPrefs.get(ContentType.PREF_FILE_EXTENSIONS, null));
+		text.addFileSpec("foo.ext", IContentType.FILE_NAME_SPEC);
+		assertTrue("2.1", text.isAssociatedWith("foo.ext"));
+		assertEquals("2.2", "foo.ext", textPrefs.get(ContentType.PREF_FILE_NAMES, null));
+		text.addFileSpec("bar.ext", IContentType.FILE_NAME_SPEC);
+		assertTrue("2.3", text.isAssociatedWith("bar.ext"));
+		assertEquals("2.4", "foo.ext,bar.ext", textPrefs.get(ContentType.PREF_FILE_NAMES, null));
+		// ... and then with file extensions
+		text.addFileSpec("foo", IContentType.FILE_EXTENSION_SPEC);
+		assertTrue("2.5", text.isAssociatedWith("xyz.foo"));
+		assertEquals("2.6", "foo", textPrefs.get(ContentType.PREF_FILE_EXTENSIONS, null));
+		text.addFileSpec("bar", IContentType.FILE_EXTENSION_SPEC);
+		assertTrue("2.7", text.isAssociatedWith("xyz.bar"));
+		assertEquals("2.4", "foo,bar", textPrefs.get(ContentType.PREF_FILE_EXTENSIONS, null));
+		// remove all associations made
+		text.removeFileSpec("foo.ext", IContentType.FILE_NAME_SPEC);
+		text.removeFileSpec("bar.ext", IContentType.FILE_NAME_SPEC);
+		text.removeFileSpec("foo", IContentType.FILE_EXTENSION_SPEC);
+		text.removeFileSpec("bar", IContentType.FILE_EXTENSION_SPEC);
+		// ensure all is as before
+		assertFalse("3.1", text.isAssociatedWith("xyz.foo"));
+		assertFalse("3.2", text.isAssociatedWith("xyz.bar"));
+		assertFalse("3.3", text.isAssociatedWith("foo.ext"));
+		assertFalse("3.4", text.isAssociatedWith("bar.ext"));
+
+		// ensure the serialization format is correct
+		try {
+			text.addFileSpec("foo.bar", IContentType.FILE_NAME_SPEC);
+			textPrefs.sync();
+			assertEquals("4.0", "foo.bar", textPrefs.get(ContentType.PREF_FILE_NAMES, null));
+		} finally {
+			// clean-up
+			text.removeFileSpec("foo.bar", IContentType.FILE_NAME_SPEC);
+		}
 	}
 }
