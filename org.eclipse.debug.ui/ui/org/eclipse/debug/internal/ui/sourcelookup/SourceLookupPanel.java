@@ -207,10 +207,6 @@ public class SourceLookupPanel extends AbstractLaunchConfigurationTab implements
 					widthHint,
 					button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 		
-		gd.heightHint =
-			Dialog.convertVerticalDLUsToPixels(
-					fontMetrics,
-					IDialogConstants.BUTTON_HEIGHT);
 		return gd;
 	}
 	

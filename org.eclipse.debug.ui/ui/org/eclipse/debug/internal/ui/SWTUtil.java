@@ -78,15 +78,6 @@ public class SWTUtil {
 		int widthHint= converter.convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
 		return Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 	}
-
-	/**
-	 * Returns a height hint for a button control.
-	 */		
-	public static int getButtonHeigthHint(Button button) {
-		PixelConverter converter= new PixelConverter(button);
-		return converter.convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
-	}	
-
 	
 	/**
 	 * Sets width and height hint for the button control.
@@ -99,7 +90,6 @@ public class SWTUtil {
 		Assert.isNotNull(button);
 		Object gd= button.getLayoutData();
 		if (gd instanceof GridData) {
-			((GridData)gd).heightHint= getButtonHeigthHint(button);
 			((GridData)gd).widthHint= getButtonWidthHint(button);	
 			((GridData)gd).horizontalAlignment = GridData.FILL;	 
 		}
