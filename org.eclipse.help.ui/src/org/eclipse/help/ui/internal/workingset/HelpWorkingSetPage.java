@@ -1,26 +1,26 @@
 package org.eclipse.help.ui.internal.workingset;
 
 /*
- * (c) Copyright IBM Corp. 2002. 
+ * (c) Copyright IBM Corp. 2002.
  * All Rights Reserved.
  */
 
-import java.util.*;
+import java.util.ArrayList;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.help.ui.internal.util.*;
-import org.eclipse.jface.util.*;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.help.internal.HelpSystem;
+import org.eclipse.help.ui.internal.util.WorkbenchResources;
+import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.wizard.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.custom.*;
+import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.dialogs.*;
-import org.eclipse.ui.help.*;
+import org.eclipse.ui.dialogs.IWorkingSetPage;
 
 /**
  * Page for help working sets.
@@ -109,8 +109,7 @@ public class HelpWorkingSetPage extends WizardPage implements IWorkingSetPage {
 
 		tree.setUseHashlookup(true);
 
-		tree.setInput(
-			new HelpResource(WorkbenchHelp.getHelpSupport().getTocs()));
+		tree.setInput(HelpSystem.getWorkingSetManager().getRoot());
 
 		tree.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event) {
@@ -141,7 +140,7 @@ public class HelpWorkingSetPage extends WizardPage implements IWorkingSetPage {
 		initializeCheckedState();
 		validateInput();
 
-		// Set help for the page 
+		// Set help for the page
 		//WorkbenchHelp.setHelp(tree, "help_workingset_page");
 	}
 

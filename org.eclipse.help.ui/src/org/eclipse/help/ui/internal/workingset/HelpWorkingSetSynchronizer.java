@@ -3,7 +3,6 @@ package org.eclipse.help.ui.internal.workingset;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.*;
 import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.workingset.*;
 import org.eclipse.jface.util.*;
@@ -103,7 +102,7 @@ public class HelpWorkingSetSynchronizer
 			if (w == null)
 				System.out.println("error");
 			else
-				w.setElements(createElements(ws));
+				w.setElements(getElements(ws));
 
 		} else if (event.getProperty().equals(IWorkingSetManager.CHANGE_WORKING_SET_NAME_CHANGE)) {
 			// change the name of the help working set
@@ -141,23 +140,22 @@ public class HelpWorkingSetSynchronizer
 			WorkingSet ws = (WorkingSet) event.getNewValue();
 			IWorkingSet w = mapping.findMapping(ws);
 			if (w == null)
-				System.out.println("error");
+				System.out.println("error: cannot find IWorkingSet " + ws);
 			else
-				w.setElements(createElements(ws));
+				w.setElements(ws.getElements());
 		} else if (event.getProperty().equals(WorkingSetManager.CHANGE_WORKING_SET_NAME_CHANGE)) {
 			// change the name of the eclipse working set
 			WorkingSet ws = (WorkingSet) event.getNewValue();
 			IWorkingSet w = mapping.findMapping(ws);
 			if (w == null)
-				System.out.println("error");
+				System.out.println("error: cannot find WorkingSet " + ws);
 			else
 				w.setName(ws.getName());
 		}
 	}
 
 	private IWorkingSet createEclipseWorkingSet(WorkingSet ws) {
-		HelpResource[] elements = createElements(ws);
-		IWorkingSet w = eclipseWSM.createWorkingSet(ws.getName(), elements);
+		IWorkingSet w = eclipseWSM.createWorkingSet(ws.getName(), ws.getElements());
 		if (w instanceof org.eclipse.ui.internal.WorkingSet)
 			// the id of the workingSet extension point in plugin.xml
 			((org.eclipse.ui.internal.WorkingSet) w).setEditPageId("org.eclipse.help.ui.HelpWorkingSetPage");
@@ -167,38 +165,24 @@ public class HelpWorkingSetSynchronizer
 	private WorkingSet createHelpWorkingSet(IWorkingSet ws) {
 		if (!isHelpWorkingSet(ws))
 			return null;
-		IHelpResource[] elements = createElements(ws);
-		if (elements != null)
-			return helpWSM.createWorkingSet(ws.getName(), elements);
-		else
-			return null;
+
+		return helpWSM.createWorkingSet(ws.getName(), getElements(ws));
 	}
 
-	private IHelpResource[] createElements(IWorkingSet ws) {
+	private AdaptableHelpResource[] getElements(IWorkingSet ws) {
 		IAdaptable[] elements = ws.getElements();
-		IHelpResource[] helpResources = new IHelpResource[elements.length];
-		for (int i = 0; i < elements.length; i++) {
-			Object adapter = elements[i].getAdapter(IHelpResource.class);
-			if (adapter != null)
-				helpResources[i] = (IHelpResource) adapter;
+		AdaptableHelpResource[] helpResources = new AdaptableHelpResource[elements.length];
+		for (int i=0; i<elements.length; i++)
+			if (elements[i] instanceof AdaptableHelpResource)
+				helpResources[i] = (AdaptableHelpResource)elements[i];
 			else
-				return null;
-		}
+				return new AdaptableHelpResource[0];
+				
 		return helpResources;
 	}
-
-	private HelpResource[] createElements(WorkingSet ws) {
-		IHelpResource[] resources = ws.getElements();
-		HelpResource[] elements = new HelpResource[resources.length];
-		for (int i = 0; i < elements.length; i++)
-			elements[i] = new HelpResource(resources[i]);
-
-		return elements;
-	}
-
 	private boolean isHelpWorkingSet(IWorkingSet ws) {
 		IAdaptable[] elements = ws.getElements();
-		return (elements.length > 0 && elements[0] instanceof HelpResource);
+		return (elements.length > 0 && elements[0] instanceof AdaptableHelpResource);
 	}
 
 }

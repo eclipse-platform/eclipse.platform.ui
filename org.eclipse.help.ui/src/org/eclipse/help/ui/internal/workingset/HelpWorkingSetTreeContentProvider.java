@@ -6,6 +6,7 @@ package org.eclipse.help.ui.internal.workingset;
  */
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.help.internal.workingset.*;
 import org.eclipse.jface.viewers.*;
 
 public class HelpWorkingSetTreeContentProvider
@@ -22,8 +23,10 @@ public class HelpWorkingSetTreeContentProvider
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 	 */
 	public Object[] getChildren(Object parentElement) {
-		if (parentElement instanceof HelpResource)
-			return ((HelpResource)parentElement).getChildren();
+		if (parentElement instanceof AdaptableTocs)
+			return ((AdaptableTocs)parentElement).getChildren();
+		else if (parentElement instanceof AdaptableToc)
+			return ((AdaptableToc) parentElement).getChildren();
 		else
 			return new IAdaptable[0];
 	}
@@ -32,8 +35,8 @@ public class HelpWorkingSetTreeContentProvider
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 	 */
 	public Object getParent(Object element) {
-		if (element instanceof HelpResource) 
-			return ((HelpResource)element).getParent();
+		if (element instanceof AdaptableHelpResource)
+			return ((AdaptableHelpResource) element).getParent();
 		else
 			return null;
 	}
@@ -42,11 +45,7 @@ public class HelpWorkingSetTreeContentProvider
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 	 */
 	public boolean hasChildren(Object element) {
-		if (element instanceof HelpResource)
-			return ((HelpResource)element).asArray() != null ; 
-					// || ((HelpResource)element).asToc() != null;
-		else
-			return false;
+		return (element instanceof AdaptableToc || element instanceof AdaptableTocs);
 	}
 
 	/**

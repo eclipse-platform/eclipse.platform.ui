@@ -6,6 +6,7 @@ package org.eclipse.help.ui.internal.workingset;
  */
 
 
+import org.eclipse.help.internal.workingset.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.*;
 
@@ -29,9 +30,10 @@ public class HelpWorkingSetElementLabelProvider extends LabelProvider {
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 	 */
 	public String getText(Object element) {
-		if (element instanceof HelpResource && 
-			((HelpResource)element).asResource() != null)
-			return ((HelpResource)element).asResource().getLabel();
+		if (element instanceof AdaptableToc )
+			return ((AdaptableToc)element).getLabel();
+		else if (element instanceof AdaptableTopic)
+			return ((AdaptableTopic)element).getLabel();
 		else
 			return null;
 	}

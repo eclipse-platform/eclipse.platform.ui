@@ -5,14 +5,14 @@ package org.eclipse.help.servlet.data;
  * All Rights Reserved.
  */
 
-import javax.servlet.*;
-import javax.servlet.http.*;
+import java.util.ArrayList;
 
-import org.eclipse.help.*;
-import org.eclipse.help.internal.*;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+
+import org.eclipse.help.internal.HelpSystem;
 import org.eclipse.help.internal.workingset.*;
-import org.eclipse.help.internal.toc.*;
-import org.eclipse.help.servlet.*;
+import org.eclipse.help.servlet.WebappResources;
 
 /**
  * This class manages help working sets
@@ -54,12 +54,16 @@ public class WorkingSetManagerData extends RequestData {
 			if (books == null)
 				books = new String[0];
 			
-			IToc[] tocs = new IToc[books.length];
-			TocManager tocmgr = HelpSystem.getTocManager();
-			for (int i = 0; i < books.length; i++)
-				tocs[i] = tocmgr.getToc(books[i], getLocale());
+			ArrayList selectedElements = new ArrayList(books.length);
+			for (int i = 0; i < books.length; i++) {
+				AdaptableHelpResource res = getAdaptableHelpResource(books[i]);
+				if (res != null)
+					selectedElements.add(res);
+			}
 
-			WorkingSet ws = wsmgr.createWorkingSet(name,tocs);
+			AdaptableHelpResource[] elements = new AdaptableHelpResource[selectedElements.size()];
+			selectedElements.toArray(elements);
+			WorkingSet ws = wsmgr.createWorkingSet(name, elements);
 			wsmgr.addWorkingSet(ws);
 		}
 	}
@@ -90,15 +94,18 @@ public class WorkingSetManagerData extends RequestData {
 				String[] books = request.getParameterValues("books");
 				if (books == null)
 					books = new String[0];
-				IHelpResource[] elements = ws.getElements();
-				for (int i = 0; i < elements.length; i++)
-					ws.removeElement(elements[i]);
-				TocManager tocmgr = HelpSystem.getTocManager();
-				IToc[] tocs = new IToc[books.length];
-				for (int i = 0; i < books.length; i++)
-					tocs[i] = tocmgr.getToc(books[i], getLocale());
-					
-				ws.setElements(tocs);
+				
+				ArrayList selectedElements = new ArrayList(books.length);
+				for (int i = 0; i < books.length; i++) {
+					AdaptableHelpResource res = getAdaptableHelpResource(books[i]);
+					if (res != null)
+						selectedElements.add(res);
+				}
+
+				AdaptableHelpResource[] elements = new AdaptableHelpResource[selectedElements.size()];
+				selectedElements.toArray(elements);
+				
+				ws.setElements(elements);
 				ws.setName(name);
 				// should also change the name....
 				
@@ -152,5 +159,12 @@ public class WorkingSetManagerData extends RequestData {
 			return EDIT;
 		else
 			return NONE;
+	}
+	
+	private AdaptableHelpResource getAdaptableHelpResource(String internalId) {
+		AdaptableHelpResource res = wsmgr.getAdaptableToc(internalId);
+		if (res == null)
+			res = wsmgr.getAdaptableTopic(internalId);
+		return res;
 	}
 }

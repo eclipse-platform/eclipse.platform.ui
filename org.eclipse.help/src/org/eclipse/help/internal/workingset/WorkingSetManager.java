@@ -19,6 +19,7 @@ import org.eclipse.help.internal.util.*;
 import org.w3c.dom.*;
 import org.xml.sax.*;
 
+
 /**
  * The working  set manager stores help working sets. Working sets are persisted
  * whenever one is added or removed.
@@ -68,7 +69,7 @@ public class WorkingSetManager {
 	private SortedSet workingSets = new TreeSet(new WorkingSetComparator());
 	private String locale;
 	private PropertyChange.ListenerList propertyChangeListeners = new PropertyChange.ListenerList();
-
+	private AdaptableTocs root;
 	
 	/**
 	 * Constructor
@@ -78,9 +79,14 @@ public class WorkingSetManager {
 		if (locale == null)
 			locale = BootLoader.getNL();
 		this.locale = locale;
+		root = new AdaptableTocs(HelpSystem.getTocManager().getTocs(locale));
 		restoreState();
 	}
 
+	public AdaptableTocs getRoot() {
+		return root;
+	}
+	
 	/**
 	 * Adds a new working set and saves it
 	 */
@@ -101,7 +107,7 @@ public class WorkingSetManager {
 	/**
 	 * Creates a new working set
 	 */
-	public WorkingSet createWorkingSet(String name, IHelpResource[] elements) {
+	public WorkingSet createWorkingSet(String name, AdaptableHelpResource[] elements) {
 		return new WorkingSet(name, elements);
 	}
 
@@ -185,6 +191,7 @@ public class WorkingSetManager {
 	 */
 	private File getWorkingSetStateFile() {
 		IPath path = HelpPlugin.getDefault().getStateLocation();
+		path = path.append(locale);
 		path = path.append(WORKING_SET_STATE_FILENAME);
 		return path.toFile();
 	}
@@ -268,20 +275,43 @@ public class WorkingSetManager {
 	 * 	creation failed.
 	 */
 	private WorkingSet restoreWorkingSet(Element workingSetNode) {
+
 		String name = workingSetNode.getAttribute("name");
 		NodeList items = workingSetNode.getElementsByTagName("item");
-		List tocs = new ArrayList(items.getLength());
+		List helpResources = new ArrayList(items.getLength());
 		for (int i = 0; i < items.getLength(); i++) {
 			Element item = (Element) items.item(i);
-			IToc toc =
-				HelpSystem.getTocManager().getToc(
-					item.getAttribute("href"),
-					locale);
-			tocs.add(toc);
+			String href = item.getAttribute("toc");
+			if (href == null || href.length() == 0)
+				continue;
+				
+			String child_pos = item.getAttribute("topic");
+			int pos = -1;
+			if (child_pos != null) {
+				try {
+					pos = Integer.parseInt(child_pos);
+				} catch (Exception e) {
+				}
+			}
+			
+			AdaptableHelpResource toc = HelpSystem.getWorkingSetManager().getAdaptableToc(href);
+
+			if (toc == null)
+				return null;
+
+			if (pos == -1) {
+				// Create the adaptable toc.
+				helpResources.add(toc);
+			} else {
+				// Create the adaptable topic
+				AdaptableTopic[] topics = (AdaptableTopic[])toc.getChildren();
+				if (pos >=0 && topics.length > pos)
+					helpResources.add(topics[pos]);
+			}
 		}
 		
-		IToc[] elements = new IToc[tocs.size()];
-		tocs.toArray(elements);
+		AdaptableHelpResource[] elements = new AdaptableHelpResource[helpResources.size()];
+		helpResources.toArray(elements);
 		
 		WorkingSet ws = createWorkingSet(name, elements);
 
@@ -350,5 +380,48 @@ public class WorkingSetManager {
 		saveState();
 		firePropertyChange(CHANGE_WORKING_SET_NAME_CHANGE, null, changedWorkingSet);
 		firePropertyChange(CHANGE_WORKING_SET_CONTENT_CHANGE, null, changedWorkingSet);
+	}
+	
+	public AdaptableToc getAdaptableToc(String href) {
+		IToc toc = HelpSystem.getTocManager().getToc(href, locale);
+		if (toc == null)
+			return null;
+		else {
+			IAdaptable[] tocs = root.getChildren();
+			for (int i=0; i<tocs.length; i++)
+				if (tocs[i].getAdapter(IToc.class) == toc)
+					return (AdaptableToc)tocs[i];
+		}
+		return null;
+	}
+	
+	public AdaptableTopic getAdaptableTopic(String id) {
+
+		if (id == null || id.length() == 0)
+			return null;
+
+		// toc id's are hrefs: /pluginId/path/to/toc.xml
+		// topic id's are based on parent toc id and index of topic: /pluginId/path/to/toc.xml_index_
+		int len = id.length();
+		if (id.charAt(len-1) == '_') {
+			// This is a first level topic
+			String indexStr = id.substring( id.lastIndexOf('_', len-2), len-1);
+			int index = 0;
+			try {
+				index = Integer.parseInt(indexStr);
+			}catch(Exception e){}
+
+			String tocStr = id.substring(0, id.lastIndexOf('_', len-2));
+			AdaptableToc toc = getAdaptableToc(tocStr);
+			if (toc == null)
+				return null;
+			IAdaptable[] topics = toc.getChildren();
+			if (index<0 || index >= topics.length)
+				return null;
+			else
+				return (AdaptableTopic)topics[index];
+		} 
+		
+		return null;
 	}
 }

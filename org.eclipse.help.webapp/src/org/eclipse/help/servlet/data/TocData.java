@@ -50,6 +50,10 @@ public class TocData extends RequestData {
 		loadTocs();
 	}
 
+	// Accessor methods to avoid exposing help classes directly to JSP.
+	// Note: this seems ok for now, but maybe we need to reconsider this 
+	//       and allow help classes in JSP's.
+	
 	public int getTocCount() {
 		return tocs.length;
 	}
@@ -65,7 +69,7 @@ public class TocData extends RequestData {
 	public String getTocDescriptionTopic(int i) {
 		return UrlUtil.getHelpURL(tocs[i].getTopic(null).getHref());
 	}
-	
+
 	/**
 	 * Returns the selected TOC
 	 * @return int

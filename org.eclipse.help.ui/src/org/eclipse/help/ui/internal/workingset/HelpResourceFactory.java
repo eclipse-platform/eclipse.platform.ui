@@ -5,10 +5,9 @@ package org.eclipse.help.ui.internal.workingset;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.boot.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.help.*;
-import org.eclipse.help.internal.*;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.help.internal.HelpSystem;
+import org.eclipse.help.internal.workingset.*;
 import org.eclipse.ui.*;
 
 /**
@@ -36,12 +35,34 @@ public class HelpResourceFactory implements IElementFactory {
 	public IAdaptable createElement(IMemento memento) {
 
 		// Get the href
-		String href = memento.getString("href");
+		String href = memento.getString("toc");
 		if (href == null)
 			return null;
 
-		// Create the adaptable toc.
-		IToc toc = HelpSystem.getTocManager().getToc(href, BootLoader.getNL());
-		return new HelpResource(toc);
+		String child_pos = memento.getString("topic");
+		int pos = -1;
+		if (child_pos != null) {
+			try {
+				pos = Integer.parseInt(child_pos);
+			} catch (Exception e) {
+			}
+		}
+
+		AdaptableHelpResource toc = HelpSystem.getWorkingSetManager().getAdaptableToc(href);
+
+		if (toc == null)
+			return null;
+			
+		if (pos == -1) {
+			// Create the adaptable toc.
+			return toc;
+		} else {
+			// Create the adaptable topic
+			AdaptableTopic[] topics = (AdaptableTopic[])toc.getChildren();
+			if (pos <0 || topics.length <= pos)
+				return null;
+			else
+				return topics[pos]; 
+		}
 	}
 }

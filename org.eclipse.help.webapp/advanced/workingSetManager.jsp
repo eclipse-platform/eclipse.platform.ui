@@ -119,7 +119,7 @@ function removeWorkingSet() {
 
 var workingSetDialog;
 var w = 300;
-var h = 300;
+var h = 500;
 
 function newWorkingSet() {
 	workingSetDialog = window.open("workingSet.jsp?operation=add&workingSet="+getWorkingSet(), "workingSetDialog", "resizeable=no,height="+h+",width="+w );

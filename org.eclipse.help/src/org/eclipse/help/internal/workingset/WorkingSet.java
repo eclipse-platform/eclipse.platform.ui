@@ -6,8 +6,6 @@ package org.eclipse.help.internal.workingset;
 
 import java.util.*;
 
-import org.eclipse.help.*;
-import org.eclipse.help.internal.*;
 import org.w3c.dom.*;
 
 public class WorkingSet {
@@ -26,17 +24,19 @@ public class WorkingSet {
 		this.elements = elements;
 	}
 	
-	public WorkingSet(String name, IHelpResource[] elements) {
+	public WorkingSet(String name, AdaptableHelpResource[] elements) {
 		this.name = name;
 		if (elements == null)
-			elements = new IHelpResource[0];
+			elements = new AdaptableHelpResource[0];
 		
 		this.elements = new ArrayList(elements.length);
-		for (int i=0; i<elements.length; i++)
+		for (int i=0; i<elements.length; i++) {
 			this.elements.add(elements[i]);
+		}
 	}
 	
-	public void removeElement(IHelpResource element) {
+	public void removeElement(AdaptableHelpResource element) {
+		// Note: this is based on equality of IHelpResource and AdaptableHelpResource
 		elements.remove(element);
 	}
 	
@@ -53,13 +53,13 @@ public class WorkingSet {
 		//HelpSystem.getWorkingSetManager().workingSetChanged(this, WorkingSetManager.CHANGE_WORKING_SET_NAME_CHANGE);
 	}
 	
-	public IHelpResource[] getElements() {
-		IHelpResource[] array = new IHelpResource[elements.size()];
+	public AdaptableHelpResource[] getElements() {
+		AdaptableHelpResource[] array = new AdaptableHelpResource[elements.size()];
 		elements.toArray(array);
 		return array;
 	}
 	
-	public void setElements(IHelpResource[] elements) {
+	public void setElements(AdaptableHelpResource[] elements) {
 		this.elements = new ArrayList(elements.length);
 		for (int i=0; i<elements.length; i++)
 			this.elements.add(elements[i]);
@@ -76,9 +76,8 @@ public class WorkingSet {
 		
 		for (Iterator it=elements.iterator(); it.hasNext(); ) {
 			Element child = doc.createElement("item");
-			IHelpResource helpResource = (IHelpResource)it.next();
-			child.setAttribute("href", helpResource.getHref());
-			child.setAttribute("label", helpResource.getLabel());
+			AdaptableHelpResource helpResource = (AdaptableHelpResource)it.next();
+			helpResource.saveState(child);
 			ws.appendChild(child);
 		}
 	}

@@ -5,10 +5,9 @@ package org.eclipse.help.ui.internal.workingset;
  * All Rights Reserved.
  */
 
-import java.util.*;
-
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.help.*;
+import org.eclipse.help.internal.workingset.AdaptableHelpResource;
 import org.eclipse.ui.*;
 
 /**
@@ -16,15 +15,15 @@ import org.eclipse.ui.*;
  */
 public class HelpResource
 	implements IAdaptable, IPersistableElement {
-	Object element;
-	HelpResource[] children;
+		
+	AdaptableHelpResource element;
 	HelpResource parent;
 
 	
 	/**
 	 * This constructor will be called when wrapping help resources.
 	 */
-	public HelpResource(Object element) {
+	public HelpResource(AdaptableHelpResource element) {
 		this.element = element;
 	}
 
@@ -32,16 +31,10 @@ public class HelpResource
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
 	public Object getAdapter(Class adapter) {
-		if (adapter == IHelpResource.class && element instanceof IHelpResource)
-			return element;
-		else if (
-			adapter == IHelpResource[].class
-				&& element instanceof IHelpResource[])
-			return element;
-		else if (adapter == IPersistableElement.class)
+		if (adapter == IPersistableElement.class)
 			return this;
-		else
-			return null;
+		else 
+			return element.getAdapter(adapter);
 	}
 
 	/**
@@ -49,7 +42,18 @@ public class HelpResource
 	*/
 	public void saveState(IMemento memento) {
 		if (asToc() != null)
-			memento.putString("href", asToc().getHref());
+			memento.putString("toc", asToc().getHref());
+		else if (asTopic() != null) {
+			ITopic topic = asTopic();
+			parent.saveState(memento);
+			// get the index of this topic
+			IAdaptable[] topics = parent.getChildren();
+			for (int i=0; i<topics.length; i++)
+				if (topics[i] == this) {
+					memento.putString("topic", String.valueOf(i));
+					return;
+				}
+		}
 	}
 
 	/**
@@ -60,40 +64,7 @@ public class HelpResource
 	}
 
 	public IAdaptable[] getChildren() {
-		if (element instanceof IHelpResource[]) {
-			if (children == null) {
-				IHelpResource[] resources = asArray();
-				children = new HelpResource[resources.length];
-				for (int i = 0; i < resources.length; i++) {
-					children[i] =
-						new HelpResource(resources[i]);
-					//adaptableChildren[i].setParent(this);
-				}
-			}
-			return children;
-		/*
-		} else if (element instanceof IToc) {
-			if (children == null) {
-				IToc toc = asToc();
-				ITopic[] topics = toc.getTopics();
-				children = new HelpResource[topics.length];
-				for (int i = 0; i < topics.length; i++) {
-					children[i] = new HelpResource(topics[i]);
-					children[i].setParent(this);
-				}
-			}
-			return children;
-		*/
-		} else {
-			return new IAdaptable[0];
-		}
-	}
-
-	IHelpResource[] asArray() {
-		if (element instanceof IHelpResource[])
-			return (IHelpResource[]) element;
-		else
-			return null;
+		return element.getChildren();
 	}
 
 	IHelpResource asResource() {
@@ -140,8 +111,8 @@ public class HelpResource
 			HelpResource res = (HelpResource) object;
 			if (asToc() != null && res.asToc() != null && asToc() == res.asToc())
 				return true;
-			if (asArray() != null && res.asArray() != null && Arrays.equals(asArray(), res.asArray()))
-				return true;
+			//if (asArray() != null && res.asArray() != null && Arrays.equals(asArray(), res.asArray()))
+			//	return true;
 		}
 		return false;
 	}

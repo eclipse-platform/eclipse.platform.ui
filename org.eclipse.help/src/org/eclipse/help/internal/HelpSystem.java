@@ -8,10 +8,10 @@ import java.util.*;
 import org.eclipse.core.boot.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.context.*;
-import org.eclipse.help.internal.workingset.*;
 import org.eclipse.help.internal.search.*;
 import org.eclipse.help.internal.toc.*;
 import org.eclipse.help.internal.util.*;
+import org.eclipse.help.internal.workingset.*;
 import org.eclipse.tomcat.*;
 /**
  * The actual implementation of the help system plugin.
@@ -132,6 +132,7 @@ public final class HelpSystem {
 		Logger.logInfo(Resources.getString("I002"));
 	}
 	public static boolean ensureWebappRunning() {
+		long begin = System.currentTimeMillis();
 		if (!getInstance().webappStarted) {
 			getInstance().webappStarted = true;
 			if (getMode()!=MODE_WORKBENCH) {
@@ -142,6 +143,8 @@ public final class HelpSystem {
 			getInstance().webappRunning =
 				AppServer.add("help", "org.eclipse.help.webapp", "");
 		}
+		long end = System.currentTimeMillis();
+		System.out.println(end-begin);
 		return getInstance().webappRunning;
 	}
 
