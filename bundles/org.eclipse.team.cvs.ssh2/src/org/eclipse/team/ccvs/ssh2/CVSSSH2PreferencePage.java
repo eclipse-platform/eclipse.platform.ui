@@ -409,14 +409,9 @@ public class CVSSSH2PreferencePage extends PreferencePage
     publicKeylabel=new Label(group, SWT.NONE);
     publicKeylabel.setText(Policy.bind("CVSSSH2PreferencePage.39")); //$NON-NLS-1$
     gd=new GridData();
-    gd.horizontalSpan=columnSpan-1;
+    gd.horizontalSpan=columnSpan;
     publicKeylabel.setLayoutData(gd);
-    keyExport=new Button(group, SWT.NULL);
-    keyExport.setText(Policy.bind("CVSSSH2PreferencePage.105")); //$NON-NLS-1$
-    gd=new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-    gd.horizontalSpan=1;
-    keyExport.setLayoutData(gd);
-
+    
     publicKeyText=new Text(group,SWT.MULTI|SWT.BORDER|SWT.V_SCROLL|SWT.WRAP);
     publicKeyText.setText(""); //$NON-NLS-1$
     publicKeyText.setEditable(false);
@@ -427,6 +422,12 @@ public class CVSSSH2PreferencePage extends PreferencePage
     gd.grabExcessHorizontalSpace = true;
     gd.grabExcessVerticalSpace = true;
     publicKeyText.setLayoutData(gd);
+    
+    keyExport=new Button(group, SWT.NULL);
+    keyExport.setText(Policy.bind("CVSSSH2PreferencePage.105")); //$NON-NLS-1$
+    gd=new GridData(GridData.HORIZONTAL_ALIGN_END);
+    gd.horizontalSpan=columnSpan;
+    keyExport.setLayoutData(gd);
 
     keyFingerPrintLabel=new Label(group, SWT.NONE);
     keyFingerPrintLabel.setText(Policy.bind("CVSSSH2PreferencePage.41")); //$NON-NLS-1$
