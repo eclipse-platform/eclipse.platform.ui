@@ -18,7 +18,7 @@ Standard Object Actions
 
 Actions on Multiselected Items
 	If two or more resources are multiselected, Rename is disabled.
-	If a project and its resource(s) are multiselected, Copy and Move do not show in the context menu.
+	If a project and its resource(s) are multiselected, Copy and Move are disabled.
 	If a folder and its child resource(s) are multiselected, Copy and Move are disabled. 
 	Verify Delete on multiselected resources.
 	Verify Copy and Move on multiselected files in the same project.
@@ -31,9 +31,11 @@ Folder Specific Actions
 	Verify the copy to the same folder and the different folder.
 
 Project Specific Actions
-	Menu also includes Open Project, Close Project, Rebuild All
-	Verify the disabled Go Into, Rename, Close Project, Rebuild All, Refresh From Local on a closed project
-	Verify the disabled Open Project on an open project
+	Menu includes group with Build, Refresh, Close Project and Open Project
+	Close Project appears only on an open project
+	Open Project appears only on a closed project
+	Both Open Project and Close Project appear when selection includes both an open and a closed project
+	For a closed project, Rename is disabled and Go Into, Build, Refresh, Close Project do not appear
 
 New Object Actions
 	Invoke File New .. projects, items, other.	
@@ -43,7 +45,6 @@ View Actions
 	Invoke Sort | by Name, | by Type in the pulldown menu. Avoid using only a.java and b.txt for a testing case since the result is the same
 		regardless of the sort key.
 	Invoke Filters... with Select All, Deselect All options.
-	Invoke Show Version Info on a project that is managed.
 	
 Navigation Actions
 	The view keeps track of navigation history. Go Into and Go Up add an item. Back and Forward change the cursor in the history list.
@@ -53,7 +54,7 @@ Navigation Actions
 		- Go Up is enabled when the input has a parent .  
 		- Go Forward is enabled when there are following items in the list, Go Back enabled when there are previous items.
 	Verify that the view's titlebar displays the simple name of its input, and that its tooltip displays the full path of its input.
-	Verify that the enablement and the actions of the navigation buttons in the local toolbar are consistent with the context menu.
+	Verify that the enablement and the actions of the navigation buttons in the local toolbar are consistent with the Navigate main menu.
 	Verify that when a navigation button in the local toolbar is enabled, the fullpath of where the button leads to is appended to the button's tooltip.
 		e.g If the path of the view's input is Project/Folder/MyFolder, the 'Up' button has the tooltip that says 'Up to Project/Folder'
 
