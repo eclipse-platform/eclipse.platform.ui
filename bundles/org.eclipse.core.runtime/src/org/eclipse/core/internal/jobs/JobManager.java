@@ -14,6 +14,7 @@ import java.text.*;
 import java.util.*;
 
 import org.eclipse.core.internal.runtime.*;
+
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
 
@@ -30,24 +31,25 @@ import org.eclipse.core.runtime.jobs.*;
  * must NEVER call the worker pool while its own monitor is held.
  */
 public class JobManager implements IJobManager {
+	private static final String OPTION_DEADLOCK_ERROR = IPlatform.PI_RUNTIME + "/jobs/errorondeadlock"; //$NON-NLS-1$
+	private static final String OPTION_DEBUG_BEGIN_END = IPlatform.PI_RUNTIME + "/jobs/beginend"; //$NON-NLS-1$
 	private static final String OPTION_DEBUG_JOBS = IPlatform.PI_RUNTIME + "/jobs"; //$NON-NLS-1$
 	private static final String OPTION_DEBUG_JOBS_TIMING = IPlatform.PI_RUNTIME + "/jobs/timing"; //$NON-NLS-1$
-	private static final String OPTION_DEBUG_BEGIN_END = IPlatform.PI_RUNTIME + "/jobs/beginend"; //$NON-NLS-1$
-	private static final String OPTION_DEADLOCK_ERROR = IPlatform.PI_RUNTIME + "/jobs/errorondeadlock"; //$NON-NLS-1$
 	private static final String OPTION_LOCKS = IPlatform.PI_RUNTIME + "/jobs/locks"; //$NON-NLS-1$
+
 	static final boolean DEBUG = Boolean.TRUE.toString().equalsIgnoreCase(InternalPlatform.getDefault().getOption(OPTION_DEBUG_JOBS));
-	static final boolean DEBUG_TIMING = Boolean.TRUE.toString().equalsIgnoreCase(InternalPlatform.getDefault().getOption(OPTION_DEBUG_JOBS_TIMING));
 	static final boolean DEBUG_BEGIN_END = Boolean.TRUE.toString().equalsIgnoreCase(InternalPlatform.getDefault().getOption(OPTION_DEBUG_BEGIN_END));
 	static final boolean DEBUG_DEADLOCK = Boolean.TRUE.toString().equalsIgnoreCase(InternalPlatform.getDefault().getOption(OPTION_DEADLOCK_ERROR));
-	static final boolean DEBUG_LOCKS = Boolean.TRUE.toString().equalsIgnoreCase(InternalPlatform.getDefault().getOption(OPTION_LOCKS));
 	private static final DateFormat DEBUG_FORMAT = new SimpleDateFormat("HH:mm:ss.SSS"); //$NON-NLS-1$
+	static final boolean DEBUG_LOCKS = Boolean.TRUE.toString().equalsIgnoreCase(InternalPlatform.getDefault().getOption(OPTION_LOCKS));
+	static final boolean DEBUG_TIMING = Boolean.TRUE.toString().equalsIgnoreCase(InternalPlatform.getDefault().getOption(OPTION_DEBUG_JOBS_TIMING));
 	private static JobManager instance;
 	/**
 	 * True if this manager is active, and false otherwise.  A job manager
 	 * starts out active, and becomes inactive if it has been shutdown
 	 * and not restarted.
 	 */
-	private static volatile boolean active = false;
+	private volatile boolean active = false;
 	
 	private final ImplicitJobs implicitJobs = new ImplicitJobs(this);
 	private final JobListeners jobListeners = new JobListeners();
@@ -237,6 +239,22 @@ public class JobManager implements IJobManager {
 			monitor = new NullProgressMonitor();
 		return monitor;
 	}
+	/**
+	 * Returns a new progress monitor for this job, belonging to the given
+	 * progress group.  Never returns null.
+	 */
+	protected IProgressMonitor createMonitor(InternalJob job, IProgressMonitor group, int ticks) {
+		synchronized (lock) {
+			if (job.getState() != Job.NONE)
+				return null;
+			IProgressMonitor monitor = null;
+			if (progressProvider != null)
+				monitor = progressProvider.createMonitor((Job)job, group, ticks);
+			if (monitor == null)
+				monitor = new NullProgressMonitor();
+			return monitor;
+		}
+	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.IJobManager#createProgressGroup()
 	 */
@@ -295,7 +313,7 @@ public class JobManager implements IJobManager {
 			if (JobManager.DEBUG && notify)
 				JobManager.debug("Ending job: " + job); //$NON-NLS-1$
 			job.setResult(result);
-			job.internalSetProgressMonitor(null);
+			job.setProgressMonitor(null);
 			job.setThread(null);
 			rescheduleDelay = job.getStartTime();
 			changeState(job, Job.NONE);
@@ -763,9 +781,11 @@ public class JobManager implements IJobManager {
 				//listeners may have canceled or put the job to sleep
 				synchronized (lock) {
 					if (job.getState() == Job.RUNNING) {
+						InternalJob internal = (InternalJob)job;
+						if (internal.getProgressMonitor() == null)
+							internal.setProgressMonitor(createMonitor(job));
 						//change from ABOUT_TO_RUN to RUNNING
-						((InternalJob) job).internalSetProgressMonitor(createMonitor(job));
-						((InternalJob)job).internalSetState(Job.RUNNING);
+						internal.internalSetState(Job.RUNNING);
 						break;
 					}
 				}

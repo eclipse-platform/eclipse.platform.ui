@@ -113,19 +113,19 @@ public interface IJobManager {
 	 *    IProgressMonitor pm = Platform.getJobManager().createProgressGroup();
 	 *    try {
 	 *       pm.beginTask("Building", 10);
-	 *       parseJob.setProgressMonitor(new SubProgressMonitor(pm, 5));
+	 *       parseJob.setProgressGroup(pm, 5);
 	 *       parseJob.schedule();
-	 *       parseJob.join();
-	 *       compileJob.setProgressMonitor(new SubProgressMonitor(pm, 5));
+	 *       compileJob.setProgressGroup(pm, 5);
 	 *       compileJob.schedule();
+	 *       parseJob.join();
 	 *       compileJob.join();
 	 *    } finally {
 	 *       pm.done();
 	 *    }
 	 * </pre>
 	 * 
-	 * @see Job#setProgressMonitor
-	 * @see SubProgressMonitor
+	 * @see Job#setProgressGroup
+	 * @see IProgresMonitor
 	 * @return A progress monitor
 	 */
 	public IProgressMonitor createProgressGroup();

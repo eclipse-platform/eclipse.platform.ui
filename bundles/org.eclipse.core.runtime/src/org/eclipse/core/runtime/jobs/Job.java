@@ -215,20 +215,6 @@ public abstract class Job extends InternalJob implements IAdaptable {
 		return super.getPriority();
 	}
 	/**
-	 * Returns the progress monitor for this job.  There is no 
-	 * guarantee that this wil be the same monitor instance provided
-	 * to <tt>setProgressMonitor</tt>.  While this job is running, this
-	 * method will return the same monitor instance that was passed
-	 * to the job's <tt>run</tt> method.
-	 * 
-	 * @see #setProgressMonitor
-	 * @see IJobManager#createProgressGroup
-	 * @return the progress monitor for this job, or <tt>null</tt>
-	 */
-	public final IProgressMonitor getProgressMonitor() {
-		return super.getProgressMonitor();
-	}
-	/**
 	 * Returns the result of this job's last run.
 	 * 
 	 * @return the result of this job's last run, or <code>null</code> if this
@@ -378,25 +364,25 @@ public abstract class Job extends InternalJob implements IAdaptable {
 		super.setPriority(i);
 	}
 	/**
-	 * Sets the progress monitor that this job will use to report
-	 * progress the next time it runs.  The provided monitor must either be
-	 * a <tt>SubProgressMonitor</tt> whose parent is a monitor
-	 * created by the method <tt>IJobManager.createProgressGroup</tt>,
-	 * or <tt>null</tt>, to indicate that a default progress monitor should
-	 * be used.
+	 * Associates this job with a progress group.  Progress feedback 
+	 * on this job's next execution will be displayed together with other
+	 * jobs in that group. The provided monitor must be a monitor 
+	 * created by the method <tt>IJobManager.createProgressGroup</tt>
+	 * and must have at least <code>ticks</code> units of available work.
 	 * <p>
-	 * The progress monitor can only be set when this job is in the <tt>NONE</tt>
-	 * state.  Attempts to set the monitor while a job is running, waiting,
-	 * or sleeping will be ignored. The monitor will be used only for
+	 * The progress group can only be set when this job is in the <tt>NONE</tt>
+	 * state.  Attempts to set the group while a job is running, waiting,
+	 * or sleeping will be ignored. The group will be used only for
 	 * a single invocation of the job's <tt>run</tt> method, after which
-	 * the monitor will be discarded.
+	 * any association of this job to the group will be lost.
 	 * 
-	 * @see #getProgressMonitor
 	 * @see IJobManager#createProgressGroup
-	 * @param monitor The progress monitor to use for this job.
+	 * @param monitor The progress group to use for this job
+	 * @param ticks the number of work ticks allocated from the
+	 *    parent monitor, or IProgressMonitor.UNKNOWN
 	 */
-	public final void setProgressMonitor(SubProgressMonitor monitor) {
-		super.setProgressMonitor(monitor);
+	public final void setProgressGroup(IProgressMonitor group, int ticks) {
+		super.setProgressGroup(group, ticks);
 	}
 	/**
 	 * Sets the scheduling rule to be used when scheduling this job.  This method

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.runtime.jobs;
 
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
@@ -52,6 +53,33 @@ public abstract class ProgressProvider {
 	 */
 	public IProgressMonitor createProgressGroup() {
 		return new NullProgressMonitor();
+	}
+	/**
+	 * Returns a progress monitor that can be used by a running job
+	 * to report progress in the context of a progress group. This method
+	 * implements <code>Job.setProgressGroup</code>.  One of the
+	 * two <code>createMonitor</code> methods will be invoked
+	 * prior to each execution of a job, depending on whether a progress
+	 * group was specified for the job.
+	 * <p>
+	 * The provided monitor must be a monitor returned by the method
+	 * <code>createProgressGroup</code>.  This method is responsible
+	 * for asserting this and throwing an appropriate runtime exception
+	 * if an invalid monitor is provided.
+	 * <p>
+	 * This default implementation returns a new
+	 * <code>SubProgressMonitor</code>.  Subclasses may override.
+	 * 
+	 * @see IJobManager#createProgressGroup
+	 * @see Job#setProgressGroup
+	 * @param job the job to create a progress monitor for
+	 * @param group the progress monitor group that this job belongs to
+	 * @param ticks
+	 * @return a progress monitor, or <code>null</code> if no progress monitoring 
+	 * is needed.
+	 */
+	public IProgressMonitor createMonitor(Job job, IProgressMonitor group, int ticks) {
+		return new SubProgressMonitor(group, ticks);
 	}
 	/**
 	 * Returns a progress monitor to use when none has been provided

@@ -127,7 +127,7 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	protected int getPriority() {
 		return priority;
 	}
-	protected IProgressMonitor getProgressMonitor() {
+	final IProgressMonitor getProgressMonitor() {
 		return monitor;
 	}
 	protected IStatus getResult() {
@@ -167,13 +167,7 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	final void internalSetPriority(int newPriority) {
 		this.priority = newPriority;
 	}
-	/**
-	 * Same as setProgressMonitor but without state checking.  For
-	 * use by JobManager only.
-	 */
-	final void internalSetProgressMonitor(IProgressMonitor monitor) {
-		this.monitor = monitor;
-	}
+
 	/*
 	 * Must be called from JobManager#setRule
 	 */
@@ -264,10 +258,14 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 				throw new IllegalArgumentException(String.valueOf(newPriority));
 		}
 	}
-	protected void setProgressMonitor(IProgressMonitor monitor) {
-		//ignore if the job is waiting, sleeping, or running
-		if (getState() == Job.NONE)
-			this.monitor = monitor;
+	protected void setProgressGroup(IProgressMonitor group, int ticks) {
+		Assert.isNotNull(group);
+		IProgressMonitor result = manager.createMonitor(this, group, ticks);
+		if (result != null)
+			setProgressMonitor(result);
+	}
+	final void setProgressMonitor(IProgressMonitor monitor) {
+		this.monitor = monitor;
 	}
 	final void setResult(IStatus result) {
 		this.result = result;

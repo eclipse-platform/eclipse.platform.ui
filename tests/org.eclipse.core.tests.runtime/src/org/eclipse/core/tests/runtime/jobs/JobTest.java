@@ -71,7 +71,6 @@ public class JobTest extends TestCase {
 	}
 
 	public void testGetResult() {
-		//execute the job several times and check if get result returns the result of job execution
 		//execute a short job
 		assertTrue("1.0", shortJob.getResult() == null);
 		shortJob.schedule();
@@ -148,22 +147,30 @@ public class JobTest extends TestCase {
 		}
 	}
 	/**
-	 * Tests the API methods Job.getProgressMonitor and Job.setProgressMonitor.
+	 * Tests the API methods Job.setProgressGroup
 	 */
-	public void testSetProgressMonitor() {
-		SubProgressMonitor monitor = new SubProgressMonitor(new NullProgressMonitor(), 10);
-		longJob.setProgressMonitor(monitor);
-		assertEquals("1.0", monitor, longJob.getProgressMonitor());
-		longJob.setProgressMonitor(null);
-		assertNull("1.1", longJob.getProgressMonitor());
-		
-		//can't change the monitor while job is waiting or running
+	public void testSetProgressGroup() {
+		//null group
+		try {
+			longJob.setProgressGroup(null, 5);
+			fail("1.0");
+		} catch (RuntimeException e) {
+			//should fail
+		}
+		IProgressMonitor group = Platform.getJobManager().createProgressGroup();
+		group.beginTask("Group task name", 10);
+		longJob.setProgressGroup(group, 5);
+
+		//ignore changes to group while waiting or running
 		longJob.schedule(100);
-		longJob.setProgressMonitor(monitor);
-		assertTrue("2.0", monitor != longJob.getProgressMonitor());
+		longJob.setProgressGroup(group, 0);
 		waitForState(longJob, Job.RUNNING);
-		longJob.setProgressMonitor(monitor);
-		assertTrue("2.1", monitor != longJob.getProgressMonitor());
+		longJob.setProgressGroup(group, 0);
+		
+		//ensure cancelation still works
+		longJob.cancel();
+		waitForState(longJob, Job.NONE);
+		group.done();
 	}
 
 	/*
