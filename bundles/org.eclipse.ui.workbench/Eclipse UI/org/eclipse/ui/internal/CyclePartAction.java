@@ -43,7 +43,7 @@ import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.IKeySequenceBinding;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.keys.KeySequence;
+import org.eclipse.ui.keys.KeyStroke;
 
 import org.eclipse.ui.internal.keys.KeySupport;
 
@@ -119,8 +119,7 @@ public class CyclePartAction extends PageEventAction {
 				int keyCode = e.keyCode;
 				char character = e.character;
 				int accelerator = KeySupport.convertEventToUnmodifiedAccelerator(e);
-				KeySequence keySequence =
-					KeySequence.getInstance(KeySupport.convertAcceleratorToKeyStroke(accelerator));
+				KeyStroke keyStroke = KeySupport.convertAcceleratorToKeyStroke(accelerator);
 
 				//System.out.println("\nPRESSED");
 				//printKeyEvent(e);
@@ -143,7 +142,10 @@ public class CyclePartAction extends PageEventAction {
 							IKeySequenceBinding keySequenceBinding =
 								(IKeySequenceBinding) iterator.next();
 
-							if (keySequenceBinding.getKeySequence().equals(keySequence)) {
+							// Compare the last key stroke of the binding.
+							List keyStrokes = keySequenceBinding.getKeySequence().getKeyStrokes();
+							if ((!keyStrokes.isEmpty())
+								&& (keyStrokes.get(keyStrokes.size() - 1).equals(keyStroke))) {
 								acceleratorForward = true;
 								break;
 							}
@@ -162,7 +164,10 @@ public class CyclePartAction extends PageEventAction {
 							IKeySequenceBinding keySequenceBinding =
 								(IKeySequenceBinding) iterator.next();
 
-							if (keySequenceBinding.getKeySequence().equals(keySequence)) {
+							// Compare the last key stroke of the binding.
+							List keyStrokes = keySequenceBinding.getKeySequence().getKeyStrokes();
+							if ((!keyStrokes.isEmpty())
+									&& (keyStrokes.get(keyStrokes.size() - 1).equals(keyStroke))) {
 								acceleratorBackward = true;
 								break;
 							}
