@@ -92,6 +92,12 @@
 				label="%CompareWithMenu.label">
 				<separator name="compareWithGroup"/>
 			</menu>
+			<menu
+				id="team.main"
+				path="additions"
+				label="%TeamMenu.label">
+				<separator name="group1"/>
+			</menu>
 			<action
 				id="compareWithEachOther"
 				label="%CompareWithEachOtherAction.label"
