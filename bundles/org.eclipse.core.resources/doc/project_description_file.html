@@ -1,0 +1,79 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.75 [en] (Windows NT 5.0; U) [Netscape]">
+   <title>Workbench Extension Points</title>
+</head>
+<body link="#0000FF" vlink="#800080">
+
+<center>
+<h1>
+The Project Description File</h1></center>
+<b><i>Description:</i></b> When a project is created in the workspace,
+a project description file is automatically generated that describes the
+project.&nbsp; The purpose of this file is to make the project self-describing,
+so that a project that is zipped up or released to a server can be correctly
+recreated in another workspace.&nbsp; This file is always called ".project",
+and is located as a direct member of the project's content area.&nbsp;
+The name of the file is exposed through the static field <tt>DESCRIPTION_FILE_NAME</tt>
+on <tt>org.eclipse.core.resources.IProjectDescription.</tt>
+<p>The name, location, and content of this file are part of the workspace
+API.&nbsp; This means they are guaranteed not to change in a way that would
+break existing users of the file.&nbsp; However, the right to add additional
+elements and attributes to the markup is reserved for possible future additions
+to the file.&nbsp; For this reason, clients that read the description file
+contents should tolerate unknown elements and attributes.
+<p>Clients that modify, delete, or replace the project description file
+do so at their own risk.&nbsp; Projects with invalid or missing description
+files will not be generally usable.&nbsp; If projects with invalid descriptions
+are discovered on workspace startup, they are closed, and it will not be
+possible to open the file until the project description file has been repaired.&nbsp;
+The workspace will not generally attempt to automatically repair missing
+or deleted description file.&nbsp; One exception is that missing project
+description files will be regenerated during workspace save and on calls
+to <tt>IProject.setDescription</tt>.
+<p>Modifications to the project description file have mostly the same effect
+as changing the project description via <tt>IProject.setDescription</tt>.&nbsp;
+One exception is that adding or removing project natures will not trigger
+the corresponding nature's configure or deconfigure method.&nbsp; Another
+exception is that changes to the project name are ignored.
+<p>If a new project is created at a location that contains an existing
+project description file, the contents of that description file will be
+honoured as the project description.&nbsp; One exception is that the project
+name in the file will be ignored if it does not match the name of the project
+being created.&nbsp; If the description file on disk is invalid, the project
+creation will fail.
+<br>&nbsp;
+<p><b><i>Configuration Markup:</i></b><b><i></i></b>
+<p><tt>&nbsp;&nbsp; &lt;!ELEMENT projectDescription (></tt><tt></tt>
+<p><tt>&nbsp;&nbsp; &lt;!ELEMENT run parameter*></tt>
+<br><tt>&nbsp;&nbsp; &lt;!ATTLIST run</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp; ></tt>
+<p>&lt;projectDescription>
+<br>&nbsp;&lt;name>zzJohn&lt;/name>
+<br>&nbsp;&lt;comment>&lt;/comment>
+<br>&nbsp;&lt;projects>
+<br>&nbsp; &lt;project>org.eclipse.core.boot&lt;/project>
+<br>&nbsp; &lt;project>org.eclipse.core.resources&lt;/project>
+<br>&nbsp; &lt;project>org.eclipse.core.runtime&lt;/project>
+<br>&nbsp;&lt;/projects>
+<br>&nbsp;&lt;buildSpec>
+<br>&nbsp; &lt;buildCommand>
+<br>&nbsp;&nbsp; &lt;name>org.eclipse.jdt.core.javabuilder&lt;/name>
+<br>&nbsp;&nbsp; &lt;arguments>
+<br>&nbsp;&nbsp; &lt;/arguments>
+<br>&nbsp; &lt;/buildCommand>
+<br>&nbsp;&lt;/buildSpec>
+<br>&nbsp;&lt;natures>
+<br>&nbsp; &lt;nature>org.eclipse.jdt.core.javanature&lt;/nature>
+<br>&nbsp; &lt;nature>org.eclipse.team.cvs.core.cvsnature&lt;/nature>
+<br>&nbsp;&lt;/natures>
+<br>&lt;/projectDescription>
+<br>&nbsp;
+<br>&nbsp;
+<p><a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2002.  All Rights Reserved." BORDER=0 height=12 width=195></a>
+</body>
+</html>
