@@ -20,11 +20,7 @@ import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.accessibility.AccessibleAdapter;
-import org.eclipse.swt.accessibility.AccessibleEvent;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.FormAttachment;
@@ -38,10 +34,13 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.application.IWorkbenchPreferences;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.ColorSchemeService;
 import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.internal.IPreferenceConstants;
+import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
@@ -501,6 +500,12 @@ public class ViewsPreferencePage
 		colorSchemeSelectedTabBGColorEditor.store();
 		colorSchemeSelectedTabFGColorEditor.store();
 		
+		if (Workbench.getInstance() != null) {
+			IWorkbenchWindow[] windows = Workbench.getInstance().getWorkbenchWindows();
+			for (int i = 0; i < windows.length; i++) {
+				ColorSchemeService.setSchemeColors(windows[i].getShell());
+			}
+		}
 		return true;
 	}
 }
