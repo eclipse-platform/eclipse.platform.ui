@@ -80,6 +80,8 @@ setTimeout('refresh()', 2000);
 	<td align='left' class='label' nowrap>
 		<a id='a<%=topic%>' 
 		   href='<%=data.getTopicHref(topic)%>' 
+		   onmouseover="showStatus(event);return true;"
+		   onmouseout="clearStatus();return true;"
 		   onclick='parent.parent.parent.setContentToolbarTitle(this.title)' 
 		   title="<%=data.getTopicTocLabel(topic)%>"><%=data.getTopicLabel(topic)%></a>
 	</td>

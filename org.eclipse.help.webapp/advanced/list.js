@@ -239,6 +239,48 @@ function showPopupMenu(e) {
 	menu.style.display = "block";
 }
 
+/**
+ * display topic label in the status line on mouse over topic
+ */
+function showStatus(e) {
+	try {
+		var overNode;
+		if (isMozilla)
+			overNode = e.target;
+		else if (isIE)
+			overNode = window.event.srcElement;
+		else
+			return true;
+
+		overNode = getTRNode(overNode);
+		if (overNode == null) {
+			window.status = "";
+			return true;
+		}
+
+		if (isMozilla)
+			e.cancelBubble = false;
+
+		var a = getAnchorNode(overNode);
+		var statusText = "";
+		if (isIE)
+			statusText = a.innerText;
+		else if (isMozilla)
+			statusText = a.lastChild.nodeValue;
+			
+		if (statusText != a.title)
+			statusText += " - " + a.title;
+			
+		window.status = statusText;
+	} catch (e) {
+	}
+
+	return true;
+}
+
+function clearStatus() {
+	window.status="";
+}
 
 /**
  * Popup a menu on right click over a bookmark.
@@ -274,38 +316,6 @@ function contextMenuHandler(e)
 	showPopupMenu(e);
 	
 	return false;
-}
-
-
-/**
- * display topic label in the status line on mouse over topic
- */
-function mouseMoveHandler(e) {
-	try{
-	  var overNode;
-	  if (isMozilla)
-	  	overNode = e.target;
-	  else if (isIE)
-	   	overNode = window.event.srcElement;
-	  else 
-	  	return;
-	  	
-	  overNode = getTRNode(overNode);
-	  if (overNode == null){
-	   window.status = "";
-	   return;
-	  }
-	 
-	  if (isMozilla)
-	     e.cancelBubble = false;
-	   
-	  if (isIE)  
-		  window.status = getAnchorNode(overNode).innerText;
-	  else if (isMozilla)
-	  	  window.status = getAnchorNode(overNode).lastChild.nodeValue;
-	}catch(e){}
-	
-	return true;
 }
 
 /**
@@ -388,13 +398,11 @@ function keyDownHandler(e)
 // listen for events
 if (isMozilla) {
   document.addEventListener('click', mouseClickHandler, true);
-  document.addEventListener('mouseover', mouseMoveHandler, true);
   document.addEventListener('keydown', keyDownHandler, true);
   //document.addEventListener("focus", focusHandler, true);
 }
 else if (isIE){
   document.onclick = mouseClickHandler;
-  document.onmouseover = mouseMoveHandler;
   document.onkeydown = keyDownHandler;
   window.onfocus = focusHandler;
 }
