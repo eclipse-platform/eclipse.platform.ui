@@ -10,25 +10,44 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.launchConfigurations;
 
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.internal.core.LaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup;
 import org.eclipse.debug.ui.CommonTab;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.debug.ui.RefreshTab;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 
-
 public class AntTabGroup extends AbstractLaunchConfigurationTabGroup {
 
-	/**
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.ui.ILaunchConfigurationTabGroup#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
+     */
+    public void initializeFrom(ILaunchConfiguration configuration) {
+        try {
+            boolean captureOutput = configuration.getAttribute(IExternalToolConstants.ATTR_CAPTURE_OUTPUT, true);
+            if (!captureOutput && configuration instanceof LaunchConfigurationWorkingCopy) {
+                LaunchConfigurationWorkingCopy copy = (LaunchConfigurationWorkingCopy) configuration;
+                copy.setAttribute(IExternalToolConstants.ATTR_CAPTURE_OUTPUT, (String)null);
+                copy.setAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT, false);
+                copy.setAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_CONSOLE, false);
+            }
+        } catch (CoreException e) {
+        }
+        super.initializeFrom(configuration);
+    }
+    
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTabGroup#createTabs(org.eclipse.debug.ui.ILaunchConfigurationDialog, java.lang.String)
 	 */
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
@@ -46,7 +65,7 @@ public class AntTabGroup extends AbstractLaunchConfigurationTabGroup {
 		setTabs(tabs);
 	}
 	
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTabGroup#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {

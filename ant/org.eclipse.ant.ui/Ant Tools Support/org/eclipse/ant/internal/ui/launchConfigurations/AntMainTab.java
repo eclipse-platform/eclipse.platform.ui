@@ -36,7 +36,6 @@ import org.eclipse.ui.help.WorkbenchHelp;
 
 public class AntMainTab extends ExternalToolsMainTab {
 
-	private Button fCaptureOutputButton;
 	private String fCurrentLocation= null;
 	private Button fSetInputHandlerButton;
 
@@ -71,7 +70,6 @@ public class AntMainTab extends ExternalToolsMainTab {
 			}
 		} catch (CoreException e) {
 		}
-		setAttribute(IExternalToolConstants.ATTR_CAPTURE_OUTPUT, configuration, fCaptureOutputButton.getSelection(), true);
 		setAttribute(IAntUIConstants.SET_INPUTHANDLER, configuration, fSetInputHandlerButton.getSelection(), true);
 	}
 
@@ -92,27 +90,8 @@ public class AntMainTab extends ExternalToolsMainTab {
 		createWorkDirectoryComponent(mainComposite);
 		createArgumentComponent(mainComposite);
 		createVerticalSpacer(mainComposite, 2);
-		createCaptureOutputComponent(mainComposite);
 		createSetInputHandlerComponent(mainComposite);
 		Dialog.applyDialogFont(parent);
-	}
-	
-	/**
-	 * Creates the controls needed to edit the capture output attribute of an
-	 * Ant build
-	 *
-	 * @param parent the composite to create the controls in
-	 */
-	private void createCaptureOutputComponent(Composite parent) {
-		fCaptureOutputButton = createCheckButton(parent, AntLaunchConfigurationMessages.getString("AntMainTab.Capture_&output_1")); //$NON-NLS-1$
-		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		data.horizontalSpan = 2;
-		fCaptureOutputButton.setLayoutData(data);
-		fCaptureOutputButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				updateLaunchConfigurationDialog();
-			}
-		});
 	}
 	
 	/**
@@ -134,15 +113,12 @@ public class AntMainTab extends ExternalToolsMainTab {
 	}
 	
 	private void updateCheckButtons(ILaunchConfiguration configuration) {
-		boolean captureOutput= true;
 		boolean setInputHandler= true;
 		try {
-			captureOutput= configuration.getAttribute(IExternalToolConstants.ATTR_CAPTURE_OUTPUT, true);
 			setInputHandler= configuration.getAttribute(IAntUIConstants.SET_INPUTHANDLER, true);
 		} catch (CoreException ce) {
 			AntUIPlugin.log(AntLaunchConfigurationMessages.getString("AntMainTab.1"), ce); //$NON-NLS-1$
 		}
-		fCaptureOutputButton.setSelection(captureOutput);
 		fSetInputHandlerButton.setSelection(setInputHandler);
 	}
 
