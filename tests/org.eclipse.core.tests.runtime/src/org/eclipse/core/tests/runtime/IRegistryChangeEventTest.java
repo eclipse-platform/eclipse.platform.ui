@@ -57,8 +57,8 @@ public class IRegistryChangeEventTest extends TestCase {
 	}
 
 	public void testAddSinglePluginWithExtensionAndExtensionPoint() {
-		ExtensionRegistry registry = new ExtensionRegistry(new ExtensionLinker());
-		final BundleModel pluginA = new BundleModel();
+		ExtensionRegistry registry = new ExtensionRegistry();
+		final Namespace pluginA = new Namespace();
 		pluginA.setUniqueIdentifier("a");
 		final ExtensionPoint xp1 = new ExtensionPoint();
 		xp1.setSimpleIdentifier("xp1");
@@ -88,14 +88,14 @@ public class IRegistryChangeEventTest extends TestCase {
 	}
 
 	public void testAddTwoPluginsExtensionPointProviderFirst() {
-		ExtensionRegistry registry = new ExtensionRegistry(new ExtensionLinker());
-		final BundleModel pluginA = new BundleModel();
+		ExtensionRegistry registry = new ExtensionRegistry();
+		final Namespace pluginA = new Namespace();
 		pluginA.setUniqueIdentifier("a");
 		final ExtensionPoint xp1 = new ExtensionPoint();
 		xp1.setSimpleIdentifier("xp1");
 		pluginA.setExtensionPoints(new ExtensionPoint[] {xp1});
 		xp1.setParent(pluginA);
-		final BundleModel pluginB = new BundleModel();
+		final Namespace pluginB = new Namespace();
 		pluginB.setUniqueIdentifier("b");
 		final Extension ext1 = new Extension();
 		ext1.setExtensionPointIdentifier("a.xp1");
@@ -124,14 +124,14 @@ public class IRegistryChangeEventTest extends TestCase {
 	}
 
 	public void testAddTwoPluginsExtensionProviderFirst() {
-		ExtensionRegistry registry = new ExtensionRegistry(new ExtensionLinker());
-		final BundleModel pluginA = new BundleModel();
+		ExtensionRegistry registry = new ExtensionRegistry();
+		final Namespace pluginA = new Namespace();
 		pluginA.setUniqueIdentifier("a");
 		final ExtensionPoint xp1 = new ExtensionPoint();
 		xp1.setSimpleIdentifier("xp1");
 		pluginA.setExtensionPoints(new ExtensionPoint[] {xp1});
 		xp1.setParent(pluginA);
-		final BundleModel pluginB = new BundleModel();
+		final Namespace pluginB = new Namespace();
 		pluginB.setUniqueIdentifier("b");
 		final Extension ext1 = new Extension();
 		ext1.setExtensionPointIdentifier("a.xp1");
@@ -160,8 +160,8 @@ public class IRegistryChangeEventTest extends TestCase {
 	}
 
 	public void testRemoveSinglePluginWithExtensionAndExtensionPoint() {
-		ExtensionRegistry registry = new ExtensionRegistry(new ExtensionLinker());
-		final BundleModel pluginA = new BundleModel();
+		ExtensionRegistry registry = new ExtensionRegistry();
+		final Namespace pluginA = new Namespace();
 		pluginA.setUniqueIdentifier("a");
 		final ExtensionPoint xp1 = new ExtensionPoint();
 		xp1.setSimpleIdentifier("xp1");
@@ -192,14 +192,14 @@ public class IRegistryChangeEventTest extends TestCase {
 	}
 
 	public void testRemoveTwoPluginsExtensionProviderFirst() {
-		ExtensionRegistry registry = new ExtensionRegistry(new ExtensionLinker());
-		final BundleModel pluginA = new BundleModel();
+		ExtensionRegistry registry = new ExtensionRegistry();
+		final Namespace pluginA = new Namespace();
 		pluginA.setUniqueIdentifier("a");
 		final ExtensionPoint xp1 = new ExtensionPoint();
 		xp1.setSimpleIdentifier("xp1");
 		pluginA.setExtensionPoints(new ExtensionPoint[] {xp1});
 		xp1.setParent(pluginA);
-		final BundleModel pluginB = new BundleModel();
+		final Namespace pluginB = new Namespace();
 		pluginB.setUniqueIdentifier("b");
 		final Extension ext1 = new Extension();
 		ext1.setExtensionPointIdentifier("a.xp1");
@@ -230,14 +230,14 @@ public class IRegistryChangeEventTest extends TestCase {
 	}
 
 	public void testRemoveTwoPluginsExtensionPointProviderFirst() {
-		ExtensionRegistry registry = new ExtensionRegistry(new ExtensionLinker());
-		final BundleModel pluginA = new BundleModel();
+		ExtensionRegistry registry = new ExtensionRegistry();
+		final Namespace pluginA = new Namespace();
 		pluginA.setUniqueIdentifier("a");
 		final ExtensionPoint xp1 = new ExtensionPoint();
 		xp1.setSimpleIdentifier("xp1");
 		pluginA.setExtensionPoints(new ExtensionPoint[] {xp1});
 		xp1.setParent(pluginA);
-		final BundleModel pluginB = new BundleModel();
+		final Namespace pluginB = new Namespace();
 		pluginB.setUniqueIdentifier("b");
 		final Extension ext1 = new Extension();
 		ext1.setExtensionPointIdentifier("a.xp1");

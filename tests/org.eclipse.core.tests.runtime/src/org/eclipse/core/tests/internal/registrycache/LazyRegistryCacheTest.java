@@ -13,7 +13,6 @@ package org.eclipse.core.tests.internal.registrycache;
 import java.io.File;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.internal.registry.Factory;
 import org.eclipse.core.internal.registry.RegistryCacheReader;
 import org.eclipse.core.runtime.IPlatform;
 import org.eclipse.core.runtime.MultiStatus;
@@ -24,7 +23,7 @@ public class LazyRegistryCacheTest extends RegistryCacheTest {
 	}
 
 	protected RegistryCacheReader createRegistryReader(File cacheFile) {
-		return new RegistryCacheReader(cacheFile, new Factory(new MultiStatus(IPlatform.PI_RUNTIME, 0, "", null)), true);
+		return new RegistryCacheReader(cacheFile, new MultiStatus(IPlatform.PI_RUNTIME, 0, "", null), true);
 	}
 
 	public static Test suite() {
