@@ -2041,6 +2041,32 @@
             platform="win32"
             keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
       </keyBinding>
+      <!-- Select previous word -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.select.wordPrevious"
+            keySequence="M1+M2+Arrow_Left"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Select line start -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.select.lineStart"
+            keySequence="M1+M2+Arrow_Left"
+            platform="carbon"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Select next word -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.select.wordNext"
+            keySequence="M1+M2+Arrow_Right"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Select line end -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.select.lineEnd"
+            keySequence="M1+M2+Arrow_Right"
+            platform="carbon"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
       <!-- Context Assist -->
       <keyBinding
             commandId="org.eclipse.ui.edit.text.contentAssist.contextInformation"
@@ -2055,6 +2081,62 @@
       <keyBinding
             keySequence="M1+M2+Space"
             platform="carbon"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Save all -->
+      <keyBinding
+      		commandId="org.eclipse.ui.file.saveAll"
+            keySequence="M1+M3+S"
+            platform="carbon"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <keyBinding
+            keySequence="M1+M3+S"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Close all -->
+      <keyBinding
+      		commandId="org.eclipse.ui.file.closeAll"
+            keySequence="M1+M3+W"
+            platform="carbon"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <keyBinding
+            keySequence="M1+M3+W"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Copy line down -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.copyLineDown"
+            keySequence="M1+M3+Arrow_Down"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Copy line up -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.copyLineUp"
+            keySequence="M1+M3+Arrow_Up"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Select previous word -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.select.wordPrevious"
+            keySequence="M2+M3+Arrow_Left"
+            platform="carbon"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <keyBinding
+            keySequence="M2+M3+Arrow_Left"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <!-- Select next word -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.select.wordNext"
+            keySequence="M2+M3+Arrow_Right"
+            platform="carbon"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
+      </keyBinding>
+      <keyBinding
+            keySequence="M2+M3+Arrow_Right"
             keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
       </keyBinding>
       <!-- Move line down -->
@@ -2117,18 +2199,6 @@
       <keyBinding
             commandId="org.eclipse.ui.edit.text.moveLineUp"
             keySequence="M3+Arrow_Up"
-            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
-      </keyBinding>
-      <!-- Copy line down -->
-      <keyBinding
-            commandId="org.eclipse.ui.edit.text.copyLineDown"
-            keySequence="M1+M3+Arrow_Down"
-            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
-      </keyBinding>
-      <!-- Copy line up -->
-      <keyBinding
-            commandId="org.eclipse.ui.edit.text.copyLineUp"
-            keySequence="M1+M3+Arrow_Up"
             keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
       </keyBinding>
       <!-- Go to previous member -->
