@@ -10,7 +10,6 @@ Contributors:
 **********************************************************************/
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -188,7 +187,16 @@ public class AntTypesPage extends AntPage {
 		 */
 		public String getColumnText(Object element, int columnIndex) {
 			Type type = (Type) element;
-			return type.getTypeName() + " (" + type.getLibrary().getFile() + ": " + type.getClassName() + ")"; //$NON-NLS-3$//$NON-NLS-2$//$NON-NLS-1$
+			StringBuffer text= new StringBuffer(type.getTypeName());
+			text.append(" ("); //$NON-NLS-1$
+			text.append(type.getLibrary().getFile());
+			text.append(": "); //$NON-NLS-1$
+			text.append(type.getClassName());
+			text.append(')');
+			if (type.isDefault()) {
+				text.append(AntPreferencesMessages.getString("AntTypesPage._[system_type]_3")); //$NON-NLS-1$
+			}
+			return text.toString();
 		}
 		
 		public Image getTypeImage() {
@@ -204,8 +212,7 @@ public class AntTypesPage extends AntPage {
 	 */
 	protected void initialize() {
 		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
-		//setInput(prefs.getTypes());
-		setInput(Arrays.asList(prefs.getCustomTypes()));
+		setInput(prefs.getTypes());
 	}
 
 }

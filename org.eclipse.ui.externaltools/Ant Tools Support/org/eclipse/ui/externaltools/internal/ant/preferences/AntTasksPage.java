@@ -10,7 +10,6 @@ Contributors:
 **********************************************************************/
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -184,12 +183,22 @@ public class AntTasksPage extends AntPage {
 		 */
 		public String getColumnText(Object element, int columnIndex) {
 			Task task = (Task) element;
-			return task.getTaskName() + " (" + task.getLibrary().getFile() + ": " + task.getClassName() + ")"; //$NON-NLS-3$//$NON-NLS-2$//$NON-NLS-1$
+			StringBuffer text= new StringBuffer(task.getTaskName());
+			text.append(" ("); //$NON-NLS-1$
+			text.append(task.getLibrary().getFile());
+			text.append(": "); //$NON-NLS-1$
+			text.append(task.getClassName());
+			text.append(')');
+			if (task.isDefault()) {
+				text.append(AntPreferencesMessages.getString("AntTasksPage._[system_task]_3")); //$NON-NLS-1$
+			}
+			return text.toString();
 		}
 		
 		public Image getTaskImage() {
-			if (taskImage == null)
+			if (taskImage == null) {
 				taskImage = PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_TASK_TSK);
+			}
 			return taskImage;
 		}
 	}
@@ -198,7 +207,6 @@ public class AntTasksPage extends AntPage {
 	 */
 	protected void initialize() {
 		AntCorePreferences prefs = AntCorePlugin.getPlugin().getPreferences();
-		//setInput(prefs.getTasks());
-		setInput(Arrays.asList(prefs.getCustomTasks()));
+		setInput(prefs.getTasks());
 	}
 }
