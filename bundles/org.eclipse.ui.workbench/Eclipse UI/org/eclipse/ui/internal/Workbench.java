@@ -113,7 +113,6 @@ import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.IKeySequenceBinding;
 import org.eclipse.ui.internal.activities.ObjectActivityManager;
-import org.eclipse.ui.internal.commands.CommandManager;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.internal.dialogs.WelcomeEditorInput;
 import org.eclipse.ui.internal.fonts.FontDefinition;
@@ -952,8 +951,7 @@ public class Workbench
 			
 			public boolean isAcceleratorInUse(int accelerator) {
 				KeySequence keySequence = KeySequence.getInstance(KeySupport.convertAcceleratorToKeyStroke(accelerator));
-				// TODO fix cast
-				return ((CommandManager) commandManager).isPerfectMatch(keySequence) || ((CommandManager) commandManager).isPartialMatch(keySequence);
+				return commandManager.isPerfectMatch(keySequence) || commandManager.isPartialMatch(keySequence);
 			}					
 			
 			public final boolean isActive(final String commandId) {

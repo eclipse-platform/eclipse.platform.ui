@@ -465,15 +465,15 @@ public class WorkbenchActivitiesCommandsAndRoles {
 	}
 	
 	private String getPerfectMatch(KeySequence keySequence) {
-		return ((CommandManager) workbench.getCommandManager()).getPerfectMatch(keySequence);
+		return workbench.getCommandManager().getPerfectMatch(keySequence);
 	}		
 	
 	private boolean isPartialMatch(KeySequence keySequence) {
-		return ((CommandManager) workbench.getCommandManager()).isPartialMatch(keySequence);
+		return workbench.getCommandManager().isPartialMatch(keySequence);
 	}
 
 	private boolean isPerfectMatch(KeySequence keySequence) {
-		return ((CommandManager) workbench.getCommandManager()).isPerfectMatch(keySequence);
+		return workbench.getCommandManager().isPerfectMatch(keySequence);
 	}	
 	
 	/**
@@ -555,7 +555,7 @@ public class WorkbenchActivitiesCommandsAndRoles {
 	}
 
 	public void updateActiveActivityIds() {
-		((CommandManager) workbench.getCommandManager()).setActiveActivityIds(workbench.getActivityManager().getActiveActivityIds());
+		workbench.getCommandManager().setActiveActivityIds(workbench.getActivityManager().getActiveActivityIds());
 	}
 
 	void updateActiveCommandIdsAndActiveActivityIds() {

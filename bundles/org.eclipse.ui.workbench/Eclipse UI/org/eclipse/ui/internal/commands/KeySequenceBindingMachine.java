@@ -31,10 +31,7 @@ final class KeySequenceBindingMachine {
 	private String[] activePlatforms;
 	private List[] keySequenceBindings;
 	private Map keySequenceBindingsByCommandId;
-	private Map keySequenceBindingsByCommandIdForMode;	
 	private Map matchesByKeySequence;
-	private Map matchesByKeySequenceForMode;
-	private KeySequence mode;	
 	private boolean solved;
 	private SortedMap tree;
 
@@ -44,7 +41,6 @@ final class KeySequenceBindingMachine {
 		activeLocales = new String[0];
 		activePlatforms = new String[0];
 		keySequenceBindings = new List[] { new ArrayList(), new ArrayList() };
-		mode = KeySequence.getInstance();	
 	}
 
 	String[] getActiveActivityIds() {
@@ -65,35 +61,11 @@ final class KeySequenceBindingMachine {
 
 	Map getKeySequenceBindingsByCommandId() {
 		if (keySequenceBindingsByCommandId == null) {
-			solve();
+			validateSolution();
 			keySequenceBindingsByCommandId = Collections.unmodifiableMap(KeySequenceBindingNode.getKeySequenceBindingsByCommandId(getMatchesByKeySequence()));				
 		}
 		
 		return keySequenceBindingsByCommandId;
-	}
-	
-	Map getKeySequenceBindingsByCommandIdForMode() {
-		if (keySequenceBindingsByCommandIdForMode == null) {
-			solve();
-			Map tree = KeySequenceBindingNode.find(this.tree, mode);
-	
-			if (tree == null)
-				tree = new TreeMap();
-
-			keySequenceBindingsByCommandIdForMode = Collections.unmodifiableMap(KeySequenceBindingNode.getKeySequenceBindingsByCommandId(getMatchesByKeySequenceForMode()));				
-		}
-		
-		return keySequenceBindingsByCommandIdForMode;
-	}
-	
-	Map getKeySequenceBindingsByCommandIdForMode(KeySequence mode) {
-		solve();
-		Map tree = KeySequenceBindingNode.find(this.tree, mode);
-			
-		if (tree == null)
-			tree = new TreeMap();
-
-		return Collections.unmodifiableMap(KeySequenceBindingNode.getKeySequenceBindingsByCommandId(getMatchesByKeySequenceForMode(mode)));
 	}	
 
 	List getKeySequenceBindings0() {
@@ -106,39 +78,11 @@ final class KeySequenceBindingMachine {
 
 	Map getMatchesByKeySequence() {
 		if (matchesByKeySequence == null) {
-			solve();
+			validateSolution();
 			matchesByKeySequence = Collections.unmodifiableMap(KeySequenceBindingNode.getMatchesByKeySequence(tree, KeySequence.getInstance()));				
 		}
 		
 		return matchesByKeySequence;
-	}
-
-	Map getMatchesByKeySequenceForMode() {
-		if (matchesByKeySequenceForMode == null) {
-			solve();
-			Map tree = KeySequenceBindingNode.find(this.tree, mode);
-	
-			if (tree == null)
-				tree = new TreeMap();
-							
-			matchesByKeySequenceForMode = Collections.unmodifiableMap(KeySequenceBindingNode.getMatchesByKeySequence(tree, mode));				
-		}
-		
-		return matchesByKeySequenceForMode;
-	}
-
-	Map getMatchesByKeySequenceForMode(KeySequence mode) {
-		solve();
-		Map tree = KeySequenceBindingNode.find(this.tree, mode);
-			
-		if (tree == null)
-			tree = new TreeMap();
-			
-		return Collections.unmodifiableMap(KeySequenceBindingNode.getMatchesByKeySequence(tree, mode));
-	}
-	
-	KeySequence getMode() {
-		return mode;	
 	}
 	
 	boolean setActiveActivityIds(String[] activeActivityIds) {
@@ -224,45 +168,11 @@ final class KeySequenceBindingMachine {
 			
 		return false;		
 	}
-
-	boolean setMode(KeySequence mode) {
-		if (mode == null)
-			throw new NullPointerException();
-			
-		if (!this.mode.equals(mode)) {
-			this.mode = mode;
-			invalidateMode();
-			return true;
-		}
-
-		return false;		
-	}
 	
-	private void build() {
-		if (tree == null) {
-			tree = new TreeMap();
-		
-			for (int i = 0; i < keySequenceBindings.length; i++) {		
-				Iterator iterator = keySequenceBindings[i].iterator();
-			
-				while (iterator.hasNext()) {
-					IKeySequenceBindingDefinition keySequenceBindingDefinition = (IKeySequenceBindingDefinition) iterator.next();
-					KeySequenceBindingNode.add(tree, keySequenceBindingDefinition.getKeySequence(), keySequenceBindingDefinition.getActivityId(), keySequenceBindingDefinition.getKeyConfigurationId(), i, keySequenceBindingDefinition.getPlatform(), keySequenceBindingDefinition.getLocale(), keySequenceBindingDefinition.getCommandId());
-				}
-			}
-		}
-	}
-
-	private void invalidateMode() {
-		keySequenceBindingsByCommandIdForMode = null;
-		matchesByKeySequenceForMode = null;
-	}
-
 	private void invalidateSolution() {
 		solved = false;
 		keySequenceBindingsByCommandId = null;	
 		matchesByKeySequence = null;
-		invalidateMode();
 	}
 	
 	private void invalidateTree() {
@@ -270,11 +180,26 @@ final class KeySequenceBindingMachine {
 		invalidateSolution();
 	}
 
-	private void solve() {
+	private void validateSolution() {
 		if (!solved) {
-			build();		
+			validateTree();		
 			KeySequenceBindingNode.solve(tree, activeActivityIds, activeKeyConfigurationIds, activePlatforms, activeLocales);
 			solved = true;
 		}
 	}
+	
+	private void validateTree() {
+		if (tree == null) {
+			tree = new TreeMap();
+			
+			for (int i = 0; i < keySequenceBindings.length; i++) {		
+				Iterator iterator = keySequenceBindings[i].iterator();
+				
+				while (iterator.hasNext()) {
+					IKeySequenceBindingDefinition keySequenceBindingDefinition = (IKeySequenceBindingDefinition) iterator.next();
+					KeySequenceBindingNode.add(tree, keySequenceBindingDefinition.getKeySequence(), keySequenceBindingDefinition.getActivityId(), keySequenceBindingDefinition.getKeyConfigurationId(), i, keySequenceBindingDefinition.getPlatform(), keySequenceBindingDefinition.getLocale(), keySequenceBindingDefinition.getCommandId());
+				}
+			}
+		}
+	}	
 }

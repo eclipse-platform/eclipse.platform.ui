@@ -254,12 +254,36 @@ public final class CommandManager implements ICommandManager {
 		}
 		
 		return keyConfiguration;
-	}	
+	}
+	
+	public Map getPartialMatches(KeySequence keySequence) {
+		Map map = new HashMap();
+		
+		for (Iterator iterator = keySequenceBindingMachine.getMatchesByKeySequence().entrySet().iterator(); iterator.hasNext();) {
+			Map.Entry entry	= (Map.Entry) iterator.next();
+			KeySequence keySequence2 = (KeySequence) entry.getKey();
+			Match match = (Match) entry.getValue();
 
-	public KeySequence getMode() {
-		return keySequenceBindingMachine.getMode();	
-	}	
+			if (keySequence2.startsWith(keySequence, false))
+				map.put(keySequence2, match.getCommandId());
+		}		
+		
+		return Collections.unmodifiableMap(map);
+	}
+	
+	public String getPerfectMatch(KeySequence keySequence) {
+		Match match = (Match) keySequenceBindingMachine.getMatchesByKeySequence().get(keySequence);
+		return match != null ? match.getCommandId() : null;
+	}
 
+	public boolean isPartialMatch(KeySequence keySequence) {
+		return !getPartialMatches(keySequence).isEmpty();
+	}
+	
+	public boolean isPerfectMatch(KeySequence keySequence) {
+		return getPerfectMatch(keySequence) != null;
+	}	
+	
 	public void removeCommandManagerListener(ICommandManagerListener commandManagerListener) {
 		if (commandManagerListener == null)
 			throw new NullPointerException();
@@ -376,11 +400,6 @@ public final class CommandManager implements ICommandManager {
 		}
 	}
 	
-	public void setMode(KeySequence mode) {
-		if (keySequenceBindingMachine.setMode(mode))
-			fireCommandManagerChanged(new CommandManagerEvent(this, false, false, false, false, false, false, false, true));
-	}
-
 	static String[] extend(String[] strings) {
 		String[] strings2 = new String[strings.length + 1];
 		System.arraycopy(strings, 0, strings2, 0, strings.length);		
@@ -464,6 +483,22 @@ public final class CommandManager implements ICommandManager {
 				((ICommandManagerListener) commandManagerListeners.get(i)).commandManagerChanged(commandManagerEvent);
 	}
 
+	private boolean isActive(Collection activityBindings) {
+		if (activityBindings.isEmpty())
+			return true;
+		
+		Iterator iterator = activeActivityIds.iterator();
+		
+		while (iterator.hasNext()) {
+			String activeActivityId = (String) iterator.next();
+			
+			if (activityBindings.contains(new ActivityBinding(activeActivityId)));
+			return true;			
+		}
+		
+		return false;
+	}
+	
 	private void notifyCategories(Map categoryEventsByCategoryId) {	
 		for (Iterator iterator = categoryEventsByCategoryId.entrySet().iterator(); iterator.hasNext();) {	
 			Map.Entry entry = (Map.Entry) iterator.next();			
@@ -757,33 +792,6 @@ public final class CommandManager implements ICommandManager {
 	
 	
 
-	public Map getPartialMatches(KeySequence keySequence) {
-		Map map = new HashMap(keySequenceBindingMachine.getMatchesByKeySequenceForMode(keySequence));
-		
-		for (Iterator iterator = map.entrySet().iterator(); iterator.hasNext();) {
-			Map.Entry entry	= (Map.Entry) iterator.next();
-			entry.setValue(((Match) entry.getValue()).getCommandId());
-		}		
-		
-		return Collections.unmodifiableMap(map);
-	}
-	
-	public String getPerfectMatch(KeySequence keySequence) {
-		Match match = (Match) keySequenceBindingMachine.getMatchesByKeySequence().get(keySequence);
-		return match != null ? match.getCommandId() : null;
-	}
-
-	public boolean isPartialMatch(KeySequence keySequence) {
-		return !getPartialMatches(keySequence).isEmpty();
-	}
-	
-	public boolean isPerfectMatch(KeySequence keySequence) {
-		return getPerfectMatch(keySequence) != null;
-	}
-
-
-
-	
 	public ICommandRegistry getCommandRegistry() {
 		return commandRegistry;
 	}
@@ -792,22 +800,9 @@ public final class CommandManager implements ICommandManager {
 		return mutableCommandRegistry;
 	}
 	
-	private boolean isActive(Collection activityBindings) {
-		if (activityBindings.isEmpty())
-			return true;
-		
-		Iterator iterator = activeActivityIds.iterator();
-		
-		while (iterator.hasNext()) {
-			String activeActivityId = (String) iterator.next();
-			
-			if (activityBindings.contains(new ActivityBinding(activeActivityId)));
-				return true;			
-		}
-		
-		return false;
-	}
-	
+
+
+
 	/* TODO			
 		HashSet categoryIdsReferencedByCommandDefinitions = new HashSet();
 

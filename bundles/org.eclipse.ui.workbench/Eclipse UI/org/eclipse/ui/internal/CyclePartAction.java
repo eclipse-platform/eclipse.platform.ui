@@ -39,10 +39,10 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.commands.CommandManager;
 import org.eclipse.ui.commands.ICommand;
+import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.IKeySequenceBinding;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.keys.KeySupport;
 import org.eclipse.ui.keys.KeySequence;
 
@@ -308,7 +308,7 @@ public class CyclePartAction extends PageEventAction {
 				boolean acceleratorForward = false;
 				boolean acceleratorBackward = false;
 				// TODO blind casts
-				CommandManager commandManager = (CommandManager) ((Workbench) WorkbenchPlugin.getDefault().getWorkbench()).getCommandManager();
+				ICommandManager commandManager = ((Workbench) WorkbenchPlugin.getDefault().getWorkbench()).getCommandManager();
 
 				if (commandForward != null) {
 					ICommand command = commandManager.getCommand(commandForward);
