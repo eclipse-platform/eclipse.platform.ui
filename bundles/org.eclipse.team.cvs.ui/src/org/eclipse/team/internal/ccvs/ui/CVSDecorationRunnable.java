@@ -20,6 +20,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.CVSTag;
+import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamPlugin;
@@ -82,7 +83,16 @@ public class CVSDecorationRunnable implements Runnable {
 			// will block if there are no resources to be decorated
 			IResource resource = notifier.next();
 
-			// determine if resource has outgoing changes (e.g. is dirty).
+			// it is possible that the resource to be decorated is no longer associated
+			// with a CVS provider. This could happen if the team nature was removed
+			// between the time the decoration event was posted to the thread and the time
+			// the thread processes the decoration.
+			ITeamProvider provider = TeamPlugin.getManager().getProvider(resource);
+			if(provider==null || !(provider instanceof CVSTeamProvider)) {
+				continue;
+			}
+
+			// determine a if resource has outgoing changes (e.g. is dirty).
 			IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
 			boolean isDirty = false;
 			boolean computeDeepDirtyCheck = store.getBoolean(ICVSUIConstants.PREF_CALCULATE_DIRTY);
@@ -90,14 +100,17 @@ public class CVSDecorationRunnable implements Runnable {
 			if(type == IResource.FILE || computeDeepDirtyCheck) {
 				isDirty = isDirty(resource);
 			}
-									
-			CVSDecoration decoration = computeTextLabelFor(resource, isDirty);
-			decoration.setOverlays(computeLabelOverlaysFor(resource, isDirty));
+			
+			// compute decorations						
+			CVSDecoration decoration = computeTextLabelFor(resource, isDirty, provider);
+			decoration.setOverlays(computeLabelOverlaysFor(resource, isDirty, provider));
+			
+			// notify that decoration is ready
 			notifier.decorated(resource, decoration);
 		}
 	}
 
-	private CVSDecoration computeTextLabelFor(IResource resource, boolean isDirty) {
+	private CVSDecoration computeTextLabelFor(IResource resource, boolean isDirty, ITeamProvider provider) {
 		Map bindings = new HashMap(3);
 		String format;
 		IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
@@ -157,7 +170,7 @@ public class CVSDecorationRunnable implements Runnable {
 		}
 	}
 
-	private List computeLabelOverlaysFor(IResource resource, boolean isDirty) {
+	private List computeLabelOverlaysFor(IResource resource, boolean isDirty, ITeamProvider provider) {
 		List overlays = new ArrayList(3);
 		
 		IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
@@ -169,11 +182,10 @@ public class CVSDecorationRunnable implements Runnable {
 				overlays.add(dirty);
 		}
 		
-		ITeamProvider p = TeamPlugin.getManager().getProvider(resource);
-		if (showHasRemote && p.hasRemote(resource)) {
+		if (showHasRemote && provider.hasRemote(resource)) {
 			overlays.add(checkedIn);
 		}
-		if (showAdded && resource.getType() == IResource.FILE && p.isCheckedOut(resource)) {
+		if (showAdded && resource.getType() == IResource.FILE && provider.isCheckedOut(resource)) {
 			overlays.add(checkedOut);
 		}
 		if(overlays.isEmpty()) {

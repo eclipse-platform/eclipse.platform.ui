@@ -33,9 +33,9 @@ public class CVSDecoratorConfiguration {
 	public static final String DEFAULT_ADDED_FLAG = "*";
 	
 	// default text decoration formats
-	public static final String DEFAULT_FILETEXTFORMAT = "{name} [{revision} {tag}]";
-	public static final String DEFAULT_FOLDERTEXTFORMAT = "{name} {tag}";
-	public static final String DEFAULT_PROJECTTEXTFORMAT = "{name} {tag} {host}:{root}";
+	public static final String DEFAULT_FILETEXTFORMAT = "{name}  {revision} {tag}";
+	public static final String DEFAULT_FOLDERTEXTFORMAT = "{name}  {tag}";
+	public static final String DEFAULT_PROJECTTEXTFORMAT = "{name}  {tag} [{host}]";
 
 	// prefix characters that can be removed if the following binding is not found
 	private static final char KEYWORD_SEPSPACE = ' ';
