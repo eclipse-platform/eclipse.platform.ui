@@ -15,10 +15,12 @@ import java.util.*;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.client.listeners.ICommandOutputListener;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.ui.IWorkbenchPart;
 
@@ -67,13 +69,18 @@ public class UpdateOperation extends SingleCommandOperation {
 			localOptions.addAll(Arrays.asList(getLocalOptions()));
 			LocalOption[] commandOptions = (LocalOption[])localOptions.toArray(new LocalOption[localOptions.size()]);
 
-			return getUpdateCommand().execute(
+			monitor.beginTask(null, 100);
+			IStatus execute = getUpdateCommand().execute(
 				session,
 				Command.NO_GLOBAL_OPTIONS, 
 				commandOptions, 
 				resources,
 				getCommandOutputListener(),
-				monitor);
+				Policy.subMonitorFor(monitor, 95));
+			
+			updateWorkspaceSubscriber(provider, Policy.subMonitorFor(monitor, 5));
+			monitor.done();
+			return execute;
 	}
 
 	protected Update getUpdateCommand() {
@@ -128,5 +135,18 @@ public class UpdateOperation extends SingleCommandOperation {
 	 */
 	protected String getErrorMessage(IStatus[] failures, int totalOperations) {
 		return Policy.bind("UpdateAction.update"); //$NON-NLS-1$
+	}
+	
+	/*
+	 * Update the workspace subscriber by flushin any cahced remote bytes
+	 */
+	private void updateWorkspaceSubscriber(CVSTeamProvider provider, IProgressMonitor monitor) {
+		CVSWorkspaceSubscriber s = CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber();
+		try {
+			s.updateRemote(provider, monitor);
+		} catch (TeamException e) {
+			// Just log the error and continue
+			CVSUIPlugin.log(e);
+		}
 	}
 }
