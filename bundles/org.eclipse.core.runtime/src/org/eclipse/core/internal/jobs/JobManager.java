@@ -568,6 +568,7 @@ public class JobManager implements IJobManager {
 		IJobChangeListener listener = null;
 		final List jobs;
 		int jobCount;
+		Job blocking = null;
 		synchronized (lock) {
 			//don't join a waiting or sleeping job when suspended (deadlock risk)
 			int states = suspended ? Job.RUNNING : Job.RUNNING | Job.WAITING | Job.SLEEPING;
@@ -575,6 +576,9 @@ public class JobManager implements IJobManager {
 			jobCount = jobs.size();
 			if (jobCount == 0)
 				return;
+			//if there is only one blocking job, use it in the blockage callback below
+			if (jobCount == 1)
+				blocking = (Job)jobs.get(0);
 			listener = new JobChangeAdapter() {
 				//update the list of jobs if new ones are added during the join
 				public void scheduled(IJobChangeEvent event) {
@@ -582,7 +586,6 @@ public class JobManager implements IJobManager {
 					if (job.belongsTo(family))
 						jobs.add(job);
 				}
-
 				public void done(IJobChangeEvent event) {
 					jobs.remove(event.getJob());
 				}
@@ -594,7 +597,6 @@ public class JobManager implements IJobManager {
 			//TODO: report blockage before starting
 			monitor.beginTask(Policy.bind("jobs.blocked0"), jobCount); //$NON-NLS-1$
 			monitor.subTask(Policy.bind("jobs.waitFamSub", Integer.toString(jobCount))); //$NON-NLS-1$
-			Job blocking = jobCount == 1 ? (Job)jobs.iterator().next() : null;
 			reportBlocked(monitor, blocking);
 			int jobsLeft;
 			int reportedWorkDone = 0;
