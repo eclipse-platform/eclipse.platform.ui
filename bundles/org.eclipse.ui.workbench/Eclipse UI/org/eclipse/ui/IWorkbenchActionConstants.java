@@ -520,8 +520,8 @@ public interface IWorkbenchActionConstants {
 	public static final String SYNC_EDITOR = "syncEditor";	// Global action. //$NON-NLS-1$
 
 	/**
-	 * Navigate menu: name of standard Show In... action (value
-	 * <code>"showIn"</code>).
+	 * Navigate menu: name of standard Show In... action 
+	 * (value <code>"showIn"</code>).
 	 * 
 	 * @see org.eclipse.ui.actions.ShowInAction
 	 */
