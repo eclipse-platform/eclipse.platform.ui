@@ -95,7 +95,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
-import org.eclipse.ui.internal.commands.Manager;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.internal.dialogs.WelcomeEditorInput;
 import org.eclipse.ui.internal.fonts.FontDefinition;
@@ -666,6 +665,29 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	 */
 	public IWorkingSetManager getWorkingSetManager() {
 		return WorkbenchPlugin.getDefault().getWorkingSetManager();
+	}
+
+	public void updateActiveKeyBindingService() {
+		IWorkbenchWindow workbenchWindow = getActiveWorkbenchWindow();
+		
+		if (workbenchWindow != null && workbenchWindow instanceof WorkbenchWindow) {
+			WWinKeyBindingService wWinKeyBindingService = ((WorkbenchWindow) workbenchWindow).getKeyBindingService();
+	
+			if (wWinKeyBindingService != null) {
+				IWorkbenchPage activePage = workbenchWindow.getActivePage();
+						
+				if (activePage != null) {
+					IWorkbenchPart activePart = activePage.getActivePart();
+								
+					if (activePart != null) {
+						wWinKeyBindingService.update(activePart);
+						return;
+					}
+				}
+
+				wWinKeyBindingService.clear();
+			}				
+		}
 	}
 		
 	/**

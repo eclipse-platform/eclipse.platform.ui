@@ -62,14 +62,9 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.internal.WWinKeyBindingService;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.WorkbenchWindow;
 
 public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePage
 	implements IWorkbenchPreferencePage {
@@ -311,30 +306,8 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 
 		Manager.getInstance().reset();
 
-		if (workbench instanceof Workbench) {	
-			IWorkbenchWindow workbenchWindow = workbench.getActiveWorkbenchWindow();
-	
-			if (workbenchWindow != null && workbenchWindow instanceof WorkbenchWindow) {
-				boolean update = false;
-				WWinKeyBindingService wWinKeyBindingService = ((WorkbenchWindow) workbenchWindow).getKeyBindingService();
-	
-				if (wWinKeyBindingService != null) {
-					IWorkbenchPage activePage = workbenchWindow.getActivePage();
-					
-					if (activePage != null) {
-						IWorkbenchPart activePart = activePage.getActivePart();
-							
-						if (activePart != null) {
-							wWinKeyBindingService.update(activePart);
-							update = true;
-						}
-					}
-				}		
-			
-				if (!update)
-					wWinKeyBindingService.clear();
-			}
-		}
+		if (workbench instanceof Workbench)
+			((Workbench) workbench).updateActiveKeyBindingService();
 
 		return super.performOk();
 	}
