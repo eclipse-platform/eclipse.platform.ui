@@ -53,7 +53,7 @@ public class InstallWizard
 		isRunning = true;
 		this.searchRequest = searchRequest;
 		setDialogSettings(UpdateUI.getDefault().getDialogSettings());
-		setDefaultPageImageDescriptor(UpdateUIImages.DESC_INSTALL_WIZ);
+		setDefaultPageImageDescriptor(UpdateUIImages.DESC_UPDATE_WIZ);
 		setForcePreviousAndNextButtons(true);
 		setNeedsProgressMonitor(true);
 		setWindowTitle(UpdateUI.getString("InstallWizard.wtitle")); //$NON-NLS-1$

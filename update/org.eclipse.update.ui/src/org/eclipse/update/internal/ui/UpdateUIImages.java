@@ -94,7 +94,7 @@ public class UpdateUIImages {
 	/**
 	 * WIZ
 	 */
-	public static final ImageDescriptor DESC_INSTALL_WIZ  = create(PATH_WIZBAN, "install_wiz.gif"); //$NON-NLS-1$
+//	public static final ImageDescriptor DESC_INSTALL_WIZ  = create(PATH_WIZBAN, "install_wiz.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_UPDATE_WIZ  = create(PATH_WIZBAN, "update_wiz.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_CONFIG_WIZ  = create(PATH_WIZBAN, "config_wiz.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_UNINSTALL_WIZ  = create(PATH_WIZBAN, "uninstall_wiz.gif"); //$NON-NLS-1$

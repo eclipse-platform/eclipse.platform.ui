@@ -28,12 +28,11 @@ public class JarVerificationDialog extends TitleAreaDialog {
 	private Composite pageContainer;
 	private Image defaultImage = null;
 	private ImageDescriptor defaultImageDescriptor =
-		UpdateUIImages.DESC_INSTALL_WIZ;
+		UpdateUIImages.DESC_UPDATE_WIZ;
 	
 	/**
 	 * Constructor for JarVerificationDialog.
 	 * @param parentShell
-	 * @param newWizard
 	 */
 	public JarVerificationDialog(Shell parentShell,IDialogPage dialogPage, IVerificationResult verificationResult) {
 		super(parentShell);
