@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Gunnar Wagenknecht - fix for bug 21756 (https://bugs.eclipse.org/bugs/show_bug.cgi?id=21756)
  *******************************************************************************/
 
 package org.eclipse.ui.views.properties;
@@ -106,9 +107,9 @@ public void applyEditorValue() {
 	if (!editor.isValueValid()) {
 		setErrorText(editor.getErrorMessage());
 		return;
-	} else {
-		setErrorText(null);
-	}
+	} 
+	
+	setErrorText(null);
 		
 	// See if the value changed and if so update
 	Object newValue = editor.getValue();
@@ -128,6 +129,7 @@ public void applyEditorValue() {
 /**
  * Return the sorted intersection of all the <code>IPropertyDescriptor</code>s 
  * for the objects.
+ * @return List
  */
 private List computeMergedPropertyDescriptors() {
 	if (values.length == 0)
@@ -182,7 +184,7 @@ private List computeMergedPropertyDescriptors() {
  * Returns an map of property descritptors (keyed on id) for the 
  * given property source.
  *
- * @source a property source for which to obtain descriptors
+ * @param source a property source for which to obtain descriptors
  * @return a table of decriptors keyed on their id
  */
 private Map computePropertyDescriptorsFor(IPropertySource source) {
@@ -292,7 +294,8 @@ public String getDescription() {
 	return descriptor.getDescription();
 }
 /**
- * Returns the descriptor for this entry.
+ *  Returns the descriptor for this entry.
+ * @return IPropertyDescriptor
  */
 private IPropertyDescriptor getDescriptor() {
 	return descriptor;
@@ -303,8 +306,9 @@ private IPropertyDescriptor getDescriptor() {
 public String getDisplayName() {
 	return descriptor.getDisplayName();
 }
-/* (non-Javadoc)
- * Method declared on IPropertySheetEntry.
+/*
+ *  (non-Javadoc)
+ * @see org.eclipse.ui.views.properties.IPropertySheetEntry#getEditor(org.eclipse.swt.widgets.Composite)
  */
 public CellEditor getEditor(Composite parent) {
 
@@ -364,7 +368,7 @@ public Image getImage() {
 /**
  * Returns an property source for the given object.
  *
- * @object an object for which to obtain a property source or
+ * @param object an object for which to obtain a property source or
  *  <code>null</code> if a property source is not available
  * @return an property source for the given object
  */
@@ -396,6 +400,7 @@ public String getValueAsString() {
 }
 /**
  * Returns the value objects of this entry.
+ * @return Object[]
  */
 private Object[] getValues() {
 	return values;
@@ -406,9 +411,8 @@ private Object[] getValues() {
 public boolean hasChildEntries() {
 	if (childEntries != null && childEntries.length > 0)
 		return true;
-	else
-		// see if we could have entires if we were asked
-		return computeMergedPropertyDescriptors().size() > 0;
+	// see if we could have entires if we were asked
+	return computeMergedPropertyDescriptors().size() > 0;
 }
 /**
  * Update our child entries.
@@ -480,12 +484,12 @@ private void refreshFromRoot() {
  */
 private void refreshValues() {
 	// get our parent's value objects
-	Object[] sources = parent.getValues();
+	Object[] currentSources = parent.getValues();
 
 	// loop through the objects getting our property value from each
-	Object[] newValues = new Object[sources.length];
-	for (int i = 0; i < sources.length; i++) {
-	 	IPropertySource source = parent.getPropertySource(sources[i]);
+	Object[] newValues = new Object[currentSources.length];
+	for (int i = 0; i < currentSources.length; i++) {
+	 	IPropertySource source = parent.getPropertySource(currentSources[i]);
 		newValues[i] = source.getPropertyValue(descriptor.getId());
 	}
 
@@ -512,6 +516,13 @@ public void resetPropertyValue() {
 	for (int i = 0; i < objects.length; i++){
 		IPropertySource source = getPropertySource(objects[i]);
 		if (source.isPropertySet(descriptor.getId())) {
+            // fix for https://bugs.eclipse.org/bugs/show_bug.cgi?id=21756
+            if(source instanceof IPropertySource2) {
+                IPropertySource2 extendedSource = (IPropertySource2) source;
+                // continue with next if property is not resettable
+                if (!extendedSource.isPropertyResettable(descriptor.getId()))
+                    continue;
+            }
 			source.resetPropertyValue(descriptor.getId());
 			change = true;
 		}
@@ -521,6 +532,7 @@ public void resetPropertyValue() {
 }
 /**
  * Set the descriptor.
+ * @param newDescriptor
  */
 private void setDescriptor(IPropertyDescriptor newDescriptor) {
 	// if our descriptor is changing, we have to get rid
@@ -542,16 +554,18 @@ private void setErrorText(String newErrorText) {
 	fireErrorMessageChanged();
 }
 /**
- * Sets the parent of the entry. 
+ * Sets the parent of the entry to be propertySheetEntry.
+ * @param propertySheetEntry
  */
-private void setParent(PropertySheetEntry p){
-	parent = p;
+private void setParent(PropertySheetEntry propertySheetEntry){
+	parent = propertySheetEntry;
 }
-/*
+/**
  * Sets a property source provider for this entry. 
  * This provider is used to obtain an <code>IPropertySource</code>
  * for each of this entries objects. If no provider is
  * set then a default provider is used.
+ * @param provider IPropertySourceProvider
  */
 public void setPropertySourceProvider(IPropertySourceProvider provider) {
 	propertySourceProvider = provider;	
@@ -624,7 +638,7 @@ public void setValues(Object[] objects) {
  * custom way.
  * </p>
  *
- * @param the child entry that changed its value
+ * @param child the child entry that changed its value
  */
 protected void valueChanged(PropertySheetEntry child) {
 	for (int i = 0; i < values.length; i++) {

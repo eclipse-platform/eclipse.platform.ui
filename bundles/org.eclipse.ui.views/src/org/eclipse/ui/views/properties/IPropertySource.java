@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Gunnar Wagenknecht - fix for bug 21756 (https://bugs.eclipse.org/bugs/show_bug.cgi?id=21756)
  *******************************************************************************/
 package org.eclipse.ui.views.properties;
 
@@ -29,6 +30,7 @@ package org.eclipse.ui.views.properties;
  * @see org.eclipse.core.runtime.IAdaptable
  * @see org.eclipse.core.runtime.Platform#getAdapterManager()
  * @see org.eclipse.ui.views.properties.PropertySheetPage
+ * @see org.eclipse.ui.views.properties.IPropertySource2
  */
 public interface IPropertySource {
 
@@ -99,22 +101,38 @@ public IPropertyDescriptor[] getPropertyDescriptors();
 public Object getPropertyValue(Object id);
 /**
  * Returns whether the value of the property with the given id has changed from
- * its default value. Returns <code>false</code> if the notion of default value
- * is not meaningful for the specified property, or if this source does not have
+ * its default value. Returns <code>false</code> if this source does not have
  * the specified property.
+ * <p>
+ * If the notion of default value is not meaningful for the specified property
+ * than <code>true</code> is returned.
+ * </p>
  * 
  * @param id the id of the property 
  * @return <code>true</code> if the value of the specified property has changed
- *   from its original default value, and <code>false</code> otherwise
+ *   from its original default value or if the specified property does not have 
+ *   a meaningful default value, and <code>false</code> otherwise
+ * @see IPropertySource2#isPropertyResettable(Object)
+ * @see #resetPropertyValue(Object)
  */
 public boolean isPropertySet(Object id);
 /**
  * Resets the property with the given id to its default value if possible.
- * Does nothing if the notion of default value is not meaningful for 
+ * <p>
+ * Does nothing if the notion of a default value is not meaningful for 
  * the specified property, or if the property's value cannot be changed,
  * or if this source does not have the specified property.
+ * </p>
+ * <p>
+ * Callers will check if this <code>IPropertySource</code> 
+ * implements <code>IPropertySource2</code> and this method will
+ * only be called if <code>IPropertySource2#isPropertyResettable(Object)</code>
+ * returns <code>true</code> for the property with the given id.
+ * </p>
  * 
  * @param id the id of the property being reset
+ * @see #isPropertySet(Object)
+ * @see IPropertySource2#isPropertyResettable(Object)
  */
 public void resetPropertyValue(Object id);
 /**
