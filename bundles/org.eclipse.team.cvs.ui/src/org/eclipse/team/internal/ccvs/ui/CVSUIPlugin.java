@@ -569,12 +569,6 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		// Get the plugin preferences for CVS Core
 		Preferences corePrefs = CVSProviderPlugin.getPlugin().getPluginPreferences();
 		
-		// work in progress START
-		store.setDefault(ICVSUIConstants.BACKGROUND_REPOVIEW, true);
-		store.setDefault(ICVSUIConstants.BACKGROUND_OPERATIONS, true);
-		store.setDefault(ICVSUIConstants.USE_NEW_SYNCVIEW, true);
-		// work in progress END
-		
 		store.setDefault(ICVSUIConstants.PREF_REPOSITORIES_ARE_BINARY, false);
 		store.setDefault(ICVSUIConstants.PREF_SHOW_COMMENTS, true);
 		store.setDefault(ICVSUIConstants.PREF_SHOW_TAGS, true);
@@ -689,6 +683,15 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		} else {
 			return null;
 		}
+	}
+	
+	/**
+	 * Returns the system speed setting. This is mainly used to determine to enable/disable
+	 * certain CVS features.
+	 * @since 3.0 
+	 */
+	public static int getPlatformPerformance() {
+		return Platform.getPlugin(Platform.PI_RUNTIME).getPluginPreferences().getInt(Platform.PREF_PLATFORM_PERFORMANCE);
 	}
 	
 	/**

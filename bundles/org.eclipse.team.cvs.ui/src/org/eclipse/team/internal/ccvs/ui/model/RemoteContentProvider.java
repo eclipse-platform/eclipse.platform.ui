@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.model;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
@@ -40,7 +41,7 @@ public class RemoteContentProvider extends WorkbenchContentProvider {
 	 */
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		if (viewer instanceof AbstractTreeViewer) {
-			if(CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.BACKGROUND_REPOVIEW)) {
+			if(CVSUIPlugin.getPlatformPerformance() != Platform.MIN_PERFORMANCE) {
 				manager = new DeferredTreeContentManager(this, (AbstractTreeViewer) viewer);
 			}
 		}

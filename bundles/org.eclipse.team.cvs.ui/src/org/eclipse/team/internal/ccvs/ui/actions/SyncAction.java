@@ -28,15 +28,11 @@ import org.eclipse.ui.IWorkingSet;
 public class SyncAction extends WorkspaceAction {
 	
 	public void execute(IAction action) throws InvocationTargetException {
-		if(CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.USE_NEW_SYNCVIEW)) {
-			IResource[] resources = getResourcesToSync();
-			if (resources == null || resources.length == 0) return;
-			
-			IWorkingSet workingSet = CVSUIPlugin.getWorkingSet(resources, Policy.bind("SyncAction.workingSetName")); //$NON-NLS-1$
-			CVSUIPlugin.showInSyncView(getShell(), resources, workingSet, 0 /* no mode in particular */);
-		} else {
-			executeInOldSyncView(action);
-		} 		
+		IResource[] resources = getResourcesToSync();
+		if (resources == null || resources.length == 0) return;
+		
+		IWorkingSet workingSet = CVSUIPlugin.getWorkingSet(resources, Policy.bind("SyncAction.workingSetName")); //$NON-NLS-1$
+		CVSUIPlugin.showInSyncView(getShell(), resources, workingSet, 0 /* no mode in particular */);
 	}
 
 	public void executeInOldSyncView(IAction action) throws InvocationTargetException {

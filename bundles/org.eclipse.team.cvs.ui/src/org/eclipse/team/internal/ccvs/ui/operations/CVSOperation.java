@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
@@ -81,7 +82,7 @@ public abstract class CVSOperation implements IRunnableWithProgress {
 	}
 
 	protected boolean areJobsEnabled() {
-		return CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.BACKGROUND_OPERATIONS);
+		return CVSUIPlugin.getPlatformPerformance() != Platform.MIN_PERFORMANCE;
 	}
 
 	/**
