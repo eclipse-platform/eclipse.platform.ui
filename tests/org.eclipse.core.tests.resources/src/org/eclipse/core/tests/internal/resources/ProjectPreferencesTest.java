@@ -35,6 +35,10 @@ public class ProjectPreferencesTest extends EclipseWorkspaceTest {
 		//		return suite;
 	}
 
+	public ProjectPreferencesTest(String name) {
+		super(name);
+	}
+
 	public void testSimple() {
 		IProject project = getWorkspace().getRoot().getProject("foo");
 		String qualifier = "org.eclipse.core.tests.resources";
@@ -129,7 +133,7 @@ public class ProjectPreferencesTest extends EclipseWorkspaceTest {
 
 	public void testListener() {
 		// setup
-		IProject project = getWorkspace().getRoot().getProject("foo");
+		IProject project = getWorkspace().getRoot().getProject(getUniqueString());
 		String qualifier = "org.eclipse.core.tests.resources";
 		String key = "key" + getUniqueString();
 		String value = "value" + getUniqueString();
@@ -213,6 +217,9 @@ public class ProjectPreferencesTest extends EclipseWorkspaceTest {
 		assertEquals("4.3", newValue, actual);
 	}
 
+	/**
+	 * Regression test for bug 60896 - Project preferences remains when deleting/creating project
+	 */
 	public void testProjectDelete() {
 		// create the project
 		IProject project = getWorkspace().getRoot().getProject(getUniqueString());
@@ -246,5 +253,44 @@ public class ProjectPreferencesTest extends EclipseWorkspaceTest {
 
 		// ensure that the preference value is not set
 		assertNull("4.0", context.getNode(qualifier).get(key, null));
+	}
+
+	/**
+	 * Regression test for Bug 60925 - project preferences do not show up in workspace.
+	 * 
+	 * Initially we were using java.io.File APIs and writing the preferences files
+	 * directly to disk. We need to convert to use Resource APIs so changes
+	 * show up in the workspace immediately.
+	 */
+	public void test60925() {
+		// setup
+		IProject project = getWorkspace().getRoot().getProject(getUniqueString());
+		ensureExistsInWorkspace(project, true);
+		String qualifier = getUniqueString();
+		String dirName = ".settings";
+		String fileExtension = "prefs";
+		IFile file = project.getFile(new Path(dirName).append(qualifier).addFileExtension(fileExtension));
+
+		// should be nothing in the file system
+		assertTrue("0.0", !file.exists());
+		assertTrue("0.1", !file.getLocation().toFile().exists());
+
+		// store a preference key/value pair
+		IScopeContext context = new ProjectScope(project);
+		String key = getUniqueString();
+		String value = getUniqueString();
+		Preferences node = context.getNode(qualifier);
+		node.put(key, value);
+
+		// flush changes to disk
+		try {
+			node.flush();
+		} catch (BackingStoreException e) {
+			fail("1.0", e);
+		}
+
+		// changes should appear in the workspace
+		assertTrue("2.0", file.exists());
+		assertTrue("2.1", file.isSynchronized(IResource.DEPTH_ZERO));
 	}
 }
