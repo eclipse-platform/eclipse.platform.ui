@@ -60,6 +60,7 @@ public abstract class ContributionManager implements IContributionManager {
  * Creates a new contribution manager.
  */
 protected ContributionManager() {
+    // Do nothing.
 }
 /* (non-Javadoc)
  * Method declared on IContributionManager.
@@ -71,9 +72,11 @@ public void add(IAction action) {
  * Method declared on IContributionManager.
  */
 public void add(IContributionItem item) {
-	item.setParent(this);
-	contributions.add(item);
-	itemAdded(item);
+    if (!checkDuplication(item)) {
+        item.setParent(this);
+        contributions.add(item);
+        itemAdded(item);
+    }
 }
 /**
  * Adds a contribution item to the start or end of the group 
@@ -104,8 +107,10 @@ private void addToGroup(String groupName, IContributionItem item, boolean append
 							break;
 					}
 				}
-				contributions.add(i,item);
-				itemAdded(item);
+				if (!checkDuplication(item)) {
+				    contributions.add(i,item);
+				    itemAdded(item);
+				}
 				return;
 			}
 		}
@@ -123,6 +128,18 @@ public void appendToGroup(String groupName, IAction action) {
  */
 public void appendToGroup(String groupName, IContributionItem item) {
 	addToGroup(groupName, item, true);
+}
+/**
+ * This method allows subclasses of <code>ContributionManager</code> to prevent
+ * duplication in the contributions list.  <code>ContributionManager</code>
+ * will either block or allow an addition based on the result of this method
+ * call.
+ * @param itemToAdd The contribution item to be added; may be <code>null</code>.
+ * @return <code>true</code> if the addition should be disallowed; 
+ * <code>false</code> otherwise
+ */
+protected boolean checkDuplication(IContributionItem itemToAdd) {
+    return false;
 }
 /**
  * Internal debug method for printing statistics about this manager
@@ -233,9 +250,11 @@ protected int indexOf(IContributionItem item) {
 public void insert(int index, IContributionItem item) {
 	if (index > contributions.size())
 		throw new IndexOutOfBoundsException("inserting " + item.getId() + " at " + index); //$NON-NLS-1$ //$NON-NLS-2$
-	item.setParent(this);
-	contributions.add(index, item);
-	itemAdded(item);
+	if (!checkDuplication(item)) {
+	    item.setParent(this);
+	    contributions.add(index, item);
+	    itemAdded(item);
+	}
 }
 /* (non-Javadoc)
  * Method declared on IContributionManager.
@@ -253,9 +272,11 @@ public void insertAfter(String ID, IContributionItem item) {
 	int ix= contributions.indexOf(ci);
 	if (ix >= 0) {
 		// System.out.println("insert after: " + ix);
-		item.setParent(this);
-		contributions.add(ix+1,item);
-		itemAdded(item);
+	    if (!checkDuplication(item)) {
+	        item.setParent(this);
+	        contributions.add(ix+1,item);
+	        itemAdded(item);
+	    }
 	}
 }
 /* (non-Javadoc)
@@ -274,9 +295,11 @@ public void insertBefore(String ID, IContributionItem item) {
 	int ix = contributions.indexOf(ci);
 	if (ix >= 0) {
 		// System.out.println("insert before: " + ix);
-		item.setParent(this);
-		contributions.add(ix,item);
-		itemAdded(item);
+	    if (!checkDuplication(item)) {
+	        item.setParent(this);
+	        contributions.add(ix,item);
+	        itemAdded(item);
+	    }
 	}
 }
 /* (non-Javadoc)
@@ -376,7 +399,11 @@ public void removeAll() {
  * @return <code>true</code> if the given identifier can be; <code>
  * @since 3.0
  */
-public boolean replaceItem(final String identifier, final IContributionItem replacementItem) {    
+public boolean replaceItem(final String identifier, final IContributionItem replacementItem) {
+    if (identifier == null) {
+        return false;
+    }
+    
     final int index = indexOf(identifier);
     if (index < 0) {
         return false; // couldn't find the item.
@@ -389,6 +416,15 @@ public boolean replaceItem(final String identifier, final IContributionItem repl
 	// Add the new item.
 	contributions.set(index, replacementItem);
 	itemAdded(replacementItem); // throws NPE if (replacementItem == null)
+	
+	// Go through and remove duplicates.
+	for (int i = contributions.size() - 1; i > index; i--) {
+	    IContributionItem item = (IContributionItem) contributions.get(i);
+	    if ((item != null) && (identifier.equals(item.getId()))) {
+	        System.out.println("Removing duplicate on replace: " + identifier);
+	        contributions.remove(i);
+	    }
+	}
 	
 	return true; // success
 }
@@ -422,7 +458,9 @@ public void setOverrides(IContributionManagerOverrides newOverrides) {
 protected void internalSetItems(IContributionItem[] items) {
 	contributions.clear();
 	for (int i=0; i < items.length; i++) {
-		contributions.add(items[i]);
+	    if (!checkDuplication(items[i])) {
+	        contributions.add(items[i]);
+	    }
 	}
 }
 }

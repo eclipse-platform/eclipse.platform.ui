@@ -1068,7 +1068,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 					coolBarMgr.setLockLayout(false);
 				}
 				// The new layout of the cool bar manager
-				ArrayList layout = new ArrayList();
+				ArrayList coolBarLayout = new ArrayList();
 				// Traverse through all the cool item in the memento
 				IMemento contributionMems[] =
 					coolBarMem.getChildren(IWorkbenchConstants.TAG_COOLITEM);
@@ -1082,10 +1082,12 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 					String id = contributionMem.getString(IWorkbenchConstants.TAG_ID);
 					
 					// Prevent duplicate items from being read back in.
-					if ((id != null) && (coolBarMgr.find(id) != null)) {
+					IContributionItem existingItem = coolBarMgr.find(id);
+					if ((id != null) && (existingItem != null)) {
 					    if (Policy.DEBUG_TOOLBAR_DISPOSAL) {
 					        System.out.println("Not loading duplicate cool bar item: " + id); //$NON-NLS-1$
 					    }
+					    coolBarLayout.add(existingItem);
 					    continue;
 					}
 					IContributionItem newItem = null;
@@ -1150,13 +1152,13 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 					}
 					// Add new item into cool bar manager
 					if (newItem != null) {
-						layout.add(newItem);
+						coolBarLayout.add(newItem);
 						newItem.setParent(coolBarMgr);
 						coolBarMgr.markDirty();
 					}
 				}
 				// Set the cool bar layout to the given layout.
-				coolBarMgr.setLayout(layout);
+				coolBarMgr.setLayout(coolBarLayout);
 			}else {
 				// For older workbenchs
 				coolBarMem = memento.getChild(IWorkbenchConstants.TAG_TOOLBAR_LAYOUT);
@@ -1331,7 +1333,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 				}
 			}
 			// The new layout of the cool bar manager
-			ArrayList layout = new ArrayList(visibleItems.size());
+			ArrayList coolBarLayout = new ArrayList(visibleItems.size());
 			// Add all visible items to the layout object
 			for (Iterator i = visibleItems.iterator(); i.hasNext();) {
 				String id = (String)i.next();
@@ -1365,7 +1367,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 				}
 				// Add new item into cool bar manager
 				if (newItem != null) {
-					layout.add(newItem);
+					coolBarLayout.add(newItem);
 					newItem.setParent(coolBarMgr);
 					coolBarMgr.markDirty();
 				}
@@ -1375,7 +1377,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 			int offset = 0;
 			for(int i=1; i < visibleWrapIndicies.size(); i++) {
 				int insertAt = ((Integer)visibleWrapIndicies.get(i)).intValue() + offset;
-				layout.add(insertAt,new Separator(CoolBarManager.USER_SEPARATOR));
+				coolBarLayout.add(insertAt,new Separator(CoolBarManager.USER_SEPARATOR));
 				offset++;
 			}
 			
@@ -1384,11 +1386,11 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 			for (int i=0; i < items.length; i++) {
 				IContributionItem item = items[i];
 				if (item.isGroupMarker()) {
-					layout.add(Math.max(Math.min(i,layout.size()), 0),item);
+					coolBarLayout.add(Math.max(Math.min(i,coolBarLayout.size()), 0),item);
 				}
 			}
 			
-			coolBarMgr.setLayout(layout);
+			coolBarMgr.setLayout(coolBarLayout);
 		}
 		return true;
 	}
@@ -1444,7 +1446,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 
 		// Find the index that this item should be inserted in
 		for (int i = insertIndex + 1; i < items.length; i++) {
-			IContributionItem item = (IContributionItem) items[i];
+			IContributionItem item = items[i];
 			String testId = item.getId();
 
 			if (item.isGroupMarker())
@@ -1720,10 +1722,10 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 				menuItem.setText(WorkbenchMessages.getString("WorkbenchWindow.close")); //$NON-NLS-1$
 				menuItem.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {
-						ToolItem toolItem = (ToolItem) perspectiveBarMenu.getData();
-						if (toolItem != null && !toolItem.isDisposed()) {
+						ToolItem perspectiveToolItem = (ToolItem) perspectiveBarMenu.getData();
+						if (perspectiveToolItem != null && !perspectiveToolItem.isDisposed()) {
 							PerspectiveBarContributionItem item =
-								(PerspectiveBarContributionItem) toolItem.getData();
+								(PerspectiveBarContributionItem) perspectiveToolItem.getData();
 							item.getPage().closePerspective(item.getPerspective(), true);
 						}
 					}
@@ -1732,10 +1734,10 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 				menuItem.setText(WorkbenchMessages.getString("WorkbenchWindow.closeAll")); //$NON-NLS-1$
 				menuItem.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {
-						ToolItem toolItem = (ToolItem) perspectiveBarMenu.getData();
-						if (toolItem != null && !toolItem.isDisposed()) {
+						ToolItem perspectiveToolItem = (ToolItem) perspectiveBarMenu.getData();
+						if (perspectiveToolItem != null && !perspectiveToolItem.isDisposed()) {
 							PerspectiveBarContributionItem item =
-								(PerspectiveBarContributionItem) toolItem.getData();
+								(PerspectiveBarContributionItem) perspectiveToolItem.getData();
 							item.getPage().closeAllPerspectives();
 						}
 					}
@@ -1925,41 +1927,41 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	}
 	class PageList {
 		//List of pages in the order they were created;
-		private List pageList;
+		private List pagesInCreationOrder;
 		//List of pages where the top is the last activated.
-		private List pageStack;
+		private List pageInActivationOrder;
 		// The page explicitly activated
 		private Object active;
 
 		public PageList() {
-			pageList = new ArrayList(4);
-			pageStack = new ArrayList(4);
+			pagesInCreationOrder = new ArrayList(4);
+			pageInActivationOrder = new ArrayList(4);
 		}
 		public boolean add(Object object) {
-			pageList.add(object);
-			pageStack.add(0, object);
+			pagesInCreationOrder.add(object);
+			pageInActivationOrder.add(0, object);
 			//It will be moved to top only when activated.
 			return true;
 		}
 		public Iterator iterator() {
-			return pageList.iterator();
+			return pagesInCreationOrder.iterator();
 		}
 		public boolean contains(Object object) {
-			return pageList.contains(object);
+			return pagesInCreationOrder.contains(object);
 		}
 		public boolean remove(Object object) {
 			if (active == object)
 				active = null;
-			pageStack.remove(object);
-			return pageList.remove(object);
+			pageInActivationOrder.remove(object);
+			return pagesInCreationOrder.remove(object);
 		}
 		public boolean isEmpty() {
-			return pageList.isEmpty();
+			return pagesInCreationOrder.isEmpty();
 		}
 		public IWorkbenchPage[] getPages() {
-			int nSize = pageList.size();
+			int nSize = pagesInCreationOrder.size();
 			IWorkbenchPage[] retArray = new IWorkbenchPage[nSize];
-			pageList.toArray(retArray);
+			pagesInCreationOrder.toArray(retArray);
 			return retArray;
 		}
 		public void setActive(Object page) {
@@ -1969,8 +1971,8 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 			active = page;
 
 			if (page != null) {
-				pageStack.remove(page);
-				pageStack.add(page);
+				pageInActivationOrder.remove(page);
+				pageInActivationOrder.add(page);
 			}
 		}
 		public WorkbenchPage getActive() {
@@ -1978,15 +1980,15 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		}
 		public WorkbenchPage getNextActive() {
 			if (active == null) {
-				if (pageStack.isEmpty())
+				if (pageInActivationOrder.isEmpty())
 					return null;
 				else
-					return (WorkbenchPage) pageStack.get(pageStack.size() - 1);
+					return (WorkbenchPage) pageInActivationOrder.get(pageInActivationOrder.size() - 1);
 			} else {
-				if (pageStack.size() < 2)
+				if (pageInActivationOrder.size() < 2)
 					return null;
 				else
-					return (WorkbenchPage) pageStack.get(pageStack.size() - 2);
+					return (WorkbenchPage) pageInActivationOrder.get(pageInActivationOrder.size() - 2);
 			}
 		}
 	}

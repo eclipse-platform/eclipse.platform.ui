@@ -154,6 +154,46 @@ public class CoolBarManager extends ContributionManager implements
         return contributionList;
 
     }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.action.ContributionManager#checkDuplication(org.eclipse.jface.action.IContributionItem)
+     */
+    protected boolean checkDuplication(IContributionItem itemToAdd) {
+        /* We will allow as many null entries as they like, though there should
+         * be none.
+         */
+        if (itemToAdd == null) {
+            return false;
+        }
+        
+        /* Null identifiers can be expected in generic contribution items.
+         */
+        String firstId = itemToAdd.getId();
+        if (firstId == null) {
+            return false;
+        }
+        
+        // Cycle through the current list looking for duplicates.
+        IContributionItem[] currentItems = getItems();
+        for (int i = 0; i < currentItems.length; i++) {
+            IContributionItem currentItem = currentItems[i];
+            
+            // We ignore null entries.
+            if (currentItem == null) {
+                continue;
+            }
+            
+            String secondId = currentItem.getId();
+            if (firstId.equals(secondId)) {
+                System.out.println("Trying to add a duplicate item."); //$NON-NLS-1$
+                new Exception().printStackTrace(System.out);
+                System.out.println("DONE --------------------------"); //$NON-NLS-1$
+                return true;
+            }
+        }
+        
+        return false;
+    }
 
     /**
      * Positions the list iterator to the end of all the separators. Calling
@@ -476,20 +516,20 @@ public class CoolBarManager extends ContributionManager implements
     /*
      * Used for debuging. Prints all the items in the internal structures.
      */
-    private void printContributions(ArrayList contributionList) {
-        int index = 0;
-        System.out.println("----------------------------------\n"); //$NON-NLS-1$
-        for (Iterator i = contributionList.iterator(); i.hasNext(); index++) {
-            IContributionItem item = (IContributionItem) i.next();
-            if (item.isSeparator()) {
-                System.out.println("Separator"); //$NON-NLS-1$
-            } else {
-                System.out.println(index + ". Item id: " + item.getId() //$NON-NLS-1$
-                        + " - is Visible: " //$NON-NLS-1$
-                        + item.isVisible());
-            }
-        }
-    }
+//    private void printContributions(ArrayList contributionList) {
+//        int index = 0;
+//        System.out.println("----------------------------------\n"); //$NON-NLS-1$
+//        for (Iterator i = contributionList.iterator(); i.hasNext(); index++) {
+//            IContributionItem item = (IContributionItem) i.next();
+//            if (item.isSeparator()) {
+//                System.out.println("Separator"); //$NON-NLS-1$
+//            } else {
+//                System.out.println(index + ". Item id: " + item.getId() //$NON-NLS-1$
+//                        + " - is Visible: " //$NON-NLS-1$
+//                        + item.isVisible());
+//            }
+//        }
+//    }
 
     /**
      * Synchronizes the visual order of the cool items in the control with this
@@ -718,7 +758,7 @@ public class CoolBarManager extends ContributionManager implements
      *            a list of new order of contribution items.
      */
     public void setLayout(ArrayList newLayout) {
-        IContributionItem[] newItems = new IContributionItem[0];
+        IContributionItem[] newItems = new IContributionItem[newLayout.size()];
         newItems = (IContributionItem[]) newLayout.toArray(newItems);
         // dispose of all the cool items on the cool bar manager
         if (coolBar != null) {
