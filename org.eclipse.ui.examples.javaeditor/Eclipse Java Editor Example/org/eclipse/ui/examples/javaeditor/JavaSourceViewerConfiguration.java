@@ -5,6 +5,8 @@ package org.eclipse.ui.examples.javaeditor;
  * All Rights Reserved.
  */
 
+import java.util.List;
+
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.jface.text.DefaultAutoIndentStrategy;
 import org.eclipse.jface.text.IAutoIndentStrategy;
@@ -16,7 +18,11 @@ import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
+import org.eclipse.jface.text.rules.BufferedRuleBasedScanner;
+import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
+import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.RuleBasedDamagerRepairer;
+import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
@@ -31,6 +37,17 @@ import org.eclipse.ui.examples.javaeditor.util.JavaColorProvider;
  * Example configuration for an <code>SourceViewer</code> which shows Java code.
  */
 public class JavaSourceViewerConfiguration extends SourceViewerConfiguration {
+	
+	
+		/**
+		 * Single token scanner.
+		 */
+		static class SingleTokenScanner extends BufferedRuleBasedScanner {
+			public SingleTokenScanner(TextAttribute attribute) {
+				setDefaultReturnToken(new Token(attribute));
+			}
+		};
+		
 
 	/**
 	 * Default constructor.
@@ -105,16 +122,16 @@ public class JavaSourceViewerConfiguration extends SourceViewerConfiguration {
 
 		JavaColorProvider provider= JavaEditorEnvironment.getJavaColorProvider();
 		PresentationReconciler reconciler= new PresentationReconciler();
-
-		RuleBasedDamagerRepairer dr= new RuleBasedDamagerRepairer(JavaEditorEnvironment.getJavaCodeScanner(), new TextAttribute(provider.getColor(provider.DEFAULT)));
+		
+		DefaultDamagerRepairer dr= new DefaultDamagerRepairer(JavaEditorEnvironment.getJavaCodeScanner());
 		reconciler.setDamager(dr, IDocument.DEFAULT_CONTENT_TYPE);
 		reconciler.setRepairer(dr, IDocument.DEFAULT_CONTENT_TYPE);
-
-		dr= new RuleBasedDamagerRepairer(JavaEditorEnvironment.getJavaDocScanner(), new TextAttribute(provider.getColor(provider.JAVADOC_DEFAULT)));
+		
+		dr= new DefaultDamagerRepairer(new SingleTokenScanner(new TextAttribute(provider.getColor(provider.JAVADOC_DEFAULT))));
 		reconciler.setDamager(dr, JavaPartitionScanner.JAVA_DOC);
 		reconciler.setRepairer(dr, JavaPartitionScanner.JAVA_DOC);
 
-		dr= new RuleBasedDamagerRepairer(null, new TextAttribute(provider.getColor(provider.MULTI_LINE_COMMENT)));
+		dr= new DefaultDamagerRepairer(new SingleTokenScanner(new TextAttribute(provider.getColor(provider.MULTI_LINE_COMMENT))));
 		reconciler.setDamager(dr, JavaPartitionScanner.JAVA_MULTILINE_COMMENT);
 		reconciler.setRepairer(dr, JavaPartitionScanner.JAVA_MULTILINE_COMMENT);
 

@@ -23,11 +23,12 @@ public class JavaTextHover implements ITextHover {
 	public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
 		if (hoverRegion != null) {
 			try {
-				return textViewer.getDocument().get(hoverRegion.getOffset(), hoverRegion.getLength());
+				if (hoverRegion.getLength() > -1)
+					return textViewer.getDocument().get(hoverRegion.getOffset(), hoverRegion.getLength());
 			} catch (BadLocationException x) {
 			}
 		}
-		return null;
+		return "empty selection";
 	}
 	
 	/* (non-Javadoc)
@@ -35,8 +36,8 @@ public class JavaTextHover implements ITextHover {
 	 */
 	public IRegion getHoverRegion(ITextViewer textViewer, int offset) {
 		Point selection= textViewer.getSelectedRange();
-		if (selection.y > 0 && selection.x <= offset && offset <= selection.x + selection.y)
+		if (selection.x <= offset && offset < selection.x + selection.y)
 			return new Region(selection.x, selection.y);
-		return null;
+		return new Region(offset, 0);
 	}
 }

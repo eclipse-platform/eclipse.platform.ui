@@ -8,6 +8,7 @@ package org.eclipse.ui.examples.javaeditor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentPartitioner;
+import org.eclipse.jface.text.rules.DefaultPartitioner;
 import org.eclipse.jface.text.rules.RuleBasedPartitioner;
 import org.eclipse.ui.editors.text.FileDocumentProvider;
 import org.eclipse.ui.examples.javaeditor.java.JavaPartitionScanner;
@@ -33,17 +34,17 @@ public class JavaDocumentProvider extends FileDocumentProvider {
 		IDocument document= super.createDocument(element);
 		if (document != null) {
 			IDocumentPartitioner partitioner= createJavaPartitioner();
-			partitioner.connect(document);
 			document.setDocumentPartitioner(partitioner);
+			partitioner.connect(document);
 		}
 		return document;
 	}
 	
 	/**
-	 * Return a paritioner for .java files.
+	 * Return a partitioner for .java files.
 	 */
-	 private RuleBasedPartitioner createJavaPartitioner() {
-		return new RuleBasedPartitioner(getJavaPartitionScanner(), TYPES);
+	 private IDocumentPartitioner createJavaPartitioner() {
+		return new DefaultPartitioner(getJavaPartitionScanner(), TYPES);
 	}
 	
 	/**

@@ -8,11 +8,13 @@ package org.eclipse.ui.examples.javaeditor.java;
 import java.text.MessageFormat;
 
 import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.TextPresentation;
 import org.eclipse.jface.text.contentassist.CompletionProposal;
 import org.eclipse.jface.text.contentassist.ContextInformation;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
+import org.eclipse.jface.text.contentassist.IContextInformationPresenter;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 
 /**
@@ -24,7 +26,7 @@ public class JavaCompletionProcessor implements IContentAssistProcessor {
 	 * Simple content assist tip closer. The tip is valid in a range
 	 * of 5 characters around its popup location.
 	 */
-	protected static class Validator implements IContextInformationValidator {
+	protected static class Validator implements IContextInformationValidator, IContextInformationPresenter {
 
 		protected int fInstallOffset;
 
@@ -40,6 +42,13 @@ public class JavaCompletionProcessor implements IContentAssistProcessor {
 		 */
 		public void install(IContextInformation info, ITextViewer viewer, int offset) {
 			fInstallOffset= offset;
+		}
+		
+		/*
+		 * @see org.eclipse.jface.text.contentassist.IContextInformationPresenter#updatePresentation(int, TextPresentation)
+		 */
+		public boolean updatePresentation(int documentPosition, TextPresentation presentation) {
+			return false;
 		}
 	};
 
