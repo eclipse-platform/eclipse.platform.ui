@@ -112,5 +112,10 @@ public interface IRemoteTargetResource extends IRemoteResource {
 	 * @return boolean
 	 */
 	boolean canBeReached(IProgressMonitor monitor) throws TeamException;
+	
+	/**
+	 * Delete the remote resource.
+	 */
+	public void delete(IProgressMonitor monitor) throws TeamException;
 
 }
