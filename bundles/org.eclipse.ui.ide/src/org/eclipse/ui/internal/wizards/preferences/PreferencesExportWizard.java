@@ -45,7 +45,6 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * 
  */
 public class PreferencesExportWizard extends Wizard implements IExportWizard {
-    private IStructuredSelection selection;
 
     private WizardPreferencesExportPage1 mainPage;
 
@@ -76,31 +75,6 @@ public class PreferencesExportWizard extends Wizard implements IExportWizard {
      * Method declared on IWorkbenchWizard.
      */
     public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
-//      Currently not concerned about selection, maybe in the future it will make sense
-//      to support exporting project preferences based on the selection  
-        
-//        this.selection = currentSelection;
-//        List selectedResources = IDE.computeSelectedResources(currentSelection);
-//        if (!selectedResources.isEmpty()) {
-//            this.selection = new StructuredSelection(selectedResources);
-//        }
-//
-//        // look it up if current selection (after resource adapting) is empty
-//        if (selection.isEmpty() && workbench.getActiveWorkbenchWindow() != null) {
-//            IWorkbenchPage page = workbench.getActiveWorkbenchWindow()
-//                    .getActivePage();
-//            if (page != null) {
-//                IEditorPart currentEditor = page.getActiveEditor();
-//                if (currentEditor != null) {
-//                    Object selectedResource = currentEditor.getEditorInput()
-//                            .getAdapter(IResource.class);
-//                    if (selectedResource != null) {
-//                        selection = new StructuredSelection(selectedResource);
-//                    }
-//                }
-//            }
-//        }
-
         setWindowTitle(PreferencesMessages.PreferencesExportWizard_export);
         setDefaultPageImageDescriptor(IDEWorkbenchPlugin.getIDEImageDescriptor("wizban/exportdir_wiz.gif"));//$NON-NLS-1$
         setNeedsProgressMonitor(true);

@@ -11,6 +11,11 @@ package org.eclipse.ui.internal;
 
 import org.eclipse.osgi.util.NLS;
 
+/**
+ * Message class for workbench messages.  These messages are used 
+ * throughout the workbench. 
+ *
+ */
 public class WorkbenchMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.ui.internal.messages";//$NON-NLS-1$
 
@@ -478,21 +483,7 @@ public class WorkbenchMessages extends NLS {
 	public static String Error;
 	public static String Information;
 
-	public static String WorkbenchPreferenceDialog_load;
-	public static String WorkbenchPreferenceDialog_save;
-	public static String WorkbenchPreferenceDialog_verifyErrorMessage;
-	public static String WorkbenchPreferenceDialog_verifyWarningMessage;
-	public static String WorkbenchPreferenceDialog_loadErrorTitle;
-	public static String WorkbenchPreferenceDialog_loadErrorMessage;
-	public static String WorkbenchPreferenceDialog_loadTitle;
-	public static String WorkbenchPreferenceDialog_loadMessage;
-	public static String WorkbenchPreferenceDialog_saveErrorTitle;
 	public static String WorkbenchPreferenceDialog_FilterMessage;
-	public static String WorkbenchPreferenceDialog_saveErrorMessage;
-	public static String WorkbenchPreferenceDialog_saveTitle;
-	public static String WorkbenchPreferenceDialog_saveMessage;
-	public static String WorkbenchPreferenceDialog_existsErrorMessage;
-	public static String WorkbenchPreferenceDialog_noPreferencesMessage;
 	public static String ErrorPreferencePage_errorMessage;
 
 	public static String ListSelection_title;

@@ -10,10 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
-import java.io.File;
-
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.IPreferencePage;
@@ -25,7 +21,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Sash;
 import org.eclipse.swt.widgets.Shell;
@@ -35,8 +30,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
-import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.Assert;
 
 /**
@@ -44,12 +37,6 @@ import org.eclipse.ui.internal.misc.Assert;
  * preferences.
  */
 public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
-
-	/**
-	 * The dialog settings key for the last used import/export path.
-	 */
-	final static String FILE_PATH_SETTING = "PreferenceImportExportFileSelectionPage.filePath"; //$NON-NLS-1$
-
 	/**
 	 * There can only ever be one instance of the workbench's preference dialog.
 	 * This keeps a handle on this instance, so that attempts to create a second
@@ -435,76 +422,6 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 		return historyBar;
 	}
 
-
-	/**
-	 * Return the file name setting or a default value if there isn't one.
-	 * 
-	 * @param export
-	 *            <code>true</code> if an export file name is being looked
-	 *            for.
-	 * 
-	 * @return String if there is a good value to choose. Otherwise return
-	 *         <code>null</code>.
-	 */
-	private String getFileNameSetting(boolean export) {
-
-		String lastFileName = WorkbenchPlugin.getDefault().getDialogSettings().get(
-				WorkbenchPreferenceDialog.FILE_PATH_SETTING);
-		if (lastFileName == null) {
-			if (export)
-				return System.getProperty("user.dir") + System.getProperty("file.separator") + WorkbenchMessages.ImportExportPages_preferenceFileName + AbstractPreferenceImportExportPage.PREFERENCE_EXT; //$NON-NLS-1$//$NON-NLS-2$
-
-		} else if ((export) || (new File(lastFileName).exists())) {
-			return lastFileName;
-		}
-
-		return null;
-	}
-
-	/**
-	 * Get the file name we are using. Set the button type flag depending on
-	 * whether it is import or export operation.
-	 * 
-	 * @param export
-	 *            <code>true</code> if an export file name is being looked
-	 *            for.
-	 * 
-	 * @return IPath or <code>null</code> if no selection is mage.
-	 */
-	private IPath getFilePath(boolean export) {
-
-		// Find the closest file/directory to what is currently entered.
-		String currentFileName = getFileNameSetting(export);
-
-		// Open a dialog allowing the user to choose.
-		FileDialog fileDialog = null;
-		if (export)
-			fileDialog = new FileDialog(getShell(), SWT.SAVE);
-		else
-			fileDialog = new FileDialog(getShell(), SWT.OPEN);
-
-		if (currentFileName != null)
-			fileDialog.setFileName(currentFileName);
-		fileDialog
-				.setFilterExtensions(PreferenceImportExportFileSelectionPage.DIALOG_PREFERENCE_EXTENSIONS);
-		currentFileName = fileDialog.open();
-
-		if (currentFileName == null)
-			return null;
-
-		/*
-		 * Append the default filename if none was specifed and such a file does
-		 * not exist.
-		 */
-		String fileName = new File(currentFileName).getName();
-		if (fileName.lastIndexOf(".") == -1) { //$NON-NLS-1$
-			currentFileName += AbstractPreferenceImportExportPage.PREFERENCE_EXT;
-		}
-		setFileNameSetting(currentFileName);
-		return new Path(currentFileName);
-
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -514,17 +431,6 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 		getTreeViewer().setInput(getPreferenceManager());
 		super.selectSavedItem();
 	}
-
-	/**
-	 * @param currentFileName
-	 */
-	private void setFileNameSetting(String currentFileName) {
-		if (currentFileName != null)
-			WorkbenchPlugin.getDefault().getDialogSettings().put(
-					WorkbenchPreferenceDialog.FILE_PATH_SETTING, currentFileName);
-
-	}
-
 
 	/*
 	 * @see org.eclipse.jface.preference.PreferenceDialog#showPage(org.eclipse.jface.preference.IPreferenceNode)
