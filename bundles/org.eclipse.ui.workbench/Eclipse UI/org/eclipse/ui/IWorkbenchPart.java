@@ -97,6 +97,17 @@ public interface IWorkbenchPart extends IAdaptable {
 	 * and <code>getTitleToolTip</code>.
 	 */
 	public static final int PROP_TITLE = 0x01;
+
+	/**
+	 * The property id for <code>getPartName</code> (used by IWorkbenchPart2)
+	 */
+	public static final int PROP_NAME = 0x104;
+	
+	/**
+	 * The property id for <code>getStatus</code> (used by IWorkbenchPart2)
+	 */
+	public static final int PROP_STATUS = 0x105;
+	
 /**
  * Adds a listener for changes to properties of this workbench part.
  * Has no effect if an identical listener is already registered.

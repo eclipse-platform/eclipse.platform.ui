@@ -10,9 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui.part;
 
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.ui.*;
-import org.eclipse.ui.internal.util.Util;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.PartInitException;
 
 /**
  * Abstract base implementation of all workbench views.
@@ -53,10 +54,8 @@ import org.eclipse.ui.internal.util.Util;
  * </ul>
  * </p>
  */
-public abstract class ViewPart extends WorkbenchPart implements IViewPart2 {
-    
-    private String partName = ""; //$NON-NLS-1$
-    private String statusText = ""; //$NON-NLS-1$
+public abstract class ViewPart extends WorkbenchPart implements IViewPart {
+
     
 /**
  * Creates a new view.
@@ -96,64 +95,6 @@ public void saveState(IMemento memento){
     // do nothing
 }
 
-/**
- * Extends the super implementation to initialize the part name.
- * 
- * @since 3.0
- */
-public void setInitializationData(IConfigurationElement cfig, String propertyName, Object data) {
-    super.setInitializationData(cfig, propertyName, data);
-	partName = Util.safeString(cfig.getAttribute("name")); //$NON-NLS-1$
-}
 
-/* (non-Javadoc)
- * Method declared on IViewPart2.
- * 
- * @since 3.0
- */
-public String getPartName() {
-    return partName;
-}
-
-/**
- * Sets or clears the name of this part.
- *
- * @param partName the part name, or <code>null</code> to clear
- * 
- * @since 3.0
- */
-protected void setPartName(String partName) {
-    partName = Util.safeString(partName); 
-	//Do not send changes if they are the same
-	if(Util.equals(this.partName, partName))
-		return;
-	this.partName = partName;
-	firePropertyChange(IWorkbenchPart.PROP_TITLE);
-}
-
-/* (non-Javadoc)
- * Method declared on IViewPart2.
- * 
- * @since 3.0
- */
-public String getStatusText() {
-    return statusText;
-}
-
-/**
- * Sets or clears the status text of this part.
- *
- * @param statusText the status text, or <code>null</code> to clear
- * 
- * @since 3.0
- */
-protected void setStatusText(String statusText) {
-    statusText = Util.safeString(statusText); 
-	//Do not send changes if they are the same
-	if(Util.equals(this.statusText, statusText))
-		return;
-	this.statusText = statusText;
-	firePropertyChange(IWorkbenchPart.PROP_TITLE);
-}
 
 }

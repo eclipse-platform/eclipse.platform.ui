@@ -21,6 +21,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPart2;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ReferenceCounter;
@@ -40,7 +41,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * @see ViewPart
  * @see EditorPart
  */
-public abstract class WorkbenchPart implements IWorkbenchPart, IExecutableExtension {
+public abstract class WorkbenchPart implements IWorkbenchPart2, IExecutableExtension {
 	private String title = ""; //$NON-NLS-1$
 	private ImageDescriptor imageDescriptor;
 	private Image titleImage;
@@ -48,6 +49,9 @@ public abstract class WorkbenchPart implements IWorkbenchPart, IExecutableExtens
 	private IConfigurationElement configElement;
 	private IWorkbenchPartSite partSite;
 	private ListenerList propChangeListeners = new ListenerList(2);
+    
+    private String partName = ""; //$NON-NLS-1$
+    private String statusText = ""; //$NON-NLS-1$
 	
 /**
  * Creates a new workbench part.
@@ -282,6 +286,65 @@ protected void setTitleToolTip(String toolTip) {
  */
 public void showBusy(boolean busy){
 	//By default do nothing
+}
+
+/* (non-Javadoc)
+ * Method declared on IViewPart2.
+ * 
+ * @since 3.0
+ */
+public String getPartName() {
+    return partName;
+}
+
+/**
+ * Sets the name of this part. The name will be shown when the view is
+ * selected in tabs. If the part name is set to the empty string, the
+ * workbench will generate a name for the part. 
+ *
+ * @param partName the part name, or the empty string indicating that the
+ * workbench should use the default name for the part.
+ * 
+ * @since 3.0
+ */
+protected void setPartName(String partName) {
+	Assert.isNotNull(partName);
+ 
+	//Do not send changes if they are the same
+	if(Util.equals(this.partName, partName))
+		return;
+	this.partName = partName;
+	firePropertyChange(IWorkbenchPart.PROP_NAME);
+}
+
+/* (non-Javadoc)
+ * Method declared on IViewPart2.
+ * 
+ * @since 3.0
+ */
+public String getStatusText() {
+    return statusText;
+}
+
+/**
+ * Sets the status text for this part. The status text is typically
+ * a short string describing the current contents of the part. If
+ * set to the empty string, the workbench will provide a (possibly empty)
+ * status message for this part.
+ *
+ * @param statusText the status text, or the empty string indicating
+ * that the workbench should manage the status message for this part
+ * 
+ * @since 3.0
+ */
+protected void setStatusText(String statusText) {
+	Assert.isNotNull(statusText);
+     
+	//Do not send changes if they are the same
+	if(Util.equals(this.statusText, statusText))
+		return;
+	this.statusText = statusText;
+	firePropertyChange(IWorkbenchPart.PROP_STATUS);
 }
 
 }

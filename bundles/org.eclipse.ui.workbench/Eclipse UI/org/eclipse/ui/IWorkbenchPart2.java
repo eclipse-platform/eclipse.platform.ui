@@ -11,20 +11,20 @@
 package org.eclipse.ui;
 
 /**
- * Extends {@link IViewPart}, adding the name and status text properties.
+ * Extends {@link IWorkbenchPart}, adding the name and status text properties.
  * Prior to 3.0, a view's title was often modified to show both the part
  * name and extra status text.  With this interface, the distinction is
  * made more explicit. 
  * 
  * @since 3.0 
  */
-public interface IViewPart2 extends IViewPart {
-
+public interface IWorkbenchPart2 extends IWorkbenchPart {
 	/**
      * Returns the name of this part. If this value changes the part must fire a
      * property listener event with <code>PROP_TITLE</code>.
      * 
-     * @return the name of this view (not null)
+     * @return the name of this view, or the empty string if the name is being managed
+     * by the workbench (not null)
      */
 	public String getPartName();
 	

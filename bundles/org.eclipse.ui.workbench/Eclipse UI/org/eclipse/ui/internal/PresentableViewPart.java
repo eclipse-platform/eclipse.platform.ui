@@ -164,14 +164,14 @@ public class PresentableViewPart implements IPresentablePart {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.presentations.IPresentablePart#getTitleStatus()
 	 */
-	public String getTitleStatus() {
+	public String getTitleStatus() {		
 		String title = getTitle();
 		
 		String name = getName();
 		
 		// Return the empty string if the title is unmodified
 		if (title.equals(name)) {
-			return new String();
+			return Util.ZERO_LENGTH_STRING;
 		} 
 
 		if (title.startsWith(name)) {
