@@ -34,7 +34,7 @@ public class Semaphore {
 		return runnable;
 	}
 	public int hashCode() {
-		return runnable.hashCode();
+		return runnable == null ? 0 : runnable.hashCode();
 	}
 	public synchronized void release() {
 		notifications++;
@@ -42,6 +42,6 @@ public class Semaphore {
 	}
 	// for debug only
 	public String toString() {
-		return runnable.toString();
+		return "Semaphore(" + runnable + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }
