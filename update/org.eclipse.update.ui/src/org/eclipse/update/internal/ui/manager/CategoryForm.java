@@ -62,7 +62,7 @@ protected void createContents(Composite parent) {
 				public void run() {
 					ICategory category = currentCategory.getCategory();
 					if (category!=null) {
-						IInfo info = category.getDescription();
+						IURLEntry info = category.getDescription();
 						URL infoURL = info.getURL();
 						if (infoURL!=null) {
 							DetailsView dv = (DetailsView)getPage().getView();
@@ -87,9 +87,9 @@ public void expandTo(Object obj) {
 
 private void inputChanged(SiteCategory category) {
 	setHeadingText(category.getCategory().getLabel());
-	IInfo info = category.getCategory().getDescription();
+	IURLEntry info = category.getCategory().getDescription();
 	if (info!=null) {
-		String text = info.getText();
+		String text = info.getAnnotation();
 		if (text!=null)
 		   textLabel.setText(text);
 		else

@@ -17,7 +17,7 @@ public class VersionedIdentifier {
 		
 		if (idWithVersion==null || (idWithVersion=idWithVersion.trim()).equals("")) {
 				this.id = "";
-				this.version = new Version();
+				this.version = new Version(0,0,0);
 			}
 		
 		int loc = idWithVersion.lastIndexOf(SEPARATOR);
@@ -27,7 +27,7 @@ public class VersionedIdentifier {
 			version = new Version(versionName);
 		} else {
 			this.id = "";			
-			version = new Version();
+			version = new Version(0,0,0);
 		}
 	}
 	

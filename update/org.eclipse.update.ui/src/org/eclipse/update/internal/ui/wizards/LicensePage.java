@@ -44,7 +44,7 @@ private static final String KEY_DECLINE = "InstallWizard.LicensePage.decline";
 		
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		text.setLayoutData(gd);
-		text.setText(job.getFeature().getLicense().getText());
+		text.setText(job.getFeature().getLicense().getAnnotation());
 		
 		Composite buttonContainer = new Composite(client, SWT.NULL);
 		layout = new GridLayout();

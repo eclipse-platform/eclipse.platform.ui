@@ -107,7 +107,7 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 				// feature URL
 				String URLInfoString = null;
 				if (element.getURL() != null) {
-					ISite featureSite = ((FeatureReference) element).getSite();
+					ISite featureSite = (ISite)((FeatureReference) element).getSite();
 					URLInfoString = UpdateManagerUtils.getURLAsString(featureSite.getURL(), element.getURL());
 					w.print("url=\"" + Writer.xmlSafe(URLInfoString) + "\"");
 				}
@@ -126,7 +126,7 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 				// feature URL
 				String URLInfoString = null;
 				if (element.getURL() != null) {
-					ISite featureSite = ((FeatureReference) element).getSite();
+					ISite featureSite = element.getSite();
 					URLInfoString = UpdateManagerUtils.getURLAsString(featureSite.getURL(), element.getURL());
 					w.print("url=\"" + Writer.xmlSafe(URLInfoString) + "\"");
 				}
@@ -152,7 +152,7 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 		IFeatureReference installedFeature;
 		//Start UOW ?
 		ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_FEATURE_INSTALL);
-		activity.setLabel(feature.getIdentifier().toString());
+		activity.setLabel(feature.getVersionIdentifier().toString());
 		activity.setDate(new Date());
 
 		try {
@@ -227,8 +227,9 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 					featureToUnconfigure.remove(element);
 					// log no feature to unconfigure
 					if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
-						String feature = element.getFeature().getIdentifier().toString();
-						String site = element.getFeature().getSite().getURL().toExternalForm();
+						String feature = element.getFeature().getVersionIdentifier().toString();
+						ISite site = element.getFeature().getSite();
+						String siteString = (site!=null)?site.getURL().toExternalForm():"NO SITE";
 						UpdateManagerPlugin.getPlugin().debug("Attempted to unconfigure the feature :" + feature + " on site :" + site + " but it cannot be found.");
 					}
 				}
@@ -302,10 +303,15 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 				if (feature != null) {
 					// get plugin identifier
 					List siteIdentifiers = new ArrayList(0);
-					IPluginEntry[] siteEntries = feature.getSite().getPluginEntries();
-					for (int index = 0; index < siteEntries.length; index++) {
-						IPluginEntry entry = siteEntries[index];
-						siteIdentifiers.add(entry.getIdentifier());
+					ISite site= feature.getSite();
+					IPluginEntry[] siteEntries=null;
+					
+					if (site!=null){
+						siteEntries= site.getPluginEntries();
+						for (int index = 0; index < siteEntries.length; index++) {
+							IPluginEntry entry = siteEntries[index];
+							siteIdentifiers.add(entry.getIdentifier());
+						}
 					}
 
 					if (siteEntries != null) {
@@ -317,8 +323,9 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 								// doesn't see to exist on the site
 								String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 								IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Error verifying existence of plugin:" + entry.getIdentifier().toString(), null);
-								UpdateManagerPlugin.getPlugin().getLog().log(status);								
-								if (!handler.reportProblem("Cannot find entry " + entry.getIdentifier().toString() + " on site " + feature.getSite().getURL().toExternalForm())) {
+								UpdateManagerPlugin.getPlugin().getLog().log(status);	
+								String siteString = (site!=null)?site.getURL().toExternalForm():"NO SITE";															
+								if (!handler.reportProblem("Cannot find entry " + entry.getIdentifier().toString() + " on site " + siteString)) {
 									throw new InterruptedException();
 								}
 							} // end if not found in site

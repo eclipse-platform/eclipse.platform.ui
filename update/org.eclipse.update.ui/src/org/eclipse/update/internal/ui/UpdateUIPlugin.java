@@ -151,7 +151,7 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 
 		for (int i=0; i<references.length; i++) {
 			IFeature feature = references[i].getFeature();
-			String id = feature.getIdentifier().getIdentifier();
+			String id = feature.getVersionIdentifier().getIdentifier();
 			if (featureId.equals(id)) {
 				result.add(feature);
 			}

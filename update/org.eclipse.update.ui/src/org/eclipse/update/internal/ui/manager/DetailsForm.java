@@ -336,7 +336,7 @@ private String getInstalledVersion(IFeature feature) {
 		ILocalSite localSite = SiteManager.getLocalSite();
 	   	IInstallConfiguration config = localSite.getCurrentConfiguration();
 	   	IConfigurationSite [] isites = config.getConfigurationSites();
-	   	String id = feature.getIdentifier().getIdentifier();
+	   	String id = feature.getVersionIdentifier().getIdentifier();
 	   	StringBuffer buf = new StringBuffer();
 	   	for (int i=0; i<isites.length; i++) {
 			ISite isite = isites[i].getSite();
@@ -345,7 +345,7 @@ private String getInstalledVersion(IFeature feature) {
 				IFeature installedFeature = result[j];
 				if (buf.length()>0) 
 			   		buf.append(", ");
-				buf.append(result[j].getIdentifier().getVersion().toString());
+				buf.append(result[j].getVersionIdentifier().getVersion().toString());
 				if (installedFeature.equals(feature)) {
 					alreadyInstalled=true;
 				}
@@ -371,7 +371,7 @@ private void inputChanged(IFeature feature) {
 	
 	setHeadingText(feature.getLabel());
 	providerLabel.setText(feature.getProvider());
-	versionLabel.setText(feature.getIdentifier().getVersion().toString());
+	versionLabel.setText(feature.getVersionIdentifier().getVersion().toString());
 	String installedVersion = getInstalledVersion(feature);
 	if (installedVersion==null)
 	   installedVersion = UpdateUIPlugin.getResourceString(KEY_NOT_INSTALLED);
@@ -383,7 +383,7 @@ private void inputChanged(IFeature feature) {
 	String pattern = UpdateUIPlugin.getResourceString(KEY_SIZE_VALUE);
 	String format = UpdateUIPlugin.getFormattedMessage(pattern, stext);
 	sizeLabel.setText(format);
-	descriptionText.setText(feature.getDescription().getText());
+	descriptionText.setText(feature.getDescription().getAnnotation());
 	Image logoImage = loadProviderImage(feature);
 	if (logoImage==null)
 	   logoImage = providerImage;

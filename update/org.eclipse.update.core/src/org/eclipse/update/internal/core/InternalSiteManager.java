@@ -1,12 +1,11 @@
 package org.eclipse.update.internal.core;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 
 import java.io.File;
-import java.lang.reflect.Constructor;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
@@ -14,6 +13,7 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.core.model.InvalidSiteTypeException;
 
 /**
  * 
@@ -40,8 +40,8 @@ public class InternalSiteManager {
 		sitesTypes = new HashMap();
 
 		// assign default type to protocol		
-		sitesTypes.put("http", SiteURL.SITE_TYPE);
-		sitesTypes.put("file", SiteFile.SITE_TYPE);
+		sitesTypes.put("http", SiteURLContentProvider.SITE_TYPE);
+		sitesTypes.put("file", SiteFileContentProvider.SITE_TYPE);
 	}
 
 	/**
@@ -91,7 +91,7 @@ public class InternalSiteManager {
 				site = attemptCreateSite(type, siteURL);
 
 				// same type as we forced ? do not continue
-				if (site.getType().equals(type)) {
+				if (site!=null && site.getType().equals(type)) {
 					String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 					IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "The site.xml does not contain any type and the protocol of the URL is not recognized. protocol:" + protocol, null);
 					throw new CoreException(status);
@@ -106,7 +106,8 @@ public class InternalSiteManager {
 
 		return site;
 	}
-
+	
+		
 	/**
 	 * return the local site where the feature will be temporary transfered
 	 */

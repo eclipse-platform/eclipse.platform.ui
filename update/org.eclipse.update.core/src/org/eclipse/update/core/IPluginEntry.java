@@ -1,7 +1,7 @@
 package org.eclipse.update.core;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
  
@@ -99,7 +99,7 @@ public interface IPluginEntry {
 	 * @since 2.0 
 	 */
 
-	int getDownloadSize();
+	long getDownloadSize();
 
 
 	/**
@@ -112,7 +112,7 @@ public interface IPluginEntry {
 	 * @since 2.0 
 	 */
 
-	int getInstallSize(); 
+	long getInstallSize(); 
 	
 }
 

@@ -21,16 +21,18 @@ public interface IFeatureFactory {
 	 * extension point ID
 	 */
 	public static final String SIMPLE_EXTENSION_ID = "featureTypes";
-	public static final String PACKAGED_FEATURE_TYPE = "jar";
+	public static final String INSTALLABLE_FEATURE_TYPE = "jar";
 	public static final String EXECUTABLE_FEATURE_TYPE = "exe";	
 	
 	/**
-	 * Returns a feature based on the URL and the site in which the Feature is.
+	 * Returns a feature based on the URL and the site in which the DefaultFeature is.
 	 * @return a feature
 	 * @since 2.0 
 	 */
 
 	IFeature createFeature(URL url,ISite site) throws CoreException;
+	
+	IFeature createFeature(ISite site) throws CoreException;
 		
 }
 

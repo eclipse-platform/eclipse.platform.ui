@@ -7,7 +7,7 @@ package org.eclipse.update.core;
 /**
  * a Category is used by the User Interface to categorize Features.
  * They are declared in the <code>site.xml</code> file of the Site.
- * The association between a Feature and a category is also done
+ * The association between a DefaultFeature and a category is also done
  * In this file.
  * 
  * <p>
@@ -59,6 +59,6 @@ public interface ICategory {
 	 * @since 2.0 
 	 */
 
-	IInfo getDescription();
+	IURLEntry getDescription();
 }
 

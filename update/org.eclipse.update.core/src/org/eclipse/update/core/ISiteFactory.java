@@ -1,14 +1,14 @@
 package org.eclipse.update.core;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
  
 import java.net.URL;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.update.internal.core.InvalidSiteTypeException;
+import org.eclipse.update.core.model.InvalidSiteTypeException;
 import org.eclipse.update.internal.core.UpdateManagerPlugin;
  
  /**

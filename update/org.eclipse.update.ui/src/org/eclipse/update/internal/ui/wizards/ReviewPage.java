@@ -75,7 +75,7 @@ private static final String KEY_CORRECT = "InstallWizard.ReviewPage.correct";
 		label.setText(UpdateUIPlugin.getResourceString(KEY_VERSION));
 		label = new Label(client, SWT.NULL);
 		label.setFont(JFaceResources.getBannerFont());
-		label.setText(job.getFeature().getIdentifier().getVersion().toString());
+		label.setText(job.getFeature().getVersionIdentifier().getVersion().toString());
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		label.setLayoutData(gd);
 

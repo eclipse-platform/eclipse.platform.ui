@@ -1,12 +1,14 @@
 package org.eclipse.update.core;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
  
 import java.net.URL;
+
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
  
  /**
   * Features define the packaging structure for a group 
@@ -27,23 +29,32 @@ import org.eclipse.core.runtime.CoreException;
 public interface IFeature extends IPluginContainer {
 
 	/**
-	 * Returns the Identifier of this Feature.
-	 * The Identifier is not intended to be the key of the Feature.
+	 * Returns the Identifier of this DefaultFeature.
+	 * The Identifier is not intended to be the key of the DefaultFeature.
 	 * the URL is the key of the feature.
 	 * @return the Identifier of this feature.
 	 * @see VersionedIdentifier
 	 * @since 2.0 
 	 */
 
-	VersionedIdentifier getIdentifier();
+	VersionedIdentifier getVersionIdentifier();
 	
 	/**
-	 * Returns the Site this Featur belongs to.
+	 * Returns the Site this DefaultFeature belongs to.
+	 * The site may be <code>null</code>.
 	 * @return the site of this feature
 	 * @since 2.0 
 	 */
 
 	ISite getSite();
+	
+	/**
+	 * Sets the Site this DefaultFeature belongs to.
+	 * @throws CoreException if the site is already set for this feature
+	 * @since 2.0 
+	 */
+
+	void setSite(ISite site) throws CoreException;	
 	
 	/**
 	 * Returns the label of the feature.
@@ -55,13 +66,13 @@ public interface IFeature extends IPluginContainer {
 	String getLabel();
 	
 	/**
-	 * Returns the URL that points at the Feature.
+	 * Returns the URL that points at the DefaultFeature.
 	 * This URL is the unique identifier of the feature
 	 * within the site.
 	 * 
 	 * The URL is declared in the <code>feature.xml</code> file.	
 	 * The URL can be relative to the <codesite.xml</code> or absolute.
-	 * The Feature knows how to decipher the URL.
+	 * The DefaultFeature knows how to decipher the URL.
 	 * 
 	 * @return the URL identifying feature in the Site.
 	 * @since 2.0 
@@ -70,8 +81,8 @@ public interface IFeature extends IPluginContainer {
 	URL getURL();
 	
 	/**
-	 * Returns the Update Information about the Feature.
-	 * The Info is usually a URL of a Site in which user 
+	 * Returns the Update Information about the DefaultFeature.
+	 * The URLEntry is usually a URL of a Site in which user 
 	 * can find new version of the feature.
 	 * 
 	 * The Update Information is composed of a URL and short label
@@ -79,12 +90,12 @@ public interface IFeature extends IPluginContainer {
 	 * 
 	 * The URL is declared in the <code>feature.xml</code> file.
 	 * 
-	 * @see IInfo
-	 * @return the IInfo that contains Update Information about this feature
+	 * @see IURLEntry
+	 * @return the IURLEntry that contains Update Information about this feature
 	 * @since 2.0 
 	 */
 
-	IInfo getUpdateInfo() ;
+	IURLEntry getUpdateSiteEntry() ;
 	
 	/**
 	 * Return an array of info where the user can find other features
@@ -95,13 +106,13 @@ public interface IFeature extends IPluginContainer {
 	 * 
 	 * The URLs are declared in the <code>feature.xml</code> file.
 	 *  
-	 * @see IInfo
+	 * @see IURLEntry
 	 * @return a Array of discovery info.Returns an empty array
 	 * if there are no discovey info.
 	 * @since 2.0 
 	 */
 
-	IInfo [] getDiscoveryInfos() ;
+	IURLEntry [] getDiscoverySiteEntries() ;
 	
 	/**
 	 * Returns the provider of the feature
@@ -112,7 +123,7 @@ public interface IFeature extends IPluginContainer {
 	String getProvider() ;
 	
 	/**
-	 * Returns the description of the Feature.
+	 * Returns the description of the DefaultFeature.
 	 * The description can be a short text and/or a
 	 * URL pointing to a file.
 	 * 
@@ -121,15 +132,15 @@ public interface IFeature extends IPluginContainer {
 	 * 
 	 * The description is declared in the <code>feature.xml</code> file.
 	 * 
-	 * @see IInfo
+	 * @see IURLEntry
 	 * @return the description of this feature
 	 * @since 2.0 
 	 */
 
-	IInfo getDescription() ;
+	IURLEntry getDescription() ;
 	
 	/**
-	 * Returns the copyright of the Feature.
+	 * Returns the copyright of the DefaultFeature.
 	 * The copyright can be a short text and/or a
 	 * URL pointing to a file.
 	 * 
@@ -138,15 +149,15 @@ public interface IFeature extends IPluginContainer {
 	 * 
 	 * The copyright is declared in the <code>feature.xml</code> file.
 	 * 
-	 * @see IInfo
+	 * @see IURLEntry
 	 * @return the copyright of this feature
 	 * @since 2.0 
 	 */
 
-	IInfo getCopyright() ;
+	IURLEntry getCopyright() ;
 	
 	/**
-	 * Returns the license of the Feature.
+	 * Returns the license of the DefaultFeature.
 	 * The license can be a short text and/or a
 	 * URL pointing to a file.
 	 * 
@@ -155,12 +166,12 @@ public interface IFeature extends IPluginContainer {
 	 * 
 	 * The license is declared in the <code>feature.xml</code> file.
 	 * 
-	 * @see IInfo
+	 * @see IURLEntry
 	 * @return the license of this feature
 	 * @since 2.0 
 	 */
 
-	IInfo getLicense() ;
+	IURLEntry getLicense() ;
 	
 	/**
 	 * Optional operating system specification.
@@ -252,6 +263,20 @@ public interface IFeature extends IPluginContainer {
 	// FIXME: javadoc
 	boolean isInstallable();
 
+	/**
+	 * Install this feature into the targetFeature
+	 * @param targetFeature the feature to install into
+	 * @param monitor
+	 * @throws CoreException
+	 */
+	public IFeatureReference install(IFeature targetFeature, IProgressMonitor monitor) throws CoreException;
+
+	/**
+	 * Removes the feature from the Site
+	 * @param monitor
+	 * @throws CoreException
+	 */
+	public void remove(IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Returns an array of archives identifier that compose the feature.
@@ -260,9 +285,6 @@ public interface IFeature extends IPluginContainer {
 	 * @deprecated seems nobody uses it
 	 * @since 2.0 
 	 */
-	// FIXME: javadoc	
-	String[] getArchives();
-	
 	/**
 	 * Returns an array of archives identifier that compose the feature.
 	 * 
@@ -270,7 +292,7 @@ public interface IFeature extends IPluginContainer {
 	 * @since 2.0 
 	 */
 	// FIXME: javadoc	
-	IDataEntry[] getDataEntries();
+	INonPluginEntry[] getNonPluginEntries();
 	
 	/**
 	 * Adds a dataEntry to the list of managed dataEntry
@@ -279,7 +301,7 @@ public interface IFeature extends IPluginContainer {
 	 * @since 2.0 
 	 */
 	
-	void addDataEntry(IDataEntry dataEntry);
+	void addNonPluginEntry(INonPluginEntry dataEntry);
 	
 	/**
 	 * returns the download size
@@ -316,7 +338,33 @@ public interface IFeature extends IPluginContainer {
 	 */
 
 	String getApplication();
-		
+	
+	/**
+	 * Sets the IFeatureContentProvider for this feature
+	 * @since 2.0
+	 */
+	void setFeatureContentProvider(IFeatureContentProvider featureContentProvider);
+	
+	/**
+	 * Returns the IFeatureContentProvider for this feature
+	 * @throws CoreExcepton if the content provider is <code>null</code>
+	 * @since 2.0
+	 */
+	IFeatureContentProvider getFeatureContentProvider() throws CoreException;	
+	
+	/**
+	 * Sets the IFeatureContentConsumer for this feature
+	 * @since 2.0
+	 */
+	void setContentConsumer(IFeatureContentConsumer contentConsumer);
+
+	/**
+	 *Returns the IFeatureContentConsumer for this feature
+	 * @throws CoreException when the DefaultFeature does not allow storage.
+	 * @since 2.0
+	 */
+	IFeatureContentConsumer getContentConsumer() throws CoreException;
+				
 }
 
 

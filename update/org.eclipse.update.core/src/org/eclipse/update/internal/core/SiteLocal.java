@@ -488,7 +488,7 @@ public class SiteLocal implements ILocalSite, IWritable {
 	/**
 	 * returns a list of PluginEntries that are not used by any other configured feature
 	 */
-	public IPluginEntry[] getDeltaPluginEntries(IFeature feature) throws CoreException {
+	public IPluginEntry[] getUnusedPluginEntries(IFeature feature) throws CoreException {
 
 		IPluginEntry[] pluginsToRemove = new IPluginEntry[0];
 

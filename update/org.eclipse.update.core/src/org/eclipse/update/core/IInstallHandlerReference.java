@@ -40,7 +40,7 @@ public interface IInstallHandlerReference {
 	 * @since 2.0 
 	 */
 
-	String getClass();
+	String getInstallHandlerClass();
 
 }
 

@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.update.core.IFeatureReference;
-import org.eclipse.update.core.IInfo;
+import org.eclipse.update.core.IURLEntry;
 import org.eclipse.update.core.ILocalSite;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;

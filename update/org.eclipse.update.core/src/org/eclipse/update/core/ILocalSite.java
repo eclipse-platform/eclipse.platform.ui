@@ -163,5 +163,11 @@ public interface ILocalSite {
 	 */	
 	IInstallConfiguration getPreservedConfigurationFor(IInstallConfiguration configuration);
 
+	/**
+	 * Returns a list of PluginEntries that are not used by any other configured feature
+	 * @since 2.0
+	 */
+	public IPluginEntry[] getUnusedPluginEntries(IFeature feature) throws CoreException;
+
 }
 

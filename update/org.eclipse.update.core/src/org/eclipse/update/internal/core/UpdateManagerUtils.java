@@ -12,6 +12,7 @@ import java.util.ResourceBundle;
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.runtime.*;
+import org.eclipse.update.core.Site;
 import org.eclipse.update.core.SiteManager;
 
 public class UpdateManagerUtils {
@@ -286,6 +287,8 @@ public class UpdateManagerUtils {
 			result = file;
 		}
 		return result;*/
+		
+		if (url==null) return null;
 		return url.getPath();
 	}
 	

@@ -2,6 +2,8 @@
 <project-description>
 	<nature id="org.eclipse.jdt.core.javanature"/>
 	<nature id="org.eclipse.pde.PluginNature"/>
+	<reference project-name="org.eclipse.update.core"/>
+	<reference project-name="org.eclipse.update.ui.forms"/>
 	<builder name="org.eclipse.jdt.core.javabuilder">
 	</builder>
 	<builder name="org.eclipse.pde.ManifestBuilder">

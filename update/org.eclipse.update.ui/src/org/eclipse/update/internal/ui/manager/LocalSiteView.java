@@ -21,7 +21,7 @@ import org.eclipse.update.core.ICategory;
 import org.eclipse.update.core.IConfigurationSite;
 import org.eclipse.update.core.IFeature;
 import org.eclipse.update.core.IImport;
-import org.eclipse.update.core.IInfo;
+import org.eclipse.update.core.IURLEntry;
 import org.eclipse.update.core.IInstallConfiguration;
 import org.eclipse.update.core.IPluginEntry;
 import org.eclipse.update.core.ISite;
@@ -172,7 +172,7 @@ class LocalSiteLabelProvider extends LabelProvider {
 		}
 		if (obj instanceof IFeature) {
 			IFeature feature = (IFeature)obj;
-			String version = feature.getIdentifier().getVersion().toString();
+			String version = feature.getVersionIdentifier().getVersion().toString();
 			return feature.getLabel() + " "+version;
 		}
 		return super.getText(obj);

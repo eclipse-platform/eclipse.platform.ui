@@ -103,7 +103,7 @@ class SiteLabelProvider extends LabelProvider {
 		if (obj instanceof CategorizedFeature) {
 			try {
 				IFeature feature = ((CategorizedFeature)obj).getFeature();
-				String version = feature.getIdentifier().getVersion().toString();
+				String version = feature.getVersionIdentifier().getVersion().toString();
 				return feature.getLabel()+" "+version;
 			}
 			catch (CoreException e) {

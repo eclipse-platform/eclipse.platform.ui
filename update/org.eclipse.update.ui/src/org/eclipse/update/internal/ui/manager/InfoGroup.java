@@ -14,7 +14,7 @@ import org.eclipse.update.internal.ui.UpdateUIPlugin;
 public class InfoGroup extends ExpandableGroup {
 	private static final String KEY_TEXT = "InfoGroup.plainTextVersion";
 	private static final String KEY_HTML = "InfoGroup.htmlVersion";
-	private IInfo info;
+	private IURLEntry info;
 	private SelectableFormLabel textLink;
 	private SelectableFormLabel urlLink;
 	private String textLabelText;
@@ -52,7 +52,7 @@ public class InfoGroup extends ExpandableGroup {
 	}
 	
 	protected void linkActivated() {
-		boolean hasText = info.getText()!=null && info.getText().length()>0;
+		boolean hasText = info.getAnnotation()!=null && info.getAnnotation().length()>0;
 		boolean hasURL = info.getURL()!=null;
 		if (hasText && hasURL) return;
 		if (hasText)
@@ -61,9 +61,9 @@ public class InfoGroup extends ExpandableGroup {
 		   showURL();
 	}
 	
-	public void setInfo(IInfo info) {
+	public void setInfo(IURLEntry info) {
 		this.info = info;
-		boolean hasText = info.getText()!=null && info.getText().length()>0;
+		boolean hasText = info.getAnnotation()!=null && info.getAnnotation().length()>0;
 		boolean hasURL = info.getURL()!=null;
 		setExpandable(hasText && hasURL);
 		setExpanded(false);
@@ -77,7 +77,7 @@ public class InfoGroup extends ExpandableGroup {
 	}
 	
 	private void showText() {
-		String text = info.getText();
+		String text = info.getAnnotation();
 		view.showText(text);
 	}
 	
