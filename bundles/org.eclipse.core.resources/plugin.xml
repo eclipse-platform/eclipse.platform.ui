@@ -28,7 +28,7 @@
    <extension-point id="refreshProviders" name="%refreshProvidersName" schema="schema/refreshProviders.exsd"/>
 
 	<extension id="preferences" point="org.eclipse.core.runtime.preferences" name="preferences">
-		<preferences scope="project" class="org.eclipse.core.internal.resources.ProjectPreferences"/>
+		<scope name="project" class="org.eclipse.core.internal.resources.ProjectPreferences"/>
 	</extension>
 	
 	<extension point="org.eclipse.core.runtime.contentTypes">
