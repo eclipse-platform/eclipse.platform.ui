@@ -72,5 +72,5 @@ public interface IIntroHTMLConstants {
 	String SPAN_CLASS_TEXT = "text"; //$NON-NLS-1$
 	
 	/* HTML style */
-	String STYLE_HTML = "HTML, IMG { border: 0px; }"; //$NON-NLS-1$
+	String STYLE_HTML = "HTML, BODY, IMG { border: 0px; }"; //$NON-NLS-1$
 }
