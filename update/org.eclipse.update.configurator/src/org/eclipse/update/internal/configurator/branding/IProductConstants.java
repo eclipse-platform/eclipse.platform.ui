@@ -68,4 +68,10 @@ public interface IProductConstants {
 	 * </p>
 	 */
 	public static final String WINDOW_IMAGES = "windowImages"; //$NON-NLS-1$
+	/**
+	 * A URL for the products's welcome page (special XML-based format)
+	 * ($nl$/ prefix to permit locale-specific translations of entire file).
+	 * Products designed to run "headless" typically would not have such a page.
+	 */
+	public static final String WELCOME_PAGE = "welcomePage";  //$NON-NLS-1$
 }

@@ -235,7 +235,7 @@ public class FeatureEntry
 			return branding.getFeatureImageURL() == null ? null : branding.getFeatureImageURL().toExternalForm();
 		else if (key.equals(TIPS_AND_TRICKS_HREF)) 
 			return branding.getTipsAndTricksHref();
-		else if (key.equals(WELCOME_PAGE)) 
+		else if (key.equals(IBundleGroupConstants.WELCOME_PAGE)) // same value is used by product and bundle group
 			return branding.getWelcomePageURL() == null ? null : branding.getWelcomePageURL().toExternalForm();
 		else if (key.equals(WELCOME_PERSPECTIVE))
 			return branding.getWelcomePerspectiveId();
