@@ -33,7 +33,7 @@
 <!--                                                                                   -->
 <!-- ================================================================================= -->
    <extension-point id="configExtension" name="%configExtension" schema="schema/org.eclipse.ui.intro.configExtension.exsd"/>
-
+   
    <extension
          point="org.eclipse.ui.intro.configExtension">
       <standbyContentPart

@@ -78,13 +78,20 @@ public final class CustomizableIntroPart extends IntroPart {
         // is still not loaded here.
     }
 
+    public void init(IIntroSite site) throws PartInitException {
+        // no memento, so pass null. We can remove this method.
+        init(site, null);
+    }
+
     /*
      * (non-Javadoc)
      * 
-     * @see org.eclipse.ui.internal.temp.IIntroPart#init(org.eclipse.ui.internal.temp.IIntroSite)
+     * @see org.eclipse.ui.intro.IIntroPart#init(org.eclipse.ui.intro.IIntroSite,
+     *      org.eclipse.ui.IMemento)
      */
-    public void init(IIntroSite site) throws PartInitException {
-        setSite(site);
+    public void init(IIntroSite site, IMemento memento)
+            throws PartInitException {
+        super.init(site, memento);
 
         // load the correct model based in the current Intro Part id. Set the
         // IntroPartId in the manager class.
@@ -98,9 +105,9 @@ public final class CustomizableIntroPart extends IntroPart {
             // we have a valid config contribution, get presentation.
             presentation = model.getPresentation();
             if (presentation != null)
-                presentation.init(this);
+                presentation.init(this, memento);
             standbyPart = new StandbyPart(model);
-            standbyPart.init(this);
+            standbyPart.init(this, memento);
         }
 
         if (model == null || !model.hasValidConfig())
@@ -108,18 +115,7 @@ public final class CustomizableIntroPart extends IntroPart {
                     "CustomizableIntroPart.configNotFound",
                     new Object[] { ModelLoaderUtil.getLogString(
                             getConfigurationElement(), null) }, null);
-    }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.intro.IIntroPart#init(org.eclipse.ui.intro.IIntroSite,
-     *      org.eclipse.ui.IMemento)
-     */
-    public void init(IIntroSite site, IMemento memento)
-            throws PartInitException {
-        init(site);
-        restoreIntroState(memento);
     }
 
     /**
@@ -208,7 +204,6 @@ public final class CustomizableIntroPart extends IntroPart {
      */
     private StandbyPart getStandbyPart() {
         return standbyPart;
-
     }
 
     /**
@@ -221,28 +216,20 @@ public final class CustomizableIntroPart extends IntroPart {
     public Control getControl() {
         return container;
     }
-    
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.intro.IIntroPart#saveState(org.eclipse.ui.IMemento)
-	 */
-	public void saveState(IMemento memento) {
-		if(presentation != null)
-			presentation.saveState(memento);
-		if(standbyPart != null)
-			standbyPart.saveState(memento);
-	}
 
-	/**
-	 * Restore the saved Intro state.  Delegate the work to 
-	 * the appropriate parts.
-	 * @param memento
-	 */
-	private void restoreIntroState(IMemento memento){
-		if(presentation != null)
-			presentation.restoreState(memento, model);
-		if(standbyPart != null)
-			standbyPart.restoreState(memento, model);
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.intro.IIntroPart#saveState(org.eclipse.ui.IMemento)
+     */
+    public void saveState(IMemento memento) {
+        if (presentation != null)
+            presentation.saveState(memento);
+        if (standbyPart != null)
+            standbyPart.saveState(memento);
+    }
+
+
 }
 
 

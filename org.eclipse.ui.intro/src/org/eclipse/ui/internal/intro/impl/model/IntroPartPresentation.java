@@ -17,8 +17,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.internal.intro.impl.IIntroConstants;
-import org.eclipse.ui.internal.intro.impl.IntroPlugin;
 import org.eclipse.ui.internal.intro.impl.model.loader.*;
 import org.eclipse.ui.internal.intro.impl.presentations.*;
 import org.eclipse.ui.internal.intro.impl.util.*;
@@ -77,8 +75,10 @@ public class IntroPartPresentation extends AbstractIntroElement {
 
     private AbstractIntroPartImplementation implementation;
 
-    // CustomizableIntroPart instance. Passed to the Implementation classes.
+    // CustomizableIntroPart and memento instances. Passed to the Implementation
+    // classes.
     private IIntroPart introPart;
+    private IMemento memento;
 
     /**
      *  
@@ -153,11 +153,13 @@ public class IntroPartPresentation extends AbstractIntroElement {
      * @param introPart
      * @throws PartInitException
      */
-    public void init(IIntroPart introPart) throws PartInitException {
+    public void init(IIntroPart introPart, IMemento memento)
+            throws PartInitException {
         // REVISIT: Called when the actual UI needs to be created. Incomplete
         // separation of model / UI. Will change later. should not get here if
         // there is no valid implementation.
         this.introPart = introPart;
+        this.memento = memento;
     }
 
     /**
@@ -180,7 +182,7 @@ public class IntroPartPresentation extends AbstractIntroElement {
                     // failed to create executable.
                     continue;
 
-                implementation.init(introPart);
+                implementation.init(introPart, memento);
                 implementation.createPartControl(parent);
                 Log.info("Loaded config implementation from: " //$NON-NLS-1$
                         + ModelLoaderUtil.getLogString(implementationElement,
@@ -205,7 +207,7 @@ public class IntroPartPresentation extends AbstractIntroElement {
             // worst case scenario. We failed in all cases.
             implementation = new FormIntroPartImplementation();
             try {
-                implementation.init(introPart);
+                implementation.init(introPart, memento);
             } catch (Exception e) {
                 // should never be here.
                 Log.error(e.getMessage(), e);
@@ -365,55 +367,18 @@ public class IntroPartPresentation extends AbstractIntroElement {
     }
 
     /**
-     * Save the current state of the intro.  Delegate to the implementation
-     * to do the work, as different implementations may have different
-     * requirements.
-     * @param memento the memento in which to store state information
+     * Save the current state of the intro. Delegate to the implementation to do
+     * the work, as different implementations may have different requirements.
+     * 
+     * @param memento
+     *            the memento in which to store state information
      */
-    public void saveState(IMemento memento){
-    	if(implementation != null)
-    		implementation.saveState(memento);
+    public void saveState(IMemento memento) {
+        if (implementation != null)
+            implementation.saveState(memento);
     }
-    
-    /**
-     * Restore the previous intro state from the provided memento.
-     * Currently, we only restore the last visited intro page.
-     * @param memento the memento that contains the previous state information
-     * @param model the model to set new state information on
-     */
-    public void restoreState(IMemento memento, IntroModelRoot model){
-    	if(memento == null || model == null || !model.hasValidConfig())
-			return;	
-    	IMemento introMemento = memento.getChild(IIntroConstants.INTRO_MEMENTO_TYPE);
-		if (introMemento != null) {
-			restoreCurrentPage(introMemento, model);
-		}
-    }
-    
-    /**
-     * Restore the current intro page.  This method simply stores the
-     * previous state data in the model and lets the specific
-     * implementations handle the rest.
-     * @param introMemento 
-     * @param model
-     */
-    protected void restoreCurrentPage(IMemento introMemento, IntroModelRoot model) {
-    	// check if the last page viewed was a static page
-		String staticURL = introMemento.getString(IIntroConstants.CURRENT_STATIC_PAGE);
-		if(staticURL != null) {
-			// set browser URL
-			model.setRestoredStaticURL(staticURL);
-		}
-		else {
-			// check if the last page was a dynamic page
-			String pageId = introMemento.getString(IIntroConstants.CURRENT_DYNAMIC_PAGE);
-			if(pageId != null){
-				model.setRestoredDynamicPageId(pageId);
-				model.setCurrentPageId(pageId);
-			}	
-		}
-    }
-    
+
+
     public void setFocus() {
         if (implementation != null)
             implementation.setFocus();
@@ -459,5 +424,5 @@ public class IntroPartPresentation extends AbstractIntroElement {
     public IntroHead getHead() {
         return head;
     }
-    
+
 }

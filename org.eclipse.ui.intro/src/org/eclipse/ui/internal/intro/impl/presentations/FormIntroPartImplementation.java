@@ -104,7 +104,6 @@ public class FormIntroPartImplementation extends
     }
 
     private ScrolledPageBook createMainPageBook(FormToolkit toolkit, Form form) {
-
         // get body and create page book in it. Body has GridLayout.
         Composite body = form.getBody();
         body.setLayout(new GridLayout());
@@ -114,32 +113,37 @@ public class FormIntroPartImplementation extends
         pageBook.setLayoutData(new GridData(GridData.FILL_BOTH));
         // creating root page form.
         if (!pageBook.hasPage(model.getHomePage().getId())) {
-            // if we do not have a root page form, create one 
+            // if we do not have a root page form, create one
             RootPageForm rootPageForm = new RootPageForm(toolkit, model, form);
             rootPageForm.createPartControl(pageBook, sharedStyleManager);
         }
-
+  
         // creating static page form.
         PageForm pageForm = null;
         if (!pageBook.hasPage(PageForm.PAGE_FORM_ID)) {
             // if we do not have this page create one in main page book.
-        	pageForm = new PageForm(toolkit, model, form);
+            pageForm = new PageForm(toolkit, model, form);
             pageForm.createPartControl(pageBook, sharedStyleManager);
         }
-        // now determine which page to show
-        AbstractIntroPage pageToShow = model.getCurrentPage();
+        // now determine which page to show.
+        String cachedPage = getCachedCurrentPage();
+        AbstractIntroPage pageToShow = null;
+        if (cachedPage != null)
+            getModelRoot().setCurrentPageId(cachedPage);
+        pageToShow = getModelRoot().getCurrentPage();
+
         // if the page to show is the root page
-        if(pageToShow != null && pageToShow instanceof IntroHomePage) {
+        if (pageToShow != null && pageToShow instanceof IntroHomePage) {
             pageBook.showPage(pageToShow.getId());
         }
         // we have to show one of the content pages
         else {
-        	if(pageToShow != null && pageForm != null){
-        		// first create the correct content
-        		pageForm.pageChanged(pageToShow.getId());
-        		// then show the page
-        		pageBook.showPage(PageForm.PAGE_FORM_ID);
-        	}
+            if (pageToShow != null && pageForm != null) {
+                // first create the correct content
+                pageForm.pageChanged(pageToShow.getId());
+                // then show the page
+                pageBook.showPage(PageForm.PAGE_FORM_ID);
+            }
         }
 
         return pageBook;
@@ -186,8 +190,8 @@ public class FormIntroPartImplementation extends
     }
 
     public void setFocus() {
-    	if(mainPageBook.getCurrentPage() != null)
-    		mainPageBook.getCurrentPage().setFocus();
+        if (mainPageBook.getCurrentPage() != null)
+            mainPageBook.getCurrentPage().setFocus();
     }
 
 }

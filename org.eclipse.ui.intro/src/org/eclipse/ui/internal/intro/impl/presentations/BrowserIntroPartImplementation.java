@@ -22,10 +22,10 @@ import org.eclipse.ui.internal.intro.impl.util.*;
 public class BrowserIntroPartImplementation extends
         AbstractIntroPartImplementation implements IPropertyListener {
 
-	
+
     // the browser widget that will display the intro content
     private Browser browser = null;
-    
+
     // the HTML generator used to generate dynamic content
     private IntroHTMLGenerator htmlGenerator = null;
 
@@ -132,51 +132,89 @@ public class BrowserIntroPartImplementation extends
             browser.setText(IntroPlugin.getString("Browser.invalidConfig")); //$NON-NLS-1$
             return;
         }
-        
-        // Check if we have a static url to restore
-        if(getModelRoot().getRestoredStaticURL() != null) {
-        	// set the URL the browser should display
-            boolean success = browser.setUrl(getModelRoot().getRestoredStaticURL());
-            if (!success) {
-                Log.error("Unable to set URL on the browser", null); //$NON-NLS-1$
-                return;
-            }
-        } else {
-        	// Check if we have a dynamic page to restore.
-        	// pageTOShow will either be the previously viewed dynamic page,
-        	// or the home page
-        	AbstractIntroPage pageToShow = getModelRoot().getCurrentPage();
-            if(pageToShow != null) {
-                // We have a dynamic case. Generate HTML for the page, and set it
-                // on the browser. 
-                generateDynamicContentForPage(pageToShow);
-                
-                // REVISIT: update the history here. The design of the history
-                // navigation is that it has to be updated independant of the
-                // property fired model events.
-                updateHistory(pageToShow.getId());
-            } else {
-            	// We are displaying a static root page for the first time this session.
-    	        IntroHomePage rootPage = getModelRoot().getHomePage();
-    	        // We have a static case. Set the url on the browser to be the url
-    	        // defined in the root page
-    	        if (!rootPage.isDynamic() && rootPage.getUrl() == null) {
-    	            // We have no content to display. log an error
-    	            Log.error("Url is null; no content to display in browser", //$NON-NLS-1$
-    	                    null);
-    	            return;
-    	        }
-    	        // set the URL the browser should display
-    	        boolean success = browser.setUrl(rootPage.getUrl());
-    	        if (!success) {
-    	            Log.error("Unable to set URL on the browser", null); //$NON-NLS-1$
-    	            return;
-    	        }
-            }
-        }
-        //Add this presentation as a listener to model
-        getModelRoot().addPropertyListener(this);
+
+
+
+        // the root page is the first page we want to display, if there is no
+        // valid cached page. Its attributes decide if we have a static or
+        // dynamic case.
+        IntroHomePage rootPage = getModelRoot().getHomePage();
+
+        // get cached page.
+        String url = getCachedCurrentPage();
+
+        if (rootPage.isDynamic())
+            handleDynamicIntro();
+        else
+            handleStaticIntro();
     }
+
+
+
+    private void handleDynamicIntro() {
+
+        IntroHomePage homePage = getModelRoot().getHomePage();
+        // check cache state.
+        String cachedPage = getCachedCurrentPage();
+        if (cachedPage != null) {
+            // we have a cached state. handle appropriately
+            if (cachedPage.startsWith("http:")) {
+                // set the URL the browser should display
+                boolean success = browser.setUrl(cachedPage);
+                if (!success) {
+                    Log
+                            .error(
+                                    "Unable to set the following ULR in browser: " + cachedPage, null); //$NON-NLS-1$
+                    return;
+                }
+            } else {
+                // Generate HTML for the cached page, and set it
+                // on the browser.
+                getModelRoot().setCurrentPageId(cachedPage);
+                generateDynamicContentForPage(getModelRoot().getCurrentPage());
+            }
+
+        } else {
+            // No cacched page. Generate HTML for the home page, and set it
+            // on the browser.
+            generateDynamicContentForPage(homePage);
+        }
+
+        // Add this presentation as a listener to model
+        // only in dynamic case, for now.
+        getModelRoot().addPropertyListener(this);
+
+        // REVISIT: update the history here. The design of the history
+        // navigation is that it has to be updated independant of the
+        // property fired model events.
+        updateHistory(homePage.getId());
+
+    }
+
+    private void handleStaticIntro() {
+        // We have a static case. Set the url on the browser to be the url
+        // defined in the root page. But first check memento if we can
+        // restore last visited page.
+        String url = getCachedCurrentPage();
+        if (url == null || !url.startsWith("http:"))
+            // no cached state, or invalid state.
+            url = getModelRoot().getHomePage().getUrl();
+
+        if (url == null) {
+            // We have no content to display. log an error
+            Log.error("Url is null; no content to display in browser", //$NON-NLS-1$
+                    null);
+            return;
+        }
+        // set the URL the browser should display
+        boolean success = browser.setUrl(url);
+        if (!success) {
+            Log.error(
+                    "Unable to set the following ULR in browser: " + url, null); //$NON-NLS-1$
+            return;
+        }
+    }
+
 
     /**
      * Generate dynamic HTML for the provided page, and set it in the browser
@@ -198,7 +236,7 @@ public class BrowserIntroPartImplementation extends
         if (browser != null) {
             boolean success = browser.setText(html.toString());
             if (!success)
-                    Log.error("Unable to set HTML on the browser", null); //$NON-NLS-1$
+                Log.error("Unable to set HTML on the browser", null); //$NON-NLS-1$
         }
         // print the HTML if we are in debug mode and have tracing turned on
         if (IntroPlugin.getDefault().isDebugging()) {
@@ -217,7 +255,7 @@ public class BrowserIntroPartImplementation extends
      */
     private IntroHTMLGenerator getHTMLGenerator() {
         if (htmlGenerator == null)
-                htmlGenerator = new IntroHTMLGenerator();
+            htmlGenerator = new IntroHTMLGenerator();
 
         return htmlGenerator;
     }
@@ -244,8 +282,8 @@ public class BrowserIntroPartImplementation extends
         if (propId == IntroModelRoot.CURRENT_PAGE_PROPERTY_ID) {
             String pageId = getModelRoot().getCurrentPageId();
             if (pageId == null || pageId.equals("")) //$NON-NLS-1$
-                    // page ID was not set properly. exit.
-                    return;
+                // page ID was not set properly. exit.
+                return;
             generateDynamicContentForPage(getModelRoot().getCurrentPage());
         }
     }
@@ -258,27 +296,33 @@ public class BrowserIntroPartImplementation extends
         browser.dispose();
     }
 
-    /* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.intro.impl.model.AbstractIntroPartImplementation#saveState(org.eclipse.ui.IMemento)
-	 */
-	protected void saveCurrentPage(IMemento memento) {
-		if(memento == null)
-			return;
-		// Handle the case where we are on a static page.
-		// browser.getURL() returns the empty string if there is no current URL
-		// and returns "about:blank" if we are on a dynamic page
-		if(browser != null 
-				&& browser.getUrl() != null 
-				&& browser.getUrl().length() > 0
-				&& !(browser.getUrl().equals("about:blank"))) { //$NON-NLS-1$
-			String currentURL = browser.getUrl();
-			if(currentURL != null) {
-			 	IMemento introMemento = memento.createChild(IIntroConstants.INTRO_MEMENTO_TYPE);
-	    		introMemento.putString(IIntroConstants.CURRENT_STATIC_PAGE, currentURL);
-			 }
-		}
-		else {
-			super.saveCurrentPage(memento);
-		}
-	}
+    /**
+     * Override parent behavior to handle the case when we have a static page.
+     * This can happen in both the static intro case, or in the dynamic when the
+     * last visited page is the dynamic browser is an http: page, and not an
+     * intro page.
+     */
+    protected void saveCurrentPage(IMemento memento) {
+        if (memento == null)
+            return;
+        // Handle the case where we are on a static page.
+        // browser.getURL() returns the empty string if there is no current URL
+        // and returns "about:blank" if we are on a dynamic page
+        if (browser != null && browser.getUrl() != null
+                && browser.getUrl().length() > 0
+                && !(browser.getUrl().equals("about:blank"))) { //$NON-NLS-1$
+            String currentURL = browser.getUrl();
+            if (currentURL != null) {
+                IMemento introMemento = memento
+                        .createChild(IIntroConstants.MEMENTO_PRESENTATION_TAG);
+                introMemento
+                        .putString(IIntroConstants.MEMENTO_CURRENT_PAGE, currentURL);
+            }
+        } else {
+            super.saveCurrentPage(memento);
+        }
+    }
+
+
+
 }

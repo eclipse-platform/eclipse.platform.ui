@@ -32,6 +32,7 @@ public class StandbyPart {
     private Composite content;
     private IIntroPart introPart;
     private EmptyStandbyContentPart emptyPart;
+    private IMemento memento;
 
     // hastable has partIds as keys, and ControlKeys are values.
     private Hashtable cachedContentParts = new Hashtable();
@@ -89,13 +90,10 @@ public class StandbyPart {
         this.model = model;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.internal.intro.impl.parts.IStandbyContentPart#init(org.eclipse.ui.intro.IIntroPart)
-     */
-    public void init(IIntroPart introPart) {
+
+    public void init(IIntroPart introPart, IMemento memento) {
         this.introPart = introPart;
+        this.memento = memento;
     }
 
     public void createPartControl(Composite parent) {
@@ -191,19 +189,15 @@ public class StandbyPart {
 
     /**
      * Save the current state of the standby part.
-     * @param memento the memento in which to store state information
+     * 
+     * @param memento
+     *            the memento in which to store state information
      */
-    public void saveState(IMemento memento){
+    public void saveState(IMemento memento) {
+        //DONOW: memento is not supported for now.
     }
-    
-    /**
-     * Restore the previous intro state from the provided memento.
-     * @param memento the memento that contains the previous state information
-     * @param model the model to set new state information on
-     */
-    public void restoreState(IMemento memento, IntroModelRoot model){
-    }
-    
+
+
     /*
      * Set focus on the IStandbyContentPart that corresponds to the top control
      * in the stack.
@@ -221,6 +215,8 @@ public class StandbyPart {
      * instance of ControlKey that wraps a control/StandbyPart pair. This is
      * needed to retrive the control of a given standby part.
      * 
+     * The IMemento should be passed to the StandbyPart when it is initialized.
+     * 
      * @param standbyContent
      */
     public Control addStandbyContentPart(String partId,
@@ -229,6 +225,8 @@ public class StandbyPart {
         ControlKey controlKey = getCachedContent(partId);
         if (controlKey == null) {
             standbyContent.init(introPart);
+            //DONOW: No memento support exposed right now for Standby Content.
+            //standbyContent.init(introPart, memento);
             try {
                 standbyContent.createPartControl(content, toolkit);
             } catch (Exception e) {
@@ -241,6 +239,7 @@ public class StandbyPart {
         }
         return controlKey.getControl();
     }
+
 
     /**
      * Checks the standby cache stack if we have already created a similar
@@ -282,4 +281,6 @@ public class StandbyPart {
             return part;
         }
     }
+
+
 }
