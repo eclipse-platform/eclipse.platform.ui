@@ -167,6 +167,8 @@ public class IDEWorkbenchActivityHelper {
      * @param workbenchActivitySupport the activity support
      */
     protected void processProject(IProject project, IWorkbenchActivitySupport workbenchActivitySupport) throws CoreException {
+        if (!project.isOpen())
+            return;
         IActivityManager activityManager = workbenchActivitySupport.getActivityManager();
         String[] ids = project.getDescription().getNatureIds();
         if (ids.length == 0)
