@@ -18,16 +18,14 @@ public class HelpURLFactory {
 		if (url == null || url.length() == 0)
 			return new PluginURL("", "");
 		// Strip off the leading "/" and the query
-		if (url.startsWith("/"))
-			url = url.substring(1);
 		String query = "";
 		int indx = url.indexOf("?");
 		if (indx != -1) {
 			query = url.substring(indx + 1);
-			url = url.substring(0, indx);
-		} 
-		
-		if (url.startsWith(TocURL.getPrefix())) // "toc"
+			url = url.substring(1, indx);
+		} else
+			url = url.substring(1);
+		if (url.startsWith(TocURL.getPrefix())) // "/toc"
 			return new TocURL(url.substring(TocURL.getPrefix().length()), query);
 		else
 			return new PluginURL(url, query);

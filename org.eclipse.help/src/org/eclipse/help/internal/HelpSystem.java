@@ -4,13 +4,11 @@
  */
 package org.eclipse.help.internal;
 import java.net.URL;
-
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.context.*;
 import org.eclipse.help.internal.server.HelpServer;
 import org.eclipse.help.internal.toc.TocManager;
 import org.eclipse.help.internal.util.*;
-import org.eclipse.help.internal.search.SearchManager;
 /**
  * The actual implementation of the help system plugin.
  */
@@ -24,7 +22,6 @@ public final class HelpSystem {
 	private String localServerAddress;
 	private String localServerPort;
 	protected HelpPreferences preferences = null;
-	protected SearchManager searchManager;
 	/**
 	 * HelpSystem constructor comment.
 	 */
@@ -69,16 +66,6 @@ public final class HelpSystem {
 			getInstance().tocManager = new TocManager();
 		}
 		return getInstance().tocManager;
-	}
-	/**
-	 * Used to obtain Search Manager
-	 * @return instance of SearchManager
-	 */
-	public static SearchManager getSearchManager() {
-		if (getInstance().searchManager == null) {
-			getInstance().searchManager = new SearchManager();
-		}
-		return getInstance().searchManager;
 	}
 	/**
 	 */
