@@ -55,7 +55,6 @@ import org.eclipse.ui.internal.misc.Assert;
 public class NewProgressViewer extends ProgressTreeViewer implements FinishedJobs.KeptJobsListener {
 	
 	static final boolean DEBUG= false;
-	static final boolean BRUTE_FORCE= false;
 	
 	static final boolean isCarbon = "carbon".equals(SWT.getPlatform());
     
@@ -84,6 +83,7 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 	private Color lightColor;
 	private Color taskColor;
 	private Color selectedColor;
+	private Color selectedTextColor;
 	private Cursor handCursor;
 	private Cursor normalCursor;
 	private Image defaultJobIcon;
@@ -92,6 +92,7 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 	private Font smallerFont;
 	private HashMap map= new HashMap();
     private IJobProgressManagerListener progressManagerListener;
+    private JobItem selection;
 
 	
 	class ListLayout extends Layout {
@@ -465,7 +466,6 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 		static final int MAX_PROGRESS_HEIGHT= 12;
 		static final int MIN_ICON_SIZE= 16;
 
-		boolean selected;
 		int cachedWidth= -1;
 		int cachedHeight= -1;
 
@@ -489,7 +489,7 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 			
 			MouseListener ml= new MouseAdapter() {
 				public void mouseDown(MouseEvent e) {
-//					select(JobItem.this);	// no selections yet
+					select(JobItem.this);
 				}
 			};
 			
@@ -698,16 +698,24 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 		 * Update the background colors.
 		 */
 		void updateBackground(boolean dark) {
-			Color c;
-			if (selected)
-				c= selectedColor;				
-			else
-				c= dark ? darkColor : lightColor;
-			setBackground(c);
+			Color fg, bg;
+			if (this == selection) {
+				fg= selectedTextColor;
+				bg= selectedColor;				
+			} else {
+				fg= taskColor;
+				bg= dark ? darkColor : lightColor;
+			}
+			setForeground(fg);
+			setBackground(bg);
 			
 			Control[] cs= getChildren();
-			for (int i= 0; i < cs.length; i++)
-				cs[i].setBackground(c);	
+			for (int i= 0; i < cs.length; i++) {
+				if (cs[i] != this.progressBar) {
+					cs[i].setForeground(fg);
+					cs[i].setBackground(bg);
+				}
+			}
 		}
 		
 		boolean setPercentDone(int percentDone) {
@@ -782,9 +790,9 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 		    }
 		    if (DEBUG) {
 			    if (isGroup)
-			    		name= "G " + name;
+			    	name= "G " + name;
 			    if (jobTreeElement.getParent() != null)
-			    		name= "X " + name;
+			    	name= "X " + name;
 		    }
 		    nameItem.setText(shortenText(nameItem, name));
 
@@ -904,6 +912,7 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 		lightColor= display.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
 		darkColor= new Color(display, lightColor.getRed()+shift, lightColor.getGreen()+shift, lightColor.getBlue()+shift);
 		taskColor= display.getSystemColor(SWT.COLOR_LIST_FOREGROUND);
+		selectedTextColor= display.getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT);
 		selectedColor= display.getSystemColor(SWT.COLOR_LIST_SELECTION);
 		linkColor= display.getSystemColor(SWT.COLOR_DARK_BLUE);
 		linkColor2= display.getSystemColor(SWT.COLOR_BLUE);
@@ -938,49 +947,36 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
     }
 
  	public void add(Object parentElement, Object[] elements) {
- 		if (BRUTE_FORCE) {
- 			refresh(true);
- 		} else {
-		    if (DEBUG) System.err.println("add");
-	 	    if (list.isDisposed())
-	 	        return;
-	 	    JobTreeItem lastAdded= null;
-			for (int i= 0; i < elements.length; i++)
-				lastAdded= findJobItem(elements[i], true);
-			relayout(true, true);
-			if (lastAdded != null)
-				reveal(lastAdded);
- 		}
+	    if (DEBUG) System.err.println("add");
+ 	    if (list.isDisposed())
+ 	        return;
+ 	    JobTreeItem lastAdded= null;
+		for (int i= 0; i < elements.length; i++)
+			lastAdded= findJobItem(elements[i], true);
+		relayout(true, true);
+		if (lastAdded != null)
+			reveal(lastAdded);
 	}
  	
 	public void remove(Object[] elements) {
- 		if (BRUTE_FORCE) {
- 			refresh(true);
- 		} else {
-	 	    if (list.isDisposed())
-	 	        return;
-	 	    if (DEBUG) System.err.println("remove");
-			boolean changed= false;
-			for (int i= 0; i < elements.length; i++) {
-				JobTreeItem ji= findJobItem(elements[i], false);
-				if (ji != null)
-					changed |= ji.remove();
-			}
-			relayout(changed, changed);
- 		}
+ 	    if (list.isDisposed())
+ 	        return;
+ 	    if (DEBUG) System.err.println("remove");
+		boolean changed= false;
+		for (int i= 0; i < elements.length; i++) {
+			JobTreeItem ji= findJobItem(elements[i], false);
+			if (ji != null)
+				changed |= ji.remove();
+		}
+		relayout(changed, changed);
 	}
 	
 	public void refresh(Object element, boolean updateLabels) {
- 		if (BRUTE_FORCE) {
- 			refresh(true);
- 		} else {
-	 	    if (list.isDisposed())
-	 	        return;
-	 	    JobTreeItem ji= findJobItem(element, true);
-			if (ji != null)
-				if (ji.refresh())
-					relayout(true, true);
- 		}
+ 	    if (list.isDisposed())
+ 	        return;
+ 	    JobTreeItem ji= findJobItem(element, true);
+		if (ji != null && ji.refresh())
+			relayout(true, true);
 	}
 	
 	public void refresh(boolean updateLabels) {
@@ -1054,7 +1050,7 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 			Object parent= jte.getParent();
 			if (parent != null) {
 				JobTreeItem parentji= findJobItem(parent, true);
-				if (parentji instanceof JobItem) {
+				if (parentji instanceof JobItem && !(jte instanceof TaskInfo)) {
 					if (findJobItem(jte, false) == null)
 						ji= new Hyperlink((JobItem)parentji, jte);
 				}
@@ -1094,6 +1090,13 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 		for (int i= 0; i < children.length; i++)
 			changed |= ((JobItem)children[i]).kill(false, true);
 		relayout(changed, changed);
+		
+		if (DEBUG) {
+			JobTreeElement[] elements = FinishedJobs.getInstance().getJobInfos();
+			System.out.println("jobs: " + elements.length);
+			for (int i= 0; i < elements.length; i++)
+				System.out.println("  " + elements[i]);
+		}
 	}
 	
 	private Image getImage(Display display, String name) {
@@ -1101,6 +1104,24 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 		if (id != null)
 			return id.createImage(display);
 		return null;
+	}
+
+	private void select(JobItem newSelection) {
+		
+		JobItem oldSelection= selection;
+		if (selection == newSelection)
+			selection= null;
+		else
+			selection= newSelection;
+		
+		Control[] cs= list.getChildren();		
+		boolean dark= (cs.length % 2) == 1;
+		for (int i= 0; i < cs.length; i++) {
+			JobItem ji= (JobItem) cs[i];
+			if (ji == newSelection || ji == selection)
+				ji.updateBackground(dark);
+			dark= !dark;
+		}
 	}
 	
 	/**

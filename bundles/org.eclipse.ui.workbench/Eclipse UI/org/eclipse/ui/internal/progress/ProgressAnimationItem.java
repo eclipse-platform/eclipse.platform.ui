@@ -67,7 +67,7 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 			 */
 			public void mouseDoubleClick(MouseEvent e) {
 			    progressRegion.processDoubleClick();
-        		toolButton.setImage(noneImage);
+                infoVisited();
 			}
 		};
 	}
@@ -111,6 +111,7 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 		bar.setLayoutData(gd);
 		
 		toolbar= new ToolBar(top, SWT.FLAT);
+		toolbar.setVisible(false);
 		//toolbar.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_MAGENTA));
 		toolButton= new ToolItem(toolbar, SWT.NONE);
 		toolButton.setImage(noneImage);
@@ -146,8 +147,9 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 		bar.setVisible(false);
 		
 		long ts= FinishedJobs.getInstance().getTimeStamp();
-		if (ts <= timeStamp) {
+		if (ts <= timeStamp) {	// if up to date, hide status
 	        toolbar.setVisible(false);		    
+	        timeStamp= ts;
 		}
 	}
 
@@ -166,8 +168,9 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 		long ts= FinishedJobs.getInstance().getTimeStamp();
 		if (ts <= timeStamp) {
 	        toolButton.setImage(noneImage);
-	        toolbar.setVisible(true);
+	        timeStamp= ts;
 		}
+        toolbar.setVisible(true);
 	}
 
     public void removed(JobTreeElement info) {
@@ -195,7 +198,9 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 	        if (status.getSeverity() == IStatus.ERROR)
 	            toolButton.setImage(errorImage);
 	        else
-	            toolButton.setImage(okImage);
+	        	if (toolButton.getImage() != errorImage)
+	        		toolButton.setImage(okImage);
+    		toolbar.setVisible(true);
 	    }
 	}
 
@@ -204,12 +209,10 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 	    display.asyncExec(new Runnable() {
 	        public void run() {
 	            if (!toolbar.isDisposed()) {
-	                if (animationRunning)
-    						toolButton.setImage(noneImage);
-	                else
-                			toolbar.setVisible(false);
+    				toolButton.setImage(noneImage);
+                	toolbar.setVisible(animationRunning);
 	            }
-	        		timeStamp= FinishedJobs.getInstance().getTimeStamp();
+	        	timeStamp= FinishedJobs.getInstance().getTimeStamp();
 	        }
 	    });
 	}
