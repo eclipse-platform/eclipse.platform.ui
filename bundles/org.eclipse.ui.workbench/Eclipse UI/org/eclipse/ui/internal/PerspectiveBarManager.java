@@ -171,7 +171,7 @@ public class PerspectiveBarManager extends ToolBarManager {
 		popup.setLocation(pt.x, pt.y);
 		popup.setVisible(true);
 		Display display = coolBar.getDisplay();
-		while (popup.isVisible()) {
+		while (popup != null && popup.isVisible()) {
 			if (!display.readAndDispatch())
 				display.sleep();
 		}
