@@ -22,7 +22,9 @@ public class Utilities {
 	private static Map entryMap;
 	private static Stack bufferPool;
 	private static final int BUFFER_SIZE = 4096;
-	private static final DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, Locale.getDefault());			
+	private static final DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, Locale.getDefault());	
+	private static long tmpseed = (new Date()).getTime();
+	private static final long dirroot = tmpseed;
 
 	/**
 	 * Returns a new working directory (in temporary space). Ensures
@@ -42,7 +44,9 @@ public class Utilities {
 			+ File.separator
 			+ ".update"
 			+ File.separator
-			+ Long.toString((new Date()).getTime())
+			+ Long.toString(dirroot)
+			+ File.separator
+			+ Long.toString(++tmpseed)
 			+ File.separator;
 		//$NON-NLS-1$ //$NON-NLS-2$
 		File tmpDir = new File(tmpName);

@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.help.AppServer;
+import org.eclipse.update.core.JarContentReference;
 import org.eclipse.update.core.Utilities;
 
 /**
@@ -89,6 +90,15 @@ public class UpdateManagerPlugin extends Plugin {
 			DEBUG_SHOW_IHANDLER = getBooleanDebugOption("org.eclipse.update.core/debug/installhandler", false); //$NON-NLS-1$
 			DEBUG_SHOW_RECONCILER = getBooleanDebugOption("org.eclipse.update.core/debug/reconciler", false); //$NON-NLS-1$
 		}
+	}
+
+	/**
+	 * @see Plugin#shutdown()
+	 */
+	public void shutdown() throws CoreException {
+		super.shutdown();
+		
+		JarContentReference.shutdown(); // make sure we are not leaving jars open
 	}
 
 	private void startupWebInstallHandler() throws CoreException {

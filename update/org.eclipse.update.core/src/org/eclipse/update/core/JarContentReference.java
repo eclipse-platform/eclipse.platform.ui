@@ -27,6 +27,7 @@ import org.eclipse.update.internal.core.UpdateManagerPlugin;
 
 public class JarContentReference extends ContentReference {
 
+	private static ArrayList referenceList = new ArrayList();
 	private JarFile jarFile;
 
 	/**
@@ -74,6 +75,7 @@ public class JarContentReference extends ContentReference {
 	public JarContentReference(String id, URL url) {
 		super(id, url);
 		this.jarFile = null;
+		referenceList.add(this); // keep track of archives
 	}
 
 	/**
@@ -86,6 +88,7 @@ public class JarContentReference extends ContentReference {
 	public JarContentReference(String id, File file) {
 		super(id, file);
 		this.jarFile = null;
+		referenceList.add(this); // keep track of archives
 	}
 	
 	/**
@@ -297,6 +300,7 @@ public class JarContentReference extends ContentReference {
 		}
 		return (ContentReference[]) content.toArray(new ContentReference[0]);
 	}
+	
 	/**
 	 * Peeks into the referenced jar archive looking for the named entry.
 	 * Returns content reference to the jar entry within the jar file.
@@ -327,5 +331,38 @@ public class JarContentReference extends ContentReference {
 		
 		String entryId = selector.defineIdentifier(entry);
 		return new JarEntryContentReference(entryId, this, entry);
+	}
+	
+	/**
+	 * Closes the jar archive corresponding to this reference
+	 * 
+	 * @exception IOException
+	 * @since 2.0
+	 */
+	public void closeArchive() throws IOException {
+		if (this.jarFile != null) {
+			this.jarFile.close();
+			this.jarFile = null;
+		}
+	}
+	
+	/**
+	 * Perform shutdown processing for jar archive handling.
+	 * This method is called when platform is shutting down.
+	 * It is not intended to be called at any other time under
+	 * normal circumstances. A side-effect of calling this method
+	 * is that all jars referenced by JarContentReferences are closed.
+	 * 
+	 * @since 2.0
+	 */
+	public static void shutdown() {
+		for (int i=0; i<referenceList.size(); i++) {
+			JarContentReference ref = (JarContentReference) referenceList.get(i);
+			try {
+				ref.closeArchive(); // ensure we are not leaving open jars
+			} catch(IOException e) {
+				// we tried, nothing we can do ...
+			}
+		}
 	}
 }
