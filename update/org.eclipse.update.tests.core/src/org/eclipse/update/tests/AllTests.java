@@ -22,7 +22,7 @@ public static Test suite() throws Exception {
 	suite.addTest(AllRegularInstallTests.suite());
 	suite.addTest(AllAPITests.suite());	
 	suite.addTest(AllParserTests.suite());
-	//suite.addTest(AllCoreUITests.suite());
+	suite.addTest(AllCoreUITests.suite());
 	suite.addTest(AllConfigurationsTests.suite());	
 	return suite;
 }
