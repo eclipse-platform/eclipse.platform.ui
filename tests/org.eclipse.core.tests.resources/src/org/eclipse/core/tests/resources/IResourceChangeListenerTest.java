@@ -469,6 +469,63 @@ public void testDeleteProject() throws CoreException {
 		getWorkspace().removeResourceChangeListener(listener);
 	}
 }
+/**
+ * Tests that team private members don't show up in resource deltas when
+ * standard traversal and visitor are used.
+ */
+public void testHiddenTeamPrivateChanges() {
+	IWorkspace workspace = getWorkspace();
+	final IFolder teamPrivateFolder = project1.getFolder("TeamPrivateFolder");
+	final IFile teamPrivateFile = folder1.getFile("TeamPrivateFile");
+	final IResource[] privateResources = new IResource[] {teamPrivateFolder, teamPrivateFile};
+	IResourceChangeListener listener = new IResourceChangeListener() {
+		public void resourceChanged(IResourceChangeEvent event) {
+			//make sure the delta doesn't include the team private members
+			assertNotDeltaIncludes("1.0", event.getDelta(), privateResources);
+			//make sure a visitor does not find team private members
+			assertNotDeltaVisits("1.1", event.getDelta(), privateResources);
+		}
+	};
+	workspace.addResourceChangeListener(listener);
+	try {
+		//create a team private folder
+		workspace.run(new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				teamPrivateFolder.create(true, true, getMonitor());
+				teamPrivateFolder.setTeamPrivateMember(true);
+			}
+		}, getMonitor());
+		//create children in team private folder
+		IFile fileInFolder = teamPrivateFolder.getFile("FileInPrivateFolder");
+		fileInFolder.create(getRandomContents(), true, getMonitor());
+		//modify children in team private folder
+		fileInFolder.setContents(getRandomContents(), IResource.NONE, getMonitor());
+		//delete children in team private folder
+		fileInFolder.delete(IResource.NONE, getMonitor());
+		//delete team private folder and change some other file
+		workspace.run(new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				teamPrivateFolder.delete(IResource.NONE, getMonitor());
+				file1.setContents(getRandomContents(), IResource.NONE, getMonitor());
+			}
+		}, getMonitor());
+		//create team private file
+		workspace.run(new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				teamPrivateFile.create(getRandomContents(), true, getMonitor());
+				teamPrivateFile.setTeamPrivateMember(true);
+			}
+		}, getMonitor());
+		//modify team private file
+		teamPrivateFile.setContents(getRandomContents(), IResource.NONE, getMonitor());
+		//delete team private file
+		teamPrivateFile.delete(IResource.NONE, getMonitor());
+	} catch (CoreException e) {
+		handleCoreException(e);
+	} finally {
+		workspace.removeResourceChangeListener(listener);
+	}
+}
 public void testMoveFile() {
 	try {
 		verifier.addExpectedChange(folder2, IResourceDelta.ADDED, 0);
@@ -675,6 +732,83 @@ public void testSetLocal() {
 		handleCoreException(e);
 	}
 }
+/**
+ * Asserts that the delta is correct for changes to team private members.
+ */
+public void testTeamPrivateChanges() {
+	IWorkspace workspace = getWorkspace();
+	final IFolder teamPrivateFolder = project1.getFolder("TeamPrivateFolder");
+	final IFile teamPrivateFile = folder1.getFile("TeamPrivateFile");
+	try {
+		//create a team private folder
+		verifier.reset();
+		verifier.addExpectedChange(teamPrivateFolder, IResourceDelta.ADDED, 0);
+		workspace.run(new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				teamPrivateFolder.create(true, true, getMonitor());
+				teamPrivateFolder.setTeamPrivateMember(true);
+			}
+		}, getMonitor());
+		assertDelta();
+		verifier.reset();
+		
+		//create children in team private folder
+		IFile fileInFolder = teamPrivateFolder.getFile("FileInPrivateFolder");
+		verifier.addExpectedChange(fileInFolder, IResourceDelta.ADDED, 0);
+		fileInFolder.create(getRandomContents(), true, getMonitor());
+		assertDelta();
+		verifier.reset();
+		
+		//modify children in team private folder
+		verifier.addExpectedChange(fileInFolder, IResourceDelta.CHANGED, IResourceDelta.CONTENT);
+		fileInFolder.setContents(getRandomContents(), IResource.NONE, getMonitor());
+		assertDelta();
+		verifier.reset();
+
+		//delete children in team private folder
+		verifier.addExpectedChange(fileInFolder, IResourceDelta.REMOVED, 0);
+		fileInFolder.delete(IResource.NONE, getMonitor());
+		assertDelta();
+		verifier.reset();
+
+		//delete team private folder and change some other file
+		verifier.addExpectedChange(teamPrivateFolder, IResourceDelta.REMOVED, 0);
+		verifier.addExpectedChange(file1, IResourceDelta.CHANGED, IResourceDelta.CONTENT);
+		workspace.run(new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				teamPrivateFolder.delete(IResource.NONE, getMonitor());
+				file1.setContents(getRandomContents(), IResource.NONE, getMonitor());
+			}
+		}, getMonitor());
+		assertDelta();
+		verifier.reset();
+
+		//create team private file
+		verifier.addExpectedChange(teamPrivateFile, IResourceDelta.ADDED, 0);
+		workspace.run(new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				teamPrivateFile.create(getRandomContents(), true, getMonitor());
+				teamPrivateFile.setTeamPrivateMember(true);
+			}
+		}, getMonitor());
+		assertDelta();
+		verifier.reset();
+
+		//modify team private file
+		verifier.addExpectedChange(teamPrivateFile, IResourceDelta.CHANGED, IResourceDelta.CONTENT);
+		teamPrivateFile.setContents(getRandomContents(), IResource.NONE, getMonitor());
+		assertDelta();
+		verifier.reset();
+
+		//delete team private file
+		verifier.addExpectedChange(teamPrivateFile, IResourceDelta.REMOVED, 0);
+		teamPrivateFile.delete(IResource.NONE, getMonitor());
+		assertDelta();
+		verifier.reset();
+	} catch (CoreException e) {
+		handleCoreException(e);
+	}
+}
 public void testTwoFileChanges() {
 	try {
 		verifier.addExpectedChange(file1, IResourceDelta.CHANGED, IResourceDelta.CONTENT);
@@ -696,69 +830,22 @@ public void testTwoFileChanges() {
 		handleCoreException(e);
 	}
 }
-/**
- * Tests that team private members don't show up in resource deltas when
- * standard traversal and visitor are used.
- */
-public void testTeamPrivateChanges() {
-	IWorkspace workspace = getWorkspace();
-	final IFolder teamPrivateFolder = project1.getFolder("TeamPrivateFolder");
-	final IFile teamPrivateFile = folder1.getFile("TeamPrivateFile");
-	final IResource[] privateResources = new IResource[] {teamPrivateFolder, teamPrivateFile};
-	IResourceChangeListener listener = new IResourceChangeListener() {
-		public void resourceChanged(IResourceChangeEvent event) {
-			//make sure the delta doesn't include the team private members
-			assertNotDeltaIncludes("1.0", event.getDelta(), privateResources);
-			//make sure a visitor does not find team private members
-			assertNotDeltaVisits("1.1", event.getDelta(), privateResources);
-		}
-	};
-	workspace.addResourceChangeListener(listener);
-	try {
-		//create a team private folder
-		workspace.run(new IWorkspaceRunnable() {
-			public void run(IProgressMonitor monitor) throws CoreException {
-				teamPrivateFolder.create(true, true, getMonitor());
-				teamPrivateFolder.setTeamPrivateMember(true);
-			}
-		}, getMonitor());
-		//create children in team private folder
-		IFile fileInFolder = teamPrivateFolder.getFile("FileInPrivateFolder");
-		fileInFolder.create(getRandomContents(), true, getMonitor());
-		//modify children in team private folder
-		fileInFolder.setContents(getRandomContents(), IResource.NONE, getMonitor());
-		//delete children in team private folder
-		fileInFolder.delete(IResource.NONE, getMonitor());
-		//delete team private folder
-		teamPrivateFolder.delete(IResource.NONE, getMonitor());
-		//create team private file
-		workspace.run(new IWorkspaceRunnable() {
-			public void run(IProgressMonitor monitor) throws CoreException {
-				teamPrivateFile.create(getRandomContents(), true, getMonitor());
-				teamPrivateFile.setTeamPrivateMember(true);
-			}
-		}, getMonitor());
-		//modify team private file
-		teamPrivateFile.setContents(getRandomContents(), IResource.NONE, getMonitor());
-		//delete team private file
-		teamPrivateFile.delete(IResource.NONE, getMonitor());
-	} catch (CoreException e) {
-		handleCoreException(e);
-	} finally {
-		workspace.removeResourceChangeListener(listener);
-	}
-}
+
 /**
  * Asserts that a manual traversal of the delta does not find the given resources.
  */
 private void assertNotDeltaIncludes(String message, IResourceDelta delta, IResource[] resources) {
-	IResource deltaResource = delta.getResource();
-	for (int i = 0; i < resources.length; i++) {
-		assertTrue(message, !deltaResource.equals(resources[i]));
-	}
-	IResourceDelta[] children = delta.getAffectedChildren();
-	for (int i = 0; i < children.length; i++) {
-		assertNotDeltaIncludes(message, children[i], resources);
+	try {
+		IResource deltaResource = delta.getResource();
+		for (int i = 0; i < resources.length; i++) {
+			assertTrue(message, !deltaResource.equals(resources[i]));
+		}
+		IResourceDelta[] children = delta.getAffectedChildren();
+		for (int i = 0; i < children.length; i++) {
+			assertNotDeltaIncludes(message, children[i], resources);
+		}
+	} catch (RuntimeException e) {
+		fail(message, e);
 	}
 }
 /**
@@ -776,6 +863,8 @@ private void assertNotDeltaVisits(final String message, IResourceDelta delta, fi
 			}
 		});
 	} catch (CoreException e) {
+		fail(message, e);
+	} catch (RuntimeException e) {
 		fail(message, e);
 	}
 }
