@@ -44,6 +44,8 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.TreeEvent;
+import org.eclipse.swt.events.TreeListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
@@ -197,6 +199,11 @@ public class PlantyContentOutlinePage extends ContentOutlinePage {
 			if("property".equals(tempElement.getName())) { //$NON-NLS-1$
 				return ExternalToolsImages.getImage(IExternalToolsUIConstants.IMAGE_ID_PROPERTY);
 			}
+			
+			XmlAttribute attribute= tempElement.getAttributeNamed(IAntEditorConstants.ATTR_TYPE);
+			if (attribute.getValue().equals(IAntEditorConstants.TYPE_EXTERNAL)) {
+				return ExternalToolsImages.getImage(IExternalToolsUIConstants.IMG_ANT_PROJECT);
+			}
 			return ExternalToolsImages.getImage(IExternalToolsUIConstants.IMAGE_ID_TASK);
 		}
         
@@ -219,9 +226,17 @@ public class PlantyContentOutlinePage extends ContentOutlinePage {
 			return false;
 		}
 		XmlElement parent= node.getParentNode();
-		if (parent == null){
-			return false; 
+		if (parent != null) {
+			type= parent.getAttributeNamed(IAntEditorConstants.ATTR_TYPE);
+			while (parent != null && !type.getValue().equals(IAntEditorConstants.TYPE_PROJECT)){
+				parent= parent.getParentNode();
+				type= parent.getAttributeNamed(IAntEditorConstants.ATTR_TYPE);
+			}
+		} 
+		if (parent == null) {
+			return false;
 		}
+		
 		XmlAttribute defaultTarget= parent.getAttributeNamed(IAntEditorConstants.ATTR_DEFAULT);
 		XmlAttribute nameAttribute= node.getAttributeNamed(IAntEditorConstants.ATTR_NAME);
 		return defaultTarget != null && nameAttribute != null && defaultTarget.getValue().equals(nameAttribute.getValue());
@@ -272,6 +287,15 @@ public class PlantyContentOutlinePage extends ContentOutlinePage {
 				
 		updateColor();
 		openEditorAction= new OpenEditorForExternalEntityAction(this);
+		
+		viewer.getTree().addTreeListener(new TreeListener() {
+			public void treeCollapsed(TreeEvent e) {
+			}
+
+			public void treeExpanded(TreeEvent e) {
+				updateColor((TreeItem)e.item);
+			}
+		});
 	}
 	
 	private void contextMenuAboutToShow(IMenuManager menu) {	

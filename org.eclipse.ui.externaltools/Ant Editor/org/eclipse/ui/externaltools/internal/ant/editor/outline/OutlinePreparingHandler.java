@@ -146,7 +146,13 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
                     XmlAttribute tempXmlAttr = getAttributeNamed(IAntEditorConstants.ATTR_NAME);
                     if(tempXmlAttr != null) {
                     	StringBuffer name= new StringBuffer(tempXmlAttr.getValue());
-                    	XmlAttribute defaultTarget= getParentNode().getAttributeNamed(IAntEditorConstants.ATTR_DEFAULT);
+						XmlElement parent= getParentNode();
+						XmlAttribute type= parent.getAttributeNamed(IAntEditorConstants.ATTR_TYPE);
+						while (parent != null && !type.getValue().equals(IAntEditorConstants.TYPE_PROJECT)){
+							parent= parent.getParentNode();
+							type= parent.getAttributeNamed(IAntEditorConstants.ATTR_TYPE);
+						}
+                    	XmlAttribute defaultTarget= parent.getAttributeNamed(IAntEditorConstants.ATTR_DEFAULT);
                     	if (defaultTarget != null && defaultTarget.getValue().equals(tempXmlAttr.getValue())) {
                     		name.append(AntOutlineMessages.getString("OutlinePreparingHandler._[default]_2")); //$NON-NLS-1$
                     	}
@@ -506,5 +512,7 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
 		XmlElement external= (XmlElement)stillOpenElements.peek();
 		external.setExternal(true);
 		external.setRootExternal(true);
+		external.getAttributes().removeAll(external.getAttributes());
+		external.addAttribute(new XmlAttribute(IAntEditorConstants.ATTR_TYPE, IAntEditorConstants.TYPE_EXTERNAL));
 	}
 }
