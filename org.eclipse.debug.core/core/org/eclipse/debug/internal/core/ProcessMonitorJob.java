@@ -60,6 +60,7 @@ public class ProcessMonitorJob extends Job {
 	 * for termination.
 	 */
 	public ProcessMonitorJob(RuntimeProcess process) {
+		super(DebugCoreMessages.getString("ProcessMonitorJob.0")); //$NON-NLS-1$
 		fProcess= process;
 		fOSProcess= process.getSystemProcess();
 		schedule();

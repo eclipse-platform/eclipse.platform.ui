@@ -767,6 +767,11 @@ public class DebugPlugin extends Plugin {
 	 * @since 3.0
 	 */
 	class AsynchJob extends Job {
+		
+		public AsynchJob() {
+			super(DebugCoreMessages.getString("DebugPlugin.Debug_async_queue_1")); //$NON-NLS-1$
+		}
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.jobs.Job#shouldRun()
 		 */
