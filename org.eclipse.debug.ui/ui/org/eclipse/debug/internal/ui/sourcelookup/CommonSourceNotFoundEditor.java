@@ -11,7 +11,6 @@
 package org.eclipse.debug.internal.ui.sourcelookup;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -34,6 +33,9 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.sourcelookup.SourceLookupDialog;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.JFaceColors;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.window.Window;
@@ -54,8 +56,9 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.EditorPart;
+import org.eclipse.ui.texteditor.IDocumentProvider;
+import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
  * Editor for when source is not found. Shows the source name and has 
@@ -80,12 +83,6 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
      * object for which the source is showing for (i.e., stackframe, breakpoint)
      */
 	protected Object fObject; 
-	/**
-	 * The identifier used for markers that mark the position that the editor should be
-	 * scrolled to.
-	 * @since 3.0
-	 */
-	protected static String SCROLL_TO_MARKER = "org.eclipse.debug.ui.ScrollToMarker"; //$NON-NLS-1$
 	
 	/**
 	 * @see org.eclipse.ui.IEditorPart#doSave(IProgressMonitor)
@@ -229,22 +226,17 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 						if (input != null) {
 							String id = modelPres.getEditorId(input, fObject);
 							if (id != null) {
-								IEditorPart editor = null;
 								try {
-									editor = page.openEditor(input, id);
+									IEditorPart editorPart = page.openEditor(input, id);
+									if (editorPart instanceof ITextEditor && lineNumber >= 0) {
+										// position to line number
+										ITextEditor textEditor = (ITextEditor) editorPart;
+										IRegion region= getLineInformation(textEditor, lineNumber);
+										if (region != null) {
+											textEditor.selectAndReveal(region.getOffset(), 0);
+										}
+									}
 								} catch (PartInitException e1) {
-								}
-								if(editor == null)
-									return;
-								//Now try to scroll the editor to the line of interest			
-								if(lineNumber != -1){			
-									try{		
-										IMarker locationMarker;
-										locationMarker = ResourcesPlugin.getWorkspace().getRoot().createMarker(SCROLL_TO_MARKER);
-										locationMarker.setAttribute(IMarker.LINE_NUMBER, lineNumber);
-										locationMarker.setAttribute(IMarker.TRANSIENT, true);
-										IDE.gotoMarker(editor, locationMarker);		
-									} catch(CoreException e){}
 								}		
 							}
 						}
@@ -256,6 +248,28 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 		closeEditor();	
 		// get new editor input
 		DebugUIPlugin.getStandardDisplay().asyncExec(open);
+	}
+	
+	/**
+	 * Returns the line information for the given line in the given editor
+	 */
+	private IRegion getLineInformation(ITextEditor editor, int lineNumber) {
+		IDocumentProvider provider= editor.getDocumentProvider();
+		IEditorInput input= editor.getEditorInput();
+		try {
+			provider.connect(input);
+		} catch (CoreException e) {
+			return null;
+		}
+		try {
+			IDocument document= provider.getDocument(input);
+			if (document != null)
+				return document.getLineInformation(lineNumber);
+		} catch (BadLocationException e) {
+		} finally {
+			provider.disconnect(input);
+		}
+		return null;
 	}
 	
 	/**
