@@ -4,11 +4,13 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
 public class ScopePreferenceDialog extends PreferenceDialog {
+	private EngineTypeDescriptor [] engineTypes;
 	/**
 	 * The Add button id.
 	 */
@@ -19,8 +21,9 @@ public class ScopePreferenceDialog extends PreferenceDialog {
 	 */
 	private final static int DELETE_ID = IDialogConstants.CLIENT_ID + 2;
 	
-	public ScopePreferenceDialog(Shell parentShell, PreferenceManager manager) {
+	public ScopePreferenceDialog(Shell parentShell, PreferenceManager manager, EngineTypeDescriptor [] engineTypes) {
 		super(parentShell, manager);
+		this.engineTypes = engineTypes;
 	}
 	
 	protected void createButtonsForButtonBar(Composite parent) {
@@ -79,6 +82,25 @@ public class ScopePreferenceDialog extends PreferenceDialog {
 	}
 	
 	private void doNew() {
+		NewEngineWizard wizard = new NewEngineWizard(engineTypes);
+		WizardDialog dialog = new WizardDialog(getShell(), wizard);
+		dialog.create();
+		dialog.getShell().setSize(400, 500);
+		if (dialog.open()==WizardDialog.OK) {
+			EngineTypeDescriptor etdesc = wizard.getSelectedEngineType();
+			EngineDescriptor desc = new EngineDescriptor(null);
+			desc.setEngineType(etdesc);
+			desc.setUserDefined(true);
+			desc.setId(computeNewId(etdesc));
+			ScopePreferenceManager mng = (ScopePreferenceManager)getPreferenceManager();
+			IPreferenceNode node = mng.addNode(desc);
+			getTreeViewer().refresh();
+			getTreeViewer().setSelection(new StructuredSelection(node));
+		}
+	}
+	
+	private String computeNewId(EngineTypeDescriptor etdesc) {
+		return etdesc.getId() +"." + 1;
 	}
 
 	private void doDelete() {

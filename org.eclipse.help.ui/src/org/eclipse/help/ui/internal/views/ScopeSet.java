@@ -161,4 +161,10 @@ public class ScopeSet {
 	public static String getMasterKey(String id) {
 		return id + ".master"; //$NON-NLS-1$
 	}
+	public static String getLabelKey(String id) {
+		return id+".label";
+	}
+	public static String getDescKey(String id) {
+		return id+".desc";
+	}
 }

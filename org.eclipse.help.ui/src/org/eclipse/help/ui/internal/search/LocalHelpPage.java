@@ -11,12 +11,11 @@
 
 package org.eclipse.help.ui.internal.search;
 
-import java.util.*;
 import java.util.ArrayList;
 
 import org.eclipse.help.internal.base.*;
 import org.eclipse.help.internal.workingset.*;
-import org.eclipse.help.ui.RootScopePage;
+import org.eclipse.help.ui.*;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
@@ -26,251 +25,272 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
-
 /**
  * Local Help participant in the federated search.
  */
 public class LocalHelpPage extends RootScopePage {
-    private Button searchAll;
-    private Button searchSelected;
-    private CheckboxTreeViewer tree;
-    private ITreeContentProvider treeContentProvider;
-    private ILabelProvider elementLabelProvider;
-    private boolean firstCheck;
-    private WorkingSet workingSet;
-    private Button capabilityFiltering;
+	private Button searchAll;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.help.ui.ISearchScopePage#init(java.lang.String, java.lang.String)
-     */
-    public void init(String engineId, String scopeSetName, Dictionary parameters) {
-        super.init(engineId, scopeSetName, parameters);
-        if (scopeSetName != null)
-            workingSet = BaseHelpSystem.getWorkingSetManager().getWorkingSet(scopeSetName);
-    }
-    /**
-     * Default constructor.
-     */
-    public LocalHelpPage() {
-        firstCheck = true;
-    }
+	private Button searchSelected;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.help.ui.RootScopePage#createScopeContents(org.eclipse.swt.widgets.Composite)
-     */
-    protected Control createScopeContents(Composite parent) {
+	private CheckboxTreeViewer tree;
 
-        Font font = parent.getFont();
-        initializeDialogUnits(parent);
+	private ITreeContentProvider treeContentProvider;
 
-        Composite composite = new Composite(parent, SWT.NULL);
-        composite.setLayout(new GridLayout());
-        composite.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
+	private ILabelProvider elementLabelProvider;
 
-        searchAll = new Button(composite, SWT.RADIO);
-        searchAll.setText(HelpBaseResources.getString("selectAll")); //$NON-NLS-1$
-        GridData gd = new GridData();
-        searchAll.setLayoutData(gd);
-        searchAll.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
-                tree.getTree().setEnabled(false);
-//                searchQueryData.setBookFiltering(false);
-            }
-        });
-        
-        searchSelected = new Button(composite, SWT.RADIO);
-        searchSelected.setText(HelpBaseResources.getString("selectWorkingSet")); //$NON-NLS-1$
-        gd = new GridData();
-        searchSelected.setLayoutData(gd);
-        searchSelected.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
-                tree.getTree().setEnabled(true);
-//              searchQueryData.setBookFiltering(false);
-            }
-        });
-      
-        if (workingSet == null)
-            searchAll.setSelection(true);
-        else
-            searchSelected.setSelection(true);
-        
-        Label label = new Label(composite, SWT.WRAP);
-        label.setFont(font);
-        label.setText(HelpBaseResources.getString("WorkingSetContent")); //$NON-NLS-1$
-        gd = new GridData(GridData.GRAB_HORIZONTAL
-                | GridData.HORIZONTAL_ALIGN_FILL
-                | GridData.VERTICAL_ALIGN_CENTER);
-        label.setLayoutData(gd);
+	private boolean firstCheck;
 
-        tree = new CheckboxTreeViewer(composite, SWT.BORDER | SWT.H_SCROLL
-                | SWT.V_SCROLL);
-        gd = new GridData(GridData.FILL_BOTH | GridData.GRAB_VERTICAL);
-        gd.heightHint = convertHeightInCharsToPixels(15);
-        tree.getControl().setLayoutData(gd);
-        tree.getControl().setFont(font);
+	private WorkingSet workingSet;
 
-        treeContentProvider = new HelpWorkingSetTreeContentProvider();
-        tree.setContentProvider(treeContentProvider);
+	private Button capabilityFiltering;
 
-        elementLabelProvider = new HelpWorkingSetElementLabelProvider();
-        tree.setLabelProvider(elementLabelProvider);
+	public void init(IEngineDescriptor ed, String scopeSetName) {
+		super.init(ed, scopeSetName);
+		if (scopeSetName != null)
+			workingSet = BaseHelpSystem.getWorkingSetManager().getWorkingSet(
+					scopeSetName);
+	}
 
-        tree.setUseHashlookup(true);
+	/**
+	 * Default constructor.
+	 */
+	public LocalHelpPage() {
+		firstCheck = true;
+	}
 
-        tree.setInput(BaseHelpSystem.getWorkingSetManager().getRoot());
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.help.ui.RootScopePage#createScopeContents(org.eclipse.swt.widgets.Composite)
+	 */
+	protected int createScopeContents(Composite parent) {
+		Font font = parent.getFont();
+		initializeDialogUnits(parent);
 
-        tree.addCheckStateListener(new ICheckStateListener() {
-            public void checkStateChanged(CheckStateChangedEvent event) {
-                handleCheckStateChange(event);
-            }
-        });
+		searchAll = new Button(parent, SWT.RADIO);
+		searchAll.setText(HelpBaseResources.getString("selectAll")); //$NON-NLS-1$
+		GridData gd = new GridData();
+		gd.horizontalSpan = 2;
+		searchAll.setLayoutData(gd);
+		searchAll.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				tree.getTree().setEnabled(false);
+				// searchQueryData.setBookFiltering(false);
+			}
+		});
 
-        tree.addTreeListener(new ITreeViewerListener() {
-            public void treeCollapsed(TreeExpansionEvent event) {
-            }
-            public void treeExpanded(TreeExpansionEvent event) {
-                final Object element = event.getElement();
-                if (tree.getGrayed(element) == false)
-                    BusyIndicator.showWhile(getShell().getDisplay(),
-                            new Runnable() {
-                                public void run() {
-                                    setSubtreeChecked(element, tree
-                                            .getChecked(element), false);
-                                }
-                            });
-            }
-        });
-        tree.getTree().setEnabled(workingSet != null);
-        capabilityFiltering = new Button(parent, SWT.CHECK);
-        capabilityFiltering.setText(HelpBaseResources.getString("LocalHelpPage.capabilityFiltering.name")); //$NON-NLS-1$
-        initializeCheckedState();
+		searchSelected = new Button(parent, SWT.RADIO);
+		searchSelected.setText(HelpBaseResources.getString("selectWorkingSet")); //$NON-NLS-1$
+		gd = new GridData();
+		gd.horizontalSpan = 2;
+		searchSelected.setLayoutData(gd);
+		searchSelected.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				tree.getTree().setEnabled(true);
+				// searchQueryData.setBookFiltering(false);
+			}
+		});
 
-        // Set help for the page
-        //WorkbenchHelp.setHelp(tree, "help_workingset_page");   
-        return composite;
-    }
+		if (workingSet == null)
+			searchAll.setSelection(true);
+		else
+			searchSelected.setSelection(true);
 
-    private void initializeCheckedState() {
-    	IPreferenceStore store = getPreferenceStore();
-    	capabilityFiltering.setSelection(store.getBoolean(getEngineId()+"."+LocalSearchScopeFactory.P_CAPABILITY_FILTERING));
-        if (workingSet == null)
-            return;
+		Label label = new Label(parent, SWT.WRAP);
+		label.setFont(font);
+		label.setText(HelpBaseResources.getString("WorkingSetContent")); //$NON-NLS-1$
+		gd = new GridData(GridData.GRAB_HORIZONTAL
+				| GridData.HORIZONTAL_ALIGN_FILL
+				| GridData.VERTICAL_ALIGN_CENTER);
+		gd.horizontalSpan = 2;
+		label.setLayoutData(gd);
 
-        BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
-            public void run() {
-                Object[] elements = workingSet.getElements();
-                tree.setCheckedElements(elements);
-                for (int i = 0; i < elements.length; i++) {
-                    Object element = elements[i];
-                    if (isExpandable(element))
-                        setSubtreeChecked(element, true, true);
-                    updateParentState(element, true);
-                }
-            }
-        });
-    }
+		tree = new CheckboxTreeViewer(parent, SWT.BORDER | SWT.H_SCROLL
+				| SWT.V_SCROLL);
+		gd = new GridData(GridData.FILL_BOTH | GridData.GRAB_VERTICAL);
+		gd.heightHint = convertHeightInCharsToPixels(15);
+		gd.horizontalSpan = 2;
+		tree.getControl().setLayoutData(gd);
+		tree.getControl().setFont(font);
 
-    boolean isExpandable(Object element) {
-        return treeContentProvider.hasChildren(element);
-    }
+		treeContentProvider = new HelpWorkingSetTreeContentProvider();
+		tree.setContentProvider(treeContentProvider);
 
-    void updateParentState(Object child, boolean baseChildState) {
-        if (child == null)
-            return;
+		elementLabelProvider = new HelpWorkingSetElementLabelProvider();
+		tree.setLabelProvider(elementLabelProvider);
 
-        Object parent = treeContentProvider.getParent(child);
-        if (parent == null)
-            return;
+		tree.setUseHashlookup(true);
 
-        boolean allSameState = true;
-        Object[] children = null;
-        children = treeContentProvider.getChildren(parent);
+		tree.setInput(BaseHelpSystem.getWorkingSetManager().getRoot());
 
-        for (int i = children.length - 1; i >= 0; i--) {
-            if (tree.getChecked(children[i]) != baseChildState
-                    || tree.getGrayed(children[i])) {
-                allSameState = false;
-                break;
-            }
-        }
+		tree.addCheckStateListener(new ICheckStateListener() {
+			public void checkStateChanged(CheckStateChangedEvent event) {
+				handleCheckStateChange(event);
+			}
+		});
 
-        tree.setGrayed(parent, !allSameState);
-        tree.setChecked(parent, !allSameState || baseChildState);
+		tree.addTreeListener(new ITreeViewerListener() {
+			public void treeCollapsed(TreeExpansionEvent event) {
+			}
 
-        updateParentState(parent, baseChildState);
-    }
+			public void treeExpanded(TreeExpansionEvent event) {
+				final Object element = event.getElement();
+				if (tree.getGrayed(element) == false)
+					BusyIndicator.showWhile(getShell().getDisplay(),
+							new Runnable() {
+								public void run() {
+									setSubtreeChecked(element, tree
+											.getChecked(element), false);
+								}
+							});
+			}
+		});
+		tree.getTree().setEnabled(workingSet != null);
+		capabilityFiltering = new Button(parent, SWT.CHECK);
+		capabilityFiltering.setText(HelpBaseResources
+				.getString("LocalHelpPage.capabilityFiltering.name")); //$NON-NLS-1$
+		initializeCheckedState();
 
-    void setSubtreeChecked(Object parent, boolean state,
-            boolean checkExpandedState) {
+		// Set help for the page
+		// WorkbenchHelp.setHelp(tree, "help_workingset_page");
+		return 1;
+	}
 
-        Object[] children = treeContentProvider.getChildren(parent);
-        for (int i = children.length - 1; i >= 0; i--) {
-            Object element = children[i];
-            if (state) {
-                tree.setChecked(element, true);
-                tree.setGrayed(element, false);
-            } else
-                tree.setGrayChecked(element, false);
-            if (isExpandable(element))
-                setSubtreeChecked(element, state, checkExpandedState);
-        }
-    }
+	private void initializeCheckedState() {
+		IPreferenceStore store = getPreferenceStore();
+		capabilityFiltering.setSelection(store.getBoolean(getEngineDescriptor()
+				.getId()
+				+ "." + LocalSearchScopeFactory.P_CAPABILITY_FILTERING));
+		if (workingSet == null)
+			return;
 
-    private void findCheckedElements(java.util.List checkedResources,
-            Object parent) {
-        Object[] children = treeContentProvider.getChildren(parent);
-        for (int i = 0; i < children.length; i++) {
-            if (tree.getGrayed(children[i]))
-                findCheckedElements(checkedResources, children[i]);
-            else if (tree.getChecked(children[i]))
-                checkedResources.add(children[i]);
-        }
-    }
+		BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
+			public void run() {
+				Object[] elements = workingSet.getElements();
+				tree.setCheckedElements(elements);
+				for (int i = 0; i < elements.length; i++) {
+					Object element = elements[i];
+					if (isExpandable(element))
+						setSubtreeChecked(element, true, true);
+					updateParentState(element, true);
+				}
+			}
+		});
+	}
 
-    void handleCheckStateChange(final CheckStateChangedEvent event) {
-        BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
-            public void run() {
-                Object element = event.getElement();
-                boolean state = event.getChecked();
-                tree.setGrayed(element, false);
-                if (isExpandable(element))
-                    setSubtreeChecked(element, state, state);
-                // only check subtree if state is set to true
+	boolean isExpandable(Object element) {
+		return treeContentProvider.hasChildren(element);
+	}
 
-                updateParentState(element, state);
-//                validateInput();
-            }
-        });
-    }    
-       
-    public WorkingSet getWorkingSet() {
-        ArrayList elements = new ArrayList(10);
-        findCheckedElements(elements, tree.getInput());
-        if (workingSet == null) {
-            workingSet = new WorkingSet(
-                    getScopeSetName(),
-                    (AdaptableHelpResource[]) elements
-                            .toArray(new AdaptableHelpResource[elements.size()]));
-        } else {
-            workingSet.setName(getScopeSetName());
-            workingSet.setElements((AdaptableHelpResource[]) elements
-                    .toArray(new AdaptableHelpResource[elements.size()]));
-        }
-        return workingSet;
-    }
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.preference.IPreferencePage#performOk()
-     */
-    public boolean performOk() {
-        if (searchSelected.getSelection())
-            BaseHelpSystem.getWorkingSetManager().addWorkingSet(getWorkingSet());
-        else 
-            BaseHelpSystem.getWorkingSetManager().removeWorkingSet(getWorkingSet());
-        
-        getPreferenceStore().setValue(getEngineId()+"."+LocalSearchScopeFactory.P_WORKING_SET, getScopeSetName());
-        getPreferenceStore().setValue(getEngineId()+"."+LocalSearchScopeFactory.P_CAPABILITY_FILTERING, 
-        		capabilityFiltering.getSelection());
-        return super.performOk();
-    }
+	void updateParentState(Object child, boolean baseChildState) {
+		if (child == null)
+			return;
+
+		Object parent = treeContentProvider.getParent(child);
+		if (parent == null)
+			return;
+
+		boolean allSameState = true;
+		Object[] children = null;
+		children = treeContentProvider.getChildren(parent);
+
+		for (int i = children.length - 1; i >= 0; i--) {
+			if (tree.getChecked(children[i]) != baseChildState
+					|| tree.getGrayed(children[i])) {
+				allSameState = false;
+				break;
+			}
+		}
+
+		tree.setGrayed(parent, !allSameState);
+		tree.setChecked(parent, !allSameState || baseChildState);
+
+		updateParentState(parent, baseChildState);
+	}
+
+	void setSubtreeChecked(Object parent, boolean state,
+			boolean checkExpandedState) {
+
+		Object[] children = treeContentProvider.getChildren(parent);
+		for (int i = children.length - 1; i >= 0; i--) {
+			Object element = children[i];
+			if (state) {
+				tree.setChecked(element, true);
+				tree.setGrayed(element, false);
+			} else
+				tree.setGrayChecked(element, false);
+			if (isExpandable(element))
+				setSubtreeChecked(element, state, checkExpandedState);
+		}
+	}
+
+	private void findCheckedElements(java.util.List checkedResources,
+			Object parent) {
+		Object[] children = treeContentProvider.getChildren(parent);
+		for (int i = 0; i < children.length; i++) {
+			if (tree.getGrayed(children[i]))
+				findCheckedElements(checkedResources, children[i]);
+			else if (tree.getChecked(children[i]))
+				checkedResources.add(children[i]);
+		}
+	}
+
+	void handleCheckStateChange(final CheckStateChangedEvent event) {
+		BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
+			public void run() {
+				Object element = event.getElement();
+				boolean state = event.getChecked();
+				tree.setGrayed(element, false);
+				if (isExpandable(element))
+					setSubtreeChecked(element, state, state);
+				// only check subtree if state is set to true
+
+				updateParentState(element, state);
+				// validateInput();
+			}
+		});
+	}
+
+	public WorkingSet getWorkingSet() {
+		ArrayList elements = new ArrayList(10);
+		findCheckedElements(elements, tree.getInput());
+		if (workingSet == null) {
+			workingSet = new WorkingSet(
+					getScopeSetName(),
+					(AdaptableHelpResource[]) elements
+							.toArray(new AdaptableHelpResource[elements.size()]));
+		} else {
+			workingSet.setName(getScopeSetName());
+			workingSet.setElements((AdaptableHelpResource[]) elements
+					.toArray(new AdaptableHelpResource[elements.size()]));
+		}
+		return workingSet;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
+	 */
+	public boolean performOk() {
+		if (searchSelected.getSelection())
+			BaseHelpSystem.getWorkingSetManager()
+					.addWorkingSet(getWorkingSet());
+		else
+			BaseHelpSystem.getWorkingSetManager().removeWorkingSet(
+					getWorkingSet());
+
+		getPreferenceStore().setValue(
+				getKey(LocalSearchScopeFactory.P_WORKING_SET),
+				getScopeSetName());
+		getPreferenceStore().setValue(
+				getKey(LocalSearchScopeFactory.P_CAPABILITY_FILTERING),
+				capabilityFiltering.getSelection());
+		return super.performOk();
+	}
+
+	private String getKey(String key) {
+		return getEngineDescriptor().getId() + "." + key;
+	}
 }

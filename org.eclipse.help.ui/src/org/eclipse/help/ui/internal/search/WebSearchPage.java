@@ -31,21 +31,15 @@ public class WebSearchPage extends RootScopePage {
 	public WebSearchPage() {
 	}
 
-	protected Control createScopeContents(Composite parent) {
+	protected int createScopeContents(Composite parent) {
 		Font font = parent.getFont();
 		initializeDialogUnits(parent);
 
-		Composite composite = new Composite(parent, SWT.NULL);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		composite.setLayout(layout);
-		composite.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
-
-		Label label = new Label(composite, SWT.NULL);
+		Label label = new Label(parent, SWT.NULL);
 		label.setText("&URL template:");
 		GridData gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		label.setLayoutData(gd);
-		urlText = new Text(composite, SWT.MULTI | SWT.WRAP | SWT.V_SCROLL
+		urlText = new Text(parent, SWT.MULTI | SWT.WRAP | SWT.V_SCROLL
 				| SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.heightHint = 64;
@@ -57,12 +51,12 @@ public class WebSearchPage extends RootScopePage {
 			}
 		});
 		updateControls();
-		return composite;
+		return 2;
 	}
 
 	protected void initializeDefaults(IPreferenceStore store) {
 		super.initializeDefaults(store);
-		String template = (String) getParameters().get(
+		String template = (String) getEngineDescriptor().getParameters().get(
 				WebSearchScopeFactory.P_URL);
 		if (template != null)
 			store
@@ -80,7 +74,7 @@ public class WebSearchPage extends RootScopePage {
 	private void updateControls() {
 		String template = getPreferenceStore().getString(
 				getStoreKey(WebSearchScopeFactory.P_URL));
-		urlText.setText(template != null ? template : "");
+		urlText.setText(template != null ? template : "http://");
 		validate();
 	}
 
@@ -102,6 +96,6 @@ public class WebSearchPage extends RootScopePage {
 	}
 
 	private String getStoreKey(String key) {
-		return getEngineId() + "." + key;
+		return getEngineDescriptor().getId() + "." + key;
 	}
 }

@@ -59,6 +59,8 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 	private Hyperlink scopeSetLink;
 
 	private ScopeSetManager scopeSetManager;
+	
+	private EngineTypeDescriptor [] engineTypes;
 
 	private ArrayList engineDescriptors;
 	
@@ -296,7 +298,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 			IConfigurationElement element = elements[i];
 			if (element.getName().equals("engine")) { //$NON-NLS-1$
 				EngineDescriptor desc = new EngineDescriptor(element);
-				String engineId = desc.getEngineId();
+				String engineId = desc.getEngineTypeId();
 				if (engineId!=null) {
 					EngineTypeDescriptor etdesc = (EngineTypeDescriptor)engineTypes.get(engineId);
 					if (etdesc!=null) {
@@ -312,15 +314,19 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 	
 	private Hashtable loadEngineTypes(IConfigurationElement [] elements) {
 		Hashtable result = new Hashtable();
+		ArrayList list = new ArrayList();
 		for (int i=0; i<elements.length; i++) {
 			IConfigurationElement element = elements[i];
 			if (element.getName().equals("engineType")) { //$NON-NLS-1$
 				EngineTypeDescriptor etdesc = new EngineTypeDescriptor(element);
 				String id = etdesc.getId();
-				if (id!=null)
+				if (id!=null) {
+					list.add(etdesc);
 					result.put(etdesc.getId(), etdesc);
+				}
 			}
 		}
+		engineTypes = (EngineTypeDescriptor [])list.toArray(new EngineTypeDescriptor[list.size()]);
 		return result;
 	}
 
@@ -399,7 +405,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 		PreferenceManager manager = new ScopePreferenceManager(
 				engineDescriptors, set);
 		PreferenceDialog dialog = new ScopePreferenceDialog(container.getShell(),
-				manager);
+				manager, engineTypes);
 		dialog.setPreferenceStore(set.getPreferenceStore());
 		dialog.open();
 		updateMasters(set);
@@ -407,7 +413,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 
 	private void doChangeScopeSet() {
 		ScopeSetDialog dialog = new ScopeSetDialog(container.getShell(),
-				scopeSetManager, engineDescriptors);
+				scopeSetManager, engineDescriptors, engineTypes);
 		dialog.setInput(scopeSetManager);
 		if (dialog.open() == ScopeSetDialog.OK) {
 			ScopeSet set = dialog.getActiveSet();

@@ -10,12 +10,8 @@
  *******************************************************************************/
 package org.eclipse.help.ui;
 
-import java.util.Dictionary;
-
 import org.eclipse.help.ui.internal.views.*;
-import org.eclipse.help.ui.internal.views.ScopeSet;
 import org.eclipse.jface.preference.*;
-import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
@@ -33,15 +29,11 @@ import org.eclipse.swt.widgets.*;
  */
 public abstract class RootScopePage extends PreferencePage implements
 		ISearchScopePage {
-	private String engineId;
-
+	private IEngineDescriptor ed;
 	private String scopeSetName;
-
-	private Dictionary parameters;
-
 	private Button masterButton;
-
-	private Control scopeContents;
+	private Text labelText;
+	private Text descText;
 
 	/**
 	 * The default constructor.
@@ -49,16 +41,9 @@ public abstract class RootScopePage extends PreferencePage implements
 	public RootScopePage() {
 	}
 
-	/**
-	 * Implements ISearchScopePage
-	 * 
-	 * @param engineId
-	 * @param scopeSetName
-	 */
-	public void init(String engineId, String scopeSetName, Dictionary parameters) {
-		this.engineId = engineId;
+	public void init(IEngineDescriptor ed, String scopeSetName) {
+		this.ed = ed;
 		this.scopeSetName = scopeSetName;
-		this.parameters = parameters;
 	}
 
 	/**
@@ -74,20 +59,50 @@ public abstract class RootScopePage extends PreferencePage implements
 		initializeDefaults(getPreferenceStore());
 		Composite container = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
+		if (ed.isRemovable())
+			layout.numColumns = 2;
 		container.setLayout(layout);
 		masterButton = new Button(container, SWT.CHECK);
 		masterButton.setText("Enable search engine");
+		GridData gd = new GridData();
+		gd.horizontalSpan = ed.isRemovable()?2:1;
+		masterButton.setLayoutData(gd);
 		boolean masterValue = getPreferenceStore().getBoolean(
-				ScopeSet.getMasterKey(engineId));
+				ScopeSet.getMasterKey(ed.getId()));
 		masterButton.setSelection(masterValue);
 		masterButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				masterValueChanged(masterButton.getSelection());
 			}
 		});
-		scopeContents = createScopeContents(container);
-		if (scopeContents != null)
-			scopeContents.setLayoutData(new GridData(GridData.FILL_BOTH));
+		if (ed.isRemovable()) {
+			Label label = new Label(container, SWT.NULL);
+			label.setText("Name:");
+			labelText = new Text(container, SWT.BORDER);
+			gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.widthHint = 200;
+			labelText.setLayoutData(gd);
+			label = new Label(container, SWT.NULL);
+			label.setText("Description:");
+			gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
+			label.setLayoutData(gd);
+			descText = new Text(container, SWT.BORDER|SWT.MULTI|SWT.WRAP);
+			gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.widthHint = 200;
+			gd.heightHint = 48;
+			descText.setLayoutData(gd);
+		}
+		int ccol = createScopeContents(container);
+		if (ccol>layout.numColumns)
+			layout.numColumns = ccol;
+		gd = (GridData)masterButton.getLayoutData();
+		gd.horizontalSpan = layout.numColumns;
+		if (ed.isRemovable()) {
+			gd = (GridData)labelText.getData();
+			gd.horizontalSpan = layout.numColumns-1;
+			gd = (GridData)descText.getData();
+			gd.horizontalSpan = layout.numColumns-1;
+		}
 		updateControls();
 		return container;
 	}
@@ -103,7 +118,6 @@ public abstract class RootScopePage extends PreferencePage implements
 	 */
 
 	protected void masterValueChanged(boolean value) {
-		scopeContents.setEnabled(value);
 	}
 
 	/**
@@ -115,23 +129,14 @@ public abstract class RootScopePage extends PreferencePage implements
 	protected String getScopeSetName() {
 		return scopeSetName;
 	}
-
+	
 	/**
-	 * Returns the identifier of the engine associated with this page.
-	 * 
-	 * @return the engine identifier
+	 * Returns the descriptor of the engine associated with this page.
+	 * @return the engine descriptor
 	 */
-	protected String getEngineId() {
-		return engineId;
-	}
-
-	/**
-	 * Returns the parameters of the engine associated with this page.
-	 * 
-	 * @return the engine parameters
-	 */
-	protected Dictionary getParameters() {
-		return parameters;
+	
+	protected IEngineDescriptor getEngineDescriptor() {
+		return ed;
 	}
 
 	/**
@@ -155,7 +160,7 @@ public abstract class RootScopePage extends PreferencePage implements
 	 */
 
 	public boolean performOk() {
-		getPreferenceStore().setValue(ScopeSet.getMasterKey(engineId),
+		getPreferenceStore().setValue(ScopeSet.getMasterKey(ed.getId()),
 				masterButton.getSelection());
 		return true;
 	}
@@ -166,17 +171,21 @@ public abstract class RootScopePage extends PreferencePage implements
 	 * 
 	 */
 	protected void performDefaults() {
-		getPreferenceStore().setToDefault(ScopeSet.getMasterKey(engineId));
+		getPreferenceStore().setToDefault(ScopeSet.getMasterKey(ed.getId()));
 		updateControls();
 		super.performDefaults();
 	}
 	
 	private void updateControls() {
-		boolean value = getPreferenceStore().getBoolean(ScopeSet.getMasterKey(engineId));
+		boolean value = getPreferenceStore().getBoolean(ScopeSet.getMasterKey(ed.getId()));
 		boolean cvalue = masterButton.getSelection();
 		if (value!=cvalue) {
 			masterButton.setSelection(value);
 			masterValueChanged(value);
+		}
+		if (ed.isRemovable()) {
+			labelText.setText(ed.getLabel());
+			descText.setText(ed.getDescription());
 		}
 	}
 
@@ -189,8 +198,8 @@ public abstract class RootScopePage extends PreferencePage implements
 	 */
 	
 	protected void initializeDefaults(IPreferenceStore store) {
-		Boolean value = (Boolean)getParameters().get(EngineDescriptor.P_MASTER);
-		store.setDefault(ScopeSet.getMasterKey(engineId), value.booleanValue());
+		Boolean value = (Boolean)ed.getParameters().get(EngineDescriptor.P_MASTER);
+		store.setDefault(ScopeSet.getMasterKey(ed.getId()), value.booleanValue());
 	}
 
 	/**
@@ -199,7 +208,7 @@ public abstract class RootScopePage extends PreferencePage implements
 	 * 
 	 * @param parent
 	 *            the page parent
-	 * @return the control of the scope contents
+	 * @return number of columns required by the client content
 	 */
-	protected abstract Control createScopeContents(Composite parent);
+	protected abstract int createScopeContents(Composite parent);
 }

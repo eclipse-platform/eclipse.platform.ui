@@ -77,7 +77,7 @@ public class ScopePreferenceManager extends PreferenceManager implements IHelpUI
 			}
 		}
 	}
-	private IPreferenceNode addNode(EngineDescriptor desc) {
+	public IPreferenceNode addNode(EngineDescriptor desc) {
 		PreferenceNode node = new EnginePreferenceNode(desc);
 		addToRoot(node);
 		return node;
