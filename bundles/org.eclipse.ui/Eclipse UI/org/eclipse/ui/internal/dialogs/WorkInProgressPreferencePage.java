@@ -96,7 +96,7 @@ public class WorkInProgressPreferencePage extends WorkbenchPreferencePage {
 				"Enable cool bars",
 				"ENABLE_COOL_BARS",
 				true,
-				"Note: This preference will only take effect on the new windows.");
+				"Note: This preference will only take effect on new windows.");
 							
 /*		// Temporary option to enable the new menu organization
 		newMenusButton = 
