@@ -62,7 +62,6 @@ public class WorkInProgressPreferencePage
 	 */
 	protected Control createContents(Composite parent) {
 		createBuildControls(parent);
-		createMachineSpeedControls(parent);
 		createRefreshControls(parent);
 		return parent;
 	}
@@ -76,55 +75,6 @@ public class WorkInProgressPreferencePage
 				WorkbenchActionBuilder.setIncludeRebuildActions(buildPreference.getSelection());
 			}
 		});
-	}
-
-	/**
-	 * Create the controls for the machine speed preferences.
-	 * @param parent
-	 * @return
-	 */
-	private Composite createMachineSpeedControls(Composite parent) {
-		Composite composite = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout(3, false);
-		layout.marginHeight = layout.marginWidth = 0;
-		composite.setLayout(layout);
-
-		Label label = new Label(composite, SWT.NONE);
-		label.setText(WorkInProgressMessages.getString("WorkInProgressPreferencePage.0_label")); //$NON-NLS-1$
-		GridData data = new GridData();
-		label.setLayoutData(data);
-		slider = new Slider(composite, SWT.HORIZONTAL);
-		data = new GridData(GridData.FILL_HORIZONTAL);
-		slider.setLayoutData(data);
-
-		displayLabel = new Label(composite, SWT.NONE);
-		data = new GridData(GridData.HORIZONTAL_ALIGN_CENTER);
-		data.widthHint = convertWidthInCharsToPixels(10);
-		displayLabel.setLayoutData(data);
-
-		Label description = new Label(composite, SWT.WRAP);
-		description.setText(WorkInProgressMessages.getString("WorkInProgressPreferencePage.SpeedExplanation")); //$NON-NLS-1$
-
-		GridData descriptionData = new GridData();
-		descriptionData.horizontalSpan = 3;
-		description.setLayoutData(descriptionData);
-
-		slider.addSelectionListener(new SelectionListener() {
-
-			public void widgetSelected(SelectionEvent e) {
-				setLabelText(((Slider) e.widget).getSelection());
-			}
-
-			public void widgetDefaultSelected(SelectionEvent e) {
-				widgetSelected(e);
-			}
-		});
-
-		slider.setValues(getValue(), SLOW, FAST + 1, 1, 1, 1);
-		int value = getValue();
-		slider.setSelection(value);
-		setLabelText(value);
-		return composite;
 	}
 
 	/**
