@@ -215,10 +215,10 @@ private void checkChanges(IResourceDelta delta){
 	}
 }
 private void checkChildren(IResourceDelta delta){
-	IResourceDelta[] affectedChildren = delta.getAffectedChildren(IResourceDelta.ALL_WITH_PHANTOMS);
-	IResourceDelta[] addedChildren = delta.getAffectedChildren(IResourceDelta.ADDED);
-	IResourceDelta[] changedChildren = delta.getAffectedChildren(IResourceDelta.CHANGED);
-	IResourceDelta[] removedChildren = delta.getAffectedChildren(IResourceDelta.REMOVED);
+	IResourceDelta[] affectedChildren = delta.getAffectedChildren(IResourceDelta.ALL_WITH_PHANTOMS, IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
+	IResourceDelta[] addedChildren = delta.getAffectedChildren(IResourceDelta.ADDED, IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
+	IResourceDelta[] changedChildren = delta.getAffectedChildren(IResourceDelta.CHANGED, IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
+	IResourceDelta[] removedChildren = delta.getAffectedChildren(IResourceDelta.REMOVED, IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
 
 	Hashtable h = new Hashtable(affectedChildren.length + 1);
 
