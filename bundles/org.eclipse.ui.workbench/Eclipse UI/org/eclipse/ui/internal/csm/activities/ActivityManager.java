@@ -65,7 +65,9 @@ public final class ActivityManager implements IActivityManager {
 		if (activityRegistry == null)
 			throw new NullPointerException();
 
-		activityRegistry.addActivityRegistryListener(new IActivityRegistryListener() {
+		this.activityRegistry = activityRegistry;
+		
+		this.activityRegistry.addActivityRegistryListener(new IActivityRegistryListener() {
 			public void activityRegistryChanged(IActivityRegistryEvent activityRegistryEvent) {
 				readRegistry();
 			}

@@ -46,8 +46,10 @@ public final class RoleManager implements IRoleManager {
 	public RoleManager(IRoleRegistry roleRegistry) {
 		if (roleRegistry == null)
 			throw new NullPointerException();
-			
-		roleRegistry.addRoleRegistryListener(new IRoleRegistryListener() {
+
+		this.roleRegistry = roleRegistry;	
+		
+		this.roleRegistry.addRoleRegistryListener(new IRoleRegistryListener() {
 			public void roleRegistryChanged(IRoleRegistryEvent roleRegistryEvent) {
 				readRegistry();
 			}
