@@ -30,7 +30,7 @@ BODY {
 	background:<%=prefs.getToolbarBackground()%>;
 	margin:0px;
 	padding:0px;
- 	_border-top:1px solid ThreeDShadow;
+ 	border-top:1px solid ThreeDShadow;
 	cursor:default;
 	align:center;
 }
@@ -39,7 +39,7 @@ BODY {
 	background:<%=prefs.getViewBackground()%>;
 	margin:0px;
 	padding:0px;
-	_border-top:1px <%=prefs.getViewBackground()%> solid;
+	border-top:1px <%=prefs.getViewBackground()%> solid;
 	cursor:default;
 	align:center;
 }
