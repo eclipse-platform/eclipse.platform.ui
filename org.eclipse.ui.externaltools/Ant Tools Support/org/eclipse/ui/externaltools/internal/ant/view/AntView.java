@@ -629,8 +629,10 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 	 * relative weights, unless the target viewer hasn't yet been shown.
 	 */
 	public void toggleTargetViewer(boolean on) {
-		if (on && sashForm.getMaximizedControl() != null) {
-			sashForm.setMaximizedControl(null);
+		if (on) {
+			if (sashForm.getMaximizedControl() != null) {
+				sashForm.setMaximizedControl(null);
+			}
 			sashForm.setWeights(getLastSashWeights());
 			toggledDetailOnce = true;
 		} else {

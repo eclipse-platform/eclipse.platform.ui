@@ -7,24 +7,20 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 *********************************************************************/
 
-import org.eclipse.debug.internal.ui.DebugPluginImages;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
-import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.Action;
 import org.eclipse.ui.externaltools.internal.ant.view.AntView;
+import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
+import org.eclipse.ui.externaltools.internal.ui.IExternalToolsUIConstants;
 
 public class ShowTargetViewerAction extends Action {
 
 	private AntView antView;
 
 	public ShowTargetViewerAction(AntView view) {
-		super(AntViewActionMessages.getString("ShowTargetViewerAction.Show")); //$NON-NLS-1$
+		super(AntViewActionMessages.getString("ShowTargetViewerAction.Show"), ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_TOGGLE)); //$NON-NLS-1$
 		setAntView(view);
 		setToolTipText(AntViewActionMessages.getString("ShowTargetViewerAction.Show"));  //$NON-NLS-1$
-		setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_DETAIL_PANE));
-		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_DETAIL_PANE));
-		setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_DETAIL_PANE));
 		setId(IExternalToolConstants.PLUGIN_ID + ".ShowTargetViewerAction");  //$NON-NLS-1$
 		//WorkbenchHelp.setHelp(this, IDebugHelpContextIds.SHOW_DETAIL_PANE_ACTION);
 	}

@@ -76,6 +76,7 @@ public class ExternalToolsImages {
 		declareRegistryImage(IExternalToolsUIConstants.IMG_ACTIVATE, LOCALTOOL + "activate.gif"); //$NON-NLS-1$
 		declareRegistryImage(IExternalToolsUIConstants.IMG_DEACTIVATE, LOCALTOOL + "deactivate.gif"); //$NON-NLS-1$
 		declareRegistryImage(IExternalToolsUIConstants.IMG_GO_TO_FILE, LOCALTOOL + "gotoobj_tsk.gif"); //$NON-NLS-1$
+		declareRegistryImage(IExternalToolsUIConstants.IMG_TOGGLE, LOCALTOOL + "toggle.gif"); //$NON-NLS-1$
 		// Ant View Labels
 		declareRegistryImage(IExternalToolsUIConstants.IMG_ANT_PROJECT, OBJECT + "file_obj.gif"); //$NON-NLS-1$
 		declareRegistryImage(IExternalToolsUIConstants.IMG_ANT_PROJECT_ERROR, LOCALTOOL + "ant_project_err.gif"); //$NON-NLS-1$
@@ -86,7 +87,7 @@ public class ExternalToolsImages {
 		// Wizards
 		declareRegistryImage(IExternalToolConstants.IMG_WIZBAN_EXTERNAL_TOOLS, WIZBAN + "ext_tools_wiz.gif"); //$NON-NLS-1$
 		
-		// Actions
+		// Refresh tab
 		declareRegistryImage(IExternalToolConstants.IMG_ACTION_REFRESH, LOCALTOOL + "refresh.gif"); //$NON-NLS-1$
 		
 		// Objects

@@ -36,6 +36,7 @@ public interface IExternalToolsUIConstants {
 	public static final String IMG_RUN= IExternalToolConstants.PLUGIN_ID + ".run"; //$NON-NLS-1$
 	public static final String IMG_SEARCH= IExternalToolConstants.PLUGIN_ID + ".search"; //$NON-NLS-1$
 	public static final String IMG_GO_TO_FILE= IExternalToolConstants.PLUGIN_ID + ".goToFile"; //$NON-NLS-1$
+	public static final String IMG_TOGGLE= IExternalToolConstants.PLUGIN_ID + ".toggle"; //$NON-NLS-1$
 	
 	// Label images
 	public static final String IMG_ANT_PROJECT= IExternalToolConstants.PLUGIN_ID + ".antProject"; //$NON-NLS-1$
