@@ -32,7 +32,6 @@ public class UninstallFeatureAction extends Action {
 			if (adapter == null || !confirm(adapter.isConfigured()))
 				return;
 
-			boolean isConfigured = adapter.isConfigured();
 			IOperation uninstallOperation =
 				(IOperation) OperationsManager
 					.getOperationFactory()

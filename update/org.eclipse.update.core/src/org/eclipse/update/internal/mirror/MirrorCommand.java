@@ -75,7 +75,6 @@ public class MirrorCommand extends ScriptedCommand {
 			e.printStackTrace();
 			return false;
 		} catch (CoreException ce) {
-			IStatus status = ce.getStatus();
 			System.out.println(ce.getMessage());
 			ce.printStackTrace();
 			return false;

@@ -113,7 +113,6 @@ public class MirrorSiteFactory extends BaseSiteFactory {
 		String[] dir;
 
 		ContentReference ref = null;
-		String refString = null;
 
 		try {
 			if (pluginDir.exists()) {
@@ -125,8 +124,6 @@ public class MirrorSiteFactory extends BaseSiteFactory {
 					ref = jarReference.peek("plugin.xml", null, null); //$NON-NLS-1$
 					if (ref == null)
 						ref = jarReference.peek("fragment.xml", null, null); //$NON-NLS-1$
-					refString =
-						(ref == null) ? null : ref.asURL().toExternalForm();
 
 					if (ref != null) {
 						PluginEntry entry =

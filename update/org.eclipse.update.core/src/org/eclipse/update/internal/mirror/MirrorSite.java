@@ -162,7 +162,6 @@ public class MirrorSite extends Site {
 		// determine list of plugins to install
 		// find the intersection between the plugin entries already contained
 		// on the target site, and plugin entries packaged in source feature
-		IFeatureReference alreadyInstalledFeature = null;
 
 		IPluginEntry[] pluginsToInstall =
 			UpdateManagerUtils.diff(
@@ -616,7 +615,7 @@ public class MirrorSite extends Site {
 	 * @param featureRefModel
 	 * @return true if such feature exists
 	 */
-	private boolean contains(SiteFeatureReferenceModel featureRefModel) {
+	/*private boolean contains(SiteFeatureReferenceModel featureRefModel) {
 		ISiteFeatureReference featureRefs[] = getRawFeatureReferences();
 		for (int i = 0; i < featureRefs.length; i++) {
 			try {
@@ -630,7 +629,8 @@ public class MirrorSite extends Site {
 			}
 		}
 		return false;
-	}
+	}*/
+	
 	/**
 	 * Updates description of this site
 	 * from description of the remote site.
