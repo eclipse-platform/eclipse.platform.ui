@@ -69,7 +69,7 @@ public class AntUIImages {
 		// Ant View Actions
 		declareRegistryImage(IAntUIConstants.IMG_ANT, OBJECT + "ant.gif"); //$NON-NLS-1$
 		declareRegistryImage(IAntUIConstants.IMG_REMOVE, LOCALTOOL + "remove_co.gif"); //$NON-NLS-1$
-		declareRegistryImage(IAntUIConstants.IMG_REMOVE_ALL, LOCALTOOL + "removeAll_co.gif"); //$NON-NLS-1$
+		declareRegistryImage(IAntUIConstants.IMG_REMOVE_ALL, LOCALTOOL + "removeall_co.gif"); //$NON-NLS-1$
 		declareRegistryImage(IAntUIConstants.IMG_ADD, LOCALTOOL + "add_co.gif"); //$NON-NLS-1$
 		declareRegistryImage(IAntUIConstants.IMG_RUN, LOCALTOOL + "run_tool.gif"); //$NON-NLS-1$
 		declareRegistryImage(IAntUIConstants.IMG_SEARCH, LOCALTOOL + "search.gif"); //$NON-NLS-1$
