@@ -23,8 +23,13 @@ import org.eclipse.ui.externaltools.model.StringMatcher;
 public class JavacLineTracker implements IConsoleLineTracker {
 	
 	private IConsole fConsole;
+	private IFile fLastFile;
 	private StringMatcher fEclipseCompilerMatcher;
 	private StringMatcher fJavacMatcher;
+	private StringMatcher fJikesMatcher;
+	
+	// trolling for errors after a Jikes error header was found
+	private boolean fTrolling = false;
 
 	/**
 	 * Constructor for JavacLineTracker.
@@ -40,6 +45,7 @@ public class JavacLineTracker implements IConsoleLineTracker {
 		fConsole = console;
 		fEclipseCompilerMatcher = new StringMatcher("*[javac]*ERROR in*.java*(at line*)*",false, false); //$NON-NLS-1$
 		fJavacMatcher = new StringMatcher("*[javac] *.java:*:*",false, false); //$NON-NLS-1$
+		fJikesMatcher = new StringMatcher("*[javac] *\"*.java\":", false, false); //$NON-NLS-1$
 	}
 
 	/**
@@ -54,6 +60,7 @@ public class JavacLineTracker implements IConsoleLineTracker {
 			String lineNumber = ""; //$NON-NLS-1$
 			int fileStart = -1;
 			if (fEclipseCompilerMatcher.match(text)) {
+				fTrolling = false;
 				int index = text.indexOf("ERROR in"); //$NON-NLS-1$
 				if (index > 0) {
 					fileStart = index + 9;
@@ -70,6 +77,7 @@ public class JavacLineTracker implements IConsoleLineTracker {
 					}
 				}
 			} else if (fJavacMatcher.match(text)) {
+				fTrolling = false;
 				fileStart = text.indexOf("[javac] "); //$NON-NLS-1$
 				fileStart += 8;
 				int index = text.indexOf(".java:", fileStart); //$NON-NLS-1$
@@ -81,6 +89,37 @@ public class JavacLineTracker implements IConsoleLineTracker {
 						lineNumber = text.substring(numberStart, index);
 					}
 				}
+			} else if (fJikesMatcher.match(text)) {
+				fileStart = text.indexOf('"');
+				fileStart++;
+				int index = text.indexOf(".java\"", fileStart); //$NON-NLS-1$
+				if (index > 0) {
+					index += 5;
+					fileName = text.substring(fileStart, index).trim();
+					fTrolling = true;
+				}
+			} else if (fTrolling) {
+				int index = text.indexOf("[javac]"); //$NON-NLS-1$
+				if (index > 0) {
+					// look for a line number
+					index+=7; 
+					int numEnd = text.indexOf(".", index); //$NON-NLS-1$
+					if (numEnd > 0) {
+						String number = text.substring(index, numEnd).trim();
+						try {
+							int num = Integer.parseInt(number);
+							int numStart = text.indexOf(number, index);
+							if (fLastFile != null && fLastFile.exists()) {
+								FileLink link = new FileLink(fLastFile, null, -1, -1, num);
+								fConsole.addLink(link, lineOffset + numStart, lineLength - numStart);
+							}
+						} catch (NumberFormatException e) {
+							// not a line number
+						}
+					}
+				} else {
+					fTrolling = false;
+				}
 			}
 			if (fileName != null) {
 				int num = -1;
@@ -89,6 +128,7 @@ public class JavacLineTracker implements IConsoleLineTracker {
 				} catch (NumberFormatException e) {
 				}
 				IFile file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(new Path(fileName));
+				fLastFile = file;
 				if (file != null && file.exists()) {
 					FileLink link = new FileLink(file, null, -1, -1, num);
 					fConsole.addLink(link, lineOffset + fileStart, lineLength - fileStart);
