@@ -22,7 +22,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 /**
- * A content describer for detecting the name of the top-level element of the
+ * A content describer for detecting the name of the top-level element or the
  * DTD system identifier in an XML file.
  * <p>
  * This executable extension supports two parameters:
