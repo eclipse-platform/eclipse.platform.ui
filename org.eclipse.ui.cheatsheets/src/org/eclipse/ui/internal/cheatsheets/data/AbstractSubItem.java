@@ -10,18 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.cheatsheets.data;
 
-import java.util.ArrayList;
-
-public interface ISubItemItem {
-
-	/**
-	 * @param subItem the SubItem to add.
-	 */
-	public void addSubItem(AbstractSubItem subItem);
-
-	/**
-	 * @return Returns the subItems.
-	 */
-	public ArrayList getSubItems();
+public abstract class AbstractSubItem {
 	
+	public AbstractSubItem() {
+		super();
+	}
 }

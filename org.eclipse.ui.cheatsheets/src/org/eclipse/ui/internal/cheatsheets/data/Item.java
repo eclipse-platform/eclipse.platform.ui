@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.cheatsheets.data;
 
-import java.util.ArrayList;
+import java.util.*;
 
 public class Item extends Intro implements IActionItem, IPerformWhenItem, ISubItemItem {
 	private String title;
@@ -21,9 +21,6 @@ public class Item extends Intro implements IActionItem, IPerformWhenItem, ISubIt
 	private PerformWhen performWhen;
 	
 	private ArrayList subItems;
-	private ArrayList conditionalSubItems;
-	private ArrayList repeatedSubItems; 
-	
 
 	/**
 	 * Constructor for Item.
@@ -54,9 +51,7 @@ public class Item extends Intro implements IActionItem, IPerformWhenItem, ISubIt
 	 *  <code>false</code> for normal items
 	 */
 	public boolean isDynamic() {
-		if( performWhen != null ||
-			(conditionalSubItems != null && conditionalSubItems.size() > 0) ||
-			(repeatedSubItems != null && repeatedSubItems.size() > 0)) {
+		if( performWhen != null || hasDynamicSubItems()) {
 			return true;
 		}
 
@@ -131,43 +126,9 @@ public class Item extends Intro implements IActionItem, IPerformWhenItem, ISubIt
 	}
 	
 	/**
-	 * @param conditionalSubItem the conditionalSubItem to add.
-	 */
-	public void addConditionalSubItem(ConditionalSubItem conditionalSubItem) {
-		if(conditionalSubItems == null) {
-			conditionalSubItems = new ArrayList();
-		}
-		conditionalSubItems.add(conditionalSubItem);
-	}
-	
-	/**
-	 * @return Returns the conditionalSubItems.
-	 */
-	public ArrayList getConditionalSubItems() {
-		return conditionalSubItems;
-	}
-	
-	/**
-	 * @param repeatedSubItem the RepeatedSubItem to add.
-	 */
-	public void addRepeatedSubItem(RepeatedSubItem repeatedSubItem) {
-		if(repeatedSubItems == null) {
-			repeatedSubItems = new ArrayList();
-		}
-		repeatedSubItems.add(repeatedSubItem);
-	}
-
-	/**
-	 * @return Returns the repeatedSubItems.
-	 */
-	public ArrayList getRepeatedSubItems() {
-		return repeatedSubItems;
-	}
-	
-	/**
 	 * @param subItem the SubItem to add.
 	 */
-	public void addSubItem(SubItem subItem) {
+	public void addSubItem(AbstractSubItem subItem) {
 		if(subItems == null) {
 			subItems = new ArrayList();
 		}
@@ -179,5 +140,19 @@ public class Item extends Intro implements IActionItem, IPerformWhenItem, ISubIt
 	 */
 	public ArrayList getSubItems() {
 		return subItems;
+	}
+	
+	private boolean hasDynamicSubItems() {
+		if( subItems != null) {
+			for (Iterator iter = subItems.iterator(); iter.hasNext();) {
+				AbstractSubItem subItem = (AbstractSubItem)iter.next();
+				if( subItem instanceof RepeatedSubItem ||
+					subItem instanceof ConditionalSubItem ) {
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 }

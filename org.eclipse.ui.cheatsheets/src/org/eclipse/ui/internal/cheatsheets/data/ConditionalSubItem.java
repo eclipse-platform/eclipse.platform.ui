@@ -10,11 +10,14 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.cheatsheets.data;
 
-import java.util.ArrayList;
+import java.util.*;
 
-public class ConditionalSubItem implements ISubItemItem {
+import org.eclipse.ui.internal.cheatsheets.views.CheatSheetManager;
+
+public class ConditionalSubItem extends AbstractSubItem implements ISubItemItem {
 	private String condition;
 	private ArrayList subItems;
+	private SubItem selectedSubItem;
 
 	/**
 	 * Constructor for ConditionalSubItem.
@@ -47,7 +50,7 @@ public class ConditionalSubItem implements ISubItemItem {
 	/**
 	 * @param subItem the SubItem to add.
 	 */
-	public void addSubItem(SubItem subItem) {
+	public void addSubItem(AbstractSubItem subItem) {
 		if(subItems == null) {
 			subItems = new ArrayList();
 		}
@@ -59,5 +62,21 @@ public class ConditionalSubItem implements ISubItemItem {
 	 */
 	public ArrayList getSubItems() {
 		return subItems;
+	}
+
+	public SubItem getSelectedSubItem() {
+		return selectedSubItem;
+	}
+
+	public void setSelectedSubItem(CheatSheetManager csm) {
+		String conditionValue = csm.getVariableData(condition);
+
+		for (Iterator iter = subItems.iterator(); iter.hasNext();) {
+			SubItem subItem = (SubItem) iter.next();
+			if(subItem.getWhen() != null && subItem.getWhen().equals(conditionValue)) {
+				selectedSubItem = subItem;
+				break;
+			}
+		}
 	}
 }

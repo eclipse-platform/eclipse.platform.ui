@@ -12,7 +12,7 @@ package org.eclipse.ui.internal.cheatsheets.data;
 
 import java.util.ArrayList;
 
-public class RepeatedSubItem implements ISubItemItem {
+public class RepeatedSubItem extends AbstractSubItem implements ISubItemItem {
 	private String values;
 	private ArrayList subItems;
 
@@ -47,7 +47,7 @@ public class RepeatedSubItem implements ISubItemItem {
 	/**
 	 * @param subItem the SubItem to add.
 	 */
-	public void addSubItem(SubItem subItem) {
+	public void addSubItem(AbstractSubItem subItem) {
 		if(subItems == null) {
 			subItems = new ArrayList();
 		}

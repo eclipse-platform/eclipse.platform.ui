@@ -856,28 +856,14 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 		try {
 			if (ciws != null) {
 				if (ciws.item.getSubItems() != null && ciws.item.getSubItems().size()>0) {
-					SubItem isi = (SubItem)ciws.item.getSubItems().get(subItemIndex);
-					if(isi.getAction() != null) {
-						String[] params = isi.getAction().getParams();
-						if ((ciws.runAction(isi.getAction().getPluginID(), isi.getAction().getActionClass(), params, getManager()) == ViewItem.VIEWITEM_ADVANCE)) { 
-							//set that item as complete.
-							ArrayList l = ciws.getListOfSubItemCompositeHolders();
-							SubItemCompositeHolder s = (SubItemCompositeHolder) l.get(subItemIndex);
-							if (s != null) {
-								s.getStartButton().setImage(ciws.restartImage);
-								s.getStartButton().redraw();
-							}
-							advanceSubItem(mylabel, true, subItemIndex);
-							saveCurrentSheet();
-						}
-					}
-				} else if (ciws.item.getRepeatedSubItems() != null && ciws.item.getRepeatedSubItems().size()>0) {
 					ArrayList l = ciws.getListOfSubItemCompositeHolders();
 					SubItemCompositeHolder s = (SubItemCompositeHolder) l.get(subItemIndex);
 					SubItem subItem = s.getSubItem();
 					if(subItem.getAction() != null) {
 						try {
-							getManager().setData("this", s.getThisValue()); //$NON-NLS-1$
+							if(s.getThisValue() != null) {
+								getManager().setData("this", s.getThisValue()); //$NON-NLS-1$
+							}
 							String[] params = subItem.getAction().getParams();
 							if ((ciws.runAction(subItem.getAction().getPluginID(), subItem.getAction().getActionClass(), params, getManager()) == ViewItem.VIEWITEM_ADVANCE)) { 
 								//set that item as complete.
@@ -887,7 +873,9 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 								saveCurrentSheet();
 							}
 						} finally {
-							getManager().setData("this", null); //$NON-NLS-1$
+							if(s.getThisValue() != null) {
+								getManager().setData("this", null); //$NON-NLS-1$
+							}
 						}
 					}
 				}

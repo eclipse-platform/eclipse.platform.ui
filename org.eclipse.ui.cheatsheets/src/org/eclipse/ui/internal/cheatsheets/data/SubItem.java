@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.cheatsheets.data;
 
-public class SubItem implements IActionItem, IPerformWhenItem {
+public class SubItem extends AbstractSubItem implements IActionItem, IPerformWhenItem {
 	
 	private String label;
 	private boolean skip;

@@ -12,15 +12,16 @@ package org.eclipse.ui.internal.cheatsheets.data;
 
 import java.io.*;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+
 import javax.xml.parsers.*;
+
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.cheatsheets.AbstractItemExtensionElement;
 import org.eclipse.ui.internal.cheatsheets.*;
 import org.eclipse.ui.internal.cheatsheets.registry.*;
-import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetRegistryReader;
 import org.w3c.dom.*;
 import org.xml.sax.*;
 
@@ -78,50 +79,6 @@ public class CheatSheetParser {
 		}
 		
 		return null;
-	}
-
-	/**
-	 * Remove the new line, form feed and tab chars
-	 * 
-	 * @param string the string to be formatted
-	 * @return the formatted string
-	 */
-	private String formatString(String string) {
-		int hasNewLine = 0;
-		int hasTab = 0;
-		int hasRetLine = 0;
-
-		hasNewLine = string.indexOf("\n"); //$NON-NLS-1$
-		if (hasNewLine != -1)
-			string = string.replace('\n', ' ');
-
-		hasRetLine = string.indexOf("\r"); //$NON-NLS-1$
-		if (hasRetLine != -1)
-			string = string.replace('\r', ' ');
-
-		hasTab = string.indexOf("\t"); //$NON-NLS-1$
-		if (hasTab != -1)
-			string = string.replace('\t', ' ');
-
-		//TODO determine if the following is really needed, double spaces after a period is common.
-		//now take out double/tripple/etc. spaces.
-		char last = 'x';
-		char current = 'x';
-		StringBuffer sb = new StringBuffer();
-
-		for (int i = 0; i < string.length(); i++) {
-			current = string.charAt(i);
-
-			if (current != ' ')
-				sb.append(current);
-			else {
-				if (last != ' ')
-					sb.append(current);
-			}
-			last = current;
-		}
-
-		return sb.toString();
 	}
 
 	private void handleAction(IActionItem item, Node actionNode) throws CheatSheetParserException {
@@ -239,12 +196,12 @@ public class CheatSheetParser {
 		for (int i = 0; i < nodes.getLength(); i++) {
 			Node node = nodes.item(i);
 
-			if(node.getNodeName().equals(IParserTags.ACTION)) {
+			if(node.getNodeName().equals(IParserTags.SUBITEM)) {
 				handleSubItem(conditionalSubItem, node);
 			}
 		}
 
-		item.addConditionalSubItem(conditionalSubItem);
+		item.addSubItem(conditionalSubItem);
 	}
 
 	private void handleDescription(Item item, Node startNode) throws CheatSheetParserException {
@@ -431,62 +388,6 @@ public class CheatSheetParser {
 			Item item = handleItem(itemNode);
 			
 			localList.add(item);
-
-//			NodeList itemchildren = itemnode.getChildNodes();
-//
-//			//			System.out.println("Checking for sub items.");
-//			NodeList subItems = itemnode.getChildNodes();
-//			ArrayList subItemArrayList = null;
-//
-//			//Gather sub items and add them to the sub item array list.  this will be parsed later.
-//			for (int m = 0; m < subItems.getLength(); m++) {
-//				Node n = subItems.item(m);
-//				if (n.getNodeName().equals(IParserTags.SUBITEM)) {
-//					if (subItemArrayList == null)
-//						subItemArrayList = new ArrayList(10);
-//					subItemArrayList.add(n);
-//				}
-//			}
-//
-//			//Create the cheatsheetitem and fill it with data.
-//			if (subItemArrayList == null) {
-//				Item itemtoadd = new Item();
-//				itemtoadd.setActionPluginID(actionPid);
-//				itemtoadd.setActionClass(actionClass);
-//				itemtoadd.setHref(topicHref);
-//				itemtoadd.setTitle(title);
-//				itemtoadd.setActionParams((String[]) l.toArray(new String[l.size()]));
-//				itemtoadd.setPerform(perform);
-//				itemtoadd.setSkip(skip);
-//				itemtoadd.setComplete(complete);
-//				itemtoadd.setText(bodyString);
-//				itemtoadd.setIsDynamic(dynamic);
-//				itemtoadd.setID(itemID);
-//				if (itemExtensionElements != null)
-//					itemtoadd.setItemExtensions(itemExtensionElements);
-//
-//				//Add the item to the list of items to build the view from.
-//				localList.add(itemtoadd);
-//			} else {
-//				ItemWithSubItems itemtoadd = new ItemWithSubItems();
-//				itemtoadd.setHref(topicHref);
-//				itemtoadd.setTitle(title);
-//				itemtoadd.setText(bodyString);
-//				itemtoadd.setIsDynamic(dynamic);
-//				itemtoadd.setID(itemID);
-//				//Parse the sub items for this item and add it to the sub item list.
-//				ArrayList subs = parseSubItems(subItemArrayList);
-//				if (subs == null || subs.size() <=1 )
-//					return null;
-//				itemtoadd.addSubItems((SubItem[]) subs.toArray(new SubItem[subs.size()]));
-//
-//				if (itemExtensionElements != null)
-//					itemtoadd.setItemExtensions(itemExtensionElements);
-//
-//				//Add the item to the list of items to build the view from.
-//				localList.add(itemtoadd);
-//			}
-//			idChecker.add(itemID);
 		}
 		return localList;
 	}
@@ -562,7 +463,7 @@ public class CheatSheetParser {
 			}
 		}
 
-		item.addRepeatedSubItem(repeatedSubItem);
+		item.addSubItem(repeatedSubItem);
 	}
 
 	private void handleSubItem(ISubItemItem item, Node subItemNode) throws CheatSheetParserException {
