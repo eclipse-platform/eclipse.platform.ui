@@ -5,7 +5,7 @@ import java.util.PropertyResourceBundle;
 import java.io.*;
 import org.eclipse.core.internal.boot.*;
 import java.net.URL;
-import java.util.Vector;
+import java.util.*;
 
 public class BootUpdateManager {
 /**
@@ -206,7 +206,25 @@ public static void uninstall(URL url) {
 		catch (IOException ex) {
 		}
 	}
+	
+	uninstall(vectorProducts, vectorComponents);
+	return;
+}
 
+public static void uninstall(LaunchInfo.VersionedIdentifier[] configList, LaunchInfo.VersionedIdentifier[] compList) {
+	Vector cfg = new Vector();
+	Vector cmp = new Vector();
+	for (int i=0; i<configList.length; i++)
+		cfg.add(configList[i].toString());
+	for (int i=0; i<compList.length; i++)
+		cfg.add(compList[i].toString());
+	uninstall(cfg, cmp);
+	return;	
+}
+
+
+private static void uninstall(Vector vectorProducts, Vector vectorComponents) {
+	
 	// Process configurations and components
 	//--------------------------------------
 	if ((vectorProducts != null && vectorProducts.size() > 0) || (vectorComponents != null && vectorComponents.size() > 0)) {
@@ -229,6 +247,7 @@ public static void uninstall(URL url) {
 
 	return;
 }
+
 /**
  */
 private static void uninstallComponents(Vector vectorComponents, IUMRegistry registry, LaunchInfo launchInfo) {
