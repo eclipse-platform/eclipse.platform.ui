@@ -307,7 +307,8 @@ public class AntOpenWithMenu extends ContributionItem {
 			IDocument document= provider.getDocument(input);
 			if (document != null) {
 				if (column > -1) {
-					return document.getLineOffset(line - 1) + column - 1;
+					 //column marks the length..adjust to 0 index and to be within the element's source range
+					return document.getLineOffset(line - 1) + column - 1 - 2;
 				} else {
 					return document.getLineOffset(line - 1);
 				}
