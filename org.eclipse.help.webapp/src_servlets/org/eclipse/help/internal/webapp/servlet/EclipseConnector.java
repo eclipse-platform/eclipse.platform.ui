@@ -19,6 +19,7 @@ import javax.servlet.http.*;
 
 import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.base.*;
+import org.eclipse.help.internal.protocols.*;
 import org.eclipse.help.internal.webapp.data.*;
 
 /**
@@ -160,7 +161,19 @@ public class EclipseConnector {
 				url = url + "?lang=" + locale;
 			}
 		}
-		URL helpURL = new URL(url);
+		// URL helpURL = new URL(url);
+		URL helpURL;
+		if (url.startsWith("help:")) {
+			helpURL =
+				new URL(
+					"help",
+					null,
+					-1,
+					url.substring("help:".length()),
+					HelpURLStreamHandler.getDefault());
+		} else {
+			helpURL = new URL(url);
+		}
 		String protocol = helpURL.getProtocol();
 		if (!("help".equals(protocol)
 			|| "file".equals(protocol)

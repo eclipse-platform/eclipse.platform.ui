@@ -19,13 +19,4 @@
    <extension-point id="toc" name="%toc_extension_point_name" schema="schema/toc.exsd"/>
    <extension-point id="contentProducer" name="%content_producer_extension_point_name" schema="schema/contentProducer.exsd"/>
 
-<!--  Help URL protocols -->
-   <extension
-         point="org.eclipse.core.runtime.urlHandlers">
-      <handler
-            class="org.eclipse.help.internal.protocols.URLHandler"
-            protocol="help">
-      </handler>
-   </extension>
-
 </plugin>

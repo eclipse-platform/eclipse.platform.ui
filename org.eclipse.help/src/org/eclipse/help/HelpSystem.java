@@ -15,6 +15,7 @@ import java.net.*;
 
 import org.eclipse.core.boot.*;
 import org.eclipse.help.internal.*;
+import org.eclipse.help.internal.protocols.*;
 
 /**
  * This class provides general access to help content contributed to the 
@@ -69,7 +70,15 @@ public final class HelpSystem {
 	 */
 	public static InputStream getHelpContent(String href) {
 		try {
-			URL helpURL = new URL("help:" + href);
+			// URL helpURL = new URL("help:" + href);
+			URL helpURL =
+				new URL(
+					"help",
+					null,
+					-1,
+					href,
+					HelpURLStreamHandler.getDefault());
+			
 			return helpURL.openStream();
 		} catch (IOException ioe) {
 			return null;

@@ -11,11 +11,12 @@
 package org.eclipse.help.internal.protocols;
 import java.io.*;
 import java.net.*;
-public class URLHandler extends URLStreamHandler {
+public class HelpURLStreamHandler extends URLStreamHandler {
+	private static HelpURLStreamHandler instance;
 	/**
 	 * Constructor for URLHandler
 	 */
-	public URLHandler() {
+	public HelpURLStreamHandler() {
 		super();
 	}
 	/**
@@ -28,5 +29,11 @@ public class URLHandler extends URLStreamHandler {
 		} else {
 			return null;
 		}
+	}
+	public static URLStreamHandler getDefault() {
+		if (instance == null) {
+			instance = new HelpURLStreamHandler();
+		}
+		return instance;
 	}
 }

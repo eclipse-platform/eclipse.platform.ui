@@ -18,6 +18,7 @@ import org.eclipse.help.*;
 import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.base.*;
 import org.eclipse.help.internal.base.util.*;
+import org.eclipse.help.internal.protocols.*;
 import org.eclipse.help.internal.toc.*;
 
 /**
@@ -285,7 +286,14 @@ class IndexingOperation {
 		}
 
 		try {
-			return new URL("help:" + url + "?lang=" + index.getLocale());
+			//return new URL("help:" + url + "?lang=" + index.getLocale());
+			return new URL(
+				"help",
+				null,
+				-1,
+				url + "?lang=" + index.getLocale(),
+				HelpURLStreamHandler.getDefault());
+
 		} catch (MalformedURLException mue) {
 			return null;
 		}
