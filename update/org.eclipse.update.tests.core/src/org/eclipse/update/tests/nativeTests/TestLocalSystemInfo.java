@@ -30,6 +30,7 @@ public class TestLocalSystemInfo extends UpdateManagerTestCase {
 			
 			File root = new File(a[i]);
 			String label = system.getLabel(root);
+			if (label==null) label="NO LABEL";
 			int type = system.getType(root);
 			long size = system.getFreeSpace(root);
 			System.out.println(" ->:"+label+":"+getType(type)+":"+getSize(size));

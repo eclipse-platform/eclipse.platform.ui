@@ -97,7 +97,7 @@ JNIEXPORT jstring JNICALL Java_org_eclipse_update_configuration_LocalSystemInfo_
 	obj = jnienv -> CallObjectMethod(file, id);
 	lpDirectoryName = jnienv -> GetStringUTFChars((jstring) obj, 0);
 
-	jstring result;
+	jstring result = NULL;
 	// Make sure we have a String of the Form: <letter>:
 	if (':' == lpDirectoryName[1]) {
 		char driveLetter[4]; // i.e. -> C:\\
@@ -108,7 +108,7 @@ JNIEXPORT jstring JNICALL Java_org_eclipse_update_configuration_LocalSystemInfo_
 		/*
 		 * Get the volume name.
 		 */
-		GetVolumeInformation(
+		int err = GetVolumeInformation(
 			driveLetter,
 			buf,
 			sizeof(buf) - 1,
@@ -117,10 +117,10 @@ JNIEXPORT jstring JNICALL Java_org_eclipse_update_configuration_LocalSystemInfo_
 			NULL,
 			NULL,
 			0);
-		result = jnienv -> NewStringUTF(buf);
-	} else {
-		result = (jstring) "wrong";
-	}
+		if (err){
+			result = jnienv -> NewStringUTF(buf);
+		}
+	} 
 
 	return result;
 }
@@ -173,6 +173,8 @@ JNIEXPORT jint JNICALL Java_org_eclipse_update_configuration_LocalSystemInfo_nat
 				result = org_eclipse_update_configuration_LocalSystemInfo_VOLUME_INVALID_PATH;
 				break;
 			case DRIVE_RAMDISK :
+				result = org_eclipse_update_configuration_LocalSystemInfo_VOLUME_RAMDISK;
+				break;			
 			case DRIVE_UNKNOWN :
 			default :
 				result = org_eclipse_update_configuration_LocalSystemInfo_VOLUME_UNKNOWN;

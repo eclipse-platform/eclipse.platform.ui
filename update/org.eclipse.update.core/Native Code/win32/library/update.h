@@ -27,6 +27,8 @@ extern "C" {
 #define org_eclipse_update_configuration_LocalSystemInfo_VOLUME_REMOTE 3L
 #undef org_eclipse_update_configuration_LocalSystemInfo_VOLUME_CDROM
 #define org_eclipse_update_configuration_LocalSystemInfo_VOLUME_CDROM 4L
+#undef org_eclipse_update_configuration_LocalSystemInfo_VOLUME_RAMDISK
+#define org_eclipse_update_configuration_LocalSystemInfo_VOLUME_RAMDISK 5L
 /* Inaccessible static: listeners */
 /* Inaccessible static: hasNatives */
 /*

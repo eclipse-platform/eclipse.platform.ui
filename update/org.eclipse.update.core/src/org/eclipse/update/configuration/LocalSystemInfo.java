@@ -42,14 +42,14 @@ public class LocalSystemInfo {
 	public static final int VOLUME_INVALID_PATH = -2;
 	
 	/**
-	 * Indicates the volume is removable
+	 * Indicates the volume is removable (floppy disk)
 	 * @see LocalSystemInfo#getType(File)
 	 * @since 2.0
 	 */
 	public static final int VOLUME_REMOVABLE = 1;
 	
 	/**
-	 * Indicates the volume is fixed (not removable)
+	 * Indicates the volume is fixed (hard drive)
 	 * @see LocalSystemInfo#getType(File)
 	 * @since 2.0
 	 */
@@ -63,11 +63,19 @@ public class LocalSystemInfo {
 	public static final int VOLUME_REMOTE = 3;
 	
 	/**
-	 * Indicates a cdrom volume
+	 * Indicates a cdrom volume (compact disc)
 	 * @see LocalSystemInfo#getType(File)
 	 * @since 2.0
 	 */
 	public static final int VOLUME_CDROM = 4;	
+	
+	/**
+	 * Indicates a ramdisk volume (memory)
+	 * @see LocalSystemInfo#getType(File)
+	 * @since 2.0
+	 */
+	public static final int VOLUME_RAMDISK = 5;	
+	
 	
 	private static ArrayList listeners = new ArrayList();	
 	private static boolean hasNatives = false;	
@@ -163,7 +171,8 @@ public class LocalSystemInfo {
 	public static String[] listMountPoints() {
 		if (hasNatives) {
 			try {
-				return nativeListMountPoints();
+				String[] mountPoints = nativeListMountPoints();
+				return mountPoints;
 			} catch (UnsatisfiedLinkError e) {
 			}
 		}

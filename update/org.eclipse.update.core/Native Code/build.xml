@@ -5,7 +5,9 @@
   <!-- Set a meaningful default value for when it is not. -->
   <property name="eclipse-home" value="${basedir}/../.."/>
   <property name="jdk-path" value="${java.home}"/>  
-  <property name="destination" value="${eclipse-home}"/>
+  <property name="destination" value="${eclipse-home}/org.eclipse.update.core/os/win32/"/>
+  <property name="obj-path" value="${eclipse-home}/org.eclipse.update.core/Native Code/"/>
+  <property name="src-path" value="${eclipse-home}/org.eclipse.update.core/Native Code/win32/library/"/>  
   
   <!-- sets the properties -->
   <property name="library-name" value="update"/>  
@@ -18,16 +20,22 @@
   <target name="init">
     <tstamp/>
     <delete>
-      <fileset dir="${eclipse-home}" includes="${library-file}"/>
-      <fileset dir="${eclipse-home}" includes="*.obj"/>
-      <fileset dir="${eclipse-home}" includes="*.tds"/>            
+      <fileset dir="${obj-path}" includes="${library-file}"/>
+      <fileset dir="${obj-path}" includes="${library-name}.obj"/>
+      <fileset dir="${obj-path}" includes="${library-name}.tds"/>            
     </delete>
   </target>
   
   <!-- This target holds code to cleanup the testing environment after -->
   <!-- after all of the tests have been run. You can use this target to -->
   <!-- delete temporary files that have been created. -->
-  <target name="cleanup"/>
+  <target name="cleanup">
+      <delete>
+      <fileset dir="${obj-path}" includes="${library-file}"/>
+      <fileset dir="${obj-path}" includes="${library-name}.obj"/>
+      <fileset dir="${obj-path}" includes="${library-name}.tds"/>            
+    </delete>
+  </target>
   
   
   <!-- This target runs the test suite. Any actions that need to happen -->
@@ -39,7 +47,6 @@
   <target name="build">
     <echo message="Building ${library-file}"/>
 
-    <property name="src-path" value="${eclipse-home}/org.eclipse.update.core/Native Code/win32/library/"/>
     <property name="header-path" value="${jdk-path}/include"/>
     <property name="header-windows-path" value="${header-path}/win32" />
 
