@@ -70,7 +70,7 @@ public class LifecycleEvent {
 		instance.kind = kind;
 		instance.resource = oldResource;
 		instance.newResource = newResource;
-		instance.updateFlags = 0;
+		instance.updateFlags = updateFlags;
 		return instance;
 	}
 }
