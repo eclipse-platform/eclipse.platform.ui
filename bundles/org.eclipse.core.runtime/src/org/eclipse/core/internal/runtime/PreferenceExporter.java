@@ -62,6 +62,10 @@ public class PreferenceExporter {
 	 * @see Preferences#importPreferences
 	 */
 	public static void importPreferences(IPath file) throws CoreException {
+		if (!file.toFile().exists()) {
+			String msg = Policy.bind("preferences.fileNotFound", file.toOSString());
+			throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 1, msg, null));
+		}
 		Map idsToPreferences = splitPreferences(file);
 		IPluginDescriptor[] descriptors = Platform.getPluginRegistry().getPluginDescriptors();
 		for (int i = 0; i < descriptors.length; i++) {
@@ -81,7 +85,11 @@ public class PreferenceExporter {
 				in = new BufferedInputStream(new FileInputStream(propertiesFile));
 				preferences.load(in);
 			} catch (IOException e) {
-				String msg = Policy.bind("preferences.errorReading", propertiesFile.toString()); //$NON-NLS-1$
+				String msg = Policy.bind("preferences.errorReading", propertiesFile.toString(), e.getMessage()); //$NON-NLS-1$
+				throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 1, msg, e));
+			} catch (IllegalArgumentException e) {
+				//properties.load throws IllegalArgumentException if the file encoding is wrong
+				String msg = Policy.bind("preferences.errorReading", propertiesFile.toString(), e.getMessage()); //$NON-NLS-1$
 				throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 1, msg, e));
 			} finally {
 				if (in != null) {
@@ -155,6 +163,7 @@ public class PreferenceExporter {
 	 */
 	private static Map splitPreferences(IPath file) throws CoreException {
 		Preferences globalPreferences = loadPreferences(file, new Preferences());
+		validatePreferenceFileFormat(globalPreferences);
 		Map idsToPreferences = new HashMap();
 		String[] keys = globalPreferences.propertyNames();
 		for (int i = 0; i < keys.length; i++) {
@@ -173,6 +182,9 @@ public class PreferenceExporter {
 		}
 		return idsToPreferences;
 	}
+
+
+
 
 	/**
 	 * Writes the given preferences to the given file.  If the preferences are
@@ -193,8 +205,8 @@ public class PreferenceExporter {
 			out = new BufferedOutputStream(new FileOutputStream(propertiesFile));
 			preferences.store(out, null);
 		} catch (IOException e) {
-				String msg = Policy.bind("preferences.errorWriting", propertiesFile.toString()); //$NON-NLS-1$
-				throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 1, msg, e));
+			String msg = Policy.bind("preferences.errorWriting", propertiesFile.toString(), e.getMessage()); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 1, msg, e));
 		} finally {
 			if (out != null) {
 				try {
@@ -239,6 +251,40 @@ public class PreferenceExporter {
 		result.add(new Status(severity, Platform.PI_RUNTIME, 1, msg, null));
 	}
 	/**
+	 * Throws an exception if the supplied preferences do not comply
+	 * with the preference export file format.
+	 */
+	private static void validatePreferenceFileFormat(Preferences preferences) throws CoreException {
+		String[] names = preferences.propertyNames();
+		for (int i = 0; i < names.length; i++) {
+			String pluginId = null;
+			int separator = names[i].indexOf(PLUGIN_SEPARATOR);
+			if (separator >= 0) {
+				//should be of the form <plugin-id>/<key>=<value>
+				pluginId = names[i].substring(0, separator);
+				//ensure there is a corresponding plugin version property
+				String versionId = preferences.getString(pluginId);
+				if (versionId == null || versionId.length() == 0) {
+					String msg = Policy.bind("preferences.invalidProperty", names[i], 
+						preferences.getString(names[i]));
+					throw new CoreException(
+						new Status(IStatus.ERROR, Platform.PI_RUNTIME, 0, msg, null));
+				}
+			} else {
+				//should be of the form <plugin-id>=<plugin-version-id>
+				pluginId = names[i];
+				//verify that the versionId has the correct format
+				String versionId = preferences.getString(pluginId);
+				if (!PluginVersionIdentifier.validateVersion(versionId).isOK()) {
+					String msg = Policy.bind("preferences.invalidProperty", names[i], 
+						preferences.getString(names[i]));
+					throw new CoreException(
+						new Status(IStatus.ERROR, Platform.PI_RUNTIME, 0, msg, null));
+				}
+			}
+		}
+	}
+	/**
 	 * @see Preferences#validatePreferenceVersions
 	 */
 	public static IStatus validatePreferenceVersions(IPath file) {
@@ -259,14 +305,10 @@ public class PreferenceExporter {
 				IPluginDescriptor descriptor = registry.getPluginDescriptor(pluginId);
 				if (descriptor != null) {
 					String version = globalPreferences.getString(pluginId);
-					//FIXME - should have version identifier validation method
-					try {
+					if (PluginVersionIdentifier.validateVersion(version).isOK()) {
 						PluginVersionIdentifier preferenceVersion = new PluginVersionIdentifier(version);
 						PluginVersionIdentifier installedVersion = descriptor.getVersionIdentifier();
 						validatePluginVersions(pluginId, preferenceVersion, installedVersion, result);
-					} catch (RuntimeException e) {
-						msg = Policy.bind("preferences.invalidVersionIdentifier", version); //$NON-NLS-1$
-						result.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, 1, msg, e));
 					}
 				}
 			}
