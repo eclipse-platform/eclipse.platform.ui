@@ -12,6 +12,7 @@ package org.eclipse.ui.activities;
 
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.application.IWorkbenchPreferences;
 
 /**
  * A utility class that contains helpful methods for interacting with the
@@ -77,7 +78,7 @@ public final class WorkbenchActivityHelper {
 	 * @return whether the UI will provide a "show all" option when applicable.
 	 */
 	public static final boolean showAll() {
-		return true;
+		return isFiltering() && PlatformUI.getWorkbench().getPreferenceStore().getBoolean(IWorkbenchPreferences.SHOULD_ALLOW_SHOW_ALL);
 	}
 
 	/**

@@ -421,8 +421,11 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		store.setDefault(IWorkbenchPreferences.SHOULD_SHOW_TOOL_BAR, true);
 		store.setDefault(IWorkbenchPreferences.SHOULD_SHOW_SHORTCUT_BAR, false);
 		store.setDefault(IWorkbenchPreferences.SHOULD_SHOW_STATUS_LINE, true);
-		store.setDefault(IWorkbenchPreferences.SHOULD_SHOW_PROGRESS_INDICATOR, false);
-			
+		store.setDefault(IWorkbenchPreferences.SHOULD_SHOW_PROGRESS_INDICATOR, false);			
+		// Allow 'show all' option by default
+		store.setDefault(IWorkbenchPreferences.SHOULD_ALLOW_SHOW_ALL, true);		
+		
+		
 		// @issue some of these may be IDE-specific
 		store.setDefault(IPreferenceConstants.EDITORLIST_PULLDOWN_ACTIVE, false);
 		store.setDefault(IPreferenceConstants.EDITORLIST_DISPLAY_FULL_NAME, false);
@@ -469,7 +472,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		store.setDefault("ENABLE_NEW_MENUS", true); //$NON-NLS-1$	
 		//Temporary option to turn off the dialog font
 		store.setDefault("DISABLE_DIALOG_FONT", false); //$NON-NLS-1$
-
+		
 		// @issue get rid of PreferenceConverter - defer setting default fonts until Display created.
 		FontRegistry registry = JFaceResources.getFontRegistry();
 		initializeFont(JFaceResources.DIALOG_FONT, registry, store);
