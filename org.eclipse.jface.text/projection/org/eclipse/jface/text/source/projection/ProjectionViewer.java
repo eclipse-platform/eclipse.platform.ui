@@ -61,6 +61,11 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	 * Key of the projection annotation model inside the visual annotation model.
 	 */
 	protected final static Object PROJECTION_ANNOTATION_MODEL= new Object();
+		
+	
+	/** The projection annotation model used by this viewer. */
+	private ProjectionAnnotationModel fProjectionAnnotationModel;
+	
 	
 	/**
 	 * Creates a new projection source viewer.
@@ -73,18 +78,28 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		super(parent, ruler, overviewRuler, showsAnnotationOverview, styles);
 	}
 	
+	/**
+	 * Creates the projection annotation model and adds it to the given annotation model.
+	 * 
+	 * @param model the model to which the projection annotation model is added
+	 */
+	protected void addProjectionAnnotationModel(IAnnotationModel model) {
+		if (model instanceof IAnnotationModelExtension) {
+			IAnnotationModelExtension extension= (IAnnotationModelExtension) model;
+			extension.addAnnotationModel(PROJECTION_ANNOTATION_MODEL, fProjectionAnnotationModel);
+		}
+	}
+	
 	/*
 	 * @see org.eclipse.jface.text.source.SourceViewer#createVisualAnnotationModel(org.eclipse.jface.text.source.IAnnotationModel)
 	 */
 	protected IAnnotationModel createVisualAnnotationModel(IAnnotationModel annotationModel) {
 		IAnnotationModel model= super.createVisualAnnotationModel(annotationModel);
-		if (model instanceof IAnnotationModelExtension) {
-			IAnnotationModelExtension extension= (IAnnotationModelExtension) model;
-			extension.addAnnotationModel(PROJECTION_ANNOTATION_MODEL, new ProjectionAnnotationModel());
-		}
+		fProjectionAnnotationModel= new ProjectionAnnotationModel();
+		addProjectionAnnotationModel(model);
 		return model;
 	}
-	
+
 	/**
 	 * Returns the projection annotation model.
 	 * 
@@ -107,15 +122,79 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.TextViewer#updateVisibleDocument(org.eclipse.jface.text.IDocument, int, int)
+	 * @see org.eclipse.jface.text.TextViewer#updateSlaveDocument(org.eclipse.jface.text.IDocument, int, int)
 	 */
-	protected boolean updateVisibleDocument(IDocument slaveDocument, int modelRangeOffset, int modelRangeLength) throws BadLocationException {
+	protected boolean updateSlaveDocument(IDocument slaveDocument, int modelRangeOffset, int modelRangeLength) throws BadLocationException {
 		if (slaveDocument instanceof ProjectionDocument) {
 			ProjectionDocument document= (ProjectionDocument) slaveDocument;
 			document.replaceMasterDocumentRanges(modelRangeOffset, modelRangeLength);
 			return true;
 		}
 		return false;
+	}
+	
+	/**
+	 * Returns whether this viewer is in projection mode.
+	 * 
+	 * @return <code>true</code> if this viewer is in projection mode,
+	 *         <code>false</code> otherwise
+	 */
+	private boolean isProjectionMode() {
+		return getProjectionAnnotationModel() != null;
+	}
+
+	/**
+	 * Disables the projection mode. 
+	 */
+	private void disableProjection() {
+		if (isProjectionMode()) {
+			IAnnotationModel model= getVisualAnnotationModel();
+			if (model instanceof IAnnotationModelExtension) {
+				IAnnotationModelExtension extension= (IAnnotationModelExtension) model;
+				extension.removeAnnotationModel(PROJECTION_ANNOTATION_MODEL);
+			}
+			fProjectionAnnotationModel.removeAllAnnotations();
+		}
+	}
+	
+	/**
+	 * Enables the projection mode.
+	 */
+	private void enableProjection() {
+		if (!isProjectionMode()) 
+			addProjectionAnnotationModel(getVisualAnnotationModel());
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.TextViewer#setVisibleRegion(int, int)
+	 */
+	public void setVisibleRegion(int start, int length) {
+		disableProjection();
+		super.setVisibleRegion(start, length);
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.TextViewer#resetVisibleRegion()
+	 */
+	public void resetVisibleRegion() {
+		super.resetVisibleRegion();
+		enableProjection();
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.ITextViewer#getVisibleRegion()
+	 */
+	public IRegion getVisibleRegion() {
+		disableProjection();
+		return super.getVisibleRegion();
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.ITextViewer#overlapsWithVisibleRegion(int,int)
+	 */
+	public boolean overlapsWithVisibleRegion(int offset, int length) {
+		disableProjection();
+		return super.overlapsWithVisibleRegion(offset, length);
 	}
 	
 	/**
@@ -248,71 +327,5 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			}	
 		}
 		return false;
-	}
-
-	/*
-	 * @see org.eclipse.jface.text.ITextViewerExtension5#setExposedModelRange(org.eclipse.jface.text.IRegion)
-	 */
-	public void setExposedModelRange(IRegion modelRange) {
-		try {
-			
-			if (modelRange != null) {
-				ProjectionDocument projection= null;
-				
-				IDocument visibleDocument= getVisibleDocument();
-				if (visibleDocument instanceof ProjectionDocument)
-					projection= (ProjectionDocument) visibleDocument;
-				else {
-					IDocument master= getDocument();
-					IDocument slave= createSlaveDocument(getDocument());
-					if (slave instanceof ProjectionDocument) {
-						projection= (ProjectionDocument) slave;
-						projection.addMasterDocumentRange(0, master.getLength());
-						replaceVisibleDocument(projection);
-					}
-				}
-				
-				if (projection != null) {
-					projection.replaceMasterDocumentRanges(modelRange.getOffset(), modelRange.getLength());
-					invalidateTextPresentation();
-				}
-				
-			} else {
-				IDocument slave= getVisibleDocument();
-				replaceVisibleDocument(getDocument());
-				freeSlaveDocument(slave);
-			}
-			
-		} catch (BadLocationException x) {
-			throw new IllegalArgumentException();
-		}
-	}
-	
-	/*
-	 * @see org.eclipse.jface.text.ITextViewer#getVisibleRegion()
-	 */
-	public IRegion getVisibleRegion() {
-		throw new UnsupportedOperationException("Visible Region support has been removed.");
-	}
-
-	/*
-	 * @see org.eclipse.jface.text.TextViewer#getVisibleRegionOffset()
-	 */
-	protected int getVisibleRegionOffset() {
-		throw new UnsupportedOperationException("Visible Region support has been removed.");
-	}
-
-	/*
-	 * @see org.eclipse.jface.text.TextViewer#internalGetVisibleRegion()
-	 */
-	protected IRegion internalGetVisibleRegion() {
-		throw new UnsupportedOperationException("Visible Region support has been removed.");
-	}
-
-	/*
-	 * @see org.eclipse.jface.text.ITextViewer#overlapsWithVisibleRegion(int,int)
-	 */
-	public boolean overlapsWithVisibleRegion(int offset, int length) {
-		throw new UnsupportedOperationException("Visible Region support has been removed.");
 	}
 }

@@ -90,4 +90,9 @@ public interface IAnnotationModelExtension {
 	 *            should be changed
 	 */
 	void modifyAnnotationPosition(Annotation annotation, Position position);
+	
+	/**
+	 * Removes all annotations from this annotation model.
+	 */
+	void removeAllAnnotations();
 }

@@ -4043,14 +4043,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			return;
 			
 		if (fShowHighlightRangeOnly) {
-			if (moveCursor) {
-				if (fSourceViewer instanceof ITextViewerExtension5) {
-					ITextViewerExtension5 extension= (ITextViewerExtension5) fSourceViewer;
-					extension.setExposedModelRange(new Region(offset, length));
-				} else {
-					fSourceViewer.setVisibleRegion(offset, length);
-				}
-			}
+			if (moveCursor)
+				fSourceViewer.setVisibleRegion(offset, length);
 		} else {
 			IRegion rangeIndication= fSourceViewer.getRangeIndication();
 			if (rangeIndication == null || offset != rangeIndication.getOffset() || length != rangeIndication.getLength())
@@ -4078,14 +4072,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		if (fSourceViewer == null)
 			return;
 		
-		if (fShowHighlightRangeOnly) {
-			if (fSourceViewer instanceof ITextViewerExtension5) {
-				ITextViewerExtension5 extension= (ITextViewerExtension5) fSourceViewer;
-				extension.setExposedModelRange(null);
-			} else {
-				fSourceViewer.resetVisibleRegion();
-			}
-		} else
+		if (fShowHighlightRangeOnly)
+			fSourceViewer.resetVisibleRegion();
+		else
 			fSourceViewer.removeRangeIndication();
 	}
 	

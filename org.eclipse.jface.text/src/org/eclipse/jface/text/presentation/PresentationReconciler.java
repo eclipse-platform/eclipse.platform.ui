@@ -200,11 +200,16 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 						damage= new Region(0, document.getLength());
 			 		} else {
 						IRegion region= widgetRegion2ModelRegion(e);
-						try {
-							String text= document.get(region.getOffset(), region.getLength());
-							DocumentEvent de= new DocumentEvent(document, region.getOffset(), region.getLength(), text);
-							damage= getDamage(de, false);
-						} catch (BadLocationException x) {
+						if (region == null) {
+							// TODO restrict to visible region
+							damage= new Region(0, document.getLength());
+						} else {
+							try {
+								String text= document.get(region.getOffset(), region.getLength());
+								DocumentEvent de= new DocumentEvent(document, region.getOffset(), region.getLength(), text);
+								damage= getDamage(de, false);
+							} catch (BadLocationException x) {
+							}
 						}
 			 		}
 		 		}
@@ -256,7 +261,7 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 	private TypedPosition fRememberedPosition;
 	/** Flag indicating the receipt of a partitioning changed notification. */
 	private boolean fDocumentPartitioningChanged= false;
-	/** The range covering the changed parititoning. */
+	/** The range covering the changed partitioning. */
 	private IRegion fChangedDocumentPartitions= null;
 	/**
 	 * The partitioning used by this presentation reconciler.
