@@ -155,5 +155,15 @@ public interface ICVSFile extends ICVSResource {
 	 * This method is used by the command framework and should not be used by other clients.
 	 */
 	public void notificationCompleted() throws CVSException;
+	
+	/**
+	 * Indicate whether the file has been "cvs edit"ed. This is determined by
+	 * looking in the CVS/Base folder for a file of the same name as the
+	 * file (i.e. no files are read so the method can be called by time critical
+	 * code like menu enablement).
+	 * 
+	 * @return boolean
+	 */
+	public boolean isEdited() throws CVSException;
 
 }

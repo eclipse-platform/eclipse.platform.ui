@@ -507,8 +507,7 @@ public class SyncFileWriter {
 		monitor = Policy.monitorFor(monitor);
 		monitor.beginTask(null, 100);
 		try {
-			IContainer cvsFolder = getCVSSubdirectory(file.getParent());
-			IFolder baseFolder = cvsFolder.getFolder(new Path(BASE_DIRNAME));
+			IFolder baseFolder = getBaseDirectory(file);
 			if (!baseFolder.exists()) {
 				baseFolder.create(false /* force */, true /* local */, Policy.subMonitorFor(monitor, 10));
 			}
@@ -536,8 +535,7 @@ public class SyncFileWriter {
 		monitor = Policy.monitorFor(monitor);
 		monitor.beginTask(null, 100);
 		try {
-			IContainer cvsFolder = getCVSSubdirectory(file.getParent());
-			IFolder baseFolder = cvsFolder.getFolder(new Path(BASE_DIRNAME));
+			IFolder baseFolder = getBaseDirectory(file);
 			IFile source = baseFolder.getFile(new Path(file.getName()));
 			if (!source.exists()) {
 				throw new CVSException(Policy.bind("SyncFileWriter.baseNotAvailable", file.getFullPath().toString())); //$NON-NLS-1$
@@ -563,8 +561,7 @@ public class SyncFileWriter {
 		monitor = Policy.monitorFor(monitor);
 		monitor.beginTask(null, 100);
 		try {
-			IContainer cvsFolder = getCVSSubdirectory(file.getParent());
-			IFolder baseFolder = cvsFolder.getFolder(new Path(BASE_DIRNAME));
+			IFolder baseFolder = getBaseDirectory(file);
 			IFile source = baseFolder.getFile(new Path(file.getName()));
 			if (source.exists()) {
 				source.delete(false, false, Policy.subMonitorFor(monitor, 100));
@@ -574,6 +571,23 @@ public class SyncFileWriter {
 		} finally {
 			monitor.done();
 		}
+	}
+
+	private static IFolder getBaseDirectory(IFile file) throws CVSException {
+		IContainer cvsFolder = getCVSSubdirectory(file.getParent());
+		IFolder baseFolder = cvsFolder.getFolder(new Path(BASE_DIRNAME));
+		return baseFolder;
+	}
+	
+	/**
+	 * Method isEdited.
+	 * @param resource
+	 * @return boolean
+	 */
+	public static boolean isEdited(IFile file) throws CVSException {
+		IFolder baseFolder = getBaseDirectory(file);
+		IFile baseFile = baseFolder.getFile(file.getName());
+		return baseFile.exists();
 	}
 
 }

@@ -53,7 +53,7 @@ public class UneditAction extends WorkspaceAction {
 	protected boolean isEnabledForCVSResource(ICVSResource cvsResource) throws CVSException {
 		if (cvsResource.isFolder()) return false;
 		if (super.isEnabledForCVSResource(cvsResource)) {
-			return !((ICVSFile)cvsResource).isReadOnly();
+			return !((ICVSFile)cvsResource).isReadOnly() && ((ICVSFile)cvsResource).isEdited();
 		} else {
 			return false;
 		}

@@ -1105,4 +1105,14 @@ public class EclipseSynchronizer {
 			monitor.done();
 		}
 	}
+	
+	/**
+	 * Method isEdited returns true if a "cvs edit" was performed on the given
+	 * file and no commit or unedit has yet been performed.
+	 * @param iResource
+	 * @return boolean
+	 */
+	public boolean isEdited(IFile resource) throws CVSException {
+		return SyncFileWriter.isEdited(resource);
+	}
 }

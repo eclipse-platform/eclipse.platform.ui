@@ -396,5 +396,11 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 		super.unmanage(monitor);
 		clearCachedBase();
 	}
+	/**
+	 * @see org.eclipse.team.internal.ccvs.core.ICVSFile#isEdited()
+	 */
+	public boolean isEdited() throws CVSException {
+		return EclipseSynchronizer.getInstance().isEdited(getIFile());
+	}
 
 }
