@@ -445,7 +445,7 @@ public class EclipseTest extends EclipseWorkspaceTest {
 		if (file instanceof ICVSRemoteFile)
 			return ((RemoteFile)file).getContents(DEFAULT_MONITOR);
 		else
-			return new BufferedInputStream(file.getInputStream());
+			return new BufferedInputStream(file.getContents());
 	}
 	
 	/*

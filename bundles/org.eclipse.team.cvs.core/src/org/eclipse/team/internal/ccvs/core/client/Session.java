@@ -519,7 +519,7 @@ public class Session {
 		// obtain an input stream for the file and its size
 		long size = file.getSize();
 		OutputStream out = connection.getOutputStream();
-		InputStream in = file.getInputStream();
+		InputStream in = file.getContents();
 		try {
 			if (isBinary || PLATFORM_NEWLINE_BYTES.length == 1) {
 				writeLine(Long.toString(size));
