@@ -68,7 +68,7 @@ public class CVSException extends TeamException {
 	 * Static helper methods for creating exceptions
 	 */
 	public static CVSException wrapException(IResource resource, String message, CoreException e) {
-		return new CVSException(new CVSStatus(IStatus.ERROR, UNABLE, message, e));
+		return new CVSException(new CVSStatus(IStatus.ERROR, e.getStatus().getCode(), message, e));
 	}
 
 	/*

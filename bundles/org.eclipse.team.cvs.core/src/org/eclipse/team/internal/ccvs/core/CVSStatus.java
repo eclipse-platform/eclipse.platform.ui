@@ -23,6 +23,7 @@ public class CVSStatus extends Status {
 	public static final int COMMITTING_SYNC_INFO_FAILED = -16;
 	public static final int DOES_NOT_EXIST = -17;
 	public static final int FOLDER_NEEDED_FOR_FILE_DELETIONS = -18;
+	public static final int CASE_VARIANT_EXISTS = -19;
 	
 	// Path for resource related status
 	private IPath path;
