@@ -127,7 +127,7 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 			setContentDescription(""); //$NON-NLS-1$
 		} else {
 			SynchronizeViewWorkbenchPart part = (SynchronizeViewWorkbenchPart)fParticipantToPart.get(participant);
-			setContentDescription(Utils.shortenText(35, part.getParticipant().getName())); //$NON-NLS-1$
+			setContentDescription(Utils.shortenText(MAX_NAME_LENGTH, part.getParticipant().getName())); //$NON-NLS-1$
 		}
 	}
 	
