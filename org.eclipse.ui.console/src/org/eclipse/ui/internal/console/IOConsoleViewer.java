@@ -1,18 +1,37 @@
 package org.eclipse.ui.internal.console;
 
+import org.eclipse.jface.resource.JFaceColors;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.TextViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.LineStyleEvent;
 import org.eclipse.swt.custom.LineStyleListener;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.MouseMoveListener;
+import org.eclipse.swt.events.MouseTrackListener;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.VerifyEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Cursor;
+import org.eclipse.swt.graphics.FontMetrics;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.console.ConsolePlugin;
+import org.eclipse.ui.console.IConsoleConstants;
+import org.eclipse.ui.console.IConsoleHyperlink;
 
 /**
  * This class is new and experimental. It will likely be subject to significant change before
@@ -21,8 +40,11 @@ import org.eclipse.ui.console.ConsolePlugin;
  * @since 3.1
  *
  */
-public class IOConsoleViewer extends TextViewer implements LineStyleListener {
+public class IOConsoleViewer extends TextViewer implements LineStyleListener, MouseTrackListener, MouseMoveListener, MouseListener, PaintListener {
     private boolean autoScroll = false;
+    private IConsoleHyperlink hyperlink;
+    private Cursor handCursor;
+    private Cursor textCursor;
     
     public IOConsoleViewer(Composite parent, IDocument document) {
         super(parent, SWT.H_SCROLL | SWT.V_SCROLL);
@@ -33,6 +55,11 @@ public class IOConsoleViewer extends TextViewer implements LineStyleListener {
         text.addLineStyleListener(this);
         text.setEditable(true);
         
+        StyledText styledText = getTextWidget();
+        styledText.setFont(JFaceResources.getFont(IConsoleConstants.CONSOLE_FONT));
+        styledText.addMouseTrackListener(this);
+        styledText.addPaintListener(this);
+		
         document.addDocumentListener(new IDocumentListener() {
             public void documentAboutToBeChanged(DocumentEvent event) {
             }
@@ -145,5 +172,199 @@ public class IOConsoleViewer extends TextViewer implements LineStyleListener {
             }
         });
     }
-    
+ 
+	/**
+	 * @see org.eclipse.swt.events.PaintListener#paintControl(org.eclipse.swt.events.PaintEvent)
+	 */
+	public void paintControl(PaintEvent e) {
+		if (hyperlink != null) {
+			IDocument doc = getDocument();
+			
+			if (doc == null) {
+				return;
+			}
+			IOConsolePartitioner partitioner = (IOConsolePartitioner)doc.getDocumentPartitioner();
+			if (partitioner == null) {
+				return;
+			}
+			
+			IRegion linkRegion = partitioner.getRegion(hyperlink);
+			if (linkRegion != null) {
+				int start = linkRegion.getOffset();
+				int end = start + linkRegion.getLength();
+
+				try {
+					Color fontColor = JFaceColors.getActiveHyperlinkText(Display.getCurrent());
+					int startLine = doc.getLineOfOffset(start);
+					int endLine = doc.getLineOfOffset(end);
+					for (int i = startLine; i <= endLine; i++) {
+						IRegion lineRegion = doc.getLineInformation(i);
+						int lineStart = lineRegion.getOffset();
+						int lineEnd = lineStart + lineRegion.getLength();
+						
+						Color color = e.gc.getForeground();
+						e.gc.setForeground(fontColor);
+						if (lineStart < end) {
+							lineStart = Math.max(start, lineStart);
+							lineEnd = Math.min(end, lineEnd);
+							Point p1 = getTextWidget().getLocationAtOffset(lineStart);
+							Point p2 = getTextWidget().getLocationAtOffset(lineEnd);
+							FontMetrics metrics = e.gc.getFontMetrics();
+							int height = metrics.getHeight();
+							e.gc.drawLine(p1.x, p1.y + height, p2.x, p2.y + height);
+							
+							String text = doc.get(start, linkRegion.getLength());
+							e.gc.drawString(text, p1.x, p1.y);
+						}
+						e.gc.setForeground(color);
+					}
+				} catch (BadLocationException ex) {
+				}
+			}
+		}
+	}
+	
+	protected Cursor getHandCursor() {
+		if (handCursor == null) {
+			handCursor = new Cursor(ConsolePlugin.getStandardDisplay(), SWT.CURSOR_HAND);
+		}
+		return handCursor;
+	}
+	
+	protected Cursor getTextCursor() {
+		if (textCursor == null) {
+			textCursor = new Cursor(ConsolePlugin.getStandardDisplay(), SWT.CURSOR_IBEAM);
+		}
+		return textCursor;
+	}	
+	
+	protected void linkEntered(IConsoleHyperlink link) {
+		Control control = getTextWidget();
+		control.setRedraw(false);
+		if (hyperlink != null) {
+			linkExited(hyperlink);
+		}
+		hyperlink = link;
+		hyperlink.linkEntered();
+		control.setCursor(getHandCursor());
+		control.setRedraw(true);
+		control.redraw();
+		control.addMouseListener(this);
+	}
+	
+	protected void linkExited(IConsoleHyperlink link) {
+		link.linkExited();
+		hyperlink = null;
+		Control control = getTextWidget();
+		control.setCursor(getTextCursor());
+		control.redraw();
+		control.removeMouseListener(this);
+	}	
+
+    /* (non-Javadoc)
+     * @see org.eclipse.swt.events.MouseTrackListener#mouseEnter(org.eclipse.swt.events.MouseEvent)
+     */
+    public void mouseEnter(MouseEvent e) {
+        getTextWidget().addMouseMoveListener(this);
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.swt.events.MouseTrackListener#mouseExit(org.eclipse.swt.events.MouseEvent)
+     */
+    public void mouseExit(MouseEvent e) {
+        getTextWidget().removeMouseMoveListener(this);
+		if (hyperlink != null) {
+			linkExited(hyperlink);
+		}
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.swt.events.MouseTrackListener#mouseHover(org.eclipse.swt.events.MouseEvent)
+     */
+    public void mouseHover(MouseEvent e) {
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.swt.events.MouseMoveListener#mouseMove(org.eclipse.swt.events.MouseEvent)
+     */
+	public void mouseMove(MouseEvent e) {
+		int offset = -1;
+		try {
+			Point p = new Point(e.x, e.y);
+			offset = getTextWidget().getOffsetAtLocation(p);
+		} catch (IllegalArgumentException ex) {
+			// out of the document range
+		}
+		updateLinks(offset);	
+	}
+	
+	
+	/**
+	 * The cursor has just be moved to the given offset, the mouse has
+	 * hovered over the given offset. Update link rendering.
+	 * 
+	 * @param offset
+	 */
+	protected void updateLinks(int offset) {
+		if (offset >= 0) {
+			IConsoleHyperlink link = getHyperlink(offset);
+			if (link != null) {
+				if (link.equals(hyperlink)) {
+					return;
+				} 
+				linkEntered(link);
+				return;
+			}
+		}
+		if (hyperlink != null) {
+			linkExited(hyperlink);
+		}		
+	}
+
+	
+	public IConsoleHyperlink getHyperlink(int offset) {
+		if (offset >= 0 && getDocument() != null) {
+			Position[] positions = null;
+			try {
+				positions = getDocument().getPositions(IOConsoleHyperlinkPosition.HYPER_LINK_CATEGORY);
+			} catch (BadPositionCategoryException ex) {
+				// no links have been added
+				return null;
+			}
+			for (int i = 0; i < positions.length; i++) {
+				Position position = positions[i];
+				if (offset >= position.getOffset() && offset <= (position.getOffset() + position.getLength())) {
+					return ((IOConsoleHyperlinkPosition)position).getHyperLink();
+				}
+			}
+		}
+		return null;
+	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.swt.events.MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
+     */
+    public void mouseDoubleClick(MouseEvent e) {
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.swt.events.MouseListener#mouseDown(org.eclipse.swt.events.MouseEvent)
+     */
+    public void mouseDown(MouseEvent e) {
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.swt.events.MouseListener#mouseUp(org.eclipse.swt.events.MouseEvent)
+     */
+	public void mouseUp(MouseEvent e) {
+	    if (hyperlink != null) {
+	        String selection = getTextWidget().getSelectionText();
+	        if (selection.length() <= 0) {
+	            if (e.button == 1) {
+	                hyperlink.linkActivated();
+	            }
+	        }
+	    }
+	}
+
 }

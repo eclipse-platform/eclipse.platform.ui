@@ -1,9 +1,12 @@
 package org.eclipse.ui.console;
 
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.ui.internal.console.IOConsoleHyperlinkPosition;
 import org.eclipse.ui.internal.console.IOConsolePage;
 import org.eclipse.ui.internal.console.IOConsolePartitioner;
 import org.eclipse.ui.internal.console.IOConsolePatternMatcher;
@@ -39,7 +42,7 @@ public class IOConsole extends AbstractConsole {
 	public static final String P_STREAM_COLOR = ConsolePlugin.getUniqueIdentifier()  + "IOConsole.P_STREAM_COLOR";	 //$NON-NLS-1$
 	
 	/**
-	 * Property constatn indicating the designated color for user input has changed
+	 * Property constant indicating the designated color for user input has changed
 	 */
 	public static final String P_INPUT_COLOR =  ConsolePlugin.getUniqueIdentifier()  + "IOConsole.P_INPUT_COLOR";	 //$NON-NLS-1$
 	
@@ -70,6 +73,7 @@ public class IOConsole extends AbstractConsole {
         inputStream = new IOConsoleInputStream(this);
         partitioner = new IOConsolePartitioner(inputStream);
         Document document = new Document();
+        document.addPositionCategory(IOConsoleHyperlinkPosition.HYPER_LINK_CATEGORY);
         partitioner.connect(document);
         patternMatcher = new IOConsolePatternMatcher(document);
     }
@@ -146,4 +150,17 @@ public class IOConsole extends AbstractConsole {
     public void removePatternMatchNotifier(IPatternMatchNotifier matchNotifier) {
         patternMatcher.removePatternMatchNotifier(matchNotifier);
     }    
+    
+    public void addHyperlink(IConsoleHyperlink hyperlink, int offset, int length) {
+		IOConsoleHyperlinkPosition hyperlinkPosition = new IOConsoleHyperlinkPosition(hyperlink, offset, length); 
+		try {
+			getDocument().addPosition(IOConsoleHyperlinkPosition.HYPER_LINK_CATEGORY, hyperlinkPosition);
+		} catch (BadPositionCategoryException e) {
+			// internal error
+			ConsolePlugin.log(e);
+		} catch (BadLocationException e) {
+			// queue the link
+//			fPendingLinks.add(hyperlinkPosition);
+		}
+    }
 }

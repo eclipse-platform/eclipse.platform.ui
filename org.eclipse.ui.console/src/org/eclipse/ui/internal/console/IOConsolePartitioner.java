@@ -9,15 +9,18 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.IDocumentPartitionerExtension;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITypedRegion;
+import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.console.ConsolePlugin;
+import org.eclipse.ui.console.IConsoleHyperlink;
 import org.eclipse.ui.console.IOConsoleInputStream;
 import org.eclipse.ui.console.IOConsoleOutputStream;
 
@@ -134,6 +137,20 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
 			}
 		}
 		return lastPartition;
+	}
+	
+	public IRegion getRegion(IConsoleHyperlink link) {
+		try {
+			Position[] positions = getDocument().getPositions(IOConsoleHyperlinkPosition.HYPER_LINK_CATEGORY);
+			for (int i = 0; i < positions.length; i++) {
+				IOConsoleHyperlinkPosition position = (IOConsoleHyperlinkPosition)positions[i];
+				if (position.getHyperLink().equals(link)) {
+					return new Region(position.getOffset(), position.getLength());
+				}
+			}
+		} catch (BadPositionCategoryException e) {
+		}
+		return null;
 	}
 	
 	private void checkBufferSize() {
