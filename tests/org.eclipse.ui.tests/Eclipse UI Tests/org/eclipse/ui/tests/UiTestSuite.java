@@ -39,7 +39,7 @@ public class UiTestSuite extends TestSuite {
 
 		if (!PlatformUtil.onLinux()) {
 			addTest(new org.eclipse.ui.tests.dialogs.UIAutomatedSuite());
-		}		
+		}
 		addTest(new org.eclipse.ui.tests.propertysheet.PropertySheetTestSuite());
 		addTest(new org.eclipse.ui.tests.internal.InternalTestSuite());
 		addTest(new org.eclipse.ui.tests.navigator.NavigatorTestSuite());
@@ -49,5 +49,6 @@ public class UiTestSuite extends TestSuite {
 		addTest(new org.eclipse.ui.tests.preferences.PreferencesTestSuite());
 		addTest(new KeysTestSuite());
 		addTest(new MultiPageEditorTestSuite());
+		addTest(new org.eclipse.ui.tests.dynamicplugins.DynamicPluginsTestSuite());
 	}
 }

@@ -23,6 +23,8 @@ import org.eclipse.jface.resource.ImageDescriptor;
 
 import org.eclipse.ui.IStartup;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.tests.dynamicplugins.TestInstallUtil;
+import org.osgi.framework.BundleContext;
 
 /**
  * The main plugin class to be used in the desktop.
@@ -112,5 +114,21 @@ public class TestPlugin extends AbstractUIPlugin implements IStartup {
 
 	public static void clearEarlyStartup() {
 		earlyStartupCalled = false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.Plugin#start(org.osgi.framework.BundleContext)
+	 */
+	public void start(BundleContext context) throws Exception {
+		TestInstallUtil.setContext(context);
+		super.start(context);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)
+	 */
+	public void stop(BundleContext context) throws Exception {
+		TestInstallUtil.setContext(null);
+		super.stop(context);
 	}
 }
