@@ -2079,6 +2079,11 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		return false;
 	}
 	/**
+	 * Toggle the floating window in the receiver.
+	 */
+	public void toggleFloatingWindow(){
+		animationItem.toggleFloatingWindow();
+	}	/**
 	 * @return Returns the animationItem.
 	 */
 	public AnimationItem getAnimationItem() {
