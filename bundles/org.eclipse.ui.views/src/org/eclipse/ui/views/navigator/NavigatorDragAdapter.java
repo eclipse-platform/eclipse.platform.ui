@@ -45,6 +45,8 @@ public class NavigatorDragAdapter extends DragSourceAdapter {
 	 * @see DragSourceListener#dragFinished
 	 */
 	public void dragFinished(DragSourceEvent event) {
+		LocalSelectionTransfer.getInstance().setSelection(null);
+
 		if (event.doit == false) {
 			return;
 		}
@@ -95,12 +97,16 @@ public class NavigatorDragAdapter extends DragSourceAdapter {
 		if (resources == null || resources.length == 0)
 			return;
 
+		//use local selection transfer if possible
+		if (LocalSelectionTransfer.getInstance().isSupportedType(event.dataType)) {
+			event.data = LocalSelectionTransfer.getInstance().getSelection();
+			return;
+		}
 		//use resource transfer if possible
 		if (ResourceTransfer.getInstance().isSupportedType(event.dataType)) {
 			event.data = resources;
 			return;
 		}
-
 		//resort to a file transfer
 		if (!FileTransfer.getInstance().isSupportedType(event.dataType))
 			return;
@@ -148,6 +154,7 @@ public class NavigatorDragAdapter extends DragSourceAdapter {
 				return;
 			}
 		}
+		LocalSelectionTransfer.getInstance().setSelection(selection);
 		event.doit = true;
 	}
 	

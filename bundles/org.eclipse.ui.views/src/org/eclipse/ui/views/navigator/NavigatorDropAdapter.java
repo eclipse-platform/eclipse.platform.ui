@@ -1,9 +1,15 @@
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+	IBM - Initial implementation
+************************************************************************/
 package org.eclipse.ui.views.navigator;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
@@ -49,12 +55,6 @@ public class NavigatorDropAdapter
 	private boolean alwaysOverwrite = false;
 	
 	/**
-	 * The selected resources if the drag and drop operation takes place 
-	 * within the same widget.
-	 */
-	private IResource[] sourceResources;
-	
-	/**
 	 * The last valid operation.
 	 */
 	private int lastValidOperation = DND.DROP_NONE;
@@ -75,22 +75,7 @@ public class NavigatorDropAdapter
 			// default to copy when dragging from outside Eclipse. Fixes bug 16308.
 			event.detail = DND.DROP_COPY;
 		}		
-		if (event.getSource() == event.widget) {
-			IStructuredSelection selection = (IStructuredSelection) getViewer().getSelection();
-			List sourceList = selection.toList();
-			sourceResources = (IResource[]) sourceList.toArray(new IResource[sourceList.size()]);
-		}
-		else {
-			sourceResources = null;
-		}
 		super.dragEnter(event);
-	}
-	/**
-	 * @see org.eclipse.swt.dnd.DropTargetListener#dragLeave(DropTargetEvent)
-	 */
-	public void dragLeave(DropTargetEvent event) {
-		sourceResources = null;
-		super.dragLeave(event);
 	}
 	/**
 	 * @see DropTargetListener#dragOver
@@ -183,6 +168,21 @@ public class NavigatorDropAdapter
 	private Display getDisplay() {
 		return getViewer().getControl().getDisplay();
 	}
+	/**
+	 * Returns the resource selection from the LocalSelectionTransfer.
+	 * 
+	 * @return the resource selection from the LocalSelectionTransfer
+	 */
+	private IResource[] getSelectedResources() {
+		IResource[] selectedResources = null;
+		
+		ISelection selection = LocalSelectionTransfer.getInstance().getSelection();
+		if (selection instanceof IStructuredSelection) {
+			List selectionList = ((IStructuredSelection) selection).toList();
+			selectedResources = (IResource[]) selectionList.toArray(new IResource[selectionList.size()]);
+		}
+		return selectedResources;		
+	}
 	
 	/**
 	 * Returns the shell
@@ -270,25 +270,25 @@ public class NavigatorDropAdapter
 		if (getCurrentTarget() == null || data == null) {
 			return false;
 		}
-		boolean result;
+		boolean result = false;
 		IStatus status = null;
+		IResource[] resources = null;
 		TransferData currentTransfer = getCurrentTransfer();
-		if (ResourceTransfer.getInstance().isSupportedType(currentTransfer)) {
-			if (getCurrentOperation() == DND.DROP_COPY) {
-				status = performResourceCopy(getShell(), data);
-				//always return false because we don't want the source to clean up
-				result = false;
-			}
-			else {
-				status = performResourceMove(data);
-				//always return false because we don't want the source to clean up
-				result = false;									
-			}
+		if (LocalSelectionTransfer.getInstance().isSupportedType(currentTransfer)) {
+			resources = getSelectedResources();
+		} else if (ResourceTransfer.getInstance().isSupportedType(currentTransfer)) {
+			resources = (IResource[]) data;
 		} else if (FileTransfer.getInstance().isSupportedType(currentTransfer)) {
 			status = performFileDrop(data);
 			result = status.isOK();
 		} else {
 			result = NavigatorDropAdapter.super.performDrop(data);
+		}
+		if (resources != null) {
+			if (getCurrentOperation() == DND.DROP_COPY)
+				status = performResourceCopy(getShell(), resources);
+			else
+				status = performResourceMove(resources);
 		}
 		openError(status);
 		return result;
@@ -319,12 +319,11 @@ public class NavigatorDropAdapter
 	/**
 	 * Performs a resource copy
 	 */
-	private IStatus performResourceCopy(Shell shell, Object data) {
+	private IStatus performResourceCopy(Shell shell, IResource[] sources) {
 		MultiStatus problems = new MultiStatus(PlatformUI.PLUGIN_ID, 1, ResourceNavigatorMessages.getString("DropAdapter.problemsMoving"), null); //$NON-NLS-1$
 		mergeStatus(problems, validateTarget(getCurrentTarget(), getCurrentTransfer()));
 
 		IContainer target = getActualTarget((IResource) getCurrentTarget());
-		IResource[] sources = (IResource[]) data;
 		CopyFilesAndFoldersOperation operation = new CopyFilesAndFoldersOperation(shell);
 		operation.copyResources(sources, target);
 		
@@ -334,12 +333,11 @@ public class NavigatorDropAdapter
 	/**
 	 * Performs a resource move
 	 */
-	private IStatus performResourceMove(Object data) {
+	private IStatus performResourceMove(IResource[] sources) {
 		MultiStatus problems = new MultiStatus(PlatformUI.PLUGIN_ID, 1, ResourceNavigatorMessages.getString("DropAdapter.problemsMoving"), null); //$NON-NLS-1$
 		mergeStatus(problems, validateTarget(getCurrentTarget(), getCurrentTransfer()));
 
 		IContainer target = getActualTarget((IResource) getCurrentTarget());
-		IResource[] sources = (IResource[]) data;
 		ReadOnlyStateChecker checker = new ReadOnlyStateChecker(
 			getShell(), 
 			WorkbenchMessages.getString("MoveResourceAction.title"),			//$NON-NLS-1$
@@ -419,21 +417,32 @@ public class NavigatorDropAdapter
 			return error(ResourceNavigatorMessages.getString("DropAdapter.resourcesCanNotBeSiblings")); //$NON-NLS-1$
 		}
 		String message = null;
-		// file import?
-		if (FileTransfer.getInstance().isSupportedType(transferType)) {
+		// drag within Eclipse?
+		if (LocalSelectionTransfer.getInstance().isSupportedType(transferType)) {
+			IResource[] selectedResources = getSelectedResources();
+			
+			if (selectedResources == null)
+				message = ResourceNavigatorMessages.getString("DropAdapter.dropOperationErrorOther"); //$NON-NLS-1$
+			else {
+				CopyFilesAndFoldersOperation operation;
+				if (lastValidOperation == DND.DROP_COPY) {
+					operation = new CopyFilesAndFoldersOperation(getShell());
+				}
+				else {
+					operation = new MoveFilesAndFoldersOperation(getShell());
+				}
+				message = operation.validateDestination(destination, selectedResources);
+			}
+		} // file import?
+		else if (FileTransfer.getInstance().isSupportedType(transferType)) {
 			String[] sourceNames = (String[]) FileTransfer.getInstance().nativeToJava(transferType);
+			if (sourceNames == null) {
+				// source names will be null on Linux. Use empty names to do destination validation.
+				// Fixes bug 29778
+				sourceNames = new String[0];
+			}				
 			CopyFilesAndFoldersOperation copyOperation = new CopyFilesAndFoldersOperation(getShell());
 			message = copyOperation.validateImportDestination(destination, sourceNames);
-		} // drag within same viewer?
-		else if (sourceResources != null) {
-			CopyFilesAndFoldersOperation operation;
-			if (lastValidOperation == DND.DROP_COPY) {
-				operation = new CopyFilesAndFoldersOperation(getShell());
-			}
-			else {
-				operation = new MoveFilesAndFoldersOperation(getShell());
-			}
-			message = operation.validateDestination(destination, sourceResources);
 		}		
 		if (message != null) {
 			return error(message);

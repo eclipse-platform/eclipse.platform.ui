@@ -603,6 +603,7 @@ public class ResourceNavigator
 		int ops = DND.DROP_COPY | DND.DROP_MOVE;
 		Transfer[] transfers =
 			new Transfer[] {
+				LocalSelectionTransfer.getInstance(),
 				ResourceTransfer.getInstance(),
 				FileTransfer.getInstance(),
 				PluginTransfer.getInstance()};
