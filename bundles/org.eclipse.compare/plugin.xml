@@ -5,10 +5,10 @@
 <!-- ======================================================================= -->
 
 <plugin
-	name="Compare"
+	name="Compare Support"
 	id="org.eclipse.compare"
-	version="1.0"
-	vendor-name="IBM"
+	version="0.9"
+	vendor-name="Object Technology International, Inc."
 	class="org.eclipse.compare.internal.CompareUIPlugin">
 	
 	<requires>
