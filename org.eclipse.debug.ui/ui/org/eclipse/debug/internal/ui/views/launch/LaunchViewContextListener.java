@@ -24,28 +24,28 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPageListener;
-import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.contexts.ContextEvent;
-import org.eclipse.ui.contexts.ContextManagerFactory;
+import org.eclipse.ui.contexts.ContextManagerEvent;
 import org.eclipse.ui.contexts.IContext;
-import org.eclipse.ui.contexts.IContextListener;
-import org.eclipse.ui.contexts.IMutableContextManager;
+import org.eclipse.ui.contexts.IContextManager;
+import org.eclipse.ui.contexts.IContextManagerListener;
 import org.eclipse.ui.contexts.NotDefinedException;
 
 /**
  * A context listener which automatically opens/closes/activates views in
  * response to debug context changes.
  */
-public class LaunchViewContextListener implements IContextListener, IPartListener, IPageListener, IPerspectiveListener {
+public class LaunchViewContextListener implements IPartListener2, IPageListener, IPerspectiveListener, IContextManagerListener {
 	
 	public static final String ID_CONTEXT_VIEW_BINDINGS= "contextViewBindings"; //$NON-NLS-1$
 	public static final String ID_DEBUG_MODEL_CONTEXT_BINDINGS= "debugModelContextBindings"; //$NON-NLS-1$
@@ -58,7 +58,12 @@ public class LaunchViewContextListener implements IContextListener, IPartListene
 	 * Attributes used to persist which views the user has manually opened/closed
 	 */
 	private static final String ATTR_VIEWS_TO_NOT_OPEN = "viewsNotToOpen"; //$NON-NLS-1$
-	private static final String ATTR_VIEWS_TO_NOT_CLOSE = "viewsNotToClose"; //$NON-NLS-1$
+	private static final String ATTR_OPENED_VIEWS = "viewsNotToClose"; //$NON-NLS-1$
+	
+	/**
+	 * The launch view that this context listener works for
+	 */
+	private LaunchView launchView;
 	
 	private Map modelsToContext= new HashMap();
 	/**
@@ -66,7 +71,7 @@ public class LaunchViewContextListener implements IContextListener, IPartListene
 	 * of context-view bindings (IConfigurationElements).
 	 */
 	private Map contextViews= new HashMap();
-	private IMutableContextManager contextManager= ContextManagerFactory.getMutableContextManager();
+	
 	/**
 	 * Collection of all views that might be opened or closed automatically.
 	 * This collection starts out containing all views associated with a context.
@@ -74,12 +79,20 @@ public class LaunchViewContextListener implements IContextListener, IPartListene
 	 */
 	private Set managedViewIds= new HashSet();
 	private Set viewIdsToNotOpen= new HashSet();
-	private Set viewIdsToNotClose= new HashSet();
+	/**
+	 * Collection of views which have been automatically opened.
+	 * Only views which are in this collection should be automatically
+	 * closed.
+	 */
+	private Set openedViewIds= new HashSet();
 	
-	public LaunchViewContextListener() {
+	public LaunchViewContextListener(LaunchView view) {
+		launchView= view;
 		loadDebugModelContextExtensions();
 		loadContextToViewExtensions(true);
-		IWorkbenchWindow window= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		IWorkbench workbench = PlatformUI.getWorkbench();
+		workbench.getContextSupport().getContextManager().addContextManagerListener(this);
+		IWorkbenchWindow window= workbench.getActiveWorkbenchWindow();
 		if (window != null) {
 			window.addPageListener(this);
 			window.addPerspectiveListener(this);
@@ -95,14 +108,12 @@ public class LaunchViewContextListener implements IContextListener, IPartListene
 		IConfigurationElement[] configurationElements = extensionPoint.getConfigurationElements();
 		for (int i = 0; i < configurationElements.length; i++) {
 			IConfigurationElement element = configurationElements[i];
-			String viewId = element.getAttribute(ATTR_VIEW_ID);
+			String viewId = getViewId(element);
 			if (reloadContextMappings) {
 				String contextId = element.getAttribute(ATTR_CONTEXT_ID);
 				if (contextId == null || viewId == null) {
 					continue;
 				}
-				IContext context= contextManager.getContext(contextId);
-				context.addContextListener(this);
 				List elements= (List) contextViews.get(contextId);
 				if (elements == null) {
 					elements= new ArrayList();
@@ -111,14 +122,6 @@ public class LaunchViewContextListener implements IContextListener, IPartListene
 				elements.add(element);
 			}
 			managedViewIds.add(viewId);
-			String autoOpen= element.getAttribute(ATTR_AUTO_OPEN);
-			if (autoOpen != null && !Boolean.valueOf(autoOpen).booleanValue()) {
-				viewIdsToNotOpen.add(viewId);
-			}
-			String autoClose= element.getAttribute(ATTR_AUTO_CLOSE);
-			if (autoClose != null && !Boolean.valueOf(autoClose).booleanValue()) {
-				viewIdsToNotClose.add(viewId);
-			}
 		}
 	}
 
@@ -156,115 +159,6 @@ public class LaunchViewContextListener implements IContextListener, IPartListene
 	}
 	
 	/**
-	 * Returns the context manager that this listener listens to.
-	 * @return the context manager that this listener listens to
-	 */
-	public IMutableContextManager getContextManager() {
-		return contextManager;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.contexts.IContextListener#contextChanged(org.eclipse.ui.contexts.ContextEvent)
-	 */
-	public void contextChanged(ContextEvent contextEvent) {
-		if (contextEvent.hasEnabledChanged()) {
-			IContext context = contextEvent.getContext();
-			if (context.isEnabled()) {
-				contextActivated(context.getId());
-			}
-		}
-	}
-	
-	/**
-	 * The context with the given ID has been activated.
-	 * If the given context ID is the same as the current
-	 * context, do nothing. Otherwise, activate the appropriate
-	 * views.
-	 * 
-	 * @param contextId the ID of the context that has been
-	 * 	activated
-	 */
-	public void contextActivated(String contextId) {
-		List configurationElements= getConfigurationElements(contextId);
-		if (configurationElements.isEmpty()) {
-			return;
-		}
-		IWorkbenchPage page= PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		page.removePartListener(this); // Stop listening before closing/opening/activating views
-		List viewsToActivate= new ArrayList();
-		List viewsToOpen= new ArrayList();
-		Iterator iterator= configurationElements.iterator();
-		while (iterator.hasNext()) {
-			IConfigurationElement element = (IConfigurationElement) iterator.next();
-			String viewId= element.getAttribute(ATTR_VIEW_ID);
-			if (viewId == null) {
-				continue;
-			}
-			IViewPart view = page.findView(viewId);
-			if (view != null) {
-				viewsToActivate.add(view);
-			} else {
-				// Don't open automatically if specified not to.
-				if (!viewIdsToNotOpen.contains(viewId)) {
-					viewsToOpen.add(viewId);
-				}
-			}
-		}
-		if (!viewsToActivate.isEmpty() || !viewsToOpen.isEmpty()) {
-			IViewReference[] references = page.getViewReferences();
-			for (int i = 0; i < references.length; i++) {
-				IViewReference reference = references[i];
-				String viewId= reference.getId();
-				IViewPart view= reference.getView(true);
-				if (view == null || !managedViewIds.contains(viewId)) {
-					// Only close views that are associated with another context and which
-					// the user hasn't manually opened.
-					continue;
-				}
-				if (!viewsToActivate.contains(view) && !viewsToOpen.contains(viewId) &&
-						!viewIdsToNotClose.contains(viewId)) {
-					// Close all views that aren't applicable, unless specified not to
-					page.hideView(view);
-				}
-			}
-		}
-		iterator= viewsToOpen.iterator();
-		while (iterator.hasNext()) {
-			String viewId = (String) iterator.next();
-			try {
-				viewsToActivate.add(page.showView(viewId, null, IWorkbenchPage.VIEW_CREATE));
-			} catch (PartInitException e) {
-				DebugUIPlugin.log(e.getStatus());
-			}
-		}
-		// Until we have an API to open views "underneath" (bug 50618), first iterate
-		// to remove views using the stack information, then open views, then activate.
-		// When the "open underneath" API is provided, only iterate once.
-		ListIterator listIterator= viewsToActivate.listIterator();
-		while (listIterator.hasNext()) {
-			boolean activate= true;
-			IViewPart view = (IViewPart) listIterator.next();
-			IViewPart[] stackedViews = page.getViewStack(view);
-			if (stackedViews == null) {
-				continue;
-			}
-			for (int i = 0; i < stackedViews.length; i++) {
-				IViewPart stackedView= stackedViews[i];
-				if (view != stackedView && viewsToActivate.contains(stackedView) && page.isPartVisible(stackedView)) {
-					// If this view is currently obscured by an appropriate view that is already visible,
-					// don't activate it (let the visible view stay visible).
-					activate= false;
-					break;
-				}
-			}
-			if (activate) {
-				page.bringToTop(view);
-			}
-		}
-		page.addPartListener(this); // Start listening again for close/open
-	}
-	
-	/**
 	 * Lists the contextViews configuration elements for the
 	 * given context ID and all its parent context IDs. The
 	 * list only contains one configuration element per view
@@ -281,6 +175,7 @@ public class LaunchViewContextListener implements IContextListener, IPartListene
 		// elements have been found.
 		List configuredViewIds= new ArrayList();
 		List allConfigurationElements= new ArrayList();
+		IContextManager contextManager = PlatformUI.getWorkbench().getContextSupport().getContextManager();
 		while (contextId != null) {
 			List configurationElements= (List) contextViews.get(contextId);
 			if (configurationElements != null) {
@@ -314,54 +209,6 @@ public class LaunchViewContextListener implements IContextListener, IPartListene
 	}
 
 	/**
-	 * When the user closes a view, do not automatically
-	 * open that view in the future.
-	 */
-	public void partClosed(IWorkbenchPart part) {
-		if (part instanceof IViewPart) {
-			String id = ((IViewPart) part).getViewSite().getId();
-			if (managedViewIds.remove(id)) {
-				viewIdsToNotOpen.add(id);
-			}
-		}
-	}
-	/**
-	 * When the user opens a view, do not automatically
-	 * close that view in the future.
-	 */
-	public void partOpened(IWorkbenchPart part) {
-		if (part instanceof IViewPart) {
-			String id = ((IViewPart) part).getViewSite().getId();
-			if (managedViewIds.remove(id)) {
-				viewIdsToNotClose.add(id);
-			}
-		}
-	}
-	public void partActivated(IWorkbenchPart part) {
-	}
-	public void partBroughtToTop(IWorkbenchPart part) {
-	}
-	public void partDeactivated(IWorkbenchPart part) {
-	}
-
-	/**
-	 * When a workbench page is opened, start listening to
-	 * part notifications.
-	 */
-	public void pageActivated(IWorkbenchPage page) {
-		page.addPartListener(this);
-	}
-	/**
-	 * When a workbench page is closed, stop listening to
-	 * part notifications.
-	 */
-	public void pageClosed(IWorkbenchPage page) {
-		page.removePartListener(this);
-	}
-	public void pageOpened(IWorkbenchPage page) {
-	}
-
-	/**
 	 * Persist the view ids that the user has manually
 	 * opened/closed so that we continue to not automatically
 	 * open/close them.
@@ -377,12 +224,12 @@ public class LaunchViewContextListener implements IContextListener, IPartListene
 			memento.putString(ATTR_VIEWS_TO_NOT_OPEN, views.toString());
 			views= new StringBuffer();
 		}
-		iter= viewIdsToNotClose.iterator();
+		iter= openedViewIds.iterator();
 		while(iter.hasNext()) {
 			views.append((String) iter.next()).append(',');
 		}
 		if (views.length() > 0) {
-			memento.putString(ATTR_VIEWS_TO_NOT_CLOSE, views.toString());
+			memento.putString(ATTR_OPENED_VIEWS, views.toString());
 		}
 	}
 	
@@ -393,7 +240,7 @@ public class LaunchViewContextListener implements IContextListener, IPartListene
 	 * @param memento the memento containing the persisted view IDs
 	 */
 	public void init(IMemento memento) {
-		initViewCollection(memento, ATTR_VIEWS_TO_NOT_CLOSE, viewIdsToNotClose);
+		initViewCollection(memento, ATTR_OPENED_VIEWS, openedViewIds);
 		initViewCollection(memento, ATTR_VIEWS_TO_NOT_OPEN, viewIdsToNotOpen);
 	}
 	
@@ -425,23 +272,322 @@ public class LaunchViewContextListener implements IContextListener, IPartListene
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPerspectiveListener#perspectiveActivated(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor)
+	 * @see org.eclipse.ui.contexts.IContextManagerListener#contextManagerChanged(org.eclipse.ui.contexts.ContextManagerEvent)
 	 */
-	public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
+	public void contextManagerChanged(ContextManagerEvent contextManagerEvent) {
+		contextActivated(contextManagerEvent.getEnabledContexts());
+		contextsDisabled(contextManagerEvent.getDisabledContexts());
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPerspectiveListener#perspectiveChanged(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor, java.lang.String)
+	
+	/**
+	 * The context with the given ID has been submitted for
+	 * enablement. Activate the appropriate views.
+	 * 
+	 * @param contextId the ID of the context that has been
+	 * 	submitted for enablement
+	 */
+	public void contextActivated(String[] contextIds) {
+		IWorkbenchPage page= getActiveWorkbenchPage();
+		if (page == null || contextIds.length == 0) {
+			return;
+		}
+		Set viewsToShow= new HashSet();
+		Set viewsToOpen= new HashSet();
+		computeViewActivation(contextIds, viewsToOpen, viewsToShow);
+		page.removePartListener(this); // Stop listening before opening/activating views
+		Iterator iterator= viewsToOpen.iterator();
+		while (iterator.hasNext()) {
+			String viewId = (String) iterator.next();
+			try {
+				IViewPart view = page.showView(viewId, null, IWorkbenchPage.VIEW_CREATE);
+				openedViewIds.add(view.getViewSite().getId());
+				viewsToShow.add(view);
+			} catch (PartInitException e) {
+				DebugUIPlugin.log(e.getStatus());
+			}
+		}
+		iterator= viewsToShow.iterator();
+		while (iterator.hasNext()) {
+			boolean activate= true;
+			IViewPart view = (IViewPart) iterator.next();
+			IViewPart[] stackedViews = page.getViewStack(view);
+			if (stackedViews == null) {
+				continue;
+			}
+			for (int i = 0; i < stackedViews.length; i++) {
+				IViewPart stackedView= stackedViews[i];
+				if (view != stackedView && viewsToShow.contains(stackedView) && page.isPartVisible(stackedView)) {
+					// If this view is currently obscured by an appropriate view that is already visible,
+					// don't activate it (let the visible view stay visible).
+					activate= false;
+					break;
+				}
+			}
+			if (activate) {
+				page.bringToTop(view);
+			}
+		}
+		page.addPartListener(this); // Start listening again for close/open
+	}
+	
+	/**
+	 * Compute which views should be automatically opened and which should be
+	 * automatically brought to top when the given contexts are enabled.
+	 * 
+	 * @param contextIds the contexts that have been enabled
+	 * @param viewIdsToOpen a Set into which this method can store the
+	 *  collection of view identifiers (String) that should be opened
+	 * @param viewIdsShow a Set into which this method can store the
+	 *  collection of view identifiers (String) that should be brought to top
+	 */
+	private void computeViewActivation(String[] contextIds, Set viewIdsToOpen, Set viewIdsShow) {
+		IWorkbenchPage page = getActiveWorkbenchPage();
+		if (page == null) {
+			return;
+		}
+		for (int i = 0; i < contextIds.length; i++) {
+			String contextId = contextIds[i];
+			Iterator configurationElements= getConfigurationElements(contextId).iterator();
+			while (configurationElements.hasNext()) {
+				IConfigurationElement element = (IConfigurationElement) configurationElements.next();
+				String viewId= getViewId(element);
+				if (viewId == null) {
+					continue;
+				}
+				IViewPart view = page.findView(viewId);
+				if (view != null) {
+					viewIdsShow.add(view);
+				} else if (isAutoOpen(element) && !viewIdsToNotOpen.contains(viewId)) {
+					// Don't open automatically if specified not to.
+					viewIdsToOpen.add(viewId);
+				}
+			}
+		}
+	}
+	
+	/**
+	 * The given contexts have been disabled. Close all views
+	 * associated with these contexts that aren't associated
+	 * with other active contexts.
+	 * 
+	 * @param contexts
+	 */
+	public void contextsDisabled(String[] contexts) {
+		IWorkbenchPage page= getActiveWorkbenchPage();
+		if (page == null || contexts.length == 0) {
+			return;
+		}
+		page.removePartListener(this);
+		Set viewsToClose= getViewIdsToClose(contexts);
+		Iterator iter= viewsToClose.iterator();
+		while (iter.hasNext()) {
+			String viewId= (String) iter.next();
+			IViewReference view = page.findViewReference(viewId);
+			if (view != null) {
+				page.hideView(view);
+			}
+		}
+		page.addPartListener(this);
+	}
+	
+	/**
+	 * Returns a collection of view IDs which should be closed
+	 * when the given context IDs are disabled.
+	 * 
+	 * @param contextIds the context identifiers
+	 * @return the identifiers of the views which should be closed
+	 *  when the given contexts disable 
+	 */
+	public Set getViewIdsToClose(String[] contextIds) {
+		Set viewIdsToClose= new HashSet();
+		Set viewIdsToKeepOpen= getViewIdsForEnabledContexts();
+		for (int i = 0; i < contextIds.length; i++) {
+			List list = getConfigurationElements(contextIds[i]);
+			Iterator iter = list.iterator();
+			while (iter.hasNext()) {
+				IConfigurationElement element = (IConfigurationElement) iter.next();
+				if (!isAutoClose(element)) {
+					continue;
+				}
+				String viewId = getViewId(element);
+				if (viewId == null || !openedViewIds.contains(viewId) || viewIdsToKeepOpen.contains(viewId)) {
+					// Don't close views that the user has manually opened or views
+					// which are associated with contexts that are still enabled.
+					continue;
+				}
+				viewIdsToClose.add(viewId);
+			}
+		}
+		return viewIdsToClose;
+	}
+	
+	/**
+	 * Returns the set of view identifiers that are bound to
+	 * contexts which are enabled in the workbench.
+	 * 
+	 * @return the set of view identifiers bound to enabled contexts
+	 */
+	protected Set getViewIdsForEnabledContexts() {
+		Set viewIds= new HashSet();
+		Iterator enabledContexts = PlatformUI.getWorkbench().getContextSupport().getContextManager().getEnabledContextIds().iterator();
+		while (enabledContexts.hasNext()) {
+			String contextId = (String) enabledContexts.next();
+			viewIds.addAll(getApplicableViewIds(contextId));
+		}
+		return viewIds;
+	}
+	
+	/**
+	 * Returns the set of view identifiers that are bound to the
+	 * given context.
+	 * 
+	 * @param contextId the context identifier
+	 * @return the set of view identifiers bound to the given context
+	 */
+	public Set getApplicableViewIds(String contextId) {
+		Set viewIds= new HashSet();
+		Iterator elements = getConfigurationElements(contextId).iterator();
+		while (elements.hasNext()) {
+			String viewId = getViewId((IConfigurationElement) elements.next());
+			if (viewId != null) {
+				viewIds.add(viewId);
+			}
+		}
+		return viewIds;
+	}
+	
+	/**
+	 * Returns the view identifier associated with the given extension
+	 * element or <code>null</code> if none.
+	 * 
+	 * @param element the contextViewBinding extension element
+	 * @return the view identifier associated with the given element or <code>null</code>
+	 */
+	public static String getViewId(IConfigurationElement element) {
+		return element.getAttribute(ATTR_VIEW_ID);
+	}
+	
+	/**
+	 * Returns whether the given configuration element is configured
+	 * for automatic view opening. The element's view should be automatically
+	 * opened if the autoOpen element is specified as true or if the autoOpen
+	 * element is unspecified.
+	 * 
+	 * @param element the contextViewBinding extension element
+	 * @return whether or not given given configuration element's view
+	 *  should be automatically opened
+	 */
+	public static boolean isAutoOpen(IConfigurationElement element) {
+		String autoOpen = element.getAttribute(ATTR_AUTO_OPEN);
+		return autoOpen == null || Boolean.valueOf(autoOpen).booleanValue();
+	}
+	
+	/**
+	 * Returns whether the given configuration element is configured
+	 * for automatic view closure. The element's view should be automatically
+	 * close if the autoClose element is specified as true or if the autoClose
+	 * element is unspecified.
+	 * 
+	 * @param element the contextViewBinding extension element
+	 * @return whether or not given given configuration element's view
+	 *  should be automatically closed
+	 */
+	public static boolean isAutoClose(IConfigurationElement element) {
+		String autoClose = element.getAttribute(ATTR_AUTO_CLOSE);
+		return autoClose == null || Boolean.valueOf(autoClose).booleanValue();
+	}
+	
+	/**
+	 * Returns the active workbench page or <code>null</code>
+	 * if none.
+	 * 
+	 * @return the active workbench page or <code>null</code>
+	 */
+	public IWorkbenchPage getActiveWorkbenchPage() {
+		IWorkbenchWindow window = launchView.getViewSite().getWorkbenchWindow();;
+		IWorkbenchPage page= null;
+		if (window != null) {
+			page= window.getActivePage();
+		}
+		return page;
+	}
+	
+	/**
+	 * Reset context state when the perspective is reset
 	 */
 	public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {
 		if (changeId.equals(IWorkbenchPage.CHANGE_RESET)) {
-			//TODO: When the workbench adds a reset_end flag, remove
-			// the part listener on reset, then add it back on reset_end.
+			page.removePartListener(this);
 			managedViewIds.clear();
-			viewIdsToNotClose.clear();
+			openedViewIds.clear();
 			viewIdsToNotOpen.clear();
 			loadContextToViewExtensions(false);
-			contextManager.setEnabledContextIds(new HashSet());
+			launchView.removeAllContextSubmissions();
+		} else if (changeId.equals(IWorkbenchPage.CHANGE_RESET_COMPLETE)) {
+			page.addPartListener(this);
 		}
+	}
+	
+	/**
+	 * When a workbench page is opened, start listening to
+	 * part notifications.
+	 */
+	public void pageActivated(IWorkbenchPage page) {
+		page.addPartListener(this);
+	}
+	
+	/**
+	 * When a workbench page is closed, stop listening to
+	 * part notifications.
+	 */
+	public void pageClosed(IWorkbenchPage page) {
+		page.removePartListener(this);
+	}
+	
+	/**
+	 * When the user opens a view, do not automatically
+	 * close that view in the future.
+	 */
+	public void partOpened(IWorkbenchPartReference ref) {
+		if (ref instanceof IViewReference) {
+			String id = ((IViewReference) ref).getId();
+			managedViewIds.remove(id);
+		}
+	}
+	
+	/**
+	 * When the user closes a view, do not automatically
+	 * open that view in the future.
+	 */
+	public void partHidden(IWorkbenchPartReference ref) {
+		if (ref instanceof IViewReference) {
+			String id = ((IViewReference) ref).getId();
+			// partHidden is sent whenever the view is made not
+			// visible. To tell that the view has been "closed",
+			// try to find it.
+			if (getActiveWorkbenchPage().findView(id) == null) {
+				if (managedViewIds.remove(id)) {
+					viewIdsToNotOpen.add(id);
+				}
+				openedViewIds.remove(id);
+			}
+		}
+	}
+	
+	public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
+	}
+	public void pageOpened(IWorkbenchPage page) {
+	}
+	public void partActivated(IWorkbenchPartReference ref) {
+	}
+	public void partBroughtToTop(IWorkbenchPartReference ref) {
+	}
+	public void partClosed(IWorkbenchPartReference ref) {
+	}
+	public void partDeactivated(IWorkbenchPartReference ref) {
+	}
+	public void partVisible(IWorkbenchPartReference ref) {
+	}
+	public void partInputChanged(IWorkbenchPartReference ref) {
 	}
 }

@@ -21,7 +21,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.core.ILaunchesListener;
+import org.eclipse.debug.core.ILaunchesListener2;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStackFrame;
@@ -34,7 +34,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 /**
  * Handles debug events, updating the launch view and viewer.
  */
-public class LaunchViewEventHandler extends AbstractDebugEventHandler implements ILaunchesListener {
+public class LaunchViewEventHandler extends AbstractDebugEventHandler implements ILaunchesListener2 {
 	/**
 	 * The timer used to time step and evaluation events. The timer allows
 	 * the UI to not refresh during fast evaluations and steps.
@@ -523,6 +523,19 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 		};
 
 		getView().asyncExec(r);		
+	}
+
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchesListener2#launchesTerminated(org.eclipse.debug.core.ILaunch[])
+	 */
+	public void launchesTerminated(final ILaunch[] launches) {
+		Runnable r= new Runnable() {
+			public void run() {
+				getLaunchView().launchesTerminated(launches);
+			}
+		};
+		getView().asyncExec(r);
 	}
 
 }
