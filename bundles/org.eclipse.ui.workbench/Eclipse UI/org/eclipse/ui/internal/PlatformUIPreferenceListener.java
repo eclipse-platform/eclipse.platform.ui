@@ -10,21 +10,28 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
+import java.util.HashMap;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.ui.IEditorDescriptor;
+import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.internal.registry.EditorRegistry;
 import org.eclipse.ui.internal.util.PrefUtil;
 
 /**
- * The PlatformUIPreferenceListener is a class that listens to 
- * changes in the preference store and propogates the change
- * for any special cases that require updating of other
- * values within the workbench.
+ * The PlatformUIPreferenceListener is a class that listens to changes in the
+ * preference store and propogates the change for any special cases that require
+ * updating of other values within the workbench.
  */
 public class PlatformUIPreferenceListener implements IPropertyChangeListener {
 
@@ -35,33 +42,80 @@ public class PlatformUIPreferenceListener implements IPropertyChangeListener {
 
 		String propertyName = event.getProperty();
 		if (IPreferenceConstants.ENABLED_DECORATORS.equals(propertyName)) {
-			WorkbenchPlugin
-				.getDefault()
-				.getDecoratorManager()
-				.restoreListeners();
+			WorkbenchPlugin.getDefault().getDecoratorManager()
+					.restoreListeners();
 			return;
 		}
-		
-		if (IWorkbenchPreferenceConstants
-			.DEFAULT_PERSPECTIVE_ID
-			.equals(propertyName)) {
+
+		if (IWorkbenchPreferenceConstants.DEFAULT_PERSPECTIVE_ID
+				.equals(propertyName)) {
 			IWorkbench workbench = PlatformUI.getWorkbench();
-			
-			workbench.getPerspectiveRegistry().setDefaultPerspective((String) event.getNewValue());
+
+			workbench.getPerspectiveRegistry().setDefaultPerspective(
+					(String) event.getNewValue());
 			return;
 		}
-		
+
 		if (IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR
-			.equals(propertyName)) {
+				.equals(propertyName)) {
 			IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
 			IWorkbench workbench = PlatformUI.getWorkbench();
-			IWorkbenchWindow[] workbenchWindows = workbench.getWorkbenchWindows();
+			IWorkbenchWindow[] workbenchWindows = workbench
+					.getWorkbenchWindows();
 			for (int i = 0; i < workbenchWindows.length; i++) {
 				IWorkbenchWindow window = workbenchWindows[i];
 				if (window instanceof WorkbenchWindow)
-					((WorkbenchWindow)window).dockPerspectiveBar(apiStore.getBoolean(IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR));
+					((WorkbenchWindow) window)
+							.dockPerspectiveBar(apiStore
+									.getBoolean(IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR));
 			}
 			return;
+		}
+		// Update the file associations if they have changed due to an import
+		if (IPreferenceConstants.RESOURCES.equals(propertyName)) {
+			IEditorRegistry registry = WorkbenchPlugin.getDefault()
+					.getEditorRegistry();
+			if (registry instanceof EditorRegistry) {
+				EditorRegistry editorRegistry = (EditorRegistry) registry;
+				IPreferenceStore store = WorkbenchPlugin.getDefault()
+						.getPreferenceStore();
+				Reader reader = null;
+				try {
+					String xmlString = store
+							.getString(IPreferenceConstants.RESOURCES);
+					if (xmlString != null && xmlString.length() > 0) {
+						reader = new StringReader(xmlString);
+						// Build the editor map.
+						HashMap editorMap = new HashMap();
+						int i = 0;
+						IEditorDescriptor[] descriptors = editorRegistry
+								.getSortedEditorsFromPlugins();
+						// Get the internal editors
+						for (i = 0; i < descriptors.length; i++) {
+							IEditorDescriptor descriptor = descriptors[i];
+							editorMap.put(descriptor.getId(), descriptor);
+						}
+						// Get the external (OS) editors
+						descriptors = editorRegistry.getSortedEditorsFromOS();
+						for (i = 0; i < descriptors.length; i++) {
+							IEditorDescriptor descriptor = descriptors[i];
+							editorMap.put(descriptor.getId(), descriptor);
+						}
+						// Update the file to editor(s) mappings
+						editorRegistry.readResources(editorMap, reader);
+					}
+				} catch (WorkbenchException e) {
+					e.printStackTrace();
+				} finally {
+					if (reader != null) {
+						try {
+							reader.close();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+			}
 		}
 	}
 }
