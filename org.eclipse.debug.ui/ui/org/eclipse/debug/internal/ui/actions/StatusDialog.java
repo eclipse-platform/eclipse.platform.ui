@@ -47,16 +47,6 @@ public abstract class StatusDialog extends Dialog {
 	}
 
 	/**
-	 * Specifies whether status line appears to the left of the buttons (default)
-	 * or above them.
-	 *
-	 * @param aboveButtons if <code>true</code> status line is placed above buttons; if
-	 * 	<code>false</code> to the right
-	 */
-	public void setStatusLineAboveButtons(boolean aboveButtons) {
-	}
-
-	/**
 	 * Update the dialog's status line to reflect the given status.
 	 * It is save to call this method before the dialog has been opened.
 	 */
