@@ -254,6 +254,7 @@ public class EditorCoolBar {
 				listComposite.getDisplay().asyncExec(new Runnable() {
 					public void run() {
 						if (singleClick) return;
+						if (editorList.keepListOpen) return;
 						if (listComposite != null) {
 							closeEditorList();
 						}

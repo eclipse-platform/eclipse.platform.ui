@@ -32,6 +32,7 @@ public class EditorList {
 	private SetScopeAction tabGroupScopeAction;
 	private BookMarkAction bookMarkAction;
 
+	public boolean keepListOpen = false;
 	private List dirtyEditorList;
 	private static boolean displayFullPath = false;
 	private static Collator collator = Collator.getInstance();
@@ -85,7 +86,7 @@ public class EditorList {
 		});
 		editorsTable.addMouseListener(new MouseAdapter() {
 			public void mouseUp(MouseEvent e) {
-				if (e.button == 1) {
+				if (e.stateMask == SWT.BUTTON1) {
 					handleSelectionEvent();
 				}
 			}
@@ -133,6 +134,7 @@ public class EditorList {
 			
 			if (selection.length == 1) {
 				Adapter a = (Adapter)selection[0].getData();
+				destroyControl();
 				a.activate(true);
 			}
 		} else {
@@ -490,7 +492,7 @@ public class EditorList {
 			if(items.length == 0) {
 				return;
 			}
-
+			keepListOpen = true;
 			for (int i = 0; i < items.length; i++) {
 				Adapter e = (Adapter)items[i].getData();
 				EditorShortcutManager manager = ((Workbench) window.getWorkbench()).getEditorShortcutManager();
@@ -507,6 +509,7 @@ public class EditorList {
 					manager.add(shortcut);
 				}
 			}
+			keepListOpen = false;
 			destroyControl();
 		}
 		/**
