@@ -142,6 +142,7 @@ public class CVSProviderTest extends EclipseTest {
 		
 		// Perform some operations on the copy and commit
 		IProject copy = checkoutCopy(project, "-copy");
+		JUnitTestCase.waitMsec(1500);
 		addResources(copy, new String[] { "added.txt", "folder2/", "folder2/added.txt" }, false);
 		changeResources(copy, new String[] {"changed.txt"}, false);
 		deleteResources(copy, new String[] {"deleted.txt"}, false);
