@@ -36,10 +36,8 @@ import org.eclipse.ui.internal.util.ImageSupport;
 import org.eclipse.ui.progress.IProgressConstants;
 
 /**
- * Create an instance of the receiver in the window.
- * 
- * @param workbenchWindow
- *            The window this is being created in.
+ * The ProgressAnimationItem is the animation items that uses
+ * the progress bar.
  */
 public class ProgressAnimationItem extends AnimationItem implements FinishedJobs.KeptJobsListener {
 
