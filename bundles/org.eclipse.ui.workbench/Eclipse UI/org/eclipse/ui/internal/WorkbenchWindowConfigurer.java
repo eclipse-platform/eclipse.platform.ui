@@ -241,7 +241,7 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 			throw new IllegalArgumentException();
 		}
 		Shell shell =  window.getShell();
-		if (shell != null) {
+		if (shell != null && !shell.isDisposed()) {
 			shell.setText(title);
 		} else {
 			// @issue need to be able to configure title before window's controls created
