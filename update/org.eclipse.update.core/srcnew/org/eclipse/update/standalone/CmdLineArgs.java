@@ -74,8 +74,6 @@ public class CmdLineArgs {
 		else if (cmd.equals("update"))
 			return new UpdateCommand(
 				(String) options.get("-featureId"),
-				(String) options.get("-version"),
-				(String) options.get("-from"),
 				(String) options.get("-to"));		
 		return null;
 	}

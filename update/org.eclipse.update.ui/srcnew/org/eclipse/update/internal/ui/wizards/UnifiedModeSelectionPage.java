@@ -59,24 +59,10 @@ public class UnifiedModeSelectionPage extends UnifiedBannerPage implements ISear
 	private void initializeSearch() {
 		if (searchRequest!=null) return;
 		UpdateSearchScope scope = new UpdateSearchScope();
-		scope.setUpdateMapURL(getUpdateMapURL());
+		scope.setUpdateMapURL(UpdateManager.getUpdateMapURL());
 		UnifiedUpdatesSearchCategory category = new UnifiedUpdatesSearchCategory();
 		searchRequest = new UpdateSearchRequest(category, scope);
 		searchRequest.addFilter(new EnvironmentFilter());
-	}
-	
-	private URL getUpdateMapURL() {
-		Preferences pref = UpdateCore.getPlugin().getPluginPreferences();
-		String mapFile = pref.getString(UpdateManager.P_MAPPINGS_FILE);
-		if (mapFile!=null && mapFile.length()>0) {
-			try {
-				String decodedFile = URLDecoder.decode(mapFile);
-				return new URL(decodedFile);
-			}
-			catch (MalformedURLException e) {
-			}
-		}
-		return null;
 	}
 
 	/* (non-Javadoc)

@@ -21,13 +21,12 @@ public class SearchCommand extends ScriptedCommand {
 	
 	private URL remoteSiteURL;
 	private UpdateSearchRequest searchRequest;
-	private UpdateSearchScope searchScope;
 	private IUpdateSearchResultCollector collector;
 	
 	public SearchCommand(String fromSite) {
 		try {
 			this.remoteSiteURL = new URL(URLDecoder.decode(fromSite));
-			searchScope = new UpdateSearchScope();
+			UpdateSearchScope searchScope = new UpdateSearchScope();
 			searchScope.addSearchSite("remoteSite", remoteSiteURL, new String[0]);
 			searchRequest = new UpdateSearchRequest(new UnifiedSiteSearchCategory(), searchScope);
 			collector = new UpdateSearchResultCollector();
@@ -37,7 +36,6 @@ public class SearchCommand extends ScriptedCommand {
 	}
 
 	/**
-	 * @see Wizard#performFinish()
 	 */
 	public boolean run() {
 		try {

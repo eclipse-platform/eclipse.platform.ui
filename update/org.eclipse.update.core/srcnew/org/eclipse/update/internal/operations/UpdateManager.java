@@ -12,6 +12,7 @@ package org.eclipse.update.internal.operations;
 
 
 import java.lang.reflect.*;
+import java.net.*;
 import java.text.*;
 import java.util.*;
 
@@ -534,5 +535,19 @@ public class UpdateManager {
 			// in the future this will be pluggable
 			validator = new OperationValidator();
 		return validator;
+	}
+	
+	public static URL getUpdateMapURL() {
+		Preferences pref = UpdateCore.getPlugin().getPluginPreferences();
+		String mapFile = pref.getString(UpdateManager.P_MAPPINGS_FILE);
+		if (mapFile!=null && mapFile.length()>0) {
+			try {
+				String decodedFile = URLDecoder.decode(mapFile);
+				return new URL(decodedFile);
+			}
+			catch (MalformedURLException e) {
+			}
+		}
+		return null;
 	}
 }
