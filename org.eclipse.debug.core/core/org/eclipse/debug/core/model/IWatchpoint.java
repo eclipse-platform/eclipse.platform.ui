@@ -27,7 +27,8 @@ import org.eclipse.core.runtime.CoreException;
  */
 public interface IWatchpoint extends IBreakpoint {
 	/**
-	 * Returns whether this watchpoint is an access watchpoint
+	 * Returns whether this watchpoint will suspend execution when its associated
+	 * variable is accessed (read).
 	 * 
 	 * @return whether this is an access watchpoint
 	 * @exception CoreException if unable to access the property
@@ -63,10 +64,10 @@ public interface IWatchpoint extends IBreakpoint {
 	public void setModification(boolean modification) throws CoreException;
 	/**
 	 * Returns whether this breakpoints supports the capability to suspend
-	 * when an associated variablle is read.
+	 * when an associated variable is read.
 	 * 
 	 * @return whether this breakpoints supports the capability to suspend
-	 * when an associated variablle is read
+	 * when an associated variable is read
 	 */
 	public boolean supportsAccess();
 	/**
