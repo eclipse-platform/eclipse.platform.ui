@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.jobs;
 
-import org.eclipse.core.internal.jobs.JobManager;
-import org.eclipse.core.internal.jobs.OrderedLock;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -31,6 +29,9 @@ import org.eclipse.team.internal.ui.TeamUIPlugin;
  * Job to refresh a subscriber with its remote state.
  * 
  * There can be several refresh jobs created but they will be serialized.
+ * This is accomplished using a synchrnized block on the family id. It is
+ * important that no scheduling rules are used for the job in order to
+ * avoid possible deadlock. 
  */
 public class RefreshSubscriberJob extends WorkspaceJob {
 	
@@ -58,11 +59,6 @@ public class RefreshSubscriberJob extends WorkspaceJob {
 	 * Time the job was run last in milliseconds.
 	 */
 	private long lastTimeRun = 0; 
-	
-	/**
-	 * Lock to ensure that only one refresh is occuring at a particulr time
-	 */
-	private OrderedLock lock = JobManager.getInstance().getLockManager().newLock();
 	
 	/**
 	 * The subscribers and roots to refresh. If these are changed when the job
@@ -108,40 +104,41 @@ public class RefreshSubscriberJob extends WorkspaceJob {
 	 * This is run by the job scheduler. A list of subscribers will be refreshed, errors will not stop the job 
 	 * and it will continue to refresh the other subscribers.
 	 */
-	public IStatus runInWorkspace(IProgressMonitor monitor) {		
-		MultiStatus status = new MultiStatus(TeamUIPlugin.ID, TeamException.UNABLE, Policy.bind("RefreshSubscriberJob.0"), null); //$NON-NLS-1$
-		TeamSubscriber subscriber = getSubscriber();
-		IResource[] roots = getResources();
-		
-		// if there are no resources to refresh, just return
-		if(subscriber == null || roots == null) {
-			return Status.OK_STATUS;
-		}
-				
-		monitor.beginTask(getTaskName(subscriber, roots), 100);
-		try {
-			// Only allow one refresh job at a time
-			// NOTE: It would be cleaner if this was done by a scheduling
-			// rule but at the time of writting, it is not possible due to
-			// the scheduling rule containment rules.
-			lock.acquire();
-			lastTimeRun = System.currentTimeMillis();
-			if(monitor.isCanceled()) {
+	public IStatus runInWorkspace(IProgressMonitor monitor) {
+		// Synchronized to ensure only one refresh job is running at a particular time
+		synchronized (getFamily()) {	
+			MultiStatus status = new MultiStatus(TeamUIPlugin.ID, TeamException.UNABLE, Policy.bind("RefreshSubscriberJob.0"), null); //$NON-NLS-1$
+			TeamSubscriber subscriber = getSubscriber();
+			IResource[] roots = getResources();
+			
+			// if there are no resources to refresh, just return
+			if(subscriber == null || roots == null) {
+				return Status.OK_STATUS;
+			}
+					
+			monitor.beginTask(getTaskName(subscriber, roots), 100);
+			try {
+				// Only allow one refresh job at a time
+				// NOTE: It would be cleaner if this was done by a scheduling
+				// rule but at the time of writting, it is not possible due to
+				// the scheduling rule containment rules.
+				lastTimeRun = System.currentTimeMillis();
+				if(monitor.isCanceled()) {
+					return Status.CANCEL_STATUS;
+				}
+				try {					
+					monitor.setTaskName(subscriber.getName());
+					subscriber.refresh(roots, IResource.DEPTH_INFINITE, Policy.subMonitorFor(monitor, 100));
+				} catch(TeamException e) {
+					status.merge(e.getStatus());
+				}
+			} catch(OperationCanceledException e2) {
 				return Status.CANCEL_STATUS;
+			} finally {
+				monitor.done();
 			}
-			try {					
-				monitor.setTaskName(subscriber.getName());
-				subscriber.refresh(roots, IResource.DEPTH_INFINITE, Policy.subMonitorFor(monitor, 100));
-			} catch(TeamException e) {
-				status.merge(e.getStatus());
-			}
-		} catch(OperationCanceledException e2) {
-			return Status.CANCEL_STATUS;
-		} finally {
-			lock.release();
-			monitor.done();
+			return status.isOK() ? Status.OK_STATUS : (IStatus) status;
 		}
-		return status.isOK() ? Status.OK_STATUS : (IStatus) status;
 	}
 
 	protected String getTaskName(TeamSubscriber subscriber, IResource[] roots) {
