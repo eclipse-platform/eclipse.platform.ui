@@ -55,7 +55,7 @@ public class AntUIImages {
 	private final static String LOCALTOOL= "elcl16/"; //basic colors - size 16x16 //$NON-NLS-1$
 	private final static String OBJECT= "obj16/"; //basic colors - size 16x16 //$NON-NLS-1$
 	private final static String OVR= "ovr16/"; //basic colors - size 7x8 //$NON-NLS-1$
-	private final static String WIZ= "wizban/";
+	private final static String WIZ= "wizban/"; //$NON-NLS-1$
 	
 	/**
 	 * Declare all images
