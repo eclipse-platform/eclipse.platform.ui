@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.*;
  * the order of elements in the list.
  * <p>
  * Subclasses must implement the <code>parseString</code>,
- * <code>createList</code>, and <code>createNewInputObject</code>
+ * <code>createList</code>, and <code>getNewInputObject</code>
  * framework methods.
  * </p>
  */
