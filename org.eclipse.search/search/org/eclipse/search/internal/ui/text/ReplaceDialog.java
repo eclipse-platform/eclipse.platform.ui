@@ -10,9 +10,11 @@
  ******************************************************************************/
 package org.eclipse.search.internal.ui.text;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceDescription;
@@ -41,9 +43,13 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.util.Assert;
 
+import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.GlobalBuildAction;
 import org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel;
 import org.eclipse.ui.texteditor.IDocumentProvider;
@@ -91,6 +97,16 @@ public class ReplaceDialog extends Dialog {
 	private int fMarkerIndex;
 	private IMarker fCurrentMatch;
 	
+	private static class MarkerNotPresentableException extends Exception {
+		private IFile fFile;
+		MarkerNotPresentableException(IFile file) {
+			fFile= file;
+		}
+		public IFile getFile() {
+			return fFile;
+		}
+	}
+	
 	protected ReplaceDialog(Shell parentShell, List elements, IWorkbenchWindow window, String searchPattern) {
 		super(parentShell);
 		Assert.isNotNull(elements);
@@ -125,6 +141,9 @@ public class ReplaceDialog extends Dialog {
 			fCurrentMatch= getNextMatch(false);
 		} catch (CoreException e) {
 			ExceptionHandler.handle(e, getShell(), getDialogTitle(), SearchMessages.getString("ReplaceDialog.error.no_matches")); //$NON-NLS-1$
+			fFatalError= true;
+		} catch (MarkerNotPresentableException e) {
+			handleMarkerNotPresentableException(e);
 			fFatalError= true;
 		}
 		return super.open();
@@ -217,6 +236,9 @@ public class ReplaceDialog extends Dialog {
 		} catch (BadLocationException e) {
 			MessageDialog.openError(getShell(), getDialogTitle(), SearchMessages.getString("ReplaceDialog.error.different_content")); //$NON-NLS-1$
 			fFatalError= true;
+		} catch (MarkerNotPresentableException e) {
+			handleMarkerNotPresentableException(e);
+			fFatalError= true;
 		}
 		updateButtons();
 		super.buttonPressed(buttonId);
@@ -238,7 +260,7 @@ public class ReplaceDialog extends Dialog {
 		return fElementIndex < fElements.size();
 	}
 	
-	private IMarker getNextMatch(boolean save) throws CoreException {
+	private IMarker getNextMatch(boolean save) throws CoreException, MarkerNotPresentableException {
 		if (fCurrentMarkers == null) {
 			if (fElementIndex >= fElements.size())
 				return null;
@@ -251,7 +273,9 @@ public class ReplaceDialog extends Dialog {
 		if (fEditor == null) {
 			IWorkbenchPage activePage = fWindow.getActivePage();
 			int openEditors= activePage.getEditorReferences().length;
-			fEditor= (ITextEditor)activePage.openEditor(result, false);
+			
+			fEditor= openFile(result, activePage);
+			fEditor.gotoMarker(result);
 			IDocumentProvider provider= fEditor.getDocumentProvider();
 			IEditorInput input = fEditor.getEditorInput();
 			fDocument= provider.getDocument(input);
@@ -268,9 +292,32 @@ public class ReplaceDialog extends Dialog {
 		return result;
 	}
 
+	private ITextEditor openFile(IMarker marker, IWorkbenchPage activePage) throws MarkerNotPresentableException, PartInitException {
+		IFile markerFile= marker.getResource() instanceof IFile ? (IFile)marker.getResource() : null;
+		if (markerFile == null)
+			throw new MarkerNotPresentableException(null);
+			
+		String currentEditorId= null;
+		IEditorRegistry editorRegistry= SearchPlugin.getDefault().getWorkbench().getEditorRegistry();
+		IEditorDescriptor desc= editorRegistry.getDefaultEditor(markerFile);
+		if (desc != null)
+			currentEditorId= desc.getId();
+		try {
+			IEditorPart result= activePage.openEditor(markerFile, "org.eclipse.ui.DefaultTextEditor", false); //$NON-NLS-1$
+			if (!(result instanceof ITextEditor))
+				throw new MarkerNotPresentableException(markerFile);
+			return (ITextEditor)result;
+		} finally {
+			if (currentEditorId != null)
+				editorRegistry.setDefaultEditor(markerFile, currentEditorId);
+		}
+	}
+
 	private void saveEditor(boolean save) throws CoreException {
-		if (fEditor != null)
-			save= save && fEditor.isDirty();
+		if (fEditor == null)
+			return;
+			
+		save= save && fEditor.isDirty();
 		if (save) {
 			IDocumentProvider provider= fEditor.getDocumentProvider();
 			IEditorInput input = fEditor.getEditorInput();
@@ -282,7 +329,7 @@ public class ReplaceDialog extends Dialog {
 				provider.changed(input);
 			}
 		}
-		if (fEditor != null && fCloseEditor && save)
+		if (fCloseEditor && !fEditor.isDirty())
 			fEditor.close(false);
 		fEditor= null;
 		fDocument= null;
@@ -321,5 +368,16 @@ public class ReplaceDialog extends Dialog {
 	
 	private String getDialogTitle() {
 		return SearchMessages.getString("ReplaceDialog.dialog.title"); //$NON-NLS-1$
+	}
+	
+	private void handleMarkerNotPresentableException(MarkerNotPresentableException e) {
+		IFile file= e.getFile();
+		String message;
+		if (file == null) {
+			message= SearchMessages.getString("ReplaceDialog.error.no_file_for_marker"); //$NON-NLS-1$
+		} else {
+			message= SearchMessages.getFormattedString("ReplaceDialog.error.unable_to_open_text_editor", file.getName()); //$NON-NLS-1$
+		}
+		MessageDialog.openError(getParentShell(), getDialogTitle(), message);
 	}
 }

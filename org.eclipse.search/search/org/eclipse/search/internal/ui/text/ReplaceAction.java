@@ -30,8 +30,12 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IStatus;
 
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
+import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.texteditor.ITextEditor;
 
 import org.eclipse.search.internal.ui.Search;
 import org.eclipse.search.internal.ui.SearchManager;
@@ -78,14 +82,37 @@ import org.eclipse.search.internal.ui.util.ListDialog;
 	
 	private boolean validateResources() {
 		List modifiedFiles= new ArrayList();
+		List openedFilesInNonTextEditor= new ArrayList();
+		List notFiles= new ArrayList();
+		IWorkbenchPage activePage =  fSite.getWorkbenchWindow().getActivePage();
+
 		for (Iterator iter = fElements.iterator(); iter.hasNext();) {
 			SearchResultViewEntry entry= (SearchResultViewEntry) iter.next();
 			IResource resource= entry.getResource();
-			if (resource instanceof IFile && ((IFile)resource).getModificationStamp() != entry.getModificationStamp())
-				modifiedFiles.add(resource);
+			if (resource instanceof IFile) {
+				IFile file= (IFile)resource;
+				if (file.getModificationStamp() != entry.getModificationStamp() || !file.isSynchronized(IResource.DEPTH_ZERO)) {
+					modifiedFiles.add(resource);
+				} else if (activePage != null) {
+					IEditorPart part= activePage.findEditor(new FileEditorInput(file));
+					if (part != null && !(part instanceof ITextEditor))
+						openedFilesInNonTextEditor.add(file);
+				}
+			} else {
+				if (resource != null)
+					notFiles.add(resource);
+			}
 		}
 		if (!modifiedFiles.isEmpty()) {
 			showModifiedFileDialog(modifiedFiles);
+			return false;
+		}
+		if (!openedFilesInNonTextEditor.isEmpty()) {
+			showOpenedFileDialog(openedFilesInNonTextEditor);
+			return false;
+		}
+		if (!notFiles.isEmpty()) {
+			showNotFilesDialog(openedFilesInNonTextEditor);
 			return false;
 		}
 		IFile[] readOnlyFiles= getReadOnlyFiles();
@@ -113,8 +140,11 @@ import org.eclipse.search.internal.ui.util.ListDialog;
 	}
 
 	private void showModifiedFileDialog(List modifiedFiles) {
+		String message= (modifiedFiles.size() == 1
+			? SearchMessages.getString("ReplaceAction.error.changed_file")  //$NON-NLS-1$
+			: SearchMessages.getString("ReplaceAction.error.changed_files"));  //$NON-NLS-1$
 		ListDialog dialog= new ListDialog(fSite.getShell(), modifiedFiles, getDialogTitle(), 
-			SearchMessages.getString("ReplaceAction.error.changed_files"),  //$NON-NLS-1$
+			message,
 			new IStructuredContentProvider() {
 				public Object[] getElements(Object inputElement) {
 					return ((List)inputElement).toArray();
@@ -151,4 +181,44 @@ import org.eclipse.search.internal.ui.util.ListDialog;
 	private String getDialogTitle() {
 		return SearchMessages.getString("ReplaceAction.dialog.title"); //$NON-NLS-1$
 	}
+	
+	private void showOpenedFileDialog(List openedFilesInNonTextEditor) {
+		String message= (openedFilesInNonTextEditor.size() == 1
+			? SearchMessages.getString("ReplaceAction.error.opened_file")  //$NON-NLS-1$
+			: SearchMessages.getString("ReplaceAction.error.opened_files"));  //$NON-NLS-1$
+		ListDialog dialog= new ListDialog(fSite.getShell(), openedFilesInNonTextEditor, getDialogTitle(), 
+			message,
+			new IStructuredContentProvider() {
+				public Object[] getElements(Object inputElement) {
+					return ((List)inputElement).toArray();
+				}
+				public void dispose() {
+				}
+				public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+				}
+			}, 
+			new WorkbenchLabelProvider());
+		dialog.setCreateCancelButton(false);
+		dialog.open();
+	}
+	
+	private void showNotFilesDialog(List notFiles) {
+		String message= (notFiles.size() == 1
+			? SearchMessages.getString("ReplaceAction.error.not_file")  //$NON-NLS-1$
+			: SearchMessages.getString("ReplaceAction.error.not_files"));  //$NON-NLS-1$
+		ListDialog dialog= new ListDialog(fSite.getShell(), notFiles, getDialogTitle(), 
+			message,
+			new IStructuredContentProvider() {
+				public Object[] getElements(Object inputElement) {
+					return ((List)inputElement).toArray();
+				}
+				public void dispose() {
+				}
+				public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+				}
+			}, 
+			new WorkbenchLabelProvider());
+		dialog.setCreateCancelButton(false);
+		dialog.open();
+	}		
 }
