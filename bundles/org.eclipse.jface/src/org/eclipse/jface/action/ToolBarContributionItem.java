@@ -312,7 +312,7 @@ public class ToolBarContributionItem extends ContributionItem {
 	 */
 	public void updateSize(boolean changeCurrentSize) {
 		// cannot set size if coolItem is null
-		if (coolItem == null) return;
+		if (coolItem == null || coolItem.isDisposed()) return;
 		// Calculate size of toolbar
 		ToolBar toolBar = (ToolBar)coolItem.getControl();
 		
