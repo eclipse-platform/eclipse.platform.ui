@@ -65,7 +65,7 @@ public abstract class RootScopePage extends PreferencePage implements ISearchSco
 	}
 	
 	protected void masterValueChanged(boolean value) {
-		scopeContents.setVisible(value);
+		scopeContents.setEnabled(value);
 	}
 	
 	protected String getScopeSetName() {
@@ -74,6 +74,10 @@ public abstract class RootScopePage extends PreferencePage implements ISearchSco
 	
 	protected String getEngineId() {
 		return engineId;
+	}
+	
+	protected boolean isEngineEnabled() {
+		return masterButton.getSelection(); 
 	}
 	
     public boolean performOk() {
