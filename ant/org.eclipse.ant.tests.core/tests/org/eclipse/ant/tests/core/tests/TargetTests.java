@@ -7,6 +7,8 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
+import java.io.File;
+
 import org.eclipse.ant.core.TargetInfo;
 import org.eclipse.ant.tests.core.AbstractAntTest;
 import org.eclipse.ant.tests.core.testplugin.AntTestChecker;
@@ -54,7 +56,7 @@ public class TargetTests extends AbstractAntTest {
 	public void testRunScript() throws CoreException {
 		run("TestForEcho.xml");
 		String message= (String)AntTestChecker.getDefault().getMessages().get(0);
-		assertTrue("Build file location should be logged as the first message", message != null && message.endsWith("AntTests\\scripts\\TestForEcho.xml"));
+		assertTrue("Build file location should be logged as the first message", message != null && message.endsWith("AntTests" + File.separator + "scripts" + File.separator + "TestForEcho.xml"));
 		assertSuccessful();
 	}
 }
