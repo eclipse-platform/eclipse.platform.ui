@@ -20,318 +20,11 @@ import org.eclipse.core.tests.harness.TestJob;
  * Tests the implemented get/set methods of the abstract class Job
  */
 public class JobTest extends TestCase {
-	protected Job shortJob;
 	protected Job longJob;
+	protected Job shortJob;
 
 	public static Test suite() {
 		return new TestSuite(JobTest.class);
-	}
-
-	/*
-	 * @see TestCase#setUp()
-	 */
-	protected void setUp() throws Exception {
-		super.setUp();
-		shortJob = new TestJob("Short Test Job", 100, 10);
-		longJob = new TestJob("Long Test Job", 1000000, 10);
-	}
-
-	/*
-	 * @see TestCase#tearDown()
-	 */
-	protected void tearDown() throws Exception {
-		super.tearDown();
-	}
-
-	public void testGetName() {
-		assertTrue("1.0", shortJob.getName().equals("Short Test Job"));
-		assertTrue("1.1", longJob.getName().equals("Long Test Job"));
-
-		//try creating a job with a null name
-		try {
-			new TestJob(null);
-			fail("2.0");
-		} catch (RuntimeException e) {
-			//should fail
-		}
-	}
-
-	public void testGetPriority() {
-		//set priorities to all allowed options
-		//check if getPriority() returns proper result
-
-		int[] priority = {Job.SHORT, Job.LONG, Job.INTERACTIVE, Job.BUILD, Job.DECORATE};
-
-		for (int i = 0; i < priority.length; i++) {
-			shortJob.setPriority(priority[i]);
-			assertTrue("1." + i, shortJob.getPriority() == priority[i]);
-		}
-	}
-
-	public void testGetProperty() {
-		QualifiedName n1 = new QualifiedName("org.eclipse.core.tests.runtime", "p1");
-		QualifiedName n2 = new QualifiedName("org.eclipse.core.tests.runtime", "p2");
-		assertNull("1.0", shortJob.getProperty(n1));
-		shortJob.setProperty(n1, null);
-		assertNull("1.1", shortJob.getProperty(n1));
-		shortJob.setProperty(n1, shortJob);
-		assertTrue("1.2", shortJob.getProperty(n1) == shortJob);
-		assertNull("1.3", shortJob.getProperty(n2));
-		shortJob.setProperty(n1, "hello");
-		assertEquals("1.4", "hello", shortJob.getProperty(n1));
-		shortJob.setProperty(n1, null);
-		assertNull("1.5", shortJob.getProperty(n1));
-		assertNull("1.6", shortJob.getProperty(n2));
-	}
-
-	public void testGetResult() {
-		//execute a short job
-		assertTrue("1.0", shortJob.getResult() == null);
-		shortJob.schedule();
-		waitForState(shortJob, Job.NONE);
-		assertTrue("1.1", shortJob.getResult().getSeverity() == IStatus.OK);
-
-		//cancel a long job
-		longJob.schedule(1000000);
-		assertTrue("1.3", longJob.sleep());
-		longJob.wakeUp();
-		waitForState(longJob, Job.RUNNING);
-		longJob.cancel();
-		waitForState(longJob, Job.NONE);
-		assertTrue("2.0", longJob.getResult().getSeverity() == IStatus.CANCEL);
-	}
-
-	public void testGetRule() {
-		//set several rules for the job, check if getRule returns the rule that was set
-		//no rule was set yet
-		assertTrue("1.0", shortJob.getRule() == null);
-
-		shortJob.setRule(new IdentityRule());
-		assertTrue("1.1", (shortJob.getRule() instanceof IdentityRule));
-
-		ISchedulingRule rule = new PathRule("/A");
-		shortJob.setRule(rule);
-		assertTrue("1.2", shortJob.getRule() == rule);
-
-		shortJob.setRule(null);
-		assertTrue("1.3", shortJob.getRule() == null);
-	}
-
-	public void testGetThread() {
-		//check that getThread returns the thread that was passed in setThread, when the job is not running
-		//if the job is scheduled, only jobs that return the asynch_exec status will run in the indicated thread
-
-		//main is not running now
-		assertTrue("1.0", shortJob.getThread() == null);
-
-		Thread t = new Thread();
-		shortJob.setThread(t);
-		assertTrue("1.1", shortJob.getThread() == t);
-
-		shortJob.setThread(new Thread());
-		assertTrue("1.2", shortJob.getThread() != t);
-
-		shortJob.setThread(null);
-		assertTrue("1.3", shortJob.getThread() == null);
-	}
-
-	public void testJoin() {
-		longJob.schedule(100000);
-		//create a thread that will join the test job
-		final int[] status = new int[1];
-		status[0] = TestBarrier.STATUS_WAIT_FOR_START;
-		Thread t = new Thread(new Runnable() {
-			public void run() {
-				status[0] = TestBarrier.STATUS_START;
-				try {
-					longJob.join();
-				} catch (InterruptedException e) {
-					Assert.fail("0.99");
-				}
-				status[0] = TestBarrier.STATUS_DONE;
-			}
-		});
-		t.start();
-		TestBarrier.waitForStatus(status, TestBarrier.STATUS_START);
-		assertEquals("1.0", TestBarrier.STATUS_START, status[0]);
-		//putting the job to sleep should not affect the join call
-		longJob.sleep();
-		//give a chance for the sleep to take effect
-		sleep(100);
-		assertEquals("1.0", TestBarrier.STATUS_START, status[0]);
-		//similarly waking the job up should not affect the join
-		longJob.wakeUp(100000);
-		sleep(100);
-		assertEquals("1.0", TestBarrier.STATUS_START, status[0]);
-
-		//finally canceling the job will cause the join to return
-		longJob.cancel();
-		TestBarrier.waitForStatus(status, TestBarrier.STATUS_DONE);
-	}
-
-	private void sleep(long duration) {
-		try {
-			Thread.sleep(duration);
-		} catch (InterruptedException e) {
-		}
-	}
-
-	public void testIsSystem() {
-		//reset the system parameter several times
-		shortJob.setUser(false);
-		shortJob.setSystem(false);
-		assertTrue("1.0", !shortJob.isUser());
-		assertTrue("1.1", !shortJob.isSystem());
-		shortJob.setSystem(true);
-		assertTrue("1.2", !shortJob.isUser());
-		assertTrue("1.3", shortJob.isSystem());
-		shortJob.setSystem(false);
-		assertTrue("1.4", !shortJob.isUser());
-		assertTrue("1.5", !shortJob.isSystem());
-	}
-
-	public void testIsUser() {
-		//reset the user parameter several times
-		shortJob.setUser(false);
-		shortJob.setSystem(false);
-		assertTrue("1.0", !shortJob.isUser());
-		assertTrue("1.1", !shortJob.isSystem());
-		shortJob.setUser(true);
-		assertTrue("1.2", shortJob.isUser());
-		assertTrue("1.3", !shortJob.isSystem());
-		shortJob.setUser(false);
-		assertTrue("1.4", !shortJob.isUser());
-		assertTrue("1.5", !shortJob.isSystem());
-	}
-
-	/*
-	 * see bug #43458
-	 */
-	public void testSetPriority() {
-		int[] wrongPriority = {1000, -Job.DECORATE, 25, 0, 5, Job.INTERACTIVE - Job.BUILD};
-
-		for (int i = 0; i < wrongPriority.length; i++) {
-			//set priority to non-existent type
-			try {
-				shortJob.setPriority(wrongPriority[i]);
-				fail("1." + (i + 1));
-			} catch (RuntimeException e) {
-				//should fail
-			}
-		}
-	}
-
-	/**
-	 * Tests the API methods Job.setProgressGroup
-	 */
-	public void testSetProgressGroup() {
-		//null group
-		try {
-			longJob.setProgressGroup(null, 5);
-			fail("1.0");
-		} catch (RuntimeException e) {
-			//should fail
-		}
-		IProgressMonitor group = Platform.getJobManager().createProgressGroup();
-		group.beginTask("Group task name", 10);
-		longJob.setProgressGroup(group, 5);
-
-		//ignore changes to group while waiting or running
-		longJob.schedule(100);
-		longJob.setProgressGroup(group, 0);
-		waitForState(longJob, Job.RUNNING);
-		longJob.setProgressGroup(group, 0);
-
-		//ensure cancelation still works
-		longJob.cancel();
-		waitForState(longJob, Job.NONE);
-		group.done();
-	}
-
-	/*
-	 * see bug #43459
-	 */
-	public void testSetRule() {
-		//setting a scheduling rule for a job after it was already scheduled should throw an exception
-		shortJob.setRule(new IdentityRule());
-		assertTrue("1.0", shortJob.getRule() instanceof IdentityRule);
-		shortJob.schedule(1000000);
-		try {
-			shortJob.setRule(new PathRule("/A"));
-			fail("1.1");
-		} catch (RuntimeException e) {
-			//should fail
-		}
-
-		//wake up the sleeping job
-		shortJob.wakeUp();
-
-		//setting the rule while running should fail
-		try {
-			shortJob.setRule(new PathRule("/A/B"));
-			fail("2.0");
-		} catch (RuntimeException e1) {
-			//should fail
-		}
-
-		try {
-			//wait for the job to complete
-			shortJob.join();
-		} catch (InterruptedException e2) {
-		}
-
-		//after the job has finished executing, the scheduling rule for it can once again be reset
-		shortJob.setRule(new PathRule("/A/B/C/D"));
-		assertTrue("1.2", shortJob.getRule() instanceof PathRule);
-		shortJob.setRule(null);
-		assertTrue("1.3", shortJob.getRule() == null);
-	}
-
-	public void testSetThread() {
-		//setting the thread of a job that is not an asynchronous job should not affect the actual thread the job will run in
-		assertTrue("0.0", longJob.getThread() == null);
-
-		longJob.setThread(Thread.currentThread());
-		assertTrue("1.0", longJob.getThread() == Thread.currentThread());
-		longJob.schedule();
-		waitForState(longJob, Job.RUNNING);
-
-		//the setThread method should have no effect on jobs that execute normally
-		assertTrue("2.0", longJob.getThread() != Thread.currentThread());
-
-		longJob.cancel();
-		waitForState(longJob, Job.NONE);
-
-		//the thread should reset to null when the job finishes execution
-		assertTrue("3.0", longJob.getThread() == null);
-
-		longJob.setThread(null);
-		assertTrue("4.0", longJob.getThread() == null);
-
-		longJob.schedule();
-		waitForState(longJob, Job.RUNNING);
-
-		//the thread that the job is executing in is not the one that was set
-		assertTrue("5.0", longJob.getThread() != null);
-		longJob.cancel();
-		waitForState(longJob, Job.NONE);
-
-		//thread should reset to null after execution of job
-		assertTrue("6.0", longJob.getThread() == null);
-
-		Thread t = new Thread();
-		longJob.setThread(t);
-		assertTrue("7.0", longJob.getThread() == t);
-		longJob.schedule();
-		waitForState(longJob, Job.RUNNING);
-
-		//the thread that the job is executing in is not the one that it was set to
-		assertTrue("8.0", longJob.getThread() != t);
-		longJob.cancel();
-		waitForState(longJob, Job.NONE);
-
-		//execution thread should reset to null after job is finished
-		assertTrue("9.0", longJob.getThread() == null);
 	}
 
 	//see bug #43591
@@ -368,6 +61,29 @@ public class JobTest extends TestCase {
 		longJob.done(Status.OK_STATUS);
 		assertTrue("6.0", longJob.getResult().getSeverity() == IStatus.CANCEL);
 
+	}
+
+	/*
+	 * @see TestCase#setUp()
+	 */
+	protected void setUp() throws Exception {
+		super.setUp();
+		shortJob = new TestJob("Short Test Job", 100, 10);
+		longJob = new TestJob("Long Test Job", 1000000, 10);
+	}
+
+	private void sleep(long duration) {
+		try {
+			Thread.sleep(duration);
+		} catch (InterruptedException e) {
+		}
+	}
+
+	/*
+	 * @see TestCase#tearDown()
+	 */
+	protected void tearDown() throws Exception {
+		super.tearDown();
 	}
 
 	//see bug #43566
@@ -620,13 +336,167 @@ public class JobTest extends TestCase {
 		assertNull("14.4", jobs[4].getThread());
 	}
 
+	public void testGetName() {
+		assertTrue("1.0", shortJob.getName().equals("Short Test Job"));
+		assertTrue("1.1", longJob.getName().equals("Long Test Job"));
+
+		//try creating a job with a null name
+		try {
+			new TestJob(null);
+			fail("2.0");
+		} catch (RuntimeException e) {
+			//should fail
+		}
+	}
+
+	public void testGetPriority() {
+		//set priorities to all allowed options
+		//check if getPriority() returns proper result
+
+		int[] priority = {Job.SHORT, Job.LONG, Job.INTERACTIVE, Job.BUILD, Job.DECORATE};
+
+		for (int i = 0; i < priority.length; i++) {
+			shortJob.setPriority(priority[i]);
+			assertTrue("1." + i, shortJob.getPriority() == priority[i]);
+		}
+	}
+
+	public void testGetProperty() {
+		QualifiedName n1 = new QualifiedName("org.eclipse.core.tests.runtime", "p1");
+		QualifiedName n2 = new QualifiedName("org.eclipse.core.tests.runtime", "p2");
+		assertNull("1.0", shortJob.getProperty(n1));
+		shortJob.setProperty(n1, null);
+		assertNull("1.1", shortJob.getProperty(n1));
+		shortJob.setProperty(n1, shortJob);
+		assertTrue("1.2", shortJob.getProperty(n1) == shortJob);
+		assertNull("1.3", shortJob.getProperty(n2));
+		shortJob.setProperty(n1, "hello");
+		assertEquals("1.4", "hello", shortJob.getProperty(n1));
+		shortJob.setProperty(n1, null);
+		assertNull("1.5", shortJob.getProperty(n1));
+		assertNull("1.6", shortJob.getProperty(n2));
+	}
+
+	public void testGetResult() {
+		//execute a short job
+		assertTrue("1.0", shortJob.getResult() == null);
+		shortJob.schedule();
+		waitForState(shortJob, Job.NONE);
+		assertTrue("1.1", shortJob.getResult().getSeverity() == IStatus.OK);
+
+		//cancel a long job
+		longJob.schedule(1000000);
+		assertTrue("1.3", longJob.sleep());
+		longJob.wakeUp();
+		waitForState(longJob, Job.RUNNING);
+		longJob.cancel();
+		waitForState(longJob, Job.NONE);
+		assertTrue("2.0", longJob.getResult().getSeverity() == IStatus.CANCEL);
+	}
+
+	public void testGetRule() {
+		//set several rules for the job, check if getRule returns the rule that was set
+		//no rule was set yet
+		assertTrue("1.0", shortJob.getRule() == null);
+
+		shortJob.setRule(new IdentityRule());
+		assertTrue("1.1", (shortJob.getRule() instanceof IdentityRule));
+
+		ISchedulingRule rule = new PathRule("/A");
+		shortJob.setRule(rule);
+		assertTrue("1.2", shortJob.getRule() == rule);
+
+		shortJob.setRule(null);
+		assertTrue("1.3", shortJob.getRule() == null);
+	}
+
+	public void testGetThread() {
+		//check that getThread returns the thread that was passed in setThread, when the job is not running
+		//if the job is scheduled, only jobs that return the asynch_exec status will run in the indicated thread
+
+		//main is not running now
+		assertTrue("1.0", shortJob.getThread() == null);
+
+		Thread t = new Thread();
+		shortJob.setThread(t);
+		assertTrue("1.1", shortJob.getThread() == t);
+
+		shortJob.setThread(new Thread());
+		assertTrue("1.2", shortJob.getThread() != t);
+
+		shortJob.setThread(null);
+		assertTrue("1.3", shortJob.getThread() == null);
+	}
+
+	public void testIsSystem() {
+		//reset the system parameter several times
+		shortJob.setUser(false);
+		shortJob.setSystem(false);
+		assertTrue("1.0", !shortJob.isUser());
+		assertTrue("1.1", !shortJob.isSystem());
+		shortJob.setSystem(true);
+		assertTrue("1.2", !shortJob.isUser());
+		assertTrue("1.3", shortJob.isSystem());
+		shortJob.setSystem(false);
+		assertTrue("1.4", !shortJob.isUser());
+		assertTrue("1.5", !shortJob.isSystem());
+	}
+
+	public void testIsUser() {
+		//reset the user parameter several times
+		shortJob.setUser(false);
+		shortJob.setSystem(false);
+		assertTrue("1.0", !shortJob.isUser());
+		assertTrue("1.1", !shortJob.isSystem());
+		shortJob.setUser(true);
+		assertTrue("1.2", shortJob.isUser());
+		assertTrue("1.3", !shortJob.isSystem());
+		shortJob.setUser(false);
+		assertTrue("1.4", !shortJob.isUser());
+		assertTrue("1.5", !shortJob.isSystem());
+	}
+
+	public void testJoin() {
+		longJob.schedule(100000);
+		//create a thread that will join the test job
+		final int[] status = new int[1];
+		status[0] = TestBarrier.STATUS_WAIT_FOR_START;
+		Thread t = new Thread(new Runnable() {
+			public void run() {
+				status[0] = TestBarrier.STATUS_START;
+				try {
+					longJob.join();
+				} catch (InterruptedException e) {
+					Assert.fail("0.99");
+				}
+				status[0] = TestBarrier.STATUS_DONE;
+			}
+		});
+		t.start();
+		TestBarrier.waitForStatus(status, TestBarrier.STATUS_START);
+		assertEquals("1.0", TestBarrier.STATUS_START, status[0]);
+		//putting the job to sleep should not affect the join call
+		longJob.sleep();
+		//give a chance for the sleep to take effect
+		sleep(100);
+		assertEquals("1.0", TestBarrier.STATUS_START, status[0]);
+		//similarly waking the job up should not affect the join
+		longJob.wakeUp(100000);
+		sleep(100);
+		assertEquals("1.0", TestBarrier.STATUS_START, status[0]);
+
+		//finally canceling the job will cause the join to return
+		longJob.cancel();
+		TestBarrier.waitForStatus(status, TestBarrier.STATUS_DONE);
+	}
+
 	/**
 	 * Tests a job change listener that throws an exception.
 	 * This would previously cause join attempts on that job to
 	 * hang indefinitely because they would miss the notification
 	 * required to end the join.
 	 */
-	public void testFailingListener() {
+	public void testJoinFailingListener() {
 		shortJob.addJobChangeListener(new JobChangeAdapter() {
 			public void done(IJobChangeEvent event) {
 				throw new RuntimeException("This exception thrown on purpose as part of a test");
@@ -650,7 +520,150 @@ public class JobTest extends TestCase {
 		t.start();
 		//wait until the join succeeds
 		TestBarrier.waitForStatus(status, TestBarrier.STATUS_DONE);
+	}
+	
+	/**
+	 * This is a regression test for bug 60323. If a job change listener
+	 * removed itself from the listener list during the done() change event,
+	 * then anyone joining on that job would hang forever.
+	 */
+	public void testJoinRemoveListener() {
+		final IJobChangeListener listener = new JobChangeAdapter() {
+			public void done(IJobChangeEvent event) {
+				shortJob.removeJobChangeListener(this);
+			}
+		};
+		shortJob.addJobChangeListener(listener);
+		final int[] status = new int[1];
+		//create a thread that will join the job
+		Thread t = new Thread(new Runnable() {
+			public void run() {
+				status[0] = TestBarrier.STATUS_START;
+				try {
+					shortJob.join();
+				} catch (InterruptedException e) {
+					Assert.fail("0.99");
+				}
+				status[0] = TestBarrier.STATUS_DONE;
+			}
+		});
+		//schedule the job and then fork the thread to join it
+		shortJob.schedule();
+		t.start();
+		//wait until the join succeeds
+		TestBarrier.waitForStatus(status, TestBarrier.STATUS_DONE);
+	}
 
+	/*
+	 * Test that a cancelled job is rescheduled
+	 */
+	public void testRescheduleCancel() {
+		final int[] status = {TestBarrier.STATUS_WAIT_FOR_START};
+		Job job = new Job("Testing") {
+			protected IStatus run(IProgressMonitor monitor) {
+				try {
+					monitor.beginTask("Testing", 1);
+					status[0] = TestBarrier.STATUS_WAIT_FOR_RUN;
+					TestBarrier.waitForStatus(status, TestBarrier.STATUS_RUNNING);
+					monitor.worked(1);
+				} finally {
+					monitor.done();
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		//schedule the job, cancel it, then reschedule
+		job.schedule();
+		TestBarrier.waitForStatus(status, TestBarrier.STATUS_WAIT_FOR_RUN);
+		job.cancel();
+		job.schedule();
+		//let the first iteration of the job finish
+		status[0] = TestBarrier.STATUS_RUNNING;
+		//wait until the job runs again
+		TestBarrier.waitForStatus(status, TestBarrier.STATUS_WAIT_FOR_RUN);
+		//let the job finish
+		status[0] = TestBarrier.STATUS_RUNNING;
+		waitForState(job, Job.NONE);
+	}
+
+	/*
+	 * Test that multiple reschedules of the same job while it is running
+	 * only remembers the last reschedule request
+	 */
+	public void testRescheduleComplex() {
+		final int[] status = {TestBarrier.STATUS_WAIT_FOR_START};
+		final int[] runCount = new int[] {0};
+		Job job = new Job("Testing") {
+			protected IStatus run(IProgressMonitor monitor) {
+				try {
+					monitor.beginTask("Testing", 1);
+					status[0] = TestBarrier.STATUS_WAIT_FOR_RUN;
+					TestBarrier.waitForStatus(status, TestBarrier.STATUS_RUNNING);
+					monitor.worked(1);
+				} finally {
+					runCount[0]++;
+					monitor.done();
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		//schedule the job, reschedule when it is running
+		job.schedule();
+		TestBarrier.waitForStatus(status, TestBarrier.STATUS_WAIT_FOR_RUN);
+		//the last schedule value should win
+		job.schedule(1000000);
+		job.schedule(3000);
+		job.schedule(200000000);
+		job.schedule();
+		status[0] = TestBarrier.STATUS_RUNNING;
+		//wait until the job runs again
+		TestBarrier.waitForStatus(status, TestBarrier.STATUS_WAIT_FOR_RUN);
+		assertEquals("1.0", 1, runCount[0]);
+		//let the job finish
+		status[0] = TestBarrier.STATUS_RUNNING;
+		waitForState(job, Job.NONE);
+		assertEquals("1.0", 2, runCount[0]);
+	}
+
+	/*
+	 * Reschedule a running job with a delay
+	 */
+	public void testRescheduleDelay() {
+		final int[] status = {TestBarrier.STATUS_WAIT_FOR_START};
+		final int[] runCount = new int[] {0};
+		Job job = new Job("Testing") {
+			protected IStatus run(IProgressMonitor monitor) {
+				try {
+					monitor.beginTask("Testing", 1);
+					status[0] = TestBarrier.STATUS_WAIT_FOR_RUN;
+					TestBarrier.waitForStatus(status, TestBarrier.STATUS_RUNNING);
+					monitor.worked(1);
+				} finally {
+					runCount[0]++;
+					monitor.done();
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		//schedule the job, reschedule when it is running
+		job.schedule();
+		TestBarrier.waitForStatus(status, TestBarrier.STATUS_WAIT_FOR_RUN);
+		job.schedule(1000000);
+		status[0] = TestBarrier.STATUS_RUNNING;
+		//now wait until the job is scheduled again and put to sleep
+		waitForState(job, Job.SLEEPING);
+		assertEquals("1.0", 1, runCount[0]);
+
+		//reschedule the job while it is sleeping
+		job.schedule();
+		//wake up the currently sleeping job
+		job.wakeUp();
+		TestBarrier.waitForStatus(status, TestBarrier.STATUS_WAIT_FOR_RUN);
+		status[0] = TestBarrier.STATUS_RUNNING;
+		//make sure the job was not rescheduled while the executing job was sleeping
+		waitForState(job, Job.NONE);
+		assertTrue("1.0", job.getState() == Job.NONE);
+		assertEquals("1.0", 2, runCount[0]);
 	}
 
 	/*
@@ -753,47 +766,6 @@ public class JobTest extends TestCase {
 	}
 
 	/*
-	 * Reschedule a running job with a delay
-	 */
-	public void testRescheduleDelay() {
-		final int[] status = {TestBarrier.STATUS_WAIT_FOR_START};
-		final int[] runCount = new int[] {0};
-		Job job = new Job("Testing") {
-			protected IStatus run(IProgressMonitor monitor) {
-				try {
-					monitor.beginTask("Testing", 1);
-					status[0] = TestBarrier.STATUS_WAIT_FOR_RUN;
-					TestBarrier.waitForStatus(status, TestBarrier.STATUS_RUNNING);
-					monitor.worked(1);
-				} finally {
-					runCount[0]++;
-					monitor.done();
-				}
-				return Status.OK_STATUS;
-			}
-		};
-		//schedule the job, reschedule when it is running
-		job.schedule();
-		TestBarrier.waitForStatus(status, TestBarrier.STATUS_WAIT_FOR_RUN);
-		job.schedule(1000000);
-		status[0] = TestBarrier.STATUS_RUNNING;
-		//now wait until the job is scheduled again and put to sleep
-		waitForState(job, Job.SLEEPING);
-		assertEquals("1.0", 1, runCount[0]);
-
-		//reschedule the job while it is sleeping
-		job.schedule();
-		//wake up the currently sleeping job
-		job.wakeUp();
-		TestBarrier.waitForStatus(status, TestBarrier.STATUS_WAIT_FOR_RUN);
-		status[0] = TestBarrier.STATUS_RUNNING;
-		//make sure the job was not rescheduled while the executing job was sleeping
-		waitForState(job, Job.NONE);
-		assertTrue("1.0", job.getState() == Job.NONE);
-		assertEquals("1.0", 2, runCount[0]);
-	}
-
-	/*
 	 * Reschedule a waiting job.
 	 */
 	public void testRescheduleWaiting() {
@@ -850,74 +822,142 @@ public class JobTest extends TestCase {
 	}
 
 	/*
-	 * Test that multiple reschedules of the same job while it is running
-	 * only remembers the last reschedule request
+	 * see bug #43458
 	 */
-	public void testRescheduleComplex() {
-		final int[] status = {TestBarrier.STATUS_WAIT_FOR_START};
-		final int[] runCount = new int[] {0};
-		Job job = new Job("Testing") {
-			protected IStatus run(IProgressMonitor monitor) {
-				try {
-					monitor.beginTask("Testing", 1);
-					status[0] = TestBarrier.STATUS_WAIT_FOR_RUN;
-					TestBarrier.waitForStatus(status, TestBarrier.STATUS_RUNNING);
-					monitor.worked(1);
-				} finally {
-					runCount[0]++;
-					monitor.done();
-				}
-				return Status.OK_STATUS;
+	public void testSetPriority() {
+		int[] wrongPriority = {1000, -Job.DECORATE, 25, 0, 5, Job.INTERACTIVE - Job.BUILD};
+
+		for (int i = 0; i < wrongPriority.length; i++) {
+			//set priority to non-existent type
+			try {
+				shortJob.setPriority(wrongPriority[i]);
+				fail("1." + (i + 1));
+			} catch (RuntimeException e) {
+				//should fail
 			}
-		};
-		//schedule the job, reschedule when it is running
-		job.schedule();
-		TestBarrier.waitForStatus(status, TestBarrier.STATUS_WAIT_FOR_RUN);
-		//the last schedule value should win
-		job.schedule(1000000);
-		job.schedule(3000);
-		job.schedule(200000000);
-		job.schedule();
-		status[0] = TestBarrier.STATUS_RUNNING;
-		//wait until the job runs again
-		TestBarrier.waitForStatus(status, TestBarrier.STATUS_WAIT_FOR_RUN);
-		assertEquals("1.0", 1, runCount[0]);
-		//let the job finish
-		status[0] = TestBarrier.STATUS_RUNNING;
-		waitForState(job, Job.NONE);
-		assertEquals("1.0", 2, runCount[0]);
+		}
+	}
+
+	/**
+	 * Tests the API methods Job.setProgressGroup
+	 */
+	public void testSetProgressGroup() {
+		//null group
+		try {
+			longJob.setProgressGroup(null, 5);
+			fail("1.0");
+		} catch (RuntimeException e) {
+			//should fail
+		}
+		IProgressMonitor group = Platform.getJobManager().createProgressGroup();
+		group.beginTask("Group task name", 10);
+		longJob.setProgressGroup(group, 5);
+
+		//ignore changes to group while waiting or running
+		longJob.schedule(100);
+		longJob.setProgressGroup(group, 0);
+		waitForState(longJob, Job.RUNNING);
+		longJob.setProgressGroup(group, 0);
+
+		//ensure cancelation still works
+		longJob.cancel();
+		waitForState(longJob, Job.NONE);
+		group.done();
 	}
 
 	/*
-	 * Test that a cancelled job is rescheduled
+	 * see bug #43459
 	 */
-	public void testRescheduleCancel() {
-		final int[] status = {TestBarrier.STATUS_WAIT_FOR_START};
-		Job job = new Job("Testing") {
-			protected IStatus run(IProgressMonitor monitor) {
-				try {
-					monitor.beginTask("Testing", 1);
-					status[0] = TestBarrier.STATUS_WAIT_FOR_RUN;
-					TestBarrier.waitForStatus(status, TestBarrier.STATUS_RUNNING);
-					monitor.worked(1);
-				} finally {
-					monitor.done();
-				}
-				return Status.OK_STATUS;
-			}
-		};
-		//schedule the job, cancel it, then reschedule
-		job.schedule();
-		TestBarrier.waitForStatus(status, TestBarrier.STATUS_WAIT_FOR_RUN);
-		job.cancel();
-		job.schedule();
-		//let the first iteration of the job finish
-		status[0] = TestBarrier.STATUS_RUNNING;
-		//wait until the job runs again
-		TestBarrier.waitForStatus(status, TestBarrier.STATUS_WAIT_FOR_RUN);
-		//let the job finish
-		status[0] = TestBarrier.STATUS_RUNNING;
-		waitForState(job, Job.NONE);
+	public void testSetRule() {
+		//setting a scheduling rule for a job after it was already scheduled should throw an exception
+		shortJob.setRule(new IdentityRule());
+		assertTrue("1.0", shortJob.getRule() instanceof IdentityRule);
+		shortJob.schedule(1000000);
+		try {
+			shortJob.setRule(new PathRule("/A"));
+			fail("1.1");
+		} catch (RuntimeException e) {
+			//should fail
+		}
+
+		//wake up the sleeping job
+		shortJob.wakeUp();
+
+		//setting the rule while running should fail
+		try {
+			shortJob.setRule(new PathRule("/A/B"));
+			fail("2.0");
+		} catch (RuntimeException e1) {
+			//should fail
+		}
+
+		try {
+			//wait for the job to complete
+			shortJob.join();
+		} catch (InterruptedException e2) {
+		}
+
+		//after the job has finished executing, the scheduling rule for it can once again be reset
+		shortJob.setRule(new PathRule("/A/B/C/D"));
+		assertTrue("1.2", shortJob.getRule() instanceof PathRule);
+		shortJob.setRule(null);
+		assertTrue("1.3", shortJob.getRule() == null);
+	}
+
+	public void testSetThread() {
+		//setting the thread of a job that is not an asynchronous job should not affect the actual thread the job will run in
+		assertTrue("0.0", longJob.getThread() == null);
+
+		longJob.setThread(Thread.currentThread());
+		assertTrue("1.0", longJob.getThread() == Thread.currentThread());
+		longJob.schedule();
+		waitForState(longJob, Job.RUNNING);
+
+		//the setThread method should have no effect on jobs that execute normally
+		assertTrue("2.0", longJob.getThread() != Thread.currentThread());
+
+		longJob.cancel();
+		waitForState(longJob, Job.NONE);
+
+		//the thread should reset to null when the job finishes execution
+		assertTrue("3.0", longJob.getThread() == null);
+
+		longJob.setThread(null);
+		assertTrue("4.0", longJob.getThread() == null);
+
+		longJob.schedule();
+		waitForState(longJob, Job.RUNNING);
+
+		//the thread that the job is executing in is not the one that was set
+		assertTrue("5.0", longJob.getThread() != null);
+		longJob.cancel();
+		waitForState(longJob, Job.NONE);
+
+		//thread should reset to null after execution of job
+		assertTrue("6.0", longJob.getThread() == null);
+
+		Thread t = new Thread();
+		longJob.setThread(t);
+		assertTrue("7.0", longJob.getThread() == t);
+		longJob.schedule();
+		waitForState(longJob, Job.RUNNING);
+
+		//the thread that the job is executing in is not the one that it was set to
+		assertTrue("8.0", longJob.getThread() != t);
+		longJob.cancel();
+		waitForState(longJob, Job.NONE);
+
+		//execution thread should reset to null after job is finished
+		assertTrue("9.0", longJob.getThread() == null);
+	}
+
+	/**
+	 * Several jobs were scheduled to run.
+	 * Pause this thread until all the jobs start running.
+	 */
+	private void waitForStart(Job[] jobs, int[] status) {
+		for (int i = 0; i < jobs.length; i++)
+			TestBarrier.waitForStatus(status, i, TestBarrier.STATUS_RUNNING);
 	}
 
 	/**
@@ -936,15 +976,6 @@ public class JobTest extends TestCase {
 			//sanity test to avoid hanging tests
 			assertTrue("Timeout waiting for job to change state.", i++ < 100);
 		}
-	}
-
-	/**
-	 * Several jobs were scheduled to run.
-	 * Pause this thread until all the jobs start running.
-	 */
-	private void waitForStart(Job[] jobs, int[] status) {
-		for (int i = 0; i < jobs.length; i++)
-			TestBarrier.waitForStatus(status, i, TestBarrier.STATUS_RUNNING);
 	}
 
 	/**
