@@ -293,7 +293,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			fSeparatorColor= fSummaryHeader.getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW);
 		}
 		
-		/**
+		/*
 		 * Returns true on color change
 		 */
 		public boolean setColor(RGB color) {
@@ -336,20 +336,20 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		}
 	}
 
-	/**
+	/*
 	 * The position updater used to adapt the positions representing
 	 * the child document ranges to changes of the parent document.
 	 */
 	class ChildPositionUpdater extends DefaultPositionUpdater {
 		
-		/**
+		/*
 		 * Creates the position updated.
 		 */
 		protected ChildPositionUpdater(String category) {
 			super(category);
 		}
 		
-		/**
+		/*
 		 * Child document ranges cannot be deleted other then by calling
 		 * freeChildDocument.
 		 */
@@ -357,7 +357,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			return true;
 		}
 		
-		/**
+		/*
 		 * If an insertion happens at a child document's start offset, the
 		 * position is extended rather than shifted. Also, if something is added 
 		 * right behind the end of the position, the position is extended rather
@@ -387,7 +387,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		}
 	}
 	
-	/**
+	/*
 	 * A Diff represents synchronized character ranges in two or three Documents.
 	 * The MergeTextViewer uses Diffs to find differences in line and token ranges.
 	 */
@@ -408,7 +408,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		ArrayList fDiffs;
 		boolean fIsWhitespace= false;
 
-		/**
+		/*
 		 * Create Diff from two ranges and an optional parent diff.
 		 */
 		Diff(Diff parent, int dir, IDocument ancestorDoc, Position aRange, int ancestorStart, int ancestorEnd,
@@ -592,7 +592,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			return null;
 		}
 		
-		/**
+		/*
 		 * Returns true if given character range overlaps with this Diff.
 		 */
 		boolean overlaps(MergeSourceViewer w, int start, int end) {
@@ -687,6 +687,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		fDocumentListener= new IDocumentListener() {
 			
 			public void documentAboutToBeChanged(DocumentEvent e) {
+				// nothing to do
 			}
 			
 			public void documentChanged(DocumentEvent e) {
@@ -841,6 +842,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	 * @param textViewer the text viewer to configure
 	 */
 	protected void configureTextViewer(TextViewer textViewer) {
+		// empty impl
 	}
 				
 	/**
