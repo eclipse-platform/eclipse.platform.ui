@@ -20,15 +20,14 @@ public class AntClassLoader extends URLClassLoader {
 
 	protected ClassLoader[] pluginLoaders;
 	private static final String ANT_PACKAGES_PREFIX= "org.apache.tools.ant"; //$NON-NLS-1$
-	private static final String[] ECLIPSE_ANT_PACKAGES_PREFIXES= new String[4];
+	private static final String[] ECLIPSE_ANT_PACKAGES_PREFIXES= new String[3];
 	private static final boolean devMode= BootLoader.inDevelopmentMode();
 	
 	static {
 		if (devMode) {
 			ECLIPSE_ANT_PACKAGES_PREFIXES[0]= "org.eclipse.ant.internal.core.ant"; //$NON-NLS-1$
-			ECLIPSE_ANT_PACKAGES_PREFIXES[1]= "org.eclipse.ui.externaltools.internal.ant.logger"; //$NON-NLS-1$
-			ECLIPSE_ANT_PACKAGES_PREFIXES[2]= "org.eclipse.ui.externaltools.internal.ant.inputhandler"; //$NON-NLS-1$
-			ECLIPSE_ANT_PACKAGES_PREFIXES[3]= "org.eclipse.ant.tests.core.support"; //$NON-NLS-1$
+			ECLIPSE_ANT_PACKAGES_PREFIXES[1]= "org.eclipse.ant.ui.internal.antsupport"; //$NON-NLS-1$
+			ECLIPSE_ANT_PACKAGES_PREFIXES[2]= "org.eclipse.ant.tests.core.support"; //$NON-NLS-1$
 		}
 	}
 	
