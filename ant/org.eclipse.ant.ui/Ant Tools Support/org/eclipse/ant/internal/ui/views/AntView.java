@@ -315,7 +315,9 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 		
 		projectViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
-				handleProjectViewerDoubleClick(event);
+				if (!event.getSelection().isEmpty()) {
+					handleProjectViewerDoubleClick(event);
+				}
 			}
 		});
 		
