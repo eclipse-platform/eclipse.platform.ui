@@ -176,9 +176,12 @@ class ProjectionSummary {
 	}
 	
 	private void createSummaries(IProgressMonitor monitor) {
+		ProjectionAnnotationModel model= fProjectionViewer.getProjectionAnnotationModel();
+		if (model == null)
+			return;
+		
 		Map additions= new HashMap();
 		
-		ProjectionAnnotationModel model= fProjectionViewer.getProjectionAnnotationModel();
 		Iterator e= model.getAnnotationIterator();
 		while (e.hasNext()) {
 			ProjectionAnnotation projection= (ProjectionAnnotation) e.next();
