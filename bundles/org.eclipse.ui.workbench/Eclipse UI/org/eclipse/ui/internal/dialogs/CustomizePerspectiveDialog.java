@@ -570,9 +570,11 @@ public class CustomizePerspectiveDialog extends Dialog {
 			return 0;
 		}
 	}
+	
 public CustomizePerspectiveDialog(Shell parentShell, Perspective persp) {
 	super(parentShell);
 	perspective = persp;
+	// @issue should pass in the parent window, not use getActiveWorkbenchWindow()
 	window = (WorkbenchWindow)PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 	
 	// build a structure for the menuitems and toolitems that the workbench contributes
