@@ -305,23 +305,25 @@ public class ResourceNavigator
 	 */
 	IContainer getInitialInput() {
 		IAdaptable input = getSite().getPage().getInput();
-		IResource resource = null;
-		if (input instanceof IResource) {
-			resource = (IResource) input;
-		} else {
-			resource = (IResource) input.getAdapter(IResource.class);
-		}
-		if (resource != null) {
-			switch (resource.getType()) {
-				case IResource.FILE :
-					return resource.getParent();
-				case IResource.FOLDER :
-				case IResource.PROJECT :
-				case IResource.ROOT :
-					return (IContainer) resource;
-				default :
-					// Unknown resource type.  Fall through.
-					break;
+		if (input != null) {
+			IResource resource = null;
+			if (input instanceof IResource) {
+				resource = (IResource) input;
+			} else {
+				resource = (IResource) input.getAdapter(IResource.class);
+			}
+			if (resource != null) {
+				switch (resource.getType()) {
+					case IResource.FILE :
+						return resource.getParent();
+					case IResource.FOLDER :
+					case IResource.PROJECT :
+					case IResource.ROOT :
+						return (IContainer) resource;
+					default :
+						// Unknown resource type.  Fall through.
+						break;
+				}
 			}
 		}
 		return ResourcesPlugin.getWorkspace().getRoot();
