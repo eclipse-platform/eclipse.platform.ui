@@ -26,18 +26,18 @@ public IndexedStoreWrapper(IPath location) {
 	this.location = location;
 }
 
-private void open() {
+private void open() throws CoreException {
 	try {
 		store = new IndexedStore();
 		store.open(location.toOSString());
 	} catch (Exception e) {
 		String message = Policy.bind("indexed.couldNotOpen", location.toOSString());
 		ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, location, message, e);
-		ResourcesPlugin.getPlugin().getLog().log(status);
+		throw new CoreException(status);
 	}
 }
 
-private void recreate() {
+private void recreate() throws CoreException {
 	close();
 	// Rename the problematic store for future analysis.
 	location.toFile().renameTo(location.append(".001").toFile());
@@ -71,8 +71,11 @@ public synchronized void commit() throws CoreException {
 }
 
 private void create() throws CoreException {
-	open();
-	if (store == null) {
+	try {
+		open();
+	} catch (CoreException e) {
+		ResourcesPlugin.getPlugin().getLog().log(e.getStatus());
+		//failed to open -- copy store elsewhere and create a new one
 		recreate();
 		if (store == null) {
 			String message = Policy.bind("indexed.couldNotCreate", location.toOSString());
@@ -101,7 +104,10 @@ public synchronized Index getIndex() throws CoreException {
 			return createIndex();
 		problem = e;
 		return null;
-	} catch (Exception e) {
+	} catch (CoreException e) {
+		//just rethrow
+		throw e;
+	}catch (Exception e) {
 		problem = e;
 		return null;
 	} finally {
@@ -186,7 +192,15 @@ public synchronized byte[] getObject(ObjectID id) throws CoreException {
 	}
 }
 
+/**
+ * Something has gone wrong.  Make a best effort at copying the file 
+ * elsewhere and creating a new one.  Log exceptions.
+ */
 public synchronized void reset() {
-	recreate();
+	try {
+		recreate();
+	} catch (CoreException e) {
+		ResourcesPlugin.getPlugin().getLog().log(e.getStatus());
+	}
 }
 }
