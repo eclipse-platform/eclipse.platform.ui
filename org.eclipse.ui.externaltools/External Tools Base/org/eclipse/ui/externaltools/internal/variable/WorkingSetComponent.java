@@ -10,7 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.externaltools.internal.variable;
 
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map;
 
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -20,6 +24,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -36,10 +41,47 @@ import org.eclipse.ui.externaltools.internal.group.IGroupDialogPage;
 public class WorkingSetComponent extends AbstractVariableComponent {
 
 	private TableViewer viewer;
+	private ILabelProvider labelProvider;
+	
 	/**
 	 * Label provider that provides labels for working sets
-	 */
-	private static ILabelProvider labelProvider = new LabelProvider() {
+	 */	
+	private static class WorkingSetLabelProvider extends LabelProvider {
+		private Map icons;
+
+		public WorkingSetLabelProvider() {
+			icons = new Hashtable(5);
+		}
+		
+		public void dispose() {
+			Iterator iterator = icons.values().iterator();
+	
+			while (iterator.hasNext()) {
+				Image icon = (Image) iterator.next();
+				icon.dispose();
+			}
+			super.dispose();
+		}
+		
+		public Image getImage(Object object) {
+			if(object instanceof IWorkingSet){
+				IWorkingSet workingSet = (IWorkingSet) object; 
+				ImageDescriptor imageDescriptor = workingSet.getImage();
+
+				if (imageDescriptor == null) {
+					return null;
+				}
+		
+				Image icon = (Image) icons.get(imageDescriptor);
+				if (icon == null) {
+					icon = imageDescriptor.createImage();
+					icons.put(imageDescriptor, icon);
+				}
+				return icon;
+			}
+			return super.getImage(object);
+		}
+		
 		public String getText(Object element) {
 			if (element instanceof IWorkingSet) {
 				return ((IWorkingSet) element).getName();
@@ -75,6 +117,7 @@ public class WorkingSetComponent extends AbstractVariableComponent {
 		super.createContents(parent, varTag, page); // Creates the main group and sets the page
 
 		viewer = new TableViewer(mainGroup);
+		labelProvider= new WorkingSetLabelProvider();
 		viewer.setLabelProvider(labelProvider);
 		viewer.setContentProvider(contentProvider);
 		viewer.setInput(PlatformUI.getWorkbench());
