@@ -13,35 +13,66 @@ package org.eclipse.ant.internal.ui.editor.outline;
 
 import org.eclipse.jface.text.Region;
 
-class XMLProblem extends Region implements IProblem {
+public class XMLProblem extends Region implements IProblem {
 	
 	public static final int SEVERTITY_WARNING= 0;
 	public static final int SEVERTITY_ERROR= 1;
 	public static final int SEVERTITY_FATAL_ERROR= 2;
 	
-	private String fCode, fMessage;
-	private int fSeverity;
+	public static final String CODE= "XML_PROBLEM"; //$NON-NLS-1$
 	
-	public XMLProblem(String code, String message, int severity, int offset, int length) {
+	private String fMessage;
+	private int fSeverity;
+	private int fAdjustedLength= -1;
+	
+	public XMLProblem(String message, int severity, int offset, int length) {
 		super(offset, length);
-		fCode= code;
 		fMessage= message;
 		fSeverity= severity;
 	}
 	
-	public String getCode() {
-		return fCode;
-	}
-	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.editor.outline.IProblem#getMessage()
+	 */
 	public String getMessage() {
 		return fMessage;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.editor.outline.IProblem#isError()
+	 */
 	public boolean isError() {
 		return fSeverity == SEVERTITY_ERROR || fSeverity == SEVERTITY_FATAL_ERROR;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.editor.outline.IProblem#isWarning()
+	 */
 	public boolean isWarning() {
 		return fSeverity == SEVERTITY_WARNING;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.IRegion#getLength()
+	 */
+	public int getLength() {
+		if (fAdjustedLength != -1) {
+			return fAdjustedLength;
+		}
+		return super.getLength();
+	}
+	
+	/**
+	 * Sets the length for this problem.
+	 */
+	public void setLength(int adjustedLength) {
+		fAdjustedLength= adjustedLength;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.editor.outline.IProblem#getCode()
+	 */
+	public String getCode() {
+		return CODE;
 	}
 }

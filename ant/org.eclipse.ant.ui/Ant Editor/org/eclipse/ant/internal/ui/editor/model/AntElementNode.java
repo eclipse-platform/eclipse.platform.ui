@@ -24,6 +24,8 @@ import org.apache.xml.utils.URI;
 import org.apache.xml.utils.URI.MalformedURIException;
 import org.eclipse.ant.internal.ui.editor.AntEditorException;
 import org.eclipse.ant.internal.ui.editor.outline.AntModel;
+import org.eclipse.ant.internal.ui.editor.outline.IProblem;
+import org.eclipse.ant.internal.ui.editor.outline.XMLProblem;
 import org.eclipse.ant.internal.ui.model.AntImageDescriptor;
 import org.eclipse.ant.internal.ui.model.AntUIImages;
 import org.eclipse.ant.internal.ui.model.IAntUIConstants;
@@ -42,7 +44,6 @@ public class AntElementNode {
 	 * @see #getOffset()
 	 */
 	protected int offset= -1;
-	
 	
 	/**
 	 * The length of the corresponding source.
@@ -103,6 +104,10 @@ public class AntElementNode {
 	 */
 	private String fElementIdentifier;
 
+	/**
+	 * The problem associated with this node. May be <code>null</code>.
+     */
+	private IProblem fProblem;
 
 	/**
      * Creates an instance with the specified name.
@@ -235,6 +240,10 @@ public class AntElementNode {
 	 */
 	public void setLength(int aLength) {
 		length = aLength;
+		if (fProblem != null && fProblem instanceof XMLProblem) {
+			((XMLProblem)fProblem).setLength(aLength);
+			fProblem= null;
+		}
 	}
 
 	/**
@@ -434,5 +443,13 @@ public class AntElementNode {
 			parentNode= parentNode.getParentNode();
 		}
 		return parentNode.getAntModel();
+	}
+
+	/**
+	 * Sets the problem associated with this element
+	 * @param problem The problem associated with this element.
+	 */
+	public void associatedProblem(IProblem problem) {
+		fProblem= problem;
 	}
 }

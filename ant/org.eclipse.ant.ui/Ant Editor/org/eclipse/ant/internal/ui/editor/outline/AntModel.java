@@ -470,11 +470,13 @@ public class AntModel {
 	}
 
 	protected IProblem createProblem(Exception exception, int offset, int length,  int severity) {
-		return new XMLProblem(exception.toString(), exception.getMessage(), severity, offset, length);
+		return new XMLProblem(exception.getMessage(), severity, offset, length);
 	}
 
 	protected void notifyProblemRequestor(Exception exception, AntElementNode element, int severity) {
-		notifyProblemRequestor(exception, element.getOffset(), element.getLength(), severity);
+		IProblem problem= createProblem(exception, element.getOffset(), element.getLength(), severity);
+		acceptProblem(problem);
+		element.associatedProblem(problem);
 	}
 	
 	protected void notifyProblemRequestor(Exception exception, int offset, int length, int severity) {
