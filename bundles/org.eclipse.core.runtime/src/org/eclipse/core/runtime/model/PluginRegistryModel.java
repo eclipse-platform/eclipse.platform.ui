@@ -237,6 +237,11 @@ public void markReadOnly() {
 		for (int i = 0; i < list.length; i++)
 			list[i].markReadOnly();
 	}
+	for (Iterator it = fragments.values().iterator(); it.hasNext();) {
+		PluginFragmentModel[] list = (PluginFragmentModel[]) it.next();
+		for (int i = 0; i < list.length; i++)
+			list[i].markReadOnly();
+	}
 }
 /**
  * Sets this model object to be resolved.
