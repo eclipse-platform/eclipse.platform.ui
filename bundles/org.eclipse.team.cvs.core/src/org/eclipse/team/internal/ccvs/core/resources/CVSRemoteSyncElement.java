@@ -224,7 +224,7 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 				return;
 			}
 		}
-		info = new ResourceSyncInfo(info.getName(), revision, info.getTimeStamp(), info.getKeywordMode(), local.getParent().getFolderSyncInfo().getTag(), info.getPermissions());
+		info = new ResourceSyncInfo(info.getName(), revision, ResourceSyncInfo.DUMMY_TIMESTAMP, info.getKeywordMode(), local.getParent().getFolderSyncInfo().getTag(), info.getPermissions());
 		local.setSyncInfo(info);
 		CVSProviderPlugin.getSynchronizer().save(((LocalResource)local).getLocalFile(), Policy.monitorFor(monitor));
 	}
