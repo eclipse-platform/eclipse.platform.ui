@@ -331,7 +331,7 @@ public class InternalAntRunner {
 			System.setErr(new PrintStream(new DemuxOutputStream(getCurrentProject(), true)));
 			
 			if (!projectHelp) {
-				fireBuildStarted(getCurrentProject());
+				getCurrentProject().fireBuildStarted();
 			}
             
             if (fEarlyErrorMessage != null) {
@@ -542,18 +542,6 @@ public class InternalAntRunner {
 		}
 
 		return buildLogger;
-	}
-
-	/*
-	 * We only have to do this because Project.fireBuildStarted is protected. If it becomes
-	 * public we should remove this method and call the appropriate one.
-	 */
-	private void fireBuildStarted(Project project) {
-		BuildEvent event = new BuildEvent(project);
-		for (Iterator iterator = project.getBuildListeners().iterator(); iterator.hasNext();) {
-			BuildListener listener = (BuildListener) iterator.next();
-			listener.buildStarted(event);
-		}
 	}
 
 	private void fireBuildFinished(Project project, Throwable error) {
