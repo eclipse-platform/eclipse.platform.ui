@@ -40,7 +40,7 @@ public interface IConsole {
 	
 	/**
 	 * Connects this console to the given stream monitor, uniquely identified by
-	 * the given identifier. This allows for more than the stanard (in, out,
+	 * the given identifier. This allows for more than the standard (in, out,
 	 * error) streams to be connected to the console.
 	 * 
 	 * @param streamMonitor
@@ -81,7 +81,7 @@ public interface IConsole {
 	public IDocument getDocument(); 
 	
 	/**
-	 * Returns the process associted with this console.
+	 * Returns the process associated with this console.
 	 * 
 	 * @return the process associated with this console
 	 */
