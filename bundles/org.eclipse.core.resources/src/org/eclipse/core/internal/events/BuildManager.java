@@ -338,7 +338,13 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	 */
 	private void checkCanceled(int trigger, IProgressMonitor monitor) {
 		Policy.checkCanceled(monitor);
-		if (trigger == IncrementalProjectBuilder.AUTO_BUILD && autoBuildJob.isInterrupted())
+		//check for auto-cancel only if we are auto-building
+		if (trigger != IncrementalProjectBuilder.AUTO_BUILD)
+			return;
+		//check if another job is blocked by the build job
+		if (autoBuildJob.isBlocking())
+			autoBuildJob.interrupt();
+		if (autoBuildJob.isInterrupted())
 			throw new OperationCanceledException();
 	}
 	protected IProject[] computeUnorderedProjects(IProject[] ordered) {
