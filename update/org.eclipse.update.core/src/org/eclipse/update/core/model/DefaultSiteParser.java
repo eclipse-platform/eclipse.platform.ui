@@ -253,8 +253,9 @@ public class DefaultSiteParser extends DefaultHandler {
 				stateStack.pop();
 				text = ""; //$NON-NLS-1$
 				while (objectStack.peek() instanceof String) {
-					text = (String) objectStack.pop() + text;
+					text = (String) objectStack.pop() + " " + text;
 				}
+				text=text.trim();
 
 				info = (URLEntryModel) objectStack.pop();
 				if (text != null)
@@ -275,8 +276,9 @@ public class DefaultSiteParser extends DefaultHandler {
 				stateStack.pop();
 				text = ""; //$NON-NLS-1$
 				while (objectStack.peek() instanceof String) {
-					text = (String) objectStack.pop() + text;
+					text = (String) objectStack.pop() + " " + text;
 				}
+				text=text.trim();
 
 				info = (URLEntryModel) objectStack.pop();
 				if (text != null)
