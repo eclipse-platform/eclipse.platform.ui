@@ -67,6 +67,16 @@ Users are free to create any kind of SWT control as a client of the intro area. 
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="icon" type="string">
+            <annotation>
+               <documentation>
+                  a relative name of the icon that will be used for all resources that match the specified extensions.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
+            </annotation>
+         </attribute>         
          <attribute name="productId" type="string" use="required">
             <annotation>
                <documentation>

@@ -17,8 +17,11 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
+
 import org.eclipse.ui.internal.activities.ws.FilterableObject;
+import org.eclipse.ui.internal.intro.IIntroConstants;
 import org.eclipse.ui.internal.registry.Category;
+import org.eclipse.ui.internal.registry.IViewDescriptor;
 import org.eclipse.ui.internal.registry.IViewRegistry;
 
 /**
@@ -85,14 +88,35 @@ public class ViewContentProvider
 							continue;
 						filtered.add(o);
 					}
-					return filtered.toArray();
+					return removeIntroView(filtered).toArray();
 				}
-				return list.toArray();
+				
+				
+				return removeIntroView(list).toArray();
 			}
 
 		}
         
 		return new Object[0];
+	}
+
+	/**
+	 * Removes the temporary intro view from the list so that it cannot be activated except through
+	 * the introduction command.
+	 *  
+	 * @param list the list of view descriptors
+	 * @return the modified list.
+	 * @since 3.0
+	 */
+	private ArrayList removeIntroView(ArrayList list) {
+		for (Iterator i = list.iterator(); i.hasNext();) {
+			IViewDescriptor view = (IViewDescriptor) i.next();
+			if (view.getId().equals(IIntroConstants.INTRO_VIEW_ID)) {
+				i.remove();
+			}
+			
+		}
+		return list;
 	}
 
 	/*

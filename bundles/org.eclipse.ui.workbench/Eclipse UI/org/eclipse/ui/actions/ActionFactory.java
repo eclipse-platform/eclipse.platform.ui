@@ -26,6 +26,7 @@ import org.eclipse.ui.internal.CyclePerspectiveAction;
 import org.eclipse.ui.internal.EditActionSetsAction;
 import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
+import org.eclipse.ui.internal.IntroAction;
 import org.eclipse.ui.internal.LockToolBarAction;
 import org.eclipse.ui.internal.MaximizePartAction;
 import org.eclipse.ui.internal.NavigationHistoryAction;
@@ -231,6 +232,21 @@ public abstract class ActionFactory {
 		}
 	};
 
+	/**
+	 * Workbench action (id "intro"): Activate the introduction extension.
+	 */
+	public static final ActionFactory INTRO = new ActionFactory("intro") {//$NON-NLS-1$
+		/* (non-javadoc) method declared on ActionFactory */
+		public IWorkbenchAction create(IWorkbenchWindow window) {
+			if (window == null) {
+				throw new IllegalArgumentException();
+			}
+			IWorkbenchAction action = new IntroAction(window);
+			action.setId(getId());
+			return action;
+		}
+	};	
+	
 	/**
 	 * Workbench action (id "copy"): Copy. This action is a
 	 * {@link Retarget Retarget}action with id "copy". This action maintains

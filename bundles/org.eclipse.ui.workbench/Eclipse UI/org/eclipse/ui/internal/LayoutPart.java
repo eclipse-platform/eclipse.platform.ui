@@ -268,4 +268,11 @@ public void setID(String str) {
 public LayoutPart targetPartFor(LayoutPart dragSource) {
 	return null;
 }
+
+/**
+ * @return Returns the propertyListeners.
+ */
+protected ListenerList getPropertyListeners() {
+	return propertyListeners;
+}
 }

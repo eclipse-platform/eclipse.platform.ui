@@ -56,6 +56,9 @@ import org.eclipse.ui.application.IWorkbenchPreferences;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import org.eclipse.ui.internal.decorators.DecoratorManager;
+import org.eclipse.ui.internal.intro.IIntroRegistry;
+import org.eclipse.ui.internal.intro.IntroRegistry;
+import org.eclipse.ui.internal.intro.IntroRegistryReader;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.EditorRegistry;
@@ -125,6 +128,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	 * @since 3.0
 	 */
 	private AboutInfo aboutInfo = null;
+	private IntroRegistry introRegistry;
 	
 	/**
 	 * Create an instance of the WorkbenchPlugin.
@@ -305,6 +309,22 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		}
 		return workingSetRegistry;
 	}
+	
+	/**
+	 * Returns the introduction registry.
+     *
+     * @return the introduction registry.
+	 * @since 3.0
+	 */
+	public IIntroRegistry getIntroRegistry() {
+		if (introRegistry == null) {
+			introRegistry = new IntroRegistry();
+			IntroRegistryReader reader = new IntroRegistryReader();
+			reader.readIntros(Platform.getPluginRegistry(), introRegistry);
+		}
+		return introRegistry;
+	}
+	
 	/*
 	 * Get the preference manager.
 	 */

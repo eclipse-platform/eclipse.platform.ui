@@ -27,6 +27,8 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.PlatformUI;
+
+import org.eclipse.ui.internal.intro.IIntroConstants;
 import org.eclipse.ui.internal.registry.IViewDescriptor;
 
 public class PartTabFolder extends LayoutPart
@@ -719,8 +721,12 @@ public IStatus restoreState(IMemento memento)
 
 			IViewDescriptor descriptor = (IViewDescriptor)WorkbenchPlugin.getDefault().
 				getViewRegistry().find(partID);
-			if(descriptor != null)
+			
+			if(descriptor != null) {
+				if (descriptor.getId().equals(IIntroConstants.INTRO_VIEW_ID)) 
+					continue; // ignore the intro view
 				tabText = descriptor.getLabel();
+			}
 
 			// Create the part.
 			LayoutPart part = new PartPlaceholder(partID);

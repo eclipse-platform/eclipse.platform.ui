@@ -36,6 +36,8 @@ import org.eclipse.swt.widgets.Sash;
 
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.SafeRunnable;
 
 import org.eclipse.ui.IWorkbenchPart;
@@ -54,6 +56,9 @@ import org.eclipse.ui.internal.misc.UIStats;
 public abstract class PartPane extends LayoutPart
 	implements Listener
 {
+	
+	public static final String PROP_ZOOMED = "zoomed"; //$NON-NLS-1$
+
 	private boolean isZoomed = false;
 	private MenuManager paneMenuManager;
 	protected IWorkbenchPartReference partReference;
@@ -390,7 +395,17 @@ public void setWorkbenchPage(WorkbenchPage workbenchPage) {
  */
 public void setZoomed(boolean isZoomed) {
 	this.isZoomed = isZoomed;
+	
+	final Object[] listeners = getPropertyListeners().getListeners();
+	if (listeners.length > 0) {
+		Boolean oldValue = isZoomed ? Boolean.FALSE : Boolean.TRUE;
+		Boolean zoomed = isZoomed ? Boolean.TRUE : Boolean.FALSE;
+		PropertyChangeEvent event = new PropertyChangeEvent(this, PROP_ZOOMED, oldValue, zoomed);
+		for (int i = 0; i < listeners.length; ++i)
+			((IPropertyChangeListener)listeners[i]).propertyChange(event);
+	}
 }
+
 /**
  * Informs the pane that it's window shell has
  * been activated.
