@@ -904,7 +904,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 				} else {
 					difference = DIFFERENCE_MINUS;						
 					commandString = /*"Unassigned"*/ keySequence.format();							
-				}		
+				}
 			}
 
 			TableItem tableItem = new TableItem(tableAssignmentsForCommand, SWT.NULL);
@@ -1001,7 +1001,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 				} else {
 					difference = DIFFERENCE_MINUS;						
 					commandString = "Unassigned";							
-				}		
+				} 	
 			}
 	
 			TableItem tableItem = new TableItem(tableAssignmentsForKeySequence, SWT.NULL);
