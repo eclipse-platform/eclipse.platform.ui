@@ -50,16 +50,21 @@ public interface IJobManager {
 	 * rule instance.
 	 * <p>
 	 * Rules can be nested only if the rule for the inner <tt>beginRule</tt>
-	 * is contained within the rule for the outer <tt>beginRule</tt>.  Also, begin/end
+	 * is contained within the rule for the outer <tt>beginRule</tt>.  Rule containment
+	 * is tested with the API method <tt>ISchedulingRule#contains</tt>.  Also, begin/end
 	 * pairs must be strictly nested.  Only the rule that has most recently begun
 	 * can be ended at any given time.
+	 * <p>
+	 * A rule of <code>null</code> can be used, but will be ignored for scheduling 
+	 * purposes.  The outermost non-null rule in the thread will be used for scheduling. A
+	 * <code>null</code> rule that is begun must still be ended.
 	 * <p>
 	 * If this method is called from within a job that has a scheduling rule, the
 	 * given rule must also be contained within the rule for the running job.
 	 * <p>
 	 * This API is experimental, and is subject to change or removal without notice.
 	 * 
-	 * @param rule the rule to begin applying in this thread
+	 * @param rule the rule to begin applying in this thread, <code>null</code>
 	 * @throws IllegalArgumentException if the rule is not strictly nested within
 	 * all other rules currently active for this thread.
 	 */
