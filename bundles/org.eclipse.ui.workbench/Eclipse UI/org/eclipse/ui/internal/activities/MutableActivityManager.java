@@ -512,11 +512,13 @@ public final class MutableActivityManager
 				updateActivities(activitiesById.keySet());
 		}
 
-		Map identifierEventsByIdentifierId =
-			updateIdentifiers(identifiersById.keySet());
-		if (identifierEventsByIdentifierId != null)
-			notifyIdentifiers(identifierEventsByIdentifierId);
-			
+		//don't update identifiers if the enabled activity set has not changed
+		if (activityManagerChanged) {
+			Map identifierEventsByIdentifierId =
+				updateIdentifiers(identifiersById.keySet());
+			if (identifierEventsByIdentifierId != null)
+				notifyIdentifiers(identifierEventsByIdentifierId);
+		}
 		if (activityEventsByActivityId != null)
 			notifyActivities(activityEventsByActivityId);
 
