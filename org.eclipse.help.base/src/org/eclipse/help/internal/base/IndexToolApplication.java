@@ -46,11 +46,11 @@ public class IndexToolApplication
 		try {
 			String directory = System.getProperty("indexOutput"); //$NON-NLS-1$
 			if (directory == null || directory.length() == 0) {
-				throw new Exception("indexOutput property is not set.");
+				throw new Exception(HelpBaseResources.getString("IndexToolApplication.propertyNotSet", "indexOutput")); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			String localeStr = System.getProperty("indexLocale"); //$NON-NLS-1$
 			if (localeStr == null || localeStr.length() < 2) {
-				throw new Exception("indexLocale property is not set.");
+				throw new Exception(HelpBaseResources.getString("IndexToolApplication.propertyNotSet", "indexLocale")); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			Locale locale;
 			if (localeStr.length() >= 5) {
@@ -65,7 +65,7 @@ public class IndexToolApplication
 		} catch (Exception e) {
 			System.out.println(e);
 			e.printStackTrace();
-			HelpBasePlugin.logError("Preindexing failed", e);
+			HelpBasePlugin.logError(HelpBaseResources.getString("IndexToolApplication.failed"), e); //$NON-NLS-1$
 		}
 		return EXIT_OK;
 	}
@@ -111,7 +111,7 @@ public class IndexToolApplication
 			}
 		}
 		if (!file.delete()) {
-			throw new IOException("Cannot delete file " + file);
+			throw new IOException(HelpBaseResources.getString("IndexToolApplication.cannotDelete", file.getAbsolutePath())); //$NON-NLS-1$
 		}
 	}
 	/**
