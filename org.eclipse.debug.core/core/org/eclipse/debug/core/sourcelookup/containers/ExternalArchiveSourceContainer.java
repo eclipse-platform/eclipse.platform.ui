@@ -210,11 +210,11 @@ public class ExternalArchiveSourceContainer extends AbstractSourceContainer {
 	}
 	
 	/**
-	 * Returns whether the root path in this archive source container
-	 * is to be automatically detected.
+	 * Returns whether root paths are automatically detected in this
+	 * archive source container.
 	 *  
-	 * @return whether the root path in this archive source container
-	 * is to be automatically detected
+	 * @return whether root paths are automatically detected in this
+	 * archive source container
 	 */
 	public boolean isDetectRoot() {
 		return fDetectRoots;
