@@ -80,6 +80,7 @@ import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.commands.ActionHandler;
 import org.eclipse.ui.commands.HandlerSubmission;
 import org.eclipse.ui.commands.IHandler;
+import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.commands.Priority;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -281,42 +282,80 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	private boolean perspectiveBarVisible = true;
 	private boolean statusLineVisible = true;
 		
-	private Map actionSetHandlersByCommandId = new HashMap();
-	private Map globalActionHandlersByCommandId = new HashMap();
-	List handlerSubmissions = new ArrayList();
+	/**
+     * The handlers for action set actions that were last submitted to the
+     * workbench command support. This is a map of command identifiers to
+     * <code>ActionHandler</code>. This map is never <code>null</code>,
+     * and is never empty as long as at least one action set has been
+     * registered. The items in this map may not all be submitted, as global
+     * actions take priority.
+     */
+    private Map actionSetHandlersByCommandId = new HashMap();
+
+    /**
+     * The handlers for global actions that were last submitted to the workbench
+     * command support. This is a map of command identifiers to
+     * <code>ActionHandler</code>. This map is never <code>null</code>,
+     * and is never empty as long as at least one global action has been
+     * registered.
+     */
+    private Map globalActionHandlersByCommandId = new HashMap();
+
+    /**
+     * The list of handler submissions submitted to the workbench command
+     * support. This list may be empty, but it is never <code>null</code>.
+     */
+    private List handlerSubmissions = new ArrayList();
+    
 	private boolean dockPerspectiveBar = Workbench.getInstance().getPreferenceStore().getBoolean(IPreferenceConstants.DOCK_PERSPECTIVE_BAR);
 	private CacheWrapper perspectiveCoolBarWrapper;
 	
 	void registerActionSets(IActionSet[] actionSets) {
-		actionSetHandlersByCommandId.clear();
-		
-		for (int i = 0; i < actionSets.length; i++)
-			if (actionSets[i] instanceof PluginActionSet) {
-				PluginActionSet pluginActionSet = (PluginActionSet) actionSets[i];
-				IAction[] pluginActions = pluginActionSet.getPluginActions();
+        // Remove the old handlers, and dispose them.
+        final Iterator oldHandlerItr = actionSetHandlersByCommandId.values()
+                .iterator();
+        while (oldHandlerItr.hasNext()) {
+            ((IHandler) oldHandlerItr.next()).dispose();
+        }
+        actionSetHandlersByCommandId.clear();
 
-				for (int j = 0; j < pluginActions.length; j++) {
-					IAction pluginAction = pluginActions[j];
-					String commandId = pluginAction.getActionDefinitionId();
-					
-					if (commandId != null) {
-					    final Object value = actionSetHandlersByCommandId.get(commandId);
-					    if (value instanceof ActionHandler) {
-					        /*
+        /*
+         * For each action in each action, create a new action handler. If there
+         * are duplicates, then dispose of the earlier handler before clobbering
+         * it. This avoids memory leaks.
+         */
+        for (int i = 0; i < actionSets.length; i++) {
+            if (actionSets[i] instanceof PluginActionSet) {
+                PluginActionSet pluginActionSet = (PluginActionSet) actionSets[i];
+                IAction[] pluginActions = pluginActionSet.getPluginActions();
+
+                for (int j = 0; j < pluginActions.length; j++) {
+                    IAction pluginAction = pluginActions[j];
+                    String commandId = pluginAction.getActionDefinitionId();
+
+                    if (commandId != null) {
+                        final Object value = actionSetHandlersByCommandId
+                                .get(commandId);
+                        if (value instanceof IHandler) {
+                            /*
                              * This handler is about to get clobbered, so
                              * dispose it.
                              */
-					        final ActionHandler handler = (ActionHandler) value;
-					        handler.dispose();
-					    }
-						actionSetHandlersByCommandId.put(commandId, new ActionHandler(pluginAction));
-					    
-					}
-				}
-			}
-			
-		setHandlersByCommandId();
-	}
+                            ((IHandler) value).dispose();
+                        }
+                        actionSetHandlersByCommandId.put(commandId,
+                                new ActionHandler(pluginAction));
+
+                    }
+                }
+            }
+        }
+
+        /* Submit the new amalgamated list of action set handlers and global
+         * handlers.
+         */
+        submitActionSetAndGlobalHandlers();
+    }
 
 	void registerGlobalAction(IAction globalAction) {
         String commandId = globalAction.getActionDefinitionId();
@@ -333,39 +372,32 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
                     globalAction));
         }
 
-        setHandlersByCommandId();
+        submitActionSetAndGlobalHandlers();
     }
 
-	void setHandlersByCommandId() {
+	/**
+     * <p>
+     * Submits the action handlers for action set actions and global actions.
+     * Global actions are given priority, so that if a global action and an
+     * action set action both handle the same command, the global action is
+     * given priority.
+     * </p>
+     * <p>
+     * These submissions are submitted as <code>Priority.LEGACY</code>, which
+     * means that they are the lowest priority. This means that if a higher
+     * priority submission handles the same command under the same conditions,
+     * that that submission will become the handler.
+     * </p>
+     */
+	void submitActionSetAndGlobalHandlers() {
+	    /* Mash the action sets and global actions together, with global actions
+	     * taking priority.
+	     */
         Map handlersByCommandId = new HashMap();
         handlersByCommandId.putAll(actionSetHandlersByCommandId);
-
-        /*
-         * Bug 60520. This has the possibility of clobbering the action set
-         * handlers. Until these handlers are submitted, extra cares needs to be
-         * taken with the ActionHandler instance. They could be leaking property
-         * change listeners otherwise. The solution is to do the clobbering by
-         * hand, and dispose of duplicated ActionHandler instances
-         */
-        final Iterator globalItr = globalActionHandlersByCommandId.entrySet()
-                .iterator();
-        while (globalItr.hasNext()) {
-            final Map.Entry entry = (Map.Entry) globalItr.next();
-            final String commandId = (String) entry.getKey();
-
-            // Check if there is a handler already, and, if so, dispose it.
-            final ActionHandler actionSetActionHandler = (ActionHandler) handlersByCommandId
-                    .get(commandId);
-            if (actionSetActionHandler != null) {
-                actionSetActionHandler.dispose();
-            }
-
-            // Clobber the handler.
-            final ActionHandler globalActionHandler = (ActionHandler) entry
-                    .getValue();
-            handlersByCommandId.put(commandId, globalActionHandler);
-        }
-
+        handlersByCommandId.putAll(globalActionHandlersByCommandId);
+        
+        // Create a low priority submission for each handler.
         final List newHandlerSubmissions = new ArrayList();
         final Shell shell = getShell();
         if (shell != null) {
@@ -379,12 +411,12 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
                         null, commandId, handler, Priority.LEGACY));
             }
         }
-
-        Workbench.getInstance().getCommandSupport().removeHandlerSubmissions(
-                this.handlerSubmissions);
-        this.handlerSubmissions = newHandlerSubmissions;
-        Workbench.getInstance().getCommandSupport().addHandlerSubmissions(
-                this.handlerSubmissions);
+        
+        // Remove the old submissions, and the add the new ones.
+        final IWorkbenchCommandSupport commandSupport = Workbench.getInstance().getCommandSupport();
+        commandSupport.removeHandlerSubmissions(handlerSubmissions);
+        handlerSubmissions = newHandlerSubmissions;
+        commandSupport.addHandlerSubmissions(newHandlerSubmissions);
     }	
 	
 	/*

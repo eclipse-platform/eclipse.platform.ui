@@ -461,9 +461,6 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
         if (handlerSubmissions2 != null) {
             handlerSubmissions2.remove(handlerSubmission);
 
-            // Bug 60520. Give the handler a chance to drop listeners.
-            handlerSubmission.getHandler().dispose();
-
             if (handlerSubmissions2.isEmpty()) {
                 handlerSubmissionsByCommandId.remove(commandId);
             }
