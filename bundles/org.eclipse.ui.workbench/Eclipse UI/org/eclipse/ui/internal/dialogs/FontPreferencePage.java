@@ -502,8 +502,16 @@ public class FontPreferencePage
 
 		FontDefinition[] definitions = getDefinitions();
 
+		boolean checkForDialogFont = getPreferenceStore().getBoolean("DISABLE_DIALOG_FONT"); //$NON-NLS-1$
+
 		for (int i = 0; i < definitions.length; i++) {
 			FontDefinition definition = definitions[i];
+
+			//Disable the dialog font if required
+			if (checkForDialogFont
+				&& definition.getId().equals(JFaceResources.DIALOG_FONT)) {
+				continue;
+			}
 			labelsToDefinitions.put(definition.getLabel(), definition);
 			Object settingValue;
 			if (getPreferenceStore().isDefault(definition.getId()))
