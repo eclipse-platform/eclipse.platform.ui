@@ -53,7 +53,7 @@ public class HistoryDropAdapter extends ViewerDropAdapter {
 		if (sources.length == 0) return false;
 		IResource resource = sources[0];
 		if (!(resource instanceof IFile)) return false;
-		view.showHistory(resource);
+		view.showHistory(resource, true /* fetch */);
 		return true;
 	}
 	public boolean validateDrop(Object target, int operation, TransferData transferType) {

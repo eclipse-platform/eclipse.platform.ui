@@ -160,7 +160,7 @@ public class AnnotateView extends ViewPart implements ISelectionChangedListener 
 				
 		try {
 			historyView = (HistoryView) page.showView(HistoryView.VIEW_ID);
-			historyView.showHistory((ICVSRemoteFile) CVSWorkspaceRoot.getRemoteResourceFor(cvsResource));
+			historyView.showHistory((ICVSRemoteFile) CVSWorkspaceRoot.getRemoteResourceFor(cvsResource), false /* don't refetch */);
 		} catch (PartInitException e) {
 			throw new InvocationTargetException(e);
 		} catch (CVSException e) {

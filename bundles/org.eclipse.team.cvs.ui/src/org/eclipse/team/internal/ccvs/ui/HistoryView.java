@@ -15,89 +15,36 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.QualifiedName;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuListener;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.text.Document;
-import org.eclipse.jface.text.ITextOperationTarget;
-import org.eclipse.jface.text.TextViewer;
-import org.eclipse.jface.viewers.ColumnWeightData;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TableLayout;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.text.*;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.custom.*;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.SyncInfo;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.CVSSyncInfo;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.ICVSFile;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
-import org.eclipse.team.internal.ccvs.core.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.ILogEntry;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
-import org.eclipse.team.internal.ccvs.ui.actions.CVSAction;
-import org.eclipse.team.internal.ccvs.ui.actions.MoveRemoteTagAction;
-import org.eclipse.team.internal.ccvs.ui.actions.OpenLogEntryAction;
+import org.eclipse.team.internal.ccvs.ui.actions.*;
 import org.eclipse.team.internal.ccvs.ui.operations.UpdateOperation;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.synchronize.SyncInfoCompareInput;
-import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IActionDelegate;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.IPartListener;
-import org.eclipse.ui.IPartListener2;
-import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchPartReference;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.ResourceTransfer;
 import org.eclipse.ui.part.ViewPart;
@@ -184,8 +131,7 @@ public class HistoryView extends ViewPart {
 		public void partInputChanged(IWorkbenchPartReference ref) {
 		}
 	};
-	
-	private QualifiedName HISTORY_VIEW_JOB_TYPE = new QualifiedName(VIEW_ID, "jobs"); //$NON-NLS-1$
+
 
 	private class FetchLogEntriesJob extends Job {
 		public ICVSRemoteFile remoteFile;
@@ -307,7 +253,7 @@ public class HistoryView extends ViewPart {
 					ArrayList logEntrieFiles = null;
 					if (!selection.isEmpty()) {
 						logEntrieFiles = new ArrayList();
-						Iterator elements = ((IStructuredSelection) selection).iterator();
+						Iterator elements = selection.iterator();
 						while (elements.hasNext()) {
 							Object next = elements.next();
 							if (next instanceof ILogEntry) {
@@ -483,7 +429,6 @@ public class HistoryView extends ViewPart {
 				
 				if (!(inputElement instanceof ICVSRemoteFile)) return null;
 				final ICVSRemoteFile remoteFile = (ICVSRemoteFile)inputElement;
-				final Object[][] result = new Object[1][];
 				if(fetchLogEntriesJob == null) {
 					fetchLogEntriesJob = new FetchLogEntriesJob();
 				}
@@ -675,12 +620,12 @@ public class HistoryView extends ViewPart {
 	 * 
 	 * Only files are supported for now.
 	 */
-	public void showHistory(IResource resource) {
+	public void showHistory(IResource resource, boolean refetch) {
 		if (resource instanceof IFile) {
 			IFile newfile = (IFile)resource;
-			if(this.file != null && newfile.equals(this.file)) {
+			if(!refetch && this.file != null && newfile.equals(this.file)) {
 				return;
-			}  
+			} 
 			this.file = newfile;
 			RepositoryProvider teamProvider = RepositoryProvider.getProvider(file.getProject(), CVSProviderPlugin.getTypeId());
 			if (teamProvider != null) {
@@ -693,7 +638,7 @@ public class HistoryView extends ViewPart {
 						// has been populated until the job that queries for the history
 						// has completed.
 						tableViewer.setInput(remoteFile);
-						setTitle(Policy.bind("HistoryView.titleWithArgument", remoteFile.getName())); //$NON-NLS-1$
+						setContentDescription(Policy.bind("HistoryView.titleWithArgument", remoteFile.getName())); //$NON-NLS-1$
 						setTitleToolTip(resource.getFullPath().toString());
 					}
 				} catch (TeamException e) {
@@ -703,7 +648,7 @@ public class HistoryView extends ViewPart {
 		} else {
 			this.file = null;
 			tableViewer.setInput(null);
-			setTitle(Policy.bind("HistoryView.title")); //$NON-NLS-1$
+			setContentDescription(Policy.bind("HistoryView.title")); //$NON-NLS-1$
 			setTitleToolTip(""); //$NON-NLS-1$
 		}
 	}
@@ -729,22 +674,22 @@ public class HistoryView extends ViewPart {
 				ICVSRemoteFile remote = (ICVSRemoteFile)info.getRemote();
 				ICVSRemoteFile base = (ICVSRemoteFile)info.getBase();
 				if(remote != null) {
-					showHistory(remote);
+					showHistory(remote, false);
 				} else if(base != null) {
-					showHistory(base);
+					showHistory(base, false);
 				}
 			}
 		// Handle editors opened on remote files
 		} else if(input instanceof RemoteFileEditorInput) {
 			ICVSRemoteFile remote = ((RemoteFileEditorInput)input).getCVSRemoteFile();
 			if(remote != null) {
-				showHistory(remote);
+				showHistory(remote, false);
 			}
 		// Handle regular file editors
 		} else if (input instanceof IFileEditorInput) {
 			IFileEditorInput fileInput = (IFileEditorInput) input;
 			IFile file = fileInput.getFile();
-			showHistory(file);			
+			showHistory(file, false /* don't fetch if already cached */);			
 		}
 	}
 	
@@ -754,20 +699,20 @@ public class HistoryView extends ViewPart {
 	/**
 	 * Shows the history for the given ICVSRemoteFile in the view.
 	 */
-	public void showHistory(ICVSRemoteFile remoteFile) {
+	public void showHistory(ICVSRemoteFile remoteFile, boolean refetch) {
 		try {
 			if (remoteFile == null) {
 				tableViewer.setInput(null);
-				setTitle(Policy.bind("HistoryView.title")); //$NON-NLS-1$
+				setContentDescription(Policy.bind("HistoryView.title")); //$NON-NLS-1$
 				setTitleToolTip(""); //$NON-NLS-1$
 				return;
 			}
 			ICVSFile existingFile = historyTableProvider.getICVSFile(); 
-			if(existingFile != null && existingFile.equals(remoteFile)) return;
+			if(!refetch && existingFile != null && existingFile.equals(remoteFile)) return;
 			this.file = null;
 			historyTableProvider.setFile(remoteFile);
 			tableViewer.setInput(remoteFile);
-			setTitle(Policy.bind("HistoryView.titleWithArgument", remoteFile.getName())); //$NON-NLS-1$
+			setContentDescription(Policy.bind("HistoryView.titleWithArgument", remoteFile.getName())); //$NON-NLS-1$
 			setTitleToolTip(remoteFile.getRepositoryRelativePath());
 		} catch (TeamException e) {
 			CVSUIPlugin.openError(getViewSite().getShell(), null, null, e);
