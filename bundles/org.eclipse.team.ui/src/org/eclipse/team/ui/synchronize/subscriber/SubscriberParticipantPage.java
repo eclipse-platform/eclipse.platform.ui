@@ -319,7 +319,7 @@ public class SubscriberParticipantPage implements IPageBookViewPage, IPropertyCh
 		return viewer;
 	}
 	
-	public StructuredViewerAdvisor getViewerConfiguration() {
+	public StructuredViewerAdvisor getViewerAdviser() {
 		return viewerAdvisor;
 	}
 	
@@ -332,6 +332,6 @@ public class SubscriberParticipantPage implements IPageBookViewPage, IPropertyCh
 	}
 
 	public void setSelection(Object[] objects, boolean reveal) {
-		getViewerConfiguration().setSelection(objects, reveal);
+		getViewerAdviser().setSelection(objects, reveal);
 	}
 }

@@ -77,7 +77,7 @@ public class CVSSynchronizeViewPage extends SubscriberParticipantPage implements
 	 */
 	public void dispose() {
 		super.dispose();
-		getViewerConfiguration().removeInputChangedListener(this);
+		getViewerAdviser().removeInputChangedListener(this);
 		CVSUIPlugin.removePropertyChangeListener(this);
 	}
 	
@@ -124,7 +124,7 @@ public class CVSSynchronizeViewPage extends SubscriberParticipantPage implements
 		super.createControl(parent);
 		
 		// Sync changes are used to update the action state for the update/commit buttons.
-		getViewerConfiguration().addInputChangedListener(this);
+		getViewerAdviser().addInputChangedListener(this);
 		
 		// Listen for decorator changed to refresh the viewer's labels.
 		CVSUIPlugin.addPropertyChangeListener(this);

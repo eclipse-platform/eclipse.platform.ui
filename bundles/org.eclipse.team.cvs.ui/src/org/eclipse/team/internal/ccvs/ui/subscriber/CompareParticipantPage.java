@@ -51,7 +51,7 @@ public class CompareParticipantPage extends CVSSynchronizeViewPage {
 			public void run() {
 				groupByComment = ! groupByComment;
 				setChecked(groupByComment);
-				CompareAdvisor advisor = ((CompareAdvisor)CompareParticipantPage.this.getViewerConfiguration());
+				CompareAdvisor advisor = ((CompareAdvisor)CompareParticipantPage.this.getViewerAdviser());
 				try {
 					advisor.prepareInput(new NullProgressMonitor());
 				} catch (TeamException e) {

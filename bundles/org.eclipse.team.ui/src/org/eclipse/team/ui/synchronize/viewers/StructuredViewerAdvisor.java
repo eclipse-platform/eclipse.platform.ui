@@ -208,16 +208,40 @@ public abstract class StructuredViewerAdvisor {
 	 * @param reveal <code>true</code> if the selection is to be made visible, and
 	 *                  <code>false</code> otherwise
 	 */
-	 public void setSelection(Object[] objects, boolean reveal) {
-	 	Object[] viewerObjects = new Object[objects.length];
-	 	if (modelProvider != null) {
+	public void setSelection(Object[] objects, boolean reveal) {
+		ISelection selection = getSelection(objects);
+		if (!selection.isEmpty()) {
+			viewer.setSelection(selection, reveal);
+		}
+	}
+	
+	/**
+	 * Gets a new selection that contains the view model objects that
+	 * correspond to the given objects. The advisor will try and
+	 * convert the objects into the appropriate viewer objects. 
+	 * This is required because the model provider controls the actual 
+	 * model elements in the viewer and must be consulted in order to
+	 * understand what objects can be selected in the viewer.
+	 * <p>
+	 * This method does not affect the selection of the viewer itself.
+	 * It's main purpose is for testing and should not be used by other
+	 * clients.
+	 * 
+	 * @param object the objects to select
+	 * @return a selection corresponding to the given objects
+	 */
+	public ISelection getSelection(Object[] objects) {
+		if (modelProvider != null) {
+	 		Object[] viewerObjects = new Object[objects.length];
 			for (int i = 0; i < objects.length; i++) {
 				viewerObjects[i] = modelProvider.getMapping(objects[i]);
 			}
-			viewer.setSelection(new StructuredSelection(viewerObjects), reveal);
+			return new StructuredSelection(viewerObjects);
+		} else {
+			return StructuredSelection.EMPTY;
 		}
-	 }
-	
+	}
+	 
 	/**
 	 * Creates the model that will be shown in the viewers. This can be called before the
 	 * viewer has been created.
@@ -275,9 +299,9 @@ public abstract class StructuredViewerAdvisor {
 	}
 	
 	/**
-	 * Get the input that will be assigned to the viewer initialized by this
-	 * configuration. Subclass may override.
-	 * @return the viewer input
+	 * Get the model provider that will be used to create the input
+	 * for the adviser's viewer.
+	 * @return the model provider
 	 */
 	protected abstract SynchronizeModelProvider getModelProvider();
 	

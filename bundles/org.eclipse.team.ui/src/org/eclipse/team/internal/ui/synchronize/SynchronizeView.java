@@ -23,9 +23,16 @@ import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.synchronize.actions.SynchronizePageDropDownAction;
 import org.eclipse.team.ui.TeamUI;
-import org.eclipse.team.ui.synchronize.*;
+import org.eclipse.team.ui.synchronize.ISynchronizeManager;
+import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
+import org.eclipse.team.ui.synchronize.ISynchronizeParticipantListener;
+import org.eclipse.team.ui.synchronize.ISynchronizeView;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.part.*;
+import org.eclipse.ui.part.IPage;
+import org.eclipse.ui.part.IPageBookViewPage;
+import org.eclipse.ui.part.MessagePage;
+import org.eclipse.ui.part.PageBook;
+import org.eclipse.ui.part.PageBookView;
 
 /**
  * Implements a Synchronize View that contains multiple synchronize participants. 
@@ -45,7 +52,7 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 	/**
 	 * Map of parts to participants
 	 */
-	private Map fPartToPage;
+	private Map fPartToParticipant;
 
 	/**
 	 * Drop down action to switch between participants
@@ -90,7 +97,7 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 	 */
 	protected void showPageRec(PageRec pageRec) {
 		super.showPageRec(pageRec);
-		activeParticipant = (ISynchronizeParticipant)fPartToPage.get(pageRec.part);
+		activeParticipant = (ISynchronizeParticipant)fPartToParticipant.get(pageRec.part);
 		updateTitle();		
 	}
 
@@ -113,10 +120,10 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 		IPage page = pageRecord.page;
 		page.dispose();
 		pageRecord.dispose();
-		ISynchronizeParticipant participant = (ISynchronizeParticipant) fPartToPage.get(part);
+		ISynchronizeParticipant participant = (ISynchronizeParticipant) fPartToParticipant.get(part);
 		participant.removePropertyChangeListener(this);
 		// empty cross-reference cache
-		fPartToPage.remove(part);
+		fPartToParticipant.remove(part);
 		fParticipantToPart.remove(participant);		
 	}
 
@@ -188,7 +195,7 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 				ISynchronizeParticipant participant = participants[i];
 				SynchronizeViewWorkbenchPart part = new SynchronizeViewWorkbenchPart(participant, getSite());
 				fParticipantToPart.put(participant, part);
-				fPartToPage.put(part, participant);
+				fPartToParticipant.put(part, participant);
 			}
 		}
 	}
@@ -227,7 +234,7 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 	public SynchronizeView() {
 		super();
 		fParticipantToPart = new HashMap();
-		fPartToPage = new HashMap();
+		fPartToParticipant = new HashMap();
 		updateTitle();
 	}
 	
@@ -332,5 +339,24 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 	
 	private boolean isAvailable() {
 		return getPageBook() != null && !getPageBook().isDisposed();
+	}
+	
+	/*
+	 * Method used by test cases to access the page for a participant
+	 */
+	public IPage getPage(ISynchronizeParticipant participant) {
+		IWorkbenchPart part = getPart(participant);
+		if (part == null) return null;
+		try {
+			return getPageRec(part).page;
+		} catch (NullPointerException e) {
+			// The PageRec class is not visible so we can't do a null check
+			// before accessing the page.
+			return null;
+		}
+	}
+
+	private IWorkbenchPart getPart(ISynchronizeParticipant participant) {
+		return (IWorkbenchPart)fParticipantToPart.get(participant);
 	}
 }

@@ -14,22 +14,36 @@ import junit.framework.AssertionFailedError;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.subscribers.SubscriberSyncInfoCollector;
-import org.eclipse.team.core.synchronize.*;
-import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.core.synchronize.SyncInfoSet;
+import org.eclipse.team.core.synchronize.SyncInfoTree;
+import org.eclipse.team.internal.ccvs.core.CVSCompareSubscriber;
+import org.eclipse.team.internal.ccvs.core.CVSMergeSubscriber;
+import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.ui.subscriber.CompareParticipant;
 import org.eclipse.team.internal.ccvs.ui.subscriber.MergeSynchronizeParticipant;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.internal.ui.synchronize.SynchronizeModelProvider;
+import org.eclipse.team.internal.ui.synchronize.SynchronizeView;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
 import org.eclipse.team.tests.ccvs.core.subscriber.SyncInfoSource;
 import org.eclipse.team.ui.TeamUI;
-import org.eclipse.team.ui.synchronize.*;
+import org.eclipse.team.ui.synchronize.ISynchronizeManager;
+import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
+import org.eclipse.team.ui.synchronize.ISynchronizeView;
 import org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipant;
+import org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipantPage;
+import org.eclipse.team.ui.synchronize.viewers.SyncInfoModelElement;
+import org.eclipse.team.ui.synchronize.viewers.SynchronizeModelElement;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.part.IPage;
 
 /**
  * SyncInfoSource that obtains SyncInfo from the SynchronizeView's SyncSet.
@@ -46,17 +60,32 @@ public class SynchronizeViewTestAdapter extends SyncInfoSource {
 	}
 	
 	public SyncInfo getSyncInfo(Subscriber subscriber, IResource resource) throws TeamException {
-		SyncInfoSet set = getCollector(subscriber).getSubscriberSyncInfoSet();
-		SyncInfo info = set.getSyncInfo(resource);
+		// Wait for the collector
+		SyncInfoSet set = getCollector(subscriber).getSyncInfoTree();
+		// Obtain the sync info from the viewer to ensure that the 
+		// entire chain has the proper state
+		SyncInfo info = internalGetSyncInfo(subscriber, resource);
+		// Do a sanity check on the collected sync info
 		if (info == null) {
 			info = subscriber.getSyncInfo(resource);
 			if ((info != null && info.getKind() != SyncInfo.IN_SYNC)) {
 				throw new AssertionFailedError(
-						"Sync info for " 
+						"Sync state for " 
 						+ resource.getFullPath() 
 						+ " was "
 						+ SyncInfo.kindToString(info.getKind())
 						+ " but resource was not collected");
+			}
+		} else {
+			SyncInfo realInfo = subscriber.getSyncInfo(resource);
+			if (info.getKind() != realInfo.getKind()) {
+				throw new AssertionFailedError(
+						"Collected sync state for " 
+						+ resource.getFullPath() 
+						+ " was "
+						+ SyncInfo.kindToString(info.getKind())
+						+ " but the real state was "
+						+ SyncInfo.kindToString(realInfo.getKind()));
 			}
 		}
 		return info;
@@ -79,6 +108,7 @@ public class SynchronizeViewTestAdapter extends SyncInfoSource {
 	private SubscriberSyncInfoCollector getCollector(Subscriber subscriber) {
 		SubscriberParticipant participant = getParticipant(subscriber);
 		if (participant == null) return null;
+		participant.setMode(SubscriberParticipant.BOTH_MODE);
 		SubscriberSyncInfoCollector syncInfoCollector = participant.getSubscriberSyncInfoCollector();
 		EclipseTest.waitForSubscriberInputHandling(syncInfoCollector);
 		return syncInfoCollector;
@@ -101,7 +131,7 @@ public class SynchronizeViewTestAdapter extends SyncInfoSource {
 	public CVSMergeSubscriber createMergeSubscriber(IProject project, CVSTag root, CVSTag branch) {
 		CVSMergeSubscriber mergeSubscriber = super.createMergeSubscriber(project, root, branch);
 		ISynchronizeManager synchronizeManager = TeamUI.getSynchronizeManager();
-		ISynchronizeParticipant participant = new MergeSynchronizeParticipant(mergeSubscriber);
+		SubscriberParticipant participant = new MergeSynchronizeParticipant(mergeSubscriber);
 		synchronizeManager.addSynchronizeParticipants(
 				new ISynchronizeParticipant[] {participant});		
 		IWorkbenchPage activePage = TeamUIPlugin.getActivePage();
@@ -121,7 +151,7 @@ public class SynchronizeViewTestAdapter extends SyncInfoSource {
 	public CVSCompareSubscriber createCompareSubscriber(IProject project, CVSTag tag) {
 		CVSCompareSubscriber s = super.createCompareSubscriber(project, tag);
 		ISynchronizeManager synchronizeManager = TeamUI.getSynchronizeManager();
-		ISynchronizeParticipant participant = new CompareParticipant(s);
+		SubscriberParticipant participant = new CompareParticipant(s);
 		synchronizeManager.addSynchronizeParticipants(
 				new ISynchronizeParticipant[] {participant});	
 		IWorkbenchPage activePage = TeamUIPlugin.getActivePage();
@@ -164,5 +194,28 @@ public class SynchronizeViewTestAdapter extends SyncInfoSource {
 	public void reset(Subscriber subscriber) throws TeamException {
 		super.reset(subscriber);
 		getCollector(subscriber).reset();
+	}
+	
+	private SyncInfo internalGetSyncInfo(Subscriber subscriber, IResource resource) {
+		try {
+			SubscriberParticipant participant = getParticipant(subscriber);
+			IWorkbenchPage activePage = TeamUIPlugin.getActivePage();
+			ISynchronizeView view = (ISynchronizeView)activePage.showView(ISynchronizeView.VIEW_ID);
+			IPage page = ((SynchronizeView)view).getPage(participant);
+			if (page instanceof SubscriberParticipantPage) {
+				SubscriberParticipantPage subscriberPage = (SubscriberParticipantPage)page;
+				ISelection selection = subscriberPage.getViewerAdviser().getSelection(new Object[] { resource });
+				if (!selection.isEmpty() && selection instanceof StructuredSelection) {
+					StructuredSelection ss = (StructuredSelection)selection;
+					Object o = ss.getFirstElement();
+					if (o instanceof SyncInfoModelElement) {
+						return ((SyncInfoModelElement)o).getSyncInfo();
+					}
+				}
+			}
+		} catch (PartInitException e) {
+			throw new AssertionFailedError("Cannot show sync view in active page");
+		}
+		return null;
 	}
 }
