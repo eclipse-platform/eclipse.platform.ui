@@ -143,26 +143,21 @@ public class RuleBasedScanner implements ICharacterScanner, ITokenScanner {
 	 */
 	public IToken nextToken() {
 		
-		IToken token;
+		fTokenOffset= fOffset;
+		fColumn= UNDEFINED;
 		
-		while (true) {
-			
-			fTokenOffset= fOffset;
-			fColumn= UNDEFINED;
-			
-			if (fRules != null) {
-				for (int i= 0; i < fRules.length; i++) {
-					token= (fRules[i].evaluate(this));
-					if (!token.isUndefined())
-						return token;
-				}
+		if (fRules != null) {
+			for (int i= 0; i < fRules.length; i++) {
+				IToken token= (fRules[i].evaluate(this));
+				if (!token.isUndefined())
+					return token;
 			}
-			
-			if (read() == EOF)
-				return Token.EOF;
-			else
-				return fDefaultReturnToken;
 		}
+		
+		if (read() == EOF)
+			return Token.EOF;
+		else
+			return fDefaultReturnToken;
 	}
 	
 	/*
