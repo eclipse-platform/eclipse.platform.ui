@@ -100,12 +100,11 @@ public abstract class JavaFileBuffer extends AbstractFileBuffer  {
 	protected void disconnected() {
 	}
 	
-	/**
-	 * Returns whether this file buffer has already been disposed.
-	 * 
-	 * @return <code>true</code> if already disposed, <code>false</code> otherwise
+	/*
+	 * @see org.eclipse.core.internal.filebuffers.AbstractFileBuffer#isDisconnected()
+	 * @since 3.1
 	 */
-	public boolean isDisposed() {
+	protected boolean isDisconnected() {
 		return fReferenceCount <= 0;
 	}
 	
@@ -120,7 +119,7 @@ public abstract class JavaFileBuffer extends AbstractFileBuffer  {
 	 * @see org.eclipse.core.filebuffers.IFileBuffer#commit(org.eclipse.core.runtime.IProgressMonitor, boolean)
 	 */
 	public void commit(IProgressMonitor monitor, boolean overwrite) throws CoreException {
-		if (!isDisposed() && fCanBeSaved) {
+		if (!isDisconnected() && fCanBeSaved) {
 			
 			fManager.fireStateChanging(this);
 			

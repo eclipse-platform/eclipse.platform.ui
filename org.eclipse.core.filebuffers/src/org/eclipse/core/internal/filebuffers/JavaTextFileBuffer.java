@@ -151,7 +151,7 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 	 * @see org.eclipse.core.buffer.text.IBufferedFile#getStatus()
 	 */
 	public IStatus getStatus() {
-		if (!isDisposed()) {
+		if (!isDisconnected()) {
 			if (fStatus != null)
 				return fStatus;
 			return (fDocument == null ? STATUS_ERROR : STATUS_OK);
@@ -208,7 +208,7 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 	 * @see org.eclipse.core.filebuffers.IFileBuffer#revert(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void revert(IProgressMonitor monitor) throws CoreException {
-		if (isDisposed())
+		if (isDisconnected())
 			return;
 		
 		IDocument original= null;

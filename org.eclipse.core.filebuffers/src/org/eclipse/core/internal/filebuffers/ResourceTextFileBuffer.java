@@ -157,7 +157,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 	 * @see org.eclipse.core.filebuffers.IFileBuffer#getStatus()
 	 */
 	public IStatus getStatus() {
-		if (!isDisposed()) {
+		if (!isDisconnected()) {
 			if (fStatus != null)
 				return fStatus;
 			return (fDocument == null ? STATUS_ERROR : STATUS_OK);
@@ -274,10 +274,11 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 	/*
 	 * @see org.eclipse.core.internal.filebuffers.ResourceFileBuffer#disconnected()
 	 */
-	protected void disconnected() {
+	protected void dispose() {
 		if (fAnnotationModel != null)
 			fAnnotationModel.disconnect(fDocument);
-		super.disconnected();
+		fDocument= null;
+		super.dispose();
 	}
 	
 	/*

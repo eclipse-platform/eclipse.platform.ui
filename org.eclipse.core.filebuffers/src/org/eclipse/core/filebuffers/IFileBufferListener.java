@@ -27,7 +27,10 @@ public interface IFileBufferListener {
 	void bufferCreated(IFileBuffer buffer);
 	
 	/**
-	 * Informs the listener about the disposal of the given buffer.
+	 * Informs the listener that the given buffer has been disposed.
+	 * All state information has already been disposed and accessing
+	 * it is forbidden. However, accessing the file buffer's content is
+	 * still allowed during the notification. 
 	 * 
 	 * @param buffer the disposed file buffer
 	 */

@@ -19,12 +19,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceRuleFactory;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -36,6 +30,13 @@ import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceRuleFactory;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.IAnnotationModelFactory;
@@ -54,11 +55,12 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.IAnnotationModel;
 
+
 /**
  * @since 3.0
  */
 public class TextFileBufferManager implements ITextFileBufferManager {	
-		
+	
 	private Map fFilesBuffers= new HashMap();
 	private List fFileBufferListeners= new ArrayList();
 	private ExtensionsRegistry fRegistry;
@@ -103,9 +105,10 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		AbstractFileBuffer fileBuffer= (AbstractFileBuffer) fFilesBuffers.get(location);
 		if (fileBuffer != null) {
 			fileBuffer.disconnect();
-			if (fileBuffer.isDisposed()) {
+			if (fileBuffer.isDisconnected()) {
 				fFilesBuffers.remove(location);
 				fireBufferDisposed(fileBuffer);
+				fileBuffer.dispose();
 			}
 		}
 	}

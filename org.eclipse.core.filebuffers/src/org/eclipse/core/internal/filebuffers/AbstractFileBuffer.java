@@ -31,7 +31,25 @@ public abstract class AbstractFileBuffer implements IFileBuffer, IStateValidatio
 	
 	public abstract void disconnect() throws CoreException;
 	
-	public abstract boolean isDisposed();
+	/**
+	 * Returns whether this file buffer has been disconnected.
+	 * 
+	 * @return <code>true</code> if already disposed, <code>false</code> otherwise
+	 * @since 3.1
+	 */
+	protected abstract boolean isDisconnected();
+	
+	/**
+	 * Disposes this file buffer.
+	 * This implementation is always empty.
+	 * <p>
+	 * Subclasses may extend but must call <code>super.dispose()</code>.
+	 * <p>
+	 * 
+	 * @since 3.1
+	 */
+	protected void dispose() {
+	}
 	
 	/*
 	 * @see org.eclipse.core.filebuffers.IStateValidationSupport#validationStateAboutToBeChanged()

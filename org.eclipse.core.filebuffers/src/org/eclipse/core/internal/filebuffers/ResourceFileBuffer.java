@@ -69,7 +69,7 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 			 */
 			public void run() {
 				
-				if (isDisposed()) {
+				if (isDisconnected()) {
 					fManager.fireStateChangeFailed(ResourceFileBuffer.this);
 					return;
 				}
@@ -127,7 +127,7 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 					switch (delta.getKind()) {
 						case IResourceDelta.CHANGED:
 							if ((IResourceDelta.ENCODING & delta.getFlags()) != 0) {
-								if (!isDisposed() && !fCanBeSaved && isSynchronized()) {
+								if (!isDisconnected() && !fCanBeSaved && isSynchronized()) {
 									fileChange= new SafeFileChange() {
 										protected void execute() throws Exception {
 											handleFileContentChanged(false);
@@ -136,7 +136,7 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 								}
 							}
 							if (fileChange == null && (IResourceDelta.CONTENT & delta.getFlags()) != 0) {
-								if (!isDisposed() && !fCanBeSaved && !isSynchronized()) {
+								if (!isDisconnected() && !fCanBeSaved && !isSynchronized()) {
 									fileChange= new SafeFileChange() {
 										protected void execute() throws Exception {
 											handleFileContentChanged(false);
@@ -154,7 +154,7 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 									}
 								};
 							} else {
-								if (!isDisposed() && !fCanBeSaved) {
+								if (!isDisconnected() && !fCanBeSaved) {
 									fileChange= new SafeFileChange() {
 										protected void execute() throws Exception {
 											handleFileDeleted();
@@ -279,14 +279,14 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 		if (fFileSynchronizer != null)
 			fFileSynchronizer.uninstall();
 		fFileSynchronizer= null;
+		removeFileBufferContentListeners();
 	}
-
-	/**
-	 * Returns whether this file buffer has already been disposed.
-	 * 
-	 * @return <code>true</code> if already disposed, <code>false</code> otherwise
+	
+	/*
+	 * @see org.eclipse.core.internal.filebuffers.AbstractFileBuffer#isDisconnected()
+	 * @since 3.1
 	 */
-	public boolean isDisposed() {
+	public boolean isDisconnected() {
 		return fFileSynchronizer == null;
 	}
 	
@@ -309,7 +309,7 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 	 * @see org.eclipse.core.filebuffers.IFileBuffer#commit(org.eclipse.core.runtime.IProgressMonitor, boolean)
 	 */
 	public void commit(IProgressMonitor monitor, boolean overwrite) throws CoreException {
-		if (!isDisposed() && fCanBeSaved) {
+		if (!isDisconnected() && fCanBeSaved) {
 			
 			fManager.fireStateChanging(this);
 			
@@ -333,7 +333,7 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 	 * @see org.eclipse.core.filebuffers.IFileBuffer#revert(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void revert(IProgressMonitor monitor) throws CoreException {
-		if (isDisposed())
+		if (isDisconnected())
 			return;
 		
 		if (!fFile.isSynchronized(IResource.DEPTH_INFINITE)) {
@@ -384,7 +384,7 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 	 * @see org.eclipse.core.filebuffers.IFileBuffer#validateState(org.eclipse.core.runtime.IProgressMonitor, java.lang.Object)
 	 */
 	public void validateState(IProgressMonitor monitor, Object computationContext) throws CoreException {
-		if (!isDisposed() && !fIsStateValidated)  {
+		if (!isDisconnected() && !fIsStateValidated)  {
 			
 			fManager.fireStateChanging(this);
 			
