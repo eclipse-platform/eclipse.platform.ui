@@ -108,9 +108,11 @@ public interface IWorkbench {
 	public boolean close();
 	/**
 	 * Returns the currently active window for this workbench (if any).
+	 * Returns <code>null</code> if there is no active workbench window.
+	 * Returns <code>null</code> if called from a non-UI thread.
 	 * 
-	 * @return the active workbench window, or <code>null</code> if the
-	 *         currently active window is not a workbench window
+	 * @return the active workbench window, or <code>null</code> if there
+	 *         is no active workbench window or if called from a non-UI thread
 	 */
 	public IWorkbenchWindow getActiveWorkbenchWindow();
 	/**
