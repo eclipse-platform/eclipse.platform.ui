@@ -63,7 +63,7 @@
                   id="curve-image">
             </div>
             <div 
-            	  id="navigation-links">
+            	  id="navigation-links" filteredFrom="swt">
                <include
                      path="root/links-background/page-links">
                </include>
