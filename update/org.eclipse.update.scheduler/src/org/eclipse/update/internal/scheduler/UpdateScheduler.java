@@ -158,20 +158,11 @@ public class UpdateScheduler extends AbstractUIPlugin{
 		return getDefault().getWorkbench().getActiveWorkbenchWindow();
 	}
 
-	private void initializeDefaultPreferences() {
-		Preferences pref = getPluginPreferences();
-		pref.setDefault(P_ENABLED, false);
-		pref.setDefault(P_SCHEDULE, VALUE_ON_STARTUP);
-		pref.setDefault(P_DOWNLOAD, false);
-	}
-
-
 	/* (non-Javadoc)
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		initializeDefaultPreferences();
 	}
 	
 	public static SchedulerStartup getScheduler() {
