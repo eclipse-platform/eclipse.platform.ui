@@ -529,8 +529,11 @@ public class TocData extends RequestData {
 			) {
 			INavigationElement c = (INavigationElement) childrenIt.next();
 			if ((c instanceof ITopicElement)) {
-				// add topic only if it will not end up being an empty container
-				if(((ITopicElement)c).getHref()!=null || getEnabledSubtopicList(c).size()>0){
+				// add topic only if it will not end up being an empty
+				// container
+				if ((((ITopicElement) c).getHref() != null && ((ITopicElement) c)
+						.getHref().length() > 0)
+						|| getEnabledSubtopicList(c).size() > 0) {
 					childTopics.add(c);
 				}
 			} else {
