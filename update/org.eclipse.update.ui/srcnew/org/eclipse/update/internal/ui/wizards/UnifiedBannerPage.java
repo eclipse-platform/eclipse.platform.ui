@@ -20,7 +20,7 @@ import org.eclipse.update.internal.ui.*;
 
 public abstract class UnifiedBannerPage extends WizardPage {
 	private Image bannerImage;
-	private boolean bannerVisible = true;
+	private boolean bannerVisible = false;
 	public UnifiedBannerPage(String name) {
 		super(name);
 	}
