@@ -37,6 +37,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ScrollBar;
+import org.eclipse.swt.printing.PrintDialog;
+import org.eclipse.swt.printing.PrinterData;
+import org.eclipse.swt.printing.Printer;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ISelection;
@@ -578,6 +583,8 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 				return isEditable();
 			case SELECT_ALL:
 				return true;
+			case PRINT:
+				return true;
 			case SHIFT_RIGHT:
 			case SHIFT_LEFT:
 				return isEditable() && fIndentChars != null && isBlockSelected();
@@ -783,6 +790,9 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 				 */
 				setSelectedRange(getVisibleRegionOffset(), getVisibleDocument().getLength());
 				break;
+			case PRINT:
+				printContents();
+				break;
 			case SHIFT_RIGHT:
 				shift(false, true);
 				break;
@@ -797,6 +807,23 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 				break;
 		}
 	}
+	
+	protected void printContents() {
+
+		Thread printingThread = new Thread("Printing") {
+			public void run() {
+				Shell shell = new Shell(new Display());
+				PrintDialog dialog = new PrintDialog(shell, SWT.NULL);
+				PrinterData data = dialog.open();
+				if (data == null) return;
+				Printer printer = new Printer(data);
+				fTextWidget.print(printer);
+				printer.dispose();
+			}
+		};
+		printingThread.start();
+    }
+	
 	/**
 	 * @see IFindReplaceTarget#findAndSelect(int, String, boolean, boolean, boolean)
 	 */
