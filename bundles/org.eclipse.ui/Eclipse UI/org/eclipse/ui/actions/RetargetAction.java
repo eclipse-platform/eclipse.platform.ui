@@ -97,6 +97,9 @@ public void partActivated(IWorkbenchPart part) {
  * @param part the workbench part that has been closed
  */
 public void partClosed(IWorkbenchPart part) {
+	IWorkbenchPart activePart = part.getSite().getPage().getActivePart();
+	if(activePart != null)
+		return;
 	if (part == getActivePart())
 		setActionHandler(null);
 	super.partClosed(part);
@@ -108,6 +111,9 @@ public void partClosed(IWorkbenchPart part) {
  */
 public void partDeactivated(IWorkbenchPart part) {
 	super.partDeactivated(part);
+	IWorkbenchPart activePart = part.getSite().getPage().getActivePart();
+	if(activePart != null)
+		return;
 	IWorkbenchPartSite site = part.getSite();
 	SubActionBars bars = (SubActionBars) ((PartSite)site).getActionBars();
 	bars.removePropertyChangeListener(propertyChangeListener);
