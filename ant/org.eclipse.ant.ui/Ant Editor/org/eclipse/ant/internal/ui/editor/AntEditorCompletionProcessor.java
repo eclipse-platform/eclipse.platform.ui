@@ -1162,7 +1162,7 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
     	if (currentProposalMode != -1) {
     		return currentProposalMode;
     	}
-    	if (antModel.getProjectNode() == null) {
+    	if (antModel != null && antModel.getProjectNode() == null) {
     		return PROPOSAL_MODE_BUILDFILE;
     	}
     	if (document.getLength() == 0 || (document.getLength() == 1 && document.get().equals("<"))) { //$NON-NLS-1$
