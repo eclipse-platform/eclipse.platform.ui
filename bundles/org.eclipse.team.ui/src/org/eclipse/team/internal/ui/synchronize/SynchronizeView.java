@@ -360,8 +360,7 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 	 * Method used by test cases to access the page for a participant
 	 */
 	public IPage getPage(ISynchronizeParticipant participant) {
-		ISynchronizeParticipantReference ref = TeamUI.getSynchronizeManager().get(participant.getId(), participant.getSecondaryId());
-		IWorkbenchPart part = getPart(ref);
+		IWorkbenchPart part = (IWorkbenchPart)fParticipantToPart.get(participant);
 		if (part == null) return null;
 		try {
 			return getPageRec(part).page;
@@ -370,9 +369,5 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 			// before accessing the page.
 			return null;
 		}
-	}
-
-	private IWorkbenchPart getPart(ISynchronizeParticipantReference ref) {
-		return (IWorkbenchPart)fParticipantToPart.get(ref);
 	}
 }
