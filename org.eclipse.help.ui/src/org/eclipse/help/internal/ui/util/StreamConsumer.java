@@ -1,26 +1,30 @@
 package org.eclipse.help.internal.ui.util;
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 import java.io.*;
+
+import org.eclipse.help.internal.util.Logger;
 /**
- * Used to destroy output from processes
+ * Used to receive output from processes
  */
 public class StreamConsumer extends Thread {
-	InputStream is;
-	byte[] buf;
+	BufferedReader bReader;
 	public StreamConsumer(InputStream inputStream) {
 		super();
-		this.is = inputStream;
-		buf = new byte[512];
+		bReader = new BufferedReader(new InputStreamReader(inputStream));
 	}
 	public void run() {
 		try {
-			int n = 0;
-			while (n >= 0)
-				n = is.read(buf);
+			String line;
+			while (null != (line = bReader.readLine())) {
+				Logger.logError(
+					WorkbenchResources.getString("StreamConsumer.linePrefix", line),
+					null);
+			}
 		} catch (IOException ioe) {
+			Logger.logError(WorkbenchResources.getString("WE025"), ioe);
 		}
 	}
 }

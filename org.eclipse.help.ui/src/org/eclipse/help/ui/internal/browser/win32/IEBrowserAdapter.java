@@ -6,10 +6,12 @@ package org.eclipse.help.ui.internal.browser.win32;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.ui.WorkbenchHelpPlugin;
-import org.eclipse.help.internal.ui.util.StreamConsumer;
+import org.eclipse.help.internal.ui.util.*;
+import org.eclipse.help.internal.util.Logger;
 import org.eclipse.help.ui.browser.IBrowser;
 /**
  * Web browser.  Win32 implmentation of IBrowser interface.
@@ -22,40 +24,53 @@ public class IEBrowserAdapter implements IBrowser, Runnable {
 		"org.eclipse.help.ui.internal.browser.win32.IEHost";
 	PrintWriter commandWriter;
 	boolean launched = false;
-	String[] cmd;
+	String[] cmdarray;
+	String cmd;
 	/**
 	 * Adapter constructor.
 	 */
 	public IEBrowserAdapter() {
+		// Create command string for launching the process
+		String executable = "java";
+		if (BootLoader.OS_WIN32.equals(BootLoader.getOS()))
+			executable += "w.exe";
+		String program =
+			System.getProperty("java.home")
+				+ File.separator
+				+ "bin"
+				+ File.separator
+				+ executable;
+		String installURL = "";
 		try {
-			// Create command string for launching the process
-			String executable = "java";
-			if (BootLoader.OS_WIN32.equals(BootLoader.getOS()))
-				executable += "w.exe";
-			cmd =
-				new String[] {
-					System.getProperty("java.home")
-						+ File.separator
-						+ "bin"
-						+ File.separator
-						+ executable,
-					"-D"
-						+ IEHost.SYS_PROPERTY_INSTALLURL
-						+ "="
-						+ Platform.resolve(
-							WorkbenchHelpPlugin.getDefault().getDescriptor().getInstallURL()),
-					"-D"
-						+ IEHost.SYS_PROPERTY_STATELOCATION
-						+ "="
-						+ WorkbenchHelpPlugin.getDefault().getStateLocation().toString(),
-					"-Djava.library.path="
-						+ getPath(PLUGIN_ID_SWT)
-						+ System.getProperty("java.library.path"),
-					"-cp",
-					getClassPath(PLUGIN_ID_HELPUI),
-					IE_CLASS };
+			URL instURL =
+				Platform.resolve(
+					WorkbenchHelpPlugin.getDefault().getDescriptor().getInstallURL());
+			installURL = instURL.toExternalForm();
 		} catch (IOException ioe) {
+			Logger.logError(WorkbenchResources.getString("WE022"), ioe);
+			return;
 		}
+		String libraryPath =
+			getPath(PLUGIN_ID_SWT) + System.getProperty("java.library.path");
+		String classPath = getClassPath(PLUGIN_ID_HELPUI);
+		String stateLocation =
+			WorkbenchHelpPlugin.getDefault().getStateLocation().toString();
+		cmdarray =
+			new String[] {
+				program,
+				"-D" + IEHost.SYS_PROPERTY_INSTALLURL + "=" + installURL,
+				"-D" + IEHost.SYS_PROPERTY_STATELOCATION + "=" + stateLocation,
+				"-Djava.library.path=" + libraryPath,
+				"-cp",
+				classPath,
+				IE_CLASS };
+		String cmd=cmdarray[0];
+		for(int i=1; i<cmdarray.length;i++)
+				cmd+=cmdarray[i];
+		if(Logger.LOG_DEBUG==Logger.getDebugLevel()){
+			Logger.logInfo("IEBrowserAdapter launch command is: "+cmd);
+		}
+
 	}
 	/*
 	 * @see IBrowser#close()
@@ -106,19 +121,25 @@ public class IEBrowserAdapter implements IBrowser, Runnable {
 	public void run() {
 		Process pr;
 		try {
-			pr = Runtime.getRuntime().exec(cmd);
-			(new StreamConsumer(pr.getInputStream())).start();
-			(new StreamConsumer(pr.getErrorStream())).start();
-			commandWriter = new PrintWriter(pr.getOutputStream(), true);
+			pr = Runtime.getRuntime().exec(cmdarray);
 		} catch (IOException e) {
+			Logger.logError(WorkbenchResources.getString("WE024",cmd), e);
 			pr = null;
-		}
-		launched = true;
-		if (pr == null)
+			launched = true;
 			return;
+		}
+		Thread ieOutConsumer=new StreamConsumer(pr.getInputStream());
+		ieOutConsumer.setName("Internet Explorer adapter output reader");
+		ieOutConsumer.start();
+		Thread ieErrConsumer=new StreamConsumer(pr.getErrorStream());
+		ieErrConsumer.setName("Internet Explorer adapter error reader");
+		ieErrConsumer.start();
+		commandWriter = new PrintWriter(pr.getOutputStream(), true);
+		launched = true;
 		try {
 			pr.waitFor();
 		} catch (InterruptedException e) {
+			Logger.logError(WorkbenchResources.getString("WE023"), e);
 		}
 		if (commandWriter != null) {
 			PrintWriter w = commandWriter;
@@ -130,7 +151,7 @@ public class IEBrowserAdapter implements IBrowser, Runnable {
 	 * Writes specified command to IE standard input
 	 */
 	private void sendCommand(String command) {
-		if (cmd == null) // did not initialize propertly
+		if (cmdarray == null) // did not initialize propertly
 			return;
 		if (commandWriter == null) {
 			if (IEHost.CMD_CLOSE.equals(command))
@@ -150,6 +171,7 @@ public class IEBrowserAdapter implements IBrowser, Runnable {
 		try {
 			commandWriter.println(command);
 		} catch (Exception e) {
+			Logger.logWarning(WorkbenchResources.getString("WW003"));
 		}
 	}
 	/** 
