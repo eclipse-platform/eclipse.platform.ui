@@ -5,6 +5,7 @@ package org.eclipse.ui.internal;
  * All Rights Reserved.
  */
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.ui.*;
 
 /**
@@ -27,6 +28,9 @@ public WWinPluginAction(IConfigurationElement actionElement, String runAttribute
 	super(actionElement, runAttribute);
 	this.window = window;
 	window.getSelectionService().addSelectionListener(this);
+	ISelection selection = window.getSelectionService().getSelection();
+	if (selection instanceof IStructuredSelection)
+		selectionChanged((IStructuredSelection) selection);
 }
 /**
  * Creates an instance of the delegate class as defined on

@@ -116,7 +116,7 @@ private void parseClasses(IConfigurationElement config) {
 	}
 	
 	// Get enablement block.					
-	IConfigurationElement[] children = config.getChildren("enablement"); //$NON-NLS-1$
+	IConfigurationElement[] children = config.getChildren(PluginActionBuilder.TAG_ENABLEMENT);
 	if (children.length > 0) {
 		enablementExpression = new ActionExpression(children[0]);
 		return;

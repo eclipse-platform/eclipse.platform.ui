@@ -61,6 +61,11 @@ public class PluginAction
 		this.runAttribute = runAttribute;
 		if (configElement.getAttribute(PluginActionBuilder.ATT_ENABLES_FOR) != null)
 			this.enabler = new SelectionEnabler(configElement);
+		else {
+			IConfigurationElement [] kids = configElement.getChildren(PluginActionBuilder.TAG_ENABLEMENT);
+			if (kids.length > 0)
+				this.enabler = new SelectionEnabler(configElement);
+		}
 
 		// Give enabler or delegate a chance to adjust enable state
 		selectionChanged(new StructuredSelection());

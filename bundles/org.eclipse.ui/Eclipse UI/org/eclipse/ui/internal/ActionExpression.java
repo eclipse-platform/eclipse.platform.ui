@@ -26,13 +26,19 @@ public class ActionExpression {
 	}
 	
 	public boolean isEnabledFor(Object object) {
-		if (root != null)
-			return root.isEnabledFor(object);
-		else
+		if (root == null)
 			return false;
+		return root.isEnabledFor(object);
 	}
 	
 	public boolean isEnabledFor(IStructuredSelection ssel) {
+		if (root == null)
+			return false;
+		if (ssel.isEmpty()) {
+			// We should pass a safe object in when there is no
+			// selection, to avoid NPE's.
+			return root.isEnabledFor(this);
+		}
 		for (Iterator elements=ssel.iterator(); elements.hasNext();) {
 			Object obj = elements.next();
 			if (!isEnabledFor(obj))
@@ -72,7 +78,7 @@ public class ActionExpression {
 		}
 		return childExpr;
 	}
-		
+	
 	protected abstract class AbstractExpression {
 		public abstract void readFrom(IConfigurationElement element) 
 			throws IllegalStateException;
