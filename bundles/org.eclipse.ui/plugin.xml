@@ -146,6 +146,9 @@
             id="org.eclipse.ui.project.closeProject">
       </actionDefinition>     
       <actionDefinition
+            id="org.eclipse.ui.project.buildProject">
+      </actionDefinition> 
+      <actionDefinition
             id="org.eclipse.ui.project.rebuildProject">
       </actionDefinition>     
 
@@ -361,7 +364,7 @@
                id="org.eclipse.ui.file.revert">
          </accelerator>         
          <accelerator
-               key="F5"
+               key=""
                id="org.eclipse.ui.file.refresh">
          </accelerator>    
          <accelerator
@@ -434,6 +437,10 @@
                key=""
                id="org.eclipse.ui.project.closeProject">
          </accelerator>
+         <accelerator
+               key=""
+               id="org.eclipse.ui.project.buildProject">
+         </accelerator>  
          <accelerator
                key=""
                id="org.eclipse.ui.project.rebuildProject">
@@ -660,7 +667,7 @@
                id="org.eclipse.ui.file.revert">
          </accelerator>         
          <accelerator
-               key="F5"
+               key=""
                id="org.eclipse.ui.file.refresh">
          </accelerator>    
          <accelerator
@@ -732,6 +739,10 @@
                key=""
                id="org.eclipse.ui.project.closeProject">
          </accelerator>
+         <accelerator
+               key=""
+               id="org.eclipse.ui.project.buildProject">
+         </accelerator> 
          <accelerator
                key=""
                id="org.eclipse.ui.project.rebuildProject">
