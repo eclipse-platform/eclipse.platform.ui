@@ -19,10 +19,5 @@
     <classpathentry kind="src" path="Eclipse UI Text Editor"/>
     <classpathentry kind="src" path="Eclipse UI Editor Support"/>
     <classpathentry kind="src" path="Eclipse UI Standard Components"/>
-    <classpathentry kind="var"
-        path="ECLIPSE_HOME/plugins/org.eclipse.vcm.ui/vcmui.jar" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.vcm.ui/vcmuisrc.zip"/>
-    <classpathentry kind="var"
-        path="ECLIPSE_HOME/plugins/org.eclipse.jdt.ui/jdt.jar"
-        rootpath="" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.jdt.ui/jdtsrc.zip"/>
     <classpathentry kind="output" path="bin"/>
 </classpath>

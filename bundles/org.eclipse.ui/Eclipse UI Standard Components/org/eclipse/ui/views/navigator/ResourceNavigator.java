@@ -4,6 +4,7 @@ package org.eclipse.ui.views.navigator;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -15,6 +16,8 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.*;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.NewWizardAction;
@@ -27,14 +30,13 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.part.*;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.views.internal.framelist.FrameList;
-import org.eclipse.ui.views.internal.navigator.*;
 
 /**
  * Implements the Resource Navigator view.
  */
 public class ResourceNavigator
 	extends ViewPart
-	implements ISetSelectionTarget, IResourceNavigatorPart {
+	implements ISetSelectionTarget, IResourceTreeNavigatorPart {
 	private TreeViewer viewer;
 	private IDialogSettings settings;
 	private IMemento memento;
@@ -44,14 +46,9 @@ public class ResourceNavigator
 
 	protected PropertyDialogAction propertyDialogAction;
 	protected NewWizardAction newWizardAction;
-
-	//The action factories
-	protected GotoActionContributionFactory gotoFactory;
-	protected OpenActionContributionFactory openActionFactory;
-	protected RefactorActionContributionFactory refactorFactory;
-	protected WorkbenchStateActionContributionFactory workbenchFactory;
-	protected ActionBarMenuContributionFactory actionMenuFactory;
-
+	
+	protected ResourceNavigatorActionFactory actionFactory;
+	
 	//The filter the resources are cleared up on
 	private ResourcePatternFilter patternFilter = new ResourcePatternFilter();
 
@@ -149,7 +146,7 @@ public class ResourceNavigator
 		viewer.setUseHashlookup(true);
 		viewer.setContentProvider(new WorkbenchContentProvider());
 		viewer.setLabelProvider(
-			new DecoratingLabelProvider(new WorkbenchLabelProvider(), null));
+			new DecoratingLabelProvider(new WorkbenchLabelProvider()));
 		viewer.addFilter(this.patternFilter);
 		if (memento != null)
 			restoreFilters();
@@ -171,14 +168,11 @@ public class ResourceNavigator
 
 		makeActions();
 		initResourceSorter();
-		addKeyListeners();
-		addMouseListeners();
-		addSelectionChangedListeners();
 
 		// Update the global action enable state to match
 		// the current selection.
 		IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
-		updateGlobalActions(selection);
+		actionFactory.updateGlobalActions(selection);
 
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
@@ -190,8 +184,16 @@ public class ResourceNavigator
 				handleDoubleClick(event);
 			}
 		});
+		viewer.getControl().addKeyListener(new KeyListener() {
+			public void keyPressed(KeyEvent event) {
+				handleKeyPressed(event);
+			}
+			public void keyReleased(KeyEvent event) {
+				handleKeyReleased(event);
+			}
+		});
 
-		fillActionBars();
+		actionFactory.fillActionBars(selection);
 
 		getSite().setSelectionProvider(viewer);
 
@@ -231,19 +233,7 @@ public class ResourceNavigator
 		}
 
 	}
-	/**
-	 * Contributes actions to the local tool bar and local pulldown menu.
-	 * @since 2.0
-	 */
-	protected void fillActionBars() {
-		IActionBars actionBars = getViewSite().getActionBars();
-		IToolBarManager toolBar = actionBars.getToolBarManager();
-		gotoFactory.fillToolBar(toolBar);
-		actionBars.updateActionBars();
 
-		IMenuManager menu = actionBars.getMenuManager();
-		actionMenuFactory.fillMenu(menu,getResourceSorter());
-	}
 	/**
 	 * Called when the context menu is about to open.
 	 */
@@ -251,9 +241,17 @@ public class ResourceNavigator
 		IStructuredSelection selection =
 			(IStructuredSelection) getResourceViewer().getSelection();
 
-		updateActions(selection);
+		propertyDialogAction.selectionChanged(selection);
+		actionFactory.updateGlobalActions(selection);
 
-		fillFileMenu(menu, selection);
+		MenuManager newMenu =
+			new MenuManager(ResourceNavigatorMessages.getString("ResourceNavigator.new"));
+		//$NON-NLS-1$
+		menu.add(newMenu);
+		new NewWizardMenu(newMenu, getSite().getWorkbenchWindow(), false);
+		
+		actionFactory.fillPopUpMenu(menu,selection);
+		
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS + "-end"));
 		//$NON-NLS-1$
@@ -261,31 +259,6 @@ public class ResourceNavigator
 
 		if (propertyDialogAction.isApplicableForSelection())
 			menu.add(propertyDialogAction);
-	}
-	/**
-	 * Add file / resource actions to the context sensitive menu.
-	 * @param menu the context sensitive menu
-	 * @param selection the current selection in the project explorer
-	 * @since 2.0
-	 */
-	protected void fillFileMenu(
-		IMenuManager menu,
-		IStructuredSelection selection) {
-	
-		MenuManager newMenu =
-			new MenuManager(ResourceNavigatorMessages.getString("ResourceNavigator.new"));
-		//$NON-NLS-1$
-		menu.add(newMenu);
-		new NewWizardMenu(newMenu, getSite().getWorkbenchWindow(), false);
-
-		gotoFactory.fillMenu(menu, selection);
-		openActionFactory.fillMenu(menu, selection);
-		menu.add(new Separator());
-		refactorFactory.fillMenu(menu, selection);
-		
-		menu.add(new Separator());
-		workbenchFactory.fillMenu(menu, selection);
-
 	}
 
 	/** 
@@ -336,14 +309,22 @@ public class ResourceNavigator
 	 * Returns the current sorter.
 	 * @since 2.0
 	 */
-	protected ResourceSorter getResourceSorter() {
-		return (ResourceSorter) getResourceViewer().getSorter();
+	public ResourceSorter getResourceSorter() {
+		return (ResourceSorter) getTreeViewer().getSorter();
 	}
+	/**
+	 * Returns the resource viewer which shows the resource hierarchy.
+	 * @since 2.0
+	 */
+	public Viewer getResourceViewer() {
+		return getTreeViewer();
+	}
+	
 	/**
 	 * Returns the tree viewer which shows the resource hierarchy.
 	 * @since 2.0
 	 */
-	public TreeViewer getResourceViewer() {
+	public TreeViewer getTreeViewer() {
 		return viewer;
 	}
 	/**
@@ -390,7 +371,7 @@ public class ResourceNavigator
 				return path.makeRelative().toString();
 			}
 		} else {
-			return ((ILabelProvider) getResourceViewer().getLabelProvider()).getText(
+			return ((ILabelProvider) getTreeViewer().getLabelProvider()).getText(
 				element);
 		}
 	}
@@ -400,8 +381,10 @@ public class ResourceNavigator
 	 * @since 2.0
 	 */
 	protected void handleDoubleClick(DoubleClickEvent event) {
-		IStructuredSelection s = (IStructuredSelection) event.getSelection();
-		Object element = s.getFirstElement();
+		IStructuredSelection selection = (IStructuredSelection) event.getSelection();
+		Object element = selection.getFirstElement();
+		
+		actionFactory.handleDoubleClick(selection);
 
 		// 1GBZIA0: ITPUI:WIN2000 - Double-clicking in navigator should expand/collapse containers
 		if (viewer.isExpandable(element)) {
@@ -418,9 +401,26 @@ public class ResourceNavigator
 	protected void handleSelectionChanged(SelectionChangedEvent event) {
 		IStructuredSelection sel = (IStructuredSelection) event.getSelection();
 		updateStatusLine(sel);
-		updateGlobalActions(sel);
+		actionFactory.updateGlobalActions(sel);
+		actionFactory.selectionChanged(sel);
 		linkToEditor(sel);
 	}
+	
+	/**
+	 * Handles a key press in viewer. By default do nothing.
+	 */
+	protected void handleKeyPressed(KeyEvent event) {
+		
+	}
+	
+	/**
+	 * Handles a key release in viewer.
+	 */
+	protected void handleKeyReleased(KeyEvent event) {
+		actionFactory.handleKeyReleased(event);
+		
+	}
+	
 	/* (non-Javadoc)
 	 * Method declared on IViewPart.
 	 */
@@ -523,20 +523,15 @@ public class ResourceNavigator
 	protected void makeActions() {
 		Shell shell = getShell();
 
-		gotoFactory = new GotoActionContributionFactory(frameList, this);
-		openActionFactory = new OpenActionContributionFactory(getSite(), shell);
-		refactorFactory = new RefactorActionContributionFactory(getResourceViewer());
-		workbenchFactory = new WorkbenchStateActionContributionFactory(getResourceViewer().getControl());
-		actionMenuFactory = new ActionBarMenuContributionFactory(this);
-
 		newWizardAction = new NewWizardAction();
-
-		gotoFactory.makeActions();
-		openActionFactory.makeActions();
-		refactorFactory.makeActions();
-		refactorFactory.addGlobalActions(getViewSite().getActionBars());
-		workbenchFactory.makeActions();
-		actionMenuFactory.makeActions();
+		
+		actionFactory = 
+			new ResourceNavigatorActionFactory(
+				frameList,
+				shell,
+				this);
+				
+		actionFactory.makeActions();
 		propertyDialogAction =
 			new PropertyDialogAction(getShell(), getResourceViewer());
 	
@@ -672,7 +667,7 @@ public class ResourceNavigator
 	 * @see IWorkbenchPart#setFocus()
 	 */
 	public void setFocus() {
-		getResourceViewer().getTree().setFocus();
+		getTreeViewer().getTree().setFocus();
 	}
 	/**
 	 * Note: For experimental use only.
@@ -681,54 +676,27 @@ public class ResourceNavigator
 	 * @param decorator a label decorator or <code>null</code> for no decorations.
 	 */
 	public void setLabelDecorator(ILabelDecorator decorator) {
-		DecoratingLabelProvider provider =
-			(DecoratingLabelProvider) getResourceViewer().getLabelProvider();
-		provider.setLabelDecorator(decorator);
+		//DecoratingLabelProvider provider =
+		//	(DecoratingLabelProvider) getTreeViewer().getLabelProvider();
+		//provider.setLabelDecorator(decorator);
 	}
 	/**
 	 * Set the current sorter.
 	 * @since 2.0
 	 */
 	public void setResourceSorter(ResourceSorter sorter) {
-		TreeViewer viewer = getResourceViewer();
+		TreeViewer viewer = getTreeViewer();
 		viewer.getControl().setRedraw(false);
 		viewer.setSorter(sorter);
 		viewer.getControl().setRedraw(true);
 		settings.put(STORE_SORT_TYPE, sorter.getCriteria());
-		actionMenuFactory.updateSortActions(sorter);
+		actionFactory.updateSortActions();
 	}
-	/**
-	 * Updates all actions with the given selection.
-	 * Necessary when popping up a menu, because some of the enablement criteria
-	 * may have changed, even if the selection in the viewer hasn't.
-	 * E.g. A project was opened or closed.
-	 */
-	void updateActions(IStructuredSelection selection) {
-		
-		propertyDialogAction.selectionChanged(selection);
-		updateGlobalActions(selection);
-		gotoFactory.updateActions(selection);
-		openActionFactory.updateActions(selection);
-		refactorFactory.updateActions(selection);
-		workbenchFactory.updateActions(selection);
-		actionMenuFactory.updateActions(selection);
-	}
-	/**
-	 * Updates the global actions with the given selection.
-	 * Be sure to invoke after actions objects have updated, since can* methods delegate to action objects.
-	 */
-	void updateGlobalActions(IStructuredSelection selection) {
-		
-		IActionBars actionBars = getViewSite().getActionBars();
-		refactorFactory.updateGlobalActions(selection,actionBars);
-		workbenchFactory.updateGlobalActions(selection);
-
-		actionBars.updateActionBars();
-	}
+	
 	
 	/**
 	 * Updates the message shown in the status line.
-	 *
+	 *					
 	 * @param selection the current selection
 	 */
 	void updateStatusLine(IStructuredSelection selection) {
@@ -751,7 +719,7 @@ public class ResourceNavigator
 			setTitleToolTip(""); //$NON-NLS-1$
 		} else {
 			ILabelProvider labelProvider =
-				(ILabelProvider) getResourceViewer().getLabelProvider();
+				(ILabelProvider) getTreeViewer().getLabelProvider();
 			setTitle(
 				ResourceNavigatorMessages.format(
 					"ResourceNavigator.title",
@@ -762,35 +730,24 @@ public class ResourceNavigator
 	}
 
 	/**
-	 * Add in a key listener for any actions that listen
-	 * to the key strokes.
-	 */
+ 	* Set the values of the filter preference to be the 
+ 	* strings in preference values
+ 	*/
 
-	protected void addKeyListeners() {
+	public void setFiltersPreference(String[] patterns){
+	
+		StringWriter writer = new StringWriter();
 
-		refactorFactory.addKeyListeners();
-		workbenchFactory.addKeyListeners();
+		for (int i = 0; i < patterns.length; i++) {
+			if (i != 0)
+				writer.write(ResourcePatternFilter.COMMA_SEPARATOR);
+			writer.write(patterns[i]);
+		}
+
+		getPlugin().getPreferenceStore().setValue(
+			ResourcePatternFilter.FILTERS_TAG,
+			writer.toString());
+	
 	}
-
-	/**
-	 * Add in a mouse listener for any actions that listen
-	 * to the mouse events.
-	 */
-
-	protected void addMouseListeners() {
-
-		openActionFactory.addMouseListeners(getResourceViewer());
-	}
-
-	/**
-	 * Add in a selection changed listener for any factory
-	 * that listens.
-	 */
-
-	protected void addSelectionChangedListeners() {
-
-		getResourceViewer().addSelectionChangedListener(gotoFactory);
-		getResourceViewer().addSelectionChangedListener(openActionFactory);
-	}
-
+		
 }

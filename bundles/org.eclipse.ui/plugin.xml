@@ -48,6 +48,7 @@
 <extension-point name="%ExtPoint.resourceFilters" id="resourceFilters"/>
 <extension-point name="%ExtPoint.markerImageProviders" id="markerImageProviders"/>
 <extension-point name="%ExtPoint.projectNatureImages" id="projectNatureImages"/>
+<extension-point name="Decorators" id="decorators"/>
 
 <!-- Extensions -->
 
@@ -110,6 +111,7 @@
 	<view
        id="org.eclipse.ui.views.ResourceNavigator"
 	   name="%Views.ResourceNavigator"
+	   accelerator="Ctrl+Alt+N"
 	   category="org.eclipse.ui"
 	   class="org.eclipse.ui.views.navigator.ResourceNavigator"
 	   icon="icons/basic/cview16/filenav_nav.gif">
@@ -117,12 +119,14 @@
 	<view
        id="org.eclipse.ui.views.BookmarkNavigator"
 	   name="%Views.BookmarkNavigator"
+	   accelerator="Ctrl+Alt+B"
 	   category="org.eclipse.ui"
 	   class="org.eclipse.ui.views.bookmarkexplorer.BookmarkNavigator"
 	   icon="icons/basic/cview16/bkmrk_nav.gif">
 	</view>
 	<view
        id="org.eclipse.ui.views.PropertySheet"
+	   accelerator="Ctrl+Alt+P"
 	   name="%Views.PropertySheet"
 	   category="org.eclipse.ui"
 	   class="org.eclipse.ui.views.properties.PropertySheet"
@@ -131,6 +135,7 @@
 	<view
 	   id="org.eclipse.ui.views.ContentOutline"
 	   name="%Views.ContentOutline"
+	   accelerator="Ctrl+Alt+O"
 	   category="org.eclipse.ui"
 	   class="org.eclipse.ui.views.contentoutline.ContentOutline"
 	   icon="icons/basic/cview16/outline_co.gif">
@@ -138,6 +143,7 @@
 	<view
 	   id="org.eclipse.ui.views.TaskList"
 	   name="%Views.TaskList"
+	   accelerator="Ctrl+Alt+K"
 	   category="org.eclipse.ui"
 	   class="org.eclipse.ui.views.tasklist.TaskList"
 	   icon="icons/basic/cview16/tasks_tsk.gif">

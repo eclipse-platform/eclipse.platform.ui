@@ -45,7 +45,8 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	private EditorRegistry editorRegistry;
 	// Manager that maps project nature ids to images
 	private ProjectImageRegistry projectImageRegistry;
-
+	// Manager that handles the decorators registered
+	private DecoratorManager decoratorManager;
 	// Global workbench ui plugin flag. Only workbench implementation is allowed to use this flag
 	// All other plugins, examples, or test cases must *not* use this flag.
 	public static boolean DEBUG = false;
@@ -301,7 +302,7 @@ protected void initializeDefaultPreferences(IPreferenceStore store) {
 	store.setDefault(IPreferenceConstants.SAVE_ALL_BEFORE_BUILD, false);
 	store.setDefault(IPreferenceConstants.WELCOME_DIALOG, true);
 	store.setDefault(IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR, true);
-	store.setDefault(IPreferenceConstants.REUSE_EDITORS, false);
+	store.setDefault(IPreferenceConstants.REUSE_EDITORS, 10);
 	store.setDefault(IPreferenceConstants.VIEW_TAB_POSITION, SWT.BOTTOM);
 	store.setDefault(IPreferenceConstants.EDITOR_TAB_POSITION, SWT.TOP);
 	store.setDefault(
@@ -317,6 +318,7 @@ protected void initializeDefaultPreferences(IPreferenceStore store) {
 		IWorkbenchPreferenceConstants.PROJECT_OPEN_NEW_PERSPECTIVE,
 		IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_PAGE);
 	store.setDefault(IPreferenceConstants.REUSE_PERSPECTIVES, false);
+	store.setDefault(IPreferenceConstants.OPEN_PERSPECTIVE_MRU, false);
 	store.setDefault(IPreferenceConstants.OPEN_VIEW_MODE, 
 		IPreferenceConstants.OVM_EMBED);
 		
@@ -420,5 +422,15 @@ public static void log(String message, IStatus status) {
 }
 public void setWorkbench(IWorkbench aWorkbench) {
 	this.workbench = aWorkbench;
+}
+
+/**
+ * Get the decorator manager used for the receiver.
+ */
+
+public DecoratorManager getDecoratorManager(){
+	if(decoratorManager == null)
+		decoratorManager = new DecoratorManager();
+	return decoratorManager;
 }
 }

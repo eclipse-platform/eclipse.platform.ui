@@ -4,9 +4,11 @@ package org.eclipse.jface.viewers;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.ListenerList;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.internal.DecoratorManager;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * A decorating label provider is a label provider which combines 
@@ -15,9 +17,23 @@ import org.eclipse.jface.util.ListenerList;
  */
 public class DecoratingLabelProvider extends LabelProvider {
 	private ILabelProvider provider;
-	private ILabelDecorator decorator;
 	// Need to keep our own list of listeners
 	private ListenerList listeners = new ListenerList();
+	
+	//The decorator to use instead of the registered one
+	private ILabelDecorator decorator;
+/**
+ * Creates a decorating label provider which uses the given label decorator
+ * to decorate labels provided by the given label provider.
+ *
+ * @param provider the nested label provider
+ * @param decorator the label decorator, or <code>null</code> if no decorator is to be used initially
+ */
+public DecoratingLabelProvider(ILabelProvider provider) {
+	Assert.isNotNull(provider);
+	this.provider = provider;
+}
+
 /**
  * Creates a decorating label provider which uses the given label decorator
  * to decorate labels provided by the given label provider.
@@ -30,6 +46,7 @@ public DecoratingLabelProvider(ILabelProvider provider, ILabelDecorator decorato
 	this.provider = provider;
 	this.decorator = decorator;
 }
+
 /**
  * The <code>DecoratingLabelProvider</code> implementation of this <code>IBaseLabelProvider</code> method
  * adds the listener to both the nested label provider and the label decorator.
@@ -39,9 +56,10 @@ public DecoratingLabelProvider(ILabelProvider provider, ILabelDecorator decorato
 public void addListener(ILabelProviderListener listener) {
 	super.addListener(listener);
 	provider.addListener(listener);
-	if (decorator != null) {
+	if(decorator == null)
+		getDecoratorManager().addListener(listener);
+	else 
 		decorator.addListener(listener);
-	}
 	listeners.add(listener);
 }
 /**
@@ -50,9 +68,6 @@ public void addListener(ILabelProviderListener listener) {
  */
 public void dispose() {
 	provider.dispose();
-	if (decorator != null) {
-		decorator.dispose();
-	}
 }
 /**
  * The <code>DecoratingLabelProvider</code> implementation of this 
@@ -63,21 +78,27 @@ public void dispose() {
  */
 public Image getImage(Object element) {
 	Image image = provider.getImage(element);
-	if (decorator != null) {
-		Image decorated = decorator.decorateImage(image, element);
-		if (decorated != null) {
-			return decorated;
-		}
+	Image decorated;
+	if(decorator == null)
+		decorated = getDecoratorManager().decorateImage(image, element);
+	else
+		decorated = decorator.decorateImage(image, element);
+		
+	if (decorated != null) {
+		return decorated;
 	}
 	return image;
 }
 /**
  * Returns the label decorator, or <code>null</code> if none has been set.
+ * This is no longer in use and is provided only for backwards
+ * compatibility.
  *
- * @return the label decorator, or <code>null</code> if none has been set.
+ * @return <code>null</code>
+ * @since 2.0
  */
 public ILabelDecorator getLabelDecorator() {
-	return decorator;
+	return null;
 }
 /**
  * Returns the nested label provider.
@@ -96,12 +117,15 @@ public ILabelProvider getLabelProvider() {
  */
 public String getText(Object element) {
 	String text = provider.getText(element);
-	if (decorator != null) {
-		String decorated = decorator.decorateText(text, element);
-		if (decorated != null) {
-			return decorated;
-		}
-	}
+	String decorated;
+	
+	if(decorator == null)
+		decorated = getDecoratorManager().decorateText(text, element);
+	else
+		decorated = decorator.decorateText(text, element);
+		
+	if (decorated != null)
+		return decorated;
 	return text;
 }
 /**
@@ -113,9 +137,10 @@ public String getText(Object element) {
 public boolean isLabelProperty(Object element, String property) {
 	if (provider.isLabelProperty(element, property))
 		return true;
-	if (decorator != null && decorator.isLabelProperty(element, property))
-		return true;
-	return false;
+	if(decorator == null)
+		return getDecoratorManager().isLabelProperty(element, property);
+	else
+		return decorator.isLabelProperty(element, property);
 }
 /**
  * The <code>DecoratingLabelProvider</code> implementation of this <code>IBaseLabelProvider</code> method
@@ -126,36 +151,29 @@ public boolean isLabelProperty(Object element, String property) {
 public void removeListener(ILabelProviderListener listener) {
 	super.removeListener(listener);
 	provider.removeListener(listener);
-	if (decorator != null) {
+	if(decorator == null)
+		getDecoratorManager().removeListener(listener);
+	else
 		decorator.removeListener(listener);
-	}
 	listeners.remove(listener);
 }
 /**
  * Sets the label decorator.
- * Removes all known listeners from the old decorator, and adds all known listeners to the new decorator.
- * The old decorator is not disposed.
- * Fires a label provider changed event indicating that all labels should be updated.
- * Has no effect if the given decorator is identical to the current one.
+ * This method is retained for backwards compatibility and 
+ * by default does nothing.
  *
- * @param decorator the label decorator, or <code>null</code> if no decorations are to be applied
+ * @param decorator the label decorator, or <code>null</code>
+ * if no decorations are to be applied
+ * @since 2.0
  */
 public void setLabelDecorator(ILabelDecorator decorator) {
-	ILabelDecorator oldDecorator = this.decorator;
-	if (oldDecorator != decorator) {
-		Object[] listeners = this.listeners.getListeners();
-		if (oldDecorator != null) {
-			for (int i = 0; i < listeners.length; ++i) {
-				oldDecorator.removeListener((ILabelProviderListener) listeners[i]);
-			}
-		}
-		this.decorator = decorator;
-		if (decorator != null) {
-			for (int i = 0; i < listeners.length; ++i) {
-				decorator.addListener((ILabelProviderListener) listeners[i]);
-			}
-		}
-		fireLabelProviderChanged(new LabelProviderChangedEvent(this));
-	}
+
+}
+
+/**
+ * Get the decorator manager the receiver is using.
+ */
+private DecoratorManager getDecoratorManager(){
+	return WorkbenchPlugin.getDefault().getDecoratorManager();
 }
 }
