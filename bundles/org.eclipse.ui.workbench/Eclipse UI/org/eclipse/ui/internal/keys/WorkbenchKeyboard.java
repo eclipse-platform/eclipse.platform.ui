@@ -16,8 +16,10 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.TreeMap;
 import java.util.WeakHashMap;
+
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionEvent;
@@ -36,26 +38,27 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Widget;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.activities.IActivityManager;
+import org.eclipse.ui.commands.ActionHandler;
 import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.ICommandManager;
+import org.eclipse.ui.commands.IHandler;
 import org.eclipse.ui.commands.NotDefinedException;
-import org.eclipse.ui.keys.KeySequence;
-import org.eclipse.ui.keys.KeyStroke;
-import org.eclipse.ui.keys.ParseException;
-import org.eclipse.ui.keys.SWTKeySupport;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.commands.ActionHandler;
 import org.eclipse.ui.internal.commands.CommandManager;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.util.StatusLineContributionItem;
 import org.eclipse.ui.internal.util.Util;
+import org.eclipse.ui.keys.KeySequence;
+import org.eclipse.ui.keys.KeyStroke;
+import org.eclipse.ui.keys.ParseException;
+import org.eclipse.ui.keys.SWTKeySupport;
 
 /**
  * <p>
@@ -212,6 +215,12 @@ public final class WorkbenchKeyboard {
     }
 
     /**
+     * The activity manager to be used to resolve key bindings. This member
+     * variable should never be <code>null</code>.
+     */
+    private final IActivityManager activityManager;
+
+    /**
      * The command manager to be used to resolve key bindings. This member
      * variable should never be <code>null</code>.
      */
@@ -335,10 +344,12 @@ public final class WorkbenchKeyboard {
      *            must not be <code>null</code>.
      */
     public WorkbenchKeyboard(Workbench associatedWorkbench,
+            IActivityManager associatedActivityManager,
             ICommandManager associatedCommandManager) {
 
         workbench = associatedWorkbench;
         state = new KeyBindingState(associatedWorkbench);
+        activityManager = associatedActivityManager;
         commandManager = associatedCommandManager;
         workbench.addWindowListener(windowListener);
     }
@@ -412,24 +423,23 @@ public final class WorkbenchKeyboard {
         resetState();
 
         // Dispatch to the handler.
-        Map actionsById = ((CommandManager) commandManager).getActionsById();
-        org.eclipse.ui.commands.IHandler action = (org.eclipse.ui.commands.IHandler) actionsById
-                .get(commandId);
+        Map handlersByCommandId = ((CommandManager) commandManager).getHandlersByCommandId();
+        IHandler handler = (IHandler) handlersByCommandId.get(commandId);
 
         if (DEBUG && DEBUG_VERBOSE) {
-            if (action == null) {
+            if (handler == null) {
                 System.out.println("KEYS >>>     action  = null"); //$NON-NLS-1$
             } else {
                 System.out.println("KEYS >>>     action = " //$NON-NLS-1$
-                        + ((ActionHandler) action).getAction());
+                        + ((ActionHandler) handler).getAction());
                 System.out.println("KEYS >>>     action.isEnabled() = " //$NON-NLS-1$
-                        + action.isEnabled());
+                        + ((ActionHandler) handler).getAction().isEnabled());
             }
         }
 
-        if (action != null && action.isEnabled()) {
+        if (handler != null && ((ActionHandler) handler).getAction().isEnabled()) {
             try {
-                action.execute(event);
+                handler.execute(event);
             } catch (Exception e) {
                 String message = "Action for command '" + commandId //$NON-NLS-1$
                         + "' failed to execute properly."; //$NON-NLS-1$
@@ -438,7 +448,7 @@ public final class WorkbenchKeyboard {
             }
         }
 
-        return (action != null);
+        return (handler != null);
     }
 
     /**
@@ -670,7 +680,7 @@ public final class WorkbenchKeyboard {
             String commandId = (String) entry.getValue();
             ICommand command = commandManager.getCommand(commandId);
             // TODO The enabled property of ICommand is broken.
-            if (!command.isDefined() || !command.isActive() // ||
+            if (!command.isDefined() || !activityManager.getIdentifier(command.getId()).isEnabled() // ||
             // !command.isEnabled()
             ) {
                 partialMatchItr.remove();

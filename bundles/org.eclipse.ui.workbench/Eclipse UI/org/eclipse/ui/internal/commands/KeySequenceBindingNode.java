@@ -159,7 +159,7 @@ final class KeySequenceBindingNode {
 	static void add(
 		Map keyStrokeNodeByKeyStrokeMap,
 		KeySequence keySequence,
-		String activityId,
+		String contextId,
 		String keyConfigurationId,
 		int rank,
 		String platform,
@@ -184,7 +184,7 @@ final class KeySequenceBindingNode {
 
 		if (keySequenceBindingNode != null)
 			keySequenceBindingNode.add(
-				activityId,
+				contextId,
 				keyConfigurationId,
 				rank,
 				platform,
@@ -214,7 +214,7 @@ final class KeySequenceBindingNode {
 	static Map getAssignmentsByContextIdKeySequence(
 		Map keyStrokeNodeByKeyStrokeMap,
 		KeySequence prefix) {
-		Map assignmentsByActivityIdByKeySequence = new HashMap();
+		Map assignmentsByContextIdByKeySequence = new HashMap();
 		Iterator iterator = keyStrokeNodeByKeyStrokeMap.entrySet().iterator();
 
 		while (iterator.hasNext()) {
@@ -225,21 +225,21 @@ final class KeySequenceBindingNode {
 			List keyStrokes = new ArrayList(prefix.getKeyStrokes());
 			keyStrokes.add(keyStroke);
 			KeySequence keySequence = KeySequence.getInstance(keyStrokes);
-			Map childAssignmentsByActivityIdByKeySequence =
+			Map childAssignmentsByContextIdByKeySequence =
 				getAssignmentsByContextIdKeySequence(
 					keySequenceBindingNode.childKeyStrokeNodeByKeyStrokeMap,
 					keySequence);
 
-			if (childAssignmentsByActivityIdByKeySequence.size() >= 1)
-				assignmentsByActivityIdByKeySequence.putAll(
-					childAssignmentsByActivityIdByKeySequence);
+			if (childAssignmentsByContextIdByKeySequence.size() >= 1)
+				assignmentsByContextIdByKeySequence.putAll(
+					childAssignmentsByContextIdByKeySequence);
 
-			assignmentsByActivityIdByKeySequence.put(
+			assignmentsByContextIdByKeySequence.put(
 				keySequence,
-				keySequenceBindingNode.assignmentsByActivityId);
+				keySequenceBindingNode.assignmentsByContextId);
 		}
 
-		return assignmentsByActivityIdByKeySequence;
+		return assignmentsByContextIdByKeySequence;
 	}
 
 	static void getKeySequenceBindingDefinitions(
@@ -257,12 +257,12 @@ final class KeySequenceBindingNode {
 			List keyStrokes = new ArrayList(prefix.getKeyStrokes());
 			keyStrokes.add(keyStroke);
 			KeySequence keySequence = KeySequence.getInstance(keyStrokes);
-			Map activityMap = keySequenceBindingNode.activityMap;
-			Iterator iterator2 = activityMap.entrySet().iterator();
+			Map contextMap = keySequenceBindingNode.contextMap;
+			Iterator iterator2 = contextMap.entrySet().iterator();
 
 			while (iterator2.hasNext()) {
 				Map.Entry entry2 = (Map.Entry) iterator2.next();
-				String activityId = (String) entry2.getKey();
+				String contextId = (String) entry2.getKey();
 				Map keyConfigurationMap = (Map) entry2.getValue();
 				Iterator iterator3 = keyConfigurationMap.entrySet().iterator();
 
@@ -293,7 +293,7 @@ final class KeySequenceBindingNode {
 										(String) iterator6.next();
 									keySequenceBindingDefinitions.add(
 										new KeySequenceBindingDefinition(
-											activityId,
+											contextId,
 											commandId,
 											keyConfigurationId,
 											keySequence,
@@ -372,7 +372,7 @@ final class KeySequenceBindingNode {
 	static void remove(
 		Map keyStrokeNodeByKeyStrokeMap,
 		KeySequence keySequence,
-		String activityId,
+		String contextId,
 		String keyConfigurationId,
 		int rank,
 		String platform,
@@ -393,7 +393,7 @@ final class KeySequenceBindingNode {
 		}
 
 		keySequenceBindingNode.remove(
-			activityId,
+			contextId,
 			keyConfigurationId,
 			rank,
 			platform,
@@ -403,7 +403,7 @@ final class KeySequenceBindingNode {
 	static void remove(
 		Map keyStrokeNodeByKeyStrokeMap,
 		KeySequence keySequence,
-		String activityId,
+		String contextId,
 		String keyConfigurationId,
 		int rank,
 		String platform,
@@ -425,7 +425,7 @@ final class KeySequenceBindingNode {
 		}
 
 		keySequenceBindingNode.remove(
-			activityId,
+			contextId,
 			keyConfigurationId,
 			rank,
 			platform,
@@ -444,7 +444,7 @@ final class KeySequenceBindingNode {
 			) {
 			KeySequenceBindingNode keySequenceBindingNode =
 				(KeySequenceBindingNode) iterator.next();
-			keySequenceBindingNode.solveAssignmentsByActivityId(
+			keySequenceBindingNode.solveAssignmentsByContextId(
 				keyConfigurationIds,
 				platforms,
 				locales);
@@ -458,7 +458,7 @@ final class KeySequenceBindingNode {
 
 	static void solve(
 		Map keyStrokeNodeByKeyStrokeMap,
-		String[] activityIds,
+		String[] contextIds,
 		String[] keyConfigurationIds,
 		String[] platforms,
 		String[] locales) {
@@ -469,21 +469,21 @@ final class KeySequenceBindingNode {
 			KeySequenceBindingNode keySequenceBindingNode =
 				(KeySequenceBindingNode) iterator.next();
 			keySequenceBindingNode.solveMatch(
-				activityIds,
+				contextIds,
 				keyConfigurationIds,
 				platforms,
 				locales);
 			solve(
 				keySequenceBindingNode.childKeyStrokeNodeByKeyStrokeMap,
-				activityIds,
+				contextIds,
 				keyConfigurationIds,
 				platforms,
 				locales);
 		}
 	}
-	private Map activityMap = new HashMap();
+	private Map contextMap = new HashMap();
 
-	private Map assignmentsByActivityId = new HashMap();
+	private Map assignmentsByContextId = new HashMap();
 	private Map childKeyStrokeNodeByKeyStrokeMap = new HashMap();
 	private Match match = null;
 
@@ -491,17 +491,17 @@ final class KeySequenceBindingNode {
 	}
 
 	private void add(
-		String activityId,
+		String contextId,
 		String keyConfigurationId,
 		int rank,
 		String platform,
 		String locale,
 		String commandId) {
-		Map keyConfigurationMap = (Map) activityMap.get(activityId);
+		Map keyConfigurationMap = (Map) contextMap.get(contextId);
 
 		if (keyConfigurationMap == null) {
 			keyConfigurationMap = new HashMap();
-			activityMap.put(activityId, keyConfigurationMap);
+			contextMap.put(contextId, keyConfigurationMap);
 		}
 
 		Map rankMap = (Map) keyConfigurationMap.get(keyConfigurationId);
@@ -536,12 +536,12 @@ final class KeySequenceBindingNode {
 	}
 
 	private void remove(
-		String activityId,
+		String contextId,
 		String keyConfigurationId,
 		int rank,
 		String platform,
 		String locale) {
-		Map keyConfigurationMap = (Map) activityMap.get(activityId);
+		Map keyConfigurationMap = (Map) contextMap.get(contextId);
 
 		if (keyConfigurationMap != null) {
 			Map rankMap = (Map) keyConfigurationMap.get(keyConfigurationId);
@@ -566,7 +566,7 @@ final class KeySequenceBindingNode {
 										keyConfigurationId);
 
 									if (keyConfigurationMap.isEmpty())
-										activityMap.remove(activityId);
+										contextMap.remove(contextId);
 								}
 							}
 						}
@@ -577,13 +577,13 @@ final class KeySequenceBindingNode {
 	}
 
 	private void remove(
-		String activityId,
+		String contextId,
 		String keyConfigurationId,
 		int rank,
 		String platform,
 		String locale,
 		String commandId) {
-		Map keyConfigurationMap = (Map) activityMap.get(activityId);
+		Map keyConfigurationMap = (Map) contextMap.get(contextId);
 
 		if (keyConfigurationMap != null) {
 			Map rankMap = (Map) keyConfigurationMap.get(keyConfigurationId);
@@ -614,7 +614,7 @@ final class KeySequenceBindingNode {
 												keyConfigurationId);
 
 											if (keyConfigurationMap.isEmpty())
-												activityMap.remove(activityId);
+												contextMap.remove(contextId);
 										}
 									}
 								}
@@ -626,17 +626,17 @@ final class KeySequenceBindingNode {
 		}
 	}
 
-	private void solveAssignmentsByActivityId(
+	private void solveAssignmentsByContextId(
 		String[] keyConfigurationIds,
 		String[] platforms,
 		String[] locales) {
-		assignmentsByActivityId.clear();
+		assignmentsByContextId.clear();
 
-		for (Iterator iterator = activityMap.entrySet().iterator();
+		for (Iterator iterator = contextMap.entrySet().iterator();
 			iterator.hasNext();
 			) {
 			Map.Entry entry = (Map.Entry) iterator.next();
-			String activityId = (String) entry.getKey();
+			String contextId = (String) entry.getKey();
 			Map keyConfigurationMap = (Map) entry.getValue();
 			KeySequenceBindingNode.Assignment assignment = null;
 
@@ -742,22 +742,22 @@ final class KeySequenceBindingNode {
 				}
 
 			if (assignment != null)
-				assignmentsByActivityId.put(activityId, assignment);
+				assignmentsByContextId.put(contextId, assignment);
 		}
 	}
 
 	private void solveMatch(
-		String[] activityIds,
+		String[] contextIds,
 		String[] keyConfigurationIds,
 		String[] platforms,
 		String[] locales) {
 		match = null;
 
-		for (int activity = 0;
-			activity < activityIds.length && activity < 0xFF && match == null;
-			activity++) {
+		for (int context = 0;
+			context < contextIds.length && context < 0xFF && match == null;
+			context++) {
 			Map keyConfigurationMap =
-				(Map) activityMap.get(activityIds[activity]);
+				(Map) contextMap.get(contextIds[context]);
 
 			if (keyConfigurationMap != null)
 				for (int keyConfiguration = 0;
@@ -802,7 +802,7 @@ final class KeySequenceBindingNode {
 																.iterator()
 																.next()
 															: null,
-														(activity << 24)
+														(context << 24)
 															+ (keyConfiguration
 																<< 16)
 															+ (platform << 8)

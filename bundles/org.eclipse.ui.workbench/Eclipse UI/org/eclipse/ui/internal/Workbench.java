@@ -826,7 +826,7 @@ public final class Workbench implements IWorkbench {
 						workbenchCommandSupport.getCommandManager().getCommand(commandId);
 
 					if (command != null)
-						return command.isDefined() && command.isActive();
+						return command.isDefined() && workbenchActivitySupport.getActivityManager().getIdentifier(command.getId()).isEnabled();
 				}
 
 				return true;

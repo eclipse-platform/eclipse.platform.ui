@@ -52,7 +52,7 @@ public interface ICommandManager {
 	/**
 	 * TODO javadoc
 	 */
-	Set getActiveActivityIds();
+	Set getActiveContextIds();
 
 	/**
 	 * TODO javadoc
@@ -180,12 +180,12 @@ public interface ICommandManager {
 	/**
 	 * Sets the set of identifiers to active activities.
 	 * 
-	 * @param activeActivityIds
+	 * @param activeContextIds
 	 *            the set of identifiers to active activities. This set may be
 	 *            empty, but it must not be <code>null</code>. If this set
 	 *            is not empty, it must only contain instances of <code>String</code>.
 	 */
-	void setActiveActivityIds(Set activeActivityIds);
+	void setActiveContextIds(Set activeContextIds);
 
 	/**
 	 * TODO javadoc

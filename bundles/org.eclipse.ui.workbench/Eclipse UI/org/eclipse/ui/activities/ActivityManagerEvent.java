@@ -34,9 +34,9 @@ public final class ActivityManagerEvent {
 	 * @param definedActivityIdsChanged
 	 *            true, iff the definedActivityIds property changed.
 	 * @param definedCategoryIdsChanged
-	 *            true, iff the definedCategoryIdsChanged property changed.
+	 *            true, iff the definedCategoryIds property changed.
 	 * @param enabledActivityIdsChanged
-	 *            true, iff the enabledActivityIdsChanged property changed.
+	 *            true, iff the enabledActivityIds property changed.
 	 */
 	public ActivityManagerEvent(
 		IActivityManager activityManager,
@@ -72,18 +72,18 @@ public final class ActivityManagerEvent {
 	}
 
 	/**
-	 * Returns whether or not the definedCategoryIdsChanged property changed.
+	 * Returns whether or not the definedCategoryIds property changed.
 	 * 
-	 * @return true, iff the definedCategoryIdsChanged property changed.
+	 * @return true, iff the definedCategoryIds property changed.
 	 */
 	public boolean haveDefinedCategoryIdsChanged() {
 		return definedCategoryIdsChanged;
 	}
 
 	/**
-	 * Returns whether or not the enabledActivityIdsChanged property changed.
+	 * Returns whether or not the enabledActivityIds property changed.
 	 * 
-	 * @return true, iff the enabledActivityIdsChanged property changed.
+	 * @return true, iff the enabledActivityIds property changed.
 	 */
 	public boolean haveEnabledActivityIdsChanged() {
 		return enabledActivityIdsChanged;

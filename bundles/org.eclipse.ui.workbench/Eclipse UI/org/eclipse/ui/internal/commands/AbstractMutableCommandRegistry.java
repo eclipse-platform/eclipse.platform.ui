@@ -36,15 +36,15 @@ public abstract class AbstractMutableCommandRegistry
 		}
 	}
 
-	public void setActivityBindingDefinitions(List activityBindingDefinitions) {
-		activityBindingDefinitions =
+	public void setContextBindingDefinitions(List contextBindingDefinitions) {
+		contextBindingDefinitions =
 			Util.safeCopy(
-				activityBindingDefinitions,
+				contextBindingDefinitions,
 				ContextBindingDefinition.class);
 
-		if (!activityBindingDefinitions
-			.equals(this.activityBindingDefinitions)) {
-			this.activityBindingDefinitions = activityBindingDefinitions;
+		if (!contextBindingDefinitions
+			.equals(this.contextBindingDefinitions)) {
+			this.contextBindingDefinitions = contextBindingDefinitions;
 			fireCommandRegistryChanged();
 		}
 	}

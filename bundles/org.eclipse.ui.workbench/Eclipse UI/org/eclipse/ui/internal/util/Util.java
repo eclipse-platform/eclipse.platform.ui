@@ -65,6 +65,17 @@ public final class Util {
 			return left.compareTo(right);
 	}
 
+	public static int compare(Object left, Object right) {
+		if (left == null && right == null)
+			return 0;
+		else if (left == null)
+			return -1;
+		else if (right == null)
+			return 1;
+		else
+			return left.toString().compareTo(right.toString());
+	}	
+	
 	public static int compare(Comparable[] left, Comparable[] right) {
 		if (left == null && right == null)
 			return 0;

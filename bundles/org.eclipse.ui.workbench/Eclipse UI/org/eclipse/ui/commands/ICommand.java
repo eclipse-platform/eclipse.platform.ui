@@ -12,6 +12,7 @@
 package org.eclipse.ui.commands;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * <p>
@@ -57,6 +58,46 @@ public interface ICommand extends Comparable {
 	 */
 	void addCommandListener(ICommandListener commandListener);
 
+    /**
+     * Executes with the specified parameter.
+     * 
+     * @param parameter
+     *            the parameter.
+     * @throws ExecutionException
+     *             if an exception occurred during execution.
+     * @throws NotHandledException
+     *             if this is not handled.
+     */
+    void execute(Object parameter) throws ExecutionException, NotHandledException;
+
+    /**
+     * Returns an attribute value given an attribute name.
+     * 
+     * @param attributeName
+     *            the name of the attribute. Must not be <code>null</code>.
+     * @return the value of the attribute.
+     * @throws NotDefinedException
+     *             if the attribute is not defined.
+     * @throws NotHandledException
+     *             if this is not handled.
+     */
+    Object getAttributeValue(String attributeName) throws NotDefinedException, NotHandledException;
+
+    /**
+     * Returns the set of names of defined attributes.
+     * <p>
+     * Notification is sent to all registered listeners if this property
+     * changes.
+     * </p>
+     * 
+     * @return the set of names of defined attributes. This set may be empty,
+     *         but is guaranteed not to be <code>null</code>. If this set is
+     *         not empty, it is guaranteed to only contain instances of <code>String</code>.
+     * @throws NotHandledException
+     *             if this is not handled.
+     */
+    Set getDefinedAttributeNames() throws NotHandledException;
+	
 	/**
 	 * <p>
 	 * Returns the list of activity bindings for this handle. This method will
@@ -168,21 +209,6 @@ public interface ICommand extends Comparable {
 
 	/**
 	 * <p>
-	 * Returns whether or not this command is active. Instances of <code>ICommand</code>
-	 * are activated and deactivated by the instance of <code>ICommandManager</code>
-	 * from whence they were brokered.
-	 * </p>
-	 * <p>
-	 * Notification is sent to all registered listeners if this attribute
-	 * changes.
-	 * </p>
-	 * 
-	 * @return <code>true</code>, iff this command is active.
-	 */
-	boolean isActive();
-
-	/**
-	 * <p>
 	 * Returns whether or not the command represented by this handle is
 	 * defined.
 	 * </p>
@@ -209,7 +235,7 @@ public interface ICommand extends Comparable {
 	 * 
 	 * @return <code>true</code>, iff this command is enabled.
 	 */
-	boolean isEnabled();
+	boolean isHandled();
 
 	/**
 	 * Unregisters an instance of <code>ICommandListener</code> listening for

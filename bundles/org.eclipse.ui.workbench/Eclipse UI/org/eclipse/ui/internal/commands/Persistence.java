@@ -76,13 +76,12 @@ final class Persistence {
 
 	private final static String STROKE_SEPARATOR = " "; //$NON-NLS-1$
 	final static String TAG_ACTIVE_KEY_CONFIGURATION = "activeKeyConfiguration"; //$NON-NLS-1$
-	// TODO contextBinding -> activityBinding
-	final static String TAG_ACTIVITY_BINDING = "contextBinding"; //$NON-NLS-1$	
-	final static String TAG_ACTIVITY_ID = "activityId"; //$NON-NLS-1$	
 	final static String TAG_CATEGORY = "category"; //$NON-NLS-1$	
 	final static String TAG_CATEGORY_ID = "categoryId"; //$NON-NLS-1$
 	final static String TAG_COMMAND = "command"; //$NON-NLS-1$	
 	final static String TAG_COMMAND_ID = "commandId"; //$NON-NLS-1$
+	final static String TAG_CONTEXT_BINDING = "contextBinding"; //$NON-NLS-1$	
+	final static String TAG_CONTEXT_ID = "contextId"; //$NON-NLS-1$	
 	final static String TAG_DESCRIPTION = "description"; //$NON-NLS-1$
 	final static String TAG_ID = "id"; //$NON-NLS-1$
 	final static String TAG_IMAGE_BINDING = "imageBinding"; //$NON-NLS-1$	
@@ -237,20 +236,17 @@ final class Persistence {
 		return list;
 	}
 
-	static ContextBindingDefinition readActivityBindingDefinition(
+	static ContextBindingDefinition readContextBindingDefinition(
 		IMemento memento,
 		String pluginIdOverride) {
 		if (memento == null)
 			throw new NullPointerException();
 
-		String activityId = memento.getString(TAG_ACTIVITY_ID); //$NON-NLS-1$
+		String contextId = memento.getString(TAG_CONTEXT_ID); //$NON-NLS-1$
 
 		// TODO deprecated start
-		if (activityId == null)
-			activityId = memento.getString("contextId"); //$NON-NLS-1$		
-
-		if ("org.eclipse.ui.globalScope".equals(activityId)) //$NON-NLS-1$
-			activityId = null;
+		if ("org.eclipse.ui.globalScope".equals(contextId)) //$NON-NLS-1$
+			contextId = null;
 		// TODO deprecated end
 
 		String commandId = memento.getString(TAG_COMMAND_ID);
@@ -258,10 +254,10 @@ final class Persistence {
 			pluginIdOverride != null
 				? pluginIdOverride
 				: memento.getString(TAG_PLUGIN_ID);
-		return new ContextBindingDefinition(activityId, commandId, pluginId);
+		return new ContextBindingDefinition(contextId, commandId, pluginId);
 	}
 
-	static List readActivityBindingDefinitions(
+	static List readContextBindingDefinitions(
 		IMemento memento,
 		String name,
 		String pluginIdOverride) {
@@ -277,7 +273,7 @@ final class Persistence {
 
 		for (int i = 0; i < mementos.length; i++)
 			list.add(
-				readActivityBindingDefinition(mementos[i], pluginIdOverride));
+				readContextBindingDefinition(mementos[i], pluginIdOverride));
 
 		return list;
 	}
@@ -508,17 +504,14 @@ final class Persistence {
 		if (memento == null)
 			throw new NullPointerException();
 
-		String activityId = memento.getString(TAG_ACTIVITY_ID);
+		String contextId = memento.getString(TAG_CONTEXT_ID);
 
 		// TODO deprecated start
-		if (activityId == null)
-			activityId = memento.getString("contextId"); //$NON-NLS-1$
+		if (contextId == null)
+			contextId = memento.getString("scope"); //$NON-NLS-1$
 
-		if (activityId == null)
-			activityId = memento.getString("scope"); //$NON-NLS-1$
-
-		if ("org.eclipse.ui.globalScope".equals(activityId)) //$NON-NLS-1$
-			activityId = null;
+		if ("org.eclipse.ui.globalScope".equals(contextId)) //$NON-NLS-1$
+			contextId = null;
 		// TODO deprecated end
 
 		String commandId = memento.getString(TAG_COMMAND_ID);
@@ -578,7 +571,7 @@ final class Persistence {
 		// TODO deprecated end
 
 		return new KeySequenceBindingDefinition(
-			activityId,
+			contextId,
 			commandId,
 			keyConfigurationId,
 			keySequence,
@@ -650,44 +643,44 @@ final class Persistence {
 				(ActiveKeyConfigurationDefinition) iterator.next());
 	}
 
-	static void writeActivityBindingDefinition(
+	static void writeContextBindingDefinition(
 		IMemento memento,
-		ContextBindingDefinition activityBindingDefinition) {
-		if (memento == null || activityBindingDefinition == null)
+		ContextBindingDefinition contextBindingDefinition) {
+		if (memento == null || contextBindingDefinition == null)
 			throw new NullPointerException();
 
 		memento.putString(
-			TAG_ACTIVITY_ID,
-			activityBindingDefinition.getActivityId());
+			TAG_CONTEXT_ID,
+			contextBindingDefinition.getContextId());
 		memento.putString(
 			TAG_COMMAND_ID,
-			activityBindingDefinition.getCommandId());
+			contextBindingDefinition.getCommandId());
 		memento.putString(
 			TAG_PLUGIN_ID,
-			activityBindingDefinition.getPluginId());
+			contextBindingDefinition.getPluginId());
 	}
 
-	static void writeActivityBindingDefinitions(
+	static void writeContextBindingDefinitions(
 		IMemento memento,
 		String name,
-		List activityBindingDefinitions) {
+		List contextBindingDefinitions) {
 		if (memento == null
 			|| name == null
-			|| activityBindingDefinitions == null)
+			|| contextBindingDefinitions == null)
 			throw new NullPointerException();
 
-		activityBindingDefinitions = new ArrayList(activityBindingDefinitions);
-		Iterator iterator = activityBindingDefinitions.iterator();
+		contextBindingDefinitions = new ArrayList(contextBindingDefinitions);
+		Iterator iterator = contextBindingDefinitions.iterator();
 
 		while (iterator.hasNext())
 			Util.assertInstance(
 				iterator.next(),
 				ContextBindingDefinition.class);
 
-		iterator = activityBindingDefinitions.iterator();
+		iterator = contextBindingDefinitions.iterator();
 
 		while (iterator.hasNext())
-			writeActivityBindingDefinition(
+			writeContextBindingDefinition(
 				memento.createChild(name),
 				(ContextBindingDefinition) iterator.next());
 	}
@@ -850,7 +843,7 @@ final class Persistence {
 			throw new NullPointerException();
 
 		memento.putString(
-			TAG_ACTIVITY_ID,
+			TAG_CONTEXT_ID,
 			keySequenceBindingDefinition.getContextId());
 		memento.putString(
 			TAG_COMMAND_ID,

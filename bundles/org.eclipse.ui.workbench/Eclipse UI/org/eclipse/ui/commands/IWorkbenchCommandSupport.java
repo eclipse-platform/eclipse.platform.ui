@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
+
 package org.eclipse.ui.commands;
 
 import org.eclipse.swt.widgets.Shell;

@@ -11,7 +11,7 @@
 package org.eclipse.ui.commands;
 
 /**
- * Signals that an attempt was made to access the properties of an undefined
+ * Signals that an attempt was made to access the properties of an unhandled
  * object.
  * <p>
  * This class is not intended to be extended by clients.
@@ -19,12 +19,12 @@ package org.eclipse.ui.commands;
  * 
  * @since 3.0
  */
-public final class NotDefinedException extends CommandException {
+public final class NotHandledException extends CommandException {
 
     /**
      * Creates a new instance of this class with no specified detail message.
      */
-    public NotDefinedException() {
+    public NotHandledException() {
     }
 
     /**
@@ -33,7 +33,7 @@ public final class NotDefinedException extends CommandException {
      * @param s
      *            the detail message.
      */
-    public NotDefinedException(String s) {
+    public NotHandledException(String s) {
         super(s);
     }
 }

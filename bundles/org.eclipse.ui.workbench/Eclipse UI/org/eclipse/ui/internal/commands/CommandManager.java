@@ -105,14 +105,14 @@ public final class CommandManager implements ICommandManager {
 		return false;
 	}
 
-	static void validateActivityBindingDefinitions(Collection activityBindingDefinitions) {
-		Iterator iterator = activityBindingDefinitions.iterator();
+	static void validateContextBindingDefinitions(Collection contextBindingDefinitions) {
+		Iterator iterator = contextBindingDefinitions.iterator();
 
 		while (iterator.hasNext()) {
-			ContextBindingDefinition activityBindingDefinition =
+			ContextBindingDefinition contextBindingDefinition =
 				(ContextBindingDefinition) iterator.next();
 
-			if (activityBindingDefinition.getCommandId() == null)
+			if (contextBindingDefinition.getCommandId() == null)
 				iterator.remove();
 		}
 	}
@@ -162,19 +162,17 @@ public final class CommandManager implements ICommandManager {
 	}
 
 	// TODO review begin
-	private Map actionsById = new HashMap();
-
-	private Set activeActivityIds = new HashSet();
+	private Map handlersByCommandId = new HashMap();
+	private Set activeContextIds = new HashSet();
 	// TODO does this have any use anymore?
 	private String activeKeyConfigurationId = null;
 	private String activeLocale = null;
 	private String activePlatform = null;
-	private Map activityBindingsByCommandId = new HashMap();
+	private Map contextBindingsByCommandId = new HashMap();
 	private Map categoriesById = new WeakHashMap();
 	private Set categoriesWithListeners = new HashSet();
 	private Map categoryDefinitionsById = new HashMap();
 	private Map commandDefinitionsById = new HashMap();
-	private Map commandIdsByActionIds = new HashMap();
 	private List commandManagerListeners;
 	private ICommandRegistry commandRegistry;
 	private Map commandsById = new WeakHashMap();
@@ -251,7 +249,7 @@ public final class CommandManager implements ICommandManager {
 	}
 
 	private void calculateKeySequenceBindings() {
-		List list = new ArrayList(this.activeActivityIds);
+		List list = new ArrayList(this.activeContextIds);
 
 		// TODO high priority. temporary fix for M3 for automatic inheritance
 		// of activities for the specific case of the java editor scope.
@@ -259,13 +257,13 @@ public final class CommandManager implements ICommandManager {
 			&& !list.contains("org.eclipse.ui.textEditorScope"))
 			list.add("org.eclipse.ui.textEditorScope");
 
-		String[] activeActivityIds =
+		String[] activeContextIds =
 			extend((String[]) list.toArray(new String[list.size()]));
 		String[] activeKeyConfigurationIds =
 			extend(getKeyConfigurationIds(activeKeyConfigurationId));
 		String[] activeLocales = extend(getPath(activeLocale, SEPARATOR));
 		String[] activePlatforms = extend(getPath(activePlatform, SEPARATOR));
-		keySequenceBindingMachine.setActiveActivityIds(activeActivityIds);
+		keySequenceBindingMachine.setActiveContextIds(activeContextIds);
 		keySequenceBindingMachine.setActiveKeyConfigurationIds(
 			activeKeyConfigurationIds);
 		keySequenceBindingMachine.setActiveLocales(activeLocales);
@@ -286,12 +284,12 @@ public final class CommandManager implements ICommandManager {
 					commandManagerEvent);
 	}
 
-	public Map getActionsById() {
-		return Collections.unmodifiableMap(actionsById);
+	public Map getHandlersByCommandId() {
+		return Collections.unmodifiableMap(handlersByCommandId);
 	}
 
-	public Set getActiveActivityIds() {
-		return Collections.unmodifiableSet(activeActivityIds);
+	public Set getActiveContextIds() {
+		return Collections.unmodifiableSet(activeContextIds);
 	}
 
 	public String getActiveKeyConfigurationId() {
@@ -421,17 +419,17 @@ public final class CommandManager implements ICommandManager {
 		return match != null ? match.getCommandId() : null;
 	}
 
-	private boolean isActive(Collection activityBindings) {
-		if (activityBindings.isEmpty())
+	private boolean isInContext(Collection contextBindings) {
+		if (contextBindings.isEmpty())
 			return true;
 
-		Iterator iterator = activeActivityIds.iterator();
+		Iterator iterator = activeContextIds.iterator();
 
 		while (iterator.hasNext()) {
-			String activeActivityId = (String) iterator.next();
+			String activeContextId = (String) iterator.next();
 
-			if (activityBindings
-				.contains(new ContextBinding(activeActivityId)));
+			if (contextBindings
+				.contains(new ContextBinding(activeContextId)));
 			return true;
 		}
 
@@ -597,7 +595,7 @@ public final class CommandManager implements ICommandManager {
 				iterator.remove();
 
 		// TODO should the active key configuration change if a call to
-		// setActivityKeyConfigurationId was explicitly made already?
+		// setContextKeyConfigurationId was explicitly made already?
 		List activeKeyConfigurationDefinitions = new ArrayList();
 		activeKeyConfigurationDefinitions.addAll(
 			commandRegistry.getActiveKeyConfigurationDefinitions());
@@ -666,33 +664,33 @@ public final class CommandManager implements ICommandManager {
 			definedKeyConfigurationIdsChanged = true;
 		}
 
-		List activityBindingDefinitions = new ArrayList();
-		activityBindingDefinitions.addAll(
-			commandRegistry.getActivityBindingDefinitions());
-		activityBindingDefinitions.addAll(
-			mutableCommandRegistry.getActivityBindingDefinitions());
-		validateActivityBindingDefinitions(activityBindingDefinitions);
-		Map activityBindingsByCommandId = new HashMap();
+		List contextBindingDefinitions = new ArrayList();
+		contextBindingDefinitions.addAll(
+			commandRegistry.getContextBindingDefinitions());
+		contextBindingDefinitions.addAll(
+			mutableCommandRegistry.getContextBindingDefinitions());
+		validateContextBindingDefinitions(contextBindingDefinitions);
+		Map contextBindingsByCommandId = new HashMap();
 
-		for (Iterator iterator = activityBindingDefinitions.iterator();
+		for (Iterator iterator = contextBindingDefinitions.iterator();
 			iterator.hasNext();
 			) {
-			ContextBindingDefinition activityBindingDefinition =
+			ContextBindingDefinition contextBindingDefinition =
 				(ContextBindingDefinition) iterator.next();
-			String activityId = activityBindingDefinition.getActivityId();
-			String commandId = activityBindingDefinition.getCommandId();
+			String contextId = contextBindingDefinition.getContextId();
+			String commandId = contextBindingDefinition.getCommandId();
 			SortedSet sortedSet =
-				(SortedSet) activityBindingsByCommandId.get(commandId);
+				(SortedSet) contextBindingsByCommandId.get(commandId);
 
 			if (sortedSet == null) {
 				sortedSet = new TreeSet();
-				activityBindingsByCommandId.put(commandId, sortedSet);
+				contextBindingsByCommandId.put(commandId, sortedSet);
 			}
 
-			sortedSet.add(new ContextBinding(activityId));
+			sortedSet.add(new ContextBinding(contextId));
 		}
 
-		this.activityBindingsByCommandId = activityBindingsByCommandId;
+		this.contextBindingsByCommandId = contextBindingsByCommandId;
 		List commandRegistryImageBindingDefinitions =
 			new ArrayList(commandRegistry.getImageBindingDefinitions());
 		validateImageBindingDefinitions(commandRegistryImageBindingDefinitions);
@@ -753,45 +751,41 @@ public final class CommandManager implements ICommandManager {
 			commandManagerListeners.remove(commandManagerListener);
 	}
 
-	public void setActionsById(Map actionsById) {
-		actionsById = Util.safeCopy(actionsById, String.class, IHandler.class, false, true);
-
-		if (!Util.equals(actionsById, this.actionsById)) {
-			this.actionsById = actionsById;
-
-			// TODO begin temporary (?)
-			for (Iterator iterator = this.actionsById.entrySet().iterator();
-				iterator.hasNext();
-				) {
-				Map.Entry entry = (Map.Entry) iterator.next();
-				String commandId = (String) entry.getKey();
-				IHandler action = (IHandler) entry.getValue();
-
-				if (commandId != null && action instanceof ActionHandler) {
-					ActionHandler actionHandler = (ActionHandler) action;
-					org.eclipse.jface.action.IAction jfaceAction =
-						(org.eclipse.jface.action.IAction) actionHandler
-							.getAction();
-
-					if (jfaceAction != null) {
-						String actionId = jfaceAction.getId();
-
-						if (actionId != null)
-							commandIdsByActionIds.put(actionId, commandId);
-					}
-				}
-			}
-			// TODO end temporary
-		}
-	}
-
-	public void setActiveActivityIds(Set activeActivityIds) {
-		activeActivityIds = Util.safeCopy(activeActivityIds, String.class);
+	public void setHandlersByCommandId(Map handlersByCommandId) {
+		handlersByCommandId = Util.safeCopy(handlersByCommandId, String.class, IHandler.class, false, true);
 		boolean commandManagerChanged = false;
 		Map commandEventsByCommandId = null;
 
-		if (!this.activeActivityIds.equals(activeActivityIds)) {
-			this.activeActivityIds = activeActivityIds;
+		if (!Util.equals(handlersByCommandId, this.handlersByCommandId)) {
+			this.handlersByCommandId = handlersByCommandId;
+			commandManagerChanged = true;
+			commandEventsByCommandId = updateCommands(commandsById.keySet());
+		}
+
+		if (commandManagerChanged)
+			fireCommandManagerChanged(
+				new CommandManagerEvent(
+					this,
+					false,
+					false,
+					false,
+					false,
+					false,
+					false,
+					false,
+					true));
+
+		if (commandEventsByCommandId != null)
+			notifyCommands(commandEventsByCommandId);
+	}
+
+	public void setActiveContextIds(Set activeContextIds) {
+		activeContextIds = Util.safeCopy(activeContextIds, String.class);
+		boolean commandManagerChanged = false;
+		Map commandEventsByCommandId = null;
+
+		if (!this.activeContextIds.equals(activeContextIds)) {
+			this.activeContextIds = activeContextIds;
 			commandManagerChanged = true;
 			calculateKeySequenceBindings();
 			commandEventsByCommandId = updateCommands(commandsById.keySet());
@@ -952,16 +946,13 @@ public final class CommandManager implements ICommandManager {
 	}
 
 	private CommandEvent updateCommand(Command command) {
-		SortedSet activityBindings =
-			(SortedSet) activityBindingsByCommandId.get(command.getId());
-		boolean activeChanged =
-			command.setActive(
-				activityBindings != null ? isActive(activityBindings) : true);
+		SortedSet contextBindings =
+			(SortedSet) contextBindingsByCommandId.get(command.getId());
 		// TODO list to sortedset in api?
-		boolean activityBindingsChanged =
-			command.setActivityBindings(
-				activityBindings != null
-					? new ArrayList(activityBindings)
+		boolean contextBindingsChanged =
+			command.setContextBindings(
+				contextBindings != null
+					? new ArrayList(contextBindings)
 					: Collections.EMPTY_LIST);
 		CommandDefinition commandDefinition =
 			(CommandDefinition) commandDefinitionsById.get(command.getId());
@@ -996,8 +987,7 @@ public final class CommandManager implements ICommandManager {
 			command.setName(
 				commandDefinition != null ? commandDefinition.getName() : null);
 
-		if (activeChanged
-			|| activityBindingsChanged
+		if (contextBindingsChanged
 			|| categoryIdChanged
 			|| definedChanged
 			|| descriptionChanged
@@ -1006,9 +996,10 @@ public final class CommandManager implements ICommandManager {
 			|| nameChanged)
 			return new CommandEvent(
 				command,
-				activeChanged,
-				activityBindingsChanged,
+				Collections.EMPTY_SET, // TODO
+				contextBindingsChanged,
 				categoryIdChanged,
+				false, // TODO 
 				definedChanged,
 				descriptionChanged,
 				imageBindingsChanged,

@@ -53,9 +53,9 @@ public final class ContextActivationServiceEvent {
 	}
 
 	/**
-	 * Returns whether or not the activeContextIdsChanged property changed.
+	 * Returns whether or not the activeContextIds property changed.
 	 * 
-	 * @return true, iff the activeContextIdsChanged property changed.
+	 * @return true, iff the activeContextIds property changed.
 	 */
 	public boolean haveActiveContextIdsChanged() {
 		return activeContextIdsChanged;

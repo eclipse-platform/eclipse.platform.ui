@@ -672,7 +672,8 @@ public class CommandContributionItem
 			// Ensure command is enabled first.
 			// See 1GAN3M6: ITPUI:WINNT - Any IAction in the workbench can be
 			// executed while disabled.
-			if (command.isEnabled()) {
+		    
+			if (isEnabled(command)) {
 				boolean trace = "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.jface/trace/actions")); //$NON-NLS-1$ //$NON-NLS-2$
 				long ms = System.currentTimeMillis();
 				try {
@@ -727,9 +728,19 @@ public class CommandContributionItem
 	 * (non-Javadoc) Method declared on IContributionItem.
 	 */
 	public boolean isEnabled() {
-		return command != null && command.isEnabled();
+		return isEnabled(command);
 	}
 
+	private static boolean isEnabled(ICommand command) {
+	    try {
+	        return Boolean.TRUE.equals(command.getAttributeValue("enabled")); //$NON-NLS-1$
+	    } catch (NotHandledException eNotHandled) {		        
+	        return false;
+	    } catch (NotDefinedException eNotDefined) {
+	        return true;
+	    }
+	}    	
+	
 	/**
 	 * Returns <code>true</code> if this item is allowed to enable, <code>false</code>
 	 * otherwise.
@@ -751,7 +762,7 @@ public class CommandContributionItem
 	 *         otherwise.
 	 */
 	public boolean isVisible() {
-		return getCommand().isActive();
+		return true; // TODO visiblity should consider the activity and context managers.
 	}
 
 	/**
@@ -790,7 +801,7 @@ public class CommandContributionItem
 				//checkedChanged = event.hasSelectionChanged();
 
 				if ((event.hasDefinedChanged() && !currentCommand.isDefined())
-					|| (event.hasActiveChanged() && !currentCommand.isActive())) {
+					/* TODO || (event.hasActiveChanged() && !currentCommand.isActive())*/) {
 					// TODO Dispose of the item?
 				}
 			}
@@ -808,7 +819,7 @@ public class CommandContributionItem
 
 					if (enabledChanged) {
 						boolean shouldBeEnabled =
-							currentCommand.isEnabled() && isEnabledAllowed();
+							isEnabled(currentCommand) && isEnabledAllowed();
 
 						if (ti.getEnabled() != shouldBeEnabled)
 							ti.setEnabled(shouldBeEnabled);
@@ -880,7 +891,7 @@ public class CommandContributionItem
 
 					if (enabledChanged) {
 						boolean shouldBeEnabled =
-							currentCommand.isEnabled() && isEnabledAllowed();
+							isEnabled(currentCommand) && isEnabledAllowed();
 
 						if (mi.getEnabled() != shouldBeEnabled)
 							mi.setEnabled(shouldBeEnabled);
@@ -917,7 +928,7 @@ public class CommandContributionItem
 
 					if (enabledChanged) {
 						boolean shouldBeEnabled =
-							currentCommand.isEnabled() && isEnabledAllowed();
+							isEnabled(currentCommand) && isEnabledAllowed();
 
 						if (button.getEnabled() != shouldBeEnabled)
 							button.setEnabled(shouldBeEnabled);

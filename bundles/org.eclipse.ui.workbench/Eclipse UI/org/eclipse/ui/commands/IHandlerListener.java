@@ -12,23 +12,23 @@ package org.eclipse.ui.commands;
 
 /**
  * An instance of this interface can be used by clients to receive notification
- * of changes to one or more instances of <code>ICommand</code>.
+ * of changes to one or more instances of <code>IHandler</code>.
  * <p>
  * This interface may be implemented by clients.
  * </p>
  * 
  * @since 3.0
- * @see ICommand#addCommandListener
- * @see ICommand#removeCommandListener
+ * @see IHandler#addHandlerListener
+ * @see IHandler#removeHandlerListener
  */
-public interface ICommandListener {
+public interface IHandlerListener {
 
     /**
-     * Notifies that one or more properties of an instance of <code>ICommand</code>
-     * have changed. Specific details are described in the <code>CommandEvent</code>.
+     * Notifies that one or more properties of an instance of <code>IHandler</code>
+     * have changed. Specific details are described in the <code>HandlerEvent</code>.
      * 
-     * @param commandEvent
-     *            the command event. Guaranteed not to be <code>null</code>.
+     * @param handlerEvent
+     *            the handler event. Guaranteed not to be <code>null</code>.
      */
-    void commandChanged(CommandEvent commandEvent);
+    void handlerChanged(HandlerEvent handlerEvent);
 }

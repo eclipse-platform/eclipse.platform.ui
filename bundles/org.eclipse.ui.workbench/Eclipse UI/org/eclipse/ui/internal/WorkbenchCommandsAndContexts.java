@@ -122,7 +122,7 @@ public class WorkbenchCommandsAndContexts {
 			}
 		}
 
-		((CommandManager) workbench.getCommandSupport().getCommandManager()).setActionsById(handlersByCommandId);
+		((CommandManager) workbench.getCommandSupport().getCommandManager()).setHandlersByCommandId(handlersByCommandId);
 	}
 	
 	public void contextActivationServiceChanged() {
@@ -142,7 +142,7 @@ public class WorkbenchCommandsAndContexts {
 			}
 		}
 
-		workbench.getCommandSupport().getCommandManager().setActiveActivityIds(activeContextIds);
+		workbench.getCommandSupport().getCommandManager().setActiveContextIds(activeContextIds);
 	}
 
 	public void updateActiveWorkbenchWindowMenuManager(boolean textOnly) {

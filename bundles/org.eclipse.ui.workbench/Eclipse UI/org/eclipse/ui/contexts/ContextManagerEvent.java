@@ -33,7 +33,7 @@ public final class ContextManagerEvent {
 	 * @param definedContextIdsChanged
 	 *            true, iff the definedContextIds property changed.
 	 * @param enabledContextIdsChanged
-	 *            true, iff the enabledContextIdsChanged property changed.
+	 *            true, iff the enabledContextIds property changed.
 	 */
 	public ContextManagerEvent(
 		IContextManager contextManager,
@@ -67,9 +67,9 @@ public final class ContextManagerEvent {
 	}
 
 	/**
-	 * Returns whether or not the enabledContextIdsChanged property changed.
+	 * Returns whether or not the enabledContextIds property changed.
 	 * 
-	 * @return true, iff the enabledContextIdsChanged property changed.
+	 * @return true, iff the enabledContextIds property changed.
 	 */
 	public boolean haveEnabledContextIdsChanged() {
 		return enabledContextIdsChanged;

@@ -26,7 +26,7 @@ import org.eclipse.ui.internal.util.Util;
 
 final class KeySequenceBindingMachine {
 
-	private String[] activeActivityIds;
+	private String[] activeContextIds;
 	private String[] activeKeyConfigurationIds;
 	private String[] activeLocales;
 	private String[] activePlatforms;
@@ -37,15 +37,15 @@ final class KeySequenceBindingMachine {
 	private SortedMap tree;
 
 	KeySequenceBindingMachine() {
-		activeActivityIds = new String[0];
+		activeContextIds = new String[0];
 		activeKeyConfigurationIds = new String[0];
 		activeLocales = new String[0];
 		activePlatforms = new String[0];
 		keySequenceBindings = new List[] { new ArrayList(), new ArrayList()};
 	}
 
-	String[] getActiveActivityIds() {
-		return (String[]) activeActivityIds.clone();
+	String[] getActiveContextIds() {
+		return (String[]) activeContextIds.clone();
 	}
 
 	String[] getActiveKeyConfigurationIds() {
@@ -111,14 +111,14 @@ final class KeySequenceBindingMachine {
 		invalidateSolution();
 	}
 
-	boolean setActiveActivityIds(String[] activeActivityIds) {
-		if (activeActivityIds == null)
+	boolean setActiveContextIds(String[] activeContextIds) {
+		if (activeContextIds == null)
 			throw new NullPointerException();
 
-		activeActivityIds = (String[]) activeActivityIds.clone();
+		activeContextIds = (String[]) activeContextIds.clone();
 
-		if (!Arrays.equals(this.activeActivityIds, activeActivityIds)) {
-			this.activeActivityIds = activeActivityIds;
+		if (!Arrays.equals(this.activeContextIds, activeContextIds)) {
+			this.activeContextIds = activeContextIds;
 			invalidateSolution();
 			return true;
 		}
@@ -210,7 +210,7 @@ final class KeySequenceBindingMachine {
 			validateTree();
 			KeySequenceBindingNode.solve(
 				tree,
-				activeActivityIds,
+				activeContextIds,
 				activeKeyConfigurationIds,
 				activePlatforms,
 				activeLocales);

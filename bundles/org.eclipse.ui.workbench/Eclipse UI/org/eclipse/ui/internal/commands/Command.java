@@ -16,382 +16,384 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.ui.commands.CommandEvent;
+import org.eclipse.ui.commands.ExecutionException;
 import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.ICommandListener;
 import org.eclipse.ui.commands.IContextBinding;
+import org.eclipse.ui.commands.IHandler;
 import org.eclipse.ui.commands.IImageBinding;
 import org.eclipse.ui.commands.IKeySequenceBinding;
 import org.eclipse.ui.commands.NotDefinedException;
-
+import org.eclipse.ui.commands.NotHandledException;
 import org.eclipse.ui.internal.util.Util;
 
 final class Command implements ICommand {
 
-	private final static int HASH_FACTOR = 89;
-	private final static int HASH_INITIAL = Command.class.getName().hashCode();
+    private final static int HASH_FACTOR = 89;
 
-	private boolean active;
-	private List activityBindings;
-	private transient IContextBinding[] activityBindingsAsArray;
-	private String categoryId;
-	private List commandListeners;
-	private Set commandsWithListeners;
-	private boolean defined;
-	private String description;
-	private boolean enabled;
-	private transient int hashCode;
-	private transient boolean hashCodeComputed;
-	private String id;
-	private List imageBindings;
-	private transient IImageBinding[] imageBindingsAsArray;
-	private List keySequenceBindings;
-	private transient IKeySequenceBinding[] keySequenceBindingsAsArray;
-	private String name;
-	private transient String string;
+    private final static int HASH_INITIAL = Command.class.getName().hashCode();
 
-	Command(Set commandsWithListeners, String id) {
-		if (commandsWithListeners == null || id == null)
-			throw new NullPointerException();
+    private List contextBindings;
 
-		this.commandsWithListeners = commandsWithListeners;
-		this.id = id;
-	}
+    private transient IContextBinding[] contextBindingsAsArray;
 
-	public void addCommandListener(ICommandListener commandListener) {
-		if (commandListener == null)
-			throw new NullPointerException();
+    private String categoryId;
 
-		if (commandListeners == null)
-			commandListeners = new ArrayList();
+    private List commandListeners;
 
-		if (!commandListeners.contains(commandListener))
-			commandListeners.add(commandListener);
+    private Set commandsWithListeners;
 
-		commandsWithListeners.add(this);
-	}
+    private boolean defined;
 
-	public int compareTo(Object object) {
-		Command castedObject = (Command) object;
-		int compareTo = Util.compare(active, castedObject.active);
+    private String description;
 
-		if (compareTo == 0) {
-			compareTo =
-				Util.compare(
-					(Comparable[]) activityBindingsAsArray,
-					(Comparable[]) castedObject.activityBindingsAsArray);
+    private IHandler handler;
 
-			if (compareTo == 0) {
-				compareTo = Util.compare(categoryId, castedObject.categoryId);
+    private transient int hashCode;
 
-				if (compareTo == 0) {
-					compareTo = Util.compare(defined, castedObject.defined);
+    private transient boolean hashCodeComputed;
 
-					if (compareTo == 0) {
-						compareTo =
-							Util.compare(description, castedObject.description);
+    private String id;
 
-						if (compareTo == 0) {
-							compareTo =
-								Util.compare(enabled, castedObject.enabled);
+    private List imageBindings;
 
-							if (compareTo == 0) {
-								compareTo = Util.compare(id, castedObject.id);
+    private transient IImageBinding[] imageBindingsAsArray;
 
-								if (compareTo == 0) {
-									compareTo =
-										Util.compare(
-											(Comparable[]) imageBindingsAsArray,
-											(
-												Comparable[]) castedObject
-													.imageBindingsAsArray);
+    private List keySequenceBindings;
 
-									if (compareTo == 0) {
-										compareTo =
-											Util.compare(
-												(Comparable[]) keySequenceBindingsAsArray,
-												(
-													Comparable[]) castedObject
-														.keySequenceBindingsAsArray);
+    private transient IKeySequenceBinding[] keySequenceBindingsAsArray;
 
-										if (compareTo == 0)
-											compareTo =
-												Util.compare(
-													name,
-													castedObject.name);
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}
+    private String name;
 
-		return compareTo;
-	}
+    private transient String string;
 
-	public boolean equals(Object object) {
-		if (!(object instanceof Command))
-			return false;
+    Command(Set commandsWithListeners, String id) {
+        if (commandsWithListeners == null || id == null)
+                throw new NullPointerException();
 
-		Command castedObject = (Command) object;
-		boolean equals = true;
-		equals &= Util.equals(active, castedObject.active);
-		equals &= Util.equals(activityBindings, castedObject.activityBindings);
-		equals &= Util.equals(categoryId, castedObject.categoryId);
-		equals &= Util.equals(defined, castedObject.defined);
-		equals &= Util.equals(description, castedObject.description);
-		equals &= Util.equals(enabled, castedObject.enabled);
-		equals &= Util.equals(id, castedObject.id);
-		equals &= Util.equals(imageBindings, castedObject.imageBindings);
-		equals
-			&= Util.equals(keySequenceBindings, castedObject.keySequenceBindings);
-		equals &= Util.equals(name, castedObject.name);
-		return equals;
-	}
+        this.commandsWithListeners = commandsWithListeners;
+        this.id = id;
+    }
 
-	void fireCommandChanged(CommandEvent commandEvent) {
-		if (commandEvent == null)
-			throw new NullPointerException();
+    public void addCommandListener(ICommandListener commandListener) {
+        if (commandListener == null) throw new NullPointerException();
 
-		if (commandListeners != null)
-			for (int i = 0; i < commandListeners.size(); i++)
-				((ICommandListener) commandListeners.get(i)).commandChanged(
-					commandEvent);
-	}
+        if (commandListeners == null) commandListeners = new ArrayList();
 
-	public List getContextBindings() {
-		return activityBindings;
-	}
+        if (!commandListeners.contains(commandListener))
+                commandListeners.add(commandListener);
 
-	public String getCategoryId() throws NotDefinedException {
-		if (!defined)
-			throw new NotDefinedException();
+        commandsWithListeners.add(this);
+    }
 
-		return categoryId;
-	}
+    public int compareTo(Object object) {
+        Command castedObject = (Command) object;
+        int compareTo = Util.compare((Comparable[]) contextBindingsAsArray,
+                (Comparable[]) castedObject.contextBindingsAsArray);
 
-	public String getDescription() throws NotDefinedException {
-		if (!defined)
-			throw new NotDefinedException();
+        if (compareTo == 0) {
+            compareTo = Util.compare(categoryId, castedObject.categoryId);
 
-		return description;
-	}
+            if (compareTo == 0) {
+                compareTo = Util.compare(defined, castedObject.defined);
 
-	public String getId() {
-		return id;
-	}
+                if (compareTo == 0) {
+                    compareTo = Util.compare(description,
+                            castedObject.description);
 
-	public List getImageBindings() {
-		return imageBindings;
-	}
+                    if (compareTo == 0) {
+                        compareTo = Util.compare(handler, castedObject.handler);
 
-	public List getKeySequenceBindings() {
-		return keySequenceBindings;
-	}
+                        if (compareTo == 0) {
+                            compareTo = Util.compare(id, castedObject.id);
 
-	public String getName() throws NotDefinedException {
-		if (!defined)
-			throw new NotDefinedException();
+                            if (compareTo == 0) {
+                                compareTo = Util
+                                        .compare(
+                                                (Comparable[]) imageBindingsAsArray,
+                                                (Comparable[]) castedObject.imageBindingsAsArray);
 
-		return name;
-	}
+                                if (compareTo == 0) {
+                                    compareTo = Util
+                                            .compare(
+                                                    (Comparable[]) keySequenceBindingsAsArray,
+                                                    (Comparable[]) castedObject.keySequenceBindingsAsArray);
 
-	public int hashCode() {
-		if (!hashCodeComputed) {
-			hashCode = HASH_INITIAL;
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(active);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(activityBindings);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(categoryId);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(defined);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(description);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(enabled);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(id);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(imageBindings);
-			hashCode =
-				hashCode * HASH_FACTOR + Util.hashCode(keySequenceBindings);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(name);
-			hashCodeComputed = true;
-		}
+                                    if (compareTo == 0)
+                                            compareTo = Util.compare(name,
+                                                    castedObject.name);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
-		return hashCode;
-	}
+        return compareTo;
+    }
 
-	public boolean isActive() {
-		return active;
-	}
+    public boolean equals(Object object) {
+        if (!(object instanceof Command)) return false;
 
-	public boolean isDefined() {
-		return defined;
-	}
+        Command castedObject = (Command) object;
+        boolean equals = true;
+        equals &= Util.equals(contextBindings, castedObject.contextBindings);
+        equals &= Util.equals(categoryId, castedObject.categoryId);
+        equals &= Util.equals(defined, castedObject.defined);
+        equals &= Util.equals(description, castedObject.description);
+        equals &= Util.equals(handler, castedObject.handler);
+        equals &= Util.equals(id, castedObject.id);
+        equals &= Util.equals(imageBindings, castedObject.imageBindings);
+        equals &= Util.equals(keySequenceBindings,
+                castedObject.keySequenceBindings);
+        equals &= Util.equals(name, castedObject.name);
+        return equals;
+    }
 
-	public boolean isEnabled() {
-		return enabled;
-	}
+    public void execute(Object parameter) throws ExecutionException,
+            NotHandledException {
+        IHandler handler = this.handler;
 
-	public void removeCommandListener(ICommandListener commandListener) {
-		if (commandListener == null)
-			throw new NullPointerException();
+        if (handler != null)
+            handler.execute(parameter);
+        else
+            throw new NotHandledException();
+    }
 
-		if (commandListeners != null)
-			commandListeners.remove(commandListener);
+    void fireCommandChanged(CommandEvent commandEvent) {
+        if (commandEvent == null) throw new NullPointerException();
 
-		if (commandListeners.isEmpty())
-			commandsWithListeners.remove(this);
-	}
+        if (commandListeners != null)
+                for (int i = 0; i < commandListeners.size(); i++)
+                    ((ICommandListener) commandListeners.get(i))
+                            .commandChanged(commandEvent);
+    }
 
-	boolean setActive(boolean active) {
-		if (active != this.active) {
-			this.active = active;
-			hashCodeComputed = false;
-			hashCode = 0;
-			string = null;
-			return true;
-		}
+    public Object getAttributeValue(String attributeName)
+            throws NotDefinedException, NotHandledException {
+        IHandler handler = this.handler;
 
-		return false;
-	}
+        if (handler != null)
+            return handler.getAttributeValue(attributeName);
+        else
+            throw new NotHandledException();
+    }
 
-	boolean setActivityBindings(List activityBindings) {
-		activityBindings =
-			Util.safeCopy(activityBindings, IContextBinding.class);
+    public String getCategoryId() throws NotDefinedException {
+        if (!defined) throw new NotDefinedException();
 
-		if (!Util.equals(activityBindings, this.activityBindings)) {
-			this.activityBindings = activityBindings;
-			this.activityBindingsAsArray =
-				(IContextBinding[]) this.activityBindings.toArray(
-					new IContextBinding[this.activityBindings.size()]);
-			hashCodeComputed = false;
-			hashCode = 0;
-			string = null;
-			return true;
-		}
+        return categoryId;
+    }
 
-		return false;
-	}
+    public List getContextBindings() {
+        return contextBindings;
+    }
 
-	boolean setCategoryId(String categoryId) {
-		if (!Util.equals(categoryId, this.categoryId)) {
-			this.categoryId = categoryId;
-			hashCodeComputed = false;
-			hashCode = 0;
-			string = null;
-			return true;
-		}
+    public Set getDefinedAttributeNames() throws NotHandledException {
+        IHandler handler = this.handler;
 
-		return false;
-	}
+        if (handler != null)
+            return handler.getDefinedAttributeNames();
+        else
+            throw new NotHandledException();
+    }
 
-	boolean setDefined(boolean defined) {
-		if (defined != this.defined) {
-			this.defined = defined;
-			hashCodeComputed = false;
-			hashCode = 0;
-			string = null;
-			return true;
-		}
+    public String getDescription() throws NotDefinedException {
+        if (!defined) throw new NotDefinedException();
 
-		return false;
-	}
+        return description;
+    }
 
-	boolean setDescription(String description) {
-		if (!Util.equals(description, this.description)) {
-			this.description = description;
-			hashCodeComputed = false;
-			hashCode = 0;
-			string = null;
-			return true;
-		}
+    public String getId() {
+        return id;
+    }
 
-		return false;
-	}
+    public List getImageBindings() {
+        return imageBindings;
+    }
 
-	boolean setEnabled(boolean enabled) {
-		if (enabled != this.enabled) {
-			this.enabled = enabled;
-			hashCodeComputed = false;
-			hashCode = 0;
-			string = null;
-			return true;
-		}
+    public List getKeySequenceBindings() {
+        return keySequenceBindings;
+    }
 
-		return false;
-	}
+    public String getName() throws NotDefinedException {
+        if (!defined) throw new NotDefinedException();
 
-	boolean setImageBindings(List imageBindings) {
-		imageBindings = Util.safeCopy(imageBindings, IImageBinding.class);
+        return name;
+    }
 
-		if (!Util.equals(imageBindings, this.imageBindings)) {
-			this.imageBindings = imageBindings;
-			this.imageBindingsAsArray =
-				(IImageBinding[]) this.imageBindings.toArray(
-					new IImageBinding[this.imageBindings.size()]);
-			hashCodeComputed = false;
-			hashCode = 0;
-			string = null;
-			return true;
-		}
+    public int hashCode() {
+        if (!hashCodeComputed) {
+            hashCode = HASH_INITIAL;
+            hashCode = hashCode * HASH_FACTOR + Util.hashCode(contextBindings);
+            hashCode = hashCode * HASH_FACTOR + Util.hashCode(categoryId);
+            hashCode = hashCode * HASH_FACTOR + Util.hashCode(defined);
+            hashCode = hashCode * HASH_FACTOR + Util.hashCode(description);
+            hashCode = hashCode * HASH_FACTOR + Util.hashCode(handler);
+            hashCode = hashCode * HASH_FACTOR + Util.hashCode(id);
+            hashCode = hashCode * HASH_FACTOR + Util.hashCode(imageBindings);
+            hashCode = hashCode * HASH_FACTOR
+                    + Util.hashCode(keySequenceBindings);
+            hashCode = hashCode * HASH_FACTOR + Util.hashCode(name);
+            hashCodeComputed = true;
+        }
 
-		return false;
-	}
+        return hashCode;
+    }
 
-	boolean setKeySequenceBindings(List keySequenceBindings) {
-		keySequenceBindings =
-			Util.safeCopy(keySequenceBindings, IKeySequenceBinding.class);
+    public boolean isDefined() {
+        return defined;
+    }
 
-		if (!Util.equals(keySequenceBindings, this.keySequenceBindings)) {
-			this.keySequenceBindings = keySequenceBindings;
-			this.keySequenceBindingsAsArray =
-				(IKeySequenceBinding[]) this.keySequenceBindings.toArray(
-					new IKeySequenceBinding[this.keySequenceBindings.size()]);
-			hashCodeComputed = false;
-			hashCode = 0;
-			string = null;
-			return true;
-		}
+    public boolean isHandled() {
+        return handler != null;
+    }
 
-		return false;
-	}
+    public void removeCommandListener(ICommandListener commandListener) {
+        if (commandListener == null) throw new NullPointerException();
 
-	boolean setName(String name) {
-		if (!Util.equals(name, this.name)) {
-			this.name = name;
-			hashCodeComputed = false;
-			hashCode = 0;
-			string = null;
-			return true;
-		}
+        if (commandListeners != null) commandListeners.remove(commandListener);
 
-		return false;
-	}
+        if (commandListeners.isEmpty()) commandsWithListeners.remove(this);
+    }
 
-	public String toString() {
-		if (string == null) {
-			final StringBuffer stringBuffer = new StringBuffer();
-			stringBuffer.append('[');
-			stringBuffer.append(active);
-			stringBuffer.append(',');
-			stringBuffer.append(activityBindings);
-			stringBuffer.append(',');
-			stringBuffer.append(categoryId);
-			stringBuffer.append(',');
-			stringBuffer.append(defined);
-			stringBuffer.append(',');
-			stringBuffer.append(description);
-			stringBuffer.append(',');
-			stringBuffer.append(enabled);
-			stringBuffer.append(',');
-			stringBuffer.append(id);
-			stringBuffer.append(',');
-			stringBuffer.append(imageBindings);
-			stringBuffer.append(',');
-			stringBuffer.append(keySequenceBindings);
-			stringBuffer.append(',');
-			stringBuffer.append(name);
-			stringBuffer.append(']');
-			string = stringBuffer.toString();
-		}
+    boolean setContextBindings(List contextBindings) {
+        contextBindings = Util.safeCopy(contextBindings,
+                IContextBinding.class);
 
-		return string;
-	}
+        if (!Util.equals(contextBindings, this.contextBindings)) {
+            this.contextBindings = contextBindings;
+            this.contextBindingsAsArray = (IContextBinding[]) this.contextBindings
+                    .toArray(new IContextBinding[this.contextBindings.size()]);
+            hashCodeComputed = false;
+            hashCode = 0;
+            string = null;
+            return true;
+        }
+
+        return false;
+    }
+
+    boolean setCategoryId(String categoryId) {
+        if (!Util.equals(categoryId, this.categoryId)) {
+            this.categoryId = categoryId;
+            hashCodeComputed = false;
+            hashCode = 0;
+            string = null;
+            return true;
+        }
+
+        return false;
+    }
+
+    boolean setDefined(boolean defined) {
+        if (defined != this.defined) {
+            this.defined = defined;
+            hashCodeComputed = false;
+            hashCode = 0;
+            string = null;
+            return true;
+        }
+
+        return false;
+    }
+
+    boolean setDescription(String description) {
+        if (!Util.equals(description, this.description)) {
+            this.description = description;
+            hashCodeComputed = false;
+            hashCode = 0;
+            string = null;
+            return true;
+        }
+
+        return false;
+    }
+
+    boolean setHandler(IHandler handler) {
+        if (handler != this.handler) {
+            this.handler = handler;
+            hashCodeComputed = false;
+            hashCode = 0;
+            string = null;
+            return true;
+        }
+
+        return false;
+    }
+
+    boolean setImageBindings(List imageBindings) {
+        imageBindings = Util.safeCopy(imageBindings, IImageBinding.class);
+
+        if (!Util.equals(imageBindings, this.imageBindings)) {
+            this.imageBindings = imageBindings;
+            this.imageBindingsAsArray = (IImageBinding[]) this.imageBindings
+                    .toArray(new IImageBinding[this.imageBindings.size()]);
+            hashCodeComputed = false;
+            hashCode = 0;
+            string = null;
+            return true;
+        }
+
+        return false;
+    }
+
+    boolean setKeySequenceBindings(List keySequenceBindings) {
+        keySequenceBindings = Util.safeCopy(keySequenceBindings,
+                IKeySequenceBinding.class);
+
+        if (!Util.equals(keySequenceBindings, this.keySequenceBindings)) {
+            this.keySequenceBindings = keySequenceBindings;
+            this.keySequenceBindingsAsArray = (IKeySequenceBinding[]) this.keySequenceBindings
+                    .toArray(new IKeySequenceBinding[this.keySequenceBindings
+                            .size()]);
+            hashCodeComputed = false;
+            hashCode = 0;
+            string = null;
+            return true;
+        }
+
+        return false;
+    }
+
+    boolean setName(String name) {
+        if (!Util.equals(name, this.name)) {
+            this.name = name;
+            hashCodeComputed = false;
+            hashCode = 0;
+            string = null;
+            return true;
+        }
+
+        return false;
+    }
+
+    public String toString() {
+        if (string == null) {
+            final StringBuffer stringBuffer = new StringBuffer();
+            stringBuffer.append('[');
+            stringBuffer.append(contextBindings);
+            stringBuffer.append(',');
+            stringBuffer.append(categoryId);
+            stringBuffer.append(',');
+            stringBuffer.append(defined);
+            stringBuffer.append(',');
+            stringBuffer.append(description);
+            stringBuffer.append(',');
+            stringBuffer.append(handler);
+            stringBuffer.append(',');
+            stringBuffer.append(id);
+            stringBuffer.append(',');
+            stringBuffer.append(imageBindings);
+            stringBuffer.append(',');
+            stringBuffer.append(keySequenceBindings);
+            stringBuffer.append(',');
+            stringBuffer.append(name);
+            stringBuffer.append(']');
+            string = stringBuffer.toString();
+        }
+
+        return string;
+    }
 }

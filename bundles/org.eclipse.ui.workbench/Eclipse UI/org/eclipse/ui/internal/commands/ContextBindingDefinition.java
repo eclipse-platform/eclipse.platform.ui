@@ -26,37 +26,37 @@ public final class ContextBindingDefinition
 	private final static int HASH_INITIAL =
 		ContextBindingDefinition.class.getName().hashCode();
 
-	static Map activityBindingDefinitionsByCommandId(Collection activityBindingDefinitions) {
-		if (activityBindingDefinitions == null)
+	static Map contextBindingDefinitionsByCommandId(Collection contextBindingDefinitions) {
+		if (contextBindingDefinitions == null)
 			throw new NullPointerException();
 
 		Map map = new HashMap();
-		Iterator iterator = activityBindingDefinitions.iterator();
+		Iterator iterator = contextBindingDefinitions.iterator();
 
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
 			Util.assertInstance(object, ContextBindingDefinition.class);
-			ContextBindingDefinition activityBindingDefinition =
+			ContextBindingDefinition contextBindingDefinition =
 				(ContextBindingDefinition) object;
-			String commandId = activityBindingDefinition.getCommandId();
+			String commandId = contextBindingDefinition.getCommandId();
 
 			if (commandId != null) {
-				Collection activityBindingDefinitions2 =
+				Collection contextBindingDefinitions2 =
 					(Collection) map.get(commandId);
 
-				if (activityBindingDefinitions2 == null) {
-					activityBindingDefinitions2 = new ArrayList();
-					map.put(commandId, activityBindingDefinitions2);
+				if (contextBindingDefinitions2 == null) {
+					contextBindingDefinitions2 = new ArrayList();
+					map.put(commandId, contextBindingDefinitions2);
 				}
 
-				activityBindingDefinitions2.add(activityBindingDefinition);
+				contextBindingDefinitions2.add(contextBindingDefinition);
 			}
 		}
 
 		return map;
 	}
 
-	private String activityId;
+	private String contextId;
 	private String commandId;
 
 	private transient int hashCode;
@@ -65,10 +65,10 @@ public final class ContextBindingDefinition
 	private transient String string;
 
 	public ContextBindingDefinition(
-		String activityId,
+		String contextId,
 		String commandId,
 		String pluginId) {
-		this.activityId = activityId;
+		this.contextId = contextId;
 		this.commandId = commandId;
 		this.pluginId = pluginId;
 	}
@@ -76,7 +76,7 @@ public final class ContextBindingDefinition
 	public int compareTo(Object object) {
 		ContextBindingDefinition castedObject =
 			(ContextBindingDefinition) object;
-		int compareTo = Util.compare(activityId, castedObject.activityId);
+		int compareTo = Util.compare(contextId, castedObject.contextId);
 
 		if (compareTo == 0) {
 			compareTo = Util.compare(commandId, castedObject.commandId);
@@ -95,14 +95,14 @@ public final class ContextBindingDefinition
 		ContextBindingDefinition castedObject =
 			(ContextBindingDefinition) object;
 		boolean equals = true;
-		equals &= Util.equals(activityId, castedObject.activityId);
+		equals &= Util.equals(contextId, castedObject.contextId);
 		equals &= Util.equals(commandId, castedObject.commandId);
 		equals &= Util.equals(pluginId, castedObject.pluginId);
 		return equals;
 	}
 
-	public String getActivityId() {
-		return activityId;
+	public String getContextId() {
+		return contextId;
 	}
 
 	public String getCommandId() {
@@ -116,7 +116,7 @@ public final class ContextBindingDefinition
 	public int hashCode() {
 		if (!hashCodeComputed) {
 			hashCode = HASH_INITIAL;
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(activityId);
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(contextId);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(commandId);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(pluginId);
 			hashCodeComputed = true;
@@ -129,7 +129,7 @@ public final class ContextBindingDefinition
 		if (string == null) {
 			final StringBuffer stringBuffer = new StringBuffer();
 			stringBuffer.append('[');
-			stringBuffer.append(activityId);
+			stringBuffer.append(contextId);
 			stringBuffer.append(',');
 			stringBuffer.append(commandId);
 			stringBuffer.append(',');

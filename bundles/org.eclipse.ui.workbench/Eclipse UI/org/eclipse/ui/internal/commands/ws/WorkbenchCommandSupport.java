@@ -51,7 +51,7 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
 		compoundCommandHandlerService =
 			CommandHandlerServiceFactory.getCompoundCommandHandlerService();
 		KeyFormatterFactory.setDefault(SWTKeySupport.getKeyFormatterForPlatform());		
-		keyboard = new WorkbenchKeyboard(workbench, getCommandManager());
+		keyboard = new WorkbenchKeyboard(workbench, workbench.getActivitySupport().getActivityManager(), getCommandManager());
 		enableKeyFilter();
 	}
 

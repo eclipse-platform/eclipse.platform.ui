@@ -11,20 +11,19 @@
 package org.eclipse.ui.commands;
 
 /**
- * Signals that an attempt was made to access the properties of an undefined
- * object.
+ * Signals that an exception occured within the command architecture.
  * <p>
  * This class is not intended to be extended by clients.
  * </p>
  * 
  * @since 3.0
  */
-public final class NotDefinedException extends CommandException {
+public abstract class CommandException extends Exception {
 
     /**
      * Creates a new instance of this class with no specified detail message.
      */
-    public NotDefinedException() {
+    public CommandException() {
     }
 
     /**
@@ -33,7 +32,30 @@ public final class NotDefinedException extends CommandException {
      * @param s
      *            the detail message.
      */
-    public NotDefinedException(String s) {
+    public CommandException(String s) {
         super(s);
+    }
+
+    /**
+     * Creates a new instance of this class with the specified detail message
+     * and cause.
+     * 
+     * @param message
+     *            the detail message.
+     * @param cause
+     *            the cause.
+     */
+    public CommandException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    /**
+     * Creates a new instance of this class with the specified cause.
+     * 
+     * @param cause
+     *            the cause.
+     */
+    public CommandException(Throwable cause) {
+        super(cause);
     }
 }

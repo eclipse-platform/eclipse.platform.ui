@@ -17,7 +17,7 @@ public interface IMutableCommandRegistry extends ICommandRegistry {
 
 	void setActiveKeyConfigurationDefinitions(List activeKeyConfigurationDefinitions);
 
-	void setActivityBindingDefinitions(List activityBindingDefinitions);
+	void setContextBindingDefinitions(List contextBindingDefinitions);
 
 	void setCategoryDefinitions(List categoryDefinitions);
 

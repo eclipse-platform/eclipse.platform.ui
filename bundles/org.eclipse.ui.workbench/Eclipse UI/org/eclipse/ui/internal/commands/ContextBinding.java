@@ -19,21 +19,21 @@ final class ContextBinding implements IContextBinding {
 	private final static int HASH_INITIAL =
 		ContextBinding.class.getName().hashCode();
 
-	private String activityId;
+	private String contextId;
 
 	private transient int hashCode;
 	private transient boolean hashCodeComputed;
 
-	ContextBinding(String activityId) {
-		if (activityId == null)
+	ContextBinding(String contextId) {
+		if (contextId == null)
 			throw new NullPointerException();
 
-		this.activityId = activityId;
+		this.contextId = contextId;
 	}
 
 	public int compareTo(Object object) {
 		ContextBinding castedObject = (ContextBinding) object;
-		int compareTo = activityId.compareTo(castedObject.activityId);
+		int compareTo = contextId.compareTo(castedObject.contextId);
 		return compareTo;
 	}
 
@@ -43,18 +43,18 @@ final class ContextBinding implements IContextBinding {
 
 		ContextBinding castedObject = (ContextBinding) object;
 		boolean equals = true;
-		equals &= activityId.equals(castedObject.activityId);
+		equals &= contextId.equals(castedObject.contextId);
 		return equals;
 	}
 
 	public String getContextId() {
-		return activityId;
+		return contextId;
 	}
 
 	public int hashCode() {
 		if (!hashCodeComputed) {
 			hashCode = HASH_INITIAL;
-			hashCode = hashCode * HASH_FACTOR + activityId.hashCode();
+			hashCode = hashCode * HASH_FACTOR + contextId.hashCode();
 			hashCodeComputed = true;
 		}
 
@@ -62,6 +62,6 @@ final class ContextBinding implements IContextBinding {
 	}
 
 	public String toString() {
-		return activityId;
+		return contextId;
 	}
 }

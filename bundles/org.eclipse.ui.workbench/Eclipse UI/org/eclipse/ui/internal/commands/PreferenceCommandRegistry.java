@@ -74,11 +74,11 @@ public final class PreferenceCommandRegistry
 							memento,
 							Persistence.TAG_ACTIVE_KEY_CONFIGURATION,
 							null));
-				List activityBindingDefinitions =
+				List contextBindingDefinitions =
 					Collections.unmodifiableList(
-						Persistence.readActivityBindingDefinitions(
+						Persistence.readContextBindingDefinitions(
 							memento,
-							Persistence.TAG_ACTIVITY_BINDING,
+							Persistence.TAG_CONTEXT_BINDING,
 							null));
 				List categoryDefinitions =
 					Collections.unmodifiableList(
@@ -119,10 +119,10 @@ public final class PreferenceCommandRegistry
 					commandRegistryChanged = true;
 				}
 
-				if (!activityBindingDefinitions
-					.equals(this.activityBindingDefinitions)) {
-					this.activityBindingDefinitions =
-						activityBindingDefinitions;
+				if (!contextBindingDefinitions
+					.equals(this.contextBindingDefinitions)) {
+					this.contextBindingDefinitions =
+						contextBindingDefinitions;
 					commandRegistryChanged = true;
 				}
 
@@ -172,10 +172,10 @@ public final class PreferenceCommandRegistry
 			xmlMemento,
 			Persistence.TAG_ACTIVE_KEY_CONFIGURATION,
 			activeKeyConfigurationDefinitions);
-		Persistence.writeActivityBindingDefinitions(
+		Persistence.writeContextBindingDefinitions(
 			xmlMemento,
-			Persistence.TAG_ACTIVITY_BINDING,
-			activityBindingDefinitions);
+			Persistence.TAG_CONTEXT_BINDING,
+			contextBindingDefinitions);
 		Persistence.writeCategoryDefinitions(
 			xmlMemento,
 			Persistence.TAG_CATEGORY,

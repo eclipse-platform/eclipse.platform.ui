@@ -56,9 +56,9 @@ public final class CommandHandlerServiceEvent {
 	}
 
 	/**
-	 * Returns whether or not the handlersByCommandIdChanged property changed.
+	 * Returns whether or not the handlersByCommandId property changed.
 	 * 
-	 * @return true, iff the handlersByCommandIdChanged property changed.
+	 * @return true, iff the handlersByCommandId property changed.
 	 */
 	public boolean haveHandlersByCommandIdChanged() {
 		return handlersByCommandIdChanged;

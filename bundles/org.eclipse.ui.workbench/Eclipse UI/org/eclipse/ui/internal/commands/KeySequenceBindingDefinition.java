@@ -59,7 +59,7 @@ public final class KeySequenceBindingDefinition
 		return map;
 	}
 
-	private String activityId;
+	private String contextId;
 	private String commandId;
 
 	private transient int hashCode;
@@ -72,14 +72,14 @@ public final class KeySequenceBindingDefinition
 	private transient String string;
 
 	public KeySequenceBindingDefinition(
-		String activityId,
+		String contextId,
 		String commandId,
 		String keyConfigurationId,
 		KeySequence keySequence,
 		String locale,
 		String platform,
 		String pluginId) {
-		this.activityId = activityId;
+		this.contextId = contextId;
 		this.commandId = commandId;
 		this.keyConfigurationId = keyConfigurationId;
 		this.keySequence = keySequence;
@@ -91,7 +91,7 @@ public final class KeySequenceBindingDefinition
 	public int compareTo(Object object) {
 		KeySequenceBindingDefinition castedObject =
 			(KeySequenceBindingDefinition) object;
-		int compareTo = Util.compare(activityId, castedObject.activityId);
+		int compareTo = Util.compare(contextId, castedObject.contextId);
 
 		if (compareTo == 0) {
 			compareTo = Util.compare(commandId, castedObject.commandId);
@@ -134,7 +134,7 @@ public final class KeySequenceBindingDefinition
 		KeySequenceBindingDefinition castedObject =
 			(KeySequenceBindingDefinition) object;
 		boolean equals = true;
-		equals &= Util.equals(activityId, castedObject.activityId);
+		equals &= Util.equals(contextId, castedObject.contextId);
 		equals &= Util.equals(commandId, castedObject.commandId);
 		equals
 			&= Util.equals(keyConfigurationId, castedObject.keyConfigurationId);
@@ -146,7 +146,7 @@ public final class KeySequenceBindingDefinition
 	}
 
 	public String getContextId() {
-		return activityId;
+		return contextId;
 	}
 
 	public String getCommandId() {
@@ -176,7 +176,7 @@ public final class KeySequenceBindingDefinition
 	public int hashCode() {
 		if (!hashCodeComputed) {
 			hashCode = HASH_INITIAL;
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(activityId);
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(contextId);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(commandId);
 			hashCode =
 				hashCode * HASH_FACTOR + Util.hashCode(keyConfigurationId);
@@ -194,7 +194,7 @@ public final class KeySequenceBindingDefinition
 		if (string == null) {
 			final StringBuffer stringBuffer = new StringBuffer();
 			stringBuffer.append('[');
-			stringBuffer.append(activityId);
+			stringBuffer.append(contextId);
 			stringBuffer.append(',');
 			stringBuffer.append(commandId);
 			stringBuffer.append(',');

@@ -19,9 +19,9 @@ import java.util.Set;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.IKeyBindingService;
+import org.eclipse.ui.commands.ActionHandler;
 import org.eclipse.ui.commands.IMutableCommandHandlerService;
 import org.eclipse.ui.contexts.IMutableContextActivationService;
-import org.eclipse.ui.internal.commands.ActionHandler;
 
 final class KeyBindingService implements IKeyBindingService {
 	private Map handlersByCommandId = new HashMap();
