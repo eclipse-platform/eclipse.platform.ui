@@ -193,8 +193,8 @@ class ThreadJob extends Job {
 			ruleStack = newStack;
 		}
 		ruleStack[top] = rule;
-//		if (JobManager.DEBUG_BEGIN_END)
-//			lastPush = (RuntimeException) new RuntimeException().fillInStackTrace();
+		if (JobManager.DEBUG_BEGIN_END)
+			lastPush = (RuntimeException) new RuntimeException().fillInStackTrace();
 		//check for containment last because we don't want to fail again on endRule
 		if (baseRule != null && rule != null && !baseRule.contains(rule))
 			illegalPush(rule, baseRule);
