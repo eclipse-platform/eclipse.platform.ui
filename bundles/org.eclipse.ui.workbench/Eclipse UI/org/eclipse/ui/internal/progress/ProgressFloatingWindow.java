@@ -10,9 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 
+import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -20,9 +21,7 @@ import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
-
-import org.eclipse.jface.viewers.IContentProvider;
-import org.eclipse.jface.window.Window;
+import org.eclipse.ui.internal.WorkbenchWindow;
 
 /**
  * The ProgressFloatingWindow is a window that opens next to an
@@ -31,15 +30,25 @@ import org.eclipse.jface.window.Window;
 class ProgressFloatingWindow extends Window {
 
 	ProgressTreeViewer viewer;
+	WorkbenchWindow window;
 
 	/**
 	 * Create a new window with a shell based off of
-	 * parent shell.
-	 * @param parentShell
+	 * parent window.
+	 * @param parentWindow window
 	 */
-	public ProgressFloatingWindow(Shell parentShell) {
-		super(parentShell);
+	public ProgressFloatingWindow(WorkbenchWindow parentWindow) {
+		super(parentWindow.getShell());
 		setShellStyle(SWT.NONE);
+		window = parentWindow;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
+	 */
+	protected void configureShell(Shell newShell) {
+		super.configureShell(newShell);
+		newShell.setTransparent(50);
 	}
 
 	/* (non-Javadoc)
@@ -88,20 +97,20 @@ class ProgressFloatingWindow extends Window {
 	 */
 	private void adjustSizeAndPosition() {
 
-		Rectangle position = getParentShell().getBounds();
-		Point size = viewer.getTree().computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		Point shellPosition = getParentShell().getLocation();
+		Point itemLocation = window.getAnimationItem().getControl().getLocation();
+		itemLocation.x += shellPosition.x;
+		itemLocation.y += shellPosition.y;
 		
-		//Workaround for resize problem
+		Point size = viewer.getTree().computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		size.x += 5;
+		size.y += 5;
 		if(size.x > 500)
 			size.x = 500;
 		getShell().setSize(size);
-		
-		TreeItem[] items = viewer.getTree().getItems();
-		for (int i = 0; i < items.length; i++) {
-			TreeItem item = items[i];
-		}
 
-		Point windowLocation = new Point(position.x, position.y + position.height - size.y);
+		Point windowLocation = new Point(itemLocation.x - size.x, itemLocation.y );
+		
 		getShell().setLocation(windowLocation);
 	}
 

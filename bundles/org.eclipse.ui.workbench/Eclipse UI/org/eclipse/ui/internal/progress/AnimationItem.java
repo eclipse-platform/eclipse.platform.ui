@@ -14,14 +14,26 @@ package org.eclipse.ui.internal.progress;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleControlAdapter;
 import org.eclipse.swt.accessibility.AccessibleControlEvent;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.HelpEvent;
+import org.eclipse.swt.events.HelpListener;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Canvas;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.internal.WorkbenchWindow;
 
 public class AnimationItem {
 
-	IWorkbenchWindow window;
+	WorkbenchWindow window;
 	private ProgressFloatingWindow floatingWindow;
 	private boolean showingDetails = false;
 	Canvas imageCanvas;
@@ -34,7 +46,7 @@ public class AnimationItem {
 	 */
 
 	public AnimationItem(
-		IWorkbenchWindow workbenchWindow) {
+		WorkbenchWindow workbenchWindow) {
 		this.window = workbenchWindow;
 	}
 
@@ -164,7 +176,7 @@ public class AnimationItem {
 	 * @param event
 	 */
 	void openFloatingWindow(){
-		floatingWindow = new ProgressFloatingWindow(window.getShell());
+		floatingWindow = new ProgressFloatingWindow(window);
 		floatingWindow.open();
 	}
 	
