@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ltk.ui.refactoring;
+package org.eclipse.ltk.internal.ui.refactoring;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ViewForm;
@@ -25,9 +25,6 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-import org.eclipse.ltk.internal.ui.refactoring.ErrorWizardPage;
-import org.eclipse.ltk.internal.ui.refactoring.RefactoringStatusViewer;
-import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 
 public class RefactoringStatusDialog extends Dialog {
 	
@@ -35,7 +32,7 @@ public class RefactoringStatusDialog extends Dialog {
 	private String fWindowTitle;
 	private boolean fBackButton;
 	
-	public RefactoringStatusDialog(Shell parent, RefactoringStatus status, String windowTitle, boolean backButton) {
+	public RefactoringStatusDialog(RefactoringStatus status, Shell parent, String windowTitle, boolean backButton) {
 		super(parent);
 		fStatus= status;
 		fWindowTitle= windowTitle;
@@ -44,7 +41,7 @@ public class RefactoringStatusDialog extends Dialog {
 	}
 	
 	public RefactoringStatusDialog(Shell parent, ErrorWizardPage page, boolean backButton) {
-		this(parent, page.getStatus(), parent.getText(), backButton);
+		this(page.getStatus(), parent, parent.getText(), backButton);
 	}
 	
 	protected void configureShell(Shell newShell) {

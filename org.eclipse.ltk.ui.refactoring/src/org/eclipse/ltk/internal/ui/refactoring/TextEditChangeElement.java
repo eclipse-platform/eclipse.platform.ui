@@ -18,18 +18,19 @@ import org.eclipse.jface.util.Assert;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.TextChange;
 import org.eclipse.ltk.core.refactoring.TextEditChangeGroup;
+import org.eclipse.ltk.ui.refactoring.ChangePreviewViewerInput;
 import org.eclipse.ltk.ui.refactoring.IChangePreviewViewer;
 
 /* package */ class TextEditChangeElement extends ChangeElement {
 	
 	private static final ChangeElement[] fgChildren= new ChangeElement[0];
 	
-	private TextEditChangeGroup fChange;
+	private TextEditChangeGroup fChangeGroup;
 	
-	public TextEditChangeElement(ChangeElement parent, TextEditChangeGroup change) {
+	public TextEditChangeElement(ChangeElement parent, TextEditChangeGroup changeGroup) {
 		super(parent);
-		fChange= change;
-		Assert.isNotNull(fChange);
+		fChangeGroup= changeGroup;
+		Assert.isNotNull(fChangeGroup);
 	}
 	
 	/**
@@ -38,33 +39,33 @@ import org.eclipse.ltk.ui.refactoring.IChangePreviewViewer;
 	 * @return the <code>TextEditChange</code>
 	 */
 	public TextEditChangeGroup getTextEditChange() {
-		return fChange;
+		return fChangeGroup;
 	}
 		
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.ui.refactoring.ChangeElement#getChangePreviewViewer()
 	 */
-	public ChangePreviewViewerDescriptor getChangePreviewViewer() throws CoreException {
-		DefaultChangeElement element= getStandardChangeElement();
+	public ChangePreviewViewerDescriptor getChangePreviewViewerDescriptor() throws CoreException {
+		DefaultChangeElement element= getDefaultChangeElement();
 		if (element == null)
 			return null;
-		return element.getChangePreviewViewer();
+		return element.getChangePreviewViewerDescriptor();
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.ui.refactoring.ChangeElement#feedInput(org.eclipse.jdt.internal.ui.refactoring.IChangePreviewViewer)
 	 */
 	public void feedInput(IChangePreviewViewer viewer) throws CoreException {
-		DefaultChangeElement element= getStandardChangeElement();
+		DefaultChangeElement element= getDefaultChangeElement();
 		if (element != null) {
 			Change change= element.getChange();
 			if (change instanceof TextChange) {
 				IRegion range= getTextRange(this);
-				Object input= null;
+				ChangePreviewViewerInput input= null;
 				if (range != null) {
-					input= TextChangePreviewViewer.createInput(new TextEditChangeGroup[] {fChange}, range);
+					input= TextChangePreviewViewer.createInput(change, new TextEditChangeGroup[] {fChangeGroup}, range);
 				} else {
-					input= TextChangePreviewViewer.createInput(fChange, 2);
+					input= TextChangePreviewViewer.createInput(change, fChangeGroup, 2);
 				}
 				viewer.setInput(input);
 			}
@@ -77,14 +78,14 @@ import org.eclipse.ltk.ui.refactoring.IChangePreviewViewer;
 	 * @see ChangeElement#setActive
 	 */
 	public void setActive(boolean active) {
-		fChange.setEnabled(active);
+		fChangeGroup.setEnabled(active);
 	}
 	
 	/* non Java-doc
 	 * @see ChangeElement.getActive
 	 */
 	public int getActive() {
-		return fChange.isEnabled() ? ACTIVE : INACTIVE;
+		return fChangeGroup.isEnabled() ? ACTIVE : INACTIVE;
 	}
 	
 	/* non Java-doc
@@ -94,7 +95,7 @@ import org.eclipse.ltk.ui.refactoring.IChangePreviewViewer;
 		return fgChildren;
 	}
 	
-	private DefaultChangeElement getStandardChangeElement() {
+	private DefaultChangeElement getDefaultChangeElement() {
 		ChangeElement element= getParent();
 		while(!(element instanceof DefaultChangeElement) && element != null) {
 			element= element.getParent();

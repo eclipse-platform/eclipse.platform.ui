@@ -17,6 +17,7 @@ import org.eclipse.jface.util.Assert;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
 import org.eclipse.ltk.core.refactoring.TextChange;
+import org.eclipse.ltk.ui.refactoring.ChangePreviewViewerInput;
 import org.eclipse.ltk.ui.refactoring.IChangePreviewViewer;
 
 class DefaultChangeElement extends ChangeElement {
@@ -51,7 +52,7 @@ class DefaultChangeElement extends ChangeElement {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.ui.refactoring.ChangeElement#getChangePreviewViewer()
 	 */
-	public ChangePreviewViewerDescriptor getChangePreviewViewer() throws CoreException {
+	public ChangePreviewViewerDescriptor getChangePreviewViewerDescriptor() throws CoreException {
 		return ChangePreviewViewerDescriptor.get(fChange);
 	}
 	
@@ -59,7 +60,7 @@ class DefaultChangeElement extends ChangeElement {
 	 * @see org.eclipse.jdt.internal.ui.refactoring.ChangeElement#feedInput(org.eclipse.jdt.internal.ui.refactoring.IChangePreviewViewer)
 	 */
 	public void feedInput(IChangePreviewViewer viewer) throws CoreException {
-		viewer.setInput(fChange);
+		viewer.setInput(new ChangePreviewViewerInput(fChange));
 	}
 	
 	/* non Java-doc

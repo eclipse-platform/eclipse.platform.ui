@@ -52,23 +52,23 @@ import org.eclipse.ltk.ui.refactoring.IChangePreviewViewer;
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.ui.refactoring.ChangeElement#getChangePreviewViewer()
 	 */
-	public ChangePreviewViewerDescriptor getChangePreviewViewer() throws CoreException {
-		DefaultChangeElement element= getStandardChangeElement();
+	public ChangePreviewViewerDescriptor getChangePreviewViewerDescriptor() throws CoreException {
+		DefaultChangeElement element= getDefaultChangeElement();
 		if (element == null)
 			return null;
-		return element.getChangePreviewViewer();
+		return element.getChangePreviewViewerDescriptor();
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.ui.refactoring.ChangeElement#feedInput(org.eclipse.jdt.internal.ui.refactoring.IChangePreviewViewer)
 	 */
 	public void feedInput(IChangePreviewViewer viewer) throws CoreException {
-		DefaultChangeElement element= getStandardChangeElement();
+		DefaultChangeElement element= getDefaultChangeElement();
 		if (element != null) {
 			Change change= element.getChange();
 			if (change instanceof TextChange) {
 				List edits= collectTextEditChanges();
-				viewer.setInput(TextChangePreviewViewer.createInput(
+				viewer.setInput(TextChangePreviewViewer.createInput(change,
 					(TextEditChangeGroup[])edits.toArray(new TextEditChangeGroup[edits.size()]),
 					getTextRange()));
 			}
@@ -137,7 +137,7 @@ import org.eclipse.ltk.ui.refactoring.IChangePreviewViewer;
 		fChildren.add(child);
 	}
 	
-	private DefaultChangeElement getStandardChangeElement() {
+	private DefaultChangeElement getDefaultChangeElement() {
 		ChangeElement element= getParent();
 		while(!(element instanceof DefaultChangeElement) && element != null) {
 			element= element.getParent();

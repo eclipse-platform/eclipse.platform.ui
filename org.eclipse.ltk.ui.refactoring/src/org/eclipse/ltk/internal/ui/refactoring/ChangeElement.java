@@ -59,12 +59,12 @@ abstract class ChangeElement {
 	}
 	
 	/**
-	 * Returns the viewer used to present a preview of this change element
+	 * Returns the viewer descriptor used to present a preview of this change element
 	 * 
 	 * @return the viewer suitable to present a preview of this change or
 	 *  <code>null</code> if no previewer is configured.
 	 */
-	public abstract ChangePreviewViewerDescriptor getChangePreviewViewer() throws CoreException;
+	public abstract ChangePreviewViewerDescriptor getChangePreviewViewerDescriptor() throws CoreException;
 	
 	public abstract void feedInput(IChangePreviewViewer viewer) throws CoreException;
 	

@@ -16,13 +16,27 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
 /**
- * Presents a preview of a <code>ChangeElement</code>
+ * Viewer to present the preview for a {@link org.eclipse.ltk.core.refactoring.Change}.
+ * It is guaranteed that the methods <code>setInput</code> and <code>getControl</code>
+ * are called after <code>createControl</code> has been called.
+ * <p>
+ * Viewers are associated with a change object via the extension point <code>
+ * org.eclipse.ltk.ui.refactoring.changePreviewViewers</code>. Implementors of this
+ * extension point must therefore implement this interface.
+ * </p>
+ * <p>
+ * To ensure visual consistency across all provided preview viewers the widget
+ * hierarchy provided through the method {@link #createControl(Composite)} has to
+ * use a {@link org.eclipse.swt.custom.ViewForm} as its root widget.
+ * </p>
+ * 
+ * @since 3.0
  */
 public interface IChangePreviewViewer {
 
 	/**
 	 * Creates the preview viewer's widget hierarchy. This method 
-	 * should only be called once. Method <code>getControl()</code>
+	 * is only called once. Method <code>getControl()</code>
 	 * should be use retrieve the widget hierarchy.
 	 * 
 	 * @param parent the parent for the widget hierarchy
@@ -43,11 +57,6 @@ public interface IChangePreviewViewer {
 	 * 
 	 * @param input the input element
 	 */
-	public void setInput(Object input) throws CoreException;
-	
-	/**
-	 * Refreshes the preview viewer.
-	 */
-	public void refresh();	
+	public void setInput(ChangePreviewViewerInput input) throws CoreException;	
 }
 

@@ -46,6 +46,7 @@ import org.eclipse.jface.wizard.IWizardContainer;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.ProgressMonitorPart;
 
+import org.eclipse.ltk.internal.ui.refactoring.*;
 import org.eclipse.ltk.internal.ui.refactoring.ErrorWizardPage;
 import org.eclipse.ltk.internal.ui.refactoring.IPreviewWizardPage;
 import org.eclipse.ltk.internal.ui.refactoring.PreviewWizardPage;
@@ -53,11 +54,13 @@ import org.eclipse.ltk.internal.ui.refactoring.RefactoringPluginImages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
 
-public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer {
+public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer, IRefactoringWizardDialog {
 
 	private RefactoringWizard fWizard;
 	private IWizardPage fCurrentPage;
 	private IWizardPage fVisiblePage;
+	
+	private boolean fMakeNextButtonDefault;
 	
 	private PageBook fPageContainer;
 	private PageBook fStatusContainer;
@@ -188,6 +191,12 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 			fSettings.put(WIDTH, size.x);
 			fSettings.put(HEIGHT, size.y);
 		}
+	}
+
+	//---- IRefactoringWizardDialog ------------------------------------
+	
+	public void makeNextButtonDefault() {
+		fMakeNextButtonDefault= true;
 	}
 	
 	//---- IWizardContainer --------------------------------------------
@@ -546,6 +555,9 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 	protected void createButtonsForButtonBar(Composite parent) {
 		if (! (fCurrentPage instanceof PreviewWizardPage) && fWizard.hasPreviewPage()) {
 			Button preview= createButton(parent, PREVIEW_ID, RefactoringUIMessages.getString("RefactoringWizardDialog2.buttons.preview.label"), false); //$NON-NLS-1$
+			if (fMakeNextButtonDefault) {
+				preview.getShell().setDefaultButton(preview);
+			}
 			preview.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					previewPressed();

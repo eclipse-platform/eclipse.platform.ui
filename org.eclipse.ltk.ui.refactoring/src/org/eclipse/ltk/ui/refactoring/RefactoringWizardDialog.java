@@ -28,7 +28,7 @@ import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
 /**
  * A dialog to host refactoring wizards.
  */
-public class RefactoringWizardDialog extends WizardDialog {
+public class RefactoringWizardDialog extends WizardDialog implements IRefactoringWizardDialog {
 
 	private static final String DIALOG_SETTINGS= "RefactoringWizard"; //$NON-NLS-1$
 	private static final String WIDTH= "width"; //$NON-NLS-1$
@@ -38,12 +38,13 @@ public class RefactoringWizardDialog extends WizardDialog {
 	
 	/*
 	 * note: this field must not be initialized - setter is called in the call to super
-	 * and java initializes fields 'after' the call to super is made. so initializing would override setting.
+	 * and java initializes fields 'after' the call to super is made. So initializing 
+	 * would override setting.
 	 */
 	private boolean fMakeNextButtonDefault; 
 
 	/**
-	 * Creates a new refactoring wizard dialag with the given wizard.
+	 * Creates a new refactoring wizard dialog with the given wizard.
 	 */
 	public RefactoringWizardDialog(Shell parent, RefactoringWizard wizard) {
 		super(parent, wizard);
@@ -95,7 +96,7 @@ public class RefactoringWizardDialog extends WizardDialog {
 
 	/* usually called in the IWizard#setContainer(IWizardContainer) method
 	 */
-	public void setMakeNextButtonDefault(boolean makeNextButtonDefault) {
-		fMakeNextButtonDefault= makeNextButtonDefault;
+	public void makeNextButtonDefault() {
+		fMakeNextButtonDefault= true;
 	}
 }

@@ -42,6 +42,7 @@ import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
 import org.eclipse.ltk.core.refactoring.TextChange;
 import org.eclipse.ltk.internal.ui.refactoring.util.ViewerPane;
+import org.eclipse.ltk.ui.refactoring.ChangePreviewViewerInput;
 import org.eclipse.ltk.ui.refactoring.IChangePreviewViewer;
 import org.eclipse.ltk.ui.refactoring.RefactoringWizardPage;
 
@@ -62,7 +63,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 		public Control getControl() {
 			return fLabel;
 		}
-		public void setInput(Object input) throws CoreException {
+		public void setInput(ChangePreviewViewerInput input) throws CoreException {
 		}
 	}
 	
@@ -353,7 +354,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 			if (element == null) {
 				showNullPreviewer();
 			} else {
-				ChangePreviewViewerDescriptor descriptor= element.getChangePreviewViewer();
+				ChangePreviewViewerDescriptor descriptor= element.getChangePreviewViewerDescriptor();
 				if (fCurrentDescriptor != descriptor) {
 					IChangePreviewViewer newViewer;
 					if (descriptor != null) {

@@ -32,20 +32,26 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.viewers.Viewer;
 
+import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.TextChange;
 import org.eclipse.ltk.core.refactoring.TextEditChangeGroup;
+import org.eclipse.ltk.ui.refactoring.ChangePreviewViewerInput;
 import org.eclipse.ltk.ui.refactoring.IChangePreviewViewer;
 
 public class TextChangePreviewViewer implements IChangePreviewViewer {
 
 	private ComparePreviewer fViewer;
 	
-	private static class TextEditChangeInput {
-		TextEditChangeGroup change;
+	private static class TextEditChangeInput extends ChangePreviewViewerInput {
+		TextEditChangeGroup group;
 		int surroundingLines;
 		
-		TextEditChangeGroup[] changes;
+		TextEditChangeGroup[] groups;
 		IRegion range;
+		
+		public TextEditChangeInput(Change change) {
+			super(change);
+		}
 	}
 	
 	private static class ComparePreviewer extends CompareViewerSwitchingPane {
@@ -106,20 +112,20 @@ public class TextChangePreviewViewer implements IChangePreviewViewer {
 		}
 	}
 	
-	public static Object createInput(TextChange change) {
-		return change;
+	public static ChangePreviewViewerInput createInput(TextChange change) {
+		return new ChangePreviewViewerInput(change);
 	}
 	
-	public static Object createInput(TextEditChangeGroup change, int surroundingLines) {
-		TextEditChangeInput result= new TextEditChangeInput();
-		result.change= change;
+	public static ChangePreviewViewerInput createInput(Change change, TextEditChangeGroup group, int surroundingLines) {
+		TextEditChangeInput result= new TextEditChangeInput(change);
+		result.group= group;
 		result.surroundingLines= surroundingLines;
 		return result;
 	}
 	
-	public static Object createInput(TextEditChangeGroup[] changes, IRegion range) {
-		TextEditChangeInput result= new TextEditChangeInput();
-		result.changes= changes;
+	public static ChangePreviewViewerInput createInput(Change change, TextEditChangeGroup[] groups, IRegion range) {
+		TextEditChangeInput result= new TextEditChangeInput(change);
+		result.groups= groups;
 		result.range= range;
 		return result;
 	}
@@ -142,38 +148,31 @@ public class TextChangePreviewViewer implements IChangePreviewViewer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.ui.refactoring.IChangePreviewViewer#setInput(org.eclipse.jdt.internal.ui.refactoring.ChangeElement)
 	 */
-	public void setInput(Object input) throws CoreException {
-		if (input instanceof TextChange) {
-			TextChange change= (TextChange)input;
-			setInput(change.getCurrentContent(), change.getPreviewContent(), change.getTextType());
-			return;
-		} else if (input instanceof TextEditChangeInput) {
+	public void setInput(ChangePreviewViewerInput input) throws CoreException {
+		Change change= input.getChange();
+		if (input instanceof TextEditChangeInput) {
 			TextEditChangeInput edi= (TextEditChangeInput)input;
-			if (edi.change != null && edi.surroundingLines >= 0) {
-				TextEditChangeGroup editChange= edi.change;
-				TextChange change= editChange.getTextChange();
-				setInput(change.getCurrentContent(editChange.getRegion(), true, 2),
-					change.getPreviewContent(new TextEditChangeGroup[] { editChange }, editChange.getRegion(), true, 2),
-					change.getTextType());
+			if (edi.group != null && edi.surroundingLines >= 0) {
+				TextEditChangeGroup editChange= edi.group;
+				TextChange textChange= editChange.getTextChange();
+				setInput(textChange.getCurrentContent(editChange.getRegion(), true, 2),
+					textChange.getPreviewContent(new TextEditChangeGroup[] { editChange }, editChange.getRegion(), true, 2),
+					textChange.getTextType());
 				return;
-			} else if (edi.changes != null && edi.changes.length > 0 && edi.range != null) {
-				TextChange change= edi.changes[0].getTextChange();
-				setInput(change.getCurrentContent(edi.range, true, 0),
-					change.getPreviewContent(edi.changes, edi.range, true, 0),
-					change.getTextType());
+			} else if (edi.groups != null && edi.groups.length > 0 && edi.range != null) {
+				TextChange textChange= edi.groups[0].getTextChange();
+				setInput(textChange.getCurrentContent(edi.range, true, 0),
+					textChange.getPreviewContent(edi.groups, edi.range, true, 0),
+					textChange.getTextType());
 				return;
 			}
+		} else if (change instanceof TextChange) {
+			TextChange textChange= (TextChange)change;
+			setInput(textChange.getCurrentContent(), textChange.getPreviewContent(), textChange.getTextType());
+			return;
 		} else {
 			fViewer.setInput(null);
 		}
-		/* 
-		} else if (change instanceof CreateTextFileChange){
-			CreateTextFileChange ctfc= (CreateTextFileChange)change;
-			String type= ctfc.isJavaFile() ? JAVA_TYPE: TEXT_TYPE;
-			setInput(input, ctfc.getCurrentContent(), ctfc.getPreview(), type);
-			return;
-		}
-		*/
 	}
 
 	/* (non-Javadoc)
