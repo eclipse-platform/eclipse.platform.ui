@@ -49,9 +49,12 @@ function mouseout(img)
             <input value='<%=WebappResources.getString("Go", null)%>' type="submit" alt='<%=WebappResources.getString("Search", null)%>' src="images/go.gif" class="normal" onmouseover="mouseover(this)" onmouseout="mouseout(this)" >
           </td> 
           <td>
-           <!--
+          
+          <!--
+            <input type="checkbox" name="scope" value="/org.eclipse.help.examples.ex1/maindocs.xml" checked>
+            <input type="checkbox" name="scope" value="/org.eclipse.jdt.doc.user/toc.xml" checked>
             <input type="checkbox" name="fieldSearch" <%= request.getParameter("fieldSearch")!=null?"checked='true'":""%>>Search headings only
-   			-->
+          -->
             <input type="hidden" name="field" value="h1" >
             <input type="hidden" name="field" value="h2" >
             <input type="hidden" name="field" value="h3" >
