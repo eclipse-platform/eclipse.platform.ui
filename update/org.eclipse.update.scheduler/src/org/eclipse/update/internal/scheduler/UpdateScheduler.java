@@ -171,6 +171,9 @@ public class UpdateScheduler extends AbstractUIPlugin{
 	}
 	
 	public static SchedulerStartup getScheduler() {
+		// If the scheduler was disabled, it does not get initialized
+		if (scheduler == null)
+			scheduler = new SchedulerStartup();
 		return scheduler;
 	}
 	
