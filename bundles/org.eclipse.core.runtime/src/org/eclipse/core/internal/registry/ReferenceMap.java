@@ -1,15 +1,23 @@
-/*******************************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
- * 
+/**
+ *  Copyright 2001-2004 The Apache Software Foundation
+ *  Portions (modifications) Copyright 2004 IBM Corp.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
  * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
-
-//TODO Add the specifics HEADERS and the APACHE licence (this is coming from the jakarta/commons project)
+ *    Apache Software Foundation - Initial implementation
+ *    Pascal Rapicault, IBM -  Pascal remove the entrySet() implementation because it relied on another class.
+ */
 package org.eclipse.core.internal.registry;
 
 
@@ -56,7 +64,7 @@ import java.util.*;
  *  provide synchronized access to a <Code>ReferenceMap</Code>.
  *
  *  @author Paul Jack 
- *  @version $Id: ReferenceMap.java,v 1.1.2.2 2004/11/05 15:42:53 prapicau Exp $
+ *  @version $Id: ReferenceMap.java,v 1.2 2004/11/15 20:08:57 prapicau Exp $
  *  @since 2.1
  *  @see java.lang.ref.Reference
  */
@@ -343,7 +351,10 @@ public class ReferenceMap extends AbstractMap {
      *  be copied from the old smaller table to the new 
      *  bigger table.
      */
+    private int countResize=0;  
     private void resize() {
+    	countResize++;
+    	System.out.println(countResize);
         Entry[] old = table;
         table = new Entry[old.length * 2];
 
@@ -530,67 +541,6 @@ public class ReferenceMap extends AbstractMap {
         size = 0;
         while (queue.poll() != null) {/*do nothing*/} // drain the queue
     }
-
-
-    /**
-     *  Returns a set view of this map's entries.
-     *
-     *  @return a set view of this map's entries
-     */
-    public Set entrySet() {
-        if (entrySet != null) return entrySet;
-        entrySet = new AbstractSet() {
-            public int size() {
-                return ReferenceMap.this.size();
-            }
-
-
-            public void clear() {
-                ReferenceMap.this.clear();
-            }
-
-
-            public boolean contains(Object o) {
-                if (o == null) return false;
-                if (!(o instanceof Map.Entry)) return false;
-                Map.Entry e = (Map.Entry)o;
-                Entry e2 = getEntry(e.getKey());
-                return (e2 != null) && e.equals(e2);
-            }
-
-
-            public boolean remove(Object o) {
-                boolean r = contains(o);
-                if (r) {
-                    Map.Entry e = (Map.Entry)o;
-                    ReferenceMap.this.remove(e.getKey());
-                }
-                return r;
-            }
-
-
-            public Iterator iterator() {
-                return new EntryIterator();
-            }
-
-            public Object[] toArray() {
-                return toArray(new Object[0]);
-            }
-
-
-            public Object[] toArray(Object[] arr) {
-                ArrayList list = new ArrayList();
-//                Iterator iterator = iterator();
-//                while (iterator.hasNext()) {
-//                    Entry e = (Entry)iterator.next();
-//                    list.add(new DefaultMapEntry(e.getKey(), e.getValue()));
-//                }
-                return list.toArray(arr);
-            }
-        };
-        return entrySet;
-    }
-
 
     /**
      *  Returns a set view of this map's keys.
@@ -862,6 +812,11 @@ public class ReferenceMap extends AbstractMap {
             return hash;
         }
     }
+
+
+	public Set entrySet() {
+		throw new UnsupportedOperationException();
+	}
 
 
 }
