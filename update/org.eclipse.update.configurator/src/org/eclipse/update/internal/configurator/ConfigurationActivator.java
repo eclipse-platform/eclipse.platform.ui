@@ -89,7 +89,7 @@ public class ConfigurationActivator implements BundleActivator {
 		Utils.setLog(platform.getLog(context.getBundle()));
 		
 		installURL = platform.getInstallURL();
-		configArea = platform.getConfigurationMetadataLocation().toOSString();
+		configArea = platform.getConfigurationLocation().toOSString();
 		configurationFactorySR = context.registerService(IPlatformConfigurationFactory.class.getName(), new PlatformConfigurationFactory(), null);
 		configuration = getPlatformConfiguration(allArgs, installURL, configArea);
 		if (configuration == null)
@@ -334,21 +334,24 @@ public class ConfigurationActivator implements BundleActivator {
 		}
 		// TODO this is such a hack it is silly.  There are still cases for race conditions etc
 		// but this should allow for some progress...
-		final Object semaphore = new Object();
+		final boolean[] flag = new boolean[] {false};
 		FrameworkListener listener = new FrameworkListener() {
 			public void frameworkEvent(FrameworkEvent event) {
 				if (event.getType() == FrameworkEvent.PACKAGES_REFRESHED)
-					synchronized (semaphore) {
-						semaphore.notifyAll();
+					synchronized (flag) {
+						flag[0] = true;
+						flag.notifyAll();
 					}
 			}
 		};
 		context.addFrameworkListener(listener);
 		packageAdmin.refreshPackages(bundles);
-		synchronized (semaphore) {
-			try {
-				semaphore.wait();
-			} catch (InterruptedException e) {
+		synchronized (flag) {
+			while (!flag[0]) {
+				try {
+					flag.wait();
+				} catch (InterruptedException e) {
+				}
 			}
 		}
 		context.removeFrameworkListener(listener);
