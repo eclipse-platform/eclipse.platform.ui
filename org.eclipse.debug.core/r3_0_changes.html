@@ -43,6 +43,16 @@
   type (specifying no launch mode), is used for all launch modes for which a specific 
   launch tab group is not contributed. Thus, when a mode is not specified by a 
   tab group, the tab group effectively becomes the default tab group.</p>
+<h3>Extensible Debug Events</h3>
+<p>The debug platform supports an extensible set of debug events. A debug event 
+  kind of <code>MODEL_SPECIFIC</code> has been added in the 3.0 release to indicate 
+  an application specific debug event. When a debug event of kind <code>MODEL_SPECIFIC</code> 
+  is created, the detail code in the event is client defined. The source of the 
+  event (debug element that generated the event) identifies the debug model from 
+  which the event was generated. The debug platform and user interface ignores 
+  model specific debug events.</p>
+<p>A data field has been added to debug events to allow clients to store application 
+  specific data in debug events.</p>
 <h2>API Changes</h2>
 <h3>Extensible Lanuch Modes</h3>
 <p>With the introduction of extensible launch modes, more than one launch delegate 
