@@ -40,10 +40,7 @@ public class IncludedFeatureReference
 	/**
 	 * Construct a feature options 
 	 * 
-	 * @param name string representation of the feature
-	 * @param isOptional <code>true</code> if the feature is optional, <code>false</code> otherwise.
-	 * @param matchingRule the matching rule
-	 * @param searchLocation the location to search for this feature's updates.
+	 * @param includedFeatureRef reference to clone
 	 * @since 2.0.2
 	 */
 	public IncludedFeatureReference(IIncludedFeatureReference includedFeatureRef) {
@@ -52,7 +49,7 @@ public class IncludedFeatureReference
 
 	/**
 	 * Constructor IncludedFeatureReference.
-	 * @param iFeatureReference
+	 * @param featureReference
 	 */
 	public IncludedFeatureReference(IFeatureReference featureReference) {
 		super(featureReference);

@@ -27,7 +27,6 @@ public interface IInstallDeltaHandler{
 	 * Sets the list of session delta to present to the user
 	 * 
 	 * @param deltas an Array of <code>ISessionDelta</code>
-	 * @see org.eclipse.update.configuration.ISesssionDelta
 	 * @since 2.0 
 	 * <p>
 	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to

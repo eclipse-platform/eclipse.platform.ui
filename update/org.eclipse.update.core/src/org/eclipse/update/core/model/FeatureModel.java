@@ -192,7 +192,6 @@ public class FeatureModel extends ModelObject {
 	/**
 	 * Get optional operating system specification as a comma-separated string.
 	 * 
-	 * @see org.eclipse.core.boot.BootLoader 
 	 * @return the operating system specification string, or <code>null</code>.
 	 * @since 2.0
 	 */
@@ -202,8 +201,6 @@ public class FeatureModel extends ModelObject {
 
 	/**
 	 * Get optional windowing system specification as a comma-separated string.
-	 * 
-	 * @see org.eclipse.core.boot.BootLoader 
 	 * @return the windowing system specification string, or <code>null</code>.
 	 * @since 2.0
 	 */
@@ -214,7 +211,6 @@ public class FeatureModel extends ModelObject {
 	/**
 	 * Get optional system architecture specification as a comma-separated string.
 	 * 
-	 * @see org.eclipse.core.boot.BootLoader 
 	 * @return the system architecture specification string, or <code>null</code>.
 	 * @since 2.0
 	 */
@@ -493,7 +489,6 @@ public class FeatureModel extends ModelObject {
 	 * Sets the operating system specification.
 	 * Throws a runtime exception if this object is marked read-only.
 	 * 
-	 * @see org.eclipse.core.boot.BootLoader
 	 * @param os operating system specification as a comma-separated list
 	 * @since 2.0
 	 */
@@ -506,7 +501,6 @@ public class FeatureModel extends ModelObject {
 	 * Sets the windowing system specification.
 	 * Throws a runtime exception if this object is marked read-only.
 	 * 
-	 * @see org.eclipse.core.boot.BootLoader
 	 * @param ws windowing system specification as a comma-separated list
 	 * @since 2.0
 	 */
@@ -531,7 +525,6 @@ public class FeatureModel extends ModelObject {
 	 * Sets the system architecture specification.
 	 * Throws a runtime exception if this object is marked read-only.
 	 * 
-	 * @see org.eclipse.core.boot.BootLoader
 	 * @param arch system architecture specification as a comma-separated list
 	 * @since 2.0
 	 */

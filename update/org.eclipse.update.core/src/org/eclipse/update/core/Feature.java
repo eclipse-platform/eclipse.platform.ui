@@ -1067,7 +1067,7 @@ public class Feature extends FeatureModel implements IFeature {
 
 	/**
 	 * Method filterPluginEntry.
-	 * @param iNonPluginEntrys
+	 * @param all
 	 * @return INonPluginEntry[]
 	 */
 	private INonPluginEntry[] filterNonPluginEntry(INonPluginEntry[] all) {
@@ -1103,7 +1103,7 @@ public class Feature extends FeatureModel implements IFeature {
 
 	/**
 	 * Method filterImports.
-	 * @param iImports
+	 * @param all
 	 * @return IImport[]
 	 */
 	private IImport[] filterImports(IImport[] all) {

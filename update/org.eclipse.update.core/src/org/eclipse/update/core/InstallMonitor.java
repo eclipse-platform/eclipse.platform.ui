@@ -259,7 +259,7 @@ public class InstallMonitor implements IProgressMonitor {
 	 * 
 	 * @see #showCopyDetails(boolean)
 	 * @see #setTotalCount(long)
-	 * @param count number of new bytes  copied.
+	 * @param increment number of new bytes  copied.
 	 * @since 2.0
 	 */
 	public void incrementCount(long increment) {

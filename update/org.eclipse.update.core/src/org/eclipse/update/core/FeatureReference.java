@@ -88,7 +88,7 @@ public class FeatureReference extends FeatureReferenceModel implements IFeatureR
 
 	/**
 	 * Returns the feature the reference points to 
-	 * @param the feature reference
+	 * @param ref the feature reference
 	 * @return the feature on the Site
 	 */
 	protected IFeature getFeature(IFeatureReference ref,IProgressMonitor monitor) throws CoreException {
@@ -204,7 +204,6 @@ public class FeatureReference extends FeatureReferenceModel implements IFeatureR
 	/**
 	 * Get optional operating system specification as a comma-separated string.
 	 *
-	 * @see org.eclipse.core.boot.BootLoader
 	 * @return the operating system specification string, or <code>null</code>.
 	 * @since 2.1
 	 */
@@ -221,7 +220,6 @@ public class FeatureReference extends FeatureReferenceModel implements IFeatureR
 	/**
 	 * Get optional windowing system specification as a comma-separated string.
 	 *
-	 * @see org.eclipse.core.boot.BootLoader
 	 * @return the windowing system specification string, or <code>null</code>.
 	 * @since 2.1
 	 */
@@ -238,7 +236,6 @@ public class FeatureReference extends FeatureReferenceModel implements IFeatureR
 	/**
 	 * Get optional system architecture specification as a comma-separated string.
 	 *
-	 * @see org.eclipse.core.boot.BootLoader
 	 * @return the system architecture specification string, or <code>null</code>.
 	 * @since 2.1
 	 */

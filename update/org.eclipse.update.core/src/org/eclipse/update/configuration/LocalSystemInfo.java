@@ -174,9 +174,6 @@ public class LocalSystemInfo {
 	
 	/**
 	 * Indicates a new volume has been added
-	 * 
-	 * @see LocalSystemInfo#addInfoListener(File)
-	 * @see LocalSystemInfo#removeInfoListener(File)
 	 * @since 2.0
 	 * <p>
 	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
@@ -189,9 +186,6 @@ public class LocalSystemInfo {
 			
 	/**
 	 * Indicates a volume has been removed
-	 * 
-	 * @see LocalSystemInfo#addInfoListener(File)
-	 * @see LocalSystemInfo#removeInfoListener(File)
 	 * @since 2.0
 	 * <p>
 	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
@@ -204,9 +198,6 @@ public class LocalSystemInfo {
 
 	/**
 	 * Indicates a volume has been changed
-	 * 
-	 * @see LocalSystemInfo#addInfoListener(File)
-	 * @see LocalSystemInfo#removeInfoListener(File)
 	 * @since 2.0
 	 * <p>
 	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to

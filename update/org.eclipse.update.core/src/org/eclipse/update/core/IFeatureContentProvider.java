@@ -208,7 +208,6 @@ public interface IFeatureContentProvider {
 	 * @return total download size, or an indication that size could not be
 	 * determined
 	 * @see org.eclipse.update.core.model.ContentEntryModel#UNKNOWN_SIZE
-	 * @exception CoreException
 	 * @since 2.0
 	 */
 	public long getDownloadSizeFor(
@@ -224,7 +223,6 @@ public interface IFeatureContentProvider {
 	 * @return total download size, or an indication that size could not be
 	 * determined
 	 * @see org.eclipse.update.core.model.ContentEntryModel#UNKNOWN_SIZE
-	 * @exception CoreException
 	 * @since 2.0
 	 */
 	public long getInstallSizeFor(

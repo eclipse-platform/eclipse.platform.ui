@@ -45,8 +45,8 @@ public interface IFeatureContentConsumer {
 	 * 
 	 * @see #open(IPluginEntry)
 	 * @see #open(INonPluginEntry)	 
-	 * @param ContentReference content reference to feature file
-	 * @param IProgressMonitor progress monitor, can be <code>null</code>
+	 * @param contentReference content reference to feature file
+	 * @param monitor progress monitor, can be <code>null</code>
 	 * @exception CoreException
 	 * @since 2.0 
 	 */
@@ -58,7 +58,7 @@ public interface IFeatureContentConsumer {
 	 * Plug-in files corresponding to this entry should be stored
 	 * using this content consumer.
 	 * 
-	 * @param nonPluginEntry non-plug-in entry
+	 * @param pluginEntry plug-in entry
 	 * @return generic content consumer for the entry
 	 * @exception CoreException
 	 * @since 2.0 

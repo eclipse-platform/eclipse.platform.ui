@@ -230,7 +230,7 @@ public interface ISite extends IAdaptable {
 	 * the size could not be determined
 	 * @since 2.0 
 	 */
-	public long getInstallSizeFor(IFeature site);
+	public long getInstallSizeFor(IFeature feature);
 
 	/**
 	 * Installs the specified feature on this site.

@@ -144,10 +144,6 @@ public class SiteManager {
 	 * This information is used as a hint by the installation and update
 	 * support.
 	 * 
-	 * @see BootLoader#ARCH_PA_RISC
-	 * @see BootLoader#ARCH_PPC
-     * @see BootLoader#ARCH_SPARC
-     * @see BootLoader#ARCH_X86
 	 * @return system architecture specification
 	 * @since 2.1
 	 */
@@ -164,13 +160,6 @@ public class SiteManager {
 	 * This information is used as a hint by the installation and update
 	 * support.
 	 *
-     * @see BootLoader#OS_AIX
-     * @see BootLoader#OS_HPUX
-     * @see BootLoader#OS_LINUX
-     * @see BootLoader#OS_MACOSX
-     * @see BootLoader#OS_QNX
-     * @see BootLoader#OS_SOLARIS
-     * @see BootLoader#OS_WIN32 
 	 * @return the operating system specification.
 	 * @since 2.1
 	 */
@@ -186,12 +175,6 @@ public class SiteManager {
 	 * 
 	 * This information is used as a hint by the installation and update
 	 * support.
-	 * 
-	 * @see BootLoader#WS_CARBON
-	 * @see BootLoader#WS_GTK
-	 * @see BootLoader#WS_MOTIF
-	 * @see BootLoader#WS_PHOTON
-	 * @see BootLoader#WS_WIN32 
 	 * @return system architecture specification.
 	 * @since 2.1
 	 */
@@ -235,7 +218,7 @@ public class SiteManager {
 	
 	/**
 	 * Returns an estimate of bytes per second transfer rate for this URL
-	 * @param URL the URL of the site
+	 * @param site the URL of the site
 	 * @return long a bytes per second estimate rate
 	 * @since 2.1
  	 */	
@@ -248,7 +231,6 @@ public class SiteManager {
 	/**
 	 * Returns current locale
 	 * 
-	 * @see BootLoader#getNL()
 	 * @return the string name of the current locale or <code>null</code>
 	 * @since 2.1
 	 */

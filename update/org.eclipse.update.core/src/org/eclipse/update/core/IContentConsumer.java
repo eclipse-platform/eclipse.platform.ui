@@ -31,8 +31,8 @@ public interface IContentConsumer {
 	 * 
 	 * @see IFeatureContentConsumer#open(IPluginEntry)
 	 * @see IFeatureContentConsumer#open(INonPluginEntry)
-	 * @param ContentReference reference to the file to store
-	 * @param IProgressMonitor progress monitor, can be <code>null</code>
+	 * @param contentReference reference to the file to store
+	 * @param monitor progress monitor, can be <code>null</code>
 	 * @exception CoreException
 	 * @since 2.0 
 	 */

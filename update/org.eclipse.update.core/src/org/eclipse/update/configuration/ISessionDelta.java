@@ -121,7 +121,7 @@ public interface ISessionDelta extends IAdaptable {
 	 * Removes the Session Delta from the file system after processing it.
 	 *
 	 * @param selected list of selected feature references to be processed
-	 * @param progressMonitor the progress monitor
+	 * @param monitor the progress monitor
 	 * @throws CoreException if an error occurs.
 	 * @since 2.0
 	 * <p>

@@ -775,7 +775,6 @@ public class ConfigurationView
 				if (feature != null)
 					addChildFeatures(
 						feature,
-						cf.getConfiguredSite(),
 						children,
 						cf.isConfigured());
 			}
@@ -795,7 +794,6 @@ public class ConfigurationView
 
 	private void addChildFeatures(
 		IFeature feature,
-		IConfiguredSite csite,
 		ArrayList children,
 		boolean configured) {
 		try {

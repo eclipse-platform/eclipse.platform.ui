@@ -34,7 +34,6 @@ public class ConfigurationManagerAction implements IWorkbenchWindowActionDelegat
 
 	/**
 	 * Insert the method's description here.
-	 * @see IWorkbenchWindowActionDelegate#run
 	 */
 	public void run(IAction action) {
 		BusyIndicator
@@ -73,7 +72,6 @@ public class ConfigurationManagerAction implements IWorkbenchWindowActionDelegat
 
 	/**
 	 * Insert the method's description here.
-	 * @see IWorkbenchWindowActionDelegate#selectionChanged
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
 	}

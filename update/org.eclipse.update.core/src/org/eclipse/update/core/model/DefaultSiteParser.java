@@ -75,8 +75,6 @@ public class DefaultSiteParser extends DefaultHandler {
 
 	/**
 	 * Constructs a site parser.
-	 * 
-	 * @param factory site model factory
 	 */
 	public DefaultSiteParser() {
 		super();

@@ -86,7 +86,6 @@ public class DefaultFeatureParser extends DefaultHandler {
 	/**
 	 * Constructs a feature parser.
 	 * 
-	 * @param factory feature model factory
 	 * @since 2.0
 	 */
 	public DefaultFeatureParser() {

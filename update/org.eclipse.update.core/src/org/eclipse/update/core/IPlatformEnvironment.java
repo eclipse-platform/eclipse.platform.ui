@@ -41,7 +41,6 @@ public interface IPlatformEnvironment extends IAdaptable {
 	 * This information is used as a hint by the installation and update
 	 * support.
 	 *
-	 * @see org.eclipse.core.boot.BootLoader 
 	 * @return the operating system specification, or <code>null</code>.
 	 * @since 2.0 
 	 */
@@ -57,7 +56,6 @@ public interface IPlatformEnvironment extends IAdaptable {
 	 * This information is used as a hint by the installation and update
 	 * support.
 	 * 
-	 * @see org.eclipse.core.boot.BootLoader 
 	 * @return system architecture specification, or <code>null</code>.
 	 * @since 2.0 
 	 */
@@ -73,7 +71,6 @@ public interface IPlatformEnvironment extends IAdaptable {
 	 * This information is used as a hint by the installation and update
 	 * support.
 	 * 
-	 * @see org.eclipse.core.boot.BootLoader 
 	 * @return system architecture specification, or <code>null</code>.
 	 * @since 2.0 
 	 */

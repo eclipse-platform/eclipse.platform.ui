@@ -495,8 +495,6 @@ public abstract class FeatureContentProvider
 	 * Sets the permission of all the ContentReferences Check for the
 	 * .permissions contentReference and use it to set the permissions of other
 	 * ContentReference
-	 * 
-	 * @return void
 	 */
 	protected void validatePermissions(ContentReference[] references) {
 

@@ -131,8 +131,6 @@ public interface IFeature extends IAdaptable, IPlatformEnvironment {
 	 * Returns the feature URL.
 	 * This is the URL that was used to create the feature. The interpretation
 	 * of the URL is dependent on the concrete feature implementation.  * 
-	 * 
-	 * @see IFeatureFactory#createFeature(URL, ISite)
 	 * @return feature URL
 	 * @since 2.0 
 	 */
@@ -418,7 +416,7 @@ public interface IFeature extends IAdaptable, IPlatformEnvironment {
 	 * need to be able to return a content provider.
 	 * 
 	 * @return feature content provider
-	 * @exception CoreExcepton
+	 * @exception CoreException
 	 * @since 2.0
 	 */
 	public IFeatureContentProvider getFeatureContentProvider()
@@ -458,7 +456,6 @@ public interface IFeature extends IAdaptable, IPlatformEnvironment {
 	 * performed as part of the feature creation operation. Once set, the 
 	 * provider should not be reset.
 	 * 
-	 * @see IFeatureFactory#createFeature(URL, ISite)
 	 * @param featureContentProvider content provider
 	 * @since 2.0
 	 */

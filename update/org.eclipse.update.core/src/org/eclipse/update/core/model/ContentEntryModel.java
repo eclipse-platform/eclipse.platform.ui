@@ -72,7 +72,6 @@ public abstract class ContentEntryModel extends ModelObject {
 	/**
 	 * Returns optional operating system specification.
 	 *
-	 * @see org.eclipse.core.boot.BootLoader 
 	 * @return the operating system specification or <code>null</code>.
 	 * @since 2.0 
 	 */
@@ -83,7 +82,6 @@ public abstract class ContentEntryModel extends ModelObject {
 	/**
 	 * Returns optional windowing system specification.
 	 *
-	 * @see org.eclipse.core.boot.BootLoader 
 	 * @return the windowing system specification or <code>null</code>.
 	 * @since 2.0 
 	 */
@@ -94,8 +92,7 @@ public abstract class ContentEntryModel extends ModelObject {
 
 	/**
 	 * Returns optional system architecture specification. 
-	 *
-	 * @see org.eclipse.core.boot.BootLoader 
+	 * 
 	 * @return the system architecture specification or <code>null</code>.
 	 * @since 2.0 
 	 */
@@ -147,7 +144,6 @@ public abstract class ContentEntryModel extends ModelObject {
 	 * Sets the operating system specification.
 	 * Throws a runtime exception if this object is marked read-only.
 	 * 
-	 * @see org.eclipse.core.boot.BootLoader 
 	 * @param os comma-separated list of OS identifiers as defined by Eclipse.
 	 * @since 2.0
 	 */
@@ -160,7 +156,6 @@ public abstract class ContentEntryModel extends ModelObject {
 	 * Sets the windowing system specification.
 	 * Throws a runtime exception if this object is marked read-only.
 	 *
-	 * @see org.eclipse.core.boot.BootLoader 
 	 * @param ws comma-separated list of WS identifiers as defined by Eclipse.
 	 * @since 2.0
 	 */
@@ -173,7 +168,6 @@ public abstract class ContentEntryModel extends ModelObject {
 	 * Sets the system architecture specification.
 	 * Throws a runtime exception if this object is marked read-only.
 	 *
-	 * @see org.eclipse.core.boot.BootLoader 
 	 * @param arch comma-separated list of arch identifiers as defined by Eclipse.
 	 * @since 2.0
 	 */

@@ -79,7 +79,7 @@ public class Site extends SiteModel implements ISite {
 	/**
 	 * Compares two sites for equality
 	 * 
-	 * @param object site object to compare with
+	 * @param obj site object to compare with
 	 * @return <code>true</code> if the two sites are equal, 
 	 * <code>false</code> otherwise
 	 * @since 2.0
@@ -370,7 +370,7 @@ public class Site extends SiteModel implements ISite {
 	 * because this implementation does not support the install action.
 	 * 
 	 * @see ISite#addPluginEntry(IPluginEntry)
-	 * @exception java.jang.UnsupportedOperationException
+	 * @exception java.lang.UnsupportedOperationException
 	 * @since 2.0
 	 */
 	public void addPluginEntry(IPluginEntry pluginEntry) {
@@ -383,7 +383,7 @@ public class Site extends SiteModel implements ISite {
 	 * because this implementation does not support the install action.
 	 * 
 	 * @see ISite#getDownloadSizeFor(IFeature)
-	 * @exception java.jang.UnsupportedOperationException
+	 * @exception java.lang.UnsupportedOperationException
 	 * @since 2.0
 	 */
 	public long getDownloadSizeFor(IFeature feature) {
@@ -396,7 +396,7 @@ public class Site extends SiteModel implements ISite {
 	 * because this implementation does not support the install action.
 	 * 
 	 * @see ISite#getInstallSizeFor(IFeature)
-	 * @exception java.jang.UnsupportedOperationException
+	 * @exception java.lang.UnsupportedOperationException
 	 * @since 2.0
 	 */
 	public long getInstallSizeFor(IFeature feature) {
@@ -411,7 +411,7 @@ public class Site extends SiteModel implements ISite {
 	 * @see ISite#install(IFeature, IVerificationListener, IProgressMonitor)
 	 * @exception InstallAbortedException when the user cancels the install
 	 * @exception CoreException
-	 * @exception java.jang.UnsupportedOperationException
+	 * @exception java.lang.UnsupportedOperationException
 	 * @since 2.0
 	 */
 	public IFeatureReference install(IFeature sourceFeature, IVerificationListener verificationListener, IProgressMonitor progress) throws InstallAbortedException, CoreException {
@@ -426,7 +426,7 @@ public class Site extends SiteModel implements ISite {
 	 * @see ISite#install(IFeature, IVerificationListener, IProgressMonitor)
 	 * @exception InstallAbortedException when the user cancels the install
 	 * @exception CoreException
-	 * @exception java.jang.UnsupportedOperationException
+	 * @exception java.lang.UnsupportedOperationException
 	 * @since 2.0
 	 */
 	public IFeatureReference install(IFeature sourceFeature, IFeatureReference[] optionalFeatures, IVerificationListener verificationListener, IProgressMonitor progress) throws InstallAbortedException, CoreException {
@@ -439,14 +439,14 @@ public class Site extends SiteModel implements ISite {
 	 * This implementation always throws UnsupportedOperationException
 	 * because this implementation does not support the install action.
 	 * 
-	 * @param feature feature to install
+	 * @param sourceFeature feature to install
 	 * @param parentContentConsumer content consumer of the parent feature
 	 * @param parentVerifier verifier of the parent feature
 	 * @param verificationListener install verification listener
-	 * @param monitor install monitor, can be <code>null</code>
+	 * @param progress install monitor, can be <code>null</code>
 	 * @exception InstallAbortedException when the user cancels the install
 	 * @exception CoreException
-	 * @exception java.jang.UnsupportedOperationException 
+	 * @exception java.lang.UnsupportedOperationException 
 	 * @since 2.0 
 	 */
 	public IFeatureReference install(IFeature sourceFeature, IFeatureReference[] optionalFeatures, IFeatureContentConsumer parentContentConsumer, IVerifier parentVerifier, IVerificationListener verificationListener, IProgressMonitor progress)
@@ -460,7 +460,7 @@ public class Site extends SiteModel implements ISite {
 	 * because this implementation does not support the remove action.
 	 * 
 	 * @see ISite#remove(IFeature, IProgressMonitor)
-	 * @exception java.jang.UnsupportedOperationException
+	 * @exception java.lang.UnsupportedOperationException
 	 * @since 2.0
 	 */
 	public void remove(IFeature feature, IProgressMonitor progress) throws CoreException {
