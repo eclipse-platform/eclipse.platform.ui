@@ -13,14 +13,16 @@ package org.eclipse.core.tests.resources.perf;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.tests.resources.CorePerformanceTest;
+import org.eclipse.core.tests.resources.ResourceTest;
 
-public class BenchMiscWorkspace extends CorePerformanceTest {
+public class BenchMiscWorkspace extends ResourceTest {
 	public static Test suite() {
-		TestSuite suite = new TestSuite(BenchMiscWorkspace.class.getName());
-		suite.addTest(new BenchMiscWorkspace("benchNoOp"));
-		return suite;
+		return new TestSuite(BenchMiscWorkspace.class);
+		//		TestSuite suite = new TestSuite(BenchMiscWorkspace.class.getName());
+		//		suite.addTest(new BenchMiscWorkspace("benchNoOp"));
+		//		return suite;
 	}
 
 	/**
@@ -41,18 +43,20 @@ public class BenchMiscWorkspace extends CorePerformanceTest {
 	/**
 	 * Benchmarks performing many empty operations.
 	 */
-	public void benchNoOp() throws Exception {
-		final int REPEAT = 100000;
-		IWorkspace ws = ResourcesPlugin.getWorkspace();
-
-		IWorkspaceRunnable noop = new IWorkspaceRunnable() {
+	public void testNoOp() throws Exception {
+		final IWorkspace ws = ResourcesPlugin.getWorkspace();
+		final IWorkspaceRunnable noop = new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) {
 			}
 		};
-		startBench();
-		for (int i = 0; i < REPEAT; i++) {
-			ws.run(noop, null);
-		}
-		stopBench("benchNoOp", REPEAT);
+		new CorePerformanceTest() {
+			protected void operation() {
+				try {
+					ws.run(noop, null);
+				} catch (CoreException e) {
+					fail("0.0", e);
+				}
+			}
+		}.run(this, 100000, 10);
 	}
 }

@@ -16,9 +16,9 @@ import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.tests.resources.CorePerformanceTest;
+import org.eclipse.core.tests.resources.ResourceTest;
 
-public class BenchWorkspace extends CorePerformanceTest {
+public class BenchWorkspace extends ResourceTest {
 	IProject project;
 	private static final int NUM_FOLDERS = 400;//must be multiple of 10
 	private static final int FILES_PER_FOLDER = 20;
@@ -38,23 +38,23 @@ public class BenchWorkspace extends CorePerformanceTest {
 	}
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite(BenchWorkspace.class.getName());
-		suite.addTest(new BenchWorkspace("benchCountResources"));
-		return suite;
+		return new TestSuite(BenchWorkspace.class);
+		//		TestSuite suite = new TestSuite(BenchWorkspace.class.getName());
+		//		suite.addTest(new BenchWorkspace("benchCountResources"));
+		//		return suite;
 	}
 
-	public void benchCountResources() {
-		Workspace workspace = (Workspace) getWorkspace();
-		int count = 0;
-		startBench();
-		for (int i = 0; i < 100; i++) {
-			count = workspace.countResources(project.getFullPath(), IResource.DEPTH_INFINITE, true);
-		}
-		stopBench("benchCountResources", 100);
-		System.out.println("Count: " + count);
+	public void testCountResources() {
+		final Workspace workspace = (Workspace) getWorkspace();
+		final IWorkspaceRoot root = workspace.getRoot();
+		new CorePerformanceTest() {
+			protected void operation() {
+				workspace.countResources(root.getFullPath(), IResource.DEPTH_INFINITE, true);
+			}
+		}.run(this, 100, 10);
 	}
 
-	public void benchCountResourcesDuringOperation() {
+	public void testCountResourcesDuringOperation() {
 		final Workspace workspace = (Workspace) getWorkspace();
 		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
@@ -65,14 +65,11 @@ public class BenchWorkspace extends CorePerformanceTest {
 						return true;
 					}
 				});
-				//now count the resources in the dirty workspace
-				int count = 0;
-				startBench();
-				for (int i = 0; i < 10; i++) {
-					count = workspace.countResources(project.getFullPath(), IResource.DEPTH_INFINITE, true);
-				}
-				stopBench("benchCountResources", 10);
-				System.out.println("Count: " + count);
+				new CorePerformanceTest() {
+					protected void operation() {
+						workspace.countResources(project.getFullPath(), IResource.DEPTH_INFINITE, true);
+					}
+				}.run(BenchWorkspace.this, 10, 10);
 			}
 		};
 		try {
@@ -139,4 +136,3 @@ public class BenchWorkspace extends CorePerformanceTest {
 		project.delete(true, true, null);
 	}
 }
-

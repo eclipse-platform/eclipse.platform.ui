@@ -14,9 +14,9 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.tests.resources.CorePerformanceTest;
+import org.eclipse.core.tests.resources.ResourceTest;
 
-public class MarkerPerformanceTest extends CorePerformanceTest {
+public class MarkerPerformanceTest extends ResourceTest {
 	IProject project;
 	IFile file;
 	IMarker[] markers;
@@ -38,15 +38,16 @@ public class MarkerPerformanceTest extends CorePerformanceTest {
 	}
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite(MarkerPerformanceTest.class.getName());
-		suite.addTest(new MarkerPerformanceTest("benchSetAttributes1"));
-		suite.addTest(new MarkerPerformanceTest("benchSetAttributes2"));
-		return suite;
+		return new TestSuite(MarkerPerformanceTest.class);
+		//		TestSuite suite = new TestSuite(MarkerPerformanceTest.class.getName());
+		//		suite.addTest(new MarkerPerformanceTest("benchSetAttributes1"));
+		//		suite.addTest(new MarkerPerformanceTest("benchSetAttributes2"));
+		//		return suite;
 	}
 
-	public void benchSetAttributes1() {
+	public void testSetAttributes1() {
 		//benchmark setting many attributes in a single operation
-		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+		final IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				//set all attributes for each marker
 				for (int i = 0; i < NUM_MARKERS; i++) {
@@ -56,19 +57,20 @@ public class MarkerPerformanceTest extends CorePerformanceTest {
 				}
 			}
 		};
-		System.out.println("Starting setAttributes1");
-		startBench();
-		try {
-			getWorkspace().run(runnable, null);
-		} catch (CoreException e) {
-			fail("2.0", e);
-		}
-		stopBench("benchSetAttributes1", REPEAT * NUM_MARKERS);
+		new CorePerformanceTest() {
+			protected void operation() {
+				try {
+					getWorkspace().run(runnable, null);
+				} catch (CoreException e) {
+					fail("2.0", e);
+				}
+			}
+		}.run(this, 1, 1);
 	}
 
-	public void benchSetAttributes2() {
+	public void testSetAttributes2() {
 		//benchmark setting many attributes in a single operation
-		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+		final IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				//set one attribute per marker, repeat for all attributes
 				for (int j = 0; j < REPEAT; j++) {
@@ -78,15 +80,15 @@ public class MarkerPerformanceTest extends CorePerformanceTest {
 				}
 			}
 		};
-
-		System.out.println("Starting setAttributes2");
-		startBench();
-		try {
-			getWorkspace().run(runnable, null);
-		} catch (CoreException e) {
-			fail("2.0", e);
-		}
-		stopBench("benchSetAttributes2", REPEAT * NUM_MARKERS);
+		new CorePerformanceTest() {
+			protected void operation() {
+				try {
+					getWorkspace().run(runnable, null);
+				} catch (CoreException e) {
+					fail("2.0", e);
+				}
+			}
+		}.run(this, 1, 1);
 	}
 
 	/**

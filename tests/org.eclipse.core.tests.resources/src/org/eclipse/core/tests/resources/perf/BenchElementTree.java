@@ -23,9 +23,16 @@ import org.eclipse.core.tests.resources.CorePerformanceTest;
  * Benchmarks for <code>ElementTree</code>.
  */
 public class BenchElementTree extends CorePerformanceTest {
-	static String[] javaLangUnits = {"AbstractMethodError.java", "ArithmeticException.java", "ArrayIndexOutOfBoundsException.java", "ArrayStoreException.java", "Boolean.java", "Byte.java", "Character.java", "Class.java", "ClassCastException.java", "ClassCircularityError.java", "ClassFormatError.java", "ClassLoader.java", "ClassNotFoundException.java", "Cloneable.java", "CloneNotSupportedException.java", "Compiler.java", "Double.java", "Error.java", "Exception.java", "ExceptionInInitializerError.java", "Float.java", "FloatingDecimal.java", "IllegalAccessError.java", "IllegalAccessException.java", "IllegalArgumentException.java", "IllegalMonitorStateException.java", "IllegalStateException.java", "IllegalThreadStateException.java", "IncompatibleClassChangeError.java",
-			"IndexOutOfBoundsException.java", "InstantiationError.java", "InstantiationException.java", "Integer.java", "InternalError.java", "InterruptedException.java", "LinkageError.java", "Long.java", "Math.java", "NegativeArraySizeException.java", "NoClassDefFoundError.java", "NoSuchFieldError.java", "NoSuchFieldException.java", "NoSuchMethodError.java", "NoSuchMethodException.java", "NullPointerException.java", "Number.java", "NumberFormatException.java", "Object.java", "OutOfMemoryError.java", "Process.java", "Runnable.java", "Runtime.java", "RuntimeException.java", "SecurityException.java", "SecurityManager.java", "Short.java", "StackOverflowError.java", "String.java", "StringBuffer.java", "StringIndexOutOfBoundsException.java", "System.java", "Thread.java", "ThreadDeath.java",
-			"ThreadGroup.java", "Throwable.java", "UnknownError.java", "UnsatisfiedLinkError.java", "VerifyError.java", "VirtualMachineError.java", "Void.java"};
+	static String[] javaLangUnits = {"AbstractMethodError.java", "ArithmeticException.java", "ArrayIndexOutOfBoundsException.java", "ArrayStoreException.java", "Boolean.java", //
+			"Byte.java", "Character.java", "Class.java", "ClassCastException.java", "ClassCircularityError.java", "ClassFormatError.java", "ClassLoader.java", "ClassNotFoundException.java", //
+			"Cloneable.java", "CloneNotSupportedException.java", "Compiler.java", "Double.java", "Error.java", "Exception.java", "ExceptionInInitializerError.java", "Float.java", "FloatingDecimal.java", //
+			"IllegalAccessError.java", "IllegalAccessException.java", "IllegalArgumentException.java", "IllegalMonitorStateException.java", "IllegalStateException.java", "IllegalThreadStateException.java", //
+			"IncompatibleClassChangeError.java", "IndexOutOfBoundsException.java", "InstantiationError.java", "InstantiationException.java", "Integer.java", "InternalError.java", "InterruptedException.java", //
+			"LinkageError.java", "Long.java", "Math.java", "NegativeArraySizeException.java", "NoClassDefFoundError.java", "NoSuchFieldError.java", "NoSuchFieldException.java", "NoSuchMethodError.java", //
+			"NoSuchMethodException.java", "NullPointerException.java", "Number.java", "NumberFormatException.java", "Object.java", "OutOfMemoryError.java", "Process.java", "Runnable.java", //
+			"Runtime.java", "RuntimeException.java", "SecurityException.java", "SecurityManager.java", "Short.java", "StackOverflowError.java", "String.java", "StringBuffer.java", //
+			"StringIndexOutOfBoundsException.java", "System.java", "Thread.java", "ThreadDeath.java", "ThreadGroup.java", "Throwable.java", "UnknownError.java", "UnsatisfiedLinkError.java", //
+			"VerifyError.java", "VirtualMachineError.java", "Void.java"};
 
 	static final IPath solution = Path.ROOT.append("solution");
 	static final IPath project = solution.append("project");
@@ -43,18 +50,12 @@ public class BenchElementTree extends CorePerformanceTest {
 	/**
 	 * Tests the performance of the createElement operation.
 	 */
-	public void benchCreateElement() {
-
-		final int repeat = 400;
-		final int count = repeat * (files.length + 3);
-
-		startBench();
-
-		for (int rep = repeat; --rep >= 0;) {
-			createTestTree(false);
-		}
-
-		stopBench("benchCreateElement", count);
+	public void testCreateElement() {
+		new CorePerformanceTest() {
+			protected void operation() {
+				createTestTree(false);
+			}
+		}.run(this, 400, 10);
 	}
 
 	/**
@@ -336,7 +337,7 @@ public class BenchElementTree extends CorePerformanceTest {
 	 * Creates a test element tree.  If withDeltas is true,
 	 * a new delta is created after each operation.
 	 */
-	private ElementTree createTestTree(boolean withDeltas) {
+	ElementTree createTestTree(boolean withDeltas) {
 		ElementTree tree = new ElementTree();
 		Object data = new Object();
 

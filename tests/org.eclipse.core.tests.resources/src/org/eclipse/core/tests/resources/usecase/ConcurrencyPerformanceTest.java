@@ -15,9 +15,9 @@ import junit.framework.TestSuite;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.tests.resources.CorePerformanceTest;
+import org.eclipse.core.tests.resources.ResourceTest;
 
-public class ConcurrencyPerformanceTest extends CorePerformanceTest {
+public class ConcurrencyPerformanceTest extends ResourceTest {
 	public ConcurrencyPerformanceTest() {
 		super("");
 	}
@@ -30,18 +30,20 @@ public class ConcurrencyPerformanceTest extends CorePerformanceTest {
 		return new TestSuite(ConcurrencyPerformanceTest.class);
 	}
 
-	public void testSimpleCalls() throws CoreException {
-
-		IWorkspaceRunnable job = new IWorkspaceRunnable() {
+	public void testSimpleCalls() {
+		final IWorkspaceRunnable job = new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) {
 				// do nothing
 			}
 		};
-		startBench();
-		int repeat = 50;
-		for (int i = 0; i < repeat; i++) {
-			getWorkspace().run(job, null);
-		}
-		stopBench("testSimpleCalls", repeat);
+		new CorePerformanceTest() {
+			protected void operation() {
+				try {
+					getWorkspace().run(job, null);
+				} catch (CoreException e) {
+					fail("1.0", e);
+				}
+			}
+		}.run(this, 50, 10);
 	}
 }
