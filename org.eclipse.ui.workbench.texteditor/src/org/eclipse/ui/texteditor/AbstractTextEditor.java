@@ -3880,6 +3880,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			} else
 				element= (IConfigurationElement)actions.get(0);
 			
+			// FIXME: see https://bugs.eclipse.org/bugs/show_bug.cgi?id=82256
 			String defId = element.getAttribute(ActionDescriptor.ATT_DEFINITION_ID);
 			return new EditorPluginAction(element, this, defId, IAction.AS_UNSPECIFIED); //$NON-NLS-1$			
 		}
