@@ -150,7 +150,7 @@ public interface IFormattingContext {
 	 * @param map
 	 *                  Map to store the preferences in
 	 * @param useDefault
-	 *                  <code>true</code> iff the default preferences should be
+	 *                  <code>true</code> if the default preferences should be
 	 *                  used, <code>false</code> otherwise
 	 */
 	void storeToMap(IPreferenceStore store, Map map, boolean useDefault);
