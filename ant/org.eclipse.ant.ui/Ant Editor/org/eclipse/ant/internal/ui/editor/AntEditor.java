@@ -1390,9 +1390,6 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 		}
 			
 		fOccurrencesFinderJob= new OccurrencesFinderJob(document, positions, selection);
-		//fOccurrencesFinderJob.setPriority(Job.DECORATE);
-		//fOccurrencesFinderJob.setSystem(true);
-		//fOccurrencesFinderJob.schedule();
 		fOccurrencesFinderJob.run(new NullProgressMonitor());
 	}
 	
