@@ -540,18 +540,18 @@ public interface IDocument {
 	 * @return the document's legal line delimiters
 	 */
 	String[] getLegalLineDelimiters();
-	
+
 	/**
-	 * Returns the line delimiter of that line.
+	 * Returns the line delimiter of that line or <code>null</code> if the
+     * line is not closed with a line delimiter.
 	 *
 	 * @param line the line of interest
-	 * @return the line delimiter of that line
+     * @return the line's delimiter or <code>null</code> if line does not have a delimiter
 	 * @exception BadLocationException if the line number is invalid in this document
 	 */
 	String getLineDelimiter(int line) throws BadLocationException;
-		
 	
-	
+
 	/* ---------------------------- search ------------------------------------ */
 	
 	/**

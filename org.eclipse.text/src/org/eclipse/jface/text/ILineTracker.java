@@ -34,7 +34,7 @@ public interface ILineTracker {
 	String[] getLegalLineDelimiters();
 			
 	/**
-	 * Returns the line delimiter of the specified line. Returns null if the
+	 * Returns the line delimiter of the specified line. Returns <code>null</code> if the
 	 * line is not closed with a line delimiter.
 	 *
 	 * @param line the line whose line delimiter is queried
