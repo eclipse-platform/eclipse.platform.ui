@@ -87,7 +87,7 @@ public interface ITextViewerExtension5 extends ITextViewerExtension3 {
 	 * @param widgetLine the widget line
 	 * @return the corresponding line of the viewer's document or <code>-1</code>
 	 */
-	int widgetlLine2ModelLine(int widgetLine);
+	int widgetLine2ModelLine(int widgetLine);
 	
 	/**
 	 * Returns the widget line of the given widget offset.
