@@ -872,7 +872,7 @@ public class LaunchViewContextListener implements IPartListener2, IContextManage
 	}
 	
 	/**
-	 * When the breakpoints view becomes visible, turn on the
+	 * When the launch view becomes visible, turn on the
 	 * debug action set. Note that the workbench will handle the
 	 * case where the user really doesn't want the action set
 	 * enabled - showActionSet(String) will do nothing for an
