@@ -31,31 +31,19 @@ public class DelayedSnapshotJob extends Job {
 	public IStatus run(IProgressMonitor monitor) {
 		if (monitor.isCanceled())
 			return Status.CANCEL_STATUS;
-		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
-			public void run(IProgressMonitor monitor) throws CoreException {
-				if (monitor.isCanceled())
-					return;
-				try {
-					EventStats.startSnapshot();
-					IStatus result = saveManager.save(ISaveContext.SNAPSHOT, null, Policy.monitorFor(null));
-					if (!result.isOK())
-						ResourcesPlugin.getPlugin().getLog().log(result);
-				} finally {
-					saveManager.operationCount = 0;
-					saveManager.snapshotRequested = false;
-					EventStats.endSnapshot();
-				}
-			}
-		};
+		if (ResourcesPlugin.getWorkspace() == null)
+			return Status.OK_STATUS;
+		IStatus result = null;
 		try {
-			IWorkspace workspace = ResourcesPlugin.getWorkspace();
-			//do null check in case workspace shuts down concurrently
-			if (workspace != null)
-				workspace.run(runnable, monitor);
+			EventStats.startSnapshot();
+			result = saveManager.save(ISaveContext.SNAPSHOT, null, Policy.monitorFor(null));
 		} catch (CoreException e) {
-			e.printStackTrace();
-			ResourcesPlugin.getPlugin().getLog().log(e.getStatus());
+			result = e.getStatus();
+		} finally {
+			saveManager.operationCount = 0;
+			saveManager.snapshotRequested = false;
+			EventStats.endSnapshot();
 		}
-		return Status.OK_STATUS;
+		return result;
 	}
 }
