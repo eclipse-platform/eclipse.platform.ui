@@ -16,7 +16,6 @@ import org.eclipse.debug.core.ILogicalStructureType;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
-import org.eclipse.debug.internal.core.LogicalStructureManager;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
@@ -96,7 +95,7 @@ public class AvailableLogicalStructuresAction extends Action implements IMenuCre
 		
 		fMenu= new Menu(parent);
 		ILogicalStructureType[] types = getTypes();
-        ILogicalStructureType enabledType = LogicalStructureManager.getDefault().getSelectedType(types);
+        ILogicalStructureType enabledType = DebugPlugin.getSelectedStructureType(types);
 		if (types != null && types.length > 0) {
 			for (int i = 0; i < types.length; i++) {
                 ILogicalStructureType type= types[i];

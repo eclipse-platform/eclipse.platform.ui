@@ -656,8 +656,31 @@ public class DebugPlugin extends Plugin {
 		return LogicalStructureManager.getDefault().getLogicalStructureTypes(value);
 	}
     
+    /**
+     * Returns the structure that the user has chosen from among the given
+     * collection of structures or <code>null</code> if the user has chosen
+     * to display none.
+     * @param structures the collection of structures available
+     * @return the structure that the user has chosen from among the given collection
+     *  or <code>null</code> if the user has chosen to display none
+     *  
+     * @since 3.1
+     */
     public static ILogicalStructureType getSelectedStructureType(ILogicalStructureType[] types) {
-        return LogicalStructureManager.getDefault().getSelectedType(types);
+        return LogicalStructureManager.getDefault().getSelectedStructureType(types);
+    }
+    
+    /**
+     * Sets the selected logical structure type for the given combination of logical
+     * structure types.
+     * @param types the combination on structure types
+     * @param selected the type that is selected for the given combo or <code>null</code>
+     *  if the user has deselected any structure for the given combo
+     *  
+     * @since 3.1
+     */
+    public static void setSelectedStructureType(ILogicalStructureType[] types, ILogicalStructureType selected) {
+        LogicalStructureManager.getDefault().setEnabledType(types, selected);
     }
 	
 	/**

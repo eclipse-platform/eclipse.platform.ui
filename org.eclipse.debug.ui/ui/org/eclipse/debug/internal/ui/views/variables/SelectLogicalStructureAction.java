@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.variables;
 
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILogicalStructureType;
 import org.eclipse.debug.core.model.IValue;
-import org.eclipse.debug.internal.core.LogicalStructureManager;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -30,9 +30,10 @@ public class SelectLogicalStructureAction extends Action {
 	/**
 	 * 
 	 * @param view Variables view
-	 * @param group group of applicable structures
+	 * @param type the type that this action will turn on/off
 	 * @param value the value for which logical structures are to be chosen
-	 * @param index the offset into the given group that this action enables
+	 * @param availableTypes the set of logical structure types that are being offered
+     *  to the user in addition to the type controlled by this action
 	 */
 	public SelectLogicalStructureAction(VariablesView view, ILogicalStructureType type, IValue value, ILogicalStructureType[] availableTypes) {
 		super(type.getDescription(value), IAction.AS_CHECK_BOX);
@@ -60,7 +61,7 @@ public class SelectLogicalStructureAction extends Action {
                 if (isChecked()) {
                     type= fType;
                 }
-                LogicalStructureManager.getDefault().setEnabledType(fAvailableTypes, type);
+                DebugPlugin.setSelectedStructureType(fAvailableTypes, type);
 				getView().getViewer().refresh();					
 			}
 		});			
