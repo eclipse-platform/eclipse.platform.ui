@@ -99,9 +99,9 @@ public class PreferencesServiceTest extends RuntimeTest {
 	public static Test suite() {
 		// all test methods are named "test..."
 		return new TestSuite(PreferencesServiceTest.class);
-		//		TestSuite suite = new TestSuite();
-		//		suite.addTest(new PreferencesServiceTest("testListeners2"));
-		//		return suite;
+//				TestSuite suite = new TestSuite();
+//				suite.addTest(new PreferencesServiceTest("testValidateVersions"));
+//				return suite;
 	}
 
 	public void testImportExportBasic() {
@@ -737,6 +737,10 @@ public class PreferencesServiceTest extends RuntimeTest {
 
 	public void testValidateVersions() {
 		final char BUNDLE_VERSION_PREFIX = '@';
+		
+		// ensure that there is at least one value in the prefs
+		Preferences scopeRoot = Platform.getPreferencesService().getRootNode().node(Plugin.PLUGIN_PREFERENCE_SCOPE);
+		scopeRoot.node("org.eclipse.core.tests.runtime").put("key", "value");
 
 		// no errors if the file doesn't exist
 		IPath path = getRandomLocation();
