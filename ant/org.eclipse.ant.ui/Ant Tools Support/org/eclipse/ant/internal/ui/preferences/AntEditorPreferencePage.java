@@ -20,6 +20,7 @@ import org.eclipse.ant.internal.ui.AntSourceViewerConfiguration;
 import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
 import org.eclipse.ant.internal.ui.editor.text.AntDocumentSetupParticipant;
 import org.eclipse.ant.internal.ui.editor.text.IAntEditorColorConstants;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.internal.ui.javaeditor.EditorUtility;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -390,13 +391,13 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 		layout.numColumns= 2;
 		appearanceComposite.setLayout(layout);
 
-		String labelText= AntPreferencesMessages.getString("AntEditorPreferencePage.printMarginColumn"); //$NON-NLS-1$
-		String[] errorMessages= new String[]{AntPreferencesMessages.getString("AntEditorPreferencePage.empty_input_print_margin"), AntPreferencesMessages.getString("AntEditorPreferencePage.invalid_input_print_margin")};  //$NON-NLS-1$//$NON-NLS-2$
-		addTextField(appearanceComposite, labelText, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN, 3, 0, errorMessages);
-		
-		labelText= AntPreferencesMessages.getString("AntEditorPreferencePage.37"); //$NON-NLS-1$
-		errorMessages= new String[]{AntPreferencesMessages.getString("AntEditorPreferencePage.38"), AntPreferencesMessages.getString("AntEditorPreferencePage.39")}; //$NON-NLS-1$ //$NON-NLS-2$
+		String labelText= AntPreferencesMessages.getString("AntEditorPreferencePage.37"); //$NON-NLS-1$
+		String[] errorMessages= new String[]{AntPreferencesMessages.getString("AntEditorPreferencePage.38"), AntPreferencesMessages.getString("AntEditorPreferencePage.39")}; //$NON-NLS-1$ //$NON-NLS-2$
 		addTextField(appearanceComposite, labelText, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH, 3, 0, errorMessages);
+		
+		labelText= AntPreferencesMessages.getString("AntEditorPreferencePage.printMarginColumn"); //$NON-NLS-1$
+		errorMessages= new String[]{AntPreferencesMessages.getString("AntEditorPreferencePage.empty_input_print_margin"), AntPreferencesMessages.getString("AntEditorPreferencePage.invalid_input_print_margin")};  //$NON-NLS-1$//$NON-NLS-2$
+		addTextField(appearanceComposite, labelText, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN, 3, 0, errorMessages);
 		
 		labelText= AntPreferencesMessages.getString("AntEditorPreferencePage.40"); //$NON-NLS-1$
 		addCheckBox(appearanceComposite, labelText, AntEditorPreferenceConstants.EDITOR_SPACES_FOR_TABS, 1);
@@ -872,19 +873,19 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 	
 	private void handleBrowserLikeLinksKeyModifierModified() {
 		String modifiers= fBrowserLikeLinksKeyModifierText.getText();
-		int stateMask= computeStateMask(modifiers);
-
+		int stateMask= computeStateMask(modifiers);	
 		if (fBrowserLikeLinksCheckBox.getSelection() && (stateMask == -1 || (stateMask & SWT.SHIFT) != 0)) {
+			fStatusList= new ArrayList();
 			if (stateMask == -1) {
-				setErrorMessage(MessageFormat.format(AntPreferencesMessages.getString("AntEditorPreferencePage.36"), new String[]{modifiers})); //$NON-NLS-1$
+			    fStatusList.add(new StatusInfo(IStatus.ERROR, MessageFormat.format(AntPreferencesMessages.getString("AntEditorPreferencePage.36"), new String[]{modifiers}))); //$NON-NLS-1$
 			} else {
-				setErrorMessage(AntPreferencesMessages.getString("AntEditorPreferencePage.43")); //$NON-NLS-1$
+			    fStatusList.add(new StatusInfo(IStatus.ERROR, AntPreferencesMessages.getString("AntEditorPreferencePage.43"))); //$NON-NLS-1$
 			}
-			setValid(false);
-			return;
-		} 
-		setValid(true);
-		setErrorMessage(null);
+			updateStatus((IStatus) fStatusList.get(0));
+		} else {
+		    fStatusList= null;
+		    updateStatus(new StatusInfo());
+		}
 	}
 	
 	/**

@@ -17,6 +17,7 @@ import java.io.InputStreamReader;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -43,6 +44,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 public abstract class AbstractAntEditorPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 	
 	private OverlayPreferenceStore fOverlayStore;
+	protected List fStatusList;
 	
 	private Map fCheckBoxes= new HashMap();
 	private SelectionListener fCheckBoxListener= new SelectionListener() {
@@ -221,7 +223,7 @@ public abstract class AbstractAntEditorPreferencePage extends PreferencePage imp
 		return status;
 	}
 	
-	private void updateStatus(IStatus status) {
+	protected void updateStatus(IStatus status) {
 		if (!status.matches(IStatus.ERROR)) {
 			Set keys= getNumberFields().keySet();
 			for (Iterator iter = keys.iterator(); iter.hasNext();) {
@@ -230,8 +232,37 @@ public abstract class AbstractAntEditorPreferencePage extends PreferencePage imp
 				status= s.getSeverity() > status.getSeverity() ? s : status;
 			}
 		}	
+		
+		List statusList= getStatusList();
+		if (statusList != null) {
+		    statusList.add(status);
+		    status= getMostSevere(statusList);
+		}
 		setValid(!status.matches(IStatus.ERROR));
 		applyToStatusLine(this, status);
+	}
+	
+	protected List getStatusList() {
+	    return fStatusList;
+	}
+	
+	/**
+	 * Finds the most severe status from a array of stati.
+	 * An error is more severe than a warning, and a warning is more severe
+	 * than ok.
+	 */
+	private IStatus getMostSevere(List statusList) {
+		IStatus max= null;
+		for (int i= 0; i < statusList.size(); i++) {
+			IStatus curr= (IStatus)statusList.get(i);
+			if (curr.matches(IStatus.ERROR)) {
+				return curr;
+			}
+			if (max == null || curr.getSeverity() > max.getSeverity()) {
+				max= curr;
+			}
+		}
+		return max;
 	}
 
 	/*
