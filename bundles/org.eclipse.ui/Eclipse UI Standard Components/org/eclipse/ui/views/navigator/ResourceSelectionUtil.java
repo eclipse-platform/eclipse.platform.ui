@@ -92,4 +92,25 @@ public static IStructuredSelection allResources(IStructuredSelection selection, 
 public static boolean resourceIsType(IResource resource, int resourceMask) {
 	return (resource.getType() & resourceMask) != 0;
 }
+
+/**
+ * Returns whether there are any resources in this selection
+ * 
+ * @param resource the resource
+ * @return <code>true</code> if there are any resources or elements that
+ * map to them <code>false</code> otherwise
+ */
+public static boolean hasResources(IStructuredSelection selection) {
+	Iterator adaptables = selection.iterator();
+	List result = new ArrayList();
+	while (adaptables.hasNext()) {
+		Object next = adaptables.next();
+		if(next instanceof IAdaptable){
+			Object resource = ((IAdaptable) next).getAdapter(IResource.class);
+			if(resource != null)
+				return true;	
+		}	
+	}
+	return false;
+}
 }
