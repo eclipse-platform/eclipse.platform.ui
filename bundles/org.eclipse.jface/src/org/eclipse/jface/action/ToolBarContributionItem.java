@@ -417,7 +417,7 @@ public class ToolBarContributionItem extends ContributionItem {
             }
         }
 
-        return visibleItem || super.isVisible();
+        return (visibleItem || super.isVisible());
     }
 
     /*

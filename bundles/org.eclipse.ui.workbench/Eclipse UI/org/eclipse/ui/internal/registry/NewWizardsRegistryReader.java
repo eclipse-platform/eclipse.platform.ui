@@ -328,7 +328,7 @@ private void pruneEmptyCategories(WizardCollectionElement parent) {
 /**
  * Implement this method to read element attributes.
  */
-protected boolean readElement(IConfigurationElement element) {
+public boolean readElement(IConfigurationElement element) {
 	if (element.getName().equals(TAG_CATEGORY)) {
 		deferCategory(element);
 		return true;

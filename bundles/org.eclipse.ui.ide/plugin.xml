@@ -371,21 +371,21 @@
             name="%Views.Bookmark"
             icon="icons/full/cview16/bkmrk_nav.gif"
             category="org.eclipse.ui"
-            class="org.eclipse.ui.views.markers.BookmarkView"
+            class="org.eclipse.ui.views.markers.internal.BookmarkView"
             id="org.eclipse.ui.views.BookmarkView">
       </view>
       <view
             name="%Views.Task"
             icon="icons/full/cview16/tasks_tsk.gif"
             category="org.eclipse.ui"
-            class="org.eclipse.ui.views.markers.TaskView"
+            class="org.eclipse.ui.views.markers.internal.TaskView"
             id="org.eclipse.ui.views.TaskList">
       </view>
       <view
             name="%Views.Problem"
             icon="icons/full/cview16/problems_view.gif"
             category="org.eclipse.ui"
-            class="org.eclipse.ui.views.markers.ProblemView"
+            class="org.eclipse.ui.views.markers.internal.ProblemView"
             id="org.eclipse.ui.views.ProblemView">
       </view>
       <view

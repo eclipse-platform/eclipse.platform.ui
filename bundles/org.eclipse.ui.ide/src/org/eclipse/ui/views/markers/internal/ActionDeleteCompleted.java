@@ -26,7 +26,6 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
 import org.eclipse.ui.actions.SelectionProviderAction;
-import org.eclipse.ui.views.markers.TaskView;
 
 public class ActionDeleteCompleted extends SelectionProviderAction {
 	

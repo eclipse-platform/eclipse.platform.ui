@@ -37,7 +37,7 @@ public class ThemeRegistryReader extends RegistryReader {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.registry.RegistryReader#readElement(org.eclipse.core.runtime.IConfigurationElement)
 	 */
-	protected boolean readElement(IConfigurationElement element) {
+	public boolean readElement(IConfigurationElement element) {
 		if (element.getName().equals(TAG_LOOKNFEEL)) {
 			readTheme(element);
 			readElementChildren(element);
@@ -51,8 +51,13 @@ public class ThemeRegistryReader extends RegistryReader {
 	public void readThemes(IPluginRegistry in, ThemeRegistry out)
 		throws CoreException {
 		// this does not seem to really ever be throwing an the exception
-		themeRegistry = out;
+		setRegistry(out);
 		readRegistry(in, PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_THEMES);
+	}
+	
+	// for dynamic UI
+	public void setRegistry(ThemeRegistry out) {
+		themeRegistry = out;
 	}
 	
 	/**

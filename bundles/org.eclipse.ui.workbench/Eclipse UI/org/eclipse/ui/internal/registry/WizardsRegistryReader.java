@@ -138,7 +138,7 @@ protected boolean initializeWizard(WorkbenchWizardElement element, IConfiguratio
 /**
  * Implement this method to read element attributes.
  */
-protected boolean readElement(IConfigurationElement element) {
+public boolean readElement(IConfigurationElement element) {
 	if (!element.getName().equals(TAG_WIZARD))
 		return false;
 	WorkbenchWizardElement wizard = createWizardElement(element);
