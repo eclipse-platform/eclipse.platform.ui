@@ -142,10 +142,8 @@ public class IntroURL implements IIntroURL {
                     getParameter(KEY_CLASS));
 
         else if (action.equals(SHOW_PAGE)) {
-            // display an Intro Page. Limitation: return value for this command
-            // can not be determined.
-            showPage(getParameter(KEY_ID));
-            return true;
+            // display an Intro Page.
+            return showPage(getParameter(KEY_ID));
         } else if (action.equals(SHOW_MESSAGE))
             return showMessage(getParameter(KEY_MESSAGE));
 
@@ -348,12 +346,12 @@ public class IntroURL implements IIntroURL {
     /**
      * Display an Intro Page.
      */
-    private void showPage(String pageId) {
-        // set the current page id in the model. This will triger a listener
-        // event to the UI.
+    private boolean showPage(String pageId) {
+        // set the current page id in the model. This will triger appropriate
+        // listener event to the UI. If setting the page in the model fails (ie:
+        // the page was not found in the model), return false.
         IntroModelRoot modelRoot = IntroPlugin.getDefault().getIntroModelRoot();
-        modelRoot.setCurrentPageId(pageId);
-        return;
+        return modelRoot.setCurrentPageId(pageId);
     }
 
     /**

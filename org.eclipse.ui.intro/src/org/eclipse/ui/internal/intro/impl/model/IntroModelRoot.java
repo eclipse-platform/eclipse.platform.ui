@@ -250,7 +250,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
                     IntroPage.TAG_PAGE);
             for (int j = 0; j < pages.length; j++) {
                 // Create the model class for an intro Page.
-                IntroPage page = new IntroPage(pages[i], bundle);
+                IntroPage page = new IntroPage(pages[j], bundle);
                 page.setParent(this);
                 children.add(page);
             }
@@ -291,9 +291,9 @@ public class IntroModelRoot extends AbstractIntroContainer {
             extensionContentElement.setAttribute("failed", "true"); //$NON-NLS-1$ //$NON-NLS-2$
         else {
             // extensions are only for anchors. Insert all children of this
-            // extension before this anchor. After all extensions have been
-            // resolved, all anchors are simply removed from the parent
-            // container.
+            // extension before this anchor. Anchors need to stay as model
+            // children, even after all extensions have been
+            // resolved, to enable other plugins to contribute.
             IntroAnchor targetAnchor = (IntroAnchor) target;
             insertAnchorChildren(targetAnchor, extensionContent, bundle);
             handleExtensionStyleInheritence(targetAnchor, extensionContent);
@@ -426,13 +426,29 @@ public class IntroModelRoot extends AbstractIntroContainer {
         return currentPageId;
     }
 
+
     /**
+     * Sets the current page. If the model does not have a page with the passed
+     * id, the message is logged, and the model retains its old current page.
+     * 
      * @param currentPageId
      *            The currentPageId to set.
+     * @return true if the model has a page with the passed id, false otherwise.
      */
-    public void setCurrentPageId(String currentPageId) {
-        this.currentPageId = currentPageId;
+    public boolean setCurrentPageId(String pageId) {
+        AbstractIntroPage page = (AbstractIntroPage) findChild(pageId, PAGE);
+        // not a page. Test for root page.
+        if (pageId.equals(homePage.getId()))
+            page = homePage;
+        if (page == null) {
+            // not a page nor the home page.
+            Log.warning("Could not find Intro page with id: " + pageId);
+            return false;
+        }
+
+        currentPageId = pageId;
         firePropertyChange(CURRENT_PAGE_PROPERTY_ID);
+        return true;
     }
 
     public void addPropertyListener(IPropertyListener l) {
@@ -477,17 +493,12 @@ public class IntroModelRoot extends AbstractIntroContainer {
         if (!homePage.isDynamic())
             return null;
 
-        AbstractIntroPage page = null;
-        IntroPage[] pages = getPages();
-        for (int i = 0; i < pages.length; i++) {
-            if (pages[i].getId() != null
-                    && pages[i].getId().equals(currentPageId))
-                page = pages[i];
-        }
+        AbstractIntroPage page = (AbstractIntroPage) findChild(currentPageId,
+                PAGE);
         if (page != null)
             return page;
         // not a page. Test for root page.
-        if (homePage.getId().equals(currentPageId))
+        if (currentPageId.equals(homePage.getId()))
             return homePage;
         // return null if page is not found.
         return null;

@@ -483,7 +483,7 @@
          <attribute name="path" type="string" use="required">
             <annotation>
                <documentation>
-                  the path that uniquely represents the element (e.g. page/div1/div2) within the target configuration to be extended. It can only be a page or a div, including shared divs at configuration level.
+                  the path that uniquely represents the path to an anchor. (e.g. page/group1/group2/anchorId) within the target configuration to be extended. It can only be an anchor which can be in any page or group, including shared groups at configuration level
                </documentation>
             </annotation>
          </attribute>

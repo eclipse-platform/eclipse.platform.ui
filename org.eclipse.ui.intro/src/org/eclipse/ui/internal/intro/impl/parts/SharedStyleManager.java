@@ -46,19 +46,19 @@ public class SharedStyleManager {
         String sharedStyle = modelRoot.getPresentation()
                 .getImplementationStyle();
         if (sharedStyle != null)
-                load(pageProperties, sharedStyle);
+            load(pageProperties, sharedStyle);
     }
 
     protected void load(Properties properties, String style) {
         if (style == null)
-                return;
+            return;
         try {
             URL styleURL = new URL(style);
             InputStream is = styleURL.openStream();
             properties.load(is);
             is.close();
         } catch (Exception e) {
-            Log.error(e.getMessage(), e);
+            Log.error("Could not load SWT style: " + style, e); //$NON-NLS-1$
         }
     }
 
@@ -77,7 +77,7 @@ public class SharedStyleManager {
     protected RGB getRGB(String key) {
         String value = getProperty(key);
         if (value == null)
-                return null;
+            return null;
         if (value.charAt(0) == '#') {
             // HEX
             try {
@@ -129,15 +129,14 @@ public class SharedStyleManager {
         if (color == null) {
             RGB rgb = getRGB(key);
             if (rgb != null)
-                    color = colors.createColor(key, rgb);
+                color = colors.createColor(key, rgb);
         }
         return color;
     }
 
     private String createColorKey(AbstractIntroPage page, String qualifier) {
         if (page != null)
-                return StringUtil
-                        .concat(page.getId(), ".", qualifier).toString(); //$NON-NLS-1$
+            return StringUtil.concat(page.getId(), ".", qualifier).toString(); //$NON-NLS-1$
         return qualifier;
     }
 
@@ -161,7 +160,7 @@ public class SharedStyleManager {
         if (link != null) {
             buff = createPathKey(link);
             if (buff == null)
-                    return ""; //$NON-NLS-1$
+                return ""; //$NON-NLS-1$
         } else {
             buff = new StringBuffer();
             buff.append(page.getId());
@@ -180,14 +179,14 @@ public class SharedStyleManager {
      */
     protected StringBuffer createPathKey(AbstractIntroIdElement element) {
         if (element.getId() == null)
-                return null;
+            return null;
         StringBuffer buffer = new StringBuffer(element.getId());
         AbstractBaseIntroElement parent = (AbstractBaseIntroElement) element
                 .getParent();
         while (parent != null
                 && !parent.isOfType(AbstractIntroElement.MODEL_ROOT)) {
             if (parent.getId() == null)
-                    return null;
+                return null;
             buffer.insert(0, parent.getId() + "."); //$NON-NLS-1$
             parent = (AbstractBaseIntroElement) parent.getParent();
         }
@@ -212,21 +211,21 @@ public class SharedStyleManager {
         }
         if (value != null) {
             if (ImageUtil.hasImage(currentKey))
-                    return ImageUtil.getImage(currentKey);
+                return ImageUtil.getImage(currentKey);
             // try to register the image.
             Bundle bundle = getAssociatedBundle(currentKey);
             if (bundle == null)
-                    // it means that we are getting a key defined in this page's
-                    // styles. (ie: not an inherited style).
-                    bundle = this.bundle;
+                // it means that we are getting a key defined in this page's
+                // styles. (ie: not an inherited style).
+                bundle = this.bundle;
             ImageUtil.registerImage(currentKey, bundle, value);
             Image image = ImageUtil.getImage(currentKey);
             if (image != null)
-                    return image;
+                return image;
         }
         // try default
         if (defaultKey != null)
-                return ImageUtil.getImage(defaultKey);
+            return ImageUtil.getImage(defaultKey);
         return null;
     }
 

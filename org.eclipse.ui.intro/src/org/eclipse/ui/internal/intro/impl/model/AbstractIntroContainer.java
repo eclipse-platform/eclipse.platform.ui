@@ -360,11 +360,23 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
 
 
     /*
-     * searches direct children for a given child with an id.
+     * searches direct children for the first child with the given id. The type
+     * of the child can be any model element that has an id. ie:
+     * AbstractIntroIdElement
      * 
      * @see org.eclipse.ui.internal.intro.impl.model.IntroElement#getType()
      */
     public AbstractIntroElement findChild(String elementId) {
+        return findChild(elementId, ID_ELEMENT);
+    }
+
+    /*
+     * searches direct children for the first child with the given id. The type
+     * of the child must br of the passed model types mask.
+     * 
+     * @see org.eclipse.ui.internal.intro.impl.model.IntroElement#getType()
+     */
+    public AbstractIntroElement findChild(String elementId, int elementMask) {
         if (!loaded)
             loadChildren();
 
@@ -379,12 +391,15 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
                 // the model that do not have ids.
                 continue;
             AbstractIntroIdElement child = (AbstractIntroIdElement) aChild;
-            if (child.getId() != null && child.getId().equals(elementId))
+            if (child.getId() != null && child.getId().equals(elementId)
+                    && child.isOfType(elementMask))
                 return child;
         }
-        // no child found.
+        // no child with given id amd type found.
         return null;
     }
+
+
 
     private void insertTarget(IntroInclude include, AbstractIntroElement target) {
         int includeLocation = children.indexOf(include);
