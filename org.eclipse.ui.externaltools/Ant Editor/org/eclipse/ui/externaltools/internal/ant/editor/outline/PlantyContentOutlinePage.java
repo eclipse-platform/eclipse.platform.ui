@@ -189,12 +189,7 @@ public class PlantyContentOutlinePage extends ContentOutlinePage implements ISho
 				return ExternalToolsImages.getImage(new AntImageDescriptor(base, flags));				
 			}
 			if("project".equals(tempElement.getName())) { //$NON-NLS-1$
-				int flags = 0;
-				ImageDescriptor base = ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_ANT_PROJECT);
-				if (tempElement.isErrorNode()) {
-					flags = flags | AntImageDescriptor.HAS_ERRORS;
-				}
-				return ExternalToolsImages.getImage(new AntImageDescriptor(base, flags));
+				return getProjectImage(tempElement);
 			}
 			
 			if("property".equals(tempElement.getName())) { //$NON-NLS-1$
@@ -203,14 +198,15 @@ public class PlantyContentOutlinePage extends ContentOutlinePage implements ISho
 			
 			XmlAttribute attribute= tempElement.getAttributeNamed(IAntEditorConstants.ATTR_TYPE);
 			if (attribute != null && IAntEditorConstants.TYPE_EXTERNAL.equals(attribute.getValue())) {
-				return ExternalToolsImages.getImage(IExternalToolsUIConstants.IMG_ANT_PROJECT);
+				return getProjectImage(tempElement);
 			}
 
 			if (attribute != null && IAntEditorConstants.TYPE_UNKNOWN.equals(attribute.getValue())) {
 				int flags= 0;
 				ImageDescriptor base= ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMAGE_ID_TASK);
-				if (tempElement.isErrorNode())
+				if (tempElement.isErrorNode()) {
 					flags |= AntImageDescriptor.HAS_ERRORS;
+				}
 				return ExternalToolsImages.getImage(new AntImageDescriptor(base, flags));
 			}
 
@@ -218,6 +214,15 @@ public class PlantyContentOutlinePage extends ContentOutlinePage implements ISho
 				return ExternalToolsImages.getImage(IExternalToolsUIConstants.IMG_ANT_TARGET_ERROR);
 			}
 			return ExternalToolsImages.getImage(IExternalToolsUIConstants.IMAGE_ID_TASK);
+		}
+		
+		private Image getProjectImage(XmlElement tempElement) {
+			int flags = 0;
+			ImageDescriptor base = ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_ANT_PROJECT);
+			if (tempElement.isErrorNode()) {
+				flags = flags | AntImageDescriptor.HAS_ERRORS;
+			}
+			return ExternalToolsImages.getImage(new AntImageDescriptor(base, flags));
 		}
         
 		/* (non-Javadoc)
@@ -430,13 +435,7 @@ public class PlantyContentOutlinePage extends ContentOutlinePage implements ISho
 	private void addOpenWithMenu(IMenuManager menu) {
 		IStructuredSelection selection= (IStructuredSelection)getSelection();
 		XmlElement element= (XmlElement)selection.getFirstElement();
-		String path= element.getFilePath();
-		if (element.isRootExternal()){
-			List children= element.getChildNodes();
-			if (!children.isEmpty()) {
-				path= ((XmlElement)children.get(0)).getFilePath();
-			}
-		}
+		String path = getElementPath(element);
 		
 		if (path != null) {
 			IPath resourcePath= new Path(path);
@@ -455,6 +454,18 @@ public class PlantyContentOutlinePage extends ContentOutlinePage implements ISho
 			}
 		}
 	}
+
+	private String getElementPath(XmlElement element) {
+		String path= element.getFilePath();
+		if (element.isRootExternal()){
+			List children= element.getChildNodes();
+			if (!children.isEmpty()) {
+				XmlElement child= (XmlElement)children.get(0);
+				path= child.getFilePath();
+			}
+		}
+		return path;
+	}
 	
 	private boolean shouldAddOpenWithMenu() {
 		ISelection iselection= getSelection();
@@ -464,7 +475,17 @@ public class PlantyContentOutlinePage extends ContentOutlinePage implements ISho
 				Object selected= selection.getFirstElement();
 				if (selected instanceof XmlElement) {
 					XmlElement element= (XmlElement)selected;
-					return element.isExternal();
+					if (element.isExternal()) {
+						String path = getElementPath(element);
+						XmlElement parent= element.getParentNode();
+						while (parent != null) {
+							String parentPath= getElementPath(parent);
+							if (path != null && !path.equals(parentPath)) {
+								return true;
+							}
+							parent= parent.getParentNode();
+						}
+					}	
 				}
 			}
 		}

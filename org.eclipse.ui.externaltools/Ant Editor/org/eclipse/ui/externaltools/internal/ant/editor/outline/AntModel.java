@@ -215,6 +215,7 @@ public class AntModel {
 		errorNode.setFilePath(element.getFilePath());
 		errorNode.setExternal(element.isExternal());
 		errorNode.setIsErrorNode(true);
+		element.setIsErrorNode(true);
 		element.addChildNode(errorNode);
 		return rootElement;
 	}

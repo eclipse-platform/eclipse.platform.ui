@@ -141,7 +141,7 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
     /**
      * Creates an <code>XmlElement</code> instance from the specified parameters.
      */
-    protected XmlElement createXmlElement(String aLocalName, String aQualifiedName, Attributes attributes) {
+    private XmlElement createXmlElement(String aLocalName, String aQualifiedName, Attributes attributes) {
 		String tempElementName = null;
 
         XmlElement tempElement = null;
@@ -467,7 +467,13 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
 		computeErrorLocation(errorNode, exception);
 		XmlElement lastOpen= getLastOpenElement();
 		if (lastOpen != null) {
-			lastOpen.addChildNode(errorNode);	
+			lastOpen.addChildNode(errorNode);
+			lastOpen.setIsErrorNode(true);
+			XmlElement parent= lastOpen.getParentNode();
+			while (parent != null && parent != rootElement) {
+				parent.setIsErrorNode(true);
+				parent= parent.getParentNode();
+			}
 		} else {
 			rootElement.addChildNode(errorNode);
 		}
