@@ -45,19 +45,19 @@ public class DebugWindowSelectionProvider extends AbstractDebugSelectionProvider
 		}
 	}
 
-	/*
+	/**
 	 * @see IPageListener#pageActivated(IWorkbenchPage)
 	 */
 	public void pageActivated(IWorkbenchPage page) {
 	}
 
-	/*
+	/**
 	 * @see IPageListener#pageClosed(IWorkbenchPage)
 	 */
 	public void pageClosed(IWorkbenchPage page) {
 	}
 
-	/*
+	/**
 	 * @see IPageListener#pageOpened(IWorkbenchPage)
 	 */
 	public void pageOpened(IWorkbenchPage page) {
