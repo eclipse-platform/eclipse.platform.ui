@@ -39,6 +39,7 @@ import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.TextUtilities;
 
 
 /**
@@ -364,26 +365,10 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 		IDocument document= fSourceViewer.getDocument();
 		IRegion lineInfo= document.getLineInformation(line);
 		for (int i= 0; i < regions.length; i++) {
-			if (overlaps(regions[i], lineInfo))
+			if (TextUtilities.overlaps(regions[i], lineInfo))
 				return regions[i];
 		}
 		return null;
-	}
-	
-	private boolean overlaps(IRegion left, IRegion right) {
-		int rightEnd= right.getOffset() + right.getLength();
-		int leftEnd= left.getOffset()+ left.getLength();
-		
-		if (right.getLength() > 0) {
-			if (left.getLength() > 0)
-				return left.getOffset() < rightEnd && right.getOffset() < leftEnd;
-			return  right.getOffset() <= left.getOffset() && left.getOffset() < rightEnd;
-		}
-		
-		if (left.getLength() > 0)
-			return left.getOffset() <= right.getOffset() && right.getOffset() < leftEnd;
-		
-		return left.getOffset() == right.getOffset();
 	}
 
 	private ILineRange convertToLineRange(IRegion region) throws BadLocationException {
