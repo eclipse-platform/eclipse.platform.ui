@@ -193,7 +193,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 		} catch (CoreException e) {
 			handleException(e);
 		}
-		List enabledBuilders= new ArrayList();
+	
 		for (int i = 0; i < commands.length; i++) {
 			ILaunchConfiguration config = ExternalToolsUtil.configFromBuildCommandArgs(commands[i].getArguments());
 			Object element= null;
@@ -815,17 +815,19 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 				TableItem item = items[i];
 				Object data= item.getData();
 				if (data instanceof ILaunchConfiguration) {
-					ILaunchConfiguration config= (ILaunchConfiguration) data;
-					boolean configEnabled= true;
+					ILaunchConfiguration config= (ILaunchConfiguration)data;
+					String builderName= null;
 					try {
-						configEnabled = ExternalToolsUtil.isBuilderEnabled(config);
+						builderName = config.getAttribute(IExternalToolConstants.ATTR_DISABLED_BUILDER, (String)null);
 					} catch (CoreException e) {
-						ExternalToolsPlugin.getDefault().log(e);
+					}
+					if (builderName != null) {
+						//do not allow "wrapped" builders to be removed or edited
+						enableEdit= false;
+						enableRemove= false;
 					}
 				} else {
 					enableEdit= false;
-					enableUp= false;
-					enableDown= false;
 					
 					if (data instanceof ErrorConfig) {
 						continue;
