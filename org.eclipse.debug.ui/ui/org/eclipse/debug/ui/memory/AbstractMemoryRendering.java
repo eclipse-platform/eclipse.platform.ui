@@ -11,6 +11,7 @@
 package org.eclipse.debug.ui.memory;
 
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
@@ -46,7 +47,7 @@ import org.eclipse.ui.IWorkbenchActionConstants;
  * </p>
  * @since 3.1
  */
-public abstract class AbstractMemoryRendering implements IMemoryRendering{
+public abstract class AbstractMemoryRendering extends PlatformObject implements IMemoryRendering{
 
 	private IMemoryBlock fMemoryBlock;
 	private IMemoryRenderingContainer fContainer;

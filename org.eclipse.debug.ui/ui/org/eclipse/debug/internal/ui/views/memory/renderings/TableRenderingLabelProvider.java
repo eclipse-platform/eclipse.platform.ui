@@ -14,7 +14,6 @@ import java.math.BigInteger;
 
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
-import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.memory.AbstractTableRendering;
 import org.eclipse.debug.ui.memory.IMemoryBlockTablePresentation;
 import org.eclipse.jface.viewers.IColorProvider;
@@ -24,7 +23,7 @@ import org.eclipse.swt.graphics.Color;
  * @since 3.0
  */
 public class TableRenderingLabelProvider
-	extends AbstractTableRenderingLabelProvider implements IColorProvider{
+extends AbstractTableRenderingLabelProvider implements IColorProvider {
 	
 	/**
 	 * Constructor for MemoryViewLabelProvider
@@ -37,35 +36,6 @@ public class TableRenderingLabelProvider
 		super(rendering);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
-	 */
-	public String getColumnText(Object element, int columnIndex) {
-		
-		String label = super.getColumnText(element, columnIndex);
-		
-		// consult model presentation for address presentation
-		if (columnIndex == 0)
-		{	
-			// get model presentation
-			IDebugModelPresentation presentation = DebugUIPlugin.getModelPresentation();
-			
-			if (presentation instanceof IMemoryBlockTablePresentation)
-			{	
-				IMemoryBlockTablePresentation memPresentation = (IMemoryBlockTablePresentation)presentation;
-				String address = ((TableRenderingLine)element).getAddress();
-				
-				// get address presentation
-				String tempLabel = memPresentation.getRowLabel(fRendering.getMemoryBlock(), new BigInteger(address, 16));
-				
-				if (tempLabel != null)
-					return tempLabel;
-			}
-			return label;
-		}
-		return label;
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
 	 */
@@ -88,5 +58,33 @@ public class TableRenderingLabelProvider
 	public Color getBackground(Object element) {
 		
 		return null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
+	 */
+	public String getColumnText(Object element, int columnIndex) {
+		
+		String label = super.getColumnText(element, columnIndex);
+		
+		// consult model presentation for address presentation
+		if (columnIndex == 0)
+		{	
+			// get model presentation
+			IMemoryBlockTablePresentation presentation = (IMemoryBlockTablePresentation)fRendering.getAdapter(IMemoryBlockTablePresentation.class);
+			
+			if (presentation != null)
+			{	
+				String address = ((TableRenderingLine)element).getAddress();
+				
+				// get address presentation
+				String tempLabel = presentation.getRowLabel(fRendering.getMemoryBlock(), new BigInteger(address, 16));
+				
+				if (tempLabel != null)
+					return tempLabel;
+			}
+			return label;
+		}
+		return label;
 	}
 }

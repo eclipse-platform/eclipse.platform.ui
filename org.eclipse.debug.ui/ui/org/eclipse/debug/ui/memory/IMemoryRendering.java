@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.ui.memory;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.swt.graphics.Image;
@@ -64,7 +65,7 @@ import org.eclipse.swt.widgets.Control;
  * </p>
  * @since 3.1
  */
-public interface IMemoryRendering {
+public interface IMemoryRendering extends IAdaptable{
     
     /**
      * Initializes this rendering to be hosted in the given container, displaying

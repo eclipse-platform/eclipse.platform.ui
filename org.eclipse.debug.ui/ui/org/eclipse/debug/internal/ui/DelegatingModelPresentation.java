@@ -11,7 +11,6 @@
 package org.eclipse.debug.internal.ui;
 
 
-import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -24,7 +23,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugElement;
-import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IValue;
@@ -32,7 +30,6 @@ import org.eclipse.debug.ui.IDebugEditorPresentation;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IValueDetailListener;
-import org.eclipse.debug.ui.memory.IMemoryBlockTablePresentation;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -50,7 +47,7 @@ import org.eclipse.ui.IEditorPart;
  * asked to render an object from a debug model, this presentation delegates
  * to the extension registered for that debug model. 
  */
-public class DelegatingModelPresentation implements IDebugModelPresentation, IDebugEditorPresentation, IColorProvider, IFontProvider, IMemoryBlockTablePresentation {
+public class DelegatingModelPresentation implements IDebugModelPresentation, IDebugEditorPresentation, IColorProvider, IFontProvider {
 	
 	/**
 	 * A mapping of attribute ids to their values
@@ -357,22 +354,4 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
         }
         return null;
     }
-
-	public String[] getColumnLabels(IMemoryBlock blk, int bytesPerLine, int numColumns) {
-		IDebugModelPresentation modelPresentation = getConfiguredPresentation(blk);
-		if (modelPresentation instanceof IMemoryBlockTablePresentation)
-		{
-			return ((IMemoryBlockTablePresentation)modelPresentation).getColumnLabels(blk, bytesPerLine, numColumns);
-		}
-		return new String[0];
-	}
-
-	public String getRowLabel(IMemoryBlock blk, BigInteger address) {
-		IDebugModelPresentation modelPresentation = getConfiguredPresentation(blk);
-		if (modelPresentation instanceof IMemoryBlockTablePresentation)
-		{
-			return ((IMemoryBlockTablePresentation)modelPresentation).getRowLabel(blk, address);
-		}
-		return null;
-	}
 }

@@ -35,9 +35,9 @@ import org.eclipse.debug.internal.ui.views.memory.renderings.TableRenderingCellM
 import org.eclipse.debug.internal.ui.views.memory.renderings.TableRenderingContentInput;
 import org.eclipse.debug.internal.ui.views.memory.renderings.TableRenderingContentProvider;
 import org.eclipse.debug.internal.ui.views.memory.renderings.TableRenderingLabelProvider;
+import org.eclipse.debug.internal.ui.views.memory.renderings.TableRenderingLabelProviderEx;
 import org.eclipse.debug.internal.ui.views.memory.renderings.TableRenderingLine;
 import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
@@ -53,6 +53,9 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.jface.viewers.ICellModifier;
+import org.eclipse.jface.viewers.IColorProvider;
+import org.eclipse.jface.viewers.IFontProvider;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.SWT;
@@ -434,7 +437,7 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 		try {
 			goToAddress(value);
 		} catch (DebugException e) {
-			DebugUIPlugin.log(e);
+			// do nothing
 		}
 	}
 
@@ -462,7 +465,12 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 		
 		fTableViewer= new TableViewer(parent, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.HIDE_SELECTION | SWT.BORDER);
 		
-		TableRenderingLabelProvider labelProvider = new TableRenderingLabelProvider(this);
+		TableRenderingLabelProvider labelProvider;
+		if (hasCustomizedDecorations())
+			labelProvider = new TableRenderingLabelProviderEx(this);
+		else
+			labelProvider = new TableRenderingLabelProvider(this);
+		
 		fTableViewer.setLabelProvider(labelProvider);
 		
 		fContentProvider = new TableRenderingContentProvider();
@@ -945,9 +953,11 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 		TableColumn [] byteColumns = new TableColumn[bytesPerLine/columnSize];		
 		
 		String[] columnLabels = new String[0];
-		IDebugModelPresentation presentation = DebugUIPlugin.getModelPresentation();
-		if (presentation instanceof IMemoryBlockTablePresentation)
-			columnLabels = ((IMemoryBlockTablePresentation)presentation).getColumnLabels(getMemoryBlock(), bytesPerLine, getNumCol());
+		IMemoryBlockTablePresentation presentation = getTablePresentationAdapter();
+		if (presentation != null)
+		{
+			columnLabels = presentation.getColumnLabels(getMemoryBlock(), bytesPerLine, getNumCol());
+		}
 		
 		// check that column labels are not null
 		if (columnLabels == null)
@@ -1443,9 +1453,12 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 	{
 		String[] columnLabels = new String[0];
 
-		IDebugModelPresentation presentation = DebugUIPlugin.getModelPresentation();
-		if (presentation instanceof IMemoryBlockTablePresentation)
-			columnLabels = ((IMemoryBlockTablePresentation)presentation).getColumnLabels(getMemoryBlock(), fBytePerLine, getNumCol());
+		
+		IMemoryBlockTablePresentation presentation = getTablePresentationAdapter();
+		if (presentation != null)
+		{
+			columnLabels = presentation.getColumnLabels(getMemoryBlock(), fBytePerLine, getNumCol());
+		}
 		
 		// check that column labels returned are not null
 		if (columnLabels == null)
@@ -2597,6 +2610,101 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 				
 		}
 		return table.getItemHeight();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+	 */
+	public Object getAdapter(Class adapter) {
+		
+		if (adapter == IColorProvider.class)
+			return getColorProviderAdapter();
+		
+		if (adapter == ILabelProvider.class)
+			return getLabelProviderAdapter();
+		
+		if (adapter == IFontProvider.class)
+			return getFontProviderAdapter();
+		
+		if (adapter == IMemoryBlockTablePresentation.class)
+			return getTablePresentationAdapter();
+		
+		return super.getAdapter(adapter);
+	}
+	
+	private boolean hasCustomizedDecorations()
+	{
+		if (getFontProviderAdapter() == null &&
+			getColorProviderAdapter() == null &&
+			getLabelProviderAdapter() == null)
+			return false;
+		return true;
+	}
+	
+	/**
+	 * Returns the color provider for this rendering's memory block or
+	 * <code>null</code> if none.
+	 * <p>
+	 * By default a color provider is obtained by aksing this rendering's
+	 * memory bock for its {@link IColorProvider} adapter. When the color
+	 * provider is queried for color information, it is provided with a
+	 * {@link MemoryRenderingElement} as an argument. 
+	 * </p>
+	 * @return the color provider for this rendering's memory block,
+	 *  or <code>null</code>
+	 */
+	protected IColorProvider getColorProviderAdapter()
+	{
+		return (IColorProvider)getMemoryBlock().getAdapter(IColorProvider.class);
+	}
+	
+	/**
+	 * Returns the label provider for this rendering's memory block or
+	 * <code>null</code> if none.
+	 * <p>
+	 * By default a label provider is obtained by aksing this rendering's
+	 * memory bock for its {@link ILabelProvider} adapter. When the label
+	 * provider is queried for label information, it is provided with a
+	 * {@link MemoryRenderingElement} as an argument. 
+	 * </p>
+	 * @return the label provider for this rendering's memory block,
+	 *  or <code>null</code>
+	 */
+	protected ILabelProvider getLabelProviderAdapter()
+	{
+		return (ILabelProvider)getMemoryBlock().getAdapter(ILabelProvider.class);
+	}
+	
+	/**
+	 * Returns the font provider for this rendering's memory block or
+	 * <code>null</code> if none.
+	 * <p>
+	 * By default a font provider is obtained by aksing this rendering's
+	 * memory bock for its {@link IFontProvider} adapter. When the font
+	 * provider is queried for font information, it is provided with a
+	 * {@link MemoryRenderingElement} as an argument. 
+	 * </p>
+	 * @return the font provider for this rendering's memory block,
+	 *  or <code>null</code>
+	 */
+	protected IFontProvider getFontProviderAdapter()
+	{
+		return (IFontProvider)getMemoryBlock().getAdapter(IFontProvider.class);
+	}
+	
+	/**
+	 * Returns the table presentation for this rendering's memory block or
+	 * <code>null</code> if none.
+	 * <p>
+	 * By default a table presentation is obtained by aksing this rendering's
+	 * memory bock for its {@link IMemoryBlockTablePresentation} adapter.
+	 * </p>
+	 * @return the table presentation for this rendering's memory block,
+	 *  or <code>null</code>
+	 */
+	protected IMemoryBlockTablePresentation getTablePresentationAdapter()
+	{
+		return (IMemoryBlockTablePresentation)getMemoryBlock().getAdapter(IMemoryBlockTablePresentation.class);
 	}
 	
 	/**

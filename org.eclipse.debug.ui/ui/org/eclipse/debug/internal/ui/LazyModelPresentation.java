@@ -11,7 +11,6 @@
 package org.eclipse.debug.internal.ui;
 
 
-import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -22,7 +21,6 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IExpression;
-import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IValue;
@@ -32,7 +30,6 @@ import org.eclipse.debug.internal.ui.views.variables.IndexedVariablePartition;
 import org.eclipse.debug.ui.IDebugEditorPresentation;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IValueDetailListener;
-import org.eclipse.debug.ui.memory.IMemoryBlockTablePresentation;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IFontProvider;
@@ -48,7 +45,7 @@ import org.eclipse.ui.IEditorPart;
  * when it is needed.
  */
 
-public class LazyModelPresentation implements IDebugModelPresentation, IDebugEditorPresentation, IColorProvider, IFontProvider, IMemoryBlockTablePresentation {
+public class LazyModelPresentation implements IDebugModelPresentation, IDebugEditorPresentation, IColorProvider, IFontProvider {
 	
 	/**
 	 * A temporary mapping of attribute ids to their values
@@ -376,24 +373,4 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
         }
         return null;
     }
-
-	public String[] getColumnLabels(IMemoryBlock blk, int bytesPerLine, int numColumns) {
-		IDebugModelPresentation presentation = getPresentation();
-		if (presentation instanceof IMemoryBlockTablePresentation)
-		{
-			IMemoryBlockTablePresentation mbp = (IMemoryBlockTablePresentation)presentation;
-			return mbp.getColumnLabels(blk, bytesPerLine, numColumns);
-		}
-		return new String[0];
-	}
-
-	public String getRowLabel(IMemoryBlock blk, BigInteger address) {
-		IDebugModelPresentation presentation = getPresentation();
-		if (presentation instanceof IMemoryBlockTablePresentation)
-		{
-			IMemoryBlockTablePresentation mbp = (IMemoryBlockTablePresentation)presentation;
-			return mbp.getRowLabel(blk, address);
-		}
-		return null;
-	}    
 }
