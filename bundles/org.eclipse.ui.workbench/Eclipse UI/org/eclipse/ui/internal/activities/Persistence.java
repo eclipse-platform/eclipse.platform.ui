@@ -60,6 +60,8 @@ final class Persistence {
 
         String childActivityId = memento.getString(TAG_REQUIRED_ACTIVITY_ID);
         String parentActivityId = memento.getString(TAG_ACTIVITY_ID);
+        if (childActivityId == null || parentActivityId == null)
+            return null;
         String sourceId = sourceIdOverride != null ? sourceIdOverride : memento
                 .getString(TAG_SOURCE_ID);
         return new ActivityRequirementBindingDefinition(childActivityId,
@@ -78,9 +80,12 @@ final class Persistence {
 
         List list = new ArrayList(mementos.length);
 
-        for (int i = 0; i < mementos.length; i++)
-            list.add(readActivityRequirementBindingDefinition(mementos[i],
-                    sourceIdOverride));
+        for (int i = 0; i < mementos.length; i++) {
+            ActivityRequirementBindingDefinition binding = readActivityRequirementBindingDefinition(mementos[i],
+                    sourceIdOverride);
+            if (binding != null)
+                list.add(binding);
+        }
 
         return list;
     }
@@ -98,8 +103,14 @@ final class Persistence {
             throw new NullPointerException();
 
         String id = memento.getString(TAG_ID);
+        if (id == null)
+            return null;
         String name = memento.getString(TAG_NAME);
+        if (name == null)
+            return null;
         String description = memento.getString(TAG_DESCRIPTION);
+        if (description == null)
+            description = ""; //$NON-NLS-1$
         String sourceId = sourceIdOverride != null ? sourceIdOverride : memento
                 .getString(TAG_SOURCE_ID);
         return new ActivityDefinition(id, name, sourceId, description);
@@ -117,8 +128,11 @@ final class Persistence {
 
         List list = new ArrayList(mementos.length);
 
-        for (int i = 0; i < mementos.length; i++)
-            list.add(readActivityDefinition(mementos[i], sourceIdOverride));
+        for (int i = 0; i < mementos.length; i++) {
+            ActivityDefinition definition = readActivityDefinition(mementos[i], sourceIdOverride);
+            if (definition != null)
+                list.add(definition);
+        }
 
         return list;
     }
@@ -129,7 +143,11 @@ final class Persistence {
             throw new NullPointerException();
 
         String activityId = memento.getString(TAG_ACTIVITY_ID);
+        if (activityId == null)
+            return null;
         String pattern = memento.getString(TAG_PATTERN);
+        if (pattern == null)
+        	return null;
         String sourceId = sourceIdOverride != null ? sourceIdOverride : memento
                 .getString(TAG_SOURCE_ID);
         return new ActivityPatternBindingDefinition(activityId, pattern,
@@ -148,9 +166,12 @@ final class Persistence {
 
         List list = new ArrayList(mementos.length);
 
-        for (int i = 0; i < mementos.length; i++)
-            list.add(readActivityPatternBindingDefinition(mementos[i],
-                    sourceIdOverride));
+        for (int i = 0; i < mementos.length; i++) {
+            ActivityPatternBindingDefinition definition = readActivityPatternBindingDefinition(mementos[i],
+                    sourceIdOverride);
+            if (definition != null)
+                list.add(definition);
+        }
 
         return list;
     }
@@ -161,7 +182,11 @@ final class Persistence {
             throw new NullPointerException();
 
         String activityId = memento.getString(TAG_ACTIVITY_ID);
+        if (activityId == null)
+            return null;
         String categoryId = memento.getString(TAG_CATEGORY_ID);
+        if (categoryId == null)
+            return null;
         String sourceId = sourceIdOverride != null ? sourceIdOverride : memento
                 .getString(TAG_SOURCE_ID);
         return new CategoryActivityBindingDefinition(activityId, categoryId,
@@ -180,9 +205,12 @@ final class Persistence {
 
         List list = new ArrayList(mementos.length);
 
-        for (int i = 0; i < mementos.length; i++)
-            list.add(readCategoryActivityBindingDefinition(mementos[i],
-                    sourceIdOverride));
+        for (int i = 0; i < mementos.length; i++) {
+            CategoryActivityBindingDefinition definition = readCategoryActivityBindingDefinition(mementos[i],
+                    sourceIdOverride);
+            if (definition != null)
+                list.add(definition);
+        }
 
         return list;
     }
@@ -193,8 +221,14 @@ final class Persistence {
             throw new NullPointerException();
 
         String id = memento.getString(TAG_ID);
+        if (id == null)
+            return null;
         String name = memento.getString(TAG_NAME);
+        if (name == null)
+            return null;
         String description = memento.getString(TAG_DESCRIPTION);
+        if (description == null)
+            description = ""; //$NON-NLS-1$
         String sourceId = sourceIdOverride != null ? sourceIdOverride : memento
                 .getString(TAG_SOURCE_ID);
         return new CategoryDefinition(id, name, sourceId, description);
@@ -212,8 +246,11 @@ final class Persistence {
 
         List list = new ArrayList(mementos.length);
 
-        for (int i = 0; i < mementos.length; i++)
-            list.add(readCategoryDefinition(mementos[i], sourceIdOverride));
+        for (int i = 0; i < mementos.length; i++) {
+            CategoryDefinition definition = readCategoryDefinition(mementos[i], sourceIdOverride);
+            if (definition != null)
+                list.add(definition);
+        }
 
         return list;
     }
