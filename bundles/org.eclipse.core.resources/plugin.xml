@@ -32,6 +32,12 @@
 	
 	<extension point="org.eclipse.core.runtime.contentTypes">
 		<file-association content-type="org.eclipse.core.runtime.xml" file-names=".project"/>
+		<content-type
+			file-extensions="prefs"
+			priority="normal"
+			name="%preferencesContentTypeName"
+			id="preferences"
+			base-type="org.eclipse.core.runtime.properties"/>		
 	</extension>
 
    <extension

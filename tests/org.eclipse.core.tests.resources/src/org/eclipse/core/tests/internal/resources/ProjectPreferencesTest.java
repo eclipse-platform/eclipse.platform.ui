@@ -15,8 +15,10 @@ import java.util.ArrayList;
 import java.util.Properties;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.eclipse.core.internal.preferences.EclipsePreferences;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.preferences.*;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 import org.osgi.service.prefs.BackingStoreException;
@@ -582,5 +584,12 @@ public class ProjectPreferencesTest extends EclipseWorkspaceTest {
 		}
 		node = new ProjectScope(project).getNode(qualifier);
 		assertEquals("2.1", value, node.get(key, null));
+	}
+
+	public void testContentType() {
+		IContentType prefsType = Platform.getContentTypeManager().getContentType(ResourcesPlugin.PI_RESOURCES + ".preferences");
+		assertNotNull("1.0", prefsType);
+		IContentType associatedType = Platform.getContentTypeManager().findContentTypeFor("some.qualifier." + EclipsePreferences.PREFS_FILE_EXTENSION);
+		assertEquals("1.1", prefsType, associatedType);
 	}
 }
