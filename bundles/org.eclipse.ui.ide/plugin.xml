@@ -515,11 +515,11 @@
    </extension>
    <extension
          point="org.eclipse.ui.systemSummarySections">
-      <configurationLogEntry
+      <section
       		id="15.UpdateSection"
             sectionTitle="%About.updateSummaryTitle"
             class="org.eclipse.ui.internal.ide.dialogs.ConfigurationLogUpdateSection">
-      </configurationLogEntry>
+      </section>
    </extension>
 
 </plugin>
