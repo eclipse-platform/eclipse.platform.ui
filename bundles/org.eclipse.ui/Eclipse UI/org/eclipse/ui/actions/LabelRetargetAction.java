@@ -22,7 +22,9 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 public class LabelRetargetAction extends RetargetAction {
 	private String defaultText;
 	private String defaultToolTipText;
+	private ImageDescriptor defaultHoverImage;
 	private ImageDescriptor defaultImage;
+	private ImageDescriptor defaultDisabledImage;
 	private String acceleratorText;
 	
 /**
@@ -39,13 +41,17 @@ public LabelRetargetAction(String actionID, String text) {
  */
 protected void propogateChange(PropertyChangeEvent event) {
 	super.propogateChange(event);
-	if (event.getProperty().equals(Action.TEXT)) {
-		String str = (String)event.getNewValue();
+	String prop = event.getProperty();
+	if (prop.equals(Action.TEXT)) {
+		String str = (String) event.getNewValue();
 		super.setText(appendAccelerator(str));
 	} 
-	else if (event.getProperty().equals(Action.TOOL_TIP_TEXT)) {
-		String str = (String)event.getNewValue();
+	else if (prop.equals(Action.TOOL_TIP_TEXT)) {
+		String str = (String) event.getNewValue();
 		super.setToolTipText(str);
+	}
+	else if (prop.equals(Action.IMAGE)) {
+		updateImages(getActionHandler());
 	}
 }
 /**
@@ -55,24 +61,35 @@ protected void setActionHandler(IAction handler) {
 	// Run the default behavior.
 	super.setActionHandler(handler);
 
-	// Now update the label and tooltip.
+	// Now update the label, tooltip and images.
 	if (handler == null) {
 		super.setText(defaultText);
 		super.setToolTipText(defaultToolTipText);
-		super.setImageDescriptor(defaultImage);
 	} else {
 		super.setText(appendAccelerator(handler.getText()));
 		super.setToolTipText(handler.getToolTipText());
-		ImageDescriptor image = handler.getImageDescriptor();
-		if (image == null) {
-			image = defaultImage;
-		}
-		super.setImageDescriptor(image);
 	}
+	updateImages(handler);
 }
 
-/**
- * Sets the action's label image to the given value.
+/* (non-Javadoc)
+ * Method declared on IAction.
+ */
+public void setDisabledImageDescriptor(ImageDescriptor image) {
+	super.setDisabledImageDescriptor(image);
+	defaultDisabledImage = image;
+}
+
+/* (non-Javadoc)
+ * Method declared on IAction.
+ */
+public void setHoverImageDescriptor(ImageDescriptor image) {
+	super.setHoverImageDescriptor(image);
+	defaultHoverImage = image;
+}
+
+/* (non-Javadoc)
+ * Method declared on IAction.
  */
 public void setImageDescriptor(ImageDescriptor image) {
 	super.setImageDescriptor(image);
@@ -128,6 +145,33 @@ private String extractAcceleratorText(String text) {
 	if (index >= 0)
 		return text.substring(index);
 	return null;
+}
+
+/**
+ * Updates the images for this action based on the given handler.
+ */
+private void updateImages(IAction handler) {
+	if (handler == null) {
+		super.setHoverImageDescriptor(defaultHoverImage);
+		super.setImageDescriptor(defaultImage);
+		super.setDisabledImageDescriptor(defaultDisabledImage);
+	}
+	else {
+		// use the default images if the handler has no images set
+		ImageDescriptor hoverImage = handler.getHoverImageDescriptor();
+		ImageDescriptor image = handler.getImageDescriptor();
+		ImageDescriptor disabledImage = handler.getDisabledImageDescriptor();
+		if (hoverImage != null || image != null || disabledImage != null) {
+			super.setHoverImageDescriptor(hoverImage);
+			super.setImageDescriptor(image);
+			super.setDisabledImageDescriptor(disabledImage);
+		}
+		else {
+			super.setHoverImageDescriptor(defaultHoverImage);
+			super.setImageDescriptor(defaultImage);
+			super.setDisabledImageDescriptor(defaultDisabledImage);
+		}
+	}
 }
 
 }

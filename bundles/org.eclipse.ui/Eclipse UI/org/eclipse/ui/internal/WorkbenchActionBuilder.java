@@ -387,7 +387,13 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		goToSubMenu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 
 		menu.add(new Separator(IWorkbenchActionConstants.OPEN_EXT));
+		for (int i = 2; i < 5; ++i) {
+			menu.add(new Separator(IWorkbenchActionConstants.OPEN_EXT + i));
+		}
 		menu.add(new Separator(IWorkbenchActionConstants.SHOW_EXT));
+		for (int i = 2; i < 5; ++i) {
+			menu.add(new Separator(IWorkbenchActionConstants.SHOW_EXT + i));
+		}
 		menu.add(new Separator());
 		menu.add(nextAction);
 		menu.add(previousAction);
