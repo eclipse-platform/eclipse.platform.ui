@@ -10,6 +10,7 @@ http://www.eclipse.org/legal/cpl-v05.html
 Contributors:
 **********************************************************************/
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 
 import org.apache.tools.ant.Project;
 import org.eclipse.core.resources.IFile;
@@ -23,6 +24,7 @@ import org.eclipse.toolscript.core.internal.AntUtil;
 import org.eclipse.toolscript.core.internal.ToolScript;
 import org.eclipse.toolscript.core.internal.ToolScriptContext;
 import org.eclipse.toolscript.core.internal.ToolScriptPlugin;
+import org.eclipse.toolscript.core.internal.ToolUtil;
 import org.eclipse.ui.IWorkbenchWindow;
 
 /**
@@ -82,6 +84,7 @@ public class AntLaunchWizard extends Wizard {
 			this.antScript = new ToolScript();
 			this.antScript.setName(name);
 			this.antScript.setType(ToolScript.SCRIPT_TYPE_ANT);
+			this.antScript.setLocation(antFile.getLocation().toString());
 			this.isNewScript = true;
 		}
 		setWindowTitle(ToolScriptMessages.getString("AntLaunchWizard.shellTitle")); //$NON-NLS-1$;
@@ -173,10 +176,18 @@ public class AntLaunchWizard extends Wizard {
 	 * Method updateScript.
 	 */
 	private void updateScript() {
-		String args = page1.getArguments();
+		StringBuffer buf = new StringBuffer(page1.getArguments());
 		String[] targets = page1.getSelectedTargets();
+		ToolUtil.buildVariableTags(ToolScript.VAR_ANT_TARGET, targets, buf);
 		
+		antScript.setArguments(buf.toString());
 		antScript.setShowLog(page1.getShowLog());
-		// save contents too here if new
+
+		if (isNewScript) {
+			ArrayList scripts = ToolScriptPlugin.getDefault().getRegistry().getToolScripts();
+			scripts.add(antScript);
+			ToolScriptPlugin.getDefault().getRegistry().setToolScripts(scripts);
+			isNewScript = false;
+		}
 	}
 }

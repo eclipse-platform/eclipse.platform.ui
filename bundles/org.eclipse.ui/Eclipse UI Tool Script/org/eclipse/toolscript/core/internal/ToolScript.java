@@ -74,7 +74,7 @@ public class ToolScript {
 	 */
 	public ToolScript() {
 		super();
-		this.refreshScope = buildVariableTag(REFRESH_SCOPE_NONE, null);
+		this.refreshScope = ToolUtil.buildVariableTag(REFRESH_SCOPE_NONE, null);
 	}
 
 	/**
@@ -125,56 +125,6 @@ public class ToolScript {
 			(String)args.get(TAG_SCRIPT_DIRECTORY),
 			(String)args.get(TAG_SCRIPT_REFRESH),
 			showLog);
-	}
-
-	/**
-	 * Builds a variable tag that will be auto-expanded before
-	 * the script is run.
-	 * 
-	 * @param varName the name of a known variable (one of the VAR_* constants)
-	 * @param varArgument an optional argument for the variable, <code>null</code> if none
-	 */
-	public static String buildVariableTag(String varName, String varArgument) {
-		StringBuffer buf = new StringBuffer();
-		buf.append(VAR_TAG_START);
-		buf.append(varName);
-		if (varArgument != null && varArgument.length() > 0) {
-			buf.append(VAR_TAG_SEP);
-			buf.append(varArgument);
-		}
-		buf.append(VAR_TAG_END);
-		return buf.toString();
-	}
-	
-	/**
-	 * Extracts a variable tag into its name and argument.
-	 * 
-	 * @param varTag the variable tag to parse
-	 * @return an array where the 1st element is the var name and
-	 * 		the 2nd element is the var argument. Elements in array
-	 * 		can be <code>null</code>
-	 */
-	public static String[] extractVariableTag(String varTag) {
-		String[] result = new String[2];
-		int start = 0;
-		int end = varTag.indexOf(VAR_TAG_START);
-		if (end < 0)
-			return result;
-		start = end + VAR_TAG_START.length();
-		
-		end = varTag.indexOf(VAR_TAG_END, start);
-		if (end < 0 || end == start)
-			return result;
-
-		int mid = varTag.indexOf(VAR_TAG_SEP, start);
-		if (mid < 0 || mid > end) {
-			result[0] = varTag.substring(start, end);
-		} else {
-			result[0] = varTag.substring(start, mid);
-			result[1] = varTag.substring(mid+1, end);
-		}
-		
-		return result;
 	}
 
 	/**
@@ -284,7 +234,7 @@ public class ToolScript {
 	 */
 	public void setRefreshScope(String refreshScope) {
 		if (refreshScope == null || refreshScope.length() < 1)
-			this.refreshScope = buildVariableTag(REFRESH_SCOPE_NONE, null);
+			this.refreshScope = ToolUtil.buildVariableTag(REFRESH_SCOPE_NONE, null);
 		else
 			this.refreshScope = refreshScope;
 	}

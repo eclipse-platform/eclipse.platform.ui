@@ -360,7 +360,7 @@ public class ToolScriptEditDialog extends TitleAreaDialog {
 				if (results == null || results.length < 1)
 					return;
 				IResource resource = (IResource)results[0];
-				String var = ToolScript.buildVariableTag(ToolScript.VAR_DIR_WORKSPACE, null);
+				String var = ToolUtil.buildVariableTag(ToolScript.VAR_DIR_WORKSPACE, null);
 				locationField.setText(var + resource.getFullPath());
 			}
 		});
@@ -402,8 +402,10 @@ public class ToolScriptEditDialog extends TitleAreaDialog {
 				dialog.open();
 				Object[] result = dialog.getResult();
 				if (result != null && result.length == 1) {
-					String var = ToolScript.buildVariableTag(ToolScript.VAR_DIR_WORKSPACE, null);
-					directoryField.setText(var + result[0].toString());
+					StringBuffer buf = new StringBuffer();
+					ToolUtil.buildVariableTag(ToolScript.VAR_DIR_WORKSPACE, null, buf);
+					buf.append(result[0].toString());
+					directoryField.setText(buf.toString());
 				}
 			}
 		});
@@ -521,9 +523,9 @@ public class ToolScriptEditDialog extends TitleAreaDialog {
 	 * Update the refresh scope field
 	 */
 	private void updateRefreshField() {
-		String[] result = script.extractVariableTag(refreshScope);
+		String[] result = ToolUtil.extractVariableTag(refreshScope);
 		if (result[0] == null) {
-			refreshScope = script.buildVariableTag(script.REFRESH_SCOPE_NONE, null);
+			refreshScope = ToolUtil.buildVariableTag(script.REFRESH_SCOPE_NONE, null);
 			result[0] = script.REFRESH_SCOPE_NONE;
 		}
 		
@@ -544,7 +546,7 @@ public class ToolScriptEditDialog extends TitleAreaDialog {
 		}
 		if (script.REFRESH_SCOPE_WORKING_SET.equals(result[0])) {
 			if (result[1] == null) {
-				refreshScope = script.buildVariableTag(script.REFRESH_SCOPE_NONE, null);
+				refreshScope = ToolUtil.buildVariableTag(script.REFRESH_SCOPE_NONE, null);
 				refreshField.setText(ToolScriptMessages.getString("ToolScriptEditDialog.refreshScopeNone")); //$NON-NLS-1$
 			}
 			else
@@ -652,11 +654,11 @@ public class ToolScriptEditDialog extends TitleAreaDialog {
 			
 			switch (sel) {
 				case 0 :
-					result = ToolScript.buildVariableTag(ToolScript.VAR_DIR_WORKSPACE, null);
+					result = ToolUtil.buildVariableTag(ToolScript.VAR_DIR_WORKSPACE, null);
 					break;
 
 				case 1 :
-					result = ToolScript.buildVariableTag(ToolScript.VAR_DIR_PROJECT, null);
+					result = ToolUtil.buildVariableTag(ToolScript.VAR_DIR_PROJECT, null);
 					break;
 
 				case 2 :
@@ -665,7 +667,7 @@ public class ToolScriptEditDialog extends TitleAreaDialog {
 					dialog.open();
 					Object[] name = dialog.getResult();
 					if (name != null && name.length > 0)
-						result = ToolScript.buildVariableTag(ToolScript.VAR_DIR_PROJECT, (String)name[0]);
+						result = ToolUtil.buildVariableTag(ToolScript.VAR_DIR_PROJECT, (String)name[0]);
 					break;
 
 				case 3 :
@@ -674,10 +676,9 @@ public class ToolScriptEditDialog extends TitleAreaDialog {
 					targetDialog.open();
 					Object[] targets = targetDialog.getResult();
 					if (targets != null && targets.length > 0) {
-						result = ""; // $NON-NLS-1$
-						for(int i=0; i<targets.length; i++) {
-							result = result + ToolScript.buildVariableTag(ToolScript.VAR_ANT_TARGET, (String)targets[i]); 
-						}
+						StringBuffer buf = new StringBuffer();
+						ToolUtil.buildVariableTags(ToolScript.VAR_ANT_TARGET, (String[])targets, buf);
+						result = buf.toString().trim();
 					}
 					break;
 			}
@@ -734,15 +735,15 @@ public class ToolScriptEditDialog extends TitleAreaDialog {
 			
 			switch (sel) {
 				case 0 :
-					result = ToolScript.buildVariableTag(ToolScript.REFRESH_SCOPE_NONE, null);
+					result = ToolUtil.buildVariableTag(ToolScript.REFRESH_SCOPE_NONE, null);
 					break;
 					
 				case 1 :
-					result = ToolScript.buildVariableTag(ToolScript.REFRESH_SCOPE_WORKSPACE, null);
+					result = ToolUtil.buildVariableTag(ToolScript.REFRESH_SCOPE_WORKSPACE, null);
 					break;
 
 				case 2 :
-					result = ToolScript.buildVariableTag(ToolScript.REFRESH_SCOPE_PROJECT, null);
+					result = ToolUtil.buildVariableTag(ToolScript.REFRESH_SCOPE_PROJECT, null);
 					break;
 
 				case 3 :
@@ -751,7 +752,7 @@ public class ToolScriptEditDialog extends TitleAreaDialog {
 					prjDialog.open();
 					Object[] name = prjDialog.getResult();
 					if (name != null && name.length > 0)
-						result = ToolScript.buildVariableTag(ToolScript.REFRESH_SCOPE_PROJECT, (String)name[0]);
+						result = ToolUtil.buildVariableTag(ToolScript.REFRESH_SCOPE_PROJECT, (String)name[0]);
 					break;
 
 				case 4 :
@@ -760,7 +761,7 @@ public class ToolScriptEditDialog extends TitleAreaDialog {
 					setDialog.open();
 					IWorkingSet[] sets = setDialog.getSelection();
 					if (sets != null && sets.length > 0)
-						result = ToolScript.buildVariableTag(ToolScript.REFRESH_SCOPE_WORKING_SET, sets[0].getName());
+						result = ToolUtil.buildVariableTag(ToolScript.REFRESH_SCOPE_WORKING_SET, sets[0].getName());
 					break;
 			}
 			

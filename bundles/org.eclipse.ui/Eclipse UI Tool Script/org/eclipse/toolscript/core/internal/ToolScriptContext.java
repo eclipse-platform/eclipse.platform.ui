@@ -196,7 +196,7 @@ public final class ToolScriptContext implements IToolScriptContext {
 		if (monitor == null)
 			monitor = new NullProgressMonitor();
 		try {
-			String[] scope = script.extractVariableTag(script.getRefreshScope());
+			String[] scope = ToolUtil.extractVariableTag(script.getRefreshScope());
 			ToolScriptRunner runner = ToolScriptPlugin.getDefault().getToolScriptRunner(script.getType());
 			if (runner != null) {
 				if (scope[0] == null || script.REFRESH_SCOPE_NONE.equals(scope[0])) {
