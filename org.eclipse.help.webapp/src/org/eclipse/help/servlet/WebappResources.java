@@ -9,7 +9,6 @@ import java.io.InputStream;
 import java.util.*;
 
 import javax.servlet.ServletContext;
-import org.eclipse.help.internal.server.PluginURL;
 
 /**
  * Uses a resource bundle to load images and strings from
