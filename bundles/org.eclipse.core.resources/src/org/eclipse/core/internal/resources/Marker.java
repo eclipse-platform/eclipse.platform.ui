@@ -208,7 +208,7 @@ public void setAttribute(String attributeName, Object value) throws CoreExceptio
  * @see IMarker#setAttribute
  */
 public void setAttribute(String attributeName, boolean value) throws CoreException {
-	setAttribute(attributeName, new Boolean(value));
+	setAttribute(attributeName, value ? Boolean.TRUE : Boolean.FALSE);
 }
 /**
  * @see IMarker#setAttributes
