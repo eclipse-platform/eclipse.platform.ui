@@ -22,6 +22,8 @@ import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -132,6 +134,13 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 				handleTableSelectionChanged(event);
 			}
 		});
+		
+		variableTable.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				handleEditButtonPressed();
+			}
+		});
+				
 		// Create columns
 		for (int i = 0; i < variableTableColumnHeaders.length; i++) {
 			tableLayout.addColumnData(variableTableColumnLayouts[i]);
@@ -240,6 +249,7 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 		IStructuredSelection selection= (IStructuredSelection) variableTable.getSelection();
 		ISimpleLaunchVariable[] variables= (ISimpleLaunchVariable[]) selection.toList().toArray(new ISimpleLaunchVariable[0]);
 		getVariableRegistry().removeVariables(variables); 
+		variableTable.refresh();
 	}
 	
 	/**
