@@ -86,8 +86,8 @@ public abstract class StatusDialog extends Dialog {
 			fOkButton.setEnabled(!status.matches(IStatus.ERROR));
 	}
 
-	/*
-	 * @see Window#create(Shell)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
 	 */
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
