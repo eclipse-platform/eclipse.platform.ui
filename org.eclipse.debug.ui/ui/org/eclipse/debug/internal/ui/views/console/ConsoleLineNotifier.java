@@ -11,8 +11,6 @@
 package org.eclipse.debug.internal.ui.views.console;
 
 
-import java.util.regex.Pattern;
-
 import org.eclipse.debug.ui.console.IConsole;
 import org.eclipse.debug.ui.console.IConsoleLineTracker;
 import org.eclipse.debug.ui.console.IConsoleLineTrackerExtension;
@@ -38,9 +36,6 @@ public class ConsoleLineNotifier implements IPatternMatchListener {
 	 * The console this notifier is tracking 
 	 */
 	private IConsole fConsole = null;
-
-//    private String[] lineDelimiters;
-	
 	
 	/**
 	 * Connects this notifier to the given console.
@@ -54,7 +49,6 @@ public class ConsoleLineNotifier implements IPatternMatchListener {
 			IConsoleLineTracker listener = (IConsoleLineTracker)listeners[i];
 			listener.init(console);
 		}
-//		lineDelimiters = fConsole.getDocument().getLegalLineDelimiters();
 		fConsole.addPatternMatchListener(this);
 	}
 	
@@ -117,14 +111,14 @@ public class ConsoleLineNotifier implements IPatternMatchListener {
      * @see org.eclipse.ui.console.IPatternMatchListener#getPattern()
      */
     public String getPattern() {
-    	return ".*\n"; //$NON-NLS-1$
+    	return ".*\r(\n?)|.*\n"; //$NON-NLS-1$
     }
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.console.IPatternMatchListener#getModifiers()
 	 */
 	public int getCompilerFlags() {
-		return Pattern.UNIX_LINES;
+		return 0;
 	}
 	
     /* (non-Javadoc)
@@ -134,7 +128,17 @@ public class ConsoleLineNotifier implements IPatternMatchListener {
         try  {
             IDocument document = fConsole.getDocument();
             String text = document.get(event.getOffset(), event.getLength());
-            text = text.replaceAll("[\r\n]", "");  //$NON-NLS-1$//$NON-NLS-2$
+            int strip = 1;
+            int length = text.length();
+            if (length >= 2) {
+                char c = text.charAt(length - 2);
+                if (c == '\r') {
+                    strip = 2;
+                }
+                text = text.substring(0, length - strip);
+            } else {
+                text = ""; //$NON-NLS-1$
+            }
             Region region = new Region(event.getOffset(), text.length()); 
             lineAppended(region);
         } catch (BadLocationException e) {}
