@@ -23,5 +23,17 @@
             id="org.eclipse.ui.tests.rcp.util.EmptyPerspective">
       </perspective>
    </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            name="RCP Test Views"
+            id="org.eclipse.ui.tests.rcp"/>
+      <view
+            class="org.eclipse.ui.tests.rcp.util.EmptyView"
+            icon="icons/sample.gif"
+            category="org.eclipse.ui.tests.rcp"
+            name="EmptyView"
+            id="org.eclipse.ui.tests.rcp.util.EmptyView"/>
+   </extension>
 
 </plugin>
