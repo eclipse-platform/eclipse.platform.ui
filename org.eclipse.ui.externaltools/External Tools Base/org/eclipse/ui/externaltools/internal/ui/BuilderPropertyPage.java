@@ -637,7 +637,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 	private ILaunchConfigurationType promptForConfigurationType() {
 		List externalToolTypes= getConfigurationTypes(IExternalToolConstants.ID_EXTERNAL_TOOLS_BUILDER_LAUNCH_CATEGORY);
 
-		ElementListSelectionDialog dialog = new ElementListSelectionDialog(getShell(), labelProvider);
+		ElementListSelectionDialog dialog = new ElementListSelectionDialog(getShell(), new BuilderLabelProvider());
 		dialog.setElements(externalToolTypes.toArray());
 		dialog.setMultipleSelection(false);
 		dialog.setTitle(ExternalToolsUIMessages.getString("BuilderPropertyPage.Choose_configuration_type_8")); //$NON-NLS-1$
