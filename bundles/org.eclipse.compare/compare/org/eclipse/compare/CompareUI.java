@@ -67,7 +67,6 @@ public final class CompareUI {
 	 * compare editor on the result.
 	 *
 	 * @param input the input on which to open the compare editor
-	 * @see ICompareEditorInput
 	 */
 	public static void openCompareEditor(CompareEditorInput input) {
 		CompareUIPlugin plugin= CompareUIPlugin.getDefault();
@@ -80,7 +79,6 @@ public final class CompareUI {
 	 * modal compare dialog on the result.
 	 *
 	 * @param input the input on which to open the compare dialog
-	 * @see ICompareEditorInput
 	 */
 	public static void openCompareDialog(CompareEditorInput input) {
 		CompareUIPlugin plugin= CompareUIPlugin.getDefault();
