@@ -73,23 +73,23 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		new String[] {IMarker.LINE_NUMBER, IMarker.CHAR_START, IMarker.CHAR_END};	
 		
 	/**
-	 * Cache of the last stack frame that source was displayed
+	 * Cache of the stack frame that source was displayed
 	 * for.
 	 */
-	private IStackFrame fLastFrame = null;
+	private IStackFrame fStackFrame = null;
 	
 	/**
-	 * Cache of the last editor input used to display source
+	 * Cache of the editor input used to display source
 	 */
-	private IEditorInput fLastInput = null;
+	private IEditorInput fEditorInput = null;
 	
 	/**
-	 * Cache of the last editor id used to display source
+	 * Cache of the editor id used to display source
 	 */
-	private String fLastEditorId = null;
+	private String fEditorId = null;
 	
 	/**
-	 * Wether this view is in the active page of a perspective.
+	 * Whether this view is in the active page of a perspective.
 	 */
 	private boolean fIsActive = true; 	
 	
@@ -229,9 +229,9 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		getSite().getPage().removePartListener(this);
 		getSite().getWorkbenchWindow().removePerspectiveListener(this);
 		getSite().getWorkbenchWindow().removePageListener(this);
-		setLastEditorId(null);
-		setLastEditorInput(null);
-		setLastStackFrame(null);
+		setEditorId(null);
+		setEditorInput(null);
+		setStackFrame(null);
 		super.dispose();
 	}
 	
@@ -407,57 +407,12 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 				}
 				
 				IStackFrame stackFrame= (IStackFrame) obj;
-				
-				Object sourceElement = null;
-				IEditorInput editorInput = null;
-				String editorId= null;
-				
-				if (stackFrame.equals(getLastStackFrame())) {
-					// avoid lookup
-					editorId = getLastEditorId();
-					editorInput = getLastEditorInput();
-				} else {
-					ILaunch launch = stackFrame.getLaunch();
-					if (launch == null) {
-						return;
-					}
-					ISourceLocator locator= launch.getSourceLocator();
-					if (locator == null) {
-						return;
-					}
-					sourceElement = locator.getSourceElement(stackFrame);
-					if (sourceElement == null) {
-						return;
-					}					
-					// Get the corresponding element.
-		
-					// translate to an editor input using the source presentation
-					// provided by the source locator, or the default debug model
-					// presentation
-					ISourcePresentation presentation = null;
-					if (locator instanceof ISourcePresentation) {
-						presentation = (ISourcePresentation)locator;
-					} else {
-						presentation = getPresentation(stackFrame.getModelIdentifier());
-					}
-				
-				
-					if (presentation != null) {
-						editorInput= presentation.getEditorInput(sourceElement);
-					}
-					
-					if (editorInput != null) {
-						editorId= presentation.getEditorId(editorInput, sourceElement);
-					}
-					
-					setLastStackFrame(stackFrame)				;
-					setLastEditorInput(editorInput);
-					setLastEditorId(editorId);
+				if (!stackFrame.equals(getStackFrame())) {
+					setStackFrame(stackFrame);
+					lookupEditorInput();
 				}
 				
-
-				
-				if (editorInput != null && editorId != null) {
+				if (getEditorInput() != null && getEditorId() != null) {
 					int lineNumber= 0;
 					int start = -1;
 					int end = -1;
@@ -468,12 +423,52 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 					} catch (DebugException de) {
 						DebugUIPlugin.logError(de);
 					}
-					openEditorAndSetMarker(editorInput, editorId, lineNumber, start, end);
+					openEditorAndSetMarker(getEditorInput(), getEditorId(), lineNumber, start, end);
 				}
 			} finally {
 				fShowingMarker= false;
 			}
 		}
+	}
+	
+	/**
+	 * Translate to an editor input using the source presentation
+	 * provided by the source locator, or the default debug model
+     * presentation.
+     */
+	private void lookupEditorInput() {
+		Object sourceElement= null;
+		IStackFrame stackFrame= getStackFrame();
+		ILaunch launch = stackFrame.getLaunch();
+		if (launch == null) {
+			return;
+		}
+		ISourceLocator locator= launch.getSourceLocator();
+		if (locator == null) {
+			return;
+		}
+		sourceElement = locator.getSourceElement(stackFrame);
+		if (sourceElement == null) {
+			return;
+		}
+		
+		ISourcePresentation presentation = null;
+		if (locator instanceof ISourcePresentation) {
+			presentation = (ISourcePresentation)locator;
+		} else {
+			presentation = getPresentation(stackFrame.getModelIdentifier());
+		}
+		IEditorInput editorInput= null;
+		String editorId= null;
+		if (presentation != null) {
+			editorInput= presentation.getEditorInput(sourceElement);
+		}
+		
+		if (editorInput != null) {
+			editorId= presentation.getEditorId(editorInput, sourceElement);
+		}
+		setEditorInput(editorInput);
+		setEditorId(editorId);
 	}
 
 	/**
@@ -502,6 +497,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 				DebugUIViewsMessages.getString("LaunchView.Error_1"),  //$NON-NLS-1$
 				DebugUIViewsMessages.getString("LaunchView.Exception_occurred_opening_editor_for_debugger._2"),  //$NON-NLS-1$
 				e.getStatus());
+			DebugUIPlugin.logError(e);
 		}		
 		
 		if (editor != null && (lineNumber >= 0 || charStart >= 0)) {
@@ -650,14 +646,13 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	}
 	
 	/**
-	 * Sets the last stack frame that source was retrieved
-	 * for. Used to avoid source lookups for the same stack
-	 * frame when stepping.
+	 * Sets the stack frame that source was retrieved
+	 * for.
 	 * 
 	 * @param frame stack frame
 	 */
-	private void setLastStackFrame(IStackFrame frame) {
-		fLastFrame = frame;
+	private void setStackFrame(IStackFrame frame) {
+		fStackFrame = frame;
 	}
 	
 	/**
@@ -667,52 +662,48 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 * 
 	 * @return stack frame, or <code>null</code>
 	 */
-	protected IStackFrame getLastStackFrame() {
-		return fLastFrame;
+	protected IStackFrame getStackFrame() {
+		return fStackFrame;
 	}	
 	
 	/**
-	 * Sets the last editor input that was resolved for the
-	 * last source display. Used to avoid editor input creation
-	 * when stepping through the same stack frame.
+	 * Sets the editor input that was resolved for the
+	 * source display.
 	 * 
 	 * @param editorInput editor input
 	 */
-	private void setLastEditorInput(IEditorInput editorInput) {
-		fLastInput = editorInput;
+	private void setEditorInput(IEditorInput editorInput) {
+		fEditorInput = editorInput;
 	}
 	
 	/**
-	 * Returns the last editor input that was resolved for the
-	 * last source display. Used to avoid editor input creation
-	 * when stepping through the same stack frame.
+	 * Returns the editor input that was resolved for the
+	 * source display.
 	 * 
 	 * @return editor input
 	 */
-	protected IEditorInput getLastEditorInput() {
-		return fLastInput;
+	protected IEditorInput getEditorInput() {
+		return fEditorInput;
 	}	
 	
 	/**
-	 * Sets the id of the last editor opened when displaying
-	 * source. Used to avoid editor id lookup when stepping
-	 * through the same frame.
+	 * Sets the id of the editor opened when displaying
+	 * source.
 	 * 
 	 * @param editorId editor id
 	 */
-	private void setLastEditorId(String editorId) {
-		fLastEditorId = editorId;
+	private void setEditorId(String editorId) {
+		fEditorId = editorId;
 	}
 	
 	/**
-	 * Returns the id of the last editor opened when displaying
-	 * source. Used to avoid editor id lookup when stepping
-	 * through the same frame.
+	 * Returns the id of the editor opened when displaying
+	 * source.
 	 * 
 	 * @return editor id
 	 */
-	protected String getLastEditorId() {
-		return fLastEditorId;
+	protected String getEditorId() {
+		return fEditorId;
 	}	
 	
 	/**
