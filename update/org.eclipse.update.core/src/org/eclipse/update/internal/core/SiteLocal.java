@@ -44,7 +44,8 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 
 		// obtain read/write location
 		IPlatformConfiguration currentPlatformConfiguration = BootLoader.getCurrentPlatformConfiguration();
-		//localSite.isTransient(currentPlatformConfiguration.isTransient());
+		localSite.isTransient(currentPlatformConfiguration.isTransient());
+		
 		try {
 			URL location = getUpdateStateLocation(currentPlatformConfiguration);
 			configXML = UpdateManagerUtils.getURL(location, SITE_LOCAL_FILE, null);
@@ -198,7 +199,10 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 		for (int i = 0; i < IWritable.INDENT; i++)
 			increment += " "; //$NON-NLS-1$
 
-		long changeStamp = BootLoader.getCurrentPlatformConfiguration().getChangeStamp();
+		// force the recalculation to avoid reconciliation
+		IPlatformConfiguration platformConfig = BootLoader.getCurrentPlatformConfiguration();
+		platformConfig.refresh();
+		long changeStamp = platformConfig.getChangeStamp();
 
 		w.print(gap + "<" + SiteLocalParser.SITE + " "); //$NON-NLS-1$ //$NON-NLS-2$
 		if (getLabel() != null) {
@@ -453,64 +457,60 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 
 		IPlatformConfiguration platformConfig = BootLoader.getCurrentPlatformConfiguration();
 		IPlatformConfiguration.ISiteEntry[] newSiteEntries = platformConfig.getConfiguredSites();
-
-		// Either it is a new site or it already exists, or it is deleted
-		// new site only exist in platformConfig
-		List modified = new ArrayList();
-		List toInstall = new ArrayList();
+		IInstallConfiguration newDefaultConfiguration = cloneConfigurationSite(null, null, null);
 		IConfiguredSite[] oldConfiguredSites = new IConfiguredSite[0];
 
 		// sites from the current configuration
 		if (getCurrentConfiguration() != null)
 			oldConfiguredSites = getCurrentConfiguration().getConfiguredSites();
 
-		// check if sites from the platform are new or modified
+		// check if sites from the platform are new sites or modified sites
+		// if they are new add them, if they are modified, compare them with the old
+		// one and add them
 		for (int siteIndex = 0; siteIndex < newSiteEntries.length; siteIndex++) {
-
-			URL resolvedURL = resolveSiteEntry(newSiteEntries[siteIndex]);
-
+			IPlatformConfiguration.ISiteEntry currentSiteEntry = newSiteEntries[siteIndex];
+			URL resolvedURL = resolveSiteEntry(currentSiteEntry);
 			boolean found = false;
+			IConfiguredSite currentConfigurationSite = null;
+
+			// check if SiteEntry has been possibly modified
+			// if it was part of the previously known configuredSite
 			for (int index = 0; index < oldConfiguredSites.length && !found; index++) {
-				if (oldConfiguredSites[index].getSite().getURL().equals(resolvedURL)) {
+				currentConfigurationSite = oldConfiguredSites[index];
+				if (currentConfigurationSite.getSite().getURL().equals(resolvedURL)) {
 					found = true;
-					((ConfiguredSite) oldConfiguredSites[index]).setPreviousPluginPath(newSiteEntries[siteIndex].getSitePolicy().getList());
-					modified.add(oldConfiguredSites[index]);
+					IConfiguredSite reconciledConfiguredSite = reconcile(currentConfigurationSite, resolvedURL);
+					newDefaultConfiguration.addConfiguredSite(reconciledConfiguredSite);
 				}
 			}
 
-			// new site not found, create it
+			// old site not found, this is a new site, create it
 			if (!found) {
 				ISite site = SiteManager.getSite(resolvedURL);
+
 				//site policy
-				IPlatformConfiguration.ISitePolicy sitePolicy = newSiteEntries[siteIndex].getSitePolicy();
+				IPlatformConfiguration.ISitePolicy sitePolicy = currentSiteEntry.getSitePolicy();
 				ConfiguredSite configSite = (ConfiguredSite) new BaseSiteLocalFactory().createConfigurationSiteModel((SiteModel) site, sitePolicy.getType());
-				configSite.setPlatformURLString(newSiteEntries[siteIndex].getURL().toExternalForm());
-				configSite.setPreviousPluginPath(newSiteEntries[siteIndex].getSitePolicy().getList());
+				configSite.setPlatformURLString(currentSiteEntry.getURL().toExternalForm());
+				configSite.setPreviousPluginPath(currentSiteEntry.getSitePolicy().getList());
 
 				//the site may not be read-write
 				configSite.isUpdateable(newSiteEntries[siteIndex].isUpdateable());
 
-				toInstall.add(configSite);
+				// Add the features as configured
+				IFeatureReference[] newFeaturesRef = site.getFeatureReferences();
+				for (int i = 0; i < newFeaturesRef.length; i++) {
+					FeatureReferenceModel newFeatureRefModel = (FeatureReferenceModel) newFeaturesRef[i];
+					configSite.getConfigurationPolicy().addConfiguredFeatureReference(newFeatureRefModel);
+				}
+				
+				newDefaultConfiguration.addConfiguredSite(configSite);
 			}
 		}
 
-		// create new InstallConfiguration
-		IInstallConfiguration newDefaultConfiguration = cloneConfigurationSite(null, null, null);
-
-		// check modified config site
-		// and add them back
-		Iterator checkIter = modified.iterator();
-		while (checkIter.hasNext()) {
-			IConfiguredSite modifiedOldConfigSite = (IConfiguredSite) checkIter.next();
-			newDefaultConfiguration.addConfiguredSite(reconcile(modifiedOldConfigSite));
-		}
-
-		// add new sites
-		Iterator addIter = toInstall.iterator();
-		while (addIter.hasNext()) {
-			IConfiguredSite newFoundSite = (IConfiguredSite) addIter.next();
-			newDefaultConfiguration.addConfiguredSite(newFoundSite);
-		}
+		// verify we do not have 2 features with different version that
+		// are configured
+		checkConfiguredFeatures(newDefaultConfiguration);
 
 		// add the configuration as the currentConfig
 		this.addConfiguration(newDefaultConfiguration);
@@ -531,59 +531,52 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 	}
 
 	/**
-	 * Compare the old version of the configuration Site with the new one.
+	 * Compare the old features in the old config
+	 * with the new one found by creating a Site on the URL
 	 * 
 	 */
-	private IConfiguredSite reconcile(IConfiguredSite oldConfiguredSiteToReconcile) throws CoreException {
+	private IConfiguredSite reconcile(IConfiguredSite oldConfiguredSite, URL siteURL) throws CoreException {
 
-		// create a copy of the ConfigSite without any feature
-		// this is not a clone
-		SiteModel siteModel = (SiteModel) oldConfiguredSiteToReconcile.getSite();
-		ConfiguredSite cSiteToReconcile = (ConfiguredSite) oldConfiguredSiteToReconcile;
-		int policy = cSiteToReconcile.getConfigurationPolicy().getPolicy();
-		ConfiguredSiteModel newSiteModel = new BaseSiteLocalFactory().createConfigurationSiteModel(siteModel, policy);
+		ConfiguredSite newConfiguredSite = createNewConfigSite(oldConfiguredSite);
+		ConfigurationPolicyModel newSitePolicyModel = newConfiguredSite.getConfigurationPolicyModel();
+		ConfigurationPolicyModel oldSitePolicyModel = ((ConfiguredSite) oldConfiguredSite).getConfigurationPolicyModel();
 
-		// copy values
-		newSiteModel.isUpdateable(cSiteToReconcile.isUpdateable());
-		newSiteModel.setPlatformURLString(((ConfiguredSiteModel) oldConfiguredSiteToReconcile).getPlatformURLString());
-		newSiteModel.setPreviousPluginPath(cSiteToReconcile.getPreviousPluginPath());
-
-		// check the Features that are still here
+		// check the Features that are still on the new version of the Config Site
+		// and the new one. Add the new Features as Configured
 		List toCheck = new ArrayList();
-		IFeatureReference[] oldConfiguredFeatures = oldConfiguredSiteToReconcile.getSite().getFeatureReferences();
-		FeatureReferenceModel[] newFoundFeatures = newSiteModel.getSiteModel().getFeatureReferenceModels();
+		ISite site = SiteManager.getSite(siteURL);
+		IFeatureReference[] foundFeatures = site.getFeatureReferences();
+		IFeatureReference[] oldConfiguredFeaturesRef = oldConfiguredSite.getSite().getFeatureReferences();
 
-		for (int i = 0; i < newFoundFeatures.length; i++) {
+		for (int i = 0; i < foundFeatures.length; i++) {
 			boolean newFeatureFound = false;
-			for (int j = 0; j < oldConfiguredFeatures.length; j++) {
-				if (oldConfiguredFeatures[j] != null && oldConfiguredFeatures[j].equals(newFoundFeatures[i])) {
-					toCheck.add(oldConfiguredFeatures[j]);
+			FeatureReferenceModel currentFeatureRefModel = (FeatureReferenceModel) foundFeatures[i];
+			for (int j = 0; j < oldConfiguredFeaturesRef.length; j++) {
+				IFeatureReference oldFeatureRef = oldConfiguredFeaturesRef[j];
+				if (oldFeatureRef != null && oldFeatureRef.equals(currentFeatureRefModel)) {
+					toCheck.add(oldFeatureRef);
 					newFeatureFound = true;
 				}
 			}
 
-			// new fature to add as configured
+			// new fature found: add as configured
 			if (!newFeatureFound) {
-				(newSiteModel.getConfigurationPolicyModel()).addConfiguredFeatureReference((FeatureReferenceModel) newFoundFeatures[i]);
+				newSitePolicyModel.addConfiguredFeatureReference(currentFeatureRefModel);
 			}
 		}
 
-		// if a feature has been found in new and old state
-		// use old state
+		// if a feature has been found in new and old state use old state (configured/unconfigured)
 		Iterator featureIter = toCheck.iterator();
-		ConfiguredSite oldConfiguredSite = (ConfiguredSite) oldConfiguredSiteToReconcile;
-		ConfigurationPolicy oldConfigurationPolicy = oldConfiguredSite.getConfigurationPolicy();
 		while (featureIter.hasNext()) {
-			IFeatureReference element = (IFeatureReference) featureIter.next();
-			FeatureReferenceModel oldFeatureRef = (FeatureReferenceModel) element;
-			if (oldConfigurationPolicy.isConfigured(oldFeatureRef)) {
-				(newSiteModel.getConfigurationPolicyModel()).addConfiguredFeatureReference(oldFeatureRef);
+			FeatureReferenceModel oldFeatureRef = (FeatureReferenceModel) featureIter.next();
+			if (oldSitePolicyModel.isConfigured(oldFeatureRef)) {
+				newSitePolicyModel.addConfiguredFeatureReference(oldFeatureRef);
 			} else {
-				(newSiteModel.getConfigurationPolicyModel()).addUnconfiguredFeatureReference(oldFeatureRef);
+				newSitePolicyModel.addUnconfiguredFeatureReference(oldFeatureRef);
 			}
 		}
 
-		return (IConfiguredSite) newSiteModel;
+		return (IConfiguredSite) newConfiguredSite;
 	}
 
 	/**
@@ -607,10 +600,12 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 							int result = compare(featureToCompare, possibleFeatureReference[j]);
 							if (result != 0) {
 								if (result == 1) {
-									configuredSites[i].unconfigure(possibleFeatureReference[j].getFeature());
+									FeatureReferenceModel FeatureRefModel = (FeatureReferenceModel) possibleFeatureReference[j];
+									((ConfiguredSite)configuredSites[i]).getConfigurationPolicy().addUnconfiguredFeatureReference(FeatureRefModel);
 								};
 								if (result == 2) {
-									configuredSites[indexConfiguredSites].unconfigure(featureToCompare.getFeature());
+									FeatureReferenceModel FeatureRefModel = (FeatureReferenceModel) featureToCompare;
+									((ConfiguredSite)configuredSites[i]).getConfigurationPolicy().addUnconfiguredFeatureReference(FeatureRefModel);									
 									// do not break, we can continue, even if the feature is unconfigured
 									// if we find another feature in another site, we may unconfigure it.
 									// but it would have been unconfigured anyway because we confured another version of the same feature
@@ -655,29 +650,6 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 	};
 
 	/**
-	 * Returns all the plugins currently configured in the pluginRegistry
-	 */
-	private static IPluginEntry[] getAllRunningPlugin() throws CoreException {
-		if (allRunningPluginEntry == null) {
-			// get all the running plugins
-			IPluginDescriptor[] descriptors = Platform.getPluginRegistry().getPluginDescriptors();
-			allRunningPluginEntry = new PluginEntry[descriptors.length];
-			if (descriptors.length > 0) {
-				for (int i = 0; i < descriptors.length; i++) {
-					String ver = descriptors[i].getVersionIdentifier().toString();
-					String id = descriptors[i].getUniqueIdentifier().toString();
-					PluginEntry entry = new PluginEntry();
-					entry.setPluginIdentifier(id);
-					entry.setPluginVersion(ver);
-					allRunningPluginEntry[i] = entry;
-				}
-			}
-		}
-
-		return allRunningPluginEntry;
-	}
-
-	/**
 	 * Add the list of plugins the platform found for each site. This list will be preserved in 
 	 * a transient way. 
 	 * 
@@ -704,13 +676,30 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 				if (configured[index] != null) {
 					if (configured[index].getSite().getURL().equals(resolvedURL)) {
 						found = true;
-						((ConfiguredSite) configured[index]).setPreviousPluginPath(siteEntries[siteIndex].getSitePolicy().getList());
+						String[] listOfPlugins = siteEntries[siteIndex].getSitePolicy().getList();
+						((ConfiguredSite) configured[index]).setPreviousPluginPath(listOfPlugins);
 						configured[index] = null;
 					}
 				}
 			}
 		}
 
+	}
+
+	private ConfiguredSite createNewConfigSite(IConfiguredSite oldConfiguredSiteToReconcile) throws CoreException {
+		// create a copy of the ConfigSite based on old ConfigSite
+		// this is not a clone, do not copy any features
+		ConfiguredSite cSiteToReconcile = (ConfiguredSite) oldConfiguredSiteToReconcile;
+		SiteModel siteModel = cSiteToReconcile.getSiteModel();
+		int policy = cSiteToReconcile.getConfigurationPolicy().getPolicy();
+
+		// copy values of the old ConfigSite that should be preserved except Features
+		ConfiguredSite newConfigurationSite = (ConfiguredSite) new BaseSiteLocalFactory().createConfigurationSiteModel(siteModel, policy);
+		newConfigurationSite.isUpdateable(cSiteToReconcile.isUpdateable());
+		newConfigurationSite.setPlatformURLString(cSiteToReconcile.getPlatformURLString());
+		newConfigurationSite.setPreviousPluginPath(cSiteToReconcile.getPreviousPluginPath());
+
+		return newConfigurationSite;
 	}
 
 	/*

@@ -21,8 +21,7 @@ import org.eclipse.update.internal.core.Policy;
 /**
  * 
  */
-public class ConfigurationPolicy extends ConfigurationPolicyModel{
-
+public class ConfigurationPolicy extends ConfigurationPolicyModel {
 
 	private IConfiguredSite configuredSite;
 
@@ -31,8 +30,7 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel{
 	 */
 	public ConfigurationPolicy() {
 	}
-	
-	
+
 	/**
 	 * Copy Constructor for ConfigurationPolicyModel.
 	 */
@@ -43,7 +41,6 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel{
 		setUnconfiguredFeatureReferences(configPolicy.getUnconfiguredFeatures());
 		setConfiguredSite(configPolicy.getConfiguredSite());
 	}
-
 
 	/**
 	 * @since 2.0
@@ -58,57 +55,52 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel{
 	/*package*/
 	void configure(IFeatureReference featureReference, boolean callInstallHandler) throws CoreException {
 
-
-		if (featureReference==null)
+		if (featureReference == null)
 			return;
 		IFeature feature = featureReference.getFeature();
 		if (feature == null)
 			return;
-				
+
 		// Setup optional install handler
 		InstallHandlerProxy handler = null;
 		if (callInstallHandler)
-			handler = new InstallHandlerProxy(
-				IInstallHandler.HANDLER_ACTION_CONFIGURE,
-				feature,
-				feature.getInstallHandlerEntry(),
-				null);
+			handler = new InstallHandlerProxy(IInstallHandler.HANDLER_ACTION_CONFIGURE, feature, feature.getInstallHandlerEntry(), null);
 		boolean success = false;
 		Throwable originalException = null;
-		
+
 		// do the configure action
 		try {
 			if (handler != null)
 				handler.configureInitiated();
-				
+
 			ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_CONFIGURE);
 			activity.setLabel(feature.getVersionedIdentifier().toString());
 			activity.setDate(new Date());
-	
-			addConfiguredFeatureReference((FeatureReferenceModel)featureReference);
-	
+
+			addConfiguredFeatureReference((FeatureReferenceModel) featureReference);
+
 			// everything done ok
 			activity.setStatus(IActivity.STATUS_OK);
-			((InstallConfiguration) SiteManager.getLocalSite().getCurrentConfiguration()).addActivityModel((ConfigurationActivityModel)activity);
-			
+			((InstallConfiguration) SiteManager.getLocalSite().getCurrentConfiguration()).addActivityModel((ConfigurationActivityModel) activity);
+
 			if (handler != null)
 				handler.completeConfigure();
-				
+
 			success = true;
-		} catch(Throwable t) {
+		} catch (Throwable t) {
 			originalException = t;
 		} finally {
 			Throwable newException = null;
 			try {
 				if (handler != null)
 					handler.configureCompleted(success);
-			} catch(Throwable t) {
+			} catch (Throwable t) {
 				newException = t;
 			}
 			if (originalException != null) // original exception wins
-				throw UpdateManagerUtils.newCoreException(Policy.bind("InstallHandler.error", feature.getLabel()),originalException);
+				throw UpdateManagerUtils.newCoreException(Policy.bind("InstallHandler.error", feature.getLabel()), originalException);
 			if (newException != null)
-				throw UpdateManagerUtils.newCoreException(Policy.bind("InstallHandler.error", feature.getLabel()),newException);
+				throw UpdateManagerUtils.newCoreException(Policy.bind("InstallHandler.error", feature.getLabel()), newException);
 		}
 	}
 
@@ -119,26 +111,21 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel{
 	/*package*/
 	boolean unconfigure(IFeatureReference featureReference) throws CoreException {
 
-		if (featureReference==null)
-			return false;			
+		if (featureReference == null)
+			return false;
 		IFeature feature = featureReference.getFeature();
 		if (feature == null)
 			return false;
-				
+
 		// Setup optional install handler
-		InstallHandlerProxy handler = 
-			new InstallHandlerProxy(
-				IInstallHandler.HANDLER_ACTION_UNCONFIGURE,
-				feature,
-				feature.getInstallHandlerEntry(),
-				null);
+		InstallHandlerProxy handler = new InstallHandlerProxy(IInstallHandler.HANDLER_ACTION_UNCONFIGURE, feature, feature.getInstallHandlerEntry(), null);
 		boolean success = false;
 		Throwable originalException = null;
-		
+
 		// do the unconfigure action
 		try {
 			handler.unconfigureInitiated();
-			
+
 			ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_UNCONFIGURE);
 			activity.setLabel(featureReference.getFeature().getVersionedIdentifier().toString());
 			activity.setDate(new Date());
@@ -148,41 +135,26 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel{
 			// everything done ok
 			activity.setStatus(IActivity.STATUS_OK);
 			((InstallConfiguration) SiteManager.getLocalSite().getCurrentConfiguration()).addActivityModel((ConfigurationActivityModel) activity);
-			
+
 			handler.completeUnconfigure();
-		
+
 			success = true;
-		} catch(Throwable t) {
+		} catch (Throwable t) {
 			originalException = t;
 		} finally {
 			Throwable newException = null;
 			try {
 				handler.configureCompleted(success);
-			} catch(Throwable t) {
+			} catch (Throwable t) {
 				newException = t;
 			}
 			if (originalException != null) // original exception wins
-				throw UpdateManagerUtils.newCoreException(Policy.bind("InstallHandler.error", feature.getLabel()),originalException);
+				throw UpdateManagerUtils.newCoreException(Policy.bind("InstallHandler.error", feature.getLabel()), originalException);
 			if (newException != null)
-				throw UpdateManagerUtils.newCoreException(Policy.bind("InstallHandler.error", feature.getLabel()),newException);
+				throw UpdateManagerUtils.newCoreException(Policy.bind("InstallHandler.error", feature.getLabel()), newException);
 		}
-		
+
 		return true;
-	}
-
-	/**
-	 * Returns true if the pluginDescriptor requires one or more pluginEntry
-	 * and the pluginDescriptor is not part of the pluginEntries
-	 * @deprecated (remove we are not in the runtime business)
-	 */
-	private boolean require(IPluginDescriptor descriptor, IPluginEntry[] entries) {
-		boolean result = false;
-		if (descriptor != null && entries != null) {
-			IPluginPrerequisite[] prereq = descriptor.getPluginPrerequisites();
-			//FIXME: todo  list
-
-		}
-		return result;
 	}
 
 	/**
@@ -249,16 +221,11 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel{
 				toInclude = delta(getUnconfiguredFeatures(), include);
 		}
 
-		// FIXME 
-		//result = union(toInclude,result);
+		result = union(toInclude, result);
 
 		return result;
 	}
 
-	
-	
-	
-	
 	/**
 	 * @since 2.0
 	 */
@@ -282,8 +249,8 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel{
 	}
 
 	/**
-		 * Returns and array with the union of plugins
-		 */
+	 * Returns and array with the union of plugins
+	*/
 	private String[] union(String[] targetArray, String[] sourceArray) {
 
 		// No string 
@@ -312,6 +279,11 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel{
 		return resultEntry;
 	}
 
+	/**
+	*	 we need to figure out which plugin SHOULD NOT be written and
+	*	 remove them from include
+	*	 we can compare the String of the URL
+	*/
 	private String[] delta(IFeatureReference[] arrayOfFeatureRef, String[] include) {
 		if (arrayOfFeatureRef == null || arrayOfFeatureRef.length < 1)
 			return include;
@@ -319,16 +291,42 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel{
 		if (include == null || include.length < 1)
 			return include;
 
-		String[] result = include;
+		// get array of String representing the plugins path
+		// of plugins that should not be saved
+		String[] featuresPlugins = new String[0];
+		if (arrayOfFeatureRef != null) {
+			int length = arrayOfFeatureRef.length;
+			featuresPlugins = new String[length];
+			for (int i = 0; i < length; i++) {
+				featuresPlugins[i] = arrayOfFeatureRef[i].getURL().toString();
+			}
+		}
 
-		// we need to figure out which plugin SHOULD NOT be written and
-		// remove them from include
-		// we need to get a URL[] 
+		// if a plugin that was in the include list
+		// is also on the list of plugins that should not be saved
+		List newInclude = new ArrayList();
+		for (int i = 0; i < include.length; i++) {
+			String currentInclude = include[i];
+			boolean found = false;
+			for (int j = 0; j < featuresPlugins.length; j++) {
+				if (featuresPlugins[j].endsWith(currentInclude)) {
+					found = true;
+					break;
+				}
+				if (!found) {
+					newInclude.add(currentInclude);
+				}
+			}
+		}
+
+		String[] result = new String[0];
+		if (newInclude.size()>0){
+			result = new String[newInclude.size()];
+			newInclude.toArray(result);
+		}
 
 		return result;
 	}
-
-
 
 	/**
 	 * Gets the configuredSite.
