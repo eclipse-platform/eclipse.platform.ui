@@ -33,6 +33,7 @@ import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -161,12 +162,14 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		buttonComposite.setLayout(layout);
+		buttonComposite.setFont(font);
 		
 		createSortTargets(buttonComposite);
 		createFilterInternalTargets(buttonComposite);
 		
 		createVerticalSpacer(comp, 1);
 		createTargetOrder(comp);
+		Dialog.applyDialogFont(parent);
 	}
 	
 	/**
@@ -174,11 +177,10 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	 * @param parent the parent composite
 	 */
 	private void createSelectionCount(Composite parent) {
-		GridData gd;
 		fSelectionCountLabel = new Label(parent, SWT.NONE);
 		fSelectionCountLabel.setFont(parent.getFont());
 		fSelectionCountLabel.setText(AntLaunchConfigurationMessages.getString("AntTargetsTab.0_out_of_0_selected_2")); //$NON-NLS-1$
-		gd = new GridData(GridData.FILL_HORIZONTAL);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		fSelectionCountLabel.setLayoutData(gd);
 	}
 
