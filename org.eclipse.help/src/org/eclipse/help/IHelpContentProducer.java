@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2003 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,7 @@ import java.util.*;
  * contributed by the plugin.  If IHelpContentProvider does not return
  * the content, help system searches doc.zip and plug-in install location
  * for the file and reads its content. 
- * @since 3.0.0
+ * @since 3.0
  */
 public interface IHelpContentProducer {
 	/**
