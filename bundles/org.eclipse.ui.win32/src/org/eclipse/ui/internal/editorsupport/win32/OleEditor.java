@@ -411,7 +411,7 @@ public class OleEditor extends EditorPart {
 		IFile file = (((IFileEditorInput) input).getFile());
 		
 		//Cannot create this with a file and no physical location
-		if(!new File(file.getLocation().toOSString()).exists())
+		if(file.getLocation() == null || !(new File(file.getLocation().toOSString()).exists()))
 			throw new PartInitException(
 				WorkbenchMessages.format("OleEditor.noFileInput", new Object[] { file.getLocation() })); //$NON-NLS-1$
 						
