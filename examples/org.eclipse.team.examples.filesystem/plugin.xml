@@ -7,6 +7,9 @@
    class="org.eclipse.team.examples.filesystem.FileSystemPlugin">
 
    <runtime>
+      <library name="teamfilesystem.jar">
+         <export name="*"/>
+      </library>
    </runtime>
    <requires>
       <import plugin="org.eclipse.core.resources"/>
