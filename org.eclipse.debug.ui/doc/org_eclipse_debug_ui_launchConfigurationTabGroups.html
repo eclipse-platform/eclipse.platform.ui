@@ -33,7 +33,7 @@ for a type of launch configuration.</p>
  group is applicable to (corresponds to the id of a launch configuration type
  extension).</li>
 <li><code>class</code> specifies a fully qualified name of a Java class
- that implements <code>ILanuchConfigurationTabGroup</code>.</li>
+ that implements <code>ILaunchConfigurationTabGroup</code>.</li>
 </ul>
 
 <p><b><i>Examples:</i></b> </p>
@@ -45,11 +45,11 @@ for a type of launch configuration.</p>
   &lt;launchConfigurationTabGroup 
      id="com.example.ExampleTabGroup"
      type="com.example.ExampleLaunchConfigurationTypeIdentifier"
-     class="com.example.ExampleLaunchConfigurationTabGroupClass"
+     class="com.example.ExampleLaunchConfigurationTabGroupClass"&gt;
   &lt;/launchConfigurationTabGroup&gt;
 &lt;/extension&gt;
 </pre>
-<p>In the above example, the contributed tab group will be shown for the launch configuration type
+<p>In the above example, the contributed tab group will be shown in the launch configuration dialog for the launch configuration type
 with identifier <code>com.example.ExampleLaunchConfigurationTypeIdentifier</code>.
 </p>
 
