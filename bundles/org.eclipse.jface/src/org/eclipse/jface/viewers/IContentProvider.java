@@ -37,7 +37,7 @@ public void dispose();
  * should update the viewer (see the add, remove, update and refresh methods on the viewers).
  * </p>
  * <p>
- * The viewer should not updated during this call, as it might be in the process
+ * The viewer should not be updated during this call, as it might be in the process
  * of being disposed.
  * </p>
  *
