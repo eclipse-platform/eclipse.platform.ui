@@ -4,5 +4,5 @@
 
 	public static final String SEARCH_DIALOG= PREFIX + "search_dialog_context";	 //$NON-NLS-1$
 	public static final String TEXT_SEARCH_PAGE= PREFIX + "text_search_page_context"; //$NON-NLS-1$
-	public static final String TYPE_FILTERING_DIALOG= PREFIX + "type_filtering_dialog_context"; //$NON-NLS-1$	public static final String SEARCH_VIEW= PREFIX + "search_view_context"; //$NON-NLS-1$
+	public static final String TYPE_FILTERING_DIALOG= PREFIX + "type_filtering_dialog_context"; //$NON-NLS-1$	public static final String SEARCH_VIEW= PREFIX + "search_view_context"; //$NON-NLS-1$		public static final String SEARCH_PREFERENCE_PAGE= PREFIX + "search_preference_page_context"; //$NON-NLS-1$
 }
