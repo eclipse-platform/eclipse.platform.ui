@@ -33,7 +33,7 @@ public class EclipseConnector {
 			+ "<body><p>\n"; //$NON-NLS-1$
 	private static final String errorPageEnd = "</p></body></html>"; //$NON-NLS-1$
 	private static final IFilter filters[] = new IFilter[]{
-			new FramesetFilter(), new HighlightFilter()};
+			new HighlightFilter(), new FramesetFilter()};
 
 	/**
 	 * Constructor.
