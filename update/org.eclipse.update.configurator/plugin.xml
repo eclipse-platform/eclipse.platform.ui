@@ -21,7 +21,7 @@
 
    <extension
          id="updateConfiguratorProductProvider"
-         name="Update Configurator Product Provider"
+         name="%productProviderName"
          point="org.eclipse.core.runtime.products">
       <provider> 
          <run class="org.eclipse.update.internal.configurator.ProductProvider"/> 
