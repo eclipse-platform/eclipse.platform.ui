@@ -14,6 +14,7 @@ package org.eclipse.ui.internal;
 
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.ui.internal.presentations.PresentationFactoryUtil;
+import org.eclipse.ui.internal.presentations.SystemMenuDetach;
 import org.eclipse.ui.internal.presentations.SystemMenuFastView;
 import org.eclipse.ui.internal.presentations.SystemMenuSize;
 import org.eclipse.ui.internal.presentations.UpdatingActionContributionItem;
@@ -42,9 +43,13 @@ public class ViewStack extends PartStack {
 
     private SystemMenuFastView fastViewAction;
 
+    private SystemMenuDetach detachViewAction;
+    
     public void addSystemActions(IMenuManager menuManager) {
         appendToGroupIfPossible(menuManager,
                 "misc", new UpdatingActionContributionItem(fastViewAction)); //$NON-NLS-1$
+        appendToGroupIfPossible(menuManager,
+        		"misc", new UpdatingActionContributionItem(detachViewAction)); //$NON-NLS-1$
         sizeItem = new SystemMenuSize((PartPane) getVisiblePart());
         appendToGroupIfPossible(menuManager, "size", sizeItem); //$NON-NLS-1$
     }
@@ -67,6 +72,7 @@ public class ViewStack extends PartStack {
 
         this.allowStateChanges = allowsStateChanges;
         fastViewAction = new SystemMenuFastView(getPresentationSite());
+        detachViewAction = new SystemMenuDetach(getPresentationSite());
     }
 
     protected WorkbenchPage getPage() {
@@ -94,6 +100,7 @@ public class ViewStack extends PartStack {
         }
 
         fastViewAction.setPane(pane);
+        detachViewAction.setPane(pane);
         sizeItem.setPane(pane);
     }
 

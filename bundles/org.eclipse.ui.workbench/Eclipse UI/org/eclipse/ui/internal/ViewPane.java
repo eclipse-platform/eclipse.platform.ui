@@ -360,6 +360,14 @@ public class ViewPane extends PartPane implements IPropertyListener {
     protected void doDock() {
         getPage().removeFastView(getViewReference());
     }
+    
+    public void doDetach() {
+    	getPage().detachView(getViewReference());
+    }
+    		
+    public void doAttach() {
+    	getPage().attachView(getViewReference());
+    }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.LayoutPart#getCompoundId()

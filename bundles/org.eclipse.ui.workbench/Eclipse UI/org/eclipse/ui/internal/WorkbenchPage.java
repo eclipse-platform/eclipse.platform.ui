@@ -1205,6 +1205,27 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             site.getPane().showFocus(false);
         }
     }
+    
+	/**
+	 * Detaches a view from the WorkbenchWindow.
+	 */
+	public void detachView(IViewReference ref){
+		Perspective persp = getActivePerspective();
+		PerspectiveHelper presentation = persp.getPresentation();
+		
+		if(persp == null)
+			return;
+		
+		presentation.detachPart(ref);
+	}
+	
+	/**
+	 * Removes a detachedwindow. 
+	 */
+	public void attachView(IViewReference ref){
+  		PerspectiveHelper presentation = getPerspectivePresentation();
+   		presentation.attachPart(ref);
+	}
 
     private void disposePart(IWorkbenchPartReference ref) {
         final WorkbenchPartReference ref0 = (WorkbenchPartReference) ref;

@@ -725,7 +725,7 @@ public class Perspective {
         fixed = layout.isFixed();
 
         // Create presentation.	
-        presentation = new PerspectiveHelper(page, container);
+        presentation = new PerspectiveHelper(page, container, this);
 
         // Hide editor area if requested by factory
         if (!layout.isEditorAreaVisible())
@@ -814,7 +814,7 @@ public class Perspective {
     public void performedShowIn(String partId) {
         showInTimes.put(partId, new Long(System.currentTimeMillis()));
     }
-
+    
     /**
      * Sets the fast view attribute.
      * Note: The page is expected to update action bars.
@@ -935,7 +935,7 @@ public class Perspective {
 
         // Create an empty presentation..
         ViewSashContainer mainLayout = new ViewSashContainer(page);
-        PerspectiveHelper pres = new PerspectiveHelper(page, mainLayout);
+        PerspectiveHelper pres = new PerspectiveHelper(page, mainLayout, this);
 
         // Read the layout.
         result.merge(pres.restoreState(memento

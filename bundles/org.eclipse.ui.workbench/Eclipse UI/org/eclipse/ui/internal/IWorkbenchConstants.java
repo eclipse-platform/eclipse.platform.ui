@@ -138,6 +138,8 @@ public interface IWorkbenchConstants {
     public static final String TAG_X = "x"; //$NON-NLS-1$
 
     public static final String TAG_Y = "y"; //$NON-NLS-1$
+    
+    public static final String TAG_FLOAT = "float"; //$NON-NLS-1$
 
     public static final String TAG_ITEM_WRAP_INDEX = "wrapIndex"; //$NON-NLS-1$
 

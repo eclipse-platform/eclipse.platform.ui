@@ -31,10 +31,11 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.presentations.PresentationFactoryUtil;
 
 public class DetachedWindow extends Window {
 
-    private ViewStack folder;
+    private DetachedViewStack folder;
 
     private WorkbenchPage page;
 
@@ -51,7 +52,7 @@ public class DetachedWindow extends Window {
         setShellStyle( //SWT.CLOSE | SWT.MIN | SWT.MAX | 
         SWT.RESIZE);
         this.page = workbenchPage;
-        folder = new ViewStack(page, false);
+        folder = new DetachedViewStack(page, false, PresentationFactoryUtil.ROLE_VIEW);
     }
 
     /**
@@ -191,6 +192,13 @@ public class DetachedWindow extends Window {
         int width = bigInt.intValue();
         bigInt = memento.getInteger(IWorkbenchConstants.TAG_HEIGHT);
         int height = bigInt.intValue();
+        bigInt = memento.getInteger(IWorkbenchConstants.TAG_FLOAT);
+        //float tag @since 3.1 - old workbench.xmls won't have it
+        int floatint = 0;
+        if(bigInt != null) {
+        	floatint = bigInt.intValue();
+        	folder.setFloatingState(floatint == 1);
+        }
 
         // Set the bounds.
         bounds = new Rectangle(x, y, width, height);
@@ -198,7 +206,9 @@ public class DetachedWindow extends Window {
             getShell().setText(title);
             getShell().setBounds(bounds);
         }
-
+        
+        
+        
         // Create the folder.
         IMemento childMem = memento.getChild(IWorkbenchConstants.TAG_FOLDER);
         if (childMem != null)
@@ -221,12 +231,14 @@ public class DetachedWindow extends Window {
         memento.putInteger(IWorkbenchConstants.TAG_Y, bounds.y);
         memento.putInteger(IWorkbenchConstants.TAG_WIDTH, bounds.width);
         memento.putInteger(IWorkbenchConstants.TAG_HEIGHT, bounds.height);
+        memento.putInteger(IWorkbenchConstants.TAG_FLOAT, 
+        		folder.isFloating() ? 1 : 0);
 
         // Save the views.	
         IMemento childMem = memento.createChild(IWorkbenchConstants.TAG_FOLDER);
         folder.saveState(childMem);
     }
-
+    
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.IWorkbenchDragDropPart#getControl()
      */
@@ -234,6 +246,10 @@ public class DetachedWindow extends Window {
         return folder.getControl();
     }
 
+    public void setFloatingState(boolean state) {
+        folder.setFloatingState(state);
+    }
+    
     /**
      * 
      * Returns true iff the given rectangle is located in the client area of any

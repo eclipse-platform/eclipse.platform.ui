@@ -70,11 +70,28 @@ public class PerspectiveHelper {
 
     protected ActualDropTarget dropTarget;
     
+    private Perspective perspective;
+    
     private IDragOverListener dragTarget = new IDragOverListener() {
 
         public IDropTarget drag(Control currentControl, Object draggedObject,
                 Point position, final Rectangle dragRectangle) {
 
+            // If we're dragging a floating detached window
+            if (draggedObject instanceof DetachedWindow) {
+                final DetachedWindow window = (DetachedWindow)draggedObject;
+                return new AbstractDropTarget() {
+                    public void drop() {
+                        window.getShell().setLocation(dragRectangle.x,
+                                dragRectangle.y);
+                    }
+
+                    public Cursor getCursor() {
+                        return DragCursors.getCursor(DragCursors.OFFSCREEN);
+                    }
+                };
+            }
+            
             if (!(draggedObject instanceof ViewPane || draggedObject instanceof ViewStack)) {
                 return null;
             }
@@ -190,10 +207,10 @@ public class PerspectiveHelper {
      * Constructs a new object.
      */
     public PerspectiveHelper(WorkbenchPage workbenchPage,
-            ViewSashContainer mainLayout) {
+            ViewSashContainer mainLayout, Perspective perspective) {
         this.page = workbenchPage;
         this.mainLayout = mainLayout;
-
+        this.perspective = perspective;
         // Determine if reparenting is allowed by checking if some arbitrary
         // Composite supports reparenting. This is used to determine if
         // detached views should be enabled.
@@ -343,6 +360,22 @@ public class PerspectiveHelper {
 
         // enable direct manipulation
         //enableDrop(part);
+    }
+    
+    
+    /**
+     * Attaches a part that was previously detached to the mainLayout. 
+     * 
+     * @param ref
+     */
+    public void attachPart(IViewReference ref) {
+		if(isZoomed())
+			zoomOut();
+		ViewPane pane = (ViewPane)((WorkbenchPartReference)ref).getPane();	
+		derefPart(pane);
+		addPart(pane);
+		bringPartToTop(pane);
+		pane.setFocus();
     }
 
     /**
@@ -761,24 +794,60 @@ public class PerspectiveHelper {
         }
 
     }
+    
+    /**
+     * Detached a part from the mainLayout. Presently this does not use placeholders
+     * since the current implementation is not robust enough to remember a view's position
+     * in more than one root container. For now the view is simply derefed and will dock
+     * in the default position when attachPart is called. 
+     * 
+     * By default parts detached this way are set to float on top of the workbench
+     * without docking. It is assumed that people that want to drag a part back onto
+     * the WorkbenchWindow will detach it via drag and drop. 
+     * 
+     * @param ref
+     */
+    public void detachPart(IViewReference ref) {
+		ViewPane pane = (ViewPane)((WorkbenchPartReference)ref).getPane();
+    	if (canDetach() && pane != null) {
+    		Rectangle bounds = pane.getParentBounds();
+//    		When new style placeholders get implemented this can be used to store the
+//    		last position of the window. Until then this breaks on restore state because
+//    		the view gets put in the placeholder rather than in the detached window. 
+//    		Leaving the user with an empty detachedwindow shell.
+//
+//    	    if (presentationHelper.hasPlaceholder(ref.getId(), ref.getSecondaryId()) ||
+//    	    	pane.getContainer() != null)
+//    	    	presentationHelper.removePart(pane);
+//    	    		
+//    	    addDetachedPart(pane, bounds);
+    	    detach(pane, bounds.x ,bounds.y);
+        	((DetachedWindow)pane.getWindow()).setFloatingState(true);
+    	}
+    }
 
     /**
      * Create a detached window containing a part.
      */
     public void addDetachedPart(LayoutPart part) {
+        // Calculate detached window size.
+        Rectangle bounds = parentWidget.getShell().getBounds();
+        bounds.x = bounds.x + (bounds.width - 300) / 2;
+        bounds.y = bounds.y + (bounds.height - 300) / 2;
+        
+        addDetachedPart(part, bounds);
+
+        // enable direct manipulation
+        //enableDrop(part);
+    }
+    
+    public void addDetachedPart(LayoutPart part, Rectangle bounds) {
         // Detaching is disabled on some platforms ..
         if (!detachable) {
             addPart(part);
             return;
         }
-
-        // Calculate detached window size.
-        int width = 300;
-        int height = 300;
-        Rectangle bounds = parentWidget.getShell().getBounds();
-        int x = bounds.x + (bounds.width - width) / 2;
-        int y = bounds.y + (bounds.height - height) / 2;
-
+        
         // Create detached window.
         DetachedWindow window = new DetachedWindow(page);
         detachedWindowList.add(window);
@@ -791,13 +860,11 @@ public class PerspectiveHelper {
         window.add(pane);
 
         // Open window.
-        window.getShell().setBounds(x, y, width, height);
+        window.getShell().setBounds(bounds.x, bounds.y, bounds.width, bounds.height);
         window.open();
 
         part.setFocus();
-
-        // enable direct manipulation
-        //enableDrop(part);
+        
     }
 
     /**
@@ -1275,10 +1342,9 @@ public class PerspectiveHelper {
                     //TODO: Remove once all views are in ViewStack
                     //TODO: See Bug 48794
                     ViewStack parent = (ViewStack) parentContainer;
-                    Perspective persp = page.getActivePerspective();
-                    if (persp != null && ref instanceof IViewReference
+                    if (perspective != null && ref instanceof IViewReference
                             && page.isFastView((IViewReference) ref)) {
-                        persp.hideFastViewSash();
+                        perspective.hideFastViewSash();
                     }
                     mainLayout.zoomIn(parent);
                     pane.setZoomed(true);
@@ -1324,10 +1390,9 @@ public class PerspectiveHelper {
             parentWidget.setRedraw(false);
             mainLayout.zoomOut();
             pane.setZoomed(false);
-            Perspective persp = page.getActivePerspective();
-            if (persp != null && zoomPart instanceof IViewReference
+            if (perspective != null && zoomPart instanceof IViewReference
                     && page.isFastView((IViewReference) zoomPart)) {
-                persp.showFastView((IViewReference) zoomPart);
+                perspective.showFastView((IViewReference) zoomPart);
             }
             parentWidget.setRedraw(true);
         } else if (pane instanceof EditorPane) {
