@@ -534,7 +534,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 			public void widgetSelected(SelectionEvent e) {
 				boolean state= fHyperlinksEnabledCheckBox.getSelection();
 				fHyperlinkKeyModifierText.setEnabled(state);
-				handleBrowserLikeLinksKeyModifierModified();
+				handleHyperlinkKeyModifierModified();
 			}
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
@@ -585,7 +585,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 
 		fHyperlinkKeyModifierText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				handleBrowserLikeLinksKeyModifierModified();
+				handleHyperlinkKeyModifierModified();
 			}
 		});
 		
@@ -920,7 +920,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 	void updateStatus(IStatus status) {
 		if (!fFieldsInitialized)
 			return;
-		status= StatusUtil.getMoreSevere(getBrowserLikeLinksKeyModifierStatus(), status);
+		status= StatusUtil.getMoreSevere(getHyperlinkKeyModifierStatus(), status);
 		setValid(!status.matches(IStatus.ERROR));
 		applyToStatusLine(this, status);
 	}
@@ -956,7 +956,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		}
 	}
 	
-	private void handleBrowserLikeLinksKeyModifierModified() {
+	private void handleHyperlinkKeyModifierModified() {
 		String modifiers= fHyperlinkKeyModifierText.getText();
 		fOverlayStore.setValue(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_KEY_MODIFIER, modifiers);
 		
@@ -975,7 +975,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		}
 	}
 	
-	private IStatus getBrowserLikeLinksKeyModifierStatus() {
+	private IStatus getHyperlinkKeyModifierStatus() {
 		if (fHyperlinkKeyModifierStatus == null)
 		fHyperlinkKeyModifierStatus= new StatusInfo();
 		return fHyperlinkKeyModifierStatus;
