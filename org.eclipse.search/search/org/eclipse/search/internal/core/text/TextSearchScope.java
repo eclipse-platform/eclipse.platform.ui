@@ -22,8 +22,8 @@ public class TextSearchScope extends SearchScope {
 	
 	private static class WorkspaceScope extends TextSearchScope {
 	
-		private WorkspaceScope(String description) {
-			super(description);
+		private WorkspaceScope() {
+			super(SearchMessages.getString("WorkspaceScope")); //$NON-NLS-1$
 		}
 		
 		public void add(IResource element) {
@@ -46,7 +46,7 @@ public class TextSearchScope extends SearchScope {
 	 * Returns a new Workbench scope.
 	 */
 	public static TextSearchScope newWorkspaceScope() {
-		return new WorkspaceScope(SearchMessages.getString("WorkspaceScope"));
+		return new WorkspaceScope();
 	}
 
 	public TextSearchScope(String description) {

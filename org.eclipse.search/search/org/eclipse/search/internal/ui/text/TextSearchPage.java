@@ -108,7 +108,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 				break;
 			case ISearchPageContainer.WORKING_SET_SCOPE:
 				IWorkingSet workingSet= getContainer().getSelectedWorkingSet();
-				String desc= SearchMessages.getFormattedString("WorkingSetScope", workingSet.getName());
+				String desc= SearchMessages.getFormattedString("WorkingSetScope", workingSet.getName()); //$NON-NLS-1$
 				scope= new TextSearchScope(desc, workingSet.getResources());
 		}		
 		scope.addExtensions(patternData.extensions);
@@ -444,7 +444,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 	}
 
 	private TextSearchScope getSelectedResourcesScope() {
-		TextSearchScope scope= new TextSearchScope(SearchMessages.getString("SelectionScope"));
+		TextSearchScope scope= new TextSearchScope(SearchMessages.getString("SelectionScope")); //$NON-NLS-1$
 		if (!getSelection().isEmpty() && getSelection() instanceof IStructuredSelection) {
 			Iterator iter= ((IStructuredSelection)getSelection()).iterator();
 			while (iter.hasNext()) {

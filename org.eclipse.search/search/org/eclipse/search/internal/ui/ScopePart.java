@@ -121,7 +121,7 @@ public class ScopePart {
 		if (getSelectedScope() == WORKING_SET_SCOPE) {
 			return new IWorkingSet() {
 				public String getName() {
-					return "This is a Test Scope";
+					return "This is a Test Scope"; //$NON-NLS-1$
 				}
 
 				public IResource[] getResources() {
@@ -153,7 +153,7 @@ public class ScopePart {
 	 */
 	public Composite createPart(Composite parent) {
 		Group group= new Group(parent, SWT.NONE);
-		group.setText("Scope");
+		group.setText(SearchMessages.getString("ScopePart.group.text")); //$NON-NLS-1$
 
 		GridLayout layout= new GridLayout();
 		layout.numColumns= 3;
@@ -162,11 +162,11 @@ public class ScopePart {
 		
 		fUseWorkspace= new Button(group, SWT.RADIO);
 		fUseWorkspace.setData(new Integer(WORKSPACE_SCOPE));
-		fUseWorkspace.setText("&Workspace");
+		fUseWorkspace.setText(SearchMessages.getString("ScopePart.workspaceScope.text")); //$NON-NLS-1$
 
 		fUseSelection= new Button(group, SWT.RADIO);
 		fUseSelection.setData(new Integer(SELECTION_SCOPE));
-		fUseSelection.setText("Selected &Resources");
+		fUseSelection.setText(SearchMessages.getString("ScopePart.selectedResourcesScope.text")); //$NON-NLS-1$
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalSpan= 2;
 		gd.horizontalIndent= 8;
@@ -174,11 +174,11 @@ public class ScopePart {
 
 		fUseWorkingSet= new Button(group, SWT.RADIO);
 		fUseWorkingSet.setData(new Integer(WORKING_SET_SCOPE));
-		fUseWorkingSet.setText("Working &Set");
+		fUseWorkingSet.setText(SearchMessages.getString("ScopePart.workingSetScope.text")); //$NON-NLS-1$
 		fWorkingSet= new Text(group, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
 		Button chooseWorkingSet= new Button(group, SWT.PUSH);
 		chooseWorkingSet.setLayoutData(new GridData());
-		chooseWorkingSet.setText("Choose...");
+		chooseWorkingSet.setText(SearchMessages.getString("ScopePart.workingSetChooseButton.text")); //$NON-NLS-1$
 		SWTUtil.setButtonDimensionHint(chooseWorkingSet);
 		chooseWorkingSet.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -232,7 +232,7 @@ public class ScopePart {
 
 	private boolean handleChooseWorkingSet() {
 		SelectionDialog dialog= SearchUI.createWorkingSetDialog(fUseSelection.getShell());
-		System.out.println("Choose working set. Scope is: " + fScope);
+		System.out.println("Choose working set. Scope is: " + fScope); //$NON-NLS-1$
 		return true;
 	}
 }

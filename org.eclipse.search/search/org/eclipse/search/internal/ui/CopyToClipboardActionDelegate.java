@@ -35,7 +35,7 @@ public class CopyToClipboardActionDelegate implements IViewActionDelegate {
 			return;
 		
 		ILabelProvider labelProvider= SearchUI.getSearchResultView().getLabelProvider();
-		String lineDelim= System.getProperty("line.separator");
+		String lineDelim= System.getProperty("line.separator"); //$NON-NLS-1$
 		StringBuffer buf= new StringBuffer();
 		Iterator iter= getSelection();
 		while (iter.hasNext()) {

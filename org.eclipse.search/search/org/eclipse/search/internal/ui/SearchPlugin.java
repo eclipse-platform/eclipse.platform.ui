@@ -289,7 +289,7 @@ public class SearchPlugin extends AbstractUIPlugin {
 	 * @return a new selection dialog or <code>null</code> if none available
 	 */
 	public static SelectionDialog createWorkingSetDialog(Shell parent) {
-		MessageDialog.openInformation(getActiveWorkbenchShell(), "Working Set Dialog", "The working set dialog will come soon!");
+		MessageDialog.openInformation(getActiveWorkbenchShell(), "Working Set Dialog", "The working set dialog will come soon!");  //$NON-NLS-1$  //$NON-NLS-2$
 		return null;
 	}
 }
