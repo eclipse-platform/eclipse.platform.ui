@@ -4,6 +4,7 @@ package org.eclipse.core.internal.indexing;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import org.eclipse.core.internal.utils.Policy;
 
 public class ObjectStoreException extends Exception {
 
