@@ -25,6 +25,9 @@ import org.eclipse.ui.help.WorkbenchHelp;
  * Dialog box to add, remove, and edit external tools.
  */
 public class ConfigurationDialog extends TitleAreaDialog {
+	// Minimum height in chars of the details text box.
+	private static final int DETAILS_HEIGHT = 5;
+	
 	private ListViewer listViewer;
 	private Button newButton;
 	private Button editButton;
@@ -144,8 +147,9 @@ public class ConfigurationDialog extends TitleAreaDialog {
 
 		detailText = new Text(topComp, SWT.WRAP | SWT.MULTI | SWT.V_SCROLL | SWT.BORDER);
 		detailText.setEditable(false);
-		detailText.setText("\n\n\n\n\n"); //$NON-NLS-1$
-		detailText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
+		gridData.heightHint = convertHeightInCharsToPixels(DETAILS_HEIGHT);
+		detailText.setLayoutData(gridData);
 		
 		// Build the separator line
 		Label separator = new Label(topComp, SWT.HORIZONTAL | SWT.SEPARATOR);
