@@ -15,7 +15,6 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -34,7 +33,6 @@ import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.ui.tests.TestPlugin;
 import org.eclipse.ui.tests.util.CallHistory;
 import org.eclipse.ui.tests.util.EmptyPerspective;
 import org.eclipse.ui.tests.util.FileUtil;
@@ -63,13 +61,7 @@ public class IWorkbenchPageTest extends UITestCase {
     protected void doTearDown() throws Exception {
         super.doTearDown();
         if (proj != null) {
-            try {
-                FileUtil.deleteProject(proj);
-            } catch (CoreException e) {
-                TestPlugin.getDefault().getLog().log(e.getStatus());
-                fail();
-
-            }
+            FileUtil.deleteProject(proj);
             proj = null;
         }
     }
