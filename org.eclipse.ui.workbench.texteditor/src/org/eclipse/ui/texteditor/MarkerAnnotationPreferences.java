@@ -174,6 +174,17 @@ public class MarkerAnnotationPreferences {
 			b= StringConverter.asBoolean(s, false);
 		info.setOverviewRulerPreferenceValue(b);
 
+		s= element.getAttribute("verticalRulerPreferenceKey");  //$NON-NLS-1$
+		if (s == null || s.trim().length() == 0)
+			s= null;
+		info.setVerticalRulerPreferenceKey(s);
+
+		b= false;
+		s= element.getAttribute("verticalRulerPreferenceValue");  //$NON-NLS-1$
+		if (s != null && s.trim().length() > 0)
+			b= StringConverter.asBoolean(s, true);
+		info.setVerticalRulerPreferenceValue(b);
+		
 		s= element.getAttribute("colorPreferenceKey");  //$NON-NLS-1$
 		if (s == null || s.trim().length() == 0) return null;
 		info.setColorPreferenceKey(s);
@@ -245,6 +256,8 @@ public class MarkerAnnotationPreferences {
 			AnnotationPreference info= (AnnotationPreference) e.next();
 			store.setDefault(info.getTextPreferenceKey(), info.getTextPreferenceValue());
 			store.setDefault(info.getOverviewRulerPreferenceKey(), info.getOverviewRulerPreferenceValue());
+			if (info.getVerticalRulerPreferenceKey() != null)
+				store.setDefault(info.getVerticalRulerPreferenceKey(), info.getVerticalRulerPreferenceValue());
 			PreferenceConverter.setDefault(store, info.getColorPreferenceKey(), info.getColorPreferenceValue());
 			if (info.getShowInNextPrevDropdownToolbarActionKey() != null)
 				store.setDefault(info.getShowInNextPrevDropdownToolbarActionKey(), info.isShowInNextPrevDropdownToolbarAction());

@@ -62,6 +62,14 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="verticalRulerPreferenceKey" type="string">
+            <annotation>
+               <documentation>
+                  The preference key for the show in vertical ruler preference.
+since: 3.0
+               </documentation>
+            </annotation>
+         </attribute>
          <attribute name="textPreferenceKey" type="string" use="required">
             <annotation>
                <documentation>
@@ -120,6 +128,14 @@ since: 3.0
             <annotation>
                <documentation>
                   
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="verticalRulerPreferenceValue" type="boolean">
+            <annotation>
+               <documentation>
+                  The default value for showing in vertical ruler.
+since: 3.0
                </documentation>
             </annotation>
          </attribute>

@@ -70,6 +70,16 @@ public class AnnotationPreference {
 	private String fOverviewRulerKey;
 	/** The default visibility in the overview ruler */
 	private boolean fOverviewRulerValue;
+	/**
+	 * The preference key for the visibility in the vertical ruler.
+	 * @since 3.0
+	 */
+	private String fVerticalRulerKey;
+	/**
+	 * The default visibility in the vertical ruler.
+	 * @since 3.0
+	 */
+	private boolean fVerticalRulerValue;
 	/** The presentation layer */
 	private int fPresentationLayer;
 	/** Indicates whether the annotation type contributed to the overview ruler's header */
@@ -138,7 +148,7 @@ public class AnnotationPreference {
 	public boolean isPreferenceKey(String key) {
 		if (key == null)
 			return false;
-		return key.equals(fColorKey) || key.equals(fOverviewRulerKey) || key.equals(fTextKey) || key.equals(fHighlightKey);
+		return key.equals(fColorKey) || key.equals(fOverviewRulerKey) || key.equals(fTextKey) || key.equals(fHighlightKey) || key.equals(fVerticalRulerKey);
 	}
 	
 	/**
@@ -203,7 +213,27 @@ public class AnnotationPreference {
 	public boolean getOverviewRulerPreferenceValue() {
 		return fOverviewRulerValue;
 	}
-
+	
+	/**
+	 * Returns the preference key for the visibility in the vertical ruler.
+	 * 
+	 * @return the preference key for the visibility in the vertical ruler
+	 * @since 3.0
+	 */
+	public String getVerticalRulerPreferenceKey() {
+		return fVerticalRulerKey;
+	}
+	
+	/**
+	 * Returns the default visibility in the vertical ruler.
+	 * 
+	 * @return the default visibility in the vertical ruler
+	 * @since 3.0
+	 */
+	public boolean getVerticalRulerPreferenceValue() {
+		return fVerticalRulerValue;
+	}
+	
 	/**
 	 * Returns the presentation layer.
 	 * 
@@ -330,6 +360,26 @@ public class AnnotationPreference {
 	 */
 	public void setOverviewRulerPreferenceValue(boolean overviewRulerValue) {
 		fOverviewRulerValue= overviewRulerValue;
+	}
+	
+	/**
+	 * Sets the preference key for the visibility in the vertical ruler.
+	 * 
+	 * @param verticalRulerKey the preference key
+	 * @since 3.0
+	 */
+	public void setVerticalRulerPreferenceKey(String verticalRulerKey) {
+		fVerticalRulerKey= verticalRulerKey;
+	}
+	
+	/**
+	 * Sets the default visibility in the vertical ruler.
+	 * 
+	 * @param verticalRulerValue <code>true</code> if visible by default, <code>false</code> otherwise
+	 * @since 3.0
+	 */
+	public void setVerticalRulerPreferenceValue(boolean verticalRulerValue) {
+		fVerticalRulerValue= verticalRulerValue;
 	}
 	
 	/**

@@ -188,6 +188,8 @@
 	            highlightPreferenceValue="false"
 	            overviewRulerPreferenceKey="searchResultIndicationInOverviewRuler"
 	            overviewRulerPreferenceValue="true"
+	            verticalRulerPreferenceKey="searchResultIndicationInVerticalRuler"
+	            verticalRulerPreferenceValue="true"
 	            colorPreferenceKey="searchResultIndicationColor"
 	            colorPreferenceValue="192,192,192"
 	            presentationLayer="3"
