@@ -205,6 +205,17 @@ public ILabelProvider getLabelProvider() {
 protected ICellEditorValidator getValidator() {
 	return validator;
 }
+
+/** 
+ * Returns whether a label provider has been set on the receiver.
+ * @return whether a label provider has been set on the receiver.
+ * @see #setLabelProvider
+ * @since 3.0
+ */
+public boolean isLabelProviderSet() {
+    return labelProvider != null;
+}
+
 /**
  * The <code>SimplePropertyDescriptor</code> implementation of this 
  * <code>IPropertyDescriptor</code> method returns true if the other
