@@ -74,6 +74,8 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	// actions
 	private PinConsoleAction fPinAction = null; 
 	private ConsoleDropDownAction fDisplayConsoleAction = null;
+	
+	private OpenConsoleAction fOpenConsoleAction = null;
 
 	private boolean isAvailable() {
 		return getPageBook() != null && !getPageBook().isDisposed();
@@ -293,6 +295,7 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	protected void createActions() {
 		fPinAction = new PinConsoleAction(this);
 		fDisplayConsoleAction = new ConsoleDropDownAction(this);
+		fOpenConsoleAction = new OpenConsoleAction();
 	}
 
 	protected void configureToolBar(IToolBarManager mgr) {
@@ -301,6 +304,7 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 		mgr.add(new Separator("fixedGroup")); //$NON-NLS-1$
 		mgr.add(fPinAction);
 		mgr.add(fDisplayConsoleAction);
+//		mgr.add(fOpenConsoleAction);
 	}
 
 	/* (non-Javadoc)

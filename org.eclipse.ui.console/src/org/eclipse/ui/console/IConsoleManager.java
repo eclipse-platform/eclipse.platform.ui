@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.console;
 
+import org.eclipse.ui.internal.console.ConsoleFactoryExtension;
+
 
 /**
  * Manages consoles.
@@ -94,4 +96,10 @@ public interface IConsoleManager {
 	 * @since 3.1
 	 */
 	public IConsolePageParticipantDelegate[] getPageParticipants(IConsole console);
+
+    /**
+     * 
+     * @since 3.1
+     */
+    public ConsoleFactoryExtension[] getConsoleFactoryExtensions();
 }

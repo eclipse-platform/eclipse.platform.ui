@@ -61,6 +61,8 @@ public class ConsoleManager implements IConsoleManager {
     private List fPatternMatchListeners;
 
     private List fPageParticipants;
+
+    private List fConsoleFactoryExtensions;
 	
 	/**
 	 * Notifies a console listener of additions or removals
@@ -310,6 +312,21 @@ public class ConsoleManager implements IConsoleManager {
             }
         }
         return (IConsolePageParticipantDelegate[]) list.toArray(new IConsolePageParticipantDelegate[0]);
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.console.IConsoleManager#getConsoleFactories()
+     */
+    public ConsoleFactoryExtension[] getConsoleFactoryExtensions() {
+        if (fConsoleFactoryExtensions == null) {
+            fConsoleFactoryExtensions = new ArrayList();
+            IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(ConsolePlugin.getUniqueIdentifier(), IConsoleConstants.EXTENSION_POINT_CONSOLE_FACTORY);
+            IConfigurationElement[] configurationElements = extensionPoint.getConfigurationElements();
+            for (int i = 0; i < configurationElements.length; i++) {
+                fConsoleFactoryExtensions.add(new ConsoleFactoryExtension(configurationElements[i]));
+            }
+        }
+        return (ConsoleFactoryExtension[]) fConsoleFactoryExtensions.toArray(new ConsoleFactoryExtension[0]);
     }
     
 }

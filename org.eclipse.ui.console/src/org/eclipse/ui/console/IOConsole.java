@@ -156,14 +156,14 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
     /**
      * @return Returns the attribute matching the specified key.
      */
-    public String getAttribute(String key) {
-        return (String)attributes.get(key);
+    public Object getAttribute(String key) {
+        return attributes.get(key);
     }
     /**
      * @param key The key used to store the attribute
      * @param value The attribute to set.
      */
-    public void setAttribute(String key, String value) {
+    public void setAttribute(String key, Object value) {
         synchronized(attributes) {
             attributes.put(key, value);
         }

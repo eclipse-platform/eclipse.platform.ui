@@ -1,0 +1,120 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.ui.internal.console;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import org.eclipse.core.expressions.EvaluationContext;
+import org.eclipse.core.expressions.EvaluationResult;
+import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.expressions.ExpressionConverter;
+import org.eclipse.core.expressions.ExpressionTagNames;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.IPluginContribution;
+import org.eclipse.ui.console.ConsolePlugin;
+import org.eclipse.ui.console.IConsoleFactory;
+import org.osgi.framework.Bundle;
+
+/**
+ * @since 3.1
+ */
+public class ConsoleFactoryExtension implements IPluginContribution {
+
+    private IConfigurationElement fConfig;
+    private Expression fEnablementExpression;
+    private String fLabel;
+    private ImageDescriptor fImageDescriptor;
+    private IConsoleFactory fFactory;
+
+    ConsoleFactoryExtension(IConfigurationElement config) {
+        fConfig = config;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IPluginContribution#getLocalId()
+     */
+    public String getLocalId() {
+        return fConfig.getAttribute("id"); //$NON-NLS-1$
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IPluginContribution#getPluginId()
+     */
+    public String getPluginId() {
+        return fConfig.getDeclaringExtension().getNamespace();
+    }
+
+    public boolean isEnabled() {
+        try {
+	        EvaluationContext context = new EvaluationContext(null, this);
+	        EvaluationResult evaluationResult = getEnablementExpression().evaluate(context);
+	        return evaluationResult == EvaluationResult.TRUE;
+        } catch (CoreException e) {
+            ConsolePlugin.log(e);
+            return false;
+        }
+    }
+    
+    public Expression getEnablementExpression() throws CoreException {
+		if (fEnablementExpression == null) {
+			IConfigurationElement[] elements = fConfig.getChildren(ExpressionTagNames.ENABLEMENT);
+			IConfigurationElement enablement = elements.length > 0 ? elements[0] : null; 
+
+			if (enablement != null) {
+			    fEnablementExpression = ExpressionConverter.getDefault().perform(enablement);
+			}
+		}
+		return fEnablementExpression;
+    }
+
+    public String getLabel() {
+        if (fLabel == null) {
+            fLabel = fConfig.getAttribute("label"); //$NON-NLS-1$
+        }
+        return fLabel;
+    }
+
+    /**
+     * @return
+     */
+    public ImageDescriptor getImageDescriptor() {
+        if (fImageDescriptor == null) {
+            try {
+                String path = fConfig.getAttributeAsIs("image"); //$NON-NLS-1$
+                if (path != null) {
+                    Bundle bundle = Platform.getBundle(getPluginId());
+                    URL url = bundle.getEntry("/"); //$NON-NLS-1$
+                    url = new URL(url, path); //$NON-NLS-1$
+                    fImageDescriptor =  ImageDescriptor.createFromURL(url);    
+                }
+                
+            } catch (MalformedURLException e) {
+                ConsolePlugin.log(e);
+            }
+        }
+        return fImageDescriptor;
+    }
+
+    /**
+     * @return
+     * @throws CoreException
+     */
+    public IConsoleFactory createFactory() throws CoreException {
+        if (fFactory == null) {
+            fFactory = (IConsoleFactory) fConfig.createExecutableExtension("class"); //$NON-NLS-1$
+        }
+        return fFactory;
+    }
+}
