@@ -832,12 +832,6 @@ public static PluginRegistryModel parsePlugins(URL[] pluginPath, Factory factory
  * @see Platform#parsePlugins
  */
 public synchronized static PluginRegistryModel parsePlugins(URL[] pluginPath, Factory factory, boolean debug) {
-	// If the platform is not running then simply parse the registry.  We don't need to play
-	// any funny class loader games as we assume the XML classes are on the class path
-	// This happens when we are running this code as part of a utility (as opposed to starting
-	// or inside the platform).
-	if (!(InternalBootLoader.isRunning() || InternalBootLoader.isStarting()))
-		return RegistryLoader.parseRegistry(pluginPath, factory, debug);
 	return RegistryLoader.parseRegistry(pluginPath, factory, debug);
 }
 private static String[] processCommandLine(String[] args) {
