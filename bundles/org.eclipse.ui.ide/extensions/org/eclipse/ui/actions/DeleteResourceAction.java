@@ -287,19 +287,32 @@ boolean confirmDeleteProjects() {
  * Deletes the given resources.
  */
 void delete(IResource[] resourcesToDelete, IProgressMonitor monitor) throws CoreException {
+    MultiStatus multiStatus = null;
 	forceOutOfSyncDelete = false;
 	monitor.beginTask("", resourcesToDelete.length); //$NON-NLS-1$
 	for (int i = 0; i < resourcesToDelete.length; ++i) {
 		if (monitor.isCanceled()) {
 			throw new OperationCanceledException();
 		}
-		delete(resourcesToDelete[i], new SubProgressMonitor(monitor, 1, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+		try {
+		    delete(resourcesToDelete[i], new SubProgressMonitor(monitor, 1, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+		} catch (CoreException e) {
+		    if (multiStatus == null) {
+		        IStatus status = e.getStatus();
+		        multiStatus = new MultiStatus(status.getPlugin(), status.getCode(), status.getMessage(), status.getException());
+		    } else {
+		        multiStatus.add(e.getStatus());
+		    }
+		}
+	}
+	if (multiStatus != null) {
+	    throw new CoreException(multiStatus);
 	}
 	monitor.done();
 }
 /**
  * Deletes the given resource.
- */
+ 	*/
 void delete(IResource resourceToDelete, IProgressMonitor monitor) throws CoreException {
 	boolean force = false; // don't force deletion of out-of-sync resources
 	try {
