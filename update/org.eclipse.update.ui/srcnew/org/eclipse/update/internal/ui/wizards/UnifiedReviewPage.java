@@ -26,7 +26,7 @@ import org.eclipse.ui.help.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.internal.ui.*;
-//import org.eclipse.update.internal.ui.model.*;
+import org.eclipse.update.internal.ui.model.SimpleFeatureAdapter;
 import org.eclipse.update.internal.ui.parts.*;
 
 public class UnifiedReviewPage extends UnifiedBannerPage {
@@ -141,6 +141,23 @@ public class UnifiedReviewPage extends UnifiedBannerPage {
 		}
 	}
 
+	class FeaturePropertyDialogAction extends PropertyDialogAction {
+		private IStructuredSelection selection;
+		
+		public FeaturePropertyDialogAction(Shell shell, ISelectionProvider provider) {
+			super(shell, provider);
+		}
+
+		public IStructuredSelection getStructuredSelection() {
+			return selection;
+		}
+		
+		public void selectionChanged(IStructuredSelection selection) {
+			this.selection = selection;
+		}
+
+
+	}
 	/**
 	 * Constructor for ReviewPage2
 	 */
@@ -406,14 +423,16 @@ public class UnifiedReviewPage extends UnifiedBannerPage {
 	private void handleProperties() {
 		final IStructuredSelection selection =
 			(IStructuredSelection) tableViewer.getSelection();
-
+			
+		final PendingOperation job = (PendingOperation) selection.getFirstElement();
 		if (propertiesAction == null) {
-			propertiesAction = new PropertyDialogAction(getShell(), tableViewer);
+			propertiesAction = new FeaturePropertyDialogAction(getShell(), tableViewer);
 		}
 
 		BusyIndicator.showWhile(tableViewer.getControl().getDisplay(), new Runnable() {
 			public void run() {
-				propertiesAction.selectionChanged(selection);
+				SimpleFeatureAdapter adapter = new SimpleFeatureAdapter(job.getFeature());
+				propertiesAction.selectionChanged(new StructuredSelection(adapter));
 				propertiesAction.run();
 			}
 		});
