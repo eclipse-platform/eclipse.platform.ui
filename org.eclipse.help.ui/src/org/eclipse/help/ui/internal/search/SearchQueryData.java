@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.search;
 
+import java.io.*;
 import java.net.*;
 import java.util.*;
 
@@ -143,7 +144,10 @@ public class SearchQueryData {
 				iterator.hasNext();
 				) {
 				String field = (String) iterator.next();
-				q += "&field=" + URLEncoder.encode(field);
+				try {
+					q += "&field=" + URLEncoder.encode(field, "UTF-8");
+				} catch (UnsupportedEncodingException uee) {
+				}
 			}
 		if (searchQuery.isFieldSearch())
 			q += "&fieldSearch=true";

@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.internal;
+import java.io.*;
 import java.net.*;
 
 import org.eclipse.core.boot.*;
@@ -72,17 +73,24 @@ public class DefaultHelpSupport implements IHelp {
 	 * Displays a help resource
 	 */
 	public void displayHelpResource(IHelpResource helpResource) {
-		if (helpResource instanceof IToc)
-			displayHelpURL("toc=" + URLEncoder.encode(helpResource.getHref()));
-		else if (helpResource instanceof ITopic) {
+		if (helpResource instanceof IToc) {
+			try {
+				displayHelpURL(
+					"toc="
+						+ URLEncoder.encode(helpResource.getHref(), "UTF-8"));
+			} catch (UnsupportedEncodingException uee) {
+			}
+		} else if (helpResource instanceof ITopic) {
 			String topicURL = getTopicURL(helpResource.getHref());
 			if (getNoframesURL(topicURL) != null) {
 				displayHelpURL(getNoframesURL(topicURL));
 				return;
 			}
-			displayHelpURL(
-				"topic="
-					+ URLEncoder.encode(topicURL));
+			try {
+				displayHelpURL("topic=" + URLEncoder.encode(topicURL, "UTF-8"));
+			} catch (UnsupportedEncodingException uee) {
+			}
+
 		} else
 			displayHelpResource(helpResource.getHref());
 	}
@@ -116,7 +124,11 @@ public class DefaultHelpSupport implements IHelp {
 				displayHelpURL(getNoframesURL(href));
 				return;
 			}
-		displayHelpURL("topic=" + URLEncoder.encode(href));
+		try {
+			displayHelpURL("topic=" + URLEncoder.encode(href, "UTF-8"));
+		} catch (UnsupportedEncodingException uee) {
+		}
+
 	}
 
 	/**
@@ -143,11 +155,21 @@ public class DefaultHelpSupport implements IHelp {
 		if (toc != null) {
 			query = "toc=" + toc;
 			if (topic != null)
-				query =
-					query + "&topic=" + URLEncoder.encode(getTopicURL(topic));
+				try {
+					query =
+						query
+							+ "&topic="
+							+ URLEncoder.encode(getTopicURL(topic), "UTF-8");
+				} catch (UnsupportedEncodingException uee) {
+				}
 		} else {
-			if (topic != null)
-				query = "topic=" + URLEncoder.encode(getTopicURL(topic));
+			try {
+				if (topic != null)
+					query =
+						"topic="
+							+ URLEncoder.encode(getTopicURL(topic), "UTF-8");
+			} catch (UnsupportedEncodingException uee) {
+			}
 		}
 
 		displayHelpURL(query);
@@ -179,13 +201,16 @@ public class DefaultHelpSupport implements IHelp {
 			displayHelpURL(getNoframesURL(topicURL));
 			return;
 		}
-		String url =
-			"tab=links"
-				+ "&contextId="
-				+ URLEncoder.encode(getContextID(context))
-				+ "&topic="
-				+ URLEncoder.encode(topicURL);
-		displayHelpURL(url);
+		try {
+			String url =
+				"tab=links"
+					+ "&contextId="
+					+ URLEncoder.encode(getContextID(context), "UTF-8")
+					+ "&topic="
+					+ URLEncoder.encode(topicURL, "UTF-8");
+			displayHelpURL(url);
+		} catch (UnsupportedEncodingException uee) {
+		}
 	}
 	/**
 	 * Display help to search view for given query
@@ -196,12 +221,15 @@ public class DefaultHelpSupport implements IHelp {
 	public void displaySearch(String searchQuery, String topic) {
 		if (searchQuery == null || topic == null)
 			return;
-		String url =
-			"tab=search&"
-				+ searchQuery
-				+ "&topic="
-				+ URLEncoder.encode(getTopicURL(topic));
-		displayHelpURL(url);
+		try {
+			String url =
+				"tab=search&"
+					+ searchQuery
+					+ "&topic="
+					+ URLEncoder.encode(getTopicURL(topic), "UTF-8");
+			displayHelpURL(url);
+		} catch (UnsupportedEncodingException uee) {
+		}
 	}
 	/**
 	 * Displays the specified url.
