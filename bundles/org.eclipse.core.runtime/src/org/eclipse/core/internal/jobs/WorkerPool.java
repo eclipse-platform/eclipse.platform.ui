@@ -20,8 +20,8 @@ import org.eclipse.core.runtime.jobs.Job;
  * thread creation/destruction policies for the job manager.
  */
 class WorkerPool {
-//	private static final int MIN_THREADS = 1;
-	private static final int MAX_THREADS = 4;
+	private static final int MIN_THREADS = 1;
+	private static final int MAX_THREADS = 20;
 	private boolean running = false;
 	private ArrayList threads = new ArrayList();
 	/**
@@ -56,7 +56,7 @@ class WorkerPool {
 	}
 	/**
 	 * Notfication that a job has been added to the queue.  Wake a worker,
-	 * creating a new worker if necessary
+	 * creating a new worker if necessary.  The provided job may be null.
 	 */
 	protected synchronized void jobQueued(InternalJob job) {
 		//if there is a sleeping thread, wake it up
@@ -69,7 +69,7 @@ class WorkerPool {
 		int threadCount = threads.size();
 		//create a thread if all threads are busy and we're under the max size
 		//if the job is high priority, we start a thread no matter what
-		if ((busyThreads == threadCount && threadCount < MAX_THREADS) || job.getPriority() == Job.INTERACTIVE) {
+		if ((busyThreads == threadCount && threadCount < MAX_THREADS) || (job != null && job.getPriority() == Job.INTERACTIVE)) {
 			Worker worker = new Worker(this);
 			threads.add(worker);
 			if (JobManager.DEBUG)
@@ -130,11 +130,15 @@ class WorkerPool {
 				sleep(Math.min(hint, BEST_BEFORE));
 			job = manager.startJob();
 			//if we were already idle, and there are still no new jobs, then the thread can expire
-			if (job == null && idle && (System.currentTimeMillis() - idleStart > BEST_BEFORE))
+			if (job == null && idle && (System.currentTimeMillis() - idleStart > BEST_BEFORE) && threads.size() > MIN_THREADS)
 				break;
 		}
-		if (job != null)
+		if (job != null)  {
 			busyThreads++;
+			//see if we need to wake another worker
+			if (manager.sleepHint() <= 0)
+				jobQueued(null);
+		}
 		return job;
 	}
 }
