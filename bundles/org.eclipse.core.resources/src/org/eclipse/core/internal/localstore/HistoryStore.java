@@ -139,7 +139,7 @@ public void clean() {
 	long minimumTimestamp = System.currentTimeMillis() - description.getFileStateLongevity();
 	int max = description.getMaxFileStates();
 	IPath current = null;
-	List result = new ArrayList(max);
+	List result = new ArrayList(Math.min(max, 1000));
 	Set blobs = new HashSet();
 	try {
 		IndexCursor cursor = store.getCursor();
