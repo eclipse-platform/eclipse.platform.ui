@@ -1040,6 +1040,16 @@ public final class Workbench implements IWorkbench {
 	}
 
 	/*
+	 * Take the workbenches' images out of the shared registry.
+	 * 
+	 * @since 3.0
+	 */
+	private void uninitializeImages() {
+		WorkbenchImages.getImageRegistry().remove(IWorkbenchGraphicConstants.IMG_OBJS_DEFAULT_PROD);
+		Window.setDefaultImage(null);
+	}
+
+	/*
 	 * Initialize the workbench colors.
 	 * 
 	 * @since 3.0
@@ -1428,13 +1438,15 @@ public final class Workbench implements IWorkbench {
 	private int runUI() {
 		UIStats.start(UIStats.START_WORKBENCH, "Workbench"); //$NON-NLS-1$
 
+		Listener closeListener = new Listener() {
+			public void handleEvent(Event event) {
+				event.doit = close();
+			}
+		};
+
 		try {
 			// react to display close event by closing workbench nicely
-			display.addListener(SWT.Close, new Listener() {
-				public void handleEvent(Event event) {
-					event.doit = close();
-				}
-			});
+			display.addListener(SWT.Close, closeListener);
 
 			// install backstop to catch exceptions thrown out of event loop
 			Window.IExceptionHandler handler = new ExceptionHandler();
@@ -1473,8 +1485,13 @@ public final class Workbench implements IWorkbench {
 		} finally {
 			// mandatory clean up
 			if (!display.isDisposed()) {
-				display.dispose();
+				display.removeListener(SWT.CLOSE, closeListener);
 			}
+		}
+
+		uninitializeImages();
+		if (WorkbenchPlugin.getDefault() != null) {
+			WorkbenchPlugin.getDefault().reset();
 		}
 
 		// restart or exit based on returnCode

@@ -33,21 +33,21 @@ public class WorkbenchColors {
 	static private Color activeGradientBlend;
 	static private Color inactiveGradientBlend;
 	
-	static private Color workbenchColors[];
+	static private Color[] workbenchColors;
 	static private Color activeEditorForeground;
-	static private Color [] activeViewGradient;
-	static private Color [] deactivatedViewGradient;
-	static private Color [] activeEditorGradient;
-	static private Color [] activeNoFocusEditorGradient;
-	static private Color [] activeNoFocusViewGradient;
-	static private Color [] deactivatedEditorGradient;
+	static private Color[] activeViewGradient;
+	static private Color[] deactivatedViewGradient;
+	static private Color[] activeEditorGradient;
+	static private Color[] activeNoFocusEditorGradient;
+	static private Color[] activeNoFocusViewGradient;
+	static private Color[] deactivatedEditorGradient;
 	static private Color activeViewForeground;
-	static private int [] activeViewPercentages;
-	static private int [] deactivatedViewPercentages;
-	static private int [] activeEditorPercentages;
-	static private int [] activeNoFocusEditorPercentages;
-	static private int [] activeNoFocusViewPercentages;
-	static private int [] deactivatedEditorPercentages;
+	static private int[] activeViewPercentages;
+	static private int[] deactivatedViewPercentages;
+	static private int[] activeEditorPercentages;
+	static private int[] activeNoFocusEditorPercentages;
+	static private int[] activeNoFocusViewPercentages;
+	static private int[] deactivatedEditorPercentages;
 	static private final String CLR_VIEW_GRAD_START = "clrViewGradStart";//$NON-NLS-1$
 	static private final String CLR_VIEW_GRAD_END = "clrViewGradEnd";//$NON-NLS-1$
 	static private final String CLR_EDITOR_GRAD_START = "clrEditorGradStart";//$NON-NLS-1$
@@ -61,6 +61,7 @@ private static void disposeWorkbenchColors() {
 	for (int i = 0; i < workbenchColors.length; i++){
 		workbenchColors[i].dispose();
 	}
+	workbenchColors = null;
 }
 
 /**

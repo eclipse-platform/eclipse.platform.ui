@@ -161,7 +161,7 @@ public class ImageRegistry {
 	 * is already an image or descriptor for the given key.
 	 * <p>
 	 * Note that an image registry owns all of the image objects registered
-	 * with it, and automatically disposes of them the SWT Display is disposed. 
+	 * with it, and automatically disposes of them when the SWT Display is disposed. 
 	 * Because of this, clients must not register an image object
 	 * that is managed by another object.
 	 * </p>
@@ -184,8 +184,27 @@ public class ImageRegistry {
 	}
 
 	/**
+	 * Removes an image from this registry.  
+     * If an SWT image was allocated, it is disposed.
+	 * This method has no effect if there is no image or descriptor for the given key.
+	 * @param key the key
+	 */
+	public void remove(String key) {
+		if (table == null)
+			return;
+
+		Entry entry = (Entry) getTable().remove(key);
+		if (entry != null) {
+		    if (entry.image != null && !entry.image.isDisposed()) {
+		        entry.image.dispose();
+		    }
+		    entry.image = null;
+		}
+	}
+
+	/**
 	 * Contains the data for an entry in the registry. 
-		 */
+	 */
 	private static class Entry {
 		protected Image image;
 		protected ImageDescriptor descriptor;

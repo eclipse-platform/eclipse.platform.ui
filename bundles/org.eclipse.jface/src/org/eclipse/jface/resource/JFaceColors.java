@@ -297,26 +297,22 @@ public class JFaceColors {
 	 * Get the color setting for the name.
 	 */
 	private static Color getColorSetting(Display display, String preferenceName) {
+        Color color = (Color) colorTable.get(preferenceName);
+        if (color != null && !color.isDisposed()) { return color; }
 
-		if(colorTable.containsKey(preferenceName))
-			return (Color) colorTable.get(preferenceName);
-			
-		IPreferenceStore store = JFacePreferences.getPreferenceStore();
-		if (store == null){
-			//Dark blue is the default if there is no store
-			Color color = getDefaultColor(display,preferenceName);
-			colorTable.put(preferenceName,color);
-			return color;
-		}
-		else{
-			Color color = new Color(
-				display,
-				PreferenceConverter.getColor(store, preferenceName));
-			allocatedColors.add(color);
-			colorTable.put(preferenceName,color);
-			return color;
-		}
-	}
+        IPreferenceStore store = JFacePreferences.getPreferenceStore();
+        if (store == null) {
+            color = getDefaultColor(display, preferenceName);
+            colorTable.put(preferenceName, color);
+            return color;
+        } else {
+            color = new Color(display, PreferenceConverter.getColor(store,
+                    preferenceName));
+            allocatedColors.add(color);
+            colorTable.put(preferenceName, color);
+            return color;
+        }
+    }
 	
 	/**
 	 * Get the color setting for the name.

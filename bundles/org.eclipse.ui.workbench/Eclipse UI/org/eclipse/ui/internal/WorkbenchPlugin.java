@@ -146,7 +146,35 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		super(descriptor);
 		inst = this;
 	}
-				
+
+	/**
+	 * Unload all members.  This can be used to run a second instance of a workbench.
+	 * @since 3.0 
+	 */
+	void reset() {
+		editorRegistry = null;
+
+        if (decoratorManager != null) {
+            decoratorManager.dispose();
+            decoratorManager = null;
+        }
+
+		themeRegistry = null;
+		workingSetManager = null;
+		workingSetRegistry = null;	
+
+		preferenceManager = null;
+		viewRegistry = null;
+		perspRegistry = null;
+		actionSetRegistry = null;
+		sharedImages = null;
+
+		aboutInfo = null;
+		introRegistry = null;
+
+		DEBUG = false;
+	}
+
 	/**
 	 * Creates an extension.  If the extension plugin has not
 	 * been loaded a busy cursor will be activated during the duration of
