@@ -89,65 +89,6 @@ public static Test suite() {
 	return suite;
 }
 /**
- * 1G1N9GZ: ITPCORE:WIN2000 - ElementTree corruption when linking trees
- */
-public void test1G1N9GZ() throws CoreException {
-	/* create P1 and set a builder */
-	IProject p1 = workspace.getRoot().getProject("p1");
-	p1.create(null);
-	p1.open(null);
-	IProjectDescription desc = p1.getDescription();
-	ICommand command = desc.newCommand();
-	command.setBuilderName(SortBuilder.BUILDER_NAME);
-	command.getArguments().put(SortBuilder.BUILD_ID, "P1Build1");
-	desc.setBuildSpec(new ICommand[] {command});
-	p1.setDescription(desc, monitor);
-
-	/* create P2 and set a builder */
-	IProject p2 = workspace.getRoot().getProject("p2");
-	p2.create(null);
-	p2.open(null);
-	desc = p1.getDescription();
-	command = desc.newCommand();
-	command.setBuilderName(SortBuilder.BUILDER_NAME);
-	command.getArguments().put(SortBuilder.BUILD_ID, "P2Build1");
-	desc.setBuildSpec(new ICommand[] {command});
-	p1.setDescription(desc, monitor);
-
-	/* PR test case */
-	workspace.save(true, null);
-	//
-	ResourcesPlugin.getPlugin().startup();
-	//
-	workspace.save(true, null);
-	
-	/* open again and try to create a files */
-	ResourcesPlugin.getPlugin().startup();
-
-	/* get new handles */
-	p1 = workspace.getRoot().getProject("p1");
-	p2 = workspace.getRoot().getProject("p2");
-
-	/* try to create other files */
-	boolean ok = true;
-	try {
-		ByteArrayInputStream source = new ByteArrayInputStream("file's content".getBytes());
-		p1.getFile("file2").create(source, true, null);
-	} catch (Exception e) {
-		ok = false;
-	}
-	assertTrue("1.0", ok);
-	//
-	ok = true;
-	try {
-		ByteArrayInputStream source = new ByteArrayInputStream("file's content".getBytes());
-		p2.getFile("file2").create(source, true, null);
-	} catch (Exception e) {
-		ok = false;
-	}
-	assertTrue("1.1", ok);
-}
-/**
  * Tests closing a workspace without save.
  */
 public void testClose() throws CoreException {
