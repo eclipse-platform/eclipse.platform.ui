@@ -132,7 +132,6 @@ protected Button createVerticalButton(Composite parent, String label, boolean de
 		}
 		button.setFocus();
 	}
-	button.setFont(parent.getFont());
 	return button;
 }
 /**
