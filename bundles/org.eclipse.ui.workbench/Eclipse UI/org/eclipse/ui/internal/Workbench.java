@@ -1011,6 +1011,7 @@ public final class Workbench implements IWorkbench, IContextResolver {
 	public IWorkbenchWindow getActiveWorkbenchWindow() {
 		// Display will be null if SWT has not been initialized or
 		// this method was called from wrong thread.
+		// @issue if this is called from the wrong thread, this should fail, not return null -- general workbench thread safety issue
 		Display display = Display.getCurrent();
 		if (display == null)
 			return null;
@@ -1747,7 +1748,7 @@ public final class Workbench implements IWorkbench, IContextResolver {
 					}
 				});
 				
-//				getWorkbenchTestable().init(display, this);
+				getWorkbenchTestable().init(display, this);
 				
 				// the event loop
 				runEventLoop(handler, display);

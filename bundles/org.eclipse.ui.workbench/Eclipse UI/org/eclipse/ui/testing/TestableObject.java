@@ -11,69 +11,43 @@
 
 package org.eclipse.ui.testing;
 
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.util.ListenerList;
-import org.eclipse.jface.util.SafeRunnable;
+import org.eclipse.jface.util.Assert;
 
 /**
  * A testable object.
- * Allows a test harness to register for test-related lifecycle events,
+ * Allows a test harness to register itself with a testable object.
+ * The test harness is notified of test-related lifecycle events,
  * such as when is an appropriate time to run tests on the object.
- * Also provides API for running tests as a runnable, and for signaling
+ * This also provides API for running tests as a runnable, and for signaling
  * when the tests are starting and when they are finished.
  * <p>
- * An application will typically provide its own subclass of this class,
- * which will fire testable events at the appropriate times, and will
- * reimplement the <code>run</code> method in a way that is appropriate
- * to the application.
+ * The workbench provides an implementation of this facade, available
+ * via <code>PlatformUI.getTestableObject()</code>.
  * </p>
  * 
  * @since 3.0
  */
 public class TestableObject {
 
-	private ListenerList listenerList = new ListenerList();
+	private ITestHarness testHarness;
 	
 	/**
-	 * Adds a listener to this testable object. 
-	 * Has no effect if an identical listener is already registered.
-	 * <p>
-	 * Testable listeners are informed about test-related lifecycle
-	 * of the testable object.  The main event is when the tests can be run. 
-	 * </p>
-	 *
-	 * @param listener a testable listener
-	 */
-	public void addTestableListener(ITestableListener listener) {
-		listenerList.add(listener);
-	}
-	
-	/**
-	 * Removes a listener from this testable object. 
-	 * Has no effect if an identical listener is already registered.
-	 *
-	 * @param listener a testable listener
-	 */
-	public void removeTestableListener(ITestableListener listener) {
-		listenerList.remove(listener);
-	}
-	
-	/**
-	 * Notifies all registered listeners of the given event.
+	 * Returns the test harness, or <code>null</code> if it has not yet been set.
 	 * 
-	 * @param event the event object
+	 * @return the test harness or <code>null</code>
 	 */
-	protected void fireTestableEvent(final TestableEvent event) {
-		Object[] listeners = listenerList.getListeners();
-		for (int i = 0; i < listeners.length; i++) {
-			final ITestableListener listener = (ITestableListener) listeners[i];
-			Platform.run(
-				new SafeRunnable() {
-					public void run() throws Exception {
-						listener.testableEvent(event);
-					}
-				});
-		}
+	public ITestHarness getTestHarness() {
+		return testHarness;
+	}
+	
+	/**
+	 * Sets the test harness.
+	 * 
+	 * @param testHarness the test harness
+	 */
+	public void setTestHarness(ITestHarness testHarness) {
+		Assert.isNotNull(testHarness);
+		this.testHarness = testHarness;
 	}
 	
 	/**

@@ -8,20 +8,19 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
+
 package org.eclipse.ui.testing;
 
 /**
- * A listener for events from an <code>ITestable</code>.
+ * Represents an arbitrary test harness.
  * 
  * @since 3.0
  */
-public interface ITestableListener {
+public interface ITestHarness {
 	
 	/**
-	 * Notification of an event from a testable object.
-	 * 
-	 * @param event the event object
+	 * Runs the tests.
 	 */
-	public void testableEvent(TestableEvent event);
-
+	public void runTests();
+	
 }

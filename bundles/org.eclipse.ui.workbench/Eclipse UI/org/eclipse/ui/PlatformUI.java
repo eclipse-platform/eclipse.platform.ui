@@ -124,6 +124,10 @@ public final class PlatformUI {
 	
 	/**
 	 * Returns the testable object facade, for use by the test harness.
+	 * <p>
+	 * IMPORTANT: This method is only for use by the test harness.
+	 * Applications and regular plug-ins should not call this method.
+	 * </p> 
 	 * 
 	 * @return the testable object facade
 	 * @since 3.0

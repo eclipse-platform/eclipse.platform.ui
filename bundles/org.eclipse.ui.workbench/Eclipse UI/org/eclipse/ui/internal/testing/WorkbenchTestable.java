@@ -10,10 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.testing;
 
-import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.widgets.Display;
+
+import org.eclipse.jface.util.Assert;
+
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.testing.TestableEvent;
 import org.eclipse.ui.testing.TestableObject;
 
 /**
@@ -33,14 +34,6 @@ public class WorkbenchTestable extends TestableObject {
 	}
 
 	/**
-	 * Flushes any events from the SWT event queue.
-	 */
-	private void flushEventQueue() {
-		while (display.readAndDispatch()) {
-		}
-	}
-
-	/**
 	 * Initializes the workbench testable with the display and workbench,
 	 * and notifies all listeners that the tests can be run.
 	 * 
@@ -52,7 +45,13 @@ public class WorkbenchTestable extends TestableObject {
 		Assert.isNotNull(workbench);
 		this.display = display;
 		this.workbench = workbench;
-		fireTestableEvent(new TestableEvent(this, TestableEvent.CAN_RUN_TESTS));
+		if (getTestHarness() != null) {
+			new Thread(new Runnable() {
+				public void run() {
+					getTestHarness().runTests();
+				}
+			}).start();
+		}
 	}
 	
 	/**
@@ -72,9 +71,7 @@ public class WorkbenchTestable extends TestableObject {
 	 */
 	public void runTest(Runnable testRunnable) {
 		Assert.isNotNull(workbench);
-		flushEventQueue();
 		display.syncExec(testRunnable);
-		flushEventQueue();
 	}
 	
 	/**
@@ -83,7 +80,12 @@ public class WorkbenchTestable extends TestableObject {
 	 * then closes the workbench.
 	 */
 	public void testingFinished() {
-		flushEventQueue();
+		// force events to be processed
+		display.syncExec(new Runnable() {
+			public void run() {
+				// do nothing
+			}
+		});
 		Assert.isTrue(workbench.close());
 	}
 }
