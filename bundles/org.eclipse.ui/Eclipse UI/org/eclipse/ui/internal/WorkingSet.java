@@ -14,7 +14,7 @@ import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.internal.model.WorkbenchWorkingSet;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
-public class WorkingSet implements IWorkingSet, IAdaptable {
+public class WorkingSet implements IWorkingSet {
 	String name;
 	Set items; // of IAdaptable
 
@@ -25,12 +25,6 @@ public class WorkingSet implements IWorkingSet, IAdaptable {
 	}
 	public boolean equals(Object o) {
 		return (o instanceof IWorkingSet) && ((IWorkingSet) o).getName().equals(getName());
-	}
-	public Object getAdapter(Class adapter) {
-		if (adapter == IWorkbenchAdapter.class) {		
-			return new WorkbenchWorkingSet(null, (IAdaptable[]) items.toArray(new IAdaptable[items.size()]), name);
-		}
-		return null;
 	}
 	/*
 	 * @see IWorkingSet#getName()
