@@ -3,7 +3,7 @@
   name="Save Participant 1"
   id="org.eclipse.core.tests.resources.saveparticipant1"
   class="org.eclipse.core.tests.resources.saveparticipant1.SaveParticipant1Plugin"
-  version="1.9.0"
+  version="2.0.0"
   provider-name="Object Technology International, Inc.">
 
   <requires>
