@@ -860,7 +860,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 			public void run() {
 				IAction findAction= null;
 				if (getDetailViewer().getTextWidget().isFocusControl()) {
-					//XXX Still using "old" resource access
+					//TODO: Still using "old" resource access
 					ResourceBundle bundle= ResourceBundle.getBundle("org.eclipse.debug.internal.ui.views.variables.VariablesViewMessages"); //$NON-NLS-1$
 					findAction= new FindReplaceAction(bundle, "find_replace_action.", VariablesView.this);	 //$NON-NLS-1$
 				} else {

@@ -73,7 +73,7 @@ Organizers with the specified name will be automatically created by the Debug Pl
          <attribute name="icon" type="string">
             <annotation>
                <documentation>
-                  Path to an optional icon which can be shown for this organizer.
+                  Optional path to an icon which can be shown for this organizer.
                </documentation>
             </annotation>
          </attribute>
@@ -109,7 +109,7 @@ Organizers with the specified name will be automatically created by the Debug Pl
 &lt;extension
     point=&quot;org.eclipse.debug.ui.breakpointOrganizers&quot;&gt;
     &lt;breakpointOrganizer
-  class=&quot;com.example.BreakpointOrganizer&quot;
+  	 class=&quot;com.example.BreakpointOrganizer&quot;
      id=&quot;com.example.BreakpointOrganizer&quot;
      label=&quot;Example Organizer&quot;
      icon=&quot;icons/full/obj16/example_org.gif&quot;/&gt;

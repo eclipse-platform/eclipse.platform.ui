@@ -17,9 +17,26 @@ import org.eclipse.swt.widgets.Shell;
  * A variable value editor allows the user to edit a variable's value.
  * Variable value editors are contributed for a debug model via the
  * <code>org.eclipse.debug.ui.variableValueEditors</code> extension point.
- * 
- * TODO: example plug-in XML
- * 
+ * <p>
+ * Following is example plug-in XML for contributing a variable value editor.
+ * <pre>
+ * &lt;extension point="org.eclipse.debug.ui.variableValueEditors"&gt;
+ *    &lt;variableEditor
+ *       modelId="com.examples.myDebugModel"
+ *       class="com.examples.variables.MyVariableValueEditor"/&gt;
+ * &lt;/extension&gt;
+ * </pre>
+ * The attributes are specified as follows:
+ * <ul>
+ * <li><code>modelId</code> the debug model identifier for which the given
+ * variable value editor is applicable</li>
+ * <li><code>class</code> fully qualified name of a class that implements 
+ * {@link IVariableValueEditor}</li>
+ * </ul>
+ * </p>
+ * <p>
+ * Clients may implement this interface.
+ * </p>
  * @since 3.1
  */
 public interface IVariableValueEditor {

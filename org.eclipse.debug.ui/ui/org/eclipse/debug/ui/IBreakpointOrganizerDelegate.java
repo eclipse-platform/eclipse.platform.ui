@@ -25,7 +25,26 @@ import org.eclipse.jface.util.IPropertyChangeListener;
  * Organizers may optionally support breakpoint recategorization. 
  * </p>
  * <p>
- * TODO: plug-in XML
+ * Following is example plug-in XML for contributing a breakpoint organizer.
+ * <pre>
+ * &lt;extension point="org.eclipse.debug.ui.breakpointOrganizers"&gt;
+ * 	&lt;breakpointOrganizer
+ * 		class="com.example.BreakpointOrganizer"
+ *      id="com.example.BreakpointOrganizer"
+ *      label="Example Organizer"
+ *      icon="icons/full/obj16/example_org.gif"/&gt;
+ * &lt;/extension&gt;
+ * </pre>
+ * The attributes are specified as follows:
+ * <ul>
+ * <li><code>class</code> Fully qualified name of a Java class that implements
+ * {@link IBreakpointOrganizerDelegate}.</li>
+ * <li><code>id</code> Unique identifier for this breakpoint organizer.</li>
+ * <li><code>label</code> Label for this organizer which is suitable for
+ * presentation to the user.</li>
+ * <li><code>icon</code> Optional path to an icon which can be shown for this
+ * organizer</li>
+ * </ul>
  * </p>
  * <p>
  * Clients contributing a breakpoint organizer are intended to implement

@@ -78,7 +78,6 @@ public class RemoveBreakpointAction extends AbstractRemoveActionDelegate {
                             	Runnable r = new Runnable() {
 								
 									public void run() {
-										// TODO Auto-generated method stub
 										((BreakpointsView) getView()).preserveSelectionState(state);
 									}
 								};
