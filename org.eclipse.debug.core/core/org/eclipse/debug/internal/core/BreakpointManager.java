@@ -263,7 +263,8 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 * and throws a debug exception if not.
 	 */
 	private void verifyBreakpoint(IBreakpoint breakpoint) throws DebugException {
-		try {
+		//see bug 6084
+	/*	try {
 			String id= breakpoint.getModelIdentifier();
 			if (id == null) {
 				throw new DebugException(new Status(IStatus.ERROR, DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(), 
@@ -271,7 +272,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 			}
 		} catch (CoreException e) {
 			throw new DebugException(e.getStatus());
-		}		
+		}		*/
 	}
 
 	/**
