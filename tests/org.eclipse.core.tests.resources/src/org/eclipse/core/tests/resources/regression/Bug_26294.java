@@ -21,6 +21,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+import org.eclipse.osgi.service.environment.Constants;
 
 /**
  * A parent container (projects and folders) would become out-of-sync if any of
@@ -40,7 +41,7 @@ public class Bug_26294 extends EclipseWorkspaceTest {
 	 * Works only for Windows.
 	 */
 	public void testDeleteOpenProjectWindows() {
-		if (!(BootLoader.getOS().equals(BootLoader.OS_WIN32)))
+		if (!(BootLoader.getOS().equals(Constants.OS_WIN32)))
 			return;
 
 		IProject project = null;
@@ -53,10 +54,17 @@ public class Bug_26294 extends EclipseWorkspaceTest {
 			IFile file1 = folder.getFile("file1.txt");
 			IFile file2 = project.getFile("file2.txt");
 			IFile file3 = folder.getFile("file3.txt");
+			IFile projectFile = project.getFile(new Path(".project"));
 
 			ensureExistsInWorkspace(new IResource[] { file1, file2, file3 }, true);
 			projectRoot = project.getLocation().toFile();
-
+			
+			assertExistsInFileSystem("0.0", file1);
+			assertExistsInFileSystem("0.1", file2);
+			assertExistsInFileSystem("0.2", file3);
+			assertExistsInFileSystem("0.3", folder);
+			assertExistsInFileSystem("0.4", projectFile);
+			
 			// opens a file so it cannot be removed on Windows
 			try {
 				input = file1.getContents();
@@ -64,8 +72,6 @@ public class Bug_26294 extends EclipseWorkspaceTest {
 				ce.printStackTrace();
 				fail("1.0");
 			}
-
-			IFile projectFile = project.getFile(new Path(".project"));
 			assertTrue("1.2", projectFile.exists());
 			assertTrue("1.3", projectFile.isSynchronized(IResource.DEPTH_INFINITE));
 
@@ -75,27 +81,40 @@ public class Bug_26294 extends EclipseWorkspaceTest {
 			} catch (CoreException ce) {
 				// success - a file couldn't be removed
 			}
-			assertTrue("2.1", project.exists());
-			assertTrue("2.2", file1.exists());
-			assertTrue("2.3", !file2.exists());
-			assertTrue("2.4", !file3.exists());
-			assertTrue("2.5", folder.exists());
-			assertTrue("2.6", !projectFile.exists());
+			
+			// Delete is best-case so check all the files. 
+			// Do a check on disk and in the workspace in case something is out of sync.
+			assertExistsInWorkspace("2.1.1", project);
+			assertExistsInFileSystem("2.1.2", project);
+
+			assertExistsInWorkspace("2.2.1", file1);
+			assertExistsInFileSystem("2.2.2", file1);
+
+			assertDoesNotExistInWorkspace("2.3.1", file2);
+			assertDoesNotExistInFileSystem("2.3.2", file2);
+			
+			assertDoesNotExistInWorkspace("2.4.1", file3);
+			assertDoesNotExistInFileSystem("2.4.2", file3);
+			
+			assertExistsInWorkspace("2.5.1", folder);
+			assertExistsInFileSystem("2.5.2", folder);
+			
+			assertDoesNotExistInWorkspace("2.6.1", projectFile);
+			assertDoesNotExistInFileSystem("2.6.2", projectFile);
+			
 			assertTrue("2.7", project.isSynchronized(IResource.DEPTH_INFINITE));
 
 			try {
 				input.close();
-			} catch (IOException ioe) {
-				ioe.printStackTrace();
-				fail("3.0", ioe);
+			} catch (IOException e) {
+				fail("3.0", e);
 			}
 
 			assertTrue("3.5", project.isSynchronized(IResource.DEPTH_INFINITE));
 			try {
 				project.delete(IResource.FORCE, getMonitor());
-			} catch (CoreException ce) {
-				ce.printStackTrace();
-				fail("4.0", ce);
+			} catch (CoreException e) {
+				fail("4.0", e);
 			}
 
 			assertTrue("5.1", !project.exists());
