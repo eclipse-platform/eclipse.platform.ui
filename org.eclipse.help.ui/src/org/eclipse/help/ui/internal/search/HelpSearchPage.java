@@ -156,7 +156,7 @@ public class HelpSearchPage extends DialogPage implements ISearchPage {
 			}
 		});
 		setControl(control);
-		WorkbenchHelp.setHelp(control, new String[] { IHelpUIConstants.SEARCH_PAGE });
+		WorkbenchHelp.setHelp(control, IHelpUIConstants.SEARCH_PAGE);
 	}
 	/**
 	 * @see ISearchPage#performAction()

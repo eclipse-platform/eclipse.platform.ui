@@ -1,6 +1,6 @@
 package org.eclipse.help.ui.internal.browser;
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 import org.eclipse.help.internal.HelpSystem;
@@ -9,17 +9,10 @@ import org.eclipse.help.internal.ui.util.WorkbenchResources;
 import org.eclipse.help.internal.util.HelpPreferences;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 /**
  * Preference page for selecting default web browser.
@@ -36,9 +29,7 @@ public class BrowsersPreferencePage
 	 */
 	protected Control createContents(Composite parent) {
 		noDefaultAndApplyButton();
-		WorkbenchHelp.setHelp(
-			parent,
-			new String[] { IHelpUIConstants.PREF_PAGE_BROWSERS });
+		WorkbenchHelp.setHelp(parent, IHelpUIConstants.PREF_PAGE_BROWSERS);
 		Composite mainComposite = new Composite(parent, SWT.NULL);
 		GridData data = new GridData();
 		data.verticalAlignment = GridData.FILL;
@@ -48,9 +39,7 @@ public class BrowsersPreferencePage
 		GridLayout layout = new GridLayout();
 		mainComposite.setLayout(layout);
 		Label description = new Label(mainComposite, SWT.NULL);
-		description.setText(
-			WorkbenchResources.getString(
-				"select_browser"));
+		description.setText(WorkbenchResources.getString("select_browser"));
 		//data = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		//description.setLayoutData(data);
 		browsersTable = new Table(mainComposite, SWT.CHECK | SWT.BORDER);

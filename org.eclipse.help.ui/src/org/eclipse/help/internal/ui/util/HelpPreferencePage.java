@@ -76,7 +76,7 @@ public class HelpPreferencePage
 	 * @param parent  the parent for the preference page
 	 */
 	protected Control createContents(Composite parent) {
-		WorkbenchHelp.setHelp(parent, new String[] { IHelpUIConstants.PREF_PAGE });
+		WorkbenchHelp.setHelp(parent, IHelpUIConstants.PREF_PAGE);
 		/* Infoceter URL */
 		Composite composite_tab0 = createComposite(parent, 1);
 		createLabel(
@@ -94,7 +94,7 @@ public class HelpPreferencePage
 			Composite composite_textField2 = createComposite(parent, 2);
 			WorkbenchHelp.setHelp(
 				composite_textField2,
-				new String[] { IHelpUIConstants.BROWSER_PATH, IHelpUIConstants.PREF_PAGE });
+				IHelpUIConstants.BROWSER_PATH);
 			Label label_textField =
 				createLabel(
 					composite_textField2,
@@ -107,7 +107,7 @@ public class HelpPreferencePage
 		Composite composite_tab2 = createComposite(parent, 1);
 		WorkbenchHelp.setHelp(
 			composite_tab2,
-			new String[] { IHelpUIConstants.LOGGING_OPTIONS, IHelpUIConstants.PREF_PAGE });
+			IHelpUIConstants.LOGGING_OPTIONS);
 		Label label2 =
 			createLabel(composite_tab2, WorkbenchResources.getString("Logging_Options"), 1);
 		//composite_checkBox << composite_tab2
@@ -129,9 +129,7 @@ public class HelpPreferencePage
 		Composite composite_tab3 = createComposite(parent, 1);
 		WorkbenchHelp.setHelp(
 			composite_tab3,
-			new String[] {
-				IHelpUIConstants.LOCAL_SERVER_CONFIG,
-				IHelpUIConstants.PREF_PAGE });
+			IHelpUIConstants.LOCAL_SERVER_CONFIG);
 		Label label31 =
 			createLabel(
 				composite_tab3,

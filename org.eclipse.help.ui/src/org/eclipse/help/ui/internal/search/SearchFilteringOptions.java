@@ -45,7 +45,7 @@ public class SearchFilteringOptions extends Dialog {
 	protected Control createDialogArea(Composite parent) {
 		WorkbenchHelp.setHelp(
 			parent,
-			new String[] { IHelpUIConstants.SEARCH_FILTERING_OPTIONS });
+			IHelpUIConstants.SEARCH_FILTERING_OPTIONS);
 		Composite mainComposite = new Composite(parent, SWT.NULL);
 		GridData data = new GridData();
 		data.verticalAlignment = GridData.FILL;

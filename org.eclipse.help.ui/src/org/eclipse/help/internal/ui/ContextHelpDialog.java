@@ -40,7 +40,7 @@ public class ContextHelpDialog {
 			Logger.logDebugMessage(
 				"ContextHelpDialog",
 				" Constructor: Shell is:" + shell.toString());
-		WorkbenchHelp.setHelp(shell, new String[] { IHelpUIConstants.F1_SHELL });
+		WorkbenchHelp.setHelp(shell, IHelpUIConstants.F1_SHELL);
 		shell.addListener(SWT.Deactivate, new Listener() {
 			public void handleEvent(Event e) {
 				if (Logger.DEBUG)
