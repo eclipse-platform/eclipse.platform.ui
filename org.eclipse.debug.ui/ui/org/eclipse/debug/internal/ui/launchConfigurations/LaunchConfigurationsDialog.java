@@ -1243,28 +1243,33 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		try {
 			run(true, true, runnable);
 		} catch (InterruptedException e) {
+			removeErrorLaunches();
 			return null;
 		} catch (InvocationTargetException e) {
 			Throwable t = e.getTargetException();
 			if (t instanceof CoreException) {
+				//error launch has been removed by the launch configuration
 				throw (CoreException)t;
 			} else {
+				//remove any "error" launches
+			  	removeErrorLaunches();
 				IStatus status = new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, DebugException.INTERNAL_ERROR, LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Exception_occurred_while_launching_50"), t); //$NON-NLS-1$
 				throw new CoreException(status);
-			}
-		} finally {
-			//remove any "error" launches
-			ILaunchManager manager= DebugPlugin.getDefault().getLaunchManager();
-			ILaunch[] launches= manager.getLaunches();
-			for (int i = 0; i < launches.length; i++) {
-				ILaunch iLaunch = launches[i];
-				if (!iLaunch.hasChildren()) {
-					manager.removeLaunch(iLaunch);
-				}
 			}
 		}
 				
 		return launchResult[0];		
+	}
+	
+	private void removeErrorLaunches() {
+		ILaunchManager manager= DebugPlugin.getDefault().getLaunchManager();
+		ILaunch[] launches= manager.getLaunches();
+		for (int i = 0; i < launches.length; i++) {
+		  ILaunch iLaunch = launches[i];
+		  if (!iLaunch.hasChildren()) {
+			  manager.removeLaunch(iLaunch);
+			 }
+		}
 	}
 	
 	private IPreferenceStore getPreferenceStore() {
