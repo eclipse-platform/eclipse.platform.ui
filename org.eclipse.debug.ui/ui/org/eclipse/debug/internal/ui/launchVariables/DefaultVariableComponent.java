@@ -12,7 +12,6 @@ package org.eclipse.debug.internal.ui.launchVariables;
 
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsMessages;
 import org.eclipse.debug.ui.launchVariables.IVariableComponentContainer;
-import org.eclipse.debug.ui.launchVariables.components.AbstractVariableComponent;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;

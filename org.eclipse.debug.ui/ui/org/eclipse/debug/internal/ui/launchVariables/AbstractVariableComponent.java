@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.ui.launchVariables.components;
+package org.eclipse.debug.internal.ui.launchVariables;
 
 import org.eclipse.debug.core.variables.VariableUtil;
 import org.eclipse.debug.ui.launchVariables.IVariableComponent;

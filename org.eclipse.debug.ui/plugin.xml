@@ -1213,11 +1213,23 @@
 		point="org.eclipse.debug.ui.launchVariableComponents">
 		<component
 			variableName="resource_path"
-            componentClass="org.eclipse.debug.ui.launchVariables.components.SpecificFileResourceComponent">
+            componentClass="org.eclipse.debug.internal.ui.launchVariables.SpecificFileResourceComponent">
 		</component>
 		<component
 			variableName="resource_loc"
-            componentClass="org.eclipse.debug.ui.launchVariables.components.SpecificFileResourceComponent">
+            componentClass="org.eclipse.debug.internal.ui.launchVariables.SpecificFileResourceComponent">
+		</component>
+		<component
+			variableName="resource_name"
+            componentClass="org.eclipse.debug.internal.ui.launchVariables.SpecificFileResourceComponent">
+		</component>
+		<component
+			variableName="resource"
+			componentClass="org.eclipse.debug.internal.ui.launchVariables.ResourceComponent">
+		</component>
+		<component
+			variableName="working_set"
+			componentClass="org.eclipse.debug.internal.ui.launchVariables.WorkingSetComponent">
 		</component>
 	</extension>
    <extension

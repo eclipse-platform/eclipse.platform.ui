@@ -223,16 +223,6 @@
 			expanderClass="org.eclipse.debug.ui.launchVariables.expanders.WorkingSetExpander">
 		</variable>
 	</extension>
-	<extension point="org.eclipse.debug.ui.launchVariableComponents">
-		<component
-			variableName="resource"
-			componentClass="org.eclipse.debug.ui.launchVariables.components.ResourceComponent">
-		</component>
-		<component
-			variableName="working_set"
-			componentClass="org.eclipse.debug.ui.launchVariables.components.WorkingSetComponent">
-		</component>
-	</extension>
 	
 	<extension point = "org.eclipse.debug.core.launchConfigurationComparators">
 		<launchConfigurationComparator

@@ -16,9 +16,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.variables.VariableUtil;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
+import org.eclipse.debug.ui.launchVariables.IVariableComponent;
 import org.eclipse.debug.ui.launchVariables.IVariableComponentContainer;
-import org.eclipse.debug.ui.launchVariables.components.WorkingSetComponent;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -43,7 +44,7 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab impl
 	private Button autoBuildButton;
 	private Button incrementalBuildButton;
 	private Button workingSetButton;
-	private WorkingSetComponent workingSetComponent;
+	private IVariableComponent workingSetComponent;
 	
 	private SelectionListener selectionListener= new SelectionAdapter() {
 		/**
@@ -66,7 +67,7 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab impl
 		mainComposite.setFont(parent.getFont());
 		createBuildScheduleComponent(mainComposite);
 		
-		workingSetComponent= new WorkingSetComponent();
+		workingSetComponent= DebugUIPlugin.getDefault().getVariableComponentManager().getComponent(IExternalToolConstants.VAR_WORKING_SET);
 		workingSetComponent.createContents(mainComposite, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.Working_Sets_1"), this); //$NON-NLS-1$
 	}
 	
