@@ -2357,7 +2357,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			boolean errorOnTab = tabError != null;
 			setTabIcon(tabItem, errorOnTab);
 			if (errorOnTab && !errorOnActiveTab) {
-				errorMessage = '[' + removeAmpersandsFrom(tabItem.getText()) + "]: " + tabError;
+				errorMessage = '[' + removeAmpersandsFrom(tabItem.getText()) + "]: " + tabError; //$NON-NLS-1$
 			}
 		}
 		setErrorMessage(errorMessage);				
