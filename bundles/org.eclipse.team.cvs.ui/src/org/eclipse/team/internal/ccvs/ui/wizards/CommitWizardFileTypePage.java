@@ -51,13 +51,13 @@ public class CommitWizardFileTypePage extends WizardPage {
         fNames= new ArrayList();
         for (final Iterator iter = unknownNames.iterator(); iter.hasNext();) {
             final String name = (String) iter.next();
-            fNames.add(new FileTypeTable.Name(name));
+            fNames.add(new FileTypeTable.Name(name, false));
         }
         
         fExtensions= new ArrayList();
         for (final Iterator iter = unknownExtensions.iterator(); iter.hasNext();) {
             final String extension= (String)iter.next();
-            fExtensions.add(new FileTypeTable.Extension(extension));
+            fExtensions.add(new FileTypeTable.Extension(extension, false));
         }
     }
     
