@@ -27,7 +27,7 @@ public class SetPagePerspectiveAction extends Action {
 		persp = perspective;
 		page = workbenchPage;
 		update(persp);
-		WorkbenchHelp.setHelp(this, new Object[] { IHelpContextIds.SWITCH_TO_PERSPECTIVE_ACTION });
+		WorkbenchHelp.setHelp(this, IHelpContextIds.SWITCH_TO_PERSPECTIVE_ACTION);
 	}
 
 	/**
@@ -73,7 +73,7 @@ public class SetPagePerspectiveAction extends Action {
 	 */
 	public void update(IPerspectiveDescriptor newDesc) {
 		persp = newDesc;
-		setToolTipText(persp.getLabel());
+		setToolTipText(WorkbenchMessages.format("SetPagePerspectiveAction.toolTip", new Object[] {persp.getLabel()}));
 		ImageDescriptor image = persp.getImageDescriptor();
 		if (image != null) {
 			setImageDescriptor(image);
