@@ -553,4 +553,34 @@ public class ProjectPreferencesTest extends EclipseWorkspaceTest {
 		node = new ProjectScope(project).getNode(ResourcesPlugin.PI_RESOURCES);
 		assertNull("2.0", node.get(key, null));
 	}
+
+	public void testProjectOpenClose() {
+		IWorkspace workspace = getWorkspace();
+		IProject project = workspace.getRoot().getProject(getUniqueString());
+		ensureExistsInWorkspace(new IResource[] {project}, true);
+		String qualifier = getUniqueString();
+		String key = getUniqueString();
+		String value = getUniqueString();
+		Preferences node = new ProjectScope(project).getNode(qualifier);
+		node.put(key, value);
+		try {
+			node.flush();
+		} catch (BackingStoreException e) {
+			fail("1.0", e);
+		}
+		// close the project
+		try {
+			project.close(getMonitor());
+		} catch (CoreException e) {
+			fail("1.1", e);
+		}
+		// now reopen the project and ensure the settings were not forgotten
+		try {
+			project.open(getMonitor());
+		} catch (CoreException e) {
+			fail("2.0", e);
+		}
+		node = new ProjectScope(project).getNode(qualifier);
+		assertEquals("2.1", value, node.get(key, null));
+	}
 }

@@ -36,7 +36,7 @@ public class ProjectPreferences extends EclipsePreferences {
 	private IEclipsePreferences loadLevel;
 	private IFile file;
 	// cache which nodes have been loaded from disk
-	private static Set loadedNodes = new HashSet();
+	protected static Set loadedNodes = new HashSet();
 	private static IResourceChangeListener listener = createListener();
 
 	static {
@@ -118,6 +118,7 @@ public class ProjectPreferences extends EclipsePreferences {
 						case IResourceDelta.REMOVED :
 							message = Policy.bind("preferences.removeNodeException", node.absolutePath()); //$NON-NLS-1$
 							node.removeNode();
+							loadedNodes.remove(node.absolutePath());
 							break;
 						case IResourceDelta.CHANGED :
 							message = Policy.bind("preferences.syncException", node.absolutePath()); //$NON-NLS-1$
