@@ -281,7 +281,13 @@ public class IResourceTest extends ResourceTest {
 
 		// setup
 		ensureExistsInWorkspace(new IResource[] {project, file}, true);
-		file.setReadOnly(true);
+		ResourceAttributes attributes = file.getResourceAttributes();
+		attributes.setReadOnly(true);
+		try {
+			file.setResourceAttributes(attributes);
+		} catch (CoreException e1) {
+			fail("1.99", e1);
+		}
 		assertTrue("2.0", file.isReadOnly());
 
 		// doit
@@ -293,7 +299,13 @@ public class IResourceTest extends ResourceTest {
 		}
 
 		// cleanup
-		file.setReadOnly(false);
+		attributes = file.getResourceAttributes();
+		attributes.setReadOnly(false);
+		try {
+			file.setResourceAttributes(attributes);
+		} catch (CoreException e1) {
+			fail("3.99", e1);
+		}
 		assertTrue("4.0", !file.isReadOnly());
 		ensureDoesNotExistInWorkspace(new IResource[] {project, file});
 	}
@@ -528,8 +540,30 @@ public class IResourceTest extends ResourceTest {
 		assertTrue("0.1", destination.exists());
 	}
 
+	public void testBug28790() {
+		//test only applicable on windows
+		if (!Platform.getOS().equals(Platform.OS_WIN32))
+			return;
+		IProject project = getWorkspace().getRoot().getProject("MyProject");
+		IFile file = project.getFile("a.txt");
+		ensureExistsInWorkspace(file, getRandomString());
+		try {
+			//ensure archive bit is not set
+			ResourceAttributes attributes = file.getResourceAttributes();
+			attributes.setArchive(false);
+			file.setResourceAttributes(attributes);
+			assertTrue("1.0", !file.getResourceAttributes().isArchive());
+			//modify the file
+			file.setContents(getRandomContents(), IResource.KEEP_HISTORY, getMonitor());
+		} catch (CoreException e) {
+			fail("1.99", e);
+		}
+		//now the archive bit should be set
+		assertTrue("2.0", file.getResourceAttributes().isArchive());
+	}
+
 	/**
-	 * Bug 31750 states that an OperationCancelledException is
+	 * Bug 31750 states that an OperationCanceledException is
 	 * not handled correctly if it occurs within a proxy visitor.
 	 */
 	public void testBug31750() {
