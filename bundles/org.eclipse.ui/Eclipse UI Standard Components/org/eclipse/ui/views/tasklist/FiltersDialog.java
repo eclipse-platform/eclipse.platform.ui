@@ -15,15 +15,18 @@ import java.text.Collator;
 import java.util.*;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.window.Window;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.window.Window;
+
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -166,6 +169,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 			text.setText(initialText);
 		}
 	}
+
 	/**
 	 * Creates and manages a group of widgets for selecting a working 
 	 * set task filter.
@@ -285,6 +289,8 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 	private CheckboxEnumGroup severityGroup;
 	private CheckboxEnumGroup priorityGroup;
 	private CheckboxEnumGroup completionGroup;
+	private Button filterOnMarkerLimit;
+	private Text markerLimit;
 
 	private SelectionListener selectionListener = new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
@@ -399,9 +405,10 @@ Combo createCombo(Composite parent, String[] items, int selectionIndex) {
  */
 protected Control createDialogArea(Composite parent) {
 	Composite composite = (Composite) super.createDialogArea(parent);
+	createMarkerLimitArea(composite);
 	createTypesArea(composite);
 	createResourceArea(composite);
-	createAttributesArea(composite);
+	createAttributesArea(composite);	
 	
 	updateUIFromFilter(getFilter());
 	
@@ -482,6 +489,23 @@ ITreeContentProvider getContentProvider() {
 		}
 	};
 }
+
+void createMarkerLimitArea(Composite parent) {
+	Composite composite = new Composite(parent, SWT.NONE);
+	composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+	GridLayout layout = new GridLayout();
+	layout.numColumns = 2;
+	composite.setLayout(layout);
+	filterOnMarkerLimit = createCheckbox(composite, TaskListMessages.getString(
+			"TaskList.limitVisibleTasksTo"), false); //$NON-NLS-1$
+	filterOnMarkerLimit.setLayoutData(new GridData());
+	markerLimit = new Text(composite, SWT.SINGLE | SWT.BORDER);
+	markerLimit.setTextLimit(6);
+	GridData gridData = new GridData();
+	gridData.widthHint = convertWidthInCharsToPixels(10);
+	markerLimit.setLayoutData(gridData);
+}	
+
 /**
  * Returns the filter which this dialog is configuring.
  *
@@ -626,8 +650,30 @@ void initTypes() {
  * because after super.open() is called, the widgetry is disposed.
  */
 protected void okPressed() {
-	updateFilterFromUI(getFilter());
-	super.okPressed();
+	try {
+		int markerLimit = Integer.parseInt(this.markerLimit.getText());
+
+		if (markerLimit < 1) {
+			throw new NumberFormatException();
+		}			
+		
+		updateFilterFromUI(getFilter());
+		super.okPressed();
+	}
+	catch (NumberFormatException eNumberFormat) {
+		MessageBox messageBox = new MessageBox(getShell(), 
+				SWT.OK | SWT.APPLICATION_MODAL | SWT.ICON_ERROR);
+		messageBox.setText(TaskListMessages.getString(
+				"TaskList.titleMarkerLimitInvalid")); //$NON-NLS-1$
+		messageBox.setMessage(TaskListMessages.getString(
+				"TaskList.messageMarkerLimitInvalid")); //$NON-NLS-1$
+		messageBox.open();
+
+		if (markerLimit.forceFocus()) {
+			markerLimit.setSelection(0, markerLimit.getCharCount());
+			markerLimit.showSelection();
+		}
+	}
 }
 /**
  * Handles a press of the Reset button.
@@ -679,6 +725,7 @@ void setSelectedTypes(String[] typeIds) {
  * Updates the enabled state of the widgetry.
  */
 void updateEnabledState() {
+	markerLimit.setEnabled(filterOnMarkerLimit.getSelection());
 	boolean isProblemSelected = selectionIncludesSubtypeOf(IMarker.PROBLEM);
 	boolean isTaskSelected = selectionIncludesSubtypeOf(IMarker.TASK);
 	severityGroup.setEnabled(isProblemSelected);
@@ -718,6 +765,17 @@ void updateFilterFromUI(TasksFilter filter) {
 	
 	filter.filterOnCompletion = completionGroup.getSelection();
 	filter.completionFilter = completionGroup.getValueMask();
+
+	int markerLimit = TasksFilter.DEFAULT_MARKER_LIMIT;
+	
+	try {
+		markerLimit = Integer.parseInt(this.markerLimit.getText());
+	}
+	catch (NumberFormatException eNumberFormat) {
+	}
+
+	filter.setMarkerLimit(markerLimit);	
+	filter.setFilterOnMarkerLimit(filterOnMarkerLimit.getSelection());
 }
 /**
  * Updates the UI state from the given filter.
@@ -747,6 +805,9 @@ void updateUIFromFilter(TasksFilter filter) {
 	
 	completionGroup.setSelection(filter.filterOnCompletion);
 	completionGroup.setValueMask(filter.completionFilter);
+
+	markerLimit.setText("" + filter.getMarkerLimit());
+	filterOnMarkerLimit.setSelection(filter.getFilterOnMarkerLimit());
 
 	updateEnabledState();
 }

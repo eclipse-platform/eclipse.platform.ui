@@ -17,8 +17,10 @@ import java.util.HashSet;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
+
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
+
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
@@ -36,7 +38,11 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 	// Description filter kind constants
 	static final int FILTER_CONTAINS = 0;
 	static final int FILTER_DOES_NOT_CONTAIN = 1;
-	
+
+	//final static int MINIMUM_MARKER_LIMIT = 10;
+	final static int DEFAULT_MARKER_LIMIT = 2000;
+	//final static int MAXIMUM_MARKER_LIMIT = 20000;
+		
 	String[] types;
 	int onResource;
 	IWorkingSet workingSet;
@@ -49,6 +55,8 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 	int priorityFilter;
 	boolean filterOnCompletion;
 	int completionFilter;
+	private boolean filterOnMarkerLimit = true;
+	private int markerLimit = DEFAULT_MARKER_LIMIT;
 
 	private static final String TAG_ID = "id"; //$NON-NLS-1$
 	private static final String TAG_TYPE = "type";  //$NON-NLS-1$
@@ -63,14 +71,44 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 	private static final String TAG_PRIORITY_FILTER = "priorityFilter"; //$NON-NLS-1$
 	private static final String TAG_FILTER_ON_COMPLETION = "filterOnCompletion"; //$NON-NLS-1$
 	private static final String TAG_COMPLETION_FILTER = "completionFilter"; //$NON-NLS-1$
+	private static final String TAG_FILTER_ON_MARKER_LIMIT = "filterOnMarkerLimit"; //$NON-NLS-1$ 
+	private static final String TAG_MARKER_LIMIT = "markerLimit"; //$NON-NLS-1$
 	
 public TasksFilter() {
 	reset();
 }
+
+boolean getFilterOnMarkerLimit() {
+	return filterOnMarkerLimit;
+}
+
+void setFilterOnMarkerLimit(boolean filterOnMarkerLimit) {
+	this.filterOnMarkerLimit = filterOnMarkerLimit;
+}
+
+int getMarkerLimit() {
+	return markerLimit;
+}
+
+void setMarkerLimit(int markerLimit) {
+	if (markerLimit < 1) {
+		markerLimit = TasksFilter.DEFAULT_MARKER_LIMIT;
+	}
+
+	//if (markerLimit < TasksFilter.MINIMUM_MARKER_LIMIT) {
+	//	markerLimit = TasksFilter.MINIMUM_MARKER_LIMIT;
+	//} else if (markerLimit > TasksFilter.MAXIMUM_MARKER_LIMIT) {
+	//	markerLimit = TasksFilter.MAXIMUM_MARKER_LIMIT;
+	//} 
+
+	this.markerLimit = markerLimit;
+}
+
 boolean checkDescription(String desc) {
 	boolean contains = containsSubstring(desc, descriptionFilter);
 	return descriptionFilterKind == FILTER_CONTAINS ? contains : !contains;
 }
+
 public Object clone() {
 	try {
 		return super.clone();
@@ -79,6 +117,7 @@ public Object clone() {
 		throw new Error(); // shouldn't happen
 	}
 }
+
 boolean containsSubstring(String string, String substring) {
 	int strLen = string.length();
 	int subLen = substring.length();
@@ -139,6 +178,8 @@ public void reset() {
 	priorityFilter = 0;
 	filterOnCompletion = false;
 	completionFilter = 0;
+	filterOnMarkerLimit = true;
+	markerLimit = DEFAULT_MARKER_LIMIT;
 }
 /**
  * @see IPersistable
@@ -171,6 +212,10 @@ public void restoreState(IMemento memento) {
 	filterOnCompletion = ival != null && ival.intValue() == 1;
 	ival = memento.getInteger(TAG_COMPLETION_FILTER);
 	completionFilter = ival == null ? 0 : ival.intValue();
+	ival = memento.getInteger(TAG_FILTER_ON_MARKER_LIMIT);
+	filterOnMarkerLimit = ival == null || ival.intValue() == 1;
+	ival = memento.getInteger(TAG_MARKER_LIMIT);
+	markerLimit = ival == null ? DEFAULT_MARKER_LIMIT : ival.intValue();
 }
 /**
  * Restores the saved working set, if any.
@@ -209,6 +254,8 @@ public void saveState(IMemento memento) {
 	memento.putInteger(TAG_PRIORITY_FILTER,priorityFilter);
 	memento.putInteger(TAG_FILTER_ON_COMPLETION,filterOnCompletion?1:0);
 	memento.putInteger(TAG_COMPLETION_FILTER,completionFilter);
+	memento.putInteger(TAG_FILTER_ON_MARKER_LIMIT,filterOnMarkerLimit?1:0);
+	memento.putInteger(TAG_MARKER_LIMIT,markerLimit);
 }
 
 public boolean select(Viewer viewer, Object parentElement, Object element) {
@@ -373,4 +420,5 @@ public boolean isShowingAll() {
 	}
 	return true;
 }
+
 }

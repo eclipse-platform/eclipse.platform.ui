@@ -14,16 +14,16 @@ Contributors:
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.custom.TableEditor;
+import org.eclipse.swt.custom.*;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
 
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -58,6 +58,11 @@ public class TaskList extends ViewPart {
 	private TasksFilter filter = new TasksFilter();
 	private IMemento memento;
 
+	private boolean markerLimitExceeded;
+	private Composite parent;
+	private StackLayout stackLayout = new StackLayout();
+	private Composite compositeMarkerLimitExceeded;
+	
 	private CellEditorActionHandler editorActionHandler;
 	private TaskAction newTaskAction;
 	private TaskAction copyTaskAction;
@@ -295,10 +300,31 @@ void createColumns() {
 	}
 	return buf.toString();
 }
+
+/* package */ boolean isMarkerLimitExceeded() {
+	return markerLimitExceeded;
+}
+
+/* package */ void setMarkerLimitExceeded(boolean markerLimitExceeded) {
+	this.markerLimitExceeded = markerLimitExceeded;
+	
+	if (markerLimitExceeded) {
+		stackLayout.topControl = compositeMarkerLimitExceeded;
+		viewer.setSelection(null);
+	}
+	else {
+		stackLayout.topControl = table;
+	}
+
+	parent.layout();
+	viewer.refresh();
+}
+
 /* (non-Javadoc)
  * Method declared on IWorkbenchPart.
  */
 public void createPartControl(Composite parent) {
+	this.parent = parent;
 	clipboard = new Clipboard(parent.getDisplay());
 	createTable(parent);
 	viewer = new TableViewer(table);
@@ -408,6 +434,17 @@ public void createPartControl(Composite parent) {
 			WorkbenchHelp.displayHelp(contextId);
 		}
 	});
+
+	compositeMarkerLimitExceeded = new Composite(parent, SWT.NONE);
+	compositeMarkerLimitExceeded.setLayout(new GridLayout());
+
+	Label labelMarkerLimitExceeded = new Label(compositeMarkerLimitExceeded, 
+			SWT.WRAP);
+	labelMarkerLimitExceeded.setText(TaskListMessages.getString(
+		"TaskList.markerLimitExceeded")); //$NON-NLS-1$
+
+	parent.setLayout(stackLayout);	
+	setMarkerLimitExceeded(false);
 
 	// Prime the status line and title.
 	updateStatusMessage();
@@ -571,9 +608,10 @@ String getStatusMessage(IStructuredSelection selection) {
 	}
 	TaskListContentProvider provider = (TaskListContentProvider) viewer.getContentProvider();
 	if (selection.size() > 1) {
-		return provider.getStatusSummary(selection);
+		return provider.getStatusSummarySelected(selection);
+	} else {
+		return provider.getStatusSummaryVisible();
 	}
-	return provider.getStatusSummary();
 }
 /**
  * When created, new task instance is cached in
@@ -612,32 +650,6 @@ public void init(IViewSite site,IMemento memento) throws PartInitException {
  */
 boolean isAffectedBy(IMarkerDelta markerDelta) {
 	return checkResource(markerDelta.getResource()) && getFilter().select(markerDelta);
-}
-
-/**
- * Returns whether the given marker is a subtype of one of the root types.
- */
-boolean isRootType(IMarker marker) {
-	String[] types = TasksFilter.ROOT_TYPES;
-	for (int i = 0; i < types.length; ++i) {
-		if (MarkerUtil.isMarkerType(marker, types[i])) {
-			return true;
-		}
-	}
-	return false;
-}	
-
-/**
- * Returns whether the given marker delta is a subtype of one of the root types.
- */
-boolean isRootType(IMarkerDelta markerDelta) {
-	String[] types = TasksFilter.ROOT_TYPES;
-	for (int i = 0; i < types.length; ++i) {
-		if (markerDelta.isSubtypeOf(types[i])) {
-			return true;
-		}
-	}
-	return false;
 }
 
 /**
@@ -750,11 +762,7 @@ void makeActions() {
  * The markers have changed.  Update the status line and title bar.
  */
 void markersChanged() {
-	// Only update the status if active, since this may be expensive.
-	if (getSite().getPage().getActivePart() == this) {
-		updateStatusMessage();
-	}
-	// Always update the title, since it can be seen even if not active
+	updateStatusMessage();
 	updateTitle();
 }
 void partActivated(IWorkbenchPart part) {
@@ -904,6 +912,7 @@ public void saveState(IMemento memento) {
 void selectionChanged(SelectionChangedEvent event) {
 	IStructuredSelection selection = (IStructuredSelection) event.getSelection();
 	updateStatusMessage(selection);
+	updateTitle();
 		
 	updatePasteEnablement();
 
@@ -1168,12 +1177,12 @@ void updateStatusMessage(IStructuredSelection selection) {
 void updateTitle() {
 	String viewName = getConfigurationElement().getAttribute("name"); //$NON-NLS-1$
 	TaskListContentProvider provider = (TaskListContentProvider) getTableViewer().getContentProvider();
-	String summary = provider.getFilterSummary();
+	String summary = provider.getTitleSummary();
 	if ("".equals(summary)) { //$NON-NLS-1$
 		setTitle(viewName);
 	}
 	else {
-		String title = TaskListMessages.format("TaskList.titleFmt", new Object[] { viewName, summary }); //$NON-NLS-1$
+		String title = TaskListMessages.format("TaskList.title", new Object[] { viewName, summary }); //$NON-NLS-1$
 		setTitle(title);
 	}
 }

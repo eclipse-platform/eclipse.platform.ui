@@ -50,7 +50,7 @@ public MarkerType[] getTypes() {
  * Returns the label for the given marker type.
  * Workaround until we have labels in XML.
  */
-String getWellKnownLabel(String type) {
+private String getWellKnownLabel(String type) {
 	if (type.equals(IMarker.PROBLEM))
 		return "Problem";//$NON-NLS-1$
 	if (type.equals(IMarker.TASK))
@@ -62,7 +62,7 @@ String getWellKnownLabel(String type) {
 /**
  * Reads the marker types from the registry.
  */
-HashMap readTypes() {
+private HashMap readTypes() {
 	HashMap types = new HashMap();
 	IExtensionPoint point = Platform.getPluginRegistry().getExtensionPoint(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_MARKERS);
 	if (point != null) {

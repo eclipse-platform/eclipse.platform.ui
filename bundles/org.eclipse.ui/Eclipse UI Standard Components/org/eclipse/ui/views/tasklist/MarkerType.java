@@ -35,7 +35,7 @@ public MarkerType[] getAllSupertypes() {
 /**
  * Appends all this type's supertypes to the given list.
  */
-void getAllSupertypes(ArrayList result) {
+private void getAllSupertypes(ArrayList result) {
 	MarkerType[] supers = getSupertypes();
 	for (int i = 0; i < supers.length; ++i) {
 		MarkerType sup = supers[i];
