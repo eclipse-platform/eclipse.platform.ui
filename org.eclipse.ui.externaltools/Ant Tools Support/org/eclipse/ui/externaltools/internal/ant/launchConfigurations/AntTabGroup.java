@@ -1,4 +1,4 @@
-package org.eclipse.ui.externaltools.launchConfigurations;
+package org.eclipse.ui.externaltools.internal.ant.launchConfigurations;
 
 /**********************************************************************
 Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
@@ -10,8 +10,12 @@ http://www.eclipse.org/legal/cpl-v10.html
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
+import org.eclipse.ui.externaltools.launchConfigurations.ExternalToolsMainTab;
+import org.eclipse.ui.externaltools.launchConfigurations.ExternalToolsOptionTab;
+import org.eclipse.ui.externaltools.launchConfigurations.ExternalToolsRefreshTab;
 
-public class ExternalToolsTabGroup extends AbstractLaunchConfigurationTabGroup {
+
+public class AntTabGroup extends AbstractLaunchConfigurationTabGroup {
 
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTabGroup#createTabs(org.eclipse.debug.ui.ILaunchConfigurationDialog, java.lang.String)
@@ -20,7 +24,8 @@ public class ExternalToolsTabGroup extends AbstractLaunchConfigurationTabGroup {
 		ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[] {
 			new ExternalToolsMainTab(),
 			new ExternalToolsOptionTab(),
-			new ExternalToolsRefreshTab()
+			new ExternalToolsRefreshTab(),
+			new AntTargetsTab()
 		};
 		setTabs(tabs);
 	}

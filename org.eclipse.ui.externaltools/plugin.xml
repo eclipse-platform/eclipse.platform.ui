@@ -351,7 +351,12 @@
 		<launchConfigurationTabGroup
 			id="org.eclipse.ui.externaltools.launchConfigurationTabGroup.program"
 			type ="org.eclipse.ui.externaltools.ProgramLaunchConfigurationType"
-			class="org.eclipse.ui.externaltools.launchConfigurations.ExternalToolsTabGroup">
+			class="org.eclipse.ui.externaltools.internal.program.launchConfigurations.ProgramTabGroup">
+		</launchConfigurationTabGroup>
+		<launchConfigurationTabGroup
+			id="org.eclipse.ui.externaltools.launchConfigurationTabGroup.ant"
+			type ="org.eclipse.ant.AntLaunchConfigurationType"
+			class="org.eclipse.ui.externaltools.internal.ant.launchConfigurations.AntTabGroup">
 		</launchConfigurationTabGroup>
 	</extension>
     
