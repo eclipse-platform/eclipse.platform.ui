@@ -300,18 +300,20 @@ public class AddDeleteMoveListener implements IResourceDeltaVisitor, IResourceCh
 					}
 				} else if (resource.getType() == IResource.FOLDER) {
 					ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
-					if (cvsResource.isManaged()) {
+					if (cvsResource.isManaged() || cvsResource.isIgnored()) {
 						IMarker marker = getAdditionMarker(resource);
 						if (marker != null) {
 							marker.delete();
 							// Check to see if there are unmanaged, unignored children
 							// If there are, mark them
-							IResource[] children = ((IFolder)resource).members();
-							for (int j = 0; j < children.length; j++) {
-								IResource iResource = children[j];
-								ICVSResource child = CVSWorkspaceRoot.getCVSResourceFor(iResource);
-								if ( ! child.isManaged() && ! child.isIgnored()) {
-									createAdditonMarker(iResource);
+							if (cvsResource.isManaged()) {
+								IResource[] children = ((IFolder)resource).members();
+								for (int j = 0; j < children.length; j++) {
+									IResource iResource = children[j];
+									ICVSResource child = CVSWorkspaceRoot.getCVSResourceFor(iResource);
+									if ( ! child.isManaged() && ! child.isIgnored()) {
+										createAdditonMarker(iResource);
+									}
 								}
 							}
 						}
