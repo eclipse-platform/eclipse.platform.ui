@@ -278,6 +278,7 @@ public class JobManager implements IJobManager {
 			job.setResult(result);
 			changeState(job, Job.NONE);
 			job.setMonitor(null);
+			job.setThread(null);
 			blocked = job.previous();
 			job.setPrevious(null);
 		}

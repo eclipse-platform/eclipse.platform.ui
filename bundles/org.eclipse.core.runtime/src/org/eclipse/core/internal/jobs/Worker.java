@@ -66,7 +66,6 @@ public class Worker extends Thread {
 				} catch (LinkageError e) {
 					result = handleException(currentJob, e);
 				} finally {
-					currentJob.setThread(null);
 					//clear interrupted state for this thread
 					Thread.interrupted();
 					if ((result.getSeverity() & (IStatus.ERROR | IStatus.WARNING)) != 0)
