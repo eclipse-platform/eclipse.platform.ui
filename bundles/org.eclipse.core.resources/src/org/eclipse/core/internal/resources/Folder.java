@@ -89,6 +89,7 @@ public void create(int updateFlags, boolean local, IProgressMonitor monitor) thr
 				}
 			}
 			internalCreate(force, local, Policy.subMonitorFor(monitor, Policy.opWork));
+			workspace.getAliasManager().updateAliases(this, getLocation(), IResource.DEPTH_ZERO, monitor);
 		} catch (OperationCanceledException e) {
 			workspace.getWorkManager().operationCanceled();
 			throw e;
