@@ -175,7 +175,10 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.application.WorkbenchAdvisor#preStartup()
 	 */
-	public void preStartup() {	    
+	public void preStartup() {	  
+		
+		//Suspend background jobs while we startup
+		Platform.getJobManager().suspend();
 		// collect the welcome perspectives of the new installed features
 		initializeFeatureSets();
 		Set s = getNewlyAddedFeatures();
@@ -195,9 +198,14 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	 * @see org.eclipse.ui.application.WorkbenchAdvisor#postStartup()
 	 */
 	public void postStartup() {
-		refreshFromLocal();
-				
-		checkUpdates();
+		try{
+			refreshFromLocal();
+			checkUpdates();
+		}
+		finally{//Resume background jobs after we startup
+			Platform.getJobManager().resume();
+		}
+
 	}
 
 	/* (non-Javadoc)
