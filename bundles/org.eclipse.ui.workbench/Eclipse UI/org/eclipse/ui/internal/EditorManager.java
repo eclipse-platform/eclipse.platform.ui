@@ -44,7 +44,7 @@ import org.eclipse.ui.part.MultiEditorInput;
  * <li>The editor should persist its own state plus editor input.</li>
  * </ol>
  */
-public class EditorManager {
+public class EditorManager { 
 	private EditorPresentation editorPresentation;
 	private WorkbenchWindow window;
 	private WorkbenchPage page;
