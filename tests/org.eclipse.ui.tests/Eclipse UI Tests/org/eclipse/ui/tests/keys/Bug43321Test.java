@@ -32,6 +32,7 @@ import org.eclipse.ui.tests.util.UITestCase;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.internal.commands.ws.WorkbenchCommandSupport;
 
 /**
  * Tests Bug 43321
@@ -77,7 +78,9 @@ public class Bug43321Test extends UITestCase {
 		List keyStrokes = new ArrayList();
 		keyStrokes.add(KeyStroke.getInstance("CTRL+C")); //$NON-NLS-1$
 		Event event = new Event();
-		((Workbench) window.getWorkbench()).getCommandSupport().getKeyboard().press(keyStrokes, event, false);
+		Workbench workbench = ((Workbench) window.getWorkbench());
+		WorkbenchCommandSupport support = (WorkbenchCommandSupport) workbench.getCommandSupport();
+		support.getKeyboard().press(keyStrokes, event, false);
 
 		// Get the menu item we've just selected.
 		IAction action =

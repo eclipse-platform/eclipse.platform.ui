@@ -63,16 +63,6 @@ public interface IWorkbenchCommandSupport {
 	ICompoundCommandHandlerService getCompoundCommandHandlerService();
 
 	/**
-	 * An accessor for the keyboard interface this workbench is using. This can
-	 * be used by external class to get a reference with which they can
-	 * simulate key presses in the key binding architecture. This is used for
-	 * testing purposes currently.
-	 * 
-	 * @return A reference to the workbench keyboard interface; never <code>null</code>.
-	 */
-	public WorkbenchKeyboard getKeyboard();
-
-	/**
 	 * Tests whether the global key binding architecture is currently active.
 	 * 
 	 * @return <code>true</code> if the key bindings are active; <code>false</code>

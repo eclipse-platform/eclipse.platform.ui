@@ -127,10 +127,15 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
 		return compoundCommandHandlerService;
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * <p>
+	 * An accessor for the keyboard interface this workbench is using. This can
+	 * be used by external class to get a reference with which they can
+	 * simulate key presses in the key binding architecture. This is used for
+	 * testing purposes currently.
+	 * </p>
 	 * 
-	 * @see org.eclipse.ui.commands.IWorkbenchCommandSupport#getKeyboard()
+	 * @return A reference to the workbench keyboard interface; never <code>null</code>.
 	 */
 	public WorkbenchKeyboard getKeyboard() {
 		return keyboard;

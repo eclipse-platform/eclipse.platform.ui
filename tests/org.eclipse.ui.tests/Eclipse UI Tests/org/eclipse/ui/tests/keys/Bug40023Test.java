@@ -26,6 +26,7 @@ import org.eclipse.ui.keys.ParseException;
 import org.eclipse.ui.tests.util.UITestCase;
 
 import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.internal.commands.ws.WorkbenchCommandSupport;
 
 /**
  * Tests Bug 40023
@@ -94,7 +95,8 @@ public class Bug40023Test extends UITestCase {
 		List keyStrokes = new ArrayList();
 		keyStrokes.add(KeyStroke.getInstance(keySequenceText));
 		Event event = new Event();
-		workbench.getCommandSupport().getKeyboard().press(keyStrokes, event, false);
+		WorkbenchCommandSupport support = (WorkbenchCommandSupport) workbench.getCommandSupport();
+		support.getKeyboard().press(keyStrokes, event, false);
 
 		// Check that the "Lock Toolbars" menu item is now checked.
 		Shell shell = window.getShell();
