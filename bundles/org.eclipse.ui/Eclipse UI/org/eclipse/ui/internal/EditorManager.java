@@ -282,7 +282,7 @@ public class EditorManager {
 		if (componentEditor != null) {
 			openInternalEditor(componentEditor, null, input, setVisible);
 			Workbench wb = (Workbench) window.getWorkbench();
-			wb.getEditorHistory().add(input);
+			wb.getEditorHistory().add(input, desc);
 			return componentEditor;
 		}
 
@@ -290,7 +290,7 @@ public class EditorManager {
 		if (testForSystemEditor(file)) {
 			openSystemEditor(file);
 			Workbench wb = (Workbench) window.getWorkbench();
-			wb.getEditorHistory().add(input);
+			wb.getEditorHistory().add(input, desc);
 			return null;
 		}
 
@@ -375,7 +375,7 @@ public class EditorManager {
 			result = null;
 		}
 		Workbench wb = (Workbench) window.getWorkbench();
-		wb.getEditorHistory().add(input);
+		wb.getEditorHistory().add(input, desc);
 		return result;
 	}
 	/**
