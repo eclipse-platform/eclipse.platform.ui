@@ -69,7 +69,7 @@ public class TitleAreaDialog extends Dialog {
 
 	private String message = ""; //$NON-NLS-1$
 	private String errorMessage;
-	private Text messageLabel;
+	private Label messageLabel;
 
 	private Label messageImageLabel;
 	private Image messageImage;
@@ -229,7 +229,7 @@ private Control createTitleArea(Composite parent) {
 	messageImageLabel.setBackground(background);
 
 	// Message label @ bottom, center
-	messageLabel = new Text(parent, SWT.WRAP | SWT.READ_ONLY);
+	messageLabel = new Label(parent, SWT.WRAP | SWT.READ_ONLY);
 	JFaceColors.setColors(messageLabel,foreground,background);
 	messageLabel.setText(" \n "); // two lines//$NON-NLS-1$
 	messageLabel.setFont(JFaceResources.getDialogFont());
