@@ -347,8 +347,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	
 	};
 	
-	/** Key used to look up font preference */
-	public final static String PREFERENCE_FONT= "AbstractTextEditor.Font";
 	/** Menu id for the editor context menu. */
 	public final static String DEFAULT_EDITOR_CONTEXT_MENU_ID= "#EditorContext";
 	/** Menu id for the ruler context menu. */
@@ -1309,7 +1307,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		if (fSourceViewer == null)
 			return;
 			
-		if (PREFERENCE_FONT.equals(event.getProperty()))
+		if (JFaceResources.TEXT_FONT.equals(event.getProperty()))
 			initializeWidgetFont(fSourceViewer.getTextWidget());
 	}
 	/*
@@ -1375,30 +1373,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	private void initializeWidgetFont(StyledText styledText) {
 		
-		IPreferenceStore store= getPreferenceStore();
-		if (store != null) {
-			
-			FontData data= null;
-			
-			if (store.contains(PREFERENCE_FONT) && !store.isDefault(PREFERENCE_FONT))
-				data= PreferenceConverter.getFontData(store, PREFERENCE_FONT);
-			else
-				data= PreferenceConverter.getDefaultFontData(store, PREFERENCE_FONT);
-			
-			if (data != null) {
-				
-				Font font= new Font(styledText.getDisplay(), data);
-				styledText.setFont(font);
-				
-				if (fFont != null)
-					fFont.dispose();
-					
-				fFont= font;
-				return;
-			}
-		}
-		
-		// if all the preferences failed
 		styledText.setFont(JFaceResources.getTextFont());
 	}
 	/*
