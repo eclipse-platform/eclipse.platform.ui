@@ -52,7 +52,8 @@ class DecoratorOverlayIcon extends CompositeImageDescriptor {
 	 * Draw the overlays for the reciever.
 	 */
 	protected void drawOverlays(ImageDescriptor[] overlays) {
-		Point size = getSize();
+		Point size = getSize();	
+			
 		for (int i = 0; i < overlays.length; i++) {
 			ImageDescriptor overlay = overlays[i];
 			if (overlay == null)
@@ -96,6 +97,9 @@ class DecoratorOverlayIcon extends CompositeImageDescriptor {
 	}
 
 	protected void drawCompositeImage(int width, int height) {
+		ImageDescriptor underlay = overlays[DecoratorRegistryReader.UNDERLAY];
+		if(underlay != null)
+			drawImage(underlay.getImageData(),0,0);
 		drawImage(base.getImageData(), 0, 0);
 		drawOverlays(overlays);
 	}
