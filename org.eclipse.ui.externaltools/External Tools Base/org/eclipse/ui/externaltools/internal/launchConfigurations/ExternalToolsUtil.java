@@ -33,7 +33,7 @@ import org.eclipse.ui.externaltools.internal.model.ToolUtil;
 import org.eclipse.ui.externaltools.internal.registry.ExternalToolMigration;
 import org.eclipse.ui.externaltools.internal.variables.RefreshScopeVariableRegistry;
 import org.eclipse.debug.ui.variables.ExpandVariableContext;
-import org.eclipse.debug.ui.variables.ExternalToolVariable;
+import org.eclipse.debug.ui.variables.LaunchConfigurationVariable;
 import org.eclipse.debug.ui.variables.VariableContextManager;
 import org.eclipse.debug.ui.variables.VariableUtil;
 
@@ -315,7 +315,7 @@ public class ExternalToolsUtil {
 		}
 
 		RefreshScopeVariableRegistry registry = ExternalToolsPlugin.getDefault().getRefreshVariableRegistry();
-		ExternalToolVariable variable = registry.getVariable(varDef.name);
+		LaunchConfigurationVariable variable = registry.getVariable(varDef.name);
 		if (variable == null) {
 			String msg = MessageFormat.format(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsUtil.noRefreshVarNamed"), new Object[] { configuration.getName(), varDef.name }); //$NON-NLS-1$
 			abort(msg, null, 0);

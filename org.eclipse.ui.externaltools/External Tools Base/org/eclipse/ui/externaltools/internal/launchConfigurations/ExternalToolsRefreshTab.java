@@ -15,8 +15,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
-import org.eclipse.debug.ui.variables.ExternalToolVariable;
-import org.eclipse.debug.ui.variables.ExternalToolVariableForm;
+import org.eclipse.debug.ui.variables.LaunchConfigurationVariable;
+import org.eclipse.debug.ui.variables.LaunchConfigurationVariableForm;
 import org.eclipse.debug.ui.variables.IVariableComponentContainer;
 import org.eclipse.debug.ui.variables.VariableUtil;
 import org.eclipse.jface.dialogs.IMessageProvider;
@@ -36,7 +36,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 
 public class ExternalToolsRefreshTab extends AbstractLaunchConfigurationTab implements IVariableComponentContainer {
 
-	private ExternalToolVariableForm variableForm;
+	private LaunchConfigurationVariableForm variableForm;
 	
 	protected Button refreshField;
 	protected Button recursiveField;
@@ -108,8 +108,8 @@ public class ExternalToolsRefreshTab extends AbstractLaunchConfigurationTab impl
 	 */
 	private void createScopeComponent(Composite parent) {
 		String label = ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsRefreshTab.Choose_scope_v&ariable___2"); //$NON-NLS-1$
-		ExternalToolVariable[] vars = ExternalToolsPlugin.getDefault().getRefreshVariableRegistry().getVariables();
-		variableForm = new ExternalToolVariableForm(label, vars);
+		LaunchConfigurationVariable[] vars = ExternalToolsPlugin.getDefault().getRefreshVariableRegistry().getVariables();
+		variableForm = new LaunchConfigurationVariableForm(label, vars);
 		variableForm.createContents(parent, this);
 	}
 	

@@ -65,7 +65,7 @@ public class LaunchConfigurationVariableRegistry {
 	protected String pluginId;
 	
 	public LaunchConfigurationVariableRegistry() {
-		this(DebugUIPlugin.getUniqueIdentifier(), IVariableConstants.EXTENSION_POINT_TOOL_VARIABLES);
+		this(DebugUIPlugin.getUniqueIdentifier(), IVariableConstants.EXTENSION_POINT_CONFIGURATION_VARIABLES);
 	}
 	
 	/**

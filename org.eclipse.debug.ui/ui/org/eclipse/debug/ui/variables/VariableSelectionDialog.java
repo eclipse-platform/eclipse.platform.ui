@@ -24,10 +24,11 @@ import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
- * Dialog that prompts the user to select an external tools variable
+ * Dialog that prompts the user to select a launch configuration variable.
+ * @since 3.0
  */
 public class VariableSelectionDialog extends SelectionDialog {
-	private ExternalToolVariableForm form;
+	private LaunchConfigurationVariableForm form;
 	public VariableSelectionDialog(Shell parent) {
 		super(parent);
 		setShellStyle(getShellStyle() | SWT.RESIZE);
@@ -43,8 +44,8 @@ public class VariableSelectionDialog extends SelectionDialog {
 	protected Control createDialogArea(Composite parent) {
 		// Create the dialog area
 		Composite composite= (Composite)super.createDialogArea(parent);
-		ExternalToolVariable[] variables= DebugUIPlugin.getDefault().getToolVariableRegistry().getVariables();
-		form= new ExternalToolVariableForm(LaunchConfigurationsMessages.getString("VariableSelectionDialog.Choose_a_variable__2"), variables); //$NON-NLS-1$
+		LaunchConfigurationVariable[] variables= DebugUIPlugin.getDefault().getToolVariableRegistry().getVariables();
+		form= new LaunchConfigurationVariableForm(LaunchConfigurationsMessages.getString("VariableSelectionDialog.Choose_a_variable__2"), variables); //$NON-NLS-1$
 		form.createContents(composite, new IVariableComponentContainer() {
 			
 			public void setErrorMessage(String errorMessage) {
@@ -76,7 +77,7 @@ public class VariableSelectionDialog extends SelectionDialog {
 		return composite;
 	}
 
-	public ExternalToolVariableForm getForm() {
+	public LaunchConfigurationVariableForm getForm() {
 		return form;
 	}
 }

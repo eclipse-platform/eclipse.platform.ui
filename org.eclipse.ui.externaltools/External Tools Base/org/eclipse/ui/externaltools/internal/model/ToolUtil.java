@@ -25,8 +25,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.variables.ExpandVariableContext;
-import org.eclipse.debug.ui.variables.ExternalToolVariable;
-import org.eclipse.debug.ui.variables.ExternalToolVariableRegistry;
+import org.eclipse.debug.ui.variables.LaunchConfigurationVariable;
+import org.eclipse.debug.ui.variables.LaunchConfigurationVariableRegistry;
 import org.eclipse.debug.ui.variables.VariableUtil;
 
 /**
@@ -112,8 +112,8 @@ public final class ToolUtil {
 			start = varDef.end;
 			
 			// Lookup the variable if it exist
-			ExternalToolVariableRegistry registry = DebugUIPlugin.getDefault().getToolVariableRegistry();
-			ExternalToolVariable variable = registry.getVariable(varDef.name);
+			LaunchConfigurationVariableRegistry registry = DebugUIPlugin.getDefault().getToolVariableRegistry();
+			LaunchConfigurationVariable variable = registry.getVariable(varDef.name);
 			if (variable == null) {
 				String msg = MessageFormat.format(ExternalToolsModelMessages.getString("ToolUtil.argumentVarMissing"), new Object[] {varDef.name}); //$NON-NLS-1$
 				status.merge(ExternalToolsPlugin.newErrorStatus(msg, null));
@@ -194,9 +194,9 @@ public final class ToolUtil {
 			buffer.append(dirLocation.substring(start, varDef.start));
 			
 			// Lookup the variable if it exist
-			ExternalToolVariableRegistry registry;
+			LaunchConfigurationVariableRegistry registry;
 			registry = DebugUIPlugin.getDefault().getToolVariableRegistry();
-			ExternalToolVariable variable = registry.getVariable(varDef.name);
+			LaunchConfigurationVariable variable = registry.getVariable(varDef.name);
 			if (variable == null) {
 				String msg = MessageFormat.format(ExternalToolsModelMessages.getString("ToolUtil.dirLocVarMissing"), new Object[] {varDef.name}); //$NON-NLS-1$
 				status.merge(ExternalToolsPlugin.newErrorStatus(msg, null));
@@ -256,9 +256,9 @@ public final class ToolUtil {
 			buffer.append(fileLocation.substring(start, varDef.start));
 		
 			// Lookup the variable if it exist
-			ExternalToolVariableRegistry registry;
+			LaunchConfigurationVariableRegistry registry;
 			registry = DebugUIPlugin.getDefault().getToolVariableRegistry();
-			ExternalToolVariable variable = registry.getVariable(varDef.name);
+			LaunchConfigurationVariable variable = registry.getVariable(varDef.name);
 			if (variable == null) {
 				String msg = MessageFormat.format(ExternalToolsModelMessages.getString("ToolUtil.fileLocVarMissing"), new Object[] {varDef.name}); //$NON-NLS-1$
 				status.merge(ExternalToolsPlugin.newErrorStatus(msg, null));

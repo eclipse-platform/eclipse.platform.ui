@@ -22,7 +22,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
-import org.eclipse.debug.ui.variables.ExternalToolVariableRegistry;
+import org.eclipse.debug.ui.variables.LaunchConfigurationVariableRegistry;
 import org.eclipse.debug.ui.variables.IVariableConstants;
 import org.eclipse.debug.ui.variables.VariableSelectionDialog;
 import org.eclipse.debug.ui.variables.VariableUtil;
@@ -433,7 +433,7 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 			if (variable.name == null || variable.name.length() == 0) {
 				return ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.No_variable_specified"); //$NON-NLS-1$
 			}
-			ExternalToolVariableRegistry registry = DebugUIPlugin.getDefault().getToolVariableRegistry();
+			LaunchConfigurationVariableRegistry registry = DebugUIPlugin.getDefault().getToolVariableRegistry();
 			if (registry.getVariable(variable.name) == null) {
 				return MessageFormat.format(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Unknown_variable"), new String[] {variable.name}); //$NON-NLS-1$
 			}

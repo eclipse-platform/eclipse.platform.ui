@@ -98,8 +98,8 @@ public interface IVariableConstants {
 	public static final String VAR_WORKING_SET = "working_set"; //$NON-NLS-1$
 	/**
 	 * Extension point to declare external tool variables. 
-	 * (value<code>toolVariables</code>).
+	 * (value<code>launchConfigurationVariables</code>).
 	 */
-	public static final String EXTENSION_POINT_TOOL_VARIABLES = "launchConfigurationVariables"; //$NON-NLS-1$
+	public static final String EXTENSION_POINT_CONFIGURATION_VARIABLES = "launchConfigurationVariables"; //$NON-NLS-1$
 	
 }
