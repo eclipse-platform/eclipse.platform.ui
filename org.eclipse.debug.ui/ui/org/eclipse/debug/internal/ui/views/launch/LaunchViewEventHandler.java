@@ -167,6 +167,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 		labelChanged(thread);
 		getLaunchViewer().updateStackFrameIcons(thread);
 		resetStackFrameCount(thread);
+		getLaunchView().clearSourceSelection();
 	}
 	
 	protected void resetStackFrameCount(IThread thread) {

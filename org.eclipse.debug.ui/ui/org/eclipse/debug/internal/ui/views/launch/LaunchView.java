@@ -441,6 +441,11 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 				}
 				
 				IStackFrame stackFrame= (IStackFrame) obj;
+				
+				if (!stackFrame.isSuspended()) {
+					return;
+				}
+				
 				if (stackFrame.equals(getStackFrame())) {
 					if (getEditorInput() == null || getEditorId() == null) {
 						lookupEditorInput();
