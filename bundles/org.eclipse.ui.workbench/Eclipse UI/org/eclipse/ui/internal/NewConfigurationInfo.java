@@ -10,12 +10,21 @@ package org.eclipse.ui.internal;
 import java.io.IOException;
 import java.net.URL;
 import java.text.MessageFormat;
+import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.boot.IPlatformConfiguration;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.IPluginRegistry;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.PluginVersionIdentifier;
+import org.eclipse.core.runtime.Status;
 
 /**
  * Configuation info class;
@@ -182,9 +191,10 @@ public abstract class NewConfigurationInfo {
 	 * @param value the value or <code>null</code>
 	 * @param b the resource bundle or <code>null</code>
 	 * @param mappings 
+	 * @param runtime mappings or <code>null</code>
 	 * @return the resource string
 	 */
-	protected String getResourceString(String value, ResourceBundle b, String[] mappings) {
+	protected String getResourceString(String value, ResourceBundle b, String[] mappings, Hashtable runtimeMappings) {
 		
 		if(value == null)
 			return null;
@@ -209,7 +219,19 @@ public abstract class NewConfigurationInfo {
 			reportINIFailure(e, "Property \"" + key + "\" not found");//$NON-NLS-1$ //$NON-NLS-2$
 			return dflt;
 		}
-		
+		if (runtimeMappings != null) {
+			for (Enumeration e = runtimeMappings.keys(); e.hasMoreElements();) {
+				String keyValue = (String) e.nextElement();
+				int i = result.indexOf(keyValue);
+				if (i != -1) {
+					String s1 = result.substring(0,i);
+					String s2 = (String) runtimeMappings.get(keyValue);
+					String s3 = result.substring(i+keyValue.length());
+					result = s1 + s2 + s3;
+				}
+			}
+		}
+	
 		if (result.indexOf('{') != -1) {
 			// We test for the curly braces since due to NL issues we do not
 			// want to use MessageFormat unless we have to.

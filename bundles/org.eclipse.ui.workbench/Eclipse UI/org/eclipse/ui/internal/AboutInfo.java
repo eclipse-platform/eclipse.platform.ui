@@ -327,10 +327,16 @@ public class AboutInfo extends NewConfigurationInfo {
 		}
 		String[] mappingsArray = (String[])mappingsList.toArray(new String[mappingsList.size()]);
 
+		Hashtable runtimeMappings  = new Hashtable();
+		String featureVersion = getVersion();
+		if (featureVersion==null)
+			featureVersion=WorkbenchMessages.getString("AboutDialog.notSpecified"); //$NON-NLS-1$
+		runtimeMappings.put("{featureVersion}", featureVersion); //$NON-NLS-1$
+
 		windowImage = getImage(ini, "windowImage"); //$NON-NLS-1$
 
 		aboutText = (String) ini.get("aboutText"); //$NON-NLS-1$
-		aboutText = getResourceString(aboutText, bundle, mappingsArray);
+		aboutText = getResourceString(aboutText, bundle, mappingsArray, runtimeMappings);
 		
 		aboutImage = getImage(ini, "aboutImage"); //$NON-NLS-1$
 
@@ -341,7 +347,7 @@ public class AboutInfo extends NewConfigurationInfo {
 		welcomePerspective = (String) ini.get("welcomePerspective"); //$NON-NLS-1$
 
 		appName = (String) ini.get("appName"); //$NON-NLS-1$
-		appName = getResourceString(appName, bundle, mappingsArray);
+		appName = getResourceString(appName, bundle, mappingsArray, null);
 
 	}
 
