@@ -53,8 +53,17 @@ class StatusLineProgressListener implements IJobProgressManagerListener {
 			return Status.OK_STATUS;
 		}
 
-		void setMessage(String newMessage) {
+		/**
+		 * Set the message for the receiver. If it is a new
+		 * message return a boolean.
+		 * @param newMessage
+		 * @return boolean. true if an update is required
+		 */
+		synchronized boolean setMessage(String newMessage) {
+			if (newMessage.equals(message))
+				return false;
 			message = newMessage;
+			return true;
 		}
 
 		/**
@@ -63,11 +72,7 @@ class StatusLineProgressListener implements IJobProgressManagerListener {
 		 * @return
 		 */
 		private IStatusLineManager getStatusLineManager() {
-			IWorkbenchWindow window =
-				WorkbenchPlugin
-					.getDefault()
-					.getWorkbench()
-					.getActiveWorkbenchWindow();
+			IWorkbenchWindow window = WorkbenchPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow();
 			if (window != null && window instanceof WorkbenchWindow)
 				return ((WorkbenchWindow) window).getStatusLineManager();
 			return null;
@@ -93,8 +98,7 @@ class StatusLineProgressListener implements IJobProgressManagerListener {
 		if (info.getJob().getState() != Job.RUNNING)
 			return;
 
-		refreshJob.setMessage(info.getDisplayString());
-		refreshJob.schedule(100);
+		updateForMessage(info.getDisplayString());
 	}
 
 	/* (non-Javadoc)
@@ -110,10 +114,9 @@ class StatusLineProgressListener implements IJobProgressManagerListener {
 
 		jobInfos.remove(info);
 
-		refreshJob.setMessage(getNextMessage());
-		refreshJob.schedule(100);
+		updateForMessage(getNextMessage());
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#showsDebug()
 	 */
@@ -139,6 +142,18 @@ class StatusLineProgressListener implements IJobProgressManagerListener {
 		}
 		return new String();
 
+	}
+
+	/**
+	 * Queue and update job for the receiver for this message.
+	 * If this was the same as the previous message then do 
+	 * nothing. 
+	 * @param message String
+	 */
+	private void updateForMessage(String message) {
+
+		if (refreshJob.setMessage(message))
+			refreshJob.schedule(100);
 	}
 
 }
