@@ -17,6 +17,10 @@ import java.util.Iterator;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.*;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
@@ -37,6 +41,11 @@ public class ErrorDialog extends IconAndMessageDialog {
 	 * Reserve room for this many list items.
 	 */
 	private static final int LIST_ITEM_COUNT = 7;
+
+	/**
+	 * The nesting indent.
+	 */
+	private static final String NESTING_INDENT = "  "; //$NON-NLS-1$
 
 	/**
 	 * The Details button.
@@ -242,6 +251,28 @@ public class ErrorDialog extends IconAndMessageDialog {
 		data.horizontalSpan = 2;
 		list.setLayoutData(data);
 		list.setFont(parent.getFont());
+
+		Menu copyMenu = new Menu(list);
+		MenuItem copyItem = new MenuItem(copyMenu, SWT.NONE);
+		copyItem.addSelectionListener(new SelectionListener() {
+			/*
+			 * @see SelectionListener.widgetSelected (SelectionEvent)
+			 */
+			public void widgetSelected(SelectionEvent e) {
+				copyToClipboard();
+			}
+
+			/*
+			 * @see SelectionListener.widgetDefaultSelected(SelectionEvent)
+			 */
+			public void widgetDefaultSelected(SelectionEvent e) {
+				copyToClipboard();
+			}
+
+		});
+		copyItem.setText(JFaceResources.getString("copy"));
+		list.setMenu(copyMenu);
+
 		listCreated = true;
 		return list;
 	}
@@ -343,7 +374,7 @@ public class ErrorDialog extends IconAndMessageDialog {
 		}
 		StringBuffer sb = new StringBuffer();
 		for (int i = 0; i < nesting; i++) {
-			sb.append("  "); //$NON-NLS-1$
+			sb.append(NESTING_INDENT); //$NON-NLS-1$
 		}
 		sb.append(status.getMessage());
 		list.add(sb.toString());
@@ -394,5 +425,44 @@ public class ErrorDialog extends IconAndMessageDialog {
 		getShell().setSize(
 			new Point(windowSize.x, windowSize.y + (newSize.y - oldSize.y)));
 
+	}
+
+	/**
+	 * Put the details of the status of the error onto the 
+	 * stream.
+	 * @param status
+	 * @param buffer
+	 * @param nesting
+	 */
+	private void populateCopyBuffer(
+		IStatus status,
+		StringBuffer buffer,
+		int nesting) {
+		if (!status.matches(displayMask)) {
+			return;
+		}
+		for (int i = 0; i < nesting; i++) {
+			buffer.append(NESTING_INDENT); //$NON-NLS-1$
+		}
+		buffer.append(status.getMessage());
+		buffer.append("\n");
+
+		IStatus[] children = status.getChildren();
+		for (int i = 0; i < children.length; i++) {
+			populateCopyBuffer(children[i], buffer, nesting + 1);
+		}
+	}
+	
+	/**
+	 * Copy the contents of the statuses to the clipboard.
+	 */
+	private void copyToClipboard(){
+		StringBuffer statusBuffer = new StringBuffer();
+		populateCopyBuffer(status,statusBuffer,0);
+		Clipboard clipboard = new Clipboard(list.getDisplay());
+		clipboard.setContents(
+			new Object[] {statusBuffer.toString()},
+			new Transfer[] {TextTransfer.getInstance()}
+		);
 	}
 }
