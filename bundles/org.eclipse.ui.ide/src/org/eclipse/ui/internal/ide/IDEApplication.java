@@ -18,6 +18,7 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
+import java.util.StringTokenizer;
 
 import org.eclipse.core.boot.IPlatformRunnable;
 import org.eclipse.core.runtime.CoreException;
@@ -46,6 +47,10 @@ public final class IDEApplication implements IPlatformRunnable, IExecutableExten
 	private static final String WORKSPACE_VERSION_KEY = "org.eclipse.core.runtime"; //$NON-NLS-1$
 	private static final String WORKSPACE_VERSION_VALUE = "1"; //$NON-NLS-1$
 
+	private static final int MIN_JVM_VERSION_MAJOR = 1;
+	private static final int MIN_JVM_VERSION_MINOR = 4;
+	private static final int MIN_JVM_VERSION_SERVICE = 1;
+
 	/**
 	 * Creates a new IDE application.
 	 */
@@ -62,6 +67,12 @@ public final class IDEApplication implements IPlatformRunnable, IExecutableExten
 
 		try {
 			Shell shell = new Shell(display);
+
+			if (!checkJavaRuntimeVersion(shell)) {
+				Platform.endSplash();
+				return EXIT_OK;
+			}
+
 			try {
 				if (!checkInstanceLocation(shell)) {
 					Platform.endSplash();
@@ -97,6 +108,39 @@ public final class IDEApplication implements IPlatformRunnable, IExecutableExten
 	}
 
 	/**
+	 * Return a boolean value indicating whether or not the version of the Java runtime
+	 * ("java.version" system property) is deemed to be compatible with Eclipse.  
+	 * The current implementation compares only the version (and not things like vendor name), 
+	 * which matches the implementation that used to be in the runtime.
+	 */
+	private boolean checkJavaRuntimeVersion(Shell shell) {
+		try {
+			if (isCompatibleVersion(System.getProperty("java.version"))) //$NON-NLS-1$
+				return true;
+
+			// build the requirement into a version string
+			String reqVersion = Integer.toString(MIN_JVM_VERSION_MAJOR) + '.'
+					+ MIN_JVM_VERSION_MINOR + '.' + MIN_JVM_VERSION_SERVICE;
+
+			MessageDialog.openError(shell, IDEWorkbenchMessages
+					.getString("IDEApplication.incompatibleJVMTitle"), //$NON-NLS-1$
+					IDEWorkbenchMessages.format(
+							"IDEApplication.incompatibleJVMMessage", //$NON-NLS-1$
+							new Object[]{reqVersion}));
+			return false;
+		} catch (SecurityException e) {
+			// If the security manager won't allow us to get the system
+			// property, continue for now and let things fail later on
+			// their own if necessary.
+			return true;
+		} catch (NumberFormatException e) {
+			// If the version string was in a format that we don't understand,
+			// continue and let things fail later on their own if necessary.
+			return true;
+		}
+	}
+
+	/**
 	 * Return true if a valid workspace path has been set and false otherwise.
 	 * Prompt for and set the path if possible and required.
 	 * 
@@ -118,8 +162,32 @@ public final class IDEApplication implements IPlatformRunnable, IExecutableExten
 		}
 
 		// -data "/valid/path", workspace already set
-		if (instanceLoc.isSet())
-			return true;
+		if (instanceLoc.isSet()) {
+			// make sure the meta data version is compatible (or the user has
+			// chosen to overwrite it).
+			if (!checkValidWorkspace(shell, instanceLoc.getURL()))
+				return false;
+
+			// at this point its valid, so try to lock it and update the
+			// metadata version information if successful
+			try {
+				if (instanceLoc.lock()) {
+					writeWorkspaceVersion();
+					return true;
+				}
+			} catch (IOException e) {
+				// do nothing
+			}
+
+			MessageDialog
+					.openError(
+							shell,
+							IDEWorkbenchMessages
+									.getString("IDEApplication.workspaceCannotBeSetTitle"), //$NON-NLS-1$
+							IDEWorkbenchMessages
+									.getString("IDEApplication.workspaceCannotBeSetMessage")); //$NON-NLS-1$
+			return false;
+		}
 
 		// -data @noDefault or -data not specified, prompt and set
 		URL defaultUrl = instanceLoc.getDefault();
@@ -152,15 +220,54 @@ public final class IDEApplication implements IPlatformRunnable, IExecutableExten
 				return false;
 			}
 
-			// by this point it has been determined that the workspace is already
-			// in use -- force the user to choose again
-			MessageDialog
-					.openError(
-							shell,
-							IDEWorkbenchMessages
-									.getString("IDEApplication.workspaceInUseTitle"), //$NON-NLS-1$
-							IDEWorkbenchMessages
-									.getString("IDEApplication.workspaceInUseMessage")); //$NON-NLS-1$
+			// by this point it has been determined that the workspace is
+			// already in use -- force the user to choose again
+			MessageDialog.openError(shell, IDEWorkbenchMessages
+					.getString("IDEApplication.workspaceInUseTitle"), //$NON-NLS-1$
+					IDEWorkbenchMessages
+							.getString("IDEApplication.workspaceInUseMessage")); //$NON-NLS-1$
+		}
+	}
+
+	/**
+	 * Return true if the argument version is >= the product's requirement and
+	 * false otherwise. This algorithm (including behaviour in error cases) was
+	 * copied from the old code in the runtime.
+	 */
+	private static boolean isCompatibleVersion(String vmVersion) {
+		if (vmVersion == null)
+			return false;
+
+		StringTokenizer tokenizer = new StringTokenizer(vmVersion, " ._"); //$NON-NLS-1$
+		try {
+			// make sure the running vm's major is >= the requirement
+			if (!tokenizer.hasMoreTokens())
+				return true;
+			int major = Integer.parseInt(tokenizer.nextToken());
+			if (major != MIN_JVM_VERSION_MAJOR)
+				return major > MIN_JVM_VERSION_MINOR;
+
+			// make sure the running vm's minor is >= the requirement
+			if (!tokenizer.hasMoreTokens())
+				return true;
+			int minor = Integer.parseInt(tokenizer.nextToken());
+			if (minor != MIN_JVM_VERSION_MINOR)
+				return minor > MIN_JVM_VERSION_MINOR;
+
+			// make sure the running vm's service is >= the requirement
+			if (!tokenizer.hasMoreTokens())
+				return true;
+			int service = Integer.parseInt(tokenizer.nextToken());
+			return service > MIN_JVM_VERSION_SERVICE;
+		} catch (SecurityException e) {
+			// If the security manager won't allow us to get the system
+			// property, continue for now and let things fail later on
+			// their own if necessary.
+			return true;
+		} catch (NumberFormatException e) {
+			// If the version string was in a format that we don't understand,
+			// continue and let things fail later on their own if necessary.
+			return true;
 		}
 	}
 
@@ -203,7 +310,7 @@ public final class IDEApplication implements IPlatformRunnable, IExecutableExten
 							.getString("IDEApplication.workspaceInvalidMessage")); //$NON-NLS-1$
 				continue;
 			}
-		} while (!isValidWorkspace(shell, url));
+		} while (!checkValidWorkspace(shell, url));
 
 		return url;
 	}
@@ -213,8 +320,11 @@ public final class IDEApplication implements IPlatformRunnable, IExecutableExten
 	 * false otherwise. A version check will be performed, and a confirmation
 	 * box may be displayed on the argument shell if an older version is
 	 * detected.
+	 * 
+	 * @return true if the argument URL is ok to use as a workspace and false
+	 *         otherwise.
 	 */
-	private boolean isValidWorkspace(Shell shell, URL url) {
+	private boolean checkValidWorkspace(Shell shell, URL url) {
 		String version = readWorkspaceVersion(url);
 
 		// if the version could not be read, then there is not any existing
