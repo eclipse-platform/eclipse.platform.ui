@@ -180,6 +180,8 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 				closeItems(editorsTable.getSelection());
 			}
 		});
+		setButtonLayoutData(closeSelected);
+		
 		//Save editors button
 		saveSelected = new Button(selectionButtons,SWT.PUSH);
 		saveSelected.setText(WorkbenchMessages.getString("WorkbenchEditorsDialog.saveSelected")); //$NON-NLS-1$
@@ -188,6 +190,8 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 				saveItems(editorsTable.getSelection(),null);
 			}
 		});
+		setButtonLayoutData(saveSelected);
+		
 		//Select clean editors button
 		selectClean = new Button(selectionButtons,SWT.PUSH);
 		selectClean.setText(WorkbenchMessages.getString("WorkbenchEditorsDialog.selectClean")); //$NON-NLS-1$
@@ -197,6 +201,8 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 				updateButtons();
 			}
 		});
+		setButtonLayoutData(selectClean);
+		
 		//Invert selection button
 		invertSelection = new Button(selectionButtons,SWT.PUSH);
 		invertSelection.setText(WorkbenchMessages.getString("WorkbenchEditorsDialog.invertSelection")); //$NON-NLS-1$
@@ -206,6 +212,7 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 				updateButtons();
 			}
 		});
+		setButtonLayoutData(invertSelection);
 		
 		//Show only active perspective button
 		final Button showAllPerspButton = new Button(dialogArea,SWT.CHECK);
