@@ -71,12 +71,12 @@ public class Path implements IPath, Cloneable {
  * Private constructor.
  */
 private Path() {
-	super();
 }
 /* (Intentionally not included in javadoc)
  * Private constructor.
  */
 private Path(String device, String[] segments, int _separators) {
+	// no segment validations are done for performance reasons	
 	this.segments = segments;
 	this.device = device;
 	//hashcode is cached in all but the bottom three bits of the separators field
@@ -94,7 +94,7 @@ private Path(String device, String[] segments, int _separators) {
  * @see #isValidPath
  */
 public Path(String fullPath) {
-	super();
+	// no segment validations are done for performance reasons 
 	initialize(null, fullPath);
 }
 /** 
@@ -110,7 +110,7 @@ public Path(String fullPath) {
  * @see #setDevice
  */
 public Path(String device, String path) {
-	super();
+	// no segment validations are done for performance reasons
 	initialize(device, path);
 }
 /* (Intentionally not included in javadoc)
