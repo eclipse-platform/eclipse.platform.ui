@@ -8,7 +8,7 @@
 	name="Compare Support"
 	id="org.eclipse.compare"
 	version="0.9"
-	vendor-name="Object Technology International, Inc."
+	provider-name="Object Technology International, Inc."
 	class="org.eclipse.compare.internal.CompareUIPlugin">
 	
 	<requires>
