@@ -11,6 +11,8 @@ package org.eclipse.core.internal.jobs;
 
 import java.util.*;
 import org.eclipse.core.internal.runtime.Assert;
+import org.eclipse.core.internal.runtime.InternalPlatform;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
@@ -43,6 +45,28 @@ class ImplicitJobs {
 		this.manager = manager;
 	}
 
+	/**
+	 * Called when a worker thread has finished running a job. At this
+	 * point, the worker thread must not own any scheduling rules
+	 * @param lastJob The last job to run in this thread
+	 */
+	void cleanup(InternalJob lastJob) {
+		final Thread currentThread = Thread.currentThread();
+		synchronized (this) {
+			ThreadJob threadJob = 	(ThreadJob) threadJobs.get(currentThread);
+			if (threadJob == null)
+				return;
+			String msg = "Worker thread ended job: " + lastJob + ", but still holds rule: " + threadJob; //$NON-NLS-1$ //$NON-NLS-2$
+			IStatus error = new Status(IStatus.ERROR, Platform.PI_RUNTIME, 1, msg, null);
+			InternalPlatform.getDefault().log(error);
+			//just log the error for now, but the code below should be added to properly cleanup in this case
+			//discard rules for this thread
+//			threadJobs.remove(currentThread);
+//			//if this job had a rule, then we are essentially releasing a lock
+//			if (threadJob.acquireRule)
+//				manager.getLockManager().removeLockThread(Thread.currentThread(), threadJob.getRule());
+		}
+	}
 	/* (Non-javadoc) 
 	 * @see IJobManager#beginRule 
 	 */

@@ -62,7 +62,7 @@ public class JobManager implements IJobManager {
 	 */
 	private boolean suspended = false;
 
-	private final ImplicitJobs implicitJobs = new ImplicitJobs(this);
+	final ImplicitJobs implicitJobs = new ImplicitJobs(this);
 	private final JobListeners jobListeners = new JobListeners();
 
 	/**

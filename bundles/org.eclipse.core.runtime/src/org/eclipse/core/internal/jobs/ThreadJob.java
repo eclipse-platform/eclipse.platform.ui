@@ -252,7 +252,7 @@ class ThreadJob extends Job {
 	 * For debugging purposes only
 	 */
 	public String toString() {
-		StringBuffer buf = new StringBuffer(getClass().getName());
+		StringBuffer buf = new StringBuffer("ThreadJob"); //$NON-NLS-1$
 		buf.append('(').append(realJob).append(',').append('[');
 		for (int i = 0; i <= top && i < ruleStack.length; i++)
 			buf.append(ruleStack[i]).append(',');
