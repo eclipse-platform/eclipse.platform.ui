@@ -105,7 +105,7 @@ public class AntAutoIndentStrategy extends DefaultAutoIndentStrategy {
 			if (command.offset == -1 || document.getLength() == 0 || fModel.getProjectNode(false) == null) {
 				return;
 			}
-			
+			String origChange= command.text;
 			int position= (command.offset == document.getLength() ? command.offset  - 1 : command.offset);
 			AntElementNode node= fModel.getProjectNode(false).getNode(position - fAccumulatedChange);
 			if (node == null) {
@@ -113,11 +113,13 @@ public class AntAutoIndentStrategy extends DefaultAutoIndentStrategy {
 			}
 			
 			// eat any WS before the insertion to the beginning of the line
+			int firstLine= 1; // don't format the first line if it has other content before it
 			IRegion line= document.getLineInformationOfOffset(command.offset);
 			String notSelected= document.get(line.getOffset(), command.offset - line.getOffset());
 			if (notSelected.trim().length() == 0) {
 				command.length += notSelected.length();
 				command.offset= line.getOffset();
+				firstLine= 0;
 			}
 			
 			// handle the indentation computation inside a temporary document
@@ -131,7 +133,7 @@ public class AntAutoIndentStrategy extends DefaultAutoIndentStrategy {
 			StringBuffer addition= new StringBuffer();
 			int insertLength= 0;
 			int lines= temp.getNumberOfLines();
-			for (int l= 0; l < lines; l++) { // we don't change the number of lines while adding indents
+			for (int l= firstLine; l < lines; l++) { // we don't change the number of lines while adding indents
 				
 				IRegion r= temp.getLineInformation(l);
 				int lineOffset= r.getOffset();
@@ -161,8 +163,10 @@ public class AntAutoIndentStrategy extends DefaultAutoIndentStrategy {
 			}
 			
 			// modify the command
-			command.text= temp.get();
-			fAccumulatedChange+= temp.getLength();
+			if (!origChange.equals(temp.get())) {
+				fAccumulatedChange+=  temp.getLength() - command.text.length();
+				command.text= temp.get();
+			}
 			
 		} catch (BadLocationException e) {
 			AntUIPlugin.log(e);
@@ -207,10 +211,11 @@ public class AntAutoIndentStrategy extends DefaultAutoIndentStrategy {
 			if (!Character.isWhitespace(ch))
 				break;
 			toDelete -= computeVisualLength(ch);
-			if (toDelete >= 0)
+			if (toDelete >= 0) {
 				to++;
-			else
+			} else {
 				break;
+			}
 		}
 		
 		document.replace(from, to - from, null);
@@ -226,9 +231,9 @@ public class AntAutoIndentStrategy extends DefaultAutoIndentStrategy {
 	private int computeVisualLength(char ch) {
 		if (ch == '\t') {
 			return getVisualTabLengthPreference();
-		} else {
-			return 1;
-		}
+		} 
+			
+		return 1;
 	}
 	
 	/**
@@ -244,10 +249,11 @@ public class AntAutoIndentStrategy extends DefaultAutoIndentStrategy {
 		
 		for (int i= 0; i < seq.length(); i++) {
 			char ch= seq.charAt(i);
-			if (ch == '\t')
+			if (ch == '\t') {
 				size += tablen - size % tablen;
-			else
+			} else {
 				size++;
+			}
 		}
 		return size;
 	}
