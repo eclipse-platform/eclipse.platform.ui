@@ -45,8 +45,6 @@ public void dispose() {
 
 public void initialize(Object modelObject) {
 	setHeadingText("");
-	setHeadingImage(UpdateUIPluginImages.get(UpdateUIPluginImages.IMG_FORM_BANNER));
-	setHeadingUnderlineImage(UpdateUIPluginImages.get(UpdateUIPluginImages.IMG_FORM_UNDERLINE));
 	super.initialize(modelObject);
 	UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 	modelListener = new IUpdateModelChangedListener() {

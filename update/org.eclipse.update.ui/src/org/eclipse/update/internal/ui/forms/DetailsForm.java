@@ -210,9 +210,6 @@ public class DetailsForm extends PropertyWebForm {
 
 	public void initialize(Object modelObject) {
 		setHeadingText("");
-		setHeadingImage(UpdateUIPluginImages.get(UpdateUIPluginImages.IMG_FORM_BANNER));
-		setHeadingUnderlineImage(
-			UpdateUIPluginImages.get(UpdateUIPluginImages.IMG_FORM_UNDERLINE));
 		super.initialize(modelObject);
 	}
 

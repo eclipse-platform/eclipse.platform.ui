@@ -145,9 +145,6 @@ public class SearchForm extends UpdateWebForm {
 
 	public void initialize(Object modelObject) {
 		updateHeadingText(null);
-		setHeadingImage(UpdateUIPluginImages.get(UpdateUIPluginImages.IMG_FORM_BANNER));
-		setHeadingUnderlineImage(
-			UpdateUIPluginImages.get(UpdateUIPluginImages.IMG_FORM_UNDERLINE));
 		super.initialize(modelObject);
 	}
 
