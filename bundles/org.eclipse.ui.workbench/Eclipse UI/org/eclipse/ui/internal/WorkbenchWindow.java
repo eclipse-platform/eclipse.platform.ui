@@ -1714,7 +1714,9 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		
 		// save the width of the perspective bar
 		IMemento persBarMem = memento.createChild(IWorkbenchConstants.TAG_PERSPECTIVE_BAR);
-		perspectiveSwitcher.saveState(persBarMem);
+		if (perspectiveSwitcher != null) {
+		    perspectiveSwitcher.saveState(persBarMem);
+		}
 		
 		/// Save the order of the cool bar contribution items
 		if (getCoolBarManager() != null) {
