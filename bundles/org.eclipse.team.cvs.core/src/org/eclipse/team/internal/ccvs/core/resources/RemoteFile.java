@@ -22,6 +22,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteResource;
@@ -569,9 +570,8 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	 * @see org.eclipse.team.core.sync.IRemoteResource#getComment()
 	 */
 	public String getComment() throws CVSException {
-//		ILogEntry entry = getLogEntry(new NullProgressMonitor());
-//		return entry.getComment();
-		return "";
+		ILogEntry entry = getLogEntry(new NullProgressMonitor());
+		return entry.getComment();
 	}
 
 	/* (non-Javadoc)
@@ -585,8 +585,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	 * @see org.eclipse.team.core.sync.IRemoteResource#getCreatorDisplayName()
 	 */
 	public String getCreatorDisplayName() throws CVSException {
-//		ILogEntry entry = getLogEntry(new NullProgressMonitor());
-//		return entry.getAuthor();
-	return "";
+		ILogEntry entry = getLogEntry(new NullProgressMonitor());
+		return entry.getAuthor();
 	}
 }
