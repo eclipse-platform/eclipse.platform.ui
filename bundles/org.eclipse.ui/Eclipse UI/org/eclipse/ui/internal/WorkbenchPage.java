@@ -480,14 +480,16 @@ private void busyResetPerspective() {
 	SetPagePerspectiveAction action = (SetPagePerspectiveAction) ((ActionContributionItem)item).getAction();
 	action.setPerspective(newPersp);
 
-	// Install new persp.
-	setPerspective(newPersp);
-
+	// Reset the coolbar layout for the reset perspective.
+	newPersp.setToolBarLayout(null);
 	IToolBarManager toolsMgr = window.getToolsManager();
 	if (toolsMgr instanceof CoolBarManager) {
 		CoolBarManager coolBarMgr = (CoolBarManager)toolsMgr;
 		coolBarMgr.resetLayout();
 	}
+
+	// Install new persp.
+	setPerspective(newPersp);
 
 	// Notify listeners.
 	window.firePerspectiveChanged(this, desc, CHANGE_RESET);
@@ -1960,12 +1962,7 @@ private void setPerspective(Perspective newPersp) {
 		CoolBarManager coolBarMgr = (CoolBarManager)toolsMgr;
 		if (oldPersp != null) {
 			CoolBarLayout layout = coolBarMgr.getLayout();
-			boolean locked = false;
-			if (layout != null) {
-				locked = layout.locked;
-			}
 			oldPersp.setToolBarLayout(layout);
-			coolBarMgr.setLayout(null);
 		} 
 	}
 	
@@ -2019,14 +2016,10 @@ private void setPerspective(Perspective newPersp) {
 	// since the layout may contain items associated to the part.
 	IToolBarManager mgr = window.getToolsManager();
 	if (mgr instanceof CoolBarManager) {
-		CoolBarManager cBarMgr = (CoolBarManager)mgr;
+		CoolBarManager coolBarMgr = (CoolBarManager)mgr;
 		if (newPersp != null) {
 			CoolBarLayout layout = newPersp.getToolBarLayout();
-			boolean locked = false;
-			if (layout != null) {
-				locked = layout.locked;
-			}
-			cBarMgr.setLayout(newPersp.getToolBarLayout());
+			coolBarMgr.setLayout(newPersp.getToolBarLayout());
 		}
 	}
 }

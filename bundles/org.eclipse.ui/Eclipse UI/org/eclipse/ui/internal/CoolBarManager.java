@@ -6,23 +6,13 @@ package org.eclipse.ui.internal;
  */
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Vector;
 
-import org.eclipse.jface.action.ActionContributionItem;
-import org.eclipse.jface.action.ContributionManager;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.jface.action.IContributionManagerOverrides;
-import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.*;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.CoolBar;
-import org.eclipse.swt.widgets.CoolItem;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.*;
 
 /**
  * WORK IN PROGRESS FOR COOLBAR SUPPORT
@@ -34,13 +24,14 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	private int itemStyle = SWT.NONE;
 
 	/** 
-	 * The cool bat control; <code>null</code> before creation
+	 * The cool bar control; <code>null</code> before creation
 	 * and after disposal.
 	 */
 	private CoolBar coolBar = null;
-	
-	private CoolBarLayout coolBarLayout = new CoolBarLayout();
-	
+
+	private MenuManager chevronMenuManager;
+	private MenuManager coolBarMenuManager = new MenuManager();
+
 	/**
 	 */
 	public CoolBarManager() {
@@ -70,6 +61,11 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 		super.add(item);
 	}
 	/**
+	 */
+	public void addToMenu(ActionContributionItem item) {
+		coolBarMenuManager.add(item.getAction());
+	}
+	/**
 	 * Adds a contribution item to the start or end of the group 
 	 * with the given name.
 	 *
@@ -82,8 +78,8 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	 */
 	private void addToGroup(String itemId, IContributionItem item, boolean append) {
 		IContributionItem[] items = getItems();
-		for (int i = 0; i<items.length; i++) {
-			CoolBarContributionItem cbItem = (CoolBarContributionItem)items[i];
+		for (int i = 0; i < items.length; i++) {
+			CoolBarContributionItem cbItem = (CoolBarContributionItem) items[i];
 			String id = cbItem.getId();
 			if (id != null && id.equalsIgnoreCase(itemId)) {
 				item.setParent(cbItem);
@@ -96,7 +92,7 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 				return;
 			}
 		}
-		throw new IllegalArgumentException("Group not found: " + itemId);//$NON-NLS-1$
+		throw new IllegalArgumentException("Group not found: " + itemId); //$NON-NLS-1$
 	}
 	/**
 	 */
@@ -113,12 +109,17 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 					coolBar.getParent().layout();
 				}
 			});
+			coolBar.addMouseListener(new MouseAdapter() {
+				public void mouseDown(MouseEvent e) {
+					popupCoolBarMenu(e);
+				}
+			});
 			IContributionItem[] items = getItems();
-			for (int i = 0; i<items.length; i++) {
-				CoolBarContributionItem cbItem = (CoolBarContributionItem)items[i];
+			for (int i = 0; i < items.length; i++) {
+				CoolBarContributionItem cbItem = (CoolBarContributionItem) items[i];
 				if (cbItem.getControl() == null) {
 					cbItem.createControl(coolBar);
-				} 
+				}
 			}
 			update(false);
 		}
@@ -127,8 +128,17 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	/**
 	 */
 	public void dispose() {
-		if (coolBarExist())
+		if (coolBarExist()) {
 			coolBar.dispose();
+		}
+		if (chevronMenuManager != null) {
+			chevronMenuManager.dispose();
+			chevronMenuManager = null;
+		}
+		if (coolBarMenuManager != null) {
+			coolBarMenuManager.dispose();
+			coolBarMenuManager = null;
+		}
 		coolBar = null;
 	}
 	public CoolBar getControl() {
@@ -149,12 +159,56 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	public int getStyle() {
 		return itemStyle;
 	}
+	private void handleChevron(SelectionEvent event) {
+		CoolItem item = (CoolItem) event.widget;
+		Control control = item.getControl();
+		if ((control instanceof ToolBar) == false) {
+			return;
+		}
+
+		Rectangle itemBounds = item.getBounds();
+		Point chevronPosition = coolBar.toDisplay(new Point(event.x, event.y));
+		ToolBar toolBar = (ToolBar) control;
+		ToolItem[] tools = toolBar.getItems();
+		int toolCount = tools.length;
+		int visibleItemCount = 0;
+		while (visibleItemCount < toolCount) {
+			Rectangle toolBounds = tools[visibleItemCount].getBounds();
+			Point point = toolBar.toDisplay(new Point(toolBounds.x, toolBounds.y));
+			toolBounds.x = point.x;
+			toolBounds.y = point.y;
+
+			// stop if the tool is at least partially hidden by the drop down chevron
+			if (chevronPosition.x >= toolBounds.x && chevronPosition.x - toolBounds.x <= toolBounds.width) {
+				break;
+			}
+			visibleItemCount++;
+		}
+
+		/* Create a pop-up menu with items for each of the hidden buttons. */
+		if (chevronMenuManager != null) {
+			chevronMenuManager.dispose();
+		}
+		chevronMenuManager = new MenuManager();
+		for (int i = visibleItemCount; i < toolCount; i++) {
+			ContributionItem data = (ContributionItem) tools[i].getData();
+			if (data instanceof ActionContributionItem) {
+				ActionContributionItem contribution = new ActionContributionItem(((ActionContributionItem) data).getAction());
+				chevronMenuManager.add(contribution);
+			} else if (data.isSeparator()) {
+				chevronMenuManager.add(new Separator());
+			}
+		}
+		Menu popup = chevronMenuManager.createContextMenu(coolBar);
+		popup.setLocation(chevronPosition.x, chevronPosition.y);
+		popup.setVisible(true);
+	}
 	/**
 	 */
 	private ArrayList getContributionIds() {
 		IContributionItem[] items = getItems();
 		ArrayList ids = new ArrayList(items.length);
-		for (int i = 0; i<items.length; i++) {
+		for (int i = 0; i < items.length; i++) {
 			IContributionItem item = items[i];
 			ids.add(item.getId());
 		}
@@ -163,28 +217,32 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	/**
 	 */
 	public CoolBarLayout getLayout() {
-		if (!coolBarExist()) return null;
-// System.out.println("get layout");
+		if (!coolBarExist())
+			return null;
+
+		CoolBarLayout layout = new CoolBarLayout();
 		CoolItem[] coolItems = coolBar.getItems();
-		ArrayList itemsInOrder = new ArrayList(coolItems.length);
-		for (int i=0; i<coolItems.length; i++) {
-			CoolBarContributionItem item = (CoolBarContributionItem)coolItems[i].getData();
-			itemsInOrder.add(item);
-// System.out.println("item " + item.getId());
+		ArrayList newItems = new ArrayList(coolItems.length);
+		for (int i = 0; i < coolItems.length; i++) {
+			CoolBarContributionItem item = (CoolBarContributionItem) coolItems[i].getData();
+			newItems.add(item);
 		}
-		coolBarLayout.items = itemsInOrder;
-		coolBarLayout.itemWrapIndices = coolBar.getWrapIndices();
-		coolBarLayout.itemSizes = coolBar.getItemSizes();
-// System.out.println(coolBarLayout.toString());
-		return coolBarLayout;
+		layout.items = newItems;
+		layout.itemSizes = coolBar.getItemSizes();
+		layout.itemWrapIndices = coolBar.getWrapIndices();
+		layout.locked = coolBar.getLocked();
+
+		//System.out.println("get layout " + layout.toString());
+
+		return layout;
 	}
 	/**
 	 */
 	private ArrayList getCoolItemIds() {
 		CoolItem[] coolItems = coolBar.getItems();
 		ArrayList ids = new ArrayList(coolItems.length);
-		for (int i=0; i<coolItems.length; i++) {
-			CoolBarContributionItem group = (CoolBarContributionItem)coolItems[i].getData();
+		for (int i = 0; i < coolItems.length; i++) {
+			CoolBarContributionItem group = (CoolBarContributionItem) coolItems[i].getData();
 			ids.add(group.getId());
 		}
 		return ids;
@@ -244,21 +302,33 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	/**
 	 */
 	public void lockLayout(boolean value) {
-		coolBarLayout.locked = value;
 		coolBar.setLocked(value);
+	}
+	/**
+	 */
+	/* package */ void popupCoolBarMenu(MouseEvent e) {
+		if (e.button != 3)
+			return;
+		Point pt = new Point(e.x, e.y);
+		pt = ((Control) e.widget).toDisplay(pt);
+		Menu coolBarMenu = coolBarMenuManager.createContextMenu(coolBar);
+		coolBarMenu.setLocation(pt.x, pt.y);
+		coolBarMenu.setVisible(true);
 	}
 	/**
 	 */
 	public void resetLayout() {
 		CoolItem[] coolItems = coolBar.getItems();
-		for (int i=0; i<coolItems.length; i++) {
+		for (int i = 0; i < coolItems.length; i++) {
 			CoolItem coolItem = coolItems[i];
 			coolItem.setData(null);
 			coolItem.setControl(null);
 			coolItem.dispose();
 		}
+		coolBar.setLocked(false);
+		coolBar.setWrapIndices(new int[] {
+		});
 		update(true);
-		lockLayout(false);
 	}
 	/**
 	 * Removes the given contribution item from the contribution items
@@ -283,44 +353,165 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	 */
 	public void setLayout(CoolBarLayout layout) {
 		if (layout == null) {
-			coolBarLayout = new CoolBarLayout();
-			coolBar.setLocked(coolBarLayout.locked);
+			CoolItem[] coolItems = coolBar.getItems();
+			for (int i = 0; i < coolItems.length; i++) {
+				CoolItem coolItem = coolItems[i];
+				ToolBar toolBar = (ToolBar) coolItem.getControl();
+				int minWidth = toolBar.getItems()[0].getWidth();
+				Point size = toolBar.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+				Point coolSize = coolItem.computeSize(size.x, size.y);
+				coolItem.setSize(coolSize);
+				coolItem.setPreferredSize(coolSize);
+				coolItem.setMinimumSize(minWidth, coolItem.getMinimumSize().y);
+			}
+			coolBar.setLocked(false);
+			coolBar.setWrapIndices(new int[] {
+			});
 			return;
 		}
-		// some of the items may not exist on the coolbar if we save
-		// the layout of editor action bars
-// System.out.println("set layout");
+
+		//		System.out.println("setting layout");
+		//		System.out.println(layout.toString());
+
+		// Some of the layout items may not exist on the coolbar, for example, if we save
+		// the layout of editor action bars.  Similarly, items may exist on the coolbar that
+		// are not part of the saved layout.
+		CoolItem[] coolItems = coolBar.getItems();
 		ArrayList currentCoolItemIds = getCoolItemIds();
-		Vector itemOrder = new Vector();
-		Vector itemSizes = new Vector();
-		int i = 0;
-		for (Iterator e = layout.items.iterator(); e.hasNext();) {
-			CoolBarContributionItem item = (CoolBarContributionItem)e.next();
-			int index = currentCoolItemIds.indexOf(item.getId());
-			if (index == -1) {
-				// not found
+		ArrayList newItems = new ArrayList();
+		ArrayList layoutItems = layout.items;
+		int maxItemCount = Math.max(coolItems.length, layout.items.size());
+		// the maximum possible number of items that need to be visited
+		int[] itemOrder = new int[maxItemCount];
+		Point[] itemSizes = new Point[maxItemCount];
+		int[] currentItemOrder = coolBar.getItemOrder();
+		// necessary if cool item order has already changed from its original creation order
+		for (int i = 0; i < itemOrder.length; i++) {
+			itemOrder[i] = -1;
+		}
+		for (int i = 0; i < coolItems.length; i++) {
+			CoolBarContributionItem item = (CoolBarContributionItem) coolItems[i].getData();
+			int index = layoutItems.indexOf(item);
+			if (index != -1) {
+				// index = new visual position, i = current visual position 
+				// and i must be original visual position
+				itemOrder[index] = currentItemOrder[i];
+				itemSizes[index] = layout.itemSizes[index];
 			} else {
-				// figure out its index location and its associated size
-// System.out.println("item " + item.getId() + " index " + index);
-				itemOrder.addElement(new Integer(index));
-				itemSizes.addElement(layout.itemSizes[i]);
-			} 
-			i++;
+				newItems.add(coolItems[i]);
+			}
 		}
-		Object[] objectArray = itemOrder.toArray();
-		int[] itemOrderArray = new int[objectArray.length];
-		for (int j=0; j<objectArray.length; j++) {
-			itemOrderArray[j]=((Integer)objectArray[j]).intValue();
+
+		Iterator iterator = newItems.iterator();
+		while (iterator.hasNext()) {
+			CoolItem coolItem = (CoolItem) iterator.next();
+			CoolBarContributionItem item = (CoolBarContributionItem) coolItem.getData();
+			int index = currentCoolItemIds.indexOf(item.getId());
+			for (int i = 0; i < itemOrder.length; i++) {
+				if (itemOrder[i] == -1) {
+					itemOrder[i] = index;
+					itemSizes[i] = coolItem.getSize();
+					break;
+				} else if (i == index) {
+					// index of new item is already used. move items up one
+					System.arraycopy(itemOrder, i, itemOrder, i + 1, itemOrder.length - i - 1);
+					System.arraycopy(itemSizes, i, itemSizes, i + 1, itemSizes.length - i - 1);
+					itemOrder[i] = index;
+					itemSizes[i] = coolItem.getSize();
+					break;
+				}
+			}
 		}
-		objectArray = itemSizes.toArray();
-		Point[] itemSizesArray = new Point[objectArray.length];
-		for (int j=0; j<objectArray.length; j++) {
-			itemSizesArray[j]=(Point)objectArray[j];
+		// remove gaps/unused slots that exist if the old CoolBar had more items 
+		// than the new CoolBar
+		int unusedCount = 0;
+		for (int i = 0; i < itemOrder.length - 1; i++) {
+			if (itemOrder[i] == -1) {
+				unusedCount++;
+				// remove unused slot
+				System.arraycopy(itemOrder, i + 1, itemOrder, i, itemOrder.length - i - 1);
+				System.arraycopy(itemSizes, i + 1, itemSizes, i, itemSizes.length - i - 1);
+			}
 		}
-		// not working with editor action items, need to revisit this...
-//		coolBar.setItemLayout(itemOrderArray, layout.itemWrapIndices, itemSizesArray);
+		if (itemOrder[itemOrder.length - 1] == -1) {
+			unusedCount++;
+		}
+		if (unusedCount > 0) {
+			int[] newItemOrder = new int[itemOrder.length - unusedCount];
+			Point[] newItemSizes = new Point[itemSizes.length - unusedCount];
+
+			System.arraycopy(itemOrder, 0, newItemOrder, 0, newItemOrder.length);
+			System.arraycopy(itemSizes, 0, newItemSizes, 0, newItemSizes.length);
+			itemOrder = newItemOrder;
+			itemSizes = newItemSizes;
+		}
+
+		/*
+		 * TODO: Make sure that a new item that used to be the last item
+		 * and is now no longer the last item doesn't take more space than
+		 * its preferred size.
+		 * Otherwise it would move the following items to the right
+		 */
+
+		//		System.out.print("item create positions ");
+		//		CoolItem[] itms = coolBar.getItems();
+		//		for (int i=0; i<itms.length; i++) {
+		//			CoolItem cItem = itms[i];
+		//			System.out.print(coolBar.indexOf(cItem) + " ");
+		//		}
+		//		System.out.println();
+		//		System.out.print("item order ");
+		//		for (int i=0; i<itemOrder.length; i++) {
+		//			System.out.print(itemOrder[i] + " ");
+		//		}
+		//		System.out.println();
+		//		System.out.print("item sizes ");
+		//		for (int i=0; i<itemSizes.length; i++) {
+		//			System.out.print(itemSizes[i] + " ");
+		//		}
+		//		System.out.println();
+
+		coolBar.setRedraw(false);
 		coolBar.setLocked(layout.locked);
-		coolBarLayout = layout;
+		coolBar.setItemLayout(itemOrder, new int[] {
+		}, itemSizes);
+
+		// restore the wrap indices after the new item order is restored, wrap on the same items that 
+		// were specified in the layout
+		CoolBarContributionItem[] wrapItems = new CoolBarContributionItem[layout.itemWrapIndices.length];
+		for (int i = 0; i < layout.itemWrapIndices.length; i++) {
+			wrapItems[i] = (CoolBarContributionItem) layout.items.get(layout.itemWrapIndices[i]);
+		}
+		int[] wrapIndices = new int[wrapItems.length];
+		currentCoolItemIds = getCoolItemIds();
+		int j = 0;
+		int numItems = itemSizes.length;
+		for (int i = 0; i < wrapItems.length; i++) {
+			int index = currentCoolItemIds.indexOf(wrapItems[i].getId());
+			if (index != -1) {
+				wrapIndices[j] = index;
+				j++;
+			} else {
+				// wrap item no longer exists, wrap on the next visual item 
+				int visualIndex = layout.itemWrapIndices[i];
+				wrapIndices[j] = visualIndex - unusedCount + 1;
+				j++;
+			}
+		}
+		int[] itemWraps = new int[j];
+		System.arraycopy(wrapIndices, 0, itemWraps, 0, j);
+
+		//		System.out.print("item wraps ");
+		//		for (int i=0; i<itemWraps.length; i++) {
+		//			System.out.print(itemWraps[i] + " ");
+		//		}
+		//		System.out.println();
+
+		coolBar.setWrapIndices(itemWraps);
+		coolBar.setRedraw(true);
+
+		//		System.out.println("layout set");
+		//		System.out.println(getLayout().toString());
 	}
 	/**
 	 */
@@ -332,15 +523,15 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 				// remove CoolBarItemContributions that are empty
 				IContributionItem[] items = getItems();
 				ArrayList toRemove = new ArrayList(items.length);
-				for (int i = 0; i<items.length; i++) {
-					CoolBarContributionItem cbItem = (CoolBarContributionItem)items[i];
+				for (int i = 0; i < items.length; i++) {
+					CoolBarContributionItem cbItem = (CoolBarContributionItem) items[i];
 					if (cbItem.getItems().length == 0) {
 						toRemove.add(cbItem);
-					} 
+					}
 				}
 				changed = changed || (toRemove.size() > 0);
 				for (Iterator e = toRemove.iterator(); e.hasNext();) {
-					CoolBarContributionItem cbItem = (CoolBarContributionItem)e.next();
+					CoolBarContributionItem cbItem = (CoolBarContributionItem) e.next();
 					remove(cbItem);
 				}
 				// remove obsolete CoolItems that do not have an associated CoolBarContributionItem
@@ -349,59 +540,69 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 				for (int i = 0; i < coolItems.length; i++) {
 					CoolItem coolItem = coolItems[i];
 					ToolBar tBar = (ToolBar) coolItem.getControl();
-					CoolBarContributionItem cbItem = (CoolBarContributionItem)coolItem.getData();
+					CoolBarContributionItem cbItem = (CoolBarContributionItem) coolItem.getData();
 					if ((cbItem == null) || (!contributionIds.contains(cbItem.getId()))) {
 						changed = true;
+						coolItem.setData(null);
 						coolItem.setControl(null);
 						tBar.dispose();
 						coolItem.dispose();
-					} 
+					}
 				}
-				
-				// create a CoolItem for each group of items that does not exist 
-				contributionIds = getCoolItemIds();
+
+				// create a CoolItem for each group of items that does not have a CoolItem 
+				ArrayList coolItemIds = getCoolItemIds();
 				items = getItems();
-				for (int i = 0; i<items.length; i++) {
-					CoolBarContributionItem cbItem = (CoolBarContributionItem)items[i];
-					if (!contributionIds.contains(cbItem.getId())) {
+				for (int i = 0; i < items.length; i++) {
+					CoolBarContributionItem cbItem = (CoolBarContributionItem) items[i];
+					if (!coolItemIds.contains(cbItem.getId())) {
 						if (cbItem.isVisible()) {
 							ToolBar toolBar = cbItem.getControl();
 							if ((toolBar != null) && (!toolBar.isDisposed())) {
 								changed = true;
 								toolBar.setVisible(true);
-								CoolItem coolItem = new CoolItem(coolBar, SWT.NULL);
+								CoolItem coolItem = new CoolItem(coolBar, SWT.DROP_DOWN);
 								coolItem.setControl(toolBar);
 								coolItem.setData(cbItem);
 								cbItem.update(true);
 								int minWidth = toolBar.getItems()[0].getWidth();
 								Point size = toolBar.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-//								System.out.println(cbItem.getId() + " toolbar size " + size);
-								coolItem.setSize(coolItem.computeSize(size.x, size.y));
-								coolItem.setMinimumWidth(minWidth);
-//								System.out.println("cool item size " + coolItem.getSize());
+								Point coolSize = coolItem.computeSize(size.x, size.y);
+								//	System.out.println(cbItem.getId() + " toolbar size " + size);
+								coolItem.setSize(coolSize);
+								coolItem.setPreferredSize(coolSize);
+								coolItem.setMinimumSize(minWidth, coolItem.getMinimumSize().y);
+								//	System.out.println("cool item size " + coolItem.getSize());
+								coolItem.addSelectionListener(new SelectionAdapter() {
+									public void widgetSelected(SelectionEvent event) {
+										if (event.detail == SWT.ARROW) {
+											handleChevron(event);
+										}
+									}
+								});
 							}
 						}
-					} 
+					}
 				}
 				// remove non-visible CoolBarContributionItems
 				coolItems = coolBar.getItems();
 				for (int i = 0; i < coolItems.length; i++) {
 					CoolItem item = coolItems[i];
 					ToolBar tBar = (ToolBar) item.getControl();
-					CoolBarContributionItem cbItem = (CoolBarContributionItem)item.getData();
+					CoolBarContributionItem cbItem = (CoolBarContributionItem) item.getData();
 					if (!cbItem.isVisible()) {
 						// do not dispose of the ToolBar, just the CoolItem
 						changed = true;
 						item.setControl(null);
 						tBar.setVisible(false);
 						item.dispose();
-					} 
+					}
 				}
 				setDirty(false);
 				coolBar.setRedraw(true);
 				if (changed) {
 					relayout();
-				} 
+				}
 			}
 
 		}
@@ -410,7 +611,8 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	 */
 	private void validateItem(IContributionItem item) {
 		if (!(item instanceof CoolBarContributionItem)) {
-			throw new IllegalArgumentException("Invalid item type " + item.getClass());//$NON-NLS-1$
+			throw new IllegalArgumentException("Invalid item type " + item.getClass());
+			//$NON-NLS-1$
 		}
 	}
 }
