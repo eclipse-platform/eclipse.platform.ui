@@ -29,6 +29,8 @@ public class EngineDescriptor implements IEngineDescriptor {
 	private ISearchEngine engine;
 
 	private IConfigurationElement config;
+	
+	private EngineDescriptorManager manager;
 
 	private EngineTypeDescriptor etdesc;
 
@@ -52,9 +54,17 @@ public class EngineDescriptor implements IEngineDescriptor {
 	public EngineDescriptor(IConfigurationElement config) {
 		this.config = config;
 	}
+	
+	public EngineDescriptor(EngineDescriptorManager manager) {
+		this.manager = manager;
+	}
 
 	public void setEngineType(EngineTypeDescriptor etdesc) {
 		this.etdesc = etdesc;
+	}
+	
+	public void setEngineDescriptorManager(EngineDescriptorManager manager) {
+		this.manager = manager;
 	}
 
 	public IConfigurationElement getConfig() {
@@ -91,16 +101,6 @@ public class EngineDescriptor implements IEngineDescriptor {
 		if (aenabled != null)
 			return aenabled.equals("true"); //$NON-NLS-1$
 		return false;
-	}
-
-	public boolean isRemovable() {
-		if (userDefined)
-			return true;
-		String removable = config.getAttribute(IHelpUIConstants.ATT_REMOVABLE);
-		if (removable != null)
-			return removable.equals("true"); //$NON-NLS-1$
-		return false;
-
 	}
 
 	public Image getIconImage() {
@@ -174,17 +174,21 @@ public class EngineDescriptor implements IEngineDescriptor {
 
 	public void setLabel(String label) {
 		this.label = label;
+		if (manager!=null)
+			manager.notifyPropertyChange(this);
 	}
 
 	public void setDescription(String desc) {
 		this.desc = desc;
+		if (manager!=null)
+			manager.notifyPropertyChange(this);
 	}
 
-	boolean isUserDefined() {
+	public boolean isUserDefined() {
 		return userDefined;
 	}
 
-	void setUserDefined(boolean userDefined) {
+	public void setUserDefined(boolean userDefined) {
 		this.userDefined = userDefined;
 	}
 }

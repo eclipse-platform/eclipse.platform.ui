@@ -31,8 +31,7 @@ import org.eclipse.ui.dialogs.ListDialog;
  */
 public class ScopeSetDialog extends ListDialog {
 	private ScopeSetManager manager;
-	private ArrayList engineDescriptors;
-	private EngineTypeDescriptor [] engineTypes;
+	private EngineDescriptorManager descManager;
 	private static final int NEW_ID = IDialogConstants.CLIENT_ID + 1;
 	private static final int EDIT_ID = IDialogConstants.CLIENT_ID + 2;
 	private static final int REMOVE_ID = IDialogConstants.CLIENT_ID + 3;
@@ -145,11 +144,10 @@ public class ScopeSetDialog extends ListDialog {
 	/**
 	 * @param parent
 	 */
-	public ScopeSetDialog(Shell parent, ScopeSetManager manager, ArrayList engineDescriptors, EngineTypeDescriptor [] engineTypes) {
+	public ScopeSetDialog(Shell parent, ScopeSetManager manager, EngineDescriptorManager descManager) {
 		super(parent);
 		this.manager = manager;
-		this.engineDescriptors = engineDescriptors;
-		this.engineTypes = engineTypes;
+		this.descManager = descManager;
 		this.sets = extractSets(manager.getScopeSets());
 		setContentProvider(new ScopeContentProvider());
 		setLabelProvider(new ScopeLabelProvider());
@@ -247,8 +245,8 @@ public class ScopeSetDialog extends ListDialog {
 		IStructuredSelection ssel = (IStructuredSelection)getTableViewer().getSelection();
 		ScopeSet set = (ScopeSet)ssel.getFirstElement();
 		if (set!=null) {
-			PreferenceManager manager = new ScopePreferenceManager(engineDescriptors, set);
-			PreferenceDialog dialog = new ScopePreferenceDialog(getShell(), manager, engineTypes);
+			PreferenceManager manager = new ScopePreferenceManager(descManager, set);
+			PreferenceDialog dialog = new ScopePreferenceDialog(getShell(), manager, descManager);
 			dialog.setPreferenceStore(set.getPreferenceStore());
 			dialog.open();
 		}

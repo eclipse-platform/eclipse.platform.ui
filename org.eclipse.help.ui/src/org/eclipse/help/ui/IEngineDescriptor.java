@@ -11,49 +11,55 @@
 package org.eclipse.help.ui;
 
 import java.util.Dictionary;
+
 /**
  * 
  */
 
 public interface IEngineDescriptor {
-/**
- * 
- * @return
- */
+	/**
+	 * 
+	 * @return
+	 */
 	String getId();
-/**
- * 
- * @return
- */
+
+	/**
+	 * 
+	 * @return
+	 */
 	String getEngineTypeId();
-/**
- * 
- * @return
- */
-	boolean isRemovable();
-/**
- * 
- * @return
- */
+
+	/**
+	 * 
+	 * @return
+	 */
 	String getLabel();
-/**
- * 
- * @param label
- */
+
+	/**
+	 * 
+	 * @param label
+	 */
 	void setLabel(String label);
-/**
- * 
- * @return
- */
+
+	/**
+	 * 
+	 * @return
+	 */
 	String getDescription();
-/**
- * 
- * @param desc
- */
+
+	/**
+	 * 
+	 * @param desc
+	 */
 	void setDescription(String desc);
-/**
- * 
- * @return
- */
+
+	/**
+	 * 
+	 * @return
+	 */
 	Dictionary getParameters();
+	/**
+	 * @return 
+	 */
+	boolean isUserDefined();
 }

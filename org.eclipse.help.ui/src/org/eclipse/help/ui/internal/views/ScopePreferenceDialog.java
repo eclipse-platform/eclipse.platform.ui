@@ -12,7 +12,7 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
 public class ScopePreferenceDialog extends PreferenceDialog {
-	private EngineTypeDescriptor [] engineTypes;
+	private EngineDescriptorManager descManager;
 	private ArrayList pendingOperations;
 	
 	class PendingOperation {
@@ -33,9 +33,9 @@ public class ScopePreferenceDialog extends PreferenceDialog {
 	 */
 	private final static int DELETE_ID = IDialogConstants.CLIENT_ID + 2;
 	
-	public ScopePreferenceDialog(Shell parentShell, PreferenceManager manager, EngineTypeDescriptor [] engineTypes) {
+	public ScopePreferenceDialog(Shell parentShell, PreferenceManager manager, EngineDescriptorManager descManager) {
 		super(parentShell, manager);
-		this.engineTypes = engineTypes;
+		this.descManager = descManager;
 	}
 	
 	protected void createButtonsForButtonBar(Composite parent) {
@@ -88,19 +88,19 @@ public class ScopePreferenceDialog extends PreferenceDialog {
 		if (obj instanceof ScopePreferenceManager.EnginePreferenceNode) {
 			ScopePreferenceManager.EnginePreferenceNode node = (ScopePreferenceManager.EnginePreferenceNode)obj;
 			EngineDescriptor desc = node.getDescriptor();
-			removable = desc.isRemovable();
+			removable = desc.isUserDefined();
 		}
 		getButton(DELETE_ID).setEnabled(removable);
 	}
 	
 	private void doNew() {
-		NewEngineWizard wizard = new NewEngineWizard(engineTypes);
+		NewEngineWizard wizard = new NewEngineWizard(descManager.getEngineTypes());
 		WizardDialog dialog = new WizardDialog(getShell(), wizard);
 		dialog.create();
 		dialog.getShell().setSize(400, 500);
 		if (dialog.open()==WizardDialog.OK) {
 			EngineTypeDescriptor etdesc = wizard.getSelectedEngineType();
-			EngineDescriptor desc = new EngineDescriptor(null);
+			EngineDescriptor desc = new EngineDescriptor(descManager);
 			desc.setEngineType(etdesc);
 			desc.setUserDefined(true);
 			desc.setId(computeNewId(etdesc));
@@ -117,7 +117,16 @@ public class ScopePreferenceDialog extends PreferenceDialog {
 	}
 
 	private void doDelete() {
+		Object obj = ((IStructuredSelection)getTreeViewer().getSelection()).getFirstElement();
+		if (obj instanceof ScopePreferenceManager.EnginePreferenceNode) {
+			ScopePreferenceManager.EnginePreferenceNode node = (ScopePreferenceManager.EnginePreferenceNode)obj;
+			EngineDescriptor desc = node.getDescriptor();
+			ScopePreferenceManager mng = (ScopePreferenceManager)getPreferenceManager();
+			getTreeViewer().remove(node);
+			scheduleOperation(DELETE_ID, desc);
+		}
 	}
+	
 	private void scheduleOperation(int action, EngineDescriptor desc) {
 		if (pendingOperations==null)
 			pendingOperations = new ArrayList();
@@ -127,6 +136,14 @@ public class ScopePreferenceDialog extends PreferenceDialog {
 		super.okPressed();
 		if (pendingOperations!=null) {
 			// process pending operations
+			for (int i=0; i<pendingOperations.size(); i++) {
+				PendingOperation op = (PendingOperation)pendingOperations.get(i);
+				if (op.action==NEW_ID)
+					descManager.add(op.desc);
+				else
+					descManager.remove(op.desc);
+			}
+			pendingOperations = null;
 		}
 	}
 }

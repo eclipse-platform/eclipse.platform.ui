@@ -13,14 +13,13 @@ package org.eclipse.help.ui.internal.views;
 import java.util.*;
 import java.util.ArrayList;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.search.federated.*;
 import org.eclipse.help.search.*;
 import org.eclipse.help.ui.internal.*;
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.preference.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -60,10 +59,9 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 
 	private ScopeSetManager scopeSetManager;
 	
-	private EngineTypeDescriptor [] engineTypes;
-
-	private ArrayList engineDescriptors;
+	private EngineDescriptorManager descManager;
 	
+
 	private JobListener jobListener;
 	
 	private class JobListener implements IJobChangeListener, Runnable {
@@ -276,64 +274,52 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 	}
 
 	private void updateMasters(ScopeSet set) {
-		Control[] masters = ((Composite) scopeSection.getClient())
+		Control[] children = ((Composite) scopeSection.getClient())
 				.getChildren();
-		for (int i = 0; i < masters.length; i++) {
-			Control master = masters[i];
-			Object data = master.getData();
-			if (data != null && data instanceof EngineDescriptor) {
-				EngineDescriptor ed = (EngineDescriptor) data;
-				Button button = (Button) master;
-				button.setSelection(set.getEngineEnabled(ed));
+		for (int i = 0; i < children.length; i++) {
+			Control child = children[i];
+			if (child instanceof Button) {
+				Button master = (Button)child;
+				Object data = master.getData();
+				if (data != null && data instanceof EngineDescriptor) {
+					EngineDescriptor ed = (EngineDescriptor) data;
+					master.setSelection(set.getEngineEnabled(ed));
+				}
 			}
 		}
 	}
 
-	private void loadEngines(Composite container, FormToolkit toolkit) {
-		engineDescriptors = new ArrayList();
-		IConfigurationElement[] elements = Platform.getExtensionRegistry()
-				.getConfigurationElementsFor(ENGINE_EXP_ID);
-		Hashtable engineTypes = loadEngineTypes(elements);		
-		for (int i = 0; i < elements.length; i++) {
-			IConfigurationElement element = elements[i];
-			if (element.getName().equals("engine")) { //$NON-NLS-1$
-				EngineDescriptor desc = new EngineDescriptor(element);
-				String engineId = desc.getEngineTypeId();
-				if (engineId!=null) {
-					EngineTypeDescriptor etdesc = (EngineTypeDescriptor)engineTypes.get(engineId);
-					if (etdesc!=null) {
-						desc.setEngineType(etdesc);
-						loadEngine(desc, container, toolkit);
-						engineDescriptors.add(desc);
-					}
-				}
-			}
+	private void loadEngines(final Composite container, final FormToolkit toolkit) {
+		descManager = new EngineDescriptorManager();
+		EngineDescriptor [] descriptors = descManager.getDescriptors();
+		for (int i=0; i<descriptors.length; i++) {
+			EngineDescriptor desc = descriptors[i];
+			loadEngine(desc, container, toolkit);
 		}
+		descManager.addObserver(new Observer() {
+		    public void update(Observable o, Object arg) {
+		    	EngineDescriptorManager.DescriptorEvent event = (EngineDescriptorManager.DescriptorEvent)arg;
+		    	int kind = event.getKind();
+		    	EngineDescriptor desc = event.getDescriptor();
+		    	if (kind==IHelpUIConstants.ADD) {
+		    		loadEngine(desc, container, toolkit);
+		    	}
+		    	else if (kind==IHelpUIConstants.REMOVE) {
+		    		removeEngine(desc);
+		    	}
+		    	else {
+		    		updateEngine(desc);
+		    	}
+		    }
+		});	
 		updateMasters(scopeSetManager.getActiveSet());
 	}
 	
-	private Hashtable loadEngineTypes(IConfigurationElement [] elements) {
-		Hashtable result = new Hashtable();
-		ArrayList list = new ArrayList();
-		for (int i=0; i<elements.length; i++) {
-			IConfigurationElement element = elements[i];
-			if (element.getName().equals("engineType")) { //$NON-NLS-1$
-				EngineTypeDescriptor etdesc = new EngineTypeDescriptor(element);
-				String id = etdesc.getId();
-				if (id!=null) {
-					list.add(etdesc);
-					result.put(etdesc.getId(), etdesc);
-				}
-			}
-		}
-		engineTypes = (EngineTypeDescriptor [])list.toArray(new EngineTypeDescriptor[list.size()]);
-		return result;
-	}
-
 	private EngineDescriptor loadEngine(final EngineDescriptor edesc,
 			Composite container, FormToolkit toolkit) {
 		Label ilabel = toolkit.createLabel(container, null);
 		ilabel.setImage(edesc.getIconImage());
+		ilabel.setData(edesc);
 		final Button master = toolkit.createButton(container, edesc.getLabel(),
 				SWT.CHECK);
 		master.setData(edesc);
@@ -351,8 +337,41 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 							FormColors.TITLE));
 			dlabel.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 			dlabel.setMenu(container.getMenu());
+			dlabel.setData(edesc);
 		}
 		return edesc;
+	}
+	
+	private void removeEngine(EngineDescriptor desc) {
+		boolean reflowNeeded=false;
+		Control [] children = container.getChildren();
+		for (int i=0; i<children.length; i++) {
+			Control child = children[i];
+			EngineDescriptor ed = (EngineDescriptor)child.getData();
+			if (ed==desc) {
+				child.dispose();
+				reflowNeeded=true;
+			}
+		}
+		if (reflowNeeded)
+			parent.reflow();
+	}
+	private void updateEngine(EngineDescriptor desc) {
+		Control [] children = container.getChildren();
+		boolean reflowNeeded=false;
+		for (int i=0; i<children.length; i++) {
+			Control child = children[i];
+			EngineDescriptor ed = (EngineDescriptor)child.getData();
+			if (ed==desc) {
+				Button b = (Button)children[i+1];
+				b.setText(desc.getLabel());
+				Label d = (Label)children[i+2];
+				d.setText(desc.getDescription());
+				reflowNeeded=true;
+				break;
+			}
+		}
+		if (reflowNeeded) parent.reflow();
 	}
 
 	public void startSearch(String text) {
@@ -366,9 +385,9 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 		final SearchResultsPart results = (SearchResultsPart) parent
 				.findPart(IHelpUIConstants.HV_FSEARCH_RESULT);
 		ArrayList eds = new ArrayList();
-		for (int i = 0; i < engineDescriptors.size(); i++) {
-			final EngineDescriptor ed = (EngineDescriptor) engineDescriptors
-					.get(i);
+		EngineDescriptor [] engineDescriptors = descManager.getDescriptors();
+		for (int i = 0; i < engineDescriptors.length; i++) {
+			final EngineDescriptor ed = engineDescriptors[i];
 			if (set.getEngineEnabled(ed) && ed.getEngine() != null) {
 				ISearchScope scope = ed.createSearchScope(set
 						.getPreferenceStore());
@@ -403,9 +422,9 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 	private void doAdvanced() {
 		ScopeSet set = scopeSetManager.getActiveSet();
 		PreferenceManager manager = new ScopePreferenceManager(
-				engineDescriptors, set);
+				descManager, set);
 		PreferenceDialog dialog = new ScopePreferenceDialog(container.getShell(),
-				manager, engineTypes);
+				manager, descManager);
 		dialog.setPreferenceStore(set.getPreferenceStore());
 		dialog.open();
 		updateMasters(set);
@@ -413,7 +432,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 
 	private void doChangeScopeSet() {
 		ScopeSetDialog dialog = new ScopeSetDialog(container.getShell(),
-				scopeSetManager, engineDescriptors, engineTypes);
+				scopeSetManager, descManager);
 		dialog.setInput(scopeSetManager);
 		if (dialog.open() == ScopeSetDialog.OK) {
 			ScopeSet set = dialog.getActiveSet();

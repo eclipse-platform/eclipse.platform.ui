@@ -20,19 +20,51 @@ import org.eclipse.help.ui.internal.*;
 import org.w3c.dom.*;
 import org.xml.sax.*;
 
-public class EngineDescriptorManager implements IHelpUIConstants {
+public class EngineDescriptorManager extends Observable implements IHelpUIConstants {
 	private ArrayList descriptors;
 
 	private EngineTypeDescriptor[] engineTypes;
 
 	private static final String USER_FILE = "userSearches.xml";
 	private static final String ATT_ENGINE_TYPE_ID = "engineTypeId";
+	
+	public static class DescriptorEvent {
+		private EngineDescriptor desc;
+		private int kind;
+		public DescriptorEvent(EngineDescriptor desc, int kind) {
+			this.desc = desc;
+			this.kind = kind;
+		}
+		public EngineDescriptor getDescriptor() {
+			return desc;
+		}
+		public int getKind() {
+			return kind;
+		}
+	}
 
 	public EngineDescriptorManager() {
 		descriptors = new ArrayList();
 		load();
 	}
+	
+	public void add(EngineDescriptor desc) {
+		descriptors.add(desc);
+		this.setChanged();
+		this.notifyObservers(new DescriptorEvent(desc, ADD));
+	}
 
+	public void remove(EngineDescriptor desc) {
+		descriptors.remove(desc);
+		this.setChanged();
+		this.notifyObservers(new DescriptorEvent(desc, REMOVE));
+	}
+
+	public void notifyPropertyChange(EngineDescriptor desc) {
+		this.setChanged();
+		this.notifyObservers(new DescriptorEvent(desc, CHANGE));
+	}
+	
 	public EngineDescriptor[] getDescriptors() {
 		return (EngineDescriptor[]) descriptors
 				.toArray(new EngineDescriptor[descriptors.size()]);
@@ -154,7 +186,9 @@ public class EngineDescriptorManager implements IHelpUIConstants {
 	 * (non-Javadoc) Method declared on IDialogSettings.
 	 */
 	public void load(String fileName) throws IOException {
-		FileInputStream stream = new FileInputStream(fileName);
+		File file = new File(fileName);
+		if (!file.exists()) return;
+		FileInputStream stream = new FileInputStream(file);
 		BufferedReader reader = new BufferedReader(new InputStreamReader(
 				stream, "utf-8"));//$NON-NLS-1$
 		load(reader);
@@ -170,7 +204,7 @@ public class EngineDescriptorManager implements IHelpUIConstants {
 	}
 
 	private void loadUserEntry(Node node) {
-		EngineDescriptor edesc = new EngineDescriptor(null);
+		EngineDescriptor edesc = new EngineDescriptor(this);
 		String id = getAttribute(node, ATT_ID);
 		String engineTypeId = getAttribute(node, ATT_ENGINE_TYPE_ID);
 		EngineTypeDescriptor etdesc = findEngineType(engineTypeId);

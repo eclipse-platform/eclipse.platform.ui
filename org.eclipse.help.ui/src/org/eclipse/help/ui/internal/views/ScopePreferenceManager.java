@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.views;
 
-import java.util.ArrayList;
-
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.ui.internal.IHelpUIConstants;
 import org.eclipse.jface.preference.*;
@@ -59,14 +57,14 @@ public class ScopePreferenceManager extends PreferenceManager implements IHelpUI
 	/**
 	 * 
 	 */
-	public ScopePreferenceManager(ArrayList engineDescriptors, ScopeSet set) {
+	public ScopePreferenceManager(EngineDescriptorManager descManager, ScopeSet set) {
 		this.set = set;		
-		load(engineDescriptors);
+		load(descManager.getDescriptors());
 	}
 
-	private void load(ArrayList descriptors) {
-		for (int i=0; i<descriptors.size(); i++) {
-			EngineDescriptor desc = (EngineDescriptor)descriptors.get(i);
+	private void load(EngineDescriptor [] descriptors) {
+		for (int i=0; i<descriptors.length; i++) {
+			EngineDescriptor desc = descriptors[i];
 			addNode(desc);
 			IConfigurationElement [] pages = desc.getPages();
 			for (int j=0; j<pages.length; j++) {

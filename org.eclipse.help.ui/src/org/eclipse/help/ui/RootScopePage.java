@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.help.ui;
 
+import java.util.Hashtable;
+
 import org.eclipse.help.ui.internal.views.*;
 import org.eclipse.jface.preference.*;
 import org.eclipse.swt.SWT;
@@ -40,6 +42,8 @@ public abstract class RootScopePage extends PreferencePage implements
 	private Text labelText;
 
 	private Text descText;
+	
+	private Hashtable disabledStates = new Hashtable();
 
 	/**
 	 * The default constructor.
@@ -65,17 +69,17 @@ public abstract class RootScopePage extends PreferencePage implements
 		initializeDefaults(getPreferenceStore());
 		Composite container = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
-		if (ed.isRemovable())
+		if (ed.isUserDefined())
 			layout.numColumns = 2;
 		container.setLayout(layout);
 		masterButton = new Button(container, SWT.CHECK);
 		masterButton.setText("Enable search engine");
 		GridData gd = new GridData();
-		gd.horizontalSpan = ed.isRemovable() ? 2 : 1;
+		gd.horizontalSpan = ed.isUserDefined() ? 2 : 1;
 		masterButton.setLayoutData(gd);
 		Label spacer = new Label(container, SWT.NULL);
 		gd = new GridData();
-		gd.horizontalSpan = ed.isRemovable() ? 2 : 1;
+		gd.horizontalSpan = ed.isUserDefined() ? 2 : 1;
 		spacer.setLayoutData(gd);
 		boolean masterValue = getPreferenceStore().getBoolean(
 				ScopeSet.getMasterKey(ed.getId()));
@@ -85,7 +89,7 @@ public abstract class RootScopePage extends PreferencePage implements
 				masterValueChanged(masterButton.getSelection());
 			}
 		});
-		if (ed.isRemovable()) {
+		if (ed.isUserDefined()) {
 			Label label = new Label(container, SWT.NULL);
 			label.setText("Name:");
 			labelText = new Text(container, SWT.BORDER);
@@ -110,7 +114,7 @@ public abstract class RootScopePage extends PreferencePage implements
 			gd.horizontalSpan = layout.numColumns;
 			gd = (GridData) spacer.getLayoutData();
 			gd.horizontalSpan = layout.numColumns;
-			if (ed.isRemovable()) {
+			if (ed.isUserDefined()) {
 				gd = (GridData) labelText.getLayoutData();
 				gd.horizontalSpan = layout.numColumns - 1;
 				gd = (GridData) descText.getLayoutData();
@@ -138,11 +142,21 @@ public abstract class RootScopePage extends PreferencePage implements
 	private void updateEnableState(boolean enabled) {
 		Composite container = masterButton.getParent();
 		Control[] children = container.getChildren();
+
+		boolean first = disabledStates.isEmpty();
 		for (int i = 0; i < children.length; i++) {
 			Control child = children[i];
 			if (child == masterButton)
 				continue;
-			child.setEnabled(enabled);
+			if (!enabled) {
+				disabledStates.put(child, new Boolean(child.isEnabled()));
+				child.setEnabled(false);
+			}
+			else {
+				Boolean savedState = (Boolean)disabledStates.get(child);
+				if (!first)
+					child.setEnabled(savedState!=null?savedState.booleanValue():true);
+			}
 		}
 	}
 
@@ -189,6 +203,10 @@ public abstract class RootScopePage extends PreferencePage implements
 	public boolean performOk() {
 		getPreferenceStore().setValue(ScopeSet.getMasterKey(ed.getId()),
 				masterButton.getSelection());
+		if (labelText!=null) {
+			ed.setLabel(labelText.getText());
+			ed.setDescription(descText.getText());
+		}
 		return true;
 	}
 
@@ -212,7 +230,7 @@ public abstract class RootScopePage extends PreferencePage implements
 			masterValueChanged(value);
 		} else if (first)
 			masterValueChanged(value);
-		if (ed.isRemovable()) {
+		if (ed.isUserDefined()) {
 			labelText.setText(ed.getLabel());
 			descText.setText(ed.getDescription());
 		}

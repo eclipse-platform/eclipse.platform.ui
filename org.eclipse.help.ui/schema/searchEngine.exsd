@@ -232,13 +232,6 @@ of a search engine that can be individually modified. Products can preconfigure 
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="removable" type="boolean" use="default" value="false">
-            <annotation>
-               <documentation>
-                  if &lt;code&gt;true&lt;/code&gt;, users will be allowed to remove this engine from the search scope preferences. Otherwise, they will be able to disable it but not to remove it. By default, engine contributed via the extension point are not removable, while engines created by the user in the UI are.
-               </documentation>
-            </annotation>
-         </attribute>
       </complexType>
    </element>
 
