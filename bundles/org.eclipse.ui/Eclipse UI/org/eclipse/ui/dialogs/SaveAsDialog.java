@@ -80,7 +80,7 @@ public void create() {
 	setMessage(WorkbenchMessages.getString("SaveAsDialog.message")); //$NON-NLS-1$
 }
 /** 
- * The <code>SaveAsDialog</code> iplementation of this <code>Window</code>
+ * The <code>SaveAsDialog</code> implementation of this <code>Window</code>
  * method disposes of the banner image when the dialog is closed.
  */
 public boolean close() {
