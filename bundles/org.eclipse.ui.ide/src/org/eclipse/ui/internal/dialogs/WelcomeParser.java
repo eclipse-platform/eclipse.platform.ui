@@ -19,9 +19,9 @@ import org.apache.xerces.parsers.*;
 import org.xml.sax.helpers.*;
 import java.io.*;
 import java.util.*;
+
 /**
  * A parser for the the welcome page
- * @issue fix me
  */
 public class WelcomeParser extends DefaultHandler {
 	private static final String TAG_WELCOME_PAGE = "welcomePage"; //$NON-NLS-1$	
