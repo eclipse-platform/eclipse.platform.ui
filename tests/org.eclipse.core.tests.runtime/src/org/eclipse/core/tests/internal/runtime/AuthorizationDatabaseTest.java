@@ -35,7 +35,7 @@ public class AuthorizationDatabaseTest extends RuntimeTest {
 	}
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite();
+		TestSuite suite = new TestSuite(AuthorizationDatabaseTest.class.getName());
 		suite.addTest(new AuthorizationDatabaseTest("test1"));
 		suite.addTest(new AuthorizationDatabaseTest("test2"));
 		suite.addTest(new AuthorizationDatabaseTest("test3"));

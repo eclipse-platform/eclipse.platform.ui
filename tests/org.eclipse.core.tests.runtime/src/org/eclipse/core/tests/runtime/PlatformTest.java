@@ -36,7 +36,7 @@ public class PlatformTest extends RuntimeTest {
 	}
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite();
+		TestSuite suite = new TestSuite(PlatformTest.class.getName());
 		suite.addTest(new PlatformTest("testKeyRing1"));
 		suite.addTest(new PlatformTest("testKeyRing2"));
 		suite.addTest(new PlatformTest("testGetCommandLine"));

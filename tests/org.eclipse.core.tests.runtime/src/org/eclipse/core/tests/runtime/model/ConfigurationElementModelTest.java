@@ -38,7 +38,7 @@ public class ConfigurationElementModelTest extends RuntimeTest {
 	}
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite();
+		TestSuite suite = new TestSuite(ConfigurationElementModelTest.class.getName());
 		suite.addTest(new ConfigurationElementModelTest("testConstructor"));
 		suite.addTest(new ConfigurationElementModelTest("testIsReadOnly"));
 		suite.addTest(new ConfigurationElementModelTest("testMarkReadOnly"));

@@ -49,7 +49,7 @@ public class StatusTest extends RuntimeTest {
 	}
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite();
+		TestSuite suite = new TestSuite(StatusTest.class.getName());
 		suite.addTest(new StatusTest("testSingleStatusReturnValues"));
 		suite.addTest(new StatusTest("testMultiStatusReturnValues"));
 		suite.addTest(new StatusTest("testAdd"));

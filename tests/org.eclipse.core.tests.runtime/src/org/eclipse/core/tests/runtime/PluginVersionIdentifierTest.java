@@ -25,7 +25,7 @@ public class PluginVersionIdentifierTest extends RuntimeTest {
 	}
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite();
+		TestSuite suite = new TestSuite(PluginVersionIdentifierTest.class.getName());
 		suite.addTest(new PluginVersionIdentifierTest("testConstructor"));
 		suite.addTest(new PluginVersionIdentifierTest("testEqual"));
 		suite.addTest(new PluginVersionIdentifierTest("testComparisons"));

@@ -27,7 +27,7 @@ public class BenchPath extends CorePerformanceTest {
 	}
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite();
+		TestSuite suite = new TestSuite(BenchPath.class.getName());
 
 		//	suite.addTest(new BenchPath("benchHash"));
 		//	suite.addTest(new BenchPath("benchPathCreation"));

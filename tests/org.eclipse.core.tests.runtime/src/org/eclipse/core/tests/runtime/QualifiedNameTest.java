@@ -38,7 +38,7 @@ public class QualifiedNameTest extends RuntimeTest {
 
 	public static Test suite() {
 
-		TestSuite suite = new TestSuite();
+		TestSuite suite = new TestSuite(QualifiedNameTest.class.getName());
 		suite.addTest(new QualifiedNameTest("testQualifiers"));
 		suite.addTest(new QualifiedNameTest("testLocalNames"));
 		suite.addTest(new QualifiedNameTest("testEqualsAndHashcode"));
