@@ -55,7 +55,7 @@ import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.IImportStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 
-public class ExternalAntBuildfileImportPage extends WizardPage {
+public class AntNewJavaProjectPage extends WizardPage {
 	
 	private static class ImportOverwriteQuery implements IOverwriteQuery {
 		public String queryOverwrite(String file) {
@@ -89,13 +89,14 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 
 	private static final int SIZING_TEXT_FIELD_WIDTH = 250;
 	
-	public ExternalAntBuildfileImportPage() {
-		super("externalAntBuildfilePage"); //$NON-NLS-1$
+	public AntNewJavaProjectPage() {
+		super("newPage"); //$NON-NLS-1$
 		setPageComplete(false);
-		setTitle(DataTransferMessages.getString("ExternalAntBuildfileImportPage.9")); //$NON-NLS-1$
-		setDescription(DataTransferMessages.getString("ExternalAntBuildfileImportPage.10")); //$NON-NLS-1$
+		setTitle(DataTransferMessages.getString("AntNewJavaProjectPage.9")); //$NON-NLS-1$
+		setDescription(DataTransferMessages.getString("AntNewJavaProjectPage.10")); //$NON-NLS-1$
 
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
@@ -138,7 +139,7 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 
 		// new project label
 		Label projectContentsLabel = new Label(projectGroup, SWT.NONE);
-		projectContentsLabel.setText(DataTransferMessages.getString("ExternalAntBuildfileImportPage.11")); //$NON-NLS-1$
+		projectContentsLabel.setText(DataTransferMessages.getString("AntNewJavaProjectPage.11")); //$NON-NLS-1$
 		projectContentsLabel.setFont(parent.getFont());
 
 		createUserSpecifiedProjectLocationGroup(projectGroup);
@@ -162,7 +163,7 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 
 		// new project label
 		Label projectLabel = new Label(projectGroup, SWT.NONE);
-		projectLabel.setText(DataTransferMessages.getString("ExternalAntBuildfileImportPage.12")); //$NON-NLS-1$
+		projectLabel.setText(DataTransferMessages.getString("AntNewJavaProjectPage.12")); //$NON-NLS-1$
 		projectLabel.setFont(dialogFont);
 
 		// new project name entry field
@@ -193,7 +194,7 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 
 		// browse button
 		fBrowseButton = new Button(projectGroup, SWT.PUSH);
-		fBrowseButton.setText(DataTransferMessages.getString("ExternalAntBuildfileImportPage.13")); //$NON-NLS-1$
+		fBrowseButton.setText(DataTransferMessages.getString("AntNewJavaProjectPage.13")); //$NON-NLS-1$
 		fBrowseButton.setFont(dialogFont);
 		setButtonLayoutData(fBrowseButton);
 		
@@ -214,7 +215,7 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 	private String getProjectName(AntProjectNode projectNode) {
 		String projectName= projectNode.getLabel();
 		if (projectName == null) {
-			projectName= DataTransferMessages.getString("ExternalAntBuildfileImportPage.14"); //$NON-NLS-1$
+			projectName= DataTransferMessages.getString("AntNewJavaProjectPage.14"); //$NON-NLS-1$
 		}
 		return projectName;
 	}
@@ -245,24 +246,24 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 	 */
 	private void handleBrowseButtonPressed() {
 		
-			String lastUsedPath= null;
-			//lastUsedPath= dialogSettings.get(IAntUIConstants.DIALOGSTORE_LASTEXTFILE);
-			if (lastUsedPath == null) {
-				lastUsedPath= ""; //$NON-NLS-1$
-			}
-			FileDialog dialog = new FileDialog(getShell(), SWT.SINGLE);
-			dialog.setFilterExtensions(new String[] { "*.xml" }); //$NON-NLS-1$;
-			dialog.setFilterPath(lastUsedPath);
+		String lastUsedPath= null;
+		//lastUsedPath= dialogSettings.get(IAntUIConstants.DIALOGSTORE_LASTEXTFILE);
+		if (lastUsedPath == null) {
+			lastUsedPath= ""; //$NON-NLS-1$
+		}
+		FileDialog dialog = new FileDialog(getShell(), SWT.SINGLE);
+		dialog.setFilterExtensions(new String[] { "*.xml" }); //$NON-NLS-1$;
+		dialog.setFilterPath(lastUsedPath);
 
-			String result = dialog.open();
-			if (result == null) {
-				return;
-			}
-			IPath filterPath= new Path(dialog.getFilterPath());
-			String buildFileName= dialog.getFileName();
-			IPath path= filterPath.append(buildFileName).makeAbsolute();	
-			
-			fLocationPathField.setText(path.toOSString());
+		String result = dialog.open();
+		if (result == null) {
+			return;
+		}
+		IPath filterPath= new Path(dialog.getFilterPath());
+		String buildFileName= dialog.getFileName();
+		IPath path= filterPath.append(buildFileName).makeAbsolute();	
+		
+		fLocationPathField.setText(path.toOSString());
 	}
 
 	/**
@@ -278,37 +279,37 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 
 		if (locationFieldContents.equals("")) { //$NON-NLS-1$
 			setErrorMessage(null);
-			setMessage(DataTransferMessages.getString("ExternalAntBuildfileImportPage.15")); //$NON-NLS-1$
+			setMessage(DataTransferMessages.getString("AntNewJavaProjectPage.15")); //$NON-NLS-1$
 			return false;
 		}
 
 		IPath path = new Path(""); //$NON-NLS-1$
 		if (!path.isValidPath(locationFieldContents)) {
-			setErrorMessage(DataTransferMessages.getString("ExternalAntBuildfileImportPage.16")); //$NON-NLS-1$
+			setErrorMessage(DataTransferMessages.getString("AntNewJavaProjectPage.16")); //$NON-NLS-1$
 			return false;
 		}
 
 		if (fAntModel == null) {
 			if (getBuildFile(locationFieldContents) == null) {
-				setErrorMessage(DataTransferMessages.getString("ExternalAntBuildfileImportPage.0")); //$NON-NLS-1$
+				setErrorMessage(DataTransferMessages.getString("AntNewJavaProjectPage.0")); //$NON-NLS-1$
 				return false;
 			} 
-			setErrorMessage(DataTransferMessages.getString("ExternalAntBuildfileImportPage.17")); //$NON-NLS-1$
+			setErrorMessage(DataTransferMessages.getString("AntNewJavaProjectPage.17")); //$NON-NLS-1$
 			return false;
 		}
 		
 		if (fAntModel.getProjectNode() == null) {
-		    setErrorMessage(DataTransferMessages.getString("ExternalAntBuildfileImportPage.2")); //$NON-NLS-1$
+		    setErrorMessage(DataTransferMessages.getString("AntNewJavaProjectPage.2")); //$NON-NLS-1$
 		    return false;
 		}
 		
 		if (getProjectNameFieldValue().length() == 0) {
-			setErrorMessage(DataTransferMessages.getString("ExternalAntBuildfileImportPage.18")); //$NON-NLS-1$
+			setErrorMessage(DataTransferMessages.getString("AntNewJavaProjectPage.18")); //$NON-NLS-1$
 			return false;
 		} 
 		IProject existingProject= ResourcesPlugin.getWorkspace().getRoot().getProject(getProjectNameFieldValue());
 		if (existingProject.exists()) {
-			setErrorMessage(DataTransferMessages.getString("ExternalAntBuildfileImportPage.19")); //$NON-NLS-1$
+			setErrorMessage(DataTransferMessages.getString("AntNewJavaProjectPage.19")); //$NON-NLS-1$
 			return false;
 		}
 
@@ -356,11 +357,11 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 		final List javacNodes= new ArrayList();
 		getJavacNodes(javacNodes, projectNode);
 		if (javacNodes.size() > 1) {
-			setErrorMessage(DataTransferMessages.getString("ExternalAntBuildfileImportPage.20")); //$NON-NLS-1$
+			setErrorMessage(DataTransferMessages.getString("AntNewJavaProjectPage.20")); //$NON-NLS-1$
 			setPageComplete(false);
 			return null;
 		} else if (javacNodes.size() == 0) {
-			setErrorMessage(DataTransferMessages.getString("ExternalAntBuildfileImportPage.1")); //$NON-NLS-1$
+			setErrorMessage(DataTransferMessages.getString("AntNewJavaProjectPage.1")); //$NON-NLS-1$
 			setPageComplete(false);
 			return null;
 		}
@@ -397,7 +398,7 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 			    status= new Status(IStatus.ERROR, AntUIPlugin.PI_ANTUI, IStatus.OK, "Error occurred. Check log for details ", t); //$NON-NLS-1$
 			    AntUIPlugin.log(t);
 			}
-			ErrorDialog.openError(getShell(), DataTransferMessages.getString("ExternalAntBuildfileImportPage.21"), //$NON-NLS-1$
+			ErrorDialog.openError(getShell(), DataTransferMessages.getString("AntNewJavaProjectPage.21"), //$NON-NLS-1$
 					null, status);
 		}
 		
@@ -419,7 +420,7 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 		} catch (InvocationTargetException e) {
 			Throwable t = e.getTargetException();
 			if (t instanceof CoreException) {	
-				ErrorDialog.openError(getShell(), DataTransferMessages.getString("ExternalAntBuildfileImportPage.22"), //$NON-NLS-1$
+				ErrorDialog.openError(getShell(), DataTransferMessages.getString("AntNewJavaProjectPage.22"), //$NON-NLS-1$
 				null, ((CoreException) t).getStatus());
 			}
 		}
