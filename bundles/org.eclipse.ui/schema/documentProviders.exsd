@@ -111,7 +111,7 @@ This example registers &lt;samp&gt;org.eclipse.ui.examples.javaeditor.JavaDocume
 &lt;/extension&gt; 
 &lt;/pre&gt;
 &lt;/p&gt;
-This example registers &lt;samp&gt;org.eclipse.ui.editors.text.FileDocumentProvider&lt;/samp&gt; as the default provider for all editor inputs that are instance of org.eclipse.ui.IStorageEditorInput.
+This example registers &lt;samp&gt;org.eclipse.ui.editors.text.FileDocumentProvider&lt;/samp&gt; as the default provider for all editor inputs that are &lt;samp&gt;instance of org.eclipse.ui.IStorageEditorInput&lt;/samp&gt;.
       </documentation>
    </annotation>
 
@@ -139,8 +139,11 @@ This example registers &lt;samp&gt;org.eclipse.ui.editors.text.FileDocumentProvi
       </appInfo>
       <documentation>
          &lt;p&gt;
-Copyright (c) 2002 IBM Corporation and others.
-All rights reserved.   This program and the accompanying materials are made available under the terms of the Common Public License v1.0 which accompanies this distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html
+&lt;a href="hglegal.htm"&gt;
+ &lt;img SRC="ngibmcpy.gif"
+   ALT="Copyright IBM Corp. 2000, 2003. All Rights Reserved."
+   BORDER=0 height=14 width=324&gt;&lt;/a&gt;
+&lt;/p&gt;
       </documentation>
    </annotation>
 
