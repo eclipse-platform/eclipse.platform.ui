@@ -18,8 +18,8 @@ import org.eclipse.swt.widgets.Shell;
  * JFace to provide extra information when a
  * blocking has occured. There is one static instance
  * of this class used by WizardDialog and ModalContext.
- * @see IProgressMonitor.clearBlocked()
- * @see IProgressMonitor.setBlocked();
+ * @see org.eclipse.core.runtime.IProgressMonitorWithBlocking#clearBlocked()
+ * @see  org.eclipse.core.runtime.IProgressMonitorWithBlocking#setBlocked(IStatus)
  * @see WizardDialog
  * @since 3.0
  */
@@ -34,7 +34,7 @@ public interface IDialogBlockedHandler {
 	 * A blockage has occured. Show the blockage and 
 	 * forward any actions to blockingMonitor.
 	 * @param parentShell The shell this is being sent from.
-	 * @param blockingMonitor The monitor to forward to. This is most
+	 * @param blocking The monitor to forward to. This is most
 	 * important for calls to <code>cancel()</code>.
 	 * @param blockingStatus The status that describes the blockage
 	 * @param blockedName The name of the locked operation.
@@ -46,7 +46,7 @@ public interface IDialogBlockedHandler {
 	 * A blockage has occured. Show the blockage and 
 	 * forward any actions to blockingMonitor. 
 	 * 
-	 * @param blockingMonitor The monitor to forward to. This is most
+	 * @param blocking The monitor to forward to. This is most
 	 * important for calls to <code>cancel()</code>.
 	 * @param blockingStatus The status that describes the blockage
 	 * @param blockedName The name of the locked operation.

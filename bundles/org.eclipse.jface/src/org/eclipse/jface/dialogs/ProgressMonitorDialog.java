@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,14 +30,16 @@ import org.eclipse.swt.widgets.*;
  * 
  * <pre>
  * 
- *  try {
- *     IRunnableWithProgress op = ...;
- *     new ProgressMonitorDialog(activeShell).run(true, true, op);
- *  } catch (InvocationTargetException e) {
- *     // handle exception
- *  } catch (InterruptedException e) {
- *     // handle cancelation
- *  }
+ *  
+ *   try {
+ *      IRunnableWithProgress op = ...;
+ *      new ProgressMonitorDialog(activeShell).run(true, true, op);
+ *   } catch (InvocationTargetException e) {
+ *      // handle exception
+ *   } catch (InterruptedException e) {
+ *      // handle cancelation
+ *   }
+ *   
  *  
  * </pre>
  * 
@@ -69,7 +71,6 @@ public class ProgressMonitorDialog extends IconAndMessageDialog
 	 */
 	private static int LABEL_DLUS = 21;
 	private static int BAR_DLUS = 9;
-	
 	/**
 	 * The progress indicator control.
 	 */
@@ -222,26 +223,27 @@ public class ProgressMonitorDialog extends IconAndMessageDialog
 	 *            IStatus that gives the details
 	 */
 	protected void updateForSetBlocked(IStatus reason) {
-		setMessage(shortenText(reason.getMessage(),messageLabel));
+		setMessage(shortenText(reason.getMessage(), messageLabel));
 		imageLabel.setImage(getImage());
 	}
 	/**
 	 * Creates a progress monitor dialog under the given shell. The dialog has a
 	 * standard title and no image. <code>open</code> is non-blocking.
 	 * 
-	 * @param parentShell
+	 * @param parent
 	 *            the parent shell, or <code>null</code> to create a top-level
 	 *            shell
 	 */
 	public ProgressMonitorDialog(Shell parent) {
 		super(parent);
 		setShellStyle(SWT.BORDER | SWT.TITLE | SWT.APPLICATION_MODAL); // no
-																	   // close
-																	   // button
+		// close
+		// button
 		setBlockOnOpen(false);
 	}
 	/**
 	 * Enables the cancel button (asynchronously).
+	 * @param b The state to set the button to.
 	 */
 	private void asyncSetOperationCancelButtonEnabled(final boolean b) {
 		if (getShell() != null) {
@@ -360,7 +362,8 @@ public class ProgressMonitorDialog extends IconAndMessageDialog
 		return parent;
 	}
 	/*
-	 * (non-Javadoc) Method declared in Window.
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.window.Window#getInitialSize()
 	 */
 	protected Point getInitialSize() {
 		Point calculatedSize = super.getInitialSize();
@@ -506,6 +509,7 @@ public class ProgressMonitorDialog extends IconAndMessageDialog
 	}
 	/**
 	 * Set the message in the message label.
+	 * @param messageString The string for the new message.
 	 */
 	private void setMessage(String messageString) {
 		//must not set null text in a label
@@ -523,8 +527,7 @@ public class ProgressMonitorDialog extends IconAndMessageDialog
 		messageLabel.update();
 	}
 	/*
-	 * (non-Javadoc)
-	 * 
+	 *  (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#open()
 	 */
 	public int open() {
@@ -535,6 +538,4 @@ public class ProgressMonitorDialog extends IconAndMessageDialog
 		}
 		return super.open();
 	}
-	
-	
 }
