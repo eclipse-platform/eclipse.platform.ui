@@ -41,8 +41,8 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
-import org.eclipse.jface.text.IEditorHelper;
-import org.eclipse.jface.text.IEditorHelperRegistry;
+import org.eclipse.jface.text.ITextViewerHelper;
+import org.eclipse.jface.text.ITextViewerHelperRegistry;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.IRewriteTarget;
 import org.eclipse.jface.text.ITextViewer;
@@ -100,7 +100,7 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 	private String fLineDelimiter;
 	/** The most recently selected proposal. */
 	private ICompletionProposal fLastProposal;
-	private IEditorHelper fEditorHelper= new IEditorHelper() {
+	private ITextViewerHelper fEditorHelper= new ITextViewerHelper() {
 
 		public boolean isValidSubjectRegion(IRegion focus) {
 			if (fViewer != null) {
@@ -360,9 +360,9 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 			if (target != null)
 				target.beginCompoundChange();
 			
-			if (fViewer instanceof IEditorHelperRegistry) {
-				IEditorHelperRegistry registry= (IEditorHelperRegistry) fViewer;
-				registry.register(fEditorHelper);
+			if (fViewer instanceof ITextViewerHelperRegistry) {
+				ITextViewerHelperRegistry registry= (ITextViewerHelperRegistry) fViewer;
+				registry.registerHelper(fEditorHelper);
 			}
 
 			if (p instanceof ICompletionProposalExtension2) {
@@ -403,9 +403,9 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 			if (target != null)
 				target.endCompoundChange();
 
-			if (fViewer instanceof IEditorHelperRegistry) {
-				IEditorHelperRegistry registry= (IEditorHelperRegistry) fViewer;
-				registry.deregister(fEditorHelper);
+			if (fViewer instanceof ITextViewerHelperRegistry) {
+				ITextViewerHelperRegistry registry= (ITextViewerHelperRegistry) fViewer;
+				registry.deregisterHelper(fEditorHelper);
 			}
 			
 			fInserting= false;
@@ -431,9 +431,9 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 
 		unregister();
 
-		if (fViewer instanceof IEditorHelperRegistry) {
-			IEditorHelperRegistry registry= (IEditorHelperRegistry) fViewer;
-			registry.deregister(fEditorHelper);
+		if (fViewer instanceof ITextViewerHelperRegistry) {
+			ITextViewerHelperRegistry registry= (ITextViewerHelperRegistry) fViewer;
+			registry.deregisterHelper(fEditorHelper);
 		}
 		
 		if (Helper2.okToUse(fProposalShell)) {
@@ -633,9 +633,9 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 				document.addDocumentListener(fDocumentListener);
 			
 			
-			if (fViewer instanceof IEditorHelperRegistry) {
-				IEditorHelperRegistry registry= (IEditorHelperRegistry) fViewer;
-				registry.register(fEditorHelper);
+			if (fViewer instanceof ITextViewerHelperRegistry) {
+				ITextViewerHelperRegistry registry= (ITextViewerHelperRegistry) fViewer;
+				registry.registerHelper(fEditorHelper);
 			}
 			
 			fProposalShell.setVisible(true);

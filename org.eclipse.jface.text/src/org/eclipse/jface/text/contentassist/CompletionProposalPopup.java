@@ -39,12 +39,12 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
-import org.eclipse.jface.text.IEditorHelper;
+import org.eclipse.jface.text.ITextViewerHelper;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.IRewriteTarget;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension;
-import org.eclipse.jface.text.IEditorHelperRegistry;
+import org.eclipse.jface.text.ITextViewerHelperRegistry;
 import org.eclipse.jface.text.TextUtilities;
 
 
@@ -146,7 +146,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 * have focus while the 'logical focus' is still with the editor. 
 	 * @since 3.1
 	 */
-	private IEditorHelper fFocusHelper;
+	private ITextViewerHelper fFocusHelper;
 	
 	/**
 	 * Creates a new completion proposal popup for the given elements.
@@ -381,7 +381,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 			
 		fInserting= true;
 		IRewriteTarget target= null;
-		IEditorHelper helper= new IEditorHelper() {
+		ITextViewerHelper helper= new ITextViewerHelper() {
 			
 			public boolean isSourceOfEvent(Object event) {
 				return true;
@@ -409,9 +409,9 @@ class CompletionProposalPopup implements IContentAssistListener {
 			if (target != null)
 				target.beginCompoundChange();
 
-			if (fViewer instanceof IEditorHelperRegistry) {
-				IEditorHelperRegistry registry= (IEditorHelperRegistry) fViewer;
-				registry.register(helper);
+			if (fViewer instanceof ITextViewerHelperRegistry) {
+				ITextViewerHelperRegistry registry= (ITextViewerHelperRegistry) fViewer;
+				registry.registerHelper(helper);
 			}
 
 
@@ -453,9 +453,9 @@ class CompletionProposalPopup implements IContentAssistListener {
 			if (target != null)
 				target.endCompoundChange();
 
-			if (fViewer instanceof IEditorHelperRegistry) {
-				IEditorHelperRegistry registry= (IEditorHelperRegistry) fViewer;
-				registry.deregister(helper);
+			if (fViewer instanceof ITextViewerHelperRegistry) {
+				ITextViewerHelperRegistry registry= (ITextViewerHelperRegistry) fViewer;
+				registry.deregisterHelper(helper);
 			}
 			fInserting= false;
 		}
@@ -480,9 +480,9 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 		unregister();
 		
-		if (fViewer instanceof IEditorHelperRegistry) {
-			IEditorHelperRegistry registry= (IEditorHelperRegistry) fViewer;
-			registry.deregister(fFocusHelper);
+		if (fViewer instanceof ITextViewerHelperRegistry) {
+			ITextViewerHelperRegistry registry= (ITextViewerHelperRegistry) fViewer;
+			registry.deregisterHelper(fFocusHelper);
 		}
 
 		if (Helper.okToUse(fProposalShell)) {
@@ -631,7 +631,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 				document.addDocumentListener(fDocumentListener);
 			
 			if (fFocusHelper == null) {
-				fFocusHelper= new IEditorHelper() {
+				fFocusHelper= new ITextViewerHelper() {
 					
 					public boolean isSourceOfEvent(Object event) {
 						return false;
@@ -647,9 +647,9 @@ class CompletionProposalPopup implements IContentAssistListener {
 					
 				};
 			}
-			if (fViewer instanceof IEditorHelperRegistry) {
-				IEditorHelperRegistry registry= (IEditorHelperRegistry) fViewer;
-				registry.register(fFocusHelper);
+			if (fViewer instanceof ITextViewerHelperRegistry) {
+				ITextViewerHelperRegistry registry= (ITextViewerHelperRegistry) fViewer;
+				registry.registerHelper(fFocusHelper);
 			}
 
 			

@@ -91,7 +91,7 @@ import org.eclipse.jface.text.projection.ChildDocumentManager;
  * will be broken by future releases.
  */
 public class TextViewer extends Viewer implements
-					ITextViewer, ITextViewerExtension, ITextViewerExtension2, ITextViewerExtension4, ITextViewerExtension6, IEditorHelperRegistry,
+					ITextViewer, ITextViewerExtension, ITextViewerExtension2, ITextViewerExtension4, ITextViewerExtension6, ITextViewerHelperRegistry,
 					ITextOperationTarget, ITextOperationTargetExtension,
 					IWidgetTokenOwner, IWidgetTokenOwnerExtension, IPostSelectionProvider {
 	
@@ -5035,31 +5035,31 @@ public class TextViewer extends Viewer implements
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.IEditorHelperRegistry#register(org.eclipse.jface.text.IEditorHelper)
+	 * @see org.eclipse.jface.text.ITextViewerHelperRegistry#registerHelper(org.eclipse.jface.text.ITextViewerHelper)
 	 * XXX API still in flux, do not rely on this method
 	 * @since 3.1
 	 */
-	public void register(IEditorHelper helper) {
+	public void registerHelper(ITextViewerHelper helper) {
 		Assert.isLegal(helper != null);
 		fEditorHelpers.add(helper);		
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.IEditorHelperRegistry#deregister(org.eclipse.jface.text.IEditorHelper)
+	 * @see org.eclipse.jface.text.ITextViewerHelperRegistry#deregisterHelper(org.eclipse.jface.text.ITextViewerHelper)
 	 * XXX API still in flux, do not rely on this method
 	 * @since 3.1
 	 */
-	public void deregister(IEditorHelper helper) {
+	public void deregisterHelper(ITextViewerHelper helper) {
 		fEditorHelpers.remove(helper);
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.IEditorHelperRegistry#getCurrentHelpers()
+	 * @see org.eclipse.jface.text.ITextViewerHelperRegistry#getCurrentHelpers()
 	 * XXX API still in flux, do not rely on this method
 	 * @since 3.1
 	 */
-	public IEditorHelper[] getCurrentHelpers() {
-		return (IEditorHelper[]) fEditorHelpers.toArray(new IEditorHelper[fEditorHelpers.size()]);
+	public ITextViewerHelper[] getCurrentHelpers() {
+		return (ITextViewerHelper[]) fEditorHelpers.toArray(new ITextViewerHelper[fEditorHelpers.size()]);
 	}
 
 	/*

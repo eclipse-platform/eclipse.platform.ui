@@ -11,14 +11,14 @@
 package org.eclipse.jface.text;
 
 /**
- * A registry for <code>IEditorHelper</code>s.
+ * A registry for <code>ITextViewerHelper</code>s.
  * <p>
  * XXX This interface is subject to change. Do not use.
  * </p>
  * 
  * @since 3.1
  */
-public interface IEditorHelperRegistry {
+public interface ITextViewerHelperRegistry {
 
 	/**
 	 * Register a helper with the registry. If the helper is already registered,
@@ -26,7 +26,7 @@ public interface IEditorHelperRegistry {
 	 * 
 	 * @param helper an editor helper
 	 */
-	public void register(IEditorHelper helper);
+	public void registerHelper(ITextViewerHelper helper);
 	
 	/**
 	 * Deregister a helper with the registry. If the helper is not registered,
@@ -34,7 +34,7 @@ public interface IEditorHelperRegistry {
 	 * 
 	 * @param helper the helper to deregister, or <code>null</code>
 	 */
-	public void deregister(IEditorHelper helper);
+	public void deregisterHelper(ITextViewerHelper helper);
 	
 	/**
 	 * Returns the current editor helpers.
@@ -42,5 +42,5 @@ public interface IEditorHelperRegistry {
 	 * @return an non- <code>null</code> array of currently registered editor
 	 *         helpers
 	 */
-	public IEditorHelper[] getCurrentHelpers();
+	public ITextViewerHelper[] getCurrentHelpers();
 }
