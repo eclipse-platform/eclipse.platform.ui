@@ -97,7 +97,7 @@ public abstract class Dialog extends Window {
 	/**
 	 * Font metrics to use for determining pixel sizes.
 	 */
-	private FontMetrics fontMetrics;
+	protected FontMetrics fontMetrics;
 	
 	/**
 	 * Number of horizontal dialog units per character, value <code>4</code>. 

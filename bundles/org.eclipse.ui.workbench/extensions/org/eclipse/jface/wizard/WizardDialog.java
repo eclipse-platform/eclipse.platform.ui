@@ -52,6 +52,9 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer {
 
 	// The wizard the dialog is currently showing.
 	private IWizard wizard;
+	
+	//The Table of Contents
+	private WizardTableOfContentsHeader tableOfContents;
 
 	// Wizards to dispose
 	private ArrayList createdWizards = new ArrayList();
@@ -61,9 +64,8 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer {
 	
 	// The currently displayed page.
 	private IWizardPage currentPage = null;
-	
-	// The number of long running operation executed from the dialog.	
-	private long activeRunningOperations = 0;
+
+		private long activeRunningOperations = 0;
 	private boolean operationCancelableState;
 	
 	// Do I have a help button or not
@@ -831,7 +833,8 @@ protected void setWizard(IWizard newWizard) {
 	wizard.setContainer(this);
 	if (!createdWizards.contains(wizard)) {
 		createdWizards.add(wizard);
-
+		if(this.tableOfContents != null)
+			this.tableOfContents.addWizard(newWizard);
 		// New wizard so just add it to the end of our nested list
 		nestedWizards.add(wizard);
 
@@ -892,6 +895,7 @@ public void showPage(IWizardPage page) {
 	currentPage = page;
 	currentPage.setVisible(true);
 	oldPage.setVisible(false);
+	tableOfContents.selectPage(page);
 
 	// update the dialog controls
 	update();
@@ -1114,4 +1118,13 @@ public void updateWindowTitle() {
 		
 	getShell().setText(title);	
 }
+
+/** 
+ * @see org.eclipse.jface.dialogs.TitleAreaDialog#initializeHeader() */
+protected void initializeHeader() {
+		this.tableOfContents = new WizardTableOfContentsHeader(this);
+		this.tableOfContents.addWizard(getWizard());
+		this.header = this.tableOfContents;
+	}
+	
 }
