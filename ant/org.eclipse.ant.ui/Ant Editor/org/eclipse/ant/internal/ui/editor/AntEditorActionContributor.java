@@ -36,14 +36,12 @@ public class AntEditorActionContributor extends TextEditorActionContributor {
 	protected RetargetTextEditorAction fContentAssistProposal;
 	protected RetargetTextEditorAction fContentFormat;
 	private OpenDeclarationAction fOpenDeclarationAction;
-	private ValidateBuildfileAction fValidateAction;
 
 	public AntEditorActionContributor() {
 		super();
 		ResourceBundle bundle = ResourceBundle.getBundle("org.eclipse.ant.internal.ui.editor.AntEditorMessages"); //$NON-NLS-1$
 		fContentAssistProposal = new RetargetTextEditorAction(bundle, "ContentAssistProposal."); //$NON-NLS-1$
 		fContentFormat = new RetargetTextEditorAction(bundle, "ContentFormat."); //$NON-NLS-1$
-		fValidateAction= new ValidateBuildfileAction();
 	}
 	
 	protected void initializeActions(AntEditor editor) {	 
