@@ -4,6 +4,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.preference.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.update.core.SiteManager;
 import org.eclipse.update.internal.ui.UpdateUIPlugin;
@@ -24,6 +26,8 @@ public class MainPreferencePage
 	private static final String SYSTEM_VALUE = "system";
 	private static final String KEY_HISTORY_SIZE =
 		"MainPreferencePage.historySize";
+	private static final String KEY_TOPIC_COLOR =
+		"MainPreferencePage.topicColor";
 	private static final String KEY_BROWSER_CHOICE =
 		"MainPreferencePage.browserChoice";
 	private static final String KEY_BROWSER_CHOICE_EMBEDDED =
@@ -81,6 +85,8 @@ public class MainPreferencePage
 			}, getFieldEditorParent());
 			addField(browser);
 		}
+		createSpacer(getFieldEditorParent(), 2);
+
 		RadioGroupFieldEditor updateVersions =
 			new RadioGroupFieldEditor(
 				P_UPDATE_VERSIONS,
@@ -97,11 +103,28 @@ public class MainPreferencePage
 					COMPATIBLE_VALUE }
 		}, getFieldEditorParent());
 		addField(updateVersions);
+		
+		createSpacer(getFieldEditorParent(), 2);
+
+		ColorFieldEditor topicColor =
+			new ColorFieldEditor(
+				UpdateColors.P_TOPIC_COLOR,
+				UpdateUIPlugin.getResourceString(KEY_TOPIC_COLOR),
+				getFieldEditorParent());
+		addField(topicColor);
+
+	}
+	protected void createSpacer(Composite composite, int columnSpan) {
+		Label label = new Label(composite, SWT.NONE);
+		GridData gd = new GridData();
+		gd.horizontalSpan = columnSpan;
+		label.setLayoutData(gd);
 	}
 	private static void initializeDefaults(IPreferenceStore store) {
 		store.setDefault(P_HISTORY_SIZE, 5);
 		store.setDefault(P_BROWSER, EMBEDDED_VALUE);
 		store.setDefault(P_UPDATE_VERSIONS, EQUIVALENT_VALUE);
+		UpdateColors.setDefaults(store);
 	}
 	private int getHistorySize() {
 		IPreferenceStore store =
@@ -115,7 +138,7 @@ public class MainPreferencePage
 		initializeDefaults(store);
 		return store.getString(P_BROWSER).equals(EMBEDDED_VALUE);
 	}
-	
+
 	public static String getUpdateVersionsMode() {
 		IPreferenceStore store =
 			UpdateUIPlugin.getDefault().getPreferenceStore();

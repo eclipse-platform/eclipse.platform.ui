@@ -22,6 +22,7 @@ import org.eclipse.update.core.*;
 import org.eclipse.update.internal.ui.forms.UpdateAdapterFactory;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.parts.AboutInfo;
+import org.eclipse.update.internal.ui.preferences.UpdateColors;
 import org.eclipse.update.internal.ui.security.AuthorizationDatabase;
 
 /**
@@ -137,6 +138,7 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 		IAdapterManager manager = Platform.getAdapterManager();
 		manager.unregisterAdapters(adapterFactory);
 		model.shutdown();
+		UpdateColors.disposeColors();
 		super.shutdown();
 	}
 
