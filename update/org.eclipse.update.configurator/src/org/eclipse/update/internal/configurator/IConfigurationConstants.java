@@ -58,5 +58,6 @@ public interface IConfigurationConstants {
 	public static final String FEATURES = "features"; //$NON-NLS-1$
 	public static final String PLUGIN_XML = "plugin.xml"; //$NON-NLS-1$
 	public static final String FRAGMENT_XML = "fragment.xml"; //$NON-NLS-1$
+	public static final String META_MANIFEST_MF = "META-INF/MANIFEST.MF"; //$NON-NLS-1$
 	public static final String FEATURE_XML = "feature.xml"; //$NON-NLS-1$
 }

@@ -259,6 +259,15 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 							continue;
 						PluginEntry entry =	pluginParser.parse(pluginFile);
 						addPluginEntry(entry);
+					}else{
+						pluginFile = new File(files[i], META_MANIFEST_MF);
+						BundleManifest bundleManifest = new BundleManifest(pluginFile);
+						if(!bundleManifest.exists() || pluginFile.lastModified() <= pluginsChangeStamp)
+								continue;
+						PluginEntry entry=bundleManifest.getPluginEntry();
+						//if(entry!=null){ // exists so not null
+							addPluginEntry(entry);
+						//}
 					}
 				} catch (IOException e) {
 					String pluginFileString = (pluginFile == null) ? null : pluginFile.getAbsolutePath();
