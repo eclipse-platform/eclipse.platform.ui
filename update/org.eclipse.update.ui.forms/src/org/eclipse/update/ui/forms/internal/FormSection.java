@@ -352,6 +352,8 @@ public abstract class FormSection implements IPropertyChangeListener {
 		dirty = newDirty;
 	}
 	public void setFocus() {
+		if (toggle!=null)
+			toggle.setFocus();
 	}
 	public void setHeaderColorKey(java.lang.String newHeaderColorKey) {
 		headerColorKey = newHeaderColorKey;
