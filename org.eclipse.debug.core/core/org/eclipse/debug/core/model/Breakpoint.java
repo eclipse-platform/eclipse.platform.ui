@@ -24,6 +24,9 @@ import org.eclipse.debug.internal.core.DebugCoreMessages;
  * Abstract implementation of a breakpoint. This class is
  * intended to be subclassed by implementations
  * of breakpoints.
+ * 
+ * @see IBreakpoint
+ * @since 2.0
  */
 
 public abstract class Breakpoint implements IBreakpoint {
@@ -127,10 +130,15 @@ public abstract class Breakpoint implements IBreakpoint {
 	}
 	
 	/**
-	 * Attribute setting of the underlying marker must occur in a 
-	 * workspace runnable (to prevent deadlock).
-	 * To be safe, all subclasses should not directly set the attributes
-	 * of the underlying marker.
+	 * Convenience method to set the given boolean attribute of
+	 * this breakpoint's underlying marker in a workspace
+	 * runnable. Setting marker attributes in a workspace runnable
+	 * prevents deadlock.
+	 * 
+	 * @param attributeName attribute name
+	 * @param value attribute value
+	 * @exception CoreException is setting the attribute fails
+	 * @see IMarker#setAttribute(java.lang.String, boolean)
 	 */
 	protected void setAttribute(final String attributeName, final boolean value) throws CoreException {
 		IWorkspace workspace= ResourcesPlugin.getWorkspace();
@@ -144,10 +152,15 @@ public abstract class Breakpoint implements IBreakpoint {
 	}
 	
 	/**
-	 * Attribute setting of the underlying marker must occur in a 
-	 * workspace runnable (to prevent deadlock).
-	 * To be safe, all subclasses should not directly set the attributes
-	 * of the underlying marker.
+	 * Convenience method to set the given integer attribute of
+	 * this breakpoint's underlying marker in a workspace
+	 * runnable. Setting marker attributes in a workspace runnable
+	 * prevents deadlock.
+	 * 
+	 * @param attributeName attribute name
+	 * @param value attribute value
+	 * @exception CoreException is setting the attribute fails
+	 * @see IMarker#setAttribute(java.lang.String, int)
 	 */
 	protected void setAttribute(final String attributeName, final int value) throws CoreException {
 		IWorkspace workspace= ResourcesPlugin.getWorkspace();
@@ -161,10 +174,15 @@ public abstract class Breakpoint implements IBreakpoint {
 	}
 
 	/**
-	 * Attribute setting of the underlying marker must occur in a 
-	 * workspace runnable (to prevent deadlock).
-	 * To be safe, all subclasses should not directly set the attributes
-	 * of the underlying marker.
+	 * Convenience method to set the given attribute of
+	 * this breakpoint's underlying marker in a workspace
+	 * runnable. Setting marker attributes in a workspace runnable
+	 * prevents deadlock.
+	 * 
+	 * @param attributeName attribute name
+	 * @param value attribute value
+	 * @exception CoreException is setting the attribute fails
+	 * @see IMarker#setAttribute(java.lang.String, java.lang.Object)
 	 */
 	protected void setAttribute(final String attributeName, final Object value) throws CoreException {
 		IWorkspace workspace= ResourcesPlugin.getWorkspace();
@@ -178,10 +196,15 @@ public abstract class Breakpoint implements IBreakpoint {
 	}
 
 	/**
-	 * Attribute setting of the underlying marker must occur in a 
-	 * workspace runnable (to prevent deadlock).
-	 * To be safe, all subclasses should not directly set the attributes
-	 * of the underlying marker.
+	 * Convenience method to set the given attributes of
+	 * this breakpoint's underlying marker in a workspace
+	 * runnable. Setting marker attributes in a workspace runnable
+	 * prevents deadlock.
+	 * 
+	 * @param attributeNames attribute names
+	 * @param values attribute values
+	 * @exception CoreException is setting the attributes fails
+	 * @see IMarker#setAttributes(java.lang.String[], java.lang.Object[])
 	 */
 	protected void setAttributes(final String[] attributeNames, final Object[] values) throws CoreException {
 		IWorkspace workspace= ResourcesPlugin.getWorkspace();
@@ -195,10 +218,14 @@ public abstract class Breakpoint implements IBreakpoint {
 	}
 
 	/**
-	 * Attribute setting of the underlying marker must occur in a 
-	 * workspace runnable (to prevent deadlock).
-	 * To be safe, all subclasses should not directly set the attributes
-	 * of the underlying marker.
+	 * Convenience method to set the attributes of
+	 * this breakpoint's underlying marker in a workspace
+	 * runnable. Setting marker attributes in a workspace runnable
+	 * prevents deadlock.
+	 * 
+	 * @param attributes attribute map
+	 * @exception CoreException is setting the attributes fails
+	 * @see IMarker#setAttributes(java.util.Map)
 	 */
 	protected void setAttributes(final Map attributes) throws CoreException{
 		IWorkspace workspace= ResourcesPlugin.getWorkspace();
@@ -211,6 +238,13 @@ public abstract class Breakpoint implements IBreakpoint {
 		workspace.run(runnable, null);
 	}
 
+	/**
+	 * Returns the marker associated with this breakpoint.
+	 * 
+	 * @return breakpoint marker
+	 * @exception DebugException if no marker is associated with 
+	 *  this breakpoint or the associated marker does not exist
+	 */
 	protected IMarker ensureMarker() throws DebugException {
 		IMarker m = getMarker();
 		if (m == null || !m.exists()) {
