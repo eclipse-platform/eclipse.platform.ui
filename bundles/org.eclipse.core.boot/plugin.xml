@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<plugin
+  name="Eclipse Core Boot"
+  id="org.eclipse.core.boot"
+  version="1.0"
+  provider-name="IBM">
+
+  <runtime>
+    <library name="boot.jar" >
+      <export name="*"/>
+    </library>
+  </runtime>
+
+</plugin>
+
