@@ -57,9 +57,10 @@ public class ArchiveSourceContainer extends AbstractSourceContainer {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#findSourceElements(java.lang.String, boolean)
+	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#findSourceElements(java.lang.String)
 	 */
-	public Object[] findSourceElements(String name, boolean findDuplicates) throws CoreException {
+	public Object[] findSourceElements(String name) throws CoreException {
+		name = name.replace('\\', '/');
 		ZipFile file = getArchive();
 		if (fDetectRoot) {
 			if (fRoot == null) {
@@ -87,7 +88,7 @@ public class ArchiveSourceContainer extends AbstractSourceContainer {
 			while (entries.hasMoreElements()) {
 				entry = (ZipEntry)entries.nextElement();
 				if (entry.getName().endsWith(name)) {
-					if (findDuplicates) {
+					if (isFindDuplicates()) {
 						if (matches == null) {
 							matches = new ArrayList();
 						}
@@ -144,7 +145,7 @@ public class ArchiveSourceContainer extends AbstractSourceContainer {
 		try {
 			return SourceLookupUtils.getZipFile(fArchivePath);
 		} catch (IOException e) {
-			abort(SourceLookupMessages.getString("ArchiveSourceContainer.2"), e); //$NON-NLS-1$
+			abort(MessageFormat.format(SourceLookupMessages.getString("ArchiveSourceContainer.2"), new String[]{fArchivePath}), e); //$NON-NLS-1$
 		}
 		return null;
 	}

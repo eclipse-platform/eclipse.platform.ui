@@ -11,7 +11,9 @@
 package org.eclipse.debug.internal.core.sourcelookup.containers;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.debug.internal.core.sourcelookup.ISourceContainer;
+import org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
 
 /**
@@ -21,9 +23,11 @@ import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
  * </p>
  * @sicne 3.0
  */
-public abstract class AbstractSourceContainer implements ISourceContainer {
+public abstract class AbstractSourceContainer extends PlatformObject implements ISourceContainer {
 	
 	public static final Object[] EMPTY = new Object[0];
+	
+	private ISourceLookupDirector fDirector;
 	
 	/**
 	 * Throws an exception with the given message and underlying exception.
@@ -43,6 +47,7 @@ public abstract class AbstractSourceContainer implements ISourceContainer {
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#dispose()
 	 */
 	public void dispose() {
+		fDirector = null;
 	}	
 	
 	/* (non-Javadoc)
@@ -59,4 +64,32 @@ public abstract class AbstractSourceContainer implements ISourceContainer {
 		return false;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#init(org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector)
+	 */
+	public void init(ISourceLookupDirector director) {
+		fDirector = director;
+	}
+	
+	/**
+	 * Returns the source lookup director this source container registered
+	 * in, or <code>null</code> if none.
+	 * 
+	 * @return the source lookup director this source container registered
+	 * in, or <code>null</code> if none
+	 */
+	protected ISourceLookupDirector getDirector() {
+		return fDirector;
+	}
+	
+	/**
+	 * Returns whether this container's source lookup director is configured
+	 * to search for duplicate source elements.
+	 * 
+	 * @return whether this container's source lookup director is configured
+	 * to search for duplicate source elements
+	 */
+	protected boolean isFindDuplicates() {
+		return getDirector().isFindDuplicates();
+	}
 }

@@ -28,19 +28,22 @@ import org.eclipse.core.runtime.CoreException;
 public interface ISourceLookupParticipant {
 
 	/**
-	 * Sets the source containers to consider when searching for source elements. 
+	 * Notification this participant has been added to the specified
+	 * source lookup director. 
      *
-	 * @param containers the source containers to consider when seaching
-	 *  for source elements
+	 * @param director the source lookup director that this participant
+	 *  has been added to
 	 */
-	public void setSourceContainers(ISourceContainer[] containers);
+	public void init(ISourceLookupDirector director);
 	
 	/**
 	 * Returns a collection of source elements corresponding to the given debug
 	 * artifact (for example, a stack frame or breakpoint). Returns an empty
-	 * collection if no source elements are found. When <code>findDuplicates</code>
-	 * is <code>false</code> the returned collection should contain at most
-	 * one source element.
+	 * collection if no source elements are found.
+	 * This participant's source lookup director specifies if duplicate
+	 * source elements should be searched for, via <code>isFindDuplicates()</code>.
+	 * When <code>false</code> the returned collection should contain at most one
+	 * source element.
 	 * <p>
 	 * If the given debug artifact is not recognized by this participant, an empty
 	 * collection is returned. Otherwise, this participant generates a source name
@@ -55,7 +58,17 @@ public interface ISourceLookupParticipant {
 	 *  debug artifact, possibly empty
 	 * @exception CoreException if an exception occurrs while searching for source
 	 */
-	public Object[] findSourceElements(Object object, boolean findDuplicates) throws CoreException;
+	public Object[] findSourceElements(Object object) throws CoreException;
+	
+	/**
+	 * Returns the source file name associated with the given debug artifact that
+	 * source needs to be found for.
+	 * 
+	 * @param object the debug artifact for which source needs to be found (e.g., stack frame)
+	 * @return the source file name associated with the given debug artifact
+	 * @throws CoreException if unable to determine a source file name 
+	 */
+	public String getSourceName(Object object) throws CoreException;
 
 	/**
 	 * Disposes this source lookup participant. This method is called when

@@ -129,21 +129,7 @@ public class SourceLookupUtils {
 		initialize();
 		return (ISourcePathComputer) defaultComputers.get(id);
 	}
-		
-	/**
-	 * Creates the default container and populates it using the ISourcePathComputer registered with
-	 * this configuration type. Note that this method does not add the default container to the 
-	 * container list.
-	 *
-	 * @see ISourcePathComputer
-	 * @param configuration the configuration that should be used to compute the default path
-	 * @return the default container that was created/populated
-	 * @throws CoreException if an error occurs while creating the containers
-	 */
-	public static ISourceContainer createDefaultContainer(ILaunchConfiguration configuration) throws CoreException {
-		return new DefaultSourceContainer(configuration);		
-	}	
-	
+			
 	/**
 	 * Creates and returns a new XML document.
 	 * 

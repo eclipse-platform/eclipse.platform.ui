@@ -66,6 +66,7 @@ public class ProjectSourceContainer extends ContainerSourceContainer {
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#getSourceContainers()
 	 */
 	public ISourceContainer[] getSourceContainers() throws CoreException {
+		// TODO: cache the result
 		IProject project = getProject();
 		IProject[] projects = project.getReferencedProjects();
 		if (projects.length > 0) {
@@ -75,6 +76,10 @@ public class ProjectSourceContainer extends ContainerSourceContainer {
 				all[i] = new ProjectSourceContainer(projects[i], true);
 			}
 			System.arraycopy(folders, 0, all, projects.length, folders.length);
+			for (int i = 0; i < all.length; i++) {
+				ISourceContainer container = all[i];
+				container.init(getDirector());
+			}			
 			return all;
 		} else {
 			return super.getSourceContainers();

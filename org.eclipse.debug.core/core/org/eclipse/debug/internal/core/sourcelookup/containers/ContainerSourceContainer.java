@@ -34,7 +34,7 @@ import org.eclipse.debug.internal.core.sourcelookup.ISourceContainer;
  * 
  * @since 3.0
  */
-public abstract class ContainerSourceContainer extends AbstractSourceContainer {
+public abstract class ContainerSourceContainer extends CompositeSourceContainer {
 
 	private IContainer fContainer = null;
 	private boolean fSubfolders = false;
@@ -63,9 +63,9 @@ public abstract class ContainerSourceContainer extends AbstractSourceContainer {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#findSourceElements(java.lang.String, boolean)
+	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#findSourceElements(java.lang.String)
 	 */
-	public Object[] findSourceElements(String name, boolean duplicates) throws CoreException {
+	public Object[] findSourceElements(String name) throws CoreException {
 		ArrayList sources = new ArrayList();
 		IContainer container = getContainer();
 		IPath path = new Path(name);
@@ -75,14 +75,14 @@ public abstract class ContainerSourceContainer extends AbstractSourceContainer {
 		}
 		
 		//check subfolders		
-		if ((duplicates && fSubfolders) || (sources.isEmpty() && fSubfolders)) {
+		if ((isFindDuplicates() && fSubfolders) || (sources.isEmpty() && fSubfolders)) {
 			ISourceContainer[] containers = getSourceContainers();
 			for (int i=0; i < containers.length; i++) {
-				Object[] objects = containers[i].findSourceElements(name, duplicates);
+				Object[] objects = containers[i].findSourceElements(name);
 				if (objects == null || objects.length == 0) {
 					continue;
 				}
-				if (duplicates) {
+				if (isFindDuplicates()) {
 					for(int j=0; j < objects.length; j++)
 						sources.add(objects[j]);
 				} else {
@@ -121,11 +121,18 @@ public abstract class ContainerSourceContainer extends AbstractSourceContainer {
 	public int hashCode() {
 		return getContainer().hashCode();
 	}
-	
+
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#getSourceContainers()
+	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#isComposite()
 	 */
-	public ISourceContainer[] getSourceContainers() throws CoreException {
+	public boolean isComposite() {	
+		return fSubfolders;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.core.sourcelookup.containers.CompositeSourceContainer#createSourceContainers()
+	 */
+	protected ISourceContainer[] createSourceContainers() throws CoreException {
 		if(fSubfolders) {
 			IResource[] resources = getContainer().members();
 			List list = new ArrayList(resources.length);
@@ -135,16 +142,20 @@ public abstract class ContainerSourceContainer extends AbstractSourceContainer {
 					list.add(new FolderSourceContainer((IFolder)resource, fSubfolders));
 				}
 			}
-			return (ISourceContainer[]) list.toArray(new ISourceContainer[list.size()]);
+			ISourceContainer[] containers = (ISourceContainer[]) list.toArray(new ISourceContainer[list.size()]);
+			for (int i = 0; i < containers.length; i++) {
+				ISourceContainer container = containers[i];
+				container.init(getDirector());
+			}			
+			return containers;
 		}
 		return new ISourceContainer[0];
 	}
-
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#isComposite()
+	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#dispose()
 	 */
-	public boolean isComposite() {	
-		return fSubfolders;
+	public void dispose() {
+		super.dispose();
+		fContainer = null;
 	}
-
 }

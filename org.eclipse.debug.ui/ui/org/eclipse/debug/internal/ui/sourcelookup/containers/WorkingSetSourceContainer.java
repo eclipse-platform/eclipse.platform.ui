@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.internal.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType;
@@ -71,11 +72,11 @@ public class WorkingSetSourceContainer extends CompositeSourceContainer{
 	public ISourceContainerType getType() {
 		return SourceLookupUtils.getSourceContainerType(WorkingSetSourceContainerType.TYPE_ID);
 	}
-	
+			
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#getSourceContainers()
+	 * @see org.eclipse.debug.internal.core.sourcelookup.containers.CompositeSourceContainer#createSourceContainers()
 	 */
-	public ISourceContainer[] getSourceContainers() {
+	protected ISourceContainer[] createSourceContainers() throws CoreException {
 		IAdaptable[] elements = fWorkingSet.getElements();
 		
 		if(elements == null)
@@ -101,6 +102,11 @@ public class WorkingSetSourceContainer extends CompositeSourceContainer{
 		
 		return (ISourceContainer[])locationList.toArray(new ISourceContainer[locationList.size()]);
 	}
-	
-		
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#dispose()
+	 */
+	public void dispose() {
+		super.dispose();
+		fWorkingSet = null;
+	}
 }

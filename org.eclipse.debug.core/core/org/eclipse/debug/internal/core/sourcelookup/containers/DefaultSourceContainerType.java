@@ -12,8 +12,6 @@ package org.eclipse.debug.internal.core.sourcelookup.containers;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.internal.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.internal.core.sourcelookup.SourceLookupMessages;
 import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
@@ -39,17 +37,8 @@ public class DefaultSourceContainerType extends AbstractSourceContainerTypeDeleg
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType#getMemento(org.eclipse.debug.internal.core.sourcelookup.ISourceContainer)
 	 */
 	public String getMemento(ISourceContainer container) throws CoreException {
-		DefaultSourceContainer def = (DefaultSourceContainer) container;
 		Document document = SourceLookupUtils.newDocument();
 		Element element = document.createElement("default"); //$NON-NLS-1$
-		//working copies produce null mementos
-		//this isn't a good solution though...causes problems sometimes since it might be working off the right copy
-		//may be avoidable if we stop writing to the config too often
-		if(def.getLaunchConfiguration().isWorkingCopy()) {
-			element.setAttribute("launchConfiguration", ((ILaunchConfigurationWorkingCopy)def.getLaunchConfiguration()).getOriginal().getMemento()); //$NON-NLS-1$
-		} else {
-			element.setAttribute("launchConfiguration", def.getLaunchConfiguration().getMemento()); //$NON-NLS-1$
-		}
 		document.appendChild(element);
 		return SourceLookupUtils.serializeDocument(document);
 	}
@@ -62,12 +51,7 @@ public class DefaultSourceContainerType extends AbstractSourceContainerTypeDeleg
 		if (node.getNodeType() == Node.ELEMENT_NODE) {
 			Element element = (Element)node;
 			if ("default".equals(element.getNodeName())) { //$NON-NLS-1$
-				String lc = element.getAttribute("launchConfiguration"); //$NON-NLS-1$
-				if (lc == null || lc.length() == 0) {
-					abort(SourceLookupMessages.getString("DefaultSourceContainerType.5"), null); //$NON-NLS-1$
-				}
-				ILaunchConfiguration configuration = DebugPlugin.getDefault().getLaunchManager().getLaunchConfiguration(lc);
-				return new DefaultSourceContainer(configuration);
+				return new DefaultSourceContainer();
 			} else {
 				abort(SourceLookupMessages.getString("DefaultSourceContainerType.6"), null); //$NON-NLS-1$
 			}

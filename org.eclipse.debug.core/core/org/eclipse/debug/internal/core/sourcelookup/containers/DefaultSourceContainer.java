@@ -26,17 +26,12 @@ import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
  * 
  * @since 3.0
  */
-public class DefaultSourceContainer extends CompositeSourceContainer {
-
-	private ILaunchConfiguration fConfiguration = null;  
-	private ISourceContainer[] fContainers = null;
+public class DefaultSourceContainer extends CompositeSourceContainer {  
 	
 	/**
-	 * Constructs a source container with the default source containers
-	 * for the given launch configuration. 
+	 * Constructs a default source container. 
 	 */
-	public DefaultSourceContainer(ILaunchConfiguration configuration) {
-		fConfiguration = configuration;
+	public DefaultSourceContainer() {
 	}
 	
 	/* (non-Javadoc)
@@ -56,13 +51,13 @@ public class DefaultSourceContainer extends CompositeSourceContainer {
 	
 	/**
 	 * Returns the launch configuration for which a default source lookup
-	 * path will be computed.
+	 * path will be computed, or <code>null</code> if none.
 	 * 
 	 * @return the launch configuration for which a default source lookup
-	 * path will be computed
+	 * path will be computed, or <code>null</code>
 	 */
-	public ILaunchConfiguration getLaunchConfiguration() {
-		return fConfiguration;
+	protected ILaunchConfiguration getLaunchConfiguration() {
+		return getDirector().getLaunchConfiguration();
 	}
 	
 	/* (non-Javadoc)
@@ -70,20 +65,6 @@ public class DefaultSourceContainer extends CompositeSourceContainer {
 	 */
 	public ISourceContainerType getType() {
 		return SourceLookupUtils.getSourceContainerType(DefaultSourceContainerType.TYPE_ID);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#getSourceContainers(ILaunchConfiguration)
-	 */
-	public ISourceContainer[] getSourceContainers() throws CoreException {
-		if (fContainers == null) {
-			ISourcePathComputer sourcePathComputer = getSourcePathComputer();
-			if (sourcePathComputer == null) {
-				return new ISourceContainer[0];
-			}
-			fContainers = sourcePathComputer.computeSourceContainers(getLaunchConfiguration(), null);
-		}
-		return fContainers;
 	}
 	
 	/**
@@ -94,10 +75,12 @@ public class DefaultSourceContainer extends CompositeSourceContainer {
 	 * if none
 	 */
 	private ISourcePathComputer getSourcePathComputer() {
-		try{
-			return DebugPlugin.getDefault().getLaunchManager().newSourcePathComputer(fConfiguration);
-		}catch(CoreException e){
-			DebugPlugin.logMessage(SourceLookupMessages.getString("DefaultSourceContainer.1"),e); //$NON-NLS-1$
+		if (getLaunchConfiguration() != null) {
+			try{
+				return DebugPlugin.getDefault().getLaunchManager().newSourcePathComputer(getLaunchConfiguration());
+			}catch(CoreException e){
+				DebugPlugin.logMessage(SourceLookupMessages.getString("DefaultSourceContainer.1"),e); //$NON-NLS-1$
+			}
 		}
 		return null;
 	}
@@ -109,4 +92,14 @@ public class DefaultSourceContainer extends CompositeSourceContainer {
 		return SourceLookupMessages.getString("DefaultSourceContainer.0"); //$NON-NLS-1$
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.core.sourcelookup.containers.CompositeSourceContainer#createSourceContainers()
+	 */
+	protected ISourceContainer[] createSourceContainers() throws CoreException {
+		ISourcePathComputer sourcePathComputer = getSourcePathComputer();
+		if (sourcePathComputer == null) {
+			return new ISourceContainer[0];
+		}
+		return sourcePathComputer.computeSourceContainers(getLaunchConfiguration(), null);
+	}
 }

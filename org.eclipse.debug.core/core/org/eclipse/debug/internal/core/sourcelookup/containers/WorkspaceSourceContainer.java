@@ -12,6 +12,7 @@ package org.eclipse.debug.internal.core.sourcelookup.containers;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.internal.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType;
 import org.eclipse.debug.internal.core.sourcelookup.SourceLookupMessages;
@@ -58,6 +59,23 @@ public class WorkspaceSourceContainer extends CompositeSourceContainer {
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#getSourceContainers()
 	 */
 	public ISourceContainer[] getSourceContainers() {
+		// TODO: cache the result
+		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+		ISourceContainer[] containers = new ISourceContainer[projects.length];
+		for (int i = 0; i < projects.length; i++) {
+			containers[i] = new ProjectSourceContainer(projects[i], false);
+		}
+		for (int i = 0; i < containers.length; i++) {
+			ISourceContainer container = containers[i];
+			container.init(getDirector());
+		}		
+		return containers;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.core.sourcelookup.containers.CompositeSourceContainer#createSourceContainers()
+	 */
+	protected ISourceContainer[] createSourceContainers() throws CoreException {
 		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		ISourceContainer[] containers = new ISourceContainer[projects.length];
 		for (int i = 0; i < projects.length; i++) {

@@ -11,6 +11,7 @@
 package org.eclipse.debug.internal.core.sourcelookup;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 
 /**
  * A source container is a container of source code. A source container is
@@ -29,14 +30,24 @@ import org.eclipse.core.runtime.CoreException;
  * @see ISourceContainerType
  * @since 3.0
  */
-public interface ISourceContainer {
+public interface ISourceContainer extends IAdaptable {
+	
+	/**
+	 * Notifiation this source container has been added to the given
+	 * source lookup director.
+	 * 
+	 * @param director the director this container has been added to
+	 */
+	public void init(ISourceLookupDirector director);
 
 	/**
 	 * Returns a collection of source elements in this container corresponding to the
-	 * given name. Returns an empty collection if no source elements are found. When
-	 * <code>findDuplicates</code> is <code>false</code> the returned collection
-	 * should contain at most one source element. If this is a composite container,
-	 * the containers contained by this container are also searched.
+	 * given name. Returns an empty collection if no source elements are found.
+	 * This source container's source lookup director specifies if duplicate
+	 * source elements should be searched for, via <code>isFindDuplicates()</code>.
+	 * When <code>false</code> the returned collection should contain at most one
+	 * source element. If this is a composite container, the containers contained
+	 * by this container are also searched.
 	 * <p>
 	 * The format of the given name is implementation specific but generally conforms
 	 * to the format of a file name. If a source container does not recognize the
@@ -45,13 +56,10 @@ public interface ISourceContainer {
 	 * names).
 	 * </p>
 	 * @param name the name of the source element to search for
-	 * @param findDuplicates whether searching should continue after the first match is
-	 *  found, or if all all potential source elements corresponding to the given name
-	 *  should be found	
 	 * @return a collection of source elements corresponding to the given name
 	 * @exception CoreException if an exception occurrs while searching for source elements
 	 */
-	public Object[] findSourceElements(String name, boolean findDuplicates) throws CoreException;
+	public Object[] findSourceElements(String name) throws CoreException;
 
 	/**
 	 * The name of this source container that can be used for presentation purposes.

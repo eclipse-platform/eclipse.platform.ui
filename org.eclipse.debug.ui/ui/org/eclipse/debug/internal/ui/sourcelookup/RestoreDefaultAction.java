@@ -35,18 +35,9 @@ public class RestoreDefaultAction extends SourceContainerAction {
 	 * @see IAction#run()
 	 */
 	public void run() {		
-		ILaunchConfiguration config = getViewer().getSourceLocator().getLaunchConfiguration();
-		if(config == null) 
-			return;
-		ISourceContainer[] container = new ISourceContainer[1];
-		try{
-			container[0] = SourceLookupUtils.createDefaultContainer(config);
-		}catch(CoreException e){
-			String message = SourceLookupUIMessages.getString("defaultContainer.0"); //$NON-NLS-1$
-			IStatus status = new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, message, e);
-			DebugUIPlugin.log(status);
-		} 
-		getViewer().addEntries(container);
+		ISourceContainer[] containers = new ISourceContainer[1];
+		containers[0] = new DefaultSourceContainer();
+		getViewer().addEntries(containers);
 	}
 	
 	/**

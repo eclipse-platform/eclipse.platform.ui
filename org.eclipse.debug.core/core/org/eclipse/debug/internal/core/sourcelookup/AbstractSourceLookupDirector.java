@@ -25,6 +25,7 @@ import org.eclipse.debug.core.ILaunchConfigurationListener;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IStackFrame;
+import org.eclipse.debug.internal.core.sourcelookup.containers.DefaultSourceContainer;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -59,7 +60,7 @@ import org.w3c.dom.NodeList;
  * @see org.eclipse.debug.internal.core.sourcelookup.ISourcePathComputer
  * @see org.eclipse.debug.internal.core.sourcelookup.ISourceLookupParticipant
  */
-public abstract class AbstractSourceLookupDirector implements IPersistableSourceLocator2, ILaunchConfigurationListener, ILaunchListener {
+public abstract class AbstractSourceLookupDirector implements ISourceLookupDirector, ILaunchConfigurationListener, ILaunchListener {
 	
 	//ISourceLocatorParticipants that are listening for container changes
 	protected ArrayList fParticipants = new ArrayList();
@@ -101,7 +102,7 @@ public abstract class AbstractSourceLookupDirector implements IPersistableSource
 			for(int i=0; i < fParticipants.size(); i++) {
 				Object[] sourceArray;
 				try {
-					sourceArray = ((ISourceLookupParticipant)fParticipants.get(i)).findSourceElements(fFrame, isFindDuplicates());
+					sourceArray = ((ISourceLookupParticipant)fParticipants.get(i)).findSourceElements(fFrame);
 					if (sourceArray !=null && sourceArray.length > 0) {
 						if (isFindDuplicates()) {
 							for(int j=0; j<sourceArray.length; j++)
@@ -199,16 +200,12 @@ public abstract class AbstractSourceLookupDirector implements IPersistableSource
 	public void addSourceLookupParticipant(ISourceLookupParticipant participant) {
 		if (!fParticipants.contains(participant)) {
 			fParticipants.add(participant);
-			participant.setSourceContainers(getSourceContainers());
+			participant.init(this);
 		}	
 	}
 	
-	/**
-	 * Returns the collection of source containers currently being searched
-	 * for source.
-	 * 
-	 * @return the collection of source containers currently being searched
-	 *  for source
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector#getSourceContainers()
 	 */
 	public ISourceContainer[] getSourceContainers() {
 		if (fSourceContainers == null) {
@@ -219,12 +216,8 @@ public abstract class AbstractSourceLookupDirector implements IPersistableSource
 		return copy;
 	}
 	
-	/**
-	 * Returns whether source containers should be searched exhaustively for
-	 * applicable source elements or if only the first match should be located.
-	 * 
-	 * @return whether source containers should be searched exhaustively for
-	 *  applicable source elements or if only the first match should be located
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector#isFindDuplicates()
 	 */
 	public boolean isFindDuplicates() {			
 		return fDuplicates;			
@@ -355,10 +348,9 @@ public abstract class AbstractSourceLookupDirector implements IPersistableSource
 	 */
 	public void setSourceContainers(ISourceContainer[] containers) {
 		fSourceContainers = containers;
-		Iterator participants = fParticipants.iterator();
-		while (participants.hasNext()) {
-			ISourceLookupParticipant participant = (ISourceLookupParticipant)participants.next();
-			participant.setSourceContainers(containers);
+		for (int i = 0; i < containers.length; i++) {
+			ISourceContainer container = containers[i];
+			container.init(this);
 		}
 	}
 	
@@ -427,19 +419,11 @@ public abstract class AbstractSourceLookupDirector implements IPersistableSource
 	public void initializeDefaults(ILaunchConfiguration configuration) throws CoreException {
 		dispose();
 		setLaunchConfiguration(configuration);
-		ISourceContainer defaultContainer = SourceLookupUtils.createDefaultContainer(configuration);
-		if(defaultContainer != null) {
-			setSourceContainers(new ISourceContainer[]{defaultContainer});
-		}
-				
+		setSourceContainers(new ISourceContainer[]{new DefaultSourceContainer()});				
 	}	
 	
-	/**
-	 * Returns the launch configuration associated with this director, or
-	 * <code>null</code> if none.
-	 * 
-	 * @return the launch configuration associated with this director,
-	 *  or <code>null</code> if none 
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector#getLaunchConfiguration()
 	 */
 	public ILaunchConfiguration getLaunchConfiguration() {
 		return fConfig;
@@ -479,5 +463,11 @@ public abstract class AbstractSourceLookupDirector implements IPersistableSource
 		if (this.equals(launch.getSourceLocator())) {
 			dispose();
 		}
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector#getParticipants()
+	 */
+	public ISourceLookupParticipant[] getParticipants() {
+		return (ISourceLookupParticipant[]) fParticipants.toArray(new ISourceLookupParticipant[fParticipants.size()]);
 	}
 }

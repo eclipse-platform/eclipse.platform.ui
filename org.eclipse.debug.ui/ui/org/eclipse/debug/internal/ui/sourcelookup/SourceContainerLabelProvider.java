@@ -10,9 +10,12 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.sourcelookup;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.internal.core.sourcelookup.ISourceContainer;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 /**
  * Label provider for source containers.
@@ -21,12 +24,22 @@ import org.eclipse.swt.graphics.Image;
  */
 public class SourceContainerLabelProvider extends LabelProvider {
 	
+	private ILabelProvider fLabelProvider = null;
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
 	 */
 	public Image getImage(Object element) {		
-		if (element instanceof ISourceContainer)
-			return SourceLookupUIUtils.getSourceContainerImage(((ISourceContainer) element).getType().getId());
+		if (element instanceof ISourceContainer) {
+			Image image = SourceLookupUIUtils.getSourceContainerImage(((ISourceContainer) element).getType().getId());
+			if (image == null && element instanceof IAdaptable) {
+				Object object = ((IAdaptable)element).getAdapter(IAdaptable.class);
+				image = getWorkbenchLabelProvider().getImage(object);
+			}
+			if (image != null) {
+				return image;
+			}
+		}
 		return super.getImage(element);
 	}
 	
@@ -39,4 +52,20 @@ public class SourceContainerLabelProvider extends LabelProvider {
 		return super.getText(element);
 	}
 	
+	private ILabelProvider getWorkbenchLabelProvider() {
+		if (fLabelProvider == null) {
+			fLabelProvider = new WorkbenchLabelProvider();
+		}
+		return fLabelProvider;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
+	 */
+	public void dispose() {
+		super.dispose();
+		if (fLabelProvider != null) {
+			fLabelProvider.dispose();
+		}
+	}
 }
