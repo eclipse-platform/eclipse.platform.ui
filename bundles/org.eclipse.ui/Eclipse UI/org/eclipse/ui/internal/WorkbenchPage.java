@@ -74,7 +74,6 @@ public class WorkbenchPage implements IWorkbenchPage {
 		private IWorkbenchPart activePart;
 		private IEditorPart topEditor;
 		private ArrayList actionSets = new ArrayList();
-		private boolean updating = false;
 	
 		/** 
 		 * Updates the contributions given the new part as the active part.
@@ -82,22 +81,9 @@ public class WorkbenchPage implements IWorkbenchPage {
 		 * @param newPart the new active part, may be <code>null</code>
 		 */
 		public void updateActivePart(IWorkbenchPart newPart) {
-			if (updating) {
-				// temp code to log error case
-				Platform.getPlugin(Platform.PI_RUNTIME).getLog().log(
-					new Status(
-					IStatus.ERROR,
-					PlatformUI.PLUGIN_ID,
-					0,
-					"Re-entry in ActionSwitcher.updateActivePart", //$NON-NLS-1$
-					new Exception()));
-			}
-			
 			if (activePart == newPart) 
 				return;
 
-			updating = true;
-				
 			boolean isNewPartAnEditor = newPart instanceof IEditorPart;
 			if (isNewPartAnEditor) {
 				String oldId = null;
@@ -107,10 +93,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 				
 				// if the active part is an editor and the new editor
 				// is the same kind of editor, then we don't have to do anything
-				if (activePart == topEditor && newId.equals(oldId)) {
-					updating = false;
+				if (activePart == topEditor && newId.equals(oldId)) 
 					return;
-				}
 				
 				// remove the contributions of the old editor
 				// if it is a different kind of editor
@@ -159,8 +143,6 @@ public class WorkbenchPage implements IWorkbenchPage {
 			}
 			
 			activePart = newPart;
-
-			updating = false;
 		}
 
 		/** 
@@ -169,22 +151,9 @@ public class WorkbenchPage implements IWorkbenchPage {
 		 * @param newEditor the new top editor, may be <code>null</code>
 		 */
 		public void updateTopEditor(IEditorPart newEditor) {
-			if (updating) {
-				// temp code to log error case
-				Platform.getPlugin(Platform.PI_RUNTIME).getLog().log(
-					new Status(
-					IStatus.ERROR,
-					PlatformUI.PLUGIN_ID,
-					0,
-					"Re-entry in ActionSwitcher.updateTopEditor", //$NON-NLS-1$
-					new Exception()));
-			}
-			
 			if (topEditor == newEditor)
 				return;
 				
-			updating = true;
-
 			String oldId = null;
 			if (topEditor != null)
 				oldId = topEditor.getSite().getId();
@@ -194,7 +163,6 @@ public class WorkbenchPage implements IWorkbenchPage {
 			if (oldId == null ? newId == null : oldId.equals(newId)) {
 				// we don't have to change anything 
 				topEditor = newEditor;
-				updating = false;
 				return;
 			}
 			
@@ -211,8 +179,6 @@ public class WorkbenchPage implements IWorkbenchPage {
 				updateActionBars();
 				
 			topEditor = newEditor;	
-			
-			updating = false;
 		}
 
 		/**
