@@ -61,8 +61,8 @@ public class OpenBreakpointMarkerAction extends SelectionProviderAction {
 			setEnabled(false);
 			return;
 		}
-		Iterator enum= selection.iterator();
-		IBreakpoint breakpoint= (IBreakpoint)enum.next();
+		Iterator itr= selection.iterator();
+		IBreakpoint breakpoint= (IBreakpoint)itr.next();
 		IEditorInput input= fgPresentation.getEditorInput(breakpoint);
 		IEditorPart part= null;
 		if (input != null) {

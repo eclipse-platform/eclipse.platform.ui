@@ -81,12 +81,12 @@ public class EnableBreakpointsAction implements IViewActionDelegate, IPartListen
 			return;
 		}
 		
-		final Iterator enum= selection.iterator();
+		final Iterator itr= selection.iterator();
 		final MultiStatus ms= new MultiStatus(DebugUIPlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, ActionMessages.getString("EnableBreakpointAction.Enable_breakpoint(s)_failed_2"), null); //$NON-NLS-1$
 		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
-				while (enum.hasNext()) {
-					IBreakpoint breakpoint = (IBreakpoint) enum.next();
+				while (itr.hasNext()) {
+					IBreakpoint breakpoint = (IBreakpoint) itr.next();
 					try {
 						if (size > 1) {
 							if (isEnableAction()) {
@@ -138,11 +138,11 @@ public class EnableBreakpointsAction implements IViewActionDelegate, IPartListen
 			return;
 		}
 		
-		Iterator enum= sel.iterator();
+		Iterator itr= sel.iterator();
 		boolean allEnabled= true;
 		boolean allDisabled= true;
-		while (enum.hasNext()) {
-			IBreakpoint bp= (IBreakpoint)enum.next();
+		while (itr.hasNext()) {
+			IBreakpoint bp= (IBreakpoint)itr.next();
 			try {
 				if (bp.isEnabled()) {
 					allDisabled= false;

@@ -92,14 +92,14 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	public void run(IAction action){
 		IStructuredSelection selection= getSelection();
 		
-		final Iterator enum= selection.iterator();
+		final Iterator itr= selection.iterator();
 		String pluginId= DebugUIPlugin.getUniqueIdentifier();
 		final MultiStatus ms= 
 			new MultiStatus(pluginId, DebugException.REQUEST_FAILED, getStatusMessage(), null); 
 		BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
 			public void run() {
-				while (enum.hasNext()) {
-					Object element= enum.next();
+				while (itr.hasNext()) {
+					Object element= itr.next();
 					try {
 						doAction(element);
 					} catch (DebugException e) {
@@ -304,9 +304,9 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 		if (selection.size() == 0) {
 			return false;
 		}
-		Iterator enum= selection.iterator();
-		while (enum.hasNext()) {
-			Object element= enum.next();
+		Iterator itr= selection.iterator();
+		while (itr.hasNext()) {
+			Object element= itr.next();
 			if (!isEnabledFor(element)) {
 				return false;
 			}
