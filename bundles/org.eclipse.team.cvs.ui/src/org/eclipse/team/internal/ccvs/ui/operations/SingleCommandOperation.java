@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.client.Command;
@@ -41,8 +42,12 @@ public abstract class SingleCommandOperation extends RepositoryProviderOperation
 		Session session = new Session(getRemoteLocation(provider), getLocalRoot(provider), true /* output to console */);
 		session.open(Policy.subMonitorFor(monitor, 10), isServerModificationOperation());
 		try {
+			// TODO: This does not properly count the number of operations
+			// Changing it causes an error in the test cases
 			IStatus status = executeCommand(session, provider, getCVSArguments(resources), Policy.subMonitorFor(monitor, 90));
-			collectStatus(status);
+			if (status.getCode() == CVSStatus.SERVER_ERROR) {
+				addError(status);
+			}
 		} finally {
 			session.close();
 		}
