@@ -249,7 +249,7 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
 	public void breakpointChanged(IBreakpoint breakpoint, IMarkerDelta delta) {
 		if (supportsBreakpoint(breakpoint)) {
 			try {
-				if (breakpoint.isEnabled()) {
+				if (breakpoint.isEnabled() && DebugPlugin.getDefault().getBreakpointManager().isEnabled()) {
 					breakpointAdded(breakpoint);
 				} else {
 					breakpointRemoved(breakpoint, null);

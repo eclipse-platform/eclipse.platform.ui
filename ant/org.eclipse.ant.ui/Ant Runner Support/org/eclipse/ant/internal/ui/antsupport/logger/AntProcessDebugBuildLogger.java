@@ -165,7 +165,9 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 			if (fBreakpoints == null) {
 				fBreakpoints= new ArrayList();
 			}
-			fBreakpoints.add(breakpoint);
+			if (!fBreakpoints.contains(breakpoint)) {
+				fBreakpoints.add(breakpoint);
+			}
 		} else {
 			fBreakpoints.remove(breakpoint);
 		}
@@ -248,6 +250,9 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
             ILineBreakpoint breakpoint = (ILineBreakpoint) fBreakpoints.get(i);
             int breakpointLineNumber;
             try {
+            	if (!breakpoint.isEnabled()) {
+                	continue;
+                }
             	breakpointLineNumber = breakpoint.getLineNumber();
             } catch (CoreException e) {
                return null;
