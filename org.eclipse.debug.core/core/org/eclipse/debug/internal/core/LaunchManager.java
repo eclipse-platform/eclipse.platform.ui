@@ -20,7 +20,6 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -200,8 +199,10 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * 
 	 * @param doc document to serialize
 	 * @return the document as a string
+	 * @throws TransformerException if an unrecoverable error occurs during the serialization
+	 * @throws IOException if the encoding attempted to be used is not supported
 	 */
-	public static String serializeDocument(Document doc) throws TransformerException, IOException {
+	protected static String serializeDocument(Document doc) throws TransformerException, IOException {
 		ByteArrayOutputStream s= new ByteArrayOutputStream();
 		
 		TransformerFactory factory= TransformerFactory.newInstance();
@@ -214,19 +215,15 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	}
 	
 	/**
-	 * Return a <code>Document</code>
-	 * 
-	 * @return the document
+	 * Returns a Document that can be used to build a DOM tree
+	 * @return the Document
+	 * @throws ParserConfigurationException if an exception occurs creating the document builder
 	 * @since 3.0
 	 */
-	public static Document getDocument() throws ParserConfigurationException {
-		DocumentBuilderFactory dfactory = DocumentBuilderFactory.newInstance();
-
-		dfactory.setNamespaceAware(true);
-		dfactory.setValidating(true);
-
-		DocumentBuilder docBuilder = dfactory.newDocumentBuilder();
-		Document doc =docBuilder.newDocument();
+	protected static Document getDocument() throws ParserConfigurationException {
+		DocumentBuilderFactory dfactory= DocumentBuilderFactory.newInstance();
+		DocumentBuilder docBuilder= dfactory.newDocumentBuilder();
+		Document doc= docBuilder.newDocument();
 		return doc;
 	}
 			
