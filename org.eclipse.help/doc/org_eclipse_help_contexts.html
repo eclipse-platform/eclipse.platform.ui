@@ -39,8 +39,7 @@ contexts manifest file)<b>:</b></i>
 <p><tt>&nbsp;&nbsp;&nbsp; &lt;!ELEMENT description (#PCDATA)></tt>
 <p><tt>&nbsp;&nbsp;&nbsp; &lt;!ELEMENT topic EMPTY ></tt>
 <br><tt>&nbsp;&nbsp;&nbsp; &lt;!ATTLIST topic label CDATA #REQUIRED ></tt>
-<br><tt>&nbsp;&nbsp;&nbsp; &lt;!ATTLIST topic href CDATA #IMPLIED
-></tt>
+<br><tt>&nbsp;&nbsp;&nbsp; &lt;!ATTLIST topic href CDATA #IMPLIED ></tt>
 <p>The contexts manifest files provide all the information needed when
 context-sensitive help is requested by the user. The id is passed by the
 platform to identify the currently active context. The context definitions
@@ -48,7 +47,8 @@ with matching IDs are then retrieved. The IContext object is then created
 by help system that contains descriptions and topics from all context definitions
 for a given ID.&nbsp; The description is to be displayed to the user, and
 related topics might be useful to the user for understanding the current
-context.
+context.&nbsp; The related topic are html files packaged in doc.zip, together
+with topics that are part of on line help.
 <br>&nbsp;
 <p><b><i>Examples:</i></b>
 <p>The following is an example of using the <tt>contexts</tt> extension
@@ -72,22 +72,29 @@ label="Help Related Topic 2"/></tt>
 <br>&nbsp;
 <h4>
 Externalizing Strings</h4>
-Plugin.xml files externalize their strings by replacing the string with
-a key (e.g. %pluginName) and creating an entry in the plugin.properties
-file of the form:
-<br>&nbsp;&nbsp;&nbsp; pluginName = "Online Help Sample Plugin"
-<br>The translated property files should be placed in nl/&lt;locale> directory.
-<p>The labels in the contexts XML files can be translated and the resulting
-contexts files placed in nl/&lt;locale> directory. The help system will
-look for the files under this directory before defaulting to plugin directory.
-<br>&nbsp;
-<p><b><i>API Information</i>: </b>No code is required to use this extension
+The Context XML files can be translated and the resulting copy (with translated
+descriptions labels) should be placed in nl/&lt;language>/&lt;country>
+or nl/&lt;language> directory.&nbsp; The &lt;language> and &lt;country>
+stand for two letter language and country codes as used in locale codes.&nbsp;
+For example, Traditional Chinese translations should be placed in the nl/zh/TW
+directory.&nbsp; The nl/&lt;language>/&lt;country> directory has a higher
+priority than nl/&lt;language>.&nbsp; Only if no file is found in the nl/&lt;language>/&lt;country>,
+the file residing in nl/&lt;language> will be used.&nbsp; The the root
+directory of a plugin will be searched last.
+<p>The related topics contained in doc.zip can be localized by creating
+a doc.zip file with translated version of documents, and placing doc.zip
+in
+<br>nl/&lt;language>/&lt;country> or nl/&lt;language> directory. The help
+system will look for the files under this directories before defaulting
+to plugin directory.
+<p>&nbsp;
+<br><b><i>API Information</i>: </b>No code is required to use this extension
 point. All that is needed is to supply the appropriate manifest file(s)
 mentioned in the <tt>plugin.xml</tt> file.
 <br>&nbsp;
-<p><b><i>Supplied Implementation: </i></b>The optional default implementation
-of the help system UI supplied with the Eclipse platform fully supports
-the <tt>contexts</tt> extension point.
+<p><b><i>Supplied Implementation: </i></b>The default implementation of
+the help system UI supplied with the Eclipse platform fully supports the
+<tt>contexts</tt> extension point.
 <p><a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2001.  All Rights Reserved." BORDER=0 height=12 width=195></a>
 </body>
 </html>

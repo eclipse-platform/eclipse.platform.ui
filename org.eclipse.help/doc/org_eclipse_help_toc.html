@@ -2,7 +2,7 @@
 <html>
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-   <meta name="GENERATOR" content="Mozilla/4.72 [en] (Windows NT 5.0; U) [Netscape]">
+   <meta name="GENERATOR" content="Mozilla/4.79 [en] (Windows NT 5.0; U) [Netscape]">
    <title>Help System extension points: Table of Contents</title>
 </head>
 <body link="#0000FF" vlink="#800080">
@@ -31,12 +31,12 @@ author the html files, zip html files into doc.zip, and store the zip file
 in the plug-in directory.</li>
 
 <li>
-create TOC files that describe Table of Contents
-for the help and the necessary topic interleaving. See the syntax below.</li>
+create TOC files that describe Table of Contents for the help and the necessary
+topic interleaving. See the syntax below.</li>
 
 <li>
-the plugin.xml file should extend the <tt>org.eclipse.help.toc</tt>
-extension point and specify TOC file(s).</li>
+the plugin.xml file should extend the <tt>org.eclipse.help.toc</tt> extension
+point and specify TOC file(s).</li>
 </ul>
 </ul>
 <b><i>Configuration Markup for the <tt>toc</tt> extension point </i></b><i>(this
@@ -52,39 +52,36 @@ of contents or section&nbsp; for this plug-in's online help</li>
 
 <ul>
 <li>
-<b>primary</b> - specifies whether the TOC file is a primary table of
-contents and is meant to be the master table of contents
-or not primary and intended to be integrated into another table of contents</li>
+<b>primary</b> - specifies whether the TOC file is a primary table of contents
+and is meant to be the master table of contents or not primary and intended
+to be integrated into another table of contents</li>
 </ul>
 <i><b>Configuration Markup for toc </b>(this is what goes into the TOC
 file)<b>:</b></i>
-<p><tt>&nbsp;&nbsp;&nbsp; &lt;!ELEMENT toc (topic | anchor | link)*
-></tt>
+<p><tt>&nbsp;&nbsp;&nbsp; &lt;!ELEMENT toc (topic | anchor | link)* ></tt>
 <br><tt>&nbsp;&nbsp;&nbsp; &lt;!ATTLIST toc link_to CDATA #IMPLIED ></tt>
-<br><tt>&nbsp;&nbsp;&nbsp; &lt;!ATTLIST toc label CDATA #REQUIRED ></tt><tt></tt>
+<br><tt>&nbsp;&nbsp;&nbsp; &lt;!ATTLIST toc label CDATA #REQUIRED ></tt>
 <p><tt>&nbsp;&nbsp;&nbsp; &lt;!ELEMENT topic (topic | anchor | link )*
 ></tt>
 <br><tt>&nbsp;&nbsp;&nbsp; &lt;!ATTLIST topic label CDATA #REQUIRED ></tt>
-<br><tt>&nbsp;&nbsp;&nbsp; &lt;!ATTLIST topic href CDATA #IMPLIED ></tt><tt></tt>
+<br><tt>&nbsp;&nbsp;&nbsp; &lt;!ATTLIST topic href CDATA #IMPLIED ></tt>
 <p><tt>&nbsp;&nbsp;&nbsp; &lt;!ELEMENT anchor EMPTY ></tt>
-<br><tt>&nbsp;&nbsp;&nbsp; &lt;!ATTLIST anchor id ID&nbsp; #REQUIRED
-></tt><tt></tt>
+<br><tt>&nbsp;&nbsp;&nbsp; &lt;!ATTLIST anchor id ID&nbsp; #REQUIRED ></tt>
 <p><tt>&nbsp;&nbsp;&nbsp; &lt;!ELEMENT link EMPTY ></tt>
 <br><tt>&nbsp;&nbsp;&nbsp; &lt;!ATTLIST link toc CDATA #REQUIRED ></tt>
 <p>In general, a plug-in that needs to provide online help will define
-its own TOC files. In the end, the help system is configured
-to be launched as some actions, and the path of the TOC file can be
-used to do so.
+its own TOC files. In the end, the help system is configured to be launched
+as some actions, and the path of the TOC file can be used to do so.
 <p><b>The topic element</b>
 <p>All help topic element are contributed as part of the toc container
 element. They can have a hierarchical structure, or can be listed as a
 flat list.
-<p>The topic element is the workhorse of structure of Table of Contents. There
-are two typical uses for the topic element:
+<p>The topic element is the workhorse of structure of Table of Contents.
+There are two typical uses for the topic element:
 <p>1.&nbsp; To provide a link to a documentation file - usually an HTML
 file.
-<br>2.&nbsp; To act as a container for other toc, either in the same
-manifest or another.
+<br>2.&nbsp; To act as a container for other toc, either in the same manifest
+or another.
 <p><b><i>1.&nbsp; Topics as links</i></b>
 <br>The simplest use of a topic is as a link to a documentation file.
 <p><tt>&lt;topic label="Some concept file" href="concepts/some_file.html"
@@ -106,10 +103,10 @@ file as well.
 <br><tt>&lt;/topic></tt>
 <p><b>The link element</b>
 <p>The link element allows to link Table of Contents defined in another
-toc file.&nbsp; All the topics from the toc file specified in the
-toc attribute will appear in the table of contents as if they were defined
-directly in place of the link element.&nbsp; To include toc from api.xml
-file you could write<tt></tt>
+toc file.&nbsp; All the topics from the toc file specified in the toc attribute
+will appear in the table of contents as if they were defined directly in
+place of the link element.&nbsp; To include toc from api.xml file you could
+write
 <p><tt>&lt;topic label="References" ></tt>
 <br><tt>&nbsp; ...</tt>
 <br><tt>&nbsp; &lt;link toc="api.xml" /></tt>
@@ -118,25 +115,26 @@ file you could write<tt></tt>
 <p><b>The anchor element</b>
 <p>The anchor element defines a point that will allow linking other toc
 files to this navigation, and extending it, without using the link element
-and referencing other toc files from here.&nbsp; To allow inserting
-Table of Contents with more topics after the "ZZZ" document you would define an anchor as follows:<tt></tt>
+and referencing other toc files from here.&nbsp; To allow inserting Table
+of Contents with more topics after the "ZZZ" document you would define
+an anchor as follows:
 <p><tt>...</tt>
 <br><tt>&lt;topic label="zzz" href="zzz.html" /></tt>
 <br><tt>&lt;anchor id="moreapi" /></tt>
 <br><tt>...</tt>
 <p><b>The toc element</b>
-<p>The toc element is a Table of Contents that groups topics and other elements
-defined in this file.&nbsp; The label identifies the table of contents
-to the user, when it is displayed to the user.&nbsp; The optional link_to
-attribute allows for linking toc from this file into another toc
+<p>The toc element is a Table of Contents that groups topics and other
+elements defined in this file.&nbsp; The label identifies the table of
+contents to the user, when it is displayed to the user.&nbsp; The optional
+link_to attribute allows for linking toc from this file into another toc
 file being higher in the navigation hierarchy.&nbsp; The value of the link_to
-attribute must specify an anchor in another toc file. To link toc
-from myapi.xml to a api.xml file, specified in another plugin you would
-use the syntax<tt></tt>
+attribute must specify an anchor in another toc file. To link toc from
+myapi.xml to a api.xml file, specified in another plugin you would use
+the syntax
 <p><tt>&lt;toc link_to="../anotherPlugin/api.xml#moreapi" label="My Tool
 API"/></tt>
 <br><tt>...</tt>
-<br><tt>&lt;toc /></tt><tt></tt>
+<br><tt>&lt;toc /></tt>
 <p>where # character separates toc file name from the anchor identifier.
 <p><b><i>Examples:</i></b>
 <p>The following is an example of using the <tt>toc</tt> extension point.
@@ -182,8 +180,8 @@ files.)
 <br><tt>&lt;/toc></tt></blockquote>
 
 <p><br>(in file <tt>samples.xml</tt>)
-<blockquote><tt>&lt;toc link_to="maindocs.xml#samples" label="Using
-The Compile Tool"></tt>
+<blockquote><tt>&lt;toc link_to="maindocs.xml#samples" label="Using The
+Compile Tool"></tt>
 <br><tt>&nbsp;&lt;topic label="The Compile Tool Sample" href="compilesample/example.html"></tt>
 <br><tt>&nbsp; &lt;topic label="Step 1" href="compilesample/step1.html"/></tt>
 <br><tt>&nbsp; &lt;topic label="Step 2" href="compilesample/step2.html"/></tt>
@@ -196,29 +194,30 @@ The Compile Tool"></tt>
 :
 <p><img SRC="helpsample.jpg" height=431 width=803>
 <h4>
-</h4>
-
-<h4>
 Internationalization</h4>
-Plugin.xml files externalize their strings by replacing the string with
-a key (e.g. %pluginName) and creating an entry in the plugin.properties
-file of the form:
-<br>&nbsp;&nbsp;&nbsp; pluginName = "Online Help Sample Plugin"
-<br>The translated property files should be placed in nl/&lt;locale> directory.
-<br>The labels in the toc XML files can be translated and the resulting
-toc files placed in nl/&lt;locale> directory. The help system will look
-for the files under this directory before defaulting to plugin directory.
-<br>The documentation contained in doc.zip can be localized by placing
-the zip file in nl/&lt;locale> directory. The help system will look for
-the doc.zip under the locale directory before defaulting to plugin directory.
+The TOC XML files can be translated and the resulting copy (with translated
+labels) should be placed in nl/&lt;language>/&lt;country> or nl/&lt;language>
+directory.&nbsp; The &lt;language> and &lt;country> stand for two letter
+language and country codes as used in locale codes.&nbsp; For example,
+Traditional Chinese translations should be placed in the nl/zh/TW directory.&nbsp;
+The nl/&lt;language>/&lt;country> directory has a higher priority than
+nl/&lt;language>.&nbsp; Only if no file is found in the nl/&lt;language>/&lt;country>,
+the file residing in nl/&lt;language> will be used.&nbsp; The the root
+directory of a plugin will be searched last.
+<p>The documentation contained in doc.zip can be localized by creating
+a doc.zip file with translated version of documents, and placing doc.zip
+in
+<br>nl/&lt;language>/&lt;country> or nl/&lt;language> directory. The help
+system will look for the files under this directories before defaulting
+to plugin directory.
 <br>&nbsp;
 <p><b><i>API Information</i>:<font color="#CC0000"> </font></b>No code
 is required to use this extension point. All that is needed is to supply
 the appropriate manifest files mentioned in the <tt>plugin.xml</tt> file.
 <br>&nbsp;
-<p><i><b>Supplied Implementation:</b> </i>The optional default implementation
-of the help system UI supplied with the Eclipse platform fully supports
-the <tt>toc</tt> extension point.
+<p><i><b>Supplied Implementation:</b> </i>The default implementation of
+the help system UI supplied with the Eclipse platform fully supports the
+<tt>toc</tt> extension point.
 <p><a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2001.  All Rights Reserved." BORDER=0 height=12 width=195></a>
 </body>
 </html>
