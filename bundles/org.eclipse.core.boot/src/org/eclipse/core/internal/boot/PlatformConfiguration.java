@@ -74,6 +74,9 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	private static final String PLUGIN_XML = "plugin.xml"; //$NON-NLS-1$
 	private static final String FRAGMENT_XML = "fragment.xml"; //$NON-NLS-1$
 	private static final String FEATURE_XML = "feature.xml"; //$NON-NLS-1$
+	private static final String PRODUCT_SITE_MARKER = ".eclipseproduct"; //$NON-NLS-1$
+	private static final String PRODUCT_SITE_ID = "id"; //$NON-NLS-1$
+	private static final String PRODUCT_SITE_VERSION = "version"; //$NON-NLS-1$
 
 	private static final String[] BOOTSTRAP_PLUGINS = { "org.eclipse.core.boot" }; //$NON-NLS-1$
 	private static final String CFG_BOOT_PLUGIN = "bootstrap"; //$NON-NLS-1$
@@ -1444,18 +1447,24 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 
 		} else {
 			// configuration URL was not specified. Default behavior is to look
-			// for configuration in the workspace meta area. If not found, look
+			// for configuration in the default state area. If not found, look
 			// for pre-initialized configuration in the installation location.
 			// If it is found it is used as the initial configuration. Otherwise
 			// a new configuration is created. In either case the resulting
-			// configuration is written into the platform .metadata area
+			// configuration is written into the default state area.
+			// The default state area is computed as follows:
+			// 1) We store the config state relative to the 'eclipse' directory if possible
+			// 2) If this directory is read-only OR 
+			//    if shared install is desired (using command line argument -shared), 
+			//    we store the state in <user.home>/.eclipse/<application-id>_<version> where <user.home> 
+			//    is unique for each local user, and <application-id> is the one 
+			//    defined in .eclipseproduct marker file. If .eclipseproduct does not
+			//    exist, use "eclipse" as the application-id.
 
-			// first determine configuration location in .metadata
-			metaPath = metaPath.replace(File.separatorChar, '/');
-			if (!metaPath.endsWith("/")) //$NON-NLS-1$
-				metaPath += "/"; //$NON-NLS-1$
-			URL cfigURL = new URL("file", null, 0, metaPath + CONFIG_FILE); // if we fail here, return exception //$NON-NLS-1$
-
+			//	if we fail here, return exception
+			URL defaultStateURL = getDefaultStateLocation();
+			URL cfigURL = new URL(defaultStateURL, CONFIG_FILE);
+			
 			// check concurrent use lock
 			// FIXME: might not need this method call
 			getConfigurationLock(cfigURL);
@@ -1479,8 +1488,10 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 					url = new URL(BootLoader.getInstallURL(), CONFIG_FILE);
 					load(url);
 					// pre-initialized config loaded OK ... copy any remaining update metadata
-					copyInitializedState(BootLoader.getInstallURL(), metaPath, CONFIG_DIR);
-					configLocation = cfigURL; // config in .metadata is the right URL
+					// Only copy if the default config location is not the install location
+					if (BootLoader.getInstallURL() != defaultStateURL)
+						copyInitializedState(BootLoader.getInstallURL(), defaultStateURL.getFile(), CONFIG_DIR);
+					configLocation = cfigURL; // config in default location is the right URL
 					verifyPath(configLocation);
 					if (DEBUG) {
 						debug("Using configuration " + configLocation.toString()); //$NON-NLS-1$
@@ -2925,5 +2936,43 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		if (!renamed)
 			resetInitializationLocation(UMDir);
 	}	
+
+	private URL getDefaultStateLocation() throws IOException {
+		// 1) We store the config state relative to the 'eclipse' directory if possible
+		// 2) If this directory is read-only 
+		//    we store the state in <user.home>/.eclipse/<application-id>_<version> where <user.home> 
+		//    is unique for each local user, and <application-id> is the one 
+		//    defined in .eclipseproduct marker file. If .eclipseproduct does not
+		//    exist, use "eclipse" as the application-id.
 		
+		URL installURL = BootLoader.getInstallURL();
+		File installDir = new File(installURL.getFile());
+		
+		if ("file".equals(installURL.getProtocol()) && installDir.canWrite()) { //$NON-NLS-1$
+			if (DEBUG)
+				debug("Using the installation directory."); //$NON-NLS-1$
+			return installURL;
+		} else {
+			if (DEBUG)
+				debug("Using the user.home location."); //$NON-NLS-1$
+			String appName = "." + ECLIPSE; //$NON-NLS-1$
+			File eclipseProduct = new File(installDir, PRODUCT_SITE_MARKER );
+			if (eclipseProduct.exists()) {
+				Properties props = new Properties();
+				props.load(new FileInputStream(eclipseProduct));
+				String appId = props.getProperty(PRODUCT_SITE_ID);
+				if (appId == null || appId.trim().length() == 0)
+					appId = ECLIPSE;
+				String appVersion = props.getProperty(PRODUCT_SITE_VERSION);
+				if (appVersion == null || appVersion.trim().length() == 0)
+					appVersion = ""; //$NON-NLS-1$
+				appName += File.separator + appId + "_" + appVersion; //$NON-NLS-1$
+			}
+				
+			String userHome = System.getProperty("user.home"); //$NON-NLS-1$
+			File configDir = new File(userHome, appName);
+			configDir.mkdirs();
+			return configDir.toURL();
+		}
+	}		
 }
