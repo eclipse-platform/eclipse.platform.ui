@@ -27,22 +27,24 @@ import org.eclipse.ui.plugin.*;
 public class UpdateScheduler extends AbstractUIPlugin implements IStartup {
 	// Preferences
 	public static final String P_ENABLED = "enabled";
-	
+
 	public static final String P_SCHEDULE = "schedule";
 	public static final String VALUE_ON_STARTUP = "on-startup";
 	public static final String VALUE_ON_SCHEDULE = "on-schedule";
-	
+
 	// values are to be picked up from the arryas DAYS and HOURS 
 	public static final String P_DAY = "day";
-	public static final String P_HOUR = "hour"; 
-	
+	public static final String P_HOUR = "hour";
+
 	//The shared instance.
 	private static UpdateScheduler plugin;
 	//Resource bundle.
 	private ResourceBundle resourceBundle;
 	// Keeps track of running job
 	private Job job;
-	
+	// Listener for job changes
+	private UpdateJobChangeAdapter jobListener;
+
 	public static final String[] DAYS =
 		{
 			"Every day",
@@ -53,7 +55,7 @@ public class UpdateScheduler extends AbstractUIPlugin implements IStartup {
 			"Every Friday",
 			"Every Saturday",
 			"Every Sunday" };
-			
+
 	public static final String[] HOURS =
 		{
 			"1:00 AM",
@@ -81,7 +83,15 @@ public class UpdateScheduler extends AbstractUIPlugin implements IStartup {
 			"11:00 PM",
 			"12:00 AM",
 			};
-			
+
+	private class UpdateJobChangeAdapter extends JobChangeAdapter {
+		public void done(Job job, IStatus result) {
+			if (job == UpdateScheduler.this.job) {
+				scheduleUpdateJob();
+			}
+		}
+	}
+
 	/**
 	 * The constructor.
 	 */
@@ -93,14 +103,9 @@ public class UpdateScheduler extends AbstractUIPlugin implements IStartup {
 		} catch (MissingResourceException x) {
 			resourceBundle = null;
 		}
-		
-		Platform.getJobManager().addJobChangeListener(new JobChangeAdapter() {
-			public void done(Job job, IStatus result) {
-				if (job == UpdateScheduler.this.job) {
-					scheduleUpdateJob();
-				}
-			}
-		});
+
+		jobListener = new UpdateJobChangeAdapter();
+		Platform.getJobManager().addJobChangeListener(jobListener);
 	}
 
 	public ResourceBundle getResourceBundle() {
@@ -222,11 +227,12 @@ public class UpdateScheduler extends AbstractUIPlugin implements IStartup {
 	public void earlyStartup() {
 		scheduleUpdateJob();
 	}
-	
+
 	public void scheduleUpdateJob() {
 		Preferences pref = getPluginPreferences();
 		// See if automatic search is enabled at all
-		if (pref.getBoolean(P_ENABLED)==false) return;
+		if (pref.getBoolean(P_ENABLED) == false)
+			return;
 
 		String schedule = pref.getString(P_SCHEDULE);
 		long delay = -1L;
@@ -238,32 +244,41 @@ public class UpdateScheduler extends AbstractUIPlugin implements IStartup {
 				delay = -1L;
 		else
 			delay = computeDelay(pref);
-		if (delay == -1L) return;
+		if (delay == -1L)
+			return;
 		startSearch(delay);
 	}
-	
+
 	private int getDay(Preferences pref) {
 		String day = pref.getString(P_DAY);
-		for (int d=0; d<DAYS.length; d++)
+		for (int d = 0; d < DAYS.length; d++)
 			if (DAYS[d].equals(day))
-				switch(d) {
-					case 0: return -1;
-					case 1: return Calendar.MONDAY;
-					case 2: return Calendar.TUESDAY;
-					case 3: return Calendar.WEDNESDAY;
-					case 4: return Calendar.THURSDAY;
-					case 5: return Calendar.FRIDAY;
-					case 6: return Calendar.SATURDAY;
-					case 7: return Calendar.SUNDAY;
+				switch (d) {
+					case 0 :
+						return -1;
+					case 1 :
+						return Calendar.MONDAY;
+					case 2 :
+						return Calendar.TUESDAY;
+					case 3 :
+						return Calendar.WEDNESDAY;
+					case 4 :
+						return Calendar.THURSDAY;
+					case 5 :
+						return Calendar.FRIDAY;
+					case 6 :
+						return Calendar.SATURDAY;
+					case 7 :
+						return Calendar.SUNDAY;
 				}
 		return -1;
 	}
-	
+
 	private int getHour(Preferences pref) {
 		String hour = pref.getString(P_HOUR);
-		for (int h=0; h<HOURS.length; h++)
+		for (int h = 0; h < HOURS.length; h++)
 			if (HOURS[h].equals(hour))
-				return h+1;
+				return h + 1;
 		return 1;
 	}
 	/*
@@ -275,49 +290,67 @@ public class UpdateScheduler extends AbstractUIPlugin implements IStartup {
 
 		int target_d = getDay(pref);
 		int target_h = getHour(pref);
-		
-		Calendar calendar  = Calendar.getInstance(); // may need to use the BootLoader locale
-		int current_d = calendar.get(Calendar.DAY_OF_WEEK); // starts with SUNDAY
+
+		Calendar calendar = Calendar.getInstance();
+		// may need to use the BootLoader locale
+		int current_d = calendar.get(Calendar.DAY_OF_WEEK);
+		// starts with SUNDAY
 		int current_h = calendar.get(Calendar.HOUR_OF_DAY);
 		int current_m = calendar.get(Calendar.MINUTE);
 		int current_s = calendar.get(Calendar.SECOND);
-		int current_ms = calendar.get(Calendar.MILLISECOND);		
+		int current_ms = calendar.get(Calendar.MILLISECOND);
 
-		long delay = 0L;  // milliseconds
+		long delay = 0L; // milliseconds
 
 		if (target_d == -1) {
 			// Compute the delay for "every day at x o'clock"
 			// Is it now ?
 			if (target_h == current_h && current_m == 0 && current_s == 0)
 				return delay;
-				
+
 			int delta_h = target_h - current_h;
 			if (target_h <= current_h)
 				delta_h += 24;
-			delay = ((delta_h*60 - current_m)*60 - current_s)*1000 - current_ms;
+			delay =
+				((delta_h * 60 - current_m) * 60 - current_s) * 1000
+					- current_ms;
 			return delay;
 		} else {
 			// Compute the delay for "every Xday at x o'clock"
 			// Is it now ?
-			if (target_d == current_d && target_h == current_h && current_m == 0 && current_s == 0)
+			if (target_d == current_d
+				&& target_h == current_h
+				&& current_m == 0
+				&& current_s == 0)
 				return delay;
-				
+
 			int delta_d = target_d - current_d;
-			if (target_d < current_d || target_d == current_d && (target_h < current_h || target_h == current_h && current_m > 0))
+			if (target_d < current_d
+				|| target_d == current_d
+				&& (target_h < current_h
+					|| target_h == current_h
+					&& current_m > 0))
 				delta_d += 7;
 			int delta_h = target_h - current_h;
-				
-			delay = (((delta_d*24 + target_h - current_h)*60 - current_m)*60 - current_s)*1000 - current_ms;
+
+			delay =
+				(((delta_d * 24 + target_h - current_h) * 60 - current_m) * 60
+					- current_s)
+					* 1000
+					- current_ms;
 
 			return delay;
 		}
 		//return -1L;
 	}
-	
+
 	private void startSearch(long delay) {
 		if (job != null) {
-			// cancel old job
+			// cancel old job.
+			// We need to deregister the listener first,so we won't automatically start another job
+			Platform.getJobManager().removeJobChangeListener(jobListener);
 			Platform.getJobManager().cancel(AutomaticUpdatesJob.family);
+			Platform.getJobManager().addJobChangeListener(jobListener);
 		}
 		job = new AutomaticUpdatesJob();
 		job.schedule(delay);
