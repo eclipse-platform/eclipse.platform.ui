@@ -37,7 +37,7 @@ public class DefaultLineTracker extends AbstractLineTracker {
 	 * @see org.eclipse.jface.text.ILineTracker#getLegalLineDelimiters()
 	 */
 	public String[] getLegalLineDelimiters() {
-		return DELIMITERS;
+		return TextUtilities.copy(DELIMITERS);
 	}
 
 	/*

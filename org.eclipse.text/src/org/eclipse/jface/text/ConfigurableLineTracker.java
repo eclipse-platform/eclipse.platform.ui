@@ -39,14 +39,14 @@ public class ConfigurableLineTracker extends AbstractLineTracker {
 	 */
 	public ConfigurableLineTracker(String[] legalLineDelimiters) {
 		Assert.isTrue(legalLineDelimiters != null && legalLineDelimiters.length > 0);
-		fDelimiters= legalLineDelimiters;
+		fDelimiters= TextUtilities.copy(legalLineDelimiters);
 	}
 	
 	/*
 	 * @see org.eclipse.jface.text.ILineTracker#getLegalLineDelimiters()
 	 */
 	public String[] getLegalLineDelimiters() {
-		return fDelimiters;
+		return TextUtilities.copy(fDelimiters);
 	}
 
 	/*
