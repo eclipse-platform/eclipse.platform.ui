@@ -11,19 +11,16 @@
 package org.eclipse.debug.internal.ui.views.memory;
 
 public interface IMultipaneMemoryView {
-	/**
-	 * @return the top view tab from the Memory View from the specified pane
-	 */
-	public IMemoryViewTab getTopMemoryTab(String paneId);
 	
 	/**
-	 * @return all view tabs from current tab folder from the specified pane
+	 * @param paneId
+	 * @return the memory pane with the specified pane id
+	 * Return null if the specified view pane cannot be found.
 	 */
-	public IMemoryViewTab[] getAllViewTabs(String paneId);
+	public IMemoryViewPane getViewPane(String paneId);
 	
 	/**
-	 * Move specified view tab to the top in the specified pane
-	 * @param viewTab
+	 * @return all view panes from the memory view
 	 */
-	public void moveToTop(String paneId, IMemoryViewTab viewTab);
+	public IMemoryViewPane[] getViewPanes();
 }

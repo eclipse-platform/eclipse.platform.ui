@@ -49,7 +49,7 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.help.WorkbenchHelp;
 
-public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, ISelectionListener, SelectionListener, IMemoryView, ISelectionChangedListener{
+public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, ISelectionListener, SelectionListener, IMemoryView, ISelectionChangedListener, IMemoryViewPane{
 
 
 	private static final String VIEW_TAB_FACTORY = "viewTabFactory"; //$NON-NLS-1$
@@ -57,7 +57,7 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 	
 	protected Composite fViewPaneCanvas;
 	protected StackLayout fStackLayout;
-	private ViewTabEnablementManager fViewTabEnablementManager;
+	protected ViewTabEnablementManager fViewTabEnablementManager;
 	protected TabFolder fEmptyTabFolder;
 	protected Hashtable fTabFolderForDebugView; 
 	protected Hashtable fMenuMgr;
@@ -65,7 +65,8 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 	protected Hashtable fRenderingInfoTable;
 	protected IMemoryBlockRetrieval fKey;  // store the key for current tab folder
 	protected ViewPaneSelectionProvider fSelectionProvider;
-	private IViewPart fParent;
+	protected IViewPart fParent;
+	protected String fPaneId;
 	
 	public AbstractMemoryViewPane(IViewPart parent)
 	{
@@ -78,11 +79,11 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 	 * @param parent
 	 * @return the control of the view pane
 	 */
-	public Control createViewPane(Composite parent)
+	public Control createViewPane(Composite parent, String paneId)
 	{	
 		WorkbenchHelp.setHelp(parent, IDebugUIConstants.PLUGIN_ID + ".MemoryView_context"); //$NON-NLS-1$
 		fSelectionProvider = new ViewPaneSelectionProvider();
-		
+		fPaneId = paneId;
 		// view pane overall canvas
 		Composite canvas = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -466,6 +467,14 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 		fSelectionProvider.setSelection(selection);
 	}
 	
+	/**
+	 * @return the unique identifier of the view pane
+	 */
+	public String getPaneId()
+	{
+		return fPaneId;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.memory.IMemoryBlockListener#MemoryBlockAdded(org.eclipse.debug.core.model.IMemoryBlock)
 	 */
@@ -487,11 +496,6 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 	abstract public Object getCurrentSelection();
 	
 	/**
-	 * @return the unique identifier of the view pane
-	 */
-	abstract public String getPaneId();
-	
-	/**
 	 * retore the view pane based on current selection from the debug view
 	 * and the memory blocks and renderings currently exist 
 	 */
@@ -500,5 +504,5 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 	/**
 	 * @return actions to be contributed to the view pane's toolbar
 	 */
-	abstract IAction[] getActions();
+	abstract public IAction[] getActions();
 }

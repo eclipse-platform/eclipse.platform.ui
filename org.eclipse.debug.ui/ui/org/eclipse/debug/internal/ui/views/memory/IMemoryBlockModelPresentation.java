@@ -54,4 +54,14 @@ public interface IMemoryBlockModelPresentation extends IDebugModelPresentation
 	 * Return null if default address presentation is to be used.
 	 */
 	public String getAddressPresentation(IMemoryBlock blk, BigInteger address);
+	
+	/**
+	 * A default rendering is being created for the memory block.  Return the pane
+	 * id of the view pane where this rendering is to be created.  
+	 * @param blk
+	 * @param renderingType
+	 * @return the pane id of the view pane where this rendering is to be created.
+	 * Return null if the default view pane is to be used.  
+	 */
+	public String getViewPaneIdForDefault(IMemoryBlock blk, IMemoryRenderingType renderingType);
 }

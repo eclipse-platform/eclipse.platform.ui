@@ -13,20 +13,14 @@ package org.eclipse.debug.internal.ui.views.memory;
 
 import java.math.BigInteger;
 
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
-import org.eclipse.debug.internal.ui.LazyModelPresentation;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -92,8 +86,6 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 	private boolean fEnabled;
 	private ViewTabCursorManager fCursorManager;
 
-	private IMemoryBlockModelPresentation fMemoryBlockPresentation;
-	private boolean fNoPresentation = false;
 	private boolean fShowAddressColumn = true;
 	
 	public int TABLE_PREBUFFER = 20;
@@ -206,84 +198,6 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 				}
 			}
 		}	
-	}
-	
-	// **  Referring to internal class:  DelegatingModelPresentation and LazyModelPresentation
-	// **  This should be ok when Memory View is contributed to Eclipse platform?
-	class MemoryViewDelegatingModelPresentation extends DelegatingModelPresentation
-	{
-		
-		MemoryViewDelegatingModelPresentation()
-		{
-			IExtensionPoint point= Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.ID_DEBUG_MODEL_PRESENTATION);
-			if (point != null) {
-				IExtension[] extensions= point.getExtensions();
-				for (int i= 0; i < extensions.length; i++) {
-					IExtension extension= extensions[i];
-					IConfigurationElement[] configElements= extension.getConfigurationElements();
-					for (int j= 0; j < configElements.length; j++) {
-						IConfigurationElement elt= configElements[j];
-						String id= elt.getAttribute("id"); //$NON-NLS-1$
-						if (id != null) {
-							IDebugModelPresentation lp= new MemoryViewLazyModelPresentation(elt);
-							getLabelProviders().put(id, lp);
-						}
-					}
-				}
-			}			
-		}
-
-	}
-	
-	class MemoryViewLazyModelPresentation extends LazyModelPresentation implements IMemoryBlockModelPresentation
-	{
-
-		MemoryViewLazyModelPresentation(IConfigurationElement element)
-		{
-			super(element);
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.ui.IMemoryBlockModelPresentation#getTabLabel(org.eclipse.debug.core.model.IMemoryBlock)
-		 */
-		public String getTabLabel(IMemoryBlock blk, String renderingId)
-		{
-			IDebugModelPresentation presentation = getPresentation();
-			
-			if (presentation instanceof IMemoryBlockModelPresentation)
-			{
-				return ((IMemoryBlockModelPresentation)presentation).getTabLabel(blk, getRenderingId()); 
-			}
-			return null;
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.ui.IMemoryBlockModelPresentation#getColumnLabels(org.eclipse.debug.core.model.IMemoryBlock, int, int)
-		 */
-		public String[] getColumnLabels(IMemoryBlock blk, int bytesPerLine, int columnSize)
-		{
-			IDebugModelPresentation presentation = getPresentation();
-			
-			if (presentation instanceof IMemoryBlockModelPresentation)
-			{
-				return ((IMemoryBlockModelPresentation)presentation).getColumnLabels(blk, bytesPerLine, columnSize); 
-			}
-			return new String[0];
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.ui.IMemoryBlockModelPresentation#getAddressPresentation(org.eclipse.debug.core.model.IMemoryBlock, java.math.BigInteger)
-		 */
-		public String getAddressPresentation(IMemoryBlock blk, BigInteger address)
-		{
-			IDebugModelPresentation presentation = getPresentation();
-			
-			if (presentation instanceof IMemoryBlockModelPresentation)
-			{
-				return ((IMemoryBlockModelPresentation)presentation).getAddressPresentation(blk, address); 
-			}
-			return null;
-		}
 	}
 
 	public MemoryViewTab(IMemoryBlock newMemory, TabItem newTab, MenuManager menuMgr, IMemoryRendering rendering, AbstractMemoryRenderer renderer) {
@@ -403,8 +317,9 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 		
 		String tabName = null;
 		
-		if (getMemoryBlockPresentation() != null)
-			tabName = getMemoryBlockPresentation().getTabLabel(newMemory, getRenderingId());
+		IDebugModelPresentation presentation = DebugUIPlugin.getModelPresentation();
+		if (presentation instanceof IMemoryBlockModelPresentation)
+			tabName = ((IMemoryBlockModelPresentation)presentation).getTabLabel(newMemory, getRenderingId());
 		
 		if (tabName == null)
 		{
@@ -713,8 +628,13 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 		TableColumn [] byteColumns = new TableColumn[bytesPerLine/columnSize];		
 		
 		String[] columnLabels = new String[0];
-		if (getMemoryBlockPresentation() != null)
-			columnLabels = getMemoryBlockPresentation().getColumnLabels(getMemoryBlock(), bytesPerLine, columnSize);
+		IDebugModelPresentation presentation = DebugUIPlugin.getModelPresentation();
+		if (presentation instanceof IMemoryBlockModelPresentation)
+			columnLabels = ((IMemoryBlockModelPresentation)presentation).getColumnLabels(getMemoryBlock(), bytesPerLine, columnSize);
+		
+		// check that column labels are not null
+		if (columnLabels == null)
+			columnLabels = new String[0];
 		
 		for (int i=0;i<byteColumns.length; i++)
 		{
@@ -800,8 +720,13 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 	{
 		String[] columnLabels = new String[0];
 
-		if (getMemoryBlockPresentation() != null)
-			columnLabels = getMemoryBlockPresentation().getColumnLabels(getMemoryBlock(), fBytePerLine, fColumnSize);		
+		IDebugModelPresentation presentation = DebugUIPlugin.getModelPresentation();
+		if (presentation instanceof IMemoryBlockModelPresentation)
+			columnLabels = ((IMemoryBlockModelPresentation)presentation).getColumnLabels(getMemoryBlock(), fBytePerLine, fColumnSize);
+		
+		// check that column labels returned are not null
+		if (columnLabels == null)
+			columnLabels = new String[0];
 		
 		int numByteColumns = fBytePerLine/fColumnSize;
 		
@@ -1988,26 +1913,6 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 		
 		// update table cursor and force redraw
 		updateCursorPosition();
-	}
-	
-	/**
-	 * @return memory block presentation to allow for customization
-	 */
-	protected IMemoryBlockModelPresentation getMemoryBlockPresentation()
-	{
-		// only try to create a model presentation once
-		if (fMemoryBlockPresentation == null && !fNoPresentation)
-		{
-			//	create model presentation for memory block
-			 DelegatingModelPresentation presentation = new MemoryViewDelegatingModelPresentation();
-			 String id = fMemoryBlock.getModelIdentifier();
-			 fMemoryBlockPresentation = (MemoryViewLazyModelPresentation)presentation.getPresentation(id);
-			 
-			 // if a memory block presentation cannot be retrieved
-			 if (fMemoryBlockPresentation == null)
-			 	fNoPresentation = true;
-		}
-		return fMemoryBlockPresentation; 
 	}
 
 	/* (non-Javadoc)

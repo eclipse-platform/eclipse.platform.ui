@@ -61,6 +61,7 @@ public class CreateRenderingTab implements IMemoryViewTab, IDebugEventSetListene
 	private Label fMemoryBlockLabel;
 	private CreateRendering fRendering = new CreateRendering();
 	private DisposeListener fDisposeListener;
+	private IRenderingViewPane fViewPane;
 
 	class MemoryRenderingLabelProvider implements ILabelProvider
 	{
@@ -154,10 +155,11 @@ public class CreateRenderingTab implements IMemoryViewTab, IDebugEventSetListene
 		}
 	}
 	
-	public CreateRenderingTab(IMemoryBlock memBlock, TabItem tabItem)
+	public CreateRenderingTab(IMemoryBlock memBlock, TabItem tabItem, IRenderingViewPane viewPane)
 	{
 		fMemoryBlock = memBlock;
 		fTabItem = tabItem;
+		fViewPane = viewPane;
 		Control control = createPartControl(tabItem.getParent());
 		fTabItem.setControl(control);
 		fTabItem.setData(this);
@@ -328,7 +330,9 @@ public class CreateRenderingTab implements IMemoryViewTab, IDebugEventSetListene
 			{
 				String id = ((IMemoryRenderingType)renderings[i]).getRenderingId();
 				try {
-					MemoryRenderingManager.getMemoryRenderingManager().addMemoryBlockRendering(fMemoryBlock, id );
+					IMemoryRendering rendering = MemoryRenderingManager.getMemoryRenderingManager().createRendering(fMemoryBlock, id);
+					if (rendering != null)
+						fViewPane.addMemoryRendering(rendering);
 				} catch (DebugException e) {
 					DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), DebugUIMessages.getString("CreateRenderingTab.3"), DebugUIMessages.getString("CreateRenderingTab.4"), e); //$NON-NLS-1$ //$NON-NLS-2$
 				}

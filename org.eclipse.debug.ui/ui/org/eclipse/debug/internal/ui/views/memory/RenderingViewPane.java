@@ -47,7 +47,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.help.WorkbenchHelp;
 
-public class RenderingViewPane extends AbstractMemoryViewPane implements IMemoryRenderingListener{
+public class RenderingViewPane extends AbstractMemoryViewPane implements IRenderingViewPane{
 
 	public static final String RENDERING_VIEW_PANE_ID = DebugUIPlugin.getUniqueIdentifier() + ".MemoryView.RenderingViewPane"; //$NON-NLS-1$
 	
@@ -61,9 +61,25 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 	private IAction fAddMemoryBlockAction;
 
 	private IAction fRemoveMemoryRenderingAction;
+	private ViewPaneRenderingMgr fRenderingMgr;
 	
 	/**
-	 * @param parent
+	 * @param parent is the view hosting this view pane
+	 * @param paneId is the identifier assigned by the Memory View
+	 * 
+	 * Pane id is assigned with the following format.  
+	 * Rendering view pane created has its id assigned to 
+	 * org.eclipse.debug.ui.MemoryView.RenderingViewPane.#.  
+	 * # is a number indicating the order of which the rendering view
+	 * pane is created.  First rendering view pane created will have its
+	 * id assigned to org.eclipse.debug.ui.MemoryView.RenderingViewPane.1.
+	 * Second rendering view pane created will have its id assigned to
+	 * org.eclipse.debug.ui.MemoryView.RenderingViewPane.2. and so on.
+	 * View pane are created from left to right by the Memory View.
+	 * 
+	 * Note:  Currently, there is only one rendering view pane with id
+	 * org.eclipse.debug.ui.MemoryView.RenderingViewPane.1.  Memory View is
+	 * equipped to host more than one rendering view pane.
 	 */
 	public RenderingViewPane(IViewPart parent) {
 		super(parent);
@@ -88,7 +104,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 				TabFolder folder =  new TabFolder(fViewPaneCanvas, SWT.NULL);
 				TabItem newItem = new TabItem(folder, SWT.NULL);
 				
-				CreateRenderingTab createTab = new CreateRenderingTab(memory, newItem);
+				CreateRenderingTab createTab = new CreateRenderingTab(memory, newItem, getInstance());
 				
 				folder.setSelection(0);
 				
@@ -140,11 +156,11 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 					}
 					
 					// get all renderings from this memroy block and remove them from the view
-					IMemoryRendering[] renderings = MemoryRenderingManager.getMemoryRenderingManager().getRenderingsFromMemoryBlock(memory);
+					IMemoryRendering[] renderings = fRenderingMgr.getRenderingsFromMemoryBlock(memory);
 					
 					for (int k=0; k<renderings.length; k++)
 					{
-						MemoryBlockRenderingRemoved(renderings[k]);
+						removeMemoryRendering(renderings[k]);
 					}
 					
 					// remove a the tab folder if the memory block is removed
@@ -389,7 +405,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 		}
 		
 		// restore view tabs
-		IMemoryRendering[] renderings = MemoryRenderingManager.getMemoryRenderingManager().getRenderingsFromMemoryBlock(memBlock);
+		IMemoryRendering[] renderings = fRenderingMgr.getRenderingsFromMemoryBlock(memBlock);
 		TabFolder toDisplay = (TabFolder)fStackLayout.topControl;
 		
 		// remember tab folder for current debug target
@@ -428,7 +444,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 		 if (viewTab == null)
 		 {
 			TabItem newItem = new TabItem(toDisplay, SWT.NULL);
-			CreateRenderingTab createTab = new CreateRenderingTab(memBlock, newItem);
+			CreateRenderingTab createTab = new CreateRenderingTab(memBlock, newItem, getInstance());
 			setRenderingSelection(createTab);	
 		 }
 		
@@ -441,7 +457,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.memory.IMemoryRenderingListener#MemoryBlockRenderingAdded(org.eclipse.debug.internal.core.memory.IMemoryRendering)
 	 */
-	public void MemoryBlockRenderingAdded(IMemoryRendering rendering) {
+	public void memoryBlockRenderingAdded(IMemoryRendering rendering) {
 		String renderingId = rendering.getRenderingId();
 		IMemoryBlock  memoryblk = rendering.getBlock();
 		
@@ -531,7 +547,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 			
 			// remove the rendering if view tab factory is not defined
 			// otherwise, we will keep getting the error
-			MemoryRenderingManager.getMemoryRenderingManager().removeMemoryBlockRendering(rendering.getBlock(), rendering.getRenderingId());
+			fRenderingMgr.removeMemoryBlockRendering(rendering.getBlock(), rendering.getRenderingId());
 		}
 		updateToolBarActionsEnablement();
 		
@@ -540,7 +556,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.memory.IMemoryRenderingListener#MemoryBlockRenderingRemoved(org.eclipse.debug.internal.core.memory.IMemoryRendering)
 	 */
-	public void MemoryBlockRenderingRemoved(final IMemoryRendering rendering) {
+	public void memoryBlockRenderingRemoved(final IMemoryRendering rendering) {
 		final IMemoryBlock memory = rendering.getBlock();
 		
 		// need to run the following code on the UI Thread to avoid invalid thread access exception
@@ -610,7 +626,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 					if (tabFolder != fEmptyTabFolder)
 					{
 						TabItem newItem = new TabItem(tabFolder, SWT.NULL);
-						CreateRenderingTab createTab = new CreateRenderingTab(memory, newItem);
+						CreateRenderingTab createTab = new CreateRenderingTab(memory, newItem, getInstance());
 						tabFolder.setSelection(0);
 						setRenderingSelection(createTab);
 					}
@@ -720,7 +736,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 	{
 		for (int i=0; i<renderings.length; i++)
 		{
-			MemoryBlockRenderingAdded(renderings[i]);
+			memoryBlockRenderingAdded(renderings[i]);
 			
 //			// disable after done
 //			if (renderings[i].getBlock() instanceof IMemoryBlockExtension)
@@ -844,11 +860,9 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 	
 	protected void addListeners() {
 		super.addListeners();
-		MemoryRenderingManager.getMemoryRenderingManager().addListener(this);
 	}
 	protected void removeListeners() {
 		super.removeListeners();
-		MemoryRenderingManager.getMemoryRenderingManager().removeListener(this);
 	}
 
 	/* (non-Javadoc)
@@ -932,12 +946,6 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.memory.AbstractMemoryViewPane#getPaneId()
-	 */
-	public String getPaneId() {
-		return RENDERING_VIEW_PANE_ID;
-	}
 	public void restoreViewPane() {
 		
 		IMemoryBlock memoryBlock = null;
@@ -981,7 +989,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 					fViewPaneCanvas.layout();
 					
 					// restore view tabs
-					IMemoryRendering[] renderings = MemoryRenderingManager.getMemoryRenderingManager().getRenderingsFromMemoryBlock(memoryBlock);
+					IMemoryRendering[] renderings = fRenderingMgr.getRenderingsFromMemoryBlock(memoryBlock);
 					
 					if (toDisplay.getItemCount() == 0)
 					{
@@ -1005,7 +1013,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 			{
 				TabFolder folder = (TabFolder)fStackLayout.topControl;
 				TabItem newItem = new TabItem(folder, SWT.NULL);
-				new CreateRenderingTab(memoryBlock, newItem);
+				new CreateRenderingTab(memoryBlock, newItem, getInstance());
 				folder.setSelection(0);						
 			}
 		}
@@ -1019,23 +1027,27 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 		
 		fMemoryBlockFromTabFolder.clear();
 		fMemoryBlockFromTabFolder = null;
+		
+		fRenderingMgr.dispose();
+		fRenderingMgr = null;
 	}	
 	
-	public Control createViewPane(Composite parent) {
-		Control control =  super.createViewPane(parent);
+	public Control createViewPane(Composite parent, String paneId) {
+		Control control =  super.createViewPane(parent, paneId);
+		fRenderingMgr = new ViewPaneRenderingMgr(this);
 		WorkbenchHelp.setHelp(parent, IDebugUIConstants.PLUGIN_ID + ".MemoryRenderingView_context"); //$NON-NLS-1$
 		return control;
 	}
 	
-	IAction[] getActions() {
+	public IAction[] getActions() {
 		ArrayList actions = new ArrayList();
 		
 		if (fAddMemoryBlockAction == null)
-			fAddMemoryBlockAction = new AddMemoryRenderingAction();
+			fAddMemoryBlockAction = new AddMemoryRenderingAction(this);
 		actions.add(fAddMemoryBlockAction);
 		
 		if (fRemoveMemoryRenderingAction == null)
-			fRemoveMemoryRenderingAction = new RemoveMemoryRenderingAction();
+			fRemoveMemoryRenderingAction = new RemoveMemoryRenderingAction(this);
 		
 		fRemoveMemoryRenderingAction.setEnabled(false);
 		actions.add(fRemoveMemoryRenderingAction);
@@ -1087,5 +1099,36 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 		super.emptyFolder();
 		updateToolBarActionsEnablement();
 		fSelectionProvider.setSelection(new StructuredSelection(new Object[0]));
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.views.memory.IRenderingViewPane#addMemoryRendering(org.eclipse.debug.internal.ui.views.memory.IMemoryRendering)
+	 */
+	public void addMemoryRendering(IMemoryRendering rendering) {
+		
+		if (rendering == null)
+			return;
+		
+		memoryBlockRenderingAdded(rendering);
+		fRenderingMgr.addMemoryBlockRendering(rendering);
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.views.memory.IRenderingViewPane#removeMemoryRendering(org.eclipse.debug.internal.ui.views.memory.IMemoryRendering)
+	 */
+	public void removeMemoryRendering(IMemoryRendering rendering) {
+		
+		if (rendering == null)
+			return;
+		
+		memoryBlockRenderingRemoved(rendering);
+		fRenderingMgr.removeMemoryBlockRendering(rendering);
+		
+	}
+	
+	private RenderingViewPane getInstance()
+	{
+		return this;
 	}
 }

@@ -62,6 +62,7 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 	ISelectionChangedListener fSelectionChangedListener;
 	MouseListener fMouseListener;
 	SelectionListener fSelectionListener;
+	private IMemoryViewPane fViewPane;
 
 	class MemoryRenderingLabelProvider implements ILabelProvider
 	{
@@ -243,7 +244,7 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 		
 		fMouseListener =new MouseAdapter() {
 			public void mouseUp(MouseEvent e) {
-				AddMemoryBlockAction action = new AddMemoryBlockAction(false);
+				AddMemoryBlockAction action = new AddMemoryBlockAction(fViewPane, false);
 				action.run();
 				populateDialog(memoryBlock, fViewer, action.getLastMemoryBlock());
 				
@@ -316,11 +317,12 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 		return composite;
 	}
 
-	public AddMemoryRenderingDialog(Shell parent) {
+	public AddMemoryRenderingDialog(Shell parent, IMemoryViewPane viewPane) {
 		super(parent);
 		super.setTitle(DebugUIMessages.getString("AddMemoryRenderingDialog.Add_memory_rendering")); //$NON-NLS-1$
 		WorkbenchHelp.setHelp(parent, DebugUIPlugin.getUniqueIdentifier() + ".AddMemoryRenderingDialog_context"); //$NON-NLS-1$
 		setShellStyle(getShellStyle() | SWT.RESIZE);
+		fViewPane = viewPane;
 	}
 	
 	private void populateDialog(Combo combo, ListViewer viewer, IMemoryBlock lastAdded)

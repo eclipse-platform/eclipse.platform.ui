@@ -26,16 +26,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IDebugEventSetListener;
-import org.eclipse.debug.core.IMemoryBlockListener;
-import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.internal.core.DebugCoreMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
@@ -44,19 +39,14 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
  * @since 3.1
  */
 
-public class MemoryRenderingManager implements IMemoryRenderingManager, IDebugEventSetListener, IMemoryBlockListener
+public class MemoryRenderingManager implements IMemoryRenderingManager
 {
-	private ArrayList listeners = new ArrayList();
-	private ArrayList fRenderings = new ArrayList();
 	private Hashtable fMemoryRenderingTypes = new Hashtable();
 	private ArrayList fRenderingTypesOrderList = new ArrayList();
 	private Hashtable fDynamicRenderingMap = new Hashtable();
 	private Hashtable fDynamicRenderingFactory = new Hashtable();
 	private Hashtable fRenderingsEnablement = new Hashtable();
 	private Hashtable fDefaultsEnablement = new Hashtable();
-	
-	private static final int ADDED = 0;
-	private static final int REMOVED = 1;
 	
 	private static final String RENDERING_EXT = "memoryRenderingTypes"; //$NON-NLS-1$
 	private static final String RENDERING_ELEMENT = "rendering"; //$NON-NLS-1$
@@ -77,58 +67,9 @@ public class MemoryRenderingManager implements IMemoryRenderingManager, IDebugEv
 	 * The singleton memory rendering manager.
 	 */
 	private static MemoryRenderingManager fgMemoryRenderingManager;
-		
-	/**
-	 * Notifies a memory block listener  in a safe runnable to
-	 * handle exceptions.
-	 */
-	class MemoryRenderingManagerNotifier implements ISafeRunnable {
-		
-		private IMemoryRenderingListener fListener;
-		private int fType;
-		private IMemoryRendering fRendering;
-		
-		/**
-		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
-		 */
-		public void handleException(Throwable exception) {
-			DebugUIPlugin.log(exception);
-		}
-
-		/**
-		 * @see org.eclipse.core.runtime.ISafeRunnable#run()
-		 */
-		public void run() throws Exception {
-			switch (fType) {
-				case ADDED:
-					fListener.MemoryBlockRenderingAdded(fRendering);
-					break;
-				case REMOVED:
-					fListener.MemoryBlockRenderingRemoved(fRendering);
-					break;
-			}			
-		}
-
-		/**
-		 * Notfied listeners of added/removed rendering events
-		 */
-		public void notify(int update, IMemoryRendering rendering) {
-			if (listeners != null) {
-				fType = update;
-				fRendering = rendering;
-				Object[] copiedListeners= listeners.toArray(new IMemoryRenderingListener[listeners.size()]);
-				for (int i= 0; i < copiedListeners.length; i++) {
-					fListener = (IMemoryRenderingListener)copiedListeners[i];
-					Platform.run(this);
-				}			
-			}
-			fListener = null;
-		}
-	}
 	
 	public MemoryRenderingManager()
 	{
-		DebugPlugin.getDefault().getMemoryBlockManager().addListener(this);
 		buildMemoryRenderingTypes();		
 	}
 	
@@ -474,42 +415,6 @@ public class MemoryRenderingManager implements IMemoryRenderingManager, IDebugEv
 		}
 		return returnedArray;
 	}
-
-	private MemoryRenderingManagerNotifier getMemoryBlockNotifier() {
-		return new MemoryRenderingManagerNotifier();
-	}	
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IMemoryRenderingManager#addMemoryBlockRendering(org.eclipse.debug.core.model.IMemoryBlock, java.lang.String)
-	 */
-	public IMemoryRendering addMemoryBlockRendering(IMemoryBlock mem, String renderingId) throws DebugException
-	{
-		if (fRenderings == null)
-			return null;
-		
-		IMemoryRendering newRendering = createRendering(mem, renderingId);
-		
-		// if an error has occurred, or if user has canceled
-		if (newRendering == null)
-			return newRendering;
-		
-		if (fRenderings.contains(newRendering))
-			return newRendering;
-		
-		fRenderings.add(newRendering);
-		
-		// add listener for the first memory block added
-		if (fRenderings.size() == 1)
-		{
-			DebugPlugin.getDefault().addDebugEventListener(this);
-		}
-
-		notifyListeners(ADDED, newRendering);
-		
-		return newRendering;
-		
-	}
-	
 	/**
 	 * @param mem
 	 * @param renderingId
@@ -574,242 +479,6 @@ public class MemoryRenderingManager implements IMemoryRenderingManager, IDebugEv
 		}
 		return new MemoryRendering(mem, renderingId);
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IMemoryRenderingManager#removeMemoryBlockRendering(org.eclipse.debug.core.model.IMemoryBlock, java.lang.String)
-	 */
-	public void removeMemoryBlockRendering(IMemoryBlock mem, String renderingId)
-	{
-		if(fRenderings == null)
-			return;
-		
-		IMemoryRendering[] toRemove = getRenderings(mem, renderingId);
-		
-		for (int i=0; i<toRemove.length; i++)
-		{
-			fRenderings.remove(toRemove[i]);
-			
-			// remove listener after the last memory block has been removed
-			if (fRenderings.size() == 0)
-			{
-				DebugPlugin.getDefault().removeDebugEventListener(this);
-			}
-			
-			notifyListeners(REMOVED, toRemove[i]);
-		}
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IMemoryRenderingManager#addMemoryBlockRendering(org.eclipse.debug.ui.IMemoryRendering)
-	 */
-	public void addMemoryBlockRendering(IMemoryRendering rendering) throws DebugException{
-		
-		// do not allow duplicated objects
-		if (fRenderings.contains(rendering))
-			return;
-		
-		fRenderings.add(rendering);
-		
-		// add listener for the first memory block added
-		if (fRenderings.size() == 1)
-		{
-			DebugPlugin.getDefault().addDebugEventListener(this);
-		}
-
-		notifyListeners(ADDED, rendering);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IMemoryRenderingManager#removeMemoryBlockRendering(org.eclipse.debug.ui.IMemoryRendering)
-	 */
-	public void removeMemoryBlockRendering(IMemoryRendering rendering) {
-		if(rendering == null)
-			return;
-		
-		if(!fRenderings.contains(rendering))
-			return;
-		
-		fRenderings.remove(rendering);
-		
-		// remove listener after the last memory block has been removed
-		if (fRenderings.size() == 0)
-		{
-			DebugPlugin.getDefault().removeDebugEventListener(this);
-		}
-		
-		notifyListeners(REMOVED, rendering);		
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IMemoryRenderingManager#getRenderings(org.eclipse.debug.core.model.IMemoryBlock, java.lang.String)
-	 */
-	public IMemoryRendering[] getRenderings(IMemoryBlock mem, String renderingId)
-	{
-		if (renderingId == null)
-		{
-			return getRenderingsFromMemoryBlock(mem);
-		}
-		
-		ArrayList ret = new ArrayList();
-		for (int i=0; i<fRenderings.size(); i++)
-		{
-			if (fRenderings.get(i) instanceof IMemoryRendering)
-			{
-				IMemoryRendering rendering = (IMemoryRendering)fRenderings.get(i);
-				if (rendering.getBlock() == mem && renderingId.equals(rendering.getRenderingId()))
-				{
-					ret.add(rendering);
-				}
-			}
-		}
-		
-		return (IMemoryRendering[])ret.toArray(new IMemoryRendering[ret.size()]);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IMemoryRenderingManager#getRenderingsFromDebugTarget(org.eclipse.debug.core.model.IDebugTarget)
-	 */
-	public IMemoryRendering[] getRenderingsFromDebugTarget(IDebugTarget target)
-	{
-		ArrayList ret = new ArrayList();
-		for (int i=0; i<fRenderings.size(); i++)
-		{
-			if (fRenderings.get(i) instanceof IMemoryRendering)
-			{
-				IMemoryRendering rendering = (IMemoryRendering)fRenderings.get(i);
-				if (rendering.getBlock().getDebugTarget() == target)
-				{
-					ret.add(rendering);
-				}
-			}
-		}
-		
-		return (IMemoryRendering[])ret.toArray(new IMemoryRendering[ret.size()]);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IMemoryRenderingManager#getRenderingsFromMemoryBlock(org.eclipse.debug.core.model.IMemoryBlock)
-	 */
-	public IMemoryRendering[] getRenderingsFromMemoryBlock(IMemoryBlock block)
-	{
-		ArrayList ret = new ArrayList();
-		for (int i=0; i<fRenderings.size(); i++)
-		{
-			if (fRenderings.get(i) instanceof IMemoryRendering)
-			{
-				IMemoryRendering rendering = (IMemoryRendering)fRenderings.get(i);
-				if (rendering.getBlock() == block)
-				{
-					ret.add(rendering);
-				}
-			}
-		}
-		
-		return (IMemoryRendering[])ret.toArray(new IMemoryRendering[ret.size()]);		
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IMemoryRenderingManager#addListener(org.eclipse.debug.ui.IMemoryBlockListener)
-	 */
-	public void addListener(IMemoryRenderingListener listener)
-	{
-		if(listeners == null)
-			return;
-		
-		if(listener == null){
-			DebugUIPlugin.logErrorMessage("Null argument passed into IMemoryRenderingManager.addListener"); //$NON-NLS-1$
-			return;
-		}
-		
-		if (!listeners.contains(listener))
-			listeners.add(listener);
-		
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IMemoryRenderingManager#removeListener(org.eclipse.debug.ui.IMemoryBlockListener)
-	 */
-	public void removeListener(IMemoryRenderingListener listener)
-	{
-		if(listeners == null)
-			return;
-		
-		if(listener == null){
-			DebugUIPlugin.logErrorMessage("Null argument passed into IMemoryRenderingManager.removeListener"); //$NON-NLS-1$
-			return;
-		}		
-		
-		if (listeners.contains(listener))
-			listeners.remove(listener);
-		
-	}
-
-	private void notifyListeners(int update, IMemoryRendering rendering)
-	{
-		getMemoryBlockNotifier().notify(update, rendering);
-	}
-
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent[])
-	 */
-	public void handleDebugEvents(DebugEvent[] events) {
-		
-		for (int i=0; i < events.length; i++)
-			handleDebugEvent(events[i]);
-		
-	}
-	
-	public void handleDebugEvent(DebugEvent event) {
-		Object obj = event.getSource();
-		IDebugTarget dt = null;
-		
-		if (event.getKind() == DebugEvent.TERMINATE)
-		{
-			// a terminate event could happen from an IThread or IDebugTarget
-			// Only handle terminate event from debug target
-			if (obj instanceof IDebugTarget)
-			{
-				dt = ((IDebugTarget)obj);
-			}			
-			
-			// returns empty array if dt == null
-			IMemoryRendering[] deletedrendering = getRenderingsFromDebugTarget(dt);
-			
-			for (int i=0; i<deletedrendering.length; i++)
-			{
-				removeMemoryBlockRendering(deletedrendering[i].getBlock(), deletedrendering[i].getRenderingId());
-			}
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IMemoryBlockListener#MemoryBlockAdded(org.eclipse.debug.core.model.IMemoryBlock)
-	 */
-	public void memoryBlocksAdded(IMemoryBlock[] memoryBlocks)
-	{
-		// do nothing when memory blocks are added
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IMemoryBlockListener#MemoryBlockRemoved(org.eclipse.debug.core.model.IMemoryBlock)
-	 */
-	public void memoryBlocksRemoved(IMemoryBlock[] memoryBlocks)
-	{
-		for (int j=0; j<memoryBlocks.length; j++)
-		{
-			IMemoryBlock memory = memoryBlocks[j];
-			// remove all renderings related to the deleted memory block
-			IMemoryRendering[] renderings = getRenderingsFromMemoryBlock(memory);
-			
-			for (int i=0; i<renderings.length; i++)
-			{
-				removeMemoryBlockRendering(renderings[i].getBlock(), renderings[i].getRenderingId());
-			}
-		}
-	}
-	
-
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.views.memory.IMemoryRenderingManager#getRenderingTypeById(java.lang.String)
@@ -1110,18 +779,6 @@ public class MemoryRenderingManager implements IMemoryRenderingManager, IDebugEv
 	 */
 	public void shutdown()
 	{
-		// clean up
-		if (listeners != null)
-		{	
-			listeners.clear();
-			listeners = null;
-		}
-		
-		if (fRenderings != null)
-		{	
-			fRenderings.clear();
-			fRenderings = null;
-		}
 		
 		if (fMemoryRenderingTypes != null)
 		{
@@ -1147,8 +804,6 @@ public class MemoryRenderingManager implements IMemoryRenderingManager, IDebugEv
 			fDynamicRenderingFactory = null;
 		}
 		
-		// remove listener
-		DebugPlugin.getDefault().getMemoryBlockManager().removeListener(this);
 	}
 
 	/**

@@ -13,12 +13,7 @@ package org.eclipse.debug.internal.ui.views.memory;
 
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
-import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.PartInitException;
 
 
 /**
@@ -32,7 +27,8 @@ import org.eclipse.ui.PartInitException;
  */
 public class RemoveMemoryRenderingAction extends AbstractMemoryAction
 {
-	public RemoveMemoryRenderingAction()
+	private IMemoryViewPane fViewPane;
+	public RemoveMemoryRenderingAction(IMemoryViewPane viewPane)
 	{
 		// create action as drop down
 		super(DebugUIMessages.getString("RemoveMemoryRenderingAction.Remove_rendering"), AS_PUSH_BUTTON); //$NON-NLS-1$
@@ -43,6 +39,7 @@ public class RemoveMemoryRenderingAction extends AbstractMemoryAction
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_REMOVE_MEMORY));	
 		setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_LCL_REMOVE_MEMORY));
 		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_REMOVE_MEMORY));
+		fViewPane = viewPane;
 	}
 	
 	/* (non-Javadoc)
@@ -60,7 +57,8 @@ public class RemoveMemoryRenderingAction extends AbstractMemoryAction
 			if (rendering != null)
 			{
 				// remove from Memory Rendering Manager
-				MemoryRenderingManager.getMemoryRenderingManager().removeMemoryBlockRendering(rendering);
+				if (fViewPane instanceof IRenderingViewPane)
+					((IRenderingViewPane)fViewPane).removeMemoryRendering(rendering);
 			}
 		}
 	}
@@ -69,40 +67,10 @@ public class RemoveMemoryRenderingAction extends AbstractMemoryAction
 	 * @see com.ibm.debug.defaultrenderings.internal.actions.AbstractMemoryAction#getViewTab()
 	 */
 	IMemoryViewTab getViewTab() {
-		String viewId = IInternalDebugUIConstants.ID_MEMORY_VIEW;
-		//	open a new view if necessary
-		IWorkbenchPage p= DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		if (p == null) {
-			return null;
-		}
-		IViewPart view = null;
-		view= p.findView(viewId);
-		
-		if (view == null) {
-			try {
-				IWorkbenchPart activePart= p.getActivePart();
-				view= p.showView(viewId);
-				p.activate(activePart);
-			} catch (PartInitException e) {
-				return null;
-			}		
-			
-		}
-		
-		if (view instanceof IMultipaneMemoryView)
+		if (fViewPane instanceof IMemoryView)
 		{
-			IMemoryViewTab topTap = ((IMultipaneMemoryView)view).getTopMemoryTab(RenderingViewPane.RENDERING_VIEW_PANE_ID);
-			
-			return topTap;
+			return ((IMemoryView)fViewPane).getTopMemoryTab();
 		}
-		else if (view instanceof IMemoryView)
-		{
-			IMemoryViewTab topTap = ((IMemoryView)view).getTopMemoryTab();
-			return topTap;
-		}
-		else
-		{
-			return null;
-		}
+		return null;
 	}		
 }

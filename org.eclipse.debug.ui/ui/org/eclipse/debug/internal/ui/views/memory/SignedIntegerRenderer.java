@@ -114,13 +114,10 @@ public class SignedIntegerRenderer
 		int endianess = RendererUtil.BIG_ENDIAN;
 
 		// Check current state of the rendering
-		IMemoryRendering[] renderings = MemoryRenderingManager.getMemoryRenderingManager().getRenderings(fViewTab.getMemoryBlock(), fViewTab.getRenderingId());
-		
-		if (renderings.length > 0){
-			if (renderings[0] instanceof IntegerRendering)
-			{
-				endianess = ((IntegerRendering)renderings[0]).getCurrentEndianess();
-			}
+		IMemoryRendering rendering = fTableViewTab.getRendering();
+		if (rendering instanceof IntegerRendering)
+		{
+			endianess = ((IntegerRendering)rendering).getCurrentEndianess();
 		}
 		
 		return endianess;

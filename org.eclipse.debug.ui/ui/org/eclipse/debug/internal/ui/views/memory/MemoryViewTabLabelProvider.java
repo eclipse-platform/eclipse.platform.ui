@@ -48,7 +48,7 @@ public class MemoryViewTabLabelProvider
 			if (fViewTab instanceof MemoryViewTab)
 			{	
 				// get model presentation
-				IDebugModelPresentation presentation = ((MemoryViewTab)fViewTab).getMemoryBlockPresentation();
+				IDebugModelPresentation presentation = DebugUIPlugin.getModelPresentation();
 				
 				if (presentation instanceof IMemoryBlockModelPresentation)
 				{	

@@ -82,9 +82,13 @@ abstract public class AbstractMemoryAction extends Action
 			
 			if (view instanceof IMultipaneMemoryView)
 			{
-				IMemoryViewTab topTap = ((IMultipaneMemoryView)view).getTopMemoryTab(MemoryViewPane.MEMORY_VIEW_PANE_ID);
-				
-				return topTap;
+				IMemoryViewPane viewPane = ((IMultipaneMemoryView)view).getViewPane(MemoryViewPane.MEMORY_VIEW_PANE_ID);
+				if (viewPane != null && viewPane instanceof IMemoryView)
+				{
+					IMemoryViewTab topTab = ((IMemoryView)viewPane).getTopMemoryTab();
+					return topTab;
+				}
+				return null;
 			}
 			else if (view instanceof IMemoryView)
 			{

@@ -52,8 +52,20 @@ public class LittleEndianAction implements IObjectActionDelegate {
 				}
 				else if (fTargetPart instanceof IMultipaneMemoryView)
 				{
-					IMemoryViewTab top = ((IMultipaneMemoryView)fTargetPart).getTopMemoryTab(RenderingViewPane.RENDERING_VIEW_PANE_ID);
-					top.refresh();
+					IMemoryViewPane[] viewPanes = ((IMultipaneMemoryView)fTargetPart).getViewPanes();
+					
+					for (int i=0; i<viewPanes.length; i++)
+					{
+						IMemoryViewPane viewPane = viewPanes[i];
+						if (viewPane != null && viewPane instanceof IMemoryView)
+						{
+							IMemoryView memoryView = (IMemoryView)viewPane;
+							IMemoryViewTab top = memoryView.getTopMemoryTab();
+							
+							if (top != null && top.getRendering() == fRendering)
+								top.refresh();
+						}
+					}
 				}
 			}
 		}

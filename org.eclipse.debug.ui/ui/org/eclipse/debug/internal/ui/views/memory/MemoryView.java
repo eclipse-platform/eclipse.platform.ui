@@ -11,6 +11,8 @@
 package org.eclipse.debug.internal.ui.views.memory;
 
 import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Hashtable;
 
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -46,9 +48,8 @@ public class MemoryView extends ViewPart implements IMultipaneMemoryView {
 	private MemoryViewPartListener fPartListener;
 	
 	private SashForm fSashForm;
-	private AbstractMemoryViewPane fMemoryViewPane;
-	private AbstractMemoryViewPane fRenderingPane;
-	
+	private Hashtable fViewPanes = new Hashtable();
+		
 	class MemoryViewSelectionProvider implements ISelectionProvider, ISelectionChangedListener
 	{
 		ArrayList fListeners = new ArrayList();
@@ -171,9 +172,7 @@ public class MemoryView extends ViewPart implements IMultipaneMemoryView {
 			
 			if (part == fView)
 			{
-				setVisible(true);
-				fMemoryViewPane.restoreViewPane();
-				fRenderingPane.restoreViewPane();
+				restoreView();
 			}
 		}
 
@@ -196,18 +195,45 @@ public class MemoryView extends ViewPart implements IMultipaneMemoryView {
 		WorkbenchHelp.setHelp(parent, IDebugUIConstants.PLUGIN_ID + ".MemoryView_context"); //$NON-NLS-1$
 		
 		fSashForm = new SashForm(parent, SWT.HORIZONTAL);
+		fSelectionProvider = new MemoryViewSelectionProvider();
 		
 		// create memory view pane
-		fMemoryViewPane = new MemoryViewPane(this);
-		ViewForm memoryViewForm = new ViewForm(fSashForm, SWT.FLAT);
-		Control memoryControl = fMemoryViewPane.createViewPane(memoryViewForm);
-		memoryViewForm.setContent(memoryControl);
+		createMemoryViewPane();
 		
-		fSelectionProvider = new MemoryViewSelectionProvider();
-		fMemoryViewPane.addSelectionListener(fSelectionProvider);
+		createRenderingViewPane(RenderingViewPane.RENDERING_VIEW_PANE_ID);
+		
+		setVisible(true);
+		
+		fSashForm.layout();
+		
+		// set up selection provider and listeners
+		
+		getSite().setSelectionProvider(fSelectionProvider);
+		contributeToActionBars();
+		
+		fPartListener = new MemoryViewPartListener(this);
+		getSite().getPage().addPartListener(fPartListener);
+		
+		// restore view pane after finishing creating all the view panes
+		restoreView();
+
+	}
+	
+	/**
+	 * 
+	 */
+	private void createMemoryViewPane() {
+		IAction[] actions;
+		
+		MemoryViewPane memoryViewPane = new MemoryViewPane(this);
+		fViewPanes.put(MemoryViewPane.MEMORY_VIEW_PANE_ID, memoryViewPane);
+		ViewForm memoryViewForm = new ViewForm(fSashForm, SWT.FLAT);
+		Control memoryControl = memoryViewPane.createViewPane(memoryViewForm, MemoryViewPane.MEMORY_VIEW_PANE_ID);
+		memoryViewForm.setContent(memoryControl);
+		memoryViewPane.addSelectionListener(fSelectionProvider);
 		
 		ToolBarManager memoryViewMgr = new ToolBarManager(SWT.FLAT);	
-		IAction[] actions = fMemoryViewPane.getActions();
+		actions = memoryViewPane.getActions();
 		for (int i=0; i<actions.length; i++)
 		{
 			memoryViewMgr.add(actions[i]);
@@ -218,16 +244,23 @@ public class MemoryView extends ViewPart implements IMultipaneMemoryView {
 		Label memoryLabel = new Label(memoryViewForm, SWT.WRAP);
 		memoryLabel.setText(DebugUIMessages.getString("MemoryView.Memory_monitors")); //$NON-NLS-1$
 		memoryViewForm.setTopLeft(memoryLabel);
-		
-		// create rendering view pane
-		fRenderingPane = new RenderingViewPane(this);
+	}
+
+
+	/**
+	 * Create rendering view pane with specified pane id.
+	 * @param paneId
+	 */
+	public void createRenderingViewPane(String paneId) {
+		RenderingViewPane renderingPane = new RenderingViewPane(this); //$NON-NLS-1$
+		fViewPanes.put(paneId, renderingPane);
 		ViewForm renderingViewForm = new ViewForm(fSashForm, SWT.FLAT);
-		Control renderingControl = fRenderingPane.createViewPane(renderingViewForm);
+		Control renderingControl = renderingPane.createViewPane(renderingViewForm, paneId);
 		renderingViewForm.setContent(renderingControl);
-		fRenderingPane.addSelectionListener(fSelectionProvider);
+		renderingPane.addSelectionListener(fSelectionProvider);
 		
 		ToolBarManager renderingViewMgr = new ToolBarManager(SWT.FLAT);
-		IAction[] renderingActions = fRenderingPane.getActions();
+		IAction[] renderingActions = renderingPane.getActions();
 		for (int i=0; i<renderingActions.length; i++)
 		{
 			renderingViewMgr.add(renderingActions[i]);
@@ -239,24 +272,14 @@ public class MemoryView extends ViewPart implements IMultipaneMemoryView {
 		renderingLabel.setText(DebugUIMessages.getString("MemoryView.Memory_renderings")); //$NON-NLS-1$
 		renderingViewForm.setTopLeft(renderingLabel);
 		
-		// set up selection provider and listeners
-		
-		getSite().setSelectionProvider(fSelectionProvider);
-		contributeToActionBars();
-		
-		fPartListener = new MemoryViewPartListener(this);
-		getSite().getPage().addPartListener(fPartListener);
-		
-		setVisible(true);
+
 	}
-	
+
 	private void contributeToActionBars() {
 		IActionBars bars = getViewSite().getActionBars();
-		bars.getMenuManager().add(new SetDefaultColumnSizePrefAction());
-		bars.updateActionBars();
-		
+		bars.getMenuManager().add(new SetDefaultColumnSizePrefAction());		
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
 	 */
@@ -265,59 +288,68 @@ public class MemoryView extends ViewPart implements IMultipaneMemoryView {
 	
 	public void dispose() {
 		
-		fMemoryViewPane.dispose();
-		fRenderingPane.dispose();
+		Enumeration enumeration = fViewPanes.elements();
+		
+		while (enumeration.hasMoreElements())
+		{
+			Object element = enumeration.nextElement();
+			if (element instanceof IMemoryViewPane)
+			{
+				((IMemoryViewPane)element).dispose();
+			}
+		}
 		
 		super.dispose();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.memory.IMultipaneMemoryView#getTopMemoryTab(java.lang.String)
-	 */
-	public IMemoryViewTab getTopMemoryTab(String paneId) {
-		if (paneId.equals(fMemoryViewPane.getPaneId()))
-		{
-			return fMemoryViewPane.getTopMemoryTab();
-		}
-		else if (paneId.equals(fRenderingPane.getPaneId()))
-		{
-			return fRenderingPane.getTopMemoryTab();
-		}
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.memory.IMultipaneMemoryView#getAllViewTabs(java.lang.String)
-	 */
-	public IMemoryViewTab[] getAllViewTabs(String paneId) {
-		if (paneId.equals(fMemoryViewPane.getPaneId()))
-		{
-			return fMemoryViewPane.getAllViewTabs();
-		}
-		else if (paneId.equals(fRenderingPane.getPaneId()))
-		{
-			return fRenderingPane.getAllViewTabs();
-		}
-		return new IMemoryViewTab[0];
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.memory.IMultipaneMemoryView#moveToTop(java.lang.String, org.eclipse.debug.internal.ui.views.memory.IMemoryViewTab)
-	 */
-	public void moveToTop(String paneId, IMemoryViewTab viewTab) {
-		if (paneId.equals(fMemoryViewPane.getPaneId()))
-		{
-			fMemoryViewPane.moveToTop(viewTab);
-		}
-		else if (paneId.equals(fRenderingPane.getPaneId()))
-		{
-			fRenderingPane.moveToTop(viewTab);
-		}
 	}
 	
 	private void setVisible(boolean visible)
 	{
-		fMemoryViewPane.setVisible(visible);
-		fRenderingPane.setVisible(visible);
+		IMemoryViewPane[] viewPanes = getViewPanes();
+		
+		for (int i=0; i<viewPanes.length; i++)
+		{
+			if (viewPanes[i] instanceof AbstractMemoryViewPane)
+			{
+				((AbstractMemoryViewPane)viewPanes[i]).setVisible(visible);
+			}
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.views.memory.IMultipaneMemoryView#getViewPane(java.lang.String)
+	 */
+	public IMemoryViewPane getViewPane(String paneId) {
+		return (IMemoryViewPane)fViewPanes.get(paneId);
 	}	
+	
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.views.memory.IMultipaneMemoryView#getViewPanes()
+	 */
+	public IMemoryViewPane[] getViewPanes() {
+		IMemoryViewPane[] viewPanes = new IMemoryViewPane[fViewPanes.size()];
+
+		Enumeration enumeration = fViewPanes.elements();
+		int i=0;
+		while (enumeration.hasMoreElements())
+		{
+			viewPanes[i] = (IMemoryViewPane)enumeration.nextElement();
+			i++;
+		}
+		
+		return viewPanes;
+	}
+	
+	/**
+	 * Restore each view pane from the memory view based on current
+	 * debug selection
+	 */
+	private void restoreView() {
+		setVisible(true);
+		IMemoryViewPane[] viewPanes = getViewPanes();
+		for (int i=0; i<viewPanes.length; i++)
+		{
+			viewPanes[i].restoreViewPane();
+		}
+	}
 }

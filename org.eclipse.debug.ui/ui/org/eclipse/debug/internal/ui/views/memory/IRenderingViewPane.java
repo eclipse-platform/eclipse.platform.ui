@@ -8,28 +8,25 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.debug.internal.ui.views.memory;
 
-
-
-
 /**
- * Rendering listeners listen for add/removal events from IMemoryRenderingManager.
- * Implementors should add itself to IMemoryRenderingManager
+ * Represents a view pane in the Memory View.  The view pane allows
+ * cliens to add and remove renderings.
  * @since 3.1
  */
-public interface IMemoryRenderingListener
-{
+public interface IRenderingViewPane extends IMemoryViewPane{
+	
 	/**
-	 * This function is called when a new rendering is added.
-	 * @param rendering
+	 * Add the given rendering to the view pane.
+	 * @param rendering to add
 	 */
-	void MemoryBlockRenderingAdded(IMemoryRendering rendering);
+	public void addMemoryRendering(IMemoryRendering rendering);
+	
+	/**
+	 * Remove the given rendering from the view pane.
+	 * @param rendering rendering to remove
+	 */
+	public void removeMemoryRendering(IMemoryRendering rendering);
 
-	/**
-	 * Fired when a memory rendering is removed.
-	 * @param rendering
-	 */
-	void MemoryBlockRenderingRemoved(IMemoryRendering rendering);	
 }

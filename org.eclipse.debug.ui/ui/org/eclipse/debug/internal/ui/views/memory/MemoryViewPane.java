@@ -485,12 +485,6 @@ public class MemoryViewPane extends AbstractMemoryViewPane {
 			}
 		}
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.memory.AbstractMemoryViewPane#getPaneId()
-	 */
-	public String getPaneId() {
-		return MEMORY_VIEW_PANE_ID;
-	}
 	
 	public void restoreViewPane() {
 		
@@ -553,11 +547,11 @@ public class MemoryViewPane extends AbstractMemoryViewPane {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.views.memory.AbstractMemoryViewPane#getActions()
 	 */
-	IAction[] getActions() {
+	public IAction[]  getActions() {
 		ArrayList actions = new ArrayList();
 		
 		if (fAddMemoryBlockAction == null)
-			fAddMemoryBlockAction = new AddMemoryBlockAction();
+			fAddMemoryBlockAction = new AddMemoryBlockAction(this);
 		actions.add(fAddMemoryBlockAction);
 
 		if (fRemoveMemoryBlockAction == null)
