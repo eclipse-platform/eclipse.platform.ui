@@ -645,7 +645,7 @@ protected boolean needsRefilter(Object element, String property) {
 		return true;
 
 	if (filters != null) {
-		for (int i = 0; i < filters.size(); ++i) {
+		for (int i = 0, n = filters.size(); i < n; ++i) {
 			ViewerFilter filter = (ViewerFilter) filters.get(i);
 			if (filter.isFilterProperty(element, property))
 				return true;

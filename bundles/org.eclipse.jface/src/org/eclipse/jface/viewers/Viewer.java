@@ -4,12 +4,13 @@ package org.eclipse.jface.viewers;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.util.ListenerList;
 import org.eclipse.swt.events.HelpEvent;
 import org.eclipse.swt.events.HelpListener;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Item;
+
+import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.util.ListenerList;
 
 /**
  * A viewer is a model-based adapter on a widget.
@@ -277,7 +278,7 @@ public Item scrollUp(int x, int y) {
  * </p>
  *
  * @param key the property name
- * @return the property value, or <code>null</code> if
+ * @param value the property value, or <code>null</code> if
  *    the property is not found
  */
 public void setData (String key, Object value) {
