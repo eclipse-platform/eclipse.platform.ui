@@ -77,6 +77,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.SubActionBars;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.dialogs.CustomizePerspectiveDialog;
+import org.eclipse.ui.internal.intro.IIntroConstants;
+import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.registry.IStickyViewDescriptor;
@@ -688,10 +690,19 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 			
 			// restore the maximized intro
 			if (introViewAdapter != null) {
-			    if (introFullScreen) 		    
-				    toggleZoom(introPane.getPartReference());
-			    // we want the intro back to a normal state before we fire the event
-			    introViewAdapter.setHandleZoomEvents(true);
+				try {
+					// ensure that the intro is visible in the new perspective
+					showView(IIntroConstants.INTRO_VIEW_ID);
+				    if (introFullScreen) 		    
+					    toggleZoom(introPane.getPartReference());
+				} catch (PartInitException e) {
+					WorkbenchPlugin.log("Could not restore intro", //$NON-NLS-1$
+							StatusUtil.newStatus(IStatus.ERROR, e.getMessage(), e));
+				}
+				finally {
+				    // we want the intro back to a normal state before we fire the event
+				    introViewAdapter.setHandleZoomEvents(true);
+				}
 			}
 			// Notify listeners that we have completed our reset.
 			window.firePerspectiveChanged(this, desc, CHANGE_RESET_COMPLETE);

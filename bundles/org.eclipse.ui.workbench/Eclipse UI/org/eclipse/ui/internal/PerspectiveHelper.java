@@ -1206,22 +1206,25 @@ public class PerspectiveHelper {
 		// If view ..
 		if (pane instanceof ViewPane) {
 			parentWidget.setRedraw(false);
-
-			ILayoutContainer parentContainer = ((ViewPane) pane).getContainer();
-			if (parentContainer instanceof ViewStack) {
-				//Check if it is a ViewStack as we only want to zoom
-				//the folder. 
-				//TODO: Remove once all views are in ViewStack
-				//TODO: See Bug 48794
-				ViewStack parent = (ViewStack) parentContainer;
-				Perspective persp = page.getActivePerspective();
-				if (persp != null
-					&& ref instanceof IViewReference
-					&& page.isFastView((IViewReference) ref)) {
-					persp.hideFastViewSash();
+			try {
+				ILayoutContainer parentContainer = ((ViewPane) pane).getContainer();
+				if (parentContainer instanceof ViewStack) {
+					//Check if it is a ViewStack as we only want to zoom
+					//the folder. 
+					//TODO: Remove once all views are in ViewStack
+					//TODO: See Bug 48794
+					ViewStack parent = (ViewStack) parentContainer;
+					Perspective persp = page.getActivePerspective();
+					if (persp != null
+						&& ref instanceof IViewReference
+						&& page.isFastView((IViewReference) ref)) {
+						persp.hideFastViewSash();
+					}
+					mainLayout.zoomIn(parent);
+					pane.setZoomed(true);
 				}
-				mainLayout.zoomIn(parent);
-				pane.setZoomed(true);
+			}
+			finally {
 				parentWidget.setRedraw(true);
 			}
 		}
@@ -1229,13 +1232,17 @@ public class PerspectiveHelper {
 		// If editor ..
 		else if (pane instanceof EditorPane) {
 			parentWidget.setRedraw(false);
-			EditorStack wb = ((EditorPane) pane).getWorkbook();
-			EditorSashContainer ea = wb.getEditorArea();
-			mainLayout.zoomIn(ea);
-			ea.zoomIn(wb);
-			wb.setZoomed(true);
-			pane.setZoomed(true);
-			parentWidget.setRedraw(true);
+			try {
+				EditorStack wb = ((EditorPane) pane).getWorkbook();
+				EditorSashContainer ea = wb.getEditorArea();
+				mainLayout.zoomIn(ea);
+				ea.zoomIn(wb);
+				wb.setZoomed(true);
+				pane.setZoomed(true);
+			}
+			finally {
+				parentWidget.setRedraw(true);
+			}
 		}
 
 		// Otherwise.
