@@ -454,6 +454,11 @@ private void saveChangesAndDispose(IResource resource) {
 				inlinedResource = null;
 				//Dispose the text widget regardless
 				disposeTextWidget();
+				// Ensure the Navigator tree has focus, which it may not if the
+				// text widget previously had focus.
+				if (navigatorTree != null && !navigatorTree.isDisposed()) {
+				    navigatorTree.setFocus();
+				}
 		    }
 		    finally {
 		        saving = false;
