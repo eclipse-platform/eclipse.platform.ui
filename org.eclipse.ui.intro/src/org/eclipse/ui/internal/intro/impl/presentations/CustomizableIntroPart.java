@@ -21,7 +21,7 @@ import org.eclipse.ui.internal.intro.impl.model.loader.*;
 import org.eclipse.ui.internal.intro.impl.parts.*;
 import org.eclipse.ui.internal.intro.impl.util.*;
 import org.eclipse.ui.intro.*;
-import org.eclipse.ui.part.intro.*;
+import org.eclipse.ui.part.*;
 
 /**
  *  

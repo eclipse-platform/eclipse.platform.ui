@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.intro.impl.parts;
 import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
 import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.internal.intro.impl.*;
@@ -25,16 +24,12 @@ import org.eclipse.ui.internal.intro.impl.util.*;
  * categories page book in the PageForm class. It has the navigation toolbar UI
  * and it has a page book for swapping in categories of Intro Pages.
  */
-public class CategoryForm implements IIntroConstants, IPropertyListener {
+public class CategoryForm implements IIntroConstants {
 
     private FormToolkit toolkit = null;
-
     private ScrolledPageBook categoryPageBook = null;
-
     private IntroModelRoot model = null;
-
     private ScrolledForm pageForm = null;
-
     private FormStyleManager styleManager;
 
     private HyperlinkAdapter hyperlinkAdapter = new HyperlinkAdapter() {
@@ -68,9 +63,6 @@ public class CategoryForm implements IIntroConstants, IPropertyListener {
     public CategoryForm(FormToolkit toolkit, IntroModelRoot modelRoot) {
         this.toolkit = toolkit;
         this.model = modelRoot;
-        // add this CategoryForm as a listener to model changes to update the
-        // title of this form.
-        model.addPropertyListener(this);
     }
 
     /**
@@ -355,18 +347,5 @@ public class CategoryForm implements IIntroConstants, IPropertyListener {
         return control;
     }
 
-    /**
-     * Handle model property changes. The UI here is notified of a change to the
-     * current page in the model. This happens if an intro URL showPage method
-     * is executed.
-     * 
-     * @see org.eclipse.ui.IPropertyListener#propertyChanged(java.lang.Object,
-     *      int)
-     */
-    public void propertyChanged(Object source, int propId) {
-        //		if (propId == IntroModelRoot.CURRENT_PAGE_PROPERTY_ID) {
-        //			String pageId = model.getCurrentPageId();
-        //			pageForm.setText(model.getCurrentPage().getTitle());
-        //		}
-    }
+
 }
