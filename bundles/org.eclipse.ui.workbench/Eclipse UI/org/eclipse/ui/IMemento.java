@@ -91,7 +91,7 @@ public interface IMemento {
      * Returns all children with the given type id.
      *
      * @param type the type id
-     * @return the list of children with the given type
+     * @return an array of children with the given type
      */
     public IMemento[] getChildren(String type);
 
