@@ -16,5 +16,7 @@ Require-Bundle: org.eclipse.core.resources;optional=true,
  org.eclipse.ui.views,
  org.eclipse.jdt.core,
  org.eclipse.jdt.ui,
- org.eclipse.ltk.core.refactoring
+ org.eclipse.ltk.core.refactoring,
+ org.eclipse.core.filebuffers,
+ org.eclipse.ui.ide
 Eclipse-AutoStart: true

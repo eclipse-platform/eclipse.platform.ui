@@ -143,6 +143,25 @@
          point="org.eclipse.ui.popupMenus">
       <objectContribution
             adaptable="true"
+            id="org.eclipse.core.tools.nls.testing.contribution"
+            objectClass="org.eclipse.jdt.core.ICompilationUnit">
+         <action
+               label="Convert to NLS Messages"
+               class="org.eclipse.core.tools.nls.ConvertMessageBundleAction"
+               menubarPath="additions"
+               enablesFor="1"
+               id="org.eclipse.core.tools.nls.ConvertMessageBundleAction">
+         </action>
+         <action
+               label="Remove Unused Messages"
+               class="org.eclipse.core.tools.nls.RemoveUnusedMessagesAction"
+               menubarPath="additions"
+               enablesFor="1"
+               id="org.eclipse.core.tools.nls.RemoveUnusedMessagesAction">
+         </action>
+      </objectContribution>
+      <objectContribution
+            adaptable="true"
             id="org.eclipse.core.tools.contribution2"
             objectClass="org.eclipse.jdt.core.IJavaElement">
          <action

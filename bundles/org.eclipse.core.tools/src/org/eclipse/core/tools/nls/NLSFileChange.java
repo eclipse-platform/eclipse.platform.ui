@@ -1,0 +1,67 @@
+/*******************************************************************************
+ * Copyright (c) 2005 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.core.tools.nls;
+
+import java.io.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+import org.eclipse.ltk.core.refactoring.TextFileChange;
+
+public class NLSFileChange extends TextFileChange {
+	private IFile file;
+	private String contents;
+
+	public NLSFileChange(IFile file) {
+		super("Message bundle properties file change", file); //$NON-NLS-1$
+		this.file = file;
+		setTextType("text"); //$NON-NLS-1$
+	}
+
+	public RefactoringStatus isValid(IProgressMonitor pm) throws OperationCanceledException {
+		return RefactoringStatus.create(Status.OK_STATUS);
+	}
+
+	void setContents(String text) {
+		this.contents = text;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ltk.core.refactoring.TextFileChange#commit(org.eclipse.jface.text.IDocument, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	protected void commit(IDocument document, IProgressMonitor monitor) throws CoreException {
+		if (contents == null) {
+			System.err.println("Cannot write null contents to file: " + file); //$NON-NLS-1$
+			return;
+		}
+		byte[] bytes = null;
+		try {
+			bytes = contents.getBytes(file.getCharset(true));
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if (bytes == null)
+			bytes = contents.getBytes();
+		InputStream input = new BufferedInputStream(new ByteArrayInputStream(bytes));
+		file.setContents(input, IResource.FORCE, null);
+	}
+
+	/* (non-Javadoc)
+	 * @see Change#getModifiedElement()
+	 */
+	public Object getModifiedElement() {
+		return file;
+	}
+
+}
