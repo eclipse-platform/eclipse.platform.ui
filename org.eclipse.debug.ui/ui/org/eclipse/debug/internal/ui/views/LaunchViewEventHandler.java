@@ -418,12 +418,14 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 				event= events[i];
 				if (event.getKind() == DebugEvent.TERMINATE && event.getSource() instanceof IDebugTarget) {
 					ILaunch[] launches= DebugPlugin.getDefault().getLaunchManager().getLaunches();
-					IDebugTarget target;
 					// If there are no more active DebugTargets, stop the thread.
 					for (int j= 0; j < launches.length; j++) {
-						target= launches[j].getDebugTarget();
-						if (!target.isDisconnected() && !target.isTerminated()) {
-							return;
+						IDebugTarget[] targets= launches[j].getDebugTargets();
+						for (int k = 0; k < targets.length; k++) {
+							IDebugTarget target = targets[k];
+							if (target != null && !target.isDisconnected() && !target.isTerminated()) {
+								return;
+							}
 						}
 					}
 					// To get here, there must be no running DebugTargets
