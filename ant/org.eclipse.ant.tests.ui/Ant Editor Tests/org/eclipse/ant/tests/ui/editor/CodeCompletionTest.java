@@ -848,4 +848,27 @@ public class CodeCompletionTest extends AbstractAntUITest {
     	assertTrue(proposals.length == 6); //boolean proposals 
     	assertContains("no", proposals);
 	}
+	
+	/**
+     * Tests the code completion for nested elements that no templates are presented
+     * Bug 76414
+     */
+	public void testEmptyBuildfileProposals() throws PartInitException {
+		try {
+			IFile file= getIFile("empty.xml");
+			AntEditor editor= (AntEditor)EditorTestHelper.openInEditor(file, ANT_EDITOR_ID, true);
+			TestTextCompletionProcessor processor= new TestTextCompletionProcessor(editor);
+			//int lineNumber= 4;
+	    	//int lineOffset= editor.getDocumentProvider().getDocument(editor.getEditorInput()).getLineOffset(lineNumber);
+	    	
+	    	editor.getSelectionProvider().setSelection(TextSelection.emptySelection());
+	    	
+	    	ICompletionProposal[] proposals= processor.computeCompletionProposals(0);
+	    	assertTrue("Two proposals are relevant at the current position. Found: " + proposals.length, proposals.length == 2);
+	    	assertContains("project", proposals);
+	    	assertContains("Buildfile template - simple buildfile with two targets", proposals);
+		} finally {
+			EditorTestHelper.closeAllEditors();
+		}
+	}
 }
