@@ -37,7 +37,6 @@ public class RemoveBreakpointAction extends AbstractRemoveActionDelegate {
 				while (itr.hasNext()) {
 					try {						
 						Object next= itr.next();
-						//see Bug 10243
 						if (next instanceof IBreakpoint) {
 							IBreakpoint breakpoint= (IBreakpoint)next;						
 							breakpointManager.removeBreakpoint(breakpoint, true);
