@@ -318,14 +318,11 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		store.setDefault(IPreferenceConstants.SAVE_ALL_BEFORE_BUILD, false);
 		store.setDefault(IPreferenceConstants.WELCOME_DIALOG, true);
 		store.setDefault(IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR, true);
+		store.setDefault(IPreferenceConstants.REUSE_EDITORS, 10);
 		store.setDefault(IPreferenceConstants.RECENT_FILES, IPreferenceConstants.MAX_RECENT_FILES_SIZE);
 		store.setDefault(IPreferenceConstants.VIEW_TAB_POSITION, SWT.BOTTOM);
 		store.setDefault(IPreferenceConstants.EDITOR_TAB_POSITION, SWT.TOP);
-		store.setDefault(IWorkbenchPreferenceConstants.OPEN_NEW_PERSPECTIVE, IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_WINDOW);
-		store.setDefault(IWorkbenchPreferenceConstants.SHIFT_OPEN_NEW_PERSPECTIVE, IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_PAGE);
-		store.setDefault(IWorkbenchPreferenceConstants.ALTERNATE_OPEN_NEW_PERSPECTIVE, IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_PAGE);
 		store.setDefault(IWorkbenchPreferenceConstants.PROJECT_OPEN_NEW_PERSPECTIVE, IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE);
-		store.setDefault(IPreferenceConstants.REUSE_PERSPECTIVES, true);
 		store.setDefault(IPreferenceConstants.OPEN_VIEW_MODE, IPreferenceConstants.OVM_FAST);
 		store.setDefault(IPreferenceConstants.ENABLED_DECORATORS, "");
 
