@@ -11,7 +11,16 @@
 <h1>
 Eclipse Platform Build Notes&nbsp;<br>
 Platform Debug</h1>
-Aug 26, 2003
+<p>Aug 26, 2003 </p>
+<h3>New Features in Milestone 3 (release 3.0)</h3>
+<h4>Extensible Watch Expressions</h4>
+<p>In release 3.0, the debug platform provides an implementation of watch expressions. 
+  Debug models can contribute watch expression delegates if they support watch 
+  expressions. When a stack frame is selected, the associated delegate is queried 
+  to provide a value for a watch expression in the given (stack frame) context. 
+  The debug platform provides persistence, enabling, disabling, entering, and 
+  editing of watch expressions. See the new extension point <code>org.eclipse.debug.core.watchExpressionDelegates</code> 
+  for more details.</p>
 <h3>Problem Reports Fixed</h3>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=41675">41675</a>: breakpoints no longer visible in overview ruler<br>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=38842">38842</a>: Make enabling and disabling expressions part of the debug framework.<br>

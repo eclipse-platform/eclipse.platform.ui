@@ -67,6 +67,13 @@
   can be acheived by having a debug model presentation implement the new interface 
   <code>IDebugEditorPresentation</code>, and implementing the appropriate methods 
   - <code>selectAndReveal</code>,<code> decorateEditor</code>, and <code>removeDecorations</code>.</p>
+<h3>Extensible Watch Expressions</h3>
+<p>In release 3.0, the debug platform provides an implementation of watch expressions. 
+  Debug models can contribute watch expression delegates if they support watch 
+  expressions. When a stack frame is selected, the associated delegate is queried 
+  to provide a value for a watch expression in the given (stack frame) context. 
+  The debug platform provides persistence, enabling, disabling, entering, and 
+  editing of watch expressions.</p>
 <h2>API Changes</h2>
 <h3>Extensible Launch Modes</h3>
 <p>With the introduction of extensible launch modes, more than one launch delegate 
