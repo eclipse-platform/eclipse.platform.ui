@@ -77,6 +77,8 @@ public interface IPluginDescriptor {
 	 *
 	 * @param extensionName the simple identifier of the extension (e.g. <code>"main"</code>).
 	 * @return the extension, or <code>null</code>
+	 * TODO XXX this javadoc direction is incorrect.  There is no corresponding method on 
+	 * IExtensionRegistry
 	 * TODO @deprecated 
 	 * Use 
 	 * <pre>
@@ -278,10 +280,8 @@ public interface IPluginDescriptor {
 	 * <p> Note that any translation specified in the plug-in manifest
 	 * file is automatically applied.
 	 * </p>
-	 *
-	 * @see #getResourceString(String)
-	 *
 	 * @return the name of the provider, possibly the empty string
+	 * @see #getResourceString(String)
 	 * TODO @deprecated
 	 * Use 
 	 * <pre>

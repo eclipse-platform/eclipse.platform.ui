@@ -155,6 +155,7 @@ public interface IPluginRegistry {
 	 * @param pluginId the unique identifier of the plug-in 
 	 *		(e.g. <code>"com.example.acme"</code>).
 	 * @return the plug-in descriptor, or <code>null</code>
+	 * TODO @deprecated 
 	 * <code>IPluginDescriptor</code> was refactored in Eclipse 3.0.
 	 * The <code>getPluginDescriptor()</code> method may only be called by plug-ins 
 	 * which explicitly require the org.eclipse.core.runtime.compatibility plug-in.
@@ -210,5 +211,4 @@ public interface IPluginRegistry {
 	 * See the comments on {@link IPluginDescriptor} and its methods for details.
 	 */
 	public IPluginDescriptor[] getPluginDescriptors(String pluginId);
-
 }
