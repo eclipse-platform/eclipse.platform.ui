@@ -1,21 +1,22 @@
-/**********************************************************************
- * Copyright (c) 2002 IBM Corporation and others.
- * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
- * 
- * Contributors: 
- * IBM - Initial API and implementation
- **********************************************************************/
 package org.eclipse.ant.core;
+
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.ant.internal.core.AntCorePreferences;
 import org.eclipse.ant.internal.core.IAntCoreConstants;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.Plugin;
 /**
  * The plug-in runtime class for the Ant Core plug-in.
  */
@@ -50,7 +51,7 @@ public class AntCorePlugin extends Plugin implements IAntCoreConstants {
 	 * Unique identifier constant (value <code>"org.eclipse.ant.core"</code>)
 	 * for the Ant Core plug-in.
 	 */
-	public static final String PI_ANTCORE= "org.eclipse.ant.core"; //$NON-NLS-1$
+	public static final String PI_ANTCORE = "org.eclipse.ant.core"; //$NON-NLS-1$
 
 	/**
 	 * Simple identifier constant (value <code>"antTasks"</code>)
@@ -96,78 +97,80 @@ public class AntCorePlugin extends Plugin implements IAntCoreConstants {
 	 */
 	public static final String ECLIPSE_PROGRESS_MONITOR = "eclipse.progress.monitor"; //$NON-NLS-1$
 
-/** 
- * Constructs an instance of this plug-in runtime class.
- * <p>
- * An instance of this plug-in runtime class is automatically created 
- * when the facilities provided by the Ant Core plug-in are required.
- * <b>Cliens must never explicitly instantiate a plug-in runtime class.</b>
- * </p>
- * 
- * @param pluginDescriptor the plug-in descriptor for the
- *   Ant Core plug-in
- */
-public AntCorePlugin(IPluginDescriptor descriptor) {
-	super(descriptor);
-	plugin = this;
-}
-
-/**
- * @see Plugin#startup
- */
-public void startup() throws CoreException {
-	taskExtensions = extractExtensions(PT_TASKS, NAME);
-	typeExtensions = extractExtensions(PT_TYPES, NAME);
-	extraClasspathExtensions = extractExtensions(PT_EXTRA_CLASSPATH, LIBRARY);
-}
-
-/**
- * @see Plugin#shutdown
- */
-public void shutdown() throws CoreException {
-	if (preferences == null)
-		return;
-	preferences.updatePluginPreferences();
-	savePluginPreferences();
-}
-
-/**
- * Given an extension point name, extract its extensions and return them
- * as a Map. It uses as keys the attribute specified by the key parameter.
- */
-private Map extractExtensions(String point, String key) {
-	IExtensionPoint extensionPoint = getDescriptor().getExtensionPoint(point);
-	if (extensionPoint == null)
-		return null;
-	IConfigurationElement[] extensions = extensionPoint.getConfigurationElements();
-	Map result = new HashMap(extensions.length);
-	for (int i = 0; i < extensions.length; i++) {
-		String name = extensions[i].getAttribute(key);
-		result.put(name, extensions[i]);
+	/** 
+	 * Constructs an instance of this plug-in runtime class.
+	 * <p>
+	 * An instance of this plug-in runtime class is automatically created 
+	 * when the facilities provided by the Ant Core plug-in are required.
+	 * <b>Cliens must never explicitly instantiate a plug-in runtime class.</b>
+	 * </p>
+	 * 
+	 * @param pluginDescriptor the plug-in descriptor for the
+	 *   Ant Core plug-in
+	 */
+	public AntCorePlugin(IPluginDescriptor descriptor) {
+		super(descriptor);
+		plugin = this;
 	}
-	return result;
-}
 
-/**
- * Returns an object representing this plug-in's preferences.
- * <p>
- * This method is for internal use by the platform-related plug-ins.  
- * Clients should not call this method.
- * </p>
- */
-public AntCorePreferences getPreferences() {
-	if (preferences == null)
-		preferences = new AntCorePreferences(taskExtensions, extraClasspathExtensions, typeExtensions);
-	return preferences;
-}
+	/**
+	 * @see Plugin#startup
+	 */
+	public void startup() throws CoreException {
+		taskExtensions = extractExtensions(PT_TASKS, NAME);
+		typeExtensions = extractExtensions(PT_TYPES, NAME);
+		extraClasspathExtensions = extractExtensions(PT_EXTRA_CLASSPATH, LIBRARY);
+	}
 
-/**
- * Returns this plug-in instance.
- *
- * @return the single instance of this plug-in runtime class
- */
-public static AntCorePlugin getPlugin() {
-	return plugin;
-}
+	/**
+	 * @see Plugin#shutdown
+	 */
+	public void shutdown() throws CoreException {
+		if (preferences == null) {
+			return;
+		}
+		preferences.updatePluginPreferences();
+		savePluginPreferences();
+	}
 
+	/**
+	 * Given an extension point name, extract its extensions and return them
+	 * as a Map. It uses as keys the attribute specified by the key parameter.
+	 */
+	private Map extractExtensions(String point, String key) {
+		IExtensionPoint extensionPoint = getDescriptor().getExtensionPoint(point);
+		if (extensionPoint == null) {
+			return null;
+		}
+		IConfigurationElement[] extensions = extensionPoint.getConfigurationElements();
+		Map result = new HashMap(extensions.length);
+		for (int i = 0; i < extensions.length; i++) {
+			String name = extensions[i].getAttribute(key);
+			result.put(name, extensions[i]);
+		}
+		return result;
+	}
+
+	/**
+	 * Returns an object representing this plug-in's preferences.
+	 * <p>
+	 * This method is for internal use by the platform-related plug-ins.  
+	 * Clients should not call this method.
+	 * </p>
+	 */
+	public AntCorePreferences getPreferences() {
+		if (preferences == null) {
+			preferences = new AntCorePreferences(taskExtensions, extraClasspathExtensions, typeExtensions);
+		}
+		return preferences;
+	}
+
+	/**
+	 * Returns this plug-in instance.
+	 *
+	 * @return the single instance of this plug-in runtime class
+	 */
+	public static AntCorePlugin getPlugin() {
+		return plugin;
+	}
 }
