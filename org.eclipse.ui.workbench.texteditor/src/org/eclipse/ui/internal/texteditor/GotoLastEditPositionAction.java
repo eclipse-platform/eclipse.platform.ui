@@ -44,7 +44,7 @@ import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 /**
  * Goes to last edit position.
  * 
- * @see org.eclipse.ui.texteditor.EditPosition
+ * @see org.eclipse.ui.internal.texteditor.EditPosition
  * @since 2.1
  */
 public class GotoLastEditPositionAction extends Action implements IWorkbenchWindowActionDelegate {
