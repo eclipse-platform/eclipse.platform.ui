@@ -82,8 +82,7 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
         layout.marginHeight = 0;
         layout.marginWidth = 0;
         viewerComposite.setLayout(layout);
-        GridData viewerData = new GridData(GridData.GRAB_HORIZONTAL
-                | GridData.GRAB_VERTICAL | GridData.FILL_BOTH);
+        GridData viewerData = new GridData(GridData.FILL_BOTH);
         viewerData.horizontalSpan = 2;
         viewerData.heightHint = 0;
         viewerComposite.setLayoutData(viewerData);
@@ -133,17 +132,13 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
             viewer.setContentProvider(provider);
             viewer.setInput(provider);
             viewer.setLabelProvider(new ProgressLabelProvider());
-            GridData viewerData = new GridData(GridData.GRAB_HORIZONTAL
-                    | GridData.GRAB_VERTICAL | GridData.FILL_BOTH);
-            int heightHint = convertHeightInCharsToPixels(10);
-            viewerData.heightHint = heightHint;
+            GridData viewerData = new GridData(GridData.FILL_BOTH);
             viewer.getControl().setLayoutData(viewerData);
-            Point size = viewer.getControl().computeSize(
-                    viewerComposite.getBounds().width, heightHint);
-            viewer.getControl().setSize(size);
-            viewerComposite.layout();
+            GridData viewerCompositeData = (GridData) viewerComposite.getLayoutData();
+            viewerCompositeData.heightHint = convertHeightInCharsToPixels(10);;
+            viewerComposite.layout(true);
             viewer.getControl().setVisible(true);
-            viewerHeight = viewer.getControl().getBounds().height;
+            viewerHeight = viewerComposite.computeTrim(0, 0, 0, viewerCompositeData.heightHint).height;
             detailsButton.setText(ProgressMessages
                     .getString("ProgressMonitorJobsDialog.HideTitle")); //$NON-NLS-1$
             shell.setSize(shellSize.x, shellSize.y + viewerHeight);
