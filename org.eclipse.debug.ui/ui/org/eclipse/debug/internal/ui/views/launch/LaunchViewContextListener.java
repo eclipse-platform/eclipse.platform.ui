@@ -26,6 +26,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IDebugModelProvider;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.actions.DebugContextManager;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPartListener2;
@@ -192,34 +193,6 @@ public class LaunchViewContextListener implements IPartListener2, IPageListener,
 				}
 				contextIds.add(contextId);
 			}
-		}
-		// add parent contexts
-		Iterator modelIds = modelsToContexts.keySet().iterator();
-		IContextManager manager = PlatformUI.getWorkbench().getContextSupport().getContextManager();
-		while (modelIds.hasNext()) {
-			String modelId = (String) modelIds.next();
-			List contexts = (List) modelsToContexts.get(modelId);
-			Set allContexts = new HashSet(contexts.size());
-			Iterator iterator = contexts.iterator();
-			while (iterator.hasNext()) {
-				String contextId = (String) iterator.next();
-				IContext context = manager.getContext(contextId);
-				while (context != null && context.isDefined()) {
-					allContexts.add(contextId);
-					try {
-						contextId = context.getParentId();
-						context = null;
-						if (contextId != null) {
-							context = manager.getContext(contextId);
-						}
-					} catch (NotDefinedException e) {
-						context = null;
-					}
-				}
-			}
-			List list = new ArrayList(allContexts.size());
-			list.addAll(allContexts);
-			modelsToContexts.put(modelId, list);
 		}
 	}
 	
@@ -400,6 +373,12 @@ public class LaunchViewContextListener implements IPartListener2, IPageListener,
 	 */
 	public void contextEnabled(Set contextIds) {
 		IWorkbenchPage page= getActiveWorkbenchPage();
+		// We ignore the "Debugging" context since we use it
+		// to provide a base set of views for other context
+		// bindings to inherit. If we don't ignore it, we'll
+		// end up opening those views whenever a debug session
+		// starts, which is not the desired behavior.
+		contextIds.remove(DebugContextManager.DEBUG_SCOPE);
 		if (page == null || contextIds.size() == 0) {
 			return;
 		}
@@ -457,7 +436,7 @@ public class LaunchViewContextListener implements IPartListener2, IPageListener,
 		if (page == null) {
 			return;
 		}
-		Iterator contexts = getLeafContexts(contextIds).iterator();
+		Iterator contexts = contextIds.iterator();
 		while (contexts.hasNext()) {
 			String contextId = (String) contexts.next();
 			Iterator configurationElements= getConfigurationElements(contextId).iterator();
@@ -476,39 +455,6 @@ public class LaunchViewContextListener implements IPartListener2, IPageListener,
 				}
 			}
 		}
-	}
-	
-	/**
-	 * Returns a set containing the leaf context ids in the givne
-	 * set. That is, any entry in the set which is a parent of an
-	 * entry in the set is removed.
-	 * 
-	 * @param contextIds
-	 * @return
-	 */
-	private Set getLeafContexts(Set contextIds) {
-		Set leaves = new HashSet(contextIds.size());
-		leaves.addAll(contextIds);
-		Iterator contexts = contextIds.iterator();
-		IContextManager manager = PlatformUI.getWorkbench().getContextSupport().getContextManager();
-		while (contexts.hasNext()) {
-			String contextId = (String) contexts.next();
-			IContext context = manager.getContext(contextId);
-			String parentId = null;
-			try {
-				parentId = context.getParentId();
-			} catch (NotDefinedException e) {
-			}
-			while (parentId != null) {
-				leaves.remove(parentId);
-				try {
-					parentId = manager.getContext(parentId).getParentId();
-				} catch (NotDefinedException e1) {
-					parentId = null;
-				}
-			}
-		}
-		return leaves;
 	}
 	
 	/**
