@@ -408,7 +408,7 @@ public void getResourceStringTest() {
 	assertNotNull("0.3", pluginD);
 
 	// check locale (test files setup for en_US)
-	assertTrue(Locale.getDefault().toString().equals("en_CA"));
+	assertTrue(Locale.getDefault().toString().equals("en_US"));
 
 	// resource strings - no lookup
 	String s1 = "Hello World";
@@ -424,7 +424,7 @@ public void getResourceStringTest() {
 
 	assertTrue("3.0", pluginA.getResourceString(key).equals(s3));
 	assertTrue("3.1", pluginB.getResourceString(key).equals(s3 + " en"));
-	assertTrue("3.2", pluginC.getResourceString(key).equals(s3 + " en_CA"));
+	assertTrue("3.2", pluginC.getResourceString(key).equals(s3 + " en_US"));
 	assertTrue("3.3", pluginD.getResourceString(key).equals(key));
 
 	assertTrue("4.0", pluginA.getResourceString(bad).equals(bad));
@@ -439,7 +439,7 @@ public void getResourceStringTest() {
 
 	assertTrue("6.0", pluginA.getResourceString(key + " " + s1).equals(s3));
 	assertTrue("6.1", pluginB.getResourceString(key + " " + s1).equals(s3 + " en"));
-	assertTrue("6.2", pluginC.getResourceString(key + " " + s1).equals(s3 + " en_CA"));
+	assertTrue("6.2", pluginC.getResourceString(key + " " + s1).equals(s3 + " en_US"));
 	assertTrue("6.3", pluginD.getResourceString(key + " " + s1).equals(s1));
 
 	// resource strings - specified bundle
