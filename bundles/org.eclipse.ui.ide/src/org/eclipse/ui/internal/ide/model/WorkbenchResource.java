@@ -33,15 +33,6 @@ public abstract class WorkbenchResource extends WorkbenchAdapter implements
         IResourceActionFilter {
 
     /**
-     * An attribute used to store the last modified time
-     * so we may determine if the other XML based attributes
-     * found in IResourceActionFilter(XML_DTD_NAME and XML_FIRST_TAG)
-     * are stale and, therefore, the xml file must be reparsed for this
-     * information.
-     */
-    public static final String XML_LAST_MOD = "xmlLastMod"; //$NON-NLS-1$
-
-    /**
      *	Answer the appropriate base image to use for the resource.
      */
     protected abstract ImageDescriptor getBaseImage(IResource resource);
