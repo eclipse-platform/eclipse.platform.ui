@@ -34,10 +34,9 @@ class DecoratorOverlayIcon extends CompositeImageDescriptor {
     /**
      * OverlayIcon constructor.
      * 
-     * @param base the base image
-     * @param overlays the overlay images
-     * @param locations the location of each image
-     * @param size the size
+     * @param baseImage the base image
+     * @param overlaysArray the overlay images
+     * @param sizeValue the size
      */
     public DecoratorOverlayIcon(Image baseImage,
             ImageDescriptor[] overlaysArray, Point sizeValue) {
