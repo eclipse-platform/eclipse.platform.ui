@@ -15,6 +15,7 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.jface.text.*;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
 import org.eclipse.compare.*;
@@ -69,7 +70,7 @@ public class KeyValuePairStructureCreator implements IStructureCreator {
 		public Image getImage() {
 			return CompareUI.getImage(getType());
 		}
-	};
+	}
 		
 		
 	public KeyValuePairStructureCreator() {
@@ -121,10 +122,10 @@ public class KeyValuePairStructureCreator implements IStructureCreator {
 			return root;
 		} catch (CoreException ex) {
 			String message= Util.getString("KeyValuePairStructureCreator.CoreException.message"); //$NON-NLS-1$
-			CompareUI.getPlugin().getLog().log(new Status(Status.ERROR, CompareUI.PLUGIN_ID, 0, message, ex));
+			CompareUI.getPlugin().getLog().log(new Status(IStatus.ERROR, CompareUI.PLUGIN_ID, 0, message, ex));
 		} catch (BadLocationException ex) {
 			String message= Util.getString("KeyValuePairStructureCreator.BadLocationException.message"); //$NON-NLS-1$
-			CompareUI.getPlugin().getLog().log(new Status(Status.ERROR, CompareUI.PLUGIN_ID, 0, message, ex));
+			CompareUI.getPlugin().getLog().log(new Status(IStatus.ERROR, CompareUI.PLUGIN_ID, 0, message, ex));
 		}
 				
 		return null;
