@@ -15,6 +15,8 @@ import org.eclipse.swt.graphics.Point;
 /**
  * Interface to a menu created by a part that will be displayed in a presentation.
  * 
+ * This interface is not intended to be implemented by clients.
+ * 
  * @since 3.0
  */
 public interface IPartMenu {
