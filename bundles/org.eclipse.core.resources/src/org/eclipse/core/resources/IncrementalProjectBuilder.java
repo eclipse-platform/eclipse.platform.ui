@@ -11,8 +11,6 @@
 package org.eclipse.core.resources;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.registry.IConfigurationElement;
-import org.eclipse.core.runtime.registry.IExecutableExtension;
 import org.eclipse.core.internal.events.InternalBuilder;
 import java.util.Map;
 
