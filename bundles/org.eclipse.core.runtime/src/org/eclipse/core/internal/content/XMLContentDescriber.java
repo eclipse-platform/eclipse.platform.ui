@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.content.ITextContentDescriber;
  */
 public class XMLContentDescriber extends TextContentDescriber implements ITextContentDescriber {
 	private static final QualifiedName[] SUPPORTED_OPTIONS = new QualifiedName[] {IContentDescription.CHARSET, IContentDescription.BYTE_ORDER_MARK};
-	private static final String ENCODING = "encoding=\""; //$NON-NLS-1$
+	private static final String ENCODING = "encoding="; //$NON-NLS-1$
 	private static final String XML_PREFIX = "<?xml "; //$NON-NLS-1$
 
 	public int describe(InputStream input, IContentDescription description) throws IOException {
