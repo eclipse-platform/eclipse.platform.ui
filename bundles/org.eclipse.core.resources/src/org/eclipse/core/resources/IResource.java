@@ -461,7 +461,7 @@ public void copy(IPath destination, boolean force, IProgressMonitor monitor) thr
  *
  * @param destination the destination path 
  * @param updateFlags bit-wise or of update flag constants
- *   (only <code>FORCE</code> and <code>DEEP</code> are relevant here)
+ *   (<code>FORCE</code> and <code>DEEP</code>)
  * @param monitor a progress monitor, or <code>null</code> if progress
  *    reporting and cancellation are not desired
  * @exception CoreException if this resource could not be copied. Reasons include:
@@ -530,45 +530,50 @@ public void copy(IPath destination, int updateFlags, IProgressMonitor monitor) t
  */
 public void copy(IProjectDescription description, boolean force, IProgressMonitor monitor) throws CoreException;
 
-
-
-
-
-
 /**
  * Makes a copy of this project using the given project description. 
- * The project's descendents are copied as well. The description 
- * specifies the name, location and attributes of the new project.
- * After successful completion, corresponding new resources will exist 
- * at the given path; their contents and properties will be copies of 
- * the originals. The original resources are not affected.
+ * The project's descendents are copied as well. The description specifies the
+ * name, location and attributes of the new project. After successful
+ * completion, corresponding new resources will exist at the given path; their
+ * contents and properties will be copies of the originals. The original
+ * resources are not affected.
  * <p>
- * When a resource is copied, its persistent properties are 
- * copied with it. Session properties and markers are not copied.
+ * When a resource is copied, its persistent properties are copied with it.
+ * Session properties and markers are not copied.
  * </p>
  * <p>
  * The <code>FORCE</code> update flag controls how this method deals with
- * cases where the workspace is not completely in sync with the local file 
+ * cases where the workspace is not completely in sync with the local file
  * system. If <code>FORCE</code> is not specified, the method will only attempt
  * to copy resources that are in sync with the corresponding files and
- * directories in the local file system; it will fail if it
- * encounters a resource that is out of sync with the file system.
- * However, if <code>FORCE</code> is specified, the method
- * copies all corresponding files and directories from the local
- * file system, including ones that have been recently updated or created.
- * Note that in both settings of the <code>FORCE</code> flag,
- * the operation fails if the newly created resources in the 
- * workspace would be out of sync with the local file system; 
- * this ensures files in the file system cannot be accidentally
- * overwritten.
+ * directories in the local file system; it will fail if it encounters a
+ * resource that is out of sync with the file system. However, if
+ * <code>FORCE</code> is specified, the method copies all corresponding files
+ * and directories from the local file system, including ones that have been
+ * recently updated or created. Note that in both settings of the
+ * <code>FORCE</code> flag, the operation fails if the newly created resources
+ * in the workspace would be out of sync with the local file system; this
+ * ensures files in the file system cannot be accidentally overwritten.
+ * </p>
+ * <p>  
+ * The <code>DEEP</code> update flag controls how this method deals with
+ * linked resources.  If <code>DEEP</code> is not specified when a project
+ * containing linked resources is copied, new linked resources are created in
+ * the destination project that point to the same file system locations.  In
+ * this case, no files on disk under linked resources are actually copied. If
+ * <code>DEEP</code> is specified, then the underlying contents of any linked
+ * resources in the project will always be copied in the file system.  In this
+ * case, the destination of the copy will never contain any linked resources.
+ * The <code>DEEP</code> update flag is ignored when copying non-linked
+ * resources.
  * </p>
  * <p>
- * Update flags other than <code>FORCE</code> are ignored.
+ * Update flags other than <code>FORCE</code> or <code>DEEP</code> are ignored.
  * </p>
  * <p> 
- * This operation changes resources; these changes will be reported
- * in a subsequent resource change event that will include 
- * an indication that the resource copy has been added to its new parent.
+ * This operation changes resources; these changes will be reported in a
+ * subsequent resource change event that will include an indication that the
+ * resource copy has been added to its new parent.
  * </p>
  * <p>
  * This operation is long-running; progress and cancellation are provided
@@ -577,7 +582,7 @@ public void copy(IProjectDescription description, boolean force, IProgressMonito
  *
  * @param description the destination project description
  * @param updateFlags bit-wise or of update flag constants
- *   (only <code>FORCE</code> is relevant here)
+ *   (<code>FORCE</code> and <code>DEEP</code>)
  * @param monitor a progress monitor, or <code>null</code> if progress
  *    reporting and cancellation are not desired
  * @exception CoreException if this resource could not be copied. Reasons include:
@@ -593,11 +598,11 @@ public void copy(IProjectDescription description, boolean force, IProgressMonito
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See IResourceChangeEvent for more details.</li>
  * </ul>
+ * @see #DEEP
+ * @see #FORCE
  * @since 2.0
  */
 public void copy(IProjectDescription description, int updateFlags, IProgressMonitor monitor) throws CoreException;
-
-
 
 /**
  * Creates and returns the marker with the specified type on this resource.
@@ -1479,69 +1484,73 @@ public void move(IPath destination, int updateFlags, IProgressMonitor monitor) t
  */
 public void move(IProjectDescription description, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException;
 
-
-
 /**
- * Renames or relocates this project so that it is the project specified by the given
- * project description.  The description specifies the name, location and attributes 
- * of the new project. After successful completion, the old project and 
- * any direct or indirect members will no longer exist; but corresponding 
+ * Renames or relocates this project so that it is the project specified by the
+ * given project description. The description specifies the name, location and
+ * attributes of the new project. After successful completion, the old project
+ * and any direct or indirect members will no longer exist; but corresponding
  * new resources will now exist at the project.
  * <p>
- * When a resource moves, its session and persistent properties move
- * with it. Likewise for all the other attributes of the resource including
- * markers.
+ * When a resource moves, its session and persistent properties move with it.
+ * Likewise for all the other attributes of the resource including markers.
  * </p>
  * <p>
  * When this project's location is the default location, then the directories
- * and files on disk are moved to be in
- * the location specified by the given description. If the given description
- * specifies the default location for the project, the directories and files
- * are moved to the default location. In all other cases the directories and
- * files on disk are left untouched. If the name in the given description is
- * the same as this project's name and the location is different, then the 
- * project contents will be moved to the new location. All other parts of the
- * given description are ignored.
+ * and files on disk are moved to be in the location specified by the given
+ * description. If the given description specifies the default location for the
+ * project, the directories and files are moved to the default location. In all
+ * other cases the directories and files on disk are left untouched. If the name
+ * in the given description is the same as this project's name and the location
+ * is different, then the project contents will be moved to the new location.
+ * All other parts of the given description are ignored.
  * </p>
  * <p>
- * The <code>FORCE</code> update flag controls how this method deals with
- * cases where the workspace is not completely in sync with the local file 
- * system. If <code>FORCE</code> is not specified, the method will only attempt
- * to move resources that are in sync with the corresponding files and
- * directories in the local file system; it will fail if it
- * encounters a resource that is out of sync with the file system.
- * However, if <code>FORCE</code> is specified, the method
- * moves all corresponding files and directories from the local
- * file system, including ones that have been recently updated or created.
- * Note that in both settings of the <code>FORCE</code> flag,
- * the operation fails if the newly created resources in the 
- * workspace would be out of sync with the local file system; 
- * this ensures files in the file system cannot be accidentally
+ * The <code>FORCE</code> update flag controls how this method deals with cases
+ * where the workspace is not completely in sync with the local file system. If
+ * <code>FORCE</code> is not specified, the method will only attempt to move
+ * resources that are in sync with the corresponding files and directories in
+ * the local file system; it will fail if it encounters a resource that is out
+ * of sync with the file system. However, if <code>FORCE</code> is specified,
+ * the method moves all corresponding files and directories from the local file
+ * system, including ones that have been recently updated or created. Note that
+ * in both settings of the <code>FORCE</code> flag, the operation fails if the
+ * newly created resources in the workspace would be out of sync with the local
+ * file system; this ensures files in the file system cannot be accidentally
  * overwritten.
  * </p>
  * <p>
- * The <code>KEEP_HISTORY</code> update flag controls whether or not 
- * file that are about to be deleted from the local file system have their
- * current contents saved in the workspace's local history. The local history
- * mechanism serves as a safety net to help the user recover from mistakes that
- * might otherwise result in data loss. Specifying <code>KEEP_HISTORY</code>
- * is recommended except in circumstances where past states of the files are of
- * no conceivable interested to the user. Note that local history is maintained
+ * The <code>KEEP_HISTORY</code> update flag controls whether or not file that
+ * are about to be deleted from the local file system have their current
+ * contents saved in the workspace's local history. The local history mechanism
+ * serves as a safety net to help the user recover from mistakes that might
+ * otherwise result in data loss. Specifying <code>KEEP_HISTORY</code> is
+ * recommended except in circumstances where past states of the files are of no
+ * conceivable interested to the user. Note that local history is maintained
  * with each individual project, and gets discarded when a project is deleted
  * from the workspace. Hence <code>KEEP_HISTORY</code> is only really applicable
  * when moving files and folders, but not whole projects.
  * </p>
  * <p>
- * Update flags other than <code>FORCE</code> and <code>KEEP_HISTORY</code> 
- * are ignored.
+ * The <code>DEEP</code> update flag controls how this method deals with linked
+ * resources.  If <code>DEEP</code> is not specified when a project
+ * containing linked resources is moved, new linked resources are created in the
+ * destination project pointing to the same file system locations.  In this
+ * case, no files on disk under any linked resource are actually moved.  If
+ * <code>DEEP</code> is specified, then the underlying contents of any linked
+ * resource will always be moved in the file system.  In this case, the
+ * destination of the move will not contain any linked resources. The
+ * <code>DEEP</code> update flag is ignored when moving non- linked resources.
+ * </p>
+ * <p>  
+ * Update flags other than <code>FORCE</code>, <code>KEEP_HISTORY</code> and
+ * <code>DEEP</code> are ignored.
  * </p>
  * <p>
- * This method changes resources; these changes will be reported
- * in a subsequent resource change event that will include 
- * an indication that the resource has been removed from its parent
- * and that a corresponding resource has been added to its new parent.
- * Additional information provided with resource delta shows that these
- * additions and removals are related.
+ * This method changes resources; these changes will be reported in a subsequent
+ * resource change event that will include an indication that the resource has
+ * been removed from its parent and that a corresponding resource has been added
+ * to its new parent. Additional information provided with resource delta shows
+ * that these additions and removals are related.
  * </p>
  * <p>
  * This method is long-running; progress and cancellation are provided
@@ -1550,7 +1559,7 @@ public void move(IProjectDescription description, boolean force, boolean keepHis
  *
  * @param description the destination project description
  * @param updateFlags bit-wise or of update flag constants
- *   (<code>FORCE</code> and <code>KEEP_HISTORY</code>)
+ *   (<code>FORCE</code>, <code>KEEP_HISTORY</code>, and <code>DEEP</code>)
  * @param monitor a progress monitor, or <code>null</code> if progress
  *    reporting and cancellation are not desired
  * @exception CoreException if this resource could not be moved. Reasons include:
@@ -1559,21 +1568,20 @@ public void move(IProjectDescription description, boolean force, boolean keepHis
  * <li> This resource or one of its descendents is not local.</li>
  * <li> This resource is not a project.</li>
  * <li> The project at the destination already exists.</li>
- * <li> This resource or one of its descendents is out of sync with the local file system
- *      and <code>FORCE</code> is not specified.</li>
+ * <li> This resource or one of its descendents is out of sync with the
+ *      local  file system and <code>FORCE</code> is not specified.</li>
  * <li> The workspace and the local file system are out of sync
  *      at the destination resource or one of its descendents.</li>
  * <li> Resource changes are disallowed during certain types of resource change 
- *       event notification. See IResourceChangeEvent for more details.</li>
+ *      event notification. See IResourceChangeEvent for more details.</li>
  * </ul>
  * @see IResourceDelta#getFlags
+ * @see #DEEP
  * @see #FORCE
  * @see #KEEP_HISTORY
  * @since 2.0
  */
 public void move(IProjectDescription description, int updateFlags, IProgressMonitor monitor) throws CoreException;
-
-
 
 /**
  * Refreshes the resource hierarchy from this resource and its 
