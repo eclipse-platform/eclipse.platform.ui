@@ -547,7 +547,7 @@ public class DebugPlugin extends Plugin {
 	/**
 	 * Register status handlers.
 	 * 
-	 * @exception CoreException if an exception occurrs reading
+	 * @exception CoreException if an exception occurs reading
 	 *  the extensions
 	 */
 	private void initializeStatusHandlers() throws CoreException {
