@@ -36,10 +36,7 @@ public class SpellingEngineRegistry {
 	 * Extension id of spelling engine extension point.
 	 * (value <code>"spellingEngine"</code>).
 	 */
-	private static final String SPELLING_ENGINE_EXTENSION_POINT= "spellingEngine"; //$NON-NLS-1$
-
-	/** Extension registry singleton */
-	private static SpellingEngineRegistry fgExtensionRegistry;
+	public static final String SPELLING_ENGINE_EXTENSION_POINT= "spellingEngine"; //$NON-NLS-1$
 
 	/** Ids mapped to descriptors */
 	private Map fDescriptorsMap;
@@ -92,7 +89,7 @@ public class SpellingEngineRegistry {
 	 * from a changed extension registry.
 	 * </p>
 	 */
-	private synchronized void reloadExtensions() {
+	public synchronized void reloadExtensions() {
 		List descriptors= new ArrayList();
 		fDescriptorsMap= new HashMap();
 		fDefaultDescriptor= null;
@@ -114,22 +111,5 @@ public class SpellingEngineRegistry {
 	private void ensureExtensionsLoaded() {
 		if (!fLoaded)
 			reloadExtensions();
-	}
-
-	/**
-	 * Returns the spelling engine registry singleton.
-	 * 
-	 * @return the spelling engine registry singleton
-	 */
-	public static SpellingEngineRegistry getDefault() {
-		if (fgExtensionRegistry == null)
-			fgExtensionRegistry= new SpellingEngineRegistry();
-		return fgExtensionRegistry;
-	}
-	
-	/**
-	 * Not intended to be instantiated by clients.
-	 */
-	private SpellingEngineRegistry() {
 	}
 }

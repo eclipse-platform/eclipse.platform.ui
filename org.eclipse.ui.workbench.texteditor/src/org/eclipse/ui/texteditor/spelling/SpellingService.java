@@ -13,6 +13,8 @@ package org.eclipse.ui.texteditor.spelling;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 
@@ -91,14 +93,22 @@ public class SpellingService {
 	 * @param collector the problem collector
 	 * @param monitor the progress monitor, can be <code>null</code>
 	 */
-	public void check(IDocument document, IRegion[] regions, SpellingContext context, ISpellingProblemCollector collector, IProgressMonitor monitor) {
+	public void check(final IDocument document, final IRegion[] regions, final SpellingContext context, final ISpellingProblemCollector collector, final IProgressMonitor monitor) {
 		try {
 			collector.beginReporting();
 			if (fPreferences.getBoolean(PREFERENCE_SPELLING_ENABLED))
 				try {
-					ISpellingEngine engine= createEngine(fPreferences);
-					if (engine != null)
-						engine.check(document, regions, context, collector, monitor);
+					final ISpellingEngine engine= createEngine(fPreferences);
+					if (engine != null) {
+						ISafeRunnable runnable= new ISafeRunnable() {
+							public void run() throws Exception {
+								engine.check(document, regions, context, collector, monitor);
+							}
+							public void handleException(Throwable x) {
+							}
+						};
+						Platform.run(runnable);
+					}
 				} catch (CoreException x) {
 					TextEditorPlugin.getDefault().getLog().log(x.getStatus());
 				}
@@ -114,7 +124,10 @@ public class SpellingService {
 	 * @return all spelling engine descriptors
 	 */
 	public SpellingEngineDescriptor[] getSpellingEngineDescriptors() {
-		return SpellingEngineRegistry.getDefault().getDescriptors();
+		SpellingEngineRegistry registry= getSpellingEngineRegistry();
+		if (registry == null)
+			return new SpellingEngineDescriptor[0];
+		return registry.getDescriptors();
 	}
 
 	/**
@@ -125,7 +138,10 @@ public class SpellingService {
 	 *         <code>null</code> if none could be found
 	 */
 	public SpellingEngineDescriptor getDefaultSpellingEngineDescriptor() {
-		return SpellingEngineRegistry.getDefault().getDefaultDescriptor();
+		SpellingEngineRegistry registry= getSpellingEngineRegistry();
+		if (registry == null)
+			return null;
+		return registry.getDefaultDescriptor();
 	}
 
 	/**
@@ -139,11 +155,15 @@ public class SpellingService {
 	 * @see SpellingService#PREFERENCE_SPELLING_ENGINE
 	 */
 	public SpellingEngineDescriptor getActiveSpellingEngineDescriptor(IPreferenceStore preferences) {
+		SpellingEngineRegistry registry= getSpellingEngineRegistry();
+		if (registry == null)
+			return null;
+
 		SpellingEngineDescriptor descriptor= null;
 		if (preferences.contains(PREFERENCE_SPELLING_ENGINE))
-			descriptor= SpellingEngineRegistry.getDefault().getDescriptor(preferences.getString(PREFERENCE_SPELLING_ENGINE));
+			descriptor= registry.getDescriptor(preferences.getString(PREFERENCE_SPELLING_ENGINE));
 		if (descriptor == null)
-			descriptor= SpellingEngineRegistry.getDefault().getDefaultDescriptor();
+			descriptor= registry.getDefaultDescriptor();
 		return descriptor;
 	}
 	
@@ -163,5 +183,14 @@ public class SpellingService {
 		if (descriptor != null)
 			return descriptor.createEngine();
 		return null;
+	}
+
+	/**
+	 * Returns the spelling engine registry.
+	 *  
+	 * @return the spelling engine registry or <code>null</code> if the plug-in has been shutdown
+	 */
+	private SpellingEngineRegistry getSpellingEngineRegistry() {
+		return TextEditorPlugin.getDefault().getSpellingEngineRegistry();
 	}
 }
