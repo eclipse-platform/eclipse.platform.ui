@@ -719,10 +719,12 @@ public class FormText extends Canvas {
 		int lineHeight = fm.getHeight();
 		// Use double-buffering to reduce flicker
 		Image textBuffer = new Image(getDisplay(), carea.width, carea.height);
+		textBuffer.setBackground(getBackground());
 		GC textGC = new GC(textBuffer, gc.getStyle());
 		textGC.setForeground(getForeground());
 		textGC.setBackground(getBackground());
 		textGC.setFont(getFont());
+		textGC.fillRectangle(0, 0, carea.width, carea.height);
 		
 		if (loading) {
 			int textWidth = gc.textExtent(loadingText).x;
