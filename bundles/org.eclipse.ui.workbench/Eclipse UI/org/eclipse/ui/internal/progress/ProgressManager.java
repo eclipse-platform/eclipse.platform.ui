@@ -328,9 +328,9 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 					next.incrementBusy(event.getJob());
 				}
 				if (event.getJob().isUser()) {
-					boolean inDialog = WorkbenchPlugin.getDefault().getPreferenceStore()
-							.getBoolean(IPreferenceConstants.SHOW_USER_JOBS_IN_DIALOG);
-					if (inDialog) {
+					boolean noDialog = WorkbenchPlugin.getDefault().getPreferenceStore()
+							.getBoolean(IPreferenceConstants.RUN_IN_BACKGROUND);
+					if (!noDialog) {
 						final IJobChangeEvent finalEvent = event;
 						WorkbenchJob showJob = new WorkbenchJob(ProgressMessages.getString("ProgressManager.showInDialogName")) { //$NON-NLS-1$
 							/* (non-Javadoc)
