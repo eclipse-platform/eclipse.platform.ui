@@ -15,7 +15,6 @@ package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -50,8 +49,7 @@ import org.eclipse.ui.presentations.StackPresentation;
  * Represents a tab folder of editors. This layout part container only accepts
  * EditorPane parts.
  */
-public class EditorWorkbook extends LayoutPart implements ILayoutContainer,
-        IWorkbenchDragSource {
+public class EditorWorkbook extends LayoutPart implements ILayoutContainer {
 
     private EditorArea editorArea;
 
@@ -88,8 +86,14 @@ public class EditorWorkbook extends LayoutPart implements ILayoutContainer,
             if (pane != null) {
                 DragUtil.performDrag(pane, Geometry.toDisplay(getParent(),
                         getPresentation().getControl().getBounds()),
-                        initialLocation, true);
+                        initialLocation, !keyboard);
             }
+        }
+        
+        public void dragStart(Point initialLocation, boolean keyboard) {
+            DragUtil.performDrag(EditorWorkbook.this, Geometry.toDisplay(getParent(),
+                    getPresentation().getControl().getBounds()),
+                    initialLocation, !keyboard);
         }
 
         public void close(IPresentablePart part) {
@@ -397,8 +401,7 @@ public class EditorWorkbook extends LayoutPart implements ILayoutContainer,
                         // simply
                         // rearranging tabs within this folder
                         if (pane.getContainer() != EditorWorkbook.this) {
-                            page.getActivePerspective().getPresentation()
-                                    .derefPart(pane);
+                            EditorPresentation.derefPart(pane);
                             pane.reparent(getParent());
                         } else {
                             remove(pane);
@@ -755,24 +758,6 @@ public class EditorWorkbook extends LayoutPart implements ILayoutContainer,
     /*
      * (non-Javadoc)
      * 
-     * @see org.eclipse.ui.internal.IWorkbenchDropTarget#addDropTargets(java.util.Collection)
-     */
-    public void addDropTargets(Collection result) {
-        addDropTargets(result, this);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.internal.IWorkbenchDragSource#getType()
-     */
-    public int getType() {
-        return EDITOR;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
      * @see org.eclipse.ui.internal.IWorkbenchDragSource#isDragAllowed(org.eclipse.swt.graphics.Point)
      */
     public boolean isDragAllowed(Point point) {
@@ -787,15 +772,6 @@ public class EditorWorkbook extends LayoutPart implements ILayoutContainer,
         //			return true;
         //	}
         //	return false;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.internal.IWorkbenchDropTarget#targetPartFor(org.eclipse.ui.internal.IWorkbenchDragSource)
-     */
-    public LayoutPart targetPartFor(IWorkbenchDragSource dragSource) {
-        return this;
     }
 
     /**
