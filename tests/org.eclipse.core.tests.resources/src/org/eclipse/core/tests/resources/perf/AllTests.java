@@ -23,6 +23,7 @@ public class AllTests extends TestSuite {
 		suite.addTest(BenchMiscWorkspace.suite());
 		suite.addTest(MarkerPerformanceTest.suite());
 		suite.addTest(LocalHistoryPerformanceTest.suite());
+		suite.addTest(WorkspacePerformanceTest.suite());
 		return suite;
 	}
 
