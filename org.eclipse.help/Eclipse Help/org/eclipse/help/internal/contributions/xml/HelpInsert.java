@@ -23,6 +23,7 @@ public class HelpInsert extends HelpContribution implements Insert {
 			fromID = attrs.getValue(ActionContributor.INSERT_FROM_ATTR);
 			toID = attrs.getValue(ActionContributor.INSERT_TO_ATTR);
 			asID = attrs.getValue(ActionContributor.INSERT_AS_ATTR);
+			label = attrs.getValue("label");
 		}
 	}
 	public String getMode() {

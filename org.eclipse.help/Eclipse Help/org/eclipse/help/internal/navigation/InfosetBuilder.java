@@ -60,6 +60,7 @@ public class InfosetBuilder {
 			String fromID = insertNode.getSource();
 			String toID = insertNode.getTarget();
 			String asType = insertNode.getMode();
+			String newLabel = insertNode.getRawLabel();
 			// check conditions
 			if (isKnownView(fromID))
 				return false;
@@ -78,7 +79,7 @@ public class InfosetBuilder {
 							if (asType.equals(ActionContributor.INSERT_AS_NEXT_SIB)) {
 								pref = HelpContribution.NEXT;
 							}
-				if (insertTopic(fromID, toID, view, pref))
+				if (insertTopic(fromID, toID, view, pref, newLabel))
 					return true;
 			}
 			return executeNested();
@@ -265,12 +266,13 @@ public class InfosetBuilder {
 		String fromTopic,
 		String toTopic,
 		InfoView view,
-		int positionPreference) {
+		int positionPreference,
+		String newLabel) {
 		if ((positionPreference == HelpContribution.PREV)
 			|| (positionPreference == HelpContribution.NEXT))
-			return insertTopicAsSib(fromTopic, toTopic, view, positionPreference);
+			return insertTopicAsSib(fromTopic, toTopic, view, positionPreference, newLabel);
 		else
-			return insertTopicAsChild(fromTopic, toTopic, view, positionPreference);
+			return insertTopicAsChild(fromTopic, toTopic, view, positionPreference, newLabel);
 	}
 	/**
 	 * Inserts the topic and creates the HelpTopic objects
@@ -279,7 +281,8 @@ public class InfosetBuilder {
 		String fromTopic,
 		String toTopic,
 		InfoView view,
-		int positionPreference) {
+		int positionPreference,
+		String newLabel) {
 		// do a simple insert
 		if (isKnownTopic(fromTopic)) {
 			Contribution parent = ((HelpInfoView) view).getContribution(toTopic);
@@ -289,7 +292,11 @@ public class InfosetBuilder {
 			if (child == null)
 				child = HelpTopicFactory.createTopic((Topic) topicNodeMap.get(fromTopic));
 			else
-				return false;//topic already inserted	
+				return false;//topic already inserted
+			if(newLabel!=null){
+				if(child instanceof HelpTopicRef)
+					((HelpTopicRef) child).setRawLabel(newLabel);
+			}
 			((HelpContribution) parent).insertChild(child, positionPreference);
 
 			// keep track of this insertion for handling solo actions
@@ -303,7 +310,7 @@ public class InfosetBuilder {
 			for (Iterator childTopics = topicNode.getChildren(); childTopics.hasNext();) {
 				Contribution childNode = (Contribution) childTopics.next();
 				String newFromTopic = childNode.getID();
-				insertTopic(newFromTopic, fromTopic, view, HelpContribution.NORMAL);
+				insertTopic(newFromTopic, fromTopic, view, HelpContribution.NORMAL, null);
 			}
 		} else
 			if (isKnownTopicSet(fromTopic)) {
@@ -311,7 +318,7 @@ public class InfosetBuilder {
 				Contribution topicSet = (Contribution) topicSetNodeMap.get(fromTopic);
 				for (Iterator topics = topicSet.getChildren(); topics.hasNext();) {
 					Contribution topic = (Contribution) topics.next();
-					insertTopic(topic.getID(), toTopic, view, positionPreference);
+					insertTopic(topic.getID(), toTopic, view, positionPreference, null);
 				}
 			}
 		return true; //success
@@ -323,7 +330,8 @@ public class InfosetBuilder {
 		String fromTopic,
 		String nearTopic,
 		InfoView view,
-		int positionPreference) {
+		int positionPreference,
+		String newLabel) {
 		// do a simple insert
 		if (isKnownTopic(fromTopic)) {
 			Contribution refSib = ((HelpInfoView) view).getContribution(nearTopic);
@@ -337,6 +345,10 @@ public class InfosetBuilder {
 				newSib = HelpTopicFactory.createTopic((Topic) topicNodeMap.get(fromTopic));
 			else
 				return false;//topic already inserted	
+			if(newLabel!=null){
+				if(newSib instanceof HelpTopicRef)
+					((HelpTopicRef) newSib).setRawLabel(newLabel);
+			}
 			((HelpContribution) parent).insertNeighbouringChild(
 				refSib,
 				newSib,
@@ -353,7 +365,7 @@ public class InfosetBuilder {
 			for (Iterator childTopics = topicNode.getChildren(); childTopics.hasNext();) {
 				Contribution childNode = (Contribution) childTopics.next();
 				String newFromTopic = childNode.getID();
-				insertTopic(newFromTopic, fromTopic, view, HelpContribution.NORMAL);
+				insertTopic(newFromTopic, fromTopic, view, HelpContribution.NORMAL, null);
 			}
 		} else
 			if (isKnownTopicSet(fromTopic)) {
@@ -369,12 +381,12 @@ public class InfosetBuilder {
 				if (positionPreference == HelpContribution.NEXT) {
 					for (int i = topics.size() - 1; i >= 0; i--) {
 						Contribution topic = (Contribution) topics.get(i);
-						insertTopic(topic.getID(), nearTopic, view, positionPreference);
+						insertTopic(topic.getID(), nearTopic, view, positionPreference, null);
 					}
 				} else {
 					for (int i = 0; i < topics.size(); i++) {
 						Contribution topic = (Contribution) topics.get(i);
-						insertTopic(topic.getID(), nearTopic, view, positionPreference);
+						insertTopic(topic.getID(), nearTopic, view, positionPreference, null);
 					}
 				}
 			}
