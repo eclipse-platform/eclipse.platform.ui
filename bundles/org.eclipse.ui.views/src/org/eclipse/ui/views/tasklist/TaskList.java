@@ -517,6 +517,7 @@ private void createPartControl0(Composite parent) {
 		IWorkbenchActionConstants.PROPERTIES,
 		propertiesAction);
 		
+	getSite().setSelectionProvider(viewer);
 	
 	if (memento != null) restoreState(memento);
 	memento = null;

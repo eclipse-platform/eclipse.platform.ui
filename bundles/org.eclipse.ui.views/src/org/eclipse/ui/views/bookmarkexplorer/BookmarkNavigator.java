@@ -269,6 +269,8 @@ public class BookmarkNavigator extends ViewPart {
 		fillActionBars();
 		updateSortState();
 	
+		getSite().setSelectionProvider(viewer);
+		
 		if(memento != null) restoreState(memento);
 		memento = null;
 	
