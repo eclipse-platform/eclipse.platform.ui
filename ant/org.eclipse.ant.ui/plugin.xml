@@ -96,8 +96,24 @@
             id="org.eclipse.ant.ui.views.AntView">
       </view>
    </extension>
+   
+   <extension
+          point="org.eclipse.ui.contexts">
+       <context
+             name="%context.editingAnt.name"
+             description="%context.editingAnt.description"
+             parentId="org.eclipse.ui.textEditorScope"
+             id="org.eclipse.ant.ui.AntEditorScope">
+       </context>
+   </extension>
+   
    <extension
          point="org.eclipse.ui.commands">
+	  <category
+            name="%antCategory.name"
+            description="%antCategory.description"
+            id="org.eclipse.ant.ui.category.source">
+      </category>
       <command
             name="%ViewCommand.antView.name"
             description="%ViewCommand.antView.description"
@@ -109,6 +125,30 @@
             contextId="org.eclipse.ui.globalScope"
             commandId="org.eclipse.ant.ui.views.AntView"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <command
+            name="%ActionDefinition.format.name"
+            description="%ActionDefinition.format.description"
+            category="org.eclipse.ant.ui.category.source"
+            id="org.eclipse.ant.ui.format">
+      </command>
+      <keyBinding
+            keySequence="M1+SHIFT+F"
+            scope="org.eclipse.ant.ui.AntEditorScope"
+            command="org.eclipse.ant.ui.format"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <command
+            name="%ActionDefinition.showTooltip.name"
+            description="%ActionDefinition.showTooltip.description"
+            category="org.eclipse.ant.ui.category.source"
+            id="org.eclipse.ant.ui.showTooltip">
+      </command>
+      <keyBinding
+            keySequence="F2"
+            scope="org.eclipse.ant.ui.AntEditorScope"
+            command="org.eclipse.ant.ui.showTooltip"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
    </extension>
    <extension

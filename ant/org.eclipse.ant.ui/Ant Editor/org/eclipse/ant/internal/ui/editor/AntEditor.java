@@ -22,6 +22,7 @@ import org.eclipse.ant.internal.ui.AntUtil;
 import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
 import org.eclipse.ant.internal.ui.IAntUIPreferenceConstants;
 import org.eclipse.ant.internal.ui.editor.actions.FoldingActionGroup;
+import org.eclipse.ant.internal.ui.editor.actions.InformationDispatchAction;
 import org.eclipse.ant.internal.ui.editor.outline.AntEditorContentOutlinePage;
 import org.eclipse.ant.internal.ui.editor.text.AntEditorDocumentProvider;
 import org.eclipse.ant.internal.ui.editor.text.AntFoldingStructureProvider;
@@ -36,7 +37,6 @@ import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jdt.ui.actions.IJavaEditorActionDefinitionIds;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -83,6 +83,7 @@ import org.eclipse.ui.texteditor.ContentAssistAction;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IEditorStatusLine;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
+import org.eclipse.ui.texteditor.ResourceAction;
 import org.eclipse.ui.texteditor.TextOperationAction;
 import org.eclipse.ui.views.contentoutline.ContentOutline;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
@@ -373,13 +374,15 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
         setAction("ContentAssistProposal", action); //$NON-NLS-1$
         
 		action = new TextOperationAction(bundle, "ContentFormat.", this, ISourceViewer.FORMAT); //$NON-NLS-1$
-		action.setActionDefinitionId(IJavaEditorActionDefinitionIds.FORMAT);
+		action.setActionDefinitionId("org.eclipse.ant.ui.format"); //$NON-NLS-1$
         setAction("ContentFormat", action); //$NON-NLS-1$
         
         fFoldingGroup= new FoldingActionGroup(this, getViewer());
         
-		//TODO set help
-		//WorkbenchHelp.setHelp(action, IJavaHelpContextIds.FORMAT_ACTION);
+        ResourceAction resAction= new TextOperationAction(AntEditorMessages.getResourceBundle(), "ShowTooltip.", this, ISourceViewer.INFORMATION, true); //$NON-NLS-1$
+		resAction= new InformationDispatchAction(AntEditorMessages.getResourceBundle(), "ShowTooltip.", (TextOperationAction) resAction, this); //$NON-NLS-1$
+		resAction.setActionDefinitionId("org.eclipse.ant.ui.showTooltip"); //$NON-NLS-1$
+		setAction("ShowTooltip", resAction); //$NON-NLS-1$
     }
 
 	/*
@@ -913,4 +916,11 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
     public void projectionDisabled() {
         fFoldingStructureProvider= null;
     }
+    
+    /* (non-Javadoc)
+	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#initializeKeyBindingScopes()
+	 */
+	protected void initializeKeyBindingScopes() {
+		setKeyBindingScopes(new String[] { "org.eclipse.ant.ui.AntEditorScope" });  //$NON-NLS-1$
+	}
 }
