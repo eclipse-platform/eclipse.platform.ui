@@ -140,13 +140,25 @@ public class MozillaBrowserAdapter implements IBrowser {
 		public BrowserThread(String urlName) {
 			this.url = urlName;
 		}
+		/**
+		 * @param browserCmd
+		 * @return int 0 if success
+		 */
 		private int openBrowser(String browserCmd) {
 			try {
 				Process pr = Runtime.getRuntime().exec(browserCmd);
-				(new StreamConsumer(pr.getInputStream())).start();
-				(new StreamConsumer(pr.getErrorStream())).start();
+				StreamConsumer outputs =
+					new StreamConsumer(pr.getInputStream());
+				(outputs).start();
+				StreamConsumer errors = new StreamConsumer(pr.getErrorStream());
+				(errors).start();
 				pr.waitFor();
-				return pr.exitValue();
+				int ret = pr.exitValue();
+
+				if (ret == 0 && errorsInOutput(outputs, errors)) {
+					return -1;
+				}
+				return ret;
 			} catch (InterruptedException e) {
 			} catch (IOException e) {
 				String msg =
@@ -155,10 +167,43 @@ public class MozillaBrowserAdapter implements IBrowser {
 						executableName);
 				HelpPlugin.logError(msg, e);
 				HelpSystem.getDefaultErrorUtil().displayError(msg, uiThread);
-				// return success so second command does not execute
+				// return success, so second command does not execute
 				return 0;
 			}
 			return -1;
+		}
+		/**
+		 * On some OSes 0 is always returned by netscape -remote.
+		 * It is necessary to examine ouput to find out failure
+		 * @param outputs
+		 * @param errors
+		 * @return
+		 * @throws InterruptedException
+		 */
+		private boolean errorsInOutput(
+			StreamConsumer outputs,
+			StreamConsumer errors) {
+			try {
+				outputs.join(1000);
+				if (outputs.getLastLine() != null
+					&& (outputs.getLastLine().indexOf("No running window found")
+						>= 0
+						|| outputs.getLastLine().indexOf("not running on display")
+							>= 0)) {
+					return true;
+				}
+				errors.join(1000);
+				if (errors.getLastLine() != null
+					&& (errors.getLastLine().indexOf("No running window found")
+						>= 0
+						|| errors.getLastLine().indexOf("not running on display")
+							>= 0)) {
+					return true;
+				}
+			} catch (InterruptedException ie) {
+				// ignore
+			}
+			return false;
 		}
 		public void run() {
 			// If browser is opening, wait until it fully opens,

@@ -39,20 +39,52 @@ public class MozillaFactory implements IBrowserFactory, IExecutableExtension {
 		}
 		try {
 			Process pr = Runtime.getRuntime().exec("which " + executable);
-			(new StreamConsumer(pr.getInputStream())).start();
-			(new StreamConsumer(pr.getErrorStream())).start();
+			StreamConsumer outputs = new StreamConsumer(pr.getInputStream());
+			(outputs).start();
+			StreamConsumer errors = new StreamConsumer(pr.getErrorStream());
+			(errors).start();
 			pr.waitFor();
 			int ret = pr.exitValue();
 			if (ret == 0) {
-				return true;
+				return !errorsInOutput(outputs, errors);
+			} else {
+				return false;
 			}
 		} catch (InterruptedException e) {
+			return false;
 		} catch (IOException e) {
-			// launching which failed, assume executable is present
+			// launching which failed, assume browser executable is present
 			return true;
 		}
+	}
+	/**
+	 * On some OSes 0 is always returned by "which" command
+	 * it is necessary to examine ouput to find out failure.
+	 * @param outputs
+	 * @param errors
+	 * @return
+	 * @throws InterruptedException
+	 */
+	private boolean errorsInOutput(
+		StreamConsumer outputs,
+		StreamConsumer errors) {
+		try {
+			outputs.join(1000);
+			if (outputs.getLastLine() != null
+				&& outputs.getLastLine().indexOf("no " + executable + " in")
+					>= 0) {
+				return true;
+			}
+			errors.join(1000);
+			if (errors.getLastLine() != null
+				&& outputs.getLastLine().indexOf("no " + executable + " in")
+					>= 0) {
+				return true;
+			}
+		} catch (InterruptedException ie) {
+			// ignore
+		}
 		return false;
-
 	}
 	/*
 	 * @see IBrowserFactory#createBrowser()
