@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,11 +12,11 @@
 package org.eclipse.jface.text;
  
 /**
- * Extension interface for <code>IDocument</code>.  <p>
+ * Extension interface for {@link org.eclipse.jface.text.IDocument}.<p>
  * 
  * It introduces the notion of sequentially rewriting a document. This is to tell a
  * document that a sequence of non-overlapping replace operation is about to be
- * performed.<p>
+ * performed. Implementers can use this knowledge for internal optimization.<p>
  * 
  * Is also introduces the concept of post notification replaces. This is, a document
  * listener who is informed about a document change can cause a derived document
@@ -35,6 +35,7 @@ public interface IDocumentExtension {
 		
 		/**
 		 * Executes the replace operation on the given document.
+		 * 
 		 * @param document the document to be changed
 		 * @param owner the owner of this replace operation
 		 */
@@ -69,15 +70,19 @@ public interface IDocumentExtension {
 	/**
 	 * Tells the document that it is about to be sequentially rewritten. That is a
 	 * sequence of non-overlapping replace operations will be performed on it. The
-	 * <code>normalize</code> flag indicates whether the rewrite is preformed from
-	 * the start of the document to its end or from an arbitrary start offset.
+	 * <code>normalize</code> flag indicates whether the rewrite is performed from
+	 * the start of the document to its end or from an arbitrary start offset. <p>
+	 * 
+	 * The document is considered being in sequential rewrite mode as long as 
+	 * <code>stopSequentialRewrite</code> has not been called.
 	 * 
 	 * @param normalize <code>true</code> if performed from the start to the end of the document
 	 */
 	void startSequentialRewrite(boolean normalize);
 	
 	/**
-	 * Tells the document that the sequential rewrite has been finished.
+	 * Tells the document that the sequential rewrite has been finished. This method
+	 * has only any effect if <code>startSequentialRewrite</code> has been called before.
 	 */
 	void stopSequentialRewrite();
 }

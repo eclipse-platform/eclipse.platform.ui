@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,9 +12,10 @@
 package org.eclipse.jface.text;
  
 /**
- * Extension interface for <code>IDocument</code>.  <p>
- * It adds configurability to the mechanism of  post notification replaces and allows to
- * postpone document listener notification.
+ * Extension interface for {@link org.eclipse.jface.text.IDocument}.<p>
+ * 
+ * It adds configuration methods to post notification replaces and document
+ * listener notification.
  * 
  * @since 2.1
  */
@@ -40,7 +41,7 @@ public interface IDocumentExtension2 {
 	 * called. The affect of these calls is that no document listener is notified
 	 * until <code>resumeListenerNotification</code> is called. This allows clients
 	 * to update structure before any listener is informed about the change.<p>
-	 * Listener notification can only be stopped for a single document manipulation.
+	 * Listener notification can only be stopped for a single <code>replace</code> operation.
 	 * Otherwise, document change notifications will be lost.
 	 */
 	void stopListenerNotification();

@@ -1,5 +1,5 @@
 /**********************************************************************
-Copyright (c) 2000, 2003 IBM Corp. and others.
+Copyright (c) 2000, 2004 IBM Corporation and others.
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
@@ -11,8 +11,18 @@ Contributors:
 package org.eclipse.jface.text;
 
 /**
- * Extension interface for <code>IDocument</code>. Adds the concept of
- * multiple partitionings the concept of open and delimited partitions.
+ * Extension interface for {@link org.eclipse.jface.text.IDocument}.
+ * <p>
+ * Adds the concept of multiple partitionings and the concept of zero-length
+ * partitions in conjunction with open and delimited partitions. A delimited
+ * partition has a well defined start delimiter and a well defined end
+ * delimiter. Between two delimited partitions there may be an open partition of
+ * length zero.
+ * <p>
+ * 
+ * In order to fulfill the contract of this interface, the document must be
+ * configured with a document partitioner implementing
+ * {@link org.eclipse.jface.text.IDocumentPartitionerExtension2}.
  * 
  * @see org.eclipse.jface.text.IDocumentPartitionerExtension2
  * @since 3.0

@@ -11,7 +11,7 @@ Contributors:
 package org.eclipse.jface.text;
 
 /**
- * Extension interface to <code>|DocumentPartitioningListener</code>. Replaces the previous concepts.
+ * Extension interface to <code>DocumentPartitioningListener</code>. Replaces the previous concepts.
  * 
  * @since 3.0
  */

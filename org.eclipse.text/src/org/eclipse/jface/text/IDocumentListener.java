@@ -19,6 +19,8 @@ package org.eclipse.jface.text;
  * the document event passed into the listener is the same for the two
  * notifications, i.e. the two document events can be checked using object identity.
  * Clients may implement this interface.
+ * 
+ * @see org.eclipse.jface.text.IDocument
  */
 public interface IDocumentListener {
 	

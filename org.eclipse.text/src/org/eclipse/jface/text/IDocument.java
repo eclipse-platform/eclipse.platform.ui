@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,6 @@ package org.eclipse.jface.text;
  * <li> positions
  * <li> partitions
  * <li> line information
- * <li> search
  * <li> document change listeners
  * <li> document partition change listeners
  * </ul>
@@ -30,9 +29,9 @@ package org.eclipse.jface.text;
  * registered document listeners are informed exactly once.
  *
  * Positions are stickers to the document's text that are updated when the
- * document is changed. Positions are updated by <code>IPositionUpdater</code>s. Position 
+ * document is changed. Positions are updated by {@link org.eclipse.jface.text.IPositionUpdater}s. Position 
  * updaters are managed as a list. The list defines the sequence in which position 
- * updaters are invoked.This way, position updaters may rely on each other. 
+ * updaters are invoked. This way, position updaters may rely on each other. 
  * Positions are grouped into categories.  A category is a ordered list of positions.
  * the document defines the order of position in a category based on the position's offset
  * based on the implementation of the method <code>computeIndexInCategory</code>.
@@ -47,12 +46,15 @@ package org.eclipse.jface.text;
  * partitioner. In this case, the document is considered as one single partition of a
  * default type. The default type is specified by this interface. If a document change
  * changes the document's partitioning all registered partitioning listeners are
- * informed exactly once.<p>
+ * informed exactly once. The extension interface {@link org.eclipse.jface.text.IDocumentExtension3}
+ * introduced in version 3.0 extends the concept of partitions and allows a document to
+ * not only manage one but multiple partitioning. Each partitioning has an id which must
+ * be used to refer to a particular partitioning.<p>
  * 
  * An <code>IDocument</code> provides methods to map line numbers and character 
  * positions onto each other based on the document's line delimiters. When moving text 
  * between documents using different line delimiters, the text must be converted to 
- * use the target document's line delimiters. <p>
+ * use the target document's line delimiters.<p>
  * 
  * <code>IDocument</code> throws <code>BadLocationException</code> if the parameters of
  * queries or manipulation requests are not inside the bounds of the document. The purpose
@@ -60,17 +62,38 @@ package org.eclipse.jface.text;
  * <ul>
  * <li> prepare document for multi-thread access
  * <li> allow clients to implement backtracking recovery methods
- * <li> prevent clients from upfront contract checking when dealing with documents.
+ * <li> prevent clients from up-front contract checking when dealing with documents.
  * </ul>
- * Clients may implement this interface or use the default implementation provided
- * by <code>AbstractDocument</code> and <code>Document</code>.
+ * 
+ * A document support for searching has deprecated since version 3.0. The recommended way
+ * for searching is to use a {@link org.eclipse.jface.text.FindReplaceDocumentAdapter}.<p>
+ * 
+ * In order to provided backward compatibility for clients of <code>IDocument</code>, extension
+ * interfaces are used to provide a means of evolution. The following extension interfaces
+ * exist:
+ * <ul>
+ * <li> {@link org.eclipse.jface.text.IDocumentExtension} since version 2.0 introducing the concept
+ *      of post notification replaces in order to allow document listeners to manipulate the document
+ *      while receiving a document change notification </li>
+ * <li> {@link org.eclipse.jface.text.IDocumentExtension2} since version 2.1 introducing configuration
+ *      methods for post notification replaces and document change notification. </li>
+ * <li> {@link org.eclipse.jface.text.IDocumentExtension3} since version 3.0 replacing the original
+ *      partitioning concept by allowing multiple partitionings at the same time and introducing zero-
+ *      length partitions in conjunction with the distinction between open and closed partitions. </li>
+ * </ul>
+ * 
+ * Clients may implement this interface and its extension interfaces or use the default
+ * implementation provided by <code>AbstractDocument</code> and <code>Document</code>.
  *
- * @see Position
- * @see IPositionUpdater
- * @see IDocumentPartitioner
- * @see ILineTracker
- * @see IDocumentListener
- * @see IDocumentPartitioningListener
+ * @see org.eclipse.jface.text.IDocumentExtension
+ * @see org.eclipse.jface.text.IDocumentExtension2
+ * @see org.eclipse.jface.text.IDocumentExtension3
+ * @see org.eclipse.jface.text.Position
+ * @see org.eclipse.jface.text.IPositionUpdater
+ * @see org.eclipse.jface.text.IDocumentPartitioner
+ * @see org.eclipse.jface.text.ILineTracker
+ * @see org.eclipse.jface.text.IDocumentListener
+ * @see org.eclipse.jface.text.IDocumentPartitioningListener
  */
 public interface IDocument {
 	
@@ -126,8 +149,7 @@ public interface IDocument {
 	/**
 	 * Replaces the content of the document with the given text.
 	 * Sends a <code>DocumentEvent</code> to all registered <code>IDocumentListener</code>.
-	 * This method is a convenience method for <code>
-	 * replace(0, getLength(), text)</code>.
+	 * This method is a convenience method for <code>replace(0, getLength(), text)</code>.
 	 *
 	 * @param text the new content of the document
 	 *
@@ -137,7 +159,7 @@ public interface IDocument {
 	void set(String text);
 		
 	/**
-	 * Subsitutes the given text for the specified document range.
+	 * Substitutes the given text for the specified document range.
 	 * Sends a <code>DocumentEvent</code> to all registered <code>IDocumentListener</code>.
 	 *
 	 * @param offset the document offset
@@ -178,22 +200,20 @@ public interface IDocument {
 	 * <code>addDocumentListener</code> it will be notified twice.
 	 * If the listener is already registered nothing happens.<p>
 	 * 
-	 * This method is not for public use, it may only be called by
-	 * implementers of <code>IDocumentAdapter</code> and only if those 
-	 * implementers need to implement <code>IDocumentListener</code>.
+	 * This method is not for public use.
 	 * 
-	 * @param documentAdapter the listener to be added as prenotified document listener
+	 * @param documentAdapter the listener to be added as pre-notified document listener
+	 * 
+	 * @see #removePrenotifiedDocumentListener(IDocumentListener)
 	 */
 	void addPrenotifiedDocumentListener(IDocumentListener documentAdapter);
 	
 	/**
 	 * Removes the given document listener from the document's list of
-	 * prenotified document listeners. If the listener is not registered
+	 * pre-notified document listeners. If the listener is not registered
 	 * with the document nothing happens. <p>
 	 * 
-	 * This method is not for public use, it may only be called by
-	 * implementers of <code>IDocumentAdapter</code> and only if those 
-	 * implementers need to implement <code>IDocumentListener</code>.
+	 * This method is not for public use.
 	 * 
 	 * @param documentAdapter the listener to be removed
 	 * 
@@ -271,7 +291,7 @@ public interface IDocument {
 	/**
 	 * Removes the given position from the specified position category. 
 	 * If the position is not part of the specified category nothing happens.
-	 * If the position has been added multiple times, only the first occurence is deleted.
+	 * If the position has been added multiple times, only the first occurrence is deleted.
 	 *
 	 * @param category the category from which to delete
 	 * @param position the position to be deleted
@@ -305,7 +325,7 @@ public interface IDocument {
 	 * Computes the index at which a <code>Position</code> with the
 	 * specified offset would be inserted into the given category. As the
 	 * ordering inside a category only depends on the offset, the index must be
-	 * choosen to be the first of all positions with the same offset.
+	 * chosen to be the first of all positions with the same offset.
 	 *
 	 * @param category the category in which would be added
 	 * @param offset the position offset to be considered
@@ -327,7 +347,7 @@ public interface IDocument {
 	
 	/**
 	 * Removes the position updater from the document's list of position updaters.
-	 * If the position updater has multiple occurences only the first occurence is
+	 * If the position updater has multiple occurrences only the first occurrence is
 	 * removed. If the position updater is not registered with this document, nothing
 	 * happens.<p>
 	 * An <code>IPositionUpdater</code> may call back to this method
@@ -364,6 +384,13 @@ public interface IDocument {
 	 * Returns the set of legal content types of document partitions.
 	 * This set can be empty. The set can contain more content types than 
 	 * contained by the result of <code>getPartitioning(0, getLength())</code>.
+	 * <p>
+	 * Use {@link IDocumentExtension3#getLegalContentTypes(String)} when the document
+	 * supports multiple partitionings. In that case this method is equivalent to:
+	 * <pre>
+	 *    IDocumentExtension3 extension= (IDocumentExtension3) document;
+	 *    return extension.getLegalContentTypes(IDocumentExtension3.DEFAULT_PARTITIONING);
+	 * </pre>
 	 *
 	 * @return the set of legal content types
 	 */
@@ -372,6 +399,14 @@ public interface IDocument {
 	/**
 	 * Returns the type of the document partition containing the given offset.
 	 * This is a convenience method for <code>getPartition(offset).getType()</code>.
+	 * <p>
+	 * Use {@link IDocumentExtension3#getContentType(String, int, boolean)} when
+	 * the document supports multiple partitionings. In that case this method is
+	 * equivalent to:
+	 * <pre>
+	 *    IDocumentExtension3 extension= (IDocumentExtension3) document;
+	 *    return extension.getContentTypes(IDocumentExtension3.DEFAULT_PARTITIONING, offset, false);
+	 * </pre>
 	 *
 	 * @param offset the document offset
 	 * @return the partition type
@@ -381,6 +416,14 @@ public interface IDocument {
 	
 	/**
 	 * Returns the document partition in which the position is located.
+	 * <p>
+	 * Use {@link IDocumentExtension3#getPartition(String, int, boolean)} when
+	 * the document supports multiple partitionings. In that case this method is
+	 * equivalent:
+	 * <pre>
+	 *    IDocumentExtension3 extension= (IDocumentExtension3) document;
+	 *    return extension.getPartition(IDocumentExtension3.DEFAULT_PARTITIONING, offset, false);
+	 * </pre>
 	 *
 	 * @param offset the document offset
 	 * @return a specification of the partition
@@ -391,6 +434,14 @@ public interface IDocument {
 	/**
 	 * Computes the partitioning of the given document range using the 
 	 * document's partitioner.
+	 * <p>
+	 * Use {@link IDocumentExtension3#computePartitioning(String, int, int, boolean)} when
+	 * the document supports multiple partitionings. In that case this method is
+	 * equivalent:
+	 * <pre>
+	 *    IDocumentExtension3 extension= (IDocumentExtension3) document;
+	 *    return extension.computePartitioning(IDocumentExtension3.DEFAULT_PARTITIONING, offset, length, false);
+	 * </pre>
 	 *
 	 * @param offset the document offset at which the range starts
 	 * @param length the length of the document range
@@ -435,6 +486,13 @@ public interface IDocument {
 	 * disconnecting the document's old partitioner from the document and to
 	 * connect the new partitioner to the document. Informs all document partitioning
 	 * listeners about this change.
+	 * <p>
+	 * Use {@link IDocumentExtension3#setDocumentPartitioner(String, IDocumentPartitioner)} when
+	 * the document supports multiple partitionings. In that case this method is equivalent to:
+	 * <pre>
+	 *    IDocumentExtension3 extension= (IDocumentExtension3) document;
+	 *    return extension.setDocumentPartitioner(IDocumentExtension3.DEFAULT_PARTITIONING, partitioner);
+	 * </pre>
 	 *
 	 * @param partitioner the document's new partitioner
 	 *
@@ -444,6 +502,14 @@ public interface IDocument {
 	
 	/**
 	 * Returns this document's partitioner.
+	 * <p>
+	 * Use {@link IDocumentExtension3#getDocumentPartitioner(String)} when
+	 * the document supports multiple partitionings. In that case this method is
+	 * equivalent to:
+	 * <pre>
+	 *    IDocumentExtension3 extension= (IDocumentExtension3) document;
+	 *    return extension.getDocumentPartitioner(IDocumentExtension3.DEFAULT_PARTITIONING);
+	 * </pre>
 	 *
 	 * @return this document's partitioner
 	 */
@@ -465,7 +531,7 @@ public interface IDocument {
 	/**
 	 * Returns the number of the line at which the character of the specified position is located. 
 	 * The first line has the line number 0. A new line starts directly after a line
-	 * delimiter. <code>(pos == document length)</code> is a valid argument also there is no
+	 * delimiter. <code>(offset == document length)</code> is a valid argument although there is no
 	 * corresponding character.
 	 *
 	 * @param offset the document offset
@@ -563,7 +629,7 @@ public interface IDocument {
 	 * @param caseSensitive indicates whether lower and upper case should be distinguished
 	 * @param wholeWord indicates whether the findString should be limited by white spaces as 
 	 * 		defined by Character.isWhiteSpace
-	 * @return the offset of the first occurence of findString based on the parameters or -1 if no match is found
+	 * @return the offset of the first occurrence of findString based on the parameters or -1 if no match is found
 	 * @exception BadLocationException if startOffset is an invalid document offset
 	 * @deprecated as of 3.0 search is provided by {@link FindReplaceDocumentAdapter}
 	 */
