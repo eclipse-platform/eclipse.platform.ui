@@ -1,6 +1,7 @@
 package org.eclipse.update.internal.ui.manager;
 
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.update.internal.ui.parts.*;
 import org.eclipse.update.ui.forms.FormWidgetFactory;
 import org.eclipse.update.core.*;
@@ -12,79 +13,68 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.internal.ui.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+
 import java.lang.reflect.InvocationTargetException;
 import org.eclipse.update.ui.internal.model.*;
 import org.eclipse.update.core.IFeature;
+import org.eclipse.swt.graphics.Image;
 
-public class SearchResultSection extends UpdateSection {
+public class SearchResultSection extends UpdateSection 
+		implements IHyperlinkListener {
 	private static final String KEY_TITLE = "UpdatesPage.SearchResultSection.title";
 	private static final String KEY_DESC = "UpdatesPage.SearchResultSection.desc";
 	private static final String KEY_NODESC = "UpdatesPage.SearchResultSection.nodesc";
-	private Composite resultContainer;
+	private Composite container;
 	private FormWidgetFactory factory;
 	private int counter = 0;
 	private boolean fullMode=false;
+	private Image featureImage;
 	
 	public SearchResultSection(UpdateFormPage page) {
 		super(page);
 		setAddSeparator(false);
 		setHeaderText(UpdateUIPlugin.getResourceString(KEY_TITLE));
 		setDescription(UpdateUIPlugin.getResourceString(KEY_NODESC));
+		featureImage = UpdateUIPluginImages.DESC_FEATURE_OBJ.createImage();
 	}
 
 	public Composite createClient(Composite parent, FormWidgetFactory factory) {
-		GridLayout layout = new GridLayout();
+		HTMLTableLayout layout = new HTMLTableLayout();
 		this.factory = factory;
 		header.setForeground(factory.getColor(factory.COLOR_COMPOSITE_SEPARATOR));
-		layout.marginWidth = 0;
+		layout.leftMargin = 10;
+		layout.rightMargin = 10;
 		layout.horizontalSpacing = 0;
-		Composite container = factory.createComposite(parent);
+		container = factory.createComposite(parent);
 		container.setLayout(layout);	
-		
-		createSeparator(container);
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		resultContainer = factory.createComposite(container);
-		resultContainer.setLayoutData(gd);
-		layout = new GridLayout();
-		resultContainer.setLayout(layout);
-		createSeparator(container);
+		layout.numColumns = 2;
 		initialize();
 		return container;
 	}
 	
-	private void createSeparator(Composite parent) {
-		Composite sep = factory.createCompositeSeparator(parent);
-		sep.setBackground(factory.getBorderColor());
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.heightHint = 1;
-		sep.setLayoutData(gd);
+	public void dispose() {
+		featureImage.dispose();
+		super.dispose();
 	}
 	
 	public void setFullMode(boolean value) {
 		if (fullMode!=value) {
 			this.fullMode = value;
-			reflow();
+			if (container!=null) reflow();
 		}
 	}
 	
 	public void reflow() {
 		counter = 0;
-		Control [] children = resultContainer.getChildren();
+		Control [] children = container.getChildren();
 		for (int i=0; i<children.length; i++) {
 			children[i].dispose();
 		}
 		initialize();
-		GridData gd = (GridData)resultContainer.getLayoutData();
-		if (counter==0)
-		   gd.heightHint = 5;
-		else
-			gd.heightHint = SWT.DEFAULT;
-
-		resultContainer.layout(true);
-		resultContainer.getParent().layout(true);
-		resultContainer.getParent().getParent().layout(true);
+		container.layout(true);
+		container.getParent().layout(true);
 	}
 	
 	private void initialize() {
@@ -112,9 +102,52 @@ public class SearchResultSection extends UpdateSection {
 	
 	private void addFeature(IFeature feature) {
 		counter++;
-		Label featureLabel = factory.createLabel(resultContainer, null);
-		String fullLabel = feature.getLabel();
-		fullLabel += " "+feature.getIdentifier().getVersion().toString();
-		featureLabel.setText(fullLabel);
+		Label imageLabel = factory.createLabel(container, null);
+		imageLabel.setImage(featureImage);
+		SelectableFormLabel featureLabel = new SelectableFormLabel(container, SWT.WRAP);
+		featureLabel.setText(getFeatureLabel(feature));
+		featureLabel.setData(feature);
+		factory.turnIntoHyperlink(featureLabel, this);
+		if (fullMode) {
+			factory.createLabel(container, null);
+			Label label = factory.createLabel(container, null);
+			label.setText("by "+feature.getProvider());
+			factory.createLabel(container, null);
+			IInfo desc = feature.getDescription();
+			if (desc != null) {
+				String text = desc.getText();
+				if (text!=null)
+					factory.createLabel(container, text, SWT.WRAP);
+			}
+		}
 	}
+	
+	private String getFeatureLabel(IFeature feature) {
+		String fullLabel = feature.getLabel();
+		return feature.getLabel()+" "+
+			feature.getIdentifier().getVersion().toString();
+	}
+	/*
+	 * @see IHyperlinkListener#linkActivated(Control)
+	 */
+	public void linkActivated(Control linkLabel) {
+		Object data = linkLabel.getData();
+		if (data instanceof IFeature) {
+			DetailsView view = (DetailsView)getPage().getView();
+			view.showPageWithInput(DetailsView.DETAILS_PAGE, data);
+		}
+	}
+
+	/*
+	 * @see IHyperlinkListener#linkEntered(Control)
+	 */
+	public void linkEntered(Control linkLabel) {
+	}
+
+	/*
+	 * @see IHyperlinkListener#linkExited(Control)
+	 */
+	public void linkExited(Control linkLabel) {
+	}
+
 }

@@ -104,6 +104,7 @@ public class HTMLTableLayout extends Layout {
 	protected void layout(Composite parent, boolean changed) {
 		Rectangle clientArea = parent.getClientArea();
 		Control [] children = parent.getChildren();
+		if (children.length ==0) return;
 		int parentWidth = clientArea.width;
 		changed = true;
 		initializeIfNeeded(parent, changed);
@@ -295,6 +296,7 @@ void createGrid(Composite composite) {
 
 	// 
 	children = composite.getChildren();
+	if (children.length==0) return;
 
 	// 
 	grid.addElement(createEmptyRow());
@@ -402,6 +404,9 @@ private TableData [] createEmptyRow() {
 	 */
 	protected Point computeSize(Composite parent, int wHint, int hHint, boolean changed) {
 		Control [] children = parent.getChildren();
+		if (children.length == 0) {
+			return new Point(0, 0);
+		}
 		int parentWidth = wHint;
 		changed = true;
 		initializeIfNeeded(parent, changed);

@@ -145,7 +145,7 @@ public void createPartControl(Composite parent) {
 	fillActionBars();
 }
 
-private void showPageWithInput(String pageId, Object input) {
+public void showPageWithInput(String pageId, Object input) {
 	showPage(pageId, input);
 	history.add(pageId, input);
    	backAction.update();

@@ -33,11 +33,13 @@ private static final String KEY_CANCEL = "UpdatesPage.cancel";
 private static final String KEY_DESC = "UpdatesPage.desc";
 private static final String KEY_OPTIONS = "UpdatesPage.options.label";
 private static final String KEY_CDROM_CHECK = "UpdatesPage.options.cdromCheck";
+private static final String KEY_FULL_MODE_CHECK = "UpdatesPage.options.fullModeCheck";
 
 	private Label descLabel;
 	private Label infoLabel;
 	private ExpandableGroup optionsGroup;
 	private Button cdromCheck;
+	private Button fullModeCheck;
 	private Button searchButton;
 	private PageBook pagebook;
 	private SearchMonitor monitor;
@@ -111,6 +113,13 @@ protected void createContents(Composite parent) {
 			
 			cdromCheck = factory.createButton(expansion, null, SWT.CHECK);
 			cdromCheck.setText(UpdateUIPlugin.getResourceString(KEY_CDROM_CHECK));
+			fullModeCheck = factory.createButton(expansion, null, SWT.CHECK);
+			fullModeCheck.setText(UpdateUIPlugin.getResourceString(KEY_FULL_MODE_CHECK));
+			fullModeCheck.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					toggleMode(fullModeCheck.getSelection());
+				}
+			});
 		}
 		protected SelectableFormLabel createTextLabel(Composite parent, FormWidgetFactory factory) {
 			SelectableFormLabel label = super.createTextLabel(parent, factory);
@@ -180,6 +189,16 @@ private void reflow() {
 	searchResultSection.reflow();
 	descLabel.getParent().layout(true);
 	((Composite)getControl()).layout(true);
+}
+
+private void toggleMode(final boolean fullMode) {
+	BusyIndicator.showWhile(getControl().getDisplay(), new Runnable() {
+		public void run() {
+			searchResultSection.setFullMode(fullMode);
+			descLabel.getParent().layout(true);
+			((Composite)getControl()).layout(true);	
+		}
+	});
 }
 
 private void performSearch() {
