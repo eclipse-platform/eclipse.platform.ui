@@ -137,7 +137,7 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 	public BeginEndRuleTest(String name) {
 		super(name);
 	}
-
+		
 	public void _testComplexRuleStarting() {
 		//test how the manager reacts when several different threads try to begin conflicting rules
 
@@ -255,9 +255,9 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 
 		for (int i = 0; i < jobs.length; i++) {
 			//check that the final status of all jobs is correct		
-			assertTrue("9.", status[i] == StatusChecker.STATUS_DONE);
-			assertTrue("10.", jobs[i].getState() == Job.NONE);
-			assertTrue("11.", jobs[i].getResult().getSeverity() == Status.OK);
+			assertTrue("9." + i, status[i] == StatusChecker.STATUS_DONE);
+			assertTrue("10." + i, jobs[i].getState() == Job.NONE);
+			assertTrue("11." + i, jobs[i].getResult().getSeverity() == Status.OK);
 		}
 	}
 
