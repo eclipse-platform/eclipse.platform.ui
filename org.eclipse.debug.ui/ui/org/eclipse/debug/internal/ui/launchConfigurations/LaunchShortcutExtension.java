@@ -49,6 +49,7 @@ public class LaunchShortcutExtension implements ILaunchShortcut, IPluginContribu
 	private Set fModes = null;
 	private IConfigurationElement fContextualLaunchConfigurationElement = null;
 	private Expression fContextualLaunchExpr = null;
+	private Expression fStandardLaunchExpr = null;
 	
 	/**
 	 * The configuration element defining this tab.
@@ -159,7 +160,7 @@ public class LaunchShortcutExtension implements ILaunchShortcut, IPluginContribu
 	 * Evaluate the given expression within the given context and return
 	 * the result. Returns <code>true</code> iff result is either TRUE or NOT_LOADED.
 	 * This allows optimistic inclusion of shortcuts before plugins are loaded.
-	 * Returns <code>false</code> if exp is <code>null</code>.
+	 * Returns <code>true</code> if exp is <code>null</code>.
 	 * 
 	 * @param exp the enablement expression to evaluate or <code>null</code>
 	 * @param context the context of the evaluation. Usually, the
@@ -167,8 +168,8 @@ public class LaunchShortcutExtension implements ILaunchShortcut, IPluginContribu
 	 * @return the result of evaluating the expression
 	 * @throws CoreException
 	 */
-	public boolean evalContextualLaunchEnablementExpression(IEvaluationContext context, Expression exp) throws CoreException {
-		return (exp != null) ? ((exp.evaluate(context)) != EvaluationResult.FALSE) : false;
+	public boolean evalEnablementExpression(IEvaluationContext context, Expression exp) throws CoreException {
+		return (exp != null) ? ((exp.evaluate(context)) != EvaluationResult.FALSE) : true;
 	}
 	
 	/**
@@ -198,6 +199,27 @@ public class LaunchShortcutExtension implements ILaunchShortcut, IPluginContribu
 		}
 		return fContextualLaunchExpr;
 	}
+	
+	/**
+	 * Returns an expression that represents the enablement logic for the
+	 * launch shortcut description or <code>null</code> if none.
+	 * @return an evaluatable expression or <code>null</code>
+	 * @throws CoreException if the configuration element can't be
+	 *  converted. Reasons include: (a) no handler is available to
+	 *  cope with a certain configuration element or (b) the XML
+	 *  expression tree is malformed.
+	 */
+	public Expression getShortcutEnablementExpression() throws CoreException {
+		// all of this stuff is optional, so...tedius testing is required
+		if (fStandardLaunchExpr == null) {
+			IConfigurationElement[] elements = getConfigurationElement().getChildren(ExpressionTagNames.ENABLEMENT);
+			IConfigurationElement enablement = elements.length > 0 ? elements[0] : null; 
+			if (enablement != null) {
+				fStandardLaunchExpr= ExpressionConverter.getDefault().perform(enablement);
+			}
+		}
+		return fStandardLaunchExpr;
+	}	
 	
 	/**
 	 * Returns the id of this shortcut

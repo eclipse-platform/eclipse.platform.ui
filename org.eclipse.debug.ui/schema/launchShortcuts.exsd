@@ -10,7 +10,7 @@
 appears in the run and/or debug cascade menus to launch the workbench selection or active editor.
       </documentation>
    </annotation>
-   
+
    <include schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.mxsd"/>
 
    <element name="extension">
@@ -52,6 +52,7 @@ appears in the run and/or debug cascade menus to launch the workbench selection 
          <sequence>
             <element ref="perspective" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="contextualLaunch" minOccurs="0" maxOccurs="1"/>
+            <element ref="enablement" minOccurs="0" maxOccurs="1"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>

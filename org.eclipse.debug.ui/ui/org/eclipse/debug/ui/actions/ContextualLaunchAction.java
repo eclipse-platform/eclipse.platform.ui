@@ -253,7 +253,7 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 	 */
 	private boolean isApplicable(LaunchShortcutExtension ext, IEvaluationContext context) throws CoreException {
 		Expression expr = ext.getContextualLaunchEnablementExpression();
-		return ext.evalContextualLaunchEnablementExpression(context, expr);
+		return ext.evalEnablementExpression(context, expr);
 	}
 
 	/**

@@ -11,6 +11,12 @@
 package org.eclipse.debug.internal.ui.actions;
 
 
+import java.util.List;
+
+import org.eclipse.core.expressions.EvaluationContext;
+import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchShortcutExtension;
 import org.eclipse.jface.action.Action;
@@ -76,7 +82,20 @@ public class LaunchShortcutAction extends Action {
 			if (page != null) {
 				ISelection selection = page.getSelection();
 				if (selection instanceof IStructuredSelection) {
-					enabled = !((IStructuredSelection)selection).isEmpty();
+					IStructuredSelection structuredSelection = (IStructuredSelection)selection;
+					try {
+						// check enablement logic, if any
+						Expression expression = fShortcut.getShortcutEnablementExpression();
+						if (expression == null) {
+							enabled = !structuredSelection.isEmpty();
+						} else {
+							List list = structuredSelection.toList();
+							IEvaluationContext context = new EvaluationContext(null, list);
+							context.addVariable("selection", list); //$NON-NLS-1$
+							enabled = fShortcut.evalEnablementExpression(context, expression);
+						}
+					} catch (CoreException e) {
+					}
 				} else {
 					IEditorPart editor = page.getActiveEditor();
 					if (editor != null) {
