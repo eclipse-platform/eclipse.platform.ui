@@ -256,6 +256,26 @@ public class AntEditorPreferenceConstants {
 	 * @since 3.1
 	 */
 	public static final String EDITOR_SHOW_SEGMENTS= "editor_show_segments"; //$NON-NLS-1$
+	
+	/**
+	 * A named preference that controls if occurrences are marked in the editor
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * @since 3.1
+	 */
+	public static final String EDITOR_MARK_OCCURRENCES= "editor_mark_occurrences"; //$NON-NLS-1$
+	
+	/**
+	 * A named preference that controls whether occurrences are sticky in the editor.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 *
+	 * @since 3.1
+	 */	
+	public static final String EDITOR_STICKY_OCCURRENCES= "stickyOccurrences"; //$NON-NLS-1$
+
 
 	public static void initializeDefaultValues(IPreferenceStore store) {
 		
@@ -288,5 +308,9 @@ public class AntEditorPreferenceConstants {
 		store.setDefault(EDITOR_SHOW_TEXT_HOVER_AFFORDANCE, true);
 		
 		store.setDefault(EDITOR_SHOW_SEGMENTS, false);
+		
+		store.setDefault(EDITOR_MARK_OCCURRENCES, false);
+		store.setDefault(EDITOR_STICKY_OCCURRENCES, true);
+		
 	}
 }

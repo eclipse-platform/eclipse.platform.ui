@@ -280,6 +280,9 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 		
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AntEditorPreferenceConstants.EDITOR_SHOW_TEXT_HOVER_AFFORDANCE));
 		
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AntEditorPreferenceConstants.EDITOR_MARK_OCCURRENCES));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AntEditorPreferenceConstants.EDITOR_STICKY_OCCURRENCES));
+		
 		for (int i= 0; i < fSyntaxColorListModel.length; i++) {
 			String colorKey= fSyntaxColorListModel[i][1];
 			addTextKeyToCover(overlayKeys, colorKey);
@@ -305,8 +308,14 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 		layout.numColumns= 2;
 		appearanceComposite.setLayout(layout);
 
-		String labelText= AntPreferencesMessages.getString("AntEditorPreferencePage.40"); //$NON-NLS-1$
-		addCheckBox(appearanceComposite, labelText, AntEditorPreferenceConstants.EDITOR_SPACES_FOR_TABS, 1);
+		String labelText= AntPreferencesMessages.getString("AntEditorPreferencePage.2"); //$NON-NLS-1$
+		addCheckBox(appearanceComposite, labelText, AntEditorPreferenceConstants.EDITOR_MARK_OCCURRENCES, 0);
+		
+		labelText= AntPreferencesMessages.getString("AntEditorPreferencePage.4"); //$NON-NLS-1$
+		addCheckBox(appearanceComposite, labelText, AntEditorPreferenceConstants.EDITOR_STICKY_OCCURRENCES, 0);
+		
+		labelText= AntPreferencesMessages.getString("AntEditorPreferencePage.40"); //$NON-NLS-1$
+		addCheckBox(appearanceComposite, labelText, AntEditorPreferenceConstants.EDITOR_SPACES_FOR_TABS, 0);
 		
 		labelText= AntPreferencesMessages.getString("AntEditorPreferencePage.32"); //$NON-NLS-1$
 		addCheckBox(appearanceComposite, labelText, AntEditorPreferenceConstants.EDITOR_SHOW_TEXT_HOVER_AFFORDANCE, 0);

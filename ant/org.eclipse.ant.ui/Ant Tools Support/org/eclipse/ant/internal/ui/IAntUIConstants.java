@@ -56,6 +56,7 @@ public interface IAntUIConstants {
      
      //editor toolbar
      public static final String IMG_SEGMENT_EDIT = PLUGIN_ID + ".segmentEdit"; //$NON-NLS-1$
+	 public static final String IMG_MARK_OCCURRENCES = PLUGIN_ID + ".markOccurrences"; //$NON-NLS-1$
      
 	/**
 	 * Icon for task proposal.

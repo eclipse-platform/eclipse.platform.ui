@@ -32,6 +32,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.swt.graphics.Image;
 
 /**
@@ -128,12 +129,8 @@ public class AntElementNode implements IAdaptable {
        fName = aName;
     }
     
-    /**
-     * Creates an instance with the specified name.
-     */
     public AntElementNode() {
     }
-    
     
     /**
      * Returns the name.
@@ -141,7 +138,6 @@ public class AntElementNode implements IAdaptable {
     public String getName() {
         return fName;
     }
-    
     
     /**
      * Returns the label that is used for display.
@@ -153,7 +149,6 @@ public class AntElementNode implements IAdaptable {
     public String getLabel() {
     	return getName();
     }
-    
     
     /**
      * Returns the child nodes.
@@ -174,8 +169,7 @@ public class AntElementNode implements IAdaptable {
         
         return descendents;
     }
-    
-    
+  
     private void determineDescendents(List descendents, List childrenNodes) {
 		Iterator itr= childrenNodes.iterator();
         while (itr.hasNext()) {
@@ -203,7 +197,6 @@ public class AntElementNode implements IAdaptable {
     	}
     	return (AntProjectNode)projectParent;
     }
-    
     
     /**
      * Adds the specified element as a child.
@@ -620,4 +613,20 @@ public class AntElementNode implements IAdaptable {
     public void setProblemMessage(String problemMessage) {
         fProblemMessage = problemMessage;
     }
+
+	public boolean containsOccurrence(String identifier) {
+		return false;
+	}
+	
+	public String getOccurrencesIdentifier() {
+		return getLabel();
+	}
+	
+	public String getModifiedIdentifier(String identifier) {
+		return identifier;
+	}
+
+	public boolean isRegionPotentialReference(IRegion region) {
+		return region.getOffset() >= fOffset;
+	}
 }

@@ -22,6 +22,7 @@ import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.ant.internal.ui.editor.AntEditorCompletionProcessor;
 import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.text.IRegion;
 import org.xml.sax.Attributes;
 
 public class AntPropertyNode extends AntTaskNode {
@@ -135,5 +136,43 @@ public class AntPropertyNode extends AntTaskNode {
 			}
         }
         return null;
+	}
+	
+	public boolean containsOccurrence(String identifier) {
+		if (fBaseLabel != null) {
+			if (fBaseLabel.equals(identifier)) {
+				return true;
+			}
+		}
+		if (fValue != null) {
+			return fValue.indexOf(identifier + '}') != -1;
+		}
+		return false;
+	}
+
+	public String getOccurrencesIdentifier() {
+		return fBaseLabel;
+	}
+
+	public boolean isRegionPotentialReference(IRegion region) {
+		if (super.isRegionPotentialReference(region)) {
+			String textToSearch= getAntModel().getText(getOffset(), getLength());
+			int valueOffset= textToSearch.indexOf("value"); //$NON-NLS-1$
+			if (valueOffset > -1) {
+				valueOffset= textToSearch.indexOf('"', valueOffset);
+				if (valueOffset > -1) {			
+					boolean inValue= region.getOffset() >= (getOffset() + valueOffset);
+					if (inValue) {
+						if ("{".equals(getAntModel().getText(region.getOffset() - 1, 1)) || "}".equals(getAntModel().getText(region.getOffset() + region.getLength(), 1))) { //$NON-NLS-1$ //$NON-NLS-2$
+							return true;
+						}
+						//reference is not in the value and not within a property de-reference
+						return false;
+					} 
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }

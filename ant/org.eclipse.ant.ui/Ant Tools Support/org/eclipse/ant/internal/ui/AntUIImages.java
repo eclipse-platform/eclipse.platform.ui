@@ -68,6 +68,7 @@ public class AntUIImages {
 		declareRegistryImage(IAntUIConstants.IMG_TEMPLATE_PROPOSAL, OBJECT + "template_obj.gif"); //$NON-NLS-1$
 		
 		declareRegistryImage(IAntUIConstants.IMG_SEGMENT_EDIT, T_ETOOL + "segment_edit.gif"); //$NON-NLS-1$
+		declareRegistryImage(IAntUIConstants.IMG_MARK_OCCURRENCES, T_ETOOL + "mark_occurrences.gif"); //$NON-NLS-1$
 		
 		// Ant View Actions
 		declareRegistryImage(IAntUIConstants.IMG_ANT, OBJECT + "ant.gif"); //$NON-NLS-1$

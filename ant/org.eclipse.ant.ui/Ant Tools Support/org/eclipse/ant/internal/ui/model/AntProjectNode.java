@@ -111,4 +111,12 @@ public class AntProjectNode extends AntElementNode {
     public AntProjectNode getProjectNode() {
         return this;
     }
+
+	public boolean containsOccurrence(String identifier) {
+		return identifier.equals(getDefaultTargetName());
+	}
+
+	public String getModifiedIdentifier(String identifier) {
+		return new StringBuffer("\"").append(identifier).append('"').toString(); //$NON-NLS-1$
+	}
 }

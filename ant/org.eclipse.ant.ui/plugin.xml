@@ -182,6 +182,28 @@ M4 = Platform-specific fourth key -->
             commandId="org.eclipse.ant.ui.antShortcut.debug"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
+      <command 
+      	name="%toggleMarkOccurrences.label"
+      	description="%toggleMarkOccurrences.description"
+      	categoryId="org.eclipse.jdt.ui.category.source"
+      	id="org.eclipse.ant.ui.toggleMarkOccurrences" /> 
+  	  <keyBinding 
+  	    	keySequence="M3+M2+O"
+  	    	contextId="org.eclipse.ant.ui.AntEditorScope"
+  	    	commandId="org.eclipse.ant.ui.toggleMarkOccurrences"
+  	    	keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration" /> 
+      <keyBinding 
+         	platform="carbon"
+         	keySequence="M3+M2+O"
+         	contextId="org.eclipse.ant.ui.AntEditorScope"
+         	commandId=""
+         	keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration" /> 
+      <keyBinding 
+      		platform="carbon" 
+      		keySequence="M1+M3+O" 
+			contextId="org.eclipse.ant.ui.AntEditorScope"
+			commandId="org.eclipse.ant.ui.toggleMarkOccurrences"
+			keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration" /> 
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
@@ -722,6 +744,32 @@ M4 = Platform-specific fourth key -->
       </wizard> 
    </extension>
        
+	<extension point="org.eclipse.ui.actionSets">
+ 		<actionSet label="%antEditorPresentationActionSet.label" 
+ 			visible="false" 
+ 			id="org.eclipse.ant.ui.actionSet.presentation">
+  			<action allowLabelUpdate="true" 
+  				style="toggle" 
+  				toolbarPath="org.eclipse.ui.edit.text.actionSet.presentation/Presentation" 
+  				id="org.eclipse.ant.ui.toggleMarkOccurrences" 
+  				definitionId="org.eclipse.ant.ui.toggleMarkOccurrences"
+  				disabledIcon="icons/full/dtool16/mark_occurrences.gif" 
+  				icon="icons/full/etool16/mark_occurrences.gif" 
+  				label="%toggleMarkOccurrences.label" 
+  				retarget="true" 
+  				tooltip="%toggleMarkOccurrences.tooltip" /> 
+  		</actionSet>
+  	</extension>
+  	
+  	<extension point="org.eclipse.ui.actionSetPartAssociations">
+	  	<actionSetPartAssociation
+	            targetID="org.eclipse.ant.ui.actionSet.presentation">
+	         <part
+	               id="org.eclipse.ant.ui.internal.editor.AntEditor">
+	         </part>
+	      </actionSetPartAssociation>
+      </extension>
+
       <!-- bug 78752 <extension
       	 point="org.eclipse.ant.core.antProperties">
       <antProperty

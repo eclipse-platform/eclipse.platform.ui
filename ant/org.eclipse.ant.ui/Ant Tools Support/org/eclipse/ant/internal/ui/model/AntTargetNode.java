@@ -139,4 +139,22 @@ public class AntTargetNode extends AntElementNode {
 		}
 		return targetName;
     }
+
+	public boolean containsOccurrence(String identifier) {
+		if (getTargetName().equals(identifier)) {
+			return true;
+		}
+		Enumeration dependencies= fTarget.getDependencies();
+		while (dependencies.hasMoreElements()) {
+			String dependency = (String) dependencies.nextElement();
+			 if (dependency.equals(identifier)) {
+			 	return true;
+			 }
+		}
+		return false;
+	}
+
+	public String getOccurrencesIdentifier() {
+		return getTargetName();
+	}
 }

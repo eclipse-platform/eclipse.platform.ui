@@ -12,6 +12,7 @@
 package org.eclipse.ant.internal.ui.model;
 
 import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.RuntimeConfigurable;
 import org.apache.tools.ant.Task;
 import org.eclipse.ant.core.AntSecurityException;
 import org.eclipse.ant.internal.ui.AntUIImages;
@@ -23,7 +24,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 public class AntTaskNode extends AntElementNode {
 
 	private Task fTask= null;
-	private String fBaseLabel= null;
+	protected String fBaseLabel= null;
 	protected String fLabel;
 	private String fId= null;
 	protected boolean fConfigured= false;
@@ -31,7 +32,7 @@ public class AntTaskNode extends AntElementNode {
 	public AntTaskNode(Task task) {
 		super(task.getTaskName());
 		fTask= task;
-	}	
+	}
 	
 	public AntTaskNode(Task task, String label) {
 		super(task.getTaskName());
@@ -113,7 +114,6 @@ public class AntTaskNode extends AntElementNode {
 		    //only configure if the user cares about the problems
 			try {
 				getTask().maybeConfigure();
-				nodeSpecificConfigure();
 				fConfigured= true;
 				return true;
 			} catch (BuildException be) {
@@ -126,14 +126,19 @@ public class AntTaskNode extends AntElementNode {
 		return false;
 	}
 
-	protected void nodeSpecificConfigure() {
-		//by default do nothing
-	}
-
 	protected void handleBuildException(BuildException be, String preferenceKey) {
 		int severity= AntModelProblem.getSeverity(preferenceKey);
 		if (severity != AntModelProblem.NO_PROBLEM) {
 			getAntModel().handleBuildException(be, this, severity);
 		}
+	}
+	
+	public boolean containsOccurrence(String identifier) {
+		RuntimeConfigurable wrapper= getTask().getRuntimeConfigurableWrapper();
+		StringBuffer text= wrapper.getText();
+		if (text.length() > 0) {
+			return text.indexOf(identifier) != -1;
+		}
+		return false;
 	}
 }

@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Stack;
+
 import org.apache.tools.ant.AntTypeDefinition;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.ComponentHelper;
@@ -1546,13 +1547,13 @@ public class AntModel implements IAntModel {
             if (nodeText.equals(newNodeText)) {
                 node.setNeedsToBeConfigured(false);
 				//update the datastructures for the new node as the offset may have changed.
-                    List tasks= (List) fDefinerNodeIdentifierToDefinedTasks.get(nodeIdentifier);
-                        for (Iterator iter = tasks.iterator(); iter.hasNext(); ) {
-                            String taskName = (String) iter.next();
-                            fTaskNameToDefiningNode.put(taskName, node);
-                        }
-                    }
-                }
+				List tasks= (List) fDefinerNodeIdentifierToDefinedTasks.get(nodeIdentifier);
+				for (Iterator iter = tasks.iterator(); iter.hasNext(); ) {
+					String taskName = (String) iter.next();
+					fTaskNameToDefiningNode.put(taskName, node);
+				}
+            }
+        }
         if (newNodeText != null) {
             fDefinersToText.put(nodeIdentifier, newNodeText);
         }
@@ -1615,4 +1616,12 @@ public class AntModel implements IAntModel {
         }
         return null;
     }
+
+	public int computeIdentifierOffset(AntElementNode currentNode, String identifier) {
+		try {
+			return computeOffset(getLine(currentNode.getOffset()), 0, identifier);
+		} catch (BadLocationException e) {
+			return -1;
+		}
+	}
 }
