@@ -22,43 +22,7 @@ import org.eclipse.update.internal.scheduler.UpdateScheduler;
 public class AutomaticUpdatesPreferencePage
 	extends PreferencePage
 	implements IWorkbenchPreferencePage {
-	private static final String[] DAYS =
-		{
-			"Every day",
-			"Every Monday",
-			"Every Tuesday",
-			"Every Wednesday",
-			"Every Thursday",
-			"Every Friday",
-			"Every Saturday",
-			"Every Sunday" };
-	private static final String[] HOURS =
-		{
-			"1:00 AM",
-			"2:00 AM",
-			"3:00 AM",
-			"4:00 AM",
-			"5:00 AM",
-			"6:00 AM",
-			"7:00 AM",
-			"8:00 AM",
-			"9:00 AM",
-			"10:00 AM",
-			"11:00 AM",
-			"12:00 PM",
-			"1:00 PM",
-			"2:00 PM",
-			"3:00 PM",
-			"4:00 PM",
-			"5:00 PM",
-			"6:00 PM",
-			"7:00 PM",
-			"8:00 PM",
-			"9:00 PM",
-			"10:00 PM",
-			"11:00 PM",
-			"12:00 AM",
-			};
+
 	private Button enabledCheck;
 	private Button onStartupRadio;
 	private Button onScheduleRadio;
@@ -111,11 +75,11 @@ public class AutomaticUpdatesPreferencePage
 		});
 
 		dayCombo = new Combo(group, SWT.NULL);
-		dayCombo.setItems(DAYS);
+		dayCombo.setItems(UpdateScheduler.DAYS);
 		Label label = new Label(group, SWT.NULL);
 		label.setText("at");
 		hourCombo = new Combo(group, SWT.NULL);
-		hourCombo.setItems(HOURS);
+		hourCombo.setItems(UpdateScheduler.HOURS);
 
 		initialize();
 
@@ -139,6 +103,10 @@ public class AutomaticUpdatesPreferencePage
 		Preferences pref = UpdateScheduler.getDefault().getPluginPreferences();
 		enabledCheck.setSelection(pref.getBoolean(UpdateScheduler.P_ENABLED));
 		setSchedule(pref.getString(UpdateScheduler.P_SCHEDULE));
+		if (UpdateScheduler.VALUE_ON_SCHEDULE.equals(pref.getString(UpdateScheduler.P_SCHEDULE))) {
+			dayCombo.select(getDay(pref));
+			hourCombo.select(getHour(pref));
+		}
 		pageChanged();
 	}
 
@@ -171,7 +139,33 @@ public class AutomaticUpdatesPreferencePage
 	public boolean performOk() {
 		Preferences pref = UpdateScheduler.getDefault().getPluginPreferences();
 		pref.setValue(UpdateScheduler.P_ENABLED, enabledCheck.getSelection());
+		if (onStartupRadio.getSelection())
+			pref.setValue(UpdateScheduler.P_SCHEDULE, UpdateScheduler.VALUE_ON_STARTUP);
+		else 
+			pref.setValue(UpdateScheduler.P_SCHEDULE, UpdateScheduler.VALUE_ON_SCHEDULE);
+			
+		pref.setValue(UpdateScheduler.P_DAY, UpdateScheduler.DAYS[dayCombo.getSelectionIndex()]);
+		pref.setValue(UpdateScheduler.P_HOUR, UpdateScheduler.HOURS[hourCombo.getSelectionIndex()]);
+		
+		UpdateScheduler.getDefault().savePluginPreferences();
+		
 		UpdateScheduler.getDefault().scheduleUpdateJob();
 		return true;
+	}
+	
+	private int getDay(Preferences pref) {
+		String day = pref.getString(UpdateScheduler.P_DAY);
+		for (int i=0; i<UpdateScheduler.DAYS.length; i++)
+			if (UpdateScheduler.DAYS[i].equals(day))
+				return i;
+		return 0;
+	}
+	
+	private int getHour(Preferences pref) {
+		String hour = pref.getString(UpdateScheduler.P_HOUR);
+		for (int i=0; i<UpdateScheduler.HOURS.length; i++)
+			if (UpdateScheduler.HOURS[i].equals(hour))
+				return i;
+		return 0;
 	}
 }
