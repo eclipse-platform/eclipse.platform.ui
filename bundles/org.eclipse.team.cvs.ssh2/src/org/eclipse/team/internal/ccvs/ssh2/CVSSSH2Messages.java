@@ -20,7 +20,6 @@ public class CVSSSH2Messages extends NLS {
 	public static String CVSSSH2PreferencePage_19;
 	public static String CVSSSH2PreferencePage_20;
 	public static String CVSSSH2PreferencePage_21;
-	public static String CVSSSH2PreferencePage_22;
 	public static String CVSSSH2PreferencePage_23;
 	public static String CVSSSH2PreferencePage_24;
 	public static String CVSSSH2PreferencePage_25;
@@ -33,8 +32,6 @@ public class CVSSSH2Messages extends NLS {
 	public static String CVSSSH2PreferencePage_34;
 	public static String CVSSSH2PreferencePage_35;
 	public static String CVSSSH2PreferencePage_36;
-	public static String CVSSSH2PreferencePage_37;
-	public static String CVSSSH2PreferencePage_38;
 	public static String CVSSSH2PreferencePage_39;
 	public static String CVSSSH2PreferencePage_41;
 	public static String CVSSSH2PreferencePage_42;
@@ -49,33 +46,8 @@ public class CVSSSH2Messages extends NLS {
 	public static String CVSSSH2PreferencePage_55;
 	public static String CVSSSH2PreferencePage_57;
 	public static String CVSSSH2PreferencePage_59;
-	public static String CVSSSH2PreferencePage_66;
-	public static String CVSSSH2PreferencePage_67;
-	public static String CVSSSH2PreferencePage_68;
-	public static String CVSSSH2PreferencePage_69;
-	public static String CVSSSH2PreferencePage_70;
-	public static String CVSSSH2PreferencePage_71;
-	public static String CVSSSH2PreferencePage_72;
-	public static String CVSSSH2PreferencePage_73;
-	public static String CVSSSH2PreferencePage_74;
-	public static String CVSSSH2PreferencePage_75;
-	public static String CVSSSH2PreferencePage_76;
-	public static String CVSSSH2PreferencePage_77;
-	public static String CVSSSH2PreferencePage_79;
-	public static String CVSSSH2PreferencePage_80;
-	public static String CVSSSH2PreferencePage_81;
-	public static String CVSSSH2PreferencePage_82;
-	public static String CVSSSH2PreferencePage_83;
-	public static String CVSSSH2PreferencePage_86;
-	public static String CVSSSH2PreferencePage_87;
-	public static String CVSSSH2PreferencePage_93;
-	public static String CVSSSH2PreferencePage_95;
-	public static String CVSSSH2PreferencePage_97;
 	public static String CVSSSH2PreferencePage_99;
 	public static String CVSSSH2PreferencePage_100;
-	public static String CVSSSH2PreferencePage_101;
-	public static String CVSSSH2PreferencePage_102;
-	public static String CVSSSH2PreferencePage_103;
 	public static String CVSSSH2PreferencePage_104;
 	public static String CVSSSH2PreferencePage_105;
 	public static String CVSSSH2PreferencePage_106;
@@ -87,8 +59,6 @@ public class CVSSSH2Messages extends NLS {
 	public static String CVSSSH2ServerConnection_3;
 	public static String CVSSSH2ServerConnection_0;
 	public static String CVSSSH2ServerConnection_1;
-	public static String CVSSSH2PreferencePage_info;
-	public static String CVSSSH2PreferencePage_warning;
 	public static String CVSSSH2PreferencePage_information;
 	public static String CVSSSH2PreferencePage_error;
 	public static String CVSSSH2PreferencePage_confirmation;
@@ -108,8 +78,6 @@ public class CVSSSH2Messages extends NLS {
 	public static String CVSSSH2PreferencePage_137;
 	public static String CVSSSH2PreferencePage_138;
 	public static String CVSSSH2PreferencePage_139;
-	public static String Util_timeout;
-
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, CVSSSH2Messages.class);
