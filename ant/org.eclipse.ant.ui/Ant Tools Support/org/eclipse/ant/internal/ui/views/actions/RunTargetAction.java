@@ -49,7 +49,7 @@ public class RunTargetAction extends Action implements IUpdate {
 		setImageDescriptor(AntUIImages.getImageDescriptor(IAntUIConstants.IMG_RUN));
 		WorkbenchHelp.setHelp(this, IAntUIHelpContextIds.RUN_TARGET_ACTION);
 
-		setToolTipText(AntViewActionMessages.getString("RunTargetAction.Run_Default")); //$NON-NLS-1$
+		setToolTipText(AntViewActionMessages.getString("RunTargetAction.3")); //$NON-NLS-1$
 		fView= view;
 	}
 
@@ -85,11 +85,13 @@ public class RunTargetAction extends Action implements IUpdate {
 		boolean enabled= false;
 		if (selection instanceof AntTargetNode) {
 			if (!((AntTargetNode) selection).isErrorNode()) {
+				setToolTipText(AntViewActionMessages.getString("RunTargetAction.4")); //$NON-NLS-1$
 				enabled= true;
 			}
 		} else if (selection instanceof AntProjectNode) {
 			if (!((AntProjectNode) selection).isErrorNode()) {
 				enabled= true;
+				setToolTipText(AntViewActionMessages.getString("RunTargetAction.3")); //$NON-NLS-1$
 			}
 		}
 		setEnabled(enabled);
