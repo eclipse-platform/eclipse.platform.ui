@@ -555,6 +555,14 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 				fHighlightedDecorationsMap= highlightedDecorationsMap;
 				updateHighlightRanges(highlightAnnotationRangeStart, highlightAnnotationRangeEnd, isWorldChange);
 			}
+		} else {
+			// annotation model is null -> clear all
+			synchronized (fDecorationMapLock) {
+				fDecorationsMap.clear();
+			}
+			synchronized (fHighlightedDecorationsMapLock) {
+				fHighlightedDecorationsMap.clear();
+			}
 		}
 	}
 	

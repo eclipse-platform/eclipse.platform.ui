@@ -436,6 +436,18 @@ abstract public class AbstractReconciler implements IReconciler {
 		fViewer.addTextInputListener(fListener);
 		
 		fDirtyRegionQueue= new DirtyRegionQueue();
+		
+		// see bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=67046
+		// if the reconciler gets installed on a viewer that already has a document
+		// (e.g. when reusing editors), we force the listener to register
+		// itself as document listener, because there will be no input change
+		// on the viewer.
+		// In order to do that, we simulate an input change.
+		IDocument document= textViewer.getDocument();
+		if (document != null) {
+			fListener.inputDocumentAboutToBeChanged(fDocument, document);
+			fListener.inputDocumentChanged(fDocument, document);
+		}
 	}
 	
 	/*
