@@ -23,16 +23,16 @@ public class MarkerSnapshotReader_1 extends MarkerSnapshotReader {
 	public static final byte QNAME = 2;
 
 	// marker attribute types
-	public static final int ATTRIBUTE_NULL = -1;
-	public static final int ATTRIBUTE_BOOLEAN = 0;
-	public static final int ATTRIBUTE_INTEGER = 1;
-	public static final int ATTRIBUTE_STRING = 2;
+	public static final byte ATTRIBUTE_NULL = 0;
+	public static final byte ATTRIBUTE_BOOLEAN = 1;
+	public static final byte ATTRIBUTE_INTEGER = 2;
+	public static final byte ATTRIBUTE_STRING = 3;
 
 public MarkerSnapshotReader_1(Workspace workspace) {
 	super(workspace);
 }
 /**
- * SNAP_FILE -> VERSION_ID RESOURCE*
+ * SNAP_FILE -> [VERSION_ID RESOURCE]*
  * VERSION_ID -> int (used for backwards compatibiliy)
  * RESOURCE -> RESOURCE_PATH MARKER_SIZE MARKER+
  * RESOURCE_PATH -> String
@@ -67,13 +67,13 @@ public void read(DataInputStream input) throws IOException {
 	info.clear(ICoreConstants.M_MARKERS_SNAP_DIRTY);
 }
 private Map readAttributes(DataInputStream input) throws IOException {
-	int attributesSize = input.readInt();
+	short attributesSize = input.readShort();
 	if (attributesSize == 0)
 		return null;
 	Map result = new HashMap(attributesSize);
 	for (int j = 0; j < attributesSize; j++) {
 		String key = input.readUTF();
-		int type = input.readInt();
+		byte type = input.readByte();
 		Object value = null;
 		switch (type) {
 			case ATTRIBUTE_INTEGER :
