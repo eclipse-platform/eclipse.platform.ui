@@ -17,6 +17,7 @@ import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.views.console.ConsoleViewer;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.Action;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
@@ -42,7 +43,11 @@ public class ClearOutputAction extends Action {
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	public void run() {
-		fConsoleViewer.clearDocument();
+		BusyIndicator.showWhile(fConsoleViewer.getControl().getDisplay(), new Runnable() {
+			public void run() {
+				fConsoleViewer.clearDocument();
+			}
+		});
 	}
 }
 
