@@ -82,8 +82,8 @@ import org.osgi.framework.Bundle;
  * <p>
  * If a client sets a default value to be equivalent to the default-default for that
  * type, the value is still known to the preference store as having a default value.
- * That is, the name will still be returned in the result of the #defaultPropertyNames
- * and #contains methods.
+ * That is, the name will still be returned in the result of the <code>defaultPropertyNames</code>
+ * and <code>contains</code> methods.
  * </p>
  * 
  * @since 2.0
@@ -376,6 +376,8 @@ public class Preferences {
 			input = new BufferedInputStream(new FileInputStream(path.toFile()));
 			service.importPreferences(input);
 		} catch (FileNotFoundException e) {
+			String msg = Policy.bind("preferences.fileNotFound", path.toOSString()); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 1, msg, e));
 		} finally {
 			if (input != null)
 				try {
@@ -479,12 +481,12 @@ public class Preferences {
 		if (name == null) {
 			throw new IllegalArgumentException();
 		}
-		Object[] listeners = this.listeners.getListeners();
+		Object[] changeListeners = this.listeners.getListeners();
 		// Do we even need to fire an event?
-		if (listeners.length > 0) {
+		if (changeListeners.length > 0) {
 			PropertyChangeEvent pe = new PropertyChangeEvent(this, name, oldValue, newValue);
-			for (int i = 0; i < listeners.length; ++i) {
-				IPropertyChangeListener l = (IPropertyChangeListener) listeners[i];
+			for (int i = 0; i < changeListeners.length; ++i) {
+				IPropertyChangeListener l = (IPropertyChangeListener) changeListeners[i];
 				l.propertyChange(pe);
 			}
 		}
