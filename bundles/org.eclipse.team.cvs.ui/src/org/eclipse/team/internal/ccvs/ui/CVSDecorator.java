@@ -217,16 +217,17 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 	 * @see IDecorationNotifier#decorated(IResource[], CVSDecoration[])
 	 */
 	public synchronized void decorated(IResource[] resources, CVSDecoration[] decorations) {
-		List events = new ArrayList();
 		if(!shutdown) {
+			List decorated = new ArrayList();
+
 			for (int i = 0; i < resources.length; i++) {
 				IResource resource= resources[i];
 				if(resource.exists()) {
 					cache.put(resource, decorations[i]);
-					events.add(new LabelProviderChangedEvent(this, resource));
+					decorated.add(decorations[i]);
 				}
 			}
-			postLabelEvents((LabelProviderChangedEvent[]) events.toArray(new LabelProviderChangedEvent[events.size()]));
+			postLabelEvent(new LabelProviderChangedEvent(this, decorated.toArray()));
 		}
 	}
 
@@ -307,12 +308,12 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 		
 		// post label events for resources that cannot or should not be decorated by CVS
 		if(!noProviderResources.isEmpty()) {
-			List events = new ArrayList();
+			List resourcesToUpdate = new ArrayList();
 			for (Iterator it = resources.iterator(); it.hasNext();) {
 				IResource element = (IResource) it.next();
-				events.add(new LabelProviderChangedEvent(this, element));
+				resourcesToUpdate.add(element);
 			}
-			postLabelEvents((LabelProviderChangedEvent[]) events.toArray(new LabelProviderChangedEvent[events.size()]));
+			postLabelEvent(new LabelProviderChangedEvent(this, resourcesToUpdate.toArray()));
 		}
 	}
 
@@ -376,22 +377,18 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 	}
 
 	/**
-	 * Post the label events to the UI thread
+	 * Post the label event to the UI thread
 	 * 
 	 * @param events  the events to post
 	 */
-	private void postLabelEvents(final LabelProviderChangedEvent[] events) {
-		// now post the change events to the UI thread
-		if (events.length > 0) {
-			Display.getDefault().asyncExec(new Runnable() {
-				public void run() {
-					for (int i = 0; i < events.length; i++) {
-						fireLabelProviderChanged(events[i]);
-					}
-				}
-			});
-		}
+	private void postLabelEvent(final LabelProviderChangedEvent event) {
+		Display.getDefault().asyncExec(new Runnable() {
+			public void run() {
+				fireLabelProviderChanged(event);
+			}
+		});
 	} 
+
 	
 	private void shutdown() {
 		shutdown = true;
