@@ -7,6 +7,7 @@ package org.eclipse.help.internal.server;
 
 import java.util.*;
 import java.net.URLDecoder;
+import org.eclipse.help.internal.util.TString;
 import org.eclipse.help.internal.navigation.HelpNavigationManager;
 import org.eclipse.help.internal.HelpSystem;
 
@@ -116,31 +117,7 @@ class HighlightProcessor implements OutputProcessor {
 		Collection result = new ArrayList();
 		for (Iterator it = col.iterator(); it.hasNext();) {
 			String keyword = (String) it.next();
-			
-			int l = keyword.length();
-			if (l < 1)
-				continue;
-			char[] keywordChars = new char[l];
-			keyword.getChars(0, l, keywordChars, 0);
-			StringBuffer jsEncoded = new StringBuffer();
-			for (int j = 0; j < keywordChars.length; j++) {
-				String charInHex = Integer.toString((int) keywordChars[j], 16).toUpperCase();
-				switch (charInHex.length()) {
-					case 1 :
-						jsEncoded.append("\\u000").append(charInHex);
-						break;
-					case 2 :
-						jsEncoded.append("\\u00").append(charInHex);
-						break;
-					case 3 :
-						jsEncoded.append("\\u0").append(charInHex);
-						break;
-					default :
-						jsEncoded.append("\\u").append(charInHex);
-						break;
-				}
-			}
-			result.add(jsEncoded.toString());
+			result.add(TString.getUnicodeEncoding(keyword));
 
 		}
 		return result;

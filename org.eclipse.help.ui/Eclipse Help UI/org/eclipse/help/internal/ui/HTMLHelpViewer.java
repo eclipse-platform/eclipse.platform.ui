@@ -16,8 +16,9 @@ import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.help.internal.contributions.*;
 import org.eclipse.help.internal.HelpSystem;
 import org.eclipse.help.internal.server.PluginURL;
-import org.eclipse.help.internal.util.Resources;
 import org.eclipse.help.internal.ui.util.*;
+import org.eclipse.help.internal.util.Resources;
+import org.eclipse.help.internal.util.TString;
 
 /**
  * Help viewer based on the IE5 ActiveX component.
@@ -127,7 +128,7 @@ public class HTMLHelpViewer implements ISelectionChangedListener {
 				String url = infoset.getHref();
 				if (url == null || url.equals(""))
 					url = defaultSplash 
-					    + "?title="+URLEncoder.encode(infoset.getLabel())
+					    + "?title="+TString.getUnicodeEncoding(infoset.getLabel()).replace('\\','%')
 					    + "&lang=" + locale;
 				else
 					url = url+ "?lang=" + locale;

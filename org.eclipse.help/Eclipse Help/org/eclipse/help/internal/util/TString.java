@@ -319,4 +319,32 @@ public class TString {
 				return "";
 		}
 	}
+	
+	public static String getUnicodeEncoding(String word)
+	{
+		int len = word.length();
+		if (len == 0)
+			return word;
+		char[] chars = new char[len];
+		word.getChars(0, len, chars, 0);
+		StringBuffer encodedChars = new StringBuffer();
+		for (int j = 0; j < chars.length; j++) {
+			String charInHex = Integer.toString((int) chars[j], 16).toUpperCase();
+			switch (charInHex.length()) {
+				case 1 :
+					encodedChars.append("\\u000").append(charInHex);
+					break;
+				case 2 :
+					encodedChars.append("\\u00").append(charInHex);
+					break;
+				case 3 :
+					encodedChars.append("\\u0").append(charInHex);
+					break;
+				default :
+					encodedChars.append("\\u").append(charInHex);
+					break;
+			}
+		}
+		return encodedChars.toString();
+	}
 }
