@@ -255,6 +255,9 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 			
  			refresh();
 		}
+		boolean isLinkEnabled() {
+			return !dialogContext && linkEnabled;
+		}
 		public void handleEvent(Event e) {
 			super.handleEvent(e);
 			switch (e.type) {
@@ -280,7 +283,7 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 			case SWT.FocusIn :
 				hasFocus = true;
 			case SWT.MouseEnter :
-				if (linkEnabled) {
+				if (isLinkEnabled()) {
 					mouseOver = true;
 					redraw();
 				}
@@ -288,7 +291,7 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 			case SWT.FocusOut :
 				hasFocus = false;
 			case SWT.MouseExit :
-				if (linkEnabled) {
+				if (isLinkEnabled()) {
 					mouseOver = false;
 					redraw();
 				}
@@ -297,11 +300,11 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 				handleActivate();
 				break;
 			case SWT.MouseDown :
-				if (!linkEnabled)
+				if (!isLinkEnabled())
 					select((JobItem) getParent(), e);
 				break;
 			case SWT.MouseUp :
-				if (linkEnabled) {
+				if (isLinkEnabled()) {
 					Point size= getSize();
 					if (e.button != 1 || e.x < 0 || e.y < 0 || e.x >= size.x || e.y >= size.y)
 						return;
@@ -334,7 +337,8 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 			if (t == null)
 				t= "";	//$NON-NLS-1$
 			if (!t.equals(text)) {
-				setToolTipText(t);
+				if (gotoAction == null || gotoAction.getToolTipText() == null)
+					setToolTipText(t);
 				text= t;
 				redraw();
 			}
@@ -345,16 +349,22 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 			if (gotoAction != null)
 				gotoAction.removePropertyChangeListener(this);
 			gotoAction= action;
-			if (gotoAction != null)
+			if (gotoAction != null) {
 				gotoAction.addPropertyChangeListener(this);
+				String tooltip= gotoAction.getToolTipText();
+				if (tooltip != null)
+					setToolTipText(tooltip);
+			} else {
+				setToolTipText(text);
+			}
 			setLinkEnable(action != null && action.isEnabled());
 		}
 		private void setLinkEnable(boolean enable) {
 			if (enable != linkEnabled) {
 				linkEnabled= enable;
-				if (linkEnabled)
+				if (isLinkEnabled())
 					setCursor(handCursor);
-				redraw();	
+				redraw();
 			}
 		}
 		public void propertyChange(PropertyChangeEvent event) {
@@ -383,7 +393,7 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 			if (jobitem.selected) 
 				return selectedTextColor;
 
-			if (linkEnabled) {
+			if (isLinkEnabled()) {
 				if (mouseOver) {
 					if (isError)
 						return errorColor2;
@@ -414,7 +424,7 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 			String t= shortenText(bufferGC, clientArea.width, text);
 			bufferGC.drawText(t, MARGINWIDTH, MARGINHEIGHT, true);
 			int sw= bufferGC.stringExtent(t).x;
-			if (linkEnabled) {
+			if (isLinkEnabled()) {
 				FontMetrics fm= bufferGC.getFontMetrics();
 				int lineY= clientArea.height - MARGINHEIGHT - fm.getDescent() + 1;
 				bufferGC.drawLine(MARGINWIDTH, lineY, MARGINWIDTH + sw, lineY);
@@ -428,7 +438,7 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 			}
 		}
 		protected void handleActivate() {
-			if (linkEnabled && gotoAction != null && gotoAction.isEnabled())
+			if (isLinkEnabled() && gotoAction != null && gotoAction.isEnabled())
 				gotoAction.run();
 		}
 		public boolean refresh() {
@@ -828,7 +838,7 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 		    	name= stripPercent(jobTreeElement.getDisplayString());
 		    
 			if (highlightJob != null && (highlightJob == job || highlightItem == this)) {
-				name= name + " (Blocking User Operation)";
+				name= name + " (Blocks User Operation)";
 			}
 		    nameItem.setToolTipText(name);
 		    nameItem.setText(shortenText(nameItem, name));
@@ -903,6 +913,9 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 		
 		private String getJobHeader(JobInfo ji, Job job) {
 			String name= job.getName();
+			
+			if (job.isSystem())
+				name= ProgressMessages.format("JobInfo.System", new Object[]{name}); //$NON-NLS-1$
 			
 			if (ji.isCanceled())
 				return ProgressMessages.format("JobInfo.Cancelled", new Object[]{name});  //$NON-NLS-1$
@@ -1070,7 +1083,7 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
     }
 
     private boolean filtered(Object element) {
-
+    	
 		if (!dialogContext && ProgressViewUpdater.getSingleton().debug) // display all  in debug mode
 			return false;
 		
@@ -1095,10 +1108,10 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
     
     private boolean jobFiltered(JobInfo ji) {
 		Job job= ji.getJob();
-		if (job == null || job.isSystem() || job.getState() == Job.SLEEPING) {
-			if (DEBUG) System.err.println("filtered: " + ji.getDisplayString());
-			return true;
-		}   			
+    	if (job != null && job == highlightJob)
+    		return false;
+		if (job == null || job.isSystem() || job.getState() == Job.SLEEPING)
+			return true;	
     	return false;
     }
     
@@ -1429,6 +1442,19 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 	}
 
 	Object[] contentProviderGetRoots(Object parent) {
+//		ArrayList tmp= new ArrayList();
+//		if (highlightJob != null) {
+//			JobInfo ji= ProgressManager.getInstance().getJobInfo(highlightJob);
+//			if (ji != null)
+//				tmp.add(ji);
+//		}
+//		IContentProvider provider = getContentProvider();
+//		if (provider instanceof ITreeContentProvider) {
+//			Object[] a= ((ITreeContentProvider)provider).getElements(parent);
+//			for (int i= 0; i < a.length; i++)
+//				tmp.add(a[i]);
+//		}
+//		return tmp.toArray();
 		IContentProvider provider = getContentProvider();
 		if (provider instanceof ITreeContentProvider)
 			return ((ITreeContentProvider)provider).getElements(parent);
@@ -1494,6 +1520,7 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
     }
 
     public void setInput(IContentProvider provider) {
+    	refresh(true);
     }
     
 	public void cancelSelection() {
