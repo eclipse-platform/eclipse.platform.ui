@@ -560,23 +560,6 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener 
 		ActionContext context = new ActionContext(null);
 		context.setInput(si);
 		actions.addContext(context);
-		
-		if (hasRunnableContext()) {
-			Display.getDefault().asyncExec(new Runnable() {
-				public void run() {
-					SyncViewer.this.run(new IRunnableWithProgress() {
-						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-							try {
-								s.refresh(s.roots(), IResource.DEPTH_INFINITE, monitor);
-							} catch (TeamException e) {
-								throw new InvocationTargetException(e);
-							}
-						}
-					});				
-				}
-			});
-		}
-				
 		initializeSubscriberInput(si);
 	}
 	

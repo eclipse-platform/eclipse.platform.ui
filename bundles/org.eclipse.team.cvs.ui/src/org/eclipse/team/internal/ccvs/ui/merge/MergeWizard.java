@@ -66,9 +66,25 @@ public class MergeWizard extends Wizard {
 		CVSTag startTag = startPage.getTag();
 		CVSTag endTag = endPage.getTag();				
 		
-		// registering the subscriber
 		final CVSMergeSubscriber s = new CVSMergeSubscriber(resources, startTag, endTag);
-		TeamProvider.registerSubscriber(s);
+		try {
+			getContainer().run(true, true, new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor)	throws InvocationTargetException, InterruptedException {
+						try {
+							s.refresh(resources, IResource.DEPTH_INFINITE, monitor);
+						} catch (TeamException e) {
+							s.cancel();
+							throw new InvocationTargetException(e);
+						}
+						TeamProvider.registerSubscriber(s);
+				}
+			});
+		} catch (InvocationTargetException e) {
+			CVSUIPlugin.openError(getContainer().getShell(), null, null, e);
+			return false;
+		} catch (InterruptedException e) {
+			return false;
+		}
 		return true;
 	}
 	
