@@ -41,7 +41,7 @@ launch configuration types capable of initiating a debug session.</p>
     groups.</li>
   <li>Register - A register group contains one or more registers.</li>
   <li>Memory Blocks - A debug target may (optionally) support the retrieval of
-    arbitrary contiguos segments of memory.</li>
+    arbitrary contiguous segments of memory.</li>
   <li>Breakpoint - Breakpoints suspend the execution of a program.</li>
   <li>Expression -  An expression is a snippet of code that can be evaluated to
   	produce a value.</li>
@@ -66,11 +66,11 @@ implemented by instances of IBreakpoint. Each breakpoint object has an associate
 which provides persistence and presentation in editors. The debug platform defines a generic
 breakpoint and line breakpoint, as well as their corresponding marker definitions. Breakpoint
 creation is a client responsibility - that is, defining the attributes of a breakpoint and
-the resource to associate a breakpoin marker with.</p>
+the resource to associate a breakpoint marker with.</p>
 
-<p>Breakpoint creation is a client responsibility, as the location in which a breakpoint may
-be placed, and the attributes that a debug target requires to install a breakpoint is
-specific to each debug architecture.</p>
+<p>Also, the location in which a breakpoint may
+be placed, and the attributes that a debug target requires to install a breakpoint are
+specific to each debug architecture, and thus a client responsibility.</p>
 
 <h5>Persistence</h5>
 

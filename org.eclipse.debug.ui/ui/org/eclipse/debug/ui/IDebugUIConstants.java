@@ -340,35 +340,35 @@ public interface IDebugUIConstants {
 	/** 
 	 * Launches view image identifier
 	 * 
-	 * @ since 2.0
+	 * @since 2.0
 	 */
 	public static final String IMG_VIEW_LAUNCHES= "IMG_VIEW_LAUNCHES"; //$NON-NLS-1$
 	
 	/** 
 	 * Breakpoints view image identifier
 	 * 
-	 * @ since 2.0
+	 * @since 2.0
 	 */
 	public static final String IMG_VIEW_BREAKPOINTS= "IMG_VIEW_BREAKPOINTS"; //$NON-NLS-1$	
 
 	/** 
 	 * Variables view image identifier
 	 * 
-	 * @ since 2.0
+	 * @since 2.0
 	 */
 	public static final String IMG_VIEW_VARIABLES= "IMG_VIEW_VARIABLES"; //$NON-NLS-1$
 	
 	/** 
 	 * Expressions view image identifier
 	 * 
-	 * @ since 2.0
+	 * @since 2.0
 	 */
 	public static final String IMG_VIEW_EXPRESSIONS= "IMG_VIEW_EXPRESSIONS"; //$NON-NLS-1$	
 
 	/** 
 	 * Console view image identifier
 	 * 
-	 * @ since 2.0
+	 * @since 2.0
 	 */
 	public static final String IMG_VIEW_CONSOLE= "IMG_VIEW_CONSOLE"; //$NON-NLS-1$
 	
@@ -376,7 +376,7 @@ public interface IDebugUIConstants {
 	/** 
 	 * Debug perspective image identifier
 	 * 
-	 * @ since 2.0
+	 * @since 2.0
 	 */
 	public static final String IMG_PERSPECTIVE_DEBUG= "IMG_PERSPECTIVE_DEBUG"; //$NON-NLS-1$			
 			
