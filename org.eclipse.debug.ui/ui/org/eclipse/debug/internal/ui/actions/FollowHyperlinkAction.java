@@ -33,7 +33,6 @@ public class FollowHyperlinkAction extends SelectionProviderAction {
 		WorkbenchHelp.setHelp(
 			this,
 			IDebugHelpContextIds.FOLLOW_CONSOLE_HYPERLINK_ACTION);
-		setEnabled(false);
 	}
 	
 	public IConsoleHyperlink getHyperLink() {

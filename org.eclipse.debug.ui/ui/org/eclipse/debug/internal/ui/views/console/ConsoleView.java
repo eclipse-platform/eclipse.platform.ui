@@ -23,6 +23,7 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.actions.ClearOutputAction;
 import org.eclipse.debug.internal.ui.actions.FollowHyperlinkAction;
+import org.eclipse.debug.internal.ui.actions.KeyBindingFollowHyperlinkAction;
 import org.eclipse.debug.internal.ui.actions.TextViewerAction;
 import org.eclipse.debug.internal.ui.actions.TextViewerGotoLineAction;
 import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandlerView;
@@ -66,6 +67,7 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 
 	protected ClearOutputAction fClearOutputAction= null;
 	protected FollowHyperlinkAction fFollowLinkAction = null;
+	protected KeyBindingFollowHyperlinkAction fKeyBindingFollowLinkAction = null;
 	protected ProcessDropDownAction fProcessDropDownAction = null;
 	protected ScrollLockAction fScrollLockAction = null;
 	private boolean fIsLocked = false;
@@ -277,8 +279,10 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 		setGlobalAction(actionBars, ITextEditorActionConstants.GOTO_LINE, action);
 		
 		fFollowLinkAction = new FollowHyperlinkAction(getConsoleViewer());
-		fFollowLinkAction.setActionDefinitionId("org.eclipse.jdt.ui.edit.text.java.open.editor");
-		getSite().getKeyBindingService().registerAction(fFollowLinkAction);
+		
+		fKeyBindingFollowLinkAction= new KeyBindingFollowHyperlinkAction(this);
+		fKeyBindingFollowLinkAction.setActionDefinitionId("org.eclipse.jdt.ui.edit.text.java.open.editor"); //$NON-NLS-1$
+		getSite().getKeyBindingService().registerAction(fKeyBindingFollowLinkAction);
 		
 		fProcessDropDownAction = new ProcessDropDownAction(this);
 		fScrollLockAction = new ScrollLockAction(getConsoleViewer());
@@ -421,7 +425,10 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 		}
 		if (fFollowLinkAction != null) {
 			fFollowLinkAction.dispose();
-			getSite().getKeyBindingService().unregisterAction(fFollowLinkAction);
+		}
+		if (fKeyBindingFollowLinkAction != null) {
+			fKeyBindingFollowLinkAction.dispose();
+			getSite().getKeyBindingService().unregisterAction(fKeyBindingFollowLinkAction);
 		}
 		if (fLaunchListener != null) {
 			DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(fLaunchListener);
