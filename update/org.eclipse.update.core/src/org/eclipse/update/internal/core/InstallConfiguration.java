@@ -819,10 +819,15 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		State state = platformAdmin.getState();
 		BundleDescription[] oldBundles = state.getBundles();
 
+		int offset = UpdateURLHandler.PROTOCOL.length() + 1;
 		for (int i=0; i<oldBundles.length; i++) {
 			if (oldBundles[i].getBundleId() == 0)
 				continue; // skip the system bundle
 			String oldBundleLocation = oldBundles[i].getLocation();
+			// Don't worry about bundles we did not install
+			if (!oldBundleLocation.startsWith(UpdateURLHandler.PROTOCOL))
+				continue;
+			oldBundleLocation = oldBundleLocation.substring(offset);
 			// TODO fix this when the platform correctly resolves local file urls
 			if (isWindows && 
 					!oldBundleLocation.startsWith("reference:file:/") && 

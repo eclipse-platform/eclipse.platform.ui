@@ -22,6 +22,7 @@ import org.eclipse.update.configurator.*;
 import org.osgi.framework.*;
 import org.osgi.service.packageadmin.*;
 import org.osgi.service.startlevel.*;
+import org.osgi.service.url.*;
 import org.osgi.util.tracker.*;
 
 public class ConfigurationActivator implements BundleActivator, IBundleGroupProvider, IConfigurationConstants {
@@ -64,6 +65,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 		context = ctx;
 		loadOptions();
 		acquireFrameworkLogService();
+		registerUpdateProtocol();
 		initialize();
 		
 		//Short cut, if the configuration has not changed
@@ -178,7 +180,9 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 				try {
 					if (DEBUG)
 						Utils.debug("Installing " + bundlesToInstall[i]);
-					Bundle target = context.installBundle(bundlesToInstall[i]);
+					URL updateURL = new URL(UpdateURLHandler.PROTOCOL, "", bundlesToInstall[i]);
+					//Bundle target = context.installBundle(bundlesToInstall[i]);
+					Bundle target = context.installBundle(updateURL.toExternalForm(), updateURL.openStream());
 					// any new bundle should be refreshed as well
 					toRefresh.add(target);
 					if (start != null)
@@ -220,10 +224,16 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 	private String[] getBundlesToInstall(Bundle[] cachedBundles, URL[] newPlugins) {
 		// First, create a map of the cached bundles, for faster lookup
 		HashSet cachedBundlesSet = new HashSet(cachedBundles.length);
+		int offset = UpdateURLHandler.PROTOCOL.length()+1;
 		for (int i=0; i<cachedBundles.length; i++) {
 			if (cachedBundles[i].getBundleId() == 0)
 				continue; // skip the system bundle
 			String bundleLocation = cachedBundles[i].getLocation();
+			// If bundle was installed by us, remove the protocol.
+			// Else, we still need to consider it, so we don't try to re-install it
+			// when at the same location
+			if (bundleLocation.startsWith(UpdateURLHandler.PROTOCOL))
+				bundleLocation = bundleLocation.substring(offset);
 			// TODO fix this when the platform correctly resolves local file urls:
 			// test if the url starts with reference:file:/ and if not, insert the / after reference:file:
 			if (isWindows && 
@@ -265,10 +275,15 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 		}
 		
 		ArrayList bundlesToUninstall = new ArrayList();
+		int offset = UpdateURLHandler.PROTOCOL.length() + 1;
 		for (int i=0; i<cachedBundles.length; i++) {
 			if (cachedBundles[i].getBundleId() == 0)
 				continue; // skip the system bundle
 			String cachedBundleLocation = cachedBundles[i].getLocation();
+			// Only worry about bundles we installed
+			if (!cachedBundleLocation.startsWith(UpdateURLHandler.PROTOCOL))
+				continue;
+			cachedBundleLocation = cachedBundleLocation.substring(offset);
 			// TODO fix this when the platform correctly resolves local file urls
 			if (isWindows && 
 					!cachedBundleLocation.startsWith("reference:file:/") && 
@@ -454,5 +469,12 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 		if (logServiceReference == null)
 			return;
 		Utils.log  = (FrameworkLog) context.getService(logServiceReference);
+	}
+	
+	private void registerUpdateProtocol() {
+	    Hashtable properties = new Hashtable(1);
+	    properties.put(URLConstants.URL_HANDLER_PROTOCOL, new String[] {UpdateURLHandler.PROTOCOL});
+	    String serviceClass = URLStreamHandlerService.class.getName();
+	    context.registerService(serviceClass, new UpdateURLHandler(), properties);
 	}
 }
