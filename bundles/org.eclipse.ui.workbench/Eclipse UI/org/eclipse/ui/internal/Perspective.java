@@ -845,6 +845,8 @@ public IStatus restoreState() {
 		IMemento childMem = views[x];
 		String primaryId = childMem.getString(IWorkbenchConstants.TAG_ID);
 		String secondaryId = childMem.getString(IWorkbenchConstants.TAG_SECONDARY_ID);
+		
+		// skip the intro as it is restored higher up in workbench.
 		if (primaryId.equals(IIntroConstants.INTRO_VIEW_ID))
 			continue;
 
