@@ -76,7 +76,7 @@ public interface ICheatSheetViewer {
 	/**
 	 * Sets the cheat sheet viewer to show the cheat sheet with 
 	 * the given id. The cheat sheet content file is located via the
-	 * <code>org.eclipse.ui.cheatsheet.cheatSheetContent</code>
+	 * <code>org.eclipse.ui.cheatsheets.cheatSheetContent</code>
 	 * extension point. The viewer shows an error message if there
 	 * is no cheat sheet with the given id.
 	 * </p>

@@ -40,7 +40,7 @@ public final class OpenCheatSheetAction extends Action {
 	/**
 	 * Creates an action that opens the cheat sheet with the given id.
 	 * The cheat sheet content file is located via the
-	 * <code>org.eclipse.ui.cheatsheet.cheatSheetContent</code>
+	 * <code>org.eclipse.ui.cheatsheets.cheatSheetContent</code>
 	 * extension point.
 	 * 
 	 * @param id the cheat sheet id

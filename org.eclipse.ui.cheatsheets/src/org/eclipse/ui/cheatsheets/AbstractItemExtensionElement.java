@@ -16,7 +16,7 @@ import org.eclipse.swt.widgets.Composite;
  * Base class for adding controls to cheat sheet items.
  * <p>
  * Subclasses are used in conjunction with the
- * <code>org.eclipse.ui.cheatsheet.cheatSheetItemExtension</code> extension
+ * <code>org.eclipse.ui.cheatsheets.cheatSheetItemExtension</code> extension
  * point. Subclasses must be public and have a public 1-arg constructor 
  * that takes the name of the attribute type <code>String</code>. The
  * extension point specifies the name of the subclass and the name of the XML
