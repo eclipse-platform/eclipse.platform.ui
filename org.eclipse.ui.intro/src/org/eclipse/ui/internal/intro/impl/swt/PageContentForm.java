@@ -51,7 +51,7 @@ public class PageContentForm implements IIntroConstants {
         String pageId = model.getCurrentPageId();
 
         // categoriesComposite has Table Layout with one col. Holds page
-        // description and composite with all otehr children.
+        // description and composite with all other children.
         Composite contentComposite = contentPageBook.createPage(pageId);
         //Util.highlight(contentComposite, SWT.COLOR_GREEN);
         TableWrapLayout layout = new TableWrapLayout();
@@ -72,7 +72,7 @@ public class PageContentForm implements IIntroConstants {
         }
 
         // Store the sub-title data for this composite from this page's
-        // subtitle. Make sure you do this before creatnig the page content to
+        // subtitle. Make sure you do this before creating the page content to
         // filter out page sub-title from content area.
         contentComposite.setData(PAGE_SUBTITLE, styleManager.getPageSubTitle());
 
@@ -85,25 +85,23 @@ public class PageContentForm implements IIntroConstants {
 
     private void createPageChildren(AbstractIntroPage page, Composite parent) {
         // setup page composite/layout
-        Composite pageComposite = createPageTableComposite(page, parent);
+        PageWidgetFactory factory = new PageWidgetFactory(toolkit, styleManager);
+        Composite pageComposite = createPageTableComposite(factory, parent);
         // now add all children
         AbstractIntroElement[] children = page.getChildren();
-        FormsWidgetFactory factory = new FormsWidgetFactory(toolkit,
-                styleManager);
         for (int i = 0; i < children.length; i++)
             factory.createIntroElement(pageComposite, children[i]);
 
     }
 
     /**
-     * Creates a composite with TableWrapLayout to hold all page children. If
-     * number of columns is zero, the number of child groups is used.
+     * Creates a composite with TableWrapLayout to hold all page children. The
+     * default number of columns is 1.
      * 
-     * @param page
      * @param parent
      * @return
      */
-    private Composite createPageTableComposite(AbstractIntroPage page,
+    private Composite createPageTableComposite(PageWidgetFactory factory,
             Composite parent) {
         Composite client = toolkit.createComposite(parent);
         TableWrapLayout layout = new TableWrapLayout();

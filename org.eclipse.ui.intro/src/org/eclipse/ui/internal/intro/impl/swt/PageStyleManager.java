@@ -33,7 +33,7 @@ public class PageStyleManager extends SharedStyleManager {
         pageProperties = new Properties(sharedProperties);
         String altStyle = page.getAltStyle();
         if (altStyle != null)
-                load(pageProperties, altStyle);
+            load(pageProperties, altStyle);
 
         // AltStyles Hashtable has alt-styles as keys, the bundles as
         // values.
@@ -72,7 +72,7 @@ public class PageStyleManager extends SharedStyleManager {
             Properties aProperties = (Properties) inheritedPageProperties
                     .nextElement();
             if (aProperties.containsKey(key))
-                    return aProperties;
+                return aProperties;
         }
         // search the page and shared properties last.
         return pageProperties;
@@ -96,7 +96,7 @@ public class PageStyleManager extends SharedStyleManager {
      * @param key
      * @return
      */
-    public Bundle getAssociatedBundle(String key) {
+    protected Bundle getAssociatedBundle(String key) {
         Properties aProperties = findProperty(key);
         Bundle bundle = (Bundle) altStyleProperties.get(aProperties);
         if (bundle != null)
@@ -116,7 +116,8 @@ public class PageStyleManager extends SharedStyleManager {
     public int getNumberOfColumns(IntroGroup group) {
         StringBuffer buff = createPathKey(group);
         if (buff == null)
-                return 1;
+            // must return 0.
+            return 0;
         String key = buff.append(".layout.ncolumns").toString(); //$NON-NLS-1$
         return getIntProperty(key);
     }
@@ -124,11 +125,23 @@ public class PageStyleManager extends SharedStyleManager {
     public int getColSpan(AbstractBaseIntroElement element) {
         StringBuffer buff = createPathKey(element);
         if (buff == null)
-                return 1;
+            return 1;
         String key = buff.append(".layout.colspan").toString(); //$NON-NLS-1$
         int colspan = getIntProperty(key);
         if (colspan != 0)
             return colspan;
+        else
+            return 1;
+    }
+
+    public int getRowSpan(AbstractBaseIntroElement element) {
+        StringBuffer buff = createPathKey(element);
+        if (buff == null)
+            return 1;
+        String key = buff.append(".layout.rowspan").toString(); //$NON-NLS-1$
+        int rowspan = getIntProperty(key);
+        if (rowspan != 0)
+            return rowspan;
         else
             return 1;
     }
@@ -173,7 +186,7 @@ public class PageStyleManager extends SharedStyleManager {
     public String getDescription(IntroGroup group) {
         StringBuffer buff = createPathKey(group);
         if (buff == null)
-                return null;
+            return null;
         String key = buff.append(".description-id").toString(); //$NON-NLS-1$
         return doGetDescription(group, key);
     }
@@ -194,7 +207,7 @@ public class PageStyleManager extends SharedStyleManager {
      */
     public String getPageDescription() {
         if (page.getId() == null)
-                return null;
+            return null;
         String key = page.getId() + ".description-id"; //$NON-NLS-1$
         return doGetDescription(page, key);
     }
@@ -203,9 +216,9 @@ public class PageStyleManager extends SharedStyleManager {
         String path = getProperty(key);
         String description = null;
         if (path != null)
-                description = findTextFromPath(parent, path);
+            description = findTextFromPath(parent, path);
         if (description != null)
-                return description;
+            return description;
         return findTextFromStyleId(parent, getDescriptionStyleId());
     }
 
@@ -230,9 +243,9 @@ public class PageStyleManager extends SharedStyleManager {
         String path = getProperty(key);
         String description = null;
         if (path != null)
-                description = findTextFromPath(page, path);
+            description = findTextFromPath(page, path);
         if (description != null)
-                return description;
+            return description;
         return findTextFromStyleId(page, getPageSubTitleStyleId());
     }
 
@@ -261,8 +274,8 @@ public class PageStyleManager extends SharedStyleManager {
                 .getChildrenOfType(AbstractIntroElement.TEXT);
         for (int i = 0; i < allText.length; i++) {
             if (allText[i].getStyleId() == null)
-                    // not all elements have style id.
-                    continue;
+                // not all elements have style id.
+                continue;
             if (allText[i].getStyleId().equals(styleId)) {
                 makeFiltered(allText[i]);
                 return allText[i].getText();
@@ -279,7 +292,7 @@ public class PageStyleManager extends SharedStyleManager {
      */
     private AbstractIntroElement makeFiltered(AbstractIntroElement element) {
         if (element.isOfType(AbstractIntroElement.BASE_ELEMENT))
-                ((AbstractBaseIntroElement) element).setFilterState(true);
+            ((AbstractBaseIntroElement) element).setFilterState(true);
         return element;
     }
 
@@ -289,7 +302,7 @@ public class PageStyleManager extends SharedStyleManager {
         String key = page.getId() + ".show-link-description"; //$NON-NLS-1$
         String value = getProperty(key);
         if (value == null)
-                value = "true"; //$NON-NLS-1$
+            value = "true"; //$NON-NLS-1$
         return value.toLowerCase().equals("true"); //$NON-NLS-1$
     }
 

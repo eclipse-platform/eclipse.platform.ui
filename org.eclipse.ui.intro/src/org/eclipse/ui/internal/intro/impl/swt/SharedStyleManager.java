@@ -25,12 +25,6 @@ public class SharedStyleManager {
     protected AbstractIntroPage page;
     protected Bundle bundle;
 
-    /*
-     * StringBuffer to return when paths can not be created. Doing this for
-     * memory
-     */
-    protected static StringBuffer emptyBuffer = new StringBuffer(""); //$NON-NLS-1$
-
     SharedStyleManager() {
     }
 
@@ -100,7 +94,7 @@ public class SharedStyleManager {
      * @param key
      * @return
      */
-    public Bundle getAssociatedBundle(String key) {
+    protected Bundle getAssociatedBundle(String key) {
         return bundle;
     }
 
@@ -202,7 +196,7 @@ public class SharedStyleManager {
      * @param defaultKey
      * @return
      */
-    private Image getImage(String key, String defaultPageKey, String defaultKey) {
+    public Image getImage(String key, String defaultPageKey, String defaultKey) {
         String currentKey = key;
         String value = getProperty(currentKey);
         if (value == null && defaultPageKey != null) {

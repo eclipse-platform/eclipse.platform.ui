@@ -21,9 +21,9 @@ import org.eclipse.ui.internal.intro.impl.util.*;
 /**
  * Factory to create all UI forms widgets for the Forms intro presentation.
  */
-public class FormsWidgetFactory {
+public class PageWidgetFactory {
 
-    private HyperlinkAdapter hyperlinkAdapter = new HyperlinkAdapter() {
+    protected HyperlinkAdapter hyperlinkAdapter = new HyperlinkAdapter() {
 
         public void linkActivated(HyperlinkEvent e) {
             String url = (String) e.getHref();
@@ -49,34 +49,18 @@ public class FormsWidgetFactory {
     };
 
 
-
-    private FormToolkit toolkit;
-    private PageStyleManager styleManager;
+    protected FormToolkit toolkit;
+    protected PageStyleManager styleManager;
 
 
     /*
      * protect bad creation.
      */
-    protected FormsWidgetFactory(FormToolkit toolkit,
+    protected PageWidgetFactory(FormToolkit toolkit,
             PageStyleManager styleManager) {
         this.toolkit = toolkit;
         this.styleManager = styleManager;
     }
-
-    /**
-     * Check the filter state of the element. Only base elements have the filter
-     * attribute.
-     * 
-     * @param element
-     * @return
-     */
-    private boolean getFilterState(AbstractIntroElement element) {
-        if (element.isOfType(AbstractIntroElement.BASE_ELEMENT))
-            return ((AbstractBaseIntroElement) element).isFiltered();
-        else
-            return false;
-    }
-
 
 
     public void createIntroElement(Composite parent,
@@ -84,7 +68,7 @@ public class FormsWidgetFactory {
         // check if this element is filtered, and if yes, do not create it.
         boolean isFiltered = getFilterState(element);
         if (isFiltered)
-                return;
+            return;
 
         switch (element.getType()) {
         case AbstractIntroElement.GROUP:
@@ -94,8 +78,8 @@ public class FormsWidgetFactory {
             // c must be a composite.
             Composite newParent = (Composite) c;
             if (c instanceof Section)
-                    // client is a composite also.
-                    newParent = (Composite) ((Section) newParent).getClient();
+                // client is a composite also.
+                newParent = (Composite) ((Section) newParent).getClient();
             AbstractIntroElement[] children = group.getChildren();
             for (int i = 0; i < children.length; i++)
                 createIntroElement(newParent, children[i]);
@@ -113,19 +97,17 @@ public class FormsWidgetFactory {
         case AbstractIntroElement.IMAGE:
             String imageText = ((IntroImage) element).getAlt();
             if (imageText == null)
-                    break;
+                break;
             c = createText(parent, imageText);
             updateLayoutData(c, element);
             break;
         case AbstractIntroElement.HTML:
             IntroText htmlText = ((IntroHTML) element).getIntroText();
             if (htmlText == null)
-                    break;
+                break;
             c = createText(parent, htmlText);
             updateLayoutData(c, element);
             break;
-
-
         default:
             break;
         }
@@ -134,12 +116,14 @@ public class FormsWidgetFactory {
     private void updateLayoutData(Control c, AbstractIntroElement element) {
         TableWrapData currentTd = (TableWrapData) c.getLayoutData();
         if (currentTd != null)
-                return;
+            return;
         TableWrapData td = new TableWrapData(TableWrapData.FILL,
                 TableWrapData.FILL);
         td.grabHorizontal = true;
         td.colspan = styleManager
                 .getColSpan((AbstractBaseIntroElement) element);
+        td.rowspan = styleManager
+                .getRowSpan((AbstractBaseIntroElement) element);
         c.setLayoutData(td);
     }
 
@@ -155,9 +139,9 @@ public class FormsWidgetFactory {
             int style = description != null ? Section.DESCRIPTION : SWT.NULL;
             Section section = toolkit.createSection(parent, style);
             if (label != null)
-                    section.setText(label);
+                section.setText(label);
             if (description != null)
-                    section.setDescription(description);
+                section.setDescription(description);
             client = toolkit.createComposite(section, SWT.WRAP);
             section.setClient(client);
             control = section;
@@ -239,7 +223,7 @@ public class FormsWidgetFactory {
      * @param body
      * @param link
      */
-    private Control createText(Composite parent, IntroText text) {
+    protected Control createText(Composite parent, IntroText text) {
         if (text.isFormatted()) {
             FormText formText = toolkit.createFormText(parent, true);
             formText.addHyperlinkListener(hyperlinkAdapter);
@@ -263,6 +247,21 @@ public class FormsWidgetFactory {
         sbuf.append("</form>"); //$NON-NLS-1$
         return sbuf.toString();
     }
+
+    /**
+     * Check the filter state of the element. Only base elements have the filter
+     * attribute.
+     * 
+     * @param element
+     * @return
+     */
+    private boolean getFilterState(AbstractIntroElement element) {
+        if (element.isOfType(AbstractIntroElement.BASE_ELEMENT))
+            return ((AbstractBaseIntroElement) element).isFiltered();
+        else
+            return false;
+    }
+
 
 }
 

@@ -83,17 +83,15 @@ public class FormIntroPartImplementation extends
         Color fg = sharedStyleManager.getColor(toolkit, "title.fg"); //$NON-NLS-1$
         if (fg != null)
             mainForm.setForeground(fg);
-        // Image bgImage = sharedStyleManager.getImage("title.image", null,
-        // null); //$NON-NLS-1$
-        // if (bgImage != null) {
-        //    mainForm.setBackgroundImage(bgImage);
-        //    String repeat = sharedStyleManager
-        //            .getProperty("title.image.repeat"); //$NON-NLS-1$
-        //    if (repeat != null && repeat.toLowerCase().equals("true"))
-        // //$NON-NLS-1$
-        //           mainForm.setBackgroundImageTiled(true);
-        //}
+        Image bgImage = sharedStyleManager.getImage("title.image", null, null); //$NON-NLS-1$
+        if (bgImage != null) {
+            mainForm.setBackgroundImage(bgImage);
+            String repeat = sharedStyleManager
+                    .getProperty("title.image.repeat"); //$NON-NLS-1$
+            if (repeat != null && repeat.toLowerCase().equals("true"))
 
+                mainForm.setBackgroundImageTiled(true);
+        }
 
         mainPageBook = createMainPageBook(toolkit, mainForm);
         // Add this presentation as a listener to model.

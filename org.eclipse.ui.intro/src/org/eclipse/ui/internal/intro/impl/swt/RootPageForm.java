@@ -30,6 +30,7 @@ public class RootPageForm implements IIntroConstants {
     private IntroHomePage rootPage;
     private Form parentForm;
     private Label descriptionLabel;
+    private PageStyleManager rootPageStyleManager;
 
     class PageComposite extends Composite {
 
@@ -45,7 +46,7 @@ public class RootPageForm implements IIntroConstants {
         }
     }
 
-    class RootPageLayout extends Layout implements ILayoutExtension {
+    class RootPageLayout extends Layout {
 
         // gap between link composite and description label.
         private int VERTICAL_SPACING = 20;
@@ -78,36 +79,16 @@ public class RootPageForm implements IIntroConstants {
         protected void layout(Composite composite, boolean flushCache) {
             Control[] children = composite.getChildren();
             Rectangle carea = composite.getClientArea();
-            Control links = children[0];
+            Control content = children[0];
             Control label = children[1];
-            Point linksSize = links.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+            Point contentSize = content.computeSize(SWT.DEFAULT, SWT.DEFAULT);
             Point labelSize = label.computeSize(carea.width - 2
                     - LABEL_MARGIN_WIDTH * 2, SWT.DEFAULT);
-            links.setBounds(carea.width / 2 - linksSize.x / 2, carea.height / 2
-                    - linksSize.y / 2, linksSize.x, linksSize.y);
-            label.setBounds(LABEL_MARGIN_WIDTH, links.getLocation().y
-                    + linksSize.y + VERTICAL_SPACING, carea.width
-                    - LABEL_MARGIN_WIDTH - LABEL_MARGIN_WIDTH, labelSize.y);
-        }
-
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.eclipse.ui.forms.widgets.ILayoutExtension#computeMaximumWidth(org.eclipse.swt.widgets.Composite,
-         *      boolean)
-         */
-        public int computeMaximumWidth(Composite parent, boolean changed) {
-            return computeSize(parent, SWT.DEFAULT, SWT.DEFAULT, changed).x;
-        }
-
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.eclipse.ui.forms.widgets.ILayoutExtension#computeMinimumWidth(org.eclipse.swt.widgets.Composite,
-         *      boolean)
-         */
-        public int computeMinimumWidth(Composite parent, boolean changed) {
-            return computeSize(parent, 0, SWT.DEFAULT, changed).x;
+            content.setBounds(carea.width / 2 - contentSize.x / 2, carea.height
+                    / 2 - contentSize.y / 2, contentSize.x, contentSize.y);
+            label.setBounds(LABEL_MARGIN_WIDTH, content.getLocation().y
+                    + contentSize.y + VERTICAL_SPACING, carea.width
+                    - LABEL_MARGIN_WIDTH * 2, labelSize.y);
         }
     }
 
@@ -166,73 +147,89 @@ public class RootPageForm implements IIntroConstants {
     public void createPartControl(ScrolledPageBook mainPageBook,
             SharedStyleManager shardStyleManager) {
         // first, create the root page style manager from shared style manager.
-        PageStyleManager rootPageStyleManager = new PageStyleManager(rootPage,
-                shardStyleManager.getProperties());
+        rootPageStyleManager = new PageStyleManager(rootPage, shardStyleManager
+                .getProperties());
 
         // Set title of Main form from root page title.
         parentForm.setText(rootPage.getTitle());
 
         // Composite for full root page. It has custom layout, and two
-        // children: the links composite and the description label.
-        Composite pageComposite = new PageComposite(
-                mainPageBook.getContainer(), SWT.NULL);
-        toolkit.adapt(pageComposite);
-        mainPageBook.registerPage(rootPage.getId(), pageComposite);
-        pageComposite.setLayout(new RootPageLayout());
+        // children: the content composite and the description label.
+        Composite rootPageComposite = new PageComposite(mainPageBook
+                .getContainer(), SWT.NULL);
+        toolkit.adapt(rootPageComposite);
+
+        mainPageBook.registerPage(rootPage.getId(), rootPageComposite);
+        rootPageComposite.setLayout(new RootPageLayout());
         // Util.highlight(pageComposite, SWT.COLOR_DARK_CYAN);
 
-        // create the links composite in the center of the root page.
-        createRootPageLinks(rootPageStyleManager, pageComposite);
+        // create the contents composite in the center of the root page.
+        createRootPageContent(rootPageComposite);
 
         // create description label for links description.
-        descriptionLabel = createHoverLabel(rootPageStyleManager, pageComposite);
+        descriptionLabel = createHoverLabel(rootPageComposite);
 
         // Clear memory. No need for style manager any more.
         rootPageStyleManager = null;
     }
 
     /**
-     * Creates links in the root page assuming that root page only has links. If
-     * not use for non-empty div links.
+     * Creates content of the root page.
      */
-    private void createRootPageLinks(PageStyleManager rootPageStyleManager,
-            Composite pageComposite) {
-
-        Composite linkComposite = toolkit.createComposite(pageComposite);
-
-        // DONOW: If the root page does not have only links, take the links of
-        // the first non-filtered div for now.
-        int numberOfLinks = rootPage.getLinks().length;
-        if (numberOfLinks > 0) {
-            // assume root page only has links, for now. populate the link
-            // composite. Number of columns there is equal to the number of
-            // links.
-            doCreateRootPageLinks(rootPageStyleManager, linkComposite, rootPage
-                    .getLinks());
-            return;
+    private void createRootPageContent(Composite rootPageComposite) {
+        // setup page composite/layout
+        Composite contentComposite = toolkit.createComposite(rootPageComposite);
+        GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_CENTER);
+        contentComposite.setLayoutData(gd);
+        AbstractIntroElement[] children = (AbstractIntroElement[]) rootPage
+                .getChildrenOfType(AbstractIntroElement.GROUP
+                        | AbstractIntroElement.LINK);
+        int numChildren = children.length;
+        GridLayout layout = new GridLayout();
+        // separate links a bit more.
+        layout.horizontalSpacing = 20;
+        layout.verticalSpacing = 20;
+        // set number of columns.
+        int numColumns = rootPageStyleManager.getPageNumberOfColumns();
+        numColumns = numColumns < 1 ? numChildren : numColumns;
+        layout.numColumns = numColumns;
+        contentComposite.setLayout(layout);
+        for (int i = 0; i < children.length; i++) {
+            if (children[i].getType() == AbstractIntroElement.GROUP)
+                createGroupContent(contentComposite, (IntroGroup) children[i]);
+            else if (children[i].getType() == AbstractIntroElement.LINK)
+                createImageHyperlink(contentComposite, (IntroLink) children[i]);
         }
     }
 
     /**
-     * Creates the given links in the root page with the root page style.
+     * Creates content of the root page.
      */
-    private void doCreateRootPageLinks(PageStyleManager rootPageStyleManager,
-            Composite linkComposite, IntroLink[] links) {
-
-        int numberOfLinks = links.length;
+    private void createGroupContent(Composite parent, IntroGroup group) {
+        // setup page composite/layout
+        Composite contentComposite = toolkit.createComposite(parent);
+        GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_CENTER);
+        gd.horizontalSpan = rootPageStyleManager.getColSpan(group);
+        gd.verticalSpan = rootPageStyleManager.getRowSpan(group);
+        contentComposite.setLayoutData(gd);
+        AbstractIntroElement[] children = (AbstractIntroElement[]) group
+                .getChildrenOfType(AbstractIntroElement.GROUP
+                        | AbstractIntroElement.LINK);
+        int numChildren = children.length;
         GridLayout layout = new GridLayout();
         // separate links a bit more.
         layout.horizontalSpacing = 20;
-        layout.numColumns = numberOfLinks;
-        linkComposite.setLayout(layout);
-        // Util.highlight(linkComposite, SWT.COLOR_CYAN);
-        // add image hyperlinks for all links.
-        for (int i = 0; i < numberOfLinks; i++)
-            createImageHyperlink(linkComposite, links[i], rootPageStyleManager);
-        // add labels for all links, after adding all links.
-        for (int i = 0; i < numberOfLinks; i++)
-            createLinkLabel(linkComposite, links[i]);
-
+        // set number of columns.
+        int numColumns = rootPageStyleManager.getNumberOfColumns(group);
+        numColumns = numColumns < 1 ? numChildren : numColumns;
+        layout.numColumns = numColumns;
+        contentComposite.setLayout(layout);
+        for (int i = 0; i < children.length; i++) {
+            if (children[i].getType() == AbstractIntroElement.GROUP)
+                createGroupContent(contentComposite, (IntroGroup) children[i]);
+            else if (children[i].getType() == AbstractIntroElement.LINK)
+                createImageHyperlink(contentComposite, (IntroLink) children[i]);
+        }
     }
 
     /**
@@ -242,24 +239,36 @@ public class RootPageForm implements IIntroConstants {
      * @param body
      * @param link
      */
-    private void createImageHyperlink(Composite body, IntroLink link,
-            PageStyleManager styleManager) {
-        ImageHyperlink imageLink = toolkit.createImageHyperlink(body, SWT.NULL);
-        imageLink.setImage(styleManager.getImage(link, "link-icon", //$NON-NLS-1$
-                ImageUtil.DEFAULT_ROOT_LINK));
-        imageLink
-                .setHoverImage(styleManager.getImage(link, "hover-icon", null)); //$NON-NLS-1$
-        // each link is centered in cell.
+    private void createImageHyperlink(Composite parent, IntroLink link) {
+        // create the container composite that will hold the imageHyperLink and
+        // the label for the description.
+        Composite container = toolkit.createComposite(parent);
+        // Util.highlight(container, SWT.COLOR_CYAN);
         GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_CENTER);
+        gd.horizontalSpan = rootPageStyleManager.getColSpan(link);
+        gd.verticalSpan = rootPageStyleManager.getRowSpan(link);
+        container.setLayoutData(gd);
+
+        GridLayout layout = new GridLayout();
+        layout.marginWidth = 0;
+        layout.marginHeight = 0;
+        container.setLayout(layout);
+        ImageHyperlink imageLink = toolkit.createImageHyperlink(container,
+                SWT.NULL);
+        imageLink.setImage(rootPageStyleManager.getImage(link, "link-icon", //$NON-NLS-1$
+                ImageUtil.DEFAULT_ROOT_LINK));
+        imageLink.setHoverImage(rootPageStyleManager.getImage(link,
+                "hover-icon", null)); //$NON-NLS-1$
+        // each link is centered in cell.
+        gd = new GridData(GridData.HORIZONTAL_ALIGN_CENTER);
         imageLink.setLayoutData(gd);
         // cache the intro link model object for description and URL.
         imageLink.setData(INTRO_LINK, link);
         imageLink.addHyperlinkListener(hyperlinkAdapter);
-    }
 
-    private void createLinkLabel(Composite body, IntroLink link) {
-        Label linkLabel = toolkit.createLabel(body, link.getLabel());
-        GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_CENTER);
+        // description label.
+        Label linkLabel = toolkit.createLabel(container, link.getLabel());
+        gd = new GridData(GridData.HORIZONTAL_ALIGN_CENTER);
         linkLabel.setFont(DEFAULT_FONT);
         linkLabel.setLayoutData(gd);
     }
@@ -270,9 +279,9 @@ public class RootPageForm implements IIntroConstants {
      * 
      * @param body
      */
-    private Label createHoverLabel(PageStyleManager styleManager, Composite body) {
+    private Label createHoverLabel(Composite body) {
         Label label = toolkit.createLabel(body, "", SWT.WRAP); //$NON-NLS-1$
-        Color fg = styleManager.getColor(toolkit, "hover-text.fg"); //$NON-NLS-1$
+        Color fg = rootPageStyleManager.getColor(toolkit, "hover-text.fg"); //$NON-NLS-1$
         if (fg == null)
             fg = toolkit.getColors().getColor(FormColors.TITLE);
         label.setForeground(fg);

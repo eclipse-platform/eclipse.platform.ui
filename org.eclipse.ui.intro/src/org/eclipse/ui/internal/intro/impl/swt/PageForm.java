@@ -102,9 +102,9 @@ public class PageForm implements IIntroConstants, IPropertyListener {
         pageForm = toolkit.createForm(mainPageBook.getContainer());
         mainPageBook.registerPage(PAGE_FORM_ID, pageForm);
         GridLayout layout = new GridLayout();
-        pageForm.getBody().setLayout(layout);
         layout.marginWidth = 0;
         layout.marginHeight = 0;
+        pageForm.getBody().setLayout(layout);
         //Util.highlight(pageForm.getBody(), SWT.COLOR_RED);
 
         // Get form body. Form body is one column grid layout. Add page book
@@ -181,12 +181,6 @@ public class PageForm implements IIntroConstants, IPropertyListener {
      */
     public void propertyChanged(Object source, int propId) {
         if (propId == IntroModelRoot.CURRENT_PAGE_PROPERTY_ID) {
-            // make sure to avoid flicker.
-            //parentForm.setRedraw(false);
-            //pageForm.setRedraw(false);
-            //categoryPageBook.getContainer().setRedraw(false);
-
-
             // update page book with correct PageContentForm composite.
             String pageId = model.getCurrentPageId();
             if (!categoryPageBook.hasPage(pageId)) {
@@ -204,11 +198,6 @@ public class PageForm implements IIntroConstants, IPropertyListener {
             parentForm.setText(model.getCurrentPage().getTitle());
             // update this page form's title, ie: Page subtitle, if it exists.
             pageForm.setText((String) page.getData(PAGE_SUBTITLE));
-
-
-            //categoryPageBook.getContainer().setRedraw(true);
-            //pageForm.setRedraw(true);
-            //parentForm.setRedraw(true);
 
             //TODO need to transfer focus to the first link in
             // the page somehow; we may need IIntroPage interface with
