@@ -123,13 +123,14 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
             }
         }
 
-        if (styleValues != null) {
-            altStyle = styleValues[0];
+        String[] altStyleValues = getAttributeList(element, ATT_ALT_STYLE);
+        if (altStyleValues != null) {
+            altStyle = altStyleValues[0];
             altStyle = BundleUtil.getResolvedResourceLocation(altStyle, bundle);
             for (int i = 1; i < styleValues.length; i++) {
-                String style = styleValues[i];
+                String style = altStyleValues[i];
                 style = BundleUtil.getResolvedResourceLocation(style, bundle);
-                addStyle(style);
+                addAltStyle(style, bundle);
             }
         }
     }
