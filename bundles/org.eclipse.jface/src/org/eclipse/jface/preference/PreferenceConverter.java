@@ -388,9 +388,12 @@ public class PreferenceConverter {
 
 	/**
 	 * Sets the current value of the preference with the given name
-	 * in the given preference store. Included for backwards compatibility -
-	 * use <code>setValue(IPreferenceStore,String,FontData[])</code> instead.
-	 *
+	 * in the given preference store. 
+	 * <p>
+	 * Included for backwards compatibility.  This method is equivalent to
+	 * </code>setValue(store, name, new FontData[]{value})</code>.
+	 * </p>
+	 * 
 	 * @param store the preference store
 	 * @param name the name of the preference
 	 * @param value the new current value of the preference
@@ -399,21 +402,20 @@ public class PreferenceConverter {
 		IPreferenceStore store,
 		String name,
 		FontData value) {
-		FontData[] data = new FontData[1];
-		data[0] = value;
-		setValue(store, name, data);
+		setValue(store, name, new FontData[]{value});
 	}
 
 	/**
 	 * Sets the current value of the preference with the given name
 	 * in the given preference store. This method also sets the corresponding
-	 * key in the JFace FontRegistry to the value and fires a 
-	 * propertyChangeEvent.
-	 * @see putValue(IPreferenceStore, String, FontData[])
+	 * key in the JFace font registry to the value and fires a 
+	 * property change event to listeners on the preference store.
 	 *
 	 * @param store the preference store
 	 * @param name the name of the preference
 	 * @param value the new current value of the preference
+	 * 
+	 * @see #putValue(IPreferenceStore, String, FontData[])
 	 */
 	public static void setValue(
 		IPreferenceStore store,
@@ -431,12 +433,13 @@ public class PreferenceConverter {
 	/**
 	 * Sets the current value of the preference with the given name
 	 * in the given preference store. This method does not update
-	 * the font registry or inform of the change.
+	 * the font registry or fire a property change event.
 	 * 
 	 * @param store the preference store
 	 * @param name the name of the preference
 	 * @param value the new current value of the preference
-	 * @see setValue(IPreferenceStore, String, FontData[])
+	 * 
+	 * @see #setValue(IPreferenceStore, String, FontData[])
 	 */
 	public static void putValue(
 		IPreferenceStore store,
