@@ -109,7 +109,7 @@ class SearchManager implements IResourceChangeListener {
 		SearchPlugin.getWorkspace().removeResourceChangeListener(this);
 		WorkspaceModifyOperation op= new WorkspaceModifyOperation() {
 			protected void execute(IProgressMonitor monitor) throws CoreException {
-				monitor.beginTask(SearchPlugin.getResourceString("SearchManager.removingMarkers"), 100);
+				monitor.beginTask(SearchPlugin.getResourceString("SearchManager.updating"), 100);
 				SearchPlugin.getWorkspace().getRoot().deleteMarkers(SearchUI.SEARCH_MARKER, true, IResource.DEPTH_INFINITE);
 				monitor.worked(100);
 				monitor.done();
@@ -178,8 +178,7 @@ class SearchManager implements IResourceChangeListener {
 			fCurrentSearch.backupMarkers();
 				
 		fCurrentSearch= search;
-		monitor.beginTask("", getCurrentResults().size() + 20);
-		monitor.subTask(SearchPlugin.getResourceString("SearchManager.removingMarkers"));
+		monitor.beginTask(SearchPlugin.getResourceString("SearchManager.updating"), getCurrentResults().size() + 20);
 		
 		// remove current search markers
 		try {
@@ -188,7 +187,7 @@ class SearchManager implements IResourceChangeListener {
 			ExceptionHandler.handle(ex, SearchPlugin.getResourceBundle(), "Search.Error.deleteMarkers.");
 		}
 		monitor.worked(10);
-		monitor.subTask(SearchPlugin.getResourceString("SearchManager.addingMarkers"));
+
 		// add search markers
 		Iterator iter= getCurrentResults().iterator();
 		ArrayList emptyEntries= new ArrayList(10);
@@ -250,7 +249,6 @@ class SearchManager implements IResourceChangeListener {
 		}
 			
 		// update viewers
-		monitor.subTask(SearchPlugin.getResourceString("SearchManager.updatingSearchViewers"));
 		iter= fListeners.iterator();
 		if (display != null && !display.isDisposed()) {
 			while (iter.hasNext()) {
