@@ -102,7 +102,7 @@ class ProjectionRulerColumn extends AnnotationRulerColumn {
 					if (p == null)
 						continue;
 					
-					int distance= getDistance(p, document, line);
+					int distance= getDistance(annotation, p, document, line);
 					if (distance == -1)
 						continue;
 					
@@ -125,18 +125,25 @@ class ProjectionRulerColumn extends AnnotationRulerColumn {
 	 * Returns the distance of the given line to the the start line of the given position in the given document. The distance is  
 	 * <code>-1</code> when the line is not included in the given position.
 	 * 
+	 * @param annotation the annotation
 	 * @param position the position
 	 * @param document the document
 	 * @param line the line
 	 * @return <code>-1</code> if line is not contained, a position number otherwise
 	 */
-	private int getDistance(Position position, IDocument document, int line) {
+	private int getDistance(ProjectionAnnotation annotation, Position position, IDocument document, int line) {
 		if (position.getOffset() > -1 && position.getLength() > -1) {
 			try {
 				int startLine= document.getLineOfOffset(position.getOffset());
 				int endLine= document.getLineOfOffset(position.getOffset() + position.getLength());
-				if (startLine <= line && line < endLine)
+				if (startLine <= line && line < endLine) {
+					if (annotation.isCollapsed()) {
+						int captionLine= document.getLineOfOffset(position.getOffset() + annotation.getCaptionOffset());
+						if (startLine <= captionLine && captionLine < endLine)
+							return Math.abs(line - captionLine);
+					}
 					return line - startLine;
+				}
 			} catch (BadLocationException x) {
 			}
 		}

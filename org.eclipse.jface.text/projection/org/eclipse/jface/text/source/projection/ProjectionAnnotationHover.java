@@ -57,18 +57,15 @@ class ProjectionAnnotationHover implements IAnnotationHover, IAnnotationHoverExt
 		return null;
 	}
 
-	private int compareRulerLine(Position position, IDocument document, int line) {
+	private boolean isCaptionLine(ProjectionAnnotation annotation, Position position, IDocument document, int line) {
 		if (position.getOffset() > -1 && position.getLength() > -1) {
 			try {
-				int startLine= document.getLineOfOffset(position.getOffset());
-				if (line == startLine)
-					return 1;
-				if (startLine <= line && line <= document.getLineOfOffset(position.getOffset() + position.getLength()))
-					return 2;
+				int startLine= document.getLineOfOffset(position.getOffset() + annotation.getCaptionOffset());
+				return line == startLine;
 			} catch (BadLocationException x) {
 			}
 		}
-		return 0;
+		return false;
 	}
 	
 	private String getProjectionTextAtLine(ISourceViewer viewer, int line, int numberOfLines) {
@@ -96,7 +93,7 @@ class ProjectionAnnotationHover implements IAnnotationHover, IAnnotationHoverExt
 					if (position == null)
 						continue;
 					
-					if (1 == compareRulerLine(position, document, line))
+					if (isCaptionLine(annotation, position, document, line))
 						return getText(document, position.getOffset(), position.getLength(), numberOfLines);
 						
 				}

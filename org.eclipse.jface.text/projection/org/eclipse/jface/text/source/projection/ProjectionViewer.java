@@ -773,7 +773,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	 *            issued, <code>false</code> otherwise
 	 * @throws BadLocationException in case the range is invalid
 	 */
-	private void expand(Position expanded, Position[] collapsed, boolean fireRedraw) throws BadLocationException {
+	private void expand(Position expanded, ProjectionAnnotation[] collapsed, boolean fireRedraw) throws BadLocationException {
 		IDocument slave= getVisibleDocument();
 		if (slave instanceof ProjectionDocument) {
 			ProjectionDocument projection= (ProjectionDocument) slave;
@@ -784,8 +784,10 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			// collapse contained regions
 			if (collapsed != null) {
 				for (int i= 0; i < collapsed.length; i++) {
-					IRegion p= computeCollapsedRegion(collapsed[i]);
-					removeMasterDocumentRange(projection, p.getOffset(), p.getLength());
+					IRegion[] regions= computeCollapsedRegions(fProjectionAnnotationModel.getPosition(collapsed[i]), collapsed[i].getCaptionOffset());
+					if (regions != null)
+						for (int j= 0; j < regions.length; j++)
+							removeMasterDocumentRange(projection, regions[j].getOffset(), regions[j].getLength());
 				}
 			}
 		}
@@ -900,6 +902,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 				fCommandQueue= new ProjectionCommandQueue();
 				
 				int topIndex= getTopIndex();
+				Point selection= getSelectedRange();
 								
 				processDeletions(event, removedAnnotations, true);
 				List coverage= new ArrayList();
@@ -926,7 +929,6 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 									
 				} else {
 					
-					Point selection= getSelectedRange();
 					StyledText textWidget= getTextWidget();
 					
 					try {
@@ -944,8 +946,21 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 						
 					} finally {
 						
-						if (selection.x != -1 && selection.y != -1)
-							setSelectedRange(selection.x, selection.y);
+						if (selection.x != -1 && selection.y != -1) {
+							IRegion widgetRange= modelRange2WidgetRange(new Region(selection.x, selection.y));
+							if (widgetRange != null) {
+								setSelectedRange(selection.x, selection.y);
+							} else if (fInformationMapping != null) {
+								// selection got hidden by the folding operation
+								int line= getDocument().getLineOfOffset(selection.x);
+								int imageLine= fInformationMapping.toClosestImageLine(line);
+								int visibleModelLine= fInformationMapping.toOriginLine(imageLine);
+								if (visibleModelLine < line && getVisibleDocument().getNumberOfLines() > imageLine + 1)
+									visibleModelLine= fInformationMapping.toOriginLine(imageLine + 1);
+								int lineOffset= getDocument().getLineOffset(visibleModelLine);
+								setSelectedRange(lineOffset, 0);
+							}
+						}
 						
 						if (textWidget != null && !textWidget.isDisposed()) {
 							if (topIndex != -1)
@@ -997,8 +1012,8 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		return false;
 	}
 	
-	private Position[] computeCollapsedRanges(Position expanded) {
-		List positions= new ArrayList(5);
+	private ProjectionAnnotation[] computeCollapsedNestedAnnotations(Position expanded) {
+		List annotations= new ArrayList(5);
 		Iterator e= fProjectionAnnotationModel.getAnnotationIterator();
 		while (e.hasNext()) {
 			ProjectionAnnotation annotation= (ProjectionAnnotation) e.next();
@@ -1009,13 +1024,13 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 					continue;
 				}
 				if (covers(expanded, position))
-					positions.add(position);
+					annotations.add(annotation);
 			}
 		}
 		
-		if (positions.size() > 0) {
-			Position[] result= new Position[positions.size()];
-			positions.toArray(result);
+		if (annotations.size() > 0) {
+			ProjectionAnnotation[] result= new ProjectionAnnotation[annotations.size()];
+			annotations.toArray(result);
 			return result;
 		}
 		
@@ -1038,7 +1053,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			ProjectionAnnotation annotation= (ProjectionAnnotation) removedAnnotations[i];
 			if (annotation.isCollapsed()) {
 				Position expanded= event.getPositionOfRemovedAnnotation(annotation);
-				Position[] collapsed= computeCollapsedRanges(expanded);
+				ProjectionAnnotation[] collapsed= computeCollapsedNestedAnnotations(expanded);
 				expand(expanded, collapsed, false);
 				if (fireRedraw)
 					internalInvalidateTextPresentation(expanded.getOffset(), expanded.getLength());
@@ -1069,6 +1084,60 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	}
 	
 	/**
+	 * Computes the regions that must be collapsed when the given position is
+	 * the position of an expanded projection annotation.
+	 * 
+	 * @param position the position
+	 * @param captionOffset the relative offset of the caption within the
+	 *        position
+	 * @return the ranges that must be collapsed, or <code>null</code> if
+	 *         there are none
+	 * @since 3.1
+	 */	
+	IRegion[] computeCollapsedRegions(Position position, int captionOffset) {
+		try {
+			IDocument document= getDocument();
+			
+			int positionOffset= position.getOffset();
+			int positionEnd= positionOffset + position.getLength();
+			
+			int firstLine= document.getLineOfOffset(positionOffset);
+			int captionLine= document.getLineOfOffset(positionOffset + captionOffset);
+			int lastLine= document.getLineOfOffset(positionEnd);
+			
+			Assert.isTrue(firstLine <= captionLine, "first folded line is greater than the caption line"); //$NON-NLS-1$
+			Assert.isTrue(captionLine <= lastLine, "caption line is greater than the last folded line"); //$NON-NLS-1$
+			
+			IRegion preRegion;
+			if (firstLine < captionLine) {
+				int preOffset= document.getLineOffset(firstLine);
+				IRegion preEndLineInfo= document.getLineInformation(captionLine);
+				int preEnd= preEndLineInfo.getOffset();
+				preRegion= new Region(preOffset, preEnd - preOffset);
+			} else {
+				preRegion= null;
+			}
+			
+			if (captionLine < lastLine) {
+				int postOffset= document.getLineOffset(captionLine + 1);
+				IRegion postRegion= new Region(postOffset, positionEnd - postOffset);
+				
+				if (preRegion == null)
+					return new IRegion[] {postRegion};
+				
+				return new IRegion[] {preRegion, postRegion};
+			}
+			
+			if (preRegion != null)
+				return new IRegion[] {preRegion};
+			
+			return null;
+		} catch (BadLocationException x) {
+			return null;
+		}
+	}
+	
+	/**
 	 * Computes the collapsed region anchor for the given position. Assuming
 	 * that the position is the position of an expanded projection annotation,
 	 * the anchor is the region that is still visible after the projection
@@ -1087,6 +1156,27 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		return null;
 	}
 	
+	/**
+	 * Computes the collapsed region anchor for the given position. Assuming
+	 * that the position is the position of an expanded projection annotation,
+	 * the anchor is the region that is still visible after the projection
+	 * annotation has been collapsed.
+	 * 
+	 * @param position the position
+	 * @param captionOffset the relative offset of the caption within the
+	 *        position
+	 * @return the collapsed region anchor
+	 */
+	Position computeCollapsedRegionAnchor(Position position, int captionOffset) {
+		try {
+			IDocument document= getDocument();
+			IRegion lineInfo= document.getLineInformationOfOffset(position.getOffset() + captionOffset);
+			return new Position(lineInfo.getOffset() + lineInfo.getLength(), 0);
+		} catch (BadLocationException x) {
+		}		
+		return null;
+	}
+	
 	private void processChanges(Annotation[] annotations, boolean fireRedraw, List coverage) throws BadLocationException {
 		for (int i= 0; i < annotations.length; i++) {
 			ProjectionAnnotation annotation= (ProjectionAnnotation) annotations[i];
@@ -1098,13 +1188,14 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			if (annotation.isCollapsed()) {
 				if (!covers(coverage, position)) {
 					coverage.add(position);
-					IRegion region= computeCollapsedRegion(position);
-					if (region != null)
-						collapse(region.getOffset(), region.getLength(), fireRedraw);
+					IRegion[] regions= computeCollapsedRegions(position, annotation.getCaptionOffset());
+					if (regions != null)
+						for (int j= 0; j < regions.length; j++)
+							collapse(regions[j].getOffset(), regions[j].getLength(), fireRedraw);
 				}
 			} else {
 				if (!covers(coverage, position)) {
-					Position[] collapsed= computeCollapsedRanges(position);
+					ProjectionAnnotation[] collapsed= computeCollapsedNestedAnnotations(position);
 					expand(position, collapsed, false);
 					if (fireRedraw)
 						internalInvalidateTextPresentation(position.getOffset(), position.getLength());
@@ -1152,9 +1243,10 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 				if (annotation.isCollapsed()) {
 					Position position= fProjectionAnnotationModel.getPosition(annotation);
 					if (position != null) {
-						IRegion region= computeCollapsedRegion(position);
-						if (region != null)
-							removeMasterDocumentRange(projection, region.getOffset(), region.getLength());
+						IRegion[] regions= computeCollapsedRegions(position, annotation.getCaptionOffset());
+						if (regions != null)
+							for (int i= 0; i < regions.length; i++)
+								removeMasterDocumentRange(projection, regions[i].getOffset(), regions[i].getLength());
 					}
 				}
 			}

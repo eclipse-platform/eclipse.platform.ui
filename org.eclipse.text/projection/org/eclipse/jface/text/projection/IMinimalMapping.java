@@ -17,8 +17,8 @@ import org.eclipse.jface.text.IRegion;
 
 /**
  * Internal interface for defining the exact subset of
- * {@link org.eclipse.jface.text.projection.ProjectionMapping}that the
- * {@link org.eclipse.jface.text.projection.ProjectionTextStore}is allowed to
+ * {@link org.eclipse.jface.text.projection.ProjectionMapping} that the
+ * {@link org.eclipse.jface.text.projection.ProjectionTextStore} is allowed to
  * access.
  * 
  * @since 3.0
@@ -43,7 +43,7 @@ interface IMinimalMapping {
 	/*
 	 * @see org.eclipse.jface.text.IDocumentInformationMappingExtension#toExactOriginRegions(IRegion)
 	 */
-	IRegion[] toExactOriginRegions(IRegion region)throws BadLocationException;
+	IRegion[] toExactOriginRegions(IRegion region) throws BadLocationException;
 	
 	/*
 	 * @see org.eclipse.jface.text.IDocumentInformationMappingExtension#getImageLength()

@@ -227,7 +227,7 @@ class ProjectionSummary {
 				if (position != null) {
 					IRegion summaryRegion= fProjectionViewer.computeCollapsedRegion(position);
 					if (summaryRegion != null) {
-						Position summaryAnchor= fProjectionViewer.computeCollapsedRegionAnchor(position);
+						Position summaryAnchor= fProjectionViewer.computeCollapsedRegionAnchor(position, projection.getCaptionOffset());
 						if (summaryAnchor != null)
 							createSummary(additions, summaryRegion, summaryAnchor);
 					}
