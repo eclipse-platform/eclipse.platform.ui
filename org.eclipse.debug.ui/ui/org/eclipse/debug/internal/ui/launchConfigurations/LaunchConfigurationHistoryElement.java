@@ -5,9 +5,13 @@ package org.eclipse.debug.internal.ui.launchConfigurations;
  * All Rights Reserved.
  */
  
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILauncher;
+import org.eclipse.debug.ui.IDebugUIConstants;
 
 /********************************************************************************
  * 								IMPORTANT
@@ -60,11 +64,6 @@ public class LaunchConfigurationHistoryElement {
 	 * The label for the launch
 	 */
 	private String fLabel;
-	
-	/**
-	 * Whether this history element representa a 'favorite'
-	 */
-	private boolean fFavorite = false;
 
 	public LaunchConfigurationHistoryElement(ILaunchConfiguration launchConfiguration, 
 											  String mode,
@@ -151,18 +150,18 @@ public class LaunchConfigurationHistoryElement {
 	 * a favorite launch configuration
 	 */
 	public boolean isFavorite() {
-		return fFavorite;
-	}
-	
-	/**
-	 * Sets whether this history element represents
-	 * a favorite launch configuration.
-	 * 
-	 * @param favorite whether this history element represents
-	 * a favorite launch configuration
-	 */	
-	public void setFavorite(boolean favorite) {
-		fFavorite = favorite;
+		if (getLaunchConfiguration() != null) {
+			try {
+				if (getMode().equals(ILaunchManager.DEBUG_MODE)) {
+					return getLaunchConfiguration().getAttribute(IDebugUIConstants.ATTR_DEBUG_FAVORITE, false);
+				} else {
+					return getLaunchConfiguration().getAttribute(IDebugUIConstants.ATTR_RUN_FAVORITE, false);
+				}
+			} catch (CoreException e) {
+				DebugUIPlugin.logError(e);
+			}
+		}
+		return false;
 	}
 	
 	// TXN

@@ -6,11 +6,14 @@ package org.eclipse.debug.internal.ui.launchConfigurations;
  */
 
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
@@ -135,24 +138,70 @@ public class LaunchHistoryPreferencePage
 	 * @see PreferencePage#performOk()
 	 */
 	public boolean performOk() {
+		
+		ILaunchConfiguration[] debugOriginals = getDebugTab().getInitialFavorites();
+		ILaunchConfiguration[] runOriginals = getRunTab().getInitialFavorites();
+		
 		DebugUIPlugin plugin = DebugUIPlugin.getDefault();
 		// debug favorites
-		Vector list = convertToHisotryElements(getDebugTab().getFavorites(), ILaunchManager.DEBUG_MODE, true);
+		Vector list = convertToHisotryElements(getDebugTab().getFavorites(), ILaunchManager.DEBUG_MODE);
 		plugin.setDebugFavorites(list);
 		
 		// debug recent history
-		list = convertToHisotryElements(getDebugTab().getRecents(), ILaunchManager.DEBUG_MODE, false);
+		list = convertToHisotryElements(getDebugTab().getRecents(), ILaunchManager.DEBUG_MODE);
 		plugin.setDebugHistory(list);
 		
 		// run favorites
-		list = convertToHisotryElements(getRunTab().getFavorites(), ILaunchManager.RUN_MODE, true);
+		list = convertToHisotryElements(getRunTab().getFavorites(), ILaunchManager.RUN_MODE);
 		plugin.setRunFavorites(list);
 		
 		// run recent history
-		list = convertToHisotryElements(getRunTab().getRecents(), ILaunchManager.RUN_MODE, false);
-		plugin.setRunHistory(list);		
+		list = convertToHisotryElements(getRunTab().getRecents(), ILaunchManager.RUN_MODE);
+		plugin.setRunHistory(list);	
+		
+		// update config attributes for favorites
+		List current = getDebugTab().getFavorites();
+		updateAttributes(debugOriginals, current, IDebugUIConstants.ATTR_DEBUG_FAVORITE);
+		
+		current = getRunTab().getFavorites();
+		updateAttributes(runOriginals, current, IDebugUIConstants.ATTR_RUN_FAVORITE);			
 		
 		return true;
+	}
+	
+	/**
+	 * Update the 'favorite' attributes to reflect the current list.
+	 */
+	protected void updateAttributes(ILaunchConfiguration[] originals, List current, String attribute) {
+		List added = new ArrayList(current);
+		List removed = new ArrayList();
+
+		for (int i = 0; i < originals.length; i++) {
+			added.remove(originals[i]);
+			if (!current.contains(originals[i])) {
+				removed.add(originals[i]);
+			}
+		}
+		
+		try {
+			Iterator a = added.iterator();
+			while (a.hasNext()) {
+				ILaunchConfiguration config = (ILaunchConfiguration)a.next();
+				ILaunchConfigurationWorkingCopy wc = config.getWorkingCopy();
+				wc.setAttribute(attribute, true);
+				wc.doSave();
+			}
+			
+			Iterator r = removed.iterator();
+			while (r.hasNext()) {
+				ILaunchConfiguration config = (ILaunchConfiguration)r.next();
+				ILaunchConfigurationWorkingCopy wc = config.getWorkingCopy();
+				wc.setAttribute(attribute, (String)null);
+				wc.doSave();
+			}				
+		} catch (CoreException e) {
+			DebugUIPlugin.logError(e);
+		}
 	}
 	
 	/**
@@ -164,14 +213,13 @@ public class LaunchHistoryPreferencePage
 	 * @return vector of history elements corresponding to the
 	 *  given launch configurations
 	 */
-	protected Vector convertToHisotryElements(List configs, String mode, boolean favorite) {
+	protected Vector convertToHisotryElements(List configs, String mode) {
 		Vector  v = new Vector(configs.size());
 		Iterator iter = configs.iterator();
 		ILabelProvider lp = DebugUITools.getDefaultLabelProvider();
 		while (iter.hasNext()) {
 			ILaunchConfiguration config = (ILaunchConfiguration)iter.next();
 			LaunchConfigurationHistoryElement hist = new LaunchConfigurationHistoryElement(config, mode, lp.getText(config));
-			hist.setFavorite(favorite);
 			v.add(hist);
 		}
 		return v;

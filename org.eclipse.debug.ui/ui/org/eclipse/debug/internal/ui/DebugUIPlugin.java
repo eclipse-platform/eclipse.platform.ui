@@ -204,7 +204,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 	private static final String HISTORY_MEMENTO_ATT = "memento";
 	private static final String HISTORY_MODE_ATT = "mode";
 	private static final String HISTORY_LABEL_ATT = "label";
-	private static final String HISTORY_FAVORITE_ATT = "favorite";
 	
 	/**
 	 * Returns whether the debug UI plug-in is in trace
@@ -639,16 +638,39 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 		setCurrentProcess(newProcess);
 	}
 	
+	protected void updateFavorites(ILaunchConfiguration config) {
+		try {
+			if (config.getAttribute(IDebugUIConstants.ATTR_DEBUG_FAVORITE, false)) {
+				addDebugFavorite(config);
+				removeLaunchConfigurationFromHistoryList(fDebugHistory, config);
+			} else {
+				removeDebugFavorite(config);
+			}
+			if (config.getAttribute(IDebugUIConstants.ATTR_RUN_FAVORITE, false)) {
+				addRunFavorite(config);
+				removeLaunchConfigurationFromHistoryList(fRunHistory, config);
+			} else {
+				removeRunFavorite(config);
+			}
+		} catch (CoreException e) {
+			logError(e);
+		}	
+	}
+	
 	/**
 	 * @see ILaunchConfigurationListener#launchConfigurationAdded(ILaunchConfiguration)
 	 */
 	public void launchConfigurationAdded(ILaunchConfiguration config) {		
+		updateFavorites(config);
 	}
 	
 	/**
 	 * @see ILaunchConfigurationListener#launchConfigurationChanged(ILaunchConfiguration)
 	 */
 	public void launchConfigurationChanged(ILaunchConfiguration config) {		
+		if (!config.isWorkingCopy()) {
+			updateFavorites(config);
+		}
 	}
 	
 	/**
@@ -926,6 +948,82 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 				}
 			}
 		}	
+	}
+	
+	/**
+	 * Returns whether the given config is displayed in the favorites
+	 * menu
+	 * 
+	 * @param config launch configuration
+	 * @return whether the given config is displayed in the favorites
+	 *  menu
+	 */
+	public boolean isDebugFavorite(ILaunchConfiguration config) {
+		return (findConfigInHistoryList(fDebugFavorites, config)) >= 0;
+	}	
+	
+	/**
+	 * Returns whether the given config is displayed in the favorites
+	 * menu
+	 * 
+	 * @param config launch configuration
+	 * @return whether the given config is displayed in the favorites
+	 *  menu
+	 */
+	public boolean isRunFavorite(ILaunchConfiguration config) {
+		return(findConfigInHistoryList(fRunFavorites, config)) >= 0;
+	}	
+	
+	/**
+	 * Adds the given config to the debug favorites. Has no
+	 * effect if already a debug favorite.
+	 * 
+	 * @param config launch configuration
+	 */
+	public void addDebugFavorite(ILaunchConfiguration config) {
+		if (!isDebugFavorite(config)) {
+			LaunchConfigurationHistoryElement hist = new LaunchConfigurationHistoryElement(config, ILaunchManager.DEBUG_MODE, getModelPresentation().getText(config));
+			fDebugFavorites.add(hist);
+		}
+	}	
+	
+	/**
+	 * Adds the given config to the run favorites. Has no
+	 * effect if already a run favorite.
+	 * 
+	 * @param config launch configuration
+	 */
+	public void addRunFavorite(ILaunchConfiguration config) {
+		if (!isRunFavorite(config)) {
+			LaunchConfigurationHistoryElement hist = new LaunchConfigurationHistoryElement(config, ILaunchManager.RUN_MODE, getModelPresentation().getText(config));
+			fRunFavorites.add(hist);
+		}
+	}	
+	
+	/**
+	 * Removes the given config from the debug favorites. Has no
+	 * effect if not a favorite.
+	 * 
+	 * @param config launch configuration
+	 */
+	public void removeDebugFavorite(ILaunchConfiguration config) {
+		int index = findConfigInHistoryList(fDebugFavorites, config);
+		if (index >= 0) {
+			fDebugFavorites.remove(index);
+		}
+	}	
+	
+	/**
+	 * Adds the given config to the run favorites. Has no
+	 * effect if already a run favorite.
+	 * 
+	 * @param config launch configuration
+	 */
+	public void removeRunFavorite(ILaunchConfiguration config) {
+		int index = findConfigInHistoryList(fRunFavorites, config);
+		if (index >= 0) {
+			fRunFavorites.remove(index);
+		}
 	}	
 	
 	/**
@@ -1052,7 +1150,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 		entry.setAttribute(HISTORY_MEMENTO_ATT, memento); 
 		entry.setAttribute(HISTORY_MODE_ATT, element.getMode());		
 		entry.setAttribute(HISTORY_LABEL_ATT, element.getLabel());		 
-		entry.setAttribute(HISTORY_FAVORITE_ATT, (new Boolean(element.isFavorite())).toString());
 	}
 	
 	protected void setOldAttributes(Element entry, LaunchConfigurationHistoryElement element) {
@@ -1172,14 +1269,10 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 		String memento = entry.getAttribute(HISTORY_MEMENTO_ATT); 
 		String mode = entry.getAttribute(HISTORY_MODE_ATT);       
 		String label = entry.getAttribute(HISTORY_LABEL_ATT);
-		String fav = entry.getAttribute(HISTORY_FAVORITE_ATT)     ;
 		ILaunchConfiguration launchConfig = getLaunchManager().getLaunchConfiguration(memento);
 		LaunchConfigurationHistoryElement hist = null;
 		if (launchConfig.exists()) {
 			hist = new LaunchConfigurationHistoryElement(launchConfig, mode, label);
-			if (fav != null) {
-				hist.setFavorite(Boolean.valueOf(fav).booleanValue());
-			}
 		} 
 		return hist;
 	}

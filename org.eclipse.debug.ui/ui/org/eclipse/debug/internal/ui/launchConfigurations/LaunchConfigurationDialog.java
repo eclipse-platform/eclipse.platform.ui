@@ -1261,9 +1261,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  		if (workingCopy.getOriginal() == null) {
  			return true;
  		}
- 		if (!workingCopy.isDirty()) {
- 			return false;
- 		}
+
  		updateWorkingCopyFromPages();
  		ILaunchConfiguration original = workingCopy.getOriginal();
  		return !original.contentsEqual(workingCopy);

@@ -541,4 +541,22 @@ public interface IDebugUIConstants {
 	 * @since 2.0
 	 */
 	public static final String ATTR_PRIVATE = PLUGIN_ID + ".private"; //$NON-NLS-1$
+	
+	/**
+	 * Launch configuration attribute - a boolean value that indicates if the launch configuration
+	 * is displayed in the debug favorites menu. Default value is
+	 * <code>false</code> if absent.
+	 * 
+	 * @since 2.0
+	 */
+	public static final String ATTR_DEBUG_FAVORITE = PLUGIN_ID + ".debugFavorite"; //$NON-NLS-1$	
+	
+	/**
+	 * Launch configuration attribute - a boolean value that indicates if the launch configuration
+	 * is displayed in the run favorites menu.Default value is
+	 * <code>false</code> if absent.
+	 * 
+	 * @since 2.0
+	 */
+	public static final String ATTR_RUN_FAVORITE = PLUGIN_ID + ".runFavorite"; //$NON-NLS-1$		
 }

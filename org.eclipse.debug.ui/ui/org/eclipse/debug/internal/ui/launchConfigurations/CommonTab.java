@@ -12,11 +12,17 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationListener;
+import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -76,6 +82,16 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	 * The label that acts as header for the 'switch to perspective' widgets
 	 */
 	private Label fSwitchToLabel;
+
+	/**
+	 * The check box specifying run favoite
+	 */
+	private Button fRunFavoriteButton;	
+	
+	/**
+	 * The check box specifying debug favoite
+	 */
+	private Button fDebugFavoriteButton;
 		
 	/**
 	 * @see ILaunchConfigurationTab#createControl(Composite)
@@ -174,6 +190,25 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		gd = new GridData(GridData.GRAB_HORIZONTAL);
 		getDebugPerspectiveCombo().setLayoutData(gd);		
 		fillWithPerspectives(getDebugPerspectiveCombo());				
+		
+		createVerticalSpacer(comp);
+		createVerticalSpacer(comp);
+		
+		Composite favComp = new Composite(comp, SWT.NONE);
+		GridLayout favLayout = new GridLayout();
+		favLayout.numColumns = 1;
+		favComp.setLayout(favLayout);
+		
+		Label favLabel = new Label(favComp, SWT.HORIZONTAL | SWT.LEFT);
+		favLabel.setText("Display in Fa&vorites Menu:");
+		
+		setRunFavoriteButton(new Button(favComp, SWT.CHECK));
+		getRunFavoriteButton().setText("&Run");
+						
+		setDebugFavoriteButton(new Button(favComp, SWT.CHECK));
+		getDebugFavoriteButton().setText("Debu&g");
+		
+
 	}
 
 	/**
@@ -406,6 +441,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		updateSharedLocationFromConfig(configuration);
 		updateRunPerspectiveFromConfig(configuration);
 		updateDebugPerspectiveFromConfig(configuration);
+		updateFavoritesFromConfig(configuration);
 	}
 	
 	protected void updateLocalSharedFromConfig(ILaunchConfiguration config) {
@@ -442,6 +478,26 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		} catch (CoreException ce) {
 		}
 		updateButtonAndCombo(getDebugPerspectiveButton(), getDebugPerspectiveCombo(), debugPerspID);
+	}
+	
+	protected void updateFavoritesFromConfig(ILaunchConfiguration config) {
+		ILaunchConfigurationType type = null;
+		boolean isDebug = false;
+		boolean isRun = false;
+		try {
+			type = config.getType();
+			isDebug = config.getAttribute(IDebugUIConstants.ATTR_DEBUG_FAVORITE, false);
+			isRun = config.getAttribute(IDebugUIConstants.ATTR_RUN_FAVORITE, false);
+		} catch (CoreException ce) {
+			getDebugFavoriteButton().setEnabled(false);
+			getRunFavoriteButton().setEnabled(false);
+			return;
+		}
+		getDebugFavoriteButton().setEnabled(type.supportsMode(ILaunchManager.DEBUG_MODE));
+		getRunFavoriteButton().setEnabled(type.supportsMode(ILaunchManager.RUN_MODE));
+		getDebugFavoriteButton().setSelection(isDebug);
+		getRunFavoriteButton().setSelection(isRun);
+		
 	}
 	
 	/**
@@ -509,6 +565,26 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	}
 	
 	/**
+	 * Update the favorite settings.
+	 * 
+	 * NOTE: set to NULL instead of false for backwards compatibility
+	 *  when comparing if content is equal, since 'false' is default
+	 * 	and will be missing for older configs.
+	 */
+	protected void updateConfigFromFavorites(ILaunchConfigurationWorkingCopy config) {
+		if (getDebugFavoriteButton().getSelection()) {
+			config.setAttribute(IDebugUIConstants.ATTR_DEBUG_FAVORITE, true);
+		} else {
+			config.setAttribute(IDebugUIConstants.ATTR_DEBUG_FAVORITE, (String)null);
+		} 
+		if (getRunFavoriteButton().getSelection()) {
+			config.setAttribute(IDebugUIConstants.ATTR_RUN_FAVORITE, true);
+		} else {
+			config.setAttribute(IDebugUIConstants.ATTR_RUN_FAVORITE, (String)null);
+		} 		
+	}	
+	
+	/**
 	 * Convenience method for getting the workspace root.
 	 */
 	private IWorkspaceRoot getWorkspaceRoot() {
@@ -558,7 +634,48 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		updateConfigFromDebugPerspective(configuration);
 		updateConfigFromRunPerspective(configuration);
 		updateConfigFromLocalShared(configuration);
+		updateConfigFromFavorites(configuration);
 	}
+
+	/**
+	 * Returns the check box used to specify a config
+	 * as a debug favorite.
+	 * 
+	 * @return check box
+	 */
+	protected Button getDebugFavoriteButton() {
+		return fDebugFavoriteButton;
+	}
+
+	/**
+	 * Sets the check box used to specify a config
+	 * as a debug favorite.
+	 * 
+	 * @param button check box
+	 */
+	private void setDebugFavoriteButton(Button button) {
+		fDebugFavoriteButton = button;
+	}
+	
+	/**
+	 * Returns the check box used to specify a config
+	 * as a run favorite.
+	 * 
+	 * @return check box
+	 */
+	protected Button getRunFavoriteButton() {
+		return fRunFavoriteButton;
+	}
+
+	/**
+	 * Sets the check box used to specify a config
+	 * as a run favorite.
+	 * 
+	 * @param button check box
+	 */
+	private void setRunFavoriteButton(Button button) {
+		fRunFavoriteButton = button;
+	}	
 
 }
 

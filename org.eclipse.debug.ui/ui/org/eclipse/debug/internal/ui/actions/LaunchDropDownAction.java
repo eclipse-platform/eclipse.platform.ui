@@ -96,12 +96,12 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 			LaunchConfigurationHistoryElement launch= historyList[i];
 			RelaunchHistoryLaunchAction newAction= new RelaunchHistoryLaunchAction(launch);
 			createMenuForAction(menu, newAction, total+1);
-			total++;;
+			total++;
 		}
 		
 		if (getLaunchAction() != null) {
 			//used in the tool bar drop down for the cascade launch with menu
-			if (historyList.length > 0) {
+			if (historyList.length > 0 || (historyList.length == 0 && (total > 0))) {
 				new MenuItem(menu, SWT.SEPARATOR);
 			}
 		
