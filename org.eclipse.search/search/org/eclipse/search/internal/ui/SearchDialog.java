@@ -4,6 +4,8 @@
  */
 package org.eclipse.search.internal.ui;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IWorkspace;
@@ -23,6 +25,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Shell;
@@ -149,11 +152,9 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 	}
 
 	private void handleCustomizePressed() {
-
+		List input= SearchPlugin.getDefault().getSearchPageDescriptors();
+		final ArrayList createdImages= new ArrayList(input.size());
 		ILabelProvider labelProvider= new LabelProvider() {
-			public Image getImage(Object element) {
-				return null;
-			}
 			public String getText(Object element) {
 				if (element instanceof SearchPageDescriptor) {
 					String label= ((SearchPageDescriptor)element).getLabel();
@@ -169,8 +170,17 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 				} else
 					return null;
 			}
+			public Image getImage(Object element) {
+				if (element instanceof SearchPageDescriptor) {
+					Image image= ((SearchPageDescriptor)element).getImage().createImage();
+					if (image != null)
+						createdImages.add(image);
+					return image;
+				} else
+					return null;
+			}
 		};
-		Object input= SearchPlugin.getDefault().getSearchPageDescriptors();
+
 		String message= SearchMessages.getString("SearchPageSelectionDialog.message"); //$NON-NLS-1$
 		
 		ListSelectionDialog dialog= new ListSelectionDialog(getShell(), input, new ListContentProvider(), labelProvider, message) {
@@ -196,8 +206,26 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 		dialog.setInitialSelections(SearchPlugin.getDefault().getEnabledSearchPageDescriptors(fInitialPageId).toArray());
 		if (dialog.open() == dialog.OK) {
 			SearchPageDescriptor.setEnabled(dialog.getResult());
-			close();
-			new OpenSearchDialogAction().run();
+			Display display= getShell().getDisplay();
+			close();			
+			if (display != null && !display.isDisposed()) {
+				display.asyncExec(
+					new Runnable() {
+						public void run() {
+							new OpenSearchDialogAction().run();
+						}
+					});
+			}
+		}
+		destroyImages(createdImages);		
+	}
+
+	private void destroyImages(List images) {
+		Iterator iter= images.iterator();
+		while (iter.hasNext()) {
+			Image image= (Image)iter.next();
+			if (image != null && !image.isDisposed())
+				image.dispose();
 		}
 	}
 	
