@@ -78,7 +78,7 @@ import org.eclipse.compare.*;
  * @see ITypedElement
  */
 public class EditionSelectionDialog extends Dialog {
-	
+		
 	/**
 	 * An item in an underlying edition.
 	 */
@@ -156,6 +156,8 @@ public class EditionSelectionDialog extends Dialog {
 	private boolean fAddMode= false;
 	/** compare mode if true, otherwise replace/add mode */
 	private boolean fCompareMode= false;
+	/** perform structure compare on editions */
+	private boolean fStructureCompare= false;
 	
 	/**
 	 * Maps from members to their corresponding editions.
@@ -169,6 +171,8 @@ public class EditionSelectionDialog extends Dialog {
 	private Pair fTargetPair;
 	/** The selected edition in the edition viewer */
 	private ITypedElement fSelectedItem;
+	private String fTitleArg;
+	private Image fTitleImage;
 	
 	// SWT controls
 	private CompareViewerSwitchingPane fContentPane;
@@ -178,7 +182,8 @@ public class EditionSelectionDialog extends Dialog {
 	private Tree fEditionTree;
 	private CompareViewerPane fEditionPane;
 	private Image fDateImage;
-	private Image fTimeImage;	
+	private Image fTimeImage;
+	private CompareViewerSwitchingPane fStructuredComparePane;
 	
 	/**
 	 * Creates a new modal, resizable dialog.
@@ -221,6 +226,14 @@ public class EditionSelectionDialog extends Dialog {
 		id= CompareUIPlugin.getImageDescriptor(iconName);
 		if (id != null)
 			fTimeImage= id.createImage();
+	}
+		
+	public void setEditionTitleArgument(String titleArgument) {
+		fTitleArg= titleArgument;
+	}
+	
+	public void setEditionTitleImage(Image titleImage) {
+		fTitleImage= titleImage;
 	}
 	
 	/**
@@ -480,6 +493,7 @@ public class EditionSelectionDialog extends Dialog {
 	 */
 	public void setCompareMode(boolean compareMode) {
 		fCompareMode= compareMode;
+		fStructureCompare= fCompareMode && !fAddMode;
 	}
 	
 	/**
@@ -656,12 +670,29 @@ public class EditionSelectionDialog extends Dialog {
 			
 			fEditionPane= new CompareViewerPane(hsplitter, SWT.BORDER | SWT.FLAT);
 		} else {
-			// only a single pane showing the editions
-			fEditionPane= new CompareViewerPane(vsplitter, SWT.BORDER | SWT.FLAT);
-			
+			if (fStructureCompare) {
+				// we need two panes: the left for the elements, the right one for the structured diff
+				Splitter hsplitter= new Splitter(vsplitter,  SWT.HORIZONTAL);
+				
+				fEditionPane= new CompareViewerPane(hsplitter, SWT.BORDER | SWT.FLAT);
+				fStructuredComparePane= new CompareViewerSwitchingPane(hsplitter, SWT.BORDER | SWT.FLAT, true) {
+					protected Viewer getViewer(Viewer oldViewer, Object input) {
+						if (input instanceof ICompareInput)
+							return CompareUIPlugin.findStructureViewer(oldViewer, (ICompareInput)input, this, fCompareConfiguration);
+						return null;
+					}
+				};
+			} else {
+				// only a single pane showing the editions
+				fEditionPane= new CompareViewerPane(vsplitter, SWT.BORDER | SWT.FLAT);
+			}
+			if (fTitleArg == null)
+				fTitleArg= fTargetPair.getItem().getName();
 			String titleFormat= Utilities.getString(fBundle, "treeTitleFormat"); //$NON-NLS-1$
-			String title= MessageFormat.format(titleFormat, new Object[] { fTargetPair.getItem().getName() });
+			String title= MessageFormat.format(titleFormat, new String[] { fTitleArg });
 			fEditionPane.setText(title);
+			if (fTitleImage != null)
+				fEditionPane.setImage(fTitleImage);
 		}
 		
 		fEditionTree= new Tree(fEditionPane, SWT.H_SCROLL + SWT.V_SCROLL);
@@ -947,10 +978,12 @@ public class EditionSelectionDialog extends Dialog {
 				input= ci.getRight();
 		}
 		fContentPane.setInput(input);
+		if (fStructuredComparePane != null)
+			fStructuredComparePane.setInput(input);
 	}
 	
 	/*
-	 * Feeds selection from edition viewer to content viewer.
+	 * Feeds selection from edition viewer to content (and structure) viewer.
 	 */
 	private void feedInput(Widget w) {
 		Object input= w.getData();
@@ -987,4 +1020,3 @@ public class EditionSelectionDialog extends Dialog {
 			fCommitButton.setEnabled(isOK && fSelectedItem != null && fTargetPair.getItem() != fSelectedItem);
 	}
 }
-

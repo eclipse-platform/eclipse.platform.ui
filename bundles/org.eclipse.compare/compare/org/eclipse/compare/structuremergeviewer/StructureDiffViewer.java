@@ -10,6 +10,7 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.Control;
 
 import org.eclipse.jface.util.*;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.text.*;
 
@@ -49,7 +50,8 @@ public class StructureDiffViewer extends DiffTreeViewer {
 	
 	private IStructureCreator fStructureCreator;
 	private IDiffContainer fRoot;
-	private ChangePropertyAction fSmartAction;
+	//private ChangePropertyAction fSmartAction;
+	private ActionContributionItem fSmartActionItem;
 	private IContentChangeListener fContentChangedListener;
 	private ICompareInputChangeListener fThreeWayInputChangedListener;
 	private CompareViewerSwitchingPane fParent;
@@ -115,9 +117,10 @@ public class StructureDiffViewer extends DiffTreeViewer {
 			if (tree != null && !tree.isDisposed())
 				tree.setData(CompareUI.COMPARE_VIEWER_TITLE, getTitle());
 			
-			if (fStructureCreator != null) {
-				if (fSmartAction != null)
-					fSmartAction.setEnabled(fStructureCreator.canRewriteTree());
+			if (fStructureCreator != null && fSmartActionItem != null) {
+				IAction a= fSmartActionItem.getAction();
+				if (a != null)
+					a.setEnabled(fStructureCreator.canRewriteTree());
 				// FIXME: if there is an input we should create the trees!
 			}
 		}
@@ -187,7 +190,10 @@ public class StructureDiffViewer extends DiffTreeViewer {
 		
 		if (input != null)
 			t= input.getAncestor();
-		fThreeWay= t != null;
+			
+		fThreeWay= (t != null);
+		fSmartActionItem.setVisible(fThreeWay);
+
 		if (t != fAncestorInput) {
 			if (fAncestorInput instanceof IContentChangeNotifier)
 				((IContentChangeNotifier)fAncestorInput).removeContentChangeListener(fContentChangedListener);
@@ -354,8 +360,10 @@ public class StructureDiffViewer extends DiffTreeViewer {
 		
 		super.createToolItems(toolBarManager);
 		
-		fSmartAction= new ChangePropertyAction(getBundle(), getCompareConfiguration(), "action.Smart.", SMART); //$NON-NLS-1$
-		toolBarManager.appendToGroup("modes", fSmartAction); //$NON-NLS-1$
+		IAction a= new ChangePropertyAction(getBundle(), getCompareConfiguration(), "action.Smart.", SMART); //$NON-NLS-1$
+		fSmartActionItem= new ActionContributionItem(a);
+		fSmartActionItem.setVisible(fThreeWay);
+		toolBarManager.appendToGroup("modes", fSmartActionItem); //$NON-NLS-1$
 	}
 	
 	/**

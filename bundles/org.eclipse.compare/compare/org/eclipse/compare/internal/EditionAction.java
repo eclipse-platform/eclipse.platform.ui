@@ -43,17 +43,19 @@ public class EditionAction implements IActionDelegate {
 		
 		private IDocument fDocument;
 		private String type;
+		private IFile fFile;
 		
-		DocumentBufferNode(IDocument document, String type) {
+		DocumentBufferNode(IDocument document, IFile file) {
 			fDocument= document;
+			fFile= file;
 		}
 		
 		public String getName() {
-			return "Editor Buffer";
+			return fFile.getName();
 		}
 		
 		public String getType() {
-			return type;
+			return fFile.getFileExtension();
 		}
 		
 		public Image getImage() {
@@ -126,7 +128,7 @@ public class EditionAction implements IActionDelegate {
 		IDocument document= getDocument(file);
 		ITypedElement target= base;
 		if (document != null)
-			target= new DocumentBufferNode(document, file.getFileExtension());
+			target= new DocumentBufferNode(document, file);
 	
 		ITypedElement[] editions= new ITypedElement[states.length+1];
 		editions[0]= base;
@@ -134,6 +136,8 @@ public class EditionAction implements IActionDelegate {
 			editions[i+1]= new HistoryItem(base, states[i]);
 
 		EditionSelectionDialog d= new EditionSelectionDialog(parentShell, bundle);
+		d.setEditionTitleArgument(file.getName());
+		d.setEditionTitleImage(CompareUIPlugin.getImage(file));
 		//d.setHideIdenticalEntries(false);
 		
 		if (fReplaceMode) {
