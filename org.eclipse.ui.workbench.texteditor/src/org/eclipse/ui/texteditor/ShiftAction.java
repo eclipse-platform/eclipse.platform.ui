@@ -29,7 +29,7 @@ import org.eclipse.ui.IWorkbenchPartSite;
  * Action for shifting code to the right or left by one indentation level.
  * @since 2.0
  */
-public final class ShiftAction extends TextEditorAction implements IReadOnlyDependent {
+public class ShiftAction extends TextEditorAction implements IReadOnlyDependent {
 	
 	/** The text operation code */
 	private int fOperationCode= -1;
@@ -92,6 +92,9 @@ public final class ShiftAction extends TextEditorAction implements IReadOnlyDepe
 	 * @see IUpdate#update()
 	 */
 	public void update() {
+		super.update();
+		if (!isEnabled())
+			return;
 		
 		ITextEditor editor= getTextEditor();
 		if (editor instanceof ITextEditorExtension2) {
@@ -101,12 +104,35 @@ public final class ShiftAction extends TextEditorAction implements IReadOnlyDepe
 				return;
 			}
 		}
-		
+
 		if (fOperationTarget == null && editor != null && fOperationCode != -1)
 			fOperationTarget= (ITextOperationTarget) editor.getAdapter(ITextOperationTarget.class);
 			
-		boolean isEnabled= (fOperationTarget != null && fOperationTarget.canDoOperation(fOperationCode));
-		setEnabled(isEnabled);
+	}
+	
+	/**
+	 * Enablement when tab key is pressed - the current selection has to be cover multiple lines.
+	 */
+	protected void updateForTab() {
+		super.update();
+		
+		if (isEnabled()) {
+			ITextEditor editor= getTextEditor();
+			if (editor instanceof ITextEditorExtension2) {
+				ITextEditorExtension2 extension= (ITextEditorExtension2) editor;
+				if (!extension.isEditorInputModifiable()) {
+					setEnabled(false);
+					return;
+				}
+			}
+		
+			if (fOperationTarget == null && editor != null && fOperationCode != -1)
+				fOperationTarget= (ITextOperationTarget) editor.getAdapter(ITextOperationTarget.class);
+			
+			boolean isEnabled= (fOperationTarget != null && fOperationTarget.canDoOperation(fOperationCode));
+			setEnabled(isEnabled);
+		}
+		
 	}
 	
 	/*

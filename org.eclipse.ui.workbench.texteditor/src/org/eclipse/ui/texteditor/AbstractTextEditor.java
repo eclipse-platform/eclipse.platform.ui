@@ -3765,6 +3765,13 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SHIFT_RIGHT);
 		setAction(ITextEditorActionConstants.SHIFT_RIGHT, action);
 		
+		action= new ShiftAction(EditorMessages.getResourceBundle(), "Editor.ShiftRight.", this, ITextOperationTarget.SHIFT_RIGHT) { //$NON-NLS-1$
+			public void update() {
+				updateForTab();
+			}
+		};
+		setAction("ShiftRightTab", action); //$NON-NLS-1$
+		
 		action= new ShiftAction(EditorMessages.getResourceBundle(), "Editor.ShiftLeft.", this, ITextOperationTarget.SHIFT_LEFT); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SHIFT_LEFT_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SHIFT_LEFT);
@@ -3880,7 +3887,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		markAsSelectionDependentAction(ITextEditorActionConstants.PASTE, true);
 		markAsSelectionDependentAction(ITextEditorActionConstants.DELETE, true);
 		markAsSelectionDependentAction(ITextEditorActionConstants.SHIFT_RIGHT, true);
-		markAsSelectionDependentAction(ITextEditorActionConstants.SHIFT_LEFT, true);
+		markAsSelectionDependentAction("ShiftRightTab", true);
 		markAsSelectionDependentAction(ITextEditorActionConstants.UPPER_CASE, true);
 		markAsSelectionDependentAction(ITextEditorActionConstants.LOWER_CASE, true);
 		
@@ -3892,6 +3899,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		markAsStateDependentAction(ITextEditorActionConstants.PASTE, true);
 		markAsStateDependentAction(ITextEditorActionConstants.DELETE, true);
 		markAsStateDependentAction(ITextEditorActionConstants.SHIFT_RIGHT, true);
+		markAsStateDependentAction("ShiftRightTab", true); //$NON-NLS-1$
 		markAsStateDependentAction(ITextEditorActionConstants.SHIFT_LEFT, true);
 		markAsStateDependentAction(ITextEditorActionConstants.FIND, true);
 		markAsStateDependentAction(ITextEditorActionConstants.DELETE_LINE, true);
@@ -3903,7 +3911,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		markAsStateDependentAction(ITextEditorActionConstants.CUT_LINE_TO_BEGINNING, true);
 		markAsStateDependentAction(ITextEditorActionConstants.CUT_LINE_TO_END, true);
 		
-		setActionActivationCode(ITextEditorActionConstants.SHIFT_RIGHT,'\t', -1, SWT.NONE);
+		setActionActivationCode("ShiftRightTab",'\t', -1, SWT.NONE); //$NON-NLS-1$
 		setActionActivationCode(ITextEditorActionConstants.SHIFT_LEFT, '\t', -1, SWT.SHIFT);
 	}
 	
