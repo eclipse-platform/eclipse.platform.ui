@@ -17,6 +17,7 @@ import java.util.zip.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.*;
 import org.eclipse.help.internal.*;
+import org.osgi.framework.Bundle;
 /** 
  * Toc created from files in a extra directory in a plugin.
  */
@@ -70,9 +71,8 @@ public class DirectoryToc {
 		if (pluginID == null) {
 			return ret;
 		}
-		IPluginDescriptor pluginDesc =
-			Platform.getPluginRegistry().getPluginDescriptor(pluginID);
-		if (pluginDesc == null)
+		Bundle pluginDesc = Platform.getBundle(pluginID);
+		if (pluginDesc == null || pluginDesc.getState() == Bundle.INSTALLED || pluginDesc.getState() == Bundle.UNINSTALLED)
 			return ret;
 		String directory = HrefUtil.getResourcePathFromHref(dir);
 		if (directory == null) {
@@ -83,16 +83,9 @@ public class DirectoryToc {
 		IPath iPath = new Path("$nl$/doc.zip");
 		Map override = new HashMap(1);
 		override.put("$nl$", locale);
-		URL url = null;
-		try {
-			url = pluginDesc.getPlugin().find(iPath, override);
-			if (url == null) {
-				url = pluginDesc.getPlugin().find(new Path("doc.zip"));
-			}
-		} catch (CoreException ce) {
-			HelpPlugin.logError(
-				HelpResources.getString("E034", "/" + pluginID + "/doc.zip"),
-				ce);
+		URL url = Platform.find(pluginDesc, iPath, override);
+		if (url == null) {
+			url = Platform.find(pluginDesc, new Path("doc.zip"));
 		}
 		if (url != null) {
 			// collect topics from doc.zip file
@@ -101,23 +94,12 @@ public class DirectoryToc {
 		// Find directory on the filesystem
 		iPath = new Path("$nl$/" + directory);
 		url = null;
-		try {
-			url = pluginDesc.getPlugin().find(iPath, override);
+			url = Platform.find(pluginDesc, iPath, override);
 			if (url == null) {
-				if (directory.length() == 0) {
-					// work around NPE in plugin.find()
-					url = pluginDesc.getInstallURL();
-				} else {
-					url = pluginDesc.getPlugin().find(new Path(directory));
-				}
+				url = Platform.find(pluginDesc, new Path(directory));
 			}
-		} catch (CoreException ce) {
-			HelpPlugin.logError(
-				HelpResources.getString("E035", "/" + pluginID + "/" + directory),
-				ce);
-		}
 		if (url != null) {
-			// collect topics from doc.zip file
+			// collect topics from directory
 			ret.putAll(
 				createExtraTopicsFromDirectory(pluginID, directory, url));
 		}
