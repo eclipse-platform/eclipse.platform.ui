@@ -67,9 +67,9 @@ public class LocalFile extends LocalResource implements ICVSFile {
 		title = Policy.bind("LocalFile.receiving", 
 							new Object[] {ioResource.getName()});
 		
-		try {		
-
-			out = new BufferedOutputStream(new FileOutputStream(ioResource));
+		try {
+			// We don't need to buffer here because the methods used below do
+			out = new FileOutputStream(ioResource);
 			
 			try {
 				if (binary) {
@@ -102,23 +102,26 @@ public class LocalFile extends LocalResource implements ICVSFile {
 		title = Policy.bind("LocalFile.sending",
 							new Object[]{ioResource.getName()});
 		
-		try {			
+		try {
+			// We don't need to buffer here because the methods used below do
 			in = new FileInputStream(ioResource);
 			
-			if (binary) {
-				
-				// Send the size to the server
-				out.write(("" + getSize()).getBytes());
-				out.write(SERVER_NEWLINE.getBytes());
-				transferWithProgress(in,out,size,monitor,title);
-			} else {
-				
-				// In this case the size has to be computed.
-				// Therefore we do send the size in transferText
-				transferText(in,out,getSize(),monitor,title,true);
+			try {
+				if (binary) {
+					
+					// Send the size to the server
+					out.write(("" + getSize()).getBytes());
+					out.write(SERVER_NEWLINE.getBytes());
+					transferWithProgress(in,out,size,monitor,title);
+				} else {
+					
+					// In this case the size has to be computed.
+					// Therefore we do send the size in transferText
+					transferText(in,out,getSize(),monitor,title,true);
+				}
+			} finally {
+				in.close();
 			}
-			
-			in.close();
 			
 		} catch (IOException e) {
 			throw CVSException.wrapException(e);
