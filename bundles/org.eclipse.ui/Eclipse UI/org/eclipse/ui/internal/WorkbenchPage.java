@@ -815,7 +815,7 @@ private Perspective createPerspective(PerspectiveDescriptor desc) {
 		Perspective persp = new Perspective(desc, this);
 		perspList.add(persp);
 		window.firePerspectiveOpened(this, desc);
-		IViewReference refs[] = viewFactory.getViews();
+		IViewReference refs[] = getViewFactory().getViews();
 		IViewPart parts[] = persp.getViews();
 		for (int i = 0; i < parts.length; i++) {
 			IViewReference ref = null;
@@ -881,7 +881,7 @@ public void dispose() {
 	closeAllEditors(false);
 
 	// Capture views.
-	IViewReference refs[] = viewFactory.getViews();
+	IViewReference refs[] = getViewFactory().getViews();
 	
 	// Get rid of perspectives.  This will close the views.
 	Iterator enum = perspList.iterator();
@@ -944,7 +944,7 @@ private void disposePerspective(Perspective persp) {
 		IViewPart view = views[nX];
 		
 		// If the part is no longer reference then dispose it.
-		boolean exists = viewFactory.hasView(view.getSite().getId());
+		boolean exists = getViewFactory().hasView(view.getSite().getId());
 		if (!exists) {
 			firePartClosed(view);
 			activationList.remove(view);
@@ -1342,7 +1342,7 @@ public void hideView(IViewPart view) {
 	
 
 	// If the part is no longer reference then dispose it.
-	boolean exists = viewFactory.hasView(view.getSite().getId());
+	boolean exists = getViewFactory().hasView(view.getSite().getId());
 	if (!exists) {
 		firePartClosed(view);
 		view.dispose();
@@ -1813,6 +1813,10 @@ private void restoreState(IMemento memento) {
 	// Restore editor manager.
 	IMemento childMem = memento.getChild(IWorkbenchConstants.TAG_EDITORS);
 	getEditorManager().restoreState(childMem);
+	
+	childMem = memento.getChild(IWorkbenchConstants.TAG_VIEWS);
+	if(childMem != null)
+		getViewFactory().restoreState(childMem);
 
 	// Get persp block.
 	childMem = memento.getChild(IWorkbenchConstants.TAG_PERSPECTIVES);
@@ -1936,6 +1940,9 @@ public void saveState(IMemento memento) {
 	IMemento childMem = memento.createChild(IWorkbenchConstants.TAG_EDITORS);
 	editorMgr.saveState(childMem);
 
+	childMem = memento.createChild(IWorkbenchConstants.TAG_VIEWS);
+	getViewFactory().saveState(childMem);
+	
 	// Create persp block.
 	childMem = memento.createChild(IWorkbenchConstants.TAG_PERSPECTIVES);
 	if (getPerspective() != null)
