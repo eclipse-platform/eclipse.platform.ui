@@ -42,7 +42,7 @@ public class UpdateManagerUtils {
 			// the url is not an absolute URL
 			// try relative
 			String path = UpdateManagerUtils.getPath(rootURL);
-//			path = path + (path.endsWith("/")?"":"/");			
+			path = path + ((path.endsWith("/")|| path.endsWith(File.separator))?"":"/");			
 			url = new URL(rootURL.getProtocol(), rootURL.getHost(), path + urlString);
 		}
 		return url;
