@@ -130,8 +130,8 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 			document.set(buffer.toString());
 		
 		} catch (IOException x) {
-			String msg= x.getMessage() == null ? "" : x.getMessage(); //$NON-NLS-1$
-			IStatus s= new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.OK, msg, x);
+			String message= (x.getMessage() != null ? x.getMessage() : ""); //$NON-NLS-1$
+			IStatus s= new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.OK, message, x);
 			throw new CoreException(s);
 		} finally {
 			if (in != null) {

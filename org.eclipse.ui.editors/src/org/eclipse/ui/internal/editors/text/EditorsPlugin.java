@@ -53,6 +53,8 @@ public class EditorsPlugin extends AbstractUIPlugin {
 	}
 	
 	public static void logErrorMessage(String message) {
+		if (message == null)
+			message= ""; //$NON-NLS-1$
 		log(new Status(IStatus.ERROR, getPluginId(), IEditorsStatusConstants.INTERNAL_ERROR, message, null));
 	}
 	

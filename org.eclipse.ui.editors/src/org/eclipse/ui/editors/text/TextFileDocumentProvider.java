@@ -391,9 +391,11 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 			Throwable e= x.getTargetException();
 			if (e instanceof CoreException)
 				throw (CoreException) e;
-			throw new CoreException(new Status(IStatus.ERROR, EditorsPlugin.getPluginId(), IStatus.ERROR, e.getMessage(), e));
+			String message= (e.getMessage() != null ? e.getMessage() : ""); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, EditorsPlugin.getPluginId(), IStatus.ERROR, message, e));
 		} catch (InterruptedException x) {
-			throw new CoreException(new Status(IStatus.CANCEL, EditorsPlugin.getPluginId(), IStatus.OK, x.getMessage(), x));
+			String message= (x.getMessage() != null ? x.getMessage() : ""); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.CANCEL, EditorsPlugin.getPluginId(), IStatus.OK, message, x));
 		}
 	}
 
@@ -661,7 +663,8 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 			generator.generateContainer(new SubProgressMonitor(monitor, 1000));
 			file.create(stream, false, new SubProgressMonitor(monitor, 1000));
 		} catch (UnsupportedEncodingException x) {
-			IStatus s= new Status(IStatus.ERROR, EditorsPlugin.getPluginId(), IStatus.OK, x.getMessage(), x);
+			String message= (x.getMessage() != null ? x.getMessage() : ""); //$NON-NLS-1$
+			IStatus s= new Status(IStatus.ERROR, EditorsPlugin.getPluginId(), IStatus.OK, message, x);
 			throw new CoreException(s);
 		} finally {
 			monitor.done();

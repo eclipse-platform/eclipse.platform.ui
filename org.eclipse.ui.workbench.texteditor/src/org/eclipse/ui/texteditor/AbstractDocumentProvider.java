@@ -496,9 +496,11 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 			Throwable e= x.getTargetException();
 			if (e instanceof CoreException)
 				throw (CoreException) e;
-			throw new CoreException(new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.ERROR, e.getMessage(), e));
+			String message= (e.getMessage() != null ? e.getMessage() : ""); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.ERROR, message, e));
 		} catch (InterruptedException x) {
-			throw new CoreException(new Status(IStatus.CANCEL, TextEditorPlugin.PLUGIN_ID, IStatus.OK, x.getMessage(), x));
+			String message= (x.getMessage() != null ? x.getMessage() : ""); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.CANCEL, TextEditorPlugin.PLUGIN_ID, IStatus.OK, message, x));
 		}
 	}
 		

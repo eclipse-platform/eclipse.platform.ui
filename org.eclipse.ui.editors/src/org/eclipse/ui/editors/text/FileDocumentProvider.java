@@ -504,7 +504,8 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 				}
 				
 			} catch (IOException x) {
-				IStatus s= new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.OK, x.getMessage(), x);
+				String message= (x.getMessage() != null ? x.getMessage() : ""); //$NON-NLS-1$
+				IStatus s= new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.OK, message, x);
 				throw new CoreException(s);
 			}
 			
