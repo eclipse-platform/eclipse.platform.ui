@@ -36,15 +36,15 @@ BODY {
 TABLE {
 	font: <%=prefs.getToolbarFont()%>;
 	background:<%=prefs.getToolbarBackground()%>;
-	margin:0;
-	padding:0;
+	margin: 0px;
+	padding: 0px;
 	height:100%;
 }
 
 FORM {
 	background:<%=prefs.getToolbarBackground()%>;
 	height:100%;
-	margin:0;
+	margin:0px;
 }
 
 INPUT {
@@ -58,11 +58,12 @@ A {
 	text-decoration:none;
 }
 
-#searchTable {
-	padding-left:5;
+#searchLabel {
+	padding-left:7px;
+	padding-right:4px;
 }
 
-#searchWord {	
+#searchWord {
 	padding-left:4px;
 	padding-right:4px;
 	border:1px solid ThreeDShadow;
@@ -73,18 +74,19 @@ A {
 	color:Window;
 	font-weight:bold;
 	border:1px solid ThreeDShadow;
+	margin-left:5px;
 }
 
 #scopeLabel {
 	text-decoration:underline; 
 	color:#0066FF; 
 	cursor:hand;
-	padding-left:10px;
+	padding-left:15px;
 }
 
-#workingSet { 
+#scope { 
 	text-align:right;
-	margin-left:4px;
+	margin-left:5px;
 	border:0px;
 	color:WindowText;
 	text-decoration:none;
@@ -179,11 +181,11 @@ function onloadHandler(e)
 	<form  name="searchForm"   onsubmit="doSearch()">
 		<table id="searchTable" align="left" valign="middle" cellspacing="0" cellpadding="0" border="0">
 			<tr nowrap  valign="middle">
-				<td>
+				<td id="searchLabel">
 					&nbsp;<%=ServletResources.getString("Search", request)%>:
 				</td>
 				<td>
-					<input type="text" id="searchWord" name="searchWord" value='' size="20" maxlength="256" alt='<%=ServletResources.getString("SearchExpression", request)%>'>
+					<input type="text" id="searchWord" name="searchWord" value='' size="24" maxlength="256" alt='<%=ServletResources.getString("SearchExpression", request)%>'>
 				</td>
 				<td >
 					&nbsp;<input type="button" onclick="this.blur();doSearch()" value='<%=ServletResources.getString("GO", request)%>' id="go" alt='<%=ServletResources.getString("GO", request)%>'>
