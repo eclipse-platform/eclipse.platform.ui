@@ -201,7 +201,6 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		});
 		lv.setContentProvider(createContentProvider());
 		lv.setLabelProvider(new DelegatingModelPresentation());
-		lv.setUseHashlookup(true);
 		// add my viewer as a selection provider, so selective re-launch works
 		getSite().setSelectionProvider(lv);
 		lv.setInput(DebugPlugin.getDefault().getLaunchManager());
