@@ -22,6 +22,20 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.IPluginPrerequisite;
+import org.eclipse.core.runtime.IPluginRegistry;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ST;
 import org.eclipse.swt.custom.StyledText;
@@ -53,19 +67,28 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.ILog;
-import org.eclipse.core.runtime.IPluginDescriptor;
-import org.eclipse.core.runtime.IPluginPrerequisite;
-import org.eclipse.core.runtime.IPluginRegistry;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableContext;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
@@ -95,29 +118,6 @@ import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.text.source.VerticalRuler;
 
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuListener;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IStatusLineManager;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IRunnableContext;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorDescriptor;
@@ -136,12 +136,13 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.part.EditorActionBarContributor;
+import org.eclipse.ui.part.EditorPart;
+
 import org.eclipse.ui.internal.ActionDescriptor;
 import org.eclipse.ui.internal.EditorPluginAction;
 import org.eclipse.ui.internal.texteditor.EditPosition;
 import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
-import org.eclipse.ui.part.EditorActionBarContributor;
-import org.eclipse.ui.part.EditorPart;
 
 
 
@@ -172,7 +173,7 @@ import org.eclipse.ui.part.EditorPart;
  *
  * @see org.eclipse.ui.editors.text.TextEditor
  */
-public abstract class AbstractTextEditor extends EditorPart implements ITextEditor, IReusableEditor, ITextEditorExtension, ITextEditorExtension2, INavigationLocationProvider {
+public abstract class AbstractTextEditor extends EditorPart implements ITextEditor, IReusableEditor, ITextEditorExtension, ITextEditorExtension2, ITextEditorExtension3, INavigationLocationProvider {
 
 	/**
 	 * Tag used in xml configuration files to specify editor action contributions.
@@ -855,12 +856,15 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		/*
 		 * @see org.eclipse.jface.action.IAction#run()
 		 */
-		public void run() {
-			super.run();
-			fOverwriting= !fOverwriting;
-			
+		public void run() {	
+			updateInsertMode();
+			updateCursor();
+			handleInsertModeChanged();
+		}
+		
+		public void updateCursor() {
 			StyledText styledText= getTextWidget();
-			if (fOverwriting) {
+			if (OVERWRITE == getInsertMode()) {
 				Image image= fOverwriteCaret.getImage();
 				fOverwriteCaret.setImage(createOverwriteCaretImage(styledText));
 				image.dispose();
@@ -868,10 +872,27 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			} else {
 				styledText.setCaret(fOriginalCaret);
 			}
-			
-			handleInsertModeChanged();
 		}
 		
+		private void updateInsertMode() {
+			InsertMode mode= getInsertMode();
+			List legalModes= getLegalInsertModes();
+			
+			int i= 0;
+			while (i < legalModes.size()) {
+				if (legalModes.get(i) == mode) break;
+				++ i;
+			}
+			
+			i= (i + 1) % legalModes.size();
+			InsertMode newMode= (InsertMode) legalModes.get(i);
+			
+			if (mode == OVERWRITE || newMode == OVERWRITE)
+				super.run();
+				
+			setInsertMode(newMode);
+		}
+
 		private Caret createOverwriteCaret() {
 			StyledText styledText= getTextWidget();
 			Caret caret= new Caret(styledText, SWT.NULL);
@@ -1276,13 +1297,13 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		new IdMapEntry(ITextEditorActionDefinitionIds.DELETE_NEXT_WORD, ST.DELETE_WORD_NEXT),
 		// miscellaneous
 		new IdMapEntry(ITextEditorActionDefinitionIds.TOGGLE_OVERWRITE, ST.TOGGLE_OVERWRITE)
-	};
-	
+	};	
 	
 	private final String fReadOnlyLabel = EditorMessages.getString("Editor.statusline.state.readonly.label"); //$NON-NLS-1$
 	private final String fWritableLabel = EditorMessages.getString("Editor.statusline.state.writable.label"); //$NON-NLS-1$
 	private final String fInsertModeLabel = EditorMessages.getString("Editor.statusline.mode.insert.label"); //$NON-NLS-1$
 	private final String fOverwriteModeLabel = EditorMessages.getString("Editor.statusline.mode.overwrite.label"); //$NON-NLS-1$
+	private final String fSmartInsertModeLabel= EditorMessages.getString("Editor.statusline.mode.smartinsert.label"); //$NON-NLS-1$
 	
 	/** The error message shown in the status line in case of failed information look up. */
 	protected final String fErrorLabel= EditorMessages.getString("Editor.statusline.error.label"); //$NON-NLS-1$
@@ -1307,6 +1328,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	/** The arguments for the position label pattern. */
 	private final Object[] fPositionLabelPatternArguments= new Object[] { fLineLabel, fColumnLabel };
 
+	
 	
 	
 	
@@ -1424,11 +1446,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	private ICursorListener fCursorListener;
 	/** 
-	 * The editor's insert mode.
-	 * @since 2.0
-	 */
-	private boolean fOverwriting= false;
-	/** 
 	 * The editor's remembered text selection.
 	 * @since 2.0
 	 */
@@ -1488,6 +1505,16 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @since 2.1
 	 */
 	private String[] fKeyBindingScopes;
+	/** 
+	 * The editor's insert mode.
+	 * @since 3.0
+	 */
+	private InsertMode fInsertMode= SMART_INSERT;
+	/**
+	 * The sequence of legal editor insert modes.
+	 * @since 3.0
+	 */
+	private List fLegalInsertModes= null;
 	
 	
 	/**
@@ -2362,6 +2389,16 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		if (fElementStateListener instanceof IElementStateListenerExtension) {
 			IElementStateListenerExtension extension= (IElementStateListenerExtension) fElementStateListener;
 			extension.elementStateValidationChanged(input, false);
+		}
+		
+		if (getInsertMode() == OVERWRITE) {
+			IAction action= getAction(ITextEditorActionDefinitionIds.TOGGLE_OVERWRITE);
+			if (action instanceof ToggleInsertModeAction) {
+				fSourceViewer.getTextWidget().invokeAction(ST.TOGGLE_OVERWRITE);
+				ToggleInsertModeAction action2= (ToggleInsertModeAction) action;
+				action2.updateCursor();
+				handleInsertModeChanged();
+			}				
 		}
 	}
 	
@@ -4243,9 +4280,59 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * 
 	 * @return <code>true</code> if in insert mode, <code>false</code> for overwrite mode
 	 * @since 2.0
+	 * @deprecated
 	 */
 	protected boolean isInInsertMode() {
-		return !fOverwriting;
+		InsertMode mode= getInsertMode();
+		return mode == INSERT || mode == SMART_INSERT;
+	}
+	
+	/*
+	 * @see org.eclipse.ui.texteditor.ITextEditorExtension3#getInsertMode()
+	 */
+	public InsertMode getInsertMode() {
+		return fInsertMode;
+	}
+	
+	/*
+	 * @see org.eclipse.ui.texteditor.ITextEditorExtension3#setInsertMode(org.eclipse.ui.texteditor.ITextEditorExtension3.InsertMode)
+	 */
+	public void setInsertMode(InsertMode mode) {
+		fInsertMode= mode;
+	}
+	
+	/**
+	 * Returns the set of legal insert modes. If insert modes are configured all defined insert modes
+	 * are legal.
+	 * 
+	 * @return the set of legal insert modes
+	 */
+	protected List getLegalInsertModes() {
+		if (fLegalInsertModes == null) {
+			fLegalInsertModes= new ArrayList();
+			fLegalInsertModes.add(OVERWRITE);
+			fLegalInsertModes.add(INSERT);
+			fLegalInsertModes.add(SMART_INSERT);
+		}
+		return fLegalInsertModes;
+	}
+
+	
+	/**
+	 * Configures the given insert mode as legal or inlegal. This call is ignored if the set of legal
+	 * input modes would be empty after the call.
+	 * 
+	 * @param mode the insert mode to be configured
+	 * @param legal <code>true</code> if the given mode is legal, <code>false</code> otherwise
+	 */
+	protected void configureInsertMode(InsertMode mode, boolean legal) {
+		List modes= getLegalInsertModes();		
+		if (legal) {
+			if (!modes.contains(mode))
+			modes.add(mode);
+		} else if (modes.size() > 1){
+			modes.remove(mode);
+		}
 	}
 	
 	/**
@@ -4288,8 +4375,15 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				text= getCursorPosition();
 			else if (ITextEditorActionConstants.STATUS_CATEGORY_ELEMENT_STATE.equals(category))
 				text= isEditorInputReadOnly() ? fReadOnlyLabel : fWritableLabel;
-			else if (ITextEditorActionConstants.STATUS_CATEGORY_INPUT_MODE.equals(category))
-				text= isInInsertMode() ? fInsertModeLabel : fOverwriteModeLabel;
+			else if (ITextEditorActionConstants.STATUS_CATEGORY_INPUT_MODE.equals(category)) {
+				InsertMode mode= getInsertMode();
+				if (OVERWRITE == mode)
+					text= fOverwriteModeLabel;
+				else if (INSERT == mode)
+					text= fInsertModeLabel;
+				else if (SMART_INSERT == mode)
+					text= fSmartInsertModeLabel;
+			}
 			
 			field.setText(text == null ? fErrorLabel : text);
 		}

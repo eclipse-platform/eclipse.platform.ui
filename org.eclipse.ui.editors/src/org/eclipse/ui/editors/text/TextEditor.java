@@ -194,6 +194,8 @@ public class TextEditor extends StatusTextEditor {
 		setRulerContextMenuId("#TextRulerContext"); //$NON-NLS-1$
 		setHelpContextId(ITextEditorHelpContextIds.TEXT_EDITOR);
 		setPreferenceStore(EditorsPlugin.getDefault().getPreferenceStore());
+		configureInsertMode(SMART_INSERT, false);
+		setInsertMode(INSERT);
 	}
 
 	/**
