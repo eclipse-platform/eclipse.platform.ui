@@ -42,6 +42,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	private static final String TRUE = "true"; //$NON-NLS-1$
 	private static final String VERSION_KEY = "eclipse.preferences.version"; //$NON-NLS-1$
 	private static final String VERSION_VALUE = "1"; //$NON-NLS-1$
+
 	private String cachedPath;
 	protected Map children;
 	protected boolean dirty = false;
