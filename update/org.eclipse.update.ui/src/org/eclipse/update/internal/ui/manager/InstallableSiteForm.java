@@ -12,6 +12,7 @@ import org.eclipse.ui.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.configuration.*;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.swt.custom.BusyIndicator;
 import java.net.URL;
@@ -23,7 +24,7 @@ private static final String KEY_TITLE = "InstallableSitePage.title";
 private static final String KEY_DESC = "InstallableSitePage.desc";
 private static final String KEY_NEW_LOC = "InstallableSitePage.newLocation";
 
-private IConfigurationSite currentSite;
+private IConfiguredSite currentSite;
 private Label urlLabel;
 	
 public InstallableSiteForm(UpdateFormPage page) {
@@ -62,12 +63,12 @@ protected void createContents(Composite parent) {
 }
 
 public void expandTo(Object obj) {
-	if (obj instanceof IConfigurationSiteAdapter) {
-		inputChanged(((IConfigurationSiteAdapter)obj).getConfigurationSite());
+	if (obj instanceof IConfiguredSiteAdapter) {
+		inputChanged(((IConfiguredSiteAdapter)obj).getConfigurationSite());
 	}
 }
 
-private void inputChanged(IConfigurationSite csite) {
+private void inputChanged(IConfiguredSite csite) {
 	ISite site = csite.getSite();
 	urlLabel.setText(site.getURL().toString());
 	urlLabel.getParent().layout();

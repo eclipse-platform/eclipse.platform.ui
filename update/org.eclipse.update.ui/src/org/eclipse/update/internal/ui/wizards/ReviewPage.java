@@ -92,7 +92,7 @@ private static final String KEY_CORRECT_UNINSTALL = "InstallWizard.ReviewPage.co
 		label.setText(UpdateUIPlugin.getResourceString(KEY_VERSION));
 		label = new Label(client, SWT.NULL);
 		label.setFont(JFaceResources.getBannerFont());
-		label.setText(job.getFeature().getVersionIdentifier().getVersion().toString());
+		label.setText(job.getFeature().getVersionedIdentifier().getVersion().toString());
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		label.setLayoutData(gd);
 

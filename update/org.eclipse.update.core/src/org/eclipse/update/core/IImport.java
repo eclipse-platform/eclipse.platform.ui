@@ -26,7 +26,7 @@ public interface IImport {
 	 * @since 2.0 
 	 */
 
-	VersionedIdentifier getIdentifier();
+	VersionedIdentifier getVersionedIdentifier();
 	
 	/**
 	 * Returns a atching rule

@@ -8,6 +8,7 @@ import java.net.URL;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.update.core.*;
+import org.eclipse.update.configuration.*;
 import org.eclipse.update.internal.core.*;
 import org.eclipse.update.tests.UpdateManagerTestCase;
 
@@ -40,7 +41,7 @@ public class TestSiteManagerAPI extends UpdateManagerTestCase {
 	public void testLocalSite() throws Exception {
 		
 		ILocalSite site = SiteManager.getLocalSite();
-		IConfigurationSite[] instSites = site.getCurrentConfiguration().getConfigurationSites();
+		IConfiguredSite[] instSites = site.getCurrentConfiguration().getConfigurationSites();
 		assertTrue(instSites.length>0);
 		System.out.println("Local Site:"+instSites[0].getSite().getURL().toExternalForm());
 		
@@ -52,7 +53,7 @@ public class TestSiteManagerAPI extends UpdateManagerTestCase {
 		assertTrue(features.length>0);
 
 		//cleanup
-		File file = new File(instSites[0].getSite().getURL().getFile()+File.separator+Site.INSTALL_FEATURE_PATH+remoteFeature.getVersionIdentifier());
+		File file = new File(instSites[0].getSite().getURL().getFile()+File.separator+Site.INSTALL_FEATURE_PATH+remoteFeature.getVersionedIdentifier());
 		UpdateManagerUtils.removeFromFileSystem(file);
 		file = new File(instSites[0].getSite().getURL().getFile()+File.separator+Site.DEFAULT_PLUGIN_PATH+"org.eclipse.update.plugin1_1.1.1");
 		UpdateManagerUtils.removeFromFileSystem(file);		

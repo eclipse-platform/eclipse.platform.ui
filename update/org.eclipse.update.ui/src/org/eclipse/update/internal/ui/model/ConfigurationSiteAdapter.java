@@ -5,6 +5,7 @@
 package org.eclipse.update.internal.ui.model;
 
 import org.eclipse.update.core.*;
+import org.eclipse.update.configuration.*;
 
 /**
  * @version 	1.0
@@ -12,16 +13,16 @@ import org.eclipse.update.core.*;
  */
 public class ConfigurationSiteAdapter
 	extends ModelObject
-	implements IConfigurationSiteAdapter {
+	implements IConfiguredSiteAdapter {
 	private IInstallConfiguration config;
-	private IConfigurationSite csite;
+	private IConfiguredSite csite;
 		
-	public ConfigurationSiteAdapter(IInstallConfiguration config, IConfigurationSite csite) {
+	public ConfigurationSiteAdapter(IInstallConfiguration config, IConfiguredSite csite) {
 		this.csite = csite;
 		this.config = config;
 	}
 	
-	public IConfigurationSite getConfigurationSite() {
+	public IConfiguredSite getConfigurationSite() {
 		return csite;
 	}
 

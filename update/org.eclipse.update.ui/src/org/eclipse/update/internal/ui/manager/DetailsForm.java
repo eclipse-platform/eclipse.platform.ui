@@ -13,6 +13,7 @@ import org.eclipse.swt.graphics.*;
 
 import java.net.URL;
 import org.eclipse.update.core.*;
+import org.eclipse.update.configuration.*;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -356,7 +357,7 @@ public class DetailsForm extends PropertyWebForm {
 
 	private String getInstalledVersion(IFeature feature) {
 		alreadyInstalled = false;
-		VersionedIdentifier vid = feature.getVersionIdentifier();
+		VersionedIdentifier vid = feature.getVersionedIdentifier();
 		String id = vid.getIdentifier();
 		Version version = vid.getVersion();
 		newerVersion = installedFeatures.length>0;
@@ -364,7 +365,7 @@ public class DetailsForm extends PropertyWebForm {
 		StringBuffer buf = new StringBuffer();
 		for (int i = 0; i < installedFeatures.length; i++) {
 			IFeature installedFeature = installedFeatures[i];
-			VersionedIdentifier ivid = installedFeature.getVersionIdentifier();
+			VersionedIdentifier ivid = installedFeature.getVersionedIdentifier();
 			if (buf.length() > 0)
 				buf.append(", ");
 			Version iversion = ivid.getVersion();
@@ -393,14 +394,14 @@ public class DetailsForm extends PropertyWebForm {
 		try {
 			ILocalSite localSite = SiteManager.getLocalSite();
 			IInstallConfiguration config = localSite.getCurrentConfiguration();
-			IConfigurationSite[] isites = config.getConfigurationSites();
-			VersionedIdentifier vid = feature.getVersionIdentifier();
+			IConfiguredSite[] isites = config.getConfigurationSites();
+			VersionedIdentifier vid = feature.getVersionedIdentifier();
 			String id = vid.getIdentifier();
 			Version version = vid.getVersion();
 
 			StringBuffer buf = new StringBuffer();
 			for (int i = 0; i < isites.length; i++) {
-				IConfigurationSite isite = isites[i];
+				IConfiguredSite isite = isites[i];
 				IFeature[] result = UpdateUIPlugin.searchSite(id, isite, true);
 				for (int j = 0; j < result.length; j++) {
 					IFeature installedFeature = result[j];
@@ -422,7 +423,7 @@ public class DetailsForm extends PropertyWebForm {
 
 		setHeadingText(feature.getLabel());
 		providerLabel.setText(feature.getProvider());
-		versionLabel.setText(feature.getVersionIdentifier().getVersion().toString());
+		versionLabel.setText(feature.getVersionedIdentifier().getVersion().toString());
 		String installedVersion = getInstalledVersion(feature);
 		if (installedVersion == null)
 			installedVersion = UpdateUIPlugin.getResourceString(KEY_NOT_INSTALLED);
@@ -470,9 +471,9 @@ public class DetailsForm extends PropertyWebForm {
 		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 		if (model.isPending(currentFeature))
 			return false;
-		if (currentAdapter instanceof IConfigurationSiteContext) {
+		if (currentAdapter instanceof IConfiguredSiteContext) {
 			// part of the local configuration
-			IConfigurationSiteContext context = (IConfigurationSiteContext)currentAdapter;
+			IConfiguredSiteContext context = (IConfiguredSiteContext)currentAdapter;
 			if (!context.getInstallConfiguration().isCurrent())
 				return false;
 			else
@@ -494,7 +495,7 @@ public class DetailsForm extends PropertyWebForm {
 		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 		if (model.isPending(currentFeature))
 			return false;
-		if (currentAdapter instanceof IConfigurationSiteContext) {
+		if (currentAdapter instanceof IConfiguredSiteContext) {
 			boolean configured = isConfigured();
 			return !configured;
 		}
@@ -502,9 +503,9 @@ public class DetailsForm extends PropertyWebForm {
 	}
 
 	private boolean isConfigured() {
-		if (currentAdapter instanceof IConfigurationSiteContext) {
-			IConfigurationSiteContext context = (IConfigurationSiteContext) currentAdapter;
-			IConfigurationSite csite = context.getConfigurationSite();
+		if (currentAdapter instanceof IConfiguredSiteContext) {
+			IConfiguredSiteContext context = (IConfiguredSiteContext) currentAdapter;
+			IConfiguredSite csite = context.getConfigurationSite();
 			IFeatureReference fref = csite.getSite().getFeatureReference(currentFeature);
 			IFeatureReference[] cfeatures = csite.getConfiguredFeatures();
 			for (int i = 0; i < cfeatures.length; i++) {
@@ -516,7 +517,7 @@ public class DetailsForm extends PropertyWebForm {
 	}
 
 	private void updateButtonText(boolean update) {
-		if (currentAdapter instanceof IConfigurationSiteContext) {
+		if (currentAdapter instanceof IConfiguredSiteContext) {
 			boolean configured = isConfigured();
 			if (configured)
 				doButton.setText(UpdateUIPlugin.getResourceString(KEY_DO_UNCONFIGURE));
@@ -673,7 +674,7 @@ public class DetailsForm extends PropertyWebForm {
 	private void doButtonSelected() {
 		if (currentFeature != null) {
 			int mode;
-			if (currentAdapter instanceof IConfigurationSiteContext) {
+			if (currentAdapter instanceof IConfiguredSiteContext) {
 				boolean configured = isConfigured();
 				if (configured)
 					mode = PendingChange.UNCONFIGURE;

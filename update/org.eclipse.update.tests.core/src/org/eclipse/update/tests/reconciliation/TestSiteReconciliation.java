@@ -14,6 +14,7 @@ import org.eclipse.core.internal.boot.PlatformConfiguration;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.ILocalSite;
 import org.eclipse.update.core.SiteManager;
+import org.eclipse.update.configuration.*;
 import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.core.InternalSiteManager;
 import org.eclipse.update.internal.core.SiteLocal;
@@ -62,8 +63,8 @@ public class TestSiteReconciliation extends UpdateManagerTestCase {
 
 		ILocalSite local = SiteManager.getLocalSite();
 		((SiteLocal)local).setStamp(0);
-		IConfigurationSite[] newSites = local.getCurrentConfiguration().getConfigurationSites();
-		IConfigurationSite newSite = null;
+		IConfiguredSite[] newSites = local.getCurrentConfiguration().getConfigurationSites();
+		IConfiguredSite newSite = null;
 		for (int i = 0; i < newSites.length; i++) {
 			if (newSites[i].getSite().getURL().equals(url))
 				newSite = newSites[i];
@@ -88,8 +89,8 @@ public class TestSiteReconciliation extends UpdateManagerTestCase {
 		
 		ILocalSite local = SiteManager.getLocalSite();
 		((SiteLocal)local).setStamp(0);		
-		IConfigurationSite[] newSites = local.getCurrentConfiguration().getConfigurationSites();
-		IConfigurationSite newSite = null;
+		IConfiguredSite[] newSites = local.getCurrentConfiguration().getConfigurationSites();
+		IConfiguredSite newSite = null;
 		for (int i = 0; i < newSites.length; i++) {
 			if (newSites[i].getSite().getURL().equals(url))
 				newSite = newSites[i];
@@ -116,8 +117,8 @@ public class TestSiteReconciliation extends UpdateManagerTestCase {
 		addConfigSite(policy,url, plugins);
 		ILocalSite local = SiteManager.getLocalSite();
 		((SiteLocal)local).setStamp(0);		
-		IConfigurationSite[] newSites = local.getCurrentConfiguration().getConfigurationSites();
-		IConfigurationSite newSite = null;
+		IConfiguredSite[] newSites = local.getCurrentConfiguration().getConfigurationSites();
+		IConfiguredSite newSite = null;
 		for (int i = 0; i < newSites.length; i++) {
 			if (newSites[i].getSite().getURL().equals(url))
 				newSite = newSites[i];
@@ -143,8 +144,8 @@ public class TestSiteReconciliation extends UpdateManagerTestCase {
 		addConfigSite(policy,url, plugins);
 		ILocalSite local = SiteManager.getLocalSite();
 		((SiteLocal)local).setStamp(0);		
-		IConfigurationSite[] newSites = local.getCurrentConfiguration().getConfigurationSites();
-		IConfigurationSite newSite = null;
+		IConfiguredSite[] newSites = local.getCurrentConfiguration().getConfigurationSites();
+		IConfiguredSite newSite = null;
 		for (int i = 0; i < newSites.length; i++) {
 			if (newSites[i].getSite().getURL().equals(url))
 				newSite = newSites[i];

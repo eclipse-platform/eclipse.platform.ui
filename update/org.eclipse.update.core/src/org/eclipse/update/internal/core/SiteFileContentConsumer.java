@@ -43,7 +43,7 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 	private String getFeaturePath() throws CoreException {
 		String featurePath = null;
 		try {
-		VersionedIdentifier featureIdentifier = feature.getVersionIdentifier();
+		VersionedIdentifier featureIdentifier = feature.getVersionedIdentifier();
 		String path = Site.INSTALL_FEATURE_PATH + featureIdentifier.toString() + File.separator;
 		URL newURL = new URL(getSite().getURL(),path);
 		featurePath = newURL.getFile();

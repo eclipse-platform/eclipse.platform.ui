@@ -10,6 +10,6 @@ import org.eclipse.update.core.*;
  * @version 	1.0
  * @author
  */
-public interface IConfiguredFeatureAdapter extends IConfigurationSiteContext {
+public interface IConfiguredFeatureAdapter extends IConfiguredSiteContext {
 	public boolean isConfigured();
 }

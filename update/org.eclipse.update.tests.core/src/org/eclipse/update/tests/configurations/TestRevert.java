@@ -8,6 +8,7 @@ import java.net.URL;
 
 import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.update.core.*;
+import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.model.*;
 import org.eclipse.update.core.model.ConfigurationSiteModel;
 import org.eclipse.update.core.model.InstallConfigurationModel;
@@ -46,11 +47,11 @@ public class TestRevert extends UpdateManagerTestCase {
 		IInstallConfiguration old = site.getCurrentConfiguration();
 		ConfigurationPolicy excludepolicy = new ConfigurationPolicy();
 		excludepolicy.setPolicy(IPlatformConfiguration.ISitePolicy.USER_EXCLUDE);
-		IConfigurationSite oldConfigSite = old.getConfigurationSites()[0];
+		IConfiguredSite oldConfigSite = old.getConfigurationSites()[0];
 		((ConfigurationSiteModel)oldConfigSite).setConfigurationPolicyModel((ConfigurationPolicyModel)excludepolicy);
 		
 		IInstallConfiguration newConfig = site.cloneCurrentConfiguration(null,"new Label");
-		IConfigurationSite configSite = newConfig.getConfigurationSites()[0];
+		IConfiguredSite configSite = newConfig.getConfigurationSites()[0];
 		if (!configSite.getSite().equals(oldConfigSite.getSite())) fail("Config sites are not equals");
 		site.addConfiguration(newConfig);		
 		IFeatureReference installedFeature = configSite.install(feature,null);
@@ -60,7 +61,7 @@ public class TestRevert extends UpdateManagerTestCase {
 
 		IFeature feature2 = featureRef2.getFeature();
 		IInstallConfiguration newConfig2 = site.cloneCurrentConfiguration(null,"new Label2");
-		IConfigurationSite anotherConfigSite = newConfig2.getConfigurationSites()[0];
+		IConfiguredSite anotherConfigSite = newConfig2.getConfigurationSites()[0];
 		if (!anotherConfigSite.getSite().equals(oldConfigSite.getSite())) fail("Config sites are not equals");		
 		site.addConfiguration(newConfig2);		
 		anotherConfigSite.install(feature2,null);
@@ -78,8 +79,8 @@ public class TestRevert extends UpdateManagerTestCase {
 		
 		// teh current one points to a real fature
 		// does not throw error.
-		IConfigurationSite newConfigSite = null;
-		IConfigurationSite[] sites = site.getCurrentConfiguration().getConfigurationSites();
+		IConfiguredSite newConfigSite = null;
+		IConfiguredSite[] sites = site.getCurrentConfiguration().getConfigurationSites();
 		for (int i = 0; i < sites.length; i++) {
 			if (sites[i].getSite().equals(oldConfigSite.getSite())){
 				 newConfigSite = sites[i];

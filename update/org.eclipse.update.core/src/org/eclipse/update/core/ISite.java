@@ -9,7 +9,7 @@ import java.net.URL;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
-public interface ISite extends IPluginContainer {
+public interface ISite {
 
 
 	/**
@@ -140,7 +140,7 @@ public interface ISite extends IPluginContainer {
 	 * then the install size is unknown and equal to <code>-1</code>.
 	 * @since 2.0 
 	 */
-	long getInstallSize(IFeature site) ;
+	long getInstallSizeFor(IFeature site);
 
 	/**
 	 * returns the download size
@@ -152,9 +152,24 @@ public interface ISite extends IPluginContainer {
 	 * 
 	 * @since 2.0 
 	 */
-	long getDownloadSize(IFeature site);
+	long getDownloadSizeFor(IFeature site) ;
 	
 	
+	/**
+	 * Returns an array of plug-ins managed by the Site
+	 * 
+	 * @return the accessible plug-ins. Returns an empty array
+	 * if there are no plug-ins.
+	 */
+
+	IPluginEntry [] getPluginEntries()  ;
+	
+	/**
+	 * Returns the number of managed plug-ins
+	 * @return the number of plug-ins
+	 */
+
+	int getPluginEntryCount() ;	
 	
 	/**
 	 * Saves the site in a persitent form

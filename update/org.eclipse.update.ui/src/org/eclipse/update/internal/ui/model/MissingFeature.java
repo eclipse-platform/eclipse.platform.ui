@@ -18,6 +18,7 @@ import org.eclipse.update.core.*;
 import org.eclipse.update.core.*;
 
 public class MissingFeature implements IFeature {
+
 	private URL url;
 	private ISite site;
 	private VersionedIdentifier id = new VersionedIdentifier("unknown", "0.0.0");
@@ -28,7 +29,7 @@ public class MissingFeature implements IFeature {
 	/*
 	 * @see IFeature#getIdentifier()
 	 */
-	public VersionedIdentifier getVersionIdentifier() {
+	public VersionedIdentifier getVersionedIdentifier() {
 		return id;
 	}
 
@@ -246,18 +247,12 @@ public class MissingFeature implements IFeature {
 	}
 
 	/*
-	 * @see IFeature#setContentConsumer(IFeatureContentConsumer)
-	 */
-	public void setContentConsumer(IFeatureContentConsumer contentConsumer) {
-	}
-
-	/*
 	 * @see IFeature#getContentConsumer()
 	 */
 	public IFeatureContentConsumer getContentConsumer() throws CoreException {
 		return null;
 	}
-
+	
 	/*
 	 * @see IFeature#setSite(ISite)
 	 */
@@ -289,6 +284,13 @@ public class MissingFeature implements IFeature {
 	 * @see IPluginContainer#remove(IPluginEntry, IProgressMonitor)
 	 */
 	public void remove(IPluginEntry entry, IProgressMonitor monitor) throws CoreException {
+	}
+
+	/*
+	 * @see IFeature#getNonPluginEntryCount()
+	 */
+	public int getNonPluginEntryCount() {
+		return 0;
 	}
 
 	}

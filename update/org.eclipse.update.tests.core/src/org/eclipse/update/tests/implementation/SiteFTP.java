@@ -117,16 +117,16 @@ public class SiteFTP implements ISite {
 	}
 
 	/*
-	 * @see ISite#getDownloadSize(IFeature)
+	 * @see ISite#getDownloadSizeFor(IFeature)
 	 */
-	public long getDownloadSize(IFeature feature) {
+	public long getDownloadSizeFor(IFeature feature) {
 		return 0;
 	}
 
 	/*
-	 * @see ISite#getInstallSize(IFeature)
+	 * @see ISite#getInstallSizeFor(IFeature)
 	 */
-	public long getInstallSize(IFeature feature) {
+	public long getInstallSizeFor(IFeature feature) {
 		return 0;
 	}
 

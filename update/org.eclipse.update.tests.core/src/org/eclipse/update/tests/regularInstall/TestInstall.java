@@ -9,6 +9,7 @@ import java.net.URL;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.update.core.*;
+import org.eclipse.update.configuration.*;
 import org.eclipse.update.internal.core.*;
 import org.eclipse.update.tests.UpdateManagerTestCase;
 
@@ -71,13 +72,13 @@ public class TestInstall extends UpdateManagerTestCase {
 		String site = localSite.getURL().getFile();
 		IPluginEntry[] entries = remoteFeature.getPluginEntries();
 		assertTrue("no plugins entry", (entries != null && entries.length != 0));
-		String pluginName = entries[0].getVersionIdentifier().toString();
+		String pluginName = entries[0].getVersionedIdentifier().toString();
 		File pluginFile = new File(site, Site.DEFAULT_PLUGIN_PATH + pluginName);
 		assertTrue("plugin files not installed locally", pluginFile.exists());
 		File pluginXMLFile = new File(site, Site.DEFAULT_PLUGIN_PATH + pluginName+File.separator + "plugin.xml");
 		assertTrue("plugin.xml file not installed locally", pluginXMLFile.exists());
 
-		File featureFile = new File(site, Site.INSTALL_FEATURE_PATH + remoteFeature.getVersionIdentifier().toString());
+		File featureFile = new File(site, Site.INSTALL_FEATURE_PATH + remoteFeature.getVersionedIdentifier().toString());
 		assertTrue("feature info not installed locally:"+featureFile, featureFile.exists());
 		//cleanup
 		UpdateManagerUtils.removeFromFileSystem(pluginFile);
@@ -129,11 +130,11 @@ public class TestInstall extends UpdateManagerTestCase {
 		IPluginEntry[] entries = remoteFeature.getPluginEntries();
 		assertTrue("no plugins entry", (entries != null && entries.length != 0));
 
-		String pluginName = entries[0].getVersionIdentifier().toString();
+		String pluginName = entries[0].getVersionedIdentifier().toString();
 		File pluginFile = new File(site, Site.DEFAULT_PLUGIN_PATH + pluginName);
 		assertTrue("plugin info not installed locally", pluginFile.exists());
 
-		File featureFile = new File(site, Site.INSTALL_FEATURE_PATH + remoteFeature.getVersionIdentifier().toString());
+		File featureFile = new File(site, Site.INSTALL_FEATURE_PATH + remoteFeature.getVersionedIdentifier().toString());
 		assertTrue("feature info not installed locally", featureFile.exists());
 
 		localSite.save();
@@ -175,7 +176,7 @@ public class TestInstall extends UpdateManagerTestCase {
 
 		assertNotNull("Cannot find help.jar on site", remoteFeature);
 		ILocalSite localSite = SiteManager.getLocalSite();
-		IConfigurationSite site = localSite.getCurrentConfiguration().getConfigurationSites()[0];
+		IConfiguredSite site = localSite.getCurrentConfiguration().getConfigurationSites()[0];
 		Listener listener = new Listener();
 		site.getSite().addSiteChangedListener(listener);
 		
@@ -186,15 +187,15 @@ public class TestInstall extends UpdateManagerTestCase {
 		assertTrue("no plugins entry", (entries != null && entries.length != 0));
 
 		String sitePath = site.getSite().getURL().getFile();			
-		String pluginName = entries[0].getVersionIdentifier().toString();
+		String pluginName = entries[0].getVersionedIdentifier().toString();
 		File pluginFile = new File(sitePath, Site.DEFAULT_PLUGIN_PATH + pluginName);
 		assertTrue("plugin info not installed locally", pluginFile.exists());
 
-		File featureFile = new File(sitePath, Site.INSTALL_FEATURE_PATH + remoteFeature.getVersionIdentifier().toString());
+		File featureFile = new File(sitePath, Site.INSTALL_FEATURE_PATH + remoteFeature.getVersionedIdentifier().toString());
 		assertTrue("feature info not installed locally", featureFile.exists());
 
 		//cleanup
-		File file = new File(site.getSite().getURL().getFile()+File.separator+Site.INSTALL_FEATURE_PATH+remoteFeature.getVersionIdentifier());
+		File file = new File(site.getSite().getURL().getFile()+File.separator+Site.INSTALL_FEATURE_PATH+remoteFeature.getVersionedIdentifier());
 		UpdateManagerUtils.removeFromFileSystem(file);
 		UpdateManagerUtils.removeFromFileSystem(pluginFile);
 		UpdateManagerUtils.removeFromFileSystem(localFile);	
@@ -209,7 +210,7 @@ public class TestInstall extends UpdateManagerTestCase {
 		
 		ISite remoteSite = SiteManager.getSite(SOURCE_FILE_SITE);
 		IFeature remoteFeature = getFeature1(remoteSite);
-		IConfigurationSite localSite = SiteManager.getLocalSite().getCurrentConfiguration().getConfigurationSites()[0];
+		IConfiguredSite localSite = SiteManager.getLocalSite().getCurrentConfiguration().getConfigurationSites()[0];
 		localSite.getSite().install(remoteFeature, null);
 
 		IFeatureReference[] features = localSite.getSite().getFeatureReferences();
@@ -217,7 +218,7 @@ public class TestInstall extends UpdateManagerTestCase {
 		if (localSite.getSite().getArchives().length==0) fail("The local site does not contain archives, should not contain an XML file but archives should be found anyway by parsing");
 		
 		//cleanup
-		File file = new File(localSite.getSite().getURL().getFile()+File.separator+Site.INSTALL_FEATURE_PATH+remoteFeature.getVersionIdentifier());
+		File file = new File(localSite.getSite().getURL().getFile()+File.separator+Site.INSTALL_FEATURE_PATH+remoteFeature.getVersionedIdentifier());
 		UpdateManagerUtils.removeFromFileSystem(file);
 		file = new File(localSite.getSite().getURL().getFile()+File.separator+Site.DEFAULT_PLUGIN_PATH+"org.eclipse.update.core.tests.feature1.plugin1_3.5.6");
 		UpdateManagerUtils.removeFromFileSystem(file);

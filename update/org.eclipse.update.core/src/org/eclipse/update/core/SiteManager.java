@@ -11,6 +11,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import org.eclipse.core.internal.plugins.ConfigurationProperty;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.model.InvalidSiteTypeException;
 import org.eclipse.update.internal.core.*;
 
@@ -68,7 +69,7 @@ public class SiteManager {
 	 * @since 2.0 
 	 */
 
-	public static IConfigurationSite createConfigurationSite(File file,int policy) throws CoreException{
+	public static IConfiguredSite createConfigurationSite(File file,int policy) throws CoreException{
 		return InternalSiteManager.createConfigurationSite(file,policy);
 	}
 	

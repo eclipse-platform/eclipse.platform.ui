@@ -71,14 +71,14 @@ public class TestRemove extends UpdateManagerTestCase {
 		IFeatureReference ref = localSite.install(remoteFeature, null);
 
 		// then remove it
-		String featureRef =  ref.getFeature().getVersionIdentifier().toString();	
+		String featureRef =  ref.getFeature().getVersionedIdentifier().toString();	
 		localSite.remove(ref.getFeature(),null);
 
 		// verify
 		String site = TARGET_FILE_SITE.getFile();
 		IPluginEntry[] entries = remoteFeature.getPluginEntries();
 		assertTrue("no plugins entry", (entries != null && entries.length != 0));
-		String pluginName = entries[0].getVersionIdentifier().toString();
+		String pluginName = entries[0].getVersionedIdentifier().toString();
 		
 		File pluginFile = new File(site, Site.DEFAULT_PLUGIN_PATH + pluginName);
 		assertTrue("plugin files installed locally", !pluginFile.exists());

@@ -14,7 +14,6 @@ import org.eclipse.update.internal.core.*;
  */
 public class Feature extends FeatureModel implements IFeature {
 
-
 	/**
 	 * 
 	 */
@@ -59,9 +58,9 @@ public class Feature extends FeatureModel implements IFeature {
 	}
 
 	/*
-	 * @see IFeature#getIdentifier()
+	 * @see IFeature#getVersionedIdentifier()
 	 */
-	public VersionedIdentifier getVersionIdentifier() {
+	public VersionedIdentifier getVersionedIdentifier() {
 		return new VersionedIdentifier(getFeatureIdentifier(), getFeatureVersion());
 	}
 
@@ -145,34 +144,25 @@ public class Feature extends FeatureModel implements IFeature {
 		this.site = site;
 	}
 
-	
-		/**
-	 * returns the download size
-	 * of the feature to be installed on the site.
-	 * If the site is <code>null</code> returns the maximum size
-	 * 
-	 * If one plug-in entry has an unknown size.
-	 * then the download size is unknown.
-	 * 
-	 * @see IFeature#getDownloadSize()
-	 * 
-	 */
+	/**
+	* returns the download size
+	* of the feature to be installed on the site.
+	* If the site is <code>null</code> returns the maximum size
+	* 
+	* If one plug-in entry has an unknown size.
+	* then the download size is unknown.
+	* 
+	* @see IFeature#getDownloadSize()
+	* 
+	*/
 	public long getDownloadSize() {
-		long result = 0;
-		IPluginEntry[] entriesToInstall = this.getPluginEntries();
-
-		if (entriesToInstall == null || entriesToInstall.length == 0) {
-			result = -1;
-		} else {
-			long pluginSize = 0;
-			int i = 0;
-			while (i < entriesToInstall.length && pluginSize != -1) {
-				pluginSize = ((PluginEntry)entriesToInstall[i]).getDownloadSize();
-				result = pluginSize == -1 ? -1 : result + pluginSize;
-				i++;
-			}
+		try {
+			return getFeatureContentProvider().getDownloadSizeFor(getPluginEntries(), getNonPluginEntries());
+		} catch (CoreException e) {
+			UpdateManagerPlugin.getPlugin().getLog().log(e.getStatus());
+			return ContentEntryModel.UNKNOWN_SIZE;
 		}
-		return result;
+
 	}
 	/**
 	 * returns the install size
@@ -185,21 +175,13 @@ public class Feature extends FeatureModel implements IFeature {
 	 * @see IFeature#getInstallSize()
 	 */
 	public long getInstallSize() {
-		long result = 0;
-		IPluginEntry[] entriesToInstall = this.getPluginEntries();
-
-		if (entriesToInstall == null || entriesToInstall.length == 0) {
-			result = -1;
-		} else {
-			long pluginSize = 0;
-			int i = 0;
-			while (i < entriesToInstall.length && pluginSize != -1) {
-				pluginSize = ((PluginEntry)entriesToInstall[i]).getInstallSize();
-				result = pluginSize == -1 ? -1 : result + pluginSize;
-				i++;
-			}
+		try {
+			return getFeatureContentProvider().getInstallSizeFor(getPluginEntries(), getNonPluginEntries());
+		} catch (CoreException e) {
+			UpdateManagerPlugin.getPlugin().getLog().log(e.getStatus());
+			return ContentEntryModel.UNKNOWN_SIZE;
 		}
-		return result;
+
 	}
 	/*
 	 * @see IFeature#isExecutable()
@@ -242,8 +224,8 @@ public class Feature extends FeatureModel implements IFeature {
 
 			// determine number of monitor tasks
 				int taskCount = 1 // one task for all feature files (already downloaded)
-					+pluginsToInstall.length // one task for each plugin to install
-					+getNonPluginEntries().length; // one task for each non-plugin file to install
+		+pluginsToInstall.length // one task for each plugin to install
+	+getNonPluginEntries().length; // one task for each non-plugin file to install
 
 			if (monitor != null)
 				monitor.beginTask(EMPTY_STRING, taskCount);
@@ -263,7 +245,7 @@ public class Feature extends FeatureModel implements IFeature {
 			// download and install plugin plugin files
 			for (int i = 0; i < pluginsToInstall.length; i++) {
 				if (monitor != null)
-					monitor.setTaskName(Policy.bind("Feature.TaskInstallPluginFiles") + pluginsToInstall[i].getVersionIdentifier().getIdentifier() + "]: "); //$NON-NLS-1$ //$NON-NLS-2$
+					monitor.setTaskName(Policy.bind("Feature.TaskInstallPluginFiles") + pluginsToInstall[i].getVersionedIdentifier().getIdentifier() + "]: "); //$NON-NLS-1$ //$NON-NLS-2$
 				IContentConsumer pluginConsumer = consumer.open(pluginsToInstall[i]);
 				references = getFeatureContentProvider().getPluginEntryContentReferences(pluginsToInstall[i], monitor);
 				for (int j = 0; j < references.length; j++) {
@@ -294,12 +276,14 @@ public class Feature extends FeatureModel implements IFeature {
 			}
 		} catch (CoreException e) {
 			// an error occured, abort 
-			if (consumer!=null) consumer.abort();
+			if (consumer != null)
+				consumer.abort();
 			throw e;
 		} finally {
-			if (monitor != null) monitor.done();
+			if (monitor != null)
+				monitor.done();
 		}
-		
+
 		return consumer.close();
 
 	}
@@ -332,7 +316,6 @@ public class Feature extends FeatureModel implements IFeature {
 			return (IPluginEntry[]) result;
 	}
 
-
 	/*
 	 * @see IFeature#getDataEntries()
 	 */
@@ -350,6 +333,13 @@ public class Feature extends FeatureModel implements IFeature {
 	public int getPluginEntryCount() {
 		return getPluginEntryModels().length;
 	}
+	
+	/*
+	 * @see IFeature#getNonPluginEntryCount()
+	 */
+	public int getNonPluginEntryCount() {
+		return getNonPluginEntryModels().length;
+	}	
 
 	/*
 	 * @see IFeature#getImports()
@@ -383,7 +373,7 @@ public class Feature extends FeatureModel implements IFeature {
 	public IFeatureContentProvider getFeatureContentProvider() throws CoreException {
 		if (featureContentProvider == null) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, Policy.bind("Feature.NoContentProvider",getVersionIdentifier().toString()), null); //$NON-NLS-1$
+			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, Policy.bind("Feature.NoContentProvider", getVersionedIdentifier().toString()), null); //$NON-NLS-1$
 			throw new CoreException(status);
 		}
 		return this.featureContentProvider;
@@ -396,13 +386,13 @@ public class Feature extends FeatureModel implements IFeature {
 		throw new UnsupportedOperationException();
 	}
 
-
 	/*
 	 * @see Object#toString()
 	 */
 	public String toString() {
-		String URLString = (getURL()==null)?"<NO URL>":getURL().toExternalForm();
-		return "Feature: "+URLString+" version:"+getVersionIdentifier().toString();
+		String URLString = (getURL() == null) ? "<NO URL>" : getURL().toExternalForm();
+		return "Feature: " + URLString + " version:" + getVersionedIdentifier().toString();
 	}
+
 
 }

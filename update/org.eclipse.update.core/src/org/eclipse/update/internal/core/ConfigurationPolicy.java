@@ -11,6 +11,7 @@ import java.util.*;
 import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.model.ConfigurationActivityModel;
 import org.eclipse.update.core.model.ConfigurationPolicyModel;
 import org.eclipse.update.core.model.FeatureReferenceModel;
@@ -54,7 +55,7 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel implements ICo
 
 		//Start UOW ?
 		ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_CONFIGURE);
-		activity.setLabel(feature.getFeature().getVersionIdentifier().toString());
+		activity.setLabel(feature.getFeature().getVersionedIdentifier().toString());
 		activity.setDate(new Date());
 
 		addConfiguredFeatureReference((FeatureReferenceModel)feature);
@@ -95,7 +96,7 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel implements ICo
 		if (unconfigure) {
 			// FIXME: Start UOW ?
 			ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_UNCONFIGURE);
-			activity.setLabel(feature.getFeature().getVersionIdentifier().toString());
+			activity.setLabel(feature.getFeature().getVersionedIdentifier().toString());
 			activity.setDate(new Date());
 
 			addUnconfiguredFeatureReference((FeatureReferenceModel)feature);
@@ -152,7 +153,7 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel implements ICo
 
 				for (int index = 0; index < entries.length; index++) {
 					IPluginEntry entry = entries[index];
-					String id = entry.getVersionIdentifier().toString();
+					String id = entry.getVersionedIdentifier().toString();
 					// obtain the path of the plugin directories on the site	
 					ContentReference[] featureContentReference = feature.getFeatureContentProvider().getPluginEntryArchiveReferences(entry, null/*IProgressMonitor*/);
 					for (int j = 0; j < featureContentReference.length; j++) {

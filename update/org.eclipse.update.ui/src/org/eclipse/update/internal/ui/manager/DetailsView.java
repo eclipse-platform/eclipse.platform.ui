@@ -182,7 +182,7 @@ public void selectionChanged(IWorkbenchPart part, ISelection sel) {
 				showPageWithInput(INSTALL_CONFIGURATION_PAGE, el);
 				return;
 			}
-			if (el instanceof IConfigurationSiteAdapter) {
+			if (el instanceof IConfiguredSiteAdapter) {
 				showPageWithInput(INSTALL_SITE_PAGE, el);
 				return;
 			}

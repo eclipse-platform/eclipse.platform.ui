@@ -16,6 +16,7 @@ import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.model.*;
 import org.eclipse.update.core.model.InvalidSiteTypeException;
 import org.eclipse.update.core.model.ParsingException;
@@ -392,7 +393,7 @@ public class InternalSiteManager {
 	 * Creates a Configuration Site and a new Site
 	 * The policy is from <code> org.eclipse.core.boot.IPlatformConfiguration</code>
 	 */
-	public static IConfigurationSite createConfigurationSite(File file, int policy)
+	public static IConfiguredSite createConfigurationSite(File file, int policy)
 		throws CoreException {
 
 		ISite site = createSite(file);

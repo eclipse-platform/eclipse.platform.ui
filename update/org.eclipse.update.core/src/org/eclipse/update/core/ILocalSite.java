@@ -89,7 +89,7 @@ public interface ILocalSite {
 	 * 
 	 * The following line creates a new current configuration in the local site
 	 * IInstallConfiguration currentConfig = site.createNewCurrentConfiguration(null,"new Label"); 
-	 * IConfigurationSite configSite = -obtain a configuration site from the InstallConfigurationModel-
+	 * IConfiguredSite configSite = -obtain a configuration site from the InstallConfigurationModel-
 	 * configSite.install(IFeature,IProgressMonitor);
 	 * 
 	 * the following line saves the state of the configuration

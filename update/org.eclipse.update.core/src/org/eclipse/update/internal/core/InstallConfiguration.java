@@ -21,12 +21,13 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.update.core.IActivity;
-import org.eclipse.update.core.IConfigurationSite;
 import org.eclipse.update.core.IFeatureReference;
 import org.eclipse.update.core.IInstallConfiguration;
 import org.eclipse.update.core.IInstallConfigurationChangedListener;
 import org.eclipse.update.core.IProblemHandler;
+import org.eclipse.update.configuration.*;
+import org.eclipse.update.configuration.IActivity;
+import org.eclipse.update.configuration.IConfiguredSite;
 import org.eclipse.update.core.model.ConfigurationActivityModel;
 import org.eclipse.update.core.model.ConfigurationSiteModel;
 import org.eclipse.update.core.model.InstallConfigurationModel;
@@ -63,7 +64,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		// do not copy list of listeners nor activities
 		// ake a copy of the siteConfiguration object
 		if (config != null) {
-			IConfigurationSite[] sites = config.getConfigurationSites();
+			IConfiguredSite[] sites = config.getConfigurationSites();
 			if (sites != null) {
 				for (int i = 0; i < sites.length; i++) {
 					ConfigurationSite configSite = new ConfigurationSite(sites[i]);
@@ -81,18 +82,18 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 	/**
 	 * 
 	 */
-	public IConfigurationSite[] getConfigurationSites() {
+	public IConfiguredSite[] getConfigurationSites() {
 		ConfigurationSiteModel[] result = getConfigurationSitesModel();
 		if (result.length == 0)
-			return new IConfigurationSite[0];
+			return new IConfiguredSite[0];
 		else
-			return (IConfigurationSite[]) result;
+			return (IConfiguredSite[]) result;
 	}
 
 	/**
 	 * 
 	 */
-	public void addConfigurationSite(IConfigurationSite site) {
+	public void addConfigurationSite(IConfiguredSite site) {
 		if (!isCurrent() && isReadOnly())
 			return;
 
@@ -116,7 +117,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 	/**
 	 * add multiple sites in one activity
 	 */
-	public void setConfigurationSites(IConfigurationSite[] site) {
+	public void setConfigurationSites(IConfiguredSite[] site) {
 		if (!isCurrent() && isReadOnly())
 			return;
 
@@ -132,7 +133,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 	/**
 	 * 
 	 */
-	public void removeConfigurationSite(IConfigurationSite site) {
+	public void removeConfigurationSite(IConfiguredSite site) {
 
 		if (removeConfigurationSiteModel((ConfigurationSiteModel) site)) { // notify listeners
 			Object[] configurationListeners = listeners.getListeners();
@@ -205,7 +206,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		ConfigurationSiteModel[] configurationSites = getConfigurationSitesModel();
 
 		for (int i = 0; i < configurationSites.length; i++) {
-			IConfigurationSite element = (IConfigurationSite) configurationSites[i];
+			IConfiguredSite element = (IConfiguredSite) configurationSites[i];
 			ConfigurationPolicy configurationPolicy = (ConfigurationPolicy) element.getConfigurationPolicy();
 
 			// obtain the list of plugins
@@ -305,13 +306,13 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 	 */
 	public void revertTo(IInstallConfiguration configuration, IProgressMonitor monitor, IProblemHandler handler) throws CoreException, InterruptedException {
 
-		IConfigurationSite[] oldConfigSites = configuration.getConfigurationSites();
-		IConfigurationSite[] nowConfigSites = this.getConfigurationSites();
+		IConfiguredSite[] oldConfigSites = configuration.getConfigurationSites();
+		IConfiguredSite[] nowConfigSites = this.getConfigurationSites();
 
 		// create a hashtable of the *old* sites
 		Map oldSitesMap = new Hashtable(0);
 		for (int i = 0; i < oldConfigSites.length; i++) {
-			IConfigurationSite element = oldConfigSites[i];
+			IConfiguredSite element = oldConfigSites[i];
 			oldSitesMap.put(element.getSite().getURL().toExternalForm(), element);
 		}
 		// create list of all the sites that map the *old* sites
@@ -322,7 +323,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			String key = null;
 			for (int i = 0; i < nowConfigSites.length; i++) {
 				key = nowConfigSites[i].getSite().getURL().toExternalForm();
-				IConfigurationSite oldSite = (IConfigurationSite) oldSitesMap.get(key);
+				IConfiguredSite oldSite = (IConfiguredSite) oldSitesMap.get(key);
 				if (oldSite != null) {
 					// the Site existed before, calculate teh delta between its current state and the
 					// state we are reverting to

@@ -7,7 +7,8 @@ package org.eclipse.update.core.model;
 import java.io.PrintWriter;
 import java.util.Date;
 
-import org.eclipse.update.core.IActivity;
+import org.eclipse.update.configuration.*;
+import org.eclipse.update.configuration.IActivity;
 
 public class ConfigurationActivityModel extends ModelObject{
 	

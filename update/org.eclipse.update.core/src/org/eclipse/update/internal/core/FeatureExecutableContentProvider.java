@@ -109,7 +109,7 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 	private String getArchiveID(IPluginEntry entry) {
 		//FIXME: fragments
 		String type = (entry.isFragment()) ? Site.DEFAULT_FRAGMENT_PATH : Site.DEFAULT_PLUGIN_PATH;
-		return type + entry.getVersionIdentifier().toString();
+		return type + entry.getVersionedIdentifier().toString();
 	}
 
 	/**
@@ -119,7 +119,7 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 	 * the default ID is fragments/pluginId_pluginVer or
 		*/
 	private String getArchiveID(INonPluginEntry entry) {
-		String nonPluginBaseID = Site.DEFAULT_FEATURE_PATH + feature.getVersionIdentifier().toString()+"/";
+		String nonPluginBaseID = Site.DEFAULT_FEATURE_PATH + feature.getVersionedIdentifier().toString()+"/";
 		return nonPluginBaseID + entry.getIdentifier().toString();
 	}
 	/*
@@ -155,7 +155,7 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 			result[0] = new ContentReference(getArchiveID(pluginEntry),new File(getPath(pluginEntry)));
 		} catch (Exception e) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Error retrieving archive names for:" + pluginEntry.getVersionIdentifier().toString(), e);
+			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Error retrieving archive names for:" + pluginEntry.getVersionedIdentifier().toString(), e);
 			throw new CoreException(status);
 		}
 		return result;
@@ -209,7 +209,7 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 			}
 		} catch (Exception e) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Error retrieving archive content references for:" + feature.getVersionIdentifier().toString(), e);
+			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Error retrieving archive content references for:" + feature.getVersionedIdentifier().toString(), e);
 			throw new CoreException(status);
 		}
 		return result;
@@ -233,7 +233,7 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 			}
 		} catch (Exception e) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Error retrieving archive content references for:" + pluginEntry.getVersionIdentifier().toString(), e);
+			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Error retrieving archive content references for:" + pluginEntry.getVersionedIdentifier().toString(), e);
 			throw new CoreException(status);
 		}
 		return result;

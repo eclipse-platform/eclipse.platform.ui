@@ -169,7 +169,7 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 				UpdateManagerUtils.removeFromFileSystem(references[i].asFile());
 			} catch (IOException e) {
 				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, Policy.bind("Site.CannotRemoveFeature", feature.getVersionIdentifier().getIdentifier(),getURL().toExternalForm()), e); //$NON-NLS-1$
+				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, Policy.bind("Site.CannotRemoveFeature", feature.getVersionedIdentifier().getIdentifier(),getURL().toExternalForm()), e); //$NON-NLS-1$
 				throw new CoreException(status);
 			}
 		}
@@ -420,22 +420,18 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 	 * @see ISite#getDownloadSize(IFeature)
 	 * 
 	 */
-	public long getDownloadSize(IFeature feature) {
+	public long getDownloadSizeFor(IFeature feature) {
 		long result = 0;
 		IPluginEntry[] entriesToInstall = feature.getPluginEntries();
 		IPluginEntry[] siteEntries = this.getPluginEntries();
 		entriesToInstall = UpdateManagerUtils.intersection(entriesToInstall, siteEntries);
 
-		if (entriesToInstall == null || entriesToInstall.length == 0) {
-			result = -1;
-		} else {
-			long pluginSize = 0;
-			int i = 0;
-			while (i < entriesToInstall.length && pluginSize != -1) {
-				pluginSize = ((PluginEntry)entriesToInstall[i]).getDownloadSize();
-				result = pluginSize == -1 ? -1 : result + pluginSize;
-				i++;
-			}
+		// FIXME Intersection for NonPluginEntry (using Install Handler)
+		try {
+		result = feature.getFeatureContentProvider().getDownloadSizeFor(entriesToInstall,/* non plugin entry []*/null);
+		} catch (CoreException e){
+			UpdateManagerPlugin.getPlugin().getLog().log(e.getStatus());
+			result = ContentEntryModel.UNKNOWN_SIZE;
 		}
 		return result;
 	}
@@ -448,26 +444,23 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 	 * If one plug-in entry has an unknown size.
 	 * then the download size is unknown.
 	 * 
-	 * @see ISite#getDownloadSize(IFeature)
+	 * @see ISite#getDownloadSizeFor(IFeature)
 	 * 
 	 */
-	public long getInstallSize(IFeature feature) {
+	public long getInstallSizeFor(IFeature feature) {
 		long result = 0;
 		IPluginEntry[] entriesToInstall = feature.getPluginEntries();
 		IPluginEntry[] siteEntries = this.getPluginEntries();
 		entriesToInstall = UpdateManagerUtils.intersection(entriesToInstall, siteEntries);
 
-		if (entriesToInstall == null || entriesToInstall.length == 0) {
-			result = -1;
-		} else {
-			long pluginSize = 0;
-			int i = 0;
-			while (i < entriesToInstall.length && pluginSize != -1) {
-				pluginSize = ((PluginEntry)entriesToInstall[i]).getInstallSize();
-				result = pluginSize == -1 ? -1 : result + pluginSize;
-				i++;
-			}
+		// FIXME Intersection for NonPluginEntry (using Install Handler)
+		try {
+		result = feature.getFeatureContentProvider().getInstallSizeFor(entriesToInstall,/* non plugin entry []*/null);
+		} catch (CoreException e){
+			UpdateManagerPlugin.getPlugin().getLog().log(e.getStatus());
+			result = ContentEntryModel.UNKNOWN_SIZE;
 		}
+		
 		return result;
 	}
 
@@ -540,7 +533,7 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 				UpdateManagerUtils.removeFromFileSystem(references[i].asFile());
 			} catch (IOException e) {
 				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, Policy.bind("Site.CannotRemovePlugin",pluginEntry.getVersionIdentifier().toString(),getURL().toExternalForm()), e); //$NON-NLS-1$
+				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, Policy.bind("Site.CannotRemovePlugin",pluginEntry.getVersionedIdentifier().toString(),getURL().toExternalForm()), e); //$NON-NLS-1$
 				throw new CoreException(status);
 			}
 		}
@@ -558,8 +551,8 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 			result = factory.createFeature(/*URL*/null,this);
 
 			// at least set the version identifier to be the same
-			 ((FeatureModel) result).setFeatureIdentifier(sourceFeature.getVersionIdentifier().getIdentifier());
-			((FeatureModel) result).setFeatureVersion(sourceFeature.getVersionIdentifier().getVersion().toString());
+			 ((FeatureModel) result).setFeatureIdentifier(sourceFeature.getVersionedIdentifier().getIdentifier());
+			((FeatureModel) result).setFeatureVersion(sourceFeature.getVersionedIdentifier().getVersion().toString());
 		}
 		return result;
 	}

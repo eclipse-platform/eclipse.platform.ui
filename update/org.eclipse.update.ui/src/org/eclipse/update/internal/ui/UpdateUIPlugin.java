@@ -14,6 +14,8 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.manager.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.configuration.*;
+
 import java.lang.reflect.*;
 import org.eclipse.jface.dialogs.ErrorDialog;
 
@@ -147,7 +149,7 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 		Platform.getPlugin("org.eclipse.core.runtime").getLog().log(status);
 	}
 	
-	public static IFeature [] searchSite(String featureId, IConfigurationSite site, boolean onlyConfigured) throws CoreException {
+	public static IFeature [] searchSite(String featureId, IConfiguredSite site, boolean onlyConfigured) throws CoreException {
 		IFeatureReference [] references = null;
 		
 		if (onlyConfigured)
@@ -158,7 +160,7 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 
 		for (int i=0; i<references.length; i++) {
 			IFeature feature = references[i].getFeature();
-			String id = feature.getVersionIdentifier().getIdentifier();
+			String id = feature.getVersionedIdentifier().getIdentifier();
 			if (featureId.equals(id)) {
 				result.add(feature);
 			}

@@ -230,7 +230,7 @@ public class SearchResultSection {
 		String fullLabel = feature.getLabel();
 		return feature.getLabel()
 			+ " "
-			+ feature.getVersionIdentifier().getVersion().toString();
+			+ feature.getVersionedIdentifier().getVersion().toString();
 	}
 
 	private void openFeature(IFeature feature) {

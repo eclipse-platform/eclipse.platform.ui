@@ -34,7 +34,7 @@ public interface IFeatureContentProvider {
 	ContentReference getFeatureManifestReference(InstallMonitor monitor) throws CoreException;
 
 	/**
-	 * Returns an array of content references for the whole DefaultFeature
+	 * Returns an array of content references for the whole Feature
 	 * 
 	 * @param monitor optional progress monitor
 	 * @return an array of ContentReference or an empty array if no references are found
@@ -45,7 +45,7 @@ public interface IFeatureContentProvider {
 	ContentReference[] getArchiveReferences(InstallMonitor monitor) throws CoreException;
 
 	/**
-	 * Returns an array of content references for the IPluginEntry
+	 * Returns an array of content references for the IFeature
 	 * 
 	 * @param monitor optional progress monitor
 	 * @return an array of ContentReference or an empty array if no references are found
@@ -112,7 +112,17 @@ public interface IFeatureContentProvider {
 	 */
 	void setFeature(IFeature feature);
 	
+	/**
+	 * Returns the size ....
+	 * @since 2.0
+	 */
+	long getDownloadSizeFor(IPluginEntry[] pluginEntries, INonPluginEntry[] nonPluginEntries);
 	
+	/**
+	 * 
+	 * @since 2.0
+	 */
+	long getInstallSizeFor(IPluginEntry[] pluginEntries, INonPluginEntry[] nonPluginEntries);
 }
 
 

@@ -22,7 +22,7 @@ public class PluginEntry extends PluginEntryModel implements IPluginEntry {
 	/**
 	 * @see IPluginEntry#getIdentifier()
 	 */
-	public VersionedIdentifier getVersionIdentifier() {
+	public VersionedIdentifier getVersionedIdentifier() {
 		return new VersionedIdentifier(getPluginIdentifier(), getPluginVersion());
 	}
 

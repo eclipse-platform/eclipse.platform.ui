@@ -36,10 +36,10 @@ public class SiteFilePluginContentConsumer extends ContentConsumer {
 		try {
 			// FIXME: fragment code
 			if (pluginEntry.isFragment()) {
-				URL newURL = new URL(site.getURL(), Site.DEFAULT_FRAGMENT_PATH + pluginEntry.getVersionIdentifier().toString());
+				URL newURL = new URL(site.getURL(), Site.DEFAULT_FRAGMENT_PATH + pluginEntry.getVersionedIdentifier().toString());
 				pluginPath = newURL.getFile();
 			} else {
-				URL newURL = new URL(site.getURL(), Site.DEFAULT_PLUGIN_PATH + pluginEntry.getVersionIdentifier().toString());
+				URL newURL = new URL(site.getURL(), Site.DEFAULT_PLUGIN_PATH + pluginEntry.getVersionedIdentifier().toString());
 				pluginPath = newURL.getFile();
 			}
 			String contentKey = contentReference.getIdentifier();

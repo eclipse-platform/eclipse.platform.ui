@@ -131,7 +131,7 @@ public class SiteView
 			if (obj instanceof FeatureReferenceAdapter) {
 				try {
 					IFeature feature = ((FeatureReferenceAdapter) obj).getFeature();
-					String version = feature.getVersionIdentifier().getVersion().toString();
+					String version = feature.getVersionedIdentifier().getVersion().toString();
 					return feature.getLabel() + " " + version;
 				} catch (CoreException e) {
 					UpdateUIPlugin.logException(e);

@@ -47,8 +47,8 @@ public class BuildZipConverter {
 			File pluginsDir = new File(site, "plugins");
 			pluginsDir.mkdirs();
 			
-			File jarFile = new File(featuresDir,feature.getVersionIdentifier()+".jar");
-			System.out.println("writing feature archive: "+feature.getVersionIdentifier()+".jar");
+			File jarFile = new File(featuresDir,feature.getVersionedIdentifier()+".jar");
+			System.out.println("writing feature archive: "+feature.getVersionedIdentifier()+".jar");
 			writeJar(jarFile, refs, feature, null, null);
 			JarContentReference jar = new JarContentReference("build.zip",buildzip);
 			Properties manifest = getBuildManifest(jar);
@@ -56,9 +56,9 @@ public class BuildZipConverter {
 			IPluginEntry[] plugins = feature.getPluginEntries();
 			for (int i=0; i<plugins.length; i++) {
 				refs = provider.getPluginEntryContentReferences(plugins[i], null);
-				jarFile = new File(pluginsDir,plugins[i].getVersionIdentifier()+".jar");
-				System.out.println("writing plugin archive: "+plugins[i].getVersionIdentifier()+".jar");
-				writeJar(jarFile, refs, feature, plugins[i].getVersionIdentifier().getIdentifier(), manifest);
+				jarFile = new File(pluginsDir,plugins[i].getVersionedIdentifier()+".jar");
+				System.out.println("writing plugin archive: "+plugins[i].getVersionedIdentifier()+".jar");
+				writeJar(jarFile, refs, feature, plugins[i].getVersionedIdentifier().getIdentifier(), manifest);
 			}
 			
 			writeSiteManifest(site, feature);
@@ -93,7 +93,7 @@ public class BuildZipConverter {
 				String value = manifest.getProperty(key);
 				if (value != null) {
 					if (value.equals("HEAD")) {
-						value += "-" + feature.getVersionIdentifier().getVersion().getMajorComponent();
+						value += "-" + feature.getVersionedIdentifier().getVersion().getMajorComponent();
 					}
 					String buf = key + "=" + value;
 					StringBufferInputStream sbis = new StringBufferInputStream(buf);
@@ -122,7 +122,7 @@ public class BuildZipConverter {
 	public static void writeSiteManifest(File site, IFeature feature) throws IOException {
 		File manifest = new File(site, "site.xml");
 		FileOutputStream os = new FileOutputStream(manifest);
-		String siteXML = "<site>\n   <feature url=\"features/"+feature.getVersionIdentifier().toString()+".jar\"/>\n</site>";
+		String siteXML = "<site>\n   <feature url=\"features/"+feature.getVersionedIdentifier().toString()+".jar\"/>\n</site>";
 		StringBufferInputStream sbis = new StringBufferInputStream(siteXML);
 		UpdateManagerUtils.copy(sbis,os,null);
 		os.close();

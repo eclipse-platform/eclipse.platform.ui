@@ -54,13 +54,13 @@ public class TestDefaultPackageFeatureAPI extends UpdateManagerTestCase {
 			remoteFeature = new DefaultFeature(site);
 			remoteFeature.setURL(url1);
 			remoteFeature.setIdentifier(ident1);
-			assertEquals(ident1.toString(),remoteFeature.getVersionIdentifier().toString());
+			assertEquals(ident1.toString(),remoteFeature.getVersionedIdentifier().toString());
 		
 			 URL url2 = UpdateManagerUtils.getURL(site.getURL(),id2,null);		
 			remoteFeature = new DefaultFeature(site);
 			remoteFeature.setURL(url2);
 			remoteFeature.setIdentifier(ident2);			
-			assertEquals(ident2.toString(),remoteFeature.getVersionIdentifier().toString());
+			assertEquals(ident2.toString(),remoteFeature.getVersionedIdentifier().toString());
 	}
 
 

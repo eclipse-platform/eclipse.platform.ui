@@ -266,7 +266,7 @@ public class SiteFileFactory extends BaseSiteFactory {
 
 						if (pluginFile != null && pluginFile.exists()) {
 							IPluginEntry entry = new DefaultPluginParser().parse(new FileInputStream(pluginFile));
-							VersionedIdentifier identifier = entry.getVersionIdentifier();
+							VersionedIdentifier identifier = entry.getVersionedIdentifier();
 							plugin = new PluginIdentifier(identifier, pluginFile);
 
 							addParsedPlugin(plugin);
@@ -343,7 +343,7 @@ public class SiteFileFactory extends BaseSiteFactory {
 
 					if (ref != null) {
 						IPluginEntry entry = new DefaultPluginParser().parse(ref.getInputStream());
-						VersionedIdentifier identifier = entry.getVersionIdentifier();
+						VersionedIdentifier identifier = entry.getVersionedIdentifier();
 						plugin = new PluginIdentifier(identifier, file);
 						addParsedPlugin(plugin);
 					} //ref!=null

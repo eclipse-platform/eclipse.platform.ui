@@ -8,6 +8,7 @@ import java.net.URL;
 
 import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.update.core.*;
+import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.model.*;
 import org.eclipse.update.core.model.ConfigurationSiteModel;
 import org.eclipse.update.core.model.InstallConfigurationModel;
@@ -42,7 +43,7 @@ public class TestBackward extends UpdateManagerTestCase {
 		IFeatureReference featureRef = remoteSite.getFeatureReferences()[0];
 		
 		IInstallConfiguration oldInstallConfig = site.getCurrentConfiguration();
-		IConfigurationSite oldConfigSite = oldInstallConfig.getConfigurationSites()[0];
+		IConfiguredSite oldConfigSite = oldInstallConfig.getConfigurationSites()[0];
 		oldConfigSite.install(featureRef.getFeature(),null);
 		site.save();
 	
@@ -53,7 +54,7 @@ public class TestBackward extends UpdateManagerTestCase {
 		assertTrue(activity.getInstallConfiguration().equals(current));
 		
 		// ConfigSite->InstallConfig
-		IConfigurationSite newConfigSite = current.getConfigurationSites()[0];
+		IConfiguredSite newConfigSite = current.getConfigurationSites()[0];
 		assertTrue(newConfigSite.getInstallConfiguration().equals(current));
 		
 		// cleanup

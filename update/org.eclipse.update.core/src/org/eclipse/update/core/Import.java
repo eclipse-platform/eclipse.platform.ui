@@ -28,7 +28,7 @@ public class Import extends ImportModel implements IImport {
 	/**
 	 * @see IImport#getIdentifier()
 	 */
-	public VersionedIdentifier getIdentifier() {
+	public VersionedIdentifier getVersionedIdentifier() {
 		return new VersionedIdentifier(getPluginIdentifier(),getPluginVersion());
 	}
 

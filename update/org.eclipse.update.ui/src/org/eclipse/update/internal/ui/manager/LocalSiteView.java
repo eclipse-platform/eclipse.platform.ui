@@ -18,7 +18,6 @@ import org.eclipse.update.internal.ui.*;
 import org.eclipse.swt.custom.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.ICategory;
-import org.eclipse.update.core.IConfigurationSite;
 import org.eclipse.update.core.IFeature;
 import org.eclipse.update.core.IImport;
 import org.eclipse.update.core.IURLEntry;
@@ -27,6 +26,9 @@ import org.eclipse.update.core.IPluginEntry;
 import org.eclipse.update.core.ISite;
 import org.eclipse.update.core.ISiteChangedListener;
 import org.eclipse.update.core.VersionedIdentifier;
+import org.eclipse.update.configuration.*;
+import org.eclipse.update.configuration.IConfiguredSite;
+
 import java.util.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -105,8 +107,8 @@ public class LocalSiteView
 			if (parent instanceof ILocalSite) {
 				return openLocalSite();
 			}
-			if (parent instanceof IConfigurationSiteAdapter) {
-				IConfigurationSiteAdapter adapter = (IConfigurationSiteAdapter) parent;
+			if (parent instanceof IConfiguredSiteAdapter) {
+				IConfiguredSiteAdapter adapter = (IConfiguredSiteAdapter) parent;
 				boolean showUnconf = showUnconfFeaturesAction.isChecked();
 				if (showUnconf)
 					return getAllFeatures(adapter);
@@ -122,9 +124,9 @@ public class LocalSiteView
 			return new Object[0];
 		}
 
-		private Object[] getConfiguredFeatures(IConfigurationSiteAdapter adapter) {
+		private Object[] getConfiguredFeatures(IConfiguredSiteAdapter adapter) {
 			try {
-				IConfigurationSite csite = adapter.getConfigurationSite();
+				IConfiguredSite csite = adapter.getConfigurationSite();
 				IFeatureReference[] refs = csite.getConfiguredFeatures();
 				Object[] result = new Object[refs.length];
 				for (int i = 0; i < refs.length; i++) {
@@ -138,8 +140,8 @@ public class LocalSiteView
 			}
 		}
 		
-		private Object[] getAllFeatures(IConfigurationSiteAdapter adapter) {
-			IConfigurationSite csite = adapter.getConfigurationSite();
+		private Object[] getAllFeatures(IConfiguredSiteAdapter adapter) {
+			IConfiguredSite csite = adapter.getConfigurationSite();
 			IFeatureReference[] crefs = csite.getConfiguredFeatures();
 			ISite site = csite.getSite();
 			IFeatureReference[] allRefs = site.getFeatureReferences();
@@ -173,7 +175,7 @@ public class LocalSiteView
 			/*
 			if (child instanceof IFeature)
 			   return ((IFeature)child).getSite();
-			if (child instanceof IConfigurationSite)
+			if (child instanceof IConfiguredSite)
 			   return getLocalSite();
 			 */
 			return null;
@@ -207,16 +209,16 @@ public class LocalSiteView
 			if (obj instanceof ILocalSite) {
 				return UpdateUIPlugin.getResourceString(KEY_CURRENT);
 			}
-			if (obj instanceof IConfigurationSiteAdapter) {
-				IConfigurationSite csite =
-					((IConfigurationSiteAdapter) obj).getConfigurationSite();
+			if (obj instanceof IConfiguredSiteAdapter) {
+				IConfiguredSite csite =
+					((IConfiguredSiteAdapter) obj).getConfigurationSite();
 				ISite site = csite.getSite();
 				return site.getURL().toString();
 			}
 			if (obj instanceof IFeatureAdapter) {
 				try {
 					IFeature feature = ((IFeatureAdapter) obj).getFeature();
-					String version = feature.getVersionIdentifier().getVersion().toString();
+					String version = feature.getVersionedIdentifier().getVersion().toString();
 					return feature.getLabel() + " " + version;
 				} catch (CoreException e) {
 					return "Error";
@@ -232,10 +234,10 @@ public class LocalSiteView
 			if (obj instanceof IFeatureAdapter) {
 				return getFeatureImage((IFeatureAdapter)obj);
 			}
-			if (obj instanceof IConfigurationSiteAdapter) {
-				IConfigurationSite csite =
-					((IConfigurationSiteAdapter) obj).getConfigurationSite();
-				if (csite.isInstallSite())
+			if (obj instanceof IConfiguredSiteAdapter) {
+				IConfiguredSite csite =
+					((IConfiguredSiteAdapter) obj).getConfigurationSite();
+				if (csite.isUpdateable())
 					return installSiteImage;
 				else
 					return linkedSiteImage;
@@ -306,7 +308,7 @@ public class LocalSiteView
 		try {
 			ILocalSite localSite = SiteManager.getLocalSite();
 			IInstallConfiguration config = localSite.getCurrentConfiguration();
-			IConfigurationSite[] sites = config.getConfigurationSites();
+			IConfiguredSite[] sites = config.getConfigurationSites();
 			Object[] result = new Object[sites.length];
 			for (int i = 0; i < sites.length; i++) {
 				result[i] = new ConfigurationSiteAdapter(config, sites[i]);
@@ -358,7 +360,7 @@ public class LocalSiteView
 		showUnconfFeaturesAction.setToolTipText(UpdateUIPlugin.getResourceString(KEY_SHOW_UNCONF_FEATURES_TOOLTIP));
 	}
 	
-	protected void fillActionBars(IActionBars bars) {
+	protected void isUpdatable(IActionBars bars) {
 		IToolBarManager tbm = bars.getToolBarManager();
 		tbm.add(showUnconfFeaturesAction);
 	}
@@ -368,7 +370,7 @@ public class LocalSiteView
 			ILocalSite localSite = SiteManager.getLocalSite();
 			IInstallConfiguration config = localSite.getCurrentConfiguration();
 			config.addInstallConfigurationChangedListener(this);
-			IConfigurationSite[] isites = config.getConfigurationSites();
+			IConfiguredSite[] isites = config.getConfigurationSites();
 			for (int i = 0; i < isites.length; i++) {
 				ISite site = isites[i].getSite();
 				site.addSiteChangedListener(this);
@@ -383,7 +385,7 @@ public class LocalSiteView
 			ILocalSite localSite = SiteManager.getLocalSite();
 			IInstallConfiguration config = localSite.getCurrentConfiguration();
 			config.removeInstallConfigurationChangedListener(this);
-			IConfigurationSite[] isites = config.getConfigurationSites();
+			IConfiguredSite[] isites = config.getConfigurationSites();
 			for (int i = 0; i < isites.length; i++) {
 				ISite site = isites[i].getSite();
 				site.removeSiteChangedListener(this);
@@ -396,7 +398,7 @@ public class LocalSiteView
 	/**
 	 * @see IInstallConfigurationChangedListener#installSiteAdded(ISite)
 	 */
-	public void installSiteAdded(IConfigurationSite csite) {
+	public void installSiteAdded(IConfiguredSite csite) {
 		//viewer.add(getLocalSite(), csite);
 		viewer.refresh(getLocalSite());
 	}
@@ -404,7 +406,7 @@ public class LocalSiteView
 	/**
 	 * @see IInstallConfigurationChangedListener#installSiteRemoved(ISite)
 	 */
-	public void installSiteRemoved(IConfigurationSite site) {
+	public void installSiteRemoved(IConfiguredSite site) {
 		//viewer.remove(site);
 		viewer.refresh(getLocalSite());
 	}
@@ -412,13 +414,13 @@ public class LocalSiteView
 	/**
 	 * @see IInstallConfigurationChangedListener#linkedSiteAdded(ISite)
 	 */
-	public void linkedSiteAdded(IConfigurationSite site) {
+	public void linkedSiteAdded(IConfiguredSite site) {
 	}
 
 	/**
 	 * @see IInstallConfigurationChangedListener#linkedSiteRemoved(ISite)
 	 */
-	public void linkedSiteRemoved(IConfigurationSite site) {
+	public void linkedSiteRemoved(IConfiguredSite site) {
 	}
 
 	/**

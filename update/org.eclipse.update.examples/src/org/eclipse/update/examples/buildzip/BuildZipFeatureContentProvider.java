@@ -112,7 +112,7 @@ public class BuildZipFeatureContentProvider extends FeatureContentProvider imple
 		try {
 			return peekPluginEntryContent(pluginEntry, monitor);
 		} catch(IOException e) {
-			throw newCoreException("Unable to return content for plugin entry "+pluginEntry.getVersionIdentifier(),e);
+			throw newCoreException("Unable to return content for plugin entry "+pluginEntry.getVersionedIdentifier(),e);
 		}
 	}
 	
@@ -188,7 +188,7 @@ public class BuildZipFeatureContentProvider extends FeatureContentProvider imple
 				if (jarEntry.isDirectory())
 					return false;
 				String entry = jarEntry.getName();
-				String id = currentPluginEntry.getVersionIdentifier().getIdentifier();
+				String id = currentPluginEntry.getVersionedIdentifier().getIdentifier();
 				if (id==null)
 					return false;
 				else if (entry.startsWith("eclipse/plugins/"+id+"/"))

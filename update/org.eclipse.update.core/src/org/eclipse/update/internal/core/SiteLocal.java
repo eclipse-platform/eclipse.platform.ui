@@ -12,6 +12,7 @@ import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.model.*;
 import org.xml.sax.SAXException;
 
@@ -383,14 +384,14 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 			ConfigurationSiteModel[] allConfiguredSites = currentConfigurationModel.getConfigurationSitesModel();
 			if (allConfiguredSites != null) {
 				for (int indexSites = 0; indexSites < allConfiguredSites.length; indexSites++) {
-					IFeatureReference[] features = ((IConfigurationSite) allConfiguredSites[indexSites]).getConfiguredFeatures();
+					IFeatureReference[] features = ((IConfiguredSite) allConfiguredSites[indexSites]).getConfiguredFeatures();
 					if (features != null) {
 						for (int indexFeatures = 0; indexFeatures < features.length; indexFeatures++) {
 							if (!features[indexFeatures].equals(feature)) {
 								IPluginEntry[] pluginEntries = features[indexFeatures].getFeature().getPluginEntries();
 								if (pluginEntries != null) {
 									for (int indexEntries = 0; indexEntries < pluginEntries.length; indexEntries++) {
-										allPluginID.add(entries[indexEntries].getVersionIdentifier());
+										allPluginID.add(entries[indexEntries].getVersionedIdentifier());
 									}
 								}
 							}
@@ -402,7 +403,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 			// create the delta with the plugins that may be still used by other configured or unconfigured feature
 			List plugins = new ArrayList();
 			for (int indexPlugins = 0; indexPlugins < entries.length; indexPlugins++) {
-				if (!allPluginID.contains(entries[indexPlugins].getVersionIdentifier())) {
+				if (!allPluginID.contains(entries[indexPlugins].getVersionedIdentifier())) {
 					plugins.add(entries[indexPlugins]);
 				}
 			}
@@ -489,7 +490,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 			List modified = new ArrayList();
 			List toInstall = new ArrayList();
 			List brokenLink = new ArrayList();
-			IConfigurationSite[] configured = new IConfigurationSite[0];
+			IConfiguredSite[] configured = new IConfiguredSite[0];
 
 			// sites from the current configuration
 			if (getCurrentConfiguration() != null)
@@ -549,21 +550,21 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 			// and add them back
 			Iterator checkIter = modified.iterator();
 			while (checkIter.hasNext()) {
-				IConfigurationSite element = (IConfigurationSite) checkIter.next();
+				IConfiguredSite element = (IConfiguredSite) checkIter.next();
 				newDefaultConfiguration.addConfigurationSite(reconcile(element));
 			}
 
 			// add new sites
 			Iterator addIter = toInstall.iterator();
 			while (addIter.hasNext()) {
-				IConfigurationSite element = (IConfigurationSite) addIter.next();
+				IConfiguredSite element = (IConfiguredSite) addIter.next();
 				newDefaultConfiguration.addConfigurationSite(element);
 			}
 
 			// add the broken one as is
 			Iterator brokenIter = brokenLink.iterator();
 			while (brokenIter.hasNext()) {
-				IConfigurationSite element = (IConfigurationSite) addIter.next();
+				IConfiguredSite element = (IConfiguredSite) addIter.next();
 				((ConfigurationSiteModel) element).setBroken(true);
 				newDefaultConfiguration.addConfigurationSite(element);
 			}
@@ -575,7 +576,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 		}
 	}
 
-	private IConfigurationSite reconcile(IConfigurationSite toReconcile) throws CoreException {
+	private IConfiguredSite reconcile(IConfiguredSite toReconcile) throws CoreException {
 
 		// create a copy of the ConfigSite without any feature
 		// this is not a clone
@@ -584,7 +585,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 		ConfigurationSiteModel newSiteModel = new BaseSiteLocalFactory().createConfigurationSiteModel(siteModel, policy);
 
 		// copy values
-		newSiteModel.setInstallSite(toReconcile.isInstallSite());
+		newSiteModel.setInstallSite(toReconcile.isUpdateable());
 		newSiteModel.setPlatformURLString(((ConfigurationSiteModel) toReconcile).getPlatformURLString());
 		newSiteModel.setPreviousPluginPath(toReconcile.getPreviousPluginPath());
 
@@ -628,7 +629,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 				IPluginEntry[] missing = substract(featuresEntries, result);
 				String listOfMissingPlugins = "";
 				for (int k = 0; k < missing.length; k++) {
-					listOfMissingPlugins = "\r\nplugin:" + missing[k].getVersionIdentifier().toString();
+					listOfMissingPlugins = "\r\nplugin:" + missing[k].getVersionedIdentifier().toString();
 				}
 				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "The feature " + element.getURL().toExternalForm() + " requires some missing plugins from the site:" + currentSite.getURL().toExternalForm() + listOfMissingPlugins, null);
@@ -644,10 +645,10 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 			((FeatureReferenceModel) element).setBroken(true);
 			// if it is broken (ie the feature does not exist, we 
 			//cannot check the plugins... consider as unconfigured)
-			 ((IConfigurationSite) newSiteModel).unconfigure(element, null);
+			 ((IConfiguredSite) newSiteModel).unconfigure(element, null);
 		}
 
-		return (IConfigurationSite) newSiteModel;
+		return (IConfiguredSite) newSiteModel;
 	}
 
 	/**
@@ -751,7 +752,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 			IPlatformConfiguration.ISiteEntry[] siteEntries = platformConfig.getConfiguredSites();
 
 			// sites from the current configuration
-			IConfigurationSite[] configured = new IConfigurationSite[0];
+			IConfiguredSite[] configured = new IConfiguredSite[0];
 			if (getCurrentConfiguration() != null)
 				configured = getCurrentConfiguration().getConfigurationSites();
 

@@ -18,6 +18,7 @@ import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.swt.custom.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.configuration.*;
 import org.eclipse.jface.action.Action;
 import org.eclipse.update.core.IInstallConfiguration;
 import java.util.*;
@@ -106,15 +107,15 @@ public class HistoryView
 			if (parent instanceof IInstallConfiguration) {
 				return getConfigurationSites((IInstallConfiguration) parent);
 			}
-			if (parent instanceof IConfigurationSiteAdapter) {
-				IConfigurationSiteAdapter csite = (IConfigurationSiteAdapter) parent;
+			if (parent instanceof IConfiguredSiteAdapter) {
+				IConfiguredSiteAdapter csite = (IConfiguredSiteAdapter) parent;
 				return getConfiguredFeatures(csite);
 			}
 			return new Object[0];
 		}
 
 		private Object[] getConfigurationSites(IInstallConfiguration config) {
-			IConfigurationSite[] sites = config.getConfigurationSites();
+			IConfiguredSite[] sites = config.getConfigurationSites();
 			Object[] adapters = new Object[sites.length];
 			for (int i = 0; i < sites.length; i++) {
 				adapters[i] = new ConfigurationSiteAdapter(config, sites[i]);
@@ -122,8 +123,8 @@ public class HistoryView
 			return adapters;
 		}
 
-		private Object[] getConfiguredFeatures(IConfigurationSiteAdapter adapter) {
-			IConfigurationSite csite = adapter.getConfigurationSite();
+		private Object[] getConfiguredFeatures(IConfiguredSiteAdapter adapter) {
+			IConfiguredSite csite = adapter.getConfigurationSite();
 			IFeatureReference[] crefs = csite.getConfiguredFeatures();
 			ISite site = csite.getSite();
 			Object[] result = new Object[crefs.length];
@@ -179,16 +180,16 @@ public class HistoryView
 				IInstallConfiguration config = (IInstallConfiguration) obj;
 				return config.getLabel();
 			}
-			if (obj instanceof IConfigurationSiteAdapter) {
-				IConfigurationSiteAdapter ad = (IConfigurationSiteAdapter) obj;
-				IConfigurationSite csite = ad.getConfigurationSite();
+			if (obj instanceof IConfiguredSiteAdapter) {
+				IConfiguredSiteAdapter ad = (IConfiguredSiteAdapter) obj;
+				IConfiguredSite csite = ad.getConfigurationSite();
 				ISite site = csite.getSite();
 				return site.getURL().toString();
 			}
 			if (obj instanceof IFeatureAdapter) {
 				try {
 					IFeature feature = ((IFeatureAdapter) obj).getFeature();
-					String version = feature.getVersionIdentifier().getVersion().toString();
+					String version = feature.getVersionedIdentifier().getVersion().toString();
 					return feature.getLabel() + " " + version;
 				} catch (CoreException e) {
 					return "error";
@@ -201,7 +202,7 @@ public class HistoryView
 				return ((SavedFolder) obj).getImage();
 			if (obj instanceof IFeatureAdapter)
 				return getFeatureImage((IFeatureAdapter) obj);
-			if (obj instanceof IConfigurationSiteAdapter)
+			if (obj instanceof IConfiguredSiteAdapter)
 				return siteImage;
 			if (obj instanceof PreservedConfiguration) {
 				obj = ((PreservedConfiguration) obj).getConfiguration();

@@ -22,7 +22,7 @@ public class DefaultFeature extends Feature {
 	public DefaultFeature(IFeature sourceFeature, ISite targetSite) throws CoreException {
 		this(targetSite);
 		this.setFeatureContentProvider(sourceFeature.getFeatureContentProvider());
-		this.setIdentifier(sourceFeature.getVersionIdentifier());
+		this.setIdentifier(sourceFeature.getVersionedIdentifier());
 		this.setLabel(sourceFeature.getLabel());
 		this.setUpdateSiteEntry(sourceFeature.getUpdateSiteEntry());
 		this.setDiscoverySiteEntries(sourceFeature.getDiscoverySiteEntries());

@@ -50,14 +50,14 @@ public class TestExecutablePackagedInstall extends UpdateManagerTestCase {
 			String site = localSite.getURL().getFile();
 			IPluginEntry[] entries = remoteFeature.getPluginEntries();
 			assertTrue("no plugins entry", (entries != null && entries.length != 0));
-			String pluginName = entries[0].getVersionIdentifier().toString();
+			String pluginName = entries[0].getVersionedIdentifier().toString();
 			File pluginFile = new File(site, Site.DEFAULT_PLUGIN_PATH + pluginName);
 			assertTrue("plugin files not installed locally", pluginFile.exists());
 
-			File featureFile = new File(site, Site.INSTALL_FEATURE_PATH + remoteFeature.getVersionIdentifier().toString());
+			File featureFile = new File(site, Site.INSTALL_FEATURE_PATH + remoteFeature.getVersionedIdentifier().toString());
 			assertTrue("feature info not installed locally:"+featureFile, featureFile.exists());
 
-			File featureFileXML = new File(site, Site.INSTALL_FEATURE_PATH + remoteFeature.getVersionIdentifier().toString() + File.separator + "feature.xml");
+			File featureFileXML = new File(site, Site.INSTALL_FEATURE_PATH + remoteFeature.getVersionedIdentifier().toString() + File.separator + "feature.xml");
 			assertTrue("feature info not installed locally: no feature.xml", featureFileXML.exists());
 		}
 
@@ -104,14 +104,14 @@ public class TestExecutablePackagedInstall extends UpdateManagerTestCase {
 			String site = localSite.getURL().getFile();
 			IPluginEntry[] entries = remoteFeature.getPluginEntries();
 			assertTrue("no plugins entry", (entries != null && entries.length != 0));
-			String pluginName = entries[0].getVersionIdentifier().toString();
+			String pluginName = entries[0].getVersionedIdentifier().toString();
 			File pluginFile = new File(site, Site.DEFAULT_PLUGIN_PATH + pluginName);
 			assertTrue("plugin files not installed locally", pluginFile.exists());
 
-			File featureFile = new File(site, Site.INSTALL_FEATURE_PATH + remoteFeature.getVersionIdentifier().toString());
+			File featureFile = new File(site, Site.INSTALL_FEATURE_PATH + remoteFeature.getVersionedIdentifier().toString());
 			assertTrue("feature info not installed locally:"+featureFile, featureFile.exists());
 
-			File featureFileXML = new File(site, Site.INSTALL_FEATURE_PATH + remoteFeature.getVersionIdentifier().toString() + File.separator + "feature.xml");
+			File featureFileXML = new File(site, Site.INSTALL_FEATURE_PATH + remoteFeature.getVersionedIdentifier().toString() + File.separator + "feature.xml");
 			assertTrue("feature info not installed locally: no feature.xml", featureFileXML.exists());
 		}
 

@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
   * 
   */
  
-public interface IFeature extends IPluginContainer {
+public interface IFeature {
 
 
 	/**
@@ -38,7 +38,7 @@ public interface IFeature extends IPluginContainer {
 	 * @since 2.0 
 	 */
 
-	VersionedIdentifier getVersionIdentifier();
+	VersionedIdentifier getVersionedIdentifier();
 	
 	/**
 	 * Returns the Site this DefaultFeature belongs to.
@@ -278,12 +278,21 @@ public interface IFeature extends IPluginContainer {
 	public void remove(IProgressMonitor monitor) throws CoreException;
 
 	/**
-	 * Returns an array of archives identifier that compose the feature.
+	 * Returns an array of plug-ins managed by the Feature
 	 * 
-	 * @return 
-	 * @deprecated seems nobody uses it
-	 * @since 2.0 
+	 * @return the accessible plug-ins. Returns an empty array
+	 * if there are no plug-ins.
 	 */
+
+	IPluginEntry [] getPluginEntries()  ;
+	
+	/**
+	 * Returns the number of managed plug-ins
+	 * @return the number of plug-ins
+	 */
+
+	int getPluginEntryCount() ;
+
 	/**
 	 * Returns an array of archives identifier that compose the feature.
 	 * 
@@ -292,14 +301,21 @@ public interface IFeature extends IPluginContainer {
 	 */
 	INonPluginEntry[] getNonPluginEntries();
 	
-		
+	/**
+	 * Returns the number of non plugin entries
+	 * @return the number of plug-ins
+	 */
+
+	int getNonPluginEntryCount() ;
+
+	
 	/**
 	 * Download Size of the feature in Kilo-Bytes
 	 * @return the size of the archive to be downloaded
 	 * @since 2.0 
 	 */
 
-	long getDownloadSize() ;
+	long getDownloadSize();
 	
 	/**
 	 * Install Size of the feature in KiloBytes
@@ -307,7 +323,7 @@ public interface IFeature extends IPluginContainer {
 	 * @since 2.0 
 	 */
 
-	long getInstallSize() ;
+	long getInstallSize();
 	
 	/**
 	 * optional identifier of the Eclipse application that is to be used during

@@ -5,6 +5,7 @@ import java.net.URL;
 import java.util.Date;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.update.configuration.*;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
@@ -45,12 +46,12 @@ public interface IInstallConfiguration extends IAdaptable {
 	 * must be read-write accessible from the current client, otherwise
 	 * subsequent installation attampts will fail.
 	 * 
-	 * @return IConfigurationSite[] local install sites. Returns an empty array
+	 * @return IConfiguredSite[] local install sites. Returns an empty array
 	 * if there are no local install sites
 	 * @since 2.0 
 	 */
 
-	public IConfigurationSite[] getConfigurationSites();
+	public IConfiguredSite[] getConfigurationSites();
 	
 	/**
 	 * Adds an additional configuration site to this configuration.
@@ -59,7 +60,7 @@ public interface IInstallConfiguration extends IAdaptable {
 	 * @since 2.0 
 	 */
 
-	public void addConfigurationSite(IConfigurationSite site);
+	public void addConfigurationSite(IConfiguredSite site);
 	
 	/**
 	 * Removes a configuration site from this configuration.
@@ -68,7 +69,7 @@ public interface IInstallConfiguration extends IAdaptable {
 	 * @since 2.0 
 	 */
 
-	public void removeConfigurationSite(IConfigurationSite site);
+	public void removeConfigurationSite(IConfiguredSite site);
 	
 	
 	/**

@@ -17,6 +17,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.update.internal.ui.parts.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.configuration.*;
 import org.eclipse.update.internal.ui.*;
 import java.net.URL;
 import java.io.*;
@@ -62,8 +63,8 @@ public class TargetPage extends WizardPage {
 		 * @see ITableLabelProvider#getColumnText(Object, int)
 		 */
 		public String getColumnText(Object obj, int col) {
-			if (obj instanceof IConfigurationSite && col == 0) {
-				IConfigurationSite csite = (IConfigurationSite) obj;
+			if (obj instanceof IConfiguredSite && col == 0) {
+				IConfiguredSite csite = (IConfiguredSite) obj;
 				ISite site = csite.getSite();
 				URL url = site.getURL();
 				return url.toString();
@@ -74,19 +75,19 @@ public class TargetPage extends WizardPage {
 	}
 
 	class ConfigListener implements IInstallConfigurationChangedListener {
-		public void installSiteAdded(IConfigurationSite csite) {
+		public void installSiteAdded(IConfiguredSite csite) {
 			tableViewer.add(csite);
 			tableViewer.setSelection(new StructuredSelection(csite));
 		}
 
-		public void installSiteRemoved(IConfigurationSite csite) {
+		public void installSiteRemoved(IConfiguredSite csite) {
 			tableViewer.remove(csite);
 		}
 
-		public void linkedSiteAdded(IConfigurationSite site) {
+		public void linkedSiteAdded(IConfiguredSite site) {
 		}
 
-		public void linkedSiteRemoved(IConfigurationSite site) {
+		public void linkedSiteRemoved(IConfiguredSite site) {
 		}
 	}
 
@@ -155,8 +156,8 @@ public class TargetPage extends WizardPage {
 		tableViewer.setLabelProvider(new TableLabelProvider());
 		tableViewer.addFilter(new ViewerFilter() {
 			public boolean select(Viewer v, Object parent, Object obj) {
-				IConfigurationSite site = (IConfigurationSite)obj;
-				return site.isInstallSite();
+				IConfiguredSite site = (IConfiguredSite)obj;
+				return site.isUpdateable();
 			}
 		});
 		tableViewer.setInput(tableViewer);
@@ -181,11 +182,11 @@ public class TargetPage extends WizardPage {
 	}
 
 	private void selectFirstTarget() {
-		IConfigurationSite[] sites = config.getConfigurationSites();
-		IConfigurationSite firstSite = null;
+		IConfiguredSite[] sites = config.getConfigurationSites();
+		IConfiguredSite firstSite = null;
 		for (int i = 0; i < sites.length; i++) {
-			IConfigurationSite csite = sites[i];
-			if (csite.isInstallSite()) {
+			IConfiguredSite csite = sites[i];
+			if (csite.isUpdateable()) {
 				firstSite = csite;
 				break;
 			}
@@ -203,11 +204,11 @@ public class TargetPage extends WizardPage {
 		if (path != null) {
 			try {
 				File file = new File(path);
-				IConfigurationSite csite =
+				IConfiguredSite csite =
 					SiteManager.createConfigurationSite(
 						file,
 						IPlatformConfiguration.ISitePolicy.USER_EXCLUDE);
-				if (csite.isInstallSite())
+				if (csite.isUpdateable())
 					config.addConfigurationSite(csite);
 				else {
 					String title = UpdateUIPlugin.getResourceString(KEY_LOCATION_ERROR_TITLE);
@@ -221,10 +222,10 @@ public class TargetPage extends WizardPage {
 		}
 	}
 
-	public IConfigurationSite getTargetSite() {
+	public IConfiguredSite getTargetSite() {
 		IStructuredSelection sel = (IStructuredSelection) tableViewer.getSelection();
 		if (sel.isEmpty())
 			return null;
-		return (IConfigurationSite) sel.getFirstElement();
+		return (IConfiguredSite) sel.getFirstElement();
 	}
 }

@@ -8,6 +8,7 @@ import java.net.URL;
 
 import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.update.core.*;
+import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.model.ConfigurationPolicyModel;
 import org.eclipse.update.internal.core.*;
 import org.eclipse.update.tests.UpdateManagerTestCase;
@@ -97,7 +98,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		// we are not checking if this is read only
 		IInstallConfiguration newConfig = site.cloneCurrentConfiguration(null,"new Label");
 		//IInstallConfiguration newConfig = site.getCurrentConfiguration();
-		IConfigurationSite configSite = newConfig.getConfigurationSites()[0];
+		IConfiguredSite configSite = newConfig.getConfigurationSites()[0];
 		ConfigurationPolicyModel configPolicy = new BaseSiteLocalFactory().createConfigurationPolicyModel();
 		configPolicy.setPolicy(IPlatformConfiguration.ISitePolicy.USER_INCLUDE);
 		configSite.setConfigurationPolicy((IConfigurationPolicy)configPolicy);
@@ -107,13 +108,13 @@ public class TestLocalSite extends UpdateManagerTestCase {
 				
 		// teh current one points to a real fature
 		// does not throw error.
-		IConfigurationSite configSite2 = site.getCurrentConfiguration().getConfigurationSites()[0];
+		IConfiguredSite configSite2 = site.getCurrentConfiguration().getConfigurationSites()[0];
 		IFeatureReference ref = configSite2.getConfiguredFeatures()[0];
 		IFeature feature2 = ref.getFeature();
 		String configuredFeature = feature2.getLabel();
 
-		assertEquals(feature2.getVersionIdentifier().toString(),"org.eclipse.update.core.tests.feature3_1.0.0");
-		assertTrue("Wrong id  version of feature",feature2.getVersionIdentifier().toString().equalsIgnoreCase("org.eclipse.update.core.tests.feature3_1.0.0"));
+		assertEquals(feature2.getVersionedIdentifier().toString(),"org.eclipse.update.core.tests.feature3_1.0.0");
+		assertTrue("Wrong id  version of feature",feature2.getVersionedIdentifier().toString().equalsIgnoreCase("org.eclipse.update.core.tests.feature3_1.0.0"));
 		
 		// only one feature configured
 		assertTrue("too many features configured",configSite2.getConfiguredFeatures().length==1);
@@ -147,9 +148,9 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		UpdateManagerUtils.removeFromFileSystem(localFile);		
 		localFile = new File(new URL(location,SiteLocal.DEFAULT_CONFIG_FILE).getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);	
-		localFile = new File(new URL(location,Site.DEFAULT_FEATURE_PATH+File.separator+feature.getVersionIdentifier().toString()).getFile());		
+		localFile = new File(new URL(location,Site.DEFAULT_FEATURE_PATH+File.separator+feature.getVersionedIdentifier().toString()).getFile());		
 		UpdateManagerUtils.removeFromFileSystem(localFile);	
-		localFile = new File(new URL(location,Site.DEFAULT_FEATURE_PATH+File.separator+feature2.getVersionIdentifier().toString()).getFile());		
+		localFile = new File(new URL(location,Site.DEFAULT_FEATURE_PATH+File.separator+feature2.getVersionedIdentifier().toString()).getFile());		
 		UpdateManagerUtils.removeFromFileSystem(localFile);	
 		UpdateManagerUtils.removeFromFileSystem(file);		
 		localFile = new File(feature2.getURL().getFile());
@@ -173,7 +174,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		
 		// we are not checking if this is read only
 		IInstallConfiguration newConfig = site.cloneCurrentConfiguration(null,"new Label");
-		IConfigurationSite configSite = newConfig.getConfigurationSites()[0];
+		IConfiguredSite configSite = newConfig.getConfigurationSites()[0];
 		ConfigurationPolicyModel configPolicy = new BaseSiteLocalFactory().createConfigurationPolicyModel();
 		configPolicy.setPolicy(IPlatformConfiguration.ISitePolicy.USER_INCLUDE);
 		configSite.setConfigurationPolicy((IConfigurationPolicy)configPolicy);		
@@ -197,12 +198,12 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		
 		// teh current one points to a real fature
 		// does not throw error.
-		IConfigurationSite configSite2 = site.getCurrentConfiguration().getConfigurationSites()[0];
+		IConfiguredSite configSite2 = site.getCurrentConfiguration().getConfigurationSites()[0];
 		IFeatureReference ref = configSite2.getConfiguredFeatures()[0];
 		IFeature feature2 = ref.getFeature();
 		String configuredFeature = feature2.getLabel();
-		assertEquals(feature2.getVersionIdentifier().toString(),"org.eclipse.update.core.tests.feature3_1.0.0");
-		assertTrue("Wrong id  version of feature",feature2.getVersionIdentifier().toString().equalsIgnoreCase("org.eclipse.update.core.tests.feature3_1.0.0"));
+		assertEquals(feature2.getVersionedIdentifier().toString(),"org.eclipse.update.core.tests.feature3_1.0.0");
+		assertTrue("Wrong id  version of feature",feature2.getVersionedIdentifier().toString().equalsIgnoreCase("org.eclipse.update.core.tests.feature3_1.0.0"));
 		
 		// test only 2 install config in local site
 		assertTrue("wrong number of history in Local site",site.getConfigurationHistory().length==2);
@@ -222,7 +223,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		UpdateManagerUtils.removeFromFileSystem(localFile);		
 		localFile = new File(new URL(location,SiteLocal.DEFAULT_CONFIG_FILE).getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);			
-		localFile = new File(new URL(location,Site.DEFAULT_FEATURE_PATH+File.separator+feature.getVersionIdentifier().toString()).getFile());		
+		localFile = new File(new URL(location,Site.DEFAULT_FEATURE_PATH+File.separator+feature.getVersionedIdentifier().toString()).getFile());		
 		UpdateManagerUtils.removeFromFileSystem(localFile);	
 		UpdateManagerUtils.removeFromFileSystem(new File(site.getCurrentConfiguration().getURL().getFile()));				
 		UpdateManagerUtils.removeFromFileSystem(file);		
@@ -244,7 +245,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		
 		// we are not checking if this is read only
 		IInstallConfiguration newConfig = site.cloneCurrentConfiguration(null,"new Label");
-		IConfigurationSite configSite = newConfig.getConfigurationSites()[0];
+		IConfiguredSite configSite = newConfig.getConfigurationSites()[0];
 		ConfigurationPolicyModel configPolicy = new BaseSiteLocalFactory().createConfigurationPolicyModel();
 		configPolicy.setPolicy(IPlatformConfiguration.ISitePolicy.USER_INCLUDE);
 		configSite.setConfigurationPolicy((IConfigurationPolicy)configPolicy);		
@@ -268,12 +269,12 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		
 		// teh current one points to a real fature
 		// does not throw error.
-		IConfigurationSite configSite2 = site.getCurrentConfiguration().getConfigurationSites()[0];
+		IConfiguredSite configSite2 = site.getCurrentConfiguration().getConfigurationSites()[0];
 		IFeatureReference ref = configSite2.getConfiguredFeatures()[0];
 		IFeature feature2 = ref.getFeature();
 		String configuredFeature = feature2.getLabel();
-		assertEquals(feature2.getVersionIdentifier().toString(),"org.test1.ident1_1.0.0");
-		assertTrue("Wrong id  version of feature",feature2.getVersionIdentifier().toString().equalsIgnoreCase("org.test1.ident1_1.0.0"));
+		assertEquals(feature2.getVersionedIdentifier().toString(),"org.test1.ident1_1.0.0");
+		assertTrue("Wrong id  version of feature",feature2.getVersionedIdentifier().toString().equalsIgnoreCase("org.test1.ident1_1.0.0"));
 		
 		// test only 2 install config in local site
 		assertTrue("wrong number of history in Local site",site.getConfigurationHistory().length==2);
@@ -293,7 +294,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		UpdateManagerUtils.removeFromFileSystem(localFile);		
 		localFile = new File(new URL(location,SiteLocal.DEFAULT_CONFIG_FILE).getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);	
-		localFile = new File(new URL(location,Site.DEFAULT_FEATURE_PATH+File.separator+feature.getVersionIdentifier().toString()).getFile());		
+		localFile = new File(new URL(location,Site.DEFAULT_FEATURE_PATH+File.separator+feature.getVersionedIdentifier().toString()).getFile());		
 		UpdateManagerUtils.removeFromFileSystem(localFile);	
 		UpdateManagerUtils.removeFromFileSystem(new File(site.getCurrentConfiguration().getURL().getFile()));						
 		UpdateManagerUtils.removeFromFileSystem(file);		

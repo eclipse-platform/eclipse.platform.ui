@@ -8,6 +8,7 @@ import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.*;
 import java.util.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.configuration.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.jface.operation.*;
@@ -43,7 +44,7 @@ public class InstallWizard extends Wizard {
 	 * @see Wizard#performFinish()
 	 */
 	public boolean performFinish() {
-		final IConfigurationSite targetSite =
+		final IConfiguredSite targetSite =
 			(targetPage == null) ? null : targetPage.getTargetSite();
 		IRunnableWithProgress operation = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
@@ -124,13 +125,13 @@ public class InstallWizard extends Wizard {
 	 * When we are uninstalling, there is not targetSite
 	 */
 	private void execute(
-		IConfigurationSite targetSite,
+		IConfiguredSite targetSite,
 		IProgressMonitor monitor)
 		throws CoreException {
 		IFeature feature = job.getFeature();
 		if (job.getJobType() == PendingChange.UNINSTALL) {
 			//find the  config site of this feature
-			IConfigurationSite site = findConfigSite(feature);
+			IConfiguredSite site = findConfigSite(feature);
 			if (site != null) {
 				site.remove(feature, monitor);
 			} else {
@@ -167,13 +168,13 @@ public class InstallWizard extends Wizard {
 		model.addPendingChange(job);
 	}
 
-	private IConfigurationSite findConfigSite(IFeature feature)
+	private IConfiguredSite findConfigSite(IFeature feature)
 		throws CoreException {
 		ILocalSite localSite = SiteManager.getLocalSite();
-		IConfigurationSite[] configSite =
+		IConfiguredSite[] configSite =
 			localSite.getCurrentConfiguration().getConfigurationSites();
 		for (int i = 0; i < configSite.length; i++) {
-			IConfigurationSite site = configSite[i];
+			IConfiguredSite site = configSite[i];
 			if (site.getSite().getURL().equals(feature.getSite().getURL())) {
 				return site;
 			}
@@ -182,7 +183,7 @@ public class InstallWizard extends Wizard {
 	}
 
 	private boolean unconfigure(IFeature feature) throws CoreException {
-		IConfigurationSite site = findConfigSite(feature);
+		IConfiguredSite site = findConfigSite(feature);
 		if (site != null) {
 			// get the feature reference
 			IFeatureReference fref = site.getSite().getFeatureReference(feature);
@@ -203,7 +204,7 @@ public class InstallWizard extends Wizard {
 		return false;
 	}
 	private void configure(IFeature feature) throws CoreException {
-		IConfigurationSite site = findConfigSite(feature);
+		IConfiguredSite site = findConfigSite(feature);
 		if (site != null) {
 			// get the feature reference
 			IFeatureReference fref = site.getSite().getFeatureReference(feature);

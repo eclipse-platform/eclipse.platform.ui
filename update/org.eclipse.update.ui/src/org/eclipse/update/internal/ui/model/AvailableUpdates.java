@@ -6,6 +6,7 @@ package org.eclipse.update.internal.ui.model;
 
 import java.net.URL;
 import org.eclipse.update.core.*;
+import org.eclipse.update.configuration.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.views.properties.*;
@@ -192,7 +193,7 @@ public class AvailableUpdates
 			}
 			IFeature feature = candidates[i];
 			String versionedLabel = feature.getLabel();
-			String version = feature.getVersionIdentifier().getVersion().toString();
+			String version = feature.getVersionedIdentifier().getVersion().toString();
 			versionedLabel += " " + version + ":";
 			backgroundProgress.setTaskName(versionedLabel);
 			findUpdates(candidates[i]);
@@ -210,7 +211,7 @@ public class AvailableUpdates
 			Vector candidates = new Vector();
 			ILocalSite localSite = SiteManager.getLocalSite();
 			IInstallConfiguration config = localSite.getCurrentConfiguration();
-			IConfigurationSite[] isites = config.getConfigurationSites();
+			IConfiguredSite[] isites = config.getConfigurationSites();
 			for (int i = 0; i < isites.length; i++) {
 				ISite isite = isites[i].getSite();
 				IFeatureReference[] refs = isite.getFeatureReferences();
@@ -309,8 +310,8 @@ public class AvailableUpdates
 	}
 
 	private boolean isNewerVersion(IFeature feature, IFeature candidate) {
-		VersionedIdentifier fvi = feature.getVersionIdentifier();
-		VersionedIdentifier cvi = candidate.getVersionIdentifier();
+		VersionedIdentifier fvi = feature.getVersionedIdentifier();
+		VersionedIdentifier cvi = candidate.getVersionedIdentifier();
 		Version fv = fvi.getVersion();
 		Version cv = cvi.getVersion();
 		return cv.compare(fv) > 0;

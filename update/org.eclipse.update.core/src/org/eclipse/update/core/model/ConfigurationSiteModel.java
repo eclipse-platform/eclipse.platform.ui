@@ -71,7 +71,7 @@ public class ConfigurationSiteModel extends ModelObject {
 	/**
 	 * @since
 	 */
-	public boolean isInstallSite() {
+	public boolean isUpdateable() {
 		return installable;
 	}
 

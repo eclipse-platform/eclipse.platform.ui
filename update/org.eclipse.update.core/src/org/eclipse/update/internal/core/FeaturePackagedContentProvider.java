@@ -51,7 +51,7 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 	 */
 	private String getPluginEntryArchiveID(IPluginEntry entry) {
 		String type = (entry.isFragment()) ? Site.DEFAULT_FRAGMENT_PATH : Site.DEFAULT_PLUGIN_PATH;
-		return type + entry.getVersionIdentifier().toString() + JAR_EXTENSION;
+		return type + entry.getVersionedIdentifier().toString() + JAR_EXTENSION;
 	}
 
 	
@@ -140,7 +140,7 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 		try {
 			// feature may not be known, 
 			// we may be asked for the manifest before the feature is set
-			String archiveID = (getFeature() != null) ? getFeature().getVersionIdentifier().toString() : "";
+			String archiveID = (getFeature() != null) ? getFeature().getVersionedIdentifier().toString() : "";
 			ContentReference currentReference = new JarContentReference(archiveID, getURL());
 			currentReference = asLocalReference(currentReference, monitor);
 			references[0] = currentReference;
@@ -194,7 +194,7 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 	public ContentReference[] getNonPluginEntryArchiveReferences(INonPluginEntry nonPluginEntry, InstallMonitor monitor) throws CoreException {
 		
 		// archive = feature/<id>_<ver>/<file>
-		String archiveID = Site.DEFAULT_FEATURE_PATH+((getFeature() != null) ? getFeature().getVersionIdentifier().toString() : "");
+		String archiveID = Site.DEFAULT_FEATURE_PATH+((getFeature() != null) ? getFeature().getVersionedIdentifier().toString() : "");
 		archiveID+="/"+nonPluginEntry.getIdentifier();		
 		URL url = getFeature().getSite().getSiteContentProvider().getArchiveReference(archiveID);		
 		
@@ -245,7 +245,7 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 			};
 
 		} catch (Exception e) {
-			throw newCoreException("Error retrieving plugin Entry Archive Reference: " + pluginEntry.getVersionIdentifier().toString()+"\r\n"+e.toString(), e);
+			throw newCoreException("Error retrieving plugin Entry Archive Reference: " + pluginEntry.getVersionedIdentifier().toString()+"\r\n"+e.toString(), e);
 		}
 		return pluginReferences;
 	}
