@@ -80,17 +80,17 @@ The &lt;code&gt;org.eclipse.ui.roles&lt;/code&gt; extension point is used to dec
          </documentation>
       </annotation>
       <complexType>
-         <attribute name="roleId" type="string" use="required">
-            <annotation>
-               <documentation>
-                  The unique identifier of the role to bind to an activity.
-               </documentation>
-            </annotation>
-         </attribute>
          <attribute name="activityId" type="string" use="required">
             <annotation>
                <documentation>
                   The unique identifier of the activity to be bound to a role.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="roleId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The unique identifier of the role to bind to an activity.
                </documentation>
             </annotation>
          </attribute>

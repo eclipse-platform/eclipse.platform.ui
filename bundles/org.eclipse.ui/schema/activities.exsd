@@ -70,6 +70,13 @@ The &lt;code&gt;org.eclipse.ui.activities&lt;/code&gt; extension point is used t
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="parentId" type="string">
+            <annotation>
+               <documentation>
+                  The unique identifier of the parent of this activity.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -87,17 +94,17 @@ The &lt;code&gt;org.eclipse.ui.activities&lt;/code&gt; extension point is used t
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="pattern" type="string" use="required">
-            <annotation>
-               <documentation>
-                  The pattern to be bound to the activity. Patterns are regular expressions which match unique identifiers.
-               </documentation>
-            </annotation>
-         </attribute>
          <attribute name="inclusive" type="boolean" use="default" value="true">
             <annotation>
                <documentation>
                   Determines whether this binding should be considered inclusive or exclusive.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="pattern" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The pattern to be bound to the activity. Patterns are regular expressions which match unique identifiers.
                </documentation>
             </annotation>
          </attribute>
