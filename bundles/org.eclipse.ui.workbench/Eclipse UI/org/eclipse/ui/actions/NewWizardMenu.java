@@ -77,7 +77,6 @@ public class NewWizardMenu extends ContributionItem {
 		if (this.enabled) {
 			// Add new project ..
 			innerMgr.add(newProjectAction);
-			innerMgr.add(new Separator());
 
 			// Get visible actions.
 			List actions = null;
@@ -85,6 +84,8 @@ public class NewWizardMenu extends ContributionItem {
 			if (page != null)
 				actions = ((WorkbenchPage) page).getNewWizardActionIds();
 			if (actions != null) {
+				if(actions.size() > 0)
+					innerMgr.add(new Separator());
 				for (Iterator i = actions.iterator(); i.hasNext();) {
 					String id = (String) i.next();
 					IAction action = getAction(id);
