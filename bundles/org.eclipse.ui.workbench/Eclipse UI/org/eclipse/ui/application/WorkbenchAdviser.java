@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -94,6 +95,11 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  */
 public abstract class WorkbenchAdviser {
 	
+	public static final int FILL_PROXY = 0x01;
+	public static final int FILL_MENUS = 0x02;
+	public static final int FILL_TOOLBARS = 0x04;
+	public static final int FILL_STATUS_LINE = 0x08;
+
 	/**
 	 * Creates and initializes a new workbench adviser instance.
 	 */
@@ -421,5 +427,17 @@ public abstract class WorkbenchAdviser {
 		// default: no initial perspective
 		return null;
 	}
+	
+	/**
+	 * 
+	 * @param window
+	 * @param configurer
+	 * @param flags
+	 */
+	public void fillActionBars(IWorkbenchWindow window, IActionBarConfigurer configurer, int flags) {
+		  // do nothing by default
+	}
+
+	
 }
 
