@@ -170,9 +170,23 @@
          </factoryclass>
       </browser>
       <browser
-            factoryclass="org.eclipse.help.internal.browser.solaris.NetscapeFactory"
             name="%netscape_adapter"
             id="org.eclipse.help.netscapeSolaris">
+         <factoryclass
+               class="org.eclipse.help.internal.browser.MozillaFactory">
+            <parameter
+                  name="executable"
+                  value="netscape">
+            </parameter>
+            <parameter
+                  name="executableName"
+                  value="%netscape">
+            </parameter>
+            <parameter
+                  name="os"
+                  value="SunOS">
+            </parameter>
+         </factoryclass>
       </browser>
       <browser
             factoryclass="org.eclipse.help.internal.browser.macosx.DefaultBrowserFactory"
