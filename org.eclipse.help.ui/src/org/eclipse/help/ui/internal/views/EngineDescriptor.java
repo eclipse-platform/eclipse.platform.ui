@@ -104,8 +104,7 @@ public class EngineDescriptor {
 					}
 				}
 				catch (CoreException e) {
-					// Handle this
-                    e.printStackTrace();
+					HelpUIPlugin.logWarning("Engine " + eclass + " cannot be instantiated");
 				}
 			}
 		}
