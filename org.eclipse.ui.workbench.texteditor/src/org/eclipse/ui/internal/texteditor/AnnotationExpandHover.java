@@ -233,7 +233,12 @@ public class AnnotationExpandHover implements IAnnotationHover, IAnnotationHover
 	}
 
 	/**
-	 * Returns the distance to the ruler line. 
+	 * Returns the distance to the ruler line.
+	 *  
+	 * @param position the position
+	 * @param document the document
+	 * @param line the line number
+	 * @return the distance to the ruler line
 	 */
 	protected int compareRulerLine(Position position, IDocument document, int line) {
 		

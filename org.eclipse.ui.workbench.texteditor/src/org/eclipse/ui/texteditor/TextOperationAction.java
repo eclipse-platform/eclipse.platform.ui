@@ -60,7 +60,7 @@ public final class TextOperationAction extends TextEditorAction {
 	 *   <code>null</code> if none
 	 * @param editor the text editor
 	 * @param operationCode the operation code
-	 * @see ResourceAction#ResourceAction
+	 * @see TextEditorAction#TextEditorAction(ResourceBundle, String, ITextEditor)
 	 */
 	public TextOperationAction(ResourceBundle bundle, String prefix, ITextEditor editor, int operationCode) {
 		super(bundle, prefix, editor);
@@ -84,7 +84,7 @@ public final class TextOperationAction extends TextEditorAction {
 	 * @param operationCode the operation code
 	 * @param runsOnReadOnly <code>true</code> if action can be executed on read-only files
 	 * 
-	 * @see ResourceAction#ResourceAction
+	 * @see TextEditorAction#TextEditorAction(ResourceBundle, String, ITextEditor)
 	 * @since 2.0
 	 */
 	public TextOperationAction(ResourceBundle bundle, String prefix, ITextEditor editor, int operationCode, boolean runsOnReadOnly) {

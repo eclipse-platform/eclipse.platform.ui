@@ -74,7 +74,7 @@ public abstract class ResourceAction extends Action {
  	 * @param	style one of <code>IAction.AS_PUSH_BUTTON</code>, <code>IAction.AS_CHECK_BOX</code>,
  	 *			and <code>IAction.AS_RADIO_BUTTON</code>.
 	 *
-	 * @see ResourceAction#ResourceAction
+	 * @see ResourceAction#ResourceAction(ResourceBundle, String)
 	 * @see org.eclipse.jface.action.IAction#AS_CHECK_BOX
 	 * @see org.eclipse.jface.action.IAction#AS_DROP_DOWN_MENU
 	 * @see org.eclipse.jface.action.IAction#AS_PUSH_BUTTON

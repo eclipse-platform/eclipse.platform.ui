@@ -54,6 +54,9 @@ class EditorStatusLine implements IEditorStatusLine {
 
 	/**
 	 * Constructor for EditorStatusLine.
+	 * 
+	 * @param statusLineManager the status line manager
+	 * @param selectionProvider the selection provider
 	 */
 	public EditorStatusLine(IStatusLineManager statusLineManager, ISelectionProvider selectionProvider) {
 
@@ -66,6 +69,8 @@ class EditorStatusLine implements IEditorStatusLine {
 	
 	/**
 	 * Returns the status line manager.
+	 * 
+	 * @return the status line manager
 	 */
 	public IStatusLineManager getStatusLineManager() {
 		return fStatusLineManager;	
@@ -73,6 +78,8 @@ class EditorStatusLine implements IEditorStatusLine {
 
 	/**
 	 * Returns the selection provider.
+	 * 
+	 * @return the selection provider
 	 */	
 	public ISelectionProvider getSelectionProvider() {
 		return fSelectionProvider;	

@@ -34,7 +34,7 @@ public abstract class TextEditorAction extends ResourceAction implements IUpdate
 	 *   (described in <code>ResourceAction</code> constructor), or 
 	 *   <code>null</code> if none
 	 * @param editor the text editor
-	 * @see ResourceAction#ResourceAction
+	 * @see ResourceAction#ResourceAction(ResourceBundle, String)
 	 */
 	protected TextEditorAction(ResourceBundle bundle, String prefix, ITextEditor editor) {
 		super(bundle, prefix);
@@ -52,7 +52,7 @@ public abstract class TextEditorAction extends ResourceAction implements IUpdate
 	 *   <code>null</code> if none
 	 * @param editor the text editor
 	 * @param style the style of this action
-	 * @see ResourceAction#ResourceAction
+	 * @see ResourceAction#ResourceAction(ResourceBundle, String, int)
 	 * @since 3.0
 	 */
 	protected TextEditorAction(ResourceBundle bundle, String prefix, ITextEditor editor, int style) {
@@ -81,7 +81,7 @@ public abstract class TextEditorAction extends ResourceAction implements IUpdate
 	
 	/**
 	 * Always enables this action if it is connected to a text editor.
-	 * If the asocciated editor is <code>null</code>, the action is disabled.
+	 * If the associated editor is <code>null</code>, the action is disabled.
 	 * Subclasses may override.
 	 */
 	public void update() {

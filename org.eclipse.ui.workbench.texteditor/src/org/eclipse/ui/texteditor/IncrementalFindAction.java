@@ -21,7 +21,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 
 
 /**
- * An action which enters the incremental find mode a la emacs.
+ * An action which enters the incremental find mode à la emacs.
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
@@ -52,7 +52,7 @@ public class IncrementalFindAction extends ResourceAction implements IUpdate {
 	 *   <code>null</code> if none
 	 * @param workbenchPart the workbench part
 	 * @param forward <code>true</code> if the search direction is forward
-	 * @see ResourceAction#ResourceAction
+	 * @see ResourceAction#ResourceAction(ResourceBundle, String)
 	 * @since 2.1
 	 */
 	public IncrementalFindAction(ResourceBundle bundle, String prefix, IWorkbenchPart workbenchPart, boolean forward) {
@@ -73,7 +73,7 @@ public class IncrementalFindAction extends ResourceAction implements IUpdate {
 	 *   <code>null</code> if none
 	 * @param workbenchWindow the workbench window
 	 * @param forward <code>true</code> if the search direction is forward
-	 * @see ResourceAction#ResourceAction
+	 * @see ResourceAction#ResourceAction(ResourceBundle, String)
 	 * 
 	 * @deprecated use FindReplaceAction(ResourceBundle, String, IWorkbenchPart, boolean) instead
 	 * @since 2.1

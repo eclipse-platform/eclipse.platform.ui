@@ -42,7 +42,7 @@ public class CaseAction extends ResourceAction implements IUpdate {
 	 * @param editor the text editor
 	 * @param toUpper <code>true</code> if this is an uppercase action, <code>false</code> otherwise.
 	 * 
-	 * @see ResourceAction#ResourceAction
+	 * @see ResourceAction#ResourceAction(ResourceBundle, String)
 	 */
 	public CaseAction(ResourceBundle bundle, String prefix, AbstractTextEditor editor, boolean toUpper) {
 		super(bundle, prefix);
@@ -78,8 +78,8 @@ public class CaseAction extends ResourceAction implements IUpdate {
 			return;
 
 		try {
-			// if the selection is emtpy, we select the word / string using the viewer's 
-			// doubleclick strategy
+			// if the selection is empty, we select the word / string using the viewer's 
+			// double-click strategy
 			if (sel.y == 0)  {
 				
 				// TODO find a better way to do this although there are multiple partitionings on a single document

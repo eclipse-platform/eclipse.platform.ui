@@ -171,7 +171,7 @@ public class MoveLinesAction extends TextEditorAction {
 	private boolean fEditInProgress= false;
 	/** stateMask for this action - if it changes, the edition is considered to be ended */
 	private int fStateMask;
-//	/** Descrition of the last edition triggered by this action */
+//	/** Description of the last edition triggered by this action */
 //	private EditDescription fDescription= new EditDescription();
 
 	/**
@@ -186,7 +186,7 @@ public class MoveLinesAction extends TextEditorAction {
 	 * @param upwards <code>true</code>if the selected lines should be moved upwards,
 	 * <code>false</code> if downwards
 	 * @param copy if <code>true</code>, the action will copy lines instead of moving them
-	 * @see ResourceAction#ResourceAction
+	 * @see TextEditorAction#TextEditorAction(ResourceBundle, String, ITextEditor)
 	 */
 	public MoveLinesAction(ResourceBundle bundle, String prefix, AbstractTextEditor editor, boolean upwards, boolean copy) {
 		super(bundle, prefix, editor);
@@ -321,7 +321,7 @@ public class MoveLinesAction extends TextEditorAction {
 	 * is selected, otherwise the line below.
 	 * 
 	 * @param document the document <code>selection</code> refers to
-	 * @param movingArea the selection on <code>document</code> that will be moved.
+	 * @param selection the selection on <code>document</code> that will be moved.
 	 * @return the region comprising the line that <code>selection</code> will be moved over, without its terminating delimiter.
 	 */
 	private ITextSelection getSkippedLine(IDocument document, ITextSelection selection) {

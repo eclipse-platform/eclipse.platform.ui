@@ -72,7 +72,9 @@ class DeleteLineTarget {
 		private boolean fDeleting;
 
 		/**
-		 * Creates the text viewer.
+		 * Creates the clipboard.
+		 * 
+		 * @param viewer the text viewer
 		 */
 		public DeleteLineClipboard(ITextViewer viewer) {
 			Assert.isNotNull(viewer);
@@ -81,6 +83,8 @@ class DeleteLineTarget {
 
 		/**
 		 * Returns the text viewer.
+		 * 
+		 * @return the text viewer
 		 */
 		public ITextViewer getViewer() {
 			return fViewer;	

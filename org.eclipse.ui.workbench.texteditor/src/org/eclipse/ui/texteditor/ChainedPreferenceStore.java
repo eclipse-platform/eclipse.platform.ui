@@ -53,13 +53,15 @@ public class ChainedPreferenceStore implements IPreferenceStore {
 
 		/**
 		 * Initialize with the given preference store.
+		 * 
+		 * @param preferenceStore the preference store
 		 */
 		public PropertyChangeListener(IPreferenceStore preferenceStore) {
 			setPreferenceStore(preferenceStore);
 		}
 		
-		/**
-		 * {@inheritDoc}
+		/*
+		 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 		 */
 		public void propertyChange(PropertyChangeEvent event) {
 			IPreferenceStore childPreferenceStore= getPreferenceStore();
@@ -149,7 +151,7 @@ public class ChainedPreferenceStore implements IPreferenceStore {
 
 	/**
 	 * Fire the given property change event.
-	 * @param event The propterty change envent 
+	 * @param event The property change event 
 	 */
 	private void firePropertyChangeEvent(PropertyChangeEvent event) {
 		Object[] listeners= fClientListeners.getListeners();
@@ -157,8 +159,8 @@ public class ChainedPreferenceStore implements IPreferenceStore {
 			 ((IPropertyChangeListener) listeners[i]).propertyChange(event);
 	}
 
-	/**
-	 * {@inheritDoc}
+	/*
+	 * @see org.eclipse.jface.preference.IPreferenceStore#getBoolean(java.lang.String)
 	 */
 	public boolean getBoolean(String name) {
 		IPreferenceStore visibleStore= getVisibleStore(name);

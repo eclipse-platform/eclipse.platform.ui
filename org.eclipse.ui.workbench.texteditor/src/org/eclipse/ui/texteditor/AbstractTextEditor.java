@@ -199,7 +199,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		/** Indicates whether the editor input changed during the process of state validation. */
 		public boolean inputChanged;
 
-		/** Detectors for editor input changes during the process of state validation. */
+		/* Detectors for editor input changes during the process of state validation. */
 		public void inputDocumentAboutToBeChanged(IDocument oldInput, IDocument newInput) {}
 		public void inputDocumentChanged(IDocument oldInput, IDocument newInput) { inputChanged= true; }
 	}
@@ -3210,7 +3210,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	
 	/**
 	 * Enables/disables sanity checking.
-	 * @param enable <code>true</code> if santity checking should be enabled, <code>false</code> otherwise
+	 * @param enable <code>true</code> if sanity checking should be enabled, <code>false</code> otherwise
 	 * @since 2.0
 	 */
 	protected void enableSanityChecking(boolean enable) {
@@ -3287,7 +3287,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	
 	/**
 	 * Validates the state of the given editor input. The predominate intent
-	 * of this method is to take any action propably necessary to ensure that
+	 * of this method is to take any action probably necessary to ensure that
 	 * the input can persistently be changed.
 	 * 
 	 * @param input the input to be validated
@@ -3394,9 +3394,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	}
 	
 	/**
-	 * Performs the save and handles errors appropriatly.
+	 * Performs the save and handles errors appropriately.
 	 * 
-	 * @param overwrite indicates whether or not overwrititng is allowed
+	 * @param overwrite indicates whether or not overwriting is allowed
 	 * @param progressMonitor the monitor in which to run the operation
 	 */
 	protected void performSave(boolean overwrite, IProgressMonitor progressMonitor) {
@@ -3522,7 +3522,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	}
 	
 	/**
-	 * Performs revert and handles errors appropriatly.
+	 * Performs revert and handles errors appropriately.
 	 * 
 	 * @since 3.0
 	 */
@@ -3624,7 +3624,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	}
 	
 	/**
-	 * Returns the action with the given action id that has been contributed via xml to this editor.
+	 * Returns the action with the given action id that has been contributed via XML to this editor.
 	 * The lookup honors the dependencies of plug-ins.
 	 * 
 	 * @param actionID the action id to look up
@@ -3855,7 +3855,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		setActionActivationCode(ITextEditorActionDefinitionIds.SELECT_LINE_END, (char) 0, SWT.END, SWT.SHIFT);
 		setActionActivationCode(ITextEditorActionDefinitionIds.SELECT_LINE_START, (char) 0, SWT.HOME, SWT.SHIFT);
 		
-		// to accomodate https://bugs.eclipse.org/bugs/show_bug.cgi?id=51516
+		// to accommodate https://bugs.eclipse.org/bugs/show_bug.cgi?id=51516
 		// nullify handling of DELETE key by StyledText
 		textWidget.setKeyBinding(SWT.DEL, SWT.NULL);
 	}
@@ -4578,7 +4578,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	}
 	
 	/**
-	 * Configures the given insert mode as legal or inlegal. This call is ignored if the set of legal
+	 * Configures the given insert mode as legal or illegal. This call is ignored if the set of legal
 	 * input modes would be empty after the call.
 	 * 
 	 * @param mode the insert mode to be configured
@@ -4717,7 +4717,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	private void updateInsertModeAction() {
 		
 		// this may be called before the part is fully initialized (see configureInsertMode)
-		// drop out in thise case.
+		// drop out in this case.
 		if (getSite() == null)
 			return;
 		
@@ -4938,6 +4938,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @param viewer the source viewer
 	 * @param offset the offset of the region
 	 * @param length the length of the region
+	 * @return <code>true</code> if visible
 	 * @since 2.1
 	 */
 	protected final static boolean isVisible(ISourceViewer viewer, int offset, int length) {

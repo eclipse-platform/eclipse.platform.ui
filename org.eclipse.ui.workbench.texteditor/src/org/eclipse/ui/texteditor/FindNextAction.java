@@ -62,7 +62,7 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 	private String fFindString;
 	/** The search direction as initially given in the dialog settings. */
 	private boolean fForward;
-	/** The warpping flag as initially given in the dialog settings. */
+	/** The wrapping flag as initially given in the dialog settings. */
 	private boolean fWrapInit;
 	/** The case flag as initially given in the dialog settings. */
 	private boolean fCaseInit;
@@ -92,7 +92,7 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 	 *   <code>null</code> if none
 	 * @param workbenchPart the workbench part
 	 * @param forward the search direction
-	 * @see ResourceAction#ResourceAction
+	 * @see ResourceAction#ResourceAction(ResourceBundle, String)
 	 */
 	public FindNextAction(ResourceBundle bundle, String prefix, IWorkbenchPart workbenchPart, boolean forward) {
 		super(bundle, prefix);
@@ -112,7 +112,7 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 	 *   <code>null</code> if none
 	 * @param workbenchWindow the workbench window
 	 * @param forward the search direction
-	 * @see ResourceAction#ResourceAction
+	 * @see ResourceAction#ResourceAction(ResourceBundle, String)
 	 * 
 	 * @deprecated use FindReplaceAction(ResourceBundle, String, IWorkbenchPart, boolean) instead
 	 */
@@ -290,8 +290,8 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 	 * @param offset the offset at which searching starts
 	 * @param findString the string which should be found
 	 * @param forwardSearch the direction of the search
-	 * @param caseSensitive <code>true</code> performes a case sensitve search, <code>false</code> an insensitive search
-	 * @param wholeWord if <code>true</code> only occurences are reported in which the findString stands as a word by itself 
+	 * @param caseSensitive <code>true</code> performs a case sensitive search, <code>false</code> an insensitive search
+	 * @param wholeWord if <code>true</code> only occurrences are reported in which the findString stands as a word by itself 
 	 * @param regExSearch if <code>true</code> findString represents a regular expression 
 	 * @return the position of the specified string, or -1 if the string has not been found
 	 * @since 3.0
@@ -376,6 +376,8 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 
 	/**
 	 * Returns the actual selection of the find replace target.
+	 * 
+	 * @return the actual selection of the find replace target
 	 */
 	private String getSelectionString() {
 		

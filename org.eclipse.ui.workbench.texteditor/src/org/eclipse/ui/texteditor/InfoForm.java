@@ -32,7 +32,8 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 
 /**
  * A form consisting of a title, a banner, and a info text. Banner and info text are
- * separated by a separator line. This form must be handled like a SWT widget. 
+ * separated by a separator line. This form must be handled like a SWT widget.
+ * 
  * @since 2.0
  */
 public class InfoForm {
@@ -150,7 +151,7 @@ public class InfoForm {
 		fText.setText(info);
 	}
 
-	/**
+	/*
 	 * @see IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
 	protected void handlePropertyChange(PropertyChangeEvent event) {		

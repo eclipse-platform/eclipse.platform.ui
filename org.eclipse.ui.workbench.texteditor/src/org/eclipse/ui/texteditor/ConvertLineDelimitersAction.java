@@ -225,6 +225,7 @@ public class ConvertLineDelimitersAction extends TextEditorAction {
 	 * 
 	 * @param lineDelimiter the line delimiter
 	 * @param platformLineDelimiter the platform line delimiter
+	 * @return the key used to lookup the action's label
 	 */
 	private static String getLabelKey(String lineDelimiter, String platformLineDelimiter) {
 		if (lineDelimiter.equals(platformLineDelimiter)) {

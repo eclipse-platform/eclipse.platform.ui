@@ -51,7 +51,7 @@ import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 public abstract class AbstractDocumentProvider implements IDocumentProvider, IDocumentProviderExtension, IDocumentProviderExtension2, IDocumentProviderExtension3 {
 
 		/**
-		 * Opertion created by the document provider and to be executed by the providers runnable context.
+		 * Operation created by the document provider and to be executed by the providers runnable context.
 		 * 
 		 * @since 3.0
 		 */
@@ -232,7 +232,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	 * <p>
 	 * Subclasses must implement this method.</p>
 	 *
-	 * @param monitor a progress monitor to report progress and request cancelation
+	 * @param monitor a progress monitor to report progress and request cancellation
 	 * @param element the element
 	 * @param document the document
 	 * @param overwrite indicates whether an overwrite should happen if necessary
@@ -442,7 +442,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	/**
 	 * This hook method is called when this provider stops managing documents for
 	 * element. I.e. it is called when the last element gets disconnected from this provider.
-	 * Subcalles may extend.
+	 * Subclasses may extend.
 	 * @since 2.0
 	 */
 	protected void disconnected() {
@@ -968,7 +968,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	}
 	
 	/**
-	 * Performs the actual work of snchronizing the given element.
+	 * Performs the actual work of synchronizing the given element.
 	 * 
 	 * @param element the element
 	 * @param monitor the progress monitor

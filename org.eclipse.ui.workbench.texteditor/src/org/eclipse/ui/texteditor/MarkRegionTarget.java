@@ -24,6 +24,7 @@ import org.eclipse.jface.text.ITextViewerExtension5;
 /**
  * Default implementation of <code>IMarkRegionTarget</code> using <code>ITextViewer</code>
  * and <code>IStatusLineManager</code>.
+ * 
  * @since 2.0
  */
 public class MarkRegionTarget implements IMarkRegionTarget {

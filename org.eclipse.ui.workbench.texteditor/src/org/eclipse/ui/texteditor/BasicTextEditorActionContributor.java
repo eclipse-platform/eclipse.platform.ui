@@ -179,6 +179,8 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 	 * The method installs the global action handlers for the given text editor.
 	 * <p>
 	 * This method cannot be overridden by subclasses.</p>
+	 * 
+	 * @param part the active editor part
 	 * @since 2.0
 	 */
 	private void doSetActiveEditor(IEditorPart part) {

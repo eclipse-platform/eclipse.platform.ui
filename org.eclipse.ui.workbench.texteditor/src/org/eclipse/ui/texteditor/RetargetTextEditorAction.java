@@ -65,7 +65,7 @@ public final class RetargetTextEditorAction extends ResourceAction {
 	 * @param	style one of <code>IAction.AS_PUSH_BUTTON</code>, <code>IAction.AS_CHECK_BOX</code>,
  	 *			and <code>IAction.AS_RADIO_BUTTON</code>.
 	 *
-	 * @see ResourceAction#ResourceAction
+	 * @see ResourceAction#ResourceAction(ResourceBundle, String, int)
 	 * @see IAction#AS_CHECK_BOX
 	 * @see IAction#AS_DROP_DOWN_MENU
 	 * @see IAction#AS_PUSH_BUTTON
@@ -88,7 +88,7 @@ public final class RetargetTextEditorAction extends ResourceAction {
 	 * @param prefix a prefix to be prepended to the various resource keys
 	 *   (described in <code>ResourceAction</code> constructor), or 
 	 *   <code>null</code> if none
-	 * @see ResourceAction#ResourceAction
+	 * @see ResourceAction#ResourceAction(ResourceBundle, String)
 	 */
 	public RetargetTextEditorAction(ResourceBundle bundle, String prefix) {
 		super(bundle, prefix);
@@ -110,7 +110,7 @@ public final class RetargetTextEditorAction extends ResourceAction {
 	 * @param	style one of <code>IAction.AS_PUSH_BUTTON</code>, <code>IAction.AS_CHECK_BOX</code>,
  	 *			and <code>IAction.AS_RADIO_BUTTON</code>.
 	 *
-	 * @see ResourceAction#ResourceAction
+	 * @see ResourceAction#ResourceAction(ResourceBundle, String, int)
 	 * @see IAction#AS_CHECK_BOX
 	 * @see IAction#AS_DROP_DOWN_MENU
 	 * @see IAction#AS_PUSH_BUTTON
@@ -135,7 +135,7 @@ public final class RetargetTextEditorAction extends ResourceAction {
 	 * @param prefix a prefix to be prepended to the various resource keys
 	 *   (described in <code>ResourceAction</code> constructor), or <code>null</code> if none
 	 * @param actionId the action id
-	 * @see ResourceAction#ResourceAction
+	 * @see ResourceAction#ResourceAction(ResourceBundle, String)
 	 * @since 2.0
 	 */
 	public RetargetTextEditorAction(ResourceBundle bundle, String prefix, String actionId) {
@@ -225,6 +225,7 @@ public final class RetargetTextEditorAction extends ResourceAction {
 	 * <code>IAction</code> stores the help listener in a local field. The
 	 * supplied listener is only used if there is no handler.
 	 * 
+	 * @param listener the help listener
 	 * @since 2.1
 	 */
 	public void setHelpListener(HelpListener listener) {

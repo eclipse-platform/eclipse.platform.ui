@@ -49,7 +49,7 @@ public class ShiftAction extends TextEditorAction implements IReadOnlyDependent 
 	 *   (described in <code>ResourceAction</code> constructor), or  <code>null</code> if none
 	 * @param editor the text editor
 	 * @param operationCode the operation code
-	 * @see ResourceAction#ResourceAction
+	 * @see TextEditorAction#TextEditorAction(ResourceBundle, String, ITextEditor)
 	 */
 	public ShiftAction(ResourceBundle bundle, String prefix, ITextEditor editor, int operationCode) {
 		super(bundle, prefix, editor);

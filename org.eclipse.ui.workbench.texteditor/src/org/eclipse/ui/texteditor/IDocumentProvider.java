@@ -90,13 +90,14 @@ public interface IDocumentProvider {
 	 * and after (<code>elementContentReplaced</code>) the content is changed.
 	 *
 	 * @param element the element, or <code>null</code>
+	 * @exception CoreException if document could not be reset for the given element
 	 */
 	void resetDocument(Object element) throws CoreException;
 	
 	/**
 	 * Saves the given document provided for the given element.
 	 *
-	 * @param monitor a progress monitor to report progress and request cancelation
+	 * @param monitor a progress monitor to report progress and request cancellation
 	 * @param element the element, or <code>null</code>
 	 * @param document the document
 	 * @param overwrite indicates whether overwrite should be performed 
@@ -118,7 +119,7 @@ public interface IDocumentProvider {
 	 * the given element and it's provided document.
 	 * 
 	 * @param element the element
-	 * @return the sysnchronization stamp of the given element
+	 * @return the synchronization stamp of the given element
 	 */
 	long getSynchronizationStamp(Object element);
 	

@@ -81,7 +81,7 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 	/**
 	 * Returns the text editor's document.
 	 * 
-	 * @param the text editor
+	 * @param part the text editor
 	 * @return the document of the given text editor
 	 */
 	private IDocument getDocument(ITextEditor part) {

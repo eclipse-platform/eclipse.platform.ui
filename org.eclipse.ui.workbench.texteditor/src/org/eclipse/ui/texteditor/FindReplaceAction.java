@@ -176,7 +176,7 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 	 *   (described in <code>ResourceAction</code> constructor), or 
 	 *   <code>null</code> if none
 	 * @param workbenchPart	 the workbench part
-	 * @see ResourceAction#ResourceAction
+	 * @see ResourceAction#ResourceAction(ResourceBundle, String)
 	 */
 	public FindReplaceAction(ResourceBundle bundle, String prefix, IWorkbenchPart workbenchPart) {
 		super(bundle, prefix);
@@ -194,7 +194,7 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 	 *   (described in <code>ResourceAction</code> constructor), or 
 	 *   <code>null</code> if none
 	 * @param workbenchWindow the workbench window
-	 * @see ResourceAction#ResourceAction
+	 * @see ResourceAction#ResourceAction(ResourceBundle, String)
 	 * 
 	 * @deprecated use FindReplaceAction(ResourceBundle, String, IWorkbenchPart) instead
 	 */

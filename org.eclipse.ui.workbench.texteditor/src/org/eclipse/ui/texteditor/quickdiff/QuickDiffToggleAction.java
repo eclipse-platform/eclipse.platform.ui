@@ -78,12 +78,12 @@ public class QuickDiffToggleAction implements IEditorActionDelegate, IUpdate {
 			IMenuManager menu= (IMenuManager)manager.find(MENU_ID);
 			// only add menu if it isn't there yet
 			if (menu == null) {
-				/* HACK: preinstall menu groups
+				/* HACK: pre-install menu groups
 				 * This is needed since we get the blank context menu, but want to show up
 				 * in the same position as the extension-added QuickDiffToggleAction.
 				 * The extension is added at the end (naturally), but other menus (debug, add)
 				 * don't add themselves to MB_ADDITIONS or alike, but rather to the end, too. So
-				 * we preinstall their respective menu groups here.
+				 * we pre-install their respective menu groups here.
 				 */
 				// TODO move these into editor as well
 				if (manager.find(GROUP_DEBUB) == null)
@@ -155,7 +155,6 @@ public class QuickDiffToggleAction implements IEditorActionDelegate, IUpdate {
 	 * for the quick diff reference. This allows the toggle action to lazily install the menu once
 	 * quick diff has been enabled.
 	 * 
-	 * @param editor the editor that the menu gets installed in.
 	 * @see QuickDiffToggleAction
 	 */
 	private void setPopupMenu() {

@@ -582,7 +582,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	
 	/**
 	 * Unsynchronized version of <code>documentAboutToBeChanged</code>, called by <code>documentAboutToBeChanged</code>
-	 * and {@link #initialize(SortedMap, int)}. 
+	 * and {@link #initialize()}. 
 	 * 
 	 * @param event the document event to be handled
 	 */

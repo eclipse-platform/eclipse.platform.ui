@@ -215,8 +215,8 @@ class FindReplaceDialog extends Dialog {
 	private IDialogSettings fDialogSettings;
 	/**
 	 * Tells whether the target supports regular expressions.
+	 * <code>true</code> if the target supports regular expressions
 	 * 
-	 * @return <code>true</code> if the target supports regular expressions
 	 * @since 3.0
 	 */
 	private boolean fIsTargetSupportingRegEx;
@@ -679,7 +679,7 @@ class FindReplaceDialog extends Dialog {
 	 * Creates the functional options part of the options defining
 	 * section of the find replace dialog.
 	 *
-	 * @param the parent composite
+	 * @param parent the parent composite
 	 * @return the options group
 	 */
 	private Composite createOptionsGroup(Composite parent) {
@@ -822,6 +822,7 @@ class FindReplaceDialog extends Dialog {
 	 * @param caseSensitive	should the search be case sensitive
 	 * @param wrapSearch	should the search wrap to the start/end if arrived at the end/start
 	 * @param wholeWord does the search string represent a complete word
+	 * @param regExSearch if <code>true</code> findString represents a regular expression
 	 * @return the occurrence of the find string following the options or <code>-1</code> if nothing found
 	 */
 	private int findIndex(String findString, int startPosition, boolean forwardSearch, boolean caseSensitive, boolean wrapSearch, boolean wholeWord, boolean regExSearch) {
@@ -860,8 +861,8 @@ class FindReplaceDialog extends Dialog {
 	 * @param offset the offset at which searching starts
 	 * @param findString the string which should be found
 	 * @param forwardSearch the direction of the search
-	 * @param caseSensitive <code>true</code> performes a case sensitve search, <code>false</code> an insensitive search
-	 * @param wholeWord if <code>true</code> only occurences are reported in which the findString stands as a word by itself 
+	 * @param caseSensitive <code>true</code> performs a case sensitive search, <code>false</code> an insensitive search
+	 * @param wholeWord if <code>true</code> only occurrences are reported in which the findString stands as a word by itself 
 	 * @param regExSearch if <code>true</code> findString represents a regular expression 
 	 * @return the position of the specified string, or -1 if the string has not been found
 	 * @since 3.0
@@ -889,7 +890,7 @@ class FindReplaceDialog extends Dialog {
 	 * @param wrapSearch	should the search wrap to the start/end if arrived at the end/start
 	 * @param wholeWord does the search string represent a complete word
 	 * @param incremental is this an incremental search
-	 * @param global is the search scope the whoel document
+	 * @param global is the search scope the whole document
 	 * @param regExSearch if <code>true</code> findString represents a regular expression 
 	 * @return <code>true</code> if the search string can be found using the given options
 	 * @since 3.0
@@ -942,7 +943,7 @@ class FindReplaceDialog extends Dialog {
 	// ------- accessors ---------------------------------------
 
 	/**
-	 * Retrieves the string to search for from the appriopriate text input field and returns it. 
+	 * Retrieves the string to search for from the appropriate text input field and returns it. 
 	 * @return the search string
 	 */
 	private String getFindString() {
@@ -961,7 +962,7 @@ class FindReplaceDialog extends Dialog {
 	}
 
 	/**
-	 * Retrieves the replacement string from the appriopriate text input field and returns it. 
+	 * Retrieves the replacement string from the appropriate text input field and returns it. 
 	 * @return the replacement string
 	 */
 	private String getReplaceString() {
@@ -1204,7 +1205,7 @@ class FindReplaceDialog extends Dialog {
 	 * @param id the button id
 	 * @param dfltButton is this button the default button
 	 * @param listener a button pressed listener
-	 * @return teh new button
+	 * @return the new button
 	 */
 	private Button makeButton(Composite parent, String key, int id, boolean dfltButton, SelectionListener listener) {
 		String label= EditorMessages.getString(key);
@@ -1235,7 +1236,9 @@ class FindReplaceDialog extends Dialog {
 	}
 
 	/**
-	 * Sets the given error message in the status line.
+	 * Sets the given status message in the status line.
+	 * 
+	 * @param error <code>true</code> if it is an error
 	 * @param message the error message
 	 */
 	private void statusMessage(boolean error, String message) {
@@ -1337,6 +1340,8 @@ class FindReplaceDialog extends Dialog {
 	/**
 	 * Replaces the current selection of the target with the user's
 	 * replace string.
+	 * 
+	 * @return <code>true</code> if the operation was successful
 	 */
 	private boolean performReplaceSelection() {
 		
@@ -1372,6 +1377,8 @@ class FindReplaceDialog extends Dialog {
 	
 	/**
 	 * Locates the user's findString in the text of the target.
+	 * 
+	 * @param mustInitIncrementalBaseLocation <code>true</code> if base location must be initialized
 	 */
 	private void performSearch(boolean mustInitIncrementalBaseLocation) {
 
@@ -1411,6 +1418,7 @@ class FindReplaceDialog extends Dialog {
 	 * @param wrapSearch	should search wrap to start/end if end/start is reached
 	 * @param wholeWord does the search string represent a complete word
 	 * @param global	is the search performed globally
+	 * @param regExSearch if <code>true</code> findString represents a regular expression
 	 * @return the number of occurrences
 	 * @since 3.0
 	 */
@@ -1459,7 +1467,7 @@ class FindReplaceDialog extends Dialog {
 		return replaceCount;
 	}
 
-	// ------- ui creation ---------------------------------------
+	// ------- UI creation ---------------------------------------
 	
 	/**
 	 * Attaches the given layout specification to the <code>component</code>.
@@ -1488,6 +1496,8 @@ class FindReplaceDialog extends Dialog {
 	
 	/** 
 	 * Updates the enabled state of the buttons.
+	 * 
+	 * @param disableReplace <code>true</code> if replace button must be disabled
 	 */
 	private void updateButtonState(boolean disableReplace) {
 		if (okToUse(getShell()) && okToUse(fFindNextButton)) {
@@ -1753,7 +1763,7 @@ class FindReplaceDialog extends Dialog {
 	private ContentAssistant createContentAssistant(final Combo combo, ComboContentAssistSubjectAdapter adapter) {
 		final ContentAssistant contentAssistant= new ContentAssistant();
 		
-		contentAssistant.setRestoreCompletionProposalSize(getSettings("FindReplaceDialog.completion_proposal_size"));
+		contentAssistant.setRestoreCompletionProposalSize(getSettings("FindReplaceDialog.completion_proposal_size")); //$NON-NLS-1$
 		
 		IContentAssistProcessor processor= new RegExContentAssistProcessor();
 		contentAssistant.setContentAssistProcessor(processor, IDocument.DEFAULT_CONTENT_TYPE);

@@ -86,7 +86,7 @@ public class DefaultRangeIndicator extends Annotation implements IAnnotationPres
 	/**
 	 * Returns the image of this range indicator.
 	 * 
-	 * @param the control
+	 * @param control the control
 	 * @return an image
 	 */
 	private Image getImage(Control control) {
@@ -119,6 +119,7 @@ public class DefaultRangeIndicator extends Annotation implements IAnnotationPres
 	 * the given display which is used as this range indicator's image.
 	 *
 	 * @param display the display on which to create the image
+	 * @param size the image size
 	 * @return a new image
  	 */
 	private static Image createImage(Display display, Point size) {

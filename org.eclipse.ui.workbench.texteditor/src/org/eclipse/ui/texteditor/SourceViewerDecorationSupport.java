@@ -56,8 +56,9 @@ public class SourceViewerDecorationSupport {
 	 * @since 3.0
 	 */
 	private static final class UnderlineDrawingStrategy implements IDrawingStrategy {
-		/**
-		 * {@inheritdoc}
+
+		/*
+		 * @see org.eclipse.jface.text.source.AnnotationPainter.IDrawingStrategy#draw(org.eclipse.jface.text.source.Annotation, org.eclipse.swt.graphics.GC, org.eclipse.swt.custom.StyledText, int, int, org.eclipse.swt.graphics.Color)
 		 */
 		public void draw(Annotation annotation, GC gc, StyledText textWidget, int offset, int length, Color color) {
 			if (gc != null) {
@@ -115,8 +116,9 @@ public class SourceViewerDecorationSupport {
 	 * @since 3.0
 	 */
 	private static final class IBeamStrategy implements IDrawingStrategy {
-		/**
-		 * {@inheritdoc}
+
+		/*
+		 * @see org.eclipse.jface.text.source.AnnotationPainter.IDrawingStrategy#draw(org.eclipse.jface.text.source.Annotation, org.eclipse.swt.graphics.GC, org.eclipse.swt.custom.StyledText, int, int, org.eclipse.swt.graphics.Color)
 		 */
 		public void draw(Annotation annotation, GC gc, StyledText textWidget, int offset, int length, Color color) {
 			if (gc != null) {
@@ -307,7 +309,7 @@ public class SourceViewerDecorationSupport {
 	 * Returns the annotation decoration style used for the show in text preference for
 	 * a given annotation type.
 	 * 
-	 * @param type the annotation type being looked up
+	 * @param annotationType the annotation type being looked up
 	 * @return the decoration style for <code>type</code>
 	 * @since 3.0
 	 */
@@ -587,8 +589,8 @@ public class SourceViewerDecorationSupport {
 	/**
 	 * Returns the shared color for the given RGB.
 	 * 
-	 * @param rgb the rgb
-	 * @return the shared color for the given rgb
+	 * @param rgb the RGB
+	 * @return the shared color for the given RGB
 	 */
 	private Color getColor(RGB rgb) {
 		return fSharedTextColors.getColor(rgb);
@@ -652,7 +654,7 @@ public class SourceViewerDecorationSupport {
 	}
 	
 	/**
-	 * Tells whether matching charaters are shown.
+	 * Tells whether matching characters are shown.
 	 * 
 	 * @return <code>true</code> if the matching characters are shown
 	 */
@@ -694,7 +696,7 @@ public class SourceViewerDecorationSupport {
 	/**
 	 * Tells whether the cursor line is shown.
 	 * 
-	 * @return <code>true</code> f the cursor line is shown
+	 * @return <code>true</code> if the cursor line is shown
 	 */
 	private boolean isCursorLineShown() {
 		if (fPreferenceStore != null && fCursorLinePainterEnableKey != null)
@@ -922,7 +924,7 @@ public class SourceViewerDecorationSupport {
 	}
 	
 	/**
-	 * Sets the annotion overview color for the given annotation type.
+	 * Sets the annotation overview color for the given annotation type.
 	 * 
 	 * @param annotationType the annotation type
 	 * @param color the color

@@ -198,7 +198,7 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 	 * Sets the direction for the next search.
 	 * This can be called before <code>beginSession</code> to set the initial search direction.
 	 * @param forward <code>true</code> if the next search should be forward
-	 * @see #beginSession
+	 * @see #beginSession()
 	 * @since 2.1
 	 */
 	public void setDirection(boolean forward) {
@@ -495,8 +495,10 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 	}
 
 	/**
-	 * Repeats the last search while possibly changing the direciton.
+	 * Repeats the last search while possibly changing the direction.
+	 * 
 	 * @param forward <code>true</code> iff the next search should be forward
+	 * @return if the search was successful
 	 * @since 2.1
 	 */
 	private boolean repeatSearch(boolean forward) {
@@ -555,7 +557,9 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 
 	/**
 	 * Adds the given character to the search string and repeats the search with the last parameters.
+	 * 
 	 * @param c the character to append to the search pattern
+	 * @return <code>true</code> the search found a match
 	 * @since 2.1
 	 */
 	private boolean addCharSearch(char c) {
@@ -772,7 +776,7 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 	/**
 	 * Sets the find status field for this incremental find target.
 	 * 
-	 * @param field
+	 * @param statusField the status field
 	 * @since 3.0
 	 */
 	void setStatusField(IStatusField statusField) {

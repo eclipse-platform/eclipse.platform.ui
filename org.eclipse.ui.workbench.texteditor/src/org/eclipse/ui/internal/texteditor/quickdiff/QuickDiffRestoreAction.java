@@ -41,6 +41,8 @@ public abstract class QuickDiffRestoreAction extends TextEditorAction {
 	/**
 	 * Creates a new instance.
 	 * 
+	 * @param bundle the resource bundle
+	 * @param prefix a prefix to be prepended to the various resource keys
 	 * @param editor the editor this action belongs to
 	 */
 	QuickDiffRestoreAction(ResourceBundle bundle, String prefix, ITextEditor editor) {

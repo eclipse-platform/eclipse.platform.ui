@@ -34,7 +34,7 @@ public class RevertToSavedAction extends TextEditorAction {
 	 *   (described in <code>ResourceAction</code> constructor), or 
 	 *   <code>null</code> if none
 	 * @param editor the text editor
-	 * @see ResourceAction#ResourceAction
+	 * @see TextEditorAction#TextEditorAction(ResourceBundle, String, ITextEditor)
 	 */
 	public RevertToSavedAction(ResourceBundle bundle, String prefix, ITextEditor editor) {
 		super(bundle, prefix, editor);

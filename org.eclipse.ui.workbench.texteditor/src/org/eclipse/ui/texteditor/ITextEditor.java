@@ -69,7 +69,7 @@ public interface ITextEditor extends IEditorPart {
 	/**
 	 * Installs the given action under the given action id.
 	 *
-	 * @param actionId the action id
+	 * @param actionID the action id
 	 * @param action the action, or <code>null</code> to clear it
 	 * @see #getAction(String)
 	 */
