@@ -5,7 +5,6 @@
 package org.eclipse.help.internal.topics;
 
 import java.util.*;
-import org.eclipse.help.topics.*;
 
 /**
  * Navigation Element.

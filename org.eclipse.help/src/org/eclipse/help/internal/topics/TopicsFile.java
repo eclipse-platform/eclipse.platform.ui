@@ -15,6 +15,7 @@ public class TopicsFile {
 
 	protected String plugin;
 	protected String href;
+	protected boolean book;
 
 
 	// used for fast access to anchors
@@ -23,9 +24,10 @@ public class TopicsFile {
 	/**
 	 * Topics File Contstructor
 	 */
-	protected TopicsFile(String plugin, String href) {
+	protected TopicsFile(String plugin, String href, boolean isBook) {
 		this.plugin = plugin;
 		this.href = href;
+		this.book = isBook;
 	}
 
 	/**
@@ -96,12 +98,6 @@ public class TopicsFile {
 	 */
 	public void build(NavigationBuilder builder) {
 		builder.buildTopicsFile(this);
-
-		// Create a dummy anchor at the end
-		if (topics != null) {
-			Anchor defaultAnchor = new Anchor(this, null);
-			topics.addChild(defaultAnchor);
-		}
 	}
 
 
@@ -111,4 +107,12 @@ public class TopicsFile {
 	public String toString() {
 		return plugin + "/" + href;
 	}
+	/**
+	 * Checks if this file specifies a book.
+	 * @return Returns a boolean
+	 */
+	public boolean isBook() {
+		return book;
+	}
+
 }

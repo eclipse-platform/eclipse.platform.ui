@@ -3,7 +3,6 @@
  * All Rights Reserved.
  */
 package org.eclipse.help;
-import org.eclipse.help.topics.*;
 /**
 * A help resource, usually a help topic.
  * <p>

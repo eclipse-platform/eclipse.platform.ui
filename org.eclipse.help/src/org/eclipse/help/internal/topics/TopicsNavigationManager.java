@@ -3,133 +3,94 @@
  * All Rights Reserved.
  */
 package org.eclipse.help.internal.topics;
-import com.ibm.jvm.format.Util;
-import java.io.File;
+import java.net.URL;
 import java.util.*;
-import org.eclipse.help.internal.*;
-import org.eclipse.help.internal.util.Logger;
-import org.eclipse.help.internal.util.Resources;
-import org.eclipse.help.topics.ITopics;
+
 import org.eclipse.core.runtime.*;
-import java.net.*;
+import org.eclipse.help.ITopic;
+import org.eclipse.help.internal.HelpSystem;
+import org.eclipse.help.internal.contributions.xml1_0.HelpInfoView;
+import org.eclipse.help.internal.util.*;
 /**
  * Manages the navigation model. It generates it and it reads it back
  * and instantiates the model for future rendering.
  * There is a model (notifier) for each <views> node.
  */
 public class TopicsNavigationManager {
-	private Map topicsNavigationModels =
-		new HashMap(/* of href to TopicsNavigationModel */
+	private Map idToTopics =
+		new HashMap(/* of ID to Topics */
 	);
 	// Ordered List of all infosets available;
-	private List topicsHrefs;
-	// Map String href to String label that keeps track of all the topics_ available
-	private TopicsMap topicsMap = null;
+	private List topicsIDs;
 	/**
 	 * HelpNavigationManager constructor.
 	 */
 	public TopicsNavigationManager() {
 		super();
 		try {
-			TopicsContributorsManager tcmgr = HelpSystem.getTopicsContributorsManager();
-			if (tcmgr.hasNewContributors()) {
-				buildContributions(tcmgr.getContributedTopicsFiles());
-				// will initialize infosetsIds, as byproduct
-				tcmgr.versionContributors();
-			} else {
-				// read persited Topics
-				getTopicsHrefs();
+			build();
+		} catch (Exception e) {
+			Logger.logError("", e);
+		}
+	}
+	private void build() {
+		try {
+			Collection contributedTopicsFiles = getContributedTopicsFiles();
+			NavigationBuilder builder = new NavigationBuilder();
+			builder.build(contributedTopicsFiles);
+			Collection builtTopics = builder.getBuiltTopics();
+			for (Iterator it = builtTopics.iterator(); it.hasNext();) {
+				Topics topics = (Topics) it.next();
+				idToTopics.put(topics.getTopicsID(), topics);
 			}
 			// 1.0 navigation support
-			HelpSystem.getNavigationManager();
+			Collection builtTopics10 = HelpSystem.getNavigationManager().getTopicsIDs();
+			for (Iterator it = builtTopics10.iterator(); it.hasNext();) {
+				String id= (String) it.next();
+				idToTopics.put(id, HelpSystem.getNavigationManager().getTopics(id));
+			}
 			// eo 1.0 nava support
 		} catch (Exception e) {
 			Logger.logError("", e);
 		}
 	}
-	
-	
-	private void buildContributions(Collection contributedTopicsFiles) {
-		try {
-			// Keep track of all the topics available
-			topicsMap = new TopicsMap();
-			NavigationBuilder builder = new NavigationBuilder();
-			builder.build(contributedTopicsFiles);
-			Collection builtTopics = builder.getBuiltTopics();
-			for (Iterator it = builtTopics.iterator(); it.hasNext();) {
-				ITopics topics = (ITopics) it.next();
-				topicsNavigationModels.put(topics.getHref(), topics);
-				// generate navigation file for each topics
-				File navOutFile = new File(HrefUtil.getStateLocation(topics.getHref()));
-				File navOutDir = navOutFile.getParentFile();
-				if (!navOutDir.exists()) {
-					navOutDir.mkdirs();
-				}
-				new NavigationWriter(topics, navOutFile).generate();
-				topicsMap.put(topics.getHref(), topics.getLabel());
-			}
-			// Save a file with all the infosets ids and labels
-			topicsMap.save();
-		} catch (Exception e) {
-			Logger.logError("", e);
-		}
-	}
-
 	/**
-	 * Returns the navigation model for specified topics href
+	 * Returns the navigation model for specified topics ID
 	 */
-	public ITopics getTopics(String href) {
-		if (href == null || href.equals(""))
+	public ITopic getTopics(String id) {
+		if (id == null || id.equals(""))
 			return null;
-			
-		ITopics topics = (ITopics) topicsNavigationModels.get(href);
-		if (topics == null && topicsMap.containsKey(href)) 
-			topics = loadSavedTopics(href);
-		
-		if (topics != null)
-			return topics;
-		// 1.0 nav support
-		else
-			return HelpSystem.getNavigationManager().getTopics(href);
-		// eo 1.0 nav support
+		return (ITopic) idToTopics.get(id);
 	}
 	/**
 	 * @return List of Topics hrefs available, not including
 	 * ones that do not have navigation
 	 * (i.e. require not met)
 	 */
-	public List getTopicsHrefs() {
-		if (topicsHrefs != null)
-			return topicsHrefs;
-		// first call to this method, prepare topicsHrefs and mapping to labels
-		if (topicsMap == null) {
-			topicsMap = new TopicsMap();
-			topicsMap.restore();
-		}
-		topicsHrefs = new ArrayList(topicsMap.size());
+	public List getTopicsIDs() {
+		if (topicsIDs != null)
+			return topicsIDs;
+		topicsIDs = new ArrayList(idToTopics.size());
 		// obtain unordered hrefs
-		List unorderedHrefs = new ArrayList(topicsMap.size());
-		unorderedHrefs.addAll(topicsMap.keySet());
-		// 1.0 nav support
-		unorderedHrefs.addAll(HelpSystem.getNavigationManager().getTopicsHrefs());
-		// eo 1.0 nav support
+		List unorderedIDs = new ArrayList(idToTopics.size());
+		unorderedIDs.addAll(idToTopics.keySet());
 		// Now create ordered list, as specified in product.ini
 		List preferedOrder = getPreferedInfosetsOrder();
 		// add all infosets that have order specified
 		if (preferedOrder != null) {
 			for (Iterator it = preferedOrder.iterator(); it.hasNext();) {
-				String infosetHref = (String) it.next();
-				if (unorderedHrefs.contains(infosetHref))
-					topicsHrefs.add(infosetHref);
-				unorderedHrefs.remove(infosetHref);
+				String infosetID = (String) it.next();
+				if (unorderedIDs.contains(infosetID))
+					topicsIDs.add(infosetID);
+				unorderedIDs.remove(infosetID);
 				// 1.0 nav support
-				for (Iterator it2 = unorderedHrefs.iterator(); it2.hasNext();) {
+				for (Iterator it2 = unorderedIDs.iterator(); it2.hasNext();) {
 					String infosetDDView = (String) it2.next();
-					if (infosetDDView.startsWith(infosetHref + "..")) {
-						topicsHrefs.add(infosetDDView);
-						unorderedHrefs.remove(infosetDDView);
+					if (infosetDDView.startsWith(infosetID + "..")) {
+						topicsIDs.add(infosetDDView);
+						unorderedIDs.remove(infosetDDView);
 						// iterator is dirty, start again
-						it2 = unorderedHrefs.iterator();
+						it2 = unorderedIDs.iterator();
 						continue;
 					}
 				}
@@ -137,8 +98,8 @@ public class TopicsNavigationManager {
 			}
 		}
 		// add the rest of infosets
-		topicsHrefs.addAll(unorderedHrefs);
-		return topicsHrefs;
+		topicsIDs.addAll(unorderedIDs);
+		return topicsIDs;
 	}
 	/**
 	 * Returns the label for Topics.
@@ -147,29 +108,11 @@ public class TopicsNavigationManager {
 	 * read in memory
 	 */
 	public String getTopicsLabel(String href) {
-		// 1.0 nav support
-		if (!topicsMap.containsKey(href))
-			return HelpSystem.getNavigationManager().getTopicsLabel(href);
-		// eo 1.0 nav support
-		return (String) topicsMap.get(href);
+		Object topics = idToTopics.get(href);
+		if (topics != null)
+			return ((ITopic) topics).getLabel();
+		return null;
 	}
-
-	/**
-	 * Loads a saved topics file with the specified original href
-	 */
-	private ITopics loadSavedTopics(String href)
-	{
-		// Need to build from a generated topics file
-		String realHref = HrefUtil.getStateLocation(href);
-		TopicsFile topicsFile = new TopicsFile(null, realHref);
-		NavigationBuilder builder = new NavigationBuilder();
-		builder.buildTopicsFile(topicsFile);
-		ITopics topics = topicsFile.getTopics();
-		topicsNavigationModels.put(href, topics);
-		
-		return topics;
-	}
-	
 	/**
 	 * Reads product.ini to determine infosets ordering.
 	 * It works in current drivers, but will not
@@ -198,5 +141,36 @@ public class TopicsNavigationManager {
 			Logger.logWarning(Resources.getString("W001"));
 		}
 		return infosets;
+	}
+	/**
+	* Returns a collection of TopicsFile that were not processed.
+	*/
+	protected Collection getContributedTopicsFiles() {
+		Collection contributedTopicsFiles = new ArrayList();
+		// find extension point
+		IExtensionPoint xpt =
+			Platform.getPluginRegistry().getExtensionPoint("org.eclipse.help", "topics");
+		if (xpt == null)
+			return contributedTopicsFiles;
+		// get all extensions
+		IExtension[] extensions = xpt.getExtensions();
+		for (int i = 0; i < extensions.length; i++) {
+			// add to TopicFiles declared in this extension
+			IConfigurationElement[] configElements =
+				extensions[i].getConfigurationElements();
+			for (int j = 0; j < configElements.length; j++)
+				if (configElements[j].getName().equals("topics")) {
+					String pluginId =
+						configElements[j]
+							.getDeclaringExtension()
+							.getDeclaringPluginDescriptor()
+							.getUniqueIdentifier();
+					String href = configElements[j].getAttribute("file");
+					boolean isBook = "book".equals(configElements[j].getAttribute("type"));
+					if (href != null)
+						contributedTopicsFiles.add(new TopicsFile(pluginId, href, isBook));
+				}
+		}
+		return contributedTopicsFiles;
 	}
 }

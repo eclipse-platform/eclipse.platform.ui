@@ -78,21 +78,5 @@ public class HrefUtil {
 			return "";
 	}
 	
-	/**
-	 * Returns the temporary location of a topics file.
-	 */
-	public static String getStateLocation(String href)
-	{
-		return 
-			HelpPlugin
-				.getDefault()
-				.getStateLocation()
-				.addTrailingSeparator()
-				.append("nl")
-				.addTrailingSeparator()
-				.append(Locale.getDefault().toString())
-				.addTrailingSeparator()
-				.append(href).toOSString();
-	}
 }
 

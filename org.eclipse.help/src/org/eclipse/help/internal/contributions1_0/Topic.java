@@ -5,7 +5,7 @@ package org.eclipse.help.internal.contributions1_0;
  */
 
 
-import org.eclipse.help.topics.ITopic;
+import org.eclipse.help.ITopic;
 
 /**
  * Topic contribution

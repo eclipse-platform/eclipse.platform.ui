@@ -11,7 +11,7 @@ import org.xml.sax.*;
 import org.eclipse.help.internal.contributions1_0.Contribution;
 import org.eclipse.help.internal.contributions1_0.Visitor;
 import org.eclipse.help.internal.util.*;
-import org.eclipse.help.topics.ITopic;
+import org.eclipse.help.ITopic;
 
 /**
  * Common class for contribution data.

@@ -3,22 +3,20 @@
  * All Rights Reserved.
  */
 package org.eclipse.help.internal;
-import java.net.*;
+import java.net.URL;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.context.*;
 import org.eclipse.help.internal.contributors.xml1_0.HelpContributionManager;
 import org.eclipse.help.internal.contributors1_0.ContributionManager;
 import org.eclipse.help.internal.navigation1_0.HelpNavigationManager;
 import org.eclipse.help.internal.server.HelpServer;
-import org.eclipse.help.internal.topics.*;
+import org.eclipse.help.internal.topics.TopicsNavigationManager;
 import org.eclipse.help.internal.util.*;
 /**
  * The actual implementation of the help system plugin.
  */
 public final class HelpSystem {
 	protected static final HelpSystem instance = new HelpSystem();
-	// TopicsContributorsManager for topics contributors
-	protected TopicsContributorsManager topicsContributorsManager;
 	// 1.0 nav support
 	// ContributionManager for help v1.0 contributions
 	protected ContributionManager contributionManager;
@@ -28,7 +26,6 @@ public final class HelpSystem {
 	// Topics NavigationManager for topics navigation
 	protected TopicsNavigationManager topicsNavigationManager;
 	protected IContextManager contextManager;
-
 	private String browserPath;
 	// constants
 	private static final String SEARCH_ENGINE_EXTENSION_POINT =
@@ -81,7 +78,6 @@ public final class HelpSystem {
 		return getInstance().navigationManager;
 	}
 	// eof 1.0 nav support
-
 	public static HelpPreferences getPreferences() {
 		return getInstance().preferences;
 	}
@@ -93,16 +89,6 @@ public final class HelpSystem {
 	 */
 	public static URL getLocalHelpServerURL() {
 		return HelpServer.getAddress();
-	}
-	/**
-	 * Used to obtain TopicsContributorsManager
-	 * @return instance of TopicsContributorsManager
-	 */
-	public static TopicsContributorsManager getTopicsContributorsManager() {
-		if (getInstance().topicsContributorsManager == null) {
-			getInstance().topicsContributorsManager = new TopicsContributorsManager();
-		}
-		return getInstance().topicsContributorsManager;
 	}
 	/**
 	 * Used to obtain Topics Naviagiont Manager
@@ -119,19 +105,17 @@ public final class HelpSystem {
 	public HelpSystem newInstance() {
 		return null;
 	}
-	public static void setBrowserPath(String path) {
+	static void setBrowserPath(String path) {
 		getInstance().browserPath = path;
 	}
-	public static void setLocalServerInfo(String addr, String port) {
+	static void setLocalServerInfo(String addr, String port) {
 		getInstance().localServerAddress = addr;
 		getInstance().localServerPort = port;
 		HelpServer.setAddress(addr, port);
 	}
 	public static void setPreferences(HelpPreferences newPreferences) {
 		getInstance().preferences = newPreferences;
-			
 		Logger.setDebugLevel(newPreferences.getInt(HelpPreferences.LOG_LEVEL_KEY));
-				
 		if (newPreferences.getInt(HelpPreferences.LOCAL_SERVER_CONFIG) > 0) {
 			setLocalServerInfo(
 				newPreferences.getString(HelpPreferences.LOCAL_SERVER_ADDRESS_KEY),
@@ -139,7 +123,6 @@ public final class HelpSystem {
 		} else {
 			setLocalServerInfo(null, "0");
 		}
-
 		HelpSystem.setBrowserPath(
 			newPreferences.getString(HelpPreferences.BROWSER_PATH_KEY));
 	}
@@ -148,7 +131,7 @@ public final class HelpSystem {
 	 * @exception CoreException if this method fails to shut down
 	 *   this plug-in 
 	 */
-	static void shutdown() throws CoreException {
+	public static void shutdown() throws CoreException {
 		getPreferences().save();
 		Logger.logInfo(Resources.getString("I003"));
 		Logger.shutdown();
@@ -156,7 +139,7 @@ public final class HelpSystem {
 	/**
 	 * Called by Platform after loading the plugin
 	 */
-	static void startup() {
+	public static void startup() {
 		try {
 			setPreferences(new HelpPreferences());
 		} catch (Exception e) {

@@ -10,7 +10,7 @@ import org.eclipse.help.internal.contributions1_0.*;
 import org.eclipse.help.internal.contributors1_0.*;
 import org.xml.sax.*;
 /* 1.0 nav support */	
-import org.eclipse.help.topics.ITopic;
+import org.eclipse.help.ITopic;
 import org.eclipse.help.internal.HelpSystem;
 /* eo 1.0 nav support */
 

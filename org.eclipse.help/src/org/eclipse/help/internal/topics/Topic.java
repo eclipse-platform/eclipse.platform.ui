@@ -7,7 +7,7 @@ package org.eclipse.help.internal.topics;
 
 import java.util.List;
 import org.eclipse.help.internal.util.Resources;
-import org.eclipse.help.topics.ITopic;
+import org.eclipse.help.ITopic;
 import org.xml.sax.*;
 /**
  * Topic.  Visible navigation element.
@@ -26,7 +26,7 @@ class Topic extends NavigationElement implements ITopic {
 		if (attrs == null)
 			return;
 		href = attrs.getValue("href");
-		if (href != null && topicsFile != null)
+		if (href != null)
 			href = HrefUtil.normalizeHref(topicsFile.getPluginID(), href);
 		label = attrs.getValue("label");
 	}

@@ -71,7 +71,8 @@ class TopicsFileParser extends DefaultHandler {
 			parser.parse(inputSource);
 			is.close();
 		} catch (SAXException se) {
-			Logger.logError("", se);
+			String msg = Resources.getString("E026", file);//Error loading topics file %1.
+			Logger.logError(msg, se);
 		} catch (IOException ioe) {
 			String msg = Resources.getString("E026", file);//Error loading topics file %1.
 			Logger.logError(msg, ioe);
@@ -96,8 +97,8 @@ class TopicsFileParser extends DefaultHandler {
 			topicsFile.setTopics((Topics)node);
 		} else if (qName.equals("topic")) {
 			node = new Topic(topicsFile, atts);
-		} else if (qName.equals("include")) {
-			node = new Include(topicsFile, atts);
+		} else if (qName.equals("link")) {
+			node = new Link(topicsFile, atts);
 		} else if (qName.equals("anchor")) {
 			node = new Anchor(topicsFile, atts);
 		}

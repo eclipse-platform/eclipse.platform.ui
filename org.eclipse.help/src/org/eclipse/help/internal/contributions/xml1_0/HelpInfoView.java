@@ -7,15 +7,16 @@ import org.eclipse.help.internal.HelpSystem;
 import org.eclipse.help.internal.contributions1_0.*;
 import org.eclipse.help.internal.util.Resources;
 import org.xml.sax.Attributes;
-
-/* 1.0 nav support */
-import org.eclipse.help.topics.*;
-/* eo 1.0 nav support */
+import java.net.URLEncoder;
+import org.eclipse.help.internal.util.TString;
+import org.eclipse.help.*;
 
 /**
  * View contribution implementation.
  */
 public class HelpInfoView extends HelpContribution implements InfoView {
+	private final static String defaultSplash =
+		"/org.eclipse.help/" + Resources.getString("splash_location");
 	/**
 	 * Constructor
 	 */
@@ -52,6 +53,15 @@ public class HelpInfoView extends HelpContribution implements InfoView {
 	 *  1.0 nav support
 	 */
 	public String getHref() {
+		return
+			defaultSplash
+				+ "?title="
+				+ URLEncoder.encode(TString.getUnicodeNumbers(getLabel()));
+	}
+	/**
+	 *  1.0 nav support
+	 */
+	public String getTopicsID() {
 		return this.getParent().getID() + ".." + getID();
 	}
 	/**

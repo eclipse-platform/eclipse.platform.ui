@@ -17,8 +17,7 @@ import org.eclipse.help.internal.contributions1_0.*;
  */
 public class HelpContributionManager implements ContributionManager {
 	// Versioning info for detecting changes
-	protected static final String PLUGIN_VERSION_FILE =
-		Resources.getString("contribution1_0_versions");
+	protected static final String PLUGIN_VERSION_FILE = "contribution1_0_versions.properties";
 	protected PluginVersionInfo pluginVersions = null;
 
 	// Manifest contributions

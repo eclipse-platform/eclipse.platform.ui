@@ -6,17 +6,17 @@ package org.eclipse.help.internal.topics;
 import java.io.File;
 import java.util.*;
 import org.eclipse.help.internal.util.XMLGenerator;
-import org.eclipse.help.topics.*;
+import org.eclipse.help.*;
 /**
  * This generates the XML file for the help navigation.
  */
 public class NavigationWriter extends XMLGenerator {
-	protected ITopics topics;
+	protected Topics topics;
 	/**
 	 * @param viewSet com.ibm.itp.ua.view.ViewSet
 	 * @param outputDir java.io.File
 	 */
-	public NavigationWriter(ITopics topics, File outputFile) {
+	public NavigationWriter(Topics topics, File outputFile) {
 		super(outputFile);
 		this.topics = topics;
 	}
@@ -27,10 +27,10 @@ public class NavigationWriter extends XMLGenerator {
 		println(
 			"<topics label=\""
 				+ xmlEscape(topics.getLabel())
-				+ "\" href=\""
-				+ reduceURL(topics.getHref())
+				+ "\" topicsID=\""
+				+ reduceURL(topics.getTopicsID())
 				+ "\">");
-		ITopic[] subtopics = topics.getTopics();
+		ITopic[] subtopics = topics.getSubtopics();
 		for (int i=0; i<subtopics.length; i++) {
 			generate(subtopics[i]);
 		}

@@ -3,21 +3,25 @@
  * All Rights Reserved.
  */
 package org.eclipse.help.internal.topics;
+import java.net.URLEncoder;
 import java.util.*;
 import org.eclipse.help.internal.util.Resources;
-import org.eclipse.help.topics.*;
+import org.eclipse.help.internal.util.TString;
 import org.xml.sax.*;
 import sun.java2d.pipe.NullPixelPipe;
+import org.eclipse.help.*;
 /** 
  * Root of navigation TopicsFile
- * Can be attached to and/or include other
- * Topics objects.
+ * Can be linked with other Topics objects.
  */
-class Topics extends NavigationElement implements ITopics {
-	private String attach_to;
+public class Topics extends NavigationElement implements ITopic {
+	private final static String defaultSplash =
+		"/org.eclipse.help/" + Resources.getString("splash_location");
+	private String link_to;
 	private String href;
 	private String label;
 	private TopicsFile topicsFile;
+	private String topicsID;
 	private ITopic[] topicArray;
 	
 	/**
@@ -27,20 +31,16 @@ class Topics extends NavigationElement implements ITopics {
 	{
 		if (attrs == null)
 			return;
-
 		this.topicsFile = topicsFile;
 		this.label = attrs.getValue("label");
-		this.attach_to = attrs.getValue("attach_to");
-		this.href = attrs.getValue("href");
-		if ((this.href == null || this.href.equals("")) && topicsFile != null )
-			// use the value of the topics file
-			this.href = topicsFile.getHref();
-
-
-		if (topicsFile != null) {
-			this.attach_to = HrefUtil.normalizeHref(topicsFile.getPluginID(), attach_to);
-			this.href = HrefUtil.normalizeHref(topicsFile.getPluginID(), href);
-		}
+		this.link_to = attrs.getValue("link_to");
+		this.topicsID=attrs.getValue("topicsID");
+		this.link_to = HrefUtil.normalizeHref(topicsFile.getPluginID(), link_to);
+		this.topicsID=HrefUtil.normalizeHref(topicsFile.getPluginID(),topicsFile.getHref());
+		this.href =
+			defaultSplash
+				+ "?title="
+				+ URLEncoder.encode(TString.getUnicodeNumbers(label));
 	}
 
 	/**
@@ -57,16 +57,12 @@ class Topics extends NavigationElement implements ITopics {
 		return topicsFile;
 	}
 
-	/////////////////////
-	//  ITopics
-	/////////////////////
-	
 	/**
-	 * Gets the atach_to
+	 * Gets the link_to
 	 * @return Returns a String
 	 */
-	protected String getAttach_to() {
-		return attach_to;
+	protected String getLink_to() {
+		return link_to;
 	}
 	/**
 	 * Gets the href
@@ -93,7 +89,7 @@ class Topics extends NavigationElement implements ITopics {
 		// by href, but for now let's just traverse the
 		// tree and find the topic.
 		Stack stack = new Stack();
-		ITopic[] topics = getTopics();
+		ITopic[] topics = getSubtopics();
 		for (int i=0; i<topics.length; i++)
 			stack.push(topics[i]);
 		
@@ -110,7 +106,7 @@ class Topics extends NavigationElement implements ITopics {
 	 * Note: assumes the topics have been built....
 	 * @return ITopic list
 	 */
-	public ITopic[] getTopics() {
+	public ITopic[] getSubtopics() {
 		if (topicArray == null)
 		{
 			List topics = getChildTopics();
@@ -124,6 +120,13 @@ class Topics extends NavigationElement implements ITopics {
 	 * Used by debugger
 	 */
 	public String toString() {
-		return href != null ? href : super.toString();
+		return topicsID != null ? topicsID : super.toString();
+	}
+	/**
+	 * Gets the topicsID.
+	 * @return Returns a String
+	 */
+	public String getTopicsID() {
+		return topicsID;
 	}
 }

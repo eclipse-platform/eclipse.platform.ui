@@ -8,33 +8,27 @@ import org.xml.sax.*;
 /**
  *  Include.  Place holder to link to other Topics objects.
  */
-class Include extends NavigationElement {
-	protected String href;
+class Link extends NavigationElement {
+	protected String topics;
 	/**
 	 * Contstructor.  Used when parsing help contributions.
 	 */
-	protected Include(TopicsFile topicsFile, Attributes attrs)
-	{
+	protected Link(TopicsFile topicsFile, Attributes attrs) {
 		if (attrs == null)
 			return;
-		href = attrs.getValue("href");
-
-		//include element must specify href attribute.
-		href = HrefUtil.normalizeHref(topicsFile.getPluginID(), href);
-
+		topics = attrs.getValue("topics");
+		topics = HrefUtil.normalizeHref(topicsFile.getPluginID(), topics);
 	}
-
 	/**
 	 * Implements abstract method.
 	 */
 	public void build(NavigationBuilder builder) {
-		builder.buildInclude(this);
+		builder.buildLink(this);
 	}
-
 	/**
 	 * Obtains href
 	 */
-	protected String getHref() {
-		return href;
+	protected String getTopics() {
+		return topics;
 	}
 }

@@ -8,7 +8,6 @@ package org.eclipse.help.internal.contributions1_0;
 
 import java.util.*;
 
-import org.eclipse.help.topics.*;
 import org.eclipse.help.*;
 
 
@@ -20,7 +19,7 @@ public interface Contribution
   // We are pushing this a bit, making everything behaving like a topic or topics
   // in the new syntax. 
   // This code should be removed with the 1.0 cleanup
-  extends IHelpResource, ITopic, ITopics
+  extends IHelpResource, ITopic
   /* eo 1.0 nav support */
 {
 	// switches indicating how to insert

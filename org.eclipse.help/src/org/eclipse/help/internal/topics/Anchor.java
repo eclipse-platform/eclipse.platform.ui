@@ -11,46 +11,35 @@ import org.xml.sax.*;
 class Anchor extends NavigationElement {
 	protected String id;
 	protected TopicsFile topicsFile;
-	
 	/**
 	 * Constructor. 
 	 */
-	protected Anchor(TopicsFile topicsFile, Attributes attrs)
-	{
+	protected Anchor(TopicsFile topicsFile, Attributes attrs) {
 		this.topicsFile = topicsFile;
-		
-		if (attrs == null) {
-			// only valid when adding a default anchor at the end of a topics file
-			id = "/" + topicsFile.getPluginID() + "/" + topicsFile.getHref();
-			topicsFile.addAnchor(this);
+		if (attrs == null)
 			return;
-		}
-
 		id = attrs.getValue("id");
-		id = HrefUtil.normalizeHref(topicsFile.getPluginID(), topicsFile.getHref() + "#" + id);
-		topicsFile.addAnchor(this);
+		id =
+			HrefUtil.normalizeHref(
+				topicsFile.getPluginID(),
+				topicsFile.getHref() + "#" + id);
 	}
-	
 	/**
 	 * Implements abstract method.
 	 */
-	public void build(NavigationBuilder builder)
-	{
+	public void build(NavigationBuilder builder) {
 		builder.buildAnchor(this);
-	}	
-	
+	}
 	/**
 	 * Obtains the ID
 	 */
 	protected String getID() {
 		return id;
 	}
-	
 	/**
 	 * Returns the topics file
 	 */
-	public TopicsFile getTopicsFile()
-	{
+	public TopicsFile getTopicsFile() {
 		return topicsFile;
 	}
 }
