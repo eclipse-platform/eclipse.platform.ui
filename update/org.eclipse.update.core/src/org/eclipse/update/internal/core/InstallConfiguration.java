@@ -294,7 +294,9 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 	 * @return true if restart is needed
 	 */
 	public boolean save(boolean isTransient) throws CoreException {
-		saveConfigurationLog();
+		// log configuration and activities
+		if ("file".equalsIgnoreCase(getURL().getProtocol()))
+			UpdateCore.log(this);
 		
 		// Write info  into platform for the next runtime
 		IPlatformConfiguration runtimeConfiguration = ConfiguratorUtils.getCurrentPlatformConfiguration();
@@ -504,20 +506,6 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		}
 	}
 
-	/*
-	 *
-	 */
-	public void saveConfigurationLog() throws CoreException {
-		// save the configuration
-		if ("file".equalsIgnoreCase(getURL().getProtocol())) { //$NON-NLS-1$
-			// the location points to a file
-			File file = new File(getURL().getFile());
-			if (!file.exists()) {
-				//log + 24642 [works for all activities]
-				UpdateCore.log(this);
-			}
-		}
-	}
 
 	/*
 	 * reverts this configuration to the match the new one
