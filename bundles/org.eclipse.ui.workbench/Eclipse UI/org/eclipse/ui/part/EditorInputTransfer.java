@@ -56,7 +56,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * way, the dragging of multiple editor inputs is supported.
  * </p>
  * <p>
- * Below is an example of how to set set the data for dragging a single editor
+ * Below is an example of how to set the data for dragging a single editor
  * input using a <code>EditorInputTransfer</code>.
  * </p>
  * <p>
