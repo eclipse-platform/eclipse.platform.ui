@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin
+  name="IBM Tooling Platform Core Tests"
+  id="tests.c"
+  version="1.0.0"
+  vendor-name="IBM">
+
+</plugin>
