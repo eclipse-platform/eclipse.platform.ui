@@ -67,7 +67,7 @@ public interface IBundleGroup {
 	 * Returns a list of all bundles supplied by this bundle group.  
 	 * @return the bundles supplied by this bundle group
 	 */
-	public Bundle getBundles();
+	public Bundle[] getBundles();
 
 	/**
 	 * Returns the property of this bundle group with the given key.
