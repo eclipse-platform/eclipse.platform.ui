@@ -106,7 +106,7 @@ public abstract class Command extends Request {
 				return OK;
 			}
 			public IStatus errorLine(String line, ICVSFolder commandRoot, IProgressMonitor monitor) {
-				return new CVSStatus(CVSStatus.ERROR, CVSStatus.ERROR_LINE, line);
+				return new CVSStatus(CVSStatus.ERROR, CVSStatus.ERROR_LINE, commandRoot, line);
 			}
 
 		};

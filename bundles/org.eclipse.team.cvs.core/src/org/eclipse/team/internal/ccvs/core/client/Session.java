@@ -317,7 +317,10 @@ public class Session {
 			}
 	
 			// ask for the set of valid requests
-			Request.VALID_REQUESTS.execute(this, Policy.subMonitorFor(monitor, 40));
+			IStatus status = Request.VALID_REQUESTS.execute(this, Policy.subMonitorFor(monitor, 40));
+			if (!status.isOK()) {
+				throw new CVSException(status);
+			}
 			
 			// set the root directory on the server for this connection
 			connection.writeLine("Root " + getRepositoryRoot()); //$NON-NLS-1$
