@@ -164,8 +164,8 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 		} else {
 			fInput.setPreBuffer(bigInt.divide(BigInteger.valueOf(32)).min(BigInteger.valueOf(fInput.getDefaultBufferSize())).intValue());
 		}
-		int addressibleUnit = fInput.getMemoryRendering().getAddressibleUnitPerLine();
-		address = bigInt.subtract(BigInteger.valueOf(addressibleUnit*fInput.getPostBuffer()));
+		int addressableUnit = fInput.getMemoryRendering().getAddressableUnitPerLine();
+		address = bigInt.subtract(BigInteger.valueOf(addressableUnit*fInput.getPostBuffer()));
 		
 		if (address.compareTo(BigInteger.valueOf(0)) < 0)
 			address = BigInteger.valueOf(0);
@@ -234,7 +234,7 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 				// get memory from memory block
 				extMemoryBlock = (IMemoryBlockExtension) fInput.getMemoryBlock();
 				
-				long reqNumberOfUnits = fInput.getMemoryRendering().getAddressibleUnitPerLine() * numberOfLines;
+				long reqNumberOfUnits = fInput.getMemoryRendering().getAddressableUnitPerLine() * numberOfLines;
 				
 				memoryBuffer =	extMemoryBlock.getBytesFromAddress(startingAddress,	reqNumberOfUnits);
 				
@@ -475,8 +475,8 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 			
 			// increment row address
 			BigInteger bigInt = new BigInteger(address, 16);
-			int addressibleUnit = fInput.getMemoryRendering().getBytesPerLine()/fInput.getMemoryRendering().getAddressibleSize();
-			address = bigInt.add(BigInteger.valueOf(addressibleUnit)).toString(16);
+			int addressableUnit = fInput.getMemoryRendering().getBytesPerLine()/fInput.getMemoryRendering().getAddressableSize();
+			address = bigInt.add(BigInteger.valueOf(addressableUnit)).toString(16);
 		}
 		
 		if (error){
@@ -663,8 +663,8 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 			
 			BigInteger startAddress = new BigInteger(first.getAddress(), 16);
 			BigInteger lastAddress = new BigInteger(last.getAddress(), 16);
-			int addressibleUnit = fInput.getMemoryRendering().getAddressibleUnitPerLine();
-			lastAddress = lastAddress.add(BigInteger.valueOf(addressibleUnit));
+			int addressableUnit = fInput.getMemoryRendering().getAddressableUnitPerLine();
+			lastAddress = lastAddress.add(BigInteger.valueOf(addressableUnit));
 			
 			if (startAddress.compareTo(address) <= 0 &&
 				lastAddress.compareTo(address) >= 0)

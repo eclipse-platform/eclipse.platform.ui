@@ -32,7 +32,7 @@ public class FormatColumnAction extends Action
 	AbstractTableRendering fRendering;
 	int fNumBytesPerCol;
 	
-	public FormatColumnAction(int numUnits, int addressibleSize, AbstractTableRendering rendering)
+	public FormatColumnAction(int numUnits, int addressableSize, AbstractTableRendering rendering)
 	{	
 		String label;
 		if (numUnits == 1)
@@ -45,12 +45,12 @@ public class FormatColumnAction extends Action
 		fRendering = rendering;	
 		
 		// check this action if the view tab is currently in this format
-		if (numUnits*addressibleSize == fRendering.getBytesPerColumn())
+		if (numUnits*addressableSize == fRendering.getBytesPerColumn())
 		{
 			setChecked(true);
 		}
 
-		fNumBytesPerCol = numUnits*addressibleSize;
+		fNumBytesPerCol = numUnits*addressableSize;
 		
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugUIConstants.PLUGIN_ID + ".FormatColumnAction_context"); //$NON-NLS-1$ 
 	}

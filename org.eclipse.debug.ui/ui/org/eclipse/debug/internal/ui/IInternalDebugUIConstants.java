@@ -209,7 +209,7 @@ public interface IInternalDebugUIConstants {
 	 */
 	public final static String FONT_NAME = IDebugUIConstants.PLUGIN_ID + ".MemoryViewTableFont"; //$NON-NLS-1$
 	
-	public final static int ADD_UNIT_PER_LINE = 16;	// number of addressible unit per line
+	public final static int ADD_UNIT_PER_LINE = 16;	// number of addressable unit per line
 	public final static int CHAR_PER_BYTE = 2;		// number of characters to represent one byte
 
 	/**

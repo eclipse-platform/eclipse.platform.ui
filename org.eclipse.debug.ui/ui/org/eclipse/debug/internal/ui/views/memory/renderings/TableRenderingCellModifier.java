@@ -71,11 +71,11 @@ public class TableRenderingCellModifier implements ICellModifier
 			   return false;
 			}
 			
-			// property is stored as number of addressible unit away from the line address
-			// to calculate offset to the memory line array, offset = numberofAddressibleUnit * addressibleSize
-			int addressibleSize = getAddressibleSize();
+			// property is stored as number of addressable unit away from the line address
+			// to calculate offset to the memory line array, offset = numberofAddressableUnit * addressableSize
+			int addressableSize = getAddressableSize();
 			
-			int offset = Integer.valueOf(property, 16).intValue()*addressibleSize;
+			int offset = Integer.valueOf(property, 16).intValue()*addressableSize;
 			int end = offset + fRendering.getBytesPerColumn();
 			
 			for (int i=offset; i<end; i++)
@@ -99,11 +99,11 @@ public class TableRenderingCellModifier implements ICellModifier
 	/**
 	 * @return
 	 */
-	private int getAddressibleSize() {
-		int addressibleSize = fRendering.getAddressibleSize();
-		if (addressibleSize < 1)
-			addressibleSize = 1;
-		return addressibleSize;
+	private int getAddressableSize() {
+		int addressableSize = fRendering.getAddressableSize();
+		if (addressableSize < 1)
+			addressableSize = 1;
+		return addressableSize;
 	}
 
 	/* (non-Javadoc)
@@ -122,7 +122,7 @@ public class TableRenderingCellModifier implements ICellModifier
 			if (TableRenderingLine.P_ADDRESS.equals(property))
 			   return line.getAddress();
 			
-			int offset = Integer.valueOf(property, 16).intValue() * getAddressibleSize();
+			int offset = Integer.valueOf(property, 16).intValue() * getAddressableSize();
 			int end = offset + fRendering.getBytesPerColumn();
 			
 
@@ -168,7 +168,7 @@ public class TableRenderingCellModifier implements ICellModifier
 
 		int lineOffset = Integer.valueOf(property, 16).intValue();
 		
-		// this offset is number of addressible unit from the line address
+		// this offset is number of addressable unit from the line address
 		long offset = getOffset(memory, line.getAddress(), lineOffset);
 		
 		// validate data
@@ -184,10 +184,10 @@ public class TableRenderingCellModifier implements ICellModifier
 			if (!oldValue.equals(value))
 			{	
 
-				// property is number of addressible unit from line address
+				// property is number of addressable unit from line address
 				// to calculate proper offset in the memoryViewLine's array
-				// offset = numberOfAddressibleUnit * addressibleSize
-				int offsetToLine = Integer.valueOf(property, 16).intValue() * getAddressibleSize();
+				// offset = numberOfAddressableUnit * addressableSize
+				int offsetToLine = Integer.valueOf(property, 16).intValue() * getAddressableSize();
 				int end = offsetToLine + fRendering.getBytesPerColumn();
 				
 				MemoryByte[] oldArray= line.getBytes(offsetToLine, end);

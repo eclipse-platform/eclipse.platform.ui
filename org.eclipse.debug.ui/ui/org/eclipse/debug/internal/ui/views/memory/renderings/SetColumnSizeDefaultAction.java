@@ -44,7 +44,7 @@ public class SetColumnSizeDefaultAction extends Action
 	 */
 	public void run()
 	{
-		int numUnits = fRendering.getAddressibleUnitPerColumn();
+		int numUnits = fRendering.getAddressableUnitPerColumn();
 		
 		IPreferenceStore prefStore = DebugUIPlugin.getDefault().getPreferenceStore();
 		prefStore.setValue(IDebugPreferenceConstants.PREF_COLUMN_SIZE, numUnits);

@@ -106,7 +106,7 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 	
 	private int fBytePerLine;								// number of bytes per line: 16
 	private int fColumnSize;								// number of bytes per column:  1,2,4,8
-	private int fAddressibleSize;	
+	private int fAddressableSize;	
 	
 	private boolean fIsShowingErrorPage;
 	
@@ -421,20 +421,20 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 		fTableViewer.getTable().setLinesVisible(true);
 		
 // FORMAT RENDERING
-		// set up addressible size and figure out number of bytes required per line
-		fAddressibleSize = -1;
+		// set up addressable size and figure out number of bytes required per line
+		fAddressableSize = -1;
 		if (getMemoryBlock() instanceof IMemoryBlockExtension)
-			fAddressibleSize = ((IMemoryBlockExtension)getMemoryBlock()).getAddressibleSize();
-		if (fAddressibleSize < 1)
-			fAddressibleSize = 1;
-		int bytePerLine = IInternalDebugUIConstants.ADD_UNIT_PER_LINE * fAddressibleSize;
+			fAddressableSize = ((IMemoryBlockExtension)getMemoryBlock()).getAddressableSize();
+		if (fAddressableSize < 1)
+			fAddressableSize = 1;
+		int bytePerLine = IInternalDebugUIConstants.ADD_UNIT_PER_LINE * fAddressableSize;
 		
 		// get default column size from preference store
 		IPreferenceStore prefStore = DebugUIPlugin.getDefault().getPreferenceStore();
-		// column size is now stored as number of addressible units
+		// column size is now stored as number of addressable units
 		int columnSize = prefStore.getInt(IDebugPreferenceConstants.PREF_COLUMN_SIZE);
-		// actual column size is number of addressible units * size of the addressible unit
-		columnSize = columnSize * getAddressibleSize();
+		// actual column size is number of addressable units * size of the addressable unit
+		columnSize = columnSize * getAddressableSize();
 		
 		// check synchronized col size
 		Integer colSize = (Integer)getSynchronizedProperty(AbstractTableRendering.PROPERTY_COL_SIZE);
@@ -773,8 +773,8 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 		if (col > 0)
 		{	
 			// 	get address offset
-			int addressibleUnit = getAddressibleUnitPerColumn();
-			offset = (col-1) * addressibleUnit;
+			int addressableUnit = getAddressableUnitPerColumn();
+			offset = (col-1) * addressableUnit;
 		}
 		else
 		{
@@ -797,9 +797,9 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 			return false;
 		
 		// calculate selected row address
-		int addressibleUnit = getAddressibleUnitPerLine();
-		int numOfRows = address.subtract(fContentProvider.getBufferTopAddress()).intValue()/addressibleUnit;
-		BigInteger rowAddress = fContentProvider.getBufferTopAddress().add(BigInteger.valueOf(numOfRows * addressibleUnit));
+		int addressableUnit = getAddressableUnitPerLine();
+		int numOfRows = address.subtract(fContentProvider.getBufferTopAddress()).intValue()/addressableUnit;
+		BigInteger rowAddress = fContentProvider.getBufferTopAddress().add(BigInteger.valueOf(numOfRows * addressableUnit));
 
 		// try to find the row of the selected address
 		int row = findAddressIndex(address);
@@ -813,8 +813,8 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 		BigInteger offset = address.subtract(rowAddress);
 		
 		// locate column
-		int colAddressibleUnit = getAddressibleUnitPerColumn();
-		int col = ((offset.intValue()/colAddressibleUnit)+1);
+		int colAddressableUnit = getAddressableUnitPerColumn();
+		int col = ((offset.intValue()/colAddressableUnit)+1);
 		
 		if (col == 0)
 			col = 1;
@@ -827,8 +827,8 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 	
 	/**
 	 * Format view tab based on parameters.
-	 * @param bytesPerLine - number of bytes per line, possible values: 16 * addressibleSize
-	 * @param columnSize - number of bytes per column, possible values: (1 / 2 / 4 / 8 / 16) * addressibleSize
+	 * @param bytesPerLine - number of bytes per line, possible values: 16 * addressableSize
+	 * @param columnSize - number of bytes per column, possible values: (1 / 2 / 4 / 8 / 16) * addressableSize
 	 * @return true if format is successful, false, otherwise
 	 */
 	public boolean format(int bytesPerLine, int columnSize)
@@ -838,8 +838,8 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 		// Back up the address and restore it later.
 		BigInteger selectedAddress = fSelectedAddress;
 		
-		// check parameter, limit number of addressible unit to 16
-		if (bytesPerLine/fAddressibleSize != IInternalDebugUIConstants.ADD_UNIT_PER_LINE)
+		// check parameter, limit number of addressable unit to 16
+		if (bytesPerLine/fAddressableSize != IInternalDebugUIConstants.ADD_UNIT_PER_LINE)
 		{
 			return false;
 		}
@@ -916,15 +916,15 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 			else
 			{
 				// otherwise, use default
-				int addressibleUnit = columnSize/fAddressibleSize;
-				if (getAddressibleUnitPerColumn() >= 4)
+				int addressableUnit = columnSize/fAddressableSize;
+				if (getAddressableUnitPerColumn() >= 4)
 				{
-					column.setText(Integer.toHexString(i*addressibleUnit).toUpperCase() + 
-						" - " + Integer.toHexString(i*addressibleUnit+addressibleUnit-1).toUpperCase()); //$NON-NLS-1$
+					column.setText(Integer.toHexString(i*addressableUnit).toUpperCase() + 
+						" - " + Integer.toHexString(i*addressableUnit+addressableUnit-1).toUpperCase()); //$NON-NLS-1$
 				}
 				else
 				{
-					column.setText(Integer.toHexString(i*addressibleUnit).toUpperCase());
+					column.setText(Integer.toHexString(i*addressableUnit).toUpperCase());
 				}
 			}
 		}
@@ -939,14 +939,14 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 		String[] columnProperties = new String[byteColumns.length+2];
 		columnProperties[0] = TableRenderingLine.P_ADDRESS;
 		
-		int addressibleUnit = columnSize / getAddressibleSize();
+		int addressableUnit = columnSize / getAddressableSize();
 
 		// use column beginning offset to the row address as properties
 		for (int i=1; i<columnProperties.length-1; i++)
 		{
-			// column properties are stored as number of addressible units from the
+			// column properties are stored as number of addressable units from the
 			// the line address
-			columnProperties[i] = Integer.toHexString((i-1)*addressibleUnit);
+			columnProperties[i] = Integer.toHexString((i-1)*addressableUnit);
 		}
 		
 		// Empty column for cursor navigation
@@ -1050,8 +1050,11 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 	
 	
 	
-	public int getAddressibleSize() {
-		return fAddressibleSize;
+	/**
+	 * @return addressable size in bytes
+	 */
+	public int getAddressableSize() {
+		return fAddressableSize;
 	}
 	
 	private Object getSynchronizedProperty(String propertyId)
@@ -1278,18 +1281,18 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 		menu.add(fPrintViewTabAction);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.memory.ITableMemoryViewTab#getNumAddressibleUnitPerLine()
+	/**
+	 * @return number of addressable units per line
 	 */
-	public int getAddressibleUnitPerLine() {
-		return fBytePerLine / fAddressibleSize;
+	public int getAddressableUnitPerLine() {
+		return fBytePerLine / fAddressableSize;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.memory.ITableMemoryViewTab#getNumbAddressibleUnitPerColumn()
+	/**
+	 * @return number of addressable units per column
 	 */
-	public int getAddressibleUnitPerColumn() {
-		return fColumnSize / fAddressibleSize;
+	public int getAddressableUnitPerColumn() {
+		return fColumnSize / fAddressableSize;
 	}
 	
 	/**
@@ -1535,8 +1538,8 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 			{	
 				TableRenderingLine line = (TableRenderingLine)items[i].getData();
 				BigInteger lineAddress = new BigInteger(line.getAddress(), 16);
-				int addressibleUnit = getAddressibleUnitPerLine();
-				BigInteger endLineAddress = lineAddress.add(BigInteger.valueOf(addressibleUnit));
+				int addressableUnit = getAddressableUnitPerLine();
+				BigInteger endLineAddress = lineAddress.add(BigInteger.valueOf(addressableUnit));
 				
 				if (lineAddress.compareTo(address) <= 0 && endLineAddress.compareTo(address) > 0)
 				{	
@@ -1737,8 +1740,8 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 			return true;
 		
 		BigInteger topVisible = getTopVisibleAddress();
-		int addressibleUnit = getAddressibleUnitPerLine();
-		BigInteger lastVisible = getTopVisibleAddress().add(BigInteger.valueOf((getNumberOfVisibleLines() * addressibleUnit) + addressibleUnit));
+		int addressableUnit = getAddressableUnitPerLine();
+		BigInteger lastVisible = getTopVisibleAddress().add(BigInteger.valueOf((getNumberOfVisibleLines() * addressableUnit) + addressableUnit));
 		
 		if (topVisible.compareTo(address) <= 0 && lastVisible.compareTo(address) > 0)
 		{
@@ -1757,11 +1760,11 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 		fPrintViewTabAction = new PrintTableRenderingAction(this);
 		
 		fFormatColumnActions = new Action[6];
-		fFormatColumnActions[0] =  new FormatColumnAction(1, fAddressibleSize, this);
-		fFormatColumnActions[1] =  new FormatColumnAction(2, fAddressibleSize, this);
-		fFormatColumnActions[2] =  new FormatColumnAction(4, fAddressibleSize, this);
-		fFormatColumnActions[3] =  new FormatColumnAction(8, fAddressibleSize, this);
-		fFormatColumnActions[4] =  new FormatColumnAction(16, fAddressibleSize, this);
+		fFormatColumnActions[0] =  new FormatColumnAction(1, fAddressableSize, this);
+		fFormatColumnActions[1] =  new FormatColumnAction(2, fAddressableSize, this);
+		fFormatColumnActions[2] =  new FormatColumnAction(4, fAddressableSize, this);
+		fFormatColumnActions[3] =  new FormatColumnAction(8, fAddressableSize, this);
+		fFormatColumnActions[4] =  new FormatColumnAction(16, fAddressableSize, this);
 		fFormatColumnActions[5] =  new SetColumnSizeDefaultAction(this);
 		
 		fReformatAction = new ReformatAction(this);
@@ -1853,22 +1856,22 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 			
 			BigInteger startAddress = new BigInteger(first.getAddress(), 16);
 			BigInteger lastAddress = new BigInteger(last.getAddress(), 16);
-			int addressibleUnit = getAddressibleUnitPerLine();
-			lastAddress = lastAddress.add(BigInteger.valueOf(addressibleUnit));
+			int addressableUnit = getAddressableUnitPerLine();
+			lastAddress = lastAddress.add(BigInteger.valueOf(addressableUnit));
 			
 			BigInteger topVisibleAddress = getTopVisibleAddress();
 			long numVisibleLines = getNumberOfVisibleLines();
-			long numOfBytes = numVisibleLines * addressibleUnit;
+			long numOfBytes = numVisibleLines * addressableUnit;
 			
 			BigInteger lastVisibleAddrss = topVisibleAddress.add(BigInteger.valueOf(numOfBytes));
 			
 			// if there are only 3 lines left at the top, refresh
-			BigInteger numTopLine = topVisibleAddress.subtract(startAddress).divide(BigInteger.valueOf(addressibleUnit));
+			BigInteger numTopLine = topVisibleAddress.subtract(startAddress).divide(BigInteger.valueOf(addressableUnit));
 			if (numTopLine.compareTo(BigInteger.valueOf(3)) <= 0 && (startAddress.compareTo(BigInteger.valueOf(0)) != 0))
 				return true;
 			
 			// if there are only 3 lines left at the bottom, refresh
-			BigInteger numBottomLine = lastAddress.subtract(lastVisibleAddrss).divide(BigInteger.valueOf(addressibleUnit));
+			BigInteger numBottomLine = lastAddress.subtract(lastVisibleAddrss).divide(BigInteger.valueOf(addressableUnit));
 			if (numBottomLine.compareTo(BigInteger.valueOf(3)) <= 0)
 			{
 				return true;

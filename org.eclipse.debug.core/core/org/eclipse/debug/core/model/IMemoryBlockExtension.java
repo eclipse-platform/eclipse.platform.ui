@@ -103,7 +103,7 @@ public interface IMemoryBlockExtension extends IMemoryBlock {
 	 * @param length is the number of units of memory to return 
 	 * @return an array of bytes from the memory block based on the given offset and length
 	 * The size of the array returned needs to be equal to 
-	 * length * IMemoryBlockExtensionRetrieval.getAddressibleSize()
+	 * length * IMemoryBlockExtensionRetrieval.getAddressableSize()
 	 * @throws DebugException if the method fails.
 	 */
 	public MemoryByte[] getBytesFromOffset(long offset, long length) throws DebugException;
@@ -120,7 +120,7 @@ public interface IMemoryBlockExtension extends IMemoryBlock {
 	 * @param length is the number of units of memory to return 
 	 * @return an array of bytes from the memory block based on the given offset and length
 	 * The size of the array returned needs to be equal to 
-	 * length * IMemoryBlockExtensionRetrieval.getAddressibleSize()
+	 * length * IMemoryBlockExtensionRetrieval.getAddressableSize()
 	 * @throws DebugException if method fails
 	 */
 	public MemoryByte[] getBytesFromAddress(BigInteger address, long length) throws DebugException;	
@@ -164,7 +164,7 @@ public interface IMemoryBlockExtension extends IMemoryBlock {
 	public IMemoryBlockRetrieval getMemoryBlockRetrieval();
 	
 	/**
-	 * @return addssible size in number of bytes
+	 * @return addressable size in number of bytes
 	 */
-	int getAddressibleSize();
+	public int getAddressableSize();
 }
