@@ -237,6 +237,27 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 	 * Makes the debug view visible.
 	 */
 	protected void doShowDebugView() {
+		if (fPrompting) {
+			// Wait until the user has dismissed the perspective
+			// switching dialog before opening the view.
+			Thread thread= new Thread(new Runnable() {
+				public void run() {
+					while (fPrompting) {
+						try {
+							Thread.sleep(100);
+						} catch (InterruptedException e) {
+						}
+					}
+					async(new Runnable() {
+						public void run() {
+							doShowDebugView();
+						}
+					});
+				}
+			});
+			thread.start();
+			return;
+		}
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		if (window != null) {
 			IWorkbenchPage page = window.getActivePage();
