@@ -36,7 +36,7 @@ import org.eclipse.ui.keys.NaturalKey;
  * their component key presses are released.
  */
 public final class KeySequenceText {
-                
+
 	/** An empty string instance for use in clearing text values. */
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	/** The text of the key sequence -- containing only the complete key strokes. */
@@ -53,18 +53,18 @@ public final class KeySequenceText {
 	 * 
 	 * @param composite The container widget; must not be <code>null</code>.
 	 */
-    public KeySequenceText(final Composite composite) {
-        // Set up the text field.
+	public KeySequenceText(final Composite composite) {
+		// Set up the text field.
 		text = new Text(composite, SWT.BORDER);
-        text.setFont(composite.getFont());
-        
-        // Add the key listener.
-        final Listener keyFilter = new KeyTrapListener();
-        text.addListener(SWT.KeyUp, keyFilter);
-        text.addListener(SWT.KeyDown, keyFilter);
+		text.setFont(composite.getFont());
 
-        // Add the traversal listener.
-        text.addTraverseListener(new FocusTrapListener());
+		// Add the key listener.
+		final Listener keyFilter = new KeyTrapListener();
+		text.addListener(SWT.KeyUp, keyFilter);
+		text.addListener(SWT.KeyDown, keyFilter);
+
+		// Add the traversal listener.
+		text.addTraverseListener(new FocusTrapListener());
 	}
 
 	/**
@@ -93,10 +93,10 @@ public final class KeySequenceText {
 	public final KeySequence getKeySequence() {
 		return keySequence;
 	}
-    
-    public final boolean hasIncompleteStroke() {
-        return (temporaryStroke != null);
-    }
+
+	public final boolean hasIncompleteStroke() {
+		return (temporaryStroke != null);
+	}
 
 	/**
 	 * Checks whether the given key stroke is a temporary key stroke or not.
@@ -108,7 +108,7 @@ public final class KeySequenceText {
 	private static final boolean isComplete(final KeyStroke keyStroke) {
 		if (keyStroke != null) {
 			final NaturalKey naturalKey = keyStroke.getNaturalKey();
-			
+
 			if (naturalKey instanceof CharacterKey) {
 				final CharacterKey characterKey = (CharacterKey) naturalKey;
 				return (characterKey.getCharacter() != '\0');
@@ -163,29 +163,29 @@ public final class KeySequenceText {
 		}
 
 		/* Create a dummy (and rather invalid) sequence to get localized display
-         * formatting
+		 * formatting
 		 */
-        final KeySequence dummySequence;
-        
-        if (keySequence == null) {
-            if (temporaryStroke == null) {
-                dummySequence = KeySequence.getInstance();
-            } else {
-                dummySequence = KeySequence.getInstance(temporaryStroke);
-            }
-        } else {
-            final List keyStrokes = new ArrayList(keySequence.getKeyStrokes());
-            if (temporaryStroke != null) {
-                keyStrokes.add(temporaryStroke);
-            }
-            dummySequence = KeySequence.getInstance(keyStrokes);
-        }
-		
+		final KeySequence dummySequence;
+
+		if (keySequence == null) {
+			if (temporaryStroke == null) {
+				dummySequence = KeySequence.getInstance();
+			} else {
+				dummySequence = KeySequence.getInstance(temporaryStroke);
+			}
+		} else {
+			final List keyStrokes = new ArrayList(keySequence.getKeyStrokes());
+			if (temporaryStroke != null) {
+				keyStrokes.add(temporaryStroke);
+			}
+			dummySequence = KeySequence.getInstance(keyStrokes);
+		}
+
 		// TODO doug, why doesn't the following work on the mac? ask me about this one.. (chris) 
 		// text.setText("carbon".equals(SWT.getPlatform()) ? KeySupport.formatCarbon(dummySequence) : dummySequence.format());
 		text.setText(dummySequence.format());
-        
-        // Update the caret position.
+
+		// Update the caret position.
 		text.setSelection(text.getText().length());
 	}
 
@@ -219,8 +219,8 @@ public final class KeySequenceText {
 				case SWT.TRAVERSE_TAB_NEXT :
 				case SWT.TRAVERSE_TAB_PREVIOUS :
 				default :
-					setKeySequence(keySequence, null);
-					// Let these ones through.
+					// Let the traversal happen, but clear the incomplete stroke
+					setKeySequence(getKeySequence(), null);
 			}
 		}
 	}
@@ -242,10 +242,28 @@ public final class KeySequenceText {
 		 */
 		public final void handleEvent(final Event event) {
 			if (event.type == SWT.KeyDown) {
-				// Handles the key pressed event.
-				final int key = KeySupport.convertEventToAccelerator(event);
-				final KeyStroke stroke = KeySupport.convertAcceleratorToKeyStroke(key);
-				setKeySequence(getKeySequence(), stroke);
+				if ((event.character == SWT.BS) && (event.stateMask == 0)) {
+					// Remove the last key stroke.
+					if (hasIncompleteStroke()) {
+						/* Remove the incomplete stroke.  This should not really
+						 * be possible, but it is better to be safe than sorry.
+						 */
+						setKeySequence(getKeySequence(), null);
+					} else {
+						// Remove the last complete stroke.
+						final KeySequence sequence = getKeySequence();
+						final List keyStrokes = new ArrayList(sequence.getKeyStrokes());
+						if (!keyStrokes.isEmpty()) {
+							keyStrokes.remove(keyStrokes.size() - 1);
+							setKeySequence(KeySequence.getInstance(keyStrokes), null);
+						}
+					}
+				} else {
+					// Handles the key pressed event.
+					final int key = KeySupport.convertEventToAccelerator(event);
+					final KeyStroke stroke = KeySupport.convertAcceleratorToKeyStroke(key);
+					setKeySequence(getKeySequence(), stroke);
+				}
 
 			} else if (hasIncompleteStroke()) {
 				/* Handles the key released event, which is only relevant if
