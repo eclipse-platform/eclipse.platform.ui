@@ -438,7 +438,7 @@ public class RefreshTab extends AbstractLaunchConfigurationTab implements IVaria
 		setErrorMessage(null);
 		setMessage(null);
 		if (fWorkingSetButton.getSelection() && fWorkingSet == null) {
-			setErrorMessage("Must select resources to refresh.");
+			setErrorMessage(LaunchVariableMessages.getString("RefreshTab.42")); //$NON-NLS-1$
 			return false;
 		}
 		return true;
