@@ -95,4 +95,11 @@ public interface IAnnotationModelExtension {
 	 * Removes all annotations from this annotation model.
 	 */
 	void removeAllAnnotations();
+	
+	/**
+	 * Returns the modification stamp of this annotation model.
+	 * 
+	 * @return the modification stamp of this annotation model
+	 */
+	Object getModificationStamp();
 }
