@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.core.filebuffers.manipulation;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.core.internal.filebuffers.FileBuffersPlugin;
 import org.eclipse.core.internal.filebuffers.Progress;
 import org.eclipse.core.runtime.CoreException;
@@ -24,10 +21,12 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.filebuffers.IFileBufferStatusCodes;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 
+import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.ReplaceEdit;
 import org.eclipse.text.edits.TextEdit;
 
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.DocumentRewriteSessionType;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 
@@ -55,16 +54,19 @@ public class ConvertLineDelimitersOperation extends TextFileBufferOperation {
 	}
 	
 	/*
-	 * @see org.eclipse.core.internal.filebuffers.textmanipulation.TextFileBufferOperation#computeTextEdits(org.eclipse.core.filebuffers.ITextFileBuffer, org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.core.internal.filebuffers.textmanipulation.TextFileBufferOperation#computeTextEdit(org.eclipse.core.filebuffers.ITextFileBuffer, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected TextEdit[] computeTextEdits(ITextFileBuffer fileBuffer, IProgressMonitor progressMonitor) throws CoreException {
+	protected TextEdit computeTextEdit(ITextFileBuffer fileBuffer, IProgressMonitor progressMonitor) throws CoreException {
 		IDocument document= fileBuffer.getDocument();
 		int lineCount= document.getNumberOfLines();
 		
 		progressMonitor= Progress.getMonitor(progressMonitor);
 		progressMonitor.beginTask("generating changes", lineCount);
 		try {
-			List edits= new ArrayList(lineCount);
+			
+			boolean isEmpty= true;
+			MultiTextEdit multiEdit= new MultiTextEdit();
+			
 			for (int i= 0; i < lineCount; i++) {
 				if (progressMonitor.isCanceled())
 					throw new OperationCanceledException();
@@ -72,17 +74,25 @@ public class ConvertLineDelimitersOperation extends TextFileBufferOperation {
 				final String delimiter= document.getLineDelimiter(i);
 				if (delimiter != null && delimiter.length() > 0 && !delimiter.equals(fLineDelimiter)) {
 					IRegion region= document.getLineInformation(i);
-					edits.add(new ReplaceEdit(region.getOffset() + region.getLength(), delimiter.length(), fLineDelimiter));
+					multiEdit.addChild(new ReplaceEdit(region.getOffset() + region.getLength(), delimiter.length(), fLineDelimiter));
+					isEmpty= false;
 				}
 				progressMonitor.worked(1);
 			}
 			
-			return (TextEdit[]) edits.toArray(new TextEdit[edits.size()]);
+			return isEmpty ? null : multiEdit;
 			
 		} catch (BadLocationException x) {
 			throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IFileBufferStatusCodes.CONTENT_CHANGE_FAILED, "", x)); //$NON-NLS-1$
 		} finally {
 			progressMonitor.done();
 		}
+	}
+
+	/*
+	 * @see org.eclipse.core.filebuffers.manipulation.TextFileBufferOperation#getDocumentRewriteSessionType()
+	 */
+	protected DocumentRewriteSessionType getDocumentRewriteSessionType() {
+		return DocumentRewriteSessionType.SEQUENTIAL;
 	}
 }

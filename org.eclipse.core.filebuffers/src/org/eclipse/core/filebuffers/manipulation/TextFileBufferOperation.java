@@ -24,13 +24,14 @@ import org.eclipse.core.filebuffers.IFileBuffer;
 import org.eclipse.core.filebuffers.IFileBufferStatusCodes;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 
+import org.eclipse.text.edits.TextEdit;
+
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.DocumentRewriteSession;
+import org.eclipse.jface.text.DocumentRewriteSessionType;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IDocumentExtension;
 import org.eclipse.jface.text.IDocumentExtension4;
 import org.eclipse.jface.text.TextUtilities;
-
-import org.eclipse.text.edits.TextEdit;
 
 /**
  * Abstraction for a file buffer operation that works on text file buffers.
@@ -46,7 +47,7 @@ public abstract class TextFileBufferOperation implements IFileBufferOperation {
 	
 	
 	/**
-	 * Computes and returns a list of text edits. Subclasses have to provide that method.
+	 * Computes and returns a text edit. Subclasses have to provide that method.
 	 * 
 	 * @param textFileBuffer the text file buffer to manipulate
 	 * @param progressMonitor the progress monitor
@@ -54,11 +55,18 @@ public abstract class TextFileBufferOperation implements IFileBufferOperation {
 	 * @throws CoreException in case the computation failed
 	 * @throws OperationCanceledException in case the progress monitor has been set to canceled
 	 */
-	protected abstract TextEdit[] computeTextEdits(ITextFileBuffer textFileBuffer, IProgressMonitor progressMonitor) throws CoreException, OperationCanceledException;
+	protected abstract TextEdit computeTextEdit(ITextFileBuffer textFileBuffer, IProgressMonitor progressMonitor) throws CoreException, OperationCanceledException;
+	
+	/**
+	 * Returns the rewrite session type that corresponds to the text edit sequence.
+	 * 
+	 * @return the rewrite session type
+	 */
+	protected abstract DocumentRewriteSessionType getDocumentRewriteSessionType();
 	
 	
 	private String fOperationName;
-	private Object fRewriteSessionId;
+	private DocumentRewriteSession fDocumentRewriteSession;
 	
 	/**
 	 * Creates a new operation with the given name.
@@ -86,14 +94,14 @@ public abstract class TextFileBufferOperation implements IFileBufferOperation {
 			progressMonitor.beginTask(getOperationName(), 100);
 			try {
 				SubProgressMonitor subMonitor= new SubProgressMonitor(progressMonitor, 50);
-				TextEdit[] edits= computeTextEdits(textFileBuffer, subMonitor);
+				TextEdit edit= computeTextEdit(textFileBuffer, subMonitor);
 				subMonitor.done();
-				if (edits != null && edits.length > 0) {
+				if (edit != null) {
 					startRewriteSession(textFileBuffer);
 					Object stateData= preProcess(textFileBuffer);
 					try {
 						subMonitor= new SubProgressMonitor(progressMonitor, 50);
-						applyTextEdits(textFileBuffer, edits, subMonitor);
+						applyTextEdit(textFileBuffer, edit, subMonitor);
 						subMonitor.done();
 					} finally {
 						postProcess(textFileBuffer, stateData);
@@ -108,8 +116,6 @@ public abstract class TextFileBufferOperation implements IFileBufferOperation {
 	
 	private Object preProcess(ITextFileBuffer fileBuffer) {
 		IDocument document= fileBuffer.getDocument();
-		if (document instanceof IDocumentExtension)
-			((IDocumentExtension) document).startSequentialRewrite(true);
 		return TextUtilities.removeDocumentPartitioners(document);
 	}
 	
@@ -117,38 +123,30 @@ public abstract class TextFileBufferOperation implements IFileBufferOperation {
 		IDocument document= fileBuffer.getDocument();
 		if (stateData instanceof Map)
 			TextUtilities.addDocumentPartitioners(document, (Map) stateData);			
-		if (document instanceof IDocumentExtension)
-			((IDocumentExtension) document).stopSequentialRewrite();
 	}
 	
 	private void startRewriteSession(ITextFileBuffer fileBuffer) {
 		IDocument document= fileBuffer.getDocument();
 		if (document instanceof IDocumentExtension4) {
-			fRewriteSessionId= new Object();
-			((IDocumentExtension4) document).startRewriteSession(fRewriteSessionId);
+			IDocumentExtension4 extension= (IDocumentExtension4) document;
+			fDocumentRewriteSession= extension.startRewriteSession(getDocumentRewriteSessionType());
 		}
 	}
 	
 	private void stopRewriteSession(ITextFileBuffer fileBuffer) {
 		IDocument document= fileBuffer.getDocument();
 		if (document instanceof IDocumentExtension4) {
-			((IDocumentExtension4) document).stopRewriteSession(fRewriteSessionId);
-			fRewriteSessionId= null;
+			IDocumentExtension4 extension= (IDocumentExtension4) document;
+			extension.stopRewriteSession(fDocumentRewriteSession);
+			fDocumentRewriteSession= null;
 		}
 	}
 	
-	private void applyTextEdits(ITextFileBuffer fileBuffer, TextEdit[] textEdits, IProgressMonitor progressMonitor) throws CoreException, OperationCanceledException {
-		progressMonitor.beginTask("applying changes", textEdits.length);
+	private void applyTextEdit(ITextFileBuffer fileBuffer, TextEdit textEdit, IProgressMonitor progressMonitor) throws CoreException, OperationCanceledException {
+		progressMonitor.beginTask("applying changes", 1);
 		try {
 			
-			IDocument document= fileBuffer.getDocument();
-			for (int i= textEdits.length - 1; i >= 0; i--) {
-				if (progressMonitor.isCanceled())
-					throw new OperationCanceledException();
-				TextEdit edit= textEdits[i];
-				edit.apply(document, TextEdit.NONE);
-				progressMonitor.worked(1);
-			}
+			textEdit.apply(fileBuffer.getDocument(), TextEdit.NONE);
 			
 		} catch (BadLocationException x) {
 			throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IFileBufferStatusCodes.CONTENT_CHANGE_FAILED, "", x)); //$NON-NLS-1$
