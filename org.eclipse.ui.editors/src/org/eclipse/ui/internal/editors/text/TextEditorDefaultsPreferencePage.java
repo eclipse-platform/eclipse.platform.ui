@@ -141,9 +141,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 				int value= fOverlayStore.getInt(fPreference.getKey());
 				EnumValue enumValue= fDomain.getValueByInteger(value);
 				if (enumValue != null) {
-					int index= fDomain.getIndex(enumValue);
-					if (index >= 0)
-						fControl.setSelection(index);
+					fControl.setSelection(value);
 				}
 			}
 		}
