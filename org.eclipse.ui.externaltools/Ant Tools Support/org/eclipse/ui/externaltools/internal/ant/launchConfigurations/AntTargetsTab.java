@@ -110,15 +110,12 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		
 		createDescriptionField(lowerComposite);
 		//createShowSubTargetsButton(lowerComposite);
-		
-		allowSelectTargets(!runDefaultTargetButton.getSelection());
-		
 	}
 	
 	/*
 	 * Enables all the appropriate controls.
 	 */
-	private void allowSelectTargets(boolean enabled) {
+	private void allowSelectTargets(boolean enabled, boolean retrieveTargets) {
 		if (! enabled) {
 			if (defaultTarget != null && defaultTarget.getDescription() != null) {
 				descriptionField.setText(defaultTarget.getDescription());	
@@ -130,7 +127,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	 	executeLabel.setEnabled(enabled);
 	 	executeTargetsTable.getControl().setEnabled(enabled);
 	 	executeTargetsTable.refresh();
-	 	if (enabled && executeTargetsTable.getTable().getItemCount() == 0) {
+	 	if (enabled && executeTargetsTable.getTable().getItemCount() == 0 && retrieveTargets) {
 	 		executeTargetsTable.setInput(getTargets());
 	 	}
 	 	descriptionLabel.setEnabled(enabled);
@@ -198,6 +195,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 						allTargets = AntUtil.getTargets(expandedLocation);
 					} catch (CoreException ce) {
 						ExternalToolsPlugin.getDefault().log("Problems retrieving Ant Targets", ce);
+						setErrorMessage(ce.getMessage());
 						allTargets= null;
 						return allTargets;
 					}
@@ -396,7 +394,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		runDefaultTargetButton.setLayoutData(gridData);
 		runDefaultTargetButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				allowSelectTargets(!runDefaultTargetButton.getSelection());
+				allowSelectTargets(!runDefaultTargetButton.getSelection(), true);
 				updateLaunchConfigurationDialog();
 			}			
 		});
@@ -413,6 +411,8 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public void initializeFrom(ILaunchConfiguration configuration) {
+		setErrorMessage(null);
+		setMessage(null);
 		String configTargets= null;
 		try {
 			configTargets= configuration.getAttribute(IExternalToolConstants.ATTR_ANT_TARGETS, (String)null);
@@ -429,12 +429,14 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		if (newLocation != null && !newLocation.equals(location)) {
 			allTargets= null;
 			location= newLocation;
+			runDefaultTargetButton.setText("Run default target");
 		}
 		
 		runDefaultTargetButton.setSelection(configTargets == null);
-		allowSelectTargets(configTargets != null);
+		allowSelectTargets(configTargets != null, false);
 		TargetInfo[] infos= getTargets();
 		if (infos == null) {
+			executeTargetsTable.setInput(new TargetInfo[0]);
 			return; 
 		}
 		String[] targetNames= AntUtil.parseRunTargets(configTargets);
