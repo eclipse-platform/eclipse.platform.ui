@@ -1,5 +1,10 @@
 package org.eclipse.debug.internal.ui.preferences;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
