@@ -32,6 +32,7 @@ public class ContextHelpWindow extends Window {
 	private ControlListener parentListener;
 	private Rectangle savedPbounds;
 	private Rectangle savedBounds;
+	private boolean parentResizeBlocked=false;
 
 	public ContextHelpWindow(Shell parent) {
 		super(parent);
@@ -71,7 +72,7 @@ public class ContextHelpWindow extends Window {
 	}
 	
 	public void maintainRelativePosition() {
-		if (savedPbounds==null || isDocked(savedPbounds))
+		if (savedPbounds==null || isDocked())
 			dock(true);
 		else {
 			Rectangle pbounds = getShell().getParent().getBounds();
@@ -209,13 +210,25 @@ public class ContextHelpWindow extends Window {
 			savedPbounds = getShell().getParent().getBounds();
 			return false;
 		}
-		boolean doDock=false;
 		Rectangle bounds = getShell().getBounds();
 		Rectangle pbounds = getShell().getParent().getBounds();
+		if (bounds.y!=savedBounds.y) {
+			// vertical move
+			if (bounds.y+bounds.height == savedBounds.y+savedBounds.height) {
+				// upper edge resize
+				if (isDocked()) {
+					savedBounds = bounds;
+					savedPbounds = pbounds;
+					return false;
+				}
+			}
+		}
+		boolean doDock=false;
+
 		if (bounds.x<pbounds.x) {
 			// left
 			int deltaX = bounds.x-savedBounds.x;
-			if (deltaX >=0 || bounds.x+bounds.width>pbounds.x) {
+			if (deltaX >0 || bounds.x+bounds.width>pbounds.x) {
 				// moving closer - check for dock snap
 				int distance = pbounds.x - bounds.x-bounds.width;
 				if (Math.abs(distance) <=DOCK_MARGIN)
@@ -225,13 +238,17 @@ public class ContextHelpWindow extends Window {
 		else {
 			// right
 			int deltaX = bounds.x-savedBounds.x;
-			if (deltaX<=0 || bounds.x<pbounds.x+pbounds.width) {
+			if (deltaX<0 || bounds.x<pbounds.x+pbounds.width) {
 				//moving closer - check for dock snap
 				int distance = bounds.x-pbounds.x-pbounds.width;
 				if (Math.abs(distance) <=DOCK_MARGIN)
 					doDock=true;
 			}
 		}
+		if (bounds.y + bounds.height < pbounds.y) // above
+			doDock=false;
+		if (pbounds.y + pbounds.height < bounds.y) // below
+			doDock=false;
 		if (doDock)
 			dock(false);
 		savedBounds = getShell().getBounds();
@@ -240,13 +257,35 @@ public class ContextHelpWindow extends Window {
 	}
 	
 	private void onWindowResize() {
+		if (isDocked()) {
+			Rectangle bounds = getShell().getBounds();
+			Rectangle pbounds = getShell().getParent().getBounds();
+			if (bounds.height != savedBounds.height) {
+				Shell parent = (Shell)getShell().getParent();
+				parentResizeBlocked=true;
+				parent.setBounds(pbounds.x, bounds.y, 
+						pbounds.width, bounds.height);
+				parentResizeBlocked=false;
+			}
+		}
 		savedBounds = getShell().getBounds();
 	}
 	
 	private void onParentWindowResize() {
-		if (isDocked())
+		if (!parentResizeBlocked && isDocked()) {
+			Rectangle bounds = getShell().getBounds();
+			Rectangle pbounds = getShell().getParent().getBounds();
+			if (bounds.x==savedPbounds.x+savedPbounds.width) {
+				// right
+				if (savedPbounds.x+savedPbounds.width!=pbounds.x+pbounds.width)
+					//right edge moved
+					dock(false);
+			}
+			else {
+			}
 			getShell().setSize(getShell().getSize().x,
 					getShell().getParent().getSize().y);
+		}
 		savedPbounds = getShell().getParent().getBounds();
 	}
 
@@ -277,11 +316,14 @@ public class ContextHelpWindow extends Window {
 	private boolean isDocked() {
 		if (savedPbounds==null)
 			return false;
-		return isDocked(savedPbounds);
+		return isDocked(savedBounds, savedPbounds);
 	}
-	private boolean isDocked(Rectangle pbounds) {
-		Rectangle bounds = getShell().getBounds();
+	private boolean isDocked(Rectangle bounds, Rectangle pbounds) {
 		if (pbounds.height!=bounds.height)
+			return false;
+		if (bounds.y + bounds.height < pbounds.y) // above
+			return false;
+		if (pbounds.y + pbounds.height < bounds.y) // below
 			return false;
 		return bounds.x==pbounds.x+pbounds.width ||
 			bounds.x==pbounds.x-bounds.width;
