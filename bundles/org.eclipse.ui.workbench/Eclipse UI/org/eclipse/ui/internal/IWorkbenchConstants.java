@@ -146,7 +146,7 @@ public interface IWorkbenchConstants {
 	public static final String TAG_NAME = "name"; //$NON-NLS-1$
 	public static final String TAG_IMAGE = "image"; //$NON-NLS-1$
 	public static final String TAG_LAUNCHER = "launcher"; //$NON-NLS-1$
-	public static final String TAG_PLUGING = "plugin"; //$NON-NLS-1$
+	public static final String TAG_PLUGIN = "plugin"; //$NON-NLS-1$
     /** deprecated - use TAG_OPEN_MODE */
 	public static final String TAG_INTERNAL = "internal"; //$NON-NLS-1$
     /** deprecated - use TAG_OPEN_MODE */

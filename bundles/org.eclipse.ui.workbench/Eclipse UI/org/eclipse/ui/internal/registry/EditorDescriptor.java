@@ -253,16 +253,18 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable, 
 	}
 
 	/**
-	 * Load the object properties from a IMemento.
+	 * Load the object properties from a memento.
+	 * 
+	 * @return <code>true</code> if the values are valid, <code>false</code> otherwise
 	 */
-	protected void loadValues(IMemento memento) {
+	protected boolean loadValues(IMemento memento) {
 		editorName = memento.getString(IWorkbenchConstants.TAG_LABEL);
 		imageFilename = memento.getString(IWorkbenchConstants.TAG_IMAGE);
 		className = memento.getString(IWorkbenchConstants.TAG_CLASS);
 		launcherName = memento.getString(IWorkbenchConstants.TAG_LAUNCHER);
 		fileName = memento.getString(IWorkbenchConstants.TAG_FILE);
 		id = memento.getString(IWorkbenchConstants.TAG_ID);
-		pluginIdentifier = memento.getString(IWorkbenchConstants.TAG_PLUGING);
+		pluginIdentifier = memento.getString(IWorkbenchConstants.TAG_PLUGIN);
 		
 		Integer openModeInt = memento.getInteger(IWorkbenchConstants.TAG_OPEN_MODE);
 		if (openModeInt != null) {
@@ -282,11 +284,15 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable, 
 				}
 			}
 		}
+		if (openMode != OPEN_EXTERNAL && openMode != OPEN_INTERNAL && openMode != OPEN_INPLACE) {
+		    return false;
+		}
 
 		String programName = memento.getString(IWorkbenchConstants.TAG_PROGRAM_NAME);
 		if (programName != null) {
 			this.program = findProgram(programName);
 		}
+		return true;
 	}
 	
 	/**
@@ -299,7 +305,7 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable, 
 		memento.putString(IWorkbenchConstants.TAG_LAUNCHER, launcherName);
 		memento.putString(IWorkbenchConstants.TAG_FILE, fileName);
 		memento.putString(IWorkbenchConstants.TAG_ID, id);
-		memento.putString(IWorkbenchConstants.TAG_PLUGING, pluginIdentifier);
+		memento.putString(IWorkbenchConstants.TAG_PLUGIN, pluginIdentifier);
 
 		memento.putInteger(IWorkbenchConstants.TAG_OPEN_MODE, openMode);
 		// legacy: handle the older attribute names, needed to allow reading of workspace by pre-3.0-RCP eclipses

@@ -450,7 +450,7 @@ public class EditorManager {
 			result = openExternalEditor(desc, input);
 		} else {
 			// this should never happen
-			throw new IllegalStateException();
+			throw new PartInitException(WorkbenchMessages.format("EditorManager.invalidDescriptor", new String[] { desc.getId() })); //$NON-NLS-1$
 		}
 		
 		Workbench wb = (Workbench) window.getWorkbench();

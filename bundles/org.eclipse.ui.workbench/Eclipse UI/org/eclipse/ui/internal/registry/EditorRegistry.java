@@ -535,7 +535,10 @@ public class EditorRegistry implements IEditorRegistry {
 			IMemento[] edMementos = memento.getChildren(IWorkbenchConstants.TAG_DESCRIPTOR);
 			for (int i = 0; i < edMementos.length; i++) {
 				editor = new EditorDescriptor();
-				editor.loadValues(edMementos[i]);
+				boolean valid = editor.loadValues(edMementos[i]);
+				if (!valid) {
+				    continue;
+				}
 
 				if (editor.getPluginID() != null) {
 					//If the editor is from a plugin we use its ID to look it up in the mapping of editors we
