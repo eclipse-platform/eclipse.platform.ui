@@ -21,10 +21,6 @@ public class BrowserIntroPartLocationListener implements LocationListener {
 
     private AbstractIntroPartImplementation implementation;
 
-    // flag used to filter out mutiple URL navigation events in one URL due to
-    // frames.
-    private int redundantNavigation = 0;
-
     /**
      * Takes the implementation as an input.
      */
@@ -39,8 +35,6 @@ public class BrowserIntroPartLocationListener implements LocationListener {
      * @see org.eclipse.swt.browser.LocationListener#changed(org.eclipse.swt.browser.LocationEvent)
      */
     public void changed(LocationEvent event) {
-        // note: navigations fired due to a setText do not fire closing changed.
-        redundantNavigation--;
     }
 
     /**
@@ -59,22 +53,22 @@ public class BrowserIntroPartLocationListener implements LocationListener {
             // execute the action embedded in the IntroURL
             IntroURL introURL = parser.getIntroURL();
             introURL.execute();
-            // if action is a show page, update UI history.
-            if (introURL.getAction().equals(IntroURL.SHOW_PAGE))
-                implementation.updateHistory(introURL
-                        .getParameter(IntroURL.KEY_ID));
             return;
         }
 
         if (parser.hasProtocol()) {
-            // Update the history even with real URLs. If this listener gets
-            // called due to a navigation, the navigation state controls the
-            // update. Note that if we have multiple embedded URL navigations
-            // due to frames, the redundantNavigation flag filters them out.
-            if (redundantNavigation == 0)
+            // Update the history even with real URLs. Note that if we have
+            // multiple embedded URL navigations due to frames, the
+            // frameNavigation flag filters them. This flag is set here, and is
+            // cleared by a progress listener, when all the frame navigation is
+            // completed.
+            Browser browser = (Browser) event.getSource();
+            if (browser.getData("frameNavigation") == null) {
+                browser.setData("frameNavigation", "true");
                 implementation.updateHistory(url);
+            }
         }
-        redundantNavigation++;
+        //redundantNavigation++;
         return;
     }
 

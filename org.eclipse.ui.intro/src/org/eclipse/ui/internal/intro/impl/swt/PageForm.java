@@ -202,7 +202,9 @@ public class PageForm implements IIntroConstants, IPropertyListener {
             categoryForm
                     .createPartControl(categoryPageBook, sharedStyleManager);
         }
+        categoryPageBook.setRedraw(false);
         categoryPageBook.showPage(pageID);
+        categoryPageBook.setRedraw(true);
 
         // Get cached page subtitle from control data.
         Composite page = (Composite) categoryPageBook.getCurrentPage();

@@ -39,7 +39,9 @@ public class BrowserIntroPartImplementation extends
             setToolTipText(IntroPlugin
                     .getString("Browser.backwardButton_tooltip")); //$NON-NLS-1$
             setImageDescriptor(ImageUtil
-                    .createImageDescriptor("backward_nav.gif")); //$NON-NLS-1$
+                    .createImageDescriptor("full/elcl16/backward_nav.gif")); //$NON-NLS-1$
+            setDisabledImageDescriptor(ImageUtil
+                    .createImageDescriptor("full/dlcl16/backward_nav.gif"));
         }
 
         public void run() {
@@ -48,8 +50,6 @@ public class BrowserIntroPartImplementation extends
                 if (canNavigateBackward()) {
                     navigateBackward();
                     if (isURL(getCurrentLocation())) {
-                        // indicate navigation.
-                        setNavigationState(true);
                         browser.setUrl(getCurrentLocation());
                     } else
                         // we need to regen HTML. Set current page, and this
@@ -70,7 +70,9 @@ public class BrowserIntroPartImplementation extends
             setToolTipText(IntroPlugin
                     .getString("Browser.forwardButton_tooltip")); //$NON-NLS-1$
             setImageDescriptor(ImageUtil
-                    .createImageDescriptor("forward_nav.gif")); //$NON-NLS-1$
+                    .createImageDescriptor("full/elcl16/forward_nav.gif")); //$NON-NLS-1$
+            setDisabledImageDescriptor(ImageUtil
+                    .createImageDescriptor("full/dlcl16/forward_nav.gif"));
         }
 
         public void run() {
@@ -79,9 +81,6 @@ public class BrowserIntroPartImplementation extends
                 if (canNavigateForward()) {
                     navigateForward();
                     if (isURL(getCurrentLocation())) {
-                        // Note: browser.forward() will not work here.
-                        // indicate navigation.
-                        setNavigationState(true);
                         browser.setUrl(getCurrentLocation());
                     } else
                         // we need to regen HTML. Set current page, and this
@@ -100,8 +99,11 @@ public class BrowserIntroPartImplementation extends
     private Action homeAction = new Action() {
 
         {
-            setToolTipText(IntroPlugin.getString("Browser.homeButton_tooltip")); //$NON-NLS-1$
-            setImageDescriptor(ImageUtil.createImageDescriptor("home_nav.gif")); //$NON-NLS-1$
+            setToolTipText(IntroPlugin.getString("Browser.homeButton_tooltip"));
+            setImageDescriptor(ImageUtil
+                    .createImageDescriptor("full/elcl16/home_nav.gif"));
+            setDisabledImageDescriptor(ImageUtil
+                    .createImageDescriptor("full/dlcl16/home_nav.gif"));
         }
 
         public void run() {
@@ -145,14 +147,16 @@ public class BrowserIntroPartImplementation extends
         // with history.
         browser.addLocationListener(urlListener);
 
+        // add a location listener that will clear a flagf at the end of any
+        // navigation to a page. This is used in conjuntion with the location
+        // listener to filter out redundant navigations die to frames.
         browser.addProgressListener(new ProgressListener() {
 
             public void changed(ProgressEvent event) {
-                browser.setData("navigation", "true");
             }
 
             public void completed(ProgressEvent event) {
-                browser.setData("navigation", null);
+                browser.setData("frameNavigation", null);
             }
         });
 

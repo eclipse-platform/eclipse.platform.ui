@@ -43,10 +43,6 @@ public abstract class AbstractIntroPartImplementation {
 
     private int navigationLocation = 0;
 
-    // state flag indicating if we got here due to a navigation event (ie: an
-    // event triggered from the toolbar actions.
-    private boolean navigation = false;
-
     private Action viewIntroModelAction = new Action() {
 
         {
@@ -111,13 +107,6 @@ public abstract class AbstractIntroPartImplementation {
      * @param pageId
      */
     public void updateHistory(String location) {
-        if (navigation) {
-            // if we got here due to a navigation event. reset state, and do
-            // nothing.
-            navigation = false;
-            return;
-        }
-
         // quick exit.
         if (!history.isEmpty() && getCurrentLocation().equals(location))
             // resetting the same location is useless.
@@ -186,9 +175,7 @@ public abstract class AbstractIntroPartImplementation {
         ++navigationLocation;
     }
 
-    protected void setNavigationState(boolean state) {
-        navigation = state;
-    }
+
 
     private boolean badNavigationLocation(int navigationLocation) {
         if (navigationLocation < 0 | navigationLocation >= history.size())

@@ -54,7 +54,9 @@ public class FormIntroPartImplementation extends
             setToolTipText(IntroPlugin
                     .getString("Browser.backwardButton_tooltip")); //$NON-NLS-1$
             setImageDescriptor(ImageUtil
-                    .createImageDescriptor("backward_nav.gif")); //$NON-NLS-1$
+                    .createImageDescriptor("full/elcl16/backward_nav.gif")); //$NON-NLS-1$
+            setDisabledImageDescriptor(ImageUtil
+                    .createImageDescriptor("full/dlcl16/backward_nav.gif"));
         }
 
         public void run() {
@@ -80,7 +82,9 @@ public class FormIntroPartImplementation extends
             setToolTipText(IntroPlugin
                     .getString("Browser.forwardButton_tooltip")); //$NON-NLS-1$
             setImageDescriptor(ImageUtil
-                    .createImageDescriptor("forward_nav.gif")); //$NON-NLS-1$
+                    .createImageDescriptor("full/elcl16/forward_nav.gif")); //$NON-NLS-1$
+            setDisabledImageDescriptor(ImageUtil
+                    .createImageDescriptor("full/dlcl16/forward_nav.gif"));
         }
 
         public void run() {
@@ -93,10 +97,8 @@ public class FormIntroPartImplementation extends
                     else
                         // Set current page, and this will triger regen.
                         getModelRoot().setCurrentPageId(getCurrentLocation());
-
                 }
             }
-
             updateNavigationActionsState();
         }
     };
@@ -105,8 +107,11 @@ public class FormIntroPartImplementation extends
     private Action homeAction = new Action() {
 
         {
-            setToolTipText(IntroPlugin.getString("Browser.homeButton_tooltip")); //$NON-NLS-1$
-            setImageDescriptor(ImageUtil.createImageDescriptor("home_nav.gif")); //$NON-NLS-1$
+            setToolTipText(IntroPlugin.getString("Browser.homeButton_tooltip"));
+            setImageDescriptor(ImageUtil
+                    .createImageDescriptor("full/elcl16/home_nav.gif"));
+            setDisabledImageDescriptor(ImageUtil
+                    .createImageDescriptor("full/dlcl16/home_nav.gif"));
         }
 
         public void run() {
@@ -146,8 +151,8 @@ public class FormIntroPartImplementation extends
 
 
     /*
-     * create static UI forms Intro. For this, we only kaunch the url of the
-     * root page.
+     * createyet3agaian static UI forms Intro. For this, we only kaunch the url
+     * of the root page.
      */
     private void handleStaticIntro() {
         String rootPageUrl = getModelRoot().getHomePage().getUrl();
@@ -225,7 +230,9 @@ public class FormIntroPartImplementation extends
         PageForm pageForm = new PageForm(toolkit, model, form);
         pageForm.createPartControl(pageBook, sharedStyleManager);
 
-        // now determine which page to show.
+        // now determine which page to show. Show it and ad it to history.
+        // if the cached page is a URL ignore it. We do not want to launch a
+        // browser on startup.
         String cachedPage = getCachedCurrentPage();
         if (cachedPage != null & !isURL(cachedPage))
             model.setCurrentPageId(cachedPage);
@@ -243,6 +250,7 @@ public class FormIntroPartImplementation extends
                 // then show the page
                 pageBook.showPage(PageForm.PAGE_FORM_ID);
             }
+            updateHistory(pageToShow.getId());
         }
 
         return pageBook;
@@ -268,11 +276,14 @@ public class FormIntroPartImplementation extends
                 // If page ID was not set properly. exit.
                 return;
 
+            // avoid flicker.
+            mainPageBook.setRedraw(false);
             // if we are showing a regular intro page, or if the Home Page has a
             // regular page layout, set the page id to the static PageForm id.
             if (!mainPageBook.hasPage(pageId))
                 pageId = PageForm.PAGE_FORM_ID;
             mainPageBook.showPage(pageId);
+            mainPageBook.setRedraw(true);
         }
     }
 

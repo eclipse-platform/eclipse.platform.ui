@@ -389,6 +389,11 @@ public class IntroPartPresentation extends AbstractIntroElement {
             implementation.standbyStateChanged(standby);
     }
 
+    public void updateHistory(String location) {
+        if (implementation != null)
+            implementation.updateHistory(location);
+    }
+
     /**
      * Called when the IntroPart is disposed. Forwards the call to the
      * implementation class.

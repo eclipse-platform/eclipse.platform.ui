@@ -269,9 +269,6 @@ public class IntroURL implements IIntroURL {
     }
 
     private boolean showMessage(String message) {
-
-        // REVISIT: some of the actions run UI code yet they are in
-        // model package.
         if (message == null)
             return false;
         else {
@@ -295,7 +292,12 @@ public class IntroURL implements IIntroURL {
         // listener event to the UI. If setting the page in the model fails (ie:
         // the page was not found in the model), return false.
         IntroModelRoot modelRoot = IntroPlugin.getDefault().getIntroModelRoot();
-        return modelRoot.setCurrentPageId(pageId);
+        boolean success = modelRoot.setCurrentPageId(pageId);
+        if (success) {
+            modelRoot.getPresentation().updateHistory(pageId);
+            return true;
+        } else
+            return false;
     }
 
     /**

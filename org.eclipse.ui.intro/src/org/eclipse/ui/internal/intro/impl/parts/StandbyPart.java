@@ -106,8 +106,6 @@ public class StandbyPart implements IIntroConstants {
 
     public void init(IIntroPart introPart, IMemento memento) {
         this.introPart = introPart;
-        // make sure to load the child of the standbyPart memento.
-        //this.memento = getMemento(memento, MEMENTO_STANDBY_CONTENT_PART_TAG);
         this.memento = memento;
     }
 
@@ -130,7 +128,7 @@ public class StandbyPart implements IIntroConstants {
         container.setLayout(new StandbyLayout());
 
         // return hyper link.
-        ImageUtil.registerImage(ImageUtil.BACK, "home_nav.gif"); //$NON-NLS-1$
+        ImageUtil.registerImage(ImageUtil.BACK, "full/elcl16/home_nav.gif");
         returnLink = toolkit.createImageHyperlink(container, SWT.WRAP);
         returnLink.setImage(ImageUtil.getImage(ImageUtil.BACK));
         returnLink.addHyperlinkListener(new HyperlinkAdapter() {
