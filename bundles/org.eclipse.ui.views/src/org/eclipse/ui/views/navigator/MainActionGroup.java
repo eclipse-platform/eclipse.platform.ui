@@ -256,6 +256,7 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
  	 */
 	public void handleKeyPressed(KeyEvent event) {
 		refactorGroup.handleKeyPressed(event);
+		workspaceGroup.handleKeyPressed(event);
 	}
 	
 	/**

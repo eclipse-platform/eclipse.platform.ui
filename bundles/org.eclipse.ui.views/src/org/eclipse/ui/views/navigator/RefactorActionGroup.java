@@ -1,4 +1,3 @@
-
 /******************************************************************************* 
  * Copyright (c) 2000, 2003 IBM Corporation and others. 
  * All rights reserved. This program and the accompanying materials! 
@@ -99,6 +98,10 @@ public class RefactorActionGroup extends ResourceNavigatorActionGroup {
 		if (event.character == SWT.DEL && event.stateMask == 0) {
 			if (deleteAction.isEnabled()) {
 				deleteAction.run();
+			}
+		} else if (event.keyCode == SWT.F2 && event.stateMask == 0) {
+			if (renameAction.isEnabled()) {
+				renameAction.run();
 			}
 		}
 	}

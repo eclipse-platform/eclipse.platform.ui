@@ -18,6 +18,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -138,7 +140,16 @@ public class WorkspaceActionGroup extends ResourceNavigatorActionGroup {
 			}
 		}					
 	}
-
+	/**
+	 * Handles a key pressed event by invoking the appropriate action.
+	 */
+	public void handleKeyPressed(KeyEvent event) {
+		if (event.keyCode == SWT.F5 && event.stateMask == 0) {
+			if (refreshAction.isEnabled()) {
+				refreshAction.refreshAll();
+			}
+		}
+	}
 	/**
 	 * Returns whether there are builders configured on the given project.
 	 *
