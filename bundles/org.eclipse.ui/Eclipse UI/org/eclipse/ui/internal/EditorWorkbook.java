@@ -146,8 +146,15 @@ public void createControl(Composite parent) {
 		}
 
 		public void mouseDown(MouseEvent e) {
-			if (visibleEditor != null)
+			if (visibleEditor != null) {
 				visibleEditor.setFocus();
+				CTabItem item = getTab(visibleEditor);
+				Rectangle bounds = item.getBounds();
+				if(bounds.contains(e.x,e.y)) {
+					if ((e.button == 3) || ((e.button == 1) && overImage(item,e.x)))
+						visibleEditor.showTitleLabelMenu(tabFolder,new Point(e.x, e.y),false);
+				}
+			}
 		}
 	});
 
@@ -174,6 +181,14 @@ public void createControl(Composite parent) {
 		if (getItemCount() > 0)
 			setVisibleEditor((EditorPane) editors.get(0));
 }
+
+/*
+ * Return true if <code>x</code> is over the label image.
+ */
+private boolean overImage(CTabItem item,int x) {
+	Rectangle imageBounds = item.getImage().getBounds();
+	return x < (item.getBounds().x + imageBounds.x + imageBounds.width);
+}		
 /**
  * Create a page and tab for an editor.
  */
@@ -343,14 +358,17 @@ public boolean isActiveWorkbook() {
 	return getEditorArea().isActiveWorkbook(this);
 }
 /**
- *	Allow the layout part to determine if they are in
- * an acceptable state to start a drag & drop operation.
+ * See LayoutPart
  */
-public boolean isDragAllowed() {
-	if (isZoomed)
+public boolean isDragAllowed(Point p) {
+	if (isZoomed) {
 		return false;
-	else
-		return true;
+	} else if (visibleEditor != null) {
+		CTabItem item = getTab(visibleEditor);
+		if(!overImage(item,p.x))
+			return true;
+	}
+	return false;
 }
 /**
  * Returns true if this part is visible.  A part is visible if it has a control.

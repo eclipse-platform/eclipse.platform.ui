@@ -260,7 +260,8 @@ public void mouseDown(MouseEvent e) {
 	// track left button only.
 	if (e.button != 1) 
 		return;
-
+	if (!sourcePart.isDragAllowed(new Point(e.x,e.y)))
+		return;
 	// remember anchor position for hysteresis in mouseMove
 	xAnchor = e.x;
 	yAnchor = e.y;
@@ -283,7 +284,7 @@ public void mouseMove(MouseEvent e) {
 
 	// If the source part is not in a state to allow drag & drop
 	// operation to start, ignore the move
-	if (!sourcePart.isDragAllowed())
+	if (!sourcePart.isDragAllowed(new Point(e.x,e.y)))
 		return;
 		
 	// Create a tracker.  This is just an XOR rect on the screen.

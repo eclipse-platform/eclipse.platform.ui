@@ -83,8 +83,7 @@ public IEditorPart getEditorPart() {
 /**
  * Answer the SWT widget style.
  */
-int getStyle()
-{
+int getStyle() {
 	return SWT.NONE;
 }
 /**
@@ -93,6 +92,13 @@ int getStyle()
 public EditorWorkbook getWorkbook() {
 	return workbook;
 }
+/**
+ * See LayoutPart
+ */
+public boolean isDragAllowed(Point p) {
+	return workbook.isDragAllowed(p) && super.isDragAllowed(p);
+}
+
 /**
  * Notify the workbook page that the part pane has
  * been activated by the user.
@@ -125,5 +131,10 @@ public void showFocus(boolean inFocus) {
  */
 public void updateTitles() {
 	getWorkbook().updateEditorTab(getEditorPart());
+}
+/**
+ * Show a title label menu for this pane.
+ */
+public void showPaneMenu() {
 }
 }

@@ -180,10 +180,9 @@ public void hookFocus(Control ctrl) {
 	ctrl.addMouseListener(mouseListener);
 }
 /**
- *	Allow the layout part to determine if they are in
- * an acceptable state to start a drag & drop operation.
+ * See LayoutPart
  */
-public boolean isDragAllowed() {
+public boolean isDragAllowed(Point p) {
 	if (isZoomed())
 		return false;
 	else
@@ -256,4 +255,66 @@ public abstract void showFocus(boolean inFocus);
 public LayoutPart targetPartFor(LayoutPart dragSource) {
 	return this;
 }
+
+/**
+ * Show a title label menu for this pane.
+ */
+public abstract void showPaneMenu();
+
+/**
+ * Show a title label menu for this pane.
+ */
+protected void showTitleLabelMenu(Control parent,Point point,boolean isFastView) {
+	Menu aMenu = new Menu(parent);
+	MenuItem item; 
+
+	// Get various view states.
+	final boolean isZoomed = ((WorkbenchPage)getPart().getSite().getPage()).isZoomed();
+	boolean canZoom = (getWindow() instanceof IWorkbenchWindow);
+
+	// add restore item
+	item = new MenuItem(aMenu, SWT.NONE);
+	item.setText(WorkbenchMessages.getString("ViewPane.restore")); //$NON-NLS-1$
+	item.addSelectionListener(new SelectionAdapter() {
+		public void widgetSelected(SelectionEvent e) {
+			if (isZoomed)
+				doZoom();
+			else
+				doPin();
+		}
+	});
+	item.setEnabled(isZoomed || isFastView);
+
+	addFastViewMenuItem(aMenu,isFastView);
+
+	// add maximize item
+	item = new MenuItem(aMenu, SWT.NONE);
+	item.setText(WorkbenchMessages.getString("ViewPane.maximize")); //$NON-NLS-1$
+	item.addSelectionListener(new SelectionAdapter() {
+		public void widgetSelected(SelectionEvent e) {
+			doZoom();
+		}
+	});
+	item.setEnabled(!isZoomed && !isFastView && canZoom);
+
+	new MenuItem(aMenu, SWT.SEPARATOR);
+	
+	// add close item
+	item = new MenuItem(aMenu, SWT.CASCADE);
+	item.setText(WorkbenchMessages.getString("ViewPane.close")); //$NON-NLS-1$
+	item.addSelectionListener(new SelectionAdapter() {
+		public void widgetSelected(SelectionEvent e) {
+			doHide();
+		}
+	});
+
+	// open menu    
+	point = parent.toDisplay(point);
+	aMenu.setLocation(point.x, point.y);
+	aMenu.setVisible(true);
+}
+
+protected void addFastViewMenuItem(Menu parent,boolean isFastView) {}
+
+protected void doPin() {}
 }

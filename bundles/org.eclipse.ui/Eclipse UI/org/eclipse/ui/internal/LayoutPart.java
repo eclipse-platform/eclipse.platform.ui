@@ -102,7 +102,7 @@ public IWorkbenchWindow getWorkbenchWindow() {
  *	Allow the layout part to determine if they are in
  * an acceptable state to start a drag & drop operation.
  */
-public boolean isDragAllowed() {
+public boolean isDragAllowed(Point p) {
 	return true;
 }
 /**

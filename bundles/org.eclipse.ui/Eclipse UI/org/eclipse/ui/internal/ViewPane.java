@@ -203,6 +203,18 @@ private void createPulldownButton() {
 	}
 }
 /**
+ * See LayoutPart
+ */
+public boolean isDragAllowed(Point p) {
+	return !overImage(p.x) && super.isDragAllowed(p);
+}
+/*
+ * Return true if <code>x</code> is over the label image.
+ */
+private boolean overImage(int x) {
+	return x < titleLabel.getImage().getBounds().width;
+}
+/**
  * Create a title bar for the pane.
  * 	- the view icon and title to the far left
  *	- the view toolbar appears in the middle.
@@ -220,8 +232,8 @@ protected void createTitleBar() {
 	titleLabel.setBackground(null, null);
 	titleLabel.addMouseListener(new MouseAdapter() {
 		public void mouseDown(MouseEvent e) {
-			if (e.button == 3)
-				showTitleLabelMenu(e);
+			if ((e.button == 3) || ((e.button == 1) && overImage(e.x)))
+				showTitleLabelMenu(titleLabel,new Point(e.x, e.y),isFastView());
 		}
 		public void mouseDoubleClick(MouseEvent event){
 			doZoom();
@@ -397,33 +409,22 @@ public void showFocus(boolean inFocus) {
 		systemBar.setBackground(WorkbenchColors.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 	}
 }
+
 /**
  * Show a title label menu for this pane.
  */
-private void showTitleLabelMenu(MouseEvent e) {
-	Menu aMenu = new Menu(titleLabel);
-	MenuItem item; 
+public void showPaneMenu() {
+	int y = titleLabel.getBounds().height / 2;
+	showTitleLabelMenu(titleLabel,new Point(y,y),isFastView());
+}
 
-	// Get various view states.
-	final boolean isZoomed = ((WorkbenchPage)getPart().getSite().getPage()).isZoomed();
-	boolean isFastView = ((WorkbenchPage)getPart().getSite().getPage()).isFastView(getViewPart());
-	boolean canZoom = (getWindow() instanceof IWorkbenchWindow);
+private boolean isFastView() {
+	return ((WorkbenchPage)getPart().getSite().getPage()).isFastView(getViewPart());
+}
 
-	// add restore item
-	item = new MenuItem(aMenu, SWT.NONE);
-	item.setText(WorkbenchMessages.getString("ViewPane.restore")); //$NON-NLS-1$
-	item.addSelectionListener(new SelectionAdapter() {
-		public void widgetSelected(SelectionEvent e) {
-			if (isZoomed)
-				doZoom();
-			else
-				doPin();
-		}
-	});
-	item.setEnabled(isZoomed || isFastView);
-
+protected void addFastViewMenuItem(Menu parent,boolean isFastView) {
 	// add fast view item
-	item = new MenuItem(aMenu, SWT.NONE);
+	MenuItem item = new MenuItem(parent, SWT.NONE);
 	item.setText(WorkbenchMessages.getString("ViewPane.fastView")); //$NON-NLS-1$
 	item.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
@@ -431,34 +432,8 @@ private void showTitleLabelMenu(MouseEvent e) {
 		}
 	});
 	item.setEnabled(!isFastView);
-
-	// add maximize item
-	item = new MenuItem(aMenu, SWT.NONE);
-	item.setText(WorkbenchMessages.getString("ViewPane.maximize")); //$NON-NLS-1$
-	item.addSelectionListener(new SelectionAdapter() {
-		public void widgetSelected(SelectionEvent e) {
-			doZoom();
-		}
-	});
-	item.setEnabled(!isZoomed && !isFastView && canZoom);
-
-	new MenuItem(aMenu, SWT.SEPARATOR);
-	
-	// add close item
-	item = new MenuItem(aMenu, SWT.CASCADE);
-	item.setText(WorkbenchMessages.getString("ViewPane.close")); //$NON-NLS-1$
-	item.addSelectionListener(new SelectionAdapter() {
-		public void widgetSelected(SelectionEvent e) {
-			doHide();
-		}
-	});
-
-	// open menu    
-	Point point = new Point(e.x, e.y);
-	point = titleLabel.toDisplay(point);
-	aMenu.setLocation(point.x, point.y);
-	aMenu.setVisible(true);
 }
+
 /**
  * Show the context menu for this window.
  */
