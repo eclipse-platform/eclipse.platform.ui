@@ -579,7 +579,8 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 			return false;
 		if (restoreCode == RESTORE_CODE_RESET)
 			openFirstTimeWindow();
-			
+		
+		forceOpenPerspective();
 		openWelcomeDialog();
 		refreshFromLocal();
 		isStarting = false;
@@ -622,6 +623,37 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		}
 	}
 
+	private void forceOpenPerspective() {
+		if (getWorkbenchWindowCount() == 0) {
+			// Something is wrong, there should be at least
+			// one workbench window open by now.
+			return;
+		}
+		
+		String perspId = null;
+		for (int i = 0; i < commandLineArgs.length - 1; i++) {
+			if (commandLineArgs[i].equalsIgnoreCase("-perspective")) { //$NON-NLS-1$
+				perspId = commandLineArgs[i+1];
+				break;
+			}
+		}
+		if (perspId == null)
+			return;
+		IPerspectiveDescriptor desc = getPerspectiveRegistry().findPerspectiveWithId(perspId);
+		if (desc == null)
+			return;
+
+		IWorkbenchWindow win = getActiveWorkbenchWindow();
+		if (win == null)
+			win = getWorkbenchWindows()[0];
+		try {
+			showPerspective(perspId, win);
+		} catch (WorkbenchException e) {
+			String msg = "Workbench exception showing specified command line perspective on startup."; //$NON-NLS-1$
+			WorkbenchPlugin.log(msg, new Status(Status.ERROR, PlatformUI.PLUGIN_ID,0, msg, e));
+		}
+	}
+	
 	private void initializeSingleClickOption() {
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		boolean openOnSingleClick = store.getBoolean(IPreferenceConstants.OPEN_ON_SINGLE_CLICK);
