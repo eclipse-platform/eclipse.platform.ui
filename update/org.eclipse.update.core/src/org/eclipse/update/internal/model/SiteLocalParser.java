@@ -29,6 +29,7 @@ public class SiteLocalParser {
 	private SiteLocalModel site;
 	public static final String CONFIG = "config"; //$NON-NLS-1$
 	private ResourceBundle bundle;
+	private BaseSiteLocalFactory factory = new BaseSiteLocalFactory();
 
 	/**
 	 * return the appropriate resource bundle for this sitelocal
@@ -66,6 +67,7 @@ public class SiteLocalParser {
 		bundle = getResourceBundle();
 		
 		processConfig();
+		processHistory();
 	}
 
 	/**
@@ -125,13 +127,13 @@ public class SiteLocalParser {
 		site.setLabel(label);
 
 		URL url = site.getLocationURL();
-		InstallConfigurationModel config = new BaseSiteLocalFactory().createInstallConfigurationModel();
+		InstallConfigurationModel config = factory.createInstallConfigurationModel();
 		config.setLocationURLString(url.toExternalForm());
 		config.setLabel(label);
 		config.resolve(url, getResourceBundleURL());
 
 		// add the config
-		site.addConfigurationModel(config);
+		((SiteLocal)site).addConfiguration((InstallConfiguration)config);
 
 		// DEBUG:		
 		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_PARSING) {
@@ -139,4 +141,35 @@ public class SiteLocalParser {
 		}
 	}
 
+	/*
+	 * reads the configuration/history directory
+	 */
+	private void processHistory() {
+		try {
+			URL historyURL = new URL(site.getLocationURL(), "history");
+			historyURL = Platform.asLocalURL(historyURL);
+			File historyDir = new File(historyURL.getFile());
+			if (historyDir.exists()) {
+				File[] backedConfigs = historyDir.listFiles();
+				for (int i=0; i<backedConfigs.length; i++) {
+					String name = backedConfigs[i].getName();
+					if (name.endsWith(".xml"))
+						name = name.substring(0, name.length()-4);
+					else 
+						continue;
+					Date date = new Date(Long.parseLong(name));
+					System.out.println(date.toString());
+					InstallConfigurationModel config = factory.createInstallConfigurationModel();
+					config.setLocationURLString(backedConfigs[i].getAbsolutePath().replace('\\', '/'));
+					config.setLabel(date.toString());
+					config.resolve(backedConfigs[i].toURL(), getResourceBundleURL());
+
+					// add the config
+					site.addConfigurationModel(config);
+				}
+			}
+		} catch (Exception e) {
+			UpdateCore.warn("Error processing history: ", e);
+		}
+	}
 }

@@ -172,7 +172,7 @@ public class InstallConfigurationParser {
 		// date
 		Date date = new Date(platformConfig.getChangeStamp());
 		config.setCreationDate(date);
-		config.setLabel(date.toLocaleString());
+		config.setLabel(date.toString());
 		
 		//timeline
 //		String timelineString = attributes.getValue("timeline"); //$NON-NLS-1$

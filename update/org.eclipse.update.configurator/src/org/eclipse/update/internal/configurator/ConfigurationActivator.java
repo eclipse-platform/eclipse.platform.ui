@@ -100,8 +100,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 			throw Utils.newCoreException("Cannot create configuration in " + configLocation.getURL(), null);
 
 		try {
-//			TODO workaround bug for missing trailing slash
-			DataInputStream stream = new DataInputStream(new URL(configLocation.getURL().toExternalForm() + "/"+ LAST_CONFIG_STAMP).openStream());
+			DataInputStream stream = new DataInputStream(new URL(configLocation.getURL(),LAST_CONFIG_STAMP).openStream());
 			lastTimeStamp = stream.readLong();
 			stream.close();
 		} catch (Exception e) {

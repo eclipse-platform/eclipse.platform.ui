@@ -56,6 +56,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 	private RandomAccessFile cfgLockFileRAF;
 
 	private static final String ECLIPSE = "eclipse"; //$NON-NLS-1$
+	private static final String CONFIG_HISTORY = "history"; //$NON-NLS-1$
 	private static final String CONFIG_NAME = "platform.xml"; //$NON-NLS-1$
 	private static final String CONFIG_FILE_INIT = "install.ini"; //$NON-NLS-1$
 	private static final String CONFIG_INI = "config.ini"; //NON-NLS-1$
@@ -491,7 +492,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 			// Backup old file
 			File oldConfigFile = new File(cfigDir, CONFIG_NAME);
 			if (oldConfigFile.exists()){
-				File backupDir = new File(cfigDir, "history");
+				File backupDir = new File(cfigDir, CONFIG_HISTORY);
 				if (!backupDir.exists())
 					backupDir.mkdir();
 				File preservedFile = new File(backupDir, String.valueOf(oldConfigFile.lastModified())+".xml");
@@ -613,8 +614,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		// a new configuration is created. In either case the resulting
 		// configuration is written into the specified configuration area.
 
-		//TODO workaround bug for missing trailing slash
-		URL configFileURL = new URL(platformConfigLocation.getURL().toExternalForm() + "/"+ CONFIG_NAME);
+		URL configFileURL = new URL(platformConfigLocation.getURL(),CONFIG_NAME);
 		try {	
 			// check concurrent use lock
 			// FIXME: might not need this method call.
@@ -631,8 +631,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 					if (parentLocation == null)
 						throw new IOException(); // no platform.xml found, need to create default site
 					
-					//TODO workaround bug for missing trailing slash
-					URL sharedConfigFileURL = new URL(parentLocation.getURL().toExternalForm() + "/"+ CONFIG_NAME);
+					URL sharedConfigFileURL = new URL(parentLocation.getURL(), CONFIG_NAME);
 
 					config = loadConfig(sharedConfigFileURL);
 					
@@ -946,9 +945,8 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 	
 	private void linkInitializedState(Configuration sharedConfig, Location sharedConfigLocation, Location newConfigLocation) {
 		try {
-			//TODO workaround bug for missing trailing slash
-			URL oldConfigIniURL = new URL(sharedConfigLocation.getURL().toExternalForm() + "/"+ CONFIG_INI);
-			URL newConfigIniURL = new URL(newConfigLocation.getURL().toExternalForm() + "/"+ CONFIG_INI);
+			URL oldConfigIniURL = new URL(sharedConfigLocation.getURL(), CONFIG_INI);
+			URL newConfigIniURL = new URL(newConfigLocation.getURL(), CONFIG_INI);
 			if (!newConfigIniURL.getProtocol().equals("file")) //$NON-NLS-1$
 				return; // need to be able to do write
 
@@ -959,8 +957,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 			props.store(new FileOutputStream(configIni), "Linked configuration");
 			
 			config = new Configuration(new Date());
-//			TODO workaround bug for missing trailing slash
-			config.setURL(new URL(newConfigLocation.getURL().toExternalForm() +"/"+ CONFIG_NAME));
+			config.setURL(new URL(newConfigLocation.getURL(), CONFIG_NAME));
 			config.setLinkedConfig(sharedConfig);
 			config.setDirty(true);
 		} catch (IOException e) {

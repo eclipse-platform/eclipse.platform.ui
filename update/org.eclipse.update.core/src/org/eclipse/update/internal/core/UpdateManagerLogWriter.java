@@ -77,7 +77,7 @@ public class UpdateManagerLogWriter {
 				activities[i].setStatus(IActivity.STATUS_OK);
 			}
 			Date date = new Date(runtimeConfig.getChangeStamp());
-			safeWriteConfiguration(date.toLocaleString(), activities);
+			safeWriteConfiguration(date.toString(), activities);
 		} catch (Exception e) {
 			// silently ignore errors
 		}
