@@ -387,18 +387,13 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 			remove(info);
 			
 			//If there are no more left then refresh all
-			if(!hasJobInfos())
+			if(hasNoRegularJobInfos())
 				refreshAll();
 		}
 	}
 
 	/**
 	 * Get the JobInfo for the job. If it does not exist create it.
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
 	 * 
 	 * @param job
 	 * @return
@@ -555,10 +550,6 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 	 * Return whether or not there are any jobs being displayed.
 	 * 
 	 * 
-	 * 
-	 * 
-	 * 
-	 * 
 	 * @return boolean
 	 */
 	public boolean hasJobInfos() {
@@ -570,14 +561,28 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 			return false;
 		}
 	}
+	
+	/**
+	 * Return true if there are no jobs or they are all debug.
+	 * 
+	 * @return boolean
+	 */
+	private boolean hasNoRegularJobInfos() {
+		synchronized (jobs) {
+						
+			Iterator iterator = jobs.keySet().iterator();
+			while (iterator.hasNext()) {
+				Job next = (Job) iterator.next();
+				if(!isNonDisplayableJob(next,false))
+					return false;
+			}
+			return true;
+		}
+	}
 
 	/**
 	 * Clear the job out of the list of those being displayed. Only do this for
 	 * jobs that are an error.
-	 * 
-	 * 
-	 * 
-	 * 
 	 * 
 	 * 
 	 * @param job
@@ -751,10 +756,7 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 			 */
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				busy[0] = false;
-				if(dialog.isDone()){
-					dialog.close();
-					return Status.OK_STATUS;
-				}
+	
 				dialog.open();
 				if(monitor.isCanceled())
 					return Status.CANCEL_STATUS;
