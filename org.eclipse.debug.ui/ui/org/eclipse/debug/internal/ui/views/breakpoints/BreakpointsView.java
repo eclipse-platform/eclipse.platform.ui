@@ -264,6 +264,7 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 		super.becomesVisible();
 		getViewer().refresh();
 		initializeCheckedState();
+		updateViewerBackground();
 	}
 
 	/* (non-Javadoc)
