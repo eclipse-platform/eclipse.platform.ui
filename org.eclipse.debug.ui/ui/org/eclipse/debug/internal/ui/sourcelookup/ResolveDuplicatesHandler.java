@@ -17,7 +17,6 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.IStatusHandler;
-import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
@@ -33,12 +32,11 @@ public class ResolveDuplicatesHandler implements IStatusHandler {
 	 */
 	public Object handleStatus(IStatus status, Object source) throws CoreException {
 		Object[] args = (Object[])source;
-		IStackFrame frame = (IStackFrame) args[0];
 		List sources = (List) args[1];
-		return resolveSourceElement(frame, sources);
+		return resolveSourceElement(sources);
 	}
 	
-	public Object resolveSourceElement(IStackFrame frame, List sources) {
+	public Object resolveSourceElement(List sources) {
 		Object file = null;
 		sources = removeSourceNotFoundEditors(sources);
 		if(sources.size() == 1) {
