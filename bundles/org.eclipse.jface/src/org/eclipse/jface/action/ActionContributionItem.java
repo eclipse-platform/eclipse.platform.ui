@@ -667,17 +667,21 @@ public void update(String propertyName) {
 				String acceleratorText = null;
 				IAction action = getAction();	
 				String text = null;
-				
-				if (action != null) {				
+
+				if (action != null) {
+					// Set the accelerator using the action's accelerator.
+					accelerator = new Integer(action.getAccelerator());
 					CommandResolver.ICallback callback = CommandResolver.getInstance().getCommandResolver();
-		
+					
 					if (callback != null) {
 						String commandId = action.getActionDefinitionId();
 				
 						if (commandId != null) {
-							accelerator = callback.getAccelerator(commandId);
+							accelerator = null;
 							acceleratorText = callback.getAcceleratorText(commandId);
-						} 
+						} else if (callback.isAcceleratorInUse(accelerator.intValue())) {
+							accelerator = null;
+						}
 					} 
 				} 
 											
@@ -688,11 +692,10 @@ public void update(String propertyName) {
 					
 				if (overrides != null)
 					text = getParent().getOverrides().getText(this);
-				
-				if (accelerator == null)
-					accelerator = new Integer(action.getAccelerator());
 								
-				mi.setAccelerator(accelerator.intValue());
+				if ((accelerator != null) && (accelerator.intValue() != 0)) {
+					mi.setAccelerator(accelerator.intValue());
+				}
 
 				if (text == null)
 					text = action.getText();

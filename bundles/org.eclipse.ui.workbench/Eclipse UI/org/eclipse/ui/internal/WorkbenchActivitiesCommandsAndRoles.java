@@ -60,7 +60,17 @@ import org.eclipse.ui.internal.util.StatusLineContributionItem;
 import org.eclipse.ui.internal.util.Util;
 
 /**
+ * <p>
  * Controls the keyboard input into the workbench key binding architecture.
+ * This allows key events to be programmatically pushed into the key binding
+ * architecture -- potentially triggering the execution of commands. It is used
+ * by the <code>Workbench</code> to listen for events on the <code>Display</code>.
+ * </p>
+ * <p>
+ * This class is not designed to be thread-safe. It is assumed that all access
+ * to the <code>press</code> method is done through the event loop. Accessing
+ * this method outside the event loop can cause corruption of internal state.
+ * </p>
  * 
  * @since 3.0
  */
@@ -162,7 +172,7 @@ public class WorkbenchActivitiesCommandsAndRoles {
 	 * Initializes the <code>outOfOrderKeys</code> member variable using the
 	 * keys defined in the properties file.
 	 */
-	static void initializeOutOfOrderKeys() {
+	private static void initializeOutOfOrderKeys() {
 		// Get the key strokes which should be out of order.
 		String keysText = WorkbenchMessages.getString(OUT_OF_ORDER_KEYS);
 		outOfOrderKeys = KeySequence.getInstance();
@@ -195,7 +205,7 @@ public class WorkbenchActivitiesCommandsAndRoles {
 	 * @return <code>true</code> if the key is an out-of-order key; <code>false</code>
 	 *         otherwise.
 	 */
-	static boolean isOutOfOrderKey(List keyStrokes) {
+	private static boolean isOutOfOrderKey(List keyStrokes) {
 		// Compare to see if one of the possible key strokes is out of order.
 		Iterator keyStrokeItr = keyStrokes.iterator();
 		while (keyStrokeItr.hasNext()) {
@@ -279,6 +289,11 @@ public class WorkbenchActivitiesCommandsAndRoles {
 		}
 	};
 
+	/**
+	 * The mode is the current state of the key binding architecture. In the
+	 * case of multi-stroke key bindings, this can be a partially complete key
+	 * binding.
+	 */
 	private KeySequence mode = KeySequence.getInstance();
 
 	final Listener modeCleaner = new Listener() {
@@ -380,7 +395,7 @@ public class WorkbenchActivitiesCommandsAndRoles {
 	 * @param event
 	 *            The incoming event; must not be <code>null</code>.
 	 */
-	void filterKeySequenceBindings(Event event) {
+	private void filterKeySequenceBindings(Event event) {
 		/*
 		 * Only process key strokes containing natural keys to trigger key
 		 * bindings
@@ -481,7 +496,7 @@ public class WorkbenchActivitiesCommandsAndRoles {
 			if (isPartialMatch(modeAfterKeyStroke)) {
 				setMode(modeAfterKeyStroke);
 				return true;
-				
+
 			} else if (isPerfectMatch(modeAfterKeyStroke)) {
 				String commandId = getPerfectMatch(modeAfterKeyStroke);
 				Map actionsById = ((CommandManager) workbench.getCommandManager()).getActionsById();
@@ -489,8 +504,6 @@ public class WorkbenchActivitiesCommandsAndRoles {
 					(org.eclipse.ui.commands.IAction) actionsById.get(commandId);
 
 				if (action != null && action.isEnabled()) {
-					setMode(modeAfterKeyStroke);
-
 					try {
 						action.execute(event);
 					} catch (Exception e) {
@@ -503,7 +516,7 @@ public class WorkbenchActivitiesCommandsAndRoles {
 
 				setMode(KeySequence.getInstance());
 				return action != null || modeBeforeKeyStroke.isEmpty();
-				
+
 			}
 		}
 
@@ -522,7 +535,7 @@ public class WorkbenchActivitiesCommandsAndRoles {
 	 * @param event
 	 *            The event to process; must not be <code>null</code>.
 	 */
-	void processKeyEvent(List keyStrokes, Event event) {
+	private void processKeyEvent(List keyStrokes, Event event) {
 		if (press(keyStrokes, event)) {
 			switch (event.type) {
 				case SWT.KeyDown :
@@ -539,11 +552,17 @@ public class WorkbenchActivitiesCommandsAndRoles {
 		}
 	}
 
-	private void setMode(KeySequence mode) {
+	/**
+	 * A mutator for the current internal key binding state.
+	 * 
+	 * @param sequence
+	 *            The current key sequence
+	 */
+	private void setMode(KeySequence sequence) {
 		if (mode == null)
 			throw new NullPointerException();
 
-		this.mode = mode;
+		mode = sequence;
 		updateModeStatusLines();
 	}
 
@@ -786,7 +805,7 @@ public class WorkbenchActivitiesCommandsAndRoles {
 	/**
 	 * Updates the text of the mode lines with the current mode.
 	 */
-	void updateModeStatusLines() {
+	private void updateModeStatusLines() {
 		// Format the mode into text.
 		String text = getMode().format();
 
