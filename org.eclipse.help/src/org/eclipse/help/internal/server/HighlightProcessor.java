@@ -23,7 +23,7 @@ class HighlightProcessor implements OutputProcessor {
 	private static final String scriptPart1 =
 		"\n<script language=\"JavaScript\">\n<!--\nvar keywords = new Array (";
 	private static final String scriptPart3 =
-		");\nonload=highlight;\nfunction highlight()\n{\nvar newText = document.body.createTextRange();\nfor (var i = 0; i < keywords.length; i++) {\nwhile (newText.findText(keywords[i]) )\n{\nvar replacement = newText.text\nnewText.pasteHTML(\"<span class=highlight style='background-color:lightgrey'>\" + replacement + \"</span>\");\n}\nnewText = document.body.createTextRange();\n}\n}\n// -->\n</script>\n";
+		");\nonload=highlight;\nfunction highlight()\n{\nvar newText = document.body.createTextRange();\nfor (var i = 0; i < keywords.length; i++) {\nwhile (newText.findText(keywords[i]) )\n{\nvar replacement = newText.text\nnewText.pasteHTML(\"<span class=highlight style='background-color:Highlight;color:HighlightText;'>\" + replacement + \"</span>\");\n}\nnewText = document.body.createTextRange();\n}\n}\n// -->\n</script>\n";
 
 	//private int docNumber;
 	private String query;

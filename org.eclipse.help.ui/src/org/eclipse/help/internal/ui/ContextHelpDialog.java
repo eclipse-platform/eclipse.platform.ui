@@ -28,13 +28,13 @@ public class ContextHelpDialog{
 	private ContextManager cmgr = HelpSystem.getContextManager();
 	private Object contexts[];
 	private Cursor defaultCursor = null;
-	private IHelpTopic farRelatedTopics[] = new IHelpTopic[0];
+	private IHelpResource farRelatedTopics[] = new IHelpResource[0];
 	private Color foregroundColour = null;
 	private static ImageRegistry imgRegistry = null;
 	private Color linkColour = null;
 	private static HyperlinkHandler linkManager = new HyperlinkHandler();
 	private Map menuItems;
-	private IHelpTopic relatedTopics[] = null;
+	private IHelpResource relatedTopics[] = null;
 	private Shell shell;
 	private Cursor waitCursor = null;
 	private int x;
@@ -166,7 +166,7 @@ public class ContextHelpDialog{
 		text.setStyleRanges(content.getStyles());
 		return text;
 	}
-	private Control createLink(Composite parent, IHelpTopic topic) {
+	private Control createLink(Composite parent, IHelpResource topic) {
 		Label image = new Label(parent, SWT.NONE);
 		image.setImage(ElementLabelProvider.getDefault().getImage(topic));
 		image.setBackground(backgroundColour);
@@ -240,18 +240,18 @@ public class ContextHelpDialog{
 	 * Check if two context topic are the same.
 	 * They are considered the same if both labels and href are equal
 	 */
-	private boolean equal(IHelpTopic topic1, IHelpTopic topic2) {
+	private boolean equal(IHelpResource topic1, IHelpResource topic2) {
 		return topic1.getHref().equals(topic2.getHref())
 			&& topic1.getLabel().equals(topic2.getLabel());
 	}
 	/**
 	 * Returns the list of all related topics
 	 */
-	private IHelpTopic[] getAllRelatedTopics() {
+	private IHelpResource[] getAllRelatedTopics() {
 		// group related topics, and far related topics together
 		int len1 = relatedTopics == null ? 0 : relatedTopics.length;
 		int len2 = farRelatedTopics == null ? 0 : farRelatedTopics.length;
-		IHelpTopic allTopics[] = new IHelpTopic[len1 + len2];
+		IHelpResource allTopics[] = new IHelpResource[len1 + len2];
 		if (len1 > 0)
 			System.arraycopy(relatedTopics, 0, allTopics, 0, len1);
 		if (len2 > 0)
@@ -261,7 +261,7 @@ public class ContextHelpDialog{
 	/**
 	 * Checks if topic labels and href are not null and not empty strings
 	 */
-	private boolean isValidTopic(IHelpTopic topic) {
+	private boolean isValidTopic(IHelpResource topic) {
 		return topic != null
 			&& topic.getHref() != null
 			&& !"".equals(topic.getHref())
@@ -272,11 +272,11 @@ public class ContextHelpDialog{
 	 * Called when related link has been chosen
 	 * Opens view with list of all related topics
 	 */
-	private void launchFullViewHelp(IHelpTopic selectedTopic) {
+	private void launchFullViewHelp(IHelpResource selectedTopic) {
 		close();
 		if (Logger.DEBUG)
 			Logger.logDebugMessage("ContextHelpDialog", "launchFullViewHelp: closes shell");
-		IHelpTopic[] allTopics = getAllRelatedTopics();
+		IHelpResource[] allTopics = getAllRelatedTopics();
 		// launch help view
 		DefaultHelp.getInstance().displayHelp(allTopics, selectedTopic);
 	}
@@ -294,17 +294,17 @@ public class ContextHelpDialog{
 	/**
 	 * Filters out the duplicate topics from an array
 	 */
-	private IHelpTopic[] removeDuplicates(IHelpTopic links[]) {
+	private IHelpResource[] removeDuplicates(IHelpResource links[]) {
 		if (links == null || links.length <= 0)
 			return links;
 		ArrayList filtered = new ArrayList();
 		for (int i = 0; i < links.length; i++) {
-			IHelpTopic topic1 = links[i];
+			IHelpResource topic1 = links[i];
 			if (!isValidTopic(topic1))
 				continue;
 			boolean dup = false;
 			for (int j = 0; j < filtered.size(); j++) {
-				IHelpTopic topic2 = (IHelpTopic) filtered.get(j);
+				IHelpResource topic2 = (IHelpResource) filtered.get(j);
 				if (!isValidTopic(topic2))
 					continue;
 				if (equal(topic1, topic2)) {
@@ -315,19 +315,19 @@ public class ContextHelpDialog{
 			if (!dup)
 				filtered.add(links[i]);
 		}
-		return (IHelpTopic[]) filtered.toArray(new IHelpTopic[filtered.size()]);
+		return (IHelpResource[]) filtered.toArray(new IHelpResource[filtered.size()]);
 	}
 	/**
 	 * Obtains more related Links
 	 */
-	public IHelpTopic[] getMoreRelatedTopics() {
+	public IHelpResource[] getMoreRelatedTopics() {
 		farRelatedTopics = cmgr.getMoreRelatedTopics(contexts);
 		// Fitler duplicates. We need to take into account all the related links
-		IHelpTopic[] temp = getAllRelatedTopics();
+		IHelpResource[] temp = getAllRelatedTopics();
 		temp = removeDuplicates(temp);
 		// strip off the related links to obtain just the far related ones
 		int len1 = relatedTopics == null ? 0 : relatedTopics.length;
-		farRelatedTopics = new IHelpTopic[temp.length - len1];
+		farRelatedTopics = new IHelpResource[temp.length - len1];
 		System.arraycopy(temp, len1, farRelatedTopics, 0, temp.length - len1);
 		return farRelatedTopics;
 	}
@@ -346,8 +346,8 @@ public class ContextHelpDialog{
 		menu.setVisible(true);
 	}
 	class LinkListener extends HyperlinkAdapter {
-		IHelpTopic topic;
-		public LinkListener(IHelpTopic topic) {
+		IHelpResource topic;
+		public LinkListener(IHelpResource topic) {
 			this.topic = topic;
 		}
 		public void linkActivated(Control c) {
@@ -356,7 +356,7 @@ public class ContextHelpDialog{
 	}
 	class MenuItemsListener implements SelectionListener {
 		public void widgetSelected(SelectionEvent e) {
-			IHelpTopic t = (IHelpTopic) menuItems.get(e.widget);
+			IHelpResource t = (IHelpResource) menuItems.get(e.widget);
 			shell.close();
 			launchFullViewHelp(t);
 		}

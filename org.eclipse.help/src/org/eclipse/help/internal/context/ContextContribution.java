@@ -51,9 +51,9 @@ public class ContextContribution implements IContext, IContextContributionNode {
 		return contributor;
 	}
 	/** List of topic ids */
-	public IHelpTopic[] getRelatedTopics() {
+	public IHelpResource[] getRelatedTopics() {
 		if (children.size() > 0) {
-			IHelpTopic[] related = new IHelpTopic[children.size()];
+			IHelpResource[] related = new IHelpResource[children.size()];
 			children.toArray(related);
 			return related;
 		} else {

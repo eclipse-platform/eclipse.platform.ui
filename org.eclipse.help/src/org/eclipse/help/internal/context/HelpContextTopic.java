@@ -4,13 +4,13 @@ package org.eclipse.help.internal.context;
  * All Rights Reserved.
  */
 import java.util.*;
-import org.eclipse.help.IHelpTopic;
+import org.eclipse.help.IHelpResource;
 import org.eclipse.help.internal.util.ContextResources;
 import org.xml.sax.Attributes;
 /**
  * Default implementation for a topic contribution
  */
-public class HelpContextTopic implements IHelpTopic, IContextContributionNode {
+public class HelpContextTopic implements IHelpResource, IContextContributionNode {
 	protected String href;
 	protected String label;
 	protected String translatedLabel;

@@ -43,14 +43,12 @@ implements IWorkbenchWindowActionDelegate, IExecutableExtension {
 	 */
 	public void run(IAction a) {
 		//This may take a while, so use the busy indicator
-		BusyIndicator.showWhile(null, new Runnable()
-		{
-			public void run()
-			{
-				try
-				{
+		BusyIndicator.showWhile(null, new Runnable() {
+			public void run() {
+				try {
 					Help.displayHelp(topicsURL);
-				}catch(Exception e){}
+				} catch (Exception e) {
+				}
 			}
 		});
 	}

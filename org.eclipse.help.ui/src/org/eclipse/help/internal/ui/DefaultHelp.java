@@ -43,9 +43,21 @@ public class DefaultHelp implements IHelp {
 			if (helpPage != null)
 				workbenchWindow.setActivePage(helpPage);
 	}
+		
+	/**
+	 * Displays context-sensitive help for specified context
+	 * @param contextIds context identifier
+	 * @param x int positioning information
+	 * @param y int positioning information
+	 */
+	public void displayHelp(String contextId, int x, int y) {
+		String[] contextIds = new String[] {contextId};
+		displayHelp(contextIds, x, y);
+	}
+	
 	/**
 	 * Displays context-sensitive help for specified contexts
-	 * @param contextIds java.lang.String[]. If a context id is a string, context is looked-up.
+	 * @param contextIds java.lang.String[]. 
 	 * @param x int positioning information
 	 * @param y int positioning information
 	 */
@@ -54,6 +66,16 @@ public class DefaultHelp implements IHelp {
 			f1Dialog.close();
 		f1Dialog = new ContextHelpDialog(contextIds, x, y);
 		f1Dialog.open();
+	}
+	/**
+	 * Displays context-sensitive help for specified context
+	 * @param contexts the context to display
+	 * @param x int positioning information
+	 * @param y int positioning information
+	 */
+	public void displayHelp(IContext context, int x, int y) {
+		IContext[] contexts = new IContext[]{context};
+		displayHelp(contexts, x, y);
 	}
 	/**
 	 * Displays context-sensitive help for specified contexts
@@ -72,11 +94,11 @@ public class DefaultHelp implements IHelp {
 	 * @param topic topic to be displayed by the help browser
 	 * @param relatedTopics topics that will populate related topics view
 	 */
-	public void displayHelp(IHelpTopic[] relatedTopics, IHelpTopic topic) {
+	public void displayHelp(IHelpResource[] relatedTopics, IHelpResource topic) {
 		if (topic == null || topic.getHref() == null)
 			return;
 		// Do not start help view if documentaton is not available, display error
-		if (HelpSystem.getTocManager().getTocs().length == 0) {
+		if (getTocs().length == 0) {
 			ErrorUtil.displayErrorDialog(WorkbenchResources.getString("WW001"));
 			//Documentation is not installed.
 			return;
@@ -115,7 +137,7 @@ public class DefaultHelp implements IHelp {
 	 */
 	public void displayHelp(String tocFileHref, String topicHref) {
 		// Do not start help view if documentaton is not available, display error
-		if (HelpSystem.getTocManager().getTocs().length == 0) {
+		if (getTocs().length == 0) {
 			// There is no documentation
 			ErrorUtil.displayErrorDialog(WorkbenchResources.getString("WW001"));
 			//Documentation is not installed.
@@ -144,6 +166,14 @@ public class DefaultHelp implements IHelp {
 	public IContext findContext(String contextID) {
 		//return HelpSystem.getContextManager().getContext(contextID);
 		return new ContextImpl(contextID);
+	}
+	/**
+	 * Returns the list of all integrated tables of contents available.
+	 * @return an array of TOC's
+	 */
+	public IToc[] getTocs()
+	{
+		return HelpSystem.getTocManager().getTocs();
 	}
 	/**
 	 * Obtains HelpView by first checking current perspective.

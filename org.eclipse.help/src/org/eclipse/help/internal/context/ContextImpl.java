@@ -26,7 +26,7 @@ public class ContextImpl implements IContext {
 	 * 
 	 * @return a list of related help topics
 	 */
-	public IHelpTopic[] getRelatedTopics() {
+	public IHelpResource[] getRelatedTopics() {
 		if (!used) {
 			context = HelpSystem.getContextManager().getContext(contextID);
 			used = true;

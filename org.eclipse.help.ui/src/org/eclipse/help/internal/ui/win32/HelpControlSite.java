@@ -70,10 +70,10 @@ public class HelpControlSite extends OleControlSite {
 				if (msg != null) {
 					if ((msg.indexOf("http://") != -1)
 						|| (msg.indexOf("javascript:") != -1)
-						|| (msg.indexOf(WorkbenchResources.getString("Connecting_to")) != -1)
-						|| (msg.indexOf(WorkbenchResources.getString("Web_site_found")) != -1)
-						|| (msg.indexOf(WorkbenchResources.getString("Finding_site")) != -1)
-						|| (msg.indexOf(WorkbenchResources.getString("Javascript_called")) != -1))
+						|| (msg.indexOf("Connecting to") != -1)
+						|| (msg.indexOf("Web site found") != -1)
+						|| (msg.indexOf("Finding site") != -1)
+						|| (msg.indexOf("Javascript called") != -1))
 						return;
 				}
 			}

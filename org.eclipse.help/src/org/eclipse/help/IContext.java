@@ -33,8 +33,9 @@ public interface IContext {
 	 * Returns a list of related topics for this help context.
 	 * 
 	 * @return a list of related help topics
+	 * @since 2.0
 	 */
-	public IHelpTopic[] getRelatedTopics();
+	public IHelpResource[] getRelatedTopics();
 	/**
 	 * Returns the text description for this context.
 	 *

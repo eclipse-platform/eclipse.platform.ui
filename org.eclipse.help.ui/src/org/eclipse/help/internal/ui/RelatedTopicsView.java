@@ -38,8 +38,8 @@ public class RelatedTopicsView extends ViewPart {
 					return;
 				if(sel instanceof IStructuredSelection){
 					Object o=((IStructuredSelection)sel).getFirstElement();
-					if(o instanceof IHelpTopic){
-						IHelpTopic t=(IHelpTopic)o;
+					if(o instanceof IHelpResource){
+						IHelpResource t=(IHelpResource)o;
 						String href=t.getHref();
 						DefaultHelp.getInstance().displayHelp(null, href);
 					}
@@ -54,7 +54,7 @@ public class RelatedTopicsView extends ViewPart {
 	/**
 	 * Shows the related links, in related topics view
 	 */
-	public void displayHelp(IHelpTopic[] relatedTopics, IHelpTopic topic) {
+	public void displayHelp(IHelpResource[] relatedTopics, IHelpResource topic) {
 		if(viewer!=null){
 			viewer.setInput(null);
 			viewer.add(relatedTopics);

@@ -91,20 +91,20 @@ public class ContextManager {
 	 * Finds rest of the topics not returned by
 	 * getRelatedTopics(Object[]).  May take long to execute.
 	 */
-	public IHelpTopic[] getMoreRelatedTopics(Object[] contexts) {
+	public IHelpResource[] getMoreRelatedTopics(Object[] contexts) {
 		if (contexts == null)
 			return null;
 		ArrayList relatedTopics = new ArrayList();
 		// Skip the first one the list and return the related topics from the other contexts
 		for (int i = 1; i < contexts.length; i++) {
-			IHelpTopic[] topics = getRelatedTopics(contexts[i]);
+			IHelpResource[] topics = getRelatedTopics(contexts[i]);
 			if (topics != null) {
 				for (int j = 0; j < topics.length; j++)
 					relatedTopics.add(topics[j]);
 			}
 		}
-		IHelpTopic[] moreRelated = new IHelpTopic[relatedTopics.size()];
-		return (IHelpTopic[]) relatedTopics.toArray(moreRelated);
+		IHelpResource[] moreRelated = new IHelpResource[relatedTopics.size()];
+		return (IHelpResource[]) relatedTopics.toArray(moreRelated);
 	}
 	// NL enables a description string. 
 	private String getNLdescription(String pluginID, String description) {
@@ -123,12 +123,12 @@ public class ContextManager {
 	 * Finds the context to display (text and related topics), given
 	 * a an ordered list of (nested) context objects
 	 */
-	public IHelpTopic[] getRelatedTopics(Object[] contexts) {
+	public IHelpResource[] getRelatedTopics(Object[] contexts) {
 		if (contexts == null)
 			return null;
 		// return the related topics from the first context
 		if (contexts.length >= 1) {
-			IHelpTopic[] topics = getRelatedTopics(contexts[0]);
+			IHelpResource[] topics = getRelatedTopics(contexts[0]);
 			return topics;
 		}
 		// worst case scenario. Could not find related Toc in any context object. 
@@ -139,7 +139,7 @@ public class ContextManager {
 	 * a an ordered list of (nested) context objects
 	 * Finds only some of the topics.
 	 */
-	private IHelpTopic[] getRelatedTopics(Object context) {
+	private IHelpResource[] getRelatedTopics(Object context) {
 		if (context instanceof IContext)
 			return ((IContext) context).getRelatedTopics();
 		if (!(context instanceof String))

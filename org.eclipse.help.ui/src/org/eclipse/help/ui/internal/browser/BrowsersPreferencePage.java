@@ -1,0 +1,122 @@
+package org.eclipse.help.ui.internal.browser;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+import org.eclipse.help.internal.HelpSystem;
+import org.eclipse.help.internal.ui.IHelpUIConstants;
+import org.eclipse.help.internal.ui.util.WorkbenchResources;
+import org.eclipse.help.internal.util.HelpPreferences;
+import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.help.WorkbenchHelp;
+/**
+ * Preference page for selecting default web browser.
+ */
+public class BrowsersPreferencePage
+	extends PreferencePage
+	implements IWorkbenchPreferencePage {
+	private String defaultBrowserID;
+	private Table browsersTable;
+	/**
+	 * Creates preference page controls on demand.
+	 *
+	 * @param parent the parent for the preference page
+	 */
+	protected Control createContents(Composite parent) {
+		noDefaultAndApplyButton();
+		WorkbenchHelp.setHelp(
+			parent,
+			new String[] { IHelpUIConstants.PREF_PAGE_BROWSERS });
+		Composite mainComposite = new Composite(parent, SWT.NULL);
+		GridData data = new GridData();
+		data.verticalAlignment = GridData.FILL;
+		data.horizontalAlignment = GridData.FILL;
+		//data.grabExcessHorizontalSpace = true;
+		mainComposite.setLayoutData(data);
+		GridLayout layout = new GridLayout();
+		mainComposite.setLayout(layout);
+		Label description = new Label(mainComposite, SWT.NULL);
+		description.setText(
+			WorkbenchResources.getString(
+				"select_browser"));
+		//data = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
+		//description.setLayoutData(data);
+		browsersTable = new Table(mainComposite, SWT.CHECK | SWT.BORDER);
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd.heightHint = convertHeightInCharsToPixels(6);
+		browsersTable.setLayoutData(gd);
+		browsersTable.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent selEvent) {
+				if (selEvent.detail == SWT.CHECK) {
+					TableItem item = (TableItem) selEvent.item;
+					if (item.getChecked()) {
+						// Deselect others
+						TableItem[] items = browsersTable.getItems();
+						for (int i = 0; i < items.length; i++) {
+							if (items[i] == item)
+								continue;
+							else
+								items[i].setChecked(false);
+						}
+					} else {
+						// Do not allow deselection
+						item.setChecked(true);
+					}
+				}
+			}
+			public void widgetDefaultSelected(SelectionEvent selEvent) {
+			}
+		});
+		// populate table with browsers
+		BrowserDescriptor[] aDescs =
+			BrowserManager.getInstance().getBrowserDescriptors();
+		for (int i = 0; i < aDescs.length; i++) {
+			TableItem item = new TableItem(browsersTable, SWT.NONE);
+			item.setText(aDescs[i].getLabel());
+			if (BrowserManager
+				.getInstance()
+				.getDefaultBrowserID()
+				.equals(aDescs[i].getID()))
+				item.setChecked(true);
+			else
+				item.setChecked(false);
+		}
+		return new Composite(parent, SWT.NULL);
+	}
+	/**
+	 * @see IWorkbenchPreferencePage
+	 */
+	public void init(IWorkbench workbench) {
+	}
+	/**
+	 * @see IPreferencePage
+	 */
+	public boolean performOk() {
+		TableItem[] items = browsersTable.getItems();
+		for (int i = 0; i < items.length; i++) {
+			if (items[i].getChecked()) {
+				// set new default browser
+				String browserID =
+					BrowserManager.getInstance().getBrowserDescriptors()[i].getID();
+				BrowserManager.getInstance().setDefaultBrowserID(browserID);
+				// save id in help preferences
+				HelpPreferences pref = HelpSystem.getPreferences();
+				pref.put(BrowserManager.DEFAULT_BROWSER_ID_KEY, browserID);
+				return true;
+			}
+		}
+		return true;
+	}
+}

@@ -14,7 +14,17 @@ import org.eclipse.help.internal.HelpPlugin;
 class HelpLogListener implements ILogListener {
 	PrintWriter log;
 	boolean logOpened;
+	File outputFile;
 	public HelpLogListener() {
+		try {
+			IPath path =
+				HelpPlugin.getDefault().getStateLocation().addTrailingSeparator().append(
+					".log");
+			outputFile = path.toFile();
+			outputFile.delete();
+		} catch (Exception e) {
+			System.out.println(Resources.getString("E027"));
+		}
 		logOpened = false;
 	}
 	private void openLog() {
@@ -27,17 +37,13 @@ class HelpLogListener implements ILogListener {
 			if ((logToConsole != null) && (logToConsole.equalsIgnoreCase("true"))) {
 				log = new PrintWriter(System.out, true);
 			} else {
-				IPath path =
-					HelpPlugin.getDefault().getStateLocation().addTrailingSeparator().append(
-						".log");
-				File outputFile = path.toFile();
 				log =
 					new PrintWriter(
 						new BufferedWriter(new FileWriter(outputFile.toString(), false)),
 						true);
 			}
 		} catch (Exception e) {
-			System.out.println("Help System Logger could not open log.");
+			System.out.println(Resources.getString("E028"));
 		}
 		logOpened = true;
 	}

@@ -4,7 +4,7 @@ package org.eclipse.help.internal.ui;
  * All Rights Reserved.
  */
 import java.util.Iterator;
-import org.eclipse.help.IHelpTopic;
+import org.eclipse.help.IHelpResource;
 import org.eclipse.help.internal.ui.util.WorkbenchResources;
 import org.eclipse.jface.resource.*;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -57,7 +57,7 @@ public class ElementLabelProvider extends LabelProvider {
 			}
 			return imgRegistry.get(IMAGE_TOPIC_AND_FOLDER);
 		}
-		if (element instanceof IHelpTopic) {
+		if (element instanceof IHelpResource) {
 			return imgRegistry.get(IMAGE_TOPIC);
 		}
 		return null;
@@ -65,8 +65,8 @@ public class ElementLabelProvider extends LabelProvider {
 	public String getText(Object element) {
 		if (element instanceof IHelpResource)
 			return ((IHelpResource) element).getLabel();
-		if (element instanceof IHelpTopic)
-			return ((IHelpTopic) element).getLabel();
+		if (element instanceof IHelpResource)
+			return ((IHelpResource) element).getLabel();
 		return null;
 	}
 }

@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
     <classpathentry kind="src" path="src"/>
-
-    <classpathentry kind="var"    path="JRE_LIB" rootpath="JRE_SRCROOT" sourcepath="JRE_SRC"/>
-    <classpathentry kind="var"     path="ECLIPSE_HOME/plugins/org.eclipse.core.runtime/runtime.jar" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.core.runtime/runtimesrc.zip"/>
-    <classpathentry kind="var"     path="ECLIPSE_HOME/plugins/org.apache.xerces/xerces.jar" sourcepath="ECLIPSE_HOME/plugins/org.apache.xerces/xercessrc.zip"/>
-    <classpathentry kind="var"     path="ECLIPSE_HOME/plugins/org.eclipse.core.boot/boot.jar" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.core.boot/bootsrc.zip"/>
-   
+    <classpathentry kind="var" path="JRE_LIB" rootpath="JRE_SRCROOT" sourcepath="JRE_SRC"/>
+    <classpathentry kind="var"
+        path="ECLIPSE_HOME/plugins/org.eclipse.core.runtime/runtime.jar" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.core.runtime/runtimesrc.zip"/>
+    <classpathentry kind="var"
+        path="ECLIPSE_HOME/plugins/org.apache.xerces/xerces.jar" sourcepath="ECLIPSE_HOME/plugins/org.apache.xerces/xercessrc.zip"/>
+    <classpathentry kind="var"
+        path="ECLIPSE_HOME/plugins/org.eclipse.core.boot/boot.jar" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.core.boot/bootsrc.zip"/>
+    <classpathentry kind="lib" path="/org.apache.lucene/lucene-1.2-rc2.jar"/>
+    <classpathentry kind="lib" path="/org.apache.lucene/lucenedemo.zip" sourcepath="/org.apache.lucene/lucenedemo.zip"/>
     <classpathentry kind="output" path="bin"/>
 </classpath>

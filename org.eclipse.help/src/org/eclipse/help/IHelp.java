@@ -30,6 +30,24 @@ package org.eclipse.help;
  */
 public interface IHelp {
 	/**
+	 * Displays context-sensitive help for context with the given context id.
+	 * <p>
+	 * (x,y) coordinates specify the location where the context sensitive
+	 * help UI will be presented. These coordinates are screen-relative 
+	 * (ie: (0,0) is the top left-most screen corner).
+	 * The platform is responsible for calling this method and supplying the 
+	 * appropriate location.
+	 * </p> 
+	 * 
+	 * @param contextId the help context identifier 
+	 * @param x horizontal position
+	 * @param y verifical position
+	 * @see #findContext
+	 * @since 2.0
+	 */
+	public void displayHelp(String contextId, int x, int y);
+	
+	/**
 	 * Displays context-sensitive help for contexts with the given context ids.
 	 * <p>
 	 * (x,y) coordinates specify the location where the context sensitive
@@ -43,8 +61,26 @@ public interface IHelp {
 	 * @param x horizontal position
 	 * @param y verifical position
 	 * @see #findContext
+	 * @deprecated
 	 */
 	public void displayHelp(String[] contextIds, int x, int y);
+	/**
+	 * Displays context-sensitive help for the given context.
+	 * <p>
+	 * (x,y) coordinates specify the location where the context sensitive 
+	 * help UI will be presented. These coordinates are screen-relative 
+	 * (ie: (0,0) is the top left-most screen corner).
+	 * The platform is responsible for calling this method and supplying the 
+	 * appropriate location.
+	 * </p>
+	 * 
+	 * 
+	 * @param contexts the context to display
+	 * @param x horizontal position
+	 * @param y verifical position
+	 * @since 2.0
+	 */
+	public void displayHelp(IContext context, int x, int y);
 	/**
 	 * Displays context-sensitive help for the given contexts.
 	 * <p>
@@ -59,6 +95,7 @@ public interface IHelp {
 	 * @param contexts a list of help contexts
 	 * @param x horizontal position
 	 * @param y verifical position
+	 * @deprecated
 	 */
 	public void displayHelp(IContext[] contexts, int x, int y);
 	/**
@@ -106,4 +143,11 @@ public interface IHelp {
 	 * @return the context, or <code>null</code> if none
 	 */
 	public IContext findContext(String contextId);
+	
+	/**
+	 * Returns the list of all integrated tables of contents available.
+	 * @return an array of TOC's
+	 * @since 2.0
+	 */
+	public IToc[] getTocs();
 }
