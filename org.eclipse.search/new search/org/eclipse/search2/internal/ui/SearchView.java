@@ -7,6 +7,9 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Michael Fraenkel (fraenkel@us.ibm.com) - contributed a fix for:
+ *       o New search view sets incorrect title
+ *         (see https://bugs.eclipse.org/bugs/show_bug.cgi?id=60966)
  *******************************************************************************/
 
 package org.eclipse.search2.internal.ui;
@@ -279,7 +282,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		if (page != null) {
 			label= page.getLabel();
 		}
-		setTitle(label);
+		setContentDescription(label);
 	}
 	
 	public ISearchResult getCurrentSearchResult() {

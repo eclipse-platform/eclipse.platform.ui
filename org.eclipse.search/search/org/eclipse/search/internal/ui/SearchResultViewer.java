@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,9 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Michael Fraenkel (fraenkel@us.ibm.com) - contributed a fix for:
+ *       o New search view sets incorrect title
+ *         (see https://bugs.eclipse.org/bugs/show_bug.cgi?id=60966)
  *******************************************************************************/
 package org.eclipse.search.internal.ui;
 
@@ -19,19 +22,6 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Item;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.swt.widgets.Widget;
-
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -50,21 +40,29 @@ import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
-
+import org.eclipse.search.internal.ui.util.FileLabelProvider;
+import org.eclipse.search.ui.IActionGroupFactory;
+import org.eclipse.search.ui.IContextMenuConstants;
+import org.eclipse.search.ui.IContextMenuContributor;
+import org.eclipse.search.ui.ISearchResultViewEntry;
+import org.eclipse.search.ui.SearchUI;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.help.WorkbenchHelp;
-
-import org.eclipse.search.ui.IActionGroupFactory;
-import org.eclipse.search.ui.IContextMenuConstants;
-import org.eclipse.search.ui.IContextMenuContributor;
-import org.eclipse.search.ui.ISearchResultViewEntry;
-import org.eclipse.search.ui.SearchUI;
-
-import org.eclipse.search.internal.ui.util.FileLabelProvider;
 
 
 /**
@@ -190,9 +188,6 @@ public class SearchResultViewer extends TableViewer {
 		}
 	}
 
-	/**
-	 * @see StructuredViewer#doUpdateItem(Widget, Object, boolean)
-	 */
 	protected void doUpdateItem(Widget item, Object element, boolean fullMap) {
 		super.doUpdateItem(item, element, fullMap);
 		if (((SearchResultViewEntry)element).isPotentialMatch()) {
@@ -571,8 +566,8 @@ public class SearchResultViewer extends TableViewer {
 			title= SearchMessages.getFormattedString("SearchResultView.titleWithDescription", description); //$NON-NLS-1$
 		} else
 			title= SearchMessages.getString("SearchResultView.title"); //$NON-NLS-1$
-		if (title == null || !title.equals(fOuterPart.getTitle()))
-			fOuterPart.setTitle(title);
+		if (title == null || !title.equals(fOuterPart.getContentDescription()))
+			fOuterPart.setContentDescription(title);
 	}
 
 	/**
@@ -580,8 +575,8 @@ public class SearchResultViewer extends TableViewer {
 	 */
 	protected void clearTitle() {
 		String title= SearchMessages.getString("SearchResultView.title"); //$NON-NLS-1$
-		if (!title.equals(fOuterPart.getTitle()))
-			fOuterPart.setTitle(title);
+		if (!title.equals(fOuterPart.getContentDescription()))
+			fOuterPart.setContentDescription(title);
 	}
 
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,9 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Michael Fraenkel (fraenkel@us.ibm.com) - contributed a fix for:
+ *       o New search view sets incorrect title
+ *         (see https://bugs.eclipse.org/bugs/show_bug.cgi?id=60966)
  *******************************************************************************/
 package org.eclipse.search.internal.ui;
 
@@ -140,8 +143,8 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 		super.dispose();
 	}
 	
-	protected void setTitle(String title) {
-		super.setTitle(title);
+	protected void setContentDescription(String title) {
+		super.setContentDescription(title);
 	}
 	
 	protected void setTitleToolTip(String text) {
