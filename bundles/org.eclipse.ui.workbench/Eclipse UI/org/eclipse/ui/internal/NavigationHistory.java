@@ -57,6 +57,7 @@ public NavigationHistory(WorkbenchPage page) {
 				String id = editor.getSite().getId();
 				Iterator e= history.iterator();
 				NavigationHistoryEntry firstEntry = null;
+				int i = 0;
 				while (e.hasNext()) {
 					NavigationHistoryEntry entry= (NavigationHistoryEntry) e.next();
 					if(id.equals(entry.editorID)) {
@@ -65,13 +66,24 @@ public NavigationHistory(WorkbenchPage page) {
 							if (entry.handlePartClosed()) {
 								if(firstEntry == null)
 									firstEntry = entry;
+								i++;
 							} else {
+								// update the active entry since we are removing an item
+								if (i < activeEntry) {
+									activeEntry--;
+								} else if (i == activeEntry) {
+									if (i != 0) activeEntry--;
+								} else {
+									// activeEntry is before item we deleted
+									i++;
+								}
 								e.remove();
 								entry.dispose();
 							}
 						}
 					}
 				}
+				updateActions();
 			}
 		}
 	});

@@ -128,6 +128,7 @@ public class NavigationHistoryAction extends PageEventAction implements IWorkben
 		// Set the enabled state of the action and set the tool tip text.  The tool tip
 		// text is set to reflect the item that one will move back/forward to.
 		WorkbenchPage page = (WorkbenchPage)getActivePage();
+		if (page == null) return;
 		NavigationHistory history = (NavigationHistory)page.getNavigationHistory();
 		NavigationHistoryEntry[] entries;
 		if (forward) {
