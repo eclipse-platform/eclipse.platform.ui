@@ -287,7 +287,7 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
 
 			if (!toolBarId.equals(contributingId)) {
 				// adding to another action set, validate the id
-				if (!coolBarMgr.isValidCoolItemId(toolBarId)) {
+				if (!coolBarMgr.isValidCoolItemId(toolBarId, window)) {
 					// toolbarid not valid, add the item to the coolitem for its action set
 					toolBarId = contributingId;
 				} else {

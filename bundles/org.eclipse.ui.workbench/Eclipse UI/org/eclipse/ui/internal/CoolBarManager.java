@@ -715,10 +715,9 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 		if (!coolBarExist()) return false;
 		return coolBar.getLocked();
 	}
-	/* package */ boolean isValidCoolItemId(String id) {
+	/* package */ boolean isValidCoolItemId(String id, WorkbenchWindow window) {
 		ActionSetRegistry registry = WorkbenchPlugin.getDefault().getActionSetRegistry();
 		if (registry.findActionSet(id) != null) return true;
-		WorkbenchWindow window = (WorkbenchWindow)((Workbench)PlatformUI.getWorkbench()).getActiveWorkbenchWindow();
 		if (window != null) {
 			return window.isWorkbenchCoolItemId(id);
 		}

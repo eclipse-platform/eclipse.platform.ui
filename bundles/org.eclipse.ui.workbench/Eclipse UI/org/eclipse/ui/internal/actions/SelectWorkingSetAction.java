@@ -53,8 +53,6 @@ public class SelectWorkingSetAction extends Action {
 	 * @see org.eclipse.jface.Action#run
 	 */
 	public void run() {
-		if (shell == null)
-			shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 		IWorkingSetManager manager = PlatformUI.getWorkbench().getWorkingSetManager();
 		IWorkingSetSelectionDialog dialog = manager.createWorkingSetSelectionDialog(shell, false);
 		IWorkingSet workingSet = actionGroup.getWorkingSet();

@@ -18,7 +18,7 @@ public class EditActionSetsAction  extends Action {
  * This default constructor allows the the action to be called from the welcome page.
  */
 public EditActionSetsAction() {
-	this(((Workbench)PlatformUI.getWorkbench()).getActiveWorkbenchWindow());
+	this(PlatformUI.getWorkbench().getActiveWorkbenchWindow());
 }
 /**
  * 
