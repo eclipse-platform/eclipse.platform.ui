@@ -45,7 +45,7 @@ public interface ISynchronizeManager {
 	 * 
 	 * @param consoles consoles to add
 	 */
-	public void addSynchronizeParticipants(ISynchronizeParticipant[] consoles);
+	public void addSynchronizeParticipants(ISynchronizeParticipant[] participants);
 	
 	/**
 	 * Removes the given participants from the synchronize manager. If the participants are
@@ -53,7 +53,7 @@ public interface ISynchronizeManager {
 	 * 
 	 * @param consoles consoles to remove
 	 */
-	public void removeSynchronizeParticipants(ISynchronizeParticipant[] consoles);
+	public void removeSynchronizeParticipants(ISynchronizeParticipant[] participants);
 	
 	/**
 	 * Returns a collection of synchronize participants registered with the synchronize manager.
