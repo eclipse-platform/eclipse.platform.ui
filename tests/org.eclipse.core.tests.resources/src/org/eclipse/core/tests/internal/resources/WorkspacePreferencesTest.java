@@ -12,9 +12,7 @@ package org.eclipse.core.tests.internal.resources;
 
 import java.util.Arrays;
 import java.util.List;
-
-import junit.framework.ComparisonFailure;
-
+import junit.framework.*;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
@@ -96,8 +94,8 @@ public class WorkspacePreferencesTest extends EclipseWorkspaceTest {
 		preferences.setValue(ResourcesPlugin.PREF_DEFAULT_BUILD_ORDER, false);
 		assertTrue("2.1", workspace.getDescription().getBuildOrder() != null);
 
-		preferences.setValue(ResourcesPlugin.PREF_BUILD_ORDER, "x,y,z");
-		List expectedList = Arrays.asList(new String[] { "x", "y", "z" });
+		preferences.setValue(ResourcesPlugin.PREF_BUILD_ORDER, "x:y,z:z");
+		List expectedList = Arrays.asList(new String[] { "x", "y,z", "z" });
 		List actualList = Arrays.asList(workspace.getDescription().getBuildOrder());
 		assertEquals("2.2", expectedList, actualList);
 
@@ -119,7 +117,7 @@ public class WorkspacePreferencesTest extends EclipseWorkspaceTest {
 	public void testSetDescription() {
 		IWorkspaceDescription description = workspace.getDescription();
 		description.setAutoBuilding(false);
-		description.setBuildOrder(new String[] { "a", "b", "c" });
+		description.setBuildOrder(new String[] { "a", "b,c", "c" });
 		description.setFileStateLongevity(60000 * 5);
 		description.setMaxFileStates(16);
 		description.setMaxFileStateSize(100050);
@@ -167,7 +165,7 @@ public class WorkspacePreferencesTest extends EclipseWorkspaceTest {
 		}
 		assertTrue("2.0 - file .description does not exist", localMetaArea.getOldWorkspaceDescriptionLocation().toFile().isFile());
 		WorkspaceDescription descriptionFromDisk = localMetaArea.readOldWorkspace();
-		assertTrue("2.1 - file .description still exists", localMetaArea.getOldWorkspaceDescriptionLocation().toFile().isFile());
+		assertTrue("2.1 - file .description still exists", !localMetaArea.getOldWorkspaceDescriptionLocation().toFile().isFile());
 		assertEquals("3.1", description.getBuildOrder(), descriptionFromDisk.getBuildOrder());
 		assertEquals("3.2", description.getFileStateLongevity(), descriptionFromDisk.getFileStateLongevity());
 		assertEquals("3.3", description.getMaxFileStates(), descriptionFromDisk.getMaxFileStates());
@@ -183,5 +181,8 @@ public class WorkspacePreferencesTest extends EclipseWorkspaceTest {
 		assertEquals(message + " - 5", description.getMaxFileStates(), preferences.getInt(ResourcesPlugin.PREF_MAX_FILE_STATES));
 		assertEquals(message + " - 6", description.getMaxFileStateSize(), preferences.getLong(ResourcesPlugin.PREF_MAX_FILE_STATE_SIZE));
 		assertEquals(message + " - 7", description.getSnapshotInterval(), preferences.getLong(ResourcesPlugin.PREF_SNAPSHOT_INTERVAL));
+	}
+	public static Test suite() {
+		return new TestSuite(WorkspacePreferencesTest.class);	
 	}
 }

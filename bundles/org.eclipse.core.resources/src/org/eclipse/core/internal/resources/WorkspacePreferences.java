@@ -11,7 +11,6 @@
 package org.eclipse.core.internal.resources;
 
 import java.util.*;
-
 import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Preferences;
@@ -25,6 +24,8 @@ import org.eclipse.core.runtime.Preferences;
 public class WorkspacePreferences extends WorkspaceDescription {
 
 	private Preferences preferences;
+	
+	public final static String PROJECT_SEPARATOR = ":"; //$NON-NLS-1$
 
 	public WorkspacePreferences() {
 		super("Workspace"); //$NON-NLS-1$
@@ -127,7 +128,7 @@ public class WorkspacePreferences extends WorkspaceDescription {
 		StringBuffer sb = new StringBuffer();
 		for (int i = 0; i < array.length; i++) {
 			sb.append(array[i]);
-			sb.append(',');
+			sb.append(PROJECT_SEPARATOR);
 		}
 		sb.deleteCharAt(sb.length() - 1);
 		return sb.toString();
@@ -138,7 +139,7 @@ public class WorkspacePreferences extends WorkspaceDescription {
 	 */
 	public static String[] convertStringToStringArray(String string) {
 		List list = new LinkedList();
-		for (StringTokenizer tokenizer = new StringTokenizer(string, ","); tokenizer.hasMoreTokens();) //$NON-NLS-1$
+		for (StringTokenizer tokenizer = new StringTokenizer(string, PROJECT_SEPARATOR); tokenizer.hasMoreTokens();)
 			list.add(tokenizer.nextToken());
 		return (String[]) list.toArray(new String[list.size()]);
 	}
