@@ -95,8 +95,12 @@ public class DebugContentProvider extends BasicContentProvider implements IDebug
 				break;
 			case DebugEvent.TERMINATE :
 				clearSourceSelection();
-				Object parent= getParent(element);
-				refresh(parent);
+				if (element instanceof IThread) {
+					remove(element);
+				} else {
+					Object parent = getParent(element);
+					refresh(parent);
+				}
 				updateButtons();
 				break;
 			case DebugEvent.RESUME :
