@@ -350,6 +350,13 @@ protected boolean validatePage() {
 			setErrorMessage(resourceGroup.getProblemMessage());
 		valid = false;
 	}
+	
+	IPath container = workspace.getRoot().getLocation().append(getContainerFullPath());
+	java.io.File systemFile = new java.io.File(container.toOSString(),fileName);
+	if(systemFile.exists()){
+		setErrorMessage(WorkbenchMessages.format("WizardNewFileCreationPage.fileExistsMessage", new String[] {systemFile.getPath()}));
+		valid = false;
+	}
 
 	// Avoid draw flicker by clearing error message
 	// if all is valid.
