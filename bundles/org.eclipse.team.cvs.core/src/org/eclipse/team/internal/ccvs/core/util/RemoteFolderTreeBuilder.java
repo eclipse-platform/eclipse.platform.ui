@@ -37,7 +37,6 @@ import org.eclipse.team.internal.ccvs.core.response.custom.IUpdateMessageListene
 import org.eclipse.team.internal.ccvs.core.response.custom.StatusMessageHandler;
 import org.eclipse.team.internal.ccvs.core.response.custom.UpdateErrorHandler;
 import org.eclipse.team.internal.ccvs.core.response.custom.UpdateMessageHandler;
-import org.omg.CORBA.UNKNOWN;
 
 /*
  * This class is responsible for building a remote tree that shows the repository

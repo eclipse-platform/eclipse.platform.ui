@@ -240,9 +240,12 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		
 		// Visit the children of the resources using the depth in order to
 		// determine which folders, text files and binary files need to be added
+		// A TreeSet is needed for the folders so they are in the right order (i.e. parents created before children)
 		final SortedSet folders = new TreeSet();
-		final List textfiles = new ArrayList(resources.length);
-		final List binaryfiles = new ArrayList(resources.length);
+		// Sets are required for the files to ensure that files will not appear twice if there parent was added as well
+		// and the depth isn't zero
+		final Set textfiles = new HashSet(resources.length);
+		final Set binaryfiles = new HashSet(resources.length);
 		final IFileTypeRegistry registry = TeamPlugin.getFileTypeRegistry();
 		final TeamException[] eHolder = new TeamException[1];
 		for (int i=0;i<resources.length;i++) {
@@ -253,13 +256,10 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 			try {		
 				// Auto-add parents if they are not already managed
 				IResource parent = resources[i].getParent();
-				List parentFolders = new ArrayList();
 				while (!isManaged(parent)) {
-					parentFolders.add(parent.getFullPath().removeFirstSegments(1).toString());
+					folders.add(parent.getFullPath().removeFirstSegments(1).toString());
 					parent = parent.getParent();
 				}
-				for (int j=parentFolders.size()-1;j>=0;j--)
-					folders.add(parentFolders.get(j));
 					
 				// Auto-add children
 				resources[i].accept(new IResourceVisitor() {
@@ -293,7 +293,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		if (eHolder[0] != null)
 			throw eHolder[0];
 	
-		// It looks like we need to add folders first, followed by files!
+		// We need to add folders first, followed by files!
 		if (!folders.isEmpty())
 			Client.execute(
 				Client.ADD,
@@ -815,15 +815,24 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	 * 
 	 * Only file resources can be merged.
 	 */
-	public void merged(IRemoteSyncElement element) throws TeamException {	
-		if (element.isOutOfDate()) {
-			ICVSResource resource = getChild(element.getLocal());
-			if (resource.exists() && !resource.isFolder()) {
-				ResourceSyncInfo info = resource.getSyncInfo();
-				info = new ResourceSyncInfo(info.getName(), ((RemoteResource)element.getRemote()).getSyncInfo().getRevision(), info.getTimeStamp(), info.getKeywordMode(), info.getTag(), info.getPermissions());
-				resource.setSyncInfo(info);
-				Synchronizer.getInstance().save();
+	public void merged(IRemoteSyncElement[] elements) throws TeamException {	
+		boolean syncChanged = false;
+		try {
+			for (int i=0;i<elements.length;i++) {
+				IRemoteSyncElement element = elements[i];
+				if (element.isOutOfDate()) {
+					ICVSResource resource = getChild(element.getLocal());
+					if (resource.exists() && !resource.isFolder()) {
+						ResourceSyncInfo info = resource.getSyncInfo();
+						info = new ResourceSyncInfo(info.getName(), ((RemoteResource)element.getRemote()).getSyncInfo().getRevision(), info.getTimeStamp(), info.getKeywordMode(), info.getTag(), info.getPermissions());
+						resource.setSyncInfo(info);
+						syncChanged = true;
+					}
+				}
 			}
+		} finally {
+			if (syncChanged)
+				Synchronizer.getInstance().save();
 		}
 	}
 	

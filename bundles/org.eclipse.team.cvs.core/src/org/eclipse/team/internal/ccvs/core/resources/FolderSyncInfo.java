@@ -134,6 +134,14 @@ public class FolderSyncInfo {
 		return result;
 	}
 	
+	/*
+	 * Provide a hashCode() method that gaurentees that equal object will have the
+	 * same hashCode
+	 */
+	public int hashCode() {
+		return getRoot().hashCode() | getRepository().hashCode();
+	}
+	
 	/**
 	 * Sets the tag for the folder.
 	 * 
