@@ -36,9 +36,9 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 		}
 		if (syncMode == SyncView.SYNC_INCOMING) {
 			manager.add(new Separator());
-//			getAction.update();
+			getAction.update();
 //			delLocalAction.update();
-//			manager.add(getAction);
+			manager.add(getAction);
 //			manager.add(delLocalAction);
 		}
 	}
