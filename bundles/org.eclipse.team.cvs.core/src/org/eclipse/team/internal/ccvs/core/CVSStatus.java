@@ -1,17 +1,18 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.team.internal.ccvs.core;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2002.
- * All Rights Reserved.
- */
  
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Status;
 	
-/**
- * @version 	1.0
- * @author
- */
 public class CVSStatus extends Status {
 
 	/*** Status codes ***/
@@ -24,6 +25,8 @@ public class CVSStatus extends Status {
 	public static final int DOES_NOT_EXIST = -17;
 	public static final int FOLDER_NEEDED_FOR_FILE_DELETIONS = -18;
 	public static final int CASE_VARIANT_EXISTS = -19;
+	public static final int UNSUPPORTED_SERVER_VERSION = -20;
+	public static final int SERVER_IS_CVSNT = -21;
 	
 	// Path for resource related status
 	private IPath path;
