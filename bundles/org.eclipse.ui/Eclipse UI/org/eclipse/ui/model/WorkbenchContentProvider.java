@@ -48,8 +48,8 @@ protected IWorkbenchAdapter getAdapter(Object o) {
  * Method declared on ITreeContentProvider.
  */
 public Object[] getChildren(Object element) {
-	if (element instanceof WorkbenchWorkingSet) {
-		return ((WorkbenchWorkingSet) element).getChildren(element);
+	if (element instanceof IWorkingSet) {
+		return ((IWorkingSet) element).getItems();
 	}
 	IWorkbenchAdapter adapter = getAdapter(element);
 	if (adapter != null) {
