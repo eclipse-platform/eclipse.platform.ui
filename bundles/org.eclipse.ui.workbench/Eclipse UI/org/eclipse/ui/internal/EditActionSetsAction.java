@@ -36,6 +36,7 @@ private IWorkbenchWindow workbenchWindow;
 public EditActionSetsAction() {
 	this(PlatformUI.getWorkbench().getActiveWorkbenchWindow());
 }
+
 /**
  * 
  */
@@ -45,6 +46,7 @@ public EditActionSetsAction(IWorkbenchWindow window) {
 		throw new IllegalArgumentException();
 	}
 	this.workbenchWindow = window;
+	setActionDefinitionId("org.eclipse.ui.window.customizePerspective"); //$NON-NLS-1$
 	// @issue missing action id
 	setToolTipText(WorkbenchMessages.getString("EditActionSetsAction.toolTip")); //$NON-NLS-1$
 	setEnabled(false);

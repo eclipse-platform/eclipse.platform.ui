@@ -41,6 +41,7 @@ public class CloseAllPerspectivesAction
 			throw new IllegalArgumentException();
 		}
 		this.workbenchWindow = window;
+		setActionDefinitionId("org.eclipse.ui.window.closeAllPerspectives"); //$NON-NLS-1$
 		// @issue missing action id
 		setToolTipText(WorkbenchMessages.getString("CloseAllPerspectivesAction.toolTip")); //$NON-NLS-1$
 		WorkbenchHelp.setHelp(this, IHelpContextIds.CLOSE_ALL_PAGES_ACTION);

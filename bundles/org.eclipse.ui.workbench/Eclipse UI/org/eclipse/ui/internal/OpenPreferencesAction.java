@@ -50,6 +50,7 @@ public OpenPreferencesAction(IWorkbenchWindow window) {
 		throw new IllegalArgumentException();
 	}
 	this.workbenchWindow = window;
+	setActionDefinitionId("org.eclipse.ui.window.preferences"); //$NON-NLS-1$
 	// @issue action id not set
 	setToolTipText(WorkbenchMessages.getString("OpenPreferences.toolTip")); //$NON-NLS-1$
 	WorkbenchHelp.setHelp(this, IHelpContextIds.OPEN_PREFERENCES_ACTION);

@@ -63,6 +63,7 @@ public ToggleEditorsVisibilityAction(IWorkbenchWindow window) {
 		throw new IllegalArgumentException();
 	}
 	this.workbenchWindow = window;
+	setActionDefinitionId("org.eclipse.ui.window.hideShowEditors"); //$NON-NLS-1$
 	// @issue missing action id
 	setToolTipText(WorkbenchMessages.getString("ToggleEditor.toolTip")); //$NON-NLS-1$
 	WorkbenchHelp.setHelp(this, IHelpContextIds.TOGGLE_EDITORS_VISIBILITY_ACTION);

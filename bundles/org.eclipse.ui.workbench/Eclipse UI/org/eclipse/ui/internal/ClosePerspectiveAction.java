@@ -41,6 +41,7 @@ public class ClosePerspectiveAction
 			throw new IllegalArgumentException();
 		}
 		this.workbenchWindow = window;
+		setActionDefinitionId("org.eclipse.ui.window.closePerspective"); //$NON-NLS-1$
 		// @issue missing action id
 		setToolTipText(WorkbenchMessages.getString("ClosePerspectiveAction.toolTip")); //$NON-NLS-1$
 		setEnabled(false);

@@ -465,7 +465,7 @@ public final class Workbench implements IWorkbench, IContextResolver {
 		if (!matchesByKeySequenceForModeAfterKeyStroke.isEmpty()) {
 			// this key stroke is part of one or more possible completions: consume the keystroke
 			modeContributionItem.setText(
-				"carbon".equals(SWT.getPlatform()) ? KeySupport.formatOSX(modeAfterKeyStroke) : modeAfterKeyStroke.format());						
+				"carbon".equals(SWT.getPlatform()) ? KeySupport.formatOSX(modeAfterKeyStroke) : modeAfterKeyStroke.format());						 //$NON-NLS-1$
 			consumeKeyStroke = true;
 		} else {
 			// there are no possible longer multi-stroke sequences, allow a completion now if possible
@@ -487,7 +487,7 @@ public final class Workbench implements IWorkbench, IContextResolver {
 					if (action.isEnabled()) {
 						try {
 							modeContributionItem.setText(
-								"carbon".equals(SWT.getPlatform()) ? KeySupport.formatOSX(modeAfterKeyStroke) : modeAfterKeyStroke.format());
+								"carbon".equals(SWT.getPlatform()) ? KeySupport.formatOSX(modeAfterKeyStroke) : modeAfterKeyStroke.format()); //$NON-NLS-1$
 							action.execute(event);
 						} catch (final Exception e) {
 							// TODO 						
@@ -506,7 +506,7 @@ public final class Workbench implements IWorkbench, IContextResolver {
 			// clear mode			
 			commandManager.setMode(KeySequence.getInstance());
 			modeContributionItem.setText(
-				"carbon".equals(SWT.getPlatform())
+				"carbon".equals(SWT.getPlatform()) //$NON-NLS-1$
 					? KeySupport.formatOSX(KeySequence.getInstance())
 					: KeySequence.getInstance().format());
 		}
