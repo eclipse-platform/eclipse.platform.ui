@@ -313,13 +313,15 @@ public class ActivitiesPreferencePage3 extends PreferencePage implements
      * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
      */
     protected Control createContents(Composite parent) {
-        Composite composite = new Composite(parent, SWT.NONE);        
+        Composite composite = new Composite(parent, SWT.NONE);  
+        composite.setFont(parent.getFont());
         GridLayout layout = new GridLayout(2, false);
         layout.marginHeight = layout.marginWidth = 0;
         composite.setLayout(layout);
         Label label = new Label(composite, SWT.WRAP);
         label
                 .setText(strings.getProperty(CAPTION_MESSAGE, ActivityMessages.ActivitiesPreferencePage_captionMessage));
+        label.setFont(parent.getFont());
         GridData data = new GridData(GridData.FILL_HORIZONTAL);
         data.widthHint = 400;
         data.horizontalSpan = 2;        
@@ -340,6 +342,7 @@ public class ActivitiesPreferencePage3 extends PreferencePage implements
      */
     private void createPromptButton(Composite composite) {
         activityPromptButton = new Button(composite, SWT.CHECK);
+        activityPromptButton.setFont(composite.getFont());
         activityPromptButton.setText(strings.getProperty(ACTIVITY_PROMPT_BUTTON, ActivityMessages.activityPromptButton));
         activityPromptButton.setToolTipText(strings.getProperty(ACTIVITY_PROMPT_BUTTON_TOOLTIP, ActivityMessages.activityPromptToolTip));
         GridData data = new GridData();
@@ -360,6 +363,7 @@ public class ActivitiesPreferencePage3 extends PreferencePage implements
         composite.setLayoutData(data);
 
         Button enableAll = new Button(composite, SWT.PUSH);
+        enableAll.setFont(parent.getFont());
         enableAll.addSelectionListener(new SelectionAdapter() {
 
             /*
@@ -376,6 +380,7 @@ public class ActivitiesPreferencePage3 extends PreferencePage implements
         setButtonLayoutData(enableAll);
 
         Button disableAll = new Button(composite, SWT.PUSH);
+        disableAll.setFont(parent.getFont());
         disableAll.addSelectionListener(new SelectionAdapter() {
             /*
              * (non-Javadoc)
@@ -391,6 +396,7 @@ public class ActivitiesPreferencePage3 extends PreferencePage implements
         
         if (allowAdvanced) {
             advancedButton = new Button(composite, SWT.PUSH);
+            advancedButton.setFont(parent.getFont());
             advancedButton.addSelectionListener(new SelectionAdapter() {
 
                 /*
@@ -427,8 +433,10 @@ public class ActivitiesPreferencePage3 extends PreferencePage implements
 
         {
             Label label = new Label(composite, SWT.NONE);
+            label.setFont(parent.getFont());
             label.setText(ActivityMessages.ActivityEnabler_description);
             descriptionText = new Text(composite, SWT.WRAP | SWT.READ_ONLY | SWT.BORDER);
+            descriptionText.setFont(parent.getFont());
             GridData data = new GridData(GridData.FILL_BOTH);
             data.heightHint = 100;
             data.widthHint = 200;
@@ -436,8 +444,10 @@ public class ActivitiesPreferencePage3 extends PreferencePage implements
         }
         {
             Label label = new Label(composite, SWT.NONE);
-            label.setText(ActivityMessages.ActivitiesPreferencePage_requirements);
+            label.setFont(parent.getFont());
+            label.setText(ActivityMessages.ActivitiesPreferencePage_requirements);            
             dependantViewer = new TableViewer(composite, SWT.BORDER);
+            dependantViewer.getControl().setFont(parent.getFont());
             dependantViewer.getControl().setLayoutData(
                     new GridData(GridData.FILL_BOTH));
             dependantViewer.setContentProvider(new CategoryContentProvider());
@@ -459,8 +469,10 @@ public class ActivitiesPreferencePage3 extends PreferencePage implements
         data.widthHint = 200;
         composite.setLayoutData(data);
         Label label = new Label(composite, SWT.NONE);
+        label.setFont(parent.getFont());
         label.setText(strings.getProperty(CATEGORY_NAME, ActivityMessages.ActivityEnabler_categories) + ':'); //$NON-NLS-1$
         Table table = new Table(composite, SWT.CHECK | SWT.BORDER | SWT.SINGLE);
+        table.setFont(parent.getFont());
         table.addSelectionListener(new SelectionAdapter() {
 
             /*
@@ -494,6 +506,7 @@ public class ActivitiesPreferencePage3 extends PreferencePage implements
             }
         });
         categoryViewer = new CheckboxTableViewer(table);
+        categoryViewer.getControl().setFont(parent.getFont());
         categoryViewer.getControl().setLayoutData(
                 new GridData(GridData.FILL_BOTH));
         categoryViewer.setContentProvider(new CategoryContentProvider());

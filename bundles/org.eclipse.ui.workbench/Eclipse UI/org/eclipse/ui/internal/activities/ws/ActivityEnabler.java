@@ -320,7 +320,7 @@ public class ActivityEnabler {
 
 		Composite buttonComposite = new Composite(c, SWT.NONE);
 		buttonComposite.setLayoutData(new GridData(
-				GridData.HORIZONTAL_ALIGN_END));
+				GridData.HORIZONTAL_ALIGN_BEGINNING));
 		{
 			GridLayout gridLayout = new GridLayout(2, true);
 			gridLayout.marginHeight = 0;
