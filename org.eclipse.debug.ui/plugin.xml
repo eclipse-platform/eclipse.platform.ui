@@ -885,15 +885,6 @@
       </persistent>
    </extension>
    <extension
-         point="org.eclipse.ui.actionSetPartAssociations">
-      <actionSetPartAssociation
-            targetID="org.eclipse.debug.ui.debugActionSet">
-         <part
-               id="org.eclipse.debug.ui.DebugView">
-         </part>
-      </actionSetPartAssociation>
-   </extension>
-   <extension
          point="org.eclipse.ui.elementFactories">
       <factory
             class="org.eclipse.debug.internal.ui.launchConfigurations.PersistableLaunchConfigurationFactory"
@@ -1083,14 +1074,5 @@
          </accelerator>
       </acceleratorSet>
    </extension>
-   
-<!-- Adds the debug actions whenever a debug view is open -->
-   
-<extension point="org.eclipse.ui.actionSetPartAssociations">
-	<actionSetPartAssociation 
-		targetID="org.eclipse.debug.ui.debugActionSet">
-		<part id="org.eclipse.debug.ui.DebugView"/>
-	</actionSetPartAssociation>
-</extension>   
 
 </plugin>
