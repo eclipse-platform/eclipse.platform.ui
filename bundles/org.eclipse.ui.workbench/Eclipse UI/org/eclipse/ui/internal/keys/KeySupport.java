@@ -1,13 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2000, 2003 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Common Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ * Contributors: IBM Corporation - initial API and implementation
+ ******************************************************************************/
 
 package org.eclipse.ui.internal.keys;
 
@@ -18,6 +16,7 @@ import java.util.TreeSet;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Event;
+
 import org.eclipse.ui.keys.CharacterKey;
 import org.eclipse.ui.keys.KeyStroke;
 import org.eclipse.ui.keys.ModifierKey;
@@ -61,6 +60,12 @@ public final class KeySupport {
 					break;
 				case SWT.ARROW_UP :
 					naturalKey = SpecialKey.ARROW_UP;
+					break;
+				case SWT.BREAK :
+					naturalKey = SpecialKey.BREAK;
+					break;
+				case SWT.CAPS_LOCK :
+					naturalKey = SpecialKey.CAPS_LOCK;
 					break;
 				case SWT.END :
 					naturalKey = SpecialKey.END;
@@ -167,9 +172,17 @@ public final class KeySupport {
 				case SWT.PAGE_UP :
 					naturalKey = SpecialKey.PAGE_UP;
 					break;
+				case SWT.PAUSE :
+					naturalKey = SpecialKey.PAUSE;
+					break;
+				case SWT.PRINT_SCREEN :
+					naturalKey = SpecialKey.PRINT_SCREEN;
+					break;
+				case SWT.SCROLL_LOCK :
+					naturalKey = SpecialKey.SCROLL_LOCK;
+					break;
 				default :
-					naturalKey =
-						CharacterKey.getInstance((char) (accelerator & 0xFFFF));
+					naturalKey = CharacterKey.getInstance((char) (accelerator & 0xFFFF));
 			}
 		}
 
@@ -202,9 +215,7 @@ public final class KeySupport {
 	 * @return The combination of the state mask and the unmodified character.
 	 */
 	public static int convertEventToUnmodifiedAccelerator(Event event) {
-		return convertEventToUnmodifiedAccelerator(
-			event.stateMask,
-			event.keyCode);
+		return convertEventToUnmodifiedAccelerator(event.stateMask, event.keyCode);
 	}
 
 	/**
@@ -219,9 +230,7 @@ public final class KeySupport {
 	 *            The key that was pressed, before being modified.
 	 * @return The combination of the state mask and the unmodified character.
 	 */
-	private static int convertEventToUnmodifiedAccelerator(
-		int stateMask,
-		int keyCode) {
+	private static int convertEventToUnmodifiedAccelerator(int stateMask, int keyCode) {
 		int modifiers = stateMask & SWT.MODIFIER_MASK;
 		int character = keyCode;
 		return modifiers + toUpperCase(character);
@@ -238,9 +247,7 @@ public final class KeySupport {
 	 * @return The combination of the state mask and the unmodified character.
 	 */
 	public static int convertEventToUnmodifiedAccelerator(KeyEvent event) {
-		return convertEventToUnmodifiedAccelerator(
-			event.stateMask,
-			event.keyCode);
+		return convertEventToUnmodifiedAccelerator(event.stateMask, event.keyCode);
 	}
 
 	/**
@@ -354,9 +361,7 @@ public final class KeySupport {
 		char character = event.character;
 		boolean ctrlDown = (event.stateMask & SWT.CTRL) != 0;
 
-		if (ctrlDown
-			&& event.character != event.keyCode
-			&& event.character < 0x20)
+		if (ctrlDown && event.character != event.keyCode && event.character < 0x20)
 			character += 0x40;
 
 		return character;
@@ -378,9 +383,7 @@ public final class KeySupport {
 
 		// Downcast in safety. Only make characters uppercase.
 		char character = (char) keyCode;
-		return Character.isLetter(character)
-			? Character.toUpperCase(character)
-			: keyCode;
+		return Character.isLetter(character) ? Character.toUpperCase(character) : keyCode;
 	}
 
 	private KeySupport() {

@@ -1,12 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2000, 2003 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Common Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
+ * Contributors: IBM Corporation - initial API and implementation
  ******************************************************************************/
 
 package org.eclipse.ui.keys;
@@ -14,6 +12,7 @@ package org.eclipse.ui.keys;
 import java.util.ResourceBundle;
 
 import org.eclipse.swt.SWT;
+
 import org.eclipse.ui.internal.util.Util;
 
 /**
@@ -52,6 +51,16 @@ public final class SpecialKey extends NaturalKey {
 	 * The name of the 'Arrow Up' key.
 	 */
 	private final static String ARROW_UP_NAME = "ARROW_UP"; //$NON-NLS-1$
+
+	/**
+	 * The name for the 'Break' key.
+	 */
+	private final static String BREAK_NAME = "BREAK"; //$NON-NLS-1$
+
+	/**
+	 * The name for the 'Caps Lock' key.
+	 */
+	private final static String CAPS_LOCK_NAME = "CAPS_LOCK"; //$NON-NLS-1$
 
 	/**
 	 * The name of the 'End' key.
@@ -142,7 +151,7 @@ public final class SpecialKey extends NaturalKey {
 	 * The name of the 'Insert' key.
 	 */
 	private final static String INSERT_NAME = "INSERT"; //$NON-NLS-1$
-	
+
 	/**
 	 * The name of the 'NumLock' key.
 	 */
@@ -241,7 +250,22 @@ public final class SpecialKey extends NaturalKey {
 	/**
 	 * The name of the 'Page Up' key.
 	 */
-	private final static String PAGE_UP_NAME = "PAGE_UP"; //$NON-NLS-1$		
+	private final static String PAGE_UP_NAME = "PAGE_UP"; //$NON-NLS-1$
+
+	/**
+	 * The name for the 'Pause' key.
+	 */
+	private final static String PAUSE_NAME = "PAUSE"; //$NON-NLS-1$
+
+	/**
+	 * The name for the 'Print Screen' key.
+	 */
+	private final static String PRINT_SCREEN_NAME = "PRINT_SCREEN"; //$NON-NLS-1$
+
+	/**
+	 * The name for the 'Scroll Lock' key.
+	 */
+	private final static String SCROLL_LOCK_NAME = "SCROLL_LOCK"; //$NON-NLS-1$		
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
@@ -259,14 +283,25 @@ public final class SpecialKey extends NaturalKey {
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'Arrow Right' key.
 	 */
-	public final static SpecialKey ARROW_RIGHT =
-		new SpecialKey(ARROW_RIGHT_NAME);
+	public final static SpecialKey ARROW_RIGHT = new SpecialKey(ARROW_RIGHT_NAME);
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'Arrow Up' key.
 	 */
 	public final static SpecialKey ARROW_UP = new SpecialKey(ARROW_UP_NAME);
+
+	/**
+	 * The single static instance of <code>SpecialKey</code> which represents
+	 * the 'Break' key.
+	 */
+	public final static SpecialKey BREAK = new SpecialKey(BREAK_NAME);
+
+	/**
+	 * The single static instance of <code>SpecialKey</code> which represents
+	 * the 'Caps Lock' key.
+	 */
+	public final static SpecialKey CAPS_LOCK = new SpecialKey(CAPS_LOCK_NAME);
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
@@ -452,42 +487,36 @@ public final class SpecialKey extends NaturalKey {
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'Decimal' key on the numpad.
 	 */
-	public final static SpecialKey NUMPAD_DECIMAL =
-		new SpecialKey(NUMPAD_DECIMAL_NAME);
+	public final static SpecialKey NUMPAD_DECIMAL = new SpecialKey(NUMPAD_DECIMAL_NAME);
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'Divide' key on the numpad.
 	 */
-	public final static SpecialKey NUMPAD_DIVIDE =
-		new SpecialKey(NUMPAD_DIVIDE_NAME);
+	public final static SpecialKey NUMPAD_DIVIDE = new SpecialKey(NUMPAD_DIVIDE_NAME);
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'Enter' key on the numpad.
 	 */
-	public final static SpecialKey NUMPAD_ENTER =
-		new SpecialKey(NUMPAD_ENTER_NAME);
+	public final static SpecialKey NUMPAD_ENTER = new SpecialKey(NUMPAD_ENTER_NAME);
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the '=' key on the numpad.
 	 */
-	public final static SpecialKey NUMPAD_EQUAL =
-	new SpecialKey(NUMPAD_EQUAL_NAME);
+	public final static SpecialKey NUMPAD_EQUAL = new SpecialKey(NUMPAD_EQUAL_NAME);
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'Multiply' key on the numpad.
 	 */
-	public final static SpecialKey NUMPAD_MULTIPLY =
-		new SpecialKey(NUMPAD_MULTIPLY_NAME);
+	public final static SpecialKey NUMPAD_MULTIPLY = new SpecialKey(NUMPAD_MULTIPLY_NAME);
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'Subtract' key on the numpad.
 	 */
-	public final static SpecialKey NUMPAD_SUBTRACT =
-		new SpecialKey(NUMPAD_SUBTRACT_NAME);
+	public final static SpecialKey NUMPAD_SUBTRACT = new SpecialKey(NUMPAD_SUBTRACT_NAME);
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
@@ -500,6 +529,24 @@ public final class SpecialKey extends NaturalKey {
 	 * the 'Page Up' key.
 	 */
 	public final static SpecialKey PAGE_UP = new SpecialKey(PAGE_UP_NAME);
+
+	/**
+	 * The single static instance of <code>SpecialKey</code> which represents
+	 * the 'Pause' key.
+	 */
+	public final static SpecialKey PAUSE = new SpecialKey(PAUSE_NAME);
+
+	/**
+	 * The single static instance of <code>SpecialKey</code> which represents
+	 * the 'Print Screen' key.
+	 */
+	public final static SpecialKey PRINT_SCREEN = new SpecialKey(PRINT_SCREEN_NAME);
+
+	/**
+	 * The single static instance of <code>SpecialKey</code> which represents
+	 * the 'Scroll Lock' key.
+	 */
+	public final static SpecialKey SCROLL_LOCK = new SpecialKey(SCROLL_LOCK_NAME);
 
 	/**
 	 * The resource bundle used by <code>format()</code> to translate key
@@ -541,7 +588,7 @@ public final class SpecialKey extends NaturalKey {
 			if (END_NAME.equals(name))
 				return Character.toString('\u2198');
 
-			if (NUMPAD_ENTER_NAME.equals(name)) 
+			if (NUMPAD_ENTER_NAME.equals(name))
 				return Character.toString('\u2324');
 
 			if (HOME_NAME.equals(name))
