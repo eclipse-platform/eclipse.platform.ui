@@ -327,7 +327,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	
 	private boolean coolBarVisible = true;
 	private boolean perspectiveBarVisible = true;
-	private boolean statusLineVisible;
+	private boolean statusLineVisible = true;
 	
 	void setHandlersByCommandId() {
 		Map handlersByCommandId = new HashMap();
