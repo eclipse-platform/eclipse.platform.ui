@@ -242,7 +242,6 @@ private void createProjectNameGroup(Composite parent) {
 	// new project label
 	Label projectLabel = new Label(projectGroup,SWT.NONE);
 	projectLabel.setText(PROJECT_NAME_LABEL);
-	projectLabel.setFont(parent.getFont());
 
 	// new project name entry field
 	projectNameField = new Text(projectGroup, SWT.BORDER);
@@ -272,7 +271,6 @@ private Composite createUserSpecifiedProjectLocationGroup(
 	// location label
 	locationLabel = new Label(projectGroup, SWT.NONE);
 	locationLabel.setText(LOCATION_LABEL);
-	locationLabel.setFont(projectGroup.getFont());
 	locationLabel.setEnabled(enabled);
 
 	// project location entry field
@@ -290,7 +288,6 @@ private Composite createUserSpecifiedProjectLocationGroup(
 			handleLocationBrowseButtonPressed();
 		}
 	});
-	this.browseButton.setFont(projectGroup.getFont());
 	this.browseButton.setEnabled(enabled);
 
 	// Set the initial value first before listener
