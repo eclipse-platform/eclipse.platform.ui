@@ -10,25 +10,23 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.intro.impl.parts;
 
-import java.io.*;
-import java.net.*;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 import org.eclipse.help.*;
-import org.eclipse.help.internal.context.*;
-import org.eclipse.jface.resource.*;
-import org.eclipse.swt.*;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.forms.*;
+import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.widgets.*;
-import org.eclipse.ui.help.*;
-import org.eclipse.ui.internal.intro.impl.*;
-import org.eclipse.ui.internal.intro.impl.util.*;
-import org.eclipse.ui.intro.*;
-import org.eclipse.ui.intro.config.*;
+import org.eclipse.ui.internal.intro.impl.IntroPlugin;
+import org.eclipse.ui.internal.intro.impl.util.ImageUtil;
+import org.eclipse.ui.intro.IIntroPart;
+import org.eclipse.ui.intro.config.IStandbyContentPart;
 
 /**
  *  
@@ -201,7 +199,7 @@ public class ContextHelpStandbyPart implements IStandbyContentPart {
         try {
             String ephrase = URLEncoder.encode(phrase, "UTF-8"); //$NON-NLS-1$
             String query = "tab=search&searchWord=" + ephrase; //$NON-NLS-1$
-            WorkbenchHelp.displayHelpResource(query);
+            PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(query);
         } catch (UnsupportedEncodingException e) {
             System.out.println(e);
         }
@@ -297,8 +295,8 @@ public class ContextHelpStandbyPart implements IStandbyContentPart {
      */
     private String decodeContextBoldTags(IContext context) {
         String styledText;
-        if (context instanceof IStyledContext) {
-            styledText = ((IStyledContext) context).getStyledText();
+        if (context instanceof IContext2) {
+            styledText = ((IContext2) context).getStyledText();
         } else {
             styledText = context.getText();
         }
@@ -310,7 +308,7 @@ public class ContextHelpStandbyPart implements IStandbyContentPart {
     private void openLink(Object href) {
         String url = (String) href;
         if (url != null)
-            WorkbenchHelp.displayHelpResource(url);
+            PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(url);
     }
 
     public void dispose() {
