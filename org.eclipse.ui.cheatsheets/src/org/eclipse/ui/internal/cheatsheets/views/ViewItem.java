@@ -210,6 +210,8 @@ public abstract class ViewItem {
 			fontDatas[i].setStyle(fontDatas[i].getStyle() ^ SWT.BOLD);
 		}
 		regularFont = new Font(mainItemComposite.getDisplay(), fontDatas);
+		
+		setBold(false);
 	}
 
 	protected ImageHyperlink createButton(Composite parent, Image image, ViewItem item, Color color, String toolTipText) {
