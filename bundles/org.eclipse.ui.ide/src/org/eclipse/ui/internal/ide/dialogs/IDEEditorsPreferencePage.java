@@ -184,8 +184,8 @@ public class IDEEditorsPreferencePage extends EditorsPreferencePage {
 	 * The default button has been pressed. 
 	 */
 	protected void performDefaults() {
-		super.performDefaults();
 		updateEncodingState(true);
+		super.performDefaults();
 	}
 	
 	/* (non-Javadoc)
