@@ -118,8 +118,8 @@ protected void addChildren(UnifiedTreeNode node) throws CoreException {
 				workspaceIndex++;
 			} else
 				if (comp > 0) {
-					// resource exists only in file system
-					child = createChildNodeFromFileSystem(node, parentLocalLocation, localName);
+					// resource exists only in file system 
+					child = createChildNodeFromFileSystem(node, parentLocalLocation, localName);			
 					localIndex++;
 				} else {
 					// resource exists only in the workspace
@@ -159,7 +159,8 @@ protected void addChildrenFromFileSystem(UnifiedTreeNode node, String parentLoca
 	for (int i = index; i < list.length; i++) {
 		String localName = (String) list[i];
 		UnifiedTreeNode child = createChildNodeFromFileSystem(node, parentLocalLocation, localName);
-		addChildToTree(node, child);
+		if (child != null)
+			addChildToTree(node, child);
 	}
 }
 protected void addChildrenMarker() {
@@ -212,11 +213,17 @@ protected void addRootToQueue() throws CoreException {
 		return;
 	addElementToQueue(node);
 }
+/**
+ * Creates a child node for a location in the file system. Does nothing and returns null if the location does not correspond to a valid file/folder. 
+ */
 protected UnifiedTreeNode createChildNodeFromFileSystem(UnifiedTreeNode parent, String parentLocalLocation, String childName) throws CoreException {
 	IPath childPath = parent.getResource().getFullPath().append(childName);
 	String location = createChildLocation(parentLocalLocation, childName);
 	long stat = CoreFileSystemLibrary.getStat(location);
-	int type = CoreFileSystemLibrary.isFile(stat) ? IResource.FILE : IResource.FOLDER;
+	int type = CoreFileSystemLibrary.isFile(stat) ? IResource.FILE : (CoreFileSystemLibrary.isFolder(stat) ? IResource.FOLDER : 0);
+	// if it is not a valid file or folder
+	if (type == 0)
+		return null;
 	IResource target = getWorkspace().newResource(childPath, type);
 	return createNode(target, stat, location, childName, false);
 }
