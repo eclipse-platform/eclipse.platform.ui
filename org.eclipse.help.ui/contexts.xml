@@ -31,4 +31,13 @@ This infopop opened because you pressed F1 while an infopop was already open.</d
       <description>Allows selecting a web browser.  The selected web browser will be the default browser used to display help contents.</description>
    </context>
 
+<!-- Search dialog Search Help -->
+   <context  id="searchPage" >
+      <description>Type a search term or terms in the search expression field, and then click <b>Search</b>. This will open Search view that contains all the search results.
+
+You can use OR and NOT qualifiers between terms. Also, if you put double-quotation marks around a query, search will return only results that contain specified phrase.
+
+Click <b>Choose</b> to see the book selection dialog, allowing for additional filtering to be specified.</description>
+   </context>
+
 </contexts>
