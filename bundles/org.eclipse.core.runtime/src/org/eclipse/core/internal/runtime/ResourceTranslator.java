@@ -71,18 +71,18 @@ public class ResourceTranslator {
 	}
 
 	private static boolean hasRuntime21(Bundle b) {
-		try {
-			ManifestElement[] prereqs = ManifestElement.parseHeader(Constants.REQUIRE_BUNDLE, (String) b.getHeaders().get(Constants.REQUIRE_BUNDLE));
-			if (prereqs == null)
-				return false;
-			for (int i = 0; i < prereqs.length; i++) {
-				if ("2.1".equals(prereqs[i].getAttribute(Constants.BUNDLE_VERSION_ATTRIBUTE)) && "org.eclipse.core.runtime".equals(prereqs[i].getValue())) { //$NON-NLS-1$//$NON-NLS-2$
-					return true;
-				}
-			}
-		} catch (BundleException e) {
-			return false;
-		}
+//		try {
+//			ManifestElement[] prereqs = ManifestElement.parseHeader(Constants.REQUIRE_BUNDLE, (String) b.getHeaders().get(Constants.REQUIRE_BUNDLE));
+//			if (prereqs == null)
+//				return false;
+//			for (int i = 0; i < prereqs.length; i++) {
+//				if ("2.1".equals(prereqs[i].getAttribute(Constants.BUNDLE_VERSION_ATTRIBUTE)) && "org.eclipse.core.runtime".equals(prereqs[i].getValue())) { //$NON-NLS-1$//$NON-NLS-2$
+//					return true;
+//				}
+//			}
+//		} catch (BundleException e) {
+//			return false;
+//		}
 		return false;
 	}
 
@@ -110,7 +110,7 @@ public class ResourceTranslator {
 	private static void addClasspathEntries(Bundle b, ArrayList classpath) {
 		ManifestElement[] classpathElements;
 		try {
-			classpathElements = ManifestElement.parseHeader(Constants.BUNDLE_CLASSPATH, (String) b.getHeaders().get(Constants.BUNDLE_CLASSPATH));
+			classpathElements = ManifestElement.parseHeader(Constants.BUNDLE_CLASSPATH, (String) b.getHeaders("").get(Constants.BUNDLE_CLASSPATH)); //$NON-NLS-1$
 			if(classpathElements == null)
 				return;
 			for (int i = 0; i < classpathElements.length; i++) {

@@ -387,7 +387,7 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 		PluginVersionIdentifier result = null;
 		Bundle bundle = Platform.getBundle(bundleName);
 		if (bundle != null) {
-			Object version = bundle.getHeaders().get(Constants.BUNDLE_VERSION);
+			Object version = bundle.getHeaders("").get(Constants.BUNDLE_VERSION); //$NON-NLS-1$
 			if (version != null && version instanceof String)
 				result = new PluginVersionIdentifier((String) version);
 		}
