@@ -10,6 +10,7 @@
 package org.eclipse.core.internal.resources;
 
 import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.*;
@@ -35,6 +36,9 @@ class AutoBuildJob extends Job {
 	 */
 	public synchronized void avoidBuild() {
 		avoidBuild = true;
+	}
+	public boolean belongsTo(Object family) {
+		return family == ResourcesPlugin.FAMILY_AUTO_BUILD;
 	}
 	public synchronized void checkCancel() {
 		int state = getState();
