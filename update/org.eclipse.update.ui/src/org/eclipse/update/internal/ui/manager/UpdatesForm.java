@@ -99,7 +99,7 @@ public class UpdatesForm extends UpdateWebForm {
 		updates.detachProgressMonitor(monitor);
 		if (statusMonitor != null)
 			updates.detachProgressMonitor(statusMonitor);
-		searchResultSection.dispose();
+		if (searchResultSection!=null) searchResultSection.dispose();
 		super.dispose();
 	}
 
