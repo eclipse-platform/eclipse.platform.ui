@@ -23,10 +23,13 @@
 		    <fileset dir="src" />
   		</zip>		
 		<jar jarfile="${destjar}">
+			<fileset dir=".">
+			  <include name="plugin.xml" />
+			  <include name="plugin.properties" />
+			  <include name="META-INF/**" />
+			</fileset>
 			<fileset dir="bin" />
 			<fileset file="${tempdir}/src.zip" />
-			<fileset file="plugin.xml" />
-			<fileset file="plugin.properties" />
 		</jar>
 		<delete file="${tempdir}/src.zip" />
 	</target>
