@@ -11,6 +11,7 @@
 package org.eclipse.text.tests;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -1206,6 +1207,24 @@ public class TextEditTests extends TestCase {
 		}
 		assertTrue(exception);
 	}
+	
+	public void testComparator() throws Exception {
+		DeleteEdit d1= new DeleteEdit(1,3);
+		Accessor accessor= new Accessor(d1, TextEdit.class);
+		Comparator comparator= (Comparator)accessor.get("INSERTION_COMPARATOR");
+		
+		TextEdit edit1= new InsertEdit(1, "test");
+		TextEdit edit2= new InsertEdit(1, "test");
+		TextEdit edit3= new InsertEdit(57, "test3");
+		
+		assertTrue(edit1.equals(edit1));
+		assertEquals(0, comparator.compare(edit1, edit1));
+		assertEquals(0, comparator.compare(edit1, edit2));
+		assertEquals(0, comparator.compare(edit2, edit1));
+		assertTrue(comparator.compare(edit1, edit3) == -comparator.compare(edit3, edit1));
+
+	}
+
 	
 	private void doUndoRedo(UndoEdit undo, String redoResult) throws Exception {
 		UndoEdit redo= undo.apply(fDocument);

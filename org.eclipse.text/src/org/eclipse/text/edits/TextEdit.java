@@ -28,7 +28,7 @@ import org.eclipse.jface.text.Region;
  * </code>). 
  * <p>
  * Text edits form a tree. Clients can navigate the tree upwards, from child to 
- * parent, as well as downwards. Newly created edits are unparented. New edits
+ * parent, as well as downwards. Newly created edits are un-parented. New edits
  * are added to the tree by calling one of the <code>add</code> methods on a parent
  * edit.
  * </p>
@@ -96,7 +96,7 @@ public abstract class TextEdit {
 	public static final int UPDATE_REGIONS= 1 << 1;
 	
 	private static class InsertionComparator implements Comparator {
-		public int compare(Object o1, Object o2) {
+		public int compare(Object o1, Object o2) throws MalformedTreeException {
 			TextEdit edit1= (TextEdit)o1;
 			TextEdit edit2= (TextEdit)o2;
 					
@@ -106,17 +106,13 @@ public abstract class TextEdit {
 			int offset2= edit2.getOffset();
 			int length2= edit2.getLength();
 					
-			// make sure that a duplicate insertion point at the same offet is 
-			// inserted last. Have to double check with the spec. It says the
-			// with identical values there is no guarantee which one will be 
-			// found.
 			if (offset1 == offset2 && length1 == 0 && length2 == 0) {
+				return 0;
+			}
+			if (offset1 + length1 <= offset2) {
 				return -1;
 			}
-			if (offset1 + length1 - 1 < offset2) {
-				return -1;
-			}
-			if (offset2 + length2 - 1 < offset1) {
+			if (offset2 + length2 <= offset1) {
 				return 1;
 			}
 			throw new MalformedTreeException(
@@ -557,7 +553,7 @@ public abstract class TextEdit {
 	 * implemented in a way so that the copy can executed without causing
 	 * any harm to the original edit. Implementors of this method are
 	 * responsible for creating deep or shallow copies of referenced
-	 * object to fullfil this requirement.
+	 * object to fulfill this requirement.
 	 * <p>
 	 * Implementers of this method should use the copy constructor <code>
 	 * Edit#Edit(Edit source) to initialize the edit part of the copy.
@@ -748,15 +744,29 @@ public abstract class TextEdit {
 		child.internalSetParent(this);
 	}
 	
-	private int computeInsertionIndex(TextEdit edit) {
+	private int computeInsertionIndex(TextEdit edit) throws MalformedTreeException {
 		int size= fChildren.size();
 		if (size == 0)
 			return 0;
-		TextEdit last= (TextEdit)fChildren.get(size - 1);
+		int lastIndex= size - 1;
+		TextEdit last= (TextEdit)fChildren.get(lastIndex);
 		if (last.getExclusiveEnd() <= edit.getOffset())
 			return size;
 		try {
-			return -Collections.binarySearch(fChildren, edit,INSERTION_COMPARATOR) -1;
+			
+			int index= Collections.binarySearch(fChildren, edit, INSERTION_COMPARATOR);
+			
+			if (index < 0)
+				// edit is not in fChildren
+				return -index - 1;
+			
+			// edit is already in fChildren
+			// make sure that multiple insertion points at the same offset are inserted last.
+			while (index < lastIndex && INSERTION_COMPARATOR.compare(fChildren.get(index), fChildren.get(index + 1)) == 0)
+				index++;
+			
+			return index + 1;
+			
 		} catch(MalformedTreeException e) {
 			e.setParent(this);
 			throw e;
