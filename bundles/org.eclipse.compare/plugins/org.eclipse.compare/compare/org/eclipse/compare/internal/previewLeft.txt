@@ -1,8 +1,0 @@
-1
-2
-outgoing addition
-3
-outgoing change
-4
-pseudo conflict
-5

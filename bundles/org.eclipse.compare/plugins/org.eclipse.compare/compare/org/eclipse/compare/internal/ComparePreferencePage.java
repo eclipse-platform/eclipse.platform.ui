@@ -274,9 +274,9 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		
 		fPreviewViewer.setInput(
 			new DiffNode(Differencer.CONFLICTING,
-				new FakeInput("previewAncestor.txt"),	//$NON-NLS-1$
-				new FakeInput("previewLeft.txt"),	//$NON-NLS-1$
-				new FakeInput("previewRight.txt")	//$NON-NLS-1$
+				new FakeInput("ComparePreferencePage.previewAncestor"),	//$NON-NLS-1$
+				new FakeInput("ComparePreferencePage.previewLeft"),	//$NON-NLS-1$
+				new FakeInput("ComparePreferencePage.previewRight")	//$NON-NLS-1$
 			)
 		);
 
@@ -330,26 +330,17 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		return checkBox;
 	}
 	
-	private String loadPreviewContentFromFile(String filename) {
+	private String loadPreviewContentFromFile(String key) {
+		
+		String preview= Utilities.getString(key);
 		String separator= System.getProperty("line.separator"); //$NON-NLS-1$
-		StringBuffer buffer= new StringBuffer(512);
-		BufferedReader reader= null;
-		try {
-			reader= new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(filename)));
-			String line;
-			while ((line= reader.readLine()) != null) {
-				buffer.append(line);
+		StringBuffer buffer= new StringBuffer();
+		for (int i= 0; i < preview.length(); i++) {
+			char c= preview.charAt(i);
+			if (c == '\n')
 				buffer.append(separator);
-			}
-		} catch (IOException io) {
-			CompareUIPlugin.log(io);
-		} finally {
-			if (reader != null) {
-				try {
-					reader.close();
-				} catch (IOException e) {
-				}
-			}
+			else
+				buffer.append(c);
 		}
 		return buffer.toString();
 	}
