@@ -287,7 +287,11 @@ public class EditorManager {
 	/*
 	 * @see IWorkbenchPage.
 	 */
-	private IEditorReference openEditorFromInput(IEditorReference ref,IFileEditorInput input, boolean setVisible) throws PartInitException {
+	private IEditorReference openEditorFromInput(IEditorReference ref,IEditorInput editorInput, boolean setVisible) throws PartInitException {
+		if (!(editorInput instanceof IFileEditorInput))
+			throw new PartInitException(WorkbenchMessages.getString("EditorManager.unableToEditor")); //$NON-NLS-1$
+
+		IFileEditorInput input = (IFileEditorInput)editorInput;
 		IFile file = input.getFile();
 		// If there is a registered editor for the file use it.
 		EditorDescriptor desc = (EditorDescriptor) getEditorRegistry().getDefaultEditor(file);
@@ -374,7 +378,7 @@ public class EditorManager {
 	 */	
 	public IEditorReference openEditor(String editorId,IEditorInput input,boolean setVisible) throws PartInitException {
 		if(editorId == null) {
-			return openEditorFromInput(new Editor(),(IFileEditorInput)input,setVisible);
+			return openEditorFromInput(new Editor(),input,setVisible);
 		} else {
 			IEditorRegistry reg = getEditorRegistry();
 			EditorDescriptor desc = (EditorDescriptor) reg.findEditor(editorId);
@@ -806,7 +810,7 @@ public class EditorManager {
 					String workbookID = editorMem.getString(IWorkbenchConstants.TAG_WORKBOOK);
 					editorPresentation.setActiveEditorWorkbookFromID(workbookID);
 					if (desc == null) {
-						result[0] = (Editor)openEditorFromInput(ref,(IFileEditorInput) editorInput, false);
+						result[0] = (Editor)openEditorFromInput(ref,editorInput, false);
 					} else {
 						result[0] = (Editor)openInternalEditor(ref,desc, editorInput, false);
 					}
