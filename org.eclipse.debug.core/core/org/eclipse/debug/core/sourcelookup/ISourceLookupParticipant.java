@@ -63,10 +63,11 @@ public interface ISourceLookupParticipant {
 	
 	/**
 	 * Returns the source file name associated with the given debug artifact that
-	 * source needs to be found for.
+	 * source needs to be found for, or <code>null</code> if none.
 	 * 
 	 * @param object the debug artifact for which source needs to be found (e.g., stack frame)
-	 * @return the source file name associated with the given debug artifact
+	 * @return the source file name associated with the given debug artifact,
+	 *  or <code>null</code> if none.
 	 * @throws CoreException if unable to determine a source file name 
 	 */
 	public String getSourceName(Object object) throws CoreException;
