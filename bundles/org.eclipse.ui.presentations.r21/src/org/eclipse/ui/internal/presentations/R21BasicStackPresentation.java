@@ -257,18 +257,6 @@ public class R21BasicStackPresentation extends StackPresentation {
 			}
 		});
 
-		closeButton = new ToolItem(viewToolBar, SWT.PUSH);
-		//		Image img = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_CLOSE_VIEW);
-		hoverImage = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_CLOSE_VIEW_HOVER);
-		closeButton.setDisabledImage(null); // PR#1GE56QT - Avoid creation of unnecessary image.
-		closeButton.setImage(hoverImage);
-		closeButton.setToolTipText(R21PresentationMessages.getString("BasicStackPresentation.close")); //$NON-NLS-1$
-		closeButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-		    	close(getCurrent());
-			}
-		});
-		
 		// listener to switch between visible tabItems
 		paneFolder.getControl().addListener(SWT.Selection, selectionListener);
 
@@ -668,9 +656,8 @@ public class R21BasicStackPresentation extends StackPresentation {
 
 		int style = SWT.NONE;
 		
-		if (getSite().isCloseable(part)) {
+		if (getSite().isCloseable(part))
 			style |= SWT.CLOSE;
-		}
 		
 		tabItem = paneFolder.createItem(style, tabIndex);
 				
@@ -683,7 +670,38 @@ public class R21BasicStackPresentation extends StackPresentation {
 		
 		return tabItem;
 	}
-	
+
+	// Create a close button in the title bar for the argument part (if needed).
+	private void updateCloseButton() {
+	    // remove the close button if needed
+	    if (current == null || !getSite().isCloseable(current)) {
+	        if (closeButton != null) {
+	            closeButton.dispose();
+	            closeButton = null;
+
+	            paneFolder.flush();
+	        }
+	        return;
+	    }
+
+	    // a close button is needed, so if its already there, we're done
+	    if (closeButton != null)
+	        return;
+
+	    // otherwise create it
+		closeButton = new ToolItem(viewToolBar, SWT.PUSH);
+		closeButton.setDisabledImage(null);
+		closeButton.setImage(WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_CLOSE_VIEW_HOVER));
+		closeButton.setToolTipText(R21PresentationMessages.getString("BasicStackPresentation.close")); //$NON-NLS-1$
+		closeButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+		    	close(getCurrent());
+			}
+		});
+
+        paneFolder.flush();
+	}
+
 	/**
 	 * Initializes a tab for the given part. Sets the text, icon, tool tip,
 	 * etc. This will also be called whenever a relevant property changes
@@ -783,7 +801,8 @@ public class R21BasicStackPresentation extends StackPresentation {
 		if (current != null) {
 			paneFolder.setSelection(indexOf(current));
 			current.setVisible(true);
-			setControlSize();		
+			updateCloseButton();
+			setControlSize();
 		}
 	}
 	
