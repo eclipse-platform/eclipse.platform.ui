@@ -250,9 +250,17 @@ public interface IExternalToolConstants {
 	 */
 	public static final String ID_PROGRAM_BUILDER_LAUNCH_CONFIGURATION_TYPE = "org.eclipse.ui.externaltools.ProgramBuilderLaunchConfigurationType"; //$NON-NLS-1$	
 
+	// ------- Launch configuration category --------
+	/**
+	 * Identifier for external tools launch configuration category
+	 */
+	public static final String ID_EXTERNAL_TOOLS_LAUNCH_CATEGORY = "org.eclipse.ui.externaltools"; //$NON-NLS-1$
+
 	// ------- Launch configuration groups --------
 	/**
-	 * Identifier for external tools launch configuration group
+	 * Identifier for external tools launch configuration group. The external
+	 * tools launch configuration group corresponds to the external tools
+	 * category in run mode.
 	 */
 	public static final String ID_EXTERNAL_TOOLS_LAUNCH_GROUP = "org.eclipse.ui.externaltools.launchGroup"; //$NON-NLS-1$
 	/**

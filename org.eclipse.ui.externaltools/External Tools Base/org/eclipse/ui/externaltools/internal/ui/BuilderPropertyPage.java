@@ -345,11 +345,10 @@ public final class BuilderPropertyPage extends PropertyPage {
 	private void handleCopyButtonPressed() {
 		ILaunchManager manager= DebugPlugin.getDefault().getLaunchManager();
 		ILaunchConfigurationType types[]= manager.getLaunchConfigurationTypes();
-		List toolTypes= new ArrayList();
-		String category= DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(IExternalToolConstants.ID_EXTERNAL_TOOLS_LAUNCH_GROUP).getCategory();
+		List toolTypes= new ArrayList(); 
 		for (int i = 0; i < types.length; i++) {
 			ILaunchConfigurationType type = types[i];
-			if (category.equals(type.getCategory())) {
+			if (IExternalToolConstants.ID_EXTERNAL_TOOLS_LAUNCH_CATEGORY.equals(type.getCategory())) {
 				toolTypes.add(type);
 			}
 		}
