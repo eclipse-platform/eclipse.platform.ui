@@ -253,6 +253,10 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	 */
 	public void setDocument(IDocument document, IAnnotationModel annotationModel, int modelRangeOffset, int modelRangeLength) {
 		boolean wasProjectionEnabled= false;
+
+		synchronized (fLock) {
+			fPendingRequests.clear();
+		}
 		
 		if (fProjectionAnnotationModel != null) {
 			wasProjectionEnabled= removeProjectionAnnotationModel(getVisualAnnotationModel()) != null;
@@ -706,17 +710,13 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 					if (display != null) {
 						display.asyncExec(new Runnable() {
 							public void run() {
-								Iterator e= fPendingRequests.iterator();
 								try {
 									while (true) {
 										AnnotationModelEvent ame= null;
 										synchronized (fLock) {
-											if (e.hasNext()) {
-												ame= (AnnotationModelEvent) e.next();
-											} else {
-												fPendingRequests.clear();
+											if (fPendingRequests.size() == 0)
 												return;
-											}
+											ame= (AnnotationModelEvent) fPendingRequests.remove(0);
 										}
 										catchupWithProjectionAnnotationModel(ame);
 									}
