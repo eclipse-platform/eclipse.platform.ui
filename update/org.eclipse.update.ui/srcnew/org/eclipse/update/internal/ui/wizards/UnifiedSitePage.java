@@ -352,14 +352,24 @@ public class UnifiedSitePage extends UnifiedBannerPage implements ISearchProvide
 	
 	private void handleSiteChecked(SiteBookmark bookmark, boolean checked) {
 		bookmark.setSelected(checked);
-		updateBookmarkGrayState(bookmark, checked);
+		if (checked) {
+			bookmark.setIgnoredCategories(null);
+		} else {
+			Object[] cats = getSiteCatalogWithIndicator(bookmark, false);
+			ArrayList result = new ArrayList();
+			for (int i = 0; i < cats.length; i++) {
+				if (cats[i] instanceof SiteCategory) {
+					result.add(((SiteCategory)cats[i]).getFullName());
+				}
+			}
+			bookmark.setIgnoredCategories(
+				result.size() == 0
+					? null
+					: (String[]) result.toArray(new String[result.size()]));
+		}
+		treeViewer.setSubtreeChecked(bookmark, checked);
+		treeViewer.setGrayed(bookmark, false);
 		updateSearchRequest();
-	}
-
-	private void updateBookmarkGrayState(SiteBookmark bookmark, boolean checked) {
-		boolean grayed = checked && bookmark.getIgnoredCategories() != null;
-		if (treeViewer.getGrayed(bookmark) != grayed)
-			treeViewer.setGrayed(bookmark, grayed);
 	}
 
 	private void handleSiteExpanded(SiteBookmark bookmark, Object[] cats) {
@@ -384,8 +394,8 @@ public class UnifiedSitePage extends UnifiedBannerPage implements ISearchProvide
 				treeViewer.setChecked(category, checked);
 			}
 		}
+		treeViewer.setGrayed(bookmark, ignored != null && ignored.length < cats.length);
 		searchRunner.setNewSearchNeeded(true);
-		updateBookmarkGrayState(bookmark, treeViewer.getChecked(bookmark));
 	}
 
 	private void handleCategoryChecked(SiteCategory category, boolean checked) {
@@ -399,18 +409,24 @@ public class UnifiedSitePage extends UnifiedBannerPage implements ISearchProvide
 			}
 		}
 		if (checked) {
-			if (array.contains(category.getFullName()))
-				array.remove(category.getFullName());
-		} else if (!array.contains(category.getFullName()))
+			array.remove(category.getFullName());
+		} else {
 			array.add(category.getFullName());
-
+		}
 
 		bookmark.setIgnoredCategories(
 			array.size() == 0
 				? null
 				: (String[]) array.toArray(new String[array.size()]));
 		searchRunner.setNewSearchNeeded(true);
-		updateBookmarkGrayState(bookmark, treeViewer.getChecked(bookmark));
+		
+		Object[] children =
+			bookmark.getCatalog(true, null);
+		treeViewer.setChecked(bookmark, array.size() < children.length);
+		bookmark.setSelected(array.size() < children.length);
+		treeViewer.setGrayed(
+			bookmark,
+			array.size() > 0 && array.size() < children.length);
 		updateSearchRequest();
 	}
 
