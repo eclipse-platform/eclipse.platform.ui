@@ -475,6 +475,8 @@ public static Test suite() {
 	suite.addTest(new IResourceTest("testGetModificationStamp"));
 	suite.addTest(new IResourceTest("testReadOnly"));
 	suite.addTest(new IResourceTest("testConstants"));
+	suite.addTest(new IResourceTest("testDerived"));
+	suite.addTest(new IResourceTest("testTeamPrivateMember"));
 	suite.addTest(new IResourceTest("testDelete")); // make sure that last test has side effects
 	return suite;
 }
@@ -609,7 +611,8 @@ public void testConstants() {
 	
 	assertEquals("5.1", 0x1, IResource.FORCE);
 	assertEquals("5.2", 0x2, IResource.KEEP_HISTORY);
-	assertEquals("5.3", 0x4, IResource.DELETE_PROJECT_CONTENT);
+	assertEquals("5.3", 0x4, IResource.ALWAYS_DELETE_PROJECT_CONTENT);
+	assertEquals("5.4", 0x8, IResource.NEVER_DELETE_PROJECT_CONTENT);
 	
 	// IContainer constants (all have fixed values)
 	assertEquals("6.1", 0x1, IContainer.INCLUDE_PHANTOMS);
@@ -774,6 +777,230 @@ public void testDelete() {
 	}
 	.performTest(inputs);
 }
+
+/**
+ * Performs black box testing of the following methods:
+ *     isDerived() and setDerived(boolean)
+ */
+public void testDerived() {
+	IWorkspaceRoot root = getWorkspace().getRoot();
+	IProject project = root.getProject("Project");
+	IFolder folder = project.getFolder("folder"); 
+	IFile file = folder.getFile("target");
+	try {
+		project.create(getMonitor());
+		project.open(getMonitor());
+		folder.create(true, true, getMonitor());
+		file.create(getRandomContents(), true, getMonitor());
+		
+	} catch (CoreException e) {
+		fail("1.0", e);
+	}
+
+	// all resources have independent derived flag; all non-derived by default; check each type
+	try {
+		
+		// root - cannot be marked as derived
+		assertTrue("2.1.1", !root.isDerived());
+		assertTrue("2.1.2", !project.isDerived());
+		assertTrue("2.1.3", !folder.isDerived());
+		assertTrue("2.1.4", !file.isDerived());
+		root.setDerived(true);
+		assertTrue("2.2.1", !root.isDerived());
+		assertTrue("2.2.2", !project.isDerived());
+		assertTrue("2.2.3", !folder.isDerived());
+		assertTrue("2.2.4", !file.isDerived());
+		root.setDerived(false);
+		assertTrue("2.3.1", !root.isDerived());
+		assertTrue("2.3.2", !project.isDerived());
+		assertTrue("2.3.3", !folder.isDerived());
+		assertTrue("2.3.4", !file.isDerived());
+	
+		// project - cannot be marked as derived
+		project.setDerived(true);
+		assertTrue("3.1.1", !root.isDerived());
+		assertTrue("3.1.2", !project.isDerived());
+		assertTrue("3.1.3", !folder.isDerived());
+		assertTrue("3.1.4", !file.isDerived());
+		project.setDerived(false);
+		assertTrue("3.2.1", !root.isDerived());
+		assertTrue("3.2.2", !project.isDerived());
+		assertTrue("3.2.3", !folder.isDerived());
+		assertTrue("3.2.4", !file.isDerived());
+	
+		// folder
+		folder.setDerived(true);
+		assertTrue("4.1.1", !root.isDerived());
+		assertTrue("4.1.2", !project.isDerived());
+		assertTrue("4.1.3", folder.isDerived());
+		assertTrue("4.1.4", !file.isDerived());
+		folder.setDerived(false);
+		assertTrue("4.2.1", !root.isDerived());
+		assertTrue("4.2.2", !project.isDerived());
+		assertTrue("4.2.3", !folder.isDerived());
+		assertTrue("4.2.4", !file.isDerived());
+	
+		// file
+		file.setDerived(true);
+		assertTrue("5.1.1", !root.isDerived());
+		assertTrue("5.1.2", !project.isDerived());
+		assertTrue("5.1.3", !folder.isDerived());
+		assertTrue("5.1.4", file.isDerived());
+		file.setDerived(false);
+		assertTrue("5.2.1", !root.isDerived());
+		assertTrue("5.2.2", !project.isDerived());
+		assertTrue("5.2.3", !folder.isDerived());
+		assertTrue("5.2.4", !file.isDerived());
+		
+	} catch (CoreException e) {
+		fail("6.0", e);
+	}
+
+	/* remove trash */
+	try {
+		project.delete(true, getMonitor());
+	} catch (CoreException e) {
+		fail("7.0", e);
+	}
+	
+	// isDerived should return false when resource does not exist
+	assertTrue("8.1", !project.isDerived());
+	assertTrue("8.2", !folder.isDerived());
+	assertTrue("8.3", !file.isDerived());
+	
+	// setDerived should fail when resource does not exist
+	try {
+		project.setDerived(false);
+		assertTrue("9.1", false);
+	} catch (CoreException e) {
+		// pass
+	}
+	try {
+		folder.setDerived(false);
+		assertTrue("9.2", false);
+	} catch (CoreException e) {
+		// pass
+	}
+	try {
+		file.setDerived(false);
+		assertTrue("9.3", false);
+	} catch (CoreException e) {
+		// pass
+	}
+}
+
+/**
+ * Performs black box testing of the following methods:
+ *     isTeamPrivateMember() and setTeamPrivateMember(boolean)
+ */
+public void testTeamPrivateMember() {
+	IWorkspaceRoot root = getWorkspace().getRoot();
+	IProject project = root.getProject("Project");
+	IFolder folder = project.getFolder("folder"); 
+	IFile file = folder.getFile("target");
+	try {
+		project.create(getMonitor());
+		project.open(getMonitor());
+		folder.create(true, true, getMonitor());
+		file.create(getRandomContents(), true, getMonitor());
+		
+	} catch (CoreException e) {
+		fail("1.0", e);
+	}
+
+	// all resources have independent team private member flag
+	// all non-TPM by default; check each type
+	try {
+		
+		// root - cannot be made team private member
+		assertTrue("2.1.1", !root.isTeamPrivateMember());
+		assertTrue("2.1.2", !project.isTeamPrivateMember());
+		assertTrue("2.1.3", !folder.isTeamPrivateMember());
+		assertTrue("2.1.4", !file.isTeamPrivateMember());
+		root.setTeamPrivateMember(true);
+		assertTrue("2.2.1", !root.isTeamPrivateMember());
+		assertTrue("2.2.2", !project.isTeamPrivateMember());
+		assertTrue("2.2.3", !folder.isTeamPrivateMember());
+		assertTrue("2.2.4", !file.isTeamPrivateMember());
+		root.setTeamPrivateMember(false);
+		assertTrue("2.3.1", !root.isTeamPrivateMember());
+		assertTrue("2.3.2", !project.isTeamPrivateMember());
+		assertTrue("2.3.3", !folder.isTeamPrivateMember());
+		assertTrue("2.3.4", !file.isTeamPrivateMember());
+	
+		// project - cannot be made team private member
+		project.setTeamPrivateMember(true);
+		assertTrue("3.1.1", !root.isTeamPrivateMember());
+		assertTrue("3.1.2", !project.isTeamPrivateMember());
+		assertTrue("3.1.3", !folder.isTeamPrivateMember());
+		assertTrue("3.1.4", !file.isTeamPrivateMember());
+		project.setTeamPrivateMember(false);
+		assertTrue("3.2.1", !root.isTeamPrivateMember());
+		assertTrue("3.2.2", !project.isTeamPrivateMember());
+		assertTrue("3.2.3", !folder.isTeamPrivateMember());
+		assertTrue("3.2.4", !file.isTeamPrivateMember());
+	
+		// folder
+		folder.setTeamPrivateMember(true);
+		assertTrue("4.1.1", !root.isTeamPrivateMember());
+		assertTrue("4.1.2", !project.isTeamPrivateMember());
+		assertTrue("4.1.3", folder.isTeamPrivateMember());
+		assertTrue("4.1.4", !file.isTeamPrivateMember());
+		folder.setTeamPrivateMember(false);
+		assertTrue("4.2.1", !root.isTeamPrivateMember());
+		assertTrue("4.2.2", !project.isTeamPrivateMember());
+		assertTrue("4.2.3", !folder.isTeamPrivateMember());
+		assertTrue("4.2.4", !file.isTeamPrivateMember());
+	
+		// file
+		file.setTeamPrivateMember(true);
+		assertTrue("5.1.1", !root.isTeamPrivateMember());
+		assertTrue("5.1.2", !project.isTeamPrivateMember());
+		assertTrue("5.1.3", !folder.isTeamPrivateMember());
+		assertTrue("5.1.4", file.isTeamPrivateMember());
+		file.setTeamPrivateMember(false);
+		assertTrue("5.2.1", !root.isTeamPrivateMember());
+		assertTrue("5.2.2", !project.isTeamPrivateMember());
+		assertTrue("5.2.3", !folder.isTeamPrivateMember());
+		assertTrue("5.2.4", !file.isTeamPrivateMember());
+		
+	} catch (CoreException e) {
+		fail("6.0", e);
+	}
+
+	/* remove trash */
+	try {
+		project.delete(true, getMonitor());
+	} catch (CoreException e) {
+		fail("7.0", e);
+	}
+	
+	// isTeamPrivateMember should return false when resource does not exist
+	assertTrue("8.1", !project.isTeamPrivateMember());
+	assertTrue("8.2", !folder.isTeamPrivateMember());
+	assertTrue("8.3", !file.isTeamPrivateMember());
+	
+	// setTeamPrivateMember should fail when resource does not exist
+	try {
+		project.setTeamPrivateMember(false);
+		assertTrue("9.1", false);
+	} catch (CoreException e) {
+		// pass
+	}
+	try {
+		folder.setTeamPrivateMember(false);
+		assertTrue("9.2", false);
+	} catch (CoreException e) {
+		// pass
+	}
+	try {
+		file.setTeamPrivateMember(false);
+		assertTrue("9.3", false);
+	} catch (CoreException e) {
+		// pass
+	}
+}
+
 /**
  * Performs black box testing of the following method:
  *     boolean equals(Object)
