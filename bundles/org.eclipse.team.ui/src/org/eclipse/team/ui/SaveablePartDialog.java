@@ -80,7 +80,7 @@ public class SaveablePartDialog extends ResizableDialog {
 				Policy.bind("ParticipantCompareDialog.3"), MessageDialog.QUESTION, new String[]{IDialogConstants.YES_LABEL, //$NON-NLS-1$
 				IDialogConstants.NO_LABEL}, 0); // YES is the default
 			
-		if (input.isDirty() && dialog.open() == IDialogConstants.YES_ID) {
+		if (input.isDirty() && dialog.open() == IDialogConstants.OK_ID) {
 			BusyIndicator.showWhile(null, new Runnable() {
 				public void run() {
 					input.doSave(new NullProgressMonitor());
