@@ -793,11 +793,10 @@ public final class WorkbenchActionBuilder {
 		registerGlobalAction(projectPropertyDialogAction);
 
 		//Only add the role manager action if we are using role support
-		// TODO This is broken.  Chris to investigate.
-//		if(!getWindow().getWorkbench().getRoleManager().getDefinedRoleIds().isEmpty()){
-//            categoryAction = ActionFactory.CONFIGURE_ACTIVITIES.create(getWindow());
-//            registerGlobalAction(categoryAction);
-//		}
+		if(!getWindow().getWorkbench().getActivityManager().getDefinedCategoryIds().isEmpty()){
+            categoryAction = ActionFactory.CONFIGURE_ACTIVITIES.create(getWindow());
+            registerGlobalAction(categoryAction);
+		}
 
 		if (EditorWorkbook.usingNewDropDown()) {
 			editorsDropDownAction = new EditorsDropDownAction(window);
