@@ -24,4 +24,10 @@ public interface IBrowserViewerContainer {
      * not available.
      */
     IActionBars getActionBars();
+    /**
+     * Opens the url in the external browser if
+     * internal browser failed to create.
+     * @param url
+     */
+    void openInExternalBrowser(String url);
 }

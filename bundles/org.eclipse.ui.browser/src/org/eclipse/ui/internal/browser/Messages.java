@@ -15,9 +15,16 @@ import org.eclipse.osgi.util.NLS;
  * Translated messages.
  */
 public class Messages extends NLS {
-	public static String test;
 	
 	static {
-		NLS.initializeMessages(WebBrowserUIPlugin.PLUGIN_ID, Messages.class);
+		NLS.initializeMessages("org.eclipse.ui.internal.browser.Messages", Messages.class);
 	}
+
+    public static String BrowserText_title;
+    public static String BrowserText_link;
+    public static String BrowserText_tooltip;
+    public static String BrowserText_dtitle;
+    public static String BrowserText_text;
+    public static String BrowserText_button_collapse;
+    public static String BrowserText_button_expand;
 }

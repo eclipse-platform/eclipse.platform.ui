@@ -26,7 +26,6 @@ import org.eclipse.swt.browser.StatusTextListener;
 import org.eclipse.swt.browser.TitleEvent;
 import org.eclipse.swt.browser.TitleListener;
 import org.eclipse.swt.browser.WindowEvent;
-import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -196,8 +195,7 @@ public class BrowserViewer extends Composite {
         // we can use it in this environment
         //if (WebBrowserUtil.canUseInternalWebBrowser())
         try {
-            //this.browser = new Browser(this, SWT.NONE);
-            text = new BrowserText(this, SWT.V_SCROLL|SWT.H_SCROLL);
+            this.browser = new Browser(this, SWT.NONE);
         }
         catch (SWTError e) {
             if (e.code!=SWT.ERROR_NO_HANDLES) {
@@ -205,7 +203,7 @@ public class BrowserViewer extends Composite {
                     .getResource("%errorCouldNotLaunchInternalWebBrowser"));
                 return;
             }
-            text = new BrowserText(this, SWT.V_SCROLL|SWT.H_SCROLL);
+            text = new BrowserText(this, this, e);
         }
 
         if (showURLbar)

@@ -10,19 +10,24 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.browser;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IPathEditorInput;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.part.EditorPart;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -333,5 +338,71 @@ public class WebBrowserEditor extends EditorPart implements IBrowserViewerContai
 
     public IActionBars getActionBars() {
         return getEditorSite().getActionBars();
+    }
+
+    public void openInExternalBrowser(String url) {
+        final IEditorInput input = getEditorInput();
+        final String id = getEditorSite().getId();
+        Runnable runnable = new Runnable() {
+            public void run() {
+                doOpenExternalEditor(id, input);
+            }
+        };
+        Display display = getSite().getShell().getDisplay();
+        close();
+        display.asyncExec(runnable);
+    }
+    
+    private void doOpenExternalEditor(String id, IEditorInput input) {
+        IEditorRegistry registry = PlatformUI.getWorkbench().getEditorRegistry();
+        String name = input.getName();
+        IEditorDescriptor [] editors = registry.getEditors(name);
+        IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+
+        String editorId = null;
+        for (int i=0; i<editors.length; i++) {
+            IEditorDescriptor editor = editors[i];
+            if (editor.getId().equals(id))
+                continue;
+            editorId = editor.getId();
+            break;
+        } 
+        
+        IEditorDescriptor ddesc = registry.getDefaultEditor(name);
+        if (ddesc!=null && ddesc.getId().equals(id)) {
+            int dot = name.lastIndexOf('.');
+            String ext = name;
+            if (dot!= -1)
+                ext = "*."+name.substring(dot+1);
+            //registry.setDefaultEditor(ext, null);
+        }
+ 
+         if (editorId==null) {
+            // no editor
+            // next check with the OS for an external editor
+            if (registry.isSystemExternalEditorAvailable(name))
+                editorId = IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID;
+        }
+
+        if (editorId!=null) {
+            try {
+                page.openEditor(input, editorId);
+                return;
+            } catch (PartInitException e) {
+            }
+        }
+        
+        // no registered editor - open using browser support
+        try {
+            URL theURL = new URL(webBrowser.getURL());
+            IWorkbenchBrowserSupport support = PlatformUI.getWorkbench().getBrowserSupport();
+            support.getExternalBrowser().openURL(theURL);
+        }
+        catch (MalformedURLException e) {
+            //TODO handle this
+        }
+        catch (PartInitException e) {
+            //TODO handle this
+        }
     }
 }

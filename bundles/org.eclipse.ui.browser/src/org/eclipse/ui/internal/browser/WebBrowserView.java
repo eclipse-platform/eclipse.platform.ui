@@ -10,8 +10,14 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.browser;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.part.ViewPart;
 /**
  * A Web browser viewer.
@@ -74,5 +80,19 @@ public class WebBrowserView extends ViewPart implements IBrowserViewerContainer 
 
     public IActionBars getActionBars() {
         return getViewSite().getActionBars();
+    }
+
+    public void openInExternalBrowser(String url) {
+        try {
+            URL theURL = new URL(url);
+            IWorkbenchBrowserSupport support = PlatformUI.getWorkbench().getBrowserSupport();
+            support.getExternalBrowser().openURL(theURL);
+        }
+        catch (MalformedURLException e) {
+            //TODO handle this
+        }
+        catch (PartInitException e) {
+            //TODO handle this
+        }
     }
 }
