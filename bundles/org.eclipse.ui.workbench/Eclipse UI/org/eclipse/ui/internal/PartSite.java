@@ -231,7 +231,7 @@ public class PartSite implements IWorkbenchPartSite {
 	 */
 	public IKeyBindingService getKeyBindingService() {
 		if (keyBindingService == null) {
-			keyBindingService = new KeyBindingService();
+			keyBindingService = new KeyBindingService(getActionService(), getContextService());
 			
 			if (this instanceof EditorSite) {
 				EditorActionBuilder.ExternalContributor contributor = (EditorActionBuilder.ExternalContributor) ((EditorSite) this).getExtensionActionBarContributor();

@@ -11,73 +11,53 @@
 
 package org.eclipse.ui.internal;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.eclipse.jface.action.IAction;
-import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.ui.IKeyBindingService;
+import org.eclipse.ui.commands.IActionService;
+import org.eclipse.ui.commands.IContextService;
 
 final class KeyBindingService implements IKeyBindingService {
 	
-	private SortedMap commandIdToActionMap = new TreeMap();
-	private String[] scopes = new String[] { IWorkbenchConstants.DEFAULT_ACCELERATOR_SCOPE_ID };
+	private SortedMap actionMap = new TreeMap();
+	private IActionService actionService;
+	private IContextService contextService;
 	
-	KeyBindingService() {
+	KeyBindingService(IActionService actionService, IContextService contextService) {
 		super();
+		this.actionService = actionService;
+		this.contextService = contextService;
 	}
 
-	IAction getAction(String command) {
-		return (IAction) commandIdToActionMap.get(command);
-	}
-	
 	public String[] getScopes() {
-    	return (String[]) scopes.clone();
+    	List contexts = contextService.getContexts();
+    	return (String[]) contexts.toArray(new String[contexts.size()]);
     }
 
-	public void setScopes(String[] scopes)
-		throws IllegalArgumentException {
-		if (scopes == null || scopes.length < 1)
-			throw new IllegalArgumentException();
-			
-    	this.scopes = (String[]) scopes.clone();
-    	
-    	for (int i = 0; i < scopes.length; i++)
-			if (scopes[i] == null)
-				throw new IllegalArgumentException();    	
+	public void setScopes(String[] scopes) {
+		List contexts = Arrays.asList(scopes);
+		contextService.setContexts(contexts);		 	
     }
 
 	public void registerAction(IAction action) {
     	String command = action.getActionDefinitionId();
 
-		if (command != null)
-			commandIdToActionMap.put(command, action);
+		if (command != null) {
+			actionMap.put(command, action);		
+			actionService.setActionMap(actionMap);
+		}
     }
     
 	public void unregisterAction(IAction action) {   		
     	String command = action.getActionDefinitionId();
 
-		if (command != null)
-			commandIdToActionMap.remove(command);
-    }
-
-    public String getActiveAcceleratorConfigurationId() {
-    	return org.eclipse.ui.internal.commands.Manager.getInstance().getKeyMachine().getConfiguration();
-    }
-
-	public String getActiveAcceleratorScopeId() {
-   		return getScopes()[0];
-    }
-
-    public void setActiveAcceleratorScopeId(String scopeId)
-    	throws IllegalArgumentException {
-   		setScopes(new String[] { scopeId });
-    }
-    
-	public boolean processKey(KeyEvent event) {
-		return false;
-    }
-
-	public void enable(boolean enable) {
-	}
+		if (command != null) {
+			actionMap.remove(command);
+			actionService.setActionMap(actionMap);
+		}
+    }	
 }

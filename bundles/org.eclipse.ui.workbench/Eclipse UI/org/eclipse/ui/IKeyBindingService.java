@@ -8,9 +8,10 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
+
 package org.eclipse.ui;
+
 import org.eclipse.jface.action.IAction;
-import org.eclipse.swt.events.KeyEvent;
 
 /**
  * The key binding service allows one to query or set the scope of Eclipse
@@ -58,53 +59,4 @@ public interface IKeyBindingService {
 	 */	
 	void unregisterAction(IAction action)
 		throws IllegalArgumentException;
-		
-	/**
-	 * Returns the id of the active accelerator configuration.
-	 * 
-	 * @return the id of the active accelerator configuration
-	 * @deprecated
-	 */
-	String getActiveAcceleratorConfigurationId();
-	
-	/**
-	 * Returns the id of the active accelerator scope.
-	 * 
-	 * @return the id of the active accelerator scope
-	 * @deprecated
-	 */
-	String getActiveAcceleratorScopeId();	
-
-	/**
-	 * Sets the active accelerator scope id.
-	 * 
-	 * @param scopeId the new accelerator scope id
-	 * @deprecated
-	 */
-	void setActiveAcceleratorScopeId(String scopeId)
-		throws IllegalArgumentException;
-	
-	/**
-	 * To be called by an editor upon receiving a key event from its SWT
-	 * text widget. The key binding service invokes the corresponding action
-	 * if the key is mapped to an action. The key binding service may also
-	 * invoke a mode, if the key is the first key in a (multi-key) accelerator
-	 * key sequence of a registered action. If either of these cases occurs,
-	 * processKey() returns true. If neither of these cases occurs, nothing
-	 * happens and processKey() returns false.
-	 * 
-	 * @param event The key to be processed
-	 * @return true if the key was consumed by the key binding service,
-	 * false if the editor is free to consume the key
-	 * @deprecated
-	 */
-	boolean processKey(KeyEvent event);
-	
-	/**
-	 * Enables or Disables this service. The default is false. Registered accelerators
-	 * have no efect until the service is enabled;
-	 * 
-	 * @deprecated
-	 */	
-	void enable(boolean enable);
 }

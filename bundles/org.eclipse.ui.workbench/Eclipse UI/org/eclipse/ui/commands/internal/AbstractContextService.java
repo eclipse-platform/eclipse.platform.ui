@@ -27,7 +27,7 @@ public abstract class AbstractContextService implements IContextService {
 	}
 
 	public void addContextServiceListener(IContextServiceListener contextServiceListener) {
-		if (contextServiceListeners != null)
+		if (contextServiceListeners == null)
 			contextServiceListeners = new ArrayList();
 		
 		if (!contextServiceListeners.contains(contextServiceListener))

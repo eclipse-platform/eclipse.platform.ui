@@ -767,24 +767,8 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	public void updateActiveKeyBindingService() {
 		IWorkbenchWindow workbenchWindow = getActiveWorkbenchWindow();
 		
-		if (workbenchWindow != null && workbenchWindow instanceof WorkbenchWindow) {
-			WWinKeyBindingService wWinKeyBindingService = ((WorkbenchWindow) workbenchWindow).getKeyBindingService();
-	
-			if (wWinKeyBindingService != null) {
-				IWorkbenchPage activePage = workbenchWindow.getActivePage();
-						
-				if (activePage != null) {
-					IWorkbenchPart activePart = activePage.getActivePart();
-								
-					if (activePart != null) {
-						wWinKeyBindingService.update(activePart);
-						return;
-					}
-				}
-
-				wWinKeyBindingService.clear();
-			}				
-		}
+		if (workbenchWindow != null && workbenchWindow instanceof WorkbenchWindow)
+			((WorkbenchWindow) workbenchWindow).updateActionAndContextManager();			
 	}
 		
 	/**

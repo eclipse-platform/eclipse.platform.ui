@@ -84,6 +84,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.commands.IActionService;
 import org.eclipse.ui.commands.IContextService;
+import org.eclipse.ui.commands.internal.ActionAndContextManager;
 import org.eclipse.ui.commands.internal.SimpleActionService;
 import org.eclipse.ui.commands.internal.SimpleContextService;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -102,6 +103,7 @@ import org.eclipse.ui.internal.registry.IActionSet;
 public class WorkbenchWindow extends ApplicationWindow
 	implements IWorkbenchWindow {
 	
+	private ActionAndContextManager actionAndContextManager;
 	private IActionService actionService;
 	private IContextService contextService;
 	private int number;
@@ -111,7 +113,7 @@ public class WorkbenchWindow extends ApplicationWindow
 	private PerspectiveListenerListOld perspectiveListeners = new PerspectiveListenerListOld();
 	private IPartDropListener partDropListener;
 	private WWinPerspectiveService perspectiveService = new WWinPerspectiveService(this);
-	private WWinKeyBindingService keyBindingService;
+	private KeyBindingService keyBindingService;
 	private WWinPartService partService = new WWinPartService(this);
 	private ActionPresentation actionPresentation;
 	private WWinActionBars actionBars;
@@ -329,6 +331,11 @@ public WorkbenchWindow(Workbench workbench, int number) {
 	};
 }
 
+void updateActionAndContextManager() {
+	if (actionAndContextManager != null)
+		actionAndContextManager.update();
+}
+
 public IActionService getActionService() {
 	if (actionService == null)
 		actionService = new SimpleActionService();
@@ -380,7 +387,7 @@ private void updateActionMap() {
 	SortedMap actionMap = new TreeMap();
 	actionMap.putAll(globalActionsCommandIdToActionMap);
 	actionMap.putAll(actionSetsCommandIdToActionMap);
-	actionService.setActionMap(actionMap);
+	getActionService().setActionMap(actionMap);
 }
 
 /*
@@ -490,9 +497,10 @@ protected IWorkbenchPage busyOpenPage(String perspID, IAdaptable input)
  */
 public int open() {
 	ContextManager contextManager = ContextManager.getInstance();
-	int r = super.open();
+	int result = super.open();	
+	actionAndContextManager = new ActionAndContextManager(this);
 	workbench.fireWindowOpened(this);
-	return r;
+	return result;
 }
 /* (non-Javadoc)
  * Method declared on Window.
@@ -1038,22 +1046,24 @@ public IPartService getPartService() {
  * @return the key binding service in use.
  * @since 2.0
  */
-public WWinKeyBindingService getKeyBindingService() {
+public KeyBindingService getKeyBindingService() {
 	if (keyBindingService == null) {
-		keyBindingService = new WWinKeyBindingService(this);
+		keyBindingService = new KeyBindingService(getActionService(), getContextService());
 		updateActiveActions();
 	}
+	
 	return keyBindingService;	
 }
+
 /**
  * Re-register the action sets actions in the keybinding service.
  */
 private void updateActiveActions() {
-	if(keyBindingService == null) {
+	if (keyBindingService == null)
 		getKeyBindingService();
-	} else {
-		IActionSet sets[] = actionPresentation.getActionSets();
-		keyBindingService.registerActionSets(sets);
+	else {
+		IActionSet actionSets[] = actionPresentation.getActionSets();
+		registerActionSets(actionSets);
 	}
 }
 
@@ -1423,8 +1433,8 @@ public IStatus restoreState(IMemento memento, IPerspectiveDescriptor activeDescr
 	setActivePage(newActivePage);
 	IWorkbenchPart part = newActivePage.getActivePart();
 	
-	if (part != null)
-		getKeyBindingService().update(part);
+	// TODO: is this necessary?
+	updateActionAndContextManager();
 		
 	// Restore the coolbar manager state. 
 	IMemento coolBarMem = memento.getChild(IWorkbenchConstants.TAG_TOOLBAR_LAYOUT);

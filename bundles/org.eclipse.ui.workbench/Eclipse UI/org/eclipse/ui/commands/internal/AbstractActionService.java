@@ -27,7 +27,7 @@ public abstract class AbstractActionService implements IActionService {
 	}
 
 	public void addActionServiceListener(IActionServiceListener actionServiceListener) {
-		if (actionServiceListeners != null)
+		if (actionServiceListeners == null)
 			actionServiceListeners = new ArrayList();
 		
 		if (!actionServiceListeners.contains(actionServiceListener))

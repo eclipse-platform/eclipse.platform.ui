@@ -53,12 +53,16 @@ class StatusLineContributionItem extends ContributionItem {
 		if (this.text.length() == 0) {
 			if (isVisible()) {
 				setVisible(false);
-				getParent().update(true);
+				
+				if (getParent() != null)
+					getParent().update(true);
 			}
 		} else {
 			if (!isVisible()) {
 				setVisible(true);
-				getParent().update(true);	
+
+				if (getParent() != null)
+					getParent().update(true);	
 			}
 		}
 	}

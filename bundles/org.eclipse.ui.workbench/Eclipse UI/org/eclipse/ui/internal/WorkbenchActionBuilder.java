@@ -644,15 +644,13 @@ public class WorkbenchActionBuilder {
 
 		// Get services for notification.
 		IPartService partService = getWindow().getPartService();
-		WWinKeyBindingService keyBindingService =
-			getWindow().getKeyBindingService();
 
 		// Many actions need the workbench.
 		IWorkbench workbench = getWindow().getWorkbench();
 
 		newWizardAction = new NewWizardAction(getWindow());
 		// images for this action are set in its constructor
-		keyBindingService.registerGlobalAction(newWizardAction);
+		getWindow().registerGlobalAction(newWizardAction);
 
 		ISharedImages sharedImages = workbench.getSharedImages();
 		newWizardDropDownAction =
@@ -689,7 +687,7 @@ public class WorkbenchActionBuilder {
 		rebuildAllAction =
 			new GlobalBuildAction(window, IncrementalProjectBuilder.FULL_BUILD);
 		rebuildAllAction.setActionDefinitionId(rebuildAllActionDefId);
-		keyBindingService.registerGlobalAction(rebuildAllAction);
+		getWindow().registerGlobalAction(rebuildAllAction);
 
 		buildAllAction =
 			new GlobalBuildAction(
@@ -705,7 +703,7 @@ public class WorkbenchActionBuilder {
 			WorkbenchImages.getImageDescriptor(
 				IWorkbenchGraphicConstants.IMG_CTOOL_BUILD_EXEC_DISABLED));
 		buildAllAction.setActionDefinitionId(buildAllActionDefId);
-		keyBindingService.registerGlobalAction(buildAllAction);
+		getWindow().registerGlobalAction(buildAllAction);
 
 		saveAction = new SaveAction(window);
 		saveAction.setImageDescriptor(
@@ -719,7 +717,7 @@ public class WorkbenchActionBuilder {
 				IWorkbenchGraphicConstants.IMG_CTOOL_SAVE_EDIT_DISABLED));
 		partService.addPartListener(saveAction);
 		saveAction.setActionDefinitionId(saveActionDefId);
-		keyBindingService.registerGlobalAction(saveAction);
+		getWindow().registerGlobalAction(saveAction);
 
 		saveAsAction = new SaveAsAction(window);
 		saveAsAction.setImageDescriptor(
@@ -745,7 +743,7 @@ public class WorkbenchActionBuilder {
 				IWorkbenchGraphicConstants.IMG_CTOOL_SAVEALL_EDIT_DISABLED));
 		partService.addPartListener(saveAllAction);
 		saveAllAction.setActionDefinitionId(saveAllActionDefId);
-		keyBindingService.registerGlobalAction(saveAllAction);
+		getWindow().registerGlobalAction(saveAllAction);
 
 		undoAction = createGlobalAction(IWorkbenchActionConstants.UNDO, "edit", true); //$NON-NLS-1$
 		undoAction.setImageDescriptor(
@@ -810,17 +808,17 @@ public class WorkbenchActionBuilder {
 		closeAction = new CloseEditorAction(window);
 		partService.addPartListener(closeAction);
 		closeAction.setActionDefinitionId(closeActionDefId);
-		keyBindingService.registerGlobalAction(closeAction);
+		getWindow().registerGlobalAction(closeAction);
 
 		closeAllAction = new CloseAllAction(window);
 		partService.addPartListener(closeAllAction);
 		closeAllAction.setActionDefinitionId(closeAllActionDefId);
-		keyBindingService.registerGlobalAction(closeAllAction);
+		getWindow().registerGlobalAction(closeAllAction);
 
 		closeAllSavedAction = new CloseAllSavedAction(window);
 		partService.addPartListener(closeAllSavedAction);
 		closeAllSavedAction.setActionDefinitionId(closeAllSavedActionDefId);
-		keyBindingService.registerGlobalAction(closeAllSavedAction);
+		getWindow().registerGlobalAction(closeAllSavedAction);
 
 		pinEditorAction = new PinEditorAction(window);
 		partService.addPartListener(pinEditorAction);
@@ -838,7 +836,7 @@ public class WorkbenchActionBuilder {
 		aboutAction.setImageDescriptor(
 			WorkbenchImages.getImageDescriptor(
 				IWorkbenchGraphicConstants.IMG_OBJS_DEFAULT_PROD));
-		keyBindingService.registerGlobalAction(aboutAction);
+		getWindow().registerGlobalAction(aboutAction);
 
 		openPreferencesAction = new OpenPreferencesAction(window);
 
@@ -871,7 +869,7 @@ public class WorkbenchActionBuilder {
 		for (int i = 0; i < infos.length; i++) {
 			if (infos[i].getWelcomePageURL() != null) {
 				quickStartAction = new QuickStartAction(window);
-				keyBindingService.registerGlobalAction(quickStartAction);
+				getWindow().registerGlobalAction(quickStartAction);
 				break;
 			}
 		}
@@ -879,7 +877,7 @@ public class WorkbenchActionBuilder {
 		for (int i = 0; i < infos.length; i++) {
 			if (infos[i].getTipsAndTricksHref() != null) {
 				tipsAndTricksAction = new TipsAndTricksAction(window);
-				keyBindingService.registerGlobalAction(tipsAndTricksAction);
+				getWindow().registerGlobalAction(tipsAndTricksAction);
 				break;
 			}
 		}
@@ -887,57 +885,57 @@ public class WorkbenchActionBuilder {
 		// Actions for invisible accelerators
 		showViewMenuAction = new ShowViewMenuAction(window);
 		showViewMenuAction.setActionDefinitionId(showViewMenuActionDefId);
-		keyBindingService.registerGlobalAction(showViewMenuAction);
+		getWindow().registerGlobalAction(showViewMenuAction);
 
 		showPartPaneMenuAction = new ShowPartPaneMenuAction(window);
 		showPartPaneMenuAction.setActionDefinitionId(
 			showPartPaneMenuActionDefId);
-		keyBindingService.registerGlobalAction(showPartPaneMenuAction);
+		getWindow().registerGlobalAction(showPartPaneMenuAction);
 
 		nextEditorAction = new CycleEditorAction(window, true);
 		nextEditorAction.setActionDefinitionId(nextEditorActionDefId);
-		keyBindingService.registerGlobalAction(nextEditorAction);
+		getWindow().registerGlobalAction(nextEditorAction);
 		nextEditorAction.commandForward = nextEditorActionDefId;
 		nextEditorAction.commandBackward = prevEditorActionDefId;
 
 		prevEditorAction = new CycleEditorAction(window, false);
 		prevEditorAction.setActionDefinitionId(prevEditorActionDefId);
-		keyBindingService.registerGlobalAction(prevEditorAction);
+		getWindow().registerGlobalAction(prevEditorAction);
 		prevEditorAction.commandForward = nextEditorActionDefId;
 		prevEditorAction.commandBackward = prevEditorActionDefId;
 
 		nextPartAction = new CyclePartAction(window, true);
 		nextPartAction.setActionDefinitionId(nextPartActionDefId);
-		keyBindingService.registerGlobalAction(nextPartAction);
+		getWindow().registerGlobalAction(nextPartAction);
 		nextPartAction.commandForward = nextPartActionDefId;
 		nextPartAction.commandBackward = prevPartActionDefId;
 
 		prevPartAction = new CyclePartAction(window, false);
 		prevPartAction.setActionDefinitionId(prevPartActionDefId);
-		keyBindingService.registerGlobalAction(prevPartAction);
+		getWindow().registerGlobalAction(prevPartAction);
 		prevPartAction.commandForward = nextPartActionDefId;
 		prevPartAction.commandBackward = prevPartActionDefId;
 
 		nextPerspectiveAction = new CyclePerspectiveAction(window, true);
 		nextPerspectiveAction.setActionDefinitionId(nextPerspectiveActionDefId);
-		keyBindingService.registerGlobalAction(nextPerspectiveAction);
+		getWindow().registerGlobalAction(nextPerspectiveAction);
 		nextPerspectiveAction.commandForward = nextPerspectiveActionDefId;
 		nextPerspectiveAction.commandBackward = prevPerspectiveActionDefId;
 
 		prevPerspectiveAction = new CyclePerspectiveAction(window, false);
 		prevPerspectiveAction.setActionDefinitionId(prevPerspectiveActionDefId);
-		keyBindingService.registerGlobalAction(prevPerspectiveAction);
+		getWindow().registerGlobalAction(prevPerspectiveAction);
 		prevPerspectiveAction.commandForward = nextPerspectiveActionDefId;
 		prevPerspectiveAction.commandBackward = prevPerspectiveActionDefId;
 
 		activateEditorAction = new ActivateEditorAction(window);
 		activateEditorAction.setActionDefinitionId(activateEditorActionDefId);
-		keyBindingService.registerGlobalAction(activateEditorAction);
+		getWindow().registerGlobalAction(activateEditorAction);
 
 		workbenchEditorsAction = new WorkbenchEditorsAction(window);
 		workbenchEditorsAction.setActionDefinitionId(
 			workbenchEditorsActionDefId);
-		keyBindingService.registerGlobalAction(workbenchEditorsAction);
+		getWindow().registerGlobalAction(workbenchEditorsAction);
 
 		hideShowEditorAction = new ToggleEditorsVisibilityAction(window);
 		savePerspectiveAction = new SavePerspectiveAction(window);
@@ -955,7 +953,7 @@ public class WorkbenchActionBuilder {
 		backwardHistoryAction.setDisabledImageDescriptor(
 			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_BACK_DISABLED));
 		backwardHistoryAction.setActionDefinitionId(backwardHistoryActionDefId);
-		keyBindingService.registerGlobalAction(backwardHistoryAction);
+		getWindow().registerGlobalAction(backwardHistoryAction);
 
 		forwardHistoryAction = new NavigationHistoryAction(window, true);
 		forwardHistoryAction.setImageDescriptor(
@@ -965,7 +963,7 @@ public class WorkbenchActionBuilder {
 		forwardHistoryAction.setDisabledImageDescriptor(
 			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD_DISABLED));
 		forwardHistoryAction.setActionDefinitionId(forwardHistoryActionDefId);
-		keyBindingService.registerGlobalAction(forwardHistoryAction);
+		getWindow().registerGlobalAction(forwardHistoryAction);
 
 		revertAction = createGlobalAction(IWorkbenchActionConstants.REVERT, "file", false); //$NON-NLS-1$
 		refreshAction = createGlobalAction(IWorkbenchActionConstants.REFRESH, "file", false); //$NON-NLS-1$
@@ -991,7 +989,7 @@ public class WorkbenchActionBuilder {
 		projectPropertyDialogAction = new ProjectPropertyDialogAction(window);
 		projectPropertyDialogAction.setActionDefinitionId(projectPropertiesActionDefId);
 		partService.addPartListener(projectPropertyDialogAction);
-		keyBindingService.registerGlobalAction(projectPropertyDialogAction);
+		getWindow().registerGlobalAction(projectPropertyDialogAction);
 	}
 
 	/**
@@ -1037,7 +1035,7 @@ public class WorkbenchActionBuilder {
 		action.setToolTipText(toolTipText);
 		getWindow().getPartService().addPartListener(action);
 		action.setActionDefinitionId(PlatformUI.PLUGIN_ID + "." + actionDefPrefix + "." + actionDefSuffix); //$NON-NLS-1$ //$NON-NLS-2$
-		getWindow().getKeyBindingService().registerGlobalAction(action);
+		getWindow().registerGlobalAction(action);
 		return action;
 	}
 

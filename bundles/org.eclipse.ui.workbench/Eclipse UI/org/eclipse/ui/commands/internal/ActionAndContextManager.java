@@ -28,8 +28,11 @@ import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
@@ -39,6 +42,7 @@ import org.eclipse.ui.commands.IActionServiceListener;
 import org.eclipse.ui.commands.IContextService;
 import org.eclipse.ui.commands.IContextServiceListener;
 import org.eclipse.ui.internal.AcceleratorMenu;
+import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.commands.KeySupport;
@@ -113,13 +117,34 @@ public class ActionAndContextManager {
 	public ActionAndContextManager(WorkbenchWindow workbenchWindow) {
 		super();
 		this.workbenchWindow = workbenchWindow;	
+		workbenchWindow.getStatusLineManager().add(modeContributionItem);							
 		workbenchWindowActionService = ((WorkbenchWindow) workbenchWindow).getActionService();
 		workbenchWindowActionService.addActionServiceListener(actionServiceListener);	
 		workbenchWindowContextService = ((WorkbenchWindow) workbenchWindow).getContextService();
 		workbenchWindowContextService.addContextServiceListener(contextServiceListener);
-		workbenchWindow.getPartService().addPartListener(partListener);				
-		workbenchWindow.getShell().addShellListener(shellListener);
-		partOrShellEvent();
+
+		this.workbenchWindow.addPageListener(new IPageListener() {			
+			public void pageActivated(IWorkbenchPage workbenchPage) {
+				workbenchPage.addPartListener(partListener);		
+			}
+			
+			public void pageClosed(IWorkbenchPage workbenchPage) {
+				workbenchPage.removePartListener(partListener);			
+			}
+			
+			public void pageOpened(IWorkbenchPage workbenchPage) {
+				workbenchPage.addPartListener(partListener);			
+			}
+		});
+		
+		workbenchWindow.getPartService().addPartListener(partListener);						
+		
+		Shell shell = workbenchWindow.getShell();
+		
+		if (shell != null)
+			shell.addShellListener(shellListener);
+
+		partEvent();
 	}
 
 	private void actionServiceChanged() {
@@ -129,16 +154,8 @@ public class ActionAndContextManager {
 	private void contextServiceChanged() {
 		update();
 	}	
-	
+
 	private void partEvent() {
-		partOrShellEvent();
-	}
-	
-	private void shellEvent() {
-		partOrShellEvent();
-	}
-	
-	private void partOrShellEvent() {
 		IActionService activeWorkbenchPartActionService = null;
 		IContextService activeWorkbenchPartContextService = null;
 		IWorkbenchPage activeWorkbenchPage = workbenchWindow.getActivePage();
@@ -156,7 +173,7 @@ public class ActionAndContextManager {
 			}
 		}
 
-		boolean update = false;
+		boolean updateRequired = false;
 				
 		if (this.activeWorkbenchPartActionService != activeWorkbenchPartActionService) {
 			if (this.activeWorkbenchPartActionService != null)
@@ -167,7 +184,7 @@ public class ActionAndContextManager {
 			if (this.activeWorkbenchPartActionService != null)
 				this.activeWorkbenchPartActionService.addActionServiceListener(actionServiceListener);
 				
-			update = true;				
+			updateRequired = true;				
 		}
 	
 		if (this.activeWorkbenchPartContextService != activeWorkbenchPartContextService) {
@@ -179,11 +196,15 @@ public class ActionAndContextManager {
 			if (this.activeWorkbenchPartContextService != null)
 				this.activeWorkbenchPartContextService.addContextServiceListener(contextServiceListener);
 				
-			update = true;				
+			updateRequired = true;				
 		}
 	
-		if (update)
+		if (updateRequired)
 			update();
+	}
+
+	private void shellEvent() {
+		update();
 	}
 
 	private void clear() {		
@@ -192,7 +213,7 @@ public class ActionAndContextManager {
 		update();
 	}
 
-	private void pressed(Stroke stroke) { 
+	private void pressed(Stroke stroke, Event event) { 
 		SequenceMachine keyMachine = Manager.getInstance().getKeyMachine();				
 		List strokes = new ArrayList(keyMachine.getMode().getStrokes());
 		strokes.add(stroke);
@@ -206,7 +227,7 @@ public class ActionAndContextManager {
 			IAction action = getAction((String) sequenceMapForMode.get(childMode));
 			
 			if (action != null && action.isEnabled())
-				action.run();
+				action.runWithEvent(event);
 		}
 		else {
 			modeContributionItem.setText(KeySupport.formatSequence(childMode, true));
@@ -242,7 +263,7 @@ public class ActionAndContextManager {
 		return null;
 	}
 
-	private void update() {
+	public void update() {
 		List contexts = new ArrayList();
 		
 		if (workbenchWindowContextService != null)
@@ -254,6 +275,10 @@ public class ActionAndContextManager {
 		SequenceMachine keyMachine = Manager.getInstance().getKeyMachine();      		
 			
 		try {
+			// TODO: get rid of this
+			if (contexts.size() == 0)
+				contexts.add(IWorkbenchConstants.DEFAULT_ACCELERATOR_SCOPE_ID);
+			
 			keyMachine.setScopes((String[]) contexts.toArray(new String[contexts.size()]));
 		} catch (IllegalArgumentException eIllegalArgument) {
 			System.err.println(eIllegalArgument);
@@ -301,7 +326,21 @@ public class ActionAndContextManager {
 			acceleratorMenu = new AcceleratorMenu(parent);
 			acceleratorMenu.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent selectionEvent) {
-					pressed(Stroke.create(selectionEvent.detail));
+					Event event = new Event();
+					event.item = selectionEvent.item;
+					event.detail = selectionEvent.detail;
+					event.x = selectionEvent.x;
+					event.y = selectionEvent.y;
+					event.width = selectionEvent.width;
+					event.height = selectionEvent.height;
+					event.stateMask = selectionEvent.stateMask;
+					event.doit = selectionEvent.doit;
+					event.data = selectionEvent.data;
+					event.display = selectionEvent.display;
+					event.time = selectionEvent.time;
+					event.widget = selectionEvent.widget;
+					pressed(Stroke.create(selectionEvent.detail), event);
+					//pressed(Stroke.create(selectionEvent.detail));
 				}
 			});
 		}
