@@ -10,12 +10,13 @@
  *******************************************************************************/
 package org.eclipse.ant.tests.core.tests;
 
-
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
+import org.eclipse.ant.core.Property;
 import org.eclipse.ant.core.Task;
 import org.eclipse.ant.tests.core.AbstractAntTest;
 import org.eclipse.ant.tests.core.testplugin.AntTestChecker;
@@ -63,5 +64,44 @@ public class TaskTests extends AbstractAntTest {
 		}
 		assertTrue("Build should have failed as task no longer defined", false);
 		restorePreferenceDefaults();
+	}
+	
+	public void testAddTaskFromFolder() throws MalformedURLException, CoreException {
+		try {
+			AntCorePreferences prefs =AntCorePlugin.getPlugin().getPreferences();
+			Task newTask= new Task();
+			String path= getProject().getFolder("lib").getFile("taskFolder").getLocation().toFile().getAbsolutePath();
+			URL url= new URL("file:" + path + File.separatorChar);
+			URL urls[] = prefs.getCustomURLs();
+			URL newUrls[] = new URL[urls.length + 1];
+			System.arraycopy(urls, 0, newUrls, 0, urls.length);
+			newUrls[urls.length] = url;
+			prefs.setCustomURLs(newUrls);
+		
+			newTask.setLibrary(url);
+			newTask.setTaskName("AntTestTask");
+			newTask.setClassName("org.eclipse.ant.tests.core.support.tasks.AntTestTask2");
+			prefs.setCustomTasks(new Task[]{newTask});
+		
+			prefs.updatePluginPreferences();
+		
+			run("CustomTask.xml");
+			String msg= (String)AntTestChecker.getDefault().getMessages().get(1);
+			assertTrue("Message incorrect: " + msg, msg.equals("Testing Ant in Eclipse with a custom task"));
+			assertSuccessful();
+		} finally {
+			restorePreferenceDefaults();
+		}
+	}
+		
+	public void testTasksDefinedInPropertyFile() throws CoreException {
+		try {
+			AntCorePreferences prefs =AntCorePlugin.getPlugin().getPreferences();
+			Property newProp= new Property("ROOTDIR", "..//resources");
+			prefs.setCustomProperties(new Property[]{newProp});
+			run("Bug34663.xml");
+		} finally {
+			restorePreferenceDefaults();
+		}
 	}
 }
