@@ -14,13 +14,5 @@ package org.eclipse.jface.text;
  * viewer's document is changed. Clients may implement this interface or
  * use the standard implementation <code>DefaultAutoIndentStrategy</code>.
  */
-public interface IAutoIndentStrategy {
-	
-	/**
-	 * Allows the strategy to manipulate the document command.
-	 *
-	 * @param document the document that will be changed
-	 * @param command the document command describing the indented change
-	 */
-	void customizeDocumentCommand(IDocument document, DocumentCommand command);	
+public interface IAutoIndentStrategy extends IAutoEditStrategy {	
 }

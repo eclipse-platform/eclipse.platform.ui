@@ -52,7 +52,8 @@ public interface ITextViewerExtension2 {
 	
 	/**
 	 * Returns the currently displayed text hover if any, <code>null</code>
-	 * otherwise.	 */
+	 * otherwise.
+	 * @since 2.1	 */
 	ITextHover getCurrentTextHover();
 	
 	/**
@@ -60,7 +61,27 @@ public interface ITextViewerExtension2 {
 	 * has been issued.
 	 * 
 	 * @return the location of the most recent mouse hover event
+	 * @since 2.1
 	 */
 	Point getHoverEventLocation();
-	
+
+	/**
+	 * Prepends the <code>IAutoEditStrategy</code> to the existing list for the specified content type.
+	 * The strategies are later called in reverse order of their insertion.
+	 * 
+	 * @param strategy the <code>IAutoEditStrategy</code>
+	 * @param contentType the content type
+	 * @since 2.1
+	 */
+	void prependAutoEditStrategy(IAutoEditStrategy strategy, String contentType);	
+
+	/**
+	 * Removes the first occurence of <code>IAutoEditStrategy</code> in the list for the specified content type.
+	 * 
+	 * @param strategy the <code>IAutoEditStrategy</code>
+	 * @param contentType the content type
+	 * @since 2.1
+	 */
+	void removeAutoEditStrategy(IAutoEditStrategy strategy, String contentType);	
+
 }

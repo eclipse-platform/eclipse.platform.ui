@@ -1277,15 +1277,71 @@ public class TextViewer extends Viewer implements
 	 * @see ITextViewer#setAutoIndentStrategy
 	 */
 	public void setAutoIndentStrategy(IAutoIndentStrategy strategy, String contentType) {
-		
-		if (strategy != null) {
-			if (fAutoIndentStrategies == null)
-				fAutoIndentStrategies= new HashMap();
-			fAutoIndentStrategies.put(contentType, strategy);
-		} else if (fAutoIndentStrategies != null)
-			fAutoIndentStrategies.remove(contentType);
+
+		if (fAutoIndentStrategies == null)
+			fAutoIndentStrategies= new HashMap();
+
+		List autoEditStrategies= (List) fAutoIndentStrategies.get(contentType);
+
+		if (strategy == null) {
+			if (autoEditStrategies == null)
+				return;
+				
+			fAutoIndentStrategies.put(contentType, null);
+				
+		} else {
+			if (autoEditStrategies == null) {
+				autoEditStrategies= new ArrayList();
+				fAutoIndentStrategies.put(contentType, autoEditStrategies);
+			}
+
+			autoEditStrategies.clear();
+			autoEditStrategies.add(strategy);			
+		}
 	}
-	
+
+	/*
+	 * @see org.eclipse.jface.text.ITextViewerExtension2#prependAutoEditStrategy(org.eclipse.jface.text.IAutoEditStrategy, java.lang.String)
+	 */
+	public void prependAutoEditStrategy(IAutoEditStrategy strategy, String contentType) {
+
+		if (strategy == null || contentType == null)
+			throw new IllegalArgumentException();
+
+		if (fAutoIndentStrategies == null)
+			fAutoIndentStrategies= new HashMap();
+		
+		List autoEditStrategies= (List) fAutoIndentStrategies.get(contentType);
+		if (autoEditStrategies == null) {
+			autoEditStrategies= new ArrayList();
+			fAutoIndentStrategies.put(contentType, autoEditStrategies);
+		}
+
+		autoEditStrategies.add(0, strategy);
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.ITextViewerExtension2#removeAutoEditStrategy(org.eclipse.jface.text.IAutoEditStrategy, java.lang.String)
+	 */
+	public void removeAutoEditStrategy(IAutoEditStrategy strategy, String contentType) {
+		if (fAutoIndentStrategies == null)
+			return;
+
+		List autoEditStrategies= (List) fAutoIndentStrategies.get(contentType);
+		if (autoEditStrategies == null)
+			return;
+			
+		for (final Iterator iterator= autoEditStrategies.iterator(); iterator.hasNext(); ) {
+			if (iterator.next().equals(strategy)) {
+				iterator.remove();
+				break;
+			}
+		}
+		
+		if (autoEditStrategies.isEmpty())
+			fAutoIndentStrategies.put(contentType, null);
+	}
+
 	/*
 	 * @see ITextViewer#setEventConsumer
 	 */
@@ -2539,17 +2595,38 @@ public class TextViewer extends Viewer implements
 	 * Hook called on receipt of a <code>VerifyEvent</code>. The event has
 	 * been translated into a <code>DocumentCommand</code> which can now be
 	 * manipulated by interested parties. By default, the hook forwards the command
-	 * to the installed <code>IAutoIndentStrategy</code>.
+	 * to the installed instances of <code>IAutoEditStrategy</code>.
 	 *
 	 * @param command the document command representing the verify event
 	 */
 	protected void customizeDocumentCommand(DocumentCommand command) {
 		if (fIgnoreAutoIndent)
 			return;
-			IAutoIndentStrategy s= (IAutoIndentStrategy) selectContentTypePlugin(command.offset, fAutoIndentStrategies);
-			if (s != null)
-				s.customizeDocumentCommand(getDocument(), command);
-		}
+
+		List strategies= (List) selectContentTypePlugin(command.offset, fAutoIndentStrategies);
+		if (strategies == null)
+			return;
+
+		switch (strategies.size()) {
+		// optimizations
+		case 0:
+			break;
+
+		case 1:
+			((IAutoEditStrategy) strategies.iterator().next()).customizeDocumentCommand(getDocument(), command);
+			break;
+				
+		// make iterator robust against adding/removing strategies from within strategies
+		default:			
+			strategies= new ArrayList(strategies);
+
+			IDocument document= getDocument();		
+			for (final Iterator iterator= strategies.iterator(); iterator.hasNext(); )
+				((IAutoEditStrategy) iterator.next()).customizeDocumentCommand(document, command);
+
+			break;
+		}			
+	}
 	
 	/**
 	 * @see VerifyListener#verifyText
@@ -2568,9 +2645,9 @@ public class TextViewer extends Viewer implements
 		if (!fDocumentCommand.fillEvent(e, offset)) {
 			try {
 				fVerifyListener.forward(false);
-				getDocument().replace(fDocumentCommand.offset, fDocumentCommand.length, fDocumentCommand.text);
+				fDocumentCommand.execute(getDocument());
 				if (fTextWidget != null) {
-					int caretOffset= fDocumentCommand.offset + (fDocumentCommand.text == null ? 0 : fDocumentCommand.text.length()) - offset;
+					int caretOffset= fDocumentCommand.caretOffset - getVisibleRegionOffset();					
 					fTextWidget.setCaretOffset(caretOffset);
 				}
 			} catch (BadLocationException x) {
