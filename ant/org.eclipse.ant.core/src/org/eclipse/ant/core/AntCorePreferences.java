@@ -31,19 +31,22 @@ import org.eclipse.core.runtime.*;
  */
 public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.IPropertyChangeListener {
 
-	protected List defaultTasks;
-	protected List defaultTypes;
-	protected List extraClasspathURLs;
-	protected URL[] defaultAntURLs;
+	private List defaultTasks;
+	private List defaultTypes;
+	private List extraClasspathURLs;
+	private URL[] defaultAntURLs;
 	
-	protected Task[] customTasks;
-	protected Type[] customTypes;
-	protected URL[] antURLs;
-	protected URL[] customURLs;
-	protected Property[] customProperties;
-	protected String[] customPropertyFiles;
+	private Task[] customTasks;
+	private Task[] oldCustomTasks;
+	private Type[] customTypes;
+	private Type[] oldCustomTypes;
+	private URL[] antURLs;
+	private URL[] customURLs;
+	private Property[] customProperties;
+	private Property[] oldCustomProperties;
+	private String[] customPropertyFiles;
 	
-	protected List pluginClassLoaders;
+	private List pluginClassLoaders;
 	
 	private ClassLoader[] orderedPluginClassLoaders;
 	
@@ -715,6 +718,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	 * @param tasks
 	 */
 	public void setCustomTasks(Task[] tasks) {
+		oldCustomTasks= customTasks;
 		customTasks = tasks;
 	}
 
@@ -723,6 +727,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	 * @param tasks
 	 */
 	public void setCustomTypes(Type[] types) {
+		oldCustomTypes= customTypes;
 		customTypes = types;
 	}
 
@@ -764,6 +769,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	 * @param the properties defining the Ant properties
 	 */
 	public void setCustomProperties(Property[] properties) {
+		oldCustomProperties= customProperties;
 		customProperties = properties;
 	}
 
@@ -844,6 +850,14 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	}
 
 	protected void updateTasks(Preferences prefs) {
+		if (oldCustomTasks != null) {
+			for (int i = 0; i < oldCustomTasks.length; i++) {
+				Task oldTask = oldCustomTasks[i];
+				prefs.setToDefault(IAntCoreConstants.PREFIX_TASK + oldTask.getTaskName());
+			}
+			oldCustomTasks= null;	
+		}	
+		
 		if (customTasks.length == 0) {
 			prefs.setValue(IAntCoreConstants.PREFERENCE_TASKS, ""); //$NON-NLS-1$
 			return;
@@ -858,6 +872,14 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	}
 
 	protected void updateTypes(Preferences prefs) {
+		if (oldCustomTypes != null) {
+			for (int i = 0; i < oldCustomTypes.length; i++) {
+				Type oldType = oldCustomTypes[i];
+				prefs.setToDefault(IAntCoreConstants.PREFIX_TYPE + oldType.getTypeName());
+			}
+			oldCustomTypes= null;	
+		}	
+				
 		if (customTypes.length == 0) {
 			prefs.setValue(IAntCoreConstants.PREFERENCE_TYPES, ""); //$NON-NLS-1$
 			return;
@@ -872,6 +894,14 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	}
 	
 	protected void updateProperties(Preferences prefs) {
+		if (oldCustomProperties != null) {
+			for (int i = 0; i < oldCustomProperties.length; i++) {
+				Property oldProperty = oldCustomProperties[i];
+				prefs.setToDefault(IAntCoreConstants.PREFIX_PROPERTY + oldProperty.getName());
+			}
+			oldCustomProperties= null;
+		}
+		
 		if (customProperties.length == 0) {
 			prefs.setValue(IAntCoreConstants.PREFERENCE_PROPERTIES, ""); //$NON-NLS-1$
 			return;
