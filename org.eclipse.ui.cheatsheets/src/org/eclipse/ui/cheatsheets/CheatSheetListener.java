@@ -24,6 +24,13 @@ package org.eclipse.ui.cheatsheets;
  * @since 3.0
  */
 public abstract class CheatSheetListener {
+	
+	/**
+	 * Creates a new cheat sheet listener.
+	 */
+	public CheatSheetListener() {
+		// do nothing
+	}
 
 	/**
 	 * Notifies this listener of the given cheat sheet event.
