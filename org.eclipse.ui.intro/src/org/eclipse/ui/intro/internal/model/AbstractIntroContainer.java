@@ -139,6 +139,9 @@ public abstract class AbstractIntroContainer extends IntroElement {
         case IntroElement.ABSTRACT_PAGE:
             src = new AbstractIntroPage[size];
             break;
+        case IntroElement.HEAD:
+            src = new IntroHead[size];
+            break;
 
         default:
             // now handle abstract types. Vector is not homogenous.
