@@ -266,6 +266,7 @@ public class SynchronizeManager implements ISynchronizeManager {
 	}
 
 	public SynchronizeManager() {
+		init();
 	}
 
 	/*

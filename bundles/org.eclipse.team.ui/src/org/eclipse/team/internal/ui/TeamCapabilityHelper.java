@@ -26,12 +26,6 @@ import org.eclipse.ui.activities.*;
  * @since 3.0
  */
 public class TeamCapabilityHelper {
-
-    /**
-     * Resource listener that reacts to new projects (and associated natures) 
-     * coming into the workspace.
-     */
-    private IResourceChangeListener listener;
     
     /**
      * Mapping from repository provider id to IPluginContribution.  Used for proper
@@ -70,8 +64,7 @@ public class TeamCapabilityHelper {
     private TeamCapabilityHelper() {
     	providerIdToPluginId = new HashMap();
         loadRepositoryProviderIds();
-        listener = getChangeListener();
-        ResourcesPlugin.getWorkspace().addResourceChangeListener(listener);
+ 
         // crawl the initial projects
         IProject [] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
         IWorkbenchActivitySupport workbenchActivitySupport = PlatformUI.getWorkbench().getActivitySupport();
@@ -117,40 +110,6 @@ public class TeamCapabilityHelper {
 			}
 		}
 	}
-    
-    /**
-	 * Get a change listener for listening to resource changes.
-	 */
-    private IResourceChangeListener getChangeListener() {
-        return new IResourceChangeListener() {
-            public void resourceChanged(IResourceChangeEvent event) {
-                if (!WorkbenchActivityHelper.isFiltering())
-                    return;
-                IResourceDelta mainDelta = event.getDelta();
-
-                if (mainDelta == null)
-                    return;
-                
-                //Has the root changed?
-                if (mainDelta.getKind() == IResourceDelta.CHANGED
-                    && mainDelta.getResource().getType() == IResource.ROOT) {
-                    try {
-                        IResourceDelta[] children = mainDelta.getAffectedChildren();
-                        IWorkbenchActivitySupport workbenchActivitySupport = PlatformUI.getWorkbench().getActivitySupport();
-                        for (int i = 0; i < children.length; i++) {
-                            IResourceDelta delta = children[i];
-                            if (delta.getResource().getType() == IResource.PROJECT) {
-                                IProject project = (IProject) delta.getResource();
-                                processProject(project, workbenchActivitySupport);
-                            }
-                        }
-                    } catch (CoreException exception) {
-                        //Do nothing if there is a CoreException
-                    }
-                }
-            }
-        };
-    }
 
     /**
      * Handle natures for the given project.
@@ -202,15 +161,5 @@ public class TeamCapabilityHelper {
 			id = project.getPersistentProperty(PROVIDER_PROP_KEY);
     	}
     	return id;
-    }
-    
-    /**
-     * Unhooks the <code>IResourceChangeListener</code>.
-     */ 
-    public void shutdown() {
-        if (listener != null) {
-            ResourcesPlugin.getWorkspace().removeResourceChangeListener(listener);
-        }   
-        singleton = null;
     }
 }

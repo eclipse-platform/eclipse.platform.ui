@@ -42,5 +42,9 @@ public interface IPreferenceIds {
 	 * Preference for disabling various prompts
 	 */
 	public static final String SYNCVIEW_REMOVE_FROM_VIEW_NO_PROMPT = PREFIX + "remove_from_view_without_prompt"; //$NON-NLS-1$
-
+	
+	/*
+	 * Preference to determine if the workspace  is started for the first time.
+	 */
+	public static final String PREF_WORKSPACE_FIRST_TIME = PREFIX + "first_time";
 }

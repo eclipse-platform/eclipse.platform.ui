@@ -15,9 +15,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
-
 import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -54,8 +54,6 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 	private static List propertyChangeListeners = new ArrayList(5);
 	
 	private Hashtable imageDescriptors = new Hashtable(20);
-	
-	private TeamCapabilityHelper capabilityHelper;
 	
 	/**
 	 * Creates a new TeamUIPlugin.
@@ -137,6 +135,7 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 		store.setDefault(IPreferenceIds.SYNCHRONIZING_DEFAULT_PARTICIPANT_SEC_ID, GlobalRefreshAction.NO_DEFAULT_PARTICPANT);	
 		store.setDefault(IPreferenceIds.SYNCHRONIZING_COMPLETE_PERSPECTIVE, MessageDialogWithToggle.PROMPT);
 		store.setDefault(IPreferenceIds.SYNCVIEW_REMOVE_FROM_VIEW_NO_PROMPT, false);	
+		store.setDefault(IPreferenceIds.PREF_WORKSPACE_FIRST_TIME, true);
 	}
 	
 	/**
@@ -173,8 +172,25 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 		initializePreferences();		
 		IAdapterFactory factory = new TeamAdapterFactory();
 		Platform.getAdapterManager().registerAdapters(factory, DiffNode.class);
-		((SynchronizeManager)TeamUI.getSynchronizeManager()).init();
-		capabilityHelper = TeamCapabilityHelper.getInstance();
+
+		// This is a backwards compatibility check to ensure that repository
+		// provider capability are enabled automatically if an old workspace is
+		// opened for the first time and contains projects shared with a disabled
+		// capability. We defer the actual processing of the projects to another
+		// job since it is not critical to the startup of the team ui plugin.
+		IPreferenceStore store = getPreferenceStore();
+		if (store.getBoolean(IPreferenceIds.PREF_WORKSPACE_FIRST_TIME)) {
+			Job capabilityInitializer = new Job("") { //$NON-NLS-1$
+				protected IStatus run(IProgressMonitor monitor) {
+					TeamCapabilityHelper.getInstance();
+					getPreferenceStore().setValue(IPreferenceIds.PREF_WORKSPACE_FIRST_TIME, false);
+					return Status.OK_STATUS;
+				}
+			};
+			capabilityInitializer.setSystem(true);
+			capabilityInitializer.setPriority(Job.DECORATE);
+			capabilityInitializer.schedule(1000);		
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -182,7 +198,6 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 	 */
 	public void shutdown() throws CoreException {
 		super.shutdown();
-		capabilityHelper.shutdown();
 		((SynchronizeManager)TeamUI.getSynchronizeManager()).dispose();
 	}
 
