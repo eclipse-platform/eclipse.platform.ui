@@ -125,10 +125,10 @@ public class WWinKeyBindingService {
 		keyStrokes.add(keyStroke);
 		Sequence childMode = Sequence.create(keyStrokes);
 		
-		Map keySequenceMapForMode = keyMachine.getKeySequenceMapForMode();		
+		Map keySequenceMapForMode = keyMachine.getSequenceMapForMode();		
 		
 		keyMachine.setMode(childMode);
-		Map childKeySequenceMapForMode = keyMachine.getKeySequenceMapForMode();
+		Map childKeySequenceMapForMode = keyMachine.getSequenceMapForMode();
 
 		if (childKeySequenceMapForMode.isEmpty()) {
 			clear();
@@ -312,7 +312,7 @@ public class WWinKeyBindingService {
 		List keyStrokes = new ArrayList(mode.getStrokes());
 		keyStrokes.add(Stroke.create(accelerator));
 		Sequence childMode = Sequence.create(keyStrokes);    		
-		Map keySequenceMapForMode = keyMachine.getKeySequenceMapForMode();
+		Map keySequenceMapForMode = keyMachine.getSequenceMapForMode();
 		return (String) keySequenceMapForMode.get(childMode);
     }
 
@@ -326,7 +326,7 @@ public class WWinKeyBindingService {
 		List keyStrokes = mode.getStrokes();
 		int size = keyStrokes.size();
 		
-		Map keySequenceMapForMode = keyMachine.getKeySequenceMapForMode();
+		Map keySequenceMapForMode = keyMachine.getSequenceMapForMode();
 		SortedSet keyStrokeSetForMode = new TreeSet();
 		Iterator iterator = keySequenceMapForMode.keySet().iterator();
 

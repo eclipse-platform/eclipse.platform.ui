@@ -25,25 +25,25 @@ import java.util.TreeSet;
 
 final class Node {
 
-	static void add(SortedMap tree, Binding keyBinding, State scopeKeyConfiguration, State platformLocale) {
-		List keyStrokes = keyBinding.getSequence().getStrokes();		
+	static void add(SortedMap tree, Binding binding, State scopeConfiguration, State platformLocale) {
+		List strokes = binding.getSequence().getStrokes();		
 		SortedMap root = tree;
-		Node keyNode = null;
+		Node node = null;
 	
-		for (int i = 0; i < keyStrokes.size(); i++) {
-			Stroke keyStroke = (Stroke) keyStrokes.get(i);
-			keyNode = (Node) root.get(keyStroke);
+		for (int i = 0; i < strokes.size(); i++) {
+			Stroke stroke = (Stroke) strokes.get(i);
+			node = (Node) root.get(stroke);
 			
-			if (keyNode == null) {
-				keyNode = new Node();	
-				root.put(keyStroke, keyNode);
+			if (node == null) {
+				node = new Node();	
+				root.put(stroke, node);
 			}
 			
-			root = keyNode.childMap;
+			root = node.childMap;
 		}
 
-		if (keyNode != null)
-			keyNode.add(scopeKeyConfiguration, new Integer(keyBinding.getRank()), platformLocale, keyBinding.getCommand());
+		if (node != null)
+			node.add(scopeConfiguration, new Integer(binding.getRank()), platformLocale, binding.getCommand());
 	}
 
 	static SortedMap find(SortedMap tree, Sequence prefix) {	
@@ -61,32 +61,32 @@ final class Node {
 		return tree;			
 	}
 
-	static void remove(SortedMap tree, Binding keyBinding, State scopeKeyConfiguration, State platformLocale) {
-		List keyStrokes = keyBinding.getSequence().getStrokes();		
+	static void remove(SortedMap tree, Binding binding, State scopeConfiguration, State platformLocale) {
+		List strokes = binding.getSequence().getStrokes();		
 		SortedMap root = tree;
-		Node keyNode = null;
+		Node node = null;
 	
-		for (int i = 0; i < keyStrokes.size(); i++) {
-			Stroke keyStroke = (Stroke) keyStrokes.get(i);
-			keyNode = (Node) root.get(keyStroke);
+		for (int i = 0; i < strokes.size(); i++) {
+			Stroke stroke = (Stroke) strokes.get(i);
+			node = (Node) root.get(stroke);
 			
-			if (keyNode == null)
+			if (node == null)
 				break;
 			
-			root = keyNode.childMap;
+			root = node.childMap;
 		}
 
-		if (keyNode != null)
-			keyNode.remove(scopeKeyConfiguration, new Integer(keyBinding.getRank()), platformLocale, keyBinding.getCommand());
+		if (node != null)
+			node.remove(scopeConfiguration, new Integer(binding.getRank()), platformLocale, binding.getCommand());
 	}
 
-	static void solve(SortedMap tree, State[] scopeKeyConfigurations, State[] platformLocales) {
+	static void solve(SortedMap tree, State[] scopeConfigurations, State[] platformLocales) {
 		Iterator iterator = tree.values().iterator();	
 		
 		while (iterator.hasNext()) {
-			Node keyNode = (Node) iterator.next();			
-			keyNode.command = solveScopeKeyConfigurationMap(keyNode.scopeKeyConfigurationMap, scopeKeyConfigurations, platformLocales);
-			solve(keyNode.childMap, scopeKeyConfigurations, platformLocales);								
+			Node node = (Node) iterator.next();			
+			node.command = solveScopeConfigurationMap(node.scopeConfigurationMap, scopeConfigurations, platformLocales);
+			solve(node.childMap, scopeConfigurations, platformLocales);								
 		}		
 	}
 	
@@ -154,21 +154,21 @@ final class Node {
 		return null;
 	}
 
-	static String solveScopeKeyConfigurationMap(SortedMap scopeKeyConfigurationMap, State scopeKeyConfiguration, State[] platformLocales) {
+	static String solveScopeConfigurationMap(SortedMap scopeConfigurationMap, State scopeConfiguration, State[] platformLocales) {
 		int bestMatch = -1;
 		String bestCommand = null;
-		Iterator iterator = scopeKeyConfigurationMap.entrySet().iterator();
+		Iterator iterator = scopeConfigurationMap.entrySet().iterator();
 
 		while (iterator.hasNext()) {
 			Map.Entry entry = (Map.Entry) iterator.next();
-			State testScopeKeyConfiguration = (State) entry.getKey();
+			State testScopeConfiguration = (State) entry.getKey();
 			SortedMap testRankMap = (SortedMap) entry.getValue();
 
 			if (testRankMap != null) {
 				String testCommand = solveRankMap(testRankMap, platformLocales);
 				
 				if (testCommand != null) {
-					int testMatch = testScopeKeyConfiguration.match(scopeKeyConfiguration);	
+					int testMatch = testScopeConfiguration.match(scopeConfiguration);	
 				
 					if (testMatch >= 0) {
 						if (bestMatch == -1 || testMatch < bestMatch) {
@@ -186,9 +186,9 @@ final class Node {
 		return bestCommand;
 	}
 
-	static String solveScopeKeyConfigurationMap(SortedMap scopeKeyConfigurationMap, State[] scopeKeyConfigurations, State[] platformLocales) {
-		for (int i = 0; i < scopeKeyConfigurations.length; i++) {
-			String command = solveScopeKeyConfigurationMap(scopeKeyConfigurationMap, scopeKeyConfigurations[i], platformLocales);
+	static String solveScopeConfigurationMap(SortedMap scopeConfigurationMap, State[] scopeConfigurations, State[] platformLocales) {
+		for (int i = 0; i < scopeConfigurations.length; i++) {
+			String command = solveScopeConfigurationMap(scopeConfigurationMap, scopeConfigurations[i], platformLocales);
 				
 			if (command != null)
 				return command;
@@ -197,63 +197,63 @@ final class Node {
 		return null;
 	}
 
-	static Map toCommandMap(SortedMap keySequenceMap) {
+	static Map toCommandMap(SortedMap sequenceMap) {
 		Map commandMap = new HashMap();
-		Iterator iterator = keySequenceMap.entrySet().iterator();
+		Iterator iterator = sequenceMap.entrySet().iterator();
 		
 		while (iterator.hasNext()) {
 			Map.Entry entry = (Map.Entry) iterator.next();
-			Sequence keySequence = (Sequence) entry.getKey();			
+			Sequence sequence = (Sequence) entry.getKey();			
 			String command = (String) entry.getValue();
-			SortedSet keySequenceSet = (SortedSet) commandMap.get(command);
+			SortedSet sequenceSet = (SortedSet) commandMap.get(command);
 			
-			if (keySequenceSet == null) {
-				keySequenceSet = new TreeSet();
-				commandMap.put(command, keySequenceSet);			
+			if (sequenceSet == null) {
+				sequenceSet = new TreeSet();
+				commandMap.put(command, sequenceSet);			
 			}
 			
-			keySequenceSet.add(keySequence);
+			sequenceSet.add(sequence);
 		}	
 		
 		return commandMap;		
 	}
 
-	static SortedMap toKeySequenceMap(SortedMap tree, Sequence prefix) {
-		SortedMap keySequenceMap = new TreeMap();
+	static SortedMap toSequenceMap(SortedMap tree, Sequence prefix) {
+		SortedMap sequenceMap = new TreeMap();
 		Iterator iterator = tree.entrySet().iterator();
 		
 		while (iterator.hasNext()) {
 			Map.Entry entry = (Map.Entry) iterator.next();
-			Stroke keyStroke = (Stroke) entry.getKey();			
-			Node keyNode = (Node) entry.getValue();					
+			Stroke stroke = (Stroke) entry.getKey();			
+			Node node = (Node) entry.getValue();					
 			List list = new ArrayList(prefix.getStrokes());
-			list.add(keyStroke);
-			Sequence keySequence = Sequence.create(list);
-			SortedMap childKeySequenceMap = toKeySequenceMap(keyNode.childMap, keySequence);
+			list.add(stroke);
+			Sequence sequence = Sequence.create(list);
+			SortedMap childSequenceMap = toSequenceMap(node.childMap, sequence);
 
-			if (childKeySequenceMap.size() >= 1)
-				keySequenceMap.putAll(childKeySequenceMap);
-			else if (keyNode.command != null)		
-				keySequenceMap.put(keySequence, keyNode.command);
+			if (childSequenceMap.size() >= 1)
+				sequenceMap.putAll(childSequenceMap);
+			else if (node.command != null)		
+				sequenceMap.put(sequence, node.command);
 		}
 
-		return keySequenceMap;
+		return sequenceMap;
 	}
 
 	SortedMap childMap = new TreeMap();	
 	String command = null;
-	SortedMap scopeKeyConfigurationMap = new TreeMap();
+	SortedMap scopeConfigurationMap = new TreeMap();
 	
 	private Node() {
 		super();
 	}
 
-	void add(State scopeKeyConfiguration, Integer rank, State platformLocale, String command) {			
-		SortedMap rankMap = (SortedMap) scopeKeyConfigurationMap.get(scopeKeyConfiguration);
+	void add(State scopeConfiguration, Integer rank, State platformLocale, String command) {			
+		SortedMap rankMap = (SortedMap) scopeConfigurationMap.get(scopeConfiguration);
 		
 		if (rankMap == null) {
 			rankMap = new TreeMap();	
-			scopeKeyConfigurationMap.put(scopeKeyConfiguration, rankMap);
+			scopeConfigurationMap.put(scopeConfiguration, rankMap);
 		}
 
 		SortedMap platformLocaleMap = (SortedMap) rankMap.get(rank);
@@ -273,8 +273,8 @@ final class Node {
 		commandSet.add(command);		
 	}
 
-	void remove(State scopeKeyConfiguration, Integer rank, State platformLocale, String command) {
-		SortedMap rankMap = (SortedMap) scopeKeyConfigurationMap.get(scopeKeyConfiguration);
+	void remove(State scopeConfiguration, Integer rank, State platformLocale, String command) {
+		SortedMap rankMap = (SortedMap) scopeConfigurationMap.get(scopeConfiguration);
 
 		if (rankMap != null) {
 			SortedMap platformLocaleMap = (SortedMap) rankMap.get(rank);
@@ -292,7 +292,7 @@ final class Node {
 							rankMap.remove(rank);
 							
 							if (rankMap.isEmpty())
-								scopeKeyConfigurationMap.remove(scopeKeyConfiguration);
+								scopeConfigurationMap.remove(scopeConfiguration);
 						}
 					}					
 				}

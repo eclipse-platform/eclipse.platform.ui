@@ -120,7 +120,7 @@ public class KeyBindingService implements IKeyBindingService {
 	 * @see IKeyBindingService#getActiveAcceleratorConfigurationId()
 	 */
     public String getActiveAcceleratorConfigurationId() {
-    	return org.eclipse.ui.internal.commands.Manager.getInstance().getKeyMachine().getKeyConfiguration();
+    	return org.eclipse.ui.internal.commands.Manager.getInstance().getKeyMachine().getConfiguration();
     }
 
 	/*

@@ -657,7 +657,7 @@ protected MenuManager createMenuManager() {
 				
 				if (accelerator != 0) {		
 					Sequence keySequence = Sequence.create(Stroke.create(accelerator));						
-					Map keySequenceMapForMode = Manager.getInstance().getKeyMachine().getKeySequenceMapForMode();
+					Map keySequenceMapForMode = Manager.getInstance().getKeyMachine().getSequenceMapForMode();
 
 					if (keySequenceMapForMode.get(keySequence) == null)
 						return null;
@@ -692,7 +692,7 @@ protected MenuManager createMenuManager() {
 				
 				if (accelerator != 0) {				
 					Sequence keySequence = Sequence.create(Stroke.create(accelerator));						
-					Map keySequenceMapForMode = Manager.getInstance().getKeyMachine().getKeySequenceMapForMode();
+					Map keySequenceMapForMode = Manager.getInstance().getKeyMachine().getSequenceMapForMode();
 
 					if (keySequenceMapForMode.get(keySequence) == null)
 						return null;
@@ -731,7 +731,7 @@ protected MenuManager createMenuManager() {
 					return stringBuffer.toString();
 				}
 			} else {
-				String acceleratorText = Manager.getInstance().getTextForAction(commandId);
+				String acceleratorText = Manager.getInstance().getKeyTextForCommand(commandId);
 				
 				if (acceleratorText != null)
 					return acceleratorText;

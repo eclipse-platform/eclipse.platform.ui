@@ -29,7 +29,7 @@ public class Manager {
 
 	private final static String LOCALE_SEPARATOR = "_"; //$NON-NLS-1$
 	private final static java.util.Locale SYSTEM_LOCALE = java.util.Locale.getDefault();
-	private final static String SYSTEM_PLATFORM = SWT.getPlatform(); // "carbon"
+	private final static String SYSTEM_PLATFORM = SWT.getPlatform();
 
 	private static Manager instance;
 
@@ -166,141 +166,6 @@ public class Manager {
 		return path;			
 	}	
 
-	/*
-	static SortedSet solveRegionalKeyBindings(Collection regionalKeyBindings, State state) {
-
-		class Key implements Comparable {		
-		
-			private final static int HASH_INITIAL = 17;
-			private final static int HASH_FACTOR = 27;
-			
-			String keyConfiguration;
-			KeySequence keySequence;
-			String scope;
-
-			public int compareTo(Object object) {
-				Key key = (Key) object;
-				int compareTo = keyConfiguration.compareTo(key.keyConfiguration);
-		
-				if (compareTo == 0) {
-					compareTo = keySequence.compareTo(key.keySequence);
-		
-					if (compareTo == 0)
-						compareTo = scope.compareTo(key.scope);
-				}
-				
-				return compareTo;
-			}
-		
-			public boolean equals(Object object) {
-				if (!(object instanceof Key))
-					return false;
-				
-				Key key = (Key) object;
-				return keyConfiguration.equals(key.keyConfiguration) && keySequence.equals(key.keySequence) && scope.equals(key.scope);
-			}
-
-			public int hashCode() {
-				int result = HASH_INITIAL;
-				result = result * HASH_FACTOR + keyConfiguration.hashCode();		
-				result = result * HASH_FACTOR + keySequence.hashCode();		
-				result = result * HASH_FACTOR + scope.hashCode();		
-				return result;
-			}
-		}
-
-		Map map = new TreeMap();
-		Iterator iterator = regionalKeyBindings.iterator();
-		
-		while (iterator.hasNext()) {
-			RegionalKeyBinding regionalKeyBinding = (RegionalKeyBinding) iterator.next();
-			KeyBinding keyBinding = regionalKeyBinding.getKeyBinding();
-			List pathItems = new ArrayList();
-			pathItems.add(pathForPlatform(regionalKeyBinding.getPlatform()));
-			pathItems.add(pathForLocale(regionalKeyBinding.getLocale()));
-			State region = State.create(pathItems);		
-			Key key = new Key();
-			key.keyConfiguration = keyBinding.getKeyConfiguration();
-			key.keySequence = keyBinding.getKeySequence();
-			key.scope = keyBinding.getScope();
-			Map stateMap = (Map) map.get(key);
-			
-			if (stateMap == null) {
-				stateMap = new TreeMap();
-				map.put(key, stateMap);
-			}
-			
-			List keyBindings = (List) stateMap.get(region);
-			
-			if (keyBindings == null) {
-				keyBindings = new ArrayList();
-				stateMap.put(region, keyBindings);	
-			}			
-		
-			keyBindings.add(keyBinding);		
-		}
-
-		SortedSet keyBindingSet = new TreeSet();
-		iterator = map.values().iterator();
-
-		while (iterator.hasNext()) {
-			Map stateMap = (Map) iterator.next();				
-			int bestMatch = -1;
-			List bestKeyBindings = null;
-			Iterator iterator2 = stateMap.entrySet().iterator();
-
-			while (iterator2.hasNext()) {
-				Map.Entry entry = (Map.Entry) iterator2.next();
-				State testState = (State) entry.getKey();
-				List testKeyBindings = (List) entry.getValue();							
-				int testMatch = testState.match(state);
-				
-				if (testMatch >= 0) {
-					if (bestMatch == -1 || testMatch < bestMatch) {
-						bestMatch = testMatch;
-						bestKeyBindings = testKeyBindings;
-					}
-					
-					if (bestMatch == 0)
-						break;
-				}
-			}				
-
-			if (bestKeyBindings != null)
-				keyBindingSet.addAll(bestKeyBindings);
-		}					
-
-		return keyBindingSet;
-	}
-	*/
-
-	/*
-	private SortedSet solveRegionalBindingSet(SortedSet regionalBindingSet, State[] states) {
-		SortedMap tree = new TreeMap();
-		Iterator iterator = regionalBindingSet.iterator();
-		
-		while (iterator.hasNext()) {
-			RegionalBinding regionalBinding = (RegionalBinding) iterator.next();
-			Binding binding = regionalBinding.getBinding();
-			List pathItems = new ArrayList();
-			pathItems.add(pathForPlatform(regionalBinding.getPlatform()));
-			pathItems.add(pathForLocale(regionalBinding.getLocale()));
-			Node.add(tree, binding, State.create(pathItems));
-		}
-
-		Node.solve(tree, states);
-		SortedSet matchSet = new TreeSet();
-		Node.toMatchSet(tree, matchSet);
-		SortedSet bindingSet = new TreeSet();
-		iterator = matchSet.iterator();
-		
-		while (iterator.hasNext())
-			bindingSet.add(((Match) iterator.next()).getBinding());							
-
-		return bindingSet;
-	}
-	*/
-
 	static Path systemLocale() {
 		return SYSTEM_LOCALE != null ? pathForLocale(SYSTEM_LOCALE.toString()) : null;
 	}
@@ -327,17 +192,17 @@ public class Manager {
 		return keyMachine;
 	}
 
-	public String getTextForAction(String command)
+	public String getKeyTextForCommand(String command)
 		throws IllegalArgumentException {
 		if (command == null)
 			throw new IllegalArgumentException();					
 
 		String text = null;
 		Map commandMap = getKeyMachine().getCommandMap();
-		SortedSet keySequenceSet = (SortedSet) commandMap.get(command);
+		SortedSet sequenceSet = (SortedSet) commandMap.get(command);
 		
-		if (keySequenceSet != null && !keySequenceSet.isEmpty())
-			text = ((Sequence) keySequenceSet.first()).formatKeySequence();
+		if (sequenceSet != null && !sequenceSet.isEmpty())
+			text = ((Sequence) sequenceSet.first()).formatKeySequence();
 		
 		return text != null ? text : ""; //$NON-NLS-1$
 	}
@@ -361,21 +226,35 @@ public class Manager {
 			preferenceRegistry.load();
 		} catch (IOException eIO) {
 		}
-	
-		List registryActiveKeyConfigurations = new ArrayList();
-		registryActiveKeyConfigurations.addAll(coreRegistry.getActiveKeyConfigurations());
-		registryActiveKeyConfigurations.addAll(localRegistry.getActiveKeyConfigurations());
-		registryActiveKeyConfigurations.addAll(preferenceRegistry.getActiveKeyConfigurations());	
-		String keyConfigurationId;
+
+		List activeGestureConfigurations = new ArrayList();
+		activeGestureConfigurations.addAll(coreRegistry.getActiveGestureConfigurations());
+		activeGestureConfigurations.addAll(localRegistry.getActiveGestureConfigurations());
+		activeGestureConfigurations.addAll(preferenceRegistry.getActiveGestureConfigurations());	
+		String activeGestureConfigurationId;
 			
-		if (registryActiveKeyConfigurations.size() == 0)
-			keyConfigurationId = ""; //$NON-NLS-1$
+		if (activeGestureConfigurations.size() == 0)
+			activeGestureConfigurationId = ""; //$NON-NLS-1$
 		else {
-			ActiveConfiguration activeKeyConfiguration = (ActiveConfiguration) registryActiveKeyConfigurations.get(registryActiveKeyConfigurations.size() - 1);
-			keyConfigurationId = activeKeyConfiguration.getValue();
+			ActiveConfiguration activeKeyConfiguration = (ActiveConfiguration) activeGestureConfigurations.get(activeGestureConfigurations.size() - 1);
+			activeGestureConfigurationId = activeKeyConfiguration.getValue();
 		}
 
-		keyMachine.setKeyConfiguration(keyConfigurationId);
+		List activeKeyConfigurations = new ArrayList();
+		activeKeyConfigurations.addAll(coreRegistry.getActiveKeyConfigurations());
+		activeKeyConfigurations.addAll(localRegistry.getActiveKeyConfigurations());
+		activeKeyConfigurations.addAll(preferenceRegistry.getActiveKeyConfigurations());	
+		String activeKeyConfigurationId;
+			
+		if (activeKeyConfigurations.size() == 0)
+			activeKeyConfigurationId = ""; //$NON-NLS-1$
+		else {
+			ActiveConfiguration activeKeyConfiguration = (ActiveConfiguration) activeKeyConfigurations.get(activeKeyConfigurations.size() - 1);
+			activeKeyConfigurationId = activeKeyConfiguration.getValue();
+		}
+
+		gestureMachine.setConfiguration(activeGestureConfigurationId);
+		keyMachine.setConfiguration(activeKeyConfigurationId);
 		update();
 	}
 
@@ -399,27 +278,40 @@ public class Manager {
 		} catch (IOException eIO) {
 		}
 
-		List registryKeyConfigurations = new ArrayList();
-		registryKeyConfigurations.addAll(coreRegistry.getKeyConfigurations());
-		registryKeyConfigurations.addAll(localRegistry.getKeyConfigurations());
-		registryKeyConfigurations.addAll(preferenceRegistry.getKeyConfigurations());
-		SortedMap registryKeyConfigurationMap = Configuration.sortedMapById(registryKeyConfigurations);
-		SortedMap keyConfigurationMap = buildPathMapForConfigurationMap(registryKeyConfigurationMap);
-		
-		List registryScopes = new ArrayList();
-		registryScopes.addAll(coreRegistry.getScopes());
-		registryScopes.addAll(localRegistry.getScopes());
-		registryScopes.addAll(preferenceRegistry.getScopes());
-		SortedMap registryScopeMap = Scope.sortedMapById(registryScopes);
-		SortedMap scopeMap = buildPathMapForScopeMap(registryScopeMap);
-		
+		SortedSet gestureBindingSet = new TreeSet();		
+		gestureBindingSet.addAll(coreRegistry.getGestureBindings());
+		gestureBindingSet.addAll(localRegistry.getGestureBindings());
+		gestureBindingSet.addAll(preferenceRegistry.getGestureBindings());
+
+		List gestureConfigurations = new ArrayList();
+		gestureConfigurations.addAll(coreRegistry.getGestureConfigurations());
+		gestureConfigurations.addAll(localRegistry.getGestureConfigurations());
+		gestureConfigurations.addAll(preferenceRegistry.getGestureConfigurations());
+		SortedMap gestureConfigurationMap = buildPathMapForConfigurationMap(Configuration.sortedMapById(gestureConfigurations));
+
 		SortedSet keyBindingSet = new TreeSet();		
 		keyBindingSet.addAll(coreRegistry.getKeyBindings());
 		keyBindingSet.addAll(localRegistry.getKeyBindings());
 		keyBindingSet.addAll(preferenceRegistry.getKeyBindings());
 
-		keyMachine.setKeyConfigurationMap(Collections.unmodifiableSortedMap(keyConfigurationMap));
+		List keyConfigurations = new ArrayList();
+		keyConfigurations.addAll(coreRegistry.getKeyConfigurations());
+		keyConfigurations.addAll(localRegistry.getKeyConfigurations());
+		keyConfigurations.addAll(preferenceRegistry.getKeyConfigurations());
+		SortedMap keyConfigurationMap = buildPathMapForConfigurationMap(Configuration.sortedMapById(keyConfigurations));
+		
+		List scopes = new ArrayList();
+		scopes.addAll(coreRegistry.getScopes());
+		scopes.addAll(localRegistry.getScopes());
+		scopes.addAll(preferenceRegistry.getScopes());
+		SortedMap scopeMap = buildPathMapForScopeMap(Scope.sortedMapById(scopes));
+
+		gestureMachine.setConfigurationMap(Collections.unmodifiableSortedMap(gestureConfigurationMap));
+		gestureMachine.setScopeMap(Collections.unmodifiableSortedMap(scopeMap));
+		gestureMachine.setBindingSet(Collections.unmodifiableSortedSet(gestureBindingSet));
+		
+		keyMachine.setConfigurationMap(Collections.unmodifiableSortedMap(keyConfigurationMap));
 		keyMachine.setScopeMap(Collections.unmodifiableSortedMap(scopeMap));
-		keyMachine.setKeyBindingSet(Collections.unmodifiableSortedSet(keyBindingSet));
+		keyMachine.setBindingSet(Collections.unmodifiableSortedSet(keyBindingSet));
 	}
 }
