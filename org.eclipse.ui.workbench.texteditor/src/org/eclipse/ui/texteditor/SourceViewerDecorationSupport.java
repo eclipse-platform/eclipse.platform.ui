@@ -233,7 +233,7 @@ public class SourceViewerDecorationSupport {
 	/** The character painter's pair matcher */
 	private ICharacterPairMatcher fCharacterPairMatcher;
 	
-	/** Table of annotation type preference infos */
+	/** Map with annotation type preference per annotation type */
 	private Map fAnnotationTypeKeyMap= new HashMap();
 	/** Preference key for the cursor line highlighting */
 	private String fCursorLinePainterEnableKey;
