@@ -600,7 +600,10 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 					}
 					in.close();
 					out.close();
-					oldFile.delete();
+					// Don't delete the old file since the public preferences and some 
+					// dialog settings are still read from org.eclipse.ui.
+					// See bug 33334. 
+					// oldFile.delete();
 				} catch (IOException e) {
 					new File(newLocation,string).delete();
 				}
