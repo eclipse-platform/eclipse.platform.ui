@@ -16,19 +16,6 @@ import org.eclipse.core.runtime.CoreException;
 
 public class DeltaDebugListener implements IResourceChangeListener {
 	/**
-	 * @see IResourceChangeListener#closing(IProject)
-	 */
-	public void closing(IProject project) {
-	}
-
-	/**
-	 * @see IResourceChangeListener#deleting(IProject)
-	 */
-
-	public void deleting(IProject project) {
-	}
-
-	/**
 	 * @see IResourceChangeListener#resourceChanged
 	 */
 	public void resourceChanged(IResourceChangeEvent event) {
