@@ -29,6 +29,7 @@ public class FileBuffersForExternalFiles extends FileBufferFunctions {
 	protected void tearDown() throws Exception {
 		File file= FileBuffers.getSystemFileAtLocation(getPath());
 		FileTool.delete(file);
+		FileTool.delete(file.getParentFile());
 		super.tearDown();
 	}
 	
