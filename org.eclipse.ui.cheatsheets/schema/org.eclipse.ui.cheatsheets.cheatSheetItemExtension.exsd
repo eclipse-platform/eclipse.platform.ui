@@ -9,7 +9,7 @@
          This extension point should be used when extra buttons or graphics need to be added to a step in the cheat sheet beside the help button.
 You can put a new attribute into the &quot;item&quot; tag in the cheat sheet content file, and when that value is read by the cheat sheet framework,
 it will check to see if there is a class registered through this extension point that will handle this attribute.  The attribute name found in the
-cheat sheet content file is matched against all of the values found in the &quot;itemAttribute&quot; attribute of all of the registered cheatsheetItemExtension point implementations.  If there is a match, the class specified to handle this item attribute is loaded by the cheat sheet framework and is called to handle the parsing of the attribute found in the cheat sheet content file.
+cheat sheet content file is matched against all of the values found in the &quot;itemAttribute&quot; attribute of all of the registered cheatsheetItemExtension point implementations.  If there is a match, the class specified to handle this item attribute is loaded by the cheat sheet framework and is called to handle the attribute specified in the cheat sheet content file.
 
 After having parsed the value of the item attribute, the class remains available to the cheat sheets framework.  When the item is rendered for the cheat sheets view, the class is once again called to handle the addition of components to a Composite.  The items that are added to this composite are displayed in the cheat sheet step (currently, beside the help icon).  It is displayed only for the step that is described by the &quot;item&quot; tag that the attribute appeared in the cheat sheet content file.
 
@@ -54,7 +54,7 @@ Suggested uses of this extension point including adding a button with a graphic 
          <documentation>
             Use this item extension to add elements to cheat sheet steps.  You can use this extension point to add icons and buttons (currently, beside the
 help icon) for a step in the cheat sheet.
-You specify the name of an attribute that you will put into the cheat sheet item tag.  You also specify a class that will handle the parsing of that attribute from the cheat sheet content file when the cheat sheet is loaded.  Anything can be put into the attribute value, as this value will be parsed by the class specified.  The specified class must subclass &lt;code&gt;org.eclipse.ui.cheatsheets.ItemExtensionElement&lt;/code&gt;.  After the cheat sheet content file is parsed and loaded, the class specified in the extension point is called again through the interface to add graphics or buttons to the step in the cheat sheet (currently, next to the help button).
+You specify the name of an attribute that you will put into the cheat sheet item tag.  You also specify a class that will handle the parsing of the attribute value from the cheat sheet content file when the cheat sheet is loaded.  The attribute valuemust be a string. The specified class must subclass &lt;code&gt;org.eclipse.ui.cheatsheets.AbstractItemExtensionElement&lt;/code&gt;.  After the cheat sheet content file is parsed and loaded, the class specified in the extension point is called again through the interface to add graphics or buttons to the step in the cheat sheet (currently, next to the help button).
          </documentation>
       </annotation>
       <complexType>
@@ -116,7 +116,7 @@ And here is the item attribute for that extension :
 Note that the value of the attribute in the item tag can be ANYTHING.  It can be anything because
 the class that parses that attribute is the class HandleParsingAndAddButton, which in this example parses
 a string /icon/button.gif from the attribute.  It later will use that info to load the gif and use it as the icon
-for the button that the class adds beside the help icon for the step in the cheat sheet with id &quot;0&quot;.
+for a new button (currently located beside the help icon for the step in the cheat sheet with id &quot;0&quot;).
       </documentation>
    </annotation>
 

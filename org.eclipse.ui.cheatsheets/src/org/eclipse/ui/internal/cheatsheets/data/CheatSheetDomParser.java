@@ -424,7 +424,9 @@ public class CheatSheetDomParser {
 			String itemExtensionAtt = itemElement.getAttributeName();
 
 			if (itemExtensionAtt.equals(item.getNodeName())) {
-				itemElement.handleAttribute(item);
+				// TODO (lorne) - please verify that item.getNodeValue() returns attribute string value sans extra quotes
+				// i.e., for attr="xxx" we want to pass "xxx" not "\"xxx\""
+				itemElement.handleAttribute(item.getNodeValue());
 				al.add(itemElement);
 			}
 		}

@@ -11,7 +11,6 @@
 package org.eclipse.ui.cheatsheets;
 
 import org.eclipse.swt.widgets.Composite;
-import org.w3c.dom.Node;
 
 /**
  * Base class for adding controls to cheat sheet items.
@@ -24,8 +23,8 @@ import org.w3c.dom.Node;
  * attribute that it can handle. When the cheat sheet framework encounters an
  * item (or subitem) element in the cheat sheet content file with an attribute
  * with a matching name, an instance of the corresponding item extension subclass
- * is created. It is up to this instance to parse the XML attribute and remember
- * any useful information. Later, when creating the visual controls for the item
+ * is created. It is up to this instance to remember the attribute value if
+ * required. Later, when creating the visual controls for the item
  * are being created, the instance is given the opportunity to add extra controls.
  * </p>
  * 
@@ -64,12 +63,12 @@ public abstract class AbstractItemExtensionElement {
 	
 	/**
 	 * Called by the cheat sheet framework to parse and extract information
-	 * from the given XML attribute node (and whose name matches
-	 * <code>getAttributeName()</code>.
+	 * from the string value of the XML attribute.
 	 * 
-	 * @param node a node containing the attribute parsed from the cheat sheet content file
+	 * @param attributeValue the attribute value specified in the cheat sheet
+	 * content file
 	 */
-	public abstract void handleAttribute(Node node);
+	public abstract void handleAttribute(String attributeValue);
 
 	/**
 	 * Called by the cheat sheet framework when creating the visual
