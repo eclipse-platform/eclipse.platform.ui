@@ -98,6 +98,9 @@ public/*final*/class WorkbenchImages {
      * Returns the image cache used internally by the workbench.
      */
     public static ReferenceCounter getImageCache() {
+        if (imageCache == null) {
+            initializeImageRegistry();
+        }
         return imageCache;
     }
 
@@ -377,12 +380,24 @@ public/*final*/class WorkbenchImages {
                 image.dispose();
             }
         }
-        descriptors.put(symbolicName, descriptor);
+        getDescriptors().put(symbolicName, descriptor);
         if (shared) {
             getImageRegistry().put(symbolicName, descriptor);
         }
     }
 
+    /**
+     * Returns the map from symbolic name to ImageDescriptor.
+     * 
+     * @return the map from symbolic name to ImageDescriptor.
+     */
+    private static Map getDescriptors() {
+        if (descriptors == null) {
+            initializeImageRegistry();
+        }
+        return descriptors;
+    }
+    
     /**
      * Returns the image stored in the workbench plugin's image registry 
      * under the given symbolic name.  If there isn't any value associated 
@@ -408,7 +423,7 @@ public/*final*/class WorkbenchImages {
      * the getImage() method instead.
      */
     public static ImageDescriptor getImageDescriptor(String symbolicName) {
-        return (ImageDescriptor) descriptors.get(symbolicName);
+        return (ImageDescriptor) getDescriptors().get(symbolicName);
     }
 
     /**
@@ -434,7 +449,7 @@ public/*final*/class WorkbenchImages {
         ImageDescriptor desc = getImageDescriptor(key);
         if (desc == null) {
             desc = new ProgramImageDescriptor(filename, offset);
-            descriptors.put(key, desc);
+            getDescriptors().put(key, desc);
         }
         return desc;
     }
