@@ -418,7 +418,11 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 	 * @see org.eclipse.search2.ui.ISearchView#fillContextMenu(org.eclipse.jface.action.IMenuManager)
 	 */
 	public void fillContextMenu(IMenuManager menuManager) {
-		menuManager.appendToGroup(IContextMenuConstants.GROUP_SEARCH, fSearchAgainAction);
+		ISearchResult result= getCurrentSearchResult();
+		if (result != null) {
+			fSearchAgainAction.setEnabled(result.getQuery().canRerun());
+			menuManager.appendToGroup(IContextMenuConstants.GROUP_SEARCH, fSearchAgainAction);
+		}
 	}
 
 	public void queryStarting(ISearchQuery query) {
