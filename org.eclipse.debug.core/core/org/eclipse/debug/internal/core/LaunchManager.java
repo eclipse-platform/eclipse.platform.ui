@@ -693,13 +693,16 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * @param config the launch configuration that was added
 	 */
 	protected void launchConfigurationAdded(ILaunchConfiguration config) throws CoreException {
+		if (config.isWorkingCopy()) {
+			return;
+		}
 		if (isValid(config)) {
 			List allConfigs = getAllLaunchConfigurations();
 			if (!allConfigs.contains(config)) {
 				allConfigs.add(config);
+				getConfigurationNotifier().notify(config, ADDED);
+				clearConfigNameCache();
 			}
-			getConfigurationNotifier().notify(config, ADDED);
-			clearConfigNameCache();			
 		} else {
 			launchConfigurationDeleted(config);
 		}
