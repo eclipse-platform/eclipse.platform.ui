@@ -8,7 +8,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
-public class NamedModelObject extends ModelObject 
+public class NamedModelObject extends UIModelObject 
 							implements IWorkbenchAdapter {
 	private String name;
 	private NamedModelObject parent;

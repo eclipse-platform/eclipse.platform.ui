@@ -8,7 +8,7 @@ import java.net.URL;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.ui.model.IFeatureAdapter;
 import org.eclipse.update.internal.ui.model.ISiteAdapter;
-import org.eclipse.update.internal.ui.model.ModelObject;
+import org.eclipse.update.internal.ui.model.UIModelObject;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.views.properties.*;
@@ -16,7 +16,7 @@ import org.eclipse.ui.model.*;
 import java.util.*;
 
 public class SearchResultSite
-	extends ModelObject
+	extends UIModelObject
 	implements IWorkbenchAdapter, ISiteAdapter {
 	private ISite site;
 	private Vector candidates;

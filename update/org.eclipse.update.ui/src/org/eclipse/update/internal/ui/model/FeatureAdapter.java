@@ -12,7 +12,7 @@ import org.eclipse.core.runtime.CoreException;
  * @version 	1.0
  * @author
  */
-public abstract class FeatureAdapter extends ModelObject implements IFeatureAdapter {
+public abstract class FeatureAdapter extends UIModelObject implements IFeatureAdapter {
 
 	/*
 	 * @see IFeatureAdapter#getInstallConfiguration()

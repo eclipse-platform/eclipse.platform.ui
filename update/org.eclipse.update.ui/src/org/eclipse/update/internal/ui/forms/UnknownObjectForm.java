@@ -55,7 +55,7 @@ public class UnknownObjectForm extends UpdateWebForm {
 	public void expandTo(Object obj) {
 		String name = "";
 
-		if (obj != null && obj instanceof ModelObject)
+		if (obj != null && obj instanceof UIModelObject)
 			name = obj.toString();
 		setHeadingText(name);
 		if (getControl() != null) {

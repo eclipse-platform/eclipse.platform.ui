@@ -7,7 +7,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 
-public class PreservedConfiguration extends ModelObject {
+public class PreservedConfiguration extends UIModelObject {
 	private IInstallConfiguration config;
 	
 	public PreservedConfiguration(IInstallConfiguration config) {

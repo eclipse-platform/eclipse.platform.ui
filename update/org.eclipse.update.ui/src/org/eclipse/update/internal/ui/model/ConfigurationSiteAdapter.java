@@ -12,7 +12,7 @@ import org.eclipse.update.configuration.*;
  * @author
  */
 public class ConfigurationSiteAdapter
-	extends ModelObject
+	extends UIModelObject
 	implements IConfiguredSiteAdapter {
 	private IInstallConfiguration config;
 	private IConfiguredSite csite;

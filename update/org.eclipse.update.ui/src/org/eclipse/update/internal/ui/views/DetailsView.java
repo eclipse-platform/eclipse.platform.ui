@@ -21,6 +21,7 @@ import org.eclipse.update.internal.ui.pages.*;
 import org.eclipse.update.internal.ui.parts.*;
 import org.eclipse.update.internal.ui.search.*;
 import org.eclipse.update.internal.ui.preferences.MainPreferencePage;
+import org.eclipse.update.core.model.ModelObject;
 
 /**
  * Insert the type's description here.
@@ -146,7 +147,7 @@ public void createPartControl(Composite parent) {
 }
 
 public void showPageWithInput(String pageId, Object input) {
-	if (!(input instanceof ModelObject)) return;
+	if (!(input instanceof UIModelObject || input instanceof ModelObject)) return;
 	showPage(pageId, input);
 	if (input!=null)
 		history.add(pageId, input);

@@ -16,11 +16,11 @@ import java.io.*;
 import org.eclipse.ui.*;
 import org.eclipse.swt.graphics.Image;
 
-public class MyComputerFile extends ModelObject implements IWorkbenchAdapter {
-	private ModelObject parent;
+public class MyComputerFile extends UIModelObject implements IWorkbenchAdapter {
+	private UIModelObject parent;
 	private File file;
 
-	public MyComputerFile(ModelObject parent, File file) {
+	public MyComputerFile(UIModelObject parent, File file) {
 		this.parent = parent;
 		this.file = file;
 	}

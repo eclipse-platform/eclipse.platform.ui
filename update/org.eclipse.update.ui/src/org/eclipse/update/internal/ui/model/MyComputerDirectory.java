@@ -19,20 +19,20 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.update.configuration.LocalSystemInfo;
 
 public class MyComputerDirectory
-	extends ModelObject
+	extends UIModelObject
 	implements IWorkbenchAdapter {
-	private ModelObject parent;
+	private UIModelObject parent;
 	private File file;
 	private boolean root;
 	Object[] children;
 
-	public MyComputerDirectory(ModelObject parent, File file, boolean root) {
+	public MyComputerDirectory(UIModelObject parent, File file, boolean root) {
 		this.parent = parent;
 		this.file = file;
 		this.root = root;
 	}
 
-	public MyComputerDirectory(ModelObject parent, File file) {
+	public MyComputerDirectory(UIModelObject parent, File file) {
 		this(parent, file, false);
 	}
 

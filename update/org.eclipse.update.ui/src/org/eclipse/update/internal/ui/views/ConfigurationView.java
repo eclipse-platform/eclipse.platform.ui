@@ -58,7 +58,7 @@ public class ConfigurationView
 	private static final String KEY_HISTORY_FOLDER = "ConfigurationView.historyFolder";
 	private static final String KEY_SAVED_FOLDER = "ConfigurationView.savedFolder";
 
-	abstract class ViewFolder extends ModelObject {
+	abstract class ViewFolder extends UIModelObject {
 		private String label;
 		private Image image;
 

@@ -122,7 +122,7 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 		model.startup();
 		IAdapterManager manager = Platform.getAdapterManager();
 		adapterFactory = new UpdateAdapterFactory();
-		manager.registerAdapters(adapterFactory, ModelObject.class);
+		manager.registerAdapters(adapterFactory, UIModelObject.class);
 		database = new AuthorizationDatabase();		
 		Authenticator.setDefault(database);
 	}

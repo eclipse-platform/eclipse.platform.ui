@@ -19,7 +19,7 @@ import org.eclipse.update.internal.ui.UpdateUIPlugin;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.update.configuration.LocalSystemInfo;
 
-public class MyComputer extends ModelObject implements IWorkbenchAdapter {
+public class MyComputer extends UIModelObject implements IWorkbenchAdapter {
 	private static final String KEY_LABEL = "MyComputer.label";
 	private Object[] children;
 	public MyComputer() {
