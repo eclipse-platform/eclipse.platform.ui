@@ -123,6 +123,13 @@
           label="Help Experimental"
           visible="true">
 
+          <action id="org.eclipse.help.internal.ui.InfocenterAction"
+                  menubarPath="help/helpEnd"
+                  label="%infocenter"
+                  class="org.eclipse.help.internal.ui.InfocenterAction"
+                  icon="icons/infocenter.gif"
+                  tooltip="%openinfocenter"/>
+
           <action id="org.eclipse.help.internal.ui.HelpActionExperimental"
                   menubarPath="help/helpEnd"
                   label="Help Contents (experimental)"
@@ -133,14 +140,6 @@
      </actionSet>
  </extension>
 
-   <!-- Help System Application -->
-   <!-- =============================== -->
-   <extension id="helpapp" point="org.eclipse.core.runtime.applications">
-     <application> 
-        <run class="org.eclipse.help.internal.ui.standalone.HelpApplication">
-        </run>
-     </application>
-   </extension>
    
     <!-- =========================================================================== -->
 	<!-- Extension point: org.eclipse.help.ui.browser                                -->
