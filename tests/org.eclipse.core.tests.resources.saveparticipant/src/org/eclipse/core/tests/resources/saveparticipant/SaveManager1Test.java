@@ -49,7 +49,7 @@ public static void doIt() throws Exception {
 		Process p = Runtime.getRuntime().exec(new String[] {
 		"java", "org.eclipse.core.tests.harness.launcher.Main", 
 		"-test", testIds[i],
-		"-platform", "c:/temp/save_manager",
+		"-data", "c:/temp/save_manager",
 		(i < (testIds.length-1) ? "-nocleanup" : "") });
 		p.waitFor();
 		java.io.InputStream input = p.getInputStream();
