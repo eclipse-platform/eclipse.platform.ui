@@ -10,9 +10,10 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.wizards;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.wizard.*;
-import org.eclipse.team.internal.ui.*;
+import org.eclipse.jface.wizard.IWizard;
+import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.team.internal.ui.ITeamUIImages;
+import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.registry.SynchronizeWizardDescription;
 import org.eclipse.team.internal.ui.synchronize.SynchronizeManager;
 import org.eclipse.team.ui.TeamImages;
@@ -28,7 +29,6 @@ import org.eclipse.ui.IWorkbench;
 public class GlobalSynchronizeWizard extends Wizard {
 
 	protected IWorkbench workbench;
-	protected IWizard wizard;
 	protected GlobalRefreshWizardSelectionPage mainPage;
 	protected ISynchronizeParticipantReference participant;
 
@@ -44,30 +44,13 @@ public class GlobalSynchronizeWizard extends Wizard {
 	 */
 	public void addPages() {
 		SynchronizeWizardDescription[] wizards = getWizards();
-		if (wizards.length == 1) {
-			// If there is only one wizard, skip the first page.
-			// Only skip the first page if the one wizard has at least one
-			// page.
-			try {
-				wizard = wizards[0].createWizard();
-				wizard.addPages();
-				if (wizard.getPageCount() > 0) {
-					wizard.setContainer(getContainer());
-					IWizardPage[] pages = wizard.getPages();
-					for (int i = 0; i < pages.length; i++) {
-						addPage(pages[i]);
-					}
-					return;
-				}
-			} catch (CoreException e) {
-				Utils.handle(e);
-				return;
-			}	
-		}
 		mainPage = new GlobalRefreshWizardSelectionPage();
 		addPage(mainPage);
 	}	
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.wizard.IWizard#canFinish()
+	 */
 	public boolean canFinish() {
 		// If we are on the first page, never allow finish unless the selected
 		// wizard has no pages.
@@ -77,9 +60,6 @@ public class GlobalSynchronizeWizard extends Wizard {
 			}
 			return false;
 		}
-		if (wizard != null) {
-			return wizard.canFinish();
-		}
 		return super.canFinish();
 	}
 
@@ -87,10 +67,6 @@ public class GlobalSynchronizeWizard extends Wizard {
 	 * @see Wizard#performFinish
 	 */
 	public boolean performFinish() {
-		// There is only one wizard with at least one page
-		if (wizard != null) {
-			return wizard.performFinish();
-		}
 		// If we are on the first page and the selected wizard has no pages then allow it to finish.
 		if (getContainer().getCurrentPage() == mainPage) {
 			IWizard noPageWizard = mainPage.getSelectedWizard();

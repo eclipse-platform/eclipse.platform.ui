@@ -46,10 +46,10 @@ public abstract class SubscriberParticipantWizard extends Wizard {
 			importWizard = getImportWizard();
 			importWizard.setContainer(getContainer());
 			importWizard.addPages();
-			IWizardPage[] pages = importWizard.getPages();
-			if (pages.length > 0) {
-				pages[0].setTitle(Policy.bind("SubscriberParticipantWizard.0", getName())); //$NON-NLS-1$
-				pages[0].setDescription(Policy.bind("SubscriberParticipantWizard.1", importWizard.getWindowTitle())); //$NON-NLS-1$
+			IWizardPage startingPage = importWizard.getStartingPage();
+			if (startingPage != null) {
+				startingPage.setTitle(Policy.bind("SubscriberParticipantWizard.0", getName())); //$NON-NLS-1$
+				startingPage.setDescription(Policy.bind("SubscriberParticipantWizard.1", importWizard.getWindowTitle())); //$NON-NLS-1$
 			}
 		} else {
 			selectionPage = new GlobalRefreshResourceSelectionPage(getRootResources());
@@ -92,7 +92,7 @@ public abstract class SubscriberParticipantWizard extends Wizard {
 	 */
 	public boolean performCancel() {
 		if(importWizard != null) {
-			return importWizard.performFinish();
+			return importWizard.performCancel();
 		}
 		return super.performCancel();
 	}
