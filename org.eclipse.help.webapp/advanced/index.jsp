@@ -22,7 +22,7 @@
 <jsp:include page="livehelp.js.jsp"/>
 </head>
 
-<frameset rows="<%="0".equals(data.getBannerHeight())?"":data.getBannerHeight()+","%>24,*"  frameborder="0" framespacing="0" border=0 spacing=0 style="border:1px solid WindowText;">
+<frameset rows="<%="0".equals(data.getBannerHeight())?"":data.getBannerHeight()+","%>24,*"  frameborder="0" framespacing="0" border=0 spacing=0>
 <%
 	if(!("0".equals(data.getBannerHeight()))){
 %>
