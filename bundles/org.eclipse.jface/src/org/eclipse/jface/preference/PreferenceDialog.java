@@ -585,6 +585,17 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 	 */
 	protected TreeViewer createTreeViewer(Composite parent) {
 		final TreeViewer viewer = new TreeViewer(parent, SWT.NONE);
+		addListeners(viewer);
+		viewer.setLabelProvider(new PreferenceLabelProvider());
+		viewer.setContentProvider(new PreferenceContentProvider());
+		return viewer;
+	}
+
+	/**
+	 * Add the listeners to the tree viewer.
+	 * @param viewer
+	 */
+	protected void addListeners(final TreeViewer viewer) {
 		viewer.addPostSelectionChangedListener(new ISelectionChangedListener() {
 			private void handleError() {
 				try {
@@ -635,9 +646,6 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 				}
 			}
 		});
-		viewer.setLabelProvider(new PreferenceLabelProvider());
-		viewer.setContentProvider(new PreferenceContentProvider());
-		return viewer;
 	}
 
 	/**
