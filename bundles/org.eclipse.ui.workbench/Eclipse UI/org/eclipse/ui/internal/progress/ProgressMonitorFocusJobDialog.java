@@ -77,15 +77,7 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 		job.cancel();
 		super.cancelPressed();
 	}
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.dialogs.ProgressMonitorDialog#close()
-	 */
-	public boolean close() {
-		job.setProperty(ProgressManager.PROPERTY_IN_DIALOG, new Boolean(false));
-		return super.close();
-	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -115,6 +107,7 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 			 */
 			public void widgetSelected(SelectionEvent e) {
 				Rectangle shellPosition = getShell().getBounds();
+				job.setProperty(ProgressManager.PROPERTY_IN_DIALOG, new Boolean(false));
 				close();
 				animateClose(shellPosition);
 			}
@@ -344,6 +337,7 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 		//after the dialog is opened we can get access to its monitor
 		ProgressManager.getInstance().progressFor(job).addProgressListener(
 				getBlockingProgressMonitor());
+		job.setProperty(ProgressManager.PROPERTY_IN_DIALOG, new Boolean(true));
 		return result;
 	}
 	/**
@@ -363,7 +357,7 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 			}
 		});
 		
-		WorkbenchJob openJob = new WorkbenchJob("Open user dialog"){
+		WorkbenchJob openJob = new WorkbenchJob(ProgressMessages.getString("ProgressMonitorFocusJobDialog.UserDialogJob")){ //$NON-NLS-1$
 			/* (non-Javadoc)
 			 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
 			 */
