@@ -48,4 +48,6 @@
     </ant>
   </target>
 
+  <target name="performance">
+  </target>
 </project>
