@@ -124,10 +124,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 	 * @see IPluginDescriptor
 	 */
 	public String getLabel() {
-		String key = (String) bundleOsgi.getHeaders().get(Constants.BUNDLE_NAME);
-		if (key == null)
-			return "";
-		return getResourceString(key);
+		return (String) bundleOsgi.getHeaders().get(Constants.BUNDLE_NAME);
 	}
 
 	/**
@@ -167,29 +164,26 @@ public class PluginDescriptor implements IPluginDescriptor {
 	 * @see IPluginDescriptor
 	 */
 	public String getProviderName() {
-		String providerName = (String) bundleOsgi.getHeaders().get(Constants.BUNDLE_VENDOR);
-		if (providerName == null)
-			return ""; //$NON-NLS-1$
-		 return getResourceString(providerName);
+		return (String) bundleOsgi.getHeaders().get(Constants.BUNDLE_VENDOR);
 	}
 	/**
 	 * @see IPluginDescriptor
 	 */
 	public ResourceBundle getResourceBundle() throws MissingResourceException {
-		return InternalPlatform.getDefault().getResourceBundle(bundleOsgi);
+		return ResourceTranslator.getResourceBundle(bundleOsgi);
 	}
 
 	/**
 	 * @see IPluginDescriptor
 	 */
 	public String getResourceString(String value) {
-		return InternalPlatform.getDefault().getResourceString(bundleOsgi, value);
+		return ResourceTranslator.getResourceString(bundleOsgi, value);
 	}
 	/**
 	 * @see IPluginDescriptor
 	 */
 	public String getResourceString(String value, ResourceBundle b) {
-		return InternalPlatform.getDefault().getResourceString(bundleOsgi, value, b);
+		return ResourceTranslator.getResourceString(bundleOsgi, value, b);
 	}
 	/**
 	 * @see IPluginDescriptor

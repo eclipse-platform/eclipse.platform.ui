@@ -175,7 +175,7 @@ public abstract class Plugin implements BundleActivator {
 	 * The context in which this plug-in operates.  Note that this value is private and should not be
 	 * shared with others as this posses a security risk.
 	 */
-	private BundleContext context;
+	private BundleContext context;		//TODO Why don't we make this protected and/or expose a protected method. This will avoid people to have to keep their copy of the context
 	/**
 	 * The debug flag for this plug-in.  The flag is false by default.
 	 * It can be set to true either by the plug-in itself or in the platform 
