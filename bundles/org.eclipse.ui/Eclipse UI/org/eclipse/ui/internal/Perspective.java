@@ -8,6 +8,7 @@ import java.io.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
@@ -626,19 +627,19 @@ public void restoreState(IMemento memento) {
 
 	// Add the visible views.
 	IMemento [] views = memento.getChildren(IWorkbenchConstants.TAG_VIEW);
-	int errors = 0;
+	List errors = new ArrayList();
 	for (int x = 0; x < views.length; x ++) {
 		// Get the view details.
 		IMemento childMem = views[x];
 		String viewID = childMem.getString(IWorkbenchConstants.TAG_ID);
 
 		// Create and open the view.
-		ViewPane pane = restoreView(childMem,viewID);
-		if(pane != null) {		
+		try {
+			ViewPane pane = restoreView(childMem,viewID);
 			page.addPart(pane.getPart());
 			pres.replacePlaceholderWithPart(pane);
-		} else {
-			errors++;
+		} catch (PartInitException e) {
+			errors.add(e.getStatus());
 		}
 	}
 
@@ -661,21 +662,29 @@ public void restoreState(IMemento memento) {
 			mapFastViewToWidthRatio.put(viewID, ratio);
 				
 			// Create and open the view.
-			ViewPane pane = restoreView(childMem,viewID);
-			if(pane != null) {			
+			try {
+				ViewPane pane = restoreView(childMem,viewID);
 				page.addPart(pane.getPart());
 				fastViews.add(pane.getPart());
-			} else {
-				errors++;
+			} catch (PartInitException e) {
+				errors.add(e.getStatus());
 			}
 		}
 	}
 
-	if(errors > 0) {
-		String message = WorkbenchMessages.getString("Perspectiver.multipleErrorsRestoring"); //$NON-NLS-1$
-		if(errors == 1)
+	if(errors.size() > 0) {
+		String message;
+		Status s;
+		if(errors.size() == 1) {
+			s = (Status)errors.get(0);
 			message = WorkbenchMessages.getString("Perspective.oneErrorRestoring"); //$NON-NLS-1$
-		MessageDialog.openError(null, WorkbenchMessages.getString("Error"), message); //$NON-NLS-1$
+		} else {
+			Status allErrors[] = new Status[errors.size()];
+			errors.toArray(allErrors);
+			message = WorkbenchMessages.getString("Perspectiver.couldNotCreateAllViews"); //$NON-NLS-1$
+			s = new MultiStatus(PlatformUI.PLUGIN_ID,0,allErrors,WorkbenchMessages.getString("Perspectiver.multipleErrorsRestoring"),null); //$NON-NLS-1$
+		}
+		ErrorDialog.openError(null,WorkbenchMessages.getString("Error"),message,s);
 	}
 		
 	// Load the action sets.
@@ -726,8 +735,9 @@ public void restoreState(IMemento memento) {
 /*
  * Create and return a new ViewPane. Return null if any error occur; 
  */
-private ViewPane restoreView(final IMemento memento,final String viewID) {
+private ViewPane restoreView(final IMemento memento,final String viewID) throws PartInitException {
 	final ViewPane pane[] = new ViewPane[1];
+	final PartInitException ex[] = new PartInitException[1];
 	Platform.run(new SafeRunnableAdapter() {
 		public void run() {
 			try {
@@ -737,13 +747,18 @@ private ViewPane restoreView(final IMemento memento,final String viewID) {
 				else
 					pane[0] = getViewFactory().createView(viewID,stateMem);
 			} catch (PartInitException e) {
-				WorkbenchPlugin.log(e.getMessage());
+				ex[0] = e;
 			}
 		}
 		public void handleException(Throwable e) {
 			//Execption is already logged.
+			String message = WorkbenchMessages.format("Perspective.exceptionRestoringView",new String[]{viewID});
+			ex[0] = new PartInitException(message);
 		}
 	});
+	if(ex[0] != null)
+		throw ex[0];
+		
 	return pane[0];
 }
 /**
