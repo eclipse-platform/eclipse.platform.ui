@@ -238,6 +238,10 @@
                 relative="org.eclipse.ui.views.TaskList"
                 visible="false"
                 relationship="stack"/>
+           <view id="org.eclipse.team.ui.target.SiteExplorerView"
+                relative="org.eclipse.ui.views.ResourceNavigator"
+                visible="false"
+                relationship="stack"/>
         </perspectiveExtension>
     </extension> 
 </plugin>
