@@ -250,7 +250,7 @@ public abstract class ObjectContributorManager {
     	Object resource  = LegacyResourceSupport.getAdaptedContributorResource(object);	
     	
     	// Fetch the unique adapters
-    	List adapters = new ArrayList(Arrays.asList(Platform.getAdapterManager().getAdapterTypes(object.getClass())));
+    	List adapters = new ArrayList(Arrays.asList(Platform.getAdapterManager().computeAdapterTypes(object.getClass())));
     	removeCommonAdapters(adapters, Arrays.asList(new Class[] {object.getClass()}));
     	
     	// Calculate the contributors for this object class

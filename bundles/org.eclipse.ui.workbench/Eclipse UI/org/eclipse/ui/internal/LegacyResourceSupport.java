@@ -255,24 +255,19 @@ public final class LegacyResourceSupport {
      * 
      * @since 3.1
      */
-    private static boolean isInstanceOf(Object object, String type) {
-        Class clazz = object.getClass();
-        while (clazz != null) {
-            // check the class
-           if(clazz.getName().equals(type)) 
-           		return true;
-            // check all interfaces
-            // TODO: need to recurse over super interfaces, and add a test case
-            Class[] interfaces = clazz.getInterfaces();
-            for (int i = 0; i < interfaces.length; i++) {
-            	if(interfaces[i].getName().equals(type)) 
-               		return true;
-            }
-            // get the superclass
-            clazz = clazz.getSuperclass();
-        }
-        return false;
-    }
+    private static boolean isInstanceOf(Class clazz, String type) {
+		if (clazz.getName().equals(type))
+			return true;
+		Class superClass= clazz.getSuperclass();
+		if (superClass != null && isInstanceOf(superClass, type))
+			return true;
+		Class[] interfaces= clazz.getInterfaces();
+		for (int i= 0; i < interfaces.length; i++) {
+			if (isInstanceOf(interfaces[i], type))
+				return true;
+		} 
+		return false;
+	}
     
     /**
      * Returns the adapted resource using the <code>IContributorResourceAdapter</code>
@@ -368,7 +363,7 @@ public final class LegacyResourceSupport {
      */    
     public static Object getAdapter(Object element, String objectClass) {
 		Object adaptedElement = null;
-		if (isInstanceOf(element, objectClass)) {
+		if (isInstanceOf(element.getClass(), objectClass)) {
 			adaptedElement = element;
 		} else {		
 			// Handle IResource

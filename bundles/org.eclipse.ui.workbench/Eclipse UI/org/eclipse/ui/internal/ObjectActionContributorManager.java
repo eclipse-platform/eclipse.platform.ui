@@ -84,23 +84,25 @@ public class ObjectActionContributorManager extends ObjectContributorManager {
         if (contributors.isEmpty())
             return false;
 
-        // Do the contributions.  Add menus first, then actions
+        // First pass, add the menus and collect the overrides. Prune from the
+        // list any non-applicable contributions.
         boolean actualContributions = false;
         ArrayList overrides = new ArrayList(4);
-        for (int i = 0; i < contributors.size(); i++) {
-            IObjectActionContributor contributor = (IObjectActionContributor) contributors
-                    .get(i);
-            if (!isApplicableTo(elements, contributor))
+        for (Iterator it = contributors.iterator(); it.hasNext();) {
+			IObjectActionContributor contributor = (IObjectActionContributor) it.next();
+            if (!isApplicableTo(elements, contributor)) {
+            	it.remove();            
                 continue;
+            }
             if (contributor.contributeObjectMenus(popupMenu, selProv))
                 actualContributions = true;
             contributor.contributeObjectActionIdOverrides(overrides);
         }
-        for (int i = 0; i < contributors.size(); i++) {
-            IObjectActionContributor contributor = (IObjectActionContributor) contributors
-                    .get(i);
-            if (!isApplicableTo(elements, contributor))
-                continue;
+        
+        // Second pass, add the contributions that are applicable to
+        // the selection.
+        for (Iterator it = contributors.iterator(); it.hasNext();) {
+			IObjectActionContributor contributor = (IObjectActionContributor) it.next();        
             if (contributor.contributeObjectActions(part, popupMenu, selProv,
                     overrides))
                 actualContributions = true;
@@ -317,7 +319,7 @@ public class ObjectActionContributorManager extends ObjectContributorManager {
         IAdapterManager adapterMgr = Platform.getAdapterManager();
         for (Iterator list = classList.iterator(); list.hasNext();) {
             Class clazz = ((Class) list.next());
-            String[] adapters = adapterMgr.getAdapterTypes(clazz);
+            String[] adapters = adapterMgr.computeAdapterTypes(clazz);
             for (int i = 0; i < adapters.length; i++) {
 				String adapter = adapters[i];
 				if(! result.contains(adapter)) {
