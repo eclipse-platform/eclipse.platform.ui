@@ -122,6 +122,16 @@ public class SyncViewerPreferencePage extends FieldEditorPreferencePage implemen
 			}
 		}
 	
+	class BooleanFieldEditor2 extends BooleanFieldEditor {
+		public BooleanFieldEditor2(String name, String labelText, int style, Composite parent) {
+			super(name, labelText, style, parent);
+		}
+
+		protected void refreshValidState() {
+			updateEnablements();
+		}
+	}
+	
 	public SyncViewerPreferencePage() {
 		super(GRID);
 		setTitle(Policy.bind("SyncViewerPreferencePage.6")); //$NON-NLS-1$
@@ -153,7 +163,7 @@ public class SyncViewerPreferencePage extends FieldEditorPreferencePage implemen
 		bkgRefresh = new BooleanFieldEditor(SYNCVIEW_BACKGROUND_SYNC, Policy.bind("SyncViewerPreferencePage.12"), SWT.NONE, refreshGroup); //$NON-NLS-1$
 		addField(bkgRefresh);
 		
-		bkgScheduledRefresh = new BooleanFieldEditor(SYNCVIEW_SCHEDULED_SYNC, Policy.bind("SyncViewerPreferencePage.13"), SWT.NONE, refreshGroup); //$NON-NLS-1$
+		bkgScheduledRefresh = new BooleanFieldEditor2(SYNCVIEW_SCHEDULED_SYNC, Policy.bind("SyncViewerPreferencePage.13"), SWT.NONE, refreshGroup); //$NON-NLS-1$
 		addField(bkgScheduledRefresh);
 		
 		scheduledDelay = new IntegerFieldEditor2(SYNCVIEW_DELAY, Policy.bind("SyncViewerPreferencePage.14"), refreshGroup, 2); //$NON-NLS-1$
@@ -243,7 +253,7 @@ public class SyncViewerPreferencePage extends FieldEditorPreferencePage implemen
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
-		if(event.getSource() == bkgScheduledRefresh) {			
+		if(event.getSource() == bkgScheduledRefresh || event.getSource() == scheduledDelay) {			
 			updateEnablements();	
 		}
 		super.propertyChange(event);
