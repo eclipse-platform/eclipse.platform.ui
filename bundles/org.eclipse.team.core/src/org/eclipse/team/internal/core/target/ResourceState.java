@@ -30,6 +30,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
@@ -37,6 +38,7 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.target.TargetManager;
 import org.eclipse.team.core.target.TargetProvider;
 import org.eclipse.team.internal.core.Assert;
+import org.eclipse.team.internal.core.NullSubProgressMonitor;
 import org.eclipse.team.internal.core.Policy;
 import org.eclipse.team.internal.core.TeamPlugin;
 
@@ -507,26 +509,32 @@ public abstract class ResourceState {
 	 */
 	protected final void get(int depth, IProgressMonitor progress) throws TeamException {
 
-		progress = Policy.monitorFor(progress);		
+		progress = Policy.monitorFor(progress);
+		
+		// the no progress monitor is used to control the progress given to
+		// other methods and ensures that the progress monitor is not overloaded
+		// with subtask messages and work. The null monitor does propagate 
+		// cancellation.
+		IProgressMonitor noProgress = new NullSubProgressMonitor(progress);
 		try {
 			progress.beginTask(null, 100);
 			Policy.checkCanceled(progress);
 			
 			// If remote does not exist then simply ensure no local resource exists.			
-			if (!hasRemote(Policy.subMonitorFor(progress, 10))) {
+			if (!hasRemote(noProgress)) {
 				if (hasLocal()) 
-					deleteLocal(Policy.subMonitorFor(progress, 90));
+					deleteLocal(noProgress);
 				return;
 			}
 			
 			// Ensure that the required local folders exist
 			if (!hasLocal()) {
-				mkLocalDirs(Policy.subMonitorFor(progress, 5));
+				mkLocalDirs(noProgress);
 			}
 			
 			// If the remote resource is a file, download the remote contents
 			if (getRemoteType() == IResource.FILE) {
-				download(Policy.subMonitorFor(progress, 80));
+				download(Policy.subMonitorFor(progress, 100));
 				return;
 			}
 			
@@ -535,11 +543,11 @@ public abstract class ResourceState {
 			// If the local resource is a file, we must remove it first.
 			if (getLocal().getType() == IResource.FILE) {
 				if (hasLocal()) {
-					deleteLocal(Policy.subMonitorFor(progress, 5)); // May not exist.
+					deleteLocal(noProgress); // May not exist.
 				}
 				// change the local resource to a folder and create it
 				localResource = localResource.getParent().getFolder(new Path(localResource.getName()));
-				mkLocalDirs(Policy.subMonitorFor(progress, 5));
+				mkLocalDirs(noProgress);
 			}
 			
 			// Finally, resolve the collection membership based upon the depth parameter.
@@ -549,11 +557,11 @@ public abstract class ResourceState {
 					return;
 				case IResource.DEPTH_ONE :
 					// If we are considering only the immediate members of the collection
-					getFolderShallow(Policy.subMonitorFor(progress, 80));
+					getFolderShallow(Policy.subMonitorFor(progress, 100));
 					return;
 				case IResource.DEPTH_INFINITE :
 					// We are going in deep.
-					getFolderDeep(Policy.subMonitorFor(progress, 80));
+					getFolderDeep(Policy.subMonitorFor(progress, 100));
 					return;
 				default :
 					// We have covered all the legal cases.
@@ -569,19 +577,31 @@ public abstract class ResourceState {
 	 * Get the folder resource represented by the receiver deeply.
 	 */
 	protected final void getFolderDeep(IProgressMonitor progress) throws TeamException {
+		progress = Policy.monitorFor(progress);
+		try {
+			progress.beginTask(null, 10);
+			// Could throw if problem getting the folder at this level.
+			ResourceState[] childFolders = getFolderShallow(Policy.subMonitorFor(progress, 7));
+	
+			// If there are no further children then we are done.
+			if (childFolders.length == 0)
+				return;
+	
+			IProgressMonitor subProgress = Policy.subMonitorFor(progress, 3);
+			// Collect the responses in the multistatus.
+			try {
+				subProgress.beginTask(null, childFolders.length);
+				for (int i = 0; i < childFolders.length; i++) {
+					childFolders[i].get(IResource.DEPTH_INFINITE, Policy.subMonitorFor(subProgress, 1));
+				}
+			} finally {
+				subProgress.done();
+			}
 
-		// Could throw if problem getting the folder at this level.
-		ResourceState[] childFolders = getFolderShallow(progress);
-
-		// If there are no further children then we are done.
-		if (childFolders.length == 0)
 			return;
-
-		// Collect the responses in the multistatus.
-		for (int i = 0; i < childFolders.length; i++)
-			childFolders[i].get(IResource.DEPTH_INFINITE, progress);
-
-		return;
+		} finally {
+			progress.done();
+		}
 	}
 	
 	/**
@@ -594,15 +614,14 @@ public abstract class ResourceState {
 	 */
 	protected final ResourceState[] getFolderShallow(IProgressMonitor progress) throws TeamException {
 		progress = Policy.monitorFor(progress);
+		IProgressMonitor noProgress = new NullProgressMonitor();
 		try {
-			Policy.checkCanceled(progress);
-			progress.beginTask(null, 100);
 			// We are assuming that the resource is a container.
 			Assert.isLegal(getLocal() instanceof IContainer);
 			IContainer localContainer = (IContainer)getLocal();
 	
 			// Get list of all _remote_ children.
-			ResourceState[] remoteChildren = getRemoteChildren(Policy.subMonitorFor(progress, 50));
+			ResourceState[] remoteChildren = getRemoteChildren(noProgress);
 	
 			// This will be the list of remote children that are themselves containers.
 			Set remoteChildFolders = new HashSet();
@@ -612,47 +631,37 @@ public abstract class ResourceState {
 			Set surplusLocalChildren = new HashSet(localChildren.length);
 			surplusLocalChildren.addAll(Arrays.asList(localChildren));
 	
-			IProgressMonitor subProgress = Policy.subMonitorFor(progress, 40);
-			try {
-				subProgress.beginTask(null, remoteChildren.length * 100);
-				// For each remote child that is a file, make the local file content equivalent.
-				for (int i = 0; i < remoteChildren.length; i++) {
-					ResourceState remoteChildState = remoteChildren[i];
-					// If the remote child is a container add it to the list, and ensure that the local child
-					// is a folder if it exists.
-					if (remoteChildState.getRemoteType() == IResource.FILE) {
-						// The remote resource is a file.  Copy the content of the remote file
-						// to the local file, overwriting any existing content that may exist, and
-						// creating the file if it doesn't.
-						remoteChildState.download(Policy.subMonitorFor(subProgress, 100));
-						// Remember that we have processed this child.
-						surplusLocalChildren.remove(remoteChildState.getLocal());
-					} else {
-						// The remote resource is a container.
-						remoteChildFolders.add(remoteChildState);
-						// If the local child is not a container then it must be deleted.
-						IResource localChild = remoteChildState.getLocal();
-						if (localChild.exists() && (!(localChild instanceof IContainer)))
-							remoteChildState.deleteLocal(Policy.subMonitorFor(subProgress, 100));
-					} // end if
-				} // end for
-			} finally {
-				subProgress.done();
-			}
+			progress.beginTask(null, remoteChildren.length * 100);
+			// For each remote child that is a file, make the local file content equivalent.
+			for (int i = 0; i < remoteChildren.length; i++) {
+				Policy.checkCanceled(progress);
+				ResourceState remoteChildState = remoteChildren[i];
+				// If the remote child is a container add it to the list, and ensure that the local child
+				// is a folder if it exists.
+				if (remoteChildState.getRemoteType() == IResource.FILE) {
+					// The remote resource is a file.  Copy the content of the remote file
+					// to the local file, overwriting any existing content that may exist, and
+					// creating the file if it doesn't.
+					remoteChildState.download(Policy.subMonitorFor(progress, 100));
+					// Remember that we have processed this child.
+					surplusLocalChildren.remove(remoteChildState.getLocal());
+				} else {
+					// The remote resource is a container.
+					remoteChildFolders.add(remoteChildState);
+					// If the local child is not a container then it must be deleted.
+					IResource localChild = remoteChildState.getLocal();
+					if (localChild.exists() && (!(localChild instanceof IContainer)))
+						remoteChildState.deleteLocal(noProgress);
+				} // end if
+			} // end for
 	
 			// Remove each local child that does not have a corresponding remote resource.
 			TargetProvider provider = TargetManager.getProvider(localContainer.getProject());
 			Iterator childrenItr = surplusLocalChildren.iterator();
-			subProgress = Policy.subMonitorFor(progress, 10);
-			try {
-				subProgress.beginTask(null, 100);
-				while (childrenItr.hasNext()) {
-					IResource unseenChild = (IResource) childrenItr.next();
-					((SynchronizedTargetProvider)provider).newState(unseenChild).deleteLocal(subProgress);
-				} // end-while
-			} finally {
-				subProgress.done();
-			}
+			while (childrenItr.hasNext()) {
+				IResource unseenChild = (IResource) childrenItr.next();
+				((SynchronizedTargetProvider)provider).newState(unseenChild).deleteLocal(noProgress);
+			} // end-while
 	
 			// Answer the array of children seen on the remote collection that are
 			// themselves collections (to support depth operations).
@@ -722,21 +731,26 @@ public abstract class ResourceState {
 	protected final void put(IProgressMonitor progress) throws TeamException {
 
 		progress = Policy.monitorFor(progress);
+		
+		// the no progress monitor is used to control the progress given to
+		// other methods and ensures that the progress monitor is not overloaded
+		// with subtask messages and work. The null monitor does propagate 
+		// cancellation.
+		IProgressMonitor noProgress = new NullSubProgressMonitor(progress);
 		try {
 			// Check cancellation
 			progress.beginTask(null, 100);
 			Policy.checkCanceled(progress);
 	
 			// Ensure that the remote type matches the local type
-			boolean hasRemote = hasRemote(progress);
+			boolean hasRemote = hasRemote(noProgress);
 			if ((getRemoteType() != localResource.getType() && localResource.getType() != IResource.PROJECT)) {
-				if (hasRemote) delete(Policy.subMonitorFor(progress, 5));
+				if (hasRemote) delete(noProgress);
 				hasRemote = false;
 			}
 					
-			// Upload the resource (this is a shallow operation for folders)
-			
-			checkin(Policy.subMonitorFor(progress, 65));
+			// Upload the resource (this is a shallow operation for folders)			
+			checkin(Policy.subMonitorFor(progress, 75));
 			
 			// If we're putting a file, we're done
 			if (localResource.getType() == IResource.FILE) return;
@@ -779,15 +793,9 @@ public abstract class ResourceState {
 	
 			// Remove each remote child that does not have a corresponding local resource.
 			Iterator childrenItr = surplusRemoteChildren.values().iterator();
-			subMonitor = Policy.subMonitorFor(progress, 5);
-			try {
-				subMonitor.beginTask(null, surplusRemoteChildren.size() * 100);
-				while (childrenItr.hasNext()) {
-					ResourceState unseenChild = (ResourceState) childrenItr.next();
-					unseenChild.delete(Policy.subMonitorFor(progress, 100));
-				}
-			} finally {
-				subMonitor.done();
+			while (childrenItr.hasNext()) {
+				ResourceState unseenChild = (ResourceState) childrenItr.next();
+				unseenChild.delete(noProgress);
 			}
 		} finally {
 			progress.done();

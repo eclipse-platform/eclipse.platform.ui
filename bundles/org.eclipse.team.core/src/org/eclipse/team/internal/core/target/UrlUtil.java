@@ -55,4 +55,27 @@ public class UrlUtil {
 			return url;
 		return url + Path.SEPARATOR;
 	}
+	
+	/*
+	 * @see toTruncatedPath(URL, int)
+	 */
+	public static String toTruncatedPath(URL url, int split) {
+		return toTruncatedPath(url.getPath(), split);
+	}
+	
+    /*
+	 * If the number of segments in the url path is greater than <code>split</code> then
+	 * the returned path is truncated to <code>split</code> number of segments and '...' 
+	 * is shown as the first segment of the path.
+	 */
+	public static String toTruncatedPath(String url, int split) {
+		IPath path = new Path(url);
+		path = path.setDevice(null); // clear the device id, in this case the http:
+		int segments = path.segmentCount();
+		if(segments>split) {				
+			IPath last = path.removeFirstSegments(segments - split);
+			return "..." + path.SEPARATOR + last.toString(); //$NON-NLS-1$
+		}
+		return path.toString();
+	}
 }
