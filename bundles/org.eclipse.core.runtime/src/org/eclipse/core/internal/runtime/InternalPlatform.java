@@ -18,7 +18,6 @@ import org.eclipse.core.internal.content.ContentTypeManager;
 import org.eclipse.core.internal.jobs.JobManager;
 import org.eclipse.core.internal.preferences.PreferencesService;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.adaptor.BundleStopper;
 import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
@@ -48,7 +47,6 @@ public final class InternalPlatform {
 	private ServiceTracker configurationLocation = null;
 	private ServiceTracker installLocation = null;
 	private ServiceTracker debugTracker = null;
-	private ServiceTracker stopperTracker = null;
 	private DebugOptions options = null;
 
 	private static IAdapterManager adapterManager;
@@ -369,7 +367,6 @@ public final class InternalPlatform {
 
 	public void start(BundleContext runtimeContext) throws IOException {
 		this.context = runtimeContext;
-		initializeBundleStopperTracker();
 		initializeLocationTrackers();
 		ResourceTranslator.start();
 		endOfInitializationHandler = getSplashHandler();
@@ -384,19 +381,6 @@ public final class InternalPlatform {
 		platformLog = new PlatformLogWriter();
 		addLogListener(platformLog);		
 		initializeRuntimeFileManager();
-	}
-
-	private void initializeBundleStopperTracker() {
-		if (! "false".equalsIgnoreCase(System.getProperties().getProperty("eclipse.strictShutdown"))) { //$NON-NLS-1$ //$NON-NLS-2$
-			stopperTracker = new ServiceTracker(context, BundleStopper.class.getName(), null);
-			stopperTracker.open();
-		}
-	}
-
-	public BundleStopper getBundleStopper() {
-		if (stopperTracker == null)
-			return null;
-		return (BundleStopper) stopperTracker.getService();
 	}
 	
 	private void initializeRuntimeFileManager() throws IOException {
@@ -433,7 +417,6 @@ public final class InternalPlatform {
 		JobManager.shutdown();
 		debugTracker.close();
 		ResourceTranslator.stop();
-		stopperTracker.close();
 		initialized = false;
 		context = null;
 	}
