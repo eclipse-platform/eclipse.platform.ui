@@ -294,7 +294,7 @@ public class ForceCommitSyncAction extends MergeAction {
 		return manager.promptForComment(getShell(), resourcesToCommit);
 	}
 
-	private IResource[] promptForResourcesToBeAdded(RepositoryManager manager, IResource[] unadded) {
+	protected IResource[] promptForResourcesToBeAdded(RepositoryManager manager, IResource[] unadded) {
 		return manager.promptForResourcesToBeAdded(getShell(), unadded);
 	}
 	
