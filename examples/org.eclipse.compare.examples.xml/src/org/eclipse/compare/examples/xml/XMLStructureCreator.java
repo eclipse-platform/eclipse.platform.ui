@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -89,12 +89,11 @@ public class XMLStructureCreator implements IStructureCreator {
 	public static final char ID_TYPE_BODY = '<';
 
 	//private static final String parserName = "org.apache.xerces.parsers.SAXParser"; //$NON-NLS-1$
-	private static final String parserName = "org.apache.crimson.parser.XMLReaderImpl"; //$NON-NLS-1$
 
-	private static boolean setValidation    = false; //defaults
-	private static boolean setNameSpaces    = true;
-    private static boolean setSchemaSupport = true;
-    private static boolean setSchemaFullSupport = false;
+	//private static boolean setValidation    = false; //defaults
+	//private static boolean setNameSpaces    = true;
+    //private static boolean setSchemaSupport = true;
+    //private static boolean setSchemaFullSupport = false;
 
 	private String fFileExt;
 	private boolean fFirstCall = true;

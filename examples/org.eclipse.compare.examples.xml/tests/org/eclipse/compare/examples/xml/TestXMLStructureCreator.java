@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,14 +37,14 @@ public class TestXMLStructureCreator extends TestCase {
 		
 		public InputStream getContents() throws CoreException {
 			try {
-				return new ByteArrayInputStream(fString.getBytes("UTF-16"));
+				return new ByteArrayInputStream(fString.getBytes("UTF-16")); //$NON-NLS-1$
 			} catch (Exception e) {
 				return new ByteArrayInputStream(fString.getBytes());
 			}
 		}
 		
 		public String getCharset() {
-			return "UTF-16";
+			return "UTF-16"; //$NON-NLS-1$
 		}
 	}
 	
