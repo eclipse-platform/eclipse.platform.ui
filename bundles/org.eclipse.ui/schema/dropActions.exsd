@@ -2,11 +2,11 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.ui">
 <annotation>
-   <appInfo>
-      <meta.schema plugin="org.eclipse.ui" id="dropActions" name="Drop Actions"/>
-   </appInfo>
-   <documentation>
-      This extension point is used to add drop behaviour to 
+      <appInfo>
+         <meta.schema plugin="org.eclipse.ui" id="dropActions" name="Drop Actions"/>
+      </appInfo>
+      <documentation>
+         This extension point is used to add drop behaviour to 
 views defined by other plugins. 
 &lt;p&gt;
 Due to the UI layering imposed by the plugin 
@@ -15,10 +15,10 @@ and nature of other views. This can make drag and
 drop operations between plugins difficult. 
 For example, one may wish to provide Java 
 refactoring support whereby the user drags a 
-method from the Java editor's content outliner 
+method from the Java editor&apos;s content outliner 
 into another java file in the resource navigator. 
-Since the resource navigator doesn't know anything 
-about Java content, it doesn't know how to behave 
+Since the resource navigator doesn&apos;t know anything 
+about Java content, it doesn&apos;t know how to behave 
 when java methods are dropped onto it.  
 Similarly, an ISV may want to drop some of 
 their content into one of the Java viewers. 
@@ -37,8 +37,8 @@ transfer type, and place a
 &lt;samp&gt;PluginTransferData&lt;/samp&gt; object in the drag event.
 See org.eclipse.jface.viewers.StructuredViewer#addDragSupport 
 to learn how to add drag support to a viewer.
-   </documentation>
-</annotation>
+      </documentation>
+   </annotation>
 
    <element name="extension">
       <complexType>
@@ -108,11 +108,13 @@ to learn how to add drag support to a viewer.
          The following is an example of a drop action extension: 
 &lt;p&gt;
 &lt;pre&gt;
-    &lt;extension point="org.eclipse.ui.dropActions"&gt; 
-        &lt;action 
-            id="my_drop_action" 
-            class="com.xyz.eclipse.TestDropAction"&gt; 
-        &lt;/action&gt; 
+    &lt;extension point=&quot;org.eclipse.ui.dropActions&quot;&gt; 
+        &lt;dropContribution&gt;
+            &lt;action 
+                id=&quot;my_drop_action&quot; 
+                class=&quot;com.xyz.eclipse.TestDropAction&quot;&gt; 
+            &lt;/action&gt; 
+        &lt;/dropContribution&gt;
     &lt;/extension&gt;  
 &lt;/pre&gt;
 &lt;/p&gt;
@@ -125,7 +127,7 @@ class MyDragListener extends DragSourceAdapter {
         if (PluginTransfer.getInstance().isSupportedType(event.dataType)) { 
             byte[] dataToSend = ...//enter the data to be sent. 
             event.data = new PluginTransferData( 
-                "my_drop_action", dataToSend); 
+                &quot;my_drop_action&quot;, dataToSend); 
         } 
     } 
 } 
