@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.presentations;
 
 import java.text.Collator;
 import java.util.Iterator;
-
 import org.eclipse.jface.viewers.ContentViewer;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.IFontProvider;
@@ -25,7 +24,6 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
@@ -53,7 +51,7 @@ public class EditorList extends AbstractTableInformationControl {
 
         public Object[] getElements(Object inputElement) {
             if (editorPresentation == null) { return new CTabItem[0]; }                         
-            final CTabFolder tabFolder = editorPresentation.getTabFolder();
+            final PaneFolder tabFolder = editorPresentation.getTabFolder();
 
             /* TODO
             ArrayList items = new ArrayList(Arrays.asList(tabFolder.getItems()));

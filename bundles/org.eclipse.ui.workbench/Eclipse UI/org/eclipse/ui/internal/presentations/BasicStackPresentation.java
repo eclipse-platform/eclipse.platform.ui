@@ -11,7 +11,6 @@
 package org.eclipse.ui.internal.presentations;
 
 import java.util.ArrayList;
-import java.util.List;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
@@ -19,21 +18,15 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.swt.custom.CTabFolder2Adapter;
-import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -67,51 +60,30 @@ import org.eclipse.ui.presentations.StackPresentation;
  */
 public class BasicStackPresentation extends StackPresentation {
 	
-	private CTabFolder tabFolder;
+	private PaneFolder tabFolder;
 	private IPresentablePart current;
 	private boolean activeState = false;
-	private int tabPosition;
 	private MenuManager systemMenuManager = new MenuManager();
-	private TabFolderLayout layout;
 	private Label titleLabel;
 	private Listener dragListener;
-	
-	// Current tab colours
-	private Color backgroundGradientStart;
-	private Color backgroundGradientEnd;
-	private Color background;
 	
 	/**
 	 * While we are dragging a tab from this folder, this holdes index of the tab
 	 * being dragged. Set to -1 if we are not currently dragging a tab from this folder.
 	 */
 	private int dragStart = -1;
-	
-	/**
-	 * State of the presentation at the last mousedown event. This is used to prevent
-	 * a mouseup over the minimize or maximize buttons from undoing a state change 
-	 * that was caused by the mousedown.
-	 */
-	private int mousedownState = -1;
-	
+		
 	private final static String TAB_DATA = BasicStackPresentation.class.getName() + ".partId"; //$NON-NLS-1$
 	
-	private CTabFolder2Adapter expandListener = new CTabFolder2Adapter() {
-		public void minimize(CTabFolderEvent event) {
-			event.doit = false;
-			if (mousedownState == getSite().getState()) {
-				getSite().setState(IStackPresentationSite.STATE_MINIMIZED);
-			}
+	private PaneFolderButtonListener buttonListener = new PaneFolderButtonListener() {
+		public void stateButtonPressed(int buttonId) {
+			getSite().setState(buttonId);
 		}
-		
-		public void restore(CTabFolderEvent event) {
-			event.doit = false;
-			getSite().setState(IStackPresentationSite.STATE_RESTORED);
-		}
-		
-		public void maximize(CTabFolderEvent event) {
-			event.doit = false;
-			getSite().setState(IStackPresentationSite.STATE_MAXIMIZED);
+
+		public void closeButtonPressed(CTabItem item) {
+			IPresentablePart part = getPartForTab(item);
+			
+			getSite().close(part);		
 		}
 	};
 	
@@ -121,12 +93,10 @@ public class BasicStackPresentation extends StackPresentation {
 				Control ctrl = (Control)e.widget;
 				
 				Point globalPos = ctrl.toDisplay(new Point(e.x, e.y));
-				
-				mousedownState = getSite().getState();
-				
+							
 				// PR#1GDEZ25 - If selection will change in mouse up ignore mouse down.
 				// Else, set focus.
-				CTabItem newItem = tabFolder.getItem(tabFolder.toControl(globalPos));
+				CTabItem newItem = tabFolder.getItem(tabFolder.getControl().toControl(globalPos));
 				if (newItem != null) {
 					CTabItem oldItem = tabFolder.getSelection();
 					if (newItem != oldItem)
@@ -145,7 +115,6 @@ public class BasicStackPresentation extends StackPresentation {
 				getSite().setState(IStackPresentationSite.STATE_MAXIMIZED);
 			}
 		}
-		
 	};
 	
 	private Listener menuListener = new Listener() {
@@ -169,28 +138,12 @@ public class BasicStackPresentation extends StackPresentation {
 		}
 	};
 	
-	public int getTopTrimStart() {
-		return layout.getTrimStart();
-	}
-	
 	private Listener resizeListener = new Listener() {
 		public void handleEvent(Event e) {
-			setControlSize();
+			//setControlSize();
 		}
 	};
 	
-	private CTabFolder2Adapter closeListener = new CTabFolder2Adapter() {
-		/* (non-Javadoc)
-		 * @see org.eclipse.swt.custom.CTabFolder2Adapter#close(org.eclipse.swt.custom.CTabFolderEvent)
-		 */
-		public void close(CTabFolderEvent event) {
-			event.doit = false;
-			IPresentablePart part = getPartForTab((CTabItem)event.item);
-			
-			getSite().close(part);
-		}
-	}; 
-
 	private IPropertyListener childPropertyChangeListener = new IPropertyListener() {
 		public void propertyChanged(Object source, int property) {
 			if (source instanceof IPresentablePart) {
@@ -213,21 +166,22 @@ public class BasicStackPresentation extends StackPresentation {
 	};
 	private ToolBar viewToolBar;
 
-	public BasicStackPresentation(CTabFolder control, IStackPresentationSite stackSite) {
+	public BasicStackPresentation(PaneFolder control, IStackPresentationSite stackSite) {
 	    super(stackSite);
 		tabFolder = control;
 		
 		tabFolder.setMinimizeVisible(stackSite.supportsState(IStackPresentationSite.STATE_MINIMIZED));
 		tabFolder.setMaximizeVisible(stackSite.supportsState(IStackPresentationSite.STATE_MAXIMIZED));
-		
-		layout = new TabFolderLayout(tabFolder);
-
-		titleLabel = new Label(control.getParent(), SWT.WRAP);
+				
+		titleLabel = new Label(tabFolder.getControl(), SWT.WRAP);
 		titleLabel.setVisible(false);
+		titleLabel.moveAbove(null);
+		
 		ColorSchemeService.setViewTitleFont(this, titleLabel);
 		
-		viewToolBar = new ToolBar(control.getParent(), SWT.HORIZONTAL 
+		viewToolBar = new ToolBar(control.getControl(), SWT.HORIZONTAL 
 				| SWT.FLAT | SWT.WRAP);
+		viewToolBar.moveAbove(null);
 		
 		ToolItem pullDownButton = new ToolItem(viewToolBar, SWT.PUSH);
 		//				Image img = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU);
@@ -244,31 +198,29 @@ public class BasicStackPresentation extends StackPresentation {
 		});
 		
 		// listener to switch between visible tabItems
-		tabFolder.addListener(SWT.Selection, selectionListener);
+		tabFolder.getControl().addListener(SWT.Selection, selectionListener);
 
 		// listener to resize visible components
-		tabFolder.addListener(SWT.Resize, resizeListener);
+		tabFolder.getControl().addListener(SWT.Resize, resizeListener);
 
 		// listen for mouse down on tab to set focus.
-		tabFolder.addMouseListener(mouseListener);
+		tabFolder.getControl().addMouseListener(mouseListener);
 		
-		tabFolder.addListener(SWT.MenuDetect, menuListener);
-
-		tabFolder.addCTabFolder2Listener(closeListener);
+		tabFolder.getControl().addListener(SWT.MenuDetect, menuListener);
 		
-		tabFolder.addCTabFolder2Listener(expandListener);
+		tabFolder.addButtonListener(buttonListener);
 		
 		dragListener = new Listener() {
 			public void handleEvent(Event event) {
 				
 				Point localPos = new Point(event.x, event.y);
 				// Ignore drags unless they are on the title area
-				if ((tabFolder.getStyle() & SWT.TOP) != 0) {
+				if ((tabFolder.getControl().getStyle() & SWT.TOP) != 0) {
 					if (localPos.y > tabFolder.getTabHeight()) {
 						return;
 					}
 				} else {
-					if (localPos.y < tabFolder.getBounds().height - tabFolder.getTabHeight()) {
+					if (localPos.y < tabFolder.getControl().getBounds().height - tabFolder.getTabHeight()) {
 						return;
 					}
 				}
@@ -276,7 +228,7 @@ public class BasicStackPresentation extends StackPresentation {
 				CTabItem tabUnderPointer = tabFolder.getItem(localPos);
 		
 				if (tabUnderPointer == null) {
-					getSite().dragStart(tabFolder.toDisplay(localPos), false);
+					getSite().dragStart(tabFolder.getControl().toDisplay(localPos), false);
 					return;
 				}
 
@@ -285,13 +237,13 @@ public class BasicStackPresentation extends StackPresentation {
 				if (getSite().isMoveable(part)) {
 					dragStart = tabFolder.indexOf(tabUnderPointer);
 					getSite().dragStart(part, 
-						tabFolder.toDisplay(localPos), false);
+						tabFolder.getControl().toDisplay(localPos), false);
 					dragStart = -1;
 				}
 			}
 		};
 		
-		PresentationUtil.addDragListener(tabFolder, dragListener);
+		PresentationUtil.addDragListener(tabFolder.getControl(), dragListener);
 		
 		// Uncomment to allow dragging from the title label
 //		PresentationUtil.addDragListener(titleLabel, new Listener() {
@@ -306,41 +258,14 @@ public class BasicStackPresentation extends StackPresentation {
 		titleLabel.addMouseListener(mouseListener);
 		
 		// Compute the tab height
-		int toolbarHeight = viewToolBar.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
-		// Add enough space for the margin
-		int tabHeight = toolbarHeight + 1;
+		int tabHeight = viewToolBar.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
+
 		// Enforce a minimum tab height
 		if (tabHeight < 20) {
 			tabHeight = 20;
 		}
 		tabFolder.setTabHeight(tabHeight);
-				
-		final Color darkShadowColour = tabFolder.getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW); 
-		final Color lightShadowColour = tabFolder.getDisplay().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
 		
-		tabFolder.addPaintListener(new PaintListener() {
-
-			public void paintControl(PaintEvent e) {
-				GC gc = e.gc;
-				
-				gc.setForeground(darkShadowColour);
-
-				Rectangle clientBounds = Geometry.copy(layout.getClientBounds());
-				Rectangle bounds = tabFolder.getBounds();
-				clientBounds.x -= bounds.x;
-				clientBounds.y -= bounds.y;
-				
-				if (activeState) {	
-					if (layout.isAnyTrimBelow()) {
-						gc.drawLine(clientBounds.x, clientBounds.y - 1, clientBounds.x + clientBounds.width - 1, clientBounds.y - 1);
-					}
-				} else {
-					gc.drawLine(1, clientBounds.y - 1, bounds.width - 1, clientBounds.y - 1);
-				}
-			}
-		
-		});
-
 		populateSystemMenu(systemMenuManager);		
 	}
 
@@ -475,19 +400,10 @@ public class BasicStackPresentation extends StackPresentation {
 	 * 
 	 * @return
 	 */
-	protected CTabFolder getTabFolder() {
+	protected PaneFolder getTabFolder() {
 		return tabFolder;
 	}
 	
-	public void setTabPosition(int position) {
-		tabPosition = position;
-		getTabFolder().setTabPosition(tabPosition);
-	}
-	
-	public int getTabPosition() {
-		return tabPosition;
-	}
-
 	/**
 	 * Returns true iff the underlying tab folder has been disposed.
 	 * 
@@ -533,53 +449,43 @@ public class BasicStackPresentation extends StackPresentation {
 	 */
 	public void setControlSize() {
 		// Set up the top-right controls
-		List topRight = new ArrayList(3);
-		
-		Control currentTop = tabFolder;
+		//List topRight = new ArrayList(3);
 		
 		String currentTitle = getCurrentTitle();
 		
 		if (!currentTitle.equals(Util.ZERO_LENGTH_STRING)) {
-			titleLabel.moveAbove(currentTop);
-			currentTop = titleLabel;
-			topRight.add(titleLabel);
-			layout.setNumLeftAligned(1);
+			tabFolder.setTopLeft(titleLabel);
 			titleLabel.setText(currentTitle);
 			titleLabel.setVisible(true);
 		} else {
+			tabFolder.setTopLeft(null);
 			titleLabel.setVisible(false);
-			layout.setNumLeftAligned(0);
 		}
 		
-		Control toolbar = getCurrentToolbar();
-		
-		if (toolbar != null) {
-			topRight.add(toolbar);
-		}
-		
+		Control currentToolbar = getCurrentToolbar(); 
+		tabFolder.setTopCenter(currentToolbar);
+			
 		IPartMenu partMenu = getPartMenu();
 		
 		if (partMenu != null) {
-			viewToolBar.moveAbove(currentTop);
-			currentTop = viewToolBar;
-			topRight.add(viewToolBar);
+			tabFolder.setTopRight(viewToolBar);
 			viewToolBar.setVisible(true);
 		} else {
+			tabFolder.setTopRight(null);
 			viewToolBar.setVisible(false);
 		}
-		
-		Control[] controls = (Control[])topRight.toArray(new Control[topRight.size()]);
-		
-		layout.setTopRight(controls);
-		
-		if (current == null || tabFolder == null)
-			return;
 
-		layout.layout();
-		
-		current.setBounds(layout.getClientBounds());
-		
-		updateTrimColours();
+		tabFolder.layout(true);
+
+		if (current != null) {
+			Rectangle clientArea = tabFolder.getClientArea();
+			Rectangle bounds = tabFolder.getControl().getBounds();
+			clientArea.x += bounds.x;
+			clientArea.y += bounds.y;
+			
+			current.setBounds(clientArea);
+		}
+
 	}
 	
 	/**
@@ -596,28 +502,6 @@ public class BasicStackPresentation extends StackPresentation {
 
 		return part.getMenu();
 	}
-	
-	/**
-	 * Update the colours of the trim widgets based on whether they are
-	 * currently in the title bar or below it.
-	 */
-	protected void updateTrimColours() {
-		Color background = layout.isTrimOnTop() ? backgroundGradientEnd : this.background ;
-		
-		Control[] trim = layout.getTopRight();
-		
-		for (int idx = 0; idx < trim.length; idx++) {
-			Control next = trim[idx];
-			
-			Color nextCol = next.getBackground();
-			
-			if (nextCol != background) {
-				next.setBackground(background);
-			}
-		}
-		
-		updateBackgroundColors();
-	}
 		
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.skins.Presentation#dispose()
@@ -626,11 +510,11 @@ public class BasicStackPresentation extends StackPresentation {
 		if (isDisposed()) {
 			return;
 		}
-		PresentationUtil.removeDragListener(tabFolder, dragListener);
+		PresentationUtil.removeDragListener(tabFolder.getControl(), dragListener);
 		
 		systemMenuManager.dispose();
 		systemMenuManager.removeAll();
-		tabFolder.dispose();
+		tabFolder.getControl().dispose();
 		tabFolder = null;
 		
 		titleLabel.dispose();
@@ -655,7 +539,7 @@ public class BasicStackPresentation extends StackPresentation {
 			style |= SWT.CLOSE;
 		}
 		
-		tabItem = new CTabItem(tabFolder, style, tabIndex);
+		tabItem = tabFolder.createItem(style, tabIndex);
 				
 		tabItem.setData(TAB_DATA, part);
 		
@@ -706,6 +590,8 @@ public class BasicStackPresentation extends StackPresentation {
 		int idx = indexOf(position);
 		
 		createPartTab(newPart, idx);
+		
+		setControlSize();
 	}
 
 	/* (non-Javadoc)
@@ -753,9 +639,8 @@ public class BasicStackPresentation extends StackPresentation {
 	 * @see org.eclipse.ui.internal.skins.Presentation#setBounds(org.eclipse.swt.graphics.Rectangle)
 	 */
 	public void setBounds(Rectangle bounds) {
-		tabFolder.setBounds(bounds);
+		tabFolder.getControl().setBounds(bounds);
 		setControlSize();
-		viewToolBar.moveAbove(getControl());
 	}
 	
 	/* (non-Javadoc)
@@ -772,15 +657,14 @@ public class BasicStackPresentation extends StackPresentation {
 		if (current != null) {
 			current.setVisible(isVisible);
 		}
-		tabFolder.setVisible(isVisible);
+		tabFolder.getControl().setVisible(isVisible);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.skins.Presentation#setState(int)
 	 */
 	public void setState(int state) {
-		tabFolder.setMinimized(state == IStackPresentationSite.STATE_MINIMIZED);
-		tabFolder.setMaximized(state == IStackPresentationSite.STATE_MAXIMIZED);
+		tabFolder.setState(state);
 	}
 	
 	/* (non-Javadoc)
@@ -795,7 +679,7 @@ public class BasicStackPresentation extends StackPresentation {
 	 * @param point
 	 */
 	protected void showSystemMenu(Point point) {
-		Menu aMenu = systemMenuManager.createContextMenu(tabFolder.getParent());
+		Menu aMenu = systemMenuManager.createContextMenu(tabFolder.getControl().getParent());
 		systemMenuManager.update(true);
 		aMenu.setLocation(point.x, point.y);
 		aMenu.setVisible(true);
@@ -805,7 +689,7 @@ public class BasicStackPresentation extends StackPresentation {
 	 * @see org.eclipse.ui.internal.skins.Presentation#getControl()
 	 */
 	public Control getControl() {
-		return tabFolder;
+		return tabFolder.getControl();
 	}
 
 	/* (non-Javadoc)
@@ -813,7 +697,7 @@ public class BasicStackPresentation extends StackPresentation {
 	 */
 	public StackDropResult dragOver(Control currentControl, Point location) {
 		// Determine which tab we're currently dragging over
-		Point localPos = tabFolder.toControl(location);
+		Point localPos = tabFolder.getControl().toControl(location);
 		final CTabItem tabUnderPointer = tabFolder.getItem(localPos);
 		
 		// This drop target only deals with tabs... if we're not dragging over
@@ -835,31 +719,10 @@ public class BasicStackPresentation extends StackPresentation {
 			position = getPartForTab(tabUnderPointer);
 		}
 		
-		return new StackDropResult(Geometry.toDisplay(tabFolder, tabUnderPointer.getBounds()),
+		return new StackDropResult(Geometry.toDisplay(tabFolder.getControl(), tabUnderPointer.getBounds()),
 			position);
 	}
-	
-	/**
-	 * Returns the current percentage for the background gradient (this is the percentage
-	 * of the way along the tab folder where the toolbar begins) 
-	 * 
-	 * @return a percentage (0 - 100)
-	 */
-	public int getGradientPercentage() {
-		Rectangle clientBounds = getTabFolder().getBounds();
 		
-		int topTrimStart = getTopTrimStart(); 
-		
-		int percentage = clientBounds.width == 0 ? 100 : Math.min(100, 
-				100 * topTrimStart / clientBounds.width);
-		
-		if (percentage < 0) {
-			percentage = 0;
-		}
-		
-		return percentage;	    
-	}
-	
 	/**
 	 * Returns the toolbar control for the currently selected part, or null if none (not 
 	 * all parts have a toolbar).
@@ -884,30 +747,7 @@ public class BasicStackPresentation extends StackPresentation {
 	 * @param background
 	 */
 	public void setBackgroundColors(Color gradientStart, Color gradientEnd, Color background) {
-		backgroundGradientStart = gradientStart;
-		backgroundGradientEnd = gradientEnd;
-		this.background = background;
-		updateBackgroundColors();
-		
-		updateTrimColours();
-	}
-	
-	/**
-	 * Causes the current background colours to be reapplied to the underlying CTabFolder. This
-	 * should be invoked whenever the colours change or when the toolbars may have been resized
-	 * or repositioned, since the gradient percentage is computed as a function of the toolbar
-	 * position.
-	 */
-	protected void updateBackgroundColors() {
-		Color [] c = new Color[3];
-		c[0] = backgroundGradientStart;
-		c[1] = backgroundGradientEnd;
-		c[2] = c[1];
-	
-		int[] percents = new int[] {getGradientPercentage(), 100};				
-	   
-		getTabFolder().setBackground(c, percents, false);
-		getTabFolder().setBackground(background);
+		tabFolder.setBackgroundColors(gradientStart, gradientEnd, background);
 	}
 
 	/* (non-Javadoc)
@@ -916,7 +756,7 @@ public class BasicStackPresentation extends StackPresentation {
 	public void showSystemMenu() {
 		IPresentablePart part = getCurrentPart();
 		if (part != null) {
-			Rectangle bounds = DragUtil.getDisplayBounds(tabFolder);
+			Rectangle bounds = DragUtil.getDisplayBounds(tabFolder.getControl());
 			
 			int idx = tabFolder.getSelectionIndex();
 			if (idx > -1) {
@@ -937,13 +777,13 @@ public class BasicStackPresentation extends StackPresentation {
 	 */
 	public Control[] getTabList(IPresentablePart part) {
 		ArrayList list = new ArrayList();
-		if (getTabPosition() == SWT.BOTTOM) {
+		if (tabFolder.getTabPosition() == SWT.BOTTOM) {
 			if (part.getToolBar() != null) list.add(part.getToolBar());
 			if (part.getControl() != null) list.add(part.getControl());
-			if (getTabFolder() != null) list.add(getTabFolder());
+			if (getTabFolder() != null) list.add(getTabFolder().getControl());
 		}
 		else {
-			if (getTabFolder() != null) list.add(getTabFolder());
+			if (getTabFolder() != null) list.add(getTabFolder().getControl());
 			if (part.getToolBar() != null) list.add(part.getToolBar());
 			if (part.getControl() != null) list.add(part.getControl());
 		}

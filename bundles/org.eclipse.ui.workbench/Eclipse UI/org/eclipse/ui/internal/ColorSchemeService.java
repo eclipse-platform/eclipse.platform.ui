@@ -11,11 +11,9 @@
 package org.eclipse.ui.internal;
 
 import java.lang.ref.WeakReference;
-
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -25,6 +23,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.presentations.BasicStackPresentation;
+import org.eclipse.ui.internal.presentations.PaneFolder;
 import org.eclipse.ui.themes.ITheme;
 import org.eclipse.ui.themes.IThemeManager;
 
@@ -75,12 +74,12 @@ public class ColorSchemeService {
 	    control.setBackground(theme.getColorRegistry().get(IWorkbenchThemeConstants.INACTIVE_TAB_BG_END));
     }
     
-	public static void setTabAttributes(BasicStackPresentation presentation, final CTabFolder control) {
+	public static void setTabAttributes(BasicStackPresentation presentation, final PaneFolder control) {
 	    if (presentation == null)  // the reference to the presentation was lost by the listener
 	    	return;	    
 
 	    ITheme theme = PlatformUI.getWorkbench().getThemeManager().getCurrentTheme();
-	    if (control.getData(LISTENER_KEY) == null) {
+	    if (control.getControl().getData(LISTENER_KEY) == null) {
 	    	final WeakReference ref = new WeakReference(presentation);
 	        final IPropertyChangeListener listener = new IPropertyChangeListener() {
 
@@ -102,8 +101,8 @@ public class ColorSchemeService {
                     }
                 }	            
 	        };
-	        control.setData(LISTENER_KEY, listener);
-	        control.addDisposeListener(new DisposeListener() {
+	        control.getControl().setData(LISTENER_KEY, listener);
+	        control.getControl().addDisposeListener(new DisposeListener() {
 
                 /* (non-Javadoc)
                  * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
@@ -113,7 +112,7 @@ public class ColorSchemeService {
                     .getWorkbench()
                     .getThemeManager()
                     .removePropertyChangeListener(listener);
-                    control.setData(LISTENER_KEY, null);   
+                    control.getControl().setData(LISTENER_KEY, null);   
                 }});
 	        
 	        PlatformUI
@@ -125,7 +124,7 @@ public class ColorSchemeService {
 	    int [] percent = new int[1];
 	    boolean vertical;
 	    ColorRegistry colorRegistry = theme.getColorRegistry();
-        control.setForeground(colorRegistry.get(IWorkbenchThemeConstants.INACTIVE_TAB_TEXT_COLOR));
+        control.getControl().setForeground(colorRegistry.get(IWorkbenchThemeConstants.INACTIVE_TAB_TEXT_COLOR));
 
         Color [] c = new Color[2];
         c[0] = colorRegistry.get(IWorkbenchThemeConstants.INACTIVE_TAB_BG_START);
@@ -150,7 +149,7 @@ public class ColorSchemeService {
         control.setSelectionBackground(c, percent, vertical);
         CTabItem [] items = control.getItems();
         Font tabFont = theme.getFontRegistry().get(IWorkbenchThemeConstants.TAB_TEXT_FONT);
-        control.setFont(tabFont);
+        control.getControl().setFont(tabFont);
         for (int i = 0; i < items.length; i++) {
 			items[i].setFont(tabFont);
 		}

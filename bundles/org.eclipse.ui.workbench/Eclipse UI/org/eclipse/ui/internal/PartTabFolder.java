@@ -788,6 +788,8 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer {
             StackPresentation presentation = getPresentation();
 
             if (presentablePart != null && presentation != null) {
+                part.moveAbove(getPresentation().getControl());
+                
                 presentation.selectPart(presentablePart);
             }
         }
@@ -863,7 +865,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer {
         if (part.getControl().getParent() != getControl().getParent()) {
         	part.reparent(getControl().getParent());
         }
-        part.moveAbove(getPresentation().getControl());
+        //part.moveAbove(getPresentation().getControl());
 
         presentationSite.getPresentation().addPart(presentablePart, position);
 

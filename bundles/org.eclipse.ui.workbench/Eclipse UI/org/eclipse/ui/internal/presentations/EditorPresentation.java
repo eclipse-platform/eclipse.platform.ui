@@ -11,15 +11,12 @@
 package org.eclipse.ui.internal.presentations;
 
 import java.util.Map;
-
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.swt.custom.CTabFolder2Adapter;
 import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.graphics.Color;
@@ -59,14 +56,14 @@ public class EditorPresentation extends BasicStackPresentation {
 
     private HandlerSubmission openEditorDropDownHandlerSubmission;
 
-    private CTabFolder2Adapter showListListener = new CTabFolder2Adapter() {
+    private PaneFolderButtonListener showListListener = new PaneFolderButtonListener () {
 
         public void showList(CTabFolderEvent event) {
-            CTabFolder tabFolder = getTabFolder();
+            PaneFolder tabFolder = getTabFolder();
             event.doit = false;
-            Point p = tabFolder.toDisplay(event.x, event.y);
+            Point p = tabFolder.getControl().toDisplay(event.x, event.y);
             p.y += +event.height;
-            EditorPresentation.this.showList(tabFolder.getShell(), p.x, p.y);
+            EditorPresentation.this.showList(tabFolder.getControl().getShell(), p.x, p.y);
         }
     };
 
@@ -78,7 +75,7 @@ public class EditorPresentation extends BasicStackPresentation {
                     && !isDisposed()) {
                 int tabLocation = preferenceStore
                         .getInt(IPreferenceConstants.EDITOR_TAB_POSITION);
-                setTabPosition(tabLocation);
+                getTabFolder().setTabPosition(tabLocation);
             } else if (IPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS
                     .equals(propertyChangeEvent.getProperty())
                     && !isDisposed()) {
@@ -91,7 +88,7 @@ public class EditorPresentation extends BasicStackPresentation {
                     .equals(propertyChangeEvent.getProperty());
             boolean styleChanged = IPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS
                     .equals(propertyChangeEvent.getProperty());
-            CTabFolder tabFolder = getTabFolder();
+            PaneFolder tabFolder = getTabFolder();
 
             if ((multiChanged || styleChanged) && tabFolder != null) {
                 if (multiChanged) {
@@ -115,13 +112,13 @@ public class EditorPresentation extends BasicStackPresentation {
     };
 
     public EditorPresentation(Composite parent, IStackPresentationSite newSite) {
-        super(new CTabFolder(parent, SWT.BORDER), newSite);
-        final CTabFolder tabFolder = getTabFolder();
-        tabFolder.addCTabFolder2Listener(showListListener);
+        super(new PaneFolder(parent, SWT.BORDER), newSite);
+        final PaneFolder tabFolder = getTabFolder();
+        tabFolder.addButtonListener(showListListener);
         preferenceStore.addPropertyChangeListener(propertyChangeListener);
         int tabLocation = preferenceStore
                 .getInt(IPreferenceConstants.EDITOR_TAB_POSITION);
-        setTabPosition(tabLocation);
+        tabFolder.setTabPosition(tabLocation);
         tabFolder.setSingleTab(!preferenceStore
                 .getBoolean(IPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS));
         setTabStyle(preferenceStore
@@ -134,12 +131,12 @@ public class EditorPresentation extends BasicStackPresentation {
         // set basic colors
         ColorSchemeService.setTabAttributes(this, tabFolder);
         updateGradient();
-        final Shell shell = tabFolder.getShell();
+        final Shell shell = tabFolder.getControl().getShell();
         IHandler openEditorDropDownHandler = new AbstractHandler() {
 
             public Object execute(Map parameterValuesByName) throws ExecutionException {
                 Rectangle clientArea = tabFolder.getClientArea();
-                Point location = tabFolder.getDisplay().map(tabFolder, null,
+                Point location = tabFolder.getControl().getDisplay().map(tabFolder.getControl(), null,
                         clientArea.x, clientArea.y);
                 showList(shell, location.x, location.y);
                 return null;
@@ -156,12 +153,12 @@ public class EditorPresentation extends BasicStackPresentation {
                         openEditorDropDownHandlerSubmission);
 
         preferenceStore.removePropertyChangeListener(propertyChangeListener);
-        getTabFolder().removeCTabFolder2Listener(showListListener);
+        getTabFolder().removeButtonListener(showListListener);
         super.dispose();
     }
 
     protected void initTab(CTabItem tabItem, IPresentablePart part) {
-        tabItem.setText(getLabelText(part, (getTabFolder().getStyle() & SWT.MULTI) == 0));
+        tabItem.setText(getLabelText(part, (getTabFolder().getControl().getStyle() & SWT.MULTI) == 0));
         tabItem.setImage(getLabelImage(part));
         String toolTipText = part.getTitleToolTip();
         if (!toolTipText.equals(Util.ZERO_LENGTH_STRING)) {
@@ -239,11 +236,11 @@ public class EditorPresentation extends BasicStackPresentation {
     }
 
     private void showList(Shell parentShell, int x, int y) {
-        final CTabFolder tabFolder = getTabFolder();
+        final PaneFolder tabFolder = getTabFolder();
 
         int shellStyle = SWT.RESIZE | SWT.ON_TOP | SWT.NO_TRIM;
         int tableStyle = SWT.V_SCROLL | SWT.H_SCROLL;
-        final EditorList editorList = new EditorList(tabFolder.getShell(),
+        final EditorList editorList = new EditorList(tabFolder.getControl().getShell(),
                 shellStyle, tableStyle);
         editorList.setInput(this);
         Point size = editorList.computeSizeHint();
@@ -305,7 +302,7 @@ public class EditorPresentation extends BasicStackPresentation {
                     .getBoolean(IWorkbenchThemeConstants.INACTIVE_TAB_VERTICAL);
         }
 
-        getTabFolder().setFont(
+        getTabFolder().getControl().setFont(
                 fontRegistry.get(IWorkbenchThemeConstants.TAB_TEXT_FONT));
 
         drawGradient(fgColor, bgColors, percent, vertical);

@@ -16,7 +16,6 @@ import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
@@ -43,7 +42,7 @@ public class PartTabFolderPresentation extends BasicStackPresentation {
 		public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
 			if (IPreferenceConstants.VIEW_TAB_POSITION.equals(propertyChangeEvent.getProperty()) && !isDisposed()) {
 				int tabLocation = preferenceStore.getInt(IPreferenceConstants.VIEW_TAB_POSITION); 
-				setTabPosition(tabLocation);
+				getTabFolder().setTabPosition(tabLocation);
 			} else if (IPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS.equals(propertyChangeEvent.getProperty()) && !isDisposed()) {
 				boolean traditionalTab = preferenceStore.getBoolean(IPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS); 
 				setTabStyle(traditionalTab);
@@ -53,13 +52,13 @@ public class PartTabFolderPresentation extends BasicStackPresentation {
 	
 	public PartTabFolderPresentation(Composite parent, IStackPresentationSite newSite) {
 		
-		super(new CTabFolder(parent, SWT.BORDER), newSite);
-		CTabFolder tabFolder = getTabFolder();
+		super(new PaneFolder(parent, SWT.BORDER), newSite);
+		PaneFolder tabFolder = getTabFolder();
 		
 		preferenceStore.addPropertyChangeListener(propertyChangeListener);
 		int tabLocation = preferenceStore.getInt(IPreferenceConstants.VIEW_TAB_POSITION); 
 		
-		setTabPosition(tabLocation);
+		tabFolder.setTabPosition(tabLocation);
 		setTabStyle(preferenceStore.getBoolean(IPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS));
 		
 		// do not support close box on unselected tabs.

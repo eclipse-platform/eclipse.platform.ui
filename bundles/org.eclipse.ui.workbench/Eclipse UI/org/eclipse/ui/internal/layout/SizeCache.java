@@ -37,10 +37,15 @@ public class SizeCache {
 	private Point cachedHeight;
 	private boolean independentDimensions = false;
 
+	public SizeCache() {
+		this(null);
+	}
+	
 	/**
 	 * Creates a cache for size computations on the given control
 	 * 
-	 * @param control the control for which 
+	 * @param control the control for which sizes will be calculated, 
+	 * or null to always return (0,0) 
 	 */
 	public SizeCache(Control control) {
 		this.control = control;		
@@ -51,7 +56,7 @@ public class SizeCache {
 	 * Sets the control whose size is being cached. Does nothing (will not
 	 * even flush the cache) if this is the same control as last time. 
 	 * 
-	 * @param newControl the control whose size is being cached
+	 * @param newControl the control whose size is being cached, or null to always return (0,0)
 	 */
 	public void setControl(Control newControl) {
 		if (newControl != control) {
@@ -64,7 +69,7 @@ public class SizeCache {
 	/**
 	 * Returns the control whose size is being cached
 	 * 
-	 * @return the control whose size is being cached
+	 * @return the control whose size is being cached, or null if this cache always returns (0,0)
 	 */
 	public Control getControl() {
 		return control;
@@ -88,6 +93,10 @@ public class SizeCache {
 	 * @return the preferred size of the control
 	 */
 	public Point computeSize(int widthHint, int heightHint) {
+		if (control == null) {
+			return new Point(0,0);
+		}
+		
 		// No hints given -- find the preferred size
 		if (widthHint == SWT.DEFAULT && heightHint == SWT.DEFAULT) {
 			if (preferredSize == null) {
@@ -212,6 +221,10 @@ public class SizeCache {
 	 * @return
 	 */
 	static boolean independentLengthAndWidth(Control control) {
+		if (control == null) {
+			return true;
+		}
+		
 		if (control instanceof Button
 				|| control instanceof ProgressBar
 				|| control instanceof Sash
