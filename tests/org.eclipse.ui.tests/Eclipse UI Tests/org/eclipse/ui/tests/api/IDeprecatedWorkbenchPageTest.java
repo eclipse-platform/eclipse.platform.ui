@@ -58,7 +58,7 @@ public class IDeprecatedWorkbenchPageTest extends UITestCase {
 				FileUtil.deleteProject(proj);
 			} catch (CoreException e) {
 				TestPlugin.getDefault().getLog().log(e.getStatus());
-				//fail();
+				fail();
 			}
 			proj = null;
 		}

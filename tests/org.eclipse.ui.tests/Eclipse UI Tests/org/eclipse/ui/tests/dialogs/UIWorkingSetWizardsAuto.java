@@ -91,7 +91,7 @@ public abstract class UIWorkingSetWizardsAuto extends UITestCase {
 
 		} catch (CoreException e) {
 			TestPlugin.getDefault().getLog().log(e.getStatus());
-			//fail();
+			fail();
 			throw(e);
 			
 		}

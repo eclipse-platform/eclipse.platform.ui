@@ -45,7 +45,7 @@ public class IEditorRegistryTest extends TestCase {
 				FileUtil.deleteProject(proj);
 			} catch (CoreException e) {
 				TestPlugin.getDefault().getLog().log(e.getStatus());
-				//fail();
+				fail();
 			}
 		}
 	}
