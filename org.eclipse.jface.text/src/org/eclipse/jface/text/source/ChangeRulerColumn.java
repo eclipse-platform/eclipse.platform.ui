@@ -136,8 +136,6 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 	private InternalListener fInternalListener= new InternalListener();
 	/** Indicates whether this column reacts on text change events */
 	private boolean fSensitiveToTextChanges= false;
-	/** The foreground color */
-	private Color fForeground;
 	/** The background color */
 	private Color fBackground;
 	/** Color for changed lines */
@@ -179,7 +177,6 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 		
 		fCanvas= new Canvas(parentControl, SWT.NONE);
 		fCanvas.setBackground(getBackground(fCanvas.getDisplay()));
-		fCanvas.setForeground(fForeground);
 			
 		fCanvas.addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent event) {
@@ -256,8 +253,6 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 			
 		GC gc= new GC(fBuffer);
 		gc.setFont(fCanvas.getFont());
-		if (fForeground != null)
-			gc.setForeground(fForeground);
 		
 		try {
 			gc.setBackground(getBackground(fCanvas.getDisplay()));
