@@ -633,7 +633,7 @@ public class Preferences {
 			// mark as dirty since value did really change
 			dirty = true;
 			// report property change if getValue now returns different value
-			firePropertyChangeEvent(name, new Boolean(oldValue), new Boolean(value));
+			firePropertyChangeEvent(name, oldValue ? Boolean.TRUE : Boolean.FALSE, value ? Boolean.TRUE : Boolean.FALSE);
 		}
 	}
 
