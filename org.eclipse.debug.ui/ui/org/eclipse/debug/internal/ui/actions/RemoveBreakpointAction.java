@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,13 +27,12 @@ import org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointContainer;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.IWorkbenchWindow;
 
 public class RemoveBreakpointAction extends AbstractRemoveActionDelegate {
 
-	/**
-	 * @see IActionDelegate#run(IAction)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
 		IStructuredSelection selection= getSelection();
@@ -86,12 +85,11 @@ public class RemoveBreakpointAction extends AbstractRemoveActionDelegate {
 			}
 		}
 	}
-	
-	/**
-	 * @see AbstractDebugActionDelegate#doAction(Object)
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.actions.AbstractDebugActionDelegate#doAction(java.lang.Object)
 	 */
 	protected void doAction(Object element) {
 		//not used
 	}
 }
-
