@@ -49,7 +49,16 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 
 	/** The string representing rendered tab */
 	private final static String TAB= EditorMessages.getString("Editor.FindIncremental.render.tab"); //$NON-NLS-1$
-
+	/**
+	 * The string representing "Reverse Incremental Find"
+	 * @since 3.0
+	 */
+	private final static String FIELD_NAME= EditorMessages.getString("Editor.FindIncremental.name"); //$NON-NLS-1$
+	/**
+	 * The string representing "Incremental Find"
+	 * @since 3.0
+	 */
+	private final static String REVERSE_FIELD_NAME= EditorMessages.getString("Editor.FindIncremental.reverse.name"); //$NON-NLS-1$
 	/**
 	 * The string representing reverse
 	 * @since 2.1
@@ -60,14 +69,12 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 	 * @since 2.1
 	 */
 	private final static String WRAPPED= EditorMessages.getString("Editor.FindIncremental.wrapped"); //$NON-NLS-1$
-
 	/** The text viewer to operate on */
 	private final ITextViewer fTextViewer;
 	/** The status line manager for output */
 	private final IStatusLineManager fStatusLine;
 	/** The find replace target to delegate find requests */
 	private final IFindReplaceTarget fTarget;
-
 	/** The current find string */
 	private StringBuffer fFindString= new StringBuffer();
 	/** The position of the first upper case character, -1 if none */
@@ -101,6 +108,18 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 	 * @since 2.1
 	 */
 	private String fPrevFindString= ""; //$NON-NLS-1$
+	/**
+	 * The find status field.
+	 * @since 3.0
+	 */
+	private IStatusField fStatusField;
+	/**
+	 * Tells whether the status field implements
+	 * <code>IStatusFieldExtension</code>.
+	 * @see IStatusFieldExtension 
+	 * @since 3.0
+	 */
+	private boolean fIsStatusFieldExtension;
 
 	/**
 	 * Data structure for a search result.
@@ -191,6 +210,8 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 		fTextViewer= viewer;
 		fStatusLine= manager;
 		fTarget= viewer.getFindReplaceTarget();
+		fStatusField= (IStatusField)fStatusLine.find(ITextEditorActionConstants.STATUS_CATEGORY_FIND_FIELD);
+		fIsStatusFieldExtension= fStatusField instanceof IStatusFieldExtension;
 	}
 
 	/*
@@ -386,9 +407,16 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 			String pattern= EditorMessages.getString("Editor.FindIncremental.not_found.pattern"); //$NON-NLS-1$
 			statusError(MessageFormat.format(pattern, new Object[] { reversePrefix, wrapPrefix, string }));
 
-		} else {
+		} else if (string.length() == 0) {
+			if (fForward)
+				statusMessage(FIELD_NAME);
+			else
+				statusMessage(REVERSE_FIELD_NAME);
+		} else if (!fForward || fWrapPosition > -1) {
 			String pattern= EditorMessages.getString("Editor.FindIncremental.found.pattern"); //$NON-NLS-1$
 			statusMessage(MessageFormat.format(pattern, new Object[] { reversePrefix, wrapPrefix, string }));
+		} else {
+			statusMessage(string);
 		}
 	}
 
@@ -613,8 +641,20 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 	 * @param string the status message
 	 */
 	private void statusMessage(String string) {
-		fStatusLine.setErrorMessage(""); //$NON-NLS-1$
-		fStatusLine.setMessage(escapeTabs(string));
+		if (fStatusField != null) {
+			if (fIsStatusFieldExtension) {
+				((IStatusFieldExtension)fStatusField).setErrorText(null);
+				fStatusField.setText(escapeTabs(string));
+				((IStatusFieldExtension)fStatusField).setVisible(true);
+				fStatusLine.update(true);
+			} else {
+				fStatusLine.setErrorMessage(null);
+				fStatusField.setText(escapeTabs(string));
+			} 
+		} else {
+			fStatusLine.setErrorMessage(null);
+			fStatusLine.setMessage(escapeTabs(string));
+		}
 	}
 
 	/**
@@ -622,16 +662,40 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 	 * @param string the status error message
 	 */
 	private void statusError(String string) {
-		fStatusLine.setErrorMessage(escapeTabs(string));
-		fStatusLine.setMessage(""); //$NON-NLS-1$
+		if (fStatusField != null) {
+			if (fIsStatusFieldExtension) {
+				((IStatusFieldExtension)fStatusField).setErrorText(escapeTabs(string));
+				fStatusField.setText(""); //$NON-NLS-1$
+				((IStatusFieldExtension)fStatusField).setVisible(true);
+				fStatusLine.update(true);
+			} else {
+				fStatusLine.setErrorMessage(escapeTabs(string));
+				fStatusField.setText(""); //$NON-NLS-1$
+			} 
+		} else {
+			fStatusLine.setErrorMessage(escapeTabs(string));
+			fStatusLine.setMessage(null);
+		}
 	}
 
 	/**
 	 * Clears the status message and the status error message.
 	 */
 	private void statusClear() {
-		fStatusLine.setErrorMessage(""); //$NON-NLS-1$
-		fStatusLine.setMessage(""); //$NON-NLS-1$
+		if (fStatusField != null) {
+			if (fIsStatusFieldExtension) {
+				fStatusField.setText(""); //$NON-NLS-1$
+				((IStatusFieldExtension)fStatusField).setErrorText(null);
+				((IStatusFieldExtension)fStatusField).setVisible(false);
+				fStatusLine.update(true);
+			} else {
+				fStatusField.setText(""); //$NON-NLS-1$
+				fStatusLine.setErrorMessage(null);
+			} 
+		} else {
+			fStatusLine.setErrorMessage(null);
+			fStatusLine.setMessage(null);
+		}
 	}
 	
 	/**
