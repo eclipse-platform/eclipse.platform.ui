@@ -319,7 +319,7 @@ public void moved(final IResource source, final IResource destination, int depth
 			return true;
 		}
 	};
-	destination.accept(visitor, depth, false);
+	destination.accept(visitor, depth, IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
 }
 /**
  * Adds the markers for a subtree of resources to the list.

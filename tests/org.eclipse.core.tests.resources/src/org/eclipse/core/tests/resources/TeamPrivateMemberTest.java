@@ -12,6 +12,7 @@ package org.eclipse.core.tests.resources;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -24,12 +25,7 @@ public TeamPrivateMemberTest(String name) {
 	super(name);
 }
 public static Test suite() {
-
 	return new TestSuite(TeamPrivateMemberTest.class);
-
-//	TestSuite suite = new TestSuite();
-//	suite.addTest(new TeamPrivateMemberTest("testDeltas"));
-//	return suite;
 }
 
 public void testRefreshLocal() {
@@ -249,7 +245,7 @@ public void testProjectCloseOpen() {
  * Resources which are marked as team private members should not be visited by
  * resource visitors.
  */
-public void testAccept() {
+public void testAccept() { 
 	IProject project = getWorkspace().getRoot().getProject("MyProject");
 	IFolder folder = project.getFolder("folder");
 	IFile file = project.getFile("file.txt");
@@ -323,10 +319,8 @@ public void testAccept() {
 		fail("2.5", e);
 	}
 	assertTrue("2.6." + visitor.getMessage(), visitor.isValid());
-	// should visit the folder and its members if we call accept on it directly
+	// should NOT visit the folder and its members if we call accept on it directly
 	visitor.reset();
-	visitor.addExpected(folder);
-	visitor.addExpected(subFile);
 	try {
 		folder.accept(visitor);
 	} catch(CoreException e) {
@@ -335,8 +329,6 @@ public void testAccept() {
 	assertTrue("2.8." + visitor.getMessage(), visitor.isValid());
 
 	visitor.reset();
-	visitor.addExpected(folder);
-	visitor.addExpected(subFile);
 	try {
 		folder.accept(visitor, IResource.DEPTH_INFINITE, IResource.NONE);
 	} catch(CoreException e) {
@@ -354,10 +346,11 @@ public void testAccept() {
 	}
 	assertTrue("2.11." + visitor.getMessage(), visitor.isValid());
 	
-	// now set all resources to be team private.
+	// now set all file/folder resources to be team private.
 	setTeamPrivateMember("3.0", project, true, IResource.DEPTH_INFINITE);
 	assertTeamPrivateMember("3.1", project, true, IResource.DEPTH_INFINITE);
 	visitor.reset();
+	// projects are never team private
 	visitor.addExpected(project);
 	try {
 		project.accept(visitor);

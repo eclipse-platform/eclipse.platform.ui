@@ -91,9 +91,16 @@ public void accept(IResourceVisitor visitor, int depth, boolean includePhantoms)
  * @see IResource#accept
  */
 public void accept(IResourceVisitor visitor, int depth, int memberFlags) throws CoreException {
+	// it is invalid to call accept on a phantom when INCLUDE_PHANTOMS is not specified
 	final boolean includePhantoms = (memberFlags & IContainer.INCLUDE_PHANTOMS) != 0;
 	ResourceInfo info = getResourceInfo(includePhantoms, false);
-	checkExists(getFlags(info), true);
+	int flags = getFlags(info);
+	checkExists(flags, true);
+	// ignore team private member entry point when INCLUDE_TEAM_PRIVATE_MEMBERS is not specified
+	final boolean includeTeamPrivateMembers = (memberFlags & IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS) != 0;
+	if (!includeTeamPrivateMembers && isTeamPrivateMember(flags))
+		return;
+	// visit this resource		
 	if (!visitor.visit(this) || depth == DEPTH_ZERO)
 		return;
 	// get the info again because it might have been changed by the visitor

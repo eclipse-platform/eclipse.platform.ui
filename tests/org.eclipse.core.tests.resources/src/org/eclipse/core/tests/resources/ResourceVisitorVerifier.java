@@ -12,6 +12,8 @@ package org.eclipse.core.tests.resources;
 
 import java.util.*;
 import junit.framework.Assert;
+import junit.framework.AssertionFailedError;
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
@@ -19,6 +21,7 @@ public class ResourceVisitorVerifier extends Assert implements IResourceVisitor 
 	Set expected;
 	StringBuffer message;
 	boolean success = true;
+	boolean verified = false;
 public ResourceVisitorVerifier() {
 	super();
 	reset();
@@ -42,13 +45,17 @@ private void log(String text) {
 	message.append("\n" + text);
 }
 private void verify() {
+	if (verified)
+		return;
 	// Add messages for the resources which weren't visited but were expected.
 	for (Iterator i=expected.iterator(); i.hasNext();) {
 		success = false;
 		log(((IResource) i.next()).getFullPath() + " was not visited.");
 	}
+	verified = true;
 }
 public boolean isValid() {
+	verify();
 	return success;
 }
 public String getMessage() {
@@ -57,5 +64,6 @@ public String getMessage() {
 public void reset() {
 	expected = new HashSet();
 	message = new StringBuffer();
+	verified = false;
 }
 }
