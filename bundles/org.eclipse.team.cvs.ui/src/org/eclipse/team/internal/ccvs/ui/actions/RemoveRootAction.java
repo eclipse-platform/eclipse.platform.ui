@@ -9,20 +9,26 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.ccvs.core.ICVSProvider;
 import org.eclipse.team.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.core.ITeamManager;
+import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.internal.ccvs.ui.RepositoryManager;
 import org.eclipse.team.ui.actions.TeamAction;
 
 /**
@@ -71,8 +77,34 @@ public class RemoveRootAction extends TeamAction {
 				ICVSProvider provider = CVSProviderPlugin.getProvider();
 				for (int i = 0; i < roots.length; i++) {
 					try {
+						
+						// Check if any projects are shared with the repository
+						boolean shared = false;
+						IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+						ITeamManager manager = TeamPlugin.getManager();
+						for (int j = 0; j < projects.length; j++) {
+							ITeamProvider teamProvider = manager.getProvider(projects[j]);
+							if (teamProvider instanceof CVSTeamProvider) {
+								CVSTeamProvider cvsProvider = (CVSTeamProvider)teamProvider;
+								if (cvsProvider.getRemoteRoot().equals(roots[i])) {
+									shared = true;
+									break;
+								}
+							}
+						}
+			
 						// This will notify the RepositoryManager of the removal
-						provider.disposeRepository(roots[i]);
+						if (shared) {
+							Shell shell = getShell();
+							final String location = roots[i].getLocation();
+							shell.getDisplay().syncExec(new Runnable() {
+								public void run() {
+									MessageDialog.openInformation(getShell(), "Unable to Discard Location", "Projects in the local workspace are shared with " + location);
+								}
+							});
+						} else {
+							provider.disposeRepository(roots[i]);
+						}
 					} catch (CVSException e) {
 						throw new InvocationTargetException(e);
 					}
