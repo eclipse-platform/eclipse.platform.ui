@@ -20,6 +20,7 @@ import org.eclipse.jface.text.DefaultTextDoubleClickStrategy;
 import org.eclipse.jface.text.DefaultUndoManager;
 import org.eclipse.jface.text.IAutoIndentStrategy;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentExtension3;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.ITextDoubleClickStrategy;
@@ -271,5 +272,19 @@ public class SourceViewerConfiguration {
 	 */
 	public String[] getConfiguredContentTypes(ISourceViewer sourceViewer) {
 		return new String[] { IDocument.DEFAULT_CONTENT_TYPE };
+	}
+	
+	/**
+	 * Returns the configured partitioning for the given source viewer. The partitioning is
+	 * used when the querying content types from the source viewer's input document.  This
+	 * implementation always returns <code>IDocumentExtension3.DEFAULT_PARTITIONING</code>.
+	 * 
+	 * @param sourceViewer the source viewer to be configured by this configuration
+	 * @return the configured partitioning
+	 * @see #getConfiguredContentTypes(ISourceViewer)
+	 * @since 3.0
+	 */
+	public String getConfiguredDocumentPartitioning(ISourceViewer sourceViewer) {
+		return IDocumentExtension3.DEFAULT_PARTITIONING;
 	}
 }

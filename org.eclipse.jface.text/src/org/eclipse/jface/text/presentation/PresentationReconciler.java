@@ -20,10 +20,13 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.DefaultPositionUpdater;
 import org.eclipse.jface.text.DocumentEvent;
+import org.eclipse.jface.text.DocumentPartitioningChangedEvent;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentExtension3;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.IDocumentPartitioningListener;
 import org.eclipse.jface.text.IDocumentPartitioningListenerExtension;
+import org.eclipse.jface.text.IDocumentPartitioningListenerExtension2;
 import org.eclipse.jface.text.IPositionUpdater;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextInputListener;
@@ -34,6 +37,7 @@ import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextEvent;
 import org.eclipse.jface.text.TextPresentation;
+import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.TypedPosition;
 
 
@@ -47,7 +51,7 @@ import org.eclipse.jface.text.TypedPosition;
  * portion overlapping with the viewer's viewport.<p>
  * Usually, clients instantiate this class and configure it before using it.
  */
-public class PresentationReconciler implements IPresentationReconciler {
+public class PresentationReconciler implements IPresentationReconciler, IPresentationReconcilerExtension {
 	
 	/** Prefix of the name of the position category for tracking damage regions. */
 	protected final static String TRACKED_PARTITION= "__reconciler_tracked_partition"; //$NON-NLS-1$
@@ -58,7 +62,7 @@ public class PresentationReconciler implements IPresentationReconciler {
 	 */
 	class InternalListener implements 
 			ITextInputListener, IDocumentListener, ITextListener, 
-			IDocumentPartitioningListener, IDocumentPartitioningListenerExtension {
+			IDocumentPartitioningListener, IDocumentPartitioningListenerExtension, IDocumentPartitioningListenerExtension2 {
 				
 		/** Set to <code>true</code> if between a document about to be changed and a changed event. */
 		private boolean fDocumentChanging= false;
@@ -127,6 +131,15 @@ public class PresentationReconciler implements IPresentationReconciler {
 				fChangedDocumentPartitions= changedRegion;
 			}
 		}
+		
+		/*
+		 * @see org.eclipse.jface.text.IDocumentPartitioningListenerExtension2#documentPartitioningChanged(org.eclipse.jface.text.DocumentPartitioningChangedEvent)
+		 */
+		public void documentPartitioningChanged(DocumentPartitioningChangedEvent event) {
+			IRegion changedRegion= event.getChangedRegion(getDocumentPartitioning());
+			if (changedRegion != null)
+				documentPartitioningChanged(event.getDocument(), changedRegion);
+		}
 				
 		/*
 		 * @see IDocumentListener#documentAboutToBeChanged(DocumentEvent)
@@ -137,7 +150,7 @@ public class PresentationReconciler implements IPresentationReconciler {
 			
 			try {
 				int offset= e.getOffset() + e.getLength();
-				fRememberedPosition= new TypedPosition(e.getDocument().getPartition(offset));
+				fRememberedPosition= new TypedPosition(getPartition(e.getDocument(), offset));
 				e.getDocument().addPosition(fPositionCategory, fRememberedPosition);
 			} catch (BadLocationException x) {
 				// can not happen
@@ -236,16 +249,41 @@ public class PresentationReconciler implements IPresentationReconciler {
 	private boolean fDocumentPartitioningChanged= false;
 	/** The range covering the changed parititoning. */
 	private IRegion fChangedDocumentPartitions= null;
-	
+	/**
+	 * The partitioning used by this presentation reconciler.
+	 * @since 3.0
+	 */
+	private String fPartitioning;	
 	
 	/**
 	 * Creates a new presentation reconciler. There are no damagers or repairers
-	 * registered with this reconciler.
+	 * registered with this reconciler. The default partitioning 
+	 * <code>IDocumentExtension3.DEFAULT_PARTITIONING</code> is used.
 	 */
 	public PresentationReconciler() {
 		super();
+		fPartitioning= IDocumentExtension3.DEFAULT_PARTITIONING;
 		fPositionCategory= TRACKED_PARTITION + hashCode();
 		fPositionUpdater= new DefaultPositionUpdater(fPositionCategory);
+	}
+	
+	/**
+	 * Sets the document partitioning for this presentation reconciler.
+	 * 
+	 * @param partitioning the document partitioning for this presentation reconciler.
+	 * @since 3.0
+	 */
+	public void setDocumentPartitioning(String partitioning) {
+		Assert.isNotNull(partitioning);
+		fPartitioning= partitioning;
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.presentation.IPresentationReconcilerExtension#geDocumenttPartitioning()
+	 * @since 3.0
+	 */
+	public String getDocumentPartitioning() {
+		return fPartitioning;
 	}
 	
 	/**
@@ -375,7 +413,7 @@ public class PresentationReconciler implements IPresentationReconciler {
 			
 			TextPresentation presentation= new TextPresentation(1000);
 			
-			ITypedRegion[] partitioning= document.computePartitioning(damage.getOffset(), damage.getLength());
+			ITypedRegion[] partitioning= TextUtilities.computePartitioning(document, getDocumentPartitioning(), damage.getOffset(), damage.getLength());
 			for (int i= 0; i < partitioning.length; i++) {
 				ITypedRegion r= partitioning[i];
 				IPresentationRepairer repairer= getRepairer(r.getType());
@@ -407,7 +445,7 @@ public class PresentationReconciler implements IPresentationReconciler {
 		
 		try {
 			
-			ITypedRegion partition= e.getDocument().getPartition(e.getOffset());
+			ITypedRegion partition= getPartition(e.getDocument(), e.getOffset());
 			IPresentationDamager damager= getDamager(partition.getType());
 			if (damager == null)
 				return null;
@@ -456,14 +494,14 @@ public class PresentationReconciler implements IPresentationReconciler {
 				-- length;
 		}
 		
-		ITypedRegion partition= d.getPartition(e.getOffset() + length);
+		ITypedRegion partition= getPartition(d, e.getOffset() + length);
 		int endOffset= partition.getOffset() + partition.getLength();		
 		if (endOffset == e.getOffset())
 			return -1;
 			
 		int end= fRememberedPosition == null ? -1 : fRememberedPosition.getOffset() + fRememberedPosition.getLength();
 		if (endOffset < end)
-			partition= d.getPartition(end);
+			partition= getPartition(d, end);
 		
 		IPresentationDamager damager= getDamager(partition.getType());
 		if (damager == null)
@@ -495,5 +533,18 @@ public class PresentationReconciler implements IPresentationReconciler {
 	 */
 	private void applyTextRegionCollection(TextPresentation presentation) {
 		fViewer.changeTextPresentation(presentation, false);
-	}	
+	}
+	
+	/**
+	 * Returns the partition for the given offset in the given document.
+	 * 
+	 * @param document the document
+	 * @param offset the offset
+	 * @return the partition
+	 * @throws BadLocationException if offset is invalid in the given document
+	 * @since 3.0
+	 */
+	private ITypedRegion getPartition(IDocument document, int offset) throws BadLocationException {
+		return TextUtilities.getPartition(document, getDocumentPartitioning(), offset);
+	}
 }

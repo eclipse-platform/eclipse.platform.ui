@@ -236,6 +236,8 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 		
 		if (getTextWidget() == null)
 			return;
+			
+		setDocumentPartitioning(configuration.getConfiguredDocumentPartitioning(this));
 		
 		// install content type independent plugins
 		fPresentationReconciler= configuration.getPresentationReconciler(this);

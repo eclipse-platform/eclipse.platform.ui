@@ -50,6 +50,7 @@ import org.eclipse.jface.text.IWidgetTokenKeeper;
 import org.eclipse.jface.text.IWidgetTokenKeeperExtension;
 import org.eclipse.jface.text.IWidgetTokenOwner;
 import org.eclipse.jface.text.IWidgetTokenOwnerExtension;
+import org.eclipse.jface.text.TextUtilities;
 
 
 
@@ -57,7 +58,7 @@ import org.eclipse.jface.text.IWidgetTokenOwnerExtension;
  * The standard implementation of the <code>IContentAssistant</code> interface.
  * Usually, clients instantiate this class and configure it before using it.
  */
-public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper, IWidgetTokenKeeperExtension {
+public class ContentAssistant implements IContentAssistant, IContentAssistantExtension, IWidgetTokenKeeper, IWidgetTokenKeeperExtension {
 	
 	/**
 	 * A generic closer class used to monitor various 
@@ -265,12 +266,12 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper, 
 			
 			int showStyle;
 			int pos= fViewer.getSelectedRange().x;
-			char[] activation= getCompletionProposalAutoActivationCharacters(fViewer.getDocument(), pos);
+			char[] activation= getCompletionProposalAutoActivationCharacters(fViewer, pos);
 			
 			if (contains(activation, e.character) && !fProposalPopup.isActive())
 				showStyle= SHOW_PROPOSALS;
 			else {
-				activation= getContextInformationAutoActivationCharacters(fViewer.getDocument(), pos);
+				activation= getContextInformationAutoActivationCharacters(fViewer, pos);
 				if (contains(activation, e.character) && !fContextInfoPopup.isActive())
 					showStyle= SHOW_CONTEXT_INFO;
 				else {
@@ -644,7 +645,8 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper, 
 	private boolean fIsAutoInserting= false;
 	private int fProposalPopupOrientation= PROPOSAL_OVERLAY;
 	private int fContextInfoPopupOrientation= CONTEXT_INFO_ABOVE;	
-	private Map fProcessors;	
+	private Map fProcessors;
+	private String fPartitioning;
 	
 	private Color fContextInfoPopupBackground;
 	private Color fContextInfoPopupForeground;
@@ -671,9 +673,27 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper, 
 	 * overlays the completion proposals with context information list if necessary, and
 	 * shows the context information above the location at which it was activated. If auto
 	 * activation will be enabled, without further configuration steps, this content assistant
-	 * is activated after a 500 ms delay.
+	 * is activated after a 500 ms delay. It uses the default partitioning.
 	 */	
 	public ContentAssistant() {
+	}
+	
+	/**
+	 * Sets the document partitioning this content assistant is using.
+	 * 
+	 * @param partitioning the document partitioning for this content assistant
+	 */
+	public void setDocumentPartitioning(String partitioning) {
+		Assert.isNotNull(partitioning);
+		fPartitioning= partitioning;
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.contentassist.IContentAssistantExtension#getDocumentPartitioning()
+	 * @since 3.0
+	 */
+	public String getDocumentPartitioning() {
+		return fPartitioning;
 	}
 	
 	/**
@@ -1263,14 +1283,18 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper, 
 	 * Returns the content assist processor for the content
 	 * type of the specified document position.
 	 *
-	 * @param document the document
-	 * @param position a position within the document
+	 * @param viewer the text viewer
+	 * @param offset a offset within the document
 	 * @return a content-assist processor or <code>null</code> if none exists
 	 */
-	private IContentAssistProcessor getProcessor(IDocument document, int position) {
+	private IContentAssistProcessor getProcessor(ITextViewer viewer, int offset) {
 		try {
-			String type= document.getContentType(position);
+			
+			IDocument document= viewer.getDocument();
+			String type= TextUtilities.getContentType(document, getDocumentPartitioning(), offset);
+			
 			return getContentAssistProcessor(type);
+		
 		} catch (BadLocationException x) {
 		}
 		
@@ -1293,7 +1317,7 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper, 
 		
 		ICompletionProposal[] result= null;
 		
-		IContentAssistProcessor p= getProcessor(viewer.getDocument(), position);
+		IContentAssistProcessor p= getProcessor(viewer, position);
 		if (p != null) {
 			result= p.computeCompletionProposals(viewer, position);
 			fLastErrorMessage= p.getErrorMessage();
@@ -1318,7 +1342,7 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper, 
 		
 		IContextInformation[] result= null;
 		
-		IContentAssistProcessor p= getProcessor(viewer.getDocument(), position);
+		IContentAssistProcessor p= getProcessor(viewer, position);
 		if (p != null) {
 			result= p.computeContextInformation(viewer, position);
 			fLastErrorMessage= p.getErrorMessage();
@@ -1333,17 +1357,15 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper, 
 	 * be dismissed. The position is used to determine the appropriate 
 	 * content assist processor to invoke.
 	 *
-	 * @param document the document
-	 * @param position a document position
+	 * @param viewer the text viewer
+	 * @param offset a document offset
 	 * @return an validator
 	 *
 	 * @see IContentAssistProcessor#getContextInformationValidator
 	 */
-	IContextInformationValidator getContextInformationValidator(IDocument document, int position) {
-		IContentAssistProcessor p= getProcessor(document, position);
-		if (p != null)
-			return p.getContextInformationValidator();
-		return null;
+	IContextInformationValidator getContextInformationValidator(ITextViewer viewer, int offset) {
+		IContentAssistProcessor p= getProcessor(viewer, offset);
+		return p != null ? p.getContextInformationValidator() : null;
 	}
 	
 	/**
@@ -1351,13 +1373,13 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper, 
 	 * display context information. The position is used to determine the appropriate 
 	 * content assist processor to invoke.
 	 *
-	 * @param document the document
-	 * @param position a document position
+	 * @param viewer the text viewer
+	 * @param offset a document offset
 	 * @return a presenter
 	 * @since 2.0
 	 */
-	IContextInformationPresenter getContextInformationPresenter(IDocument document, int position) {
-		IContextInformationValidator validator= getContextInformationValidator(document, position);
+	IContextInformationPresenter getContextInformationPresenter(ITextViewer viewer, int offset) {
+		IContextInformationValidator validator= getContextInformationValidator(viewer, offset);
 		if (validator instanceof IContextInformationPresenter)
 			return (IContextInformationPresenter) validator;
 		return null;
@@ -1368,17 +1390,15 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper, 
 	 * initiate proposing completions. The position is used to determine the 
 	 * appropriate content assist processor to invoke.
 	 *
-	 * @param document the document
-	 * @param position a document position
+	 * @param viewer the text viewer
+	 * @param offset a document offset
 	 * @return the auto activation characters
 	 *
 	 * @see IContentAssistProcessor#getCompletionProposalAutoActivationCharacters
 	 */
-	private char[] getCompletionProposalAutoActivationCharacters(IDocument document, int position) {
-		IContentAssistProcessor p= getProcessor(document, position);
-		if (p != null)
-			return p.getCompletionProposalAutoActivationCharacters();
-		return null;
+	private char[] getCompletionProposalAutoActivationCharacters(ITextViewer viewer, int offset) {
+		IContentAssistProcessor p= getProcessor(viewer, offset);
+		return p != null ? p.getCompletionProposalAutoActivationCharacters() : null;
 	}
 	
 	/**
@@ -1386,17 +1406,15 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper, 
 	 * initiate the presentation of context information. The position is used
 	 * to determine the appropriate content assist processor to invoke.
 	 *
-	 * @param document the document
-	 * @param position a document position
+	 * @param viewer the text viewer
+	 * @param offset a document offset
 	 * @return the auto activation characters
 	 *
 	 * @see IContentAssistProcessor#getContextInformationAutoActivationCharacters
 	 */
-	private char[] getContextInformationAutoActivationCharacters(IDocument document, int position) {
-		IContentAssistProcessor p= getProcessor(document, position);
-		if (p != null)
-			return p.getContextInformationAutoActivationCharacters();
-		return null;
+	private char[] getContextInformationAutoActivationCharacters(ITextViewer viewer, int offset) {
+		IContentAssistProcessor p= getProcessor(viewer, offset);
+		return p != null ? p.getContextInformationAutoActivationCharacters() : null;
 	}
 	
 	/*

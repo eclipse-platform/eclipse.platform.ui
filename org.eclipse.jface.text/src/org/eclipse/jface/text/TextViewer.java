@@ -667,7 +667,7 @@ public class TextViewer extends Viewer implements
 		/** The highlight color of the range of this target. */
 		private Color fScopeHighlightColor;
 		/** The document partitioner remembered in case of a "Replace All". */
-		private IDocumentPartitioner fRememberedPartitioner;
+		private Map fRememberedPartitioners;
 		
 		/*
 		 * @see IFindReplaceTarget#getSelectionText()
@@ -846,11 +846,7 @@ public class TextViewer extends Viewer implements
 					fUndoManager.beginCompoundChange();
 				
 				IDocument document= TextViewer.this.getDocument();
-				fRememberedPartitioner= document.getDocumentPartitioner();
-				if (fRememberedPartitioner != null) {
-					fRememberedPartitioner.disconnect();
-					document.setDocumentPartitioner(null);
-				}
+				fRememberedPartitioners= TextUtilities.removeDocumentPartitioners(document);
 
 			} else {
 				
@@ -860,10 +856,9 @@ public class TextViewer extends Viewer implements
 				if (fUndoManager != null)
 					fUndoManager.endCompoundChange();
 					
-				if (fRememberedPartitioner != null) {
+				if (fRememberedPartitioners != null) {
 					IDocument document= TextViewer.this.getDocument();
-					fRememberedPartitioner.connect(document);
-					document.setDocumentPartitioner(fRememberedPartitioner);
+					TextUtilities.addDocumentPartitioners(document, fRememberedPartitioners);
 				}
 			}
 		}
@@ -1239,6 +1234,11 @@ public class TextViewer extends Viewer implements
 	 * @since 2.1
 	 */
 	protected PaintManager fPaintManager;
+	/**
+	 * The viewers partitioning, i.e. the partitioning name the viewer uses to access partitioning information of its input document.
+	 * @since 3.0
+	 */
+	protected String fPartitioning;
 	
 	
 	
@@ -1705,7 +1705,7 @@ public class TextViewer extends Viewer implements
 			return null;
 
 		try {
-			TextHoverKey key= new TextHoverKey(document.getContentType(offset), stateMask);
+			TextHoverKey key= new TextHoverKey(TextUtilities.getContentType(document, getDocumentPartitioning(), offset), stateMask);
 			Object textHover= fTextHovers.get(key);
 			if (textHover == null) {
 				// Use default text hover
@@ -3023,7 +3023,7 @@ public class TextViewer extends Viewer implements
 	 */
 	protected Object selectContentTypePlugin(int offset, Map plugins) {
 		try {
-			return selectContentTypePlugin(getDocument().getContentType(offset), plugins);
+			return selectContentTypePlugin(TextUtilities.getContentType(getDocument(), getDocumentPartitioning(), offset), plugins);
 		} catch (BadLocationException x) {
 			if (TRACE_ERRORS)
 				System.out.println(JFaceTextMessages.getString("TextViewer.error.bad_location.selectContentTypePlugin")); //$NON-NLS-1$
@@ -3504,13 +3504,13 @@ public class TextViewer extends Viewer implements
 		startSequentialRewriteMode(true);
 
 		IDocument d= getDocument();
-		IDocumentPartitioner partitioner= null;
+		Map partitioners= null;
 		
 		try {
 			
 			Point selection= getSelectedRange();
 			IRegion block= getTextBlockFromSelection(selection);
-			ITypedRegion[] regions= d.computePartitioning(block.getOffset(), block.getLength());
+			ITypedRegion[] regions= TextUtilities.computePartitioning(d, getDocumentPartitioning(), block.getOffset(), block.getLength());
 
 			int lineCount= 0;			
 			int[] lines= new int[regions.length * 2]; // [startline, endline, startline, endline, ...]
@@ -3523,13 +3523,8 @@ public class TextViewer extends Viewer implements
 				lineCount += lines[j + 1] - lines[j] + 1;
 			}
 			
-			if (lineCount >= 20) {
-				partitioner= d.getDocumentPartitioner();
-				if (partitioner != null) {
-					partitioner.disconnect();
-					d.setDocumentPartitioner(null);
-				}
-			}
+			if (lineCount >= 20)
+				partitioners= TextUtilities.removeDocumentPartitioners(d);
 			
 			// Remember the selection range.
 			IPositionUpdater positionUpdater= new ShiftPositionUpdater(SHIFTING);
@@ -3570,10 +3565,8 @@ public class TextViewer extends Viewer implements
 		
 		} finally {
 
-			if (partitioner != null) {
-				partitioner.connect(d);
-				d.setDocumentPartitioner(partitioner);
-			}
+			if (partitioners != null)
+				TextUtilities.addDocumentPartitioners(d, partitioners);
 			
 			stopSequentialRewriteMode();
 			setRedraw(true);
@@ -4568,5 +4561,26 @@ public class TextViewer extends Viewer implements
 		} else  {
 			return false;
 		}
+	}
+	
+	/**
+	 * Sets the document partitioning of this viewer. The partitioning is used by this viewer to
+	 * access partitioning information of the viewers input document.
+	 * 
+	 * @param partitioning the partitioning name
+	 * @since 3.0
+	 */
+	public void setDocumentPartitioning(String partitioning) {
+		fPartitioning= partitioning;
+	}
+	
+	/**
+	 * Returns the document partitioning for this viewer.
+	 * 
+	 * @return the document partitioning for this viewer
+	 * @since 3.0
+	 */
+	protected String getDocumentPartitioning() {
+		return fPartitioning;
 	}
 }

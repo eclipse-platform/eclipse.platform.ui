@@ -29,6 +29,7 @@ import org.eclipse.jface.text.IPositionUpdater;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.TypedPosition;
 
 
@@ -61,7 +62,7 @@ import org.eclipse.jface.text.TypedPosition;
  * @see ITypedRegion
  * @see Position
  */
-public class ContentFormatter implements IContentFormatter {
+public class ContentFormatter implements IContentFormatter, IContentFormatterExtension {
 		
 	/**
 	 * Defines a reference to either the offset or the end offset of
@@ -267,6 +268,11 @@ public class ContentFormatter implements IContentFormatter {
 	private List fOverlappingPositionReferences;
 	/** Position updater used for partitioning positions */
 	private IPositionUpdater fPartitioningUpdater;
+	/**
+	 * The document partitioning used by this formatter.
+	 * @since 3.0
+	 */
+	private String fPartitioning;
 	
 	
 	
@@ -310,6 +316,24 @@ public class ContentFormatter implements IContentFormatter {
 		fPartitionManagingCategories= categories;
 	}
 	
+	/**
+	 * Sets the document partitioning to be used by this formatter.
+	 * 
+	 * @param partitioning the document partitioning
+	 * @since 3.0
+	 */
+	public void setDocumentPartitioning(String partitioning) {
+		fPartitioning= partitioning;
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.formatter.IContentFormatterExtension#getDocumentPartitioning()
+	 * @since 3.0
+	 */
+	public String getDocumentPartitioning() {
+		return fPartitioning;
+	}
+
 	/**
 	 * Sets the formatter's operation mode.
 	 * 
@@ -403,7 +427,7 @@ public class ContentFormatter implements IContentFormatter {
 	 */
 	private TypedPosition[] getPartitioning(IDocument document, IRegion region) throws BadLocationException {
 		
-		ITypedRegion[] regions= document.computePartitioning(region.getOffset(), region.getLength());
+		ITypedRegion[] regions= TextUtilities.computePartitioning(document, fPartitioning, region.getOffset(), region.getLength());
 		TypedPosition[] positions= new TypedPosition[regions.length];
 		
 		for (int i= 0; i < regions.length; i++) {

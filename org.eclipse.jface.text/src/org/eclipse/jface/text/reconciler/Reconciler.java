@@ -20,9 +20,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentExtension3;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.TypedRegion;
 
 /**
@@ -36,18 +38,45 @@ import org.eclipse.jface.text.TypedRegion;
  * @see org.eclipse.jface.text.ITextInputListener
  * @see DirtyRegion
  */
-public class Reconciler extends AbstractReconciler {
+public class Reconciler extends AbstractReconciler implements IReconcilerExtension {
 	
 	/** The map of reconciling strategies */
 	private Map fStrategies;
 	
 	/**
+	 * The partitioning this reconciler uses.
+	 *@since 3.0
+	 */
+	private String fPartitioning;
+	
+	/**
 	 * Creates a new reconciler with the following configuration: it is
 	 * an incremental reconciler with a standard delay of 500 ms. There
-	 * are no predefined reconciling strategies.
+	 * are no predefined reconciling strategies. The partitioning it uses
+	 * is the default partitioning <code>IDocumentExtension3.DEFAULT_PARTITIONING</code>.
 	 */ 
 	public Reconciler() {
 		super();
+		fPartitioning= IDocumentExtension3.DEFAULT_PARTITIONING;
+	}
+	
+	/**
+	 * Sets the document partitioning for this reconciler.
+	 * 
+	 * @param partitioning the document partitioning for this reconciler
+	 * @since 3.0
+	 */
+	public void setDocumentPartitioning(String partitioning) {
+		Assert.isNotNull(partitioning);
+		fPartitioning= partitioning;
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.reconciler.IReconcilerExtension#getDocumentPartitioning()
+	 * @since 3.0
+	 */
+	public String getDocumentPartitioning() {
+		return fPartitioning;
 	}
 	
 	/**
@@ -88,7 +117,7 @@ public class Reconciler extends AbstractReconciler {
 						
 		return (IReconcilingStrategy) fStrategies.get(contentType);
 	}
-	
+		
 	/**
 	 * Processes a dirty region. If the dirty region is <code>null</code> the whole
 	 * document is consider being dirty. The dirty region is partitioned by the
@@ -105,12 +134,7 @@ public class Reconciler extends AbstractReconciler {
 		if (region == null)
 			region= new Region(0, getDocument().getLength());
 			
-		ITypedRegion[] regions= null;
-		try {
-			regions= getDocument().computePartitioning(region.getOffset(), region.getLength());
-		} catch (BadLocationException x) {
-			regions= new TypedRegion[0];
-		}
+		ITypedRegion[] regions= computePartitioning(region.getOffset(), region.getLength());
 		
 		for (int i= 0; i < regions.length; i++) {
 			ITypedRegion r= regions[i];
@@ -163,16 +187,7 @@ public class Reconciler extends AbstractReconciler {
 	 * @since 2.0
 	 */
 	protected void initialProcess() {
-		
-		IRegion region= new Region(0, getDocument().getLength());
-			
-		ITypedRegion[] regions= null;
-		try {
-			regions= getDocument().computePartitioning(region.getOffset(), region.getLength());
-		} catch (BadLocationException x) {
-			regions= new TypedRegion[0];
-		}
-		
+		ITypedRegion[] regions= computePartitioning(0, getDocument().getLength());
 		for (int i= 0; i < regions.length; i++) {
 			ITypedRegion r= regions[i];
 			IReconcilingStrategy s= getReconcilingStrategy(r.getType());
@@ -181,5 +196,24 @@ public class Reconciler extends AbstractReconciler {
 				e.initialReconcile();
 			}
 		}
+	}
+
+	/**
+	 * Computes and returns the partitioning for the given region of the input document
+	 * of the reconciler's connected text viewer.
+	 * 
+	 * @param offset the region offset
+	 * @param length the region length
+	 * @return the computed partitioning
+	 * @since 3.0
+	 */
+	private ITypedRegion[] computePartitioning(int offset, int length) {
+		ITypedRegion[] regions= null;
+		try {
+			regions= TextUtilities.computePartitioning(getDocument(), getDocumentPartitioning(), offset, length);
+		} catch (BadLocationException x) {
+			regions= new TypedRegion[0];
+		}
+		return regions;
 	}
 }

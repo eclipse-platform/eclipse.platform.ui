@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.jface.text.AbstractInformationControlManager;
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentExtension3;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IRegion;
@@ -43,6 +43,7 @@ import org.eclipse.jface.text.IWidgetTokenKeeperExtension;
 import org.eclipse.jface.text.IWidgetTokenOwner;
 import org.eclipse.jface.text.IWidgetTokenOwnerExtension;
 import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.TextUtilities;
 
 
 /**
@@ -57,7 +58,7 @@ import org.eclipse.jface.text.Region;
  * 
  * @since 2.0
  */
-public class InformationPresenter extends AbstractInformationControlManager implements IInformationPresenter, IWidgetTokenKeeper, IWidgetTokenKeeperExtension {
+public class InformationPresenter extends AbstractInformationControlManager implements IInformationPresenter, IInformationPresenterExtension, IWidgetTokenKeeper, IWidgetTokenKeeperExtension {
 	
 	
 	/** 
@@ -221,7 +222,12 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 	/** The map of <code>IInformationProvider</code> objects */
 	private Map fProviders;
 	/** The offset to override selection. */
-	private int fOffset= -1;	
+	private int fOffset= -1;
+	/**
+	 * The document partitioning for this information presenter.
+	 * @since 3.0
+	 */
+	private String fPartitioning;
 	
 	/**
 	 * Creates a new information presenter that uses the given information control creator.
@@ -229,7 +235,8 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 	 * control closer is set that closes the information control in the event of key strokes, 
 	 * resizing, moves, focus changes, mouse clicks, and disposal - all of those applied to
 	 * the information control's parent control. Also, the setup ensures that the information 
-	 * control when made visible will request thel focus.
+	 * control when made visible will request thel focus. By default, the default document
+	 * partitioning <code>IDocumentExtension3.DEFAULT_PARTITIONING</code> is used.
 	 * 
 	 * @param creator the information control creator to be used
 	 */
@@ -237,6 +244,26 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 		super(creator);
 		setCloser(new Closer());
 		takesFocusWhenVisible(true);
+		fPartitioning= IDocumentExtension3.DEFAULT_PARTITIONING;
+	}
+	
+	/**
+	 * Sets the document partitioning to be used by this information presenter.
+	 * 
+	 * @param partitioning the document partitioning to be used by this information presenter
+	 * @since 3.0
+	 */
+	public void setDocumentPartitioning(String partitioning) {
+		Assert.isNotNull(partitioning);
+		fPartitioning= partitioning;
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.information.IInformationPresenterExtension#getDocumentPartitioning()
+	 * @since 3.0
+	 */
+	public String getDocumentPartitioning() {
+		return fPartitioning;
 	}
 	
 	/**
@@ -293,9 +320,8 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 			
 		IInformationProvider provider= null;
 		try {
-			IDocument document= fTextViewer.getDocument();
-			String type= document.getContentType(offset);
-			provider= getInformationProvider(type);
+			String contentType= TextUtilities.getContentType(fTextViewer.getDocument(), getDocumentPartitioning(), offset);
+			provider= getInformationProvider(contentType);
 		} catch (BadLocationException x) {
 		}
 		if (provider == null)

@@ -159,7 +159,7 @@ class ContextInformationPopup implements IContentAssistListener {
 
 	private void internalShowContextInfo(IContextInformation information, int offset) {
 				
-		IContextInformationValidator validator= fContentAssistant.getContextInformationValidator(fViewer.getDocument(), offset);
+		IContextInformationValidator validator= fContentAssistant.getContextInformationValidator(fViewer, offset);
 		
 		if (validator != null) {
 			ContextFrame current= new ContextFrame();
@@ -169,7 +169,7 @@ class ContextInformationPopup implements IContentAssistListener {
 			current.fOffset= offset;
 			current.fVisibleOffset= fViewer.getTextWidget().getSelectionRange().x - (offset - current.fBeginOffset);
 			current.fValidator= validator;
-			current.fPresenter= fContentAssistant.getContextInformationPresenter(fViewer.getDocument(), offset);
+			current.fPresenter= fContentAssistant.getContextInformationPresenter(fViewer, offset);
 			
 			fContextFrameStack.push(current);
 			
