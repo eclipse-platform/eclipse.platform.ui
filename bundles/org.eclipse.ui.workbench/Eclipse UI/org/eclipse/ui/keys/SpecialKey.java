@@ -541,10 +541,8 @@ public final class SpecialKey extends NaturalKey {
 			if (END_NAME.equals(name))
 				return Character.toString('\u2198');
 
-			/*
-			 * TODO SWT does not distinguish the enter key from the return key.
-			 * if (ENTER_NAME.equals(name)) Character.toString('\u2324');
-			 */
+			if (NUMPAD_ENTER_NAME.equals(name)) 
+				return Character.toString('\u2324');
 
 			if (HOME_NAME.equals(name))
 				return Character.toString('\u2196');
