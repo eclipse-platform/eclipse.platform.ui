@@ -231,7 +231,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		this.number = number;
 		layout = new TrimLayout();
 		//layout.setMargins(3,3);
-		layout.setSpacing(5, 5, 5, 2);
+		layout.setSpacing(5, 5, 2, 2);
 		
 		// Make sure there is a workbench. This call will throw
 		// an exception if workbench not created yet. 
