@@ -23,21 +23,6 @@ public FileSystemResourceManager(Workspace workspace) {
 	this.workspace = workspace;
 	localStore = new FileSystemStore();
 }
-private void addFilesToHistoryStore(IPath key, IPath localLocation, boolean move) throws CoreException {
-	java.io.File localFile = localLocation.toFile();
-	if (!localFile.exists())
-		return;
-	long lastModified = CoreFileSystemLibrary.getLastModified(localFile.getAbsolutePath());
-	if (localFile.isFile()) {
-		historyStore.addState(key, localLocation, lastModified, move);
-		return;
-	}
-	String[] children = localFile.list();
-	if (children == null)
-		return;
-	for (int i = 0; i < children.length; i++)
-		addFilesToHistoryStore(key.append(children[i]), localLocation.append(children[i]), move);
-}
 /**
  * Returns a container for the given file system location or null if there
  * is no mapping for this path. If the path has only one segment, then an 
@@ -78,70 +63,25 @@ public void delete(IResource target, boolean force, boolean convertToPhantom, bo
 	try {
 		Resource resource = (Resource) target;
 		int totalWork = resource.countResources(IResource.DEPTH_INFINITE, false);
+		totalWork *= 2;
 		String title = Policy.bind("deleting", new String[] { resource.getFullPath().toString()});
 		monitor.beginTask(title, totalWork);
-		IStatus status = null;
-		IProgressMonitor sub = Policy.subMonitorFor(monitor, totalWork);
-		if (force)
-			status = deleteWithForce(resource, convertToPhantom, keepHistory, sub);
-		else
-			status = deleteWithoutForce(resource, convertToPhantom, keepHistory, sub);
+		MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_DELETE_LOCAL, Policy.bind("deleteProblem", null), null);
+		List skipList = null;
+		UnifiedTree tree = new UnifiedTree(target);
+		if (!force) {
+			IProgressMonitor sub = Policy.subMonitorFor(monitor, totalWork / 2);
+			sub.beginTask("", 10000);
+			RefreshLocalWithStatusVisitor refreshVisitor = new RefreshLocalWithStatusVisitor(Policy.bind("deleteProblem", null), Policy.bind("resourcesDifferent", null), sub);
+			tree.accept(refreshVisitor, IResource.DEPTH_INFINITE);
+			status.merge(refreshVisitor.getStatus());
+			skipList = refreshVisitor.getAffectedResources();
+		}
+		DeleteVisitor deleteVisitor = new DeleteVisitor(skipList, force, convertToPhantom, keepHistory, Policy.subMonitorFor(monitor, force ? totalWork : (totalWork / 2)));
+		tree.accept(deleteVisitor, IResource.DEPTH_INFINITE);
+		status.merge(deleteVisitor.getStatus());
 		if (!status.isOK())
 			throw new ResourceException(status);
-	} finally {
-		monitor.done();
-	}
-}
-protected void deleteContents(final IResource target, final boolean keepHistory, final MultiStatus status) throws CoreException {
-	IUnifiedTreeVisitor visitor = new IUnifiedTreeVisitor() {
-		public boolean visit(UnifiedTreeNode node) throws CoreException {
-			IPath location = node.getLocalLocation();
-			if (keepHistory)
-				getHistoryStore().addState(target.getFullPath(), location, node.getLastModified(), true);
-			else
-				getStore().delete(location.toFile(), status);
-			return false;
-		}
-	};
-	UnifiedTree tree = new UnifiedTree(target);
-	tree.accept(visitor, IResource.DEPTH_INFINITE);
-}
-protected IStatus deleteWithForce(Resource target, boolean convertToPhantom, boolean keepHistory, IProgressMonitor monitor) throws CoreException {
-	monitor = Policy.monitorFor(monitor);
-	try {
-		monitor.beginTask("", 100);
-		MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_DELETE_LOCAL, Policy.bind("deleteProblem", null), null);
-		deleteContents(target, keepHistory, status);
-		monitor.worked(70);
-		target.deleteResource(convertToPhantom, status);
-		monitor.worked(30);
-		return status;
-	} finally {
-		monitor.done();
-	}
-}
-protected IStatus deleteWithoutForce(Resource target, boolean convertToPhantom, boolean keepHistory, IProgressMonitor monitor) throws CoreException {
-	monitor = Policy.monitorFor(monitor);
-	try {
-		int totalWork = target.countResources(IResource.DEPTH_INFINITE, false) + 1000;
-		totalWork *= 2;
-		monitor.beginTask("", totalWork);
-		/* refresh local logging out of sync resources */
-		IProgressMonitor sub = Policy.subMonitorFor(monitor, totalWork / 2);
-		RefreshLocalWithStatusVisitor refreshVisitor = new RefreshLocalWithStatusVisitor(Policy.bind("deleteProblem", null), Policy.bind("resourcesDifferent", null), sub);
-		UnifiedTree tree = new UnifiedTree(target);
-		tree.accept(refreshVisitor, IResource.DEPTH_INFINITE);
-		sub.done();
-		/* delete only resources that were in sync */
-		sub = Policy.subMonitorFor(monitor, totalWork / 2);
-		List skipList = refreshVisitor.getAffectedResources();
-		DeleteVisitor deleteVisitor = new DeleteVisitor(skipList, true, convertToPhantom, keepHistory, sub);
-		tree.accept(deleteVisitor, IResource.DEPTH_INFINITE);
-		sub.done();
-		/* create status */
-		MultiStatus status = deleteVisitor.getStatus();
-		status.merge(refreshVisitor.getStatus());
-		return status;
 	} finally {
 		monitor.done();
 	}
@@ -199,9 +139,9 @@ public void move(IResource target, IPath destination, boolean keepHistory, IProg
 				break;
 		}
 		IPath sourceLocation = locationFor(target);
-		IPath destinationLocation = locationFor(resource);
 		if (keepHistory)
 			addFilesToHistoryStore(target.getFullPath(), sourceLocation, false);
+		IPath destinationLocation = locationFor(resource);
 		getStore().move(sourceLocation.toFile(), destinationLocation.toFile(), false, Policy.subMonitorFor(monitor, 1));
 	} finally {
 		monitor.done();
@@ -436,4 +376,18 @@ public void write(IProject target, IProgressMonitor monitor) throws CoreExceptio
 	info.setLocalSyncInfo(lastModified);
 	info.set(M_LOCAL_EXISTS);
 }
-}
+private void addFilesToHistoryStore(IPath key, IPath localLocation, boolean move) throws CoreException {
+	java.io.File localFile = localLocation.toFile();
+	if (!localFile.exists())
+		return;
+	long lastModified = CoreFileSystemLibrary.getLastModified(localFile.getAbsolutePath());
+	if (localFile.isFile()) {
+		historyStore.addState(key, localLocation, lastModified, move);
+		return;
+	}
+	String[] children = localFile.list();
+	if (children == null)
+		return;
+	for (int i = 0; i < children.length; i++)
+		addFilesToHistoryStore(key.append(children[i]), localLocation.append(children[i]), move);
+}}

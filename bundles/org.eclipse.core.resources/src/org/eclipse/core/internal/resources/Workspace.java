@@ -313,7 +313,7 @@ public IProject[][] computePrerequisiteOrder(IProject[] projects) {
 public IStatus copy(IResource[] resources, IPath destination, boolean force, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		int opWork = resources.length;
+		int opWork = Math.max(resources.length, 1);
 		int totalWork = Policy.totalWork * opWork / Policy.opWork;
 		monitor.beginTask(Policy.bind("copying", new String[] { "" }), totalWork);
 		Assert.isLegal(resources != null);
@@ -474,7 +474,7 @@ public static WorkspaceDescription defaultWorkspaceDescription() {
 public IStatus delete(IResource[] resources, boolean force, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		int opWork = resources.length;
+		int opWork = Math.max(resources.length, 1);
 		int totalWork = Policy.totalWork * opWork / Policy.opWork;
 		monitor.beginTask(Policy.bind("deleting", new String[] { "" }), totalWork);
 		MultiStatus result = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, Policy.bind("deleteProblem", null), null);
@@ -492,7 +492,13 @@ public IStatus delete(IResource[] resources, boolean force, IProgressMonitor mon
 					continue;
 				}
 				try {
-					resource.delete(force, Policy.subMonitorFor(monitor, 1));
+					// We cannot call delete(boolean, boolean, monitor) to all
+					// kind of resources because this method has a different
+					// semantics for project and root.
+					if (resource.getType() == IResource.PROJECT || resource.getType() == IResource.ROOT)
+						resource.delete(force, Policy.subMonitorFor(monitor, 1));
+					else
+						resource.delete(force, true, Policy.subMonitorFor(monitor, 1));
 				} catch (CoreException e) {
 					// Don't really care about the exception unless the resource is still around.
 					ResourceInfo info = resource.getResourceInfo(false, false);
@@ -827,14 +833,12 @@ protected void linkTrees(IPath path, ElementTree[] newTrees) throws CoreExceptio
 public IStatus move(IResource[] resources, IPath destination, boolean force, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		int opWork = resources.length;
+		int opWork = Math.max(resources.length, 1);
 		int totalWork = Policy.totalWork * opWork / Policy.opWork;
 		monitor.beginTask(Policy.bind("moving", new String[] { "" }), totalWork);
 		Assert.isLegal(resources != null);
-		if (resources.length == 0) {
-			monitor.worked(totalWork);
+		if (resources.length == 0)
 			return new ResourceStatus(IResourceStatus.OK, Policy.bind("ok", null));
-		}
 		resources = (IResource[]) resources.clone(); // to avoid concurrent changes to this array
 		IPath parentPath = null;
 		MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, Policy.bind("moveProblem", null), null);
@@ -843,20 +847,21 @@ public IStatus move(IResource[] resources, IPath destination, boolean force, IPr
 			beginOperation(true);
 			for (int i = 0; i < resources.length; i++) {
 				Policy.checkCanceled(monitor);
-				if (resources[i] == null || isDuplicate(resources, i)) {
+				Resource resource = (Resource) resources[i];
+				if (resource == null || isDuplicate(resources, i)) {
 					monitor.worked(1);
 					continue;
 				}
 				// test siblings
 				if (parentPath == null)
-					parentPath = resources[i].getFullPath().removeLastSegments(1);
-				if (parentPath.equals(resources[i].getFullPath().removeLastSegments(1))) {
+					parentPath = resource.getFullPath().removeLastSegments(1);
+				if (parentPath.equals(resource.getFullPath().removeLastSegments(1))) {
 					// test move requirements
 					try {
-						IStatus requirements = ((Resource) resources[i]).checkMoveRequirements(destination.append(resources[i].getName()), resources[i].getType());
+						IStatus requirements = resource.checkMoveRequirements(destination.append(resource.getName()), resource.getType());
 						if (requirements.isOK()) {
 							try {
-								resources[i].move(destination.append(resources[i].getName()), force, Policy.subMonitorFor(monitor, 1));
+								resource.move(destination.append(resource.getName()), force, Policy.subMonitorFor(monitor, 1));
 							} catch (CoreException e) {
 								status.merge(e.getStatus());
 							}
@@ -870,8 +875,8 @@ public IStatus move(IResource[] resources, IPath destination, boolean force, IPr
 					}
 				} else {
 					monitor.worked(1);
-					String message = Policy.bind("notChild", new String[] { resources[i].getFullPath().toString(), parentPath.toString()});
-					status.merge(new ResourceStatus(IResourceStatus.OPERATION_FAILED, resources[i].getFullPath(), message));
+					String message = Policy.bind("notChild", new String[] { resource.getFullPath().toString(), parentPath.toString()});
+					status.merge(new ResourceStatus(IResourceStatus.OPERATION_FAILED, resource.getFullPath(), message));
 				}
 			}
 		} catch (OperationCanceledException e) {

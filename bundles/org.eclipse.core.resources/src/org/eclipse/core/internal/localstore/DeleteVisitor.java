@@ -9,6 +9,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.utils.Policy;
+import java.util.Enumeration;
 import java.util.List;
 
 public class DeleteVisitor implements IUnifiedTreeVisitor, ICoreConstants {
@@ -35,15 +36,26 @@ public DeleteVisitor(List skipList, boolean force, boolean convertToPhantom, boo
 protected void delete(UnifiedTreeNode node) {
 	IPath location = node.getLocalLocation();
 	Resource target = (Resource) node.getResource();
-	boolean success = true;
-	if (keepHistory)
-		target.getLocalManager().getHistoryStore().addState(target.getFullPath(), location, node.getLastModified(), true);
-	else
-		success = getStore().delete(location.toFile(), status);
-	// if there was a problem don't try and delete the resource from the tree
-	if (!success)
-		return;
 	try {
+		if (keepHistory) {
+			if (target.getType() == IResource.FOLDER) {
+				for (Enumeration children = node.getChildren(); children.hasMoreElements();)
+					delete((UnifiedTreeNode) children.nextElement());
+				node.removeChildrenFromTree();
+				if(!getStore().delete(location.toFile(), status))
+					return;
+			} else {
+				target.getLocalManager().getHistoryStore().addState(target.getFullPath(), location, node.getLastModified(), true);
+				if (target.getLocation().toFile().exists()) {
+					String message = "Could not delete file: " + target.getFullPath();
+					status.add(new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, target.getFullPath(), message));
+					return;
+				}
+			}
+		} else {
+			if(!getStore().delete(location.toFile(), status))
+				return;
+		}
 		target.deleteResource(convertToPhantom, status);
 	} catch (CoreException e) {
 		status.add(e.getStatus());
@@ -64,6 +76,8 @@ protected boolean isAncestor(IResource one, IResource another) throws CoreExcept
 	return one.getFullPath().isPrefixOf(another.getFullPath()) && !equals(one, another);
 }
 protected boolean isAncestorOfResourceToSkip(IResource resource) throws CoreException {
+	if (skipList == null)
+		return false;
 	for (int i = 0; i < skipList.size(); i++) {
 		IResource target = (IResource) skipList.get(i);
 		if (isAncestor(resource, target))
@@ -72,9 +86,12 @@ protected boolean isAncestorOfResourceToSkip(IResource resource) throws CoreExce
 	return false;
 }
 protected void removeFromSkipList(IResource resource) {
-	skipList.remove(resource);
+	if (skipList != null)
+		skipList.remove(resource);
 }
 protected boolean shouldSkip(IResource resource) throws CoreException {
+	if (skipList == null)
+		return false;
 	for (int i = 0; i < skipList.size(); i++)
 		if (equals(resource, (IResource) skipList.get(i)))
 			return true;

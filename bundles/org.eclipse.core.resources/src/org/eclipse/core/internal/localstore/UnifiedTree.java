@@ -264,30 +264,19 @@ protected boolean queueIsEmpty() {
 protected UnifiedTreeNode removeElementFromQueue() {
 	return (UnifiedTreeNode) queue.remove();
 }
+/**
+ * Remove from the last element of the queue to the first child of the
+ * given node.
+ */
 protected void removeNodeChildrenFromQueue(UnifiedTreeNode node) throws CoreException {
-	if (node.getFirstChild() == null)
+	UnifiedTreeNode first = node.getFirstChild();
+	if (first == null)
 		return;
-	UnifiedTreeNode child = (UnifiedTreeNode) queue.removeTail();
-	boolean addLevelMarker = isLevelMarker(child);
 	while (true) {
-		child = (UnifiedTreeNode) queue.peekTail();
-		if (isChildrenMarker(child))
+		if (first.equals(queue.removeTail()))
 			break;
-		queue.removeTail();
 	}
-	if (addLevelMarker)
-		addElementToQueue(levelMarker);
-}
-protected boolean removeResourceFromList(String[] list, String name) {
-	if (list == null)
-		return false;
-	for (int i = 0; i < list.length; i++) {
-		if (list[i] != null && list[i].equals(name)) {
-			list[i] = null;
-			return true;
-		}
-	}
-	return false;
+	node.setFirstChild(null);
 }
 public void setRoot(IResource root) {
 	Assert.isLegal(root.getType() != IResource.PROJECT);

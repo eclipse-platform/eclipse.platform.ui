@@ -68,12 +68,10 @@ public void delete(File target) throws CoreException {
 	if (!Workspace.clear(target))
 		throw new ResourceException(IResourceStatus.FAILED_DELETE_LOCAL, new Path(target.getAbsolutePath()), Policy.bind("couldnotDelete", new String[] {target.getAbsolutePath()}), null);
 }
-public boolean delete(java.io.File root, MultiStatus status) {
+public boolean delete(File root, MultiStatus status) {
 	boolean failedRecursive = false;
 	if (root.isDirectory()) {
 		String[] list = root.list();
-		// for some unknown reason, list() can return null.  
-		// Just skip the children If it does.
 		if (list != null)
 			for (int i = 0; i < list.length; i++)
 				// try best effort on all children so put logical OR at end

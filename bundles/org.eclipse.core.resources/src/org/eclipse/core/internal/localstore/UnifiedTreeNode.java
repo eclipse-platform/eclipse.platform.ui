@@ -69,4 +69,7 @@ public String toString() {
 	String s = resource == null ? "null" : resource.getFullPath().toString();
 	return "Node: " + s;
 }
+public void removeChildrenFromTree() throws CoreException {
+	tree.removeNodeChildrenFromQueue(this);
+}
 }

@@ -292,7 +292,8 @@ public IStatus copy(IResource[] resources, IPath destination, boolean force, IPr
  *    individual resource deletions fails; that is, if at least one
  *    of the resources in the list still exists at the end of this 
  *    method.</li>
- * <li> History is not kept for any of the resources deleted</li>
+ * <li> History is kept for deleted files. When projects are deleted, no history
+ *    is kept</li>
  * </ul>
  * </p>
  * <p>
