@@ -1061,7 +1061,7 @@ public class Main {
 		// determine the splash path
 		String location = getSplashLocation(defaultPath);
 		if (debug)
-			System.out.println("Startup: splash path = " + location); //$NON-NLS-1$
+			System.out.println("Splash path:\n    " + location); //$NON-NLS-1$
 		if (location == null)
 			return;
 
