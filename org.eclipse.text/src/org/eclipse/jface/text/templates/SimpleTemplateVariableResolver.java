@@ -16,7 +16,7 @@ package org.eclipse.jface.text.templates;
  * 
  * @since 3.0
  */
-public class SimpleVariableResolver extends TemplateVariableResolver {
+public class SimpleTemplateVariableResolver extends TemplateVariableResolver {
 
 	/** The string to which this variable evaluates. */
 	private String fEvaluationString;
@@ -24,7 +24,7 @@ public class SimpleVariableResolver extends TemplateVariableResolver {
 	/*
 	 * @see TemplateVariableResolver#TemplateVariableResolver(String, String)
 	 */
-	protected SimpleVariableResolver(String type, String description) {
+	protected SimpleTemplateVariableResolver(String type, String description) {
 		super(type, description);
 	}
 

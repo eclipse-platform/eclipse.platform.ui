@@ -24,11 +24,14 @@ import java.util.regex.PatternSyntaxException;
  */
 public class FindReplaceDocumentAdapter implements CharSequence {
 	
+	private static class FindReplaceOperationCode {
+	}
+	
 	// Shortcuts to findReplace operation codes
-	private static final FindReplaceOperationCode FIND_FIRST= FindReplaceOperationCode.FIND_FIRST;
-	private static final FindReplaceOperationCode FIND_NEXT= FindReplaceOperationCode.FIND_NEXT;
-	private static final FindReplaceOperationCode REPLACE= FindReplaceOperationCode.REPLACE;
-	private static final FindReplaceOperationCode REPLACE_FIND_NEXT= FindReplaceOperationCode.REPLACE_FIND_NEXT;
+	private static final FindReplaceOperationCode FIND_FIRST= new FindReplaceOperationCode();
+	private static final FindReplaceOperationCode FIND_NEXT= new FindReplaceOperationCode();
+	private static final FindReplaceOperationCode REPLACE= new FindReplaceOperationCode();
+	private static final FindReplaceOperationCode REPLACE_FIND_NEXT= new FindReplaceOperationCode();
 	
 	/**
 	 * The adapted document.
@@ -61,7 +64,7 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 	}
 	
 	/**
-	 * Returns the region of a given search string in the document based on a set of search criteria.
+	 * Returns the location of a given string in this adapter's document based on a set of search criteria.
 	 *
 	 * @param startOffset document offset at which search starts
 	 * @param findString the string to find
@@ -75,7 +78,7 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 	 * @throws BadLocationException if startOffset is an invalid document offset
 	 * @throws PatternSyntaxException if a regular expression has invalid syntax
 	 */
-	public IRegion search(int startOffset, String findString, boolean forwardSearch, boolean caseSensitive, boolean wholeWord, boolean regExSearch) throws BadLocationException {
+	public IRegion find(int startOffset, String findString, boolean forwardSearch, boolean caseSensitive, boolean wholeWord, boolean regExSearch) throws BadLocationException {
 		Assert.isTrue(!(regExSearch && wholeWord));
 
 		// Adjust offset to special meaning of -1
@@ -115,7 +118,7 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 	 * @see FindReplaceOperationCode#REPLACE
 	 * @see FindReplaceOperationCode#REPLACE_FIND_NEXT
 	 */
-	public IRegion findReplace(FindReplaceOperationCode operationCode, int startOffset, String findString, String replaceText, boolean forwardSearch, boolean caseSensitive, boolean wholeWord, boolean regExSearch) throws BadLocationException {
+	private IRegion findReplace(FindReplaceOperationCode operationCode, int startOffset, String findString, String replaceText, boolean forwardSearch, boolean caseSensitive, boolean wholeWord, boolean regExSearch) throws BadLocationException {
 
 		// Validate option combinations
 		Assert.isTrue(!(regExSearch && wholeWord));
@@ -269,7 +272,7 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 	 * @see IDocumentListener
 	 */
 	public IRegion replace(String text, boolean regExReplace) throws BadLocationException {
-		return findReplace(FindReplaceOperationCode.REPLACE, -1, null, text, false, false, false, regExReplace);
+		return findReplace(REPLACE, -1, null, text, false, false, false, regExReplace);
 	}
 
 	// ---------- CharSequence implementation ----------

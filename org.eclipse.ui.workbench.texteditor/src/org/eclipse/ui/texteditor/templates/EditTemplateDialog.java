@@ -54,7 +54,7 @@ import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
-import org.eclipse.jface.text.templates.ContextType;
+import org.eclipse.jface.text.templates.TemplateContextType;
 import org.eclipse.jface.text.templates.ContextTypeRegistry;
 import org.eclipse.jface.text.templates.Template;
 import org.eclipse.jface.text.templates.TemplateException;
@@ -68,7 +68,7 @@ import org.eclipse.ui.texteditor.IUpdate;
  * 
  * @since 3.0
  */
-public class EditTemplateDialog extends StatusDialog {
+class EditTemplateDialog extends StatusDialog {
 
 	private static class TextViewerAction extends Action implements IUpdate {
 	
@@ -157,7 +157,7 @@ public class EditTemplateDialog extends StatusDialog {
 		
 		List contexts= new ArrayList();
 		for (Iterator it= registry.contextTypes(); it.hasNext();) {
-			ContextType type= (ContextType) it.next();
+			TemplateContextType type= (TemplateContextType) it.next();
 			contexts.add(new String[] { type.getId(), type.getName() });
 		}
 		fContextTypes= (String[][]) contexts.toArray(new String[contexts.size()][]);
@@ -166,7 +166,7 @@ public class EditTemplateDialog extends StatusDialog {
 		
 		fContextTypeRegistry= registry;
 		
-		ContextType type= fContextTypeRegistry.getContextType(template.getContextTypeId());
+		TemplateContextType type= fContextTypeRegistry.getContextType(template.getContextTypeId());
 		fTemplateProcessor.setContextType(type);
 	}
 	
@@ -292,7 +292,7 @@ public class EditTemplateDialog extends StatusDialog {
 		String text= document.get();
 		fTemplate.setPattern(text);
 		fValidationStatus.setOK();
-		ContextType contextType= fContextTypeRegistry.getContextType(fTemplate.getContextTypeId());
+		TemplateContextType contextType= fContextTypeRegistry.getContextType(fTemplate.getContextTypeId());
 		if (contextType != null) {
 			try {
 				contextType.validate(text);

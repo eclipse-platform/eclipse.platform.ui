@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jface.text.link;
+package org.eclipse.jface.text.templates;
 
 import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.DocumentEvent;
@@ -16,11 +16,12 @@ import org.eclipse.jface.text.IPositionUpdater;
 import org.eclipse.jface.text.Position;
 
 /**
- * Position updater that takes any changes at the borders of a position to not belong to the position.
+ * Position updater that takes any change in [position.offset, position.offset + position.length] as
+ * belonging to the position.
  * 
  * @since 3.0
  */
-public class ExclusivePositionUpdater implements IPositionUpdater {
+class InclusivePositionUpdater implements IPositionUpdater {
 
 	/** The position category. */
 	private final String fCategory;
@@ -30,7 +31,7 @@ public class ExclusivePositionUpdater implements IPositionUpdater {
 	 * 
 	 * @param category the new category.
 	 */
-	public ExclusivePositionUpdater(String category) {
+	public InclusivePositionUpdater(String category) {
 		fCategory= category;
 	}
 
@@ -58,11 +59,11 @@ public class ExclusivePositionUpdater implements IPositionUpdater {
 				int length= position.getLength();
 				int end= offset + length;
 
-				if (offset >= eventOffset + eventOldLength) 
-					// position comes
+				if (offset > eventOffset + eventOldLength) 
+					// position comes way
 					// after change - shift
 					position.setOffset(offset + deltaLength);
-				else if (end <= eventOffset) 
+				else if (end < eventOffset) 
 					// position comes way before change -
 					// leave alone
 					;
@@ -71,15 +72,16 @@ public class ExclusivePositionUpdater implements IPositionUpdater {
 					position.setLength(length + deltaLength);
 				} else if (offset < eventOffset) {
 					// event extends over end of position - adjust length
-					int newEnd= eventOffset;
+					int newEnd= eventOffset + eventNewLength;
 					position.setLength(newEnd - offset);
 				} else if (end > eventOffset + eventOldLength) {
 					// event extends from before position into it - adjust offset
 					// and length
 					// offset becomes end of event, length ajusted acordingly
-					int newOffset= eventOffset + eventNewLength;
-					position.setOffset(newOffset);
-					position.setLength(end - newOffset);
+					// we want to recycle the overlapping part
+					position.setOffset(eventOffset);
+					int deleted= eventOffset + eventOldLength - offset;
+					position.setLength(length - deleted + eventNewLength);
 				} else {
 					// event consumes the position - delete it
 					position.delete();

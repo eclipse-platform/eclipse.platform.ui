@@ -21,7 +21,7 @@ import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
-import org.eclipse.jface.text.templates.ContextType;
+import org.eclipse.jface.text.templates.TemplateContextType;
 import org.eclipse.jface.text.templates.TemplateVariableResolver;
 
 
@@ -48,14 +48,14 @@ public class TemplateVariableProcessor implements IContentAssistProcessor {
 
 	
 	/** the context type */
-	private ContextType fContextType;
+	private TemplateContextType fContextType;
 	
 	/**
 	 * Sets the context type.
 	 * 
 	 * @param contextType the context type for this processor
 	 */
-	public void setContextType(ContextType contextType) {
+	public void setContextType(TemplateContextType contextType) {
 		fContextType= contextType;	
 	}
 	
@@ -64,7 +64,7 @@ public class TemplateVariableProcessor implements IContentAssistProcessor {
 	 * 
 	 * @return the context type
 	 */
-	public ContextType getContextType() {
+	public TemplateContextType getContextType() {
 		return fContextType;	
 	}	
 	

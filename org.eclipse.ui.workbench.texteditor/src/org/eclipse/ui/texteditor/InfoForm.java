@@ -35,6 +35,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
  * separated by a separator line. This form must be handled like a SWT widget.
  * 
  * @since 2.0
+ * @deprecated since 3.0. there is no replacement, use org.eclipse.ui.forms to define a component with a similar look and function.
  */
 public class InfoForm {
 	

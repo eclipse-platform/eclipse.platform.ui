@@ -119,7 +119,7 @@ public abstract class TemplateCompletionProcessor implements IContentAssistProce
 	 * @return a template context that can handle template insertion at the given location, or <code>null</code>
 	 */
 	protected TemplateContext createContext(ITextViewer viewer, IRegion region) {
-		ContextType contextType= getContextType(viewer, region);
+		TemplateContextType contextType= getContextType(viewer, region);
 		if (contextType != null) {
 			IDocument document= viewer.getDocument();
 			return new DocumentTemplateContext(contextType, document, region.getOffset(), region.getLength());
@@ -135,7 +135,7 @@ public abstract class TemplateCompletionProcessor implements IContentAssistProce
 	 * @param region the region into the document displayed by viewer
 	 * @return the context type that can handle template expansion for the given location, or <code>null</code> if none exists
 	 */
-	protected abstract ContextType getContextType(ITextViewer viewer, IRegion region);
+	protected abstract TemplateContextType getContextType(ITextViewer viewer, IRegion region);
 
 	/**
 	 * Returns the relevance of a template given a prefix. The default

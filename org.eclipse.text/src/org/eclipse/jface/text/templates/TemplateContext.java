@@ -24,7 +24,7 @@ import org.eclipse.jface.text.BadLocationException;
 public abstract class TemplateContext {
 
 	/** The context type of this context */
-	private final ContextType fContextType;
+	private final TemplateContextType fContextType;
 	/** Additional variables. */
 	private final Map fVariables= new HashMap();
 	/** A flag to indicate that the context should not be modified. */
@@ -35,7 +35,7 @@ public abstract class TemplateContext {
 	 * 
 	 * @param contextType the context type of this context
 	 */
-	protected TemplateContext(ContextType contextType) {
+	protected TemplateContext(TemplateContextType contextType) {
 		fContextType= contextType;
 		fReadOnly= true;
 	}
@@ -45,7 +45,7 @@ public abstract class TemplateContext {
 	 * 
 	 * @return the context type of this context
 	 */
-	public ContextType getContextType() {
+	public TemplateContextType getContextType() {
 	 	return fContextType;   
 	}
 	

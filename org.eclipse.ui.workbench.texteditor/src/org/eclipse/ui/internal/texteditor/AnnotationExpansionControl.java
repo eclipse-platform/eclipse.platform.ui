@@ -59,13 +59,13 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.text.source.Annotation;
-import org.eclipse.jface.text.source.AnnotationEvent;
 import org.eclipse.jface.text.source.IAnnotationAccess;
 import org.eclipse.jface.text.source.IAnnotationAccessExtension;
-import org.eclipse.jface.text.source.IAnnotationListener;
+import org.eclipse.jface.text.source.IVerticalRulerListener;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
+import org.eclipse.jface.text.source.VerticalRulerEvent;
 
 
 /**
@@ -94,7 +94,7 @@ public class AnnotationExpansionControl implements IInformationControl, IInforma
 		public Annotation[] fAnnotations;
 		public ISourceViewer fViewer;
 		public IVerticalRulerInfo fRulerInfo;
-		public IAnnotationListener fAnnotationListener;
+		public IVerticalRulerListener fAnnotationListener;
 		public IDoubleClickListener fDoubleClickListener;
 		public ICallback redoAction;
 		public IAnnotationModel model;
@@ -121,7 +121,7 @@ public class AnnotationExpansionControl implements IInformationControl, IInforma
 				fHoverManager.showInformation();
 			
 			if (fInput.fAnnotationListener != null) {
-				AnnotationEvent event= new AnnotationEvent(fAnnotation);
+				VerticalRulerEvent event= new VerticalRulerEvent(fAnnotation);
 				fInput.fAnnotationListener.annotationSelected(event);
 			}
 
@@ -129,7 +129,7 @@ public class AnnotationExpansionControl implements IInformationControl, IInforma
 		
 		public void defaultSelected() {
 			if (fInput.fAnnotationListener != null) {
-				AnnotationEvent event= new AnnotationEvent(fAnnotation);
+				VerticalRulerEvent event= new VerticalRulerEvent(fAnnotation);
 				fInput.fAnnotationListener.annotationDefaultSelected(event);
 			}
 
@@ -138,7 +138,7 @@ public class AnnotationExpansionControl implements IInformationControl, IInforma
 		
 		public void showContextMenu(Menu menu) {
 			if (fInput.fAnnotationListener != null) {
-				AnnotationEvent event= new AnnotationEvent(fAnnotation);
+				VerticalRulerEvent event= new VerticalRulerEvent(fAnnotation);
 				fInput.fAnnotationListener.annotationContextMenuAboutToShow(event, menu);
 			}
 		}

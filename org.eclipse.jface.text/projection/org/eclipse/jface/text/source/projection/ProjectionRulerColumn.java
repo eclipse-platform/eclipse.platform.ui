@@ -39,7 +39,7 @@ import org.eclipse.jface.text.source.IAnnotationModel;
  * 
  * @since 3.0
  */
-public class ProjectionRulerColumn extends AnnotationRulerColumn {
+class ProjectionRulerColumn extends AnnotationRulerColumn {
 	
 	private ProjectionAnnotation fCurrentAnnotation;
 

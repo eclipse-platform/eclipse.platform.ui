@@ -18,16 +18,20 @@ import java.util.ResourceBundle;
 import org.eclipse.swt.widgets.Menu;
 
 import org.eclipse.jface.text.Position;
-import org.eclipse.jface.text.source.*;
 import org.eclipse.jface.text.source.Annotation;
+import org.eclipse.jface.text.source.IVerticalRulerListener;
 import org.eclipse.jface.text.source.IAnnotationModel;
+import org.eclipse.jface.text.source.IVerticalRulerInfo;
+import org.eclipse.jface.text.source.IVerticalRulerInfoExtension;
+import org.eclipse.jface.text.source.VerticalRulerEvent;
 
 /**
- * A ruler action which can select the textual range of a marker 
- * that has a visual representation in a vertical ruler.
+ * A ruler action which can select the textual range of an annotation that has a
+ * visual representation in a vertical ruler.
+ * 
  * @since 3.0
  */
-public class SelectMarkerRulerAction2 extends TextEditorAction implements IAnnotationListener {
+public class SelectAnnotationRulerAction extends TextEditorAction implements IVerticalRulerListener {
 
 	/**
 	 * Creates a new action for the given ruler and editor. The action configures
@@ -40,7 +44,7 @@ public class SelectMarkerRulerAction2 extends TextEditorAction implements IAnnot
 	 * 
 	 * @see ResourceAction#ResourceAction(ResourceBundle, String)
 	 */
-	public SelectMarkerRulerAction2(ResourceBundle bundle, String prefix, ITextEditor editor) {
+	public SelectAnnotationRulerAction(ResourceBundle bundle, String prefix, ITextEditor editor) {
 		super(bundle, prefix, editor);
 	}
 	
@@ -51,13 +55,13 @@ public class SelectMarkerRulerAction2 extends TextEditorAction implements IAnnot
 		if (getTextEditor() != null) {
 			IVerticalRulerInfo service= (IVerticalRulerInfo) getTextEditor().getAdapter(IVerticalRulerInfo.class);
 			if (service instanceof IVerticalRulerInfoExtension)
-				((IVerticalRulerInfoExtension) service).removeAnnotationListener(this);
+				((IVerticalRulerInfoExtension) service).removeVerticalRulerListener(this);
 		}
 		super.setEditor(editor);
 		if (getTextEditor() != null) {
 			IVerticalRulerInfo service= (IVerticalRulerInfo) getTextEditor().getAdapter(IVerticalRulerInfo.class);
 			if (service instanceof IVerticalRulerInfoExtension)
-				((IVerticalRulerInfoExtension) service).addAnnotationListener(this);
+				((IVerticalRulerInfoExtension) service).addVerticalRulerListener(this);
 		}
 	}
 	
@@ -72,16 +76,16 @@ public class SelectMarkerRulerAction2 extends TextEditorAction implements IAnnot
 	}
 
 	/*
-	 * @see org.eclipse.ui.texteditor.IAnnotationListener#annotationSelected(org.eclipse.ui.texteditor.AnnotationEvent)
+	 * @see org.eclipse.ui.texteditor.IVerticalRulerListener#annotationSelected(org.eclipse.ui.texteditor.VerticalRulerEvent)
 	 */
-	public void annotationSelected(AnnotationEvent event) {
+	public void annotationSelected(VerticalRulerEvent event) {
 	}
 
 	/*
-	 * @see org.eclipse.ui.texteditor.IAnnotationListener#annotationDefaultSelected(org.eclipse.ui.texteditor.AnnotationEvent)
+	 * @see org.eclipse.ui.texteditor.IVerticalRulerListener#annotationDefaultSelected(org.eclipse.ui.texteditor.VerticalRulerEvent)
 	 */
-	public void annotationDefaultSelected(AnnotationEvent event) {
-		Annotation a= event.getAnnotation();
+	public void annotationDefaultSelected(VerticalRulerEvent event) {
+		Annotation a= event.getSelectedAnnotation();
 		IAnnotationModel model= getAnnotationModel();
 		Position position= model.getPosition(a);
 		if (position == null)
@@ -91,8 +95,8 @@ public class SelectMarkerRulerAction2 extends TextEditorAction implements IAnnot
 	}
 
 	/*
-	 * @see org.eclipse.ui.texteditor.IAnnotationListener#annotationContextMenuAboutToShow(org.eclipse.ui.texteditor.AnnotationEvent, org.eclipse.swt.widgets.Menu)
+	 * @see org.eclipse.ui.texteditor.IVerticalRulerListener#annotationContextMenuAboutToShow(org.eclipse.ui.texteditor.VerticalRulerEvent, org.eclipse.swt.widgets.Menu)
 	 */
-	public void annotationContextMenuAboutToShow(AnnotationEvent event, Menu menu) {
+	public void annotationContextMenuAboutToShow(VerticalRulerEvent event, Menu menu) {
 	}
 }

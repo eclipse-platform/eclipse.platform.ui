@@ -30,12 +30,12 @@ public interface IVerticalRulerInfoExtension {
 	IAnnotationModel getModel();
 	
 	/**
-	 * Registers an annotation listener to be informed if an annotation gets
+	 * Registers a vertical ruler listener to be informed if an annotation gets
 	 * selected on the vertical ruler.
 	 * 
-	 * @param listener the listener to be informed about annotation selection events
+	 * @param listener the listener to be informed
 	 */
-	void addAnnotationListener(IAnnotationListener listener);
+	void addVerticalRulerListener(IVerticalRulerListener listener);
 	
 	/**
 	 * Removes a previously registered listener. If <code>listener</code> is not registered
@@ -43,5 +43,5 @@ public interface IVerticalRulerInfoExtension {
 	 * 
 	 * @param listener the listener to be removed
 	 */
-	void removeAnnotationListener(IAnnotationListener listener);
+	void removeVerticalRulerListener(IVerticalRulerListener listener);
 }

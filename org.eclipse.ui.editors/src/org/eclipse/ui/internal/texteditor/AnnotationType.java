@@ -8,14 +8,16 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.texteditor;
+package org.eclipse.ui.internal.texteditor;
+
+import org.eclipse.ui.texteditor.AnnotationPreference;
 
 /**
  * Represents an annotation type.
  *
  * @since 3.0
  */
-public class AnnotationType {
+public final class AnnotationType {
 	private String fType;
 	private String[] fSuperTypes;
 	private AnnotationPreference fPreference;
@@ -35,7 +37,6 @@ public class AnnotationType {
 	
 	/**
 	 * For internal use only.
-	 * Visibility will be changed to default.
 	 * 
 	 * @return the annotation preference
 	 */
@@ -45,7 +46,6 @@ public class AnnotationType {
 	
 	/**
 	 * For internal use only.
-	 * Visibility will be changed to default.
 	 * 
 	 * @param preference the annotation preference
 	 */

@@ -8,7 +8,7 @@ http://www.eclipse.org/legal/cpl-v10.html
 Contributors:
 	IBM Corporation - Initial implementation
 **********************************************************************/
-package org.eclipse.ui.editors.text;
+package org.eclipse.ui.internal.editors.text;
 
 import org.eclipse.core.filebuffers.ISynchronizationContext;
 

@@ -30,7 +30,7 @@ import org.eclipse.ui.editors.text.EditorsUI;
  * 
  * @since 3.0
  */
-public class AnnotationTypeLookup {
+public final class AnnotationTypeLookup {
 	
 	/**
 	 * Record representing an annotation type mapping.

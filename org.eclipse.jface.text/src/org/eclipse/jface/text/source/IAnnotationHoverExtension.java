@@ -27,11 +27,11 @@ import org.eclipse.jface.text.IInformationControlCreator;
 public interface IAnnotationHoverExtension {
 	
 	/**
-	 * Returns the information control creator of this annotation hover.
+	 * Returns the hover control creator of this annotation hover.
 	 * 
-	 * @return the information control creator
+	 * @return the hover control creator
 	 */
-	IInformationControlCreator getInformationControlCreator();
+	IInformationControlCreator getHoverControlCreator();
 	
 	/**
 	 * Returns whether the provided information control can interact with the mouse cursor. I.e. the

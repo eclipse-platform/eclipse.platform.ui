@@ -35,6 +35,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
  * 
  * @see FontFieldEditor 
  * @since 2.0
+ * @deprecated since 3.0 not longer in use, no longer supported
  */
 public class PropagatingFontFieldEditor extends FontFieldEditor {
 	

@@ -19,7 +19,7 @@ package org.eclipse.jface.text;
  * This general concepts replaces the notion of <code>visible region</code>.
  * 
  * @since 2.1
- * @deprecated replaced by <code>ITextViewerExtension5</code>
+ * @deprecated completely replaced by <code>ITextViewerExtension5</code>
  */
 public interface ITextViewerExtension3 {
 	

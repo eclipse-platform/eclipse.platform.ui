@@ -20,7 +20,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.ISourceViewer;
 
 /**
- * Action that converts the current selection to lower case.
+ * Action that converts the current selection to lower case or upper case.
  * @since 3.0
  */
 public class CaseAction extends ResourceAction implements IUpdate {

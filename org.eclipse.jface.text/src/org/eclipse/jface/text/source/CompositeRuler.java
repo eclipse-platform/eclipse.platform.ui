@@ -64,7 +64,7 @@ import org.eclipse.jface.text.ITextViewerExtension5;
  * @see ITextViewer
  * @since 2.0
  */
-public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, IVerticalRulerInfoExtension, IAnnotationListener {
+public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, IVerticalRulerInfoExtension {
 	
 	
 	/**
@@ -790,53 +790,66 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.source.IVerticalRulerInfoExtension#addAnnotationListener(org.eclipse.jface.text.source.IAnnotationListener)
+	 * @see org.eclipse.jface.text.source.IVerticalRulerInfoExtension#addVerticalRulerListener(org.eclipse.jface.text.source.IVerticalRulerListener)
 	 * @since 3.0
 	 */
-	public void addAnnotationListener(IAnnotationListener listener) {
+	public void addVerticalRulerListener(IVerticalRulerListener listener) {
 		fAnnotationListeners.add(listener);
 	}
 	
 	/*
-	 * @see org.eclipse.jface.text.source.IVerticalRulerInfoExtension#removeAnnotationListener(org.eclipse.jface.text.source.IAnnotationListener)
+	 * @see org.eclipse.jface.text.source.IVerticalRulerInfoExtension#removeVerticalRulerListener(org.eclipse.jface.text.source.IVerticalRulerListener)
 	 * @since 3.0
 	 */
-	public void removeAnnotationListener(IAnnotationListener listener) {
+	public void removeVerticalRulerListener(IVerticalRulerListener listener) {
 		fAnnotationListeners.remove(listener);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IAnnotationListener#annotationSelected(org.eclipse.jface.text.source.AnnotationEvent)
+	/**
+	 * Fires the annotation selected event to all registered vertical ruler
+	 * listeners.
+	 * TODO use robust iterators
+	 * 
+	 * @param event the event to fire
 	 * @since 3.0
 	 */
-	public void annotationSelected(AnnotationEvent event) {
+	public void fireAnnotationSelected(VerticalRulerEvent event) {
 		// forward to listeners
 		for (Iterator it= fAnnotationListeners.iterator(); it.hasNext();) {
-			IAnnotationListener listener= (IAnnotationListener) it.next();
+			IVerticalRulerListener listener= (IVerticalRulerListener) it.next();
 			listener.annotationSelected(event);
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IAnnotationListener#annotationDefaultSelected(org.eclipse.jface.text.source.AnnotationEvent)
+	/**
+	 * Fires the annotation default selected event to all registered vertical
+	 * ruler listeners.
+	 * TODO use robust iterators
+	 * 
+	 * @param event the event to fire
 	 * @since 3.0
 	 */
-	public void annotationDefaultSelected(AnnotationEvent event) {
+	public void fireAnnotationDefaultSelected(VerticalRulerEvent event) {
 		// forward to listeners
 		for (Iterator it= fAnnotationListeners.iterator(); it.hasNext();) {
-			IAnnotationListener listener= (IAnnotationListener) it.next();
+			IVerticalRulerListener listener= (IVerticalRulerListener) it.next();
 			listener.annotationDefaultSelected(event);
 		}
 	}
-
-	/*
-	 * @see org.eclipse.jface.text.source.IAnnotationListener#annotationContextMenuAboutToShow(org.eclipse.jface.text.source.AnnotationEvent, org.eclipse.swt.widgets.Menu)
+	
+	/**
+	 * Informs all registered vertical ruler listeners that the content menu on a selected annotation\
+	 * is about to be shown.
+	 * TODO use robust iterators
+	 * 
+	 * @param event the event to fire
+	 * @param menu the menu that is about to be shown
 	 * @since 3.0
 	 */
-	public void annotationContextMenuAboutToShow(AnnotationEvent event, Menu menu) {
+	public void fireAnnotationContextMenuAboutToShow(VerticalRulerEvent event, Menu menu) {
 		// forward to listeners
 		for (Iterator it= fAnnotationListeners.iterator(); it.hasNext();) {
-			IAnnotationListener listener= (IAnnotationListener) it.next();
+			IVerticalRulerListener listener= (IVerticalRulerListener) it.next();
 			listener.annotationContextMenuAboutToShow(event, menu);
 		}
 	}

@@ -14,7 +14,7 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IRegion;
 
 /**
- * Internal class. Do not use.
+ * Internal interface. Do not use.
  * 
  * @since 3.0
  */

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.texteditor;
+package org.eclipse.ui.internal.texteditor;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -18,9 +18,12 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 import org.eclipse.jface.text.source.IAnnotationAccessExtension;
+import org.eclipse.ui.texteditor.AnnotationPreference;
+import org.eclipse.ui.texteditor.AnnotationPreferenceLookup;
+import org.eclipse.ui.texteditor.IAnnotationImageProvider;
 
 
-class DelegatingAnnotationPreference extends AnnotationPreference {
+public class DelegatingAnnotationPreference extends AnnotationPreference {
 	
 	private AnnotationType fType;
 	private AnnotationPreferenceLookup fLookup;

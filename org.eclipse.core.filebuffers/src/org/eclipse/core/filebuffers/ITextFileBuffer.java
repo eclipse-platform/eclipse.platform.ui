@@ -40,7 +40,7 @@ public interface ITextFileBuffer extends IFileBuffer {
 	
 	/**
 	 * Sets the character encoding to be used for reading and writing the buffer's
-	 * underlyning file.
+	 * underlying file.
 	 * 
 	 * @param encoding the encoding
 	 */

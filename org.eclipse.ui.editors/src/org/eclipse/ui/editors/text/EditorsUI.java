@@ -11,7 +11,6 @@
 package org.eclipse.ui.editors.text;
 
 import org.eclipse.ui.texteditor.AnnotationPreferenceLookup;
-import org.eclipse.ui.texteditor.AnnotationTypeHierarchy;
 import org.eclipse.ui.texteditor.AnnotationTypeLookup;
 
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
@@ -54,15 +53,6 @@ public final class EditorsUI {
 		return EditorsPlugin.getDefault().getAnnotationPreferenceLookup();
 	}
 	
-	/**
-	 * Returns the annotation type hierarchy for this plug-in.
-	 * 
-	 * @return the annotation type hierarchy
-	 */
-	public static AnnotationTypeHierarchy getAnnotationTypeHierarchy() {
-		return EditorsPlugin.getDefault().getAnnotationTypeHierarchy();
-	}
-
 	private EditorsUI() {
 		// block instantiation
 	}

@@ -25,7 +25,7 @@ import org.eclipse.swt.custom.TextChangingEvent;
 /**
  * Adapts an <code>IDocument</code> to the <code>StyledTextContent</code> interface.
  */
-class DocumentAdapter implements IDocumentAdapter, IDocumentListener, IDocumentAdapterExtension {
+class DefaultDocumentAdapter implements IDocumentAdapter, IDocumentListener, IDocumentAdapterExtension {
 
 	/** The adapted document. */
 	private IDocument fDocument;
@@ -64,7 +64,7 @@ class DocumentAdapter implements IDocumentAdapter, IDocumentListener, IDocumentA
 	 * Creates a new document adapter which is initially not connected to
 	 * any document.
 	 */
-	public DocumentAdapter() {
+	public DefaultDocumentAdapter() {
 	}
 	
 	/**

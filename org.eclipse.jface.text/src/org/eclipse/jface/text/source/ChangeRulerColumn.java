@@ -43,7 +43,7 @@ import org.eclipse.jface.text.TextEvent;
 
 /**
  * A vertical ruler column displaying line numbers and serving as a UI for quick diff.
- * Clients usually instantiate and configure object of this class.
+ * Clients instantiate and configure object of this class.
  *
  * @since 3.0
  */
@@ -676,16 +676,16 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.source.IVerticalRulerInfoExtension#addAnnotationListener(org.eclipse.jface.text.source.IAnnotationListener)
+	 * @see org.eclipse.jface.text.source.IVerticalRulerInfoExtension#addVerticalRulerListener(org.eclipse.jface.text.source.IVerticalRulerListener)
 	 */
-	public void addAnnotationListener(IAnnotationListener listener) {
+	public void addVerticalRulerListener(IVerticalRulerListener listener) {
 		throw new UnsupportedOperationException();
 	}
 	
 	/*
-	 * @see org.eclipse.jface.text.source.IVerticalRulerInfoExtension#removeAnnotationListener(org.eclipse.jface.text.source.IAnnotationListener)
+	 * @see org.eclipse.jface.text.source.IVerticalRulerInfoExtension#removeVerticalRulerListener(org.eclipse.jface.text.source.IVerticalRulerListener)
 	 */
-	public void removeAnnotationListener(IAnnotationListener listener) {
+	public void removeVerticalRulerListener(IVerticalRulerListener listener) {
 		throw new UnsupportedOperationException();
 	}
 }

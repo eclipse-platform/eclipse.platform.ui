@@ -3982,12 +3982,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.LOWER_CASE);
 		setAction(ITextEditorActionConstants.LOWER_CASE, action);
 		
-		action = new SmartEnterAction(EditorMessages.getResourceBundle(), "Editor.SmartEnter.", this, false); //$NON-NLS-1$
+		action = new InsertLineAction(EditorMessages.getResourceBundle(), "Editor.SmartEnter.", this, false); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SMART_ENTER_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SMART_ENTER);
 		setAction(ITextEditorActionConstants.SMART_ENTER, action);
 		
-		action = new SmartEnterAction(EditorMessages.getResourceBundle(), "Editor.SmartEnterInverse.", this, true); //$NON-NLS-1$
+		action = new InsertLineAction(EditorMessages.getResourceBundle(), "Editor.SmartEnterInverse.", this, true); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SMART_ENTER_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SMART_ENTER_INVERSE);
 		setAction(ITextEditorActionConstants.SMART_ENTER_INVERSE, action);

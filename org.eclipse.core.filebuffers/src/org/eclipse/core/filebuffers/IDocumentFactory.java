@@ -25,5 +25,5 @@ public interface IDocumentFactory {
 	 * 
 	 * @return a new, empty document
 	 */
-	IDocument	createDocument();
+	IDocument createDocument();
 }

@@ -14,23 +14,21 @@ import org.eclipse.swt.widgets.Menu;
 
 
 /**
- * Interface for listening to annotation selection events.
+ * Interface for listening to annotation related events happening on a vertical ruler.
  * <p>
  * This interface may be implemented by clients.
- * </p>
- * <p>
- * TODO Note that this is work in progress and the interface is still subject to change.
  * </p>
  * 
  * @since 3.0
  */
-public interface IAnnotationListener {
+public interface IVerticalRulerListener {
+	
 	/**
 	 * Called when an annotation is selected (e.g. hovering or selecting via keyboard) in the UI.
 	 * 
 	 * @param event the annotation event that occurred
 	 */
-	void annotationSelected(AnnotationEvent event);
+	void annotationSelected(VerticalRulerEvent event);
 	
 	/**
 	 * Called when default selection (e.g. double clicking or pressing enter) occurs on an 
@@ -38,7 +36,7 @@ public interface IAnnotationListener {
 	 * 
 	 * @param event the annotation event that occurred
 	 */
-	void annotationDefaultSelected(AnnotationEvent event);
+	void annotationDefaultSelected(VerticalRulerEvent event);
 	
 	/** 
 	 * Called when the context menu is opened on an annotation.
@@ -46,5 +44,5 @@ public interface IAnnotationListener {
 	 * @param event the annotation event that occurred
 	 * @param menu the menu that is about to be shown
 	 */
-	void annotationContextMenuAboutToShow(AnnotationEvent event, Menu menu);
+	void annotationContextMenuAboutToShow(VerticalRulerEvent event, Menu menu);
 }

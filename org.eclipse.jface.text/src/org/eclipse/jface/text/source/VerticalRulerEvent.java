@@ -12,16 +12,13 @@ package org.eclipse.jface.text.source;
 
 
 /**
- * An event sent to {@link org.eclipse.jface.text.source.IAnnotationListener} instances when annotation
+ * An event sent to {@link org.eclipse.jface.text.source.IVerticalRulerListener} instances when annotation
  * selection etc. occurs.
- * 
- * <p>
- * TODO Note that this is work in progress and the interface is still subject to change.
- * </p>
  * 
  * @since 3.0
  */
-public class AnnotationEvent {
+public class VerticalRulerEvent {
+	
 	private Annotation fAnnotation;
 	
 	/**
@@ -29,21 +26,21 @@ public class AnnotationEvent {
 	 * 
 	 * @param annotation the annotation concerned, or <code>null</code>
 	 */
-	public AnnotationEvent(Annotation annotation) {
+	public VerticalRulerEvent(Annotation annotation) {
 		fAnnotation= annotation;
 	}
 
 	/**
 	 * @return the concerned annotation or <code>null</code>
 	 */
-	public Annotation getAnnotation() {
+	public Annotation getSelectedAnnotation() {
 		return fAnnotation;
 	}
 	
 	/**
 	 * @param annotation the concerned annotation, or <code>null</code>
 	 */
-	public void setAnnotation(Annotation annotation) {
+	public void setSelectedAnnotation(Annotation annotation) {
 		fAnnotation= annotation;
 	}
 }

@@ -25,7 +25,7 @@ import org.eclipse.jface.text.Region;
  * 
  * @since 3.0
  */
-public class ProjectionTextStore implements ITextStore {
+class ProjectionTextStore implements ITextStore {
 	
 	/**
 	 * Implementation of <code>IRegion</code> that can be reused

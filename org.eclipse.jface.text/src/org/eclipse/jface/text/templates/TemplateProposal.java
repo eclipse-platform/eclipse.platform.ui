@@ -32,7 +32,6 @@ import org.eclipse.jface.text.contentassist.ICompletionProposalExtension2;
 import org.eclipse.jface.text.contentassist.ICompletionProposalExtension3;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.link.ILinkedModeListener;
-import org.eclipse.jface.text.link.InclusivePositionUpdater;
 import org.eclipse.jface.text.link.LinkedModeModel;
 import org.eclipse.jface.text.link.LinkedPosition;
 import org.eclipse.jface.text.link.LinkedPositionGroup;
@@ -212,7 +211,7 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 	    TemplateVariable[] variables= buffer.getVariables();
 		for (int i= 0; i != variables.length; i++) {
 			TemplateVariable variable= variables[i];
-			if (variable.getType().equals(GlobalVariables.Cursor.NAME))
+			if (variable.getType().equals(GlobalTemplateVariables.Cursor.NAME))
 				return variable.getOffsets()[0];
 		}
 

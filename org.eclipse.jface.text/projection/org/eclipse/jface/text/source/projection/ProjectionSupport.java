@@ -215,7 +215,7 @@ public class ProjectionSupport {
 	
 	private IAnnotationHover createProjectionAnnotationHover() {
 		ProjectionAnnotationHover hover= new ProjectionAnnotationHover();
-		hover.setInformationControlCreator(fInformationControlCreator);
+		hover.setHoverControlCreator(fInformationControlCreator);
 		return hover;
 	}
 

@@ -60,9 +60,9 @@ import org.eclipse.jface.text.IDocumentExtension.IReplace;
  * @since 3.0
  */
 public class LinkedModeModel {
-
+	
 	/**
-	 * Checks whether there is alreay a linked mode model installed on <code>document</code>.
+	 * Checks whether there is already a linked mode model installed on <code>document</code>.
 	 * 
 	 * @param document the <code>IDocument</code> of interest
 	 * @return <code>true</code> if there is an existing model, <code>false</code>
@@ -74,10 +74,10 @@ public class LinkedModeModel {
 	}
 
 	/**
-	 * Checks whether there is alreay a linked mode model installed on any of
+	 * Checks whether there is already a linked mode model installed on any of
 	 * the <code>documents</code>.
 	 * 
-	 * @param documents the <code>IDocument</code> s of interest
+	 * @param documents the <code>IDocument</code>s of interest
 	 * @return <code>true</code> if there is an existing model, <code>false</code>
 	 *         otherwise
 	 */

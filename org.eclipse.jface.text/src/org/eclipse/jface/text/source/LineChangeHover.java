@@ -244,9 +244,9 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.source.IAnnotationHoverExtension#getInformationControlCreator()
+	 * @see org.eclipse.jface.text.source.IAnnotationHoverExtension#getHoverControlCreator()
 	 */
-	public IInformationControlCreator getInformationControlCreator() {
+	public IInformationControlCreator getHoverControlCreator() {
 		return null;
 	}
 

@@ -1025,7 +1025,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 */
 	public int search(int startPosition, String findString, boolean forwardSearch, boolean caseSensitive, boolean wholeWord) throws BadLocationException {
 		try {
-			IRegion region= getFindReplaceDocumentAdapter().search(startPosition, findString, forwardSearch, caseSensitive, wholeWord, false);
+			IRegion region= getFindReplaceDocumentAdapter().find(startPosition, findString, forwardSearch, caseSensitive, wholeWord, false);
 			if (region == null)
 				return -1;
 			else

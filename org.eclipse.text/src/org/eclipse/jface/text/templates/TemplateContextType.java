@@ -38,7 +38,7 @@ import org.eclipse.jface.text.IDocument;
  * 
  * @since 3.0
  */
-public class ContextType {
+public class TemplateContextType {
 
 	/** Name of the context type. */
 	private /* final */ String fId= null;
@@ -55,7 +55,7 @@ public class ContextType {
 	 * 
 	 * @param id the unique identifier of the context type
 	 */
-	public ContextType(String id) {
+	public TemplateContextType(String id) {
 		this(id, id);
 	}
 	
@@ -65,7 +65,7 @@ public class ContextType {
 	 * @param id the unique identifier of the context type
 	 * @param name the name of the context type
 	 */
-	public ContextType(String id, String name) {
+	public TemplateContextType(String id, String name) {
 		Assert.isNotNull(id);
 		Assert.isNotNull(name);
 		fId= id;
@@ -100,7 +100,7 @@ public class ContextType {
 	 * {@link #ContextType(String)} instead.
 	 * </p>
 	 */
-	public ContextType() {
+	public TemplateContextType() {
 	}
 	
 	/**

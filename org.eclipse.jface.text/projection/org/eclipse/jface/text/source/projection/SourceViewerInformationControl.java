@@ -46,7 +46,7 @@ import org.eclipse.jface.text.source.SourceViewerConfiguration;
  * 
  * @since 3.0
  */
-public class SourceViewerInformationControl implements IInformationControl, IInformationControlExtension, DisposeListener {
+class SourceViewerInformationControl implements IInformationControl, IInformationControlExtension, DisposeListener {
 	
 	/** Border thickness in pixels. */
 	private static final int BORDER= 1;

@@ -20,7 +20,7 @@ import java.util.Calendar;
  * 
  * @since 3.0
  */
-public class GlobalVariables {
+public class GlobalTemplateVariables {
 	
 	/** The type of the selection variables. */
 	public static final String SELECTION= "selection"; //$NON-NLS-1$
@@ -28,7 +28,7 @@ public class GlobalVariables {
 	/**
 	 * The cursor variable determines the cursor placement after template edition.
 	 */
-	public static class Cursor extends SimpleVariableResolver {
+	public static class Cursor extends SimpleTemplateVariableResolver {
 		
 		/** Name of the cursor variable, value= {@value} */
 		public static final String NAME= "cursor"; //$NON-NLS-1$
@@ -46,7 +46,7 @@ public class GlobalVariables {
 	 * The word selection variable determines templates that work on a full
 	 * lines selection.
 	 */
-	public static class WordSelection extends SimpleVariableResolver {
+	public static class WordSelection extends SimpleTemplateVariableResolver {
 		
 		/** Name of the word selection variable, value= {@value} */
 		public static final String NAME= "word_selection"; //$NON-NLS-1$
@@ -70,7 +70,7 @@ public class GlobalVariables {
 	 * The line selection variable determines templates that work on selected
 	 * lines.
 	 */
-	public static class LineSelection extends SimpleVariableResolver {
+	public static class LineSelection extends SimpleTemplateVariableResolver {
 		
 		/** Name of the line selection variable, value= {@value} */
 		public static final String NAME= "line_selection"; //$NON-NLS-1$
@@ -93,7 +93,7 @@ public class GlobalVariables {
 	/**
 	 * The dollar variable inserts an escaped dollar symbol.
 	 */
-	public static class Dollar extends SimpleVariableResolver {
+	public static class Dollar extends SimpleTemplateVariableResolver {
 		/**
 		 * Creates a new dollar variable
 		 */
@@ -106,7 +106,7 @@ public class GlobalVariables {
 	/**
 	 * The date variable evaluates to the current date.
 	 */
-	public static class Date extends SimpleVariableResolver {
+	public static class Date extends SimpleTemplateVariableResolver {
 		/**
 		 * Creates a new date variable
 		 */
@@ -121,7 +121,7 @@ public class GlobalVariables {
 	/**
 	 * The year variable evaluates to the current year.
 	 */
-	public static class Year extends SimpleVariableResolver {
+	public static class Year extends SimpleTemplateVariableResolver {
 		/**
 		 * Creates a new year variable
 		 */
@@ -136,7 +136,7 @@ public class GlobalVariables {
 	/**
 	 * The time variable evaluates to the current time.
 	 */
-	public static class Time extends SimpleVariableResolver {
+	public static class Time extends SimpleTemplateVariableResolver {
 		/**
 		 * Creates a new time variable
 		 */
@@ -155,7 +155,7 @@ public class GlobalVariables {
 	/**
 	 * The user variable evaluates to the current user.
 	 */
-	public static class User extends SimpleVariableResolver {
+	public static class User extends SimpleTemplateVariableResolver {
 		/**
 		 * Creates a new user name variable
 		 */

@@ -19,7 +19,7 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.jface.text.templates.ContextType;
+import org.eclipse.jface.text.templates.TemplateContextType;
 import org.eclipse.jface.text.templates.Template;
 import org.eclipse.jface.text.templates.TemplateCompletionProcessor;
 
@@ -78,7 +78,7 @@ public class XMLCompletionProcessor extends TemplateCompletionProcessor {
 	/**
 	 * Return the XML context type that is supported by this plugin. 
 	 */
-	protected ContextType getContextType(ITextViewer viewer, IRegion region) {
+	protected TemplateContextType getContextType(ITextViewer viewer, IRegion region) {
 		return TemplateEditorUI.getDefault().getContextTypeRegistry().getContextType(XMLContextType.XML_CONTEXT_TYPE);
 	}
 

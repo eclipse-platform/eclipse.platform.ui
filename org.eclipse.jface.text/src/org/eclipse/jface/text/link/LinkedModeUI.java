@@ -1108,7 +1108,7 @@ public class LinkedModeUI {
 	 *  
 	 * @param listener the new listener, never <code>null</code>.
 	 */
-	public void setPositionListener(ILinkedModeUIFocusListener listener) {
+	protected void setPositionListener(ILinkedModeUIFocusListener listener) {
 		Assert.isNotNull(listener);
 		fPositionListener= listener;
 	}

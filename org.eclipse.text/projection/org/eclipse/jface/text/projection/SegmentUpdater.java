@@ -27,7 +27,7 @@ import org.eclipse.jface.text.Position;
  * 
  * @since 3.0
  */
-public class SegmentUpdater extends DefaultPositionUpdater {
+class SegmentUpdater extends DefaultPositionUpdater {
 	
 	private Segment fNextSegment= null;
 	private boolean fIsProjectionChange= false;

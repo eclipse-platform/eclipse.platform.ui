@@ -54,7 +54,7 @@ public class ContextTypeRegistry {
 	 * 
 	 * @param contextType the context type to add
 	 */	
-	public void addContextType(ContextType contextType) {
+	public void addContextType(TemplateContextType contextType) {
 		fContextTypes.put(contextType.getId(), contextType);
 	}
 	
@@ -64,8 +64,8 @@ public class ContextTypeRegistry {
 	 * @param id the id of the context type to retrieve
 	 * @return the context type if <code>name</code> is valid, <code>null</code> otherwise
 	 */
-	public ContextType getContextType(String id) {
-		return (ContextType) fContextTypes.get(id);
+	public TemplateContextType getContextType(String id) {
+		return (TemplateContextType) fContextTypes.get(id);
 	}
 
 	/**
@@ -91,7 +91,7 @@ public class ContextTypeRegistry {
 		if (fContextTypes.containsKey(id))
 			return;
 		
-		ContextType type= createContextType(id);
+		TemplateContextType type= createContextType(id);
 		if (type != null)
 			addContextType(type);
 		
@@ -108,11 +108,11 @@ public class ContextTypeRegistry {
 	 * @param id the id for the context type as specified in XML
 	 * @return the instantiated and configured context type, or <code>null</code> if it is not found or cannot be instantiated
 	 */
-	public static ContextType createContextType(String id) {
+	public static TemplateContextType createContextType(String id) {
 		Assert.isNotNull(id);
 		
 		IConfigurationElement[] extensions= getTemplateExtensions();
-		ContextType type= createContextType(extensions, id);
+		TemplateContextType type= createContextType(extensions, id);
 		
 		if (type != null) {
 			TemplateVariableResolver[] resolvers= createResolvers(extensions, id);
@@ -123,7 +123,7 @@ public class ContextTypeRegistry {
 		return type;
 	}
 
-	private static ContextType createContextType(IConfigurationElement[] extensions, String contextTypeId) {
+	private static TemplateContextType createContextType(IConfigurationElement[] extensions, String contextTypeId) {
 		for (int i= 0; i < extensions.length; i++) {
 			// TODO create half-order over contributions
 			if (extensions[i].getName().equals(CONTEXT_TYPE)) {
@@ -157,10 +157,10 @@ public class ContextTypeRegistry {
 		return Platform.getExtensionRegistry().getConfigurationElementsFor(TEMPLATES_EXTENSION_POINT);
 	}
 
-	private static ContextType createContextType(IConfigurationElement element) {
+	private static TemplateContextType createContextType(IConfigurationElement element) {
 		String id= element.getAttributeAsIs(ID);
 		try {
-			ContextType contextType= (ContextType) element.createExecutableExtension(CLASS);
+			TemplateContextType contextType= (TemplateContextType) element.createExecutableExtension(CLASS);
 			String name= element.getAttribute(NAME);
 			if (name == null)
 				name= id;

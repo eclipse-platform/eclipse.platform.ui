@@ -31,7 +31,7 @@ import org.eclipse.jface.text.Assert;
  * Allows to sort an array based on their elements' configuration elements
  * according to the prerequisite relation of their defining plug-ins.
  * <p>
- * This class can be directly used or subclassed.
+ * This class can directly be used or subclassed.
  * </p>
  * 
  * @since 3.0

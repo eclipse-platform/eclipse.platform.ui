@@ -37,7 +37,7 @@ public class DocumentTemplateContext extends TemplateContext {
 	 *        assist)
 	 * @param completionLength the completion length
 	 */
-	public DocumentTemplateContext(ContextType type, IDocument document, int completionOffset, int completionLength) {
+	public DocumentTemplateContext(TemplateContextType type, IDocument document, int completionOffset, int completionLength) {
 		super(type);
 
 		Assert.isNotNull(document);

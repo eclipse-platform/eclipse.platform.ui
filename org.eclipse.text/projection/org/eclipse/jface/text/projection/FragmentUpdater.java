@@ -29,7 +29,7 @@ import org.eclipse.jface.text.Position;
  * 
  * @since 3.0
  */
-public class FragmentUpdater extends DefaultPositionUpdater {
+class FragmentUpdater extends DefaultPositionUpdater {
 	
 	/** Indicates whether the position being updated represents the last fragment. */
 	private boolean fIsLast= false;

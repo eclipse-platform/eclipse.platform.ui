@@ -39,7 +39,7 @@ import org.eclipse.swt.custom.StyledText;
  * </p>
  * @since 3.0
  */
-public class SmartEnterAction extends TextEditorAction {
+public class InsertLineAction extends TextEditorAction {
 
 	/** 
 	 * <code>true</code> if this action inserts a line above the current (Smart Enter Inverse),
@@ -54,7 +54,7 @@ public class SmartEnterAction extends TextEditorAction {
 	 * @param textEditor the editor that the action acts upon
 	 * @param above whether new lines are inserted above or below the caret's line.
 	 */
-	public SmartEnterAction(ResourceBundle bundle, String prefix, ITextEditor textEditor, boolean above) {
+	public InsertLineAction(ResourceBundle bundle, String prefix, ITextEditor textEditor, boolean above) {
 		super(bundle, prefix, textEditor);
 		fAbove= above;
 	}

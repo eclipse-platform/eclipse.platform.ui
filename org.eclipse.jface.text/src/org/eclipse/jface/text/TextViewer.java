@@ -699,7 +699,7 @@ public class TextViewer extends Viewer implements
 		 * @since 3.0
 		 */
 		void resetFindRepalceDocumentAdapter() {
-			fFindRepalceDocumentAdapter= new FindReplaceDocumentAdapter(TextViewer.this.getVisibleDocument());
+			fFindReplaceDocumentAdapter= new FindReplaceDocumentAdapter(TextViewer.this.getVisibleDocument());
 		}
 		
 		/*
@@ -1256,7 +1256,7 @@ public class TextViewer extends Viewer implements
 	 * 
 	 * @since 3.0
 	 */
-	private FindReplaceDocumentAdapter fFindRepalceDocumentAdapter;
+	private FindReplaceDocumentAdapter fFindReplaceDocumentAdapter;
 	
 	/** Should the auto indent strategies ignore the next edit operation */
 	protected boolean  fIgnoreAutoIndent= false;
@@ -1347,7 +1347,7 @@ public class TextViewer extends Viewer implements
 	 * @return the document adapter to be used
 	 */
 	protected IDocumentAdapter createDocumentAdapter() {
-		return new DocumentAdapter();
+		return new DefaultDocumentAdapter();
 	}
 	
 	/**
@@ -3000,7 +3000,7 @@ public class TextViewer extends Viewer implements
 		initializeWidgetContents();
 		
 		if (fVisibleDocument != null) {
-			fFindRepalceDocumentAdapter= new FindReplaceDocumentAdapter(getVisibleDocument());
+			fFindReplaceDocumentAdapter= new FindReplaceDocumentAdapter(getVisibleDocument());
 			if (fVisibleDocumentListener != null)
 				fVisibleDocument.addDocumentListener(fVisibleDocumentListener);
 		}
@@ -3880,7 +3880,7 @@ public class TextViewer extends Viewer implements
 		try {
 			
 			int widgetOffset= (startPosition == -1 ? startPosition : modelOffset2WidgetOffset(startPosition));
-			IRegion matchRegion= getFindRepalceDocumentAdapter().search(widgetOffset, findString, forwardSearch, caseSensitive, wholeWord, regExSearch);
+			IRegion matchRegion= getFindRepalceDocumentAdapter().find(widgetOffset, findString, forwardSearch, caseSensitive, wholeWord, regExSearch);
 			if (matchRegion != null) {
 				int widgetPos= matchRegion.getOffset();
 				int length= matchRegion.getLength();
@@ -3926,7 +3926,7 @@ public class TextViewer extends Viewer implements
 			if (widgetOffset == -1)
 				return -1;
 
-			IRegion matchRegion= getFindRepalceDocumentAdapter().search(widgetOffset, findString, forwardSearch, caseSensitive, wholeWord, regExSearch);
+			IRegion matchRegion= getFindRepalceDocumentAdapter().find(widgetOffset, findString, forwardSearch, caseSensitive, wholeWord, regExSearch);
 			int widgetPos= -1;
 			int length= 0;
 			if (matchRegion != null) {
@@ -4139,9 +4139,9 @@ public class TextViewer extends Viewer implements
 	 * @since 3.0
 	 */
 	private FindReplaceDocumentAdapter getFindRepalceDocumentAdapter() {
-		if (fFindRepalceDocumentAdapter == null)
-			fFindRepalceDocumentAdapter= new FindReplaceDocumentAdapter(getVisibleDocument());
-		return fFindRepalceDocumentAdapter;
+		if (fFindReplaceDocumentAdapter == null)
+			fFindReplaceDocumentAdapter= new FindReplaceDocumentAdapter(getVisibleDocument());
+		return fFindReplaceDocumentAdapter;
 	}
 
 	/*

@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.editors.text;
+package org.eclipse.ui.internal.editors.text;
 
 import java.lang.reflect.InvocationTargetException;
 

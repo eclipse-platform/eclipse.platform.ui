@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.texteditor;
+package org.eclipse.ui.internal.texteditor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,7 +28,7 @@ import org.eclipse.ui.editors.text.EditorsUI;
  * 
  * @since 3.0
  */
-public class AnnotationTypeHierarchy {
+public final class AnnotationTypeHierarchy {
 	
 	private Map fTypeMap;
 	private Map fTypesCache= new HashMap();

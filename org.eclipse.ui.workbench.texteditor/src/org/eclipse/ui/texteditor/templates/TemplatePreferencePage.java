@@ -65,7 +65,7 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
-import org.eclipse.jface.text.templates.ContextType;
+import org.eclipse.jface.text.templates.TemplateContextType;
 import org.eclipse.jface.text.templates.ContextTypeRegistry;
 import org.eclipse.jface.text.templates.Template;
 import org.eclipse.jface.text.templates.persistence.TemplatePersistenceData;
@@ -112,7 +112,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 				case 0:
 					return template.getName();
 				case 1:
-					ContextType type= fContextTypeRegistry.getContextType(template.getContextTypeId());
+					TemplateContextType type= fContextTypeRegistry.getContextType(template.getContextTypeId());
 					if (type != null)
 						return type.getName();
 					else
@@ -542,7 +542,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		Template template= new Template();
 		Iterator it= fContextTypeRegistry.contextTypes();
 		if (it.hasNext()) {
-			template.setContextTypeId(((ContextType) it.next()).getId());
+			template.setContextTypeId(((TemplateContextType) it.next()).getId());
 			
 			EditTemplateDialog dialog= createTemplateEditDialog(template, false, true);
 			if (dialog.open() == Window.OK) {

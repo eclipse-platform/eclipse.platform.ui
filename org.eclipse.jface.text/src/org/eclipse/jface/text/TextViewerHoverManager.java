@@ -169,7 +169,7 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 						}
 						
 						if (hover instanceof ITextHoverExtension)
-							setCustomInformationControlCreator(((ITextHoverExtension) hover).getInformationControlCreator());
+							setCustomInformationControlCreator(((ITextHoverExtension) hover).getHoverControlCreator());
 						else
 							setCustomInformationControlCreator(null);
 						

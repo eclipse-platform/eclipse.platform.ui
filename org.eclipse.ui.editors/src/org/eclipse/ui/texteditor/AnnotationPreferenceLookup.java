@@ -17,6 +17,7 @@ import java.util.Map;
 import org.eclipse.jface.text.source.Annotation;
 
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
+import org.eclipse.ui.internal.texteditor.*;
 
 /**
  * Provides the strategy for finding the annotation preference for a given

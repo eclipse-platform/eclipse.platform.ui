@@ -27,9 +27,9 @@ import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.editors.text.TextEditorPreferenceConstants;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.texteditor.AnnotationPreferenceLookup;
-import org.eclipse.ui.texteditor.AnnotationTypeHierarchy;
 import org.eclipse.ui.texteditor.AnnotationTypeLookup;
 import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
+import org.eclipse.ui.internal.texteditor.AnnotationTypeHierarchy;
 
 /**
  * Represents the editors plug-in. It provides a series of convenience methods such as

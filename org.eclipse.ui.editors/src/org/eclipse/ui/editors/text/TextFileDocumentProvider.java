@@ -68,6 +68,7 @@ import org.eclipse.ui.texteditor.IElementStateListener;
 import org.eclipse.ui.texteditor.IElementStateListenerExtension;
 import org.eclipse.ui.texteditor.ISchedulingRuleProvider;
 import org.eclipse.ui.texteditor.ResourceMarkerAnnotationModel;
+import org.eclipse.ui.internal.editors.text.*;
 
 /**
  * @since 3.0

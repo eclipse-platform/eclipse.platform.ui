@@ -21,9 +21,9 @@ package org.eclipse.jface.text;
 public interface ITextHoverExtension {
 
 	/**
-	 * Returns the information control creator of this text hover.
+	 * Returns the hover control creator of this text hover.
 	 * 
-	 * @return the information control creator
+	 * @return the hover control creator
 	 */
-	IInformationControlCreator getInformationControlCreator();
+	IInformationControlCreator getHoverControlCreator();
 }

@@ -21,6 +21,7 @@ import java.util.Map;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -34,26 +35,25 @@ import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.text.source.Annotation;
+import org.eclipse.jface.text.source.CompositeRuler;
 import org.eclipse.jface.text.source.IAnnotationAccess;
 import org.eclipse.jface.text.source.IAnnotationAccessExtension;
 import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.IAnnotationHoverExtension;
-import org.eclipse.jface.text.source.IAnnotationListener;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.ILineRange;
 import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.jface.text.source.IVerticalRulerExtension;
-import org.eclipse.jface.text.source.IVerticalRulerInfo;
+import org.eclipse.jface.text.source.IVerticalRulerListener;
 import org.eclipse.jface.text.source.LineRange;
+import org.eclipse.jface.text.source.VerticalRulerEvent;
 
 import org.eclipse.ui.internal.texteditor.AnnotationExpansionControl.AnnotationHoverInput;
 
 /**
  * @since 3.0
  */
-public class AnnotationExpandHover implements IAnnotationHover, IAnnotationHoverExtension {
-	
-	
+public class AnnotationExpandHover implements IAnnotationHover, IAnnotationHoverExtension {	
+
 	private class InformationControlCreator implements IInformationControlCreator, IInformationControlCreatorExtension {
 
 		/*
@@ -78,9 +78,34 @@ public class AnnotationExpandHover implements IAnnotationHover, IAnnotationHover
 		}
 	}
 	
+	private class VerticalRulerListener implements IVerticalRulerListener {
+
+		/*
+		 * @see org.eclipse.jface.text.source.IVerticalRulerListener#annotationSelected(org.eclipse.jface.text.source.VerticalRulerEvent)
+		 */
+		public void annotationSelected(VerticalRulerEvent event) {
+			fCompositeRuler.fireAnnotationSelected(event);
+		}
+
+		/*
+		 * @see org.eclipse.jface.text.source.IVerticalRulerListener#annotationDefaultSelected(org.eclipse.jface.text.source.VerticalRulerEvent)
+		 */
+		public void annotationDefaultSelected(VerticalRulerEvent event) {
+			fCompositeRuler.fireAnnotationDefaultSelected(event);
+		}
+
+		/*
+		 * @see org.eclipse.jface.text.source.IVerticalRulerListener#annotationContextMenuAboutToShow(org.eclipse.jface.text.source.VerticalRulerEvent, org.eclipse.swt.widgets.Menu)
+		 */
+		public void annotationContextMenuAboutToShow(VerticalRulerEvent event, Menu menu) {
+			fCompositeRuler.fireAnnotationContextMenuAboutToShow(event, menu);
+		}
+	}
+
+	
 	private final IInformationControlCreator fgCreator= new InformationControlCreator();
-	protected IVerticalRulerInfo fVerticalRulerInfo;
-	protected IAnnotationListener fAnnotationListener;
+	protected final IVerticalRulerListener fgListener= new VerticalRulerListener();
+	protected CompositeRuler fCompositeRuler;
 	protected IDoubleClickListener fDblClickListener;
 	protected IAnnotationAccess fAnnotationAccess;
 	
@@ -88,19 +113,13 @@ public class AnnotationExpandHover implements IAnnotationHover, IAnnotationHover
 	 * Creates a new hover instance.
 	 * 
 	 * @param ruler
-	 * @param listener
-	 * @param doubleClickListener
 	 * @param access
+	 * @param doubleClickListener
 	 */
-	public AnnotationExpandHover(IVerticalRulerInfo ruler, IAnnotationListener listener, IDoubleClickListener doubleClickListener, IAnnotationAccess access) {
-		fAnnotationListener= listener;
-		fVerticalRulerInfo= ruler;
-		fDblClickListener= doubleClickListener;
+	public AnnotationExpandHover(CompositeRuler ruler, IAnnotationAccess access, IDoubleClickListener doubleClickListener) {
+		fCompositeRuler= ruler;
 		fAnnotationAccess= access;
-	}
-
-	public AnnotationExpandHover(IVerticalRulerInfo ruler, IAnnotationAccess access) {
-		this(ruler, null, null, access);
+		fDblClickListener= doubleClickListener;
 	}
 
 	/*
@@ -147,8 +166,8 @@ public class AnnotationExpandHover implements IAnnotationHover, IAnnotationHover
 		AnnotationHoverInput input= new AnnotationHoverInput();
 		input.fAnnotations= (Annotation[]) exact.toArray(new Annotation[0]);
 		input.fViewer= viewer;
-		input.fRulerInfo= fVerticalRulerInfo;
-		input.fAnnotationListener= fAnnotationListener;
+		input.fRulerInfo= fCompositeRuler;
+		input.fAnnotationListener= fgListener;
 		input.fDoubleClickListener= fDblClickListener;
 		input.model= model;
 		
@@ -215,18 +234,18 @@ public class AnnotationExpandHover implements IAnnotationHover, IAnnotationHover
 	
 	protected void setLastRulerMouseLocation(ISourceViewer viewer, int line) {
 		// set last mouse activity in order to get the correct context menu
-		if (fVerticalRulerInfo instanceof IVerticalRulerExtension) {
+		if (fCompositeRuler != null) {
 			StyledText st= viewer.getTextWidget();
 			if (st != null && !st.isDisposed()) {
 				if (viewer instanceof ITextViewerExtension5) {
 					int widgetLine= ((ITextViewerExtension5)viewer).modelLine2WidgetLine(line);
 					Point loc= st.getLocationAtOffset(st.getOffsetAtLine(widgetLine));
-					((IVerticalRulerExtension)fVerticalRulerInfo).setLocationOfLastMouseButtonActivity(0, loc.y);
+					fCompositeRuler.setLocationOfLastMouseButtonActivity(0, loc.y);
 				} else if (viewer instanceof TextViewer) {
 					// TODO remove once TextViewer implements the extension
 					int widgetLine= ((TextViewer)viewer).modelLine2WidgetLine(line);
 					Point loc= st.getLocationAtOffset(st.getOffsetAtLine(widgetLine));
-					((IVerticalRulerExtension)fVerticalRulerInfo).setLocationOfLastMouseButtonActivity(0, loc.y);
+					fCompositeRuler.setLocationOfLastMouseButtonActivity(0, loc.y);
 				}
 			}
 		}
@@ -257,9 +276,9 @@ public class AnnotationExpandHover implements IAnnotationHover, IAnnotationHover
 	}
 	
 	/*
-	 * @see org.eclipse.jface.text.source.IAnnotationHoverExtension#getInformationControlCreator()
+	 * @see org.eclipse.jface.text.source.IAnnotationHoverExtension#getHoverControlCreator()
 	 */
-	public IInformationControlCreator getInformationControlCreator() {
+	public IInformationControlCreator getHoverControlCreator() {
 		return fgCreator;
 	}
 

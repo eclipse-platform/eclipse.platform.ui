@@ -21,7 +21,7 @@ import org.eclipse.jface.text.templates.persistence.TemplateStore;
  * 
  * @since 3.0
  */
-public class TemplateContentProvider implements IStructuredContentProvider {
+class TemplateContentProvider implements IStructuredContentProvider {
 
 	/** The template store. */
 	private TemplateStore fStore;	
