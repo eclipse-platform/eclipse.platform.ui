@@ -905,7 +905,7 @@ public class LaunchViewContextListener implements IContextManagerListener {
 	 * 
 	 * Don't listen to part open/close notifications during reset.
 	 */
-	public void perspectiveChanged(IWorkbenchPage page, String changeId) {
+	public void perspectiveChanged(String changeId) {
 		if (changeId.equals(IWorkbenchPage.CHANGE_RESET)) {
 			fIsTrackingPartChanges= false;
 		} else if (changeId.equals(IWorkbenchPage.CHANGE_RESET_COMPLETE)) {
@@ -919,7 +919,7 @@ public class LaunchViewContextListener implements IContextManagerListener {
 	 * 
 	 * When a part is opened/closed, do not close/open it automatically. 
 	 */
-	public void perspectiveChanged(IWorkbenchPage page, IWorkbenchPartReference ref, String changeId) {
+	public void perspectiveChanged(IWorkbenchPartReference ref, String changeId) {
 		if (!fIsTrackingPartChanges) {
 			return;
 		}
