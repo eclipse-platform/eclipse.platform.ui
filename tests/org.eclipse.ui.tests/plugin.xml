@@ -44,6 +44,12 @@
             class="org.eclipse.ui.tests.util.EmptyPerspective"
             id="org.eclipse.ui.tests.util.EmptyPerspective">
       </perspective>
+      <perspective
+            name="Drag Test Perspective"
+            icon="icons/anything.gif"
+            class="org.eclipse.ui.tests.dnd.DragDropPerspectiveFactory"
+            id="org.eclipse.ui.tests.dnd.dragdrop">
+      </perspective>
    </extension>
 <!-- Utils End -->
    <extension
@@ -208,6 +214,18 @@
                class="org.eclipse.ui.tests.api.MockWorkbenchWindowActionDelegate"
                menubarPath="additions"
                id="org.eclipse.ui.tests.api.MockWindowAction">
+         </action>
+      </actionSet>
+      <actionSet
+            label="Drag Test"
+            visible="true"
+            id="org.eclipse.ui.tests.dragTestActions">
+         <action
+               label="Drag-Drop Snapshot"
+               class="org.eclipse.ui.tests.dnd.GenerateDragSnapshotAction"
+               menubarPath="additions"
+               allowLabelUpdate="false"
+               id="org.eclipse.ui.tests.action1">
          </action>
       </actionSet>
    </extension>

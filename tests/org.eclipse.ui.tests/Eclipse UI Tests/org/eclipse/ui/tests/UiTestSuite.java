@@ -12,7 +12,6 @@ package org.eclipse.ui.tests;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-
 import org.eclipse.ui.tests.activities.ActivitiesTestSuite;
 import org.eclipse.ui.tests.adaptable.AdaptableTestSuite;
 import org.eclipse.ui.tests.api.ApiTestSuite;
@@ -20,6 +19,7 @@ import org.eclipse.ui.tests.commands.CommandsTestSuite;
 import org.eclipse.ui.tests.contexts.ContextsTestSuite;
 import org.eclipse.ui.tests.datatransfer.DataTransferTestSuite;
 import org.eclipse.ui.tests.dialogs.UIAutomatedSuite;
+import org.eclipse.ui.tests.dnd.DragTestSuite;
 import org.eclipse.ui.tests.dynamicplugins.DynamicPluginsTestSuite;
 import org.eclipse.ui.tests.internal.InternalTestSuite;
 import org.eclipse.ui.tests.intro.IntroTestSuite;
@@ -67,5 +67,6 @@ public class UiTestSuite extends TestSuite {
         addTest(new ActivitiesTestSuite());
         addTest(new CommandsTestSuite());
         addTest(new ContextsTestSuite());
+        addTest(new DragTestSuite());
     }
 }
