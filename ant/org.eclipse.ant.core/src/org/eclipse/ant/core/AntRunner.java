@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
-import java.util.Vector;
 
 import org.eclipse.ant.internal.core.AntClassLoader;
 import org.eclipse.ant.internal.core.AntCorePreferences;
@@ -34,7 +33,7 @@ public class AntRunner implements IPlatformRunnable {
 
 	protected String fBuildFileLocation = IAntCoreConstants.DEFAULT_BUILD_FILENAME;
 	protected List fBuildListeners;
-	protected Vector fTargets;
+	protected String[] fTargets;
 	protected Map fUserProperties;
 	protected int fMessageOutputLevel = 2; // Project.MSG_INFO
 	protected String fBuildLoggerClassName;
@@ -147,10 +146,7 @@ public class AntRunner implements IPlatformRunnable {
 	 * @param executionTargets which targets should be run and in which order
 	 */
 	public void setExecutionTargets(String[] executionTargets) {
-		fTargets = new Vector(executionTargets.length);
-		for (int i = 0; i < executionTargets.length; i++) {
-			fTargets.add(executionTargets[i]);
-		}
+		fTargets = executionTargets;
 	}
 
 	/**
@@ -286,7 +282,7 @@ public class AntRunner implements IPlatformRunnable {
 			setMessageOutputLevel.invoke(runner, new Object[] { new Integer(fMessageOutputLevel)});
 			// set execution targets
 			if (fTargets != null) {
-				Method setExecutionTargets = classInternalAntRunner.getMethod("setExecutionTargets", new Class[] { Vector.class }); //$NON-NLS-1$
+				Method setExecutionTargets = classInternalAntRunner.getMethod("setExecutionTargets", new Class[] { String[].class }); //$NON-NLS-1$
 				setExecutionTargets.invoke(runner, new Object[] { fTargets });
 			}
 			// set extra arguments

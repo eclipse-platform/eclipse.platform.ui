@@ -9,8 +9,8 @@ http://www.eclipse.org/legal/cpl-v10.html
 
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.BuildListener;
@@ -79,7 +79,7 @@ public class ProgressBuildListener implements BuildListener {
 
 	}
 
-	public ProgressBuildListener(Project project, Vector targetNames, IProgressMonitor monitor) {
+	public ProgressBuildListener(Project project, List targetNames, IProgressMonitor monitor) {
 		fProjects = new HashMap();
 		fMainProject = project;
 		ProjectMonitors monitors = new ProjectMonitors();
