@@ -150,7 +150,7 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 	 * @see IActionDelegateWithEvent#runWithEvent(IAction, Event)
 	 */
 	public void runWithEvent(IAction action, Event event) {
-		//getLaunchAction().runWithEvent(action, event);
+		getLaunchAction().runWithEvent(action, event);
 	}
 
 	/**
