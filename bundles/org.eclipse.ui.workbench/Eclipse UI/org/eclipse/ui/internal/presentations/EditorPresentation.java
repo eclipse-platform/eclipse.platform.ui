@@ -219,26 +219,26 @@ public class EditorPresentation extends BasicStackPresentation {
         if (items.isEmpty()) return;
 		int shellStyle = SWT.RESIZE | SWT.ON_TOP | SWT.NO_TRIM;
 		int tableStyle = SWT.V_SCROLL | SWT.H_SCROLL;
-        final EditorList info = new EditorList(
+        final EditorList editorList = new EditorList(
                 tabFolder.getShell(), shellStyle, tableStyle);
-        info.setInput(this);
-        Point size = info.computeSizeHint();
+        editorList.setInput(this);
+        Point size = editorList.computeSizeHint();
         int minX = 50; //labelComposite.getSize().x;
         int minY = 300;
         if (size.x < minX) size.x = minX;
         if (size.y < minY) size.y = minY;
-        info.setSize(size.x, size.y);
+        editorList.setSize(size.x, size.y);
         Rectangle bounds = Display.getCurrent().getBounds();
         if (x + size.x > bounds.width) x = bounds.width - size.x;
         if (y + size.y > bounds.height) y = bounds.height - size.y;
-        info.setLocation(new Point(x, y));
-        info.setVisible(true);
-        info.setFocus();
-        info.getTableViewer().getTable().getShell().addListener(SWT.Deactivate,
+        editorList.setLocation(new Point(x, y));
+        editorList.setVisible(true);
+        editorList.setFocus();
+        editorList.getTableViewer().getTable().getShell().addListener(SWT.Deactivate,
                 new Listener() {
 
                     public void handleEvent(Event event) {
-                        info.setVisible(false);
+                        editorList.setVisible(false);
                     }
                 });
     }
