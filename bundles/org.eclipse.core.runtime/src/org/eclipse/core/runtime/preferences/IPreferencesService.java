@@ -557,22 +557,32 @@ public interface IPreferencesService {
 	 * <p>
 	 * It is the responsibility of the client to close the given output stream.
 	 * </p>
+	 * <p>
+	 * <em>Note:</em> This is interim API and will likely change shape before the 
+	 * final 3.1 release.
+	 * </p>
 	 * 
 	 * @param tree the tree to export
 	 * @param transfers the list of transfers to export
 	 * @param stream the stream to export to
 	 * @throws CoreException
+	 * @since 3.1
 	 */
-	public void exportPreferences(IEclipsePreferences tree, OutputStream stream, IPreferenceTransfer[] transfers) throws CoreException;
+	public void exportPreferences(IEclipsePreferences tree, IPreferenceTransfer[] transfers, OutputStream stream) throws CoreException;
 
 	/**
 	 * Return a list of transfers which match the given tree. If the specified list of transfers is
 	 * <code>null</code>, empty, or there are no matches, then return an empty list.
+	 * <p>
+	 * <em>Note:</em> This is interim API and will likely change shape before the 
+	 * final 3.1 release.
+	 * </p>
 	 * 
 	 * @param tree the tree to match against
 	 * @param transfers the list of transfers to match against
 	 * @return the array of matching transfers
 	 * @throws CoreException
+	 * @since 3.1
 	 */
 	public IPreferenceTransfer[] matches(IEclipsePreferences tree, IPreferenceTransfer[] transfers) throws CoreException;
 
@@ -583,10 +593,15 @@ public interface IPreferencesService {
 	 * <p>
 	 * If the list of transfers is <code>null</code> or empty then do nothing.
 	 * </p>
+	 * <p>
+	 * <em>Note:</em> This is interim API and will likely change shape before the 
+	 * final 3.1 release.
+	 * </p>
 	 * 
 	 * @param tree the tree to consider applying
 	 * @param transfers the filters to use
 	 * @throws CoreException
+	 * @since 3.1
 	 */
 	public void applyPreferences(IEclipsePreferences tree, IPreferenceTransfer[] transfers) throws CoreException;
 }

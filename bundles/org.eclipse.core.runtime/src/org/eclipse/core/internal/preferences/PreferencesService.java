@@ -798,13 +798,13 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.preferences.IPreferencesService#exportPreferences(org.eclipse.core.runtime.preferences.IPreferenceTransfer[], java.io.OutputStream)
+	 * @see org.eclipse.core.runtime.preferences.IPreferencesService#exportPreferences(IEclipsePreferences, IPreferenceTransfer[], OutputStream)
 	 */
-	public void exportPreferences(IEclipsePreferences node, OutputStream stream, IPreferenceTransfer[] transfers) throws CoreException {
+	public void exportPreferences(IEclipsePreferences node, IPreferenceTransfer[] transfers, OutputStream stream) throws CoreException {
 		if (transfers == null || transfers.length == 0)
 			return;
 		try {
-			internalExport(node, stream, transfers);
+			internalExport(node, transfers, stream);
 		} catch (BackingStoreException e) {
 			throw new CoreException(createStatusError(Messages.preferences_exportProblems, e));
 		}
@@ -814,7 +814,7 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 	 * Take the preference tree and trim it so it only holds values applying to the given transfers.
 	 * Then export the resulting tree to the given output stream.
 	 */
-	private void internalExport(IEclipsePreferences node, OutputStream output, IPreferenceTransfer transfers[]) throws BackingStoreException, CoreException {
+	private void internalExport(IEclipsePreferences node, IPreferenceTransfer transfers[], OutputStream output) throws BackingStoreException, CoreException {
 		ArrayList trees = new ArrayList();
 		for (int i = 0; i < transfers.length; i++)
 			trees.add(trimTree(node, transfers[i]));
