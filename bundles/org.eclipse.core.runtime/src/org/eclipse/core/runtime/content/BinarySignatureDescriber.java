@@ -43,9 +43,9 @@ import org.eclipse.osgi.util.NLS;
  * </p>
  * <p>
  * This class is not intended to be subclassed or instantiated by clients, 
- * only to be referenced in the "describer" configuration element of
+ * only to be referenced by the "describer" configuration element in
  * extensions to the <code>org.eclipse.core.runtime.contentTypes</code>
- * extension-pont.
+ * extension point.
  * </p>
  * 
  * @since 3.0
