@@ -52,12 +52,12 @@ public class StickyViewDescriptor implements IStickyViewDescriptor {
         
         String closeableString = singleton.getAttribute(ATT_CLOSEABLE);
         if (closeableString != null) {
-            closeable = !closeableString.equals("false");
+            closeable = !closeableString.equals("false"); //$NON-NLS-1$
         }
 
         String moveableString = singleton.getAttribute(ATT_MOVEABLE);
         if (moveableString != null) {
-            moveable = !moveableString.equals("false");
+            moveable = !moveableString.equals("false"); //$NON-NLS-1$
         }
 
     }
