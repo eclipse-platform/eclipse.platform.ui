@@ -13,7 +13,6 @@ package org.eclipse.ui.internal;
 
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ISaveablePart;
-import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -30,15 +29,30 @@ public class SaveAction extends BaseSaveAction {
 		super(WorkbenchMessages.getString("SaveAction.text"), window); //$NON-NLS-1$
 		setText(WorkbenchMessages.getString("SaveAction.text")); //$NON-NLS-1$
 		setToolTipText(WorkbenchMessages.getString("SaveAction.toolTip")); //$NON-NLS-1$
-		setId(IWorkbenchActionConstants.SAVE);
+		setId("save"); //$NON-NLS-1$
 		WorkbenchHelp.setHelp(this, IHelpContextIds.SAVE_ACTION);
+		setImageDescriptor(
+			WorkbenchImages.getImageDescriptor(
+				IWorkbenchGraphicConstants.IMG_CTOOL_SAVE_EDIT));
+		setHoverImageDescriptor(
+			WorkbenchImages.getImageDescriptor(
+				IWorkbenchGraphicConstants.IMG_CTOOL_SAVE_EDIT_HOVER));
+		setDisabledImageDescriptor(
+			WorkbenchImages.getImageDescriptor(
+				IWorkbenchGraphicConstants.IMG_CTOOL_SAVE_EDIT_DISABLED));
+		setActionDefinitionId("org.eclipse.ui.file.save"); //$NON-NLS-1$
 	}
 	
-	/**
+	/* (non-Javadoc)
+	 * Method declared on IAction.
 	 * Performs the <code>Save</code> action by calling the
 	 * <code>IEditorPart.doSave</code> method on the active editor.
 	 */
 	public void run() {
+		if (getWorkbenchWindow() == null) {
+			// action has been disposed
+			return;
+		}
 		/* **********************************************************************************
 		 * The code below was added to track the view with focus
 		 * in order to support save actions from a view. Remove this
@@ -53,8 +67,10 @@ public class SaveAction extends BaseSaveAction {
 		/* **********************************************************************************/
 
 		IEditorPart part = getActiveEditor();
-		IWorkbenchPage page = part.getSite().getPage();
-		page.saveEditor(part, false);
+		if (part != null) {
+			IWorkbenchPage page = part.getSite().getPage();
+			page.saveEditor(part, false);
+		}
 	}
 	
 	/* (non-Javadoc)

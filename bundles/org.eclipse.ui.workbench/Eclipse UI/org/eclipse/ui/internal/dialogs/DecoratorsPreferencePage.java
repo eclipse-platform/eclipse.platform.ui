@@ -10,6 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
+import java.text.Collator;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
@@ -20,7 +25,6 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.decorators.*;
-import org.eclipse.ui.internal.misc.Sorter;
 
 /**
  * The DecoratorsPreferencePage is the preference page for enabling and disabling
@@ -98,15 +102,15 @@ public class DecoratorsPreferencePage
 		checkboxViewer.getTable().setFont(mainFont);
 		
 		checkboxViewer.setContentProvider(new IStructuredContentProvider() {
-			
-			Sorter sorter = new Sorter(){
-				/*
-				 * @see Sorter.compare(element,element)
-				 */
-				public boolean compare(Object elementOne, Object elementTwo){
-					return ((DecoratorDefinition) elementTwo).getName().compareTo(((DecoratorDefinition) elementOne).getName()) > 0;
+			private final Comparator comparer = new Comparator() {
+				private Collator collator = Collator.getInstance();
+
+				public int compare(Object arg0, Object arg1) {
+					String s1 = ((DecoratorDefinition)arg0).getName();
+					String s2 = ((DecoratorDefinition)arg1).getName();
+					return collator.compare(s1, s2);
 				}
-			};
+			}; 
 			
 			public void dispose() {
 				//Nothing to do on dispose
@@ -115,7 +119,11 @@ public class DecoratorsPreferencePage
 			}
 			public Object[] getElements(Object inputElement) {
 				//Make an entry for each decorator definition
-				return sorter.sort((Object[]) inputElement);
+				Object[] elements = (Object[]) inputElement;
+				Object[] results = new Object[elements.length];
+				System.arraycopy(elements, 0, results, 0, elements.length);
+				Collections.sort(Arrays.asList(results), comparer);
+				return results;
 			}
 		
 		});
@@ -222,18 +230,13 @@ public class DecoratorsPreferencePage
 	public boolean performOk() {
 		if (super.performOk()) {
 			DecoratorManager manager = getDecoratorManager();
-			//Clear the caches first to avoid unneccessary updates
-			manager.clearCaches();
 			DecoratorDefinition[] definitions = manager.getAllDecoratorDefinitions();
 			for (int i = 0; i < definitions.length; i++) {
 				boolean checked = checkboxViewer.getChecked(definitions[i]);
 				definitions[i].setEnabled(checked);
 				
 			}
-			//Have the manager clear again as there may have been
-			//extra updates fired by the enablement changes.
-			manager.clearCaches();
-			manager.updateForEnablementChange();
+			manager.reset();
 			return true;
 		}
 		return false;

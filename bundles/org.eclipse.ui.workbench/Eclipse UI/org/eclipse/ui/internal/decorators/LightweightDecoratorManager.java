@@ -12,11 +12,8 @@ package org.eclipse.ui.internal.decorators;
 
 import java.util.*;
 
-import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.misc.StatusUtil;
 
 /**
  * The LightweightDecoratorManager is a decorator manager
@@ -36,7 +33,7 @@ class LightweightDecoratorManager {
 		private DecorationBuilder decoration;
 		private LightweightDecoratorDefinition decorator;
 
-		void setValues(
+		private void setValues(
 			Object object,
 			DecorationBuilder builder,
 			LightweightDecoratorDefinition definition) {
@@ -49,8 +46,6 @@ class LightweightDecoratorManager {
 		 * @see ISafeRunnable.handleException(Throwable).
 		 */
 		public void handleException(Throwable exception) {
-			IStatus status = StatusUtil.newStatus(IStatus.ERROR,exception.getMessage(),exception);
-			WorkbenchPlugin.log("Exception in Decorator",status); //$NON-NLS-1$
 		}
 		/*
 		 * @see ISafeRunnable.run
@@ -173,28 +168,24 @@ class LightweightDecoratorManager {
 	* decorators.
 	* 
 	* @param element The source element
+	* @param adapted The adapted value of element or null
 	* @param decoration. The DecorationResult we are working on.
-	* @param adaptableDecoration. If it is true only apply the decorators
-	*  where adaptable is true.
 	*/
 
 	void getDecorations(
 		Object element,
-		DecorationBuilder decoration,
-		boolean adaptableDecoration) {
+		DecorationBuilder decoration) {
 
 		LightweightDecoratorDefinition[] decorators = getDecoratorsFor(element);
 
 		for (int i = 0; i < decorators.length; i++) {
-			//If we are doing the adaptable one make sure we are
-			//only applying the adaptable decorations
-			if(adaptableDecoration && !decorators[i].isAdaptable())
-				continue;
 			if (decorators[i].getEnablement().isEnabledFor(element)) {
 				decoration.setCurrentDefinition(decorators[i]);
 				decorate(element, decoration, decorators[i]);
 			}
 		}
+
+
 	}
 
 	/**

@@ -330,6 +330,7 @@ public class PreferenceDialog
 		// Build the Page container
 		pageContainer = createPageContainer(composite);
 		pageContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
+		pageContainer.setFont(parent.getFont());
 
 		// Build the separator line
 		Label separator = new Label(composite, SWT.HORIZONTAL | SWT.SEPARATOR);
@@ -509,7 +510,7 @@ public class PreferenceDialog
 	/**
 	 * Creates a TreeItem structure that reflects to the page hierarchy.
 	 */
-	protected void createTreeItemFor(Widget parent, IPreferenceNode node) {
+	private void createTreeItemFor(Widget parent, IPreferenceNode node) {
 		TreeItem item = null;
 		if (parent instanceof Tree)
 			item = new TreeItem((Tree) parent, SWT.DEFAULT);
@@ -650,7 +651,7 @@ public class PreferenceDialog
 	 * Selects the page determined by <code>currentTreeItem</code> in
 	 * the page hierarchy.
 	 */
-	void selectCurrentPageAgain() {
+	private void selectCurrentPageAgain() {
 		tree.setSelection(new TreeItem[] { currentTreeItem });
 		currentPage.setVisible(true);
 	}
@@ -734,7 +735,7 @@ public class PreferenceDialog
 	 * Clear the last selected node. This is so that we not chache
 	 * the last selection in case of an error.
 	 */
-	void clearSelectedNode() {
+	private void clearSelectedNode() {
 		setSelectedNodePreference(null);
 	}
 
@@ -969,7 +970,7 @@ public class PreferenceDialog
 		if (currentPage != null) {
 			if (!currentPage.okToLeave())
 				return false;
-		}
+		};
 
 		IPreferencePage oldPage = currentPage;
 		currentPage = newPage;
@@ -1064,7 +1065,7 @@ public class PreferenceDialog
 	/**
 	 * Shows the "Page Flipping abort" dialog.
 	 */
-	void showPageFlippingAbortDialog() {
+	private void showPageFlippingAbortDialog() {
 		MessageDialog.openError(getShell(), JFaceResources.getString("AbortPageFlippingDialog.title"), //$NON-NLS-1$
 		JFaceResources.getString("AbortPageFlippingDialog.message")); //$NON-NLS-1$
 	}

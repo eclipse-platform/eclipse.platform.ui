@@ -87,7 +87,6 @@ public class TableSortDialog extends Dialog {
 		prioritiesArea.setLayout(new GridLayout(3, false));
 
 		int[] priorities = sorter.getPriorities();
-		int[] directions = sorter.getDirections();
 		
 		ascendingButtons = new Button[priorities.length];
 		descendingButtons = new Button[priorities.length];

@@ -23,7 +23,6 @@ import org.eclipse.swt.widgets.*;
  * A dialog to show an error while giving the user the option to continue.
  */
 public class PreferenceErrorDialog extends ErrorDialog {
-	private IStatus status;
 	/**
 	 * Create a new instance of the dialog
 	 */
@@ -33,8 +32,8 @@ public class PreferenceErrorDialog extends ErrorDialog {
 		String message,
 		IStatus status,
 		int displayMask) {
+			
 		super(parentShell, dialogTitle, message, status, displayMask);
-		this.status = status;
 	}
 	/**
 	 * Opens an error dialog to display the given error.  

@@ -13,7 +13,7 @@ package org.eclipse.ui.contexts;
 
 /**
  * <p>
- * JAVADOC
+ * TODO javadoc
  * </p>
  * <p>
  * This interface is not intended to be extended by clients.
@@ -27,9 +27,9 @@ package org.eclipse.ui.contexts;
 public interface IContextListener {
 
 	/**
-	 * JAVADOC
+	 * TODO javadoc
 	 * 
 	 * @param contextEvent
-	 */
+	 */	
 	void contextChanged(IContextEvent contextEvent);
 }

@@ -44,7 +44,7 @@ import org.eclipse.jface.preference.PreferenceManager;
  * This interface is not intended to be implemented by clients.
  * </p>
  *
- * @see org.eclipse.ui.plugin.AbstractUIPlugin#getWorkbench()
+ * @see org.eclipse.ui.PlatformUI#getWorkbench
  */
 public interface IWorkbench {
 /**
@@ -111,14 +111,17 @@ public IPreferenceStore getPreferenceStore();
  */
 public ISharedImages getSharedImages();
 /**
- * Returns the marker help registry for the workbench.
+ * Returns the number of open main windows associated with this workbench.
+ * Note that wizards and dialogs are not included in this list since they
+ * are not considered main windows.
  * 
- * @since 2.0
- * @return the marker help registry
+ * @return the number of open windows
+ * @since 3.0
+ * @issue Use getWorkbenchWindows().length?
  */
-public IMarkerHelpRegistry getMarkerHelpRegistry();
+public int getWorkbenchWindowCount();
 /**
- * Returns a list of the open main windows associated with this workbench.
+* Returns a list of the open main windows associated with this workbench.
  * Note that wizards and dialogs are not included in this list since they
  * are not considered main windows.
  *
@@ -312,5 +315,4 @@ public IDecoratorManager getDecoratorManager();
  */
 public boolean saveAllEditors(boolean confirm);
 
-//IContextActivationService getContextActivationService();
 }

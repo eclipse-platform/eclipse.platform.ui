@@ -10,8 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui;
 
-
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.application.WorkbenchAdviser;
+import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
  * The central class for access to the Eclipse Platform User Interface. 
@@ -20,6 +21,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * 
  * Features provided:
  * <ul>
+ * <li>creation of the workbench.</li>
  * <li>access to the workbench.</li>
  * </ul>
  * <p>
@@ -28,23 +30,93 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  */
 public final class PlatformUI {
 	/**
-	 * Identifies the workbench plugin.
+	 * Identifies the workbench plug-in.
 	 */
-	public static final String PLUGIN_ID = "org.eclipse.ui";//$NON-NLS-1$
+	public static final String PLUGIN_ID = "org.eclipse.ui"; //$NON-NLS-1$
 	
-	private static IWorkbench instance; 
-/**
- * Block instantiation.
- */
-private PlatformUI() {
-}
-/**
- * Returns the workbench interface.
- */
-public static IWorkbench getWorkbench() {
-	if (instance == null) {
-		instance = WorkbenchPlugin.getDefault().getWorkbench();
+	/**
+	 * Return code (value 0) indicating that the workbench terminated normally.
+	 * 
+	 * @see #createAndRunWorkbench
+	 * @since 3.0
+	 */
+	public static final int RETURN_OK = 0;
+
+	/**
+	 * Return code (value 1) indicating that the workbench was terminated with
+	 * a call to <code>IWorkbench.restart</code>.
+	 * 
+	 * @see #createAndRunWorkbench
+	 * @see IWorkbench#restart
+	 * @since 3.0
+	 */
+	public static final int RETURN_RESTART = 1;
+
+	/**
+	 * Return code (value 2) indicating that the workbench failed to start.
+	 * 
+	 * @see #createAndRunWorkbench
+	 * @see IWorkbench#restart
+	 * @since 3.0
+	 */
+	public static final int RETURN_UNSTARTABLE = 2;
+
+	/**
+	 * Return code (value 3) indicating that the workbench was terminated with
+	 * a call to <code>IWorkbenchConfigurer.emergencyClose</code>.
+	 * 
+	 * @see #createAndRunWorkbench
+	 * @see IWorkbenchConfigurer#emergencyClose
+	 * @since 3.0
+	 */
+	public static final int RETURN_EMERGENCY_CLOSE = 3;
+
+	/**
+	 * Block instantiation.
+	 */
+	private PlatformUI() {
 	}
-	return instance;
-}
+	
+	/**
+	 * Returns the workbench. Fails if the workbench has not been created yet.
+	 * 
+	 * @return the workbench
+	 */
+	public static IWorkbench getWorkbench() {
+		if (Workbench.getInstance() == null) {
+			// app forgot to call createAndRunWorkbench beforehand
+			throw new IllegalStateException(WorkbenchMessages.getString("PlatformUI.NoWorkbench")); //$NON-NLS-1$
+		}
+		return Workbench.getInstance();
+	}
+	
+	/**
+	 * Creates the workbench and associates it with the given workbench adviser,
+	 * and runs the workbench UI. This entails processing and dispatching
+	 * events until the workbench is closed or restarted.
+	 * <p>
+	 * This method is intended to be called by the main class (the "application").
+	 * Fails if the workbench UI has already been created.
+	 * </p>
+	 * <p>
+	 * Note that this method is intended to be called by the application
+	 * (<code>org.eclipse.core.boot.IPlatformRunnable</code>). It must be
+	 * called exactly once, and early on before anyone else asks
+	 * <code>getWorkbench()</code> for the workbench.
+	 * </p>
+	 * 
+	 * @param adviser the application-specific adviser that configures and
+	 * specializes the workbench
+	 * @return return code {@link #RETURN_OK RETURN_OK} for normal exit; 
+	 * {@link #RETURN_RESTART RETURN_RESTART} if the workbench was terminated
+	 * with a call to {@link IWorkbench#restart IWorkbench.restart}; 
+	 * {@link #RETURN_UNSTARTABLE RETURN_UNSTARTABLE} if the workbench could
+	 * not be started; 
+	 * {@link #RETURN_EMERGENCY_CLOSE RETURN_EMERGENCY_CLOSE} if the UI quit
+	 * because of an emergency; other values reserved for future use
+	 * @since 3.0
+	 */
+	public static int createAndRunWorkbench(WorkbenchAdviser adviser) {
+		return Workbench.createAndRunWorkbench(adviser);
+	}
 }

@@ -41,20 +41,21 @@ class DecoratorOverlayIcon extends CompositeImageDescriptor {
 	 * @param size the size
 	 */
 	public DecoratorOverlayIcon(
-		Image baseImage,
-		ImageDescriptor[] overlaysArray,
-		Point sizeValue) {
-		this.base = baseImage;
-		this.overlays = overlaysArray;
-		this.size = sizeValue;
+		Image base,
+		ImageDescriptor[] overlays,
+		Point size) {
+		this.base = base;
+		this.overlays = overlays;
+		this.size = size;
 	}
 	/**
 	 * Draw the overlays for the reciever.
 	 */
-	protected void drawOverlays(ImageDescriptor[] overlaysArray) {
+	protected void drawOverlays(ImageDescriptor[] overlays) {
+		Point size = getSize();	
 			
 		for (int i = 0; i < overlays.length; i++) {
-			ImageDescriptor overlay = overlaysArray[i];
+			ImageDescriptor overlay = overlays[i];
 			if (overlay == null)
 				continue;
 			ImageData overlayData = overlay.getImageData();

@@ -11,54 +11,50 @@
 
 package org.eclipse.ui.internal;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.IKeyBindingService;
-import org.eclipse.ui.commands.IActionService;
-import org.eclipse.ui.contexts.IContextActivationService;
+import org.eclipse.ui.commands.IHandlerService;
+import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.internal.commands.ActionHandler;
 
 final class KeyBindingService implements IKeyBindingService {
 	
-	private IActionService actionService;
-	private IContextActivationService contextActivationService;
-	private List scopes = new ArrayList();
+	private SortedMap handlerMap = new TreeMap();
+	private IContextService contextService;
+	private IHandlerService handlerService;
 		
-	KeyBindingService(IActionService actionService, IContextActivationService contextActivationService) {
+	KeyBindingService(IContextService contextService, IHandlerService handlerService) {
 		super();
-		this.contextActivationService = contextActivationService;
-		this.actionService = actionService;	
+		this.contextService = contextService;
+		this.handlerService = handlerService;	
 	}
 
 	public String[] getScopes() {
-    	return (String[]) scopes.toArray(new String[scopes.size()]);
+    	return contextService.getActiveContextIds();
     }
 
 	public void setScopes(String[] scopes) {
-		for (int i = 0; i < this.scopes.size(); i++)
-			contextActivationService.deactivateContext((String) this.scopes.get(i));
-			
-		this.scopes.clear();		
-
-		for (int i = 0; i < scopes.length; i++) {
-			contextActivationService.activateContext(scopes[i]);
-			this.scopes.add(scopes[i]);
-		}
+		contextService.setActiveContextIds(scopes);		 	
     }
 
 	public void registerAction(IAction action) {
     	String command = action.getActionDefinitionId();
 
-		if (command != null)
-			actionService.addAction(command, new ActionHandler(action));		
+		if (command != null) {
+			handlerMap.put(command, new ActionHandler(action));		
+			handlerService.setHandlerMap(handlerMap);
+		}
     }
     
 	public void unregisterAction(IAction action) {   		
     	String command = action.getActionDefinitionId();
 
-		if (command != null)
-			actionService.removeAction(command);
+		if (command != null) {
+			handlerMap.remove(command);
+			handlerService.setHandlerMap(handlerMap);
+		}
     }	
 }

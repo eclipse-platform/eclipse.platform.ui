@@ -67,9 +67,9 @@ public class WWinPluginAction extends PluginAction implements IActionSetContribu
 			String label = actionElement.getAttribute(ActionDescriptor.ATT_LABEL);
 
 			if (allowLabelUpdate != null && allowLabelUpdate.equals(TRUE_VALUE))
-				retargetAction = new LabelRetargetAction(id, label, style);
+				retargetAction = new LabelRetargetAction(id, label);
 			else
-				retargetAction = new RetargetAction(id, label, style);
+				retargetAction = new RetargetAction(id, label);
 			retargetAction.addPropertyChangeListener(new IPropertyChangeListener() {
 				public void propertyChange(PropertyChangeEvent event) {
 					if (event.getProperty().equals(Action.ENABLED)) {

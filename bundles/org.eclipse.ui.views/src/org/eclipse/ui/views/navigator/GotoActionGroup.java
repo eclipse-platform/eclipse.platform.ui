@@ -20,6 +20,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.actions.ActionContext;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.views.framelist.BackAction;
 import org.eclipse.ui.views.framelist.ForwardAction;
 import org.eclipse.ui.views.framelist.FrameList;
@@ -63,10 +64,10 @@ public class GotoActionGroup extends ResourceNavigatorActionGroup {
 			IWorkbenchActionConstants.GO_INTO,
 			goIntoAction);
 		actionBars.setGlobalActionHandler(
-			IWorkbenchActionConstants.BACK,
+			ActionFactory.BACK.getId(),
 			backAction);
 		actionBars.setGlobalActionHandler(
-			IWorkbenchActionConstants.FORWARD,
+			ActionFactory.FORWARD.getId(),
 			forwardAction);
 		actionBars.setGlobalActionHandler(
 			IWorkbenchActionConstants.UP,

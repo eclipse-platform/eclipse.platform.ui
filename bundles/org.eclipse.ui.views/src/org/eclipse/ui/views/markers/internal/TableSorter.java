@@ -79,7 +79,6 @@ public class TableSorter extends ViewerSorter implements Comparator {
 	}
 	
 	public void setTopPriority(IField property) {
-		int index = -1;
 		for (int i = 0; i < fields.length; i++) {
 			if (fields[i].equals(property)) {
 				setTopPriority(i);

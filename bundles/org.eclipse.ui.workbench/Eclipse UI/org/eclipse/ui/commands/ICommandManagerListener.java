@@ -13,9 +13,6 @@ package org.eclipse.ui.commands;
 
 /**
  * <p>
- * JAVADOC
- * </p>
- * <p>
  * This interface is not intended to be extended by clients.
  * </p>
  * <p>
@@ -26,10 +23,4 @@ package org.eclipse.ui.commands;
  */
 public interface ICommandManagerListener {
 
-	/**
-	 * JAVADOC
-	 * 
-	 * @param commandManagerEvent
-	 */
-	void commandManagerChanged(ICommandManagerEvent commandManagerEvent);
 }

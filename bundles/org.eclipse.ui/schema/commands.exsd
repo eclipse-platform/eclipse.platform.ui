@@ -3,7 +3,7 @@
 <schema targetNamespace="org.eclipse.ui">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.ui" id="iconcommands" name="Commands"/>
+         <meta.schema plugin="org.eclipse.ui" id="commands" name="Commands"/>
       </appInfo>
       <documentation>
          &lt;p&gt;
@@ -15,9 +15,12 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
    <element name="extension">
       <complexType>
          <sequence>
+<!--element ref="activeGestureConfiguration"/-->
             <element ref="activeKeyConfiguration"/>
             <element ref="category"/>
             <element ref="command"/>
+<!--element ref="gestureConfiguration"/-->
+<!--element ref="gestureBinding"/-->
             <element ref="keyBinding"/>
             <element ref="keyConfiguration"/>
             <element ref="context"/>
@@ -46,6 +49,17 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
       </complexType>
    </element>
 
+<!--element name="activeGestureConfiguration">
+      <complexType>
+         <attribute name="value" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element-->
    <element name="activeKeyConfiguration">
       <annotation>
          <documentation>
@@ -54,13 +68,6 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
       </annotation>
       <complexType>
          <attribute name="value" type="string">
-            <annotation>
-               <documentation>
-                  The unique id (&lt;code&gt;id&lt;/code&gt;attribute) of the keyConfiguration element one wishes to be initially active.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="keyConfigurationId" type="string">
             <annotation>
                <documentation>
                   The unique id (&lt;code&gt;id&lt;/code&gt;attribute) of the keyConfiguration element one wishes to be initially active.
@@ -122,6 +129,13 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="icon" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
@@ -136,21 +150,33 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="categoryId" type="string">
-            <annotation>
-               <documentation>
-                  The unique id of the category for this command. If this command does not specify a category, it will still appear in all UI, alongside other specifically categorized commands.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="helpId" type="string">
+      </complexType>
+   </element>
+
+<!--element name="gestureConfiguration">
+      <complexType>
+         <attribute name="description" type="string">
             <annotation>
                <documentation>
                   
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="icon" type="string">
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="parent" type="string">
             <annotation>
                <documentation>
                   
@@ -158,8 +184,56 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
             </annotation>
          </attribute>
       </complexType>
-   </element>
-
+   </element-->
+<!--element name="gestureBinding">
+      <complexType>
+         <sequence>
+            <element ref="sequence" minOccurs="0" maxOccurs="1"/>
+         </sequence>
+         <attribute name="configuration" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="command" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="locale" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="platform" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="context" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="string" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element-->
    <element name="keyBinding">
       <annotation>
          <documentation>
@@ -170,7 +244,7 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
 <!--sequence>
             <element ref="sequence" minOccurs="0" maxOccurs="1"/>
          </sequence-->
-         <attribute name="configuration" type="string">
+         <attribute name="configuration" type="string" use="required">
             <annotation>
                <documentation>
                   The unique id of the key configuration of this key binding.
@@ -198,14 +272,14 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="contextId" type="string">
+         <attribute name="context" type="string">
             <annotation>
                <documentation>
                   The unique id of the context of this key binding.
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="string" type="string">
+         <attribute name="string" type="string" use="required">
             <annotation>
                <documentation>
                   The key sequence to assign to the command. Key sequences consist of one or more key strokes, where a key stroke consists of a key on the keyboard, optionally pressed in combination with one or more of the following modifiers: Ctrl, Alt, Shift, and Command. Key strokes are separated by spaces, and modifiers are separated by &apos;+&apos; characters.
@@ -216,27 +290,6 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
             <annotation>
                <documentation>
                   The unique id of the context of this key binding.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="keyConfigurationId" type="string">
-            <annotation>
-               <documentation>
-                  The unique id of the key configuration of this key binding.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="commandId" type="string">
-            <annotation>
-               <documentation>
-                  The unique identifier of the command to which the key sequence specified by this key binding is assigned. If the value of this attribute is an empty string, the key sequence is assigned to an internal &apos;no operation&apos; command. This is useful for &apos;undefining&apos; key bindings in specific key configurations and contexts which may have been borrowed from their parents.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="keySequence" type="string">
-            <annotation>
-               <documentation>
-                  The key sequence to assign to the command. Key sequences consist of one or more key strokes, where a key stroke consists of a key on the keyboard, optionally pressed in combination with one or more of the following modifiers: Ctrl, Alt, Shift, and Command. Key strokes are separated by spaces, and modifiers are separated by &apos;+&apos; characters.
                </documentation>
             </annotation>
          </attribute>
@@ -278,23 +331,9 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="parentId" type="string">
-            <annotation>
-               <documentation>
-                  The unique id of the parent key configuration. If this key configuration has a parent, it will borrow all key bindings from its parent, in addition to the key bindings defined in its own key configuration.
-               </documentation>
-            </annotation>
-         </attribute>
       </complexType>
    </element>
 
-<!--element name="sequence">
-      <complexType>
-         <sequence>
-            <element ref="stroke" minOccurs="1" maxOccurs="unbounded"/>
-         </sequence>
-      </complexType>
-   </element-->
 <!--element name="stroke">
       <complexType>
          <attribute name="value" type="string">
@@ -304,6 +343,13 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
                </documentation>
             </annotation>
          </attribute>
+      </complexType>
+   </element-->
+<!--element name="sequence">
+      <complexType>
+         <sequence>
+            <element ref="stroke" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
       </complexType>
    </element-->
    <element name="context">
@@ -335,13 +381,6 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
             </annotation>
          </attribute>
          <attribute name="parent" type="string">
-            <annotation>
-               <documentation>
-                  The unique id of the parent context. If this context has a parent, it will borrow all key bindings from its parent, in addition to the key bindings defined in its own context.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="parentId" type="string">
             <annotation>
                <documentation>
                   The unique id of the parent context. If this context has a parent, it will borrow all key bindings from its parent, in addition to the key bindings defined in its own context.

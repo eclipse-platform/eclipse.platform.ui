@@ -11,15 +11,11 @@
 
 package org.eclipse.ui.commands;
 
-import java.util.List;
 import java.util.SortedSet;
 
 /**
  * <p>
- * JAVADOC
- * </p>
- * <p>
- * This interface is not intended to be extended or implemented by clients.
+ * This interface is not intended to be implemented or extended by clients.
  * </p>
  * <p>
  * <em>EXPERIMENTAL</em>
@@ -30,94 +26,32 @@ import java.util.SortedSet;
 public interface ICommandManager {
 
 	/**
-	 * Registers an ICommandManagerListener instance with this command manager.
+	 * Registers an IManagerListener instance with this manager.
 	 *
-	 * @param commandManagerListener the ICommandManagerListener instance to register.
-	 * @throws NullPointerException
+	 * @param managerListener the IManagerListener instance to register.
 	 */	
-	void addCommandManagerListener(ICommandManagerListener commandManagerListener);
+	void addManagerListener(ICommandManagerListener managerListener);
 
 	/**
-	 * JAVADOC
+	 * TODO javadoc
 	 *
+	 * @param id
 	 * @return
-	 */
-	List getActiveContextIds();
+	 */	
+	ICommand getCommand(String id);
 
 	/**
-	 * JAVADOC
+	 * TODO javadoc
 	 *
+	 * @param id
 	 * @return
 	 */
-	String getActiveKeyConfigurationId();
-
-	/**
-	 * JAVADOC
-	 *
-	 * @return
-	 */
-	String getActiveLocale();
+	SortedSet getCommandIds();
 	
 	/**
-	 * JAVADOC
+	 * Unregisters an IManagerListener instance with this manager.
 	 *
-	 * @return
+	 * @param managerListener the IManagerListener instance to unregister.
 	 */
-	String getActivePlatform();
-
-	/**
-	 * JAVADOC
-	 *
-	 * @param categoryId
-	 * @return
-	 * @throws NullPointerException
-	 */	
-	ICategory getCategory(String categoryId);
-
-	/**
-	 * JAVADOC
-	 *
-	 * @param commandId
-	 * @return
-	 * @throws NullPointerException
-	 */	
-	ICommand getCommand(String commandId);
-
-	/**
-	 * JAVADOC
-	 *
-	 * @return
-	 */
-	SortedSet getDefinedCategoryIds();
-
-	/**
-	 * JAVADOC
-	 *
-	 * @return
-	 */
-	SortedSet getDefinedCommandIds();
-
-	/**
-	 * JAVADOC
-	 *
-	 * @return
-	 */
-	SortedSet getDefinedKeyConfigurationIds();
-
-	/**
-	 * JAVADOC
-	 *
-	 * @param keyConfigurationId
-	 * @return
-	 * @throws NullPointerException
-	 */	
-	IKeyConfiguration getKeyConfiguration(String keyConfigurationId);
-
-	/**
-	 * Unregisters an ICommandManagerListener instance with this command manager.
-	 *
-	 * @param commandManagerListener the ICommandManagerListener instance to unregister.
-	 * @throws NullPointerException
-	 */
-	void removeCommandManagerListener(ICommandManagerListener commandManagerListener);
+	void removeManagerListener(ICommandManagerListener managerListener);
 }

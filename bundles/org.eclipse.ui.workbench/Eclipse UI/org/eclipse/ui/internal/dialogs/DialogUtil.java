@@ -21,6 +21,10 @@ import org.eclipse.ui.PartInitException;
 
 /**
  * Utility class to help with dialogs.
+ * <p>
+ * Note that a copy of this class exists in the
+ * org.eclipse.ui.internal.ide package.
+ * </p>
  */
 public class DialogUtil {
 

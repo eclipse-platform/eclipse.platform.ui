@@ -20,6 +20,7 @@ import org.eclipse.ui.PlatformUI;
  * or extended.
  * </p>
  * 
+ * @issue this class has been xcloned to org.eclipse.ui.internal.ide package; remove all IDE-specific constants from here
  */
 public interface IHelpContextIds {
 	public static final String PREFIX = PlatformUI.PLUGIN_ID + "."; //$NON-NLS-1$

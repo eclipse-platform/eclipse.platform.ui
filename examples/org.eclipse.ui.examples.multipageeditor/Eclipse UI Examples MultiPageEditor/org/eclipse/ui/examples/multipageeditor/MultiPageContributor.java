@@ -13,9 +13,10 @@ package org.eclipse.ui.examples.multipageeditor;
  
 import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.*;
+import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.part.MultiPageEditorActionBarContributor;
 import org.eclipse.ui.texteditor.ITextEditor;
-import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 
 /**
  * Manages the installation/deinstallation of global actions for multi-page editors.
@@ -51,16 +52,16 @@ public void setActivePage(IEditorPart part) {
 
 		ITextEditor editor = (part instanceof ITextEditor) ? (ITextEditor) part : null;
 
-		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.DELETE, getAction(editor, ITextEditorActionConstants.DELETE));
-		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.UNDO, getAction(editor, ITextEditorActionConstants.UNDO));
-		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.REDO, getAction(editor, ITextEditorActionConstants.REDO));
-		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.CUT, getAction(editor, ITextEditorActionConstants.CUT));
-		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.COPY, getAction(editor, ITextEditorActionConstants.COPY));
-		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.PASTE, getAction(editor, ITextEditorActionConstants.PASTE));
-		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.SELECT_ALL, getAction(editor, ITextEditorActionConstants.SELECT_ALL));
-		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.FIND, getAction(editor, ITextEditorActionConstants.FIND));
-		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.BOOKMARK, getAction(editor, ITextEditorActionConstants.BOOKMARK));
-		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.ADD_TASK, getAction(editor, ITextEditorActionConstants.ADD_TASK));
+		actionBars.setGlobalActionHandler(ActionFactory.DELETE.getId(), getAction(editor, ActionFactory.DELETE.getId()));
+		actionBars.setGlobalActionHandler(ActionFactory.UNDO.getId(), getAction(editor, ActionFactory.UNDO.getId()));
+		actionBars.setGlobalActionHandler(ActionFactory.REDO.getId(), getAction(editor, ActionFactory.REDO.getId()));
+		actionBars.setGlobalActionHandler(ActionFactory.CUT.getId(), getAction(editor, ActionFactory.CUT.getId()));
+		actionBars.setGlobalActionHandler(ActionFactory.COPY.getId(), getAction(editor, ActionFactory.COPY.getId()));
+		actionBars.setGlobalActionHandler(ActionFactory.PASTE.getId(), getAction(editor, ActionFactory.PASTE.getId()));
+		actionBars.setGlobalActionHandler(ActionFactory.SELECT_ALL.getId(), getAction(editor, ActionFactory.SELECT_ALL.getId()));
+		actionBars.setGlobalActionHandler(ActionFactory.FIND.getId(), getAction(editor, ActionFactory.FIND.getId()));
+		actionBars.setGlobalActionHandler(IDEActionFactory.BOOKMARK.getId(), getAction(editor, IDEActionFactory.BOOKMARK.getId()));
+		actionBars.setGlobalActionHandler(IDEActionFactory.ADD_TASK.getId(), getAction(editor, IDEActionFactory.ADD_TASK.getId()));
 		actionBars.updateActionBars();
 	}
 }

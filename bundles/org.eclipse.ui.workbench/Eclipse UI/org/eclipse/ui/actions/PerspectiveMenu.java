@@ -42,7 +42,6 @@ import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.dialogs.SelectPerspectiveDialog;
-import org.eclipse.ui.internal.roles.RoleManager;
 
 /**
  * A menu for perspective selection.  
@@ -213,11 +212,8 @@ public abstract class PerspectiveMenu extends ContributionItem {
 		if (ids == null)
 			return list;
 
-		RoleManager manager = RoleManager.getInstance();
 		for (int i = 0; i < ids.size(); i++) {
 			String perspID = (String) ids.get(i);
-			if(manager.isFiltering() && !manager.isEnabledId(perspID))
-				continue;
 			IPerspectiveDescriptor desc = reg.findPerspectiveWithId(perspID);
 			if (desc != null && !list.contains(desc))
 				list.add(desc);

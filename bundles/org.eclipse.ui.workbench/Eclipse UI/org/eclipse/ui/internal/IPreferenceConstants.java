@@ -15,21 +15,6 @@ package org.eclipse.ui.internal;
  * The IPreferenceConstants are the internal constants used by the Workbench.
  */
 public interface IPreferenceConstants {
-	// (boolean) Whether or not to display the Welcome dialog on startup.
-	public static final String WELCOME_DIALOG = "WELCOME_DIALOG"; //$NON-NLS-1$
-
-	// (boolean) Cause all editors to save modified resources prior
-	// to running a full or incremental manual build.
-	public static final String SAVE_ALL_BEFORE_BUILD = "SAVE_ALL_BEFORE_BUILD"; //$NON-NLS-1$
-
-	// (boolean) Whether or not to automatically run a build
-	// when a resource is modified. NOTE: The value is not
-	// actually in the preference store but available from
-	// IWorkspace. This constant is used solely for property
-	// change notification from the preference store so
-	// interested parties can listen for all preference changes.
-	public static final String AUTO_BUILD = "AUTO_BUILD"; //$NON-NLS-1$
-
 	//Do we show tabs up or down for views
 	public static final String VIEW_TAB_POSITION = "VIEW_TAB_POSITION"; //$NON-NLS-1$
 
@@ -63,7 +48,6 @@ public interface IPreferenceConstants {
 	
 	// (int) N recently viewed files will be listed in the File->Open Recent menu.
 	public static final String RECENT_FILES = "RECENT_FILES"; //$NON-NLS-1$
-	public static final int MAX_RECENT_FILES_SIZE = 15;
 
 	// (integer) Mode for opening a view.
 	public static final String OPEN_VIEW_MODE = "OPEN_VIEW_MODE"; //$NON-NLS-1$
@@ -80,17 +64,6 @@ public interface IPreferenceConstants {
 	//Identifier for enabled decorators
 	public static final String ENABLED_DECORATORS = "ENABLED_DECORATORS"; //$NON-NLS-1$
 	
-	//Boolean: true = refresh workspace on startup if the command line does 
-	//not have the -refresh option
-	public static final String REFRESH_WORKSPACE_ON_STARTUP = "REFRESH_WORKSPACE_ON_STARTUP"; //$NON-NLS-1$
-	
-	//Boolean: true = close all editors before saving the workbench state when exiting
-	//Eclipse.  Will improve startup time for editors that have a long open time.
-	public static final String CLOSE_EDITORS_ON_EXIT = "CLOSE_EDITORS_ON_EXIT"; //$NON-NLS-1$
-	
-	//Boolean: true = keep cycle part dialog open when keys released
-	public static final String STICKY_CYCLE = "STICKY_CYCLE"; //$NON-NLS-1$
-	
 	//List of plugins but that extends "startup" extension point but are overriden by the user.
 	//String of plugin unique ids separated by ";"
 	public static final String PLUGINS_NOT_ACTIVATED_ON_STARTUP = "PLUGINS_NOT_ACTIVATED_ON_STARTUP"; //$NON-NLS-1$
@@ -104,10 +77,6 @@ public interface IPreferenceConstants {
 	//Preference key for default editors
 	public final static String DEFAULT_EDITORS_CACHE = "defaultEditorsCache"; //$NON-NLS-1$
 
-	//Workspace save interval in minutes
-	public final static String SAVE_INTERVAL = "saveInterval"; //$NON-NLS-1$
-	public static final int MAX_SAVE_INTERVAL = 9999;
-	
 	//Tab width = tab height * scalar value
 	public final static String EDITOR_TAB_WIDTH = "EDITOR_TAB_WIDTH"; //$NON-NLS-1$
 
@@ -128,9 +97,6 @@ public interface IPreferenceConstants {
 	// Boolean; true = EditorList displays full path
 	public static final String EDITORLIST_DISPLAY_FULL_NAME = "EDITORLIST_DISPLAY_FULL_NAME"; //$NON-NLS-1$
 	
-	// Show Tasks view to users when build contains errors
-	public static final String SHOW_TASKS_ON_BUILD = "SHOW_TASKS_ON_BUILD"; //$NON-NLS-1$
-	
 	// Show the shortcut bar in workbench windows
 	public static final String SHOW_SHORTCUT_BAR = "SHOW_SHORTCUT_BAR"; //$NON-NLS-1$
 
@@ -139,13 +105,4 @@ public interface IPreferenceConstants {
 
 	// Show the toolbar in workbench windows
 	public static final String SHOW_TOOL_BAR = "SHOW_TOOL_BAR"; //$NON-NLS-1$
-	
-	// Switch perspectives when creating a new project 
-	public static final String PROJECT_SWITCH_PERSP_MODE = "SWITCH_PERSPECTIVE_ON_PROJECT_CREATION"; //$NON-NLS-1$
-	public static final String PSPM_PROMPT = "prompt"; //$NON-NLS-1$
-	public static final String PSPM_ALWAYS = "always"; //$NON-NLS-1$
-	public static final String PSPM_NEVER = "never"; //$NON-NLS-1$
-	
-	// Prompt for exit confirmation when last window closed.
-	public static final String EXIT_PROMPT_ON_CLOSE_LAST_WINDOW = "EXIT_PROMPT_ON_CLOSE_LAST_WINDOW"; //$NON-NLS-1$
-}
+	}

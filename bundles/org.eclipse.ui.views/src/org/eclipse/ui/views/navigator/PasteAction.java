@@ -30,7 +30,7 @@ import org.eclipse.ui.part.ResourceTransfer;
  * 
  * @since 2.0
  */
-/*package*/ class PasteAction extends SelectionListenerAction {
+/*package*/ class PasteAction extends ResourceSelectionListenerAction {
 
 	/**
 	 * The id of this action.
@@ -159,15 +159,9 @@ protected boolean updateSelection(IStructuredSelection selection) {
 	if (!super.updateSelection(selection)) 
 		return false;
 	
-	final IResource[][] clipboardData = new IResource[1][];
-	shell.getDisplay().syncExec(new Runnable() {
-		public void run() {
-			// clipboard must have resources or files
-			ResourceTransfer resTransfer = ResourceTransfer.getInstance();
-			clipboardData[0] = (IResource[])clipboard.getContents(resTransfer);		
-		}
-	});	
-	IResource[] resourceData = clipboardData[0];
+	// clipboard must have resources or files
+	ResourceTransfer resTransfer = ResourceTransfer.getInstance();
+	IResource[] resourceData = (IResource[])clipboard.getContents(resTransfer);
 	boolean isProjectRes = resourceData != null
 		&& resourceData.length > 0
 		&& resourceData[0].getType() == IResource.PROJECT;

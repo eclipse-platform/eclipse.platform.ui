@@ -107,7 +107,6 @@ public class DialogTaskProperties extends DialogMarkerProperties {
 	
 	protected boolean getCompleted() {
 		IMarker marker = getMarker();
-		boolean complete = false;
 		if (marker == null) {
 			Map attributes = getInitialAttributes();
 			Object done = attributes.get(IMarker.DONE);

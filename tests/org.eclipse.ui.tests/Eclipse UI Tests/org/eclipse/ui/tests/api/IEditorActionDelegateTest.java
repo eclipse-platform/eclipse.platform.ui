@@ -16,6 +16,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.action.IMenuManager;
 
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.util.ActionUtil;
 import org.eclipse.ui.tests.util.FileUtil;
 
@@ -83,7 +84,7 @@ public class IEditorActionDelegateTest extends IActionDelegateTest {
 	{
 		IProject proj = FileUtil.createProject("IEditorActionDelegateTest");
 		IFile file = FileUtil.createFile("test" + suffix + ".txt", proj);
-		return (MockEditorPart)page.openEditor(file, EDITOR_ID);
+		return (MockEditorPart)page.openEditor(new FileEditorInput(file), EDITOR_ID);
 	}
 
 }

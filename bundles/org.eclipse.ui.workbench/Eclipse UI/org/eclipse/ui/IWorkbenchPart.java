@@ -205,8 +205,7 @@ public void removePropertyListener(IPropertyListener listener);
  * Asks this part to take focus within the workbench.
  * <p>
  * Clients should not call this method (the workbench calls this method at
- * appropriate times).  To have the workbench activate a part, use
- * <code>IWorkbenchPage.activate(IWorkbenchPart) instead</code>.
+ * appropriate times).
  * </p>
  */
 public void setFocus();

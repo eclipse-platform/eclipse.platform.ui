@@ -18,6 +18,7 @@ import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.internal.misc.Assert;
@@ -390,14 +391,14 @@ public class CellEditorActionHandler {
  */
 public CellEditorActionHandler(IActionBars actionBar) {
 	super();
-	actionBar.setGlobalActionHandler(IWorkbenchActionConstants.CUT, cellCutAction);
-	actionBar.setGlobalActionHandler(IWorkbenchActionConstants.COPY, cellCopyAction);
-	actionBar.setGlobalActionHandler(IWorkbenchActionConstants.PASTE, cellPasteAction);
-	actionBar.setGlobalActionHandler(IWorkbenchActionConstants.DELETE, cellDeleteAction);
-	actionBar.setGlobalActionHandler(IWorkbenchActionConstants.SELECT_ALL, cellSelectAllAction);
-	actionBar.setGlobalActionHandler(IWorkbenchActionConstants.FIND, cellFindAction);
-	actionBar.setGlobalActionHandler(IWorkbenchActionConstants.UNDO, cellUndoAction);
-	actionBar.setGlobalActionHandler(IWorkbenchActionConstants.REDO, cellRedoAction);
+	actionBar.setGlobalActionHandler(ActionFactory.CUT.getId(), cellCutAction);
+	actionBar.setGlobalActionHandler(ActionFactory.COPY.getId(), cellCopyAction);
+	actionBar.setGlobalActionHandler(ActionFactory.PASTE.getId(), cellPasteAction);
+	actionBar.setGlobalActionHandler(ActionFactory.DELETE.getId(), cellDeleteAction);
+	actionBar.setGlobalActionHandler(ActionFactory.SELECT_ALL.getId(), cellSelectAllAction);
+	actionBar.setGlobalActionHandler(ActionFactory.FIND.getId(), cellFindAction);
+	actionBar.setGlobalActionHandler(ActionFactory.UNDO.getId(), cellUndoAction);
+	actionBar.setGlobalActionHandler(ActionFactory.REDO.getId(), cellRedoAction);
 }
 /**
  * Adds a <code>CellEditor</code> to the handler so that the

@@ -35,8 +35,8 @@ public class PendingUpdateAdapter
 	 * Set whether or not this has been removed from the tree.
 	 * @param removed boolean
 	 */
-	public void setRemoved(boolean removedValue) {
-		this.removed = removedValue;
+	public void setRemoved(boolean removed) {
+		this.removed = removed;
 	}
 
 	/**

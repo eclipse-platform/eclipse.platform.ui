@@ -66,7 +66,7 @@ class FiltersDialog extends Dialog {
 		}
 		EnumValue[] getValues() {
 			return values;
-		}
+		};
 	}
 
 	private EnumType severityType;
@@ -79,6 +79,7 @@ class FiltersDialog extends Dialog {
 		private Button[] valueButtons;
 
 		CheckboxEnumGroup(Composite parent, String text, EnumType type) {
+			Font font = parent.getFont();
 			this.type = type;
 			// although not needed for layout, this composite is needed to get the tab order right
 			Composite enableComposite = new Composite(parent, SWT.NONE);
@@ -87,6 +88,7 @@ class FiltersDialog extends Dialog {
 			enableButton = new Button(enableComposite, SWT.CHECK);
 			enableButton.addSelectionListener(selectionListener);
 			enableButton.setText(text);
+			enableButton.setFont(font);
 			Composite valueComposite = new Composite(parent, SWT.NONE);
 			valueComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			valueComposite.setLayout(new FillLayout());
@@ -95,6 +97,8 @@ class FiltersDialog extends Dialog {
 			for (int i = 0; i < values.length; ++i) {
 				Button valueButton = new Button(valueComposite, SWT.CHECK);
 				valueButton.setText(values[i].getText());
+//				valueButton.setImage(values[i].getImage());
+				valueButton.setFont(font);
 				valueButtons[i] = valueButton;
 			}
 		}
@@ -276,15 +280,15 @@ class FiltersDialog extends Dialog {
 
 	private TasksFilter filter;
 
-	MarkerTypesModel markerTypesModel = new MarkerTypesModel();
+	private MarkerTypesModel markerTypesModel = new MarkerTypesModel();
 	
 	private MarkerType[] markerTypes;
 	
 	private CheckboxTreeViewer typesViewer;
-	Button anyResourceButton;
-	Button anyResourceInSameProjectButton; // added by cagatayk@acm.org
-	Button selectedResourceButton;
-	Button selectedResourceAndChildrenButton;
+	private Button anyResourceButton;
+	private Button anyResourceInSameProjectButton; // added by cagatayk@acm.org
+	private Button selectedResourceButton;
+	private Button selectedResourceAndChildrenButton;
 	private WorkingSetGroup workingSetGroup;
 	private LabelComboTextGroup descriptionGroup;
 	private CheckboxEnumGroup severityGroup;
@@ -293,7 +297,7 @@ class FiltersDialog extends Dialog {
 	private Button filterOnMarkerLimit;
 	private Text markerLimit;
 
-	SelectionListener selectionListener = new SelectionAdapter() {
+	private SelectionListener selectionListener = new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
 			FiltersDialog.this.widgetSelected(e);
 		}
@@ -493,6 +497,7 @@ class FiltersDialog extends Dialog {
 	 * @param parent the parent composite
 	 */
 	void createTypesArea(Composite parent) {
+		Font font = parent.getFont();
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		GridLayout layout = new GridLayout();
@@ -500,15 +505,17 @@ class FiltersDialog extends Dialog {
 	
 		Label label = new Label(composite, SWT.NONE);
 		label.setText(TaskListMessages.getString("TaskList.showItemsOfType")); //$NON-NLS-1$
+		label.setFont(font);
 		
 		typesViewer = new CheckboxTreeViewer(composite);
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
 		gridData.heightHint = 100;
+		typesViewer.getTree().setFont(font);
 		typesViewer.getControl().setLayoutData(gridData);
 		typesViewer.setContentProvider(getContentProvider());
 		typesViewer.setLabelProvider(getLabelProvider());
 		typesViewer.setSorter(getSorter());
-		typesViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
+		typesViewer.setAutoExpandLevel(CheckboxTreeViewer.ALL_LEVELS);
 		typesViewer.addCheckStateListener(checkStateListener);
 		typesViewer.setInput(getMarkerTypes());
 	}
@@ -704,9 +711,9 @@ class FiltersDialog extends Dialog {
 	 */
 	protected void okPressed() {
 		try {
-			int parseResult = Integer.parseInt(this.markerLimit.getText());
+			int markerLimit = Integer.parseInt(this.markerLimit.getText());
 	
-			if (parseResult < 1) {
+			if (markerLimit < 1) {
 				throw new NumberFormatException();
 			}			
 			
@@ -796,45 +803,45 @@ class FiltersDialog extends Dialog {
 	 *
 	 * @param filter the filter to update
 	 */
-	void updateFilterFromUI(TasksFilter tasksFilter) {
+	void updateFilterFromUI(TasksFilter filter) {
 	
-		tasksFilter.types = getSelectedTypes();
+		filter.types = getSelectedTypes();
 		
 		if (selectedResourceButton.getSelection())
-			tasksFilter.onResource = TasksFilter.ON_SELECTED_RESOURCE_ONLY;
+			filter.onResource = TasksFilter.ON_SELECTED_RESOURCE_ONLY;
 		else if (selectedResourceAndChildrenButton.getSelection())
-			tasksFilter.onResource = TasksFilter.ON_SELECTED_RESOURCE_AND_CHILDREN;
+			filter.onResource = TasksFilter.ON_SELECTED_RESOURCE_AND_CHILDREN;
 		else if (anyResourceInSameProjectButton.getSelection()) // added by cagatayk@acm.org
-			tasksFilter.onResource = TasksFilter.ON_ANY_RESOURCE_OF_SAME_PROJECT;
+			filter.onResource = TasksFilter.ON_ANY_RESOURCE_OF_SAME_PROJECT;
 		else if (workingSetGroup.getSelection())
-			tasksFilter.onResource = TasksFilter.ON_WORKING_SET;
+			filter.onResource = TasksFilter.ON_WORKING_SET;
 		else
-			tasksFilter.onResource = TasksFilter.ON_ANY_RESOURCE;
+			filter.onResource = TasksFilter.ON_ANY_RESOURCE;
 	
-		tasksFilter.workingSet = workingSetGroup.getWorkingSet();
-		tasksFilter.descriptionFilterKind = descriptionGroup.combo.getSelectionIndex();
-		tasksFilter.descriptionFilter = descriptionGroup.text.getText();
-		tasksFilter.filterOnDescription = !tasksFilter.descriptionFilter.equals("");//$NON-NLS-1$
+		filter.workingSet = workingSetGroup.getWorkingSet();
+		filter.descriptionFilterKind = descriptionGroup.combo.getSelectionIndex();
+		filter.descriptionFilter = descriptionGroup.text.getText();
+		filter.filterOnDescription = !filter.descriptionFilter.equals("");//$NON-NLS-1$
 		
-		tasksFilter.filterOnSeverity = severityGroup.getSelection();
-		tasksFilter.severityFilter = severityGroup.getValueMask();
+		filter.filterOnSeverity = severityGroup.getSelection();
+		filter.severityFilter = severityGroup.getValueMask();
 		
-		tasksFilter.filterOnPriority = priorityGroup.getSelection();
-		tasksFilter.priorityFilter = priorityGroup.getValueMask();
+		filter.filterOnPriority = priorityGroup.getSelection();
+		filter.priorityFilter = priorityGroup.getValueMask();
 		
-		tasksFilter.filterOnCompletion = completionGroup.getSelection();
-		tasksFilter.completionFilter = completionGroup.getValueMask();
+		filter.filterOnCompletion = completionGroup.getSelection();
+		filter.completionFilter = completionGroup.getValueMask();
 	
-		int limit = TasksFilter.DEFAULT_MARKER_LIMIT;
+		int markerLimit = TasksFilter.DEFAULT_MARKER_LIMIT;
 		
 		try {
-			limit = Integer.parseInt(this.markerLimit.getText());
+			markerLimit = Integer.parseInt(this.markerLimit.getText());
 		}
 		catch (NumberFormatException eNumberFormat) {
 		}
 	
-		tasksFilter.setMarkerLimit(limit);	
-		tasksFilter.setFilterOnMarkerLimit(filterOnMarkerLimit.getSelection());
+		filter.setMarkerLimit(markerLimit);	
+		filter.setFilterOnMarkerLimit(filterOnMarkerLimit.getSelection());
 	}
 
 	/**
@@ -842,32 +849,32 @@ class FiltersDialog extends Dialog {
 	 *
 	 * @param filter the filter to use
 	 */
-	void updateUIFromFilter(TasksFilter tasksFilter) {
+	void updateUIFromFilter(TasksFilter filter) {
 		
-		setSelectedTypes(tasksFilter.types);
+		setSelectedTypes(filter.types);
 	
-		int on = tasksFilter.onResource;
+		int on = filter.onResource;
 		anyResourceButton.setSelection(on == TasksFilter.ON_ANY_RESOURCE);
 		anyResourceInSameProjectButton.setSelection(on == TasksFilter.ON_ANY_RESOURCE_OF_SAME_PROJECT); // added by cagatayk@acm.org
 		selectedResourceButton.setSelection(on == TasksFilter.ON_SELECTED_RESOURCE_ONLY);
 		selectedResourceAndChildrenButton.setSelection(on == TasksFilter.ON_SELECTED_RESOURCE_AND_CHILDREN);
 		workingSetGroup.setSelection(on == TasksFilter.ON_WORKING_SET);
-		workingSetGroup.setWorkingSet(tasksFilter.workingSet);
+		workingSetGroup.setWorkingSet(filter.workingSet);
 				
-		descriptionGroup.combo.select(tasksFilter.descriptionFilterKind);
-		descriptionGroup.text.setText(tasksFilter.descriptionFilter);
+		descriptionGroup.combo.select(filter.descriptionFilterKind);
+		descriptionGroup.text.setText(filter.descriptionFilter);
 		
-		severityGroup.setSelection(tasksFilter.filterOnSeverity);
-		severityGroup.setValueMask(tasksFilter.severityFilter);
+		severityGroup.setSelection(filter.filterOnSeverity);
+		severityGroup.setValueMask(filter.severityFilter);
 		
-		priorityGroup.setSelection(tasksFilter.filterOnPriority);
-		priorityGroup.setValueMask(tasksFilter.priorityFilter);
+		priorityGroup.setSelection(filter.filterOnPriority);
+		priorityGroup.setValueMask(filter.priorityFilter);
 		
-		completionGroup.setSelection(tasksFilter.filterOnCompletion);
-		completionGroup.setValueMask(tasksFilter.completionFilter);
+		completionGroup.setSelection(filter.filterOnCompletion);
+		completionGroup.setValueMask(filter.completionFilter);
 	
-		markerLimit.setText("" + tasksFilter.getMarkerLimit()); //$NON-NLS-1$
-		filterOnMarkerLimit.setSelection(tasksFilter.getFilterOnMarkerLimit());
+		markerLimit.setText("" + filter.getMarkerLimit()); //$NON-NLS-1$
+		filterOnMarkerLimit.setSelection(filter.getFilterOnMarkerLimit());
 	
 		updateEnabledState();
 	}

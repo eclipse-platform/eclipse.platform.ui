@@ -278,7 +278,6 @@ public class OpenStrategy {
 						}
 						break;
 					case SWT.MouseDown :
-						mouseUpEvent = null;
 						arrowKeyDown = false;
 						break;						
 					case SWT.MouseUp:

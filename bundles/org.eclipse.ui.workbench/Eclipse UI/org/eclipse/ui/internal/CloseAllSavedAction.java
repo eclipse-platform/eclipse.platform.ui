@@ -10,77 +10,79 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import org.eclipse.ui.*;
-import org.eclipse.ui.actions.PartEventAction;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.IPropertyListener;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
- *	Closes all active editors
+ *	Closes all editors except ones with unsaved changes.
  */
-public class CloseAllSavedAction extends PartEventAction implements IPageListener, IPropertyListener{
-	private IWorkbenchWindow workbench;	
+public class CloseAllSavedAction extends PageEventAction implements IPropertyListener {
+	
+	/**
+	 * List of parts (element type: <code>IWorkbenchPart</code>)
+	 * against which this class has outstanding property listeners registered.
+	 */
+	private List partsWithListeners = new ArrayList(1);
+
 /**
  *	Create an instance of this class
  */
-public CloseAllSavedAction(IWorkbenchWindow aWorkbench) {
-	super(WorkbenchMessages.getString("CloseAllSavedAction.text")); //$NON-NLS-1$
-	this.workbench = aWorkbench;
+public CloseAllSavedAction(IWorkbenchWindow window) {
+	super(WorkbenchMessages.getString("CloseAllSavedAction.text"), window); //$NON-NLS-1$
 	setToolTipText(WorkbenchMessages.getString("CloseAllSavedAction.toolTip")); //$NON-NLS-1$
-	//Should create a ID in IWorkbenchActionConstants when it becames API?
+	// @issue Should create a ID in IWorkbenchActionConstants when it becames API?
 	setId("closeAllSaved"); //$NON-NLS-1$
 	updateState();
-	aWorkbench.addPageListener(this);
 	WorkbenchHelp.setHelp(this, IHelpContextIds.CLOSE_ALL_SAVED_ACTION);
+	setActionDefinitionId("org.eclipse.ui.file.closeAllSaved"); //$NON-NLS-1$
 }
-/**
- * Notifies this listener that the given page has been activated.
- *
- * @param page the page that was activated
- * @see IWorkbenchWindow#setActivePage
+/* (non-Javadoc)
+ * Method declared on PageEventAction.
  */
-public void pageActivated(org.eclipse.ui.IWorkbenchPage page) {
+public void pageActivated(IWorkbenchPage page) {
+	super.pageActivated(page);
 	updateState();
 }
-/**
- * Notifies this listener that the given page has been closed.
- *
- * @param page the page that was closed
- * @see IWorkbenchPage#close
+/* (non-Javadoc)
+ * Method declared on PageEventAction.
  */
-public void pageClosed(org.eclipse.ui.IWorkbenchPage page) {
+public void pageClosed(IWorkbenchPage page) {
+	super.pageClosed(page);
 	updateState();
 }
-/**
- * Notifies this listener that the given page has been opened.
- *
- * @param page the page that was opened
- * @see IWorkbenchWindow#openPage
- */
-public void pageOpened(org.eclipse.ui.IWorkbenchPage page) {}
-/**
- * A part has been closed.
+/* (non-Javadoc)
+ * Method declared on PartEventAction.
  */
 public void partClosed(IWorkbenchPart part) {
+	super.partClosed(part);
 	if (part instanceof IEditorPart) {
 		part.removePropertyListener(this);
+		partsWithListeners.remove(part);
 		updateState();	
 	}
 }
-/**
- * A part has been opened.
+/* (non-Javadoc)
+ * Method declared on PartEventAction.
  */
 public void partOpened(IWorkbenchPart part) {	
+	super.partOpened(part);
 	if (part instanceof IEditorPart) {
 		part.addPropertyListener(this);
+		partsWithListeners.add(part);
 		updateState();	
 	}
 }
-/**
- * Indicates that a property has changed.
- *
- * @param source the object whose property has changed
- * @param propID the property which has changed.  In most cases this property ID
- * should be defined as a constant on the source class.
+/* (non-Javadoc)
+ * Method declared on IPropertyListener.
  */
 public void propertyChanged(Object source, int propID) {
 	if (source instanceof IEditorPart) {
@@ -89,30 +91,47 @@ public void propertyChanged(Object source, int propID) {
 		}
 	}
 }
-/**
- *	The user has invoked this action
+/* (non-Javadoc)
+ * Method declared on Action.
  */
 public void run() {
-	WorkbenchPage page = (WorkbenchPage)workbench.getActivePage();
-	if (page != null)
-		page.closeAllSavedEditors();
+	if (getWorkbenchWindow() == null) {
+		// action has been dispose
+		return;
+	}
+	IWorkbenchPage page = getActivePage();
+	if (page != null) {
+		((WorkbenchPage) page).closeAllSavedEditors();
+	}
 }
 /**
  * Enable the action if there at least one editor open.
  */
 private void updateState() {
-	WorkbenchPage page = (WorkbenchPage)workbench.getActivePage();
-	if(page == null) {
+	IWorkbenchPage page = getActivePage();
+	if (page == null) {
 		setEnabled(false);
 		return;
 	}
-	IEditorReference editors[] = page.getSortedEditors();
+	IEditorReference editors[] = page.getEditorReferences();
 	for (int i = 0; i < editors.length; i++) {
-		if(!editors[i].isDirty()) {
+		if (!editors[i].isDirty()) {
 			setEnabled(true);
 			return;
 		}
 	}
 	setEnabled(false);
 }
+/* (non-Javadoc)
+ * Method declared on PageEventAction.
+ */
+public void dispose() {
+	super.dispose();
+	for (Iterator it = partsWithListeners.iterator(); it.hasNext(); ) {
+		IWorkbenchPart part = (IWorkbenchPart) it.next();
+		part.removePropertyListener(this);
+	}
+	partsWithListeners.clear();
+}
+
 }

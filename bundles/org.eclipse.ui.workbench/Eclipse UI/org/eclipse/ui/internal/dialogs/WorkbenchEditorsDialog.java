@@ -33,13 +33,12 @@ import org.eclipse.ui.internal.*;
  */
 public class WorkbenchEditorsDialog extends SelectionDialog {
 
-	private WorkbenchWindow window;
+	private IWorkbenchWindow window;
 	private Table editorsTable;
 	private Button saveSelected;
 	private Button closeSelected;
 	private Button selectClean;
 	private Button invertSelection;
-	private Button allSelection;
 	
 	private boolean showAllPersp = false;
 	private int sortColumn;
@@ -70,7 +69,7 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 	/**
 	 * Constructor for WorkbenchEditorsDialog.
 	 */
-	public WorkbenchEditorsDialog(WorkbenchWindow window) {
+	public WorkbenchEditorsDialog(IWorkbenchWindow window) {
 		super(window.getShell());
 		this.window = window;
 		setTitle(WorkbenchMessages.getString("WorkbenchEditorsDialog.title")); //$NON-NLS-1$
@@ -111,16 +110,13 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
-		// Typically we would use the parent's createButtonsForButtonBar.
-		// However, we only want a Cancel button and not an OK button.  The
-		// OK button will be used later (in createDialogArea) to activate
-		// the selected editor.
-		createButton(
-			parent,
-			IDialogConstants.CANCEL_ID,
-			IDialogConstants.CANCEL_LABEL,
-			false);				
-		Button button = getButton(IDialogConstants.CANCEL_ID);
+		super.createButtonsForButtonBar(parent);
+		
+		Button button = getButton(IDialogConstants.OK_ID);
+		if (button != null)
+			button.setText(WorkbenchMessages.getString("WorkbenchEditorsDialog.activate")); //$NON-NLS-1$
+			
+		button = getButton(IDialogConstants.CANCEL_ID);
 		if (button != null)
 			button.setText(WorkbenchMessages.getString("WorkbenchEditorsDialog.close")); //$NON-NLS-1$
 		
@@ -193,15 +189,33 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 		tc.setResizable(true);
 		tc.setText(WorkbenchMessages.getString("WorkbenchEditorsDialog.path")); //$NON-NLS-1$
 		tc.addSelectionListener(headerListener);
-		
-		// A composite for selection option buttons
+		//A composite for save editors and close editors buttons
 		Composite selectionButtons = new Composite(dialogArea,SWT.NULL);
-		Label compLabel = new Label(selectionButtons,SWT.NULL);
-		compLabel.setFont(font);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 4;
 		selectionButtons.setLayout(layout);
-
+		//Close editors button
+		closeSelected = new Button(selectionButtons,SWT.PUSH);
+		closeSelected.setText(WorkbenchMessages.getString("WorkbenchEditorsDialog.closeSelected")); //$NON-NLS-1$
+		closeSelected.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				closeItems(editorsTable.getSelection());
+			}
+		});
+		closeSelected.setFont(font);
+		setButtonLayoutData(closeSelected);
+		
+		//Save editors button
+		saveSelected = new Button(selectionButtons,SWT.PUSH);
+		saveSelected.setText(WorkbenchMessages.getString("WorkbenchEditorsDialog.saveSelected")); //$NON-NLS-1$
+		saveSelected.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				saveItems(editorsTable.getSelection(),null);
+			}
+		});
+		saveSelected.setFont(font);
+		setButtonLayoutData(saveSelected);
+		
 		//Select clean editors button
 		selectClean = new Button(selectionButtons,SWT.PUSH);
 		selectClean.setText(WorkbenchMessages.getString("WorkbenchEditorsDialog.selectClean")); //$NON-NLS-1$
@@ -225,56 +239,7 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 		});
 		invertSelection.setFont(font);
 		setButtonLayoutData(invertSelection);
-
-		//Select all button
-		allSelection = new Button(selectionButtons,SWT.PUSH);
-		allSelection.setText(WorkbenchMessages.getString("WorkbenchEditorsDialog.allSelection")); //$NON-NLS-1$
-		allSelection.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				editorsTable.setSelection(editorsTable.getItems());
-				updateButtons();
-			}
-		});
-		allSelection.setFont(font);
-		setButtonLayoutData(allSelection);
-
-		// A composite for selected editor action buttons
-		Composite actionButtons = new Composite(dialogArea,SWT.NULL);
-		Label actLabel = new Label(actionButtons,SWT.NULL);
-		actLabel.setFont(font);
-		GridLayout actLayout = new GridLayout();
-		actLayout.numColumns = 4;
-		actionButtons.setLayout(actLayout);
-
-		// Activate selected editor button
-		createButton(
-			actionButtons,
-			IDialogConstants.OK_ID,
-			WorkbenchMessages.getString("WorkbenchEditorsDialog.activate"),
-			true);
 		
-		//Close selected editors button
-		closeSelected = new Button(actionButtons,SWT.PUSH);
-		closeSelected.setText(WorkbenchMessages.getString("WorkbenchEditorsDialog.closeSelected")); //$NON-NLS-1$
-		closeSelected.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				closeItems(editorsTable.getSelection());
-			}
-		});
-		closeSelected.setFont(font);
-		setButtonLayoutData(closeSelected);
-		
-		//Save selected editors button
-		saveSelected = new Button(actionButtons,SWT.PUSH);
-		saveSelected.setText(WorkbenchMessages.getString("WorkbenchEditorsDialog.saveSelected")); //$NON-NLS-1$
-		saveSelected.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				saveItems(editorsTable.getSelection(),null);
-			}
-		});
-		saveSelected.setFont(font);
-		setButtonLayoutData(saveSelected);
-				
 		//Show only active perspective button
 		final Button showAllPerspButton = new Button(dialogArea,SWT.CHECK);
 		showAllPerspButton.setText(WorkbenchMessages.getString("WorkbenchEditorsDialog.showAllPersp")); //$NON-NLS-1$
@@ -595,7 +560,8 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 					IEditorRegistry registry = WorkbenchPlugin.getDefault().getEditorRegistry();
 					image = registry.getImageDescriptor(input.getName());
 					if (image == null) {
-						image = registry.getDefaultEditor().getImageDescriptor();
+						// @issue what should be the default image?
+						// image = registry.getDefaultEditor().getImageDescriptor();
 					}
 				}
 				if (image != null) {
@@ -626,10 +592,7 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 				IWorkbenchPage p = window.getActivePage();
 				if (p != null) {
 					try {
-						if(desc != null)
-							p.openEditor(input,desc.getId(),true);
-						else if(input instanceof IFileEditorInput)
-							p.openEditor(((IFileEditorInput)input).getFile());
+						p.openEditor(input, desc.getId(), true);
 					} catch (PartInitException e) {
 					}
 				}

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.ui.internal.progress.ProgressMessages;
 
 /**
  * SubTaskInfo is the class that displays a subtask in the 
@@ -18,16 +20,16 @@ package org.eclipse.ui.internal.progress;
 class SubTaskInfo extends JobTreeElement {
 
 	protected String taskName;
-	JobInfo jobInfo;
+	Job job;
 
 	/**
 	 * Create a new instance of the receiver.
 	 * @param parentJob
 	 * @param name
 	 */
-	SubTaskInfo(JobInfo parentJob, String name) {
+	SubTaskInfo(Job parentJob, String name) {
 		taskName = name;
-		jobInfo = parentJob;
+		job = parentJob;
 	}
 
 	/* (non-Javadoc)
@@ -65,7 +67,7 @@ class SubTaskInfo extends JobTreeElement {
 	 * @see org.eclipse.ui.internal.progress.JobTreeElement#getParent()
 	 */
 	Object getParent() {
-		return jobInfo;
+		return job;
 	}
 
 	/* (non-Javadoc)

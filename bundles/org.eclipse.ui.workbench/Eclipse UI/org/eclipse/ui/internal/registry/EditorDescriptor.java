@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
+import java.io.File;
 import java.io.Serializable;
 
 import org.eclipse.core.runtime.CoreException;
@@ -19,11 +20,17 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.program.Program;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.misc.ProgramImageDescriptor;
 
 /**
  * @see IEditorDescriptor
  */
-public class EditorDescriptor implements IEditorDescriptor, Serializable {
+public final class EditorDescriptor implements IEditorDescriptor, Serializable {
+	private static final String ATT_EDITOR_CONTRIBUTOR = "contributorClass"; //$NON-NLS-1$
+	/* package */ static final int OPEN_INTERNAL = 0x01;
+	/* package */ static final int OPEN_INPLACE = 0x02;
+	/* package */ static final int OPEN_EXTERNAL = 0x04;
+
 	private String editorName;
 	private String imageFilename;
 	private transient ImageDescriptor imageDesc;
@@ -35,15 +42,69 @@ public class EditorDescriptor implements IEditorDescriptor, Serializable {
 	//Work in progress for OSEditors
 	private Program program;
 
-	private String pluginIdentifier;
 	//The id of the plugin which contributed this editor, null for external editors
-	private boolean internal = false;
-	private boolean openInPlace = false;
+	private String pluginIdentifier;
+	private int openMode = 0;	
 	private transient IConfigurationElement configurationElement;
-	private static String ATT_EDITOR_CONTRIBUTOR = "contributorClass"; //$NON-NLS-1$
 
-	// Single descriptor instance to represent the system editor
-	private static EditorDescriptor systemEditorDescriptor;
+	/**
+	 * Create a new instance of an editor descriptor. Limited
+	 * to internal framework calls.
+	 */
+	/* package */ EditorDescriptor() {
+		super();
+	}
+	
+	/**
+	 * Creates a descriptor for an external program.
+	 * 
+	 * @param filename the external editor full path and filename
+	 * @return the editor descriptor
+	 */
+	public static EditorDescriptor createForProgram(String filename) {
+		if (filename == null) {
+			throw new IllegalArgumentException();
+		}
+		EditorDescriptor editor = new EditorDescriptor();
+		
+		editor.setFileName(filename);
+		editor.setID(filename);
+		editor.setOpenMode(OPEN_EXTERNAL);
+		
+		//Isolate the program name (no directory or extension)
+		int start = filename.lastIndexOf(File.separator);
+		String name;
+		if (start != -1) {
+			name = filename.substring(start + 1);
+		} else {
+			name = filename;
+		}
+		int end = name.lastIndexOf('.');
+		if (end != -1) {
+			name = name.substring(0, end);
+		}
+		editor.setName(name);
+		
+		// get the program icon without storing it in the registry
+		ImageDescriptor imageDescriptor = new ProgramImageDescriptor(filename, 0);
+		editor.setImageDescriptor(imageDescriptor);
+		
+		return editor;
+	}
+	/**
+	 * Return the program called programName. Return null if it is not found.
+	 * @return org.eclipse.swt.program.Program
+	 */
+	private static Program findProgram(String programName) {
+
+		Program[] programs = Program.getPrograms();
+		for (int i = 0; i < programs.length; i++) {
+			if (programs[i].getName().equals(programName))
+				return programs[i];
+		}
+
+		return null;
+	}
 	/**
 	 * Creates the action contributor for this editor.
 	 */
@@ -66,20 +127,6 @@ public class EditorDescriptor implements IEditorDescriptor, Serializable {
 			id, e.getStatus());
 		}
 		return contributor;
-	}
-	/**
-	 * Return the program called programName. Return null if it is not found.
-	 * @return org.eclipse.swt.program.Program
-	 */
-	private static Program findProgram(String programName) {
-
-		Program[] programs = Program.getPrograms();
-		for (int i = 0; i < programs.length; i++) {
-			if (programs[i].getName().equals(programName))
-				return programs[i];
-		}
-
-		return null;
 	}
 	/**
 	 * @see IResourceEditorDescriptor
@@ -115,18 +162,21 @@ public class EditorDescriptor implements IEditorDescriptor, Serializable {
 	public ImageDescriptor getImageDescriptor() {
 		if (testImage) {
 			testImage = false;
-			if (imageDesc == null)
+			if (imageDesc == null) {
+				// @issue what should be the default image?
 				imageDesc =
 					WorkbenchImages.getImageDescriptor(
 						ISharedImages.IMG_OBJ_FILE);
-			else {
+			} else {
 				Image img = imageDesc.createImage(false);
-				if (img == null)
+				if (img == null) {
+					// @issue what should be the default image?
 					imageDesc =
 						WorkbenchImages.getImageDescriptor(
 							ISharedImages.IMG_OBJ_FILE);
-				else
+				} else {
 					img.dispose();
+				}
 			}
 		}
 		return imageDesc;
@@ -164,29 +214,28 @@ public class EditorDescriptor implements IEditorDescriptor, Serializable {
 	public Program getProgram() {
 		return this.program;
 	}
-	/**
-	 * Return the single descriptor instance of a system editor
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IEditorDescriptor#isOpenInternal()
 	 */
-	public static EditorDescriptor getSystemEditorDescriptor() {
-		if (systemEditorDescriptor == null) {
-			systemEditorDescriptor = new EditorDescriptor();
-			systemEditorDescriptor.setID(IWorkbenchConstants.SYSTEM_EDITOR_ID);
-			systemEditorDescriptor.setName(WorkbenchMessages.getString("SystemEditorDescription.name")); //$NON-NLS-1$
-		}
-		return systemEditorDescriptor;
+	public boolean isOpenInternal() {
+		return openMode == OPEN_INTERNAL;
 	}
-	/**
-	 * @see IResourceEditorDescriptor
-	 */
-	public boolean isInternal() {
-		return internal;
-	}
-	/**
-	 * @see IResourceEditorDescriptor
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IEditorDescriptor#isOpenInPlace()
 	 */
 	public boolean isOpenInPlace() {
-		return openInPlace;
+		return openMode == OPEN_INPLACE;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IEditorDescriptor#isOpenExternal()
+	 */
+	public boolean isOpenExternal() {
+		return openMode == OPEN_EXTERNAL;
+	}
+
 	/**
 	 * Load the object properties from a IMemento.
 	 */
@@ -198,20 +247,14 @@ public class EditorDescriptor implements IEditorDescriptor, Serializable {
 		fileName = memento.getString(IWorkbenchConstants.TAG_FILE);
 		id = memento.getString(IWorkbenchConstants.TAG_ID);
 		pluginIdentifier = memento.getString(IWorkbenchConstants.TAG_PLUGING);
-		internal =
-			new Boolean(memento.getString(IWorkbenchConstants.TAG_INTERNAL))
-				.booleanValue();
-		openInPlace =
-			new Boolean(
-				memento.getString(IWorkbenchConstants.TAG_OPEN_IN_PLACE))
-				.booleanValue();
+		openMode = memento.getInteger(IWorkbenchConstants.TAG_OPEN_MODE).intValue();
 
-		String programName =
-			memento.getString(IWorkbenchConstants.TAG_PROGRAM_NAME);
-		if (programName != null)
+		String programName =	memento.getString(IWorkbenchConstants.TAG_PROGRAM_NAME);
+		if (programName != null) {
 			this.program = findProgram(programName);
-
+		}
 	}
+	
 	/**
 	 * Save the object values in a IMemento
 	 */
@@ -223,12 +266,7 @@ public class EditorDescriptor implements IEditorDescriptor, Serializable {
 		memento.putString(IWorkbenchConstants.TAG_FILE, fileName);
 		memento.putString(IWorkbenchConstants.TAG_ID, id);
 		memento.putString(IWorkbenchConstants.TAG_PLUGING, pluginIdentifier);
-		memento.putString(
-			IWorkbenchConstants.TAG_INTERNAL,
-			String.valueOf(internal));
-		memento.putString(
-			IWorkbenchConstants.TAG_OPEN_IN_PLACE,
-			String.valueOf(openInPlace));
+		memento.putInteger(IWorkbenchConstants.TAG_OPEN_MODE, openMode);
 		if (this.program != null)
 			memento.putString(
 				IWorkbenchConstants.TAG_PROGRAM_NAME,
@@ -237,19 +275,19 @@ public class EditorDescriptor implements IEditorDescriptor, Serializable {
 	/**
 	 * Set the class name of an internal editor.
 	 */
-	public void setClassName(String newClassName) {
+	/* package */ void setClassName(String newClassName) {
 		className = newClassName;
 	}
 	/**
 	 * Set the configuration element which contributed this editor.
 	 */
-	public void setConfigurationElement(IConfigurationElement newConfigurationElement) {
+	/* package */ void setConfigurationElement(IConfigurationElement newConfigurationElement) {
 		configurationElement = newConfigurationElement;
 	}
 	/**
 	 * Set the filename of an external editor.
 	 */
-	public void setFileName(String aFileName) {
+	/* package */ void setFileName(String aFileName) {
 		fileName = aFileName;
 	}
 	/**
@@ -257,59 +295,54 @@ public class EditorDescriptor implements IEditorDescriptor, Serializable {
 	 * For internal editors this is the id as provided in the extension point
 	 * For external editors it is path and filename of the editor
 	 */
-	public void setID(String anID) {
+	/* package */ void setID(String anID) {
 		id = anID;
 	}
 	/**
 	 * The Image to use to repesent this editor
 	 */
-	public void setImageDescriptor(ImageDescriptor desc) {
+	/* package */ void setImageDescriptor(ImageDescriptor desc) {
 		imageDesc = desc;
 		testImage = true;
 	}
 	/**
 	 * The name of the image to use for this editor.
 	 */
-	public void setImageFilename(String aFileName) {
+	/* package */ void setImageFilename(String aFileName) {
 		imageFilename = aFileName;
-	}
-	/**
-	 * True if this editor is an interal editor.
-	 */
-	public void setInternal(boolean newInternal) {
-		internal = newInternal;
 	}
 	/**
 	 * Sets the new launcher class name
 	 *
 	 * @param newLauncher the new launcher
 	 */
-	public void setLauncher(String newLauncher) {
+	/* package */ void setLauncher(String newLauncher) {
 		launcherName = newLauncher;
 	}
 	/**
 	 * The label to show for this editor.
 	 */
-	public void setName(String newName) {
+	/* package */ void setName(String newName) {
 		editorName = newName;
 	}
 	/**
-	 * Set if this external editor should be opened inplace.
+	 * Set the open mode of this editor descriptor.
+	 * @param anID
 	 */
-	public void setOpenInPlace(boolean aBoolean) {
-		openInPlace = aBoolean;
+	/* package */ void setOpenMode(int mode) {
+		openMode = mode;
 	}
 	/**
 	 * The id of the plugin which contributed this editor, null for external editors.
 	 */
-	public void setPluginIdentifier(String anID) {
+	/* package */ void setPluginIdentifier(String anID) {
 		pluginIdentifier = anID;
 	}
 	/**
 	 * Set the receivers program.
 	 * @param newProgram
 	 */
-	public void setProgram(Program newProgram) {
+	/* package */ void setProgram(Program newProgram) {
 
 		this.program = newProgram;
 		if (editorName == null)
@@ -319,6 +352,6 @@ public class EditorDescriptor implements IEditorDescriptor, Serializable {
 	 * For debugging purposes only.
 	 */
 	public String toString() {
-		return "ResourceEditorDescriptor(" + editorName + ")"; //$NON-NLS-2$//$NON-NLS-1$
+		return "EditorDescriptor(" + editorName + ")"; //$NON-NLS-2$//$NON-NLS-1$
 	}
 }

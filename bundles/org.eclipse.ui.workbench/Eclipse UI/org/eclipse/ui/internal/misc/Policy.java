@@ -16,6 +16,7 @@ import org.eclipse.ui.PlatformUI;
 public class Policy {
 	public static boolean DEFAULT = false;
 	
+	// @issue this is an IDE specific debug option
 	public static boolean DEBUG_OPEN_ERROR_DIALOG = DEFAULT;
 	public static boolean DEBUG_SWT_GRAPHICS = DEFAULT;
 

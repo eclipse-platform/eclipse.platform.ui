@@ -10,13 +10,14 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.decorators;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.internal.ActionDescriptor;
-import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.dialogs.DialogUtil;
-import org.eclipse.ui.internal.model.WorkbenchAdapter;
-import org.eclipse.ui.model.*;
-import org.eclipse.jface.resource.*;
+import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * Represent the description of an action within
@@ -26,9 +27,9 @@ import org.eclipse.jface.resource.*;
  *		and should be reviewed to determine if code
  *		reuse if possible.]
  */
-public class LightweightActionDescriptor extends WorkbenchAdapter
-	implements IAdaptable
-{
+public class LightweightActionDescriptor implements IAdaptable, IWorkbenchAdapter {
+	private static final Object[] NO_CHILDREN = new Object[0];
+
 	private String id;
 	private String label;
 	private String description;
@@ -42,7 +43,11 @@ public LightweightActionDescriptor(IConfigurationElement actionElement) {
 
 	String iconName = actionElement.getAttribute(ActionDescriptor.ATT_ICON);
 	if (iconName != null) {
-		this.image = WorkbenchImages.getImageDescriptorFromExtension(actionElement.getDeclaringExtension(), iconName);
+		IExtension extension = actionElement.getDeclaringExtension();
+		String extendingPluginId = 
+			extension.getDeclaringPluginDescriptor().getUniqueIdentifier();
+		this.image = AbstractUIPlugin.imageDescriptorFromPlugin(
+			extendingPluginId, iconName);
 	}
 }
 /**
@@ -79,7 +84,7 @@ public ImageDescriptor getImageDescriptor() {
 public ImageDescriptor getImageDescriptor(Object o) {
 	if (o == this)
 		return getImageDescriptor();
-	return super.getImageDescriptor(o);
+	return null;
 }
 /**
  * Returns the action's label.
@@ -98,6 +103,18 @@ public String getLabel(Object o) {
 			text = text.substring(0, end);
 		return DialogUtil.removeAccel(text);		
 	}
-	return super.getLabel(o);
+	return o == null ? "" : o.toString();//$NON-NLS-1$
+}
+/* (non-Javadoc)
+ * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(java.lang.Object)
+ */
+public Object[] getChildren(Object o) {
+	return NO_CHILDREN;
+}
+/* (non-Javadoc)
+ * @see org.eclipse.ui.model.IWorkbenchAdapter#getParent(java.lang.Object)
+ */
+public Object getParent(Object o) {
+	return null;
 }
 }

@@ -48,7 +48,7 @@ public class UIPreferences extends TestCase {
 	}
 	private IProject getDummyProject() {
 		try {
-			IProject projects[] = WorkbenchPlugin.getPluginWorkspace().getRoot().getProjects();
+			IProject projects[] = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 			for (int i = 0; i < projects.length; i++) {
 				if ( projects[i].getName().equals(PROJECT_NAME) ) {
 					projects[i].delete(true, null);

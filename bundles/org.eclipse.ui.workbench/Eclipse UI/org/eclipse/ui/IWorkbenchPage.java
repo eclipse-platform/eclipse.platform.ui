@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.util.IPropertyChangeListener;
 
@@ -45,6 +43,8 @@ public interface IWorkbenchPage extends IPartService, ISelectionService {
 	 * <code>openEditor</code> is called.
 	 *
 	 * @see #openEditor
+	 * @deprecated in 3.0 since the notion of markers this is not generally
+	 * applicable. Use the IDE-specific constant <code>IDE.EDITOR_ID_ATTR</code>.
  	 */	
 	public static final String EDITOR_ID_ATTR = "org.eclipse.ui.editorID"; //$NON-NLS-1$
 
@@ -342,120 +342,12 @@ public boolean isEditorAreaVisible();
  */
 public void reuseEditor(IReusableEditor editor,IEditorInput input);
 /**
- * Opens an editor on the given file resource. 
+ * Opens an editor on the given input.  
  * <p>
- * If this page already has an editor open on the target object that editor is 
- * activated; otherwise, a new editor is opened. 
- * <p><p>
- * An appropriate editor for the input is determined using a multistep process.
- * </p>
- * <ol>
- *   <li>The workbench editor registry is consulted to determine if an editor 
- *			extension has been registered for the file type.  If so, an 
- *			instance of the editor extension is opened on the file.  
- *			See <code>IEditorRegistry.getDefaultEditor(IFile)</code>.
- *   <li>Next, the native operating system will be consulted to determine if a native
- *			editor exists for the file type.  If so, a new process is started
- *			and the native editor is opened on the file.
- *   <li>If all else fails the file will be opened in a default text editor.</li>
- * </ol>
- * </p>
- *
- * @param input the file to edit
- * @return an open and active editor, or null if a system editor was opened
- * @exception PartInitException if the editor could not be initialized
- */
-public IEditorPart openEditor(IFile input) throws PartInitException;
-/**
- * Opens an editor on the given file resource.  
- * <p>
- * If this page already has an editor open on the target object that editor is 
- * brought to front; otherwise, a new editor is opened. If 
- * <code>activate == true</code> the editor will be activated. 
- * <p><p>
- * The editor type is determined by mapping <code>editorId</code> to an editor
- * extension registered with the workbench.  An editor id is passed rather than
- * an editor object to prevent the accidental creation of more than one editor
- * for the same input. It also guarantees a consistent lifecycle for editors,
- * regardless of whether they are created by the user or restored from saved 
- * data.
- * </p>
- *
- * @param input the file to edit
- * @param editorId the id of the editor extension to use or null
- * @param activate if <code>true</code> the editor will be activated
- * @return an open and active editor
- * @exception PartInitException if the editor could not be initialized
- */
-public IEditorPart openEditor(IFile input, String editorID, boolean activate)
-	throws PartInitException;
-/**
- * Opens an editor on the given file resource.  
- * <p>
- * If this page already has an editor open on the target object that editor is 
- * activated; otherwise, a new editor is opened. 
- * <p><p>
- * The editor type is determined by mapping <code>editorId</code> to an editor
- * extension registered with the workbench.  An editor id is passed rather than
- * an editor object to prevent the accidental creation of more than one editor
- * for the same input. It also guarantees a consistent lifecycle for editors,
- * regardless of whether they are created by the user or restored from saved 
- * data.
- * </p>
- *
- * @param editorId the id of the editor extension to use
- * @param input the file to edit
- * @return an open and active editor
- * @exception PartInitException if the editor could not be initialized
- */
-public IEditorPart openEditor(IFile input, String editorID)
-	throws PartInitException;
-/**
- * Opens an editor on the file resource of the given marker. 
- * <p>
- * If this page already has an editor open on the target object that editor is 
- * activated; otherwise, a new editor is opened. The cursor and selection state 
- * of the editor is then updated from information recorded in the marker.
- * <p><p>
- * If the marker contains an <code>EDITOR_ID_ATTR</code> attribute 
- * the attribute value will be used to determine the editor type to be opened. 
- * If not, the registered editor for the marker resource will be used. 
- * </p>
- *
- * @param marker the marker to open
- * @return an open and active editor, or null if a system editor was opened
- * @exception PartInitException if the editor could not be initialized
- * @see IEditorPart#gotoMarker
- */
-public IEditorPart openEditor(IMarker marker) throws PartInitException;
-/**
- * Opens an editor on the file resource of the given marker. 
- * <p>
- * If this page already has an editor open on the target object that editor is 
- * brought to front; otherwise, a new editor is opened. If 
- * <code>activate == true</code> the editor will be activated.  The cursor and 
- * selection state of the editor are then updated from information recorded in 
- * the marker.
- * <p><p>
- * If the marker contains an <code>EDITOR_ID_ATTR</code> attribute 
- * the attribute value will be used to determine the editor type to be opened. 
- * If not, the registered editor for the marker resource will be used. 
- * </p>
- *
- * @param marker the marker to open
- * @param activate if <code>true</code> the editor will be activated
- * @return an open editor, or null if a system editor was opened
- * @exception PartInitException if the editor could not be initialized
- * @see IEditorPart#gotoMarker
- */
-public IEditorPart openEditor(IMarker marker, boolean activate) 
-	throws PartInitException;
-/**
- * Opens an editor on the given object.  
- * <p>
- * If this page already has an editor open on the target object that editor is 
- * activated; otherwise, a new editor is opened. 
- * <p><p>
+ * If this page already has an editor open on the target input that editor is 
+ * activated; otherwise, a new editor is opened. Two editor inputs, input1 and
+ * input2, are considered the same if <pre>input1.equals(input2) == true</pre>.
+ * </p><p>
  * The editor type is determined by mapping <code>editorId</code> to an editor
  * extension registered with the workbench.  An editor id is passed rather than
  * an editor object to prevent the accidental creation of more than one editor
@@ -466,18 +358,20 @@ public IEditorPart openEditor(IMarker marker, boolean activate)
  *
  * @param input the editor input
  * @param editorId the id of the editor extension to use
- * @return an open and active editor
- * @exception PartInitException if the editor could not be initialized
+ * @return an open and active editor, or <code>null</code> if an external editor
+ * was opened
+ * @exception PartInitException if the editor could not be created or initialized
  */
-public IEditorPart openEditor(IEditorInput input, String editorId)
-	throws PartInitException;
+public IEditorPart openEditor(IEditorInput input, String editorId) throws PartInitException;
 /**
- * Opens an editor on the given object.  
+ * Opens an editor on the given input.  
  * <p>
- * If this page already has an editor open on the target object that editor is 
- * brought to the front; otherwise, a new editor is opened.  If 
- * <code>activate == true</code> the editor will be activated.  
- * <p><p>
+ * If this page already has an editor open on the target input that editor is 
+ * brought to the front; otherwise, a new editor is opened. Two editor inputs 
+ * are considered the same if they equal. See <code>Object.equals(Object)<code>
+ * and <code>IEditorInput</code>. If <code>activate == true</code> the editor
+ * will be activated.  
+ * </p><p>
  * The editor type is determined by mapping <code>editorId</code> to an editor
  * extension registered with the workbench.  An editor id is passed rather than
  * an editor object to prevent the accidental creation of more than one editor
@@ -489,21 +383,11 @@ public IEditorPart openEditor(IEditorInput input, String editorId)
  * @param input the editor input
  * @param editorId the id of the editor extension to use
  * @param activate if <code>true</code> the editor will be activated
- * @return an open editor
- * @exception PartInitException if the editor could not be initialized
+ * @return an open editor, or <code>null</code> if an external editor was opened
+ * @exception PartInitException if the editor could not be created or initialized
  */
 public IEditorPart openEditor(IEditorInput input, String editorId, boolean activate)
 	throws PartInitException;
-/**
- * Opens an operating system editor on a given file. Once open, the
- * workbench has no knowledge of the editor or the state of the file
- * being edited.  Users are expected to perform a "Local Refresh" from
- * the workbench user interface.
- *
- * @param input the file to edit
- * @exception PartInitException if the editor could not be opened.
- */
-public void openSystemEditor(IFile input) throws PartInitException;
 /**
  * Removes the property change listener.
  * 
@@ -670,6 +554,4 @@ public void setEditorReuseThreshold(int openEditors);
  * @since 2.1
  */
 public INavigationHistory getNavigationHistory();
-
-//IContextActivationService getContextActivationService();
 }

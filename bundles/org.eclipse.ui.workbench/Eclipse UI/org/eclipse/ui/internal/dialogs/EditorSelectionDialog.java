@@ -15,16 +15,13 @@ import org.eclipse.ui.internal.registry.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.*;
-import org.eclipse.ui.internal.misc.ProgramImageDescriptor;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import java.util.*;
-import java.io.File;
 
 
 /**
@@ -42,7 +39,6 @@ public class EditorSelectionDialog extends Dialog implements Listener {
 	private Button browseExternalEditorsButton;
 	private Button internalButton;
 	private Button okButton;
-	private Button cancelButton;
 	private static final String STORE_ID_INTERNAL_EXTERNAL = "EditorSelectionDialog.STORE_ID_INTERNAL_EXTERNAL";//$NON-NLS-1$
 	private String message = WorkbenchMessages.getString("EditorSelection.chooseAnEditor"); //$NON-NLS-1$
 	// collection of IEditorDescriptor
@@ -312,25 +308,7 @@ protected void promptForExternalEditor() {
 	dialog.setFilterExtensions(Executable_Filters);
 	String result = dialog.open();
 	if (result != null) {
-		EditorDescriptor editor = new EditorDescriptor();
-		editor.setFileName(result);
-		editor.setID(result);
-		//Isolate the program name (no directory or extension)
-		int start = result.lastIndexOf(File.separator);
-		String name;
-		if (start != -1) {
-			name = result.substring(start + 1);
-		} else {
-			name = result;
-		}
-		int end = name.lastIndexOf('.');
-		if (end != -1) {
-			name = name.substring(0, end);
-		}
-		editor.setName(name);
-		// get the program icon without storing it in the registry
-		ImageDescriptor imageDescriptor = new ProgramImageDescriptor(result, 0);
-		editor.setImageDescriptor(imageDescriptor);
+		EditorDescriptor editor = EditorDescriptor.createForProgram(result);
 		// pretend we had obtained it from the list of os registered editors
 		TableItem ti = new TableItem(editorTable, SWT.NULL);
 		ti.setData(editor);
@@ -404,7 +382,7 @@ public void updateEnableState() {
 }
 protected void createButtonsForButtonBar(Composite parent) {
 	okButton = createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
-	cancelButton = createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
+	createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 	//initially there is no selection so OK button should not be enabled
 	okButton.setEnabled(false);
 	

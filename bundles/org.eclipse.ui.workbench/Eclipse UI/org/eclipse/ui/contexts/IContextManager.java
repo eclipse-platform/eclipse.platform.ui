@@ -11,15 +11,12 @@
 
 package org.eclipse.ui.contexts;
 
-import java.util.List;
-import java.util.SortedSet;
-
 /**
  * <p>
- * JAVADOC
+ * TODO javadoc
  * </p>
  * <p>
- * This interface is not intended to be extended or implemented by clients.
+ * This interface is not intended to be implemented or extended by clients.
  * </p>
  * <p>
  * <em>EXPERIMENTAL</em>
@@ -33,38 +30,35 @@ public interface IContextManager {
 	 * Registers an IContextManagerListener instance with this context manager.
 	 *
 	 * @param contextManagerListener the IContextManagerListener instance to register.
-	 * @throws NullPointerException
 	 */	
 	void addContextManagerListener(IContextManagerListener contextManagerListener);
 
 	/**
-	 * JAVADOC
+	 * TODO javadoc
 	 *
 	 * @return
 	 */
-	List getActiveContextIds();
+	String[] getActiveContextIds();
 
 	/**
-	 * JAVADOC
+	 * TODO javadoc
 	 *
 	 * @param contextId
 	 * @return
-	 * @throws NullPointerException
 	 */	
 	IContext getContext(String contextId);
 
 	/**
-	 * JAVADOC
+	 * TODO javadoc
 	 *
 	 * @return
 	 */
-	SortedSet getDefinedContextIds();
+	String[] getContextIds();
 	
 	/**
 	 * Unregisters an IContextManagerListener instance with this context manager.
 	 *
 	 * @param contextManagerListener the IContextManagerListener instance to unregister.
-	 * @throws NullPointerException
 	 */
 	void removeContextManagerListener(IContextManagerListener contextManagerListener);
 }

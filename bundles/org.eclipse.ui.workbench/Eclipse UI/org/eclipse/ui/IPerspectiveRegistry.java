@@ -44,7 +44,6 @@ public IPerspectiveDescriptor findPerspectiveWithLabel(String label);
  * Returns the id of the default perspective for the workbench.  This identifies one
  * perspective extension within the workbench's perspective registry.
  * <p>
- * <p><p>
  * On startup of the platform UI the default perspective is determined using a 
  * multistep process.
  * </p>
@@ -61,6 +60,7 @@ public IPerspectiveDescriptor findPerspectiveWithLabel(String label);
  * </p>
  *
  * @return the default perspective id; will never be <code>null</code>
+ * @issue revise - this is out of date (even before RCP)
  */
 public String getDefaultPerspective();
 /**

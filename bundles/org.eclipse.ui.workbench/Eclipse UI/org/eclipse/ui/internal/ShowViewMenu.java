@@ -22,7 +22,6 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.dialogs.ShowViewDialog;
 import org.eclipse.ui.internal.registry.*;
-import org.eclipse.ui.internal.roles.RoleManager;
 
 /**
  * A <code>ShowViewMenu</code> is used to populate a menu manager with
@@ -70,7 +69,8 @@ public class ShowViewMenu extends ContributionItem {
 	 * 
 	 * @param window the window containing the menu
 	 */
-	public ShowViewMenu(IWorkbenchWindow window) {
+	public ShowViewMenu(IWorkbenchWindow window, String id) {
+		super(id);
 		this.window = window;
 		WorkbenchHelp.setHelp(showDlgAction, IHelpContextIds.SHOW_VIEW_OTHER_ACTION);
 	}
@@ -104,17 +104,6 @@ public class ShowViewMenu extends ContributionItem {
 		// Get visible actions.
 		List viewIds = ((WorkbenchPage) page).getShowViewActionIds();
 		viewIds = addOpenedViews(page, viewIds);
-		
-		List filtered = new ArrayList();
-		Iterator iterator = viewIds.iterator();
-		while(iterator.hasNext()){
-			String next = (String) iterator.next();
-			if(RoleManager.getInstance().isEnabledId(next))
-				filtered.add(next);			
-		}
-		
-		viewIds = filtered;
-		
 		List actions = new ArrayList(viewIds.size());
 		for (Iterator i = viewIds.iterator(); i.hasNext();) {
 			String id = (String) i.next();

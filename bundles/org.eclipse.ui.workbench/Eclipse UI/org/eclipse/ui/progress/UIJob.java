@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.progress.ProgressMessages;
 
 public abstract class UIJob extends Job {
@@ -74,9 +73,6 @@ public abstract class UIJob extends Job {
 			public void run() {
 				IStatus result = null;
 				try {
-					//As we are in the UI Thread we can
-					//always know what to tell the job.
-					setThread(Thread.currentThread());
 					result = runInUIThread(monitor);
 				} finally {
 					if (result == null)
@@ -116,13 +112,11 @@ public abstract class UIJob extends Job {
 		if (display != null)
 			return display;
 		IWorkbenchWindow windows[] =
-			WorkbenchPlugin.getDefault().getWorkbench().getWorkbenchWindows();
-		if (windows.length ==  0 || windows[0].getShell().isDisposed())
+			PlatformUI.getWorkbench().getWorkbenchWindows();
+		if (windows.length == 0)
 			return Display.getDefault();
 		else
 			return windows[0].getShell().getDisplay();
-			
-		
 
 	}
 

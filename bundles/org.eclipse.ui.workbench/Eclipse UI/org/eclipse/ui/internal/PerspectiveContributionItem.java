@@ -25,6 +25,7 @@ import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.MenuManager;
 
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.actions.ContributionItemFactory;
 
 /**
  * This contribution item creates a menu to open perspectives within
@@ -45,7 +46,7 @@ public class PerspectiveContributionItem extends ContributionItem {
 	public PerspectiveContributionItem(IWorkbenchWindow window) {
 		super();
 		menuMgr = new MenuManager();
-		menuMgr.add(new ChangeToPerspectiveMenu(window));
+		menuMgr.add(ContributionItemFactory.PERSPECTIVES_SHORTLIST.create(window));
 	}
 	
 	/* (non-Javadoc)

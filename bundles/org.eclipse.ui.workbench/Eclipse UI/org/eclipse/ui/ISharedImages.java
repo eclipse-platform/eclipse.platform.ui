@@ -39,11 +39,19 @@ public interface ISharedImages {
 
 	/**
 	 * Identifies a project image.
+	 * 
+	 * @deprecated in 3.0. This image is IDE-specific, and is therefore found
+	 * only in IDE configurations. IDE-specific tools should use 
+	 * <code>org.eclipse.ui.ide.IDE.SharedImages.IMG_OBJ_PROJECT</code> instead.
 	 */
 	public final static String IMG_OBJ_PROJECT = "IMG_OBJ_PROJECT"; //$NON-NLS-1$
 
 	/**
 	 * Identifies a closed project image.
+	 * 
+	 * @deprecated in 3.0. This image is IDE-specific, and is therefore found
+	 * only in IDE configurations. IDE-specific tools should use 
+	 * <code>org.eclipse.ui.ide.IDE.SharedImages.IMG_OBJ_PROJECT_CLOSED</code> instead.
 	 */
 	public final static String IMG_OBJ_PROJECT_CLOSED = "IMG_OBJ_PROJECT_CLOSED"; //$NON-NLS-1$
 	
@@ -54,6 +62,10 @@ public interface ISharedImages {
 
 	/**
 	 * Identifies the image used for "open marker".
+	 * 
+	 * @deprecated in 3.0. This image is IDE-specific, and is therefore found
+	 * only in IDE configurations. IDE-specific tools should use 
+	 * <code>org.eclipse.ui.ide.IDE.SharedImages.IMG_OPEN_MARKER</code> instead.
 	 */
 	public final static String IMG_OPEN_MARKER = "IMG_OPEN_MARKER"; //$NON-NLS-1$
 	
@@ -79,25 +91,46 @@ public interface ISharedImages {
 
 	/**
 	 * Identifies the default image used to indicate a task.
+	 * 
+	 * @deprecated in 3.0. This image is IDE-specific, and is therefore found
+	 * only in IDE configurations. IDE-specific tools should use 
+	 * <code>org.eclipse.ui.ide.IDE.SharedImages.IMG_OBJS_TASK_TSK</code> instead.
 	 */
 	public final static String IMG_OBJS_TASK_TSK = "IMG_OBJS_TASK_TSK"; //$NON-NLS-1$
+
 	/**
 	 * Identifies the default image used to indicate a bookmark.
+	 * 
+	 * @deprecated in 3.0. This image is IDE-specific, and is therefore found
+	 * only in IDE configurations. IDE-specific tools should use 
+	 * <code>org.eclipse.ui.ide.IDE.SharedImages.IMG_OBJS_BKMRK_TSK</code> instead.
 	 */
 	public final static String IMG_OBJS_BKMRK_TSK = "IMG_OBJS_BKMRK_TSK"; //$NON-NLS-1$
 	
 	/**
 	 * Identifies the new wizard image in the enabled state.
+	 * 
+	 * @deprecated in 3.0. This image is IDE-specific, and is therefore found
+	 * only in IDE configurations. IDE-specific tools should use 
+	 * <code>org.eclipse.ui.ide.IDE.SharedImages.IMG_TOOL_NEW_WIZARD</code> instead.
 	 */
 	public final static String IMG_TOOL_NEW_WIZARD = "IMG_TOOL_NEW_WIZARD"; //$NON-NLS-1$
 
 	/**
 	 * Identifies the new wizard image in the hover (colored) state.
+	 * 
+	 * @deprecated in 3.0. This image is IDE-specific, and is therefore found
+	 * only in IDE configurations. IDE-specific tools should use 
+	 * <code>org.eclipse.ui.ide.IDE.SharedImages.IMG_TOOL_NEW_WIZARD_HOVER</code> instead.
 	 */
 	public final static String IMG_TOOL_NEW_WIZARD_HOVER = "IMG_TOOL_NEW_WIZARD_HOVER"; //$NON-NLS-1$
 
 	/**
 	 * Identifies the new wizard image in the disabled state.
+	 * 
+	 * @deprecated in 3.0. This image is IDE-specific, and is therefore found
+	 * only in IDE configurations. IDE-specific tools should use 
+	 * <code>org.eclipse.ui.ide.IDE.SharedImages.IMG_TOOL_NEW_WIZARD_DISABLED</code> instead.
 	 */
 	public final static String IMG_TOOL_NEW_WIZARD_DISABLED = "IMG_TOOL_NEW_WIZARD_DISABLED"; //$NON-NLS-1$
 	
@@ -236,24 +269,25 @@ public interface ISharedImages {
 	 */
 	public final static String IMG_TOOL_UP_DISABLED = "IMG_TOOL_UP_DISABLED"; //$NON-NLS-1$
 	
-/**
- * Retrieves the specified image from the workbench plugin's image registry.
- * Note: The returned <code>Image</code> is managed by the workbench; clients
- * must <b>not</b> dispose of the returned image.
- *
- * @param symbolicName the symbolic name of the image (constants found in
- *    this interface)
- * @return the image, or <code>null</code> if not found
- */
-public Image getImage(String symbolicName);
-/**
- * Retrieves the image descriptor for specified image from the workbench's
- * image registry. Unlike <code>Image</code>s, image descriptors themselves do
- * not need to be disposed.
- *
- * @param symbolicName the symbolic name of the image (constants found in
- *    this interface)
- * @return the image descriptor, or <code>null</code> if not found
- */
-public ImageDescriptor getImageDescriptor(String symbolicName);
+	/**
+	 * Retrieves the specified image from the workbench plugin's image registry.
+	 * Note: The returned <code>Image</code> is managed by the workbench; clients
+	 * must <b>not</b> dispose of the returned image.
+	 *
+	 * @param symbolicName the symbolic name of the image; there are constants
+	 * declared in this interface for build-in images that come with the workbench
+	 * @return the image, or <code>null</code> if not found
+	 */
+	public Image getImage(String symbolicName);
+	
+	/**
+	 * Retrieves the image descriptor for specified image from the workbench's
+	 * image registry. Unlike <code>Image</code>s, image descriptors themselves do
+	 * not need to be disposed.
+	 *
+	 * @param symbolicName the symbolic name of the image; there are constants
+	 * declared in this interface for build-in images that come with the workbench
+	 * @return the image descriptor, or <code>null</code> if not found
+	 */
+	public ImageDescriptor getImageDescriptor(String symbolicName);
 }

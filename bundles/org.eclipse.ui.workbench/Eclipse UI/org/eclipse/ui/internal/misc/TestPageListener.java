@@ -18,6 +18,7 @@ import org.eclipse.ui.*;
 public class TestPageListener implements IPageListener {
 /**
  * TestPageListener constructor comment.
+ * @issue seems like garbage - no one using it
  */
 public TestPageListener() {
 	super();

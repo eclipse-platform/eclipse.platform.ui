@@ -13,8 +13,6 @@ package org.eclipse.jface.preference;
 
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.accessibility.AccessibleAdapter;
-import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
@@ -25,11 +23,11 @@ import org.eclipse.swt.widgets.*;
  */
 public class ColorSelector {
 
-	Point fExtent;
-	Image fImage;
-	RGB fColorValue;
-	Color fColor;
-	Button fButton;
+	private Point fExtent;
+	private Image fImage;
+	private RGB fColorValue;
+	private Color fColor;
+	private Button fButton;
 
 	/**
 	 * Create a new instance of the reciever and the
@@ -70,16 +68,6 @@ public class ColorSelector {
 					fColor.dispose();
 					fColor = null;
 				}
-			}
-		});
-		
-		fButton.getAccessible().addAccessibleListener(new AccessibleAdapter()
-		{
-			/* (non-Javadoc)
-			 * @see org.eclipse.swt.accessibility.AccessibleAdapter#getName(org.eclipse.swt.accessibility.AccessibleEvent)
-			 */
-			public void getName(AccessibleEvent e) {
-				e.result = JFaceResources.getString("ColorSelector.Name"); //$NON-NLS-1$
 			}
 		});
 	}

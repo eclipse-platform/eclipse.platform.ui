@@ -25,11 +25,13 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.BuildAction;
 import org.eclipse.ui.actions.CloseResourceAction;
 import org.eclipse.ui.actions.OpenResourceAction;
 import org.eclipse.ui.actions.RefreshAction;
+import org.eclipse.ui.ide.IDEActionFactory;
+import org.eclipse.ui.ide.IDEContributionItemFactory;
 
 /**
  * This is the action group for workspace actions such as Build, Refresh Local,
@@ -49,19 +51,19 @@ public class WorkspaceActionGroup extends ResourceNavigatorActionGroup {
 
 	public void fillActionBars(IActionBars actionBars) {
 		actionBars.setGlobalActionHandler(
-			IWorkbenchActionConstants.REFRESH,
+			ActionFactory.REFRESH.getId(),
 			refreshAction);
 		actionBars.setGlobalActionHandler(
-			IWorkbenchActionConstants.BUILD_PROJECT,
+			IDEContributionItemFactory.BUILD.getId(),
 			buildAction);
 		actionBars.setGlobalActionHandler(
-			IWorkbenchActionConstants.REBUILD_PROJECT,
+			IDEContributionItemFactory.BUILD_PROJECT.getId(),
 			rebuildAction);
 		actionBars.setGlobalActionHandler(
-			IWorkbenchActionConstants.OPEN_PROJECT,
+			IDEActionFactory.OPEN_PROJECT.getId(),
 			openProjectAction);
 		actionBars.setGlobalActionHandler(
-			IWorkbenchActionConstants.CLOSE_PROJECT,
+			IDEActionFactory.CLOSE_PROJECT.getId(),
 			closeProjectAction);
 	}
 	/**

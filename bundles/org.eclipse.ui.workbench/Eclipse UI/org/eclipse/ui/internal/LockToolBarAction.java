@@ -11,47 +11,94 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * The <code>LockToolBarAction</code> is used to lock the toolbars for the
  * workbench.  The toolbar for all perspectives is locked.
  */
-public class LockToolBarAction extends Action {
-	private WorkbenchWindow window;
-	
+public class LockToolBarAction
+		extends Action 
+		implements IWindowListener, ActionFactory.IWorkbenchAction {
+			
+	/**
+	 * The workbench window; or <code>null</code> if this
+	 * action has been <code>dispose</code>d.
+	 */
+	private IWorkbenchWindow workbenchWindow;
+
 	/**
 	 * Create a new instance of <code>LockToolBarAction</code>
 	 * 
 	 * @param window the workbench window this action applies to
 	 */
-	public LockToolBarAction(WorkbenchWindow window) {
+	public LockToolBarAction(IWorkbenchWindow window) {
 		super(WorkbenchMessages.getString("LockToolBarAction.text")); //$NON-NLS-1$
+		if (window == null) {
+			throw new IllegalArgumentException();
+		}
+		this.workbenchWindow = window;
+		// @issue missing action id
 		setToolTipText(WorkbenchMessages.getString("LockToolBarAction.toolTip")); //$NON-NLS-1$
 		setEnabled(false);
 		setChecked(false);
-		this.window = window;
 		WorkbenchHelp.setHelp(this, IHelpContextIds.LOCK_TOOLBAR_ACTION);
-		// add window listener for updating checked state of this action when
-		// workbench opened
-		window.getWorkbench().addWindowListener(new org.eclipse.ui.IWindowListener() {
-			public void windowActivated(IWorkbenchWindow window){
-			}   
-			public void windowDeactivated(IWorkbenchWindow window) {
-			}   
-			public void windowClosed(IWorkbenchWindow window) {
-			}   
-			public void windowOpened(IWorkbenchWindow window) {
-    			setChecked(((WorkbenchWindow)window).isToolBarLocked());
-			}   
-		});
+		this.workbenchWindow.getWorkbench().addWindowListener(this);
 	}
+
 	/* (non-Javadoc)
 	 * Method declared on IAction.
 	 */
 	public void run() {
+		if (workbenchWindow == null) {
+			// action has been disposed
+			return;
+		}
 		boolean locked = isChecked();
-		window.lockToolBar(locked);
+		((WorkbenchWindow) workbenchWindow).lockToolBar(locked);
 	}
+	
+	/* (non-Javadoc)
+	 * Method declared on IWindowListener
+	 */
+	public void windowActivated(IWorkbenchWindow window){
+		// do nothing
+	}   
+
+	/* (non-Javadoc)
+	 * Method declared on IWindowListener
+	 */
+	public void windowDeactivated(IWorkbenchWindow window) {
+		// do nothing
+	}   
+
+	/* (non-Javadoc)
+	 * Method declared on IWindowListener
+	 */
+	public void windowClosed(IWorkbenchWindow window) {
+		// do nothing
+	}   
+
+	/* (non-Javadoc)
+	 * Method declared on IWindowListener
+	 */
+	public void windowOpened(IWorkbenchWindow window) {
+		setChecked(((WorkbenchWindow)window).isToolBarLocked());
+	}   
+
+	/* (non-Javadoc)
+	 * Method declared on ActionFactory.IWorkbenchAction.
+	 */
+	public void dispose() {
+		if (workbenchWindow == null) {
+			// already disposed
+			return;
+		}
+		workbenchWindow.getWorkbench().removeWindowListener(this);
+		workbenchWindow = null;
+	}
+
 }

@@ -13,7 +13,12 @@ package org.eclipse.ui.internal;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.actions.PerspectiveMenu;
 
 /**
@@ -27,8 +32,8 @@ public class ChangeToPerspectiveMenu extends PerspectiveMenu {
 	 * 
 	 * @param window the workbench window this action applies to.
 	 */
-	public ChangeToPerspectiveMenu(IWorkbenchWindow window) {
-		super(window, "ChangeToPerspectiveMenu"); //$NON-NLS-1$
+	public ChangeToPerspectiveMenu(IWorkbenchWindow window, String id) {
+		super(window, id);
 		showActive(true);
 	}
 
@@ -36,7 +41,7 @@ public class ChangeToPerspectiveMenu extends PerspectiveMenu {
 	 * @see PerspectiveMenu#run(IPerspectiveDescriptor)
 	 */
 	protected void run(IPerspectiveDescriptor desc) {
-		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store = PlatformUI.getWorkbench().getPreferenceStore();
 		int mode = store.getInt(IPreferenceConstants.OPEN_PERSP_MODE);
 		IWorkbenchPage page = getWindow().getActivePage();
 		IPerspectiveDescriptor persp = null;
@@ -47,8 +52,8 @@ public class ChangeToPerspectiveMenu extends PerspectiveMenu {
 		// has an active perspective.
 		if (IPreferenceConstants.OPM_NEW_WINDOW == mode && persp != null) {
 			try {
-				IAdaptable input = WorkbenchPlugin.getPluginWorkspace().getRoot();
 				IWorkbench workbench = getWindow().getWorkbench();
+				IAdaptable input = ((Workbench) workbench).getDefaultWindowInput();
 				workbench.openWorkbenchWindow(desc.getId(), input);
 			} catch (WorkbenchException e) {
 				handleWorkbenchException(e);
@@ -58,7 +63,8 @@ public class ChangeToPerspectiveMenu extends PerspectiveMenu {
 				page.setPerspective(desc);
 			} else {
 				try {
-					IAdaptable input = WorkbenchPlugin.getPluginWorkspace().getRoot();
+					IWorkbench workbench = getWindow().getWorkbench();
+					IAdaptable input = ((Workbench) workbench).getDefaultWindowInput();
 					getWindow().openPage(desc.getId(), input);
 				} catch(WorkbenchException e) {
 					handleWorkbenchException(e);

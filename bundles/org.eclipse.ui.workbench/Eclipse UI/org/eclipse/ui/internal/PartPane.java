@@ -145,7 +145,7 @@ protected void createChildControl() {
 		}
 		public void handleException(Throwable e) {
 			// Log error.
-			Workbench wb = (Workbench)WorkbenchPlugin.getDefault().getWorkbench();
+			Workbench wb = (Workbench)PlatformUI.getWorkbench();
 			if (!wb.isStarting())
 				super.handleException(e);
 

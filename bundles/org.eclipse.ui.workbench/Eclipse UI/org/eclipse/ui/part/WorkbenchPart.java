@@ -10,16 +10,23 @@
  *******************************************************************************/
 package org.eclipse.ui.part;
 
-
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExecutableExtension;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IPropertyListener;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ReferenceCounter;
 import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * Abstract base implementation of all workbench parts.
@@ -204,11 +211,12 @@ public void setInitializationData(IConfigurationElement cfig, String propertyNam
 	// Icon.
 	String strIcon = cfig.getAttribute("icon");//$NON-NLS-1$
 	if (strIcon != null) {
+		IExtension extension = configElement.getDeclaringExtension();
+		String extendingPluginId =
+			extension.getDeclaringPluginDescriptor().getUniqueIdentifier();
 		imageDescriptor = 
-			WorkbenchImages.getImageDescriptorFromExtension(
-				configElement.getDeclaringExtension(), 
-				strIcon); 
-					
+			AbstractUIPlugin.imageDescriptorFromPlugin(
+				extendingPluginId, strIcon);					
 		
 		/* remember the image in a separatly from titleImage,
 		 * since it must be disposed even if the titleImage is changed

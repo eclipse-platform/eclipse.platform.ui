@@ -18,8 +18,6 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -48,18 +46,14 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.application.IWorkbenchPreferences;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
-import org.eclipse.ui.internal.registry.CapabilityRegistry;
 import org.eclipse.ui.internal.registry.EditorRegistry;
 import org.eclipse.ui.internal.registry.IViewRegistry;
-import org.eclipse.ui.internal.registry.MarkerHelpRegistry;
-import org.eclipse.ui.internal.registry.MarkerHelpRegistryReader;
-import org.eclipse.ui.internal.registry.MarkerImageProviderRegistry;
 import org.eclipse.ui.internal.registry.PerspectiveRegistry;
 import org.eclipse.ui.internal.registry.PreferencePageRegistryReader;
-import org.eclipse.ui.internal.registry.ProjectImageRegistry;
 import org.eclipse.ui.internal.registry.ViewRegistry;
 import org.eclipse.ui.internal.registry.ViewRegistryReader;
 import org.eclipse.ui.internal.registry.WorkingSetRegistry;
@@ -89,12 +83,8 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	private static WorkbenchPlugin inst;
 	// Manager that maps resources to descriptors of editors to use
 	private EditorRegistry editorRegistry;
-	// Manager that maps project nature ids to images
-	private ProjectImageRegistry projectImageRegistry;
 	// Manager for the DecoratorManager
 	private DecoratorManager decoratorManager;
-	// Manager that maps markers to help context ids and resolutions
-	private MarkerHelpRegistry markerHelpRegistry;
 	// Manager for working sets (IWorkingSet)
 	private WorkingSetManager workingSetManager;
 	// Working set registry, stores working set dialogs
@@ -106,6 +96,8 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 
 	/**
 	 * The workbench plugin ID.
+	 * 
+	 * @issue we should just drop this constant and use PlatformUI.PLUGIN_ID instead
 	 */
 	public static String PI_WORKBENCH = PlatformUI.PLUGIN_ID;
 
@@ -115,14 +107,11 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	private static char PREFERENCE_PAGE_CATEGORY_SEPARATOR = '/';
 
 	// Other data.
-	private IWorkbench workbench;
 	private PreferenceManager preferenceManager;
 	private ViewRegistry viewRegistry;
 	private PerspectiveRegistry perspRegistry;
-	private CapabilityRegistry capabilityRegistry;
 	private ActionSetRegistry actionSetRegistry;
 	private SharedImages sharedImages;
-	private MarkerImageProviderRegistry markerImageProviderRegistry;
 	
 	/**
 	 * Create an instance of the WorkbenchPlugin.
@@ -194,30 +183,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		}
 		return actionSetRegistry;
 	}
-	/**
-	 * Returns the capability registry for the workbench.
-	 * 
-	 * @return the capability registry
-	 */
-	public CapabilityRegistry getCapabilityRegistry() {
-		if (capabilityRegistry == null) {
-			capabilityRegistry = new CapabilityRegistry();
-			capabilityRegistry.load();
-		}
-		return capabilityRegistry;
-	}
-	/**
-	 * Returns the marker help registry for the workbench.
-	 *
-	 * @return the marker help registry
-	 */
-	public MarkerHelpRegistry getMarkerHelpRegistry() {
-		if (markerHelpRegistry == null) {
-			markerHelpRegistry = new MarkerHelpRegistry();
-			new MarkerHelpRegistryReader().addHelp(markerHelpRegistry);
-		}
-		return markerHelpRegistry;
-	}
+
 	/* Return the default instance of the receiver. This represents the runtime plugin.
 	 *
 	 * @see AbstractPlugin for the typical implementation pattern for plugin classes.
@@ -277,16 +243,6 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		return factory;
 	}
 	/**
-	 * Returns the marker image provider registry for the workbench.
-	 *
-	 * @return the marker image provider registry
-	 */
-	public MarkerImageProviderRegistry getMarkerImageProviderRegistry() {
-		if (markerImageProviderRegistry == null)
-			markerImageProviderRegistry = new MarkerImageProviderRegistry();
-		return markerImageProviderRegistry;
-	}
-	/**
 	 * Return the perspective registry.
 	 */
 	public IPerspectiveRegistry getPerspectiveRegistry() {
@@ -295,15 +251,6 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 			perspRegistry.load();
 		}
 		return perspRegistry;
-	}
-	/**
-	 * Return the workspace used by the workbench
-	 *
-	 * This method is internal to the workbench and must not be called
-	 * by any plugins.
-	 */
-	public static IWorkspace getPluginWorkspace() {
-		return ResourcesPlugin.getWorkspace();
 	}
 	/**
 	 * Returns the working set manager
@@ -350,17 +297,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		}
 		return preferenceManager;
 	}
-	/**
-	 *Answers the manager that maps project nature ids to images
-	 */
 
-	public ProjectImageRegistry getProjectImageRegistry() {
-		if (projectImageRegistry == null) {
-			projectImageRegistry = new ProjectImageRegistry();
-			projectImageRegistry.load();
-		}
-		return projectImageRegistry;
-	}
 	/**
 	 * Returns the shared images for the workbench.
 	 *
@@ -387,11 +324,12 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		}
 		return viewRegistry;
 	}
-	/*
+	/**
 	 * Answer the workbench.
+	 * @deprecated Use <code>PlatformUI.getWorkbench()</code> instead.
 	 */
 	public IWorkbench getWorkbench() {
-		return workbench;
+		return PlatformUI.getWorkbench();
 	}
 	/** 
 	 * Set default preference values.
@@ -401,15 +339,19 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	protected void initializeDefaultPreferences(IPreferenceStore store) {
 		
 		JFacePreferences.setPreferenceStore(store);
-		store.setDefault(IPreferenceConstants.AUTO_BUILD, true);
-		store.setDefault(IPreferenceConstants.SAVE_ALL_BEFORE_BUILD, false);
-		store.setDefault(IPreferenceConstants.SAVE_INTERVAL, 5); //5 minutes
-		store.setDefault(IPreferenceConstants.WELCOME_DIALOG, true);
-		store.setDefault(IPreferenceConstants.REFRESH_WORKSPACE_ON_STARTUP, false);
+
+		// new generic workbench preferences
+		store.setDefault(IWorkbenchPreferences.SHOULD_SAVE_WORKBENCH_STATE, false);
+		store.setDefault(IWorkbenchPreferences.SHOULD_CLOSE_EDITORS_ON_EXIT, false);
+		store.setDefault(IWorkbenchPreferences.SHOULD_SHOW_TITLE_BAR, true);
+		store.setDefault(IWorkbenchPreferences.SHOULD_SHOW_MENU_BAR, true);
+		store.setDefault(IWorkbenchPreferences.SHOULD_SHOW_TOOL_BAR, true);
+		store.setDefault(IWorkbenchPreferences.SHOULD_SHOW_SHORTCUT_BAR, true);
+		store.setDefault(IWorkbenchPreferences.SHOULD_SHOW_STATUS_LINE, true);
+			
+		// @issue some of these may be IDE-specific
 		store.setDefault(IPreferenceConstants.EDITORLIST_PULLDOWN_ACTIVE, false);
 		store.setDefault(IPreferenceConstants.EDITORLIST_DISPLAY_FULL_NAME, false);
-		store.setDefault(IPreferenceConstants.CLOSE_EDITORS_ON_EXIT, false);
-		store.setDefault(IPreferenceConstants.STICKY_CYCLE, false);
 		store.setDefault(IPreferenceConstants.REUSE_EDITORS_BOOLEAN, false);
 		store.setDefault(IPreferenceConstants.REUSE_DIRTY_EDITORS, true);
 		store.setDefault(IPreferenceConstants.REUSE_EDITORS, 8);
@@ -422,7 +364,6 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		store.setDefault(IPreferenceConstants.EDITOR_TAB_WIDTH, 3); // high
 		store.setDefault(IPreferenceConstants.OPEN_VIEW_MODE, IPreferenceConstants.OVM_EMBED);
 		store.setDefault(IPreferenceConstants.OPEN_PERSP_MODE, IPreferenceConstants.OPM_ACTIVE_PAGE);
-		store.setDefault(IPreferenceConstants.PROJECT_SWITCH_PERSP_MODE, IPreferenceConstants.PSPM_PROMPT);
 		store.setDefault(IPreferenceConstants.ENABLED_DECORATORS, ""); //$NON-NLS-1$
 		store.setDefault(IPreferenceConstants.EDITORLIST_SELECTION_SCOPE, IPreferenceConstants.EDITORLIST_SET_PAGE_SCOPE); // Current Window
 		store.setDefault(IPreferenceConstants.EDITORLIST_SORT_CRITERIA, IPreferenceConstants.EDITORLIST_NAME_SORT); // Name Sort
@@ -430,17 +371,18 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		store.setDefault(IPreferenceConstants.SHOW_SHORTCUT_BAR, true);
 		store.setDefault(IPreferenceConstants.SHOW_STATUS_LINE, true);
 		store.setDefault(IPreferenceConstants.SHOW_TOOL_BAR, true);
-		store.setDefault(IPreferenceConstants.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW, true);
 		
-		// Set the default behaviour for showing the task list when there are compiles errors in the build
-		store.setDefault(IPreferenceConstants.SHOW_TASKS_ON_BUILD, true);
+		// Set the default configuration for the key binding service
+		store.setDefault(IWorkbenchConstants.ACCELERATOR_CONFIGURATION_ID, IWorkbenchConstants.DEFAULT_ACCELERATOR_CONFIGURATION_ID);
 
+		// @issue get rid of PreferenceConverter - just hard code the RGB string		
 		//Set the default error colour to red
 		PreferenceConverter.setDefault(store,JFacePreferences.ERROR_COLOR, new RGB(255, 0, 0));
 		//Set the default hyperlink line colour to dark blue
 		PreferenceConverter.setDefault(store,JFacePreferences.HYPERLINK_COLOR, new RGB(0, 0, 153));
 		//Set the default active hyperlink line colour to blue
 		PreferenceConverter.setDefault(store,JFacePreferences.ACTIVE_HYPERLINK_COLOR, new RGB(0, 0, 255));
+		
 		
 		// Temporary option to enable wizard for project capability
 		store.setDefault("ENABLE_CONFIGURABLE_PROJECT_WIZARD", false); //$NON-NLS-1$
@@ -454,12 +396,13 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		store.setDefault("DISABLE_DIALOG_FONT", false); //$NON-NLS-1$
 		store.setDefault(IWorkbenchConstants.SHOW_PROGRESS_INDICATOR, true); //$NON-NLS-1$	
 
+		// @issue get rid of PreferenceConverter - defer setting default fonts until Display created.
 		FontRegistry registry = JFaceResources.getFontRegistry();
 		initializeFont(JFaceResources.DIALOG_FONT, registry, store);
 		initializeFont(JFaceResources.BANNER_FONT, registry, store);
 		initializeFont(JFaceResources.HEADER_FONT, registry, store);
 		initializeFont(JFaceResources.TEXT_FONT, registry, store);
-			
+		
 		store.addPropertyChangeListener(new PlatformUIPreferenceListener());
 	}
 
@@ -543,8 +486,12 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 
 		//1FTTJKV: ITPCORE:ALL - log(status) does not allow plugin information to be recorded
 	}
+	
+	/**
+	 * @deprecated Use <code>PlatformUI.createAndRunWorkbench</code>.
+	 */
 	public void setWorkbench(IWorkbench aWorkbench) {
-		this.workbench = aWorkbench;
+		// Do nothing
 	}
 
 	/**

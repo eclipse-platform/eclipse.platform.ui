@@ -351,15 +351,6 @@ protected void createTitleBar() {
 }
 public void dispose() {
 	super.dispose();
-	
-	/* Bug 42684.  The ViewPane instance has been disposed, but an attempt is
-	 * then made to remove focus from it.  This happens because the ViewPane is
-	 * still viewed as the active part.  In general, when disposed, the control
-	 * containing the titleLabel will also disappear (disposing of the 
-	 * titleLabel).  As a result, the reference to titleLabel should be dropped. 
-	 */ 
-	titleLabel = null;
-	
 	if (isvMenuMgr != null)
 		isvMenuMgr.dispose();
 	if (isvToolBarMgr != null)
@@ -687,41 +678,22 @@ public void updateActionBars() {
  */
 public void updateTitles() {
 	IViewReference ref = getViewReference();
-	if (titleLabel != null && !titleLabel.isDisposed()) {
-		boolean changed = false;
-		
-		// only update if text or image has changed 
-		String text = ref.getTitle();
-		if (text == null)
-			text = "";//$NON-NLS-1$
-		if (!text.equals(titleLabel.getText())) {
-			titleLabel.setText(text);
-			changed = true;
-		}
-		Image image = ref.getTitleImage();
-		if (image != titleLabel.getImage()) {
-			titleLabel.setImage(image);
-			changed = true;
-		}
-		// only relayout if text or image has changed
-		if (changed) {
-			((Composite) getControl()).layout();
-		}
-		
-		String tooltip = ref.getTitleToolTip();
-		if (!(tooltip == null ? titleLabel.getToolTipText() == null : tooltip.equals(titleLabel.getToolTipText()))) {
-			titleLabel.setToolTipText(ref.getTitleToolTip());
-			changed = true;
-		}
-		
-		if (changed) {
-			// XXX: Workaround for 1GCGA89: SWT:ALL - CLabel tool tip does not always update properly
-			titleLabel.update();
-			
-			// notify the page that this view's title has changed
-			// in case it needs to update its fast view button
-			page.updateTitle(ref);
-		}
+	String text = ref.getTitle();
+	if (text == null)
+		text = "";//$NON-NLS-1$
+	Image image = ref.getTitleImage();
+	// only update and relayout if text or image has changed
+	if (!text.equals(titleLabel.getText()) || image != titleLabel.getImage()) {
+		titleLabel.setText(text);
+		titleLabel.setImage(image);
+		((Composite) getControl()).layout();
 	}
+	titleLabel.setToolTipText(ref.getTitleToolTip());
+	// XXX: Workaround for 1GCGA89: SWT:ALL - CLabel tool tip does not always update properly
+	titleLabel.update();
+
+	// notify the page that this view's title has changed
+	// in case it needs to update its fast view button
+	page.updateTitle(ref);
 }
 }

@@ -11,11 +11,27 @@
 package org.eclipse.ui.internal;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -25,15 +41,32 @@ import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IEditorActionBarContributor;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorLauncher;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.IEditorRegistry;
+import org.eclipse.ui.IElementFactory;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IPathEditorInput;
+import org.eclipse.ui.IPersistableElement;
+import org.eclipse.ui.IReusableEditor;
+import org.eclipse.ui.ISaveablePart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.internal.dialogs.EventLoopProgressMonitor;
 import org.eclipse.ui.internal.editorsupport.ComponentSupport;
 import org.eclipse.ui.internal.misc.ExternalEditor;
 import org.eclipse.ui.internal.misc.UIStats;
-import org.eclipse.ui.internal.model.AdaptableList;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
+import org.eclipse.ui.model.AdaptableList;
 import org.eclipse.ui.model.WorkbenchContentProvider;
+import org.eclipse.ui.model.WorkbenchPartLabelProvider;
 import org.eclipse.ui.part.MultiEditor;
 import org.eclipse.ui.part.MultiEditorInput;
 
@@ -316,51 +349,6 @@ public class EditorManager {
 		return false;
 	}
 	/*
-	 * @see IWorkbenchPage.
-	 */
-	private IEditorReference openEditorFromInput(IEditorReference ref,IEditorInput editorInput, boolean setVisible, boolean forceInternal) throws PartInitException {
-		if (!(editorInput instanceof IFileEditorInput))
-			throw new PartInitException(
-				WorkbenchMessages.format(
-					"EditorManager.unableToOpenEditor", //$NON-NLS-1$
-					new Object[] { editorInput.getName() }));
-					
-		IFileEditorInput input = (IFileEditorInput)editorInput;
-		IFile file = input.getFile();
-		// If there is a registered editor for the file use it.
-		EditorDescriptor desc = (EditorDescriptor) getEditorRegistry().getDefaultEditor(file);
-		if (desc != null) {
-			return openEditorFromDescriptor(ref,desc, input, forceInternal);
-		}
-
-		// Try to open an OLE editor.
-		IEditorPart componentEditor = ComponentSupport.getComponentEditor(file);
-		if (componentEditor != null) {
-			createSite(componentEditor, desc, input);
-			((Editor)ref).setPart(componentEditor);
-			createEditorTab(ref, null, input, setVisible);
-			Workbench wb = (Workbench) window.getWorkbench();
-			wb.getEditorHistory().add(input, desc);
-			return ref;
-		}
-		
-		//only open a system file if an external editor is permitted.
-		if (!forceInternal) {
-			// Try to open a system editor.
-			if (testForSystemEditor(file)) {
-				openSystemEditor(file);
-				Workbench wb = (Workbench) window.getWorkbench();
-				wb.getEditorHistory().add(input, desc);
-				return null;
-			}
-		}
-
-		// There is no registered editor.  
-		// Use the default text editor.
-		desc = (EditorDescriptor) getEditorRegistry().getDefaultEditor();
-		return openEditorFromDescriptor(ref,desc, input, forceInternal);
-	}
-	/*
 	 * Prompt the user to save the reusable editor.
 	 * Return false if a new editor should be opened.
 	 */
@@ -419,114 +407,86 @@ public class EditorManager {
 	/*
 	 * See IWorkbenchPage.
 	 */	
-	public IEditorReference openEditor(String editorId,IEditorInput input,boolean setVisible, boolean forceInternal) throws PartInitException {
-		if(editorId == null) {
-			return openEditorFromInput(new Editor(),input,setVisible, forceInternal);
-		} else {
-			IEditorRegistry reg = getEditorRegistry();
-			EditorDescriptor desc = (EditorDescriptor) reg.findEditor(editorId);
-			if (desc == null) {
-				throw new PartInitException(WorkbenchMessages.format("EditorManager.unknownEditorIDMessage", new Object[] { editorId })); //$NON-NLS-1$
-			}
-			IEditorReference result = openEditorFromDescriptor(new Editor(),desc, input, forceInternal);
-			if(input instanceof IFileEditorInput) {
-				IFile file = ((IFileEditorInput)input).getFile();
-				if(file != null) {
-					// Update the default editor for this file.
-					IEditorDescriptor defaultDesc = (EditorDescriptor)getEditorRegistry().getDefaultEditor(file.getName());
-					if (defaultDesc == null)
-						defaultDesc = (EditorDescriptor)getEditorRegistry().getDefaultEditor();
-					String editorID = desc.getId();
-					if(defaultDesc.getId().equals(editorId)) {
-						getEditorRegistry().setDefaultEditor(file, null);
-					} else {
-						getEditorRegistry().setDefaultEditor(file, editorID);
-					}
-				}
-			}
-			return result;			
+	public IEditorReference openEditor(String editorId, IEditorInput input, boolean setVisible) throws PartInitException {
+		if (editorId == null || input == null) {
+			throw new IllegalArgumentException();
 		}
+		
+		IEditorRegistry reg = getEditorRegistry();
+		EditorDescriptor desc = (EditorDescriptor) reg.findEditor(editorId);
+		if (desc == null) {
+			throw new PartInitException(WorkbenchMessages.format("EditorManager.unknownEditorIDMessage", new Object[] { editorId })); //$NON-NLS-1$
+		}
+
+		IEditorReference result = openEditorFromDescriptor(new Editor(), desc, input);
+		return result;			
 	}
 	/*
-	 * Open a new 
+	 * Open a new editor
 	 */
-	private IEditorReference openEditorFromDescriptor(IEditorReference ref,EditorDescriptor desc, IEditorInput input, boolean forceInternal) throws PartInitException {
+	private IEditorReference openEditorFromDescriptor(IEditorReference ref, EditorDescriptor desc, IEditorInput input) throws PartInitException {
 		IEditorReference result = ref;
-		if (desc.isInternal()) {
+		if (desc.isOpenInternal()) {
 			result = reuseInternalEditor(desc, input);
 			if (result == null) {
 				result = ref;
-				openInternalEditor(ref,desc, input, true);
+				openInternalEditor(ref, desc, input, true);
 			}
-		} else if (desc.isOpenInPlace()) {
-			IEditorPart cEditor = ComponentSupport.getComponentEditor();
-			if (cEditor == null) {
-				return null;
-			} else {				
-				createSite(cEditor, desc, input);
-				((Editor)ref).setPart(cEditor);
-				createEditorTab(ref, desc, input, true);
-			}
-		} else if (!forceInternal && desc.getId().equals(IWorkbenchConstants.SYSTEM_EDITOR_ID)) {
-			if (input instanceof IFileEditorInput) {
-				openSystemEditor(((IFileEditorInput) input).getFile());
-				result = null;
-			} else
+		} else if (desc.getId().equals(IEditorRegistry.SYSTEM_INPLACE_EDITOR_ID)) {
+			result = openSystemInPlaceEditor(ref, desc, input);
+		} else if (desc.getId().equals(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID)) {
+			IPathEditorInput pathInput = getPathEditorInput(input);
+			if (pathInput != null) {
+				result = openSystemExternalEditor(pathInput.getPath());
+			} else {
 				throw new PartInitException(WorkbenchMessages.getString("EditorManager.systemEditorError")); //$NON-NLS-1$
-		} else if (!forceInternal) {
-			openExternalEditor(desc, input);
-			result = null;
-		} else { //use default text editor
-			desc = (EditorDescriptor) getEditorRegistry().getDefaultEditor();
-			result = reuseInternalEditor(desc, input);
-			if (result == null) {
-				result = ref;
-				openInternalEditor(ref,desc, input, true);
 			}
+		} else if (desc.isOpenExternal()){
+			result = openExternalEditor(desc, input);
+		} else {
+			// this should never happen
+			throw new IllegalStateException();
 		}
+		
 		Workbench wb = (Workbench) window.getWorkbench();
 		wb.getEditorHistory().add(input, desc);
 		return result;
 	}
 	/**
-	 * Open an external viewer on an file.  Throw up an error dialog if
-	 * an exception occurs.
+	 * Open a specific external editor on an file based on the descriptor.
 	 */
-	private void openExternalEditor(final EditorDescriptor desc, final Object input) throws PartInitException {
-		// Convert input to file.
-		if (!(input instanceof IFileEditorInput))
-			throw new PartInitException(WorkbenchMessages.format("EditorManager.errorOpeningExternalEditor", new Object[] { desc.getFileName(), desc.getId()})); //$NON-NLS-1$
-		//$NON-NLS-1$
-
-		final IFileEditorInput fileInput = (IFileEditorInput) input;
-
-		//Must catch CoreException inside the runnable because
-		//the Runnable.run() does not throw exceptions.
+	private IEditorReference openExternalEditor(final EditorDescriptor desc, IEditorInput input) throws PartInitException {
 		final CoreException ex[] = new CoreException[1];
-		// Start busy indicator.
-		BusyIndicator.showWhile(getDisplay(), new Runnable() {
-			public void run() {
-				// Open an external editor.
-				try {
-					if (desc.getLauncher() != null) {
-						// Open using launcher
-						Object launcher = WorkbenchPlugin.createExtension(desc.getConfigurationElement(), "launcher"); //$NON-NLS-1$
-						 ((IEditorLauncher) launcher).open(fileInput.getFile());
-					} else {
-						// Open using command
-						ExternalEditor oEditor = new ExternalEditor(fileInput.getFile(), desc);
-						oEditor.open();
-					}
-				} catch (CoreException e) {
-					ex[0] = e;
-				}
-			}
-		});
 
-		// Test the result.
-		if (ex[0] != null) {
-			throw new PartInitException(ex[0].getMessage()); //$NON-NLS-1$
+		final IPathEditorInput pathInput = getPathEditorInput(input);
+		if (pathInput != null) {
+			BusyIndicator.showWhile(getDisplay(), new Runnable() {
+				public void run() {
+					try {
+						if (desc.getLauncher() != null) {
+							// open using launcher
+							Object launcher = WorkbenchPlugin.createExtension(desc.getConfigurationElement(), "launcher"); //$NON-NLS-1$
+							 ((IEditorLauncher) launcher).open(pathInput.getPath());
+						} else {
+							// open using command
+							ExternalEditor oEditor = new ExternalEditor(pathInput.getPath(), desc);
+							oEditor.open();
+						}
+					} catch (CoreException e) {
+						ex[0] = e;
+					}
+				}
+			});
+		} else {
+			throw new PartInitException(WorkbenchMessages.format("EditorManager.errorOpeningExternalEditor", new Object[] {desc.getFileName(), desc.getId()})); //$NON-NLS-1$
 		}
+
+		if (ex[0] != null) {
+			throw new PartInitException(WorkbenchMessages.format("EditorManager.errorOpeningExternalEditor", new Object[] {desc.getFileName(), desc.getId()}), ex[0]); //$NON-NLS-1$
+		}
+		
+		// we do not have an editor part for external editors
+		return null;
 	}
 	/*
 	 * Create the site and action bars for each inner editor.
@@ -622,16 +582,15 @@ public class EditorManager {
 		IEditorReference reusableEditorRef = findReusableEditor(desc);
 		if (reusableEditorRef != null) {
 			IEditorPart reusableEditor = reusableEditorRef.getEditor(false);
-			if(reusableEditor == null) {
+			if (reusableEditor == null) {
 				IEditorReference result = new Editor();
-				openInternalEditor(result,desc, input, true);
-				page.closeEditor(reusableEditorRef,false);
+				openInternalEditor(result, desc, input, true);
+				page.closeEditor(reusableEditorRef, false);
 				return result;	
 			}
+			
 			EditorSite site = (EditorSite) reusableEditor.getEditorSite();
 			EditorDescriptor oldDesc = site.getEditorDescriptor();
-			if (oldDesc == null)
-				oldDesc = (EditorDescriptor) getEditorRegistry().getDefaultEditor();
 			if ((desc.getId().equals(oldDesc.getId())) && (reusableEditor instanceof IReusableEditor)) {
 				Workbench wb = (Workbench) window.getWorkbench();
 				editorPresentation.moveEditor(reusableEditor, -1);
@@ -652,10 +611,13 @@ public class EditorManager {
 	 * Open an internal editor on an file.  Throw up an error dialog if
 	 * an exception occurs.
 	 */
-	private void openInternalEditor(IEditorReference ref,final EditorDescriptor desc, IEditorInput input, boolean setVisible) throws PartInitException {
+	private void openInternalEditor(IEditorReference ref, EditorDescriptor desc, IEditorInput input, boolean setVisible) throws PartInitException {
 		// Create an editor instance.
-		final IEditorPart editor;
-		final String label = ref.getName() != null ? ref.getName() : desc.getLabel();
+		String label = ref.getName();
+		if (label == null) {
+			label = desc.getLabel();
+		}
+		IEditorPart editor;
 		try {
 			UIStats.start(UIStats.CREATE_PART,label);
 			editor = createPart(desc);
@@ -685,42 +647,56 @@ public class EditorManager {
 		return editor[0];
 	}
 	/**
-	 * Open a system editor on the input file.  Throw up an error dialog if
-	 * an error occurs.
+	 * Open a system external editor on the input path.
 	 */
-	public void openSystemEditor(final IFile input) throws PartInitException {
-		// Start busy indicator.
+	private IEditorReference openSystemExternalEditor(final IPath location) throws PartInitException {
+		if (location == null) {
+			throw new IllegalArgumentException();
+		}
+		
 		final boolean result[] = {false};
 		BusyIndicator.showWhile(getDisplay(), new Runnable() {
 			public void run() {
-				// Open file using shell.
-				IPath location = input.getLocation();
-				if(location != null) {
-					String path = location.toOSString();
-					result[0] = Program.launch(path);
+				if (location != null) {
+					result[0] = Program.launch(location.toOSString());
 				}
 			}
 		});
 
-		// ShellExecute returns whether call was successful
 		if (!result[0]) {
-			throw new PartInitException(WorkbenchMessages.format("EditorManager.unableToOpenExternalEditor", new Object[] { input.getName()})); //$NON-NLS-1$
+			throw new PartInitException(WorkbenchMessages.format("EditorManager.unableToOpenExternalEditor", new Object[] {location})); //$NON-NLS-1$
+		}
+		
+		// We do not have an editor part for external editors
+		return null;
+	}
+
+	/**
+	 * Opens a system in place editor on the input.
+	 */
+	private IEditorReference openSystemInPlaceEditor(IEditorReference ref, EditorDescriptor desc, IEditorInput input) throws PartInitException {
+		IEditorPart cEditor = ComponentSupport.getSystemInPlaceEditor();
+		if (cEditor == null) {
+			return null;
+		} else {				
+			createSite(cEditor, desc, input);
+			((Editor)ref).setPart(cEditor);
+			createEditorTab(ref, desc, input, true);
+			return ref;
 		}
 	}
-	
-	private ImageDescriptor findImage(EditorDescriptor desc,IFile file) {
-		ImageDescriptor iDesc;
-		if(desc != null) {
-			iDesc = desc.getImageDescriptor();
-		} else if(file != null && (testForSystemEditor(file) || ComponentSupport.testForOleEditor(file))) {
-			iDesc = PlatformUI.getWorkbench().getEditorRegistry().getImageDescriptor(file);;
+		
+	private ImageDescriptor findImage(EditorDescriptor desc, IPath path) {
+		if (desc == null) {
+			// @issue what should be the default image?
+			return ImageDescriptor.getMissingImageDescriptor();
 		} else {
-			// There is no registered editor.  
-			// Use the default text editor's.
-			IEditorRegistry reg = getEditorRegistry();
-			iDesc = reg.getDefaultEditor().getImageDescriptor();
+			if (desc.isOpenExternal() && path != null) {
+				return PlatformUI.getWorkbench().getEditorRegistry().getImageDescriptor(path.toOSString());
+			} else {
+				return desc.getImageDescriptor();
+			}
 		}
-		return iDesc;
 	}
 	/**
 	 * @see IPersistablePart
@@ -798,14 +774,12 @@ public class EditorManager {
 						IEditorRegistry reg = WorkbenchPlugin.getDefault().getEditorRegistry();
 						desc = (EditorDescriptor) reg.findEditor(editorID);
 					}
-					IFile file = null;
-					if(desc == null) {
-						String path = editorMem.getString(IWorkbenchConstants.TAG_PATH);	
-						IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(new Path(path));
-						if (res instanceof IFile)
-							file = (IFile)res;
+					String location = editorMem.getString(IWorkbenchConstants.TAG_PATH);	
+					IPath path = null;
+					if (location != null) {
+						path = new Path(location);
 					}
-					ImageDescriptor iDesc = findImage(desc,file);
+					ImageDescriptor iDesc = findImage(desc, path);
 					
 					String tooltip = editorMem.getString(IWorkbenchConstants.TAG_TOOLTIP);
 					if(tooltip == null) tooltip = ""; //$NON-NLS-1$
@@ -866,11 +840,12 @@ public class EditorManager {
 				// Get the input factory.
 				IMemento inputMem = editorMem.getChild(IWorkbenchConstants.TAG_INPUT);
 				String factoryID = null;
-				if(inputMem != null)
+				if (inputMem != null) {
 					factoryID = inputMem.getString(IWorkbenchConstants.TAG_FACTORY_ID);
+				}
 				if (factoryID == null) {
 					WorkbenchPlugin.log("Unable to restore editor - no input factory ID."); //$NON-NLS-1$
-					result[0] = unableToCreateEditor(editorMem,null);
+					result[0] = unableToCreateEditor(editorMem, null);
 					return;
 				}
 				IAdaptable input;
@@ -908,25 +883,26 @@ public class EditorManager {
 					IEditorRegistry reg = WorkbenchPlugin.getDefault().getEditorRegistry();
 					desc = (EditorDescriptor) reg.findEditor(editorID);
 				}
-
+				if (desc == null) {
+					WorkbenchPlugin.log("Unable to restore editor - no editor descriptor for id: " + editorID); //$NON-NLS-1$
+					result[0] = unableToCreateEditor(editorMem, null);
+					return;
+				}
+				
 				// Open the editor.
 				try {
 					String workbookID = editorMem.getString(IWorkbenchConstants.TAG_WORKBOOK);
 					editorPresentation.setActiveEditorWorkbookFromID(workbookID);
-					if (desc == null) {
-						openEditorFromInput(ref,editorInput, false, false);
-					} else {
-						openInternalEditor(ref,desc, editorInput, false);
-					}
+					openInternalEditor(ref, desc, editorInput, false);
 					ref.getPane().createChildControl();
 					((EditorPane)ref.getPane()).getWorkbook().updateEditorTab(ref);
 				} catch (PartInitException e) {
 					WorkbenchPlugin.log("Exception creating editor: " + e.getMessage()); //$NON-NLS-1$
-					result[0] = unableToCreateEditor(editorMem,e);				
+					result[0] = unableToCreateEditor(editorMem, e);				
 				}
 			}
 			public void handleException(Throwable e) {
-				result[0] = unableToCreateEditor(editorMem,e);
+				result[0] = unableToCreateEditor(editorMem, e);
 			}
 		});
 		if(result[0] != null)
@@ -995,8 +971,7 @@ public class EditorManager {
 	public static boolean saveAll(List dirtyEditors,boolean confirm,final IWorkbenchWindow window) {
 		if (confirm) {
 			// Convert the list into an element collection.
-			AdaptableList input = new AdaptableList();
-			input.add(dirtyEditors.iterator());
+			AdaptableList input = new AdaptableList(dirtyEditors);
 		
 			ListSelectionDialog dlg =
 				new ListSelectionDialog(window.getShell(), input, new WorkbenchContentProvider(), new WorkbenchPartLabelProvider(), RESOURCES_TO_SAVE_MESSAGE);
@@ -1019,8 +994,9 @@ public class EditorManager {
 		}
 		
 		// Create save block.
+		// @issue reference to workspace runnable!
 		final List finalEditors = dirtyEditors;
-		final IWorkspaceRunnable workspaceOp = new IWorkspaceRunnable() {
+/*		final IWorkspaceRunnable workspaceOp = new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) {
 				monitor.beginTask("", finalEditors.size()); //$NON-NLS-1$
 				Iterator enum = finalEditors.iterator();
@@ -1032,12 +1008,25 @@ public class EditorManager {
 				}
 			}
 		};
+*/
 		IRunnableWithProgress progressOp = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
-				try {
-					IProgressMonitor monitorWrap = new EventLoopProgressMonitor(monitor);
+//				try {
+					// @issue reference to workspace to run runnable
+/*					IProgressMonitor monitorWrap = new EventLoopProgressMonitor(monitor);
 					ResourcesPlugin.getWorkspace().run(workspaceOp, monitorWrap);
-				} catch (CoreException e) {
+*/
+//--------- This code was in the IWorkspaceRunnable above
+					monitor.beginTask("", finalEditors.size()); //$NON-NLS-1$
+					Iterator enum = finalEditors.iterator();
+					while (enum.hasNext()) {
+						IEditorPart part = (IEditorPart) enum.next();
+						part.doSave(new SubProgressMonitor(monitor, 1));
+						if (monitor.isCanceled())
+							break;
+					}
+//-----------
+/*				} catch (CoreException e) {
 					IStatus status = new Status(Status.WARNING, PlatformUI.PLUGIN_ID, 0, WorkbenchMessages.getString("EditorManager.saveFailed"), e); //$NON-NLS-1$
 					WorkbenchPlugin.log(WorkbenchMessages.getString("EditorManager.saveFailed"), status); //$NON-NLS-1$
 					ErrorDialog.openError(
@@ -1046,6 +1035,7 @@ public class EditorManager {
 						WorkbenchMessages.format("EditorManager.saveFailedMessage", new Object[] { e.getMessage()}), //$NON-NLS-1$
 						e.getStatus());
 				}
+*/
 			}
 		};
 		
@@ -1131,16 +1121,17 @@ public class EditorManager {
 				// Save each open editor.
 				IEditorReference editorReference = editorPanes[i].getEditorReference();
 				final IEditorPart editor = editorReference.getEditor(false);
-				if(editor == null) {
+				if (editor == null) {
 					Editor e = (Editor)editorReference;
-					if(e.getMemento() != null) {
+					if (e.getMemento() != null) {
 						IMemento editorMem = memento.createChild(IWorkbenchConstants.TAG_EDITOR);
 						editorMem.putMemento(e.getMemento());
 					}
 					continue;
 				}
+				
 				final EditorSite site = (EditorSite)editor.getEditorSite();
-				if(site.getPane() instanceof MultiEditorInnerPane)
+				if (site.getPane() instanceof MultiEditorInnerPane)
 					continue;
 					
 				Platform.run(new SafeRunnable() {
@@ -1170,9 +1161,10 @@ public class EditorManager {
 						if (editorPane == editorPane.getWorkbook().getVisibleEditor())
 							editorMem.putString(IWorkbenchConstants.TAG_FOCUS, "true"); //$NON-NLS-1$
 							
-						if (input instanceof IFileEditorInput) {
-							IFile file = ((IFileEditorInput)input).getFile();
-							editorMem.putString(IWorkbenchConstants.TAG_PATH,file.getFullPath().toString());
+						IPathEditorInput pathInput = getPathEditorInput(input);
+						if (pathInput != null) {
+							IPath path = pathInput.getPath();
+							editorMem.putString(IWorkbenchConstants.TAG_PATH, path.toString());
 						}
 				
 						// Save input.
@@ -1200,19 +1192,15 @@ public class EditorManager {
 	public boolean setVisibleEditor(IEditorReference newEd, boolean setFocus) {
 		return editorPresentation.setVisibleEditor(newEd, setFocus);
 	}
-	/**
-	 * Answer true if a system editor exists for the input file.
-	 * @see openSystemEditor.
-	 */
-	private boolean testForSystemEditor(IFile input) {
-		String strName = input.getName();
-		int nDot = strName.lastIndexOf('.');
-		if (nDot >= 0) {
-			strName = strName.substring(nDot);
-			return Program.findProgram(strName) != null;
+	
+	private IPathEditorInput getPathEditorInput(IEditorInput input) {
+		if (input instanceof IPathEditorInput) {
+			return (IPathEditorInput) input;
 		}
-		return false;
+		
+		return (IPathEditorInput) input.getAdapter(IPathEditorInput.class);
 	}
+	
 	
 	private class Editor extends WorkbenchPartReference implements IEditorReference {
 

@@ -17,7 +17,6 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.internal.*;
-import org.eclipse.ui.internal.registry.WizardsRegistryReader;
 
 /**
  * The RunnableDecoratorDefinition is the definition for 
@@ -26,7 +25,7 @@ import org.eclipse.ui.internal.registry.WizardsRegistryReader;
 
 class FullDecoratorDefinition extends DecoratorDefinition {
 
-	ILabelDecorator decorator;
+	private ILabelDecorator decorator;
 
 	/**
 	 * Create a new instance of the receiver with the
@@ -71,7 +70,7 @@ class FullDecoratorDefinition extends DecoratorDefinition {
 						decorator =
 							(ILabelDecorator) WorkbenchPlugin.createExtension(
 								definingElement,
-								WizardsRegistryReader.ATT_CLASS);
+								DecoratorRegistryReader.ATT_CLASS);
 						decorator.addListener(
 							WorkbenchPlugin.getDefault().getDecoratorManager());
 					} catch (CoreException exception) {

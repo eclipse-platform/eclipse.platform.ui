@@ -8,13 +8,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.ui.internal;
 
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.SortedSet;
 
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
@@ -24,8 +24,6 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
-import org.eclipse.swt.events.TraverseEvent;
-import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
@@ -39,13 +37,10 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.commands.ICommand;
-import org.eclipse.ui.commands.IKeyBinding;
-import org.eclipse.ui.commands.NotDefinedException;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.commands.CommandManager;
-import org.eclipse.ui.internal.keys.KeySupport;
-import org.eclipse.ui.keys.KeySequence;
+import org.eclipse.ui.internal.commands.Manager;
+import org.eclipse.ui.internal.commands.util.Sequence;
+import org.eclipse.ui.internal.commands.util.Stroke;
 
 /**
  * Implements a action to enable the user switch between parts
@@ -53,19 +48,20 @@ import org.eclipse.ui.keys.KeySequence;
  */
 public class CyclePartAction extends PageEventAction {
 	
-	String commandForward = null;
-	String commandBackward = null;
-	boolean forward;
+	private String commandForward = null;
+	private String commandBackward = null;
+	
+	protected boolean forward;
+	
 	private Object selection;
 	
 	/**
 	 * Creates a CyclePartAction.
 	 */
-	protected CyclePartAction(IWorkbenchWindow window, boolean forward) {
+	public CyclePartAction(IWorkbenchWindow window, boolean forward) {
 		super("", window); //$NON-NLS-1$
 		this.forward = forward;
 		setText();
-		window.getPartService().addPartListener(this);
 		updateState();
 	}
 	
@@ -77,11 +73,15 @@ public class CyclePartAction extends PageEventAction {
 		if (forward) {
 			setText(WorkbenchMessages.getString("CyclePartAction.next.text")); //$NON-NLS-1$
 			setToolTipText(WorkbenchMessages.getString("CyclePartAction.next.toolTip")); //$NON-NLS-1$
+			// @issue missing action ids
 			WorkbenchHelp.setHelp(this, IHelpContextIds.CYCLE_PART_FORWARD_ACTION);
+			setActionDefinitionId("org.eclipse.ui.window.nextView"); //$NON-NLS-1$
 		} else {
 			setText(WorkbenchMessages.getString("CyclePartAction.prev.text")); //$NON-NLS-1$
 			setToolTipText(WorkbenchMessages.getString("CyclePartAction.prev.toolTip")); //$NON-NLS-1$
+			// @issue missing action ids
 			WorkbenchHelp.setHelp(this, IHelpContextIds.CYCLE_PART_BACKWARD_ACTION);
+			setActionDefinitionId("org.eclipse.ui.window.previousView"); //$NON-NLS-1$
 		}
 	}
 	
@@ -117,17 +117,11 @@ public class CyclePartAction extends PageEventAction {
 		updateState();
 	}
 	
-	/** 
-	 * Dispose the resources cached by this action.
-	 */
-	protected void dispose() {
-	}
-	
 	/**
 	 * Updates the enabled state.
 	 */
 	protected void updateState() {
-		WorkbenchPage page = (WorkbenchPage)getActivePage();
+		IWorkbenchPage page = getActivePage();
 		if (page == null) {
 			setEnabled(false);
 			return;
@@ -135,7 +129,7 @@ public class CyclePartAction extends PageEventAction {
 		// enable iff there is at least one other part to switch to
 		// (the editor area counts as one entry)
 		int count = page.getViewReferences().length;
-		if (page.getSortedEditors().length > 0) {
+		if (page.getEditorReferences().length > 0) {
 			++count;
 		}
 		setEnabled(count >= 1);
@@ -145,6 +139,10 @@ public class CyclePartAction extends PageEventAction {
 	 * @see Action#run()
 	 */
 	public void runWithEvent(Event e) {
+		if (getWorkbenchWindow() == null) {
+			// action has been disposed
+			return;
+		}
 		IWorkbenchPage page = getActivePage();
 		openDialog((WorkbenchPage) page); 
 		activate(page, selection);	
@@ -154,7 +152,7 @@ public class CyclePartAction extends PageEventAction {
 	 * Activate the selected item.
 	 */
 	public void activate(IWorkbenchPage page,Object selection) {
-		if(selection != null) {
+		if (selection != null) {
 			if (selection instanceof IEditorReference)
 				page.setEditorAreaVisible(true);
 			
@@ -237,15 +235,11 @@ public class CyclePartAction extends PageEventAction {
 			public void helpRequested(HelpEvent event) {
 			}
 		});
-
-        // TODO Bold cast to Workbench
-        final Workbench workbench = (Workbench) page.getWorkbenchWindow().getWorkbench();
+		
 		try {
 			dialog.open();
 			addMouseListener(table, dialog);
-            workbench.disableKeyFilter();
 			addKeyListener(table, dialog);
-			addTraverseListener(table);
 			
 			while (!dialog.isDisposed())
 				if (!display.readAndDispatch())
@@ -253,7 +247,6 @@ public class CyclePartAction extends PageEventAction {
 		} finally {
 			if(!dialog.isDisposed())
 				cancel(dialog);
-            workbench.enableKeyFilter();
 		}
 	}
 	
@@ -300,7 +293,6 @@ public class CyclePartAction extends PageEventAction {
 				int stateMask = e.stateMask;
 				char character = e.character;
 				int accelerator = stateMask | (keyCode != 0 ? keyCode : convertCharacter(character));
-				KeySequence keySequence = KeySequence.getInstance(KeySupport.convertAcceleratorToKeyStroke(accelerator));
 
 				//System.out.println("\nPRESSED");
 				//printKeyEvent(e);
@@ -308,46 +300,43 @@ public class CyclePartAction extends PageEventAction {
 				
 				boolean acceleratorForward = false;
 				boolean acceleratorBackward = false;
-				CommandManager commandManager = CommandManager.getInstance();
 
 				if (commandForward != null) {
-					ICommand command = commandManager.getCommand(commandForward);
-					
-					if (command.isDefined()) {
-						try {
-							SortedSet keyBindings = command.getKeyBindings();
-							Iterator iterator = keyBindings.iterator();
-							
-							while (iterator.hasNext()) {
-								IKeyBinding keyBinding = (IKeyBinding) iterator.next();
-								
-								if (keyBinding.getKeySequence().equals(keySequence)) {
-									acceleratorForward = true;
-									break;
-								}
+					Map commandMap = Manager.getInstance().getKeyMachine().getCommandMap();		
+					SortedSet sequenceSet = (SortedSet) commandMap.get(commandForward);
+		
+					if (sequenceSet != null) {
+						Iterator iterator = sequenceSet.iterator();
+						
+						while (iterator.hasNext()) {
+							Sequence sequence = (Sequence) iterator.next();
+							List strokes = sequence.getStrokes();
+							int size = strokes.size();
+
+							if (size > 0 && accelerator == ((Stroke) strokes.get(size - 1)).getValue()) {
+								acceleratorForward = true;
+								break;
 							}
-						} catch (NotDefinedException eNotDefined) {							
 						}
 					}
 				}
-				
+
 				if (commandBackward != null) {
-					ICommand command = commandManager.getCommand(commandBackward);
-					
-					if (command.isDefined()) {
-						try {
-							SortedSet keyBindings = command.getKeyBindings();
-							Iterator iterator = keyBindings.iterator();
-								
-							while (iterator.hasNext()) {
-								IKeyBinding keyBinding = (IKeyBinding) iterator.next();
-									
-								if (keyBinding.getKeySequence().equals(keySequence)) {
-									acceleratorBackward = true;
-									break;
-								}
+					Map commandMap = Manager.getInstance().getKeyMachine().getCommandMap();		
+					SortedSet sequenceSet = (SortedSet) commandMap.get(commandBackward);
+		
+					if (sequenceSet != null) {
+						Iterator iterator = sequenceSet.iterator();
+						
+						while (iterator.hasNext()) {
+							Sequence sequence = (Sequence) iterator.next();
+							List strokes = sequence.getStrokes();
+							int size = strokes.size();
+
+							if (size > 0 && accelerator == ((Stroke) strokes.get(size - 1)).getValue()) {
+								acceleratorBackward = true;
+								break;
 							}
-						} catch (NotDefinedException eNotDefined) {							
 						}
 					}
 				}
@@ -383,27 +372,8 @@ public class CyclePartAction extends PageEventAction {
 				//printKeyEvent(e);
 				//System.out.println("accelerat:\t" + accelerator + "\t (" + KeySupport.formatStroke(Stroke.create(accelerator), true) + ")");
 				
-				final IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-				final boolean stickyCycle = store.getBoolean(IPreferenceConstants.STICKY_CYCLE);
-				if ((!stickyCycle && (firstKey || quickReleaseMode)) && keyCode == stateMask)
+				if ((firstKey || quickReleaseMode) && keyCode == stateMask)
 					ok(dialog, table);
-			}
-		});
-	}
-	
-	/**
-	 * Adds a listener to the given table that blocks all traversal operations.
-	 * @param table The table to which the traversal suppression should be 
-	 * added; must not be <code>null</code>.
-	 */
-	private final void addTraverseListener(final Table table) {
-		table.addTraverseListener(new TraverseListener() {
-			/**
-			 * Blocks all key traversal events.
-			 * @param event The trigger event; must not be <code>null</code>.
-			 */
-			public final void keyTraversed(final TraverseEvent event) {
-				event.doit = false;
 			}
 		});
 	}
@@ -459,4 +429,33 @@ public class CyclePartAction extends PageEventAction {
 			}
 		});
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.ICycleAction
+	 */
+	public String getBackwardActionDefinitionId() {
+		return commandBackward;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.ICycleAction
+	 */
+	public String getForwardActionDefinitionId() {
+		return commandForward;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.ICycleAction
+	 */
+	public void setBackwardActionDefinitionId(String actionDefinitionId) {
+		commandBackward = actionDefinitionId;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.ICycleAction
+	 */
+	public void setForwardActionDefinitionId(String actionDefinitionId) {
+		commandForward = actionDefinitionId;
+	}
+
 }

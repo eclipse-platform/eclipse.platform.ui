@@ -72,6 +72,7 @@ import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.IShowInTargetList;
@@ -234,10 +235,10 @@ public class BookmarkNavigator extends ViewPart {
 		
 		// Register with action service.
 		IActionBars actionBars = getViewSite().getActionBars();
-		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.COPY, copyAction);
-		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.PASTE, pasteAction);
-		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.DELETE, removeAction);
-		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.SELECT_ALL, selectAllAction);
+		actionBars.setGlobalActionHandler(ActionFactory.COPY.getId(), copyAction);
+		actionBars.setGlobalActionHandler(ActionFactory.PASTE.getId(), pasteAction);
+		actionBars.setGlobalActionHandler(ActionFactory.DELETE.getId(), removeAction);
+		actionBars.setGlobalActionHandler(ActionFactory.SELECT_ALL.getId(), selectAllAction);
 		
 		// Set the double click action.
 		viewer.addOpenListener(new IOpenListener() {

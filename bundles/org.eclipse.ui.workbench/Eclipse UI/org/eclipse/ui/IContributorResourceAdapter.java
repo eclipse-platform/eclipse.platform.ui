@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui;
 
-
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 
 /**
@@ -22,7 +20,6 @@ import org.eclipse.core.runtime.IAdaptable;
  * Implementors of this interface are typically registered with an
  * IAdapterFactory for lookup via the getAdapter() mechanism.
  */
-
 public interface IContributorResourceAdapter {
 	
 	/**
@@ -30,12 +27,16 @@ public interface IContributorResourceAdapter {
 	 * adapts to. An IContributorResourceAdapter assumes
 	 * that any object passed to it adapts to one equivalent
 	 * resource.
-	 * @return <code>IResource</code> or <code>null</code> if there
-	 * 	is no adapted resource for this type.
-	 * @param IAdaptable the adaptable being queried.
+	 * <p>
+	 * The return type is declared as <code>Object</code> so that this
+	 * interface can exist independently of the resource plug-in.
+	 * </p>
+	 * 
+	 * @param IAdaptable the adaptable being queried
+	 * @return an <code>IResource</code>, or <code>null</code> if there
+	 * 	is no adapted resource for this type
 	 */
-	
-	public IResource getAdaptedResource(IAdaptable adaptable);
+	public Object getAdaptedResource(IAdaptable adaptable);
 
 }
 

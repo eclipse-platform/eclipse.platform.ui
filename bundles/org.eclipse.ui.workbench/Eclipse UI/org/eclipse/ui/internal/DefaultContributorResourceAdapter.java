@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.IContributorResourceAdapter;
 
@@ -20,7 +18,6 @@ import org.eclipse.ui.IContributorResourceAdapter;
  * implementation of the IContributorResourceAdapter used for 
  * one to one resource adaption.
  */
-
 public class DefaultContributorResourceAdapter
 	implements IContributorResourceAdapter {
 		
@@ -45,9 +42,14 @@ public class DefaultContributorResourceAdapter
 	/*
 	 * @see IContributorResourceAdapter#getAdaptedResource(IAdaptable)
 	 */
-	public IResource getAdaptedResource(IAdaptable adaptable) {
-		return (IResource) adaptable.getAdapter(IResource.class);
+	public Object getAdaptedResource(IAdaptable adaptable) {
+		// use Java reflection to avoid dependence on IResource (which is not
+		// part of generic workbench and many not even be present)
+		Class resourceClass = ObjectContributorManager.getResourceClass();
+		if (resourceClass == null) {
+			return null;
+		}
+		return adaptable.getAdapter(resourceClass);
 	}
-
 }
 

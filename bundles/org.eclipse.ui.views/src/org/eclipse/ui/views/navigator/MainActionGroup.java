@@ -33,6 +33,7 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.actions.ActionContext;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.AddBookmarkAction;
 import org.eclipse.ui.actions.AddTaskAction;
 import org.eclipse.ui.actions.ExportResourcesAction;
@@ -40,6 +41,7 @@ import org.eclipse.ui.actions.ImportResourcesAction;
 import org.eclipse.ui.actions.NewWizardMenu;
 import org.eclipse.ui.actions.WorkingSetFilterActionGroup;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
+import org.eclipse.ui.ide.IDEActionFactory;
 
 /**
  * The main action group for the navigator.
@@ -247,13 +249,13 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
 	 */
 	public void fillActionBars(IActionBars actionBars) {
 		actionBars.setGlobalActionHandler(
-			IWorkbenchActionConstants.PROPERTIES,
+			ActionFactory.PROPERTIES.getId(),
 			propertyDialogAction);
 		actionBars.setGlobalActionHandler(
-			IWorkbenchActionConstants.BOOKMARK,
+			IDEActionFactory.BOOKMARK.getId(),
 			addBookmarkAction);
 		actionBars.setGlobalActionHandler(
-			IWorkbenchActionConstants.ADD_TASK,
+			IDEActionFactory.ADD_TASK.getId(),
 			addTaskAction);
 			
 		gotoGroup.fillActionBars(actionBars);

@@ -15,6 +15,7 @@ import org.eclipse.core.resources.IProject;
 
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.util.CallHistory;
 import org.eclipse.ui.tests.util.FileUtil;
 import org.eclipse.ui.tests.util.UITestCase;
@@ -109,7 +110,7 @@ public class IEditorActionBarContributorTest extends UITestCase {
 	{
 		IProject proj = FileUtil.createProject("IEditorActionBarContributorTest");
 		IFile file = FileUtil.createFile("test" + suffix + ".txt", proj);
-		return (MockEditorPart)page.openEditor(file, EDITOR_ID);
+		return (MockEditorPart)page.openEditor(new FileEditorInput(file), EDITOR_ID);
 	}
 }
 

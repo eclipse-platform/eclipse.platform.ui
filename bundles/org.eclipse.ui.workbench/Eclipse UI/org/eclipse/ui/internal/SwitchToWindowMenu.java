@@ -22,7 +22,7 @@ import org.eclipse.ui.*;
 public class SwitchToWindowMenu extends ContributionItem {
 	private static final int MAX_TEXT_LENGTH = 40;
 	
-	private WorkbenchWindow workbenchWindow;
+	private IWorkbenchWindow workbenchWindow;
 	private boolean showSeparator;
 	private boolean dirty = true;
 	private IMenuListener menuListener = new IMenuListener() {
@@ -38,8 +38,8 @@ public class SwitchToWindowMenu extends ContributionItem {
 	 * @param window the workbench window this action applies to
 	 * @param showSeparator whether to add a separator in the menu
 	 */
-	public SwitchToWindowMenu(WorkbenchWindow window, boolean showSeparator) {
-		super("Switch To Window"); //$NON-NLS-1$
+	public SwitchToWindowMenu(IWorkbenchWindow window, String id, boolean showSeparator) {
+		super(id);
 		this.workbenchWindow = window;
 		this.showSeparator = showSeparator;
 	}

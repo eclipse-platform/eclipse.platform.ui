@@ -241,7 +241,7 @@ public class DecoratorManager
 	 */
 	private Object getResourceAdapter(Object element) {
 
-		//Get any adaptions to IResource
+		//Get any adaptions to IResource (when resources are available)
 		if (element instanceof IAdaptable) {
 			IAdaptable adaptable = (IAdaptable) element;
 			Object resourceAdapter =
@@ -251,11 +251,7 @@ public class DecoratorManager
 					DefaultContributorResourceAdapter.getDefault();
 
 			Object adapted =
-				(
-					(
-						IContributorResourceAdapter) resourceAdapter)
-							.getAdaptedResource(
-					adaptable);
+				((IContributorResourceAdapter) resourceAdapter).getAdaptedResource(adaptable);
 			if (adapted != element)
 				return adapted; //Avoid applying decorator twice
 		}
@@ -366,6 +362,17 @@ public class DecoratorManager
 	public void updateForEnablementChange() {
 		//Clear any results that may be around as all labels have changed
 		scheduler.clearResults();
+		fireListeners(new LabelProviderChangedEvent(this));
+		writeDecoratorsPreference();
+	}
+
+	/**
+	 * Reset the cached values in the receiver and 
+	 * force an update on all listeners.
+	 */
+	public void reset() {
+		cachedFullDecorators = new HashMap();
+		lightweightManager.reset();
 		fireListeners(new LabelProviderChangedEvent(this));
 		writeDecoratorsPreference();
 	}

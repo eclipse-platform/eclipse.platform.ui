@@ -18,29 +18,37 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * Opens a new window. The initial perspective
  * for the new window will be the same type as
  * the active perspective in the window which this
  * action is running in. The default input for the 
- * new window's page is the workspace root.
+ * new window's page is application-specific.
  */
-public class OpenInNewWindowAction extends Action {
+public class OpenInNewWindowAction
+	extends Action
+	implements ActionFactory.IWorkbenchAction {
+
+	/**
+	 * The workbench window; or <code>null</code> if this
+	 * action has been <code>dispose</code>d.
+	 */
 	private IWorkbenchWindow workbenchWindow;
+	
 	private IAdaptable pageInput;
 
 	/**
 	 * Creates a new <code>OpenInNewWindowAction</code>. Sets
-	 * the new window page's input to be the workspace root
-	 * by default.
+	 * the new window page's input to be an application-specific
+	 * default.
 	 * 
 	 * @param window the workbench window containing this action
 	 */
 	public OpenInNewWindowAction(IWorkbenchWindow window) {
-		this(window, WorkbenchPlugin.getPluginWorkspace().getRoot());
+		this(window, ((Workbench)window.getWorkbench()).getDefaultWindowInput());
 	}
 
 	/**
@@ -51,8 +59,12 @@ public class OpenInNewWindowAction extends Action {
 	 */
 	public OpenInNewWindowAction(IWorkbenchWindow window, IAdaptable input) {
 		super(WorkbenchMessages.getString("OpenInNewWindowAction.text")); //$NON-NLS-1$
+		if (window == null) {
+			throw new IllegalArgumentException();
+		}
+		this.workbenchWindow = window;
+		// @issue missing action id
 		setToolTipText(WorkbenchMessages.getString("OpenInNewWindowAction.toolTip")); //$NON-NLS-1$
-		workbenchWindow = window;
 		pageInput = input;
 		WorkbenchHelp.setHelp(this,IHelpContextIds.OPEN_NEW_WINDOW_ACTION);
 	}
@@ -72,6 +84,10 @@ public class OpenInNewWindowAction extends Action {
 	 * action is running in.
 	 */
 	public void run() {
+		if (workbenchWindow == null) {
+			// action has been disposed
+			return;
+		}
 		try {
 			String perspId;
 			
@@ -89,5 +105,13 @@ public class OpenInNewWindowAction extends Action {
 				e.getMessage(),
 				e.getStatus());
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * Method declared on ActionFactory.IWorkbenchAction.
+	 * @since 3.0
+	 */
+	public void dispose() {
+		workbenchWindow = null;
 	}
 }

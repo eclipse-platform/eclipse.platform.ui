@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * This class is used to read resource editor registry descriptors from
@@ -23,17 +24,18 @@ import org.eclipse.ui.internal.WorkbenchImages;
  */
 public class EditorRegistryReader extends RegistryReader {
 	
-	private static final    String      ATT_CLASS = "class";//$NON-NLS-1$
-	private static final    String      ATT_NAME = "name";//$NON-NLS-1$
-	private static final    String      TAG_EDITOR = "editor";//$NON-NLS-1$
-	private static final    String      P_TRUE = "true";//$NON-NLS-1$
-	private static final    String      ATT_COMMAND = "command";//$NON-NLS-1$
-	private static final    String      ATT_LAUNCHER = "launcher";//$NON-NLS-1$
-	private static final    String      ATT_DEFAULT = "default";//$NON-NLS-1$
-	public  static final    String      ATT_ID = "id";//$NON-NLS-1$
-	private static final    String      ATT_ICON = "icon";//$NON-NLS-1$
-	private static final   String       ATT_EXTENSIONS = "extensions";//$NON-NLS-1$
-	private static final   String       ATT_FILENAMES = "filenames";//$NON-NLS-1$
+	private static final String ATT_CLASS = "class";//$NON-NLS-1$
+	private static final String ATT_NAME = "name";//$NON-NLS-1$
+	private static final String TAG_EDITOR = "editor";//$NON-NLS-1$
+	private static final String P_TRUE = "true";//$NON-NLS-1$
+	private static final String ATT_COMMAND = "command";//$NON-NLS-1$
+	private static final String ATT_LAUNCHER = "launcher";//$NON-NLS-1$
+	private static final String ATT_DEFAULT = "default";//$NON-NLS-1$
+	public  static final String ATT_ID = "id";//$NON-NLS-1$
+	private static final String ATT_ICON = "icon";//$NON-NLS-1$
+	private static final String ATT_EXTENSIONS = "extensions";//$NON-NLS-1$
+	private static final String ATT_FILENAMES = "filenames";//$NON-NLS-1$
+	
 	private EditorRegistry editorRegistry;
 /**
  * Get the editors that are defined in the registry
@@ -90,7 +92,10 @@ protected boolean readElement(IConfigurationElement element) {
 		}
 	}
 	if (icon != null) {
-		editor.setImageDescriptor(WorkbenchImages.getImageDescriptorFromExtension(extension, icon));
+		String extendingPluginId =
+			extension.getDeclaringPluginDescriptor().getUniqueIdentifier();
+		editor.setImageDescriptor(
+			AbstractUIPlugin.imageDescriptorFromPlugin(extendingPluginId, icon));
 		editor.setImageFilename(icon);
 	}
 	
@@ -116,19 +121,19 @@ protected boolean readElement(IConfigurationElement element) {
 	if (launcher != null) {
 		// open using a launcer
 		editor.setLauncher(launcher);
-		editor.setInternal(false);
-		
+		editor.setOpenMode(EditorDescriptor.OPEN_EXTERNAL);
 	} else if (command != null) {
 	   	// open using an external editor 	
 	   	editor.setFileName(command);
-   		if (icon == null) 
-		   editor.setImageDescriptor(WorkbenchImages.getImageDescriptorFromProgram(command, 0));
-	   	editor.setInternal(false);
+	   	editor.setOpenMode(EditorDescriptor.OPEN_EXTERNAL);
+   		if (icon == null) { 
+		   	editor.setImageDescriptor(WorkbenchImages.getImageDescriptorFromProgram(command, 0));
+   		}
 	} else {
 		// open using an internal editor
 		String className = element.getAttribute(ATT_CLASS);
 		editor.setClassName(className);
-		editor.setInternal(true);
+		editor.setOpenMode(EditorDescriptor.OPEN_INTERNAL);
 	}
 
 	// Is this the default editor?

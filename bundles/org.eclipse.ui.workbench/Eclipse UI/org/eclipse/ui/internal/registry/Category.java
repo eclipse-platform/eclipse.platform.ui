@@ -18,15 +18,29 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.WorkbenchImages;
-import org.eclipse.ui.internal.model.WorkbenchAdapter;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
- * The default implementation of the interface <code>ICategory</code>.
- * 
- * @see ICategory
+ * Category provides for hierarchical grouping of elements
+ * registered in the registry. One extension normally defines
+ * a category, and other reference it via its ID.
+ * <p>
+ * A category may specify its parent category in order to
+ * achieve hierarchy.
+ * </p>
  */
-public class Category extends WorkbenchAdapter implements ICategory {
+public class Category implements IWorkbenchAdapter {
+	/**
+	 * Name of the miscellaneous category
+	 */
+	public final static String MISC_NAME = WorkbenchMessages.getString("ICategory.other"); //$NON-NLS-1$
+	
+	/**
+	 * Identifier of the miscellaneous category
+	 */
+	public final static String MISC_ID = "org.eclipse.ui.internal.otherCategory"; //$NON-NLS-1$
+	
 	private static final String ATT_ID = "id"; //$NON-NLS-1$
 	private static final String ATT_PARENT = "parentCategory"; //$NON-NLS-1$
 	private static final String ATT_NAME = "name"; //$NON-NLS-1$
@@ -171,5 +185,12 @@ public class Category extends WorkbenchAdapter implements ICategory {
 			return !elements.isEmpty();
 		else
 			return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getParent(java.lang.Object)
+	 */
+	public Object getParent(Object o) {
+		return null;
 	}
 }

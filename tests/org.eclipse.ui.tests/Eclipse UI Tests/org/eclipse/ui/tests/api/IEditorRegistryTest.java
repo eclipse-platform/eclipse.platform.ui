@@ -22,6 +22,7 @@ import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IFileEditorMapping;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.registry.EditorRegistry;
 import org.eclipse.ui.internal.registry.FileEditorMapping;
 import org.eclipse.ui.tests.util.ArrayUtil;
@@ -78,7 +79,7 @@ public class IEditorRegistryTest extends TestCase {
 			editors = fReg.getEditors( maps[i][0] );
 			assertEquals( editors.length, 1 );
 			assertEquals( editors[ 0 ].getId(), maps[i][1] );
-			editors2 = fReg.getEditors( FileUtil.createFile( maps[i][0], proj ) );
+			editors2 = fReg.getEditors( FileUtil.createFile( maps[i][0], proj ).getName() );
 			assertEquals( ArrayUtil.equals( editors, editors2 ), true );
 		}
 
@@ -86,7 +87,7 @@ public class IEditorRegistryTest extends TestCase {
 		String fileName = IConstants.UnknownFileName[0];
 		editors = fReg.getEditors( fileName );
 		assertEquals( editors.length, 0 );
-		editors = fReg.getEditors( FileUtil.createFile( fileName, proj ));
+		editors = fReg.getEditors( FileUtil.createFile( fileName, proj ).getName());
 		assertEquals( editors.length, 0 );
 	}
 
@@ -135,27 +136,27 @@ public class IEditorRegistryTest extends TestCase {
 		
 		IFile file = FileUtil.createFile("Whats up.bro", proj);
 		String id = MockEditorPart.ID1;
-		fReg.setDefaultEditor( file, id );
-		IEditorDescriptor editor = fReg.getDefaultEditor( file );
+		IDE.setDefaultEditor( file, id );
+		IEditorDescriptor editor = IDE.getDefaultEditor( file );
 		assertEquals( editor.getId(), id );
 		
 		//attach an IFile object with a registered extension to a different editor
 		file = FileUtil.createFile("ambush.mock1", proj);
 		id = MockEditorPart.ID2;
-		fReg.setDefaultEditor( file, id );
-		editor = fReg.getDefaultEditor( file );
+		IDE.setDefaultEditor( file, id );
+		editor = IDE.getDefaultEditor( file );
 		assertEquals( editor.getId(), id );
 		
 		//a non-registered IFile object with a registered extension
 		String name = "what.mock2";
 		file = FileUtil.createFile( name, proj);
-		editor = fReg.getDefaultEditor( file );
+		editor = IDE.getDefaultEditor( file );
 		assertEquals( editor, fReg.getDefaultEditor( name ) );
 		
 		//a non-registered IFile object with an unregistered extension
 		name = IConstants.UnknownFileName[0];
 		file = FileUtil.createFile( name, proj);
-		assertNull( fReg.getDefaultEditor( file ) );
+		assertNull( IDE.getDefaultEditor( file ) );
 	}
 	
 	public void testSetDefaultEditor() throws Throwable
@@ -164,19 +165,19 @@ public class IEditorRegistryTest extends TestCase {
 		IFile file = FileUtil.createFile("good.file", proj);
 
 		String id = MockEditorPart.ID1;
-		fReg.setDefaultEditor( file, id );	
-		IEditorDescriptor editor = fReg.getDefaultEditor( file );
+		IDE.setDefaultEditor( file, id );	
+		IEditorDescriptor editor = IDE.getDefaultEditor( file );
 		assertEquals( editor.getId(), id );
 		
 		//change the default editor
 		id = MockEditorPart.ID2;
-		fReg.setDefaultEditor( file, id );	
-		editor = fReg.getDefaultEditor( file );
+		IDE.setDefaultEditor( file, id );	
+		editor = IDE.getDefaultEditor( file );
 		assertEquals( editor.getId(), id );
 		
 		//register the default editor with an invalid editor id
-		fReg.setDefaultEditor( file, IConstants.FakeID );	
-		assertNull( fReg.getDefaultEditor( file ) );		
+		IDE.setDefaultEditor( file, IConstants.FakeID );	
+		assertNull( IDE.getDefaultEditor( file ) );		
 	}
 	
 	/**
@@ -198,13 +199,13 @@ public class IEditorRegistryTest extends TestCase {
 		image2 = fReg.getDefaultEditor( fileName).getImageDescriptor();
 		assertEquals( image1, image2 );
 		//for getImageDescriptor(IFile file)
-		assertEquals( image1, fReg.getImageDescriptor( file ) );
+		assertEquals( image1, fReg.getImageDescriptor( file.getName() ) );
 		
 		//same extension, different file name
 		fileName = "b.mock1";
 		file = FileUtil.createFile(fileName, proj);
 		assertEquals( image1, fReg.getImageDescriptor( fileName ) );
-		assertEquals( image1, fReg.getImageDescriptor( file ) );
+		assertEquals( image1, fReg.getImageDescriptor( file.getName() ) );
 		
 		//default image		
 		fileName = "a.nullAndVoid";
@@ -213,7 +214,7 @@ public class IEditorRegistryTest extends TestCase {
 		image2 = fReg.getImageDescriptor( "b.this_is_not_good" );				
 		assertNotNull( image1 );
 		assertEquals( image1, image2 );
-		assertEquals( image2, fReg.getImageDescriptor( file ) );
+		assertEquals( image2, fReg.getImageDescriptor( file.getName() ) );
 	}
 	
 	public void testAddPropertyListener() throws Throwable

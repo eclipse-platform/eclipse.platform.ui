@@ -24,6 +24,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.registry.PerspectiveRegistry;
+import org.eclipse.ui.model.PerspectiveLabelProvider;
 
 /**
  * The SavePerspectiveDialog can be used to get the name of a new
@@ -130,7 +131,7 @@ protected Control createDialogArea(Composite parent) {
 
 	// Add perspective list.
 	list = new TableViewer(composite, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
-	list.setLabelProvider(new PerspLabelProvider());
+	list.setLabelProvider(new PerspectiveLabelProvider());
 	list.setContentProvider(new PerspContentProvider());
 	list.setSorter(new ViewerSorter() {});
 	list.setInput(perspReg);

@@ -13,9 +13,6 @@ package org.eclipse.ui.commands;
 
 /**
  * <p>
- * JAVADOC
- * </p>
- * <p>
  * This interface is not intended to be extended by clients.
  * </p>
  * <p>
@@ -27,9 +24,23 @@ package org.eclipse.ui.commands;
 public interface ICommandListener {
 
 	/**
-	 * JAVADOC
+	 * TODO javadoc
 	 * 
 	 * @param commandEvent
-	 */
-	void commandChanged(ICommandEvent commandEvent);
+	 */	
+	void commandAdded(CommandEvent commandEvent);
+	
+	/**
+	 * TODO javadoc
+	 * 
+	 * @param commandEvent
+	 */	
+	void commandChanged(CommandEvent commandEvent);
+	
+	/**
+	 * TODO javadoc
+	 * 
+	 * @param commandEvent
+	 */	
+	void commandRemoved(CommandEvent commandEvent);
 }

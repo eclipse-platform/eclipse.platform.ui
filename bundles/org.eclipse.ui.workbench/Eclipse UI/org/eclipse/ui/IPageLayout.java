@@ -186,6 +186,7 @@ public void addFastView(String id, float ratio);
  * workbench's extension point (named <code>"org.eclipse.ui.newWizards"</code>).
  *
  * @param id the wizard id
+ * @issue there is no new wizards in the generic workbench (also for perspectiveExtensions extension point)
  */
 public void addNewWizardShortcut(String id);
 /**

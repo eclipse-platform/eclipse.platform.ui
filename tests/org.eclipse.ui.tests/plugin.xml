@@ -13,9 +13,14 @@
       <import plugin="org.eclipse.core.boot"/>
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.core.resources"/>
-      <import plugin="org.eclipse.swt"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.junit"/>
+      <import plugin="org.eclipse.ui.ide"/>
+      <import plugin="org.eclipse.ui.editors"/>
+      <import plugin="org.eclipse.ui.workbench.texteditor"/>
+      <import plugin="org.eclipse.ui.views"/>
+      <import plugin="org.eclipse.text"/>
+      <import plugin="org.eclipse.jface.text"/>
    </requires>
 
 

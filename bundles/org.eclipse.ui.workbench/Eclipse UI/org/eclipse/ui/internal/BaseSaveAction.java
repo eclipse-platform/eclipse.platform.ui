@@ -11,6 +11,10 @@
 
 package org.eclipse.ui.internal;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.ISaveablePart;
@@ -23,6 +27,12 @@ import org.eclipse.ui.IWorkbenchWindow;
  * The abstract superclass for save actions that depend on the active editor.
  */
 public abstract class BaseSaveAction extends ActiveEditorAction {
+	/**
+	 * List of parts (element type: <code>IWorkbenchPart</code>)
+	 * against which this class has outstanding property listeners registered.
+	 */
+	private List partsWithListeners = new ArrayList(1);
+
 	private final IPropertyListener propListener = new IPropertyListener() {
 		public void propertyChanged(Object source, int propId) {
 			if (source == getActiveEditor()) {
@@ -48,16 +58,20 @@ public abstract class BaseSaveAction extends ActiveEditorAction {
 	 * Method declared on ActiveEditorAction.
 	 */
 	protected void editorActivated(IEditorPart part) {
-		if (part != null)
+		if (part != null) {
 			part.addPropertyListener(propListener);
+			partsWithListeners.add(part);
+		}
 	}
 	
 	/* (non-Javadoc)
 	 * Method declared on ActiveEditorAction.
 	 */
 	protected void editorDeactivated(IEditorPart part) {
-		if (part != null)
+		if (part != null) {
 			part.removePropertyListener(propListener);
+			partsWithListeners.remove(part);
+		}
 	}
 	
 
@@ -143,22 +157,43 @@ public abstract class BaseSaveAction extends ActiveEditorAction {
 	 * Set the active editor
 	 */
 	private void setActiveView(IWorkbenchPart part) {
-		if (activeView == part)
+		if (activeView == part) {
 			return;
-		if (activeView != null)
+		}
+		if (activeView != null) {
 			activeView.removePropertyListener(propListener2);
-		if (part instanceof IViewPart)
+			partsWithListeners.remove(activeView);
+		}
+		if (part instanceof IViewPart) {
 			activeView = (IViewPart)part;
-		else
+		} else {
 			activeView = null;
-		if (activeView != null)
+		}
+		if (activeView != null) {
 			activeView.addPropertyListener(propListener2);
+			partsWithListeners.add(activeView);
+		}
 	}
 	protected final ISaveablePart getSaveableView() {
-		if (activeView == null)
+		if (activeView == null) {
 			return null;
-		if (activeView instanceof ISaveablePart)
+		}
+		if (activeView instanceof ISaveablePart) {
 			return (ISaveablePart)activeView;
+		}
 		return (ISaveablePart)activeView.getAdapter(ISaveablePart.class);
+	}
+
+	/* (non-Javadoc)
+	 * Method declared on PageEventAction.
+	 */
+	public void dispose() {
+		super.dispose();
+		for (Iterator it = partsWithListeners.iterator(); it.hasNext(); ) {
+			IWorkbenchPart part = (IWorkbenchPart) it.next();
+			part.removePropertyListener(propListener);
+			part.removePropertyListener(propListener2);
+		}
+		partsWithListeners.clear();
 	}
 }

@@ -39,12 +39,12 @@ public class ComboBoxCellEditor extends CellEditor {
 	/**
 	 * The zero-based index of the selected item.
 	 */
-	int selection;
+	private int selection;
 
 	/**
 	 * The custom combo box control.
 	 */
-	CCombo comboBox;
+	private CCombo comboBox;
 
 	/**
 	 * Default ComboBoxCellEditor style
@@ -135,10 +135,6 @@ protected Control createControl(Composite parent) {
 		public void widgetDefaultSelected(SelectionEvent event) {
 			applyEditorValueAndDeactivate();
 		}
-		
-		public void widgetSelected(SelectionEvent event) {
-			selection = comboBox.getSelectionIndex();
-		}
 	});
 
 	comboBox.addTraverseListener(new TraverseListener() {
@@ -227,7 +223,7 @@ private void populateComboBoxItems() {
 /**
  * Applies the currently selected value and deactiavates the cell editor
  */
-void applyEditorValueAndDeactivate() {
+private void applyEditorValueAndDeactivate() {
 	//	must set the selection before getting value
 	selection = comboBox.getSelectionIndex();
 	Object newValue = doGetValue();

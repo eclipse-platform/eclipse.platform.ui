@@ -130,6 +130,7 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements IWorki
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		buttonComposite.setLayout(layout);
+		buttonComposite.setFont(composite.getFont());
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_END | GridData.GRAB_HORIZONTAL);
 		data.grabExcessHorizontalSpace = true;
 		composite.setData(data);
@@ -232,7 +233,7 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements IWorki
 	/**
 	 * Opens a working set wizard for creating a new working set.
 	 */
-	void createWorkingSet() {
+	private void createWorkingSet() {
 		WorkingSetNewWizard wizard = new WorkingSetNewWizard();
 		WizardDialog dialog = new WizardDialog(getShell(), wizard);
 	
@@ -254,7 +255,7 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements IWorki
 	 * 
 	 * @see org.eclipse.ui.IWorkingSetPage
 	 */
-	void editSelectedWorkingSet() {
+	private void editSelectedWorkingSet() {
 		IWorkingSetManager manager = WorkbenchPlugin.getDefault().getWorkingSetManager();			
 		IWorkingSet editWorkingSet = (IWorkingSet) getSelectedWorkingSets().get(0);		
 		IWorkingSetEditWizard wizard = manager.createWorkingSetEditWizard(editWorkingSet);
@@ -273,7 +274,7 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements IWorki
 		dialog.create();
 		WorkbenchHelp.setHelp(dialog.getShell(), IHelpContextIds.WORKING_SET_EDIT_WIZARD);
 		if (dialog.open() == Window.OK) {		
-			editWorkingSet = wizard.getSelection();
+			editWorkingSet = (IWorkingSet) wizard.getSelection();
 			listViewer.update(editWorkingSet, null);
 			// make sure ok button is enabled when the selected working set 
 			// is edited. Fixes bug 33386.
@@ -303,7 +304,7 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements IWorki
 	/**
 	 * Called when the selection has changed.
 	 */
-	void handleSelectionChanged() {
+	private void handleSelectionChanged() {
 		updateButtonAvailability();
 	}
 	/**
@@ -334,7 +335,7 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements IWorki
 	/**
 	 * Removes the selected working sets from the workbench.
 	 */
-	void removeSelectedWorkingSets() {
+	private void removeSelectedWorkingSets() {
 		ISelection selection = listViewer.getSelection();
 
 		if (selection instanceof IStructuredSelection) {

@@ -10,10 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ISaveablePart;
-import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.help.WorkbenchHelp;
 
@@ -29,15 +27,27 @@ public class SaveAsAction extends BaseSaveAction {
 		super(WorkbenchMessages.getString("SaveAs.text"), window); //$NON-NLS-1$
 		setText(WorkbenchMessages.getString("SaveAs.text")); //$NON-NLS-1$
 		setToolTipText(WorkbenchMessages.getString("SaveAs.toolTip")); //$NON-NLS-1$
-		setId(IWorkbenchActionConstants.SAVE_AS);
+		setId("saveAs"); //$NON-NLS-1$
 		WorkbenchHelp.setHelp(this, IHelpContextIds.SAVE_AS_ACTION);
+		setImageDescriptor(
+			WorkbenchImages.getImageDescriptor(
+				IWorkbenchGraphicConstants.IMG_CTOOL_SAVEAS_EDIT));
+		setHoverImageDescriptor(
+			WorkbenchImages.getImageDescriptor(
+				IWorkbenchGraphicConstants.IMG_CTOOL_SAVEAS_EDIT_HOVER));
+		setDisabledImageDescriptor(
+			WorkbenchImages.getImageDescriptor(
+				IWorkbenchGraphicConstants.IMG_CTOOL_SAVEAS_EDIT_DISABLED));
 	}
 	
-	/**
-	 * Performs the <code>Save As</code> action by calling the
-	 * <code>IEditorPart.doSaveAs</code> method on the active editor.
+	/* (non-Javadoc)
+	 * Method declared on Action.
 	 */
 	public void run() {
+		if (getWorkbenchWindow() == null) {
+			// action has been disposed
+			return;
+		}
 		/* **********************************************************************************
 		 * The code below was added to track the view with focus
 		 * in order to support save actions from a view. Remove this
@@ -51,7 +61,10 @@ public class SaveAsAction extends BaseSaveAction {
 		}
 		/* **********************************************************************************/
 
-		getActiveEditor().doSaveAs();
+		IEditorPart editor = getActiveEditor();
+		if (editor != null) {
+			editor.doSaveAs();
+		}
 	}
 	
 	/* (non-Javadoc)

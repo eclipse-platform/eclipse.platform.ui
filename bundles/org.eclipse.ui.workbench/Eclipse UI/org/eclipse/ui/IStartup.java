@@ -22,7 +22,7 @@ package org.eclipse.ui;
  */
 public interface IStartup {
 	/**
-	 * Will be called in a separate thread after the workbench initializes.
+	 * Will be called in a separed thread after the workbench initializes.
 	 */
 	public void earlyStartup();
 }

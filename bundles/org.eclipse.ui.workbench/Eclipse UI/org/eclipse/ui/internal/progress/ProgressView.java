@@ -1,17 +1,6 @@
-/*******************************************************************************
- * Copyright (c) 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
- * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
-
 package org.eclipse.ui.internal.progress;
 
-import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.*;
@@ -22,19 +11,14 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.internal.ViewSite;
 import org.eclipse.ui.part.ViewPart;
-
-/**
- * The ProgressView is the class that shows the details of the
- * current workbench progress.
- */
+import org.eclipse.ui.internal.progress.ProgressMessages;
 
 public class ProgressView extends ViewPart implements IViewPart {
 
 	ProgressTreeViewer viewer;
-	Action cancelAction;
-	Action deleteAction;
-	Action showErrorAction;
-	Action clearErrorsAction;
+	private Action cancelAction;
+	private Action deleteAction;
+	private Action showErrorAction;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
@@ -89,11 +73,9 @@ public class ProgressView extends ViewPart implements IViewPart {
 		createCancelAction();
 		createDeleteAction();
 		createShowErrorAction();
-		createClearErrorsAction();
 		menuMgr.add(cancelAction);
 		menuMgr.add(deleteAction);
 		menuMgr.add(showErrorAction);
-		menuMgr.add(clearErrorsAction);
 
 		menuMgr.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager manager) {
@@ -104,10 +86,11 @@ public class ProgressView extends ViewPart implements IViewPart {
 				if (info == null) {
 					return;
 				}
-				int code = info.getJob().getState();
-				if (code == Job.RUNNING)
+				int code = info.getStatus().getCode();
+				if (code == JobInfo.PENDING_STATUS
+					|| code == JobInfo.RUNNING_STATUS)
 					cancelAction.setEnabled(true);
-				else if (info.getErrorStatus() != null) {
+				else if (code == IStatus.ERROR) {
 					deleteAction.setEnabled(true);
 					showErrorAction.setEnabled(true);
 				}
@@ -125,7 +108,7 @@ public class ProgressView extends ViewPart implements IViewPart {
 		IMenuManager menuMgr =
 			((ViewSite) getSite()).getActionBars().getMenuManager();
 		menuMgr.add(new Action(ProgressMessages.getString("ProgressView.VerboseAction"), IAction.AS_CHECK_BOX) { //$NON-NLS-1$
-
+			
 			/* (non-Javadoc)
 			 * @see org.eclipse.jface.action.Action#run()
 			 */
@@ -133,9 +116,9 @@ public class ProgressView extends ViewPart implements IViewPart {
 				ProgressContentProvider provider = (ProgressContentProvider) viewer.getContentProvider();
 				provider.debug = !provider.debug;
 				setChecked(provider.debug);
-				provider.refreshAll();
+				provider.refreshViewer(null);
 			}
-
+			
 		});
 
 	}
@@ -164,7 +147,7 @@ public class ProgressView extends ViewPart implements IViewPart {
 	 * JobInfo.
 	 * @return
 	 */
-	JobInfo getSelectedInfo() {
+	private JobInfo getSelectedInfo() {
 		IStructuredSelection selection = getSelection();
 		if (selection != null && selection.size() == 1) {
 			JobTreeElement element =
@@ -186,7 +169,7 @@ public class ProgressView extends ViewPart implements IViewPart {
 			 * @see org.eclipse.jface.viewers.ViewerSorter#compare(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 			 */
 			public int compare(Viewer testViewer, Object e1, Object e2) {
-				return ((Comparable) e1).compareTo(e2);
+				return ((JobTreeElement) e1).compareTo((JobTreeElement) e2);
 			}
 		};
 	}
@@ -198,14 +181,10 @@ public class ProgressView extends ViewPart implements IViewPart {
 	private void createCancelAction() {
 			cancelAction = new Action(ProgressMessages.getString("ProgressView.CancelAction")) {//$NON-NLS-1$
 	/* (non-Javadoc)
-	  * @see org.eclipse.jface.action.Action#run()
+	 * @see org.eclipse.jface.action.Action#run()
 	 */
 			public void run() {
 				JobInfo element = getSelectedInfo();
-				//Check it case it got removed after enablement
-				if (element == null) {
-					return;
-				}
 				element.getJob().cancel();
 
 			}
@@ -224,26 +203,11 @@ public class ProgressView extends ViewPart implements IViewPart {
 	 */
 			public void run() {
 				JobInfo element = getSelectedInfo();
-				//Check it case it got removed after enablement
-				if (element == null) {
-					return;
-				}
-				JobProgressManager.getInstance().clearJob(element.getJob());
-			}
-		};
-	}
-
-	/**
-	 * Create the clear all errors action for the receiver.
-	 * @return Action
-	 */
-	private void createClearErrorsAction() {
-			clearErrorsAction = new Action(ProgressMessages.getString("ProgressView.ClearAllAction")) {//$NON-NLS-1$
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.Action#run()
-	 */
-			public void run() {
-				JobProgressManager.getInstance().clearAllErrors();
+				(
+					(ProgressContentProvider) viewer
+						.getContentProvider())
+						.clearJob(
+					element.getJob());
 			}
 		};
 	}
@@ -262,8 +226,8 @@ public class ProgressView extends ViewPart implements IViewPart {
 				ErrorDialog.openError(
 					viewer.getControl().getShell(),
 					element.getDisplayString(),
-					element.getErrorStatus().getMessage(),
-					element.getErrorStatus());
+					element.getStatus().getMessage(),
+					element.getStatus());
 			}
 
 		};

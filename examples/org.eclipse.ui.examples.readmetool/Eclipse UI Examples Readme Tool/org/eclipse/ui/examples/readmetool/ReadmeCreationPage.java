@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.ide.IDE;
 
 /**
  * This class is the only page of the Readme file resource creation wizard.  
@@ -109,12 +110,13 @@ public boolean finish() {
 	// Since the file resource was created fine, open it for editing
 	// if requested by the user
 	try {
-	if (openFileCheckbox.getSelection()) {
-		IWorkbenchWindow dwindow = workbench.getActiveWorkbenchWindow();
-		IWorkbenchPage page = dwindow.getActivePage();
-		if (page != null)
-			page.openEditor(newFile);
-	}
+		if (openFileCheckbox.getSelection()) {
+			IWorkbenchWindow dwindow = workbench.getActiveWorkbenchWindow();
+			IWorkbenchPage page = dwindow.getActivePage();
+			if (page != null) {
+				IDE.openEditor(page, newFile, true);
+			}
+		}
 	} catch (PartInitException e) {
 		e.printStackTrace();
 		return false;

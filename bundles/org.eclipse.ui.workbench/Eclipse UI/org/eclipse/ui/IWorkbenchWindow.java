@@ -98,6 +98,8 @@ public IWorkbench getWorkbench();
  * @param menuId the menu id
  * @return <code>true</code> if the specified menu is an application menu,
  *  and <code>false</code> if is not
+ * @issue this method should be deprecated and removed, only the application
+ * 	would know something like this.
  */
 public boolean isApplicationMenu(String menuId);
 /**
@@ -147,4 +149,8 @@ public IWorkbenchPage openPage(IAdaptable input)
  * @param page the new active page
  */
 public void setActivePage(IWorkbenchPage page);
+
+//public IActionService getActionService();
+
+//public IContextService getContextService();
 }

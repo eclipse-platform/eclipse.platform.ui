@@ -18,6 +18,7 @@ import org.eclipse.ui.*;
 public class TestPartListener implements IPartListener {
 /**
  * TestPartListener constructor comment.
+ * @issue seems like garbage - no one using it
  */
 public TestPartListener() {
 	super();

@@ -11,7 +11,6 @@
 
 package org.eclipse.ui.part;
 
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -68,12 +67,6 @@ public abstract class MultiEditor extends EditorPart {
 	 * @see IEditorPart#doSaveAs()
 	 */
 	public void doSaveAs() {
-	}
-
-	/*
-	 * @see IEditorPart#gotoMarker(IMarker)
-	 */
-	public void gotoMarker(IMarker marker) {
 	}
 
 	/*
@@ -141,7 +134,7 @@ public abstract class MultiEditor extends EditorPart {
 	/**
 	 * Set the active editor.
 	 */
-	protected void activateEditor(IEditorPart part) {
+	private void activateEditor(IEditorPart part) {
 		IEditorPart oldEditor = getActiveEditor();
 		activeEditorIndex = getIndex(part);
 		IEditorPart e = getActiveEditor();
@@ -152,7 +145,7 @@ public abstract class MultiEditor extends EditorPart {
 	/*
 	 * Return the index of the specified editor
 	 */
-	protected int getIndex(IEditorPart editor) {
+	private int getIndex(IEditorPart editor) {
 		for (int i = 0; i < innerEditors.length; i++) {
 			if (innerEditors[i] == editor)
 				return i;

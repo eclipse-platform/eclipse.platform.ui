@@ -28,30 +28,21 @@ import org.eclipse.ui.PlatformUI;
  * the user can reopen an item from the recently used files list.
  */
 public class EditorHistory {
-	
-	private int size;
-	private ArrayList fifoList;
+	/**
+	 * The maximum of entries in the history.
+	 */
+	public static final int MAX_SIZE = 15;
+
+	/**
+	 * The list of editor entries, in FIFO order.
+	 */	
+	private ArrayList fifoList = new ArrayList(MAX_SIZE);
 	
 	/**
 	 * Constructs a new history.
 	 */
 	public EditorHistory() {
-		this(10);
-	}
-	
-	/**
-	 * Constructs a new history.
-	 */
-	public EditorHistory(int size) {
-		this.size = size;
-		fifoList = new ArrayList(size);
-	}
-	
-	/**
-	 * Adds an item to the history.  Added in fifo fashion.
-	 */
-	public void add(IEditorInput input) {
-		add(input, null);
+		super();
 	}
 	
 	/**
@@ -71,11 +62,13 @@ public class EditorHistory {
 			remove(newItem.getInput());
 		}
 
-		// Add the new item.
-		fifoList.add(index, newItem);
-		if (fifoList.size() > size) {
-			fifoList.remove(size);
+		// Remove the oldest one
+		if (fifoList.size() == MAX_SIZE) {
+			fifoList.remove(MAX_SIZE - 1);
 		}
+		
+		// Add the new item.
+		fifoList.add(index < MAX_SIZE ? index : MAX_SIZE - 1, newItem);
 	}
 	
 	/**
@@ -88,17 +81,7 @@ public class EditorHistory {
 		fifoList.toArray(array);
 		return array;
 	}
-	
-	
-	
-	
-	/**
-	 * Returns the stack height.
-	 */
-	public int getSize() {
-		return fifoList.size();
-	}
-	
+
 	/**
 	 * Refresh the editor list.  Any stale items are removed.
 	 * Only restored items are considered.
@@ -135,17 +118,6 @@ public class EditorHistory {
 			if (item.matches(input)) {
 				iter.remove();
 			}
-		}
-	}
-	
-	/**
-	 * Reset the editor history to have the specified size.  Trim the list if
-	 * it does not conforms to the new size.
-	 */
-	public void reset(int size) {
-		this.size = size;
-		while (fifoList.size() > size) {
-			fifoList.remove(size);
 		}
 	}
 	

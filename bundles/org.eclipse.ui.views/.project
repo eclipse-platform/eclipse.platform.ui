@@ -7,8 +7,8 @@
 		<project>org.eclipse.core.resources</project>
 		<project>org.eclipse.core.runtime</project>
 		<project>org.eclipse.help</project>
-		<project>org.eclipse.jface</project>
-		<project>org.eclipse.ui.workbench</project>
+		<project>org.eclipse.ui</project>
+		<project>org.eclipse.ui.ide</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

@@ -11,25 +11,39 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * The <code>ClosePerspectiveAction</code> is used to close the
  * active perspective in the workbench window's active page.
  */
-public class ClosePerspectiveAction extends Action {
-	private WorkbenchWindow window;
+public class ClosePerspectiveAction
+		extends Action 
+		implements ActionFactory.IWorkbenchAction {
+			
+	/**
+	 * The workbench window; or <code>null</code> if this
+	 * action has been <code>dispose</code>d.
+	 */
+	private IWorkbenchWindow workbenchWindow;
 	
 	/**
 	 * Create a new instance of <code>ClosePerspectiveAction</code>
 	 * 
 	 * @param window the workbench window this action applies to
 	 */
-	public ClosePerspectiveAction(WorkbenchWindow window) {
+	public ClosePerspectiveAction(IWorkbenchWindow window) {
 		super(WorkbenchMessages.getString("ClosePerspectiveAction.text")); //$NON-NLS-1$
+		if (window == null) {
+			throw new IllegalArgumentException();
+		}
+		this.workbenchWindow = window;
+		// @issue missing action id
 		setToolTipText(WorkbenchMessages.getString("ClosePerspectiveAction.toolTip")); //$NON-NLS-1$
 		setEnabled(false);
-		this.window = window;
 		WorkbenchHelp.setHelp(this, IHelpContextIds.CLOSE_PAGE_ACTION);
 	}
 	
@@ -37,11 +51,28 @@ public class ClosePerspectiveAction extends Action {
 	 * Method declared on IAction.
 	 */
 	public void run() {
-		WorkbenchPage page = (WorkbenchPage) window.getActivePage();
+		if (workbenchWindow == null) {
+			// action has been disposed
+			return;
+		}
+		IWorkbenchPage page = workbenchWindow.getActivePage();
 		if (page != null) {
-			Perspective persp = page.getActivePerspective();
-			if (persp != null)
-				page.closePerspective(persp, true,true);
+			Perspective persp = ((WorkbenchPage) page).getActivePerspective();
+			if (persp != null) {
+				((WorkbenchPage) page).closePerspective(persp, true, true);
+			}
 		}
 	}
+
+	/* (non-Javadoc)
+	 * Method declared on ActionFactory.IWorkbenchAction.
+	 */
+	public void dispose() {
+		if (workbenchWindow == null) {
+			// already disposed
+			return;
+		}
+		workbenchWindow = null;
+	}
+
 }

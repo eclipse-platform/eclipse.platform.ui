@@ -10,12 +10,18 @@
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
-import org.eclipse.ui.*;
-import org.eclipse.ui.internal.PartSite;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.util.*;
-import org.eclipse.swt.events.*;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.events.HelpEvent;
+import org.eclipse.swt.events.HelpListener;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.SubActionBars;
+import org.eclipse.ui.internal.PartSite;
 
 /**
  * A <code>RetargetAction</code> tracks the active part in the workbench.  
@@ -37,7 +43,9 @@ import org.eclipse.swt.widgets.Event;
  *
  * @since 2.0 
  */
-public class RetargetAction extends PartEventAction {
+public class RetargetAction extends PartEventAction 
+	implements ActionFactory.IWorkbenchAction {
+
 	/**
 	 * The help listener assigned to this action, or <code>null</code> if none.
 	 */
@@ -52,26 +60,10 @@ public class RetargetAction extends PartEventAction {
 	};
 	
 	/**
-	 * Constructs a RetargetAction with the given action id and text.
-	 * 
-	 * @param actionID the retargetable action id
-	 * @param text the action's text, or <code>null</code> if there is no text
+	 * Constructs a RetargetAction.
 	 */
-	public RetargetAction(String actionID, String text) {
-		this(actionID, text, IAction.AS_UNSPECIFIED);
-	}
-		
-	/**
-	 * Constructs a RetargetAction with the given action id, text and style.
-	 * 
-	 * @param actionID the retargetable action id
-	 * @param text the action's text, or <code>null</code> if there is no text
-	 * @param style one of <code>AS_PUSH_BUTTON</code>, <code>AS_CHECK_BOX</code>,
-	 * 		<code>AS_DROP_DOWN_MENU</code>, <code>AS_RADIO_BUTTON</code>, and
-	 * 		<code>AS_UNSPECIFIED</code>.
-	 */
-	public RetargetAction(String actionID, String text, int style) {
-		super(text, style);
+	public RetargetAction(String actionID, String label) {
+		super(label);
 		setId(actionID);
 		setEnabled(false);
 		super.setHelpListener(new HelpListener() {

@@ -17,10 +17,10 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IMarkerResolution;
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.actions.SelectionProviderAction;
 import org.eclipse.ui.dialogs.MarkerResolutionSelectionDialog;
+import org.eclipse.ui.ide.IDE;
 
 /**
  * This action displays a list of resolutions for the selected marker
@@ -75,8 +75,7 @@ public class ActionResolveMarker extends SelectionProviderAction {
 	 * @return the resolutions for the selected marker	
 	 */
 	private IMarkerResolution[] getResolutions(IMarker marker) {
-		IWorkbench workbench = part.getSite().getWorkbenchWindow().getWorkbench();
-		return workbench.getMarkerHelpRegistry().getResolutions(marker);
+		return IDE.getMarkerHelpRegistry().getResolutions(marker);
 	}
 
 	/**
@@ -104,7 +103,6 @@ public class ActionResolveMarker extends SelectionProviderAction {
 		if (marker == null) {
 			return;
 		}
-		IWorkbench workbench = part.getSite().getWorkbenchWindow().getWorkbench();
-		setEnabled(workbench.getMarkerHelpRegistry().hasResolutions(marker));
+		setEnabled(IDE.getMarkerHelpRegistry().hasResolutions(marker));
 	}
 }

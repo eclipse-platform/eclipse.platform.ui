@@ -21,8 +21,8 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.DeleteResourceAction;
 import org.eclipse.ui.actions.TextActionHandler;
 
@@ -87,8 +87,8 @@ public class RefactorActionGroup extends ResourceNavigatorActionGroup {
 		textActionHandler.setDeleteAction(deleteAction);
 		renameAction.setTextActionHandler(textActionHandler);
 		
-		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.MOVE, moveAction);
-		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.RENAME, renameAction);
+		actionBars.setGlobalActionHandler(ActionFactory.MOVE.getId(), moveAction);
+		actionBars.setGlobalActionHandler(ActionFactory.RENAME.getId(), renameAction);
 	}
 
 	/**

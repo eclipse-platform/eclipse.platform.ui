@@ -28,10 +28,10 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.SubActionBars;
-import org.eclipse.ui.commands.IActionService;
-import org.eclipse.ui.contexts.IContextActivationService;
-import org.eclipse.ui.internal.commands.ActionService;
-import org.eclipse.ui.internal.contexts.ContextActivationService;
+import org.eclipse.ui.commands.IHandlerService;
+import org.eclipse.ui.contexts.IContextService;
+import org.eclipse.ui.internal.commands.SimpleHandlerService;
+import org.eclipse.ui.internal.contexts.SimpleContextService;
 
 /**
  * <code>PartSite</code> is the general implementation for an
@@ -54,7 +54,6 @@ import org.eclipse.ui.internal.contexts.ContextActivationService;
  * </ol>
  */
 public class PartSite implements IWorkbenchPartSite {
-
 	private IWorkbenchPart part;
 	private IWorkbenchPage page;
 	private PartPane pane;
@@ -67,7 +66,8 @@ public class PartSite implements IWorkbenchPartSite {
 	private KeyBindingService keyBindingService;
 	private ArrayList menuExtenders;
 	
-	private IActionService handlerService;
+	private IContextService contextService;
+	private IHandlerService handlerService;
 		
 	/**
 	 * EditorContainer constructor comment.
@@ -78,25 +78,6 @@ public class PartSite implements IWorkbenchPartSite {
 		extensionID = "org.eclipse.ui.UnknownID"; //$NON-NLS-1$
 		extensionName = "Unknown Name"; //$NON-NLS-1$
 	}
-
-	private IActionService actionService;
-
-	public IActionService getActionService() {
-		if (actionService == null) 
-			actionService = new ActionService();
-		
-		return actionService;
-	}
-	
-	private IContextActivationService contextActivationService;	
-	
-	public IContextActivationService getContextActivationService() {
-		if (contextActivationService == null) 
-			contextActivationService = new ContextActivationService();
-		
-		return contextActivationService;
-	}
-	
 	/**
 	 * Dispose the contributions.
 	 */
@@ -265,7 +246,7 @@ public class PartSite implements IWorkbenchPartSite {
 	 */
 	public IKeyBindingService getKeyBindingService() {
 		if (keyBindingService == null) {
-			keyBindingService = new KeyBindingService(getActionService(), getContextActivationService());
+			keyBindingService = new KeyBindingService(getContextService(), getHandlerService());
 			
 			if (this instanceof EditorSite) {
 				EditorActionBuilder.ExternalContributor contributor = (EditorActionBuilder.ExternalContributor) ((EditorSite) this).getExtensionActionBarContributor();
@@ -281,20 +262,34 @@ public class PartSite implements IWorkbenchPartSite {
 								IAction action = actionDescriptors[i].getAction();
 				
 								if (action != null && action.getActionDefinitionId() != null)
-									keyBindingService.registerAction(action);
+								keyBindingService.registerAction(action);
 							}
 						}
 					}
 				}				
 			}			
 			
-			// keyBindingService.setScopes(new String[] { getInitialScopeId() }); //$NON-NLS-1$
+			keyBindingService.setScopes(new String[] { getInitialScopeId()}); //$NON-NLS-1$
 		}
 
 		return keyBindingService;
 	}
 
 	protected String getInitialScopeId() {
-		return null;
+		return IWorkbenchConstants.DEFAULT_ACCELERATOR_SCOPE_ID;
+	}
+
+	public IContextService getContextService() {
+		if (contextService == null)
+			contextService = new SimpleContextService();
+
+		return contextService;		
+	}
+
+	public IHandlerService getHandlerService() {
+		if (handlerService == null)
+			handlerService = new SimpleHandlerService();
+
+		return handlerService;		
 	}
 }

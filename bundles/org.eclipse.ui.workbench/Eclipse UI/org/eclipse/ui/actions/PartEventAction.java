@@ -10,8 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
-import org.eclipse.ui.*;
 import org.eclipse.jface.action.Action;
+import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * The abstract superclass for actions that listen to part activation and
@@ -35,6 +36,10 @@ import org.eclipse.jface.action.Action;
  *   <li><code>partBroughtToTop</code></li>
  * </ul>
  * </p>
+ * <p>
+ * Although this method implements the <code>IPartListener</code> interface,
+ * it does NOT register itself. 
+ * </p>
  */
 public abstract class PartEventAction extends Action implements IPartListener {
 
@@ -45,21 +50,11 @@ public abstract class PartEventAction extends Action implements IPartListener {
 /**
  * Creates a new action with the given text.
  *
- * @param text the action's text, or <code>null</code> if there is no text
+ * @param text the string used as the text for the action, 
+ *   or <code>null</code> if there is no text
  */
 protected PartEventAction(String text) {
 	super(text);
-}
-/**
- * Creates a new action with the given text and style.
- *
- * @param text the action's text, or <code>null</code> if there is no text
- * @param style one of <code>AS_PUSH_BUTTON</code>, <code>AS_CHECK_BOX</code>,
- * 		<code>AS_DROP_DOWN_MENU</code>, <code>AS_RADIO_BUTTON</code>, and
- * 		<code>AS_UNSPECIFIED</code>.
- */
-protected PartEventAction(String text, int style) {
-	super(text, style);
 }
 /**
  * Returns the currently active part in the workbench.

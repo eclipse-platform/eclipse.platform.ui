@@ -24,7 +24,6 @@ import org.eclipse.swt.widgets.Control;
  */ 
 class BookmarkContentProvider implements IStructuredContentProvider, IResourceChangeListener, IBasicPropertyConstants {
 	
-	private BookmarkNavigator bookmarksView;
 	private IResource input;
 	private Viewer viewer;
 	
@@ -32,7 +31,7 @@ class BookmarkContentProvider implements IStructuredContentProvider, IResourceCh
 	 * The constructor.
 	 */
 	public BookmarkContentProvider(BookmarkNavigator bookmarksView) {
-		this.bookmarksView = bookmarksView;
+		super();
 	}
 	/**
 	 * The visual part that is using this content provider is about
@@ -125,7 +124,7 @@ class BookmarkContentProvider implements IStructuredContentProvider, IResourceCh
 		this.input = (IResource) newInput;
 	}
 	/**
-	 * The workbench has changed.  Process the delta and issue updates to the viewer,
+	 * The workbench has changed.  Process the delta and provide updates to the viewer,
 	 * inside the UI thread.
 	 *
 	 * @see IResourceChangeListener#resourceChanged
