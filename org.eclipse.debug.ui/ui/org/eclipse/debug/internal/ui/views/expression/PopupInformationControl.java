@@ -67,7 +67,7 @@ public abstract class PopupInformationControl implements IInformationControl, II
 	/**
 	 * The popup window
 	 */
-	private Shell shell;
+	protected Shell shell;
 	
 	/**
 	 * The maximum width of the popup

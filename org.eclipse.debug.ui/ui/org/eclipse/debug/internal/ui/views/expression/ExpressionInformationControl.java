@@ -36,6 +36,9 @@ import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -65,6 +68,7 @@ public class ExpressionInformationControl extends PopupInformationControl {
 	private IDebugModelPresentation modelPresentation;
 	private StyledText valueDisplay;
 	private SashForm sashForm;
+	private Tree tree;
 
 	/**
 	 * Constructs a popup to display an expression. A label and handler
@@ -183,7 +187,7 @@ public class ExpressionInformationControl extends PopupInformationControl {
 		valueDisplay = new StyledText(sashForm, SWT.NO_TRIM);
 		valueDisplay.setEditable(false);
 		
-		final Tree tree = viewer.getTree();
+		tree = viewer.getTree();
 		tree.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
 				try {
@@ -230,6 +234,49 @@ public class ExpressionInformationControl extends PopupInformationControl {
 		return tree;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.IInformationControl#computeSizeHint()
+	 */
+	public Point computeSizeHint() {
+		Point persistedSize = getInitialSize();
+		if (persistedSize != null) {
+			return persistedSize;
+		}
+		
+		int height = 0;
+		int width = 0;
+		int itemCount = 0;
+		
+		TreeItem[] items = tree.getItems();
+		GC gc = new GC(tree);
+		for (int i=0; i<items.length; i++) {
+			width = Math.max (width, calculateWidth(items[i], gc));
+			itemCount++;
+			
+			// do the same for the children because we expand the first level.
+			TreeItem[] children = items[i].getItems();
+			for (int j = 0; j < children.length; j++) {
+				width = Math.max(width, calculateWidth(children[j], gc));
+				itemCount++;
+			}
+			
+		}
+		gc.dispose ();
+		width += 40; // give a little extra space
+		
+		height = itemCount * tree.getItemHeight() + 90;
+		return shell.computeSize(width, height, true);
+	}
+	
+	private int calculateWidth (TreeItem item, GC gc) {
+		int width = 0;
+		Image image = item.getImage ();
+		String text = item.getText ();
+		if (image != null) width = image.getBounds ().width + 2;
+		if (text != null && text.length () > 0) width += gc.stringExtent (text).x;
+		return width;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.IInformationControlExtension#hasContents()
 	 */
