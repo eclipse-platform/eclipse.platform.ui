@@ -41,7 +41,7 @@ public final class KeyConfiguration implements Comparable {
 		return nameComparator;
 	}
 
-	public static SortedMap sortedMap(List keyConfigurations)
+	public static SortedMap sortedMapById(List keyConfigurations)
 		throws IllegalArgumentException {
 		if (keyConfigurations == null)
 			throw new IllegalArgumentException();
@@ -57,6 +57,27 @@ public final class KeyConfiguration implements Comparable {
 				
 			KeyConfiguration keyConfiguration = (KeyConfiguration) object;
 			sortedMap.put(keyConfiguration.id, keyConfiguration);									
+		}			
+		
+		return sortedMap;
+	}
+
+	public static SortedMap sortedMapByName(List keyConfigurations)
+		throws IllegalArgumentException {
+		if (keyConfigurations == null)
+			throw new IllegalArgumentException();
+
+		SortedMap sortedMap = new TreeMap();			
+		Iterator iterator = keyConfigurations.iterator();
+		
+		while (iterator.hasNext()) {
+			Object object = iterator.next();
+			
+			if (!(object instanceof KeyConfiguration))
+				throw new IllegalArgumentException();
+				
+			KeyConfiguration keyConfiguration = (KeyConfiguration) object;
+			sortedMap.put(keyConfiguration.name, keyConfiguration);									
 		}			
 		
 		return sortedMap;
@@ -109,7 +130,7 @@ public final class KeyConfiguration implements Comparable {
 			return false;
 
 		KeyConfiguration keyConfiguration = (KeyConfiguration) object;	
-		return Util.equals(description, keyConfiguration.description) && id.equals(keyConfiguration.id) && name.equals(keyConfiguration) && Util.equals(parent, keyConfiguration.parent) && 
+		return Util.equals(description, keyConfiguration.description) && id.equals(keyConfiguration.id) && name.equals(keyConfiguration.name) && Util.equals(parent, keyConfiguration.parent) && 
 			Util.equals(plugin, keyConfiguration.plugin);
 	}
 
@@ -144,6 +165,6 @@ public final class KeyConfiguration implements Comparable {
 	}
 	
 	public String toString() {
-		return name + '(' + id + ')';	
+		return name + " (" + id + ')';	
 	}
 }

@@ -41,7 +41,7 @@ public final class GestureConfiguration implements Comparable {
 		return nameComparator;
 	}
 
-	public static SortedMap sortedMap(List gestureConfigurations)
+	public static SortedMap sortedMapById(List gestureConfigurations)
 		throws IllegalArgumentException {
 		if (gestureConfigurations == null)
 			throw new IllegalArgumentException();
@@ -57,6 +57,27 @@ public final class GestureConfiguration implements Comparable {
 				
 			GestureConfiguration gestureConfiguration = (GestureConfiguration) object;
 			sortedMap.put(gestureConfiguration.id, gestureConfiguration);									
+		}			
+		
+		return sortedMap;
+	}
+
+	public static SortedMap sortedMapByName(List gestureConfigurations)
+		throws IllegalArgumentException {
+		if (gestureConfigurations == null)
+			throw new IllegalArgumentException();
+
+		SortedMap sortedMap = new TreeMap();			
+		Iterator iterator = gestureConfigurations.iterator();
+		
+		while (iterator.hasNext()) {
+			Object object = iterator.next();
+			
+			if (!(object instanceof GestureConfiguration))
+				throw new IllegalArgumentException();
+				
+			GestureConfiguration gestureConfiguration = (GestureConfiguration) object;
+			sortedMap.put(gestureConfiguration.name, gestureConfiguration);									
 		}			
 		
 		return sortedMap;
@@ -109,7 +130,7 @@ public final class GestureConfiguration implements Comparable {
 			return false;
 
 		GestureConfiguration gestureConfiguration = (GestureConfiguration) object;	
-		return Util.equals(description, gestureConfiguration.description) && id.equals(gestureConfiguration.id) && name.equals(gestureConfiguration) && 
+		return Util.equals(description, gestureConfiguration.description) && id.equals(gestureConfiguration.id) && name.equals(gestureConfiguration.name) && 
 			Util.equals(parent, gestureConfiguration.parent) && Util.equals(plugin, gestureConfiguration.plugin);
 	}
 
@@ -144,6 +165,6 @@ public final class GestureConfiguration implements Comparable {
 	}
 	
 	public String toString() {
-		return name + '(' + id + ')';	
+		return name + " (" + id + ')';	
 	}
 }

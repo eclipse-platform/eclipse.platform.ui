@@ -419,14 +419,14 @@ public class KeyManager {
 		registryKeyConfigurations.addAll(coreRegistry.getKeyConfigurations());
 		registryKeyConfigurations.addAll(localRegistry.getKeyConfigurations());
 		registryKeyConfigurations.addAll(preferenceRegistry.getKeyConfigurations());
-		SortedMap registryKeyConfigurationMap = KeyConfiguration.sortedMap(registryKeyConfigurations);
+		SortedMap registryKeyConfigurationMap = KeyConfiguration.sortedMapById(registryKeyConfigurations);
 		SortedMap keyConfigurationMap = buildPathMapForKeyConfigurationMap(registryKeyConfigurationMap);
 		
 		List registryScopes = new ArrayList();
 		registryScopes.addAll(coreRegistry.getScopes());
 		registryScopes.addAll(localRegistry.getScopes());
 		registryScopes.addAll(preferenceRegistry.getScopes());
-		SortedMap registryScopeMap = Scope.sortedMap(registryScopes);
+		SortedMap registryScopeMap = Scope.sortedMapById(registryScopes);
 		SortedMap scopeMap = buildPathMapForScopeMap(registryScopeMap);
 
 		SortedSet coreRegistryKeyBindingSet = new TreeSet();

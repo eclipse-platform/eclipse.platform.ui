@@ -41,7 +41,7 @@ public final class Command implements Comparable {
 		return nameComparator;
 	}
 
-	public static SortedMap sortedMap(List commands)
+	public static SortedMap sortedMapById(List commands)
 		throws IllegalArgumentException {
 		if (commands == null)
 			throw new IllegalArgumentException();
@@ -57,6 +57,27 @@ public final class Command implements Comparable {
 				
 			Command command = (Command) object;
 			sortedMap.put(command.id, command);									
+		}			
+		
+		return sortedMap;
+	}
+
+	public static SortedMap sortedMapByName(List commands)
+		throws IllegalArgumentException {
+		if (commands == null)
+			throw new IllegalArgumentException();
+
+		SortedMap sortedMap = new TreeMap();			
+		Iterator iterator = commands.iterator();
+		
+		while (iterator.hasNext()) {
+			Object object = iterator.next();
+			
+			if (!(object instanceof Command))
+				throw new IllegalArgumentException();
+				
+			Command command = (Command) object;
+			sortedMap.put(command.name, command);									
 		}			
 		
 		return sortedMap;
@@ -143,6 +164,6 @@ public final class Command implements Comparable {
 	}
 	
 	public String toString() {
-		return name + '(' + id + ')';	
+		return name + " (" + id + ')';	
 	}
 }

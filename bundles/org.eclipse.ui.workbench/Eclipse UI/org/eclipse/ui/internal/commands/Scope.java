@@ -41,7 +41,7 @@ public final class Scope implements Comparable {
 		return nameComparator;
 	}
 
-	public static SortedMap sortedMap(List scopes)
+	public static SortedMap sortedMapById(List scopes)
 		throws IllegalArgumentException {
 		if (scopes == null)
 			throw new IllegalArgumentException();
@@ -57,6 +57,27 @@ public final class Scope implements Comparable {
 				
 			Scope scope = (Scope) object;
 			sortedMap.put(scope.id, scope);									
+		}			
+		
+		return sortedMap;
+	}
+
+	public static SortedMap sortedMapByName(List scopes)
+		throws IllegalArgumentException {
+		if (scopes == null)
+			throw new IllegalArgumentException();
+
+		SortedMap sortedMap = new TreeMap();			
+		Iterator iterator = scopes.iterator();
+		
+		while (iterator.hasNext()) {
+			Object object = iterator.next();
+			
+			if (!(object instanceof Scope))
+				throw new IllegalArgumentException();
+				
+			Scope scope = (Scope) object;
+			sortedMap.put(scope.name, scope);									
 		}			
 		
 		return sortedMap;
@@ -109,7 +130,7 @@ public final class Scope implements Comparable {
 			return false;
 
 		Scope scope = (Scope) object;	
-		return Util.equals(description, scope.description) && id.equals(scope.id) && name.equals(scope) && Util.equals(parent, scope.parent) && Util.equals(plugin, scope.plugin);
+		return Util.equals(description, scope.description) && id.equals(scope.id) && name.equals(scope.name) && Util.equals(parent, scope.parent) && Util.equals(plugin, scope.plugin);
 	}
 
 	public String getDescription() {
@@ -143,6 +164,6 @@ public final class Scope implements Comparable {
 	}
 	
 	public String toString() {
-		return name + '(' + id + ')';	
+		return name + " (" + id + ')';		
 	}
 }

@@ -12,10 +12,7 @@ Contributors:
 package org.eclipse.ui.internal.commands;
 
 import java.io.IOException;
-import java.text.Collator;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -29,8 +26,20 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -39,7 +48,6 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
@@ -48,27 +56,26 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.internal.WWinKeyBindingService;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.WorkbenchWindow;
 
 public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePage
 	implements IWorkbenchPreferencePage {
 
 	private final static ResourceBundle resourceBundle = ResourceBundle.getBundle(KeyPreferencePage.class.getName());
 
-	private final static String COMMAND_CONFLICT = Util.getString(resourceBundle, "CommandConflict"); //$NON-NLS-1$
-	private final static String COMMAND_UNDEFINED = Util.getString(resourceBundle, "CommandUndefined"); //$NON-NLS-1$
+	private final static String COMMAND_CONFLICT = Util.getString(resourceBundle, "commandConflict"); //$NON-NLS-1$
+	private final static String COMMAND_UNDEFINED = Util.getString(resourceBundle, "commandUndefined"); //$NON-NLS-1$
 	private final static int DIFFERENCE_ADD = 0;	
 	private final static int DIFFERENCE_CHANGE = 1;	
 	private final static int DIFFERENCE_MINUS = 2;	
@@ -79,68 +86,15 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 	private final static RGB RGB_CONFLICT = new RGB(255, 0, 0);
 	private final static RGB RGB_CONFLICT_MINUS = new RGB(255, 192, 192);
 	private final static RGB RGB_MINUS =	new RGB(192, 192, 192);
-	private final static int SPACE = 8;	
+	private final static char SPACE = ' '; //$NON-NLS-1$
 	private final static String ZERO_LENGTH_STRING = ""; //$NON-NLS-1$
 
-
-	private Button buttonCustomize;
-	private Combo comboActiveConfiguration;
-	private String configurationId;
-	private HashMap nameToConfigurationMap;
-	private KeyManager keyManager;
-	private IPreferenceStore preferenceStore;
-	private IWorkbench workbench;
-
-
-	private KeyMachine keyMachine;
-	private SortedMap registryCommandMap;
-
-	private SortedSet dialogPreferenceBindingSet;
-	private SortedSet preferenceBindingSet;	
-	private SortedSet registryBindingSet;
-	private SortedMap registryConfigurationMap;
-	private SortedMap registryScopeMap;
-	
-	private List actions;
-	private List configurations;
-	private List scopes;
-
-	private String[] actionNames;
-	private String[] configurationNames;	
-	private String[] scopeNames;
-
-	private Label labelCommand;
-	private Combo comboCommand;
-	private Table tableCommand;
-	//private Button buttonDetails;	
-	private Label labelKeySequence;
-	private Combo comboKeySequence;
-	private Table tableKeySequence;
-	//private Button buttonBrowseSelectedCommand;
-	private Group groupState;
-	private Label labelScope; 
-	private Combo comboScope;
-	private Label labelConfiguration; 
-	private Combo comboConfiguration;
-	private Group groupCommand;
-	private Button buttonDefault;
-	private Text textDefault;
-	private Button buttonCustom; 
-	private Combo comboCustom;
-
-	private SortedMap tree;
-	private Map nameToKeySequenceMap;
-	private List actionRecords = new ArrayList();	
-	private List keySequenceRecords = new ArrayList();
-
-
-	
 	private final class CommandRecord {
 
-		String actionId;
+		String commandId;
 		KeySequence keySequence;
 		String scopeId;
-		String configurationId;
+		String keyConfigurationId;
 		Set customSet;
 		Set defaultSet;
 
@@ -165,7 +119,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 	private final class KeySequenceRecord {
 
 		String scopeId;
-		String configurationId;
+		String keyConfigurationId;
 		Set customSet;
 		Set defaultSet;
 
@@ -186,291 +140,928 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 				defaultCommandId = (String) defaultSet.iterator().next();
 		}
 	}	
-	
-	final class DialogCustomize extends Dialog {
 
-			public DialogCustomize(Shell parentShell, SortedSet preferenceBindingSet)
-				throws IllegalArgumentException {
-				super(parentShell);
+	private class TreeViewerCommandsContentProvider implements ITreeContentProvider {
 		
-				if (preferenceBindingSet == null)
-					throw new IllegalArgumentException();
-			
-				preferenceBindingSet = new TreeSet(preferenceBindingSet);
-				Iterator iterator = preferenceBindingSet.iterator();
+		public void dispose() {
+		}
 		
-				while (iterator.hasNext())
-					if (!(iterator.next() instanceof KeyBinding))
-						throw new IllegalArgumentException();
-	
-				dialogPreferenceBindingSet = preferenceBindingSet;
+		public Object[] getChildren(Object parentElement) {
+			List children = new ArrayList();
 
+			if (parentElement instanceof Category) {
+				if (commands != null) {					
+					Category category = (Category) parentElement;
 
-
-		
-				tree = new TreeMap();
-				SortedSet bindingSet = new TreeSet();
-				bindingSet.addAll(dialogPreferenceBindingSet);
-				bindingSet.addAll(registryBindingSet);
-				iterator = bindingSet.iterator();
-		
-				while (iterator.hasNext()) {
-					KeyBinding binding = (KeyBinding) iterator.next();				
-					set(tree, binding, false);			
+					for (int i = 0; i < commands.size(); i++) {
+						Command command = (Command) commands.get(i);
+							
+						if (category.getId().equals(command.getCategory()))
+							children.add(command);											
+					}
 				}
-
-				nameToKeySequenceMap = new HashMap();	
-				Collection keySequences = tree.keySet();
-				iterator = keySequences.iterator();
-
-				while (iterator.hasNext()) {
-					KeySequence keySequence = (KeySequence) iterator.next();
-					String name = keySequence.toString();
-			
-					if (!nameToKeySequenceMap.containsKey(name))
-						nameToKeySequenceMap.put(name, keySequence);
-				}
-
-				setShellStyle(getShellStyle() | SWT.RESIZE);
+			} else if (parentElement == null) {
+				if (categories != null && commands != null) {
+					List categories = new ArrayList(KeyPreferencePage.this.categories);
+					Collections.sort(categories, Category.nameComparator());
+					children.addAll(categories);
+					List commands = new ArrayList();
+	
+					for (int i = 0; i < KeyPreferencePage.this.commands.size(); i++) {
+						Command command = (Command) KeyPreferencePage.this.commands.get(i);
+							
+						if (command.getCategory() == null)
+							commands.add(command);										
+					}
+	
+					Collections.sort(commands, Command.nameComparator());
+					children.addAll(commands);
+				}									
 			}
-
-			public SortedSet getPreferenceBindingSet() {
-				return Collections.unmodifiableSortedSet(dialogPreferenceBindingSet);	
-			}
-
-			protected void configureShell(Shell shell) {
-				super.configureShell(shell);
-				shell.setText(Util.getString(resourceBundle, "Title")); //$NON-NLS-1$
-			}
-
-			protected Control createDialogArea(Composite parent) {
-				Composite composite = (Composite) super.createDialogArea(parent);
-				createUI(composite);
-				return composite;		
-			}	
-
-			protected void okPressed() {
-				dialogPreferenceBindingSet = solve(tree);
-				super.okPressed();
-			}
+				
+			return children.toArray();
 		}
 
-	
-	protected Control createContents(Composite parent) {
-		Composite composite = new Composite(parent, SWT.NULL);
-		composite.setFont(parent.getFont());
-		GridLayout gridLayoutComposite = new GridLayout();
-		gridLayoutComposite.marginWidth = 0;
-		gridLayoutComposite.marginHeight = 0;
-		composite.setLayout(gridLayoutComposite);
-
-		Label label = new Label(composite, SWT.LEFT);
-		label.setFont(composite.getFont());
-		label.setText("Active Configuration:");
-
-		comboActiveConfiguration = new Combo(composite, SWT.READ_ONLY);
-		comboActiveConfiguration.setFont(composite.getFont());
-		GridData gridData = new GridData();
-		gridData.widthHint = 200;
-		comboActiveConfiguration.setLayoutData(gridData);
-
-		if (nameToConfigurationMap.isEmpty())
-			comboActiveConfiguration.setEnabled(false);
-		else {
-			String[] items = (String[]) nameToConfigurationMap.keySet().toArray(new String[nameToConfigurationMap.size()]);
-			Arrays.sort(items, Collator.getInstance());
-			comboActiveConfiguration.setItems(items);
-			KeyConfiguration configuration = (KeyConfiguration) registryConfigurationMap.get(configurationId);
-
-			if (configuration != null)
-				comboActiveConfiguration.select(comboActiveConfiguration.indexOf(configuration.getName()));
+		public Object[] getElements(Object inputElement) {
+			return getChildren(null);
 		}
 
-		buttonCustomize = new Button(composite, SWT.CENTER | SWT.PUSH);
-		buttonCustomize.setFont(composite.getFont());
-		buttonCustomize.setText("Customize Key Bindings...");
-		gridData = setButtonLayoutData(buttonCustomize);
-		gridData.horizontalAlignment = GridData.HORIZONTAL_ALIGN_BEGINNING;
-		gridData.widthHint += 8;
-
-		buttonCustomize.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent selectionEvent) {				
-				DialogCustomize dialogCustomize = new DialogCustomize(getShell(), preferenceBindingSet);
+		public Object getParent(Object element) {
+			if (element instanceof Command && categoriesById != null) {
+				String category = ((Command) element).getCategory();
 				
-				if (dialogCustomize.open() == DialogCustomize.OK) {
-					preferenceBindingSet = dialogCustomize.getPreferenceBindingSet();	
-				}
-				
-				// TODO: doesn't this have to be disposed?
-			}	
-		});
+				if (category != null)
+					return categoriesById.get(category);
+			}
 
-		// TODO: WorkbenchHelp.setHelp(parent, IHelpContextIds.WORKBENCH_KEYBINDINGS_PREFERENCE_PAGE);
+			return null;
+		}
 
-		return composite;	
+		public boolean hasChildren(Object element) {
+			return getChildren(element).length >= 1;
+		}			
+
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		}
 	}
+		
+	private class TreeViewerCommandsLabelProvider extends LabelProvider {			
+
+		public String getText(Object element) {
+			if (element instanceof Category)
+				return ((Category) element).getName();
+			else if (element instanceof Command)
+				return ((Command) element).getName();
+			else 				
+				return super.getText(element);
+		}						
+	};
+
+	private Label labelActiveKeyConfiguration; 
+	private Combo comboActiveKeyConfiguration;
+	//private Button buttonNew; 
+	//private Button buttonRename;
+	//private Button buttonDelete;
+	private Label labelCommands;
+	private TreeViewer treeViewerCommands;
+	//private Button buttonCategorize;
+	private Label labelKeySequencesForCommand;
+	private Table tableKeySequencesForCommand;
+	//private TableViewer tableViewerKeySequencesForCommand;	
+	private Label labelKeySequence;
+	private Combo comboKeySequence;
+	private Label labelScope; 
+	private Combo comboScope;
+	private Label labelKeyConfiguration; 
+	private Combo comboKeyConfiguration;
+	private Button buttonChange;
+	private Label labelCommandsForKeySequence;
+	private Table tableCommandsForKeySequence;
+	//private TableViewer tableViewerCommandsForKeySequence;
+
+	private IWorkbench workbench;
+	private State[] states;
+
+	private List categories;
+	private SortedMap categoriesById;
+	private SortedMap categoriesByName;
+	private List commands;
+	private SortedMap commandsById;
+	private SortedMap commandsByName;
+	private List scopes;
+	private SortedMap scopesById;
+	private SortedMap scopesByName;
+
+	private List coreActiveKeyConfigurations;
+	private List coreKeyBindings;
+	private List coreKeyConfigurations;
+	private List coreRegionalKeyBindings;
+
+	private List localActiveKeyConfigurations;
+	private List localKeyBindings;
+	private List localKeyConfigurations;
+	private List localRegionalKeyBindings;
+
+	private List preferenceActiveKeyConfigurations;
+	private List preferenceKeyBindings;
+	private List preferenceKeyConfigurations;
+	private List preferenceRegionalKeyBindings;
+
+	private ActiveKeyConfiguration activeKeyConfiguration;	
+	private List activeKeyConfigurations;
+	private List keyBindings;
+	private List keyConfigurations;
+	private SortedMap keyConfigurationsById;
+	private SortedMap keyConfigurationsByName;		
+	private List regionalKeyBindings;
+	private SortedMap tree;
+	private List commandRecords = new ArrayList();	
+	private List keySequenceRecords = new ArrayList();
+	private SortedMap keySequencesByName;
 
 	public void init(IWorkbench workbench) {
 		this.workbench = workbench;
-		keyManager = KeyManager.getInstance();
-		keyMachine = keyManager.getKeyMachine();
-
 		List pathItems = new ArrayList();
 		pathItems.add(KeyManager.systemPlatform());
 		pathItems.add(KeyManager.systemLocale());
-		State[] states = new State[] { State.create(pathItems) };	
-
-		CoreRegistry coreRegistry = CoreRegistry.getInstance();
-		LocalRegistry localRegistry = LocalRegistry.getInstance();
+		states = new State[] { State.create(pathItems) };
 		PreferenceRegistry preferenceRegistry = PreferenceRegistry.getInstance();
 
-		List registryActiveKeyConfigurations = new ArrayList();
-		registryActiveKeyConfigurations.addAll(coreRegistry.getActiveKeyConfigurations());
-		registryActiveKeyConfigurations.addAll(localRegistry.getActiveKeyConfigurations());
-		registryActiveKeyConfigurations.addAll(preferenceRegistry.getActiveKeyConfigurations());
-		
-		if (registryActiveKeyConfigurations.size() == 0)
-			configurationId = ZERO_LENGTH_STRING;
-		else {
-			ActiveKeyConfiguration activeKeyConfiguration = (ActiveKeyConfiguration) registryActiveKeyConfigurations.get(registryActiveKeyConfigurations.size() - 1);
-			configurationId = activeKeyConfiguration.getValue();
+		try {
+			preferenceRegistry.load();
+		} catch (IOException eIO) {
 		}
-
-		SortedSet coreRegistryKeyBindingSet = new TreeSet();
-		coreRegistryKeyBindingSet.addAll(coreRegistry.getKeyBindings());	
-		SortedSet coreRegistryRegionalKeyBindingSet = new TreeSet();
-		coreRegistryRegionalKeyBindingSet.addAll(coreRegistry.getRegionalKeyBindings());
-		coreRegistryKeyBindingSet.addAll(KeyManager.solveRegionalKeyBindingSet(coreRegistryRegionalKeyBindingSet, states));
-
-		SortedSet localRegistryKeyBindingSet = new TreeSet();
-		localRegistryKeyBindingSet.addAll(localRegistry.getKeyBindings());	
-		SortedSet localRegistryRegionalKeyBindingSet = new TreeSet();
-		localRegistryRegionalKeyBindingSet.addAll(localRegistry.getRegionalKeyBindings());
-		localRegistryKeyBindingSet.addAll(KeyManager.solveRegionalKeyBindingSet(localRegistryRegionalKeyBindingSet, states));
-
-		SortedSet preferenceRegistryKeyBindingSet = new TreeSet();
-		preferenceRegistryKeyBindingSet.addAll(preferenceRegistry.getKeyBindings());	
 	
-		registryBindingSet = new TreeSet();		
-		registryBindingSet.addAll(coreRegistryKeyBindingSet);
-		registryBindingSet.addAll(localRegistryKeyBindingSet);
-
-		preferenceBindingSet = new TreeSet();
-		preferenceBindingSet.addAll(preferenceRegistryKeyBindingSet);
-
-
-		List registryKeyConfigurations = new ArrayList();
-		registryKeyConfigurations.addAll(coreRegistry.getKeyConfigurations());
-		registryKeyConfigurations.addAll(localRegistry.getKeyConfigurations());
-		registryKeyConfigurations.addAll(preferenceRegistry.getKeyConfigurations());
-		registryConfigurationMap = KeyConfiguration.sortedMap(registryKeyConfigurations);
-		
-		List registryScopes = new ArrayList();
-		registryScopes.addAll(coreRegistry.getScopes());
-		registryScopes.addAll(localRegistry.getScopes());
-		registryScopes.addAll(preferenceRegistry.getScopes());
-		registryScopeMap = Scope.sortedMap(registryScopes);
-
-
-		nameToConfigurationMap = new HashMap();	
-		Collection configurations = registryConfigurationMap.values();
-		Iterator iterator = configurations.iterator();
-
-		while (iterator.hasNext()) {
-			KeyConfiguration configuration = (KeyConfiguration) iterator.next();
-			String name = configuration.getName();
-			
-			if (!nameToConfigurationMap.containsKey(name))
-				nameToConfigurationMap.put(name, configuration);
-		}	
+		preferenceActiveKeyConfigurations = new ArrayList(preferenceRegistry.getActiveKeyConfigurations());
+		preferenceKeyBindings = new ArrayList(preferenceRegistry.getKeyBindings());
+		preferenceKeyConfigurations = new ArrayList(preferenceRegistry.getKeyConfigurations());
+		preferenceRegionalKeyBindings = new ArrayList(preferenceRegistry.getRegionalKeyBindings());
 	}
-	
-	protected void performDefaults() {
-		int result = SWT.YES;
-		
-		if (!preferenceBindingSet.isEmpty()) {		
-			MessageBox messageBox = new MessageBox(getShell(), SWT.YES | SWT.NO | SWT.ICON_WARNING | SWT.APPLICATION_MODAL);
-			messageBox.setText("Restore Defaults");
-			messageBox.setMessage("This will clear all of your customized key bindings.\r\nAre you sure you want to do this?");
-			result = messageBox.open();
-		}
-		
-		if (result == SWT.YES) {			
-			if (comboActiveConfiguration != null && comboActiveConfiguration.isEnabled()) {
-				comboActiveConfiguration.clearSelection();
-				comboActiveConfiguration.deselectAll();
-				
-				CoreRegistry coreRegistry = CoreRegistry.getInstance();
-				LocalRegistry localRegistry = LocalRegistry.getInstance();
 
-				List registryActiveKeyConfigurations = new ArrayList();
-				registryActiveKeyConfigurations.addAll(coreRegistry.getActiveKeyConfigurations());
-				registryActiveKeyConfigurations.addAll(localRegistry.getActiveKeyConfigurations());
-		
-				if (registryActiveKeyConfigurations.size() == 0)
-					configurationId = ""; //$NON-NLS-1$
-				else {
-					ActiveKeyConfiguration activeKeyConfiguration = (ActiveKeyConfiguration) registryActiveKeyConfigurations.get(registryActiveKeyConfigurations.size() - 1);
-					configurationId = activeKeyConfiguration.getValue();
-				}			
-				
-				KeyConfiguration configuration = (KeyConfiguration) registryConfigurationMap.get(configurationId);
-
-				if (configuration != null)
-					comboActiveConfiguration.select(comboActiveConfiguration.indexOf(configuration.getName()));
-			}
-
-			preferenceBindingSet = new TreeSet();
-		}
-	}	
-	
 	public boolean performOk() {
+		copyFromUI();
 		PreferenceRegistry preferenceRegistry = PreferenceRegistry.getInstance();
+		preferenceRegistry.setActiveKeyConfigurations(preferenceActiveKeyConfigurations);
+		preferenceRegistry.setKeyBindings(preferenceKeyBindings);
+		preferenceRegistry.setKeyConfigurations(preferenceKeyConfigurations);
+		preferenceRegistry.setRegionalKeyBindings(preferenceRegionalKeyBindings);
 		
-		if (comboActiveConfiguration != null && comboActiveConfiguration.isEnabled()) {
-			int i = comboActiveConfiguration.getSelectionIndex();
-			
-			if (i >= 0 && i < comboActiveConfiguration.getItemCount()) {			
-				String configurationName = comboActiveConfiguration.getItem(i);
-				
-				if (configurationName != null) {				
-					KeyConfiguration configuration = (KeyConfiguration) nameToConfigurationMap.get(configurationName);
-					
-					if (configuration != null) {
-						configurationId = configuration.getId();
-						preferenceRegistry.setActiveKeyConfigurations(Collections.singletonList(ActiveKeyConfiguration.create(null, configurationId)));
-												
-						List preferenceKeyBindings = new ArrayList();
-						preferenceKeyBindings.addAll(preferenceBindingSet);
-						preferenceRegistry.setKeyBindings(preferenceKeyBindings);
+		try {
+			preferenceRegistry.save();
+		} catch (IOException eIO) {
+		}
 
-						try {
-							preferenceRegistry.save();
-						} catch (IOException eIO) {
-						}
+		if (workbench instanceof Workbench) {
+			Workbench workbench = (Workbench) this.workbench;
+			KeyManager.getInstance().getKeyMachine().setKeyConfiguration(activeKeyConfiguration != null ? activeKeyConfiguration.getValue() : ""); //$NON-NLS-1$
+			IWorkbenchWindow workbenchWindow = workbench.getActiveWorkbenchWindow();
 
-						keyManager.update();
-	
-						if (workbench instanceof Workbench) {
-							Workbench workbench = (Workbench) this.workbench;
-							workbench.setActiveAcceleratorConfiguration(configuration);
-						}
-					}
-				}
+			if (workbenchWindow != null && workbenchWindow instanceof WorkbenchWindow) {
+				WWinKeyBindingService wWinKeyBindingService = ((WorkbenchWindow) workbenchWindow).getKeyBindingService();
+
+				if (wWinKeyBindingService != null)
+					wWinKeyBindingService.clear();
+
+				MenuManager menuManager = ((WorkbenchWindow) workbenchWindow).getMenuManager();
+				menuManager.update(IAction.TEXT);
 			}
 		}
-		
+
+		KeyManager.getInstance().update();
 		return super.performOk();
 	}
+
+	public void setVisible(boolean visible) {
+		if (visible == true) {
+			CoreRegistry coreRegistry = CoreRegistry.getInstance();
+			LocalRegistry localRegistry = LocalRegistry.getInstance();
+			PreferenceRegistry preferenceRegistry = PreferenceRegistry.getInstance();
+			
+			try {
+				coreRegistry.load();
+			} catch (IOException eIO) {
+			}
 	
+			try {
+				localRegistry.load();
+			} catch (IOException eIO) {
+			}
+	
+			try {
+				preferenceRegistry.load();
+			} catch (IOException eIO) {
+			}		
+	
+			boolean categoriesChanged = false;
+			List categories = new ArrayList();
+			categories.addAll(coreRegistry.getCategories());
+			categories.addAll(localRegistry.getCategories());
+			categories.addAll(preferenceRegistry.getCategories());
+	
+			if (!Util.equals(categories, this.categories)) {
+				this.categories = Collections.unmodifiableList(categories);
+				categoriesById = Collections.unmodifiableSortedMap(Category.sortedMapById(this.categories));
+				categoriesByName = Collections.unmodifiableSortedMap(Category.sortedMapByName(this.categories));
+				categoriesChanged = true;
+			}
+	
+			boolean commandsChanged = false;
+			List commands = new ArrayList();
+			commands.addAll(coreRegistry.getCommands());
+			commands.addAll(localRegistry.getCommands());
+			commands.addAll(preferenceRegistry.getCommands());
+			
+			if (!Util.equals(commands, this.commands)) {
+				this.commands = Collections.unmodifiableList(commands);
+				commandsById = Collections.unmodifiableSortedMap(Command.sortedMapById(this.commands));
+				commandsByName = Collections.unmodifiableSortedMap(Command.sortedMapByName(this.commands));
+				commandsChanged = true;
+			}
+
+			if (categoriesChanged|| commandsChanged)
+				treeViewerCommands.setInput(new Object());
+	
+			List scopes = new ArrayList();
+			scopes.addAll(coreRegistry.getScopes());
+			scopes.addAll(localRegistry.getScopes());
+			scopes.addAll(preferenceRegistry.getScopes());
+	
+			if (!Util.equals(scopes, this.scopes)) {
+				this.scopes = Collections.unmodifiableList(scopes);
+				scopesById = Collections.unmodifiableSortedMap(Scope.sortedMapById(this.scopes));
+				scopesByName = Collections.unmodifiableSortedMap(Scope.sortedMapByName(this.scopes));
+				Set scopeNameSet = scopesByName.keySet();
+				comboScope.setItems((String[]) scopeNameSet.toArray(new String[scopeNameSet.size()]));
+			}		
+
+			coreActiveKeyConfigurations = new ArrayList(coreRegistry.getActiveKeyConfigurations());
+			coreKeyBindings = new ArrayList(coreRegistry.getKeyBindings());
+			coreKeyConfigurations = new ArrayList(coreRegistry.getKeyConfigurations());
+			coreRegionalKeyBindings = new ArrayList(coreRegistry.getRegionalKeyBindings());
+
+			localActiveKeyConfigurations = new ArrayList(localRegistry.getActiveKeyConfigurations());
+			localKeyBindings = new ArrayList(localRegistry.getKeyBindings());
+			localKeyConfigurations = new ArrayList(localRegistry.getKeyConfigurations());
+			localRegionalKeyBindings = new ArrayList(localRegistry.getRegionalKeyBindings());
+	
+			copyToUI();
+			update();
+		} else
+			copyFromUI();
+
+		super.setVisible(visible);
+	}
+
+	protected Control createContents(Composite parent) {
+		return createUI(parent);
+	}
+
 	protected IPreferenceStore doGetPreferenceStore() {
 		return WorkbenchPlugin.getDefault().getPreferenceStore();
 	}
 
+	protected void performDefaults() {
+		// TODO only show message box if there are changes
+		MessageBox restoreDefaultsMessageBox = new MessageBox(getShell(), SWT.YES | SWT.NO | SWT.ICON_WARNING | SWT.APPLICATION_MODAL);
+		restoreDefaultsMessageBox.setText(Util.getString(resourceBundle, "restoreDefaultsMessageBoxText")); //$NON-NLS-1$
+		restoreDefaultsMessageBox.setMessage(Util.getString(resourceBundle, "restoreDefaultsMessageBoxMessage")); //$NON-NLS-1$
+		
+		if (restoreDefaultsMessageBox.open() == SWT.YES) {
+			preferenceActiveKeyConfigurations = new ArrayList();
+			preferenceKeyBindings = new ArrayList();
+			preferenceKeyConfigurations = new ArrayList();
+			preferenceRegionalKeyBindings = new ArrayList();
+			copyToUI();
+		}
+	}
 
-	private void buildCommandRecords(SortedMap tree, String actionId, List actionRecords) {
-		if (actionRecords != null) {
-			actionRecords.clear();
+	private void copyFromUI() {
+		activeKeyConfiguration = null; 		
+		preferenceActiveKeyConfigurations = new ArrayList();		
+		int index = comboActiveKeyConfiguration.getSelectionIndex();
+				
+		if (index >= 0) {
+			KeyConfiguration keyConfiguration = (KeyConfiguration) keyConfigurationsByName.get(comboActiveKeyConfiguration.getItem(index));
+			activeKeyConfiguration = ActiveKeyConfiguration.create(null, keyConfiguration.getId());
+			preferenceActiveKeyConfigurations.add(activeKeyConfiguration);
+		}
+
+		preferenceKeyBindings = new ArrayList(solve(tree));
+		preferenceRegionalKeyBindings = new ArrayList();
+	}
+
+	private void copyToUI() {	
+		// TODO validate lists for referential integrity
+		List activeKeyConfigurations = new ArrayList();
+		activeKeyConfigurations.addAll(coreActiveKeyConfigurations);
+		activeKeyConfigurations.addAll(localActiveKeyConfigurations);
+		activeKeyConfigurations.addAll(preferenceActiveKeyConfigurations);
+
+		if (!Util.equals(activeKeyConfigurations, this.activeKeyConfigurations)) {
+			this.activeKeyConfigurations = Collections.unmodifiableList(activeKeyConfigurations);
+			activeKeyConfiguration = (ActiveKeyConfiguration) this.activeKeyConfigurations.get(this.activeKeyConfigurations.size() - 1);				
+		}
+		
+		List keyConfigurations = new ArrayList();
+		keyConfigurations.addAll(coreKeyConfigurations);
+		keyConfigurations.addAll(localKeyConfigurations);
+		keyConfigurations.addAll(preferenceKeyConfigurations);
+
+		if (!Util.equals(keyConfigurations, this.keyConfigurations)) {
+			this.keyConfigurations = Collections.unmodifiableList(keyConfigurations);
+			keyConfigurationsById = Collections.unmodifiableSortedMap(KeyConfiguration.sortedMapById(this.keyConfigurations));
+			keyConfigurationsByName = Collections.unmodifiableSortedMap(KeyConfiguration.sortedMapByName(this.keyConfigurations));
+			Set keyConfigurationNameSet = keyConfigurationsByName.keySet();
+			comboActiveKeyConfiguration.setItems((String[]) keyConfigurationNameSet.toArray(new String[keyConfigurationNameSet.size()]));
+			comboKeyConfiguration.setItems((String[]) keyConfigurationNameSet.toArray(new String[keyConfigurationNameSet.size()]));
+		}		
+
+		int index = -1;
+			
+		if (activeKeyConfiguration != null) {
+			KeyConfiguration keyConfiguration = (KeyConfiguration) keyConfigurationsById.get(activeKeyConfiguration.getValue());
+
+			if (keyConfiguration != null)
+				index = comboActiveKeyConfiguration.indexOf(keyConfiguration.getName());
+		}
+			
+		if (index >= 0)
+			comboActiveKeyConfiguration.select(index);
+		else {
+			comboActiveKeyConfiguration.clearSelection();
+			comboActiveKeyConfiguration.deselectAll();
+		}
+
+		SortedSet coreKeyBindingSet = new TreeSet();
+		coreKeyBindingSet.addAll(coreKeyBindings);			
+		SortedSet coreRegionalKeyBindingSet = new TreeSet();
+		coreRegionalKeyBindingSet.addAll(coreRegionalKeyBindings);
+		coreKeyBindingSet.addAll(KeyManager.solveRegionalKeyBindingSet(coreRegionalKeyBindingSet, states));
+
+		SortedSet localKeyBindingSet = new TreeSet();
+		localKeyBindingSet.addAll(localKeyBindings);			
+		SortedSet localRegionalKeyBindingSet = new TreeSet();
+		localRegionalKeyBindingSet.addAll(localRegionalKeyBindings);
+		localKeyBindingSet.addAll(KeyManager.solveRegionalKeyBindingSet(localRegionalKeyBindingSet, states));
+
+		SortedSet preferenceKeyBindingSet = new TreeSet();
+		preferenceKeyBindingSet.addAll(preferenceKeyBindings);			
+		SortedSet preferenceRegionalKeyBindingSet = new TreeSet();
+		preferenceRegionalKeyBindingSet.addAll(preferenceRegionalKeyBindings);
+		preferenceKeyBindingSet.addAll(KeyManager.solveRegionalKeyBindingSet(preferenceRegionalKeyBindingSet, states));
+
+		tree = new TreeMap();
+		SortedSet keyBindingSet = new TreeSet();
+		keyBindingSet.addAll(coreKeyBindingSet);
+		keyBindingSet.addAll(localKeyBindingSet);
+		keyBindingSet.addAll(preferenceKeyBindingSet);
+		Iterator iterator = keyBindingSet.iterator();
+		
+		while (iterator.hasNext()) {
+			KeyBinding keyBinding = (KeyBinding) iterator.next();				
+			set(tree, keyBinding, false);			
+		}
+
+		keySequencesByName = new TreeMap();
+		iterator = tree.keySet().iterator();
+
+		while (iterator.hasNext()) {
+			Object object = iterator.next();
+			
+			if (object instanceof KeySequence) {
+				KeySequence keySequence = (KeySequence) object;
+				String name = keySequence.toString();
+				keySequencesByName.put(name, keySequence);
+			}
+		}		
+
+		Set keySequenceNameSet = keySequencesByName.keySet();
+		comboKeySequence.setItems((String[]) keySequenceNameSet.toArray(new String[keySequenceNameSet.size()]));
+		selectedTreeViewerCommands();
+	}
+
+	private Control createUI(Composite parent) {
+		Composite composite = new Composite(parent, SWT.NULL);
+		composite.setFont(parent.getFont());
+		GridLayout gridLayout = new GridLayout();
+		gridLayout.marginHeight = 0;
+		gridLayout.marginWidth = 0;
+		composite.setLayout(gridLayout);
+
+		Composite compositeActiveKeyConfiguration = new Composite(composite, SWT.NULL);
+		compositeActiveKeyConfiguration.setFont(composite.getFont());
+		gridLayout = new GridLayout();
+		gridLayout.marginHeight = 0;
+		gridLayout.marginWidth = 0;
+		gridLayout.numColumns = 5;
+		compositeActiveKeyConfiguration.setLayout(gridLayout);
+
+		labelActiveKeyConfiguration = new Label(compositeActiveKeyConfiguration, SWT.LEFT);
+		labelActiveKeyConfiguration.setFont(compositeActiveKeyConfiguration.getFont());
+		labelActiveKeyConfiguration.setText(Util.getString(resourceBundle, "labelActiveKeyConfiguration")); //$NON-NLS-1$
+
+		comboActiveKeyConfiguration = new Combo(compositeActiveKeyConfiguration, SWT.READ_ONLY);
+		comboActiveKeyConfiguration.setFont(compositeActiveKeyConfiguration.getFont());
+		GridData gridData = new GridData();
+		gridData.widthHint = 150;
+		comboActiveKeyConfiguration.setLayoutData(gridData);
+
+		//buttonNew = new Button(compositeActiveKeyConfiguration, SWT.CENTER | SWT.PUSH);
+		//buttonNew.setFont(compositeActiveKeyConfiguration.getFont());
+		//gridData = new GridData();
+		//gridData.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
+		//int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+		//buttonNew.setText(Util.getString(resourceBundle, "buttonNew")); //$NON-NLS-1$
+		//gridData.widthHint = Math.max(widthHint, buttonNew.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x) + 5;
+		//buttonNew.setLayoutData(gridData);
+		//buttonNew.setVisible(false);	
+
+		//buttonRename = new Button(compositeActiveKeyConfiguration, SWT.CENTER | SWT.PUSH);
+		//buttonRename.setFont(compositeActiveKeyConfiguration.getFont());
+		//gridData = new GridData();
+		//gridData.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
+		//widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+		//buttonRename.setText(Util.getString(resourceBundle, "buttonRename")); //$NON-NLS-1$
+		//gridData.widthHint = Math.max(widthHint, buttonRename.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x) + 5;
+		//buttonRename.setLayoutData(gridData);		
+		//buttonRename.setVisible(false);	
+		
+		//buttonDelete = new Button(compositeActiveKeyConfiguration, SWT.CENTER | SWT.PUSH);
+		//buttonDelete.setFont(compositeActiveKeyConfiguration.getFont());
+		//gridData = new GridData();
+		//gridData.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
+		//widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+		//buttonDelete.setText(Util.getString(resourceBundle, "buttonDelete")); //$NON-NLS-1$
+		//gridData.widthHint = Math.max(widthHint, buttonDelete.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x) + 5;
+		//buttonDelete.setLayoutData(gridData);	
+		//buttonDelete.setVisible(false);	
+
+		Label labelSeparator = new Label(composite, SWT.HORIZONTAL | SWT.SEPARATOR);
+		labelSeparator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		Composite compositeAssignment = new Composite(composite, SWT.NULL);
+		compositeAssignment.setFont(composite.getFont());
+		gridLayout = new GridLayout();
+		gridLayout.horizontalSpacing = 7;
+		gridLayout.numColumns = 2;
+		compositeAssignment.setLayout(gridLayout);
+		compositeAssignment.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+		labelCommands = new Label(compositeAssignment, SWT.LEFT);
+		labelCommands.setFont(compositeAssignment.getFont());
+		gridData = new GridData();
+		gridData.horizontalSpan = 2;
+		labelCommands.setLayoutData(gridData);
+		labelCommands.setText(Util.getString(resourceBundle, "labelCommands")); //$NON-NLS-1$
+
+		Composite compositeAssignmentLeft = new Composite(compositeAssignment, SWT.NULL);
+		compositeAssignmentLeft.setFont(compositeAssignment.getFont());
+		gridLayout = new GridLayout();
+		gridLayout.marginHeight = 0;
+		gridLayout.marginWidth = 0;
+		compositeAssignmentLeft.setLayout(gridLayout);
+		compositeAssignmentLeft.setLayoutData(new GridData(GridData.FILL_VERTICAL));
+ 
+		treeViewerCommands = new TreeViewer(compositeAssignmentLeft);
+		gridData = new GridData(GridData.FILL_BOTH);
+		gridData.heightHint = 200;
+		gridData.widthHint = 220;
+		treeViewerCommands.getControl().setLayoutData(gridData);
+		treeViewerCommands.setContentProvider(new TreeViewerCommandsContentProvider());	
+		treeViewerCommands.setLabelProvider(new TreeViewerCommandsLabelProvider());		
+
+		//buttonCategorize = new Button(compositeAssignmentLeft, SWT.CHECK | SWT.LEFT);
+		//buttonCategorize.setFont(compositeAssignmentLeft.getFont());
+		//buttonCategorize.setSelection(true);
+		//buttonCategorize.setText(Util.getString(resourceBundle, "buttonCategorize")); //$NON-NLS-1$
+		//buttonCategorize.setVisible(false);	
+
+		Composite compositeAssignmentRight = new Composite(compositeAssignment, SWT.NULL);
+		compositeAssignmentRight.setFont(compositeAssignment.getFont());
+		gridLayout = new GridLayout();
+		gridLayout.marginHeight = 0;		
+		gridLayout.marginWidth = 0;
+		compositeAssignmentRight.setLayout(gridLayout);
+		compositeAssignmentRight.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+		labelKeySequencesForCommand = new Label(compositeAssignmentRight, SWT.LEFT);
+		labelKeySequencesForCommand.setFont(compositeAssignmentRight.getFont());
+		labelKeySequencesForCommand.setText(Util.getString(resourceBundle, "labelKeySequencesForCommand")); //$NON-NLS-1$
+
+		tableKeySequencesForCommand = new Table(compositeAssignmentRight, SWT.BORDER | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
+		tableKeySequencesForCommand.setFont(compositeAssignmentRight.getFont());
+		tableKeySequencesForCommand.setHeaderVisible(true);
+		gridData = new GridData(GridData.FILL_BOTH);
+		gridData.heightHint = 75;
+		gridData.widthHint = 390;	
+		tableKeySequencesForCommand.setLayoutData(gridData);
+
+		TableColumn tableColumn = new TableColumn(tableKeySequencesForCommand, SWT.NULL, 0);
+		tableColumn.setResizable(false);
+		tableColumn.setText(ZERO_LENGTH_STRING);
+		tableColumn.setWidth(20);
+
+		tableColumn = new TableColumn(tableKeySequencesForCommand, SWT.NULL, 1);
+		tableColumn.setResizable(true);
+		tableColumn.setText(Util.getString(resourceBundle, "tableColumnKeySequence")); //$NON-NLS-1$
+		tableColumn.setWidth(210);	
+		
+		tableColumn = new TableColumn(tableKeySequencesForCommand, SWT.NULL, 2);
+		tableColumn.setResizable(true);
+		tableColumn.setText(Util.getString(resourceBundle, "tableColumnScope")); //$NON-NLS-1$
+		tableColumn.setWidth(80);
+
+		tableColumn = new TableColumn(tableKeySequencesForCommand, SWT.NULL, 3);
+		tableColumn.setResizable(true);
+		tableColumn.setText(Util.getString(resourceBundle, "tableColumnKeyConfiguration")); //$NON-NLS-1$
+		tableColumn.setWidth(80);
+
+		//tableViewerKeySequencesForCommand = new TableViewer(tableKeySequencesForCommand);
+		//tableViewerKeySequencesForCommand.setContentProvider(new TableViewerKeySequencesForCommandContentProvider());
+		//tableViewerKeySequencesForCommand.setLabelProvider(new TableViewerKeySequencesForCommandLabelProvider());
+
+		Composite compositeAssignmentChange = new Composite(compositeAssignmentRight, SWT.NULL);
+		compositeAssignmentChange.setFont(compositeAssignmentRight.getFont());
+		gridLayout = new GridLayout();
+		gridLayout.marginHeight = 10;
+		gridLayout.marginWidth = 10;		
+		gridLayout.numColumns = 2;
+		compositeAssignmentChange.setLayout(gridLayout);
+
+		labelKeySequence = new Label(compositeAssignmentChange, SWT.LEFT);
+		labelKeySequence.setFont(compositeAssignmentChange.getFont());
+		labelKeySequence.setText(Util.getString(resourceBundle, "labelKeySequence")); //$NON-NLS-1$
+
+		comboKeySequence = new Combo(compositeAssignmentChange, SWT.NULL);
+		comboKeySequence.setFont(compositeAssignmentChange.getFont());
+		gridData = new GridData();
+		gridData.widthHint = 210;
+		comboKeySequence.setLayoutData(gridData);
+
+		labelScope = new Label(compositeAssignmentChange, SWT.LEFT);
+		labelScope.setFont(compositeAssignmentChange.getFont());
+		labelScope.setText(Util.getString(resourceBundle, "labelScope")); //$NON-NLS-1$
+
+		comboScope = new Combo(compositeAssignmentChange, SWT.READ_ONLY);
+		comboScope.setFont(compositeAssignmentChange.getFont());
+		gridData = new GridData();
+		gridData.widthHint = 100;
+		comboScope.setLayoutData(gridData);
+		
+		labelKeyConfiguration = new Label(compositeAssignmentChange, SWT.LEFT);
+		labelKeyConfiguration.setFont(compositeAssignmentChange.getFont());
+		labelKeyConfiguration.setText(Util.getString(resourceBundle, "labelKeyConfiguration")); //$NON-NLS-1$
+
+		comboKeyConfiguration = new Combo(compositeAssignmentChange, SWT.READ_ONLY);
+		comboKeyConfiguration.setFont(compositeAssignmentChange.getFont());
+		gridData = new GridData();
+		gridData.widthHint = 100;
+		comboKeyConfiguration.setLayoutData(gridData);
+
+		Control spacer = new Composite(compositeAssignmentChange, SWT.NULL);	
+		gridData = new GridData();
+		gridData.heightHint = 0;
+		gridData.horizontalSpan = 2;
+		gridData.widthHint = 0;
+		spacer.setLayoutData(gridData);
+		
+		spacer = new Composite(compositeAssignmentChange, SWT.NULL);	
+		gridData = new GridData();
+		gridData.heightHint = 0;
+		gridData.widthHint = 0;
+		spacer.setLayoutData(gridData);
+				
+		buttonChange = new Button(compositeAssignmentChange, SWT.CENTER | SWT.PUSH);
+		buttonChange.setFont(compositeAssignmentChange.getFont());
+		gridData = new GridData();
+		gridData.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
+		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+		buttonChange.setText(Util.getString(resourceBundle, "buttonChange")); //$NON-NLS-1$
+		gridData.widthHint = Math.max(widthHint, buttonChange.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x) + 5;
+		buttonChange.setLayoutData(gridData);		
+
+		spacer = new Composite(compositeAssignmentRight, SWT.NULL);	
+		gridData = new GridData(GridData.FILL_BOTH);
+		gridData.heightHint = 0;
+		gridData.widthHint = 0;
+		spacer.setLayoutData(gridData);
+		
+		labelCommandsForKeySequence = new Label(compositeAssignmentRight, SWT.LEFT);
+		labelCommandsForKeySequence.setFont(compositeAssignmentRight.getFont());
+		labelCommandsForKeySequence.setText(Util.getString(resourceBundle, "labelCommandsForKeySequence")); //$NON-NLS-1$
+
+		tableCommandsForKeySequence = new Table(compositeAssignmentRight, SWT.BORDER | SWT.H_SCROLL | SWT.HIDE_SELECTION | SWT.V_SCROLL);
+		tableCommandsForKeySequence.setFont(compositeAssignmentRight.getFont());
+		tableCommandsForKeySequence.setHeaderVisible(true);
+		gridData = new GridData(GridData.FILL_BOTH);
+		gridData.heightHint = 75;
+		gridData.widthHint = 390;	
+		tableCommandsForKeySequence.setLayoutData(gridData);
+
+		tableColumn = new TableColumn(tableCommandsForKeySequence, SWT.NULL, 0);
+		tableColumn.setResizable(false);
+		tableColumn.setText(ZERO_LENGTH_STRING);
+		tableColumn.setWidth(20);
+
+		tableColumn = new TableColumn(tableCommandsForKeySequence, SWT.NULL, 1);
+		tableColumn.setResizable(true);
+		tableColumn.setText(Util.getString(resourceBundle, "tableColumnCommand")); //$NON-NLS-1$
+		tableColumn.setWidth(210);	
+		
+		tableColumn = new TableColumn(tableCommandsForKeySequence, SWT.NULL, 2);
+		tableColumn.setResizable(true);
+		tableColumn.setText(Util.getString(resourceBundle, "tableColumnScope")); //$NON-NLS-1$
+		tableColumn.setWidth(80);
+
+		tableColumn = new TableColumn(tableCommandsForKeySequence, SWT.NULL, 3);
+		tableColumn.setResizable(true);
+		tableColumn.setText(Util.getString(resourceBundle, "tableColumnKeyConfiguration")); //$NON-NLS-1$
+		tableColumn.setWidth(80);
+
+		//tableViewerCommandsForKeySequence = new TableViewer(tableCommandsForKeySequence);
+		//tableViewerCommandsForKeySequence.setContentProvider(new TableViewerCommandsForKeySequenceContentProvider());
+		//tableViewerCommandsForKeySequence.setLabelProvider(new TableViewerCommandsForKeySequenceLabelProvider());
+
+		comboActiveKeyConfiguration.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent selectionEvent) {
+				selectedComboActiveKeyConfiguration();
+			}	
+		});
+
+		//buttonNew.addSelectionListener(new SelectionAdapter() {
+		//	public void widgetSelected(SelectionEvent selectionEvent) {
+		//	}	
+		//});
+
+		//buttonRename.addSelectionListener(new SelectionAdapter() {
+		//	public void widgetSelected(SelectionEvent selectionEvent) {
+		//	}	
+		//});
+
+		//buttonDelete.addSelectionListener(new SelectionAdapter() {
+		//	public void widgetSelected(SelectionEvent selectionEvent) {
+		//	}	
+		//});
+
+		treeViewerCommands.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				doubleClickedTreeViewerCommands();
+			}
+		});
+
+		treeViewerCommands.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				selectedTreeViewerCommands();
+			}
+		});
+
+		//buttonCategorize.addSelectionListener(new SelectionAdapter() {
+		//	public void widgetSelected(SelectionEvent selectionEvent) {
+		//	}	
+		//});
+
+		tableKeySequencesForCommand.addMouseListener(new MouseAdapter() {
+			public void mouseDoubleClick(MouseEvent mouseEvent) {
+				doubleClickedTableKeySequencesForCommand();	
+			}			
+		});		
+
+		tableKeySequencesForCommand.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent selectionEvent) {			
+				selectedTableKeySequencesForCommand();
+			}	
+		});
+	
+		//tableViewerKeySequencesForCommand.addDoubleClickListener(new IDoubleClickListener() {
+		//	public void doubleClick(DoubleClickEvent event) {
+		//	}
+		//});
+
+		//tableViewerKeySequencesForCommand.addSelectionChangedListener(new ISelectionChangedListener() {
+		//	public void selectionChanged(SelectionChangedEvent event) {
+		//	}
+		//});
+
+		comboKeySequence.addModifyListener(new ModifyListener() {			
+			public void modifyText(ModifyEvent modifyEvent) {
+				modifiedComboKeySequence();
+			}	
+		});
+
+		comboKeySequence.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent selectionEvent) {
+				selectedComboKeySequence();
+			}	
+		});
+
+		comboScope.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent selectionEvent) {
+				selectedComboScope();
+			}	
+		});
+		
+		comboKeyConfiguration.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent selectionEvent) {
+				selectedComboKeyConfiguration();
+			}	
+		});
+
+		buttonChange.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent selectionEvent) {
+				selectedButtonChange();
+			}	
+		});
+
+		tableCommandsForKeySequence.addMouseListener(new MouseAdapter() {
+			public void mouseDoubleClick(MouseEvent mouseEvent) {
+				doubleClickedTableCommandsForKeySequence();	
+			}			
+		});		
+
+		tableCommandsForKeySequence.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent selectionEvent) {			
+				selectedTableCommandsForKeySequence();
+			}	
+		});
+
+		//tableViewerCommandsForKeySequence.addDoubleClickListener(new IDoubleClickListener() {
+		//	public void doubleClick(DoubleClickEvent event) {
+		//	}
+		//});
+
+		//tableViewerCommandsForKeySequence.addSelectionChangedListener(new ISelectionChangedListener() {
+		//	public void selectionChanged(SelectionChangedEvent event) {
+		//	}
+		//});
+				
+		// TODO: WorkbenchHelp.setHelp(parent, IHelpContextIds.WORKBENCH_KEY_PREFERENCE_PAGE);
+		return composite;	
+	}
+
+	private void selectedComboActiveKeyConfiguration() {		
+	}
+
+	private void doubleClickedTreeViewerCommands() {
+	}
+
+	private void selectedTreeViewerCommands() {
+		commandRecords.clear();
+		ISelection selection = treeViewerCommands.getSelection();
+		
+		if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
+			Object object = ((IStructuredSelection) selection).getFirstElement();
+						
+			if (object instanceof Command)
+				buildCommandRecords(tree, ((Command) object).getId(), commandRecords);
+		}
+
+		buildTableCommand();
+		KeySequence keySequence = getKeySequence();
+		String scopeId = getScopeId();
+		String keyConfigurationId = getKeyConfigurationId();
+		selectTableCommand(scopeId, keyConfigurationId, keySequence);				
+		update();
+	}
+
+	private void doubleClickedTableKeySequencesForCommand() {
+	}
+		
+	private void selectedTableKeySequencesForCommand() {
+		CommandRecord commandRecord = (CommandRecord) getSelectedCommandRecord();
+		
+		if (commandRecord != null) {
+			setScopeId(commandRecord.scopeId);
+			setKeyConfigurationId(commandRecord.keyConfigurationId);				
+
+			// careful here. this triggers a modify event.
+			setKeySequence(commandRecord.keySequence);
+		}
+		
+		update();
+	}
+
+	private void modifiedComboKeySequence() {
+		selectedComboKeySequence();
+	}
+
+	private void selectedComboKeySequence() {
+		KeySequence keySequence = getKeySequence();
+		String scopeId = getScopeId();
+		String keyConfigurationId = getKeyConfigurationId();
+		selectTableCommand(scopeId, keyConfigurationId, keySequence);						
+		keySequenceRecords.clear();
+		buildKeySequenceRecords(tree, keySequence, keySequenceRecords);
+		buildTableKeySequence();	
+		selectTableKeySequence(scopeId, keyConfigurationId);		
+		update();
+	}
+
+	private void selectedComboScope() {
+		KeySequence keySequence = getKeySequence();
+		String scopeId = getScopeId();
+		String keyConfigurationId = getKeyConfigurationId();
+		selectTableCommand(scopeId, keyConfigurationId, keySequence);
+		selectTableKeySequence(scopeId, keyConfigurationId);
+		update();
+	}
+
+	private void selectedComboKeyConfiguration() {
+		KeySequence keySequence = getKeySequence();
+		String scopeId = getScopeId();
+		String keyConfigurationId = getKeyConfigurationId();
+		selectTableCommand(scopeId, keyConfigurationId, keySequence);
+		selectTableKeySequence(scopeId, keyConfigurationId);
+		update();
+	}
+
+	private void selectedButtonChange() {
+		KeySequence keySequence = getKeySequence();
+		boolean validKeySequence = keySequence != null && !keySequence.getKeyStrokes().isEmpty();
+		String scopeId = getScopeId();
+		boolean validScopeId = scopeId != null && scopesById.get(scopeId) != null;	
+		String keyConfigurationId = getKeyConfigurationId();
+		boolean validKeyConfigurationId = keyConfigurationId != null && keyConfigurationsById.get(keyConfigurationId) != null;
+	
+		if (validKeySequence && validScopeId && validKeyConfigurationId) {	
+			String commandId = null;
+			ISelection selection = treeViewerCommands.getSelection();
+		
+			if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
+				Object object = ((IStructuredSelection) selection).getFirstElement();
+						
+				if (object instanceof Command)
+					commandId = ((Command) object).getId();
+			}
+
+			CommandRecord commandRecord = getSelectedCommandRecord();
+		
+			if (commandRecord == null)
+				set(tree, KeyBinding.create(commandId, keyConfigurationId, keySequence, null, 0, scopeId), true);			 
+			else {
+				if (!commandRecord.customSet.isEmpty())
+					clear(tree, keySequence, scopeId, keyConfigurationId);
+				else
+					set(tree, KeyBinding.create(null, keyConfigurationId, keySequence, null, 0, scopeId), true);			 
+			}
+
+			commandRecords.clear();
+			buildCommandRecords(tree, commandId, commandRecords);
+			buildTableCommand();
+			selectTableCommand(scopeId, keyConfigurationId, keySequence);							
+			keySequenceRecords.clear();
+			buildKeySequenceRecords(tree, keySequence, keySequenceRecords);
+			buildTableKeySequence();	
+			selectTableKeySequence(scopeId, keyConfigurationId);
+			update();
+		}
+	}
+
+	private void doubleClickedTableCommandsForKeySequence() {	
+	}
+
+	private void selectedTableCommandsForKeySequence() {
+	}
+
+	private void update() {
+		boolean commandSelected = false;
+		ISelection selection = treeViewerCommands.getSelection();
+		
+		if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
+			Object object = ((IStructuredSelection) selection).getFirstElement();
+						
+			if (object instanceof Command)
+				commandSelected = true;
+		}
+
+		KeySequence keySequence = getKeySequence();
+		boolean validKeySequence = keySequence != null && !keySequence.getKeyStrokes().isEmpty();
+		String scopeId = getScopeId();
+		boolean validScopeId = scopeId != null && scopesById.get(scopeId) != null;	
+		String keyConfigurationId = getKeyConfigurationId();
+		boolean validKeyConfigurationId = keyConfigurationId != null && keyConfigurationsById.get(keyConfigurationId) != null;
+
+		tableKeySequencesForCommand.setEnabled(commandSelected);
+		comboKeySequence.setEnabled(commandSelected);
+		comboScope.setEnabled(commandSelected);
+		comboKeyConfiguration.setEnabled(commandSelected);	
+		buttonChange.setEnabled(commandSelected && validKeySequence && validScopeId && validKeyConfigurationId);		
+		tableCommandsForKeySequence.setEnabled(commandSelected && validKeySequence && validScopeId && validKeyConfigurationId);		
+
+		CommandRecord commandRecord = getSelectedCommandRecord();
+		
+		if (commandRecord == null)
+			buttonChange.setText(Util.getString(resourceBundle, "buttonChange.add"));			 
+		else {
+			if (!commandRecord.customSet.isEmpty() && !commandRecord.defaultSet.isEmpty()) {
+				buttonChange.setText(Util.getString(resourceBundle, "buttonChange.restore"));
+			} else
+				buttonChange.setText(Util.getString(resourceBundle, "buttonChange.remove"));			 
+		}
+	}
+
+	private void buildCommandRecords(SortedMap tree, String commandId, List commandRecords) {
+		if (commandRecords != null) {
+			commandRecords.clear();
 				
 			if (tree != null) {
 				Iterator iterator = tree.entrySet().iterator();
@@ -486,27 +1077,27 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 						while (iterator2.hasNext()) {
 							Map.Entry entry2 = (Map.Entry) iterator2.next();
 							String scopeId = (String) entry2.getKey();										
-							Map configurationMap = (Map) entry2.getValue();						
-							Iterator iterator3 = configurationMap.entrySet().iterator();
+							Map keyConfigurationMap = (Map) entry2.getValue();						
+							Iterator iterator3 = keyConfigurationMap.entrySet().iterator();
 										
 							while (iterator3.hasNext()) {
 								Map.Entry entry3 = (Map.Entry) iterator3.next();
-								String configurationId = (String) entry3.getKey();					
+								String keyConfigurationId = (String) entry3.getKey();					
 								Map pluginMap = (Map) entry3.getValue();													
 								Set customSet = new HashSet();
 								Set defaultSet = new HashSet();						
 								buildPluginSets(pluginMap, customSet, defaultSet);
 
-								if (customSet.contains(actionId) || defaultSet.contains(actionId)) {
-									CommandRecord actionRecord = new CommandRecord();
-									actionRecord.actionId = actionId;
-									actionRecord.keySequence = keySequence;
-									actionRecord.scopeId = scopeId;
-									actionRecord.configurationId = configurationId;
-									actionRecord.customSet = customSet;
-									actionRecord.defaultSet = defaultSet;
-									actionRecord.calculate();	
-									actionRecords.add(actionRecord);									
+								if (customSet.contains(commandId) || defaultSet.contains(commandId)) {
+									CommandRecord commandRecord = new CommandRecord();
+									commandRecord.commandId = commandId;
+									commandRecord.keySequence = keySequence;
+									commandRecord.scopeId = scopeId;
+									commandRecord.keyConfigurationId = keyConfigurationId;
+									commandRecord.customSet = customSet;
+									commandRecord.defaultSet = defaultSet;
+									commandRecord.calculate();	
+									commandRecords.add(commandRecord);									
 								}
 							}
 						}
@@ -529,16 +1120,16 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 					while (iterator.hasNext()) {
 						Map.Entry entry = (Map.Entry) iterator.next();
 						String scopeId2 = (String) entry.getKey();					
-						Map configurationMap = (Map) entry.getValue();						
-						Iterator iterator2 = configurationMap.entrySet().iterator();
+						Map keyConfigurationMap = (Map) entry.getValue();						
+						Iterator iterator2 = keyConfigurationMap.entrySet().iterator();
 							
 						while (iterator2.hasNext()) {
 							Map.Entry entry2 = (Map.Entry) iterator2.next();
-							String configurationId2 = (String) entry2.getKey();					
+							String keyConfigurationId2 = (String) entry2.getKey();					
 							Map pluginMap = (Map) entry2.getValue();			
 							KeySequenceRecord keySequenceRecord = new KeySequenceRecord();
 							keySequenceRecord.scopeId = scopeId2;
-							keySequenceRecord.configurationId = configurationId2;							
+							keySequenceRecord.keyConfigurationId = keyConfigurationId2;							
 							keySequenceRecord.customSet = new HashSet();
 							keySequenceRecord.defaultSet = new HashSet();						
 							buildPluginSets(pluginMap, keySequenceRecord.customSet, keySequenceRecord.defaultSet);			
@@ -557,65 +1148,65 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		while (iterator.hasNext()) {
 			Map.Entry entry = (Map.Entry) iterator.next();
 			String pluginId = (String) entry.getKey();
-			Map actionMap = (Map) entry.getValue();
-			Iterator iterator2 = actionMap.keySet().iterator();
+			Map commandMap = (Map) entry.getValue();
+			Iterator iterator2 = commandMap.keySet().iterator();
 	
 			while (iterator2.hasNext()) {
-				String actionId = (String) iterator2.next();
+				String commandId = (String) iterator2.next();
 		
 				if (pluginId == null)
-					customSet.add(actionId);
+					customSet.add(commandId);
 				else 
-					defaultSet.add(actionId);									
+					defaultSet.add(commandId);									
 			}
 		}
 	}
 
 	private void buildTableCommand() {
-		tableCommand.removeAll();
+		tableKeySequencesForCommand.removeAll();
 
-		for (int i = 0; i < actionRecords.size(); i++) {
-			CommandRecord actionRecord = (CommandRecord) actionRecords.get(i);
-			Set customSet = actionRecord.customSet;
-			Set defaultSet = actionRecord.defaultSet;
+		for (int i = 0; i < commandRecords.size(); i++) {
+			CommandRecord commandRecord = (CommandRecord) commandRecords.get(i);
+			Set customSet = commandRecord.customSet;
+			Set defaultSet = commandRecord.defaultSet;
 			int difference = DIFFERENCE_NONE;
-			//String actionId = null;
-			boolean actionConflict = false;
+			//String commandId = null;
+			boolean commandConflict = false;
 			String alternateCommandId = null;
 			boolean alternateCommandConflict = false;
 	
 			if (customSet.isEmpty()) {
-				if (defaultSet.contains(actionRecord.actionId)) {												
-					//actionId = actionRecord.actionId;
-					actionConflict = actionRecord.defaultConflict;					
+				if (defaultSet.contains(commandRecord.commandId)) {												
+					//commandId = commandRecord.commandId;
+					commandConflict = commandRecord.defaultConflict;					
 				}
 			} else {
 				if (defaultSet.isEmpty()) {									
-					if (customSet.contains(actionRecord.actionId)) {													
+					if (customSet.contains(commandRecord.commandId)) {													
 						difference = DIFFERENCE_ADD;
-						//actionId = actionRecord.actionId;
-						actionConflict = actionRecord.customConflict;
+						//commandId = commandRecord.commandId;
+						commandConflict = commandRecord.customConflict;
 					}
 				} else {
-					if (customSet.contains(actionRecord.actionId)) {
+					if (customSet.contains(commandRecord.commandId)) {
 						difference = DIFFERENCE_CHANGE;
-						//actionId = actionRecord.actionId;
-						actionConflict = actionRecord.customConflict;		
-						alternateCommandId = actionRecord.defaultCommandId;
-						alternateCommandConflict = actionRecord.defaultConflict;
+						//commandId = commandRecord.commandId;
+						commandConflict = commandRecord.customConflict;		
+						alternateCommandId = commandRecord.defaultCommandId;
+						alternateCommandConflict = commandRecord.defaultConflict;
 					} else {
-						if (defaultSet.contains(actionRecord.actionId)) {	
+						if (defaultSet.contains(commandRecord.commandId)) {	
 							difference = DIFFERENCE_MINUS;
-							//actionId = actionRecord.actionId;
-							actionConflict = actionRecord.defaultConflict;		
-							alternateCommandId = actionRecord.customCommandId;
-							alternateCommandConflict = actionRecord.customConflict;
+							//commandId = commandRecord.commandId;
+							commandConflict = commandRecord.defaultConflict;		
+							alternateCommandId = commandRecord.customCommandId;
+							alternateCommandConflict = commandRecord.customConflict;
 						}
 					}
 				}								
 			}
 
-			TableItem tableItem = new TableItem(tableCommand, SWT.NULL);					
+			TableItem tableItem = new TableItem(tableKeySequencesForCommand, SWT.NULL);					
 
 			switch (difference) {
 				case DIFFERENCE_ADD:
@@ -634,13 +1225,13 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 					break;				
 			}
 
-			boolean conflict = actionConflict || alternateCommandConflict;
+			boolean conflict = commandConflict || alternateCommandConflict;
 			StringBuffer stringBuffer = new StringBuffer();
 
-			if (actionRecord.keySequence != null)
-				stringBuffer.append(actionRecord.keySequence.toString());
+			if (commandRecord.keySequence != null)
+				stringBuffer.append(commandRecord.keySequence.toString());
 
-			if (actionConflict)
+			if (commandConflict)
 				stringBuffer.append(" " + COMMAND_CONFLICT);
 
 			if (difference == DIFFERENCE_CHANGE) {
@@ -650,10 +1241,10 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 				if (alternateCommandId == null) 
 					alternateCommandName = COMMAND_UNDEFINED;
 				else {
-					Command action = (Command) registryCommandMap.get(alternateCommandId);
+					Command command = (Command) commandsById.get(alternateCommandId);
 					
-					if (action != null)
-						alternateCommandName = action.getName();
+					if (command != null)
+						alternateCommandName = command.getName();
 					else
 						alternateCommandName = "[" + alternateCommandId + "]";
 				}
@@ -672,10 +1263,10 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 				if (alternateCommandId == null) 
 					alternateCommandName = COMMAND_UNDEFINED;
 				else {
-					Command action = (Command) registryCommandMap.get(alternateCommandId);
+					Command command = (Command) commandsById.get(alternateCommandId);
 					
-					if (action != null)
-						alternateCommandName = action.getName();
+					if (command != null)
+						alternateCommandName = command.getName();
 					else
 						alternateCommandName = "[" + alternateCommandId + "]";
 				}
@@ -689,10 +1280,10 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 			}
 
 			tableItem.setText(1, stringBuffer.toString());				
-			Scope scope = (Scope) registryScopeMap.get(actionRecord.scopeId);
-			tableItem.setText(2, scope != null ? scope.getName() : "[" + actionRecord.scopeId + "]");
-			KeyConfiguration configuration = (KeyConfiguration) registryConfigurationMap.get(actionRecord.configurationId);			
-			tableItem.setText(3, configuration != null ? configuration.getName() : "[" + actionRecord.configurationId + "]");
+			Scope scope = (Scope) scopesById.get(commandRecord.scopeId);
+			tableItem.setText(2, scope != null ? scope.getName() : "[" + commandRecord.scopeId + "]");
+			KeyConfiguration keyConfiguration = (KeyConfiguration) keyConfigurationsById.get(commandRecord.keyConfigurationId);			
+			tableItem.setText(3, keyConfiguration != null ? keyConfiguration.getName() : "[" + commandRecord.keyConfigurationId + "]");
 
 			if (difference == DIFFERENCE_MINUS) {
 				if (conflict)
@@ -705,22 +1296,22 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 	}
 	
 	private void buildTableKeySequence() {
-		tableKeySequence.removeAll();
+		tableCommandsForKeySequence.removeAll();
 	
 		for (int i = 0; i < keySequenceRecords.size(); i++) {
 			KeySequenceRecord keySequenceRecord = (KeySequenceRecord) keySequenceRecords.get(i);
 			int difference = DIFFERENCE_NONE;
-			String actionId = null;
-			boolean actionConflict = false;
+			String commandId = null;
+			boolean commandConflict = false;
 			String alternateCommandId = null;
 			boolean alternateCommandConflict = false;
 
 			if (keySequenceRecord.customSet.isEmpty()) {
-				actionId = keySequenceRecord.defaultCommandId;															
-				actionConflict = keySequenceRecord.defaultConflict;
+				commandId = keySequenceRecord.defaultCommandId;															
+				commandConflict = keySequenceRecord.defaultConflict;
 			} else {
-				actionId = keySequenceRecord.customCommandId;															
-				actionConflict = keySequenceRecord.customConflict;						
+				commandId = keySequenceRecord.customCommandId;															
+				commandConflict = keySequenceRecord.customConflict;						
 
 				if (keySequenceRecord.defaultSet.isEmpty())
 					difference = DIFFERENCE_ADD;
@@ -731,7 +1322,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 				}
 			}
 
-			TableItem tableItem = new TableItem(tableKeySequence, SWT.NULL);					
+			TableItem tableItem = new TableItem(tableCommandsForKeySequence, SWT.NULL);					
 
 			switch (difference) {
 				case DIFFERENCE_ADD:
@@ -750,24 +1341,24 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 					break;				
 			}
 
-			boolean conflict = actionConflict || alternateCommandConflict;
+			boolean conflict = commandConflict || alternateCommandConflict;
 			StringBuffer stringBuffer = new StringBuffer();
-			String actionName = null;
+			String commandName = null;
 					
-			if (actionId == null) 
-				actionName = COMMAND_UNDEFINED;
+			if (commandId == null) 
+				commandName = COMMAND_UNDEFINED;
 			else {
-				Command action = (Command) registryCommandMap.get(actionId);
+				Command command = (Command) commandsById.get(commandId);
 						
-				if (action != null)
-					actionName = action.getName();
+				if (command != null)
+					commandName = command.getName();
 				else
-					actionName = "[" + actionId + "]";
+					commandName = "[" + commandId + "]";
 			}
 			
-			stringBuffer.append(actionName);
+			stringBuffer.append(commandName);
 
-			if (actionConflict)
+			if (commandConflict)
 				stringBuffer.append(" " + COMMAND_CONFLICT);
 
 			if (difference == DIFFERENCE_CHANGE) {
@@ -777,10 +1368,10 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 				if (alternateCommandId == null) 
 					alternateCommandName = COMMAND_UNDEFINED;
 				else {
-					Command action = (Command) registryCommandMap.get(alternateCommandId);
+					Command command = (Command) commandsById.get(alternateCommandId);
 						
-					if (action != null)
-						alternateCommandName = action.getName();
+					if (command != null)
+						alternateCommandName = command.getName();
 					else
 						alternateCommandName = "[" + alternateCommandId + "]";
 				}
@@ -794,10 +1385,10 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 			}
 	
 			tableItem.setText(1, stringBuffer.toString());
-			Scope scope = (Scope) registryScopeMap.get(keySequenceRecord.scopeId);
+			Scope scope = (Scope) scopesById.get(keySequenceRecord.scopeId);
 			tableItem.setText(2, scope != null ? scope.getName() : "[" + keySequenceRecord.scopeId + "]");
-			KeyConfiguration configuration = (KeyConfiguration) registryConfigurationMap.get(keySequenceRecord.configurationId);			
-			tableItem.setText(3, configuration != null ? configuration.getName() : "[" + keySequenceRecord.configurationId + "]");
+			KeyConfiguration keyConfiguration = (KeyConfiguration) keyConfigurationsById.get(keySequenceRecord.keyConfigurationId);			
+			tableItem.setText(3, keyConfiguration != null ? keyConfiguration.getName() : "[" + keySequenceRecord.keyConfigurationId + "]");
 
 			if (difference == DIFFERENCE_MINUS) {
 				if (conflict)
@@ -809,390 +1400,68 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		}
 	}
 
-	private GridLayout createGridLayout() {
-		GridLayout gridLayout = new GridLayout();
-		gridLayout.horizontalSpacing = SPACE;
-		gridLayout.marginHeight = SPACE;
-		gridLayout.marginWidth = SPACE;
-		gridLayout.verticalSpacing = SPACE;
-		return gridLayout;
-	}		
-		
-	private void createUI(Composite composite) {
-		Font font = composite.getFont();
-		GridLayout gridLayout = createGridLayout();
-		composite.setLayout(gridLayout);
-
-		Group groupBrowseCommand = new Group(composite, SWT.NULL);	
-		groupBrowseCommand.setFont(font);
-		gridLayout = createGridLayout();
-		gridLayout.numColumns = 3;		
-		groupBrowseCommand.setLayout(gridLayout);
-		groupBrowseCommand.setLayoutData(new GridData(GridData.FILL_BOTH));
-		groupBrowseCommand.setText(Util.getString(resourceBundle, "GroupBrowseCommand")); //$NON-NLS-1$	
-
-		labelCommand = new Label(groupBrowseCommand, SWT.LEFT);
-		labelCommand.setFont(font);
-		labelCommand.setText(Util.getString(resourceBundle, "LabelCommand")); //$NON-NLS-1$
-
-		comboCommand = new Combo(groupBrowseCommand, SWT.READ_ONLY);
-		comboCommand.setFont(font);
-		GridData gridData = new GridData();
-		gridData.widthHint = 250;
-		comboCommand.setLayoutData(gridData);
-		
-		Label spacer = new Label(groupBrowseCommand, SWT.NULL);
-		spacer.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));				
-
-		tableCommand = new Table(groupBrowseCommand, SWT.BORDER | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
-		tableCommand.setHeaderVisible(true);
-		gridData = new GridData(GridData.FILL_BOTH);
-		gridData.heightHint = 75;		
-		gridData.horizontalSpan = 3;		
-		tableCommand.setLayoutData(gridData);
-		tableCommand.setFont(font);
-
-		TableColumn tableColumn = new TableColumn(tableCommand, SWT.NULL, 0);
-		tableColumn.setResizable(false);
-		tableColumn.setText(ZERO_LENGTH_STRING);
-		tableColumn.setWidth(20);
-
-		tableColumn = new TableColumn(tableCommand, SWT.NULL, 1);
-		tableColumn.setResizable(true);
-		tableColumn.setText(Util.getString(resourceBundle, "HeaderKeySequence")); //$NON-NLS-1$
-		tableColumn.setWidth(350);	
-
-		tableColumn = new TableColumn(tableCommand, SWT.NULL, 2);
-		tableColumn.setResizable(true);
-		tableColumn.setText(Util.getString(resourceBundle, "HeaderScope")); //$NON-NLS-1$
-		tableColumn.setWidth(100);
-
-		tableColumn = new TableColumn(tableCommand, SWT.NULL, 3);
-		tableColumn.setResizable(true);
-		tableColumn.setText(Util.getString(resourceBundle, "HeaderConfiguration")); //$NON-NLS-1$
-		tableColumn.setWidth(100);
-
-		/*
-		buttonDetails = new Button(groupBrowseCommand, SWT.CENTER | SWT.PUSH);
-		buttonDetails(font);
-		gridData = new GridData(GridData.HORIZONTAL_ALIGN_END);
-		gridData.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
-		gridData.horizontalSpan = 3;				
-		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-		buttonDetails.setText(Util.getString(resourceBundle, "ButtonDetails")); //$NON-NLS-1$
-		gridData.widthHint = Math.max(widthHint, buttonDetails.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x) + SPACE;
-		buttonDetails.setLayoutData(gridData);		
-		*/
-
-		Group groupBrowseKeySequence = new Group(composite, SWT.NULL);	
-		groupBrowseKeySequence.setFont(font);
-		gridLayout = createGridLayout();
-		gridLayout.numColumns = 3;		
-		groupBrowseKeySequence.setLayout(gridLayout);
-		groupBrowseKeySequence.setLayoutData(new GridData(GridData.FILL_BOTH));
-		groupBrowseKeySequence.setText(Util.getString(resourceBundle, "GroupBrowseKeySequence")); //$NON-NLS-1$	
-
-		labelKeySequence = new Label(groupBrowseKeySequence, SWT.LEFT);
-		labelKeySequence.setFont(font);
-		labelKeySequence.setText(Util.getString(resourceBundle, "LabelKeySequence")); //$NON-NLS-1$
-
-		comboKeySequence = new Combo(groupBrowseKeySequence, SWT.NULL);
-		comboKeySequence.setFont(font);
-		gridData = new GridData();
-		gridData.widthHint = 250;
-		comboKeySequence.setLayoutData(gridData);
-		
-		spacer = new Label(groupBrowseKeySequence, SWT.NULL);
-		spacer.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));				
-
-		tableKeySequence = new Table(groupBrowseKeySequence, SWT.BORDER | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
-		tableKeySequence.setHeaderVisible(true);
-		gridData = new GridData(GridData.FILL_BOTH);
-		gridData.heightHint = 75;		
-		gridData.horizontalSpan = 3;		
-		tableKeySequence.setLayoutData(gridData);
-		tableKeySequence.setFont(font);
-
-		tableColumn = new TableColumn(tableKeySequence, SWT.NULL, 0);
-		tableColumn.setResizable(false);
-		tableColumn.setText(ZERO_LENGTH_STRING);
-		tableColumn.setWidth(20);
-
-		tableColumn = new TableColumn(tableKeySequence, SWT.NULL, 1);
-		tableColumn.setResizable(true);
-		tableColumn.setText(Util.getString(resourceBundle, "HeaderCommand")); //$NON-NLS-1$
-		tableColumn.setWidth(350);	
-		
-		tableColumn = new TableColumn(tableKeySequence, SWT.NULL, 2);
-		tableColumn.setResizable(true);
-		tableColumn.setText(Util.getString(resourceBundle, "HeaderScope")); //$NON-NLS-1$
-		tableColumn.setWidth(100);
-
-		tableColumn = new TableColumn(tableKeySequence, SWT.NULL, 3);
-		tableColumn.setResizable(true);
-		tableColumn.setText(Util.getString(resourceBundle, "HeaderConfiguration")); //$NON-NLS-1$
-		tableColumn.setWidth(100);
-
-		/*
-		buttonBrowseSelectedCommand = new Button(groupBrowseKeySequence, SWT.CENTER | SWT.PUSH);
-		buttonBrowseSelectedCommand.setFont(font);
-		gridData = new GridData(GridData.HORIZONTAL_ALIGN_END);
-		gridData.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
-		gridData.horizontalSpan = 3;				
-		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-		buttonBrowseSelectedCommand.setText(Util.getString(resourceBundle, "ButtonBrowseSelectedCommand")); //$NON-NLS-1$
-		gridData.widthHint = Math.max(widthHint, buttonBrowseSelectedCommand.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x) + SPACE;
-		buttonBrowseSelectedCommand.setLayoutData(gridData);		
-		*/
-		
-		Composite compositeStateAndCommand = new Composite(groupBrowseKeySequence, SWT.NULL);
-		gridLayout = createGridLayout();
-		gridLayout.marginHeight = 0;
-		gridLayout.marginWidth = 0;		
-		gridLayout.numColumns = 2;
-		compositeStateAndCommand.setLayout(gridLayout);
-		gridData = new GridData(GridData.FILL_HORIZONTAL);
-		gridData.horizontalSpan = 3;
-		compositeStateAndCommand.setLayoutData(gridData);
-
-		groupState = new Group(compositeStateAndCommand, SWT.NULL);	
-		groupState.setFont(font);
-		gridLayout = createGridLayout();
-		gridLayout.numColumns = 2;		
-		groupState.setLayout(gridLayout);
-		groupState.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		groupState.setText(Util.getString(resourceBundle, "GroupState")); //$NON-NLS-1$
-
-		labelScope = new Label(groupState, SWT.LEFT);
-		labelScope.setFont(font);
-		labelScope.setText(Util.getString(resourceBundle, "LabelScope")); //$NON-NLS-1$
-
-		comboScope = new Combo(groupState, SWT.READ_ONLY);
-		comboScope.setFont(font);
-		gridData = new GridData(GridData.FILL_HORIZONTAL);
-		gridData.widthHint = 100;
-		comboScope.setLayoutData(gridData);
-
-		labelConfiguration = new Label(groupState, SWT.LEFT);
-		labelConfiguration.setFont(font);
-		labelConfiguration.setText(Util.getString(resourceBundle, "LabelConfiguration")); //$NON-NLS-1$
-
-		comboConfiguration = new Combo(groupState, SWT.READ_ONLY);
-		comboConfiguration.setFont(font);
-		gridData = new GridData(GridData.FILL_HORIZONTAL);
-		gridData.widthHint = 100;
-		comboConfiguration.setLayoutData(gridData);
-
-		groupCommand = new Group(compositeStateAndCommand, SWT.NULL);	
-		groupCommand.setFont(font);
-		gridLayout = createGridLayout();
-		gridLayout.numColumns = 2;		
-		groupCommand.setLayout(gridLayout);
-		groupCommand.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		groupCommand.setText(Util.getString(resourceBundle, "GroupCommand")); //$NON-NLS-1$
-
-		buttonDefault = new Button(groupCommand, SWT.LEFT | SWT.RADIO);
-		buttonDefault.setFont(font);
-		buttonDefault.setText(Util.getString(resourceBundle, "ButtonDefault")); //$NON-NLS-1$
-
-		textDefault = new Text(groupCommand, SWT.BORDER | SWT.READ_ONLY);
-		textDefault.setFont(font);
-		gridData = new GridData(GridData.FILL_HORIZONTAL);
-		gridData.widthHint = 250;
-		textDefault.setLayoutData(gridData);
-
-		buttonCustom = new Button(groupCommand, SWT.LEFT | SWT.RADIO);
-		buttonCustom.setFont(font);
-		buttonCustom.setText(Util.getString(resourceBundle, "ButtonCustom")); //$NON-NLS-1$
-
-		comboCustom = new Combo(groupCommand, SWT.READ_ONLY);
-		comboCustom.setFont(font);
-		gridData = new GridData(GridData.FILL_HORIZONTAL);
-		gridData.widthHint = 250;
-		comboCustom.setLayoutData(gridData);
-
-		comboCommand.setItems(actionNames);
-		comboKeySequence.setItems(getKeySequences());
-		comboScope.setItems(scopeNames);
-		comboConfiguration.setItems(configurationNames);
-		comboCustom.setItems(actionNames);
-
-		setConfigurationId(IWorkbenchConstants.DEFAULT_ACCELERATOR_CONFIGURATION_ID);
-		setScopeId(IWorkbenchConstants.DEFAULT_ACCELERATOR_SCOPE_ID);
-		setCommand(Collections.EMPTY_SET, Collections.EMPTY_SET);
-
-		comboCommand.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent selectionEvent) {
-				selectedComboCommand();
-			}	
-		});
-
-		tableCommand.addMouseListener(new MouseAdapter() {
-			public void mouseDoubleClick(MouseEvent mouseEvent) {
-				selectedButtonDetails();	
-			}			
-		});		
-
-		tableCommand.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent selectionEvent) {
-				selectedTableCommand();
-			}	
-		});
-
-		/*
-		buttonDetails.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent selectionEvent) {
-				selectedButtonDetails();
-			}	
-		});
-		*/		
-
-		comboKeySequence.addModifyListener(new ModifyListener() {			
-			public void modifyText(ModifyEvent modifyEvent) {
-				modifiedComboKeySequence();
-			}	
-		});
-
-		comboKeySequence.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent selectionEvent) {
-				selectedComboKeySequence();
-			}	
-		});
-
-		tableKeySequence.addMouseListener(new MouseAdapter() {
-			public void mouseDoubleClick(MouseEvent mouseEvent) {
-				selectedButtonBrowseSelectedCommand();	
-			}			
-		});		
-
-		tableKeySequence.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent selectionEvent) {			
-				selectedTableKeySequence();
-			}	
-		});
-
-		/*
-		buttonBrowseSelectedCommand.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent selectionEvent) {
-				selectedButtonBrowseSelectedCommand();
-			}	
-		});
-		*/
-
-		comboScope.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent selectionEvent) {
-				selectedComboScope();
-			}	
-		});
-
-		comboConfiguration.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent selectionEvent) {
-				selectedComboConfiguration();
-			}	
-		});
-
-		buttonDefault.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent selectionEvent) {
-				selectedButtonDefault();
-			}	
-		});
-
-		buttonCustom.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent selectionEvent) {
-				selectedButtonCustom();
-			}	
-		});
-		
-		comboCustom.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent selectionEvent) {
-				selectedComboCustom();
-			}	
-		});
-
-		update();
-	}
-
-	private CommandRecord getSelectedCommandRecord() {		
-		int selection = tableCommand.getSelectionIndex();
-		
-		if (selection >= 0 && selection < actionRecords.size() && tableCommand.getSelectionCount() == 1)
-			return (CommandRecord) actionRecords.get(selection);
-		else
-			return null;
-	}
-
-	private KeySequenceRecord getSelectedKeySequenceRecord() {		
-		int selection = tableKeySequence.getSelectionIndex();
-		
-		if (selection >= 0 && selection < keySequenceRecords.size() && tableKeySequence.getSelectionCount() == 1)
-			return (KeySequenceRecord) keySequenceRecords.get(selection);
-		else
-			return null;
-	}
-
-	private void selectTableCommand(String scopeId, String configurationId, KeySequence keySequence) {	
+	private void selectTableCommand(String scopeId, String keyConfigurationId, KeySequence keySequence) {	
 		int selection = -1;
 		
-		for (int i = 0; i < actionRecords.size(); i++) {
-			CommandRecord actionRecord = (CommandRecord) actionRecords.get(i);			
+		for (int i = 0; i < commandRecords.size(); i++) {
+			CommandRecord commandRecord = (CommandRecord) commandRecords.get(i);			
 			
-			if (Util.equals(scopeId, actionRecord.scopeId) && Util.equals(configurationId, actionRecord.configurationId) && 
-				Util.equals(keySequence, actionRecord.keySequence)) {
+			if (Util.equals(scopeId, commandRecord.scopeId) && Util.equals(keyConfigurationId, commandRecord.keyConfigurationId) && Util.equals(keySequence, commandRecord.keySequence)) {
 				selection = i;
 				break;			
 			}			
 		}
 
-		if (tableCommand.getSelectionCount() > 1)
-			tableCommand.deselectAll();
+		if (tableKeySequencesForCommand.getSelectionCount() > 1)
+			tableKeySequencesForCommand.deselectAll();
 
-		if (selection != tableCommand.getSelectionIndex()) {
-			if (selection == -1 || selection >= tableCommand.getItemCount())
-				tableCommand.deselectAll();
+		if (selection != tableKeySequencesForCommand.getSelectionIndex()) {
+			if (selection == -1 || selection >= tableKeySequencesForCommand.getItemCount())
+				tableKeySequencesForCommand.deselectAll();
 			else
-				tableCommand.select(selection);
+				tableKeySequencesForCommand.select(selection);
 		}
 	}
 
-	private void selectTableKeySequence(String scopeId, String configurationId) {		
+	private void selectTableKeySequence(String scopeId, String keyConfigurationId) {		
 		int selection = -1;
 		
 		for (int i = 0; i < keySequenceRecords.size(); i++) {
 			KeySequenceRecord keySequenceRecord = (KeySequenceRecord) keySequenceRecords.get(i);			
 			
-			if (Util.equals(scopeId, keySequenceRecord.scopeId) && Util.equals(configurationId, keySequenceRecord.configurationId)) {
+			if (Util.equals(scopeId, keySequenceRecord.scopeId) && Util.equals(keyConfigurationId, keySequenceRecord.keyConfigurationId)) {
 				selection = i;
 				break;			
 			}			
 		}
 
-		if (tableKeySequence.getSelectionCount() > 1)
-			tableKeySequence.deselectAll();
+		if (tableCommandsForKeySequence.getSelectionCount() > 1)
+			tableCommandsForKeySequence.deselectAll();
 
-		if (selection != tableKeySequence.getSelectionIndex()) {
-			if (selection == -1 || selection >= tableKeySequence.getItemCount())
-				tableKeySequence.deselectAll();
+		if (selection != tableCommandsForKeySequence.getSelectionIndex()) {
+			if (selection == -1 || selection >= tableCommandsForKeySequence.getItemCount())
+				tableCommandsForKeySequence.deselectAll();
 			else
-				tableKeySequence.select(selection);
+				tableCommandsForKeySequence.select(selection);
 		}
 	}
 
-	private void clear(SortedMap tree, KeySequence keySequence, String scope, String configuration) {			
+	private void clear(SortedMap tree, KeySequence keySequence, String scope, String keyConfiguration) {			
 		Map scopeMap = (Map) tree.get(keySequence);
 		
 		if (scopeMap != null) {
-			Map configurationMap = (Map) scopeMap.get(scope);
+			Map keyConfigurationMap = (Map) scopeMap.get(scope);
 		
-			if (configurationMap != null) {
-				Map pluginMap = (Map) configurationMap.get(configuration);
+			if (keyConfigurationMap != null) {
+				Map pluginMap = (Map) keyConfigurationMap.get(keyConfiguration);
 	
 				if (pluginMap != null) {
 					pluginMap.remove(null);
 					
 					if (pluginMap.isEmpty()) {
-						configurationMap.remove(configuration);
+						keyConfigurationMap.remove(keyConfiguration);
 						
-						if (configurationMap.isEmpty()) {
+						if (keyConfigurationMap.isEmpty()) {
 							scopeMap.remove(scope);	
 
 							if (scopeMap.isEmpty()) {
@@ -1213,32 +1482,32 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 			tree.put(binding.getKeySequence(), scopeMap);
 		}
 
-		Map configurationMap = (Map) scopeMap.get(binding.getScope());
+		Map keyConfigurationMap = (Map) scopeMap.get(binding.getScope());
 		
-		if (configurationMap == null) {
-			configurationMap = new TreeMap();	
-			scopeMap.put(binding.getScope(), configurationMap);
+		if (keyConfigurationMap == null) {
+			keyConfigurationMap = new TreeMap();	
+			scopeMap.put(binding.getScope(), keyConfigurationMap);
 		}
 		
-		Map pluginMap = (Map) configurationMap.get(binding.getKeyConfiguration());
+		Map pluginMap = (Map) keyConfigurationMap.get(binding.getKeyConfiguration());
 		
 		if (pluginMap == null) {
 			pluginMap = new HashMap();	
-			configurationMap.put(binding.getKeyConfiguration(), pluginMap);
+			keyConfigurationMap.put(binding.getKeyConfiguration(), pluginMap);
 		}
 
-		Map actionMap = consolidate ? null : (Map) pluginMap.get(binding.getPlugin());
+		Map commandMap = consolidate ? null : (Map) pluginMap.get(binding.getPlugin());
 		
-		if (actionMap == null) {
-			actionMap = new HashMap();	
-			pluginMap.put(binding.getPlugin(), actionMap);
+		if (commandMap == null) {
+			commandMap = new HashMap();	
+			pluginMap.put(binding.getPlugin(), commandMap);
 		}
 
-		Set bindingSet = (Set) actionMap.get(binding.getCommand());
+		Set bindingSet = (Set) commandMap.get(binding.getCommand());
 		
 		if (bindingSet == null) {
 			bindingSet = new TreeSet();
-			actionMap.put(binding.getCommand(), bindingSet);	
+			commandMap.put(binding.getCommand(), bindingSet);	
 		}
 
 		if (consolidate)
@@ -1256,15 +1525,15 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 			Iterator iterator2 = scopeMap.values().iterator();
 			
 			while (iterator2.hasNext()) {
-				Map configurationMap = (Map) iterator2.next();
-				Iterator iterator3 = configurationMap.values().iterator();
+				Map keyConfigurationMap = (Map) iterator2.next();
+				Iterator iterator3 = keyConfigurationMap.values().iterator();
 				
 				while (iterator3.hasNext()) {
 					Map pluginMap = (Map) iterator3.next();
-					Map actionMap = (Map) pluginMap.get(null);
+					Map commandMap = (Map) pluginMap.get(null);
 					
-					if (actionMap != null) {
-						Iterator iterator4 = actionMap.values().iterator();
+					if (commandMap != null) {
+						Iterator iterator4 = commandMap.values().iterator();
 						
 						while (iterator4.hasNext())
 							bindingSet.addAll((Set) iterator4.next());
@@ -1276,8 +1545,42 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		return bindingSet;
 	}
 
+	private CommandRecord getSelectedCommandRecord() {		
+		int selection = tableKeySequencesForCommand.getSelectionIndex();
+		
+		if (selection >= 0 && selection < commandRecords.size() && tableKeySequencesForCommand.getSelectionCount() == 1)
+			return (CommandRecord) commandRecords.get(selection);
+		else
+			return null;
+	}
+
+	private KeySequenceRecord getSelectedKeySequenceRecord() {		
+		int selection = tableCommandsForKeySequence.getSelectionIndex();
+		
+		if (selection >= 0 && selection < keySequenceRecords.size() && tableCommandsForKeySequence.getSelectionCount() == 1)
+			return (KeySequenceRecord) keySequenceRecords.get(selection);
+		else
+			return null;
+	}
+
+	private KeySequence getKeySequence() {
+		KeySequence keySequence = null;
+		String name = comboKeySequence.getText();		
+		keySequence = (KeySequence) keySequencesByName.get(name);
+			
+		if (keySequence == null)
+			keySequence = KeySequence.parse(name);
+
+		return keySequence;
+	}
+
+	private void setKeySequence(KeySequence keySequence) {
+		comboKeySequence.setText(keySequence != null ? keySequence.toString() : ""); //$NON-NLS-1$
+	}
+
 	private String getScopeId() {
 		int selection = comboScope.getSelectionIndex();
+		List scopes = new ArrayList(scopesByName.values());			
 		
 		if (selection >= 0 && selection < scopes.size()) {
 			Scope scope = (Scope) scopes.get(selection);
@@ -1291,7 +1594,9 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		comboScope.clearSelection();
 		comboScope.deselectAll();
 		
-		if (scopeId != null)	
+		if (scopeId != null) {
+			List scopes = new ArrayList(scopesByName.values());			
+
 			for (int i = 0; i < scopes.size(); i++) {
 				Scope scope = (Scope) scopes.get(i);		
 				
@@ -1300,419 +1605,36 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 					break;		
 				}
 			}
+		}
 	}
 
-	private String getConfigurationId() {
-		int selection = comboConfiguration.getSelectionIndex();
+	private String getKeyConfigurationId() {
+		int selection = comboKeyConfiguration.getSelectionIndex();
+		List keyConfigurations = new ArrayList(keyConfigurationsByName.values());
 		
-		if (selection >= 0 && selection < configurations.size()) {
-			KeyConfiguration configuration = (KeyConfiguration) configurations.get(selection);
-			return configuration.getId();				
+		if (selection >= 0 && selection < keyConfigurations.size()) {
+			KeyConfiguration keyConfiguration = (KeyConfiguration) keyConfigurations.get(selection);
+			return keyConfiguration.getId();				
 		}
 		
 		return null;
 	}
 
-	private void setConfigurationId(String configurationId) {				
-		comboConfiguration.clearSelection();
-		comboConfiguration.deselectAll();
+	private void setKeyConfigurationId(String keyConfigurationId) {				
+		comboKeyConfiguration.clearSelection();
+		comboKeyConfiguration.deselectAll();
 		
-		if (configurationId != null)	
-			for (int i = 0; i < configurations.size(); i++) {
-				KeyConfiguration configuration = (KeyConfiguration) configurations.get(i);		
+		if (keyConfigurationId != null) {
+			List keyConfigurations = new ArrayList(keyConfigurationsByName.values());
 				
-				if (configuration.getId().equals(configurationId)) {
-					comboConfiguration.select(i);
+			for (int i = 0; i < keyConfigurations.size(); i++) {
+				KeyConfiguration keyConfiguration = (KeyConfiguration) keyConfigurations.get(i);		
+				
+				if (keyConfiguration.getId().equals(keyConfigurationId)) {
+					comboKeyConfiguration.select(i);
 					break;		
 				}
 			}
-	}	
-	
-	private void setCommand(Set customSet, Set defaultSet) {	
-		boolean customConflict = false;
-		String customCommandId = null;
-		boolean defaultConflict = false;
-		String defaultCommandId = null;	
-
-		if (customSet.size() > 1)
-			customConflict = true;
-		else if (!customSet.isEmpty())				
-			customCommandId = (String) customSet.iterator().next();
-	
-		if (defaultSet.size() > 1)
-			defaultConflict = true;
-		else if (!defaultSet.isEmpty())				
-			defaultCommandId = (String) defaultSet.iterator().next();
-
-		buttonDefault.setSelection(customSet.isEmpty());
-		textDefault.setText(defaultCommandId != null ? defaultCommandId : ZERO_LENGTH_STRING);
-
-		if (defaultConflict)
-			textDefault.setText(COMMAND_CONFLICT);
-		else {
-			if (defaultCommandId == null)
-				textDefault.setText(COMMAND_UNDEFINED);
-			else {
-				for (int j = 0; j < actions.size(); j++) {
-					Command action = (Command) actions.get(j);		
-								
-					if (action.getId().equals(defaultCommandId)) {
-						textDefault.setText(action.getName());
-						break;		
-					}
-				}
-			}
-		}	
-
-		buttonCustom.setSelection(!customSet.isEmpty());
-		comboCustom.deselectAll();
-		comboCustom.setText(customCommandId != null ? customCommandId : ZERO_LENGTH_STRING);
-		
-		if (!customSet.isEmpty()) {
-			if (customConflict)
-				comboCustom.setText(COMMAND_CONFLICT);
-			else {			
-				if (customCommandId == null)
-					comboCustom.select(0);
-				else
-					for (int i = 0; i < actions.size(); i++) {
-						Command action = (Command) actions.get(i);		
-								
-						if (action.getId().equals(customCommandId)) {
-							comboCustom.select(i + 1);
-							break;		
-						}
-					}			
-			}
 		}
-	}
-
-	private String[] getKeySequences() {
-		String[] items = (String[]) nameToKeySequenceMap.keySet().toArray(new String[nameToKeySequenceMap.size()]);
-		Arrays.sort(items, Collator.getInstance());
-		return items;
-	}
-
-	private void selectedComboCommand() {
-		actionRecords.clear();
-		int selection = comboCommand.getSelectionIndex();
-
-		if (selection >= 0 && selection <= actions.size() && tree != null) {		
-			String actionId = null;				
-			
-			if (selection > 0) {
-				Command action = (Command) actions.get(selection - 1);
-				actionId = action.getId();
-			}
-
-			buildCommandRecords(tree, actionId, actionRecords);
-		} 
-
-		buildTableCommand();
-		update();
-	}
-
-	private void selectedTableCommand() {
-		int i = tableCommand.getSelectionIndex();
-
-		if (i >= 0) {
-			CommandRecord actionRecord = (CommandRecord) actionRecords.get(i);						
-					
-			if (actionRecord != null) {
-				comboKeySequence.clearSelection();
-				comboKeySequence.deselectAll();
-		
-				if (actionRecord.keySequence != null) {
-					String name = actionRecord.keySequence.toString();
-			
-					if (name != null)
-						comboKeySequence.setText(name);
-				}	
-
-				keySequenceRecords.clear();
-				buildKeySequenceRecords(tree, actionRecord.keySequence, keySequenceRecords);
-				buildTableKeySequence();
-				selectTableKeySequence(actionRecord.scopeId, actionRecord.configurationId);				
-				setScopeId(actionRecord.scopeId);
-				setConfigurationId(actionRecord.configurationId);
-				setCommand(actionRecord.customSet, actionRecord.defaultSet);			
-			}
-		}
-
-		update();
-	}	
-	
-	private void selectedButtonDetails() {
-		// TODO add dialog to display the plugin map for selected row in tableCommand
-	}
-
-	private void modifiedComboKeySequence() {
-		selectedComboKeySequence();
-	}
-	
-	private void selectedComboKeySequence() {			
-		KeySequence keySequence = null;
-		String name = comboKeySequence.getText();		
-		keySequence = (KeySequence) nameToKeySequenceMap.get(name);
-			
-		if (keySequence == null)
-			keySequence = KeySequence.parse(name);
-
-		keySequenceRecords.clear();
-		buildKeySequenceRecords(tree, keySequence, keySequenceRecords);
-		buildTableKeySequence();
-		String scopeId = getScopeId();
-		String configurationId = getConfigurationId();
-		selectTableKeySequence(scopeId, configurationId);		
-		KeySequenceRecord keySequenceRecord = (KeySequenceRecord) getSelectedKeySequenceRecord();
-		
-		if (keySequenceRecord != null)
-			setCommand(keySequenceRecord.customSet, keySequenceRecord.defaultSet);
-		else
-			setCommand(Collections.EMPTY_SET, Collections.EMPTY_SET);	
-
-		update();
-	}	
-	
-	private void selectedTableKeySequence() {
-		KeySequenceRecord keySequenceRecord = (KeySequenceRecord) getSelectedKeySequenceRecord();
-		
-		if (keySequenceRecord != null) {
-			setScopeId(keySequenceRecord.scopeId);
-			setConfigurationId(keySequenceRecord.configurationId);				
-			setCommand(keySequenceRecord.customSet, keySequenceRecord.defaultSet);
-		} else
-			setCommand(Collections.EMPTY_SET, Collections.EMPTY_SET);	
-
-		update();
-	}
-	
-	private void selectedButtonBrowseSelectedCommand() {
-		/*
-		KeySequenceRecord keySequenceRecord = getSelectedKeySequenceRecord();
-		
-		if (keySequenceRecord != null) {
-
-			if (!actionConflict) {
-				comboCommand.deselectAll();
-
-				for (int i = 0; )				
-
-				browseCommand(actionId);
-				return;
-			}		
-		} 
-		
-		unbrowseCommand();
-		*/	
-	
-		update();
-	}
-
-	private void selectedComboScope() {
-		selectedComboState();	
-	}
-
-	private void selectedComboConfiguration() {	
-		selectedComboState();
-	}
-
-	private void selectedComboState() {
-		selectTableKeySequence(getScopeId(), getConfigurationId());
-		KeySequenceRecord keySequenceRecord = (KeySequenceRecord) getSelectedKeySequenceRecord();
-		
-		if (keySequenceRecord != null)		
-			setCommand(keySequenceRecord.customSet, keySequenceRecord.defaultSet);
-		else
-			setCommand(Collections.EMPTY_SET, Collections.EMPTY_SET);
-
-		update();
-	}
-
-	private void selectedButtonDefault() {
-		change(false);
-	}
-
-	private void selectedButtonCustom() {		
-		change(true);
-	}
-
-	private void selectedComboCustom() {
-		change(true);
-	}
-
-	private void change(boolean custom) {
-		int selection = comboCustom.getSelectionIndex();
-				
-		if (selection < 0)
-			comboCustom.select(comboCommand.getSelectionIndex());
-
-		KeySequence keySequence = null;
-		String name = comboKeySequence.getText();
-		
-		if (name != null || name.length() > 0) {
-			keySequence = (KeySequence) nameToKeySequenceMap.get(name);
-			
-			if (keySequence == null)
-				keySequence = KeySequence.parse(name);
-		}				
-
-		String scopeId = getScopeId();
-		String configurationId = getConfigurationId();
-
-		if (keySequence != null) {
-			if (!custom)
-				clear(tree, keySequence, scopeId, configurationId);						
-			else { 
-				String actionId = null;				
-				selection = comboCustom.getSelectionIndex();
-				
-				if (selection < 0)
-					selection = comboCommand.getSelectionIndex();
-		
-				selection--;
-			
-				if (selection >= 0 && selection < actions.size()) {
-					Command action = (Command) actions.get(selection);
-					actionId = action.getId();
-				}				
-
-				set(tree, KeyBinding.create(actionId, configurationId, keySequence, null, 0, scopeId), true);				
-				/*
-				name = keyManager.getTextForKeySequence(keySequence);			
-				
-				if (!nameToKeySequenceMap.containsKey(name))
-					nameToKeySequenceMap.put(name, keySequence);
-	
-				comboKeySequence.setItems(getKeySequences());
-				*/					
-			}
-		}
-
-		selectedComboCommand();
-		keySequenceRecords.clear();
-		
-		if (keySequence != null)	
-			buildKeySequenceRecords(tree, keySequence, keySequenceRecords);
-		
-		buildTableKeySequence();
-		selectTableKeySequence(scopeId, configurationId);
-		update();
-	}
-
-	private void update() {
-		boolean bValidCommand = comboCommand.getSelectionIndex() >= 0;
-		tableCommand.setEnabled(bValidCommand);
-
-		KeySequence keySequence = null;
-		String name = comboKeySequence.getText();
-		
-		if (name != null || name.length() > 0) {
-			keySequence = (KeySequence) nameToKeySequenceMap.get(name);
-			
-			if (keySequence == null)
-				keySequence = KeySequence.parse(name);
-		}				
-
-		boolean bValidKeySequence = keySequence != null && keySequence.getKeyStrokes().size() >= 1;
-		tableKeySequence.setEnabled(bValidKeySequence);		
-		//buttonBrowseSelectedCommand.setEnabled(bValidKeySequence); // TODO + table has selection
-		groupState.setEnabled(bValidKeySequence);
-		labelScope.setEnabled(bValidKeySequence);
-		comboScope.setEnabled(bValidKeySequence);
-		labelConfiguration.setEnabled(bValidKeySequence);
-		comboConfiguration.setEnabled(bValidKeySequence);
-		groupCommand.setEnabled(bValidKeySequence);
-		buttonDefault.setEnabled(bValidKeySequence);
-		textDefault.setEnabled(bValidKeySequence);
-		buttonCustom.setEnabled(bValidKeySequence);
-		comboCustom.setEnabled(bValidKeySequence);
-	}
-	
-	public void setVisible(boolean visible) {
-		SortedMap commandMap = new TreeMap();
-		List commands = CoreRegistry.getInstance().getCommands();
-		Iterator iterator = commands.iterator();
-		Command command;
-		
-		while (iterator.hasNext()) {
-			command = (Command) iterator.next();
-			commandMap.put(command.getId(), command);			
-		}
-
-		registryCommandMap = commandMap;
-		actions = new ArrayList();
-		actions.addAll(registryCommandMap.values());
-		Collections.sort(actions, Command.nameComparator());				
-
-
-
-		List pathItems = new ArrayList();
-		pathItems.add(KeyManager.systemPlatform());
-		pathItems.add(KeyManager.systemLocale());
-		State[] states = new State[] { State.create(pathItems) };	
-
-		CoreRegistry coreRegistry = CoreRegistry.getInstance();
-		LocalRegistry localRegistry = LocalRegistry.getInstance();
-		PreferenceRegistry preferenceRegistry = PreferenceRegistry.getInstance();
-
-		SortedSet coreRegistryKeyBindingSet = new TreeSet();
-		coreRegistryKeyBindingSet.addAll(coreRegistry.getKeyBindings());	
-		SortedSet coreRegistryRegionalKeyBindingSet = new TreeSet();
-		coreRegistryRegionalKeyBindingSet.addAll(coreRegistry.getRegionalKeyBindings());
-		coreRegistryKeyBindingSet.addAll(KeyManager.solveRegionalKeyBindingSet(coreRegistryRegionalKeyBindingSet, states));
-
-		SortedSet localRegistryKeyBindingSet = new TreeSet();
-		localRegistryKeyBindingSet.addAll(localRegistry.getKeyBindings());	
-		SortedSet localRegistryRegionalKeyBindingSet = new TreeSet();
-		localRegistryRegionalKeyBindingSet.addAll(localRegistry.getRegionalKeyBindings());
-		localRegistryKeyBindingSet.addAll(KeyManager.solveRegionalKeyBindingSet(localRegistryRegionalKeyBindingSet, states));
-
-		SortedSet preferenceRegistryKeyBindingSet = new TreeSet();
-		preferenceRegistryKeyBindingSet.addAll(preferenceRegistry.getKeyBindings());	
-	
-		List registryKeyConfigurations = new ArrayList();
-		registryKeyConfigurations.addAll(coreRegistry.getKeyConfigurations());
-		registryKeyConfigurations.addAll(localRegistry.getKeyConfigurations());
-		registryKeyConfigurations.addAll(preferenceRegistry.getKeyConfigurations());
-		registryConfigurationMap = KeyConfiguration.sortedMap(registryKeyConfigurations);
-		
-		List registryScopes = new ArrayList();
-		registryScopes.addAll(coreRegistry.getScopes());
-		registryScopes.addAll(localRegistry.getScopes());
-		registryScopes.addAll(preferenceRegistry.getScopes());
-		registryScopeMap = Scope.sortedMap(registryScopes);
-
-		registryBindingSet = new TreeSet();		
-		registryBindingSet.addAll(coreRegistryKeyBindingSet);
-		registryBindingSet.addAll(localRegistryKeyBindingSet);
-
-
-		configurations = new ArrayList();
-		configurations.addAll(registryConfigurationMap.values());	
-		Collections.sort(configurations, KeyConfiguration.nameComparator());				
-		
-
-		scopes = new ArrayList();
-		scopes.addAll(registryScopeMap.values());	
-		Collections.sort(scopes, Scope.nameComparator());				
-
-		actionNames = new String[1 + actions.size()];
-		actionNames[0] = COMMAND_UNDEFINED;
-		
-		for (int i = 0; i < actions.size(); i++)
-			actionNames[i + 1] = ((Command) actions.get(i)).getName();
-
-		configurationNames = new String[configurations.size()];
-		
-		for (int i = 0; i < configurations.size(); i++)
-			configurationNames[i] = ((KeyConfiguration) configurations.get(i)).getName();
-
-		scopeNames = new String[scopes.size()];
-		
-		for (int i = 0; i < scopes.size(); i++)
-			scopeNames[i] = ((Scope) scopes.get(i)).getName();
-		
-		super.setVisible(visible);
 	}
 }

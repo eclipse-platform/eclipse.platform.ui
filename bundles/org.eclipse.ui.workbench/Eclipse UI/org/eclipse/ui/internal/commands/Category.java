@@ -41,7 +41,7 @@ public final class Category implements Comparable {
 		return nameComparator;
 	}
 
-	public static SortedMap sortedMap(List categories)
+	public static SortedMap sortedMapById(List categories)
 		throws IllegalArgumentException {
 		if (categories == null)
 			throw new IllegalArgumentException();
@@ -57,6 +57,27 @@ public final class Category implements Comparable {
 				
 			Category category = (Category) object;
 			sortedMap.put(category.id, category);									
+		}			
+		
+		return sortedMap;
+	}
+
+	public static SortedMap sortedMapByName(List categories)
+		throws IllegalArgumentException {
+		if (categories == null)
+			throw new IllegalArgumentException();
+
+		SortedMap sortedMap = new TreeMap();			
+		Iterator iterator = categories.iterator();
+		
+		while (iterator.hasNext()) {
+			Object object = iterator.next();
+			
+			if (!(object instanceof Category))
+				throw new IllegalArgumentException();
+				
+			Category category = (Category) object;
+			sortedMap.put(category.name, category);									
 		}			
 		
 		return sortedMap;
@@ -132,6 +153,6 @@ public final class Category implements Comparable {
 	}
 	
 	public String toString() {
-		return name + '(' + id + ')';	
+		return name + " (" + id + ')';	
 	}
 }
