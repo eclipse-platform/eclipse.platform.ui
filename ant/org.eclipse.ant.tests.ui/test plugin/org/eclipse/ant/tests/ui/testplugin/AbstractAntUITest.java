@@ -22,11 +22,11 @@ import java.io.UnsupportedEncodingException;
 import junit.framework.TestCase;
 
 import org.apache.xerces.parsers.SAXParser;
-import org.eclipse.ant.ui.internal.editor.outline.AntModel;
-import org.eclipse.ant.ui.internal.editor.outline.XMLCore;
-import org.eclipse.ant.ui.internal.editor.support.TestLocationProvider;
-import org.eclipse.ant.ui.internal.launchConfigurations.IAntLaunchConfigurationConstants;
-import org.eclipse.ant.ui.internal.model.AntUIPlugin;
+import org.eclipse.ant.internal.ui.editor.outline.AntModel;
+import org.eclipse.ant.internal.ui.editor.outline.XMLCore;
+import org.eclipse.ant.tests.ui.editor.support.TestLocationProvider;
+import org.eclipse.ant.internal.ui.launchConfigurations.IAntLaunchConfigurationConstants;
+import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;

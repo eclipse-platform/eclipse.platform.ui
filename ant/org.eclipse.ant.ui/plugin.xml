@@ -4,12 +4,12 @@
    name="%pluginName"
    version="3.0.0"
    provider-name="%providerName"
-   class="org.eclipse.ant.ui.internal.model.AntUIPlugin">
+   class="org.eclipse.ant.internal.ui.model.AntUIPlugin">
 
    <runtime>
       <library name="antui.jar">
          <export name="*"/>
-         <packages prefixes="org.eclipse.ant.ui"/>
+         <packages prefixes="org.eclipse.ant.internal.ui"/>
       </library>
    </runtime>
    <requires>
@@ -32,8 +32,8 @@
             name="%AntEditor.name"
             icon="icons/full/obj16/ant_buildfile.gif"
             filenames="build.xml"
-            contributorClass="org.eclipse.ant.ui.internal.editor.AntEditorActionContributor"
-            class="org.eclipse.ant.ui.internal.editor.AntEditor"
+            contributorClass="org.eclipse.ant.internal.ui.editor.AntEditorActionContributor"
+            class="org.eclipse.ant.internal.ui.editor.AntEditor"
             id="org.eclipse.ant.ui.internal.editor.AntEditor">
       </editor>
    </extension>
@@ -42,7 +42,7 @@
       <launchConfigurationTabGroup
             type="org.eclipse.ant.AntLaunchConfigurationType"
             helpContextId="org.eclipse.ui.externaltools.launchConfigHelpContext.ant"
-            class="org.eclipse.ant.ui.internal.launchConfigurations.AntTabGroup"
+            class="org.eclipse.ant.internal.ui.launchConfigurations.AntTabGroup"
             id="org.eclipse.ant.ui.launchConfigurationTabGroup.ant">
       </launchConfigurationTabGroup>
    </extension>
@@ -50,14 +50,14 @@
          point="org.eclipse.debug.core.launchConfigurationTypes">
       <launchConfigurationType
             name="%AntBuild"
-            delegate="org.eclipse.ant.ui.internal.launchConfigurations.AntLaunchDelegate"
+            delegate="org.eclipse.ant.internal.ui.launchConfigurations.AntLaunchDelegate"
             category="org.eclipse.ui.externaltools"
             modes="run"
             id="org.eclipse.ant.AntLaunchConfigurationType">
       </launchConfigurationType>
       <launchConfigurationType
             name="%AntBuild"
-            delegate="org.eclipse.ant.ui.internal.launchConfigurations.AntLaunchDelegate"
+            delegate="org.eclipse.ant.internal.ui.launchConfigurations.AntLaunchDelegate"
             category="org.eclipse.ui.externaltools.builder"
             modes="run"
             id="org.eclipse.ant.AntBuilderLaunchConfigurationType">
@@ -66,7 +66,7 @@
    <extension
          point="org.eclipse.jdt.launching.classpathProviders">
       <classpathProvider
-            class="org.eclipse.ant.ui.internal.launchConfigurations.AntClasspathProvider"
+            class="org.eclipse.ant.internal.ui.launchConfigurations.AntClasspathProvider"
             id="org.eclipse.ant.ui.AntClasspathProvider">
       </classpathProvider>
    </extension>
@@ -81,7 +81,7 @@
             icon="icons/full/cview16/ant_view.gif"
             fastViewWidthRatio="0.40"
             category="org.eclipse.ant.ui.views"
-            class="org.eclipse.ant.ui.internal.views.AntView"
+            class="org.eclipse.ant.internal.ui.views.AntView"
             id="org.eclipse.ant.ui.views.AntView">
       </view>
    </extension>
@@ -152,27 +152,27 @@
          point="org.eclipse.ui.preferencePages">
       <page
             name="%PreferencePage.antPreferences"
-            class="org.eclipse.ant.ui.internal.preferences.AntPreferencePage"
+            class="org.eclipse.ant.internal.ui.preferences.AntPreferencePage"
             id="org.eclipse.ant.ui.AntPreferencePage">
       </page>
       <page
             name="%PreferencePage.antRuntimePreferences"
             category="org.eclipse.ant.ui.AntPreferencePage"
-            class="org.eclipse.ant.ui.internal.preferences.AntRuntimePreferencePage"
+            class="org.eclipse.ant.internal.ui.preferences.AntRuntimePreferencePage"
             id="org.eclipse.ant.ui.AntRuntimePreferencePage">
       </page>
       <page
             name="%PreferencePage.antEditorPreferences"
             category="org.eclipse.ant.ui.AntPreferencePage"
-            class="org.eclipse.ant.ui.internal.preferences.AntEditorPreferencePage"
+            class="org.eclipse.ant.internal.ui.preferences.AntEditorPreferencePage"
             id="org.eclipse.ant.ui.AntEditorPreferencePage">
       </page>
    </extension>
    <extension
          point="org.eclipse.ui.popupMenus">
       <viewerContribution
-            targetID="org.eclipse.ant.ui.internal.editor.AntEditor.RulerContext"
-            id="org.eclipse.ant.ui.internal.editor.AntEditor.RulerContext">
+            targetID="org.eclipse.ant.internal.ui.editor.AntEditor.RulerContext"
+            id="org.eclipse.ant.internal.ui.editor.AntEditor.RulerContext">
          <action
                label="%AddTask.label"
                helpContextId="org.eclipse.ui.AddTask_action_context"
@@ -198,7 +198,7 @@
          <action
                label="%PopupMenu.runAnt"
                tooltip="%PopupMenu.runAntTip"
-               class="org.eclipse.ant.ui.internal.launchConfigurations.AntRunActionDelegate"
+               class="org.eclipse.ant.internal.ui.launchConfigurations.AntRunActionDelegate"
                menubarPath="additions"
                enablesFor="1"
                id="org.eclipse.ant.ui.RunAntAction">
@@ -214,7 +214,7 @@
    <extension
          point="org.eclipse.debug.ui.consoleColorProviders">
       <consoleColorProvider
-            class="org.eclipse.ant.ui.internal.launchConfigurations.AntConsoleColorProvider"
+            class="org.eclipse.ant.internal.ui.launchConfigurations.AntConsoleColorProvider"
             processType="org.eclipse.ant.ui.antProcess"
             id="org.eclipse.ant.consoleColorProvider">
       </consoleColorProvider>
@@ -231,13 +231,13 @@
       <launchConfigurationTabGroup
             type="org.eclipse.ant.AntLaunchConfigurationType"
             helpContextId="org.eclipse.ui.externaltools.launchConfigHelpContext.ant"
-            class="org.eclipse.ant.ui.internal.launchConfigurations.AntTabGroup"
+            class="org.eclipse.ant.internal.ui.launchConfigurations.AntTabGroup"
             id="org.eclipse.ant.ui.launchConfigurationTabGroup.ant">
       </launchConfigurationTabGroup>
       <launchConfigurationTabGroup
             type="org.eclipse.ant.AntBuilderLaunchConfigurationType"
             helpContextId="org.eclipse.ui.externaltools.launchConfigHelpContext.ant_builder"
-            class="org.eclipse.ant.ui.internal.launchConfigurations.AntBuilderTabGroup"
+            class="org.eclipse.ant.internal.ui.launchConfigurations.AntBuilderTabGroup"
             id="org.eclipse.ant.ui.launchConfigurationTabGroup.ant.builder">
       </launchConfigurationTabGroup>
    </extension>
@@ -262,7 +262,7 @@
             helpContextId="org.eclipse.ui.externaltools.launchShortcutHelpContext.antShortcut"
             category="org.eclipse.ui.externaltools"
             modes="run"
-            class="org.eclipse.ant.ui.internal.launchConfigurations.AntLaunchShortcut"
+            class="org.eclipse.ant.internal.ui.launchConfigurations.AntLaunchShortcut"
             id="org.eclipse.ant.ui.antShortcut">
       </shortcut>
    </extension>
@@ -270,17 +270,17 @@
    <extension
          point="org.eclipse.debug.ui.consoleLineTrackers">
       <consoleLineTracker
-            class="org.eclipse.ant.ui.internal.console.JavacLineTracker"
+            class="org.eclipse.ant.internal.ui.console.JavacLineTracker"
             processType="org.eclipse.ant.ui.antProcess"
             id="org.eclipse.ant.ui.javacLineTracker">
       </consoleLineTracker>
       <consoleLineTracker
-            class="org.eclipse.ant.ui.internal.console.TaskLineTracker"
+            class="org.eclipse.ant.internal.ui.console.TaskLineTracker"
             processType="org.eclipse.ant.ui.antProcess"
             id="org.eclipse.ant.ui.taskLineTracker">
       </consoleLineTracker>
       <consoleLineTracker
-            class="org.eclipse.ant.ui.internal.console.BuildFailedTracker"
+            class="org.eclipse.ant.internal.ui.console.BuildFailedTracker"
             processType="org.eclipse.ant.ui.antProcess"
             id="org.eclipse.ant.ui.buildFailedTracker">
       </consoleLineTracker>
@@ -290,7 +290,7 @@
       <statusHandler
             plugin="org.eclipse.ant.ui"
             code="1000"
-            class="org.eclipse.ant.ui.internal.launchConfigurations.RunAntStatusHandler"
+            class="org.eclipse.ant.internal.ui.launchConfigurations.RunAntStatusHandler"
             id="org.eclipse.ant.ui.statusHandler.runAntInit">
       </statusHandler>
    </extension>

@@ -12,8 +12,8 @@
 package org.eclipse.ant.tests.ui;
 
 import org.eclipse.ant.tests.ui.testplugin.ConsoleLineTracker;
-import org.eclipse.ant.ui.internal.model.AntUIPlugin;
-import org.eclipse.ant.ui.internal.model.IAntUIPreferenceConstants;
+import org.eclipse.ant.internal.ui.model.AntUIPlugin;
+import org.eclipse.ant.internal.ui.model.IAntUIPreferenceConstants;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.ui.console.IConsoleHyperlink;
 import org.eclipse.jface.text.BadLocationException;

@@ -17,10 +17,8 @@ package org.eclipse.ant.tests.ui.testplugin;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.ant.ui.internal.editor.test.AntEditorContentOutlineTests;
-import org.eclipse.ant.ui.internal.editor.test.CodeCompletionTest;
-import org.eclipse.ant.ui.internal.editor.test.EnclosingTargetSearchingHandlerTest;
-import org.eclipse.ant.ui.internal.editor.test.TaskDescriptionProviderTest;
+import org.eclipse.ant.tests.ui.BuildTests;
+import org.eclipse.ant.tests.ui.separateVM.SeparateVMTests;
 
 /**
  * Test suite for the Ant UI
@@ -33,11 +31,12 @@ public class AntUITests extends TestSuite {
         TestSuite suite= new AntUITests();
         suite.setName("Ant UI Unit Tests");
 		suite.addTest(new TestSuite(ProjectCreationDecorator.class));
-		//suite.addTest(new TestSuite(SeparateVMTests.class));
-        suite.addTest(new TestSuite(CodeCompletionTest.class));
-        suite.addTest(new TestSuite(TaskDescriptionProviderTest.class));
-        suite.addTest(new TestSuite(AntEditorContentOutlineTests.class));
-        suite.addTest(new TestSuite(EnclosingTargetSearchingHandlerTest.class));
+		suite.addTest(new TestSuite(BuildTests.class));
+		suite.addTest(new TestSuite(SeparateVMTests.class));
+//        suite.addTest(new TestSuite(CodeCompletionTest.class));
+//        suite.addTest(new TestSuite(TaskDescriptionProviderTest.class));
+//        suite.addTest(new TestSuite(AntEditorContentOutlineTests.class));
+//        suite.addTest(new TestSuite(EnclosingTargetSearchingHandlerTest.class));
         return suite;
     }
 }
