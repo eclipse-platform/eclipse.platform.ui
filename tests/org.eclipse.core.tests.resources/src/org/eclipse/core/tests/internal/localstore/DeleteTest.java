@@ -353,10 +353,9 @@ public class DeleteTest extends LocalStoreTest {
 		ensureExistsInWorkspace(subsubfileUnsync, true);
 
 		/* make some resources "unsync" with the workspace */
-		Thread.sleep(sleepTime);
 		ensureExistsInFileSystem(fileUnsync);
 		ensureDoesNotExistInFileSystem(deletedfolderSync);
-		ensureExistsInFileSystem(subsubfileUnsync);
+		ensureOutOfSync(subsubfileUnsync);
 
 		/* delete */
 		folder.delete(true, null);
