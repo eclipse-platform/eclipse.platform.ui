@@ -37,8 +37,9 @@ protected void updateState() {
 	//now check for the menu.
 	if (isEnabled()) {
 		PartPane pane = (((PartSite) getActivePart().getSite()).getPane());
-		if (pane instanceof ViewPane)
-			setEnabled(((ViewPane) pane).hasViewMenu());
+		setEnabled(
+			(pane instanceof ViewPane)
+			&& ((ViewPane) pane).hasViewMenu());
 	}
 }
 }
