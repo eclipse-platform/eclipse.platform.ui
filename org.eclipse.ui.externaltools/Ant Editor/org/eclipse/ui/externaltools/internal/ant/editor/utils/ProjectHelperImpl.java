@@ -144,7 +144,7 @@ public class ProjectHelperImpl extends org.apache.tools.ant.helper.ProjectHelper
      * <P>
      * This method does the same as <code>parse(Project, File)</code>, though
      * it works on a string. This is required for finding the properties for
-     * planty.
+     * the Ant Editor code assistance.
      * 
      * @param project project instance to be configured.
      * @param source the source as string from which the project is read.
@@ -168,18 +168,15 @@ public class ProjectHelperImpl extends org.apache.tools.ant.helper.ProjectHelper
                 parser = new XMLReaderAdapter(JAXPUtils.getXMLReader());
             }
 
-
             String uri = "file:" + buildFile.getAbsolutePath().replace('\\', '/'); //$NON-NLS-1$
             for (int index = uri.indexOf('#'); index != -1; index = uri.indexOf('#')) {
                 uri = uri.substring(0, index) + "%23" + uri.substring(index + 1); //$NON-NLS-1$
             }
-
-            
+             
             // changed here
             inputSource = new InputSource(new StringReader(sourceAsString));
-
-           // project.log("parsing buildfile " + buildFile + " with URI = "
-            //    + uri, Project.MSG_VERBOSE);
+			inputSource.setSystemId(uri);
+          
             HandlerBase hb = new RootHandler(this);
             parser.setDocumentHandler(hb);
             parser.setEntityResolver(hb);

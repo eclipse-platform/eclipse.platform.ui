@@ -1045,7 +1045,12 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
         		|| tempTargetName.length() == 0) {
         	return properties;
         }
-        List tempSortedTargets = tempProject.topoSort(tempTargetName, tempProject.getTargets());
+        List tempSortedTargets = null;
+        try {
+        	tempSortedTargets= tempProject.topoSort(tempTargetName, tempProject.getTargets());
+        } catch (BuildException be) {
+			return tempProject.getProperties();
+        }
 
         int curidx = 0;
         Target curtarget;
