@@ -39,7 +39,7 @@ class JobInfo {
 	}
 
 	boolean hasChildren() {
-		return children.size() == 0;
+		return children.size() > 0;
 	}
 
 	Object[] getChildren() {

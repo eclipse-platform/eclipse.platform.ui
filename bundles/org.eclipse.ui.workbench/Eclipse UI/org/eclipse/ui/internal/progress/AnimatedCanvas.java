@@ -111,6 +111,8 @@ public class AnimatedCanvas {
 	 * @param b
 	 */
 	public void setAnimated(final boolean b) {
+		if(getControl().isDisposed())
+			return;
 		getControl().getDisplay().asyncExec(new Runnable() {
 			/* (non-Javadoc)
 			 * @see java.lang.Runnable#run()

@@ -1,5 +1,6 @@
 package org.eclipse.ui.views.progress;
 
+import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -37,7 +38,9 @@ public class ProgressView extends ViewPart implements IViewPart {
 	 * @since 2.0
 	 */
 	protected void initContentProvider(TreeViewer viewer) {
-		viewer.setContentProvider(new ProgressContentProvider());
+		IContentProvider provider = new ProgressContentProvider(viewer);
+		viewer.setContentProvider(provider);
+		viewer.setInput(provider);
 	}
 
 	/**

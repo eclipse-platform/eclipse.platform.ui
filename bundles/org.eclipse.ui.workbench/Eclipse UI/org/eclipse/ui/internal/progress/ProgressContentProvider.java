@@ -11,6 +11,7 @@ import java.util.Hashtable;
 import org.eclipse.core.internal.jobs.JobManager;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.*;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
@@ -18,11 +19,12 @@ public class ProgressContentProvider
 	implements ITreeContentProvider, IJobListener, IProgressListener {
 
 	private Hashtable jobs = new Hashtable();
+	private TreeViewer viewer;
 
-	public ProgressContentProvider() {
+	public ProgressContentProvider(TreeViewer mainViewer) {
 		JobManager.getInstance().addJobListener(this);
 		JobManager.getInstance().addProgressListener(this);
-
+		viewer = mainViewer;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
@@ -64,7 +66,7 @@ public class ProgressContentProvider
 	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		// XXX Auto-generated method stub
+		System.out.println("input changed");
 
 	}
 
@@ -81,6 +83,7 @@ public class ProgressContentProvider
 	 */
 	public void aboutToSchedule(Job job) {
 		jobs.put(job, new JobInfo(job.toString()));
+		refreshViewer();
 
 	}
 
@@ -113,6 +116,7 @@ public class ProgressContentProvider
 	 */
 	public void beginTask(Job job, String name, int totalWork) {
 		getInfo(job).addToLeafChild(new JobInfoWithProgress(name, totalWork));
+		refreshViewer();
 	}
 
 	/* (non-Javadoc)
@@ -136,6 +140,7 @@ public class ProgressContentProvider
 	 */
 	public void subTask(Job job, String name) {
 		getInfo(job).addToLeafChild(new JobInfo(name));
+		refreshViewer();
 
 	}
 	private JobInfo getInfo(Job job) {
@@ -147,6 +152,7 @@ public class ProgressContentProvider
 	 */
 	public void worked(Job job, int work) {
 		getInfo(job).addWork(work);
+		refreshViewer();
 	}
 
 	/* (non-Javadoc)
@@ -155,6 +161,17 @@ public class ProgressContentProvider
 	public void resumed(Job job) {
 		// XXX Auto-generated method stub
 
+	}
+
+	private void refreshViewer() {
+		viewer.getControl().getDisplay().asyncExec(new Runnable() {
+			/* (non-Javadoc)
+			 * @see java.lang.Runnable#run()
+			 */
+			public void run() {
+				viewer.refresh();
+			}
+		});
 	}
 
 }
