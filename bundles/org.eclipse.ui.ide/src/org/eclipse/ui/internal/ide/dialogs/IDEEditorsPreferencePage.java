@@ -35,42 +35,45 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 
 /**
  * Extends the Editors preference page with IDE-specific settings.
- *
- * Note: want IDE settings to appear in main Editors preference page (via subclassing),
- *   however the superclass, EditorsPreferencePage, is internal
+ * 
+ * Note: want IDE settings to appear in main Editors preference page (via
+ * subclassing), however the superclass, EditorsPreferencePage, is internal
  */
 public class IDEEditorsPreferencePage extends EditorsPreferencePage {
 
 	// State for encoding group
 	private String defaultEnc;
+
 	private Button defaultEncodingButton;
+
 	private Button otherEncodingButton;
+
 	private Combo encodingCombo;
-	
+
 	protected Control createContents(Composite parent) {
 		Composite composite = createComposite(parent);
 
 		createEditorHistoryGroup(composite);
-		
+
 		createSpace(composite);
 		createShowMultipleEditorTabsPref(composite);
 		createCloseEditorsOnExitPref(composite);
 		createEditorReuseGroup(composite);
-		
+
 		createSpace(composite);
 		createEncodingGroup(composite);
-		
+
 		updateValidState();
 
 		// @issue need IDE-level help for this page
-//		WorkbenchHelp.setHelp(parent, IHelpContextIds.WORKBENCH_EDITOR_PREFERENCE_PAGE);
+		//		WorkbenchHelp.setHelp(parent,
+		// IHelpContextIds.WORKBENCH_EDITOR_PREFERENCE_PAGE);
 
 		return composite;
 	}
-	
 
 	private void createEncodingGroup(Composite parent) {
-		
+
 		Font font = parent.getFont();
 		Group group = new Group(parent, SWT.NONE);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
@@ -78,30 +81,35 @@ public class IDEEditorsPreferencePage extends EditorsPreferencePage {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		group.setLayout(layout);
-		group.setText(IDEWorkbenchMessages.getString("WorkbenchPreference.encoding")); //$NON-NLS-1$
+		group.setText(IDEWorkbenchMessages
+				.getString("WorkbenchPreference.encoding")); //$NON-NLS-1$
 		group.setFont(font);
-		
+
 		SelectionAdapter buttonListener = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateEncodingState(defaultEncodingButton.getSelection());
 				updateValidState();
 			}
 		};
-		
+
 		defaultEncodingButton = new Button(group, SWT.RADIO);
-		defaultEnc = System.getProperty("file.encoding", "UTF-8");  //$NON-NLS-1$  //$NON-NLS-2$
-		defaultEncodingButton.setText(IDEWorkbenchMessages.format("WorkbenchPreference.defaultEncoding", new String[] { defaultEnc })); //$NON-NLS-1$
+		defaultEnc = System.getProperty("file.encoding", "UTF-8"); //$NON-NLS-1$  //$NON-NLS-2$
+		defaultEncodingButton
+				.setText(IDEWorkbenchMessages
+						.format(
+								"WorkbenchPreference.defaultEncoding", new String[] { defaultEnc })); //$NON-NLS-1$
 		data = new GridData();
 		data.horizontalSpan = 2;
 		defaultEncodingButton.setLayoutData(data);
 		defaultEncodingButton.addSelectionListener(buttonListener);
 		defaultEncodingButton.setFont(font);
-		
+
 		otherEncodingButton = new Button(group, SWT.RADIO);
-		otherEncodingButton.setText(IDEWorkbenchMessages.getString("WorkbenchPreference.otherEncoding")); //$NON-NLS-1$
+		otherEncodingButton.setText(IDEWorkbenchMessages
+				.getString("WorkbenchPreference.otherEncoding")); //$NON-NLS-1$
 		otherEncodingButton.addSelectionListener(buttonListener);
 		otherEncodingButton.setFont(font);
-		
+
 		encodingCombo = new Combo(group, SWT.NONE);
 		data = new GridData();
 		data.widthHint = convertWidthInCharsToPixels(15);
@@ -116,23 +124,25 @@ public class IDEEditorsPreferencePage extends EditorsPreferencePage {
 		ArrayList encodings = new ArrayList();
 		int n = 0;
 		try {
-			n = Integer.parseInt(IDEWorkbenchMessages.getString("WorkbenchPreference.numDefaultEncodings")); //$NON-NLS-1$
-		}
-		catch (NumberFormatException e) {
+			n = Integer.parseInt(IDEWorkbenchMessages
+					.getString("WorkbenchPreference.numDefaultEncodings")); //$NON-NLS-1$
+		} catch (NumberFormatException e) {
 			// Ignore;
 		}
 		for (int i = 0; i < n; ++i) {
-			String enc = IDEWorkbenchMessages.getString("WorkbenchPreference.defaultEncoding" + (i+1), null); //$NON-NLS-1$
+			String enc = IDEWorkbenchMessages.getString(
+					"WorkbenchPreference.defaultEncoding" + (i + 1), null); //$NON-NLS-1$
 			if (enc != null) {
 				encodings.add(enc);
 			}
 		}
-		
+
 		if (!encodings.contains(defaultEnc)) {
 			encodings.add(defaultEnc);
 		}
 
-		String enc = ResourcesPlugin.getPlugin().getPluginPreferences().getString(ResourcesPlugin.PREF_ENCODING);
+		String enc = ResourcesPlugin.getPlugin().getPluginPreferences()
+				.getString(ResourcesPlugin.PREF_ENCODING);
 		boolean isDefault = enc == null || enc.length() == 0;
 
 		if (!isDefault && !encodings.contains(enc)) {
@@ -144,7 +154,7 @@ public class IDEEditorsPreferencePage extends EditorsPreferencePage {
 		}
 
 		encodingCombo.setText(isDefault ? defaultEnc : enc);
-		
+
 		updateEncodingState(isDefault);
 	}
 
@@ -154,16 +164,17 @@ public class IDEEditorsPreferencePage extends EditorsPreferencePage {
 			return;
 		}
 		if (!isEncodingValid()) {
-			setErrorMessage(IDEWorkbenchMessages.getString("WorkbenchPreference.unsupportedEncoding")); //$NON-NLS-1$
+			setErrorMessage(IDEWorkbenchMessages
+					.getString("WorkbenchPreference.unsupportedEncoding")); //$NON-NLS-1$
 			setValid(false);
 		}
 	}
-	
+
 	private boolean isEncodingValid() {
-		return defaultEncodingButton.getSelection() ||
-		isValidEncoding(encodingCombo.getText());
+		return defaultEncodingButton.getSelection()
+				|| isValidEncoding(encodingCombo.getText());
 	}
-	
+
 	private boolean isValidEncoding(String enc) {
 		try {
 			new String(new byte[0], enc);
@@ -178,32 +189,54 @@ public class IDEEditorsPreferencePage extends EditorsPreferencePage {
 		otherEncodingButton.setSelection(!useDefault);
 		encodingCombo.setEnabled(!useDefault);
 		updateValidState();
-	}		
-	
+	}
+
 	/**
-	 * The default button has been pressed. 
+	 * The default button has been pressed.
 	 */
 	protected void performDefaults() {
 		updateEncodingState(true);
 		super.performDefaults();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.internal.dialogs.FileEditorsPreferencePage#performOk()
 	 */
 	public boolean performOk() {
-		// set the workspace text file encoding
-		String enc = defaultEncodingButton.getSelection() ? null : encodingCombo.getText();
-		try {
-			ResourcesPlugin.getWorkspace().getRoot().setDefaultCharset(enc, null);
-		} catch (CoreException exception) {
-			ErrorDialog.openError(
-					getShell(),
-					IDEWorkbenchMessages.getString("IDEEditorsPreferencePageEncodingError"),  //$NON-NLS-1$
-					exception.getMessage(),
-					exception.getStatus());
+
+		if (hasNewEncoding()) {
+			// set the workspace text file encoding
+			String enc = defaultEncodingButton.getSelection() ? null
+					: encodingCombo.getText();
+			try {
+				ResourcesPlugin.getWorkspace().getRoot().setDefaultCharset(enc,
+						null);
+			} catch (CoreException exception) {
+				ErrorDialog.openError(getShell(), IDEWorkbenchMessages
+						.getString("IDEEditorsPreferencePageEncodingError"), //$NON-NLS-1$
+						exception.getMessage(), exception.getStatus());
 				return false;
+			}
 		}
 		return super.performOk();
+	}
+
+	/**
+	 * Return whether or not the encoding setting changed/
+	 * @return
+	 */
+	private boolean hasNewEncoding() {
+		
+		String enc = ResourcesPlugin.getPlugin().getPluginPreferences()
+		.getString(ResourcesPlugin.PREF_ENCODING);
+		
+		
+		if(defaultEncodingButton.getSelection()){
+			//Changed if default is selected and there is no setting
+			return enc != null && enc.length() > 0;
+		}
+		return !(enc.equals(encodingCombo.getText()));
 	}
 }
