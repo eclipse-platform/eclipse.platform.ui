@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.debug.model;
 
-import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 
@@ -20,7 +19,8 @@ import org.eclipse.debug.core.model.IVariable;
 public class AntProperty extends AntDebugElement implements IVariable {
 
 	private String fName;
-	private IValue fValue;
+	private AntValue fValue;
+    private String fLabel;
 	
 	/**
 	 * Constructs a variable associated with the debug target
@@ -39,41 +39,41 @@ public class AntProperty extends AntDebugElement implements IVariable {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IVariable#getValue()
 	 */
-	public IValue getValue() throws DebugException {
+	public IValue getValue() {
 		return fValue;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IVariable#getName()
 	 */
-	public String getName() throws DebugException {
+	public String getName() {
 		return fName;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IVariable#getReferenceTypeName()
 	 */
-	public String getReferenceTypeName() throws DebugException {
+	public String getReferenceTypeName() {
 		return ""; //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IVariable#hasValueChanged()
 	 */
-	public boolean hasValueChanged() throws DebugException {
+	public boolean hasValueChanged() {
 		return false;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValueModification#setValue(java.lang.String)
 	 */
-	public void setValue(String expression) throws DebugException {
+	public void setValue(String expression) {
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValueModification#setValue(org.eclipse.debug.core.model.IValue)
 	 */
-	public void setValue(IValue value) throws DebugException {
+	public void setValue(IValue value) {
 	}
 	
 	/* (non-Javadoc)
@@ -86,14 +86,27 @@ public class AntProperty extends AntDebugElement implements IVariable {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValueModification#verifyValue(java.lang.String)
 	 */
-	public boolean verifyValue(String expression) throws DebugException {
+	public boolean verifyValue(String expression) {
 		return false;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValueModification#verifyValue(org.eclipse.debug.core.model.IValue)
 	 */
-	public boolean verifyValue(IValue value) throws DebugException {
+	public boolean verifyValue(IValue value) {
 		return false;
 	}
+
+    /**
+     * @return the text used to render this property
+     */
+    public String getText() {
+        if (fLabel == null) {
+            StringBuffer buffer= new StringBuffer(getName());
+            buffer.append(" = "); //$NON-NLS-1$
+            buffer.append(fValue.getValueString());          
+            fLabel=  buffer.toString();
+        } 
+        return fLabel;
+    }
 }
