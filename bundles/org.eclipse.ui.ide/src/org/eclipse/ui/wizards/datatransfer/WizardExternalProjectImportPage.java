@@ -16,6 +16,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -455,7 +456,7 @@ public class WizardExternalProjectImportPage extends WizardPage {
                         1000));
                 if (monitor.isCanceled())
                     throw new OperationCanceledException();
-                project.open(new SubProgressMonitor(monitor, 1000));
+                project.open(IResource.BACKGROUND_REFRESH, new SubProgressMonitor(monitor, 1000));
 
             }
         };

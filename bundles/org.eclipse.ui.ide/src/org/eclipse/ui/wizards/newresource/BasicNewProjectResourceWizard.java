@@ -22,6 +22,7 @@ import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -278,7 +279,7 @@ public class BasicNewProjectResourceWizard extends BasicNewResourceWizard
             if (monitor.isCanceled())
                 throw new OperationCanceledException();
 
-            projectHandle.open(new SubProgressMonitor(monitor, 1000));
+            projectHandle.open(IResource.BACKGROUND_REFRESH, new SubProgressMonitor(monitor, 1000));
 
         } finally {
             monitor.done();
