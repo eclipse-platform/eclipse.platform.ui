@@ -1,9 +1,15 @@
-package org.eclipse.ui;
+/************************************************************************
+Copyright (c) 2000,2002 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+Contributors:
+	IBM - Initial implementation
+************************************************************************/
+
+package org.eclipse.ui;
 
 /**
  * Describes the public attributes for a marker and the acceptables values
@@ -61,5 +67,13 @@ public interface IMarkerActionFilter extends IActionFilter {
 	 * the end to represent "one or more characters".
 	 */
 	public static final String MESSAGE = "message"; //$NON-NLS-1$
+	
+	/**
+	 * An attribute indicating the type of resource associated with the marker
+	 * (value <code>"resourceType"</code>). The attribute value in xml must be
+	 * one of <code>IResource.FILE, IResource.PROJECT, IResource.FOLDER,
+	 * or IResource.ROOT</code>.
+	 */
+	public static final String RESOURCE_TYPE = "resourceType"; //$NON-NLS-1$
 
 }

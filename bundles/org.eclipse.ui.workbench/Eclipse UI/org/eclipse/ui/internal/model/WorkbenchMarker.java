@@ -5,12 +5,14 @@ package org.eclipse.ui.internal.model;
  * All Rights Reserved.
  */
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.ui.internal.*;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IMarkerActionFilter;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.actions.SimpleWildcardTester;
-import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * Model object for adapting IMarker objects to the IWorkbenchAdapter
@@ -90,6 +92,14 @@ public boolean testAttribute(Object target, String name, String value) {
 		} catch (CoreException e) {
 			return false;
 		}
+	} else if (name.equals(RESOURCE_TYPE)) {
+		int desiredType = Integer.parseInt(value);
+		if (!(desiredType == IResource.FILE || 
+			desiredType == IResource.FOLDER || 
+			desiredType == IResource.PROJECT || 
+			desiredType == IResource.ROOT))
+				return false;
+		return (marker.getResource().getType() & desiredType) > 0;  
 	}
 	return false;
 }
