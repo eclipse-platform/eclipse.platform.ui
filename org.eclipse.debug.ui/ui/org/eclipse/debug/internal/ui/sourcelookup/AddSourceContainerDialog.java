@@ -11,11 +11,10 @@
 package org.eclipse.debug.internal.ui.sourcelookup;
 
 import java.util.ArrayList;
-
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
-import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -80,7 +79,7 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
 		parent.setLayout(topLayout);
 		parent.setLayoutData(gd);	
 				
-		ISourceContainerType[] types = filterTypes(SourceLookupUtils.getSourceContainerTypes());
+		ISourceContainerType[] types = filterTypes(DebugPlugin.getDefault().getLaunchManager().getSourceContainerTypes());
 		
 		fViewer = new TableViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.SINGLE);
 		final Table table = fViewer.getTable();

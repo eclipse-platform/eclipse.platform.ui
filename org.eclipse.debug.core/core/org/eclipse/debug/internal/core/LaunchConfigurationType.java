@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
-
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -32,7 +31,6 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.debug.core.sourcelookup.ISourcePathComputer;
-import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
 
 /**
  * A launch configuration type wrappers a configuration
@@ -154,7 +152,7 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 	public ISourcePathComputer getSourcePathComputer() {
 		String id = getConfigurationElement().getAttribute("sourcePathComputerId"); //$NON-NLS-1$
 		if (id != null && id.length() > 0) {
-			return SourceLookupUtils.getSourcePathComputer(id);
+			return DebugPlugin.getDefault().getLaunchManager().getSourcePathComputer(id);
 		}
 		return null;
 	}

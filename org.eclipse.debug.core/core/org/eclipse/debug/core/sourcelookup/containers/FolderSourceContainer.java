@@ -13,7 +13,6 @@ package org.eclipse.debug.core.sourcelookup.containers;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
-import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
 
 /**
  * A folder in the workspace. Source elements are searched
@@ -45,7 +44,7 @@ public class FolderSourceContainer extends ContainerSourceContainer {
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#getType()
 	 */
 	public ISourceContainerType getType() {
-		return SourceLookupUtils.getSourceContainerType(FolderSourceContainer.TYPE_ID);
+		return getSourceContainerType(TYPE_ID);
 	}
 	
 }

@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
-import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
 
 /**
  * A project in the workspace. Source is searched for in the root project
@@ -70,7 +69,7 @@ public class ProjectSourceContainer extends ContainerSourceContainer {
 	* @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#getType()
 	*/
 	public ISourceContainerType getType() {
-		return SourceLookupUtils.getSourceContainerType(ProjectSourceContainer.TYPE_ID);
+		return getSourceContainerType(TYPE_ID);
 	}
 
 	/* (non-Javadoc)

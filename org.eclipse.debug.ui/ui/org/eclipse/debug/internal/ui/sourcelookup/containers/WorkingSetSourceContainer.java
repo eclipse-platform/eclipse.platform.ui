@@ -11,7 +11,6 @@
 package org.eclipse.debug.internal.ui.sourcelookup.containers;
 
 import java.util.ArrayList;
-
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -22,7 +21,7 @@ import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
 import org.eclipse.debug.core.sourcelookup.containers.CompositeSourceContainer;
 import org.eclipse.debug.core.sourcelookup.containers.FolderSourceContainer;
 import org.eclipse.debug.core.sourcelookup.containers.ProjectSourceContainer;
-import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.ui.IWorkingSet;
 
 /**
@@ -35,6 +34,11 @@ import org.eclipse.ui.IWorkingSet;
 public class WorkingSetSourceContainer extends CompositeSourceContainer{
 	
 	private IWorkingSet fWorkingSet;
+	/**
+	 * Unique identifier for the working set source container type
+	 * (value <code>org.eclipse.debug.ui.containerType.workingSet</code>.)
+	 */
+	public static final String TYPE_ID = DebugUIPlugin.getUniqueIdentifier()+".containerType.workingSet"; //$NON-NLS-1$
 		
 	/**
 	 * Creates a source container for the working set.
@@ -70,7 +74,7 @@ public class WorkingSetSourceContainer extends CompositeSourceContainer{
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#getType()
 	 */
 	public ISourceContainerType getType() {
-		return SourceLookupUtils.getSourceContainerType(WorkingSetSourceContainerType.TYPE_ID);
+		return getSourceContainerType(TYPE_ID);
 	}
 			
 	/* (non-Javadoc)

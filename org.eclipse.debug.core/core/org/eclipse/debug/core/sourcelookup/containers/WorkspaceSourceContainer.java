@@ -17,7 +17,6 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
 import org.eclipse.debug.internal.core.sourcelookup.SourceLookupMessages;
-import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
 
 /**
  * All projects in the workspace.
@@ -62,7 +61,7 @@ public class WorkspaceSourceContainer extends CompositeSourceContainer {
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#getType()
 	 */
 	public ISourceContainerType getType() {
-		return SourceLookupUtils.getSourceContainerType(WorkspaceSourceContainer.TYPE_ID);
+		return getSourceContainerType(TYPE_ID);
 	}
 
 	/* (non-Javadoc)

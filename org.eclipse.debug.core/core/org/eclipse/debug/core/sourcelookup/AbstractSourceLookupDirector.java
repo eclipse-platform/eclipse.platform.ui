@@ -31,7 +31,6 @@ import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.sourcelookup.containers.DefaultSourceContainer;
 import org.eclipse.debug.internal.core.sourcelookup.SourceLookupMessages;
-import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -187,6 +186,18 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 	}
 	
 	/**
+	 * Throws an exception with the given message and underlying exception.
+	 * 
+	 * @param message error message
+	 * @param exception underlying exception, or <code>null</code>
+	 * @throws CoreException
+	 */
+	protected void abort(String message, Throwable exception) throws CoreException {
+		IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, message, exception);
+		throw new CoreException(status);
+	}
+	
+	/**
 	 * Constructs source containers from a list of container mementos.
 	 * 
 	 * @param list the list of nodes to be parsed
@@ -201,15 +212,15 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 			Element element = (Element)list.item(i);
 			String typeId = element.getAttribute(CONTAINER_TYPE_ATTR);
 			if (typeId == null || typeId.equals("")) {	 //$NON-NLS-1$
-				SourceLookupUtils.abort(SourceLookupMessages.getString("AbstractSourceLookupDirector.11"), null); //$NON-NLS-1$
+				abort(SourceLookupMessages.getString("AbstractSourceLookupDirector.11"), null); //$NON-NLS-1$
 			}
-			ISourceContainerType type = SourceLookupUtils.getSourceContainerType(typeId);
+			ISourceContainerType type = DebugPlugin.getDefault().getLaunchManager().getSourceContainerType(typeId);
 			if(type == null) {
-				SourceLookupUtils.abort(MessageFormat.format(SourceLookupMessages.getString("AbstractSourceLookupDirector.12"), new String[]{typeId}), null); //$NON-NLS-1$
+				abort(MessageFormat.format(SourceLookupMessages.getString("AbstractSourceLookupDirector.12"), new String[]{typeId}), null); //$NON-NLS-1$
 			}			
 			String memento = element.getAttribute(CONTAINER_MEMENTO_ATTR);
 			if (memento == null || memento.equals("")) {	 //$NON-NLS-1$
-				SourceLookupUtils.abort(SourceLookupMessages.getString("AbstractSourceLookupDirector.13"), null); //$NON-NLS-1$
+				abort(SourceLookupMessages.getString("AbstractSourceLookupDirector.13"), null); //$NON-NLS-1$
 			}
 			ISourceContainer container = type.createSourceContainer(memento);
 			containers.add(container);
@@ -315,7 +326,7 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 	 * @see org.eclipse.debug.core.model.IPersistableSourceLocator#getMemento()
 	 */
 	public String getMemento() throws CoreException {
-		Document doc = SourceLookupUtils.newDocument();
+		Document doc = DebugPlugin.newDocument();
 		Element rootNode = doc.createElement(DIRECTOR_ROOT_NODE);
 		doc.appendChild(rootNode);
 				
@@ -336,7 +347,7 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 				pathNode.appendChild(node);
 			}
 		}
-		return SourceLookupUtils.serializeDocument(doc);
+		return DebugPlugin.serializeDocument(doc);
 	}
 	
 	/* (non-Javadoc)
@@ -344,9 +355,9 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 	 */
 	public void initializeFromMemento(String memento) throws CoreException {
 		dispose();
-		Element rootElement = SourceLookupUtils.parseDocument(memento);		
+		Element rootElement = DebugPlugin.parseDocument(memento);		
 		if (!rootElement.getNodeName().equalsIgnoreCase(DIRECTOR_ROOT_NODE)) { 
-			SourceLookupUtils.abort(SourceLookupMessages.getString("AbstractSourceLookupDirector.14"), null); //$NON-NLS-1$
+			abort(SourceLookupMessages.getString("AbstractSourceLookupDirector.14"), null); //$NON-NLS-1$
 		}
 		NodeList list = rootElement.getChildNodes();
 		int length = list.getLength();

@@ -12,9 +12,9 @@ package org.eclipse.debug.internal.core.sourcelookup.containers;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
+import org.eclipse.debug.core.sourcelookup.containers.AbstractSourceContainerTypeDelegate;
 import org.eclipse.debug.core.sourcelookup.containers.WorkspaceSourceContainer;
 import org.eclipse.debug.internal.core.sourcelookup.SourceLookupMessages;
-import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -30,7 +30,7 @@ public class WorkspaceSourceContainerType extends AbstractSourceContainerTypeDel
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainerTypeDelegate#createSourceContainer(java.lang.String)
 	 */
 	public ISourceContainer createSourceContainer(String memento) throws CoreException {
-		Node node = SourceLookupUtils.parseDocument(memento);
+		Node node = parseDocument(memento);
 		if (node.getNodeType() == Node.ELEMENT_NODE) {
 			Element element = (Element)node;
 			if ("workspace".equals(element.getNodeName())) { //$NON-NLS-1$
@@ -46,9 +46,9 @@ public class WorkspaceSourceContainerType extends AbstractSourceContainerTypeDel
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainerTypeDelegate#getMemento(org.eclipse.debug.internal.core.sourcelookup.ISourceContainer)
 	 */
 	public String getMemento(ISourceContainer container) throws CoreException {
-		Document document = SourceLookupUtils.newDocument();
+		Document document = newDocument();
 		Element element = document.createElement("workspace"); //$NON-NLS-1$
 		document.appendChild(element);
-		return SourceLookupUtils.serializeDocument(document);
+		return serializeDocument(document);
 	}
 }

@@ -11,14 +11,20 @@
 package org.eclipse.debug.core;
 
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Vector;
-
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.FactoryConfigurationError;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -40,7 +46,11 @@ import org.eclipse.debug.internal.core.ExpressionManager;
 import org.eclipse.debug.internal.core.LaunchManager;
 import org.eclipse.debug.internal.core.ListenerList;
 import org.eclipse.debug.internal.core.LogicalStructureManager;
+import org.eclipse.debug.internal.core.sourcelookup.SourceLookupMessages;
 import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
 
 /**
  * There is one instance of the debug plug-in available from
@@ -130,6 +140,22 @@ public class DebugPlugin extends Plugin {
 	 * @since 3.0
 	 */
 	public static final String EXTENSION_POINT_LOGICAL_STRUCTURE_TYPES = "logicalStructureTypes"; //$NON-NLS-1$
+	
+	/**
+	 * Simple identifier constant (value <code>"sourceContainerTypes"</code>) for the
+	 * source container types extension point.
+	 * 
+	 * @since 3.0
+	 */	
+	public static final String EXTENSION_POINT_SOURCE_CONTAINER_TYPES = "sourceContainerTypes";	 //$NON-NLS-1$
+
+	/**
+	 * Simple identifier constant (value <code>"sourcePathComputers"</code>) for the
+	 * source path computers extension point.
+	 * 
+	 * @since 3.0
+	 */		
+	public static final String EXTENSION_POINT_SOURCE_PATH_COMPUTERS = "sourcePathComputers"; //$NON-NLS-1$
 	
 	/**
 	 * Status code indicating an unexpected internal error.
@@ -231,8 +257,7 @@ public class DebugPlugin extends Plugin {
 	 * Mode constants for the event notifier
 	 */
 	private static final int NOTIFY_FILTERS = 0;
-	private static final int NOTIFY_EVENTS = 1;
-	
+	private static final int NOTIFY_EVENTS = 1;	
 			
 	/**
 	 * Returns the singleton instance of the debug plug-in.
@@ -951,7 +976,87 @@ public class DebugPlugin extends Plugin {
 		}
 
 	}
+
+	/**
+	 * Creates and returns a new XML document.
+	 * 
+	 * @return a new XML document
+	 * @throws CoreException if unable to create a new document
+	 * @since 3.0
+	 */
+	public static Document newDocument()throws CoreException {
+		try {
+			return LaunchManager.getDocument();
+		} catch (ParserConfigurationException e) {
+			abort(SourceLookupMessages.getString("SourceLookupUtils.3"), e); //$NON-NLS-1$
+		}		
+		return null;
+	}	
 	
+	/**
+	 * Serializes the given XML document into a string.
+	 * 
+	 * @param document XML document to serialize
+	 * @return a string representing the given document
+	 * @throws CoreException if unable to serialize the document
+	 * @since 3.0
+	 */
+	public static String serializeDocument(Document document) throws CoreException {
+		try {
+			return LaunchManager.serializeDocument(document);
+		} catch (TransformerException e) {
+			abort(SourceLookupMessages.getString("SourceLookupUtils.4"), e); //$NON-NLS-1$
+		} catch (IOException e) {
+			abort(SourceLookupMessages.getString("SourceLookupUtils.5"), e); //$NON-NLS-1$
+		}
+		return null;
+	}
+
+	/**
+	 * Parses the given string representing an XML document, returning its
+	 * root element.
+	 * 
+	 * @param document XML document as a string
+	 * @return the document's root element
+	 * @throws CoreException if unable to parse the document
+	 * @since 3.0
+	 */
+	public static Element parseDocument(String document) throws CoreException {
+		Element root = null;
+		InputStream stream = null;
+		try{		
+			DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			stream = new ByteArrayInputStream(document.getBytes());
+			root = parser.parse(stream).getDocumentElement();
+		} catch (ParserConfigurationException e) {
+			abort(SourceLookupMessages.getString("SourceLookupUtils.6"), e); //$NON-NLS-1$
+		} catch (FactoryConfigurationError e) {
+			abort(SourceLookupMessages.getString("SourceLookupUtils.7"), e); //$NON-NLS-1$
+		} catch (SAXException e) {
+			abort(SourceLookupMessages.getString("SourceLookupUtils.8"), e); //$NON-NLS-1$
+		} catch (IOException e) {
+			abort(SourceLookupMessages.getString("SourceLookupUtils.9"), e); //$NON-NLS-1$
+		} finally { 
+			try{
+				stream.close();
+			} catch(IOException e) {
+				abort(SourceLookupMessages.getString("SourceLookupUtils.10"), e); //$NON-NLS-1$
+			}
+		}		
+		return root;
+	}	
+	
+	/**
+	 * Throws an exception with the given message and underlying exception.
+	 * 
+	 * @param message error message
+	 * @param exception underlying exception, or <code>null</code>
+	 * @throws CoreException
+	 */
+	private static void abort(String message, Throwable exception) throws CoreException {
+		IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, message, exception);
+		throw new CoreException(status);
+	}	
 }
 
 

@@ -11,10 +11,13 @@
 package org.eclipse.debug.core.sourcelookup.containers;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
+import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
-import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
 
 /**
  * Common function for source containers.
@@ -37,7 +40,8 @@ public abstract class AbstractSourceContainer extends PlatformObject implements 
 	 * @throws CoreException
 	 */
 	protected void abort(String message, Throwable exception) throws CoreException {
-		SourceLookupUtils.abort(message, exception);
+		IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, message, exception);
+		throw new CoreException(status);
 	}
 	
 	/* (non-Javadoc)
@@ -91,5 +95,16 @@ public abstract class AbstractSourceContainer extends PlatformObject implements 
 	 */
 	protected boolean isFindDuplicates() {
 		return getDirector().isFindDuplicates();
+	}
+	
+	/**
+	 * Returns the source container type identified by the given id,
+	 * or <code>null</code> if none.
+	 * 
+	 * @param id source container type identifier
+	 * @return source container type or <code>null</code>
+	 */
+	protected ISourceContainerType getSourceContainerType(String id) {
+		return DebugPlugin.getDefault().getLaunchManager().getSourceContainerType(id);
 	}
 }

@@ -13,7 +13,6 @@ package org.eclipse.debug.core.sourcelookup.containers;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
-import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
 
 /**
  * Archive source container for an archive in the workspace. Returns instances
@@ -70,7 +69,7 @@ public class ArchiveSourceContainer extends ExternalArchiveSourceContainer {
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#getType()
 	 */
 	public ISourceContainerType getType() {
-		return SourceLookupUtils.getSourceContainerType(ArchiveSourceContainer.TYPE_ID);
+		return getSourceContainerType(TYPE_ID);
 	}
 	
 	/* (non-Javadoc)

@@ -24,6 +24,7 @@ import java.io.InputStreamReader;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -32,7 +33,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -42,7 +42,6 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -81,8 +80,10 @@ import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IPersistableSourceLocator;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.sourcelookup.AbstractSourceLookupDirector;
+import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
 import org.eclipse.debug.core.sourcelookup.ISourcePathComputer;
-import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
+import org.eclipse.debug.internal.core.sourcelookup.SourceContainerType;
+import org.eclipse.debug.internal.core.sourcelookup.SourcePathComputer;
 import org.eclipse.osgi.service.environment.Constants;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -204,6 +205,19 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	protected static final IPath LOCAL_LAUNCH_CONFIGURATION_CONTAINER_PATH =
 		DebugPlugin.getDefault().getStateLocation().append(".launches"); //$NON-NLS-1$
 		
+	
+	/**
+	 * Map of source container type extensions. Keys are extension ids
+	 * and values are associated configuration elements.
+	 */
+	private Map sourceContainerTypes;	
+	
+	/**
+	 * Map of source path computer extensions. Keys are extension ids
+	 * and values are associated configuration elements.
+	 */
+	private Map sourcePathComputers;
+	
 	/**
 	 * Serializes a XML document into a string - encoded in UTF8 format,
 	 * with platform line separators.
@@ -1697,7 +1711,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchManager#newSourcePathComputer(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
-	public ISourcePathComputer newSourcePathComputer(ILaunchConfiguration configuration) throws CoreException {
+	public ISourcePathComputer getSourcePathComputer(ILaunchConfiguration configuration) throws CoreException {
 		String id = null;
 		id = configuration.getAttribute(ISourcePathComputer.ATTR_SOURCE_PATH_COMPUTER_ID, (String)null);
 		
@@ -1705,6 +1719,52 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 			//use default computer for configuration type, if any			
 			return configuration.getType().getSourcePathComputer();							
 		}
-		return SourceLookupUtils.getSourcePathComputer(id);
+		return getSourcePathComputer(id);
+	}
+	
+	/**
+	 * Initializes source container type and source path computer extensions.
+	 */
+	private void initializeSourceContainerTypes() {
+		if (sourceContainerTypes == null) {
+			IPluginDescriptor descriptor= DebugPlugin.getDefault().getDescriptor();
+			IConfigurationElement[] extensions = descriptor.getExtensionPoint(DebugPlugin.EXTENSION_POINT_SOURCE_CONTAINER_TYPES).getConfigurationElements();
+			sourceContainerTypes = new HashMap();
+			for (int i = 0; i < extensions.length; i++) {
+				sourceContainerTypes.put(
+						extensions[i].getAttribute("id"), //$NON-NLS-1$
+						new SourceContainerType(extensions[i]));
+			}			
+			extensions = descriptor.getExtensionPoint(DebugPlugin.EXTENSION_POINT_SOURCE_PATH_COMPUTERS).getConfigurationElements();
+			sourcePathComputers = new HashMap();
+			for (int i = 0; i < extensions.length; i++) {
+				sourcePathComputers.put(
+						extensions[i].getAttribute("id"), //$NON-NLS-1$
+						new SourcePathComputer(extensions[i]));
+			}
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchManager#getSourceContainerType(java.lang.String)
+	 */
+	public ISourceContainerType getSourceContainerType(String id) {
+		initializeSourceContainerTypes();
+		return (ISourceContainerType) sourceContainerTypes.get(id);
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchManager#getSourceContainerTypes()
+	 */
+	public ISourceContainerType[] getSourceContainerTypes() {
+		initializeSourceContainerTypes();
+		Collection containers = sourceContainerTypes.values();
+		return (ISourceContainerType[]) containers.toArray(new ISourceContainerType[containers.size()]);
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchManager#getSourcePathComputer(java.lang.String)
+	 */
+	public ISourcePathComputer getSourcePathComputer(String id) {
+		initializeSourceContainerTypes();
+		return (ISourcePathComputer) sourcePathComputers.get(id);
 	}
 }

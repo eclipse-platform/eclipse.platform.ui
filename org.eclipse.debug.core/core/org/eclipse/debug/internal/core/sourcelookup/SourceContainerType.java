@@ -12,7 +12,12 @@ package org.eclipse.debug.internal.core.sourcelookup;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.debug.core.sourcelookup.*;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.sourcelookup.ISourceContainer;
+import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
+import org.eclipse.debug.core.sourcelookup.ISourceContainerTypeDelegate;
 
 /**
  * Proxy to contributed source container type extension.
@@ -49,8 +54,8 @@ public class SourceContainerType implements ISourceContainerType {
 		if (this.equals(container.getType())) {
 			return getDelegate().getMemento(container);
 		}
-		SourceLookupUtils.abort(SourceLookupMessages.getString("SourceContainerType.3"), null); //$NON-NLS-1$
-		return null;
+		IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, SourceLookupMessages.getString("SourceContainerType.3"), null); //$NON-NLS-1$
+		throw new CoreException(status);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType#getName()

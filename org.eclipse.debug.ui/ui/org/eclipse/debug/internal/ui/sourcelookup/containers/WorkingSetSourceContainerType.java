@@ -12,16 +12,12 @@ package org.eclipse.debug.internal.ui.sourcelookup.containers;
 
 import java.io.IOException;
 import java.io.StringReader;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
-import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
-import org.eclipse.debug.internal.core.sourcelookup.containers.AbstractSourceContainerTypeDelegate;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.core.sourcelookup.containers.AbstractSourceContainerTypeDelegate;
 import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupUIMessages;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -36,22 +32,16 @@ import org.xml.sax.SAXException;
  * @since 3.0
  */
 public class WorkingSetSourceContainerType extends AbstractSourceContainerTypeDelegate {
-	/**
-	 * Unique identifier for the working set source container type
-	 * (value <code>org.eclipse.debug.ui.containerType.workingSet</code>.)
-	 */
-	public static final String TYPE_ID = DebugUIPlugin.getUniqueIdentifier()+".containerType.workingSet"; //$NON-NLS-1$
-		
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainerTypeDelegate#getMemento(org.eclipse.debug.internal.core.sourcelookup.ISourceContainer)
 	 */	
 	public String getMemento(ISourceContainer container) throws CoreException {
 		WorkingSetSourceContainer workingSet = (WorkingSetSourceContainer) container;
-		Document doc = SourceLookupUtils.newDocument();		
+		Document doc = newDocument();		
 		Element node = doc.createElement("workingSet"); //$NON-NLS-1$
 		node.setAttribute("name", workingSet.getName()); //$NON-NLS-1$
 		doc.appendChild(node);
-		return SourceLookupUtils.serializeDocument(doc);	 
+		return serializeDocument(doc);	 
 	}
 	
 	/* (non-Javadoc)

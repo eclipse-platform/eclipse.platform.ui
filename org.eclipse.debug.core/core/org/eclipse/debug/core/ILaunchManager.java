@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IPersistableSourceLocator;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
 import org.eclipse.debug.core.sourcelookup.ISourcePathComputer;
 
 /**
@@ -363,8 +364,17 @@ public interface ILaunchManager {
 	 *  path computer
 	 * @since 3.0
 	 */
-	public ISourcePathComputer newSourcePathComputer(ILaunchConfiguration configuration) throws CoreException;
+	public ISourcePathComputer getSourcePathComputer(ILaunchConfiguration configuration) throws CoreException;
 	
+	/**
+	 * Returns the source path computer extension registered with the given
+	 * unique identifier, or <code>null</code> if none.
+	 * 
+	 * @param id source path computer identifier
+	 * @return the source path computer extension registered with the given
+	 * unique identifier, or <code>null</code> if none
+	 */
+	public ISourcePathComputer getSourcePathComputer(String id);
 
 	/**
 	 * Returns the native system environment variables as a map of
@@ -376,6 +386,24 @@ public interface ILaunchManager {
 	 * @since 3.0
 	 */	
 	public Map getNativeEnvironment();
+	
+	/**
+	 * Returns all registered source container type extensions.
+	 * 
+	 * @return all registered source container type extensions
+	 */
+	public ISourceContainerType[] getSourceContainerTypes();
+	
+	/**
+	 * Returns the source container type extension registered with the
+	 * given unique identifier, or <code>null</code> if none.
+	 * 
+	 * @param id unique identifier of a source container type extension
+	 * @return the source container type extension registered with the
+	 * given unique identifier, or <code>null</code> if none
+	 */
+	public ISourceContainerType getSourceContainerType(String id);
+	
 }
 
 

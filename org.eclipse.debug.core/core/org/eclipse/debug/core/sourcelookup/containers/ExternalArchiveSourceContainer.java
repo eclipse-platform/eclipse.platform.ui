@@ -165,7 +165,7 @@ public class ExternalArchiveSourceContainer extends AbstractSourceContainer {
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#getType()
 	 */
 	public ISourceContainerType getType() {
-		return SourceLookupUtils.getSourceContainerType(ExternalArchiveSourceContainer.TYPE_ID);
+		return getSourceContainerType(TYPE_ID);
 	}
 	
 	/**
