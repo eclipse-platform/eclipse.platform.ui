@@ -2339,13 +2339,19 @@ private void setPerspective(Perspective newPersp) {
 	IWorkbenchPartReference[] refs;
 	if (oldPersp != null) {
 		refs = oldPersp.getViewReferences();
-		for (int i = 0; i < refs.length; i++)
-			set.add(((WorkbenchPartReference) refs[i]).getPane());
+		for (int i = 0; i < refs.length; i++) {
+			PartPane pane = ((WorkbenchPartReference) refs[i]).getPane();
+			if(pane != null)
+				set.add(pane);
+		}
 	}
 	if (newPersp != null) {
 		refs = newPersp.getViewReferences();
-		for (int i = 0; i < refs.length; i++)
-			set.add(((WorkbenchPartReference) refs[i]).getPane());
+		for (int i = 0; i < refs.length; i++) {
+			PartPane pane = ((WorkbenchPartReference) refs[i]).getPane();
+			if(pane != null)
+				set.add(pane);
+		}
 		PerspectivePresentation pres = newPersp.getPresentation();
 		for (Iterator iter = set.iterator(); iter.hasNext();) {
 			PartPane pane = (PartPane) iter.next();

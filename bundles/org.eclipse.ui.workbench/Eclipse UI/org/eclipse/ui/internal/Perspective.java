@@ -685,10 +685,12 @@ protected void onDeactivate() {
 	// Update fast views.
 	for (int i = 0; i < fastViews.size(); i++){
 		ViewPane pane = getPane((IViewReference)fastViews.get(i));
-		presentation.disableDrag(pane);
-		Control ctrl = pane.getControl();
-		if (ctrl != null)
-			ctrl.setEnabled(true); // Add focus support.
+		if(pane != null) {
+			presentation.disableDrag(pane);
+			Control ctrl = pane.getControl();
+			if (ctrl != null)
+				ctrl.setEnabled(true); // Add focus support.
+		}
 	}
 }
 /**
