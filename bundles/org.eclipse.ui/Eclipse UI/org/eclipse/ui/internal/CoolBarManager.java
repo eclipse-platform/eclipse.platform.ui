@@ -114,21 +114,36 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	/**
 	 * Create the coolbar item for the given contribution item.
 	 */
-	private CoolItem createCoolItem(CoolBarContributionItem cbItem) {
+	private CoolItem createCoolItem(CoolBarContributionItem cbItem, ToolBar toolBar) {
 		CoolItem coolItem;
-		int index;
+		toolBar.setVisible(true);
+		int index = -1;
 		if (cbItem.isOrderBefore()) {
 			index = getInsertBeforeIndex(cbItem);
 		} else if (cbItem.isOrderAfter()) {
 			index = getInsertAfterIndex(cbItem);
-		} else {
-			index = -1;
 		}
 		if (index == -1) {
 			coolItem = new CoolItem(coolBar, SWT.DROP_DOWN);
 		} else {
 			coolItem = new CoolItem(coolBar, SWT.DROP_DOWN, index);
 		}
+		coolItem.setControl(toolBar);
+		coolItem.setData(cbItem);
+		int minWidth = toolBar.getItems()[0].getWidth();
+		Point size = toolBar.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		Point coolSize = coolItem.computeSize(size.x, size.y);
+		// note setMinimumSize must be called before setSize, see PR 15565
+		coolItem.setMinimumSize(minWidth, coolSize.y);
+		coolItem.setPreferredSize(coolSize);
+		coolItem.setSize(coolSize);
+		coolItem.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent event) {
+				if (event.detail == SWT.ARROW) {
+					handleChevron(event);
+				}
+			}
+		});
 		return coolItem;
 	}
 	/**
@@ -424,9 +439,7 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 			coolItem.setControl(null);
 			coolItem.dispose();
 		}
-		coolBar.setLocked(false);
-		coolBar.setWrapIndices(new int[] {
-		});
+		coolBar.setWrapIndices(new int[] {});
 		update(true);
 	}
 	/**
@@ -641,28 +654,11 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 							ToolBar toolBar = cbItem.getControl();
 							if ((toolBar != null) && (!toolBar.isDisposed()) && cbItem.hasDisplayableItems()) {
 								changed = true;
-								toolBar.setVisible(true);
-								CoolItem coolItem = createCoolItem(cbItem);
-								coolItem.setControl(toolBar);
-								coolItem.setData(cbItem);
-								cbItem.update(true);
-								int minWidth = toolBar.getItems()[0].getWidth();
-								Point size = toolBar.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-								Point coolSize = coolItem.computeSize(size.x, size.y);
-								// note setMinimumSize must be called before setSize, see PR 15565
-								coolItem.setMinimumSize(minWidth, coolSize.y);
-								coolItem.setPreferredSize(coolSize);
-								coolItem.setSize(coolSize);
-								coolItem.addSelectionListener(new SelectionAdapter() {
-									public void widgetSelected(SelectionEvent event) {
-										if (event.detail == SWT.ARROW) {
-											handleChevron(event);
-										}
-									}
-								});
+								createCoolItem(cbItem, toolBar);
 							}
 						}
-					} 				}
+					} 				
+				}
 				setDirty(false);
 
 				// workaround for 14330
