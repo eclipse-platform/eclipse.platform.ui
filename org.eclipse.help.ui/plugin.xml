@@ -91,7 +91,7 @@
    <extension
          point="org.eclipse.help.ui.searchEngine">
       <engine
-            scopeFactory="org.eclipse.help.internal.search.federated.LocalSearchScopeFactory"
+            scopeFactory="org.eclipse.help.ui.internal.search.LocalSearchScopeFactory"
             label="Local Help"
             class="org.eclipse.help.internal.search.federated.LocalHelp"
             pageClass="org.eclipse.help.ui.internal.search.LocalHelpPage"
