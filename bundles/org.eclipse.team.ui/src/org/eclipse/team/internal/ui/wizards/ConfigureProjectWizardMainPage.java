@@ -11,6 +11,9 @@
 package org.eclipse.team.internal.ui.wizards;
 
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.Dialog;
@@ -19,6 +22,8 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -26,6 +31,7 @@ import org.eclipse.team.internal.ui.IHelpContextIds;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.ui.IConfigurationWizard;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.*;
 
@@ -37,8 +43,10 @@ import org.eclipse.ui.model.*;
  */
 public class ConfigureProjectWizardMainPage extends WizardPage {
 	private Table table;
+	private Button showAllToggle;
 	private TableViewer viewer;
 	private AdaptableList wizards;
+	private AdaptableList disabledWizards;
 	private IWorkbench workbench;
 	private IProject project;
 	private String description;
@@ -53,8 +61,8 @@ public class ConfigureProjectWizardMainPage extends WizardPage {
 	 * @param titleImage  the image for the page title
 	 * @param wizards  the wizards to populate the table with
 	 */
-	public ConfigureProjectWizardMainPage(String pageName, String title, ImageDescriptor titleImage, AdaptableList wizards) {
-		this(pageName,title,titleImage,wizards,Policy.bind("ConfigureProjectWizardMainPage.selectRepository")); //$NON-NLS-1$
+	public ConfigureProjectWizardMainPage(String pageName, String title, ImageDescriptor titleImage, AdaptableList wizards, AdaptableList disabledWizards) {
+		this(pageName,title,titleImage,wizards,disabledWizards, Policy.bind("ConfigureProjectWizardMainPage.selectRepository")); //$NON-NLS-1$
 	}
 	
 	/**
@@ -66,9 +74,10 @@ public class ConfigureProjectWizardMainPage extends WizardPage {
 	 * @param wizards  the wizards to populate the table with
 	 * @param description The string to use as a description label
 	 */
-	public ConfigureProjectWizardMainPage(String pageName, String title, ImageDescriptor titleImage, AdaptableList wizards, String description) {
+	public ConfigureProjectWizardMainPage(String pageName, String title, ImageDescriptor titleImage, AdaptableList wizards, AdaptableList disabledWizards, String description) {
 		super(pageName, title, titleImage);
 		this.wizards = wizards;
+		this.disabledWizards = disabledWizards;
 		this.description = description;
 	}
 	
@@ -140,6 +149,21 @@ public class ConfigureProjectWizardMainPage extends WizardPage {
 				getWizard().getContainer().showPage(getNextPage());
 			}
 		});
+		
+		if(disabledWizards.size() > 0) {
+			showAllToggle = new Button(composite, SWT.CHECK);
+			showAllToggle.setText(Policy.bind("ConfigureProjectWizard.showAll")); //$NON-NLS-1$
+			showAllToggle.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					ArrayList all = new ArrayList(Arrays.asList(wizards.getChildren()));
+					if(showAllToggle.getSelection()) {
+						all.addAll(Arrays.asList(disabledWizards.getChildren()));
+					}
+					viewer.setInput(new AdaptableList(all));
+				}
+			});
+		}
+		
 		viewer.setInput(wizards);
         Dialog.applyDialogFont(parent);
 	}
@@ -152,6 +176,7 @@ public class ConfigureProjectWizardMainPage extends WizardPage {
 	 */
 	public IWizardPage getNextPage() {
 		if (selectedWizard == null) return null;
+		if(! WorkbenchActivityHelper.allowUseOf(((IStructuredSelection)viewer.getSelection()).getFirstElement())) return null;
 		return selectedWizard.getStartingPage();
 	}
 	/**

@@ -14,6 +14,7 @@ package org.eclipse.team.internal.ui.wizards;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.model.WorkbenchAdapter;
 
@@ -21,7 +22,7 @@ import org.eclipse.ui.model.WorkbenchAdapter;
  * ConfigurationWizardElement represents an item in the configuration wizard table,
  * declared by an extension to the configurationWizards extension point.
  */
-public class ConfigurationWizardElement extends WorkbenchAdapter implements IAdaptable  {
+public class ConfigurationWizardElement extends WorkbenchAdapter implements IAdaptable, IPluginContribution  {
 	private String id;
 	private String name;
 	private ImageDescriptor imageDescriptor;
@@ -136,5 +137,19 @@ public class ConfigurationWizardElement extends WorkbenchAdapter implements IAda
 	 */
 	public void setImageDescriptor(ImageDescriptor value) {
 		imageDescriptor = value;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPluginContribution#getLocalId()
+	 */
+	public String getLocalId() {
+		return configurationElement.getAttribute(ConfigureProjectWizard.ATT_ID);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPluginContribution#getPluginId()
+	 */
+	public String getPluginId() {
+		return configurationElement.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier();
 	}
 }

@@ -12,17 +12,10 @@ package org.eclipse.team.internal.ui.wizards;
 
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IPluginRegistry;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.team.internal.ui.ITeamUIImages;
-import org.eclipse.team.internal.ui.Policy;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.ui.IConfigurationWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
@@ -74,7 +67,8 @@ public class ConfigureProjectWizard extends Wizard implements IConfigurationWiza
 	 * @see Wizard#addPages
 	 */
 	public void addPages() {
-		AdaptableList wizards = getAvailableWizards();
+		AdaptableList disabledWizards = new AdaptableList();
+		AdaptableList wizards = getAvailableWizards(disabledWizards);	
 		if (wizards.size() == 1) {
 			// If there is only one wizard, skip the first page.
 			// Only skip the first page if the one wizard has at least one page.
@@ -96,7 +90,7 @@ public class ConfigureProjectWizard extends Wizard implements IConfigurationWiza
 				return;
 			}
 		}
-		mainPage = new ConfigureProjectWizardMainPage("configurePage1", getWizardLabel(), TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_WIZBAN_SHARE), wizards); //$NON-NLS-1$
+		mainPage = new ConfigureProjectWizardMainPage("configurePage1", getWizardLabel(), TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_WIZBAN_SHARE), wizards, disabledWizards); //$NON-NLS-1$
 		mainPage.setDescription(getWizardDescription());
 		mainPage.setProject(project);
 		mainPage.setWorkbench(workbench);
@@ -161,7 +155,7 @@ public class ConfigureProjectWizard extends Wizard implements IConfigurationWiza
 	 * 
 	 * @return the available wizards
 	 */
-	protected AdaptableList getAvailableWizards() {
+	protected AdaptableList getAvailableWizards(AdaptableList disabledWizards) {
 		AdaptableList result = new AdaptableList();
 		IPluginRegistry registry = Platform.getPluginRegistry();
 		IExtensionPoint point = registry.getExtensionPoint(pluginId, getExtensionPoint());
@@ -171,16 +165,17 @@ public class ConfigureProjectWizard extends Wizard implements IConfigurationWiza
 				IConfigurationElement[] elements = extensions[i].getConfigurationElements();
 				for (int j = 0; j < elements.length; j++) {
 					IConfigurationElement element = elements[j];
-					if (element.getName().equals(TAG_WIZARD) && !filterItem(element)) {
+					if (element.getName().equals(TAG_WIZARD)) {
 						ConfigurationWizardElement wizard = createWizardElement(element);
-						if (wizard != null) {
+						if (wizard != null && filterItem(element)) {
+							disabledWizards.add(wizard);
+						} else if (wizard != null) {
 							result.add(wizard);
 						}
 					}
 				}
 			}
 		}
-		
 		return result;
 	}
 	
