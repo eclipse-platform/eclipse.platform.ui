@@ -23,7 +23,6 @@ import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceDescription;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -32,14 +31,13 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.AboutInfo;
@@ -59,13 +57,11 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.actions.GlobalBuildAction;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchAdviser;
 import org.eclipse.ui.internal.EditorAreaDropAdapter;
-import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchActionBuilder;
 import org.eclipse.ui.internal.dialogs.MessageDialogWithToggle;
 import org.eclipse.ui.internal.dialogs.WelcomeEditorInput;
@@ -116,14 +112,14 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 	private ArrayList welcomePerspectiveInfos = null;
 	
 	/**
-	 * Preference change listener
+	 * Listener for core preference changes.
 	 */
-	private final IPropertyChangeListener preferenceChangeListener =
-		new IPropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent event) {
-				handlePreferenceChange(event);
+	private final Preferences.IPropertyChangeListener preferenceChangeListener =
+		new Preferences.IPropertyChangeListener() {
+			public void propertyChange(org.eclipse.core.runtime.Preferences.PropertyChangeEvent event) {
+				handlePreferenceChange(event.getProperty());
 			}
-	};
+		};
 
 	/**
 	 * Creates a new workbench adviser instance.
@@ -208,9 +204,7 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 	public void postStartup() {
 		refreshFromLocal();
 		enableAutoBuild();
-		// listen for changes to IDE-specific preferences
-		// @issue must sure this is the correct preference store
-		PlatformUI.getWorkbench().getPreferenceStore().addPropertyChangeListener(preferenceChangeListener);
+		ResourcesPlugin.getPlugin().getPluginPreferences().addPropertyChangeListener(preferenceChangeListener);
 		try {
 			openWelcomeEditors();
 		} catch (WorkbenchException e) {
@@ -259,7 +253,6 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 		if (configurer.getWorkbench().getWorkbenchWindowCount() > 1)
 			return true;
 
-		// @issue the Exit Prompt On Close preference is IDE specific
 		IPreferenceStore store = IDEWorkbenchPlugin.getDefault().getPreferenceStore();
 		boolean promptOnExit =	store.getBoolean(IPreferenceConstants.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW);
 
@@ -409,8 +402,7 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 	private IResourceChangeListener getShowTasksChangeListener() {
 		return new IResourceChangeListener() {
 			public void resourceChanged(final IResourceChangeEvent event) {	
-				IPreferenceStore store = PlatformUI.getWorkbench().getPreferenceStore();
-				// @issue IPreferenceConstants.SHOW_TASKS_ON_BUILD is IDE-specific and should be in IDE-specific package
+				IPreferenceStore store = IDEWorkbenchPlugin.getDefault().getPreferenceStore();
 				if (store.getBoolean(IPreferenceConstants.SHOW_TASKS_ON_BUILD)) {
 					IMarker error = findProblemToShow(event);
 					if (error != null) {
@@ -471,9 +463,6 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 		// record setting of flag for future reference
 		autoBuild = description.isAutoBuilding();
 		if (autoBuild) {
-			IPreferenceStore store = PlatformUI.getWorkbench().getPreferenceStore();
-			// @issue IPreferenceConstants.AUTO_BUILD is IDE-specific and should be in IDE-specific package
-			store.setValue(IPreferenceConstants.AUTO_BUILD, false);
 			description.setAutoBuilding(false);
 			try {
 				workspace.setDescription(description);
@@ -521,12 +510,6 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 					IDEWorkbenchMessages.getString("Workspace.problemsTitle"),		//$NON-NLS-1$
 					IDEWorkbenchMessages.getString("Workspace.problemAutoBuild"));	//$NON-NLS-1$
 			}
-			// update the preference store so that property change listener
-			// get notified of preference change.
-			// @issue IPreferenceConstants.AUTO_BUILD is IDE-specific and should be in IDE-specific package
-			IPreferenceStore store = PlatformUI.getWorkbench().getPreferenceStore();
-			store.setValue(IPreferenceConstants.AUTO_BUILD, true);
-			updateBuildActions(true);
 		}
 	}
 
@@ -553,42 +536,17 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 	/**
 	 * Handles a change to a preference.
 	 */
-	private void handlePreferenceChange(PropertyChangeEvent event) {
-		// @issue IPreferenceConstants.AUTO_BUILD is IDE-specific and should be in IDE-specific package
-		if (event.getProperty().equals(IPreferenceConstants.AUTO_BUILD)) {
-			// Auto build is stored in core. It is also in the preference 
-			// store for use by import/export.
-			IWorkspaceDescription description =	ResourcesPlugin.getWorkspace().getDescription();
-			boolean autoBuildSetting = description.isAutoBuilding();
-			boolean newAutoBuildSetting = PlatformUI.getWorkbench().getPreferenceStore().getBoolean(IPreferenceConstants.AUTO_BUILD);
-
-			if (autoBuildSetting != newAutoBuildSetting) {
-				// Update the core setting.
-				description.setAutoBuilding(newAutoBuildSetting);
-				autoBuildSetting = newAutoBuildSetting;
-				try {
-					ResourcesPlugin.getWorkspace().setDescription(description);
-				} catch (CoreException e) {
-					IDEWorkbenchPlugin.log("Error changing auto build preference setting.", e.getStatus()); //$NON-NLS-1$
-				}
-
-				// If auto build is turned on, then do a global incremental
-				// build on all the projects.
-				if (newAutoBuildSetting) {
-					GlobalBuildAction action = new GlobalBuildAction(
-						PlatformUI.getWorkbench().getActiveWorkbenchWindow(),
-						IncrementalProjectBuilder.INCREMENTAL_BUILD);
-					action.doBuild();
-				}
-				updateBuildActions(newAutoBuildSetting);
-			}
+	private void handlePreferenceChange(String propertyName) {
+		// when auto-build pref changes update the build icon on the toolbar/menu
+		if (propertyName.equals(ResourcesPlugin.PREF_AUTO_BUILDING)) {
+			boolean autoBuildPref = ResourcesPlugin.getWorkspace().isAutoBuilding(); 
+			updateBuildActions(autoBuildPref);
 		}
 	}
 
 	private void refreshFromLocal() {
 		String[] commandLineArgs = Platform.getCommandLineArgs();
-		IPreferenceStore store = PlatformUI.getWorkbench().getPreferenceStore();
-		// @issue should reference REFRESH_WORKSPACE_ON_STARTUP in IDE-specific package
+		IPreferenceStore store = IDEWorkbenchPlugin.getDefault().getPreferenceStore();
 		boolean refresh = store.getBoolean(IPreferenceConstants.REFRESH_WORKSPACE_ON_STARTUP);
 		if (!refresh)
 			return;
