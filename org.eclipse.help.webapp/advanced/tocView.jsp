@@ -28,6 +28,8 @@ minus.src = "<%=prefs.getImagesDirectory()%>"+"/minus.gif";
 plus = new Image();
 plus.src = "<%=prefs.getImagesDirectory()%>"+"/plus.gif";
 
+toc_img = new Image();
+toc_img.src = "<%=prefs.getImagesDirectory()%>"+"/toc_obj.gif";
 folder_img = new Image();
 folder_img.src = "<%=prefs.getImagesDirectory()%>"+"/container_obj.gif";
 topic_img = new Image();
