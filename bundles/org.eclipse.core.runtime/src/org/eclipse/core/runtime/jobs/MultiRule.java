@@ -136,6 +136,15 @@ public class MultiRule implements ISchedulingRule {
 	 * For debugging purposes only.
 	 */
 	public String toString() {
-		return "MultiRule" + rules; //$NON-NLS-1$
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("MultiRule["); //$NON-NLS-1$
+		int last = rules.length - 1;
+		for (int i = 0; i < rules.length; i++) {
+			buffer.append(rules[i]);
+			if (i != last)
+				buffer.append(',');
+		}
+		buffer.append(']');
+		return buffer.toString();
 	}
 }
