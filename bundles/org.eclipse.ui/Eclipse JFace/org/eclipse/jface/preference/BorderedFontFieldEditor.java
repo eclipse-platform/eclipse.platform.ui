@@ -176,8 +176,7 @@ public class BorderedFontFieldEditor {
 	 * Stores the current value.
 	 */
 	public void store() {
-		FontData[] data = new FontData[] { chosenFont };
-		JFaceResources.getFontRegistry().put(preferenceName, data);
+		PreferenceConverter.setValue(preferenceStore, preferenceName, chosenFont);
 	}
 	/**
 	 * Creates the change button for this field editor.=
