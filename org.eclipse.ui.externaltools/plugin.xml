@@ -291,7 +291,7 @@
 		</consoleLineTracker>
 		<consoleLineTracker
 			id = "org.eclipse.ui.externaltools.ant.taskLineTracker"
-			class = "org.eclipse.ui.externaltools.internal.ant.logger.TaskLineTracker"
+			class = "org.eclipse.ui.externaltools.internal.ant.console.TaskLineTracker"
 			processType = "ant">
 		</consoleLineTracker>		
 	</extension>	

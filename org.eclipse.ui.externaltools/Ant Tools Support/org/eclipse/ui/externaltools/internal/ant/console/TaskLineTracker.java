@@ -1,5 +1,5 @@
-package org.eclipse.ui.externaltools.internal.ant.logger;
-
+package org.eclipse.ui.externaltools.internal.ant.console;
+ 
 /**********************************************************************
 Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
 This file is made available under the terms of the Common Public License v1.0
@@ -47,5 +47,4 @@ public class TaskLineTracker implements IConsoleLineTracker {
 		TaskLinkManager.dispose(fConsole.getProcess());
 		fConsole = null;
 	}
-
 }
