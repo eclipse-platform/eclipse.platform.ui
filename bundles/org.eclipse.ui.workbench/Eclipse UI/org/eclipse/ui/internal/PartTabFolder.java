@@ -32,7 +32,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder2;
 import org.eclipse.swt.custom.CTabFolderCloseAdapter;
 import org.eclipse.swt.custom.CTabFolderEvent;
-import org.eclipse.swt.custom.CTabFolderExpandListener;
+import org.eclipse.swt.custom.CTabFolderMinMaxAdapter;
 import org.eclipse.swt.custom.CTabItem2;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -74,10 +74,18 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 	 */
 	IChangeListener minimizeListener = new IChangeListener() {
 		public void update(boolean changed) {
-			if (tabFolder != null && !tabFolder.isDisposed()) {
-				boolean expanded = !minimizedState.get();
+			if (tabFolder != null && !tabFolder.isDisposed()) {				
+				tabFolder.setMinimized(minimizedState.get());
 				
-				tabFolder.setExpanded(expanded);		
+				if (minimizedState.get()) {
+					tabFolder.setMaximized(false);
+				}
+				
+				if (current != null) {
+					boolean expanded = !minimizedState.get();
+					
+					current.setVisible(expanded);
+				}
 			}
 		}
 	};
@@ -85,41 +93,44 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 	/**
 	 * Sets the minimized state based on the state of the tab folder
 	 */
-	CTabFolderExpandListener expandListener = new CTabFolderExpandListener() {
-		public void collapse(CTabFolderEvent event) {
-			minimizedState.set(true, minimizeListener);		
+	CTabFolderMinMaxAdapter expandListener = new CTabFolderMinMaxAdapter() {
+		
+		public void minimize(CTabFolderEvent event) {
+			minimizedState.set(true);
+			tabFolder.setMaximized(false);
+			event.doit = false;
 			
 			reflectChangesInPage();	
 		}
 		
-		public void expand(CTabFolderEvent event) {
-			minimizedState.set(false, minimizeListener);
+		public void restore(CTabFolderEvent event) {
+			tabFolder.setMaximized(false);
+			
+			minimizedState.set(false);
 			
 			reflectChangesInPage();
 		}
 		
-		public void reflectChangesInPage() {
-			parent.getDisplay().asyncExec(new Runnable() {
-				public void run() {			
-					if (current != null) {
-						boolean expanded = !minimizedState.get();
-						
-						current.setVisible(expanded);
-					}
-					
-					tabFolder.setSize(getMinimumWidth(), getMinimumHeight());
-					
-					WorkbenchPage page = ((PartPane) current).getPage();
-					if (page.isZoomed()) {
-						page.zoomOut();
-					}
+		public void maximize(CTabFolderEvent event) {
+			minimizedState.set(false);
+			tabFolder.setMaximized(true);
+			
+			((PartPane) current).doZoom();
+		}
 		
-					PartSashContainer cont = (PartSashContainer) getContainer();
-					if (cont != null) {
-						cont.getLayoutTree().setBounds(PartTabFolder.this.parent.getClientArea());
-					}
-				}
-			});
+		public void reflectChangesInPage() {
+			
+			tabFolder.setSize(getMinimumWidth(), getMinimumHeight());
+			
+			WorkbenchPage page = ((PartPane) current).getPage();
+			if (page.isZoomed()) {
+				page.zoomOut();
+			}
+
+			PartSashContainer cont = (PartSashContainer) getContainer();
+			if (cont != null) {
+				cont.getLayoutTree().setBounds(PartTabFolder.this.parent.getClientArea());
+			}
 		}
 	};
 	
@@ -293,9 +304,8 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 		
 		preferenceStore.addPropertyChangeListener(propertyChangeListener);
 		int tabLocation = preferenceStore.getInt(IPreferenceConstants.VIEW_TAB_POSITION); 
-		int style = SWT.BORDER | tabLocation;
 		
-		tabFolder = new CTabFolder2(parent, tabLocation | SWT.BORDER);
+		tabFolder = new CTabFolder2(parent, tabLocation | SWT.BORDER | SWT.CLOSE);
 		//tabFolder.setBorderVisible(true);
 		ColorSchemeService.setTabColors(tabFolder);
 		
@@ -935,7 +945,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 			}
 		}
 		
-		memento.putInteger(IWorkbenchConstants.TAG_EXPANDED, tabFolder.getExpanded() ? 1 : 0);
+		memento.putInteger(IWorkbenchConstants.TAG_EXPANDED, minimizedState.get() ? 0 : 1);
 		
 		return new Status(IStatus.OK, PlatformUI.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
 	}
@@ -1113,11 +1123,15 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 	 */
 	private void attachExpandListener(boolean b) {
 		if (container != null) {
-			tabFolder.addCTabFolderExpandListener(expandListener);
+			tabFolder.addCTabFolderMinMaxListener(expandListener);
 			minimizedState.addChangeListener(minimizeListener);
+			tabFolder.setMinimizeVisible(true);
+			tabFolder.setMaximizeVisible(true);
 		} else {
-			tabFolder.removeCTabFolderExpandListener(expandListener);
+			tabFolder.addCTabFolderMinMaxListener(expandListener);
 			minimizedState.removeChangeListener(minimizeListener);
+			tabFolder.setMinimizeVisible(false);
+			tabFolder.setMaximizeVisible(false);
 		}
 	}
 }
