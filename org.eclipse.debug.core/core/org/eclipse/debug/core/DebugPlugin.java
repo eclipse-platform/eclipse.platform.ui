@@ -458,7 +458,7 @@ public class DebugPlugin extends Plugin {
 	 * with this plug-in.
 	 * 
 	 * @return list of registered debug event listeners, instances
-	 *  of <code>IDebugEventListener</code>	
+	 *  of <code>IDebugEventListener</code>	or <code>IDebugEventSetListeners</code>
 	 */
 	private Object[] getEventListeners() {
 		return fEventListeners.getListeners();
