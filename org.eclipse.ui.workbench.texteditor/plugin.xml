@@ -9,7 +9,7 @@
    <runtime>
       <library name="texteditor.jar">
          <export name="*"/>
-         <packages prefixes="org.eclipse.ui.texteditor,org.eclipse.ui.internal.texteditor"/>
+         <packages prefixes="org.eclipse.ui.texteditor,org.eclipse.ui.internal.texteditor,org.eclipse.ui.texteditor.quickdiff,org.eclipse.ui.internal.texteditor.quickdiff"/>
       </library>
    </runtime>
    <requires>
@@ -22,6 +22,9 @@
 
 
    <extension-point id="markerAnnotationSpecification" name="%markerAnnotationSpecification.label" schema="schema/markerAnnotationSpecification.exsd"/>
+<!-- quick diff reference provider extension point -->
+   <extension-point id="quickDiffReferenceProvider" name="%referenceProvider" schema="schema/quickDiffReferenceProvider.exsd"/>
+
 
 <!-- commands and their bindings -->   
    <extension
@@ -239,7 +242,7 @@
             definitionId="org.eclipse.ui.navigate.next"
 			icon="icons/full/etool16/next_nav.gif"
             disabledIcon="icons/full/dtool16/next_nav.gif"
-            hoverIcon="icons/full/ctool16/next_nav.gif"
+            hoverIcon="icons/full/ctool16/next_nav.gif"			
 			class="org.eclipse.ui.internal.texteditor.NextPulldownActionDelegate"/>
       </actionSet>
    </extension>
@@ -343,5 +346,114 @@
             isGoToPreviousNavigationTargetKey="isBookmarkGoToPreviousNavigationTarget"
             isGoToPreviousNavigationTarget="false">
       </specification>
+      
+      <!-- change information annotations -->
+      <specification
+      		annotationType="org.eclipse.ui.workbench.texteditor.quickdiffChange"
+            label="%changes.label"
+            markerType="org.eclipse.quickdiff.changeindication"
+            textPreferenceKey="changeIndication"
+            textPreferenceValue="false"
+            overviewRulerPreferenceKey="changeIndicationInOverviewRuler"
+            overviewRulerPreferenceValue="false"
+            colorPreferenceKey="changeIndicationColor"
+            colorPreferenceValue="255,230,230"
+            presentationLayer="2"
+            contributesToHeader="false"
+            showInNextPrevDropdownToolbarActionKey="showChangeInNextPrevDropdownToolbarAction"
+            showInNextPrevDropdownToolbarAction="false"
+            isGoToNextNavigationTargetKey="isChangeGoToNextNavigationTarget"
+            isGoToNextNavigationTarget="false"
+            isGoToPreviousNavigationTargetKey="isChangeGoToPreviousNavigationTarget"
+            isGoToPreviousNavigationTarget="false">
+      </specification>
+      <specification
+      		annotationType="org.eclipse.ui.workbench.texteditor.quickdiffAddition"
+            label="%additions.label"
+            markerType="org.eclipse.quickdiff.additionindication"
+            textPreferenceKey="additionIndication"
+            textPreferenceValue="false"
+            overviewRulerPreferenceKey="additionIndicationInOverviewRuler"
+            overviewRulerPreferenceValue="false"
+            colorPreferenceKey="additionIndicationColor"
+            colorPreferenceValue="230,230,255"
+            presentationLayer="2"
+            contributesToHeader="false"
+            showInNextPrevDropdownToolbarActionKey="showAdditionInNextPrevDropdownToolbarAction"
+            showInNextPrevDropdownToolbarAction="false"
+            isGoToNextNavigationTargetKey="isAdditionGoToNextNavigationTarget"
+            isGoToNextNavigationTarget="false"
+            isGoToPreviousNavigationTargetKey="isAdditionGoToPreviousNavigationTarget"
+            isGoToPreviousNavigationTarget="false">
+      </specification>
+      <specification
+      		annotationType="org.eclipse.ui.workbench.texteditor.quickdiffDeletion"
+            label="%deletions.label"
+            markerType="org.eclipse.quickdiff.deletionindication"
+            textPreferenceKey="deletionIndication"
+            textPreferenceValue="false"
+            overviewRulerPreferenceKey="deletionIndicationInOverviewRuler"
+            overviewRulerPreferenceValue="false"
+            colorPreferenceKey="deletionIndicationColor"
+            colorPreferenceValue="0,0,0"
+            presentationLayer="2"
+            contributesToHeader="false"
+            showInNextPrevDropdownToolbarActionKey="showDeletionInNextPrevDropdownToolbarAction"
+            showInNextPrevDropdownToolbarAction="false"
+            isGoToNextNavigationTargetKey="isDeletionGoToNextNavigationTarget"
+            isGoToNextNavigationTarget="false"
+            isGoToPreviousNavigationTargetKey="isDeletionGoToPreviousNavigationTarget"
+            isGoToPreviousNavigationTarget="false">
+      </specification>
    </extension>
+   
+<!-- add the quick diff context menu -->
+   <extension
+         point="org.eclipse.ui.popupMenus">
+<!-- default -->
+      <viewerContribution
+            targetID="#RulerContext"
+            id="org.eclipse.ui.quickdiff.DefaultEditorContribution">
+         <action
+               label="%quickdiff.toggle.enable"
+               style="push"
+               helpContextId="quickdiff.toggle"
+               class="org.eclipse.ui.texteditor.quickdiff.QuickDiffToggleAction"
+               menubarPath="quickdiff"
+               id="quickdiff.toggle">
+         </action>
+      </viewerContribution>
+   </extension>
+<!-- add the toggle command so we can provide a shortcut -->
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            name="%ActionDefinition.quickDiff.name"
+            description="%ActionDefinition.quickDiff.description"
+            category="org.eclipse.ui.category.edit"
+            id="org.eclipse.quickdiff.toggle">
+      </command>
+      <keyBinding
+            string="Ctrl+Shift+Q"
+            scope="org.eclipse.ui.textEditorScope"
+            command="org.eclipse.quickdiff.toggle"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+   </extension>
+<!-- add the toggle action a second time in order to make it available as shortcut to keybinings -->
+   <extension
+         point="org.eclipse.ui.editorActions">
+<!-- text editor -->
+      <editorContribution
+            targetID="org.eclipse.ui.DefaultTextEditor"
+            id="org.eclipse.quickdiff.editoractions.texteditor">
+         <action
+               definitionId="org.eclipse.quickdiff.toggle"
+               label="%quickdiff.toggle.enable"
+               class="org.eclipse.ui.texteditor.quickdiff.QuickDiffToggleAction"
+               id="org.eclipse.ui.texteditor.quickdiff.QuickDiffToggleAction">
+         </action>
+      </editorContribution>
+   </extension>
+
 </plugin>
