@@ -88,5 +88,14 @@ public class SetPagePerspectiveAction extends Action {
 			setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_DEF_PERSPECTIVE));
 			setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_DEF_PERSPECTIVE_HOVER));
 		}
+		setText(persp.getLabel());
+	}
+	
+	/**
+	 * Return whether or not this actions shows text in the toolbar.
+	 * @return
+	 */
+	public boolean showTextInToolBar(){
+		return true;
 	}
 }

@@ -143,7 +143,7 @@ public class IDEWorkbenchWindow extends WorkbenchWindow {
 	 * @see org.eclipse.ui.internal.WorkbenchWindow#shortCutBarStyle()
 	 */
 	protected int shortCutBarStyle() {
-		return SWT.FLAT | SWT.WRAP | SWT.HORIZONTAL;
+		return SWT.FLAT | SWT.WRAP | SWT.HORIZONTAL | SWT.RIGHT;
 	}
 
 }

@@ -571,6 +571,8 @@ private boolean hasImages(IAction action) {
 public boolean isEnabled() {
 	return action != null && action.isEnabled();
 }
+
+
 /**
  * The action item implementation of this <code>IContributionItem</code>
  * method returns <code>true</code> for menu items and <code>false</code>
@@ -642,6 +644,11 @@ public void update(String propertyName) {
 			
 			if (tooltipTextChanged)
 				ti.setToolTipText(action.getToolTipText());
+			
+			if (textChanged){
+				if(action instanceof Action && (((Action) action).showTextInToolBar()))
+						ti.setText(action.getText());
+			}
 				
 			if (enableStateChanged) {
 				boolean shouldBeEnabled = action.isEnabled() && isEnabledAllowed();

@@ -52,6 +52,7 @@ public class ShowFastViewContribution extends ContributionItem {
 			final ToolItem item = new ToolItem(parent, SWT.CHECK, index);
 			item.setImage(ref.getTitleImage());
 			item.setToolTipText(ref.getTitle());
+			item.setText(ref.getTitle());
 			item.setData(FAST_VIEW, ref);
 			
 			// Select the active fast view's icon.
