@@ -685,15 +685,125 @@ public final class BindingManagerTest extends UITestCase {
 				.getActiveScheme());
 	}
 
-	public final void testSetBindings() {
-		// TODO Implement this test case.
+	/**
+	 * Verifies that you can set the bindings to null. Verifies that setting the
+	 * bindings clears the cache.
+	 * 
+	 * @throws NotDefinedException
+	 *             If this test doesn't properly define a scheme.
+	 */
+	public final void testSetBindings() throws NotDefinedException {
+		// GENERAL SET-UP
+		final Context context = contextManager.getContext("na");
+		context.define("name", "description", null);
+		final Scheme scheme = bindingManager.getScheme("na");
+		scheme.define("name", "description", null);
+		bindingManager.setActiveScheme(scheme);
+		final Set activeContextIds = new HashSet();
+		activeContextIds.add("na");
+		contextManager.setActiveContextIds(activeContextIds);
+
+		// SET NULL
+		final String commandId = "commandId";
+		bindingManager.setBindings(null);
+		assertTrue("There should be no active bindings", bindingManager
+				.getActiveBindingsFor(commandId).isEmpty());
+
+		// ADD BINDING
+		final Binding binding = new TestBinding(commandId, "na", "na", null,
+				null, Binding.SYSTEM);
+		final Set bindings = new HashSet();
+		bindings.add(binding);
+		bindingManager.setBindings(bindings);
+		final Collection activeBindings = bindingManager
+				.getActiveBindingsFor(commandId);
+		assertEquals("There should be one active binding", 1, activeBindings
+				.size());
+		assertSame("The binding should be the one we set",
+				TestBinding.TRIGGER_SEQUENCE, activeBindings.iterator().next());
 	}
 
-	public final void testSetLocale() {
-		// TODO Implement this test case.
+	/**
+	 * Verifies that it cannot be set to <code>null</code>. Verifies that it
+	 * clears the cache.
+	 * 
+	 * @throws NotDefinedException
+	 *             If this test doesn't properly define a scheme.
+	 */
+	public final void testSetLocale() throws NotDefinedException {
+		// GENERAL SET-UP
+		final Context context = contextManager.getContext("na");
+		context.define("name", "description", null);
+		final Scheme scheme = bindingManager.getScheme("na");
+		scheme.define("name", "description", null);
+		bindingManager.setActiveScheme(scheme);
+		final Set activeContextIds = new HashSet();
+		activeContextIds.add("na");
+		contextManager.setActiveContextIds(activeContextIds);
+
+		// SET TO NULL
+		try {
+			bindingManager.setLocale(null);
+			fail("Cannot set the locale to null");
+		} catch (final NullPointerException e) {
+			// Success
+		}
+
+		// SET TO SOMETHING
+		final String commandId = "commandId";
+		final Binding binding = new TestBinding(commandId, "na", "na", "xx",
+				null, Binding.SYSTEM);
+		bindingManager.addBinding(binding);
+		assertTrue("The binding shouldn't be active", bindingManager
+				.getActiveBindingsFor(commandId).isEmpty());
+		bindingManager.setLocale("xx_XX");
+		final Collection activeBindings = bindingManager
+				.getActiveBindingsFor(commandId);
+		assertEquals("The binding should become active", 1, activeBindings
+				.size());
+		assertSame("The binding should be the same",
+				TestBinding.TRIGGER_SEQUENCE, activeBindings.iterator().next());
 	}
 
-	public final void testSetPlatform() {
-		// TODO Implement this test case.
+	/**
+	 * Verifies that it cannot be set to <code>null</code>. Verifies that it
+	 * clears the cache.
+	 * 
+	 * @throws NotDefinedException
+	 *             If this test doesn't properly define a scheme.
+	 */
+	public final void testSetPlatform() throws NotDefinedException {
+		// GENERAL SET-UP
+		final Context context = contextManager.getContext("na");
+		context.define("name", "description", null);
+		final Scheme scheme = bindingManager.getScheme("na");
+		scheme.define("name", "description", null);
+		bindingManager.setActiveScheme(scheme);
+		final Set activeContextIds = new HashSet();
+		activeContextIds.add("na");
+		contextManager.setActiveContextIds(activeContextIds);
+
+		// SET TO NULL
+		try {
+			bindingManager.setPlatform(null);
+			fail("Cannot set the platform to null");
+		} catch (final NullPointerException e) {
+			// Success
+		}
+
+		// SET TO SOMETHING
+		final String commandId = "commandId";
+		final Binding binding = new TestBinding(commandId, "na", "na", null,
+				"atari", Binding.SYSTEM);
+		bindingManager.addBinding(binding);
+		assertTrue("The binding shouldn't be active", bindingManager
+				.getActiveBindingsFor(commandId).isEmpty());
+		bindingManager.setPlatform("atari");
+		final Collection activeBindings = bindingManager
+				.getActiveBindingsFor(commandId);
+		assertEquals("The binding should become active", 1, activeBindings
+				.size());
+		assertSame("The binding should be the same",
+				TestBinding.TRIGGER_SEQUENCE, activeBindings.iterator().next());
 	}
 }
