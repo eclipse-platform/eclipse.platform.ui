@@ -885,7 +885,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		 */
 		public void run() {
 			boolean isSmartHomeEndEnabled= false;
-			IPreferenceStore store= getNewPreferenceStore();
+			IPreferenceStore store= getPreferenceStore();
 			if (store != null)
 				isSmartHomeEndEnabled= store.getBoolean(AbstractTextEditor.PREFERENCE_NAVIGATION_SMART_HOME_END);
 
@@ -1007,7 +1007,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		 */
 		public void run() {
 			boolean isSmartHomeEndEnabled= false;
-			IPreferenceStore store= getNewPreferenceStore();
+			IPreferenceStore store= getPreferenceStore();
 			if (store != null)
 				isSmartHomeEndEnabled= store.getBoolean(AbstractTextEditor.PREFERENCE_NAVIGATION_SMART_HOME_END);
 
@@ -1473,13 +1473,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	private IDocumentProvider fExplicitDocumentProvider;
 	/** The editor's preference store. */
 	private IPreferenceStore fPreferenceStore;
-	/**
-	 * The editor's new preference store.
-	 * <p>Note that this is work in progress and is still subject to change.</p>
-	 *  
-	 * @since 3.0
-	 */
-	private IPreferenceStore fNewPreferenceStore;
 	/** The editor's range indicator. */
 	private Annotation fRangeIndicator;
 	/** The editor's source viewer configuration. */
@@ -1784,29 +1777,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	
 	/**
 	 * Returns this editor's preference store.
-	 * <p>
-	 * FIXME: deprecate when the new API is stabilized.
-	 * </p> 
 	 * 
 	 * @return this editor's preference store
 	 */
 	protected final IPreferenceStore getPreferenceStore() {
 		return fPreferenceStore;
-	}
-	
-	/**
-	 * Returns this editor's new preference store. Can be a read-only preference store.
-	 * <p>
-	 * XXX: Note that this is work in progress and API is still subject to change.
-	 * </p>
-	 * 
-	 * @return this editor's new preference store
-	 * @since 3.0
-	 */
-	protected final IPreferenceStore getNewPreferenceStore() {
-		if (fNewPreferenceStore == null)
-			return fPreferenceStore;
-		return fNewPreferenceStore;
 	}
 	
 	/**
@@ -1899,15 +1874,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	/**
 	 * Sets this editor's preference store. This method must be
 	 * called before the editor's control is created.
-	 * <p>
-	 * FIXME: deprecate when the new API is stabilized.
-	 * </p> 
 	 * 
-	 * @param store the new preference store
+	 * @param store the preference store
 	 */
 	protected void setPreferenceStore(IPreferenceStore store) {
-		Assert.isTrue(fNewPreferenceStore == null);
-		
 		if (fPreferenceStore != null)
 			fPreferenceStore.removePropertyChangeListener(fPropertyChangeListener);
 			
@@ -1917,48 +1887,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			fPreferenceStore.addPropertyChangeListener(fPropertyChangeListener);
 	}
 
-	/**
-	 * Sets this editor's new preference store. This method must be
-	 * called before the editor's control is created.
-	 * <p>
-	 * XXX: Note that this is work in progress and API is still subject to change.
-	 * </p>
-	 * 
-	 * @param store the new preference store
-	 * @param pre_3_0_Store the preference store used in pre 3.0 plug-ins
-	 * @since 3.0
-	 */
-	protected void setNewPreferenceStore(IPreferenceStore store, IPreferenceStore pre_3_0_Store) {
-		Assert.isTrue(store != null);
-		Assert.isTrue(pre_3_0_Store != null);
-		
-		if (fPreferenceStore != null)
-			fPreferenceStore.removePropertyChangeListener(fPropertyChangeListener);
-		fPreferenceStore= pre_3_0_Store;
-		setNewPreferenceStore(store);
-	}
-	
-	/**
-	 * Sets this editor's new preference store. This method must be
-	 * called before the editor's control is created.
-	 * <p>
-	 * XXX: Note that this is work in progress and API is still subject to change.
-	 * </p>
-	 * 
-	 * @param store the new preference store
-	 * @since 3.0
-	 */
-	protected void setNewPreferenceStore(IPreferenceStore store) {
-		Assert.isTrue(fPreferenceStore != null);
-		Assert.isTrue(store != null);
-		
-		if (fNewPreferenceStore != null)
-			fNewPreferenceStore.removePropertyChangeListener(fPropertyChangeListener);
-			
-		fNewPreferenceStore= store;
-		fNewPreferenceStore.addPropertyChangeListener(fPropertyChangeListener);
-	}
-		
 	/*
 	 * @see ITextEditor#isEditable()
 	 */
@@ -2560,7 +2488,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	protected void initializeViewerColors(ISourceViewer viewer) {
 		
-		IPreferenceStore store= getNewPreferenceStore();
+		IPreferenceStore store= getPreferenceStore();
 		if (store != null) {
 			
 			StyledText styledText= viewer.getTextWidget();
@@ -2619,7 +2547,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	private void initializeFindScopeColor(ISourceViewer viewer) {
 
-		IPreferenceStore store= getNewPreferenceStore();
+		IPreferenceStore store= getPreferenceStore();
 		if (store != null) {
 
 			StyledText styledText= viewer.getTextWidget();
@@ -2884,10 +2812,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			if (fPreferenceStore != null) {
 				fPreferenceStore.removePropertyChangeListener(fPropertyChangeListener);
 				fPreferenceStore= null;
-			}
-			if (fNewPreferenceStore != null) {
-				fNewPreferenceStore.removePropertyChangeListener(fPropertyChangeListener);
-				fNewPreferenceStore= null;
 			}
 			fPropertyChangeListener= null;
 		}
