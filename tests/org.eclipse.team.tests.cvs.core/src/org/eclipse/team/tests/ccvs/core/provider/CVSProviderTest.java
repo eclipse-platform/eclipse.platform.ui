@@ -431,5 +431,17 @@ public class CVSProviderTest extends EclipseTest {
 		// ensure that phantoms for the resources no longer exist
 		assertFalse(project.getFolder("folder1/folder2").isPhantom());
 	}
+	
+	public void testForBinaryLinefeedCorruption() throws CoreException, TeamException, IOException {
+		IProject project = createProject("testForBinaryLinefeedCorruption", new String[] { "binaryFile" });
+		ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor(project.getFile("binaryFile"));
+		assertTrue(ResourceSyncInfo.isBinary(cvsFile.getSyncBytes()));
+		project.getFile("binaryFile").setContents(new ByteArrayInputStream("line 1/nline 2/nline3".getBytes()), false, false, null);
+		commitProject(project);
+		
+		// Checkout a copy and ensure the file was not corrupted
+		IProject copy = checkoutCopy(project, "-copy");
+		assertEquals(project, copy);
+	}
 }
 
