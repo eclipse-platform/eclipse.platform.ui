@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-import org.eclipse.core.runtime.NLS;
+import org.eclipse.osgi.util.NLS;
 
 public class CompatibilityMessages extends NLS {
 

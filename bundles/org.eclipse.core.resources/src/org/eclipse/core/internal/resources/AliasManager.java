@@ -18,6 +18,7 @@ import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * An alias is a resource that occupies the same file system location as another

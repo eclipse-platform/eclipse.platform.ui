@@ -16,9 +16,9 @@ import java.util.HashSet;
 import java.util.Set;
 import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.resources.IResourceStatus;
-import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.osgi.util.NLS;
 
 public class SyncInfoSnapReader {
 	protected Workspace workspace;

@@ -9,7 +9,7 @@
  **********************************************************************/
 package org.eclipse.core.internal.utils;
 
-import org.eclipse.core.runtime.NLS;
+import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.core.internal.utils.messages"; //$NON-NLS-1$

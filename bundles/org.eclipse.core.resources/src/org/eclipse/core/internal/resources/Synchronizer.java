@@ -19,6 +19,7 @@ import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.internal.watson.IPathRequestor;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 
 //
 public class Synchronizer implements ISynchronizer {

@@ -17,7 +17,7 @@ import java.net.UnknownHostException;
 import java.security.SecureRandom;
 import java.util.GregorianCalendar;
 import java.util.Random;
-import org.eclipse.core.runtime.NLS;
+import org.eclipse.osgi.util.NLS;
 
 public class UniversalUniqueIdentifier implements java.io.Serializable {
 

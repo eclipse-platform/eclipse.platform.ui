@@ -17,6 +17,7 @@ import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 
 public class PropertyBucket extends Bucket {
 	public static class PropertyEntry extends Entry {

@@ -24,6 +24,7 @@ import org.eclipse.core.resources.team.IMoveDeleteHook;
 import org.eclipse.core.resources.team.TeamHook;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.osgi.util.NLS;
 import org.osgi.framework.Bundle;
 
 public class Workspace extends PlatformObject implements IWorkspace, ICoreConstants {

@@ -22,6 +22,7 @@ import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * @see org.eclipse.core.internal.properties.IPropertyManager

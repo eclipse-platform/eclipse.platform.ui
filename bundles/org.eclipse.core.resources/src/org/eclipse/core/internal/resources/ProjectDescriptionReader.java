@@ -18,6 +18,7 @@ import org.eclipse.core.internal.localstore.SafeFileInputStream;
 import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
 

@@ -16,6 +16,7 @@ import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.osgi.util.NLS;
 
 public class Folder extends Container implements IFolder {
 	protected Folder(IPath path, Workspace container) {

@@ -14,10 +14,10 @@ import java.util.Map;
 import org.eclipse.core.internal.utils.Assert;
 import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * An abstract marker implementation.

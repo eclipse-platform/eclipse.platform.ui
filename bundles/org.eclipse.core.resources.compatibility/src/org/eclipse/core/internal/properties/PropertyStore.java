@@ -18,6 +18,7 @@ import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 
 /**
  *

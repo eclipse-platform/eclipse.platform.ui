@@ -19,6 +19,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.team.IMoveDeleteHook;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.osgi.util.NLS;
 
 public class Project extends Container implements IProject {
 

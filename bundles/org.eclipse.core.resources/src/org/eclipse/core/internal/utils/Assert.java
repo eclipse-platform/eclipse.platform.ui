@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.utils;
 
-import org.eclipse.core.runtime.NLS;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * <code>Assert</code> is useful for for embedding runtime sanity checks

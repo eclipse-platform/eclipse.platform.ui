@@ -18,6 +18,7 @@ import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.internal.watson.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * A marker manager stores and retrieves markers on resources in the workspace.

@@ -25,6 +25,7 @@ import org.eclipse.core.resources.team.IMoveDeleteHook;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
+import org.eclipse.osgi.util.NLS;
 
 public abstract class Resource extends PlatformObject implements IResource, ICoreConstants, Cloneable {
 	/* package */IPath path;

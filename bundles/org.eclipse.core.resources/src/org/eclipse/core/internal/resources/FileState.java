@@ -19,6 +19,7 @@ import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentTypeManager;
+import org.eclipse.osgi.util.NLS;
 
 public class FileState extends PlatformObject implements IFileState {
 	protected long lastModified;

@@ -21,6 +21,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.osgi.util.NLS;
 
 public class SaveManager implements IElementInfoFlattener, IManager, IStringPoolParticipant {
 	protected static final String CLEAR_DELTA_PREFIX = "clearDelta_"; //$NON-NLS-1$

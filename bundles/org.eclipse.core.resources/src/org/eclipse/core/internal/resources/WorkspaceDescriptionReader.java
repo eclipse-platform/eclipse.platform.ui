@@ -17,9 +17,9 @@ import javax.xml.parsers.*;
 import org.eclipse.core.internal.localstore.SafeFileInputStream;
 import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.osgi.util.NLS;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 

@@ -19,6 +19,7 @@ import org.eclipse.core.internal.watson.ElementTree;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ILock;
+import org.eclipse.osgi.util.NLS;
 import org.osgi.framework.Bundle;
 
 public class BuildManager implements ICoreConstants, IManager, ILifecycleListener {

@@ -16,9 +16,9 @@ import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.internal.resources.ResourceStatus;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.osgi.util.NLS;
 
 public class IndexedStoreWrapper {
 

@@ -20,6 +20,7 @@ import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.internal.utils.Convert;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 
 public class HistoryStore implements IHistoryStore {
 	protected Workspace workspace;

@@ -18,6 +18,7 @@ import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * Manages the synchronization between the workspace's view and the file system.  

@@ -18,6 +18,7 @@ import org.eclipse.core.internal.utils.Assert;
 import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * A bucket is a persistent dictionary having paths as keys. Values are determined

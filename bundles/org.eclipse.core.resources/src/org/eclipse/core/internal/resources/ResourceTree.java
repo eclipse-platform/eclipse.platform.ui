@@ -17,6 +17,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.team.IResourceTree;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ILock;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * @since 2.0

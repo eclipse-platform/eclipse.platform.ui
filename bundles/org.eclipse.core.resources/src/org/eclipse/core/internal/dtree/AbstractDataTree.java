@@ -12,9 +12,9 @@ package org.eclipse.core.internal.dtree;
 
 import java.security.InvalidParameterException;
 import org.eclipse.core.internal.utils.Messages;
-import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * Data trees can be viewed as generic multi-leaf trees.  The tree points to a single

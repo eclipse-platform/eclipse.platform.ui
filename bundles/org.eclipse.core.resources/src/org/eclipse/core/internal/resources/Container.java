@@ -19,6 +19,7 @@ import org.eclipse.core.internal.watson.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.osgi.util.NLS;
 
 public abstract class Container extends Resource implements IContainer {
 	protected Container(IPath path, Workspace container) {
