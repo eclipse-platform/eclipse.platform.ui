@@ -423,7 +423,14 @@ public class EclipseTest extends EclipseWorkspaceTest {
 	 */
 	protected void assertEquals(IPath path, ResourceSyncInfo info1, ResourceSyncInfo info2, boolean includeTimestamp, boolean includeTag) throws CoreException, CVSException, IOException {
 		if (info1 == null || info2 == null) {
-			assertTrue("Resource Sync info differs for " + path.toString(), info1 == info2);
+			if (info1 == info2) return;
+			if (info1 == null) {
+				fail("Expected no resource sync info  for " + path.toString() + " but it was " + info2 + " instead");
+			}
+			if (info2 == null) {
+				fail("Expected resource sync info of " + info1 + " for " + path.toString() + " but there was no sync info.");
+			}
+			fail("Shouldn't be able to get here");
 			return;
 		}
 		String line1;
@@ -440,7 +447,7 @@ public class EclipseTest extends EclipseWorkspaceTest {
 			line1 = line1.substring(0, line1.lastIndexOf('/'));
 			line2 = line2.substring(0, line2.lastIndexOf('/'));
 		}
-		assertTrue("Resource Sync info differs for " + path.toString(), line1.equals(line2));
+		assertEquals("Resource Sync info differs for " + path.toString(), line1, line2);
 	}
 	
 	/*
@@ -807,6 +814,9 @@ public class EclipseTest extends EclipseWorkspaceTest {
 		Throwable t = status.getException();
 		if (t != null) {
 			t.printStackTrace(output);
+			if (t instanceof CoreException) {
+				write(((CoreException)t).getStatus(), indent + 1);
+			}
 		}
 
 		if (status.isMultiStatus()) {
