@@ -94,7 +94,7 @@ public class AddReadmeMarkerAction extends Action {
             MarkerUtilities
                     .createMarker(getResource(), attributes, MARKER_TYPE);
         } catch (CoreException x) {
-            Bundle bundle = Platform.getBundle(ReadmePlugin.PLUGIN_ID);
+            Bundle bundle = ReadmePlugin.getDefault().getBundle();
             Platform.getLog(bundle).log(x.getStatus());
 
             Shell shell = textEditor.getSite().getShell();
