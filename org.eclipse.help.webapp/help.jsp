@@ -88,6 +88,9 @@
 <title>Help</title>
 
 <script language="Javascript">
+	// Global var for the webapp address
+	var contextPath = "<%=request.getContextPath()%>";
+	
 	// Global for the nav frame script
 	var titleArray = new Array();
 	titleArray["toc"] = "<%=ContentStr%>";

@@ -155,7 +155,10 @@ function displayTocFor(topic)
 	if (!selected) {
 		// save the current navigation, so we can retrieve it when synch does not work
 		saveNavigation();
-		NavFrame.toc.location.replace("toc.jsp?topic="+topic+"&synch=yes");			
+		// we are using the full URL because this API is exposed to clients
+		// (content page may want to autosynchronize)
+		var tocURL = window.location.protocol + "//" +window.location.host  +contextPath + "/toc.jsp";
+		NavFrame.toc.location.replace(tocURL + "?topic="+topic+"&synch=yes");			
 	}
 }
 
