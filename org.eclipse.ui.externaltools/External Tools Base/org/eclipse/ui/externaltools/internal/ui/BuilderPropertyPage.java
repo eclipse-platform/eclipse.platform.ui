@@ -74,7 +74,7 @@ import org.eclipse.ui.externaltools.model.IExternalToolConstants;
  */
 public final class BuilderPropertyPage extends PropertyPage {
 	private static final int BUILDER_TABLE_WIDTH = 250;
-	private static final String NEW_NAME = "BuilderPropertyPageName"; //$NON-NLS-1$
+
 	private static final String IMG_BUILDER = "icons/full/obj16/builder.gif"; //$NON-NLS-1$;
 	private static final String IMG_INVALID_BUILD_TOOL = "icons/full/obj16/invalid_build_tool.gif"; //$NON-NLS-1$
 
@@ -86,7 +86,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 
 	private Table builderTable;
 	private Button upButton, downButton, newButton, copyButton, editButton, removeButton;
-	private ArrayList imagesToDispose = new ArrayList();
+	private List imagesToDispose = new ArrayList();
 	private Image builderImage, invalidBuildToolImage;
 	private IDebugModelPresentation debugModelPresentation;
 	

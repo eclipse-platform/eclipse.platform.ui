@@ -36,7 +36,6 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 	private static final int[] DEFAULT_BUILD_TYPES= new int[] {
 									IncrementalProjectBuilder.INCREMENTAL_BUILD,
 									IncrementalProjectBuilder.FULL_BUILD};
-	private static final String NEW_NAME = "ExternalToolBuilderName"; //$NON-NLS-1$;
 
 	/**
 	 * Creates an uninitialized external tool builder.
