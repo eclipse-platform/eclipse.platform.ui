@@ -120,6 +120,9 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 			ConsoleDocumentPartitioner.this.streamAppended(newText, fStreamIdentifier);
 		}
 		
+		public void streamClosed(IStreamMonitor monitor) {
+		}
+		
 		public void connect() {
 			fStreamMonitor.addListener(this);
 			String contents= fStreamMonitor.getContents();

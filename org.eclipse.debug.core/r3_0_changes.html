@@ -99,5 +99,11 @@
   with the introduction of background launching, this method can no longer be 
   called, as the launch dialog is be closed before the resulting launch object 
   exists.</p>
+<h3>Stream Close Notification</h3>
+<p>The <code>org.eclipse.debug.core.IStreamListener</code> interface now includes a method to notify
+  the listener when the stream closes. Implementors must now implement this interface as well. To
+  maintain current behavior, clients do not need to do any work in the new method. Implementors of
+  <code>org.eclipse.debug.core.model.IStreamMonitor</code> must now notify listeners via the new
+  method when they are finished appending text.</p>
 </body>
 </html>

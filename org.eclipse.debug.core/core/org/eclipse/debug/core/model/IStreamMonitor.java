@@ -16,7 +16,8 @@ import org.eclipse.debug.core.IStreamListener;
 /**
  * A stream monitor manages the contents of the stream a process
  * is writing to, and notifies registered listeners of changes in
- * the stream.
+ * the stream. Since 3.0, stream monitors also notify listeners when
+ * the stream closes.
  * <p>
  * Clients may implement this interface. Generally, a client that
  * provides an implementation of the <code>IStreamsProxy</code>
