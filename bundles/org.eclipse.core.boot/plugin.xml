@@ -2,7 +2,7 @@
 <plugin
   name="%pluginName"
   id="org.eclipse.core.boot"
-  version="0.9"
+  version="1.0"
   provider-name="Object Technology International, Inc.">
 
   <runtime>
