@@ -349,6 +349,24 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 						refreshAll();
 				}
 			}
+			
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#scheduled(org.eclipse.core.runtime.jobs.IJobChangeEvent)
+			 */
+			public void scheduled(IJobChangeEvent event) {
+				if (isNeverDisplayedJob(event.getJob()))
+					return;
+
+				if (jobs.containsKey(event.getJob()))
+					refresh(getJobInfo(event.getJob()));
+				else {
+					JobInfo info = new JobInfo(event.getJob());
+					jobs.put(event.getJob(), info);
+					add(info);
+				}
+			}			
 		
 		};
 	}
@@ -412,25 +430,6 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 		}
 
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#scheduled(org.eclipse.core.runtime.jobs.IJobChangeEvent)
-	 */
-	public void scheduled(IJobChangeEvent event) {
-		if (isNeverDisplayedJob(event.getJob()))
-			return;
-
-		if (jobs.containsKey(event.getJob()))
-			refresh(getJobInfo(event.getJob()));
-		else {
-			JobInfo info = new JobInfo(event.getJob());
-			jobs.put(event.getJob(), info);
-			add(info);
-		}
-	}
-
 	
 
 	/**
