@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.Path;
-import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IRegisterGroup;
 import org.eclipse.debug.core.model.IStackFrame;
@@ -40,32 +39,14 @@ public class AntStackFrame extends AntDebugElement implements IStackFrame {
 	 * @param thread
 	 * @param id stack frame id (0 is the bottom of the stack)
 	 */
-	public AntStackFrame(AntThread thread, int id) {
+	public AntStackFrame(AntThread thread, int id, String name, String filePath, int lineNumber) {
 		super((AntDebugTarget) thread.getDebugTarget());
 		fId = id;
 		fThread = thread;
-	}
-	
-	/**
-	 * Initializes this frame based on its data
-	 * 
-	 * @param data
-	 */
-	protected void init(String data) {
-	    //TODO need to move to blocking call(s) to retrieve the information as needed
-	    //otherwise have trouble with things like opening the associated editor
-		String[] strings= data.split(DebugMessageIds.MESSAGE_DELIMITER);
-		//0 STACK message
-		//1 targetName
-		//2 taskName
-		//3 filePath
-		//4 lineNumber
-		fName= strings[1] + ": " + strings[2]; //$NON-NLS-1$
-		fFilePath= strings[3];
+		fLineNumber= lineNumber;
+		fName= name;
+		fFilePath= filePath;
 		fFileName= new Path(fFilePath).lastSegment();
-		fLineNumber= Integer.parseInt(strings[4]);
-		fireCreationEvent();
-		fireChangeEvent(DebugEvent.STATE);
 	}
 	
 	/* (non-Javadoc)
@@ -79,8 +60,9 @@ public class AntStackFrame extends AntDebugElement implements IStackFrame {
 	 * @see org.eclipse.debug.core.model.IStackFrame#getVariables()
 	 */
 	public IVariable[] getVariables() throws DebugException {
-	   List properties= getVariables0();
-	   return (IVariable[])properties.toArray(new IVariable[properties.size()]);
+	    return new IVariable[0];
+	  // List properties= getVariables0();
+	  // return (IVariable[])properties.toArray(new IVariable[properties.size()]);
 	}
 
 	private synchronized List getVariables0() throws DebugException {

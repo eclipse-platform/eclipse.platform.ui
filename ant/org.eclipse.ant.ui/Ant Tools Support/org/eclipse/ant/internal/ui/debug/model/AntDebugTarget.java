@@ -26,7 +26,6 @@ import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.ILineBreakpoint;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 
@@ -338,17 +337,6 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget {
 		fSuspended = false;
 		DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(this);
 		fireTerminateEvent();
-	}
-	
-	/**
-	 * Returns the current stack frames in the target.
-	 * 
-	 * @return the current stack frames in the target
-	 * @throws DebugException if unable to perform the request
-	 */
-	protected IStackFrame[] getStackFrames() throws DebugException {
-		sendRequest(DebugMessageIds.STACK);
-		return new IStackFrame[] {new AntStackFrame(fThread, 0)};
 	}
 	
 	/**

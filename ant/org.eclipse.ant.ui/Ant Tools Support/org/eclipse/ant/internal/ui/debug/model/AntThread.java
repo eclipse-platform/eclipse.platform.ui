@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.debug.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IStackFrame;
@@ -26,7 +30,7 @@ public class AntThread extends AntDebugElement implements IThread {
 	 */
 	private IBreakpoint[] fBreakpoints;
 	
-	private IStackFrame[] fFrames;
+	private List fFrames;
 	
 	/**
 	 * Whether this thread is stepping
@@ -47,13 +51,30 @@ public class AntThread extends AntDebugElement implements IThread {
 	 */
 	public IStackFrame[] getStackFrames() throws DebugException {
 		if (isSuspended()) {
-			if (fFrames == null || fFrames.length == 0) {
-				fFrames= ((AntDebugTarget)getDebugTarget()).getStackFrames();
+			if (fFrames == null || fFrames.size() == 0) {
+				getStackFrames0();
+				fireChangeEvent(DebugEvent.CONTENT);
 			}
 		} else {
-			fFrames= new IStackFrame[0];
+			fFrames= new ArrayList();
 		}
-		return fFrames;
+		return (IStackFrame[]) fFrames.toArray(new IStackFrame[fFrames.size()]);
+	}
+	
+	/**
+	 * Returns the current stack frames in the thread
+	 * 
+	 * @return the current stack frames in the target
+	 * @throws DebugException if unable to perform the request
+	 */
+	protected void getStackFrames0() throws DebugException {
+		sendRequest(DebugMessageIds.STACK);
+		synchronized (this) {
+		    try {
+                wait();
+            } catch (InterruptedException e) {
+            }
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -221,6 +242,33 @@ public class AntThread extends AntDebugElement implements IThread {
 	 * @param stepping whether stepping
 	 */
 	protected void setStepping(boolean stepping) {
+	    fFrames= new ArrayList();
 		fStepping = stepping;
 	}
+
+    protected void buildStack(String data) {
+		String[] strings= data.split(DebugMessageIds.MESSAGE_DELIMITER);
+		//0 STACK message
+		//1 targetName
+		//2 taskName
+		//3 filePath
+		//4 lineNumber
+		//5 ...
+		fFrames= new ArrayList();
+		String name;
+		String filePath;
+		int lineNumber;
+		AntStackFrame frame;
+		int stackFrameId= 0;
+		for (int i = 1; i < strings.length; i++) {
+		    name= strings[i] + ": " + strings[++i]; //$NON-NLS-1$
+			filePath= strings[++i];
+			lineNumber= Integer.parseInt(strings[++i]);
+			frame= new AntStackFrame(this, stackFrameId++, name, filePath, lineNumber);
+			fFrames.add(frame);
+		}
+		synchronized (this) {
+		    notifyAll();
+		}
+    }
 }
