@@ -5,6 +5,7 @@ package org.eclipse.update.tests;
  */
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.appserver.WebappManager;
+import org.eclipse.update.internal.core.UpdateManagerPlugin;
 
 /**
  * manages the startuo and shutown of the 
@@ -15,6 +16,7 @@ public class UpdateTestsPlugin extends Plugin {
 	private static String appServerHost = null;
 	private static int appServerPort = 0;
 	private static UpdateTestsPlugin plugin;
+	private static boolean initialized=false;
 
 	public UpdateTestsPlugin(IPluginDescriptor descriptor) {
 		super(descriptor);
@@ -30,17 +32,6 @@ public class UpdateTestsPlugin extends Plugin {
 	 */
 	public void startup() throws CoreException {
 
-		try {
-			WebappManager.start("org.eclipse.update.tests.core.updatetests", "org.eclipse.update.tests.core", new Path("webserver"));
-			appServerHost = WebappManager.getHost();
-			appServerPort = WebappManager.getPort();
-
-			String text = "The webServer did start ip:" + getWebAppServerHost() + ":" + getWebAppServerPort();
-		} catch (CoreException e) {
-			String text = "The webServer didn't start ip:" + getWebAppServerHost() + ":" + getWebAppServerPort();
-			IStatus status = new Status(IStatus.ERROR, "org.eclipse.update.tests.core", IStatus.OK, "WebServer not started. Update Tests results are invalid", null);
-			throw new CoreException(status);
-		}
 	}
 
 	/**
@@ -57,6 +48,7 @@ public class UpdateTestsPlugin extends Plugin {
 	 * Returns the host identifier for the web app server
 	 */
 	public static String getWebAppServerHost() {
+		if (!initialized) initialize();
 		return appServerHost;
 	}
 
@@ -64,7 +56,28 @@ public class UpdateTestsPlugin extends Plugin {
 	 * Returns the port identifier for the web app server
 	 */
 	public static int getWebAppServerPort() {
+		if (!initialized) initialize();		
 		return appServerPort;
+	}
+	/**
+	 * Method initialize.
+	 */
+	private static void initialize() {
+		String text = null;
+		try {
+			WebappManager.start("org.eclipse.update.tests.core.updatetests", "org.eclipse.update.tests.core", new Path("webserver"));
+			appServerHost = WebappManager.getHost();
+			appServerPort = WebappManager.getPort();
+
+			text = "The webServer did start ip:" + appServerHost + ":" + appServerPort;
+		} catch (CoreException e) {
+			text = "The webServer didn't start ";
+			IStatus status = new Status(IStatus.ERROR, "org.eclipse.update.tests.core", IStatus.OK, "WebServer not started. Update Tests results are invalid", null);
+			UpdateManagerPlugin.warn("",new CoreException(status));
+		}finally {
+			System.out.println(text);
+			initialized = true;
+		}
 	}
 
 }
