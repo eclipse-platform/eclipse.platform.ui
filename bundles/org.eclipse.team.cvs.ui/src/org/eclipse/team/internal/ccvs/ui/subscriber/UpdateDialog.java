@@ -10,27 +10,13 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.subscriber;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.eclipse.core.resources.IResource;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.team.core.subscribers.SyncInfo;
-import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.ui.sync.AndSyncInfoFilter;
-import org.eclipse.team.ui.sync.AutomergableFilter;
-import org.eclipse.team.ui.sync.OrSyncInfoFilter;
-import org.eclipse.team.ui.sync.SyncInfoChangeTypeFilter;
-import org.eclipse.team.ui.sync.SyncInfoDirectionFilter;
-import org.eclipse.team.ui.sync.SyncInfoFilter;
 import org.eclipse.team.ui.sync.SyncInfoSet;
+import org.eclipse.team.internal.ccvs.ui.Policy;
 
 /**
  * This dialog prompts for the type of update which should take place
@@ -39,24 +25,10 @@ import org.eclipse.team.ui.sync.SyncInfoSet;
  */
 public class UpdateDialog extends SyncInfoSetDetailsDialog {
 
-	private Button radio1;
-	private Button radio2;
+	public static final int YES = IDialogConstants.YES_ID;
 	
-	private boolean autoMerge;
-	private SyncInfoFilter automergableFilter;
-
-	/**
-	 * @param parentShell
-	 * @param dialogTitle
-	 * @param dialogTitleImage
-	 * @param dialogMessage
-	 * @param dialogImageType
-	 * @param dialogButtonLabels
-	 * @param defaultIndex
-	 */
 	public UpdateDialog(Shell parentShell, SyncInfoSet syncSet) {
-		super(parentShell, "Overwrite Local Changes?", syncSet);
-		this.autoMerge = hasAutomergableResources();
+		super(parentShell, Policy.bind("UpdateDialog.overwriteTitle"), syncSet); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -69,107 +41,32 @@ public class UpdateDialog extends SyncInfoSetDetailsDialog {
 		// TODO: set F1 help
 		//WorkbenchHelp.setHelp(composite, IHelpContextIds.ADD_TO_VERSION_CONTROL_DIALOG);
 		
-		createWrappingLabel(composite, Policy.bind("UpdateSyncAction.You_have_local_changes_you_are_about_to_overwrite_2"));
-		
-		if (hasAutomergableResources()) {
-			
-			SelectionListener selectionListener = new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					Button button = (Button)e.widget;
-					if (button.getSelection()) {
-						setAutomerge(button == radio1);
-					}
-				}
-			};
-			
-			radio1 = new Button(composite, SWT.RADIO);
-			radio1.addSelectionListener(selectionListener);
-			
-			radio1.setText(Policy.bind("UpdateSyncAction.Only_update_resources_that_can_be_automatically_merged_3")); //$NON-NLS-1$
+		createWrappingLabel(composite, Policy.bind("UpdateDialog.overwriteMessage")); //$NON-NLS-1$
+	}
+
+	protected void createButtonsForButtonBar(Composite parent) {
+		createButton(parent, YES, IDialogConstants.YES_LABEL, true);
+		createButton(parent, IDialogConstants.NO_ID, IDialogConstants.NO_LABEL, true);
+		super.createButtonsForButtonBar(parent);
+	}
 	
-			radio2 = new Button(composite, SWT.RADIO);
-			radio2.addSelectionListener(selectionListener);
+	protected boolean includeOkButton() {
+		return false;
+	}
 	
-			radio2.setText(Policy.bind("UpdateSyncAction.Update_all_resources,_overwriting_local_changes_with_remote_contents_4")); //$NON-NLS-1$
-			
-			// set initial state
-			radio1.setSelection(autoMerge);
-			radio2.setSelection(!autoMerge);
+	protected boolean includeCancelButton() {
+		return false;
+	}
+
+	protected void buttonPressed(int id) {
+		// hijack yes and no buttons to set the correct return
+		// codes.
+		if(id == YES || id == IDialogConstants.NO_ID) {
+			setReturnCode(id);
+			filterSyncSet();
+			close();
 		} else {
-			createWrappingLabel(composite, Policy.bind("UpdateSyncAction.Update_all_resources,_overwriting_local_changes_with_remote_contents_4"));
+			super.buttonPressed(id);
 		}
 	}
-
-	/**
-	 * @return
-	 */
-	private boolean hasAutomergableResources() {
-		return getSyncSet().hasNodes(getAutomergableFilter());
-	}
-
-	/**
-	 * TODO: Could be a method on SyncInfoSet
-	 * @param resources2
-	 */
-	protected IResource[] getAllResources() {
-		SyncInfo[] resources;
-		if (autoMerge) {
-			resources = getSyncSet().getNodes(getAutomergableFilter());
-		} else {
-			resources = getSyncSet().getSyncInfos();
-		}
-		List result = new ArrayList();
-		for (int i = 0; i < resources.length; i++) {
-			SyncInfo info = resources[i];
-			result.add(info.getLocal());
-		}
-		return (IResource[]) result.toArray(new IResource[result.size()]);
-		
-	}
-
-	/**
-	 * Set the filter used to determine if a change is automergable
-	 * @param automergableFilter
-	 */
-	public void setAutomergableFilter(SyncInfoFilter automergableFilter) {
-		this.automergableFilter = automergableFilter;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.sync.SubscriberAction#getSyncInfoFilter()
-	 */
-	public SyncInfoFilter getAutomergableFilter() {
-		if (automergableFilter == null) {
-			// By default, filter for all incoming infos and automergable conflicting changes
-			automergableFilter = new OrSyncInfoFilter(new SyncInfoFilter[] {
-				new SyncInfoDirectionFilter(SyncInfo.INCOMING),
-				new AndSyncInfoFilter(new SyncInfoFilter[] {
-					new AutomergableFilter(),
-					new SyncInfoDirectionFilter(SyncInfo.CONFLICTING),
-					new SyncInfoChangeTypeFilter(SyncInfo.CHANGE)
-				})
-			});
-		} 
-		return automergableFilter;
-	}
-	
-	private void setAutomerge(boolean b) {
-		this.autoMerge = b;
-		resetViewerInput();
-	}
-	
-	public boolean getAutomerge() {
-		return autoMerge;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.SyncInfoSetDetailsDialog#keepSelectedResources()
-	 */
-	protected void filterSyncSet() {
-		if (autoMerge) {
-			getSyncSet().selectNodes(getAutomergableFilter());
-		}
-		super.filterSyncSet();
-	}
-
 }

@@ -10,64 +10,85 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.subscriber;
 
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.swt.widgets.Shell;
+import java.lang.reflect.InvocationTargetException;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.SyncInfo;
+import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.client.Command;
+import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.operations.ReplaceOperation;
 import org.eclipse.team.ui.sync.SyncInfoSet;
 
 /**
  * This action performs an update for the CVSWorkspaceSubscriber.
  */
-public class WorkspaceUpdateAction extends SubscriberUpdateAction {
+public class WorkspaceUpdateAction extends SafeUpdateAction {
 
-	// used to indicate how conflicts are to be updated
-	private boolean onlyUpdateAutomergeable;
-
-	/*
-	 * (non-Javadoc) 
-	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.SubscriberUpdateAction#performPrompting(org.eclipse.team.ui.sync.SyncInfoSet)
-	 */
-	protected boolean performPrompting(SyncInfoSet syncSet) {
-		// If there are conflicts or outgoing changes in the syncSet, we need to warn the user.
-		onlyUpdateAutomergeable = false;
-		if (syncSet.hasConflicts() || syncSet.hasOutgoingChanges()) {
-			return promptForMergeableConflicts(syncSet);
-		}
-		return true;
-	}
-	
-	/**
-	 * Prompt for mergeable conflicts.
-	 * Note: This method is designed to be overridden by test cases.
-	 * 
-	 * @return 0 to cancel, 1 to only update mergeable conflicts, 2 to overwrite if unmergeable
-	 */
-	protected boolean promptForMergeableConflicts(final SyncInfoSet syncSet) {
-		final int[] result = new int[] {Dialog.CANCEL};
-		final Shell shell = getShell();
-		shell.getDisplay().syncExec(new Runnable() {
-			public void run() {
-				UpdateDialog dialog = new UpdateDialog(shell, syncSet);
-				result[0] = dialog.open();
-				// Need to record the choice so that the update will be performed
-				// properly for automergable conflicts
-				onlyUpdateAutomergeable = dialog.getAutomerge();
-			}
-		});
-		return (result[0] == Dialog.OK);
-	}
-	
 	/* (non-Javadoc)
-	 * 
-	 * Return true for conflicting changes that are automergable if the user has chosen the 
-	 * appropriate operation.
-	 * 
-	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.SubscriberUpdateAction#supportsShallowUpdateFor(SyncInfo)
+	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.SafeUpdateAction#runUpdateDeletions(org.eclipse.team.core.subscribers.SyncInfo[], org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected boolean supportsShallowUpdateFor(SyncInfo changedNode) {
-		return ((changedNode.getKind() & SyncInfo.DIRECTION_MASK)  == SyncInfo.CONFLICTING
-			&& ((changedNode.getKind() & SyncInfo.CHANGE_MASK) == SyncInfo.CHANGE)
-			&& onlyUpdateAutomergeable 
-			&& (changedNode.getKind() & SyncInfo.AUTOMERGE_CONFLICT) != 0);
+	protected void runUpdateDeletions(SyncInfo[] nodes, IProgressMonitor monitor) throws TeamException {
+		monitor.beginTask(null, nodes.length * 100);
+		for (int i = 0; i < nodes.length; i++) {
+			SyncInfo node = nodes[i];
+			unmanage(node, Policy.subMonitorFor(monitor, 50));
+			deleteAndKeepHistory(node.getLocal(), Policy.subMonitorFor(monitor, 50));
+		}
+		pruneEmptyParents(nodes);
+		monitor.done();
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.SafeUpdateAction#runSafeUpdate(org.eclipse.team.core.subscribers.SyncInfo[], org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	protected void runSafeUpdate(SyncInfo[] nodes, IProgressMonitor monitor) throws TeamException {
+		safeUpdate(getIResourcesFrom(nodes), new LocalOption[] { Command.DO_NOT_RECURSE }, monitor);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.SafeUpdateAction#overwriteUpdate(org.eclipse.team.ui.sync.SyncInfoSet, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	protected void overwriteUpdate(SyncInfoSet syncSet, IProgressMonitor monitor) throws TeamException {
+		try {
+			new ReplaceOperation(getShell(), syncSet.getResources(), false /* recurse */)
+				.run(monitor);
+		} catch (InvocationTargetException e) {
+			throw CVSException.wrapException(e);
+		} catch (InterruptedException e) {
+			Policy.cancelOperation();
+		}
+		
+	}
+	
+	private void unmanage(SyncInfo element, IProgressMonitor monitor) throws CVSException {
+		CVSWorkspaceRoot.getCVSResourceFor(element.getLocal()).unmanage(monitor);
+	}
+
+	private void deleteAndKeepHistory(IResource resource, IProgressMonitor monitor) throws CVSException {
+		try {
+			if (!resource.exists()) return;
+			if (resource.getType() == IResource.FILE)
+				((IFile)resource).delete(false /* force */, true /* keep history */, monitor);
+			else if (resource.getType() == IResource.FOLDER)
+				((IFolder)resource).delete(false /* force */, true /* keep history */, monitor);
+		} catch (CoreException e) {
+			throw CVSException.wrapException(e);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.SafeUpdateAction#updated(org.eclipse.core.resources.IResource[])
+	 */
+	protected void updated(IResource[] resources) throws TeamException {
+		// Do nothing
+	}
+	
 }
