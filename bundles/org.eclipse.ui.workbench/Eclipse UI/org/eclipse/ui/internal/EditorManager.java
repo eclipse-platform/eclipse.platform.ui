@@ -809,23 +809,34 @@ public class EditorManager {
             site.setActionBars(createEmptyEditorActionBars());
 
         final String label = part.getTitle(); // debugging only
-        try {
-            UIStats.start(UIStats.INIT_PART, label);
-            part.init(site, input);
-        } finally {
-            UIStats.end(UIStats.INIT_PART, label);
-        }
+		try {
+			try {
+				UIStats.start(UIStats.INIT_PART, label);
+				part.init(site, input);
+			} finally {
+				UIStats.end(UIStats.INIT_PART, label);
+			}
+			if (part.getSite() != site)
+				throw new PartInitException(
+						WorkbenchMessages
+								.format(
+										"EditorManager.siteIncorrect", new Object[] { desc.getId() })); //$NON-NLS-1$
+		} catch (Exception e) {
+			disposeEditorActionBars((EditorActionBars) site.getActionBars());
+			site.dispose();
+			if (e instanceof PartInitException)
+				throw (PartInitException) e;
 
-        if (part.getSite() != site)
-            throw new PartInitException(
-                    WorkbenchMessages
-                            .format(
-                                    "EditorManager.siteIncorrect", new Object[] { desc.getId() })); //$NON-NLS-1$
+			throw new PartInitException(
+					WorkbenchMessages
+							.format(
+									"EditorManager.unableToInitialize", new Object[] { desc.getId(), e }), e); //$NON-NLS-1$        	
+		}
     }
 
     /*
-     * See IWorkbenchPage.
-     */
+	 * See IWorkbenchPage.
+	 */
     private IEditorReference reuseInternalEditor(EditorDescriptor desc,
             IEditorInput input) throws PartInitException {
         IEditorReference reusableEditorRef = findReusableEditor(desc);
