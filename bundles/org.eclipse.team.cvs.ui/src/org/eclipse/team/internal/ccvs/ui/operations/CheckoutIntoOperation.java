@@ -131,7 +131,7 @@ public class CheckoutIntoOperation extends CheckoutOperation {
 		if (localFolderName == null) {
 			
 			// Determine which local folders will be afected
-			IStatus status = Request.EXPAND_MODULES.execute(session, new String[] { remoteFolder.getName()}, Policy.subMonitorFor(monitor, 10));
+			IStatus status = Request.EXPAND_MODULES.execute(session, new String[] { remoteFolder.getRepositoryRelativePath()}, Policy.subMonitorFor(monitor, 10));
 			if (status.getCode() == CVSStatus.SERVER_ERROR) {
 				addError(status);
 				return null;
@@ -337,7 +337,7 @@ public class CheckoutIntoOperation extends CheckoutOperation {
 			IStatus status = Command.CHECKOUT.execute(session,
 				Command.NO_GLOBAL_OPTIONS,
 				(LocalOption[])localOptions.toArray(new LocalOption[localOptions.size()]),
-				new String[] { remoteFolder.getName() },
+				new String[] { remoteFolder.getRepositoryRelativePath() },
 				null,
 				Policy.subMonitorFor(monitor, 10));
 			if (!status.isOK()) {
