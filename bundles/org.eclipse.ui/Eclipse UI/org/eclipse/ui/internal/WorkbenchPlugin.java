@@ -302,6 +302,7 @@ protected void initializeDefaultPreferences(IPreferenceStore store) {
 	store.setDefault(IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR, true);
 	store.setDefault(IPreferenceConstants.VIEW_TAB_POSITION, SWT.BOTTOM);
 	store.setDefault(IPreferenceConstants.EDITOR_TAB_POSITION, SWT.TOP);
+	store.setDefault(IPreferenceConstants.DISPLAYED_TASKS_COUNT, 100);
 	store.setDefault(
 		IWorkbenchPreferenceConstants.OPEN_NEW_PERSPECTIVE,
 		IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_PAGE);

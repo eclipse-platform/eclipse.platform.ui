@@ -44,29 +44,33 @@ protected void addToChildren(ZipEntry parent, ZipEntry child) {
  * it has not already been created.
  */
 protected void createContainer(IPath pathname) {
-	if (directoryEntryCache.containsKey(pathname))
+	String pathString = pathname.toString();
+	if (directoryEntryCache.containsKey(pathString))
 		return;
 
 	ZipEntry parent;
 	if (pathname.segmentCount() == 1)
 		parent = root;
-	else
-		parent = (ZipEntry)directoryEntryCache.get(pathname.removeLastSegments(1));
-		
-	ZipEntry newEntry = new ZipEntry(pathname.toString());
-	directoryEntryCache.put(pathname,newEntry);
+	else{
+		IPath parentPath = pathname.removeLastSegments(1);
+		parent = (ZipEntry)directoryEntryCache.get(parentPath.toString());
+	}
+	
+	ZipEntry newEntry = new ZipEntry(pathString);
+	directoryEntryCache.put(pathString,newEntry);
 	addToChildren(parent,newEntry);
 }
 /**
  * Creates a new file zip entry with the specified name.
  */
-protected void createFile(ZipEntry entry) {
-	IPath pathname = new Path(entry.getName());
+protected void createFile(ZipEntry entry,IPath pathname ) {
 	ZipEntry parent;
 	if (pathname.segmentCount() == 1)
 		parent = root;
-	else
-		parent = (ZipEntry) directoryEntryCache.get(pathname.removeLastSegments(1));
+	else{
+		IPath parentPath = pathname.removeLastSegments(1).addTrailingSeparator();
+		parent = (ZipEntry) directoryEntryCache.get(parentPath.toString());
+	}
 
 	addToChildren(parent, entry);
 }
@@ -129,12 +133,13 @@ protected void initialize() {
 	while (entries.hasMoreElements()) {
 		ZipEntry entry = (ZipEntry)entries.nextElement();
 		if (!entry.isDirectory()) {
-			IPath path = new Path(entry.getName()).addTrailingSeparator();
+			IPath entryPath = new Path(entry.getName());
+			IPath path = entryPath.addTrailingSeparator();
 			int pathSegmentCount = path.segmentCount();
 			
 			for (int i = 1; i < pathSegmentCount; i++)
 				createContainer(path.uptoSegment(i));
-			createFile(entry);
+			createFile(entry,entryPath);
 		}
 	}
 }
