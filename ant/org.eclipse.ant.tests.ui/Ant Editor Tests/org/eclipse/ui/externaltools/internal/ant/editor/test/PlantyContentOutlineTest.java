@@ -580,8 +580,8 @@ public class PlantyContentOutlineTest extends TestCase {
     public void testOutlinePreparingHandler() throws SAXException, ParserConfigurationException, IOException {
         SAXParser tempParser = SAXParserFactory.newInstance().newSAXParser();
 
-        OutlinePreparingHandler tempHandler = new OutlinePreparingHandler(new File(getClass().getResource("/de/gebit/planty/test/test2.xml").getFile()));
-        InputStream tempStream = getClass().getResourceAsStream("/de/gebit/planty/test/test2.xml");
+        OutlinePreparingHandler tempHandler = new OutlinePreparingHandler(new File(getClass().getResource("test2.xml").getFile()).getParentFile());
+        InputStream tempStream = getClass().getResourceAsStream("test2.xml");
         try {
             tempParser.parse(tempStream, tempHandler);
         } catch(SAXParseException e) {
@@ -697,14 +697,14 @@ public class PlantyContentOutlineTest extends TestCase {
      * and determining the correct location of the tags.
      */
     public void testCreationOfOutlineTree() {
-        InputStream tempStream = getClass().getResourceAsStream("/de/gebit/planty/test/buildtest1.xml");
+        InputStream tempStream = getClass().getResourceAsStream("buildtest1.xml");
         TestFile tempFile = new TestFile(tempStream);
         TestOutlinePage tempPage = new TestOutlinePage();
         XmlElement tempElement = tempPage.getContentOutline(tempFile);
         assertNotNull(tempElement);
         
         // Get the content as string
-        tempStream = getClass().getResourceAsStream("/de/gebit/planty/test/buildtest1.xml");
+        tempStream = getClass().getResourceAsStream("buildtest1.xml");
         tempFile = new TestFile(tempStream);
         String tempWholeDocumentString = tempPage.getFileContentAsString(tempFile);
 
@@ -781,14 +781,14 @@ public class PlantyContentOutlineTest extends TestCase {
      * file.
      */
     public void testParsingOfNonValidFile() {
-        InputStream tempStream = getClass().getResourceAsStream("/de/gebit/planty/test/buildtest2.xml");
+        InputStream tempStream = getClass().getResourceAsStream("buildtest2.xml");
         TestFile tempFile = new TestFile(tempStream);
         TestOutlinePage tempPage = new TestOutlinePage();
         XmlElement tempElement = tempPage.getContentOutline(tempFile);
         assertNotNull(tempElement);
 
         // Get the content as string
-        tempStream = getClass().getResourceAsStream("/de/gebit/planty/test/buildtest2.xml");
+        tempStream = getClass().getResourceAsStream("buildtest2.xml");
         tempFile = new TestFile(tempStream);
         String tempWholeDocumentString = tempPage.getFileContentAsString(tempFile);
 
@@ -813,7 +813,7 @@ public class PlantyContentOutlineTest extends TestCase {
 	 * Tests whether the outline can handle empty files.
 	 */
 	public void testWithEmptyBuildFile() {
-        InputStream tempStream = getClass().getResourceAsStream("/de/gebit/planty/test/emptyfile.xml");
+        InputStream tempStream = getClass().getResourceAsStream("emptyfile.xml");
         TestFile tempFile = new TestFile(tempStream);
         TestOutlinePage tempPage = new TestOutlinePage();
         XmlElement tempElement = tempPage.getContentOutline(tempFile);
@@ -825,14 +825,14 @@ public class PlantyContentOutlineTest extends TestCase {
 	 * Some testing of getting the right location of tags.
 	 */
 	public void testAdvancedTaskLocationing() {
-        InputStream tempStream = getClass().getResourceAsStream("/de/gebit/planty/test/outline_select_test_build.xml");
+        InputStream tempStream = getClass().getResourceAsStream("outline_select_test_build.xml");
         TestFile tempFile = new TestFile(tempStream);
         TestOutlinePage tempPage = new TestOutlinePage();
         XmlElement tempElement = tempPage.getContentOutline(tempFile);
         assertNotNull(tempElement);
         
         // Get the content as string
-        tempStream = getClass().getResourceAsStream("/de/gebit/planty/test/outline_select_test_build.xml");
+        tempStream = getClass().getResourceAsStream("outline_select_test_build.xml");
         tempFile = new TestFile(tempStream);
         String tempWholeDocumentString = tempPage.getFileContentAsString(tempFile);
         
@@ -858,8 +858,6 @@ public class PlantyContentOutlineTest extends TestCase {
         	tempOffset+=15;
         }    
 	    assertEquals(tempOffset, tempEle.getOffset());
-
-//        List tempList = tempProjectEle.getChildNodes();
 	}
 
 

@@ -278,7 +278,7 @@ public class CodeCompletionTest extends TestCase {
     public void testBuildWithProperties() {
         Project tempProject = new Project();
         tempProject.init();
-        URL tempURL = Class.class.getResource("/de/gebit/planty/test/buildtest1.xml");
+        URL tempURL = getClass().getResource("buildtest1.xml");
         assertNotNull(tempURL);
         File tempFile = new File(tempURL.getPath());
         assertTrue(tempFile.exists());
@@ -296,7 +296,7 @@ public class CodeCompletionTest extends TestCase {
         // test with not valid (complete) build file
         tempProject = new Project();
         tempProject.init();
-        tempURL = Class.class.getResource("/de/gebit/planty/test/buildtest2.xml");
+        tempURL = getClass().getResource("buildtest2.xml");
         assertNotNull(tempURL);
         tempFile = new File(tempURL.getPath());
 		assertTrue(tempFile.exists());
@@ -315,7 +315,7 @@ public class CodeCompletionTest extends TestCase {
         // test with not valid whole document string
         tempProject = new Project();
         tempProject.init();
-        tempURL = Class.class.getResource("/de/gebit/planty/test/buildtest2.xml");
+        tempURL = getClass().getResource("buildtest2.xml");
         assertNotNull(tempURL);
         String tempPath = tempURL.getPath();
         tempPath = tempPath.substring(0, tempPath.lastIndexOf('/')+1) + "someNonExisting.xml";
@@ -347,7 +347,7 @@ public class CodeCompletionTest extends TestCase {
     public void testPropertyProposalDefinedInDependendTargets() throws FileNotFoundException {
         TestPlantyTextCompletionProcessor tempProcessor = new TestPlantyTextCompletionProcessor();
 
-        URL tempURL = Class.class.getResource("/de/gebit/planty/test/dependencytest.xml");
+        URL tempURL = getClass().getResource("dependencytest.xml");
         assertNotNull(tempURL);
         File tempFile = new File(tempURL.getPath());
         assertTrue(tempFile.exists());
@@ -578,8 +578,10 @@ public class CodeCompletionTest extends TestCase {
     public void testXMLParsingWithPlantyDefaultHandler() throws SAXException, ParserConfigurationException, IOException {
         SAXParser tempParser = SAXParserFactory.newInstance().newSAXParser();
 
-        PlantySaxDefaultHandler tempHandler = new PlantySaxDefaultHandler(4, 8);
-        InputStream tempStream = getClass().getResourceAsStream("/de/gebit/planty/test/test1.xml");
+		URL url= getClass().getResource("test1.xml");
+		File file= new File(url.getFile());
+        PlantySaxDefaultHandler tempHandler = new PlantySaxDefaultHandler(file.getParentFile(), 4, 8);
+        InputStream tempStream = getClass().getResourceAsStream("test1.xml");
         try {
             tempParser.parse(tempStream, tempHandler);
         } catch(SAXParseException e) {
@@ -591,8 +593,10 @@ public class CodeCompletionTest extends TestCase {
         assertEquals(1, tempChildNodes.getLength());
         assertEquals("gurgel", ((Element)tempChildNodes.item(0)).getTagName());
 
-        tempHandler = new PlantySaxDefaultHandler(4, 8);
-        tempStream = getClass().getResourceAsStream("/de/gebit/planty/test/test2.xml");
+		url= getClass().getResource("test2.xml");
+		file= new File(url.getFile());
+        tempHandler = new PlantySaxDefaultHandler(file.getParentFile(), 4, 8);
+        tempStream = getClass().getResourceAsStream("test2.xml");
         tempParser.parse(tempStream, tempHandler);
         tempElement = tempHandler.getParentElement(false);
         assertNotNull(tempElement);
@@ -604,8 +608,10 @@ public class CodeCompletionTest extends TestCase {
         assertEquals("klack", ((Element)tempChildNodes.item(2)).getTagName());
         assertEquals("humpf", ((Element)tempChildNodes.item(3)).getTagName());
 
-        tempHandler = new PlantySaxDefaultHandler(3, 1);
-        tempStream = getClass().getResourceAsStream("/de/gebit/planty/test/test3.xml");
+		url= getClass().getResource("test3.xml");
+		file= new File(url.getFile());
+        tempHandler = new PlantySaxDefaultHandler(file.getParentFile(), 3, 1);
+        tempStream = getClass().getResourceAsStream("test3.xml");
         try {
             tempParser.parse(tempStream, tempHandler);
         } catch(SAXParseException e) {
@@ -614,8 +620,10 @@ public class CodeCompletionTest extends TestCase {
         assertNotNull(tempElement);
         assertEquals("bla", tempElement.getTagName());
 
-        tempHandler = new PlantySaxDefaultHandler(0, 46);
-        tempStream = getClass().getResourceAsStream("/de/gebit/planty/test/test4.xml");
+		url= getClass().getResource("test4.xml");
+		file= new File(url.getFile());
+        tempHandler = new PlantySaxDefaultHandler(file.getParentFile(), 0, 46);
+        tempStream = getClass().getResourceAsStream("test4.xml");
         try {
             tempParser.parse(tempStream, tempHandler);
         } catch(SAXParseException e) {
