@@ -1280,15 +1280,21 @@ private void onFastViewIconDrag(PartDropEvent e) {
 				zoomOut();
 			if (e.dropTarget instanceof ShortcutBarPart) {
 				if (e.dragSource instanceof ShortcutBarPart) 
-					//fast view is beig dragged, move it to the new posotion
-					moveFastView((ShortcutBarPart)e.dragSource, e.cursorX, e.cursorY);
+					/* fast view is beig dragged, move it to the new position
+					 * PR 6988 */
+					moveFastView((ShortcutBarPart)e.dragSource, new Point(e.cursorX, e.cursorY));
 				else {
-					//fast view being created, then move it to its desired position
+					//First create the fast view
 					makeFast(e.dragSource);
-					//NOTE: when creating a fast view, the e.cursorX does not seem to 
-					//report the accurate position.  Since we are only interested in the
-					//vertical position, hard code the x value to a value over the shortcut bar.
-					reorderFastViews((ShortcutBarPart)e.dropTarget, ((ViewPane)e.dragSource).getViewReference(), 15, e.cursorY);
+					//Then move it to the intended position.  PR 6988
+					if (e.dragSource instanceof ViewPane) {
+						ViewPane pane = (ViewPane)e.dragSource;
+						/* Convert the point to its display-relative coordinates, 
+						 * then back to the toolbar-relative coordinates. */
+						Point point = pane.getControl().toDisplay(new Point(e.cursorX, e.cursorY));
+						Point destination = ((ShortcutBarPart)e.dropTarget).getControl().toControl(point);
+						reorderFastViews((ShortcutBarPart)e.dropTarget, ((ViewPane)e.dragSource).getViewReference(), destination);
+					}
 				}
 				break;
 			}
@@ -1317,7 +1323,7 @@ private void onFastViewIconDrag(PartDropEvent e) {
  * @param x
  * @param y
  */
-private void moveFastView(ShortcutBarPart shortcutBarPart, int x, int y) {
+private void moveFastView(ShortcutBarPart shortcutBarPart, Point point) {
 	
 	// Get the fast view that is being dragged
 	WorkbenchWindow window = (WorkbenchWindow)page.getWorkbenchWindow();
@@ -1325,7 +1331,7 @@ private void moveFastView(ShortcutBarPart shortcutBarPart, int x, int y) {
 	IViewReference draggedView = (IViewReference)draggedItem.getData(ShowFastViewContribution.FAST_VIEW);
 	
 	//move the fast view to the new position
-	reorderFastViews(shortcutBarPart, draggedView, x, y);
+	reorderFastViews(shortcutBarPart, draggedView, point);
 }
 /**
  * Method reorderFastViews.
@@ -1337,19 +1343,23 @@ private void moveFastView(ShortcutBarPart shortcutBarPart, int x, int y) {
 private void reorderFastViews(
 	ShortcutBarPart shortcutBarPart,
 	IViewReference draggedView,
-	int x,
-	int y) {
+	Point point) {
+		
+	IViewReference destinationView = null;
+	boolean useDestination = false;	
 	
 	// Get the fast view that it is being dragged to
-	IViewReference destinationView = null;	
 	ToolBar bar = (ToolBar)shortcutBarPart.getControl();
-	ToolItem destItem = bar.getItem(new Point(x,y));
+	//get the ToolItem the cursor is over
+	ToolItem destItem = bar.getItem(point);
 	
-	if (destItem != null)  // destination is a toolitem on the shortcut bar
+	if (destItem != null) { //user is over a toolitem, either fast or perspecitve
 		destinationView = (IViewReference)destItem.getData(ShowFastViewContribution.FAST_VIEW);
-
-	//move the view and refresh the menu to show the change
-	page.getActivePerspective().moveFastView(draggedView, destinationView);
+		useDestination = true;
+	}
+	page.getActivePerspective().moveFastView(draggedView, destinationView, useDestination);
+	
+	//refresh the menu to show the change
 	((WorkbenchWindow)page.getWorkbenchWindow()).getShortcutBar().update(true);
 }
 

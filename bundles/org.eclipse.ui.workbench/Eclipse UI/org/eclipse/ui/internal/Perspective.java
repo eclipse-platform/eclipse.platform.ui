@@ -1402,21 +1402,32 @@ public void setOldPartID(String oldPartID) {
 }
 /**
  * Method moveFastView.  Moves draggedView to the position above
- * destinationView.  Moves draggedView to the end if destinationView is null
+ * destinationView.  If useDestination is false, add view to the end.
+ * Otherwise, either place above destination view, or at the beginning if hte
+ * destinationView is null
  * @param draggedView
  * @param destinationView
+ * @param useDestination
  */
-/*package*/ void moveFastView(IViewReference draggedView, IViewReference destinationView) {
+
+/*package*/ void moveFastView(IViewReference draggedView, IViewReference destinationView, boolean useDestination) {
+	//PR 6988
+	
 	//do nothing if views are the same
 	if (draggedView == destinationView)
 		return;
 		
 	//move the view
 	fastViews.remove(draggedView);
-	if (destinationView == null) //add it to the end
+	//should the destination be used to determine where to place the fast view?
+	if (useDestination) {
+		if (destinationView == null) //add it to the beginning
+			fastViews.add(0, draggedView);
+		else
+			fastViews.add(fastViews.indexOf(destinationView), draggedView);
+	} else { //add it to the end
 		fastViews.add(draggedView);
-	else
-		fastViews.add(fastViews.indexOf(destinationView), draggedView);
+	}
 }
 
 }
