@@ -125,16 +125,15 @@ added to the &quot;Other&quot; category.
          <attribute name="contentFile" type="string">
             <annotation>
                <documentation>
-                  The content file is an XML file that describes the cheat sheet.
-
-A cheat sheet content file is assebled in XML that is parsed at run time by the cheat sheet framework.  Based on the settings in this file, a certain number of steps, actions, descriptions, and help links are shown to the user when the cheat sheet is opened.
+                  a cheat sheet content file. The content file is an XML file that contains the specifics of the cheat sheet (&lt;a href=&quot;cheatSheetContentFileSpec.html&quot;&gt;cheat sheet content file format specification)&lt;/a&gt;.
+The content file is parsed at run time by the cheat sheet framework. Based on the settings in this file, a certain number of steps, actions, descriptions, and help links are shown to the user when the cheat sheet is opened.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="listener" type="string">
             <annotation>
                <documentation>
-                  listener is a fully qualified name of a Java class which must subclasses org.eclipse.ui.cheatsheets.CheatSheetListener.
+                  listener is a fully qualified name of a Java class which must subclass &lt;code&gt;org.eclipse.ui.cheatsheets.CheatSheetListener&lt;/code&gt;.
                </documentation>
             </annotation>
          </attribute>
@@ -182,15 +181,6 @@ A cheat sheet content file is assebled in XML that is parsed at run time by the 
            This is a descriptive bit of text for my cheat sheet description.
          &lt;/description&gt;
         &lt;/cheatSheet&gt;
-        &lt;!-- this is a sample cheat sheet listener being registered.  It is notified of cheat sheet item events --&gt;
-        &lt;!-- for the cheat sheet with id org.eclipse.ui.cheatsheet.sample.PatternSheet.          --&gt;
-        &lt;!-- The AListener class implements org.eclipse.ui.cheatsheets.events.ICheatsheetItemListener   --&gt;
-         &lt;cheatSheetListener
-   id=&quot;com.org.xyz.listener&quot;
-   targetCheatSheetId=&quot;com.org.xyz.cheatSheet&quot;
-   class=&quot;com.org.xyz.AListener&quot;
-   classPluginId=&quot;com.org.xyz.plugin&quot;&gt;
-  &lt;/cheatSheetListener&gt;
 &lt;/extension&gt;
       </documentation>
    </annotation>
@@ -205,7 +195,7 @@ A cheat sheet content file is assebled in XML that is parsed at run time by the 
 The main API&apos;s available are:
 
   - Action to open a cheat sheet with an id, or a content file URL.
-  - Live help action to launch a cheat sheet with an id from a live help link in a help book.
+  - Live help action to open a cheat sheet with an id from a live help link in a help book.
   
   - Interfaces for:
     -Actions:  ICheatsheetAction
@@ -226,7 +216,7 @@ The main API&apos;s available are:
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         There is no supplied implementation at this time.
+         There are no built-in cheat sheets.
       </documentation>
    </annotation>
 
@@ -235,7 +225,7 @@ The main API&apos;s available are:
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-/************************************************************************
+         /************************************************************************
  * Copyright (c) 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
