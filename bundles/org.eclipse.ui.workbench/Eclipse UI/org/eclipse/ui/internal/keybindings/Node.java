@@ -17,7 +17,7 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-class Node {
+final class Node {
 	
 	static boolean add(SortedMap contributions, 
 		Contributor contributor, Action action)
@@ -164,8 +164,20 @@ class Node {
 		return null;
 	}
 	
-	static void addToTree(SortedMap tree, KeyBinding keyBinding) {
+	static void addToTree(SortedMap tree, KeyBinding keyBinding, SortedMap configurationMap, SortedMap scopeMap) {
 		List keyStrokes = keyBinding.getKeySequence().getKeyStrokes();		
+		Path configuration = (Path) configurationMap.get(keyBinding.getConfiguration());
+		
+		if (configuration == null)
+			return;
+
+		Path locale = KeyBindingManager.pathForLocale(keyBinding.getLocale());
+		Path platform = KeyBindingManager.pathForPlatform(keyBinding.getPlatform());
+		Path scope = (Path) scopeMap.get(keyBinding.getScope());
+		
+		if (scope == null)
+			return;
+		
 		SortedMap root = tree;
 		Node node = null;
 	
@@ -183,7 +195,7 @@ class Node {
 
 		if (node != null) {
 			SortedMap states = node.states;			
-			State state = keyBinding.getState();			
+			State state = State.create(configuration, locale, platform, scope);			
 			SortedMap contributorToActionSetMap = (SortedMap) states.get(state);
 			
 			if (contributorToActionSetMap == null) {
@@ -191,8 +203,8 @@ class Node {
 				states.put(state, contributorToActionSetMap);
 			}
 			
-			add(contributorToActionSetMap, keyBinding.getContributor(),
-				keyBinding.getAction());			
+			add(contributorToActionSetMap, Contributor.create(keyBinding.getPlugin()),
+				Action.create(keyBinding.getAction()));			
 		}
 	}
 
@@ -272,8 +284,11 @@ class Node {
 					
 					while (iterator4.hasNext()) {
 						Action action = (Action) iterator4.next();
+						
+						/* TBD:
 						bindings.add(KeyBinding.create(keySequence, state, 
-							contributor, action));					
+							contributor, action));
+							*/					
 					}				
 				}			
 			}

@@ -20,206 +20,247 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
 
-public final class KeyBinding implements Comparable {
+final class KeyBinding implements Comparable {
 
-	public final static String ROOT = "keybindings";	
-	public final static String ELEMENT = "keybinding";
+	private final static String ATTRIBUTE_ACTION = "action"; //$NON-NLS-1$
+	private final static String ATTRIBUTE_CONFIGURATION = "configuration"; //$NON-NLS-1$		
+	private final static String ATTRIBUTE_LOCALE = "locale"; //$NON-NLS-1$	
+	private final static String ATTRIBUTE_PLATFORM = "platform"; //$NON-NLS-1$		
+	private final static String ATTRIBUTE_PLUGIN = "plugin"; //$NON-NLS-1$		
+	private final static String ATTRIBUTE_SCOPE = "scope"; //$NON-NLS-1$
+	private final static String ELEMENT_KEYBINDING = "keybinding"; //$NON-NLS-1$
+	private final static String ZERO_LENGTH_STRING = ""; //$NON-NLS-1$
 
-	public static KeyBinding create(KeySequence keySequence, State state, 
-		Contributor contributor, Action action)
+	static KeyBinding create(KeySequence keySequence, String action, String configuration, String locale, String platform, String plugin, 
+		String scope)
 		throws IllegalArgumentException {
-		return new KeyBinding(keySequence, state, contributor, action);
+		return new KeyBinding(keySequence, action, configuration, locale, platform, plugin, scope);
 	}
 
-	public static KeyBinding read(IMemento memento)
+	static KeyBinding read(IMemento memento)
 		throws IllegalArgumentException {
 		if (memento == null)
 			throw new IllegalArgumentException();
 		
-		KeySequence sequence = 
-			KeySequence.read(memento.getChild(KeySequence.ELEMENT));
-		State state = KeyBinding.readState(memento.getChild(State.ELEMENT));
-		Contributor contributor = 
-			Contributor.read(memento.getChild(Contributor.ELEMENT));
-		Action action = Action.read(memento.getChild(Action.ELEMENT));
-		return KeyBinding.create(sequence, state, contributor, action);
+		KeySequence keySequence = KeySequence.read(memento.getChild(KeySequence.ELEMENT));
+		String action = memento.getString(ATTRIBUTE_ACTION);
+		String configuration = memento.getString(ATTRIBUTE_CONFIGURATION);
+		
+		if (configuration == null)
+			configuration = ZERO_LENGTH_STRING;
+		
+		String locale = memento.getString(ATTRIBUTE_LOCALE);
+
+		if (locale == null)
+			locale = ZERO_LENGTH_STRING;
+
+		String platform = memento.getString(ATTRIBUTE_PLATFORM);
+
+		if (platform == null)
+			platform = ZERO_LENGTH_STRING;
+
+		String plugin = memento.getString(ATTRIBUTE_PLUGIN);
+		String scope = memento.getString(ATTRIBUTE_SCOPE);
+
+		if (scope == null)
+			scope = ZERO_LENGTH_STRING;
+
+		return KeyBinding.create(keySequence, action, configuration, locale, platform, plugin, scope);
 	}
 
-	public static List readBindingsFromReader(Reader reader)
+	static List readKeyBindingsFromReader(Reader reader)
 		throws IOException {
 		try {
 			XMLMemento xmlMemento = XMLMemento.createReadRoot(reader);
-			return readBindings(xmlMemento);
+			return readKeyBindings(xmlMemento);
 		} catch (WorkbenchException eWorkbench) {
 			throw new IOException();	
 		}
 	}
-
-	public static void writeBindingsToWriter(Writer writer, String root, 
-		List bindings)
-		throws IOException {
-		XMLMemento xmlMemento = XMLMemento.createWriteRoot(root);
-		writeBindings(xmlMemento, bindings);
-		xmlMemento.save(writer);
-	}
-
-	public static List readBindings(IMemento memento)
+	
+	static List readKeyBindings(IMemento memento)
 		throws IllegalArgumentException {
 		if (memento == null)
 			throw new IllegalArgumentException();			
 		
-		IMemento[] mementos = memento.getChildren(KeyBinding.ELEMENT);
+		IMemento[] mementos = memento.getChildren(ELEMENT_KEYBINDING);
 		
 		if (mementos == null)
 			throw new IllegalArgumentException();
 		
-		List bindings = new ArrayList(mementos.length);
+		List keyBindings = new ArrayList(mementos.length);
 		
 		for (int i = 0; i < mementos.length; i++)
-			bindings.add(KeyBinding.read(mementos[i]));
+			keyBindings.add(KeyBinding.read(mementos[i]));
 		
-		return bindings;		
+		return keyBindings;		
 	}
 
-	public static void writeBindings(IMemento memento, List bindings)
+	static void writeKeyBindingsToWriter(Writer writer, String root, List keyBindings)
+		throws IOException {
+		XMLMemento xmlMemento = XMLMemento.createWriteRoot(root);
+		writeKeyBindings(xmlMemento, keyBindings);
+		xmlMemento.save(writer);
+	}
+
+	static void writeKeyBindings(IMemento memento, List keyBindings)
 		throws IllegalArgumentException {
-		if (memento == null || bindings == null)
+		if (memento == null || keyBindings == null)
 			throw new IllegalArgumentException();
 			
-		Iterator iterator = bindings.iterator();
+		Iterator iterator = keyBindings.iterator();
 		
 		while (iterator.hasNext())
-			((KeyBinding) iterator.next()).write(memento.createChild(KeyBinding.ELEMENT)); 
+			((KeyBinding) iterator.next()).write(memento.createChild(ELEMENT_KEYBINDING)); 
 	}
 
-	public static void filterAction(List bindings, Set actions, 
-		boolean exclusive) {
-		Iterator iterator = bindings.iterator();
+	static void filterAction(List keyBindings, Set actions, boolean exclusive) {
+		Iterator iterator = keyBindings.iterator();
 		
 		while (iterator.hasNext()) {
-			KeyBinding binding = (KeyBinding) iterator.next();
-			Action action = binding.getAction();
+			KeyBinding keyBinding = (KeyBinding) iterator.next();
 			
-			if (exclusive ^ !actions.contains(action))
+			if (exclusive ^ !actions.contains(keyBinding.getAction()))
 				iterator.remove();
 		}
 	}
 
-	/*
-	public static void filterConfiguration(List bindings, Set configurations,
-		boolean exclusive) {
-		Iterator iterator = bindings.iterator();
+	static void filterConfiguration(List keyBindings, Set configurations, boolean exclusive) {
+		Iterator iterator = keyBindings.iterator();
 		
 		while (iterator.hasNext()) {
-			KeyBinding binding = (KeyBinding) iterator.next();
-			State state = binding.getState();			
-			Path configuration = state.getConfiguration();
+			KeyBinding keyBinding = (KeyBinding) iterator.next();
 			
-			if (exclusive ^ !configurations.contains(configuration))
+			if (exclusive ^ !configurations.contains(keyBinding.getConfiguration()))
 				iterator.remove();
 		}
 	}
-	*/
 
-	/*
-	public static void filterLocale(List bindings, Set locales, 
-		boolean exclusive) {
-		Iterator iterator = bindings.iterator();
+	static void filterLocale(List keyBindings, Set locales, boolean exclusive) {
+		Iterator iterator = keyBindings.iterator();
 		
 		while (iterator.hasNext()) {
-			KeyBinding binding = (KeyBinding) iterator.next();
-			State state = binding.getState();			
-			Path locale = state.getLocale();
+			KeyBinding keyBinding = (KeyBinding) iterator.next();
 			
-			if (exclusive ^ !locales.contains(locale))
+			if (exclusive ^ !locales.contains(keyBinding.getLocale()))
 				iterator.remove();
 		}
 	}
-	*/
 
-	/*
-	public static void filterPlatform(List bindings, Set platforms, 
-		boolean exclusive) {
-		Iterator iterator = bindings.iterator();
+	static void filterPlatform(List keyBindings, Set platforms, boolean exclusive) {
+		Iterator iterator = keyBindings.iterator();
 		
 		while (iterator.hasNext()) {
-			KeyBinding binding = (KeyBinding) iterator.next();
-			State state = binding.getState();			
-			Path platform = state.getPlatform();
+			KeyBinding keyBinding = (KeyBinding) iterator.next();
 			
-			if (exclusive ^ !platforms.contains(platform))
+			if (exclusive ^ !platforms.contains(keyBinding.getPlatform()))
 				iterator.remove();
 		}
 	}
-	*/
 
-	/*
-	public static void filterScope(List bindings, Set scopes, 
-		boolean exclusive) {
-		Iterator iterator = bindings.iterator();
+	static void filterPlugin(List keyBindings, Set plugins, boolean exclusive) {
+		Iterator iterator = keyBindings.iterator();
 		
 		while (iterator.hasNext()) {
-			KeyBinding binding = (KeyBinding) iterator.next();
-			State state = binding.getState();			
-			Path scope = state.getScope();
+			KeyBinding keyBinding = (KeyBinding) iterator.next();
 			
-			if (exclusive ^ !scopes.contains(scope))
+			if (exclusive ^ !plugins.contains(keyBinding.getPlugin()))
 				iterator.remove();
 		}
 	}
-	*/
+
+	static void filterScope(List keyBindings, Set scopes, boolean exclusive) {
+		Iterator iterator = keyBindings.iterator();
+		
+		while (iterator.hasNext()) {
+			KeyBinding keyBinding = (KeyBinding) iterator.next();
+			
+			if (exclusive ^ !scopes.contains(keyBinding.getScope()))
+				iterator.remove();
+		}
+	}
 
 	private KeySequence keySequence;
-	private State state;
-	private Contributor contributor;
-	private Action action;
+	private String action;
+	private String configuration;
+	private String locale;
+	private String platform;	
+	private String scope;
+	private String plugin;
 
-	private KeyBinding(KeySequence keySequence, State state, 
-		Contributor contributor, Action action)
+	private KeyBinding(KeySequence keySequence, String action, String configuration, String locale, String platform, String plugin, String scope)
 		throws IllegalArgumentException {
 		super();
 		
-		if (keySequence == null || state == null || contributor == null ||
-			action == null)
+		if (keySequence == null || keySequence.getKeyStrokes().size() <= 0 || configuration == null || locale == null || platform == null || 
+			scope == null)
 			throw new IllegalArgumentException();	
 		
 		this.keySequence = keySequence;
-		this.state = state;
-		this.contributor = contributor;
-		this.action = action;
+		this.action = action;	
+		this.configuration = configuration;
+		this.locale = locale;
+		this.platform = platform;
+		this.plugin = plugin;
+		this.scope = scope;
 	}
 
-	public KeySequence getKeySequence() {
+	KeySequence getKeySequence() {
 		return keySequence;	
 	}
-	
-	public State getState() {
-		return state;
-	}
 
-	public Contributor getContributor() {
-		return contributor;
-	}
-	
-	public Action getAction() {
+	String getAction() {
 		return action;
 	}
 
+	String getConfiguration() {
+		return configuration;
+	}
+	
+	String getLocale() {
+		return locale;
+	}
+	
+	String getPlatform() {
+		return platform;
+	}
+
+	String getPlugin() {
+		return plugin;
+	}
+	
+	String getScope() {
+		return scope;
+	}
+	
 	public int compareTo(Object object) {
 		if (!(object instanceof KeyBinding))
 			throw new ClassCastException();		
 		
-		KeyBinding binding = (KeyBinding) object;
-		int compareTo = keySequence.compareTo(binding.keySequence);
+		KeyBinding keyBinding = (KeyBinding) object;
+		int compareTo = keySequence.compareTo(keyBinding.keySequence);
 
 		if (compareTo == 0) {
-			compareTo = state.compareTo(binding.state);
+			compareTo = Util.compare(action, keyBinding.action);
 
-			if (compareTo == 0)
-				compareTo = contributor.compareTo(binding.contributor);
-			
-				if (compareTo == 0)
-					compareTo = action.compareTo(binding.action);
+			if (compareTo == 0) {
+				compareTo = Util.compare(configuration, keyBinding.configuration);
+
+				if (compareTo == 0) {
+					compareTo = Util.compare(locale, keyBinding.locale);
+
+					if (compareTo == 0) {
+						compareTo = Util.compare(platform, keyBinding.platform);
+
+						if (compareTo == 0) {
+							compareTo = Util.compare(plugin, keyBinding.plugin);
+
+							if (compareTo == 0)
+								compareTo = Util.compare(scope, keyBinding.scope);
+						}
+					}
+				}
+			}
 		}
 		
 		return compareTo;
@@ -229,47 +270,28 @@ public final class KeyBinding implements Comparable {
 		if (!(object instanceof KeyBinding))
 			return false;
 		
-		KeyBinding binding = (KeyBinding) object;
-		return keySequence.equals(binding.keySequence) && 
-			state.equals(binding.state) && 
-			contributor.equals(binding.contributor) && 
-			action.equals(binding.action);
+		KeyBinding keyBinding = (KeyBinding) object;
+		return keySequence.equals(keyBinding.keySequence) && Util.equals(action, keyBinding.action) && 
+			Util.equals(configuration, keyBinding.configuration) && Util.equals(locale, keyBinding.locale) &&
+			Util.equals(platform, keyBinding.platform) && Util.equals(plugin, keyBinding.plugin) && Util.equals(scope, keyBinding.scope);
 	}
 
-	public void write(IMemento memento)
+	public int hashCode() {
+		// TBD!
+		return 0;
+	}
+
+	void write(IMemento memento)
 		throws IllegalArgumentException {
 		if (memento == null)
 			throw new IllegalArgumentException();
-			
+
 		keySequence.write(memento.createChild(KeySequence.ELEMENT));
-		writeState(memento.createChild(State.ELEMENT), state);
-		contributor.write(memento.createChild(Contributor.ELEMENT));
-		action.write(memento.createChild(Action.ELEMENT));			
+		memento.putString(ATTRIBUTE_ACTION, action);
+		memento.putString(ATTRIBUTE_CONFIGURATION, configuration);
+		memento.putString(ATTRIBUTE_LOCALE, locale);
+		memento.putString(ATTRIBUTE_PLATFORM, platform);
+		memento.putString(ATTRIBUTE_PLUGIN, plugin);
+		memento.putString(ATTRIBUTE_SCOPE, scope);
 	}
-
-	static State readState(IMemento memento)
-		throws IllegalArgumentException {
-		if (memento == null)
-			throw new IllegalArgumentException();
-		
-		Path configuration = Path.read(memento.getChild("configuration"));
-		Path locale = Path.read(memento.getChild("locale"));
-		Path platform = Path.read(memento.getChild("platform"));
-		Path scope = Path.read(memento.getChild("scope"));
-		return State.create(configuration, locale, platform, scope);
-	}
-
-	static void writeState(IMemento memento, State state)
-		throws IllegalArgumentException {
-		if (memento == null || state == null)
-			throw new IllegalArgumentException();	
-			
-		List paths = state.getPaths();
-		((Path) paths.get(1)).write(memento.createChild("configuration"));
-		((Path) paths.get(3)).write(memento.createChild("locale"));
-		((Path) paths.get(2)).write(memento.createChild("platform"));
-		((Path) paths.get(0)).write(memento.createChild("scope"));
-	}
-	
-	//private List paths;
 }

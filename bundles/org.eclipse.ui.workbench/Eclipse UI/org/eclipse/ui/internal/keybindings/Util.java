@@ -52,8 +52,7 @@ public final class Util {
 			return +1;
 		else {
 			while (left.hasNext() && right.hasNext()) {
-				int compareTo = ((Comparable) left.next()).compareTo(
-					(Comparable) right.next());
+				int compareTo = ((Comparable) left.next()).compareTo((Comparable) right.next());
 			
 				if (compareTo != 0)
 					return compareTo;
@@ -61,6 +60,10 @@ public final class Util {
 	
 			return left.hasNext() ? +1 : right.hasNext() ? -1 : 0;
 		}
+	}
+
+	public static boolean equals(Object left, Object right) {
+		return left == null ? right == null : left.equals(right);
 	}
 
 	private Util() {

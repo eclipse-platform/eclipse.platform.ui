@@ -8,6 +8,8 @@ http://www.eclipse.org/legal/cpl-v10.html
 
 package org.eclipse.ui.internal.keybindings;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -20,6 +22,7 @@ import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.Accelerator;
@@ -34,6 +37,7 @@ public final class KeyBindingManager {
 	private final static String KEY_STROKE_SEPARATOR = " "; //$NON-NLS-1$
 	private final static String LOCALE_SEPARATOR = "_"; //$NON-NLS-1$
 	private final static String OR_SEPARATOR = "||"; //$NON-NLS-1$
+	private final static String ZERO_LENGTH_STRING = ""; //$NON-NLS-1$
 
 	private static KeyBindingManager instance;
 
@@ -44,7 +48,7 @@ public final class KeyBindingManager {
 		return instance;	
 	}
 	
-	private static SortedMap buildConfigurationMap() {
+	private static SortedMap loadConfigurationMap() {
 		AcceleratorRegistry acceleratorRegistry = WorkbenchPlugin.getDefault().getAcceleratorRegistry();	
 		return buildConfigurationMap(acceleratorRegistry.getAcceleratorConfigurations());	
 	}
@@ -55,10 +59,13 @@ public final class KeyBindingManager {
 
 		while (iterator.hasNext()) {
 			String id = (String) iterator.next();
-			Path path = pathForConfigurationId(id, acceleratorConfigurations);
 			
-			if (path != null)
-				configurations.put(id, path);
+			if (id != null) {			
+				Path path = pathForConfigurationId(id, acceleratorConfigurations);
+			
+				if (path != null)
+					configurations.put(id, path);
+			}			
 		}
 
 		return configurations;		
@@ -89,7 +96,7 @@ public final class KeyBindingManager {
 		return path;			
 	}	
 
-	private static SortedMap buildScopeMap() {
+	private static SortedMap loadScopeMap() {
 		AcceleratorRegistry acceleratorRegistry = WorkbenchPlugin.getDefault().getAcceleratorRegistry();	
 		return buildScopeMap(acceleratorRegistry.getAcceleratorScopes());	
 	}
@@ -100,10 +107,13 @@ public final class KeyBindingManager {
 
 		while (iterator.hasNext()) {
 			String id = (String) iterator.next();
-			Path path = pathForScopeId(id, acceleratorScopes);
 			
-			if (path != null)
-				scopes.put(id, path);
+			if (id != null) {
+				Path path = pathForScopeId(id, acceleratorScopes);
+			
+				if (path != null)
+					scopes.put(id, path);
+			}
 		}
 
 		return scopes;		
@@ -134,7 +144,7 @@ public final class KeyBindingManager {
 		return path;	
 	}	
 
-	private static Path pathForLocale(String locale) {
+	static Path pathForLocale(String locale) {
 		Path path = null;
 
 		if (locale != null) {
@@ -163,16 +173,15 @@ public final class KeyBindingManager {
 		return locale != null ? pathForLocale(locale.toString()) : null;
 	}
 
-	private static Path pathForPlatform(String platform) {
+	static Path pathForPlatform(String platform) {
 		Path path = null;
 
 		if (platform != null) {
 			List pathItems = new ArrayList();				
 			platform = platform.trim();
 			
-			if (platform.length() > 0) {
+			if (platform.length() > 0)
 				pathItems.add(PathItem.create(platform));
-			}
 
 			path = Path.create(pathItems);
 		}
@@ -183,74 +192,62 @@ public final class KeyBindingManager {
 	private static Path systemPlatform() {
 		return pathForPlatform(SWT.getPlatform());
 	}
-
-	private static SortedMap buildTree(Map configurationMap, Map scopeMap) {
-		SortedMap tree = new TreeMap();
+	
+	private static List loadKeyBindings() {
+		List keyBindings = new ArrayList();
 		AcceleratorRegistry acceleratorRegistry = WorkbenchPlugin.getDefault().getAcceleratorRegistry();	
 		List acceleratorSets = acceleratorRegistry.getAcceleratorSets();
 		Iterator iterator = acceleratorSets.iterator();
 		
 		while (iterator.hasNext()) {
-			AcceleratorSet acceleratorSet = (AcceleratorSet) iterator.next();		
-
-			String configurationId = acceleratorSet.getAcceleratorConfigurationId();
-			Path configuration = (Path) configurationMap.get(configurationId);
+			AcceleratorSet acceleratorSet = (AcceleratorSet) iterator.next();
+			String configuration = acceleratorSet.getAcceleratorConfigurationId();
 			
 			if (configuration == null)
-				continue;
+				configuration = ZERO_LENGTH_STRING;
+			
+			String scope = acceleratorSet.getAcceleratorScopeId();
 
-			String scopeId = acceleratorSet.getAcceleratorScopeId();	
-			Path scope = (Path) scopeMap.get(scopeId);
-			
 			if (scope == null)
-				continue;			
-			
-			String pluginId = acceleratorSet.getPluginId();
-			
-			if (pluginId == null)
-				pluginId = "";
-			
+				scope = ZERO_LENGTH_STRING;
+
+			String plugin = acceleratorSet.getPluginId();			
 			List accelerators = acceleratorSet.getAccelerators();
 			Iterator iterator2 = accelerators.iterator();
 			
 			while (iterator2.hasNext()) {
 				Accelerator accelerator = (Accelerator) iterator2.next();				
-				String id = accelerator.getId();					
-				
-				if (id == null)
-					// this means explicit null action. should these be stripped?
+				List keySequences = parseKeySequences(accelerator.getKey());
+			
+				if (keySequences == null)
 					continue;
-				
-				List keySequences = getKeySequences(accelerator.getKey());
-				
-				if (keySequences == null || keySequences.size() <= 0)
-					// this means explicit null key sequences. should these be stripped?
-					continue;
-				
-				Path locale = pathForLocale(accelerator.getLocale());
-				
+
+				String action = accelerator.getId();									
+				String locale = accelerator.getLocale();
+			
 				if (locale == null)
-					locale = Path.create();
-
-				Path platform = pathForPlatform(accelerator.getPlatform());
+					locale = ZERO_LENGTH_STRING;
 				
-				if (platform == null)
-					platform = Path.create();
+				String platform = accelerator.getPlatform();				
 
-				State state = State.create(configuration, locale, platform, scope);				
-				Action action = Action.create(id); 
-				Contributor contributor = Contributor.create(pluginId);					
+				if (platform == null)
+					platform = ZERO_LENGTH_STRING;
+				
 				Iterator iterator3 = keySequences.iterator();
-											
-				while (iterator3.hasNext())
-					Node.addToTree(tree, KeyBinding.create((KeySequence) iterator3.next(), state, contributor, action));
+				
+				while (iterator3.hasNext()) {
+					KeySequence keySequence = (KeySequence) iterator3.next();
+							
+					if (keySequence.getKeyStrokes().size() >= 1)						
+						keyBindings.add(KeyBinding.create(keySequence, action, configuration, locale, platform, plugin, scope));
+				}
 			}			
 		}
 		
-		return tree;
-	}			
-
-	private static List getKeySequences(String keys) {
+		return keyBindings;
+	}
+	
+	private static List parseKeySequences(String keys) {
 		List keySequences = null;
 		
 		if (keys != null) {
@@ -276,15 +273,27 @@ public final class KeyBindingManager {
 		return keySequences;
 	}
 
+	private static SortedMap buildTree(List keyBindings, SortedMap configurationMap, SortedMap scopeMap) {
+		SortedMap tree = new TreeMap();
+		Iterator iterator = keyBindings.iterator();
+		
+		while (iterator.hasNext())
+			Node.addToTree(tree, (KeyBinding) iterator.next(), configurationMap, scopeMap);
+
+		return tree;
+	}			
+
 	private SortedMap configurationMap;
-	private SortedMap scopeMap;
-	private SortedMap tree = new TreeMap();
-	
+	private SortedMap scopeMap;		
+	private List initialKeyBindings;
+	//private List customKeyBindings;	
+	private SortedMap tree;
+		
 	private Path configuration = Path.create();
 	private Path locale = systemLocale();
 	private Path platform = systemPlatform();
 	private Path[] scopes = new Path[] { Path.create() };
-
+	
 	private KeySequence mode = KeySequence.create();
 	private SortedMap actionKeySequenceSetMap;
 	private SortedMap keySequenceActionMap;
@@ -294,25 +303,28 @@ public final class KeyBindingManager {
 
 	private KeyBindingManager() {
 		super();
-		configurationMap = Collections.unmodifiableSortedMap(buildConfigurationMap());
-		scopeMap = Collections.unmodifiableSortedMap(buildScopeMap());
-		tree = buildTree(configurationMap, scopeMap);
+		configurationMap = Collections.unmodifiableSortedMap(loadConfigurationMap());
+		scopeMap = Collections.unmodifiableSortedMap(loadScopeMap());
+		initialKeyBindings = Collections.unmodifiableList(loadKeyBindings());
 		
-		/*
-		TBD: add all custom bindings here..
-		don't forget to add them: Node.addToTree(tree, binding);
-		*/
-				
-		/*
-		try {
-			FileWriter fileWriter = new FileWriter("c:\\bindings.xml");
-			KeyBinding.writeBindingsToWriter(fileWriter, KeyBinding.ROOT, 
-				Node.toBindings(tree));
-		} catch (IOException eIO) {
-		}
-		*/
-		
+		tree = buildTree(initialKeyBindings, configurationMap, scopeMap);	
 		solve();
+				
+		try {
+			IPath path = WorkbenchPlugin.getDefault().getStateLocation();
+
+			IPath path0 = path.append("initialKeyBindings (from list).xml");
+			FileWriter fileWriter0 = new FileWriter(path0.toFile());
+			KeyBinding.writeKeyBindingsToWriter(fileWriter0, "initialkeybindings", initialKeyBindings);
+			fileWriter0.close();
+
+			IPath path1 = path.append("initialKeyBindings (from tree).xml");
+			FileWriter fileWriter1 = new FileWriter(path1.toFile());
+			KeyBinding.writeKeyBindingsToWriter(fileWriter1, "initialkeybindings", Node.toBindings(tree));
+			fileWriter1.close();
+		} catch (IOException eIO) {
+			eIO.printStackTrace();
+		}
 	}
 	
 	public Path getConfigurationForId(String id) {
