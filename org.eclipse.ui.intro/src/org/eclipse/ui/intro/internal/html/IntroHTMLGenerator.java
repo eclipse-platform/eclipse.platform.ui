@@ -110,7 +110,7 @@ public class IntroHTMLGenerator {
 		// add the page's inherited style(s)
 		String[] pageStyles = introPage.getStyles();
 		for (int i = 0; i < pageStyles.length; i++) {
-			style = pageStyles[0];
+			style = pageStyles[i];
 			if (style != null)
 				head.addContent(generateLinkElement(style, indentLevel + 1));
 		}
